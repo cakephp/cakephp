@@ -40,7 +40,7 @@ use Cake\Utility\String;
 class CsrfComponent extends Component {
 
 /**
- * Settings for the CSRF handling.
+ * Default config for the CSRF handling.
  *
  *  - cookieName = The name of the cookie to send.
  *  - expiry = How long the CSRF token should last. Defaults to browser session.
@@ -50,7 +50,7 @@ class CsrfComponent extends Component {
  *
  * @var array
  */
-	public $settings = [
+	protected $_defaultConfig = [
 		'cookieName' => 'csrfToken',
 		'expiry' => 0,
 		'secure' => false,
@@ -76,7 +76,7 @@ class CsrfComponent extends Component {
 		$controller = $event->subject();
 		$request = $controller->request;
 		$response = $controller->response;
-		$cookieName = $this->settings['cookieName'];
+		$cookieName = $this->config('cookieName');
 
 		$cookieData = $request->cookie($cookieName);
 		if ($cookieData) {
@@ -105,15 +105,14 @@ class CsrfComponent extends Component {
  * @param \Cake\Network\Response $response The response object.
  */
 	protected function _setCookie(Request $request, Response $response) {
-		$settings = $this->settings;
 		$value = Security::hash(String::uuid(), 'sha1', true);
 		$request->params['_csrfToken'] = $value;
 		$response->cookie([
-			'name' => $settings['cookieName'],
+			'name' => $this->config('cookieName'),
 			'value' => $value,
-			'expiry' => $settings['expiry'],
+			'expiry' => $this->config('expiry'),
 			'path' => $request->base,
-			'secure' => $settings['secure'],
+			'secure' => $this->config('secure'),
 		]);
 	}
 
@@ -125,10 +124,8 @@ class CsrfComponent extends Component {
  * @return void
  */
 	protected function _validateToken(Request $request) {
-		$settings = $this->settings;
-
-		$cookie = $request->cookie($settings['cookieName']);
-		$post = $request->data($settings['field']);
+		$cookie = $request->cookie($this->config('cookieName'));
+		$post = $request->data($this->config('field'));
 		$header = $request->header('X-CSRF-Token');
 
 		if ($post !== $cookie && $header !== $cookie) {

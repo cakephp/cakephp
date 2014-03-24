@@ -34,7 +34,7 @@ use Cake\Network\Response;
  *
  * ### Using Digest auth
  *
- * In your controller's components array, add auth + the required settings.
+ * In your controller's components array, add auth + the required config
  * {{{
  *	public $components = array(
  *		'Auth' => array(
@@ -60,7 +60,7 @@ use Cake\Network\Response;
 class DigestAuthenticate extends BasicAuthenticate {
 
 /**
- * Settings for this object.
+ * Default config for this object.
  *
  * - `fields` The fields to use to identify a user by.
  * - `userModel` The model name of the User, defaults to Users.
@@ -72,17 +72,17 @@ class DigestAuthenticate extends BasicAuthenticate {
  * - `nonce` A nonce used for authentication. Defaults to `uniqid()`.
  * - `qop` Defaults to auth, no other values are supported at this time.
  * - `opaque` A string that must be returned unchanged by clients.
- *    Defaults to `md5($settings['realm'])`
+ *    Defaults to `md5($config['realm'])`
  *
  * @var array
  */
-	public $settings = array(
-		'fields' => array(
+	protected $_defaultConfig = [
+		'fields' => [
 			'username' => 'username',
 			'password' => 'password'
-		),
+		],
 		'userModel' => 'Users',
-		'scope' => array(),
+		'scope' => [],
 		'recursive' => 0,
 		'contain' => null,
 		'realm' => null,
@@ -90,7 +90,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 		'nonce' => null,
 		'opaque' => null,
 		'passwordHasher' => 'Blowfish',
-	);
+	];
 
 /**
  * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
@@ -104,13 +104,16 @@ class DigestAuthenticate extends BasicAuthenticate {
 			return false;
 		}
 
-		list(, $model) = pluginSplit($this->settings['userModel']);
+		list(, $model) = pluginSplit($this->config('userModel'));
 		$user = $this->_findUser($digest['username']);
 		if (empty($user)) {
 			return false;
 		}
-		$password = $user[$this->settings['fields']['password']];
-		unset($user[$this->settings['fields']['password']]);
+
+		$field = $this->_config['fields']['password'];
+		$password = $user[$field];
+		unset($user[$field]);
+
 		$hash = $this->generateResponseHash($digest, $password, $request->env('REQUEST_METHOD'));
 		if ($digest['response'] === $hash) {
 			return $user;
@@ -199,11 +202,12 @@ class DigestAuthenticate extends BasicAuthenticate {
  */
 	public function loginHeaders(Request $request) {
 		$options = array(
-			'realm' => $this->settings['realm'] ?: $request->env('SERVER_NAME'),
-			'qop' => $this->settings['qop'],
-			'nonce' => $this->settings['nonce'] ?: uniqid(''),
+			'realm' => $this->config('realm') ?: $request->env('SERVER_NAME'),
+			'qop' => $this->config('qop'),
+			'nonce' => $this->config('nonce') ?: uniqid(''),
+			'opaque' => $this->config('opaque') ?: md5($options['realm'])
 		);
-		$options['opaque'] = $this->settings['opaque'] ?: md5($options['realm']);
+
 		$opts = array();
 		foreach ($options as $k => $v) {
 			$opts[] = sprintf('%s="%s"', $k, $v);

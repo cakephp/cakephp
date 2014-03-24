@@ -86,8 +86,9 @@ class PhpAcl extends Object implements AclInterface {
  * @return void
  */
 	public function initialize(Component $Component) {
-		if (!empty($Component->settings['adapter'])) {
-			$this->options = array_merge($this->options, $Component->settings['adapter']);
+		$adapter = $Component->config('adapter');
+		if ($adapter) {
+			$this->options = array_merge($this->options, $adapter);
 		}
 
 		$engine = new PhpConfig(dirname($this->options['config']) . DS);

@@ -17,6 +17,7 @@ namespace Cake\Controller;
 use Cake\Core\Object;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
+use Cake\Utility\Hash;
 
 /**
  * Base class for an individual Component. Components provide reusable bits of
@@ -71,18 +72,27 @@ class Component extends Object implements EventListener {
 	protected $_registry;
 
 /**
- * Settings for this Component
- *
- * @var array
- */
-	public $settings = array();
-
-/**
  * Other Components this component uses.
  *
  * @var array
  */
 	public $components = array();
+
+/**
+ * Runtime config for this Component
+ *
+ * @var array
+ */
+	protected $_config = [];
+
+/**
+ * Default config
+ *
+ * These are merged with user-provided config when the component is used.
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [];
 
 /**
  * A component lookup table used to lazy load component objects.
@@ -95,12 +105,15 @@ class Component extends Object implements EventListener {
  * Constructor
  *
  * @param ComponentRegistry $registry A ComponentRegistry this component can use to lazy load its components
- * @param array $settings Array of configuration settings.
+ * @param array $config Array of configuration settings.
  */
-	public function __construct(ComponentRegistry $registry, $settings = []) {
+	public function __construct(ComponentRegistry $registry, $config = []) {
 		$this->_registry = $registry;
-		$this->settings = array_merge($this->settings, $settings);
-		$this->_set($settings);
+
+		$this->_config = array_merge($this->_defaultConfig, $config);
+
+		$this->_set($this->_config); //@TODO get rid of public properties and remove this
+
 		if (!empty($this->components)) {
 			$this->_componentMap = $registry->normalizeArray($this->components);
 		}
@@ -114,8 +127,8 @@ class Component extends Object implements EventListener {
  */
 	public function __get($name) {
 		if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
-			$settings = array_merge((array)$this->_componentMap[$name]['settings'], array('enabled' => false));
-			$this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $settings);
+			$config = array_merge((array)$this->_componentMap[$name]['settings'], array('enabled' => false));
+			$this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $config);
 		}
 		if (isset($this->{$name})) {
 			return $this->{$name};
@@ -123,10 +136,58 @@ class Component extends Object implements EventListener {
 	}
 
 /**
+ * Component config getter and setter
+ *
+ * Usage:
+ * {{{
+ * $instance->config(); will return full config
+ * $instance->config('foo'); will return configured foo
+ * $instance->config('notset'); will return null
+ * $instance->config('foo', $x); will set ['foo' $x] to the existing config
+ * $instance->config('foo.bar', $x); will set/add ['foo' => ['bar' => $x]] to the existing config
+ * }}}
+ *
+ * @param string|null $key to return
+ * @param mixed $val value to set
+ * @return mixed array or config value
+ */
+	public function config($key = null, $val = null) {
+		if ($key === null) {
+			return $this->_config;
+		}
+
+		if ($val !== null) {
+			return $this->_configSet([$key => $val]);
+		} elseif (is_array($key)) {
+			return $this->_configSet($key);
+		}
+
+		return array_key_exists($key, $this->_config) ? $this->_config[$key] : null;
+	}
+
+/**
+ * Update config with passed argument
+ *
+ * Overriden in subclasses if the component config shouldn't be modified at runtime
+ *
+ * @param array $config
+ * @return void
+ */
+	protected function _configSet($config) {
+		foreach ($config as $key => $val) {
+			if (strpos($key, '.')) {
+				$this->_config = Hash::insert($this->_config, $key, $val);
+			} else {
+				$this->_config[$key] = $val;
+			}
+		}
+	}
+
+/**
  * Get the Controller callbacks this Component is interested in.
  *
  * Uses Conventions to map controller events to standard component
- * callback method names. By defining one of the callback methods a 
+ * callback method names. By defining one of the callback methods a
  * component is assumed to be interested in the related event.
  *
  * Override this method if you need to add non-conventional event listeners.

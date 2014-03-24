@@ -31,7 +31,7 @@ use Cake\Network\Response;
  *
  * ### Using Basic auth
  *
- * In your controller's components array, add auth + the required settings.
+ * In your controller's components array, add auth + the required config
  * {{{
  *	public $components = array(
  *		'Auth' => array(
@@ -94,7 +94,7 @@ class BasicAuthenticate extends BaseAuthenticate {
  * @return string Headers for logging in.
  */
 	public function loginHeaders(Request $request) {
-		$realm = !empty($this->settings['realm']) ? $this->settings['realm'] : $request->env('SERVER_NAME');
+		$realm = $this->config('realm') ?: $request->env('SERVER_NAME');
 		return sprintf('WWW-Authenticate: Basic realm="%s"', $realm);
 	}
 

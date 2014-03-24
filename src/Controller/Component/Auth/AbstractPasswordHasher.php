@@ -23,12 +23,20 @@ namespace Cake\Controller\Component\Auth;
 abstract class AbstractPasswordHasher {
 
 /**
- * Configurations for this object. Settings passed from authenticator class to
- * the constructor are merged with this property.
+ * Runtime config for this object
  *
  * @var array
  */
 	protected $_config = array();
+
+/**
+ * Default config
+ *
+ * These are merged with user-provided config when the object is used.
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [];
 
 /**
  * Constructor
@@ -36,20 +44,28 @@ abstract class AbstractPasswordHasher {
  * @param array $config Array of config.
  */
 	public function __construct($config = array()) {
-		$this->config($config);
+		$this->_config = array_merge($this->_defaultConfig, $config);
 	}
 
 /**
- * Get/Set the config
+ * config getter and setter
  *
- * @param array $config Sets config, if null returns existing config
- * @return array Returns configs
+ * Usage:
+ * {{{
+ * $instance->config(); will return full config
+ * $instance->config('foo'); will return configured foo
+ * $instance->config('notset'); will return null
+ * }}}
+ *
+ * @param string|null $key to return
+ * @return mixed array or config value
  */
-	public function config($config = null) {
-		if (is_array($config)) {
-			$this->_config = array_merge($this->_config, $config);
+	public function config($key = null) {
+		if ($key === null) {
+			return $this->_config;
 		}
-		return $this->_config;
+
+		return array_key_exists($key, $this->_config) ? $this->_config[$key] : null;
 	}
 
 /**

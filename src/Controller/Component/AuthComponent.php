@@ -68,8 +68,8 @@ class AuthComponent extends Component {
  *	);
  * }}}
  *
- * Using the class name without 'Authenticate' as the key, you can pass in an array of settings for each
- * authentication object. Additionally you can define settings that should be set to all authentications objects
+ * Using the class name without 'Authenticate' as the key, you can pass in an array of config for each
+ * authentication object. Additionally you can define config that should be set to all authentications objects
  * using the 'all' key:
  *
  * {{{
@@ -109,8 +109,8 @@ class AuthComponent extends Component {
  *	);
  * }}}
  *
- * Using the class name without 'Authorize' as the key, you can pass in an array of settings for each
- * authorization object. Additionally you can define settings that should be set to all authorization objects
+ * Using the class name without 'Authorize' as the key, you can pass in an array of config for each
+ * authorization object. Additionally you can define config that should be set to all authorization objects
  * using the 'all' key:
  *
  * {{{
@@ -483,13 +483,13 @@ class AuthComponent extends Component {
 			return;
 		}
 		$this->_authorizeObjects = array();
-		$config = Hash::normalize((array)$this->authorize);
+		$authorize = Hash::normalize((array)$this->authorize);
 		$global = array();
-		if (isset($config[AuthComponent::ALL])) {
-			$global = $config[AuthComponent::ALL];
-			unset($config[AuthComponent::ALL]);
+		if (isset($authorize[AuthComponent::ALL])) {
+			$global = $authorize[AuthComponent::ALL];
+			unset($authorize[AuthComponent::ALL]);
 		}
-		foreach ($config as $class => $settings) {
+		foreach ($authorize as $class => $config) {
 			$className = App::classname($class, 'Controller/Component/Auth', 'Authorize');
 			if (!class_exists($className)) {
 				throw new Error\Exception(sprintf('Authorization adapter "%s" was not found.', $class));
@@ -497,8 +497,8 @@ class AuthComponent extends Component {
 			if (!method_exists($className, 'authorize')) {
 				throw new Error\Exception('Authorization objects must implement an authorize() method.');
 			}
-			$settings = array_merge($global, (array)$settings);
-			$this->_authorizeObjects[] = new $className($this->_registry, $settings);
+			$config = array_merge($global, (array)$config);
+			$this->_authorizeObjects[] = new $className($this->_registry, $config);
 		}
 		return $this->_authorizeObjects;
 	}
@@ -759,13 +759,13 @@ class AuthComponent extends Component {
 			return;
 		}
 		$this->_authenticateObjects = array();
-		$config = Hash::normalize((array)$this->authenticate);
+		$authenticate = Hash::normalize((array)$this->authenticate);
 		$global = array();
-		if (isset($config[AuthComponent::ALL])) {
-			$global = $config[AuthComponent::ALL];
-			unset($config[AuthComponent::ALL]);
+		if (isset($authenticate[AuthComponent::ALL])) {
+			$global = $authenticate[AuthComponent::ALL];
+			unset($authenticate[AuthComponent::ALL]);
 		}
-		foreach ($config as $class => $settings) {
+		foreach ($authenticate as $class => $config) {
 			$className = App::classname($class, 'Controller/Component/Auth', 'Authenticate');
 			if (!class_exists($className)) {
 				throw new Error\Exception(sprintf('Authentication adapter "%s" was not found.', $class));
@@ -773,8 +773,8 @@ class AuthComponent extends Component {
 			if (!method_exists($className, 'authenticate')) {
 				throw new Error\Exception('Authentication objects must implement an authenticate() method.');
 			}
-			$settings = array_merge($global, (array)$settings);
-			$this->_authenticateObjects[] = new $className($this->_registry, $settings);
+			$config = array_merge($global, (array)$config);
+			$this->_authenticateObjects[] = new $className($this->_registry, $config);
 		}
 		return $this->_authenticateObjects;
 	}

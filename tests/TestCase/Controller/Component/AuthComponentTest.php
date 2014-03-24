@@ -340,7 +340,7 @@ class AuthComponentTest extends TestCase {
 		);
 		$objects = $this->Controller->Auth->constructAuthorize();
 		$result = $objects[0];
-		$this->assertEquals('controllers/', $result->settings['actionPath']);
+		$this->assertEquals('controllers/', $result->config('actionPath'));
 	}
 
 /**
@@ -371,7 +371,7 @@ class AuthComponentTest extends TestCase {
 		);
 		$objects = $this->Controller->Auth->constructAuthenticate();
 		$result = $objects[0];
-		$this->assertEquals('AuthUsers', $result->settings['userModel']);
+		$this->assertEquals('AuthUsers', $result->config('userModel'));
 	}
 
 /**

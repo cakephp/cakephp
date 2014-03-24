@@ -38,7 +38,7 @@ class ActionsAuthorizeTest extends TestCase {
 		$this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
 
 		$this->auth = new ActionsAuthorize($this->Collection);
-		$this->auth->settings['actionPath'] = '/controllers';
+		$this->auth->config('actionPath', '/controllers');
 	}
 
 /**
@@ -126,7 +126,7 @@ class ActionsAuthorizeTest extends TestCase {
 
 		$this->_mockAcl();
 
-		$this->auth->settings['userModel'] = 'TestPlugin.AuthUser';
+		$this->auth->config('userModel', 'TestPlugin.AuthUser');
 		$user = array(
 			'id' => 1,
 			'username' => 'mariano'
@@ -164,7 +164,7 @@ class ActionsAuthorizeTest extends TestCase {
  * @return void
  */
 	public function testActionNoDoubleSlash() {
-		$this->auth->settings['actionPath'] = '/controllers/';
+		$this->auth->config('actionPath', '/controllers/');
 		$request = new Request('/posts/index', false);
 		$request->addParams(array(
 			'plugin' => null,

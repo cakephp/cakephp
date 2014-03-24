@@ -22,7 +22,7 @@ use Cake\Network\Response;
 
 /**
  * An authentication adapter for AuthComponent. Provides the ability to authenticate using POST
- * data. Can be used by configuring AuthComponent to use it via the AuthComponent::$authenticate setting.
+ * data. Can be used by configuring AuthComponent to use it via the AuthComponent::$authenticate config.
  *
  * {{{
  *	$this->Auth->authenticate = array(
@@ -32,8 +32,8 @@ use Cake\Network\Response;
  *	)
  * }}}
  *
- * When configuring FormAuthenticate you can pass in settings to which fields, model and additional conditions
- * are used. See FormAuthenticate::$settings for more information.
+ * When configuring FormAuthenticate you can pass in config to which fields, model and additional conditions
+ * are used. See FormAuthenticate::$_config for more information.
  *
  * @see AuthComponent::$authenticate
  */
@@ -61,8 +61,8 @@ class FormAuthenticate extends BaseAuthenticate {
 	}
 
 /**
- * Authenticates the identity contained in a request. Will use the `settings.userModel`, and `settings.fields`
- * to find POST data that is used to find a matching record in the `settings.userModel`. Will return false if
+ * Authenticates the identity contained in a request. Will use the `config.userModel`, and `config.fields`
+ * to find POST data that is used to find a matching record in the `config.userModel`. Will return false if
  * there is no post data, either username or password is missing, or if the scope conditions have not been met.
  *
  * @param \Cake\Network\Request $request The request that contains login information.
@@ -70,10 +70,9 @@ class FormAuthenticate extends BaseAuthenticate {
  * @return mixed False on login failure.  An array of User data on success.
  */
 	public function authenticate(Request $request, Response $response) {
-		$userModel = $this->settings['userModel'];
-		list(, $model) = pluginSplit($userModel);
+		list(, $model) = pluginSplit($this->config('userModel'));
 
-		$fields = $this->settings['fields'];
+		$fields = $this->config('fields');
 		if (!$this->_checkFields($request, $model, $fields)) {
 			return false;
 		}

@@ -61,11 +61,11 @@ class AclComponent extends Component {
  * Constructor. Will return an instance of the correct ACL class as defined in `Configure::read('Acl.classname')`
  *
  * @param ComponentRegistry $collection
- * @param array $settings
+ * @param array $config
  * @throws \Cake\Error\Exception when Acl.classname could not be loaded.
  */
-	public function __construct(ComponentRegistry $collection, $settings = array()) {
-		parent::__construct($collection, $settings);
+	public function __construct(ComponentRegistry $collection, $config = array()) {
+		parent::__construct($collection, $config);
 		$classname = $name = Configure::read('Acl.classname');
 		if (!class_exists($classname)) {
 			$classname = App::classname($name, 'Controller/Component/Acl');

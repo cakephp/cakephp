@@ -39,10 +39,10 @@ class CrudAuthorize extends BaseAuthorize {
  * Sets up additional actionMap values that match the configured `Routing.prefixes`.
  *
  * @param ComponentRegistry $registry The component registry from the controller.
- * @param array $settings An array of settings. This class does not use any settings.
+ * @param array $configs An array of configs. This class does not use any configs.
  */
-	public function __construct(ComponentRegistry $registry, $settings = array()) {
-		parent::__construct($registry, $settings);
+	public function __construct(ComponentRegistry $registry, $configs = array()) {
+		parent::__construct($registry, $configs);
 		$this->_setPrefixMappings();
 	}
 
@@ -82,7 +82,7 @@ class CrudAuthorize extends BaseAuthorize {
  * @return boolean
  */
 	public function authorize($user, Request $request) {
-		if (!isset($this->settings['actionMap'][$request->params['action']])) {
+		if (!isset($this->_config['actionMap'][$request->params['action']])) {
 			trigger_error(sprintf(
 				'CrudAuthorize::authorize() - Attempted access of un-mapped action "%1$s" in controller "%2$s"',
 				$request->action,
@@ -92,12 +92,12 @@ class CrudAuthorize extends BaseAuthorize {
 			);
 			return false;
 		}
-		$user = array($this->settings['userModel'] => $user);
+		$user = array($this->_config['userModel'] => $user);
 		$Acl = $this->_registry->load('Acl');
 		return $Acl->check(
 			$user,
 			$this->action($request, ':controller'),
-			$this->settings['actionMap'][$request->params['action']]
+			$this->_config['actionMap'][$request->params['action']]
 		);
 	}
 

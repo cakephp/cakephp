@@ -46,7 +46,14 @@ abstract class BaseAuthorize {
 	protected $_registry;
 
 /**
- * Settings for authorize objects.
+ * Runtime config for this object
+ *
+ * @var array
+ */
+	protected $_config = [];
+
+/**
+ * Default config for authorize objects.
  *
  * - `actionPath` - The path to ACO nodes that contains the nodes for controllers. Used as a prefix
  *    when calling $this->action();
@@ -55,30 +62,30 @@ abstract class BaseAuthorize {
  *
  * @var array
  */
-	public $settings = array(
+	protected $_defaultConfig = [
 		'actionPath' => null,
-		'actionMap' => array(
+		'actionMap' => [
 			'index' => 'read',
 			'add' => 'create',
 			'edit' => 'update',
 			'view' => 'read',
 			'delete' => 'delete',
 			'remove' => 'delete'
-		),
+		],
 		'userModel' => 'Users'
-	);
+	];
 
 /**
  * Constructor
  *
  * @param ComponentRegistry $registry The controller for this request.
- * @param array $settings An array of settings. This class does not use any settings.
+ * @param array $config An array of config. This class does not use any config.
  */
-	public function __construct(ComponentRegistry $registry, $settings = array()) {
+	public function __construct(ComponentRegistry $registry, $config = array()) {
 		$this->_registry = $registry;
 		$controller = $registry->getController();
 		$this->controller($controller);
-		$this->settings = Hash::merge($this->settings, $settings);
+		$this->_config = Hash::merge($this->_defaultConfig, $config);
 	}
 
 /**
@@ -89,6 +96,50 @@ abstract class BaseAuthorize {
  * @return boolean
  */
 	abstract public function authorize($user, Request $request);
+
+/**
+ * config getter and setter
+ *
+ * Usage:
+ * {{{
+ * $instance->config(); will return full config
+ * $instance->config('foo'); will return configured foo
+ * $instance->config('notset'); will return null
+ * }}}
+ *
+ * @param string|null $key to return
+ * @param mixed $val value to set
+ * @return mixed array or config value
+ */
+	public function config($key = null, $val = null) {
+		if ($key === null) {
+			return $this->_config;
+		}
+
+		if ($val !== null) {
+			return $this->_configSet([$key => $val]);
+		} elseif (is_array($key)) {
+			return $this->_configSet($key);
+		}
+
+		return Hash::get($this->_config, $key);
+	}
+
+/**
+ * Update config with passed argument
+ *
+ * @param array $config
+ * @return void
+ */
+	protected function _configSet($config) {
+		foreach ($config as $key => $val) {
+			if (strpos($key, '.')) {
+				$this->_config = Hash::insert($this->_config, $key, $val);
+			} else {
+				$this->_config[$key] = $val;
+			}
+		}
+	}
 
 /**
  * Accessor to the controller object.
@@ -121,7 +172,7 @@ abstract class BaseAuthorize {
 		$path = str_replace(
 			array(':controller', ':action', ':plugin/'),
 			array(Inflector::camelize($request['controller']), $request['action'], $plugin),
-			$this->settings['actionPath'] . $path
+			$this->config('actionPath') . $path
 		);
 		$path = str_replace('//', '/', $path);
 		return trim($path, '/');
@@ -153,16 +204,17 @@ abstract class BaseAuthorize {
  */
 	public function mapActions($map = array()) {
 		if (empty($map)) {
-			return $this->settings['actionMap'];
+			return $this->config('actionMap');
 		}
+
 		$crud = array('create', 'read', 'update', 'delete');
 		foreach ($map as $action => $type) {
 			if (in_array($action, $crud) && is_array($type)) {
 				foreach ($type as $typedAction) {
-					$this->settings['actionMap'][$typedAction] = $action;
+					$this->_config['actionMap'][$typedAction] = $action;
 				}
 			} else {
-				$this->settings['actionMap'][$action] = $type;
+				$this->_config['actionMap'][$action] = $type;
 			}
 		}
 	}

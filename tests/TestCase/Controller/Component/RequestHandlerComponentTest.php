@@ -87,20 +87,20 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
- * Test that the constructor sets the settings.
+ * Test that the constructor sets the config.
  *
  * @return void
  */
-	public function testConstructorSettings() {
-		$settings = array(
+	public function testConstructorConfig() {
+		$config = array(
 			'ajaxLayout' => 'test_ajax',
 			'viewClassMap' => array('json' => 'MyPlugin.MyJson')
 		);
 		$controller = $this->getMock('Cake\Controller\Controller');
 		$collection = new ComponentRegistry($controller);
-		$requestHandler = new RequestHandlerComponent($collection, $settings);
+		$requestHandler = new RequestHandlerComponent($collection, $config);
 		$this->assertEquals('test_ajax', $requestHandler->ajaxLayout);
-		$this->assertEquals(array('json' => 'MyPlugin.MyJson'), $requestHandler->settings['viewClassMap']);
+		$this->assertEquals(array('json' => 'MyPlugin.MyJson'), $requestHandler->config('viewClassMap'));
 	}
 
 /**
@@ -290,7 +290,7 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testViewClassMap() {
 		$event = new Event('Controller.initialize', $this->Controller);
-		$this->RequestHandler->settings = array('viewClassMap' => array('json' => 'CustomJson'));
+		$this->RequestHandler->config(array('viewClassMap' => array('json' => 'CustomJson')));
 		$this->RequestHandler->initialize($event);
 		$result = $this->RequestHandler->viewClassMap();
 		$expected = array(

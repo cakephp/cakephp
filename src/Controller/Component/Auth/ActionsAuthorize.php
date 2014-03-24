@@ -36,7 +36,7 @@ class ActionsAuthorize extends BaseAuthorize {
  */
 	public function authorize($user, Request $request) {
 		$Acl = $this->_registry->load('Acl');
-		$user = array($this->settings['userModel'] => $user);
+		$user = [$this->config('userModel') => $user];
 		return $Acl->check($user, $this->action($request));
 	}
 
