@@ -36,7 +36,7 @@ class TimestampBehavior extends Behavior {
  *
  * @var array
  */
-	protected static $_defaultConfig = [
+	protected $_defaultConfig = [
 		'implementedFinders' => [],
 		'implementedMethods' => [
 			'timestamp' => 'timestamp',

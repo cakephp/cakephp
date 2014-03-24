@@ -58,7 +58,7 @@ class TranslateBehavior extends Behavior {
  *
  * @var array
  */
-	protected static $_defaultConfig = [
+	protected $_defaultConfig = [
 		'implementedFinders' => ['translations' => 'findTranslations'],
 		'implementedMethods' => ['locale' => 'locale'],
 		'fields' => [],
