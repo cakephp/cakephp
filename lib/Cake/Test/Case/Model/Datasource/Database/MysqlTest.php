@@ -1269,6 +1269,49 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
+ * test that read() places provided joins after the generated ones.
+ *
+ * @return void
+ */
+	public function testReadCustomJoinsAfterGeneratedJoins() {
+		$db = $this->Dbo->config['database'];
+		$test = $this->getMock('Mysql', array('connect', '_execute', 'execute'));
+		$test->config['database'] = $db;
+
+		$this->Model = $this->getMock('TestModel9', array('getDataSource'));
+		$this->Model->expects($this->any())
+			->method('getDataSource')
+			->will($this->returnValue($test));
+
+		$this->Model->TestModel8 = $this->getMock('TestModel8', array('getDataSource'));
+		$this->Model->TestModel8->expects($this->any())
+			->method('getDataSource')
+			->will($this->returnValue($test));
+
+		$model8Table = $test->fullTableName($this->Model->TestModel8);
+		$usersTable = $test->fullTableName('users');
+
+		$search = "LEFT JOIN $model8Table AS `TestModel8` ON " .
+			"(`TestModel8`.`name` != 'larry' AND `TestModel9`.`test_model8_id` = `TestModel8`.`id`) " .
+			"LEFT JOIN $usersTable AS `User` ON (`TestModel9`.`id` = `User`.`test_id`)";
+
+		$test->expects($this->at(0))->method('execute')
+			->with($this->stringContains($search));
+
+		$test->read($this->Model, array(
+			'joins' => array(
+				array(
+					'table' => 'users',
+					'alias' => 'User',
+					'type' => 'LEFT',
+					'conditions' => array('TestModel9.id = User.test_id')
+				)
+			),
+			'recursive' => 1
+		));
+	}
+
+/**
  * testGenerateInnerJoinAssociationQuery method
  *
  * @return void
