@@ -290,31 +290,33 @@ class ViewTask extends BakeTask {
 			$plugin = $this->plugin . '.';
 		}
 
-		$controllerClassName = $this->controllerName;
-		$controllerClassName = App::className($plugin . $controllerClassName, 'Controller');
-
-		if (!class_exists($controllerClassName)) {
-			$file = $controllerClassName . '.php';
-			$this->err(__d('cake_console', "The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.", $file));
+		if (!class_exists($this->controllerClass)) {
+			$file = $controllerClass . '.php';
+			$this->err(__d(
+				'cake_console',
+				"The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.",
+				str_replace('\\', '/', $file)
+			));
 			return $this->_stop();
 		}
 
-		$controllerObj = new $controllerClassName();
+		$controllerObj = new $this->controllerClass();
 		$controllerObj->plugin = $this->plugin;
 		$controllerObj->constructClasses();
 		$modelClass = $controllerObj->modelClass;
 		$modelObj = $controllerObj->{$modelClass};
 
 		if ($modelObj) {
-			$primaryKey = $modelObj->primaryKey();
+			$primaryKey = (array)$modelObj->primaryKey();
 			$displayField = $modelObj->displayField();
-			$singularVar = Inflector::variable($modelClass);
+			$singularVar = $this->_singularName($this->controllerName);
 			$singularHumanName = $this->_singularHumanName($this->controllerName);
 			$schema = $modelObj->schema();
 			$fields = $schema->columns();
 			$associations = $this->_associations($modelObj);
 		} else {
-			$primaryKey = $displayField = null;
+			$primaryKey = [];
+			$displayField = null;
 			$singularVar = Inflector::variable(Inflector::singularize($this->controllerName));
 			$singularHumanName = $this->_singularHumanName($this->controllerName);
 			$fields = $schema = $associations = [];
@@ -504,8 +506,10 @@ class ViewTask extends BakeTask {
 				$target = $assoc->target();
 				$assocName = $assoc->name();
 				$alias = $target->alias();
-				$assoiations[$type][$assocName] = [
-					'primaryKey' => $target->primaryKey(),
+
+				$associations[$type][$assocName] = [
+					'property' => $assoc->property(),
+					'primaryKey' => (array)$target->primaryKey(),
 					'displayField' => $target->displayField(),
 					'foreignKey' => $assoc->foreignKey(),
 					'controller' => Inflector::underscore($alias),

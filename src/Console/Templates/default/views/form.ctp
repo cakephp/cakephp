@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -17,28 +15,29 @@
 use Cake\Utility\Inflector;
 ?>
 <div class="<?= $pluralVar; ?> form">
-<?= "<?= \$this->Form->create('{$modelClass}'); ?>\n"; ?>
+<?= "<?= \$this->Form->create(\${$singularVar}); ?>\n"; ?>
 	<fieldset>
 		<legend><?php printf("<?= __('%s %s'); ?>", Inflector::humanize($action), $singularHumanName); ?></legend>
 <?php
 		echo "\t<?php\n";
 		foreach ($fields as $field) {
-			if (strpos($action, 'add') !== false && $field == $primaryKey) {
+			if (strpos($action, 'add') !== false && in_array($field, $primaryKey)) {
 				continue;
 			} elseif (!in_array($field, ['created', 'modified', 'updated'])) {
 				echo "\t\techo \$this->Form->input('{$field}');\n";
 			}
 		}
-		if (!empty($associations['hasAndBelongsToMany'])) {
-			foreach ($associations['hasAndBelongsToMany'] as $assocName => $assocData) {
-				echo "\t\techo \$this->Form->input('{$assocName}');\n";
+		if (!empty($associations['BelongsToMany'])) {
+			foreach ($associations['BelongsToMany'] as $assocName => $assocData) {
+				echo "\t\techo \$this->Form->input('{$assocName}._ids', ['options' => ${$assocName}]);\n";
 			}
 		}
 		echo "\t?>\n";
 ?>
 	</fieldset>
 <?php
-	echo "<?= \$this->Form->end(__('Submit')); ?>\n";
+	echo "<?= \$this->Form->submit(__('Submit')); ?>\n";
+	echo "<?= \$this->Form->end(); ?>\n";
 ?>
 </div>
 <div class="actions">
@@ -46,7 +45,7 @@ use Cake\Utility\Inflector;
 	<ul>
 
 <?php if (strpos($action, 'add') === false): ?>
-		<li><?= "<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', \$this->Form->value('{$modelClass}.{$primaryKey}')], null, __('Are you sure you want to delete # %s?', \$this->Form->value('{$modelClass}.{$primaryKey}'))); ?>"; ?></li>
+		<li><?= "<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', \${$singularVar}->{$primaryKey[0]}], null, __('Are you sure you want to delete # %s?', \${$singularVar}->{$primaryKey[0]})); ?>"; ?></li>
 <?php endif; ?>
 		<li><?= "<?= \$this->Html->link(__('List " . $pluralHumanName . "'), ['action' => 'index']); ?>"; ?></li>
 <?php

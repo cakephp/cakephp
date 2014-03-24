@@ -20,6 +20,7 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -114,6 +115,10 @@ class ViewTaskTest extends TestCase {
 		$this->Task->Template->templatePaths = ['default' => CAKE . 'Console/Templates/default/'];
 
 		Configure::write('App.namespace', 'TestApp');
+
+		TableRegistry::get('ViewTaskComments', [
+			'className' => __NAMESPACE__ . '\ViewTaskCommentsTable',
+		]);
 	}
 
 /**
@@ -123,6 +128,7 @@ class ViewTaskTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
+		TableRegistry::clear();
 		unset($this->Task);
 	}
 
@@ -187,7 +193,7 @@ class ViewTaskTest extends TestCase {
 		$vars = array(
 			'modelClass' => 'TestViewModel',
 			'schema' => [],
-			'primaryKey' => 'id',
+			'primaryKey' => ['id'],
 			'displayField' => 'name',
 			'singularVar' => 'testViewModel',
 			'pluralVar' => 'testViewModels',
@@ -198,14 +204,14 @@ class ViewTaskTest extends TestCase {
 		);
 		$result = $this->Task->getContent('view', $vars);
 
-		$this->assertRegExp('/Delete Test View Model/', $result);
-		$this->assertRegExp('/Edit Test View Model/', $result);
-		$this->assertRegExp('/List Test View Models/', $result);
-		$this->assertRegExp('/New Test View Model/', $result);
+		$this->assertContains('Delete Test View Model', $result);
+		$this->assertContains('Edit Test View Model', $result);
+		$this->assertContains('List Test View Models', $result);
+		$this->assertContains('New Test View Model', $result);
 
-		$this->assertRegExp('/testViewModel\[\'TestViewModel\'\]\[\'id\'\]/', $result);
-		$this->assertRegExp('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
-		$this->assertRegExp('/testViewModel\[\'TestViewModel\'\]\[\'body\'\]/', $result);
+		$this->assertContains('$testViewModel->id', $result);
+		$this->assertContains('$testViewModel->name', $result);
+		$this->assertContains('$testViewModel->body', $result);
 	}
 
 /**
@@ -217,7 +223,7 @@ class ViewTaskTest extends TestCase {
 		$vars = array(
 			'modelClass' => 'TestViewModel',
 			'schema' => [],
-			'primaryKey' => 'id',
+			'primaryKey' => ['id'],
 			'displayField' => 'name',
 			'singularVar' => 'testViewModel',
 			'pluralVar' => 'testViewModels',
@@ -229,19 +235,19 @@ class ViewTaskTest extends TestCase {
 		$this->Task->params['prefix'] = 'Admin';
 		$result = $this->Task->getContent('view', $vars);
 
-		$this->assertRegExp('/Delete Test View Model/', $result);
-		$this->assertRegExp('/Edit Test View Model/', $result);
-		$this->assertRegExp('/List Test View Models/', $result);
-		$this->assertRegExp('/New Test View Model/', $result);
+		$this->assertContains('Delete Test View Model', $result);
+		$this->assertContains('Edit Test View Model', $result);
+		$this->assertContains('List Test View Models', $result);
+		$this->assertContains('New Test View Model', $result);
 
-		$this->assertRegExp('/testViewModel\[\'TestViewModel\'\]\[\'id\'\]/', $result);
-		$this->assertRegExp('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
-		$this->assertRegExp('/testViewModel\[\'TestViewModel\'\]\[\'body\'\]/', $result);
+		$this->assertContains('$testViewModel->id', $result);
+		$this->assertContains('$testViewModel->name', $result);
+		$this->assertContains('$testViewModel->body', $result);
 
 		$result = $this->Task->getContent('add', $vars);
-		$this->assertRegExp("/input\('name'\)/", $result);
-		$this->assertRegExp("/input\('body'\)/", $result);
-		$this->assertRegExp('/List Test View Models/', $result);
+		$this->assertContains("input('name')", $result);
+		$this->assertContains("input('body')", $result);
+		$this->assertContains('List Test View Models', $result);
 	}
 
 /**
@@ -250,13 +256,14 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeView() {
-		$this->Task->controllerName = __NAMESPACE__ . '\ViewTaskCommentsController';
+		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments/view.ctp',
-				$this->stringContains('View Task Articles')
+				$this->stringContains('View Task Comments')
 			);
 
 		$this->Task->bake('view', true);
@@ -268,8 +275,8 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeEdit() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
 		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
@@ -285,13 +292,13 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeIndex() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
 		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments/index.ctp',
-				$this->stringContains("\$viewTaskComment['Article']['title']")
+				$this->stringContains("\$viewTaskComment->article->title")
 			);
 		$this->Task->bake('index', true);
 	}
