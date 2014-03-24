@@ -28,10 +28,9 @@ use Cake\TestSuite\TestCase;
  */
 class ViewTaskCommentsTable extends Table {
 
-	public function intialize(array $config) {
+	public function initialize(array $config) {
 		$this->table('comments');
 		$this->belongsTo('Articles', [
-			'className' => 'TestTest.ViewTaskArticles',
 			'foreignKey' => 'article_id'
 		]);
 	}
@@ -54,7 +53,7 @@ class ViewTaskArticlesTable extends Table {
  */
 class ViewTaskCommentsController extends Controller {
 
-	public $modelClass = 'Cake\Test\TestCase\Console\Command\ViewTaskCommentsTable';
+	public $modelClass = 'Cake\Test\TestCase\Console\Command\Task\ViewTaskCommentsTable';
 
 /**
  * Testing public controller action
@@ -113,6 +112,8 @@ class ViewTaskTest extends TestCase {
 		$this->Task->path = TMP;
 		$this->Task->Template->params['theme'] = 'default';
 		$this->Task->Template->templatePaths = ['default' => CAKE . 'Console/Templates/default/'];
+
+		Configure::write('App.namespace', 'TestApp');
 	}
 
 /**
@@ -123,6 +124,58 @@ class ViewTaskTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Task);
+	}
+
+/**
+ * Test the controller() method.
+ *
+ * @return void
+ */
+	public function testController() {
+		$this->Task->controller('Comments');
+		$this->assertEquals('Comments', $this->Task->controllerName);
+		$this->assertEquals(
+			'TestApp\Controller\CommentsController',
+			$this->Task->controllerClass
+		);
+	}
+
+/**
+ * Test controller method with plugins.
+ *
+ * @return void
+ */
+	public function testControllerPlugin() {
+		$this->Task->params['plugin'] = 'TestPlugin';
+		$this->Task->controller('TestPlugin');
+		$this->assertEquals('TestPlugin', $this->Task->controllerName);
+		$this->assertEquals(
+			'TestPlugin\Controller\TestPluginController',
+			$this->Task->controllerClass
+		);
+	}
+
+/**
+ * Test controller method with prefixes.
+ *
+ * @return void
+ */
+	public function testControllerPrefix() {
+		$this->Task->params['prefix'] = 'Admin';
+		$this->Task->controller('Posts');
+		$this->assertEquals('Posts', $this->Task->controllerName);
+		$this->assertEquals(
+			'TestApp\Controller\Admin\PostsController',
+			$this->Task->controllerClass
+		);
+
+		$this->Task->params['plugin'] = 'TestPlugin';
+		$this->Task->controller('Comments');
+		$this->assertEquals('Comments', $this->Task->controllerName);
+		$this->assertEquals(
+			'TestPlugin\Controller\Admin\CommentsController',
+			$this->Task->controllerClass
+		);
 	}
 
 /**
@@ -197,10 +250,10 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeView() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
-		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->controllerName = __NAMESPACE__ . '\ViewTaskCommentsController';
 
-		$this->Task->expects($this->at(0))->method('createFile')
+		$this->Task->expects($this->at(0))
+			->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments/view.ctp',
 				$this->stringContains('View Task Articles')

@@ -17,6 +17,7 @@ namespace Cake\Console\Command\Task;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
 /**
@@ -45,6 +46,13 @@ class ViewTask extends BakeTask {
  * @var string
  */
 	public $controllerName = null;
+
+/**
+ * Classname of the controller being used
+ *
+ * @var string
+ */
+	public $controllerClass = null;
 
 /**
  * The template file to use
@@ -98,7 +106,7 @@ class ViewTask extends BakeTask {
 		}
 
 		$action = null;
-		$this->controllerName = $this->_controllerName($this->args[0]);
+		$this->controller($this->args[0]);
 
 		$this->Project->interactive = false;
 		if (strtolower($this->args[0]) === 'all') {
@@ -130,14 +138,34 @@ class ViewTask extends BakeTask {
 	}
 
 /**
+ * Set the controller related properties.
+ *
+ * @param string $name The controller name.
+ * @return void
+ */
+	public function controller($name) {
+		$this->controllerName = $name;
+		$plugin = $prefix = null;
+		if (!empty($this->params['plugin'])) {
+			$plugin = $this->params['plugin'] . '.';
+		}
+		if (!empty($this->params['prefix'])) {
+			$prefix = $this->params['prefix'] . '/';
+		}
+		$this->controllerClass = App::className($plugin . $prefix . $name, 'Controller', 'Controller');
+	}
+
+/**
  * Get a list of actions that can / should have views baked for them.
  *
  * @return array Array of action names that should be baked
  */
 	protected function _methodsToBake() {
+		$base = Configure::read('App.namespace');
+
 		$methods = array_diff(
-			array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
-			array_map('strtolower', get_class_methods('AppController'))
+			array_map('strtolower', get_class_methods($this->controllerClass)),
+			array_map('strtolower', get_class_methods($base . '\Controller\AppController'))
 		);
 		$scaffoldActions = false;
 		if (empty($methods)) {
@@ -154,7 +182,7 @@ class ViewTask extends BakeTask {
 					unset($methods[$i]);
 				}
 			}
-			if ($method[0] === '_' || $method == strtolower($this->controllerName . 'Controller')) {
+			if ($method[0] === '_') {
 				unset($methods[$i]);
 			}
 		}
@@ -177,7 +205,7 @@ class ViewTask extends BakeTask {
 		$this->interactive = false;
 		foreach ($tables as $table) {
 			$model = $this->_modelName($table);
-			$this->controllerName = $this->_controllerName($model);
+			$this->controller($model);
 			if (class_exists($model)) {
 				$vars = $this->_loadController();
 				if (!$actions) {
@@ -262,7 +290,7 @@ class ViewTask extends BakeTask {
 			$plugin = $this->plugin . '.';
 		}
 
-		$controllerClassName = $this->controllerName . 'Controller';
+		$controllerClassName = $this->controllerName;
 		$controllerClassName = App::className($plugin . $controllerClassName, 'Controller');
 
 		if (!class_exists($controllerClassName)) {
@@ -275,15 +303,15 @@ class ViewTask extends BakeTask {
 		$controllerObj->plugin = $this->plugin;
 		$controllerObj->constructClasses();
 		$modelClass = $controllerObj->modelClass;
-		$modelObj = $controllerObj->{$controllerObj->modelClass};
+		$modelObj = $controllerObj->{$modelClass};
 
 		if ($modelObj) {
-			$primaryKey = $modelObj->primaryKey;
-			$displayField = $modelObj->displayField;
+			$primaryKey = $modelObj->primaryKey();
+			$displayField = $modelObj->displayField();
 			$singularVar = Inflector::variable($modelClass);
 			$singularHumanName = $this->_singularHumanName($this->controllerName);
 			$schema = $modelObj->schema();
-			$fields = $schema->fields();
+			$fields = $schema->columns();
 			$associations = $this->_associations($modelObj);
 		} else {
 			$primaryKey = $displayField = null;
@@ -294,8 +322,13 @@ class ViewTask extends BakeTask {
 		$pluralVar = Inflector::variable($this->controllerName);
 		$pluralHumanName = $this->_pluralHumanName($this->controllerName);
 
-		return compact('modelClass', 'schema', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
-				'singularHumanName', 'pluralHumanName', 'fields', 'associations');
+		return compact(
+			'modelClass', 'schema',
+			'primaryKey', 'displayField',
+			'singularVar', 'pluralVar',
+			'singularHumanName', 'pluralHumanName',
+			'fields', 'associations'
+		);
 	}
 
 /**
@@ -459,10 +492,10 @@ class ViewTask extends BakeTask {
 /**
  * Returns associations for controllers models.
  *
- * @param Model $model
+ * @param Table $model
  * @return array $associations
  */
-	protected function _associations(Model $model) {
+	protected function _associations(Table $model) {
 		$keys = ['BelongsTo', 'HasOne', 'HasMany', 'BelongsToMany'];
 		$associations = [];
 
