@@ -523,16 +523,15 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithAlternateTemplates() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
-		$this->Task->connection = 'test';
-		$this->Task->args = array('ViewTaskComments', 'index', 'list');
-		$this->Task->params = array();
+		$this->_setupTask(['in', 'err', 'createFile', 'bake', '_stop']);
 
-		$this->Task->expects($this->once())->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/list.ctp',
-				$this->stringContains('ViewTaskComment')
-			);
+		$this->Task->connection = 'test';
+		$this->Task->args = ['ViewTaskComments', 'index', 'list'];
+		$this->Task->params = [];
+
+		$this->Task->expects($this->once())
+			->method('bake')
+			->with('list', true);
 		$this->Task->execute();
 	}
 
