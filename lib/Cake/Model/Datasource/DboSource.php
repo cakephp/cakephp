@@ -1067,6 +1067,9 @@ class DboSource extends DataSource {
 			}
 		}
 
+		$originalJoins = $queryData['joins'];
+		$queryData['joins'] = array();
+
 		// Generate hasOne and belongsTo associations inside $queryData
 		$linkedModels = array();
 		foreach ($associations as $type) {
@@ -1091,6 +1094,10 @@ class DboSource extends DataSource {
 					$linkedModels[$type . '/' . $assoc] = true;
 				}
 			}
+		}
+
+		if (!empty($originalJoins)) {
+			$queryData['joins'] = array_merge($queryData['joins'], $originalJoins);
 		}
 
 		// Build SQL statement with the primary model, plus hasOne and belongsTo associations
