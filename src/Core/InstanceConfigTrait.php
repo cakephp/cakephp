@@ -91,7 +91,7 @@ trait InstanceConfigTrait {
 
 		$return = $this->_config;
 
-		foreach(explode('.', $key) as $k) {
+		foreach (explode('.', $key) as $k) {
 			if (!is_array($return) || !isset($return[$k])) {
 				$return = null;
 				break;
@@ -107,14 +107,14 @@ trait InstanceConfigTrait {
 /**
  * Write a config variable
  *
- * @throws Error\Exception if attempting to clobber existing config
+ * @throws Cake\Error\Exception if attempting to clobber existing config
  * @param string|array $key
  * @param mixed|null $value
  * @return void
  */
 	protected function _configWrite($key, $value = null) {
 		if (is_array($key)) {
-			foreach($key as $k => $val) {
+			foreach ($key as $k => $val) {
 				$this->_configWrite($k, $val);
 			}
 			return;
@@ -127,7 +127,7 @@ trait InstanceConfigTrait {
 
 		$update =& $this->_config;
 
-		foreach(explode('.', $key) as $k) {
+		foreach (explode('.', $key) as $k) {
 			if (!is_array($update)) {
 				throw new Error\Exception(sprintf('Cannot set %s value', $key));
 			}
