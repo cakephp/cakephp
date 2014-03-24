@@ -85,7 +85,7 @@ class ViewTaskTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
+	public $fixtures = array('core.article', 'core.post', 'core.comment', 'core.articles_tag', 'core.tag');
 
 /**
  * setUp method
@@ -97,11 +97,20 @@ class ViewTaskTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
+		Configure::write('App.namespace', 'TestApp');
+		$this->_setupTask(['in', 'err', 'createFile', '_stop']);
+
+		TableRegistry::get('ViewTaskComments', [
+			'className' => __NAMESPACE__ . '\ViewTaskCommentsTable',
+		]);
+	}
+
+	protected function _setupTask($methods) {
 		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ViewTask',
-			['in', 'err', 'createFile', '_stop'],
+			$methods,
 			[$out, $out, $in]
 		);
 		$this->Task->Template = new TemplateTask($out, $out, $in);
@@ -113,12 +122,6 @@ class ViewTaskTest extends TestCase {
 		$this->Task->path = TMP;
 		$this->Task->Template->params['theme'] = 'default';
 		$this->Task->Template->templatePaths = ['default' => CAKE . 'Console/Templates/default/'];
-
-		Configure::write('App.namespace', 'TestApp');
-
-		TableRegistry::get('ViewTaskComments', [
-			'className' => __NAMESPACE__ . '\ViewTaskCommentsTable',
-		]);
 	}
 
 /**
@@ -147,16 +150,27 @@ class ViewTaskTest extends TestCase {
 	}
 
 /**
+ * Test the controller() method.
+ *
+ * @dataProvider nameVariations
+ * @return void
+ */
+	public function testControllerVariations($name) {
+		$this->Task->controller($name);
+		$this->assertEquals('ViewTaskComments', $this->Task->controllerName);
+	}
+
+/**
  * Test controller method with plugins.
  *
  * @return void
  */
 	public function testControllerPlugin() {
 		$this->Task->params['plugin'] = 'TestPlugin';
-		$this->Task->controller('TestPlugin');
-		$this->assertEquals('TestPlugin', $this->Task->controllerName);
+		$this->Task->controller('Tests');
+		$this->assertEquals('Tests', $this->Task->controllerName);
 		$this->assertEquals(
-			'TestPlugin\Controller\TestPluginController',
+			'TestPlugin\Controller\TestsController',
 			$this->Task->controllerClass
 		);
 	}
@@ -182,6 +196,46 @@ class ViewTaskTest extends TestCase {
 			'TestPlugin\Controller\Admin\CommentsController',
 			$this->Task->controllerClass
 		);
+	}
+
+/**
+ * Test getPath()
+ *
+ * @return void
+ */
+	public function testGetPath() {
+		$this->Task->controllerName = 'Posts';
+		$this->Task->path = '/path/Template/';
+
+		$result = $this->Task->getPath();
+		$this->assertEquals('/path/Template/Posts/', $result);
+
+		$this->Task->params['prefix'] = 'admin';
+		$result = $this->Task->getPath();
+		$this->assertEquals('/path/Template/Admin/Posts/', $result);
+	}
+
+/**
+ * Test getPath with plugins.
+ *
+ * @return void
+ */
+	public function testGetPathPlugin() {
+		$this->Task->controllerName = 'Posts';
+		$this->Task->path = '/path/Template/';
+
+		$pluginPath = APP . 'Plugin/TestPlugin/';
+		Plugin::load('TestPlugin', array('path' => $pluginPath));
+
+		$this->Task->params['plugin'] = $this->Task->plugin = 'TestPlugin';
+		$result = $this->Task->getPath();
+		$this->assertEquals($pluginPath . 'Template/Posts/', $result);
+
+		$this->Task->params['prefix'] = 'admin';
+		$result = $this->Task->getPath();
+		$this->assertEquals($pluginPath . 'Template/Admin/Posts/', $result);
+
+		Plugin::unload('TestPlugin');
 	}
 
 /**
@@ -309,8 +363,8 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeWithNoTemplate() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
 		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->never())->method('createFile');
 		$this->Task->bake('delete', true);
@@ -323,7 +377,6 @@ class ViewTaskTest extends TestCase {
  */
 	public function testBakeWithPlugin() {
 		$this->markTestIncomplete('Model baking will not work as models do not work.');
-		$this->markTestIncomplete('Still fails because of issues with modelClass');
 
 		$this->Task->controllerName = 'ViewTaskComments';
 		$this->Task->plugin = 'TestTest';
@@ -350,10 +403,11 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeActions() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
 		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
-		$this->Task->expects($this->at(0))->method('createFile')
+		$this->Task->expects($this->at(0))
+			->method('createFile')
 			->with(
 				TMP . 'ViewTaskComments/view.ctp',
 				$this->stringContains('View Task Comments')
@@ -378,8 +432,8 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public function testCustomAction() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
 		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->any())->method('in')
 			->will($this->onConsecutiveCalls('', 'my_action', 'y'));
@@ -399,44 +453,11 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteIntoAll() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
+		$this->_setupTask(['in', 'err', 'createFile', 'all', '_stop']);
 		$this->Task->args[0] = 'all';
 
-		$this->Task->Controller->expects($this->once())->method('listAll')
-			->will($this->returnValue(array('view_task_comments')));
-
-		$this->Task->expects($this->at(0))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/index.ctp',
-				$this->anything()
-			);
-		$this->Task->expects($this->at(1))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/add.ctp',
-				$this->anything()
-			);
-		$this->Task->expects($this->exactly(2))->method('createFile');
-
-		$this->Task->execute();
-	}
-
-/**
- * Test all() with action parameter
- *
- * @return void
- */
-	public function testExecuteIntoAllWithActionName() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
-		$this->Task->args = array('all', 'index');
-
-		$this->Task->Controller->expects($this->once())->method('listAll')
-			->will($this->returnValue(array('view_task_comments')));
-
-		$this->Task->expects($this->once())->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/index.ctp',
-				$this->anything()
-			);
+		$this->Task->expects($this->once())
+			->method('all');
 
 		$this->Task->execute();
 	}
@@ -494,99 +515,26 @@ class ViewTaskTest extends TestCase {
 	}
 
 /**
- * test that both plural and singular forms can be used for baking views.
- *
- * @dataProvider nameVariations
- * @return void
- */
-	public function testExecuteWithControllerVariations($name) {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
-		$this->Task->args = array($name);
-
-		$this->Task->expects($this->at(0))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/index.ctp',
-				$this->anything()
-			);
-		$this->Task->expects($this->at(1))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/add.ctp',
-				$this->anything()
-			);
-		$this->Task->execute();
-	}
-
-/**
  * test `cake bake view $controller --admin`
  * Which only bakes admin methods, not non-admin methods.
  *
  * @return void
  */
 	public function testExecuteWithControllerAndAdminFlag() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
-		$_back = Configure::read('Routing');
-		Configure::write('Routing.prefixes', array('admin'));
-		$this->Task->args[0] = 'ViewTaskArticles';
-		$this->Task->params['admin'] = 1;
+		$this->Task->args[0] = 'Posts';
+		$this->Task->params['prefix'] = 'Admin';
 
-		$this->Task->Project->expects($this->any())->method('getPrefix')->will($this->returnValue('admin_'));
+		$this->Task->expects($this->exactly(2))
+			->method('createFile');
 
-		$this->Task->expects($this->exactly(4))->method('createFile');
-
-		$views = array('admin_index.ctp', 'admin_add.ctp', 'admin_view.ctp', 'admin_edit.ctp');
+		$views = array('index.ctp', 'add.ctp');
 		foreach ($views as $i => $view) {
 			$this->Task->expects($this->at($i))->method('createFile')
 				->with(
-					TMP . 'ViewTaskArticles/' . $view,
+					TMP . 'Admin/Posts/' . $view,
 					$this->anything()
 				);
 		}
-		$this->Task->execute();
-		Configure::write('Routing', $_back);
-	}
-
-/**
- * test execute into interactive.
- *
- * @return void
- */
-	public function testExecuteInteractive() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
-		$this->Task->connection = 'test';
-		$this->Task->args = array();
-		$this->Task->params = array();
-
-		$this->Task->Controller->expects($this->once())->method('getName')
-			->will($this->returnValue('ViewTaskComments'));
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('y', 'y', 'n'));
-
-		$this->Task->expects($this->at(3))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/index.ctp',
-				$this->stringContains('ViewTaskComment')
-			);
-
-		$this->Task->expects($this->at(4))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/view.ctp',
-				$this->stringContains('ViewTaskComment')
-			);
-
-		$this->Task->expects($this->at(5))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/add.ctp',
-				$this->stringContains('Add View Task Comment')
-			);
-
-		$this->Task->expects($this->at(6))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/edit.ctp',
-				$this->stringContains('Edit View Task Comment')
-			);
-
-		$this->Task->expects($this->exactly(4))->method('createFile');
 		$this->Task->execute();
 	}
 
@@ -606,54 +554,6 @@ class ViewTaskTest extends TestCase {
 				TMP . 'ViewTaskComments/list.ctp',
 				$this->stringContains('ViewTaskComment')
 			);
-		$this->Task->execute();
-	}
-
-/**
- * test execute into interactive() with admin methods.
- *
- * @return void
- */
-	public function testExecuteInteractiveWithAdmin() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
-		Configure::write('Routing.prefixes', array('admin'));
-		$this->Task->connection = 'test';
-		$this->Task->args = array();
-
-		$this->Task->Controller->expects($this->once())->method('getName')
-			->will($this->returnValue('ViewTaskComments'));
-
-		$this->Task->Project->expects($this->once())->method('getPrefix')
-			->will($this->returnValue('admin_'));
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('y', 'n', 'y'));
-
-		$this->Task->expects($this->at(3))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/admin_index.ctp',
-				$this->stringContains('ViewTaskComment')
-			);
-
-		$this->Task->expects($this->at(4))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/admin_view.ctp',
-				$this->stringContains('ViewTaskComment')
-			);
-
-		$this->Task->expects($this->at(5))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/admin_add.ctp',
-				$this->stringContains('Add View Task Comment')
-			);
-
-		$this->Task->expects($this->at(6))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/admin_edit.ctp',
-				$this->stringContains('Edit View Task Comment')
-			);
-
-		$this->Task->expects($this->exactly(4))->method('createFile');
 		$this->Task->execute();
 	}
 
