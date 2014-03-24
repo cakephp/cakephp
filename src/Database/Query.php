@@ -14,6 +14,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\DefaultTypesTrait;
 use Cake\Database\Exception;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\FunctionExpression;
@@ -32,6 +33,8 @@ use IteratorAggregate;
  * to a specific SQL disalect.
  */
 class Query implements ExpressionInterface, IteratorAggregate {
+
+	use DefaultTypesTrait;
 
 /**
  * Connection instance to be used to execute this query.
@@ -127,15 +130,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @var \Cake\Database\StatementInterface
  */
 	protected $_iterator;
-
-/**
- * Associative array with the default fields and their types this query might contain
- * used to avoid repetition when calling multiple times functions inside this class that
- * may require a custom type for a specific field.
- *
- * @var array
- */
-	protected $_defaultTypes = [];
 
 /**
  * The object responsible for generating query placeholders and temporarily store values
@@ -1498,7 +1492,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return QueryExpression
  */
 	public function newExpr() {
-		return new QueryExpression;
+		return new QueryExpression([], $this->defaultTypes());
 	}
 
 /**
@@ -1641,32 +1635,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			}
 		};
 		return $this->traverse($visitor);
-	}
-
-/**
- * Configures a map of default fields and their associated types to be
- * used as the default list of types for every function in this class
- * with a $types param. Useful to avoid repetition when calling the same
- * functions using the same fields and types.
- *
- * If called with no arguments it will return the currently configured types.
- *
- * ## Example
- *
- * {{{
- *	$query->defaultTypes(['created' => 'datetime', 'is_visible' => 'boolean']);
- * }}}
- *
- * @param array $types associative array where keys are field names and values
- * are the correspondent type.
- * @return Query|array
- */
-	public function defaultTypes(array $types = null) {
-		if ($types === null) {
-			return $this->_defaultTypes;
-		}
-		$this->_defaultTypes = $types;
-		return $this;
 	}
 
 /**

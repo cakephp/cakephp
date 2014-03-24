@@ -14,6 +14,7 @@
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\DefaultTypesTrait;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\ValueBinder;
@@ -26,6 +27,8 @@ use \Countable;
  *
  */
 class QueryExpression implements ExpressionInterface, Countable {
+
+	use DefaultTypesTrait;
 
 /**
  * String to be used for joining each of the internal expressions
@@ -59,6 +62,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @see QueryExpression::add() for more details on $conditions and $types
  */
 	public function __construct($conditions = [], $types = [], $conjunction = 'AND') {
+		$this->defaultTypes($types);
 		$this->type(strtoupper($conjunction));
 		if (!empty($conditions)) {
 			$this->add($conditions, $types);
@@ -113,7 +117,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 			return $this;
 		}
 
-		$this->_addConditions($conditions, $types);
+		$this->_addConditions($conditions, $types + $this->defaultTypes());
 		return $this;
 	}
 
@@ -283,7 +287,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 		if (is_callable($conditions)) {
 			return $conditions(new self);
 		}
-		return new self($conditions, $types);
+		return new self($conditions, $types + $this->defaultTypes());
 	}
 
 /**
@@ -299,7 +303,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 		if (is_callable($conditions)) {
 			return $conditions(new self([], [], 'OR'));
 		}
-		return new self($conditions, $types, 'OR');
+		return new self($conditions, $types + $this->defaultTypes(), 'OR');
 	}
 // @codingStandardsIgnoreEnd
 
@@ -315,7 +319,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return QueryExpression
  */
 	public function not($conditions, $types = []) {
-		return $this->add(['NOT' => $conditions], $types);
+		return $this->add(['NOT' => $conditions], $types + $this->defaultTypes());
 	}
 
 /**
