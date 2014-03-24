@@ -1288,9 +1288,12 @@ class MysqlTest extends CakeTestCase {
 			->method('getDataSource')
 			->will($this->returnValue($test));
 
-		$search = "LEFT JOIN `cake_test_db`.`test_model8` AS `TestModel8` ON " .
+		$model8Table = $test->fullTableName($this->Model->TestModel8);
+		$usersTable = $test->fullTableName('users');
+
+		$search = "LEFT JOIN $model8Table AS `TestModel8` ON " .
 			"(`TestModel8`.`name` != 'larry' AND `TestModel9`.`test_model8_id` = `TestModel8`.`id`) " .
-			"LEFT JOIN `cake_test_db`.`users` AS `User` ON (`TestModel9`.`id` = `User`.`test_id`)";
+			"LEFT JOIN $usersTable AS `User` ON (`TestModel9`.`id` = `User`.`test_id`)";
 
 		$test->expects($this->at(0))->method('execute')
 			->with($this->stringContains($search));
