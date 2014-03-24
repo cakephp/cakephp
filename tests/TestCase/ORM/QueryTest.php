@@ -764,13 +764,13 @@ class QueryTest extends TestCase {
 
 		$this->assertEquals(['field_a', 'field_b'], $query->clause('select'));
 
-		$expected = new QueryExpression($options['conditions']);
+		$expected = new QueryExpression($options['conditions'], ['foo.id' => 'integer', 'id' => 'integer']);
 		$result = $query->clause('where');
 		$this->assertEquals($expected, $result);
 
 		$this->assertEquals(1, $query->clause('limit'));
 
-		$expected = new QueryExpression(['a > b']);
+		$expected = new QueryExpression(['a > b'], ['foo.id' => 'integer', 'id' => 'integer']);
 		$result = $query->clause('join');
 		$this->assertEquals([
 			'table_a' => ['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected]
@@ -782,7 +782,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals(5, $query->clause('offset'));
 		$this->assertEquals(['field_a'], $query->clause('group'));
 
-		$expected = new QueryExpression($options['having']);
+		$expected = new QueryExpression($options['having'], ['foo.id' => 'integer', 'id' => 'integer']);
 		$this->assertEquals($expected, $query->clause('having'));
 
 		$expected = ['table_a' => ['table_b' => []]];

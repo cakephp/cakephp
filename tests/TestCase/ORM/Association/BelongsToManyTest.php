@@ -226,7 +226,12 @@ class BelongsToManyTest extends TestCase {
 			'Tags' => [
 				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				], ['Tags.name' => 'string']),
+				], [
+					'Tags.name' => 'string',
+					'Tags.id' => 'integer',
+					'id' => 'integer',
+					'name' => 'string',
+				]),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -240,6 +245,11 @@ class BelongsToManyTest extends TestCase {
 				'conditions' => new QueryExpression([
 					['Articles.id' => $field1],
 					['Tags.id' => $field2]
+				], [
+					'ArticlesTags.article_id' => 'integer',
+					'article_id' => 'integer',
+					'ArticlesTags.tag_id' => 'integer',
+					'tag_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'articles_tags'
@@ -273,7 +283,12 @@ class BelongsToManyTest extends TestCase {
 			'Tags' => [
 				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				], ['Tags.name' => 'string']),
+				], [
+					'Tags.name' => 'string',
+					'Tags.id' => 'integer',
+					'id' => 'integer',
+					'name' => 'string',
+				]),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -287,6 +302,11 @@ class BelongsToManyTest extends TestCase {
 				'conditions' => new QueryExpression([
 					['Articles.id' => $field1],
 					['Tags.id' => $field2]
+				], [
+					'ArticlesTags.article_id' => 'integer',
+					'article_id' => 'integer',
+					'ArticlesTags.tag_id' => 'integer',
+					'tag_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'articles_tags'
@@ -315,7 +335,12 @@ class BelongsToManyTest extends TestCase {
 				'conditions' => new QueryExpression([
 					'a' => 1,
 					'Tags.name' => 'cake',
-				], ['Tags.name' => 'string']),
+				], [
+					'Tags.name' => 'string',
+					'Tags.id' => 'integer',
+					'id' => 'integer',
+					'name' => 'string',
+				]),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -329,6 +354,11 @@ class BelongsToManyTest extends TestCase {
 				'conditions' => new QueryExpression([
 					['Articles.id' => $field1],
 					['Tags.id' => $field2]
+				], [
+					'ArticlesTags.article_id' => 'integer',
+					'article_id' => 'integer',
+					'ArticlesTags.tag_id' => 'integer',
+					'tag_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'articles_tags'
@@ -371,7 +401,12 @@ class BelongsToManyTest extends TestCase {
 			'Tags' => [
 				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				], ['Tags.name' => 'string']),
+				], [
+					'Tags.name' => 'string',
+					'Tags.id' => 'integer',
+					'id' => 'integer',
+					'name' => 'string',
+				]),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -387,6 +422,11 @@ class BelongsToManyTest extends TestCase {
 				'conditions' => new QueryExpression([
 					['Articles.id' => $fieldA, 'Articles.site_id' => $fieldB],
 					['Tags.id' => $fieldC, 'Tags.my_site_id' => $fieldD]
+				], [
+					'ArticlesTags.article_id' => 'integer',
+					'article_id' => 'integer',
+					'ArticlesTags.tag_id' => 'integer',
+					'tag_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'articles_tags'

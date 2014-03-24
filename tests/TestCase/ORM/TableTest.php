@@ -2037,7 +2037,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findByUsername('garrett');
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$expected = new QueryExpression(['username' => 'garrett'], ['username' => 'string']);
+		$expected = new QueryExpression(['username' => 'garrett'], [
+			'Users.id' => 'integer',
+			'id' => 'integer',
+			'Users.username' => 'string',
+			'username' => 'string',
+			'Users.password' => 'string',
+			'password' => 'string',
+			'Users.created' => 'timestamp',
+			'created' => 'timestamp',
+			'Users.updated' => 'timestamp',
+			'updated' => 'timestamp',
+		]);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
 
@@ -2092,7 +2103,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
 		$expected = new QueryExpression(
 			['username' => 'garrett', 'id' => 4],
-			['username' => 'string', 'id' => 'integer'],
+			[
+				'Users.id' => 'integer',
+				'id' => 'integer',
+				'Users.username' => 'string',
+				'username' => 'string',
+				'Users.password' => 'string',
+				'password' => 'string',
+				'Users.created' => 'timestamp',
+				'created' => 'timestamp',
+				'Users.updated' => 'timestamp',
+				'updated' => 'timestamp',
+			],
 			'AND'
 		);
 		$this->assertEquals($expected, $result->clause('where'));
@@ -2108,7 +2130,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findByUsernameOrId('garrett', 4);
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$expected = new QueryExpression();
+		$expected = new QueryExpression([], [
+			'Users.id' => 'integer',
+			'id' => 'integer',
+			'Users.username' => 'string',
+			'username' => 'string',
+			'Users.password' => 'string',
+			'password' => 'string',
+			'Users.created' => 'timestamp',
+			'created' => 'timestamp',
+			'Users.updated' => 'timestamp',
+			'updated' => 'timestamp',
+		]);
 		$expected->add([
 			'OR' => [
 				'username' => 'garrett',
@@ -2132,7 +2165,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($result->clause('limit'));
 		$expected = new QueryExpression(
 			['author_id' => 1],
-			['author_id' => 'integer'],
+			[
+				'Articles.id' => 'integer',
+				'id' => 'integer',
+				'Articles.author_id' => 'integer',
+				'author_id' => 'integer',
+				'Articles.title' => 'string',
+				'title' => 'string',
+				'Articles.body' => 'text',
+				'body' => 'text',
+				'Articles.published' => 'string',
+				'published' => 'string',
+			],
 			'AND'
 		);
 		$this->assertEquals($expected, $result->clause('where'));
@@ -2150,7 +2194,19 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
 		$this->assertNull($result->clause('limit'));
 		$expected = new QueryExpression(
-			['author_id' => 1, 'published' => 'Y']
+			['author_id' => 1, 'published' => 'Y'],
+			[
+				'Users.id' => 'integer',
+				'id' => 'integer',
+				'Users.username' => 'string',
+				'username' => 'string',
+				'Users.password' => 'string',
+				'password' => 'string',
+				'Users.created' => 'timestamp',
+				'created' => 'timestamp',
+				'Users.updated' => 'timestamp',
+				'updated' => 'timestamp',
+			]
 		);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
@@ -2166,7 +2222,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$result = $table->findAllByAuthorIdOrPublished(1, 'Y');
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
 		$this->assertNull($result->clause('limit'));
-		$expected = new QueryExpression();
+		$expected = new QueryExpression([], [
+			'Users.id' => 'integer',
+			'id' => 'integer',
+			'Users.username' => 'string',
+			'username' => 'string',
+			'Users.password' => 'string',
+			'password' => 'string',
+			'Users.created' => 'timestamp',
+			'created' => 'timestamp',
+			'Users.updated' => 'timestamp',
+			'updated' => 'timestamp',
+		]);
 		$expected->add(
 			['or' => ['author_id' => 1, 'published' => 'Y']]
 		);

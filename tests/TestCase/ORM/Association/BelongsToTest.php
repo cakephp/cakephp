@@ -99,7 +99,12 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				], ['Companies.id' => 'integer']),
+				], [
+					'Companies.id' => 'integer',
+					'id' => 'integer',
+					'Companies.company_name' => 'string',
+					'company_name' => 'string',
+				]),
 				'table' => 'companies',
 				'type' => 'LEFT'
 			]
@@ -128,6 +133,11 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 			'Companies' => [
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => false
+				], [
+					'Companies.id' => 'integer',
+					'id' => 'integer',
+					'Companies.company_name' => 'string',
+					'company_name' => 'string',
 				]),
 				'type' => 'LEFT',
 				'table' => 'companies',
@@ -164,7 +174,12 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				], ['Companies.id' => 'integer']),
+				], [
+					'Companies.id' => 'integer',
+					'id' => 'integer',
+					'Companies.company_name' => 'string',
+					'company_name' => 'string',
+				]),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
@@ -194,7 +209,12 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 					'a' => 1,
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				], ['Companies.id' => 'integer']),
+				], [
+					'Companies.id' => 'integer',
+					'id' => 'integer',
+					'Companies.company_name' => 'string',
+					'company_name' => 'string',
+				]),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
@@ -231,7 +251,12 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				], ['Companies.id' => 'integer']),
+				], [
+					'Companies.id' => 'integer',
+					'id' => 'integer',
+					'Companies.company_name' => 'string',
+					'company_name' => 'string',
+				]),
 				'table' => 'companies',
 				'type' => 'INNER'
 			]
@@ -313,7 +338,12 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field1, 'Companies.tenant_id' => $field2]
-				], ['Companies.id' => 'integer']),
+				], [
+					'Companies.id' => 'integer',
+					'id' => 'integer',
+					'Companies.company_name' => 'string',
+					'company_name' => 'string',
+				]),
 				'table' => 'companies',
 				'type' => 'LEFT'
 			]
