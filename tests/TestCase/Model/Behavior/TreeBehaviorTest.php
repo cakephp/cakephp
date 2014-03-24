@@ -172,9 +172,6 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertFalse($this->table->moveUp(1, 0));
 		$this->assertFalse($this->table->moveUp(1, -10));
 
-		// move unexisting node
-		$this->assertFalse($table->moveUp(500, 1));
-
 		// move inner node
 		$result = $table->moveUp(3, 1);
 		$nodes = $table->find('children', ['for' => 1])->all();
@@ -195,6 +192,18 @@ class TreeBehaviorTest extends TestCase {
 	}
 
 /**
+ * Tests that moveUp() will throw an exception if the node was not found
+ *
+ * @expectedException \Cake\ORM\Error\RecordNotFoundException
+ * @return void
+ */
+	public function testMoveUpException() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$table->moveUp(500, 1);
+	}
+
+/**
  * Tests the moveDown() method
  *
  * @return void
@@ -211,14 +220,10 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertFalse($this->table->moveUp(8, -10));
 
 		// move inner node
-		$nodeIds = [];
 		$result = $table->moveDown(2, 1);
 		$nodes = $table->find('children', ['for' => 1])->all();
 		$this->assertEquals([3, 4, 5, 2], $nodes->extract('id')->toArray());
 		$this->assertTrue($result);
-
-		// move unexisting node
-		$this->assertFalse($table->moveDown(500, 1));
 
 		// move leaf
 		$this->assertFalse( $table->moveDown(5, 1));
@@ -231,6 +236,18 @@ class TreeBehaviorTest extends TestCase {
 			->order(['lft' => 'ASC'])
 			->all();
 		$this->assertEquals([6, 8, 1], $nodes->extract('id')->toArray());
+	}
+
+/**
+ * Tests that moveDown() will throw an exception if the node was not found
+ *
+ * @expectedException \Cake\ORM\Error\RecordNotFoundException
+ * @return void
+ */
+	public function testMoveDownException() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$table->moveDown(500, 1);
 	}
 
 /**

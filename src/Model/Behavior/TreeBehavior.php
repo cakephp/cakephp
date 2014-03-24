@@ -158,6 +158,7 @@ class TreeBehavior extends Behavior {
  *
  * @param integer|string $id The ID of the record to move
  * @param integer|boolean $number How many places to move the node, or true to move to first position
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  * @return boolean true on success, false on failure
  */
 	public function moveUp($id, $number = 1) {
@@ -175,7 +176,7 @@ class TreeBehavior extends Behavior {
 			->first();
 
 		if (!$node) {
-			return false;
+			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
 		}
 
 		if ($node->{$parent}) {
@@ -218,6 +219,7 @@ class TreeBehavior extends Behavior {
  *
  * @param integer|string $id The ID of the record to move
  * @param integer|boolean $number How many places to move the node or true to move to last position
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  * @return boolean true on success, false on failure
  */
 	public function moveDown($id, $number = 1) {
@@ -235,7 +237,7 @@ class TreeBehavior extends Behavior {
 			->first();
 
 		if (!$node) {
-			return false;
+			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
 		}
 
 		if ($node->{$parent}) {
