@@ -172,8 +172,10 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(false, $this->table->moveUp(1, 0));
 		$this->assertEquals(false, $this->table->moveUp(1, -10));
 
+		// move unexisting node
+		$this->assertEquals(false, $table->moveUp(500, 1));
+
 		// move inner node
-		$nodeIds = [];
 		$result = $table->moveUp(3, 1);
 		$nodes = $table->find('children', ['for' => 1])->all();
 		$this->assertEquals([3, 4, 5, 2], $nodes->extract('id')->toArray());
@@ -186,22 +188,10 @@ class TreeBehaviorTest extends TestCase {
 		$table->moveUp(8, true);
 		$nodes = $table->find()
 			->select(['id'])
-			->where(['parent_id' => 0, 'menu' => 'main-menu'])
+			->where(['parent_id IS' => null, 'menu' => 'main-menu'])
 			->order(['lft' => 'ASC'])
 			->all();
 		$this->assertEquals([8, 1, 6], $nodes->extract('id')->toArray());
-	}
-
-/**
- * Tests that moveUp() will throw an exception if the node was not found
- *
- * @expectedException \Cake\ORM\Error\RecordNotFoundException
- * @return void
- */
-	public function testMoveUpException() {
-		$table = TableRegistry::get('MenuLinkTrees');
-		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-		$table->moveUp(500, 1);
 	}
 
 /**
@@ -227,6 +217,9 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals([3, 4, 5, 2], $nodes->extract('id')->toArray());
 		$this->assertEquals(true, $result);
 
+		// move unexisting node
+		$this->assertEquals(false, $table->moveDown(500, 1));
+
 		// move leaf
 		$this->assertEquals(false, $table->moveDown(5, 1));
 
@@ -234,22 +227,10 @@ class TreeBehaviorTest extends TestCase {
 		$table->moveDown(1, true);
 		$nodes = $table->find()
 			->select(['id'])
-			->where(['parent_id' => 0, 'menu' => 'main-menu'])
+			->where(['parent_id IS' => null, 'menu' => 'main-menu'])
 			->order(['lft' => 'ASC'])
 			->all();
 		$this->assertEquals([6, 8, 1], $nodes->extract('id')->toArray());
-	}
-
-/**
- * Tests that moveDown() will throw an exception if the node was not found
- *
- * @expectedException \Cake\ORM\Error\RecordNotFoundException
- * @return void
- */
-	public function testMoveDownException() {
-		$table = TableRegistry::get('MenuLinkTrees');
-		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-		$table->moveDown(500, 1);
 	}
 
 /**
