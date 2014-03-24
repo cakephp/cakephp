@@ -18,7 +18,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * TestObject class
+ * TestInstanceConfig
  */
 class TestInstanceConfig {
 
@@ -29,12 +29,43 @@ class TestInstanceConfig {
  *
  * Some default config
  *
- * @var mixed
+ * @var array
  */
 	protected $_defaultConfig = [
 		'some' => 'string',
 		'a' => ['nested' => 'value']
 	];
+}
+
+/**
+ * ReadOnlyTestInstanceConfig
+ */
+class ReadOnlyTestInstanceConfig {
+
+	use InstanceConfigTrait;
+
+/**
+ * _defaultConfig
+ *
+ * Some default config
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [
+		'some' => 'string',
+		'a' => ['nested' => 'value']
+	];
+
+/**
+ * Example of how to prevent modifying config at run time
+ *
+ * @param mixed $key
+ * @param mixed $value
+ * @return void
+ */
+	protected function _configWrite($key, $value = null) {
+		throw new \Exception('This Instance is readonly');
+	}
 }
 
 /**
@@ -228,6 +259,28 @@ class InstanceConfigTraitTest extends TestCase {
  */
 	public function testSetClobber() {
 		$this->object->config(['a.nested.value' => 'not possible']);
+	}
+
+/**
+ * testReadOnlyConfig
+ *
+ * @expectedException \Exception
+ * @expectedExceptionMessage This Instance is readonly
+ * @return void
+ */
+	public function testReadOnlyConfig() {
+		$object = new ReadOnlyTestInstanceConfig();
+
+		$this->assertSame(
+			[
+				'some' => 'string',
+				'a' => ['nested' => 'value']
+			],
+			$object->config(),
+			'default config should be returned'
+		);
+
+		$object->config('throw.me', 'an exception');
 	}
 
 }
