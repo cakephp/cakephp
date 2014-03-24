@@ -371,33 +371,6 @@ class ViewTaskTest extends TestCase {
 	}
 
 /**
- * test bake() with a -plugin param
- *
- * @return void
- */
-	public function testBakeWithPlugin() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
-
-		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->plugin = 'TestTest';
-		$this->Task->name = 'View';
-
-		//fake plugin path
-		Plugin::load('TestTest', array('path' => APP . 'Plugin/TestTest/'));
-		$path = APP . 'Plugin/TestTest/View/ViewTaskComments/view.ctp';
-
-		$result = $this->Task->getContent('index');
-		$this->assertNotContains('List Test Test.view Task Articles', $result);
-
-		$this->Task->expects($this->once())
-			->method('createFile')
-			->with($path, $this->anything());
-
-		$this->Task->bake('view', true);
-		Plugin::unload();
-	}
-
-/**
  * test bake actions baking multiple actions.
  *
  * @return void
@@ -468,15 +441,14 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithActionParam() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
+		$this->_setupTask(['in', 'err', 'createFile', 'bake', '_stop']);
 		$this->Task->args[0] = 'ViewTaskComments';
 		$this->Task->args[1] = 'view';
 
-		$this->Task->expects($this->once())->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/view.ctp',
-				$this->anything()
-			);
+		$this->Task->expects($this->once())
+			->method('bake')
+			->with('view', true);
+
 		$this->Task->execute();
 	}
 
@@ -487,20 +459,27 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithController() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
+		$this->_setupTask(['in', 'err', 'createFile', 'bake', '_stop']);
 		$this->Task->args[0] = 'ViewTaskComments';
 
-		$this->Task->expects($this->at(0))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/index.ctp',
-				$this->anything()
-			);
-		$this->Task->expects($this->at(1))->method('createFile')
-			->with(
-				TMP . 'ViewTaskComments/add.ctp',
-				$this->anything()
-			);
-		$this->Task->expects($this->exactly(2))->method('createFile');
+		$this->Task->expects($this->exactly(4))
+			->method('bake');
+
+		$this->Task->expects($this->at(0))
+			->method('bake')
+			->with('index', $this->anything());
+
+		$this->Task->expects($this->at(1))
+			->method('bake')
+			->with('view', $this->anything());
+
+		$this->Task->expects($this->at(2))
+			->method('bake')
+			->with('add', $this->anything());
+
+		$this->Task->expects($this->at(3))
+			->method('bake')
+			->with('edit', $this->anything());
 
 		$this->Task->execute();
 	}

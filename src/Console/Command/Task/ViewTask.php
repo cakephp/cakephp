@@ -18,6 +18,7 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 
 /**
@@ -248,21 +249,16 @@ class ViewTask extends BakeTask {
 			$plugin = $this->plugin . '.';
 		}
 
-		if (!class_exists($this->controllerClass)) {
-			$file = $this->controllerClass . '.php';
-			$this->err(__d(
-				'cake_console',
-				"The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.",
-				str_replace('\\', '/', $file)
-			));
-			return $this->_stop();
+		if (class_exists($this->controllerClass)) {
+			$controllerObj = new $this->controllerClass();
+			$controllerObj->plugin = $this->plugin;
+			$controllerObj->constructClasses();
+			$modelClass = $controllerObj->modelClass;
+			$modelObj = $controllerObj->{$modelClass};
+		} else {
+			$modelObj = TableRegistry::get($this->controllerName);
 		}
 
-		$controllerObj = new $this->controllerClass();
-		$controllerObj->plugin = $this->plugin;
-		$controllerObj->constructClasses();
-		$modelClass = $controllerObj->modelClass;
-		$modelObj = $controllerObj->{$modelClass};
 
 		if ($modelObj) {
 			$primaryKey = (array)$modelObj->primaryKey();
