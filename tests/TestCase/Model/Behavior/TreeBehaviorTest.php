@@ -347,4 +347,26 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals($expected, $results);
 	}
 
+/**
+ * Tests adding a leaf to the tree
+ *
+ * @return void
+ */
+	public function testAddLeaf() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = new Entity(
+			['name' => 'laptops', 'parent_id' => 2],
+			['markNew' => true]
+		);
+		$this->assertSame($entity, $table->save($entity));
+		$results = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals(9, $entity->lft);
+		$this->assertEquals(10, $entity->rght);
+
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
+		$table->recover();
+		$result = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals($expected, $results);
+	}
 }
