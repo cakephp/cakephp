@@ -86,7 +86,7 @@ class TreeBehavior extends Behavior {
 			$edge = $parentNode->get($config['right']);
 			$entity->set($config['left'], $edge);
 			$entity->set($config['right'], $edge + 1);
-			$this->_sync(2, '+', ">= {$config['right']}");
+			$this->_sync(2, '+', ">= {$edge}");
 		}
 
 		if ($isNew && !$parent) {
@@ -102,9 +102,11 @@ class TreeBehavior extends Behavior {
 
 	protected function _getParent($id) {
 		$config = $this->config();
+		$primaryKey = (array)$this->_table->primaryKey();
 		$parentNode = $this->_scope($this->_table->find())
-			->select([$config['lft'], $config['rght']])
-			->where([$primaryKey[0] => $parent]);
+			->select([$config['left'], $config['right']])
+			->where([$primaryKey[0] => $id])
+			->first();
 
 		if (!$parentNode) {
 			throw new \Cake\ORM\Error\RecordNotFoundException(

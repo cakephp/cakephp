@@ -324,4 +324,27 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals($expected, $results);
 	}
 
+/**
+ * Tests that adding a child node as a decendant of one of the roots works
+ *
+ * @return void
+ */
+	public function testAddMiddle() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = new Entity(
+			['name' => 'laptops', 'parent_id' => 1],
+			['markNew' => true]
+		);
+		$this->assertSame($entity, $table->save($entity));
+		$results = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals(20, $entity->lft);
+		$this->assertEquals(21, $entity->rght);
+
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
+		$table->recover();
+		$result = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals($expected, $results);
+	}
+
 }
