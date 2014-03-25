@@ -28,7 +28,10 @@ use Cake\Error;
  */
 class StringTemplate {
 
-	use InstanceConfigTrait;
+	use InstanceConfigTrait {
+		config as add;
+		config as get;
+	}
 
 /**
  * List of attributes that can be made compact.
@@ -77,33 +80,13 @@ class StringTemplate {
 	}
 
 /**
- * Add one or more template strings.
- *
- * @param array $templates The templates to add.
- * @return void
- */
-	public function add(array $templates) {
-		$this->config($templates);
-	}
-
-/**
- * Get one or all templates.
- *
- * @param string $name Leave null to get all templates, provide a name to get a single template.
- * @return string|array|null Either the template(s) or null
- */
-	public function get($name = null) {
-		return $this->config($name);
-	}
-
-/**
  * Remove the named template.
  *
  * @param string $name The template to remove.
  * @return void
  */
 	public function remove($name) {
-		unset($this->_config[$name]);
+		$this->config($name, null);
 	}
 
 /**
