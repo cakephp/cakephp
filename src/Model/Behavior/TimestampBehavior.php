@@ -36,7 +36,7 @@ class TimestampBehavior extends Behavior {
  *
  * @var array
  */
-	protected static $_defaultConfig = [
+	protected $_defaultConfig = [
 		'implementedFinders' => [],
 		'implementedMethods' => [
 			'timestamp' => 'timestamp',
@@ -71,11 +71,12 @@ class TimestampBehavior extends Behavior {
  */
 	public function handleEvent(Event $event, Entity $entity) {
 		$eventName = $event->name();
-		$config = $this->config();
+		$events = $this->config('events');
 
 		$new = $entity->isNew() !== false;
+		$refresh = $this->config('refreshTimestamp');
 
-		foreach ($config['events'][$eventName] as $field => $when) {
+		foreach ($events[$eventName] as $field => $when) {
 			if (!in_array($when, ['always', 'new', 'existing'])) {
 				throw new \UnexpectedValueException(
 					sprintf('When should be one of "always", "new" or "existing". The passed value "%s" is invalid', $when)
@@ -86,7 +87,7 @@ class TimestampBehavior extends Behavior {
 				($when === 'new' && $new) ||
 				($when === 'existing' && !$new)
 			) {
-				$this->_updateField($entity, $field, $config['refreshTimestamp']);
+				$this->_updateField($entity, $field, $refresh);
 			}
 		}
 
@@ -140,18 +141,19 @@ class TimestampBehavior extends Behavior {
  * @return bool true if a field is updated, false if no action performed
  */
 	public function touch(Entity $entity, $eventName = 'Model.beforeSave') {
-		$config = $this->config();
-		if (!isset($config['events'][$eventName])) {
+		$events = $this->config('events');
+		if (empty($events[$eventName])) {
 			return false;
 		}
 
 		$return = false;
+		$refresh = $this->config('refreshTimestamp');
 
-		foreach ($config['events'][$eventName] as $field => $when) {
+		foreach ($events[$eventName] as $field => $when) {
 			if (in_array($when, ['always', 'existing'])) {
 				$return = true;
 				$entity->dirty($field, false);
-				$this->_updateField($entity, $field, $config['refreshTimestamp']);
+				$this->_updateField($entity, $field, $refresh);
 			}
 		}
 
