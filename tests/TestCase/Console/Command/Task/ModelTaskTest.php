@@ -296,6 +296,23 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
+ * Test getting accessible fields includes associations.
+ *
+ * @return void
+ */
+	public function testGetFieldsAssociations() {
+		$model = TableRegistry::get('BakeArticles');
+		$model->belongsToMany('BakeTags');
+		$model->belongsTo('BakeAuthors');
+		$model->hasMany('BakeComments');
+
+		$result = $this->Task->getFields($model);
+		$this->assertContains('bake_tags', $result);
+		$this->assertContains('bake_comments', $result);
+		$this->assertContains('bake_author', $result);
+	}
+
+/**
  * Test getting field with the no- option
  *
  * @return void
@@ -629,9 +646,9 @@ class ModelTaskTest extends TestCase {
 		$result = $this->Task->bakeEntity($model, $config);
 
 		$this->assertContains("protected \$_accessible = [", $result);
-		$this->assertContains("'title' => false,", $result);
-		$this->assertContains("'body' => false,", $result);
-		$this->assertContains("'published' => false", $result);
+		$this->assertContains("'title' => true,", $result);
+		$this->assertContains("'body' => true,", $result);
+		$this->assertContains("'published' => true", $result);
 		$this->assertNotContains("protected \$_hidden", $result);
 	}
 
