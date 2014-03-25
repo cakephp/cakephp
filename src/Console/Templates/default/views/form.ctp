@@ -41,7 +41,7 @@ use Cake\Utility\Inflector;
 ?>
 	</fieldset>
 <?php
-	echo "<?= \$this->Form->submit(__('Submit')); ?>\n";
+	echo "<?= \$this->Form->button(__('Submit')); ?>\n";
 	echo "<?= \$this->Form->end(); ?>\n";
 ?>
 </div>
