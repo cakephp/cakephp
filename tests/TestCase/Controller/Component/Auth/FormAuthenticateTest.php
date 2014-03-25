@@ -67,8 +67,8 @@ class FormAuthenticateTest extends TestCase {
 			'userModel' => 'AuthUsers',
 			'fields' => array('username' => 'user', 'password' => 'password')
 		));
-		$this->assertEquals('AuthUsers', $object->settings['userModel']);
-		$this->assertEquals(array('username' => 'user', 'password' => 'password'), $object->settings['fields']);
+		$this->assertEquals('AuthUsers', $object->config('userModel'));
+		$this->assertEquals(array('username' => 'user', 'password' => 'password'), $object->config('fields'));
 	}
 
 /**
@@ -216,7 +216,7 @@ class FormAuthenticateTest extends TestCase {
  * @return void
  */
 	public function testAuthenticateScopeFail() {
-		$this->auth->settings['scope'] = array('Users.id' => 2);
+		$this->auth->config('scope', ['Users.id' => 2]);
 		$request = new Request('posts/index');
 		$request->data = array('Users' => array(
 			'username' => 'mariano',
@@ -241,7 +241,7 @@ class FormAuthenticateTest extends TestCase {
 		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake', 'blowfish', false);
 		$PluginModel->save(new Entity($user));
 
-		$this->auth->settings['userModel'] = 'TestPlugin.AuthUsers';
+		$this->auth->config('userModel', 'TestPlugin.AuthUsers');
 
 		$request = new Request('posts/index');
 		$request->data = array('AuthUsers' => array(
@@ -266,10 +266,10 @@ class FormAuthenticateTest extends TestCase {
  * @return void
  */
 	public function testPasswordHasherSettings() {
-		$this->auth->settings['passwordHasher'] = array(
+		$this->auth->config('passwordHasher', [
 			'className' => 'Simple',
 			'hashType' => 'md5'
-		);
+		]);
 
 		$passwordHasher = $this->auth->passwordHasher();
 		$result = $passwordHasher->config();
@@ -301,10 +301,10 @@ class FormAuthenticateTest extends TestCase {
 			'fields' => array('username' => 'username', 'password' => 'password'),
 			'userModel' => 'Users'
 		));
-		$this->auth->settings['passwordHasher'] = array(
+		$this->auth->config('passwordHasher', [
 			'className' => 'Simple',
 			'hashType' => 'sha1'
-		);
+		]);
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 

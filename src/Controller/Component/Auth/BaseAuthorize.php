@@ -18,6 +18,7 @@ namespace Cake\Controller\Component\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -30,6 +31,8 @@ use Cake\Utility\Inflector;
  * @see AuthComponent::$authenticate
  */
 abstract class BaseAuthorize {
+
+	use InstanceConfigTrait;
 
 /**
  * Controller for the request.
@@ -46,7 +49,7 @@ abstract class BaseAuthorize {
 	protected $_registry;
 
 /**
- * Settings for authorize objects.
+ * Default config for authorize objects.
  *
  * - `actionPath` - The path to ACO nodes that contains the nodes for controllers. Used as a prefix
  *    when calling $this->action();
@@ -55,30 +58,30 @@ abstract class BaseAuthorize {
  *
  * @var array
  */
-	public $settings = array(
+	protected $_defaultConfig = [
 		'actionPath' => null,
-		'actionMap' => array(
+		'actionMap' => [
 			'index' => 'read',
 			'add' => 'create',
 			'edit' => 'update',
 			'view' => 'read',
 			'delete' => 'delete',
 			'remove' => 'delete'
-		),
+		],
 		'userModel' => 'Users'
-	);
+	];
 
 /**
  * Constructor
  *
  * @param ComponentRegistry $registry The controller for this request.
- * @param array $settings An array of settings. This class does not use any settings.
+ * @param array $config An array of config. This class does not use any config.
  */
-	public function __construct(ComponentRegistry $registry, $settings = array()) {
+	public function __construct(ComponentRegistry $registry, $config = array()) {
 		$this->_registry = $registry;
 		$controller = $registry->getController();
 		$this->controller($controller);
-		$this->settings = Hash::merge($this->settings, $settings);
+		$this->config($config);
 	}
 
 /**
@@ -121,7 +124,7 @@ abstract class BaseAuthorize {
 		$path = str_replace(
 			array(':controller', ':action', ':plugin/'),
 			array(Inflector::camelize($request['controller']), $request['action'], $plugin),
-			$this->settings['actionPath'] . $path
+			$this->config('actionPath') . $path
 		);
 		$path = str_replace('//', '/', $path);
 		return trim($path, '/');
@@ -153,16 +156,17 @@ abstract class BaseAuthorize {
  */
 	public function mapActions($map = array()) {
 		if (empty($map)) {
-			return $this->settings['actionMap'];
+			return $this->config('actionMap');
 		}
+
 		$crud = array('create', 'read', 'update', 'delete');
 		foreach ($map as $action => $type) {
 			if (in_array($action, $crud) && is_array($type)) {
 				foreach ($type as $typedAction) {
-					$this->settings['actionMap'][$typedAction] = $action;
+					$this->_config['actionMap'][$typedAction] = $action;
 				}
 			} else {
-				$this->settings['actionMap'][$action] = $type;
+				$this->_config['actionMap'][$action] = $type;
 			}
 		}
 	}

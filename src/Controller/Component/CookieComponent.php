@@ -175,11 +175,11 @@ class CookieComponent extends Component {
  * Constructor
  *
  * @param ComponentRegistry $collection A ComponentRegistry for this component
- * @param array $settings Array of settings.
+ * @param array $config Array of config.
  */
-	public function __construct(ComponentRegistry $collection, $settings = array()) {
+	public function __construct(ComponentRegistry $collection, $config = array()) {
 		$this->key = Configure::read('Security.salt');
-		parent::__construct($collection, $settings);
+		parent::__construct($collection, $config);
 		if (isset($this->time)) {
 			$this->_expire($this->time);
 		}

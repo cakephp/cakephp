@@ -67,8 +67,8 @@ class BasicAuthenticateTest extends TestCase {
 			'userModel' => 'AuthUser',
 			'fields' => array('username' => 'user', 'password' => 'password')
 		));
-		$this->assertEquals('AuthUser', $object->settings['userModel']);
-		$this->assertEquals(array('username' => 'user', 'password' => 'password'), $object->settings['fields']);
+		$this->assertEquals('AuthUser', $object->config('userModel'));
+		$this->assertEquals(array('username' => 'user', 'password' => 'password'), $object->config('fields'));
 	}
 
 /**
@@ -186,7 +186,7 @@ class BasicAuthenticateTest extends TestCase {
  * @return void
  */
 	public function testAuthenticateFailReChallenge() {
-		$this->auth->settings['scope'] = array('username' => 'nate');
+		$this->auth->config('scope.username', 'nate');
 		$request = new Request([
 			'url' => 'posts/index',
 			'environment' => [
@@ -223,7 +223,7 @@ class BasicAuthenticateTest extends TestCase {
 			array('username' => 'mariano')
 		);
 
-		$this->auth->settings['passwordHasher'] = 'Blowfish';
+		$this->auth->config('passwordHasher', 'Blowfish');
 
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(

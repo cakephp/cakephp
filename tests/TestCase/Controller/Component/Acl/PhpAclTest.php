@@ -333,7 +333,7 @@ class PhpAclTest extends TestCase {
  */
 	public function testPolicy() {
 		// allow by default
-		$this->Acl->settings['adapter']['policy'] = PhpAcl::ALLOW;
+		$this->Acl->config('adapter.policy', PhpAcl::ALLOW);
 		$this->Acl->adapter($this->PhpAcl);
 
 		$this->assertTrue($this->Acl->check('Role/sales', 'foo'));
