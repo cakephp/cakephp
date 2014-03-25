@@ -158,6 +158,7 @@ class ViewTaskTest extends TestCase {
 	public function testControllerVariations($name) {
 		$this->Task->controller($name);
 		$this->assertEquals('ViewTaskComments', $this->Task->controllerName);
+		$this->assertEquals('ViewTaskComments', $this->Task->tableName);
 	}
 
 /**
@@ -169,6 +170,7 @@ class ViewTaskTest extends TestCase {
 		$this->Task->params['plugin'] = 'TestPlugin';
 		$this->Task->controller('Tests');
 		$this->assertEquals('Tests', $this->Task->controllerName);
+		$this->assertEquals('Tests', $this->Task->tableName);
 		$this->assertEquals(
 			'TestPlugin\Controller\TestsController',
 			$this->Task->controllerClass
@@ -184,6 +186,7 @@ class ViewTaskTest extends TestCase {
 		$this->Task->params['prefix'] = 'Admin';
 		$this->Task->controller('Posts');
 		$this->assertEquals('Posts', $this->Task->controllerName);
+		$this->assertEquals('Posts', $this->Task->tableName);
 		$this->assertEquals(
 			'TestApp\Controller\Admin\PostsController',
 			$this->Task->controllerClass
@@ -192,8 +195,24 @@ class ViewTaskTest extends TestCase {
 		$this->Task->params['plugin'] = 'TestPlugin';
 		$this->Task->controller('Comments');
 		$this->assertEquals('Comments', $this->Task->controllerName);
+		$this->assertEquals('Comments', $this->Task->tableName);
 		$this->assertEquals(
 			'TestPlugin\Controller\Admin\CommentsController',
+			$this->Task->controllerClass
+		);
+	}
+
+/**
+ * test controller with a non-conventional controller name
+ *
+ * @return void
+ */
+	public function testControllerWithOverride() {
+		$this->Task->controller('Comments', 'Posts');
+		$this->assertEquals('Posts', $this->Task->controllerName);
+		$this->assertEquals('Comments', $this->Task->tableName);
+		$this->assertEquals(
+			'TestApp\Controller\PostsController',
 			$this->Task->controllerClass
 		);
 	}
@@ -313,6 +332,7 @@ class ViewTaskTest extends TestCase {
  */
 	public function testBakeView() {
 		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->tableName = 'ViewTaskComments';
 		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->at(0))
@@ -332,6 +352,7 @@ class ViewTaskTest extends TestCase {
  */
 	public function testBakeEdit() {
 		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->tableName = 'ViewTaskComments';
 		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->at(0))->method('createFile')
@@ -352,6 +373,7 @@ class ViewTaskTest extends TestCase {
  */
 	public function testBakeIndex() {
 		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->tableName = 'ViewTaskComments';
 		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->at(0))->method('createFile')
@@ -369,6 +391,7 @@ class ViewTaskTest extends TestCase {
  */
 	public function testBakeWithNoTemplate() {
 		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->tableName = 'ViewTaskComments';
 		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->never())->method('createFile');
@@ -382,6 +405,7 @@ class ViewTaskTest extends TestCase {
  */
 	public function testBakeActions() {
 		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->tableName = 'ViewTaskComments';
 		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->at(0))
@@ -411,6 +435,7 @@ class ViewTaskTest extends TestCase {
  */
 	public function testCustomAction() {
 		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->tableName = 'ViewTaskComments';
 		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->any())->method('in')
@@ -495,12 +520,34 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public static function nameVariations() {
-		return array(array('ViewTaskComments'), array('ViewTaskComment'), array('view_task_comment'));
+		return [['ViewTaskComments'], ['ViewTaskComment'], ['view_task_comment']];
 	}
 
 /**
- * test `cake bake view $controller --admin`
- * Which only bakes admin methods, not non-admin methods.
+ * test `cake bake view $table --controller Blog`
+ *
+ * @return void
+ */
+	public function testExecuteWithControllerFlag() {
+		$this->Task->args[0] = 'Posts';
+		$this->Task->params['controller'] = 'Blog';
+
+		$this->Task->expects($this->exactly(4))
+			->method('createFile');
+
+		$views = array('index.ctp', 'view.ctp', 'add.ctp', 'edit.ctp');
+		foreach ($views as $i => $view) {
+			$this->Task->expects($this->at($i))->method('createFile')
+				->with(
+					TMP . 'Blog/' . $view,
+					$this->anything()
+				);
+		}
+		$this->Task->execute();
+	}
+
+/**
+ * test `cake bake view $controller --prefix Admin`
  *
  * @return void
  */

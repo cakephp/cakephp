@@ -56,6 +56,13 @@ class ViewTask extends BakeTask {
 	public $controllerClass = null;
 
 /**
+ * Name of the table views are being baked against.
+ *
+ * @var string
+ */
+	public $tableName = null;
+
+/**
  * The template file to use
  *
  * @var string
@@ -119,7 +126,11 @@ class ViewTask extends BakeTask {
 			return $this->all();
 		}
 
-		$this->controller($this->args[0]);
+		$controller = null;
+		if (!empty($this->params['controller'])) {
+			$controller = $this->params['controller'];
+		}
+		$this->controller($this->args[0], $controller);
 
 		if (isset($this->args[1])) {
 			$this->template = $this->args[1];
@@ -148,12 +159,16 @@ class ViewTask extends BakeTask {
 /**
  * Set the controller related properties.
  *
- * @param string $name The controller name.
+ * @param string $table The table/model that is being baked.
+ * @param string $controller The controller name if specified.
  * @return void
  */
-	public function controller($name) {
-		$name = $this->_controllerName($name);
-		$this->controllerName = $name;
+	public function controller($table, $controller = null) {
+		$this->tableName = $this->_controllerName($table);
+		if (empty($controller)) {
+			$controller = $this->tableName;
+		}
+		$this->controllerName = $controller;
 
 		$plugin = $prefix = null;
 		if (!empty($this->params['plugin'])) {
@@ -162,7 +177,7 @@ class ViewTask extends BakeTask {
 		if (!empty($this->params['prefix'])) {
 			$prefix = $this->params['prefix'] . '/';
 		}
-		$this->controllerClass = App::className($plugin . $prefix . $name, 'Controller', 'Controller');
+		$this->controllerClass = App::className($plugin . $prefix . $controller, 'Controller', 'Controller');
 	}
 
 /**
@@ -238,46 +253,30 @@ class ViewTask extends BakeTask {
  * @return array Returns an variables to be made available to a view template
  */
 	protected function _loadController() {
-		if (!$this->controllerName) {
-			$this->err(__d('cake_console', 'Controller not found'));
-		}
-
 		$plugin = null;
 		if ($this->plugin) {
 			$plugin = $this->plugin . '.';
 		}
 
-		if (class_exists($this->controllerClass)) {
-			$controllerObj = new $this->controllerClass();
-			$controllerObj->plugin = $this->plugin;
-			$controllerObj->constructClasses();
-			$modelClass = $controllerObj->modelClass;
-			$modelObj = $controllerObj->{$modelClass};
-		} else {
-			$modelObj = TableRegistry::get($this->controllerName);
-		}
+		$modelObj = TableRegistry::get($this->tableName);
 
-		$primaryKey = [];
-		$displayField = null;
 		$singularVar = Inflector::variable(Inflector::singularize($this->controllerName));
 		$singularHumanName = $this->_singularHumanName($this->controllerName);
-		$fields = $schema = $keyFields = $associations = [];
 
-		if ($modelObj) {
-			$primaryKey = (array)$modelObj->primaryKey();
-			$displayField = $modelObj->displayField();
-			$singularVar = $this->_singularName($this->controllerName);
-			$singularHumanName = $this->_singularHumanName($this->controllerName);
-			$schema = $modelObj->schema();
-			$fields = $schema->columns();
-			$associations = $this->_associations($modelObj);
-			$keyFields = [];
-			if (!empty($associations['BelongsTo'])) {
-				foreach ($associations['BelongsTo'] as $assoc) {
-					$keyFields[$assoc['foreignKey']] = $assoc['variable'];
-				}
+		$primaryKey = (array)$modelObj->primaryKey();
+		$displayField = $modelObj->displayField();
+		$singularVar = $this->_singularName($this->controllerName);
+		$singularHumanName = $this->_singularHumanName($this->controllerName);
+		$schema = $modelObj->schema();
+		$fields = $schema->columns();
+		$associations = $this->_associations($modelObj);
+		$keyFields = [];
+		if (!empty($associations['BelongsTo'])) {
+			foreach ($associations['BelongsTo'] as $assoc) {
+				$keyFields[$assoc['foreignKey']] = $assoc['variable'];
 			}
 		}
+
 		$pluralVar = Inflector::variable($this->controllerName);
 		$pluralHumanName = $this->_pluralHumanName($this->controllerName);
 
@@ -439,6 +438,8 @@ class ViewTask extends BakeTask {
 			'boolean' => true,
 			'short' => 'f',
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
+		])->addOption('controller', [
+			'help' => __d('cake_console', 'The controller name if you have a controller that does not follow conventions.')
 		])->addOption('prefix', [
 			'help' => __d('cake_console', 'The routing prefix to generate views for.'),
 		])->addSubcommand('all', [
