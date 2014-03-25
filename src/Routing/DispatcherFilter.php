@@ -17,9 +17,9 @@
 
 namespace Cake\Routing;
 
+use Cake\Core\InstanceConfigTrait;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
-use Cake\Utility\Hash;
 
 /**
  * This abstract class represents a filter to be applied to a dispatcher cycle. It acts as as
@@ -29,6 +29,8 @@ use Cake\Utility\Hash;
  */
 abstract class DispatcherFilter implements EventListener {
 
+	use InstanceConfigTrait;
+
 /**
  * Default priority for all methods in this filter
  *
@@ -37,19 +39,21 @@ abstract class DispatcherFilter implements EventListener {
 	public $priority = 10;
 
 /**
- * Settings for this filter
+ * Default config
+ *
+ * These are merged with user-provided config when the class is used.
  *
  * @var array
  */
-	public $settings = array();
+	protected $_defaultConfig = [];
 
 /**
  * Constructor.
  *
- * @param array $settings Configuration settings for the filter.
+ * @param array $config Settings for the filter.
  */
-	public function __construct($settings = array()) {
-		$this->settings = Hash::merge($this->settings, $settings);
+	public function __construct($config = []) {
+		$this->config($config);
 	}
 
 /**
