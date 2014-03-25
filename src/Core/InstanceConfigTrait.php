@@ -150,6 +150,7 @@ trait InstanceConfigTrait {
 /**
  * Delete a single config key
  *
+ * @throws Cake\Error\Exception if attempting to clobber existing config
  * @param string $key
  * @return void
  */

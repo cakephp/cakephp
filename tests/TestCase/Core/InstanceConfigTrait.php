@@ -310,7 +310,6 @@ class InstanceConfigTraitTest extends TestCase {
 			$this->object->config(),
 			'deleted keys should not be present'
 		);
-
 	}
 
 /**
@@ -338,6 +337,17 @@ class InstanceConfigTraitTest extends TestCase {
 			$this->object->config(),
 			'deleted keys should not be present'
 		);
+	}
+
+/**
+ * testSetClobber
+ *
+ * @expectedException \Exception
+ * @expectedExceptionMessage Cannot unset a.nested.value.whoops
+ * @return void
+ */
+	public function testDeleteClobber() {
+		$this->object->config('a.nested.value.whoops', null);
 	}
 
 }
