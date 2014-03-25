@@ -417,9 +417,20 @@ class ViewTask extends BakeTask {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 
-		$parser->description(
-			__d('cake_console', 'Bake views for a controller, using built-in or custom templates.')
-		)->addArgument('controller', [
+		$parser->description([
+			__d('cake_console', 'Bake views for a controller, using built-in or custom templates.'),
+			__d('cake_console', 'You can bake all the views for a controller using: '),
+			'',
+			__d('cake_console', '  Console/cake bake view Tasks'),
+			'',
+			__d('cake_console', 'You can bake a single view using:'),
+			'',
+			__d('cake_console', '  Console/cake bake view Tasks index'),
+			'',
+			__d('cake_console', 'You can bake a single view for all controllers using:'),
+			'',
+			__d('cake_console', '  Console/cake bake view all index')
+		])->addArgument('controller', [
 			'help' => __d('cake_console', 'Name of the controller views to bake. Can be Plugin.name as a shortcut for plugin baking.')
 		])->addArgument('action', [
 			'help' => __d('cake_console', "Will bake a single action's file. core templates are (index, add, edit, view)")
