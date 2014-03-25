@@ -1610,6 +1610,7 @@ class FormHelperTest extends TestCase {
 				'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}</div>'
 			]
 		]);
+
 		$expected = [
 			'div' => ['class' => 'input text error'],
 			'label' => ['for' => 'article-title'],
@@ -5811,10 +5812,10 @@ class FormHelperTest extends TestCase {
  */
 	public function testResetTemplates() {
 		$this->Form->templates(['input' => '<input>']);
-		$this->assertEquals('<input>', $this->Form->getTemplater()->get('input'));
+		$this->assertEquals('<input>', $this->Form->templater()->get('input'));
 
 		$this->assertNull($this->Form->resetTemplates());
-		$this->assertNotEquals('<input>', $this->Form->getTemplater()->get('input'));
+		$this->assertNotEquals('<input>', $this->Form->templater()->get('input'));
 	}
 
 }

@@ -27,27 +27,7 @@ trait StringTemplateTrait {
  *
  * @var \Cake\View\StringTemplate
  */
-	protected $_templater;
-
-/**
- * Initializes the StringTemplate class and loads templates
- *
- * @param array $templates
- * @param string $templateClass Class name of the template class to instantiate
- * @return void
- */
-	public function initStringTemplates($templates = [], $templateClass = '\Cake\View\StringTemplate') {
-		$this->_templater = new $templateClass($templates);
-		if (empty($this->settings['templates'])) {
-			return;
-		}
-		if (is_string($this->settings['templates'])) {
-			$this->_templater->load($this->settings['templates']);
-		}
-		if (is_array($this->settings['templates'])) {
-			$this->_templater->add($this->settings['templates']);
-		}
-	}
+	protected $templater;
 
 /**
  * Get/set templates to use.
@@ -58,9 +38,10 @@ trait StringTemplateTrait {
  */
 	public function templates($templates = null) {
 		if ($templates === null || is_string($templates)) {
-			return $this->_templater->get($templates);
+			return $this->templater()->get($templates);
 		}
-		return $this->_templater->add($templates);
+
+		return $this->templater()->add($templates);
 	}
 
 /**
@@ -71,16 +52,32 @@ trait StringTemplateTrait {
  * @return string
  */
 	public function formatTemplate($name, $data) {
-		return $this->_templater->format($name, $data);
+		return $this->templater()->format($name, $data);
 	}
 
 /**
- * Returns the template engine object
+ * templater
  *
- * @return StringTemplate
+ * @return void
  */
-	public function getTemplater() {
-		return $this->_templater;
+	public function templater() {
+
+		if (empty($this->templater)) {
+			$class = $this->config('templateClass') ?: '\Cake\View\StringTemplate';
+			$this->templater = new $class;
+
+			$templates = $this->config('templates');
+
+			if ($templates) {
+				if (is_string($templates)) {
+					$this->templater->load($templates);
+				} else {
+					$this->templater->add($templates);
+				}
+			}
+		}
+
+		return $this->templater;
 	}
 
 }

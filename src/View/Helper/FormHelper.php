@@ -62,17 +62,49 @@ class FormHelper extends Helper {
 	protected $_datetimeParts = ['year', 'month', 'day', 'hour', 'minute', 'second', 'meridian'];
 
 /**
- * Settings for the helper.
+ * Default config for the helper.
  *
  * @var array
  */
-	public $settings = [
+	protected $_defaultConfig = [
 		'errorClass' => 'form-error',
 		'typeMap' => [
 			'string' => 'text', 'datetime' => 'datetime', 'boolean' => 'checkbox',
 			'timestamp' => 'datetime', 'text' => 'textarea', 'time' => 'time',
 			'date' => 'date', 'float' => 'number', 'integer' => 'number',
 			'decimal' => 'number', 'binary' => 'file', 'uuid' => 'string'
+		],
+		'widgets' => [],
+		'registry' => null,
+		'templates' => [
+			'button' => '<button{{attrs}}>{{text}}</button>',
+			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
+			'checkboxContainer' => '<div class="checkbox">{{input}}{{label}}</div>',
+			'dateWidget' => '{{month}}{{day}}{{year}}{{hour}}{{minute}}{{second}}{{meridian}}',
+			'error' => '<div class="error-message">{{content}}</div>',
+			'errorList' => '<ul>{{content}}</ul>',
+			'errorItem' => '<li>{{text}}</li>',
+			'file' => '<input type="file" name="{{name}}"{{attrs}}>',
+			'fieldset' => '<fieldset>{{content}}</fieldset>',
+			'formstart' => '<form{{attrs}}>',
+			'formend' => '</form>',
+			'hiddenblock' => '<div style="display:none;">{{content}}</div>',
+			'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
+			'inputsubmit' => '<input type="{{type}}"{{attrs}}>',
+			'label' => '<label{{attrs}}>{{text}}</label>',
+			'legend' => '<legend>{{text}}</legend>',
+			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
+			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
+			'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
+			'selectMultiple' => '<select name="{{name}}[]" multiple="multiple"{{attrs}}>{{content}}</select>',
+			'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
+			'radioContainer' => '{{input}}{{label}}',
+			'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
+			'formGroup' => '{{label}}{{input}}',
+			'checkboxFormGroup' => '{{input}}{{label}}',
+			'groupContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
+			'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
+			'submitContainer' => '<div class="submit">{{content}}</div>',
 		]
 	];
 
@@ -131,54 +163,18 @@ class FormHelper extends Helper {
 	protected $_contextProviders;
 
 /**
- * Default templates the FormHelper uses.
- *
- * @var array
- */
-	protected $_defaultTemplates = [
-		'button' => '<button{{attrs}}>{{text}}</button>',
-		'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
-		'checkboxContainer' => '<div class="checkbox">{{input}}{{label}}</div>',
-		'dateWidget' => '{{month}}{{day}}{{year}}{{hour}}{{minute}}{{second}}{{meridian}}',
-		'error' => '<div class="error-message">{{content}}</div>',
-		'errorList' => '<ul>{{content}}</ul>',
-		'errorItem' => '<li>{{text}}</li>',
-		'file' => '<input type="file" name="{{name}}"{{attrs}}>',
-		'fieldset' => '<fieldset>{{content}}</fieldset>',
-		'formstart' => '<form{{attrs}}>',
-		'formend' => '</form>',
-		'hiddenblock' => '<div style="display:none;">{{content}}</div>',
-		'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
-		'inputsubmit' => '<input type="{{type}}"{{attrs}}>',
-		'label' => '<label{{attrs}}>{{text}}</label>',
-		'legend' => '<legend>{{text}}</legend>',
-		'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
-		'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
-		'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
-		'selectMultiple' => '<select name="{{name}}[]" multiple="multiple"{{attrs}}>{{content}}</select>',
-		'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
-		'radioContainer' => '{{input}}{{label}}',
-		'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
-		'formGroup' => '{{label}}{{input}}',
-		'checkboxFormGroup' => '{{input}}{{label}}',
-		'groupContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
-		'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
-		'submitContainer' => '<div class="submit">{{content}}</div>',
-	];
-
-/**
  * Construct the widgets and binds the default context providers
  *
  * @param \Cake\View\View $View The View this helper is being attached to.
- * @param array $settings Configuration settings for the helper.
+ * @param array $config Configuration settings for the helper.
  */
-	public function __construct(View $View, $settings = array()) {
-		$settings += ['widgets' => [], 'templates' => null, 'registry' => null];
-		parent::__construct($View, $settings);
+	public function __construct(View $View, $config = array()) {
+		parent::__construct($View, $config);
 
-		$this->initStringTemplates($this->_defaultTemplates);
-		$this->widgetRegistry($settings['registry'], $settings['widgets']);
-		unset($this->settings['widgets'], $this->settings['registry']);
+		$config = $this->config();
+
+		$this->widgetRegistry($config['registry'], $config['widgets']);
+		$this->config(['widgets' => null, 'registry' => null]);
 
 		$this->_addDefaultContextProviders();
 	}
@@ -193,7 +189,7 @@ class FormHelper extends Helper {
 	public function widgetRegistry(WidgetRegistry $instance = null, $widgets = []) {
 		if ($instance === null) {
 			if ($this->_registry === null) {
-				$this->_registry = new WidgetRegistry($this->_templater, $widgets);
+				$this->_registry = new WidgetRegistry($this->templater(), $widgets);
 			}
 			return $this->_registry;
 		}
@@ -293,7 +289,7 @@ class FormHelper extends Helper {
 		];
 
 		$this->_idPrefix = $options['idPrefix'];
-		$templater = $this->getTemplater();
+		$templater = $this->templater();
 
 		if (!empty($options['templates']) && is_array($options['templates'])) {
 			$templater->add($options['templates']);
@@ -941,7 +937,7 @@ class FormHelper extends Helper {
 		}
 
 		$internalType = $context->type($fieldName);
-		$map = $this->settings['typeMap'];
+		$map = $this->config('typeMap');
 		$type = isset($map[$internalType]) ? $map[$internalType] : 'text';
 		$fieldName = array_slice(explode('.', $fieldName), -1)[0];
 
@@ -1414,7 +1410,7 @@ class FormHelper extends Helper {
 		}
 
 		$out = $this->formatTemplate('formstart', [
-			'attrs' => $this->_templater->formatAttributes($formOptions)
+			'attrs' => $this->templater()->formatAttributes($formOptions)
 		]);
 		$out .= $this->hidden('_method', ['value' => $requestMethod]);
 		$out .= $this->_csrfField();
@@ -1517,7 +1513,7 @@ class FormHelper extends Helper {
 
 		$input = $this->formatTemplate('inputsubmit', [
 			'type' => $type,
-			'attrs' => $this->_templater->formatAttributes($options),
+			'attrs' => $this->templater()->formatAttributes($options),
 		]);
 
 		return $this->formatTemplate('submitContainer', [
@@ -2098,7 +2094,7 @@ class FormHelper extends Helper {
 		unset($options['value'], $options['default']);
 
 		if ($context->hasError($field)) {
-			$options = $this->addClass($options, $this->settings['errorClass']);
+			$options = $this->addClass($options, $this->config('errorClass'));
 		}
 		if (!empty($options['disabled']) || $secure === static::SECURE_SKIP) {
 			return $options;
@@ -2242,9 +2238,7 @@ class FormHelper extends Helper {
  * @return void
  */
 	public function resetTemplates() {
-		$reflection = new \ReflectionClass($this);
-		$properties = $reflection->getDefaultProperties();
-		$this->templates($properties['_defaultTemplates']);
+		$this->templates($this->_defaultConfig['templates']);
 	}
 
 /**

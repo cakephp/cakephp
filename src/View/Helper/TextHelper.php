@@ -39,6 +39,15 @@ class TextHelper extends Helper {
 	public $helpers = array('Html');
 
 /**
+ * Default config for this class
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [
+		'engine' => 'Cake\Utility\String'
+	];
+
+/**
  * An array of md5sums and their contents.
  * Used when inserting links into text.
  *
@@ -62,17 +71,18 @@ class TextHelper extends Helper {
  *            The class needs to be placed in the `Utility` directory.
  *
  * @param View $View the view object the helper is attached to.
- * @param array $settings Settings array Settings array
+ * @param array $config Settings array Settings array
  * @throws \Cake\Error\Exception when the engine class could not be found.
  */
-	public function __construct(View $View, $settings = array()) {
-		$settings = Hash::merge(array('engine' => 'Cake\Utility\String'), $settings);
-		parent::__construct($View, $settings);
-		$engineClass = App::classname($settings['engine'], 'Utility');
+	public function __construct(View $View, $config = array()) {
+		parent::__construct($View, $config);
+
+		$config = $this->config();
+		$engineClass = App::classname($config['engine'], 'Utility');
 		if ($engineClass) {
-			$this->_engine = new $engineClass($settings);
+			$this->_engine = new $engineClass($config);
 		} else {
-			throw new Error\Exception(sprintf('Class for %s could not be found', $settings['engine']));
+			throw new Error\Exception(sprintf('Class for %s could not be found', $config['engine']));
 		}
 	}
 

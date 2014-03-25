@@ -16,6 +16,7 @@ namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Event\EventListener;
@@ -48,12 +49,7 @@ use Cake\Utility\Inflector;
  */
 class Helper extends Object implements EventListener {
 
-/**
- * Settings for this helper.
- *
- * @var array
- */
-	public $settings = array();
+	use InstanceConfigTrait;
 
 /**
  * List of helpers used by this helper
@@ -61,6 +57,13 @@ class Helper extends Object implements EventListener {
  * @var array
  */
 	public $helpers = array();
+
+/**
+ * Default config for this helper.
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [];
 
 /**
  * A helper lookup table used to lazy load helper objects.
@@ -141,14 +144,17 @@ class Helper extends Object implements EventListener {
  * Default Constructor
  *
  * @param View $View The View this helper is being attached to.
- * @param array $settings Configuration settings for the helper.
+ * @param array $config Configuration settings for the helper.
  */
-	public function __construct(View $View, $settings = array()) {
+	public function __construct(View $View, $config = array()) {
 		$this->_View = $View;
 		$this->request = $View->request;
-		if ($settings) {
-			$this->settings = Hash::merge($this->settings, $settings);
+
+		if ($config) {
+			$config = Hash::merge($this->_defaultConfig, $config);
 		}
+		$this->config($config);
+
 		if (!empty($this->helpers)) {
 			$this->_helperMap = $View->Helpers->normalizeArray($this->helpers);
 		}

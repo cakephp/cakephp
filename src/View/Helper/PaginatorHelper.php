@@ -30,7 +30,9 @@ class PaginatorHelper extends Helper {
 	use StringTemplateTrait;
 
 /**
- * Holds the default options for pagination links
+ * Defualt config for this class
+ *
+ * Options: Holds the default options for pagination links
  *
  * The values that may be specified are:
  *
@@ -41,44 +43,31 @@ class PaginatorHelper extends Helper {
  * - `model` The name of the model.
  * - `escape` Defines if the title field for the link should be escaped (default: true).
  *
- * @var array
- */
-	public $options = [];
-
-/**
- * The default templates used by PaginatorHelper.
+ * Templates: the templates used by this class
  *
  * @var array
  */
-	protected $_defaultTemplates = [
-		'nextActive' => '<li class="next"><a rel="next" href="{{url}}">{{text}}</a></li>',
-		'nextDisabled' => '<li class="next disabled"><span>{{text}}</span></li>',
-		'prevActive' => '<li class="prev"><a rel="prev" href="{{url}}">{{text}}</a></li>',
-		'prevDisabled' => '<li class="prev disabled"><span>{{text}}</span></li>',
-		'counterRange' => '{{start}} - {{end}} of {{count}}',
-		'counterPages' => '{{page}} of {{pages}}',
-		'first' => '<li class="first"><a href="{{url}}">{{text}}</a></li>',
-		'last' => '<li class="last"><a href="{{url}}">{{text}}</a></li>',
-		'number' => '<li><a href="{{url}}">{{text}}</a></li>',
-		'current' => '<li class="active"><span>{{text}}</span></li>',
-		'ellipsis' => '<li class="ellipsis">...</li>',
-		'sort' => '<a href="{{url}}">{{text}}</a>',
-		'sortAsc' => '<a class="asc" href="{{url}}">{{text}}</a>',
-		'sortDesc' => '<a class="desc" href="{{url}}">{{text}}</a>',
-		'sortAscLocked' => '<a class="asc locked" href="{{url}}">{{text}}</a>',
-		'sortDescLocked' => '<a class="desc locked" href="{{url}}">{{text}}</a>',
+	protected $_defaultConfig = [
+		'options' => [],
+		'templates' => [
+			'nextActive' => '<li class="next"><a rel="next" href="{{url}}">{{text}}</a></li>',
+			'nextDisabled' => '<li class="next disabled"><span>{{text}}</span></li>',
+			'prevActive' => '<li class="prev"><a rel="prev" href="{{url}}">{{text}}</a></li>',
+			'prevDisabled' => '<li class="prev disabled"><span>{{text}}</span></li>',
+			'counterRange' => '{{start}} - {{end}} of {{count}}',
+			'counterPages' => '{{page}} of {{pages}}',
+			'first' => '<li class="first"><a href="{{url}}">{{text}}</a></li>',
+			'last' => '<li class="last"><a href="{{url}}">{{text}}</a></li>',
+			'number' => '<li><a href="{{url}}">{{text}}</a></li>',
+			'current' => '<li class="active"><span>{{text}}</span></li>',
+			'ellipsis' => '<li class="ellipsis">...</li>',
+			'sort' => '<a href="{{url}}">{{text}}</a>',
+			'sortAsc' => '<a class="asc" href="{{url}}">{{text}}</a>',
+			'sortDesc' => '<a class="desc" href="{{url}}">{{text}}</a>',
+			'sortAscLocked' => '<a class="asc locked" href="{{url}}">{{text}}</a>',
+			'sortDescLocked' => '<a class="desc locked" href="{{url}}">{{text}}</a>',
+		]
 	];
-
-/**
- * Constructor
- *
- * @param View $View The View this helper is being attached to.
- * @param array $settings Configuration settings for the helper.
- */
-	public function __construct(View $View, $settings = []) {
-		parent::__construct($View, $settings);
-		$this->initStringTemplates($this->_defaultTemplates);
-	}
 
 /**
  * Before render callback. Overridden to merge passed args with URL options.
@@ -88,7 +77,10 @@ class PaginatorHelper extends Helper {
  * @return void
  */
 	public function beforeRender($event, $viewFile) {
-		$this->options['url'] = array_merge($this->request->params['pass'], $this->request->query);
+		$this->config(
+			'options.url',
+			array_merge($this->request->params['pass'], $this->request->query)
+		);
 	}
 
 /**
@@ -151,7 +143,7 @@ class PaginatorHelper extends Helper {
 			);
 			unset($options[$model]);
 		}
-		$this->options = array_filter(array_merge($this->options, $options));
+		$this->_config['options'] = array_filter(array_merge($this->config('options'), $options));
 	}
 
 /**
@@ -237,7 +229,7 @@ class PaginatorHelper extends Helper {
 		$text = $options['escape'] ? h($text) : $text;
 
 		if (!$enabled) {
-			return $this->_templater->format($template, [
+			return $this->templater()->format($template, [
 				'text' => $text,
 			]);
 		}
@@ -248,7 +240,7 @@ class PaginatorHelper extends Helper {
 			['page' => $paging['page'] + $options['step']]
 		);
 		$url = $this->url($url, $options['model']);
-		return $this->_templater->format($template, [
+		return $this->templater()->format($template, [
 			'url' => $url,
 			'text' => $text,
 		]);
@@ -397,7 +389,7 @@ class PaginatorHelper extends Helper {
 			'text' => $options['escape'] ? h($title) : $title,
 			'url' => $this->url($url, $options['model']),
 		];
-		return $this->_templater->format($template, $vars);
+		return $this->templater()->format($template, $vars);
 	}
 
 /**
@@ -418,8 +410,9 @@ class PaginatorHelper extends Helper {
 			'direction' => $paging['direction'],
 		];
 
-		if (!empty($this->options['url'])) {
-			$url = array_merge($this->options['url'], $url);
+		$defaultUrl = $this->config('options.url');
+		if ($defaultUrl) {
+			$url = array_merge($defaultUrl, $url);
 		}
 		$url = array_merge(array_filter($url), $options);
 
@@ -551,7 +544,7 @@ class PaginatorHelper extends Helper {
 				break;
 			default:
 				$template = 'counterCustom';
-				$this->_templater->add([$template => $options['format']]);
+				$this->templater()->add([$template => $options['format']]);
 		}
 		$map = [
 			'page' => $paging['page'],
@@ -562,7 +555,7 @@ class PaginatorHelper extends Helper {
 			'end' => $end,
 			'model' => strtolower(Inflector::humanize(Inflector::tableize($options['model'])))
 		];
-		return $this->_templater->format($template, $map);
+		return $this->templater()->format($template, $map);
 	}
 
 /**
@@ -612,7 +605,7 @@ class PaginatorHelper extends Helper {
 		}
 
 		$out = '';
-		$ellipsis = $this->_templater->format('ellipsis', []);
+		$ellipsis = $this->templater()->format('ellipsis', []);
 
 		if ($options['modulus'] && $params['pageCount'] > $options['modulus']) {
 			$half = intval($options['modulus'] / 2);
@@ -642,10 +635,10 @@ class PaginatorHelper extends Helper {
 					'text' => $i,
 					'url' => $this->url(['page' => $i], $options['model']),
 				];
-				$out .= $this->_templater->format('number', $vars);
+				$out .= $this->templater()->format('number', $vars);
 			}
 
-			$out .= $this->_templater->format('current', [
+			$out .= $this->templater()->format('current', [
 				'text' => $params['page'],
 				'url' => $this->url(['page' => $params['page']], $options['model']),
 			]);
@@ -656,7 +649,7 @@ class PaginatorHelper extends Helper {
 					'text' => $i,
 					'url' => $this->url(['page' => $i], $options['model']),
 				];
-				$out .= $this->_templater->format('number', $vars);
+				$out .= $this->templater()->format('number', $vars);
 			}
 
 			if ($end != $params['page']) {
@@ -664,7 +657,7 @@ class PaginatorHelper extends Helper {
 					'text' => $i,
 					'url' => $this->url(['page' => $end], $options['model']),
 				];
-				$out .= $this->_templater->format('number', $vars);
+				$out .= $this->templater()->format('number', $vars);
 			}
 
 			$out .= $options['after'];
@@ -682,7 +675,7 @@ class PaginatorHelper extends Helper {
 
 			for ($i = 1; $i <= $params['pageCount']; $i++) {
 				if ($i == $params['page']) {
-					$out .= $this->_templater->format('current', [
+					$out .= $this->templater()->format('current', [
 						'text' => $params['page'],
 						'url' => $this->url(['page' => $params['page']], $options['model']),
 					]);
@@ -691,7 +684,7 @@ class PaginatorHelper extends Helper {
 						'text' => $i,
 						'url' => $this->url(['page' => $i], $options['model']),
 					];
-					$out .= $this->_templater->format('number', $vars);
+					$out .= $this->templater()->format('number', $vars);
 				}
 			}
 
@@ -740,14 +733,14 @@ class PaginatorHelper extends Helper {
 
 		if (is_int($first) && $params['page'] >= $first) {
 			for ($i = 1; $i <= $first; $i++) {
-				$out .= $this->_templater->format('number', [
+				$out .= $this->templater()->format('number', [
 					'url' => $this->url(['page' => $i], $options['model']),
 					'text' => $i
 				]);
 			}
 		} elseif ($params['page'] > 1 && is_string($first)) {
 			$first = $options['escape'] ? h($first) : $first;
-			$out .= $this->_templater->format('first', [
+			$out .= $this->templater()->format('first', [
 				'url' => $this->url(['page' => 1], $options['model']),
 				'text' => $first
 			]);
@@ -793,14 +786,14 @@ class PaginatorHelper extends Helper {
 
 		if (is_int($last) && $params['page'] <= $lower) {
 			for ($i = $lower; $i <= $params['pageCount']; $i++) {
-				$out .= $this->_templater->format('number', [
+				$out .= $this->templater()->format('number', [
 					'url' => $this->url(['page' => $i], $options['model']),
 					'text' => $i
 				]);
 			}
 		} elseif ($params['page'] < $params['pageCount'] && is_string($last)) {
 			$last = $options['escape'] ? h($last) : $last;
-			$out .= $this->_templater->format('last', [
+			$out .= $this->templater()->format('last', [
 				'url' => $this->url(['page' => $params['pageCount']], $options['model']),
 				'text' => $last
 			]);
