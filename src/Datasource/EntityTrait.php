@@ -390,18 +390,18 @@ trait EntityTrait {
  * Implements isset($entity);
  *
  * @param mixed $offset
- * @return void
+ * @return boolean Success
  */
 	public function offsetExists($offset) {
 		return $this->has($offset);
 	}
+
 /**
  * Implements $entity[$offset];
  *
  * @param mixed $offset
- * @return void
+ * @return mixed
  */
-
 	public function &offsetGet($offset) {
 		return $this->get($offset);
 	}
@@ -413,7 +413,6 @@ trait EntityTrait {
  * @param mixed $value
  * @return void
  */
-
 	public function offsetSet($offset, $value) {
 		$this->set($offset, $value);
 	}
