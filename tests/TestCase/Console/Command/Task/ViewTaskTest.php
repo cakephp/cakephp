@@ -254,7 +254,8 @@ class ViewTaskTest extends TestCase {
 			'singularHumanName' => 'Test View Model',
 			'pluralHumanName' => 'Test View Models',
 			'fields' => ['id', 'name', 'body'],
-			'associations' => []
+			'associations' => [],
+			'keyFields' => [],
 		);
 		$result = $this->Task->getContent('view', $vars);
 
@@ -284,6 +285,7 @@ class ViewTaskTest extends TestCase {
 			'singularHumanName' => 'Test View Model',
 			'pluralHumanName' => 'Test View Models',
 			'fields' => ['id', 'name', 'body'],
+			'keyFields' => [],
 			'associations' => []
 		);
 		$this->Task->params['prefix'] = 'Admin';
@@ -337,7 +339,10 @@ class ViewTaskTest extends TestCase {
 				TMP . 'ViewTaskComments/edit.ctp',
 				$this->anything()
 			);
-		$this->Task->bake('edit', true);
+		$result = $this->Task->bake('edit', true);
+
+		$this->assertContains("Form->input('id')", $result);
+		$this->assertContains("Form->input('article_id', ['options' => \$articles])", $result);
 	}
 
 /**

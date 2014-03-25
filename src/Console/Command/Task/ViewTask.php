@@ -232,11 +232,8 @@ class ViewTask extends BakeTask {
  * - 'singularHumanName'
  * - 'pluralHumanName'
  * - 'fields'
- * - 'foreignKeys',
- * - 'belongsTo'
- * - 'hasOne'
- * - 'hasMany'
- * - 'hasAndBelongsToMany'
+ * - 'keyFields'
+ * - 'schema'
  *
  * @return array Returns an variables to be made available to a view template
  */
@@ -260,6 +257,11 @@ class ViewTask extends BakeTask {
 			$modelObj = TableRegistry::get($this->controllerName);
 		}
 
+		$primaryKey = [];
+		$displayField = null;
+		$singularVar = Inflector::variable(Inflector::singularize($this->controllerName));
+		$singularHumanName = $this->_singularHumanName($this->controllerName);
+		$fields = $schema = $keyFields = $associations = [];
 
 		if ($modelObj) {
 			$primaryKey = (array)$modelObj->primaryKey();
@@ -269,12 +271,12 @@ class ViewTask extends BakeTask {
 			$schema = $modelObj->schema();
 			$fields = $schema->columns();
 			$associations = $this->_associations($modelObj);
-		} else {
-			$primaryKey = [];
-			$displayField = null;
-			$singularVar = Inflector::variable(Inflector::singularize($this->controllerName));
-			$singularHumanName = $this->_singularHumanName($this->controllerName);
-			$fields = $schema = $associations = [];
+			$keyFields = [];
+			if (!empty($associations['BelongsTo'])) {
+				foreach ($associations['BelongsTo'] as $assoc) {
+					$keyFields[$assoc['foreignKey']] = $assoc['variable'];
+				}
+			}
 		}
 		$pluralVar = Inflector::variable($this->controllerName);
 		$pluralHumanName = $this->_pluralHumanName($this->controllerName);
@@ -284,7 +286,7 @@ class ViewTask extends BakeTask {
 			'primaryKey', 'displayField',
 			'singularVar', 'pluralVar',
 			'singularHumanName', 'pluralHumanName',
-			'fields', 'associations'
+			'fields', 'associations', 'keyFields'
 		);
 	}
 
@@ -334,9 +336,9 @@ class ViewTask extends BakeTask {
 /**
  * Assembles and writes bakes the view file.
  *
- * @param string $action Action to bake
- * @param string $content Content to write
- * @return boolean Success
+ * @param string $action Action to bake.
+ * @param string $content Content to write.
+ * @return string Generated file content.
  */
 	public function bake($action, $content = '') {
 		if ($content === true) {
@@ -348,7 +350,8 @@ class ViewTask extends BakeTask {
 		$this->out("\n" . __d('cake_console', 'Baking `%s` view file...', $action), 1, Shell::QUIET);
 		$path = $this->getPath();
 		$filename = $path . Inflector::underscore($action) . '.ctp';
-		return $this->createFile($filename, $content);
+		$this->createFile($filename, $content);
+		return $content;
 	}
 
 /**

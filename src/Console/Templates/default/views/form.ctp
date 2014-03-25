@@ -23,7 +23,12 @@ use Cake\Utility\Inflector;
 		foreach ($fields as $field) {
 			if (strpos($action, 'add') !== false && in_array($field, $primaryKey)) {
 				continue;
-			} elseif (!in_array($field, ['created', 'modified', 'updated'])) {
+			}
+			if (isset($keyFields[$field])) {
+				echo "\t\techo \$this->Form->input('{$field}', ['options' => \${$keyFields[$field]}]);\n";
+				continue;
+			}
+			if (!in_array($field, ['created', 'modified', 'updated'])) {
 				echo "\t\techo \$this->Form->input('{$field}');\n";
 			}
 		}
@@ -45,7 +50,7 @@ use Cake\Utility\Inflector;
 	<ul>
 
 <?php if (strpos($action, 'add') === false): ?>
-		<li><?= "<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', \${$singularVar}->{$primaryKey[0]}], null, __('Are you sure you want to delete # %s?', \${$singularVar}->{$primaryKey[0]})); ?>"; ?></li>
+		<li><?= "<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', \${$singularVar}->{$primaryKey[0]}], [], __('Are you sure you want to delete # %s?', \${$singularVar}->{$primaryKey[0]})); ?>"; ?></li>
 <?php endif; ?>
 		<li><?= "<?= \$this->Html->link(__('List " . $pluralHumanName . "'), ['action' => 'index']); ?>"; ?></li>
 <?php
