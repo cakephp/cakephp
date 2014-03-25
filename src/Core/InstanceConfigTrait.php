@@ -67,7 +67,7 @@ trait InstanceConfigTrait {
 			$this->_config = $this->_defaultConfig;
 		}
 
-		if ($value !== null || is_array($key)) {
+		if (is_array($key) || func_num_args() === 2) {
 			return $this->_configWrite($key, $value);
 		}
 
@@ -120,14 +120,19 @@ trait InstanceConfigTrait {
 			return;
 		}
 
+		if ($value === null) {
+			return $this->_configDelete($key);
+		}
+
 		if (strpos($key, '.') === false) {
 			$this->_config[$key] = $value;
 			return;
 		}
 
 		$update =& $this->_config;
+		$stack = explode('.', $key);
 
-		foreach (explode('.', $key) as $k) {
+		foreach ($stack as $k) {
 			if (!is_array($update)) {
 				throw new Error\Exception(sprintf('Cannot set %s value', $key));
 			}
@@ -140,6 +145,40 @@ trait InstanceConfigTrait {
 		}
 
 		$update = $value;
+	}
+
+/**
+ * Delete a single config key
+ *
+ * @param string $key
+ * @return void
+ */
+	protected function _configDelete($key) {
+		if (strpos($key, '.') === false) {
+			unset($this->_config[$key]);
+			return;
+		}
+
+		$update =& $this->_config;
+		$stack = explode('.', $key);
+		$length = count($stack);
+
+		foreach ($stack as $i => $k) {
+			if (!is_array($update)) {
+				throw new Error\Exception(sprintf('Cannot unset %s value', $key));
+			}
+
+			if (!isset($update[$k])) {
+				break;
+			}
+
+			if ($i === $length - 2) {
+				unset($update[$k]);
+				break;
+			}
+
+			$update =& $update[$k];
+		}
 	}
 
 }

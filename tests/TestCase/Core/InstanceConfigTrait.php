@@ -285,4 +285,59 @@ class InstanceConfigTraitTest extends TestCase {
 		$object->config('throw.me', 'an exception');
 	}
 
+/**
+ * testDeleteSimple
+ *
+ * @return void
+ */
+	public function testDeleteSimple() {
+		$this->object->config('foo', null);
+		$this->assertNull(
+			$this->object->config('foo'),
+			'setting a new key to null should have no effect'
+		);
+
+		$this->object->config('some', null);
+		$this->assertNull(
+			$this->object->config('some'),
+			'should delete the existing value'
+		);
+
+		$this->assertSame(
+			[
+				'a' => ['nested' => 'value'],
+			],
+			$this->object->config(),
+			'deleted keys should not be present'
+		);
+
+	}
+
+/**
+ * testDeleteNested
+ *
+ * @return void
+ */
+	public function testDeleteNested() {
+		$this->object->config('new.foo', null);
+		$this->assertNull(
+			$this->object->config('new.foo'),
+			'setting a new key to null should have no effect'
+		);
+
+		$this->object->config('a.nested', null);
+		$this->assertNull(
+			$this->object->config('a.nested'),
+			'should delete the existing value'
+		);
+
+		$this->assertSame(
+			[
+				'some' => 'string',
+			],
+			$this->object->config(),
+			'deleted keys should not be present'
+		);
+	}
+
 }
