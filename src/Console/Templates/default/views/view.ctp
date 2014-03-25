@@ -101,7 +101,7 @@ foreach ($relations as $alias => $details):
 	?>
 <div class="related">
 	<h3><?= "<?= __('Related " . $otherPluralHumanName . "'); ?>"; ?></h3>
-	<?= "<?php if (!empty(\${$singularVar}->{$alias})): ?>\n"; ?>
+	<?= "<?php if (!empty(\${$singularVar}->{$details['property']})): ?>\n"; ?>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 <?php
