@@ -69,7 +69,7 @@ foreach ($modelObj->associations()->type('BelongsTo') as $assoc) {
 		foreach ($modelObj->associations()->type($assoc) as $association):
 			$otherName = $association->target()->alias();
 			$otherPlural = $this->_pluralName($otherName);
-			echo "\t\t\${$otherPlural} = \$this->{$currentModelName}->association('{$otherName}')->find('list');\n";
+			echo "\t\t\${$otherPlural} = \$this->{$currentModelName}->{$otherName}->find('list');\n";
 			$compact[] = "'{$otherPlural}'";
 		endforeach;
 	endforeach;
@@ -101,7 +101,7 @@ foreach ($modelObj->associations()->type('BelongsTo') as $assoc) {
 			foreach ($modelObj->associations()->type($assoc) as $association):
 				$otherName = $association->target()->alias();
 				$otherPlural = $this->_pluralName($otherName);
-				echo "\t\t\${$otherPlural} = \$this->{$currentModelName}->association('{$otherName}')->find('list');\n";
+				echo "\t\t\${$otherPlural} = \$this->{$currentModelName}->{$otherName}->find('list');\n";
 				$compact[] = "'{$otherPlural}'";
 			endforeach;
 		endforeach;
