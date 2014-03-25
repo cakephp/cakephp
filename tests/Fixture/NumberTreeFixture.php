@@ -61,77 +61,66 @@ class NumberTreeFixture extends TestFixture {
  */
 	public $records = array(
 		array(
-			'id' => '1',
 			'name' => 'electronics',
 			'parent_id' => null,
 			'lft' => '1',
 			'rght' => '20'
 		),
 		array(
-			'id' => '2',
 			'name' => 'televisions',
 			'parent_id' => '1',
 			'lft' => '2',
 			'rght' => '9'
 		),
 		array(
-			'id' => '3',
 			'name' => 'tube',
 			'parent_id' => '2',
 			'lft' => '3',
 			'rght' => '4'
 		),
 		array(
-			'id' => '4',
 			'name' => 'lcd',
 			'parent_id' => '2',
 			'lft' => '5',
 			'rght' => '6'
 		),
 		array(
-			'id' => '5',
 			'name' => 'plasma',
 			'parent_id' => '2',
 			'lft' => '7',
 			'rght' => '8'
 		),
 		array(
-			'id' => '6',
 			'name' => 'portable',
 			'parent_id' => '1',
 			'lft' => '10',
 			'rght' => '19'
 		),
 		array(
-			'id' => '7',
 			'name' => 'mp3',
 			'parent_id' => '6',
 			'lft' => '11',
 			'rght' => '14'
 		),
 		array(
-			'id' => '8',
 			'name' => 'flash',
 			'parent_id' => '7',
 			'lft' => '12',
 			'rght' => '13'
 		),
 		array(
-			'id' => '9',
 			'name' => 'cd',
 			'parent_id' => '6',
 			'lft' => '15',
 			'rght' => '16'
 		),
 		array(
-			'id' => '10',
 			'name' => 'radios',
 			'parent_id' => '6',
 			'lft' => '17',
 			'rght' => '18'
 		),
 		array(
-			'id' => '11',
 			'name' => 'alien hardware',
 			'parent_id' => null,
 			'lft' => '21',

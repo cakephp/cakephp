@@ -302,4 +302,26 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals($expected2, $result2);
 	}
 
+/**
+ * Tests adding a new orphan node
+ *
+ * @return void
+ */
+	public function testAddOrphan() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = new Entity(
+			['name' => 'New Orphan', 'parent_id' => null],
+			['markNew' => true]
+		);
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals(23, $entity->lft);
+		$this->assertEquals(24, $entity->rght);
+
+		$expected[] = $entity->toArray();
+		$results = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals($expected, $results);
+	}
+
 }

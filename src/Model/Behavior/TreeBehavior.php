@@ -61,6 +61,98 @@ class TreeBehavior extends Behavior {
 		$this->_table = $table;
 	}
 
+/**
+ * Before save listener.
+ * Transparently managse setting the lft and rght fields if the parent field is
+ * included in the parameters to be saved.
+ *
+ * @param \Cake\Event\Event the beforeSave event that was fired
+ * @param \Cake\ORM\Entity the entity that is going to be saved
+ * @return void
+ */
+	public function beforeSave(Event $event, Entity $entity) {
+		$isNew = $entity->isNew();
+		$config = $this->config('parent');
+		$parent = $entity->get($config['parent']);
+		$primaryKey = (array)$this->_table->primaryKey();
+		$dirty = $entity->dirty($config['parent']);
+
+		if ($isNew && $parent) {
+			if ($entity->get($primaryKey[0]) == $parent) {
+				throw new \RuntimeException("Cannot set a node's parent as itself");
+			}
+
+			$parentNode = $this->_getParent($parent);
+			$edge = $parentNode->get($config['right']);
+			$entity->set($config['left'], $edge);
+			$entity->set($config['right'], $edge + 1);
+			$this->_sync(2, '+', ">= {$config['right']}");
+		}
+
+		if ($isNew && !$parent) {
+			$edge = $this->_getMax();
+			$entity->set($config['left'],$edge + 1);
+			$entity->set($config['right'], $edge + 2);
+		}
+
+		if (!$isNew && $dirty && $parent) {
+			$this->_setParent($entity, $parent);
+		}
+	}
+
+	protected function _getParent($id) {
+		$config = $this->config();
+		$parentNode = $this->_scope($this->_table->find())
+			->select([$config['lft'], $config['rght']])
+			->where([$primaryKey[0] => $parent]);
+
+		if (!$parentNode) {
+			throw new \Cake\ORM\Error\RecordNotFoundException(
+				"Parent node \"{$parent}\ was not found in the tree."
+			);
+		}
+
+		return $parentNode;
+	}
+
+	protected function _setParent($entity, $parent) {
+		$config = $this->config();
+		$parentNode = $this->_getParent($parent);
+		$parentNodeLeft = $parentNode->get($config['left']);
+		$parentNoderight = $parentNode->get($config['right']);
+
+		$right = $entity->get($config['right']);
+		$left = $entity->get($config['left']);
+
+		$diff = $right - $left + 1;
+		$targetLeft = $parentRight - $diff;
+		$targetRight = $parentRight - 1;
+
+		// Values for moving to the left
+		$min = $parentRight;
+		$max = $left - 1;
+
+		if ($left < $targetLeft) {
+			//Moving to the right
+			$min = $right + 1;
+			$max = $parentRight - 1;
+			$diff *= -1;
+		}
+
+		$this->_sync($diff, '+', "BETWEEN {$min} AND {$max}");
+
+		if ($right - $left > 1) {
+			//Correcting internal subtree
+			$internalLeft = $left + 1;
+			$internalRight = $right - 1;
+			$this->_sync($targetLeft - $left, '+', "BETWEEN {$internalLeft} AND {$internalRight}");
+		}
+
+		//Allocating new position
+		$entity->set($config['left'], $targetLeft);
+		$entity->set($config['right'], $targetRight);
+	}
+
 	public function findPath($query, $options) {
 		if (empty($options['for'])) {
 			throw new \InvalidArgumentException("The 'for' key is required for find('path')");
