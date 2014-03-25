@@ -29,7 +29,7 @@ use Cake\Utility\Inflector;
 		}
 		if (!empty($associations['BelongsToMany'])) {
 			foreach ($associations['BelongsToMany'] as $assocName => $assocData) {
-				echo "\t\techo \$this->Form->input('{$assocName}._ids', ['options' => ${$assocName}]);\n";
+				echo "\t\techo \$this->Form->input('{$assocName}._ids', ['options' => \${$assocData['variable']}]);\n";
 			}
 		}
 		echo "\t?>\n";

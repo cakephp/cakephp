@@ -24,8 +24,8 @@ foreach ($fields as $field) {
 		foreach ($associations['BelongsTo'] as $alias => $details) {
 			if ($field === $details['foreignKey']) {
 				$isKey = true;
-				echo "\t\t<dt><?= __('" . Inflector::humanize(Inflector::underscore($alias)) . "'); ?></dt>\n";
-				echo "\t\t<dd>\n\t\t\t<?= \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['primaryKey'][0]}]); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
+				echo "\t\t<dt><?= __('" . Inflector::humanize(Inflector::underscore($details['property'])) . "'); ?></dt>\n";
+				echo "\t\t<dd>\n\t\t\t<?= \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['property']}->{$details['primaryKey'][0]}]); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 				break;
 			}
 		}
@@ -45,7 +45,7 @@ foreach ($fields as $field) {
 	$pk = "\${$singularVar}->{$primaryKey[0]}";
 
 	echo "\t\t<li><?= \$this->Html->link(__('Edit " . $singularHumanName ."'), ['action' => 'edit', {$pk}]); ?> </li>\n";
-	echo "\t\t<li><?= \$this->Form->postLink(__('Delete " . $singularHumanName . "'), ['action' => 'delete', {$pk}], null, __('Are you sure you want to delete # %s?', {$pk})); ?> </li>\n";
+	echo "\t\t<li><?= \$this->Form->postLink(__('Delete " . $singularHumanName . "'), ['action' => 'delete', {$pk}], [], __('Are you sure you want to delete # %s?', {$pk})); ?> </li>\n";
 	echo "\t\t<li><?= \$this->Html->link(__('List " . $pluralHumanName . "'), ['action' => 'index']); ?> </li>\n";
 	echo "\t\t<li><?= \$this->Html->link(__('New " . $singularHumanName . "'), ['action' => 'add']); ?> </li>\n";
 
@@ -72,7 +72,7 @@ if (!empty($associations['HasOne'])) :
 	<?php
 			foreach ($details['fields'] as $field) {
 				echo "\t\t<dt><?= __('" . Inflector::humanize($field) . "'); ?></dt>\n";
-				echo "\t\t<dd>\n\t<?= \${$singularVar}->{$details['property']}->{$field}; ?>\n&nbsp;</dd>\n";
+				echo "\t\t<dd>\n\t<?= h(\${$singularVar}->{$details['property']}->{$field}) ?>\n&nbsp;</dd>\n";
 			}
 	?>
 		</dl>
@@ -102,7 +102,7 @@ foreach ($relations as $alias => $details):
 <div class="related">
 	<h3><?= "<?= __('Related " . $otherPluralHumanName . "'); ?>"; ?></h3>
 	<?= "<?php if (!empty(\${$singularVar}->{$alias})): ?>\n"; ?>
-	<table cellpadding = "0" cellspacing = "0">
+	<table cellpadding="0" cellspacing="0">
 	<tr>
 <?php
 			foreach ($details['fields'] as $field) {
@@ -115,7 +115,7 @@ foreach ($relations as $alias => $details):
 echo "\t<?php foreach (\${$singularVar}->{$details['property']} as \${$otherSingularVar}): ?>\n";
 		echo "\t\t<tr>\n";
 			foreach ($details['fields'] as $field) {
-				echo "\t\t\t<td><?= \${$otherSingularVar}->{$field} ?></td>\n";
+				echo "\t\t\t<td><?= h(\${$otherSingularVar}->{$field}) ?></td>\n";
 			}
 
 			$otherPk = "\${$otherSingularVar}->{$details['primaryKey'][0]}";
@@ -123,7 +123,7 @@ echo "\t<?php foreach (\${$singularVar}->{$details['property']} as \${$otherSing
 			echo "\t\t\t<td class=\"actions\">\n";
 			echo "\t\t\t\t<?= \$this->Html->link(__('View'), ['controller' => '{$details['controller']}', 'action' => 'view', {$otherPk}]); ?>\n";
 			echo "\t\t\t\t<?= \$this->Html->link(__('Edit'), ['controller' => '{$details['controller']}', 'action' => 'edit', {$otherPk}]); ?>\n";
-			echo "\t\t\t\t<?= \$this->Form->postLink(__('Delete'), ['controller' => '{$details['controller']}', 'action' => 'delete', {$otherPk}], null, __('Are you sure you want to delete # %s?', {$otherPk})); ?>\n";
+			echo "\t\t\t\t<?= \$this->Form->postLink(__('Delete'), ['controller' => '{$details['controller']}', 'action' => 'delete', {$otherPk}], [], __('Are you sure you want to delete # %s?', {$otherPk})); ?>\n";
 			echo "\t\t\t</td>\n";
 		echo "\t\t</tr>\n";
 

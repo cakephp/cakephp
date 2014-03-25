@@ -47,9 +47,9 @@ use Cake\Utility\Inflector;
 		$pk = "\${$singularVar}->{$primaryKey[0]}";
 
 		echo "\t\t<td class=\"actions\">\n";
-		echo "\t\t\t<?= \$this->Html->link(__('View'), ['action' => 'view', {$pk}]]); ?>\n";
-		echo "\t\t\t<?= \$this->Html->link(__('Edit'), ['action' => 'edit', {$pk}]]); ?>\n";
-		echo "\t\t\t<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', {$pk}], null, __('Are you sure you want to delete # %s?', {$pk})); ?>\n";
+		echo "\t\t\t<?= \$this->Html->link(__('View'), ['action' => 'view', {$pk}]); ?>\n";
+		echo "\t\t\t<?= \$this->Html->link(__('Edit'), ['action' => 'edit', {$pk}]); ?>\n";
+		echo "\t\t\t<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', {$pk}], [], __('Are you sure you want to delete # %s?', {$pk})); ?>\n";
 		echo "\t\t</td>\n";
 	echo "\t</tr>\n";
 
@@ -59,8 +59,7 @@ use Cake\Utility\Inflector;
 	<p>
 	<?= "<?php
 	echo \$this->Paginator->counter();
-	?>"; ?>
-	</p>
+	?>"; ?></p>
 	<div class="paging">
 	<?php
 		echo "<?php\n";

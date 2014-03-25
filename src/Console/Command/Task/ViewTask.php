@@ -107,6 +107,7 @@ class ViewTask extends BakeTask {
 
 		if (empty($this->args)) {
 			$this->out(__d('cake_console', 'Possible tables to bake views for based on your current database:'));
+			$this->Model->connection = $this->connection;
 			foreach ($this->Model->listAll() as $table) {
 				$this->out('- ' . $this->_controllerName($table));
 			}
@@ -432,6 +433,7 @@ class ViewTask extends BakeTask {
 			'short' => 'c',
 			'help' => __d('cake_console', 'The connection the connected model is on.')
 		])->addOption('force', [
+			'boolean' => true,
 			'short' => 'f',
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		])->addOption('prefix', [
@@ -463,6 +465,7 @@ class ViewTask extends BakeTask {
 
 				$associations[$type][$assocName] = [
 					'property' => $assoc->property(),
+					'variable' => Inflector::variable($assocName),
 					'primaryKey' => (array)$target->primaryKey(),
 					'displayField' => $target->displayField(),
 					'foreignKey' => $assoc->foreignKey(),
