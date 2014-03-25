@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -52,6 +50,20 @@ class DateTimeTypeTest extends TestCase {
 		$this->assertEquals('12', $result->format('H'));
 		$this->assertEquals('13', $result->format('i'));
 		$this->assertEquals('14', $result->format('s'));
+	}
+
+/**
+ * Test datetime parsing when value include milliseconds.
+ *
+ * Postgres includes milliseconds in timestamp columns,
+ * data from those columns should work.
+ *
+ * @return void
+ */
+	public function testToPHPIncludingMilliseconds() {
+		$in = '2014-03-24 20:44:36.315113';
+		$result = $this->type->toPHP($in, $this->driver);
+		$this->assertInstanceOf('\DateTime', $result);
 	}
 
 /**

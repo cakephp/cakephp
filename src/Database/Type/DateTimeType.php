@@ -56,8 +56,8 @@ class DateTimeType extends \Cake\Database\Type {
 		if ($value === null) {
 			return null;
 		}
-		$value = DateTime::createFromFormat($this->_format, $value);
-		return $value;
+		list($value) = explode('.', $value);
+		return DateTime::createFromFormat($this->_format, $value);
 	}
 
 /**
