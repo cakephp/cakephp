@@ -1,7 +1,5 @@
 <?php
 /**
- * Bake Template for Controller action generation.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -14,10 +12,26 @@
  * @since         1.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-$associations = [];
-foreach ($modelObj->associations()->type('BelongsTo') as $assoc) {
-	$associations[] = "'" . $assoc->target()->alias() . "'";
-}
+$extractor = function ($val) {
+	return $val->target()->alias();
+};
+$stringifyList = function ($list) {
+	$wrapped = array_map(function ($v) {
+		return "'$v'";
+	}, $list);
+	return implode(', ', $wrapped);
+};
+
+$belongsTo = array_map($extractor, $modelObj->associations()->type('BelongsTo'));
+$belongsToMany = array_map($extractor, $modelObj->associations()->type('BelongsToMany'));
+
+$editAssociations = array_merge($belongsTo, $belongsToMany);
+
+$allAssociations = array_merge(
+	$editAssociations,
+	array_map($extractor, $modelObj->associations()->type('HasOne')),
+	array_map($extractor, $modelObj->associations()->type('HasMany'))
+);
 ?>
 
 /**
@@ -26,9 +40,9 @@ foreach ($modelObj->associations()->type('BelongsTo') as $assoc) {
  * @return void
  */
 	public function index() {
-<?php if ($associations): ?>
+<?php if ($belongsTo): ?>
 		$this->paginate = [
-			'contain' => [<?= implode(', ', $associations) ?>]
+			'contain' => [<?= $stringifyList($belongsTo) ?>]
 		];
 <?php endif; ?>
 		$this->set('<?= $pluralName ?>', $this->paginate($this-><?= $currentModelName ?>));
@@ -43,7 +57,7 @@ foreach ($modelObj->associations()->type('BelongsTo') as $assoc) {
  */
 	public function view($id = null) {
 		$<?= $singularName?> = $this-><?= $currentModelName ?>->get($id, [
-			'contain' => [<?= implode(', ', $associations) ?>]
+			'contain' => [<?= $stringifyList($allAssociations) ?>]
 		]);
 		$this->set('<?= $singularName; ?>', $<?= $singularName; ?>);
 	}
@@ -65,15 +79,14 @@ foreach ($modelObj->associations()->type('BelongsTo') as $assoc) {
 			}
 		}
 <?php
-	foreach (['BelongsTo', 'BelongsToMany'] as $assoc):
-		foreach ($modelObj->associations()->type($assoc) as $association):
+		foreach ($editAssociations as $assoc):
+			$association = $modelObj->association($assoc);
 			$otherName = $association->target()->alias();
 			$otherPlural = $this->_pluralName($otherName);
 			echo "\t\t\${$otherPlural} = \$this->{$currentModelName}->{$otherName}->find('list');\n";
 			$compact[] = "'{$otherPlural}'";
 		endforeach;
-	endforeach;
-	echo "\t\t\$this->set(compact(" . join(', ', $compact) . "));\n";
+		echo "\t\t\$this->set(compact(" . join(', ', $compact) . "));\n";
 ?>
 	}
 
@@ -86,7 +99,9 @@ foreach ($modelObj->associations()->type('BelongsTo') as $assoc) {
  * @return void
  */
 	public function edit($id = null) {
-		$<?= $singularName ?> = $this-><?= $currentModelName ?>->get($id);
+		$<?= $singularName ?> = $this-><?= $currentModelName ?>->get($id, [
+			'contain' => [<?= $stringifyList($belongsToMany) ?>]
+		]);
 		if ($this->request->is(['post', 'put'])) {
 			$<?= $singularName ?> = $this-><?= $currentModelName ?>->patchEntity($<?= $singularName ?>, $this->request->data);
 			if ($this-><?= $currentModelName; ?>->save($<?= $singularName ?>)) {
@@ -97,13 +112,12 @@ foreach ($modelObj->associations()->type('BelongsTo') as $assoc) {
 			}
 		}
 <?php
-		foreach (['BelongsTo', 'BelongsToMany'] as $assoc):
-			foreach ($modelObj->associations()->type($assoc) as $association):
-				$otherName = $association->target()->alias();
-				$otherPlural = $this->_pluralName($otherName);
-				echo "\t\t\${$otherPlural} = \$this->{$currentModelName}->{$otherName}->find('list');\n";
-				$compact[] = "'{$otherPlural}'";
-			endforeach;
+		foreach ($editAssociations as $assoc):
+			$association = $modelObj->association($assoc);
+			$otherName = $association->target()->alias();
+			$otherPlural = $this->_pluralName($otherName);
+			echo "\t\t\${$otherPlural} = \$this->{$currentModelName}->{$otherName}->find('list');\n";
+			$compact[] = "'{$otherPlural}'";
 		endforeach;
 		echo "\t\t\$this->set(compact(" . join(', ', $compact) . "));\n";
 	?>
