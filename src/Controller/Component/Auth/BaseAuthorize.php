@@ -18,6 +18,7 @@ namespace Cake\Controller\Component\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -30,6 +31,8 @@ use Cake\Utility\Inflector;
  * @see AuthComponent::$authenticate
  */
 abstract class BaseAuthorize {
+
+	use InstanceConfigTrait;
 
 /**
  * Controller for the request.
@@ -44,13 +47,6 @@ abstract class BaseAuthorize {
  * @var ComponentRegistry
  */
 	protected $_registry;
-
-/**
- * Runtime config for this object
- *
- * @var array
- */
-	protected $_config = [];
 
 /**
  * Default config for authorize objects.
@@ -85,7 +81,7 @@ abstract class BaseAuthorize {
 		$this->_registry = $registry;
 		$controller = $registry->getController();
 		$this->controller($controller);
-		$this->_config = Hash::merge($this->_defaultConfig, $config);
+		$this->config($config);
 	}
 
 /**
@@ -96,50 +92,6 @@ abstract class BaseAuthorize {
  * @return boolean
  */
 	abstract public function authorize($user, Request $request);
-
-/**
- * config getter and setter
- *
- * Usage:
- * {{{
- * $instance->config(); will return full config
- * $instance->config('foo'); will return configured foo
- * $instance->config('notset'); will return null
- * }}}
- *
- * @param string|null $key to return
- * @param mixed $val value to set
- * @return mixed array or config value
- */
-	public function config($key = null, $val = null) {
-		if ($key === null) {
-			return $this->_config;
-		}
-
-		if ($val !== null) {
-			return $this->_configSet([$key => $val]);
-		} elseif (is_array($key)) {
-			return $this->_configSet($key);
-		}
-
-		return Hash::get($this->_config, $key);
-	}
-
-/**
- * Update config with passed argument
- *
- * @param array $config
- * @return void
- */
-	protected function _configSet($config) {
-		foreach ($config as $key => $val) {
-			if (strpos($key, '.')) {
-				$this->_config = Hash::insert($this->_config, $key, $val);
-			} else {
-				$this->_config[$key] = $val;
-			}
-		}
-	}
 
 /**
  * Accessor to the controller object.

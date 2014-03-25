@@ -26,11 +26,13 @@ use Cake\Utility\Security;
 class SimplePasswordHasher extends AbstractPasswordHasher {
 
 /**
- * Config for this object.
+ * Default config for this object.
  *
  * @var array
  */
-	protected $_config = array('hashType' => null);
+	protected $_defaultConfig = [
+		'hashType' => null
+	];
 
 /**
  * Generates password hash.
@@ -40,7 +42,7 @@ class SimplePasswordHasher extends AbstractPasswordHasher {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#hashing-passwords
  */
 	public function hash($password) {
-		return Security::hash($password, $this->_config['hashType'], true);
+		return Security::hash($password, $this->config('hashType'), true);
 	}
 
 /**

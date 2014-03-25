@@ -16,6 +16,7 @@ namespace Cake\Controller\Component\Auth;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\Auth\AbstractPasswordHasher;
 use Cake\Core\App;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -29,12 +30,7 @@ use Cake\Utility\Security;
  */
 abstract class BaseAuthenticate {
 
-/**
- * Runtime config for this object
- *
- * @var array
- */
-	protected $_config = [];
+	use InstanceConfigTrait;
 
 /**
  * Default config for this object.
@@ -83,7 +79,7 @@ abstract class BaseAuthenticate {
  */
 	public function __construct(ComponentRegistry $registry, $config) {
 		$this->_registry = $registry;
-		$this->_config = Hash::merge($this->_defaultConfig, $config);
+		$this->config($config);
 	}
 
 /**
@@ -133,50 +129,6 @@ abstract class BaseAuthenticate {
 		}
 
 		return $result;
-	}
-
-/**
- * config getter and setter
- *
- * Usage:
- * {{{
- * $instance->config(); will return full config
- * $instance->config('foo'); will return configured foo
- * $instance->config('notset'); will return null
- * }}}
- *
- * @param string|null $key to return
- * @param mixed $val value to set
- * @return mixed array or config value
- */
-	public function config($key = null, $val = null) {
-		if ($key === null) {
-			return $this->_config;
-		}
-
-		if ($val !== null) {
-			return $this->_configSet([$key => $val]);
-		} elseif (is_array($key)) {
-			return $this->_configSet($key);
-		}
-
-		return Hash::get($this->_config, $key);
-	}
-
-/**
- * Update config with passed argument
- *
- * @param array $config
- * @return void
- */
-	protected function _configSet($config) {
-		foreach ($config as $key => $val) {
-			if (strpos($key, '.')) {
-				$this->_config = Hash::insert($this->_config, $key, $val);
-			} else {
-				$this->_config[$key] = $val;
-			}
-		}
 	}
 
 /**

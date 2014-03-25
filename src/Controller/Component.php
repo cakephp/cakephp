@@ -14,6 +14,7 @@
  */
 namespace Cake\Controller;
 
+use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Object;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
@@ -64,6 +65,8 @@ use Cake\Utility\Hash;
  */
 class Component extends Object implements EventListener {
 
+	use InstanceConfigTrait;
+
 /**
  * Component registry class used to lazy load components.
  *
@@ -77,13 +80,6 @@ class Component extends Object implements EventListener {
  * @var array
  */
 	public $components = array();
-
-/**
- * Runtime config for this Component
- *
- * @var array
- */
-	protected $_config = [];
 
 /**
  * Default config
@@ -110,9 +106,9 @@ class Component extends Object implements EventListener {
 	public function __construct(ComponentRegistry $registry, $config = []) {
 		$this->_registry = $registry;
 
-		$this->_config = array_merge($this->_defaultConfig, $config);
+		$this->config($config);
 
-		$this->_set($this->_config); //@TODO get rid of public properties and remove this
+		$this->_set($this->config()); //@TODO get rid of public properties and remove this
 
 		if (!empty($this->components)) {
 			$this->_componentMap = $registry->normalizeArray($this->components);
@@ -132,54 +128,6 @@ class Component extends Object implements EventListener {
 		}
 		if (isset($this->{$name})) {
 			return $this->{$name};
-		}
-	}
-
-/**
- * Component config getter and setter
- *
- * Usage:
- * {{{
- * $instance->config(); will return full config
- * $instance->config('foo'); will return configured foo
- * $instance->config('notset'); will return null
- * $instance->config('foo', $x); will set ['foo' $x] to the existing config
- * $instance->config('foo.bar', $x); will set/add ['foo' => ['bar' => $x]] to the existing config
- * }}}
- *
- * @param string|null $key to return
- * @param mixed $val value to set
- * @return mixed array or config value
- */
-	public function config($key = null, $val = null) {
-		if ($key === null) {
-			return $this->_config;
-		}
-
-		if ($val !== null) {
-			return $this->_configSet([$key => $val]);
-		} elseif (is_array($key)) {
-			return $this->_configSet($key);
-		}
-
-		return array_key_exists($key, $this->_config) ? $this->_config[$key] : null;
-	}
-
-/**
- * Update config with passed argument
- *
- * Overriden in subclasses if the component config shouldn't be modified at runtime
- *
- * @param array $config
- * @return void
- */
-	protected function _configSet($config) {
-		foreach ($config as $key => $val) {
-			if (strpos($key, '.')) {
-				$this->_config = Hash::insert($this->_config, $key, $val);
-			} else {
-				$this->_config[$key] = $val;
-			}
 		}
 	}
 

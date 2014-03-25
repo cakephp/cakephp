@@ -110,7 +110,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 			return false;
 		}
 
-		$field = $this->_config['fields']['password'];
+		$field = $this->config('fields.password');
 		$password = $user[$field];
 		unset($user[$field]);
 
