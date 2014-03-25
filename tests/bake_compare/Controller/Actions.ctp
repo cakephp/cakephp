@@ -40,8 +40,8 @@
 				$this->Session->setFlash(__('The bake article could not be saved. Please, try again.'));
 			}
 		}
-		$bakeUsers = $this->BakeArticles->association('BakeUsers')->find('list');
-		$bakeTags = $this->BakeArticles->association('BakeTags')->find('list');
+		$bakeUsers = $this->BakeArticles->BakeUsers->find('list');
+		$bakeTags = $this->BakeArticles->BakeTags->find('list');
 		$this->set(compact('bakeArticle', 'bakeUsers', 'bakeTags'));
 	}
 
@@ -63,8 +63,8 @@
 				$this->Session->setFlash(__('The bake article could not be saved. Please, try again.'));
 			}
 		}
-		$bakeUsers = $this->BakeArticles->association('BakeUsers')->find('list');
-		$bakeTags = $this->BakeArticles->association('BakeTags')->find('list');
+		$bakeUsers = $this->BakeArticles->BakeUsers->find('list');
+		$bakeTags = $this->BakeArticles->BakeTags->find('list');
 		$this->set(compact('bakeArticle', 'bakeUsers', 'bakeTags'));
 	}
 
