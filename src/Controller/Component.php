@@ -18,7 +18,6 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Object;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
-use Cake\Utility\Hash;
 
 /**
  * Base class for an individual Component. Components provide reusable bits of
