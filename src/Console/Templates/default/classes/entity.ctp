@@ -31,7 +31,7 @@ class <?= $name ?> extends Entity {
  */
 	protected $_accessible = [
 <?php foreach ($fields as $field): ?>
-		'<?= $field ?>' => false,
+		'<?= $field ?>' => true,
 <?php endforeach; ?>
 	];
 
