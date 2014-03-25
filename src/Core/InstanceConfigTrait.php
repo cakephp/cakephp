@@ -19,7 +19,7 @@ use Cake\Error;
 /**
  * A trait for reading and writing instance config
  *
- * Implementing objects are expected to declare a `$_config` property.
+ * Implementing objects are expected to declare a `$_defaultConfig` property.
  */
 trait InstanceConfigTrait {
 
