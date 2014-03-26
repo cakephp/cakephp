@@ -163,7 +163,7 @@ class Dispatcher implements EventListener {
 			));
 		}
 
-		$response = $this->_invoke($controller, $request, $response);
+		$response = $this->_invoke($controller, $response);
 		if (isset($request->params['return'])) {
 			return $response->body();
 		}
@@ -179,16 +179,15 @@ class Dispatcher implements EventListener {
  * Otherwise the return value of the controller action are returned.
  *
  * @param Controller $controller Controller to invoke
- * @param \Cake\Network\Request $request The request object to invoke the controller for.
  * @param \Cake\Network\Response $response The response object to receive the output
  * @return \Cake\Network\Response the resulting response object
  */
-	protected function _invoke(Controller $controller, Request $request, Response $response) {
+	protected function _invoke(Controller $controller, Response $response) {
 		$controller->constructClasses();
 		$controller->startupProcess();
 
 		$render = true;
-		$result = $controller->invokeAction($request);
+		$result = $controller->invokeAction();
 		if ($result instanceof Response) {
 			$render = false;
 			$response = $result;
