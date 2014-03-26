@@ -394,4 +394,70 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(range(1, 22), $numbers);
 	}
 
+/**
+ * Tests moving a subtree to the left
+ *
+ * @return void
+ */
+	public function testReParentSubTreeLeft() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(6);
+		$entity->parent_id = 2;
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals(9, $entity->lft);
+		$this->assertEquals(18, $entity->rght);
+
+		$result = $table->find()->order('lft')->hydrate(false)->toArray();
+		$table->recover();
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test moving a leaft to the left
+ *
+ * @return void
+ */
+	public function testReParentLeafLeft() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(10);
+		$entity->parent_id = 2;
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals(9, $entity->lft);
+		$this->assertEquals(10, $entity->rght);
+
+		$result = $table->find()->order('lft')->hydrate(false)->toArray();
+		$table->recover();
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test moving a leaft to the left
+ *
+ * @return void
+ */
+	public function testReParentLeafRight() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(5);
+		$entity->parent_id = 6;
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals(17, $entity->lft);
+		$this->assertEquals(18, $entity->rght);
+
+		$result = $table->find()->order('lft')->hydrate(false);
+		$expected = [1, 2, 3, 4, 6, 7, 8, 9, 10, 5, 11];
+		$this->assertEquals($expected, $result->extract('id')->toArray());
+		$numbers = [];
+		$result->each(function($v) use (&$numbers) {
+			$numbers[] = $v['lft'];
+			$numbers[] = $v['rght'];
+		});
+		sort($numbers);
+		$this->assertEquals(range(1, 22), $numbers);
+	}
+
 }

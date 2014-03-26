@@ -126,21 +126,21 @@ class TreeBehavior extends Behavior {
 		$right = $entity->get($config['right']);
 		$left = $entity->get($config['left']);
 
-		$diff = $right - $left + 1;
-		$targetLeft = $parentRight - $diff;
-		$targetRight = $parentRight - 1;
-
 		// Values for moving to the left
+		$diff = $right - $left + 1;
+		$targetLeft = $parentRight;
+		$targetRight = $diff + $parentRight - 1;
 		$min = $parentRight;
 		$max = $left - 1;
 
 		if ($left < $targetLeft) {
 			//Moving to the right
+			$targetLeft = $parentRight - $diff;
+			$targetRight = $parentRight - 1;
 			$min = $right + 1;
 			$max = $parentRight - 1;
 			$diff *= -1;
 		}
-
 
 		if ($right - $left > 1) {
 			//Correcting internal subtree
