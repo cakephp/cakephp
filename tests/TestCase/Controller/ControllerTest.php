@@ -855,4 +855,37 @@ class ControllerTest extends TestCase {
 		$this->assertEquals('Pages', $Controller->viewPath);
 	}
 
+/**
+ * Test the components() method.
+ *
+ * @return void
+ */
+	public function testComponents() {
+		$request = new Request('/');
+		$response = $this->getMock('Cake\Network\Response');
+
+		$controller = new TestController($request, $response);
+		$this->assertInstanceOf('Cake\Controller\ComponentRegistry', $controller->components());
+
+		$result = $controller->components();
+		$this->assertSame($result, $controller->components());
+	}
+
+/**
+ * Test adding a component
+ *
+ * @return void
+ */
+	public function testAddComponent() {
+		$request = new Request('/');
+		$response = $this->getMock('Cake\Network\Response');
+
+		$controller = new TestController($request, $response);
+		$result = $controller->addComponent('Paginator');
+		$this->assertInstanceOf('Cake\Controller\Component\PaginatorComponent', $result);
+
+		$registry = $controller->components();
+		$this->assertTrue(isset($registry->Paginator));
+	}
+
 }
