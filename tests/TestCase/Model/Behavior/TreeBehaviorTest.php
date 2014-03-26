@@ -321,7 +321,7 @@ class TreeBehaviorTest extends TestCase {
 
 		$expected[] = $entity->toArray();
 		$results = $table->find()->order('lft')->hydrate(false)->toArray();
-		$this->assertEquals($expected, $results);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -337,14 +337,13 @@ class TreeBehaviorTest extends TestCase {
 			['markNew' => true]
 		);
 		$this->assertSame($entity, $table->save($entity));
-		$results = $table->find()->order('lft')->hydrate(false)->toArray();
 		$this->assertEquals(20, $entity->lft);
 		$this->assertEquals(21, $entity->rght);
 
-		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
-		$table->recover();
 		$result = $table->find()->order('lft')->hydrate(false)->toArray();
-		$this->assertEquals($expected, $results);
+		$table->recover();
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -360,13 +359,39 @@ class TreeBehaviorTest extends TestCase {
 			['markNew' => true]
 		);
 		$this->assertSame($entity, $table->save($entity));
-		$results = $table->find()->order('lft')->hydrate(false)->toArray();
 		$this->assertEquals(9, $entity->lft);
 		$this->assertEquals(10, $entity->rght);
 
-		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
-		$table->recover();
 		$result = $table->find()->order('lft')->hydrate(false)->toArray();
+		$table->recover();
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
 		$this->assertEquals($expected, $results);
 	}
+
+/**
+ * Tests moving a subtree to the right
+ *
+ * @return void
+ */
+	public function testReParentSubTreeRight() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(2);
+		$entity->parent_id = 6;
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals(11, $entity->lft);
+		$this->assertEquals(18, $entity->rght);
+
+		$result = $table->find()->order('lft')->hydrate(false);
+		$expected = [1, 6, 7, 8, 9, 10, 2, 3, 4, 5, 11];
+		$this->assertEquals($expected, $result->extract('id')->toArray());
+		$numbers = [];
+		$result->each(function($v) use (&$numbers) {
+			$numbers[] = $v['lft'];
+			$numbers[] = $v['rght'];
+		});
+		sort($numbers);
+		$this->assertEquals(range(1, 22), $numbers);
+	}
+
 }

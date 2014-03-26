@@ -120,8 +120,8 @@ class TreeBehavior extends Behavior {
 	protected function _setParent($entity, $parent) {
 		$config = $this->config();
 		$parentNode = $this->_getParent($parent);
-		$parentNodeLeft = $parentNode->get($config['left']);
-		$parentNoderight = $parentNode->get($config['right']);
+		$parentLeft = $parentNode->get($config['left']);
+		$parentRight = $parentNode->get($config['right']);
 
 		$right = $entity->get($config['right']);
 		$left = $entity->get($config['left']);
@@ -141,13 +141,19 @@ class TreeBehavior extends Behavior {
 			$diff *= -1;
 		}
 
-		$this->_sync($diff, '+', "BETWEEN {$min} AND {$max}");
 
 		if ($right - $left > 1) {
 			//Correcting internal subtree
 			$internalLeft = $left + 1;
 			$internalRight = $right - 1;
-			$this->_sync($targetLeft - $left, '+', "BETWEEN {$internalLeft} AND {$internalRight}");
+			$this->_sync($targetLeft - $left, '+', "BETWEEN {$internalLeft} AND {$internalRight}", true);
+		}
+
+		$this->_sync($diff, '+', "BETWEEN {$min} AND {$max}");
+
+		if ($right - $left > 1) {
+			//Inverting sign again
+			$this->_sync('-1', '*', "< 0");
 		}
 
 		//Allocating new position
@@ -459,17 +465,19 @@ class TreeBehavior extends Behavior {
 		return $edge->{$LorR};
 	}
 
-	protected function _sync($shift, $dir = '+', $conditions = null, $field = 'both') {
+	protected function _sync($shift, $dir = '+', $conditions = null, $invert = false, $field = 'both') {
 		extract($this->config());
 
 		if ($field === 'both') {
-			$this->_sync($shift, $dir, $conditions, $left);
+			$this->_sync($shift, $dir, $conditions, $invert, $left);
 			$field = $right;
 		}
 
 		// updateAll + scope
 		$exp = new QueryExpression();
-		$exp->add("{$field} = ({$field} {$dir} {$shift})");
+		$invert = $invert ? '*-1' : '';
+		$template = sprintf('%s = (%s %s %s)%s', $field, $field, $dir, $shift, $invert);
+		$exp->add($template);
 
 		$query = $this->_scope($this->_table->query());
 		$query->update()
