@@ -874,6 +874,7 @@ class Controller extends Object implements CakeEventListener {
  * Returns number of errors in a submitted FORM.
  *
  * @return integer Number of errors
+ * @deprecated This method will be removed in 3.0
  */
 	public function validate() {
 		$args = func_get_args();
@@ -892,6 +893,7 @@ class Controller extends Object implements CakeEventListener {
  *
  * @param mixed A list of models as a variable argument
  * @return array Validation errors, or false if none
+ * @deprecated This method will be removed in 3.0
  */
 	public function validateErrors() {
 		$objects = func_get_args();
