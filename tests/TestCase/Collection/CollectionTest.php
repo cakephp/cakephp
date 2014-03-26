@@ -68,6 +68,19 @@ class CollectionTest extends TestCase {
 	}
 
 /**
+ * Test filter() with no callback.
+ *
+ * @return void
+ */
+	public function testFilterNoCallback() {
+		$items = [1, 2, 0, 3, false, 4, null, 5, ''];
+		$collection = new Collection($items);
+		$result = $collection->filter()->toArray();
+		$expected = [1, 2, 3, 4, 5];
+		$this->assertEquals($expected, array_values($result));
+	}
+
+/**
  * Tests that it is possible to chain filter() as it returns a collection object
  *
  * @return void

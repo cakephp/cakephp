@@ -72,15 +72,21 @@ trait CollectionTrait {
  *
  * {{{
  * $collection = (new Collection([1, 2, 3]))->filter(function($value, $key) {
- *	return $value % 2 === 0;
+ *  return $value % 2 === 0;
  * });
  * }}}
  *
  * @param callable $c the method that will receive each of the elements and
- * returns true whether or not they should be in the resulting collection.
+ *   returns true whether or not they should be in the resulting collection.
+ *   If left null, a callback that filters out falsey values will be used.
  * @return \Cake\Collection\Iterator\FilterIterator
  */
-	public function filter(callable $c) {
+	public function filter(callable $c = null) {
+		if ($c === null) {
+			$c = function ($v) {
+				return !!$v;
+			};
+		}
 		return new FilterIterator($this, $c);
 	}
 
