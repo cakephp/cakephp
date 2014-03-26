@@ -115,7 +115,14 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['clients.id' => new IdentifierExpression('foo.client_id')]
-				], ['clients.id' => 'integer'])
+				], [
+					'clients.id' => 'integer',
+					'id' => 'integer',
+					'clients.name' => 'string',
+					'name' => 'string',
+					'clients.phone' => 'string',
+					'phone' => 'string',
+				])
 			]])
 			->will($this->returnValue($query));
 
@@ -125,6 +132,13 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'INNER',
 				'conditions' => new QueryExpression([
 					['clients.id' => new IdentifierExpression('orders.client_id')]
+				], [
+						'orders.id' => 'integer',
+						'id' => 'integer',
+						'orders.total' => 'string',
+						'total' => 'string',
+						'orders.placed' => 'datetime',
+						'placed' => 'datetime',
 				])
 			]])
 			->will($this->returnValue($query));
@@ -135,7 +149,7 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['orderTypes.id' => new IdentifierExpression('orders.order_type_id')]
-				], ['orderTypes.id' => 'integer'])
+				], ['orderTypes.id' => 'integer', 'id' => 'integer'])
 			]])
 			->will($this->returnValue($query));
 
@@ -145,6 +159,9 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'INNER',
 				'conditions' => new QueryExpression([
 					['orders.id' => new IdentifierExpression('stuff.order_id')]
+				], [
+					'stuff.id' => 'integer',
+					'id' => 'integer',
 				])
 			]])
 			->will($this->returnValue($query));
@@ -155,7 +172,7 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['stuffTypes.id' => new IdentifierExpression('stuff.stuff_type_id')]
-				], ['stuffTypes.id' => 'integer'])
+				], ['stuffTypes.id' => 'integer', 'id' => 'integer'])
 			]])
 			->will($this->returnValue($query));
 
@@ -165,7 +182,7 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['companies.id' => new IdentifierExpression('clients.organization_id')]
-				], ['companies.id' => 'integer'])
+				], ['companies.id' => 'integer', 'id' => 'integer'])
 			]])
 			->will($this->returnValue($query));
 
@@ -175,7 +192,7 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['categories.id' => new IdentifierExpression('companies.category_id')]
-				], ['categories.id' => 'integer'])
+				], ['categories.id' => 'integer', 'id' => 'integer'])
 			]])
 			->will($this->returnValue($query));
 

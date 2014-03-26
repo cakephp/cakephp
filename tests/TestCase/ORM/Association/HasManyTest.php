@@ -481,6 +481,13 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Articles.is_active' => true,
 					['Authors.id' => $field]
+				], [
+					'Articles.id' => 'integer',
+					'id' => 'integer',
+					'Articles.title' => 'string',
+					'title' => 'string',
+					'Articles.author_id' => 'integer',
+					'author_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'articles'
@@ -511,6 +518,13 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'Articles' => [
 				'conditions' => new QueryExpression([
 					'Articles.is_active' => false
+				], [
+					'Articles.id' => 'integer',
+					'id' => 'integer',
+					'Articles.title' => 'string',
+					'title' => 'string',
+					'Articles.author_id' => 'integer',
+					'author_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'articles'
@@ -547,6 +561,13 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Articles.is_active' => true,
 					['Authors.id' => $field]
+				], [
+					'Articles.id' => 'integer',
+					'id' => 'integer',
+					'Articles.title' => 'string',
+					'title' => 'string',
+					'Articles.author_id' => 'integer',
+					'author_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'articles'
@@ -579,6 +600,13 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Articles.is_active' => true,
 					['Authors.id' => $field1, 'Authors.site_id' => $field2]
+				], [
+					'Articles.id' => 'integer',
+					'id' => 'integer',
+					'Articles.title' => 'string',
+					'title' => 'string',
+					'Articles.author_id' => 'integer',
+					'author_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'articles'
@@ -632,6 +660,13 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 					'a' => 1,
 					'Articles.is_active' => true,
 					['Authors.id' => $field],
+				], [
+					'Articles.id' => 'integer',
+					'id' => 'integer',
+					'Articles.title' => 'string',
+					'title' => 'string',
+					'Articles.author_id' => 'integer',
+					'author_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'articles'

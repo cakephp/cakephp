@@ -97,6 +97,13 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
+				], [
+					'Profiles.id' => 'integer',
+					'id' => 'integer',
+					'Profiles.first_name' => 'string',
+					'first_name' => 'string',
+					'Profiles.user_id' => 'integer',
+					'user_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'profiles'
@@ -128,6 +135,13 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			'Profiles' => [
 				'conditions' => new QueryExpression([
 					'Profiles.is_active' => false
+				], [
+					'Profiles.id' => 'integer',
+					'id' => 'integer',
+					'Profiles.first_name' => 'string',
+					'first_name' => 'string',
+					'Profiles.user_id' => 'integer',
+					'user_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'profiles'
@@ -164,6 +178,13 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
+				], [
+					'Profiles.id' => 'integer',
+					'id' => 'integer',
+					'Profiles.first_name' => 'string',
+					'first_name' => 'string',
+					'Profiles.user_id' => 'integer',
+					'user_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'profiles'
@@ -194,6 +215,13 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 					'a' => 1,
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
+				], [
+					'Profiles.id' => 'integer',
+					'id' => 'integer',
+					'Profiles.first_name' => 'string',
+					'first_name' => 'string',
+					'Profiles.user_id' => 'integer',
+					'user_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'profiles'
@@ -233,6 +261,13 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Profiles.is_active' => true,
 					['Users.id' => $field1, 'Users.site_id' => $field2],
+				], [
+					'Profiles.id' => 'integer',
+					'id' => 'integer',
+					'Profiles.first_name' => 'string',
+					'first_name' => 'string',
+					'Profiles.user_id' => 'integer',
+					'user_id' => 'integer',
 				]),
 				'type' => 'INNER',
 				'table' => 'profiles'
