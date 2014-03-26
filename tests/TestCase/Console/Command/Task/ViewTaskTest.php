@@ -35,6 +35,7 @@ class ViewTaskCommentsTable extends Table {
 			'foreignKey' => 'article_id'
 		]);
 	}
+
 }
 
 /**
@@ -46,6 +47,7 @@ class ViewTaskArticlesTable extends Table {
 	public function intialize(array $config) {
 		$this->table('articles');
 	}
+
 }
 
 /**
