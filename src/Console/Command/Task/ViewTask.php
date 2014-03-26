@@ -32,7 +32,7 @@ class ViewTask extends BakeTask {
  *
  * @var array
  */
-	public $tasks = ['Project', 'Controller', 'DbConfig', 'Model', 'Template'];
+	public $tasks = ['Model', 'Template'];
 
 /**
  * path to View directory
@@ -226,8 +226,8 @@ class ViewTask extends BakeTask {
  * @return void
  */
 	public function all() {
-		$this->Controller->connection = $this->connection;
-		$tables = $this->Controller->listAll();
+		$this->Model->connection = $this->connection;
+		$tables = $this->Model->listAll();
 
 		foreach ($tables as $table) {
 			$this->args[0] = $table;

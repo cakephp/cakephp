@@ -107,6 +107,11 @@ class ViewTaskTest extends TestCase {
 		]);
 	}
 
+/**
+ * Generate the mock objects used in tests.
+ *
+ * @return void
+ */
 	protected function _setupTask($methods) {
 		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
@@ -116,10 +121,7 @@ class ViewTaskTest extends TestCase {
 			[$out, $out, $in]
 		);
 		$this->Task->Template = new TemplateTask($out, $out, $in);
-		$this->Task->Controller = $this->getMock('Cake\Console\Command\Task\ControllerTask', [], [$out, $out, $in]);
 		$this->Task->Model = $this->getMock('Cake\Console\Command\Task\ModelTask', [], [$out, $out, $in]);
-		$this->Task->Project = $this->getMock('Cake\Console\Command\Task\ProjectTask', [], [$out, $out, $in]);
-		$this->Task->DbConfig = $this->getMock('Cake\Console\Command\Task\DbConfigTask', [], [$out, $out, $in]);
 
 		$this->Task->path = TMP;
 		$this->Task->Template->params['theme'] = 'default';
