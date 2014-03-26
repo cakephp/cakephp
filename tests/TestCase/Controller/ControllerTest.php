@@ -730,7 +730,7 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$Controller->invokeAction($url);
+		$Controller->invokeAction();
 	}
 
 /**
@@ -746,7 +746,7 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$Controller->invokeAction($url);
+		$Controller->invokeAction();
 	}
 
 /**
@@ -762,7 +762,7 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$Controller->invokeAction($url);
+		$Controller->invokeAction();
 	}
 
 /**
@@ -778,7 +778,7 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$Controller->invokeAction($url);
+		$Controller->invokeAction();
 	}
 
 /**
@@ -794,7 +794,7 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$Controller->invokeAction($url);
+		$Controller->invokeAction();
 	}
 
 /**
@@ -814,7 +814,7 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$Controller->invokeAction($url);
+		$Controller->invokeAction();
 	}
 
 /**
@@ -832,7 +832,7 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$result = $Controller->invokeAction($url);
+		$result = $Controller->invokeAction();
 		$this->assertEquals('I am from the controller.', $result);
 	}
 

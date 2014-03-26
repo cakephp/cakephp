@@ -374,13 +374,13 @@ class Controller extends Object implements EventListener {
  * Dispatches the controller action. Checks that the action
  * exists and isn't private.
  *
- * @param \Cake\Network\Request $request
  * @return mixed The resulting response.
  * @throws \Cake\Error\PrivateActionException When actions are not public or prefixed by _
  * @throws \Cake\Error\MissingActionException When actions are not defined.
  */
-	public function invokeAction(Request $request) {
+	public function invokeAction() {
 		try {
+			$request = $this->request;
 			$method = new \ReflectionMethod($this, $request->params['action']);
 
 			if ($this->_isPrivateAction($method, $request)) {
