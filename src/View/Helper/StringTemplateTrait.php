@@ -27,7 +27,7 @@ trait StringTemplateTrait {
  *
  * @var \Cake\View\StringTemplate
  */
-	protected $templater;
+	protected $_templater;
 
 /**
  * Get/set templates to use.
@@ -62,22 +62,22 @@ trait StringTemplateTrait {
  */
 	public function templater() {
 
-		if (empty($this->templater)) {
+		if (empty($this->_templater)) {
 			$class = $this->config('templateClass') ?: '\Cake\View\StringTemplate';
-			$this->templater = new $class;
+			$this->_templater = new $class;
 
 			$templates = $this->config('templates');
 
 			if ($templates) {
 				if (is_string($templates)) {
-					$this->templater->load($templates);
+					$this->_templater->load($templates);
 				} else {
-					$this->templater->add($templates);
+					$this->_templater->add($templates);
 				}
 			}
 		}
 
-		return $this->templater;
+		return $this->_templater;
 	}
 
 }
