@@ -25,4 +25,28 @@ class ArticlesTable extends Table {
 		$this->hasMany('ArticlesTags');
 	}
 
+/**
+ * Example public method
+ *
+ * @return void
+ */
+	public function doSomething() {
+	}
+
+/**
+ * Example Secondary public method
+ *
+ * @return void
+ */
+	public function doSomethingElse() {
+	}
+
+/**
+ * Example protected method
+ *
+ * @return void
+ */
+	protected function _innerMethod() {
+	}
+
 }

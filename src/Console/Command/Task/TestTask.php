@@ -1,7 +1,5 @@
 <?php
 /**
- * The TestTask handles creating and updating test files.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -50,7 +48,8 @@ class TestTask extends BakeTask {
  * @var array
  */
 	public $classTypes = [
-		'Model' => 'Model',
+		'Entity' => 'Model/Entity',
+		'Table' => 'Model/Table',
 		'Controller' => 'Controller',
 		'Component' => 'Controller/Component',
 		'Behavior' => 'Model/Behavior',
@@ -98,13 +97,13 @@ class TestTask extends BakeTask {
  */
 	public function execute() {
 		parent::execute();
-		$count = count($this->args);
-		if (!$count) {
-			$this->_interactive();
+		if (empty($this->args)) {
+			return $this->outputTypeChoices();
 		}
 
+		$count = count($this->args);
 		if ($count === 1) {
-			$this->_interactive($this->args[0]);
+			return $this->outputClassChoices($this->args[0]);
 		}
 
 		if ($count > 1) {
@@ -113,6 +112,61 @@ class TestTask extends BakeTask {
 				$this->out('<success>Done</success>');
 			}
 		}
+	}
+
+/**
+ * Output a list of class types you can bake a test for.
+ *
+ * @return void
+ */
+	public function outputTypeChoices() {
+		$this->out(
+			__d('cake_console', 'You must provide a class type to bake a test for. The valid types are:'),
+			2
+		);
+		$i = 0;
+		foreach ($this->classTypes as $option => $package) {
+			$this->out(++$i . '. ' . $option);
+		}
+		$this->out('');
+		$this->out('Re-run your command as Console/cake bake <type> <classname>');
+	}
+
+/**
+ * Output a list of possible classnames you might want to generate a test for.
+ *
+ * @param string $type The typename to get classes for.
+ * @return void
+ */
+	public function outputClassChoices($type) {
+		$type = $this->mapType($type);
+		$plugin = null;
+		if (!empty($this->plugin)) {
+			$plugin = $this->plugin;
+		}
+
+		$this->out(
+			__d('cake_console', 'You must provide a class to bake a test for. Some possible options are:'),
+			2
+		);
+		$options = $this->_getClassOptions($type);
+		$i = 0;
+		foreach ($options as $option) {
+			$this->out(++$i . '. ' . $option);
+		}
+		$this->out('');
+		$this->out('Re-run your command as Console/cake bake ' . $type . ' <classname>');
+	}
+
+/**
+ * Get the possible classes for a given type.
+ *
+ * @param string $type The type name to look for classes in.
+ * @return array
+ */
+	protected function _getClassOptions($type) {
+		$classes = [];
+		return $classes;
 	}
 
 /**
@@ -193,31 +247,6 @@ class TestTask extends BakeTask {
 			return $out;
 		}
 		return false;
-	}
-
-/**
- * Interact with the user and get their chosen type. Can exit the script.
- *
- * @return string Users chosen type.
- */
-	public function getObjectType() {
-		$this->hr();
-		$this->out(__d('cake_console', 'Select an object type:'));
-		$this->hr();
-
-		$keys = [];
-		$i = 0;
-		foreach ($this->classTypes as $option => $package) {
-			$this->out(++$i . '. ' . $option);
-			$keys[] = $i;
-		}
-		$keys[] = 'q';
-		$selection = $this->in(__d('cake_console', 'Enter the type of object to bake a test for or (q)uit'), $keys, 'q');
-		if ($selection === 'q') {
-			return $this->_stop();
-		}
-		$types = array_keys($this->classTypes);
-		return $types[$selection - 1];
 	}
 
 /**
@@ -335,20 +364,15 @@ class TestTask extends BakeTask {
  * Map the types that TestTask uses to concrete types that App::classname can use.
  *
  * @param string $type The type of thing having a test generated.
- * @param string $plugin The plugin name.
  * @return string
  * @throws \Cake\Error\Exception When invalid object types are requested.
  */
-	public function mapType($type, $plugin) {
+	public function mapType($type) {
 		$type = ucfirst($type);
 		if (empty($this->classTypes[$type])) {
 			throw new Error\Exception('Invalid object type.');
 		}
-		$real = $this->classTypes[$type];
-		if ($plugin) {
-			$real = trim($plugin, '.') . '.' . $real;
-		}
-		return $real;
+		return $this->classTypes[$type];
 	}
 
 /**
@@ -578,7 +602,8 @@ class TestTask extends BakeTask {
 			'help' => __d('cake_console', 'Type of class to bake, can be any of the following: controller, model, helper, component or behavior.'),
 			'choices' => [
 				'Controller', 'controller',
-				'Model', 'model',
+				'Table', 'table',
+				'Entity', 'entity',
 				'Helper', 'helper',
 				'Component', 'component',
 				'Behavior', 'behavior'
@@ -594,9 +619,7 @@ class TestTask extends BakeTask {
 		])->addOption('force', [
 			'short' => 'f',
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
-		])->epilog(
-			__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.')
-		);
+		]);
 
 		return $parser;
 	}
