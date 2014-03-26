@@ -1,8 +1,5 @@
 <?php
 /**
- *
- * PHP Version 5.4
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
