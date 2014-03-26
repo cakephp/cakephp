@@ -16,6 +16,7 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
 use Cake\Error;
 use \Countable;
@@ -27,6 +28,8 @@ use \Countable;
  * values correctly into the statement.
  */
 class ValuesExpression implements ExpressionInterface {
+
+	use TypeMapTrait;
 
 /**
  * Array of values to insert.
@@ -43,13 +46,6 @@ class ValuesExpression implements ExpressionInterface {
 	protected $_columns = [];
 
 /**
- * List of column types.
- *
- * @var array
- */
-	protected $_types = [];
-
-/**
  * The Query object to use as a values expression
  *
  * @var \Cake\Database\Query
@@ -60,11 +56,11 @@ class ValuesExpression implements ExpressionInterface {
  * Constructor
  *
  * @param array $columns The list of columns that are going to be part of the values.
- * @param array $types A dictionary of column -> type names
+ * @param TypeMap $types A dictionary of column -> type names
  */
-	public function __construct(array $columns, array $types = []) {
+	public function __construct(array $columns, $typeMap) {
 		$this->_columns = $columns;
-		$this->_types = $types;
+		$this->typeMap($typeMap);
 	}
 
 /**
@@ -152,7 +148,7 @@ class ValuesExpression implements ExpressionInterface {
 		foreach ($this->_values as $row) {
 			$row = array_merge($defaults, $row);
 			foreach ($row as $column => $value) {
-				$type = isset($this->_types[$column]) ? $this->_types[$column] : null;
+				$type = $this->typeMap()->type($column);
 				$generator->bind($i++, $value, $type);
 			}
 		}

@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
+use Cake\Database\TypeMap;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ConnectionManager;
@@ -2037,7 +2038,19 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findByUsername('garrett');
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$expected = new QueryExpression(['username' => 'garrett'], ['username' => 'string']);
+		$typeMap = new TypeMap([
+			'Users.id' => 'integer',
+			'id' => 'integer',
+			'Users.username' => 'string',
+			'username' => 'string',
+			'Users.password' => 'string',
+			'password' => 'string',
+			'Users.created' => 'timestamp',
+			'created' => 'timestamp',
+			'Users.updated' => 'timestamp',
+			'updated' => 'timestamp',
+		]);
+		$expected = new QueryExpression(['username' => 'garrett'], $typeMap);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
 
@@ -2090,11 +2103,20 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findByUsernameAndId('garrett', 4);
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$expected = new QueryExpression(
-			['username' => 'garrett', 'id' => 4],
-			['username' => 'string', 'id' => 'integer'],
-			'AND'
-		);
+
+		$typeMap = new TypeMap([
+			'Users.id' => 'integer',
+			'id' => 'integer',
+			'Users.username' => 'string',
+			'username' => 'string',
+			'Users.password' => 'string',
+			'password' => 'string',
+			'Users.created' => 'timestamp',
+			'created' => 'timestamp',
+			'Users.updated' => 'timestamp',
+			'updated' => 'timestamp',
+		]);
+		$expected = new QueryExpression(['username' => 'garrett', 'id' => 4], $typeMap);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
 
@@ -2108,13 +2130,25 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findByUsernameOrId('garrett', 4);
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$expected = new QueryExpression();
+
+		$typeMap = new TypeMap([
+			'Users.id' => 'integer',
+			'id' => 'integer',
+			'Users.username' => 'string',
+			'username' => 'string',
+			'Users.password' => 'string',
+			'password' => 'string',
+			'Users.created' => 'timestamp',
+			'created' => 'timestamp',
+			'Users.updated' => 'timestamp',
+			'updated' => 'timestamp',
+		]);
+		$expected = new QueryExpression([], $typeMap);
 		$expected->add([
 			'OR' => [
 				'username' => 'garrett',
 				'id' => 4
-			]],
-			['username' => 'string', 'id' => 'integer']
+			]]
 		);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
@@ -2130,11 +2164,20 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$result = $table->findAllByAuthorId(1);
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
 		$this->assertNull($result->clause('limit'));
-		$expected = new QueryExpression(
-			['author_id' => 1],
-			['author_id' => 'integer'],
-			'AND'
-		);
+
+		$typeMap = new TypeMap([
+			'Articles.id' => 'integer',
+			'id' => 'integer',
+			'Articles.author_id' => 'integer',
+			'author_id' => 'integer',
+			'Articles.title' => 'string',
+			'title' => 'string',
+			'Articles.body' => 'text',
+			'body' => 'text',
+			'Articles.published' => 'string',
+			'published' => 'string',
+		]);
+		$expected = new QueryExpression(['author_id' => 1], $typeMap);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
 
@@ -2152,6 +2195,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$expected = new QueryExpression(
 			['author_id' => 1, 'published' => 'Y']
 		);
+		$expected->typeMap()->defaults([
+			'Users.id' => 'integer',
+			'id' => 'integer',
+			'Users.username' => 'string',
+			'username' => 'string',
+			'Users.password' => 'string',
+			'password' => 'string',
+			'Users.created' => 'timestamp',
+			'created' => 'timestamp',
+			'Users.updated' => 'timestamp',
+			'updated' => 'timestamp',
+		]);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
 
@@ -2167,6 +2222,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
 		$this->assertNull($result->clause('limit'));
 		$expected = new QueryExpression();
+		$expected->typeMap()->defaults([
+			'Users.id' => 'integer',
+			'id' => 'integer',
+			'Users.username' => 'string',
+			'username' => 'string',
+			'Users.password' => 'string',
+			'password' => 'string',
+			'Users.created' => 'timestamp',
+			'created' => 'timestamp',
+			'Users.updated' => 'timestamp',
+			'updated' => 'timestamp',
+		]);
 		$expected->add(
 			['or' => ['author_id' => 1, 'published' => 'Y']]
 		);

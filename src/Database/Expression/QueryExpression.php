@@ -16,6 +16,8 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Database\TypeMap;
+use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
 use \Countable;
 
@@ -26,6 +28,8 @@ use \Countable;
  *
  */
 class QueryExpression implements ExpressionInterface, Countable {
+
+	use TypeMapTrait;
 
 /**
  * String to be used for joining each of the internal expressions
@@ -52,16 +56,19 @@ class QueryExpression implements ExpressionInterface, Countable {
  *
  * @param array $conditions tree-like array structure containing all the conditions
  * to be added or nested inside this expression object.
- * @param array $types associative array of types to be associated with the values
+ * @param array|TypeMap $types associative array of types to be associated with the values
  * passed in $conditions.
  * @param string $conjunction the glue that will join all the string conditions at this
  * level of the expression tree. For example "AND", "OR", "XOR"...
+ * @param TypeMap $typeMap contains default and call specific type mapping
  * @see QueryExpression::add() for more details on $conditions and $types
  */
 	public function __construct($conditions = [], $types = [], $conjunction = 'AND') {
+		$typeMap = ($types instanceof TypeMap) ? $types : new TypeMap($types);
+		$this->typeMap($typeMap);
 		$this->type(strtoupper($conjunction));
 		if (!empty($conditions)) {
-			$this->add($conditions, $types);
+			$this->add($conditions);
 		}
 	}
 
@@ -281,9 +288,9 @@ class QueryExpression implements ExpressionInterface, Countable {
  */
 	public function and_($conditions, $types = []) {
 		if (is_callable($conditions)) {
-			return $conditions(new self);
+			return $conditions(new self([], $this->typeMap()->types($types)));
 		}
-		return new self($conditions, $types);
+		return new self($conditions, $this->typeMap()->types($types));
 	}
 
 /**
@@ -297,9 +304,9 @@ class QueryExpression implements ExpressionInterface, Countable {
  */
 	public function or_($conditions, $types = []) {
 		if (is_callable($conditions)) {
-			return $conditions(new self([], [], 'OR'));
+			return $conditions(new self([], $this->typeMap()->types($types), 'OR'));
 		}
-		return new self($conditions, $types, 'OR');
+		return new self($conditions, $this->typeMap()->types($types), 'OR');
 	}
 // @codingStandardsIgnoreEnd
 
@@ -425,12 +432,12 @@ class QueryExpression implements ExpressionInterface, Countable {
 			}
 
 			if ($numericKey && is_array($c) || in_array(strtolower($k), $operators)) {
-				$this->_conditions[] = new self($c, $types, $numericKey ? 'AND' : $k);
+				$this->_conditions[] = new self($c, $this->typeMap()->types($types), $numericKey ? 'AND' : $k);
 				continue;
 			}
 
 			if (strtolower($k) === 'not') {
-				$this->_conditions[] = new UnaryExpression(new self($c, $types), [], 'NOT');
+				$this->_conditions[] = new UnaryExpression(new self($c, $this->typeMap()->types($types)), [], 'NOT');
 				continue;
 			}
 
@@ -467,8 +474,12 @@ class QueryExpression implements ExpressionInterface, Countable {
 		if (count($parts) > 1) {
 			list($expression, $operator) = $parts;
 		}
+		
+		if (!empty($types)) {
+			$this->typeMap()->types($types);
+		}
 
-		$type = isset($types[$expression]) ? $types[$expression] : null;
+		$type = $this->typeMap()->type($expression);
 		$multi = false;
 
 		$typeMultiple = strpos($type, '[]') !== false;

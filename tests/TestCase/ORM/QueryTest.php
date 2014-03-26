@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
@@ -764,13 +765,16 @@ class QueryTest extends TestCase {
 
 		$this->assertEquals(['field_a', 'field_b'], $query->clause('select'));
 
+		$typeMap = new TypeMap(['foo.id' => 'integer', 'id' => 'integer']);
 		$expected = new QueryExpression($options['conditions']);
+		$expected->typeMap($typeMap);
 		$result = $query->clause('where');
 		$this->assertEquals($expected, $result);
 
 		$this->assertEquals(1, $query->clause('limit'));
 
 		$expected = new QueryExpression(['a > b']);
+		$expected->typeMap($typeMap);
 		$result = $query->clause('join');
 		$this->assertEquals([
 			'table_a' => ['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected]
@@ -783,6 +787,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals(['field_a'], $query->clause('group'));
 
 		$expected = new QueryExpression($options['having']);
+		$expected->typeMap($typeMap);
 		$this->assertEquals($expected, $query->clause('having'));
 
 		$expected = ['table_a' => ['table_b' => []]];
