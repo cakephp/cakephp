@@ -16,6 +16,7 @@
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
+use Cake\Database\TypeMap;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
@@ -222,11 +223,17 @@ class BelongsToManyTest extends TestCase {
 			'conditions' => ['Tags.name' => 'cake']
 		];
 		$association = new BelongsToMany('Tags', $config);
+		$typeMap = new TypeMap([
+			'Tags.id' => 'integer',
+			'id' => 'integer',
+			'Tags.name' => 'string',
+			'name' => 'string',
+		]);
 		$query->expects($this->at(0))->method('join')->with([
 			'Tags' => [
 				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				], ['Tags.name' => 'string']),
+				], $typeMap),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -235,12 +242,19 @@ class BelongsToManyTest extends TestCase {
 		$field1 = new IdentifierExpression('ArticlesTags.article_id');
 		$field2 = new IdentifierExpression('ArticlesTags.tag_id');
 
+		$typeMap = new TypeMap([
+			'ArticlesTags.article_id' => 'integer',
+			'article_id' => 'integer',
+			'ArticlesTags.tag_id' => 'integer',
+			'tag_id' => 'integer',
+		]);
+
 		$query->expects($this->at(2))->method('join')->with([
 			'ArticlesTags' => [
 				'conditions' => new QueryExpression([
 					['Articles.id' => $field1],
 					['Tags.id' => $field2]
-				]),
+				], $typeMap),
 				'type' => 'INNER',
 				'table' => 'articles_tags'
 			]
@@ -269,11 +283,17 @@ class BelongsToManyTest extends TestCase {
 			'conditions' => ['Tags.name' => 'cake']
 		];
 		$association = new BelongsToMany('Tags', $config);
+		$typeMap = new TypeMap([
+			'Tags.id' => 'integer',
+			'id' => 'integer',
+			'Tags.name' => 'string',
+			'name' => 'string',
+		]);
 		$query->expects($this->at(0))->method('join')->with([
 			'Tags' => [
 				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				], ['Tags.name' => 'string']),
+				], $typeMap),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -282,12 +302,19 @@ class BelongsToManyTest extends TestCase {
 		$field1 = new IdentifierExpression('ArticlesTags.article_id');
 		$field2 = new IdentifierExpression('ArticlesTags.tag_id');
 
+		$typeMap = new TypeMap([
+			'ArticlesTags.article_id' => 'integer',
+			'article_id' => 'integer',
+			'ArticlesTags.tag_id' => 'integer',
+			'tag_id' => 'integer',
+		]);
+
 		$query->expects($this->at(1))->method('join')->with([
 			'ArticlesTags' => [
 				'conditions' => new QueryExpression([
 					['Articles.id' => $field1],
 					['Tags.id' => $field2]
-				]),
+				], $typeMap),
 				'type' => 'INNER',
 				'table' => 'articles_tags'
 			]
@@ -310,12 +337,18 @@ class BelongsToManyTest extends TestCase {
 			'conditions' => ['Tags.name' => 'cake']
 		];
 		$association = new BelongsToMany('Tags', $config);
+		$typeMap = new TypeMap([
+			'Tags.id' => 'integer',
+			'id' => 'integer',
+			'Tags.name' => 'string',
+			'name' => 'string',
+		]);
 		$query->expects($this->at(0))->method('join')->with([
 			'Tags' => [
 				'conditions' => new QueryExpression([
 					'a' => 1,
 					'Tags.name' => 'cake',
-				], ['Tags.name' => 'string']),
+				], $typeMap),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -324,12 +357,19 @@ class BelongsToManyTest extends TestCase {
 		$field1 = new IdentifierExpression('ArticlesTags.article_id');
 		$field2 = new IdentifierExpression('ArticlesTags.tag_id');
 
+		$typeMap = new TypeMap([
+			'ArticlesTags.article_id' => 'integer',
+			'article_id' => 'integer',
+			'ArticlesTags.tag_id' => 'integer',
+			'tag_id' => 'integer',
+		]);
+
 		$query->expects($this->at(2))->method('join')->with([
 			'ArticlesTags' => [
 				'conditions' => new QueryExpression([
 					['Articles.id' => $field1],
 					['Tags.id' => $field2]
-				]),
+				], $typeMap),
 				'type' => 'INNER',
 				'table' => 'articles_tags'
 			]
@@ -367,11 +407,17 @@ class BelongsToManyTest extends TestCase {
 		$this->article->primaryKey(['id', 'site_id']);
 		$this->tag->primaryKey(['id', 'my_site_id']);
 		$association = new BelongsToMany('Tags', $config);
+		$typeMap = new TypeMap([
+			'Tags.id' => 'integer',
+			'id' => 'integer',
+			'Tags.name' => 'string',
+			'name' => 'string',
+		]);
 		$query->expects($this->at(0))->method('join')->with([
 			'Tags' => [
 				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				], ['Tags.name' => 'string']),
+				], $typeMap),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -382,12 +428,19 @@ class BelongsToManyTest extends TestCase {
 		$fieldC = new IdentifierExpression('ArticlesTags.tag_id');
 		$fieldD = new IdentifierExpression('ArticlesTags.tag_site_id');
 
+		$typeMap = new TypeMap([
+			'ArticlesTags.article_id' => 'integer',
+			'article_id' => 'integer',
+			'ArticlesTags.tag_id' => 'integer',
+			'tag_id' => 'integer',
+		]);
+
 		$query->expects($this->at(1))->method('join')->with([
 			'ArticlesTags' => [
 				'conditions' => new QueryExpression([
 					['Articles.id' => $fieldA, 'Articles.site_id' => $fieldB],
 					['Tags.id' => $fieldC, 'Tags.my_site_id' => $fieldD]
-				]),
+				], $typeMap),
 				'type' => 'INNER',
 				'table' => 'articles_tags'
 			]

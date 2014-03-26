@@ -29,7 +29,7 @@ class TypeMap {
  * @param array $defaults
  */
 	public function __construct(array $defaults = []) {
-			$this->defaults($defaults);
+		$this->defaults($defaults);
 	}
 
 /**

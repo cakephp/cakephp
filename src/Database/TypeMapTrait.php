@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -28,20 +26,22 @@ trait TypeMapTrait {
 /**
  * Setter/Getter for type map
  *
+ * @param array|TypeMap $typeMap Creates a TypeMap if array, otherwise sets the given TypeMap
  * @return this|TypeMap
  */
 	public function typeMap($typeMap = null) {
+		$this->_typeMap = ($this->_typeMap) ?: new TypeMap();
 		if ($typeMap === null) {
-			$this->_typeMap = ($this->_typeMap) ?: new TypeMap();
 			return $this->_typeMap;
 		}
-		$this->_typeMap = $typeMap;
+		$this->_typeMap = is_array($typeMap) ? (new TypeMap)->types($typeMap) : $typeMap;
 		return $this;
 	}
 
 /**
  * Allows setting default types when chaining query
  *
+ * @param array $types
  * @return this|array
  */
 	public function defaultTypes(array $types = null) {

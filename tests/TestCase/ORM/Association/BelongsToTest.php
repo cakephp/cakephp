@@ -16,6 +16,7 @@
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
+use Cake\Database\TypeMap;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Association\BelongsTo;
@@ -94,12 +95,18 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new BelongsTo('Companies', $config);
 		$field = new IdentifierExpression('Clients.company_id');
+		$typeMap = new TypeMap([
+			'Companies.id' => 'integer',
+			'id' => 'integer',
+			'Companies.company_name' => 'string',
+			'company_name' => 'string',
+		]);
 		$query->expects($this->once())->method('join')->with([
 			'Companies' => [
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				], ['Companies.id' => 'integer']),
+				], $typeMap),
 				'table' => 'companies',
 				'type' => 'LEFT'
 			]
@@ -124,11 +131,17 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Companies.is_active' => true]
 		];
 		$association = new BelongsTo('Companies', $config);
+		$typeMap = new TypeMap([
+			'Companies.id' => 'integer',
+			'id' => 'integer',
+			'Companies.company_name' => 'string',
+			'company_name' => 'string',
+		]);
 		$query->expects($this->once())->method('join')->with([
 			'Companies' => [
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => false
-				]),
+				], $typeMap),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
@@ -159,12 +172,18 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new BelongsTo('Companies', $config);
 		$field = new IdentifierExpression('Clients.company_id');
+		$typeMap = new TypeMap([
+			'Companies.id' => 'integer',
+			'id' => 'integer',
+			'Companies.company_name' => 'string',
+			'company_name' => 'string',
+		]);
 		$query->expects($this->once())->method('join')->with([
 			'Companies' => [
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				], ['Companies.id' => 'integer']),
+				], $typeMap),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
@@ -188,13 +207,19 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new BelongsTo('Companies', $config);
 		$field = new IdentifierExpression('Clients.company_id');
+		$typeMap = new TypeMap([
+			'Companies.id' => 'integer',
+			'id' => 'integer',
+			'Companies.company_name' => 'string',
+			'company_name' => 'string',
+		]);
 		$query->expects($this->once())->method('join')->with([
 			'Companies' => [
 				'conditions' => new QueryExpression([
 					'a' => 1,
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				], ['Companies.id' => 'integer']),
+				], $typeMap),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
@@ -226,12 +251,18 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new BelongsTo('Companies', $config);
 		$field = new IdentifierExpression('Clients.company_id');
+		$typeMap = new TypeMap([
+			'Companies.id' => 'integer',
+			'id' => 'integer',
+			'Companies.company_name' => 'string',
+			'company_name' => 'string',
+		]);
 		$query->expects($this->once())->method('join')->with([
 			'Companies' => [
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				], ['Companies.id' => 'integer']),
+				], $typeMap),
 				'table' => 'companies',
 				'type' => 'INNER'
 			]
@@ -308,12 +339,18 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$association = new BelongsTo('Companies', $config);
 		$field1 = new IdentifierExpression('Clients.company_id');
 		$field2 = new IdentifierExpression('Clients.company_tenant_id');
+		$typeMap = new TypeMap([
+			'Companies.id' => 'integer',
+			'id' => 'integer',
+			'Companies.company_name' => 'string',
+			'company_name' => 'string',
+		]);
 		$query->expects($this->once())->method('join')->with([
 			'Companies' => [
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field1, 'Companies.tenant_id' => $field2]
-				], ['Companies.id' => 'integer']),
+				], $typeMap),
 				'table' => 'companies',
 				'type' => 'LEFT'
 			]

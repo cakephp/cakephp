@@ -64,11 +64,10 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @see QueryExpression::add() for more details on $conditions and $types
  */
 	public function __construct($conditions = [], $types = [], $conjunction = 'AND') {
-		$typeMap = ($types instanceof TypeMap) ? $types : new TypeMap($types);
-		$this->typeMap($typeMap);
+		$this->typeMap($types);
 		$this->type(strtoupper($conjunction));
 		if (!empty($conditions)) {
-			$this->add($conditions);
+			$this->add($conditions, $this->typeMap()->types());
 		}
 	}
 
@@ -419,6 +418,8 @@ class QueryExpression implements ExpressionInterface, Countable {
 	protected function _addConditions(array $conditions, array $types) {
 		$operators = ['and', 'or', 'xor'];
 
+		$typeMap = $this->typeMap()->types($types);
+
 		foreach ($conditions as $k => $c) {
 			$numericKey = is_numeric($k);
 
@@ -430,14 +431,14 @@ class QueryExpression implements ExpressionInterface, Countable {
 				$this->_conditions[] = $c;
 				continue;
 			}
-
+			
 			if ($numericKey && is_array($c) || in_array(strtolower($k), $operators)) {
-				$this->_conditions[] = new self($c, $this->typeMap()->types($types), $numericKey ? 'AND' : $k);
+				$this->_conditions[] = new self($c, $typeMap, $numericKey ? 'AND' : $k);
 				continue;
 			}
 
 			if (strtolower($k) === 'not') {
-				$this->_conditions[] = new UnaryExpression(new self($c, $this->typeMap()->types($types)), [], 'NOT');
+				$this->_conditions[] = new UnaryExpression(new self($c, $typeMap), [], 'NOT');
 				continue;
 			}
 
@@ -447,7 +448,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 			}
 
 			if (!$numericKey) {
-				$this->_conditions[] = $this->_parseCondition($k, $c, $types);
+				$this->_conditions[] = $this->_parseCondition($k, $c);
 			}
 		}
 	}
@@ -462,21 +463,15 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @param string $field The value from with the actual field and operator will
  * be extracted.
  * @param mixed $value The value to be bound to a placeholder for the field
- * @param array $types List of types where the field can be found so the value
- * can be converted accordingly.
  * @return string|QueryExpression
  */
-	protected function _parseCondition($field, $value, $types) {
+	protected function _parseCondition($field, $value) {
 		$operator = '=';
 		$expression = $field;
 		$parts = explode(' ', trim($field), 2);
 
 		if (count($parts) > 1) {
 			list($expression, $operator) = $parts;
-		}
-		
-		if (!empty($types)) {
-			$this->typeMap()->types($types);
 		}
 
 		$type = $this->typeMap()->type($expression);
