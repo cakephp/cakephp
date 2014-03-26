@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -30,24 +28,26 @@ use Cake\Utility\Inflector;
 	echo "\t<tr>\n";
 		foreach ($fields as $field) {
 			$isKey = false;
-			if (!empty($associations['belongsTo'])) {
-				foreach ($associations['belongsTo'] as $alias => $details) {
+			if (!empty($associations['BelongsTo'])) {
+				foreach ($associations['BelongsTo'] as $alias => $details) {
 					if ($field === $details['foreignKey']) {
 						$isKey = true;
-						echo "\t\t<td>\n\t\t\t<?= \$this->Html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}']]); ?>\n\t\t</td>\n";
+						echo "\t\t<td>\n\t\t\t<?= \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['primaryKey'][0]}]); ?>\n\t\t</td>\n";
 						break;
 					}
 				}
 			}
 			if ($isKey !== true) {
-				echo "\t\t<td><?= h(\${$singularVar}['{$modelClass}']['{$field}']); ?>&nbsp;</td>\n";
+				echo "\t\t<td><?= h(\${$singularVar}->{$field}); ?>&nbsp;</td>\n";
 			}
 		}
 
+		$pk = "\${$singularVar}->{$primaryKey[0]}";
+
 		echo "\t\t<td class=\"actions\">\n";
-		echo "\t\t\t<?= \$this->Html->link(__('View'), ['action' => 'view', \${$singularVar}['{$modelClass}']['{$primaryKey}']]); ?>\n";
-		echo "\t\t\t<?= \$this->Html->link(__('Edit'), ['action' => 'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}']]); ?>\n";
-		echo "\t\t\t<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']], null, __('Are you sure you want to delete # %s?', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
+		echo "\t\t\t<?= \$this->Html->link(__('View'), ['action' => 'view', {$pk}]); ?>\n";
+		echo "\t\t\t<?= \$this->Html->link(__('Edit'), ['action' => 'edit', {$pk}]); ?>\n";
+		echo "\t\t\t<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', {$pk}], [], __('Are you sure you want to delete # %s?', {$pk})); ?>\n";
 		echo "\t\t</td>\n";
 	echo "\t</tr>\n";
 
@@ -56,17 +56,14 @@ use Cake\Utility\Inflector;
 	</table>
 	<p>
 	<?= "<?php
-	echo \$this->Paginator->counter([
-	'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
-	]);
-	?>"; ?>
-	</p>
+	echo \$this->Paginator->counter();
+	?>"; ?></p>
 	<div class="paging">
 	<?php
 		echo "<?php\n";
-		echo "\t\techo \$this->Paginator->prev('< ' . __('previous'), [], null, ['class' => 'prev disabled']);\n";
-		echo "\t\techo \$this->Paginator->numbers(['separator' => '']);\n";
-		echo "\t\techo \$this->Paginator->next(__('next') . ' >', [], null, ['class' => 'next disabled']);\n";
+		echo "\t\techo \$this->Paginator->prev('< ' . __('previous'));\n";
+		echo "\t\techo \$this->Paginator->numbers();\n";
+		echo "\t\techo \$this->Paginator->next(__('next') . ' >');\n";
 		echo "\t?>\n";
 	?>
 	</div>

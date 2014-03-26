@@ -20,7 +20,7 @@
  */
 	public function view($id = null) {
 		$bakeArticle = $this->BakeArticles->get($id, [
-			'contain' => ['BakeUsers']
+			'contain' => ['BakeUsers', 'BakeTags', 'BakeComments']
 		]);
 		$this->set('bakeArticle', $bakeArticle);
 	}
@@ -53,7 +53,9 @@
  * @return void
  */
 	public function edit($id = null) {
-		$bakeArticle = $this->BakeArticles->get($id);
+		$bakeArticle = $this->BakeArticles->get($id, [
+			'contain' => ['BakeTags']
+		]);
 		if ($this->request->is(['post', 'put'])) {
 			$bakeArticle = $this->BakeArticles->patchEntity($bakeArticle, $this->request->data);
 			if ($this->BakeArticles->save($bakeArticle)) {

@@ -30,17 +30,18 @@ class PostsController extends Controller {
 	public $components = array();
 
 /**
- * components
+ * index action
  *
- * @var array
+ * @return void
  */
-	public $uses = array();
+	public function index() {
+	}
 
 /**
  * index action
  *
  * @return void
  */
-	public function index() {
+	public function add() {
 	}
 }

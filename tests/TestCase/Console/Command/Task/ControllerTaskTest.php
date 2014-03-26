@@ -75,10 +75,6 @@ class ControllerTaskTest extends TestCase {
 			array('in', 'out', 'err', 'createFile', '_stop'),
 			array($out, $out, $in)
 		);
-		$this->Task->Project = $this->getMock('Cake\Console\Command\Task\ProjectTask',
-			array('in', 'out', 'err', 'createFile', '_stop', 'getPrefix'),
-			array($out, $out, $in)
-		);
 		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\TestTask', array(), array($out, $out, $in));
 
 		TableRegistry::get('BakeArticles', [
