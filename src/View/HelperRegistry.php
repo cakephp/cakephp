@@ -151,18 +151,4 @@ class HelperRegistry extends ObjectRegistry {
 		return $instance;
 	}
 
-/**
- * Destroys all objects in the registry.
- *
- * Removes all attached listeners and destroys all stored instances.
- *
- * @return void
- */
-	public function reset() {
-		foreach ($this->_loaded as $helper) {
-			$this->_eventManager->detach($helper);
-		}
-		parent::reset();
-	}
-
 }

@@ -38,6 +38,13 @@ abstract class ObjectRegistry {
 	protected $_loaded = [];
 
 /**
+ * The event manager to bind components to.
+ *
+ * @var \Cake\Event\EventManager
+ */
+	protected $_eventManager;
+
+/**
  * Loads/constructs a object instance.
  *
  * Will return the instance in the registry if it already exists.
@@ -170,24 +177,47 @@ abstract class ObjectRegistry {
 /**
  * Clear loaded instances in the registry.
  *
+ * If the registry subclass has an event manager, the objects will be detached from events as well.
+ *
  * @return void
  */
 	public function reset() {
-		$this->_loaded = [];
+		foreach (array_keys($this->_loaded) as $name) {
+			$this->unload($name);
+		}
 	}
 
 /**
  * set an object directly into the registry by name
  *
- * This is primarily to aide testing
+ * This is primarily to aid testing
  *
- * @param string $objectName
+ * @param string $objectName The name of the object to set in the registry.
  * @param object $object instance to store in the registry
  * @return void
  */
 	public function set($objectName, $object) {
 		list($plugin, $name) = pluginSplit($objectName);
 		$this->_loaded[$name] = $object;
+	}
+
+/**
+ * Remove an object from the registry.
+ *
+ * If this registry has an event manager, the object will be detached from any events as well.
+ *
+ * @param string $objectName The name of the object to remove from the registry.
+ * @return void
+ */
+	public function unload($objectName) {
+		if (empty($this->_loaded[$objectName])) {
+			return;
+		}
+		$object = $this->_loaded[$objectName];
+		if (isset($this->_eventManager)) {
+			$this->_eventManager->detach($object);
+		}
+		unset($this->_loaded[$objectName]);
 	}
 
 }

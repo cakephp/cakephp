@@ -200,4 +200,22 @@ class HelperRegistryTest extends TestCase {
 
 		$this->assertNotSame($instance, $this->Helpers->load('Paginator'));
 	}
+
+/**
+ * Test unloading.
+ *
+ * @return void
+ */
+	public function testUnload() {
+		$instance = $this->Helpers->load('Paginator');
+		$this->assertSame(
+			$instance,
+			$this->Helpers->Paginator,
+			'Instance in registry should be the same as previously loaded'
+		);
+		$this->assertCount(1, $this->Events->listeners('View.beforeRender'));
+
+		$this->assertNull($this->Helpers->unload('Paginator'), 'No return expected');
+		$this->assertCount(0, $this->Events->listeners('View.beforeRender'));
+	}
 }
