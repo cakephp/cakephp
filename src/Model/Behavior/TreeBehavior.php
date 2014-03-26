@@ -91,12 +91,16 @@ class TreeBehavior extends Behavior {
 
 		if ($isNew && !$parent) {
 			$edge = $this->_getMax();
-			$entity->set($config['left'],$edge + 1);
+			$entity->set($config['left'], $edge + 1);
 			$entity->set($config['right'], $edge + 2);
 		}
 
 		if (!$isNew && $dirty && $parent) {
 			$this->_setParent($entity, $parent);
+		}
+
+		if (!$isNew && $dirty && !$parent) {
+			$this->_setAsRoot($entity);
 		}
 	}
 
@@ -159,6 +163,19 @@ class TreeBehavior extends Behavior {
 		//Allocating new position
 		$entity->set($config['left'], $targetLeft);
 		$entity->set($config['right'], $targetRight);
+	}
+
+	protected function _setAsRoot($entity) {
+		$config = $this->config();
+		$edge = $this->_getMax();
+		$right = $entity->get($config['right']);
+		$left = $entity->get($config['left']);
+		$internalLeft = $left + 1;
+		$internalRight = $right - 1;
+
+		$entity->set($config['left'], $edge + 1);
+		$entity->set($config['right'], $edge + $right - 1);
+		$this->_sync($edge - 1, '+', "BETWEEN {$internalLeft} AND {$internalRight}");
 	}
 
 	public function findPath($query, $options) {

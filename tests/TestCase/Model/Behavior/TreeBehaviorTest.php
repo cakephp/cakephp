@@ -460,4 +460,24 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(range(1, 22), $numbers);
 	}
 
+/**
+ * Tests moving as a new root
+ *
+ * @return void
+ */
+	public function testRootingSubTree() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(2);
+		$entity->parent_id = null;
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals(23, $entity->lft);
+		$this->assertEquals(30, $entity->rght);
+
+		$result = $table->find()->order('lft')->hydrate(false)->toArray();
+		$table->recover();
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals($expected, $result);
+	}
+
 }
