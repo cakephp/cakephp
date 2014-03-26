@@ -42,16 +42,6 @@ class SessionHelper extends Helper {
 	];
 
 /**
- * Construct the helper and sets up templates
- *
- * @param \Cake\View\View $view The View this helper is being attached to.
- * @param array $config Configuration settings for the helper.
- */
-	public function __construct(View $view, $config = []) {
-		parent::__construct($view, $config);
-	}
-
-/**
  * Used to read a session values set in a controller for a key or return values for all keys.
  *
  * In your view: `$this->Session->read('Controller.sessKey');`
