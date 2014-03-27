@@ -147,11 +147,16 @@ class InstanceConfigTraitTest extends TestCase {
 			'should return the same value just set'
 		);
 
-		$this->object->config('some', 'zum');
+		$return = $this->object->config('some', 'zum');
 		$this->assertSame(
 			'zum',
 			$this->object->config('some'),
 			'should return the overritten value'
+		);
+		$this->assertSame(
+			$this->object,
+			$return,
+			'write operations should return the instance'
 		);
 
 		$this->assertSame(
@@ -260,7 +265,131 @@ class InstanceConfigTraitTest extends TestCase {
  * @return void
  */
 	public function testSetClobber() {
-		$this->object->config(['a.nested.value' => 'not possible']);
+		$this->object->config(['a.nested.value' => 'not possible'], null, false);
+		$result = $this->object->config();
+	}
+
+/**
+ * testMerge
+ *
+ * @return void
+ */
+	public function testMerge() {
+		$this->object->config(['a' => ['nother' => 'value']]);
+
+		$this->assertSame(
+			[
+				'some' => 'string',
+				'a' => [
+					'nested' => 'value',
+					'nother' => 'value'
+				]
+			],
+			$this->object->config(),
+			'Merging should not delete untouched array values'
+		);
+	}
+
+/**
+ * testMergeDotKey
+ *
+ * @return void
+ */
+	public function testMergeDotKey() {
+		$this->object->config('a.nother', 'value');
+
+		$this->assertSame(
+			[
+				'some' => 'string',
+				'a' => [
+					'nested' => 'value',
+					'nother' => 'value'
+				]
+			],
+			$this->object->config(),
+			'Should act the same as having passed the equivalent array to the config function'
+		);
+
+		$this->object->config(['a.nextra' => 'value']);
+
+		$this->assertSame(
+			[
+				'some' => 'string',
+				'a' => [
+					'nested' => 'value',
+					'nother' => 'value',
+					'nextra' => 'value'
+				]
+			],
+			$this->object->config(),
+			'Merging should not delete untouched array values'
+		);
+	}
+
+/**
+ * testSetDefaultsMerge
+ *
+ * @return void
+ */
+	public function testSetDefaultsMerge() {
+		$this->object->config(['a' => ['nother' => 'value']]);
+
+		$this->assertSame(
+			[
+				'some' => 'string',
+				'a' => [
+					'nested' => 'value',
+					'nother' => 'value'
+				]
+			],
+			$this->object->config(),
+			'First access should act like any subsequent access'
+		);
+	}
+
+/**
+ * testSetDefaultsNoMerge
+ *
+ * @return void
+ */
+	public function testSetDefaultsNoMerge() {
+		$this->object->config(['a' => ['nother' => 'value']], null, false);
+
+		$this->assertSame(
+			[
+				'some' => 'string',
+				'a' => [
+					'nother' => 'value'
+				]
+			],
+			$this->object->config(),
+			'If explicitly no-merge, array values should be overwritten'
+		);
+	}
+
+/**
+ * testSetMergeNoClobber
+ *
+ * Merging offers no such protection of clobbering a value whilst implemented
+ * using the Hash class
+ *
+ * @return void
+ */
+	public function testSetMergeNoClobber() {
+		$this->object->config(['a.nested.value' => 'it is possible']);
+
+		$this->assertSame(
+			[
+				'some' => 'string',
+				'a' => [
+					'nested' => [
+						'value' => 'it is possible'
+					]
+				]
+			],
+			$this->object->config(),
+			'When merging a scalar property will be overwritten with an array'
+		);
 	}
 
 /**
@@ -340,7 +469,7 @@ class InstanceConfigTraitTest extends TestCase {
 	}
 
 /**
- * testSetClobber
+ * testDeleteClobber
  *
  * @expectedException \Exception
  * @expectedExceptionMessage Cannot unset a.nested.value.whoops

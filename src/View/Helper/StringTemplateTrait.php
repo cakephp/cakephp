@@ -41,7 +41,8 @@ trait StringTemplateTrait {
 			return $this->templater()->get($templates);
 		}
 
-		return $this->templater()->add($templates);
+		$this->templater()->add($templates);
+		return $this;
 	}
 
 /**

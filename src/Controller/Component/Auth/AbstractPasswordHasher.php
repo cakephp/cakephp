@@ -41,7 +41,7 @@ abstract class AbstractPasswordHasher {
  * @param array $config Array of config.
  */
 	public function __construct($config = array()) {
-		$this->config($config);
+		$this->config($config, null, true);
 	}
 
 /**
