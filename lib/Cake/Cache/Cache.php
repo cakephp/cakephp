@@ -328,6 +328,73 @@ class Cache {
 	}
 
 /**
+ * Write data for many keys into cache. Will automatically use the currently
+ * active cache configuration. To set the currently active configuration use
+ * Cache::config()
+ *
+ * ### Usage:
+ *
+ * Writing to the active cache config:
+ *
+ * `Cache::writeMany(array('cached_data_1' => 'data 1', 'cached_data_2' => 'data 2'));`
+ *
+ * Writing to a specific cache config:
+ *
+ * `Cache::writeMany(array('cached_data_1' => 'data 1', 'cached_data_2' => 'data 2'), 'long_term');`
+ *
+ * @param array $data An array of data to be stored in the cache
+ * @param string $config Optional string configuration name to write to. Defaults to 'default'
+ * @return array of bools for each key provided, indicated true for success or false for fail
+ */
+	public static function writeMany($data, $config = 'default') {
+		$settings = self::settings($config);
+
+		if (empty($settings)) {
+			return false;
+		}
+		if (!self::isInitialized($config)) {
+			return false;
+		}
+		
+		$return = array();
+		
+		if (method_exists(self::$_engines[$config],'writeMany')) {
+			$writeKeys = array();
+			foreach ($data as $key => $value) {
+				// do not send invalid keys to the cache engine, put them in $falsekeys instead
+				$engineKey = self::$_engines[$config]->key($key);
+				if (!$engineKey || is_resource($value)) {
+					$return[$key] = false;
+				} else {
+					$writeKeys[$key] = array($settings['prefix'] . $engineKey, $value);
+				}
+			}
+			if (!empty($writeKeys)) {
+				$result = self::$_engines[$config]->writeMany($writeKeys, $settings['duration']);
+				if ($result === false) {
+					trigger_error(
+						__d('cake_dev',
+							"%s cache was unable to write to %s cache",
+							$config,
+							self::$_engines[$config]->settings['engine']
+						),
+						E_USER_WARNING
+					);
+				}
+			} else {
+				$result = array();
+			}
+			self::set(null, $config);
+			$return = array_merge($return, $result);
+		}else{
+			foreach ($data as $key => $value) {
+				$return[$key] = self::write($key, $value, $config);
+			}
+		}
+		self::set(null, $config);
+		return $return;
+	}
+/**
  * Read a key from the cache. Will automatically use the currently
  * active cache configuration. To set the currently active configuration use
  * Cache::config()
