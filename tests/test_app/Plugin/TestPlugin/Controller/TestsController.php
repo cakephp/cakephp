@@ -34,7 +34,7 @@ class TestsController extends TestPluginAppController {
 	}
 
 	public function some_method() {
-		return 25;
+		$this->response->body(25);
 	}
 
 }

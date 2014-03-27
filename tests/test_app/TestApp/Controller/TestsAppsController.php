@@ -36,7 +36,7 @@ class TestsAppsController extends AppController {
 	}
 
 	public function some_method() {
-		return 5;
+		$this->response->body(5);
 	}
 
 	public function set_action() {
