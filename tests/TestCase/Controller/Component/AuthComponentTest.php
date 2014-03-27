@@ -1,7 +1,5 @@
 <?php
 /**
- * AuthComponentTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -79,7 +77,7 @@ class AuthComponentTest extends TestCase {
 		$this->Controller = new AuthTestController($request, $this->getMock('Cake\Network\Response'));
 		$this->Controller->constructClasses();
 
-		$this->Auth = new TestAuthComponent($this->Controller->Components);
+		$this->Auth = new TestAuthComponent($this->Controller->components());
 		$this->Auth->request = $request;
 		$this->Auth->response = $this->getMock('Cake\Network\Response');
 		AuthComponent::$sessionKey = 'Auth.User';
@@ -752,7 +750,7 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->Session = $this->getMock(
 			'Cake\Controller\Component\SessionComponent',
 			array('setFlash'),
-			array($Controller->Components)
+			array($Controller->components())
 		);
 
 		$Controller->expects($this->once())
@@ -790,7 +788,7 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->Session = $this->getMock(
 			'Cake\Controller\Component\SessionComponent',
 			array('setFlash'),
-			array($Controller->Components)
+			array($Controller->components())
 		);
 
 		$Controller->expects($this->once())
