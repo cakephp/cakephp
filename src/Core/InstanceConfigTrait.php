@@ -65,11 +65,11 @@ trait InstanceConfigTrait {
  *
  * `$this->config(['one' => 'value', 'another' => 'value']);`
  *
- * @param string|array|null $key the key to get/set, or a complete array of configs
- * @param mixed|null $value the value to set
- * @return mixed|this config value being read, or the object itself on write operations
- * @param bool $merge whether to merge or overwrite existing config defaults to true
- * @throws \Cake\Error\Exception When trying to set a key that is invalid
+ * @param string|array|null $key The key to get/set, or a complete array of configs.
+ * @param mixed|null $value The value to set.
+ * @param bool $merge Whether to merge or overwrite existing config defaults to true.
+ * @return mixed Config value being read, or the object itself on write operations.
+ * @throws \Cake\Error\Exception When trying to set a key that is invalid.
  */
 	public function config($key = null, $value = null, $merge = true) {
 		if (!$this->_configInitialized) {
