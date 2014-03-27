@@ -357,7 +357,6 @@ class Cache {
 		}
 		
 		$return = array();
-		
 		if (method_exists(self::$_engines[$config],'writeMany')) {
 			$result = self::$_engines[$config]->writeMany($data, $settings['duration']);
 			if ($result === false) {
@@ -380,9 +379,7 @@ class Cache {
 	}
 
 /**
- * Read a key from the cache. Will automatically use the currently
- * active cache configuration. To set the currently active configuration use
- * Cache::config()
+ * Read a key from the cache.
  *
  * ### Usage:
  *
@@ -415,9 +412,7 @@ class Cache {
 	}
 
 /**
- * Read multiple keys from the cache. Will automatically use the currently
- * active cache configuration. To set the currently active configuration use
- * Cache::config()
+ * Read multiple keys from the cache.
  *
  * ### Usage:
  *
@@ -441,7 +436,7 @@ class Cache {
 		if (!self::isInitialized($config)) {
 			return false;
 		}
-		
+
 		$return = array();
 		if (method_exists(self::$_engines[$config],'readMany')) {
 			$return = self::$_engines[$config]->readMany($keys);
@@ -546,7 +541,7 @@ class Cache {
 	}
 
 /**
- * Delete a key from the cache.
+ * Delete many keys from the cache.
  *
  * ### Usage:
  *
@@ -573,10 +568,8 @@ class Cache {
 		}
 
 		$return = array();
-		
 		if (method_exists(self::$_engines[$config],'deleteMany')) {
 			$return = self::$_engines[$config]->deleteMany($keys);
-			
 		} else {
 			foreach ($keys as $key) {
 				$return[$key] = self::read($key, $config);
