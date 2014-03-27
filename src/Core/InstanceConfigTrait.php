@@ -67,7 +67,7 @@ trait InstanceConfigTrait {
  *
  * @param string|array|null $key the key to get/set, or a complete array of configs
  * @param mixed|null $value the value to set
- * @return mixed|null null for write, or whatever is in the config on read
+ * @return mixed|this config value being read, or the object itself on write operations
  * @param bool $merge whether to merge or overwrite existing config defaults to true
  * @throws \Cake\Error\Exception When trying to set a key that is invalid
  */
@@ -78,7 +78,8 @@ trait InstanceConfigTrait {
 		}
 
 		if (is_array($key) || func_num_args() >= 2) {
-			return $this->_configWrite($key, $value, $merge);
+			$this->_configWrite($key, $value, $merge);
+			return $this;
 		}
 
 		return $this->_configRead($key);

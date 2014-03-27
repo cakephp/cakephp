@@ -147,11 +147,16 @@ class InstanceConfigTraitTest extends TestCase {
 			'should return the same value just set'
 		);
 
-		$this->object->config('some', 'zum');
+		$return = $this->object->config('some', 'zum');
 		$this->assertSame(
 			'zum',
 			$this->object->config('some'),
 			'should return the overritten value'
+		);
+		$this->assertSame(
+			$this->object,
+			$return,
+			'write operations should return the instance'
 		);
 
 		$this->assertSame(
