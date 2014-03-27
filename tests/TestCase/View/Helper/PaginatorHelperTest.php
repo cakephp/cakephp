@@ -83,7 +83,12 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->templates([
 			'test' => 'val'
 		]);
-		$this->assertNull($result, 'Setting should return null');
+		$this->assertSame(
+			$this->Paginator,
+			$result,
+			'Setting should return the same object'
+		);
+
 		$result = $this->Paginator->templates();
 		$this->assertArrayHasKey('test', $result);
 		$this->assertEquals('val', $result['test']);
