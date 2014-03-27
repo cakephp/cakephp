@@ -277,9 +277,7 @@ class Cache {
 	}
 
 /**
- * Write data for key into cache. Will automatically use the currently
- * active cache configuration. To set the currently active configuration use
- * Cache::config()
+ * Write data for key into cache.
  *
  * ### Usage:
  *
@@ -314,23 +312,13 @@ class Cache {
 		$success = self::$_engines[$config]->write($settings['prefix'] . $key, $value, $settings['duration']);
 		self::set(null, $config);
 		if ($success === false && $value !== '') {
-			trigger_error(
-				__d('cake_dev',
-					"%s cache was unable to write '%s' to %s cache",
-					$config,
-					$key,
-					self::$_engines[$config]->settings['engine']
-				),
-				E_USER_WARNING
-			);
+			throw new CacheException(__d('cake_dev', '%s cache was unable to write \'%s\' to %s cache', $config. $key, self::$_engines[$config]->settings['engine']));
 		}
 		return $success;
 	}
 
 /**
- * Write data for many keys into cache. Will automatically use the currently
- * active cache configuration. To set the currently active configuration use
- * Cache::config()
+ * Write data for many keys into cache.
  *
  * ### Usage:
  *
@@ -360,14 +348,7 @@ class Cache {
 		if (method_exists(self::$_engines[$config],'writeMany')) {
 			$result = self::$_engines[$config]->writeMany($data, $settings['duration']);
 			if ($result === false) {
-				trigger_error(
-					__d('cake_dev',
-						"%s cache was unable to write to %s cache",
-						$config,
-						self::$_engines[$config]->settings['engine']
-					),
-					E_USER_WARNING
-				);
+				throw new CacheException(__d('cake_dev', '%s cache was unable to write to %s cache', $config. self::$_engines[$config]->settings['engine']));
 			}
 			self::set(null, $config);
 		}else{
