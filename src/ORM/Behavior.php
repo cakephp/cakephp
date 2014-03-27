@@ -126,7 +126,7 @@ class Behavior implements EventListener {
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
-		$this->config($config, null, true);
+		$this->config($config);
 	}
 
 /**
