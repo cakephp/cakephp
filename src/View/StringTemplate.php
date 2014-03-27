@@ -15,6 +15,7 @@
 namespace Cake\View;
 
 use Cake\Configure\Engine\PhpConfig;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Plugin;
 use Cake\Error;
 
@@ -26,6 +27,11 @@ use Cake\Error;
  * for generating HTML and other content.
  */
 class StringTemplate {
+
+	use InstanceConfigTrait {
+		config as add;
+		config as get;
+	}
 
 /**
  * List of attributes that can be made compact.
@@ -39,11 +45,11 @@ class StringTemplate {
 	);
 
 /**
- * The templates this instance holds.
+ * The default templates this instance holds.
  *
  * @var array
  */
-	protected $_templates = [
+	protected $_defaultConfig = [
 		'attribute' => '{{name}}="{{value}}"',
 		'compactAttribute' => '{{name}}="{{value}}"',
 	];
@@ -53,10 +59,8 @@ class StringTemplate {
  *
  * @param array $templates A set of templates to add.
  */
-	public function __construct(array $templates = null) {
-		if ($templates) {
-			$this->add($templates);
-		}
+	public function __construct(array $config = null) {
+		$this->config($config);
 	}
 
 /**
@@ -76,39 +80,13 @@ class StringTemplate {
 	}
 
 /**
- * Add one or more template strings.
- *
- * @param array $templates The templates to add.
- * @return void
- */
-	public function add(array $templates) {
-		$this->_templates = array_merge($this->_templates, $templates);
-	}
-
-/**
- * Get one or all templates.
- *
- * @param string $name Leave null to get all templates, provide a name to get a single template.
- * @return string|array|null Either the template(s) or null
- */
-	public function get($name = null) {
-		if ($name === null) {
-			return $this->_templates;
-		}
-		if (!isset($this->_templates[$name])) {
-			return null;
-		}
-		return $this->_templates[$name];
-	}
-
-/**
  * Remove the named template.
  *
  * @param string $name The template to remove.
  * @return void
  */
 	public function remove($name) {
-		unset($this->_templates[$name]);
+		$this->config($name, null);
 	}
 
 /**

@@ -135,7 +135,7 @@ class TestHelper extends Helper {
  *
  * @var array
  */
-	public $settings = array(
+	protected $_defaultConfig = array(
 		'key1' => 'val1',
 		'key2' => array('key2.1' => 'val2.1', 'key2.2' => 'val2.2')
 	);
@@ -211,7 +211,7 @@ class HelperTest extends TestCase {
 			'key2' => array('key2.1' => 'val2.1', 'key2.2' => 'newval'),
 			'key3' => 'val3'
 		);
-		$this->assertEquals($expected, $Helper->settings);
+		$this->assertEquals($expected, $Helper->config());
 	}
 
 /**

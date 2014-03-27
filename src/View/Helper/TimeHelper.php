@@ -35,6 +35,15 @@ class TimeHelper extends Helper {
 	use StringTemplateTrait;
 
 /**
+ * Default config for this class
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [
+		'engine' => 'Cake\Utility\Time'
+	];
+
+/**
  * Cake\Utility\Time instance
  *
  * @var \Cake\Utility\Time
@@ -50,19 +59,20 @@ class TimeHelper extends Helper {
  *            The class needs to be placed in the `Utility` directory.
  *
  * @param View $View the view object the helper is attached to.
- * @param array $settings Settings array
+ * @param array $config Settings array
  * @throws \Cake\Error\Exception When the engine class could not be found.
  */
-	public function __construct(View $View, $settings = array()) {
-		$settings = Hash::merge(array('engine' => 'Cake\Utility\Time'), $settings);
-		parent::__construct($View, $settings);
-		$engineClass = App::classname($settings['engine'], 'Utility');
+	public function __construct(View $View, $config = array()) {
+		parent::__construct($View, $config);
+
+		$config = $this->config();
+
+		$engineClass = App::classname($config['engine'], 'Utility');
 		if ($engineClass) {
-			$this->_engine = new $engineClass($settings);
+			$this->_engine = new $engineClass($config);
 		} else {
-			throw new Error\Exception(sprintf('Class for %s could not be found', $settings['engine']));
+			throw new Error\Exception(sprintf('Class for %s could not be found', $config['engine']));
 		}
-		$this->initStringTemplates();
 	}
 
 /**
@@ -349,7 +359,7 @@ class TimeHelper extends Helper {
 			$relativeDate = sprintf(
 				'<%s%s>%s</%s>',
 				$element['tag'],
-				$this->_templater->formatAttributes($element, array('tag')),
+				$this->templater()->formatAttributes($element, array('tag')),
 				$relativeDate,
 				$element['tag']
 			);

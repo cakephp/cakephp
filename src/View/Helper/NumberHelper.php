@@ -31,6 +31,15 @@ use Cake\View\View;
 class NumberHelper extends Helper {
 
 /**
+ * Default config for this class
+ *
+ * @var mixed
+ */
+	protected $_defaultConfig = [
+		'engine' => 'Cake\Utility\Number'
+	];
+
+/**
  * Cake\Utility\Number instance
  *
  * @var \Cake\Utility\Number
@@ -46,17 +55,19 @@ class NumberHelper extends Helper {
  *            The class needs to be placed in the `Utility` directory.
  *
  * @param View $View The View this helper is being attached to.
- * @param array $settings Configuration settings for the helper
+ * @param array $config Configuration settings for the helper
  * @throws \Cake\Error\Exception When the engine class could not be found.
  */
-	public function __construct(View $View, $settings = array()) {
-		$settings = Hash::merge(array('engine' => 'Cake\Utility\Number'), $settings);
-		parent::__construct($View, $settings);
-		$engineClass = App::classname($settings['engine'], 'Utility');
+	public function __construct(View $View, $config = array()) {
+		parent::__construct($View, $config);
+
+		$config = $this->config();
+
+		$engineClass = App::classname($config['engine'], 'Utility');
 		if ($engineClass) {
-			$this->_engine = new $engineClass($settings);
+			$this->_engine = new $engineClass($config);
 		} else {
-			throw new Error\Exception(sprintf('Class for %s could not be found', $settings['engine']));
+			throw new Error\Exception(sprintf('Class for %s could not be found', $config['engine']));
 		}
 	}
 

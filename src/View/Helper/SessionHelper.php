@@ -31,26 +31,15 @@ class SessionHelper extends Helper {
 	use StringTemplateTrait;
 
 /**
- * Default templates to use.
+ * Default config for this class
  *
  * @var array
  */
-	protected $_defaultTemplates = [
-		'flash' => '<div id="{{key}}-message" class="{{class}}">{{message}}</div>'
+	protected $_defaultConfig = [
+		'templates' => [
+			'flash' => '<div id="{{key}}-message" class="{{class}}">{{message}}</div>'
+		]
 	];
-
-/**
- * Construct the helper and sets up templates
- *
- * @param \Cake\View\View $view The View this helper is being attached to.
- * @param array $settings Configuration settings for the helper.
- */
-	public function __construct(View $view, $settings = []) {
-		$settings += ['templates' => null];
-		parent::__construct($view, $settings);
-
-		$this->initStringTemplates($this->_defaultTemplates);
-	}
 
 /**
  * Used to read a session values set in a controller for a key or return values for all keys.

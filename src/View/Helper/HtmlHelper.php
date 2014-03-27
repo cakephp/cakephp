@@ -42,39 +42,41 @@ class HtmlHelper extends Helper {
 	public $response;
 
 /**
- * Default templates the helper users.
+ * Default config for this class
  *
  * @var array
  */
-	protected $_defaultTemplates = [
-		'meta' => '<meta{{attrs}}/>',
-		'metalink' => '<link href="{{url}}"{{attrs}}/>',
-		'link' => '<a href="{{url}}"{{attrs}}>{{content}}</a>',
-		'mailto' => '<a href="mailto:{{url}}"{{attrs}}>{{content}}</a>',
-		'image' => '<img src="{{url}}"{{attrs}}/>',
-		'tableheader' => '<th{{attrs}}>{{content}}</th>',
-		'tableheaderrow' => '<tr{{attrs}}>{{content}}</tr>',
-		'tablecell' => '<td{{attrs}}>{{content}}</td>',
-		'tablerow' => '<tr{{attrs}}>{{content}}</tr>',
-		'block' => '<div{{attrs}}>{{content}}</div>',
-		'blockstart' => '<div{{attrs}}>',
-		'blockend' => '</div>',
-		'tag' => '<{{tag}}{{attrs}}>{{content}}</{{tag}}>',
-		'tagstart' => '<{{tag}}{{attrs}}>',
-		'tagend' => '</{{tag}}>',
-		'tagselfclosing' => '<{{tag}}{{attrs}}/>',
-		'para' => '<p{{attrs}}>{{content}}</p>',
-		'parastart' => '<p{{attrs}}>',
-		'css' => '<link rel="{{rel}}" href="{{url}}"{{attrs}}/>',
-		'style' => '<style{{attrs}}>{{content}}</style>',
-		'charset' => '<meta http-equiv="Content-Type" content="text/html; charset={{charset}}" />',
-		'ul' => '<ul{{attrs}}>{{content}}</ul>',
-		'ol' => '<ol{{attrs}}>{{content}}</ol>',
-		'li' => '<li{{attrs}}>{{content}}</li>',
-		'javascriptblock' => '<script{{attrs}}>{{content}}</script>',
-		'javascriptstart' => '<script>',
-		'javascriptlink' => '<script src="{{url}}"{{attrs}}></script>',
-		'javascriptend' => '</script>'
+	protected $_defaultConfig = [
+		'templates' => [
+			'meta' => '<meta{{attrs}}/>',
+			'metalink' => '<link href="{{url}}"{{attrs}}/>',
+			'link' => '<a href="{{url}}"{{attrs}}>{{content}}</a>',
+			'mailto' => '<a href="mailto:{{url}}"{{attrs}}>{{content}}</a>',
+			'image' => '<img src="{{url}}"{{attrs}}/>',
+			'tableheader' => '<th{{attrs}}>{{content}}</th>',
+			'tableheaderrow' => '<tr{{attrs}}>{{content}}</tr>',
+			'tablecell' => '<td{{attrs}}>{{content}}</td>',
+			'tablerow' => '<tr{{attrs}}>{{content}}</tr>',
+			'block' => '<div{{attrs}}>{{content}}</div>',
+			'blockstart' => '<div{{attrs}}>',
+			'blockend' => '</div>',
+			'tag' => '<{{tag}}{{attrs}}>{{content}}</{{tag}}>',
+			'tagstart' => '<{{tag}}{{attrs}}>',
+			'tagend' => '</{{tag}}>',
+			'tagselfclosing' => '<{{tag}}{{attrs}}/>',
+			'para' => '<p{{attrs}}>{{content}}</p>',
+			'parastart' => '<p{{attrs}}>',
+			'css' => '<link rel="{{rel}}" href="{{url}}"{{attrs}}/>',
+			'style' => '<style{{attrs}}>{{content}}</style>',
+			'charset' => '<meta http-equiv="Content-Type" content="text/html; charset={{charset}}" />',
+			'ul' => '<ul{{attrs}}>{{content}}</ul>',
+			'ol' => '<ol{{attrs}}>{{content}}</ol>',
+			'li' => '<li{{attrs}}>{{content}}</li>',
+			'javascriptblock' => '<script{{attrs}}>{{content}}</script>',
+			'javascriptstart' => '<script>',
+			'javascriptlink' => '<script src="{{url}}"{{attrs}}></script>',
+			'javascriptend' => '</script>'
+		]
 	];
 
 /**
@@ -128,13 +130,11 @@ class HtmlHelper extends Helper {
  * Using the `templates` option you can redefine the tag HtmlHelper will use.
  *
  * @param View $View The View this helper is being attached to.
- * @param array $settings Configuration settings for the helper.
+ * @param array $config Configuration settings for the helper.
  */
-	public function __construct(View $View, $settings = array()) {
-		parent::__construct($View, $settings);
+	public function __construct(View $View, $config = array()) {
+		parent::__construct($View, $config);
 		$this->response = $this->_View->response ?: new Response();
-
-		$this->initStringTemplates($this->_defaultTemplates);
 	}
 
 /**
@@ -243,17 +243,17 @@ class HtmlHelper extends Helper {
 			if (isset($options['rel']) && $options['rel'] === 'icon') {
 				$out = $this->formatTemplate('metalink', [
 					'url' => $options['link'],
-					'attrs' => $this->_templater->formatAttributes($options, ['block', 'link'])
+					'attrs' => $this->templater()->formatAttributes($options, ['block', 'link'])
 				]);
 				$options['rel'] = 'shortcut icon';
 			}
 			$out .= $this->formatTemplate('metalink', [
 				'url' => $options['link'],
-				'attrs' => $this->_templater->formatAttributes($options, ['block', 'link'])
+				'attrs' => $this->templater()->formatAttributes($options, ['block', 'link'])
 			]);
 		} else {
 			$out = $this->formatTemplate('meta', [
-				'attrs' => $this->_templater->formatAttributes($options, ['block', 'type'])
+				'attrs' => $this->templater()->formatAttributes($options, ['block', 'type'])
 			]);
 		}
 
@@ -346,7 +346,7 @@ class HtmlHelper extends Helper {
 		}
 		return $this->formatTemplate('link', [
 			'url' => $url,
-			'attrs' => $this->_templater->formatAttributes($options),
+			'attrs' => $this->templater()->formatAttributes($options),
 			'content' => $title
 		]);
 	}
@@ -422,14 +422,14 @@ class HtmlHelper extends Helper {
 
 		if ($options['rel'] == 'import') {
 			$out = $this->formatTemplate('style', [
-				'attrs' => $this->_templater->formatAttributes($options, ['rel', 'block']),
+				'attrs' => $this->templater()->formatAttributes($options, ['rel', 'block']),
 				'content' => '@import url(' . $url . ');',
 			]);
 		} else {
 			$out = $this->formatTemplate('css', [
 				'rel' => $options['rel'],
 				'url' => $url,
-				'attrs' => $this->_templater->formatAttributes($options, ['rel', 'block']),
+				'attrs' => $this->templater()->formatAttributes($options, ['rel', 'block']),
 			]);
 		}
 
@@ -502,7 +502,7 @@ class HtmlHelper extends Helper {
 		}
 		$out = $this->formatTemplate('javascriptlink', [
 			'url' => $url,
-			'attrs' => $this->_templater->formatAttributes($options, ['block', 'once']),
+			'attrs' => $this->templater()->formatAttributes($options, ['block', 'once']),
 		]);
 
 		if (empty($options['block'])) {
@@ -537,7 +537,7 @@ class HtmlHelper extends Helper {
 		unset($options['safe']);
 
 		$out = $this->formatTemplate('javascriptblock', [
-			'attrs' => $this->_templater->formatAttributes($options, ['block']),
+			'attrs' => $this->templater()->formatAttributes($options, ['block']),
 			'content' => $script
 		]);
 
@@ -702,12 +702,12 @@ class HtmlHelper extends Helper {
 			}
 			$result .= $this->formatTemplate('li', [
 				'content' => $elementContent,
-				'attrs' => $this->_templater->formatAttributes($options)
+				'attrs' => $this->templater()->formatAttributes($options)
 			]);
 		}
 		return $this->formatTemplate('ul', [
 			'content' => $result,
-			'attrs' => $this->_templater->formatAttributes($ulOptions)
+			'attrs' => $this->templater()->formatAttributes($ulOptions)
 		]);
 	}
 
@@ -777,7 +777,7 @@ class HtmlHelper extends Helper {
 
 		$image = $this->formatTemplate('image', [
 			'url' => $path,
-			'attrs' => $this->_templater->formatAttributes($options),
+			'attrs' => $this->templater()->formatAttributes($options),
 		]);
 
 		if ($url) {
@@ -805,18 +805,18 @@ class HtmlHelper extends Helper {
 		foreach ($names as $arg) {
 			if (!is_array($arg)) {
 				$out[] = $this->formatTemplate('tableheader', [
-					'attrs' => $this->_templater->formatAttributes($thOptions),
+					'attrs' => $this->templater()->formatAttributes($thOptions),
 					'content' => $arg
 				]);
 			} else {
 				$out[] = $this->formatTemplate('tableheader', [
-					'attrs' => $this->_templater->formatAttributes(current($arg)),
+					'attrs' => $this->templater()->formatAttributes(current($arg)),
 					'content' => key($arg)
 				]);
 			}
 		}
 		return $this->formatTemplate('tablerow', [
-			'attrs' => $this->_templater->formatAttributes($trOptions),
+			'attrs' => $this->templater()->formatAttributes($trOptions),
 			'content' => implode(' ', $out)
 		]);
 	}
@@ -868,13 +868,13 @@ class HtmlHelper extends Helper {
 					$cellOptions['class'] = 'column-' . ++$i;
 				}
 				$cellsOut[] = $this->formatTemplate('tablecell', [
-					'attrs' => $this->_templater->formatAttributes($cellOptions),
+					'attrs' => $this->templater()->formatAttributes($cellOptions),
 					'content' => $cell
 				]);
 			}
 			$opts = $count % 2 ? $oddTrOptions : $evenTrOptions;
 			$out[] = $this->formatTemplate('tablerow', [
-				'attrs' => $this->_templater->formatAttributes($opts),
+				'attrs' => $this->templater()->formatAttributes($opts),
 				'content' => implode(' ', $cellsOut),
 			]);
 		}
@@ -909,7 +909,7 @@ class HtmlHelper extends Helper {
 			$tag = 'tag';
 		}
 		return $this->formatTemplate($tag, [
-			'attrs' => $this->_templater->formatAttributes($options),
+			'attrs' => $this->templater()->formatAttributes($options),
 			'tag' => $name,
 			'content' => $text,
 		]);
@@ -961,7 +961,7 @@ class HtmlHelper extends Helper {
 			$tag = 'parastart';
 		}
 		return $this->formatTemplate($tag, [
-			'attrs' => $this->_templater->formatAttributes($options),
+			'attrs' => $this->templater()->formatAttributes($options),
 			'content' => $text,
 		]);
 	}
@@ -1046,7 +1046,7 @@ class HtmlHelper extends Helper {
 				$source['src'] = $this->assetUrl($source['src'], $options);
 				$sourceTags .= $this->formatTemplate('tagselfclosing', [
 					'tag' => 'source',
-					'attrs' => $this->_templater->formatAttributes($source)
+					'attrs' => $this->templater()->formatAttributes($source)
 				]);
 			}
 			unset($source);
@@ -1103,7 +1103,7 @@ class HtmlHelper extends Helper {
 		}
 		$items = $this->_nestedListItem($list, $options, $itemOptions, $tag);
 		return $this->formatTemplate($tag, [
-			'attrs' => $this->_templater->formatAttributes($options),
+			'attrs' => $this->templater()->formatAttributes($options),
 			'content' => $items
 		]);
 	}
@@ -1132,7 +1132,7 @@ class HtmlHelper extends Helper {
 				$itemOptions['class'] = $itemOptions['odd'];
 			}
 			$out .= $this->formatTemplate('li', [
-				'attrs' => $this->_templater->formatAttributes($itemOptions, ['even', 'odd']),
+				'attrs' => $this->templater()->formatAttributes($itemOptions, ['even', 'odd']),
 				'content' => $item
 			]);
 			$index++;

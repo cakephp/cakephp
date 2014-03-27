@@ -31,6 +31,13 @@ trait InstanceConfigTrait {
 	protected $_config = [];
 
 /**
+ * Whether the config property has already been configured with defaults
+ *
+ * @var bool
+ */
+	protected $_configInitialized = false;
+
+/**
  * ### Usage
  *
  * Reading the whole config:
@@ -63,8 +70,9 @@ trait InstanceConfigTrait {
  * @throws \Cake\Error\Exception When trying to set a key that is invalid
  */
 	public function config($key = null, $value = null) {
-		if ($this->_config === [] && $this->_defaultConfig) {
+		if (!$this->_configInitialized) {
 			$this->_config = $this->_defaultConfig;
+			$this->_configInitialized = true;
 		}
 
 		if (is_array($key) || func_num_args() === 2) {
