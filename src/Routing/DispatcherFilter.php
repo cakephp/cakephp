@@ -53,7 +53,7 @@ abstract class DispatcherFilter implements EventListener {
  * @param array $config Settings for the filter.
  */
 	public function __construct($config = []) {
-		$this->config($config, null, true);
+		$this->config($config);
 	}
 
 /**

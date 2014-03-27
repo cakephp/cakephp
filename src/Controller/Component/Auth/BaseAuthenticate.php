@@ -79,7 +79,7 @@ abstract class BaseAuthenticate {
  */
 	public function __construct(ComponentRegistry $registry, $config) {
 		$this->_registry = $registry;
-		$this->config($config, null, true);
+		$this->config($config);
 	}
 
 /**

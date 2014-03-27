@@ -60,7 +60,7 @@ class StringTemplate {
  * @param array $templates A set of templates to add.
  */
 	public function __construct(array $config = []) {
-		$this->config($config, null, true);
+		$this->config($config);
 	}
 
 /**

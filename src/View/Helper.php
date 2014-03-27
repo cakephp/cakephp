@@ -153,7 +153,7 @@ class Helper extends Object implements EventListener {
 		if ($config) {
 			$config = Hash::merge($this->_defaultConfig, $config);
 		}
-		$this->config($config, null, true);
+		$this->config($config);
 
 		if (!empty($this->helpers)) {
 			$this->_helperMap = $View->Helpers->normalizeArray($this->helpers);
