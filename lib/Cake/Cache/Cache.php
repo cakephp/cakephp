@@ -371,17 +371,17 @@ class Cache {
  *
  * Reading multiple keys from the active cache configuration.
  *
- * `Cache::read(array('my_data_1', 'my_data_2)));`
+ * `Cache::readMany(array('my_data_1', 'my_data_2)));`
  *
  * Reading from a specific cache configuration.
  *
- * `Cache::read(array('my_data_1', 'my_data_2), 'long_term');`
+ * `Cache::readMany(array('my_data_1', 'my_data_2), 'long_term');`
  *
  * @param array $keys an array of keys to fetch from the cache
  * @param string $config optional name of the configuration to use. Defaults to 'default'
  * @return array An array containing, for each of the given $keys, the cached data or false if cached data could not be retreived
  */
-	public static function readMulti($keys, $config = 'default') {
+	public static function readMany($keys, $config = 'default') {
 		$settings = self::settings($config);
 		if (empty($settings)) {
 			return false;
@@ -389,7 +389,7 @@ class Cache {
 		if (!self::isInitialized($config)) {
 			return false;
 		}
-		if (method_exists(self::$_engines[$config],'readMulti')) {
+		if (method_exists(self::$_engines[$config],'readMany')) {
 			$falsekeys = array();
 			$readKeys = array();
 			foreach ($keys as $key) {
@@ -401,9 +401,8 @@ class Cache {
 					$readKeys[$key] = $settings['prefix'] . $engineKey;
 				}
 			}
-			return array_merge($falsekeys, self::$_engines[$config]->readMulti($readKeys));
+			return array_merge($falsekeys, self::$_engines[$config]->readMany($readKeys));
 		} else {
-			// revert to normal Cache::read for each key
 			$return = array();
 			foreach ($keys as $key) {
 				$return[$key] = self::read($key, $config);
