@@ -384,7 +384,6 @@ class Cache {
 			} else {
 				$result = array();
 			}
-			self::set(null, $config);
 			$return = array_merge($return, $result);
 		}else{
 			foreach ($data as $key => $value) {
