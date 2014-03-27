@@ -249,9 +249,13 @@ class BelongsToMany extends Association {
  * @param array $row
  * @return array
  */
-	public function transformRow($row) {
+	public function transformRow($row, $joined = false) {
+		$alias = $this->junction()->alias();
+		if ($joined) {
+			$row[$this->target()->alias()]['_joinData'] = $row[$alias];
+			unset($row[$alias]);
+		}
 		$row = $this->_transformRow($row);
-		unset($row[$this->junction()->alias()]);
 		return $row;
 	}
 

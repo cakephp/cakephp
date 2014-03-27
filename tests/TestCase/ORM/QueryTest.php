@@ -659,7 +659,8 @@ class QueryTest extends TestCase {
 				'published' => 'Y',
 				'tags' => [
 					'id' => 3,
-					'name' => 'tag3'
+					'name' => 'tag3',
+					'_joinData' => ['article_id' => 2, 'tag_id' => 3]
 				]
 			]
 		];
@@ -681,7 +682,8 @@ class QueryTest extends TestCase {
 				'published' => 'Y',
 				'tags' => [
 					'id' => 2,
-					'name' => 'tag2'
+					'name' => 'tag2',
+					'_joinData' => ['article_id' => 1, 'tag_id' => 2]
 				]
 			]
 		];
@@ -719,7 +721,8 @@ class QueryTest extends TestCase {
 					'published' => 'Y',
 					'tags' => [
 						'id' => 2,
-						'name' => 'tag2'
+						'name' => 'tag2',
+						'_joinData' => ['article_id' => 1, 'tag_id' => 2]
 					]
 				]
 			]
@@ -1873,7 +1876,6 @@ class QueryTest extends TestCase {
 		$table->belongsTo('Tags');
 		TableRegistry::get('Tags')->belongsToMany('Articles');
 		$results = $table->find()->contain(['Articles', 'Tags.Articles'])->hydrate(false)->toArray();
-		debug($results);
 	}
 
 }

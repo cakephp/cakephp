@@ -404,7 +404,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 				$results[$alias] = $entity;
 			}
 
-			$results = $instance->transformRow($results);
+			$results = $instance->transformRow($results, $assoc['canBeJoined']);
 		}
 
 		foreach ($presentAliases as $alias => $present) {
