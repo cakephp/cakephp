@@ -883,6 +883,7 @@ class ControllerTest extends TestCase {
 		$controller = new TestController($request, $response);
 		$result = $controller->addComponent('Paginator');
 		$this->assertInstanceOf('Cake\Controller\Component\PaginatorComponent', $result);
+		$this->assertSame($result, $controller->Paginator);
 
 		$registry = $controller->components();
 		$this->assertTrue(isset($registry->Paginator));

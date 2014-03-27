@@ -334,14 +334,23 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Add a component to the controller's registry
+ * Add a component to the controller's registry.
+ *
+ * This method will also set the component to a property.
+ * For example:
+ *
+ * `$this->addComponent('DebugKit.Toolbar');`
+ *
+ * Will result in a `Toolbar` property being set.
  *
  * @param string $name The name of the component to load.
  * @param array $config The config for the component.
  * @return \Cake\Controller\Component
  */
 	public function addComponent($name, $config = []) {
-		return $this->components()->load($name, $config);
+		list(, $prop) = pluginSplit($name);
+		$this->{$prop} = $this->components()->load($name, $config);
+		return $this->{$prop};
 	}
 
 /**
