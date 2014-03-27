@@ -81,7 +81,7 @@ abstract class BaseAuthorize {
 		$this->_registry = $registry;
 		$controller = $registry->getController();
 		$this->controller($controller);
-		$this->config($config);
+		$this->config($config, null, true);
 	}
 
 /**

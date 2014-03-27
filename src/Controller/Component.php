@@ -105,7 +105,7 @@ class Component extends Object implements EventListener {
 	public function __construct(ComponentRegistry $registry, $config = []) {
 		$this->_registry = $registry;
 
-		$this->config($config);
+		$this->config($config, null, true);
 
 		$this->_set($this->config());
 

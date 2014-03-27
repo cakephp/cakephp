@@ -15,6 +15,7 @@
 namespace Cake\Core;
 
 use Cake\Error;
+use Cake\Utility\Hash;
 
 /**
  * A trait for reading and writing instance config
@@ -67,16 +68,17 @@ trait InstanceConfigTrait {
  * @param string|array|null $key the key to get/set, or a complete array of configs
  * @param mixed|null $value the value to set
  * @return mixed|null null for write, or whatever is in the config on read
+ * @param bool $merge whether to merge or overwrite existing config
  * @throws \Cake\Error\Exception When trying to set a key that is invalid
  */
-	public function config($key = null, $value = null) {
+	public function config($key = null, $value = null, $merge = false) {
 		if (!$this->_configInitialized) {
 			$this->_config = $this->_defaultConfig;
 			$this->_configInitialized = true;
 		}
 
-		if (is_array($key) || func_num_args() === 2) {
-			return $this->_configWrite($key, $value);
+		if (is_array($key) || func_num_args() >= 2) {
+			return $this->_configWrite($key, $value, $merge);
 		}
 
 		return $this->_configRead($key);
@@ -117,19 +119,30 @@ trait InstanceConfigTrait {
  *
  * @throws Cake\Error\Exception if attempting to clobber existing config
  * @param string|array $key
- * @param mixed|null $value
+ * @param mixed $value
+ * @param bool $merge
  * @return void
  */
-	protected function _configWrite($key, $value = null) {
+	protected function _configWrite($key, $value, $merge = null) {
+		if (is_string($key) && $value === null) {
+			return $this->_configDelete($key);
+		}
+
+		if ($merge) {
+			if (is_array($key)) {
+				$update = $key;
+			} else {
+				$update = [$key => $value];
+			}
+			$this->_config = Hash::merge($this->_config, Hash::expand($update));
+			return;
+		}
+
 		if (is_array($key)) {
 			foreach ($key as $k => $val) {
 				$this->_configWrite($k, $val);
 			}
 			return;
-		}
-
-		if ($value === null) {
-			return $this->_configDelete($key);
 		}
 
 		if (strpos($key, '.') === false) {
