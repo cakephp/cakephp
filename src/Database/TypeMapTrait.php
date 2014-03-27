@@ -16,6 +16,9 @@ namespace Cake\Database;
 
 use Cake\Database\TypeMap;
 
+/*
+ * Represents a class that holds a TypeMap object
+ */
 trait TypeMapTrait {
 
 /**
@@ -24,7 +27,8 @@ trait TypeMapTrait {
 	protected $_typeMap;
 
 /**
- * Setter/Getter for type map
+ * Creates a new TypeMap if $typeMap is an array, otherwise returns the existing type map
+ * or exchanges it for the given one.
  *
  * @param array|TypeMap $typeMap Creates a TypeMap if array, otherwise sets the given TypeMap
  * @return this|TypeMap
@@ -34,7 +38,7 @@ trait TypeMapTrait {
 		if ($typeMap === null) {
 			return $this->_typeMap;
 		}
-		$this->_typeMap = is_array($typeMap) ? (new TypeMap)->types($typeMap) : $typeMap;
+		$this->_typeMap = is_array($typeMap) ? new TypeMap($typeMap) : $typeMap;
 		return $this;
 	}
 

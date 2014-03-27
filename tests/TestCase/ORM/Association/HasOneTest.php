@@ -16,9 +16,9 @@
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
-use Cake\Database\TypeMap;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\TypeMap;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -56,6 +56,14 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 					'primary' => ['type' => 'primary', 'columns' => ['id']]
 				]
 			]
+		]);
+		$this->profilesTypeMap = new TypeMap([
+			'Profiles.id' => 'integer',
+			'id' => 'integer',
+			'Profiles.first_name' => 'string',
+			'first_name' => 'string',
+			'Profiles.user_id' => 'integer',
+			'user_id' => 'integer',
 		]);
 	}
 
@@ -95,20 +103,12 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new HasOne('Profiles', $config);
 		$field = new IdentifierExpression('Profiles.user_id');
-		$typeMap = new TypeMap([
-			'Profiles.id' => 'integer',
-			'id' => 'integer',
-			'Profiles.first_name' => 'string',
-			'first_name' => 'string',
-			'Profiles.user_id' => 'integer',
-			'user_id' => 'integer',
-		]);
 		$query->expects($this->once())->method('join')->with([
 			'Profiles' => [
 				'conditions' => new QueryExpression([
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
-				], $typeMap),
+				], $this->profilesTypeMap),
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]
@@ -135,19 +135,11 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Profiles.is_active' => true]
 		];
 		$association = new HasOne('Profiles', $config);
-		$typeMap = new TypeMap([
-			'Profiles.id' => 'integer',
-			'id' => 'integer',
-			'Profiles.first_name' => 'string',
-			'first_name' => 'string',
-			'Profiles.user_id' => 'integer',
-			'user_id' => 'integer',
-		]);
 		$query->expects($this->once())->method('join')->with([
 			'Profiles' => [
 				'conditions' => new QueryExpression([
 					'Profiles.is_active' => false
-				], $typeMap),
+				], $this->profilesTypeMap),
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]
@@ -178,20 +170,12 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new HasOne('Profiles', $config);
 		$field = new IdentifierExpression('Profiles.user_id');
-		$typeMap = new TypeMap([
-			'Profiles.id' => 'integer',
-			'id' => 'integer',
-			'Profiles.first_name' => 'string',
-			'first_name' => 'string',
-			'Profiles.user_id' => 'integer',
-			'user_id' => 'integer',
-		]);
 		$query->expects($this->once())->method('join')->with([
 			'Profiles' => [
 				'conditions' => new QueryExpression([
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
-				], $typeMap),
+				], $this->profilesTypeMap),
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]
@@ -215,21 +199,13 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new HasOne('Profiles', $config);
 		$field = new IdentifierExpression('Profiles.user_id');
-		$typeMap = new TypeMap([
-			'Profiles.id' => 'integer',
-			'id' => 'integer',
-			'Profiles.first_name' => 'string',
-			'first_name' => 'string',
-			'Profiles.user_id' => 'integer',
-			'user_id' => 'integer',
-		]);
 		$query->expects($this->once())->method('join')->with([
 			'Profiles' => [
 				'conditions' => new QueryExpression([
 					'a' => 1,
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
-				], $typeMap),
+				], $this->profilesTypeMap),
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]
@@ -263,20 +239,12 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$association = new HasOne('Profiles', $config);
 		$field1 = new IdentifierExpression('Profiles.user_id');
 		$field2 = new IdentifierExpression('Profiles.user_site_id');
-		$typeMap = new TypeMap([
-			'Profiles.id' => 'integer',
-			'id' => 'integer',
-			'Profiles.first_name' => 'string',
-			'first_name' => 'string',
-			'Profiles.user_id' => 'integer',
-			'user_id' => 'integer',
-		]);
 		$query->expects($this->once())->method('join')->with([
 			'Profiles' => [
 				'conditions' => new QueryExpression([
 					'Profiles.is_active' => true,
 					['Users.id' => $field1, 'Users.site_id' => $field2],
-				], $typeMap),
+				], $this->profilesTypeMap),
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]

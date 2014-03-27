@@ -86,6 +86,8 @@ class QueryTest extends TestCase {
 		$orders->hasOne('stuff');
 		$stuff->belongsTo('stuffTypes');
 		$companies->belongsTo('categories');
+
+		$this->fooTypeMap = new TypeMap(['foo.id' => 'integer', 'id' => 'integer']);
 	}
 
 /**
@@ -765,16 +767,14 @@ class QueryTest extends TestCase {
 
 		$this->assertEquals(['field_a', 'field_b'], $query->clause('select'));
 
-		$typeMap = new TypeMap(['foo.id' => 'integer', 'id' => 'integer']);
-		$expected = new QueryExpression($options['conditions']);
-		$expected->typeMap($typeMap);
+		$expected = new QueryExpression($options['conditions'], $this->fooTypeMap);
 		$result = $query->clause('where');
 		$this->assertEquals($expected, $result);
 
 		$this->assertEquals(1, $query->clause('limit'));
 
 		$expected = new QueryExpression(['a > b']);
-		$expected->typeMap($typeMap);
+		$expected->typeMap($this->fooTypeMap);
 		$result = $query->clause('join');
 		$this->assertEquals([
 			'table_a' => ['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected]
@@ -787,7 +787,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals(['field_a'], $query->clause('group'));
 
 		$expected = new QueryExpression($options['having']);
-		$expected->typeMap($typeMap);
+		$expected->typeMap($this->fooTypeMap);
 		$this->assertEquals($expected, $query->clause('having'));
 
 		$expected = ['table_a' => ['table_b' => []]];

@@ -431,7 +431,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 				$this->_conditions[] = $c;
 				continue;
 			}
-			
+
 			if ($numericKey && is_array($c) || in_array(strtolower($k), $operators)) {
 				$this->_conditions[] = new self($c, $typeMap, $numericKey ? 'AND' : $k);
 				continue;

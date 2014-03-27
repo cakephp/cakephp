@@ -14,18 +14,32 @@
  */
 namespace Cake\Database;
 
+/**
+ * Implements default and single-use mappings for columns to their associated types
+ */
 class TypeMap {
 
 /**
+ * Associative array with the default fields and their types this query might contain
+ * used to avoid repetition when calling multiple times functions inside this class that
+ * may require a custom type for a specific field.
+ *
  * @var array
  */
 	protected $_defaults;
 
 /**
+ * Associative array with the fields and their types that override defaults this query might contain
+ * used to avoid repetition when calling multiple times functions inside this class that
+ * may require a custom type for a specific field.
+ *
  * @var array
  */
 	protected $_types = [];
+
 /**
+ * Creates an instance with the given defaults
+ *
  * @param array $defaults
  */
 	public function __construct(array $defaults = []) {
@@ -33,22 +47,45 @@ class TypeMap {
 	}
 
 /**
- * Set/Get defaults
+ * Configures a map of default fields and their associated types to be
+ * used as the default list of types for every function in this class
+ * with a $types param. Useful to avoid repetition when calling the same
+ * functions using the same fields and types.
  *
- * @var this|array
+ * If called with no arguments it will return the currently configured types.
+ *
+ * ## Example
+ *
+ * {{{
+ *	$query->defaults(['created' => 'datetime', 'is_visible' => 'boolean']);
+ * }}}
+ *
+ * @param array $defaults associative array where keys are field names and values
+ * are the correspondent type.
+ * @return this|array
  */
 	public function defaults(array $defaults = null) {
 		if ($defaults === null) {
-				return $this->_defaults;
+			return $this->_defaults;
 		}
 		$this->_defaults = $defaults;
 		return $this;
 	}
 
 /**
- * Set/Get types
+ * Configures a map of fields and their associated types for single-use.
  *
- * @var this|array
+ * If called with no arguments it will return the currently configured types.
+ *
+ * ## Example
+ *
+ * {{{
+ *	$query->types(['created' => 'time']);
+ * }}}
+ *
+ * @param array $defaults associative array where keys are field names and values
+ * are the correspondent type.
+ * @return this|array
  */
 	public function types(array $types = null) {
 		if ($types === null) {
@@ -59,9 +96,11 @@ class TypeMap {
 	}
 
 /**
- * Get column type
+ * Returns the type of the given column. If there is no single use type is configured,
+ * the column type will be looked for inside the default mapping. If neither exist,
+ * null will be returned.
  *
- * @var string
+ * @var null|string
  */
 	public function type($column) {
 		if (isset($this->_types[$column])) {

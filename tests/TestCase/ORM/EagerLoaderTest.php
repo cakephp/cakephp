@@ -14,9 +14,9 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Database\TypeMap;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\EagerLoader;
 use Cake\ORM\Query;
@@ -77,6 +77,43 @@ class EagerLoaderTest extends TestCase {
 		$orders->hasOne('stuff');
 		$stuff->belongsTo('stuffTypes');
 		$companies->belongsTo('categories');
+
+		$this->clientsTypeMap = new TypeMap([
+			'clients.id' => 'integer',
+			'id' => 'integer',
+			'clients.name' => 'string',
+			'name' => 'string',
+			'clients.phone' => 'string',
+			'phone' => 'string',
+		]);
+		$this->ordersTypeMap = new TypeMap([
+			'orders.id' => 'integer',
+			'id' => 'integer',
+			'orders.total' => 'string',
+			'total' => 'string',
+			'orders.placed' => 'datetime',
+			'placed' => 'datetime',
+		]);
+		$this->orderTypesTypeMap = new TypeMap([
+			'orderTypes.id' => 'integer',
+			'id' => 'integer',
+		]);
+		$this->stuffTypeMap = new TypeMap([
+			'stuff.id' => 'integer',
+			'id' => 'integer',
+		]);
+		$this->stuffTypesTypeMap = new TypeMap([
+			'stuffTypes.id' => 'integer',
+			'id' => 'integer',
+		]);
+		$this->companiesTypeMap = new TypeMap([
+			'companies.id' => 'integer',
+			'id' => 'integer',
+		]);
+		$this->categoriesTypeMap = new TypeMap([
+			'categories.id' => 'integer',
+			'id' => 'integer',
+		]);
 	}
 
 /**
@@ -110,16 +147,7 @@ class EagerLoaderTest extends TestCase {
 
 		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
 
-		$typeMap = new TypeMap([
-			'clients.id' => 'integer',
-			'id' => 'integer',
-			'clients.name' => 'string',
-			'name' => 'string',
-			'clients.phone' => 'string',
-			'phone' => 'string',
-		]);
-
-		$query->typeMap($typeMap);
+		$query->typeMap($this->clientsTypeMap);
 
 		$query->expects($this->at(0))->method('join')
 			->with(['clients' => [
@@ -127,18 +155,9 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['clients.id' => new IdentifierExpression('foo.client_id')],
-				], $query->typeMap())
+				], $this->clientsTypeMap)
 			]])
 			->will($this->returnValue($query));
-
-		$typeMap = new TypeMap([
-			'orders.id' => 'integer',
-			'id' => 'integer',
-			'orders.total' => 'string',
-			'total' => 'string',
-			'orders.placed' => 'datetime',
-			'placed' => 'datetime',
-		]);
 
 		$query->expects($this->at(1))->method('join')
 			->with(['orders' => [
@@ -146,14 +165,9 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'INNER',
 				'conditions' => new QueryExpression([
 					['clients.id' => new IdentifierExpression('orders.client_id')]
-				], $typeMap)
+				], $this->ordersTypeMap)
 			]])
 			->will($this->returnValue($query));
-
-		$typeMap = new TypeMap([
-			'orderTypes.id' => 'integer',
-			'id' => 'integer',
-		]);
 
 		$query->expects($this->at(2))->method('join')
 			->with(['orderTypes' => [
@@ -161,14 +175,9 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['orderTypes.id' => new IdentifierExpression('orders.order_type_id')]
-				], $typeMap)
+				], $this->orderTypesTypeMap)
 			]])
 			->will($this->returnValue($query));
-
-		$typeMap = new TypeMap([
-			'stuff.id' => 'integer',
-			'id' => 'integer',
-		]);
 
 		$query->expects($this->at(3))->method('join')
 			->with(['stuff' => [
@@ -176,14 +185,9 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'INNER',
 				'conditions' => new QueryExpression([
 					['orders.id' => new IdentifierExpression('stuff.order_id')]
-				], $typeMap)
+				], $this->stuffTypeMap)
 			]])
 			->will($this->returnValue($query));
-
-		$typeMap = new TypeMap([
-			'stuffTypes.id' => 'integer',
-			'id' => 'integer',
-		]);
 
 		$query->expects($this->at(4))->method('join')
 			->with(['stuffTypes' => [
@@ -191,14 +195,9 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['stuffTypes.id' => new IdentifierExpression('stuff.stuff_type_id')]
-				], $typeMap)
+				], $this->stuffTypesTypeMap)
 			]])
 			->will($this->returnValue($query));
-
-		$typeMap = new TypeMap([
-			'companies.id' => 'integer',
-			'id' => 'integer',
-		]);
 
 		$query->expects($this->at(5))->method('join')
 			->with(['companies' => [
@@ -206,21 +205,17 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['companies.id' => new IdentifierExpression('clients.organization_id')]
-				], $typeMap)
+				], $this->companiesTypeMap)
 			]])
 			->will($this->returnValue($query));
 
-		$typeMap = new TypeMap([
-			'categories.id' => 'integer',
-			'id' => 'integer',
-		]);
 		$query->expects($this->at(6))->method('join')
 			->with(['categories' => [
 				'table' => 'categories',
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['categories.id' => new IdentifierExpression('companies.category_id')]
-				], $typeMap)
+				], $this->categoriesTypeMap)
 			]])
 			->will($this->returnValue($query));
 
