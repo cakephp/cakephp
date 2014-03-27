@@ -34,7 +34,6 @@ class TestDispatchPagesController extends Controller {
  * @return void
  */
 	public function admin_index() {
-		return true;
 	}
 
 /**
@@ -43,7 +42,6 @@ class TestDispatchPagesController extends Controller {
  * @return void
  */
 	public function camelCased() {
-		return true;
 	}
 
 }
