@@ -34,7 +34,9 @@ trait TypeMapTrait {
  * @return this|TypeMap
  */
 	public function typeMap($typeMap = null) {
-		$this->_typeMap = ($this->_typeMap) ?: new TypeMap();
+		if (!$this->_typeMap) {
+			$this->_typeMap = new TypeMap();
+		}
 		if ($typeMap === null) {
 			return $this->_typeMap;
 		}
