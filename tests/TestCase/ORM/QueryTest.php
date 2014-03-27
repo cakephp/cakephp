@@ -1870,12 +1870,24 @@ class QueryTest extends TestCase {
 		$this->assertSame($expected, $results);
 	}
 
+/**
+ * Tests that it is possible to use the same association aliases in the association
+ * chain for contain
+ *
+ * @return void
+ */
 	public function testRepeatedAssociationAliases() {
 		$table = TableRegistry::get('ArticlesTags');
 		$table->belongsTo('Articles');
 		$table->belongsTo('Tags');
 		TableRegistry::get('Tags')->belongsToMany('Articles');
 		$results = $table->find()->contain(['Articles', 'Tags.Articles'])->hydrate(false)->toArray();
+		$this->assertNotEmpty($results[0]['tag']['articles']);
+		$this->assertNotEmpty($results[0]['article']);
+		$this->assertNotEmpty($results[1]['tag']['articles']);
+		$this->assertNotEmpty($results[1]['article']);
+		$this->assertNotEmpty($results[2]['tag']['articles']);
+		$this->assertNotEmpty($results[2]['article']);
 	}
 
 }
