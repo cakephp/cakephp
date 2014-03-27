@@ -363,6 +363,56 @@ class Cache {
 	}
 
 /**
+ * Read multiple keys from the cache. Will automatically use the currently
+ * active cache configuration. To set the currently active configuration use
+ * Cache::config()
+ *
+ * ### Usage:
+ *
+ * Reading multiple keys from the active cache configuration.
+ *
+ * `Cache::read(array('my_data_1', 'my_data_2)));`
+ *
+ * Reading from a specific cache configuration.
+ *
+ * `Cache::read(array('my_data_1', 'my_data_2), 'long_term');`
+ *
+ * @param array $keys an array of keys to fetch from the cache
+ * @param string $config optional name of the configuration to use. Defaults to 'default'
+ * @return array An array containing, for each of the given $keys, the cached data or false if cached data could not be retreived
+ */
+	public static function readMulti($keys, $config = 'default') {
+		$settings = self::settings($config);
+		if (empty($settings)) {
+			return false;
+		}
+		if (!self::isInitialized($config)) {
+			return false;
+		}
+		if (method_exists(self::$_engines[$config],'readMulti')) {
+			$falsekeys = array();
+			$readKeys = array();
+			foreach ($keys as $key) {
+				// do not send invalid keys to the cache engine, put them in $falsekeys instead
+				$engineKey = self::$_engines[$config]->key($key);
+				if (!$engineKey) {
+					$falsekeys[$key] = false;
+				} else {
+					$readKeys[$key] = $settings['prefix'] . $engineKey;
+				}
+			}
+			return array_merge($falsekeys, self::$_engines[$config]->readMulti($readKeys));
+		} else {
+			// revert to normal Cache::read for each key
+			$return = array();
+			foreach ($keys as $key) {
+				$return[$key] = self::read($key, $config);
+			}
+			return $return;
+		}
+	}
+
+/**
  * Increment a number under the key and return incremented value.
  *
  * @param string $key Identifier for the data
