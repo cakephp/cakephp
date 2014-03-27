@@ -659,7 +659,8 @@ class QueryTest extends TestCase {
 				'published' => 'Y',
 				'tags' => [
 					'id' => 3,
-					'name' => 'tag3'
+					'name' => 'tag3',
+					'_joinData' => ['article_id' => 2, 'tag_id' => 3]
 				]
 			]
 		];
@@ -681,7 +682,8 @@ class QueryTest extends TestCase {
 				'published' => 'Y',
 				'tags' => [
 					'id' => 2,
-					'name' => 'tag2'
+					'name' => 'tag2',
+					'_joinData' => ['article_id' => 1, 'tag_id' => 2]
 				]
 			]
 		];
@@ -719,7 +721,8 @@ class QueryTest extends TestCase {
 					'published' => 'Y',
 					'tags' => [
 						'id' => 2,
-						'name' => 'tag2'
+						'name' => 'tag2',
+						'_joinData' => ['article_id' => 1, 'tag_id' => 2]
 					]
 				]
 			]
@@ -1865,6 +1868,26 @@ class QueryTest extends TestCase {
 			['title' => 'Third Article', 'person' => ['name' => 'mariano']],
 		];
 		$this->assertSame($expected, $results);
+	}
+
+/**
+ * Tests that it is possible to use the same association aliases in the association
+ * chain for contain
+ *
+ * @return void
+ */
+	public function testRepeatedAssociationAliases() {
+		$table = TableRegistry::get('ArticlesTags');
+		$table->belongsTo('Articles');
+		$table->belongsTo('Tags');
+		TableRegistry::get('Tags')->belongsToMany('Articles');
+		$results = $table->find()->contain(['Articles', 'Tags.Articles'])->hydrate(false)->toArray();
+		$this->assertNotEmpty($results[0]['tag']['articles']);
+		$this->assertNotEmpty($results[0]['article']);
+		$this->assertNotEmpty($results[1]['tag']['articles']);
+		$this->assertNotEmpty($results[1]['article']);
+		$this->assertNotEmpty($results[2]['tag']['articles']);
+		$this->assertNotEmpty($results[2]['article']);
 	}
 
 }

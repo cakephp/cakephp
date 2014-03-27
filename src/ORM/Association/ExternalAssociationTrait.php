@@ -91,15 +91,19 @@ trait ExternalAssociationTrait {
  * source results.
  *
  * @param array $row
+ * @param boolean $joined Whether or not the row is a result of a direct join
+ * with this association
  * @return array
  */
-	public function transformRow($row) {
+	public function transformRow($row, $joined) {
 		$sourceAlias = $this->source()->alias();
 		$targetAlias = $this->target()->alias();
-		$values = $row[$this->_name];
 
-		if (isset($values[$this->_name]) && is_array($values[$this->_name])) {
-			$values = $values[$this->_name];
+		$collectionAlias = $this->_name . '___collection_';
+		if (isset($row[$collectionAlias])) {
+			$values = $row[$collectionAlias];
+		} else {
+			$values = $row[$this->_name];
 		}
 
 		$row[$sourceAlias][$this->property()] = $values;
@@ -164,7 +168,7 @@ trait ExternalAssociationTrait {
 			$sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
 		}
 
-		$nestKey = $tAlias . '__' . $tAlias;
+		$nestKey = $tAlias . '___collection_';
 
 		if (count($sourceKeys) > 1) {
 			return $this->_multiKeysInjector($resultMap, $sourceKeys, $nestKey);

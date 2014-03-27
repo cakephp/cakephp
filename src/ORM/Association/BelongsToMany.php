@@ -247,12 +247,17 @@ class BelongsToMany extends Association {
  * source results.
  *
  * @param array $row
+ * @param boolean $joined Whether or not the row is a result of a direct join
+ * with this association
  * @return array
  */
-	public function transformRow($row) {
-		$row = $this->_transformRow($row);
-		unset($row[$this->junction()->alias()]);
-		return $row;
+	public function transformRow($row, $joined) {
+		$alias = $this->junction()->alias();
+		if ($joined) {
+			$row[$this->target()->alias()][$this->_junctionProperty] = $row[$alias];
+			unset($row[$alias]);
+		}
+		return $this->_transformRow($row, $joined);
 	}
 
 /**
