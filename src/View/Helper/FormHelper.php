@@ -76,7 +76,7 @@ class FormHelper extends Helper {
 		],
 		'widgets' => [],
 		'registry' => null,
-		'templates' => [
+		'defaultTemplates' => [
 			'button' => '<button{{attrs}}>{{text}}</button>',
 			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
 			'checkboxContainer' => '<div class="checkbox">{{input}}{{label}}</div>',
@@ -168,9 +168,8 @@ class FormHelper extends Helper {
  * @param \Cake\View\View $View The View this helper is being attached to.
  * @param array $config Configuration settings for the helper.
  */
-	public function __construct(View $View, $config = array()) {
+	public function __construct(View $View, $config = []) {
 		parent::__construct($View, $config);
-
 		$config = $this->config();
 
 		$this->widgetRegistry($config['registry'], $config['widgets']);
@@ -2238,7 +2237,7 @@ class FormHelper extends Helper {
  * @return void
  */
 	public function resetTemplates() {
-		$this->templates($this->_defaultConfig['templates']);
+		$this->templates($this->_defaultConfig['defaultTemplates']);
 	}
 
 /**
