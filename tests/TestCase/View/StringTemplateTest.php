@@ -53,7 +53,11 @@ class StringTemplateTest extends TestCase {
 			'link' => '<a href="{{url}}">{{text}}</a>'
 		];
 		$result = $this->template->add($templates);
-		$this->assertNull($result, 'No return');
+		$this->assertSame(
+			$this->template,
+			$result,
+			'The same instance should be returned'
+		);
 
 		$this->assertEquals($templates['link'], $this->template->get('link'));
 	}
