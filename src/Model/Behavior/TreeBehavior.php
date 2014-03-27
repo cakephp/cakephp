@@ -170,12 +170,24 @@ class TreeBehavior extends Behavior {
 		$edge = $this->_getMax();
 		$right = $entity->get($config['right']);
 		$left = $entity->get($config['left']);
-		$internalLeft = $left + 1;
-		$internalRight = $right - 1;
+		$diff = $right - $left;
 
-		$entity->set($config['left'], $edge + 1);
-		$entity->set($config['right'], $edge + $right - 1);
-		$this->_sync($edge - 1, '+', "BETWEEN {$internalLeft} AND {$internalRight}");
+		if ($right - $left > 1) {
+			//Correcting internal subtree
+			$internalLeft = $left + 1;
+			$internalRight = $right - 1;
+			$this->_sync($edge - $diff - $left, '+', "BETWEEN {$internalLeft} AND {$internalRight}", true);
+		}
+
+		$this->_sync($diff + 1, '-', "BETWEEN {$right} AND {$edge}");
+
+		if ($right - $left > 1) {
+			//Inverting sign again
+			$this->_sync('-1', '*', "< 0");
+		}
+
+		$entity->set($config['left'], $edge - $diff);
+		$entity->set($config['right'], $edge);
 	}
 
 	public function findPath($query, $options) {

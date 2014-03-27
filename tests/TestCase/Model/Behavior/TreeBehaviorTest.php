@@ -461,7 +461,7 @@ class TreeBehaviorTest extends TestCase {
 	}
 
 /**
- * Tests moving as a new root
+ * Tests moving a subtree as a new root
  *
  * @return void
  */
@@ -471,13 +471,19 @@ class TreeBehaviorTest extends TestCase {
 		$entity = $table->get(2);
 		$entity->parent_id = null;
 		$this->assertSame($entity, $table->save($entity));
-		$this->assertEquals(23, $entity->lft);
-		$this->assertEquals(30, $entity->rght);
+		$this->assertEquals(15, $entity->lft);
+		$this->assertEquals(22, $entity->rght);
 
-		$result = $table->find()->order('lft')->hydrate(false)->toArray();
-		$table->recover();
-		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
-		$this->assertEquals($expected, $result);
+		$result = $table->find()->order('lft')->hydrate(false);
+		$expected = [1, 6, 7, 8, 9, 10, 11, 2, 3, 4, 5];
+		$this->assertEquals($expected, $result->extract('id')->toArray());
+		$numbers = [];
+		$result->each(function($v) use (&$numbers) {
+			$numbers[] = $v['lft'];
+			$numbers[] = $v['rght'];
+		});
+		sort($numbers);
+		$this->assertEquals(range(1, 22), $numbers);
 	}
 
 }
