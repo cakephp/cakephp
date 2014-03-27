@@ -359,40 +359,26 @@ class Cache {
 		$return = array();
 		
 		if (method_exists(self::$_engines[$config],'writeMany')) {
-			$writeKeys = array();
-			foreach ($data as $key => $value) {
-				// do not send invalid keys to the cache engine, put them in $falsekeys instead
-				$engineKey = self::$_engines[$config]->key($key);
-				if (!$engineKey || is_resource($value)) {
-					$return[$key] = false;
-				} else {
-					$writeKeys[$key] = array($settings['prefix'] . $engineKey, $value);
-				}
+			$result = self::$_engines[$config]->writeMany($data, $settings['duration']);
+			if ($result === false) {
+				trigger_error(
+					__d('cake_dev',
+						"%s cache was unable to write to %s cache",
+						$config,
+						self::$_engines[$config]->settings['engine']
+					),
+					E_USER_WARNING
+				);
 			}
-			if (!empty($writeKeys)) {
-				$result = self::$_engines[$config]->writeMany($writeKeys, $settings['duration']);
-				if ($result === false) {
-					trigger_error(
-						__d('cake_dev',
-							"%s cache was unable to write to %s cache",
-							$config,
-							self::$_engines[$config]->settings['engine']
-						),
-						E_USER_WARNING
-					);
-				}
-			} else {
-				$result = array();
-			}
-			$return = array_merge($return, $result);
+			self::set(null, $config);
 		}else{
 			foreach ($data as $key => $value) {
 				$return[$key] = self::write($key, $value, $config);
 			}
 		}
-		self::set(null, $config);
 		return $return;
 	}
+
 /**
  * Read a key from the cache. Will automatically use the currently
  * active cache configuration. To set the currently active configuration use
@@ -455,26 +441,16 @@ class Cache {
 		if (!self::isInitialized($config)) {
 			return false;
 		}
+		
+		$return = array();
 		if (method_exists(self::$_engines[$config],'readMany')) {
-			$falsekeys = array();
-			$readKeys = array();
-			foreach ($keys as $key) {
-				// do not send invalid keys to the cache engine, put them in $falsekeys instead
-				$engineKey = self::$_engines[$config]->key($key);
-				if (!$engineKey) {
-					$falsekeys[$key] = false;
-				} else {
-					$readKeys[$key] = $settings['prefix'] . $engineKey;
-				}
-			}
-			return array_merge($falsekeys, self::$_engines[$config]->readMany($readKeys));
+			$return = self::$_engines[$config]->readMany($keys);
 		} else {
-			$return = array();
 			foreach ($keys as $key) {
 				$return[$key] = self::read($key, $config);
 			}
-			return $return;
 		}
+		return $return;
 	}
 
 /**
@@ -567,6 +543,46 @@ class Cache {
 		$success = self::$_engines[$config]->delete($settings['prefix'] . $key);
 		self::set(null, $config);
 		return $success;
+	}
+
+/**
+ * Delete a key from the cache.
+ *
+ * ### Usage:
+ *
+ * Deleting multiple keys from the active cache configuration.
+ *
+ * `Cache::deleteMany(array('my_data_1', 'my_data_2'));`
+ *
+ * Deleting from a specific cache configuration.
+ *
+ * `Cache::deleteMany(array('my_data_1', 'my_data_2), 'long_term');`
+ *
+ * @param array $keys Array of cache keys to be deleted
+ * @param string $config name of the configuration to use. Defaults to 'default'
+ * @return array of boolean values that are true if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ */
+	public static function deleteMany($keys, $config = 'default') {
+		$settings = self::settings($config);
+
+		if (empty($settings)) {
+			return false;
+		}
+		if (!self::isInitialized($config)) {
+			return false;
+		}
+
+		$return = array();
+		
+		if (method_exists(self::$_engines[$config],'deleteMany')) {
+			$return = self::$_engines[$config]->deleteMany($keys);
+			
+		} else {
+			foreach ($keys as $key) {
+				$return[$key] = self::read($key, $config);
+			}
+		}
+		return $return;
 	}
 
 /**
