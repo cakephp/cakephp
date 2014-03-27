@@ -96,10 +96,11 @@ trait ExternalAssociationTrait {
 	public function transformRow($row) {
 		$sourceAlias = $this->source()->alias();
 		$targetAlias = $this->target()->alias();
-		$values = $row[$this->_name];
 
-		if (isset($values[$this->_name]) && is_array($values[$this->_name])) {
-			$values = $values[$this->_name];
+		if (isset($row[$this->_name . '___collection_'])) {
+			$values = $row[$this->_name . '___collection_'];
+		} else {
+			$values = $row[$this->_name];
 		}
 
 		$row[$sourceAlias][$this->property()] = $values;
@@ -164,7 +165,7 @@ trait ExternalAssociationTrait {
 			$sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
 		}
 
-		$nestKey = $tAlias . '__' . $tAlias;
+		$nestKey = $tAlias . '___collection_';
 
 		if (count($sourceKeys) > 1) {
 			return $this->_multiKeysInjector($resultMap, $sourceKeys, $nestKey);

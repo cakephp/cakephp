@@ -305,7 +305,8 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		$map = [];
 		$visitor = function($level) use (&$visitor, &$map) {
 			foreach ($level as $assoc => $meta) {
-				$map[$assoc] = [
+				$map[$meta['aliasPath']] = [
+					'alias' => $assoc,
 					'instance' => $meta['instance'],
 					'canBeJoined' => $meta['canBeJoined'],
 					'entityClass' => $meta['instance']->target()->entityClass()
@@ -350,6 +351,11 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			$table = $defaultAlias;
 			$field = $key;
 
+			if (strpos($key, '___collection_') !== false) {
+				$results[$key] = $value;
+				continue;
+			}
+
 			if (empty($this->_map[$key])) {
 				$parts = explode('__', $key);
 				if (count($parts) > 1) {
@@ -377,21 +383,27 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			'markNew' => false,
 			'guard' => false
 		];
-		foreach (array_reverse($this->_associationMap) as $alias => $assoc) {
-			if (!isset($results[$alias])) {
+		foreach (array_reverse($this->_associationMap) as $assoc) {
+			$alias = $assoc['alias'];
+			if (!isset($results[$alias]) && !isset($results[$alias . '___collection_'])) {
 				continue;
 			}
+
 			$instance = $assoc['instance'];
 			$target = $instance->target();
-			$results[$alias] = $this->_castValues($target, $results[$alias]);
-			unset($presentAliases[$alias]);
 			$options['source'] = $target->alias();
+			unset($presentAliases[$alias]);
+
+			if ($assoc['canBeJoined']) {
+				$results[$alias] = $this->_castValues($target, $results[$alias]);
+			}
 
 			if ($this->_hydrate && $assoc['canBeJoined']) {
 				$entity = new $assoc['entityClass']($results[$alias], $options);
 				$entity->clean();
 				$results[$alias] = $entity;
 			}
+
 			$results = $instance->transformRow($results);
 		}
 

@@ -1867,4 +1867,13 @@ class QueryTest extends TestCase {
 		$this->assertSame($expected, $results);
 	}
 
+	public function testRepeatedAssociationAliases() {
+		$table = TableRegistry::get('ArticlesTags');
+		$table->belongsTo('Articles');
+		$table->belongsTo('Tags');
+		TableRegistry::get('Tags')->belongsToMany('Articles');
+		$results = $table->find()->contain(['Articles', 'Tags.Articles'])->hydrate(false)->toArray();
+		debug($results);
+	}
+
 }
