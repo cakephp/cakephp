@@ -270,7 +270,7 @@ class InstanceConfigTraitTest extends TestCase {
  * @return void
  */
 	public function testMerge() {
-		$this->object->config(['a' => ['nother' => 'value']], null, true);
+		$this->object->config(['a' => ['nother' => 'value']]);
 
 		$this->assertSame(
 			[
@@ -291,7 +291,7 @@ class InstanceConfigTraitTest extends TestCase {
  * @return void
  */
 	public function testMergeDotKey() {
-		$this->object->config('a.nother', 'value', true);
+		$this->object->config('a.nother', 'value');
 
 		$this->assertSame(
 			[
@@ -305,7 +305,7 @@ class InstanceConfigTraitTest extends TestCase {
 			'Should act the same as having passed the equivalent array to the config function'
 		);
 
-		$this->object->config(['a.nextra' => 'value'], null, true);
+		$this->object->config(['a.nextra' => 'value']);
 
 		$this->assertSame(
 			[
@@ -327,7 +327,7 @@ class InstanceConfigTraitTest extends TestCase {
  * @return void
  */
 	public function testSetDefaultsMerge() {
-		$this->object->config(['a' => ['nother' => 'value']], null, true);
+		$this->object->config(['a' => ['nother' => 'value']]);
 
 		$this->assertSame(
 			[
@@ -371,7 +371,7 @@ class InstanceConfigTraitTest extends TestCase {
  * @return void
  */
 	public function testSetMergeNoClobber() {
-		$this->object->config(['a.nested.value' => 'it is possible'], null, true);
+		$this->object->config(['a.nested.value' => 'it is possible']);
 
 		$this->assertSame(
 			[
