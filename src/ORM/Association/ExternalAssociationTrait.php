@@ -99,8 +99,9 @@ trait ExternalAssociationTrait {
 		$sourceAlias = $this->source()->alias();
 		$targetAlias = $this->target()->alias();
 
-		if (isset($row[$this->_name . '___collection_'])) {
-			$values = $row[$this->_name . '___collection_'];
+		$collectionAlias = $this->_name . '___collection_';
+		if (isset($row[$collectionAlias])) {
+			$values = $row[$collectionAlias];
 		} else {
 			$values = $row[$this->_name];
 		}

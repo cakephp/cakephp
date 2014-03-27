@@ -257,8 +257,7 @@ class BelongsToMany extends Association {
 			$row[$this->target()->alias()][$this->_junctionProperty] = $row[$alias];
 			unset($row[$alias]);
 		}
-		$row = $this->_transformRow($row, $joined);
-		return $row;
+		return $this->_transformRow($row, $joined);
 	}
 
 /**
