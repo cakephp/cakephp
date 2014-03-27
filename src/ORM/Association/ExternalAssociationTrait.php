@@ -91,9 +91,11 @@ trait ExternalAssociationTrait {
  * source results.
  *
  * @param array $row
+ * @param boolean $joined Whether or not the row is a result of a direct join
+ * with this association
  * @return array
  */
-	public function transformRow($row) {
+	public function transformRow($row, $joined) {
 		$sourceAlias = $this->source()->alias();
 		$targetAlias = $this->target()->alias();
 
