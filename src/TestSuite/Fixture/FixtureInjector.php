@@ -14,13 +14,14 @@
  */
 namespace Cake\TestSuite\Fixture;
 
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
-use \Exception;
-use \PHPUnit_Framework_AssertionFailedError;
-use \PHPUnit_Framework_Test;
-use \PHPUnit_Framework_TestListener;
-use \PHPUnit_Framework_TestSuite;
+use Exception;
+use PHPUnit_Framework_AssertionFailedError;
+use PHPUnit_Framework_Test;
+use PHPUnit_Framework_TestListener;
+use PHPUnit_Framework_TestSuite;
 
 /**
  * Test listener used to inject a fixture manager in all tests that
@@ -69,6 +70,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  */
 	public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
 		$this->_fixtureManager->shutdown();
+		$config = ConnectionManager::config('test');
+		ConnectionManager::drop('test');
+		ConnectionManager::config('test', $config);
 	}
 
 /**

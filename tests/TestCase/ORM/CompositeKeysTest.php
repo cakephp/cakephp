@@ -44,7 +44,9 @@ class CompositeKeyTest extends TestCase {
  * @var array
  */
 	public $fixtures = [
-		'core.site_article', 'core.site_author', 'core.site_tag',
+		'core.site_article',
+		'core.site_author',
+		'core.site_tag',
 		'core.site_articles_tag'
 	];
 
@@ -74,7 +76,7 @@ class CompositeKeyTest extends TestCase {
  * @dataProvider strategiesProvider
  * @return void
  */
-	public function testHasManyEager($strategy) {
+	public function _testHasManyEager($strategy) {
 		$table = TableRegistry::get('SiteAuthors');
 		$table->hasMany('SiteArticles', [
 			'propertyName' => 'articles',
@@ -147,7 +149,7 @@ class CompositeKeyTest extends TestCase {
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testBelongsToManyEager($strategy) {
+	public function _testBelongsToManyEager($strategy) {
 		$articles = TableRegistry::get('SiteArticles');
 		$tags = TableRegistry::get('SiteTags');
 		$junction = TableRegistry::get('SiteArticlesTags');
