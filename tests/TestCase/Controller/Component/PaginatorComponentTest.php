@@ -448,6 +448,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testOutOfVeryBigPageNumberGetsClamped() {
+		$this->loadFixtures('Post');
 		$this->request->query = [
 			'page' => '3000000000000000000000000',
 		];
@@ -615,6 +616,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateMaxLimit() {
+		$this->loadFixtures('Post');
 		$table = TableRegistry::get('PaginatorPosts');
 
 		$settings = [

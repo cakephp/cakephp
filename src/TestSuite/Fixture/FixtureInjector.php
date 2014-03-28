@@ -14,7 +14,6 @@
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
 use Exception;
@@ -37,13 +36,6 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 	protected $_fixtureManager;
 
 /**
- * Indicates the current number of nested testsuites
- *
- * @var integer
- */
-	protected $_nesting = 0;
-
-/**
  * Constructor. Save internally the reference to the passed fixture manager
  *
  * @param \Cake\TestSuite\Fixture\FixtureManager $manager
@@ -60,13 +52,6 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  * @return void
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
-		$this->_nesting++;
-		foreach ($suite->getIterator() as $test) {
-			if ($test instanceof TestCase) {
-				$this->_fixtureManager->fixturize($test);
-				$test->fixtureManager = $this->_fixtureManager;
-			}
-		}
 	}
 
 /**
@@ -77,13 +62,6 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  * @return void
  */
 	public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
-		$this->_nesting--;
-		if (!$this->_nesting) {
-			$this->_fixtureManager->shutdown();
-			$config = ConnectionManager::config('test');
-			ConnectionManager::drop('test');
-			ConnectionManager::config('test', $config);
-		}
 	}
 
 /**
@@ -137,6 +115,8 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  * @return void
  */
 	public function startTest(PHPUnit_Framework_Test $test) {
+		$this->_fixtureManager->fixturize($test);
+		$test->fixtureManager = $this->_fixtureManager;
 		$this->_fixtureManager->load($test);
 	}
 
@@ -149,6 +129,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  */
 	public function endTest(PHPUnit_Framework_Test $test, $time) {
 		$this->_fixtureManager->unload($test);
+		$this->_fixtureManager->shutdown();
 	}
 
 /**
