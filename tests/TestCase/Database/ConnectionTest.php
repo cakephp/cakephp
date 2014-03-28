@@ -147,14 +147,14 @@ class ConnectionTest extends TestCase {
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch();
 		$this->assertEquals([2], $result);
-		$result->closeCursor();
+		$statement->closeCursor();
 
 		$sql = 'SELECT 1 + ? + ? AS total';
 		$statement = $this->connection->execute($sql, [2, 3], array('integer', 'integer'));
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch('assoc');
 		$this->assertEquals(['total' => 6], $result);
-		$result->closeCursor();
+		$statement->closeCursor();
 
 		$sql = 'SELECT 1 + :one + :two AS total';
 		$statement = $this->connection->execute($sql, ['one' => 2, 'two' => 3], array('one' => 'integer', 'two' => 'integer'));
@@ -173,7 +173,7 @@ class ConnectionTest extends TestCase {
 		$sql = "SELECT ? = '2012-01-01'";
 		$statement = $this->connection->execute($sql, [new \DateTime('2012-01-01')], ['date']);
 		$result = $statement->fetch();
-		$result->closeCursor();
+		$statement->closeCursor();
 		$this->assertTrue((bool)$result[0]);
 
 		$sql = "SELECT ? = '2012-01-01', ? = '2000-01-01 10:10:10', ? = 2";
