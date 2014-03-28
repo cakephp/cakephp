@@ -130,16 +130,23 @@ abstract class BaseAuthorize {
  * $this->Auth->mapActions(array('create' => array('add', 'register'));
  * }}}
  *
+ * Or equivalently:
+ *
+ * {{{
+ * $this->Auth->mapActions(array('register' => 'create', 'add' => 'create'));
+ * }}}
+ *
  * Create mappings for custom CRUD operations:
  *
  * {{{
- * $this->Auth->mapActions(array('my_action' => 'admin'));
+ * $this->Auth->mapActions(array('range' => 'search'));
  * }}}
  *
  * You can use the custom CRUD operations to create additional generic permissions
  * that behave like CRUD operations. Doing this will require additional columns on the
- * permissions lookup. When using with DbAcl, you'll have to add additional _admin type columns
- * to the `aros_acos` table.
+ * permissions lookup. For example if one wanted an additional search CRUD operation 
+ * one would create and additional column '_search' in the aros_acos table. One could
+ * create a custom admin CRUD operation for administration functions similarly if needed.
  *
  * @param array $map Either an array of mappings, or undefined to get current values.
  * @return mixed Either the current mappings or null when setting.
@@ -149,9 +156,8 @@ abstract class BaseAuthorize {
 		if (empty($map)) {
 			return $this->settings['actionMap'];
 		}
-		$crud = array('create', 'read', 'update', 'delete');
 		foreach ($map as $action => $type) {
-			if (in_array($action, $crud) && is_array($type)) {
+			if (is_array($type)) {
 				foreach ($type as $typedAction) {
 					$this->settings['actionMap'][$typedAction] = $action;
 				}
