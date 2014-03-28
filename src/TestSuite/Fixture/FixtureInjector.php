@@ -37,6 +37,13 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 	protected $_fixtureManager;
 
 /**
+ * Indicates the current number of nested testsuites
+ *
+ * @var integer
+ */
+	protected $_nesting = 0;
+
+/**
  * Constructor. Save internally the reference to the passed fixture manager
  *
  * @param \Cake\TestSuite\Fixture\FixtureManager $manager
@@ -53,6 +60,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  * @return void
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
+		$this->_nesting++;
 		foreach ($suite->getIterator() as $test) {
 			if ($test instanceof TestCase) {
 				$this->_fixtureManager->fixturize($test);
@@ -69,10 +77,13 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  * @return void
  */
 	public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
+		$this->_nesting--;
 		$this->_fixtureManager->shutdown();
-		$config = ConnectionManager::config('test');
-		ConnectionManager::drop('test');
-		ConnectionManager::config('test', $config);
+		if (!$this->_nesting) {
+			$config = ConnectionManager::config('test');
+			ConnectionManager::drop('test');
+			ConnectionManager::config('test', $config);
+		}
 	}
 
 /**
