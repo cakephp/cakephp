@@ -36,7 +36,7 @@ class SessionHelper extends Helper {
  * @var array
  */
 	protected $_defaultConfig = [
-		'templates' => [
+		'defaultTemplates' => [
 			'flash' => '<div id="{{key}}-message" class="{{class}}">{{message}}</div>'
 		]
 	];

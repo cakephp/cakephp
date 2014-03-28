@@ -143,7 +143,6 @@ class FormHelperTest extends TestCase {
 		$this->View = new View(null);
 
 		$this->Form = new FormHelper($this->View);
-		$this->Form->Html = new HtmlHelper($this->View);
 		$this->Form->request = new Request('articles/add');
 		$this->Form->request->here = '/articles/add';
 		$this->Form->request['controller'] = 'articles';
@@ -187,8 +186,21 @@ class FormHelperTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
+		unset($this->Form, $this->Controller, $this->View);
 		TableRegistry::clear();
+	}
+
+/**
+ * Test construct() with the templates option.
+ *
+ * @return void
+ */
+	public function testConstructTemplatesFile() {
+		$helper = new FormHelper($this->View, [
+			'templates' => 'htmlhelper_tags.php'
+		]);
+		$result = $helper->input('name');
+		$this->assertContains('<input', $result);
 	}
 
 /**
