@@ -105,20 +105,4 @@ class MysqlTest extends TestCase {
 		$driver->connect();
 	}
 
-/**
- * Tests disconnecting from database
- *
- * @return void
- **/
-	public function testDisconnect() {
-		$config = ConnectionManager::config('test');
-		ConnectionManager::config('test_disconnect', $config);
-		$connection = ConnectionManager::get('test_disconnect');
-		$this->assertTrue($connection->connect());
-		$this->assertTrue($connection->isConnected());
-		$connection->disconnect();
-		$this->assertFalse($connection->isConnected());
-		ConnectionManager::drop('test_disconnect');
-	}
-
 }
