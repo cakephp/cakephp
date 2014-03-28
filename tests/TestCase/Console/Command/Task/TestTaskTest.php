@@ -374,27 +374,25 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeControllerTest() {
-		$this->markTestIncomplete('This test explodes because of namespicing');
+		Configure::write('App.namespace', 'TestApp');
 
-		$this->Task->expects($this->once())->method('createFile')->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('isLoadableClass')->will($this->returnValue(true));
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->will($this->returnValue(true));
 
-		$result = $this->Task->bake('Controller', 'TestTaskComments');
+		$result = $this->Task->bake('Controller', 'PostsController');
 
-		$this->assertContains("App::uses('TestTaskCommentsController', 'Controller')", $result);
-		$this->assertContains('class TestTaskCommentsControllerTest extends ControllerTestCase', $result);
+		$this->assertContains("use TestApp\Controller\PostsController", $result);
+		$this->assertContains('class PostsControllerTest extends ControllerTestCase', $result);
 
 		$this->assertNotContains('function setUp()', $result);
-		$this->assertNotContains("\$this->TestTaskComments = new TestTaskCommentsController()", $result);
-		$this->assertNotContains("\$this->TestTaskComments->constructClasses()", $result);
+		$this->assertNotContains("\$this->Posts = new PostsController()", $result);
+		$this->assertNotContains("\$this->Posts->constructClasses()", $result);
 
 		$this->assertNotContains('function tearDown()', $result);
-		$this->assertNotContains('unset($this->TestTaskComments)', $result);
+		$this->assertNotContains('unset($this->Posts)', $result);
 
-		$this->assertContains("'app.test_task_article'", $result);
-		$this->assertContains("'app.test_task_comment'", $result);
-		$this->assertContains("'app.test_task_tag'", $result);
-		$this->assertContains("'app.articles_tag'", $result);
+		$this->assertContains("'app.post'", $result);
 	}
 
 /**
@@ -403,9 +401,11 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeComponentTest() {
-		$this->markTestIncomplete('Model tests need reworking.');
 		Configure::write('App.namespace', 'TestApp');
-		$this->Task->expects($this->once())->method('createFile')->will($this->returnValue(true));
+
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Component', 'Apple');
 
@@ -430,8 +430,9 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeBehaviorTest() {
-		$this->markTestIncomplete('Model tests need reworking.');
-		$this->Task->expects($this->once())->method('createFile')->will($this->returnValue(true));
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Behavior', 'Example');
 

@@ -15,10 +15,12 @@
 namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
+use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error;
+use Cake\ORM\Association;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Folder;
 use Cake\Utility\Inflector;
@@ -202,9 +204,9 @@ class TestTask extends BakeTask {
 		if (!empty($this->params['fixtures'])) {
 			$fixtures = array_map('trim', explode(',', $this->params['fixtures']));
 			$this->_fixtures = $fixtures;
-		} elseif ($this->typeCanDetectFixtures($type) && $this->isLoadableClass($realType, $fullClassName)) {
+		} elseif ($this->typeCanDetectFixtures($type) && class_exists($fullClassName)) {
 			$this->out(__d('cake_console', 'Bake is detecting possible fixtures...'));
-			$testSubject = $this->buildTestSubject($type, $className);
+			$testSubject = $this->buildTestSubject($type, $fullClassName);
 			$this->generateFixtureList($testSubject);
 		}
 
@@ -281,34 +283,26 @@ class TestTask extends BakeTask {
  */
 	public function typeCanDetectFixtures($type) {
 		$type = strtolower($type);
-		return in_array($type, ['controller', 'model']);
-	}
-
-/**
- * Check if a class with the given package is loaded or can be loaded.
- *
- * @param string $package The package of object you are generating tests for eg. controller
- * @param string $class the Classname of the class the test is being generated for.
- * @return boolean
- */
-	public function isLoadableClass($package, $class) {
-		$classname = App::classname($class, $package);
-		return !empty($classname);
+		return in_array($type, ['controller', 'table']);
 	}
 
 /**
  * Construct an instance of the class to be tested.
  * So that fixtures can be detected
  *
- * @param string $type The Type of object you are generating tests for eg. controller
- * @param string $class the Classname of the class the test is being generated for.
+ * @param string $type The type of object you are generating tests for eg. controller
+ * @param string $class The classname of the class the test is being generated for.
  * @return object And instance of the class that is going to be tested.
  */
 	public function buildTestSubject($type, $class) {
 		TableRegistry::clear();
-		$class = $this->getRealClassName($type, $class);
-		if (strtolower($type) === 'model') {
-			$instance = TableRegistry::get($class);
+		if (strtolower($type) === 'table') {
+			list($namespace, $name) = namespaceSplit($class);
+			$name = str_replace('Table', '', $name);
+			if ($this->plugin) {
+				$name = $this->plugin . '.' . $name;
+			}
+			$instance = TableRegistry::get($name);
 		} else {
 			$instance = new $class();
 		}
@@ -411,21 +405,17 @@ class TestTask extends BakeTask {
  * @return void
  */
 	protected function _processModel($subject) {
-		$this->_addFixture($subject->name);
-		$associated = $subject->getAssociated();
-		foreach ($associated as $alias => $type) {
-			$className = $subject->{$alias}->name;
-			if (!isset($this->_fixtures[$className])) {
-				$this->_processModel($subject->{$alias});
+		$this->_addFixture($subject->alias());
+		foreach ($subject->associations()->keys() as $alias) {
+			$assoc = $subject->association($alias);
+			$name = $assoc->target()->alias();
+			if (!isset($this->_fixtures[$name])) {
+				$this->_processModel($assoc->target());
 			}
-			if ($type === 'hasAndBelongsToMany') {
-				if (!empty($subject->hasAndBelongsToMany[$alias]['with'])) {
-					list(, $joinModel) = pluginSplit($subject->hasAndBelongsToMany[$alias]['with']);
-				} else {
-					$joinModel = Inflector::classify($subject->hasAndBelongsToMany[$alias]['joinTable']);
-				}
-				if (!isset($this->_fixtures[$joinModel])) {
-					$this->_processModel($subject->{$joinModel});
+			if ($assoc->type() === Association::MANY_TO_MANY) {
+				$junction = $assoc->junction();
+				if (!isset($this->_fixtures[$junction->alias()])) {
+					$this->_processModel($junction);
 				}
 			}
 		}
@@ -440,10 +430,7 @@ class TestTask extends BakeTask {
  */
 	protected function _processController($subject) {
 		$subject->constructClasses();
-		$models = [Inflector::classify($subject->name)];
-		if (!empty($subject->uses)) {
-			$models = $subject->uses;
-		}
+		$models = [$subject->modelClass];
 		foreach ($models as $model) {
 			list(, $model) = pluginSplit($model);
 			$this->_processModel($subject->{$model});
@@ -463,7 +450,7 @@ class TestTask extends BakeTask {
 		} else {
 			$prefix = 'app.';
 		}
-		$fixture = $prefix . Inflector::underscore($name);
+		$fixture = $prefix . Inflector::underscore(Inflector::singularize($name));
 		$this->_fixtures[$name] = $fixture;
 	}
 
