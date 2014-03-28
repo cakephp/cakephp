@@ -62,6 +62,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  * @return void
  */
 	public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
+		$this->_fixtureManager->shutdown();
 	}
 
 /**
@@ -129,7 +130,6 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  */
 	public function endTest(PHPUnit_Framework_Test $test, $time) {
 		$this->_fixtureManager->unload($test);
-		$this->_fixtureManager->shutdown();
 	}
 
 /**
