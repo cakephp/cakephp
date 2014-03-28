@@ -165,4 +165,20 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('FOO', $query->clause('epilog'));
 	}
 
+/**
+ * Tests disconnecting from database
+ *
+ * @return void
+ **/
+	public function testDisconnect() {
+		$config = ConnectionManager::config('test');
+		ConnectionManager::config('test_disconnect', $config);
+		$connection = ConnectionManager::get('test_disconnect');
+		$this->assertTrue($connection->connect());
+		$this->assertTrue($connection->isConnected());
+		$connection->disconnect();
+		$this->assertFalse($connection->isConnected());
+		ConnectionManager::drop('test_disconnect');
+	}
+
 }
