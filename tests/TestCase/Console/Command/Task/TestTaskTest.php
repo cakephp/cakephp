@@ -396,6 +396,15 @@ class TestTaskTest extends TestCase {
 	}
 
 /**
+ * test baking controller test files
+ *
+ * @return void
+ */
+	public function testBakePrefixControllerTest() {
+		$this->markTestIncomplete();
+	}
+
+/**
  * test baking component test files,
  *
  * @return void
@@ -543,57 +552,31 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeWithPlugin() {
-		$this->markTestIncomplete('Model tests need reworking.');
-		$this->Task->plugin = 'TestTest';
+		$this->Task->plugin = 'TestPlugin';
 
-		//fake plugin path
-		Plugin::load('TestTest', array('path' => APP . 'Plugin/TestTest/'));
-		$path = APP . 'Plugin/TestTest/Test/TestCase/View/Helper/FormHelperTest.php';
+		Plugin::load('TestPlugin');
+		$path = TEST_APP . 'Plugin/TestPlugin/Test/TestCase/View/Helper/FormHelperTest.php';
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, $this->anything());
 
 		$this->Task->bake('Helper', 'Form');
-		Plugin::unload();
 	}
 
 /**
- * test interactive with plugins lists from the plugin
+ * Provider for test case file names.
  *
- * @return void
+ * @return array
  */
-	public function testInteractiveWithPlugin() {
-		$this->markTestIncomplete();
-		$testApp = TEST_APP . 'Plugin/';
-		Plugin::load('TestPlugin');
-
-		$this->Task->plugin = 'TestPlugin';
-		$path = $testApp . 'TestPlugin/Test/TestCase/View/Helper/OtherHelperTest.php';
-		$this->Task->expects($this->any())
-			->method('in')
-			->will($this->onConsecutiveCalls(
-				5, //helper
-				1 //OtherHelper
-			));
-
-		$this->Task->expects($this->once())
-			->method('createFile')
-			->with($path, $this->anything());
-
-		$this->Task->stdout->expects($this->at(21))
-			->method('write')
-			->with('1. OtherHelperHelper');
-
-		$this->Task->execute();
-	}
-
 	public static function caseFileNameProvider() {
 		return array(
-			array('Model', 'Post', 'TestCase/Model/PostTest.php'),
+			array('Table', 'Posts', 'TestCase/Model/Table/PostsTableTest.php'),
+			array('Entity', 'Article', 'TestCase/Model/Entity/ArticleTest.php'),
 			array('Helper', 'Form', 'TestCase/View/Helper/FormHelperTest.php'),
 			array('Controller', 'Posts', 'TestCase/Controller/PostsControllerTest.php'),
 			array('Behavior', 'Tree', 'TestCase/Model/Behavior/TreeBehaviorTest.php'),
 			array('Component', 'Auth', 'TestCase/Controller/Component/AuthComponentTest.php'),
-			array('model', 'Post', 'TestCase/Model/PostTest.php'),
+			array('entity', 'Article', 'TestCase/Model/Entity/ArticleTest.php'),
+			array('table', 'Posts', 'TestCase/Model/Table/PostsTableTest.php'),
 			array('helper', 'Form', 'TestCase/View/Helper/FormHelperTest.php'),
 			array('controller', 'Posts', 'TestCase/Controller/PostsControllerTest.php'),
 			array('behavior', 'Tree', 'TestCase/Model/Behavior/TreeBehaviorTest.php'),
@@ -608,7 +591,6 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testTestCaseFileName($type, $class, $expected) {
-		$this->markTestIncomplete();
 		$this->Task->path = DS . 'my/path/tests/';
 
 		$result = $this->Task->testCaseFileName($type, $class);

@@ -551,7 +551,7 @@ class TestTask extends BakeTask {
 			$path .= $this->classTypes[$type] . DS;
 		}
 		list($namespace, $className) = namespaceSplit($this->getRealClassName($type, $className));
-		return str_replace('/', DS, $path) . Inflector::camelize($className) . 'Test.php';
+		return str_replace(['/', '\\'], DS, $path) . Inflector::camelize($className) . 'Test.php';
 	}
 
 /**
