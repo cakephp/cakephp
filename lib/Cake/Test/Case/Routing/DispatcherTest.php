@@ -57,12 +57,11 @@ class TestDispatcher extends Dispatcher {
  *
  * @param Controller $controller
  * @param CakeRequest $request
- * @param CakeResponse $response
- * @return void
+ * @return CakeResponse
  */
-	protected function _invoke(Controller $controller, CakeRequest $request, CakeResponse $response) {
+	protected function _invoke(Controller $controller, CakeRequest $request) {
 		$this->controller = $controller;
-		return parent::_invoke($controller, $request, $response);
+		return parent::_invoke($controller, $request);
 	}
 
 /**
@@ -508,7 +507,7 @@ class TestFilterDispatcher extends DispatcherFilter {
 
 /**
  * TestFilterDispatcher::beforeDispatch()
- * 
+ *
  * @param mixed $event
  * @return CakeResponse|boolean
  */
@@ -521,7 +520,7 @@ class TestFilterDispatcher extends DispatcherFilter {
 
 /**
  * TestFilterDispatcher::afterDispatch()
- * 
+ *
  * @param mixed $event
  * @return mixed boolean to stop the event dispatching or null to continue
  */
