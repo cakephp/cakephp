@@ -61,35 +61,22 @@ class CompositeKeyTest extends TestCase {
 	}
 
 /**
+ * Data provider for the two types of strategies HasMany implements
+ *
+ * @return void
+ */
+	public function strategiesProvider() {
+		return [['subquery'], ['select']];
+	}
+
+/**
  * Tests that HasMany associations are correctly eager loaded and results
  * correctly nested when multiple foreignKeys are used
  *
- * Uses the select strategy
- *
+ * @dataProvider strategiesProvider
  * @return void
  */
-	public function testHasManyEagerSelect() {
-		$this->_testHasMany('select');
-	}
-
-/**
- * Tests that HasMany associations are correctly eager loaded and results
- * correctly nested when multiple foreignKeys are used.
- *
- * Uses the subquery startegy
- *
- * @return void
- */
-	public function testHasManyEagerSubquery() {
-		$this->_testHasMany('subquery');
-	}
-
-/**
- * Helper method used to test eager loading of hasMany associations
- *
- * @return void
- */
-	protected function _testHasMany($strategy) {
+	public function _testHasManyEager($strategy) {
 		$table = TableRegistry::get('SiteAuthors');
 		$table->hasMany('SiteArticles', [
 			'propertyName' => 'articles',
@@ -159,32 +146,10 @@ class CompositeKeyTest extends TestCase {
  * Tests that BelongsToMany associations are correctly eager loaded when multiple
  * foreignKeys are used
  *
- * Uses the select strategy
- *
+ * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testBelongsToManyEagerSelect() {
-		$this->_testBelongsToMany('select');
-	}
-
-/**
- * Tests that BelongsToMany associations are correctly eager loaded when multiple
- * foreignKeys are used
- *
- * Uses the subquery strategy
- *
- * @return void
- **/
-	public function testBelongsToManyEagerSubquery() {
-		$this->_testBelongsToMany('subquery');
-	}
-
-/**
- * Helper method used to test eager loding of BelongsToMany associations
- *
- * @return void
- */
-	protected function _testBelongsToMany($strategy) {
+	public function _testBelongsToManyEager($strategy) {
 		$articles = TableRegistry::get('SiteArticles');
 		$tags = TableRegistry::get('SiteTags');
 		$junction = TableRegistry::get('SiteArticlesTags');
