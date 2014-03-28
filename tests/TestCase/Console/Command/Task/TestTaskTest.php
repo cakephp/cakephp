@@ -462,8 +462,8 @@ class TestTaskTest extends TestCase {
 		$this->assertContains('class ExampleHelperTest extends TestCase', $result);
 
 		$this->assertContains('function setUp()', $result);
-		$this->assertContains("\$View = new View()", $result);
-		$this->assertContains("\$this->Example = new ExampleHelper(\$View)", $result);
+		$this->assertContains("\$view = new View()", $result);
+		$this->assertContains("\$this->Example = new ExampleHelper(\$view)", $result);
 
 		$this->assertContains('function tearDown()', $result);
 		$this->assertContains('unset($this->Example)', $result);
@@ -475,43 +475,50 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testGenerateConstructor() {
-		$result = $this->Task->generateConstructor('controller', 'PostsController', null);
+		$result = $this->Task->generateConstructor('controller', 'PostsController');
 		$expected = array('', '', '');
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Task->generateConstructor('model', 'Post', null);
-		$expected = array('', "ClassRegistry::init('Post');\n", '');
+		$result = $this->Task->generateConstructor('table', 'App\Model\\Table\PostsTable');
+		$expected = array('', "TableRegistry::get('Posts', ['className' => 'App\Model\\Table\PostsTable']);\n", '');
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Task->generateConstructor('helper', 'FormHelper', null);
-		$expected = array("\$View = new View();\n", "new FormHelper(\$View);\n", '');
+		$result = $this->Task->generateConstructor('helper', 'FormHelper');
+		$expected = array("\$view = new View();\n", "new FormHelper(\$view);\n", '');
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Task->generateConstructor('entity', 'TestPlugin\Model\Entity\Article', null);
+		$expected = array("", "new Article();\n", '');
 		$this->assertEquals($expected, $result);
 	}
 
 /**
  * Test generateUses()
+ *
+ * @return void
  */
 	public function testGenerateUses() {
-		$result = $this->Task->generateUses('model', 'Model', 'App\Model\Post');
+		$result = $this->Task->generateUses('table', 'App\Model\Table\PostsTable');
 		$expected = array(
-			'App\Model\Post',
+			'Cake\ORM\TableRegistry',
+			'App\Model\Table\PostsTable',
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Task->generateUses('controller', 'Controller', 'App\Controller\PostsController');
+		$result = $this->Task->generateUses('controller', 'App\Controller\PostsController');
 		$expected = array(
 			'App\Controller\PostsController',
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Task->generateUses('helper', 'View/Helper', 'App\View\Helper\FormHelper');
+		$result = $this->Task->generateUses('helper', 'App\View\Helper\FormHelper');
 		$expected = array(
 			'Cake\View\View',
 			'App\View\Helper\FormHelper',
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Task->generateUses('component', 'Controller/Component', 'App\Controller\Component\AuthComponent');
+		$result = $this->Task->generateUses('component', 'App\Controller\Component\AuthComponent');
 		$expected = array(
 			'Cake\Controller\ComponentRegistry',
 			'App\Controller\Component\AuthComponent',

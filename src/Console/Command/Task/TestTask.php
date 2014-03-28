@@ -508,14 +508,15 @@ class TestTask extends BakeTask {
 		$type = strtolower($type);
 		$pre = $construct = $post = '';
 		if ($type === 'table') {
-			$construct = "TableRegistry::init('{$className}', ['className' => '{$fullClassName}']);\n";
+			$className = str_replace('Table', '', $className);
+			$construct = "TableRegistry::get('{$className}', ['className' => '{$fullClassName}']);\n";
 		}
 		if ($type === 'behavior' || $type === 'entity') {
 			$construct = "new {$className}();\n";
 		}
 		if ($type === 'helper') {
-			$pre = "\$View = new View();\n";
-			$construct = "new {$className}(\$View);\n";
+			$pre = "\$view = new View();\n";
+			$construct = "new {$className}(\$view);\n";
 		}
 		if ($type === 'component') {
 			$pre = "\$registry = new ComponentRegistry();\n";
