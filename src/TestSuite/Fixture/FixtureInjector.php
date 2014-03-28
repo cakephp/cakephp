@@ -36,12 +36,20 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 	protected $_fixtureManager;
 
 /**
+ * Holds a reference to the conainer test suite
+ *
+ * @var \PHPUnit_Framework_TestSuite
+ */
+	protected $_first;
+
+/**
  * Constructor. Save internally the reference to the passed fixture manager
  *
  * @param \Cake\TestSuite\Fixture\FixtureManager $manager
  */
 	public function __construct(FixtureManager $manager) {
 		$this->_fixtureManager = $manager;
+		$this->_fixtureManager->shutdown();
 	}
 
 /**
@@ -52,6 +60,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  * @return void
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
+		if (empty($this->_first)) {
+			$this->_first = $suite;
+		}
 	}
 
 /**
@@ -62,6 +73,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  * @return void
  */
 	public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
+		if ($this->_first === $suite) {
+			$this->_fixtureManager->shutdown();
+		}
 	}
 
 /**
