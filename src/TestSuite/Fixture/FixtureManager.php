@@ -287,7 +287,7 @@ class FixtureManager {
 			}
 
 			if (!in_array($db->configName(), (array)$fixture->created)) {
-				$this->_setupTable($fixture, $db, $test->dropTables);
+				$this->_setupTable($fixture, $db, $dropTables);
 			}
 			$fixture->truncate($db);
 			$fixture->insert($db);
