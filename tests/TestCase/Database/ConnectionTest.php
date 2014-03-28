@@ -124,10 +124,14 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testDisconnect() {
+		$config = ConnectionManager::config('test');
+		ConnectionManager::config('test_disconnect', $config);
+		$this->connection = ConnectionManager::get('test_disconnect');
 		$this->assertTrue($this->connection->connect());
 		$this->assertTrue($this->connection->isConnected());
 		$this->connection->disconnect();
 		$this->assertFalse($this->connection->isConnected());
+		ConnectionManager::drop('test_disconnect');
 	}
 
 /**

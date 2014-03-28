@@ -64,7 +64,6 @@ class FixtureManager {
 		if (empty($test->fixtures) || !empty($this->_processed[get_class($test)])) {
 			return;
 		}
-		$test->db = ConnectionManager::get('test', false);
 		if (!is_array($test->fixtures)) {
 			$test->fixtures = array_map('trim', explode(',', $test->fixtures));
 		}
@@ -224,6 +223,7 @@ class FixtureManager {
 		}
 
 		$dbs = [];
+		$this->fixturize($test);
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
@@ -235,7 +235,9 @@ class FixtureManager {
 				$db = ConnectionManager::get($fixture->connection, false);
 				$db->transactional(function($db) use ($fixtures, $test) {
 					foreach ($fixtures as $fixture) {
-						$this->_setupTable($fixture, $db, $test->dropTables);
+						if (!in_array($db->configName(), (array)$fixture->created)) {
+							$this->_setupTable($fixture, $db, $test->dropTables);
+						}
 						$fixture->truncate($db);
 						$fixture->insert($db);
 					}
@@ -283,7 +285,10 @@ class FixtureManager {
 			if (!$db) {
 				$db = ConnectionManager::get($fixture->connection);
 			}
-			$this->_setupTable($fixture, $db, $dropTables);
+
+			if (!in_array($db->configName(), (array)$fixture->created)) {
+				$this->_setupTable($fixture, $db, $test->dropTables);
+			}
 			$fixture->truncate($db);
 			$fixture->insert($db);
 		} else {
