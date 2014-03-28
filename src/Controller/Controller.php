@@ -197,7 +197,7 @@ class Controller extends Object implements EventListener {
  *
  * @var \Cake\Controller\ComponentRegistry
  */
-	public $_components = null;
+	protected $_components = null;
 
 /**
  * Array containing the names of components this controller uses. Component names

@@ -67,7 +67,7 @@ class View extends Object {
  *
  * @var Cake\View\HelperRegistry
  */
-	public $_helpers;
+	protected $_helpers;
 
 /**
  * ViewBlock instance.

@@ -317,7 +317,6 @@ class DebuggerTest extends TestCase {
 		$result = Debugger::exportVar($View);
 		$expected = <<<TEXT
 object(Cake\View\View) {
-	_helpers => object(Cake\View\HelperRegistry) {}
 	Blocks => object(Cake\View\ViewBlock) {}
 	plugin => null
 	name => ''
@@ -346,6 +345,7 @@ object(Cake\View\View) {
 	Form => object(Cake\View\Helper\FormHelper) {}
 	int => (int) 2
 	float => (float) 1.333
+	[protected] _helpers => object(Cake\View\HelperRegistry) {}
 	[protected] _ext => '.ctp'
 	[protected] _passedVars => [
 		(int) 0 => 'viewVars',
