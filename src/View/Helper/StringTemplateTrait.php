@@ -66,12 +66,10 @@ trait StringTemplateTrait {
 			$class = $this->config('templateClass') ?: '\Cake\View\StringTemplate';
 			$this->_templater = new $class;
 
-			$defaults = $this->config('defaultTemplates');
-			$this->_templater->add($defaults);
-
 			$templates = $this->config('templates');
 			if ($templates) {
 				if (is_string($templates)) {
+					$this->_templater->add($this->_defaultConfig['templates']);
 					$this->_templater->load($templates);
 				} else {
 					$this->_templater->add($templates);
