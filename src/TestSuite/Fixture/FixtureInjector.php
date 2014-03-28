@@ -78,8 +78,8 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  */
 	public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
 		$this->_nesting--;
-		$this->_fixtureManager->shutdown();
 		if (!$this->_nesting) {
+			$this->_fixtureManager->shutdown();
 			$config = ConnectionManager::config('test');
 			ConnectionManager::drop('test');
 			ConnectionManager::config('test', $config);
