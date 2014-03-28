@@ -18,6 +18,7 @@ use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Query;
+use Cake\Datasource\ConnectionManager;
 use \PDO;
 
 /**

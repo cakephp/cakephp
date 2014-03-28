@@ -24,18 +24,12 @@ use Cake\Utility\Hash;
 class PaginatorPostsTable extends Table {
 
 /**
- * table property
- *
- * @var string
- */
-	protected $_table = 'posts';
-
-/**
  * initialize method
  *
  * @return void
  */
 	public function initialize(array $config) {
+		$this->table('posts');
 		$this->belongsTo('PaginatorAuthor', [
 			'foreignKey' => 'author_id'
 		]);

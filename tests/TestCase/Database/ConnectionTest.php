@@ -119,18 +119,6 @@ class ConnectionTest extends TestCase {
 	}
 
 /**
- * Tests disconnecting from database
- *
- * @return void
- **/
-	public function testDisconnect() {
-		$this->assertTrue($this->connection->connect());
-		$this->assertTrue($this->connection->isConnected());
-		$this->connection->disconnect();
-		$this->assertFalse($this->connection->isConnected());
-	}
-
-/**
  * Tests creation of prepared statements
  *
  * @return void
@@ -159,17 +147,20 @@ class ConnectionTest extends TestCase {
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch();
 		$this->assertEquals([2], $result);
+		$statement->closeCursor();
 
 		$sql = 'SELECT 1 + ? + ? AS total';
 		$statement = $this->connection->execute($sql, [2, 3], array('integer', 'integer'));
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch('assoc');
 		$this->assertEquals(['total' => 6], $result);
+		$statement->closeCursor();
 
 		$sql = 'SELECT 1 + :one + :two AS total';
 		$statement = $this->connection->execute($sql, ['one' => 2, 'two' => 3], array('one' => 'integer', 'two' => 'integer'));
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch('assoc');
+		$statement->closeCursor();
 		$this->assertEquals(['total' => 6], $result);
 	}
 
@@ -182,12 +173,14 @@ class ConnectionTest extends TestCase {
 		$sql = "SELECT ? = '2012-01-01'";
 		$statement = $this->connection->execute($sql, [new \DateTime('2012-01-01')], ['date']);
 		$result = $statement->fetch();
+		$statement->closeCursor();
 		$this->assertTrue((bool)$result[0]);
 
 		$sql = "SELECT ? = '2012-01-01', ? = '2000-01-01 10:10:10', ? = 2";
 		$params = [new \DateTime('2012-01-01 10:10:10'), '2000-01-01 10:10:10', 2.1];
 		$statement = $this->connection->execute($sql, $params, ['date', 'string', 'integer']);
 		$result = $statement->fetch();
+		$statement->closeCursor();
 		$this->assertEquals($result, array_filter($result));
 	}
 
@@ -211,6 +204,7 @@ class ConnectionTest extends TestCase {
 		$sql = 'SELECT 1';
 		$statement = $this->connection->execute($sql);
 		$result = $statement->fetch();
+		$statement->closeCursor();
 		$this->assertCount(1, $result);
 		$this->assertEquals([1], $result);
 	}
@@ -287,8 +281,9 @@ class ConnectionTest extends TestCase {
 		$this->_insertTwoRecords();
 
 		$total = $this->connection->execute('SELECT COUNT(*) AS total FROM things');
-		$total = $total->fetch('assoc');
-		$this->assertEquals(2, $total['total']);
+		$result = $total->fetch('assoc');
+		$this->assertEquals(2, $result['total']);
+		$total->closeCursor();
 
 		$result = $this->connection->execute('SELECT title, body  FROM things');
 		$row = $result->fetch('assoc');
@@ -296,6 +291,7 @@ class ConnectionTest extends TestCase {
 		$this->assertEquals('a body', $row['body']);
 
 		$row = $result->fetch('assoc');
+		$result->closeCursor();
 		$this->assertEquals('another title', $row['title']);
 		$this->assertEquals('another body', $row['body']);
 	}
@@ -312,6 +308,7 @@ class ConnectionTest extends TestCase {
 		$this->connection->update('things', ['title' => $title, 'body' => $body]);
 		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
 		$this->assertCount(2, $result);
+		$result->closeCursor();
 	}
 
 /**
@@ -326,6 +323,7 @@ class ConnectionTest extends TestCase {
 		$this->connection->update('things', ['title' => $title, 'body' => $body], ['id' => 2]);
 		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
 		$this->assertCount(1, $result);
+		$result->closeCursor();
 	}
 
 /**
@@ -340,6 +338,7 @@ class ConnectionTest extends TestCase {
 		$this->connection->update('things', ['title' => $title, 'body' => $body], ['id' => 2, 'body is not null']);
 		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
 		$this->assertCount(1, $result);
+		$result->closeCursor();
 	}
 
 /**
@@ -359,6 +358,7 @@ class ConnectionTest extends TestCase {
 		$this->assertEquals('2012-01-01', $row['body']);
 		$row = $result->fetch('assoc');
 		$this->assertEquals('2012-01-01', $row['body']);
+		$result->closeCursor();
 	}
 
 /**
@@ -376,6 +376,7 @@ class ConnectionTest extends TestCase {
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
 		$this->assertEquals('2012-01-01', $row['body']);
+		$result->closeCursor();
 	}
 
 /**

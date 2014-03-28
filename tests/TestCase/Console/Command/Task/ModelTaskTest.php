@@ -97,6 +97,7 @@ class ModelTaskTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Task);
+		$this->fixtureManager->shutDown();
 	}
 
 /**

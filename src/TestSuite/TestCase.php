@@ -47,13 +47,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * Control table create/drops on each test method.
  *
- * Set this to false to avoid tables to be dropped if they already exist
- * between each test method. Tables will still be dropped at the
+ * If true, tables will still be dropped at the
  * end of each test runner execution.
  *
  * @var boolean
  */
-	public $dropTables = true;
+	public $dropTables = false;
 
 /**
  * Configure values to restore at end of test.

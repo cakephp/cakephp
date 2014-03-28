@@ -44,7 +44,9 @@ class CompositeKeyTest extends TestCase {
  * @var array
  */
 	public $fixtures = [
-		'core.site_article', 'core.site_author', 'core.site_tag',
+		'core.site_article',
+		'core.site_author',
+		'core.site_tag',
 		'core.site_articles_tag'
 	];
 
