@@ -178,4 +178,19 @@ class ComponentRegistryTest extends TestCase {
 		$this->assertNotSame($instance, $this->Components->load('Auth'));
 	}
 
+/**
+ * Test unloading.
+ *
+ * @return void
+ */
+	public function testUnload() {
+		$eventManager = $this->Components->getController()->getEventManager();
+
+		$result = $this->Components->load('Auth');
+		$this->Components->unload('Auth');
+
+		$this->assertFalse(isset($this->Components->Auth), 'Should be gone');
+		$this->assertCount(0, $eventManager->listeners('Controller.startup'));
+	}
+
 }

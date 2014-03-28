@@ -174,7 +174,7 @@ class SecurityComponentTest extends TestCase {
 		]);
 		$Controller = new \TestApp\Controller\SomePagesController($request);
 		$event = new Event('Controller.startup', $Controller, $this->Controller);
-		$Security = new SecurityComponent($Controller->Components);
+		$Security = new SecurityComponent($Controller->components());
 		$Security->blackHoleCallback = '_fail';
 		$Security->startup($event);
 		$Security->blackHole($Controller, 'csrf');
@@ -207,7 +207,7 @@ class SecurityComponentTest extends TestCase {
 			'requireSecure' => array('update_account'),
 			'validatePost' => false,
 		);
-		$Security = new SecurityComponent($this->Controller->Components, $settings);
+		$Security = new SecurityComponent($this->Controller->components(), $settings);
 		$this->assertEquals($Security->validatePost, $settings['validatePost']);
 	}
 

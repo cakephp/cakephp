@@ -1,7 +1,5 @@
 <?php
 /**
- * ViewTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -787,9 +785,9 @@ class ViewTest extends TestCase {
  *
  * @return void
  */
-	public function testMagicGet() {
+	public function testMagicGetAndAddHelper() {
 		$View = new View($this->PostsController);
-		$View->loadHelper('Html');
+		$View->addHelper('Html');
 		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
 	}
 
@@ -920,7 +918,7 @@ class ViewTest extends TestCase {
 		);
 		$View = new View($this->PostsController);
 		$View->render('index');
-		$this->assertEquals('Valuation', $View->Helpers->TestBeforeAfter->property);
+		$this->assertEquals('Valuation', $View->helpers()->TestBeforeAfter->property);
 	}
 
 /**
@@ -956,7 +954,7 @@ class ViewTest extends TestCase {
 		$result = $View->render('index', false);
 		$this->assertEquals('posts index', $result);
 
-		$attached = $View->Helpers->loaded();
+		$attached = $View->helpers()->loaded();
 		$this->assertEquals(array('Session', 'Html', 'Form', 'Number'), $attached);
 
 		$this->PostsController->helpers = array('Html', 'Form', 'Number', 'TestPlugin.PluggedHelper');
@@ -965,7 +963,7 @@ class ViewTest extends TestCase {
 		$result = $View->render('index', false);
 		$this->assertEquals('posts index', $result);
 
-		$attached = $View->Helpers->loaded();
+		$attached = $View->helpers()->loaded();
 		$expected = array('Html', 'Form', 'Number', 'PluggedHelper');
 		$this->assertEquals($expected, $attached, 'Attached helpers are wrong.');
 	}
@@ -1572,4 +1570,17 @@ TEXT;
 		$result = $this->View->get('title', $default);
 		$this->assertEquals($expected, $result);
 	}
+
+/**
+ * Test the helpers() method.
+ *
+ * @return void
+ */
+	public function testHelpers() {
+		$this->assertInstanceOf('Cake\View\HelperRegistry', $this->View->helpers());
+
+		$result = $this->View->helpers();
+		$this->assertSame($result, $this->View->helpers());
+	}
+
 }

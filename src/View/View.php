@@ -1,7 +1,5 @@
 <?php
 /**
- * Methods for displaying presentation data in the view.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -67,9 +65,9 @@ class View extends Object {
 /**
  * Helpers collection
  *
- * @var HelperRegistry
+ * @var Cake\View\HelperRegistry
  */
-	public $Helpers;
+	protected $_helpers;
 
 /**
  * ViewBlock instance.
@@ -337,7 +335,6 @@ class View extends Object {
 		} else {
 			$this->response = new Response();
 		}
-		$this->Helpers = new HelperRegistry($this);
 		$this->Blocks = new ViewBlock();
 		$this->loadHelpers();
 		parent::__construct();
@@ -774,9 +771,10 @@ class View extends Object {
  * @return mixed
  */
 	public function __get($name) {
-		if (isset($this->Helpers->{$name})) {
-			$this->{$name} = $this->Helpers->{$name};
-			return $this->Helpers->{$name};
+		$registry = $this->helpers();
+		if (isset($registry->{$name})) {
+			$this->{$name} = $registry->{$name};
+			return $registry->{$name};
 		}
 		return $this->{$name};
 	}
@@ -811,10 +809,11 @@ class View extends Object {
  * @return void
  */
 	public function loadHelpers() {
-		$helpers = $this->Helpers->normalizeArray($this->helpers);
+		$registry = $this->helpers();
+		$helpers = $registry->normalizeArray($this->helpers);
 		foreach ($helpers as $properties) {
 			list(, $class) = pluginSplit($properties['class']);
-			$this->{$class} = $this->Helpers->load($properties['class'], $properties['settings']);
+			$this->{$class} = $registry->load($properties['class'], $properties['settings']);
 		}
 	}
 
@@ -882,6 +881,17 @@ class View extends Object {
 	}
 
 /**
+ * Get the helper registry in use by this View class.
+ *
+ * @return \Cake\View\HelperRegistry
+ */
+	public function helpers() {
+		if ($this->_helpers === null) {
+			$this->_helpers = new HelperRegistry($this);
+		}
+		return $this->_helpers;
+	}
+/**
  * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
  *
  * @param string $helperName Name of the helper to load.
@@ -889,8 +899,8 @@ class View extends Object {
  * @return Helper a constructed helper object.
  * @see HelperRegistry::load()
  */
-	public function loadHelper($helperName, $settings = array()) {
-		return $this->Helpers->load($helperName, $settings);
+	public function addHelper($helperName, $settings = []) {
+		return $this->helpers()->load($helperName, $settings);
 	}
 
 /**

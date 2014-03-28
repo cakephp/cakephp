@@ -30,16 +30,9 @@ class ComponentRegistry extends ObjectRegistry {
 /**
  * The controller that this collection was initialized with.
  *
- * @var Controller
+ * @var \Cake\Controller\Controller
  */
 	protected $_Controller = null;
-
-/**
- * The event manager to bind components to.
- *
- * @var \Cake\Event\EventManager
- */
-	protected $_eventManager = null;
 
 /**
  * Constructor.
@@ -110,20 +103,6 @@ class ComponentRegistry extends ObjectRegistry {
 			$this->_eventManager->attach($instance);
 		}
 		return $instance;
-	}
-
-/**
- * Destroys all objects in the registry.
- *
- * Removes all attached listeners and destroys all stored instances.
- *
- * @return void
- */
-	public function reset() {
-		foreach ($this->_loaded as $component) {
-			$this->_eventManager->detach($component);
-		}
-		parent::reset();
 	}
 
 }

@@ -1,9 +1,5 @@
 <?php
 /**
- * Error Handling Controller
- *
- * Controller used by ErrorHandler to render error views.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -24,7 +20,6 @@ use Cake\Routing\Router;
  * Error Handling Controller
  *
  * Controller used by ErrorHandler to render error views.
- *
  */
 class ErrorController extends Controller {
 
@@ -47,7 +42,7 @@ class ErrorController extends Controller {
 		if (count(Router::extensions()) &&
 			!isset($this->RequestHandler)
 		) {
-			$this->RequestHandler = $this->Components->load('RequestHandler');
+			$this->addComponent('RequestHandler');
 		}
 		$eventManager = $this->getEventManager();
 		if (isset($this->Auth)) {
