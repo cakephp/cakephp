@@ -18,6 +18,7 @@ use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Query;
+use Cake\Datasource\ConnectionManager;
 use \PDO;
 
 /**
@@ -172,6 +173,7 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
  **/
 	public function testDisconnect() {
 		$config = ConnectionManager::config('test');
+		$this->skipIf(strpos($config['datasource'], 'Postgres') === false, 'Not using Postgres for test config');
 		ConnectionManager::config('test_disconnect', $config);
 		$connection = ConnectionManager::get('test_disconnect');
 		$this->assertTrue($connection->connect());
