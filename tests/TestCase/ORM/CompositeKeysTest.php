@@ -76,7 +76,7 @@ class CompositeKeyTest extends TestCase {
  * @dataProvider strategiesProvider
  * @return void
  */
-	public function _testHasManyEager($strategy) {
+	public function testHasManyEager($strategy) {
 		$table = TableRegistry::get('SiteAuthors');
 		$table->hasMany('SiteArticles', [
 			'propertyName' => 'articles',
@@ -149,7 +149,7 @@ class CompositeKeyTest extends TestCase {
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function _testBelongsToManyEager($strategy) {
+	public function testBelongsToManyEager($strategy) {
 		$articles = TableRegistry::get('SiteArticles');
 		$tags = TableRegistry::get('SiteTags');
 		$junction = TableRegistry::get('SiteArticlesTags');
