@@ -116,6 +116,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  */
 	public function startTest(PHPUnit_Framework_Test $test) {
 		$test->fixtureManager = $this->_fixtureManager;
+		$this->_fixtureManager->fixturize($test);
 		$this->_fixtureManager->load($test);
 	}
 

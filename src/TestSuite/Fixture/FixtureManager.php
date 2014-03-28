@@ -223,7 +223,6 @@ class FixtureManager {
 		}
 
 		$dbs = [];
-		$this->fixturize($test);
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
@@ -256,7 +255,7 @@ class FixtureManager {
  * @return void
  */
 	public function unload(TestCase $test) {
-		$fixtures = !empty($test->fixtures) ? $test->fixtures : array();
+		$fixtures = !empty($test->fixtures) ? $test->fixtures : [];
 		foreach (array_reverse($fixtures) as $f) {
 			if (isset($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
@@ -299,9 +298,6 @@ class FixtureManager {
 /**
  * Drop all fixture tables loaded by this class
  *
- * This will also close the session, as failing to do so will cause
- * fatal errors with database sessions.
- *
  * @return void
  */
 	public function shutDown() {
@@ -311,6 +307,7 @@ class FixtureManager {
 					$db = ConnectionManager::get($ds);
 					$fixture->drop($db);
 				}
+				$fixture->created = [];
 			}
 		}
 	}

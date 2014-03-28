@@ -123,7 +123,7 @@ class ConnectionTest extends TestCase {
  *
  * @return void
  **/
-	public function _testDisconnect() {
+	public function testDisconnect() {
 		$config = ConnectionManager::config('test');
 		ConnectionManager::config('test_disconnect', $config);
 		$this->connection = ConnectionManager::get('test_disconnect');
