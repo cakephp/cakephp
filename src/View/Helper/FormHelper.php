@@ -76,7 +76,7 @@ class FormHelper extends Helper {
 		],
 		'widgets' => [],
 		'registry' => null,
-		'defaultTemplates' => [
+		'templates' => [
 			'button' => '<button{{attrs}}>{{text}}</button>',
 			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
 			'checkboxContainer' => '<div class="checkbox">{{input}}{{label}}</div>',
@@ -2237,7 +2237,7 @@ class FormHelper extends Helper {
  * @return void
  */
 	public function resetTemplates() {
-		$this->templates($this->_defaultConfig['defaultTemplates']);
+		$this->templates($this->_defaultConfig['templates']);
 	}
 
 /**

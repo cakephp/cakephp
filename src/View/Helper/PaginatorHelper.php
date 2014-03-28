@@ -49,7 +49,7 @@ class PaginatorHelper extends Helper {
  */
 	protected $_defaultConfig = [
 		'options' => [],
-		'defaultTemplates' => [
+		'templates' => [
 			'nextActive' => '<li class="next"><a rel="next" href="{{url}}">{{text}}</a></li>',
 			'nextDisabled' => '<li class="next disabled"><span>{{text}}</span></li>',
 			'prevActive' => '<li class="prev"><a rel="prev" href="{{url}}">{{text}}</a></li>',
