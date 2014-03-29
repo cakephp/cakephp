@@ -489,6 +489,7 @@ class CakeTimeTest extends CakeTestCase {
 		$time = time();
 		date_default_timezone_set('Europe/Paris');
 		$result = $this->Time->toServer($time, 'America/New_York');
+		date_default_timezone_set('America/New_York');
 		$this->assertEquals(date('Y-m-d H:i:s', $time), $result);
 
 		date_default_timezone_set('Europe/Paris');
