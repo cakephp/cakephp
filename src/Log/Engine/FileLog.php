@@ -99,8 +99,6 @@ class FileLog extends BaseLog {
 				$this->_size = CakeNumber::fromReadableSize($this->_config['size']);
 			}
 		}
-
-		return $return;
 	}
 
 /**
