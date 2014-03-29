@@ -225,11 +225,12 @@ class ConnectionTest extends TestCase {
 			['id' => 'integer', 'title' => 'string', 'body' => 'string']
 		);
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+		$result->closeCursor();
 		$result = $this->connection->execute('SELECT * from things');
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
-		$this->assertEquals($data, $row);
 		$result->closeCursor();
+		$this->assertEquals($data, $row);
 	}
 
 /**
@@ -246,12 +247,13 @@ class ConnectionTest extends TestCase {
 			$data,
 			['integer', 'string', 'string']
 		);
+		$result->closeCursor();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
 		$result = $this->connection->execute('SELECT * from things');
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
-		$this->assertEquals($data, $row);
 		$result->closeCursor();
+		$this->assertEquals($data, $row);
 	}
 
 /**
@@ -273,6 +275,7 @@ class ConnectionTest extends TestCase {
 		$result->bindValue(2, 'another title');
 		$result->bindValue(3, 'another body');
 		$result->execute();
+		$result->closeCursor();
 	}
 
 /**
