@@ -53,8 +53,7 @@ trait ExternalAssociationTrait {
 	public function foreignKey($key = null) {
 		if ($key === null) {
 			if ($this->_foreignKey === null) {
-				$key = Inflector::singularize($this->source()->alias());
-				$this->_foreignKey = Inflector::underscore($key) . '_id';
+				$this->_foreignKey = $this->_generateKey($this->source()->alias());
 			}
 			return $this->_foreignKey;
 		}
