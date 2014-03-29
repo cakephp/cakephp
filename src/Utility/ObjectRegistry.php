@@ -48,7 +48,7 @@ abstract class ObjectRegistry {
  * Loads/constructs a object instance.
  *
  * Will return the instance in the registry if it already exists.
- * If a subclass provides event support, you can use `$settings['enabled'] = false`
+ * If a subclass provides event support, you can use `$config['enabled'] = false`
  * to exclude constructed objects from being registered for events.
  *
  * Using Cake\Controller\Controller::$components as an example. You can alias
@@ -65,16 +65,16 @@ abstract class ObjectRegistry {
  * All calls to the `Email` component would use `AliasedEmail` instead.
  *
  * @param string $objectName The name/class of the object to load.
- * @param array $settings Additional settings to use when loading the object.
+ * @param array $config Additional settings to use when loading the object.
  * @return mixed
  */
-	public function load($objectName, $settings = []) {
+	public function load($objectName, $config = []) {
 		list($plugin, $name) = pluginSplit($objectName);
 		if (isset($this->_loaded[$name])) {
 			return $this->_loaded[$name];
 		}
-		if (is_array($settings) && isset($settings['className'])) {
-			$className = $this->_resolveClassName($settings['className']);
+		if (is_array($config) && isset($config['className'])) {
+			$className = $this->_resolveClassName($config['className']);
 		}
 		if (!isset($className)) {
 			$className = $this->_resolveClassName($objectName);
@@ -82,7 +82,7 @@ abstract class ObjectRegistry {
 		if (!$className) {
 			$this->_throwMissingClassError($objectName, substr($plugin, 0, -1));
 		}
-		$instance = $this->_create($className, $name, $settings);
+		$instance = $this->_create($className, $name, $config);
 		$this->_loaded[$name] = $instance;
 		return $instance;
 	}
@@ -112,10 +112,10 @@ abstract class ObjectRegistry {
  *
  * @param string $class The class to build.
  * @param string $alias The alias of the object.
- * @param array $settings The settings for construction
+ * @param array $config The Configuration settings for construction
  * @return mixed
  */
-	abstract protected function _create($class, $alias, $settings);
+	abstract protected function _create($class, $alias, $config);
 
 /**
  * Get the loaded object list, or get the object instance at a given name.
@@ -163,13 +163,13 @@ abstract class ObjectRegistry {
 	public function normalizeArray($objects) {
 		$normal = array();
 		foreach ($objects as $i => $objectName) {
-			$options = array();
+			$config = array();
 			if (!is_int($i)) {
-				$options = (array)$objectName;
+				$config = (array)$objectName;
 				$objectName = $i;
 			}
 			list(, $name) = pluginSplit($objectName);
-			$normal[$name] = array('class' => $objectName, 'settings' => $options);
+			$normal[$name] = array('class' => $objectName, 'config' => $config);
 		}
 		return $normal;
 	}
