@@ -156,7 +156,7 @@ class AclShell extends AppShell {
 			$identifier = array('alias' => $identifier);
 		}
 
-		if ($this->Acl->{$class}->find('all', ['conditions' => $identifier])) {
+		if ($this->Acl->{$class}->find('all', array('conditions' => $identifier))) {
 			if (!$this->Acl->{$class}->deleteAll($identifier)) {
 				$this->error(__d('cake_console', 'Node Not Deleted. ') . __d('cake_console', 'There was an error deleting the %s.', $class) . "\n");
 			}
