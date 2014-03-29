@@ -463,6 +463,7 @@ class Query extends DatabaseQuery {
 	public function count() {
 		$query = clone $this;
 		$query->limit(null);
+		$query->order([], true);
 		$query->offset(null);
 		$query->mapReduce(null, null, true);
 		$query->formatResults(null, true);
