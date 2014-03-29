@@ -167,7 +167,7 @@ class ConnectionManagerTest extends TestCase {
 
 		$this->assertInstanceOf('TestPlugin\Datasource\TestSource', $connection);
 		unset($config['className']);
-		$this->assertSame($config + ['name' => 'test_variant'], $connection->settings);
+		$this->assertSame($config + ['name' => 'test_variant'], $connection->config());
 	}
 
 /**
