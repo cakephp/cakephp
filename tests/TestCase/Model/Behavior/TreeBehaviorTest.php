@@ -185,7 +185,10 @@ class TreeBehaviorTest extends TestCase {
 		$table->moveUp(8, true);
 		$nodes = $table->find()
 			->select(['id'])
-			->where(['parent_id IS' => null, 'menu' => 'main-menu'])
+			->where(function($exp) {
+				return $exp->isNull('parent_id');
+			})
+			->where(['menu' => 'main-menu'])
 			->order(['lft' => 'ASC'])
 			->all();
 		$this->assertEquals([8, 1, 6], $nodes->extract('id')->toArray());
@@ -232,7 +235,10 @@ class TreeBehaviorTest extends TestCase {
 		$table->moveDown(1, true);
 		$nodes = $table->find()
 			->select(['id'])
-			->where(['parent_id IS' => null, 'menu' => 'main-menu'])
+			->where(function($exp) {
+				return $exp->isNull('parent_id');
+			})
+			->where(['menu' => 'main-menu'])
 			->order(['lft' => 'ASC'])
 			->all();
 		$this->assertEquals([6, 8, 1], $nodes->extract('id')->toArray());
