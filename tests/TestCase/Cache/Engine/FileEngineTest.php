@@ -28,13 +28,6 @@ use Cake\TestSuite\TestCase;
 class FileEngineTest extends TestCase {
 
 /**
- * config property
- *
- * @var array
- */
-	public $config = array();
-
-/**
  * setUp method
  *
  * @return void
