@@ -27,13 +27,14 @@ class ConnectionTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
+		$this->connection->execute('DROP TABLE IF EXISTS things');
 	}
 
 	public function tearDown() {
-		parent::tearDown();
 		$this->connection->execute('DROP TABLE IF EXISTS things');
 		$this->connection->useSavePoints(false);
 		unset($this->connection);
+		parent::tearDown();
 	}
 
 /**
