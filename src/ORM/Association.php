@@ -162,6 +162,13 @@ abstract class Association {
 	protected $_strategy = self::STRATEGY_JOIN;
 
 /**
+ * If camel backed compoundNames should be used for fields and property names.
+ *
+ * @var boolean
+ */
+	protected $_camelBacked = false;
+
+/**
  * Constructor. Subclasses can override _options function to get the original
  * list of passed options if expecting any other special key
  *
@@ -320,6 +327,20 @@ abstract class Association {
 	}
 
 /**
+ * Sets the scheme for how fields and variables are named by default.
+ * If no arguments are passed, the currently configured scheme is returned.
+ *
+ * @param boolean $useCompoundNames If camel backed compoundNames should be used.
+ * @return boolean
+ */
+	public function camelBacked($useCompoundNames = null) {
+		if ($useCompoundNames === null) {
+			return $this->_camelBacked;
+		}
+		return $this->_camelBacked = $useCompoundNames;
+	}
+
+/**
  * Sets the property name that should be filled with data from the target table
  * in the source table record.
  * If no arguments are passed, the currently configured type is returned.
@@ -333,7 +354,11 @@ abstract class Association {
 		}
 		if ($name === null && !$this->_propertyName) {
 			list($plugin, $name) = pluginSplit($this->_name);
-			$this->_propertyName = Inflector::underscore($name);
+			$name = Inflector::underscore($name);
+			if ($this->_camelBacked) {
+				$name = lcfirst(Inflector::camelize($name));
+			}
+			$this->_propertyName = $name;
 		}
 		return $this->_propertyName;
 	}
@@ -580,6 +605,20 @@ abstract class Association {
 			$newBinds[$options['aliasPath'] . '.' . $alias] = $value;
 		}
 		$query->contain($newBinds);
+	}
+
+/**
+ * Association::_generateKey()
+ *
+ * @param string $tableAlias
+ * @return string
+ */
+	protected function _generateKey($tableAlias) {
+		$key = Inflector::underscore(Inflector::singularize($tableAlias));
+		if ($this->_camelBacked) {
+			$key = lcfirst(Inflector::camelize($key));
+		}
+		return $key . ($this->_camelBacked ? 'Id' : '_id');
 	}
 
 /**

@@ -131,8 +131,7 @@ class BelongsToMany extends Association {
 	public function targetForeignKey($key = null) {
 		if ($key === null) {
 			if ($this->_targetForeignKey === null) {
-				$key = Inflector::singularize($this->target()->alias());
-				$this->_targetForeignKey = Inflector::underscore($key) . '_id';
+				$this->_targetForeignKey = $this->_generateKey($this->target()->alias());
 			}
 			return $this->_targetForeignKey;
 		}

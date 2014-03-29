@@ -55,8 +55,7 @@ class HasOne extends Association {
 	public function foreignKey($key = null) {
 		if ($key === null) {
 			if ($this->_foreignKey === null) {
-				$key = Inflector::singularize($this->source()->alias());
-				$this->_foreignKey = Inflector::underscore($key) . '_id';
+				$this->_foreignKey = $this->_generateKey($this->source()->alias());
 			}
 			return $this->_foreignKey;
 		}
@@ -77,7 +76,11 @@ class HasOne extends Association {
 		}
 		if ($name === null && !$this->_propertyName) {
 			list($plugin, $name) = pluginSplit($this->_name);
-			$this->_propertyName = Inflector::underscore(Inflector::singularize($name));
+			$name = Inflector::underscore(Inflector::singularize($name));
+			if ($this->_camelBacked) {
+				$name = lcfirst(Inflector::camelize($name));
+			}
+			$this->_propertyName = $name;
 		}
 		return $this->_propertyName;
 	}
