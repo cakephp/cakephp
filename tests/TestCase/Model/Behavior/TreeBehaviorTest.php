@@ -321,7 +321,7 @@ class TreeBehaviorTest extends TestCase {
 
 		$expected[] = $entity->toArray();
 		$results = $table->find()->order('lft')->hydrate(false)->toArray();
-		$this->assertEquals($expected, $result);
+		$this->assertEquals($expected, $results);
 	}
 
 /**
@@ -362,7 +362,7 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(9, $entity->lft);
 		$this->assertEquals(10, $entity->rght);
 
-		$result = $table->find()->order('lft')->hydrate(false)->toArray();
+		$results = $table->find()->order('lft')->hydrate(false)->toArray();
 		$table->recover();
 		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
 		$this->assertEquals($expected, $results);

@@ -156,8 +156,7 @@ class TreeBehavior extends Behavior {
 		$this->_sync($diff, '+', "BETWEEN {$min} AND {$max}");
 
 		if ($right - $left > 1) {
-			//Inverting sign again
-			$this->_sync('-1', '*', "< 0");
+			$this->_unmarkInternalTree();
 		}
 
 		//Allocating new position
@@ -182,12 +181,20 @@ class TreeBehavior extends Behavior {
 		$this->_sync($diff + 1, '-', "BETWEEN {$right} AND {$edge}");
 
 		if ($right - $left > 1) {
-			//Inverting sign again
-			$this->_sync('-1', '*', "< 0");
+			$this->_unmarkInternalTree();
 		}
 
 		$entity->set($config['left'], $edge - $diff);
 		$entity->set($config['right'], $edge);
+	}
+
+	protected function _unmarkInternalTree() {
+		$config = $this->config();
+		$query = $this->_table->query();
+		$this->_table->updateAll([
+			$query->newExpr()->add("{$config['left']} = {$config['left']} * -1"),
+			$query->newExpr()->add("{$config['right']} = {$config['right']} * -1"),
+		], [$config['left'] . ' <' => 0]);
 	}
 
 	public function findPath($query, $options) {
