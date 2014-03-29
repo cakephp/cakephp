@@ -16,6 +16,7 @@ namespace Cake\Controller\Component\Acl;
 
 use Cake\Configure\Engine\IniConfig;
 use Cake\Controller\Component;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Object;
 use Cake\Utility\Hash;
 
@@ -26,12 +27,9 @@ use Cake\Utility\Hash;
  */
 class IniAcl extends Object implements AclInterface {
 
-/**
- * Array with configuration, parsed from ini file
- *
- * @var array
- */
-	public $config = null;
+	use InstanceConfigTrait {
+		config as protected _traitConfig;
+	}
 
 /**
  * The Hash::extract() path to the user/aro identifier in the
@@ -41,6 +39,38 @@ class IniAcl extends Object implements AclInterface {
  * @var string
  */
 	public $userPath = 'User.username';
+
+/**
+ * Default config for this class
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [];
+
+/**
+ * read/write config
+ *
+ * Load acl config on first access. Wraps the InstanceConfigTrait method, taking
+ * care of the trait's implementation of determining intent from tne number of
+ * passed arguments
+ *
+ * @param string|array|null $key The key to get/set, or a complete array of configs.
+ * @param mixed|null $value The value to set.
+ * @param bool $merge Whether to merge or overwrite existing config defaults to true.
+ * @return mixed Config value being read, or the object itself on write operations.
+ * @throws \Cake\Error\Exception When trying to set a key that is invalid.
+ */
+	public function config($key = null, $value = null, $merge = true) {
+		if (!$this->_configInitialized) {
+			$this->_defaultConfig = $this->readConfigFile(APP . 'Config/acl.ini.php');
+		}
+
+		if (is_array($key) || func_num_args() >= 2) {
+			return $this->_traitConfig($key, $value, $merge);
+		}
+
+		return $this->_traitConfig($key);
+	}
 
 /**
  * Initialize method
@@ -95,10 +125,7 @@ class IniAcl extends Object implements AclInterface {
  * @return boolean Success
  */
 	public function check($aro, $aco, $action = null) {
-		if (!$this->config) {
-			$this->config = $this->readConfigFile(APP . 'Config/acl.ini.php');
-		}
-		$aclConfig = $this->config;
+		$aclConfig = $this->config();
 
 		if (is_array($aro)) {
 			$aro = Hash::get($aro, $this->userPath);
