@@ -14,6 +14,7 @@
  */
 namespace Cake\Cache;
 
+use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Inflector;
 
 /**
@@ -22,14 +23,7 @@ use Cake\Utility\Inflector;
  */
 abstract class CacheEngine {
 
-/**
- * Runtime config
- *
- * This is the config of a particular instance
- *
- * @var array
- */
-	protected $_config = [];
+	use InstanceConfigTrait;
 
 /**
  * The default cache configuration is overriden in most cache adapters. These are
@@ -70,7 +64,8 @@ abstract class CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($config = []) {
-		$this->_config = $config + $this->_defaultConfig;
+		$this->config($config);
+
 		if (!empty($this->_config['groups'])) {
 			sort($this->_config['groups']);
 			$this->_groupPrefix = str_repeat('%s_', count($this->_config['groups']));
@@ -78,6 +73,7 @@ abstract class CacheEngine {
 		if (!is_numeric($this->_config['duration'])) {
 			$this->_config['duration'] = strtotime($this->_config['duration']) - time();
 		}
+
 		return true;
 	}
 
@@ -164,29 +160,6 @@ abstract class CacheEngine {
  */
 	public function groups() {
 		return $this->_config['groups'];
-	}
-
-/**
- * Cache Engine config
- *
- * If called with no arguments, returns the full config array
- * Otherwise returns the config for the specified key
- *
- * Usage:
- * {{{
- * $instance->config(); will return full config
- * $instance->config('duration'); will return configured duration
- * $instance->config('notset'); will return null
- * }}}
- *
- * @param string|null $key to return
- * @return mixed array or config value
- */
-	public function config($key = null) {
-		if ($key === null) {
-			return $this->_config;
-		}
-		return isset($this->_config[$key]) ? $this->_config[$key] : null;
 	}
 
 /**
