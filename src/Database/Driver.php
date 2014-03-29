@@ -183,7 +183,7 @@ abstract class Driver {
  * @return string String for use in schema definitions.
  */
 	public function schemaValue($value) {
-		if (is_null($value)) {
+		if ($value === null) {
 			return 'NULL';
 		}
 		if ($value === false) {
