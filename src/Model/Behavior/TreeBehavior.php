@@ -126,11 +126,18 @@ class TreeBehavior extends Behavior {
 		$parentNode = $this->_getParent($parent);
 		$parentLeft = $parentNode->get($config['left']);
 		$parentRight = $parentNode->get($config['right']);
-
 		$right = $entity->get($config['right']);
 		$left = $entity->get($config['left']);
 
-		// Values for moving to the left
+		if ($parentLeft > $left && $parentLeft < $right) {
+			throw new \RuntimeException(sprintf(
+				'Cannot use node "%s" as parent for entity "%s"',
+				$parent,
+				$entity->get($this->_table->primaryKey())
+			));
+		}
+
+		// Values for moving )o the left
 		$diff = $right - $left + 1;
 		$targetLeft = $parentRight;
 		$targetRight = $diff + $parentRight - 1;

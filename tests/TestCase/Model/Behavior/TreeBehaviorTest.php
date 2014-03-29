@@ -486,4 +486,19 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(range(1, 22), $numbers);
 	}
 
+/**
+ * Tests that trying to create a cycle throws an exception
+ *
+ * @expectedException RuntimeException
+ * @expectedExceptionMessage Cannot use node "5" as parent for entity "2"
+ * @return void
+ */
+	public function testReparentCycle() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(2);
+		$entity->parent_id = 5;
+		$table->save($entity);
+	}
+
 }
