@@ -895,23 +895,26 @@ class Controller extends Object implements CakeEventListener {
  * @return array Validation errors, or false if none
  * @deprecated This method will be removed in 3.0
  */
-	public function validateErrors() {
+	public function validateErrors(Model $Model = null) {
 		$objects = func_get_args();
 
-		if (empty($objects)) {
-			return false;
-		}
-
-		$errors = array();
-		foreach ($objects as $object) {
-			if (isset($this->{$object->alias})) {
-				$object = $this->{$object->alias};
+		if (count($objects) > 1) {
+			foreach ($objects as $Model) {
+				$errors = $this->validateErrors($Model);
 			}
-			$object->set($object->data);
-			$errors = array_merge($errors, $object->invalidFields());
+			return $errors;
+		} else {
+			if (is_null($Model)) {
+				return false;
+			}
+			if (isset($this->{$Model->alias})) {
+				$Model = $this->{$Model->alias};
+			}
+			$Model->set($Model->data);
+			//increments validationErrors array with each model being validated
+			$errors = array_merge((array) $this->validationErrors, $Model->invalidFields());
+			return $this->validationErrors = (!empty($errors) ? $errors : false);
 		}
-
-		return $this->validationErrors = (!empty($errors) ? $errors : false);
 	}
 
 /**
