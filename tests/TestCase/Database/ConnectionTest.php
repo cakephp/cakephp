@@ -228,6 +228,7 @@ class ConnectionTest extends TestCase {
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
 		$this->assertEquals($data, $row);
+		$result->closeCursor();
 	}
 
 /**
@@ -249,6 +250,7 @@ class ConnectionTest extends TestCase {
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
 		$this->assertEquals($data, $row);
+		$result->closeCursor();
 	}
 
 /**
