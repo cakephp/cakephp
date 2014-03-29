@@ -58,7 +58,7 @@ class QueryLogger {
  */
 	protected function _interpolate($query) {
 		$params = array_map(function($p) {
-			if (is_null($p)) {
+			if ($p === null) {
 				return 'NULL';
 			}
 			return is_string($p) ? "'$p'" : $p;

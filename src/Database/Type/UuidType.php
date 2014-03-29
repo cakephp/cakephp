@@ -32,7 +32,7 @@ class UuidType extends \Cake\Database\Type {
  * @return mixed
  */
 	public function toStatement($value, Driver $driver) {
-		if (is_null($value)) {
+		if ($value === null) {
 			return PDO::PARAM_NULL;
 		}
 		return PDO::PARAM_STR;

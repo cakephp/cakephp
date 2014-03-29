@@ -84,7 +84,7 @@ trait CollectionTrait {
 	public function filter(callable $c = null) {
 		if ($c === null) {
 			$c = function ($v) {
-				return !!$v;
+				return (bool)$v;
 			};
 		}
 		return new FilterIterator($this, $c);

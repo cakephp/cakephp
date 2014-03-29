@@ -175,7 +175,7 @@ class Type {
  * @return mixed
  */
 	protected function _basicTypeCast($value, Driver $driver) {
-		if (is_null($value)) {
+		if ($value === null) {
 			return null;
 		}
 
@@ -196,7 +196,7 @@ class Type {
  * @return mixed
  */
 	public function toStatement($value, Driver $driver) {
-		if (is_null($value)) {
+		if ($value === null) {
 			return PDO::PARAM_NULL;
 		}
 
