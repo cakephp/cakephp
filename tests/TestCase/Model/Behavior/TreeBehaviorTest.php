@@ -540,4 +540,20 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Test deleting a root node
+ *
+ * @return void
+ */
+	public function testDeleteRoot() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(1);
+		$this->assertTrue($table->delete($entity));
+		$result = $table->find()->order('lft')->hydrate(false)->toArray();
+		$table->recover();
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals($expected, $result);
+	}
+
 }
