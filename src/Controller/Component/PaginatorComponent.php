@@ -95,7 +95,7 @@ class PaginatorComponent extends Component {
  *  $results = $paginator->paginate($table, $settings);
  * }}}
  *
- * This would allow you to have different pagination settings for `Comments` and `Posts` tables.
+ * This would allow you to have different pagination settings for `Articles` and `Comments` tables.
  *
  * ### Controlling sort fields
  *
