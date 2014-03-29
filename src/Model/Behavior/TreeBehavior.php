@@ -118,8 +118,10 @@ class TreeBehavior extends Behavior {
 		$diff = $right - $left + 1;
 
 		if ($diff > 2) {
-			$this->_table->deleteAll(['left >=' => $left + 1, 'left <=' => $right - 1]);
-			return;
+			$this->_table->deleteAll([
+				"{$config['left']} >=" => $left + 1,
+				"{$config['left']} <=" => $right - 1
+			]);
 		}
 
 		$this->_sync($diff, '-' , "> {$right}");

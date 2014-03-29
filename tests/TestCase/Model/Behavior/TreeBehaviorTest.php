@@ -522,4 +522,22 @@ class TreeBehaviorTest extends TestCase {
 		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
 		$this->assertEquals($expected, $result);
 	}
+
+
+/**
+ * Tests deleting a subtree
+ *
+ * @return void
+ */
+	public function testDeleteSubTree() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(6);
+		$this->assertTrue($table->delete($entity));
+		$result = $table->find()->order('lft')->hydrate(false)->toArray();
+		$table->recover();
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals($expected, $result);
+	}
+
 }
