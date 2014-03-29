@@ -44,17 +44,14 @@ abstract class BaseLog implements LogInterface {
 		$this->config($config);
 
 		if (!is_array($this->_config['scopes'])) {
-			$normalized = true;
 			$this->_config['scopes'] = (array)$this->_config['scopes'];
 		}
 
 		if (!is_array($this->_config['levels'])) {
-			$normalized = true;
 			$this->_config['levels'] = (array)$this->_config['levels'];
 		}
 
-		if (isset($this->_config['types']) && empty($this->_config['levels'])) {
-			$normalized = true;
+		if (!empty($this->_config['types']) && empty($this->_config['levels'])) {
 			$this->_config['levels'] = (array)$this->_config['types'];
 		}
 	}

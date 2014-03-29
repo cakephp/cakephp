@@ -76,7 +76,7 @@ class FileLog extends BaseLog {
  * @param array $config Configuration array
  */
 	public function __construct(array $config = []) {
-		parent::config($config);
+		parent::__construct($config);
 
 		if (!empty($this->_config['path'])) {
 			$this->_path = $this->_config['path'];
