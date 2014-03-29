@@ -507,4 +507,19 @@ class TreeBehaviorTest extends TestCase {
 		$table->save($entity);
 	}
 
+/**
+ * Tests deleting a leaf in the tree
+ *
+ * @return void
+ */
+	public function testDeleteLeaf() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(4);
+		$this->assertTrue($table->delete($entity));
+		$result = $table->find()->order('lft')->hydrate(false)->toArray();
+		$table->recover();
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals($expected, $result);
+	}
 }

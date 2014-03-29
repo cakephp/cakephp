@@ -111,6 +111,20 @@ class TreeBehavior extends Behavior {
 		}
 	}
 
+	public function beforeDelete(Event $event, Entity $entity) {
+		$config = $this->config();
+		$left = $entity->get($config['left']);
+		$right = $entity->get($config['right']);
+		$diff = $right - $left + 1;
+
+		if ($diff > 2) {
+			$this->_table->deleteAll(['left >=' => $left + 1, 'left <=' => $right - 1]);
+			return;
+		}
+
+		$this->_sync($diff, '-' , "> {$right}");
+	}
+
 /**
  * Returns an entity with the left and right columns for the parent node
  * of the node specified by the passed id.
