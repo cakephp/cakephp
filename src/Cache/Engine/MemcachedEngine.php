@@ -112,6 +112,10 @@ class MemcachedEngine extends CacheEngine {
 
 		parent::init($config);
 
+		if (isset($config['servers'])) {
+			$this->config('servers', $config['servers'], false);
+		}
+
 		if (!is_array($this->_config['servers'])) {
 			$this->_config['servers'] = [$this->_config['servers']];
 		}
