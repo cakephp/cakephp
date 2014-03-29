@@ -73,14 +73,10 @@ class FileLog extends BaseLog {
 /**
  * Sets protected properties based on config provided
  *
-* @param string|array|null $key the key to get/set, or a complete array of configs
- * @param mixed|null $value the value to set
- * @return mixed config value being read, or the object itself on write operations
- * @param bool $merge whether to merge or overwrite existing config defaults to true
- * @return mixed config value being read, or the object itself on write operations
+ * @param array $config Configuration array
  */
-	public function config($key = null, $value = null, $merge = true) {
-		$return = parent::config($key, $value, $merge);
+	public function __construct(array $config = []) {
+		parent::config($config);
 
 		if (!empty($this->_config['path'])) {
 			$this->_path = $this->_config['path'];
