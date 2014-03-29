@@ -111,6 +111,13 @@ class TreeBehavior extends Behavior {
 		}
 	}
 
+/**
+ * Also deletes the nodes in the subtree of the entity to be delete
+ *
+ * @param \Cake\Event\Event the beforeDelete event that was fired
+ * @param \Cake\ORM\Entity the entity that is going to be saved
+ * @return void
+ */
 	public function beforeDelete(Event $event, Entity $entity) {
 		$config = $this->config();
 		$left = $entity->get($config['left']);
