@@ -48,7 +48,7 @@ class TreeBehavior extends Behavior {
 			'childCount' => 'childCount',
 			'moveUp' => 'moveUp',
 			'moveDown' => 'moveDown',
-			'recorver' => 'recover'
+			'recover' => 'recover'
 		],
 		'parent' => 'parent_id',
 		'left' => 'lft',
@@ -75,6 +75,7 @@ class TreeBehavior extends Behavior {
  * @param \Cake\Event\Event the beforeSave event that was fired
  * @param \Cake\ORM\Entity the entity that is going to be saved
  * @return void
+ * @throws \RuntimeException if the parent to set for the node is invalid
  */
 	public function beforeSave(Event $event, Entity $entity) {
 		$isNew = $entity->isNew();
@@ -116,6 +117,7 @@ class TreeBehavior extends Behavior {
  *
  * @param mixed $id The id of the node to get its parent for
  * @return \Cake\ORM\Entity
+ * @throws \Cake\ORM\Error\RecordNotFoundException if the parent could not be found
  */
 	protected function _getParent($id) {
 		$config = $this->config();
@@ -127,7 +129,7 @@ class TreeBehavior extends Behavior {
 
 		if (!$parentNode) {
 			throw new \Cake\ORM\Error\RecordNotFoundException(
-				"Parent node \"{$parent}\ was not found in the tree."
+				"Parent node \"{$config['parent']}\ was not found in the tree."
 			);
 		}
 
@@ -142,6 +144,7 @@ class TreeBehavior extends Behavior {
  * @param \Cake\ORM\Entity $entity The entity to re-parent
  * @param mixed $parent the id of the parent to set
  * @return void
+ * @throws \RuntimeException if the parent to set to the entity is not valid
  */
 	protected function _setParent($entity, $parent) {
 		$config = $this->config();
@@ -249,6 +252,7 @@ class TreeBehavior extends Behavior {
  * @param \Cake\ORM\Query $query The constructed query to modify
  * @param array $options the list of options for the query
  * @return \Cake\ORM\Query
+ * @throws \InvalidArgumentException If the 'for' key is missing in options
  */
 	public function findPath($query, $options) {
 		if (empty($options['for'])) {
@@ -541,8 +545,8 @@ class TreeBehavior extends Behavior {
  * @return integer
  */
 	protected function _getMaxOrMin($maxOrMin = 'max') {
-		extract($this->config());
-		$lOrR = $maxOrMin === 'max' ? $right : $left;
+		$config = $this->config();
+		$lOrR = $maxOrMin === 'max' ? $config['right'] : $config['left'];
 		$dOrA = $maxOrMin === 'max' ? 'DESC' : 'ASC';
 
 		$edge = $this->_scope($this->_table->find())
@@ -574,8 +578,8 @@ class TreeBehavior extends Behavior {
 
 		foreach ([$config['left'], $config['right']] as $field) {
 			$exp = new QueryExpression();
-			$invert = $invert ? '*-1' : '';
-			$template = sprintf('%s = (%s %s %s)%s', $field, $field, $dir, $shift, $invert);
+			$mark = $mark ? '*-1' : '';
+			$template = sprintf('%s = (%s %s %s)%s', $field, $field, $dir, $shift, $mark);
 			$exp->add($template);
 
 			$query = $this->_scope($this->_table->query());
