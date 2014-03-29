@@ -152,11 +152,11 @@ class AclShell extends AppShell {
 		extract($this->_dataVars());
 
 		$identifier = $this->parseIdentifier($this->args[1]);
-		if(is_string($identifier)) {
-			$identifier = ['alias' => $identifier];
+		if (is_string($identifier)) {
+			$identifier = array('alias' => $identifier);
 		}
 
-		if($this->Acl->{$class}->find('all')) {
+		if ($this->Acl->{$class}->find('all', ['conditions' => $identifier])) {
 			if (!$this->Acl->{$class}->deleteAll($identifier)) {
 				$this->error(__d('cake_console', 'Node Not Deleted. ') . __d('cake_console', 'There was an error deleting the %s.', $class) . "\n");
 			}
