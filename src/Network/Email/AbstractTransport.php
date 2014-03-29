@@ -16,18 +16,22 @@
  */
 namespace Cake\Network\Email;
 
+use Cake\Core\InstanceConfigTrait;
+
 /**
  * Abstract transport for sending email
  *
  */
 abstract class AbstractTransport {
 
+	use InstanceConfigTrait;
+
 /**
- * Configurations
+ * Default config for this class
  *
  * @var array
  */
-	protected $_config = array();
+	protected $_defaultConfig = [];
 
 /**
  * Send mail
@@ -42,21 +46,8 @@ abstract class AbstractTransport {
  *
  * @param array $config The configuration data for the transport.
  */
-	public function __construct($config = null) {
+	public function __construct($config = []) {
 		$this->config($config);
-	}
-
-/**
- * Set the config
- *
- * @param array $config
- * @return array Returns configs
- */
-	public function config($config = null) {
-		if (is_array($config)) {
-			$this->_config = $config + $this->_config;
-		}
-		return $this->_config;
 	}
 
 /**

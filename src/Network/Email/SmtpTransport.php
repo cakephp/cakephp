@@ -25,6 +25,21 @@ use Cake\Network\Socket;
 class SmtpTransport extends AbstractTransport {
 
 /**
+ * Default config for this class
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [
+		'host' => 'localhost',
+		'port' => 25,
+		'timeout' => 30,
+		'username' => null,
+		'password' => null,
+		'client' => null,
+		'tls' => false
+	];
+
+/**
  * Socket to SMTP server
  *
  * @var \Cake\Network\Socket
@@ -65,29 +80,6 @@ class SmtpTransport extends AbstractTransport {
 	}
 
 /**
- * Set the configuration
- *
- * @param array $config
- * @return array Returns configs
- */
-	public function config($config = null) {
-		if ($config === null) {
-			return $this->_config;
-		}
-		$default = array(
-			'host' => 'localhost',
-			'port' => 25,
-			'timeout' => 30,
-			'username' => null,
-			'password' => null,
-			'client' => null,
-			'tls' => false
-		);
-		$this->_config = array_merge($default, $this->_config, $config);
-		return $this->_config;
-	}
-
-/**
  * Connect to SMTP Server
  *
  * @return void
@@ -100,8 +92,10 @@ class SmtpTransport extends AbstractTransport {
 		}
 		$this->_smtpSend(null, '220');
 
-		if (isset($this->_config['client'])) {
-			$host = $this->_config['client'];
+		$config = $this->_config;
+
+		if (isset($config['client'])) {
+			$host = $config['client'];
 		} elseif ($httpHost = env('HTTP_HOST')) {
 			list($host) = explode(':', $httpHost);
 		} else {
@@ -110,13 +104,13 @@ class SmtpTransport extends AbstractTransport {
 
 		try {
 			$this->_smtpSend("EHLO {$host}", '250');
-			if ($this->_config['tls']) {
+			if ($config['tls']) {
 				$this->_smtpSend("STARTTLS", '220');
 				$this->_socket->enableCrypto('tls');
 				$this->_smtpSend("EHLO {$host}", '250');
 			}
 		} catch (Error\SocketException $e) {
-			if ($this->_config['tls']) {
+			if ($config['tls']) {
 				throw new Error\SocketException('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.');
 			}
 			try {
@@ -134,13 +128,14 @@ class SmtpTransport extends AbstractTransport {
  * @throws \Cake\Error\SocketException
  */
 	protected function _auth() {
-		if (isset($this->_config['username']) && isset($this->_config['password'])) {
+		$config = $this->_config;
+		if (isset($config['username']) && isset($config['password'])) {
 			$authRequired = $this->_smtpSend('AUTH LOGIN', '334|503');
 			if ($authRequired == '334') {
-				if (!$this->_smtpSend(base64_encode($this->_config['username']), '334')) {
+				if (!$this->_smtpSend(base64_encode($config['username']), '334')) {
 					throw new Error\SocketException('SMTP server did not accept the username.');
 				}
-				if (!$this->_smtpSend(base64_encode($this->_config['password']), '235')) {
+				if (!$this->_smtpSend(base64_encode($config['password']), '235')) {
 					throw new Error\SocketException('SMTP server did not accept the password.');
 				}
 			} elseif ($authRequired == '504') {
@@ -231,10 +226,13 @@ class SmtpTransport extends AbstractTransport {
 		if ($data !== null) {
 			$this->_socket->write($data . "\r\n");
 		}
+
+		$timeout = $this->_config['timeout'];
+
 		while ($checkCode !== false) {
 			$response = '';
 			$startTime = time();
-			while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $this->_config['timeout'])) {
+			while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $timeout)) {
 				$response .= $this->_socket->read();
 			}
 			if (substr($response, -2) !== "\r\n") {
