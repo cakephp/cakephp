@@ -16,6 +16,7 @@
  */
 namespace Cake\Network;
 
+use Cake\Core\InstanceConfigTrait;
 use Cake\Error;
 use Cake\Validation\Validation;
 
@@ -27,6 +28,8 @@ use Cake\Validation\Validation;
  */
 class Socket {
 
+	use InstanceConfigTrait;
+
 /**
  * Object description
  *
@@ -35,24 +38,17 @@ class Socket {
 	public $description = 'Remote DataSource Network Socket Interface';
 
 /**
- * Base configuration settings for the socket connection
+ * Default configuration settings for the socket connection
  *
  * @var array
  */
-	protected $_baseConfig = array(
+	protected $_defaultConfig = array(
 		'persistent' => false,
 		'host' => 'localhost',
 		'protocol' => 'tcp',
 		'port' => 80,
 		'timeout' => 30
 	);
-
-/**
- * Configuration settings for the socket connection
- *
- * @var array
- */
-	public $config = array();
 
 /**
  * Reference to socket connection resource
@@ -115,9 +111,10 @@ class Socket {
  * @see Socket::$_baseConfig
  */
 	public function __construct($config = array()) {
-		$this->config = array_merge($this->_baseConfig, $config);
-		if (!is_numeric($this->config['protocol'])) {
-			$this->config['protocol'] = getprotobyname($this->config['protocol']);
+		$this->config($config);
+
+		if (!is_numeric($this->_config['protocol'])) {
+			$this->_config['protocol'] = getprotobyname($this->_config['protocol']);
 		}
 	}
 
@@ -133,27 +130,27 @@ class Socket {
 		}
 
 		$scheme = null;
-		if (isset($this->config['request']['uri']) && $this->config['request']['uri']['scheme'] === 'https') {
+		if (isset($this->_config['request']['uri']) && $this->_config['request']['uri']['scheme'] === 'https') {
 			$scheme = 'ssl://';
 		}
 
-		if (!empty($this->config['context'])) {
-			$context = stream_context_create($this->config['context']);
+		if (!empty($this->_config['context'])) {
+			$context = stream_context_create($this->_config['context']);
 		} else {
 			$context = stream_context_create();
 		}
 
 		$connectAs = STREAM_CLIENT_CONNECT;
-		if ($this->config['persistent']) {
+		if ($this->_config['persistent']) {
 			$connectAs |= STREAM_CLIENT_PERSISTENT;
 		}
 
 		set_error_handler(array($this, '_connectionErrorHandler'));
 		$this->connection = stream_socket_client(
-			$scheme . $this->config['host'] . ':' . $this->config['port'],
+			$scheme . $this->_config['host'] . ':' . $this->_config['port'],
 			$errNum,
 			$errStr,
-			$this->config['timeout'],
+			$this->_config['timeout'],
 			$connectAs,
 			$context
 		);
@@ -171,7 +168,7 @@ class Socket {
 
 		$this->connected = is_resource($this->connection);
 		if ($this->connected) {
-			stream_set_timeout($this->connection, $this->config['timeout']);
+			stream_set_timeout($this->connection, $this->_config['timeout']);
 		}
 		return $this->connected;
 	}
@@ -208,8 +205,8 @@ class Socket {
  * @return string Host name
  */
 	public function host() {
-		if (Validation::ip($this->config['host'])) {
-			return gethostbyaddr($this->config['host']);
+		if (Validation::ip($this->_config['host'])) {
+			return gethostbyaddr($this->_config['host']);
 		}
 		return gethostbyaddr($this->address());
 	}
@@ -220,10 +217,10 @@ class Socket {
  * @return string IP address
  */
 	public function address() {
-		if (Validation::ip($this->config['host'])) {
-			return $this->config['host'];
+		if (Validation::ip($this->_config['host'])) {
+			return $this->_config['host'];
 		}
-		return gethostbyname($this->config['host']);
+		return gethostbyname($this->_config['host']);
 	}
 
 /**
@@ -232,10 +229,10 @@ class Socket {
  * @return array IP addresses
  */
 	public function addresses() {
-		if (Validation::ip($this->config['host'])) {
-			return array($this->config['host']);
+		if (Validation::ip($this->_config['host'])) {
+			return array($this->_config['host']);
 		}
-		return gethostbynamel($this->config['host']);
+		return gethostbynamel($this->_config['host']);
 	}
 
 /**

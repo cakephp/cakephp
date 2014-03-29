@@ -52,7 +52,7 @@ class SocketTest extends TestCase {
  */
 	public function testConstruct() {
 		$this->Socket = new Socket();
-		$config = $this->Socket->config;
+		$config = $this->Socket->config();
 		$this->assertSame($config, array(
 			'persistent'	=> false,
 			'host'			=> 'localhost',
@@ -64,16 +64,16 @@ class SocketTest extends TestCase {
 		$this->Socket->reset();
 		$this->Socket->__construct(array('host' => 'foo-bar'));
 		$config['host'] = 'foo-bar';
-		$this->assertSame($this->Socket->config, $config);
+		$this->assertSame($this->Socket->config(), $config);
 
 		$this->Socket = new Socket(array('host' => 'www.cakephp.org', 'port' => 23, 'protocol' => 'udp'));
-		$config = $this->Socket->config;
+		$config = $this->Socket->config();
 
 		$config['host'] = 'www.cakephp.org';
 		$config['port'] = 23;
 		$config['protocol'] = 17;
 
-		$this->assertSame($this->Socket->config, $config);
+		$this->assertSame($this->Socket->config(), $config);
 	}
 
 /**
@@ -121,7 +121,7 @@ class SocketTest extends TestCase {
  * return void
  */
 	public function testInvalidConnection($data) {
-		$this->Socket->config = array_merge($this->Socket->config, $data);
+		$this->Socket->config($data);
 		$this->Socket->connect();
 	}
 
@@ -231,7 +231,19 @@ class SocketTest extends TestCase {
 		);
 		$anotherSocket = new Socket($config);
 		$anotherSocket->reset();
-		$this->assertEquals(array(), $anotherSocket->config);
+
+		$expected = [
+			'persistent' => false,
+			'host' => 'localhost',
+			'protocol' => 'tcp',
+			'port' => 80,
+			'timeout' => 30
+		];
+		$this->assertEquals(
+			$expected,
+			$anotherSocket->config(),
+			'Reset should cause config to return the defaults defined in _defaultConfig'
+		);
 	}
 
 /**
