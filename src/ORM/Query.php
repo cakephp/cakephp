@@ -456,7 +456,7 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * Return the COUNT(*) for for the query.
+ * Return the COUNT(*) for the query.
  *
  * @return integer
  */
