@@ -204,9 +204,9 @@ class ConnectionTest extends TestCase {
 		$sql = 'SELECT 1';
 		$statement = $this->connection->execute($sql);
 		$result = $statement->fetch();
-		$statement->closeCursor();
 		$this->assertCount(1, $result);
 		$this->assertEquals([1], $result);
+		$statement->closeCursor();
 	}
 
 /**
