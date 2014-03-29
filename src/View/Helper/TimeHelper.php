@@ -65,7 +65,7 @@ class TimeHelper extends Helper {
 	public function __construct(View $View, $config = array()) {
 		parent::__construct($View, $config);
 
-		$config = $this->config();
+		$config = $this->_config;
 
 		$engineClass = App::classname($config['engine'], 'Utility');
 		if ($engineClass) {

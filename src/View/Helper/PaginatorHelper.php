@@ -143,7 +143,7 @@ class PaginatorHelper extends Helper {
 			);
 			unset($options[$model]);
 		}
-		$this->_config['options'] = array_filter(array_merge($this->config('options'), $options));
+		$this->_config['options'] = array_filter(array_merge($this->_config['options'], $options));
 	}
 
 /**
@@ -410,9 +410,8 @@ class PaginatorHelper extends Helper {
 			'direction' => $paging['direction'],
 		];
 
-		$defaultUrl = $this->config('options.url');
-		if ($defaultUrl) {
-			$url = array_merge($defaultUrl, $url);
+		if (!empty($this->_config['options']['url'])) {
+			$url = array_merge($this->_config['options']['url'], $url);
 		}
 		$url = array_merge(array_filter($url), $options);
 
