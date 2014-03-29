@@ -88,10 +88,10 @@ class TimestampBehavior extends Behavior {
  */
 	public function handleEvent(Event $event, Entity $entity) {
 		$eventName = $event->name();
-		$events = $this->config('events');
+		$events = $this->_config['events'];
 
 		$new = $entity->isNew() !== false;
-		$refresh = $this->config('refreshTimestamp');
+		$refresh = $this->_config['refreshTimestamp'];
 
 		foreach ($events[$eventName] as $field => $when) {
 			if (!in_array($when, ['always', 'new', 'existing'])) {
@@ -158,13 +158,13 @@ class TimestampBehavior extends Behavior {
  * @return bool true if a field is updated, false if no action performed
  */
 	public function touch(Entity $entity, $eventName = 'Model.beforeSave') {
-		$events = $this->config('events');
+		$events = $this->_config['events'];
 		if (empty($events[$eventName])) {
 			return false;
 		}
 
 		$return = false;
-		$refresh = $this->config('refreshTimestamp');
+		$refresh = $this->_config['refreshTimestamp'];
 
 		foreach ($events[$eventName] as $field => $when) {
 			if (in_array($when, ['always', 'existing'])) {

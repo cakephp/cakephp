@@ -133,7 +133,7 @@ class CounterCacheBehavior extends Behavior {
  * @return void
  */
 	protected function _processAssociations(Event $event, Entity $entity) {
-		foreach ($this->config() as $assoc => $settings) {
+		foreach ($this->_config as $assoc => $settings) {
 			$assoc = $this->_table->association($assoc);
 			$this->_processAssociation($event, $entity, $assoc, $settings);
 		}
