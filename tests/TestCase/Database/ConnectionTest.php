@@ -31,7 +31,10 @@ class ConnectionTest extends TestCase {
 	}
 
 	public function tearDown() {
-		$this->connection->execute('DROP TABLE IF EXISTS things');
+		try {
+			$this->connection->execute('DROP TABLE IF EXISTS things');
+		} catch (\Exception $e) {
+		}
 		$this->connection->useSavePoints(false);
 		unset($this->connection);
 		parent::tearDown();
