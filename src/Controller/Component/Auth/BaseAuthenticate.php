@@ -94,20 +94,20 @@ abstract class BaseAuthenticate {
  * @return boolean|array Either false on failure, or an array of user data.
  */
 	protected function _findUser($username, $password = null) {
-		$userModel = $this->config('userModel');
+		$userModel = $this->_config['userModel'];
 		list(, $model) = pluginSplit($userModel);
-		$fields = $this->config('fields');
+		$fields = $this->_config['fields'];
 
 		$conditions = [$model . '.' . $fields['username'] => $username];
 
-		$scope = $this->config('scope');
+		$scope = $this->_config['scope'];
 		if ($scope) {
 			$conditions = array_merge($conditions, $scope);
 		}
 
 		$table = TableRegistry::get($userModel)->find('all');
 
-		$contain = $this->config('contain');
+		$contain = $this->_config['contain'];
 		if ($contain) {
 			$table = $table->contain($contain);
 		}
@@ -143,7 +143,7 @@ abstract class BaseAuthenticate {
 			return $this->_passwordHasher;
 		}
 
-		$passwordHasher = $this->config('passwordHasher');
+		$passwordHasher = $this->_config['passwordHasher'];
 
 		$config = array();
 		if (is_string($passwordHasher)) {

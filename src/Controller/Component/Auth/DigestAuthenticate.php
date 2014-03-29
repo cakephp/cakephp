@@ -104,13 +104,13 @@ class DigestAuthenticate extends BasicAuthenticate {
 			return false;
 		}
 
-		list(, $model) = pluginSplit($this->config('userModel'));
+		list(, $model) = pluginSplit($this->_config['userModel']);
 		$user = $this->_findUser($digest['username']);
 		if (empty($user)) {
 			return false;
 		}
 
-		$field = $this->config('fields.password');
+		$field = $this->_config['fields']['password'];
 		$password = $user[$field];
 		unset($user[$field]);
 
@@ -202,10 +202,10 @@ class DigestAuthenticate extends BasicAuthenticate {
  */
 	public function loginHeaders(Request $request) {
 		$options = array(
-			'realm' => $this->config('realm') ?: $request->env('SERVER_NAME'),
-			'qop' => $this->config('qop'),
-			'nonce' => $this->config('nonce') ?: uniqid(''),
-			'opaque' => $this->config('opaque') ?: md5($options['realm'])
+			'realm' => $this->_config['realm'] ?: $request->env('SERVER_NAME'),
+			'qop' => $this->_config['qop'],
+			'nonce' => $this->_config['nonce'] ?: uniqid(''),
+			'opaque' => $this->_config['opaque'] ?: md5($options['realm'])
 		);
 
 		$opts = array();

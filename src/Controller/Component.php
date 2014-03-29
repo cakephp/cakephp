@@ -122,7 +122,7 @@ class Component extends Object implements EventListener {
  */
 	public function __get($name) {
 		if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
-			$config = array_merge((array)$this->_componentMap[$name]['settings'], array('enabled' => false));
+			$config = array_merge((array)$this->_componentMap[$name]['config'], array('enabled' => false));
 			$this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $config);
 		}
 		if (isset($this->{$name})) {

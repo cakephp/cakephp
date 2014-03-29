@@ -124,7 +124,7 @@ abstract class BaseAuthorize {
 		$path = str_replace(
 			array(':controller', ':action', ':plugin/'),
 			array(Inflector::camelize($request['controller']), $request['action'], $plugin),
-			$this->config('actionPath') . $path
+			$this->_config['actionPath'] . $path
 		);
 		$path = str_replace('//', '/', $path);
 		return trim($path, '/');
@@ -156,7 +156,7 @@ abstract class BaseAuthorize {
  */
 	public function mapActions($map = array()) {
 		if (empty($map)) {
-			return $this->config('actionMap');
+			return $this->_config['actionMap'];
 		}
 
 		$crud = array('create', 'read', 'update', 'delete');

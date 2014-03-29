@@ -76,7 +76,7 @@ class CsrfComponent extends Component {
 		$controller = $event->subject();
 		$request = $controller->request;
 		$response = $controller->response;
-		$cookieName = $this->config('cookieName');
+		$cookieName = $this->_config['cookieName'];
 
 		$cookieData = $request->cookie($cookieName);
 		if ($cookieData) {
@@ -108,11 +108,11 @@ class CsrfComponent extends Component {
 		$value = Security::hash(String::uuid(), 'sha1', true);
 		$request->params['_csrfToken'] = $value;
 		$response->cookie([
-			'name' => $this->config('cookieName'),
+			'name' => $this->_config['cookieName'],
 			'value' => $value,
-			'expiry' => $this->config('expiry'),
+			'expiry' => $this->_config['expiry'],
 			'path' => $request->base,
-			'secure' => $this->config('secure'),
+			'secure' => $this->_config['secure'],
 		]);
 	}
 
@@ -124,8 +124,8 @@ class CsrfComponent extends Component {
  * @return void
  */
 	protected function _validateToken(Request $request) {
-		$cookie = $request->cookie($this->config('cookieName'));
-		$post = $request->data($this->config('field'));
+		$cookie = $request->cookie($this->_config['cookieName']);
+		$post = $request->data($this->_config['field']);
 		$header = $request->header('X-CSRF-Token');
 
 		if ($post !== $cookie && $header !== $cookie) {
