@@ -26,6 +26,18 @@ use Cake\Utility\Hash;
 class ConsoleLog extends BaseLog {
 
 /**
+ * Default config for this class
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [
+		'stream' => 'php://stderr',
+		'levels' => null,
+		'scopes' => [],
+		'outputAs' => 'see constructor'
+	];
+
+/**
  * Output stream
  *
  * @var \Cake\Console\ConsoleOutput
@@ -46,19 +58,15 @@ class ConsoleLog extends BaseLog {
  * @throws \Cake\Error\Exception
  */
 	public function __construct($config = array()) {
-		parent::__construct($config);
 		if (DS === '\\' && !(bool)env('ANSICON')) {
-			$outputAs = ConsoleOutput::PLAIN;
+			$this->_defaultConfig['outputAs'] = ConsoleOutput::PLAIN;
 		} else {
-			$outputAs = ConsoleOutput::COLOR;
+			$this->_defaultConfig['outputAs'] = ConsoleOutput::COLOR;
 		}
-		$config = Hash::merge(array(
-			'stream' => 'php://stderr',
-			'levels' => null,
-			'scopes' => array(),
-			'outputAs' => $outputAs,
-			), $this->_config);
-		$config = $this->config($config);
+
+		parent::__construct($config);
+
+		$config = $this->_config;
 		if ($config['stream'] instanceof ConsoleOutput) {
 			$this->_output = $config['stream'];
 		} elseif (is_string($config['stream'])) {

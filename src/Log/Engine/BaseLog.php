@@ -14,6 +14,7 @@
  */
 namespace Cake\Log\Engine;
 
+use Cake\Core\InstanceConfigTrait;
 use Cake\Log\LogInterface;
 
 /**
@@ -22,12 +23,17 @@ use Cake\Log\LogInterface;
  */
 abstract class BaseLog implements LogInterface {
 
+	use InstanceConfigTrait;
+
 /**
- * Engine config
+ * Default config for this class
  *
- * @var string
+ * @var array
  */
-	protected $_config = [];
+	protected $_defaultConfig = [
+		'levels' => [],
+		'scopes' => []
+	];
 
 /**
  * __construct method
@@ -36,32 +42,21 @@ abstract class BaseLog implements LogInterface {
  */
 	public function __construct(array $config = []) {
 		$this->config($config);
-	}
 
-/**
- * Sets instance config. When $config is null, returns config array
- *
- * ### Options
- *
- * - `levels` string or array, levels the engine is interested in
- * - `scopes` string or array, scopes the engine is interested in
- *
- * @param array|null $config Either an array of configuration, or null to get
- *    current configuration.
- * @return array Array of configuration options.
- */
-	public function config($config = null) {
-		if (empty($config)) {
-			return $this->_config;
+		if (!is_array($this->_config['scopes'])) {
+			$normalized = true;
+			$this->_config['scopes'] = (array)$this->_config['scopes'];
 		}
-		$config += ['levels' => [], 'scopes' => []];
-		$config['scopes'] = (array)$config['scopes'];
-		$config['levels'] = (array)$config['levels'];
-		if (isset($config['types']) && empty($config['levels'])) {
-			$config['levels'] = (array)$config['types'];
+
+		if (!is_array($this->_config['levels'])) {
+			$normalized = true;
+			$this->_config['levels'] = (array)$this->_config['levels'];
 		}
-		$this->_config = $config;
-		return $this->_config;
+
+		if (isset($this->_config['types']) && empty($this->_config['levels'])) {
+			$normalized = true;
+			$this->_config['levels'] = (array)$this->_config['types'];
+		}
 	}
 
 /**
@@ -70,7 +65,7 @@ abstract class BaseLog implements LogInterface {
  * @return array
  */
 	public function levels() {
-		return isset($this->_config['levels']) ? $this->_config['levels'] : [];
+		return $this->_config['levels'];
 	}
 
 /**
@@ -79,7 +74,7 @@ abstract class BaseLog implements LogInterface {
  * @return array
  */
 	public function scopes() {
-		return isset($this->_config['scopes']) ? $this->_config['scopes'] : [];
+		return $this->_config['scopes'];
 	}
 
 }

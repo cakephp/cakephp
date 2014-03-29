@@ -28,20 +28,33 @@ use Cake\Utility\Hash;
 class FileLog extends BaseLog {
 
 /**
- * Default configuration values
+ * Default config for this class
+ *
+ * - `levels` string or array, levels the engine is interested in
+ * - `scopes` string or array, scopes the engine is interested in
+ * - `file` Log file name
+ * - `path` The path to save logs on.
+ * - `size` Used to implement basic log file rotation. If log file size
+ *   reaches specified size the existing file is renamed by appending timestamp
+ *   to filename and new log file is created. Can be integer bytes value or
+ *   human reabable string values like '10MB', '100KB' etc.
+ * - `rotate` Log files are rotated specified times before being removed.
+ *   If value is 0, old versions are removed rather then rotated.
+ * - `mask` A mask is applied when log files are created. Left empty no chmod
+ *   is made.
  *
  * @var array
- * @see FileLog::__construct()
  */
-	protected $_defaults = array(
+	protected $_defaultConfig = [
 		'path' => LOGS,
 		'file' => null,
 		'types' => null,
-		'scopes' => array(),
+		'levels' => [],
+		'scopes' => [],
 		'rotate' => 10,
 		'size' => 10485760, // 10MB
 		'mask' => null,
-	);
+	];
 
 /**
  * Path to save log files on.
@@ -58,61 +71,40 @@ class FileLog extends BaseLog {
 	protected $_file = null;
 
 /**
- * Constructs a new File Logger.
- *
- * Config
- *
- * - `levels` string or array, levels the engine is interested in
- * - `scopes` string or array, scopes the engine is interested in
- * - `file` Log file name
- * - `path` The path to save logs on.
- * - `size` Used to implement basic log file rotation. If log file size
- *   reaches specified size the existing file is renamed by appending timestamp
- *   to filename and new log file is created. Can be integer bytes value or
- *   human reabable string values like '10MB', '100KB' etc.
- * - `rotate` Log files are rotated specified times before being removed.
- *   If value is 0, old versions are removed rather then rotated.
- * - `mask` A mask is applied when log files are created. Left empty no chmod
- *   is made.
- *
- * @param array $config Options for the FileLog, see above.
- */
-	public function __construct($config = array()) {
-		$config = Hash::merge($this->_defaults, $config);
-		parent::__construct($config);
-	}
-
-/**
  * Sets protected properties based on config provided
  *
- * @param array $config Engine configuration
- * @return array
+* @param string|array|null $key the key to get/set, or a complete array of configs
+ * @param mixed|null $value the value to set
+ * @return mixed config value being read, or the object itself on write operations
+ * @param bool $merge whether to merge or overwrite existing config defaults to true
+ * @return mixed config value being read, or the object itself on write operations
  */
-	public function config($config = array()) {
-		parent::config($config);
+	public function config($key = null, $value = null, $merge = true) {
+		$return = parent::config($key, $value, $merge);
 
-		if (!empty($config['path'])) {
-			$this->_path = $config['path'];
+		if (!empty($this->_config['path'])) {
+			$this->_path = $this->_config['path'];
 		}
 		if (Configure::read('debug') && !is_dir($this->_path)) {
 			mkdir($this->_path, 0775, true);
 		}
 
-		if (!empty($config['file'])) {
-			$this->_file = $config['file'];
+		if (!empty($this->_config['file'])) {
+			$this->_file = $this->_config['file'];
 			if (substr($this->_file, -4) !== '.log') {
 				$this->_file .= '.log';
 			}
 		}
-		if (!empty($config['size'])) {
-			if (is_numeric($config['size'])) {
-				$this->_size = (int)$config['size'];
+
+		if (!empty($this->_config['size'])) {
+			if (is_numeric($this->_config['size'])) {
+				$this->_size = (int)$this->_config['size'];
 			} else {
-				$this->_size = CakeNumber::fromReadableSize($config['size']);
+				$this->_size = CakeNumber::fromReadableSize($this->_config['size']);
 			}
 		}
 
-		return $this->_config;
+		return $return;
 	}
 
 /**
@@ -133,18 +125,19 @@ class FileLog extends BaseLog {
 		}
 
 		$pathname = $this->_path . $filename;
-		if (empty($this->_config['mask'])) {
+		$mask = $this->_config['mask'];
+		if (empty($mask)) {
 			return file_put_contents($pathname, $output, FILE_APPEND);
 		}
 
 		$exists = file_exists($pathname);
 		$result = file_put_contents($pathname, $output, FILE_APPEND);
 		static $selfError = false;
-		if (!$selfError && !$exists && !chmod($pathname, (int)$this->_config['mask'])) {
+		if (!$selfError && !$exists && !chmod($pathname, (int)$mask)) {
 			$selfError = true;
 			trigger_error(vsprintf(
 				'Could not apply permission mask "%s" on log file "%s"',
-				array($this->_config['mask'], $pathname)), E_USER_WARNING);
+				array($mask, $pathname)), E_USER_WARNING);
 			$selfError = false;
 		}
 		return $result;
@@ -189,7 +182,8 @@ class FileLog extends BaseLog {
 			return;
 		}
 
-		if ($this->_config['rotate'] === 0) {
+		$rotate = $this->_config['rotate'];
+		if ($rotate === 0) {
 			$result = unlink($filepath);
 		} else {
 			$result = rename($filepath, $filepath . '.' . time());
@@ -197,7 +191,7 @@ class FileLog extends BaseLog {
 
 		$files = glob($filepath . '.*');
 		if ($files) {
-			$filesToDelete = count($files) - $this->_config['rotate'];
+			$filesToDelete = count($files) - $rotate;
 			while ($filesToDelete > 0) {
 				unlink(array_shift($files));
 				$filesToDelete--;
