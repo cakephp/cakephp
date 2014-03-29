@@ -39,7 +39,7 @@ class TreeBehavior extends Behavior {
  *
  * @var array
  */
-	protected static $_defaultConfig = [
+	protected $_defaultConfig = [
 		'implementedFinders' => [
 			'path' => 'findPath',
 			'children' => 'findChildren',
@@ -79,7 +79,7 @@ class TreeBehavior extends Behavior {
  */
 	public function beforeSave(Event $event, Entity $entity) {
 		$isNew = $entity->isNew();
-		$config = $this->config('parent');
+		$config = $this->config();
 		$parent = $entity->get($config['parent']);
 		$primaryKey = (array)$this->_table->primaryKey();
 		$dirty = $entity->dirty($config['parent']);
