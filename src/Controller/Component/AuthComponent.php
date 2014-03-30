@@ -261,8 +261,9 @@ class AuthComponent extends Component {
 			return $this->_unauthenticated($controller);
 		}
 
+		$authorize = $this->config('authorize');
 		if ($this->_isLoginAction($controller) ||
-			empty($this->config('authorize')) ||
+			empty($authorize) ||
 			$this->isAuthorized($this->user())
 		) {
 			return true;
