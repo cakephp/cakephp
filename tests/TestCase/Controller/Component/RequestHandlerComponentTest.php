@@ -335,7 +335,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$this->RequestHandler->startup($event);
-		$this->assertEquals($this->Controller->layout, $this->RequestHandler->ajaxLayout);
+		$this->assertEquals($this->Controller->layout, $this->RequestHandler->config('ajaxLayout'));
 
 		$this->_init();
 		$this->Controller->request->params['_ext'] = 'js';
