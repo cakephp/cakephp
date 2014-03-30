@@ -27,8 +27,9 @@ class ConnectionTest extends TestCase {
 	public $fixtures = ['core.thing'];
 
 	public function setUp() {
-		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
+		$this->skipIf($this->connection()->driver() instanceof \Cake\Database\Driver\Sqlite);
+		parent::setUp();
 	}
 
 	public function tearDown() {
