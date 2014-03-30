@@ -253,11 +253,6 @@ class ViewTask extends BakeTask {
  * @return array Returns an variables to be made available to a view template
  */
 	protected function _loadController() {
-		$plugin = null;
-		if ($this->plugin) {
-			$plugin = $this->plugin . '.';
-		}
-
 		$modelObj = TableRegistry::get($this->tableName);
 
 		$singularVar = Inflector::variable(Inflector::singularize($this->controllerName));
