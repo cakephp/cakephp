@@ -33,6 +33,7 @@ class DatabaseSuite extends TestSuite {
  */
 	public static function suite() {
 		$suite = new self('Database related tests');
+		$this->addTestFile(__DIR__ . DS . 'Database' . DS . 'ConnectionTest.php');
 		$suite->addTestDirectoryRecursive(__DIR__ . DS . 'Database');
 		$suite->addTestDirectoryRecursive(__DIR__ . DS . 'ORM');
 		$suite->addTestDirectoryRecursive(__DIR__ . DS . 'Model');
