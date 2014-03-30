@@ -236,7 +236,7 @@ class ConnectionTest extends TestCase {
  *
  * @return void
  **/
-	public function _testInsertWithPositionalTypes() {
+	public function testInsertWithPositionalTypes() {
 		$data = ['id' => '3', 'title' => 'a title', 'body' => 'a body'];
 		$result = $this->connection->insert(
 			'things',
