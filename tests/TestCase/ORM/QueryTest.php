@@ -808,7 +808,6 @@ class QueryTest extends TestCase {
 		$this->assertEquals(10, $query->clause('offset'));
 	}
 
-
 /**
  * ApplyOptions should ignore null values.
  *
