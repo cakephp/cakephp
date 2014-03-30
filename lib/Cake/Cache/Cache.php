@@ -553,7 +553,7 @@ class Cache {
 			$return = self::$_engines[$config]->deleteMany($keys);
 		} else {
 			foreach ($keys as $key) {
-				$return[$key] = self::read($key, $config);
+				$return[$key] = self::delete($key, $config);
 			}
 		}
 		return $return;
