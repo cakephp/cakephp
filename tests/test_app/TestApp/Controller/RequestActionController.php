@@ -33,10 +33,11 @@ class RequestActionController extends AppController {
 /**
  * test_request_action method
  *
- * @return string
+ * @return \Cake\Network\Response
  */
 	public function test_request_action() {
-		return 'This is a test';
+		$this->response->body('This is a test');
+		return $this->response;
 	}
 
 /**
@@ -44,39 +45,40 @@ class RequestActionController extends AppController {
  *
  * @param mixed $id
  * @param mixed $other
- * @access public
- * @return string
+ * @return \Cake\Network\Response
  */
 	public function another_ra_test($id, $other) {
-		return $id + $other;
+		$this->response->body($id + $other);
+		return $this->response;
 	}
 
 /**
  * normal_request_action method
  *
- * @return string
+ * @return \Cake\Network\Response
  */
 	public function normal_request_action() {
-		return 'Hello World';
+		$this->response->body('Hello World');
+		return $this->response;
 	}
 
 /**
- * returns $this->here
+ * returns $this->here as body
  *
- * @return string
+ * @return \Cake\Network\Response
  */
 	public function return_here() {
-		return $this->here;
+		$this->response->body($this->here);
+		return $this->response;
 	}
 
 /**
  * paginate_request_action method
  *
- * @return boolean
+ * @return void
  */
 	public function paginate_request_action() {
 		$data = $this->paginate();
-		return true;
 	}
 
 /**
@@ -85,7 +87,7 @@ class RequestActionController extends AppController {
  * @return array
  */
 	public function post_pass() {
-		return $this->request->data;
+		$this->response->body(json_encode($this->request->data));
 	}
 
 /**
@@ -94,16 +96,20 @@ class RequestActionController extends AppController {
  * @return array
  */
 	public function query_pass() {
-		return $this->request->query;
+		$this->response->body(json_encode($this->request->query));
 	}
 
 /**
  * test param passing and parsing.
  *
- * @return array
+ * @return void
  */
 	public function params_pass() {
-		return $this->request;
+		$this->response->body(json_encode([
+			'params' => $this->request->params,
+			'query' => $this->request->query,
+			'url' => $this->request->url
+		]));
 	}
 
 /**

@@ -35,9 +35,9 @@ class OrangeSessionTestController extends Controller {
 /**
  * session_id method
  *
- * @return string
+ * @return void
  */
 	public function session_id() {
-		return $this->Session->id();
+		$this->response->body($this->Session->id());
 	}
 }

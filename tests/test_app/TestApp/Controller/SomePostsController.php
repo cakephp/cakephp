@@ -57,7 +57,6 @@ class SomePostsController extends Controller {
  * @return void
  */
 	public function index() {
-		return true;
 	}
 
 /**
@@ -66,7 +65,6 @@ class SomePostsController extends Controller {
  * @return void
  */
 	public function change() {
-		return true;
 	}
 
 }

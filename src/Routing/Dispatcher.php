@@ -163,7 +163,7 @@ class Dispatcher implements EventListener {
 			));
 		}
 
-		$response = $this->_invoke($controller, $response);
+		$response = $this->_invoke($controller);
 		if (isset($request->params['return'])) {
 			return $response->body();
 		}
@@ -175,31 +175,31 @@ class Dispatcher implements EventListener {
 
 /**
  * Initializes the components and models a controller will be using.
- * Triggers the controller action, and invokes the rendering if Controller::$autoRender is true and echo's the output.
- * Otherwise the return value of the controller action are returned.
+ * Triggers the controller action and invokes the rendering if Controller::$autoRender
+ * is true. If a response object is returned by controller action that is returned
+ * else controller's $response property is returned.
  *
  * @param Controller $controller Controller to invoke
- * @param \Cake\Network\Response $response The response object to receive the output
- * @return \Cake\Network\Response the resulting response object
+ * @return \Cake\Network\Response The resulting response object
+ * @throws \Cake\Error\Exception If data returned by controller action is not an
+ *   instance of Response
  */
-	protected function _invoke(Controller $controller, Response $response) {
+	protected function _invoke(Controller $controller) {
 		$controller->constructClasses();
 		$controller->startupProcess();
 
-		$render = true;
-		$result = $controller->invokeAction();
-		if ($result instanceof Response) {
-			$render = false;
-			$response = $result;
+		$response = $controller->invokeAction();
+		if ($response !== null && !($response instanceof Response)) {
+			throw new Error\Exception('Controller action can only return an instance of Response');
 		}
 
-		if ($render && $controller->autoRender) {
+		if (!$response && $controller->autoRender) {
 			$response = $controller->render();
-		} elseif (!($result instanceof CakeResponse) && $response->body() === null) {
-			$response->body($result);
+		} elseif (!$response) {
+			$response = $controller->response;
 		}
-		$controller->shutdownProcess();
 
+		$controller->shutdownProcess();
 		return $response;
 	}
 

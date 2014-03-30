@@ -58,12 +58,11 @@ class TestDispatcher extends Dispatcher {
  * invoke method
  *
  * @param \Cake\Controller\Controller $controller
- * @param \Cake\Network\Response $response
- * @return void
+ * @return \Cake\Network\Response $response
  */
-	protected function _invoke(Controller $controller, Response $response) {
+	protected function _invoke(Controller $controller) {
 		$this->controller = $controller;
-		return parent::_invoke($controller, $response);
+		return parent::_invoke($controller);
 	}
 
 /**
