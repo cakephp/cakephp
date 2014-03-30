@@ -261,9 +261,8 @@ class AuthComponent extends Component {
 			return $this->_unauthenticated($controller);
 		}
 
-		$authorize = $this->config('authorize');
 		if ($this->_isLoginAction($controller) ||
-			empty($authorize) ||
+			empty($this->_config['authorize']) ||
 			$this->isAuthorized($this->user())
 		) {
 			return true;
@@ -318,17 +317,16 @@ class AuthComponent extends Component {
 		}
 
 		if (!$controller->request->is('ajax')) {
-			$this->flash($this->config('authError'));
+			$this->flash($this->_config['authError']);
 			$this->Session->write('Auth.redirect', $controller->request->here(false));
-			$controller->redirect($this->config('loginAction'));
+			$controller->redirect($this->_config['loginAction']);
 			return false;
 		}
 
-		$ajaxLogin = $this->config('ajaxLogin');
-		if (!empty($ajaxLogin)) {
+		if (!empty($this->_config['ajaxLogin'])) {
 			$controller->response->statusCode(403);
 			$controller->viewPath = 'Element';
-			echo $controller->render($ajaxLogin, $this->RequestHandler->ajaxLayout);
+			echo $controller->render($this->_config['ajaxLogin'], $this->RequestHandler->ajaxLayout);
 			$this->_stop();
 			return false;
 		}
@@ -348,7 +346,7 @@ class AuthComponent extends Component {
 			$url = $controller->request->url;
 		}
 		$url = Router::normalize($url);
-		$loginAction = Router::normalize($this->config('loginAction'));
+		$loginAction = Router::normalize($this->_config['loginAction']);
 
 		return $loginAction === $url;
 	}
@@ -361,21 +359,19 @@ class AuthComponent extends Component {
  * @throws \Cake\Error\ForbiddenException
  */
 	protected function _unauthorized(Controller $controller) {
-		$unauthorizedRedirect = $this->config('unauthorizedRedirect');
-		if ($unauthorizedRedirect === false) {
-			throw new Error\ForbiddenException($this->config('authError'));
+		if ($this->_config['unauthorizedRedirect'] === false) {
+			throw new Error\ForbiddenException($this->_config['authError']);
 		}
 
-		$this->flash($this->config('authError'));
-		if ($unauthorizedRedirect === true) {
+		$this->flash($this->_config['authError']);
+		if ($this->_config['unauthorizedRedirect'] === true) {
 			$default = '/';
-			$loginRedirect = $this->config('loginRedirect');
-			if (!empty($loginRedirect)) {
-				$default = $loginRedirect;
+			if (!empty($this->_config['loginRedirect'])) {
+				$default = $this->_config['loginRedirect'];
 			}
 			$url = $controller->referer($default, true);
 		} else {
-			$url = $unauthorizedRedirect;
+			$url = $this->_config['unauthorizedRedirect'];
 		}
 		$controller->redirect($url, null, true);
 		return false;
@@ -399,7 +395,7 @@ class AuthComponent extends Component {
 				'action' => 'login',
 				'plugin' => null
 			],
-			'logoutRedirect' => $this->config('loginAction'),
+			'logoutRedirect' => $this->_config['loginAction'],
 			'authError' => __d('cake', 'You are not authorized to access that location.')
 		];
 
@@ -451,12 +447,11 @@ class AuthComponent extends Component {
  * @throws \Cake\Error\Exception
  */
 	public function constructAuthorize() {
-		$authorize = $this->config('authorize');
-		if (empty($authorize)) {
+		if (empty($this->_config['authorize'])) {
 			return;
 		}
 		$this->_authorizeObjects = array();
-		$authorize = Hash::normalize((array)$authorize);
+		$authorize = Hash::normalize((array)$this->_config['authorize']);
 		$global = array();
 		if (isset($authorize[AuthComponent::ALL])) {
 			$global = $authorize[AuthComponent::ALL];
@@ -604,7 +599,7 @@ class AuthComponent extends Component {
 		$this->Session->delete(static::$sessionKey);
 		$this->Session->delete('Auth.redirect');
 		$this->Session->renew();
-		return Router::normalize($this->config('logoutRedirect'));
+		return Router::normalize($this->_config['logoutRedirect']);
 	}
 
 /**
@@ -685,11 +680,11 @@ class AuthComponent extends Component {
 			$redir = $this->Session->read('Auth.redirect');
 			$this->Session->delete('Auth.redirect');
 
-			if (Router::normalize($redir) == Router::normalize($this->config('loginAction'))) {
-				$redir = $this->config('loginRedirect');
+			if (Router::normalize($redir) == Router::normalize($this->_config['loginAction'])) {
+				$redir = $this->_config['loginRedirect'];
 			}
-		} elseif ($this->config('loginRedirect')) {
-			$redir = $this->config('loginRedirect');
+		} elseif ($this->_config['loginRedirect']) {
+			$redir = $this->_config['loginRedirect'];
 		} else {
 			$redir = '/';
 		}
@@ -727,12 +722,11 @@ class AuthComponent extends Component {
  * @throws \Cake\Error\Exception
  */
 	public function constructAuthenticate() {
-		$authenticate = $this->config('authenticate');
-		if (empty($authenticate)) {
+		if (empty($this->_config['authenticate'])) {
 			return;
 		}
 		$this->_authenticateObjects = array();
-		$authenticate = Hash::normalize((array)$authenticate);
+		$authenticate = Hash::normalize((array)$this->_config['authenticate']);
 		$global = array();
 		if (isset($authenticate[AuthComponent::ALL])) {
 			$global = $authenticate[AuthComponent::ALL];
@@ -762,7 +756,7 @@ class AuthComponent extends Component {
 		if ($message === false) {
 			return;
 		}
-		$flashConfig = $this->config('flash');
+		$flashConfig = $this->_config['flash'];
 		$this->Session->setFlash(
 			$message,
 			$flashConfig['element'],

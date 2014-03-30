@@ -125,12 +125,12 @@ class CookieComponent extends Component {
 	public function __construct(ComponentRegistry $collection, $config = array()) {
 		parent::__construct($collection, $config);
 
-		if ($this->config('key')) {
+		if (!$this->_config['key']) {
 			$this->config('key', Configure::read('Security.salt'));
 		}
 
-		if ($this->config('time')) {
-			$this->_expire($this->config('time'));
+		if ($this->_config['time']) {
+			$this->_expire($this->_config['time']);
 		}
 
 		$controller = $collection->getController();
@@ -154,9 +154,9 @@ class CookieComponent extends Component {
  * @return void
  */
 	public function startup(Event $event) {
-		$this->_expire($this->config('time'));
+		$this->_expire($this->_config['time']);
 
-		$this->_values[$this->config('name')] = array();
+		$this->_values[$this->_config['name']] = array();
 	}
 
 /**
@@ -232,30 +232,30 @@ class CookieComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::read
  */
 	public function read($key = null) {
-		$name = $this->config('name');
-		$values = $this->_request->cookie($name);
-		if (empty($this->_values[$name]) && $values) {
-			$this->_values[$name] = $this->_decrypt($values);
+		$cookieName = $this->config('name');
+		$values = $this->_request->cookie($cookieName);
+		if (empty($this->_values[$cookieName]) && $values) {
+			$this->_values[$cookieName] = $this->_decrypt($values);
 		}
-		if (empty($this->_values[$name])) {
-			$this->_values[$name] = array();
+		if (empty($this->_values[$cookieName])) {
+			$this->_values[$cookieName] = array();
 		}
 		if ($key === null) {
-			return $this->_values[$name];
+			return $this->_values[$cookieName];
 		}
 
 		if (strpos($key, '.') !== false) {
 			$names = explode('.', $key, 2);
 			$key = $names[0];
 		}
-		if (!isset($this->_values[$name][$key])) {
+		if (!isset($this->_values[$cookieName][$key])) {
 			return null;
 		}
 
 		if (!empty($names[1])) {
-			return Hash::get($this->_values[$name][$key], $names[1]);
+			return Hash::get($this->_values[$cookieName][$key], $names[1]);
 		}
-		return $this->_values[$name][$key];
+		return $this->_values[$cookieName][$key];
 	}
 
 /**
@@ -291,23 +291,23 @@ class CookieComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::delete
  */
 	public function delete($key) {
-		$name = $this->config('name');
-		if (empty($this->_values[$name])) {
+		$cookieName = $this->config('name');
+		if (empty($this->_values[$cookieName])) {
 			$this->read();
 		}
 		if (strpos($key, '.') === false) {
-			if (isset($this->_values[$name][$key]) && is_array($this->_values[$name][$key])) {
-				foreach ($this->_values[$name][$key] as $idx => $val) {
+			if (isset($this->_values[$cookieName][$key]) && is_array($this->_values[$cookieName][$key])) {
+				foreach ($this->_values[$cookieName][$key] as $idx => $val) {
 					$this->_delete("[$key][$idx]");
 				}
 			}
 			$this->_delete("[$key]");
-			unset($this->_values[$name][$key]);
+			unset($this->_values[$cookieName][$key]);
 			return;
 		}
 		$names = explode('.', $key, 2);
-		if (isset($this->_values[$name][$names[0]])) {
-			$this->_values[$name][$names[0]] = Hash::remove($this->_values[$name][$names[0]], $names[1]);
+		if (isset($this->_values[$cookieName][$names[0]])) {
+			$this->_values[$cookieName][$names[0]] = Hash::remove($this->_values[$cookieName][$names[0]], $names[1]);
 		}
 		$this->_delete('[' . implode('][', $names) . ']');
 	}
@@ -448,10 +448,10 @@ class CookieComponent extends Component {
 		}
 		$prefix = "Q2FrZQ==.";
 		if ($this->_type === 'rijndael') {
-			$cipher = Security::rijndael($value, $this->config('key'), 'encrypt');
+			$cipher = Security::rijndael($value, $this->_config['key'], 'encrypt');
 		}
 		if ($this->_type === 'aes') {
-			$cipher = Security::encrypt($value, $this->config('key'));
+			$cipher = Security::encrypt($value, $this->_config['key']);
 		}
 		return $prefix . base64_encode($cipher);
 	}
@@ -492,10 +492,10 @@ class CookieComponent extends Component {
 		}
 		$value = base64_decode(substr($value, strlen($prefix)));
 		if ($this->_type === 'rijndael') {
-			$plain = Security::rijndael($value, $this->config('key'), 'decrypt');
+			$plain = Security::rijndael($value, $this->_config['key'], 'decrypt');
 		}
 		if ($this->_type === 'aes') {
-			$plain = Security::decrypt($value, $this->config('key'));
+			$plain = Security::decrypt($value, $this->_config['key']);
 		}
 		return $this->_explode($plain);
 	}
