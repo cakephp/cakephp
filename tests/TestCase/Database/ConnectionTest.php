@@ -28,7 +28,7 @@ class ConnectionTest extends TestCase {
 
 	public function setUp() {
 		$this->connection = ConnectionManager::get('test');
-		$this->skipIf($this->connection()->driver() instanceof \Cake\Database\Driver\Sqlite);
+		$this->skipIf($this->connection->driver() instanceof \Cake\Database\Driver\Sqlite);
 		parent::setUp();
 	}
 
