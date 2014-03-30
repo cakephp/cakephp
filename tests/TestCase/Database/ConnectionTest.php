@@ -216,9 +216,7 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testInsertWithMatchingTypes() {
-		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
-		$this->connection->execute($table);
-		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
+		$data = ['id' => '3', 'title' => 'a title', 'body' => 'a body'];
 		$result = $this->connection->insert(
 			'things',
 			$data,
@@ -226,7 +224,7 @@ class ConnectionTest extends TestCase {
 		);
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
 		$result->closeCursor();
-		$result = $this->connection->execute('SELECT * from things');
+		$result = $this->connection->execute('SELECT * from things where id = 3');
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
 		$result->closeCursor();
@@ -239,9 +237,7 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function _testInsertWithPositionalTypes() {
-		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
-		$this->connection->execute($table);
-		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
+		$data = ['id' => '3', 'title' => 'a title', 'body' => 'a body'];
 		$result = $this->connection->insert(
 			'things',
 			$data,
@@ -249,7 +245,7 @@ class ConnectionTest extends TestCase {
 		);
 		$result->closeCursor();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-		$result = $this->connection->execute('SELECT * from things');
+		$result = $this->connection->execute('SELECT * from things where id  = 3');
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
 		$result->closeCursor();
