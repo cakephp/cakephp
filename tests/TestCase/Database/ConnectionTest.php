@@ -27,7 +27,6 @@ class ConnectionTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
-		$this->connection->execute('DROP TABLE IF EXISTS things');
 	}
 
 	public function tearDown() {
