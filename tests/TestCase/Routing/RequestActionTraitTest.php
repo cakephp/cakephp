@@ -186,7 +186,7 @@ class RequestActionTraitTest extends TestCase {
  */
 	public function testRequestActionParamParseAndPass() {
 		$result = $this->object->requestAction('/request_action/params_pass');
-		$result = unserialize($result);
+		$result = json_decode($result, true);
 		$this->assertEquals('request_action/params_pass', $result['url']);
 		$this->assertEquals('request_action', $result['params']['controller']);
 		$this->assertEquals('params_pass', $result['params']['action']);
@@ -204,14 +204,14 @@ class RequestActionTraitTest extends TestCase {
 			'item' => 'value'
 		);
 		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'post_pass'));
-		$result = unserialize($result);
+		$result = json_decode($result, true);
 		$this->assertEmpty($result);
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'post_pass'),
 			array('post' => $_POST)
 		);
-		$result = unserialize($result);
+		$result = json_decode($result, true);
 		$expected = $_POST;
 		$this->assertEquals($expected, $result);
 	}
@@ -230,7 +230,7 @@ class RequestActionTraitTest extends TestCase {
 			['controller' => 'request_action', 'action' => 'query_pass'],
 			['query' => $query]
 		);
-		$result = unserialize($result);
+		$result = json_decode($result, true);
 		$this->assertEquals($query, $result);
 
 		$result = $this->object->requestAction([
@@ -238,13 +238,13 @@ class RequestActionTraitTest extends TestCase {
 			'action' => 'query_pass',
 			'?' => $query
 		]);
-		$result = unserialize($result);
+		$result = json_decode($result, true);
 		$this->assertEquals($query, $result);
 
 		$result = $this->object->requestAction(
 			'/request_action/query_pass?page=3&sort=body'
 		);
-		$result = unserialize($result);
+		$result = json_decode($result, true);
 		$expected = ['page' => 3, 'sort' => 'body'];
 		$this->assertEquals($expected, $result);
 	}
@@ -262,14 +262,14 @@ class RequestActionTraitTest extends TestCase {
 			array('controller' => 'request_action', 'action' => 'post_pass'),
 			array('post' => $data)
 		);
-		$result = unserialize($result);
+		$result = json_decode($result, true);
 		$this->assertEquals($data, $result);
 
 		$result = $this->object->requestAction(
 			'/request_action/post_pass',
 			array('post' => $data)
 		);
-		$result = unserialize($result);
+		$result = json_decode($result, true);
 		$this->assertEquals($data, $result);
 	}
 
@@ -282,14 +282,14 @@ class RequestActionTraitTest extends TestCase {
 		$result = $this->object->requestAction(
 			'/request_action/params_pass?get=value&limit=5'
 		);
-		$result = unserialize($result);
+		$result = json_decode($result, true);
 		$this->assertEquals('value', $result['query']['get']);
 
 		$result = $this->object->requestAction(
 			array('controller' => 'request_action', 'action' => 'params_pass'),
 			array('query' => array('get' => 'value', 'limit' => 5))
 		);
-		$result = unserialize($result);
+		$result = json_decode($result, true);
 		$this->assertEquals('value', $result['query']['get']);
 	}
 

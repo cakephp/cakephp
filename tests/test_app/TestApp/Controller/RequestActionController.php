@@ -87,7 +87,7 @@ class RequestActionController extends AppController {
  * @return array
  */
 	public function post_pass() {
-		$this->response->body(serialize($this->request->data));
+		$this->response->body(json_encode($this->request->data));
 	}
 
 /**
@@ -96,7 +96,7 @@ class RequestActionController extends AppController {
  * @return array
  */
 	public function query_pass() {
-		$this->response->body(serialize($this->request->query));
+		$this->response->body(json_encode($this->request->query));
 	}
 
 /**
@@ -105,7 +105,7 @@ class RequestActionController extends AppController {
  * @return void
  */
 	public function params_pass() {
-		$this->response->body(serialize([
+		$this->response->body(json_encode([
 			'params' => $this->request->params,
 			'query' => $this->request->query,
 			'url' => $this->request->url
