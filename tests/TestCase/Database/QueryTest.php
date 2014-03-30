@@ -2397,6 +2397,20 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests converting a query to a string
+ *
+ * @return void
+ */
+	public function testToString() {
+		$query = new Query($this->connection);
+		$query
+			->select(['title'])
+			->from('articles');
+		$result = (string)$query;
+		$this->assertQuotedQuery('SELECT <title> FROM <articles>', $result, true);
+	}
+
+/**
  * Tests __debugInfo
  *
  * @return void

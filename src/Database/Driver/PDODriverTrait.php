@@ -79,8 +79,7 @@ trait PDODriverTrait {
  */
 	public function prepare($query) {
 		$this->connect();
-		$sql = $query instanceof Query ? $query->sql() : $query;
-		$statement = $this->_connection->prepare($sql);
+		$statement = $this->_connection->prepare((string)$query);
 		return new PDOStatement($statement, $this);
 	}
 
