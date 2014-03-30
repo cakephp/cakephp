@@ -571,6 +571,8 @@ class TestTask extends BakeTask {
 		])->addOption('force', [
 			'short' => 'f',
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
+		])->addOption('fixtures', [
+			'help' => __d('cake_console', 'A comma separated list of fixture names you want to include.')
 		]);
 
 		return $parser;
