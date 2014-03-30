@@ -195,7 +195,7 @@ class PaginatorComponent extends Component {
 			'pageCount' => $pageCount,
 			'sort' => key($order),
 			'direction' => current($order),
-			'limit' => $defaults['limit'] != $options['limit'] ? $options['limit'] : null,
+			'limit' => $defaults['limit'] != $limit ? $limit : null,
 			'sortDefault' => $sortDefault,
 			'directionDefault' => $directionDefault
 		);
