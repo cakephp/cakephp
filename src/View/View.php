@@ -813,7 +813,7 @@ class View extends Object {
 		$helpers = $registry->normalizeArray($this->helpers);
 		foreach ($helpers as $properties) {
 			list(, $class) = pluginSplit($properties['class']);
-			$this->{$class} = $registry->load($properties['class'], $properties['settings']);
+			$this->{$class} = $registry->load($properties['class'], $properties['config']);
 		}
 	}
 
@@ -895,12 +895,12 @@ class View extends Object {
  * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
  *
  * @param string $helperName Name of the helper to load.
- * @param array $settings Settings for the helper
+ * @param array $config Settings for the helper
  * @return Helper a constructed helper object.
  * @see HelperRegistry::load()
  */
-	public function addHelper($helperName, $settings = []) {
-		return $this->helpers()->load($helperName, $settings);
+	public function addHelper($helperName, $config = []) {
+		return $this->helpers()->load($helperName, $config);
 	}
 
 /**

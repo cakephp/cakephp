@@ -170,7 +170,7 @@ class FormHelper extends Helper {
  */
 	public function __construct(View $View, $config = []) {
 		parent::__construct($View, $config);
-		$config = $this->config();
+		$config = $this->_config;
 
 		$this->widgetRegistry($config['registry'], $config['widgets']);
 		$this->config(['widgets' => null, 'registry' => null]);
@@ -936,7 +936,7 @@ class FormHelper extends Helper {
 		}
 
 		$internalType = $context->type($fieldName);
-		$map = $this->config('typeMap');
+		$map = $this->_config['typeMap'];
 		$type = isset($map[$internalType]) ? $map[$internalType] : 'text';
 		$fieldName = array_slice(explode('.', $fieldName), -1)[0];
 
@@ -2093,7 +2093,7 @@ class FormHelper extends Helper {
 		unset($options['value'], $options['default']);
 
 		if ($context->hasError($field)) {
-			$options = $this->addClass($options, $this->config('errorClass'));
+			$options = $this->addClass($options, $this->_config['errorClass']);
 		}
 		if (!empty($options['disabled']) || $secure === static::SECURE_SKIP) {
 			return $options;

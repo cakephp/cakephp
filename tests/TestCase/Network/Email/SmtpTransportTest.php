@@ -357,14 +357,16 @@ class SmtpTransportTest extends TestCase {
  * @return void
  */
 	public function testEmptyConfigArray() {
-		$expected = $this->SmtpTransport->config(array(
+		$this->SmtpTransport->config(array(
 			'client' => 'myhost.com',
 			'port' => 666
 		));
+		$expected = $this->SmtpTransport->config();
 
 		$this->assertEquals(666, $expected['port']);
 
-		$result = $this->SmtpTransport->config(array());
+		$this->SmtpTransport->config(array());
+		$result = $this->SmtpTransport->config();
 		$this->assertEquals($expected, $result);
 	}
 

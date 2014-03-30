@@ -5,17 +5,26 @@ namespace TestPlugin\Datasource;
 class TestSource {
 
 /**
- * Settings
+ * Config
  *
  * @var array
  */
-	public $settings;
+	protected $_config;
 
 /**
  * Constructor
  */
-	public function __construct(array $settings) {
-		$this->settings = $settings;
+	public function __construct(array $config) {
+		$this->_config = $config;
+	}
+
+/**
+ * config
+ *
+ * @return array
+ */
+	public function config() {
+		return $this->_config;
 	}
 
 }

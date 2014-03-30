@@ -150,9 +150,6 @@ class Helper extends Object implements EventListener {
 		$this->_View = $View;
 		$this->request = $View->request;
 
-		if ($config) {
-			$config = Hash::merge($this->_defaultConfig, $config);
-		}
 		$this->config($config);
 
 		if (!empty($this->helpers)) {
@@ -180,8 +177,8 @@ class Helper extends Object implements EventListener {
  */
 	public function __get($name) {
 		if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
-			$settings = array_merge((array)$this->_helperMap[$name]['settings'], array('enabled' => false));
-			$this->{$name} = $this->_View->addHelper($this->_helperMap[$name]['class'], $settings);
+			$settings = array_merge((array)$this->_helperMap[$name]['config'], array('enabled' => false));
+			$this->{$name} = $this->_View->addHelper($this->_helperMap[$name]['class'], $this->_config);
 		}
 		if (isset($this->{$name})) {
 			return $this->{$name};

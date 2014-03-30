@@ -24,6 +24,8 @@ use Cake\Log\Engine\BaseLog;
 class SyslogLog extends BaseLog {
 
 /**
+ * Default config for this class
+ *
  * By default messages are formatted as:
  * level: message
  *
@@ -49,12 +51,14 @@ class SyslogLog extends BaseLog {
  *
  * @var array
  */
-	protected $_defaults = array(
+	protected $_defaultConfig = [
+		'levels' => [],
+		'scopes' => [],
 		'format' => '%s: %s',
 		'flag' => LOG_ODELAY,
 		'prefix' => '',
 		'facility' => LOG_USER
-	);
+	];
 
 /**
  * Used to map the string names back to their LOG_* constants
@@ -78,17 +82,6 @@ class SyslogLog extends BaseLog {
  * @var boolean
  */
 	protected $_open = false;
-
-/**
- * Make sure the configuration contains the format parameter, by default it uses
- * the error number and the type as a prefix to the message
- *
- * @param array $config
- */
-	public function __construct($config = array()) {
-		$config += $this->_defaults;
-		parent::__construct($config);
-	}
 
 /**
  * Writes a message to syslog

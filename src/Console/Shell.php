@@ -427,7 +427,7 @@ class Shell extends Object {
 	public function __get($name) {
 		if (empty($this->{$name}) && in_array($name, $this->taskNames)) {
 			$properties = $this->_taskMap[$name];
-			$this->{$name} = $this->Tasks->load($properties['class'], $properties['settings']);
+			$this->{$name} = $this->Tasks->load($properties['class'], $properties['config']);
 			$this->{$name}->args =& $this->args;
 			$this->{$name}->params =& $this->params;
 			$this->{$name}->initialize();

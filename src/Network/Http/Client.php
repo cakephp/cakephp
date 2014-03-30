@@ -14,6 +14,7 @@
 namespace Cake\Network\Http;
 
 use Cake\Core\App;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Error;
 use Cake\Network\Http\Cookies;
 use Cake\Network\Http\Request;
@@ -87,12 +88,15 @@ use Cake\Utility\Hash;
  */
 class Client {
 
+	use InstanceConfigTrait;
+
 /**
- * Stored configuration for the client.
+ * Default configuration for the client.
  *
  * @var array
  */
-	protected $_config = [
+	protected $_defaultConfig = [
+		'adapter' => 'Cake\Network\Http\Adapter\Stream',
 		'host' => null,
 		'port' => null,
 		'scheme' => 'http',
@@ -143,42 +147,21 @@ class Client {
  * @param array $config Config options for scoped clients.
  */
 	public function __construct($config = []) {
-		$adapter = 'Cake\Network\Http\Adapter\Stream';
-		if (isset($config['adapter'])) {
-			$adapter = $config['adapter'];
-			unset($config['adapter']);
-		}
-		if (isset($config['cookieJar'])) {
-			$this->_cookies = $config['cookieJar'];
-			unset($config['cookieJar']);
-		}
-		if (empty($this->_cookies)) {
-			$this->_cookies = new Cookies();
-		}
-
 		$this->config($config);
 
+		$adapter = $this->_config['adapter'];
+		$this->config('adapter', null);
 		if (is_string($adapter)) {
 			$adapter = new $adapter();
 		}
 		$this->_adapter = $adapter;
-	}
 
-/**
- * Get or set additional config options.
- *
- * Setting config will use Hash::merge() for appending into
- * the existing configuration.
- *
- * @param array|null $config Configuration options. null to get.
- * @return this|array
- */
-	public function config($config = null) {
-		if ($config === null) {
-			return $this->_config;
+		if (!empty($this->_config['cookieJar'])) {
+			$this->_cookies = $this->_config['cookieJar'];
+			$this->config('cookieJar', null);
+		} else {
+			$this->_cookies = new Cookies();
 		}
-		$this->_config = Hash::merge($this->_config, $config);
-		return $this;
 	}
 
 /**

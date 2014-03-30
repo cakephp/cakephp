@@ -90,7 +90,8 @@ class RequestHandlerComponent extends Component {
  * @var array
  */
 	protected $_defaultConfig = [
-		'checkHttpCache' => true
+		'checkHttpCache' => true,
+		'viewClassMap' => ''
 	];
 
 /**
@@ -147,7 +148,7 @@ class RequestHandlerComponent extends Component {
 			$this->_setExtension();
 		}
 
-		$classMap = $this->config('viewClassMap');
+		$classMap = $this->_config['viewClassMap'];
 		if ($classMap) {
 			$this->viewClassMap($classMap);
 		}
@@ -293,7 +294,7 @@ class RequestHandlerComponent extends Component {
  * @return boolean false if the render process should be aborted
  */
 	public function beforeRender(Event $event) {
-		if ($this->config('checkHttpCache') && $this->response->checkNotModified($this->request)) {
+		if ($this->_config['checkHttpCache'] && $this->response->checkNotModified($this->request)) {
 			return false;
 		}
 	}
