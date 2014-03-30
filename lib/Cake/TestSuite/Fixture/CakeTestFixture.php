@@ -86,7 +86,7 @@ class CakeTestFixture {
  * When table is created for a fixture the MEMORY engine is used
  * where possible. Set $canUseMemory to false if you don't want this.
  *
- * @var array
+ * @var boolean
  */
 	public $canUseMemory = true;
 
