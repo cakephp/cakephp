@@ -361,6 +361,7 @@ class ConnectionTest extends TestCase {
 		$this->connection->delete('things');
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(0, $result);
+		$result->closeCursor();
 	}
 
 /**
@@ -371,14 +372,17 @@ class ConnectionTest extends TestCase {
 		$this->connection->delete('things', ['id' => '1-rest-is-ommited'], ['id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(1, $result);
+		$result->closeCursor();
 
 		$this->connection->delete('things', ['id' => '1-rest-is-ommited'], ['id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(1, $result);
+		$result->closeCursor();
 
 		$this->connection->delete('things', ['id' => '2-rest-is-ommited'], ['id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(0, $result);
+		$result->closeCursor();
 	}
 
 /**
@@ -392,6 +396,7 @@ class ConnectionTest extends TestCase {
 		$this->connection->rollback();
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(2, $result);
+		$result->closeCursor();
 
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
