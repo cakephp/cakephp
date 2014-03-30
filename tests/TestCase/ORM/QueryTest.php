@@ -793,6 +793,23 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Test that page is applied after limit.
+ *
+ * @return void
+ */
+	public function testApplyOptionsPageIsLast() {
+		$query = new Query($this->connection, $this->table);
+		$opts = [
+			'page' => 3,
+			'limit' => 5
+		];
+		$query->applyOptions($opts);
+		$this->assertEquals(5, $query->clause('limit'));
+		$this->assertEquals(10, $query->clause('offset'));
+	}
+
+
+/**
  * ApplyOptions should ignore null values.
  *
  * @return void

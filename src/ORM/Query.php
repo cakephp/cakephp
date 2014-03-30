@@ -444,6 +444,7 @@ class Query extends DatabaseQuery {
 			'page' => 'page',
 		];
 
+		ksort($options);
 		foreach ($options as $option => $values) {
 			if (isset($valid[$option]) && isset($values)) {
 				$this->{$valid[$option]}($values);
