@@ -38,89 +38,34 @@ use Cake\Utility\Security;
 class CookieComponent extends Component {
 
 /**
- * The name of the cookie.
+ * Default config
  *
- * Overridden with the controller beforeFilter();
- * $this->Cookie->name = 'CookieName';
- *
- * @var string
+ * - `name` - The name of the cookie.
+ * - `time` - The time a cookie will remain valid. Can be either integer
+ *   unix timestamp or a date string.
+ * - `path` - The path on the server in which the cookie will be available on.
+ *   If path is set to '/foo/', the cookie will only be available within the
+ *   /foo/ directory and all sub-directories such as /foo/bar/ of domain.
+ *   The default value is the entire domain.
+ * - `domain` - The domain that the cookie is available. To make the cookie
+ *   available on all subdomains of example.com set domain to '.example.com'.
+ * - `secure` - Indicates that the cookie should only be transmitted over a
+ *   secure HTTPS connection. When set to true, the cookie will only be set if
+ *   a secure connection exists.
+ * - `key` - Encryption key.
+ * - `httpOnly` - Set to true to make HTTP only cookies. Cookies that are HTTP only
+ *   are not accessible in JavaScript. Default false
+ * @var array
  */
-	public $name = 'CakeCookie';
-
-/**
- * The time a cookie will remain valid.
- *
- * Can be either integer Unix timestamp or a date string.
- *
- * Overridden with the controller beforeFilter();
- * $this->Cookie->time = '5 Days';
- *
- * @var mixed
- */
-	public $time = null;
-
-/**
- * Cookie path.
- *
- * Overridden with the controller beforeFilter();
- * $this->Cookie->path = '/';
- *
- * The path on the server in which the cookie will be available on.
- * If public $cookiePath is set to '/foo/', the cookie will only be available
- * within the /foo/ directory and all sub-directories such as /foo/bar/ of domain.
- * The default value is the entire domain.
- *
- * @var string
- */
-	public $path = '/';
-
-/**
- * Domain path.
- *
- * The domain that the cookie is available.
- *
- * Overridden with the controller beforeFilter();
- * $this->Cookie->domain = '.example.com';
- *
- * To make the cookie available on all subdomains of example.com.
- * Set $this->Cookie->domain = '.example.com'; in your controller beforeFilter
- *
- * @var string
- */
-	public $domain = '';
-
-/**
- * Secure HTTPS only cookie.
- *
- * Overridden with the controller beforeFilter();
- * $this->Cookie->secure = true;
- *
- * Indicates that the cookie should only be transmitted over a secure HTTPS connection.
- * When set to true, the cookie will only be set if a secure connection exists.
- *
- * @var boolean
- */
-	public $secure = false;
-
-/**
- * Encryption key.
- *
- * Overridden with the controller beforeFilter();
- * $this->Cookie->key = 'SomeRandomString';
- *
- * @var string
- */
-	public $key = null;
-
-/**
- * HTTP only cookie
- *
- * Set to true to make HTTP only cookies. Cookies that are HTTP only
- * are not accessible in JavaScript.
- *
- * @var boolean
- */
-	public $httpOnly = false;
+	protected $_defaultConfig = [
+		'name' => 'CakeCookie',
+		'time' => null,
+		'path' => '/',
+		'domain' => '',
+		'secure' => false,
+		'key' => null,
+		'httpOnly' => false
+	];
 
 /**
  * Values stored in the cookie.
@@ -178,10 +123,14 @@ class CookieComponent extends Component {
  * @param array $config Array of config.
  */
 	public function __construct(ComponentRegistry $collection, $config = array()) {
-		$this->key = Configure::read('Security.salt');
 		parent::__construct($collection, $config);
-		if (isset($this->time)) {
-			$this->_expire($this->time);
+
+		if ($this->config('key')) {
+			$this->config('key', Configure::read('Security.salt'));
+		}
+
+		if ($this->config('time')) {
+			$this->_expire($this->config('time'));
 		}
 
 		$controller = $collection->getController();
@@ -205,9 +154,9 @@ class CookieComponent extends Component {
  * @return void
  */
 	public function startup(Event $event) {
-		$this->_expire($this->time);
+		$this->_expire($this->config('time'));
 
-		$this->_values[$this->name] = array();
+		$this->_values[$this->config('name')] = array();
 	}
 
 /**
@@ -231,7 +180,8 @@ class CookieComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::write
  */
 	public function write($key, $value = null, $encrypt = true, $expires = null) {
-		if (empty($this->_values[$this->name])) {
+		$cookieName = $this->config('name');
+		if (empty($this->_values[$cookieName])) {
 			$this->read();
 		}
 
@@ -253,20 +203,20 @@ class CookieComponent extends Component {
 			$firstName = $names[0];
 			$isMultiValue = (is_array($value) || count($names) > 1);
 
-			if (!isset($this->_values[$this->name][$firstName]) && $isMultiValue) {
-				$this->_values[$this->name][$firstName] = array();
+			if (!isset($this->_values[$cookieName][$firstName]) && $isMultiValue) {
+				$this->_values[$cookieName][$firstName] = array();
 			}
 
 			if (count($names) > 1) {
-				$this->_values[$this->name][$firstName] = Hash::insert(
-					$this->_values[$this->name][$firstName],
+				$this->_values[$cookieName][$firstName] = Hash::insert(
+					$this->_values[$cookieName][$firstName],
 					$names[1],
 					$value
 				);
 			} else {
-				$this->_values[$this->name][$firstName] = $value;
+				$this->_values[$cookieName][$firstName] = $value;
 			}
-			$this->_write('[' . $firstName . ']', $this->_values[$this->name][$firstName]);
+			$this->_write('[' . $firstName . ']', $this->_values[$cookieName][$firstName]);
 		}
 		$this->_encrypted = true;
 	}
@@ -282,29 +232,30 @@ class CookieComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::read
  */
 	public function read($key = null) {
-		$values = $this->_request->cookie($this->name);
-		if (empty($this->_values[$this->name]) && $values) {
-			$this->_values[$this->name] = $this->_decrypt($values);
+		$name = $this->config('name');
+		$values = $this->_request->cookie($name);
+		if (empty($this->_values[$name]) && $values) {
+			$this->_values[$name] = $this->_decrypt($values);
 		}
-		if (empty($this->_values[$this->name])) {
-			$this->_values[$this->name] = array();
+		if (empty($this->_values[$name])) {
+			$this->_values[$name] = array();
 		}
 		if ($key === null) {
-			return $this->_values[$this->name];
+			return $this->_values[$name];
 		}
 
 		if (strpos($key, '.') !== false) {
 			$names = explode('.', $key, 2);
 			$key = $names[0];
 		}
-		if (!isset($this->_values[$this->name][$key])) {
+		if (!isset($this->_values[$name][$key])) {
 			return null;
 		}
 
 		if (!empty($names[1])) {
-			return Hash::get($this->_values[$this->name][$key], $names[1]);
+			return Hash::get($this->_values[$name][$key], $names[1]);
 		}
-		return $this->_values[$this->name][$key];
+		return $this->_values[$name][$key];
 	}
 
 /**
@@ -340,22 +291,23 @@ class CookieComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::delete
  */
 	public function delete($key) {
-		if (empty($this->_values[$this->name])) {
+		$name = $this->config('name');
+		if (empty($this->_values[$name])) {
 			$this->read();
 		}
 		if (strpos($key, '.') === false) {
-			if (isset($this->_values[$this->name][$key]) && is_array($this->_values[$this->name][$key])) {
-				foreach ($this->_values[$this->name][$key] as $idx => $val) {
+			if (isset($this->_values[$name][$key]) && is_array($this->_values[$name][$key])) {
+				foreach ($this->_values[$name][$key] as $idx => $val) {
 					$this->_delete("[$key][$idx]");
 				}
 			}
 			$this->_delete("[$key]");
-			unset($this->_values[$this->name][$key]);
+			unset($this->_values[$name][$key]);
 			return;
 		}
 		$names = explode('.', $key, 2);
-		if (isset($this->_values[$this->name][$names[0]])) {
-			$this->_values[$this->name][$names[0]] = Hash::remove($this->_values[$this->name][$names[0]], $names[1]);
+		if (isset($this->_values[$name][$names[0]])) {
+			$this->_values[$name][$names[0]] = Hash::remove($this->_values[$name][$names[0]], $names[1]);
 		}
 		$this->_delete('[' . implode('][', $names) . ']');
 	}
@@ -370,18 +322,19 @@ class CookieComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::destroy
  */
 	public function destroy() {
-		if (empty($this->_values[$this->name])) {
+		$cookieName = $this->config('name');
+		if (empty($this->_values[$cookieName])) {
 			$this->read();
 		}
 
-		foreach ($this->_values[$this->name] as $name => $value) {
+		foreach ($this->_values[$cookieName] as $name => $value) {
 			if (is_array($value)) {
 				foreach ($value as $key => $val) {
-					unset($this->_values[$this->name][$name][$key]);
+					unset($this->_values[$cookieName][$name][$key]);
 					$this->_delete("[$name][$key]");
 				}
 			}
-			unset($this->_values[$this->name][$name]);
+			unset($this->_values[$cookieName][$name]);
 			$this->_delete("[$name]");
 		}
 	}
@@ -444,14 +397,15 @@ class CookieComponent extends Component {
  * @return void
  */
 	protected function _write($name, $value) {
+		$config = $this->config();
 		$this->_response->cookie(array(
-			'name' => $this->name . $name,
+			'name' => $config['name'] . $name,
 			'value' => $this->_encrypt($value),
 			'expire' => $this->_expires,
-			'path' => $this->path,
-			'domain' => $this->domain,
-			'secure' => $this->secure,
-			'httpOnly' => $this->httpOnly
+			'path' => $config['path'],
+			'domain' => $config['domain'],
+			'secure' => $config['secure'],
+			'httpOnly' => $config['httpOnly']
 		));
 
 		if (!empty($this->_reset)) {
@@ -467,14 +421,15 @@ class CookieComponent extends Component {
  * @return void
  */
 	protected function _delete($name) {
+		$config = $this->config();
 		$this->_response->cookie(array(
-			'name' => $this->name . $name,
+			'name' => $config['name'] . $name,
 			'value' => '',
 			'expire' => time() - 42000,
-			'path' => $this->path,
-			'domain' => $this->domain,
-			'secure' => $this->secure,
-			'httpOnly' => $this->httpOnly
+			'path' => $config['path'],
+			'domain' => $config['domain'],
+			'secure' => $config['secure'],
+			'httpOnly' => $config['httpOnly']
 		));
 	}
 
@@ -493,10 +448,10 @@ class CookieComponent extends Component {
 		}
 		$prefix = "Q2FrZQ==.";
 		if ($this->_type === 'rijndael') {
-			$cipher = Security::rijndael($value, $this->key, 'encrypt');
+			$cipher = Security::rijndael($value, $this->config('key'), 'encrypt');
 		}
 		if ($this->_type === 'aes') {
-			$cipher = Security::encrypt($value, $this->key);
+			$cipher = Security::encrypt($value, $this->config('key'));
 		}
 		return $prefix . base64_encode($cipher);
 	}
@@ -537,10 +492,10 @@ class CookieComponent extends Component {
 		}
 		$value = base64_decode(substr($value, strlen($prefix)));
 		if ($this->_type === 'rijndael') {
-			$plain = Security::rijndael($value, $this->key, 'decrypt');
+			$plain = Security::rijndael($value, $this->config('key'), 'decrypt');
 		}
 		if ($this->_type === 'aes') {
-			$plain = Security::decrypt($value, $this->key);
+			$plain = Security::decrypt($value, $this->config('key'));
 		}
 		return $this->_explode($plain);
 	}
@@ -578,4 +533,5 @@ class CookieComponent extends Component {
 		}
 		return $array;
 	}
+
 }
