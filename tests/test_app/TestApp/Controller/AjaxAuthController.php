@@ -54,8 +54,8 @@ class AjaxAuthController extends Controller {
  * @return void
  */
 	public function beforeFilter(Event $event) {
-		$this->TestAuth->ajaxLogin = 'test_element';
-		$this->TestAuth->userModel = 'AuthUser';
+		$this->TestAuth->config('ajaxLogin', 'test_element');
+		$this->TestAuth->config('userModel', 'AuthUser');
 		$this->TestAuth->RequestHandler->ajaxLayout = 'ajax2';
 	}
 
