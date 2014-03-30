@@ -115,19 +115,19 @@ class PluginTask extends Shell {
 		if (strtolower($looksGood) === 'y') {
 			$Folder = new Folder($this->path . $plugin);
 			$directories = [
-				'Config/Schema',
-				'Model/Behavior',
-				'Model/Table',
-				'Model/Entity',
-				'Console/Command/Task',
-				'Controller/Component',
+				'Config' . DS . 'Schema',
+				'Model' . DS . 'Behavior',
+				'Model' . DS . 'Table',
+				'Model' . DS . 'Entity',
+				'Console' . DS . 'Command' . DS . 'Task',
+				'Controller' . DS . 'Component',
 				'Lib',
-				'View/Helper',
+				'View' . DS . 'Helper',
 				'Template',
-				'Test/TestCase/Controller/Component',
-				'Test/TestCase/View/Helper',
-				'Test/TestCase/Model/Behavior',
-				'Test/Fixture',
+				'Test' . DS . 'TestCase' . DS . 'Controller' . DS . 'Component',
+				'Test' . DS . 'TestCase' . DS . 'View' . DS . 'Helper',
+				'Test' . DS . 'TestCase' . DS . 'Model' . DS . 'Behavior',
+				'Test' . DS . 'Fixture',
 				'webroot'
 			];
 
