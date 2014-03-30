@@ -30,13 +30,7 @@ class ConnectionTest extends TestCase {
 	}
 
 	public function tearDown() {
-		try {
-			$this->connection->execute('DROP TABLE IF EXISTS things');
-		} catch (\Exception $e) {
-			$config = ConnectionManager::config('test');
-			ConnectionManager::drop('test');
-			ConnectionManager::config('test', $config);
-		}
+		$this->connection->execute('DROP TABLE IF EXISTS things');
 		$this->connection->useSavePoints(false);
 		unset($this->connection);
 		parent::tearDown();
@@ -243,7 +237,7 @@ class ConnectionTest extends TestCase {
  *
  * @return void
  **/
-	public function testInsertWithPositionalTypes() {
+	public function _testInsertWithPositionalTypes() {
 		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
 		$this->connection->execute($table);
 		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
