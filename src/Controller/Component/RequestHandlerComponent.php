@@ -39,14 +39,6 @@ use Cake\Utility\Xml;
 class RequestHandlerComponent extends Component {
 
 /**
- * The layout that will be switched to for Ajax requests
- *
- * @var string
- * @see RequestHandler::setAjax()
- */
-	public $ajaxLayout = 'ajax';
-
-/**
  * Determines whether or not callbacks will be fired on this component
  *
  * @var boolean
@@ -87,11 +79,17 @@ class RequestHandlerComponent extends Component {
  *
  * These are merged with user-provided config when the component is used.
  *
+ * - `checkHttpCache` - Whether to check for http cache.
+ * - `viewClassMap` - Mapping between type and view class.
+ * - `ajaxLayout` - The layout that will be switched to for Ajax requests.
+ *   See RequestHandler::setAjax()
+ *
  * @var array
  */
 	protected $_defaultConfig = [
 		'checkHttpCache' => true,
-		'viewClassMap' => ''
+		'viewClassMap' => '',
+		'ajaxLayout' => 'ajax'
 	];
 
 /**
@@ -510,7 +508,7 @@ class RequestHandlerComponent extends Component {
 		$options = array_merge($defaults, $options);
 
 		if ($type === 'ajax') {
-			$controller->layout = $this->ajaxLayout;
+			$controller->layout = $this->_config['ajaxLayout'];
 			return $this->respondAs('html', $options);
 		}
 

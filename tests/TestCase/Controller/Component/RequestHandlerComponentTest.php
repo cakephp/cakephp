@@ -99,7 +99,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$controller = $this->getMock('Cake\Controller\Controller');
 		$collection = new ComponentRegistry($controller);
 		$requestHandler = new RequestHandlerComponent($collection, $config);
-		$this->assertEquals('test_ajax', $requestHandler->ajaxLayout);
+		$this->assertEquals('test_ajax', $requestHandler->config('ajaxLayout'));
 		$this->assertEquals(array('json' => 'MyPlugin.MyJson'), $requestHandler->config('viewClassMap'));
 	}
 
