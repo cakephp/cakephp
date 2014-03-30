@@ -204,7 +204,7 @@ class TestTask extends BakeTask {
 
 		if (!empty($this->params['fixtures'])) {
 			$fixtures = array_map('trim', explode(',', $this->params['fixtures']));
-			$this->_fixtures = $fixtures;
+			$this->_fixtures = array_filter($fixtures);
 		} elseif ($this->typeCanDetectFixtures($type) && class_exists($fullClassName)) {
 			$this->out(__d('cake_console', 'Bake is detecting possible fixtures...'));
 			$testSubject = $this->buildTestSubject($type, $fullClassName);
@@ -344,21 +344,6 @@ class TestTask extends BakeTask {
 			throw new Error\Exception('Invalid object type.');
 		}
 		return $this->classTypes[$type];
-	}
-
-/**
- * Get the base class and package name for a given type.
- *
- * @param string $type The type the class having a test
- *   generated for is in.
- * @return array Array of (class, type)
- * @throws \Cake\Error\Exception on invalid types.
- */
-	public function getBaseType($type) {
-		if (empty($this->baseTypes[$type])) {
-			throw new Error\Exception('Invalid type name');
-		}
-		return $this->baseTypes[$type];
 	}
 
 /**

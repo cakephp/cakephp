@@ -304,6 +304,26 @@ class TestTaskTest extends TestCase {
 	}
 
 /**
+ * Test baking a test for a concrete model with fixtures arg
+ *
+ * @return void
+ */
+	public function testBakeFixturesParam() {
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->will($this->returnValue(true));
+
+		$this->Task->params['fixtures'] = 'app.post, app.comments , app.user ,';
+		$result = $this->Task->bake('Table', 'Articles');
+
+		$this->assertContains('public $fixtures = [', $result);
+		$this->assertContains('app.post', $result);
+		$this->assertContains('app.comments', $result);
+		$this->assertContains('app.user', $result);
+		$this->assertNotContains("''", $result);
+	}
+
+/**
  * Test baking a test for a concrete model.
  *
  * @return void
