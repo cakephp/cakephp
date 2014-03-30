@@ -506,7 +506,7 @@ class Table {
 	}
 
 /**
- * Get/Set whether the table is temporrary in the database
+ * Get/Set whether the table is temporary in the database
  *
  * @param boolean|null $set whether or not the table is to be temporary
  * @return this|boolean Either the table instance, the current temporary setting

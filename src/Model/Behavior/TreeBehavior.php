@@ -152,7 +152,7 @@ class TreeBehavior extends Behavior {
 
 		if (!$parentNode) {
 			throw new \Cake\ORM\Error\RecordNotFoundException(
-				"Parent node \"{$config['parent']}\ was not found in the tree."
+				"Parent node \"{$config['parent']}\" was not found in the tree."
 			);
 		}
 
@@ -185,7 +185,7 @@ class TreeBehavior extends Behavior {
 			));
 		}
 
-		// Values for moving )o the left
+		// Values for moving to the left
 		$diff = $right - $left + 1;
 		$targetLeft = $parentRight;
 		$targetRight = $diff + $parentRight - 1;
@@ -358,7 +358,7 @@ class TreeBehavior extends Behavior {
 			->first();
 
 		if (!$node) {
-			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$for}\ was not found in the tree.");
+			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$for}\" was not found in the tree.");
 		}
 
 		return $this->_scope($query)
