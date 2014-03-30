@@ -50,9 +50,10 @@ class IniAcl extends Object implements AclInterface {
 /**
  * read/write config
  *
- * Load acl config on first access. Wraps the InstanceConfigTrait method, taking
- * care of the trait's implementation of determining intent from tne number of
- * passed arguments
+ * Load acl config on first access, rather than on creation, so that there's no
+ * needless overhead if the class is loaded but not referenced.
+ * Wraps the InstanceConfigTrait method, taking care of the trait's implementation
+ * of determining intent from the number ofpassed arguments.
  *
  * @param string|array|null $key The key to get/set, or a complete array of configs.
  * @param mixed|null $value The value to set.
