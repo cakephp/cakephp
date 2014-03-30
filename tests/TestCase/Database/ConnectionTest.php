@@ -33,6 +33,9 @@ class ConnectionTest extends TestCase {
 		try {
 			$this->connection->execute('DROP TABLE IF EXISTS things');
 		} catch (\Exception $e) {
+			$config = ConnectionManager::config('test');
+			ConnectionManager::drop('test');
+			ConnectionManager::config('test', $config);
 		}
 		$this->connection->useSavePoints(false);
 		unset($this->connection);
