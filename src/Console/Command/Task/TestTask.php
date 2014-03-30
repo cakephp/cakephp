@@ -168,31 +168,6 @@ class TestTask extends BakeTask {
 	}
 
 /**
- * Handles interactive baking
- *
- * @param string $type
- * @return string|boolean
- */
-	protected function _interactive($type = null) {
-		$this->interactive = true;
-		$this->hr();
-		$this->out(__d('cake_console', 'Bake Tests'));
-		$this->out(__d('cake_console', 'Path: %s', $this->getPath()));
-		$this->hr();
-
-		if ($type) {
-			$type = Inflector::camelize($type);
-			if (!isset($this->classTypes[$type])) {
-				$this->error(__d('cake_console', 'Incorrect type provided. Please choose one of %s', implode(', ', array_keys($this->classTypes))));
-			}
-		} else {
-			$type = $this->getObjectType();
-		}
-		$className = $this->getClassName($type);
-		return $this->bake($type, $className);
-	}
-
-/**
  * Completes final steps for generating data to create test case.
  *
  * @param string $type Type of object to bake test case for ie. Model, Controller
@@ -239,40 +214,6 @@ class TestTask extends BakeTask {
 			return $out;
 		}
 		return false;
-	}
-
-/**
- * Get the user chosen Class name for the chosen type
- *
- * @param string $objectType Type of object to list classes for i.e. Model, Controller.
- * @return string Class name the user chose.
- */
-	public function getClassName($objectType) {
-		$type = ucfirst(strtolower($objectType));
-		$typeLength = strlen($type);
-		$type = $this->classTypes[$type];
-		if ($this->plugin) {
-			$plugin = $this->plugin . '.';
-			$options = App::objects($plugin . $type);
-		} else {
-			$options = App::objects($type);
-		}
-		$this->out(__d('cake_console', 'Choose a %s class', $objectType));
-		$keys = [];
-		foreach ($options as $key => $option) {
-			$this->out(++$key . '. ' . $option);
-			$keys[] = $key;
-		}
-		while (empty($selection)) {
-			$selection = $this->in(__d('cake_console', 'Choose an existing class, or enter the name of a class that does not exist'));
-			if (is_numeric($selection) && isset($options[$selection - 1])) {
-				$selection = $options[$selection - 1];
-			}
-			if ($type !== 'Model') {
-				$selection = substr($selection, 0, $typeLength * - 1);
-			}
-		}
-		return $selection;
 	}
 
 /**
