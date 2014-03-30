@@ -154,7 +154,6 @@ class ControllerTask extends BakeTask {
 			'actions',
 			'helpers',
 			'components',
-			'prefix',
 			'namespace'
 		);
 		$data['name'] = $controllerName;
