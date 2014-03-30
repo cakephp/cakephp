@@ -17,7 +17,7 @@ a starting point. For existing applications you can add the following to your
 `composer.json` file:
 
 	"require": {
-		"cakephp/framework": "dev-3.0"
+		"cakephp/cakephp": "3.0.*-dev"
 	}
 
 And run `php composer.phar update`
