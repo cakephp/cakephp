@@ -21,6 +21,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\ORM\Association;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Folder;
 use Cake\Utility\Inflector;
@@ -389,7 +390,7 @@ class TestTask extends BakeTask {
  */
 	public function generateFixtureList($subject) {
 		$this->_fixtures = [];
-		if ($subject instanceof Model) {
+		if ($subject instanceof Table) {
 			$this->_processModel($subject);
 		} elseif ($subject instanceof Controller) {
 			$this->_processController($subject);

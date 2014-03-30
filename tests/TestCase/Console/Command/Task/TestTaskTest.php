@@ -21,8 +21,10 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
+use TestApp\Controller\PostsController;
+use TestApp\Model\Table\ArticlesTable;
 
 /**
  * TestTaskTest class
@@ -126,6 +128,22 @@ class TestTaskTest extends TestCase {
 	}
 
 /**
+ * test execute with type and class name defined
+ *
+ * @return void
+ */
+	public function testExecuteWithTwoArgs() {
+		$this->Task->args = ['Table', 'TestTaskTag'];
+		$this->Task->expects($this->once())->method('createFile')
+			->with(
+				$this->stringContains('TestCase/Model/Table/TestTaskTagTableTest.php'),
+				$this->stringContains('class TestTaskTagTableTest extends TestCase')
+			);
+		$this->Task->execute();
+	}
+
+
+/**
  * Test generating class options for table.
  *
  * @return void
@@ -170,33 +188,6 @@ class TestTaskTest extends TestCase {
 	}
 
 /**
- * Test that file path generation doesn't continuously append paths.
- *
- * @return void
- */
-	public function testFilePathGenerationModelRepeated() {
-		$this->markTestIncomplete('Not working for some reason');
-		$this->Task->expects($this->never())->method('err');
-		$this->Task->expects($this->never())->method('_stop');
-
-		$file = TESTS . 'TestCase/Model/MyClassTest.php';
-
-		$this->Task->expects($this->at(1))->method('createFile')
-			->with($file, $this->anything());
-
-		$this->Task->expects($this->at(3))->method('createFile')
-			->with($file, $this->anything());
-
-		$file = TESTS . 'TestCase/Controller/CommentsControllerTest.php';
-		$this->Task->expects($this->at(5))->method('createFile')
-			->with($file, $this->anything());
-
-		$this->Task->bake('Model', 'MyClass');
-		$this->Task->bake('Model', 'MyClass');
-		$this->Task->bake('Controller', 'Comments');
-	}
-
-/**
  * Test that method introspection pulls all relevant non parent class
  * methods into the test case.
  *
@@ -214,14 +205,15 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testFixtureArrayGenerationFromModel() {
-		$this->markTestIncomplete('Not working right now');
-
-		$subject = new TestTaskArticlesTable();
+		$subject = new ArticlesTable();
 		$result = $this->Task->generateFixtureList($subject);
-		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags',
-			'app.test_task_article', 'app.test_task_tag');
-
-		$this->assertEquals(sort($expected), sort($result));
+		$expected = [
+			'app.article',
+			'app.author',
+			'app.tag',
+			'app.articles_tag'
+		];
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -230,13 +222,12 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testFixtureArrayGenerationFromController() {
-		$this->markTestIncomplete('Not working right now');
-		$subject = new TestTaskCommentsController();
+		$subject = new PostsController();
 		$result = $this->Task->generateFixtureList($subject);
-		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags',
-			'app.test_task_article', 'app.test_task_tag');
-
-		$this->assertEquals(sort($expected), sort($result));
+		$expected = [
+			'app.post',
+		];
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -245,43 +236,10 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testRegistryClearWhenBuildingTestObjects() {
-		$this->markTestIncomplete('Not working right now');
+		$articles = TableRegistry::get('Articles');
+		$this->Task->buildTestSubject('Table', 'Posts');
 
-		$model = new TestTaskCommentsTable();
-		$model->bindModel(array(
-			'belongsTo' => array(
-				'Random' => array(
-					'className' => 'TestTaskArticle',
-					'foreignKey' => 'article_id',
-				)
-			)
-		));
-		$keys = ClassRegistry::keys();
-		$this->assertTrue(in_array('test_task_comment', $keys));
-		$this->Task->buildTestSubject('Model', 'TestTaskComment');
-
-		$keys = ClassRegistry::keys();
-		$this->assertFalse(in_array('random', $keys));
-	}
-
-/**
- * test that getClassName returns the user choice as a class name.
- *
- * @return void
- */
-	public function testGetClassName() {
-		$objects = App::objects('model');
-		$this->skipIf(empty($objects), 'No models in app.');
-
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('MyCustomClass'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(1));
-
-		$result = $this->Task->getClassName('Model');
-		$this->assertEquals('MyCustomClass', $result);
-
-		$result = $this->Task->getClassName('Model');
-		$options = App::objects('model');
-		$this->assertEquals($options[0], $result);
+		$this->assertFalse(TableRegistry::exists('Articles'));
 	}
 
 /**
@@ -351,21 +309,20 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeModelTest() {
-		$this->markTestIncomplete('Model tests need reworking.');
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->will($this->returnValue(true));
 
-		$this->Task->expects($this->once())->method('createFile')->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('isLoadableClass')->will($this->returnValue(true));
+		$result = $this->Task->bake('Table', 'Articles');
 
-		$result = $this->Task->bake('Model', 'TestTaskArticle');
-
-		$this->assertContains("use App\Model\TestTaskArticle", $result);
-		$this->assertContains('class TestTaskArticleTest extends TestCase', $result);
+		$this->assertContains("use App\Model\Table\ArticlesTable", $result);
+		$this->assertContains('class ArticlesTableTest extends TestCase', $result);
 
 		$this->assertContains('function setUp()', $result);
-		$this->assertContains("\$this->TestTaskArticle = ClassRegistry::init('TestTaskArticle')", $result);
+		$this->assertContains("\$this->Articles = TableRegistry::get('Articles', [", $result);
 
 		$this->assertContains('function tearDown()', $result);
-		$this->assertContains('unset($this->TestTaskArticle)', $result);
+		$this->assertContains('unset($this->Articles)', $result);
 	}
 
 /**
@@ -401,7 +358,23 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testBakePrefixControllerTest() {
-		$this->markTestIncomplete();
+		Configure::write('App.namespace', 'TestApp');
+
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->will($this->returnValue(true));
+
+		$result = $this->Task->bake('Controller', 'Admin\Posts');
+
+		$this->assertContains("use TestApp\Controller\Admin\PostsController", $result);
+		$this->assertContains('class PostsControllerTest extends ControllerTestCase', $result);
+
+		$this->assertNotContains('function setUp()', $result);
+		$this->assertNotContains("\$this->Posts = new PostsController()", $result);
+		$this->assertNotContains("\$this->Posts->constructClasses()", $result);
+
+		$this->assertNotContains('function tearDown()', $result);
+		$this->assertNotContains('unset($this->Posts)', $result);
 	}
 
 /**
@@ -604,71 +577,13 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testTestCaseFileNamePlugin() {
-		$this->markTestIncomplete();
 		$this->Task->path = DS . 'my/path/tests/';
 
-		Plugin::load('TestTest', array('path' => APP . 'Plugin/TestTest/'));
-		$this->Task->plugin = 'TestTest';
-		$result = $this->Task->testCaseFileName('Model', 'Post');
-		$expected = APP . 'Plugin/TestTest/Test/TestCase/Model/PostTest.php';
+		Plugin::load('TestPlugin');
+		$this->Task->plugin = 'TestPlugin';
+		$result = $this->Task->testCaseFileName('entity', 'Post');
+		$expected = TEST_APP . 'Plugin/TestPlugin/Test/TestCase/Model/Entity/PostTest.php';
 		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test execute with a type defined
- *
- * @return void
- */
-	public function testExecuteWithOneArg() {
-		$this->markTestIncomplete('Tests using models need work');
-
-		$this->Task->args[0] = 'Model';
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('TestTaskTag'));
-		$this->Task->expects($this->once())->method('isLoadableClass')->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('createFile')
-			->with(
-				$this->anything(),
-				$this->stringContains('class TestTaskTagTest extends TestCase')
-			);
-		$this->Task->execute();
-	}
-
-/**
- * test execute with type and class name defined
- *
- * @return void
- */
-	public function testExecuteWithTwoArgs() {
-		$this->markTestIncomplete('Tests using models need work');
-
-		$this->Task->args = array('Model', 'TestTaskTag');
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('TestTaskTag'));
-		$this->Task->expects($this->once())->method('createFile')
-			->with(
-				$this->anything(),
-				$this->stringContains('class TestTaskTagTest extends TestCase')
-			);
-		$this->Task->expects($this->any())->method('isLoadableClass')->will($this->returnValue(true));
-		$this->Task->execute();
-	}
-
-/**
- * test execute with type and class name defined and lower case.
- *
- * @return void
- */
-	public function testExecuteWithTwoArgsLowerCase() {
-		$this->markTestIncomplete('Tests using models need work');
-
-		$this->Task->args = array('model', 'TestTaskTag');
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('TestTaskTag'));
-		$this->Task->expects($this->once())->method('createFile')
-			->with(
-				$this->anything(),
-				$this->stringContains('class TestTaskTagTest extends TestCase')
-			);
-		$this->Task->expects($this->any())->method('isLoadableClass')->will($this->returnValue(true));
-		$this->Task->execute();
 	}
 
 /**
