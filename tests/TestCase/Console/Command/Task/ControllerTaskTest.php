@@ -270,6 +270,22 @@ class ControllerTaskTest extends TestCase {
 	}
 
 /**
+ * Test execute no args.
+ *
+ * @return void
+ */
+	public function testExecuteNoArgs() {
+		$this->Task->expects($this->never())
+			->method('createFile');
+
+		$this->Task->expects($this->at(0))
+			->method('out')
+			->with($this->stringContains('Possible controllers based on your current database'));
+
+		$this->Task->execute();
+	}
+
+/**
  * test that execute runs all when the first arg == all
  *
  * @return void

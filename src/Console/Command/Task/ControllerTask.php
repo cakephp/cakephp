@@ -63,7 +63,7 @@ class ControllerTask extends BakeTask {
 		}
 
 		if (empty($this->args)) {
-			$this->out(__d('cake_console', 'Possible Controllers based on your current database:'));
+			$this->out(__d('cake_console', 'Possible controllers based on your current database:'));
 			foreach ($this->listAll() as $table) {
 				$this->out('- ' . $this->_controllerName($table));
 			}
