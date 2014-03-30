@@ -7,7 +7,7 @@ php:
 env:
   - DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_login='travis' db_password=''
   - DB=pgsql db_class='Cake\Database\Driver\Postgres' db_dsn='pgsql:host=127.0.0.1;dbname=cakephp_test' db_database="cakephp_test" db_login='postgres' db_password=''
-  - DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite::/tmp/cake.db'
+  - DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite:/tmp/cake.db'
 
 services:
   - memcached
