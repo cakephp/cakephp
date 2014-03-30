@@ -88,8 +88,7 @@ class Sqlite extends \Cake\Database\Driver {
  */
 	public function prepare($query) {
 		$this->connect();
-		$sql = $query instanceof Query ? $query->sql() : $query;
-		$statement = $this->_connection->prepare($sql);
+		$statement = $this->_connection->prepare((string)$query);
 		return new SqliteStatement(new PDOStatement($statement, $this), $this);
 	}
 

@@ -1822,7 +1822,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return string
  */
 	public function __toString() {
-		return sprintf('(%s)', $this->sql());
+		return $this->sql();
 	}
 
 /**
