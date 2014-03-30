@@ -15,7 +15,6 @@ services:
 matrix:
   allow_failures:
     - php: hhvm
-    - env: DB=sqlite
   fast_finish: true
   include:
     - php: 5.4
