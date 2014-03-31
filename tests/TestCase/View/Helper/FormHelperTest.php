@@ -5622,7 +5622,8 @@ class FormHelperTest extends TestCase {
 				'/label',
 				'textarea' => array(
 					'name',
-					'id' => '0-comments-1-comment'
+					'type',
+					'id' => '0-comments-1-comment',
 				),
 				'/textarea',
 			'/div'
@@ -5637,6 +5638,7 @@ class FormHelperTest extends TestCase {
 				'/label',
 				'textarea' => array(
 					'name',
+					'type',
 					'id' => '0-comments-0-comment'
 				),
 				'Value',
@@ -5654,6 +5656,7 @@ class FormHelperTest extends TestCase {
 				'/label',
 				'textarea' => array(
 					'name',
+					'type',
 					'class' => 'form-error',
 					'id' => '0-comments-0-comment'
 				),
@@ -5677,6 +5680,8 @@ class FormHelperTest extends TestCase {
 				'/label',
 				'textarea' => array(
 					'name',
+					'type',
+					'required' => 'required',
 					'id' => '0-comments-1-comment'
 				),
 				'/textarea',

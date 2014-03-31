@@ -727,9 +727,7 @@ class ModelTaskTest extends TestCase {
 		$this->Task->expects($this->at(0))
 			->method('out')
 			->with($this->stringContains('Choose a model to bake from the following:'));
-		$this->Task->expects($this->at(1))
-			->method('out')
-			->with('- BakeArticles');
+
 		$this->Task->execute();
 	}
 

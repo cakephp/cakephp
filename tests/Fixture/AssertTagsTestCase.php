@@ -4,7 +4,7 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\TestCase;
 
 /**
- * This class helpes in indirectly testing the functionalities of CakeTestCase::assertTags
+ * This class helps in indirectly testing the functionalities of CakeTestCase::assertTags
  *
  */
 class AssertTagsTestCase extends TestCase {
@@ -118,4 +118,5 @@ class AssertTagsTestCase extends TestCase {
 		);
 		$this->assertTags($input, $pattern);
 	}
+
 }

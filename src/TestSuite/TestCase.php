@@ -271,24 +271,33 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * Checks for an input tag with a name attribute (contains any non-empty value) and an id
  * attribute that contains 'my-input':
- * 	array('input' => array('name', 'id' => 'my-input'))
+ *
+ * {{{
+ * array('input' => array('name', 'id' => 'my-input'))
+ * }}}
  *
  * Checks for two p elements with some text in them:
- * 	array(
- * 		array('p' => true),
- * 		'textA',
- * 		'/p',
- * 		array('p' => true),
- * 		'textB',
- * 		'/p'
- *	)
+ *
+ * {{{
+ * array(
+ *   array('p' => true),
+ *   'textA',
+ *   '/p',
+ *   array('p' => true),
+ *   'textB',
+ *   '/p'
+ * )
+ * }}}
  *
  * You can also specify a pattern expression as part of the attribute values, or the tag
  * being defined, if you prepend the value with preg: and enclose it with slashes, like so:
- *	array(
- *  	array('input' => array('name', 'id' => 'preg:/FieldName\d+/')),
- *  	'preg:/My\s+field/'
- *	)
+ *
+ * {{{
+ * array(
+ *   array('input' => array('name', 'id' => 'preg:/FieldName\d+/')),
+ *   'preg:/My\s+field/'
+ * )
+ * }}}
  *
  * Important: This function is very forgiving about whitespace and also accepts any
  * permutation of attribute order. It will also allow whitespace between specified tags.
@@ -371,8 +380,13 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 							$val = '.+?';
 							$explanations[] = sprintf('Attribute "%s" present', $attr);
 						} elseif (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
-							$quotes = '["\']?';
-							$val = $matches[1];
+							$val = str_replace(
+								array('.*', '.+'),
+								array('.*?', '.+?'),
+								$matches[1]
+							);
+							$quotes = $val !== $matches[1] ? '["\']' : '["\']?';
+
 							$explanations[] = sprintf('Attribute "%s" matches "%s"', $attr, $val);
 						} else {
 							$explanations[] = sprintf('Attribute "%s" == "%s"', $attr, $val);
@@ -383,16 +397,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 					$i++;
 				}
 				if ($attrs) {
-					$permutations = $this->_arrayPermute($attrs);
-
-					$permutationTokens = array();
-					foreach ($permutations as $permutation) {
-						$permutationTokens[] = implode('', $permutation);
-					}
 					$regex[] = array(
-						sprintf('%s', implode(', ', $explanations)),
-						$permutationTokens,
-						$i,
+						'explains' => $explanations,
+						'attrs' => $attrs,
 					);
 				}
 				$regex[] = array(
@@ -402,9 +409,14 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 				);
 			}
 		}
-		foreach ($regex as $i => $assertation) {
-			list($description, $expressions, $itemNum) = $assertation;
+		foreach ($regex as $i => $assertion) {
 			$matches = false;
+			if (isset($assertion['attrs'])) {
+				$string = $this->_assertAttributes($assertion, $string);
+				continue;
+			}
+
+			list($description, $expressions, $itemNum) = $assertion;
 			foreach ((array)$expressions as $expression) {
 				$expression = sprintf('/^%s/s', $expression);
 				if (preg_match($expression, $string, $match)) {
@@ -428,31 +440,33 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 	}
 
 /**
- * Generates all permutation of an array $items and returns them in a new array.
+ * Check the attributes as part of an assertTags() check.
  *
- * @param array $items An array of items
- * @param array $perms
- * @return array
+ * @param array $assertions Assertions to run.
+ * @param string $string The HTML string to check.
+ * @return void
  */
-	protected function _arrayPermute($items, $perms = array()) {
-		static $permuted;
-		if (empty($perms)) {
-			$permuted = array();
-		}
-
-		if (empty($items)) {
-			$permuted[] = $perms;
-		} else {
-			$numItems = count($items) - 1;
-			for ($i = $numItems; $i >= 0; --$i) {
-				$newItems = $items;
-				$newPerms = $perms;
-				list($tmp) = array_splice($newItems, $i, 1);
-				array_unshift($newPerms, $tmp);
-				$this->_arrayPermute($newItems, $newPerms);
+	protected function _assertAttributes($assertions, $string) {
+		$asserts = $assertions['attrs'];
+		$explains = $assertions['explains'];
+		$len = count($asserts);
+		do {
+			$matches = false;
+			foreach ($asserts as $j => $assert) {
+				if (preg_match(sprintf('/^%s/s', $assert), $string, $match)) {
+					$matches = true;
+					$string = substr($string, strlen($match[0]));
+					array_splice($asserts, $j, 1);
+					array_splice($explains, $j, 1);
+					break;
+				}
 			}
-			return $permuted;
-		}
+			if ($matches === false) {
+				$this->assertTrue(false, 'Attribute did not match. Was expecting ' . $explains[$j]);
+			}
+			$len = count($asserts);
+		} while ($len > 0);
+		return $string;
 	}
 
 // @codingStandardsIgnoreStart
