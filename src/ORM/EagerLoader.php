@@ -368,8 +368,8 @@ class EagerLoader {
 			$contain = $meta['associations'];
 			$alias = $meta['instance']->source()->alias();
 
-			$isSelect = $meta['instance']->strategy() === $meta['instance']::STRATEGY_SELECT;
-			if ($isSelect && empty($collected[$alias])) {
+			$requiresKeys = $meta['instance']->requiresKeys($meta['config']);
+			if ($requiresKeys && empty($collected[$alias])) {
 				continue;
 			}
 
