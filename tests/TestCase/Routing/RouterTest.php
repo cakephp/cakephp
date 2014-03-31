@@ -220,6 +220,45 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * Test mapResources with a default extension.
+ *
+ * @return void
+ */
+	public function testMapResourcesWithExtension() {
+		$resources = Router::mapResources('Posts', ['_ext' => 'json']);
+		$this->assertEquals(['posts'], $resources);
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		Router::parseExtensions('json', 'xml');
+
+		$expected = array(
+			'plugin' => null,
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => [],
+			'[method]' => 'GET',
+			'_ext' => 'json',
+		);
+
+		$result = Router::parse('/posts');
+		$this->assertEquals($expected, $result);
+
+		$result = Router::parse('/posts.json');
+		$this->assertEquals($expected, $result);
+
+		$expected = array(
+			'plugin' => null,
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => [],
+			'[method]' => 'GET',
+			'_ext' => 'xml',
+		);
+		$result = Router::parse('/posts.xml');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testMapResources with custom connectOptions
  */
 	public function testMapResourcesConnectOptions() {
