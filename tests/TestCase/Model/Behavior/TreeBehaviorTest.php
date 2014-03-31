@@ -524,7 +524,6 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-
 /**
  * Tests deleting a subtree
  *
