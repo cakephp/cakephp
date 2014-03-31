@@ -24,16 +24,17 @@ use Cake\TestSuite\TestCase;
  */
 class ConnectionTest extends TestCase {
 
+	public $fixtures = ['core.thing'];
+
 	public function setUp() {
-		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
+		parent::setUp();
 	}
 
 	public function tearDown() {
-		parent::tearDown();
-		$this->connection->execute('DROP TABLE IF EXISTS things');
 		$this->connection->useSavePoints(false);
 		unset($this->connection);
+		parent::tearDown();
 	}
 
 /**
@@ -204,9 +205,9 @@ class ConnectionTest extends TestCase {
 		$sql = 'SELECT 1';
 		$statement = $this->connection->execute($sql);
 		$result = $statement->fetch();
-		$statement->closeCursor();
 		$this->assertCount(1, $result);
 		$this->assertEquals([1], $result);
+		$statement->closeCursor();
 	}
 
 /**
@@ -215,18 +216,18 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testInsertWithMatchingTypes() {
-		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
-		$this->connection->execute($table);
-		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
+		$data = ['id' => '3', 'title' => 'a title', 'body' => 'a body'];
 		$result = $this->connection->insert(
 			'things',
 			$data,
 			['id' => 'integer', 'title' => 'string', 'body' => 'string']
 		);
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-		$result = $this->connection->execute('SELECT * from things');
+		$result->closeCursor();
+		$result = $this->connection->execute('SELECT * from things where id = 3');
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
+		$result->closeCursor();
 		$this->assertEquals($data, $row);
 	}
 
@@ -236,40 +237,19 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testInsertWithPositionalTypes() {
-		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
-		$this->connection->execute($table);
-		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
+		$data = ['id' => '3', 'title' => 'a title', 'body' => 'a body'];
 		$result = $this->connection->insert(
 			'things',
 			$data,
 			['integer', 'string', 'string']
 		);
+		$result->closeCursor();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-		$result = $this->connection->execute('SELECT * from things');
+		$result = $this->connection->execute('SELECT * from things where id  = 3');
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
+		$result->closeCursor();
 		$this->assertEquals($data, $row);
-	}
-
-/**
- * Auxiliary function to insert a couple rows in a newly created table
- *
- * @return void
- **/
-	protected function _insertTwoRecords() {
-		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
-		$this->connection->execute($table);
-		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
-		$result = $this->connection->insert(
-			'things',
-			$data,
-			['id' => 'integer', 'title' => 'string', 'body' => 'string']
-		);
-
-		$result->bindValue(1, '2', 'integer');
-		$result->bindValue(2, 'another title');
-		$result->bindValue(3, 'another body');
-		$result->execute();
 	}
 
 /**
@@ -278,8 +258,6 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testStatementReusing() {
-		$this->_insertTwoRecords();
-
 		$total = $this->connection->execute('SELECT COUNT(*) AS total FROM things');
 		$result = $total->fetch('assoc');
 		$this->assertEquals(2, $result['total']);
@@ -302,7 +280,6 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testUpdateWithoutConditionsNorTypes() {
-		$this->_insertTwoRecords();
 		$title = 'changed the title!';
 		$body = 'changed the body!';
 		$this->connection->update('things', ['title' => $title, 'body' => $body]);
@@ -317,7 +294,6 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testUpdateWithConditionsNoTypes() {
-		$this->_insertTwoRecords();
 		$title = 'changed the title!';
 		$body = 'changed the body!';
 		$this->connection->update('things', ['title' => $title, 'body' => $body], ['id' => 2]);
@@ -332,7 +308,6 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testUpdateWithConditionsCombinedNoTypes() {
-		$this->_insertTwoRecords();
 		$title = 'changed the title!';
 		$body = 'changed the body!';
 		$this->connection->update('things', ['title' => $title, 'body' => $body], ['id' => 2, 'body is not null']);
@@ -347,7 +322,6 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testUpdateWithTypes() {
-		$this->_insertTwoRecords();
 		$title = 'changed the title!';
 		$body = new \DateTime('2012-01-01');
 		$values = compact('title', 'body');
@@ -367,7 +341,6 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testUpdateWithConditionsAndTypes() {
-		$this->_insertTwoRecords();
 		$title = 'changed the title!';
 		$body = new \DateTime('2012-01-01');
 		$values = compact('title', 'body');
@@ -385,10 +358,10 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testDeleteNoConditions() {
-		$this->_insertTwoRecords();
 		$this->connection->delete('things');
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(0, $result);
+		$result->closeCursor();
 	}
 
 /**
@@ -396,18 +369,20 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testDeleteWithConditions() {
-		$this->_insertTwoRecords();
 		$this->connection->delete('things', ['id' => '1-rest-is-ommited'], ['id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(1, $result);
+		$result->closeCursor();
 
 		$this->connection->delete('things', ['id' => '1-rest-is-ommited'], ['id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(1, $result);
+		$result->closeCursor();
 
 		$this->connection->delete('things', ['id' => '2-rest-is-ommited'], ['id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(0, $result);
+		$result->closeCursor();
 	}
 
 /**
@@ -416,12 +391,12 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testSimpleTransactions() {
-		$this->_insertTwoRecords();
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
 		$this->connection->rollback();
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(2, $result);
+		$result->closeCursor();
 
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
@@ -437,8 +412,6 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testVirtualNestedTrasanction() {
-		$this->_insertTwoRecords();
-
 		//starting 3 virtual transaction
 		$this->connection->begin();
 		$this->connection->begin();
@@ -462,8 +435,6 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testVirtualNestedTrasanction2() {
-		$this->_insertTwoRecords();
-
 		//starting 3 virtual transaction
 		$this->connection->begin();
 		$this->connection->begin();
@@ -486,8 +457,6 @@ class ConnectionTest extends TestCase {
  **/
 
 	public function testVirtualNestedTrasanction3() {
-		$this->_insertTwoRecords();
-
 		//starting 3 virtual transaction
 		$this->connection->begin();
 		$this->connection->begin();
@@ -511,7 +480,6 @@ class ConnectionTest extends TestCase {
  **/
 	public function testSavePoints() {
 		$this->skipIf(!$this->connection->useSavePoints(true));
-		$this->_insertTwoRecords();
 
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
@@ -541,8 +509,6 @@ class ConnectionTest extends TestCase {
 
 	public function testSavePoints2() {
 		$this->skipIf(!$this->connection->useSavePoints(true));
-		$this->_insertTwoRecords();
-
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
 
