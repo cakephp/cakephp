@@ -33,21 +33,21 @@ class Route {
  *
  * @var array
  */
-	public $keys = array();
+	public $keys = [];
 
 /**
  * An array of additional parameters for the Route.
  *
  * @var array
  */
-	public $options = array();
+	public $options = [];
 
 /**
  * Default parameters for a Route
  *
  * @var array
  */
-	public $defaults = array();
+	public $defaults = [];
 
 /**
  * The routes template string.
@@ -83,18 +83,18 @@ class Route {
  *
  * @var array
  */
-	protected $_headerMap = array(
+	protected $_headerMap = [
 		'type' => 'content_type',
 		'method' => 'request_method',
 		'server' => 'server_name'
-	);
+	];
 
 /**
  * List of connected extensions for this route.
  *
  * @var array
  */
-	protected $_extensions = array();
+	protected $_extensions = [];
 
 /**
  * Constructor for a Route
@@ -110,7 +110,7 @@ class Route {
  * @param array $defaults Array of defaults for the route.
  * @param array $options Array of additional options for the Route
  */
-	public function __construct($template, $defaults = array(), $options = array()) {
+	public function __construct($template, $defaults = [], $options = []) {
 		$this->template = $template;
 		$this->defaults = (array)$defaults;
 		$this->options = (array)$options;
@@ -168,11 +168,11 @@ class Route {
 	protected function _writeRoute() {
 		if (empty($this->template) || ($this->template === '/')) {
 			$this->_compiledRoute = '#^/*$#';
-			$this->keys = array();
+			$this->keys = [];
 			return;
 		}
 		$route = $this->template;
-		$names = $routeParams = array();
+		$names = $routeParams = [];
 		$parsed = preg_quote($this->template, '#');
 
 		preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $route, $namedElements);
@@ -295,7 +295,7 @@ class Route {
 		for ($i = 0; $i <= $count; $i++) {
 			unset($route[$i]);
 		}
-		$route['pass'] = array();
+		$route['pass'] = [];
 
 		// Assign defaults, set passed args to pass
 		foreach ($this->defaults as $key => $value) {
@@ -320,7 +320,7 @@ class Route {
 			unset($route['_trailing_']);
 		}
 
-		if ($ext && empty($route['_ext'])) {
+		if (!empty($ext)) {
 			$route['_ext'] = $ext;
 		}
 
@@ -373,7 +373,7 @@ class Route {
  * @return array Array of passed args.
  */
 	protected function _parseArgs($args, $context) {
-		$pass = array();
+		$pass = [];
 		$args = explode('/', $args);
 
 		foreach ($args as $param) {
@@ -398,7 +398,7 @@ class Route {
  *   directory.
  * @return mixed Either a string url for the parameters if they match or false.
  */
-	public function match($url, $context = array()) {
+	public function match($url, $context = []) {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
@@ -434,7 +434,7 @@ class Route {
 		}
 
 		// Missing defaults is a fail.
-		if (array_diff_key($defaults, $url) !== array()) {
+		if (array_diff_key($defaults, $url) !== []) {
 			return false;
 		}
 
@@ -449,8 +449,8 @@ class Route {
 			return false;
 		}
 
-		$pass = array();
-		$query = array();
+		$pass = [];
+		$query = [];
 
 		foreach ($url as $key => $value) {
 			// keys that exist in the defaults and have different values is a match failure.
@@ -506,12 +506,12 @@ class Route {
  * @param array $query An array of parameters
  * @return string Composed route string.
  */
-	protected function _writeUrl($params, $pass = array(), $query = array()) {
+	protected function _writeUrl($params, $pass = [], $query = []) {
 		$pass = implode('/', array_map('rawurlencode', $pass));
 		$out = $this->template;
 
 		if (!empty($this->keys)) {
-			$search = $replace = array();
+			$search = $replace = [];
 
 			foreach ($this->keys as $key) {
 				$string = null;

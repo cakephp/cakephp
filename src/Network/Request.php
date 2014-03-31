@@ -39,7 +39,8 @@ class Request implements \ArrayAccess {
 		'plugin' => null,
 		'controller' => null,
 		'action' => null,
-		'pass' => [],
+		'_ext' => null,
+		'pass' => []
 	);
 
 /**
