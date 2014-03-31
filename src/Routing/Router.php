@@ -328,10 +328,10 @@ class Router {
  * @return void
  * @throws \Cake\Error\Exception
  */
-	public static function connect($route, $defaults = array(), $options = array()) {
+	public static function connect($route, $defaults = [], $options = []) {
 		static::$initialized = true;
 
-		$defaults += array('plugin' => null);
+		$defaults += ['plugin' => null];
 		if (empty($options['action'])) {
 			$defaults += array('action' => 'index');
 		}
@@ -382,7 +382,7 @@ class Router {
  * @see routes
  * @return array Array of routes
  */
-	public static function redirect($route, $url, $options = array()) {
+	public static function redirect($route, $url, $options = []) {
 		$options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
 		if (is_string($url)) {
 			$url = array('redirect' => $url);
@@ -434,7 +434,7 @@ class Router {
  * @param array $options Options to use when generating REST routes
  * @return array Array of mapped resources
  */
-	public static function mapResources($controller, $options = array()) {
+	public static function mapResources($controller, $options = []) {
 		$options = array_merge(array(
 			'connectOptions' => [],
 			'id' => static::ID . '|' . static::UUID
@@ -541,7 +541,7 @@ class Router {
 			static::pushRequest($request);
 		} else {
 			$requestData = $request;
-			$requestData += array(array(), array());
+			$requestData += array([], []);
 			$requestData[0] += array(
 				'controller' => false,
 				'action' => false,
@@ -713,14 +713,14 @@ class Router {
  * @return string Full translated URL with base path.
  * @throws \Cake\Error\Exception When the route name is not found
  */
-	public static function url($url = null, $options = array()) {
+	public static function url($url = null, $options = []) {
 		if (!static::$initialized) {
 			static::_loadRoutes();
 		}
 
 		$full = false;
 		if (is_bool($options)) {
-			list($full, $options) = array($options, array());
+			list($full, $options) = array($options, []);
 		}
 		$urlType = gettype($url);
 		$hasLeadingSlash = $plainString = false;
@@ -888,14 +888,14 @@ class Router {
  * @return string The string that is the reversed result of the array
  */
 	public static function reverse($params, $full = false) {
-		$url = array();
+		$url = [];
 		if ($params instanceof Request) {
 			$url = $params->query;
 			$params = $params->params;
 		} elseif (isset($params['url'])) {
 			$url = $params['url'];
 		}
-		$pass = isset($params['pass']) ? $params['pass'] : array();
+		$pass = isset($params['pass']) ? $params['pass'] : [];
 
 		unset(
 			$params['pass'], $params['paging'], $params['models'], $params['url'], $url['url'],
@@ -1016,13 +1016,13 @@ class Router {
  * @param array $options The array of options.
  * @return \Cake\Network\Request The modified request
  */
-	public static function parseNamedParams(Request $request, $options = array()) {
+	public static function parseNamedParams(Request $request, $options = []) {
 		$options += array('separator' => ':');
 		if (empty($request->params['pass'])) {
-			$request->params['named'] = array();
+			$request->params['named'] = [];
 			return $request;
 		}
-		$named = array();
+		$named = [];
 		foreach ($request->params['pass'] as $key => $value) {
 			if (strpos($value, $options['separator']) === false) {
 				continue;

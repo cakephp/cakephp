@@ -416,36 +416,36 @@ class RouterTest extends TestCase {
 	public function testGenerateUrlResourceRoute() {
 		Router::mapResources('Posts');
 
-		$result = Router::url(array(
+		$result = Router::url([
 			'controller' => 'posts',
 			'action' => 'index',
 			'[method]' => 'GET'
-		));
+		]);
 		$expected = '/posts';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(array(
+		$result = Router::url([
 			'controller' => 'posts',
 			'action' => 'view',
 			'[method]' => 'GET',
 			'id' => 10
-		));
+		]);
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(array('controller' => 'posts', 'action' => 'add', '[method]' => 'POST'));
+		$result = Router::url(['controller' => 'posts', 'action' => 'add', '[method]' => 'POST']);
 		$expected = '/posts';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(array('controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'id' => 10));
+		$result = Router::url(['controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'id' => 10]);
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(array('controller' => 'posts', 'action' => 'delete', '[method]' => 'DELETE', 'id' => 10));
+		$result = Router::url(['controller' => 'posts', 'action' => 'delete', '[method]' => 'DELETE', 'id' => 10]);
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(array('controller' => 'posts', 'action' => 'edit', '[method]' => 'POST', 'id' => 10));
+		$result = Router::url(['controller' => 'posts', 'action' => 'edit', '[method]' => 'POST', 'id' => 10]);
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 	}

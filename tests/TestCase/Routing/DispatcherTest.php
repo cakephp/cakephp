@@ -119,7 +119,7 @@ class MyPluginController extends MyPluginAppController {
  *
  * @var array
  */
-	public $uses = array();
+	public $uses = [];
 
 /**
  * index method
@@ -169,7 +169,7 @@ class OtherPagesController extends MyPluginAppController {
  *
  * @var array
  */
-	public $uses = array();
+	public $uses = [];
 
 /**
  * display method
@@ -217,7 +217,7 @@ class ArticlesTestController extends ArticlesTestAppController {
  *
  * @var array
  */
-	public $uses = array();
+	public $uses = [];
 
 /**
  * admin_index method
@@ -252,7 +252,7 @@ class DispatcherTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$_GET = array();
+		$_GET = [];
 
 		Configure::write('App.base', false);
 		Configure::write('App.baseUrl', false);
@@ -273,7 +273,7 @@ class DispatcherTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Plugin::unload();
-		Configure::write('Dispatcher.filters', array());
+		Configure::write('Dispatcher.filters', []);
 	}
 
 /**
@@ -932,7 +932,7 @@ class DispatcherTest extends TestCase {
 		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
 		$dispatcher->parseParams($event);
 		$expected = array(
-			'pass' => array(),
+			'pass' => [],
 			'plugin' => null,
 			'controller' => 'posts',
 			'action' => 'add',
@@ -1012,7 +1012,7 @@ class DispatcherTest extends TestCase {
 		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
 		$dispatcher->parseParams($event);
 		$expected = array(
-			'pass' => array(),
+			'pass' => [],
 			'plugin' => null,
 			'controller' => 'posts',
 			'action' => 'add',
@@ -1053,7 +1053,7 @@ class DispatcherTest extends TestCase {
 		foreach ($_SERVER as $key => $val) {
 			unset($_SERVER[$key]);
 		}
-		Configure::write('App', array());
+		Configure::write('App', []);
 	}
 
 /**
