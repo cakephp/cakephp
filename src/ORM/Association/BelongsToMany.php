@@ -280,28 +280,14 @@ class BelongsToMany extends Association {
 	}
 
 /**
- * {@inheritdoc}
+ * Builds an array containing the results from fetchQuery indexed by
+ * the foreignKey value corresponding to this association.
  *
+ * @param \Cake\ORM\Query $fetchQuery The query to get results from
+ * @param array $options The options passed to the eager loader
+ * @return array
  */
-	public function eagerLoader(array $options) {
-		$options += [
-			'foreignKey' => $this->foreignKey(),
-			'conditions' => [],
-			'sort' => $this->sort(),
-			'strategy' => $this->strategy()
-		];
-
-		$queryBuilder = false;
-		if (!empty($options['queryBuilder'])) {
-			$queryBuilder = $options['queryBuilder'];
-			unset($options['queryBuilder']);
-		}
-
-		$fetchQuery = $this->_buildQuery($options);
-		if ($queryBuilder) {
-			$fetchQuery = $queryBuilder($fetchQuery);
-		}
-
+	protected function _buildResultMap($fetchQuery, $options) {
 		$resultMap = [];
 		$key = (array)$options['foreignKey'];
 		$property = $this->target()->association($this->junction()->alias())->property();
@@ -321,8 +307,7 @@ class BelongsToMany extends Association {
 			}
 			$resultMap[implode(';', $values)][] = $result;
 		}
-
-		return $this->_resultInjector($fetchQuery, $resultMap);
+		return $resultMap;
 	}
 
 /**
@@ -410,7 +395,6 @@ class BelongsToMany extends Association {
  * @see BelongsToMany::replaceLinks()
  */
 	public function save(Entity $entity, $options = []) {
-		$property = $this->property();
 		$targetEntity = $entity->get($this->property());
 		$strategy = $this->saveStrategy();
 
@@ -508,7 +492,7 @@ class BelongsToMany extends Association {
 		$jointProperty = $this->_junctionProperty;
 		$junctionAlias = $junction->alias();
 
-		foreach ($targetEntities as $k => $e) {
+		foreach ($targetEntities as $e) {
 			$joint = $e->get($jointProperty);
 			if (!$joint) {
 				$joint = new $entityClass;
@@ -936,8 +920,8 @@ class BelongsToMany extends Association {
 		if ($name === null) {
 			if (empty($this->_junctionTableName)) {
 				$aliases = array_map('\Cake\Utility\Inflector::underscore', [
-					$sAlias = $this->source()->alias(),
-					$tAlias = $this->target()->alias()
+					$this->source()->alias(),
+					$this->target()->alias()
 				]);
 				sort($aliases);
 				$this->_junctionTableName = implode('_', $aliases);

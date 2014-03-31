@@ -131,65 +131,6 @@ trait ExternalAssociationTrait {
 	}
 
 /**
- * Returns a callable to be used for each row in a query result set
- * for injecting the eager loaded rows
- *
- * @param \Cake\ORM\Query $fetchQuery the Query used to fetch results
- * @param array $resultMap an array with the foreignKey as keys and
- * the corresponding target table results as value.
- * @return \Closure
- */
-	protected function _resultInjector($fetchQuery, $resultMap) {
-		$source = $this->source();
-		$sAlias = $source->alias();
-		$tAlias = $this->target()->alias();
-
-		$sourceKeys = [];
-		foreach ((array)$source->primaryKey() as $key) {
-			$sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
-		}
-
-		$nestKey = $tAlias . '___collection_';
-
-		if (count($sourceKeys) > 1) {
-			return $this->_multiKeysInjector($resultMap, $sourceKeys, $nestKey);
-		}
-
-		$sourceKey = $sourceKeys[0];
-		return function($row) use ($resultMap, $sourceKey, $nestKey) {
-			if (isset($resultMap[$row[$sourceKey]])) {
-				$row[$nestKey] = $resultMap[$row[$sourceKey]];
-			}
-			return $row;
-		};
-	}
-
-/**
- * Returns a callable to be used for each row in a query result set
- * for injecting the eager loaded rows when the matching needs to
- * be done with multiple foreign keys
- *
- * @param array $resultMap a keyed arrays containing the target table
- * @param array $sourceKeys an array with aliased keys to match
- * @param string $nestKey the key under which results should be nested
- * @return \Closure
- */
-	protected function _multiKeysInjector($resultMap, $sourceKeys, $nestKey) {
-		return function($row) use ($resultMap, $sourceKeys, $nestKey) {
-			$values = [];
-			foreach ($sourceKeys as $key) {
-				$values[] = $row[$key];
-			}
-
-			$key = implode(';', $values);
-			if (isset($resultMap[$key])) {
-				$row[$nestKey] = $resultMap[$key];
-			}
-			return $row;
-		};
-	}
-
-/**
  * Parse extra options passed in the constructor.
  *
  * @param array $opts original list of options passed in constructor

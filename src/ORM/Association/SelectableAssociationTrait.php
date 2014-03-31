@@ -30,7 +30,33 @@ trait SelectableAssociationTrait {
  */
 	public function requiresKeys($options = []) {
 		$strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
-		return $strategy === parent::STRATEGY_SELECT;
+		return $strategy === $this::STRATEGY_SELECT;
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	public function eagerLoader(array $options) {
+		$options += [
+			'foreignKey' => $this->foreignKey(),
+			'conditions' => [],
+			'sort' => $this->sort(),
+			'strategy' => $this->strategy()
+		];
+
+		$queryBuilder = false;
+		if (!empty($options['queryBuilder'])) {
+			$queryBuilder = $options['queryBuilder'];
+			unset($options['queryBuilder']);
+		}
+
+		$fetchQuery = $this->_buildQuery($options);
+		if ($queryBuilder) {
+			$fetchQuery = $queryBuilder($fetchQuery);
+		}
+		$resultMap = $this->_buildResultMap($fetchQuery, $options);
+		return $this->_resultInjector($fetchQuery, $resultMap);
 	}
 
 /**
@@ -48,8 +74,8 @@ trait SelectableAssociationTrait {
 		$key = $this->_linkField($options);
 
 		$filter = $options['keys'];
-		if ($options['strategy'] === parent::STRATEGY_SUBQUERY) {
-			$filter = $this->_buildSubquery($options['query'], $key);
+		if ($options['strategy'] === $this::STRATEGY_SUBQUERY) {
+			$filter = $this->_buildSubquery($options['query']);
 		}
 
 		$fetchQuery = $this
@@ -136,10 +162,9 @@ trait SelectableAssociationTrait {
  * to load records in the source table.
  *
  * @param \Cake\ORM\Query $query the original query used to load source records
- * @param string $foreignKey the field to be selected in the query
  * @return \Cake\ORM\Query
  */
-	protected function _buildSubquery($query, $foreignKey) {
+	protected function _buildSubquery($query) {
 		$filterQuery = clone $query;
 		$filterQuery->limit(null);
 		$filterQuery->contain([], true);
@@ -152,6 +177,87 @@ trait SelectableAssociationTrait {
 		$filterQuery->join($joins, [], true);
 		$fields = $query->aliasFields((array)$query->repository()->primaryKey());
 		return $filterQuery->select($fields, true);
+	}
+
+/**
+ * Builds an array containing the results from fetchQuery indexed by
+ * the foreignKey value corresponding to this association.
+ *
+ * @param \Cake\ORM\Query $fetchQuery The query to get results from
+ * @param array $options The options passed to the eager loader
+ * @return array
+ */
+	protected function _buildResultMap($fetchQuery, $options) {
+		$resultMap = [];
+		$key = (array)$options['foreignKey'];
+
+		foreach ($fetchQuery->all() as $result) {
+			$values = [];
+			foreach ($key as $k) {
+				$values[] = $result[$k];
+			}
+			$resultMap[implode(';', $values)][] = $result;
+		}
+		return $resultMap;
+	}
+
+/**
+ * Returns a callable to be used for each row in a query result set
+ * for injecting the eager loaded rows
+ *
+ * @param \Cake\ORM\Query $fetchQuery the Query used to fetch results
+ * @param array $resultMap an array with the foreignKey as keys and
+ * the corresponding target table results as value.
+ * @return \Closure
+ */
+	protected function _resultInjector($fetchQuery, $resultMap) {
+		$source = $this->source();
+		$sAlias = $source->alias();
+		$tAlias = $this->target()->alias();
+
+		$sourceKeys = [];
+		foreach ((array)$source->primaryKey() as $key) {
+			$sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
+		}
+
+		$nestKey = $tAlias . '___collection_';
+
+		if (count($sourceKeys) > 1) {
+			return $this->_multiKeysInjector($resultMap, $sourceKeys, $nestKey);
+		}
+
+		$sourceKey = $sourceKeys[0];
+		return function($row) use ($resultMap, $sourceKey, $nestKey) {
+			if (isset($resultMap[$row[$sourceKey]])) {
+				$row[$nestKey] = $resultMap[$row[$sourceKey]];
+			}
+			return $row;
+		};
+	}
+
+/**
+ * Returns a callable to be used for each row in a query result set
+ * for injecting the eager loaded rows when the matching needs to
+ * be done with multiple foreign keys
+ *
+ * @param array $resultMap a keyed arrays containing the target table
+ * @param array $sourceKeys an array with aliased keys to match
+ * @param string $nestKey the key under which results should be nested
+ * @return \Closure
+ */
+	protected function _multiKeysInjector($resultMap, $sourceKeys, $nestKey) {
+		return function($row) use ($resultMap, $sourceKeys, $nestKey) {
+			$values = [];
+			foreach ($sourceKeys as $key) {
+				$values[] = $row[$key];
+			}
+
+			$key = implode(';', $values);
+			if (isset($resultMap[$key])) {
+				$row[$nestKey] = $resultMap[$key];
+			}
+			return $row;
+		};
 	}
 
 }

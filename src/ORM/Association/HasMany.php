@@ -47,43 +47,6 @@ class HasMany extends Association {
 	protected $_strategy = parent::STRATEGY_SELECT;
 
 /**
- * {@inheritdoc}
- *
- */
-	public function eagerLoader(array $options) {
-		$options += [
-			'foreignKey' => $this->foreignKey(),
-			'conditions' => [],
-			'sort' => $this->sort(),
-			'strategy' => $this->strategy()
-		];
-
-		$queryBuilder = false;
-		if (!empty($options['queryBuilder'])) {
-			$queryBuilder = $options['queryBuilder'];
-			unset($options['queryBuilder']);
-		}
-
-		$fetchQuery = $this->_buildQuery($options);
-		if ($queryBuilder) {
-			$fetchQuery = $queryBuilder($fetchQuery);
-		}
-
-		$resultMap = [];
-		$key = (array)$options['foreignKey'];
-
-		foreach ($fetchQuery->all() as $result) {
-			$values = [];
-			foreach ($key as $k) {
-				$values[] = $result[$k];
-			}
-			$resultMap[implode(';', $values)][] = $result;
-		}
-
-		return $this->_resultInjector($fetchQuery, $resultMap);
-	}
-
-/**
  * Returns whether or not the passed table is the owning side for this
  * association. This means that rows in the 'target' table would miss important
  * or required information if the row in 'source' did not exist.
