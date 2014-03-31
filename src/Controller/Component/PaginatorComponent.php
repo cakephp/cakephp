@@ -39,9 +39,12 @@ class PaginatorComponent extends Component {
  * When calling paginate() these settings will be merged with the configuration
  * you provide.
  *
- * - `maxLimit` The maximum limit users can choose to view. Defaults to 100
- * - `limit` The initial number of items per page. Defaults to 20.
- * - `page` The starting page, defaults to 1.
+ * - `maxLimit` - The maximum limit users can choose to view. Defaults to 100
+ * - `limit` - The initial number of items per page. Defaults to 20.
+ * - `page` - The starting page, defaults to 1.
+ * - `whitelist` - A list of parameters users are allowed to set using request
+ *   parameters. Modifying this list will allow users to have more influence
+ *   over pagination, be careful with what you permit.
  *
  * @var array
  */
@@ -49,17 +52,7 @@ class PaginatorComponent extends Component {
 		'page' => 1,
 		'limit' => 20,
 		'maxLimit' => 100,
-	);
-
-/**
- * A list of parameters users are allowed to set using request parameters. Modifying
- * this list will allow users to have more influence over pagination,
- * be careful with what you permit.
- *
- * @var array
- */
-	public $whitelist = array(
-		'limit', 'sort', 'page', 'direction'
+		'whitelist' => ['limit', 'sort', 'page', 'direction']
 	);
 
 /**
@@ -224,7 +217,7 @@ class PaginatorComponent extends Component {
  * - Request parameters
  *
  * The result of this method is the aggregate of all the option sets combined together. You can change
- * PaginatorComponent::$whitelist to modify which options/values can be set using request parameters.
+ * config value `whitelist` to modify which options/values can be set using request parameters.
  *
  * @param string $alias Model alias being paginated, if the general settings has a key with this value
  *   that key's settings will be used for pagination instead of the general ones.
@@ -234,7 +227,7 @@ class PaginatorComponent extends Component {
 	public function mergeOptions($alias, $settings) {
 		$defaults = $this->getDefaults($alias, $settings);
 		$request = $this->_registry->getController()->request;
-		$request = array_intersect_key($request->query, array_flip($this->whitelist));
+		$request = array_intersect_key($request->query, array_flip($this->_config['whitelist']));
 		return array_merge($defaults, $request);
 	}
 

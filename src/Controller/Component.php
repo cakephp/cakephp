@@ -107,8 +107,6 @@ class Component extends Object implements EventListener {
 
 		$this->config($config);
 
-		$this->_set($this->config());
-
 		if (!empty($this->components)) {
 			$this->_componentMap = $registry->normalizeArray($this->components);
 		}

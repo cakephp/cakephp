@@ -138,7 +138,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller = new SecurityTestController($request);
 		$this->Controller->constructClasses();
 		$this->Controller->Security = $this->Controller->TestSecurity;
-		$this->Controller->Security->blackHoleCallback = 'fail';
+		$this->Controller->Security->config('blackHoleCallback', 'fail');
 		$this->Security = $this->Controller->Security;
 		Configure::write('Session', [
 			'defaults' => 'php'
@@ -175,7 +175,7 @@ class SecurityComponentTest extends TestCase {
 		$Controller = new \TestApp\Controller\SomePagesController($request);
 		$event = new Event('Controller.startup', $Controller, $this->Controller);
 		$Security = new SecurityComponent($Controller->components());
-		$Security->blackHoleCallback = '_fail';
+		$Security->config('blackHoleCallback', '_fail');
 		$Security->startup($event);
 		$Security->blackHole($Controller, 'csrf');
 	}
@@ -597,7 +597,7 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testValidatePostWithDisabledFields() {
 		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->Security->disabledFields = array('Model.username', 'Model.password');
+		$this->Controller->Security->config('disabledFields', ['Model.username', 'Model.password']);
 		$this->Controller->Security->startup($event);
 		$fields = 'ef1082968c449397bcd849f963636864383278b1%3AModel.hidden';
 		$unlocked = '';
@@ -870,7 +870,7 @@ class SecurityComponentTest extends TestCase {
 		$this->assertFalse($result);
 
 		$this->Controller->Security->startup($event);
-		$this->Controller->Security->disabledFields = array('MyModel.name');
+		$this->Controller->Security->config('disabledFields', ['MyModel.name']);
 
 		$this->Controller->request->data = array(
 			'MyModel' => array('name' => 'some data'),

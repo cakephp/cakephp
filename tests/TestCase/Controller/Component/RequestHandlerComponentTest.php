@@ -99,7 +99,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$controller = $this->getMock('Cake\Controller\Controller');
 		$collection = new ComponentRegistry($controller);
 		$requestHandler = new RequestHandlerComponent($collection, $config);
-		$this->assertEquals('test_ajax', $requestHandler->ajaxLayout);
+		$this->assertEquals('test_ajax', $requestHandler->config('ajaxLayout'));
 		$this->assertEquals(array('json' => 'MyPlugin.MyJson'), $requestHandler->config('viewClassMap'));
 	}
 
@@ -335,7 +335,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$this->RequestHandler->startup($event);
-		$this->assertEquals($this->Controller->layout, $this->RequestHandler->ajaxLayout);
+		$this->assertEquals($this->Controller->layout, $this->RequestHandler->config('ajaxLayout'));
 
 		$this->_init();
 		$this->Controller->request->params['_ext'] = 'js';
