@@ -88,16 +88,6 @@ class HasOne extends Association {
 	}
 
 /**
- * Eager loads a list of records in the target table that are related to another
- * set of records in the source table.
- *
- * @param array $options
- * @return \Closure
- */
-	public function eagerLoader(array $options) {
-	}
-
-/**
  * Takes an entity from the source table and looks if there is a field
  * matching the property name for this association. The found entity will be
  * saved on the target table for this association by passing supplied
@@ -158,6 +148,13 @@ class HasOne extends Association {
 		}
 
 		return $conditions;
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	public function eagerLoader(array $options) {
 	}
 
 }
