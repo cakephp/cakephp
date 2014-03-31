@@ -384,7 +384,7 @@ class TestTaskTest extends TestCase {
 			->method('createFile')
 			->will($this->returnValue(true));
 
-		$result = $this->Task->bake('Controller', 'Admin\Posts');
+		$result = $this->Task->bake('controller', 'Admin\Posts');
 
 		$this->assertContains("use TestApp\Controller\Admin\PostsController", $result);
 		$this->assertContains('class PostsControllerTest extends ControllerTestCase', $result);

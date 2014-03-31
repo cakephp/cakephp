@@ -16,6 +16,7 @@
  */
 use Cake\Utility\Inflector;
 
+$isController = strtolower($type) === 'controller';
 echo "<?php\n";
 ?>
 namespace <?= $baseNamespace; ?>\Test\TestCase\<?= $subNamespace ?>;
@@ -23,7 +24,7 @@ namespace <?= $baseNamespace; ?>\Test\TestCase\<?= $subNamespace ?>;
 <?php foreach ($uses as $dependency): ?>
 use <?= $dependency; ?>;
 <?php endforeach; ?>
-<?php if ($type === 'Controller'): ?>
+<?php if ($isController): ?>
 use Cake\TestSuite\ControllerTestCase;
 <?php else: ?>
 use Cake\TestSuite\TestCase;
@@ -32,7 +33,7 @@ use Cake\TestSuite\TestCase;
 /**
  * <?= $fullClassName; ?> Test Case
  */
-<?php if ($type === 'Controller'): ?>
+<?php if ($isController): ?>
 class <?= $className; ?>Test extends ControllerTestCase {
 <?php else: ?>
 class <?= $className; ?>Test extends TestCase {

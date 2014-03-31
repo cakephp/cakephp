@@ -512,6 +512,7 @@ class TestTask extends BakeTask {
 			'help' => __d('cake_console', 'CamelCased name of the plugin to bake tests for.')
 		])->addOption('force', [
 			'short' => 'f',
+			'boolean' => true,
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		])->addOption('fixtures', [
 			'help' => __d('cake_console', 'A comma separated list of fixture names you want to include.')
