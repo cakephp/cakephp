@@ -367,6 +367,12 @@ class EagerLoader {
 		foreach ($external as $meta) {
 			$contain = $meta['associations'];
 			$alias = $meta['instance']->source()->alias();
+
+			$requiresKeys = $meta['instance']->requiresKeys($meta['config']);
+			if ($requiresKeys && empty($collected[$alias])) {
+				continue;
+			}
+
 			$keys = isset($collected[$alias]) ? $collected[$alias] : null;
 			$f = $meta['instance']->eagerLoader(
 				$meta['config'] + ['query' => $query, 'contain' => $contain, 'keys' => $keys]

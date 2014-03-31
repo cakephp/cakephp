@@ -30,7 +30,7 @@ class QueryRegressionTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.user'];
+	public $fixtures = ['core.user', 'core.article', 'core.tag', 'core.articles_tag'];
 
 /**
  * Tear down
@@ -51,6 +51,19 @@ class QueryRegressionTest extends TestCase {
 		$user = $table->find()->where(['id' => 1])->first();
 		$this->assertEquals(new \DateTime('2007-03-17 01:16:23'), $user->created);
 		$this->assertEquals(new \DateTime('2007-03-17 01:18:31'), $user->updated);
+	}
+
+/**
+ * Tests that EagerLoader does not try to create queries for associations having no
+ * keys to compare against
+ *
+ * @return void
+ */
+	public function testEagerLoadingFromEmptyResults() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsToMany('ArticlesTags');
+		$results = $table->find()->where(['id >' => 100])->contain('ArticlesTags')->toArray();
+		$this->assertEmpty($results);
 	}
 
 }
