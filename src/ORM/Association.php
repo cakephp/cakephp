@@ -577,6 +577,15 @@ abstract class Association {
 	}
 
 /**
+ * Eager loads a list of records in the target table that are related to another
+ * set of records in the source table.
+ *
+ * @param array $options
+ * @return \Closure
+ */
+	public abstract function eagerLoader(array $options);
+
+/**
  * Returns a single or multiple condition(s) to be appended to the generated join
  * clause for getting the results on the target table. If false is returned then
  * it will not attach any new conditions to the join clause
