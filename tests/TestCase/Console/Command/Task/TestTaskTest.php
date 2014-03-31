@@ -264,17 +264,17 @@ class TestTaskTest extends TestCase {
 	public static function realClassProvider() {
 		return [
 			['Entity', 'Article', 'App\Model\Entity\Article'],
-			['Entity', 'ArticleEntity', 'App\Model\Entity\ArticleEntity'],
+			['entity', 'ArticleEntity', 'App\Model\Entity\ArticleEntity'],
 			['Table', 'Posts', 'App\Model\Table\PostsTable'],
-			['Table', 'PostsTable', 'App\Model\Table\PostsTable'],
+			['table', 'PostsTable', 'App\Model\Table\PostsTable'],
 			['Controller', 'Posts', 'App\Controller\PostsController'],
-			['Controller', 'PostsController', 'App\Controller\PostsController'],
+			['controller', 'PostsController', 'App\Controller\PostsController'],
 			['Behavior', 'Timestamp', 'App\Model\Behavior\TimestampBehavior'],
-			['Behavior', 'TimestampBehavior', 'App\Model\Behavior\TimestampBehavior'],
+			['behavior', 'TimestampBehavior', 'App\Model\Behavior\TimestampBehavior'],
 			['Helper', 'Form', 'App\View\Helper\FormHelper'],
-			['Helper', 'FormHelper', 'App\View\Helper\FormHelper'],
+			['helper', 'FormHelper', 'App\View\Helper\FormHelper'],
 			['Component', 'Auth', 'App\Controller\Component\AuthComponent'],
-			['Component', 'AuthComponent', 'App\Controller\Component\AuthComponent'],
+			['component', 'AuthComponent', 'App\Controller\Component\AuthComponent'],
 		];
 	}
 

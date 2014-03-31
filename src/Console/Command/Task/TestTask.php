@@ -66,12 +66,12 @@ class TestTask extends BakeTask {
  * @var array
  */
 	public $classSuffixes = [
-		'Entity' => '',
-		'Table' => 'Table',
-		'Controller' => 'Controller',
-		'Component' => 'Component',
-		'Behavior' => 'Behavior',
-		'Helper' => 'Helper'
+		'entity' => '',
+		'table' => 'Table',
+		'controller' => 'Controller',
+		'component' => 'Component',
+		'behavior' => 'Behavior',
+		'helper' => 'Helper'
 	];
 
 /**
@@ -264,7 +264,7 @@ class TestTask extends BakeTask {
 		if ($this->plugin) {
 			$namespace = Plugin::getNamespace($this->plugin);
 		}
-		$suffix = $this->classSuffixes[$type];
+		$suffix = $this->classSuffixes[strtolower($type)];
 		$subSpace = $this->mapType($type);
 		if ($suffix && strpos($class, $suffix) === false) {
 			$class .= $suffix;
