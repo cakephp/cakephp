@@ -193,6 +193,10 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with($filename, $this->anything());
+
+		$this->Task->Test->expects($this->at(0))
+			->method('bake')
+			->with('Controller', 'Admin\BakeArticles');
 		$result = $this->Task->bake('BakeArticles');
 
 		$this->assertTextContains('namespace App\Controller\Admin;', $result);

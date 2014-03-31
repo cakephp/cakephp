@@ -217,7 +217,9 @@ class ControllerTask extends BakeTask {
 		}
 		$this->Test->plugin = $this->plugin;
 		$this->Test->connection = $this->connection;
-		$this->Test->interactive = $this->interactive;
+		if (!empty($this->params['prefix'])) {
+			$className = $this->params['prefix'] . '\\' . $className;
+		}
 		return $this->Test->bake('Controller', $className);
 	}
 
