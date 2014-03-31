@@ -699,9 +699,7 @@ class Controller extends Object implements EventListener {
 	public function paginate($object = null) {
 		if (is_object($object)) {
 			$table = $object;
-		}
-
-		if (is_string($object) || $object === null) {
+		} elseif (is_string($object) || $object === null) {
 			$try = [$object, $this->modelClass];
 			foreach ($try as $tableName) {
 				if (empty($tableName)) {
@@ -712,14 +710,22 @@ class Controller extends Object implements EventListener {
 			}
 		}
 
-		$this->Paginator = $this->addComponent('Paginator');
+		$alias = $table->alias();
+		$paginate = $this->paginate;
+		if (isset($paginate[$alias])) {
+			$paginate = $paginate[$alias];
+		}
+
+		if (!isset($this->Paginator)) {
+			$this->addComponent('Paginator');
+		}
 		if (
 			!in_array('Paginator', $this->helpers) &&
 			!array_key_exists('Paginator', $this->helpers)
 		) {
 			$this->helpers[] = 'Paginator';
 		}
-		return $this->Paginator->paginate($table, $this->paginate);
+		return $this->Paginator->paginate($table, $paginate);
 	}
 
 /**

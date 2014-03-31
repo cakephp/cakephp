@@ -718,6 +718,37 @@ class ControllerTest extends TestCase {
 	}
 
 /**
+ * testPaginateNestedConfig
+ *
+ * @return void
+ */
+	public function testPaginateNestedConfig() {
+		$request = new Request('controller_posts/index');
+		$request->params['pass'] = array();
+		$response = $this->getMock('Cake\Network\Response', ['httpCodes']);
+
+		$Controller = new Controller($request, $response);
+		$Controller->paginate = [
+			'limit' => 123,
+			'Posts' => [
+				'limit' => 456
+			],
+			'Authors' => [
+				'limit' => 789
+			]
+		];
+
+		$Controller->Posts = TableRegistry::get('Posts');
+		$Controller->Paginator = $this->getMock('Cake\Component\PaginatorComponent', ['paginate']);
+		$Controller->Paginator
+			->expects($this->at(0))
+			->method('paginate')
+			->with($Controller->Posts, ['limit' => 456]);
+
+		$Controller->paginate('Posts');
+	}
+
+/**
  * testMissingAction method
  *
  * @expectedException \Cake\Error\MissingActionException

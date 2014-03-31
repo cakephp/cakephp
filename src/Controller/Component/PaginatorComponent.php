@@ -169,7 +169,6 @@ class PaginatorComponent extends Component {
 		$count = $numResults ? $query->count() : 0;
 
 		$defaults = $this->getDefaults($alias, $settings);
-		unset($defaults[0]);
 
 		$page = $options['page'];
 		$limit = $options['limit'];
@@ -247,18 +246,13 @@ class PaginatorComponent extends Component {
  * @return array An array of pagination defaults for a model, or the general settings.
  */
 	public function getDefaults($alias, $defaults) {
-		if (isset($defaults[$alias])) {
-			$defaults = $defaults[$alias];
-		}
 		if (isset($defaults['limit']) &&
 			(empty($defaults['maxLimit']) || $defaults['limit'] > $defaults['maxLimit'])
 		) {
 			$defaults['maxLimit'] = $defaults['limit'];
 		}
-		return array_merge(
-			array('page' => 1, 'limit' => 20, 'maxLimit' => 100),
-			$defaults
-		);
+
+		return $defaults + $this->_config;
 	}
 
 /**
