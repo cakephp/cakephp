@@ -423,7 +423,8 @@ class TestTask extends BakeTask {
 		$pre = $construct = $post = '';
 		if ($type === 'table') {
 			$className = str_replace('Table', '', $className);
-			$construct = "TableRegistry::get('{$className}', ['className' => '{$fullClassName}']);\n";
+			$pre = "\$config = TableRegistry::exists('{$className}') ? [] : ['className' => '{$fullClassName}'];\n";
+			$construct = "TableRegistry::get('{$className}', \$config);\n";
 		}
 		if ($type === 'behavior' || $type === 'entity') {
 			$construct = "new {$className}();\n";

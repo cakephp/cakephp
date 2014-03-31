@@ -338,7 +338,8 @@ class TestTaskTest extends TestCase {
 		$this->assertContains('class ArticlesTableTest extends TestCase', $result);
 
 		$this->assertContains('function setUp()', $result);
-		$this->assertContains("\$this->Articles = TableRegistry::get('Articles', [", $result);
+		$this->assertContains("\$config = TableRegistry::exists('Articles') ?", $result);
+		$this->assertContains("\$this->Articles = TableRegistry::get('Articles', \$config", $result);
 
 		$this->assertContains('function tearDown()', $result);
 		$this->assertContains('unset($this->Articles)', $result);
@@ -478,19 +479,23 @@ class TestTaskTest extends TestCase {
  */
 	public function testGenerateConstructor() {
 		$result = $this->Task->generateConstructor('controller', 'PostsController');
-		$expected = array('', '', '');
+		$expected = ['', '', ''];
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->generateConstructor('table', 'App\Model\\Table\PostsTable');
-		$expected = array('', "TableRegistry::get('Posts', ['className' => 'App\Model\\Table\PostsTable']);\n", '');
+		$expected = [
+			"\$config = TableRegistry::exists('Posts') ? [] : ['className' => 'App\Model\\Table\PostsTable'];\n",
+			"TableRegistry::get('Posts', \$config);\n",
+			''
+		];
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->generateConstructor('helper', 'FormHelper');
-		$expected = array("\$view = new View();\n", "new FormHelper(\$view);\n", '');
+		$expected = ["\$view = new View();\n", "new FormHelper(\$view);\n", ''];
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Task->generateConstructor('entity', 'TestPlugin\Model\Entity\Article', null);
-		$expected = array("", "new Article();\n", '');
+		$result = $this->Task->generateConstructor('entity', 'TestPlugin\Model\Entity\Article');
+		$expected = ["", "new Article();\n", ''];
 		$this->assertEquals($expected, $result);
 	}
 
