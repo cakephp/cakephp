@@ -382,6 +382,7 @@ class TestTaskTest extends TestCase {
 
 		$this->Task->expects($this->once())
 			->method('createFile')
+			->with($this->stringContains('Controller/Admin/PostsControllerTest.php'))
 			->will($this->returnValue(true));
 
 		$result = $this->Task->bake('controller', 'Admin\Posts');
@@ -566,18 +567,19 @@ class TestTaskTest extends TestCase {
  */
 	public static function caseFileNameProvider() {
 		return array(
-			array('Table', 'Posts', 'TestCase/Model/Table/PostsTableTest.php'),
-			array('Entity', 'Article', 'TestCase/Model/Entity/ArticleTest.php'),
-			array('Helper', 'Form', 'TestCase/View/Helper/FormHelperTest.php'),
-			array('Controller', 'Posts', 'TestCase/Controller/PostsControllerTest.php'),
-			array('Behavior', 'Tree', 'TestCase/Model/Behavior/TreeBehaviorTest.php'),
-			array('Component', 'Auth', 'TestCase/Controller/Component/AuthComponentTest.php'),
-			array('entity', 'Article', 'TestCase/Model/Entity/ArticleTest.php'),
-			array('table', 'Posts', 'TestCase/Model/Table/PostsTableTest.php'),
-			array('helper', 'Form', 'TestCase/View/Helper/FormHelperTest.php'),
-			array('controller', 'Posts', 'TestCase/Controller/PostsControllerTest.php'),
-			array('behavior', 'Tree', 'TestCase/Model/Behavior/TreeBehaviorTest.php'),
-			array('component', 'Auth', 'TestCase/Controller/Component/AuthComponentTest.php'),
+			array('Table', 'App\Model\Table\PostsTable', 'TestCase/Model/Table/PostsTableTest.php'),
+			array('Entity', 'App\Model\Entity\Article', 'TestCase/Model/Entity/ArticleTest.php'),
+			array('Helper', 'App\View\Helper\FormHelper', 'TestCase/View/Helper/FormHelperTest.php'),
+			array('Controller', 'App\Controller\PostsController', 'TestCase/Controller/PostsControllerTest.php'),
+			array('Controller', 'App\Controller\Admin\PostsController', 'TestCase/Controller/Admin/PostsControllerTest.php'),
+			array('Behavior', 'App\Model\Behavior\TreeBehavior', 'TestCase/Model/Behavior/TreeBehaviorTest.php'),
+			array('Component', 'App\Controller\Component\AuthComponent', 'TestCase/Controller/Component/AuthComponentTest.php'),
+			array('entity', 'App\Model\Entity\Article', 'TestCase/Model/Entity/ArticleTest.php'),
+			array('table', 'App\Model\Table\PostsTable', 'TestCase/Model/Table/PostsTableTest.php'),
+			array('helper', 'App\View\Helper\FormHelper', 'TestCase/View/Helper/FormHelperTest.php'),
+			array('controller', 'App\Controller\PostsController', 'TestCase/Controller/PostsControllerTest.php'),
+			array('behavior', 'App\Model\Behavior\TreeBehavior', 'TestCase/Model/Behavior/TreeBehaviorTest.php'),
+			array('component', 'App\Controller\Component\AuthComponent', 'TestCase/Controller/Component/AuthComponentTest.php'),
 		);
 	}
 
@@ -605,7 +607,9 @@ class TestTaskTest extends TestCase {
 
 		Plugin::load('TestPlugin');
 		$this->Task->plugin = 'TestPlugin';
-		$result = $this->Task->testCaseFileName('entity', 'Post');
+		$class = 'TestPlugin\Model\Entity\Post';
+		$result = $this->Task->testCaseFileName('entity', $class);
+
 		$expected = TEST_APP . 'Plugin/TestPlugin/Test/TestCase/Model/Entity/PostTest.php';
 		$this->assertEquals($expected, $result);
 	}
