@@ -142,7 +142,6 @@ class TestTaskTest extends TestCase {
 		$this->Task->execute();
 	}
 
-
 /**
  * Test generating class options for table.
  *
@@ -296,7 +295,7 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testGetRealClassnamePlugin() {
-		Plugin::load('TestPLugin');
+		Plugin::load('TestPlugin');
 		$this->Task->plugin = 'TestPlugin';
 		$result = $this->Task->getRealClassname('Helper', 'Asset');
 		$expected = 'TestPlugin\View\Helper\AssetHelper';
