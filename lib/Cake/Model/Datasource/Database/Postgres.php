@@ -838,9 +838,18 @@ class Postgres extends DboSource {
  * @param array $column An array structured like the following:
  *                      array('name'=>'value', 'type'=>'value'[, options]),
  *                      where options can be 'default', 'length', or 'key'.
+ *                      If given a Postgres array-type like 'integer[3][3]',
+ *                      that type will be incorporated into the $columns
+ *                      property and should be treated similarly to a string
+ *                      in subsequent operations. Postgres tends to ignore
+ *                      the 'fixed-size array' aspect; it just supports
+ *											the notation, but creates unlimited-size arrays.
  * @return string
  */
 	public function buildColumn($column) {
+		if (preg_match('/^[[:graph:]]+(\[[[:digit:]]*\])+$/', $column['type'])) {
+			$this->columns[$column['type']] = array('name' => $column['type']);
+		}
 		$col = $this->columns[$column['type']];
 		if (!isset($col['length']) && !isset($col['limit'])) {
 			unset($column['length']);
