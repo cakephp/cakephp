@@ -29,13 +29,6 @@ use Cake\Utility\Inflector;
 class BelongsTo extends Association {
 
 /**
- * Whether this association can be expressed directly in a query join
- *
- * @var boolean
- */
-	protected $_canBeJoined = true;
-
-/**
  * Sets the name of the field representing the foreign key to the target table.
  * If no parameters are passed current field is returned
  *

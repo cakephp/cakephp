@@ -80,13 +80,6 @@ abstract class Association {
 	protected $_name;
 
 /**
- * Whether this association can be expressed directly in a query join
- *
- * @var boolean
- */
-	protected $_canBeJoined = false;
-
-/**
  * The class name of the target table object
  *
  * @var string
@@ -302,7 +295,8 @@ abstract class Association {
  * @return boolean
  */
 	public function canBeJoined($options = []) {
-		return $this->_canBeJoined;
+		$strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
+		return $strategy == $this::STRATEGY_JOIN;
 	}
 
 /**

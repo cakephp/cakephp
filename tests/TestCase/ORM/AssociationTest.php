@@ -117,7 +117,7 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testCanBeJoined() {
-		$this->assertFalse($this->association->canBeJoined());
+		$this->assertTrue($this->association->canBeJoined());
 	}
 
 /**
