@@ -326,6 +326,7 @@ class ControllerTestCaseTest extends TestCase {
 			)
 		);
 		$this->Case->testAction('/tests_apps_posts/post_var', array(
+			'method' => 'post',
 			'data' => $data
 		));
 		$this->assertEquals($this->Case->controller->viewVars['data'], $data);
@@ -419,6 +420,7 @@ class ControllerTestCaseTest extends TestCase {
 
 		$data = array('var' => 'set');
 		$result = $this->Case->testAction('/tests_apps_posts/post_var', array(
+			'method' => 'post',
 			'data' => $data,
 			'return' => 'vars'
 		));
