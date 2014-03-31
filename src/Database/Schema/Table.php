@@ -66,6 +66,13 @@ class Table {
 	protected $_options = [];
 
 /**
+ * Whether or not the table is temporary
+ *
+ * @var boolean
+ */
+	protected $_temporary = false;
+
+/**
  * The valid keys that can be used in a column
  * definition.
  *
@@ -495,6 +502,20 @@ class Table {
 			return $this->_options;
 		}
 		$this->_options = array_merge($this->_options, $options);
+		return $this;
+	}
+
+/**
+ * Get/Set whether the table is temporary in the database
+ *
+ * @param boolean|null $set whether or not the table is to be temporary
+ * @return this|boolean Either the table instance, the current temporary setting
+ */
+	public function temporary($set = null) {
+		if ($set === null) {
+			return $this->_temporary;
+		}
+		$this->_temporary = (bool)$set;
 		return $this;
 	}
 

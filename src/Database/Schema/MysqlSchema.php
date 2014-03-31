@@ -232,7 +232,8 @@ class MysqlSchema extends BaseSchema {
  */
 	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$content = implode(",\n", array_merge($columns, $constraints, $indexes));
-		$content = sprintf("CREATE TABLE `%s` (\n%s\n)", $table->name(), $content);
+		$temporary = $table->temporary() ? ' TEMPORARY ' : ' ';
+		$content = sprintf("CREATE%sTABLE `%s` (\n%s\n)", $temporary, $table->name(), $content);
 		$options = $table->options();
 		if (isset($options['engine'])) {
 			$content .= sprintf(' ENGINE=%s', $options['engine']);
