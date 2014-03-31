@@ -309,14 +309,7 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/posts.json');
 		$this->assertEquals($expected, $result);
 
-		$expected = array(
-			'plugin' => null,
-			'controller' => 'posts',
-			'action' => 'index',
-			'pass' => [],
-			'[method]' => 'GET',
-			'_ext' => 'xml',
-		);
+		$expected['_ext'] = 'xml';
 		$result = Router::parse('/posts.xml');
 		$this->assertEquals($expected, $result);
 	}
