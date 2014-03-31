@@ -455,6 +455,24 @@ class ViewTaskTest extends TestCase {
 	}
 
 /**
+ * Test execute no args.
+ *
+ * @return void
+ */
+	public function testExecuteNoArgs() {
+		$this->_setupTask(['in', 'err', 'bake', 'createFile', '_stop']);
+
+		$this->Task->Model->expects($this->once())
+			->method('listAll')
+			->will($this->returnValue(['comments', 'articles']));
+
+		$this->Task->expects($this->never())
+			->method('bake');
+
+		$this->Task->execute();
+	}
+
+/**
  * Test all()
  *
  * @return void
@@ -467,6 +485,25 @@ class ViewTaskTest extends TestCase {
 			->method('all');
 
 		$this->Task->execute();
+	}
+
+/**
+ * Test all() calls execute
+ *
+ * @return void
+ */
+	public function testAllCallsExecute() {
+		$this->_setupTask(['in', 'err', 'createFile', 'execute', '_stop']);
+
+		$this->Task->Model->expects($this->once())
+			->method('listAll')
+			->will($this->returnValue(['comments', 'articles']));
+
+		$this->Task->expects($this->exactly(2))
+			->method('execute');
+
+		$this->Task->all();
+		$this->assertEquals('articles', $this->Task->args[0]);
 	}
 
 /**

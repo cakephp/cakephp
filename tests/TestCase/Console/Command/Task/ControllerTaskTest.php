@@ -193,6 +193,10 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with($filename, $this->anything());
+
+		$this->Task->Test->expects($this->at(0))
+			->method('bake')
+			->with('Controller', 'Admin\BakeArticles');
 		$result = $this->Task->bake('BakeArticles');
 
 		$this->assertTextContains('namespace App\Controller\Admin;', $result);
@@ -267,6 +271,22 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->Test->expects($this->never())
 			->method('bake');
 		$this->Task->bakeTest('BakeArticles');
+	}
+
+/**
+ * Test execute no args.
+ *
+ * @return void
+ */
+	public function testExecuteNoArgs() {
+		$this->Task->expects($this->never())
+			->method('createFile');
+
+		$this->Task->expects($this->at(0))
+			->method('out')
+			->with($this->stringContains('Possible controllers based on your current database'));
+
+		$this->Task->execute();
 	}
 
 /**

@@ -63,7 +63,7 @@ class ControllerTask extends BakeTask {
 		}
 
 		if (empty($this->args)) {
-			$this->out(__d('cake_console', 'Possible Controllers based on your current database:'));
+			$this->out(__d('cake_console', 'Possible controllers based on your current database:'));
 			foreach ($this->listAll() as $table) {
 				$this->out('- ' . $this->_controllerName($table));
 			}
@@ -217,7 +217,9 @@ class ControllerTask extends BakeTask {
 		}
 		$this->Test->plugin = $this->plugin;
 		$this->Test->connection = $this->connection;
-		$this->Test->interactive = $this->interactive;
+		if (!empty($this->params['prefix'])) {
+			$className = $this->params['prefix'] . '\\' . $className;
+		}
 		return $this->Test->bake('Controller', $className);
 	}
 
@@ -247,37 +249,6 @@ class ControllerTask extends BakeTask {
 			$helpers = array_values(array_filter(array_map('trim', $helpers)));
 		}
 		return $helpers;
-	}
-
-/**
- * Interact with the user and get a list of additional components
- *
- * @return array Components the user wants to use.
- */
-	public function doComponents() {
-		$components = ['Paginator'];
-		return array_merge($components, $this->_doPropertyChoices(
-			__d('cake_console', "Would you like this controller to use other components\nbesides PaginatorComponent?"),
-			__d('cake_console', "Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, Security, RequestHandler'")
-		));
-	}
-
-/**
- * Common code for property choice handling.
- *
- * @param string $prompt A yes/no question to precede the list
- * @param string $example A question for a comma separated list, with examples.
- * @return array Array of values for property.
- */
-	protected function _doPropertyChoices($prompt, $example) {
-		$proceed = $this->in($prompt, ['y', 'n'], 'n');
-		$property = [];
-		if (strtolower($proceed) === 'y') {
-			$propertyList = $this->in($example);
-			$propertyListTrimmed = str_replace(' ', '', $propertyList);
-			$property = explode(',', $propertyListTrimmed);
-		}
-		return array_filter($property);
 	}
 
 /**
