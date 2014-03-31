@@ -312,7 +312,7 @@ class Cache {
 		$success = self::$_engines[$config]->write($settings['prefix'] . $key, $value, $settings['duration']);
 		self::set(null, $config);
 		if ($success === false && $value !== '') {
-			throw new CacheException(__d('cake_dev', '%s cache was unable to write \'%s\' to %s cache', $config. $key, self::$_engines[$config]->settings['engine']));
+			throw new CacheException(__d('cake_dev', '%s cache was unable to write \'%s\' to %s cache', $config, $key, self::$_engines[$config]->settings['engine']));
 		}
 		return $success;
 	}
