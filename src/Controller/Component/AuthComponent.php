@@ -141,7 +141,7 @@ class AuthComponent extends Component {
  */
 	protected $_defaultConfig = [
 		'authenticate' => null,
-		'authorize' => false,
+		'authorize' => null,
 		'ajaxLogin' => null,
 		'flash' => null,
 		'loginAction' => null,
