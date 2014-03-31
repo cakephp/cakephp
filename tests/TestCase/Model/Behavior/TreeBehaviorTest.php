@@ -37,6 +37,7 @@ class TreeBehaviorTest extends TestCase {
 	];
 
 	public function setUp() {
+		parent::setUp();
 		$this->table = TableRegistry::get('NumberTrees');
 		$this->table->addBehavior('Tree');
 	}

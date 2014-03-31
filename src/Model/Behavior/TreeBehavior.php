@@ -131,7 +131,7 @@ class TreeBehavior extends Behavior {
 			]);
 		}
 
-		$this->_sync($diff, '-' , "> {$right}");
+		$this->_sync($diff, '-', "> {$right}");
 	}
 
 /**
@@ -569,19 +569,19 @@ class TreeBehavior extends Behavior {
  */
 	protected function _getMaxOrMin($maxOrMin = 'max') {
 		$config = $this->config();
-		$lOrR = $maxOrMin === 'max' ? $config['right'] : $config['left'];
-		$dOrA = $maxOrMin === 'max' ? 'DESC' : 'ASC';
+		$field = $maxOrMin === 'max' ? $config['right'] : $config['left'];
+		$direction = $maxOrMin === 'max' ? 'DESC' : 'ASC';
 
 		$edge = $this->_scope($this->_table->find())
-			->select([$lOrR])
-			->order([$lOrR => $dOrA])
+			->select([$field])
+			->order([$field => $direction])
 			->first();
 
-		if (empty($edge->{$lOrR})) {
+		if (empty($edge->{$field})) {
 			return 0;
 		}
 
-		return $edge->{$lOrR};
+		return $edge->{$field};
 	}
 
 /**
