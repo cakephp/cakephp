@@ -659,7 +659,7 @@ class DispatcherTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response', array('send'));
 		$dispatcher->dispatch($request, $response);
 		$this->assertEmpty($dispatcher->controller);
-		$expected = array('controller' => null, 'action' => null, 'plugin' => null, 'pass' => array());
+		$expected = array('controller' => null, 'action' => null, 'plugin' => null, '_ext' => null, 'pass' => []);
 		$this->assertEquals($expected, $request->params);
 
 		$dispatcher = new TestDispatcher();

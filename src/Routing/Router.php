@@ -743,7 +743,8 @@ class Router {
 		$params = array(
 			'plugin' => null,
 			'controller' => null,
-			'action' => 'index'
+			'action' => 'index',
+			'_ext' => null
 		);
 		$here = $base = $output = $frag = null;
 
@@ -801,9 +802,11 @@ class Router {
 			}
 
 			$url += array(
-				'controller' => $params['controller'],
 				'plugin' => $params['plugin'],
-				'action' => 'index'
+				'controller' => $params['controller'],
+				'action' => 'index',
+				'_ext' => $params['_ext']
+
 			);
 			$url = static::_applyUrlFilters($url);
 			$output = static::$_routes->match($url);
