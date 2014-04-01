@@ -98,14 +98,24 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that results are grouped correctly when using contain()
- * and results are not hydrated
+ * Provides strategies for associations that can be joined
  *
  * @return void
  */
-	public function testContainResultFetchingOneLevel() {
+	public function internalStategiesProvider() {
+		return [['join'], ['select'], ['subquery']];
+	}
+
+/**
+ * Tests that results are grouped correctly when using contain()
+ * and results are not hydrated
+ *
+ * @dataProvider internalStategiesProvider
+ * @return void
+ */
+	public function testContainResultFetchingOneLevel($strategy) {
 		$table = TableRegistry::get('articles', ['table' => 'articles']);
-		$table->belongsTo('authors');
+		$table->belongsTo('authors', ['strategy' => $strategy]);
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()

@@ -16,6 +16,7 @@ namespace Cake\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association;
+use Cake\ORM\Association\SelectableAssociationTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
@@ -27,6 +28,8 @@ use Cake\Utility\Inflector;
  * An example of a BelongsTo association would be Article belongs to Author.
  */
 class BelongsTo extends Association {
+
+	use SelectableAssociationTrait;
 
 /**
  * Sets the name of the field representing the foreign key to the target table.
@@ -88,6 +91,23 @@ class BelongsTo extends Association {
  */
 	public function isOwningSide(Table $side) {
 		return $side === $this->target();
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	public function transformRow($row, $joined) {
+		if ($this->strategy() === $this::STRATEGY_JOIN) {
+			return parent::transformRow($row, $joined);
+		}
+
+		$sourceAlias = $this->source()->alias();
+		$nestKey = $this->_nestingKey();
+		if (isset($row[$nestKey])) {
+			$row[$sourceAlias][$this->property()] = $row[$nestKey];
+		}
+		return $row;
 	}
 
 /**
@@ -157,7 +177,37 @@ class BelongsTo extends Association {
  * {@inheritdoc}
  *
  */
-	public function eagerLoader(array $options) {
+	protected function _linkField($options) {
+		$links = [];
+		$name = $this->name();
+
+		foreach ((array)$this->target()->primaryKey() as $key) {
+			$links[] = sprintf('%s.%s', $name, $key);
+		}
+
+		if (count($links) === 1) {
+			return $links[0];
+		}
+
+		return $links;
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	protected function _buildResultMap($fetchQuery, $options) {
+		$resultMap = [];
+		$key = (array)$this->target()->primaryKey();
+
+		foreach ($fetchQuery->all() as $result) {
+			$values = [];
+			foreach ($key as $k) {
+				$values[] = $result[$k];
+			}
+			$resultMap[implode(';', $values)] = $result;
+		}
+		return $resultMap;
 	}
 
 }

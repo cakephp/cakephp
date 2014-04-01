@@ -38,13 +38,7 @@ trait SelectableAssociationTrait {
  *
  */
 	public function eagerLoader(array $options) {
-		$options += [
-			'foreignKey' => $this->foreignKey(),
-			'conditions' => [],
-			'sort' => $this->sort(),
-			'strategy' => $this->strategy()
-		];
-
+		$options = $options + $this->_defaultOptions();
 		$queryBuilder = false;
 		if (!empty($options['queryBuilder'])) {
 			$queryBuilder = $options['queryBuilder'];
@@ -57,6 +51,19 @@ trait SelectableAssociationTrait {
 		}
 		$resultMap = $this->_buildResultMap($fetchQuery, $options);
 		return $this->_resultInjector($fetchQuery, $resultMap);
+	}
+
+/**
+ * Returns the default options to use for the eagerLoader
+ *
+ * @return array
+ */
+	protected function _defaultOptions() {
+		return [
+			'foreignKey' => $this->foreignKey(),
+			'conditions' => [],
+			'strategy' => $this->strategy()
+		];
 	}
 
 /**
@@ -141,20 +148,7 @@ trait SelectableAssociationTrait {
  * @param array $options
  * @return string
  */
-	protected function _linkField($options) {
-		$links = [];
-		$name = $this->name();
-
-		foreach ((array)$options['foreignKey'] as $key) {
-			$links[] = sprintf('%s.%s', $name, $key);
-		}
-
-		if (count($links) === 1) {
-			return $links[0];
-		}
-
-		return $links;
-	}
+	protected abstract function _linkField($options);
 
 /**
  * Builds a query to be used as a condition for filtering records in in the
@@ -187,19 +181,7 @@ trait SelectableAssociationTrait {
  * @param array $options The options passed to the eager loader
  * @return array
  */
-	protected function _buildResultMap($fetchQuery, $options) {
-		$resultMap = [];
-		$key = (array)$options['foreignKey'];
-
-		foreach ($fetchQuery->all() as $result) {
-			$values = [];
-			foreach ($key as $k) {
-				$values[] = $result[$k];
-			}
-			$resultMap[implode(';', $values)][] = $result;
-		}
-		return $resultMap;
-	}
+	protected abstract function _buildResultMap($fetchQuery, $options);
 
 /**
  * Returns a callable to be used for each row in a query result set
@@ -213,15 +195,16 @@ trait SelectableAssociationTrait {
 	protected function _resultInjector($fetchQuery, $resultMap) {
 		$source = $this->source();
 		$sAlias = $source->alias();
-		$tAlias = $this->target()->alias();
+		$keys = $this->type() === $this::ONE_TO_ONE ?
+			$this->foreignKey() :
+			$source->primaryKey();
 
 		$sourceKeys = [];
-		foreach ((array)$source->primaryKey() as $key) {
+		foreach ((array)$keys as $key) {
 			$sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
 		}
 
-		$nestKey = $tAlias . '___collection_';
-
+		$nestKey = $this->_nestingKey();
 		if (count($sourceKeys) > 1) {
 			return $this->_multiKeysInjector($resultMap, $sourceKeys, $nestKey);
 		}
@@ -233,6 +216,15 @@ trait SelectableAssociationTrait {
 			}
 			return $row;
 		};
+	}
+
+/**
+ * Returns the key under which the eagerLoader will put this association results
+ *
+ * @return string
+ */
+	protected function _nestingKey() {
+		return $this->property();
 	}
 
 /**

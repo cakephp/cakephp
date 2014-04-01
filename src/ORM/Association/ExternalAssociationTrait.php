@@ -25,7 +25,9 @@ use Cake\Utility\Inflector;
  */
 trait ExternalAssociationTrait {
 
-	use SelectableAssociationTrait;
+	use SelectableAssociationTrait {
+		_defaultOptions as private _selectableOptions;
+	}
 
 /**
  * Order in which target records should be returned
@@ -98,6 +100,44 @@ trait ExternalAssociationTrait {
 
 		$row[$sourceAlias][$this->property()] = $values;
 		return $row;
+	}
+
+/**
+ * Returns the default options to use for the eagerLoader
+ *
+ * @return array
+ */
+	protected function _defaultOptions() {
+		return $this->_selectableOptions() + [
+			'sort' => $this->sort()
+		];
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	protected function _buildResultMap($fetchQuery, $options) {
+		$resultMap = [];
+		$key = (array)$options['foreignKey'];
+
+		foreach ($fetchQuery->all() as $result) {
+			$values = [];
+			foreach ($key as $k) {
+				$values[] = $result[$k];
+			}
+			$resultMap[implode(';', $values)][] = $result;
+		}
+		return $resultMap;
+	}
+
+/**
+ * Returns the key under which the eagerLoader will put this association results
+ *
+ * @return void
+ */
+	protected function _nestingKey() {
+		return $this->_name . '___collection_';
 	}
 
 /**

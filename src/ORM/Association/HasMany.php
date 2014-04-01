@@ -118,6 +118,25 @@ class HasMany extends Association {
 	}
 
 /**
+ * {@inheritdoc}
+ *
+ */
+	protected function _linkField($options) {
+		$links = [];
+		$name = $this->name();
+
+		foreach ((array)$options['foreignKey'] as $key) {
+			$links[] = sprintf('%s.%s', $name, $key);
+		}
+
+		if (count($links) === 1) {
+			return $links[0];
+		}
+
+		return $links;
+	}
+
+/**
  * Get the relationship type.
  *
  * @return string
