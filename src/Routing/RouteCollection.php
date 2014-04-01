@@ -226,6 +226,15 @@ class RouteCollection implements \Countable {
 	}
 
 /**
+ * Get the list of connected routes.
+ *
+ * @return array.
+ */
+	public function routes() {
+		return $this->_routes;
+	}
+
+/**
  * Part of the countable interface.
  *
  * @return integer The number of connected routes.
