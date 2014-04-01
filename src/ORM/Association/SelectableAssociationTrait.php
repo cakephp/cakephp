@@ -174,7 +174,7 @@ trait SelectableAssociationTrait {
 		$foreignKey = (array)$this->foreignKey();
 		$keys = $primary;
 
-		if (count($primary) !== count($foreignKey)) {
+		if ($this->type() === $this::ONE_TO_ONE) {
 			$keys = $foreignKey;
 		}
 
