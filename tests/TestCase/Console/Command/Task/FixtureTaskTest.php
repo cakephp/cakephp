@@ -54,7 +54,6 @@ class FixtureTaskTest extends TestCase {
 			array($out, $out, $in)
 		);
 		$this->Task->Template = new TemplateTask($out, $out, $in);
-		$this->Task->DbConfig = $this->getMock('Cake\Console\Command\Task\DbConfigTask', array(), array($out, $out, $in));
 		$this->Task->Template->initialize();
 	}
 

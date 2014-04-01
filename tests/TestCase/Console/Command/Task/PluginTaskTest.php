@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
 
-use Cake\Console\Command\Task\DbConfigTask;
 use Cake\Console\Command\Task\TemplateTask;
 use Cake\Core\App;
 use Cake\Core\Configure;
