@@ -23,7 +23,7 @@ use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Log\Engine\ConsoleLog;
 use Cake\Log\Log;
-use Cake\Utility\ClassRegistry;
+use Cake\Utility\ConventionsTrait;
 use Cake\Utility\File;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
@@ -668,31 +668,6 @@ class Shell extends Object {
 
 		$this->err(__d('cake_console', '<error>Could not write to `%s`</error>.', $path), 2);
 		return false;
-	}
-
-/**
- * Action to create a Unit Test
- *
- * @return boolean Success
- */
-	protected function _checkUnitTest() {
-		if (class_exists('PHPUnit_Framework_TestCase')) {
-			return true;
-			//@codingStandardsIgnoreStart
-		} elseif (@include 'PHPUnit/Autoload.php') {
-			//@codingStandardsIgnoreEnd
-			return true;
-		}
-
-		$prompt = __d('cake_console', 'PHPUnit is not installed. Do you want to bake unit test files anyway?');
-		$unitTest = $this->in($prompt, ['y', 'n'], 'y');
-		$result = strtolower($unitTest) === 'y' || strtolower($unitTest) === 'yes';
-
-		if ($result) {
-			$this->out();
-			$this->out(__d('cake_console', 'You can download PHPUnit from %s', 'http://phpunit.de'));
-		}
-		return $result;
 	}
 
 /**
