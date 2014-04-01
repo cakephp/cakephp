@@ -229,6 +229,63 @@ class CompositeKeyTest extends TestCase {
 	}
 
 /**
+ * Provides strategies for associations that can be joined
+ *
+ * @return void
+ */
+	public function internalStategiesProvider() {
+		return [['join'], ['select'], ['subquery']];
+	}
+
+/**
+ * Tests loding belongsTo with composite keys
+ *
+ * @dataProvider internalStategiesProvider
+ * @return void
+ */
+	public function testBelongsToEager($strategy) {
+		$table = TableRegistry::get('SiteArticles');
+		$table->belongsTo('SiteAuthors', [
+			'propertyName' => 'author',
+			'strategy' => $strategy,
+			'foreignKey' => ['author_id', 'site_id']
+		]);
+		$query = new Query($this->connection, $table);
+		$results = $query->select()
+			->where(['id IN' => [1, 2]])
+			->contain('SiteAuthors')
+			->hydrate(false)
+			->toArray();
+		$expected = [
+			[
+				'id' => 1,
+				'author_id' => 1,
+				'site_id' => 1,
+				'title' => 'First Article',
+				'body' => 'First Article Body',
+				'author' => [
+					'id' => 1,
+					'name' => 'mark',
+					'site_id' => 1
+				]
+			],
+			[
+				'id' => 2,
+				'author_id' => 3,
+				'site_id' => 2,
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'author' => [
+					'id' => 3,
+					'name' => 'jose',
+					'site_id' => 2
+				]
+			]
+		];
+		$this->assertEquals($expected, $results);
+	}
+
+/**
  * Tests that it is possible to insert a new row using the save method
  * if the entity has composite primary key
  *

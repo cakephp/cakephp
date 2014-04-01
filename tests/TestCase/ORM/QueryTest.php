@@ -1910,7 +1910,11 @@ class QueryTest extends TestCase {
 		$table->belongsTo('Articles', ['strategy' => $strategy]);
 		$table->belongsTo('Tags', ['strategy' => $strategy]);
 		TableRegistry::get('Tags')->belongsToMany('Articles');
-		$results = $table->find()->contain(['Articles', 'Tags.Articles'])->hydrate(false)->toArray();
+		$results = $table
+			->find()
+			->contain(['Articles', 'Tags.Articles'])
+			->hydrate(false)
+			->toArray();
 		$this->assertNotEmpty($results[0]['tag']['articles']);
 		$this->assertNotEmpty($results[0]['article']);
 		$this->assertNotEmpty($results[1]['tag']['articles']);
