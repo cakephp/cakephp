@@ -684,110 +684,6 @@ class Shell extends Object {
 	}
 
 /**
- * Creates the proper controller path for the specified controller class name
- *
- * @param string $name Controller class name
- * @return string Path to controller
- */
-	protected function _controllerPath($name) {
-		return Inflector::underscore($name);
-	}
-
-/**
- * Creates the proper controller plural name for the specified controller class name
- *
- * @param string $name Controller class name
- * @return string Controller plural name
- */
-	protected function _controllerName($name) {
-		return Inflector::pluralize(Inflector::camelize($name));
-	}
-
-/**
- * Creates the proper model camelized name (plural) for the specified name
- *
- * @param string $name Name
- * @return string Camelized and plural model name
- */
-	protected function _modelName($name) {
-		return Inflector::pluralize(Inflector::camelize($name));
-	}
-
-/**
- * Creates the proper underscored model key for associations
- *
- * @param string $name Model class name
- * @return string Singular model key
- */
-	protected function _modelKey($name) {
-		return Inflector::underscore(Inflector::singularize($name)) . '_id';
-	}
-
-/**
- * Creates the proper model name from a foreign key
- *
- * @param string $key Foreign key
- * @return string Model name
- */
-	protected function _modelNameFromKey($key) {
-		$key = str_replace('_id', '', $key);
-		return $this->_modelName($key);
-	}
-
-/**
- * creates the singular name for use in views.
- *
- * @param string $name
- * @return string $name
- */
-	protected function _singularName($name) {
-		return Inflector::variable(Inflector::singularize($name));
-	}
-
-/**
- * Creates the plural name for views
- *
- * @param string $name Name to use
- * @return string Plural name for views
- */
-	protected function _pluralName($name) {
-		return Inflector::variable(Inflector::pluralize($name));
-	}
-
-/**
- * Creates the singular human name used in views
- *
- * @param string $name Controller name
- * @return string Singular human name
- */
-	protected function _singularHumanName($name) {
-		return Inflector::humanize(Inflector::underscore(Inflector::singularize($name)));
-	}
-
-/**
- * Creates the plural human name used in views
- *
- * @param string $name Controller name
- * @return string Plural human name
- */
-	protected function _pluralHumanName($name) {
-		return Inflector::humanize(Inflector::underscore($name));
-	}
-
-/**
- * Find the correct path for a plugin. Scans $pluginPaths for the plugin you want.
- *
- * @param string $pluginName Name of the plugin you want ie. DebugKit
- * @return string $path path to the correct plugin.
- */
-	protected function _pluginPath($pluginName) {
-		if (Plugin::loaded($pluginName)) {
-			return Plugin::path($pluginName);
-		}
-		return current(App::path('Plugin')) . $pluginName . DS;
-	}
-
-/**
  * Used to enable or disable logging stream output to stdout and stderr
  * If you don't wish to see in your stdout or stderr everything that is logged
  * through Cake Log, call this function with first param as false
@@ -812,4 +708,5 @@ class Shell extends Object {
 		Log::config('stdout', ['engine' => $stdout]);
 		Log::config('stderr', ['engine' => $stderr]);
 	}
+
 }

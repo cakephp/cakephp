@@ -18,6 +18,7 @@ namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Utility\ConventionsTrait;
 use Cake\Utility\Folder;
 use Cake\Utility\ViewVarsTrait;
 
@@ -28,6 +29,7 @@ use Cake\Utility\ViewVarsTrait;
  */
 class TemplateTask extends Shell {
 
+	use ConventionsTrait;
 	use ViewVarsTrait;
 
 /**

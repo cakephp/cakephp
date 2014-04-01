@@ -54,7 +54,7 @@ class BakeShellTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->Dispatch, $this->Shell);
+		unset($this->Shell);
 	}
 
 /**
@@ -94,6 +94,21 @@ class BakeShellTest extends TestCase {
 		$this->Shell->all();
 
 		$this->assertEquals('Comments', $this->Shell->View->args[0]);
+	}
+
+/**
+ * Test the main function.
+ *
+ * @return void
+ */
+	public function testMain() {
+		$this->Shell->expects($this->at(0))
+			->method('out')
+			->with($this->stringContains('The following commands'));
+		$this->Shell->expects($this->at(3))
+			->method('out')
+			->with('controller');
+		$this->Shell->main();
 	}
 
 }

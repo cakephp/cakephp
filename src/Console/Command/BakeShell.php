@@ -20,7 +20,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Model\Model;
-use Cake\Utility\Inflector;
+use Cake\Utility\ConventionsTrait;
 
 /**
  * Command-line code generation utility to automate programmer chores.
@@ -32,6 +32,8 @@ use Cake\Utility\Inflector;
  * @link          http://book.cakephp.org/3.0/en/console-and-shells/code-generation-with-bake.html
  */
 class BakeShell extends Shell {
+
+	use ConventionsTrait;
 
 /**
  * Contains tasks to load and instantiate
@@ -57,7 +59,7 @@ class BakeShell extends Shell {
 		Configure::write('debug', true);
 		Cache::disable();
 
-		$task = Inflector::classify($this->command);
+		$task = $this->_camelize($this->command);
 		if (isset($this->{$task}) && !in_array($task, ['Project'])) {
 			if (isset($this->params['connection'])) {
 				$this->{$task}->connection = $this->params['connection'];
@@ -87,9 +89,10 @@ class BakeShell extends Shell {
 		$this->out(__d('cake_console', 'model'));
 		$this->out(__d('cake_console', 'view'));
 		$this->out(__d('cake_console', 'controller'));
-		$this->out(__d('cake_console', 'project'));
 		$this->out(__d('cake_console', 'fixture'));
+		$this->out(__d('cake_console', 'project'));
 		$this->out(__d('cake_console', 'test'));
+		$this->out(__d('cake_console', 'view'));
 		$this->out('');
 		$this->out(__d('cake_console', 'Using <info>Console/cake bake [name]</info> you can invoke a specific bake task.'));
 	}

@@ -17,15 +17,17 @@ namespace Cake\Console\Command\Task;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Utility\ConventionsTrait;
 use Cake\Utility\File;
 use Cake\Utility\Folder;
-use Cake\Utility\Inflector;
 
 /**
  * The Plugin Task handles creating an empty plugin, ready to be used
  *
  */
 class PluginTask extends Shell {
+
+	use ConventionsTrait;
 
 /**
  * path to plugins directory
@@ -65,7 +67,7 @@ class PluginTask extends Shell {
  */
 	public function execute() {
 		if (isset($this->args[0])) {
-			$plugin = Inflector::camelize($this->args[0]);
+			$plugin = $this->_camelize($this->args[0]);
 			$pluginPath = $this->_pluginPath($plugin);
 			if (is_dir($pluginPath)) {
 				$this->out(__d('cake_console', 'Plugin: %s already exists, no action taken', $plugin));
