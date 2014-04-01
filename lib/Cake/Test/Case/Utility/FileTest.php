@@ -532,7 +532,7 @@ class FileTest extends CakeTestCase {
 		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
 		$file = new File($path);
 		$expected = 'image/gif';
-		if (function_exists('mime_content_type') && false === mime_content_type($file->pwd())) {
+		if (function_exists('mime_content_type') && mime_content_type($file->pwd()) === false) {
 			$expected = false;
 		}
 		$this->assertEquals($expected, $file->mime());
