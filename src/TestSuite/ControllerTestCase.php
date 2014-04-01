@@ -201,7 +201,7 @@ abstract class ControllerTestCase extends TestCase {
  *   REST webservices.
  * - `query` The query string parameters to set.
  * - `cookies` The cookie data to use for the request.
- * - `method` POST or GET. Defaults to POST.
+ * - `method` POST or GET. Defaults to GET.
  * - `return` Specify the return type you want. Choose from:
  *     - `vars` Get the set view variables.
  *     - `view` Get the rendered view, without a layout.
@@ -220,7 +220,7 @@ abstract class ControllerTestCase extends TestCase {
 			'query' => array(),
 			'data' => array(),
 			'cookies' => array(),
-			'method' => 'POST',
+			'method' => 'GET',
 			'return' => 'result'
 		), $options);
 
