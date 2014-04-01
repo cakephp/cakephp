@@ -333,7 +333,7 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * Test that RouterCollection::routes() gets the list of connected routes.
+ * Test that RouterCollection::all() gets the list of all connected routes.
  *
  * @return void
  */
@@ -342,7 +342,7 @@ class RouterTest extends TestCase {
 		Router::setRouteCollection($collection);
 		Router::mapResources('Posts');
 
-		$routes = $collection->routes();
+		$routes = $collection->all();
 
 		$this->assertEquals(count($routes), 6);
 		$this->assertInstanceOf('Cake\Routing\Route\Route', $routes[0]);

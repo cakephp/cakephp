@@ -226,11 +226,11 @@ class RouteCollection implements \Countable {
 	}
 
 /**
- * Get the list of connected routes.
+ * Get the list of all connected routes.
  *
  * @return array.
  */
-	public function routes() {
+	public function all() {
 		return $this->_routes;
 	}
 
