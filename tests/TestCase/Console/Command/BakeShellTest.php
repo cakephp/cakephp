@@ -1,7 +1,5 @@
 <?php
 /**
- * BakeShell Test Case
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -43,7 +41,7 @@ class BakeShellTest extends TestCase {
 
 		$this->Shell = $this->getMock(
 			'Cake\Console\Command\BakeShell',
-			['in', 'out', 'hr', 'err', 'createFile', '_stop', '_checkUnitTest'],
+			['in', 'out', 'hr', 'err', 'createFile', '_stop'],
 			[$out, $out, $in]
 		);
 		Configure::write('App.namespace', 'TestApp');
@@ -65,64 +63,37 @@ class BakeShellTest extends TestCase {
  * @return void
  */
 	public function testAllWithModelName() {
-		$this->markTestIncomplete('Baking with models is not working right now.');
-		$dispatcher =& $this->Dispatcher;
-
-		$this->Shell->Model = $this->getMock(
-			'Cake\Console\Command\Task\ModelTask',
-			[],
-			[$dispatcher]
-		);
-		$this->Shell->Controller = $this->getMock(
-			'Cake\Console\Command\Task\ControllerTask',
-			[],
-			[$dispatcher]
-		);
-		$this->Shell->View = $this->getMock(
-			'Cake\Console\Command\Task\ModelTask',
-			[],
-			[$dispatcher]
-		);
-		$this->Shell->DbConfig = $this->getMock(
-			'Cake\Console\Command\Task\DbConfigTask',
-			[],
-			[$dispatcher]
-		);
-
-		$this->Shell->DbConfig->expects($this->once())
-			->method('getConfig')
-			->will($this->returnValue('test'));
-
-		$this->Shell->Model->expects($this->never())
-			->method('getName');
+		$this->Shell->Model = $this->getMock('Cake\Console\Command\Task\ModelTask');
+		$this->Shell->Controller = $this->getMock('Cake\Console\Command\Task\ControllerTask');
+		$this->Shell->View = $this->getMock('Cake\Console\Command\Task\ModelTask');
 
 		$this->Shell->Model->expects($this->once())
 			->method('bake')
+			->with('Comments')
 			->will($this->returnValue(true));
 
 		$this->Shell->Controller->expects($this->once())
 			->method('bake')
+			->with('Comments')
 			->will($this->returnValue(true));
 
 		$this->Shell->View->expects($this->once())
 			->method('execute');
 
-		$this->Shell->expects($this->once())
-			->method('_stop');
-
 		$this->Shell->expects($this->at(0))
 			->method('out')
 			->with('Bake All');
 
-		$this->Shell->expects($this->at(4))
+		$this->Shell->expects($this->at(2))
 			->method('out')
 			->with('<success>Bake All complete</success>');
 
 		$this->Shell->connection = '';
-		$this->Shell->params = array();
-		$this->Shell->args = array('Comment');
+		$this->Shell->params = [];
+		$this->Shell->args = ['Comment'];
 		$this->Shell->all();
 
-		$this->assertEquals('Comment', $this->Shell->View->args[0]);
+		$this->assertEquals('Comments', $this->Shell->View->args[0]);
 	}
+
 }
