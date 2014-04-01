@@ -54,7 +54,9 @@ class CookieComponent extends Component {
  *   a secure connection exists.
  * - `key` - Encryption key.
  * - `httpOnly` - Set to true to make HTTP only cookies. Cookies that are HTTP only
- *   are not accessible in JavaScript. Default false
+ *   are not accessible in JavaScript. Default false.
+ * - `encryption` - Type of encryption to use. Defaults to 'aes'.
+ *
  * @var array
  */
 	protected $_defaultConfig = [
@@ -64,7 +66,8 @@ class CookieComponent extends Component {
 		'domain' => '',
 		'secure' => false,
 		'key' => null,
-		'httpOnly' => false
+		'httpOnly' => false,
+		'encryption' => 'aes'
 	];
 
 /**
@@ -76,15 +79,6 @@ class CookieComponent extends Component {
  * @var string
  */
 	protected $_values = array();
-
-/**
- * Type of encryption to use.
- *
- * Defaults to Security::encrypt(); or AES encryption.
- *
- * @var string
- */
-	protected $_type = 'aes';
 
 /**
  * Used to reset cookie time if $expire is passed to CookieComponent::write()
@@ -340,15 +334,18 @@ class CookieComponent extends Component {
 	}
 
 /**
- * Will allow overriding default encryption method. Use this method
- * in ex: AppController::beforeFilter() before you have read or
- * written any cookies.
+ * Get / set encryption type. Use this method in ex: AppController::beforeFilter()
+ * before you have read or written any cookies.
  *
  * @param string $type Encryption method
- * @return void
+ * @return string
  * @throws \Cake\Error\Exception When an unknown type is used.
  */
-	public function type($type = 'aes') {
+	public function encryption($type = null) {
+		if ($type === null) {
+			return $this->_config['encryption'];
+		}
+
 		$availableTypes = [
 			'rijndael',
 			'aes'
@@ -356,7 +353,7 @@ class CookieComponent extends Component {
 		if (!in_array($type, $availableTypes)) {
 			throw new Error\Exception('You must use rijndael, or aes for cookie encryption type');
 		}
-		$this->_type = $type;
+		$this->config('encryption', $type);
 	}
 
 /**
@@ -447,10 +444,10 @@ class CookieComponent extends Component {
 			return $value;
 		}
 		$prefix = "Q2FrZQ==.";
-		if ($this->_type === 'rijndael') {
+		if ($this->_config['encryption'] === 'rijndael') {
 			$cipher = Security::rijndael($value, $this->_config['key'], 'encrypt');
 		}
-		if ($this->_type === 'aes') {
+		if ($this->_config['encryption'] === 'aes') {
 			$cipher = Security::encrypt($value, $this->_config['key']);
 		}
 		return $prefix . base64_encode($cipher);
@@ -464,7 +461,6 @@ class CookieComponent extends Component {
  */
 	protected function _decrypt($values) {
 		$decrypted = array();
-		$type = $this->_type;
 
 		foreach ((array)$values as $name => $value) {
 			if (is_array($value)) {
@@ -491,10 +487,10 @@ class CookieComponent extends Component {
 			return $this->_explode($value);
 		}
 		$value = base64_decode(substr($value, strlen($prefix)));
-		if ($this->_type === 'rijndael') {
+		if ($this->_config['encryption'] === 'rijndael') {
 			$plain = Security::rijndael($value, $this->_config['key'], 'decrypt');
 		}
-		if ($this->_type === 'aes') {
+		if ($this->_config['encryption'] === 'aes') {
 			$plain = Security::decrypt($value, $this->_config['key']);
 		}
 		return $this->_explode($plain);
