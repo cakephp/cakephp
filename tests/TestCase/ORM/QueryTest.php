@@ -1148,12 +1148,13 @@ class QueryTest extends TestCase {
 /**
  * Tests that belongsTo relations are correctly hydrated
  *
+ * @dataProvider internalStategiesProvider
  * @return void
  */
-	public function testHydrateBelongsTo() {
+	public function testHydrateBelongsTo($strategy) {
 		$table = TableRegistry::get('articles');
 		TableRegistry::get('authors');
-		$table->belongsTo('authors');
+		$table->belongsTo('authors', ['strategy' => $strategy]);
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
@@ -1171,16 +1172,17 @@ class QueryTest extends TestCase {
 /**
  * Tests that deeply nested associations are also hydrated correctly
  *
+ * @dataProvider internalStategiesProvider
  * @return void
  */
-	public function testHydrateDeep() {
+	public function testHydrateDeep($strategy) {
 		$table = TableRegistry::get('authors');
 		$article = TableRegistry::get('articles');
 		$table->hasMany('articles', [
 			'propertyName' => 'articles',
 			'sort' => ['articles.id' => 'asc']
 		]);
-		$article->belongsTo('authors');
+		$article->belongsTo('authors', ['strategy' => $strategy]);
 		$query = new Query($this->connection, $table);
 
 		$results = $query->select()
@@ -1900,12 +1902,13 @@ class QueryTest extends TestCase {
  * Tests that it is possible to use the same association aliases in the association
  * chain for contain
  *
+ * @dataProvider internalStategiesProvider
  * @return void
  */
-	public function testRepeatedAssociationAliases() {
+	public function testRepeatedAssociationAliases($strategy) {
 		$table = TableRegistry::get('ArticlesTags');
-		$table->belongsTo('Articles');
-		$table->belongsTo('Tags');
+		$table->belongsTo('Articles', ['strategy' => $strategy]);
+		$table->belongsTo('Tags', ['strategy' => $strategy]);
 		TableRegistry::get('Tags')->belongsToMany('Articles');
 		$results = $table->find()->contain(['Articles', 'Tags.Articles'])->hydrate(false)->toArray();
 		$this->assertNotEmpty($results[0]['tag']['articles']);

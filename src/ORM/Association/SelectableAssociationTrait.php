@@ -81,8 +81,13 @@ trait SelectableAssociationTrait {
 		$key = $this->_linkField($options);
 
 		$filter = $options['keys'];
+
 		if ($options['strategy'] === $this::STRATEGY_SUBQUERY) {
 			$filter = $this->_buildSubquery($options['query']);
+		}
+
+		if (is_array($filter) && count(current($filter)) > 1) {
+			$filter = $this->_extractFilteringColumns($filter);
 		}
 
 		$fetchQuery = $this
@@ -115,6 +120,39 @@ trait SelectableAssociationTrait {
 		}
 
 		return $fetchQuery;
+	}
+
+/**
+ * Returns an array containing only the values from the foreignKey for the
+ * target table that can be used for a matching query. The values are
+ * taken from another array containing all the primary key columns and
+ * theirs values from another query.
+ *
+ * @param array $keys the primary key values extracted from a source query
+ * @return array
+ */
+	protected function _extractFilteringColumns($keys) {
+		$primary = (array)$this->source()->primaryKey();
+		$foreignKeys = (array)$this->foreignKey();
+
+		if (count($primary) === count($foreignKeys)) {
+			return $keys;
+		}
+
+		$positions = array_keys(array_intersect($primary, $foreignKeys));
+		$single = count($foreignKeys) === 1;
+		return array_map(function($keys) use ($positions, $single) {
+			if ($single) {
+				return $keys[$positions[0]];
+			}
+
+			$result = [];
+			foreach ($positions as $p) {
+				$result[] = $keys[$p];
+			}
+
+			return $result;
+		}, $keys);
 	}
 
 /**
