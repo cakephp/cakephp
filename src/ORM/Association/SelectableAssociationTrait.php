@@ -206,8 +206,17 @@ trait SelectableAssociationTrait {
 				unset($joins[$i]);
 			}
 		}
+
+		$primary = (array)$query->repository()->primaryKey();
+		$foreignKey = (array)$this->foreignKey();
+		$keys = $primary;
+
+		if (count($primary) !== count($foreignKey)) {
+			$keys = $foreignKey;
+		}
+
 		$filterQuery->join($joins, [], true);
-		$fields = $query->aliasFields((array)$query->repository()->primaryKey());
+		$fields = $query->aliasFields($keys);
 		return $filterQuery->select($fields, true);
 	}
 
