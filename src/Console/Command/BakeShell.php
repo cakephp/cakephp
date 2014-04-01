@@ -80,15 +80,17 @@ class BakeShell extends Shell {
 			$this->out(__d('cake_console', 'Add your database connection information to App/Config/app.php.'));
 			return false;
 		}
-		$this->out(__d('cake_console', 'Bake Shell'));
-		$this->hr();
-		$this->out(__d('cake_console', '[M]odel'));
-		$this->out(__d('cake_console', '[V]iew'));
-		$this->out(__d('cake_console', '[C]ontroller'));
-		$this->out(__d('cake_console', '[P]roject'));
-		$this->out(__d('cake_console', '[F]ixture'));
-		$this->out(__d('cake_console', '[T]est case'));
-		$this->out(__d('cake_console', '[Q]uit'));
+		$this->out(__d('cake_console', 'The following commands you can generate skeleton code your your application.'));
+		$this->out(__d('cake_console', 'Available bake commands:'));
+		$this->out('');
+		$this->out(__d('cake_console', 'model'));
+		$this->out(__d('cake_console', 'view'));
+		$this->out(__d('cake_console', 'controller'));
+		$this->out(__d('cake_console', 'project'));
+		$this->out(__d('cake_console', 'fixture'));
+		$this->out(__d('cake_console', 'test'));
+		$this->out('');
+		$this->out(__d('cake_console', 'Using <info>Console/cake bake [name]</info> you can invoke a specific bake task.'));
 	}
 
 /**
@@ -152,9 +154,6 @@ class BakeShell extends Shell {
 		])->addSubcommand('plugin', [
 			'help' => __d('cake_console', 'Bake a new plugin folder in the path supplied or in current directory if no path is specified.'),
 			'parser' => $this->Plugin->getOptionParser()
-		])->addSubcommand('db_config', [
-			'help' => __d('cake_console', 'Bake a datasources.php file in config directory.'),
-			'parser' => $this->DbConfig->getOptionParser()
 		])->addSubcommand('model', [
 			'help' => __d('cake_console', 'Bake a model.'),
 			'parser' => $this->Model->getOptionParser()
