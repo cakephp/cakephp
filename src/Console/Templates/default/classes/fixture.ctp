@@ -16,8 +16,6 @@
  * @since         1.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
-echo "<?php\n";
 ?>
 <?= '<?php' . "\n"; ?>
 namespace <?= $namespace; ?>\Test\Fixture;
