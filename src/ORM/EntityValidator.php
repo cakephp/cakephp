@@ -93,7 +93,8 @@ class EntityValidator {
 			}
 
 			$validator = $association->target()->entityValidator();
-			if ($association->type() === Association::ONE_TO_ONE) {
+			$types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
+			if (in_array($association->type(), $types)) {
 				$valid = $validator->one($value, $assoc['options']) && $valid;
 			} else {
 				$valid = $validator->many($value, $assoc['options']) && $valid;
