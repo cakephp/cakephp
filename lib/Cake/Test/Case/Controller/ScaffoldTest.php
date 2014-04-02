@@ -64,6 +64,7 @@ class ScaffoldMockControllerWithFields extends Controller {
  * function beforeScaffold
  *
  * @param string method
+ * @return boolean true
  */
 	public function beforeScaffold($method) {
 		$this->set('scaffoldFields', array('title'));
@@ -82,7 +83,8 @@ class TestScaffoldMock extends Scaffold {
 /**
  * Overload _scaffold
  *
- * @param unknown_type $params
+ * @param CakeRequest $request
+ * @return void
  */
 	protected function _scaffold(CakeRequest $request) {
 		$this->_params = $request;

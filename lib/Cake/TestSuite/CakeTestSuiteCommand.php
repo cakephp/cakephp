@@ -57,6 +57,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
  *
  * @param array   $argv
  * @param boolean $exit
+ * @return void
  */
 	public function run(array $argv, $exit = true) {
 		$this->handleArguments($argv);

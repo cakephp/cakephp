@@ -268,6 +268,7 @@ class ClassRegistryTest extends CakeTestCase {
 /**
  * Tests prefixed datasource names for test purposes
  *
+ * @return void
  */
 	public function testPrefixedTestDatasource() {
 		ClassRegistry::config(array('testing' => true));
@@ -287,6 +288,7 @@ class ClassRegistryTest extends CakeTestCase {
 /**
  * Tests that passing the string parameter to init() will return false if the model does not exists
  *
+ * @return void
  */
 	public function testInitStrict() {
 		$this->assertFalse(ClassRegistry::init('NonExistent', true));

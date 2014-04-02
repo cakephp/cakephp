@@ -43,6 +43,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * Method executed before each test
  *
+ * @return void
  */
 	public function setUp() {
 		parent::setUp();
@@ -68,6 +69,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * Method executed after each test
  *
+ * @return void
  */
 	public function tearDown() {
 		unset($this->Article);
@@ -3388,6 +3390,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testResetAddedAssociation method
  *
+ * @return void
  */
 	public function testResetAddedAssociation() {
 		$this->assertTrue(empty($this->Article->hasMany['ArticlesTag']));
@@ -3429,6 +3432,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testResetAssociation method
  *
+ * @return void
  */
 	public function testResetAssociation() {
 		$this->Article->Behaviors->load('Containable');
@@ -3460,6 +3464,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testResetDeeperHasOneAssociations method
  *
+ * @return void
  */
 	public function testResetDeeperHasOneAssociations() {
 		$this->Article->User->unbindModel(array(
@@ -3520,6 +3525,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testResetMultipleHabtmAssociations method
  *
+ * @return void
  */
 	public function testResetMultipleHabtmAssociations() {
 		$articleHabtm = array(
@@ -3610,6 +3616,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 /**
  * test that bindModel and unbindModel work with find() calls in between.
+ *
+ * @return void
  */
 	public function testBindMultipleTimesWithFind() {
 		$binding = array(

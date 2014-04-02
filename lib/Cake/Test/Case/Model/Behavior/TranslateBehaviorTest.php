@@ -416,6 +416,8 @@ class TranslateBehaviorTest extends CakeTestCase {
 
 /**
  * Test loading fields with 0 as the translated value.
+ *
+ * @return void
  */
 	public function testFetchTranslationsWithZero() {
 		$this->loadFixtures('Translate', 'TranslatedItem');

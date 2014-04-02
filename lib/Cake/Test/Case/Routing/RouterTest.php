@@ -2388,6 +2388,8 @@ class RouterTest extends CakeTestCase {
 
 /**
  * test using custom route class in PluginDot notation
+ *
+ * @return void
  */
 	public function testUsingCustomRouteClassPluginDotSyntax() {
 		App::build(array(
@@ -2550,6 +2552,8 @@ class RouterTest extends CakeTestCase {
 
 /**
  * Test that Router::url() uses the first request
+ *
+ * @return void
  */
 	public function testUrlWithRequestAction() {
 		$firstRequest = new CakeRequest('/posts/index');

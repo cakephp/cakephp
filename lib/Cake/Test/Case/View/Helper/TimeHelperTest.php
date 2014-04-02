@@ -78,6 +78,8 @@ class TimeHelperTest extends CakeTestCase {
 
 /**
  * test CakeTime class methods are called correctly
+ *
+ * @return void
  */
 	public function testTimeHelperProxyMethodCalls() {
 		$methods = array(
@@ -104,6 +106,8 @@ class TimeHelperTest extends CakeTestCase {
 
 /**
  * test engine override
+ *
+ * @return void
  */
 	public function testEngineOverride() {
 		App::build(array(

@@ -58,6 +58,7 @@ class MysqlTest extends CakeTestCase {
 /**
  * Sets up a Dbo class instance for testing
  *
+ * @return void
  */
 	public function setUp() {
 		parent::setUp();
@@ -73,6 +74,7 @@ class MysqlTest extends CakeTestCase {
 /**
  * Sets up a Dbo class instance for testing
  *
+ * @return void
  */
 	public function tearDown() {
 		parent::tearDown();
@@ -85,6 +87,7 @@ class MysqlTest extends CakeTestCase {
  * Test Dbo value method
  *
  * @group quoting
+ * @return void
  */
 	public function testQuoting() {
 		$result = $this->Dbo->fields($this->model);

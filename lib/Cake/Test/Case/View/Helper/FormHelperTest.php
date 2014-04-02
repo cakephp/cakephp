@@ -2236,6 +2236,7 @@ class FormHelperTest extends CakeTestCase {
 /**
  * test form->input() with time types.
  *
+ * @return void
  */
 	public function testInputTime() {
 		extract($this->dateRegex);
@@ -8254,6 +8255,7 @@ class FormHelperTest extends CakeTestCase {
 /**
  * Test base form URL when url param is passed with multiple parameters (&)
  *
+ * @return void
  */
 	public function testCreateQuerystringrequest() {
 		$encoding = strtolower(Configure::read('App.encoding'));

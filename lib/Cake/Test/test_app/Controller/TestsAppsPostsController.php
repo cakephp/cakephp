@@ -27,6 +27,11 @@ class TestsAppsPostsController extends AppController {
 
 	public $viewPath = 'TestsApps';
 
+/**
+ * add method
+ *
+ * @return void
+ */
 	public function add() {
 		$data = array(
 			'Post' => array(
@@ -44,6 +49,7 @@ class TestsAppsPostsController extends AppController {
 /**
  * check URL params
  *
+ * @return void
  */
 	public function url_var() {
 		$this->set('params', $this->request->params);
@@ -53,12 +59,18 @@ class TestsAppsPostsController extends AppController {
 /**
  * post var testing
  *
+ * @return void
  */
 	public function post_var() {
 		$this->set('data', $this->request->data);
 		$this->render('index');
 	}
 
+/**
+ * input_data()
+ *
+ * @return void
+ */
 	public function input_data() {
 		$this->set('data', $this->request->input('json_decode', true));
 		$this->render('index');
@@ -67,6 +79,7 @@ class TestsAppsPostsController extends AppController {
 /**
  * Fixturized action for testAction()
  *
+ * @return void
  */
 	public function fixtured() {
 		$this->set('posts', $this->Post->find('all'));

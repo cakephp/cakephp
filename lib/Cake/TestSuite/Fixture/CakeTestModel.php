@@ -47,8 +47,8 @@ class CakeTestModel extends Model {
  * @param array $data
  * @param boolean|array $validate
  * @param array $fieldList
+ * @return void
  */
-
 	public function save($data = null, $validate = true, $fieldList = array()) {
 		$db = $this->getDataSource();
 		$db->columns['datetime']['formatter'] = 'CakeTestSuiteDispatcher::date';
