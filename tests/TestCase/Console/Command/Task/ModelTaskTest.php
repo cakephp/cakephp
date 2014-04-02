@@ -442,11 +442,11 @@ class ModelTaskTest extends TestCase {
 	public function testGetBehaviors() {
 		$model = TableRegistry::get('NumberTrees');
 		$result = $this->Task->getBehaviors($model);
-		$this->assertEquals(['Tree' => ''], $result);
+		$this->assertEquals(['Tree' => []], $result);
 
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->getBehaviors($model);
-		$this->assertEquals(['Timestamp' => ''], $result);
+		$this->assertEquals(['Timestamp' => []], $result);
 
 		$model = TableRegistry::get('CounterCacheUsers');
 		$result = $this->Task->getBehaviors($model);

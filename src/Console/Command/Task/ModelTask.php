@@ -481,14 +481,14 @@ class ModelTask extends BakeTask {
 			return [];
 		}
 		if (in_array('created', $fields) || in_array('modified', $fields)) {
-			$behaviors['Timestamp'] = '';
+			$behaviors['Timestamp'] = [];
 		}
 
 		if (in_array('lft', $fields) && $schema->columnType('lft') === 'integer' &&
 			in_array('rght', $fields) && $schema->columnType('rght') === 'integer' &&
 			in_array('parent_id', $fields)
 		) {
-			$behaviors['Tree'] = '';
+			$behaviors['Tree'] = [];
 		}
 
 		$counterCache = [];
