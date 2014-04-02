@@ -45,8 +45,8 @@ $key = array_map(function($el) { return "'$el'"; }, (array)$primaryKey);
 ?>
 		$this->primaryKey([<?= implode(', ', $key) ?>]);
 <?php endif ?>
-<?php foreach ($behaviors as $behavior): ?>
-		$this->addBehavior('<?= $behavior ?>');
+<?php foreach ($behaviors as $behavior => $behaviorData): ?>
+		$this->addBehavior('<?= $behavior ?>'<?= $behaviorData ? ", [" . implode(', ', $behaviorData) . ']' : '' ?>);
 <?php endforeach ?>
 
 <?php foreach ($associations as $type => $assocs): ?>
