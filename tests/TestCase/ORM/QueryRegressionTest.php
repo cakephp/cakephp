@@ -30,7 +30,7 @@ class QueryRegressionTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.user', 'core.article', 'core.tag', 'core.articles_tag'];
+	public $fixtures = ['core.user', 'core.article', 'core.tag', 'core.articles_tag', 'core.author'];
 
 /**
  * Tear down
@@ -64,6 +64,16 @@ class QueryRegressionTest extends TestCase {
 		$table->belongsToMany('ArticlesTags');
 		$results = $table->find()->where(['id >' => 100])->contain('ArticlesTags')->toArray();
 		$this->assertEmpty($results);
+	}
+
+	public function testDuplicateAttachableAliases() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors');
+		$table->hasOne('ArticlesTags');
+		$table->Authors->target()->hasOne('Tags', ['foreignKey' => 'id']);
+		$table->ArticlesTags->target()->belongsTo('Tags', ['foreignKey' => 'tag_id']);
+
+		$results = $table->find()->contain(['Authors.Tags', 'ArticlesTags.Tags']);
 	}
 
 }
