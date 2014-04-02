@@ -33,7 +33,7 @@ class MysqlSchemaTest extends TestCase {
  */
 	protected function _needsConnection() {
 		$config = ConnectionManager::config('test');
-		$this->skipIf(strpos($config['className'], 'Mysql') === false, 'Not using Mysql for test config');
+		$this->skipIf(strpos($config['driver'], 'Mysql') === false, 'Not using Mysql for test config');
 	}
 
 /**
@@ -65,6 +65,10 @@ class MysqlSchemaTest extends TestCase {
 			],
 			[
 				'INTEGER(11)',
+				['type' => 'integer', 'length' => 11, 'unsigned' => false]
+			],
+			[
+				'MEDIUMINT(11)',
 				['type' => 'integer', 'length' => 11, 'unsigned' => false]
 			],
 			[
@@ -224,9 +228,8 @@ SQL;
 		$result = $schema->listTables();
 
 		$this->assertInternalType('array', $result);
-		$this->assertCount(2, $result);
-		$this->assertEquals('schema_articles', $result[0]);
-		$this->assertEquals('schema_authors', $result[1]);
+		$this->assertContains('schema_articles', $result);
+		$this->assertContains('schema_authors', $result);
 	}
 
 /**
