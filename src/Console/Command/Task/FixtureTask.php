@@ -224,8 +224,7 @@ class FixtureTask extends BakeTask {
 		if (!empty($this->params['records']) || isset($importOptions['fromTable'])) {
 			$records = $this->_makeRecordString($this->_getRecordsFromTable($model, $useTable));
 		}
-		$out = $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import'));
-		return $out;
+		return $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import'));
 	}
 
 /**
@@ -296,7 +295,7 @@ class FixtureTask extends BakeTask {
 		foreach ($table->constraints() as $index) {
 			$fieldData = $table->constraint($index);
 			$properties = implode(', ', $this->_values($fieldData));
-			$contraints[] = "\t\t\t'$index' => [$properties],";
+			$constraints[] = "\t\t\t'$index' => [$properties],";
 		}
 		$options = $this->_values($table->options());
 
@@ -326,7 +325,7 @@ class FixtureTask extends BakeTask {
 		}
 		foreach ($values as $key => $val) {
 			if (is_array($val)) {
-				$vals[] = "'{$key}' => array(" . implode(", ", $this->_values($val)) . ")";
+				$vals[] = "'{$key}' => [" . implode(", ", $this->_values($val)) . "]";
 			} else {
 				$val = var_export($val, true);
 				if ($val === 'NULL') {

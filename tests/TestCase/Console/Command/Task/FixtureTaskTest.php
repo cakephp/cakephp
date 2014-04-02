@@ -191,7 +191,8 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->args = array('article');
 		$filename = '/my/path/ArticleFixture.php';
 
-		$this->Task->expects($this->at(0))->method('createFile')
+		$this->Task->expects($this->at(0))
+			->method('createFile')
 			->with($filename, $this->stringContains('class ArticleFixture'));
 
 		$this->Task->execute();
@@ -343,6 +344,9 @@ class FixtureTaskTest extends TestCase {
 		$result = $this->Task->bake('Article', 'datatypes');
 		$this->assertContains("'float_field' => 1", $result);
 		$this->assertContains("'bool' => 1", $result);
+		$this->assertContains("_constraints", $result);
+		$this->assertContains("'primary' => ['type' => 'primary'", $result);
+		$this->assertContains("'columns' => ['id']", $result);
 
 		$result = $this->Task->bake('Article', 'binary_tests');
 		$this->assertContains("'data' => 'Lorem ipsum dolor sit amet'", $result);
@@ -361,11 +365,9 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with($filename, $this->stringContains('ArticleFixture'));
 
-		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, $this->stringContains('<?php'));
-
-		$this->Task->generateFixtureFile('Article', array());
-		$this->Task->generateFixtureFile('Article', array());
+		$result = $this->Task->generateFixtureFile('Article', []);
+		$this->assertContains('<?php', $result);
+		$this->assertContains('namespace App\Test\Fixture;', $result);
 	}
 
 /**
@@ -376,16 +378,16 @@ class FixtureTaskTest extends TestCase {
 	public function testGeneratePluginFixtureFile() {
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->plugin = 'TestFixture';
-		$filename = APP . 'Plugin/TestFixture/Test/Fixture/ArticleFixture.php';
+		$this->Task->plugin = 'TestPlugin';
+		$filename = TEST_APP . 'Plugin/TestPlugin/Test/Fixture/ArticleFixture.php';
 
-		//fake plugin path
-		Plugin::load('TestFixture', array('path' => APP . 'Plugin/TestFixture/'));
+		Plugin::load('TestPlugin');
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with($filename, $this->stringContains('class Article'));
 
-		$this->Task->generateFixtureFile('Article', array());
-		Plugin::unload();
+		$result = $this->Task->generateFixtureFile('Article', []);
+		$this->assertContains('<?php', $result);
+		$this->assertContains('namespace TestPlugin\Test\Fixture;', $result);
 	}
 
 }
