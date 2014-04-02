@@ -502,7 +502,7 @@ class ModelTaskTest extends TestCase {
 		$this->Task->plugin = 'TestPlugin';
 		$this->Task->Test->expects($this->at(0))
 			->method('bake')
-			->with('Model', 'BakeArticle');
+			->with('Table', 'BakeArticle');
 		$this->Task->bakeTest('BakeArticle');
 
 		$this->assertEquals($this->Task->plugin, $this->Task->Test->plugin);

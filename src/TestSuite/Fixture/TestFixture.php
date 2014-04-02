@@ -147,7 +147,8 @@ class TestFixture {
 			}
 			// Trigger errors on deprecated usage.
 			if (is_array($data) && isset($data['key'])) {
-				$msg = 'Usage of the `key` options in columns is not supported. Try using the upgrade shell to migrate your fixtures.`';
+				$msg = 'Usage of the `key` options in columns is not supported. Try using the upgrade shell to migrate your fixtures.';
+				$msg .= ' You can download the upgrade shell from https://github.com/cakephp/upgrade.';
 				trigger_error($msg, E_USER_NOTICE);
 			}
 			$this->_schema->addColumn($field, $data);
@@ -161,6 +162,7 @@ class TestFixture {
 			// Trigger errors on deprecated usage.
 			if (empty($data['type'])) {
 				$msg = 'Indexes must define a type. Try using the upgrade shell to migrate your fixtures.';
+				$msg .= ' You can download the upgrade shell from https://github.com/cakephp/upgrade.';
 				trigger_error($msg, E_USER_NOTICE);
 			}
 			foreach ($this->fields['_indexes'] as $name => $data) {

@@ -126,8 +126,12 @@ class FixtureTask extends BakeTask {
 		if (strtolower($this->args[0]) === 'all') {
 			return $this->all();
 		}
+		$table = null;
+		if (isset($this->params['table'])) {
+			$table = $this->params['table'];
+		}
 		$model = $this->_modelName($this->args[0]);
-		$this->bake($model);
+		$this->bake($model, $table);
 	}
 
 /**
@@ -224,8 +228,7 @@ class FixtureTask extends BakeTask {
 		if (!empty($this->params['records']) || isset($importOptions['fromTable'])) {
 			$records = $this->_makeRecordString($this->_getRecordsFromTable($model, $useTable));
 		}
-		$out = $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import'));
-		return $out;
+		return $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import'));
 	}
 
 /**
@@ -296,21 +299,21 @@ class FixtureTask extends BakeTask {
 		foreach ($table->constraints() as $index) {
 			$fieldData = $table->constraint($index);
 			$properties = implode(', ', $this->_values($fieldData));
-			$contraints[] = "\t\t\t'$index' => [$properties],";
+			$constraints[] = "\t\t\t'$index' => [$properties],";
 		}
 		$options = $this->_values($table->options());
 
 		$content = implode("\n", $cols) . "\n";
 		if (!empty($indexes)) {
-			$content .= "\t\t'_indexes' => [" . implode("\n", $indexes) . "],\n";
+			$content .= "\t\t'_indexes' => [\n" . implode("\n", $indexes) . "\n\t\t],\n";
 		}
 		if (!empty($constraints)) {
-			$content .= "\t\t'_constraints' => [" . implode("\n", $constraints) . "],\n";
+			$content .= "\t\t'_constraints' => [\n" . implode("\n", $constraints) . "\n\t\t],\n";
 		}
 		if (!empty($options)) {
-			$content .= "\t\t'_options' => [" . implode(', ', $options) . "],\n";
+			$content .= "\t\t'_options' => [\n" . implode(', ', $options) . "\n\t\t],\n";
 		}
-		return "[\n$content]";
+		return "[\n$content\t]";
 	}
 
 /**
@@ -326,7 +329,7 @@ class FixtureTask extends BakeTask {
 		}
 		foreach ($values as $key => $val) {
 			if (is_array($val)) {
-				$vals[] = "'{$key}' => array(" . implode(", ", $this->_values($val)) . ")";
+				$vals[] = "'{$key}' => [" . implode(", ", $this->_values($val)) . "]";
 			} else {
 				$val = var_export($val, true);
 				if ($val === 'NULL') {

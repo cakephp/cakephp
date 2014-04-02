@@ -734,7 +734,7 @@ class ModelTask extends BakeTask {
 		}
 		$this->Test->plugin = $this->plugin;
 		$this->Test->connection = $this->connection;
-		return $this->Test->bake('Model', $className);
+		return $this->Test->bake('Table', $className);
 	}
 
 }
