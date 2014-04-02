@@ -280,53 +280,14 @@ class BelongsToMany extends Association {
 	}
 
 /**
- * Eager loads a list of records in the target table that are related to another
- * set of records in the source table. Source records can specified in two ways:
- * first one is by passing a Query object setup to find on the source table and
- * the other way is by explicitly passing an array of primary key values from
- * the source table.
+ * Builds an array containing the results from fetchQuery indexed by
+ * the foreignKey value corresponding to this association.
  *
- * The required way of passing related source records is controlled by "strategy"
- * By default the subquery strategy is used, which requires a query on the source
- * When using the select strategy, the list of primary keys will be used.
- *
- * Returns a closure that should be run for each record returned in an specific
- * Query. This callable will be responsible for injecting the fields that are
- * related to each specific passed row.
- *
- * Options array accept the following keys:
- *
- * - query: Query object setup to find the source table records
- * - keys: List of primary key values from the source table
- * - foreignKey: The name of the field used to relate both tables
- * - conditions: List of conditions to be passed to the query where() method
- * - sort: The direction in which the records should be returned
- * - fields: List of fields to select from the target table
- * - contain: List of related tables to eager load associated to the target table
- * - strategy: The name of strategy to use for finding target table records
- *
- * @param array $options
- * @return \Closure
+ * @param \Cake\ORM\Query $fetchQuery The query to get results from
+ * @param array $options The options passed to the eager loader
+ * @return array
  */
-	public function eagerLoader(array $options) {
-		$options += [
-			'foreignKey' => $this->foreignKey(),
-			'conditions' => [],
-			'sort' => $this->sort(),
-			'strategy' => $this->strategy()
-		];
-
-		$queryBuilder = false;
-		if (!empty($options['queryBuilder'])) {
-			$queryBuilder = $options['queryBuilder'];
-			unset($options['queryBuilder']);
-		}
-
-		$fetchQuery = $this->_buildQuery($options);
-		if ($queryBuilder) {
-			$fetchQuery = $queryBuilder($fetchQuery);
-		}
-
+	protected function _buildResultMap($fetchQuery, $options) {
 		$resultMap = [];
 		$key = (array)$options['foreignKey'];
 		$property = $this->target()->association($this->junction()->alias())->property();
@@ -346,8 +307,7 @@ class BelongsToMany extends Association {
 			}
 			$resultMap[implode(';', $values)][] = $result;
 		}
-
-		return $this->_resultInjector($fetchQuery, $resultMap);
+		return $resultMap;
 	}
 
 /**
@@ -435,7 +395,6 @@ class BelongsToMany extends Association {
  * @see BelongsToMany::replaceLinks()
  */
 	public function save(Entity $entity, $options = []) {
-		$property = $this->property();
 		$targetEntity = $entity->get($this->property());
 		$strategy = $this->saveStrategy();
 
@@ -533,7 +492,7 @@ class BelongsToMany extends Association {
 		$jointProperty = $this->_junctionProperty;
 		$junctionAlias = $junction->alias();
 
-		foreach ($targetEntities as $k => $e) {
+		foreach ($targetEntities as $e) {
 			$joint = $e->get($jointProperty);
 			if (!$joint) {
 				$joint = new $entityClass;
@@ -961,8 +920,8 @@ class BelongsToMany extends Association {
 		if ($name === null) {
 			if (empty($this->_junctionTableName)) {
 				$aliases = array_map('\Cake\Utility\Inflector::underscore', [
-					$sAlias = $this->source()->alias(),
-					$tAlias = $this->target()->alias()
+					$this->source()->alias(),
+					$this->target()->alias()
 				]);
 				sort($aliases);
 				$this->_junctionTableName = implode('_', $aliases);

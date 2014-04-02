@@ -15,7 +15,7 @@
 namespace Cake\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
-use Cake\Database\Expression\TupleComparison;
+use Cake\ORM\Association\SelectableAssociationTrait;
 use Cake\ORM\Query;
 use Cake\Utility\Inflector;
 
@@ -24,6 +24,10 @@ use Cake\Utility\Inflector;
  * a extra query.
  */
 trait ExternalAssociationTrait {
+
+	use SelectableAssociationTrait {
+		_defaultOptions as private _selectableOptions;
+	}
 
 /**
  * Order in which target records should be returned
@@ -75,18 +79,6 @@ trait ExternalAssociationTrait {
 	}
 
 /**
- * Returns true if the eager loading process will require a set of parent table's
- * primary keys in order to use them as a filter in the finder query.
- *
- * @param array $options
- * @return boolean true if a list of keys will be required
- */
-	public function requiresKeys($options = []) {
-		$strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
-		return $strategy !== parent::STRATEGY_SUBQUERY;
-	}
-
-/**
  * Correctly nests a result row associated values into the correct array keys inside the
  * source results.
  *
@@ -111,13 +103,42 @@ trait ExternalAssociationTrait {
 	}
 
 /**
- * Eager loads a list of records in the target table that are related to another
- * set of records in the source table.
+ * Returns the default options to use for the eagerLoader
  *
- * @param array $options
- * @return \Closure
+ * @return array
  */
-	public abstract function eagerLoader(array $options);
+	protected function _defaultOptions() {
+		return $this->_selectableOptions() + [
+			'sort' => $this->sort()
+		];
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	protected function _buildResultMap($fetchQuery, $options) {
+		$resultMap = [];
+		$key = (array)$options['foreignKey'];
+
+		foreach ($fetchQuery->all() as $result) {
+			$values = [];
+			foreach ($key as $k) {
+				$values[] = $result[$k];
+			}
+			$resultMap[implode(';', $values)][] = $result;
+		}
+		return $resultMap;
+	}
+
+/**
+ * Returns the key under which the eagerLoader will put this association results
+ *
+ * @return void
+ */
+	protected function _nestingKey() {
+		return $this->_name . '___collection_';
+	}
 
 /**
  * Returns a single or multiple conditions to be appended to the generated join
@@ -147,186 +168,6 @@ trait ExternalAssociationTrait {
 		}
 
 		return $conditions;
-	}
-
-/**
- * Returns a callable to be used for each row in a query result set
- * for injecting the eager loaded rows
- *
- * @param \Cake\ORM\Query $fetchQuery the Query used to fetch results
- * @param array $resultMap an array with the foreignKey as keys and
- * the corresponding target table results as value.
- * @return \Closure
- */
-	protected function _resultInjector($fetchQuery, $resultMap) {
-		$source = $this->source();
-		$sAlias = $source->alias();
-		$tAlias = $this->target()->alias();
-
-		$sourceKeys = [];
-		foreach ((array)$source->primaryKey() as $key) {
-			$sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
-		}
-
-		$nestKey = $tAlias . '___collection_';
-
-		if (count($sourceKeys) > 1) {
-			return $this->_multiKeysInjector($resultMap, $sourceKeys, $nestKey);
-		}
-
-		$sourceKey = $sourceKeys[0];
-		return function($row) use ($resultMap, $sourceKey, $nestKey) {
-			if (isset($resultMap[$row[$sourceKey]])) {
-				$row[$nestKey] = $resultMap[$row[$sourceKey]];
-			}
-			return $row;
-		};
-	}
-
-/**
- * Returns a callable to be used for each row in a query result set
- * for injecting the eager loaded rows when the matching needs to
- * be done with multiple foreign keys
- *
- * @param array $resultMap a keyed arrays containing the target table
- * @param array $sourceKeys an array with aliased keys to match
- * @param string $nestKey the key under which results should be nested
- * @return \Closure
- */
-	protected function _multiKeysInjector($resultMap, $sourceKeys, $nestKey) {
-		return function($row) use ($resultMap, $sourceKeys, $nestKey) {
-			$values = [];
-			foreach ($sourceKeys as $key) {
-				$values[] = $row[$key];
-			}
-
-			$key = implode(';', $values);
-			if (isset($resultMap[$key])) {
-				$row[$nestKey] = $resultMap[$key];
-			}
-			return $row;
-		};
-	}
-
-/**
- * Auxiliary function to construct a new Query object to return all the records
- * in the target table that are associated to those specified in $options from
- * the source table
- *
- * @param array $options options accepted by eagerLoader()
- * @return \Cake\ORM\Query
- * @throws \InvalidArgumentException When a key is required for associations but not selected.
- */
-	protected function _buildQuery($options) {
-		$target = $this->target();
-		$alias = $target->alias();
-		$key = $this->_linkField($options);
-
-		$filter = $options['keys'];
-		if ($options['strategy'] === parent::STRATEGY_SUBQUERY) {
-			$filter = $this->_buildSubquery($options['query'], $key);
-		}
-
-		$fetchQuery = $this
-			->find('all')
-			->where($options['conditions'])
-			->eagerLoaded(true)
-			->hydrate($options['query']->hydrate());
-		$fetchQuery = $this->_addFilteringCondition($fetchQuery, $key, $filter);
-
-		if (!empty($options['fields'])) {
-			$fields = $fetchQuery->aliasFields($options['fields'], $alias);
-			if (!in_array($key, $fields)) {
-				throw new \InvalidArgumentException(
-					sprintf('You are required to select the "%s" field', $key)
-				);
-			}
-			$fetchQuery->select($fields);
-		}
-
-		if (!empty($options['sort'])) {
-			$fetchQuery->order($options['sort']);
-		}
-
-		if (!empty($options['contain'])) {
-			$fetchQuery->contain($options['contain']);
-		}
-
-		if (!empty($options['queryBuilder'])) {
-			$options['queryBuilder']($fetchQuery);
-		}
-
-		return $fetchQuery;
-	}
-
-/**
- * Appends any conditions required to load the relevant set of records in the
- * target table query given a filter key and some filtering values.
- *
- * @param \Cake\ORM\Query taget table's query
- * @param string $key the fields that should be used for filtering
- * @param mixed $filter the value that should be used to match for $key
- * @return \Cake\ORM\Query
- */
-	protected function _addFilteringCondition($query, $key, $filter) {
-		if (is_array($key)) {
-			$types = [];
-			$defaults = $query->defaultTypes();
-			foreach ($key as $k) {
-				if (isset($defaults[$k])) {
-					$types[] = $defaults[$k];
-				}
-			}
-			return $query->andWhere(new TupleComparison($key, $filter, $types, 'IN'));
-		}
-
-		return $query->andWhere([$key . ' IN' => $filter]);
-	}
-
-/**
- * Generates a string used as a table field that contains the values upon
- * which the filter should be applied
- *
- * @param array $options
- * @return string
- */
-	protected function _linkField($options) {
-		$links = [];
-		$name = $this->name();
-
-		foreach ((array)$options['foreignKey'] as $key) {
-			$links[] = sprintf('%s.%s', $name, $key);
-		}
-
-		if (count($links) === 1) {
-			return $links[0];
-		}
-
-		return $links;
-	}
-
-/**
- * Builds a query to be used as a condition for filtering records in in the
- * target table, it is constructed by cloning the original query that was used
- * to load records in the source table.
- *
- * @param \Cake\ORM\Query $query the original query used to load source records
- * @param string $foreignKey the field to be selected in the query
- * @return \Cake\ORM\Query
- */
-	protected function _buildSubquery($query, $foreignKey) {
-		$filterQuery = clone $query;
-		$filterQuery->limit(null);
-		$filterQuery->contain([], true);
-		$joins = $filterQuery->join();
-		foreach ($joins as $i => $join) {
-			if (strtolower($join['type']) !== 'inner') {
-				unset($joins[$i]);
-			}
-		}
-		$filterQuery->join($joins, [], true);
-		$fields = $query->aliasFields((array)$query->repository()->primaryKey());
-		return $filterQuery->select($fields, true);
 	}
 
 /**

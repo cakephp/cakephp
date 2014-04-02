@@ -47,68 +47,6 @@ class HasMany extends Association {
 	protected $_strategy = parent::STRATEGY_SELECT;
 
 /**
- * Eager loads a list of records in the target table that are related to another
- * set of records in the source table. Source records can specified in two ways:
- * first one is by passing a Query object setup to find on the source table and
- * the other way is by explicitly passing an array of primary key values from
- * the source table.
- *
- * The required way of passing related source records is controlled by "strategy"
- * By default the subquery strategy is used, which requires a query on the source
- * When using the select strategy, the list of primary keys will be used.
- *
- * Returns a closure that should be run for each record returned in an specific
- * Query. This callable will be responsible for injecting the fields that are
- * related to each specific passed row.
- *
- * Options array accept the following keys:
- *
- * - query: Query object setup to find the source table records
- * - keys: List of primary key values from the source table
- * - foreignKey: The name of the field used to relate both tables
- * - conditions: List of conditions to be passed to the query where() method
- * - sort: The direction in which the records should be returned
- * - fields: List of fields to select from the target table
- * - contain: List of related tables to eager load associated to the target table
- * - strategy: The name of strategy to use for finding target table records
- *
- * @param array $options
- * @return \Closure
- */
-	public function eagerLoader(array $options) {
-		$options += [
-			'foreignKey' => $this->foreignKey(),
-			'conditions' => [],
-			'sort' => $this->sort(),
-			'strategy' => $this->strategy()
-		];
-
-		$queryBuilder = false;
-		if (!empty($options['queryBuilder'])) {
-			$queryBuilder = $options['queryBuilder'];
-			unset($options['queryBuilder']);
-		}
-
-		$fetchQuery = $this->_buildQuery($options);
-		if ($queryBuilder) {
-			$fetchQuery = $queryBuilder($fetchQuery);
-		}
-
-		$resultMap = [];
-		$key = (array)$options['foreignKey'];
-
-		foreach ($fetchQuery->all() as $result) {
-			$values = [];
-			foreach ($key as $k) {
-				$values[] = $result[$k];
-			}
-			$resultMap[implode(';', $values)][] = $result;
-		}
-
-		return $this->_resultInjector($fetchQuery, $resultMap);
-	}
-
-/**
  * Returns whether or not the passed table is the owning side for this
  * association. This means that rows in the 'target' table would miss important
  * or required information if the row in 'source' did not exist.
@@ -177,6 +115,25 @@ class HasMany extends Association {
 
 		$entity->set($this->property(), $targetEntities);
 		return $entity;
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	protected function _linkField($options) {
+		$links = [];
+		$name = $this->name();
+
+		foreach ((array)$options['foreignKey'] as $key) {
+			$links[] = sprintf('%s.%s', $name, $key);
+		}
+
+		if (count($links) === 1) {
+			return $links[0];
+		}
+
+		return $links;
 	}
 
 /**

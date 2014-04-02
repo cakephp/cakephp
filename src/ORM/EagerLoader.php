@@ -395,15 +395,21 @@ class EagerLoader {
 	protected function _collectKeys($external, $query, $statement) {
 		$collectKeys = [];
 		foreach ($external as $meta) {
-			$source = $meta['instance']->source();
-			if ($meta['instance']->requiresKeys($meta['config'])) {
-				$alias = $source->alias();
-				$pkFields = [];
-				foreach ((array)$source->primaryKey() as $key) {
-					$pkFields[] = key($query->aliasField($key, $alias));
-				}
-				$collectKeys[$alias] = [$alias, $pkFields, count($pkFields) === 1];
+			if (!$meta['instance']->requiresKeys($meta['config'])) {
+				continue;
 			}
+
+			$source = $meta['instance']->source();
+			$keys = $meta['instance']->type() === $meta['instance']::ONE_TO_ONE ?
+				(array)$meta['instance']->foreignKey() :
+				(array)$source->primaryKey();
+
+			$alias = $source->alias();
+			$pkFields = [];
+			foreach ($keys as $key) {
+				$pkFields[] = key($query->aliasField($key, $alias));
+			}
+			$collectKeys[$alias] = [$alias, $pkFields, count($pkFields) === 1];
 		}
 
 		if (empty($collectKeys)) {

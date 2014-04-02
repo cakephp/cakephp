@@ -32,13 +32,6 @@ class HasOne extends Association {
 	use DependentDeleteTrait;
 
 /**
- * Whether this association can be expressed directly in a query join
- *
- * @var boolean
- */
-	protected $_canBeJoined = true;
-
-/**
  * The type of join to be used when adding the association to a query
  *
  * @var string
@@ -155,6 +148,13 @@ class HasOne extends Association {
 		}
 
 		return $conditions;
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	public function eagerLoader(array $options) {
 	}
 
 }

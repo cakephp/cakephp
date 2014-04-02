@@ -50,7 +50,10 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->association = $this->getMock(
 			'\Cake\ORM\Association',
-			['_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide', 'save'],
+			[
+				'_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+				'save', 'eagerLoader'
+			],
 			['Foo', $config]
 		);
 	}
@@ -117,7 +120,7 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testCanBeJoined() {
-		$this->assertFalse($this->association->canBeJoined());
+		$this->assertTrue($this->association->canBeJoined());
 	}
 
 /**
