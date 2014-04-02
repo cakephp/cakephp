@@ -72,6 +72,13 @@ abstract class Association {
 	const MANY_TO_MANY = 'manyToMany';
 
 /**
+ * Association type for many to one associations.
+ *
+ * @var string
+ */
+	const MANY_TO_ONE = 'manyToOne';
+
+/**
  * Name given to the association, it usually represents the alias
  * assigned to the target associated table
  *
@@ -455,11 +462,9 @@ abstract class Association {
 /**
  * Get the relationship type.
  *
- * @return string Constant of either ONE_TO_ONE, MANY_TO_ONE, or MANY_TO_MANY.
+ * @return string Constant of either ONE_TO_ONE, MANY_TO_ONE, ONE_TO_MANY or MANY_TO_MANY.
  */
-	public function type() {
-		return self::ONE_TO_ONE;
-	}
+	public abstract function type();
 
 /**
  * Proxies the finding operation to the target table's find method

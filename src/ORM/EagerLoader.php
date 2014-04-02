@@ -400,7 +400,7 @@ class EagerLoader {
 			}
 
 			$source = $meta['instance']->source();
-			$keys = $meta['instance']->type() === $meta['instance']::ONE_TO_ONE ?
+			$keys = $meta['instance']->type() === $meta['instance']::MANY_TO_ONE ?
 				(array)$meta['instance']->foreignKey() :
 				(array)$source->primaryKey();
 

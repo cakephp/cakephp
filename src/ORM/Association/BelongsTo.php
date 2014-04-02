@@ -94,6 +94,15 @@ class BelongsTo extends Association {
 	}
 
 /**
+ * Get the relationship type.
+ *
+ * @return string
+ */
+	public function type() {
+		return self::MANY_TO_ONE;
+	}
+
+/**
  * {@inheritdoc}
  *
  */
