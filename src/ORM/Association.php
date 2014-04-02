@@ -591,7 +591,7 @@ abstract class Association {
  * Query. This callable will be responsible for injecting the fields that are
  * related to each specific passed row.
  *
- * Options array accept the following keys:
+ * Options array accepts the following keys:
  *
  * - query: Query object setup to find the source table records
  * - keys: List of primary key values from the source table

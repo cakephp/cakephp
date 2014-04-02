@@ -122,7 +122,7 @@ trait SelectableAssociationTrait {
  * Appends any conditions required to load the relevant set of records in the
  * target table query given a filter key and some filtering values.
  *
- * @param \Cake\ORM\Query taget table's query
+ * @param \Cake\ORM\Query $query Target table's query
  * @param string $key the fields that should be used for filtering
  * @param mixed $filter the value that should be used to match for $key
  * @return \Cake\ORM\Query
@@ -152,7 +152,7 @@ trait SelectableAssociationTrait {
 	protected abstract function _linkField($options);
 
 /**
- * Builds a query to be used as a condition for filtering records in in the
+ * Builds a query to be used as a condition for filtering records in the
  * target table, it is constructed by cloning the original query that was used
  * to load records in the source table.
  *
@@ -242,9 +242,9 @@ trait SelectableAssociationTrait {
  * for injecting the eager loaded rows when the matching needs to
  * be done with multiple foreign keys
  *
- * @param array $resultMap a keyed arrays containing the target table
- * @param array $sourceKeys an array with aliased keys to match
- * @param string $nestKey the key under which results should be nested
+ * @param array $resultMap A keyed arrays containing the target table
+ * @param array $sourceKeys An array with aliased keys to match
+ * @param string $nestKey The key under which results should be nested
  * @return \Closure
  */
 	protected function _multiKeysInjector($resultMap, $sourceKeys, $nestKey) {
