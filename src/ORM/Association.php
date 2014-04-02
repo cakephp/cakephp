@@ -582,6 +582,41 @@ abstract class Association {
 	}
 
 /**
+ * Returns a single or multiple conditions to be appended to the generated join
+ * clause for getting the results on the target table.
+ *
+ * @param array $options list of options passed to attachTo method
+ * @return array
+ * @throws \RuntimeException if the number of columns in the foreignKey do not
+ * match the number of columns in the source table primaryKey
+ */
+	protected function _joinCondition(array $options) {
+		$conditions = [];
+		$tAlias = $this->target()->alias();
+		$sAlias = $this->source()->alias();
+		$foreignKey = (array)$options['foreignKey'];
+		$primaryKey = (array)$this->_sourceTable->primaryKey();
+
+		if (count($foreignKey) !== count($primaryKey)) {
+			$msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
+			throw new \RuntimeException(sprintf(
+				$msg,
+				$this->_name,
+				implode(', ', $foreignKey),
+				implode(', ', $primaryKey)
+			));
+		}
+
+		foreach ($foreignKey as $k => $f) {
+			$field = sprintf('%s.%s', $sAlias, $primaryKey[$k]);
+			$value = new IdentifierExpression(sprintf('%s.%s', $tAlias, $f));
+			$conditions[$field] = $value;
+		}
+
+		return $conditions;
+	}
+
+/**
  * Eager loads a list of records in the target table that are related to another
  * set of records in the source table. Source records can specified in two ways:
  * first one is by passing a Query object setup to find on the source table and
@@ -611,16 +646,6 @@ abstract class Association {
  * @return \Closure
  */
 	public abstract function eagerLoader(array $options);
-
-/**
- * Returns a single or multiple condition(s) to be appended to the generated join
- * clause for getting the results on the target table. If false is returned then
- * it will not attach any new conditions to the join clause
- *
- * @param array $options list of options passed to attachTo method
- * @return string|array|boolean
- */
-	protected abstract function _joinCondition(array $options);
 
 /**
  * Handles cascading a delete from an associated model.
