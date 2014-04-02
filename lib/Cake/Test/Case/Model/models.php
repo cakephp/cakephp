@@ -929,6 +929,10 @@ class Post extends CakeTestModel {
  */
 	public $belongsTo = array('Author');
 
+/**
+ * @param array $queryData
+ * @return boolean true
+ */
 	public function beforeFind($queryData) {
 		if (isset($queryData['connection'])) {
 			$this->useDbConfig = $queryData['connection'];
@@ -936,6 +940,11 @@ class Post extends CakeTestModel {
 		return true;
 	}
 
+/**
+ * @param array $results
+ * @param boolean $primary
+ * @return array $results
+ */
 	public function afterFind($results, $primary = false) {
 		$this->useDbConfig = 'test';
 		return $results;
@@ -2729,6 +2738,11 @@ class AfterTree extends NumberTree {
  */
 	public $actsAs = array('Tree');
 
+/**
+ * @param boolean $created
+ * @param array $options
+ * @return void
+ */
 	public function afterSave($created, $options = array()) {
 		if ($created && isset($this->data['AfterTree'])) {
 			$this->data['AfterTree']['name'] = 'Six and One Half Changed in AfterTree::afterSave() but not in database';

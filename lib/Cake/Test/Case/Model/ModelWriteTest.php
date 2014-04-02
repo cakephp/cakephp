@@ -40,6 +40,7 @@ class TestAuthor extends Author {
  * Helper method to set a datasource object
  *
  * @param Object $object The datasource object
+ * @return void
  */
 	public function setDataSourceObject($object) {
 		$this->_dataSourceObject = $object;
@@ -77,6 +78,7 @@ class TestPost extends Post {
  * Helper method to set a datasource object
  *
  * @param Object $object The datasource object
+ * @return void
  */
 	public function setDataSourceObject($object) {
 		$this->_dataSourceObject = $object;
@@ -365,6 +367,8 @@ class ModelWriteTest extends BaseModelTest {
 
 /**
  * test that save() resets whitelist on failed save
+ *
+ * @return void
  */
 	public function testSaveFieldListResetsWhitelistOnFailedSave() {
 		$this->loadFixtures('Bidding');

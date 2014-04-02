@@ -462,6 +462,8 @@ class TestCachedPagesController extends Controller {
 
 /**
  * Test cached views with themes.
+ *
+ * @return void
  */
 	public function themed() {
 		$this->cacheAction = 10;

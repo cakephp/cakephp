@@ -706,6 +706,8 @@ class ViewTest extends CakeTestCase {
 
 /**
  * Test that elements can have callbacks
+ *
+ * @return void
  */
 	public function testElementCallbacks() {
 		$Helper = $this->getMock('Helper', array(), array($this->View), 'ElementCallbackMockHtmlHelper');

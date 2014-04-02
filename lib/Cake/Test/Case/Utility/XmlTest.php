@@ -553,6 +553,7 @@ XML;
  * testFromArrayFail method
  *
  * @dataProvider invalidArrayDataProvider
+ * @return void
  */
 	public function testFromArrayFail($value) {
 		try {
@@ -1123,6 +1124,7 @@ XML;
  *
  * @dataProvider invalidToArrayDataProvider
  * @expectedException XmlException
+ * @return void
  */
 	public function testToArrayFail($value) {
 		Xml::toArray($value);

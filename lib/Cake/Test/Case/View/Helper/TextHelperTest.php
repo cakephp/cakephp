@@ -74,6 +74,8 @@ class TextHelperTest extends CakeTestCase {
 
 /**
  * test String class methods are called correctly
+ *
+ * @return void
  */
 	public function testTextHelperProxyMethodCalls() {
 		$methods = array(
@@ -90,6 +92,8 @@ class TextHelperTest extends CakeTestCase {
 
 /**
  * test engine override
+ *
+ * @return void
  */
 	public function testEngineOverride() {
 		App::build(array(
