@@ -169,8 +169,13 @@ class BelongsTo extends Association {
 		$primaryKey = (array)$this->_targetTable->primaryKey();
 
 		if (count($foreignKey) !== count($primaryKey)) {
-			$msg = 'Cannot match provided foreignKey, got %d columns expected %d';
-			throw new \RuntimeException(sprintf($msg, count($foreignKey), count($primaryKey)));
+			$msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
+			throw new \RuntimeException(sprintf(
+				$msg,
+				$this->_name,
+				implode(', ', $foreignKey),
+				implode(', ', $primaryKey)
+			));
 		}
 
 		foreach ($foreignKey as $k => $f) {
