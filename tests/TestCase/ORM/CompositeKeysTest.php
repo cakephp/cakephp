@@ -292,7 +292,6 @@ class CompositeKeyTest extends TestCase {
  * @return void
  */
 	public function testHasOneEager($strategy) {
-		$strategy = 'select';
 		$table = TableRegistry::get('SiteAuthors');
 		$table->hasOne('SiteArticles', [
 			'propertyName' => 'first_article',
