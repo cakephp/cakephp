@@ -201,11 +201,13 @@ class DigestAuthenticate extends BasicAuthenticate {
  * @return string Headers for logging in.
  */
 	public function loginHeaders(Request $request) {
+		$realm = $this->_config['realm'] ?: $request->env('SERVER_NAME');
+
 		$options = array(
-			'realm' => $this->_config['realm'] ?: $request->env('SERVER_NAME'),
+			'realm' => $realm,
 			'qop' => $this->_config['qop'],
 			'nonce' => $this->_config['nonce'] ?: uniqid(''),
-			'opaque' => $this->_config['opaque'] ?: md5($options['realm'])
+			'opaque' => $this->_config['opaque'] ?: md5($realm)
 		);
 
 		$opts = array();

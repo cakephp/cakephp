@@ -206,6 +206,24 @@ DIGEST;
 	}
 
 /**
+ * testLoginHeaders method
+ *
+ * @return void
+ */
+	public function testLoginHeaders() {
+		$request = new Request([
+			'environment' => ['SERVER_NAME' => 'localhost']
+		]);
+		$this->auth = new DigestAuthenticate($this->Collection, array(
+			'realm' => 'localhost',
+			'nonce' => '123'
+		));
+		$expected = 'WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="421aa90e079fa326b6494f812ad13e79"';
+		$result = $this->auth->loginHeaders($request);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testParseDigestAuthData method
  *
  * @return void
