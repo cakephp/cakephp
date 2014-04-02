@@ -33,7 +33,7 @@ class PostgresSchemaTest extends TestCase {
  */
 	protected function _needsConnection() {
 		$config = ConnectionManager::config('test');
-		$this->skipIf(strpos($config['className'], 'Postgres') === false, 'Not using Postgres for test config');
+		$this->skipIf(strpos($config['driver'], 'Postgres') === false, 'Not using Postgres for test config');
 	}
 
 /**
@@ -87,11 +87,11 @@ SQL;
 			// Timestamp
 			[
 				'TIMESTAMP',
-				['type' => 'datetime', 'length' => null]
+				['type' => 'timestamp', 'length' => null]
 			],
 			[
 				'TIMESTAMP WITHOUT TIME ZONE',
-				['type' => 'datetime', 'length' => null]
+				['type' => 'timestamp', 'length' => null]
 			],
 			// Date & time
 			[
@@ -307,7 +307,7 @@ SQL;
 				'autoIncrement' => null,
 			],
 			'created' => [
-				'type' => 'datetime',
+				'type' => 'timestamp',
 				'null' => true,
 				'default' => null,
 				'length' => null,
