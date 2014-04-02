@@ -180,6 +180,25 @@ class FixtureTaskTest extends TestCase {
 	}
 
 /**
+ * Test the table option.
+ *
+ * @return void
+ */
+	public function testExecuteWithTableOption() {
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('article');
+		$this->Task->params = ['table' => 'comments'];
+		$filename = '/my/path/ArticleFixture.php';
+
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with($filename, $this->stringContains("public \$table = 'comments';"));
+
+		$this->Task->execute();
+	}
+
+/**
  * test that execute passes runs bake depending with named model.
  *
  *
