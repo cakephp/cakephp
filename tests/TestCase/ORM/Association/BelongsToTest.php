@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\TypeMap;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -53,6 +54,12 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 					'primary' => ['type' => 'primary', 'columns' => ['id']]
 				]
 			]
+		]);
+		$this->companiesTypeMap = new TypeMap([
+			'Companies.id' => 'integer',
+			'id' => 'integer',
+			'Companies.company_name' => 'string',
+			'company_name' => 'string',
 		]);
 	}
 
@@ -97,7 +104,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				], ['Companies.id' => 'integer']),
+				], $this->companiesTypeMap),
 				'table' => 'companies',
 				'type' => 'LEFT'
 			]
@@ -126,7 +133,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 			'Companies' => [
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => false
-				]),
+				], $this->companiesTypeMap),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
@@ -162,7 +169,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				], ['Companies.id' => 'integer']),
+				], $this->companiesTypeMap),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
@@ -192,7 +199,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 					'a' => 1,
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				], ['Companies.id' => 'integer']),
+				], $this->companiesTypeMap),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
@@ -229,7 +236,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				], ['Companies.id' => 'integer']),
+				], $this->companiesTypeMap),
 				'table' => 'companies',
 				'type' => 'INNER'
 			]
@@ -311,7 +318,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field1, 'Companies.tenant_id' => $field2]
-				], ['Companies.id' => 'integer']),
+				], $this->companiesTypeMap),
 				'table' => 'companies',
 				'type' => 'LEFT'
 			]

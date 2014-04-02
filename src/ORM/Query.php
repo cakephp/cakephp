@@ -102,7 +102,7 @@ class Query extends DatabaseQuery {
  * @param \Cake\ORM\Table $table
  */
 	public function __construct($connection, $table) {
-		$this->connection($connection);
+		parent::__construct($connection);
 		$this->repository($table);
 
 		if ($this->_repository) {
@@ -128,7 +128,7 @@ class Query extends DatabaseQuery {
 		foreach ($schema->columns() as $f) {
 			$fields[$f] = $fields[$alias . '.' . $f] = $schema->columnType($f);
 		}
-		$this->defaultTypes($this->defaultTypes() + $fields);
+		$this->defaultTypes($fields);
 
 		return $this;
 	}

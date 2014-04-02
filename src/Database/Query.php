@@ -33,6 +33,8 @@ use IteratorAggregate;
  */
 class Query implements ExpressionInterface, IteratorAggregate {
 
+	use TypeMapTrait;
+
 /**
  * Connection instance to be used to execute this query.
  *
@@ -127,15 +129,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @var \Cake\Database\StatementInterface
  */
 	protected $_iterator;
-
-/**
- * Associative array with the default fields and their types this query might contain
- * used to avoid repetition when calling multiple times functions inside this class that
- * may require a custom type for a specific field.
- *
- * @var array
- */
-	protected $_defaultTypes = [];
 
 /**
  * The object responsible for generating query placeholders and temporarily store values
@@ -665,7 +658,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$tables = [$tables];
 		}
 
-		$types += $this->defaultTypes();
 		$joins = [];
 		$i = count($this->_parts['join']);
 		foreach ($tables as $alias => $t) {
@@ -854,7 +846,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		if ($overwrite) {
 			$this->_parts['where'] = $this->newExpr();
 		}
-		$this->_conjugate('where', $conditions, 'AND', $types + $this->defaultTypes());
+		$this->_conjugate('where', $conditions, 'AND', $types);
 		return $this;
 	}
 
@@ -915,7 +907,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function andWhere($conditions, $types = []) {
-		$this->_conjugate('where', $conditions, 'AND', $types + $this->defaultTypes());
+		$this->_conjugate('where', $conditions, 'AND', $types);
 		return $this;
 	}
 
@@ -976,7 +968,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function orWhere($conditions, $types = []) {
-		$this->_conjugate('where', $conditions, 'OR', $types + $this->defaultTypes());
+		$this->_conjugate('where', $conditions, 'OR', $types);
 		return $this;
 	}
 
@@ -1081,7 +1073,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		if ($overwrite) {
 			$this->_parts['having'] = $this->newExpr();
 		}
-		$this->_conjugate('having', $conditions, 'AND', $types + $this->defaultTypes());
+		$this->_conjugate('having', $conditions, 'AND', $types);
 		return $this;
 	}
 
@@ -1097,7 +1089,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function andHaving($conditions, $types = []) {
-		$this->_conjugate('having', $conditions, 'AND', $types + $this->defaultTypes());
+		$this->_conjugate('having', $conditions, 'AND', $types);
 		return $this;
 	}
 
@@ -1113,7 +1105,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function orHaving($conditions, $types = []) {
-		$this->_conjugate('having', $conditions, 'OR', $types + $this->defaultTypes());
+		$this->_conjugate('having', $conditions, 'OR', $types);
 		return $this;
 	}
 
@@ -1343,7 +1335,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		$this->_parts['insert'][1] = $columns;
 
 		if (!$this->_parts['values']) {
-			$this->_parts['values'] = new ValuesExpression($columns, $types + $this->defaultTypes());
+			$this->_parts['values'] = new ValuesExpression($columns, $this->typeMap()->types($types));
 		}
 
 		return $this;
@@ -1429,14 +1421,14 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 		if (is_array($key) || $key instanceof ExpressionInterface) {
 			$types = (array)$value;
-			$this->_parts['set']->add($key, $types + $this->defaultTypes());
+			$this->_parts['set']->add($key, $types);
 			return $this;
 		}
 
 		if (is_string($types) && is_string($key)) {
 			$types = [$key => $types];
 		}
-		$this->_parts['set']->eq($key, $value, $types + $this->defaultTypes());
+		$this->_parts['set']->eq($key, $value, $types);
 
 		return $this;
 	}
@@ -1498,7 +1490,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return QueryExpression
  */
 	public function newExpr() {
-		return new QueryExpression;
+		return new QueryExpression([], $this->typeMap());
 	}
 
 /**
@@ -1641,32 +1633,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			}
 		};
 		return $this->traverse($visitor);
-	}
-
-/**
- * Configures a map of default fields and their associated types to be
- * used as the default list of types for every function in this class
- * with a $types param. Useful to avoid repetition when calling the same
- * functions using the same fields and types.
- *
- * If called with no arguments it will return the currently configured types.
- *
- * ## Example
- *
- * {{{
- *	$query->defaultTypes(['created' => 'datetime', 'is_visible' => 'boolean']);
- * }}}
- *
- * @param array $types associative array where keys are field names and values
- * are the correspondent type.
- * @return Query|array
- */
-	public function defaultTypes(array $types = null) {
-		if ($types === null) {
-			return $this->_defaultTypes;
-		}
-		$this->_defaultTypes = $types;
-		return $this;
 	}
 
 /**
@@ -1835,7 +1801,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		return [
 			'sql' => $this->sql(),
 			'params' => $this->valueBinder()->bindings(),
-			'defaultTypes' => $this->_defaultTypes,
+			'defaultTypes' => $this->defaultTypes(),
 			'decorators' => count($this->_resultDecorators),
 			'executed' => $this->_iterator ? true : false
 		];

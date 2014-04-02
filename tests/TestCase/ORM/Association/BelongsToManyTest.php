@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
+use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
@@ -68,6 +69,18 @@ class BelongsToManyTest extends TestCase {
 					'primary' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]
 				]
 			]
+		]);
+		$this->tagsTypeMap = new TypeMap([
+			'Tags.id' => 'integer',
+			'id' => 'integer',
+			'Tags.name' => 'string',
+			'name' => 'string',
+		]);
+		$this->articlesTagsTypeMap = new TypeMap([
+			'ArticlesTags.article_id' => 'integer',
+			'article_id' => 'integer',
+			'ArticlesTags.tag_id' => 'integer',
+			'tag_id' => 'integer',
 		]);
 	}
 
@@ -224,7 +237,7 @@ class BelongsToManyTest extends TestCase {
 			'Tags' => [
 				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				], ['Tags.name' => 'string']),
+				], $this->tagsTypeMap),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -238,7 +251,7 @@ class BelongsToManyTest extends TestCase {
 				'conditions' => new QueryExpression([
 					['Articles.id' => $field1],
 					['Tags.id' => $field2]
-				]),
+				], $this->articlesTagsTypeMap),
 				'type' => 'INNER',
 				'table' => 'articles_tags'
 			]
@@ -271,7 +284,7 @@ class BelongsToManyTest extends TestCase {
 			'Tags' => [
 				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				], ['Tags.name' => 'string']),
+				], $this->tagsTypeMap),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -285,7 +298,7 @@ class BelongsToManyTest extends TestCase {
 				'conditions' => new QueryExpression([
 					['Articles.id' => $field1],
 					['Tags.id' => $field2]
-				]),
+				], $this->articlesTagsTypeMap),
 				'type' => 'INNER',
 				'table' => 'articles_tags'
 			]
@@ -313,7 +326,7 @@ class BelongsToManyTest extends TestCase {
 				'conditions' => new QueryExpression([
 					'a' => 1,
 					'Tags.name' => 'cake',
-				], ['Tags.name' => 'string']),
+				], $this->tagsTypeMap),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -327,7 +340,7 @@ class BelongsToManyTest extends TestCase {
 				'conditions' => new QueryExpression([
 					['Articles.id' => $field1],
 					['Tags.id' => $field2]
-				]),
+				], $this->articlesTagsTypeMap),
 				'type' => 'INNER',
 				'table' => 'articles_tags'
 			]
@@ -369,7 +382,7 @@ class BelongsToManyTest extends TestCase {
 			'Tags' => [
 				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				], ['Tags.name' => 'string']),
+				], $this->tagsTypeMap),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -385,7 +398,7 @@ class BelongsToManyTest extends TestCase {
 				'conditions' => new QueryExpression([
 					['Articles.id' => $fieldA, 'Articles.site_id' => $fieldB],
 					['Tags.id' => $fieldC, 'Tags.my_site_id' => $fieldD]
-				]),
+				], $this->articlesTagsTypeMap),
 				'type' => 'INNER',
 				'table' => 'articles_tags'
 			]

@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Configure;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -52,6 +53,31 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
 		Configure::write('App.namespace', 'TestApp');
+
+		$this->usersTypeMap = new TypeMap([
+			'Users.id' => 'integer',
+			'id' => 'integer',
+			'Users.username' => 'string',
+			'username' => 'string',
+			'Users.password' => 'string',
+			'password' => 'string',
+			'Users.created' => 'timestamp',
+			'created' => 'timestamp',
+			'Users.updated' => 'timestamp',
+			'updated' => 'timestamp',
+		]);
+		$this->articlesTypeMap = new TypeMap([
+			'Articles.id' => 'integer',
+			'id' => 'integer',
+			'Articles.title' => 'string',
+			'title' => 'string',
+			'Articles.author_id' => 'integer',
+			'author_id' => 'integer',
+			'Articles.body' => 'text',
+			'body' => 'text',
+			'Articles.published' => 'string',
+			'published' => 'string',
+		]);
 	}
 
 	public function tearDown() {
@@ -2037,7 +2063,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findByUsername('garrett');
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$expected = new QueryExpression(['username' => 'garrett'], ['username' => 'string']);
+
+		$expected = new QueryExpression(['username' => 'garrett'], $this->usersTypeMap);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
 
@@ -2090,11 +2117,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findByUsernameAndId('garrett', 4);
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$expected = new QueryExpression(
-			['username' => 'garrett', 'id' => 4],
-			['username' => 'string', 'id' => 'integer'],
-			'AND'
-		);
+
+		$expected = new QueryExpression(['username' => 'garrett', 'id' => 4], $this->usersTypeMap);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
 
@@ -2108,13 +2132,13 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findByUsernameOrId('garrett', 4);
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$expected = new QueryExpression();
+
+		$expected = new QueryExpression([], $this->usersTypeMap);
 		$expected->add([
 			'OR' => [
 				'username' => 'garrett',
 				'id' => 4
-			]],
-			['username' => 'string', 'id' => 'integer']
+			]]
 		);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
@@ -2130,11 +2154,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$result = $table->findAllByAuthorId(1);
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
 		$this->assertNull($result->clause('limit'));
-		$expected = new QueryExpression(
-			['author_id' => 1],
-			['author_id' => 'integer'],
-			'AND'
-		);
+
+		$expected = new QueryExpression(['author_id' => 1], $this->articlesTypeMap);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
 
@@ -2150,7 +2171,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
 		$this->assertNull($result->clause('limit'));
 		$expected = new QueryExpression(
-			['author_id' => 1, 'published' => 'Y']
+			['author_id' => 1, 'published' => 'Y'],
+			$this->usersTypeMap
 		);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
@@ -2167,6 +2189,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
 		$this->assertNull($result->clause('limit'));
 		$expected = new QueryExpression();
+		$expected->typeMap()->defaults([
+			'Users.id' => 'integer',
+			'id' => 'integer',
+			'Users.username' => 'string',
+			'username' => 'string',
+			'Users.password' => 'string',
+			'password' => 'string',
+			'Users.created' => 'timestamp',
+			'created' => 'timestamp',
+			'Users.updated' => 'timestamp',
+			'updated' => 'timestamp',
+		]);
 		$expected->add(
 			['or' => ['author_id' => 1, 'published' => 'Y']]
 		);

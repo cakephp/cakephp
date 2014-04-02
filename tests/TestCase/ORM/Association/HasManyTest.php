@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
+use Cake\Database\TypeMap;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -57,6 +58,14 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'_constraints' => [
 				'primary' => ['type' => 'primary', 'columns' => ['id']]
 			]
+		]);
+		$this->articlesTypeMap = new TypeMap([
+			'Articles.id' => 'integer',
+			'id' => 'integer',
+			'Articles.title' => 'string',
+			'title' => 'string',
+			'Articles.author_id' => 'integer',
+			'author_id' => 'integer',
 		]);
 	}
 
@@ -481,7 +490,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Articles.is_active' => true,
 					['Authors.id' => $field]
-				]),
+				], $this->articlesTypeMap),
 				'type' => 'INNER',
 				'table' => 'articles'
 			]
@@ -511,7 +520,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'Articles' => [
 				'conditions' => new QueryExpression([
 					'Articles.is_active' => false
-				]),
+				], $this->articlesTypeMap),
 				'type' => 'INNER',
 				'table' => 'articles'
 			]
@@ -547,7 +556,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Articles.is_active' => true,
 					['Authors.id' => $field]
-				]),
+				], $this->articlesTypeMap),
 				'type' => 'INNER',
 				'table' => 'articles'
 			]
@@ -579,7 +588,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Articles.is_active' => true,
 					['Authors.id' => $field1, 'Authors.site_id' => $field2]
-				]),
+				], $this->articlesTypeMap),
 				'type' => 'INNER',
 				'table' => 'articles'
 			]
@@ -632,7 +641,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 					'a' => 1,
 					'Articles.is_active' => true,
 					['Authors.id' => $field],
-				]),
+				], $this->articlesTypeMap),
 				'type' => 'INNER',
 				'table' => 'articles'
 			]

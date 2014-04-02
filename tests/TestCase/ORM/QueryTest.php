@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
@@ -85,6 +86,8 @@ class QueryTest extends TestCase {
 		$orders->hasOne('stuff');
 		$stuff->belongsTo('stuffTypes');
 		$companies->belongsTo('categories');
+
+		$this->fooTypeMap = new TypeMap(['foo.id' => 'integer', 'id' => 'integer']);
 	}
 
 /**
@@ -777,13 +780,14 @@ class QueryTest extends TestCase {
 
 		$this->assertEquals(['field_a', 'field_b'], $query->clause('select'));
 
-		$expected = new QueryExpression($options['conditions']);
+		$expected = new QueryExpression($options['conditions'], $this->fooTypeMap);
 		$result = $query->clause('where');
 		$this->assertEquals($expected, $result);
 
 		$this->assertEquals(1, $query->clause('limit'));
 
 		$expected = new QueryExpression(['a > b']);
+		$expected->typeMap($this->fooTypeMap);
 		$result = $query->clause('join');
 		$this->assertEquals([
 			'table_a' => ['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected]
@@ -796,6 +800,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals(['field_a'], $query->clause('group'));
 
 		$expected = new QueryExpression($options['having']);
+		$expected->typeMap($this->fooTypeMap);
 		$this->assertEquals($expected, $query->clause('having'));
 
 		$expected = ['table_a' => ['table_b' => []]];
