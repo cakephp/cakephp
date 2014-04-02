@@ -174,7 +174,7 @@ class HashTest extends CakeTestCase {
 /**
  * Test get()
  *
- * return void
+ * @return void
  */
 	public function testGet() {
 		$data = array('abc', 'def');

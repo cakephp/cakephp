@@ -206,7 +206,7 @@ class XmlTest extends CakeTestCase {
 /**
  * test build with a single empty tag
  *
- * return void
+ * @return void
  */
 	public function testBuildEmptyTag() {
 		try {

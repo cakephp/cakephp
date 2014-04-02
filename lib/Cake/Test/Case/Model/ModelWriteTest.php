@@ -6784,7 +6784,7 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * testSaveAllFieldListHasMany method
  *
- * return @void
+ * @return void
  */
 	public function testSaveAllFieldListHasMany() {
 		$this->loadFixtures('Article', 'Comment');
@@ -6971,7 +6971,7 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * testSaveAllDeepFieldListHasMany method
  *
- * return @void
+ * @return void
  */
 	public function testSaveAllDeepFieldListHasMany() {
 		$this->loadFixtures('Article', 'Comment', 'User');
@@ -7014,7 +7014,7 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * testSaveAllDeepHasManyBelongsTo method
  *
- * return @void
+ * @return void
  */
 	public function testSaveAllDeepHasManyBelongsTo() {
 		$this->loadFixtures('Article', 'Comment', 'User');
@@ -7066,7 +7066,7 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * testSaveAllDeepHasManyhasMany method
  *
- * return @void
+ * @return void
  */
 	public function testSaveAllDeepHasManyHasMany() {
 		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment');
@@ -7122,7 +7122,7 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * testSaveAllDeepOrderHasManyHasMany method
  *
- * return @void
+ * @return void
  */
 	public function testSaveAllDeepOrderHasManyHasMany() {
 		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment');
@@ -7159,7 +7159,7 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * testSaveAllDeepEmptyHasManyHasMany method
  *
- * return @void
+ * @return void
  */
 	public function testSaveAllDeepEmptyHasManyHasMany() {
 		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
@@ -7197,7 +7197,7 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * testUpdateAllBoolean
  *
- * return @void
+ * @return void
  */
 	public function testUpdateAllBoolean() {
 		$this->loadFixtures('Item', 'Syfile', 'Portfolio', 'Image', 'ItemsPortfolio');
@@ -7212,7 +7212,7 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * testUpdateAllBooleanConditions
  *
- * return @void
+ * @return void
  */
 	public function testUpdateAllBooleanConditions() {
 		$this->loadFixtures('Item', 'Syfile', 'Portfolio', 'Image', 'ItemsPortfolio');
@@ -7229,7 +7229,7 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * testUpdateBoolean
  *
- * return @void
+ * @return void
  */
 	public function testUpdateBoolean() {
 		$this->loadFixtures('Item', 'Syfile', 'Portfolio', 'Image', 'ItemsPortfolio');
