@@ -186,7 +186,7 @@ class HasOne extends Association {
  */
 	protected function _buildResultMap($fetchQuery, $options) {
 		$resultMap = [];
-		$key = (array)$this->target()->primaryKey();
+		$key = (array)$options['foreignKey'];
 
 		foreach ($fetchQuery->all() as $result) {
 			$values = [];
