@@ -126,8 +126,12 @@ class FixtureTask extends BakeTask {
 		if (strtolower($this->args[0]) === 'all') {
 			return $this->all();
 		}
+		$table = null;
+		if (isset($this->params['table'])) {
+			$table = $this->params['table'];
+		}
 		$model = $this->_modelName($this->args[0]);
-		$this->bake($model);
+		$this->bake($model, $table);
 	}
 
 /**
@@ -301,15 +305,15 @@ class FixtureTask extends BakeTask {
 
 		$content = implode("\n", $cols) . "\n";
 		if (!empty($indexes)) {
-			$content .= "\t\t'_indexes' => [" . implode("\n", $indexes) . "],\n";
+			$content .= "\t\t'_indexes' => [\n" . implode("\n", $indexes) . "\n\t\t],\n";
 		}
 		if (!empty($constraints)) {
-			$content .= "\t\t'_constraints' => [" . implode("\n", $constraints) . "],\n";
+			$content .= "\t\t'_constraints' => [\n" . implode("\n", $constraints) . "\n\t\t],\n";
 		}
 		if (!empty($options)) {
-			$content .= "\t\t'_options' => [" . implode(', ', $options) . "],\n";
+			$content .= "\t\t'_options' => [\n" . implode(', ', $options) . "\n\t\t],\n";
 		}
-		return "[\n$content]";
+		return "[\n$content\t]";
 	}
 
 /**
