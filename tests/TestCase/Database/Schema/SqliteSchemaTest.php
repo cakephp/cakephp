@@ -33,7 +33,7 @@ class SqliteSchemaTest extends TestCase {
  */
 	protected function _needsConnection() {
 		$config = ConnectionManager::config('test');
-		$this->skipIf(strpos($config['className'], 'Sqlite') === false, 'Not using Sqlite for test config');
+		$this->skipIf(strpos($config['driver'], 'Sqlite') === false, 'Not using Sqlite for test config');
 	}
 
 /**

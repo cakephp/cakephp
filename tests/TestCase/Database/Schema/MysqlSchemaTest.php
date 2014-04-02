@@ -33,7 +33,7 @@ class MysqlSchemaTest extends TestCase {
  */
 	protected function _needsConnection() {
 		$config = ConnectionManager::config('test');
-		$this->skipIf(strpos($config['className'], 'Mysql') === false, 'Not using Mysql for test config');
+		$this->skipIf(strpos($config['driver'], 'Mysql') === false, 'Not using Mysql for test config');
 	}
 
 /**
