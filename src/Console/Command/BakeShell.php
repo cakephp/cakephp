@@ -1,11 +1,5 @@
 <?php
 /**
- * Command-line code generation utility to automate programmer chores.
- *
- * Bake is CakePHP's code generation script, which can help you kickstart
- * application development by writing fully functional skeleton controllers,
- * models, and views. Going further, Bake can also write Unit Tests for you.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -35,7 +29,7 @@ use Cake\Utility\Inflector;
  * application development by writing fully functional skeleton controllers,
  * models, and views. Going further, Bake can also write Unit Tests for you.
  *
- * @link          http://book.cakephp.org/2.0/en/console-and-shells/code-generation-with-bake.html
+ * @link          http://book.cakephp.org/3.0/en/console-and-shells/code-generation-with-bake.html
  */
 class BakeShell extends Shell {
 
@@ -44,7 +38,7 @@ class BakeShell extends Shell {
  *
  * @var array
  */
-	public $tasks = ['Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test'];
+	public $tasks = ['Project', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test'];
 
 /**
  * The connection being used.
@@ -64,7 +58,7 @@ class BakeShell extends Shell {
 		Cache::disable();
 
 		$task = Inflector::classify($this->command);
-		if (isset($this->{$task}) && !in_array($task, ['Project', 'DbConfig'])) {
+		if (isset($this->{$task}) && !in_array($task, ['Project'])) {
 			if (isset($this->params['connection'])) {
 				$this->{$task}->connection = $this->params['connection'];
 			}
@@ -80,62 +74,23 @@ class BakeShell extends Shell {
  * @return mixed
  */
 	public function main() {
-		if (!is_dir($this->DbConfig->path)) {
-			$path = $this->Project->execute();
-			if (!empty($path)) {
-				$this->DbConfig->path = $path . 'Config/';
-			} else {
-				return false;
-			}
-		}
-
 		$connections = ConnectionManager::configured();
 		if (empty($connections)) {
-			$this->out(__d('cake_console', 'Your database configuration was not found. Take a moment to create one.'));
-			$this->args = null;
-			return $this->DbConfig->execute();
+			$this->out(__d('cake_console', 'Your database configuration was not found.'));
+			$this->out(__d('cake_console', 'Add your database connection information to App/Config/app.php.'));
+			return false;
 		}
-		$this->out(__d('cake_console', 'Interactive Bake Shell'));
-		$this->hr();
-		$this->out(__d('cake_console', '[D]atabase Configuration'));
-		$this->out(__d('cake_console', '[M]odel'));
-		$this->out(__d('cake_console', '[V]iew'));
-		$this->out(__d('cake_console', '[C]ontroller'));
-		$this->out(__d('cake_console', '[P]roject'));
-		$this->out(__d('cake_console', '[F]ixture'));
-		$this->out(__d('cake_console', '[T]est case'));
-		$this->out(__d('cake_console', '[Q]uit'));
-
-		$classToBake = strtoupper($this->in(__d('cake_console', 'What would you like to Bake?'), ['D', 'M', 'V', 'C', 'P', 'F', 'T', 'Q']));
-		switch ($classToBake) {
-			case 'D':
-				$this->DbConfig->execute();
-				break;
-			case 'M':
-				$this->Model->execute();
-				break;
-			case 'V':
-				$this->View->execute();
-				break;
-			case 'C':
-				$this->Controller->execute();
-				break;
-			case 'P':
-				$this->Project->execute();
-				break;
-			case 'F':
-				$this->Fixture->execute();
-				break;
-			case 'T':
-				$this->Test->execute();
-				break;
-			case 'Q':
-				return $this->_stop();
-			default:
-				$this->out(__d('cake_console', 'You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, F, T, or C.'));
-		}
-		$this->hr();
-		$this->main();
+		$this->out(__d('cake_console', 'The following commands you can generate skeleton code your your application.'));
+		$this->out(__d('cake_console', 'Available bake commands:'));
+		$this->out('');
+		$this->out(__d('cake_console', 'model'));
+		$this->out(__d('cake_console', 'view'));
+		$this->out(__d('cake_console', 'controller'));
+		$this->out(__d('cake_console', 'project'));
+		$this->out(__d('cake_console', 'fixture'));
+		$this->out(__d('cake_console', 'test'));
+		$this->out('');
+		$this->out(__d('cake_console', 'Using <info>Console/cake bake [name]</info> you can invoke a specific bake task.'));
 	}
 
 /**
@@ -147,64 +102,36 @@ class BakeShell extends Shell {
 		$this->out('Bake All');
 		$this->hr();
 
-		if (!isset($this->params['connection']) && empty($this->connection)) {
-			$this->connection = $this->DbConfig->getConfig();
+		$this->connection = 'default';
+		if (!empty($this->params['connection'])) {
+			$this->connection = $this->params['connection'];
 		}
 
 		if (empty($this->args)) {
-			$this->Model->interactive = true;
-			$name = $this->Model->getName($this->connection);
+			$this->Model->connection = $this->connection;
+			$this->out(__d('cake_console', 'Possible model names based on your database'));
+			foreach ($this->Model->listAll() as $table) {
+				$this->out('- ' . $table);
+			}
+			$this->out(__d('cake_console', 'Run <info>cake bake all [name]</info>. To generate skeleton files.'));
+			return false;
 		}
 
 		foreach (['Model', 'Controller', 'View'] as $task) {
 			$this->{$task}->connection = $this->connection;
-			$this->{$task}->interactive = false;
 		}
 
-		if (!empty($this->args[0])) {
-			$name = $this->args[0];
-		}
+		$name = $this->args[0];
+		$name = $this->_modelName($name);
 
-		$modelExists = false;
-		$model = $this->_modelName($name);
+		$this->Model->bake($name);
+		$this->Controller->bake($name);
 
-		$model = App::classname($model, 'Model');
-		if (class_exists($model)) {
-			$object = new $model();
-			$modelExists = true;
-		} else {
-			$object = new Model(['name' => $name, 'ds' => $this->connection]);
-		}
+		$this->View->args = [$name];
+		$this->View->execute();
 
-		$modelBaked = $this->Model->bake($object, false);
-
-		if ($modelBaked && $modelExists === false) {
-			if ($this->_checkUnitTest()) {
-				$this->Model->bakeFixture($model);
-				$this->Model->bakeTest($model);
-			}
-			$modelExists = true;
-		}
-
-		if ($modelExists === true) {
-			$controller = $this->_controllerName($name);
-			if ($this->Controller->bake($controller, $this->Controller->bakeActions($controller))) {
-				if ($this->_checkUnitTest()) {
-					$this->Controller->bakeTest($controller);
-				}
-			}
-			$controller = App::classname($controller, 'Controller', 'Controller');
-			if ($controller) {
-				$this->View->args = [$name];
-				$this->View->execute();
-			}
-			$this->out('', 1, Shell::QUIET);
-			$this->out(__d('cake_console', '<success>Bake All complete</success>'), 1, Shell::QUIET);
-			array_shift($this->args);
-		} else {
-			$this->error(__d('cake_console', 'Bake All could not continue without a valid model'));
-		}
-		return $this->_stop();
+		$this->out(__d('cake_console', '<success>Bake All complete</success>'), 1, Shell::QUIET);
+		return true;
 	}
 
 /**
@@ -227,9 +154,6 @@ class BakeShell extends Shell {
 		])->addSubcommand('plugin', [
 			'help' => __d('cake_console', 'Bake a new plugin folder in the path supplied or in current directory if no path is specified.'),
 			'parser' => $this->Plugin->getOptionParser()
-		])->addSubcommand('db_config', [
-			'help' => __d('cake_console', 'Bake a datasources.php file in config directory.'),
-			'parser' => $this->DbConfig->getOptionParser()
 		])->addSubcommand('model', [
 			'help' => __d('cake_console', 'Bake a model.'),
 			'parser' => $this->Model->getOptionParser()
