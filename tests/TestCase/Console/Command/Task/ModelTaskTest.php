@@ -35,7 +35,8 @@ class ModelTaskTest extends TestCase {
  */
 	public $fixtures = array(
 		'core.bake_article', 'core.bake_comment', 'core.bake_articles_bake_tag',
-		'core.bake_tag', 'core.user', 'core.category_thread', 'core.number_tree'
+		'core.bake_tag', 'core.user', 'core.category_thread', 'core.number_tree',
+		'core.counter_cache_user'
 	);
 
 /**
@@ -441,11 +442,18 @@ class ModelTaskTest extends TestCase {
 	public function testGetBehaviors() {
 		$model = TableRegistry::get('NumberTrees');
 		$result = $this->Task->getBehaviors($model);
-		$this->assertEquals(['Tree'], $result);
+		$this->assertEquals(['Tree' => []], $result);
 
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->getBehaviors($model);
-		$this->assertEquals(['Timestamp'], $result);
+		$this->assertEquals(['Timestamp' => []], $result);
+
+		$model = TableRegistry::get('CounterCacheUsers');
+		$result = $this->Task->getBehaviors($model);
+		$expected = [
+			'CounterCache' => ["'Posts' => ['post_count']"]
+		];
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -562,7 +570,7 @@ class ModelTaskTest extends TestCase {
 			'table' => 'articles',
 			'primaryKey' => ['id'],
 			'displayField' => 'title',
-			'behaviors' => ['Timestamp'],
+			'behaviors' => ['Timestamp' => ''],
 		];
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->bakeTable($model, $config);
@@ -873,9 +881,9 @@ class ModelTaskTest extends TestCase {
 		$this->Task->args = ['all'];
 		$this->Task->skipTables = ['bake_tags'];
 
-		$this->Task->Fixture->expects($this->exactly(6))
+		$this->Task->Fixture->expects($this->exactly(7))
 			->method('bake');
-		$this->Task->Test->expects($this->exactly(6))
+		$this->Task->Test->expects($this->exactly(7))
 			->method('bake');
 
 		$filename = '/my/path/Entity/BakeArticle.php';
@@ -898,8 +906,13 @@ class ModelTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename);
 
-		$filename = '/my/path/Entity/NumberTree.php';
+		$filename = '/my/path/Entity/CounterCacheUser.php';
 		$this->Task->expects($this->at(9))
+			->method('createFile')
+			->with($filename);
+
+		$filename = '/my/path/Entity/NumberTree.php';
+		$this->Task->expects($this->at(11))
 			->method('createFile')
 			->with($filename);
 

@@ -1,9 +1,5 @@
 <?php
 /**
- * Short description for after_tree_fixture.php
- *
- * Long description for after_tree_fixture.php
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  *
  * Licensed under The MIT License

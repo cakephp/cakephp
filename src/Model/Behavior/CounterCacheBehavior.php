@@ -31,7 +31,7 @@ use Cake\Utility\Inflector;
  * Regular counter cache
  * {{{
  * [
- *     'User' => [
+ *     'Users' => [
  *         'post_count'
  *     ]
  * ]
@@ -40,7 +40,7 @@ use Cake\Utility\Inflector;
  * Counter cache with scope
  * {{{
  * [
- *     'User' => [
+ *     'Users' => [
  *         'posts_published' => [
  *             'conditions' => [
  *                 'published' => true
@@ -53,7 +53,7 @@ use Cake\Utility\Inflector;
  * Counter cache using custom find
  * {{{
  * [
- *     'User' => [
+ *     'Users' => [
  *         'posts_published' => [
  *             'findType' => 'published' // Will be using findPublished()
  *         ]
@@ -65,7 +65,7 @@ use Cake\Utility\Inflector;
  * This is equivalent to example #2
  * {{{
  * [
- *     'User' => [
+ *     'Users' => [
  *         'posts_published' => function (Event $event, Entity $entity, Table $table) {
  *             $query = $table->find('all')->where([
  *                 'published' => true,
