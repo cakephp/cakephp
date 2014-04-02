@@ -252,7 +252,7 @@ class CompositeKeyTest extends TestCase {
 		]);
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
-			->where(['id IN' => [1, 2]])
+			->where(['SiteArticles.id IN' => [1, 2]])
 			->contain('SiteAuthors')
 			->hydrate(false)
 			->toArray();

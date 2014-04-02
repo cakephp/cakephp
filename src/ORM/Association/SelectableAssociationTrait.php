@@ -147,7 +147,7 @@ trait SelectableAssociationTrait {
  * which the filter should be applied
  *
  * @param array $options
- * @return string
+ * @return string|array
  */
 	protected abstract function _linkField($options);
 
@@ -170,12 +170,10 @@ trait SelectableAssociationTrait {
 			}
 		}
 
-		$primary = (array)$query->repository()->primaryKey();
-		$foreignKey = (array)$this->foreignKey();
-		$keys = $primary;
+		$keys = (array)$query->repository()->primaryKey();
 
 		if ($this->type() === $this::ONE_TO_ONE) {
-			$keys = $foreignKey;
+			$keys = (array)$this->foreignKey();
 		}
 
 		$filterQuery->join($joins, [], true);
