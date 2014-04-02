@@ -193,8 +193,15 @@ class SqliteSchemaTest extends TestCase {
  */
 	protected function _createTables($connection) {
 		$this->_needsConnection();
-		$connection->execute('DROP TABLE IF EXISTS schema_articles');
-		$connection->execute('DROP TABLE IF EXISTS schema_authors');
+
+		$schema = new SchemaCollection($connection);
+		$result = $schema->listTables();
+		if (
+			in_array('schema_articles', $result) &&
+			in_array('schema_authors', $result)
+		) {
+			return;
+		}
 
 		$table = <<<SQL
 CREATE TABLE schema_authors (
@@ -235,10 +242,8 @@ SQL;
 		$result = $schema->listTables();
 
 		$this->assertInternalType('array', $result);
-		$this->assertCount(3, $result);
-		$this->assertEquals('schema_articles', $result[0]);
-		$this->assertEquals('schema_authors', $result[1]);
-		$this->assertEquals('sqlite_sequence', $result[2]);
+		$this->assertContains('schema_articles', $result);
+		$this->assertContains('schema_authors', $result);
 	}
 
 /**

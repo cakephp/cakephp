@@ -228,9 +228,8 @@ SQL;
 		$result = $schema->listTables();
 
 		$this->assertInternalType('array', $result);
-		$this->assertCount(2, $result);
-		$this->assertEquals('schema_articles', $result[0]);
-		$this->assertEquals('schema_authors', $result[1]);
+		$this->assertContains('schema_articles', $result);
+		$this->assertContains('schema_authors', $result);
 	}
 
 /**
