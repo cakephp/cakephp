@@ -80,7 +80,7 @@ class MysqlSchema extends BaseSchema {
 		if (strpos($col, 'bigint') !== false || $col === 'bigint') {
 			return ['type' => 'biginteger', 'length' => $length, 'unsigned' => $unsigned];
 		}
-		if (strpos($col, 'int') !== false) {
+		if (in_array($col, ['int', 'integer', 'tinyint', 'smallint', 'mediumint'])) {
 			return ['type' => 'integer', 'length' => $length, 'unsigned' => $unsigned];
 		}
 		if ($col === 'char' && $length === 36) {

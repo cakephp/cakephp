@@ -68,6 +68,10 @@ class MysqlSchemaTest extends TestCase {
 				['type' => 'integer', 'length' => 11, 'unsigned' => false]
 			],
 			[
+				'MEDIUMINT(11)',
+				['type' => 'integer', 'length' => 11, 'unsigned' => false]
+			],
+			[
 				'INTEGER(11) UNSIGNED',
 				['type' => 'integer', 'length' => 11, 'unsigned' => true]
 			],
