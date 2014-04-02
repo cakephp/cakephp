@@ -591,20 +591,20 @@ class PaginatorHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Paginator->url();
+		$result = $this->Paginator->generateUrl();
 		$this->assertEquals('/index', $result);
 
 		$this->Paginator->request->params['paging']['Article']['page'] = 2;
-		$result = $this->Paginator->url();
+		$result = $this->Paginator->generateUrl();
 		$this->assertEquals('/index?page=2', $result);
 
 		$options = array('sort' => 'Article', 'direction' => 'desc');
-		$result = $this->Paginator->url($options);
+		$result = $this->Paginator->generateUrl($options);
 		$this->assertEquals('/index?page=2&amp;sort=Article&amp;direction=desc', $result);
 
 		$this->Paginator->request->params['paging']['Article']['page'] = 3;
 		$options = array('sort' => 'Article.name', 'direction' => 'desc');
-		$result = $this->Paginator->url($options);
+		$result = $this->Paginator->generateUrl($options);
 		$this->assertEquals('/index?page=3&amp;sort=Article.name&amp;direction=desc', $result);
 	}
 
@@ -628,7 +628,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->request->params['paging']['Article']['prevPage'] = true;
 		$options = array('prefix' => 'members');
 
-		$result = $this->Paginator->url($options);
+		$result = $this->Paginator->generateUrl($options);
 		$expected = '/members/posts/index?page=2';
 		$this->assertEquals($expected, $result);
 
@@ -661,12 +661,12 @@ class PaginatorHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$options = array('prefix' => 'members', 'controller' => 'posts', 'sort' => 'name', 'direction' => 'desc');
-		$result = $this->Paginator->url($options);
+		$result = $this->Paginator->generateUrl($options);
 		$expected = '/members/posts/index?page=2&amp;sort=name&amp;direction=desc';
 		$this->assertEquals($expected, $result);
 
 		$options = array('controller' => 'posts', 'sort' => 'Article.name', 'direction' => 'desc');
-		$result = $this->Paginator->url($options);
+		$result = $this->Paginator->generateUrl($options);
 		$expected = '/posts/index?page=2&amp;sort=Article.name&amp;direction=desc';
 		$this->assertEquals($expected, $result);
 	}
