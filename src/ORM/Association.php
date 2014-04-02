@@ -460,13 +460,6 @@ abstract class Association {
 	}
 
 /**
- * Get the relationship type.
- *
- * @return string Constant of either ONE_TO_ONE, MANY_TO_ONE, ONE_TO_MANY or MANY_TO_MANY.
- */
-	public abstract function type();
-
-/**
  * Proxies the finding operation to the target table's find method
  * and modifies the query accordingly based of this association
  * configuration
@@ -615,6 +608,13 @@ abstract class Association {
 
 		return $conditions;
 	}
+
+/**
+ * Get the relationship type.
+ *
+ * @return string Constant of either ONE_TO_ONE, MANY_TO_ONE, ONE_TO_MANY or MANY_TO_MANY.
+ */
+	public abstract function type();
 
 /**
  * Eager loads a list of records in the target table that are related to another
