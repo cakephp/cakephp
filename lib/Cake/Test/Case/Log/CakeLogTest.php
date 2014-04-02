@@ -510,6 +510,7 @@ class CakeLogTest extends CakeTestCase {
 /**
  * test bogus type and scope
  *
+ * @return void
  */
 	public function testBogusTypeAndScope() {
 		$this->_resetLogConfig();
@@ -536,6 +537,8 @@ class CakeLogTest extends CakeTestCase {
 
 /**
  * test scoped logging with convenience methods
+ *
+ * @return void
  */
 	public function testConvenienceScopedLogging() {
 		if (file_exists(LOGS . 'shops.log')) {

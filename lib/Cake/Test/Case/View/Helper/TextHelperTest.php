@@ -208,6 +208,8 @@ class TextHelperTest extends CakeTestCase {
 
 /**
  * Data provider for autoLinking
+ *
+ * @return array
  */
 	public static function autoLinkProvider() {
 		return array(
