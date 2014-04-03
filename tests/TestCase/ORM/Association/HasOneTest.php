@@ -247,7 +247,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  * key will work if the foreign key is passed
  *
  * @expectedException \RuntimeException
- * @expectedExceptionMessage Cannot match provided foreignKey, got 1 columns expected 2
+ * @expectedExceptionMessage Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"
  * @return void
  */
 	public function testAttachToMultiPrimaryKeyMistmatch() {

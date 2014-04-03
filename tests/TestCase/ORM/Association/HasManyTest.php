@@ -132,14 +132,14 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$callable = $association->eagerLoader(compact('keys', 'query'));
 		$row = ['Authors__id' => 1, 'username' => 'author 1'];
 		$result = $callable($row);
-		$row['Articles___collection_'] = [
+		$row['Articles'] = [
 			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
 			];
 		$this->assertEquals($row, $result);
 
 		$row = ['Authors__id' => 2, 'username' => 'author 2'];
 		$result = $callable($row);
-		$row['Articles___collection_'] = [
+		$row['Articles'] = [
 			['id' => 1, 'title' => 'article 1', 'author_id' => 2]
 			];
 		$this->assertEquals($row, $result);
@@ -347,14 +347,14 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		]);
 		$row = ['Authors__id' => 1, 'username' => 'author 1'];
 		$result = $callable($row);
-		$row['Articles___collection_'] = [
+		$row['Articles'] = [
 			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
 		];
 		$this->assertEquals($row, $result);
 
 		$row = ['Authors__id' => 2, 'username' => 'author 2'];
 		$result = $callable($row);
-		$row['Articles___collection_'] = [
+		$row['Articles'] = [
 			['id' => 1, 'title' => 'article 1', 'author_id' => 2]
 		];
 		$this->assertEquals($row, $result);
@@ -447,14 +447,14 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$callable = $association->eagerLoader(compact('keys', 'query'));
 		$row = ['Authors__id' => 2, 'Authors__site_id' => 10, 'username' => 'author 1'];
 		$result = $callable($row);
-		$row['Articles___collection_'] = [
+		$row['Articles'] = [
 			['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10]
 		];
 		$this->assertEquals($row, $result);
 
 		$row = ['Authors__id' => 1, 'username' => 'author 2', 'Authors__site_id' => 20];
 		$result = $callable($row);
-		$row['Articles___collection_'] = [
+		$row['Articles'] = [
 			['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20]
 		];
 		$this->assertEquals($row, $result);
@@ -593,7 +593,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
  * key will work if the foreign key is passed
  *
  * @expectedException \RuntimeException
- * @expectedExceptionMessage Cannot match provided foreignKey, got 1 columns expected 2
+ * @expectedExceptionMessage Cannot match provided foreignKey for "Articles", got "(author_id)" but expected foreign key for "(id, site_id)
  * @return void
  */
 	public function testAttachToMultiPrimaryKeyMistmatch() {

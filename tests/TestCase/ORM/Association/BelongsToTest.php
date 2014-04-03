@@ -328,7 +328,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  * key will work if the foreign key is passed
  *
  * @expectedException \RuntimeException
- * @expectedExceptionMessage Cannot match provided foreignKey, got 1 columns expected 2
+ * @expectedExceptionMessage Cannot match provided foreignKey for "Companies", got "(company_id)" but expected foreign key for "(id, tenant_id)"
  * @return void
  */
 	public function testAttachToMultiPrimaryKeyMistmatch() {
