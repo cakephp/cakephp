@@ -310,9 +310,9 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 					'instance' => $meta['instance'],
 					'canBeJoined' => $meta['canBeJoined'],
 					'entityClass' => $meta['instance']->target()->entityClass(),
-					'nestKey' => $meta['aliasPath']
+					'nestKey' => $meta['canBeJoined'] ? $assoc : $meta['aliasPath']
 				];
-				if (!empty($meta['associations'])) {
+				if ($meta['canBeJoined'] && !empty($meta['associations'])) {
 					$visitor($meta['associations']);
 				}
 			}
