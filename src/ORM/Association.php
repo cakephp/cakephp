@@ -447,15 +447,18 @@ abstract class Association {
  * source results.
  *
  * @param array $row
+ * @param string $nestKey The array key under which the results for this association
+ * should be found
  * @param boolean $joined Whether or not the row is a result of a direct join
  * with this association
  * @return array
  */
-	public function transformRow($row, $joined) {
+	public function transformRow($row, $nestKey, $joined) {
 		$sourceAlias = $this->source()->alias();
-		$targetAlias = $this->target()->alias();
+		$nestKey = $nestKey ?: $this->_name;
 		if (isset($row[$sourceAlias])) {
-			$row[$sourceAlias][$this->property()] = $row[$targetAlias];
+			$row[$sourceAlias][$this->property()] = $row[$nestKey];
+			unset($row[$nestKey]);
 		}
 		return $row;
 	}

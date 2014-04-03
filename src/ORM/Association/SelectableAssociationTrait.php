@@ -50,7 +50,7 @@ trait SelectableAssociationTrait {
 			$fetchQuery = $queryBuilder($fetchQuery);
 		}
 		$resultMap = $this->_buildResultMap($fetchQuery, $options);
-		return $this->_resultInjector($fetchQuery, $resultMap);
+		return $this->_resultInjector($fetchQuery, $resultMap, $options);
 	}
 
 /**
@@ -62,7 +62,8 @@ trait SelectableAssociationTrait {
 		return [
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
-			'strategy' => $this->strategy()
+			'strategy' => $this->strategy(),
+			'nestKey' => $this->_name
 		];
 	}
 
@@ -199,7 +200,7 @@ trait SelectableAssociationTrait {
  * the corresponding target table results as value.
  * @return \Closure
  */
-	protected function _resultInjector($fetchQuery, $resultMap) {
+	protected function _resultInjector($fetchQuery, $resultMap, $options) {
 		$source = $this->source();
 		$sAlias = $source->alias();
 		$keys = $this->type() === $this::MANY_TO_ONE ?
@@ -211,7 +212,7 @@ trait SelectableAssociationTrait {
 			$sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
 		}
 
-		$nestKey = $this->_nestingKey();
+		$nestKey = $options['nestKey'];
 		if (count($sourceKeys) > 1) {
 			return $this->_multiKeysInjector($resultMap, $sourceKeys, $nestKey);
 		}
@@ -223,15 +224,6 @@ trait SelectableAssociationTrait {
 			}
 			return $row;
 		};
-	}
-
-/**
- * Returns the key under which the eagerLoader will put this association results
- *
- * @return string
- */
-	protected function _nestingKey() {
-		return $this->property();
 	}
 
 /**

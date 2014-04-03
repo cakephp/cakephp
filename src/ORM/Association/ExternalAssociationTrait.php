@@ -78,30 +78,6 @@ trait ExternalAssociationTrait {
 	}
 
 /**
- * Correctly nests a result row associated values into the correct array keys inside the
- * source results.
- *
- * @param array $row
- * @param boolean $joined Whether or not the row is a result of a direct join
- * with this association
- * @return array
- */
-	public function transformRow($row, $joined) {
-		$sourceAlias = $this->source()->alias();
-		$targetAlias = $this->target()->alias();
-
-		$collectionAlias = $this->_name . '___collection_';
-		if (isset($row[$collectionAlias])) {
-			$values = $row[$collectionAlias];
-		} else {
-			$values = $row[$this->_name];
-		}
-
-		$row[$sourceAlias][$this->property()] = $values;
-		return $row;
-	}
-
-/**
  * Returns the default options to use for the eagerLoader
  *
  * @return array
@@ -129,16 +105,6 @@ trait ExternalAssociationTrait {
 		}
 		return $resultMap;
 	}
-
-/**
- * Returns the key under which the eagerLoader will put this association results
- *
- * @return void
- */
-	protected function _nestingKey() {
-		return $this->_name . '___collection_';
-	}
-
 
 /**
  * Parse extra options passed in the constructor.

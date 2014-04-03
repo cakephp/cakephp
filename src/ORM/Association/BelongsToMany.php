@@ -32,7 +32,6 @@ class BelongsToMany extends Association {
 	use ExternalAssociationTrait {
 		_options as _externalOptions;
 		_addFilteringCondition as _addExternalConditions;
-		transformRow as protected _transformRow;
 	}
 
 /**
@@ -236,21 +235,17 @@ class BelongsToMany extends Association {
 	}
 
 /**
- * Correctly nests a result row associated values into the correct array keys inside the
- * source results.
+ * {@inheritdoc}
  *
- * @param array $row
- * @param boolean $joined Whether or not the row is a result of a direct join
- * with this association
- * @return array
  */
-	public function transformRow($row, $joined) {
+	public function transformRow($row, $nestKey, $joined) {
 		$alias = $this->junction()->alias();
 		if ($joined) {
 			$row[$this->target()->alias()][$this->_junctionProperty] = $row[$alias];
 			unset($row[$alias]);
 		}
-		return $this->_transformRow($row, $joined);
+
+		return parent::transformRow($row, $nestKey, $joined);
 	}
 
 /**

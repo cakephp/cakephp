@@ -389,7 +389,12 @@ class EagerLoader {
 
 			$keys = isset($collected[$alias]) ? $collected[$alias] : null;
 			$f = $meta['instance']->eagerLoader(
-				$meta['config'] + ['query' => $query, 'contain' => $contain, 'keys' => $keys]
+				$meta['config'] + [
+					'query' => $query,
+					'contain' => $contain,
+					'keys' => $keys,
+					'nestKey' => $meta['aliasPath']
+				]
 			);
 			$statement = new CallbackStatement($statement, $driver, $f);
 		}

@@ -103,23 +103,6 @@ class BelongsTo extends Association {
 	}
 
 /**
- * {@inheritdoc}
- *
- */
-	public function transformRow($row, $joined) {
-		if ($this->strategy() === $this::STRATEGY_JOIN) {
-			return parent::transformRow($row, $joined);
-		}
-
-		$sourceAlias = $this->source()->alias();
-		$nestKey = $this->_nestingKey();
-		if (isset($row[$nestKey])) {
-			$row[$sourceAlias][$this->property()] = $row[$nestKey];
-		}
-		return $row;
-	}
-
-/**
  * Takes an entity from the source table and looks if there is a field
  * matching the property name for this association. The found entity will be
  * saved on the target table for this association by passing supplied

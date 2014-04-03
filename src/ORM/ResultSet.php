@@ -309,7 +309,8 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 					'alias' => $assoc,
 					'instance' => $meta['instance'],
 					'canBeJoined' => $meta['canBeJoined'],
-					'entityClass' => $meta['instance']->target()->entityClass()
+					'entityClass' => $meta['instance']->target()->entityClass(),
+					'nestKey' => $meta['canBeJoined'] ? $assoc : $meta['aliasPath']
 				];
 				if (!empty($meta['associations'])) {
 					$visitor($meta['associations']);
@@ -351,7 +352,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			$table = $defaultAlias;
 			$field = $key;
 
-			if (strpos($key, '___collection_') !== false) {
+			if (isset($this->_associationMap[$key])) {
 				$results[$key] = $value;
 				continue;
 			}
@@ -383,9 +384,10 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			'markNew' => false,
 			'guard' => false
 		];
+			
 		foreach (array_reverse($this->_associationMap) as $assoc) {
-			$alias = $assoc['alias'];
-			if (!isset($results[$alias]) && !isset($results[$alias . '___collection_'])) {
+			$alias = $assoc['nestKey'];
+			if (!isset($results[$alias])) {
 				continue;
 			}
 
@@ -404,7 +406,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 				$results[$alias] = $entity;
 			}
 
-			$results = $instance->transformRow($results, $assoc['canBeJoined']);
+			$results = $instance->transformRow($results, $alias, $assoc['canBeJoined']);
 		}
 
 		foreach ($presentAliases as $alias => $present) {
