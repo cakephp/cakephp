@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -26,6 +24,13 @@ use Cake\Error;
  * Implementing objects are expected to declare a static `$_config` property.
  */
 trait StaticConfigTrait {
+
+/**
+ * Configuration sets.
+ *
+ * @var array
+ */
+	protected static $_config = [];
 
 /**
  * This method can be used to define confguration adapters for an application

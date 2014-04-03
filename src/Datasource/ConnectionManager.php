@@ -34,13 +34,6 @@ class ConnectionManager {
 	}
 
 /**
- * Holds a list of connection configurations
- *
- * @var array
- */
-	protected static $_config = [];
-
-/**
  * A map of connection aliases.
  *
  * @var array

@@ -116,13 +116,6 @@ class Log {
 	protected static $_dirtyConfig = false;
 
 /**
- * An array of configured loggers.
- *
- * @var array
- */
-	protected static $_config = [];
-
-/**
  * LogEngineRegistry class
  *
  * @var LogEngineRegistry
