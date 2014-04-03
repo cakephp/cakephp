@@ -327,7 +327,8 @@ class EagerLoader {
 		];
 
 		$config['canBeJoined'] = $instance->canBeJoined($config['config']);
-		if ($config['canBeJoined'] && !empty($this->_aliasList[$alias])) {
+		$canChange = $config['canBeJoined'] && empty($config['config']['matching']);
+		if ($canChange && !empty($this->_aliasList[$alias])) {
 			$config['canBeJoined'] = false;
 			$config['config']['strategy'] = $instance::STRATEGY_SELECT;
 		}
