@@ -121,7 +121,7 @@ class AppTest extends TestCase {
 		Plugin::load('TestPlugin');
 
 		$result = App::path('Controller', 'TestPlugin');
-		$this->assertEquals($basepath . 'TestPlugin' . DS . 'Controller' . DS, $result[0]);
+		$this->assertPathEquals($basepath . 'TestPlugin' . DS . 'Controller' . DS, $result[0]);
 	}
 
 /**
@@ -243,11 +243,11 @@ class AppTest extends TestCase {
 
 		$path = App::pluginPath('TestPlugin');
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
-		$this->assertEquals($expected, $path);
+		$this->assertPathEquals($expected, $path);
 
 		$path = App::pluginPath('TestPluginTwo');
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS;
-		$this->assertEquals($expected, $path);
+		$this->assertPathEquals($expected, $path);
 	}
 
 /**
@@ -258,11 +258,11 @@ class AppTest extends TestCase {
 	public function testThemePath() {
 		$path = App::themePath('test_theme');
 		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Themed' . DS . 'TestTheme' . DS;
-		$this->assertEquals($expected, $path);
+		$this->assertPathEquals($expected, $path);
 
 		$path = App::themePath('TestTheme');
 		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Themed' . DS . 'TestTheme' . DS;
-		$this->assertEquals($expected, $path);
+		$this->assertPathEquals($expected, $path);
 	}
 
 }

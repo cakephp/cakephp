@@ -523,6 +523,20 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 	}
 
 /**
+ * Compatibility function to test paths.
+ *
+ * @param string $expected
+ * @param string $result
+ * @param string $message the text to display if the assertion is not correct
+ * @return void
+ */
+	protected static function assertPathEquals($expected, $result, $message = '') {
+		$expected = str_replace(DS, '/', $expected);
+		$result = str_replace(DS, '/', $result);
+		static::assertEquals($expected, $result, $message);
+	}
+
+/**
  * Compatibility function for skipping.
  *
  * @param boolean $condition Condition to trigger skipping

@@ -221,10 +221,10 @@ class PluginTest extends TestCase {
 	public function testPath() {
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
-		$this->assertEquals(Plugin::path('TestPlugin'), $expected);
+		$this->assertPathEquals(Plugin::path('TestPlugin'), $expected);
 
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS;
-		$this->assertEquals(Plugin::path('TestPluginTwo'), $expected);
+		$this->assertPathEquals(Plugin::path('TestPluginTwo'), $expected);
 	}
 
 /**
