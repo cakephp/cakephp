@@ -39,10 +39,10 @@ class CrudAuthorize extends BaseAuthorize {
  * Sets up additional actionMap values that match the configured `Routing.prefixes`.
  *
  * @param ComponentRegistry $registry The component registry from the controller.
- * @param array $configs An array of configs. This class does not use any configs.
+ * @param array $config An array of config. This class does not use any config.
  */
-	public function __construct(ComponentRegistry $registry, $configs = array()) {
-		parent::__construct($registry, $configs);
+	public function __construct(ComponentRegistry $registry, $config = array()) {
+		parent::__construct($registry, $config);
 		$this->_setPrefixMappings();
 	}
 
