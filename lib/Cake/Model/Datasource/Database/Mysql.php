@@ -155,7 +155,9 @@ class Mysql extends DboSource {
 		$flags = $config['flags'] + array(
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+			PDO::ATTR_STRINGIFY_FETCHES => false,
+			PDO::ATTR_EMULATE_PREPARES => false
 		);
 
 		if (!empty($config['encoding'])) {
