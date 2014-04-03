@@ -44,7 +44,7 @@ use Cake\Utility\ViewVarsTrait;
  * current view the default app view files will be used. You can set `$this->theme = 'mytheme'`
  * in your Controller to use the Themes.
  *
- * Example of theme path with `$this->theme = 'SuperHot';` Would be `app/View/Themed/SuperHot/Posts`
+ * Example of theme path with `$this->theme = 'SuperHot';` Would be `app/Template/Themed/SuperHot/Posts`
  *
  * @property      \Cake\View\Helper\CacheHelper $Cache
  * @property      \Cake\View\Helper\FormHelper $Form
@@ -251,8 +251,8 @@ class View extends Object {
  * @var array
  */
 	protected $_passedVars = array(
-		'viewVars', 'autoLayout', 'helpers', 'view', 'layout', 'name', 'theme', 'layoutPath',
-		'viewPath', 'plugin', 'passedArgs', 'cacheAction'
+		'viewVars', 'autoLayout', 'helpers', 'view', 'layout', 'name', 'theme',
+		'layoutPath', 'viewPath', 'plugin', 'passedArgs', 'cacheAction'
 	);
 
 /**
@@ -331,7 +331,7 @@ class View extends Object {
 
 /**
  * Constructor
- * 
+ *
  * @param Request $request
  * @param Response $response
  * @param EventManager $eventManager
@@ -880,7 +880,10 @@ class View extends Object {
 		$remainingBlocks = count($this->Blocks->unclosed());
 
 		if ($initialBlocks !== $remainingBlocks) {
-			throw new Error\Exception(sprintf('The "%s" block was left open. Blocks are not allowed to cross files.', $this->Blocks->active()));
+			throw new Error\Exception(sprintf(
+				'The "%s" block was left open. Blocks are not allowed to cross files.',
+				$this->Blocks->active()
+			));
 		}
 		return $content;
 	}
