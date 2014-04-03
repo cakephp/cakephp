@@ -13,6 +13,8 @@
  */
 namespace Cake\Utility;
 
+use Cake\Core\App;
+
 /**
  * Provides the set() method for collecting template context.
  *
@@ -28,6 +30,24 @@ trait ViewVarsTrait {
  * @var array
  */
 	public $viewVars = [];
+
+/**
+ * Constructs the view class instance based on object properties.
+ *
+ * @param string $viewClass Optional namespaced class name of the View class to instantiate.
+ * @return View
+ */
+	public function createView($viewClass = null) {
+		if ($viewClass === null) {
+			$viewClass = $this->viewClass;
+			if ($this->viewClass !== 'View') {
+				list($plugin, $viewClass) = pluginSplit($viewClass, true);
+				$viewClass = App::classname($viewClass, 'View', 'View');
+			}
+		}
+		$viewOptions = array_intersect_key(get_object_vars($this), array_flip($this->_validViewOptions));
+		return new $viewClass($this->request, $this->response, $this->getEventManager(), $viewOptions);
+	}
 
 /**
  * Saves a variable for use inside a template.
@@ -49,4 +69,5 @@ trait ViewVarsTrait {
 		}
 		$this->viewVars = $data + $this->viewVars;
 	}
+
 }
