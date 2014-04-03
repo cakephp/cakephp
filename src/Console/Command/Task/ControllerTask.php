@@ -18,7 +18,6 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 
 /**
@@ -33,13 +32,6 @@ class ControllerTask extends BakeTask {
  * @var array
  */
 	public $tasks = ['Model', 'Test', 'Template'];
-
-/**
- * path to Controller directory
- *
- * @var array
- */
-	public $path = null;
 
 /**
  * Override initialize
