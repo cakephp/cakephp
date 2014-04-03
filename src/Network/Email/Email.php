@@ -296,13 +296,6 @@ class Email {
 	protected $_boundary = null;
 
 /**
- * Configuration profiles for use in instances.
- *
- * @var array
- */
-	protected static $_config = [];
-
-/**
  * Configuration profiles for transports.
  *
  * @var array

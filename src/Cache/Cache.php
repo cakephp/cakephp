@@ -77,16 +77,6 @@ class Cache {
 	protected static $_enabled = true;
 
 /**
- * Cache configuration.
- *
- * Keeps the permanent/default settings for each cache engine.
- * These settings are used to reset the engines after temporary modification.
- *
- * @var array
- */
-	protected static $_config = [];
-
-/**
  * Group to Config mapping
  *
  * @var array
