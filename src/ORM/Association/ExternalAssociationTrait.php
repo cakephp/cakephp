@@ -14,7 +14,6 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association\SelectableAssociationTrait;
 use Cake\ORM\Query;
 use Cake\Utility\Inflector;

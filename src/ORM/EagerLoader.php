@@ -68,6 +68,13 @@ class EagerLoader {
 	protected $_loadExternal = [];
 
 /**
+ * Contains a list of the association names that are to be eagerly loaded
+ *
+ * @var array
+ */
+	protected $_aliasList = [];
+
+/**
  * Sets the list of associations that should be eagerly loaded along for a
  * specific table using when a query is provided. The list of associated tables
  * passed to this method must have been previously set as associations using the
@@ -318,7 +325,14 @@ class EagerLoader {
 			'aliasPath' => trim($paths['aliasPath'], '.'),
 			'propertyPath' => trim($paths['propertyPath'], '.'),
 		];
+
 		$config['canBeJoined'] = $instance->canBeJoined($config['config']);
+		if ($config['canBeJoined'] && !empty($this->_aliasList[$alias])) {
+			$config['canBeJoined'] = false;
+			$config['config']['strategy'] = $instance::STRATEGY_SELECT;
+		}
+
+		$this->_aliasList[$alias][] = $paths['aliasPath'];
 
 		foreach ($extra as $t => $assoc) {
 			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc, $paths);

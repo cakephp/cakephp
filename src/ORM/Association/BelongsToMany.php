@@ -50,13 +50,6 @@ class BelongsToMany extends Association {
 	const SAVE_REPLACE = 'replace';
 
 /**
- * Whether this association can be expressed directly in a query join
- *
- * @var boolean
- */
-	protected $_canBeJoined = false;
-
-/**
  * The type of join to be used when adding the association to a query
  *
  * @var string

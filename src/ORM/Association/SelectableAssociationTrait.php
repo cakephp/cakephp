@@ -79,7 +79,6 @@ trait SelectableAssociationTrait {
 		$target = $this->target();
 		$alias = $target->alias();
 		$key = $this->_linkField($options);
-
 		$filter = $options['keys'];
 
 		if ($options['strategy'] === $this::STRATEGY_SUBQUERY) {

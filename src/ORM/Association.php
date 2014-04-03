@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
 use Cake\ORM\Entity;

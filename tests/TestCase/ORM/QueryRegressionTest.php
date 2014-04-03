@@ -67,13 +67,20 @@ class QueryRegressionTest extends TestCase {
 	}
 
 	public function testDuplicateAttachableAliases() {
+		TableRegistry::get('Stuff', ['table' => 'tags']);
+		TableRegistry::get('Things', ['table' => 'articles_tags']);
+
 		$table = TableRegistry::get('Articles');
 		$table->belongsTo('Authors');
-		$table->hasOne('ArticlesTags');
-		$table->Authors->target()->hasOne('Tags', ['foreignKey' => 'id']);
-		$table->ArticlesTags->target()->belongsTo('Tags', ['foreignKey' => 'tag_id']);
+		$table->hasOne('Things');
+		
+		$table->Authors->target()->hasOne('Stuff', ['foreignKey' => 'id']);
+		$table->Things->target()->belongsTo('Stuff', ['foreignKey' => 'tag_id']);
 
-		$results = $table->find()->contain(['Authors.Tags', 'ArticlesTags.Tags']);
+		$results = $table->find()
+			->contain(['Authors.Stuff', 'Things.Stuff'])
+			->hydrate(false)
+			->toArray();
 	}
 
 }
