@@ -55,7 +55,7 @@ class PluginTask extends Shell {
  */
 	public function initialize() {
 		$this->path = current(App::path('Plugin'));
-		$this->bootstrap = APP . 'Config/bootstrap.php';
+		$this->bootstrap = APP . 'Config' . DS . 'bootstrap.php';
 	}
 
 /**
@@ -156,7 +156,7 @@ class PluginTask extends Shell {
 			$out .= "use App\\Controller\\AppController;\n\n";
 			$out .= "class {$plugin}AppController extends AppController {\n\n";
 			$out .= "}\n";
-			$this->createFile($this->path . $plugin . DS . 'Controller/' . $controllerFileName, $out);
+			$this->createFile($this->path . $plugin . DS . 'Controller' . DS . $controllerFileName, $out);
 
 			$this->_modifyBootstrap($plugin);
 			$this->_generatePhpunitXml($plugin, $this->path);
@@ -218,7 +218,7 @@ class PluginTask extends Shell {
 		]);
 		$this->out( __d('cake_console', 'Generating Test/bootstrap.php file...'));
 		$out = $this->Template->generate('test', 'bootstrap');
-		$file = $path . $plugin . '/Test/bootstrap.php';
+		$file = $path . $plugin . DS . 'Test' . DS . 'bootstrap.php';
 		$this->createFile($file, $out);
 	}
 

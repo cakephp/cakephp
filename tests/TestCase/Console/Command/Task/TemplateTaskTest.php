@@ -55,9 +55,9 @@ class TemplateTaskTest extends TestCase {
  * @return void
  */
 	public function testFindingInstalledThemesForBake() {
-		$consoleLibs = CAKE . 'Console/';
+		$consoleLibs = CAKE . 'Console' . DS;
 		$this->Task->initialize();
-		$this->assertEquals($this->Task->templatePaths['default'], $consoleLibs . 'Templates/default/');
+		$this->assertPathEquals($this->Task->templatePaths['default'], $consoleLibs . 'Templates/default/');
 	}
 
 /**

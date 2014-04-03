@@ -231,11 +231,11 @@ class ViewTaskTest extends TestCase {
 		$this->Task->path = '/path/Template/';
 
 		$result = $this->Task->getPath();
-		$this->assertEquals('/path/Template/Posts/', $result);
+		$this->assertPathEquals('/path/Template/Posts/', $result);
 
 		$this->Task->params['prefix'] = 'admin';
 		$result = $this->Task->getPath();
-		$this->assertEquals('/path/Template/Admin/Posts/', $result);
+		$this->assertPathEquals('/path/Template/Admin/Posts/', $result);
 	}
 
 /**
@@ -252,11 +252,11 @@ class ViewTaskTest extends TestCase {
 
 		$this->Task->params['plugin'] = $this->Task->plugin = 'TestPlugin';
 		$result = $this->Task->getPath();
-		$this->assertEquals($pluginPath . 'Template/Posts/', $result);
+		$this->assertPathEquals($pluginPath . 'Template/Posts/', $result);
 
 		$this->Task->params['prefix'] = 'admin';
 		$result = $this->Task->getPath();
-		$this->assertEquals($pluginPath . 'Template/Admin/Posts/', $result);
+		$this->assertPathEquals($pluginPath . 'Template/Admin/Posts/', $result);
 
 		Plugin::unload('TestPlugin');
 	}
@@ -342,7 +342,7 @@ class ViewTaskTest extends TestCase {
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments/view.ctp',
+				TMP . 'ViewTaskComments' . DS . 'view.ctp',
 				$this->stringContains('View Task Comments')
 			);
 
@@ -361,7 +361,7 @@ class ViewTaskTest extends TestCase {
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments/edit.ctp',
+				TMP . 'ViewTaskComments' . DS . 'edit.ctp',
 				$this->anything()
 			);
 		$result = $this->Task->bake('edit', true);
@@ -382,7 +382,7 @@ class ViewTaskTest extends TestCase {
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments/index.ctp',
+				TMP . 'ViewTaskComments' . DS . 'index.ctp',
 				$this->stringContains("\$viewTaskComment->article->title")
 			);
 		$this->Task->bake('index', true);
@@ -415,17 +415,17 @@ class ViewTaskTest extends TestCase {
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments/view.ctp',
+				TMP . 'ViewTaskComments' . DS . 'view.ctp',
 				$this->stringContains('View Task Comments')
 			);
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments/edit.ctp',
+				TMP . 'ViewTaskComments' . DS . 'edit.ctp',
 				$this->stringContains('Edit View Task Comment')
 			);
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments/index.ctp',
+				TMP . 'ViewTaskComments' . DS . 'index.ctp',
 				$this->stringContains('ViewTaskComment')
 			);
 
@@ -447,7 +447,7 @@ class ViewTaskTest extends TestCase {
 
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments/my_action.ctp',
+				TMP . 'ViewTaskComments' . DS . 'my_action.ctp',
 				$this->anything()
 			);
 
@@ -580,7 +580,7 @@ class ViewTaskTest extends TestCase {
 		foreach ($views as $i => $view) {
 			$this->Task->expects($this->at($i))->method('createFile')
 				->with(
-					TMP . 'Blog/' . $view,
+					TMP . 'Blog' . DS . $view,
 					$this->anything()
 				);
 		}
@@ -603,7 +603,7 @@ class ViewTaskTest extends TestCase {
 		foreach ($views as $i => $view) {
 			$this->Task->expects($this->at($i))->method('createFile')
 				->with(
-					TMP . 'Admin/Posts/' . $view,
+					TMP . 'Admin' . DS . 'Posts' . DS . $view,
 					$this->anything()
 				);
 		}

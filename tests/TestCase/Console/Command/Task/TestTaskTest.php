@@ -136,7 +136,7 @@ class TestTaskTest extends TestCase {
 		$this->Task->args = ['Table', 'TestTaskTag'];
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
-				$this->stringContains('TestCase/Model/Table/TestTaskTagTableTest.php'),
+				$this->stringContains('TestCase' . DS . 'Model' . DS . 'Table' . DS . 'TestTaskTagTableTest.php'),
 				$this->stringContains('class TestTaskTagTableTest extends TestCase')
 			);
 		$this->Task->execute();
@@ -382,7 +382,7 @@ class TestTaskTest extends TestCase {
 
 		$this->Task->expects($this->once())
 			->method('createFile')
-			->with($this->stringContains('Controller/Admin/PostsControllerTest.php'))
+			->with($this->stringContains('Controller' . DS . 'Admin' . DS . 'PostsControllerTest.php'))
 			->will($this->returnValue(true));
 
 		$result = $this->Task->bake('controller', 'Admin\Posts');
@@ -554,6 +554,7 @@ class TestTaskTest extends TestCase {
 
 		Plugin::load('TestPlugin');
 		$path = TEST_APP . 'Plugin/TestPlugin/Test/TestCase/View/Helper/FormHelperTest.php';
+		$path = str_replace('/', DS, $path);
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, $this->anything());
 
@@ -594,7 +595,7 @@ class TestTaskTest extends TestCase {
 
 		$result = $this->Task->testCaseFileName($type, $class);
 		$expected = $this->Task->path . $expected;
-		$this->assertEquals($expected, $result);
+		$this->assertPathEquals($expected, $result);
 	}
 
 /**
@@ -611,7 +612,7 @@ class TestTaskTest extends TestCase {
 		$result = $this->Task->testCaseFileName('entity', $class);
 
 		$expected = TEST_APP . 'Plugin/TestPlugin/Test/TestCase/Model/Entity/PostTest.php';
-		$this->assertEquals($expected, $result);
+		$this->assertPathEquals($expected, $result);
 	}
 
 /**
