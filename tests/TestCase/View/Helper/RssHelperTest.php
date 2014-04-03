@@ -36,8 +36,7 @@ class RssHelperTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$controller = null;
-		$this->View = new View($controller);
+		$this->View = new View();
 		$this->Rss = new RssHelper($this->View);
 	}
 

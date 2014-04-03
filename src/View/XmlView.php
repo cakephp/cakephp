@@ -16,6 +16,8 @@ namespace Cake\View;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Event\EventManager;
+use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Set;
 use Cake\Utility\Xml;
@@ -63,14 +65,17 @@ class XmlView extends View {
 
 /**
  * Constructor
- *
- * @param Controller $controller
+ * @param Request $request
+ * @param Response $response
+ * @param EventManager $eventManager
+ * @param array $viewOptions
  */
-	public function __construct(Controller $controller = null) {
-		parent::__construct($controller);
+	public function __construct(Request $request = null, Response $response = null,
+		EventManager $eventManager = null, array $viewOptions = []) {
+		parent::__construct($request, $response, $eventManager, $viewOptions);
 
-		if (isset($controller->response) && $controller->response instanceof Response) {
-			$controller->response->type('xml');
+		if ($response && $response instanceof Response) {
+			$response->type('xml');
 		}
 	}
 

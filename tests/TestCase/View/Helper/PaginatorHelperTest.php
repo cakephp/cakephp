@@ -37,8 +37,7 @@ class PaginatorHelperTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('Config.language', 'eng');
-		$controller = null;
-		$this->View = new View($controller);
+		$this->View = new View();
 		$this->Paginator = new PaginatorHelper($this->View);
 		$this->Paginator->Js = $this->getMock('Cake\View\Helper\PaginatorHelper', array(), array($this->View));
 		$this->Paginator->request = new Request();

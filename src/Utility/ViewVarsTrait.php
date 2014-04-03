@@ -49,5 +49,4 @@ trait ViewVarsTrait {
 		}
 		$this->viewVars = $data + $this->viewVars;
 	}
-
 }

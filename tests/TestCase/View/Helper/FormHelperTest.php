@@ -140,7 +140,7 @@ class FormHelperTest extends TestCase {
 		Configure::write('App.base', '');
 		Configure::write('App.namespace', 'Cake\Test\TestCase\View\Helper');
 		Configure::delete('Asset');
-		$this->View = new View(null);
+		$this->View = new View();
 
 		$this->Form = new FormHelper($this->View);
 		$this->Form->request = new Request('articles/add');
@@ -2205,7 +2205,7 @@ class FormHelperTest extends TestCase {
 		$this->Form = $this->getMock(
 			'Cake\View\Helper\FormHelper',
 			['datetime'],
-			[new View(null)]
+			[new View()]
 		);
 		$this->Form->expects($this->once())->method('datetime')
 			->with('prueba', [
@@ -2244,7 +2244,7 @@ class FormHelperTest extends TestCase {
 		$this->Form = $this->getMock(
 			'Cake\View\Helper\FormHelper',
 			['datetime'],
-			[new View(null)]
+			[new View()]
 		);
 
 		$this->Form->create(false, ['idPrefix' => 'prefix']);

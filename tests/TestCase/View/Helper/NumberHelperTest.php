@@ -57,7 +57,7 @@ class NumberHelperTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->View = new View(null);
+		$this->View = new View();
 
 		$this->_appNamespace = Configure::read('App.namespace');
 		Configure::write('App.namespace', 'TestApp');

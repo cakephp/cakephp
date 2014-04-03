@@ -695,9 +695,8 @@ class ExceptionRendererTest extends TestCase {
 
 		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
 		$ExceptionRenderer->controller->helpers = array('Fail', 'Boom');
-		$ExceptionRenderer->controller->layoutPath = 'json';
-		$ExceptionRenderer->controller->subDir = 'json';
-		$ExceptionRenderer->controller->viewClass = 'Json';
+		$ExceptionRenderer->controller->layoutPath = 'boom';
+		$ExceptionRenderer->controller->subDir = 'boom';
 		$ExceptionRenderer->controller->request = new Request;
 
 		$ExceptionRenderer->controller->expects($this->once())

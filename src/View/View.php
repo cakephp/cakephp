@@ -77,7 +77,7 @@ class View extends Object {
 	public $Blocks;
 
 /**
- * Name of the plugin.
+ * The name of the plugin.
  *
  * @link http://manual.cakephp.org/chapter/plugins
  * @var string
@@ -85,16 +85,17 @@ class View extends Object {
 	public $plugin = null;
 
 /**
- * Name of the controller.
+ * Name of the controller that created the View if any.
  *
- * @var string Name of controller
+ * @see Controller::$name
+ * @var string
  */
 	public $name = null;
 
 /**
- * Current passed params
+ * Current passed params. Passed to View from the creating Controller for convenience.
  *
- * @var mixed
+ * @var array
  */
 	public $passedArgs = array();
 
@@ -106,30 +107,33 @@ class View extends Object {
 	public $helpers = array();
 
 /**
- * Path to View.
+ * The name of the views subfolder containing views for this View.
  *
- * @var string Path to View
+ * @var string
  */
 	public $viewPath = null;
 
 /**
- * Name of view to use with this View.
+ * The name of the view file to render. The name specified
+ * is the filename in /app/Template/<SubFolder> without the .ctp extension.
  *
  * @var string
  */
 	public $view = null;
 
 /**
- * Name of layout to use with this View.
+ * The name of the layout file to render the view inside of. The name specified
+ * is the filename of the layout in /app/Template/Layout without the .ctp
+ * extension.
  *
  * @var string
  */
 	public $layout = 'default';
 
 /**
- * Path to Layout.
+ * The name of the layouts subfolder containing layouts for this View.
  *
- * @var string Path to Layout
+ * @var string
  */
 	public $layoutPath = null;
 
@@ -157,17 +161,31 @@ class View extends Object {
 	public $subDir = null;
 
 /**
- * Theme name.
+ * The view theme to use.
  *
  * @var string
  */
 	public $theme = null;
 
 /**
- * Used to define methods a controller that will be cached.
+ * Used to define methods a controller that will be cached. To cache a
+ * single action, the value is set to an array containing keys that match
+ * action names and values that denote cache expiration times (in seconds).
  *
- * @see Controller::$cacheAction
+ * Example:
+ *
+ * {{{
+ * public $cacheAction = array(
+ *       'view/23/' => 21600,
+ *       'recalled/' => 86400
+ *   );
+ * }}}
+ *
+ * $cacheAction can also be set to a strtotime() compatible string. This
+ * marks all the actions in the controller for view caching.
+ *
  * @var mixed
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html#additional-configuration-options
  */
 	public $cacheAction = false;
 
@@ -233,8 +251,8 @@ class View extends Object {
  * @var array
  */
 	protected $_passedVars = array(
-		'viewVars', 'autoLayout', 'helpers', 'view', 'layout', 'name', 'theme',
-		'layoutPath', 'viewPath', 'request', 'plugin', 'passedArgs', 'cacheAction'
+		'viewVars', 'autoLayout', 'helpers', 'view', 'layout', 'name', 'theme', 'layoutPath',
+		'viewPath', 'plugin', 'passedArgs', 'cacheAction'
 	);
 
 /**
@@ -313,31 +331,37 @@ class View extends Object {
 
 /**
  * Constructor
- *
- * @param Controller $controller A controller object to pull View::_passedVars from.
+ * 
+ * @param Request $request
+ * @param Response $response
+ * @param EventManager $eventManager
+ * @param array $viewOptions
  */
-	public function __construct(Controller $controller = null) {
-		if (is_object($controller)) {
-			$count = count($this->_passedVars);
-			for ($j = 0; $j < $count; $j++) {
-				$var = $this->_passedVars[$j];
-				$this->{$var} = $controller->{$var};
+	public function __construct(Request $request = null, Response $response = null,
+		EventManager $eventManager = null, array $viewOptions = []) {
+		parent::__construct();
+
+		foreach ($this->_passedVars as $var) {
+			if (isset($viewOptions[$var])) {
+				$this->{$var} = $viewOptions[$var];
 			}
-			$this->_eventManager = $controller->getEventManager();
 		}
-		if (empty($this->request) && !($this->request = Router::getRequest(true))) {
+		$this->_eventManager = $eventManager;
+		$this->request = $request;
+		$this->response = $response;
+		if (empty($this->request)) {
+			$this->request = Router::getRequest(true);
+		}
+		if (empty($this->request)) {
 			$this->request = new Request();
 			$this->request->base = '';
 			$this->request->here = $this->request->webroot = '/';
 		}
-		if (is_object($controller) && isset($controller->response)) {
-			$this->response = $controller->response;
-		} else {
+		if (empty($this->response)) {
 			$this->response = new Response();
 		}
 		$this->Blocks = new ViewBlock();
 		$this->loadHelpers();
-		parent::__construct();
 	}
 
 /**
