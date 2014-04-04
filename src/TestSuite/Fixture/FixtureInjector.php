@@ -130,8 +130,10 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  */
 	public function startTest(PHPUnit_Framework_Test $test) {
 		$test->fixtureManager = $this->_fixtureManager;
-		$this->_fixtureManager->fixturize($test);
-		$this->_fixtureManager->load($test);
+		if ($test instanceof TestCase) {
+			$this->_fixtureManager->fixturize($test);
+			$this->_fixtureManager->load($test);
+		}
 	}
 
 /**
@@ -142,7 +144,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  * @return void
  */
 	public function endTest(PHPUnit_Framework_Test $test, $time) {
-		$this->_fixtureManager->unload($test);
+		if ($test instanceof TestCase) {
+			$this->_fixtureManager->unload($test);
+		}
 	}
 
 /**
