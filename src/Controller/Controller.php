@@ -658,12 +658,15 @@ class Controller extends Object implements EventListener {
 			}
 		}
 
-		$this->Paginator = $this->addComponent('Paginator');
+		$this->addComponent('Paginator');
 		if (
 			!in_array('Paginator', $this->helpers) &&
 			!array_key_exists('Paginator', $this->helpers)
 		) {
 			$this->helpers[] = 'Paginator';
+		}
+		if (empty($table)) {
+			throw new \RuntimeException('Unable to locate an object compatible with paginate.');
 		}
 		return $this->Paginator->paginate($table, $this->paginate);
 	}
