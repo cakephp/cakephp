@@ -114,12 +114,10 @@ class PaginatorComponentTest extends TestCase {
 	public function testPaginateExtraParams() {
 		$this->request->query = array('page' => '-1');
 		$settings = array(
-			'PaginatorPosts' => array(
-				'contain' => array('PaginatorAuthor'),
-				'maxLimit' => 10,
-				'group' => 'PaginatorPosts.published',
-				'order' => array('PaginatorPosts.id' => 'ASC')
-			),
+			'contain' => array('PaginatorAuthor'),
+			'maxLimit' => 10,
+			'group' => 'PaginatorPosts.published',
+			'order' => array('PaginatorPosts.id' => 'ASC')
 		);
 		$table = $this->_getMockPosts(['find']);
 		$query = $this->_getMockFindQuery();
@@ -147,11 +145,9 @@ class PaginatorComponentTest extends TestCase {
  */
 	public function testPaginateCustomFinder() {
 		$settings = array(
-			'PaginatorPosts' => array(
-				'findType' => 'popular',
-				'fields' => array('id', 'title'),
-				'maxLimit' => 10,
-			)
+			'findType' => 'popular',
+			'fields' => array('id', 'title'),
+			'maxLimit' => 10,
 		);
 
 		$table = $this->_getMockPosts(['findPopular']);
@@ -233,20 +229,11 @@ class PaginatorComponentTest extends TestCase {
 	public function testMergeOptionsModelSpecific() {
 		$settings = array(
 			'page' => 1,
-			'limit' => 20,
-			'maxLimit' => 100,
-			'Posts' => array(
-				'page' => 1,
-				'limit' => 10,
-				'maxLimit' => 50,
-			)
+			'limit' => 10,
+			'maxLimit' => 50,
 		);
 		$result = $this->Paginator->mergeOptions('Silly', $settings);
 		$this->assertEquals($settings, $result);
-
-		$result = $this->Paginator->mergeOptions('Posts', $settings);
-		$expected = array('page' => 1, 'limit' => 10, 'maxLimit' => 50);
-		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -358,14 +345,43 @@ class PaginatorComponentTest extends TestCase {
 		);
 		$result = $this->Paginator->mergeOptions('Post', $settings);
 		$expected = array('page' => 1, 'limit' => 200, 'maxLimit' => 200, 'paramType' => 'named');
+		$this->assertEquals(
+			$expected,
+			$result,
+			'Configuring a higher limit than maxLimit should bump the maxLimit value'
+		);
+	}
+
+/**
+ * testMergeOptionsUsesConfig
+ *
+ * @return void
+ */
+	public function testMergeOptionsUsesConfig() {
+		$this->Paginator->config('limit', 12);
+
+		$result = $this->Paginator->mergeOptions('Post', []);
+		$expected = array(
+			'page' => 1,
+			'limit' => 12,
+			'maxLimit' => 100,
+		);
 		$this->assertEquals($expected, $result);
 
-		$settings = array(
-			'maxLimit' => 10,
-			'paramType' => 'named',
+		$result = $this->Paginator->mergeOptions('Post', ['limit' => 34]);
+		$expected = array(
+			'page' => 1,
+			'limit' => 34,
+			'maxLimit' => 34
 		);
-		$result = $this->Paginator->mergeOptions('Post', $settings);
-		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 10, 'paramType' => 'named');
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Paginator->mergeOptions('Post', ['limit' => 123]);
+		$expected = array(
+			'page' => 1,
+			'limit' => 123,
+			'maxLimit' => 123
+		);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -750,12 +766,10 @@ class PaginatorComponentTest extends TestCase {
 	public function testPaginateQuery() {
 		$this->request->query = array('page' => '-1');
 		$settings = array(
-			'PaginatorPosts' => array(
-				'contain' => array('PaginatorAuthor'),
-				'maxLimit' => 10,
-				'group' => 'PaginatorPosts.published',
-				'order' => array('PaginatorPosts.id' => 'ASC')
-			)
+			'contain' => array('PaginatorAuthor'),
+			'maxLimit' => 10,
+			'group' => 'PaginatorPosts.published',
+			'order' => array('PaginatorPosts.id' => 'ASC')
 		);
 		$table = $this->_getMockPosts(['find']);
 		$query = $this->_getMockFindQuery($table);
@@ -781,13 +795,11 @@ class PaginatorComponentTest extends TestCase {
 	public function testPaginateQueryWithLimit() {
 		$this->request->query = array('page' => '-1');
 		$settings = array(
-			'PaginatorPosts' => array(
-				'contain' => array('PaginatorAuthor'),
-				'maxLimit' => 10,
-				'limit' => 5,
-				'group' => 'PaginatorPosts.published',
-				'order' => array('PaginatorPosts.id' => 'ASC')
-			)
+			'contain' => array('PaginatorAuthor'),
+			'maxLimit' => 10,
+			'limit' => 5,
+			'group' => 'PaginatorPosts.published',
+			'order' => array('PaginatorPosts.id' => 'ASC')
 		);
 		$table = $this->_getMockPosts(['find']);
 		$query = $this->_getMockFindQuery($table);
