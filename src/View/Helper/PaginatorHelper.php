@@ -239,7 +239,7 @@ class PaginatorHelper extends Helper {
 			$options['url'],
 			['page' => $paging['page'] + $options['step']]
 		);
-		$url = $this->url($url, $options['model']);
+		$url = $this->generateUrl($url, $options['model']);
 		return $this->templater()->format($template, [
 			'url' => $url,
 			'text' => $text,
@@ -387,7 +387,7 @@ class PaginatorHelper extends Helper {
 		);
 		$vars = [
 			'text' => $options['escape'] ? h($title) : $title,
-			'url' => $this->url($url, $options['model']),
+			'url' => $this->generateUrl($url, $options['model']),
 		];
 		return $this->templater()->format($template, $vars);
 	}
@@ -397,10 +397,11 @@ class PaginatorHelper extends Helper {
  *
  * @param array $options Pagination/URL options array
  * @param string $model Which model to paginate on
+ * @param boolean $full If true, the full base URL will be prepended to the result
  * @return mixed By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::url
  */
-	public function url($options = array(), $model = null) {
+	public function generateUrl(array $options = array(), $model = null, $full = false) {
 		$paging = $this->params($model);
 		$paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
 		$url = [
@@ -425,7 +426,7 @@ class PaginatorHelper extends Helper {
 		) {
 			$url['sort'] = $url['direction'] = null;
 		}
-		return parent::url($url);
+		return $this->url($url, $full);
 	}
 
 /**
@@ -632,21 +633,21 @@ class PaginatorHelper extends Helper {
 			for ($i = $start; $i < $params['page']; $i++) {
 				$vars = [
 					'text' => $i,
-					'url' => $this->url(['page' => $i], $options['model']),
+					'url' => $this->generateUrl(['page' => $i], $options['model']),
 				];
 				$out .= $this->templater()->format('number', $vars);
 			}
 
 			$out .= $this->templater()->format('current', [
 				'text' => $params['page'],
-				'url' => $this->url(['page' => $params['page']], $options['model']),
+				'url' => $this->generateUrl(['page' => $params['page']], $options['model']),
 			]);
 
 			$start = $params['page'] + 1;
 			for ($i = $start; $i < $end; $i++) {
 				$vars = [
 					'text' => $i,
-					'url' => $this->url(['page' => $i], $options['model']),
+					'url' => $this->generateUrl(['page' => $i], $options['model']),
 				];
 				$out .= $this->templater()->format('number', $vars);
 			}
@@ -654,7 +655,7 @@ class PaginatorHelper extends Helper {
 			if ($end != $params['page']) {
 				$vars = [
 					'text' => $i,
-					'url' => $this->url(['page' => $end], $options['model']),
+					'url' => $this->generateUrl(['page' => $end], $options['model']),
 				];
 				$out .= $this->templater()->format('number', $vars);
 			}
@@ -676,12 +677,12 @@ class PaginatorHelper extends Helper {
 				if ($i == $params['page']) {
 					$out .= $this->templater()->format('current', [
 						'text' => $params['page'],
-						'url' => $this->url(['page' => $params['page']], $options['model']),
+						'url' => $this->generateUrl(['page' => $params['page']], $options['model']),
 					]);
 				} else {
 					$vars = [
 						'text' => $i,
-						'url' => $this->url(['page' => $i], $options['model']),
+						'url' => $this->generateUrl(['page' => $i], $options['model']),
 					];
 					$out .= $this->templater()->format('number', $vars);
 				}
@@ -733,14 +734,14 @@ class PaginatorHelper extends Helper {
 		if (is_int($first) && $params['page'] >= $first) {
 			for ($i = 1; $i <= $first; $i++) {
 				$out .= $this->templater()->format('number', [
-					'url' => $this->url(['page' => $i], $options['model']),
+					'url' => $this->generateUrl(['page' => $i], $options['model']),
 					'text' => $i
 				]);
 			}
 		} elseif ($params['page'] > 1 && is_string($first)) {
 			$first = $options['escape'] ? h($first) : $first;
 			$out .= $this->templater()->format('first', [
-				'url' => $this->url(['page' => 1], $options['model']),
+				'url' => $this->generateUrl(['page' => 1], $options['model']),
 				'text' => $first
 			]);
 		}
@@ -786,14 +787,14 @@ class PaginatorHelper extends Helper {
 		if (is_int($last) && $params['page'] <= $lower) {
 			for ($i = $lower; $i <= $params['pageCount']; $i++) {
 				$out .= $this->templater()->format('number', [
-					'url' => $this->url(['page' => $i], $options['model']),
+					'url' => $this->generateUrl(['page' => $i], $options['model']),
 					'text' => $i
 				]);
 			}
 		} elseif ($params['page'] < $params['pageCount'] && is_string($last)) {
 			$last = $options['escape'] ? h($last) : $last;
 			$out .= $this->templater()->format('last', [
-				'url' => $this->url(['page' => $params['pageCount']], $options['model']),
+				'url' => $this->generateUrl(['page' => $params['pageCount']], $options['model']),
 				'text' => $last
 			]);
 		}
