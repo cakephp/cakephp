@@ -85,8 +85,16 @@ class QueryRegressionTest extends TestCase {
 
 		$results = $table->find()
 			->contain(['Authors.Stuff', 'Things.Stuff'])
-			->hydrate(false)
 			->toArray();
+
+		$this->assertEquals(1, $results[0]->articles_tag->foo->id);
+		$this->assertEquals(1, $results[0]->author->favorite_tag->id);
+		$this->assertEquals(2, $results[1]->articles_tag->foo->id);
+		$this->assertEquals(1, $results[0]->author->favorite_tag->id);
+		$this->assertEquals(1, $results[2]->articles_tag->foo->id);
+		$this->assertEquals(3, $results[2]->author->favorite_tag->id);
+		$this->assertEquals(3, $results[3]->articles_tag->foo->id);
+		$this->assertEquals(3, $results[3]->author->favorite_tag->id);
 	}
 
 }

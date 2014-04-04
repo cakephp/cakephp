@@ -106,6 +106,7 @@ class EagerLoader {
 		$associations = (array)$associations;
 		$associations = $this->_reformatContain($associations, $this->_containments);
 		$this->_normalized = $this->_loadExternal = null;
+		$this->_aliasList = [];
 		return $this->_containments = $associations;
 	}
 
