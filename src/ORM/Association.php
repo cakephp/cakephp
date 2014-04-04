@@ -645,6 +645,7 @@ abstract class Association {
  * - fields: List of fields to select from the target table
  * - contain: List of related tables to eager load associated to the target table
  * - strategy: The name of strategy to use for finding target table records
+ * - nestKey: The array key under which results will be found when transforming the row
  *
  * @param array $options
  * @return \Closure

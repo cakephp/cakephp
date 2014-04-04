@@ -198,6 +198,7 @@ trait SelectableAssociationTrait {
  * @param \Cake\ORM\Query $fetchQuery the Query used to fetch results
  * @param array $resultMap an array with the foreignKey as keys and
  * the corresponding target table results as value.
+ * @param array $options The options passed to the eagerLoader method
  * @return \Closure
  */
 	protected function _resultInjector($fetchQuery, $resultMap, $options) {
