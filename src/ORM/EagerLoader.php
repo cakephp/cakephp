@@ -164,7 +164,7 @@ class EagerLoader {
 				$repository,
 				$alias,
 				$options,
-				[]
+				['root' => null]
 			);
 		}
 
@@ -312,7 +312,7 @@ class EagerLoader {
 			);
 		}
 
-		$paths += ['aliasPath' => '', 'propertyPath' => ''];
+		$paths += ['aliasPath' => '', 'propertyPath' => '', 'root' => $alias];
 		$paths['aliasPath'] .= '.' . $alias;
 		$paths['propertyPath'] .= '.' . $instance->property();
 
@@ -324,21 +324,50 @@ class EagerLoader {
 			'instance' => $instance,
 			'config' => array_diff_key($options, $extra),
 			'aliasPath' => trim($paths['aliasPath'], '.'),
-			'propertyPath' => trim($paths['propertyPath'], '.'),
+			'propertyPath' => trim($paths['propertyPath'], '.')
 		];
-
 		$config['canBeJoined'] = $instance->canBeJoined($config['config']);
-		$canChange = $config['canBeJoined'] && empty($config['config']['matching']);
-		if ($canChange && !empty($this->_aliasList[$alias])) {
-			$config['canBeJoined'] = false;
-			$config['config']['strategy'] = $instance::STRATEGY_SELECT;
-		}
+		$config = $this->_correctStrategy($alias, $config, $paths['root']);
 
-		$this->_aliasList[$alias][] = $paths['aliasPath'];
+		if ($config['canBeJoined']) {
+			$this->_aliasList[$paths['root']][$alias] = true;
+		} else {
+			$paths['root'] = $config['aliasPath'];
+		}
 
 		foreach ($extra as $t => $assoc) {
 			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc, $paths);
 		}
+
+		return $config;
+	}
+
+/**
+ * Changes the association fetching strategy if required because of duplicate
+ * under the same direct associations chain
+ *
+ * @param string $alias the name of the association to evaluate
+ * @param array $config The association config
+ * @param string $root An string representing the root association that started
+ * the direct chain this alias is in
+ * @return array The modified association config
+ * @throws \RuntimeException if a duplicate association in the same chain is detected
+ * but is not possible to change the strategy due to conflicting settings
+ */
+	protected function _correctStrategy($alias, $config, $root) {
+		if (!$config['canBeJoined'] || empty($this->_aliasList[$root][$alias])) {
+			return $config;
+		}
+
+		if (!empty($config['config']['matching'])) {
+			throw new \RuntimeException(sprintf(
+				'Cannot use "matching" on "%s" as there is another association with the same alias',
+				$alias
+			));
+		}
+
+		$config['canBeJoined'] = false;
+		$config['config']['strategy'] = $config['instance']::STRATEGY_SELECT;
 
 		return $config;
 	}
