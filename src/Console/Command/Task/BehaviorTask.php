@@ -107,7 +107,7 @@ class BehaviorTask extends BakeTask {
 			'help' => __d('cake_console', 'Name of the Behavior to bake. Can use Plugin.name to bake controllers into plugins.')
 		])->addOption('plugin', [
 			'short' => 'p',
-			'help' => __d('cake_console', 'Plugin to bake the controller into.')
+			'help' => __d('cake_console', 'Plugin to bake the behavior into.')
 		])->addOption('theme', [
 			'short' => 't',
 			'help' => __d('cake_console', 'Theme to use when baking code.')
