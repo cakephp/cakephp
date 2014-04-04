@@ -27,6 +27,13 @@ use Cake\Core\Configure;
 class BakeTask extends Shell {
 
 /**
+ * The default path to bake files into.
+ *
+ * @var string
+ */
+	public $path;
+
+/**
  * Name of plugin
  *
  * @var string

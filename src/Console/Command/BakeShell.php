@@ -38,7 +38,7 @@ class BakeShell extends Shell {
  *
  * @var array
  */
-	public $tasks = ['Project', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test'];
+	public $tasks = ['Behavior', 'Project', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test'];
 
 /**
  * The connection being used.
@@ -83,6 +83,7 @@ class BakeShell extends Shell {
 		$this->out(__d('cake_console', 'The following commands you can generate skeleton code your your application.'));
 		$this->out(__d('cake_console', 'Available bake commands:'));
 		$this->out('');
+		$this->out(__d('cake_console', 'behavior'));
 		$this->out(__d('cake_console', 'model'));
 		$this->out(__d('cake_console', 'view'));
 		$this->out(__d('cake_console', 'controller'));
@@ -154,6 +155,9 @@ class BakeShell extends Shell {
 		])->addSubcommand('plugin', [
 			'help' => __d('cake_console', 'Bake a new plugin folder in the path supplied or in current directory if no path is specified.'),
 			'parser' => $this->Plugin->getOptionParser()
+		])->addSubcommand('behavior', [
+			'help' => __d('cake_console', 'Bake a behavior.'),
+			'parser' => $this->Behavior->getOptionParser()
 		])->addSubcommand('model', [
 			'help' => __d('cake_console', 'Bake a model.'),
 			'parser' => $this->Model->getOptionParser()
