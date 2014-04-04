@@ -153,7 +153,7 @@ App::uses('Multibyte', 'I18n');
  */
 if (!defined('FULL_BASE_URL')) {
 	$s = null;
-	if (env('HTTPS')) {
+	if (env('HTTPS') || 'https' === env('HTTP_X_FORWARDED_PROTO')) {
 		$s = 's';
 	}
 
