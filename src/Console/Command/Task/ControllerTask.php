@@ -145,8 +145,10 @@ class ControllerTask extends BakeTask {
 		}
 
 		$namespace = Configure::read('App.namespace');
+        	$plugin = null;
 		if ($this->plugin) {
-			$namespace = $this->plugin;
+            		$plugin = Inflector::camelize($this->plugin);
+			$namespace = $plugin;
 		}
 
 		$data = compact(
@@ -154,7 +156,8 @@ class ControllerTask extends BakeTask {
 			'actions',
 			'helpers',
 			'components',
-			'namespace'
+			'namespace',
+			'plugin'
 		);
 		$data['name'] = $controllerName;
 
