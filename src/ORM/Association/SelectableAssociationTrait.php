@@ -172,7 +172,7 @@ trait SelectableAssociationTrait {
 
 		$keys = (array)$query->repository()->primaryKey();
 
-		if ($this->type() === $this::ONE_TO_ONE) {
+		if ($this->type() === $this::MANY_TO_ONE) {
 			$keys = (array)$this->foreignKey();
 		}
 
@@ -203,7 +203,7 @@ trait SelectableAssociationTrait {
 	protected function _resultInjector($fetchQuery, $resultMap) {
 		$source = $this->source();
 		$sAlias = $source->alias();
-		$keys = $this->type() === $this::ONE_TO_ONE ?
+		$keys = $this->type() === $this::MANY_TO_ONE ?
 			$this->foreignKey() :
 			$source->primaryKey();
 

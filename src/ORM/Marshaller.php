@@ -132,7 +132,8 @@ class Marshaller {
 	protected function _marshalAssociation($assoc, $value, $include) {
 		$targetTable = $assoc->target();
 		$marshaller = $targetTable->marshaller();
-		if ($assoc->type() === Association::ONE_TO_ONE) {
+		$types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
+		if (in_array($assoc->type(), $types)) {
 			return $marshaller->one($value, (array)$include);
 		}
 		if ($assoc->type() === Association::MANY_TO_MANY) {
@@ -327,7 +328,8 @@ class Marshaller {
 
 		$targetTable = $assoc->target();
 		$marshaller = $targetTable->marshaller();
-		if ($assoc->type() === Association::ONE_TO_ONE) {
+		$types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
+		if (in_array($assoc->type(), $types)) {
 			return $marshaller->merge($original, $value, (array)$include);
 		}
 		if ($assoc->type() === Association::MANY_TO_MANY) {

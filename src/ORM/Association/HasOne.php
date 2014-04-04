@@ -17,6 +17,7 @@ namespace Cake\ORM\Association;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association;
 use Cake\ORM\Association\DependentDeleteTrait;
+use Cake\ORM\Association\SelectableAssociationTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
@@ -30,6 +31,7 @@ use Cake\Utility\Inflector;
 class HasOne extends Association {
 
 	use DependentDeleteTrait;
+	use SelectableAssociationTrait;
 
 /**
  * The type of join to be used when adding the association to a query
@@ -85,6 +87,15 @@ class HasOne extends Association {
  */
 	public function isOwningSide(Table $side) {
 		return $side === $this->source();
+	}
+
+/**
+ * Get the relationship type.
+ *
+ * @return string
+ */
+	public function type() {
+		return self::ONE_TO_ONE;
 	}
 
 /**
@@ -154,7 +165,37 @@ class HasOne extends Association {
  * {@inheritdoc}
  *
  */
-	public function eagerLoader(array $options) {
+	protected function _linkField($options) {
+		$links = [];
+		$name = $this->name();
+
+		foreach ((array)$options['foreignKey'] as $key) {
+			$links[] = sprintf('%s.%s', $name, $key);
+		}
+
+		if (count($links) === 1) {
+			return $links[0];
+		}
+
+		return $links;
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	protected function _buildResultMap($fetchQuery, $options) {
+		$resultMap = [];
+		$key = (array)$options['foreignKey'];
+
+		foreach ($fetchQuery->all() as $result) {
+			$values = [];
+			foreach ($key as $k) {
+				$values[] = $result[$k];
+			}
+			$resultMap[implode(';', $values)] = $result;
+		}
+		return $resultMap;
 	}
 
 }

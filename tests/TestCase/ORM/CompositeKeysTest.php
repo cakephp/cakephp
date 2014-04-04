@@ -286,6 +286,55 @@ class CompositeKeyTest extends TestCase {
 	}
 
 /**
+ * Tests loding hasOne with composite keys
+ *
+ * @dataProvider internalStategiesProvider
+ * @return void
+ */
+	public function testHasOneEager($strategy) {
+		$table = TableRegistry::get('SiteAuthors');
+		$table->hasOne('SiteArticles', [
+			'propertyName' => 'first_article',
+			'strategy' => $strategy,
+			'foreignKey' => ['author_id', 'site_id']
+		]);
+		$query = new Query($this->connection, $table);
+		$results = $query->select()
+			->where(['SiteAuthors.id IN' => [1, 3]])
+			->contain('SiteArticles')
+			->hydrate(false)
+			->toArray();
+
+		$expected = [
+			[
+				'id' => 1,
+				'name' => 'mark',
+				'site_id' => 1,
+				'first_article' => [
+					'id' => 1,
+					'author_id' => 1,
+					'site_id' => 1,
+					'title' => 'First Article',
+					'body' => 'First Article Body'
+				]
+			],
+			[
+				'id' => 3,
+				'name' => 'jose',
+				'site_id' => 2,
+				'first_article' => [
+					'id' => 2,
+					'author_id' => 3,
+					'site_id' => 2,
+					'title' => 'Second Article',
+					'body' => 'Second Article Body'
+				]
+			]
+		];
+		$this->assertEquals($expected, $results);
+	}
+
+/**
  * Tests that it is possible to insert a new row using the save method
  * if the entity has composite primary key
  *
