@@ -15,8 +15,10 @@
 namespace Cake\Console\Command\Task;
 
 use Cake\Console\Command\Task\BakeTask;
+use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Utility\Inflector;
 
 /**
  * Behavior code generator.
@@ -29,6 +31,13 @@ class BehaviorTask extends BakeTask {
  * @var array
  */
 	public $tasks = ['Test', 'Template'];
+
+/**
+ * Task name used in path generation.
+ *
+ * @var string
+ */
+	public $name = 'Model/Behavior';
 
 /**
  * Override initialize
@@ -63,7 +72,7 @@ class BehaviorTask extends BakeTask {
 			$namespace = Plugin::getNamespace($this->plugin);
 		}
 		$data = compact('name', 'namespace');
-		$this->template->set($data);
+		$this->Template->set($data);
 		$contents = $this->Template->generate('classes', 'behavior');
 
 		$path = $this->getPath();
