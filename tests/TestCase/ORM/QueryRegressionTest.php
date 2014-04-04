@@ -81,7 +81,6 @@ class QueryRegressionTest extends TestCase {
 		$table = TableRegistry::get('Articles');
 		$table->belongsTo('Authors');
 		$table->hasOne('Things', ['propertyName' => 'articles_tag']);
-		
 		$table->Authors->target()->hasOne('Stuff', [
 			'foreignKey' => 'id',
 			'propertyName' => 'favorite_tag'
