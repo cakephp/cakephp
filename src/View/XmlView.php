@@ -19,7 +19,7 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Utility\Set;
+use Cake\Utility\Hash;
 use Cake\Utility\Xml;
 
 /**
@@ -131,7 +131,7 @@ class XmlView extends View {
 			}
 		} else {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
-			if (is_array($data) && Set::numeric(array_keys($data))) {
+			if (is_array($data) && Hash::numeric(array_keys($data))) {
 				$data = array($rootNode => array($serialize => $data));
 			}
 		}
