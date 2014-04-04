@@ -233,11 +233,15 @@ class Controller extends Object implements EventListener {
  * @param \Cake\Network\Request $request Request object for this controller. Can be null for testing,
  *  but expect that features that use the request parameters will not work.
  * @param \Cake\Network\Response $response Response object for this controller.
+ * @param string $name Override the name useful in testing when using mocks.
  */
-	public function __construct($request = null, $response = null) {
-		if ($this->name === null) {
-			list(, $this->name) = namespaceSplit(get_class($this));
-			$this->name = substr($this->name, 0, -10);
+	public function __construct($request = null, $response = null, $name = null) {
+		if ($this->name === null && $name === null) {
+			list(, $name) = namespaceSplit(get_class($this));
+			$name = substr($name, 0, -10);
+		}
+		if ($name !== null) {
+			$this->name = $name;
 		}
 
 		if (!$this->viewPath) {
