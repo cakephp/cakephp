@@ -1,7 +1,5 @@
 <?php
 /**
- * Internationalization
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -20,7 +18,9 @@ use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Core\StaticConfigTrait;
 use Cake\Error\Exception;
+use Cake\I18n\CatalogRegistry;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
@@ -32,6 +32,8 @@ use Cake\Utility\String;
  *
  */
 class I18n {
+
+	use StaticConfigTrait;
 
 /**
  * Instance of the L10n class for localization
@@ -169,6 +171,13 @@ class I18n {
 	protected $_request = null;
 
 /**
+ * Catalog registry used for creating and using catalog adapters.
+ *
+ * @var \Cake\I18n\CatalogRegistry
+ */
+	protected static $_registry;
+
+/**
  * Constructor, use I18n::getInstance() to get the i18n translation object.
  *
  * @param \Cake\Network\Request $request Request object
@@ -193,6 +202,43 @@ class I18n {
 	}
 
 /**
+ * Finds and builds the instance of the required engine class.
+ *
+ * @param string $name Name of the config array that needs an engine instance built
+ * @return void
+ * @throws \Cake\Error\Exception When a catalog engine cannot be created.
+ */
+	protected static function _buildEngine($name) {
+		if (empty(static::$_registry)) {
+			static::$_registry = new CatalogRegistry();
+		}
+		if (empty(static::$_config[$name]['className'])) {
+			throw new Exception(sprintf('The "%s" catalog configuration does not exist.', $name));
+		}
+
+		$config = static::$_config[$name];
+		static::$_registry->load($name, $config);
+	}
+
+/**
+ * Fetch the engine attached to a specific configuration name.
+ *
+ * If the catalog engine & configuration are missing an error will be
+ * triggered.
+ *
+ * @param string $config The configuration name you want an engine for.
+ * @return \Cake\I18n\CatalogEngine
+ */
+	public static function engine($config) {
+		if (isset(static::$_registry->{$config})) {
+			return static::$_registry->{$config};
+		}
+
+		static::_buildEngine($config);
+		return static::$_registry->{$config};
+	}
+
+/**
  * Used by the translation functions in basics.php
  * Returns a translated string based on current language and translation files stored in locale folder
  *
@@ -201,13 +247,15 @@ class I18n {
  * @param string $domain Domain The domain of the translation. Domains are often used by plugin translations.
  *    If null, the default domain will be used.
  * @param int $category Category The integer value of the category to use.
- * @param int $count Count Count is used with $plural to choose the correct plural form.
+ * @param int $count Count is used with $plural to choose the correct plural form.
  * @param string $language Language to translate string to.
  *    If null it checks for language in session followed by Config.language configuration variable.
  * @return string translated string.
  * @throws \Cake\Error\Exception When '' is provided as a domain.
  */
-	public static function translate($singular, $plural = null, $domain = null, $category = self::LC_MESSAGES, $count = null, $language = null) {
+	public static function translate($singular, $plural = null, $domain = null,
+		$category = self::LC_MESSAGES, $count = null, $language = null
+	) {
 		$_this = I18n::getInstance();
 
 		if (strpos($singular, "\r\n") !== false) {
@@ -217,9 +265,7 @@ class I18n {
 			$plural = str_replace("\r\n", "\n", $plural);
 		}
 
-		if (is_numeric($category)) {
-			$_this->category = $_this->_categories[$category];
-		}
+		$_this->category = $_this->_categories[$category];
 
 		if (empty($language)) {
 			if (empty($language)) {
@@ -255,7 +301,7 @@ class I18n {
 			return $_this->_translateTime($singular, $domain);
 		}
 
-		if (!isset($count)) {
+		if ($count === null) {
 			$plurals = 0;
 		} elseif (!empty($_this->_domains[$domain][$_this->_lang][$_this->category]["%plural-c"]) && $_this->_noLocale === false) {
 			$header = $_this->_domains[$domain][$_this->_lang][$_this->category]["%plural-c"];
