@@ -30,7 +30,7 @@ class QueryRegressionTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.user', 'core.article', 'core.tag', 'core.articles_tag'];
+	public $fixtures = ['core.user', 'core.article', 'core.tag', 'core.articles_tag', 'core.author'];
 
 /**
  * Tear down
@@ -64,6 +64,44 @@ class QueryRegressionTest extends TestCase {
 		$table->belongsToMany('ArticlesTags');
 		$results = $table->find()->where(['id >' => 100])->contain('ArticlesTags')->toArray();
 		$this->assertEmpty($results);
+	}
+
+/**
+ * Tests that duplicate aliases in contain() can be used, even when they would
+ * naturally be attached to the query instead of eagerly loaded. What should
+ * happen here is that One of the duplicates will be changed to be loaded using
+ * an extra query, but yielding the same results
+ *
+ * @return void
+ */
+	public function testDuplicateAttachableAliases() {
+		TableRegistry::get('Stuff', ['table' => 'tags']);
+		TableRegistry::get('Things', ['table' => 'articles_tags']);
+
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors');
+		$table->hasOne('Things', ['propertyName' => 'articles_tag']);
+		$table->Authors->target()->hasOne('Stuff', [
+			'foreignKey' => 'id',
+			'propertyName' => 'favorite_tag'
+		]);
+		$table->Things->target()->belongsTo('Stuff', [
+			'foreignKey' => 'tag_id',
+			'propertyName' => 'foo']
+		);
+
+		$results = $table->find()
+			->contain(['Authors.Stuff', 'Things.Stuff'])
+			->toArray();
+
+		$this->assertEquals(1, $results[0]->articles_tag->foo->id);
+		$this->assertEquals(1, $results[0]->author->favorite_tag->id);
+		$this->assertEquals(2, $results[1]->articles_tag->foo->id);
+		$this->assertEquals(1, $results[0]->author->favorite_tag->id);
+		$this->assertEquals(1, $results[2]->articles_tag->foo->id);
+		$this->assertEquals(3, $results[2]->author->favorite_tag->id);
+		$this->assertEquals(3, $results[3]->articles_tag->foo->id);
+		$this->assertEquals(3, $results[3]->author->favorite_tag->id);
 	}
 
 }

@@ -14,7 +14,6 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association\SelectableAssociationTrait;
 use Cake\ORM\Query;
 use Cake\Utility\Inflector;
@@ -79,30 +78,6 @@ trait ExternalAssociationTrait {
 	}
 
 /**
- * Correctly nests a result row associated values into the correct array keys inside the
- * source results.
- *
- * @param array $row
- * @param boolean $joined Whether or not the row is a result of a direct join
- * with this association
- * @return array
- */
-	public function transformRow($row, $joined) {
-		$sourceAlias = $this->source()->alias();
-		$targetAlias = $this->target()->alias();
-
-		$collectionAlias = $this->_name . '___collection_';
-		if (isset($row[$collectionAlias])) {
-			$values = $row[$collectionAlias];
-		} else {
-			$values = $row[$this->_name];
-		}
-
-		$row[$sourceAlias][$this->property()] = $values;
-		return $row;
-	}
-
-/**
  * Returns the default options to use for the eagerLoader
  *
  * @return array
@@ -129,45 +104,6 @@ trait ExternalAssociationTrait {
 			$resultMap[implode(';', $values)][] = $result;
 		}
 		return $resultMap;
-	}
-
-/**
- * Returns the key under which the eagerLoader will put this association results
- *
- * @return void
- */
-	protected function _nestingKey() {
-		return $this->_name . '___collection_';
-	}
-
-/**
- * Returns a single or multiple conditions to be appended to the generated join
- * clause for getting the results on the target table.
- *
- * @param array $options list of options passed to attachTo method
- * @return array
- * @throws \RuntimeException if the number of columns in the foreignKey do not
- * match the number of columns in the source table primaryKey
- */
-	protected function _joinCondition(array $options) {
-		$conditions = [];
-		$tAlias = $this->target()->alias();
-		$sAlias = $this->source()->alias();
-		$foreignKey = (array)$options['foreignKey'];
-		$primaryKey = (array)$this->_sourceTable->primaryKey();
-
-		if (count($foreignKey) !== count($primaryKey)) {
-			$msg = 'Cannot match provided foreignKey, got %d columns expected %d';
-			throw new \RuntimeException(sprintf($msg, count($foreignKey), count($primaryKey)));
-		}
-
-		foreach ($foreignKey as $k => $f) {
-			$field = sprintf('%s.%s', $sAlias, $primaryKey[$k]);
-			$value = new IdentifierExpression(sprintf('%s.%s', $tAlias, $f));
-			$conditions[$field] = $value;
-		}
-
-		return $conditions;
 	}
 
 /**

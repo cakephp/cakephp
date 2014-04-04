@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
 use Cake\ORM\Entity;
@@ -446,25 +447,21 @@ abstract class Association {
  * source results.
  *
  * @param array $row
+ * @param string $nestKey The array key under which the results for this association
+ * should be found
  * @param boolean $joined Whether or not the row is a result of a direct join
  * with this association
  * @return array
  */
-	public function transformRow($row, $joined) {
+	public function transformRow($row, $nestKey, $joined) {
 		$sourceAlias = $this->source()->alias();
-		$targetAlias = $this->target()->alias();
+		$nestKey = $nestKey ?: $this->_name;
 		if (isset($row[$sourceAlias])) {
-			$row[$sourceAlias][$this->property()] = $row[$targetAlias];
+			$row[$sourceAlias][$this->property()] = $row[$nestKey];
+			unset($row[$nestKey]);
 		}
 		return $row;
 	}
-
-/**
- * Get the relationship type.
- *
- * @return string Constant of either ONE_TO_ONE, MANY_TO_ONE, ONE_TO_MANY or MANY_TO_MANY.
- */
-	public abstract function type();
 
 /**
  * Proxies the finding operation to the target table's find method
@@ -582,6 +579,48 @@ abstract class Association {
 	}
 
 /**
+ * Returns a single or multiple conditions to be appended to the generated join
+ * clause for getting the results on the target table.
+ *
+ * @param array $options list of options passed to attachTo method
+ * @return array
+ * @throws \RuntimeException if the number of columns in the foreignKey do not
+ * match the number of columns in the source table primaryKey
+ */
+	protected function _joinCondition(array $options) {
+		$conditions = [];
+		$tAlias = $this->target()->alias();
+		$sAlias = $this->source()->alias();
+		$foreignKey = (array)$options['foreignKey'];
+		$primaryKey = (array)$this->_sourceTable->primaryKey();
+
+		if (count($foreignKey) !== count($primaryKey)) {
+			$msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
+			throw new \RuntimeException(sprintf(
+				$msg,
+				$this->_name,
+				implode(', ', $foreignKey),
+				implode(', ', $primaryKey)
+			));
+		}
+
+		foreach ($foreignKey as $k => $f) {
+			$field = sprintf('%s.%s', $sAlias, $primaryKey[$k]);
+			$value = new IdentifierExpression(sprintf('%s.%s', $tAlias, $f));
+			$conditions[$field] = $value;
+		}
+
+		return $conditions;
+	}
+
+/**
+ * Get the relationship type.
+ *
+ * @return string Constant of either ONE_TO_ONE, MANY_TO_ONE, ONE_TO_MANY or MANY_TO_MANY.
+ */
+	public abstract function type();
+
+/**
  * Eager loads a list of records in the target table that are related to another
  * set of records in the source table. Source records can specified in two ways:
  * first one is by passing a Query object setup to find on the source table and
@@ -606,21 +645,12 @@ abstract class Association {
  * - fields: List of fields to select from the target table
  * - contain: List of related tables to eager load associated to the target table
  * - strategy: The name of strategy to use for finding target table records
+ * - nestKey: The array key under which results will be found when transforming the row
  *
  * @param array $options
  * @return \Closure
  */
 	public abstract function eagerLoader(array $options);
-
-/**
- * Returns a single or multiple condition(s) to be appended to the generated join
- * clause for getting the results on the target table. If false is returned then
- * it will not attach any new conditions to the join clause
- *
- * @param array $options list of options passed to attachTo method
- * @return string|array|boolean
- */
-	protected abstract function _joinCondition(array $options);
 
 /**
  * Handles cascading a delete from an associated model.

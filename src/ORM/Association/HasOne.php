@@ -14,7 +14,6 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association;
 use Cake\ORM\Association\DependentDeleteTrait;
 use Cake\ORM\Association\SelectableAssociationTrait;
@@ -129,36 +128,6 @@ class HasOne extends Association {
 		}
 
 		return $entity;
-	}
-
-/**
- * Returns a single or multiple conditions to be appended to the generated join
- * clause for getting the results on the target table.
- *
- * @param array $options list of options passed to attachTo method
- * @return array
- * @throws \RuntimeException if the number of columns in the foreignKey do not
- * match the number of columns in the source table primaryKey
- */
-	protected function _joinCondition(array $options) {
-		$conditions = [];
-		$tAlias = $this->target()->alias();
-		$sAlias = $this->_sourceTable->alias();
-		$foreignKey = (array)$options['foreignKey'];
-		$primaryKey = (array)$this->_sourceTable->primaryKey();
-
-		if (count($foreignKey) !== count($primaryKey)) {
-			$msg = 'Cannot match provided foreignKey, got %d columns expected %d';
-			throw new \RuntimeException(sprintf($msg, count($foreignKey), count($primaryKey)));
-		}
-
-		foreach ($foreignKey as $k => $f) {
-			$field = sprintf('%s.%s', $sAlias, $primaryKey[$k]);
-			$value = new IdentifierExpression(sprintf('%s.%s', $tAlias, $f));
-			$conditions[$field] = $value;
-		}
-
-		return $conditions;
 	}
 
 /**

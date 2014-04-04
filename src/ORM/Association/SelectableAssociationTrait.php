@@ -50,7 +50,7 @@ trait SelectableAssociationTrait {
 			$fetchQuery = $queryBuilder($fetchQuery);
 		}
 		$resultMap = $this->_buildResultMap($fetchQuery, $options);
-		return $this->_resultInjector($fetchQuery, $resultMap);
+		return $this->_resultInjector($fetchQuery, $resultMap, $options);
 	}
 
 /**
@@ -62,7 +62,8 @@ trait SelectableAssociationTrait {
 		return [
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
-			'strategy' => $this->strategy()
+			'strategy' => $this->strategy(),
+			'nestKey' => $this->_name
 		];
 	}
 
@@ -79,7 +80,6 @@ trait SelectableAssociationTrait {
 		$target = $this->target();
 		$alias = $target->alias();
 		$key = $this->_linkField($options);
-
 		$filter = $options['keys'];
 
 		if ($options['strategy'] === $this::STRATEGY_SUBQUERY) {
@@ -198,9 +198,10 @@ trait SelectableAssociationTrait {
  * @param \Cake\ORM\Query $fetchQuery the Query used to fetch results
  * @param array $resultMap an array with the foreignKey as keys and
  * the corresponding target table results as value.
+ * @param array $options The options passed to the eagerLoader method
  * @return \Closure
  */
-	protected function _resultInjector($fetchQuery, $resultMap) {
+	protected function _resultInjector($fetchQuery, $resultMap, $options) {
 		$source = $this->source();
 		$sAlias = $source->alias();
 		$keys = $this->type() === $this::MANY_TO_ONE ?
@@ -212,7 +213,7 @@ trait SelectableAssociationTrait {
 			$sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
 		}
 
-		$nestKey = $this->_nestingKey();
+		$nestKey = $options['nestKey'];
 		if (count($sourceKeys) > 1) {
 			return $this->_multiKeysInjector($resultMap, $sourceKeys, $nestKey);
 		}
@@ -224,15 +225,6 @@ trait SelectableAssociationTrait {
 			}
 			return $row;
 		};
-	}
-
-/**
- * Returns the key under which the eagerLoader will put this association results
- *
- * @return string
- */
-	protected function _nestingKey() {
-		return $this->property();
 	}
 
 /**
