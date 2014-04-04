@@ -66,6 +66,14 @@ class QueryRegressionTest extends TestCase {
 		$this->assertEmpty($results);
 	}
 
+/**
+ * Tests that duplicate aliases in contain() can be used, even when they would
+ * naturally be attached to the query instead of eagerly loaded. What should
+ * happen here is that One of the duplicates will be changed to be loaded using
+ * an extra query, but yielding the same results
+ *
+ * @return void
+ */
 	public function testDuplicateAttachableAliases() {
 		TableRegistry::get('Stuff', ['table' => 'tags']);
 		TableRegistry::get('Things', ['table' => 'articles_tags']);
