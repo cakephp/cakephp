@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Controller;
 
 use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\Controller;
 use Cake\Core\App;
@@ -191,6 +192,22 @@ class ComponentRegistryTest extends TestCase {
 
 		$this->assertFalse(isset($this->Components->Auth), 'Should be gone');
 		$this->assertCount(0, $eventManager->listeners('Controller.startup'));
+	}
+
+/**
+ * Test set.
+ *
+ * @return void
+ */
+	public function testSet() {
+		$eventManager = $this->Components->getController()->getEventManager();
+		$this->assertCount(0, $eventManager->listeners('Controller.startup'));
+
+		$auth = new AuthComponent($this->Components);
+		$this->Components->set('Auth', $auth);
+
+		$this->assertTrue(isset($this->Components->Auth), 'Should be gone');
+		$this->assertCount(1, $eventManager->listeners('Controller.startup'));
 	}
 
 }
