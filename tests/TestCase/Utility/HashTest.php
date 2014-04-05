@@ -2294,7 +2294,7 @@ class HashTest extends TestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = Hash::mergeDiff($first, null);
+		$result = Hash::mergeDiff($first, array());
 		$this->assertEquals($result, $first);
 
 		$result = Hash::mergeDiff($first, $second);
