@@ -560,32 +560,12 @@ class TreeBehavior extends Behavior {
  * @return integer
  */
 	protected function _getMax() {
-		return $this->_getMaxOrMin('max');
-	}
-
-/**
- * Returns the minimum index value in the table.
- *
- * @return integer
- */
-	protected function _getMin() {
-		return $this->_getMaxOrMin('min');
-	}
-
-/**
- * Get the maximum|minimum index value in the table.
- *
- * @param string $maxOrMin Either 'max' or 'min'
- * @return integer
- */
-	protected function _getMaxOrMin($maxOrMin = 'max') {
 		$config = $this->config();
-		$field = $maxOrMin === 'max' ? $config['right'] : $config['left'];
-		$direction = $maxOrMin === 'max' ? 'DESC' : 'ASC';
+		$field = $config['right'];
 
 		$edge = $this->_scope($this->_table->find())
 			->select([$field])
-			->order([$field => $direction])
+			->order([$field => 'DESC'])
 			->first();
 
 		if (empty($edge->{$field})) {
