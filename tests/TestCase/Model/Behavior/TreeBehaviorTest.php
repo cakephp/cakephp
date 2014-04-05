@@ -168,23 +168,44 @@ class TreeBehaviorTest extends TestCase {
 		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
 
 		// top level, wont move
-		$this->assertFalse($this->table->moveUp($table->get(1), 10));
+		$node = $this->table->moveUp($table->get(1), 10);
+		$this->assertEquals(['lft' => 1, 'rght' => 10], $node->extract(['lft', 'rght']));
 
 		// edge cases
 		$this->assertFalse($this->table->moveUp($table->get(1), 0));
-		$this->assertFalse($this->table->moveUp($table->get(1), -10));
+		$node = $this->table->moveUp($table->get(1), -10);
+		$this->assertEquals(['lft' => 1, 'rght' => 10], $node->extract(['lft', 'rght']));
 
 		// move inner node
-		$result = $table->moveUp($table->get(3), 1);
+		$node = $table->moveUp($table->get(3), 1);
 		$nodes = $table->find('children', ['for' => 1])->all();
 		$this->assertEquals([3, 4, 5, 2], $nodes->extract('id')->toArray());
-		$this->assertTrue($result);
+		$this->assertEquals(['lft' => 2, 'rght' => 7], $node->extract(['lft', 'rght']));
+		return;
+	}
 
-		// move leaf
-		$this->assertFalse($table->moveUp($table->get(5), 1));
+/**
+ * Tests moving a node with no siblings
+ *
+ * @return void
+ */
+	public function testMoveLeaf() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$node = $table->moveUp($table->get(5), 1);
+		$this->assertEquals(['lft' => 6, 'rght' => 7], $node->extract(['lft', 'rght']));
+	}
 
-		// move to first position
-		$table->moveUp($table->get(8), true);
+/**
+ * Tests moving a node to the top
+ *
+ * @return void
+ */
+	public function testMoveTop() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$node = $table->moveUp($table->get(8), true);
+		$this->assertEquals(['lft' => 1, 'rght' => 2], $node->extract(['lft', 'rght']));
 		$nodes = $table->find()
 			->select(['id'])
 			->where(function($exp) {

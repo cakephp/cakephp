@@ -380,7 +380,7 @@ class TreeBehavior extends Behavior {
  * @param \Cake\ORM\Entity $node The node to move
  * @param integer|boolean $number How many places to move the node, or true to move to first position
  * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
- * @return boolean true on success, false on failure
+ * @return \Cake\ORM\Entity|boolean $node The node after being moved or false on failure
  */
 	public function moveUp($node, $number = 1) {
 		$config = $this->config();
@@ -390,37 +390,45 @@ class TreeBehavior extends Behavior {
 			return false;
 		}
 
-		if ($node->{$parent}) {
-			$parentNode = $this->_table->get($node->{$parent}, ['fields' => [$left, $right]]);
-
-			if (($node->{$left} - 1) == $parentNode->{$left}) {
-				return false;
-			}
-		}
-
-		$previousNode = $this->_scope($this->_table->find())
-			->select([$left, $right])
-			->where([$right => ($node->{$left} - 1)])
-			->first();
-
-		if (!$previousNode) {
-			return false;
+		$parentLeft = 0;
+		if ($node->get($parent)) {
+			$parentLeft = $this->_getNode($node->get($parent))->get($left);
 		}
 
 		$edge = $this->_getMax();
-		$this->_sync($edge - $previousNode->{$left} + 1, '+', "BETWEEN {$previousNode->{$left}} AND {$previousNode->{$right}}");
-		$this->_sync($node->{$left} - $previousNode->{$left}, '-', "BETWEEN {$node->{$left}} AND {$node->{$right}}");
-		$this->_sync($edge - $previousNode->{$left} - ($node->{$right} - $node->{$left}), '-', "> {$edge}");
+		while ($number-- > 0) {
+			list($nodeLeft, $nodeRight) = array_values($node->extract([$left, $right]));
 
-		if (is_int($number)) {
-			$number--;
+			if ($parentLeft && ($nodeLeft - 1 == $parentLeft)) {
+				break;
+			}
+
+			$nextNode = $this->_scope($this->_table->find())
+				->select([$left, $right])
+				->where([$right => ($nodeLeft - 1)])
+				->first();
+
+			if (!$nextNode) {
+				break;
+			}
+
+			$this->_sync($edge - $nextNode->{$left} + 1, '+', "BETWEEN {$nextNode->{$left}} AND {$nextNode->{$right}}");
+			$this->_sync($nodeLeft - $nextNode->{$left}, '-', "BETWEEN {$nodeLeft} AND {$nodeRight}");
+			$this->_sync($edge - $nextNode->{$left} - ($nodeRight - $nodeLeft), '-', "> {$edge}");
+
+			$newLeft = $nodeLeft;
+			if ($nodeLeft >= $nextNode->{$left} || $nodeLeft <= $nextNode->{$right}) {
+				$newLeft -= $edge - $nextNode->{$left} + 1;
+			}
+			$newLeft = $nodeLeft - ($nodeLeft - $nextNode->{$left});
+
+			$node->set($left, $newLeft);
+			$node->set($right, $newLeft + ($nodeRight - $nodeLeft));
 		}
-
-		if ($number) {
-			$this->moveUp($node, $number);
-		}
-
-		return true;
+		
+		$node->dirty($left, false);
+		$node->dirty($right, false);
+		return $node;
 	}
 
 /**
@@ -455,7 +463,7 @@ class TreeBehavior extends Behavior {
 		while ($number-- > 0) {
 			list($nodeLeft, $nodeRight) = array_values($node->extract([$left, $right]));
 
-			if ($parentRight && ($right + 1 == $parentRight)) {
+			if ($parentRight && ($nodeRight + 1 == $parentRight)) {
 				break;
 			}
 
