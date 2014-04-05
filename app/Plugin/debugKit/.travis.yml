@@ -1,0 +1,80 @@
+language: php
+
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+
+env:
+  - CAKE_VERSION=2.2.7 DB=mysql
+  - CAKE_VERSION=2.2.7 DB=pgsql
+  - CAKE_VERSION=master DB=mysql
+  - CAKE_VERSION=master DB=pgsql
+  - CAKE_VERSION=2.4.1 DB=mysql
+  - CAKE_VERSION=2.4.1 DB=pgsql
+
+before_script:
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
+  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi"
+  - git clone git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKE_VERSION
+  - cp -R ../debug_kit plugins/DebugKit
+  - chmod -R 777 ../cakephp/app/tmp
+  - set +H
+  - echo "<?php
+    class DATABASE_CONFIG {
+    private \$identities = array(
+      'mysql' => array(
+        'datasource' => 'Database/Mysql',
+        'host' => '0.0.0.0',
+        'login' => 'travis'
+      ),
+      'pgsql' => array(
+        'datasource' => 'Database/Postgres',
+        'host' => '127.0.0.1',
+        'login' => 'postgres',
+        'database' => 'cakephp_test',
+        'schema' => array(
+          'default' => 'public',
+          'test' => 'public'
+        )
+      )
+    );
+    public \$default = array(
+      'persistent' => false,
+      'host' => '',
+      'login' => '',
+      'password' => '',
+      'database' => 'cakephp_test',
+      'prefix' => ''
+    );
+    public \$test = array(
+      'persistent' => false,
+      'host' => '',
+      'login' => '',
+      'password' => '',
+      'database' => 'cakephp_test',
+      'prefix' => ''
+    );
+    public function __construct() {
+      \$db = 'mysql';
+      if (!empty(\$_SERVER['DB'])) {
+        \$db = \$_SERVER['DB'];
+      }
+      foreach (array('default', 'test') as \$source) {
+        \$config = array_merge(\$this->{\$source}, \$this->identities[\$db]);
+        if (is_array(\$config['database'])) {
+          \$config['database'] = \$config['database'][\$source];
+        }
+        if (!empty(\$config['schema']) && is_array(\$config['schema'])) {
+          \$config['schema'] = \$config['schema'][\$source];
+        }
+        \$this->{\$source} = \$config;
+      }
+    }
+    }" > ../cakephp/app/Config/database.php
+
+script:
+  - ./lib/Cake/Console/cake test DebugKit AllDebugKit --stderr
+
+notifications:
+  email: false

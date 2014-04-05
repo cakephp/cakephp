@@ -1,0 +1,384 @@
+/* @override http://localhost/mark_story/site/debug_kit/css/debug_toolbar.css */
+#debug-kit-toolbar {
+	position: fixed;
+	top: 0px;
+	right:0px;
+	width: 100%;
+	height: 1%;
+	overflow: visible;
+	z-index:10000;
+	font-family: helvetica, arial, sans-serif;
+	font-size: 12px;
+	direction: ltr;
+}
+#debug-kit-toolbar img {
+	border:0;
+	outline:0;
+}
+
+/* panel tabs */
+#debug-kit-toolbar #panel-tabs {
+	float: right;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.5);
+	border-radius: 8px 0 0 8px;
+}
+#debug-kit-toolbar .panel-tab {
+	clear: none;
+	float: left;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+#debug-kit-toolbar .panel-tab > a {
+	float: left;
+	clear: none;
+	background: #efefef;
+	background: -webkit-gradient(linear, left top, left bottom, from(#efefef), to(#cacaca));
+	background: -moz-linear-gradient(top, #efefef, #cacaca);
+	color: #222;
+	padding: 6px;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #aaa;
+	font-size: 12px;
+	line-height: 16px;
+	margin: 0;
+	display: block;
+	text-decoration:none;
+	text-shadow:1px 1px #eee;
+	-moz-text-shadow:1px 1px #eee;
+	-webkit-text-shadow:1px 1px #eee;
+}
+#debug-kit-toolbar .panel-tab .active {
+	background: #fff;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f5f5f5), to(#fff));
+	background: -moz-linear-gradient(top, #f5f5f5, #fff);
+}
+#debug-kit-toolbar .panel-tab > a:hover {
+	background: #fff;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f5f5f5), to(#fff));
+	background: -moz-linear-gradient(top, #f5f5f5, #fff);
+	text-decoration:underline;
+}
+#debug-kit-toolbar .panel-tab.icon a {
+	padding: 4px;
+}
+#debug-kit-toolbar .panel-tab a.edit-value {
+		float: none;
+		display: inline;
+}
+
+/* Hovering over link shows tab, useful for no js  */
+#debug-kit-toolbar .panel-tab a:hover + .panel-content,
+#debug-kit-toolbar .panel-tab a + .panel-content:hover {
+	display: block;
+}
+#debug-kit-toolbar .panel-tab.icon a {
+	border-radius: 8px 0 0 8px;
+}
+#debug-kit-toolbar .panel-tab.icon img {
+	display:block;
+}
+
+/* panel content */
+#debug-kit-toolbar .panel-content {
+	position: absolute;
+	text-align: left;
+	width: auto;
+	top:28px;
+	right:0px;
+	background: #fff;
+	color: #000;
+	width:100%;
+	box-shadow:0px 5px 6px rgba(0, 0, 0, 0.5);
+	height: 200px;
+	overflow: hidden;
+}
+
+#debug-kit-toolbar .panel-resize-region {
+	padding:15px;
+	position: absolute;
+	top: 0px;
+	bottom: 14px;
+	left: 0px;
+	right: 0px;
+	overflow: auto;
+}
+
+#debug-kit-toolbar .ui-control {
+	background:#ccc;
+	background: -webkit-gradient(linear, left top, left bottom, from(#d6d6d6), to(#c2c2c2));
+	background: -moz-linear-gradient(top, #d6d6d6, #c2c2c2);
+	text-align:center;
+	border-top:1px solid #afafaf;
+	border-bottom:1px solid #7c7c7c;
+	color:#666;
+	text-shadow: 1px 1px #eee;
+	-webkit-text-shadow: 1px 1px #eee;
+	-moz-text-shadow: 1px 1px #eee;
+}
+#debug-kit-toolbar .ui-button {
+	border-radius: 5px;
+}
+#debug-kit-toolbar .ui-button:hover {
+	text-decoration: none;
+	background:#ccc;
+	background: -webkit-gradient(linear, left top, left bottom, from(#c2c2c2), to(#d6d6d6));
+	background: -moz-linear-gradient(top, #c2c2c2, #d6d6d6);
+}
+#debug-kit-toolbar .panel-resize-handle {
+	cursor: row-resize;
+	height:14px;
+	line-height: 14px;
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+}
+#debug-kit-toolbar .panel-toggle {
+	float: right;
+	display: block;
+	width: 16px;
+	height: 16px;
+	font-size: 16px;
+	line-height: 14px;
+	border-left: 1px solid #afafaf;
+	border-right: 1px solid #7c7c7c;
+	text-decoration: none;
+	margin: 10px 20px 0 0;
+	z-index: 999;
+	position: relative;
+}
+
+/* Hide panel content by default */
+#debug-kit-toolbar .panel-content {
+	display: none;
+}
+#debug-kit-toolbar .panel-content p {
+	margin: 1em 0;
+}
+#debug-kit-toolbar .panel-content h2 {
+	padding: 0;
+	margin-top:0;
+}
+#debug-kit-toolbar .panel-content h3 {
+	padding: 0;
+	margin-top: 1em;
+}
+#debug-kit-toolbar .panel-content .info {
+	padding: 4px;
+	border-top: 1px dashed #6c6cff;
+	border-bottom: 1px dashed #6c6cff;
+}
+#debug-kit-toolbar h1,
+#debug-kit-toolbar h2,
+#debug-kit-toolbar h3,
+#debug-kit-toolbar h4,
+#debug-kit-toolbar h5,
+#debug-kit-toolbar th {
+	color: #5d1717;
+	font-family: Arial, sans-serif;
+	margin-bottom:0.6em;
+	background:none;
+}
+#debug-kit-toolbar h1 {
+	font-size: 18px;
+}
+#debug-kit-toolbar h2 {
+	font-size: 16px;
+}
+#debug-kit-toolbar h4 {
+	font-size: 14px;
+}
+
+
+/* panel tables */
+#debug-kit-toolbar .debug-table {
+	width: 100%;
+	border: 1px solid #eee;
+	border-left: 0;
+	clear:both;
+	margin-bottom: 20px;
+	border-spacing: 0;
+}
+#debug-kit-toolbar .debug-table td,
+#debug-kit-toolbar .debug-table th {
+	text-align: left;
+	border: 0;
+	border-left: 1px solid #eee;
+	padding: 3px;
+	margin: 0;
+}
+#debug-kit-toolbar table.debug-table th {
+	border-bottom: 1px solid #bbb;
+	border-left: 1px solid #bbb;
+	background: -webkit-linear-gradient(top, #d4d4d4, #c1c1c1);
+	background: -moz-linear-gradient(top, #d4d4d4, #c1c1c1);
+	color: #222;
+	font-weight: bold;
+	line-height: 16px;
+}
+#debug-kit-toolbar .debug-table tr:nth-child(2n) td {
+	background: #f6f6f6;
+}
+#debug-kit-toolbar .debug-timers .debug-table td:nth-child(2),
+#debug-kit-toolbar .debug-timers .debug-table th:nth-child(2) {
+	text-align:right;
+}
+
+/** code tables **/
+#debug-kit-toolbar .code-table td {
+	white-space: pre;
+	font-family: monaco, Consolas, "courier new", courier, monospaced;
+}
+#debug-kit-toolbar .code-table td:first-child {
+	width: 15%;
+}
+#debug-kit-toolbar .code-table td:last-child {
+	width: 80%;
+}
+#debug-kit-toolbar .panel-content.request {
+	display: block;
+}
+
+/** Neat Array styles **/
+#debug-kit-toolbar .neat-array,
+#debug-kit-toolbar .neat-array li {
+	list-style:none;
+	list-style-image:none;
+}
+#debug-kit-toolbar .neat-array {
+	padding: 1px 2px 1px 20px;
+	background: #CE9E23;
+	list-style: none;
+	margin: 0 0 1em 0;
+}
+#debug-kit-toolbar .neat-array .neat-array {
+	padding: 0 0 0 20px;
+	margin: 0;
+	border-top:1px solid #CE9E23;
+}
+#debug-kit-toolbar .neat-array li {
+	background: #FEF6E5;
+	border-top: 1px solid #CE9E23;
+	border-bottom: 1px solid #CE9E23;
+	margin: 0;
+	line-height: 1.5em;
+}
+#debug-kit-toolbar .neat-array li:hover {
+	background: #fff;
+}
+#debug-kit-toolbar .neat-array li strong {
+	padding: 0 8px;
+	font-weight: bold;
+}
+
+
+/* expandable sections */
+#debug-kit-toolbar .neat-array li.expandable {
+	cursor: pointer;
+}
+#debug-kit-toolbar .neat-array .expanded {
+	border-bottom:0;
+}
+#debug-kit-toolbar .neat-array li.expandable.expanded > strong:before {
+	content: 'v ';
+}
+#debug-kit-toolbar .neat-array li.expandable.collapsed > strong:before,
+#debug-kit-toolbar .neat-array li.expandable.expanded .expandable.collapsed > strong:before {
+	content: '> ';
+}
+#debug-kit-toolbar .neat-array li {
+	cursor: default;
+}
+
+#debug-kit-toolbar .debug-kit-graph-bar,
+#debug-kit-toolbar .debug-kit-graph-bar-value {
+	margin: 0;
+	padding: 0px;
+	border: none;
+	overflow: hidden;
+	height: 10px;
+}
+#debug-kit-toolbar .debug-kit-graph-bar {
+	background: #ddd;
+	padding: 2px;
+	border-radius: 2px;
+	height: 12px;
+}
+#debug-kit-toolbar .debug-kit-graph-bar-value {
+	background: -webkit-linear-gradient(top, #77D124, #4B9406);
+	background: -moz-linear-gradient(top, #77D124, #4B9406);
+	border-radius: 3px;
+	border: 1px solid #4B9406;
+}
+
+/* Sql Log */
+#sqllog-tab td,
+#sqllog-tab .slow-query-container p {
+	font-family: Monaco, 'Consolas', "Courier New", Courier, monospaced;
+}
+#debug-kit-toolbar #sqllog-tab a.show-slow {
+	display:block;
+	margin: 3px;
+	float:none;
+}
+#sqllog-tab .slow-query-container p {
+	display:block;
+	clear:both;
+	margin: 20px 0 5px;
+}
+#debug-kit-toolbar #sqllog-tab .panel-content-data a {
+	background: none;
+	border:none;
+}
+#sqllog-tab .slow-query {
+	background:#e79302;
+	font-size:9px;
+	color:#fff;
+	padding: 2px;
+	white-space:nowrap;
+}
+#sqllog-tab input[type=submit] {
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+	font-size: 12px;
+	font-family: Monaco, 'Consolas', "Courier New", Courier, monospaced;
+}
+#sqllog-tab input[type=submit]:hover {
+	color: darkred;
+}
+
+/* previous panels */
+#debug-kit-toolbar .panel-history {
+	display: none;
+	background:#eeffff;
+}
+#debug-kit-toolbar #history-tab ul {
+	margin: 20px 0 0 20px;
+}
+#debug-kit-toolbar #history-tab li {
+	margin: 0 0 5px 0;
+}
+#debug-kit-toolbar #history-tab .panel-content-data a {
+	float: none;
+	display:block;
+}
+#debug-kit-toolbar #history-tab a.active {
+	background: #FEF6E5;
+}
+#debug-kit-toolbar #history-tab a.loading:after {
+	content : ' Loading...';
+	font-style:italic;
+}
+
+/* Minimized mode */
+#debug-kit-toolbar.minimized {
+	opacity: 0.75;
+}
+#debug-kit-toolbar.minimized:hover {
+	opacity: inherit;
+}
