@@ -188,9 +188,10 @@ abstract class ObjectRegistry {
 	}
 
 /**
- * set an object directly into the registry by name
+ * Set an object directly into the registry by name.
  *
- * This is primarily to aid testing
+ * If this collection implements events, the passed object will
+ * be attached into the event manager
  *
  * @param string $objectName The name of the object to set in the registry.
  * @param object $object instance to store in the registry
@@ -198,6 +199,10 @@ abstract class ObjectRegistry {
  */
 	public function set($objectName, $object) {
 		list($plugin, $name) = pluginSplit($objectName);
+		$this->unload($objectName);
+		if (isset($this->_eventManager)) {
+			$this->_eventManager->attach($object);
+		}
 		$this->_loaded[$name] = $object;
 	}
 

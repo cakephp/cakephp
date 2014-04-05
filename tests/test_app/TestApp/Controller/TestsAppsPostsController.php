@@ -23,21 +23,15 @@ namespace TestApp\Controller;
 
 class TestsAppsPostsController extends AppController {
 
-	public $uses = array('Post');
-
 	public $viewPath = 'TestsApps';
 
 	public function add() {
-		$data = array(
-			'Post' => array(
-				'title' => 'Test article',
-				'body' => 'Body of article.',
-				'author_id' => 1
-			)
-		);
-		$this->Post->save($data);
-
-		$this->set('posts', $this->Post->find('all'));
+		$this->loadModel('Posts');
+		$entity = $this->Posts->newEntity($this->request->data);
+		if ($entity) {
+			$this->Posts->save($entity);
+		}
+		$this->set('posts', $this->Posts->find('all'));
 		$this->render('index');
 	}
 
@@ -69,7 +63,8 @@ class TestsAppsPostsController extends AppController {
  *
  */
 	public function fixtured() {
-		$this->set('posts', $this->Post->find('all'));
+		$this->loadModel('Posts');
+		$this->set('posts', $this->Posts->find('all'));
 		$this->render('index');
 	}
 

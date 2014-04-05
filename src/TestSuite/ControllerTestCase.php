@@ -1,7 +1,5 @@
 <?php
 /**
- * ControllerTestCase file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -59,8 +57,9 @@ class ControllerTestDispatcher extends Dispatcher {
 		$this->testController->helpers = array_merge($default, $this->testController->helpers);
 		$this->testController->setRequest($request);
 		$this->testController->response = $this->response;
-		foreach ($this->testController->Components->loaded() as $component) {
-			$object = $this->testController->Components->{$component};
+		$registry = $this->testController->components();
+		foreach ($registry->loaded() as $component) {
+			$object = $registry->{$component};
 			if (isset($object->response)) {
 				$object->response = $response;
 			}
@@ -98,7 +97,7 @@ class InterceptContentHelper extends Helper {
  */
 	public function afterRender($viewFile) {
 		$this->_View->assign('__view_no_layout__', $this->_View->fetch('content'));
-		$this->_View->Helpers->unload('InterceptContent');
+		$this->_View->helpers()->unload('InterceptContent');
 	}
 
 }
@@ -324,17 +323,16 @@ abstract class ControllerTestCase extends TestCase {
 			'models' => array(),
 			'components' => array()
 		), (array)$mocks);
+		list(, $controllerName) = namespaceSplit($classname);
+		$name = substr($controllerName, 0, -10);
 
 		$request = $this->getMock('Cake\Network\Request');
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		$controller = $this->getMock(
 			$classname,
 			$mocks['methods'],
-			array($request, $response)
+			array($request, $response, $name)
 		);
-		list(, $controllerName) = namespaceSplit($classname);
-		$controller->name = substr($controllerName, 0, -10);
-		$controller->Components->setController($controllerObj);
 
 		foreach ($mocks['models'] as $model => $methods) {
 			if (is_string($methods)) {
@@ -362,10 +360,11 @@ abstract class ControllerTestCase extends TestCase {
 					'class' => $name . 'Component'
 				));
 			}
+			$registry = $controller->components();
+
 			$config = isset($controller->components[$component]) ? $controller->components[$component] : array();
-			$component = $this->getMock($componentClass, $methods, array($controller->Components, $config));
-			$controller->Components->set($name, $component);
-			$controller->Components->enable($name);
+			$component = $this->getMock($componentClass, $methods, array($registry, $config));
+			$registry->set($name, $component);
 		}
 
 		$controller->constructClasses();
