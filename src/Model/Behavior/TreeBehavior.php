@@ -14,14 +14,10 @@
  */
 namespace Cake\Model\Behavior;
 
-use ArrayObject;
-use Cake\Collection\Collection;
-use Cake\Database\Expression\QueryExpression;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 
 class TreeBehavior extends Behavior {
 
@@ -571,13 +567,11 @@ class TreeBehavior extends Behavior {
 		$config = $this->config();
 
 		foreach ([$config['left'], $config['right']] as $field) {
-			$exp = new QueryExpression();
+			$query = $this->_scope($this->_table->query());
+
 			$mark = $mark ? '*-1' : '';
 			$template = sprintf('%s = (%s %s %s)%s', $field, $field, $dir, $shift, $mark);
-			$exp->add($template);
-
-			$query = $this->_scope($this->_table->query());
-			$query->update()->set($exp);
+			$query->update()->set($query->newExpr()->add($template));
 			$query->where("{$field} {$conditions}");
 
 			$query->execute();
