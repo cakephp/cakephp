@@ -607,4 +607,30 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(range(1, 22), $numbers);
 	}
 
+/**
+ * Tests removing the root of a tree
+ *
+ * @return void
+ */
+	public function testRemoveRootFromTree() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(1);
+		$this->assertSame($entity, $table->removeFromTree($entity));
+		$result = $table->find('threaded')->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals(21, $entity->lft);
+		$this->assertEquals(22, $entity->rght);
+		$this->assertEquals(null, $entity->parent_id);
+		$result = $table->find()->order('lft')->hydrate(false);
+		$expected = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1];
+		$this->assertEquals($expected, $result->extract('id')->toArray());
+		$numbers = [];
+		$result->each(function($v) use (&$numbers) {
+			$numbers[] = $v['lft'];
+			$numbers[] = $v['rght'];
+		});
+		sort($numbers);
+		$this->assertEquals(range(1, 22), $numbers);
+	}
+
 }
