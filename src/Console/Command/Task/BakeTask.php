@@ -1,7 +1,5 @@
 <?php
 /**
- * Base class for Bake Tasks.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -19,12 +17,15 @@ namespace Cake\Console\Command\Task;
 use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use Cake\Utility\ConventionsTrait;
 
 /**
  * Base class for Bake Tasks.
  *
  */
 class BakeTask extends Shell {
+
+	use ConventionsTrait;
 
 /**
  * The default path to bake files into.

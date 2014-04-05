@@ -23,7 +23,7 @@ use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Log\Engine\ConsoleLog;
 use Cake\Log\Log;
-use Cake\Utility\ClassRegistry;
+use Cake\Utility\ConventionsTrait;
 use Cake\Utility\File;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
@@ -671,31 +671,6 @@ class Shell extends Object {
 	}
 
 /**
- * Action to create a Unit Test
- *
- * @return boolean Success
- */
-	protected function _checkUnitTest() {
-		if (class_exists('PHPUnit_Framework_TestCase')) {
-			return true;
-			//@codingStandardsIgnoreStart
-		} elseif (@include 'PHPUnit/Autoload.php') {
-			//@codingStandardsIgnoreEnd
-			return true;
-		}
-
-		$prompt = __d('cake_console', 'PHPUnit is not installed. Do you want to bake unit test files anyway?');
-		$unitTest = $this->in($prompt, ['y', 'n'], 'y');
-		$result = strtolower($unitTest) === 'y' || strtolower($unitTest) === 'yes';
-
-		if ($result) {
-			$this->out();
-			$this->out(__d('cake_console', 'You can download PHPUnit from %s', 'http://phpunit.de'));
-		}
-		return $result;
-	}
-
-/**
  * Makes absolute file path easier to read
  *
  * @param string $file Absolute file path
@@ -707,110 +682,6 @@ class Shell extends Object {
 		$shortPath = str_replace('..' . DS, '', $shortPath);
 		$shortPath = str_replace(DS, '/', $shortPath);
 		return str_replace('//', DS, $shortPath);
-	}
-
-/**
- * Creates the proper controller path for the specified controller class name
- *
- * @param string $name Controller class name
- * @return string Path to controller
- */
-	protected function _controllerPath($name) {
-		return Inflector::underscore($name);
-	}
-
-/**
- * Creates the proper controller plural name for the specified controller class name
- *
- * @param string $name Controller class name
- * @return string Controller plural name
- */
-	protected function _controllerName($name) {
-		return Inflector::pluralize(Inflector::camelize($name));
-	}
-
-/**
- * Creates the proper model camelized name (plural) for the specified name
- *
- * @param string $name Name
- * @return string Camelized and plural model name
- */
-	protected function _modelName($name) {
-		return Inflector::pluralize(Inflector::camelize($name));
-	}
-
-/**
- * Creates the proper underscored model key for associations
- *
- * @param string $name Model class name
- * @return string Singular model key
- */
-	protected function _modelKey($name) {
-		return Inflector::underscore(Inflector::singularize($name)) . '_id';
-	}
-
-/**
- * Creates the proper model name from a foreign key
- *
- * @param string $key Foreign key
- * @return string Model name
- */
-	protected function _modelNameFromKey($key) {
-		$key = str_replace('_id', '', $key);
-		return $this->_modelName($key);
-	}
-
-/**
- * creates the singular name for use in views.
- *
- * @param string $name
- * @return string $name
- */
-	protected function _singularName($name) {
-		return Inflector::variable(Inflector::singularize($name));
-	}
-
-/**
- * Creates the plural name for views
- *
- * @param string $name Name to use
- * @return string Plural name for views
- */
-	protected function _pluralName($name) {
-		return Inflector::variable(Inflector::pluralize($name));
-	}
-
-/**
- * Creates the singular human name used in views
- *
- * @param string $name Controller name
- * @return string Singular human name
- */
-	protected function _singularHumanName($name) {
-		return Inflector::humanize(Inflector::underscore(Inflector::singularize($name)));
-	}
-
-/**
- * Creates the plural human name used in views
- *
- * @param string $name Controller name
- * @return string Plural human name
- */
-	protected function _pluralHumanName($name) {
-		return Inflector::humanize(Inflector::underscore($name));
-	}
-
-/**
- * Find the correct path for a plugin. Scans $pluginPaths for the plugin you want.
- *
- * @param string $pluginName Name of the plugin you want ie. DebugKit
- * @return string $path path to the correct plugin.
- */
-	protected function _pluginPath($pluginName) {
-		if (Plugin::loaded($pluginName)) {
-			return Plugin::path($pluginName);
-		}
-		return current(App::path('Plugin')) . $pluginName . DS;
 	}
 
 /**
@@ -838,4 +709,5 @@ class Shell extends Object {
 		Log::config('stdout', ['engine' => $stdout]);
 		Log::config('stderr', ['engine' => $stderr]);
 	}
+
 }
