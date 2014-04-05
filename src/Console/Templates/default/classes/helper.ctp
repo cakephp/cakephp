@@ -16,6 +16,7 @@ echo "<?php\n"; ?>
 namespace <?= $namespace ?>\View\Helper;
 
 use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * <?= $name ?> helper

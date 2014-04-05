@@ -16,6 +16,7 @@ echo "<?php\n"; ?>
 namespace <?= $namespace ?>\Model\Behavior;
 
 use Cake\ORM\Behavior;
+use Cake\ORM\Table;
 
 /**
  * <?= $name ?> behavior

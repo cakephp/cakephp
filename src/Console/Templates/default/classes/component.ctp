@@ -16,6 +16,7 @@ echo "<?php\n"; ?>
 namespace <?= $namespace ?>\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Controller\ComponentRegistry;
 
 /**
  * <?= $name ?> component
