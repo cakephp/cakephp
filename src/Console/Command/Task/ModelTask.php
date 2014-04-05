@@ -448,7 +448,9 @@ class ModelTask extends BakeTask {
 		}
 
 		$allowEmpty = false;
-		if ($metaData['null'] === true) {
+		if (in_array($fieldName, $primaryKey)) {
+			$allowEmpty = 'create';
+		} elseif ($metaData['null'] === true) {
 			$allowEmpty = true;
 		}
 

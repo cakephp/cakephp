@@ -425,7 +425,7 @@ class ModelTaskTest extends TestCase {
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->getValidation($model);
 		$expected = [
-			'id' => ['rule' => 'numeric', 'allowEmpty' => false],
+			'id' => ['rule' => 'numeric', 'allowEmpty' => 'create'],
 			'bake_user_id' => ['rule' => 'numeric', 'allowEmpty' => false],
 			'title' => ['rule' => false, 'allowEmpty' => false],
 			'body' => ['rule' => false, 'allowEmpty' => true],
