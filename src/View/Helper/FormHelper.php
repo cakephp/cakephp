@@ -278,7 +278,7 @@ class FormHelper extends Helper {
 
 		$isCreate = $context->isCreate();
 
-		$options = $options + [
+		$options += [
 			'type' => $isCreate ? 'post' : 'put',
 			'action' => null,
 			'url' => null,

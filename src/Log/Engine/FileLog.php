@@ -147,7 +147,7 @@ class FileLog extends BaseLog {
 
 		if (!empty($this->_file)) {
 			$filename = $this->_file;
-		} elseif ($level == 'error' || $level == 'warning') {
+		} elseif ($level === 'error' || $level === 'warning') {
 			$filename = 'error.log';
 		} elseif (in_array($level, $debugTypes)) {
 			$filename = 'debug.log';

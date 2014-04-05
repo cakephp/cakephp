@@ -209,7 +209,7 @@ class Request implements \ArrayAccess {
  * @return void
  */
 	protected function _setConfig($config) {
-		if (!empty($config['url']) && $config['url'][0] == '/') {
+		if (!empty($config['url']) && $config['url'][0] === '/') {
 			$config['url'] = substr($config['url'], 1);
 		}
 

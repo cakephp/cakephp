@@ -451,13 +451,13 @@ class TestTask extends BakeTask {
 	public function generateUses($type, $fullClassName) {
 		$uses = [];
 		$type = strtolower($type);
-		if ($type == 'component') {
+		if ($type === 'component') {
 			$uses[] = 'Cake\Controller\ComponentRegistry';
 		}
-		if ($type == 'table') {
+		if ($type === 'table') {
 			$uses[] = 'Cake\ORM\TableRegistry';
 		}
-		if ($type == 'helper') {
+		if ($type === 'helper') {
 			$uses[] = 'Cake\View\View';
 		}
 		$uses[] = $fullClassName;

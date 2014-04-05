@@ -366,7 +366,7 @@ class Response extends Message {
 			return false;
 		}
 		$key = $this->_exposedProperties[$name];
-		if (substr($key, 0, 4) == '_get') {
+		if (substr($key, 0, 4) === '_get') {
 			return $this->{$key}();
 		}
 		return $this->{$key};
@@ -383,7 +383,7 @@ class Response extends Message {
 			return false;
 		}
 		$key = $this->_exposedProperties[$name];
-		if (substr($key, 0, 4) == '_get') {
+		if (substr($key, 0, 4) === '_get') {
 			$val = $this->{$key}();
 			return $val !== null;
 		}

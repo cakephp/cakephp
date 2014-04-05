@@ -104,7 +104,7 @@ class EventManager {
 			$this->_attachSubscriber($callable);
 			return;
 		}
-		$options = $options + array('priority' => static::$defaultPriority);
+		$options += array('priority' => static::$defaultPriority);
 		$this->_listeners[$eventKey][$options['priority']][] = array(
 			'callable' => $callable,
 		);

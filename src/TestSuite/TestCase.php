@@ -572,7 +572,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 		}
 
 		list($plugin, $baseClass) = pluginSplit($alias);
-		$options = $options + ['alias' => $baseClass] + TableRegistry::config($alias);
+		$options += ['alias' => $baseClass] + TableRegistry::config($alias);
 
 		$mock = $this->getMock($options['className'], $methods, array($options));
 		TableRegistry::set($alias, $mock);

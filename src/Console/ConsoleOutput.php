@@ -161,7 +161,7 @@ class ConsoleOutput {
 	public function __construct($stream = 'php://stdout') {
 		$this->_output = fopen($stream, 'w');
 
-		if (DS == '\\' && !(bool)env('ANSICON')) {
+		if (DS === '\\' && !(bool)env('ANSICON')) {
 			$this->_outputAs = static::PLAIN;
 		}
 	}

@@ -38,7 +38,7 @@ trait SelectableAssociationTrait {
  *
  */
 	public function eagerLoader(array $options) {
-		$options = $options + $this->_defaultOptions();
+		$options += $this->_defaultOptions();
 		$queryBuilder = false;
 		if (!empty($options['queryBuilder'])) {
 			$queryBuilder = $options['queryBuilder'];

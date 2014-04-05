@@ -43,7 +43,7 @@ class SomePostsController extends Controller {
  * @return void
  */
 	public function beforeFilter(Event $event) {
-		if ($this->request->params['action'] == 'index') {
+		if ($this->request->params['action'] === 'index') {
 			$this->request->params['action'] = 'view';
 		} else {
 			$this->request->params['action'] = 'change';

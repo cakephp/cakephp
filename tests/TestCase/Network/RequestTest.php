@@ -934,7 +934,7 @@ class RequestTest extends TestCase {
 		$this->assertTrue($request->is('closure'));
 
 		Request::addDetector('get', function ($request) {
-			return $request->env('REQUEST_METHOD') == 'GET';
+			return $request->env('REQUEST_METHOD') === 'GET';
 		});
 		$request->env('REQUEST_METHOD', 'GET');
 		$this->assertTrue($request->is('get'));
