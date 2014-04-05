@@ -29,24 +29,24 @@ class HelperTask extends SimpleBakeTask {
 	public $pathFragment = 'View/Helper/';
 
 /**
- * The name of the task used in menus and output.
- *
- * @var string
+ * {@inheritDoc}
  */
-	public $name = 'helper';
+	public function name() {
+		return 'helper';
+	}
 
 /**
- * The suffix appended to generated class files.
- *
- * @var string
+ * {@inheritDoc}
  */
-	public $suffix = 'Helper';
+	public function fileName($name) {
+		return $name . 'Helper.php';
+	}
 
 /**
- * Template name to use.
- *
- * @var string
+ * {@inheritDoc}
  */
-	public $template = 'helper';
+	public function template() {
+		return 'helper';
+	}
 
 }

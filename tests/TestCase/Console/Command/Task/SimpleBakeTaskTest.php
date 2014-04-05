@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * SimpleBakeTaskTest class
- *
  */
 class SimpleBakeTaskTest extends TestCase {
 
@@ -35,8 +34,9 @@ class SimpleBakeTaskTest extends TestCase {
 		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
 
-		$this->Task = $this->getMock('Cake\Console\Command\Task\SimpleBakeTask',
-			['in', 'err', 'createFile', '_stop', 'clear'],
+		$this->Task = $this->getMock(
+			'Cake\Console\Command\Task\SimpleBakeTask',
+			['in', 'err', 'createFile', '_stop', 'name', 'template', 'fileName'],
 			[$out, $out, $in]
 		);
 		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\TestTask',
@@ -47,9 +47,18 @@ class SimpleBakeTaskTest extends TestCase {
 		$this->Task->Template->initialize();
 
 		$this->Task->pathFragment = 'Model/Behavior/';
-		$this->Task->suffix = 'Behavior';
-		$this->Task->template = 'behavior';
-		$this->Task->name = 'behavior';
+
+		$this->Task->expects($this->any())
+			->method('name')
+			->will($this->returnValue('behavior'));
+
+		$this->Task->expects($this->any())
+			->method('template')
+			->will($this->returnValue('behavior'));
+
+		$this->Task->expects($this->any())
+			->method('fileName')
+			->will($this->returnValue('ExampleBehavior.php'));
 	}
 
 /**
@@ -143,6 +152,34 @@ class SimpleBakeTaskTest extends TestCase {
 		$this->assertContains('namespace TestPlugin\Model\Behavior;', $result);
 		$this->assertContains('use Cake\ORM\Behavior;', $result);
 		$this->assertContains('class ExampleBehavior extends Behavior {', $result);
+	}
+
+/**
+ * Provider for subclasses.
+ *
+ * @return array
+ */
+	public function subclassProvider() {
+		return [
+			['Cake\Console\Command\Task\BehaviorTask'],
+			['Cake\Console\Command\Task\ComponentTask'],
+			['Cake\Console\Command\Task\HelperTask'],
+		];
+	}
+
+/**
+ * Test that the various implementations are sane.
+ *
+ * @dataProvider subclassProvider
+ * @return void
+ */
+	public function testImplementations($class) {
+		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
+		$task = new $class($out, $out, $in);
+		$this->assertInternalType('string', $task->name());
+		$this->assertInternalType('string', $task->fileName('Example'));
+		$this->assertInternalType('string', $task->template());
 	}
 
 }

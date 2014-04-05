@@ -29,24 +29,24 @@ class ComponentTask extends SimpleBakeTask {
 	public $pathFragment = 'Controller/Component/';
 
 /**
- * The name of the task used in menus and output.
- *
- * @var string
+ * {@inheritDoc}
  */
-	public $name = 'component';
+	public function name() {
+		return 'component';
+	}
 
 /**
- * The suffix appended to generated class files.
- *
- * @var string
+ * {@inheritDoc}
  */
-	public $suffix = 'Component';
+	public function fileName($name) {
+		return $name . 'Component.php';
+	}
 
 /**
- * Template name to use.
- *
- * @var string
+ * {@inheritDoc}
  */
-	public $template = 'component';
+	public function template() {
+		return 'component';
+	}
 
 }

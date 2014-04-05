@@ -29,24 +29,24 @@ class BehaviorTask extends SimpleBakeTask {
 	public $pathFragment = 'Model/Behavior/';
 
 /**
- * The name of the task used in menus and output.
- *
- * @var string
+ * {@inheritDoc}
  */
-	public $name = 'behavior';
+	public function name() {
+		return 'behavior';
+	}
 
 /**
- * The suffix appended to generated class files.
- *
- * @var string
+ * {@inheritDoc}
  */
-	public $suffix = 'Behavior';
+	public function fileName($name) {
+		return $name . 'Behavior.php';
+	}
 
 /**
- * Template name to use.
- *
- * @var string
+ * {@inheritDoc}
  */
-	public $template = 'behavior';
+	public function template() {
+		return 'behavior';
+	}
 
 }

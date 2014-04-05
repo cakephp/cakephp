@@ -23,7 +23,7 @@ use Cake\Utility\Inflector;
 /**
  * Base class for simple bake tasks code generator.
  */
-class SimpleBakeTask extends BakeTask {
+abstract class SimpleBakeTask extends BakeTask {
 
 /**
  * Tasks to be loaded by this Task
@@ -33,32 +33,39 @@ class SimpleBakeTask extends BakeTask {
 	public $tasks = ['Test', 'Template'];
 
 /**
- * Task name used in path generation.
+ * Get the generated object's name.
  *
- * @var string
+ * @return string
  */
-	public $pathFragment;
+	abstract public function name();
 
 /**
- * The name of the task used in menus and output.
+ * Get the generated object's filename without the leading path.
  *
- * @var string
+ * @param string $name The name of the object being generated
+ * @return string
  */
-	public $name;
+	abstract public function fileName($name);
 
 /**
- * The suffix appended to generated class files.
+ * Get the template name.
  *
- * @var string
+ * @return string
  */
-	public $suffix;
+	abstract public function template();
 
 /**
- * Template name to use.
+ * Get template data.
  *
- * @var string
+ * @return array
  */
-	public $template;
+	public function templateData() {
+		$namespace = Configure::read('App.namespace');
+		if ($this->plugin) {
+			$namespace = Plugin::getNamespace($this->plugin);
+		}
+		return ['namespace' => $namespace];
+	}
 
 /**
  * Execute method
@@ -79,16 +86,11 @@ class SimpleBakeTask extends BakeTask {
  * @return void
  */
 	public function bake($name) {
-		$namespace = Configure::read('App.namespace');
-		if ($this->plugin) {
-			$namespace = Plugin::getNamespace($this->plugin);
-		}
-		$data = compact('name', 'namespace');
-		$this->Template->set($data);
-		$contents = $this->Template->generate('classes', $this->template);
+		$this->Template->set('name', $name);
+		$this->Template->set($this->templateData());
+		$contents = $this->Template->generate('classes', $this->template());
 
-		$path = $this->getPath();
-		$filename = $path . $name . $this->suffix . '.php';
+		$filename = $this->getPath() . $this->fileName($name);
 		$this->createFile($filename, $contents);
 		return $contents;
 	}
@@ -103,7 +105,7 @@ class SimpleBakeTask extends BakeTask {
 			return;
 		}
 		$this->Test->plugin = $this->plugin;
-		return $this->Test->bake($this->name, $className);
+		return $this->Test->bake($this->name(), $className);
 	}
 
 /**
@@ -113,18 +115,19 @@ class SimpleBakeTask extends BakeTask {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
+		$name = $this->name();
 		$parser->description(
-			__d('cake_console', 'Bake a %s class file.', $this->name)
+			__d('cake_console', 'Bake a %s class file.', $name)
 		)->addArgument('name', [
 			'help' => __d(
 				'cake_console',
 				'Name of the %s to bake. Can use Plugin.name to bake %s files into plugins.',
-				$this->name,
-				$this->name
+				$name,
+				$name
 			)
 		])->addOption('plugin', [
 			'short' => 'p',
-			'help' => __d('cake_console', 'Plugin to bake the %s into.', $this->name)
+			'help' => __d('cake_console', 'Plugin to bake the %s into.', $name)
 		])->addOption('theme', [
 			'short' => 't',
 			'help' => __d('cake_console', 'Theme to use when baking code.')
