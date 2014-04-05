@@ -20,10 +20,10 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * HelperTaskTest class
+ * SimpleBakeTaskTest class
  *
  */
-class HelperTaskTest extends TestCase {
+class SimpleBakeTaskTest extends TestCase {
 
 /**
  * setup method
@@ -35,7 +35,7 @@ class HelperTaskTest extends TestCase {
 		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
 
-		$this->Task = $this->getMock('Cake\Console\Command\Task\HelperTask',
+		$this->Task = $this->getMock('Cake\Console\Command\Task\SimpleBakeTask',
 			['in', 'err', 'createFile', '_stop', 'clear'],
 			[$out, $out, $in]
 		);
@@ -45,6 +45,11 @@ class HelperTaskTest extends TestCase {
 		);
 		$this->Task->Template = new TemplateTask($out, $out, $in);
 		$this->Task->Template->initialize();
+
+		$this->Task->pathFragment = 'Model/Behavior/';
+		$this->Task->suffix = 'Behavior';
+		$this->Task->template = 'behavior';
+		$this->Task->name = 'behavior';
 	}
 
 /**
@@ -57,12 +62,12 @@ class HelperTaskTest extends TestCase {
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with(
-				APP . 'View/Helper/ExampleHelper.php',
-				$this->stringContains('class ExampleHelper extends Helper')
+				APP . 'Model/Behavior/ExampleBehavior.php',
+				$this->stringContains('class ExampleBehavior extends Behavior')
 			);
 		$this->Task->Test->expects($this->once())
 			->method('bake')
-			->with('helper', 'Example');
+			->with('behavior', 'Example');
 
 		$this->Task->execute();
 	}
@@ -78,14 +83,14 @@ class HelperTaskTest extends TestCase {
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with(
-				APP . 'View/Helper/ExampleHelper.php',
-				$this->stringContains('class ExampleHelper extends Helper')
+				APP . 'Model/Behavior/ExampleBehavior.php',
+				$this->stringContains('class ExampleBehavior extends Behavior')
 			);
 
 		$result = $this->Task->bake('Example');
-		$this->assertContains('namespace TestApp\View\Helper;', $result);
-		$this->assertContains('use Cake\View\Helper;', $result);
-		$this->assertContains('class ExampleHelper extends Helper {', $result);
+		$this->assertContains('namespace TestApp\Model\Behavior;', $result);
+		$this->assertContains('use Cake\ORM\Behavior;', $result);
+		$this->assertContains('class ExampleBehavior extends Behavior {', $result);
 	}
 
 /**
@@ -97,7 +102,7 @@ class HelperTaskTest extends TestCase {
 		$this->Task->plugin = 'TestPlugin';
 		$this->Task->Test->expects($this->once())
 			->method('bake')
-			->with('helper', 'Example');
+			->with('behavior', 'Example');
 
 		$this->Task->bakeTest('Example');
 		$this->assertEquals($this->Task->plugin, $this->Task->Test->plugin);
@@ -130,14 +135,14 @@ class HelperTaskTest extends TestCase {
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with(
-				$path . 'View/Helper/ExampleHelper.php',
-				$this->stringContains('class ExampleHelper extends Helper')
+				$path . 'Model/Behavior/ExampleBehavior.php',
+				$this->stringContains('class ExampleBehavior extends Behavior')
 			);
 
 		$result = $this->Task->bake('Example');
-		$this->assertContains('namespace TestPlugin\View\Helper;', $result);
-		$this->assertContains('use Cake\View\Helper;', $result);
-		$this->assertContains('class ExampleHelper extends Helper {', $result);
+		$this->assertContains('namespace TestPlugin\Model\Behavior;', $result);
+		$this->assertContains('use Cake\ORM\Behavior;', $result);
+		$this->assertContains('class ExampleBehavior extends Behavior {', $result);
 	}
 
 }
