@@ -74,7 +74,7 @@ class ValidationRule {
  *
  * @param array $validator [optional] The validator properties
  */
-	public function __construct($validator = array()) {
+	public function __construct(array $validator = array()) {
 		$this->_addValidatorProps($validator);
 	}
 
@@ -105,7 +105,7 @@ class ValidationRule {
  * @throws \InvalidArgumentException when the supplied rule is not a valid
  * callable for the configured scope
  */
-	public function process($value, $providers, array $context = []) {
+	public function process($value, array $providers, array $context = []) {
 		$context += ['data' => [], 'newRecord' => true, 'providers' => $providers];
 
 		if ($this->_skip($context)) {

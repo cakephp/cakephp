@@ -49,8 +49,8 @@ class PluginShortRoute extends Route {
  *   directory.
  * @return mixed either false or a string URL.
  */
-	public function match($url, $context = array()) {
-		if (isset($url['controller']) && isset($url['plugin']) && $url['plugin'] != $url['controller']) {
+	public function match(array $url, array $context = array()) {
+		if (isset($url['controller']) && isset($url['plugin']) && $url['plugin'] !== $url['controller']) {
 			return false;
 		}
 		$this->defaults['controller'] = $url['controller'];

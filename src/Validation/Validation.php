@@ -578,7 +578,7 @@ class Validation {
  * @param boolean $caseInsensitive Set to true for case insensitive comparison.
  * @return boolean Success
  */
-	public static function multiple($check, $options = array(), $caseInsensitive = false) {
+	public static function multiple($check, array $options = array(), $caseInsensitive = false) {
 		$defaults = array('in' => null, 'max' => null, 'min' => null);
 		$options = array_merge($defaults, $options);
 
@@ -805,7 +805,7 @@ class Validation {
  * @param boolean $caseInsensitive Set to true for case insensitive comparison.
  * @return boolean Success.
  */
-	public static function inList($check, $list, $caseInsensitive = false) {
+	public static function inList($check, array $list, $caseInsensitive = false) {
 		$strict = !is_numeric($check);
 
 		if ($caseInsensitive) {

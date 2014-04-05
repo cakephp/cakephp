@@ -51,10 +51,10 @@ class RedirectRoute extends Route {
  * Constructor
  *
  * @param string $template Template string with parameter placeholders
- * @param array $defaults Array of defaults for the route.
+ * @param array|string $defaults Defaults for the route.
  * @param array $options Array of additional options for the Route
  */
-	public function __construct($template, $defaults = array(), $options = array()) {
+	public function __construct($template, $defaults = [], array $options = []) {
 		parent::__construct($template, $defaults, $options);
 		$this->redirect = (array)$defaults;
 	}
@@ -108,7 +108,7 @@ class RedirectRoute extends Route {
  * @param array $context Array of request context parameters.
  * @return mixed either false or a string url.
  */
-	public function match($url, $context = array()) {
+	public function match(array $url, array $context = array()) {
 		return false;
 	}
 
