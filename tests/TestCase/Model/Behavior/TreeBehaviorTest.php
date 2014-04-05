@@ -581,4 +581,30 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(range(1, 22), $numbers);
 	}
 
+/**
+ * Test removing a middle node from a tree
+ *
+ * @return void
+ */
+	public function testRemoveMiddleNodeFromTree() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(6);
+		$this->assertSame($entity, $table->removeFromTree($entity));
+		$result = $table->find('threaded')->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals(21, $entity->lft);
+		$this->assertEquals(22, $entity->rght);
+		$this->assertEquals(null, $entity->parent_id);
+		$result = $table->find()->order('lft')->hydrate(false);
+		$expected = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 6];
+		$this->assertEquals($expected, $result->extract('id')->toArray());
+		$numbers = [];
+		$result->each(function($v) use (&$numbers) {
+			$numbers[] = $v['lft'];
+			$numbers[] = $v['rght'];
+		});
+		sort($numbers);
+		$this->assertEquals(range(1, 22), $numbers);
+	}
+
 }

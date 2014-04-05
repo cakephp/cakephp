@@ -329,23 +329,47 @@ class TreeBehavior extends Behavior {
 			]);
 	}
 
+/**
+ * Removes the current node from the tree, by positioning it as a new root
+ * and reparents all children up one level.
+ *
+ * Note that the node will not be deleted just moved away from its current position
+ * without moving its children with it.
+ *
+ * @param \Cake\ORM\Entity $node The node to remove from the tree
+ * @return \Cake\ORM\Entity|false the node after being removed from the tree or
+ * false on error
+ */
 	public function removeFromTree($node) {
 		$config = $this->config();
 		$left = $node->get($config['left']);
 		$right = $node->get($config['right']);
 		$parent = $node->get($config['parent']);
 
-		if ($right - $left > 1) {
-			$this->_table->updateAll(
-				[$config['parent'] => $parent],
-				[$config['parent'] => $id]
-			);
-			$this->_sync(1, '-', 'BETWEEN ' . ($left + 1) . ' AND ' . ($right - 1));
-			$this->_sync(2, '-', "> {$right}");
+		$node->set($config['parent'], null);
+
+		if ($right - $left < 2) {
+			return $this->_table->save($node);
 		}
 
-		$node->set($config['parent'], null);
-		return $this->_table->save($node);
+		$primary = $this->_table->primaryKey();
+		$this->_table->updateAll(
+			[$config['parent'] => $parent],
+			[$config['parent'] => $node->get($primary)]
+		);
+		$this->_sync(1, '-', 'BETWEEN ' . ($left + 1) . ' AND ' . ($right - 1));
+		$this->_sync(2, '-', "> {$right}");
+		$edge = $this->_getMax();
+		$node->set($config['left'], $edge + 1);
+		$node->set($config['right'], $edge + 2);
+		$fields = [$config['parent'], $config['left'], $config['right']];
+
+		$this->_table->updateAll($node->extract($fields), [$primary => $node->get($primary)]);
+
+		foreach ($fields as $field) {
+			$node->dirty($field, false);
+		}
+		return $node;
 	}
 
 /**
