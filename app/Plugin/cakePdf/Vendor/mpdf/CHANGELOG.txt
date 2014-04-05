@@ -1,0 +1,379 @@
+===========================
+mPDF 5.4
+14/02/2012
+===========================
+
+
+Files changed
+-------------
+mpdf.php
+config.php
+compress.php
+classes/ttfontsuni.php
+classes/barcode.php
+classes/indic.php
+classes/svg.php
+examples/show_code.php	-----  SECURITY RISK**
+examples/example49_changelog.php
+examples/example57_new_mPDF_v5-3_active_forms_b (replace example57_new_mPDF_v5-3_active_forms)
+includes/out.php
+mpdfi/fpdi_pdf_parser.php
+
+Files added
+-----------
+classes/bmp.php
+classes/directw.php
+classes/form.php
+classes/grad.php
+classes/tocontents.php
+classes/wmf.php
+examples/example58_new_mPDF_v5-4_features
+
+config.php changes
+------------------
+Edited: $this->allowedCSStags, $this->innerblocktags, $this->defaultCSS;  (CAPTION added in each case)
+Moved: Numerous $form_.. variables are now in /classes/form.php
+
+New config variables 
+--------------------
+$this->bookmarkStyles = array();
+$this->cacheTables = true;
+	
+New methods
+-----------
+function CircularText()
+function SetVisibility()
+
+New/Extended CSS
+----------------
+box-shadow (block elements - does NOT support "inset")
+text-shadow (all text elements - does NOT support "blur")
+visibility: visible|hidden|printonly|screenonly (block-level elements and images IMG only)
+text-transform: capitalize|uppercase|lowercase (extended to support TD/TH)
+tr|td|th:nth-child(odd|even|2n+1)
+color, strikethrough, underline and background-color (extended to support rotated TD/TH)
+underline and strike-through (extended to support TD/TH)
+underline (line colour)  (extended to work correctly in watermark)
+page-break-after: left|right|always (block elements and tables)
+	NB respects $mpdf->restoreBlockPagebreaks = true; i.e. will make pagebreak act like formfeed
+background[-color]: extended to support rgba|cmyka|cmyk|hsla|hsl|spot
+border(extended to support inline elements)
+
+
+New HTML
+--------
+<caption>
+<textcircle />
+
+
+New features / Improvements
+---------------------------
+Tables - Zebra Stripes
+Tables: overlapping rowspans (partially) supported
+Tables - Disk caching
+Using progress bars (or $showStats) now reports 'real' memory usage i.e. get_memory_usage(true)
+Support for query string in the URLs for external stylesheets e.g. @import url("style.css?ltcyy7");
+Table caption partially supported
+CircularText
+BookMark styling
+Spread tables i.e. can split table (columns) across several pages width.
+Can use chelvetica, ctimes and ccourier to specify core fonts in a non-core font document
+Spread tables i.e. can split table (columns) across several pages width.
+{colsum} in <tfoot> cell will insert a column total per page.
+SVG embedded as island in HTML supported
+Active Forms
+	textarea and input (text types) now accept javascript as:
+	onKeystroke, onValidate, onCalculate and onFormat
+	onChange is depracated but works as onCalculate (for textarea and input)
+	(PS Select still accepts onChange cf. 5.3.37)
+Ledger and Tabloid added as page formats recognised. NB Ledger is same as tabloid but landscape. In mPDF, both give the same size (portrait)
+so need to add -L e.g. Ledger-L for landscape.
+
+
+Internal script changes
+-----------------------
+Changed this->k to _MPDFK throughout all scripts
+Changes to color (packed binary data in string rather than array) to reduce memory usage esp in tables
+Internal variables Removed
+	$usetableheader;
+	$tableheadernrows;
+	$tablefooternrows;
+vars $ChangePage, $p_bottom_border, $img_margin_top(+) $issetcolor + other similar  removed
+
+Removed a whole load of // comments
+Updates to remove some more Warning Notices (not all marked in text)
+Border set on TR - changed so set on each cell, rather than retrospectively at end of TR
+All references to table['text'] removed as not needed - uses ['textbuffer'] instead
+OpenTag(TD) changes to reduce memory usage with tables
+Includes different method to set a default timezone
+fn _smallCaps does not need (undefined) $space
+this->chrs and this->ords replaced by chr() and ord()
+Headers in out.php updated to match those used in Output()
+Change to SetFont() to improve performance time
+Change to GetStringWidth() to improve performance time
+Corrected copying of Glyphs 0,1,2, to all subset fonts (non-SMP/SIP), and only setting 32->127 in subset
+Subset fonts (non-SMP/SIP) have additionally Unicode CMap tables (0,0,4 and 0,3,4) as well as Microsoft (3,1,4)
+Subset fonts (SMP/SIP) have CMap tables (1,0,6 and 3,0,4) - rather than 1,0,6 and 3,0,6
+Subset fonts (SMP/SIP) have 'name' table changed to give 1,0 and 3,0. As it is a symbol font (not Unicode encoded) :
+	needs to have a name entry in 3,0 (e.g. symbol) - original font will have 3,1 (i.e. Unicode)
+Automatically checks for HTML code length > 100000 characters and gives error warning if
+	 PHP < 5.2.0 (as not configurable) or increases pcre.backtrack_limit if PHP < 5.3.7
+
+Removed/Depracated
+------------------
+function UseTableHeader($opt=true)	fn removed / depracated
+function UsePRE($opt=true) removed
+$attr['REPEAT_HEADER'] == true		CSS removed / depracated
+$this->usepre=true; removed / depracated as never needed - always respects PRE whitespace
+
+ToC: NB Values can no longer be set directly e.g. as in example
+	$mpdf->TOCheader = array();	// array as for setting header/footer
+	$mpdf->TOCfooter = array();	// array as for setting header/footer
+	$mpdf->TOCpreHTML = '<h2>Contents - Portrait</h2>';	// HTML text to appear before table of contents
+	$mpdf->TOCpostHTML = '';	// HTML text to appear after table of contents
+	$mpdf->TOCbookmarkText = 'Content list';	// Text as it will appear in the Bookmarks (leave blank for none)
+Need to use TOCpagebreak either direct (or array version) or as HTML
+OR if absolutley necessary, could use:
+	$mpdf->tocontents->TOCheader = array();	// array as for setting header/footer
+	$mpdf->tocontents->TOCfooter = array();	// array as for setting header/footer
+	$mpdf->tocontents->TOCpreHTML = '<h2>Contents - Portrait</h2>';	// HTML text to appear before table of contents
+	$mpdf->tocontents->TOCpostHTML = '';	// HTML text to appear after table of contents
+	$mpdf->tocontents->TOCbookmarkText = 'Content list';	// Text as it will appear in the Bookmarks (leave blank for none)
+
+
+
+Further Details
+===============
+
+CSS border on inline elements
+-----------------------------
+Support for CSS border (and variants) on inline elements e.g. <span style="border-bottom: 1px dashed #000000;">
+Border styles solid|dotted|dashed|double only are supported. Border radius not supported.
+Nested inline elements will have repeat left|right borders on the nested content (unlike browsers)
+
+Tables - Zebra Stripes
+----------------------
+TABLE - striped rows cf. http://dev.opera.com/articles/view/zebra-striping-tables-with-css3/
+tr:nth-child(odd) { background-color: #99ff99; }
+thead tr:nth-child(3n+2) { background-color: #FFBBFF; }
+td:nth-child(2n+1) { background-color: #BBBBFF; }
+table.zebraTable td:nth-child(2n+1) { background-color: #BBBBFF; }
+table.zebraTable th:nth-child(2n+1) { background-color: #BBBBFF; }
+
+NB mPDF does NOT correctly apply specificity to all CSS
+table.zebra tbody tr:nth-child(2n+1) td { background-color: #FFFFBB; }
+table.zebra tbody td:nth-child(odd) { background-color: #BBBBFF; }
+
+should make every odd row yellow, and every odd coloumn blue, but with the row/yellow overriding the column/blue.
+In mPDF the td:nth-child(odd) trumps the plain td, so the column colour wins out. You can force the effect you want by using
+table.zebra tbody tr:nth-child(2n+1) td:nth-child(1n+0) { background-color: #FFFFBB; }
+
+(The :nth-child(1n+0) selector just selects every td cell.)
+
+
+
+Tables - Disk caching
+---------------------
+TABLES: using disk caching
+// Using disk to cache table data can reduce memory usage dramatically, but at a cost of increased 
+// executon time and disk access (read and write)
+$this->cacheTables = true;
+NB		$this->packTableData will be overridden to => true;	// required for cacheTables
+		$this->simpleTables will be overridden to => false;  // Cannot co-exist with cacheTables
+
+
+Table caption
+-------------
+Must come immediately after <table...>
+CSS caption-side and HTML align attribute of top|bottom supported (not attribute left|right)
+Handled as a separate block element brought outside the table, so:
+	CSS will not cascade correctly on the table
+	width of caption block is that of page or of the block element containing the table
+	so alignment will be to the page-width not the table width
+	if table page-break-after: always, the caption will follow the pagebreak.
+This does work:
+<style>
+.tablecaption { caption-side: bottom; text-align: left; font-weight: bold; color: green; }
+</style>
+...
+<table>
+<caption class="tablecaption">Caption title here</caption>
+<tbody>
+
+CSS visibility: printonly, screenonly
+-------------------------------------
+Roughly based on CSS
+
+Works on Block elements P, DIV etc, or Image
+Cannot nest / layer.
+Inner blocks/image with set visibility are ignored if already set on enclosing block element.
+(Block element) does not work inside table (image does)
+So 'visible' does nothing but is set as default
+(NB Changes output to PDF version 1.5)
+Incompatible with PDFA / PDFX
+
+'visibility'
+    Value:  	visible | hidden | (collapse | inherit)
+    Initial:  	visible
+    Applies to:  	all elements
+    Inherited:  	yes
+
+The 'visibility' property specifies whether the boxes generated by an element are rendered.
+Invisible boxes still affect layout (set the 'display' property to 'none' to suppress box generation altogether).
+Values have the following meanings:
+
+visible
+    The generated box is visible.
+hidden
+    The generated box is invisible (fully transparent, nothing is drawn), but still affects layout.
+	Furthermore, descendants of the element will be visible if they have 'visibility: visible'.
+collapse | inherit
+    NOT supported in mPDF
+
+CUSTOM:
+printonly | screenonly
+
+
+Added VISIBILITY function
+$mpdf->SetVisibility('screenonly'); or 'printonly' 'visible' or 'hidden'
+(NB Changes output to PDF version 1.5)
+Incompatible with PDFA / PDFX
+
+CircularText
+------------
+function CircularText($x, $y, $r, $text, $align='top', $kerning=120, $fontwidth=100) {
+x: abscissa of center
+y: ordinate of center
+r: radius of circle
+text: text to be printed
+align: text alignment: top or bottom. Default value: top
+kerning: spacing between letters in percentage. Default value: 120. Zero is not allowed.
+fontwidth: width of letters in percentage. Default value: 100. Zero is not allowed
+
+- now uses Kerning between letters if useKerning == true (set manually see example)
+
+BookMark styling
+----------------
+New configurable variable to control appearance of Bookmarks e.g.
+$this->bookmarkStyles = array(
+	0 => array('color'=> array(0,64,128), 'style'=>'B'),
+	1 => array('color'=> array(128,0,0), 'style'=>''),
+	2 => array('color'=> array(0,128,0), 'style'=>'I'),
+);
+	
+Column sums
+-----------
+(Also changed some preg_replace to str_replace to improve performance)
+To use: just add {colsum} to any cells of the table footer <tfoot>
+Add a number to specify a fixed number of decimal points e.g. <td>£{colsum2}</td>  will give you £123.40
+The width of the column will be calculated using the actual string {colsum} as a placeholder.
+If you need the column to be wider, use underscores "_" to pad it e.g. {colsum2_____}
+
+
+Spread tables
+-------------
+i.e. can split table (columns) across several pages width.
+CSS <table style="overflow: visible">
+Cannot use with: 
+$this->kwt - ignored
+$this->table_rotate - ignored
+$this->table_keep_together - ignored
+$this->ColActive  - cancels spread tables
+
+Messes up with:
+$mpdf->forcePortraitHeaders = true;
+$mpdf->forcePortraitMargins = true;
+Problems with CJK, and RTL
+
+Will do no resizing of fonts at all.
+Maximum width of column = page width i.e. will not split columns across pages - NB will keep colspan>1 on one page
+If table row too high for page will die with error message.
+Will override some specs for width if this creates conflicts
+Recommended to specify absolute value of width on each column.
+
+
+
+
+Bug fixes
+=========
+Dottab - if text after dottab is hyperlinked <a></a> then dots are underlined
+
+page-break-before now respects $mpdf->restoreBlockPagebreaks = true; i.e. will make pagebreak act like formfeed
+Annotation() function called directly with colorarray(r,g,b)
+
+Added urldecode to _getImage to cope with ../name%20of%20image.jpg
+Added urldecode AND htmlspecials_decode to href in <a> link e.g. https://www.google.com/search?hl=en&amp;q=mpdf&amp;filename=name%20of%20file
+[barcode.php] Allow &nbsp; in C39 codes - will be changed to spaces
+
+<table> inside a <div position:fixed, left:300px;> not calculating table width correctly
+	- leading to either upside down table or error width less than 1 character
+
+Depracated magic_quotes_runtime() in compress.php
+
+DIRECTW included twice in compress.php
+FORMS mark up for compress.php corrected
+
+double backslashes not preserved inside <pre> or <textarea>
+
+font-weight and font-style not recognised in <pageheader>
+
+Progress bars causing corrupt PDF file (out.php) changed fopen from "r" mode to "rb" (binary)
+Target around image - <a href="#internaltarget"><img ... /></a> - not working
+
+SmallCaps in <thead> error
+
+Fonts with "name" table in format 1 not recognised correctly
+Rotated table which does not fit on remaining page, forces a new page even if already at top of page
+
+Locale causing problems - all instances of sprintf() using %.3f changed to %.3F so not locale aware
+
+CSS border radius not implemented on fixed/absolute positioned block element
+
+Background color in rotated table extending way beyond bottom of table
+
+Nested table containing <thead> or <tfoot> was confused with <thead> or <tfoot> of parent table
+
+Correct handling of spaces, < or & in textarea
+
+<option> and <input ..> attributes value/title decoded with fn lesser_entity_decode instead of htmlspecialchars_decode to include &apos;
+
+line width not restored to correct value after "line-through" text in Cell()
+
+Kannada - incorrect positioning of Reph
+
+Forms - In <input> or <option> (select) not correctly handling HTML named entities e.g. &lt; in value or title
+Active forms - &nbsp; as Value or Title incorrectly showing as Euro - PDFDocEncoding fixed
+
+Unicode data in embedded fonts not encrypted when doc encrypted 
+
+Nested block elements which are empty including innermost one, top margin of innermost block was ignored
+
+font-size: xx% inside a block was setting on block's parent font-size
+
+Active forms - radio buttons (removed name from Widget - leave on Radio group)
+	causing problems accessing field for radio buttons
+
+When using simple tables and border-collapse, if table border set, but cell borders not set, should display table border (fixed)
+position:fixed block - if neither top nor bottom nor height specified, was positioned incorrectly (y)
+Leave - if top, bottom, margin-top, margiin-bottom and height are all left unspecified (or auto), will centre vertically
+on the page (specific to mPDF - not consistent with CSS2.1)
+But if any one of them are specified (including e.g. margin-top=0), follows CSS spec, so top is the current "static" position
+
+background-image-opacity=0 not working on BODY or BLOCK
+
+Lists - if LI continues after a nested List, would add as a new LI item (should continue as part of earlier LI item)
+
+fn WriteCell() converts to 'windows-1252' when required
+if multiple calls to mPDF used, cannot redefine function cmp()
+internal link targets <a name="xx" /> in ToC not moved when using: page-break-inside:avoid
+internal link targets <a name="xx" /> not moved when using: columns, page-break-inside:avoid, keep-with-table or table rotate
+
+Active Forms - onChange not working for SELECT (cf. 5.3.25) Example 57 only worked by chance as JS was carried over from Select to Text field
+Bug is fixed, but example file needed updating to onCalculate for the display field.
+
+Table cell: if height set as %, currently sets it as % of page-width; instead this now ignores it.
+
+Bengali letter Khanda Ta (U+09CE) character not recognised; was added in Unicode v4.1 and prior to this, (U+09A4 U+09CD U+200D)
+	so mPDF converts to this string and seems to work.
+
+OCR characters wrong size in barcodes if using different ocr font

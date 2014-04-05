@@ -23,7 +23,8 @@
  */
 // Setup DebugKit plugin
 CakePlugin::load('DebugKit');
-
+// setup cakepdf plugin
+CakePlugin::load('CakePdf', array('bootstrap' => true, 'routes' => true));
 // Setup a 'default' cache configuration for use in the application.
 Cache::config('default', array('engine' => 'File'));
 
