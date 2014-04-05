@@ -538,6 +538,10 @@ class ModelTaskTest extends TestCase {
  */
 	public function testBakeTableValidation() {
 		$validation = array(
+			'id' => array(
+				'allowEmpty' => 'create',
+				'rule' => 'numeric',
+			),
 			'name' => array(
 				'allowEmpty' => false,
 				'rule' => false,
@@ -555,7 +559,9 @@ class ModelTaskTest extends TestCase {
 		$this->assertContains('use Cake\Validation\Validator;', $result);
 		$this->assertContains('class BakeArticlesTable extends Table {', $result);
 		$this->assertContains('public function validationDefault(Validator $validator) {', $result);
+		$this->assertContains("->add('id', 'valid', ['rule' => 'numeric'])", $result);
 		$this->assertContains("->add('email', 'valid', ['rule' => 'email'])", $result);
+		$this->assertContains("->allowEmpty('id', 'create')", $result);
 		$this->assertContains("->allowEmpty('email')", $result);
 		$this->assertContains("->validatePresence('name', 'create')", $result);
 	}
