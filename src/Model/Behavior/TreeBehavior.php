@@ -44,7 +44,8 @@ class TreeBehavior extends Behavior {
 			'childCount' => 'childCount',
 			'moveUp' => 'moveUp',
 			'moveDown' => 'moveDown',
-			'recover' => 'recover'
+			'recover' => 'recover',
+			'removeFromTree' => 'removeFromTree'
 		],
 		'parent' => 'parent_id',
 		'left' => 'lft',
@@ -326,6 +327,25 @@ class TreeBehavior extends Behavior {
 				"{$right} <" => $node->{$right},
 				"{$left} >" => $node->{$left}
 			]);
+	}
+
+	public function removeFromTree($node) {
+		$config = $this->config();
+		$left = $node->get($config['left']);
+		$right = $node->get($config['right']);
+		$parent = $node->get($config['parent']);
+
+		if ($right - $left > 1) {
+			$this->_table->updateAll(
+				[$config['parent'] => $parent],
+				[$config['parent'] => $id]
+			);
+			$this->_sync(1, '-', 'BETWEEN ' . ($left + 1) . ' AND ' . ($right - 1));
+			$this->_sync(2, '-', "> {$right}");
+		}
+
+		$node->set($config['parent'], null);
+		return $this->_table->save($node);
 	}
 
 /**

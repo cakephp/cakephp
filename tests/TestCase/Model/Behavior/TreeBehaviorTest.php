@@ -556,4 +556,29 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Tests that a leaf can be taken out of the tree and put in as a root
+ *
+ * @return void
+ */
+	public function testRemoveFromLeafFromTree() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(10);
+		$this->assertSame($entity, $table->removeFromTree($entity));
+		$this->assertEquals(21, $entity->lft);
+		$this->assertEquals(22, $entity->rght);
+		$this->assertEquals(null, $entity->parent_id);
+		$result = $table->find()->order('lft')->hydrate(false);
+		$expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10];
+		$this->assertEquals($expected, $result->extract('id')->toArray());
+		$numbers = [];
+		$result->each(function($v) use (&$numbers) {
+			$numbers[] = $v['lft'];
+			$numbers[] = $v['rght'];
+		});
+		sort($numbers);
+		$this->assertEquals(range(1, 22), $numbers);
+	}
+
 }
