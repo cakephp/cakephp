@@ -14,112 +14,39 @@
  */
 namespace Cake\Console\Command\Task;
 
-use Cake\Console\Command\Task\BakeTask;
-use Cake\Core\App;
-use Cake\Core\Configure;
-use Cake\Core\Plugin;
-use Cake\Utility\Inflector;
+use Cake\Console\Command\Task\SimpleBakeTask;
 
 /**
  * Helper code generator.
  */
-class HelperBakeTask {
-
-/**
- * Tasks to be loaded by this Task
- *
- * @var array
- */
-	public $tasks = ['Test', 'Template'];
+class HelperTask extends SimpleBakeTask {
 
 /**
  * Task name used in path generation.
  *
  * @var string
  */
-	public $name = 'View/Helper';
+	public $pathFragment = 'View/Helper/';
 
 /**
- * Override initialize
+ * The name of the task used in menus and output.
  *
- * @return void
+ * @var string
  */
-	public function initialize() {
-		$this->path = current(App::path('View/Helper'));
-	}
+	public $name = 'helper';
 
 /**
- * Execute method
+ * The suffix appended to generated class files.
  *
- * @return void
+ * @var string
  */
-	public function execute() {
-		parent::execute();
-		$name = Inflector::classify($this->args[0]);
-		$this->bake($name);
-		$this->bakeTest($name);
-	}
+	public $suffix = 'Helper';
 
 /**
- * Generate a class stub
+ * Template name to use.
  *
- * @param string $className The classname to generate.
- * @return void
+ * @var string
  */
-	public function bake($name) {
-		$namespace = Configure::read('App.namespace');
-		if ($this->plugin) {
-			$namespace = Plugin::getNamespace($this->plugin);
-		}
-		$data = compact('name', 'namespace');
-		$this->Template->set($data);
-		$contents = $this->Template->generate('classes', 'helper');
+	public $template = 'helper';
 
-		$path = $this->getPath();
-		$filename = $path . $name . 'Helper.php';
-		$this->createFile($filename, $contents);
-		return $contents;
-	}
-
-/**
- * Generate a test case.
- *
- * @return void
- */
-	public function bakeTest($className) {
-		if (!empty($this->params['no-test'])) {
-			return;
-		}
-		$this->Test->plugin = $this->plugin;
-		return $this->Test->bake('Helper', $className);
-	}
-
-/**
- * Gets the option parser instance and configures it.
- *
- * @return \Cake\Console\ConsoleOptionParser
- */
-	public function getOptionParser() {
-		$parser = parent::getOptionParser();
-		$parser->description(
-			__d('cake_console', 'Bake a helper class file.')
-		)->addArgument('name', [
-			'help' => __d('cake_console', 'Name of the helper to bake. Can use Plugin.name to bake controllers into plugins.')
-		])->addOption('plugin', [
-			'short' => 'p',
-			'help' => __d('cake_console', 'Plugin to bake the helper into.')
-		])->addOption('theme', [
-			'short' => 't',
-			'help' => __d('cake_console', 'Theme to use when baking code.')
-		])->addOption('no-test', [
-			'boolean' => true,
-			'help' => __d('cake_console', 'Do not generate a test skeleton.')
-		])->addOption('force', [
-			'short' => 'f',
-			'boolean' => true,
-			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
-		]);
-
-		return $parser;
-	}
 }

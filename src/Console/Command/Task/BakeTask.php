@@ -28,11 +28,11 @@ class BakeTask extends Shell {
 	use ConventionsTrait;
 
 /**
- * The default path to bake files into.
+ * The pathFragment appended to the plugin/app path.
  *
  * @var string
  */
-	public $path;
+	public $pathFragment;
 
 /**
  * Name of plugin
@@ -67,9 +67,9 @@ class BakeTask extends Shell {
  * @return string Path to output.
  */
 	public function getPath() {
-		$path = $this->path;
+		$path = APP . $this->pathFragment;
 		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . $this->name . DS;
+			$path = $this->_pluginPath($this->plugin) . $this->pathFragment;
 		}
 		return $path;
 	}

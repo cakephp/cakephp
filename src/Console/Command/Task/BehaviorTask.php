@@ -14,112 +14,39 @@
  */
 namespace Cake\Console\Command\Task;
 
-use Cake\Console\Command\Task\BakeTask;
-use Cake\Core\App;
-use Cake\Core\Configure;
-use Cake\Core\Plugin;
-use Cake\Utility\Inflector;
+use Cake\Console\Command\Task\SimpleBakeTask;
 
 /**
  * Behavior code generator.
  */
-class BehaviorTask extends BakeTask {
-
-/**
- * Tasks to be loaded by this Task
- *
- * @var array
- */
-	public $tasks = ['Test', 'Template'];
+class BehaviorTask extends SimpleBakeTask {
 
 /**
  * Task name used in path generation.
  *
  * @var string
  */
-	public $name = 'Model/Behavior';
+	public $pathFragment = 'Model/Behavior/';
 
 /**
- * Override initialize
+ * The name of the task used in menus and output.
  *
- * @return void
+ * @var string
  */
-	public function initialize() {
-		$this->path = current(App::path('Model/Behavior'));
-	}
+	public $name = 'behavior';
 
 /**
- * Execute method
+ * The suffix appended to generated class files.
  *
- * @return void
+ * @var string
  */
-	public function execute() {
-		parent::execute();
-		$name = Inflector::classify($this->args[0]);
-		$this->bake($name);
-		$this->bakeTest($name);
-	}
+	public $suffix = 'Behavior';
 
 /**
- * Generate a class stub
+ * Template name to use.
  *
- * @param string $className The classname to generate.
- * @return void
+ * @var string
  */
-	public function bake($name) {
-		$namespace = Configure::read('App.namespace');
-		if ($this->plugin) {
-			$namespace = Plugin::getNamespace($this->plugin);
-		}
-		$data = compact('name', 'namespace');
-		$this->Template->set($data);
-		$contents = $this->Template->generate('classes', 'behavior');
+	public $template = 'behavior';
 
-		$path = $this->getPath();
-		$filename = $path . $name . 'Behavior.php';
-		$this->createFile($filename, $contents);
-		return $contents;
-	}
-
-/**
- * Generate a test case.
- *
- * @return void
- */
-	public function bakeTest($className) {
-		if (!empty($this->params['no-test'])) {
-			return;
-		}
-		$this->Test->plugin = $this->plugin;
-		return $this->Test->bake('Behavior', $className);
-	}
-
-/**
- * Gets the option parser instance and configures it.
- *
- * @return \Cake\Console\ConsoleOptionParser
- */
-	public function getOptionParser() {
-		$parser = parent::getOptionParser();
-		$parser->description(
-			__d('cake_console', 'Bake a behavior class file.')
-		)->addArgument('name', [
-			'help' => __d('cake_console', 'Name of the Behavior to bake. Can use Plugin.name to bake controllers into plugins.')
-		])->addOption('plugin', [
-			'short' => 'p',
-			'help' => __d('cake_console', 'Plugin to bake the behavior into.')
-		])->addOption('theme', [
-			'short' => 't',
-			'help' => __d('cake_console', 'Theme to use when baking code.')
-		])->addOption('no-test', [
-			'boolean' => true,
-			'help' => __d('cake_console', 'Do not generate a test skeleton.')
-		])->addOption('force', [
-			'short' => 'f',
-			'boolean' => true,
-			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
-		]);
-
-		return $parser;
-	}
 }
