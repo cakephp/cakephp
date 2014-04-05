@@ -425,7 +425,7 @@ class ModelTaskTest extends TestCase {
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->getValidation($model);
 		$expected = [
-			'id' => ['rule' => 'numeric', 'allowEmpty' => false],
+			'id' => ['rule' => 'numeric', 'allowEmpty' => 'create'],
 			'bake_user_id' => ['rule' => 'numeric', 'allowEmpty' => false],
 			'title' => ['rule' => false, 'allowEmpty' => false],
 			'body' => ['rule' => false, 'allowEmpty' => true],
@@ -538,6 +538,10 @@ class ModelTaskTest extends TestCase {
  */
 	public function testBakeTableValidation() {
 		$validation = array(
+			'id' => array(
+				'allowEmpty' => 'create',
+				'rule' => 'numeric',
+			),
 			'name' => array(
 				'allowEmpty' => false,
 				'rule' => false,
@@ -555,7 +559,9 @@ class ModelTaskTest extends TestCase {
 		$this->assertContains('use Cake\Validation\Validator;', $result);
 		$this->assertContains('class BakeArticlesTable extends Table {', $result);
 		$this->assertContains('public function validationDefault(Validator $validator) {', $result);
+		$this->assertContains("->add('id', 'valid', ['rule' => 'numeric'])", $result);
 		$this->assertContains("->add('email', 'valid', ['rule' => 'email'])", $result);
+		$this->assertContains("->allowEmpty('id', 'create')", $result);
 		$this->assertContains("->allowEmpty('email')", $result);
 		$this->assertContains("->validatePresence('name', 'create')", $result);
 	}

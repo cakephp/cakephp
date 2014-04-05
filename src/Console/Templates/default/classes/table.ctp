@@ -75,7 +75,9 @@ $key = array_map(function($el) { return "'$el'"; }, (array)$primaryKey);
 <?php if ($rule['rule']): ?>
 			->add('<?= $field ?>', 'valid', ['rule' => '<?= $rule['rule'] ?>'])
 <?php endif; ?>
-<?php if ($rule['allowEmpty']): ?>
+<?php if (is_string($rule['allowEmpty'])): ?>
+			->allowEmpty('<?= $field ?>', '<?= $rule['allowEmpty'] ?>')
+<?php elseif ($rule['allowEmpty']): ?>
 			->allowEmpty('<?= $field ?>')
 <?php else: ?>
 			->validatePresence('<?= $field ?>', 'create')
