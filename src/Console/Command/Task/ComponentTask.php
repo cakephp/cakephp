@@ -17,36 +17,36 @@ namespace Cake\Console\Command\Task;
 use Cake\Console\Command\Task\SimpleBakeTask;
 
 /**
- * Behavior code generator.
+ * Component code generator.
  */
-class BehaviorTask extends SimpleBakeTask {
+class ComponentTask extends SimpleBakeTask {
 
 /**
  * Task name used in path generation.
  *
  * @var string
  */
-	public $pathFragment = 'Model/Behavior/';
+	public $pathFragment = 'Controller/Component/';
 
 /**
  * {@inheritDoc}
  */
 	public function name() {
-		return 'behavior';
+		return 'component';
 	}
 
 /**
  * {@inheritDoc}
  */
 	public function fileName($name) {
-		return $name . 'Behavior.php';
+		return $name . 'Component.php';
 	}
 
 /**
  * {@inheritDoc}
  */
 	public function template() {
-		return 'behavior';
+		return 'component';
 	}
 
 }

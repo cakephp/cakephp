@@ -39,7 +39,7 @@ class ViewTask extends BakeTask {
  *
  * @var array
  */
-	public $path = null;
+	public $pathFragment = 'Template/';
 
 /**
  * Name of the controller being used
@@ -83,13 +83,6 @@ class ViewTask extends BakeTask {
  * @var array
  */
 	public $noTemplateActions = ['delete'];
-
-/**
- * Override the name so the base class can do the right thing.
- *
- * @var string
- */
-	public $name = 'Template';
 
 /**
  * Override initialize

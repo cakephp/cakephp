@@ -33,7 +33,7 @@ class ModelTask extends BakeTask {
  *
  * @var string
  */
-	public $path = null;
+	public $pathFragment = 'Model/';
 
 /**
  * tasks
@@ -69,15 +69,6 @@ class ModelTask extends BakeTask {
  * @var array
  */
 	protected $_validations = [];
-
-/**
- * Override initialize
- *
- * @return void
- */
-	public function initialize() {
-		$this->path = APP . 'Model' . DS;
-	}
 
 /**
  * Execution method always used for tasks

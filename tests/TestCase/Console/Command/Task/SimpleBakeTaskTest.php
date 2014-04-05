@@ -20,10 +20,9 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * BehaviorTaskTest class
- *
+ * SimpleBakeTaskTest class
  */
-class BehaviorTaskTest extends TestCase {
+class SimpleBakeTaskTest extends TestCase {
 
 /**
  * setup method
@@ -35,8 +34,9 @@ class BehaviorTaskTest extends TestCase {
 		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
 
-		$this->Task = $this->getMock('Cake\Console\Command\Task\BehaviorTask',
-			['in', 'err', 'createFile', '_stop', 'clear'],
+		$this->Task = $this->getMock(
+			'Cake\Console\Command\Task\SimpleBakeTask',
+			['in', 'err', 'createFile', '_stop', 'name', 'template', 'fileName'],
 			[$out, $out, $in]
 		);
 		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\TestTask',
@@ -45,7 +45,20 @@ class BehaviorTaskTest extends TestCase {
 		);
 		$this->Task->Template = new TemplateTask($out, $out, $in);
 		$this->Task->Template->initialize();
-		$this->Task->path = '/app/Model/Behavior/';
+
+		$this->Task->pathFragment = 'Model/Behavior/';
+
+		$this->Task->expects($this->any())
+			->method('name')
+			->will($this->returnValue('behavior'));
+
+		$this->Task->expects($this->any())
+			->method('template')
+			->will($this->returnValue('behavior'));
+
+		$this->Task->expects($this->any())
+			->method('fileName')
+			->will($this->returnValue('ExampleBehavior.php'));
 	}
 
 /**
@@ -58,12 +71,12 @@ class BehaviorTaskTest extends TestCase {
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with(
-				'/app/Model/Behavior/ExampleBehavior.php',
+				APP . 'Model/Behavior/ExampleBehavior.php',
 				$this->stringContains('class ExampleBehavior extends Behavior')
 			);
 		$this->Task->Test->expects($this->once())
 			->method('bake')
-			->with('Behavior', 'Example');
+			->with('behavior', 'Example');
 
 		$this->Task->execute();
 	}
@@ -79,7 +92,7 @@ class BehaviorTaskTest extends TestCase {
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with(
-				'/app/Model/Behavior/ExampleBehavior.php',
+				APP . 'Model/Behavior/ExampleBehavior.php',
 				$this->stringContains('class ExampleBehavior extends Behavior')
 			);
 
@@ -98,7 +111,7 @@ class BehaviorTaskTest extends TestCase {
 		$this->Task->plugin = 'TestPlugin';
 		$this->Task->Test->expects($this->once())
 			->method('bake')
-			->with('Behavior', 'Example');
+			->with('behavior', 'Example');
 
 		$this->Task->bakeTest('Example');
 		$this->assertEquals($this->Task->plugin, $this->Task->Test->plugin);
@@ -139,6 +152,34 @@ class BehaviorTaskTest extends TestCase {
 		$this->assertContains('namespace TestPlugin\Model\Behavior;', $result);
 		$this->assertContains('use Cake\ORM\Behavior;', $result);
 		$this->assertContains('class ExampleBehavior extends Behavior {', $result);
+	}
+
+/**
+ * Provider for subclasses.
+ *
+ * @return array
+ */
+	public function subclassProvider() {
+		return [
+			['Cake\Console\Command\Task\BehaviorTask'],
+			['Cake\Console\Command\Task\ComponentTask'],
+			['Cake\Console\Command\Task\HelperTask'],
+		];
+	}
+
+/**
+ * Test that the various implementations are sane.
+ *
+ * @dataProvider subclassProvider
+ * @return void
+ */
+	public function testImplementations($class) {
+		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
+		$task = new $class($out, $out, $in);
+		$this->assertInternalType('string', $task->name());
+		$this->assertInternalType('string', $task->fileName('Example'));
+		$this->assertInternalType('string', $task->template());
 	}
 
 }

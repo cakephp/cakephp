@@ -747,15 +747,14 @@ class ModelTaskTest extends TestCase {
  */
 	public function testExecuteWithNamedModel() {
 		$this->Task->connection = 'test';
-		$this->Task->path = $this->_normalizePath('/my/path/');
 		$this->Task->args = ['BakeArticles'];
 
-		$tableFile = $this->_normalizePath('/my/path/Table/BakeArticlesTable.php');
+		$tableFile = $this->_normalizePath(APP . 'Model/Table/BakeArticlesTable.php');
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with($tableFile, $this->stringContains('class BakeArticlesTable extends Table'));
 
-		$entityFile = $this->_normalizePath('/my/path/Entity/BakeArticle.php');
+		$entityFile = $this->_normalizePath(APP . 'Model/Entity/BakeArticle.php');
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with($entityFile, $this->stringContains('class BakeArticle extends Entity'));
@@ -782,10 +781,9 @@ class ModelTaskTest extends TestCase {
  */
 	public function testExecuteWithNamedModelVariations($name) {
 		$this->Task->connection = 'test';
-		$this->Task->path = $this->_normalizePath('/my/path/');
 
 		$this->Task->args = array($name);
-		$filename = $this->_normalizePath('/my/path/Table/BakeArticlesTable.php');
+		$filename = $this->_normalizePath(APP . 'Model/Table/BakeArticlesTable.php');
 
 		$this->Task->expects($this->at(0))
 			->method('createFile')
@@ -805,7 +803,6 @@ class ModelTaskTest extends TestCase {
 		}
 
 		$this->Task->connection = 'test';
-		$this->Task->path = $this->_normalizePath('/my/path/');
 		$this->Task->args = ['all'];
 
 		$this->Task->Fixture->expects($this->exactly($count))
@@ -813,52 +810,52 @@ class ModelTaskTest extends TestCase {
 		$this->Task->Test->expects($this->exactly($count))
 			->method('bake');
 
-		$filename = $this->_normalizePath('/my/path/Table/BakeArticlesTable.php');
+		$filename = $this->_normalizePath(APP . 'Model/Table/BakeArticlesTable.php');
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with($filename, $this->stringContains('class BakeArticlesTable extends'));
 
-		$filename = $this->_normalizePath('/my/path/Entity/BakeArticle.php');
+		$filename = $this->_normalizePath(APP . 'Model/Entity/BakeArticle.php');
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with($filename, $this->stringContains('class BakeArticle extends'));
 
-		$filename = $this->_normalizePath('/my/path/Table/BakeArticlesBakeTagsTable.php');
+		$filename = $this->_normalizePath(APP . 'Model/Table/BakeArticlesBakeTagsTable.php');
 		$this->Task->expects($this->at(2))
 			->method('createFile')
 			->with($filename, $this->stringContains('class BakeArticlesBakeTagsTable extends'));
 
-		$filename = $this->_normalizePath('/my/path/Entity/BakeArticlesBakeTag.php');
+		$filename = $this->_normalizePath(APP . 'Model/Entity/BakeArticlesBakeTag.php');
 		$this->Task->expects($this->at(3))
 			->method('createFile')
 			->with($filename, $this->stringContains('class BakeArticlesBakeTag extends'));
 
-		$filename = $this->_normalizePath('/my/path/Table/BakeCommentsTable.php');
+		$filename = $this->_normalizePath(APP . 'Model/Table/BakeCommentsTable.php');
 		$this->Task->expects($this->at(4))
 			->method('createFile')
 			->with($filename, $this->stringContains('class BakeCommentsTable extends'));
 
-		$filename = $this->_normalizePath('/my/path/Entity/BakeComment.php');
+		$filename = $this->_normalizePath(APP . 'Model/Entity/BakeComment.php');
 		$this->Task->expects($this->at(5))
 			->method('createFile')
 			->with($filename, $this->stringContains('class BakeComment extends'));
 
-		$filename = $this->_normalizePath('/my/path/Table/BakeTagsTable.php');
+		$filename = $this->_normalizePath(APP . 'Model/Table/BakeTagsTable.php');
 		$this->Task->expects($this->at(6))
 			->method('createFile')
 			->with($filename, $this->stringContains('class BakeTagsTable extends'));
 
-		$filename = $this->_normalizePath('/my/path/Entity/BakeTag.php');
+		$filename = $this->_normalizePath(APP . 'Model/Entity/BakeTag.php');
 		$this->Task->expects($this->at(7))
 			->method('createFile')
 			->with($filename, $this->stringContains('class BakeTag extends'));
 
-		$filename = $this->_normalizePath('/my/path/Table/CategoryThreadsTable.php');
+		$filename = $this->_normalizePath(APP . 'Model/Table/CategoryThreadsTable.php');
 		$this->Task->expects($this->at(8))
 			->method('createFile')
 			->with($filename, $this->stringContains('class CategoryThreadsTable extends'));
 
-		$filename = $this->_normalizePath('/my/path/Entity/CategoryThread.php');
+		$filename = $this->_normalizePath(APP . 'Model/Entity/CategoryThread.php');
 		$this->Task->expects($this->at(9))
 			->method('createFile')
 			->with($filename, $this->stringContains('class CategoryThread extends'));
@@ -878,7 +875,6 @@ class ModelTaskTest extends TestCase {
 		}
 
 		$this->Task->connection = 'test';
-		$this->Task->path = $this->_normalizePath('/my/path/');
 		$this->Task->args = ['all'];
 		$this->Task->skipTables = ['bake_tags'];
 
@@ -887,32 +883,32 @@ class ModelTaskTest extends TestCase {
 		$this->Task->Test->expects($this->exactly(7))
 			->method('bake');
 
-		$filename = $this->_normalizePath('/my/path/Entity/BakeArticle.php');
+		$filename = $this->_normalizePath(APP . 'Model/Entity/BakeArticle.php');
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with($filename);
 
-		$filename = $this->_normalizePath('/my/path/Entity/BakeArticlesBakeTag.php');
+		$filename = $this->_normalizePath(APP . 'Model/Entity/BakeArticlesBakeTag.php');
 		$this->Task->expects($this->at(3))
 			->method('createFile')
 			->with($filename);
 
-		$filename = $this->_normalizePath('/my/path/Entity/BakeComment.php');
+		$filename = $this->_normalizePath(APP . 'Model/Entity/BakeComment.php');
 		$this->Task->expects($this->at(5))
 			->method('createFile')
 			->with($filename);
 
-		$filename = $this->_normalizePath('/my/path/Entity/CategoryThread.php');
+		$filename = $this->_normalizePath(APP . 'Model/Entity/CategoryThread.php');
 		$this->Task->expects($this->at(7))
 			->method('createFile')
 			->with($filename);
 
-		$filename = $this->_normalizePath('/my/path/Entity/CounterCacheUser.php');
+		$filename = $this->_normalizePath(APP . 'Model/Entity/CounterCacheUser.php');
 		$this->Task->expects($this->at(9))
 			->method('createFile')
 			->with($filename);
 
-		$filename = $this->_normalizePath('/my/path/Entity/NumberTree.php');
+		$filename = $this->_normalizePath(APP . 'Model/Entity/NumberTree.php');
 		$this->Task->expects($this->at(11))
 			->method('createFile')
 			->with($filename);
