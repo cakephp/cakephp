@@ -189,7 +189,7 @@ class ControllerTaskTest extends TestCase {
 	public function testBakePrefixed() {
 		$this->Task->params['prefix'] = 'Admin';
 
-		$filename = str_replace('/', DS, '/my/path/Admin/BakeArticlesController.php');
+		$filename = $this->_normalizePath('/my/path/Admin/BakeArticlesController.php');
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with($filename, $this->anything());

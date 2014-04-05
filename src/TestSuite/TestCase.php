@@ -469,6 +469,16 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 		return $string;
 	}
 
+/**
+ * Normalize a path for comparison.
+ *
+ * @param string $path Path separated by "/" slash.
+ * @return string Normalized path separated by DS.
+ */
+	protected function _normalizePath($path) {
+		return str_replace('/', DS, $path);
+	}
+
 // @codingStandardsIgnoreStart
 
 /**

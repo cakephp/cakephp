@@ -396,7 +396,7 @@ class FixtureTaskTest extends TestCase {
  */
 	public function testGeneratePluginFixtureFile() {
 		$this->Task->connection = 'test';
-		$this->Task->path = str_replace('/', DS, '/my/path/');
+		$this->Task->path = $this->_normalizePath('/my/path/');
 		$this->Task->plugin = 'TestPlugin';
 		$filename = TEST_APP . 'Plugin/TestPlugin/Test/Fixture/ArticleFixture.php';
 		$filename = str_replace('/', DS, $filename);
