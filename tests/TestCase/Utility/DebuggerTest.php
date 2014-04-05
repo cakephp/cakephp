@@ -646,7 +646,7 @@ object(Cake\Test\TestCase\Utility\DebuggableThing) {
 	'inner' => object(Cake\Test\TestCase\Utility\DebuggableThing) {
 
 		[maximum depth reached]
-
+	
 	}
 
 }
