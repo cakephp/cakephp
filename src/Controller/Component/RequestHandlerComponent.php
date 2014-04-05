@@ -563,7 +563,7 @@ class RequestHandlerComponent extends Component {
  */
 	public function respondAs($type, $options = array()) {
 		$defaults = array('index' => null, 'charset' => null, 'attachment' => false);
-		$options = $options + $defaults;
+		$options += $defaults;
 
 		$cType = $type;
 		if (strpos($type, '/') === false) {

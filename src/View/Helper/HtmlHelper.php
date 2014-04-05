@@ -420,7 +420,7 @@ class HtmlHelper extends Helper {
 			$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 		}
 
-		if ($options['rel'] == 'import') {
+		if ($options['rel'] === 'import') {
 			$out = $this->formatTemplate('style', [
 				'attrs' => $this->templater()->formatAttributes($options, ['rel', 'block']),
 				'content' => '@import url(' . $url . ');',

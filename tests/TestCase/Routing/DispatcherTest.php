@@ -1098,7 +1098,7 @@ class DispatcherTest extends TestCase {
  */
 	protected function _cachePath($here) {
 		$path = $here;
-		if ($here == '/') {
+		if ($here === '/') {
 			$path = 'home';
 		}
 		$path = strtolower(Inflector::slug($path));
