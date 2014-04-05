@@ -40,7 +40,7 @@ class BakeShell extends Shell {
  *
  * @var array
  */
-	public $tasks = ['Behavior', 'Project', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test'];
+	public $tasks = ['Behavior', 'Project', 'Model', 'Controller', 'View', 'Helper', 'Plugin', 'Fixture', 'Test'];
 
 /**
  * The connection being used.
@@ -173,6 +173,9 @@ class BakeShell extends Shell {
 		])->addSubcommand('fixture', [
 			'help' => __d('cake_console', 'Bake a fixture.'),
 			'parser' => $this->Fixture->getOptionParser()
+		])->addSubcommand('helper', [
+			'help' => __d('cake_console', 'Bake a helper.'),
+			'parser' => $this->Helper->getOptionParser()
 		])->addSubcommand('test', [
 			'help' => __d('cake_console', 'Bake a unit test.'),
 			'parser' => $this->Test->getOptionParser()
