@@ -89,7 +89,7 @@ class TreeBehavior extends Behavior {
 				throw new \RuntimeException("Cannot set a node's parent as itself");
 			}
 
-			$parentNode = $this->_getParent($parent);
+			$parentNode = $this->_getNode($parent);
 			$edge = $parentNode->get($config['right']);
 			$entity->set($config['left'], $edge);
 			$entity->set($config['right'], $edge + 1);
@@ -135,31 +135,6 @@ class TreeBehavior extends Behavior {
 	}
 
 /**
- * Returns an entity with the left and right columns for the parent node
- * of the node specified by the passed id.
- *
- * @param mixed $id The id of the node to get its parent for
- * @return \Cake\ORM\Entity
- * @throws \Cake\ORM\Error\RecordNotFoundException if the parent could not be found
- */
-	protected function _getParent($id) {
-		$config = $this->config();
-		$primaryKey = (array)$this->_table->primaryKey();
-		$parentNode = $this->_scope($this->_table->find())
-			->select([$config['left'], $config['right']])
-			->where([$primaryKey[0] => $id])
-			->first();
-
-		if (!$parentNode) {
-			throw new \Cake\ORM\Error\RecordNotFoundException(
-				"Parent node \"{$config['parent']}\" was not found in the tree."
-			);
-		}
-
-		return $parentNode;
-	}
-
-/**
  * Sets the correct left and right values for the passed entity so it can be
  * updated to a new parent. It also makes the hole in the tree so the node
  * move can be done without corrupting the structure.
@@ -171,7 +146,7 @@ class TreeBehavior extends Behavior {
  */
 	protected function _setParent($entity, $parent) {
 		$config = $this->config();
-		$parentNode = $this->_getParent($parent);
+		$parentNode = $this->_getNode($parent);
 		$parentLeft = $parentNode->get($config['left']);
 		$parentRight = $parentNode->get($config['right']);
 		$right = $entity->get($config['right']);
@@ -306,14 +281,12 @@ class TreeBehavior extends Behavior {
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 
 		if ($direct) {
-			$count = $this->_table->find()
+			return $this->_scope($this->_table->find())
 				->where([$parent => $id])
 				->count();
-			return $count;
 		}
 
-		$node = $this->_table->get($id, [$this->_table->primaryKey() => $id]);
-
+		$node = $this->_getNode($id);
 		return ($node->{$right} - $node->{$left} - 1) / 2;
 	}
 
@@ -338,7 +311,6 @@ class TreeBehavior extends Behavior {
 		$options += ['for' => null, 'direct' => false];
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 		list($for, $direct) = [$options['for'], $options['direct']];
-		$primaryKey = $this->_table->primaryKey();
 
 		if (empty($for)) {
 			throw new \InvalidArgumentException("The 'for' key is required for find('children')");
@@ -352,15 +324,7 @@ class TreeBehavior extends Behavior {
 			return $this->_scope($query)->where([$parent => $for]);
 		}
 
-		$node = $this->_scope($this->_table->find())
-			->select([$right, $left])
-			->where([$primaryKey => $for])
-			->first();
-
-		if (!$node) {
-			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$for}\" was not found in the tree.");
-		}
-
+		$node = $this->_getNode($for);
 		return $this->_scope($query)
 			->where([
 				"{$right} <" => $node->{$right},
@@ -382,20 +346,12 @@ class TreeBehavior extends Behavior {
 	public function moveUp($id, $number = 1) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
-		$primaryKey = $this->_table->primaryKey();
 
 		if (!$number) {
 			return false;
 		}
 
-		$node = $this->_scope($this->_table->find())
-			->select([$parent, $left, $right])
-			->where([$primaryKey => $id])
-			->first();
-
-		if (!$node) {
-			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
-		}
+		$node = $this->_getNode($id);
 
 		if ($node->{$parent}) {
 			$parentNode = $this->_table->get($node->{$parent}, ['fields' => [$left, $right]]);
@@ -444,20 +400,12 @@ class TreeBehavior extends Behavior {
 	public function moveDown($id, $number = 1) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
-		$primaryKey = $this->_table->primaryKey();
 
 		if (!$number) {
 			return false;
 		}
 
-		$node = $this->_scope($this->_table->find())
-			->select([$parent, $left, $right])
-			->where([$primaryKey => $id])
-			->first();
-
-		if (!$node) {
-			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
-		}
+		$node = $this->_getNode($id);
 
 		if ($node->{$parent}) {
 			$parentNode = $this->_table->get($node->{$parent}, ['fields' => [$left, $right]]);
@@ -490,6 +438,29 @@ class TreeBehavior extends Behavior {
 		}
 
 		return true;
+	}
+
+/**
+ * Returns a single node from the tree from its primary key
+ *
+ * @param mixed $id
+ * @return Cake\ORM\Entity
+ */
+	protected function _getNode($id) {
+		$config = $this->config();
+		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
+		$primaryKey = $this->_table->primaryKey();
+
+		$node = $this->_scope($this->_table->find())
+			->select([$parent, $left, $right])
+			->where([$primaryKey => $id])
+			->first();
+
+		if (!$node) {
+			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
+		}
+
+		return $node;
 	}
 
 /**
