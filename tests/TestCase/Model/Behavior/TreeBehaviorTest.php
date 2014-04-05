@@ -181,7 +181,6 @@ class TreeBehaviorTest extends TestCase {
 		$nodes = $table->find('children', ['for' => 1])->all();
 		$this->assertEquals([3, 4, 5, 2], $nodes->extract('id')->toArray());
 		$this->assertEquals(['lft' => 2, 'rght' => 7], $node->extract(['lft', 'rght']));
-		return;
 	}
 
 /**
