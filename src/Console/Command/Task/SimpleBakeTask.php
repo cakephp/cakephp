@@ -116,7 +116,12 @@ class SimpleBakeTask extends BakeTask {
 		$parser->description(
 			__d('cake_console', 'Bake a %s class file.', $this->name)
 		)->addArgument('name', [
-			'help' => __d('cake_console', 'Name of the %s to bake. Can use Plugin.name to bake controllers into plugins.', $this->name)
+			'help' => __d(
+				'cake_console',
+				'Name of the %s to bake. Can use Plugin.name to bake %s files into plugins.',
+				$this->name,
+				$this->name
+			)
 		])->addOption('plugin', [
 			'short' => 'p',
 			'help' => __d('cake_console', 'Plugin to bake the %s into.', $this->name)

@@ -33,13 +33,6 @@ use Cake\Utility\Inflector;
 class TestTask extends BakeTask {
 
 /**
- * path to TESTS directory
- *
- * @var string
- */
-	public $path = TESTS;
-
-/**
  * Tasks used.
  *
  * @var array
@@ -465,6 +458,20 @@ class TestTask extends BakeTask {
 	}
 
 /**
+ * Get the file path.
+ *
+ * @return string
+ */
+	public function getPath() {
+		$dir = 'Test/TestCase/';
+		$path = ROOT . DS . $dir;
+		if (isset($this->plugin)) {
+			$path = $this->_pluginPath($this->plugin) . $dir;
+		}
+		return $path;
+	}
+
+/**
  * Make the filename for the test case. resolve the suffixes for controllers
  * and get the plugin path if needed.
  *
@@ -473,8 +480,7 @@ class TestTask extends BakeTask {
  * @return string filename the test should be created on.
  */
 	public function testCaseFileName($type, $className) {
-		$path = $this->getPath() . 'TestCase/';
-
+		$path = $this->getPath();
 		$namespace = Configure::read('App.namespace');
 		if ($this->plugin) {
 			$namespace = Plugin::getNamespace($this->plugin);

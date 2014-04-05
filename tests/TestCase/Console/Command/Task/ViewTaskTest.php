@@ -123,7 +123,6 @@ class ViewTaskTest extends TestCase {
 		$this->Task->Template = new TemplateTask($out, $out, $in);
 		$this->Task->Model = $this->getMock('Cake\Console\Command\Task\ModelTask', [], [$out, $out, $in]);
 
-		$this->Task->path = TMP;
 		$this->Task->Template->params['theme'] = 'default';
 		$this->Task->Template->templatePaths = ['default' => CAKE . 'Console/Templates/default/'];
 	}
@@ -228,14 +227,13 @@ class ViewTaskTest extends TestCase {
  */
 	public function testGetPath() {
 		$this->Task->controllerName = 'Posts';
-		$this->Task->path = '/path/Template/';
 
 		$result = $this->Task->getPath();
-		$this->assertPathEquals('/path/Template/Posts/', $result);
+		$this->assertPathEquals(APP . 'Template/Posts/', $result);
 
 		$this->Task->params['prefix'] = 'admin';
 		$result = $this->Task->getPath();
-		$this->assertPathEquals('/path/Template/Admin/Posts/', $result);
+		$this->assertPathEquals(APP . 'Template/Admin/Posts/', $result);
 	}
 
 /**
@@ -245,7 +243,6 @@ class ViewTaskTest extends TestCase {
  */
 	public function testGetPathPlugin() {
 		$this->Task->controllerName = 'Posts';
-		$this->Task->path = '/path/Template/';
 
 		$pluginPath = APP . 'Plugin/TestPlugin/';
 		Plugin::load('TestPlugin', array('path' => $pluginPath));
@@ -342,7 +339,7 @@ class ViewTaskTest extends TestCase {
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments' . DS . 'view.ctp',
+				$this->_normalizePath(APP . 'Template/ViewTaskComments/view.ctp'),
 				$this->stringContains('View Task Comments')
 			);
 
@@ -361,7 +358,7 @@ class ViewTaskTest extends TestCase {
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments' . DS . 'edit.ctp',
+				$this->_normalizePath(APP . 'Template/ViewTaskComments/edit.ctp'),
 				$this->anything()
 			);
 		$result = $this->Task->bake('edit', true);
@@ -382,7 +379,7 @@ class ViewTaskTest extends TestCase {
 
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments' . DS . 'index.ctp',
+				$this->_normalizePath(APP . 'Template/ViewTaskComments/index.ctp'),
 				$this->stringContains("\$viewTaskComment->article->title")
 			);
 		$this->Task->bake('index', true);
@@ -415,17 +412,17 @@ class ViewTaskTest extends TestCase {
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments' . DS . 'view.ctp',
+				$this->_normalizePath(APP . 'Template/ViewTaskComments/view.ctp'),
 				$this->stringContains('View Task Comments')
 			);
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments' . DS . 'edit.ctp',
+				$this->_normalizePath(APP . 'Template/ViewTaskComments/edit.ctp'),
 				$this->stringContains('Edit View Task Comment')
 			);
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments' . DS . 'index.ctp',
+				$this->_normalizePath(APP . 'Template/ViewTaskComments/index.ctp'),
 				$this->stringContains('ViewTaskComment')
 			);
 
@@ -447,7 +444,7 @@ class ViewTaskTest extends TestCase {
 
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
-				TMP . 'ViewTaskComments' . DS . 'my_action.ctp',
+				$this->_normalizePath(APP . 'Template/ViewTaskComments/my_action.ctp'),
 				$this->anything()
 			);
 
@@ -580,7 +577,7 @@ class ViewTaskTest extends TestCase {
 		foreach ($views as $i => $view) {
 			$this->Task->expects($this->at($i))->method('createFile')
 				->with(
-					TMP . 'Blog' . DS . $view,
+					$this->_normalizePath(APP . 'Template/Blog/' . $view),
 					$this->anything()
 				);
 		}
@@ -603,7 +600,7 @@ class ViewTaskTest extends TestCase {
 		foreach ($views as $i => $view) {
 			$this->Task->expects($this->at($i))->method('createFile')
 				->with(
-					TMP . 'Admin' . DS . 'Posts' . DS . $view,
+					$this->_normalizePath(APP . 'Template/Admin/Posts/' . $view),
 					$this->anything()
 				);
 		}

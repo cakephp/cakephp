@@ -66,7 +66,6 @@ class ControllerTaskTest extends TestCase {
 		);
 		$this->Task->name = 'Controller';
 		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
 
 		$this->Task->Template = new TemplateTask($out, $out, $in);
 		$this->Task->Template->params['theme'] = 'default';
@@ -165,7 +164,7 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->params['helpers'] = 'Html,Time';
 		$this->Task->params['components'] = 'Csrf, Auth';
 
-		$filename = '/my/path/BakeArticlesController.php';
+		$filename = APP . 'Controller/BakeArticlesController.php';
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with(
@@ -189,7 +188,7 @@ class ControllerTaskTest extends TestCase {
 	public function testBakePrefixed() {
 		$this->Task->params['prefix'] = 'Admin';
 
-		$filename = $this->_normalizePath('/my/path/Admin/BakeArticlesController.php');
+		$filename = $this->_normalizePath(APP . 'Controller/Admin/BakeArticlesController.php');
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with($filename, $this->anything());
@@ -300,14 +299,13 @@ class ControllerTaskTest extends TestCase {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
 		$this->Task->args = ['all'];
 		$this->Task->params = ['helpers' => 'Time,Text'];
 
 		$this->Task->Test->expects($this->atLeastOnce())
 			->method('bake');
 
-		$filename = '/my/path/BakeArticlesController.php';
+		$filename = APP . 'Controller/BakeArticlesController.php';
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with($filename, $this->logicalAnd(
@@ -338,10 +336,9 @@ class ControllerTaskTest extends TestCase {
  */
 	public function testExecuteWithControllerNameVariations($name) {
 		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
 		$this->Task->args = [$name];
 
-		$filename = '/my/path/BakeArticlesController.php';
+		$filename = APP . 'Controller/BakeArticlesController.php';
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with($filename, $this->stringContains('public function index()'));

@@ -34,13 +34,11 @@ class ControllerTask extends BakeTask {
 	public $tasks = ['Model', 'Test', 'Template'];
 
 /**
- * Override initialize
+ * Path fragment for generated code.
  *
- * @return void
+ * @var string
  */
-	public function initialize() {
-		$this->path = current(App::path('Controller'));
-	}
+	public $pathFragment = 'Controller/';
 
 /**
  * Execution method always used for tasks

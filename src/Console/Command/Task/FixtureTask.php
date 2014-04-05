@@ -37,22 +37,17 @@ class FixtureTask extends BakeTask {
 	public $tasks = ['Model', 'Template'];
 
 /**
- * path to fixtures directory
+ * Get the file path.
  *
- * @var string
+ * @return string
  */
-	public $path = null;
-
-/**
- * Override initialize
- *
- * @param \Cake\Console\ConsoleOutput $stdout A ConsoleOutput object for stdout.
- * @param \Cake\Console\ConsoleOutput $stderr A ConsoleOutput object for stderr.
- * @param \Cake\Console\ConsoleInput $stdin A ConsoleInput object for stdin.
- */
-	public function __construct(ConsoleOutput $stdout = null, ConsoleOutput $stderr = null, ConsoleInput $stdin = null) {
-		parent::__construct($stdout, $stderr, $stdin);
-		$this->path = ROOT . DS . 'Test' . DS . 'Fixture' . DS;
+	public function getPath() {
+		$dir = 'Test/Fixture/';
+		$path = ROOT . DS . $dir;
+		if (isset($this->plugin)) {
+			$path = $this->_pluginPath($this->plugin) . $dir;
+		}
+		return $path;
 	}
 
 /**
@@ -263,19 +258,6 @@ class FixtureTask extends BakeTask {
 		$this->out("\n" . __d('cake_console', 'Baking test fixture for %s...', $model), 1, Shell::QUIET);
 		$this->createFile($path . $filename, $content);
 		return $content;
-	}
-
-/**
- * Get the path to the fixtures.
- *
- * @return string Path for the fixtures
- */
-	public function getPath() {
-		$path = $this->path;
-		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'Test/Fixture/';
-		}
-		return $path;
 	}
 
 /**
