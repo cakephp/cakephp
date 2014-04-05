@@ -24,16 +24,6 @@ use Cake\Utility\Inflector;
 trait ConventionsTrait {
 
 /**
- * Creates the proper controller path for the specified controller class name
- *
- * @param string $name Controller class name
- * @return string Path to controller
- */
-	protected function _controllerPath($name) {
-		return Inflector::underscore($name);
-	}
-
-/**
  * Creates the proper controller plural name for the specified controller class name
  *
  * @param string $name Controller class name
@@ -44,6 +34,16 @@ trait ConventionsTrait {
 	}
 
 /**
+ * Creates a fixture name
+ *
+ * @param string $name Model class name
+ * @return string Singular model key
+ */
+	protected function _fixtureName($name) {
+		return Inflector::underscore(Inflector::singularize($name));
+	}
+
+/**
  * Creates the proper model camelized name (plural) for the specified name
  *
  * @param string $name Name
@@ -51,6 +51,16 @@ trait ConventionsTrait {
  */
 	protected function _modelName($name) {
 		return Inflector::pluralize(Inflector::camelize($name));
+	}
+
+/**
+ * Creates the proper entity name (singular) for the specified name
+ *
+ * @param string $name Name
+ * @return string Camelized and plural model name
+ */
+	protected function _entityName($name) {
+		return Inflector::singularize(Inflector::camelize($name));
 	}
 
 /**
