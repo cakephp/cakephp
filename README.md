@@ -71,4 +71,6 @@ Get Support!
 
 [![Bake Status](https://secure.travis-ci.org/cakephp/cakephp.png?branch=3.0)](http://travis-ci.org/cakephp/cakephp)
 
+[![Coverage Status](https://coveralls.io/repos/cakephp/cakephp/badge.png?branch=3.0-coveralls)](https://coveralls.io/r/cakephp/cakephp?branch=3.0)
+
 ![Cake Power](https://raw.github.com/cakephp/cakephp/master/lib/Cake/Console/Templates/skel/webroot/img/cake.power.gif)
