@@ -374,7 +374,7 @@ class Folder {
  * @return boolean Returns TRUE on success, FALSE on failure
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::chmod
  */
-	public function chmod($path, $mode = false, $recursive = true, $exceptions = array()) {
+	public function chmod($path, $mode = false, $recursive = true, array $exceptions = array()) {
 		if (!$mode) {
 			$mode = $this->mode;
 		}
@@ -727,7 +727,7 @@ class Folder {
  * - `skip` Files/directories to skip.
  * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
  *
- * @param array $options (to, from, chmod, skip, scheme)
+ * @param array|string $options (to, from, chmod, skip, scheme)
  * @return boolean Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::move
  */

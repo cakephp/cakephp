@@ -177,7 +177,7 @@ class Number {
  * @return string Percentage string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toPercentage
  */
-	public static function toPercentage($value, $precision = 2, $options = array()) {
+	public static function toPercentage($value, $precision = 2, array $options = array()) {
 		$options += array('multiply' => false);
 		if ($options['multiply']) {
 			$value *= 100;
@@ -247,7 +247,7 @@ class Number {
  * @return string formatted delta
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::formatDelta
  */
-	public static function formatDelta($value, $options = array()) {
+	public static function formatDelta($value, array $options = array()) {
 		$places = isset($options['places']) ? $options['places'] : 0;
 		$value = number_format($value, $places, '.', '');
 		$sign = $value > 0 ? '+' : '';
@@ -292,7 +292,7 @@ class Number {
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
-	public static function currency($value, $currency = null, $options = array()) {
+	public static function currency($value, $currency = null, array $options = array()) {
 		$default = static::$_currencyDefaults;
 		if ($currency === null) {
 			$currency = static::defaultCurrency();
@@ -365,7 +365,7 @@ class Number {
  * @see NumberHelper::currency()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::addFormat
  */
-	public static function addFormat($formatName, $options) {
+	public static function addFormat($formatName, array $options) {
 		static::$_currencies[$formatName] = $options + static::$_currencyDefaults;
 	}
 
