@@ -1,0 +1,16 @@
+*.diff
+*.err
+*.orig
+*.rej
+*.swo
+*.swp
+*.vi
+*~
+.DS_Store
+.cache
+.project
+.settings
+.svn
+errors.err
+tags
+/nbproject/

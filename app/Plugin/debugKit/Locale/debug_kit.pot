@@ -1,0 +1,138 @@
+# LANGUAGE translation of Debug Kit Application
+# Copyright 2008 Andy Dawson <andydawson76@yahoo.co.uk>
+# No version information was available in the source files.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: debug_kit-\n"
+"POT-Creation-Date: 2009-05-27 09:47+0200\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: Andy Dawson <andydawson76@yahoo.co.uk>\n"
+"Language-Team:\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Basepath: ../../../\n"
+
+#: controllers/components/toolbar.php:91
+msgid "Component initialization and startup"
+msgstr ""
+
+#: controllers/components/toolbar.php:140
+msgid "Controller Action"
+msgstr ""
+
+#: controllers/components/toolbar.php:167
+msgid "Render Controller Action"
+msgstr ""
+
+#: controllers/components/toolbar.php:231
+msgid "Could not load DebugToolbar panel %s"
+msgstr ""
+
+#: views/elements/debug_toolbar.ctp:25
+msgid "There are no active panels. You must enable a panel to see its output."
+msgstr ""
+
+#: views/elements/history_panel.ctp:21
+msgid "Request History"
+msgstr ""
+
+#: views/elements/history_panel.ctp:23
+msgid "No previous requests logged."
+msgstr ""
+
+#: views/elements/history_panel.ctp:25
+msgid "previous requests available"
+msgstr ""
+
+#: views/elements/history_panel.ctp:27
+msgid "Restore to current request"
+msgstr ""
+
+#: views/elements/log_panel.ctp:21
+msgid "Logs"
+msgstr ""
+
+#: views/elements/log_panel.ctp:28
+msgid "Time"
+msgstr ""
+
+#: views/elements/log_panel.ctp:28
+#: views/elements/timer_panel.ctp:54
+msgid "Message"
+msgstr ""
+
+#: views/elements/log_panel.ctp:37
+msgid "There were no log entries made this request"
+msgstr ""
+
+#: views/elements/request_panel.ctp:21
+msgid "Request"
+msgstr ""
+
+#: views/elements/request_panel.ctp:35
+msgid "Current Route"
+msgstr ""
+
+#: views/elements/session_panel.ctp:21
+msgid "Session"
+msgstr ""
+
+#: views/elements/sql_log_panel.ctp:21
+msgid "Sql Logs"
+msgstr ""
+
+#: views/elements/sql_log_panel.ctp:31
+msgid "toggle (%s) query explains for %s"
+msgstr ""
+
+#: views/elements/sql_log_panel.ctp:39
+msgid "No slow queries!, or your database does not support EXPLAIN"
+msgstr ""
+
+#: views/elements/sql_log_panel.ctp:44
+msgid "No active database connections"
+msgstr ""
+
+#: views/elements/timer_panel.ctp:33
+msgid "Memory"
+msgstr ""
+
+#: views/elements/timer_panel.ctp:35
+msgid "Current Memory Use"
+msgstr ""
+
+#: views/elements/timer_panel.ctp:39
+msgid "Peak Memory Use"
+msgstr ""
+
+#: views/elements/timer_panel.ctp:43
+msgid "Timers"
+msgstr ""
+
+#: views/elements/timer_panel.ctp:45
+msgid "%s (ms)"
+msgstr ""
+
+#: views/elements/timer_panel.ctp:46
+msgid "Total Request Time:"
+msgstr ""
+
+#: views/elements/timer_panel.ctp:54
+msgid "Time in ms"
+msgstr ""
+
+#: views/elements/timer_panel.ctp:54
+msgid "Graph"
+msgstr ""
+
+#: views/elements/variables_panel.ctp:21
+msgid "View Variables"
+msgstr ""
+
+#: views/helpers/simple_graph.php:79
+msgid "Starting %sms into the request, taking %sms"
+msgstr ""
+

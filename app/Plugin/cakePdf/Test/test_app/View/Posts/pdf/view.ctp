@@ -1,0 +1,1 @@
+Post data: <?php echo $post; ?>

@@ -1,0 +1,35 @@
+{
+    "name": "cakephp/debug_kit",
+    "description": "CakePHP Debug Kit",
+    "type": "cakephp-plugin",
+    "keywords": ["cakephp", "debug", "kit"],
+    "homepage": "https://github.com/cakephp/debug_kit",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mark Story",
+            "homepage": "http://mark-story.com",
+            "role": "Author"
+        },
+        {
+            "name": "CakePHP Community",
+            "homepage": "https://github.com/cakephp/debug_kit/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/cakephp/debug_kit/issues",
+        "forum": "http://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/debug_kit"
+    },
+    "require": {
+        "php": ">=5.3.0",
+        "composer/installers": "*"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2.x-dev"
+        },
+        "installer-name": "DebugKit"
+    }
+}

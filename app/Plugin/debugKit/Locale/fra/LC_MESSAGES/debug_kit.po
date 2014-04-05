@@ -1,0 +1,135 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# No version information was available in the source files.
+#
+#, fuzzy
+msgid   ""
+msgstr  "Project-Id-Version: PROJECT VERSION\n"
+        "POT-Creation-Date: 2013-06-04 12:00+0200\n"
+        "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+        "Last-Translator: cake17 <gvmail76-inscription@yahoo.fr>\n"
+        "Language-Team: \n"
+        "MIME-Version: 1.0\n"
+        "Content-Type: text/plain; charset=UTF-8\n"
+        "Content-Transfer-Encoding: 8bit\n"
+        "Plural-Forms: nplurals=2; plural=n>1;\n"
+
+#: controllers/components/toolbar.php:91
+msgid   "Component initialization and startup"
+msgstr  "Initialisation du component et démarrage"
+
+#: controllers/components/toolbar.php:140
+msgid   "Controller Action"
+msgstr  "Action du Controller"
+
+#: controllers/components/toolbar.php:167
+msgid   "Render Controller Action"
+msgstr  "Rendu de l'Action du Controller"
+
+#: controllers/components/toolbar.php:231
+msgid   "Could not load DebugToolbar panel %s"
+msgstr  "Ne peut charger le panel %s de DebugToolbar"
+
+#: views/elements/debug_toolbar.ctp:25
+msgid   "There are no active panels. You must enable a panel to see its output."
+msgstr  "Il n'y a pas de panels actifs. Vous devez activer le panel pour voir sa sortie."
+
+#: views/elements/history_panel.ctp:21
+msgid   "Request History"
+msgstr  "Historique des Requêtes"
+
+#: views/elements/history_panel.ctp:23
+msgid   "No previous requests logged."
+msgstr  "Pas de demandes antérieures enregistrées."
+
+#: views/elements/history_panel.ctp:25
+msgid   "previous requests available"
+msgstr  "Des requêtes antérieures sont disponibles"
+
+#: views/elements/history_panel.ctp:27
+msgid   "Restore to current request"
+msgstr  "Restaure la requête actuelle"
+
+#: views/elements/log_panel.ctp:21
+msgid   "Logs"
+msgstr  "Logs"
+
+#: views/elements/log_panel.ctp:28
+msgid   "Time"
+msgstr  "Date"
+
+#: views/elements/log_panel.ctp:28 views/elements/timer_panel.ctp:54
+msgid   "Message"
+msgstr  "Message"
+
+#: views/elements/log_panel.ctp:37
+msgid   "There were no log entries made this request"
+msgstr  "Il n'y avait pas d'entrées de log faîtes pour cette requête"
+
+#: views/elements/request_panel.ctp:21
+msgid   "Request"
+msgstr  "Requête"
+
+#: views/elements/request_panel.ctp:35
+msgid   "Current Route"
+msgstr  "Route actuelle"
+
+#: views/elements/session_panel.ctp:21
+msgid   "Session"
+msgstr  "Session"
+
+#: views/elements/sql_log_panel.ctp:21
+msgid   "Sql Logs"
+msgstr  "Logs Sql"
+
+#: views/elements/sql_log_panel.ctp:31
+msgid   "toggle (%s) query explains for %s"
+msgstr  "bascule (%s) requêtes expliquées pour %s"
+
+#: views/elements/sql_log_panel.ctp:39
+msgid   "No slow queries!, or your database does not support EXPLAIN"
+msgstr  "Pas de requêtes lentes!, ou votre base de données ne supporte pas EXPLAIN"
+
+#: views/elements/sql_log_panel.ctp:44
+msgid   "No active database connections"
+msgstr  "Pas de connections actives de la base de données"
+
+#: views/elements/timer_panel.ctp:33
+msgid   "Memory"
+msgstr  "Mémoire"
+
+#: views/elements/timer_panel.ctp:35
+msgid   "Current Memory Use"
+msgstr  "Utilisation de la Mémoire Actuelle"
+
+#: views/elements/timer_panel.ctp:39
+msgid   "Peak Memory Use"
+msgstr  "Utilisation de la Mémoire au niveau maximum"
+
+#: views/elements/timer_panel.ctp:43
+msgid   "Timers"
+msgstr  "Timers"
+
+#: views/elements/timer_panel.ctp:45
+msgid   "%s (ms)"
+msgstr  "%s (ms)"
+
+#: views/elements/timer_panel.ctp:46
+msgid   "Total Request Time:"
+msgstr  "Total du Temps de Requête"
+
+#: views/elements/timer_panel.ctp:54
+msgid   "Time in ms"
+msgstr  "Temps en ms"
+
+#: views/elements/timer_panel.ctp:54
+msgid   "Graph"
+msgstr  "Graph"
+
+#: views/elements/variables_panel.ctp:21
+msgid   "View Variables"
+msgstr  "Variables du View"
+
+#: views/helpers/simple_graph.php:79
+msgid   "Starting %sms into the request, taking %sms"
+msgstr  "Début en %sms de la requête, et prend %sms"

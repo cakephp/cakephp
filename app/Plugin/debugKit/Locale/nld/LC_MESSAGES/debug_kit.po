@@ -1,0 +1,141 @@
+# LANGUAGE translation of Debug Kit Application
+# Copyright 2008 Andy Dawson <andydawson76@yahoo.co.uk>
+# No version information was available in the source files.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: debug_kit-\n"
+"POT-Creation-Date: 2009-05-27 09:47+0200\n"
+"PO-Revision-Date: 2014-03-04 11:41+0200\n"
+"Last-Translator: Marlin Cremers <m.cremers@mms-projects.net>\n"
+"Language-Team: \n"
+"Language: nld\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 1.9-dev\n"
+"X-Poedit-Basepath: ../../../\n"
+
+#: controllers/components/toolbar.php:91
+msgid "Component initialization and startup"
+msgstr "Component initializatie en opstarten"
+
+#: controllers/components/toolbar.php:140
+msgid "Controller Action"
+msgstr "Controller Actie"
+
+#: controllers/components/toolbar.php:167
+msgid "Render Controller Action"
+msgstr "Produceer Controller Actie"
+
+#: controllers/components/toolbar.php:231
+msgid "Could not load DebugToolbar panel %s"
+msgstr "Kon DebugToolbar paneel %s niet laden"
+
+#: views/elements/debug_toolbar.ctp:25
+msgid "There are no active panels. You must enable a panel to see its output."
+msgstr ""
+"Er zijn geen actieve panelen. Je moet een paneel aanzetten om de uitvoer te "
+"zien."
+
+#: views/elements/history_panel.ctp:21
+msgid "Request History"
+msgstr "Aanvraag Geschiedenis"
+
+#: views/elements/history_panel.ctp:23
+msgid "No previous requests logged."
+msgstr "Geen vorige aanvragen gelogged."
+
+#: views/elements/history_panel.ctp:25
+msgid "previous requests available"
+msgstr "vorige aanvraag beschikbaar"
+
+#: views/elements/history_panel.ctp:27
+msgid "Restore to current request"
+msgstr "Herstel naar actuele aanvraag"
+
+#: views/elements/log_panel.ctp:21
+msgid "Logs"
+msgstr "Logs"
+
+#: views/elements/log_panel.ctp:28
+msgid "Time"
+msgstr "Tijd"
+
+#: views/elements/log_panel.ctp:28
+#: views/elements/timer_panel.ctp:54
+msgid "Message"
+msgstr "Bericht"
+
+#: views/elements/log_panel.ctp:37
+msgid "There were no log entries made this request"
+msgstr "Er zijn geen log vermeldingen gemaakt in deze aanvraag"
+
+#: views/elements/request_panel.ctp:21
+msgid "Request"
+msgstr "Aanvraag"
+
+#: views/elements/request_panel.ctp:35
+msgid "Current Route"
+msgstr "Huide Route"
+
+#: views/elements/session_panel.ctp:21
+msgid "Session"
+msgstr "Sessie"
+
+#: views/elements/sql_log_panel.ctp:21
+msgid "Sql Logs"
+msgstr "Sql Logs"
+
+#: views/elements/sql_log_panel.ctp:31
+msgid "toggle (%s) query explains for %s"
+msgstr ""
+
+#: views/elements/sql_log_panel.ctp:39
+msgid "No slow queries!, or your database does not support EXPLAIN"
+msgstr ""
+
+#: views/elements/sql_log_panel.ctp:44
+msgid "No active database connections"
+msgstr "Geen actieve database verbindingen"
+
+#: views/elements/timer_panel.ctp:33
+msgid "Memory"
+msgstr "Geheugen"
+
+#: views/elements/timer_panel.ctp:35
+msgid "Current Memory Use"
+msgstr "Actueel Geheugen Gebruik"
+
+#: views/elements/timer_panel.ctp:39
+msgid "Peak Memory Use"
+msgstr "Hoogste Geheugen Gebruik"
+
+#: views/elements/timer_panel.ctp:43
+msgid "Timers"
+msgstr ""
+
+#: views/elements/timer_panel.ctp:45
+msgid "%s (ms)"
+msgstr "%s (ms)"
+
+#: views/elements/timer_panel.ctp:46
+msgid "Total Request Time:"
+msgstr "Totale Aanvraag Tijd:"
+
+#: views/elements/timer_panel.ctp:54
+msgid "Time in ms"
+msgstr "Tijd in ms"
+
+#: views/elements/timer_panel.ctp:54
+msgid "Graph"
+msgstr "Diagram"
+
+#: views/elements/variables_panel.ctp:21
+msgid "View Variables"
+msgstr "View Variabelen"
+
+#: views/helpers/simple_graph.php:79
+msgid "Starting %sms into the request, taking %sms"
+msgstr ""
