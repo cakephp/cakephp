@@ -268,22 +268,21 @@ class TreeBehavior extends Behavior {
 /**
  * Get the number of children nodes.
  *
- * @param integer|string $id The id of the record to read
+ * @param \Cake\ORM\Entity The entity to count children for
  * @param boolean $direct whether to count all nodes in the subtree or just
  * direct children
  * @return integer Number of children nodes.
  */
-	public function childCount($id, $direct = false) {
+	public function childCount($node, $direct = false) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 
 		if ($direct) {
 			return $this->_scope($this->_table->find())
-				->where([$parent => $id])
+				->where([$parent => $node->get($this->_table->primaryKey())])
 				->count();
 		}
 
-		$node = $this->_getNode($id);
 		return ($node->{$right} - $node->{$left} - 1) / 2;
 	}
 
@@ -378,20 +377,18 @@ class TreeBehavior extends Behavior {
  * If the node is the first child, or is a top level node with no previous node
  * this method will return false
  *
- * @param integer|string $id The id of the record to move
+ * @param \Cake\ORM\Entity $node The node to move
  * @param integer|boolean $number How many places to move the node, or true to move to first position
  * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  * @return boolean true on success, false on failure
  */
-	public function moveUp($id, $number = 1) {
+	public function moveUp($node, $number = 1) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 
 		if (!$number) {
 			return false;
 		}
-
-		$node = $this->_getNode($id);
 
 		if ($node->{$parent}) {
 			$parentNode = $this->_table->get($node->{$parent}, ['fields' => [$left, $right]]);
@@ -420,7 +417,7 @@ class TreeBehavior extends Behavior {
 		}
 
 		if ($number) {
-			$this->moveUp($id, $number);
+			$this->moveUp($node, $number);
 		}
 
 		return true;
@@ -432,12 +429,12 @@ class TreeBehavior extends Behavior {
  * If the node is the last child, or is a top level node with no subsequent node
  * this method will return false
  *
- * @param integer|string $id The id of the record to move
+ * @param \Cake\ORM\Entity $node The node to move
  * @param integer|boolean $number How many places to move the node or true to move to last position
  * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
- * @return boolean true on success, false on failure
+ * @return \Cake\ORM\Entity|boolean the entity after being moved or false on failure
  */
-	public function moveDown($id, $number = 1) {
+	public function moveDown($node, $number = 1) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 
@@ -445,39 +442,49 @@ class TreeBehavior extends Behavior {
 			return false;
 		}
 
-		$node = $this->_getNode($id);
-
-		if ($node->{$parent}) {
-			$parentNode = $this->_table->get($node->{$parent}, ['fields' => [$left, $right]]);
-
-			if (($node->{$right} + 1) == $parentNode->{$right}) {
-				return false;
-			}
+		$parentRight = 0;
+		if ($node->get($parent)) {
+			$parentRight = $this->_getNode($node->get($parent))->get($right);
 		}
 
-		$nextNode = $this->_scope($this->_table->find())
-			->select([$left, $right])
-			->where([$left => $node->{$right} + 1])
-			->first();
-
-		if (!$nextNode) {
-			return false;
+		if ($number === true) {
+			$number = PHP_INT_MAX;
 		}
 
 		$edge = $this->_getMax();
-		$this->_sync($edge - $node->{$left} + 1, '+', "BETWEEN {$node->{$left}} AND {$node->{$right}}");
-		$this->_sync($nextNode->{$left} - $node->{$left}, '-', "BETWEEN {$nextNode->{$left}} AND {$nextNode->{$right}}");
-		$this->_sync($edge - $node->{$left} - ($nextNode->{$right} - $nextNode->{$left}), '-', "> {$edge}");
+		while ($number-- > 0) {
+			list($nodeLeft, $nodeRight) = array_values($node->extract([$left, $right]));
 
-		if (is_int($number)) {
-			$number--;
+			if ($parentRight && ($right + 1 == $parentRight)) {
+				break;
+			}
+
+			$nextNode = $this->_scope($this->_table->find())
+				->select([$left, $right])
+				->where([$left => $nodeRight + 1])
+				->first();
+
+			if (!$nextNode) {
+				break;
+			}
+
+			$this->_sync($edge - $nodeLeft + 1, '+', "BETWEEN {$nodeLeft} AND {$nodeRight}");
+			$this->_sync($nextNode->{$left} - $nodeLeft, '-', "BETWEEN {$nextNode->{$left}} AND {$nextNode->{$right}}");
+			$this->_sync($edge - $nodeLeft - ($nextNode->{$right} - $nextNode->{$left}), '-', "> {$edge}");
+
+			$newLeft = $edge + 1;
+			if ($newLeft >= $nextNode->{$left} || $newLeft <= $nextNode->{$right}) {
+				$newLeft -= $nextNode->{$left} - $nodeLeft;
+			}
+			$newLeft -= $nextNode->{$right} - $nextNode->{$left} - 1;
+
+			$node->set($left, $newLeft);
+			$node->set($right, $newLeft + ($nodeRight - $nodeLeft));
 		}
-
-		if ($number) {
-			$this->moveDown($id, $number);
-		}
-
-		return true;
+		
+		$node->dirty($left, false);
+		$node->dirty($right, false);
+		return $node;
 	}
 
 /**
