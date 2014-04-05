@@ -161,7 +161,7 @@ class PluginTaskTest extends TestCase {
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
-		$file = $path . DS. 'Test' . DS . 'bootstrap.php';
+		$file = $path . DS . 'Test' . DS . 'bootstrap.php';
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
