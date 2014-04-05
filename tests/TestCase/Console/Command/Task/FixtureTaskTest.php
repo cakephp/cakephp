@@ -71,17 +71,8 @@ class FixtureTaskTest extends TestCase {
  *
  * @return void
  */
-<<<<<<< HEAD
-	public function testConstruct() {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-
-		$Task = new FixtureTask($out, $out, $in);
-		$this->assertEquals(ROOT . DS . 'Test' . DS . 'Fixture' . DS, $Task->path);
-=======
 	public function testGetPath() {
-		$this->assertEquals(ROOT . '/Test/Fixture/', $this->Task->getPath());
->>>>>>> Update other bake tasks to use newer style path generation.
+		$this->assertPathEquals(ROOT . '/Test/Fixture/', $this->Task->getPath());
 	}
 
 /**

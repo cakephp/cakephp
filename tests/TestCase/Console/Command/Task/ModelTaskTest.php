@@ -754,7 +754,7 @@ class ModelTaskTest extends TestCase {
 			->method('createFile')
 			->with($tableFile, $this->stringContains('class BakeArticlesTable extends Table'));
 
-		$entityFile = $this->_normalizePath(APP 'Model/Entity/BakeArticle.php');
+		$entityFile = $this->_normalizePath(APP . 'Model/Entity/BakeArticle.php');
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with($entityFile, $this->stringContains('class BakeArticle extends Entity'));
