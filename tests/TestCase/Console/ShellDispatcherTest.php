@@ -135,8 +135,8 @@ class ShellDispatcherTest extends TestCase {
 		$expected = array(
 			'app' => 'new',
 			'webroot' => 'webroot',
-			'working' => str_replace('/', DS, '/var/www/htdocs/new'),
-			'root' => str_replace('/', DS, '/var/www/htdocs')
+			'working' => $this->_normalizePath('/var/www/htdocs/new'),
+			'root' => $this->_normalizePath('/var/www/htdocs')
 		);
 		$Dispatcher->parseParams($params);
 		$this->assertEquals($expected, $Dispatcher->params);
@@ -265,8 +265,8 @@ class ShellDispatcherTest extends TestCase {
 		$expected = array(
 			'app' => 'app',
 			'webroot' => 'webroot',
-			'working' => str_replace('/', DS, '/cake/1.2.x.x/app'),
-			'root' => str_replace('/', DS, '/cake/1.2.x.x'),
+			'working' => $this->_normalizePath('/cake/1.2.x.x/app'),
+			'root' => $this->_normalizePath('/cake/1.2.x.x'),
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
@@ -361,8 +361,8 @@ class ShellDispatcherTest extends TestCase {
 		$expected = array(
 			'app' => 'old',
 			'webroot' => 'webroot',
-			'working' => str_replace('/', DS, '/var/www/htdocs/old'),
-			'root' => str_replace('/', DS, '/var/www/htdocs')
+			'working' => $this->_normalizePath('/var/www/htdocs/old'),
+			'root' => $this->_normalizePath('/var/www/htdocs')
 		);
 		$Dispatcher->parseParams($params);
 		$this->assertEquals($expected, $Dispatcher->params);

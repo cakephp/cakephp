@@ -76,7 +76,7 @@ class FixtureTaskTest extends TestCase {
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
 		$Task = new FixtureTask($out, $out, $in);
-		$this->assertEquals(ROOT . '/Test/Fixture/', $Task->path);
+		$this->assertEquals(ROOT . DS . 'Test' . DS . 'Fixture' . DS, $Task->path);
 	}
 
 /**
@@ -395,9 +395,10 @@ class FixtureTaskTest extends TestCase {
  */
 	public function testGeneratePluginFixtureFile() {
 		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
+		$this->Task->path = $this->_normalizePath('/my/path/');
 		$this->Task->plugin = 'TestPlugin';
 		$filename = TEST_APP . 'Plugin/TestPlugin/Test/Fixture/ArticleFixture.php';
+		$filename = str_replace('/', DS, $filename);
 
 		Plugin::load('TestPlugin');
 		$this->Task->expects($this->at(0))->method('createFile')

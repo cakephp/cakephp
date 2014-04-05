@@ -42,8 +42,8 @@ class PluginTaskTest extends TestCase {
 		);
 		$this->Task->Template = new TemplateTask($this->out, $this->out, $this->in);
 
-		$this->Task->path = TMP . 'tests/';
-		$this->Task->bootstrap = TMP . 'tests/bootstrap.php';
+		$this->Task->path = TMP . 'tests' . DS;
+		$this->Task->bootstrap = TMP . 'tests' . DS . 'bootstrap.php';
 
 		if (!is_dir($this->Task->path)) {
 			mkdir($this->Task->path);
@@ -75,7 +75,7 @@ class PluginTaskTest extends TestCase {
 
 		$path = $this->Task->path . 'BakeTestPlugin';
 
-		$file = $path . '/Controller/BakeTestPluginAppController.php';
+		$file = $path . DS . 'Controller' . DS . 'BakeTestPluginAppController.php';
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
@@ -123,16 +123,16 @@ class PluginTaskTest extends TestCase {
 			->will($this->returnValue('y'));
 
 		$path = $this->Task->path . 'TestPlugin';
-		$file = $path . '/Controller/TestPluginAppController.php';
+		$file = $path . DS . 'Controller' . DS . 'TestPluginAppController.php';
 
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
-		$file = $path . '/phpunit.xml';
+		$file = $path . DS . 'phpunit.xml';
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
-		$file = $path . '/Test/bootstrap.php';
+		$file = $path . DS . 'Test' . DS . 'bootstrap.php';
 		$this->Task->expects($this->at(4))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
@@ -153,15 +153,15 @@ class PluginTaskTest extends TestCase {
 			->will($this->returnValue('y'));
 
 		$path = $this->Task->path . 'BakeTestPlugin';
-		$file = $path . DS . 'Controller/BakeTestPluginAppController.php';
+		$file = $path . DS . 'Controller' . DS . 'BakeTestPluginAppController.php';
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
-		$file = $path . '/phpunit.xml';
+		$file = $path . DS . 'phpunit.xml';
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
-		$file = $path . '/Test/bootstrap.php';
+		$file = $path . DS . 'Test' . DS . 'bootstrap.php';
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
@@ -188,7 +188,7 @@ class PluginTaskTest extends TestCase {
 			array('in', 'out', 'err', 'createFile', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);
-		$this->Task->path = TMP . 'tests/';
+		$this->Task->path = TMP . 'tests' . DS;
 
 		// Make sure the added path is filtered out.
 		$this->Task->expects($this->exactly($last))

@@ -499,25 +499,25 @@ class ShellTest extends TestCase {
  */
 	public function testShortPath() {
 		$path = $expected = DS . 'tmp/ab/cd';
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
+		$this->assertPathEquals($expected, $this->Shell->shortPath($path));
 
 		$path = $expected = DS . 'tmp/ab/cd/';
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
+		$this->assertPathEquals($expected, $this->Shell->shortPath($path));
 
 		$path = $expected = DS . 'tmp/ab/index.php';
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
+		$this->assertPathEquals($expected, $this->Shell->shortPath($path));
 
 		$path = DS . 'tmp/ab/' . DS . 'cd';
 		$expected = DS . 'tmp/ab/cd';
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
+		$this->assertPathEquals($expected, $this->Shell->shortPath($path));
 
 		$path = 'tmp/ab';
 		$expected = 'tmp/ab';
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
+		$this->assertPathEquals($expected, $this->Shell->shortPath($path));
 
 		$path = 'tmp/ab';
 		$expected = 'tmp/ab';
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
+		$this->assertPathEquals($expected, $this->Shell->shortPath($path));
 
 		$path = APP;
 		$result = $this->Shell->shortPath($path);

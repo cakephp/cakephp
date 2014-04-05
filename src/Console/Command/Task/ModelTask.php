@@ -76,7 +76,7 @@ class ModelTask extends BakeTask {
  * @return void
  */
 	public function initialize() {
-		$this->path = APP . '/Model/';
+		$this->path = APP . 'Model' . DS;
 	}
 
 /**
@@ -538,7 +538,7 @@ class ModelTask extends BakeTask {
 		$out = $this->Template->generate('classes', 'entity');
 
 		$path = $this->getPath();
-		$filename = $path . 'Entity/' . $name . '.php';
+		$filename = $path . 'Entity' . DS . $name . '.php';
 		$this->out("\n" . __d('cake_console', 'Baking entity class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
 		return $out;
@@ -581,7 +581,7 @@ class ModelTask extends BakeTask {
 		$out = $this->Template->generate('classes', 'table');
 
 		$path = $this->getPath();
-		$filename = $path . 'Table/' . $name . 'Table.php';
+		$filename = $path . 'Table' . DS . $name . 'Table.php';
 		$this->out("\n" . __d('cake_console', 'Baking table class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
 		TableRegistry::clear();

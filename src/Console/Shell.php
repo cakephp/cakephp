@@ -705,7 +705,8 @@ class Shell extends Object {
 	public function shortPath($file) {
 		$shortPath = str_replace(ROOT, null, $file);
 		$shortPath = str_replace('..' . DS, '', $shortPath);
-		return str_replace(DS . DS, DS, $shortPath);
+		$shortPath = str_replace(DS, '/', $shortPath);
+		return str_replace('//', DS, $shortPath);
 	}
 
 /**
