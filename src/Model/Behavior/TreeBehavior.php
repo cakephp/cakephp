@@ -299,7 +299,6 @@ class TreeBehavior extends Behavior {
  *
  * @param array $options Array of options as described above
  * @return \Cake\ORM\Query
- * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  * @throws \InvalidArgumentException When the 'for' key is not passed in $options
  */
 	public function findChildren($query, $options) {
@@ -425,7 +424,7 @@ class TreeBehavior extends Behavior {
 			$node->set($left, $newLeft);
 			$node->set($right, $newLeft + ($nodeRight - $nodeLeft));
 		}
-		
+
 		$node->dirty($left, false);
 		$node->dirty($right, false);
 		return $node;
@@ -489,7 +488,7 @@ class TreeBehavior extends Behavior {
 			$node->set($left, $newLeft);
 			$node->set($right, $newLeft + ($nodeRight - $nodeLeft));
 		}
-		
+
 		$node->dirty($left, false);
 		$node->dirty($right, false);
 		return $node;
@@ -500,6 +499,7 @@ class TreeBehavior extends Behavior {
  *
  * @param mixed $id
  * @return Cake\ORM\Entity
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  */
 	protected function _getNode($id) {
 		$config = $this->config();
