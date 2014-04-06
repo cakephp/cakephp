@@ -405,14 +405,7 @@ class TreeBehaviorTest extends TestCase {
 
 		$result = $table->find()->order('lft')->hydrate(false);
 		$expected = [1, 6, 7, 8, 9, 10, 2, 3, 4, 5, 11];
-		$this->assertEquals($expected, $result->extract('id')->toArray());
-		$numbers = [];
-		$result->each(function($v) use (&$numbers) {
-			$numbers[] = $v['lft'];
-			$numbers[] = $v['rght'];
-		});
-		sort($numbers);
-		$this->assertEquals(range(1, 22), $numbers);
+		$this->assertTreeNumbers($expected, $table);
 	}
 
 /**
@@ -471,14 +464,7 @@ class TreeBehaviorTest extends TestCase {
 
 		$result = $table->find()->order('lft')->hydrate(false);
 		$expected = [1, 2, 3, 4, 6, 7, 8, 9, 10, 5, 11];
-		$this->assertEquals($expected, $result->extract('id')->toArray());
-		$numbers = [];
-		$result->each(function($v) use (&$numbers) {
-			$numbers[] = $v['lft'];
-			$numbers[] = $v['rght'];
-		});
-		sort($numbers);
-		$this->assertEquals(range(1, 22), $numbers);
+		$this->assertTreeNumbers($expected, $table);
 	}
 
 /**
@@ -497,14 +483,7 @@ class TreeBehaviorTest extends TestCase {
 
 		$result = $table->find()->order('lft')->hydrate(false);
 		$expected = [1, 6, 7, 8, 9, 10, 11, 2, 3, 4, 5];
-		$this->assertEquals($expected, $result->extract('id')->toArray());
-		$numbers = [];
-		$result->each(function($v) use (&$numbers) {
-			$numbers[] = $v['lft'];
-			$numbers[] = $v['rght'];
-		});
-		sort($numbers);
-		$this->assertEquals(range(1, 22), $numbers);
+		$this->assertTreeNumbers($expected, $table);
 	}
 
 /**
@@ -585,14 +564,7 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(null, $entity->parent_id);
 		$result = $table->find()->order('lft')->hydrate(false);
 		$expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10];
-		$this->assertEquals($expected, $result->extract('id')->toArray());
-		$numbers = [];
-		$result->each(function($v) use (&$numbers) {
-			$numbers[] = $v['lft'];
-			$numbers[] = $v['rght'];
-		});
-		sort($numbers);
-		$this->assertEquals(range(1, 22), $numbers);
+		$this->assertTreeNumbers($expected, $table);
 	}
 
 /**
@@ -611,14 +583,7 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(null, $entity->parent_id);
 		$result = $table->find()->order('lft')->hydrate(false);
 		$expected = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 6];
-		$this->assertEquals($expected, $result->extract('id')->toArray());
-		$numbers = [];
-		$result->each(function($v) use (&$numbers) {
-			$numbers[] = $v['lft'];
-			$numbers[] = $v['rght'];
-		});
-		sort($numbers);
-		$this->assertEquals(range(1, 22), $numbers);
+		$this->assertTreeNumbers($expected, $table);
 	}
 
 /**
@@ -635,8 +600,20 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(21, $entity->lft);
 		$this->assertEquals(22, $entity->rght);
 		$this->assertEquals(null, $entity->parent_id);
-		$result = $table->find()->order('lft')->hydrate(false);
 		$expected = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1];
+		$this->assertTreeNumbers($expected, $table);
+	}
+
+/**
+ * Custom assertion use to verify tha a tree is returned in the expected order
+ * and that it is still valid
+ *
+ * @param array $expected The list of ids in the order they are expected
+ * @param \Cake\ORM\Table the table instance to use for comparing
+ * @return void
+ */
+	public function assertTreeNumbers($expected, $table) {
+		$result = $table->find()->order('lft')->hydrate(false);
 		$this->assertEquals($expected, $result->extract('id')->toArray());
 		$numbers = [];
 		$result->each(function($v) use (&$numbers) {
