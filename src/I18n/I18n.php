@@ -20,7 +20,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Core\StaticConfigTrait;
 use Cake\Error\Exception;
-use Cake\I18n\CatalogRegistry;
+use Cake\I18n\CatalogEngineRegistry;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
@@ -210,7 +210,7 @@ class I18n {
  */
 	protected static function _buildEngine($name) {
 		if (empty(static::$_registry)) {
-			static::$_registry = new CatalogRegistry();
+			static::$_registry = new CatalogEngineRegistry();
 		}
 		if (empty(static::$_config[$name]['className'])) {
 			throw new Exception(sprintf('The "%s" catalog configuration does not exist.', $name));
@@ -288,12 +288,17 @@ class I18n {
 		$_this->domain = $domain . '_' . $_this->l10n->lang;
 
 		if (!isset($_this->_domains[$domain][$_this->_lang])) {
-			$_this->_domains[$domain][$_this->_lang] = [];
-			$_this->_domains[$domain][$_this->_lang] = Cache::read($_this->domain, '_cake_core_');
+			$_this->_domains[$domain][$_this->_lang] = (array)Cache::read($_this->domain, '_cake_core_');
 		}
 
 		if (!isset($_this->_domains[$domain][$_this->_lang][$_this->category])) {
-			$_this->_bindTextDomain($domain);
+			$merge[$domain][$_this->_lang][$_this->category] = $_this->_translations(
+				$domain,
+				$_this->l10n->languagePath,
+				$_this->category
+			);
+			$_this->_domains = Hash::mergeDiff($_this->_domains, $merge);
+
 			Cache::write($_this->domain, $_this->_domains[$domain][$_this->_lang], '_cake_core_');
 		}
 
@@ -303,8 +308,10 @@ class I18n {
 
 		if ($count === null) {
 			$plurals = 0;
-		} elseif (!empty($_this->_domains[$domain][$_this->_lang][$_this->category]["%plural-c"]) && $_this->_noLocale === false) {
-			$header = $_this->_domains[$domain][$_this->_lang][$_this->category]["%plural-c"];
+		} elseif (!empty($_this->_domains[$domain][$_this->_lang][$_this->category]['%plural-c']) &&
+			$_this->_noLocale === false
+		) {
+			$header = $_this->_domains[$domain][$_this->_lang][$_this->category]['%plural-c'];
 			$plurals = $_this->_pluralGuess($header, $count);
 		} else {
 			if ($count != 1) {
@@ -343,6 +350,42 @@ class I18n {
 			return $plural;
 		}
 		return $singular;
+	}
+
+/**
+ * [_translations description]
+ *
+ * @param string $domain [description]
+ * @param array $locales [description]
+ * @param string $category [description]
+ * @return array [description]
+ */
+	protected function _translations($domain, array $locales, $category) {
+		$this->_noLocale = true;
+
+		$config = 'default';
+		if (isset(static::$_config[$domain])) {
+			$config = $domain;
+		}
+
+		$translations = static::engine($config)->read($domain, $locales, $category);
+		if ($translations !== false) {
+			$this->_noLocale = false;
+
+			if (isset($translations['%po-header']['plural-forms'])) {
+				$switch = preg_replace(
+					'/(?:[() {}\\[\\]^\\s*\\]]+)/',
+					'',
+					$translations['%po-header']['plural-forms']
+				);
+				$translations['%plural-c'] = $switch;
+			}
+			unset($translations['%po-header']);
+		} else {
+			$translations = [];
+		}
+
+		return $translations;
 	}
 
 /**

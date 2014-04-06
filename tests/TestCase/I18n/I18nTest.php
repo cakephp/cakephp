@@ -227,6 +227,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('24 ends with any # (translated)', $plurals));
 		$this->assertTrue(in_array('25 ends with any # (translated)', $plurals));
 
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
+
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 0 (from core translated)', $coreSingular);
 
@@ -315,6 +319,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 = 0 or > 1 (translated)', $plurals));
 		$this->assertTrue(in_array('24 = 0 or > 1 (translated)', $plurals));
 		$this->assertTrue(in_array('25 = 0 or > 1 (translated)', $plurals));
+
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
 
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 1 (from core translated)', $coreSingular);
@@ -405,6 +413,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('24 > 1 (translated)', $plurals));
 		$this->assertTrue(in_array('25 > 1 (translated)', $plurals));
 
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
+
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 2 (from core translated)', $coreSingular);
 
@@ -494,6 +506,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
 
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
+
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 3 (from core translated)', $coreSingular);
 
@@ -582,6 +598,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
+
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
 
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 4 (from core translated)', $coreSingular);
@@ -673,6 +693,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
 
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
+
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 5 (from core translated)', $coreSingular);
 
@@ -763,6 +787,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
 
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
+
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 6 (from core translated)', $coreSingular);
 
@@ -851,6 +879,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 ends in 2-4, not 12-14 (translated)', $plurals));
 		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
+
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
 
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 7 (from core translated)', $coreSingular);
@@ -941,6 +973,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
 
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
+
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 8 (from core translated)', $coreSingular);
 
@@ -1030,6 +1066,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 ends in 2-4, not 12-14 (translated)', $plurals));
 		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
+
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
 
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 9 (from core translated)', $coreSingular);
@@ -1123,6 +1163,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
 
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
+
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 10 (from core translated)', $coreSingular);
 
@@ -1213,6 +1257,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
 
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
+
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 11 (from core translated)', $coreSingular);
 
@@ -1301,6 +1349,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
+
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
 
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 12 (from core translated)', $coreSingular);
@@ -1391,6 +1443,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
 
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
+
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 13 (from core translated)', $coreSingular);
 
@@ -1479,6 +1535,10 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
+
+		$this->markTestIncomplete(
+			'The feature of checking core.po for each domain has not been implemented.'
+		);
 
 		$coreSingular = $this->_singularFromCore();
 		$this->assertEquals('Plural Rule 14 (from core translated)', $coreSingular);
@@ -1803,6 +1863,10 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testTimeDefinition() {
+		$this->markTestIncomplete(
+			'Parsing LC_TIME files has not been implemented yet.'
+		);
+
 		Configure::write('Config.language', 'po');
 		$result = __c('d_fmt', 5);
 		$expected = '%m/%d/%Y';
@@ -1823,6 +1887,10 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testTimeDefinitionJapanese() {
+		$this->markTestIncomplete(
+			'Parsing LC_TIME files has not been implemented yet.'
+		);
+
 		Configure::write('Config.language', 'ja_jp');
 		$result = __c('d_fmt', 5);
 
