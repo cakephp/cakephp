@@ -862,12 +862,18 @@ trait CollectionTrait {
 /**
  * 
  *
- * @return void
+ * @return \Cake\Collection\Iterator\TreeIterator
  */
-	public function listNested($nestingKey = 'children') {
+	public function listNested($dir = 'desc', $nestingKey = 'children') {
+		$dir = strtolower($dir);
+		$modes = [
+			'desc' => TreeIterator::SELF_FIRST,
+			'asc' => TreeIterator::CHILD_FIRST,
+			'leaves' => TreeIterator::LEAVES_ONLY
+		];
 		return new TreeIterator(
 			new NestIterator($this, $nestingKey),
-			TreeIterator::SELF_FIRST
+			isset($modes[$dir]) ? $modes[$dir] : $dir
 		);
 	}
 

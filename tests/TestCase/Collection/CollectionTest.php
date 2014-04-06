@@ -873,11 +873,25 @@ class CollectionTest extends TestCase {
 	}
 
 /**
- * Tests the listNested method with the default 'children' nesting key
+ * Provider for testing each of the direcations for listNested
  *
  * @return void
  */
-	public function testListNested() {
+	public function nestedListProvider() {
+		return [
+			['desc', [1, 2, 3, 5, 7, 4, 8, 6, 9, 10]],
+			['asc', [5, 7, 3, 8, 4, 2, 1, 9, 10, 6]],
+			['leaves', [5, 7, 8, 9, 10]]
+		];
+	}
+
+/**
+ * Tests the listNested method with the default 'children' nesting key
+ *
+ * @dataProvider nestedListProvider
+ * @return void
+ */
+	public function testListNested($dir, $expected) {
 		$items = [
 			['id' => 1, 'parent_id' => null],
 			['id' => 2, 'parent_id' => 1],
@@ -890,11 +904,8 @@ class CollectionTest extends TestCase {
 			['id' => 9, 'parent_id' => 6],
 			['id' => 10, 'parent_id' => 6]
 		];
-		$collection = (new Collection($items))->nest('id', 'parent_id')->listNested();
-		$this->assertEquals(
-			[1, 2, 3, 5, 7, 4, 8, 6, 9, 10],
-			$collection->extract('id')->toArray(false)
-		);
+		$collection = (new Collection($items))->nest('id', 'parent_id')->listNested($dir);
+		$this->assertEquals($expected, $collection->extract('id')->toArray(false));
 	}
 
 /**
@@ -907,7 +918,7 @@ class CollectionTest extends TestCase {
 			['id' => 1, 'stuff' => [['id' => 2, 'stuff' => [['id' => 3]]]]],
 			['id' => 4, 'stuff' => [['id' => 5]]]
 		];
-		$collection = (new Collection($items))->listNested('stuff');
+		$collection = (new Collection($items))->listNested('desc', 'stuff');
 		$this->assertEquals(range(1, 5), $collection->extract('id')->toArray(false));
 	}
 

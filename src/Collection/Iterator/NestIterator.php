@@ -38,7 +38,7 @@ class NestIterator extends Collection implements RecursiveIterator{
 		if (is_array($children)) {
 			return !empty($children);
 		}
-		
+
 		if ($children instanceof \Traversable) {
 			return true;
 		}
