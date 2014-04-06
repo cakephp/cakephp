@@ -860,8 +860,35 @@ trait CollectionTrait {
 	}
 
 /**
- * 
+ * Returns a new collection with each of the elements of this collection
+ * after flattening the tree structure. The tree structure is defined
+ * by nesting elements under a key with a known name. It is possible
+ * to specify such name by using the '$nestingKey' parameter.
  *
+ * By default all elements in the tree following a Depth First Search
+ * will be returned, that is, elements from the top parent to the leaves
+ * for each branch.
+ *
+ * It is possible to return all elements from bottom to top using a Breadth First
+ * Search approach by passing the '$dir' parameter with 'asc'. That is, it will
+ * return all elements for the same tree depth first and from bottom to top.
+ *
+ * Finally, you can specify to only get a collection with the leaf nodes in the
+ * tree structure. You do so by passing 'leaves' in the first argument.
+ *
+ * ### Example:
+ *
+ * {{{
+ * $collection = new Collection([
+ *	['id' => 1, 'children' => [['id' => 2, 'children' => [['id' => 3]]]]],
+ *	['id' => 4, 'children' => [['id' => 5]]]
+ * ]);
+ * $flattenedIds = $collection->listNested()->extract('id'); // Yields [1, 2, 3, 4, 5]
+ * }}}
+ *
+ * @param string|int $dir The direction in which to return the elements
+ * @param string|callable $nestingKey The key name under which children are nested
+ * or a callable function that will return the children list
  * @return \Cake\Collection\Iterator\TreeIterator
  */
 	public function listNested($dir = 'desc', $nestingKey = 'children') {
