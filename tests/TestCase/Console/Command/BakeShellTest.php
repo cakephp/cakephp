@@ -111,4 +111,34 @@ class BakeShellTest extends TestCase {
 		$this->Shell->main();
 	}
 
+/**
+ * Test loading tasks from core and app directories.
+ *
+ * @return void
+ */
+	public function testLoadTasks() {
+		$this->Shell->loadTasks();
+		$expected = [
+			'Behavior',
+			'Component',
+			'Controller',
+			'Fixture',
+			'Helper',
+			'Model',
+			'Plugin',
+			'Project',
+			'Test',
+			'View'
+		];
+		$this->assertEquals($expected, $this->Shell->tasks);
+	}
+
+/**
+ * Test loading tasks from plugins
+ *
+ * @return void
+ */
+	public function testLoadTasksPlugin() {
+	}
+
 }

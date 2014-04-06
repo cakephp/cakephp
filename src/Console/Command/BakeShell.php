@@ -18,6 +18,7 @@ use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Model\Model;
 use Cake\Utility\ConventionsTrait;
@@ -104,6 +105,80 @@ class BakeShell extends Shell {
 		$this->out(__d('cake_console', 'view'));
 		$this->out('');
 		$this->out(__d('cake_console', 'Using <info>Console/cake bake [name]</info> you can invoke a specific bake task.'));
+	}
+
+/**
+ * Locate the tasks bake will use.
+ *
+ * Scans the following paths for tasks that are subclasses of
+ * Cake\Console\Command\Task\BakeTask:
+ *
+ * - Cake/Console/Command/Task/
+ * - App/Console/Command/Task/
+ * - Console/Command/Task for each loaded plugin
+ *
+ * @return void
+ */
+	public function loadTasks() {
+		$tasks = [];
+		$tasks = $this->_findTasks($tasks, CAKE, 'Cake');
+		$tasks = $this->_findTasks($tasks, APP, Configure::read('App.namespace'));
+		foreach (Plugin::loaded() as $plugin) {
+			$tasks = $this->_findTasks(
+				$tasks,
+				Plugin::path($plugin),
+				Plugin::getNamespace($plugin),
+				$plugin
+			);
+		}
+		$this->tasks = array_values($tasks);
+		parent::loadTasks();
+	}
+
+/**
+ * Append matching tasks in $path to the $tasks array.
+ *
+ * @param array $tasks The task list to modify and return.
+ * @param string $path The base path to look in.
+ * @param string $namespace The base namespace.
+ * @param string $prefix The prefix to append.
+ * @return array Updated tasks.
+ */
+	protected function _findTasks($tasks, $path, $namespace, $prefix = false) {
+		$path .= 'Console/Command/Task';
+		if (!is_dir($path)) {
+			return $tasks;
+		}
+		$iterator = new \DirectoryIterator($path);
+		$candidates = [];
+		foreach ($iterator as $item) {
+			if ($item->isDot() || $item->isDir()) {
+				continue;
+			}
+			$name = $item->getBasename('.php');
+			$candidates[] = $namespace . '\Console\Command\Task\\' . $name;
+		}
+		$classes = [];
+		foreach ($candidates as $classname) {
+			if (!class_exists($classname)) {
+				continue;
+			}
+			$reflect = new \ReflectionClass($classname);
+			if (!$reflect->isInstantiable()) {
+				continue;
+			}
+			if (!$reflect->isSubclassOf('Cake\Console\Command\Task\BakeTask')) {
+				continue;
+			}
+			$classes[] = $classname;
+		}
+		foreach ($classes as $class) {
+			list($ns, $name) = namespaceSplit($class);
+			$name = substr($name, 0, -4);
+			$fullName = ($prefix ? $prefix . '.' : '') . $name;
+			$tasks[$name] = $fullName;
+		}
+		return $tasks;
 	}
 
 /**
