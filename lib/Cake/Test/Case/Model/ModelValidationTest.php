@@ -2078,7 +2078,7 @@ class ModelValidationTest extends BaseModelTest {
 /**
  * testValidateFirstWithDefaults method
  *
- * return @void
+ * @return void
  */
 	public function testFirstWithDefaults() {
 		$this->loadFixtures('Article', 'Tag', 'Comment', 'User', 'ArticlesTag');

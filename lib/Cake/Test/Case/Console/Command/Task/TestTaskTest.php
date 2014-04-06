@@ -534,6 +534,8 @@ class TestTaskTest extends CakeTestCase {
 
 /**
  * Test generateUses()
+ *
+ * @return void
  */
 	public function testGenerateUses() {
 		$result = $this->Task->generateUses('model', 'Model', 'Post');

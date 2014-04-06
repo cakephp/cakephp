@@ -44,6 +44,8 @@ class FirstGenericObject extends GenericObject {
 
 /**
  * A generic callback
+ *
+ * @return void
  */
 	public function callback() {
 	}
@@ -55,6 +57,9 @@ class FirstGenericObject extends GenericObject {
  */
 class SecondGenericObject extends GenericObject {
 
+/**
+ * @return void
+ */
 	public function callback() {
 	}
 
@@ -65,6 +70,9 @@ class SecondGenericObject extends GenericObject {
  */
 class ThirdGenericObject extends GenericObject {
 
+/**
+ * @return void
+ */
 	public function callback() {
 	}
 

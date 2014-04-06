@@ -69,6 +69,8 @@ class NumberHelperTest extends CakeTestCase {
 
 /**
  * test CakeNumber class methods are called correctly
+ *
+ * @return void
  */
 	public function testNumberHelperProxyMethodCalls() {
 		$methods = array(
@@ -86,6 +88,8 @@ class NumberHelperTest extends CakeTestCase {
 
 /**
  * test engine override
+ *
+ * @return void
  */
 	public function testEngineOverride() {
 		App::build(array(
