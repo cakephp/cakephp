@@ -14,7 +14,7 @@
  */
 namespace Cake\Console\Command\Task;
 
-use Cake\Console\Shell;
+use Cake\Console\Command\Task\BakeTask;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Utility\ConventionsTrait;
@@ -25,16 +25,7 @@ use Cake\Utility\Folder;
  * The Plugin Task handles creating an empty plugin, ready to be used
  *
  */
-class PluginTask extends Shell {
-
-	use ConventionsTrait;
-
-/**
- * path to plugins directory
- *
- * @var array
- */
-	public $path = null;
+class PluginTask extends BakeTask {
 
 /**
  * Path to the bootstrap file. Changed in tests.
