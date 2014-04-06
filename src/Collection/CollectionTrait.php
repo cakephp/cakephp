@@ -876,6 +876,13 @@ trait CollectionTrait {
  * Finally, you can specify to only get a collection with the leaf nodes in the
  * tree structure. You do so by passing 'leaves' in the first argument.
  *
+ * The possible values for the first argument are aliases for the following
+ * constants and it is valid to pass those instead of the alias:
+ *
+ * - desc: TreeIterator::SELF_FIRST
+ * - asc: TreeIterator::CHILD_FIRST
+ * - leaves: TreeIterator::LEAVES_ONLY
+ *
  * ### Example:
  *
  * {{{
