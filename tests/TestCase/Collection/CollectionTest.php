@@ -922,4 +922,19 @@ class CollectionTest extends TestCase {
 		$this->assertEquals(range(1, 5), $collection->extract('id')->toArray(false));
 	}
 
+/**
+ * Tests flattening the collection using a custom callable function
+ *
+ * @return void
+ */
+	public function testListNestedWithCallable() {
+		$items = [
+			['id' => 1, 'stuff' => [['id' => 2, 'stuff' => [['id' => 3]]]]],
+			['id' => 4, 'stuff' => [['id' => 5]]]
+		];
+		$collection = (new Collection($items))->listNested('desc', function($item) {
+			return isset($item['stuff']) ? $item['stuff'] : [];
+		});
+		$this->assertEquals(range(1, 5), $collection->extract('id')->toArray(false));
+	}
 }
