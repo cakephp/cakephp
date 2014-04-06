@@ -268,12 +268,12 @@ class TreeBehavior extends Behavior {
 /**
  * Get the number of children nodes.
  *
- * @param \Cake\ORM\Entity The entity to count children for
+ * @param \Cake\ORM\Entity $node The entity to count children for
  * @param boolean $direct whether to count all nodes in the subtree or just
  * direct children
  * @return integer Number of children nodes.
  */
-	public function childCount($node, $direct = false) {
+	public function childCount(Entity $node, $direct = false) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 
@@ -338,7 +338,7 @@ class TreeBehavior extends Behavior {
  * @return \Cake\ORM\Entity|false the node after being removed from the tree or
  * false on error
  */
-	public function removeFromTree($node) {
+	public function removeFromTree(Entity $node) {
 		$config = $this->config();
 		$left = $node->get($config['left']);
 		$right = $node->get($config['right']);
@@ -381,7 +381,7 @@ class TreeBehavior extends Behavior {
  * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  * @return \Cake\ORM\Entity|boolean $node The node after being moved or false on failure
  */
-	public function moveUp($node, $number = 1) {
+	public function moveUp(Entity $node, $number = 1) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 
@@ -441,7 +441,7 @@ class TreeBehavior extends Behavior {
  * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  * @return \Cake\ORM\Entity|boolean the entity after being moved or false on failure
  */
-	public function moveDown($node, $number = 1) {
+	public function moveDown(Entity $node, $number = 1) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 
