@@ -66,6 +66,7 @@ class NumberHelper extends AppHelper {
 
 /**
  * Call methods from CakeNumber utility class
+ *
  * @return mixed Whatever is returned by called method, or false on failure
  */
 	public function __call($method, $params) {
@@ -100,6 +101,10 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
+ * Formats a number into a percentage string.
+ *
+ * Options:
+ *
  * - `multiply`: Multiply the input value by 100 for decimal percentages.
  *
  * @see CakeNumber::toPercentage()
@@ -164,7 +169,6 @@ class NumberHelper extends AppHelper {
  * @param string $formatName The format name to be used in the future.
  * @param array $options The array of options for this format.
  * @return void
- * @see NumberHelper::currency()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::addFormat
  */
 	public function addFormat($formatName, $options) {
@@ -177,8 +181,7 @@ class NumberHelper extends AppHelper {
  * @see CakeNumber::defaultCurrency()
  *
  * @param string $currency The currency to be used in the future.
- * @return void
- * @see NumberHelper::currency()
+ * @return string Currency
  */
 	public function defaultCurrency($currency) {
 		return $this->_engine->defaultCurrency($currency);
