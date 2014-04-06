@@ -872,4 +872,43 @@ class CollectionTest extends TestCase {
 		);
 	}
 
+/**
+ * Tests the listNested method with the default 'children' nesting key
+ *
+ * @return void
+ */
+	public function testListNested() {
+		$items = [
+			['id' => 1, 'parent_id' => null],
+			['id' => 2, 'parent_id' => 1],
+			['id' => 3, 'parent_id' => 2],
+			['id' => 4, 'parent_id' => 2],
+			['id' => 5, 'parent_id' => 3],
+			['id' => 6, 'parent_id' => null],
+			['id' => 7, 'parent_id' => 3],
+			['id' => 8, 'parent_id' => 4],
+			['id' => 9, 'parent_id' => 6],
+			['id' => 10, 'parent_id' => 6]
+		];
+		$collection = (new Collection($items))->nest('id', 'parent_id')->listNested();
+		$this->assertEquals(
+			[1, 2, 3, 5, 7, 4, 8, 6, 9, 10],
+			$collection->extract('id')->toArray(false)
+		);
+	}
+
+/**
+ * Tests using listNested with a different nesting key
+ *
+ * @return void
+ */
+	public function testListNestedCustomKey() {
+		$items = [
+			['id' => 1, 'stuff' => [['id' => 2, 'stuff' => [['id' => 3]]]]],
+			['id' => 4, 'stuff' => [['id' => 5]]]
+		];
+		$collection = (new Collection($items))->listNested('stuff');
+		$this->assertEquals(range(1, 5), $collection->extract('id')->toArray(false));
+	}
+
 }

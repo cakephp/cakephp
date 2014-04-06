@@ -21,8 +21,10 @@ use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
 use Cake\Collection\Iterator\InsertIterator;
 use Cake\Collection\Iterator\MapReduce;
+use Cake\Collection\Iterator\NestIterator;
 use Cake\Collection\Iterator\ReplaceIterator;
 use Cake\Collection\Iterator\SortIterator;
+use Cake\Collection\Iterator\TreeIterator;
 use LimitIterator;
 
 /**
@@ -855,6 +857,18 @@ trait CollectionTrait {
  */
 	public function compile($preserveKeys = true) {
 		return new Collection($this->toArray($preserveKeys));
+	}
+
+/**
+ * 
+ *
+ * @return void
+ */
+	public function listNested($nestingKey = 'children') {
+		return new TreeIterator(
+			new NestIterator($this, $nestingKey),
+			TreeIterator::SELF_FIRST
+		);
 	}
 
 }
