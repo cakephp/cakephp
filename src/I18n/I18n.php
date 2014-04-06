@@ -306,12 +306,29 @@ class I18n {
 			return $_this->_translateTime($singular, $domain);
 		}
 
+		return $_this->_translateString($singular, $plural, $domain, $_this->category, $count, $_this->_lang);
+	}
+
+/**
+ * [_translateString description]
+ *
+ * @param string $singular [description]
+ * @param string $plural [description]
+ * @param string $domain [description]
+ * @param string $category [description]
+ * @param int $count [description]
+ * @param string $locale [description]
+ * @return string [description]
+ */
+	protected function _translateString($singular, $plural, $domain, $category, $count, $locale) {
+		$_this = I18n::getInstance();
+
 		if ($count === null) {
 			$plurals = 0;
-		} elseif (!empty($_this->_domains[$domain][$_this->_lang][$_this->category]['%plural-c']) &&
+		} elseif (!empty($_this->_domains[$domain][$locale][$category]['%plural-c']) &&
 			$_this->_noLocale === false
 		) {
-			$header = $_this->_domains[$domain][$_this->_lang][$_this->category]['%plural-c'];
+			$header = $_this->_domains[$domain][$locale][$category]['%plural-c'];
 			$plurals = $_this->_pluralGuess($header, $count);
 		} else {
 			if ($count != 1) {
@@ -321,8 +338,8 @@ class I18n {
 			}
 		}
 
-		if (!empty($_this->_domains[$domain][$_this->_lang][$_this->category][$singular])) {
-			if (($trans = $_this->_domains[$domain][$_this->_lang][$_this->category][$singular]) || ($plurals) && ($trans = $_this->_domains[$domain][$_this->_lang][$_this->category][$plural])) {
+		if (!empty($_this->_domains[$domain][$locale][$category][$singular])) {
+			if (($trans = $_this->_domains[$domain][$locale][$category][$singular]) || ($plurals) && ($trans = $_this->_domains[$domain][$locale][$category][$plural])) {
 				if (is_array($trans)) {
 					if (isset($trans[$plurals])) {
 						$trans = $trans[$plurals];
@@ -333,7 +350,7 @@ class I18n {
 								' Check your po file for correct plurals and valid Plural-Forms header.',
 								$singular,
 								$domain,
-								$_this->_lang
+								$locale
 							),
 							E_USER_WARNING
 						);
