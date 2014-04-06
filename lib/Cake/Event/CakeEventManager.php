@@ -222,7 +222,7 @@ class CakeEventManager {
  * Dispatches a new event to all configured listeners
  *
  * @param string|CakeEvent $event the event key name or instance of CakeEvent
- * @return void
+ * @return CakeEvent
  */
 	public function dispatch($event) {
 		if (is_string($event)) {
@@ -231,7 +231,7 @@ class CakeEventManager {
 
 		$listeners = $this->listeners($event->name());
 		if (empty($listeners)) {
-			return;
+			return $event;
 		}
 
 		foreach ($listeners as $listener) {
@@ -250,6 +250,7 @@ class CakeEventManager {
 				$event->result = $result;
 			}
 		}
+		return $event;
 	}
 
 /**
