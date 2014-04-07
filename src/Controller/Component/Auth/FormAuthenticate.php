@@ -25,11 +25,11 @@ use Cake\Network\Response;
  * data. Can be used by configuring AuthComponent to use it via the AuthComponent::$authenticate config.
  *
  * {{{
- *	$this->Auth->authenticate = array(
- *		'Form' => array(
- *			'scope' => array('Users.active' => 1)
- *		)
- *	)
+ *	$this->Auth->authenticate = [
+ *		'Form' => [
+ *			'scope' => ['Users.active' => 1]
+ *		]
+ *	]
  * }}}
  *
  * When configuring FormAuthenticate you can pass in config to which fields, model and additional conditions
@@ -47,7 +47,7 @@ class FormAuthenticate extends BaseAuthenticate {
  * @return boolean False if the fields have not been supplied. True if they exist.
  */
 	protected function _checkFields(Request $request, array $fields) {
-		foreach (array($fields['username'], $fields['password']) as $field) {
+		foreach ([$fields['username'], $fields['password']] as $field) {
 			$value = $request->data($field);
 			if (empty($value) || !is_string($value)) {
 				return false;
