@@ -53,7 +53,7 @@ class Object {
  * @param array $params Parameter list to use when calling $method
  * @return mixed Returns the result of the method call
  */
-	public function dispatchMethod($method, $params = []) {
+	public function dispatchMethod($method, array $params = []) {
 		switch (count($params)) {
 			case 0:
 				return $this->{$method}();

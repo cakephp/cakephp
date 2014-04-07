@@ -64,7 +64,7 @@ class AclComponent extends Component {
  * @param array $config
  * @throws \Cake\Error\Exception when Acl.classname could not be loaded.
  */
-	public function __construct(ComponentRegistry $collection, $config = array()) {
+	public function __construct(ComponentRegistry $collection, array $config = array()) {
 		parent::__construct($collection, $config);
 		$classname = $name = Configure::read('Acl.classname');
 		if (!class_exists($classname)) {

@@ -186,7 +186,7 @@ abstract class BaseAuthenticate {
  * @param array $user The user about to be logged out.
  * @return void
  */
-	public function logout($user) {
+	public function logout(array $user) {
 	}
 
 /**

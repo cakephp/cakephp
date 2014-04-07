@@ -77,7 +77,7 @@ abstract class BaseAuthorize {
  * @param ComponentRegistry $registry The controller for this request.
  * @param array $config An array of config. This class does not use any config.
  */
-	public function __construct(ComponentRegistry $registry, $config = array()) {
+	public function __construct(ComponentRegistry $registry, array $config = array()) {
 		$this->_registry = $registry;
 		$controller = $registry->getController();
 		$this->controller($controller);
@@ -153,7 +153,7 @@ abstract class BaseAuthorize {
  *
  * You can use the custom CRUD operations to create additional generic permissions
  * that behave like CRUD operations. Doing this will require additional columns on the
- * permissions lookup. For example if one wanted an additional search CRUD operation 
+ * permissions lookup. For example if one wanted an additional search CRUD operation
  * one would create and additional column '_search' in the aros_acos table. One could
  * create a custom admin CRUD operation for administration functions similarly if needed.
  *
@@ -161,7 +161,7 @@ abstract class BaseAuthorize {
  * @return mixed Either the current mappings or null when setting.
  * @see AuthComponent::mapActions()
  */
-	public function mapActions($map = array()) {
+	public function mapActions(array $map = array()) {
 		if (empty($map)) {
 			return $this->_config['actionMap'];
 		}

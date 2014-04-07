@@ -116,7 +116,7 @@ class CookieComponent extends Component {
  * @param ComponentRegistry $collection A ComponentRegistry for this component
  * @param array $config Array of config.
  */
-	public function __construct(ComponentRegistry $collection, $config = array()) {
+	public function __construct(ComponentRegistry $collection, array $config = array()) {
 		parent::__construct($collection, $config);
 
 		if (!$this->_config['key']) {

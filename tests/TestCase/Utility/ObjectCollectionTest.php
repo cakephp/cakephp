@@ -34,7 +34,6 @@ class GenericObject {
  */
 	public function __construct(GenericObjectCollection $collection, $settings = array()) {
 		$this->_Collection = $collection;
-		$this->settings = $settings;
 	}
 
 }

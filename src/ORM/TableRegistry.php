@@ -132,7 +132,7 @@ class TableRegistry {
  * @return \Cake\ORM\Table
  * @throws RuntimeException When you try to configure an alias that already exists.
  */
-	public static function get($alias, $options = []) {
+	public static function get($alias, array $options = []) {
 		$exists = isset(static::$_instances[$alias]);
 		if ($exists && !empty($options)) {
 			throw new RuntimeException(sprintf(
