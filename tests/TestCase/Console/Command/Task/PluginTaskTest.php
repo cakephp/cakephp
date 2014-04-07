@@ -114,27 +114,15 @@ class PluginTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithNoArgs() {
-		$this->Task->expects($this->at(0))
-			->method('in')
-			->will($this->returnValue('TestPlugin'));
-
-		$this->Task->expects($this->at(1))
-			->method('in')
-			->will($this->returnValue('y'));
-
 		$path = $this->Task->path . 'TestPlugin';
 		$file = $path . DS . 'Controller' . DS . 'TestPluginAppController.php';
 
-		$this->Task->expects($this->at(2))->method('createFile')
-			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
+		$this->Task->expects($this->at(0))
+			->method('err')
+			->with($this->stringContains('You must'));
 
-		$file = $path . DS . 'phpunit.xml';
-		$this->Task->expects($this->at(3))->method('createFile')
-			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
-
-		$file = $path . DS . 'Test' . DS . 'bootstrap.php';
-		$this->Task->expects($this->at(4))->method('createFile')
-			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
+		$this->Task->expects($this->never())
+			->method('createFile');
 
 		$this->Task->args = array();
 		$this->Task->execute();

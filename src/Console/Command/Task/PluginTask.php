@@ -15,6 +15,7 @@
 namespace Cake\Console\Command\Task;
 
 use Cake\Console\Command\Task\BakeTask;
+use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Utility\ConventionsTrait;
@@ -57,31 +58,18 @@ class PluginTask extends BakeTask {
  * @return void
  */
 	public function execute() {
-		if (isset($this->args[0])) {
-			$plugin = $this->_camelize($this->args[0]);
-			$pluginPath = $this->_pluginPath($plugin);
-			if (is_dir($pluginPath)) {
-				$this->out(__d('cake_console', 'Plugin: %s already exists, no action taken', $plugin));
-				$this->out(__d('cake_console', 'Path: %s', $pluginPath));
-				return false;
-			}
-			$this->_interactive($plugin);
-		} else {
-			return $this->_interactive();
+		if (empty($this->args[0])) {
+			$this->err('<error>You must provide a plugin name in CamelCase format.</error>');
+			$this->err('To make an "Example" plugin, run <info>Console/cake bake plugin Example</info>.');
+			return false;
 		}
-	}
-
-/**
- * Interactive interface
- *
- * @param string $plugin
- * @return void
- */
-	protected function _interactive($plugin = null) {
-		while ($plugin === null) {
-			$plugin = $this->in(__d('cake_console', 'Enter the name of the plugin in CamelCase format'));
+		$plugin = $this->_camelize($this->args[0]);
+		$pluginPath = $this->_pluginPath($plugin);
+		if (is_dir($pluginPath)) {
+			$this->out(__d('cake_console', 'Plugin: %s already exists, no action taken', $plugin));
+			$this->out(__d('cake_console', 'Path: %s', $pluginPath));
+			return false;
 		}
-
 		if (!$this->bake($plugin)) {
 			$this->error(__d('cake_console', "An error occurred trying to bake: %s in %s", $plugin, $this->path . $plugin));
 		}
