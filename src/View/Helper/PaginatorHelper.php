@@ -124,7 +124,7 @@ class PaginatorHelper extends Helper {
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::options
  */
-	public function options($options = array()) {
+	public function options(array $options = array()) {
 		if (!empty($options['paging'])) {
 			if (!isset($this->request->params['paging'])) {
 				$this->request->params['paging'] = array();
@@ -171,7 +171,7 @@ class PaginatorHelper extends Helper {
  *  null if the results are not currently sorted.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortKey
  */
-	public function sortKey($model = null, $options = array()) {
+	public function sortKey($model = null, array $options = array()) {
 		if (empty($options)) {
 			$options = $this->params($model);
 		}
@@ -190,7 +190,7 @@ class PaginatorHelper extends Helper {
  *  null if the results are not currently sorted.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortDir
  */
-	public function sortDir($model = null, $options = array()) {
+	public function sortDir($model = null, array $options = array()) {
 		$dir = null;
 
 		if (empty($options)) {
@@ -263,7 +263,7 @@ class PaginatorHelper extends Helper {
  * @return string A "previous" link or a disabled link.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::prev
  */
-	public function prev($title = '<< Previous', $options = []) {
+	public function prev($title = '<< Previous', array $options = []) {
 		$defaults = [
 			'url' => [],
 			'model' => $this->defaultModel(),
@@ -298,7 +298,7 @@ class PaginatorHelper extends Helper {
  * @return string A "next" link or $disabledTitle text if the link is disabled.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::next
  */
-	public function next($title = 'Next >>', $options = []) {
+	public function next($title = 'Next >>', array $options = []) {
 		$defaults = [
 			'url' => [],
 			'model' => $this->defaultModel(),
@@ -335,7 +335,7 @@ class PaginatorHelper extends Helper {
  *  key the returned link will sort by 'desc'.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sort
  */
-	public function sort($key, $title = null, $options = []) {
+	public function sort($key, $title = null, array $options = []) {
 		$options = array_merge(
 			['url' => array(), 'model' => null, 'escape' => true],
 			$options
@@ -508,7 +508,7 @@ class PaginatorHelper extends Helper {
  *    the following placeholders `{{page}}`, `{{pages}}`, `{{current}}`, `{{count}}`, `{{model}}`, `{{start}}`, `{{end}}` and any
  *    custom content you would like.
  *
- * @param array $options Options for the counter string. See #options for list of keys.
+ * @param string|array $options Options for the counter string. See #options for list of keys.
  * @return string Counter string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::counter
  */
@@ -581,17 +581,11 @@ class PaginatorHelper extends Helper {
  * and the number of pages exceed the modulus. For example if you have 25 pages, and use the first/last
  * options and a modulus of 8, ellipsis content will be inserted after the first and last link sets.
  *
- * @param array $options Options for the numbers, (before, after, model, modulus)
+ * @param array $options Options for the numbers.
  * @return string numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::numbers
  */
-	public function numbers($options = array()) {
-		if ($options === true) {
-			$options = array(
-				'first' => 'first', 'last' => 'last'
-			);
-		}
-
+	public function numbers(array $options = array()) {
 		$defaults = array(
 			'before' => null, 'after' => null, 'model' => $this->defaultModel(),
 			'modulus' => 8, 'first' => null, 'last' => null,
@@ -717,10 +711,10 @@ class PaginatorHelper extends Helper {
  * @return string numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::first
  */
-	public function first($first = '<< first', $options = []) {
+	public function first($first = '<< first', array $options = []) {
 		$options = array_merge(
 			['model' => $this->defaultModel(), 'escape' => true],
-			(array)$options
+			$options
 		);
 
 		$params = $this->params($options['model']);
@@ -769,10 +763,10 @@ class PaginatorHelper extends Helper {
  * @return string numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::last
  */
-	public function last($last = 'last >>', $options = array()) {
+	public function last($last = 'last >>', array $options = array()) {
 		$options = array_merge(
 			['model' => $this->defaultModel(), 'escape' => true],
-			(array)$options
+			$options
 		);
 
 		$params = $this->params($options['model']);

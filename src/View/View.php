@@ -410,7 +410,7 @@ class View extends Object {
  * - `ignoreMissing` - Used to allow missing elements. Set to true to not trigger notices.
  * @return string Rendered Element
  */
-	public function element($name, $data = array(), $options = array()) {
+	public function element($name, array $data = array(), array $options = array()) {
 		$file = $plugin = null;
 
 		if (!isset($options['callbacks'])) {
@@ -926,7 +926,7 @@ class View extends Object {
  * @return Helper a constructed helper object.
  * @see HelperRegistry::load()
  */
-	public function addHelper($helperName, $config = []) {
+	public function addHelper($helperName, array $config = []) {
 		return $this->helpers()->load($helperName, $config);
 	}
 
@@ -1126,7 +1126,7 @@ class View extends Object {
  * Checks if an element is cached and returns the cached data if present
  *
  * @param string $name Element name
- * @param string $data Data
+ * @param array $data Data
  * @param array $options Element options
  * @return string|null
  */

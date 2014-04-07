@@ -146,7 +146,7 @@ class Helper extends Object implements EventListener {
  * @param View $View The View this helper is being attached to.
  * @param array $config Configuration settings for the helper.
  */
-	public function __construct(View $View, $config = array()) {
+	public function __construct(View $View, array $config = array()) {
 		$this->_View = $View;
 		$this->request = $View->request;
 
@@ -249,7 +249,7 @@ class Helper extends Object implements EventListener {
  *   `plugin` False value will prevent parsing path as a plugin
  * @return string Generated URL
  */
-	public function assetUrl($path, $options = array()) {
+	public function assetUrl($path, array $options = array()) {
 		if (is_array($path)) {
 			return $this->url($path, !empty($options['fullBase']));
 		}
@@ -368,7 +368,7 @@ class Helper extends Object implements EventListener {
  * @param string $key the key to use for class.
  * @return array Array of options with $key set.
  */
-	public function addClass($options = array(), $class = null, $key = 'class') {
+	public function addClass(array $options = array(), $class = null, $key = 'class') {
 		if (isset($options[$key]) && trim($options[$key])) {
 			$options[$key] .= ' ' . $class;
 		} else {

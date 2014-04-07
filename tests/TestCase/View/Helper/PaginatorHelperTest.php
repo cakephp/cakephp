@@ -1031,7 +1031,7 @@ class PaginatorHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Paginator->numbers(true);
+		$result = $this->Paginator->numbers(array('first' => 'first', 'last' => 'last'));
 		$expected = array(
 			array('li' => array('class' => 'first')), array('a' => array('href' => '/index')), 'first', '/a', '/li',
 			array('li' => array('class' => 'ellipsis')), '...', '/li',

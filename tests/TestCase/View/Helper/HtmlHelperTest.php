@@ -492,9 +492,6 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testStyle() {
-		$result = $this->Html->style('display: none;');
-		$this->assertEquals('display: none;', $result);
-
 		$result = $this->Html->style(array('display' => 'none', 'margin' => '10px'));
 		$expected = 'display:none; margin:10px;';
 		$this->assertRegExp('/^display\s*:\s*none\s*;\s*margin\s*:\s*10px\s*;?$/', $expected);
@@ -521,7 +518,7 @@ class HtmlHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		Plugin::load('TestPlugin');
-		$result = $this->Html->css('TestPlugin.style', null, array('plugin' => false));
+		$result = $this->Html->css('TestPlugin.style', array('plugin' => false));
 		$expected['link']['href'] = 'preg:/.*css\/TestPlugin\.style\.css/';
 		$this->assertTags($result, $expected);
 		Plugin::unload('TestPlugin');
@@ -582,40 +579,6 @@ class HtmlHelperTest extends TestCase {
 	}
 
 /**
- * Test css link BC usage
- *
- * @return void
- */
-	public function testCssLinkBC() {
-		Configure::write('Asset.filter.css', false);
-
-		Plugin::load('TestPlugin');
-		$result = $this->Html->css('TestPlugin.style', null, array('plugin' => false));
-		$expected = array(
-			'link' => array(
-				'rel' => 'stylesheet',
-				'href' => 'preg:/.*css\/TestPlugin\.style\.css/'
-			)
-		);
-		$this->assertTags($result, $expected);
-		Plugin::unload('TestPlugin');
-
-		$result = $this->Html->css('screen', 'import');
-		$expected = array(
-			'<style',
-			'preg:/@import url\(.*css\/screen\.css\);/',
-			'/style'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Html->css('css_in_head', null, array('block' => true));
-		$this->assertNull($result);
-
-		$result = $this->Html->css('more_css_in_head', null, array('block' => true));
-		$this->assertNull($result);
-	}
-
-/**
  * testCssWithFullBase method
  *
  * @return void
@@ -624,7 +587,7 @@ class HtmlHelperTest extends TestCase {
 		Configure::write('Asset.filter.css', false);
 		$here = $this->Html->url('/', true);
 
-		$result = $this->Html->css('screen', null, array('fullBase' => true));
+		$result = $this->Html->css('screen', array('fullBase' => true));
 		$expected = array(
 			'link' => array('rel' => 'stylesheet', 'href' => $here . 'css/screen.css')
 		);
@@ -1265,7 +1228,7 @@ class HtmlHelperTest extends TestCase {
  * Test the array form of $startText
  */
 	public function testGetCrumbFirstLink() {
-		$result = $this->Html->getCrumbList(null, 'Home');
+		$result = $this->Html->getCrumbList(array(), 'Home');
 		$this->assertTags(
 			$result,
 			array(
@@ -1882,7 +1845,7 @@ class HtmlHelperTest extends TestCase {
 		$this->Html->addCrumb('First', '#first');
 		$this->Html->addCrumb('Second', '#second');
 
-		$result = $this->Html->getCrumbList(null, 'Home');
+		$result = $this->Html->getCrumbList(array(), 'Home');
 		$this->assertTags(
 			$result,
 			array(
@@ -1900,7 +1863,7 @@ class HtmlHelperTest extends TestCase {
 			)
 		);
 
-		$result = $this->Html->getCrumbList(null, array('url' => '/home', 'text' => '<img src="/home.png" />', 'escape' => false));
+		$result = $this->Html->getCrumbList(array(), array('url' => '/home', 'text' => '<img src="/home.png" />', 'escape' => false));
 		$this->assertTags(
 			$result,
 			array(

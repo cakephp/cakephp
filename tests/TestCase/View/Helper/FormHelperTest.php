@@ -2659,19 +2659,19 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->inputs(null, null, array('legend' => 'Field of Dreams', 'fieldset' => true));
+		$result = $this->Form->inputs(null, array(), array('legend' => 'Field of Dreams', 'fieldset' => true));
 		$this->assertContains('<legend>Field of Dreams</legend>', $result);
 		$this->assertContains('<fieldset>', $result);
 
-		$result = $this->Form->inputs('Field of Dreams', null, array('fieldset' => true));
+		$result = $this->Form->inputs('Field of Dreams', array(), array('fieldset' => true));
 		$this->assertContains('<legend>Field of Dreams</legend>', $result);
 		$this->assertContains('<fieldset>', $result);
 
-		$result = $this->Form->inputs(null, null, array('fieldset' => false, 'legend' => false));
+		$result = $this->Form->inputs(null, array(), array('fieldset' => false, 'legend' => false));
 		$this->assertNotContains('<legend>', $result);
 		$this->assertNotContains('<fieldset>', $result);
 
-		$result = $this->Form->inputs(null, null, array('fieldset' => false, 'legend' => 'Hello'));
+		$result = $this->Form->inputs(null, array(), array('fieldset' => false, 'legend' => 'Hello'));
 		$this->assertNotContains('<legend>', $result);
 		$this->assertNotContains('<fieldset>', $result);
 

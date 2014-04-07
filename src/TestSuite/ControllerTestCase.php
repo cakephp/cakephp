@@ -215,13 +215,13 @@ abstract class ControllerTestCase extends TestCase {
 	protected function _testAction($url = '', $options = array()) {
 		$this->vars = $this->result = $this->view = $this->contents = $this->headers = null;
 
-		$options = array_merge(array(
+		$options += array(
 			'query' => array(),
 			'data' => array(),
 			'cookies' => array(),
 			'method' => 'GET',
 			'return' => 'result'
-		), $options);
+		);
 
 		$method = strtoupper($options['method']);
 		$_SERVER['REQUEST_METHOD'] = $method;
@@ -308,7 +308,7 @@ abstract class ControllerTestCase extends TestCase {
  * @throws \Cake\Error\MissingControllerException When controllers could not be created.
  * @throws \Cake\Error\MissingComponentException When components could not be created.
  */
-	public function generate($controller, $mocks = array()) {
+	public function generate($controller, array $mocks = array()) {
 		$classname = App::classname($controller, 'Controller', 'Controller');
 		if (!$classname) {
 			list($plugin, $controller) = pluginSplit($controller);
@@ -322,7 +322,7 @@ abstract class ControllerTestCase extends TestCase {
 			'methods' => array('_stop'),
 			'models' => array(),
 			'components' => array()
-		), (array)$mocks);
+		), $mocks);
 		list(, $controllerName) = namespaceSplit($classname);
 		$name = substr($controllerName, 0, -10);
 
