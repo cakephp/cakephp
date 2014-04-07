@@ -249,7 +249,7 @@ class BakeShell extends Shell {
 			'help' => __d('cake_console', 'Theme to use when baking code.')
 		]);
 
-		foreach ($this->tasks as $task) {
+		foreach ($this->_taskMap as $task => $config) {
 			$taskParser = $this->{$task}->getOptionParser();
 			$parser->addSubcommand(Inflector::underscore($task), [
 				'help' => $taskParser->description(),
