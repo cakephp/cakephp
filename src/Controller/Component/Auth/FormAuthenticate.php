@@ -43,16 +43,12 @@ class FormAuthenticate extends BaseAuthenticate {
  * Checks the fields to ensure they are supplied.
  *
  * @param \Cake\Network\Request $request The request that contains login information.
- * @param string $model The model used for login verification.
  * @param array $fields The fields to be checked.
  * @return boolean False if the fields have not been supplied. True if they exist.
  */
-	protected function _checkFields(Request $request, $model, $fields) {
-		if (empty($request->data[$model])) {
-			return false;
-		}
+	protected function _checkFields(Request $request, array $fields) {
 		foreach (array($fields['username'], $fields['password']) as $field) {
-			$value = $request->data($model . '.' . $field);
+			$value = $request->data($field);
 			if (empty($value) || !is_string($value)) {
 				return false;
 			}
@@ -70,15 +66,13 @@ class FormAuthenticate extends BaseAuthenticate {
  * @return mixed False on login failure.  An array of User data on success.
  */
 	public function authenticate(Request $request, Response $response) {
-		list(, $model) = pluginSplit($this->_config['userModel']);
-
 		$fields = $this->_config['fields'];
-		if (!$this->_checkFields($request, $model, $fields)) {
+		if (!$this->_checkFields($request, $fields)) {
 			return false;
 		}
 		return $this->_findUser(
-			$request->data[$model][$fields['username']],
-			$request->data[$model][$fields['password']]
+			$request->data[$fields['username']],
+			$request->data[$fields['password']]
 		);
 	}
 

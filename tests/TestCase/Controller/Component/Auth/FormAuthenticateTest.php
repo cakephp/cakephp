@@ -78,7 +78,7 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateNoData() {
 		$request = new Request('posts/index');
-		$request->data = array();
+		$request->data = [];
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
@@ -89,7 +89,7 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateNoUsername() {
 		$request = new Request('posts/index');
-		$request->data = array('Users' => array('password' => 'foobar'));
+		$request->data = ['password' => 'foobar'];
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
@@ -100,7 +100,7 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateNoPassword() {
 		$request = new Request('posts/index');
-		$request->data = array('Users' => array('username' => 'mariano'));
+		$request->data = ['username' => 'mariano'];
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
@@ -111,11 +111,10 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function testAuthenticatePasswordIsFalse() {
 		$request = new Request('posts/index', false);
-		$request->data = array(
-			'Users' => array(
-				'username' => 'mariano',
-				'password' => null
-		));
+		$request->data = [
+			'username' => 'mariano',
+			'password' => null
+		];
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
@@ -127,11 +126,10 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function testAuthenticatePasswordIsEmptyString() {
 		$request = new Request('posts/index', false);
-		$request->data = array(
-			'Users' => array(
-				'username' => 'mariano',
-				'password' => ''
-		));
+		$request->data = [
+			'username' => 'mariano',
+			'password' => ''
+		];
 
 		$this->auth = $this->getMock(
 			'Cake\Controller\Component\Auth\FormAuthenticate',
@@ -159,18 +157,16 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateFieldsAreNotString() {
 		$request = new Request('posts/index', false);
-		$request->data = array(
-			'Users' => array(
-				'username' => array('mariano', 'phpnut'),
-				'password' => 'my password'
-		));
+		$request->data = [
+			'username' => ['mariano', 'phpnut'],
+			'password' => 'my password'
+		];
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 
-		$request->data = array(
-			'Users' => array(
-				'username' => 'mariano',
-				'password' => array('password1', 'password2')
-		));
+		$request->data = [
+			'username' => 'mariano',
+			'password' => ['password1', 'password2']
+		];
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
@@ -181,11 +177,10 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateInjection() {
 		$request = new Request('posts/index');
-		$request->data = array(
-			'Users' => array(
-				'username' => '> 1',
-				'password' => "' OR 1 = 1"
-		));
+		$request->data = [
+			'username' => '> 1',
+			'password' => "' OR 1 = 1"
+		];
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
@@ -196,10 +191,10 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateSuccess() {
 		$request = new Request('posts/index');
-		$request->data = array('Users' => array(
+		$request->data = [
 			'username' => 'mariano',
 			'password' => 'password'
-		));
+		];
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(
 			'id' => 1,
@@ -218,10 +213,10 @@ class FormAuthenticateTest extends TestCase {
 	public function testAuthenticateScopeFail() {
 		$this->auth->config('scope', ['Users.id' => 2]);
 		$request = new Request('posts/index');
-		$request->data = array('Users' => array(
+		$request->data = [
 			'username' => 'mariano',
 			'password' => 'password'
-		));
+		];
 
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
@@ -244,10 +239,10 @@ class FormAuthenticateTest extends TestCase {
 		$this->auth->config('userModel', 'TestPlugin.AuthUsers');
 
 		$request = new Request('posts/index');
-		$request->data = array('AuthUsers' => array(
+		$request->data = [
 			'username' => 'gwoo',
 			'password' => 'cake'
-		));
+		];
 
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(
@@ -283,10 +278,10 @@ class FormAuthenticateTest extends TestCase {
 		);
 
 		$request = new Request('posts/index');
-		$request->data = array('Users' => array(
+		$request->data = [
 			'username' => 'mariano',
 			'password' => 'mypass'
-		));
+		];
 
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(
