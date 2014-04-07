@@ -886,7 +886,7 @@ class FormHelper extends Helper {
 	protected function _getInput($fieldName, $options) {
 		switch ($options['type']) {
 			case 'select':
-				$opts = $options['options'];
+				$opts = (array)$options['options'];
 				unset($options['options']);
 				return $this->select($fieldName, $opts, $options);
 			case 'url':
