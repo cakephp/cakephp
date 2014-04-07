@@ -998,6 +998,8 @@ class DboSourceTest extends CakeTestCase {
 
 /**
  * Test getting the last error.
+ *
+ * @return void
  */
 	public function testLastError() {
 		$stmt = $this->getMock('PDOStatement');

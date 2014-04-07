@@ -35,6 +35,11 @@ class CakeTestCaseTest extends CakeTestCase {
  */
 	public $fixtures = array('core.post', 'core.author', 'core.test_plugin_comment');
 
+/**
+ * CakeTestCaseTest::setUpBeforeClass()
+ *
+ * @return void
+ */
 	public static function setUpBeforeClass() {
 		require_once CAKE . 'Test' . DS . 'Fixture' . DS . 'AssertTagsTestCase.php';
 		require_once CAKE . 'Test' . DS . 'Fixture' . DS . 'FixturizedTestCase.php';

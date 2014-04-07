@@ -122,6 +122,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * Print result
  *
  * @param PHPUnit_Framework_TestResult $result
+ * @return void
  */
 	public function printResult(PHPUnit_Framework_TestResult $result) {
 		$this->paintFooter($result);
@@ -131,6 +132,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * Paint result
  *
  * @param PHPUnit_Framework_TestResult $result
+ * @return void
  */
 	public function paintResult(PHPUnit_Framework_TestResult $result) {
 		$this->paintFooter($result);
@@ -142,6 +144,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * @param  PHPUnit_Framework_Test $test
  * @param  Exception              $e
  * @param  float                  $time
+ * @return void
  */
 	public function addError(PHPUnit_Framework_Test $test, Exception $e, $time) {
 		$this->paintException($e, $test);
@@ -153,6 +156,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * @param  PHPUnit_Framework_Test $test
  * @param  PHPUnit_Framework_AssertionFailedError $e
  * @param  float $time
+ * @return void
  */
 	public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time) {
 		$this->paintFail($e, $test);
@@ -164,6 +168,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * @param  PHPUnit_Framework_Test $test
  * @param  Exception $e
  * @param  float $time
+ * @return void
  */
 	public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
 		$this->paintSkip($e, $test);
@@ -175,6 +180,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * @param  PHPUnit_Framework_Test $test
  * @param  Exception $e
  * @param  float $time
+ * @return void
  */
 	public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
 		$this->paintSkip($e, $test);
@@ -184,6 +190,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * A test suite started.
  *
  * @param  PHPUnit_Framework_TestSuite $suite
+ * @return void
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
 		if (!$this->_headerSent) {
@@ -196,6 +203,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * A test suite ended.
  *
  * @param  PHPUnit_Framework_TestSuite $suite
+ * @return void
  */
 	public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
 	}
@@ -204,6 +212,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  * A test started.
  *
  * @param  PHPUnit_Framework_Test $test
+ * @return void
  */
 	public function startTest(PHPUnit_Framework_Test $test) {
 	}
@@ -213,6 +222,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
  *
  * @param  PHPUnit_Framework_Test $test
  * @param  float $time
+ * @return void
  */
 	public function endTest(PHPUnit_Framework_Test $test, $time) {
 		$this->numAssertions += $test->getNumAssertions();
