@@ -429,9 +429,7 @@ class ViewTask extends BakeTask {
 			'help' => __d('cake_console', 'The routing prefix to generate views for.'),
 		])->addSubcommand('all', [
 			'help' => __d('cake_console', 'Bake all CRUD action views for all controllers. Requires models and controllers to exist.')
-		])->epilog(
-			__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.')
-		);
+		]);
 
 		return $parser;
 	}

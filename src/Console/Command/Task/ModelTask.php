@@ -651,7 +651,7 @@ class ModelTask extends BakeTask {
 		$parser = parent::getOptionParser();
 
 		$parser->description(
-			__d('cake_console', 'Bake models.')
+			__d('cake_console', 'Bake table and entity classes.')
 		)->addArgument('name', [
 			'help' => __d('cake_console', 'Name of the model to bake. Can use Plugin.name to bake plugin models.')
 		])->addSubcommand('all', [
