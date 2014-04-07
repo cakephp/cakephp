@@ -938,20 +938,4 @@ class CollectionTest extends TestCase {
 		$this->assertEquals(range(1, 5), $collection->extract('id')->toArray(false));
 	}
 
-	public function testPrinter() {
-		$items = [
-			[
-				'id' => 1,
-				'name' => 'a',
-				'stuff' => [
-					['id' => 2, 'name' => 'b', 'stuff' => [['id' => 3, 'name' => 'c']]]
-				]
-			],
-			['id' => 4, 'name' => 'd', 'stuff' => [['id' => 5, 'name' => 'e']]]
-		];
-		$printer = (new Collection($items))->listNested('desc', 'stuff')->printer('name');
-		foreach ($printer as $k => $p) {
-			debug([$k => $p]);
-		}
-	}
 }
