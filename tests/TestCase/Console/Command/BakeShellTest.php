@@ -106,9 +106,11 @@ class BakeShellTest extends TestCase {
 		$this->Shell->expects($this->at(0))
 			->method('out')
 			->with($this->stringContains('The following commands'));
-		$this->Shell->expects($this->at(3))
+		$this->Shell->expects($this->at(4))
 			->method('out')
-			->with('model');
+			->with('behavior');
+
+		$this->Shell->loadTasks();
 		$this->Shell->main();
 	}
 
