@@ -157,13 +157,6 @@ class I18n {
 	const LC_MESSAGES = 6;
 
 /**
- * Escape string
- *
- * @var string
- */
-	protected $_escape = null;
-
-/**
  * Request object instance
  *
  * @var \Cake\Network\Request
@@ -379,13 +372,21 @@ class I18n {
  */
 	protected function _translations($domain, array $locales, $category) {
 		$this->_noLocale = true;
+		$translations = false;
 
-		$config = 'default';
-		if (isset(static::$_config[$domain])) {
-			$config = $domain;
+		if ($category === 'LC_TIME' && isset(static::$_config['_LC_TIME_'])) {
+			$translations = static::engine('_LC_TIME_')->read($domain, $locales, $category);
 		}
 
-		$translations = static::engine($config)->read($domain, $locales, $category);
+		if ($category !== 'LC_TIME' || $translations === false) {
+			$config = 'default';
+			if (isset(static::$_config[$domain])) {
+				$config = $domain;
+			}
+
+			$translations = static::engine($config)->read($domain, $locales, $category);
+		}
+
 		if ($translations !== false) {
 			$this->_noLocale = false;
 
@@ -472,124 +473,6 @@ class I18n {
 		} elseif (strpos($header, "plurals=5")) {
 			return $n == 1 ? 0 : ($n == 2 ? 1 : ($n >= 3 && $n <= 6 ? 2 : ($n >= 7 && $n <= 10 ? 3 : 4)));
 		}
-	}
-
-/**
- * Parses a locale definition file following the POSIX standard
- *
- * @param string $filename Locale definition filename
- * @return mixed Array of definitions on success or false on failure
- */
-	public static function loadLocaleDefinition($filename) {
-		if (!$file = fopen($filename, 'r')) {
-			return false;
-		}
-
-		$definitions = array();
-		$comment = '#';
-		$escape = '\\';
-		$currentToken = false;
-		$value = '';
-		$_this = I18n::getInstance();
-		while ($line = fgets($file)) {
-			$line = trim($line);
-			if (empty($line) || $line[0] === $comment) {
-				continue;
-			}
-			$parts = preg_split("/[[:space:]]+/", $line);
-			if ($parts[0] === 'comment_char') {
-				$comment = $parts[1];
-				continue;
-			}
-			if ($parts[0] === 'escape_char') {
-				$escape = $parts[1];
-				continue;
-			}
-			$count = count($parts);
-			if ($count === 2) {
-				$currentToken = $parts[0];
-				$value = $parts[1];
-			} elseif ($count === 1) {
-				$value = is_array($value) ? $parts[0] : $value . $parts[0];
-			} else {
-				continue;
-			}
-
-			$len = strlen($value) - 1;
-			if ($value[$len] === $escape) {
-				$value = substr($value, 0, $len);
-				continue;
-			}
-
-			$mustEscape = array($escape . ',', $escape . ';', $escape . '<', $escape . '>', $escape . $escape);
-			$replacements = array_map('crc32', $mustEscape);
-			$value = str_replace($mustEscape, $replacements, $value);
-			$value = explode(';', $value);
-			$_this->_escape = $escape;
-			foreach ($value as $i => $val) {
-				$val = trim($val, '"');
-				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/', array(&$_this, '_parseLiteralValue'), $val);
-				$val = str_replace($replacements, $mustEscape, $val);
-				$value[$i] = $val;
-			}
-			if (count($value) === 1) {
-				$definitions[$currentToken] = array_pop($value);
-			} else {
-				$definitions[$currentToken] = $value;
-			}
-		}
-
-		return $definitions;
-	}
-
-/**
- * Puts the parameters in raw translated strings
- *
- * @param string $translated The raw translated string
- * @param array $args The arguments to put in the translation
- * @return string Translated string with arguments
- */
-	public static function insertArgs($translated, array $args) {
-		if (empty($args)) {
-			return $translated;
-		}
-
-		if (is_array($args[0])) {
-			$args = $args[0];
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
-	}
-
-/**
- * Auxiliary function to parse a symbol from a locale definition file
- *
- * @param string $string Symbol to be parsed
- * @return string parsed symbol
- */
-	protected function _parseLiteralValue($string) {
-		$string = $string[1];
-		if (substr($string, 0, 2) === $this->_escape . 'x') {
-			$delimiter = $this->_escape . 'x';
-			return implode('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
-		}
-		if (substr($string, 0, 2) === $this->_escape . 'd') {
-			$delimiter = $this->_escape . 'd';
-			return implode('', array_map('chr', array_filter(explode($delimiter, $string))));
-		}
-		if ($string[0] === $this->_escape && isset($string[1]) && is_numeric($string[1])) {
-			$delimiter = $this->_escape;
-			return implode('', array_map('chr', array_filter(explode($delimiter, $string))));
-		}
-		if (substr($string, 0, 3) === 'U00') {
-			$delimiter = 'U00';
-			return implode('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
-		}
-		if (preg_match('/U([0-9a-fA-F]{4})/', $string, $match)) {
-			return String::ascii(array(hexdec($match[1])));
-		}
-		return $string;
 	}
 
 /**

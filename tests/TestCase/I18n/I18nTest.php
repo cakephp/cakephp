@@ -1863,10 +1863,6 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testTimeDefinition() {
-		$this->markTestIncomplete(
-			'Parsing LC_TIME files has not been implemented yet.'
-		);
-
 		Configure::write('Config.language', 'po');
 		$result = __c('d_fmt', 5);
 		$expected = '%m/%d/%Y';
@@ -1887,10 +1883,6 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testTimeDefinitionJapanese() {
-		$this->markTestIncomplete(
-			'Parsing LC_TIME files has not been implemented yet.'
-		);
-
 		Configure::write('Config.language', 'ja_jp');
 		$result = __c('d_fmt', 5);
 
@@ -1932,18 +1924,6 @@ class I18nTest extends TestCase {
  */
 	public function testTranslateEmptyDomain() {
 		I18n::translate('Plural Rule 1', null, '');
-	}
-
-/**
- * testLoadLocaleDefinition method
- *
- * @return void
- */
-	public function testLoadLocaleDefinition() {
-		$path = current(App::path('Locale'));
-		$result = I18n::loadLocaleDefinition($path . 'nld' . DS . 'LC_TIME');
-		$expected = array('zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag');
-		$this->assertSame($expected, $result['day']);
 	}
 
 /**

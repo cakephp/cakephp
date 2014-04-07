@@ -134,6 +134,9 @@ Log::config([
 I18n::config([
 	'default' => [
 		'engine' => 'Cake\I18n\Catalog\Gettext'
+	],
+	'_LC_TIME_' => [
+		'engine' => 'Cake\I18n\Catalog\Locale'
 	]
 ]);
 
