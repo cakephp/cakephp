@@ -607,7 +607,7 @@ class Hash {
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::expand
  */
-	public static function expand($data, $separator = '.') {
+	public static function expand(array $data, $separator = '.') {
 		$result = array();
 		foreach ($data as $flat => $value) {
 			$keys = explode($separator, $flat);
@@ -859,7 +859,7 @@ class Hash {
  * @param string $key The key for the data.
  * @return array
  */
-	protected static function _squash($data, $key = null) {
+	protected static function _squash(array $data, $key = null) {
 		$stack = array();
 		foreach ($data as $k => $r) {
 			$id = $k;
@@ -886,7 +886,7 @@ class Hash {
  *    The expression for this function is ($data - $compare) + ($compare - ($data - $compare))
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::diff
  */
-	public static function diff(array $data, $compare) {
+	public static function diff(array $data, array $compare) {
 		if (empty($data)) {
 			return (array)$compare;
 		}
@@ -912,7 +912,7 @@ class Hash {
  * @return array The merged array.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::mergeDiff
  */
-	public static function mergeDiff(array $data, $compare) {
+	public static function mergeDiff(array $data, array $compare) {
 		if (empty($data) && !empty($compare)) {
 			return $compare;
 		}
@@ -982,7 +982,7 @@ class Hash {
  * @see Hash::extract()
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::nest
  */
-	public static function nest(array $data, $options = array()) {
+	public static function nest(array $data, array $options = array()) {
 		if (!$data) {
 			return $data;
 		}

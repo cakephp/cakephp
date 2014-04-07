@@ -274,7 +274,7 @@ class Debugger {
  * @return mixed Formatted stack trace
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::trace
  */
-	public static function trace($options = array()) {
+	public static function trace(array $options = array()) {
 		$self = Debugger::getInstance();
 		$defaults = array(
 			'depth'		=> 999,
@@ -700,7 +700,7 @@ class Debugger {
  * @deprecated Use Debugger::outputAs() and Debugger::addFormat(). Will be removed
  *   in 3.0
  */
-	public function output($format = null, $strings = array()) {
+	public function output($format = null, array $strings = array()) {
 		$self = Debugger::getInstance();
 		$data = null;
 

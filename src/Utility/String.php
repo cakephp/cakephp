@@ -195,7 +195,7 @@ class String {
  * @param array $options An array of options, see description above
  * @return string
  */
-	public static function insert($str, $data, $options = array()) {
+	public static function insert($str, $data, array $options = array()) {
 		$defaults = array(
 			'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false
 		);
@@ -259,7 +259,7 @@ class String {
  * @return string
  * @see String::insert()
  */
-	public static function cleanInsert($str, $options) {
+	public static function cleanInsert($str, array $options) {
 		$clean = $options['clean'];
 		if (!$clean) {
 			return $str;
@@ -412,7 +412,7 @@ class String {
  * @return string The highlighted text
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
  */
-	public static function highlight($text, $phrase, $options = array()) {
+	public static function highlight($text, $phrase, array $options = array()) {
 		if (empty($phrase)) {
 			return $text;
 		}
@@ -477,7 +477,7 @@ class String {
  * @param array $options An array of options.
  * @return string Trimmed string.
  */
-	public static function tail($text, $length = 100, $options = array()) {
+	public static function tail($text, $length = 100, array $options = array()) {
 		$default = array(
 			'ellipsis' => '...', 'exact' => true
 		);
@@ -515,7 +515,7 @@ class String {
  * @return string Trimmed string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
  */
-	public static function truncate($text, $length = 100, $options = array()) {
+	public static function truncate($text, $length = 100, array $options = array()) {
 		$default = array(
 			'ellipsis' => '...', 'exact' => true, 'html' => false
 		);
@@ -671,7 +671,7 @@ class String {
  * @return string The glued together string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::toList
  */
-	public static function toList($list, $and = 'and', $separator = ', ') {
+	public static function toList(array $list, $and = 'and', $separator = ', ') {
 		if (count($list) > 1) {
 			return implode($separator, array_slice($list, null, -1)) . ' ' . $and . ' ' . array_pop($list);
 		}
@@ -743,7 +743,7 @@ class String {
  * @param array $array
  * @return string
  */
-	public static function ascii($array) {
+	public static function ascii(array $array) {
 		$ascii = '';
 
 		foreach ($array as $utf8) {

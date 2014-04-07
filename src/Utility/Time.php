@@ -624,7 +624,7 @@ class Time {
  * NOTE: If the difference is one week or more, the lowest level of accuracy is day
  *
  * @param integer|string|\DateTime $dateTime Datetime UNIX timestamp, strtotime() valid string or DateTime object
- * @param array $options Default format if timestamp is used in $dateString
+ * @param string|array $options Default format if timestamp is used in $dateString
  * @return string Relative time string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::timeAgoInWords
  */
