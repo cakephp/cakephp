@@ -79,29 +79,30 @@ class TreeBehaviorTest extends TestCase {
  */
 	public function testChildCount() {
 		// direct children for the root node
-		$countDirect = $this->table->childCount(1, true);
+		$table = $this->table;
+		$countDirect = $this->table->childCount($table->get(1), true);
 		$this->assertEquals(2, $countDirect);
 
 		// counts all the children of root
-		$count = $this->table->childCount(1, false);
+		$count = $this->table->childCount($table->get(1), false);
 		$this->assertEquals(9, $count);
 
 		// counts direct children
-		$count = $this->table->childCount(2, false);
+		$count = $this->table->childCount($table->get(2), false);
 		$this->assertEquals(3, $count);
 
 		// count children for a middle-node
-		$count = $this->table->childCount(6, false);
+		$count = $this->table->childCount($table->get(6), false);
 		$this->assertEquals(4, $count);
 
 		// count leaf children
-		$count = $this->table->childCount(10, false);
+		$count = $this->table->childCount($table->get(10), false);
 		$this->assertEquals(0, $count);
 
 		// test scoping
 		$table = TableRegistry::get('MenuLinkTrees');
 		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-		$count = $table->childCount(3, false);
+		$count = $table->childCount($table->get(3), false);
 		$this->assertEquals(2, $count);
 	}
 
@@ -117,7 +118,7 @@ class TreeBehaviorTest extends TestCase {
 				return $query->where(['menu' => 'main-menu']);
 			}
 		]);
-		$count = $table->childCount(1, false);
+		$count = $table->childCount($table->get(1), false);
 		$this->assertEquals(4, $count);
 	}
 
@@ -167,23 +168,43 @@ class TreeBehaviorTest extends TestCase {
 		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
 
 		// top level, wont move
-		$this->assertFalse($this->table->moveUp(1, 10));
+		$node = $this->table->moveUp($table->get(1), 10);
+		$this->assertEquals(['lft' => 1, 'rght' => 10], $node->extract(['lft', 'rght']));
 
 		// edge cases
-		$this->assertFalse($this->table->moveUp(1, 0));
-		$this->assertFalse($this->table->moveUp(1, -10));
+		$this->assertFalse($this->table->moveUp($table->get(1), 0));
+		$node = $this->table->moveUp($table->get(1), -10);
+		$this->assertEquals(['lft' => 1, 'rght' => 10], $node->extract(['lft', 'rght']));
 
 		// move inner node
-		$result = $table->moveUp(3, 1);
+		$node = $table->moveUp($table->get(3), 1);
 		$nodes = $table->find('children', ['for' => 1])->all();
 		$this->assertEquals([3, 4, 5, 2], $nodes->extract('id')->toArray());
-		$this->assertTrue($result);
+		$this->assertEquals(['lft' => 2, 'rght' => 7], $node->extract(['lft', 'rght']));
+	}
 
-		// move leaf
-		$this->assertFalse($table->moveUp(5, 1));
+/**
+ * Tests moving a node with no siblings
+ *
+ * @return void
+ */
+	public function testMoveLeaf() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$node = $table->moveUp($table->get(5), 1);
+		$this->assertEquals(['lft' => 6, 'rght' => 7], $node->extract(['lft', 'rght']));
+	}
 
-		// move to first position
-		$table->moveUp(8, true);
+/**
+ * Tests moving a node to the top
+ *
+ * @return void
+ */
+	public function testMoveTop() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$node = $table->moveUp($table->get(8), true);
+		$this->assertEquals(['lft' => 1, 'rght' => 2], $node->extract(['lft', 'rght']));
 		$nodes = $table->find()
 			->select(['id'])
 			->where(function($exp) {
@@ -196,18 +217,6 @@ class TreeBehaviorTest extends TestCase {
 	}
 
 /**
- * Tests that moveUp() will throw an exception if the node was not found
- *
- * @expectedException \Cake\ORM\Error\RecordNotFoundException
- * @return void
- */
-	public function testMoveUpException() {
-		$table = TableRegistry::get('MenuLinkTrees');
-		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-		$table->moveUp(500, 1);
-	}
-
-/**
  * Tests the moveDown() method
  *
  * @return void
@@ -215,25 +224,42 @@ class TreeBehaviorTest extends TestCase {
 	public function testMoveDown() {
 		$table = TableRegistry::get('MenuLinkTrees');
 		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-
 		// latest node, wont move
-		$this->assertFalse($this->table->moveDown(8, 10));
+		$node = $this->table->moveDown($table->get(8), 10);
+		$this->assertEquals(['lft' => 21, 'rght' => 22], $node->extract(['lft', 'rght']));
 
 		// edge cases
-		$this->assertFalse($this->table->moveDown(8, 0));
-		$this->assertFalse($this->table->moveUp(8, -10));
+		$this->assertFalse($this->table->moveDown($table->get(8), 0));
 
 		// move inner node
-		$result = $table->moveDown(2, 1);
+		$node = $table->moveDown($table->get(2), 1);
 		$nodes = $table->find('children', ['for' => 1])->all();
 		$this->assertEquals([3, 4, 5, 2], $nodes->extract('id')->toArray());
-		$this->assertTrue($result);
+		$this->assertEquals(['lft' => 11, 'rght' => 12], $node->extract(['lft', 'rght']));
+	}
 
-		// move leaf
-		$this->assertFalse( $table->moveDown(5, 1));
+/**
+ * Tests moving a node that has no siblings
+ *
+ * @return void
+ */
+	public function testMoveLeafDown() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$node = $table->moveDown($table->get(5), 1);
+		$this->assertEquals(['lft' => 6, 'rght' => 7], $node->extract(['lft', 'rght']));
+	}
 
-		// move to last position
-		$table->moveDown(1, true);
+/**
+ * Tests moving a node to the bottom
+ *
+ * @return void
+ */
+	public function testMoveToBottom() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$node = $table->moveDown($table->get(1), true);
+		$this->assertEquals(['lft' => 7, 'rght' => 16], $node->extract(['lft', 'rght']));
 		$nodes = $table->find()
 			->select(['id'])
 			->where(function($exp) {
@@ -243,18 +269,6 @@ class TreeBehaviorTest extends TestCase {
 			->order(['lft' => 'ASC'])
 			->all();
 		$this->assertEquals([6, 8, 1], $nodes->extract('id')->toArray());
-	}
-
-/**
- * Tests that moveDown() will throw an exception if the node was not found
- *
- * @expectedException \Cake\ORM\Error\RecordNotFoundException
- * @return void
- */
-	public function testMoveDownException() {
-		$table = TableRegistry::get('MenuLinkTrees');
-		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-		$table->moveDown(500, 1);
 	}
 
 /**
@@ -391,14 +405,7 @@ class TreeBehaviorTest extends TestCase {
 
 		$result = $table->find()->order('lft')->hydrate(false);
 		$expected = [1, 6, 7, 8, 9, 10, 2, 3, 4, 5, 11];
-		$this->assertEquals($expected, $result->extract('id')->toArray());
-		$numbers = [];
-		$result->each(function($v) use (&$numbers) {
-			$numbers[] = $v['lft'];
-			$numbers[] = $v['rght'];
-		});
-		sort($numbers);
-		$this->assertEquals(range(1, 22), $numbers);
+		$this->assertTreeNumbers($expected, $table);
 	}
 
 /**
@@ -457,14 +464,7 @@ class TreeBehaviorTest extends TestCase {
 
 		$result = $table->find()->order('lft')->hydrate(false);
 		$expected = [1, 2, 3, 4, 6, 7, 8, 9, 10, 5, 11];
-		$this->assertEquals($expected, $result->extract('id')->toArray());
-		$numbers = [];
-		$result->each(function($v) use (&$numbers) {
-			$numbers[] = $v['lft'];
-			$numbers[] = $v['rght'];
-		});
-		sort($numbers);
-		$this->assertEquals(range(1, 22), $numbers);
+		$this->assertTreeNumbers($expected, $table);
 	}
 
 /**
@@ -483,14 +483,7 @@ class TreeBehaviorTest extends TestCase {
 
 		$result = $table->find()->order('lft')->hydrate(false);
 		$expected = [1, 6, 7, 8, 9, 10, 11, 2, 3, 4, 5];
-		$this->assertEquals($expected, $result->extract('id')->toArray());
-		$numbers = [];
-		$result->each(function($v) use (&$numbers) {
-			$numbers[] = $v['lft'];
-			$numbers[] = $v['rght'];
-		});
-		sort($numbers);
-		$this->assertEquals(range(1, 22), $numbers);
+		$this->assertTreeNumbers($expected, $table);
 	}
 
 /**
@@ -554,6 +547,81 @@ class TreeBehaviorTest extends TestCase {
 		$table->recover();
 		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Tests that a leaf can be taken out of the tree and put in as a root
+ *
+ * @return void
+ */
+	public function testRemoveFromLeafFromTree() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(10);
+		$this->assertSame($entity, $table->removeFromTree($entity));
+		$this->assertEquals(21, $entity->lft);
+		$this->assertEquals(22, $entity->rght);
+		$this->assertEquals(null, $entity->parent_id);
+		$result = $table->find()->order('lft')->hydrate(false);
+		$expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10];
+		$this->assertTreeNumbers($expected, $table);
+	}
+
+/**
+ * Test removing a middle node from a tree
+ *
+ * @return void
+ */
+	public function testRemoveMiddleNodeFromTree() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(6);
+		$this->assertSame($entity, $table->removeFromTree($entity));
+		$result = $table->find('threaded')->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals(21, $entity->lft);
+		$this->assertEquals(22, $entity->rght);
+		$this->assertEquals(null, $entity->parent_id);
+		$result = $table->find()->order('lft')->hydrate(false);
+		$expected = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 6];
+		$this->assertTreeNumbers($expected, $table);
+	}
+
+/**
+ * Tests removing the root of a tree
+ *
+ * @return void
+ */
+	public function testRemoveRootFromTree() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(1);
+		$this->assertSame($entity, $table->removeFromTree($entity));
+		$result = $table->find('threaded')->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals(21, $entity->lft);
+		$this->assertEquals(22, $entity->rght);
+		$this->assertEquals(null, $entity->parent_id);
+		$expected = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1];
+		$this->assertTreeNumbers($expected, $table);
+	}
+
+/**
+ * Custom assertion use to verify tha a tree is returned in the expected order
+ * and that it is still valid
+ *
+ * @param array $expected The list of ids in the order they are expected
+ * @param \Cake\ORM\Table the table instance to use for comparing
+ * @return void
+ */
+	public function assertTreeNumbers($expected, $table) {
+		$result = $table->find()->order('lft')->hydrate(false);
+		$this->assertEquals($expected, $result->extract('id')->toArray());
+		$numbers = [];
+		$result->each(function($v) use (&$numbers) {
+			$numbers[] = $v['lft'];
+			$numbers[] = $v['rght'];
+		});
+		sort($numbers);
+		$this->assertEquals(range(1, 22), $numbers);
 	}
 
 }

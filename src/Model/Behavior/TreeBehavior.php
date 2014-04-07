@@ -14,14 +14,10 @@
  */
 namespace Cake\Model\Behavior;
 
-use ArrayObject;
-use Cake\Collection\Collection;
-use Cake\Database\Expression\QueryExpression;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 
 class TreeBehavior extends Behavior {
 
@@ -48,7 +44,8 @@ class TreeBehavior extends Behavior {
 			'childCount' => 'childCount',
 			'moveUp' => 'moveUp',
 			'moveDown' => 'moveDown',
-			'recover' => 'recover'
+			'recover' => 'recover',
+			'removeFromTree' => 'removeFromTree'
 		],
 		'parent' => 'parent_id',
 		'left' => 'lft',
@@ -89,7 +86,7 @@ class TreeBehavior extends Behavior {
 				throw new \RuntimeException("Cannot set a node's parent as itself");
 			}
 
-			$parentNode = $this->_getParent($parent);
+			$parentNode = $this->_getNode($parent);
 			$edge = $parentNode->get($config['right']);
 			$entity->set($config['left'], $edge);
 			$entity->set($config['right'], $edge + 1);
@@ -135,31 +132,6 @@ class TreeBehavior extends Behavior {
 	}
 
 /**
- * Returns an entity with the left and right columns for the parent node
- * of the node specified by the passed id.
- *
- * @param mixed $id The id of the node to get its parent for
- * @return \Cake\ORM\Entity
- * @throws \Cake\ORM\Error\RecordNotFoundException if the parent could not be found
- */
-	protected function _getParent($id) {
-		$config = $this->config();
-		$primaryKey = (array)$this->_table->primaryKey();
-		$parentNode = $this->_scope($this->_table->find())
-			->select([$config['left'], $config['right']])
-			->where([$primaryKey[0] => $id])
-			->first();
-
-		if (!$parentNode) {
-			throw new \Cake\ORM\Error\RecordNotFoundException(
-				"Parent node \"{$config['parent']}\" was not found in the tree."
-			);
-		}
-
-		return $parentNode;
-	}
-
-/**
  * Sets the correct left and right values for the passed entity so it can be
  * updated to a new parent. It also makes the hole in the tree so the node
  * move can be done without corrupting the structure.
@@ -171,7 +143,7 @@ class TreeBehavior extends Behavior {
  */
 	protected function _setParent($entity, $parent) {
 		$config = $this->config();
-		$parentNode = $this->_getParent($parent);
+		$parentNode = $this->_getNode($parent);
 		$parentLeft = $parentNode->get($config['left']);
 		$parentRight = $parentNode->get($config['right']);
 		$right = $entity->get($config['right']);
@@ -296,23 +268,20 @@ class TreeBehavior extends Behavior {
 /**
  * Get the number of children nodes.
  *
- * @param integer|string $id The id of the record to read
+ * @param \Cake\ORM\Entity $node The entity to count children for
  * @param boolean $direct whether to count all nodes in the subtree or just
  * direct children
  * @return integer Number of children nodes.
  */
-	public function childCount($id, $direct = false) {
+	public function childCount(Entity $node, $direct = false) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 
 		if ($direct) {
-			$count = $this->_table->find()
-				->where([$parent => $id])
+			return $this->_scope($this->_table->find())
+				->where([$parent => $node->get($this->_table->primaryKey())])
 				->count();
-			return $count;
 		}
-
-		$node = $this->_table->get($id, [$this->_table->primaryKey() => $id]);
 
 		return ($node->{$right} - $node->{$left} - 1) / 2;
 	}
@@ -330,7 +299,6 @@ class TreeBehavior extends Behavior {
  *
  * @param array $options Array of options as described above
  * @return \Cake\ORM\Query
- * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  * @throws \InvalidArgumentException When the 'for' key is not passed in $options
  */
 	public function findChildren($query, $options) {
@@ -338,7 +306,6 @@ class TreeBehavior extends Behavior {
 		$options += ['for' => null, 'direct' => false];
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 		list($for, $direct) = [$options['for'], $options['direct']];
-		$primaryKey = $this->_table->primaryKey();
 
 		if (empty($for)) {
 			throw new \InvalidArgumentException("The 'for' key is required for find('children')");
@@ -352,15 +319,7 @@ class TreeBehavior extends Behavior {
 			return $this->_scope($query)->where([$parent => $for]);
 		}
 
-		$node = $this->_scope($this->_table->find())
-			->select([$right, $left])
-			->where([$primaryKey => $for])
-			->first();
-
-		if (!$node) {
-			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$for}\" was not found in the tree.");
-		}
-
+		$node = $this->_getNode($for);
 		return $this->_scope($query)
 			->where([
 				"{$right} <" => $node->{$right},
@@ -369,65 +328,106 @@ class TreeBehavior extends Behavior {
 	}
 
 /**
+ * Removes the current node from the tree, by positioning it as a new root
+ * and reparents all children up one level.
+ *
+ * Note that the node will not be deleted just moved away from its current position
+ * without moving its children with it.
+ *
+ * @param \Cake\ORM\Entity $node The node to remove from the tree
+ * @return \Cake\ORM\Entity|false the node after being removed from the tree or
+ * false on error
+ */
+	public function removeFromTree(Entity $node) {
+		$config = $this->config();
+		$left = $node->get($config['left']);
+		$right = $node->get($config['right']);
+		$parent = $node->get($config['parent']);
+
+		$node->set($config['parent'], null);
+
+		if ($right - $left == 1) {
+			return $this->_table->save($node);
+		}
+
+		$primary = $this->_table->primaryKey();
+		$this->_table->updateAll(
+			[$config['parent'] => $parent],
+			[$config['parent'] => $node->get($primary)]
+		);
+		$this->_sync(1, '-', 'BETWEEN ' . ($left + 1) . ' AND ' . ($right - 1));
+		$this->_sync(2, '-', "> {$right}");
+		$edge = $this->_getMax();
+		$node->set($config['left'], $edge + 1);
+		$node->set($config['right'], $edge + 2);
+		$fields = [$config['parent'], $config['left'], $config['right']];
+
+		$this->_table->updateAll($node->extract($fields), [$primary => $node->get($primary)]);
+
+		foreach ($fields as $field) {
+			$node->dirty($field, false);
+		}
+		return $node;
+	}
+
+/**
  * Reorders the node without changing its parent.
  *
  * If the node is the first child, or is a top level node with no previous node
  * this method will return false
  *
- * @param integer|string $id The id of the record to move
+ * @param \Cake\ORM\Entity $node The node to move
  * @param integer|boolean $number How many places to move the node, or true to move to first position
  * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
- * @return boolean true on success, false on failure
+ * @return \Cake\ORM\Entity|boolean $node The node after being moved or false on failure
  */
-	public function moveUp($id, $number = 1) {
+	public function moveUp(Entity $node, $number = 1) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
-		$primaryKey = $this->_table->primaryKey();
 
 		if (!$number) {
 			return false;
 		}
 
-		$node = $this->_scope($this->_table->find())
-			->select([$parent, $left, $right])
-			->where([$primaryKey => $id])
-			->first();
-
-		if (!$node) {
-			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
-		}
-
-		if ($node->{$parent}) {
-			$parentNode = $this->_table->get($node->{$parent}, ['fields' => [$left, $right]]);
-
-			if (($node->{$left} - 1) == $parentNode->{$left}) {
-				return false;
-			}
-		}
-
-		$previousNode = $this->_scope($this->_table->find())
-			->select([$left, $right])
-			->where([$right => ($node->{$left} - 1)])
-			->first();
-
-		if (!$previousNode) {
-			return false;
+		$parentLeft = 0;
+		if ($node->get($parent)) {
+			$parentLeft = $this->_getNode($node->get($parent))->get($left);
 		}
 
 		$edge = $this->_getMax();
-		$this->_sync($edge - $previousNode->{$left} + 1, '+', "BETWEEN {$previousNode->{$left}} AND {$previousNode->{$right}}");
-		$this->_sync($node->{$left} - $previousNode->{$left}, '-', "BETWEEN {$node->{$left}} AND {$node->{$right}}");
-		$this->_sync($edge - $previousNode->{$left} - ($node->{$right} - $node->{$left}), '-', "> {$edge}");
+		while ($number-- > 0) {
+			list($nodeLeft, $nodeRight) = array_values($node->extract([$left, $right]));
 
-		if (is_int($number)) {
-			$number--;
+			if ($parentLeft && ($nodeLeft - 1 == $parentLeft)) {
+				break;
+			}
+
+			$nextNode = $this->_scope($this->_table->find())
+				->select([$left, $right])
+				->where([$right => ($nodeLeft - 1)])
+				->first();
+
+			if (!$nextNode) {
+				break;
+			}
+
+			$this->_sync($edge - $nextNode->{$left} + 1, '+', "BETWEEN {$nextNode->{$left}} AND {$nextNode->{$right}}");
+			$this->_sync($nodeLeft - $nextNode->{$left}, '-', "BETWEEN {$nodeLeft} AND {$nodeRight}");
+			$this->_sync($edge - $nextNode->{$left} - ($nodeRight - $nodeLeft), '-', "> {$edge}");
+
+			$newLeft = $nodeLeft;
+			if ($nodeLeft >= $nextNode->{$left} || $nodeLeft <= $nextNode->{$right}) {
+				$newLeft -= $edge - $nextNode->{$left} + 1;
+			}
+			$newLeft = $nodeLeft - ($nodeLeft - $nextNode->{$left});
+
+			$node->set($left, $newLeft);
+			$node->set($right, $newLeft + ($nodeRight - $nodeLeft));
 		}
 
-		if ($number) {
-			$this->moveUp($id, $number);
-		}
-
-		return true;
+		$node->dirty($left, false);
+		$node->dirty($right, false);
+		return $node;
 	}
 
 /**
@@ -436,19 +436,75 @@ class TreeBehavior extends Behavior {
  * If the node is the last child, or is a top level node with no subsequent node
  * this method will return false
  *
- * @param integer|string $id The id of the record to move
+ * @param \Cake\ORM\Entity $node The node to move
  * @param integer|boolean $number How many places to move the node or true to move to last position
  * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
- * @return boolean true on success, false on failure
+ * @return \Cake\ORM\Entity|boolean the entity after being moved or false on failure
  */
-	public function moveDown($id, $number = 1) {
+	public function moveDown(Entity $node, $number = 1) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
-		$primaryKey = $this->_table->primaryKey();
 
 		if (!$number) {
 			return false;
 		}
+
+		$parentRight = 0;
+		if ($node->get($parent)) {
+			$parentRight = $this->_getNode($node->get($parent))->get($right);
+		}
+
+		if ($number === true) {
+			$number = PHP_INT_MAX;
+		}
+
+		$edge = $this->_getMax();
+		while ($number-- > 0) {
+			list($nodeLeft, $nodeRight) = array_values($node->extract([$left, $right]));
+
+			if ($parentRight && ($nodeRight + 1 == $parentRight)) {
+				break;
+			}
+
+			$nextNode = $this->_scope($this->_table->find())
+				->select([$left, $right])
+				->where([$left => $nodeRight + 1])
+				->first();
+
+			if (!$nextNode) {
+				break;
+			}
+
+			$this->_sync($edge - $nodeLeft + 1, '+', "BETWEEN {$nodeLeft} AND {$nodeRight}");
+			$this->_sync($nextNode->{$left} - $nodeLeft, '-', "BETWEEN {$nextNode->{$left}} AND {$nextNode->{$right}}");
+			$this->_sync($edge - $nodeLeft - ($nextNode->{$right} - $nextNode->{$left}), '-', "> {$edge}");
+
+			$newLeft = $edge + 1;
+			if ($newLeft >= $nextNode->{$left} || $newLeft <= $nextNode->{$right}) {
+				$newLeft -= $nextNode->{$left} - $nodeLeft;
+			}
+			$newLeft -= $nextNode->{$right} - $nextNode->{$left} - 1;
+
+			$node->set($left, $newLeft);
+			$node->set($right, $newLeft + ($nodeRight - $nodeLeft));
+		}
+
+		$node->dirty($left, false);
+		$node->dirty($right, false);
+		return $node;
+	}
+
+/**
+ * Returns a single node from the tree from its primary key
+ *
+ * @param mixed $id
+ * @return Cake\ORM\Entity
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
+ */
+	protected function _getNode($id) {
+		$config = $this->config();
+		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
+		$primaryKey = $this->_table->primaryKey();
 
 		$node = $this->_scope($this->_table->find())
 			->select([$parent, $left, $right])
@@ -459,37 +515,7 @@ class TreeBehavior extends Behavior {
 			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
 		}
 
-		if ($node->{$parent}) {
-			$parentNode = $this->_table->get($node->{$parent}, ['fields' => [$left, $right]]);
-
-			if (($node->{$right} + 1) == $parentNode->{$right}) {
-				return false;
-			}
-		}
-
-		$nextNode = $this->_scope($this->_table->find())
-			->select([$left, $right])
-			->where([$left => $node->{$right} + 1])
-			->first();
-
-		if (!$nextNode) {
-			return false;
-		}
-
-		$edge = $this->_getMax();
-		$this->_sync($edge - $node->{$left} + 1, '+', "BETWEEN {$node->{$left}} AND {$node->{$right}}");
-		$this->_sync($nextNode->{$left} - $node->{$left}, '-', "BETWEEN {$nextNode->{$left}} AND {$nextNode->{$right}}");
-		$this->_sync($edge - $node->{$left} - ($nextNode->{$right} - $nextNode->{$left}), '-', "> {$edge}");
-
-		if (is_int($number)) {
-			$number--;
-		}
-
-		if ($number) {
-			$this->moveDown($id, $number);
-		}
-
-		return true;
+		return $node;
 	}
 
 /**
@@ -549,32 +575,12 @@ class TreeBehavior extends Behavior {
  * @return integer
  */
 	protected function _getMax() {
-		return $this->_getMaxOrMin('max');
-	}
-
-/**
- * Returns the minimum index value in the table.
- *
- * @return integer
- */
-	protected function _getMin() {
-		return $this->_getMaxOrMin('min');
-	}
-
-/**
- * Get the maximum|minimum index value in the table.
- *
- * @param string $maxOrMin Either 'max' or 'min'
- * @return integer
- */
-	protected function _getMaxOrMin($maxOrMin = 'max') {
 		$config = $this->config();
-		$field = $maxOrMin === 'max' ? $config['right'] : $config['left'];
-		$direction = $maxOrMin === 'max' ? 'DESC' : 'ASC';
+		$field = $config['right'];
 
 		$edge = $this->_scope($this->_table->find())
 			->select([$field])
-			->order([$field => $direction])
+			->order([$field => 'DESC'])
 			->first();
 
 		if (empty($edge->{$field})) {
@@ -600,13 +606,11 @@ class TreeBehavior extends Behavior {
 		$config = $this->config();
 
 		foreach ([$config['left'], $config['right']] as $field) {
-			$exp = new QueryExpression();
+			$query = $this->_scope($this->_table->query());
+
 			$mark = $mark ? '*-1' : '';
 			$template = sprintf('%s = (%s %s %s)%s', $field, $field, $dir, $shift, $mark);
-			$exp->add($template);
-
-			$query = $this->_scope($this->_table->query());
-			$query->update()->set($exp);
+			$query->update()->set($query->newExpr()->add($template));
 			$query->where("{$field} {$conditions}");
 
 			$query->execute();
