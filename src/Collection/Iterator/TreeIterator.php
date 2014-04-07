@@ -83,7 +83,7 @@ class TreeIterator extends RecursiveIteratorIterator {
  * @param string|callable $keyPath The property to use as iteration key or a
  * callable returning the key value.
  * @param string $spacer The string to use for prefixing the values according to
- * their depth in the array
+ * their depth in the tree
  * @return \Cake\Collection\Iterator\TreePrinter
  */
 	public function printer($valuePath, $keyPath = null, $spacer = '__') {
