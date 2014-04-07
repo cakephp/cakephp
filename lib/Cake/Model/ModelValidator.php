@@ -127,7 +127,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  */
 	public function validateAssociated(&$data, $options = array()) {
 		$model = $this->getModel();
-		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
+		$options += array('atomic' => true, 'deep' => false);
 		$model->validationErrors = $validationErrors = $return = array();
 		$model->create(null);
 		$return[$model->alias] = true;
@@ -204,7 +204,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  */
 	public function validateMany(&$data, $options = array()) {
 		$model = $this->getModel();
-		$options = array_merge(array('atomic' => true, 'deep' => false), $options);
+		$options += array('atomic' => true, 'deep' => false);
 		$model->validationErrors = $validationErrors = $return = array();
 		foreach ($data as $key => &$record) {
 			if ($options['deep']) {

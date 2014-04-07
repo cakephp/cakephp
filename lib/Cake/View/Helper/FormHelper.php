@@ -360,14 +360,14 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$options = array_merge(array(
+		$options += array(
 			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
 			'action' => null,
 			'url' => null,
 			'default' => true,
 			'encoding' => strtolower(Configure::read('App.encoding')),
-			'inputDefaults' => array()),
-		$options);
+			'inputDefaults' => array()
+		);
 		$this->inputDefaults($options['inputDefaults']);
 		unset($options['inputDefaults']);
 
@@ -621,9 +621,9 @@ class FormHelper extends AppHelper {
  *
  * @param boolean $lock Whether this field should be part of the validation
  *     or excluded as part of the unlockedFields.
- * @param string $field Reference to field to be secured. Should be dot separated to indicate nesting.
+ * @param string|array $field Reference to field to be secured. Should be dot separated to indicate nesting.
  * @param mixed $value Field value, if value should not be tampered with.
- * @return mixed|null Not used yet
+ * @return void
  */
 	protected function _secure($lock, $field = null, $value = null) {
 		if (!$field) {
@@ -685,7 +685,7 @@ class FormHelper extends AppHelper {
  */
 	public function error($field, $text = null, $options = array()) {
 		$defaults = array('wrap' => true, 'class' => 'error-message', 'escape' => true);
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 		$this->setEntity($field);
 
 		$error = $this->tagIsInvalid();

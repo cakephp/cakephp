@@ -215,11 +215,11 @@ abstract class ControllerTestCase extends CakeTestCase {
 	protected function _testAction($url = '', $options = array()) {
 		$this->vars = $this->result = $this->view = $this->contents = $this->headers = null;
 
-		$options = array_merge(array(
+		$options += array(
 			'data' => array(),
 			'method' => 'POST',
 			'return' => 'result'
-		), $options);
+		);
 
 		$restore = array('get' => $_GET, 'post' => $_POST);
 

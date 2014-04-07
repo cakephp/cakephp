@@ -281,7 +281,7 @@ class PaginatorHelper extends AppHelper {
 		$defaults = array(
 			'rel' => 'prev'
 		);
-		$options = array_merge($defaults, (array)$options);
+		$options = (array)$options + $defaults;
 		return $this->_pagingLink('Prev', $title, $options, $disabledTitle, $disabledOptions);
 	}
 
@@ -307,7 +307,7 @@ class PaginatorHelper extends AppHelper {
 		$defaults = array(
 			'rel' => 'next'
 		);
-		$options = array_merge($defaults, (array)$options);
+		$options = (array)$options + $defaults;
 		return $this->_pagingLink('Next', $title, $options, $disabledTitle, $disabledOptions);
 	}
 
@@ -331,7 +331,7 @@ class PaginatorHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sort
  */
 	public function sort($key, $title = null, $options = array()) {
-		$options = array_merge(array('url' => array(), 'model' => null), $options);
+		$options += array('url' => array(), 'model' => null);
 		$url = $options['url'];
 		unset($options['url']);
 
@@ -397,12 +397,12 @@ class PaginatorHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::link
  */
 	public function link($title, $url = array(), $options = array()) {
-		$options = array_merge(array('model' => null, 'escape' => true), $options);
+		$options += array('model' => null, 'escape' => true);
 		$model = $options['model'];
 		unset($options['model']);
 
 		if (!empty($this->options)) {
-			$options = array_merge($this->options, $options);
+			$options += $this->options;
 		}
 		if (isset($options['url'])) {
 			$url = array_merge((array)$options['url'], (array)$url);
@@ -489,7 +489,7 @@ class PaginatorHelper extends AppHelper {
 			'url' => array(), 'step' => 1, 'escape' => true, 'model' => null,
 			'tag' => 'span', 'class' => strtolower($which), 'disabledTag' => null
 		);
-		$options = array_merge($_defaults, (array)$options);
+		$options = (array)$options + $_defaults;
 		$paging = $this->params($options['model']);
 		if (empty($disabledOptions)) {
 			$disabledOptions = $options;
@@ -499,7 +499,7 @@ class PaginatorHelper extends AppHelper {
 			if (!empty($disabledTitle) && $disabledTitle !== true) {
 				$title = $disabledTitle;
 			}
-			$options = array_merge($_defaults, (array)$disabledOptions);
+			$options = (array)$disabledOptions + $_defaults;
 		} elseif (!$this->{$check}($options['model'])) {
 			return null;
 		}
@@ -631,13 +631,11 @@ class PaginatorHelper extends AppHelper {
 			$options = array('format' => $options);
 		}
 
-		$options = array_merge(
-			array(
-				'model' => $this->defaultModel(),
-				'format' => 'pages',
-				'separator' => __d('cake', ' of ')
-			),
-		$options);
+		$options += array(
+			'model' => $this->defaultModel(),
+			'format' => 'pages',
+			'separator' => __d('cake', ' of ')
+		);
 
 		$paging = $this->params($options['model']);
 		if (!$paging['pageCount']) {
@@ -855,16 +853,14 @@ class PaginatorHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::first
  */
 	public function first($first = '<< first', $options = array()) {
-		$options = array_merge(
-			array(
-				'tag' => 'span',
-				'after' => null,
-				'model' => $this->defaultModel(),
-				'separator' => ' | ',
-				'ellipsis' => '...',
-				'class' => null
-			),
-		(array)$options);
+		$options = (array)$options + array(
+			'tag' => 'span',
+			'after' => null,
+			'model' => $this->defaultModel(),
+			'separator' => ' | ',
+			'ellipsis' => '...',
+			'class' => null
+		);
 
 		$params = array_merge(array('page' => 1), (array)$this->params($options['model']));
 		unset($options['model']);
@@ -920,16 +916,14 @@ class PaginatorHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::last
  */
 	public function last($last = 'last >>', $options = array()) {
-		$options = array_merge(
-			array(
-				'tag' => 'span',
-				'before' => null,
-				'model' => $this->defaultModel(),
-				'separator' => ' | ',
-				'ellipsis' => '...',
-				'class' => null
-			),
-		(array)$options);
+		$options = (array)$options + array(
+			'tag' => 'span',
+			'before' => null,
+			'model' => $this->defaultModel(),
+			'separator' => ' | ',
+			'ellipsis' => '...',
+			'class' => null
+		);
 
 		$params = array_merge(array('page' => 1), (array)$this->params($options['model']));
 		unset($options['model']);

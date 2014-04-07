@@ -203,7 +203,7 @@ class DbConfigTask extends AppShell {
  * @return boolean True if user says it looks good, false otherwise
  */
 	protected function _verify($config) {
-		$config = array_merge($this->_defaultConfig, $config);
+		$config += $this->_defaultConfig;
 		extract($config);
 		$this->out();
 		$this->hr();

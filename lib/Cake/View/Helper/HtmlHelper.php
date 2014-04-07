@@ -273,7 +273,7 @@ class HtmlHelper extends AppHelper {
 			}
 		}
 
-		$options = array_merge($type, $options);
+		$options += $type;
 		$out = null;
 
 		if (isset($options['link'])) {
@@ -522,7 +522,7 @@ class HtmlHelper extends AppHelper {
 			list($inline, $options) = array($options, array());
 			$options['inline'] = $inline;
 		}
-		$options = array_merge(array('block' => null, 'inline' => true, 'once' => true), $options);
+		$options += array('block' => null, 'inline' => true, 'once' => true);
 		if (!$options['inline'] && empty($options['block'])) {
 			$options['block'] = __FUNCTION__;
 		}
@@ -715,7 +715,7 @@ class HtmlHelper extends AppHelper {
  */
 	public function getCrumbList($options = array(), $startText = false) {
 		$defaults = array('firstClass' => 'first', 'lastClass' => 'last', 'separator' => '', 'escape' => true);
-		$options = array_merge($defaults, (array)$options);
+		$options = (array)$options + $defaults;
 		$firstClass = $options['firstClass'];
 		$lastClass = $options['lastClass'];
 		$separator = $options['separator'];
@@ -1231,13 +1231,13 @@ class HtmlHelper extends AppHelper {
 		$readerObj = new $readerClass($path);
 		$configs = $readerObj->read($file);
 		if (isset($configs['tags']) && is_array($configs['tags'])) {
-			$this->_tags = array_merge($this->_tags, $configs['tags']);
+			$this->_tags = $configs['tags'] + $this->_tags;
 		}
 		if (isset($configs['minimizedAttributes']) && is_array($configs['minimizedAttributes'])) {
-			$this->_minimizedAttributes = array_merge($this->_minimizedAttributes, $configs['minimizedAttributes']);
+			$this->_minimizedAttributes = $configs['minimizedAttributes'] + $this->_minimizedAttributes;
 		}
 		if (isset($configs['docTypes']) && is_array($configs['docTypes'])) {
-			$this->_docTypes = array_merge($this->_docTypes, $configs['docTypes']);
+			$this->_docTypes = $configs['docTypes'] + $this->_docTypes;
 		}
 		if (isset($configs['attributeFormat'])) {
 			$this->_attributeFormat = $configs['attributeFormat'];

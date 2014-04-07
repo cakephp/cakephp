@@ -194,7 +194,7 @@ class JsHelper extends AppHelper {
 			'onDomReady' => $domReady, 'inline' => true,
 			'cache' => false, 'clear' => true, 'safe' => true
 		);
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 		$script = implode("\n", $this->getBuffer($options['clear']));
 
 		if (empty($script)) {
