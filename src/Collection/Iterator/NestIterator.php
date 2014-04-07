@@ -18,11 +18,11 @@ use Cake\Collection\Collection;
 use RecursiveIterator;
 
 /**
- * A type of collection that is aweare of nested items and exposes methods to
- * check or retreive them
+ * A type of collection that is aware of nested items and exposes methods to
+ * check or retrieve them
  *
  */
-class NestIterator extends Collection implements RecursiveIterator{
+class NestIterator extends Collection implements RecursiveIterator {
 
 /**
  * The name of the property that contains the nested items for each element
@@ -54,12 +54,12 @@ class NestIterator extends Collection implements RecursiveIterator{
 	}
 
 /**
- * Returns true if there is an arary or a traversable object stored under the
- * condifure nestKey for the current item
+ * Returns true if there is an array or a traversable object stored under the
+ * configured nestKey for the current item
  *
  * @return boolean
  */
-	public function hasChildren () {
+	public function hasChildren() {
 		$property = $this->_propertyExtractor($this->_nestKey);
 		$children = $property($this->current());
 

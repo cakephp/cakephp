@@ -32,7 +32,7 @@ class TreeIterator extends RecursiveIteratorIterator {
 /**
  * The iteration mode
  *
- * @car integer
+ * @var integer
  */
 	protected $_mode;
 
