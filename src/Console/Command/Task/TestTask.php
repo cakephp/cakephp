@@ -370,7 +370,7 @@ class TestTask extends BakeTask {
 		} else {
 			$prefix = 'app.';
 		}
-		$fixture = $prefix . Inflector::underscore(Inflector::singularize($name));
+		$fixture = $prefix . $this->_fixtureName($name);
 		$this->_fixtures[$name] = $fixture;
 	}
 

@@ -181,7 +181,7 @@ class ViewTask extends BakeTask {
 	public function getPath() {
 		$path = parent::getPath();
 		if (!empty($this->params['prefix'])) {
-			$path .= Inflector::camelize($this->params['prefix']) . DS;
+			$path .= $this->_camelize($this->params['prefix']) . DS;
 		}
 		$path .= $this->controllerName . DS;
 		return $path;
@@ -247,9 +247,6 @@ class ViewTask extends BakeTask {
  */
 	protected function _loadController() {
 		$modelObj = TableRegistry::get($this->tableName);
-
-		$singularVar = Inflector::variable(Inflector::singularize($this->controllerName));
-		$singularHumanName = $this->_singularHumanName($this->controllerName);
 
 		$primaryKey = (array)$modelObj->primaryKey();
 		$displayField = $modelObj->displayField();

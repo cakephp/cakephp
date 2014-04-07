@@ -18,7 +18,6 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Inflector;
 
 /**
  * Task class for creating and updating controller files.
@@ -65,7 +64,6 @@ class ControllerTask extends BakeTask {
 		}
 
 		$controller = $this->_controllerName($this->args[0]);
-
 		$this->bake($controller);
 	}
 
@@ -102,14 +100,13 @@ class ControllerTask extends BakeTask {
 
 		$modelObj = TableRegistry::get($currentModelName);
 
-		$controllerPath = $this->_controllerPath($controllerName);
 		$pluralName = $this->_pluralName($currentModelName);
-		$singularName = Inflector::variable(Inflector::singularize($currentModelName));
+		$singularName = $this->_singularName($currentModelName);
 		$singularHumanName = $this->_singularHumanName($controllerName);
 		$pluralHumanName = $this->_pluralName($controllerName);
 
 		$this->Template->set(compact(
-			'plugin', 'admin', 'controllerPath', 'pluralName', 'singularName',
+			'plugin', 'admin', 'pluralName', 'singularName',
 			'singularHumanName', 'pluralHumanName', 'modelObj', 'currentModelName'
 		));
 		$actions = $this->Template->generate('actions', 'controller_actions');
@@ -190,7 +187,7 @@ class ControllerTask extends BakeTask {
 	public function getPath() {
 		$path = parent::getPath();
 		if (!empty($this->params['prefix'])) {
-			$path .= Inflector::camelize($this->params['prefix']) . DS;
+			$path .= $this->_camelize($this->params['prefix']) . DS;
 		}
 		return $path;
 	}

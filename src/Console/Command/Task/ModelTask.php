@@ -510,7 +510,7 @@ class ModelTask extends BakeTask {
 		if (!empty($this->params['no-entity'])) {
 			return;
 		}
-		$name = Inflector::singularize($model->alias());
+		$name = $this->_entityName($model->alias());
 
 		$ns = Configure::read('App.namespace');
 		$pluginPath = '';
