@@ -106,9 +106,9 @@ class BakeShellTest extends TestCase {
 		$this->Shell->expects($this->at(0))
 			->method('out')
 			->with($this->stringContains('The following commands'));
-		$this->Shell->expects($this->at(4))
-			->method('out')
-			->with('behavior');
+
+		$this->Shell->expects($this->exactly(17))
+			->method('out');
 
 		$this->Shell->loadTasks();
 		$this->Shell->main();
@@ -149,6 +149,8 @@ class BakeShellTest extends TestCase {
 			'View',
 			'Zerg',
 		];
+		sort($this->Shell->tasks);
+		sort($expected);
 		$this->assertEquals($expected, $this->Shell->tasks);
 	}
 
