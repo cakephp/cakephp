@@ -14,10 +14,7 @@
  */
 namespace Cake\I18n\Catalog;
 
-use Cake\Core\App;
-use Cake\Core\Plugin;
 use Cake\I18n\CatalogEngine;
-use Cake\Utility\Inflector;
 
 class Gettext extends CatalogEngine {
 
@@ -36,24 +33,6 @@ class Gettext extends CatalogEngine {
 		}
 
 		return false;
-	}
-
-	protected function _searchPaths($domain) {
-		$searchPaths = App::path('Locale');
-		$plugins = Plugin::loaded();
-
-		if (!empty($plugins)) {
-			foreach ($plugins as $plugin) {
-				$pluginDomain = Inflector::underscore($plugin);
-				if ($pluginDomain === $domain) {
-					$searchPaths[] = Plugin::path($plugin) . 'Locale/';
-					$searchPaths = array_reverse($searchPaths);
-					break;
-				}
-			}
-		}
-
-		return $searchPaths;
 	}
 
 	protected function _header($entries) {

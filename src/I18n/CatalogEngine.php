@@ -14,10 +14,42 @@
  */
 namespace Cake\I18n;
 
+use Cake\Core\App;
+use Cake\Core\InstanceConfigTrait;
+use Cake\Core\Plugin;
+use Cake\Utility\Inflector;
+
 /**
  * Abstract class for all catalog engine classes.
  */
 abstract class CatalogEngine {
+
+	use InstanceConfigTrait;
+
+/**
+ * Default config for this class
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [];
+
+	protected function _searchPaths($domain) {
+		$searchPaths = App::path('Locale');
+		$plugins = Plugin::loaded();
+
+		if (!empty($plugins)) {
+			foreach ($plugins as $plugin) {
+				$pluginDomain = Inflector::underscore($plugin);
+				if ($pluginDomain === $domain) {
+					$searchPaths[] = Plugin::path($plugin) . 'Locale/';
+					$searchPaths = array_reverse($searchPaths);
+					break;
+				}
+			}
+		}
+
+		return $searchPaths;
+	}
 
 /**
  * [read description]
