@@ -402,10 +402,10 @@ class Request implements \ArrayAccess {
  * Recursively walks the FILES array restructuring the data
  * into something sane and useable.
  *
+ * @param array $post The post data having files inserted into
  * @param string $path The dot separated path to insert $data into.
  * @param array $data The data to traverse/insert.
  * @param string $field The terminal field name, which is the top level key in $_FILES.
- * @param array $post The post data having files inserted into
  * @return void
  */
 	protected function _processFileData(&$post, $path, $data, $field) {
@@ -651,8 +651,8 @@ class Request implements \ArrayAccess {
  * @param array $params Array of parameters to merge in
  * @return \Cake\Network\Request The current object, you can chain this method.
  */
-	public function addParams($params) {
-		$this->params = array_merge($this->params, (array)$params);
+	public function addParams(array $params) {
+		$this->params = array_merge($this->params, $params);
 		return $this;
 	}
 
@@ -663,7 +663,7 @@ class Request implements \ArrayAccess {
  * @param array $paths Array of paths to merge in
  * @return \Cake\Network\Request the current object, you can chain this method.
  */
-	public function addPaths($paths) {
+	public function addPaths(array $paths) {
 		foreach (array('webroot', 'here', 'base') as $element) {
 			if (isset($paths[$element])) {
 				$this->{$element} = $paths[$element];

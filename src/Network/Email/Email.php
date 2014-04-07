@@ -716,7 +716,7 @@ class Email {
  * @param array $include
  * @return array
  */
-	public function getHeaders($include = array()) {
+	public function getHeaders(array $include = array()) {
 		if ($include == array_values($include)) {
 			$include = array_fill_keys($include, true);
 		}

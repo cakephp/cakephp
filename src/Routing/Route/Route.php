@@ -107,13 +107,13 @@ class Route {
  * - `pass` - Copies the listed parameters into params['pass'].
  *
  * @param string $template Template string with parameter placeholders
- * @param array $defaults Array of defaults for the route.
+ * @param array|string $defaults Defaults for the route.
  * @param array $options Array of additional options for the Route
  */
-	public function __construct($template, $defaults = [], $options = []) {
+	public function __construct($template, $defaults = [], array $options = []) {
 		$this->template = $template;
 		$this->defaults = (array)$defaults;
-		$this->options = (array)$options;
+		$this->options = $options;
 		if (isset($this->options['_name'])) {
 			$this->_name = $this->options['_name'];
 		}
@@ -398,7 +398,7 @@ class Route {
  *   directory.
  * @return mixed Either a string url for the parameters if they match or false.
  */
-	public function match($url, $context = []) {
+	public function match(array $url, array $context = []) {
 		if (!$this->compiled()) {
 			$this->compile();
 		}

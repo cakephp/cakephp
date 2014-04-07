@@ -351,7 +351,7 @@ class Response {
  *
  * @var array
  */
-	protected $_fileRange = null;
+	protected $_fileRange = [];
 
 /**
  * The charset the response body is encoded with
@@ -1187,7 +1187,7 @@ class Response {
  * If the method is called with an array as argument, it will set the cookie
  * configuration to the cookie container.
  *
- * @param array $options Either null to get all cookies, string for a specific cookie
+ * @param array|null $options Either null to get all cookies, string for a specific cookie
  *  or array to set cookie.
  *
  * ### Options (when setting a configuration)
@@ -1326,7 +1326,7 @@ class Response {
  * @return void
  * @throws \Cake\Error\NotFoundException
  */
-	public function file($path, $options = array()) {
+	public function file($path, array $options = array()) {
 		$options += array(
 			'name' => null,
 			'download' => null

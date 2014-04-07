@@ -140,7 +140,7 @@ class Dispatcher implements EventListener {
  * @return string|void if `$request['return']` is set then it returns response body, null otherwise
  * @throws \Cake\Error\MissingControllerException When the controller is missing.
  */
-	public function dispatch(Request $request, Response $response, $additionalParams = array()) {
+	public function dispatch(Request $request, Response $response, array $additionalParams = array()) {
 		$beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response', 'additionalParams'));
 		$this->getEventManager()->dispatch($beforeEvent);
 
@@ -211,7 +211,7 @@ class Dispatcher implements EventListener {
  * @param \Cake\Event\Event $event containing the request, response and additional params
  * @return void
  */
-	public function parseParams($event) {
+	public function parseParams(Event $event) {
 		$request = $event->data['request'];
 		Router::setRequestInfo($request);
 

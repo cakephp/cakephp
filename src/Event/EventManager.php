@@ -96,7 +96,7 @@ class EventManager {
  * @throws \InvalidArgumentException When event key is missing or callable is not an
  *   instance of Cake\Event\EventListener.
  */
-	public function attach($callable, $eventKey = null, $options = array()) {
+	public function attach($callable, $eventKey = null, array $options = array()) {
 		if (!$eventKey && !($callable instanceof EventListener)) {
 			throw new \InvalidArgumentException('The eventKey variable is required');
 		}

@@ -73,7 +73,7 @@ trait RequestActionTrait {
  * @return mixed Boolean true or false on success/failure, or contents
  *    of rendered action if 'return' is set in $extra.
  */
-	public function requestAction($url, $extra = array()) {
+	public function requestAction($url, array $extra = array()) {
 		if (empty($url)) {
 			return false;
 		}

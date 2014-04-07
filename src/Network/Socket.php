@@ -110,7 +110,7 @@ class Socket {
  * @param array $config Socket configuration, which will be merged with the base configuration
  * @see Socket::$_baseConfig
  */
-	public function __construct($config = array()) {
+	public function __construct(array $config = array()) {
 		$this->config($config);
 
 		if (!is_numeric($this->_config['protocol'])) {
