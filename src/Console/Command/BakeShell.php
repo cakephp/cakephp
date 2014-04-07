@@ -149,6 +149,24 @@ class BakeShell extends Shell {
 		if (!is_dir($path)) {
 			return $tasks;
 		}
+		$candidates = $this->_findClassFiles($path, $namespace);
+		$classes = $this->_findTaskClasses($candidates);
+		foreach ($classes as $class) {
+			list($ns, $name) = namespaceSplit($class);
+			$name = substr($name, 0, -4);
+			$fullName = ($prefix ? $prefix . '.' : '') . $name;
+			$tasks[$name] = $fullName;
+		}
+		return $tasks;
+	}
+
+/**
+ * Find task classes in a given path.
+ *
+ * @param string $path The path to scan.
+ * @return array An array of files that may contain bake tasks.
+ */
+	protected function _findClassFiles($path, $namespace) {
 		$iterator = new \DirectoryIterator($path);
 		$candidates = [];
 		foreach ($iterator as $item) {
@@ -158,8 +176,18 @@ class BakeShell extends Shell {
 			$name = $item->getBasename('.php');
 			$candidates[] = $namespace . '\Console\Command\Task\\' . $name;
 		}
+		return $candidates;
+	}
+
+/**
+ * Find bake tasks in a given set of files.
+ *
+ * @param array $files The array of files.
+ * @return array An array of matching classes.
+ */
+	protected function _findTaskClasses($files) {
 		$classes = [];
-		foreach ($candidates as $classname) {
+		foreach ($files as $classname) {
 			if (!class_exists($classname)) {
 				continue;
 			}
@@ -172,13 +200,7 @@ class BakeShell extends Shell {
 			}
 			$classes[] = $classname;
 		}
-		foreach ($classes as $class) {
-			list($ns, $name) = namespaceSplit($class);
-			$name = substr($name, 0, -4);
-			$fullName = ($prefix ? $prefix . '.' : '') . $name;
-			$tasks[$name] = $fullName;
-		}
-		return $tasks;
+		return $classes;
 	}
 
 /**

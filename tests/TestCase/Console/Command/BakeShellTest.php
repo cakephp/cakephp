@@ -18,6 +18,7 @@ use Cake\Console\Command\BakeShellShell;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 class BakeShellTest extends TestCase {
@@ -112,11 +113,11 @@ class BakeShellTest extends TestCase {
 	}
 
 /**
- * Test loading tasks from core and app directories.
+ * Test loading tasks from core directories.
  *
  * @return void
  */
-	public function testLoadTasks() {
+	public function testLoadTasksCoreAndApp() {
 		$this->Shell->loadTasks();
 		$expected = [
 			'Behavior',
@@ -128,7 +129,8 @@ class BakeShellTest extends TestCase {
 			'Plugin',
 			'Project',
 			'Test',
-			'View'
+			'View',
+			'Zerg',
 		];
 		$this->assertEquals($expected, $this->Shell->tasks);
 	}
@@ -139,6 +141,10 @@ class BakeShellTest extends TestCase {
  * @return void
  */
 	public function testLoadTasksPlugin() {
+		Plugin::load('TestPlugin');
+		$this->Shell->loadTasks();
+		$this->assertContains('TestPlugin.Widget', $this->Shell->tasks);
+		$this->assertContains('TestPlugin.Zerg', $this->Shell->tasks);
 	}
 
 }
