@@ -102,7 +102,7 @@ class Component extends Object implements EventListener {
  * @param ComponentRegistry $registry A ComponentRegistry this component can use to lazy load its components
  * @param array $config Array of configuration settings.
  */
-	public function __construct(ComponentRegistry $registry, $config = []) {
+	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$this->_registry = $registry;
 
 		$this->config($config);

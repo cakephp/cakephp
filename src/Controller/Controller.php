@@ -290,7 +290,7 @@ class Controller extends Object implements EventListener {
  * @param array $config The config for the component.
  * @return \Cake\Controller\Component
  */
-	public function addComponent($name, $config = []) {
+	public function addComponent($name, array $config = []) {
 		list(, $prop) = pluginSplit($name);
 		$this->{$prop} = $this->components()->load($name, $config);
 		return $this->{$prop};

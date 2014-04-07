@@ -41,7 +41,7 @@ class ApcEngine extends CacheEngine {
  * @param array $config array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($config = []) {
+	public function init(array $config = []) {
 		if (!isset($config['prefix'])) {
 			$config['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}

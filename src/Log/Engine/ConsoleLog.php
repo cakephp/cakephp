@@ -57,7 +57,7 @@ class ConsoleLog extends BaseLog {
  * @param array $config Options for the FileLog, see above.
  * @throws \Cake\Error\Exception
  */
-	public function __construct($config = array()) {
+	public function __construct(array $config = array()) {
 		if (DS === '\\' && !(bool)env('ANSICON')) {
 			$this->_defaultConfig['outputAs'] = ConsoleOutput::PLAIN;
 		} else {

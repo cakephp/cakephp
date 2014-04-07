@@ -119,7 +119,7 @@ class RequestHandlerComponent extends Component {
  * @param ComponentRegistry $collection ComponentRegistry object.
  * @param array $config Array of config.
  */
-	public function __construct(ComponentRegistry $collection, $config = array()) {
+	public function __construct(ComponentRegistry $collection, array $config = array()) {
 		parent::__construct($collection, $config);
 		$this->addInputType('xml', array(array($this, 'convertXml')));
 
@@ -499,7 +499,7 @@ class RequestHandlerComponent extends Component {
  * @see RequestHandlerComponent::setContent()
  * @see RequestHandlerComponent::respondAs()
  */
-	public function renderAs(Controller $controller, $type, $options = array()) {
+	public function renderAs(Controller $controller, $type, array $options = array()) {
 		$defaults = array('charset' => 'UTF-8');
 
 		if (Configure::read('App.encoding') !== null) {
@@ -561,7 +561,7 @@ class RequestHandlerComponent extends Component {
  *    already been set by this method.
  * @see RequestHandlerComponent::setContent()
  */
-	public function respondAs($type, $options = array()) {
+	public function respondAs($type, array $options = array()) {
 		$defaults = array('index' => null, 'charset' => null, 'attachment' => false);
 		$options = $options + $defaults;
 

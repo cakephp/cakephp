@@ -111,7 +111,7 @@ class Plugin {
  * @throws \Cake\Error\MissingPluginException if the folder for the plugin to be loaded is not found
  * @return void
  */
-	public static function load($plugin, $config = []) {
+	public static function load($plugin, array $config = []) {
 		if (is_array($plugin)) {
 			foreach ($plugin as $name => $conf) {
 				list($name, $conf) = (is_numeric($name)) ? [$conf, $config] : [$name, $conf];
@@ -176,7 +176,7 @@ class Plugin {
  * @param array $options
  * @return void
  */
-	public static function loadAll($options = []) {
+	public static function loadAll(array $options = []) {
 		$plugins = App::objects('Plugin');
 		foreach ($plugins as $p) {
 			$opts = isset($options[$p]) ? $options[$p] : null;

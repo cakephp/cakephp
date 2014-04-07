@@ -63,7 +63,7 @@ abstract class CacheEngine {
  * @param array $config Associative array of parameters for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($config = []) {
+	public function init(array $config = []) {
 		$this->config($config);
 
 		if (!empty($this->_config['groups'])) {

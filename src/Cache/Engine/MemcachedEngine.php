@@ -97,7 +97,7 @@ class MemcachedEngine extends CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  * @throws \Cake\Error\Exception when you try use authentication without Memcached compiled with SASL support
  */
-	public function init($config = []) {
+	public function init(array $config = []) {
 		if (!class_exists('Memcached')) {
 			return false;
 		}
