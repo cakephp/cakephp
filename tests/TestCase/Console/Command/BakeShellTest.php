@@ -115,6 +115,21 @@ class BakeShellTest extends TestCase {
 	}
 
 /**
+ * Test that the generated option parser reflects all tasks.
+ *
+ * @return void
+ */
+	public function testGetOptionParser() {
+		$this->Shell->loadTasks();
+		$parser = $this->Shell->getOptionParser();
+		$commands = $parser->subcommands();
+		$this->assertArrayHasKey('fixture', $commands);
+		$this->assertArrayHasKey('view', $commands);
+		$this->assertArrayHasKey('controller', $commands);
+		$this->assertArrayHasKey('model', $commands);
+	}
+
+/**
  * Test loading tasks from core directories.
  *
  * @return void
