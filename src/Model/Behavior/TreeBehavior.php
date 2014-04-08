@@ -392,7 +392,7 @@ class TreeBehavior extends Behavior {
 	}
 
 /**
- * Helper function contianing the actual code for removeFromTree
+ * Helper function containing the actual code for removeFromTree
  *
  * @param \Cake\ORM\Entity $node The node to remove from the tree
  * @return \Cake\ORM\Entity|false the node after being removed from the tree or
