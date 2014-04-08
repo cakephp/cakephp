@@ -79,6 +79,8 @@ class TextHelperTest extends TestCase {
 
 /**
  * test String class methods are called correctly
+ *
+ * @return void
  */
 	public function testTextHelperProxyMethodCalls() {
 		$methods = array(
@@ -106,6 +108,8 @@ class TextHelperTest extends TestCase {
 
 /**
  * test engine override
+ *
+ * @return void
  */
 	public function testEngineOverride() {
 		$Text = new TextHelperTestObject($this->View, array('engine' => 'TestAppEngine'));
@@ -214,6 +218,8 @@ class TextHelperTest extends TestCase {
 
 /**
  * Data provider for autoLinking
+ *
+ * @return array
  */
 	public static function autoLinkProvider() {
 		return array(

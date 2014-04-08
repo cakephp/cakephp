@@ -505,7 +505,7 @@ class RequestHandlerComponent extends Component {
 		if (Configure::read('App.encoding') !== null) {
 			$defaults['charset'] = Configure::read('App.encoding');
 		}
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 
 		if ($type === 'ajax') {
 			$controller->layout = $this->_config['ajaxLayout'];

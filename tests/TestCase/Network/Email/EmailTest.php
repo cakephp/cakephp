@@ -34,6 +34,7 @@ class TestEmail extends Email {
 /**
  * Wrap to protected method
  *
+ * @return array
  */
 	public function formatAddress($address) {
 		return parent::_formatAddress($address);
@@ -42,6 +43,7 @@ class TestEmail extends Email {
 /**
  * Wrap to protected method
  *
+ * @return array
  */
 	public function wrap($text, $length = Email::LINE_LENGTH_MUST) {
 		return parent::_wrap($text, $length);
@@ -59,6 +61,7 @@ class TestEmail extends Email {
 /**
  * Encode to protected method
  *
+ * @return string
  */
 	public function encode($text) {
 		return $this->_encode($text);
@@ -67,6 +70,7 @@ class TestEmail extends Email {
 /**
  * Render to protected method
  *
+ * @return array
  */
 	public function render($content) {
 		return $this->_render($content);
@@ -287,6 +291,8 @@ class EmailTest extends TestCase {
 
 /**
  * Tests that it is possible set custom email validation
+ *
+ * @return void
  */
 	public function testCustomEmailValidation() {
 		$regex = '/^[\.a-z0-9!#$%&\'*+\/=?^_`{|}~-]+@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]{2,6}$/i';
@@ -1519,7 +1525,7 @@ class EmailTest extends TestCase {
  * @return void
  */
 	public function testSendRenderPlugin() {
-		Plugin::load('TestPlugin');
+		Plugin::load(['TestPlugin', 'TestPluginTwo']);
 
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('debug');
@@ -1539,6 +1545,14 @@ class EmailTest extends TestCase {
 		$result = $this->CakeEmail->template('TestPlugin.test_plugin_tpl', 'plug_default')->send();
 		$this->assertContains('Into TestPlugin.', $result['message']);
 		$this->assertContains('This email was sent using the TestPlugin.', $result['message']);
+
+		$this->CakeEmail->template(
+			'TestPlugin.test_plugin_tpl',
+			'TestPluginTwo.default'
+		);
+		$result = $this->CakeEmail->send();
+		$this->assertContains('Into TestPlugin.', $result['message']);
+		$this->assertContains('This email was sent using TestPluginTwo.', $result['message']);
 
 		// test plugin template overridden by theme
 		$this->CakeEmail->theme('TestTheme');
@@ -2112,6 +2126,8 @@ class EmailTest extends TestCase {
  * Tests for compatible check.
  *          charset property and       charset() method.
  *    headerCharset property and headerCharset() method.
+ *
+ * @return void
  */
 	public function testCharsetsCompatible() {
 		$checkHeaders = array(
@@ -2161,6 +2177,11 @@ class EmailTest extends TestCase {
 		$this->assertSame($oldStyleHeaders['Subject'], $newStyleHeaders['Subject']);
 	}
 
+/**
+ * @param mixed $charset
+ * @param mixed $headerCharset
+ * @return CakeEmail
+ */
 	protected function _getEmailByOldStyleCharset($charset, $headerCharset) {
 		$email = new Email(array('transport' => 'debug'));
 
@@ -2180,6 +2201,11 @@ class EmailTest extends TestCase {
 		return $email;
 	}
 
+/**
+ * @param mixed $charset
+ * @param mixed $headerCharset
+ * @return CakeEmail
+ */
 	protected function _getEmailByNewStyleCharset($charset, $headerCharset) {
 		$email = new Email(array('transport' => 'debug'));
 
@@ -2199,6 +2225,11 @@ class EmailTest extends TestCase {
 		return $email;
 	}
 
+/**
+ * testWrapLongLine()
+ *
+ * @return void
+ */
 	public function testWrapLongLine() {
 		$message = '<a href="http://cakephp.org">' . str_repeat('x', Email::LINE_LENGTH_MUST) . "</a>";
 
@@ -2239,6 +2270,11 @@ class EmailTest extends TestCase {
 		$this->assertLineLengths($result['message']);
 	}
 
+/**
+ * testWrapWithTagsAcrossLines()
+ *
+ * @return void
+ */
 	public function testWrapWithTagsAcrossLines() {
 		$str = <<<HTML
 <table>
@@ -2263,6 +2299,11 @@ HTML;
 		$this->assertLineLengths($result['message']);
 	}
 
+/**
+ * CakeEmailTest::testWrapIncludeLessThanSign()
+ *
+ * @return void
+ */
 	public function testWrapIncludeLessThanSign() {
 		$str = 'foo<bar';
 		$length = strlen($str);
@@ -2281,6 +2322,11 @@ HTML;
 		$this->assertLineLengths($result['message']);
 	}
 
+/**
+ * CakeEmailTest::testWrapForJapaneseEncoding()
+ *
+ * @return void
+ */
 	public function testWrapForJapaneseEncoding() {
 		$this->skipIf(!function_exists('mb_convert_encoding'));
 

@@ -45,6 +45,7 @@ class ControllerAuthorizeTest extends TestCase {
 
 /**
  * @expectedException \PHPUnit_Framework_Error
+ * @return void
  */
 	public function testControllerTypeError() {
 		$this->auth->controller(new \StdClass());
@@ -52,6 +53,7 @@ class ControllerAuthorizeTest extends TestCase {
 
 /**
  * @expectedException \Cake\Error\Exception
+ * @return void
  */
 	public function testControllerErrorOnMissingMethod() {
 		$this->auth->controller(new Controller());
@@ -84,4 +86,5 @@ class ControllerAuthorizeTest extends TestCase {
 
 		$this->assertTrue($this->auth->authorize($user, $request));
 	}
+
 }

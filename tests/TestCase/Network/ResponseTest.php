@@ -47,6 +47,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the request object constructor
  *
+ * @return void
  */
 	public function testConstruct() {
 		$response = new Response();
@@ -86,6 +87,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the body method
  *
+ * @return void
  */
 	public function testBody() {
 		$response = new Response();
@@ -98,6 +100,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the charset method
  *
+ * @return void
  */
 	public function testCharset() {
 		$response = new Response();
@@ -111,6 +114,7 @@ class ResponseTest extends TestCase {
  * Tests the statusCode method
  *
  * @expectedException \Cake\Error\Exception
+ * @return void
  */
 	public function testStatusCode() {
 		$response = new Response();
@@ -126,6 +130,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the type method
  *
+ * @return void
  */
 	public function testType() {
 		$response = new Response();
@@ -148,6 +153,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the header method
  *
+ * @return void
  */
 	public function testHeader() {
 		$response = new Response();
@@ -196,6 +202,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the send method
  *
+ * @return void
  */
 	public function testSend() {
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', '_sendContent', '_setCookies'));
@@ -241,7 +248,9 @@ class ResponseTest extends TestCase {
 
 /**
  * Tests the send method and changing the content type
+ *
  * @dataProvider charsetTypeProvider
+ * @return void
  */
 	public function testSendChangingContentType($original, $expected) {
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', '_sendContent', '_setCookies'));
@@ -261,6 +270,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the send method and changing the content type to JS without adding the charset
  *
+ * @return void
  */
 	public function testSendChangingContentTypeWithoutCharset() {
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', '_sendContent', '_setCookies'));
@@ -282,6 +292,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the send method and changing the content type
  *
+ * @return void
  */
 	public function testSendWithLocation() {
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', '_sendContent', '_setCookies'));
@@ -299,6 +310,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the disableCache method
  *
+ * @return void
  */
 	public function testDisableCache() {
 		$response = new Response();
@@ -314,6 +326,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the cache method
  *
+ * @return void
  */
 	public function testCache() {
 		$response = new Response();
@@ -386,6 +399,7 @@ class ResponseTest extends TestCase {
  * Tests the httpCodes method
  *
  * @expectedException \Cake\Error\Exception
+ * @return void
  */
 	public function testHttpCodes() {
 		$response = new Response();
@@ -430,6 +444,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the download method
  *
+ * @return void
  */
 	public function testDownload() {
 		$response = new Response();
@@ -443,6 +458,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the mapType method
  *
+ * @return void
  */
 	public function testMapType() {
 		$response = new Response();
@@ -459,6 +475,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the outputCompressed method
  *
+ * @return void
  */
 	public function testOutputCompressed() {
 		$response = new Response();
@@ -496,6 +513,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the send and setting of Content-Length
  *
+ * @return void
  */
 	public function testSendContentLength() {
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', '_sendContent'));

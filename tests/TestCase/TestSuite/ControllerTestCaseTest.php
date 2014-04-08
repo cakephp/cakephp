@@ -95,6 +95,8 @@ class ControllerTestCaseTest extends TestCase {
 
 /**
  * Test that ControllerTestCase::generate() creates mock objects correctly
+ *
+ * @return void
  */
 	public function testGenerate() {
 		$Posts = $this->Case->generate('TestApp\Controller\PostsController');
@@ -156,6 +158,8 @@ class ControllerTestCaseTest extends TestCase {
 
 /**
  * testGenerateWithComponentConfig
+ *
+ * @return void
  */
 	public function testGenerateWithComponentConfig() {
 		$Tests = $this->Case->generate('TestConfigs', array(
@@ -178,6 +182,8 @@ class ControllerTestCaseTest extends TestCase {
 
 /**
  * Tests ControllerTestCase::generate() using classes from plugins
+ *
+ * @return void
  */
 	public function testGenerateWithPlugin() {
 		$Tests = $this->Case->generate('TestPlugin.Tests', array(
@@ -197,6 +203,8 @@ class ControllerTestCaseTest extends TestCase {
 
 /**
  * Tests testAction
+ *
+ * @return void
  */
 	public function testTestAction() {
 		$Controller = $this->Case->generate('TestsApps');
@@ -258,6 +266,7 @@ class ControllerTestCaseTest extends TestCase {
  * Tests not using loaded routes during tests
  *
  * @expectedException \Cake\Error\MissingActionException
+ * @return void
  */
 	public function testSkipRoutes() {
 		Router::connect('/:controller/:action/*');
@@ -269,6 +278,8 @@ class ControllerTestCaseTest extends TestCase {
 
 /**
  * Tests backwards compatibility with setting the return type
+ *
+ * @return void
  */
 	public function testBCSetReturn() {
 		$this->Case->autoMock = true;
@@ -299,6 +310,8 @@ class ControllerTestCaseTest extends TestCase {
 
 /**
  * Tests sending POST data to testAction
+ *
+ * @return void
  */
 	public function testTestActionPostData() {
 		$this->Case->autoMock = true;
@@ -334,6 +347,8 @@ class ControllerTestCaseTest extends TestCase {
 
 /**
  * Tests sending GET data to testAction
+ *
+ * @return void
  */
 	public function testTestActionGetData() {
 		$this->Case->autoMock = true;
@@ -384,6 +399,8 @@ class ControllerTestCaseTest extends TestCase {
 
 /**
  * Tests autoMock ability
+ *
+ * @return void
  */
 	public function testAutoMock() {
 		$this->Case->autoMock = true;
@@ -397,6 +414,8 @@ class ControllerTestCaseTest extends TestCase {
 
 /**
  * Test using testAction and not mocking
+ *
+ * @return void
  */
 	public function testNoMocking() {
 		$result = $this->Case->testAction('/tests_apps/some_method');

@@ -143,12 +143,13 @@ class HtmlHelper extends Helper {
  * @param string $name Text for link
  * @param string $link URL for link (if empty it won't be a link)
  * @param string|array $options Link attributes e.g. array('id' => 'selected')
- * @return void
+ * @return this HtmlHelper
  * @see HtmlHelper::link() for details on $options that can be used.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
 	public function addCrumb($name, $link = null, array $options = array()) {
 		$this->_crumbs[] = array($name, $link, $options);
+		return $this;
 	}
 
 /**
@@ -235,7 +236,7 @@ class HtmlHelper extends Helper {
 			}
 		}
 
-		$options = array_merge($type, $options);
+		$options += $type;
 		$out = null;
 
 		if (isset($options['link'])) {
@@ -656,7 +657,7 @@ class HtmlHelper extends Helper {
  */
 	public function getCrumbList(array $options = array(), $startText = false) {
 		$defaults = array('firstClass' => 'first', 'lastClass' => 'last', 'separator' => '', 'escape' => true);
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 		$firstClass = $options['firstClass'];
 		$lastClass = $options['lastClass'];
 		$separator = $options['separator'];

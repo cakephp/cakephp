@@ -304,7 +304,7 @@ class Number {
 			$options['before'] = $currency;
 		}
 
-		$options = array_merge($default, $options);
+		$options += $default;
 
 		if (isset($options['before']) && $options['before'] !== '') {
 			$options['wholeSymbol'] = $options['before'];

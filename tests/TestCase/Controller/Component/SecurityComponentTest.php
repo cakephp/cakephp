@@ -165,6 +165,7 @@ class SecurityComponentTest extends TestCase {
  * visibility keyword in the blackhole callback
  *
  * @expectedException \Cake\Error\BadRequestException
+ * @return void
  */
 	public function testBlackholeWithBrokenCallback() {
 		$request = new Request('posts/index');

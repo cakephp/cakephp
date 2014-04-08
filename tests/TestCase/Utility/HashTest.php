@@ -174,7 +174,7 @@ class HashTest extends TestCase {
 /**
  * Test get()
  *
- * return void
+ * @return void
  */
 	public function testGet() {
 		$data = array('abc', 'def');
@@ -920,6 +920,8 @@ class HashTest extends TestCase {
 
 /**
  * Test that extract() + matching can hit null things.
+ *
+ * @return void
  */
 	public function testExtractMatchesNull() {
 		$data = array(

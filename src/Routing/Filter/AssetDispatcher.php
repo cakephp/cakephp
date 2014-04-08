@@ -1,7 +1,5 @@
 <?php
 /**
- * AssetDispatcher
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -45,6 +43,7 @@ class AssetDispatcher extends DispatcherFilter {
  *
  * @param \Cake\Event\Event $event containing the request and response object
  * @return \Cake\Network\Response if the client is requesting a recognized asset, null otherwise
+ * @throws NotFoundException When asset not found
  */
 	public function beforeDispatch(Event $event) {
 		$request = $event->data['request'];
@@ -55,12 +54,18 @@ class AssetDispatcher extends DispatcherFilter {
 		}
 
 		$assetFile = $this->_getAssetFile($url);
-		if ($assetFile === null || !file_exists($assetFile)) {
+		if ($assetFile === null) {
 			return null;
 		}
 
 		$response = $event->data['response'];
 		$event->stopPropagation();
+
+		if (!file_exists($assetFile)) {
+			$response->statusCode(404);
+			$response->send();
+			return $response;
+		}
 
 		$response->modified(filemtime($assetFile));
 		if ($response->checkNotModified($request)) {

@@ -417,12 +417,12 @@ class String {
 			return $text;
 		}
 
-		$default = array(
+		$defaults = array(
 			'format' => '<span class="highlight">\1</span>',
 			'html' => false,
 			'regex' => "|%s|iu"
 		);
-		$options = array_merge($default, $options);
+		$options += $defaults;
 		extract($options);
 
 		if (is_array($phrase)) {
@@ -481,7 +481,7 @@ class String {
 		$default = array(
 			'ellipsis' => '...', 'exact' => true
 		);
-		$options = array_merge($default, $options);
+		$options += $default;
 		extract($options);
 
 		if (mb_strlen($text) <= $length) {
@@ -522,7 +522,7 @@ class String {
 		if (!empty($options['html']) && Configure::read('App.encoding') === 'UTF-8') {
 			$default['ellipsis'] = "\xe2\x80\xa6";
 		}
-		$options = array_merge($default, $options);
+		$options += $default;
 		extract($options);
 
 		if ($html) {

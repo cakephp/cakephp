@@ -259,7 +259,7 @@ if (!function_exists('pr')) {
  * print_r() will wrap <PRE> tags around the output of given array. Similar to debug().
  *
  * @see debug()
- * @param array $var Variable to print out
+ * @param mixed $var Variable to print out
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pr
  */

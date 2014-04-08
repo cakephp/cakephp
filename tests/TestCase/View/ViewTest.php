@@ -674,6 +674,8 @@ class ViewTest extends TestCase {
 
 /**
  * Test that elements can have callbacks
+ *
+ * @return void
  */
 	public function testElementCallbacks() {
 		$count = 0;
