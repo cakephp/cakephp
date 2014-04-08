@@ -74,7 +74,7 @@ class TextHelper extends Helper {
  * @param array $config Settings array Settings array
  * @throws \Cake\Error\Exception when the engine class could not be found.
  */
-	public function __construct(View $View, $config = array()) {
+	public function __construct(View $View, array $config = array()) {
 		parent::__construct($View, $config);
 
 		$config = $this->_config;
@@ -110,7 +110,7 @@ class TextHelper extends Helper {
  * @return string The text with links
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoLinkUrls
  */
-	public function autoLinkUrls($text, $options = array()) {
+	public function autoLinkUrls($text, array $options = array()) {
 		$this->_placeholders = array();
 		$options += array('escape' => true);
 
@@ -191,7 +191,7 @@ class TextHelper extends Helper {
  * @return string The text with links
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoLinkEmails
  */
-	public function autoLinkEmails($text, $options = array()) {
+	public function autoLinkEmails($text, array $options = array()) {
 		$options += array('escape' => true);
 		$this->_placeholders = array();
 
@@ -219,7 +219,7 @@ class TextHelper extends Helper {
  * @return string The text with links
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoLink
  */
-	public function autoLink($text, $options = array()) {
+	public function autoLink($text, array $options = array()) {
 		$text = $this->autoLinkUrls($text, $options);
 		return $this->autoLinkEmails($text, array_merge($options, array('escape' => false)));
 	}
@@ -236,7 +236,7 @@ class TextHelper extends Helper {
  * @return string The highlighted text
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
  */
-	public function highlight($text, $phrase, $options = array()) {
+	public function highlight($text, $phrase, array $options = array()) {
 		return $this->_engine->highlight($text, $phrase, $options);
 	}
 
@@ -295,7 +295,7 @@ class TextHelper extends Helper {
  * @return string Trimmed string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
  */
-	public function truncate($text, $length = 100, $options = array()) {
+	public function truncate($text, $length = 100, array $options = array()) {
 		return $this->_engine->truncate($text, $length, $options);
 	}
 

@@ -79,16 +79,34 @@ class NumberHelperTest extends TestCase {
  */
 	public function testNumberHelperProxyMethodCalls() {
 		$methods = array(
-			'precision', 'toReadableSize', 'toPercentage', 'format',
-			'currency', 'addFormat',
+			'precision', 'toReadableSize', 'format',
 		);
 		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', $methods);
 		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
 		$Number->attach($CakeNumber);
+
 		foreach ($methods as $method) {
 			$CakeNumber->expects($this->at(0))->method($method);
 			$Number->{$method}('who', 'what', 'when', 'where', 'how');
 		}
+
+		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', array('toPercentage'));
+		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
+		$Number->attach($CakeNumber);
+		$CakeNumber->expects($this->at(0))->method('toPercentage');
+		$Number->toPercentage('who', 'what', array('when'));
+
+		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', array('currency'));
+		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
+		$Number->attach($CakeNumber);
+		$CakeNumber->expects($this->at(0))->method('currency');
+		$Number->currency('who', 'what', array('when'));
+
+		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', array('addFormat'));
+		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
+		$Number->attach($CakeNumber);
+		$CakeNumber->expects($this->at(0))->method('addFormat');
+		$Number->addFormat('who', array('when'));
 	}
 
 /**

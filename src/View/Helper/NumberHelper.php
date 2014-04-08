@@ -58,7 +58,7 @@ class NumberHelper extends Helper {
  * @param array $config Configuration settings for the helper
  * @throws \Cake\Error\Exception When the engine class could not be found.
  */
-	public function __construct(View $View, $config = array()) {
+	public function __construct(View $View, array $config = array()) {
 		parent::__construct($View, $config);
 
 		$config = $this->_config;
@@ -124,7 +124,7 @@ class NumberHelper extends Helper {
  * @return string Percentage string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toPercentage
  */
-	public function toPercentage($number, $precision = 2, $options = array()) {
+	public function toPercentage($number, $precision = 2, array $options = array()) {
 		return $this->_engine->toPercentage($number, $precision, $options);
 	}
 
@@ -134,7 +134,7 @@ class NumberHelper extends Helper {
  * @see \Cake\Utility\Number::format()
  *
  * @param float $number A floating point number
- * @param integer $options If integer then places, if string then before, if (,.-) then use it
+ * @param mixed $options If integer then places, if string then before, if (,.-) then use it
  *   or array with places and before keys
  * @return string formatted number
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
@@ -183,7 +183,7 @@ class NumberHelper extends Helper {
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
-	public function currency($number, $currency = null, $options = array()) {
+	public function currency($number, $currency = null, array $options = array()) {
 		return $this->_engine->currency($number, $currency, $options);
 	}
 
@@ -208,7 +208,7 @@ class NumberHelper extends Helper {
  * @see NumberHelper::currency()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::addFormat
  */
-	public function addFormat($formatName, $options) {
+	public function addFormat($formatName, array $options) {
 		return $this->_engine->addFormat($formatName, $options);
 	}
 

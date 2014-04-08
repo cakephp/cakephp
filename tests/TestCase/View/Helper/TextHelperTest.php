@@ -82,14 +82,25 @@ class TextHelperTest extends TestCase {
  */
 	public function testTextHelperProxyMethodCalls() {
 		$methods = array(
-			'highlight', 'stripLinks', 'truncate', 'excerpt', 'toList',
-			);
+			'stripLinks', 'excerpt', 'toList',
+		);
 		$String = $this->getMock(__NAMESPACE__ . '\StringMock', $methods);
 		$Text = new TextHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\StringMock'));
 		$Text->attach($String);
 		foreach ($methods as $method) {
 			$String->expects($this->at(0))->method($method);
 			$Text->{$method}('who', 'what', 'when', 'where', 'how');
+		}
+
+		$methods = array(
+			'highlight', 'truncate'
+		);
+		$String = $this->getMock(__NAMESPACE__ . '\StringMock', $methods);
+		$Text = new TextHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\StringMock'));
+		$Text->attach($String);
+		foreach ($methods as $method) {
+			$String->expects($this->at(0))->method($method);
+			$Text->{$method}('who', array('what'));
 		}
 	}
 

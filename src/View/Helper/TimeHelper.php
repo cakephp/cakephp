@@ -62,7 +62,7 @@ class TimeHelper extends Helper {
  * @param array $config Settings array
  * @throws \Cake\Error\Exception When the engine class could not be found.
  */
-	public function __construct(View $View, $config = array()) {
+	public function __construct(View $View, array $config = array()) {
 		parent::__construct($View, $config);
 
 		$config = $this->_config;
@@ -336,7 +336,7 @@ class TimeHelper extends Helper {
  * @return string Relative time string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function timeAgoInWords($dateTime, $options = array()) {
+	public function timeAgoInWords($dateTime, array $options = array()) {
 		$element = null;
 
 		if (!empty($options['element'])) {

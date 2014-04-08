@@ -168,7 +168,7 @@ class FormHelper extends Helper {
  * @param \Cake\View\View $View The View this helper is being attached to.
  * @param array $config Configuration settings for the helper.
  */
-	public function __construct(View $View, $config = []) {
+	public function __construct(View $View, array $config = []) {
 		parent::__construct($View, $config);
 		$config = $this->_config;
 
@@ -440,14 +440,14 @@ class FormHelper extends Helper {
  * the hidden input tags generated for the Security Component. This is
  * especially useful to set HTML5 attributes like 'form'.
  *
- * @param array|null $fields If set specifies the list of fields to use when
+ * @param array $fields If set specifies the list of fields to use when
  *    generating the hash, else $this->fields is being used.
  * @param array $secureAttributes will be passed as html attributes into the hidden
  *    input elements generated for the Security Component.
  * @return string A hidden input field with a security hash
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::secure
  */
-	public function secure($fields = array(), $secureAttributes = array()) {
+	public function secure(array $fields = array(), array $secureAttributes = array()) {
 		if (!isset($this->request['_Token']) || empty($this->request['_Token'])) {
 			return;
 		}
@@ -571,7 +571,7 @@ class FormHelper extends Helper {
  * @return string Formatted errors or ''.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::error
  */
-	public function error($field, $text = null, $options = []) {
+	public function error($field, $text = null, array $options = []) {
 		$options += ['escape' => true];
 
 		$context = $this->_getContext();
@@ -734,7 +734,7 @@ class FormHelper extends Helper {
  * and fieldset rendering.
  * `$this->Form->inputs('My legend');` Would generate an input set with a custom legend.
  *
- * @param array $fields An array of customizations for the fields that will be
+ * @param mixed $fields An array of customizations for the fields that will be
  *   generated. This array allows you to set custom types, labels, or other options.
  * @param array $blacklist A list of fields to not create inputs for.
  * @param array $options Options array. Valid keys are:
@@ -744,7 +744,7 @@ class FormHelper extends Helper {
  * @return string Completed form inputs.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::inputs
  */
-	public function inputs($fields = null, $blacklist = null, $options = array()) {
+	public function inputs($fields = null, array $blacklist = [], array $options = []) {
 		$fieldset = $legend = true;
 		$context = $this->_getContext();
 
@@ -788,7 +788,7 @@ class FormHelper extends Helper {
 			}
 			$entity = explode('.', $name);
 			$blacklisted = (
-				is_array($blacklist) &&
+				!empty($blacklist) &&
 				(in_array($name, $blacklist) || in_array(end($entity), $blacklist))
 			);
 			if ($blacklisted) {
@@ -828,13 +828,13 @@ class FormHelper extends Helper {
  * @return string Completed form widget.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#creating-form-elements
  */
-	public function input($fieldName, $options = []) {
+	public function input($fieldName, array $options = []) {
 		$options += [
 			'type' => null,
 			'label' => null,
 			'error' => null,
-			'options' => null,
 			'required' => null,
+			'options' => null,
 			'templates' => []
 		];
 		$options = $this->_parseOptions($fieldName, $options);
@@ -886,7 +886,7 @@ class FormHelper extends Helper {
 	protected function _getInput($fieldName, $options) {
 		switch ($options['type']) {
 			case 'select':
-				$opts = $options['options'];
+				$opts = (array)$options['options'];
 				unset($options['options']);
 				return $this->select($fieldName, $opts, $options);
 			case 'url':
@@ -1132,7 +1132,7 @@ class FormHelper extends Helper {
  * @return string An HTML text input element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
  */
-	public function checkbox($fieldName, $options = []) {
+	public function checkbox($fieldName, array $options = []) {
 		$options += array('hiddenField' => true, 'value' => 1);
 
 		// Work around value=>val translations.
@@ -1177,7 +1177,7 @@ class FormHelper extends Helper {
  * @return string Completed radio widget set.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
  */
-	public function radio($fieldName, $options = [], $attributes = []) {
+	public function radio($fieldName, array $options = [], array $attributes = []) {
 		$attributes = $this->_initInputField($fieldName, $attributes);
 
 		$hiddenField = isset($attributes['hiddenField']) ? $attributes['hiddenField'] : true;
@@ -1246,7 +1246,7 @@ class FormHelper extends Helper {
  * @return string A generated HTML text input element
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::textarea
  */
-	public function textarea($fieldName, $options = array()) {
+	public function textarea($fieldName, array $options = array()) {
 		$options = $this->_initInputField($fieldName, $options);
 		return $this->widget('textarea', $options);
 	}
@@ -1259,7 +1259,7 @@ class FormHelper extends Helper {
  * @return string A generated hidden input
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::hidden
  */
-	public function hidden($fieldName, $options = array()) {
+	public function hidden($fieldName, array $options = array()) {
 		$options += array('required' => false, 'secure' => true);
 
 		$secure = $options['secure'];
@@ -1285,7 +1285,7 @@ class FormHelper extends Helper {
  * @return string A generated file input.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::file
  */
-	public function file($fieldName, $options = array()) {
+	public function file($fieldName, array $options = array()) {
 		$options += array('secure' => true);
 		$secure = $options['secure'];
 		$options['secure'] = static::SECURE_SKIP;
@@ -1318,7 +1318,7 @@ class FormHelper extends Helper {
  * @return string A HTML button tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::button
  */
-	public function button($title, $options = array()) {
+	public function button($title, array $options = array()) {
 		$options += array('type' => 'submit', 'escape' => false, 'secure' => false);
 		if (isset($options['name'])) {
 			$this->_secure($options['secure'], $this->_secureFieldName($options));
@@ -1346,7 +1346,7 @@ class FormHelper extends Helper {
  * @return string A HTML button tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postButton
  */
-	public function postButton($title, $url, $options = array()) {
+	public function postButton($title, $url, array $options = array()) {
 		$out = $this->create(false, array('url' => $url));
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach (Hash::flatten($options['data']) as $key => $value) {
@@ -1383,7 +1383,7 @@ class FormHelper extends Helper {
  * @return string An `<a />` element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */
-	public function postLink($title, $url = null, $options = array(), $confirmMessage = false) {
+	public function postLink($title, $url = null, array $options = array(), $confirmMessage = false) {
 		$options += array('block' => null);
 
 		$requestMethod = 'POST';
@@ -1465,7 +1465,7 @@ class FormHelper extends Helper {
  * @return string A HTML submit button
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::submit
  */
-	public function submit($caption = null, $options = []) {
+	public function submit($caption = null, array $options = []) {
 		if (!is_string($caption) && empty($caption)) {
 			$caption = __d('cake', 'Submit');
 		}
@@ -1573,7 +1573,7 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
  * @see \Cake\View\Helper\FormHelper::multiCheckbox() for creating multiple checkboxes.
  */
-	public function select($fieldName, $options = [], $attributes = []) {
+	public function select($fieldName, array $options = [], array $attributes = []) {
 		$attributes += [
 			'disabled' => null,
 			'escape' => true,
@@ -1638,7 +1638,7 @@ class FormHelper extends Helper {
  * @return string Formatted SELECT element
  * @see \Cake\View\Helper\FormHelper::select() for supported option formats.
  */
-	public function multiCheckbox($fieldName, $options, $attributes = []) {
+	public function multiCheckbox($fieldName, array $options, array $attributes = []) {
 		$attributes += [
 			'disabled' => null,
 			'escape' => true,
@@ -1696,7 +1696,7 @@ class FormHelper extends Helper {
  * @return string A generated day select box.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::day
  */
-	public function day($fieldName = null, $options = []) {
+	public function day($fieldName = null, array $options = []) {
 		$options = $this->_singleDatetime($options, 'day');
 
 		if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 31) {
@@ -1727,7 +1727,7 @@ class FormHelper extends Helper {
  * @return string Completed year select input
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::year
  */
-	public function year($fieldName, $options = []) {
+	public function year($fieldName, array $options = []) {
 		$options = $this->_singleDatetime($options, 'year');
 
 		$len = isset($options['val']) ? strlen($options['val']) : 0;
@@ -1758,7 +1758,7 @@ class FormHelper extends Helper {
  * @return string A generated month select dropdown.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::month
  */
-	public function month($fieldName, $options = array()) {
+	public function month($fieldName, array $options = array()) {
 		$options = $this->_singleDatetime($options, 'month');
 
 		if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 12) {
@@ -1786,7 +1786,7 @@ class FormHelper extends Helper {
  * @return string Completed hour select input
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::hour
  */
-	public function hour($fieldName, $options = []) {
+	public function hour($fieldName, array $options = []) {
 		$options += ['format' => 12];
 		$options = $this->_singleDatetime($options, 'hour');
 
@@ -1819,7 +1819,7 @@ class FormHelper extends Helper {
  * @return string Completed minute select input.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::minute
  */
-	public function minute($fieldName, $options = []) {
+	public function minute($fieldName, array $options = []) {
 		$options = $this->_singleDatetime($options, 'minute');
 
 		if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 60) {
@@ -1845,7 +1845,7 @@ class FormHelper extends Helper {
  * @return string Completed meridian select input
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::meridian
  */
-	public function meridian($fieldName, $options = array()) {
+	public function meridian($fieldName, array $options = array()) {
 		$options = $this->_singleDatetime($options, 'meridian');
 
 		if (isset($options['val'])) {
@@ -1893,7 +1893,7 @@ class FormHelper extends Helper {
  * @return string Generated set of select boxes for the date and time formats chosen.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::dateTime
  */
-	public function dateTime($fieldName, $options = array()) {
+	public function dateTime($fieldName, array $options = array()) {
 		$options += [
 			'empty' => true,
 			'value' => null,
@@ -1992,7 +1992,7 @@ class FormHelper extends Helper {
  * @return string Generated set of select boxes for time formats chosen.
  * @see Cake\View\Helper\FormHelper::dateTime() for templating options.
  */
-	public function time($fieldName, $options = []) {
+	public function time($fieldName, array $options = []) {
 		$options += [
 			'empty' => true,
 			'value' => null,
@@ -2020,7 +2020,7 @@ class FormHelper extends Helper {
  * @return string Generated set of select boxes for time formats chosen.
  * @see Cake\View\Helper\FormHelper::dateTime() for templating options.
  */
-	public function date($fieldName, $options = []) {
+	public function date($fieldName, array $options = []) {
 		$options += [
 			'empty' => true,
 			'value' => null,
