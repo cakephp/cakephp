@@ -39,6 +39,7 @@ class TreeBehavior extends Behavior {
 		'implementedFinders' => [
 			'path' => 'findPath',
 			'children' => 'findChildren',
+			'treeList' => 'findTreeList'
 		],
 		'implementedMethods' => [
 			'childCount' => 'childCount',
@@ -325,6 +326,21 @@ class TreeBehavior extends Behavior {
 				"{$right} <" => $node->{$right},
 				"{$left} >" => $node->{$left}
 			]);
+	}
+
+	public function findTreeList($query, $options) {
+		return $this->_scope($query)
+			->find('threaded', ['parentField' => $this->config()['parent']])
+			->formatResults(function($results) use ($options) {
+				$options += [
+					'keyPath' => $this->_table->primaryKey(),
+					'valuePath' => $this->_table->displayField(),
+					'spacer' => '_'
+				];
+				return $results
+					->listNested()
+					->printer($options['valuePath'], $options['keyPath'], $options['spacer']);
+			});
 	}
 
 /**
