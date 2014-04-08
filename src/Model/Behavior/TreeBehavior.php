@@ -339,6 +339,19 @@ class TreeBehavior extends Behavior {
  * false on error
  */
 	public function removeFromTree(Entity $node) {
+		return $this->_table->connection()->transactional(function() use ($node) {
+			return $this->_removeFromTree($node);
+		});
+	}
+
+/**
+ * Helper function contianing the actual code for removeFromTree
+ *
+ * @param \Cake\ORM\Entity $node The node to remove from the tree
+ * @return \Cake\ORM\Entity|false the node after being removed from the tree or
+ * false on error
+ */
+	protected function _removeFromTree($node) {
 		$config = $this->config();
 		$left = $node->get($config['left']);
 		$right = $node->get($config['right']);
@@ -382,6 +395,20 @@ class TreeBehavior extends Behavior {
  * @return \Cake\ORM\Entity|boolean $node The node after being moved or false on failure
  */
 	public function moveUp(Entity $node, $number = 1) {
+		return $this->_table->connection()->transactional(function() use ($node, $number) {
+			return $this->_moveUp($node, $number);
+		});
+	}
+
+/**
+ * Helper function used with the actual code for moveUp
+ *
+ * @param \Cake\ORM\Entity $node The node to move
+ * @param integer|boolean $number How many places to move the node, or true to move to first position
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
+ * @return \Cake\ORM\Entity|boolean $node The node after being moved or false on failure
+ */
+	protected function _moveUp($node, $number) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 
@@ -442,6 +469,20 @@ class TreeBehavior extends Behavior {
  * @return \Cake\ORM\Entity|boolean the entity after being moved or false on failure
  */
 	public function moveDown(Entity $node, $number = 1) {
+		return $this->_table->connection()->transactional(function() use ($node, $number) {
+			return $this->_moveDown($node, $number);
+		});
+	}
+
+/**
+ * Helper function used with the actual code for moveDown
+ *
+ * @param \Cake\ORM\Entity $node The node to move
+ * @param integer|boolean $number How many places to move the node, or true to move to last position
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
+ * @return \Cake\ORM\Entity|boolean $node The node after being moved or false on failure
+ */
+	protected function _moveDown($node, $number) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 
