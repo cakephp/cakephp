@@ -14,7 +14,7 @@
  */
 namespace Cake\Console\Command\Task;
 
-use Cake\Console\Shell;
+use Cake\Console\Command\Task\BakeTask;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Utility\File;
@@ -26,7 +26,7 @@ use Cake\Utility\String;
  * Task class for creating new project apps and plugins
  *
  */
-class ProjectTask extends Shell {
+class ProjectTask extends BakeTask {
 
 /**
  * App path (used in testing).

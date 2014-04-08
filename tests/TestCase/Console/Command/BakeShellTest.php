@@ -18,6 +18,7 @@ use Cake\Console\Command\BakeShellShell;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 class BakeShellTest extends TestCase {
@@ -105,10 +106,64 @@ class BakeShellTest extends TestCase {
 		$this->Shell->expects($this->at(0))
 			->method('out')
 			->with($this->stringContains('The following commands'));
-		$this->Shell->expects($this->at(3))
-			->method('out')
-			->with('model');
+
+		$this->Shell->expects($this->exactly(17))
+			->method('out');
+
+		$this->Shell->loadTasks();
 		$this->Shell->main();
+	}
+
+/**
+ * Test that the generated option parser reflects all tasks.
+ *
+ * @return void
+ */
+	public function testGetOptionParser() {
+		$this->Shell->loadTasks();
+		$parser = $this->Shell->getOptionParser();
+		$commands = $parser->subcommands();
+		$this->assertArrayHasKey('fixture', $commands);
+		$this->assertArrayHasKey('view', $commands);
+		$this->assertArrayHasKey('controller', $commands);
+		$this->assertArrayHasKey('model', $commands);
+	}
+
+/**
+ * Test loading tasks from core directories.
+ *
+ * @return void
+ */
+	public function testLoadTasksCoreAndApp() {
+		$this->Shell->loadTasks();
+		$expected = [
+			'Behavior',
+			'Component',
+			'Controller',
+			'Fixture',
+			'Helper',
+			'Model',
+			'Plugin',
+			'Project',
+			'Test',
+			'View',
+			'Zerg',
+		];
+		sort($this->Shell->tasks);
+		sort($expected);
+		$this->assertEquals($expected, $this->Shell->tasks);
+	}
+
+/**
+ * Test loading tasks from plugins
+ *
+ * @return void
+ */
+	public function testLoadTasksPlugin() {
+		Plugin::load('TestPlugin');
+		$this->Shell->loadTasks();
+		$this->assertContains('TestPlugin.Widget', $this->Shell->tasks);
+		$this->assertContains('TestPlugin.Zerg', $this->Shell->tasks);
 	}
 
 }

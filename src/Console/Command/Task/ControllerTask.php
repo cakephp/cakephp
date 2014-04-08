@@ -257,7 +257,7 @@ class ControllerTask extends BakeTask {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		$parser->description(
-			__d('cake_console', 'Bake a controller for a model. Using options you can bake public, admin or both.')
+			__d('cake_console', 'Bake a controller skeleton.')
 		)->addArgument('name', [
 			'help' => __d('cake_console', 'Name of the controller to bake. Can use Plugin.name to bake controllers into plugins.')
 		])->addOption('plugin', [
