@@ -1645,7 +1645,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param string|integer $param placeholder to be replaced with quoted version
  * of $value
- * @param mixed $value the value to be bound
+ * @param mixed $value The value to be bound
  * @param string|integer $type the mapped type name, used for casting when sending
  * to database
  * @return Query

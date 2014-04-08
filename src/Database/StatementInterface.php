@@ -34,7 +34,7 @@ interface StatementInterface {
  *	`$statement->bindValue(5, new \DateTime(), 'date');`
  *
  * @param string|integer $column name or param position to be bound
- * @param mixed $value the value to bind to variable in query
+ * @param mixed $value The value to bind to variable in query
  * @param string $type name of configured Type class
  * @return void
  */
@@ -104,7 +104,7 @@ interface StatementInterface {
  * }}}
  *
  * @param string $type 'num' for positional columns, assoc for named columns
- * @return mixed|boolean result array containing columns and values or false if no results
+ * @return mixed Result array containing columns and values or false if no results
  * are left
  */
 	public function fetch($type = 'num');

@@ -181,7 +181,7 @@ trait CollectionTrait {
  * Returns true if $value is present in this collection. Comparisons are made
  * both by value and type.
  *
- * @param mixed $value the value to check for
+ * @param mixed $value The value to check for
  * @return boolean true if $value is present in this collection
  */
 	public function contains($value) {

@@ -133,7 +133,7 @@ class MapReduce implements IteratorAggregate {
  * Appends a new record to the bucket labelled with $key, usually as a result
  * of mapping a single record from the original data.
  *
- * @param mixed $value the record itself to store in the bucket
+ * @param mixed $value The record itself to store in the bucket
  * @param string $bucket the name of the bucket where to put the record
  * @return void
  */
