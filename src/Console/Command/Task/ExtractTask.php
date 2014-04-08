@@ -94,13 +94,6 @@ class ExtractTask extends Shell {
 	protected $_exclude = [];
 
 /**
- * Holds whether this call should extract model validation messages
- *
- * @var boolean
- */
-	protected $_extractValidation = true;
-
-/**
  * Holds the validation string domain to use for validation messages when extracting
  *
  * @var boolean
@@ -183,9 +176,6 @@ class ExtractTask extends Shell {
 			$this->_exclude = array_merge($this->_exclude, App::path('Plugin'));
 		}
 
-		if (!empty($this->params['ignore-model-validation']) || (!$this->_isExtractingApp() && empty($plugin))) {
-			$this->_extractValidation = false;
-		}
 		if (!empty($this->params['validation-domain'])) {
 			$this->_validationDomain = $this->params['validation-domain'];
 		}
@@ -288,12 +278,10 @@ class ExtractTask extends Shell {
 		$this->out(__d('cake_console', 'Output Directory: ') . $this->_output);
 		$this->hr();
 		$this->_extractTokens();
-		$this->_extractValidationMessages();
 		$this->_buildFiles();
 		$this->_writeFiles();
 		$this->_paths = $this->_files = $this->_storage = [];
 		$this->_translations = $this->_tokens = [];
-		$this->_extractValidation = true;
 		$this->out();
 		$this->out(__d('cake_console', 'Done.'));
 	}
@@ -433,107 +421,6 @@ class ExtractTask extends Shell {
 				}
 			}
 			$count++;
-		}
-	}
-
-/**
- * Looks for models in the application and extracts the validation messages
- * to be added to the translation map
- *
- * @return void
- */
-	protected function _extractValidationMessages() {
-		if (!$this->_extractValidation) {
-			return;
-		}
-
-		$plugins = [null];
-		if (empty($this->params['exclude-plugins'])) {
-			$plugins = array_merge($plugins, App::objects('Plugin', null, false));
-		}
-		foreach ($plugins as $plugin) {
-			$this->_extractPluginValidationMessages($plugin);
-		}
-	}
-
-/**
- * Extract validation messages from application or plugin models
- *
- * @param string $plugin Plugin name or `null` to process application models
- * @return void
- */
-	protected function _extractPluginValidationMessages($plugin = null) {
-		if (!empty($plugin)) {
-			if (!Plugin::loaded($plugin)) {
-				return;
-			}
-			$plugin = $plugin . '.';
-		}
-		$models = App::objects($plugin . 'Model', null, false);
-
-		foreach ($models as $model) {
-			$modelClass = App::classname($plugin . $model, 'Model');
-			$reflection = new \ReflectionClass($modelClass);
-			if (!$reflection->isSubClassOf('Cake\Model\Model')) {
-				continue;
-			}
-			$properties = $reflection->getDefaultProperties();
-			$validate = $properties['validate'];
-			if (empty($validate)) {
-				continue;
-			}
-
-			$file = $reflection->getFileName();
-			$domain = $this->_validationDomain;
-			if (!empty($properties['validationDomain'])) {
-				$domain = $properties['validationDomain'];
-			}
-			foreach ($validate as $field => $rules) {
-				$this->_processValidationRules($field, $rules, $file, $domain);
-			}
-		}
-	}
-
-/**
- * Process a validation rule for a field and looks for a message to be added
- * to the translation map
- *
- * @param string $field the name of the field that is being processed
- * @param array $rules the set of validation rules for the field
- * @param string $file the file name where this validation rule was found
- * @param string $domain default domain to bind the validations to
- * @param string $category the translation category
- * @return void
- */
-	protected function _processValidationRules($field, $rules, $file, $domain, $category = 'LC_MESSAGES') {
-		if (!is_array($rules)) {
-			return;
-		}
-
-		$dims = Hash::dimensions($rules);
-		if ($dims === 1 || ($dims === 2 && isset($rules['message']))) {
-			$rules = [$rules];
-		}
-
-		foreach ($rules as $rule => $validateProp) {
-			$msgid = null;
-			if (isset($validateProp['message'])) {
-				if (is_array($validateProp['message'])) {
-					$msgid = $validateProp['message'][0];
-				} else {
-					$msgid = $validateProp['message'];
-				}
-			} elseif (is_string($rule)) {
-				$msgid = $rule;
-			}
-			if ($msgid) {
-				$msgid = $this->_formatString(sprintf("'%s'", $msgid));
-				$details = [
-					'file' => $file,
-					'line' => 'validation for field ' . $field
-				];
-				$this->_addTranslation($category, $domain, $msgid, $details);
-			}
 		}
 	}
 
