@@ -121,11 +121,11 @@ class CakePlugin {
 	public static function loadAll($options = array()) {
 		$plugins = App::objects('plugins');
 		foreach ($plugins as $p) {
-			$opts = isset($options[$p]) ? $options[$p] : array();
+			$opts = isset($options[$p]) ? (array)$options[$p] : array();
 			if (isset($options[0])) {
 				$opts += $options[0];
 			}
-			self::load($p, (array)$opts);
+			self::load($p, $opts);
 		}
 	}
 
