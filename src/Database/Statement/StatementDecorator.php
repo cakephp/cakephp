@@ -166,7 +166,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
  * }}}
  *
  * @param string $type 'num' for positional columns, assoc for named columns
- * @return mixed|boolean result array containing columns and values or false if no results
+ * @return mixed Result array containing columns and values or false if no results
  * are left
  */
 	public function fetch($type = 'num') {

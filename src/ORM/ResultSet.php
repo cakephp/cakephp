@@ -173,7 +173,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	}
 
 /**
- * Rewind a ResultSet.
+ * Rewinds a ResultSet.
  *
  * Part of Iterator interface.
  *
@@ -222,7 +222,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	}
 
 /**
- * Serialize a resultset.
+ * Serializes a resultset.
  *
  * Part of Serializable interface.
  *
@@ -236,7 +236,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	}
 
 /**
- * Unserialize a resultset.
+ * Unserializes a resultset.
  *
  * Part of Serializable interface.
  *
@@ -340,10 +340,10 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	}
 
 /**
- * Correctly nest results keys including those coming from associations
+ * Correctly nests results keys including those coming from associations
  *
- * @param mixed|boolean $row array containing columns and values or false if there is no results
- * @return array
+ * @param mixed $row array containing columns and values or false if there is no results
+ * @return array Results
  */
 	protected function _groupResult($row) {
 		$defaultAlias = $this->_defaultTable->alias();

@@ -1248,7 +1248,7 @@ class Table implements RepositoryInterface, EventListener {
  * for id generation.
  *
  * @param array $primary The primary key columns to get a new ID for.
- * @return null|mixed Either null or the new primary key value.
+ * @return mixed Either null or the new primary key value.
  */
 	protected function _newId($primary) {
 		if (!$primary || count((array)$primary) > 1) {

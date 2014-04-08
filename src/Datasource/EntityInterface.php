@@ -29,7 +29,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
  *
  * @param string|array $property the name of property to set or a list of
  * properties with their respective values
- * @param mixed|array $value the value to set to the property or an array if the
+ * @param mixed $value the value to set to the property or an array if the
  * first argument is also an array, in which case will be treated as $options
  * @param array $options options to be used for setting the property. Allowed option
  * keys are `setter` and `guard`
