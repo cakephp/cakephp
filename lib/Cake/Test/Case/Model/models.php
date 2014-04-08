@@ -172,7 +172,7 @@ class TestValidate extends CakeTestModel {
  * @return void
  */
 	public function validateNumber($value, $options) {
-		$options = array_merge(array('min' => 0, 'max' => 100), $options);
+		$options += array('min' => 0, 'max' => 100);
 		$valid = ($value['number'] >= $options['min'] && $value['number'] <= $options['max']);
 		return $valid;
 	}
@@ -1511,8 +1511,8 @@ class SomethingElse extends CakeTestModel {
 
 /**
  * afterFind callBack
- * 
- * @param array $results 
+ *
+ * @param array $results
  * @param bool $primary
  * @return array
  */
@@ -1550,8 +1550,8 @@ class JoinThing extends CakeTestModel {
 
 /**
  * afterFind callBack
- * 
- * @param array $results 
+ *
+ * @param array $results
  * @param bool $primary
  * @return array
  */

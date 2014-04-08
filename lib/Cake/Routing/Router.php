@@ -480,10 +480,10 @@ class Router {
 		}
 
 		if ($named === true || $named === false) {
-			$options = array_merge(array('default' => $named, 'reset' => true, 'greedy' => $named), $options);
+			$options += array('default' => $named, 'reset' => true, 'greedy' => $named);
 			$named = array();
 		} else {
-			$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
+			$options += array('default' => false, 'reset' => false, 'greedy' => true);
 		}
 
 		if ($options['reset'] || self::$_namedConfig['rules'] === false) {
@@ -532,11 +532,11 @@ class Router {
  */
 	public static function mapResources($controller, $options = array()) {
 		$hasPrefix = isset($options['prefix']);
-		$options = array_merge(array(
+		$options += array(
 			'connectOptions' => array(),
 			'prefix' => '/',
 			'id' => self::ID . '|' . self::UUID
-		), $options);
+		);
 
 		$prefix = $options['prefix'];
 		$connectOptions = $options['connectOptions'];

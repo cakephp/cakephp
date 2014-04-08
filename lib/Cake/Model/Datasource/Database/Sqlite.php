@@ -395,7 +395,7 @@ class Sqlite extends DboSource {
  */
 	public function buildColumn($column) {
 		$name = $type = null;
-		$column = array_merge(array('null' => true), $column);
+		$column += array('null' => true);
 		extract($column);
 
 		if (empty($name) || empty($type)) {

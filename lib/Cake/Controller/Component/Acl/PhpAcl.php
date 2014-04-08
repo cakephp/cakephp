@@ -81,7 +81,7 @@ class PhpAcl extends Object implements AclInterface {
  */
 	public function initialize(Component $Component) {
 		if (!empty($Component->settings['adapter'])) {
-			$this->options = array_merge($this->options, $Component->settings['adapter']);
+			$this->options = $Component->settings['adapter'] + $this->options;
 		}
 
 		App::uses('PhpReader', 'Configure');
@@ -546,7 +546,7 @@ class PhpAro {
  * @return void
  */
 	public function addAlias(array $alias) {
-		$this->aliases = array_merge($this->aliases, $alias);
+		$this->aliases = $alias + $this->aliases;
 	}
 
 /**

@@ -327,7 +327,7 @@ class Set {
 			return $data;
 		}
 		$contexts = $data;
-		$options = array_merge(array('flatten' => true), $options);
+		$options += array('flatten' => true);
 		if (!isset($contexts[0])) {
 			$current = current($data);
 			if ((is_array($current) && count($data) < 1) || !is_array($current) || !Set::numeric(array_keys($data))) {
@@ -1010,7 +1010,7 @@ class Set {
  */
 	public static function apply($path, $data, $callback, $options = array()) {
 		$defaults = array('type' => 'pass');
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 		$extracted = Set::extract($path, $data);
 
 		if ($options['type'] === 'map') {

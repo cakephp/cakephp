@@ -130,7 +130,7 @@ class Cache {
 		}
 
 		if (!empty($settings)) {
-			self::$_config[$name] = array_merge($current, $settings);
+			self::$_config[$name] = $settings + $current;
 		}
 
 		if (empty(self::$_config[$name]['engine'])) {
@@ -253,7 +253,7 @@ class Cache {
 				if (is_string($settings) && $value !== null) {
 					$settings = array($settings => $value);
 				}
-				$settings = array_merge(self::$_config[$config], $settings);
+				$settings += self::$_config[$config];
 				if (isset($settings['duration']) && !is_numeric($settings['duration'])) {
 					$settings['duration'] = strtotime($settings['duration']) - time();
 				}

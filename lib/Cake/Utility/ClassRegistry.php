@@ -119,7 +119,7 @@ class ClassRegistry {
 
 			if (is_array($settings)) {
 				$pluginPath = null;
-				$settings = array_merge($defaults, $settings);
+				$settings += $defaults;
 				$class = $settings['class'];
 
 				list($plugin, $class) = pluginSplit($class);
