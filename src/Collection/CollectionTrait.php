@@ -893,7 +893,7 @@ trait CollectionTrait {
  * $flattenedIds = $collection->listNested()->extract('id'); // Yields [1, 2, 3, 4, 5]
  * }}}
  *
- * @param string|int $dir The direction in which to return the elements
+ * @param string|integer $dir The direction in which to return the elements
  * @param string|callable $nestingKey The key name under which children are nested
  * or a callable function that will return the children list
  * @return \Cake\Collection\Iterator\TreeIterator
