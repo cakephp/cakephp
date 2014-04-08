@@ -21,8 +21,10 @@ use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
 use Cake\Collection\Iterator\InsertIterator;
 use Cake\Collection\Iterator\MapReduce;
+use Cake\Collection\Iterator\NestIterator;
 use Cake\Collection\Iterator\ReplaceIterator;
 use Cake\Collection\Iterator\SortIterator;
+use Cake\Collection\Iterator\TreeIterator;
 use LimitIterator;
 
 /**
@@ -855,6 +857,58 @@ trait CollectionTrait {
  */
 	public function compile($preserveKeys = true) {
 		return new Collection($this->toArray($preserveKeys));
+	}
+
+/**
+ * Returns a new collection with each of the elements of this collection
+ * after flattening the tree structure. The tree structure is defined
+ * by nesting elements under a key with a known name. It is possible
+ * to specify such name by using the '$nestingKey' parameter.
+ *
+ * By default all elements in the tree following a Depth First Search
+ * will be returned, that is, elements from the top parent to the leaves
+ * for each branch.
+ *
+ * It is possible to return all elements from bottom to top using a Breadth First
+ * Search approach by passing the '$dir' parameter with 'asc'. That is, it will
+ * return all elements for the same tree depth first and from bottom to top.
+ *
+ * Finally, you can specify to only get a collection with the leaf nodes in the
+ * tree structure. You do so by passing 'leaves' in the first argument.
+ *
+ * The possible values for the first argument are aliases for the following
+ * constants and it is valid to pass those instead of the alias:
+ *
+ * - desc: TreeIterator::SELF_FIRST
+ * - asc: TreeIterator::CHILD_FIRST
+ * - leaves: TreeIterator::LEAVES_ONLY
+ *
+ * ### Example:
+ *
+ * {{{
+ * $collection = new Collection([
+ *	['id' => 1, 'children' => [['id' => 2, 'children' => [['id' => 3]]]]],
+ *	['id' => 4, 'children' => [['id' => 5]]]
+ * ]);
+ * $flattenedIds = $collection->listNested()->extract('id'); // Yields [1, 2, 3, 4, 5]
+ * }}}
+ *
+ * @param string|integer $dir The direction in which to return the elements
+ * @param string|callable $nestingKey The key name under which children are nested
+ * or a callable function that will return the children list
+ * @return \Cake\Collection\Iterator\TreeIterator
+ */
+	public function listNested($dir = 'desc', $nestingKey = 'children') {
+		$dir = strtolower($dir);
+		$modes = [
+			'desc' => TreeIterator::SELF_FIRST,
+			'asc' => TreeIterator::CHILD_FIRST,
+			'leaves' => TreeIterator::LEAVES_ONLY
+		];
+		return new TreeIterator(
+			new NestIterator($this, $nestingKey),
+			isset($modes[$dir]) ? $modes[$dir] : $dir
+		);
 	}
 
 }
