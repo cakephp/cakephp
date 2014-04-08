@@ -171,7 +171,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  */
 	public function event($type, $callback, $options = array()) {
 		$defaults = array('wrap' => true, 'stop' => true);
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 
 		$function = 'function (event) {%s}';
 		if ($options['wrap'] && $options['stop']) {
@@ -345,7 +345,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @see JsBaseEngineHelper::serializeForm() for option list.
  */
 	public function serializeForm($options = array()) {
-		$options = array_merge(array('isForm' => false, 'inline' => false), $options);
+		$options += array('isForm' => false, 'inline' => false);
 		$selector = $this->selection;
 		if (!$options['isForm']) {
 			$selector = $this->selection . '.closest("form")';

@@ -1135,7 +1135,7 @@ class CakeEmail {
 				if (!is_array($this->_config['log'])) {
 					$this->_config['log'] = array('level' => $this->_config['log']);
 				}
-				$config = array_merge($config, $this->_config['log']);
+				$config = $this->_config['log'] + $config;
 			}
 			CakeLog::write(
 				$config['level'],
@@ -1199,7 +1199,7 @@ class CakeEmail {
 			}
 			$config = $configs->{$config};
 		}
-		$this->_config = array_merge($this->_config, $config);
+		$this->_config = $config + $this->_config;
 		if (!empty($config['charset'])) {
 			$this->charset = $config['charset'];
 		}

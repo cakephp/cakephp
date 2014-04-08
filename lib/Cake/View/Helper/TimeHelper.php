@@ -408,7 +408,7 @@ class TimeHelper extends AppHelper {
 			);
 
 			if (is_array($options['element'])) {
-				$element = array_merge($element, $options['element']);
+				$element = $options['element'] + $element;
 			} else {
 				$element['tag'] = $options['element'];
 			}

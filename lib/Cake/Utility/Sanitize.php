@@ -104,14 +104,14 @@ class Sanitize {
 				$defaultCharset = 'UTF-8';
 			}
 		}
-		$default = array(
+		$defaults = array(
 			'remove' => false,
 			'charset' => $defaultCharset,
 			'quotes' => ENT_QUOTES,
 			'double' => true
 		);
 
-		$options = array_merge($default, $options);
+		$options += $defaults;
 
 		if ($options['remove']) {
 			$string = strip_tags($string);
@@ -224,7 +224,7 @@ class Sanitize {
 			$options = array('connection' => $options);
 		}
 
-		$options = array_merge(array(
+		$options += array(
 			'connection' => 'default',
 			'odd_spaces' => true,
 			'remove_html' => false,
@@ -234,7 +234,7 @@ class Sanitize {
 			'unicode' => true,
 			'escape' => true,
 			'backslash' => true
-		), $options);
+		);
 
 		if (is_array($data)) {
 			foreach ($data as $key => $val) {

@@ -416,12 +416,12 @@ class String {
 			return $text;
 		}
 
-		$default = array(
+		$defaults = array(
 			'format' => '<span class="highlight">\1</span>',
 			'html' => false,
 			'regex' => "|%s|iu"
 		);
-		$options = array_merge($default, $options);
+		$options += $defaults;
 		extract($options);
 
 		if (is_array($phrase)) {
@@ -477,10 +477,10 @@ class String {
  * @return string Trimmed string.
  */
 	public static function tail($text, $length = 100, $options = array()) {
-		$default = array(
+		$defaults = array(
 			'ellipsis' => '...', 'exact' => true
 		);
-		$options = array_merge($default, $options);
+		$options += $defaults;
 		extract($options);
 
 		if (!function_exists('mb_strlen')) {
@@ -519,15 +519,15 @@ class String {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
  */
 	public static function truncate($text, $length = 100, $options = array()) {
-		$default = array(
+		$defaults = array(
 			'ellipsis' => '...', 'exact' => true, 'html' => false
 		);
 		if (isset($options['ending'])) {
-			$default['ellipsis'] = $options['ending'];
+			$defaults['ellipsis'] = $options['ending'];
 		} elseif (!empty($options['html']) && Configure::read('App.encoding') === 'UTF-8') {
-			$default['ellipsis'] = "\xe2\x80\xa6";
+			$defaults['ellipsis'] = "\xe2\x80\xa6";
 		}
-		$options = array_merge($default, $options);
+		$options += $defaults;
 		extract($options);
 
 		if (!function_exists('mb_strlen')) {

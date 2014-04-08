@@ -92,7 +92,7 @@ class Component extends Object {
  */
 	public function __get($name) {
 		if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
-			$settings = array_merge((array)$this->_componentMap[$name]['settings'], array('enabled' => false));
+			$settings = array('enabled' => false) + (array)$this->_componentMap[$name]['settings'];
 			$this->{$name} = $this->_Collection->load($this->_componentMap[$name]['class'], $settings);
 		}
 		if (isset($this->{$name})) {

@@ -199,7 +199,7 @@ class UpgradeShell extends AppShell {
 				$dir = $options;
 				$options = array();
 			}
-			$options = array_merge($defaultOptions, $options);
+			$options += $defaultOptions;
 			$this->_movePhpFiles($dir, $options);
 		}
 	}
