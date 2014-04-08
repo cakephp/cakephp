@@ -735,7 +735,7 @@ class Set {
  * @return integer The number of dimensions in $array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::countDim
  */
-	public static function countDim($array = null, $all = false, $count = 0) {
+	public static function countDim($array, $all = false, $count = 0) {
 		if ($all) {
 			$depth = array($count);
 			if (is_array($array) && reset($array) !== false) {
