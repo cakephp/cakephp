@@ -156,7 +156,7 @@ class Log {
 	);
 
 /**
- * initialize ObjectCollection
+ * Initializes registry and configurations
  *
  * @return void
  */
