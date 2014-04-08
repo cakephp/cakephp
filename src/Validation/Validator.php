@@ -43,13 +43,6 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	protected $_providers = [];
 
 /**
- * The translation domain to use when setting the error messages
- *
- * @var string
- */
-	protected $_validationDomain = 'default';
-
-/**
  * Contains the validation messages associated with checking the presence
  * for each corresponding field.
  *
@@ -84,7 +77,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 
 			if (!$keyPresent && !$this->_checkPresence($field, $newRecord)) {
 				$errors[$name][] = isset($this->_presenceMessages[$name])
-					? __d($this->_validationDomain, $this->_presenceMessages[$name])
+					? $this->_presenceMessages[$name]
 					: $requiredMessage;
 				continue;
 			}
@@ -98,7 +91,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 
 			if (!$canBeEmpty && $isEmpty) {
 				$errors[$name][] = isset($this->_allowEmptyMessages[$name])
-					? __d($this->_validationDomain, $this->_allowEmptyMessages[$name])
+					? $this->_allowEmptyMessages[$name]
 					: $emptyMessage;
 				continue;
 			}
@@ -167,17 +160,6 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 			return null;
 		}
 		$this->_providers[$name] = $object;
-		return $this;
-	}
-
-/**
- * Sets the I18n domain for validation messages. This method is chainable.
- *
- * @param string $validationDomain The validation domain to be used.
- * @return \Cake\Validation\Validation
- */
-	public function setValidationDomain($validationDomain) {
-		$this->_validationDomain = $validationDomain;
 		return $this;
 	}
 
@@ -442,7 +424,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 
 			$errors[$name] = __d('cake', 'The provided value is invalid');
 			if (is_string($result)) {
-				$errors[$name] = __d($this->_validationDomain, $result);
+				$errors[$name] = $result;
 			}
 
 			if ($rule->isLast()) {
