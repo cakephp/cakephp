@@ -108,12 +108,12 @@ class CakePlugin {
  * {{{
  * 	CakePlugin::loadAll(array(
  *		array('bootstrap' => true),
- * 		'DebugKit' => array('routes' => true),
+ * 		'DebugKit' => array('routes' => true, 'bootstrap' => false),
  * 	))
  * }}}
  *
- * The above example will load the bootstrap file for all plugins, but for DebugKit it will only load the routes file
- * and will not look for any bootstrap script.
+ * The above example will load the bootstrap file for all plugins, but for DebugKit it will only load
+ * the routes file and will not look for any bootstrap script.
  *
  * @param array $options
  * @return void
