@@ -118,7 +118,7 @@ class SocketTest extends TestCase {
  *
  * @dataProvider invalidConnections
  * @expectedException \Cake\Error\SocketException
- * return void
+ * @return void
  */
 	public function testInvalidConnection($data) {
 		$this->Socket->config($data);

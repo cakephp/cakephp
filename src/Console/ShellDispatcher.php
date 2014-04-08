@@ -263,7 +263,7 @@ class ShellDispatcher {
 			$params = str_replace('/', '\\', $params);
 		}
 
-		$this->params = array_merge($this->params, $params);
+		$this->params = $params + $this->params;
 	}
 
 /**

@@ -142,7 +142,7 @@ class CacheHelper extends Helper {
 			$options = $cacheAction;
 			if (isset($cacheAction[$index])) {
 				if (is_array($cacheAction[$index])) {
-					$options = array_merge(array('duration' => 0, 'callbacks' => false), $cacheAction[$index]);
+					$options = $cacheAction[$index] + array('duration' => 0, 'callbacks' => false);
 				} else {
 					$cacheTime = $cacheAction[$index];
 				}

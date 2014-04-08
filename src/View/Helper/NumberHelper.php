@@ -205,7 +205,6 @@ class NumberHelper extends Helper {
  * @param string $formatName The format name to be used in the future.
  * @param array $options The array of options for this format.
  * @return void
- * @see NumberHelper::currency()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::addFormat
  */
 	public function addFormat($formatName, array $options) {
@@ -218,8 +217,7 @@ class NumberHelper extends Helper {
  * @see  \Cake\Utility\Number::defaultCurrency()
  *
  * @param string $currency The currency to be used in the future.
- * @return void
- * @see NumberHelper::currency()
+ * @return string Currency
  */
 	public function defaultCurrency($currency) {
 		return $this->_engine->defaultCurrency($currency);

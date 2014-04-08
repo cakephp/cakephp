@@ -293,7 +293,7 @@ class ConsoleOptionParser {
 				'boolean' => false,
 				'choices' => []
 			];
-			$options = array_merge($defaults, $options);
+			$options += $defaults;
 			$option = new ConsoleInputOption($options);
 		}
 		$this->_options[$name] = $option;
@@ -332,7 +332,7 @@ class ConsoleOptionParser {
 				'required' => false,
 				'choices' => []
 			];
-			$options = array_merge($defaults, $params);
+			$options = $params + $defaults;
 			$index = $options['index'];
 			unset($options['index']);
 			$arg = new ConsoleInputArgument($options);
@@ -397,7 +397,7 @@ class ConsoleOptionParser {
 				'help' => '',
 				'parser' => null
 			];
-			$options = array_merge($defaults, $options);
+			$options += $defaults;
 			$command = new ConsoleInputSubcommand($options);
 		}
 		$this->_subcommands[$name] = $command;

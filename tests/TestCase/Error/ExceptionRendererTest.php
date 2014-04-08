@@ -252,6 +252,8 @@ class ExceptionRendererTest extends TestCase {
 
 /**
  * test that helpers in custom CakeErrorController are not lost
+ *
+ * @return void
  */
 	public function testCakeErrorHelpersNotLost() {
 		Configure::write('App.namespace', 'TestApp');

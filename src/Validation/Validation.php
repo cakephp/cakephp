@@ -580,7 +580,7 @@ class Validation {
  */
 	public static function multiple($check, array $options = array(), $caseInsensitive = false) {
 		$defaults = array('in' => null, 'max' => null, 'min' => null);
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 
 		$check = array_filter((array)$check);
 		if (empty($check)) {
@@ -894,7 +894,7 @@ class Validation {
 			'deep' => false,
 			'type' => null
 		);
-		$params = array_merge($defaults, $params);
+		$params += $defaults;
 		if ($params['country'] !== null) {
 			$params['country'] = mb_strtolower($params['country']);
 		}

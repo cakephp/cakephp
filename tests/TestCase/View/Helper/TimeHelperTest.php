@@ -82,6 +82,8 @@ class TimeHelperTest extends TestCase {
 
 /**
  * test Cake\Utility\Time class methods are called correctly
+ *
+ * @return void
  */
 	public function testTimeHelperProxyMethodCalls() {
 		$methods = array(
@@ -108,6 +110,8 @@ class TimeHelperTest extends TestCase {
 
 /**
  * test engine override
+ *
+ * @return void
  */
 	public function testEngineOverride() {
 		$Time = new TimeHelperTestObject($this->View, array('engine' => 'TestAppEngine'));

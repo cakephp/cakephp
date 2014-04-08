@@ -609,6 +609,8 @@ class CookieComponentTest extends TestCase {
 
 /**
  * Test reading empty values.
+ *
+ * @return void
  */
 	public function testReadEmpty() {
 		$this->request->cookies['CakeTestCookie'] = array(

@@ -88,7 +88,7 @@ class PhpAcl extends Object implements AclInterface {
 	public function initialize(Component $Component) {
 		$adapter = $Component->config('adapter');
 		if ($adapter) {
-			$this->options = array_merge($this->options, $adapter);
+			$this->options = $adapter + $this->options;
 		}
 
 		$engine = new PhpConfig(dirname($this->options['config']) . DS);
@@ -552,7 +552,7 @@ class PhpAro {
  * @return void
  */
 	public function addAlias(array $alias) {
-		$this->aliases = array_merge($this->aliases, $alias);
+		$this->aliases = $alias + $this->aliases;
 	}
 
 /**

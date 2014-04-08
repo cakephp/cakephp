@@ -261,6 +261,7 @@ class ConsoleOptionParserTest extends TestCase {
  * test parsing options that do not exist.
  *
  * @expectedException \Cake\Error\ConsoleException
+ * @return void
  */
 	public function testOptionThatDoesNotExist() {
 		$parser = new ConsoleOptionParser('test', false);
@@ -273,6 +274,7 @@ class ConsoleOptionParserTest extends TestCase {
  * test parsing short options that do not exist.
  *
  * @expectedException \Cake\Error\ConsoleException
+ * @return void
  */
 	public function testShortOptionThatDoesNotExist() {
 		$parser = new ConsoleOptionParser('test', false);

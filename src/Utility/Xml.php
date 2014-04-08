@@ -94,7 +94,7 @@ class Xml {
 			'return' => 'simplexml',
 			'loadEntities' => false,
 		);
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 
 		if (is_array($input) || is_object($input)) {
 			return static::fromArray((array)$input, $options);
@@ -210,7 +210,7 @@ class Xml {
 			'return' => 'simplexml',
 			'pretty' => false
 		);
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 
 		$dom = new DOMDocument($options['version'], $options['encoding']);
 		if ($options['pretty']) {
