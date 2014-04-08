@@ -298,6 +298,7 @@ class TreeBehavior extends Behavior {
  *
  * If the direct option is set to true, only the direct children are returned (based upon the parent_id field)
  *
+ * @param \Cake\ORM\Query $query
  * @param array $options Array of options as described above
  * @return \Cake\ORM\Query
  * @throws \InvalidArgumentException When the 'for' key is not passed in $options
@@ -328,6 +329,23 @@ class TreeBehavior extends Behavior {
 			]);
 	}
 
+/**
+ * Gets a representation of the elements on the tree as a flat list where the keys are
+ * the primary key for the table and the values as the display field for the table, prefixed
+ * so that it visually shows its relative depth in the tree.
+ *
+ * Avaliable options are:
+ *
+ * - keyPath: A dot separated path to fetch the field to use for the array key, or a closure to
+ *  return the key out of the provided row.
+ * - valuePath: A dot separated path to fetch the field to use for the array value, or a closure to
+ *  return the value out of the provided row.
+ *  - spacer: A string to be used as prefix for denoting the depth in the tree for each item
+ *
+ * @param \Cake\ORM\Query $query
+ * @param array $options Array of options as described above
+ * @return \Cake\ORM\Query
+ */
 	public function findTreeList($query, $options) {
 		return $this->_scope($query)
 			->find('threaded', ['parentField' => $this->config()['parent']])
