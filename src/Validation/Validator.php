@@ -425,7 +425,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * from executing them
  *
  * @param ValidationSet $rules the list of rules for a field
- * @param mixed $value the value to be checked
+ * @param mixed $value The value to be checked
  * @param array $data the full data passed to the validator
  * @param boolean $newRecord whether is it a new record or an existing one
  * @return array

@@ -127,7 +127,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * Adds a new condition to the expression object in the form "field = value".
  *
  * @param string $field database field to be compared against value
- * @param mixed $value the value to be bound to $field for comparison
+ * @param mixed $value The value to be bound to $field for comparison
  * @param string $type the type name for $value as configured using the Type map.
  * If it is suffixed with "[]" and the value is an array then multiple placeholders
  * will be created, one per each value in the array.
@@ -141,7 +141,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * Adds a new condition to the expression object in the form "field != value".
  *
  * @param string $field database field to be compared against value
- * @param mixed $value the value to be bound to $field for comparison
+ * @param mixed $value The value to be bound to $field for comparison
  * @param string $type the type name for $value as configured using the Type map.
  * If it is suffixed with "[]" and the value is an array then multiple placeholders
  * will be created, one per each value in the array.
@@ -155,7 +155,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * Adds a new condition to the expression object in the form "field > value".
  *
  * @param string $field database field to be compared against value
- * @param mixed $value the value to be bound to $field for comparison
+ * @param mixed $value The value to be bound to $field for comparison
  * @param string $type the type name for $value as configured using the Type map.
  * @return QueryExpression
  */
@@ -167,7 +167,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * Adds a new condition to the expression object in the form "field < value".
  *
  * @param string $field database field to be compared against value
- * @param mixed $value the value to be bound to $field for comparison
+ * @param mixed $value The value to be bound to $field for comparison
  * @param string $type the type name for $value as configured using the Type map.
  * @return QueryExpression
  */
@@ -179,7 +179,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * Adds a new condition to the expression object in the form "field >= value".
  *
  * @param string $field database field to be compared against value
- * @param mixed $value the value to be bound to $field for comparison
+ * @param mixed $value The value to be bound to $field for comparison
  * @param string $type the type name for $value as configured using the Type map.
  * @return QueryExpression
  */
@@ -191,7 +191,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * Adds a new condition to the expression object in the form "field <= value".
  *
  * @param string $field database field to be compared against value
- * @param mixed $value the value to be bound to $field for comparison
+ * @param mixed $value The value to be bound to $field for comparison
  * @param string $type the type name for $value as configured using the Type map.
  * @return QueryExpression
  */
@@ -223,7 +223,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * Adds a new condition to the expression object in the form "field LIKE value".
  *
  * @param string $field database field to be compared against value
- * @param mixed $value the value to be bound to $field for comparison
+ * @param mixed $value The value to be bound to $field for comparison
  * @param string $type the type name for $value as configured using the Type map.
  * @return QueryExpression
  */
@@ -235,7 +235,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * Adds a new condition to the expression object in the form "field NOT LIKE value".
  *
  * @param string $field database field to be compared against value
- * @param mixed $value the value to be bound to $field for comparison
+ * @param mixed $value The value to be bound to $field for comparison
  * @param string $type the type name for $value as configured using the Type map.
  * @return QueryExpression
  */

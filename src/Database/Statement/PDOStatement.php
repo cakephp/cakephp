@@ -53,7 +53,7 @@ class PDOStatement extends StatementDecorator {
  *	`$statement->bindValue(5, new \DateTime(), 'date');`
  *
  * @param string|integer $column name or param position to be bound
- * @param mixed $value the value to bind to variable in query
+ * @param mixed $value The value to bind to variable in query
  * @param string|integer $type PDO type or name of configured Type class
  * @return void
  */

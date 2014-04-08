@@ -50,7 +50,7 @@ class Comparison extends QueryExpression {
  * Constructor
  *
  * @param string $field the field name to compare to a value
- * @param mixed $value the value to be used in comparison
+ * @param mixed $value The value to be used in comparison
  * @param string $type the type name used to cast the value
  * @param string $conjunction the operator used for comparing field and value
  */
