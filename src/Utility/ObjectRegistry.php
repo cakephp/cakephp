@@ -21,8 +21,7 @@ namespace Cake\Utility;
  * as a super class for various composition based re-use features in CakePHP.
  *
  * Each subclass needs to implement the various abstract methods to complete
- * the template method load(). This class replaces ObjectCollection
- * from previous versions of CakePHP.
+ * the template method load().
  *
  * @see \Cake\Controller\ComponentRegistry
  * @see \Cake\View\HelperRegistry
