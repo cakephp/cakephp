@@ -19,6 +19,19 @@ use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 
+/**
+ * Makes the table to which this is attached to behave like a nested set and
+ * provides methods for managing and retrieving information out of the derived
+ * hierarchical structure.
+ *
+ * Tables attaching this behavior are required to have a column referencing the
+ * parent row, and two other numeric columns (lft and rgth) where the implicit
+ * order will be cached.
+ *
+ * For more information on what is a nested set and a how it works refer to
+ * http://www.sitepoint.com/hierarchical-data-database
+ *
+ */
 class TreeBehavior extends Behavior {
 
 /**
