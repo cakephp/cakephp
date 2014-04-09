@@ -50,4 +50,7 @@
 		<env name="db_password" value=""/>
 		-->
 	</php>
+	<logging>
+		<log type="coverage-clover" target="build/logs/clover.xml"/>
+	</logging>
 </phpunit>
