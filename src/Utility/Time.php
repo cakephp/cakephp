@@ -636,7 +636,6 @@ class Time {
 		$absoluteString = __d('cake', 'on %s');
 		$accuracy = static::$wordAccuracy;
 
-
 		if (isset($options['timezone'])) {
 			$timezone = $options['timezone'];
 		} elseif (isset($options['userOffset'])) {
