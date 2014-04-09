@@ -1,7 +1,5 @@
 <?php
 /**
- * ConsoleOptionParserTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -69,6 +67,20 @@ class ConsoleOptionParserTest extends TestCase {
 		$parser = new ConsoleOptionParser('test', false);
 		$result = $parser->addOption('test');
 		$this->assertEquals($parser, $result, 'Did not return $this from addOption');
+	}
+
+/**
+ * test removing an option
+ *
+ * @return void
+ */
+	public function testRemoveOption() {
+		$parser = new ConsoleOptionParser('test', false);
+		$result = $parser->addOption('test')
+			->removeOption('test')
+			->removeOption('help');
+		$this->assertSame($parser, $result, 'Did not return $this from removeOption');
+		$this->assertEquals([], $result->options());
 	}
 
 /**
