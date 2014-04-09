@@ -18,7 +18,6 @@ use Cake\Console\Command\Task\BakeTask;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Utility\ConventionsTrait;
 use Cake\Utility\File;
 use Cake\Utility\Folder;
 
@@ -244,7 +243,7 @@ class PluginTask extends BakeTask {
 			'Can create plugins in any of your bootstrapped plugin paths.'
 		))->addArgument('name', [
 			'help' => __d('cake_console', 'CamelCased name of the plugin to create.')
-		]);
+		])->removeOption('plugin');
 
 		return $parser;
 	}

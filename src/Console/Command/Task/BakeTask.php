@@ -95,4 +95,30 @@ class BakeTask extends Shell {
 		}
 	}
 
+/**
+ * Get the option parser for this task.
+ *
+ * This base class method sets up some commonly used options.
+ *
+ * @return \Cake\Console\ConsoleOptionParser
+ */
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+		$parser->addOption('plugin', [
+			'short' => 'p',
+			'help' => __d('cake_console', 'Plugin to bake into.')
+		])->addOption('force', [
+			'short' => 'f',
+			'boolean' => true,
+			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
+		])->addOption('connection', [
+			'short' => 'c',
+			'help' => __d('cake_console', 'The datasource connection to get data from.')
+		])->addOption('theme', [
+			'short' => 't',
+			'help' => __d('cake_console', 'Theme to use when baking code.')
+		]);
+		return $parser;
+	}
+
 }

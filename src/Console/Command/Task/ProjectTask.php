@@ -227,7 +227,7 @@ class ProjectTask extends BakeTask {
 			])->addOption('composer', [
 				'default' => ROOT . '/composer.phar',
 				'help' => __d('cake_console', 'The path to the composer executable.')
-			]);
+			])->removeOption('plugin');
 	}
 
 }

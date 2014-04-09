@@ -58,26 +58,12 @@ class FixtureTask extends BakeTask {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 
-		$parser->description(
+		$parser = $parser->description(
 			__d('cake_console', 'Generate fixtures for use with the test suite. You can use `bake fixture all` to bake all fixtures.')
 		)->addArgument('name', [
 			'help' => __d('cake_console', 'Name of the fixture to bake. Can use Plugin.name to bake plugin fixtures.')
-		])->addOption('connection', [
-			'help' => __d('cake_console', 'Which database configuration to use for baking.'),
-			'short' => 'c',
-			'default' => 'default'
 		])->addOption('table', [
 			'help' => __d('cake_console', 'The table name if it does not follow conventions.'),
-		])->addOption('plugin', [
-			'help' => __d('cake_console', 'CamelCased name of the plugin to bake fixtures for.'),
-			'short' => 'p',
-		])->addOption('theme', [
-			'short' => 't',
-			'help' => __d('cake_console', 'Theme to use when baking code.')
-		])->addOption('force', [
-			'short' => 'f',
-			'boolean' => true,
-			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		])->addOption('count', [
 			'help' => __d('cake_console', 'When using generated data, the number of records to include in the fixture(s).'),
 			'short' => 'n',

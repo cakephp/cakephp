@@ -260,15 +260,6 @@ class ControllerTask extends BakeTask {
 			__d('cake_console', 'Bake a controller skeleton.')
 		)->addArgument('name', [
 			'help' => __d('cake_console', 'Name of the controller to bake. Can use Plugin.name to bake controllers into plugins.')
-		])->addOption('plugin', [
-			'short' => 'p',
-			'help' => __d('cake_console', 'Plugin to bake the controller into.')
-		])->addOption('connection', [
-			'short' => 'c',
-			'help' => __d('cake_console', 'The connection the controller\'s model is on.')
-		])->addOption('theme', [
-			'short' => 't',
-			'help' => __d('cake_console', 'Theme to use when baking code.')
 		])->addOption('components', [
 			'help' => __d('cake_console', 'The comma separated list of components to use.')
 		])->addOption('helpers', [
@@ -281,10 +272,6 @@ class ControllerTask extends BakeTask {
 		])->addOption('no-actions', [
 			'boolean' => true,
 			'help' => __d('cake_console', 'Do not generate basic CRUD action methods.')
-		])->addOption('force', [
-			'short' => 'f',
-			'boolean' => true,
-			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		])->addSubcommand('all', [
 			'help' => __d('cake_console', 'Bake all controllers with CRUD methods.')
 		]);
