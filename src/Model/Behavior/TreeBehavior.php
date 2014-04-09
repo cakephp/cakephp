@@ -25,12 +25,11 @@ use Cake\ORM\Table;
  * hierarchical structure.
  *
  * Tables attaching this behavior are required to have a column referencing the
- * parent row, and two other numeric columns (lft and rgth) where the implicit
+ * parent row, and two other numeric columns (lft and rght) where the implicit
  * order will be cached.
  *
  * For more information on what is a nested set and a how it works refer to
  * http://www.sitepoint.com/hierarchical-data-database
- *
  */
 class TreeBehavior extends Behavior {
 
@@ -343,9 +342,9 @@ class TreeBehavior extends Behavior {
 	}
 
 /**
- * Gets a representation of the elements on the tree as a flat list where the keys are
- * the primary key for the table and the values as the display field for the table, prefixed
- * so that it visually shows its relative depth in the tree.
+ * Gets a representation of the elements in the tree as a flat list where the keys are
+ * the primary key for the table and the values are the display field for the table. 
+ * Values are prefixed to visually indicate relative depth in the tree.
  *
  * Avaliable options are:
  *
@@ -376,7 +375,7 @@ class TreeBehavior extends Behavior {
 
 /**
  * Removes the current node from the tree, by positioning it as a new root
- * and reparents all children up one level.
+ * and re-parents all children up one level.
  *
  * Note that the node will not be deleted just moved away from its current position
  * without moving its children with it.
