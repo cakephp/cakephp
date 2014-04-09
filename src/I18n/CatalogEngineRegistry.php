@@ -57,6 +57,7 @@ class CatalogEngineRegistry extends ObjectRegistry {
  * Create the catalog engine instance.
  *
  * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ *
  * @param string|CatalogInterface $class The classname or object to make.
  * @param string $alias The alias of the object.
  * @param array $config An array of setting to use for the catalog engine.

@@ -27,11 +27,7 @@ class Locale extends CatalogEngine {
 	protected $_escape = null;
 
 /**
- * [read description]
- * @param string $domain [description]
- * @param array $locales [description]
- * @param string $category [description]
- * @return array|boolean [description]
+ * @inheritdoc
  */
 	public function read($domain, array $locales, $category) {
 		$paths = $this->_searchPaths($domain);

@@ -33,6 +33,12 @@ abstract class CatalogEngine {
  */
 	protected $_defaultConfig = [];
 
+/**
+ * Paths to search for catalog files.
+ *
+ * @param string $domain Domain name
+ * @return array List of paths
+ */
 	protected function _searchPaths($domain) {
 		$searchPaths = App::path('Locale');
 		$plugins = Plugin::loaded();
@@ -52,23 +58,25 @@ abstract class CatalogEngine {
 	}
 
 /**
- * [read description]
- * @param string $domain [description]
- * @param array $locales [description]
- * @param string $category [description]
- * @return array|boolean [description]
+ * Read translations from catalog
+ *
+ * @param string $domain Domain name
+ * @param array $locales Locales to get translations for
+ * @param string $category Category name
+ * @return array|boolean List of translation on success or false on failure
  */
 	public function read($domain, array $locales, $category) {
 		return false;
 	}
 
 /**
- * [write description]
- * @param string $domain [description]
- * @param string $locale [description]
- * @param string $category [description]
- * @param array $data [description]
- * @return boolean [description]
+ * Write translations to catalog
+ *
+ * @param string $domain Domain name
+ * @param array $locales Locale to write translations for
+ * @param string $category Category name
+ * @param array $data Translations to write
+ * @return boolean True on success else false
  */
 	public function write($domain, $locale, $category, array $data) {
 		return false;

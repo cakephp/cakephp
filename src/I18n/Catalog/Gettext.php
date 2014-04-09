@@ -18,6 +18,9 @@ use Cake\I18n\CatalogEngine;
 
 class Gettext extends CatalogEngine {
 
+/**
+ * @inheritdoc
+ */
 	public function read($domain, array $locales, $category) {
 		$paths = $this->_searchPaths($domain);
 
@@ -35,6 +38,12 @@ class Gettext extends CatalogEngine {
 		return false;
 	}
 
+/**
+ * Parse headers
+ *
+ * @param array $entries List of parsed entries
+ * @return array
+ */
 	protected function _header($entries) {
 		if (!isset($entries[""])) {
 			return $entries;
@@ -55,6 +64,12 @@ class Gettext extends CatalogEngine {
 		return $entries;
 	}
 
+/**
+ * Parse mo / po file.
+ *
+ * @param string $filename Filename
+ * @return array|boolean List of entries on success else false on failure
+ */
 	public function parse($filename) {
 		foreach (['mo', 'po'] as $type) {
 			$return = $this->{'_parse' . ucfirst($type)}($filename . '.' . $type);
@@ -65,6 +80,12 @@ class Gettext extends CatalogEngine {
 		return false;
 	}
 
+/**
+ * Parse mo file.
+ *
+ * @param string $filename Filename
+ * @return array|boolean List of entries on success else false on failure
+ */
 	protected function _parseMo($filename) {
 		if (!file_exists($filename)) {
 			return false;
@@ -108,6 +129,12 @@ class Gettext extends CatalogEngine {
 		return $translations;
 	}
 
+/**
+ * Parse mo / po file.
+ *
+ * @param string $filename Filename
+ * @return array|boolean List of entries on success else false on failure
+ */
 	protected function _parsePo($filename) {
 		if (!file_exists($filename)) {
 			return false;

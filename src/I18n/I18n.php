@@ -303,15 +303,15 @@ class I18n {
 	}
 
 /**
- * [_translateString description]
+ * Translate a string
  *
- * @param string $singular [description]
- * @param string $plural [description]
- * @param string $domain [description]
- * @param string $category [description]
- * @param int $count [description]
- * @param string $locale [description]
- * @return string [description]
+ * @param string $singular String to translate
+ * @param string $plural Plural string
+ * @param string $domain Domain name
+ * @param string $category Category name LC_MESSAGES, LC_ALL etc
+ * @param int $count Count is used with $plural to choose the correct plural form
+ * @param string $locale Locale to translate string to
+ * @return string Translated string
  */
 	protected function _translateString($singular, $plural, $domain, $category, $count, $locale) {
 		$_this = I18n::getInstance();
@@ -363,12 +363,12 @@ class I18n {
 	}
 
 /**
- * [_translations description]
+ * Get translations using one of the configured catalog engines.
  *
- * @param string $domain [description]
- * @param array $locales [description]
- * @param string $category [description]
- * @return array [description]
+ * @param string $domain Domain name
+ * @param array $locales Locales
+ * @param string $category Category name
+ * @return array Translations
  */
 	protected function _translations($domain, array $locales, $category) {
 		$this->_noLocale = true;
