@@ -106,7 +106,7 @@ abstract class CacheEngine {
 	public function writeMany($data) {
 		$return = array();
 		foreach ($data as $key => $value) {
-			$return[$key] = self::write($key, $value);
+			$return[$key] = static::write($key, $value);
 		}
 		return $return;
 	}
@@ -128,7 +128,7 @@ abstract class CacheEngine {
 	public function readMany($keys) {
 		$return = array();
 		foreach ($keys as $key) {
-			$return[$key] = self::read($key);
+			$return[$key] = static::read($key);
 		}
 		return $return;
 	}
@@ -168,7 +168,7 @@ abstract class CacheEngine {
 	public function deleteMany($keys) {
 		$return = array();
 		foreach ($keys as $key) {
-			$return[$key] = self::delete($key);
+			$return[$key] = static::delete($key);
 		}
 		return $return;
 	}
