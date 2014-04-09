@@ -277,6 +277,30 @@ class TreeBehaviorTest extends TestCase {
 	}
 
 /**
+ * Tests moving a node with no lft and rght
+ *
+ * @return void
+ */
+	public function testMoveNoTreeColumns() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$node = $table->get(8);
+		$node->unsetProperty('lft');
+		$node->unsetProperty('rght');
+		$node = $table->moveUp($node, true);
+		$this->assertEquals(['lft' => 1, 'rght' => 2], $node->extract(['lft', 'rght']));
+		$nodes = $table->find()
+			->select(['id'])
+			->where(function($exp) {
+				return $exp->isNull('parent_id');
+			})
+			->where(['menu' => 'main-menu'])
+			->order(['lft' => 'ASC'])
+			->all();
+		$this->assertEquals([8, 1, 6], $nodes->extract('id')->toArray());
+	}
+
+/**
  * Tests the moveDown() method
  *
  * @return void
@@ -319,6 +343,30 @@ class TreeBehaviorTest extends TestCase {
 		$table = TableRegistry::get('MenuLinkTrees');
 		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
 		$node = $table->moveDown($table->get(1), true);
+		$this->assertEquals(['lft' => 7, 'rght' => 16], $node->extract(['lft', 'rght']));
+		$nodes = $table->find()
+			->select(['id'])
+			->where(function($exp) {
+				return $exp->isNull('parent_id');
+			})
+			->where(['menu' => 'main-menu'])
+			->order(['lft' => 'ASC'])
+			->all();
+		$this->assertEquals([6, 8, 1], $nodes->extract('id')->toArray());
+	}
+
+/**
+ * Tests moving a node with no lft and rght columns
+ *
+ * @return void
+ */
+	public function testMoveDownNoTreeColumns() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$node = $table->get(1);
+		$node->unsetProperty('lft');
+		$node->unsetProperty('rght');
+		$node = $table->moveDown($node, true);
 		$this->assertEquals(['lft' => 7, 'rght' => 16], $node->extract(['lft', 'rght']));
 		$nodes = $table->find()
 			->select(['id'])
@@ -509,7 +557,7 @@ class TreeBehaviorTest extends TestCase {
 	}
 
 /**
- * Test moving a leaft to the left
+ * Test moving a leaf to the left
  *
  * @return void
  */
@@ -528,6 +576,28 @@ class TreeBehaviorTest extends TestCase {
 	}
 
 /**
+ * Tests moving a subtree with a node having no lft and rght columns
+ *
+ * @return void
+ */
+	public function testReParentNoTreeColumns() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(6);
+		$entity->unsetProperty('lft');
+		$entity->unsetProperty('rght');
+		$entity->parent_id = 2;
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals(9, $entity->lft);
+		$this->assertEquals(18, $entity->rght);
+
+		$result = $table->find()->order('lft')->hydrate(false)->toArray();
+		$table->recover();
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Tests moving a subtree as a new root
  *
  * @return void
@@ -536,6 +606,27 @@ class TreeBehaviorTest extends TestCase {
 		$table = TableRegistry::get('NumberTrees');
 		$table->addBehavior('Tree');
 		$entity = $table->get(2);
+		$entity->parent_id = null;
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals(15, $entity->lft);
+		$this->assertEquals(22, $entity->rght);
+
+		$result = $table->find()->order('lft')->hydrate(false);
+		$expected = [1, 6, 7, 8, 9, 10, 11, 2, 3, 4, 5];
+		$this->assertTreeNumbers($expected, $table);
+	}
+
+/**
+ * Tests moving a subtree with no tree columns
+ *
+ * @return void
+ */
+	public function testRootingNoTreeColumns() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(2);
+		$entity->unsetProperty('lft');
+		$entity->unsetProperty('rght');
 		$entity->parent_id = null;
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertEquals(15, $entity->lft);
@@ -602,6 +693,25 @@ class TreeBehaviorTest extends TestCase {
 		$table = TableRegistry::get('NumberTrees');
 		$table->addBehavior('Tree');
 		$entity = $table->get(1);
+		$this->assertTrue($table->delete($entity));
+		$result = $table->find()->order('lft')->hydrate(false)->toArray();
+		$table->recover();
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals($expected, $result);
+	}
+
+
+/**
+ * Test deleting a node with no tree columns
+ *
+ * @return void
+ */
+	public function testDeleteRootNoTreeColumns() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$entity = $table->get(1);
+		$entity->unsetProperty('lft');
+		$entity->unsetProperty('rght');
 		$this->assertTrue($table->delete($entity));
 		$result = $table->find()->order('lft')->hydrate(false)->toArray();
 		$table->recover();

@@ -130,6 +130,7 @@ class TreeBehavior extends Behavior {
  */
 	public function beforeDelete(Event $event, Entity $entity) {
 		$config = $this->config();
+		$this->_ensureFields($entity);
 		$left = $entity->get($config['left']);
 		$right = $entity->get($config['right']);
 		$diff = $right - $left + 1;
