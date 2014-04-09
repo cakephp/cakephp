@@ -107,6 +107,20 @@ class TreeBehaviorTest extends TestCase {
 	}
 
 /**
+ * Tests that childCount will provide the correct lft and rght values
+ *
+ * @return void
+ */
+	public function testChildCountNoTreeColumns() {
+		$table = $this->table;
+		$node = $table->get(6);
+		$node->unsetProperty('lft');
+		$node->unsetProperty('rght');
+		$count = $this->table->childCount($node, false);
+		$this->assertEquals(4, $count);
+	}
+
+/**
  * Tests the childCount() plus callable scoping
  *
  * @return void
