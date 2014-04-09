@@ -482,42 +482,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 // @codingStandardsIgnoreStart
 
 /**
- * assert no errors
- *
- * @deprecated This is a compatiblity wrapper for 1.x. It will be removed in 3.0
- * @return void
- */
-	protected function assertNoErrors() {
-	}
-
-/**
- * Compatibility wrapper function for setExpectedException
- *
- * @param mixed $expected the name of the Exception or error
- * @param string $message the text to display if the assertion is not correct
- * @deprecated This is a compatiblity wrapper for 1.x. It will be removed in 3.0
- * @return void
- */
-	protected function expectError($expected = false, $message = '') {
-		if (!$expected) {
-			$expected = 'Exception';
-		}
-		$this->setExpectedException($expected, $message);
-	}
-
-/**
- * Compatibility wrapper function for setExpectedException
- *
- * @param mixed $name the name of the Exception
- * @param string $message the text to display if the assertion is not correct
- * @deprecated This is a compatiblity wrapper for 1.x. It will be removed in 3.0
- * @return void
- */
-	protected function expectException($name = 'Exception', $message = '') {
-		$this->setExpectedException($name, $message);
-	}
-
-/**
  * Compatibility function to test if value is between an acceptable range
  *
  * @param mixed $result
