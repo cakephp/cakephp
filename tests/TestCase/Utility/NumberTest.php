@@ -53,34 +53,38 @@ class NumberTest extends TestCase {
 	public function testFormat() {
 		$value = '100100100';
 
-		$result = $this->Number->format($value, '#');
-		$expected = '#100,100,100';
+		$result = $this->Number->format($value);
+		$expected = '100,100,100.00';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->format($value, 3);
+		$result = $this->Number->format($value, array('before' => '#'));
+		$expected = '#100,100,100.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->format($value, array('places' => 3));
 		$expected = '100,100,100.000';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->format($value);
-		$expected = '100,100,100';
+		$result = $this->Number->format($value, array('thousands' => '-'));
+		$expected = '100-100-100.00';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->format($value, '-');
-		$expected = '100-100-100';
+		$result = $this->Number->format($value, array('decimals' => ',', 'thousands' => '.'));
+		$expected = '100.100.100,00';
 		$this->assertEquals($expected, $result);
 
 		$value = 0.00001;
-		$result = $this->Number->format($value, array('places' => 1));
+		$result = $this->Number->format($value, array('places' => 1, 'before' => '$'));
 		$expected = '$0.0';
 		$this->assertEquals($expected, $result);
 
 		$value = -0.00001;
-		$result = $this->Number->format($value, array('places' => 1));
+		$result = $this->Number->format($value, array('places' => 1, 'before' => '$'));
 		$expected = '$-0.0';
 		$this->assertEquals($expected, $result);
 
 		$value = 1.23;
-		$options = array('decimals' => ',', 'thousands' => '.', 'before' => '', 'after' => ' €');
+		$options = array('decimals' => ',', 'thousands' => '.', 'after' => ' €');
 		$result = $this->Number->format($value, $options);
 		$expected = '1,23 €';
 		$this->assertEquals($expected, $result);
@@ -142,7 +146,6 @@ class NumberTest extends TestCase {
 			'decimals' => '&amp;',
 			'places' => 3,
 			'escape' => false,
-			'before' => '',
 		));
 		$expected = '5&nbsp;199&nbsp;100&amp;001';
 		$this->assertEquals($expected, $result);
@@ -153,7 +156,7 @@ class NumberTest extends TestCase {
 			'decimals' => '.a',
 			'escape' => false,
 		));
-		$expected = '$1,,000.a45';
+		$expected = '1,,000.a45';
 		$this->assertEquals($expected, $result);
 
 		$value = 519919827593784.00;
@@ -172,7 +175,6 @@ class NumberTest extends TestCase {
 		$result = Number::format($value, array(
 			'thousands' => '- |-| /-\ >< () |2 -',
 			'decimals' => '- £€€† -',
-			'before' => ''
 		));
 		$expected = '13- |-| /-\ &gt;&lt; () |2 -371- |-| /-\ &gt;&lt; () |2 -337- £€€† -13';
 		$this->assertEquals($expected, $result);
