@@ -188,39 +188,25 @@ class Number {
 /**
  * Formats a number into a currency format.
  *
- * @param float $value A floating point number
- * @param integer $options If integer then places, if string then before, if (,.-) then use it
- *   or array with places and before keys
- * @return string formatted number
+ * Options:
+ *
+ * - `places` - Number of decimal places to use. ie. 2
+ * - `before` - The string to place before whole numbers. ie. '['
+ * - `after` - The string to place after decimal numbers. ie. ']'
+ * - `thousands` - Thousands separator ie. ','
+ * - `decimals` - Decimal separator symbol ie. '.'
+ * - `escape` - Set to false to prevent escaping
+ *
+ * @param float $value A floating point number.
+ * @param array $options An array with options.
+ * @return string Formatted number
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
  */
-	public static function format($value, $options = false) {
-		$places = 0;
-		if (is_int($options)) {
-			$places = $options;
-		}
-
-		$separators = array(',', '.', '-', ':');
-
-		$before = $after = null;
-		if (is_string($options) && !in_array($options, $separators)) {
-			$before = $options;
-		}
-		$thousands = ',';
-		if (!is_array($options) && in_array($options, $separators)) {
-			$thousands = $options;
-		}
-		$decimals = '.';
-		if (!is_array($options) && in_array($options, $separators)) {
-			$decimals = $options;
-		}
-
-		$escape = true;
-		if (is_array($options)) {
-			$defaults = array('before' => '$', 'places' => 2, 'thousands' => ',', 'decimals' => '.');
-			$options += $defaults;
-			extract($options);
-		}
+	public static function format($value, array $options = []) {
+		$defaults = array('before' => '', 'after' => '', 'places' => 2,
+			'thousands' => ',', 'decimals' => '.', 'escape' => true);
+		$options += $defaults;
+		extract($options);
 
 		$out = $before . number_format($value, $places, $decimals, $thousands) . $after;
 

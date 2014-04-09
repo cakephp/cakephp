@@ -79,7 +79,7 @@ class NumberHelperTest extends TestCase {
  */
 	public function testNumberHelperProxyMethodCalls() {
 		$methods = array(
-			'precision', 'toReadableSize', 'format',
+			'precision', 'toReadableSize',
 		);
 		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', $methods);
 		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
@@ -101,6 +101,12 @@ class NumberHelperTest extends TestCase {
 		$Number->attach($CakeNumber);
 		$CakeNumber->expects($this->at(0))->method('currency');
 		$Number->currency('who', 'what', array('when'));
+
+		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', array('format'));
+		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
+		$Number->attach($CakeNumber);
+		$CakeNumber->expects($this->at(0))->method('format');
+		$Number->format('who', array('when'));
 
 		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', array('addFormat'));
 		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
