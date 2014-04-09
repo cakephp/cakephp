@@ -468,7 +468,7 @@ class Inflector {
  * @param boolean $reset If true, will unset default inflections for all
  *        new rules that are being defined in $rules.
  * @return void
- * @throws \Cake\Error\Exception When pattern is not an array.
+ * @throws \Cake\Error\Exception When pattern is not an array for singular/plural.
  */
 	public static function rules($type, $rules, $reset = false) {
 		$var = '_' . $type;
