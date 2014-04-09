@@ -748,7 +748,7 @@ class FormHelper extends Helper {
 
 		$fields = array_merge(
 			Hash::normalize($modelFields),
-			Hash::normalize((array)$fields)
+			Hash::normalize($fields)
 		);
 
 		if (isset($options['legend'])) {
