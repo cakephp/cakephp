@@ -623,12 +623,12 @@ class Time {
  *
  * NOTE: If the difference is one week or more, the lowest level of accuracy is day
  *
- * @param integer|string|\DateTime $dateTime Datetime UNIX timestamp, strtotime() valid string or DateTime object
- * @param string|array $options Default format if timestamp is used in $dateString
+ * @param integer|string|\DateTime $dateTime Datetime UNIX timestamp, strtotime() valid string or DateTime object.
+ * @param array $options Array of options.
  * @return string Relative time string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::timeAgoInWords
  */
-	public static function timeAgoInWords($dateTime, $options = array()) {
+	public static function timeAgoInWords($dateTime, array $options = []) {
 		$timezone = null;
 		$format = static::$wordFormat;
 		$end = static::$wordEnd;
@@ -636,41 +636,38 @@ class Time {
 		$absoluteString = __d('cake', 'on %s');
 		$accuracy = static::$wordAccuracy;
 
-		if (is_array($options)) {
-			if (isset($options['timezone'])) {
-				$timezone = $options['timezone'];
-			} elseif (isset($options['userOffset'])) {
-				$timezone = $options['userOffset'];
-			}
 
-			if (isset($options['accuracy'])) {
-				if (is_array($options['accuracy'])) {
-					$accuracy = array_merge($accuracy, $options['accuracy']);
-				} else {
-					foreach ($accuracy as $key => $level) {
-						$accuracy[$key] = $options['accuracy'];
-					}
+		if (isset($options['timezone'])) {
+			$timezone = $options['timezone'];
+		} elseif (isset($options['userOffset'])) {
+			$timezone = $options['userOffset'];
+		}
+
+		if (isset($options['accuracy'])) {
+			if (is_array($options['accuracy'])) {
+				$accuracy = array_merge($accuracy, $options['accuracy']);
+			} else {
+				foreach ($accuracy as $key => $level) {
+					$accuracy[$key] = $options['accuracy'];
 				}
 			}
-
-			if (isset($options['format'])) {
-				$format = $options['format'];
-			}
-			if (isset($options['end'])) {
-				$end = $options['end'];
-			}
-			if (isset($options['relativeString'])) {
-				$relativeString = $options['relativeString'];
-				unset($options['relativeString']);
-			}
-			if (isset($options['absoluteString'])) {
-				$absoluteString = $options['absoluteString'];
-				unset($options['absoluteString']);
-			}
-			unset($options['end'], $options['format']);
-		} else {
-			$format = $options;
 		}
+
+		if (isset($options['format'])) {
+			$format = $options['format'];
+		}
+		if (isset($options['end'])) {
+			$end = $options['end'];
+		}
+		if (isset($options['relativeString'])) {
+			$relativeString = $options['relativeString'];
+			unset($options['relativeString']);
+		}
+		if (isset($options['absoluteString'])) {
+			$absoluteString = $options['absoluteString'];
+			unset($options['absoluteString']);
+		}
+		unset($options['end'], $options['format']);
 
 		$now = static::fromString(time(), $timezone);
 		$inSeconds = static::fromString($dateTime, $timezone);
