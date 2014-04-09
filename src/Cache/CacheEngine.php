@@ -125,7 +125,7 @@ abstract class CacheEngine {
  * @param array $keys An array of identifiers for the data
  * @return array For each cache key (given as the array key) the cache data associated or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
-	public function readMany($keys){
+	public function readMany($keys) {
 		$return = array();
 		foreach ($keys as $key) {
 			$return[$key] = self::read($key);
