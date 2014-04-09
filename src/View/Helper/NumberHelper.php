@@ -133,13 +133,12 @@ class NumberHelper extends Helper {
  *
  * @see \Cake\Utility\Number::format()
  *
- * @param float $number A floating point number
- * @param mixed $options If integer then places, if string then before, if (,.-) then use it
- *   or array with places and before keys
- * @return string formatted number
+ * @param float $number A floating point number.
+ * @param array $options Array of options.
+ * @return string Formatted number
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
  */
-	public function format($number, $options = false) {
+	public function format($number, array $options = []) {
 		return $this->_engine->format($number, $options);
 	}
 

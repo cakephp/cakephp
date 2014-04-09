@@ -199,7 +199,7 @@ class Number {
  *
  * @param float $value A floating point number.
  * @param array $options An array with options.
- * @return string formatted number
+ * @return string Formatted number
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
  */
 	public static function format($value, array $options = []) {
