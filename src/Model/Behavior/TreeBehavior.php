@@ -19,6 +19,18 @@ use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 
+/**
+ * Makes the table to which this is attached to behave like a nested set and
+ * provides methods for managing and retrieving information out of the derived
+ * hierarchical structure.
+ *
+ * Tables attaching this behavior are required to have a column referencing the
+ * parent row, and two other numeric columns (lft and rght) where the implicit
+ * order will be cached.
+ *
+ * For more information on what is a nested set and a how it works refer to
+ * http://www.sitepoint.com/hierarchical-data-database
+ */
 class TreeBehavior extends Behavior {
 
 /**
@@ -39,6 +51,7 @@ class TreeBehavior extends Behavior {
 		'implementedFinders' => [
 			'path' => 'findPath',
 			'children' => 'findChildren',
+			'treeList' => 'findTreeList'
 		],
 		'implementedMethods' => [
 			'childCount' => 'childCount',
@@ -297,6 +310,7 @@ class TreeBehavior extends Behavior {
  *
  * If the direct option is set to true, only the direct children are returned (based upon the parent_id field)
  *
+ * @param \Cake\ORM\Query $query
  * @param array $options Array of options as described above
  * @return \Cake\ORM\Query
  * @throws \InvalidArgumentException When the 'for' key is not passed in $options
@@ -328,8 +342,40 @@ class TreeBehavior extends Behavior {
 	}
 
 /**
+ * Gets a representation of the elements in the tree as a flat list where the keys are
+ * the primary key for the table and the values are the display field for the table. 
+ * Values are prefixed to visually indicate relative depth in the tree.
+ *
+ * Avaliable options are:
+ *
+ * - keyPath: A dot separated path to fetch the field to use for the array key, or a closure to
+ *  return the key out of the provided row.
+ * - valuePath: A dot separated path to fetch the field to use for the array value, or a closure to
+ *  return the value out of the provided row.
+ *  - spacer: A string to be used as prefix for denoting the depth in the tree for each item
+ *
+ * @param \Cake\ORM\Query $query
+ * @param array $options Array of options as described above
+ * @return \Cake\ORM\Query
+ */
+	public function findTreeList($query, $options) {
+		return $this->_scope($query)
+			->find('threaded', ['parentField' => $this->config()['parent']])
+			->formatResults(function($results) use ($options) {
+				$options += [
+					'keyPath' => $this->_table->primaryKey(),
+					'valuePath' => $this->_table->displayField(),
+					'spacer' => '_'
+				];
+				return $results
+					->listNested()
+					->printer($options['valuePath'], $options['keyPath'], $options['spacer']);
+			});
+	}
+
+/**
  * Removes the current node from the tree, by positioning it as a new root
- * and reparents all children up one level.
+ * and re-parents all children up one level.
  *
  * Note that the node will not be deleted just moved away from its current position
  * without moving its children with it.
@@ -339,6 +385,19 @@ class TreeBehavior extends Behavior {
  * false on error
  */
 	public function removeFromTree(Entity $node) {
+		return $this->_table->connection()->transactional(function() use ($node) {
+			return $this->_removeFromTree($node);
+		});
+	}
+
+/**
+ * Helper function containing the actual code for removeFromTree
+ *
+ * @param \Cake\ORM\Entity $node The node to remove from the tree
+ * @return \Cake\ORM\Entity|false the node after being removed from the tree or
+ * false on error
+ */
+	protected function _removeFromTree($node) {
 		$config = $this->config();
 		$left = $node->get($config['left']);
 		$right = $node->get($config['right']);
@@ -382,6 +441,20 @@ class TreeBehavior extends Behavior {
  * @return \Cake\ORM\Entity|boolean $node The node after being moved or false on failure
  */
 	public function moveUp(Entity $node, $number = 1) {
+		return $this->_table->connection()->transactional(function() use ($node, $number) {
+			return $this->_moveUp($node, $number);
+		});
+	}
+
+/**
+ * Helper function used with the actual code for moveUp
+ *
+ * @param \Cake\ORM\Entity $node The node to move
+ * @param integer|boolean $number How many places to move the node, or true to move to first position
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
+ * @return \Cake\ORM\Entity|boolean $node The node after being moved or false on failure
+ */
+	protected function _moveUp($node, $number) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 
@@ -442,6 +515,20 @@ class TreeBehavior extends Behavior {
  * @return \Cake\ORM\Entity|boolean the entity after being moved or false on failure
  */
 	public function moveDown(Entity $node, $number = 1) {
+		return $this->_table->connection()->transactional(function() use ($node, $number) {
+			return $this->_moveDown($node, $number);
+		});
+	}
+
+/**
+ * Helper function used with the actual code for moveDown
+ *
+ * @param \Cake\ORM\Entity $node The node to move
+ * @param integer|boolean $number How many places to move the node, or true to move to last position
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
+ * @return \Cake\ORM\Entity|boolean $node The node after being moved or false on failure
+ */
+	protected function _moveDown($node, $number) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 

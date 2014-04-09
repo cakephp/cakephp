@@ -159,6 +159,52 @@ class TreeBehaviorTest extends TestCase {
 	}
 
 /**
+ * Tests the find('treeList') method
+ *
+ * @return void
+ */
+	public function testFindTreeList() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$result = $table->find('treeList')->toArray();
+		$expected = [
+			1 => 'Link 1',
+			2 => '_Link 2',
+			3 => '_Link 3',
+			4 => '__Link 4',
+			5 => '___Link 5',
+			6 => 'Link 6',
+			7 => '_Link 7',
+			8 => 'Link 8'
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Tests the find('treeList') method with custom options
+ *
+ * @return void
+ */
+	public function testFindTreeListCustom() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$result = $table
+			->find('treeList', ['keyPath' => 'url', 'valuePath' => 'id', 'spacer' => ' '])
+			->toArray();
+		$expected = [
+			'/link1.html' => '1',
+			'http://example.com' => ' 2',
+			'/what/even-more-links.html' => ' 3',
+			'/lorem/ipsum.html' => '  4',
+			'/what/the.html' => '   5',
+			'/yeah/another-link.html' => '6',
+			'http://cakephp.org' => ' 7',
+			'/page/who-we-are.html' => '8'
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Tests the moveUp() method
  *
  * @return void
