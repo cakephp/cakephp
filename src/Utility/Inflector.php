@@ -483,25 +483,26 @@ class Inflector {
 
 			default:
 				foreach ($rules as $rule => $pattern) {
-					if (is_array($pattern)) {
-						if ($reset) {
-							static::${$var}[$rule] = $pattern;
+					if (!is_array($pattern)) {
+						continue;
+					}
+					if ($reset) {
+						static::${$var}[$rule] = $pattern;
+					} else {
+						if ($rule === 'uninflected') {
+							static::${$var}[$rule] = array_merge($pattern, static::${$var}[$rule]);
 						} else {
-							if ($rule === 'uninflected') {
-								static::${$var}[$rule] = array_merge($pattern, static::${$var}[$rule]);
-							} else {
-								static::${$var}[$rule] = $pattern + static::${$var}[$rule];
-							}
+							static::${$var}[$rule] = $pattern + static::${$var}[$rule];
 						}
-						unset($rules[$rule], static::${$var}['cache' . ucfirst($rule)]);
-						if (isset(static::${$var}['merged'][$rule])) {
-							unset(static::${$var}['merged'][$rule]);
-						}
-						if ($type === 'plural') {
-							static::$_cache['pluralize'] = static::$_cache['tableize'] = array();
-						} elseif ($type === 'singular') {
-							static::$_cache['singularize'] = array();
-						}
+					}
+					unset($rules[$rule], static::${$var}['cache' . ucfirst($rule)]);
+					if (isset(static::${$var}['merged'][$rule])) {
+						unset(static::${$var}['merged'][$rule]);
+					}
+					if ($type === 'plural') {
+						static::$_cache['pluralize'] = static::$_cache['tableize'] = array();
+					} elseif ($type === 'singular') {
+						static::$_cache['singularize'] = array();
 					}
 				}
 				static::${$var}['rules'] = $rules + static::${$var}['rules'];
