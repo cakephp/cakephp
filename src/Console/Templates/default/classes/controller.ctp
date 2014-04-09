@@ -21,7 +21,7 @@ use Cake\Utility\Inflector;
 echo "<?php\n"; ?>
 namespace <?= $namespace ?>\Controller<?= $prefix ?>;
 
-use <?= $namespace ?>\Controller\AppController;
+use <?= $namespace ?>\Controller\<?= $plugin; ?>AppController;
 
 /**
  * <?= $name; ?> Controller
@@ -36,7 +36,7 @@ if (!empty($components)) {
 }
 ?>
  */
-class <?= $name; ?>Controller extends AppController {
+class <?= $name; ?>Controller extends <?= $plugin; >AppController {
 
 <?php
 
