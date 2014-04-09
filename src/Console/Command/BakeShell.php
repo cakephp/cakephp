@@ -86,7 +86,7 @@ class BakeShell extends Shell {
 			$this->out(Inflector::underscore($name));
 		}
 		$this->out('');
-		$this->out(__d('cake_console', 'Using <info>Console/cake bake [name]</info> you can invoke a specific bake task.'));
+		$this->out(__d('cake_console', 'By using <info>Console/cake bake [name]</info> you can invoke a specific bake task.'));
 	}
 
 /**
