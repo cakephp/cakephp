@@ -608,7 +608,6 @@ class Time {
  * - `end` => The end of relative time telling
  * - `relativeString` => The printf compatible string when outputting relative time
  * - `absoluteString` => The printf compatible string when outputting absolute time
- * - `userOffset` => Users offset from GMT (in hours) *Deprecated* use timezone intead.
  * - `timezone` => The user timezone the timestamp should be formatted in.
  *
  * Relative dates look something like this:
@@ -638,8 +637,6 @@ class Time {
 
 		if (isset($options['timezone'])) {
 			$timezone = $options['timezone'];
-		} elseif (isset($options['userOffset'])) {
-			$timezone = $options['userOffset'];
 		}
 
 		if (isset($options['accuracy'])) {
