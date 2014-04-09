@@ -203,6 +203,48 @@ class Cache {
 	}
 
 /**
+ *  Write data for many keys into cache.
+ *
+ * ### Usage:
+ *
+ * Writing to the active cache config:
+ *
+ * `Cache::writeMany(array('cached_data_1' => 'data 1', 'cached_data_2' => 'data 2'));`
+ *
+ * Writing to a specific cache config:
+ *
+ * `Cache::writeMany(array('cached_data_1' => 'data 1', 'cached_data_2' => 'data 2'), 'long_term');`
+ *
+ * @param array $data An array of data to be stored in the cache
+ * @param string $config Optional string configuration name to write to. Defaults to 'default'
+ * @return array of bools for each key provided, indicated true for success or false for fail
+ */
+	public static function writeMany($data, $config = 'default') {
+		$settings = self::settings($config);
+
+		if (empty($settings)) {
+			return false;
+		}
+		if (!self::isInitialized($config)) {
+			return false;
+		}
+		
+		$return = array();
+		if (method_exists(self::$_engines[$config],'writeMany')) {
+			$result = self::$_engines[$config]->writeMany($data, $settings['duration']);
+			if ($result === false) {
+				throw new CacheException(__d('cake_dev', '%s cache was unable to write to %s cache', $config. self::$_engines[$config]->settings['engine']));
+			}
+			self::set(null, $config);
+		}else{
+			foreach ($data as $key => $value) {
+				$return[$key] = self::write($key, $value, $config);
+			}
+		}
+		return $return;
+	}
+
+ /**
  * Read a key from the cache.
  *
  * ### Usage:
@@ -228,6 +270,42 @@ class Cache {
 		return $engine->read($key);
 	}
 
+ /**
+ * Read multiple keys from the cache.
+ *
+ * ### Usage:
+ *
+ * Reading multiple keys from the active cache configuration.
+ *
+ * `Cache::readMany(array('my_data_1', 'my_data_2)));`
+ *
+ * Reading from a specific cache configuration.
+ *
+ * `Cache::readMany(array('my_data_1', 'my_data_2), 'long_term');`
+ *
+ * @param array $keys an array of keys to fetch from the cache
+ * @param string $config optional name of the configuration to use. Defaults to 'default'
+ * @return array An array containing, for each of the given $keys, the cached data or false if cached data could not be retreived
+ */
+	public static function readMany($keys, $config = 'default') {
+		$settings = self::settings($config);
+		if (empty($settings)) {
+			return false;
+		}
+		if (!self::isInitialized($config)) {
+			return false;
+		}
+
+		$return = array();
+		if (method_exists(self::$_engines[$config],'readMany')) {
+			$return = self::$_engines[$config]->readMany($keys);
+		} else {
+			foreach ($keys as $key) {
+				$return[$key] = self::read($key, $config);
+			}
+		}
+		return $return;
+	}
 /**
  * Increment a number under the key and return incremented value.
  *
@@ -291,6 +369,44 @@ class Cache {
 	}
 
 /**
+ * Delete many keys from the cache.
+ *
+ * ### Usage:
+ *
+ * Deleting multiple keys from the active cache configuration.
+ *
+ * `Cache::deleteMany(array('my_data_1', 'my_data_2'));`
+ *
+ * Deleting from a specific cache configuration.
+ *
+ * `Cache::deleteMany(array('my_data_1', 'my_data_2), 'long_term');`
+ *
+ * @param array $keys Array of cache keys to be deleted
+ * @param string $config name of the configuration to use. Defaults to 'default'
+ * @return array of boolean values that are true if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ */
+	public static function deleteMany($keys, $config = 'default') {
+		$settings = self::settings($config);
+
+		if (empty($settings)) {
+			return false;
+		}
+		if (!self::isInitialized($config)) {
+			return false;
+		}
+
+		$return = array();
+		if (method_exists(self::$_engines[$config],'deleteMany')) {
+			$return = self::$_engines[$config]->deleteMany($keys);
+		} else {
+			foreach ($keys as $key) {
+				$return[$key] = self::delete($key, $config);
+			}
+		}
+		return $return;
+	}
+
+ /**
  * Delete all keys from the cache.
  *
  * @param boolean $check if true will check expiration, otherwise delete all
