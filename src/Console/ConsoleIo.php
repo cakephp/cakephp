@@ -1,0 +1,256 @@
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Console;
+
+use Cake\Console\ConsoleInput;
+use Cake\Console\ConsoleOutput;
+
+/**
+ * A wrapper around the various IO operations shell tasks need to do.
+ *
+ * Packages up the stdout, stderr, and stdin streams providing a simple
+ * consistent interface for shells to use. This class also makes mocking streams
+ * easy to do in unit tests.
+ */
+class ConsoleIo {
+
+/**
+ * The output stream
+ *
+ * @var \Cake\Console\ConsoleOutput
+ */
+	protected $_out;
+
+/**
+ * The error stream
+ *
+ * @var \Cake\Console\ConsoleOutput
+ */
+	protected $_err;
+
+/**
+ * The input stream
+ *
+ * @var \Cake\Console\ConsoleInput
+ */
+	protected $_in;
+
+/**
+ * Output constant making verbose shells.
+ *
+ * @var integer
+ */
+	const VERBOSE = 2;
+
+/**
+ * Output constant for making normal shells.
+ *
+ * @var integer
+ */
+	const NORMAL = 1;
+
+/**
+ * Output constants for making quiet shells.
+ *
+ * @var integer
+ */
+	const QUIET = 0;
+
+/**
+ * The current output level.
+ *
+ * @var integer
+ */
+	protected $_level = ConsoleIo::NORMAL;
+
+/**
+ * Constructor
+ *
+ * @param \Cake\Console\ConsoleOutput $out A ConsoleOutput object for stdout.
+ * @param \Cake\Console\ConsoleOutput $err A ConsoleOutput object for stderr.
+ * @param \Cake\Console\ConsoleInput $in A ConsoleInput object for stdin.
+ */
+	public function __construct(ConsoleOutput $out = null, ConsoleOutput $err = null, ConsoleInput $in = null) {
+		$this->_out = $out ? $out : new ConsoleOutput('php://stdout');
+		$this->_err = $err ? $err : new ConsoleOutput('php://stderr');
+		$this->_in = $in ? $in : new ConsoleInput('php://stdin');
+	}
+
+/**
+ * Output only at the verbose level.
+ *
+ * @param string|array $message A string or a an array of strings to output
+ * @param integer $newlines Number of newlines to append
+ * @return integer|boolean Returns the number of bytes returned from writing to stdout.
+ */
+	public function verbose($message, $newlines = 1) {
+		return $this->out($message, $newlines, self::VERBOSE);
+	}
+
+/**
+ * Output at all levels.
+ *
+ * @param string|array $message A string or a an array of strings to output
+ * @param integer $newlines Number of newlines to append
+ * @return integer|boolean Returns the number of bytes returned from writing to stdout.
+ */
+	public function quiet($message, $newlines = 1) {
+		return $this->out($message, $newlines, self::QUIET);
+	}
+
+/**
+ * Outputs a single or multiple messages to stdout. If no parameters
+ * are passed outputs just a newline.
+ *
+ * ### Output levels
+ *
+ * There are 3 built-in output level. Shell::QUIET, Shell::NORMAL, Shell::VERBOSE.
+ * The verbose and quiet output levels, map to the `verbose` and `quiet` output switches
+ * present in most shells. Using Shell::QUIET for a message means it will always display.
+ * While using Shell::VERBOSE means it will only display when verbose output is toggled.
+ *
+ * @param string|array $message A string or a an array of strings to output
+ * @param integer $newlines Number of newlines to append
+ * @param integer $level The message's output level, see above.
+ * @return integer|boolean Returns the number of bytes returned from writing to stdout.
+ * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::out
+ */
+	public function out($message = null, $newlines = 1, $level = Shell::NORMAL) {
+		if ($level <= $this->_level) {
+			return $this->_out->write($message, $newlines);
+		}
+		return true;
+	}
+
+/**
+ * Outputs a single or multiple error messages to stderr. If no parameters
+ * are passed outputs just a newline.
+ *
+ * @param string|array $message A string or a an array of strings to output
+ * @param integer $newlines Number of newlines to append
+ * @return void
+ * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::err
+ */
+	public function err($message = null, $newlines = 1) {
+		$this->_err->write($message, $newlines);
+	}
+
+/**
+ * Returns a single or multiple linefeeds sequences.
+ *
+ * @param integer $multiplier Number of times the linefeed sequence should be repeated
+ * @return string
+ * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::nl
+ */
+	public function nl($multiplier = 1) {
+		return str_repeat(ConsoleOutput::LF, $multiplier);
+	}
+
+/**
+ * Outputs a series of minus characters to the standard output, acts as a visual separator.
+ *
+ * @param integer $newlines Number of newlines to pre- and append
+ * @param integer $width Width of the line, defaults to 63
+ * @return void
+ * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::hr
+ */
+	public function hr($newlines = 0, $width = 63) {
+		$this->out(null, $newlines);
+		$this->out(str_repeat('-', $width));
+		$this->out(null, $newlines);
+	}
+
+/**
+ * Prompts the user for input, and returns it.
+ *
+ * @param string $prompt Prompt text.
+ * @param string $default Default input value.
+ * @return mixed Either the default value, or the user-provided input.
+ * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::in
+ */
+	public function ask($prompt, $default = null) {
+		$in = $this->_getInput($prompt, null, $default);
+		return $in;
+	}
+
+/**
+ * Prompts the user for input based on a list of options, and returns it.
+ *
+ * @param string $prompt Prompt text.
+ * @param string|array $options Array or string of options.
+ * @param string $default Default input value.
+ * @return mixed Either the default value, or the user-provided input.
+ * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::in
+ */
+	public function askChoice($prompt, $options, $default = null) {
+		$originalOptions = $options;
+		$in = $this->_getInput($prompt, $originalOptions, $default);
+
+		if ($options && is_string($options)) {
+			if (strpos($options, ',')) {
+				$options = explode(',', $options);
+			} elseif (strpos($options, '/')) {
+				$options = explode('/', $options);
+			} else {
+				$options = [$options];
+			}
+		}
+		if (is_array($options)) {
+			$options = array_merge(
+				array_map('strtolower', $options),
+				array_map('strtoupper', $options),
+				$options
+			);
+			while ($in === '' || !in_array($in, $options)) {
+				$in = $this->_getInput($prompt, $originalOptions, $default);
+			}
+		}
+		return $in;
+	}
+
+/**
+ * Prompts the user for input, and returns it.
+ *
+ * @param string $prompt Prompt text.
+ * @param string|array $options Array or string of options.
+ * @param string $default Default input value.
+ * @return string Either the default value, or the user-provided input.
+ */
+	protected function _getInput($prompt, $options, $default) {
+		if (!is_array($options)) {
+			$printOptions = '';
+		} else {
+			$printOptions = '(' . implode('/', $options) . ')';
+		}
+
+		if ($default === null) {
+			$this->_out->write('<question>' . $prompt . '</question>' . " $printOptions \n" . '> ', 0);
+		} else {
+			$this->_out->write('<question>' . $prompt . '</question>' . " $printOptions \n" . "[$default] > ", 0);
+		}
+		$result = $this->_in->read();
+
+		if ($result === false) {
+			return false;
+		}
+		$result = trim($result);
+
+		if ($default !== null && ($result === '' || $result === null)) {
+			return $default;
+		}
+		return $result;
+	}
+
+}
