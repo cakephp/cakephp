@@ -14,6 +14,8 @@
  */
 namespace Cake\Utility;
 
+use Cake\Error;
+
 /**
  * Pluralize and singularize English words.
  *
