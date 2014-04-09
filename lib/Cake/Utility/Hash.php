@@ -40,8 +40,16 @@ class Hash {
  * @param mixed $default The return value when the path does not exist
  * @return mixed The value fetched from the array, or null.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::get
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function get(array $data, $path, $default = null) {
+	public static function get($data, $path, $default = null) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		if (empty($data)) {
 			return $default;
 		}
@@ -51,7 +59,7 @@ class Hash {
 			$parts = $path;
 		}
 		foreach ($parts as $key) {
-			if (is_array($data) && isset($data[$key])) {
+			if (self::isArrayType($data) && isset($data[$key])) {
 				$data =& $data[$key];
 			} else {
 				return $default;
@@ -88,8 +96,16 @@ class Hash {
  * @return array An array of the extracted values. Returns an empty array
  *   if there are no matches.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::extract
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function extract(array $data, $path) {
+	public static function extract($data, $path) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		if (empty($path)) {
 			return $data;
 		}
@@ -126,7 +142,7 @@ class Hash {
 			if ($conditions) {
 				$filter = array();
 				foreach ($next as $item) {
-					if (is_array($item) && self::_matches($item, $conditions)) {
+					if (self::isArrayType($item) && self::_matches($item, $conditions)) {
 						$filter[] = $item;
 					}
 				}
@@ -142,6 +158,7 @@ class Hash {
  *
  * @param string $token the token being splitted.
  * @return array array(token, conditions) with token splitted
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
 	protected static function _splitConditions($token) {
 		$conditions = false;
@@ -181,7 +198,7 @@ class Hash {
  * @param string $selector The patterns to match.
  * @return boolean Fitness of expression.
  */
-	protected static function _matches(array $data, $selector) {
+	protected static function _matches($data, $selector) {
 		preg_match_all(
 			'/(\[ (?P<attr>[^=><!]+?) (\s* (?P<op>[><!]?[=]|[><]) \s* (?P<val>(?:\/.*?\/ | [^\]]+)) )? \])/x',
 			$selector,
@@ -235,8 +252,16 @@ class Hash {
  * @param array $values The values to insert.
  * @return array The data with $values inserted.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::insert
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function insert(array $data, $path, $values = null) {
+	public static function insert($data, $path, $values = null) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		if (strpos($path, '[') === false) {
 			$tokens = explode('.', $path);
 		} else {
@@ -293,7 +318,7 @@ class Hash {
 					$_list[$key] = array();
 				}
 				$_list =& $_list[$key];
-				if (!is_array($_list)) {
+				if (!self::isArrayType($_list)) {
 					$_list = array();
 				}
 			} elseif ($op === 'remove') {
@@ -318,8 +343,16 @@ class Hash {
  * @param string $path A path expression to use to remove.
  * @return array The modified array.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::remove
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function remove(array $data, $path) {
+	public static function remove($data, $path) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		if (strpos($path, '[') === false) {
 			$tokens = explode('.', $path);
 		} else {
@@ -337,7 +370,7 @@ class Hash {
 
 		foreach ($data as $k => $v) {
 			$match = self::_matchToken($k, $token);
-			if ($match && is_array($v)) {
+			if ($match && self::isArrayType($v)) {
 				if ($conditions && self::_matches($v, $conditions)) {
 					unset($data[$k]);
 					continue;
@@ -366,13 +399,21 @@ class Hash {
  * @return array Combined array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::combine
  * @throws CakeException CakeException When keys and values count is unequal.
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function combine(array $data, $keyPath, $valuePath = null, $groupPath = null) {
+	public static function combine($data, $keyPath, $valuePath = null, $groupPath = null) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		if (empty($data)) {
 			return array();
 		}
 
-		if (is_array($keyPath)) {
+		if (self::isArrayType($keyPath)) {
 			$format = array_shift($keyPath);
 			$keys = self::format($data, $keyPath, $format);
 		} else {
@@ -382,7 +423,7 @@ class Hash {
 			return array();
 		}
 
-		if (!empty($valuePath) && is_array($valuePath)) {
+		if (!empty($valuePath) && self::isArrayType($valuePath)) {
 			$format = array_shift($valuePath);
 			$vals = self::format($data, $valuePath, $format);
 		} elseif (!empty($valuePath)) {
@@ -441,8 +482,16 @@ class Hash {
  * @see sprintf()
  * @see Hash::extract()
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::format
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function format(array $data, array $paths, $format) {
+	public static function format($data, array $paths, $format) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		$extracted = array();
 		$count = count($paths);
 
@@ -477,8 +526,16 @@ class Hash {
  * @param array $needle The values to file in $data
  * @return boolean true if $data contains $needle, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::contains
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function contains(array $data, array $needle) {
+	public static function contains($data, array $needle) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		if (empty($data) || empty($needle)) {
 			return false;
 		}
@@ -489,7 +546,7 @@ class Hash {
 			$val = $needle[$key];
 			unset($needle[$key]);
 
-			if (array_key_exists($key, $data) && is_array($val)) {
+			if (array_key_exists($key, $data) && self::isArrayType($val)) {
 				$next = $data[$key];
 				unset($data[$key]);
 
@@ -519,10 +576,18 @@ class Hash {
  * @return boolean Existence of path.
  * @see Hash::extract()
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::check
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function check(array $data, $path) {
+	public static function check($data, $path) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		$results = self::extract($data, $path);
-		if (!is_array($results)) {
+		if (!self::isArrayType($results)) {
 			return false;
 		}
 		return count($results) > 0;
@@ -536,10 +601,18 @@ class Hash {
  *   `self::_filter()` Which strips out all non-zero empty values.
  * @return array Filtered array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::filter
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function filter(array $data, $callback = array('self', '_filter')) {
+	public static function filter($data, $callback = array('self', '_filter')) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		foreach ($data as $k => $v) {
-			if (is_array($v)) {
+			if (self::isArrayType($v)) {
 				$data[$k] = self::filter($v, $callback);
 			}
 		}
@@ -568,8 +641,16 @@ class Hash {
  * @param string $separator String used to separate array key elements in a path, defaults to '.'
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::flatten
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function flatten(array $data, $separator = '.') {
+	public static function flatten($data, $separator = '.') {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		$result = array();
 		$stack = array();
 		$path = null;
@@ -580,7 +661,7 @@ class Hash {
 			$element = $data[$key];
 			unset($data[$key]);
 
-			if (is_array($element) && !empty($element)) {
+			if (self::isArrayType($element) && !empty($element)) {
 				if (!empty($data)) {
 					$stack[] = array($data, $path);
 				}
@@ -643,14 +724,22 @@ class Hash {
  * @param mixed $merge Array to merge with. The argument and all trailing arguments will be array cast when merged
  * @return array Merged array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::merge
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function merge(array $data, $merge) {
+	public static function merge($data, $merge) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		$args = func_get_args();
 		$return = current($args);
 
 		while (($arg = next($args)) !== false) {
 			foreach ((array)$arg as $key => $val) {
-				if (!empty($return[$key]) && is_array($return[$key]) && is_array($val)) {
+				if (!empty($return[$key]) && self::isArrayType($return[$key]) && self::isArrayType($val)) {
 					$return[$key] = self::merge($return[$key], $val);
 				} elseif (is_int($key) && isset($return[$key])) {
 					$return[] = $val;
@@ -668,8 +757,16 @@ class Hash {
  * @param array $array The array to check.
  * @return boolean true if values are numeric, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::numeric
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function numeric(array $data) {
+	public static function numeric($data) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		if (empty($data)) {
 			return false;
 		}
@@ -686,15 +783,23 @@ class Hash {
  * @param array $array Array to count dimensions on
  * @return integer The number of dimensions in $data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::dimensions
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function dimensions(array $data) {
+	public static function dimensions($data) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		if (empty($data)) {
 			return 0;
 		}
 		reset($data);
 		$depth = 1;
 		while ($elem = array_shift($data)) {
-			if (is_array($elem)) {
+			if (self::isArrayType($elem)) {
 				$depth += 1;
 				$data =& $elem;
 			} else {
@@ -711,10 +816,18 @@ class Hash {
  * @param array $data Array to count dimensions on
  * @return integer The maximum number of dimensions in $data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::maxDimensions
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function maxDimensions(array $data) {
+	public static function maxDimensions($data) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		$depth = array();
-		if (is_array($data) && reset($data) !== false) {
+		if (self::isArrayType($data) && reset($data) !== false) {
 			foreach ($data as $value) {
 				$depth[] = self::dimensions((array)$value) + 1;
 			}
@@ -731,8 +844,16 @@ class Hash {
  * @param callable $function The function to call on each extracted value.
  * @return array An array of the modified values.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::map
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function map(array $data, $path, $function) {
+	public static function map($data, $path, $function) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		$values = (array)self::extract($data, $path);
 		return array_map($function, $values);
 	}
@@ -745,8 +866,16 @@ class Hash {
  * @param callable $function The function to call on each extracted value.
  * @return mixed The reduced value.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::reduce
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function reduce(array $data, $path, $function) {
+	public static function reduce($data, $path, $function) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		$values = (array)self::extract($data, $path);
 		return array_reduce($values, $function);
 	}
@@ -770,8 +899,16 @@ class Hash {
  * @param string $path The path to extract from $data.
  * @param callable $function The function to call on each extracted value.
  * @return mixed The results of the applied method.
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function apply(array $data, $path, $function) {
+	public static function apply($data, $path, $function) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		$values = (array)self::extract($data, $path);
 		return call_user_func($function, $values);
 	}
@@ -798,8 +935,16 @@ class Hash {
  * @param string $type See direction types above. Defaults to 'regular'.
  * @return array Sorted array of data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::sort
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function sort(array $data, $path, $dir, $type = 'regular') {
+	public static function sort($data, $path, $dir, $type = 'regular') {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		if (empty($data)) {
 			return array();
 		}
@@ -873,7 +1018,7 @@ class Hash {
 			if ($key !== null) {
 				$id = $key;
 			}
-			if (is_array($r) && !empty($r)) {
+			if (self::isArrayType($r) && !empty($r)) {
 				$stack = array_merge($stack, self::_squash($r, $id));
 			} else {
 				$stack[] = array('id' => $id, 'value' => $r);
@@ -892,8 +1037,16 @@ class Hash {
  * @return array Returns the key => value pairs that are not common in $data and $compare
  *    The expression for this function is ($data - $compare) + ($compare - ($data - $compare))
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::diff
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function diff(array $data, $compare) {
+	public static function diff($data, $compare) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		if (empty($data)) {
 			return (array)$compare;
 		}
@@ -918,8 +1071,16 @@ class Hash {
  * @param array $compare The data to compare and append onto.
  * @return array The merged array.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::mergeDiff
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function mergeDiff(array $data, $compare) {
+	public static function mergeDiff($data, $compare) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		if (empty($data) && !empty($compare)) {
 			return $compare;
 		}
@@ -929,7 +1090,7 @@ class Hash {
 		foreach ($compare as $key => $value) {
 			if (!array_key_exists($key, $data)) {
 				$data[$key] = $value;
-			} elseif (is_array($value)) {
+			} elseif (self::isArrayType($value)) {
 				$data[$key] = self::mergeDiff($data[$key], $compare[$key]);
 			}
 		}
@@ -943,8 +1104,16 @@ class Hash {
  * @param boolean $assoc If true, $data will be converted to an associative array.
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::normalize
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function normalize(array $data, $assoc = true) {
+	public static function normalize($data, $assoc = true) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		$keys = array_keys($data);
 		$count = count($keys);
 		$numeric = true;
@@ -988,8 +1157,16 @@ class Hash {
  * @return array of results, nested
  * @see Hash::extract()
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::nest
+ * @throws CakeException CakeException When type of $date in not array/ArrayAccess/ArrayObject.
  */
-	public static function nest(array $data, $options = array()) {
+	public static function nest($data, $options = array()) {
+		if (!self::isArrayType($data)) {
+				throw new CakeException(__d(
+				'cake_dev',
+				'Argument 1 must be of the type array.'
+			));
+		}
+
 		if (!$data) {
 			return $data;
 		}
@@ -1045,4 +1222,23 @@ class Hash {
 		return array_values($return);
 	}
 
+/**
+ *  Helper method for check type of varilabel is array
+ * 
+ * @param mixed $data
+ * @return boolean
+ */
+	public static function isArrayType($data) {
+		if (is_array($data)) {
+			return true;
+		}
+		if (is_object($data)) {
+			if ($data instanceof ArrayAccess) {
+				return true;
+			} elseif (($data instanceof ArrayObject) && ($data->getFlags() === ArrayObject::ARRAY_AS_PROPS)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
