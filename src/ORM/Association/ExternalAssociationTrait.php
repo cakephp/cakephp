@@ -78,6 +78,18 @@ trait ExternalAssociationTrait {
 	}
 
 /**
+ * {@inheritdoc}
+ *
+ */
+	public function defaultRowValue($row, $joined) {
+		$sourceAlias = $this->source()->alias();
+		if (isset($row[$sourceAlias])) {
+			$row[$sourceAlias][$this->property()] = $joined ? null : [];
+		}
+		return $row;
+	}
+
+/**
  * Returns the default options to use for the eagerLoader
  *
  * @return array

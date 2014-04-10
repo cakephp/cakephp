@@ -52,7 +52,7 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
 			'\Cake\ORM\Association',
 			[
 				'_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-				'save', 'eagerLoader', 'type'
+				'save', 'eagerLoader', 'type', 'defaultRowValue'
 			],
 			['Foo', $config]
 		);
