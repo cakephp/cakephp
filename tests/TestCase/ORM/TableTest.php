@@ -2926,7 +2926,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$table->association('tags')->unlink($article, $tags);
 		$left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
-		$this->assertNull($left->tags);
+		$this->assertEmpty($left->tags);
 	}
 
 /**
@@ -2952,7 +2952,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$table->association('tags')->unlink($article, $tags);
 		$left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
-		$this->assertNull($left->tags);
+		$this->assertEmpty($left->tags);
 	}
 
 /**
@@ -3001,7 +3001,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->association('tags')->replaceLinks($article, $tags);
 		$this->assertSame($tags, $article->tags);
 		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
-		$this->assertNull($article->tags);
+		$this->assertEmpty($article->tags);
 	}
 
 /**
