@@ -464,6 +464,24 @@ abstract class Association {
 	}
 
 /**
+ * Returns a modified row after appending a property for this association
+ * with the default empty value according to whether the association was
+ * joined or fetched externally.
+ *
+ * @param array $row
+ * @param boolean $joined Whether or not the row is a result of a direct join
+ * with this association
+ * @return array
+ */
+	public function defaultRowValue($row, $joined) {
+		$sourceAlias = $this->source()->alias();
+		if (isset($row[$sourceAlias])) {
+			$row[$sourceAlias][$this->property()] = null;
+		}
+		return $row;
+	}
+
+/**
  * Proxies the finding operation to the target table's find method
  * and modifies the query accordingly based of this association
  * configuration
@@ -684,17 +702,5 @@ abstract class Association {
  * @see Table::save()
  */
 	public abstract function save(Entity $entity, $options = []);
-
-/**
- * Returns a modified row after appending a property for this association
- * with the default empty value according to whether the association was
- * joined or fetched externally.
- *
- * @param array $row
- * @param boolean $joined Whether or not the row is a result of a direct join
- * with this association
- * @return array
- */
-	abstract public function defaultRowValue($row, $joined);
 
 }

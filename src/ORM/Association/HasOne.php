@@ -134,18 +134,6 @@ class HasOne extends Association {
  * {@inheritdoc}
  *
  */
-	public function defaultRowValue($row, $joined) {
-		$sourceAlias = $this->source()->alias();
-		if (isset($row[$sourceAlias])) {
-			$row[$sourceAlias][$this->property()] = null;
-		}
-		return $row;
-	}
-
-/**
- * {@inheritdoc}
- *
- */
 	protected function _linkField($options) {
 		$links = [];
 		$name = $this->name();
