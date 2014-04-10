@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Utility;
 
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Error\XmlException;
 use Cake\Utility\Xml;
 
 /**
@@ -139,7 +140,7 @@ class XmlTest extends TestCase {
 /**
  * Test that building SimpleXmlElement with invalid XML causes the right exception.
  *
- * @expectedException \Cake\Error\XmlException
+ * @expectedException \Cake\Utility\Error\XmlException
  * @return void
  */
 	public function testBuildInvalidDataSimpleXml() {
@@ -1067,7 +1068,7 @@ XML;
  * testToArrayFail method
  *
  * @dataProvider invalidToArrayDataProvider
- * @expectedException \Cake\Error\XmlException
+ * @expectedException \Cake\Utility\Error\XmlException
  * @return void
  */
 	public function testToArrayFail($value) {

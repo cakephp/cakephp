@@ -15,7 +15,9 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\Utility\Error;
+
+use Cake\Error\Exception;
 
 /**
  * Exception class for Xml.  This exception will be thrown from Xml when it

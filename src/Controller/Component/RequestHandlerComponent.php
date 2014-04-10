@@ -19,11 +19,12 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Error;
+use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
+use Cake\Utility\Error\XmlException;
 use Cake\Utility\Inflector;
 use Cake\Utility\Xml;
 
@@ -248,7 +249,7 @@ class RequestHandlerComponent extends Component {
 				return Xml::toArray($xml->data);
 			}
 			return Xml::toArray($xml);
-		} catch (Error\XmlException $e) {
+		} catch (XmlException $e) {
 			return array();
 		}
 	}
@@ -640,7 +641,7 @@ class RequestHandlerComponent extends Component {
  */
 	public function addInputType($type, $handler) {
 		if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {
-			throw new Error\Exception('You must give a handler callback.');
+			throw new Exception('You must give a handler callback.');
 		}
 		$this->_inputTypeMap[$type] = $handler;
 	}
