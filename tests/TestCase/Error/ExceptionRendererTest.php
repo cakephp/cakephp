@@ -510,22 +510,6 @@ class ExceptionRendererTest extends TestCase {
 				404
 			),
 			array(
-				new Error\MissingTableException(array('table' => 'articles', 'class' => 'Article', 'ds' => 'test')),
-				array(
-					'/<h2>Missing Database Table<\/h2>/',
-					'/Table <em>articles<\/em> for model <em>Article<\/em> was not found in datasource <em>test<\/em>/'
-				),
-				500
-			),
-			array(
-				new Error\MissingDatabaseException(array('connection' => 'default')),
-				array(
-					'/<h2>Missing Database Connection<\/h2>/',
-					'/Confirm you have created the file/'
-				),
-				500
-			),
-			array(
 				new Error\MissingViewException(array('file' => '/posts/about.ctp')),
 				array(
 					"/posts\/about.ctp/"
@@ -537,23 +521,6 @@ class ExceptionRendererTest extends TestCase {
 				array(
 					"/Missing Layout/",
 					"/layouts\/my_layout.ctp/"
-				),
-				500
-			),
-			array(
-				new Error\MissingConnectionException(array('class' => 'Mysql')),
-				array(
-					'/<h2>Missing Database Connection<\/h2>/',
-					'/A Database connection using "Mysql" was missing or unable to connect./',
-				),
-				500
-			),
-			array(
-				new Error\MissingConnectionException(array('class' => 'Mysql', 'enabled' => false)),
-				array(
-					'/<h2>Missing Database Connection<\/h2>/',
-					'/A Database connection using "Mysql" was missing or unable to connect./',
-					'/Mysql driver is NOT enabled/'
 				),
 				500
 			),
