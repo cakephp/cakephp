@@ -1957,4 +1957,20 @@ class QueryTest extends TestCase {
 			->all();
 	}
 
+/**
+ * Tests that a hasOne association using the select strategy will still have the
+ * key present in the results when no match is found
+ *
+ * @return void
+ */
+	public function testAssociationKeyPresent() {
+		$table = TableRegistry::get('Articles');
+		$table->hasOne('ArticlesTags', ['strategy' => 'select']);
+		$article = $table->find()->where(['id' => 3])
+			->hydrate(false)
+			->contain('ArticlesTags')
+			->first();
+
+		$this->assertNull($article['articles_tag']);
+	}
 }
