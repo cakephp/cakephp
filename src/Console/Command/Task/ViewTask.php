@@ -410,19 +410,6 @@ class ViewTask extends BakeTask {
 			'help' => __d('cake_console', "Will bake a single action's file. core templates are (index, add, edit, view)")
 		])->addArgument('alias', [
 			'help' => __d('cake_console', 'Will bake the template in <action> but create the filename after <alias>.')
-		])->addOption('plugin', [
-			'short' => 'p',
-			'help' => __d('cake_console', 'Plugin to bake the view into.')
-		])->addOption('theme', [
-			'short' => 't',
-			'help' => __d('cake_console', 'Theme to use when baking code.')
-		])->addOption('connection', [
-			'short' => 'c',
-			'help' => __d('cake_console', 'The connection the connected model is on.')
-		])->addOption('force', [
-			'boolean' => true,
-			'short' => 'f',
-			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		])->addOption('controller', [
 			'help' => __d('cake_console', 'The controller name if you have a controller that does not follow conventions.')
 		])->addOption('prefix', [

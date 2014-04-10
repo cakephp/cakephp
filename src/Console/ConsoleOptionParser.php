@@ -304,6 +304,17 @@ class ConsoleOptionParser {
 	}
 
 /**
+ * Remove an option from the option parser.
+ *
+ * @param string $name The option name to remove.
+ * @return ConsoleOptionParser $this
+ */
+	public function removeOption($name) {
+		unset($this->_options[$name]);
+		return $this;
+	}
+
+/**
  * Add a positional argument to the option parser.
  *
  * ### Params

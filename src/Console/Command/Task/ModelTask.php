@@ -656,19 +656,6 @@ class ModelTask extends BakeTask {
 			'help' => __d('cake_console', 'Name of the model to bake. Can use Plugin.name to bake plugin models.')
 		])->addSubcommand('all', [
 			'help' => __d('cake_console', 'Bake all model files with associations and validation.')
-		])->addOption('plugin', [
-			'short' => 'p',
-			'help' => __d('cake_console', 'Plugin to bake the model into.')
-		])->addOption('theme', [
-			'short' => 't',
-			'help' => __d('cake_console', 'Theme to use when baking code.')
-		])->addOption('connection', [
-			'short' => 'c',
-			'help' => __d('cake_console', 'The connection the model table is on.')
-		])->addOption('force', [
-			'short' => 'f',
-			'boolean' => true,
-			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		])->addOption('table', [
 			'help' => __d('cake_console', 'The table name to use if you have non-conventional table names.')
 		])->addOption('no-entity', [

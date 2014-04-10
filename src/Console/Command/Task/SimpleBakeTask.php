@@ -125,19 +125,9 @@ abstract class SimpleBakeTask extends BakeTask {
 				$name,
 				$name
 			)
-		])->addOption('plugin', [
-			'short' => 'p',
-			'help' => __d('cake_console', 'Plugin to bake the %s into.', $name)
-		])->addOption('theme', [
-			'short' => 't',
-			'help' => __d('cake_console', 'Theme to use when baking code.')
 		])->addOption('no-test', [
 			'boolean' => true,
 			'help' => __d('cake_console', 'Do not generate a test skeleton.')
-		])->addOption('force', [
-			'short' => 'f',
-			'boolean' => true,
-			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		]);
 
 		return $parser;
