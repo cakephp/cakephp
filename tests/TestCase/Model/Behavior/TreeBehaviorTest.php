@@ -700,7 +700,6 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-
 /**
  * Test deleting a node with no tree columns
  *
