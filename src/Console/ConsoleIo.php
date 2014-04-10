@@ -89,6 +89,19 @@ class ConsoleIo {
 	}
 
 /**
+ * Get/set the current output level.
+ *
+ * @param null|int $level The current output level.
+ * @return int The current output level.
+ */
+	public function level($level = null) {
+		if ($level !== null) {
+			$this->_level = $level;
+		}
+		return $this->_level;
+	}
+
+/**
  * Output only at the verbose level.
  *
  * @param string|array $message A string or a an array of strings to output
@@ -240,11 +253,7 @@ class ConsoleIo {
 		$this->_out->write('<question>' . $prompt . "</question>$optionsText\n$defaultText> ", 0);
 		$result = $this->_in->read();
 
-		if ($result === false) {
-			return false;
-		}
 		$result = trim($result);
-
 		if ($default !== null && ($result === '' || $result === null)) {
 			return $default;
 		}

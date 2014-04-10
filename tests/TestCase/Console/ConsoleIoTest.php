@@ -116,4 +116,168 @@ class ConsoleIoTest extends TestCase {
 		$this->assertEquals('n', $result);
 	}
 
+/**
+ * testOut method
+ *
+ * @return void
+ */
+	public function testOut() {
+		$this->out->expects($this->at(0))
+			->method('write')
+			->with("Just a test", 1);
+
+		$this->out->expects($this->at(1))
+			->method('write')
+			->with(array('Just', 'a', 'test'), 1);
+
+		$this->out->expects($this->at(2))
+			->method('write')
+			->with(array('Just', 'a', 'test'), 2);
+
+		$this->out->expects($this->at(3))
+			->method('write')
+			->with('', 1);
+
+		$this->io->out('Just a test');
+		$this->io->out(array('Just', 'a', 'test'));
+		$this->io->out(array('Just', 'a', 'test'), 2);
+		$this->io->out();
+	}
+
+/**
+ * test that verbose and quiet output levels work
+ *
+ * @return void
+ */
+	public function testVerboseOut() {
+		$this->out->expects($this->at(0))
+			->method('write')
+			->with('Verbose', 1);
+		$this->out->expects($this->at(1))
+			->method('write')
+			->with('Normal', 1);
+		$this->out->expects($this->at(2))
+			->method('write')
+			->with('Quiet', 1);
+
+		$this->io->level(ConsoleIo::VERBOSE);
+
+		$this->io->out('Verbose', 1, ConsoleIo::VERBOSE);
+		$this->io->out('Normal', 1, ConsoleIo::NORMAL);
+		$this->io->out('Quiet', 1, ConsoleIo::QUIET);
+	}
+
+/**
+ * test that verbose and quiet output levels work
+ *
+ * @return void
+ */
+	public function testVerboseOutput() {
+		$this->out->expects($this->at(0))
+			->method('write')
+			->with('Verbose', 1);
+		$this->out->expects($this->at(1))
+			->method('write')
+			->with('Normal', 1);
+		$this->out->expects($this->at(2))
+			->method('write')
+			->with('Quiet', 1);
+
+		$this->io->level(ConsoleIo::VERBOSE);
+
+		$this->io->verbose('Verbose');
+		$this->io->out('Normal');
+		$this->io->quiet('Quiet');
+	}
+
+
+/**
+ * test that verbose and quiet output levels work
+ *
+ * @return void
+ */
+	public function testQuietOutput() {
+		$this->out->expects($this->exactly(2))
+			->method('write')
+			->with('Quiet', 1);
+
+		$this->io->level(ConsoleIo::QUIET);
+
+		$this->io->out('Verbose', 1, ConsoleIo::VERBOSE);
+		$this->io->out('Normal', 1, ConsoleIo::NORMAL);
+		$this->io->out('Quiet', 1, ConsoleIo::QUIET);
+		$this->io->verbose('Verbose');
+		$this->io->quiet('Quiet');
+	}
+
+/**
+ * testErr method
+ *
+ * @return void
+ */
+	public function testErr() {
+		$this->err->expects($this->at(0))
+			->method('write')
+			->with("Just a test", 1);
+
+		$this->err->expects($this->at(1))
+			->method('write')
+			->with(array('Just', 'a', 'test'), 1);
+
+		$this->err->expects($this->at(2))
+			->method('write')
+			->with(array('Just', 'a', 'test'), 2);
+
+		$this->err->expects($this->at(3))
+			->method('write')
+			->with('', 1);
+
+		$this->io->err('Just a test');
+		$this->io->err(array('Just', 'a', 'test'));
+		$this->io->err(array('Just', 'a', 'test'), 2);
+		$this->io->err();
+	}
+
+/**
+ * testNl
+ *
+ * @return void
+ */
+	public function testNl() {
+		$newLine = "\n";
+		if (DS === '\\') {
+			$newLine = "\r\n";
+		}
+		$this->assertEquals($this->io->nl(), $newLine);
+		$this->assertEquals($this->io->nl(true), $newLine);
+		$this->assertEquals("", $this->io->nl(false));
+		$this->assertEquals($this->io->nl(2), $newLine . $newLine);
+		$this->assertEquals($this->io->nl(1), $newLine);
+	}
+
+/**
+ * testHr
+ *
+ * @return void
+ */
+	public function testHr() {
+		$bar = '---------------------------------------------------------------';
+
+		$this->out->expects($this->at(0))->method('write')->with('', 0);
+		$this->out->expects($this->at(1))->method('write')->with($bar, 1);
+		$this->out->expects($this->at(2))->method('write')->with('', 0);
+
+		$this->out->expects($this->at(3))->method('write')->with("", true);
+		$this->out->expects($this->at(4))->method('write')->with($bar, 1);
+		$this->out->expects($this->at(5))->method('write')->with("", true);
+
+		$this->out->expects($this->at(6))->method('write')->with("", 2);
+		$this->out->expects($this->at(7))->method('write')->with($bar, 1);
+		$this->out->expects($this->at(8))->method('write')->with("", 2);
+
+		$this->io->hr();
+		$this->io->hr(true);
+		$this->io->hr(2);
+	}
+
 }
