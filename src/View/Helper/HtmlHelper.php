@@ -1076,6 +1076,11 @@ class HtmlHelper extends Helper {
 /**
  * Build a nested list (UL/OL) out of an associative array.
  *
+ * Options for $itemOptions:
+ *
+ * - `even` - Class to use for even rows.
+ * - `odd` - Class to use for odd rows.
+ *
  * @param array $list Set of elements to list
  * @param string|array $options Additional HTML attributes of the list (ol/ul) tag or if ul/ol use that as tag
  * @param array $itemOptions Additional HTML attributes of the list item (LI) tag
@@ -1083,11 +1088,7 @@ class HtmlHelper extends Helper {
  * @return string The nested list
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::nestedList
  */
-	public function nestedList($list, $options = array(), array $itemOptions = array(), $tag = 'ul') {
-		if (is_string($options)) {
-			$tag = $options;
-			$options = array();
-		}
+	public function nestedList(array $list, array $options = array(), array $itemOptions = array(), $tag = 'ul') {
 		$items = $this->_nestedListItem($list, $options, $itemOptions, $tag);
 		return $this->formatTemplate($tag, [
 			'attrs' => $this->templater()->formatAttributes($options),
@@ -1105,7 +1106,7 @@ class HtmlHelper extends Helper {
  * @return string The nested list element
  * @see HtmlHelper::nestedList()
  */
-	protected function _nestedListItem($items, $options, array $itemOptions, $tag) {
+	protected function _nestedListItem($items, $options, $itemOptions, $tag) {
 		$out = '';
 
 		$index = 1;

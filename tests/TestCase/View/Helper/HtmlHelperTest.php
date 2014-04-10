@@ -1318,7 +1318,7 @@ class HtmlHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->nestedList($list, null);
+		$result = $this->Html->nestedList($list);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, array(), array(), 'ol');
@@ -1349,9 +1349,6 @@ class HtmlHelperTest extends TestCase {
 			'/li',
 			'/ol'
 		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Html->nestedList($list, 'ol');
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->nestedList($list, array('class' => 'list'));
