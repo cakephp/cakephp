@@ -147,16 +147,6 @@ class TestObject extends Object {
 		$this->methodCalls[] = array('methodWithOptionalParam' => array($param));
 	}
 
-/**
- * undocumented function
- *
- * @param array $properties
- * @return void
- */
-	public function set($properties = array()) {
-		return parent::_set($properties);
-	}
-
 }
 
 /**
@@ -226,26 +216,6 @@ class ObjectTest extends TestCase {
 		$this->assertRegExp('/\[Test\] => warning 2$/', $result[3]);
 		$this->assertRegExp('/^\)$/', $result[4]);
 		unlink(LOGS . 'error.log');
-	}
-
-/**
- * testSet method
- *
- * @return void
- */
-	public function testSet() {
-		$this->object->set('a string');
-		$this->assertEquals('Joel', $this->object->firstName);
-
-		$this->object->set(array('firstName'));
-		$this->assertEquals('Joel', $this->object->firstName);
-
-		$this->object->set(array('firstName' => 'Ashley'));
-		$this->assertEquals('Ashley', $this->object->firstName);
-
-		$this->object->set(array('firstName' => 'Joel', 'lastName' => 'Moose'));
-		$this->assertEquals('Joel', $this->object->firstName);
-		$this->assertEquals('Moose', $this->object->lastName);
 	}
 
 /**

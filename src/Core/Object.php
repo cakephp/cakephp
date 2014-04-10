@@ -56,22 +56,4 @@ class Object {
 		exit($status);
 	}
 
-/**
- * Allows setting of multiple properties of the object in a single line of code. Will only set
- * properties that are part of a class declaration.
- *
- * @param array $properties An associative array containing properties and corresponding values.
- * @return void
- */
-	protected function _set($properties = []) {
-		if (is_array($properties) && !empty($properties)) {
-			$vars = get_object_vars($this);
-			foreach ($properties as $key => $val) {
-				if (array_key_exists($key, $vars)) {
-					$this->{$key} = $val;
-				}
-			}
-		}
-	}
-
 }
