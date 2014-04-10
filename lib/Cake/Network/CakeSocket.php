@@ -169,16 +169,18 @@ class CakeSocket {
 			);
 		}
 		//The above lines of duplicated code can be replaced with a single do while, and I've included it here in a commen if you want to use it instead, but I believe it hurts readability.
-		/*do{
-		 $this->connection = stream_socket_client(
+		/*$iLatestSSLVersion = 3; //Maybe this could become a class constant?
+		do{
+		 	$this->connection = stream_socket_client(
 		 		$scheme . $this->config['host'] . ':' . $this->config['port'],
 		 		$errNum,
 		 		$errStr,
 		 		$this->config['timeout'],
 		 		$connectAs,
 		 		$context
-		 );
-		}while(empty($errNum) && empty($errStr) && !$this->connection && $scheme === 'ssl://' && $scheme = 'sslv3://');*/		
+		 	);
+		 	$scheme = "sslv".$iLatestSSLVersion--.'://';
+		}while(empty($errNum) && empty($errStr) && !$this->connection && strpos($scheme, 'ssl') === 0);*/		
 		
 		restore_error_handler();
 
