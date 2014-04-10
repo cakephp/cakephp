@@ -74,7 +74,8 @@ interface RepositoryInterface {
  * first load a collection of records and update them.
  *
  * @param array $fields A hash of field => new value.
- * @param array $conditions An array of conditions, similar to those used with find()
+ * @param mixed $conditions Conditions to be used, accepts anything Query::where()
+ * can take.
  * @return boolean Success Returns true if one or more rows are affected.
  */
 	public function updateAll($fields, $conditions);
@@ -91,7 +92,8 @@ interface RepositoryInterface {
  * use database foreign keys + ON CASCADE rules if you need cascading deletes combined
  * with this method.
  *
- * @param array $conditions An array of conditions, similar to those used with find()
+ * @param mixed $conditions Conditions to be used, accepts anything Query::where()
+ * can take.
  * @return boolean Success Returns true if one or more rows are affected.
  * @see RepositoryInterface::delete()
  */

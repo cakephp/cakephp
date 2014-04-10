@@ -55,12 +55,26 @@ class AssociationProxyTest extends TestCase {
  * Tests that getting a bad property throws exception
  *
  * @expectedException \RuntimeException
- * @expectedExceptionMessage Table "TestApp\Model\Table\ArticlesTable" is not associated with "posts"
+ * @expectedExceptionMessage Table "Cake\ORM\Table" is not associated with "posts"
  * @return void
  */
 	public function testGetBadAssociation() {
 		$articles = TableRegistry::get('articles');
 		$articles->posts;
+	}
+
+/**
+ * Tests that the proxied updateAll will preserve conditions set for the association
+ *
+ * @return void
+ */
+	public function testUpdateAllFromAssociation() {
+		$articles = TableRegistry::get('articles');
+		$comments = TableRegistry::get('comments');
+		$articles->hasMany('comments', ['conditions' => ['published' => 'Y']]);
+		$articles->comments->updateAll(['comment' => 'changed'], ['article_id' => 1]);
+		$changed = $comments->find()->where(['comment' => 'changed'])->count();
+		$this->assertEquals(3, $changed);
 	}
 
 }

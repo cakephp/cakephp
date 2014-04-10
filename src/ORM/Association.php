@@ -481,6 +481,22 @@ abstract class Association {
 	}
 
 /**
+ * Proxies the update to the target table's updateAll method
+ *
+ * @param array $fields A hash of field => new value.
+ * @param mixed $conditions Conditions to be used, accepts anything Query::where()
+ * can take.
+ * @see \Cake\ORM\Table::updateAll()
+ * @return boolean Success Returns true if one or more rows are affected.
+ */
+	public function updateAll($fields, $conditions) {
+		$target = $this->target();
+		$expression = $target->query()->newExpr();
+		$expression->add($this->conditions())->add($conditions);
+		return $target->updateAll($fields, $expression);
+	}
+
+/**
  * Triggers beforeFind on the target table for the query this association is
  * attaching to
  *
