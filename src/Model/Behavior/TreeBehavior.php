@@ -29,7 +29,7 @@ use Cake\ORM\Table;
  * order will be cached.
  *
  * For more information on what is a nested set and a how it works refer to
- * http://www.sitepoint.com/hierarchical-data-database
+ * http://www.sitepoint.com/hierarchical-data-database-2/
  */
 class TreeBehavior extends Behavior {
 
@@ -130,6 +130,7 @@ class TreeBehavior extends Behavior {
  */
 	public function beforeDelete(Event $event, Entity $entity) {
 		$config = $this->config();
+		$this->_ensureFields($entity);
 		$left = $entity->get($config['left']);
 		$right = $entity->get($config['right']);
 		$diff = $right - $left + 1;
@@ -157,6 +158,7 @@ class TreeBehavior extends Behavior {
 	protected function _setParent($entity, $parent) {
 		$config = $this->config();
 		$parentNode = $this->_getNode($parent);
+		$this->_ensureFields($entity);
 		$parentLeft = $parentNode->get($config['left']);
 		$parentRight = $parentNode->get($config['right']);
 		$right = $entity->get($config['right']);
@@ -215,6 +217,7 @@ class TreeBehavior extends Behavior {
 	protected function _setAsRoot($entity) {
 		$config = $this->config();
 		$edge = $this->_getMax();
+		$this->_ensureFields($entity);
 		$right = $entity->get($config['right']);
 		$left = $entity->get($config['left']);
 		$diff = $right - $left;
@@ -296,6 +299,7 @@ class TreeBehavior extends Behavior {
 				->count();
 		}
 
+		$this->_ensureFields($node);
 		return ($node->{$right} - $node->{$left} - 1) / 2;
 	}
 
@@ -386,6 +390,7 @@ class TreeBehavior extends Behavior {
  */
 	public function removeFromTree(Entity $node) {
 		return $this->_table->connection()->transactional(function() use ($node) {
+			$this->_ensureFields($node);
 			return $this->_removeFromTree($node);
 		});
 	}
@@ -442,6 +447,7 @@ class TreeBehavior extends Behavior {
  */
 	public function moveUp(Entity $node, $number = 1) {
 		return $this->_table->connection()->transactional(function() use ($node, $number) {
+			$this->_ensureFields($node);
 			return $this->_moveUp($node, $number);
 		});
 	}
@@ -516,6 +522,7 @@ class TreeBehavior extends Behavior {
  */
 	public function moveDown(Entity $node, $number = 1) {
 		return $this->_table->connection()->transactional(function() use ($node, $number) {
+			$this->_ensureFields($node);
 			return $this->_moveDown($node, $number);
 		});
 	}
@@ -722,4 +729,28 @@ class TreeBehavior extends Behavior {
 
 		return $query;
 	}
+
+/**
+ * Ensures that the provided entity contains non-empty values for the left and
+ * right fields
+ *
+ * @param \Cake\ORM\Entity $entity The entity to ensure fields for
+ * @return void
+ */
+	protected function _ensureFields($entity) {
+		$config = $this->config();
+		$fields = [$config['left'], $config['right']];
+		$values = array_filter($entity->extract($fields));
+		if (count($values) === count($fields)) {
+			return;
+		}
+
+		$fresh = $this->_table->get($entity->get($this->_table->primaryKey()), $fields);
+		$entity->set($fresh->extract($fields), ['guard' => false]);
+
+		foreach ($fields as $field) {
+			$entity->dirty($field, false);
+		}
+	}
+
 }
