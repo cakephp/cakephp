@@ -181,8 +181,7 @@ class ConsoleIo {
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::in
  */
 	public function ask($prompt, $default = null) {
-		$in = $this->_getInput($prompt, null, $default);
-		return $in;
+		return $this->_getInput($prompt, null, $default);
 	}
 
 /**
@@ -196,7 +195,6 @@ class ConsoleIo {
  */
 	public function askChoice($prompt, $options, $default = null) {
 		$originalOptions = $options;
-		$in = $this->_getInput($prompt, $originalOptions, $default);
 
 		if ($options && is_string($options)) {
 			if (strpos($options, ',')) {
@@ -207,15 +205,16 @@ class ConsoleIo {
 				$options = [$options];
 			}
 		}
-		if (is_array($options)) {
-			$options = array_merge(
-				array_map('strtolower', $options),
-				array_map('strtoupper', $options),
-				$options
-			);
-			while ($in === '' || !in_array($in, $options)) {
-				$in = $this->_getInput($prompt, $originalOptions, $default);
-			}
+
+		$printOptions = '(' . implode('/', $options) . ')';
+		$options = array_merge(
+			array_map('strtolower', $options),
+			array_map('strtoupper', $options),
+			$options
+		);
+		$in = '';
+		while ($in === '' || !in_array($in, $options)) {
+			$in = $this->_getInput($prompt, $printOptions, $default);
 		}
 		return $in;
 	}
@@ -229,17 +228,16 @@ class ConsoleIo {
  * @return string Either the default value, or the user-provided input.
  */
 	protected function _getInput($prompt, $options, $default) {
-		if (!is_array($options)) {
-			$printOptions = '';
-		} else {
-			$printOptions = '(' . implode('/', $options) . ')';
+		$optionsText = '';
+		if (isset($options)) {
+			$optionsText = " $options ";
 		}
 
-		if ($default === null) {
-			$this->_out->write('<question>' . $prompt . '</question>' . " $printOptions \n" . '> ', 0);
-		} else {
-			$this->_out->write('<question>' . $prompt . '</question>' . " $printOptions \n" . "[$default] > ", 0);
+		$defaultText = '';
+		if ($default !== null) {
+			$defaultText = "[$default] ";
 		}
+		$this->_out->write('<question>' . $prompt . "</question>$optionsText\n$defaultText> ", 0);
 		$result = $this->_in->read();
 
 		if ($result === false) {
