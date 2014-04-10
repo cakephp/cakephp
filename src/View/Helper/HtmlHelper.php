@@ -198,42 +198,41 @@ class HtmlHelper extends Helper {
  *   custom block name.
  *
  * @param string $type The title of the external resource
- * @param string|array $url The address of the external resource or string for content attribute
+ * @param string|array $content The address of the external resource or string for content attribute
  * @param array $options Other attributes for the generated tag. If the type attribute is html,
  *    rss, atom, or icon, the mime-type is returned.
  * @return string A completed `<link />` element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::meta
  */
-	public function meta($type, $url = null, array $options = array()) {
+	public function meta($type, $content = null, array $options = array()) {
 		$options += array('block' => null);
 
-		if (!is_array($type)) {
-			$types = array(
-				'rss' => array('type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $url),
-				'atom' => array('type' => 'application/atom+xml', 'title' => $type, 'link' => $url),
-				'icon' => array('type' => 'image/x-icon', 'rel' => 'icon', 'link' => $url),
-				'keywords' => array('name' => 'keywords', 'content' => $url),
-				'description' => array('name' => 'description', 'content' => $url),
-			);
+		$types = array(
+			'rss' => array('type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $content),
+			'atom' => array('type' => 'application/atom+xml', 'title' => $type, 'link' => $content),
+			'icon' => array('type' => 'image/x-icon', 'rel' => 'icon', 'link' => $content),
+			'keywords' => array('name' => 'keywords', 'content' => $content),
+			'description' => array('name' => 'description', 'content' => $content),
+			'robots' => array('name' => 'robots', 'content' => $content),
+		);
 
-			if ($type === 'icon' && $url === null) {
-				$types['icon']['link'] = 'favicon.ico';
-			}
+		if ($type === 'icon' && $content === null) {
+			$types['icon']['link'] = 'favicon.ico';
+		}
 
-			if (isset($types[$type])) {
-				$type = $types[$type];
-			} elseif (!isset($options['type']) && $url !== null) {
-				if (is_array($url) && isset($url['ext'])) {
-					$type = $types[$url['ext']];
-				} else {
-					$type = $types['rss'];
-				}
-			} elseif (isset($options['type']) && isset($types[$options['type']])) {
-				$type = $types[$options['type']];
-				unset($options['type']);
+		if (isset($types[$type])) {
+			$type = $types[$type];
+		} elseif (!isset($options['type']) && $content !== null) {
+			if (is_array($content) && isset($content['ext'])) {
+				$type = $types[$content['ext']];
 			} else {
-				$type = array();
+				$type = $types['rss'];
 			}
+		} elseif (isset($options['type']) && isset($types[$options['type']])) {
+			$type = $types[$options['type']];
+			unset($options['type']);
+		} else {
+			$type = array();
 		}
 
 		$options += $type;
