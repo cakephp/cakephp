@@ -387,11 +387,13 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 
 		foreach (array_reverse($this->_associationMap) as $assoc) {
 			$alias = $assoc['nestKey'];
+			$instance = $assoc['instance'];
+
 			if (!isset($results[$alias])) {
+				$results = $instance->defaultRowValue($results, $assoc['canBeJoined']);
 				continue;
 			}
 
-			$instance = $assoc['instance'];
 			$target = $instance->target();
 			$options['source'] = $target->alias();
 			unset($presentAliases[$alias]);
