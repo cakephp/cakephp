@@ -157,7 +157,7 @@ class CakeSocket {
 			$connectAs,
 			$context
 		);
-		if(empty($errNum) && empty($errStr) && !$this->connection && $scheme === 'ssl://'){
+		if (empty($errNum) && empty($errStr) && !$this->connection && $scheme === 'ssl://'){
 			$scheme = 'sslv3://';
 			$this->connection = stream_socket_client(
 					$scheme . $this->config['host'] . ':' . $this->config['port'],
@@ -180,7 +180,7 @@ class CakeSocket {
 		 		$context
 		 	);
 		 	$scheme = "sslv".$iLatestSSLVersion--.'://';
-		}while(empty($errNum) && empty($errStr) && !$this->connection && strpos($scheme, 'ssl') === 0);*/		
+		}while (empty($errNum) && empty($errStr) && !$this->connection && strpos($scheme, 'ssl') === 0);*/		
 		
 		restore_error_handler();
 
