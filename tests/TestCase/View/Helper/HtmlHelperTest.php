@@ -1504,21 +1504,14 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->meta('atom', array('controller' => 'posts', 'ext' => 'xml'), array('link' => '/articles.rss'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/articles\.rss/', 'type' => 'application/atom+xml', 'title' => 'atom')));
 
-		$result = $this->Html->meta(array('link' => 'favicon.ico', 'rel' => 'icon'));
-		$expected = array(
-			'link' => array('href' => 'preg:/.*favicon\.ico/', 'rel' => 'icon'),
-			array('link' => array('href' => 'preg:/.*favicon\.ico/', 'rel' => 'shortcut icon'))
-		);
-		$this->assertTags($result, $expected);
-
 		$result = $this->Html->meta('keywords', 'these, are, some, meta, keywords');
 		$this->assertTags($result, array('meta' => array('name' => 'keywords', 'content' => 'these, are, some, meta, keywords')));
 
 		$result = $this->Html->meta('description', 'this is the meta description');
 		$this->assertTags($result, array('meta' => array('name' => 'description', 'content' => 'this is the meta description')));
 
-		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'));
-		$this->assertTags($result, array('meta' => array('name' => 'ROBOTS', 'content' => 'ALL')));
+		$result = $this->Html->meta('robots', 'ALL');
+		$this->assertTags($result, array('meta' => array('name' => 'robots', 'content' => 'ALL')));
 	}
 
 /**
@@ -1576,13 +1569,13 @@ class HtmlHelperTest extends TestCase {
 	public function testMetaWithBlocks() {
 		$this->View->expects($this->at(0))
 			->method('append')
-			->with('meta', $this->stringContains('ROBOTS'));
+			->with('meta', $this->stringContains('robots'));
 
 		$this->View->expects($this->at(1))
 			->method('append')
 			->with('metaTags', $this->stringContains('favicon.ico'));
 
-		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array('block' => true));
+		$result = $this->Html->meta('robots', 'ALL', array('block' => true));
 		$this->assertNull($result);
 
 		$result = $this->Html->meta('icon', 'favicon.ico', array('block' => 'metaTags'));
