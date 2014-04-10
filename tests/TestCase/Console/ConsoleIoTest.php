@@ -280,4 +280,34 @@ class ConsoleIoTest extends TestCase {
 		$this->io->hr(2);
 	}
 
+/**
+ * Test overwriting.
+ *
+ * @return void
+ */
+	public function testOverwrite() {
+		$number = strlen('Some text I want to overwrite');
+
+		$this->out->expects($this->at(0))
+			->method('write')
+			->with('Some <info>text</info> I want to overwrite', 0)
+			->will($this->returnValue($number));
+
+		$this->out->expects($this->at(1))
+			->method('write')
+			->with(str_repeat("\x08", $number), 0);
+
+		$this->out->expects($this->at(2))
+			->method('write')
+			->with('Less text', 0)
+			->will($this->returnValue(9));
+
+		$this->out->expects($this->at(3))
+			->method('write')
+			->with(str_repeat(' ', $number - 9), 0);
+
+		$this->io->out('Some <info>text</info> I want to overwrite', 0);
+		$this->io->overwrite('Less text');
+	}
+
 }

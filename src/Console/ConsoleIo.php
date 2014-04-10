@@ -76,6 +76,14 @@ class ConsoleIo {
 	protected $_level = ConsoleIo::NORMAL;
 
 /**
+ * The number of bytes last written to the output stream
+ * used when overwriting the previous message.
+ *
+ * @var integer
+ */
+	protected $_lastWritten = 0;
+
+/**
  * Constructor
  *
  * @param \Cake\Console\ConsoleOutput $out A ConsoleOutput object for stdout.
@@ -140,11 +148,44 @@ class ConsoleIo {
  * @return integer|boolean Returns the number of bytes returned from writing to stdout.
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::out
  */
-	public function out($message = null, $newlines = 1, $level = Shell::NORMAL) {
+	public function out($message = null, $newlines = 1, $level = ConsoleIo::NORMAL) {
 		if ($level <= $this->_level) {
-			return $this->_out->write($message, $newlines);
+			$this->_lastWritten = $this->_out->write($message, $newlines);
+			return $this->_lastWritten;
 		}
 		return true;
+	}
+
+/**
+ * Overwrite some already output text.
+ *
+ * Useful for building progress bars, or when you want to replace
+ * text already output to the screen with new text.
+ *
+ * **Warning** You cannot overwrite text that contains newlines.
+ *
+ * @param array|string $message The message to output.
+ * @param integer $newlines Number of newlines to append.
+ * @param integer $size The number of bytes to overwrite. Defaults to the
+ *    length of the last message output.
+ * @return integer|boolean Returns the number of bytes returned from writing to stdout.
+ */
+	public function overwrite($message, $newlines = 1, $size = null) {
+		$size = $size ?: $this->_lastWritten;
+
+		// Output backspaces.
+		$this->out(str_repeat("\x08", $size), 0);
+
+		$newBytes = $this->out($message, 0);
+
+		// Fill any remaining bytes with spaces.
+		$fill = $size - $newBytes;
+		if ($fill > 0) {
+			$this->out(str_repeat(' ', $fill), 0);
+		}
+		if ($newlines) {
+			$this->out($this->nl($newlines), 0);
+		}
 	}
 
 /**
