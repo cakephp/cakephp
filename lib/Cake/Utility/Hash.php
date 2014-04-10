@@ -192,7 +192,7 @@ class Hash {
 				return false;
 			}
 
-			$prop = isset($data[$attr]) ? $data[$attr] : null;
+			$prop = isset($data[$attr]) ? ( is_bool($data[$attr]) ? (($data[$attr]) ? 'true' : 'false') : $data[$attr] ) : null;
 
 			// Pattern matches and other operators.
 			if ($op === '=' && $val && $val[0] === '/') {
