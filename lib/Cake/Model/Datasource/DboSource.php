@@ -1638,7 +1638,7 @@ class DboSource extends DataSource {
  * Builds a string containing an SQL statement template.
  *
  * @param Model $Model Primary Model object.
- * @param Model $LinkModel Linked model object.
+ * @param Model|null $LinkModel Linked model object.
  * @param string $type Association type, one of the model association types ie. hasMany.
  * @param string $association Association name.
  * @param array $assocData Association data.
@@ -1650,9 +1650,23 @@ class DboSource extends DataSource {
  */
 	public function generateAssociationQuery(Model $Model, $LinkModel, $type, $association, $assocData, &$queryData, $external) {
 		$assocData = $this->_scrubQueryData($assocData);
+		$queryData = $this->_scrubQueryData($queryData);
 
 		if ($LinkModel === null) {
-			return '';
+			return $this->buildStatement(
+				array(
+					'fields' => array_unique($queryData['fields']),
+					'table' => $this->fullTableName($Model),
+					'alias' => $Model->alias,
+					'limit' => $queryData['limit'],
+					'offset' => $queryData['offset'],
+					'joins' => $queryData['joins'],
+					'conditions' => $queryData['conditions'],
+					'order' => $queryData['order'],
+					'group' => $queryData['group']
+				),
+				$Model
+			);
 		}
 
 		if ($external && !empty($assocData['finderQuery'])) {
@@ -1698,8 +1712,6 @@ class DboSource extends DataSource {
 						'type' => isset($assocData['type']) ? $assocData['type'] : 'LEFT',
 						'conditions' => trim($this->conditions($conditions, true, false, $Model))
 					);
-
-					$queryData = $this->_scrubQueryData($queryData);
 
 					$fields = array();
 					if ($assocData['fields'] !== false) {
