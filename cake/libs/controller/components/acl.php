@@ -270,7 +270,7 @@ class DbAcl extends AclBase {
 		$acoPath = $this->Aco->node($aco);
 
 		$_aco = $aco;
-		while(!$acoPath) {
+		while (!$acoPath) {
 			$_aco = explode('/', $_aco);
 			array_pop($_aco);
 			$_aco = implode('/', $_aco);
