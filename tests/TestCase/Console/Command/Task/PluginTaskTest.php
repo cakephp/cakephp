@@ -33,14 +33,14 @@ class PluginTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Console\Command\Task\PluginTask',
 			array('in', 'err', 'createFile', '_stop', 'clear'),
-			array($this->out, $this->out, $this->in)
+			array($this->io)
 		);
-		$this->Task->Template = new TemplateTask($this->out, $this->out, $this->in);
+		$this->Task->Template = new TemplateTask($this->io);
+		$this->Task->Template->interactive = false;
 
 		$this->Task->path = TMP . 'tests' . DS;
 		$this->Task->bootstrap = TMP . 'tests' . DS . 'bootstrap.php';
@@ -174,7 +174,7 @@ class PluginTaskTest extends TestCase {
 
 		$this->Task = $this->getMock('Cake\Console\Command\Task\PluginTask',
 			array('in', 'out', 'err', 'createFile', '_stop'),
-			array($this->out, $this->out, $this->in)
+			array($this->io)
 		);
 		$this->Task->path = TMP . 'tests' . DS;
 

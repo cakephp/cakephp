@@ -16,7 +16,7 @@ namespace Cake\Test\TestCase\Console\Command;
 
 use Cake\Console\Command\CompletionShell;
 use Cake\Console\Command\Task\CommandTask;
-use Cake\Console\ConsoleInput;
+use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOutput;
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
@@ -50,19 +50,19 @@ class CompletionShellTest extends TestCase {
 		parent::setUp();
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
-		$out = new TestCompletionStringOutput();
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->out = new TestCompletionStringOutput();
+		$io = new ConsoleIo($this->out);
 
 		$this->Shell = $this->getMock(
 			'Cake\Console\Command\CompletionShell',
-			array('in', '_stop', 'clear'),
-			array($out, $out, $in)
+			['in', '_stop', 'clear'],
+			[$io]
 		);
 
 		$this->Shell->Command = $this->getMock(
 			'Cake\Console\Command\Task\CommandTask',
-			array('in', '_stop', 'clear'),
-			array($out, $out, $in)
+			['in', '_stop', 'clear'],
+			[$io]
 		);
 	}
 
@@ -84,7 +84,7 @@ class CompletionShellTest extends TestCase {
  */
 	public function testStartup() {
 		$this->Shell->runCommand('main', array());
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$needle = 'Welcome to CakePHP';
 		$this->assertTextNotContains($needle, $output);
@@ -97,7 +97,7 @@ class CompletionShellTest extends TestCase {
  */
 	public function testMain() {
 		$this->Shell->runCommand('main', array());
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$expected = "/This command is not intended to be called manually/";
 		$this->assertRegExp($expected, $output);
@@ -110,7 +110,7 @@ class CompletionShellTest extends TestCase {
  */
 	public function testCommands() {
 		$this->Shell->runCommand('commands', array());
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$expected = "TestPlugin.example TestPluginTwo.example TestPluginTwo.welcome bake i18n server test sample\n";
 		$this->assertEquals($expected, $output);
@@ -123,7 +123,7 @@ class CompletionShellTest extends TestCase {
  */
 	public function testOptionsNoArguments() {
 		$this->Shell->runCommand('options', array());
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$expected = "--help -h --verbose -v --quiet -q\n";
 		$this->assertEquals($expected, $output);
@@ -136,7 +136,7 @@ class CompletionShellTest extends TestCase {
  */
 	public function testOptionsNonExistingCommand() {
 		$this->Shell->runCommand('options', array('options', 'foo'));
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$expected = "--help -h --verbose -v --quiet -q\n";
 		$this->assertEquals($expected, $output);
@@ -149,7 +149,7 @@ class CompletionShellTest extends TestCase {
  */
 	public function testOptions() {
 		$this->Shell->runCommand('options', array('options', 'bake'));
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$expected = "--help -h --verbose -v --quiet -q --connection -c --theme -t\n";
 		$this->assertEquals($expected, $output);
@@ -162,7 +162,7 @@ class CompletionShellTest extends TestCase {
  */
 	public function testSubCommandsCorePlugin() {
 		$this->Shell->runCommand('subCommands', array('subCommands', 'CORE.bake'));
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$expected = "behavior component controller fixture helper model plugin project test view widget zerg\n";
 		$this->assertEquals($expected, $output);
@@ -175,7 +175,7 @@ class CompletionShellTest extends TestCase {
  */
 	public function testSubCommandsAppPlugin() {
 		$this->Shell->runCommand('subCommands', array('subCommands', 'app.sample'));
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$expected = '';
 		$this->assertEquals($expected, $output);
@@ -188,7 +188,7 @@ class CompletionShellTest extends TestCase {
  */
 	public function testSubCommandsPlugin() {
 		$this->Shell->runCommand('subCommands', array('subCommands', 'TestPluginTwo.welcome'));
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$expected = "say_hello\n";
 		$this->assertEquals($expected, $output);
@@ -201,7 +201,7 @@ class CompletionShellTest extends TestCase {
  */
 	public function testSubCommandsNoArguments() {
 		$this->Shell->runCommand('subCommands', array());
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$expected = '';
 		$this->assertEquals($expected, $output);
@@ -214,7 +214,7 @@ class CompletionShellTest extends TestCase {
  */
 	public function testSubCommandsNonExistingCommand() {
 		$this->Shell->runCommand('subCommands', array('subCommands', 'foo'));
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$expected = '';
 		$this->assertEquals($expected, $output);
@@ -227,7 +227,7 @@ class CompletionShellTest extends TestCase {
  */
 	public function testSubCommands() {
 		$this->Shell->runCommand('subCommands', array('subCommands', 'bake'));
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$expected = "behavior component controller fixture helper model plugin project test view widget zerg\n";
 		$this->assertEquals($expected, $output);
@@ -240,9 +240,10 @@ class CompletionShellTest extends TestCase {
  */
 	public function testFuzzy() {
 		$this->Shell->runCommand('fuzzy', array());
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$expected = '';
 		$this->assertEquals($expected, $output);
 	}
+
 }

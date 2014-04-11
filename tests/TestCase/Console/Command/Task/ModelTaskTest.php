@@ -46,12 +46,11 @@ class ModelTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
+		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'err', 'createFile', '_stop', '_checkUnitTest'),
-			array($out, $out, $in)
+			array($io)
 		);
 		$this->Task->connection = 'test';
 		$this->_setupOtherMocks();
@@ -64,12 +63,11 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	protected function _useMockedOut() {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
+		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
-			array($out, $out, $in)
+			array($io)
 		);
 		$this->_setupOtherMocks();
 	}
@@ -80,12 +78,12 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	protected function _setupOtherMocks() {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
+		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
-		$this->Task->Fixture = $this->getMock('Cake\Console\Command\Task\FixtureTask', [], [$out, $out, $in]);
-		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\FixtureTask', [], [$out, $out, $in]);
-		$this->Task->Template = new TemplateTask($out, $out, $in);
+		$this->Task->Fixture = $this->getMock('Cake\Console\Command\Task\FixtureTask', [], [$io]);
+		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\FixtureTask', [], [$io]);
+		$this->Task->Template = new TemplateTask($io);
+		$this->Task->Template->interactive = false;
 
 		$this->Task->name = 'Model';
 	}

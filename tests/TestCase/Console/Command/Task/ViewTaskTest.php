@@ -113,15 +113,14 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	protected function _setupTask($methods) {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
+		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ViewTask',
 			$methods,
-			[$out, $out, $in]
+			[$io]
 		);
-		$this->Task->Template = new TemplateTask($out, $out, $in);
-		$this->Task->Model = $this->getMock('Cake\Console\Command\Task\ModelTask', [], [$out, $out, $in]);
+		$this->Task->Template = new TemplateTask($io);
+		$this->Task->Model = $this->getMock('Cake\Console\Command\Task\ModelTask', [], [$io]);
 
 		$this->Task->Template->params['theme'] = 'default';
 		$this->Task->Template->templatePaths = ['default' => CAKE . 'Console/Templates/default/'];

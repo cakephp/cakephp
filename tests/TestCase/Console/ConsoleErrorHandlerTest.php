@@ -1,7 +1,5 @@
 <?php
 /**
- * ConsoleErrorHandler Test case
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,6 +16,7 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleErrorHandler;
 use Cake\Error;
+use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -34,6 +33,7 @@ class ConsoleErrorHandlerTest extends TestCase {
 		parent::setUp();
 		$this->stderr = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
 		$this->Error = $this->getMock('Cake\Console\ConsoleErrorHandler', ['_stop'], [['stderr' => $this->stderr]]);
+		Log::drop('stderr');
 	}
 
 /**

@@ -1,9 +1,5 @@
 <?php
 /**
- * ExtractTaskTest file
- *
- * Test Case for i18n extraction shell task
- *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -38,13 +34,12 @@ class ExtractTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock(
 			'Cake\Console\Command\Task\ExtractTask',
 			array('in', 'out', 'err', '_stop'),
-			array($out, $out, $in)
+			array($this->io)
 		);
 		$this->path = TMP . 'tests/extract_task_test';
 		new Folder($this->path . DS . 'locale', true);
@@ -206,11 +201,9 @@ class ExtractTaskTest extends TestCase {
  */
 	public function testExtractExcludePlugins() {
 		Configure::write('App.namespace', 'TestApp');
-		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
 			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
-			array($this->out, $this->out, $this->in)
+			array($this->io)
 		);
 		$this->Task->expects($this->exactly(1))
 			->method('_isExtractingApp')
@@ -233,11 +226,9 @@ class ExtractTaskTest extends TestCase {
 	public function testExtractPlugin() {
 		Configure::write('App.namespace', 'TestApp');
 
-		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
 			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
-			array($this->out, $this->out, $this->in)
+			array($this->io)
 		);
 
 		$this->Task->params['output'] = $this->path . DS;
