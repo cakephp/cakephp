@@ -499,6 +499,41 @@ abstract class Association {
 	}
 
 /**
+ * Proxies the update operation to the target table's updateAll method
+ *
+ * @param array $fields A hash of field => new value.
+ * @param mixed $conditions Conditions to be used, accepts anything Query::where()
+ * can take.
+ * @see \Cake\ORM\Table::updateAll()
+ * @return boolean Success Returns true if one or more rows are affected.
+ */
+	public function updateAll($fields, $conditions) {
+		$target = $this->target();
+		$expression = $target->query()
+			->where($this->conditions())
+			->where($conditions)
+			->clause('where');
+		return $target->updateAll($fields, $expression);
+	}
+
+/**
+ * Proxies the delete operation to the target table's deleteAll method
+ *
+ * @param mixed $conditions Conditions to be used, accepts anything Query::where()
+ * can take.
+ * @return boolean Success Returns true if one or more rows are affected.
+ * @see \Cake\ORM\Table::delteAll()
+ */
+	public function deleteAll($conditions) {
+		$target = $this->target();
+		$expression = $target->query()
+			->where($this->conditions())
+			->where($conditions)
+			->clause('where');
+		return $target->deleteAll($expression);
+	}
+
+/**
  * Triggers beforeFind on the target table for the query this association is
  * attaching to
  *
@@ -629,6 +664,41 @@ abstract class Association {
 		}
 
 		return $conditions;
+	}
+
+/**
+ * Proxies property retrieval to the target table. This is handy for getting this
+ * association's associations
+ *
+ * @param string $property the property name
+ * @return \Cake\ORM\Association
+ * @throws \RuntimeException if no association with such name exists
+ */
+	public function __get($property) {
+		return $this->target()->{$property};
+	}
+
+/**
+ * Proxies the isset call to the target table. This is handy to check if the
+ * target table has another association with the passed name
+ *
+ * @param string $property the property name
+ * @return boolean true if the property exists
+ */
+	public function __isset($property) {
+		return isset($this->target()->{$property});
+	}
+
+/**
+ * Proxies method calls to the target table.
+ *
+ * @param string $method name of the method to be invoked
+ * @param array $args List of arguments passed to the function
+ * @return mixed
+ * @throws \BadMethodCallException
+ */
+	public function __call($method, $argument) {
+		return call_user_func_array([$this->target(), $method], $argument);
 	}
 
 /**
