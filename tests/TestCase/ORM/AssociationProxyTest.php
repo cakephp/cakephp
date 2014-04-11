@@ -36,6 +36,16 @@ class AssociationProxyTest extends TestCase {
 	];
 
 /**
+ * Teardown
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		TableRegistry::clear();
+	}
+
+/**
  * Tests that it is possible to get associations as a property
  *
  * @return void
