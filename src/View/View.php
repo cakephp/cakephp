@@ -29,7 +29,6 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\ViewVarsTrait;
-use Cake\View\Error;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed

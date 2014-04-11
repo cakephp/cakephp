@@ -24,13 +24,12 @@ use Cake\Controller\Error\MissingControllerException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Error;
+use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Routing\Error\MissingDispatcherFilterException;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 
@@ -110,7 +109,7 @@ class Dispatcher implements EventListener {
 			if (is_string($filter['callable'])) {
 				$callable = App::classname($filter['callable'], 'Routing/Filter');
 				if (!$callable) {
-					throw new MissingDispatcherFilterException($filter['callable']);
+					throw new Error\MissingDispatcherFilterException($filter['callable']);
 				}
 				$manager->attach(new $callable($settings));
 			} else {
@@ -193,7 +192,7 @@ class Dispatcher implements EventListener {
 
 		$response = $controller->invokeAction();
 		if ($response !== null && !($response instanceof Response)) {
-			throw new Error\Exception('Controller action can only return an instance of Response');
+			throw new Exception('Controller action can only return an instance of Response');
 		}
 
 		if (!$response && $controller->autoRender) {
