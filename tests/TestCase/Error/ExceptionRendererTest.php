@@ -579,11 +579,6 @@ class ExceptionRendererTest extends TestCase {
 				new Error\Exception('base class'),
 				array('/Internal Error/'),
 				500
-			),
-			array(
-				new Error\ConfigureException('No file'),
-				array('/Internal Error/'),
-				500
 			)
 		);
 	}

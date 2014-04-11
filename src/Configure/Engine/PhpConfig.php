@@ -57,22 +57,22 @@ class PhpConfig implements ConfigEngineInterface {
  * @param string $key The identifier to read from. If the key has a . it will be treated
  *  as a plugin prefix.
  * @return array Parsed configuration values.
- * @throws \Cake\Error\ConfigureException when files don't exist or they don't contain `$config`.
+ * @throws \Cake\Error\Exception when files don't exist or they don't contain `$config`.
  *  Or when files contain '..' as this could lead to abusive reads.
  */
 	public function read($key) {
 		if (strpos($key, '..') !== false) {
-			throw new Error\ConfigureException('Cannot load configuration files with ../ in them.');
+			throw new Error\Exception('Cannot load configuration files with ../ in them.');
 		}
 
 		$file = $this->_getFilePath($key);
 		if (!is_file($file)) {
-			throw new Error\ConfigureException(sprintf('Could not load configuration file: %s', $file));
+			throw new Error\Exception(sprintf('Could not load configuration file: %s', $file));
 		}
 
 		include $file;
 		if (!isset($config)) {
-			throw new Error\ConfigureException(sprintf('No variable $config found in %s', $file));
+			throw new Error\Exception(sprintf('No variable $config found in %s', $file));
 		}
 		return $config;
 	}
