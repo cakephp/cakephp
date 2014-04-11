@@ -91,7 +91,7 @@ class Marshaller {
  * @return \Cake\ORM\Entity
  * @see \Cake\ORM\Table::newEntity()
  */
-	public function one(array $data, $include = []) {
+	public function one(array $data, array $include = []) {
 		$propertyMap = $this->_buildPropertyMap($include);
 
 		$schema = $this->_table->schema();
@@ -150,7 +150,7 @@ class Marshaller {
  * @return array An array of hydrated records.
  * @see \Cake\ORM\Table::newEntities()
  */
-	public function many(array $data, $include = []) {
+	public function many(array $data, array $include = []) {
 		$output = [];
 		foreach ($data as $record) {
 			$output[] = $this->one($record, $include);
@@ -236,7 +236,7 @@ class Marshaller {
  * @param array $include The list of associations to be merged
  * @return \Cake\Datasource\EntityInterface
  */
-	public function merge(EntityInterface $entity, array $data, $include = []) {
+	public function merge(EntityInterface $entity, array $data, array $include = []) {
 		$propertyMap = $this->_buildPropertyMap($include);
 		$tableName = $this->_table->alias();
 
@@ -282,7 +282,7 @@ class Marshaller {
  * @param array $include The list of associations to be merged
  * @return array
  */
-	public function mergeMany($entities, array $data, $include = []) {
+	public function mergeMany($entities, array $data, array $include = []) {
 		$primary = (array)$this->_table->primaryKey();
 		$indexed = (new Collection($data))->groupBy($primary[0])->toArray();
 		$new = isset($indexed[null]) ? [$indexed[null]] : [];

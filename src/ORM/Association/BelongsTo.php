@@ -58,7 +58,7 @@ class BelongsTo extends Association {
  * @param array $options The options for the original delete.
  * @return boolean Success.
  */
-	public function cascadeDelete(Entity $entity, $options = []) {
+	public function cascadeDelete(Entity $entity, array $options = []) {
 		return true;
 	}
 
@@ -115,7 +115,7 @@ class BelongsTo extends Association {
  * the saved entity
  * @see Table::save()
  */
-	public function save(Entity $entity, $options = []) {
+	public function save(Entity $entity, array $options = []) {
 		$targetEntity = $entity->get($this->property());
 		if (empty($targetEntity) || !($targetEntity instanceof Entity)) {
 			return $entity;
@@ -144,7 +144,7 @@ class BelongsTo extends Association {
  * @throws \RuntimeException if the number of columns in the foreignKey do not
  * match the number of columns in the target table primaryKey
  */
-	protected function _joinCondition(array $options) {
+	protected function _joinCondition($options) {
 		$conditions = [];
 		$tAlias = $this->target()->alias();
 		$sAlias = $this->_sourceTable->alias();

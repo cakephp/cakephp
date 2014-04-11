@@ -475,7 +475,7 @@ class Table implements RepositoryInterface, EventListener {
  * @return void
  * @see \Cake\ORM\Behavior
  */
-	public function addBehavior($name, $options = []) {
+	public function addBehavior($name, array $options = []) {
 		$this->_behaviors->load($name, $options);
 	}
 
@@ -992,7 +992,7 @@ class Table implements RepositoryInterface, EventListener {
  * {@inheritdoc}
  *
  */
-	public function exists(array $conditions) {
+	public function exists($conditions) {
 		return (bool)count($this->find('all')
 			->select(['existing' => 1])
 			->where($conditions)
@@ -1082,7 +1082,7 @@ class Table implements RepositoryInterface, EventListener {
  * }}}
  *
  */
-	public function save(EntityInterface $entity, array $options = []) {
+	public function save(EntityInterface $entity, $options = []) {
 		$options = new \ArrayObject($options + [
 			'atomic' => true,
 			'validate' => true,
@@ -1319,7 +1319,7 @@ class Table implements RepositoryInterface, EventListener {
  * the options used in the delete operation.
  *
  */
-	public function delete(EntityInterface $entity, array $options = []) {
+	public function delete(EntityInterface $entity, $options = []) {
 		$options = new \ArrayObject($options + ['atomic' => true]);
 
 		$process = function() use ($entity, $options) {
@@ -1397,7 +1397,7 @@ class Table implements RepositoryInterface, EventListener {
  * @return \Cake\ORM\Query
  * @throws \BadMethodCallException
  */
-	public function callFinder($type, Query $query, $options = []) {
+	public function callFinder($type, Query $query, array $options = []) {
 		$query->applyOptions($options);
 		$options = $query->getOptions();
 		$finder = 'find' . ucfirst($type);
@@ -1674,7 +1674,7 @@ class Table implements RepositoryInterface, EventListener {
  * }}}
  *
  * @param \Cake\Datasource\EntityInterface $entity The entity to be validated
- * @param array $options A list of options to use while validating, the following
+ * @param array|\ArrayObject $options A list of options to use while validating, the following
  * keys are accepted:
  * - validate: The name of the validation set to use
  * - associated: map of association names to validate as well
@@ -1724,14 +1724,14 @@ class Table implements RepositoryInterface, EventListener {
  * ]);
  * }}}
  *
- * @param array $entities The entities to be validated
+ * @param array|\ArrayAccess $entities The entities to be validated
  * @param array $options A list of options to use while validating, the following
  * keys are accepted:
  * - validate: The name of the validation set to use
  * - associated: map of association names to validate as well
  * @return boolean true if the passed entities and their associations are valid
  */
-	public function validateMany($entities, $options = []) {
+	public function validateMany($entities, array $options = []) {
 		if (!isset($options['associated'])) {
 			$options['associated'] = $this->_associations->keys();
 		}

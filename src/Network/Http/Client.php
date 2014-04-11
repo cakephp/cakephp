@@ -188,7 +188,7 @@ class Client {
  * @param array $options Additional options for the request.
  * @return \Cake\Network\Http\Response
  */
-	public function get($url, $data = [], $options = []) {
+	public function get($url, array $data = [], array $options = []) {
 		$options = $this->_mergeOptions($options);
 		$body = [];
 		if (isset($data['_content'])) {
@@ -208,11 +208,11 @@ class Client {
  * Do a POST request.
  *
  * @param string $url The url or path you want to request.
- * @param array $data The post data you want to send.
+ * @param mixed $data The post data you want to send.
  * @param array $options Additional options for the request.
  * @return \Cake\Network\Http\Response
  */
-	public function post($url, $data = [], $options = []) {
+	public function post($url, $data = [], array $options = []) {
 		$options = $this->_mergeOptions($options);
 		$url = $this->buildUrl($url, [], $options);
 		return $this->_doRequest(Request::METHOD_POST, $url, $data, $options);
@@ -222,11 +222,11 @@ class Client {
  * Do a PUT request.
  *
  * @param string $url The url or path you want to request.
- * @param array $data The request data you want to send.
+ * @param mixed $data The request data you want to send.
  * @param array $options Additional options for the request.
  * @return \Cake\Network\Http\Response
  */
-	public function put($url, $data = [], $options = []) {
+	public function put($url, $data = [], array $options = []) {
 		$options = $this->_mergeOptions($options);
 		$url = $this->buildUrl($url, [], $options);
 		return $this->_doRequest(Request::METHOD_PUT, $url, $data, $options);
@@ -236,11 +236,11 @@ class Client {
  * Do a PATCH request.
  *
  * @param string $url The url or path you want to request.
- * @param array $data The request data you want to send.
+ * @param mixed $data The request data you want to send.
  * @param array $options Additional options for the request.
  * @return \Cake\Network\Http\Response
  */
-	public function patch($url, $data = [], $options = []) {
+	public function patch($url, $data = [], array $options = []) {
 		$options = $this->_mergeOptions($options);
 		$url = $this->buildUrl($url, [], $options);
 		return $this->_doRequest(Request::METHOD_PATCH, $url, $data, $options);
@@ -250,11 +250,11 @@ class Client {
  * Do a DELETE request.
  *
  * @param string $url The url or path you want to request.
- * @param array $data The request data you want to send.
+ * @param mixed $data The request data you want to send.
  * @param array $options Additional options for the request.
  * @return \Cake\Network\Http\Response
  */
-	public function delete($url, $data = [], $options = []) {
+	public function delete($url, $data = [], array $options = []) {
 		$options = $this->_mergeOptions($options);
 		$url = $this->buildUrl($url, [], $options);
 		return $this->_doRequest(Request::METHOD_DELETE, $url, $data, $options);
@@ -268,7 +268,7 @@ class Client {
  * @param array $options Additional options for the request.
  * @return \Cake\Network\Http\Response
  */
-	public function head($url, $data = [], $options = []) {
+	public function head($url, array $data = [], array $options = []) {
 		$options = $this->_mergeOptions($options);
 		$url = $this->buildUrl($url, $data, $options);
 		return $this->_doRequest(Request::METHOD_HEAD, $url, '', $options);

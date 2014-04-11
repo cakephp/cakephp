@@ -28,7 +28,7 @@ trait SelectableAssociationTrait {
  * @param array $options
  * @return boolean true if a list of keys will be required
  */
-	public function requiresKeys($options = []) {
+	public function requiresKeys(array $options = []) {
 		$strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
 		return $strategy === $this::STRATEGY_SELECT;
 	}

@@ -49,7 +49,7 @@ class Digest {
  * @return void
  * @see http://www.ietf.org/rfc/rfc2617.txt
  */
-	public function authentication(Request $request, $credentials) {
+	public function authentication(Request $request, array $credentials) {
 		if (!isset($credentials['username'], $credentials['password'])) {
 			return;
 		}

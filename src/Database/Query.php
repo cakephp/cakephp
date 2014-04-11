@@ -1326,7 +1326,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  * @throws \RuntimeException When there are 0 columns.
  */
-	public function insert($columns, $types = []) {
+	public function insert(array $columns, array $types = []) {
 		if (empty($columns)) {
 			throw new \RuntimeException('At least 1 column is required to perform an insert.');
 		}

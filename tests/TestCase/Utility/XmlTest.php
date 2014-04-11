@@ -96,10 +96,6 @@ class XmlTest extends TestCase {
 			Xml::build($xml, array('return' => 'domdocument')),
 			Xml::build(file_get_contents($xml), array('return' => 'domdocument'))
 		);
-		$this->assertEquals(
-			Xml::build($xml, array('return' => 'simplexml')),
-			Xml::build($xml, 'simplexml')
-		);
 
 		$xml = array('tag' => 'value');
 		$obj = Xml::build($xml);

@@ -208,7 +208,7 @@ class PluginTask extends BakeTask {
  * @param array $pathOptions
  * @return void
  */
-	public function findPath($pathOptions) {
+	public function findPath(array $pathOptions) {
 		$valid = false;
 		foreach ($pathOptions as $i => $path) {
 			if (!is_dir($path)) {

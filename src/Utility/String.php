@@ -327,7 +327,7 @@ class String {
  * @param array|integer $options Array of options to use, or an integer to wrap the text to.
  * @return string Formatted text.
  */
-	public static function wrap($text, $options = array()) {
+	public static function wrap($text, $options = []) {
 		if (is_numeric($options)) {
 			$options = array('width' => $options);
 		}

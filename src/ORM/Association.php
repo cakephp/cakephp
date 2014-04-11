@@ -302,7 +302,7 @@ abstract class Association {
  * @param array $options custom options key that could alter the return value
  * @return boolean
  */
-	public function canBeJoined($options = []) {
+	public function canBeJoined(array $options = []) {
 		$strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
 		return $strategy == $this::STRATEGY_JOIN;
 	}
@@ -492,7 +492,7 @@ abstract class Association {
  * @see \Cake\ORM\Table::find()
  * @return \Cake\ORM\Query
  */
-	public function find($type = 'all', $options = []) {
+	public function find($type = 'all', array $options = []) {
 		return $this->target()
 			->find($type, $options)
 			->where($this->conditions());
@@ -640,7 +640,7 @@ abstract class Association {
  * @throws \RuntimeException if the number of columns in the foreignKey do not
  * match the number of columns in the source table primaryKey
  */
-	protected function _joinCondition(array $options) {
+	protected function _joinCondition($options) {
 		$conditions = [];
 		$tAlias = $this->target()->alias();
 		$sAlias = $this->source()->alias();
@@ -750,7 +750,7 @@ abstract class Association {
  * @param array $options The options for the original delete.
  * @return boolean Success
  */
-	public abstract function cascadeDelete(Entity $entity, $options = []);
+	public abstract function cascadeDelete(Entity $entity, array $options = []);
 
 /**
  * Returns whether or not the passed table is the owning side for this
@@ -771,6 +771,6 @@ abstract class Association {
  * the saved entity
  * @see Table::save()
  */
-	public abstract function save(Entity $entity, $options = []);
+	public abstract function save(Entity $entity, array $options = []);
 
 }

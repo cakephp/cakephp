@@ -31,7 +31,7 @@ class Basic {
  * @return void
  * @see http://www.ietf.org/rfc/rfc2617.txt
  */
-	public function authentication(Request $request, $credentials) {
+	public function authentication(Request $request, array $credentials) {
 		if (isset($credentials['username'], $credentials['password'])) {
 			$value = $this->_generateHeader($credentials['username'], $credentials['password']);
 			$request->header('Authorization', $value);
@@ -46,7 +46,7 @@ class Basic {
  * @return void
  * @see http://www.ietf.org/rfc/rfc2617.txt
  */
-	public function proxyAuthentication(Request $request, $credentials) {
+	public function proxyAuthentication(Request $request, array $credentials) {
 		if (isset($credentials['username'], $credentials['password'])) {
 			$value = $this->_generateHeader($credentials['username'], $credentials['password']);
 			$request->header('Proxy-Authorization', $value);

@@ -160,7 +160,7 @@ class FixtureTask extends BakeTask {
  * @return string Baked fixture content
  * @throws \RuntimeException
  */
-	public function bake($model, $useTable = false, $importOptions = []) {
+	public function bake($model, $useTable = false, array $importOptions = []) {
 		$table = $schema = $records = $import = $modelImport = null;
 		$importBits = [];
 
@@ -216,10 +216,10 @@ class FixtureTask extends BakeTask {
  * Generate the fixture file, and write to disk
  *
  * @param string $model name of the model being generated
- * @param string $otherVars Contents of the fixture file.
+ * @param array $otherVars Contents of the fixture file.
  * @return string Content saved into fixture file.
  */
-	public function generateFixtureFile($model, $otherVars) {
+	public function generateFixtureFile($model, array $otherVars) {
 		$defaults = [
 			'name' => Inflector::singularize($model),
 			'table' => null,
@@ -232,7 +232,7 @@ class FixtureTask extends BakeTask {
 		if ($this->plugin) {
 			$defaults['namespace'] = $this->plugin;
 		}
-		$vars = array_merge($defaults, $otherVars);
+		$vars = $otherVars + $defaults;
 
 		$path = $this->getPath();
 		$filename = $vars['name'] . 'Fixture.php';
