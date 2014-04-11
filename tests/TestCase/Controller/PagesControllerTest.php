@@ -21,6 +21,7 @@ use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
+use Cake\View\Error\MissingViewException;
 use TestApp\Controller\PagesController;
 
 /**
@@ -65,7 +66,7 @@ class PagesControllerTest extends TestCase {
 /**
  * Test that missing view in debug mode renders missing_view error page
  *
- * @expectedException \Cake\Error\MissingViewException
+ * @expectedException \Cake\View\Error\MissingViewException
  * @expectedExceptionCode 500
  * @return void
  */

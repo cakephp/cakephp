@@ -15,7 +15,9 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\View\Error;
+
+use Cake\Error\Exception;
 
 /**
  * Used when a view file cannot be found.

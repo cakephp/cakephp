@@ -26,6 +26,7 @@ use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Cake\View\Error\MissingViewException;
 
 /**
  * BlueberryComponent class
@@ -510,7 +511,7 @@ class ExceptionRendererTest extends TestCase {
 				404
 			),
 			array(
-				new Error\MissingViewException(array('file' => '/posts/about.ctp')),
+				new MissingViewException(array('file' => '/posts/about.ctp')),
 				array(
 					"/posts\/about.ctp/"
 				),

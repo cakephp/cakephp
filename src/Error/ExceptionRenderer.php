@@ -28,6 +28,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
+use Cake\View\Error\MissingViewException;
 use Cake\View\View;
 
 /**
@@ -266,7 +267,7 @@ class ExceptionRenderer {
 			$event = new Event('Controller.shutdown', $this->controller);
 			$this->controller->afterFilter($event);
 			$this->controller->response->send();
-		} catch (Error\MissingViewException $e) {
+		} catch (MissingViewException $e) {
 			$attributes = $e->getAttributes();
 			if (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false) {
 				$this->_outputMessageSafe('error500');

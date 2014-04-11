@@ -29,6 +29,7 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\ViewVarsTrait;
+use Cake\View\Error\MissingViewException;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
@@ -937,7 +938,7 @@ class View extends Object {
  *
  * @param string $name Controller action to find template filename for
  * @return string Template filename
- * @throws \Cake\Error\MissingViewException when a view file could not be found.
+ * @throws \Cake\View\Error\MissingViewException when a view file could not be found.
  */
 	protected function _getViewFileName($name = null) {
 		$subDir = null;
@@ -986,7 +987,7 @@ class View extends Object {
 				}
 			}
 		}
-		throw new Error\MissingViewException(array('file' => $defaultPath . $name . $this->_ext));
+		throw new MissingViewException(array('file' => $defaultPath . $name . $this->_ext));
 	}
 
 /**
