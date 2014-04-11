@@ -110,7 +110,7 @@ class ConsoleIo {
 	}
 
 /**
- * Output only at the verbose level.
+ * Output at the verbose level.
  *
  * @param string|array $message A string or a an array of strings to output
  * @param integer $newlines Number of newlines to append
@@ -146,7 +146,6 @@ class ConsoleIo {
  * @param integer $newlines Number of newlines to append
  * @param integer $level The message's output level, see above.
  * @return integer|boolean Returns the number of bytes returned from writing to stdout.
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::out
  */
 	public function out($message = null, $newlines = 1, $level = ConsoleIo::NORMAL) {
 		if ($level <= $this->_level) {
@@ -195,7 +194,6 @@ class ConsoleIo {
  * @param string|array $message A string or a an array of strings to output
  * @param integer $newlines Number of newlines to append
  * @return void
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::err
  */
 	public function err($message = null, $newlines = 1) {
 		$this->_err->write($message, $newlines);
@@ -206,7 +204,6 @@ class ConsoleIo {
  *
  * @param integer $multiplier Number of times the linefeed sequence should be repeated
  * @return string
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::nl
  */
 	public function nl($multiplier = 1) {
 		return str_repeat(ConsoleOutput::LF, $multiplier);
@@ -218,7 +215,6 @@ class ConsoleIo {
  * @param integer $newlines Number of newlines to pre- and append
  * @param integer $width Width of the line, defaults to 63
  * @return void
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::hr
  */
 	public function hr($newlines = 0, $width = 63) {
 		$this->out(null, $newlines);
@@ -232,7 +228,6 @@ class ConsoleIo {
  * @param string $prompt Prompt text.
  * @param string $default Default input value.
  * @return mixed Either the default value, or the user-provided input.
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::in
  */
 	public function ask($prompt, $default = null) {
 		return $this->_getInput($prompt, null, $default);
@@ -245,7 +240,6 @@ class ConsoleIo {
  * @param string|array $options Array or string of options.
  * @param string $default Default input value.
  * @return mixed Either the default value, or the user-provided input.
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::in
  */
 	public function askChoice($prompt, $options, $default = null) {
 		$originalOptions = $options;
