@@ -109,7 +109,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test load() on undefined class
  *
- * @expectedException \Cake\Error\MissingBehaviorException
+ * @expectedException \Cake\ORM\Error\MissingBehaviorException
  * @return void
  */
 	public function testLoadMissingClass() {

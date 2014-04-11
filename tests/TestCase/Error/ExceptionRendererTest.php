@@ -28,6 +28,7 @@ use Cake\Error;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
 use Cake\Network\Request;
+use Cake\ORM\Error\MissingBehaviorException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Error\MissingHelperException;
@@ -542,7 +543,7 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
-				new Error\MissingBehaviorException(array('class' => 'MyCustomBehavior')),
+				new MissingBehaviorException(array('class' => 'MyCustomBehavior')),
 				array(
 					'/<h2>Missing Behavior<\/h2>/',
 					'/Create the class <em>MyCustomBehavior<\/em> below in file:/',

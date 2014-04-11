@@ -15,7 +15,7 @@
 namespace Cake\ORM;
 
 use Cake\Core\App;
-use Cake\Error;
+use Cake\Error\Exception;
 use Cake\ORM\Behavior;
 use Cake\ORM\Table;
 use Cake\Utility\ObjectRegistry;
@@ -87,7 +87,7 @@ class BehaviorRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the behavior is missing in.
- * @throws \Cake\Error\MissingBehaviorException
+ * @throws \Cake\ORM\Error\MissingBehaviorException
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\MissingBehaviorException([
@@ -145,7 +145,7 @@ class BehaviorRegistry extends ObjectRegistry {
 					$finder,
 					$duplicate[0]
 				);
-				throw new Error\Exception($error);
+				throw new Exception($error);
 			}
 			$finders[$finder] = [$alias, $methodName];
 		}
@@ -159,7 +159,7 @@ class BehaviorRegistry extends ObjectRegistry {
 					$method,
 					$duplicate[0]
 				);
-				throw new Error\Exception($error);
+				throw new Exception($error);
 			}
 			$methods[$method] = [$alias, $methodName];
 		}
@@ -210,7 +210,7 @@ class BehaviorRegistry extends ObjectRegistry {
 			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
-		throw new Error\Exception(sprintf('Cannot call "%s" it does not belong to any attached behavior.', $method));
+		throw new Exception(sprintf('Cannot call "%s" it does not belong to any attached behavior.', $method));
 	}
 
 /**
@@ -229,7 +229,7 @@ class BehaviorRegistry extends ObjectRegistry {
 			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
-		throw new Error\Exception(sprintf('Cannot call finder "%s" it does not belong to any attached behavior.', $type));
+		throw new Exception(sprintf('Cannot call finder "%s" it does not belong to any attached behavior.', $type));
 	}
 
 }
