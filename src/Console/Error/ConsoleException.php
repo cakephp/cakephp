@@ -1,6 +1,6 @@
 <?php
 /**
- * MissingShellException class
+ * ConsoleException class
  *
  * PHP 5
  *
@@ -15,14 +15,14 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\Console\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Used when a shell cannot be found.
+ * Exception class for Console libraries.  This exception will be thrown from Console library
+ * classes when they encounter an error.
  *
  */
-class MissingShellException extends Exception {
-
-	protected $_messageTemplate = 'Shell class for "%s" could not be found.';
-
+class ConsoleException extends Exception {
 }

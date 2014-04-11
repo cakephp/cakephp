@@ -18,7 +18,7 @@ namespace Cake\Console;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Error;
+use Cake\Error\Exception;
 use Cake\Utility\Inflector;
 
 /**
@@ -92,7 +92,7 @@ class ShellDispatcher {
 	protected function _initEnvironment() {
 		if (!$this->_bootstrap()) {
 			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'lib' . DS . 'Cake exists in ' . CAKE_CORE_INCLUDE_PATH;
-			throw new Error\Exception($message);
+			throw new Exception($message);
 		}
 
 		if (!isset($this->args[0]) || !isset($this->params['working'])) {
@@ -100,7 +100,7 @@ class ShellDispatcher {
 				"Please make sure that " . DS . 'lib' . DS . 'Cake' . DS . "Console is in your system path,\n" .
 				"and check the cookbook for the correct usage of this command.\n" .
 				"(http://book.cakephp.org/)";
-			throw new Error\Exception($message);
+			throw new Exception($message);
 		}
 
 		$this->shiftArgs();
@@ -132,7 +132,7 @@ class ShellDispatcher {
  * Dispatch a request.
  *
  * @return boolean
- * @throws \Cake\Error\MissingShellMethodException
+ * @throws \Cake\Console\Error\MissingShellMethodException
  */
 	protected function _dispatch() {
 		$shell = $this->shiftArgs();
@@ -184,7 +184,7 @@ class ShellDispatcher {
  *
  * @param string $shell Optionally the name of a plugin
  * @return mixed An object
- * @throws \Cake\Error\MissingShellException when errors are encountered.
+ * @throws \Cake\Console\Error\MissingShellException when errors are encountered.
  */
 	protected function _getShell($shell) {
 		list($plugin, $shell) = pluginSplit($shell);

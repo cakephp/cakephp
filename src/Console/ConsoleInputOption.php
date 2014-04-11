@@ -16,8 +16,6 @@
  */
 namespace Cake\Console;
 
-use Cake\Error;
-
 /**
  * An object to represent a single option used in the command line.
  * ConsoleOptionParser creates these when you use addOption()
@@ -77,7 +75,7 @@ class ConsoleInputOption {
  * @param boolean $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
  * @param string $default The default value for this option.
  * @param array $choices Valid choices for this option.
- * @throws \Cake\Error\ConsoleException
+ * @throws \Cake\Console\Error\ConsoleException
  */
 	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = []) {
 		if (is_array($name) && isset($name['name'])) {
@@ -181,7 +179,7 @@ class ConsoleInputOption {
  *
  * @param string $value
  * @return boolean
- * @throws \Cake\Error\ConsoleException
+ * @throws \Cake\Console\Error\ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {

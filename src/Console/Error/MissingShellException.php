@@ -1,6 +1,6 @@
 <?php
 /**
- * MissingShellMethodException class
+ * MissingShellException class
  *
  * PHP 5
  *
@@ -15,14 +15,16 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\Console\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Used when a shell method cannot be found.
+ * Used when a shell cannot be found.
  *
  */
-class MissingShellMethodException extends Exception {
+class MissingShellException extends Exception {
 
-	protected $_messageTemplate = "Unknown command %1\$s %2\$s.\nFor usage try `cake %1\$s --help`";
+	protected $_messageTemplate = 'Shell class for "%s" could not be found.';
 
 }

@@ -15,7 +15,6 @@
 namespace Cake\Console;
 
 use Cake\Core\App;
-use Cake\Error;
 use Cake\Utility\ObjectRegistry;
 
 /**
@@ -59,7 +58,7 @@ class TaskRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the task is missing in.
- * @throws \Cake\Error\MissingTaskException
+ * @throws \Cake\Console\Error\MissingTaskException
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\MissingTaskException([

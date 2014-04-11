@@ -16,8 +16,6 @@
  */
 namespace Cake\Console;
 
-use Cake\Error;
-
 /**
  * An object to represent a single argument used in the command line.
  * ConsoleOptionParser creates these when you use addArgument()
@@ -136,7 +134,7 @@ class ConsoleInputArgument {
  *
  * @param string $value
  * @return boolean
- * @throws \Cake\Error\ConsoleException
+ * @throws \Cake\Console\Error\ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {

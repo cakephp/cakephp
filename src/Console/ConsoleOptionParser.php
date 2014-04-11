@@ -16,7 +16,6 @@
  */
 namespace Cake\Console;
 
-use Cake\Error;
 use Cake\Utility\Inflector;
 
 /**
@@ -464,7 +463,7 @@ class ConsoleOptionParser {
  * @param string $command The subcommand to use. If this parameter is a subcommand, that has a parser,
  *    That parser will be used to parse $argv instead.
  * @return Array [$params, $args]
- * @throws \Cake\Error\ConsoleException When an invalid parameter is encountered.
+ * @throws \Cake\Console\Error\ConsoleException When an invalid parameter is encountered.
  */
 	public function parse($argv, $command = null) {
 		if (isset($this->_subcommands[$command]) && $this->_subcommands[$command]->parser()) {
@@ -556,7 +555,7 @@ class ConsoleOptionParser {
  * @param string $option The option to parse.
  * @param array $params The params to append the parsed value into
  * @return array Params with $option added in.
- * @throws \Cake\Error\ConsoleException When unknown short options are encountered.
+ * @throws \Cake\Console\Error\ConsoleException When unknown short options are encountered.
  */
 	protected function _parseShortOption($option, $params) {
 		$key = substr($option, 1);
@@ -580,7 +579,7 @@ class ConsoleOptionParser {
  * @param string $name The name to parse.
  * @param array $params The params to append the parsed value into
  * @return array Params with $option added in.
- * @throws \Cake\Error\ConsoleException
+ * @throws \Cake\Console\Error\ConsoleException
  */
 	protected function _parseOption($name, $params) {
 		if (!isset($this->_options[$name])) {
@@ -627,7 +626,7 @@ class ConsoleOptionParser {
  * @param string $argument The argument to append
  * @param array $args The array of parsed args to append to.
  * @return array Args
- * @throws \Cake\Error\ConsoleException
+ * @throws \Cake\Console\Error\ConsoleException
  */
 	protected function _parseArg($argument, $args) {
 		if (empty($this->_args)) {
