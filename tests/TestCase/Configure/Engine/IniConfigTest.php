@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Configure\Engine;
@@ -168,7 +168,7 @@ class IniConfigTest extends TestCase {
 /**
  * Test an exception is thrown by reading files that exist without .ini extension.
  *
- * @expectedException Cake\Error\ConfigureException
+ * @expectedException \Cake\Error\ConfigureException
  * @return void
  */
 	public function testReadWithExistentFileWithoutExtension() {
@@ -179,7 +179,7 @@ class IniConfigTest extends TestCase {
 /**
  * Test an exception is thrown by reading files that don't exist.
  *
- * @expectedException Cake\Error\ConfigureException
+ * @expectedException \Cake\Error\ConfigureException
  * @return void
  */
 	public function testReadWithNonExistentFile() {
@@ -201,7 +201,7 @@ class IniConfigTest extends TestCase {
 /**
  * Test reading keys with ../ doesn't work.
  *
- * @expectedException Cake\Error\ConfigureException
+ * @expectedException \Cake\Error\ConfigureException
  * @return void
  */
 	public function testReadWithDots() {

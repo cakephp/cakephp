@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
@@ -407,7 +407,7 @@ class FolderTest extends TestCase {
 				CAKE . 'Config',
 			),
 			array(
-				CAKE . 'Config/config.php',
+				CAKE . 'Config' . DS . 'config.php',
 			)
 		);
 
@@ -657,18 +657,18 @@ class FolderTest extends TestCase {
 		$Folder = new Folder(CAKE);
 		$result = $Folder->findRecursive('(config|paths)\.php');
 		$expected = array(
-			CAKE . 'Config/config.php'
+			CAKE . 'Config' . DS . 'config.php'
 		);
 		$this->assertSame(array(), array_diff($expected, $result));
 		$this->assertSame(array(), array_diff($expected, $result));
 
 		$result = $Folder->findRecursive('(config|woot)\.php', true);
 		$expected = array(
-			CAKE . 'Config/config.php'
+			CAKE . 'Config' . DS . 'config.php'
 		);
 		$this->assertSame($expected, $result);
 
-		$path = TMP . 'tests/';
+		$path = TMP . 'tests' . DS;
 		$Folder = new Folder($path, true);
 		$Folder->create($path . 'sessions');
 		$Folder->create($path . 'testme');
@@ -690,15 +690,15 @@ class FolderTest extends TestCase {
 
 		$result = $Folder->findRecursive('(paths|my)\.php');
 		$expected = array(
-			$path . 'testme/my.php',
-			$path . 'testme/paths.php'
+			$path . 'testme' . DS . 'my.php',
+			$path . 'testme' . DS . 'paths.php'
 		);
 		$this->assertSame(sort($expected), sort($result));
 
 		$result = $Folder->findRecursive('(paths|my)\.php', true);
 		$expected = array(
-			$path . 'testme/my.php',
-			$path . 'testme/paths.php'
+			$path . 'testme' . DS . 'my.php',
+			$path . 'testme' . DS . 'paths.php'
 		);
 		$this->assertSame($expected, $result);
 	}
@@ -738,7 +738,7 @@ class FolderTest extends TestCase {
  * @return void
  */
 	public function testReset() {
-		$path = TMP . 'tests/folder_delete_test';
+		$path = TMP . 'tests' . DS . 'folder_delete_test';
 		mkdir($path, 0777, true);
 		$folder = $path . DS . 'sub';
 		mkdir($folder);
@@ -787,7 +787,7 @@ class FolderTest extends TestCase {
  * @return void
  */
 	public function testDelete() {
-		$path = TMP . 'tests/folder_delete_test';
+		$path = TMP . 'tests' . DS . 'folder_delete_test';
 		mkdir($path, 0777, true);
 		touch($path . DS . 'file_1');
 		mkdir($path . DS . 'level_1_1');

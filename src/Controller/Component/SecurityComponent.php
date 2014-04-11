@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.10.8.2156
+ * @since         0.10.8
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component;
@@ -40,72 +40,37 @@ use Cake\Utility\Security;
 class SecurityComponent extends Component {
 
 /**
- * The controller method that will be called if this request is black-hole'd
+ * Default config
  *
- * @var string
- */
-	public $blackHoleCallback = null;
-
-/**
- * List of actions that require an SSL-secured connection
- *
- * @var array
- * @see SecurityComponent::requireSecure()
- */
-	public $requireSecure = array();
-
-/**
- * List of actions that require a valid authentication key
- *
- * @var array
- * @see SecurityComponent::requireAuth()
- */
-	public $requireAuth = array();
-
-/**
- * Controllers from which actions of the current controller are allowed to receive
- * requests.
- *
- * @var array
- * @see SecurityComponent::requireAuth()
- */
-	public $allowedControllers = array();
-
-/**
- * Actions from which actions of the current controller are allowed to receive
- * requests.
- *
- * @var array
- * @see SecurityComponent::requireAuth()
- */
-	public $allowedActions = array();
-
-/**
- * Form fields to exclude from POST validation. Fields can be unlocked
- * either in the Component, or with FormHelper::unlockField().
- * Fields that have been unlocked are not required to be part of the POST
- * and hidden unlocked fields do not have their values checked.
+ * - `blackHoleCallback` - The controller method that will be called if this
+ *   request is black-hole'd.
+ * - `requireSecure` - List of actions that require an SSL-secured connection.
+ * - `requireAuth` - List of actions that require a valid authentication key.
+ * - `allowedControllers` - Controllers from which actions of the current
+ *   controller are allowed to receive requests.
+ * - `allowedActions` - Actions from which actions of the current controller
+ *   are allowed to receive requests.
+ * - `unlockedFields` - Form fields to exclude from POST validation. Fields can
+ *   be unlocked either in the Component, or with FormHelper::unlockField().
+ *   Fields that have been unlocked are not required to be part of the POST
+ *   and hidden unlocked fields do not have their values checked.
+ * - `unlockedActions` - Actions to exclude from POST validation checks.
+ *   Other checks like requireAuth(), requireSecure() etc. will still be applied.
+ * - `validatePost` -  Whether to validate POST data. Set to false to disable
+ *   for data coming from 3rd party services, etc.
  *
  * @var array
  */
-	public $unlockedFields = array();
-
-/**
- * Actions to exclude from POST validation checks.
- * Other checks like requireAuth(), requireSecure()
- * etc. will still be applied.
- *
- * @var array
- */
-	public $unlockedActions = array();
-
-/**
- * Whether to validate POST data. Set to false to disable for data coming from 3rd party
- * services, etc.
- *
- * @var boolean
- */
-	public $validatePost = true;
+	protected $_defaultConfig = [
+		'blackHoleCallback' => null,
+		'requireSecure' => [],
+		'requireAuth' => [],
+		'allowedControllers' => [],
+		'allowedActions' => [],
+		'unlockedFields' => [],
+		'unlockedActions' => [],
+		'validatePost' => true
+	];
 
 /**
  * Other components used by the Security component
@@ -124,7 +89,7 @@ class SecurityComponent extends Component {
 /**
  * Request object
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	public $request;
 
@@ -147,12 +112,16 @@ class SecurityComponent extends Component {
 			$controller->request->params['requested'] != 1
 		);
 
-		if ($this->_action == $this->blackHoleCallback) {
+		if ($this->_action == $this->_config['blackHoleCallback']) {
 			return $this->blackHole($controller, 'auth');
 		}
 
-		if (!in_array($this->_action, (array)$this->unlockedActions) && $isPost && $isNotRequestAction) {
-			if ($this->validatePost && $this->_validatePost($controller) === false) {
+		if (!in_array($this->_action, (array)$this->_config['unlockedActions']) &&
+			$isPost && $isNotRequestAction
+		) {
+			if ($this->_config['validatePost'] &&
+				$this->_validatePost($controller) === false
+			) {
 				return $this->blackHole($controller, 'auth');
 			}
 		}
@@ -197,13 +166,13 @@ class SecurityComponent extends Component {
  * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
  * @see SecurityComponent::$blackHoleCallback
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#handling-blackhole-callbacks
- * @throws Cake\Error\BadRequestException
+ * @throws \Cake\Error\BadRequestException
  */
 	public function blackHole(Controller $controller, $error = '') {
-		if (!$this->blackHoleCallback) {
+		if (!$this->_config['blackHoleCallback']) {
 			throw new Error\BadRequestException('The request has been black-holed');
 		}
-		return $this->_callback($controller, $this->blackHoleCallback, array($error));
+		return $this->_callback($controller, $this->_config['blackHoleCallback'], array($error));
 	}
 
 /**
@@ -217,7 +186,7 @@ class SecurityComponent extends Component {
 		if (isset($actions[0]) && is_array($actions[0])) {
 			$actions = $actions[0];
 		}
-		$this->{'require' . $method} = (empty($actions)) ? array('*') : $actions;
+		$this->config('require' . $method, (empty($actions)) ? array('*') : $actions);
 	}
 
 /**
@@ -227,10 +196,12 @@ class SecurityComponent extends Component {
  * @return boolean true if secure connection required
  */
 	protected function _secureRequired(Controller $controller) {
-		if (is_array($this->requireSecure) && !empty($this->requireSecure)) {
-			$requireSecure = $this->requireSecure;
+		if (is_array($this->_config['requireSecure']) &&
+			!empty($this->_config['requireSecure'])
+		) {
+			$requireSecure = $this->_config['requireSecure'];
 
-			if (in_array($this->_action, $requireSecure) || $this->requireSecure == array('*')) {
+			if (in_array($this->_action, $requireSecure) || $requireSecure == array('*')) {
 				if (!$this->request->is('ssl')) {
 					if (!$this->blackHole($controller, 'secure')) {
 						return null;
@@ -248,10 +219,13 @@ class SecurityComponent extends Component {
  * @return boolean true if authentication required
  */
 	protected function _authRequired(Controller $controller) {
-		if (is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($this->request->data)) {
-			$requireAuth = $this->requireAuth;
+		if (is_array($this->_config['requireAuth']) &&
+			!empty($this->_config['requireAuth']) &&
+			!empty($this->request->data)
+		) {
+			$requireAuth = $this->_config['requireAuth'];
 
-			if (in_array($this->request->params['action'], $requireAuth) || $this->requireAuth == array('*')) {
+			if (in_array($this->request->params['action'], $requireAuth) || $requireAuth == array('*')) {
 				if (!isset($controller->request->data['_Token'])) {
 					if (!$this->blackHole($controller, 'auth')) {
 						return null;
@@ -293,7 +267,10 @@ class SecurityComponent extends Component {
 		}
 		$data = $controller->request->data;
 
-		if (!isset($data['_Token']) || !isset($data['_Token']['fields']) || !isset($data['_Token']['unlocked'])) {
+		if (!isset($data['_Token']) ||
+			!isset($data['_Token']['fields']) ||
+			!isset($data['_Token']['unlocked'])
+		) {
 			return false;
 		}
 
@@ -305,7 +282,7 @@ class SecurityComponent extends Component {
 		if (strpos($token, ':')) {
 			list($token, $locked) = explode(':', $token, 2);
 		}
-		unset($check['_Token']);
+		unset($check['_Token'], $check['_csrfToken']);
 
 		$locked = explode('|', $locked);
 		$unlocked = explode('|', $unlocked);
@@ -326,7 +303,7 @@ class SecurityComponent extends Component {
 		}
 
 		$unlockedFields = array_unique(
-			array_merge((array)$this->disabledFields, (array)$this->unlockedFields, $unlocked)
+			array_merge((array)$this->config('disabledFields'), (array)$this->_config['unlockedFields'], $unlocked)
 		);
 
 		foreach ($fieldList as $i => $key) {
@@ -363,7 +340,7 @@ class SecurityComponent extends Component {
 /**
  * Manually add CSRF token information into the provided request object.
  *
- * @param Cake\Network\Request $request The request object to add into.
+ * @param \Cake\Network\Request $request The request object to add into.
  * @return boolean
  */
 	public function generateToken(Request $request) {
@@ -374,9 +351,9 @@ class SecurityComponent extends Component {
 			return false;
 		}
 		$token = array(
-			'allowedControllers' => $this->allowedControllers,
-			'allowedActions' => $this->allowedActions,
-			'unlockedFields' => $this->unlockedFields,
+			'allowedControllers' => $this->_config['allowedControllers'],
+			'allowedActions' => $this->_config['allowedActions'],
+			'unlockedFields' => $this->_config['unlockedFields'],
 		);
 
 		$tokenData = array();
@@ -397,7 +374,7 @@ class SecurityComponent extends Component {
  * @param string $method Method to execute
  * @param array $params Parameters to send to method
  * @return mixed Controller callback method's response
- * @throws Cake\Error\BadRequestException When a the blackholeCallback is not callable.
+ * @throws \Cake\Error\BadRequestException When a the blackholeCallback is not callable.
  */
 	protected function _callback(Controller $controller, $method, $params = array()) {
 		if (!is_callable(array($controller, $method))) {

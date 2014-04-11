@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.0.0.2277
+ * @since         1.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View\Helper;
@@ -65,7 +65,7 @@ class CacheHelper extends Helper {
 /**
  * Parses the view file and stores content for cache file building.
  *
- * @param Cake\Event\Event $event The event instance.
+ * @param \Cake\Event\Event $event The event instance.
  * @param string $viewFile
  * @param string $output The output for the file.
  * @return string Updated content.
@@ -79,7 +79,7 @@ class CacheHelper extends Helper {
 /**
  * Parses the layout file and stores content for cache file building.
  *
- * @param Cake\Event\Event $event The event instance.
+ * @param \Cake\Event\Event $event The event instance.
  * @param string $layoutFile
  * @return void
  */
@@ -142,7 +142,7 @@ class CacheHelper extends Helper {
 			$options = $cacheAction;
 			if (isset($cacheAction[$index])) {
 				if (is_array($cacheAction[$index])) {
-					$options = array_merge(array('duration' => 0, 'callbacks' => false), $cacheAction[$index]);
+					$options = $cacheAction[$index] + array('duration' => 0, 'callbacks' => false);
 				} else {
 					$cacheTime = $cacheAction[$index];
 				}

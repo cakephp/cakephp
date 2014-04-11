@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0.3830
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Validation;
@@ -290,13 +290,16 @@ class Validation {
  * - `ym` 2006/12 or 06/12 separators can be a space, period, dash, forward slash
  * - `y` 2006 just the year without any separators
  *
- * @param string $check a valid date string
+ * @param string|\DateTime $check a valid date string/object
  * @param string|array $format Use a string or an array of the keys above.
  *    Arrays should be passed as array('dmy', 'mdy', etc)
  * @param string $regex If a custom regular expression is used this is the only validation that will occur.
  * @return boolean Success
  */
 	public static function date($check, $format = 'ymd', $regex = null) {
+		if ($check instanceof \DateTime) {
+			return true;
+		}
 		if ($regex !== null) {
 			return static::_check($check, $regex);
 		}
@@ -344,7 +347,7 @@ class Validation {
  *
  * All values matching the "date" core validation rule, and the "time" one will be valid
  *
- * @param string $check Value to check
+ * @param string|\DateTime $check Value to check
  * @param string|array $dateFormat Format of the date part. See Validation::date for more information.
  * @param string $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
  * @return boolean True if the value is valid, false otherwise
@@ -352,6 +355,9 @@ class Validation {
  * @see Validation::time
  */
 	public static function datetime($check, $dateFormat = 'ymd', $regex = null) {
+		if ($check instanceof \DateTime) {
+			return true;
+		}
 		$valid = false;
 		$parts = explode(' ', $check);
 		if (!empty($parts) && count($parts) > 1) {
@@ -367,10 +373,13 @@ class Validation {
  * Validates time as 24hr (HH:MM) or am/pm ([H]H:MM[a|p]m)
  * Does not allow/validate seconds.
  *
- * @param string $check a valid time string
+ * @param string|\DateTime $check a valid time string/object
  * @return boolean Success
  */
 	public static function time($check) {
+		if ($check instanceof \DateTime) {
+			return true;
+		}
 		return static::_check($check, '%^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){0,2}$%');
 	}
 
@@ -421,6 +430,12 @@ class Validation {
 				$regex = "/^{$sign}{$dnum}{$exp}$/";
 			}
 		}
+
+		// account for localized floats.
+		$data = localeconv();
+		$check = str_replace($data['thousands_sep'], '', $check);
+		$check = str_replace($data['decimal_point'], '.', $check);
+
 		return static::_check($check, $regex);
 	}
 
@@ -563,9 +578,9 @@ class Validation {
  * @param boolean $caseInsensitive Set to true for case insensitive comparison.
  * @return boolean Success
  */
-	public static function multiple($check, $options = array(), $caseInsensitive = false) {
+	public static function multiple($check, array $options = array(), $caseInsensitive = false) {
 		$defaults = array('in' => null, 'max' => null, 'min' => null);
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 
 		$check = array_filter((array)$check);
 		if (empty($check)) {
@@ -790,7 +805,7 @@ class Validation {
  * @param boolean $caseInsensitive Set to true for case insensitive comparison.
  * @return boolean Success.
  */
-	public static function inList($check, $list, $caseInsensitive = false) {
+	public static function inList($check, array $list, $caseInsensitive = false) {
 		$strict = !is_numeric($check);
 
 		if ($caseInsensitive) {
@@ -879,7 +894,7 @@ class Validation {
 			'deep' => false,
 			'type' => null
 		);
-		$params = array_merge($defaults, $params);
+		$params += $defaults;
 		if ($params['country'] !== null) {
 			$params['country'] = mb_strtolower($params['country']);
 		}
@@ -920,12 +935,12 @@ class Validation {
 	}
 
 /**
- * Checks the mime type of a file. Comparison is case sensitive.
+ * Checks the mime type of a file.
  *
  * @param string|array $check
- * @param array $mimeTypes to check for
+ * @param array|string $mimeTypes Array of mime types or regex pattern to check.
  * @return boolean Success
- * @throws Cake\Error\Exception when mime type can not be determined.
+ * @throws \Cake\Error\Exception when mime type can not be determined.
  */
 	public static function mimeType($check, $mimeTypes = array()) {
 		if (is_array($check) && isset($check['tmp_name'])) {
@@ -937,6 +952,14 @@ class Validation {
 
 		if ($mime === false) {
 			throw new Exception('Can not determine the mimetype.');
+		}
+
+		if (is_string($mimeTypes)) {
+			return self::_check($mime, $mimeTypes);
+		}
+
+		foreach ($mimeTypes as $key => $val) {
+			$mimeTypes[$key] = strtolower($val);
 		}
 		return in_array($mime, $mimeTypes);
 	}
@@ -974,7 +997,7 @@ class Validation {
 			$check = $check['error'];
 		}
 
-		return $check === UPLOAD_ERR_OK;
+		return (int)$check === UPLOAD_ERR_OK;
 	}
 
 /**

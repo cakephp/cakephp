@@ -9,12 +9,16 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\ORM;
 
+use Cake\Database\Expression\IdentifierExpression;
+use Cake\Datasource\ResultSetDecorator;
+use Cake\Event\Event;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -69,19 +73,19 @@ abstract class Association {
 	const MANY_TO_MANY = 'manyToMany';
 
 /**
+ * Association type for many to one associations.
+ *
+ * @var string
+ */
+	const MANY_TO_ONE = 'manyToOne';
+
+/**
  * Name given to the association, it usually represents the alias
  * assigned to the target associated table
  *
  * @var string
  */
 	protected $_name;
-
-/**
- * Whether this association can be expressed directly in a query join
- *
- * @var boolean
- */
-	protected $_canBeJoined = false;
 
 /**
  * The class name of the target table object
@@ -91,9 +95,9 @@ abstract class Association {
 	protected $_className;
 
 /**
- * The name of the field representing the foreign key to the target table
+ * The name of the field representing the foreign key to the table to load
  *
- * @var string
+ * @var string|array
  */
 	protected $_foreignKey;
 
@@ -124,14 +128,14 @@ abstract class Association {
 /**
  * Source table instance
  *
- * @var Cake\ORM\Table
+ * @var \Cake\ORM\Table
  */
 	protected $_sourceTable;
 
 /**
  * Target table instance
  *
- * @var Cake\ORM\Table
+ * @var \Cake\ORM\Table
  */
 	protected $_targetTable;
 
@@ -164,7 +168,6 @@ abstract class Association {
  *
  * @param string $name The name given to the association
  * @param array $options A list of properties to be set on this object
- * @return void
  */
 	public function __construct($name, array $options = []) {
 		$defaults = [
@@ -210,8 +213,8 @@ abstract class Association {
  * Sets the table instance for the source side of the association. If no arguments
  * are passed, the current configured table instance is returned
  *
- * @param Cake\ORM\Table $table the instance to be assigned as source side
- * @return Cake\ORM\Table
+ * @param \Cake\ORM\Table $table the instance to be assigned as source side
+ * @return \Cake\ORM\Table
  */
 	public function source(Table $table = null) {
 		if ($table === null) {
@@ -224,8 +227,8 @@ abstract class Association {
  * Sets the table instance for the target side of the association. If no arguments
  * are passed, the current configured table instance is returned
  *
- * @param Cake\ORM\Table $table the instance to be assigned as target side
- * @return Cake\ORM\Table
+ * @param \Cake\ORM\Table $table the instance to be assigned as target side
+ * @return \Cake\ORM\Table
  */
 	public function target(Table $table = null) {
 		if ($table === null && $this->_targetTable) {
@@ -251,7 +254,7 @@ abstract class Association {
  * the target association. If no parameters are passed the current list is returned
  *
  * @param array $conditions list of conditions to be used
- * @see Cake\Database\Query::where() for examples on the format of the array
+ * @see \Cake\Database\Query::where() for examples on the format of the array
  * @return array
  */
 	public function conditions($conditions = null) {
@@ -266,7 +269,7 @@ abstract class Association {
  * If no parameters are passed the current field is returned
  *
  * @param string $key the key to be used to link both tables together
- * @return string
+ * @return string|array
  */
 	public function foreignKey($key = null) {
 		if ($key !== null) {
@@ -300,7 +303,8 @@ abstract class Association {
  * @return boolean
  */
 	public function canBeJoined($options = []) {
-		return $this->_canBeJoined;
+		$strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
+		return $strategy == $this::STRATEGY_JOIN;
 	}
 
 /**
@@ -382,20 +386,28 @@ abstract class Association {
  *   will be merged with any conditions originally configured for this association
  * - fields: a list of fields in the target table to include in the result
  * - type: The type of join to be used (e.g. INNER)
+ * - matching: Indicates whether the query records should be filtered based on
+ *   the records found on this association. This will force a 'INNER JOIN'
+ * - aliasPath: A dot separated string representing the path of association names
+ *   followed from the passed query main table to this association.
+ * - propertyPath: A dot separated string representing the path of association
+ *   properties to be followed from the passed query main entity to this
+ *   association
  *
  * @param Query $query the query to be altered to include the target table data
  * @param array $options Any extra options or overrides to be taken in account
  * @return void
+ * @throws \RuntimeException if the query builder passed does not return a query
+ * object
  */
 	public function attachTo(Query $query, array $options = []) {
 		$target = $this->target();
-		$source = $this->source();
 		$options += [
 			'includeFields' => true,
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
 			'fields' => [],
-			'type' => $this->joinType(),
+			'type' => empty($options['matching']) ? $this->joinType() : 'INNER',
 			'table' => $target->table()
 		];
 		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
@@ -407,52 +419,66 @@ abstract class Association {
 			}
 		}
 
-		$options['conditions'] = $query->newExpr()->add($options['conditions']);
-
+		$dummy = $target->query()->eagerLoaded(true);
 		if (!empty($options['queryBuilder'])) {
-			$newQuery = $options['queryBuilder']($target->query());
-			$options['fields'] = $newQuery->clause('select') ?: $options['fields'];
-			$options['conditions']->add($newQuery->clause('where'));
-		}
-
-		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
-		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
-
-		if (empty($options['fields'])) {
-			$f = isset($options['fields']) ? $options['fields'] : null;
-			if ($options['includeFields'] && ($f === null || $f !== false)) {
-				$options['fields'] = $target->schema()->columns();
+			$dummy = $options['queryBuilder']($dummy);
+			if (!($dummy instanceof Query)) {
+				throw new \RuntimeException(sprintf(
+					'Query builder for association "%s" did not return a query',
+					$this->name()
+				));
 			}
 		}
 
-		if (!empty($options['fields'])) {
-			$query->select($query->aliasFields($options['fields'], $target->alias()));
-		}
+		$dummy->where($options['conditions']);
+		$this->_dispatchBeforeFind($dummy);
+
+		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
+		$options['conditions'] = $dummy->clause('where');
+		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
+
+		$this->_appendFields($query, $dummy, $options);
+		$this->_formatAssociationResults($query, $dummy, $options);
+		$this->_bindNewAssociations($query, $dummy, $options);
 	}
 
 /**
  * Correctly nests a result row associated values into the correct array keys inside the
  * source results.
  *
- * @param array $result
+ * @param array $row
+ * @param string $nestKey The array key under which the results for this association
+ * should be found
+ * @param boolean $joined Whether or not the row is a result of a direct join
+ * with this association
  * @return array
  */
-	public function transformRow($row) {
+	public function transformRow($row, $nestKey, $joined) {
 		$sourceAlias = $this->source()->alias();
-		$targetAlias = $this->target()->alias();
+		$nestKey = $nestKey ?: $this->_name;
 		if (isset($row[$sourceAlias])) {
-			$row[$sourceAlias][$this->property()] = $row[$targetAlias];
+			$row[$sourceAlias][$this->property()] = $row[$nestKey];
+			unset($row[$nestKey]);
 		}
 		return $row;
 	}
 
 /**
- * Get the relationship type.
+ * Returns a modified row after appending a property for this association
+ * with the default empty value according to whether the association was
+ * joined or fetched externally.
  *
- * @return string Constant of either ONE_TO_ONE, MANY_TO_ONE, or MANY_TO_MANY.
+ * @param array $row
+ * @param boolean $joined Whether or not the row is a result of a direct join
+ * with this association
+ * @return array
  */
-	public function type() {
-		return self::ONE_TO_ONE;
+	public function defaultRowValue($row, $joined) {
+		$sourceAlias = $this->source()->alias();
+		if (isset($row[$sourceAlias])) {
+			$row[$sourceAlias][$this->property()] = null;
+		}
+		return $row;
 	}
 
 /**
@@ -473,14 +499,246 @@ abstract class Association {
 	}
 
 /**
- * Returns a single or multiple condition(s) to be appended to the generated join
- * clause for getting the results on the target table. If false is returned then
- * it will not attach any new conditions to the join clause
+ * Proxies the update operation to the target table's updateAll method
+ *
+ * @param array $fields A hash of field => new value.
+ * @param mixed $conditions Conditions to be used, accepts anything Query::where()
+ * can take.
+ * @see \Cake\ORM\Table::updateAll()
+ * @return boolean Success Returns true if one or more rows are affected.
+ */
+	public function updateAll($fields, $conditions) {
+		$target = $this->target();
+		$expression = $target->query()
+			->where($this->conditions())
+			->where($conditions)
+			->clause('where');
+		return $target->updateAll($fields, $expression);
+	}
+
+/**
+ * Proxies the delete operation to the target table's deleteAll method
+ *
+ * @param mixed $conditions Conditions to be used, accepts anything Query::where()
+ * can take.
+ * @return boolean Success Returns true if one or more rows are affected.
+ * @see \Cake\ORM\Table::delteAll()
+ */
+	public function deleteAll($conditions) {
+		$target = $this->target();
+		$expression = $target->query()
+			->where($this->conditions())
+			->where($conditions)
+			->clause('where');
+		return $target->deleteAll($expression);
+	}
+
+/**
+ * Triggers beforeFind on the target table for the query this association is
+ * attaching to
+ *
+ * @param \Cake\ORM\Query $query the query this association is attaching itself to
+ * @return void
+ */
+	protected function _dispatchBeforeFind($query) {
+		$table = $this->target();
+		$options = $query->getOptions();
+		$event = new Event('Model.beforeFind', $table, [$query, $options, false]);
+		$table->getEventManager()->dispatch($event);
+	}
+
+/**
+ * Helper function used to conditionally append fields to the select clause of
+ * a query from the fields found in another query object.
+ *
+ * @param \Cake\ORM\Query $query the query that will get the fields appended to
+ * @param \Cake\ORM\Query $surrogate the query having the fields to be copied from
+ * @param array $options options passed to the method `attachTo`
+ * @return void
+ */
+	protected function _appendFields($query, $surrogate, $options) {
+		$options['fields'] = $surrogate->clause('select') ?: $options['fields'];
+		$target = $this->_targetTable;
+		if (empty($options['fields'])) {
+			$f = isset($options['fields']) ? $options['fields'] : null;
+			if ($options['includeFields'] && ($f === null || $f !== false)) {
+				$options['fields'] = $target->schema()->columns();
+			}
+		}
+
+		if (!empty($options['fields'])) {
+			$query->select($query->aliasFields($options['fields'], $target->alias()));
+		}
+	}
+
+/**
+ * Adds a formatter function to the passed `$query` if the `$surrogate` query
+ * declares any other formatter. Since the `$surrogate` query correspond to
+ * the associated target table, the resulting formatter will be the result of
+ * applying the surrogate formatters to only the property corresponding to
+ * such table.
+ *
+ * @param \Cake\ORM\Query $query the query that will get the formatter applied to
+ * @param \Cake\ORM\Query $surrogate the query having formatters for the associated
+ * target table.
+ * @param array $options options passed to the method `attachTo`
+ * @return void
+ */
+	protected function _formatAssociationResults($query, $surrogate, $options) {
+		$formatters = $surrogate->formatResults();
+
+		if (!$formatters) {
+			return;
+		}
+
+		$property = $options['propertyPath'];
+		$query->formatResults(function($results) use ($formatters, $property) {
+			$extracted = $results->extract($property)->compile();
+			foreach ($formatters as $callable) {
+				$extracted = new ResultSetDecorator($callable($extracted));
+			}
+			return $results->insert($property, $extracted);
+		}, Query::PREPEND);
+	}
+
+/**
+ * Applies all attachable associations to `$query` out of the containments found
+ * in the `$surrogate` query.
+ *
+ * Copies all contained associations from the `$surrogate` query into the
+ * passed `$query`. Containments are altered so that they respect the associations
+ * chain from which they originated.
+ *
+ * @param \Cake\ORM\Query $query the query that will get the associations attached to
+ * @param \Cake\ORM\Query $surrogate the query having the containments to be attached
+ * @param array $options options passed to the method `attachTo`
+ * @return void
+ */
+	protected function _bindNewAssociations($query, $surrogate, $options) {
+		$contain = $surrogate->contain();
+		$target = $this->_targetTable;
+
+		if (!$contain) {
+			return;
+		}
+
+		$loader = $surrogate->eagerLoader();
+		$loader->attachAssociations($query, $target, $options['includeFields']);
+		$newBinds = [];
+		foreach ($contain as $alias => $value) {
+			$newBinds[$options['aliasPath'] . '.' . $alias] = $value;
+		}
+		$query->contain($newBinds);
+	}
+
+/**
+ * Returns a single or multiple conditions to be appended to the generated join
+ * clause for getting the results on the target table.
  *
  * @param array $options list of options passed to attachTo method
- * @return string|array|boolean
+ * @return array
+ * @throws \RuntimeException if the number of columns in the foreignKey do not
+ * match the number of columns in the source table primaryKey
  */
-	protected abstract function _joinCondition(array $options);
+	protected function _joinCondition(array $options) {
+		$conditions = [];
+		$tAlias = $this->target()->alias();
+		$sAlias = $this->source()->alias();
+		$foreignKey = (array)$options['foreignKey'];
+		$primaryKey = (array)$this->_sourceTable->primaryKey();
+
+		if (count($foreignKey) !== count($primaryKey)) {
+			$msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
+			throw new \RuntimeException(sprintf(
+				$msg,
+				$this->_name,
+				implode(', ', $foreignKey),
+				implode(', ', $primaryKey)
+			));
+		}
+
+		foreach ($foreignKey as $k => $f) {
+			$field = sprintf('%s.%s', $sAlias, $primaryKey[$k]);
+			$value = new IdentifierExpression(sprintf('%s.%s', $tAlias, $f));
+			$conditions[$field] = $value;
+		}
+
+		return $conditions;
+	}
+
+/**
+ * Proxies property retrieval to the target table. This is handy for getting this
+ * association's associations
+ *
+ * @param string $property the property name
+ * @return \Cake\ORM\Association
+ * @throws \RuntimeException if no association with such name exists
+ */
+	public function __get($property) {
+		return $this->target()->{$property};
+	}
+
+/**
+ * Proxies the isset call to the target table. This is handy to check if the
+ * target table has another association with the passed name
+ *
+ * @param string $property the property name
+ * @return boolean true if the property exists
+ */
+	public function __isset($property) {
+		return isset($this->target()->{$property});
+	}
+
+/**
+ * Proxies method calls to the target table.
+ *
+ * @param string $method name of the method to be invoked
+ * @param array $args List of arguments passed to the function
+ * @return mixed
+ * @throws \BadMethodCallException
+ */
+	public function __call($method, $argument) {
+		return call_user_func_array([$this->target(), $method], $argument);
+	}
+
+/**
+ * Get the relationship type.
+ *
+ * @return string Constant of either ONE_TO_ONE, MANY_TO_ONE, ONE_TO_MANY or MANY_TO_MANY.
+ */
+	public abstract function type();
+
+/**
+ * Eager loads a list of records in the target table that are related to another
+ * set of records in the source table. Source records can specified in two ways:
+ * first one is by passing a Query object setup to find on the source table and
+ * the other way is by explicitly passing an array of primary key values from
+ * the source table.
+ *
+ * The required way of passing related source records is controlled by "strategy"
+ * By default the subquery strategy is used, which requires a query on the source
+ * When using the select strategy, the list of primary keys will be used.
+ *
+ * Returns a closure that should be run for each record returned in an specific
+ * Query. This callable will be responsible for injecting the fields that are
+ * related to each specific passed row.
+ *
+ * Options array accepts the following keys:
+ *
+ * - query: Query object setup to find the source table records
+ * - keys: List of primary key values from the source table
+ * - foreignKey: The name of the field used to relate both tables
+ * - conditions: List of conditions to be passed to the query where() method
+ * - sort: The direction in which the records should be returned
+ * - fields: List of fields to select from the target table
+ * - contain: List of related tables to eager load associated to the target table
+ * - strategy: The name of strategy to use for finding target table records
+ * - nestKey: The array key under which results will be found when transforming the row
+ *
+ * @param array $options
+ * @return \Closure
+ */
+	public abstract function eagerLoader(array $options);
 
 /**
  * Handles cascading a delete from an associated model.
@@ -488,7 +746,7 @@ abstract class Association {
  * Each implementing class should handle the cascaded delete as
  * required.
  *
- * @param Cake\ORM\Entity $entity The entity that started the cascaded delete.
+ * @param \Cake\ORM\Entity $entity The entity that started the cascaded delete.
  * @param array $options The options for the original delete.
  * @return boolean Success
  */
@@ -499,6 +757,7 @@ abstract class Association {
  * association. This means that rows in the 'target' table would miss important
  * or required information if the row in 'source' did not exist.
  *
+ * @param \Cake\ORM\Table $side The potential Table with ownership
  * @return boolean
  */
 	public abstract function isOwningSide(Table $side);

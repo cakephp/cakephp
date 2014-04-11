@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,13 +9,14 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
 use Cake\Error;
 use \Countable;
@@ -29,6 +28,8 @@ use \Countable;
  * values correctly into the statement.
  */
 class ValuesExpression implements ExpressionInterface {
+
+	use TypeMapTrait;
 
 /**
  * Array of values to insert.
@@ -45,16 +46,9 @@ class ValuesExpression implements ExpressionInterface {
 	protected $_columns = [];
 
 /**
- * List of column types.
- *
- * @var array
- */
-	protected $_types = [];
-
-/**
  * The Query object to use as a values expression
  *
- * @var Cake\Database\Query
+ * @var \Cake\Database\Query
  */
 	protected $_query = false;
 
@@ -62,12 +56,11 @@ class ValuesExpression implements ExpressionInterface {
  * Constructor
  *
  * @param array $columns The list of columns that are going to be part of the values.
- * @param array $types A dictionary of column -> type names
- * @return void
+ * @param TypeMap $types A dictionary of column -> type names
  */
-	public function __construct(array $columns, array $types = []) {
+	public function __construct(array $columns, $typeMap) {
 		$this->_columns = $columns;
-		$this->_types = $types;
+		$this->typeMap($typeMap);
 	}
 
 /**
@@ -76,7 +69,7 @@ class ValuesExpression implements ExpressionInterface {
  * @param array|Query $data Array of data to append into the insert, or
  *   a query for doing INSERT INTO .. SELECT style commands
  * @return void
- * @throws Cake\Error\Exception When mixing array + Query data types.
+ * @throws \Cake\Error\Exception When mixing array + Query data types.
  */
 	public function add($data) {
 		if (
@@ -113,7 +106,7 @@ class ValuesExpression implements ExpressionInterface {
  * Sets the values to be inserted. If no params are passed, then it returns
  * the currently stored values
  *
- * @param array $cols arrays with values to be inserted
+ * @param array $values arrays with values to be inserted
  * @return array|ValuesExpression
  */
 	public function values($values = null) {
@@ -129,8 +122,8 @@ class ValuesExpression implements ExpressionInterface {
  * to insert records in the table. If no params are passed, then it returns
  * the currently stored query
  *
- * @param Cake\Database\Query $query
- * @return Cake\Database\Query
+ * @param \Cake\Database\Query $query
+ * @return \Cake\Database\Query
  */
 	public function query(Query $query = null) {
 		if ($query === null) {
@@ -142,7 +135,7 @@ class ValuesExpression implements ExpressionInterface {
 /**
  * Convert the values into a SQL string with placeholders.
  *
- * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @param \Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
 	public function sql(ValueBinder $generator) {
@@ -155,7 +148,7 @@ class ValuesExpression implements ExpressionInterface {
 		foreach ($this->_values as $row) {
 			$row = array_merge($defaults, $row);
 			foreach ($row as $column => $value) {
-				$type = isset($this->_types[$column]) ? $this->_types[$column] : null;
+				$type = $this->typeMap()->type($column);
 				$generator->bind($i++, $value, $type);
 			}
 		}

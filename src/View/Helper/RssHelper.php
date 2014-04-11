@@ -13,7 +13,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View\Helper;
@@ -273,7 +273,7 @@ class RssHelper extends Helper {
 /**
  * Converts a time in any format to an RSS time
  *
- * @param integer|string|DateTime $time
+ * @param integer|string|\DateTime $time
  * @return string An RSS-formatted timestamp
  * @see TimeHelper::toRSS
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::time
@@ -349,6 +349,15 @@ class RssHelper extends Helper {
 		$xml = $elem->saveXml();
 		$xml = trim(substr($xml, strpos($xml, '?>') + 2));
 		return $xml;
+	}
+
+/**
+ * Event listeners.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [];
 	}
 
 }

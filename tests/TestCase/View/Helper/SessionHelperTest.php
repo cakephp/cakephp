@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Helper;
@@ -37,8 +37,7 @@ class SessionHelperTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$controller = null;
-		$this->View = new View($controller);
+		$this->View = new View();
 		$this->Session = new SessionHelper($this->View);
 		Session::start();
 
@@ -121,11 +120,11 @@ class SessionHelperTest extends TestCase {
  */
 	public function testFlash() {
 		$result = $this->Session->flash('flash');
-		$expected = '<div id="flashMessage" class="message">This is a calling</div>';
+		$expected = '<div id="flash-message" class="message">This is a calling</div>';
 		$this->assertEquals($expected, $result);
 		$this->assertFalse($this->Session->check('Message.flash'));
 
-		$expected = '<div id="classyMessage" class="positive">Recorded</div>';
+		$expected = '<div id="classy-message" class="positive">Recorded</div>';
 		$result = $this->Session->flash('classy');
 		$this->assertEquals($expected, $result);
 
@@ -148,7 +147,7 @@ class SessionHelperTest extends TestCase {
  */
 	public function testFlashAttributes() {
 		$result = $this->Session->flash('flash', array('params' => array('class' => 'test-message')));
-		$expected = '<div id="flashMessage" class="test-message">This is a calling</div>';
+		$expected = '<div id="flash-message" class="test-message">This is a calling</div>';
 		$this->assertEquals($expected, $result);
 		$this->assertFalse($this->Session->check('Message.flash'));
 	}

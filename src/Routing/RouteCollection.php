@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Routing;
@@ -30,7 +30,7 @@ class RouteCollection implements \Countable {
  *
  * @var array
  */
-	protected $_routeTable = array();
+	protected $_routeTable = [];
 
 /**
  * A list of routes connected, in the order they were connected.
@@ -38,7 +38,7 @@ class RouteCollection implements \Countable {
  *
  * @var array
  */
-	protected $_routes = array();
+	protected $_routes = [];
 
 /**
  * The top most request's context. Updated whenever
@@ -46,24 +46,24 @@ class RouteCollection implements \Countable {
  *
  * @var array
  */
-	protected $_requestContext = array(
+	protected $_requestContext = [
 		'_base' => '',
 		'_port' => 80,
 		'_scheme' => 'http',
 		'_host' => 'localhost',
-	);
+	];
 
 /**
  * Add a route to the collection.
  *
  * Appends the route to the list of routes, and the route hashtable.
- * @param Cake\Routing\Route\Route $route The route to add
+ * @param \Cake\Routing\Route\Route $route The route to add
  * @return void
  */
 	public function add(Route $route) {
 		$name = $route->getName();
 		if (!isset($this->_routeTable[$name])) {
-			$this->_routeTable[$name] = array();
+			$this->_routeTable[$name] = [];
 		}
 		$this->_routeTable[$name][] = $route;
 		$this->_routes[] = $route;
@@ -123,22 +123,22 @@ class RouteCollection implements \Countable {
 		if (isset($url['plugin'])) {
 			$plugin = $url['plugin'];
 		}
-		$fallbacks = array(
+		$fallbacks = [
 			'%2$s:%3$s',
 			'%2$s:_action',
 			'_controller:%3$s',
 			'_controller:_action'
-		);
+		];
 		if ($plugin) {
-			$fallbacks = array(
+			$fallbacks = [
 				'%1$s.%2$s:%3$s',
 				'%1$s.%2$s:_action',
 				'%1$s._controller:%3$s',
 				'%1$s._controller:_action',
 				'_plugin._controller:%3$s',
 				'_plugin._controller:_action',
-				'_controller:_action',
-			);
+				'_controller:_action'
+			];
 		}
 		foreach ($fallbacks as $i => $template) {
 			$fallbacks[$i] = sprintf($template, $plugin, $url['controller'], $url['action']);
@@ -219,10 +219,19 @@ class RouteCollection implements \Countable {
  */
 	public function get($index) {
 		if (is_string($index)) {
-			$routes = isset($this->_routeTable[$index]) ? $this->_routeTable[$index] : array(null);
+			$routes = isset($this->_routeTable[$index]) ? $this->_routeTable[$index] : [null];
 			return $routes[0];
 		}
 		return isset($this->_routes[$index]) ? $this->_routes[$index] : null;
+	}
+
+/**
+ * Get the list of all connected routes.
+ *
+ * @return array.
+ */
+	public function all() {
+		return $this->_routes;
 	}
 
 /**
@@ -238,16 +247,16 @@ class RouteCollection implements \Countable {
  * Populate the request context used to generate URL's
  * Generally set to the last/most recent request.
  *
- * @param Cake\Network\Request $request
+ * @param \Cake\Network\Request $request
  * @return void
  */
 	public function setContext(Request $request) {
-		$this->_requestContext = array(
+		$this->_requestContext = [
 			'_base' => $request->base,
 			'_port' => $request->port(),
 			'_scheme' => $request->scheme(),
 			'_host' => $request->host()
-		);
+		];
 	}
 
 /**

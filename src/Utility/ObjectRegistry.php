@@ -9,6 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
@@ -20,13 +21,11 @@ namespace Cake\Utility;
  * as a super class for various composition based re-use features in CakePHP.
  *
  * Each subclass needs to implement the various abstract methods to complete
- * the template method load(). This class replaces ObjectCollection
- * from previous versions of CakePHP.
+ * the template method load().
  *
- * @since CakePHP 3.0
- * @see Cake\Controller\ComponentRegistry
- * @see Cake\View\HelperRegistry
- * @see Cake\Console\TaskRegistry
+ * @see \Cake\Controller\ComponentRegistry
+ * @see \Cake\View\HelperRegistry
+ * @see \Cake\Console\TaskRegistry
  */
 abstract class ObjectRegistry {
 
@@ -38,10 +37,17 @@ abstract class ObjectRegistry {
 	protected $_loaded = [];
 
 /**
+ * The event manager to bind components to.
+ *
+ * @var \Cake\Event\EventManager
+ */
+	protected $_eventManager;
+
+/**
  * Loads/constructs a object instance.
  *
  * Will return the instance in the registry if it already exists.
- * If a subclass provides event support, you can use `$settings['enabled'] = false`
+ * If a subclass provides event support, you can use `$config['enabled'] = false`
  * to exclude constructed objects from being registered for events.
  *
  * Using Cake\Controller\Controller::$components as an example. You can alias
@@ -57,17 +63,17 @@ abstract class ObjectRegistry {
  *
  * All calls to the `Email` component would use `AliasedEmail` instead.
  *
- * @param string $name The name/class of the object to load.
- * @param array $settings Additional settings to use when loading the object.
+ * @param string $objectName The name/class of the object to load.
+ * @param array $config Additional settings to use when loading the object.
  * @return mixed
  */
-	public function load($objectName, $settings = []) {
+	public function load($objectName, $config = []) {
 		list($plugin, $name) = pluginSplit($objectName);
 		if (isset($this->_loaded[$name])) {
 			return $this->_loaded[$name];
 		}
-		if (is_array($settings) && isset($settings['className'])) {
-			$className = $this->_resolveClassName($settings['className']);
+		if (is_array($config) && isset($config['className'])) {
+			$className = $this->_resolveClassName($config['className']);
 		}
 		if (!isset($className)) {
 			$className = $this->_resolveClassName($objectName);
@@ -75,7 +81,7 @@ abstract class ObjectRegistry {
 		if (!$className) {
 			$this->_throwMissingClassError($objectName, substr($plugin, 0, -1));
 		}
-		$instance = $this->_create($className, $name, $settings);
+		$instance = $this->_create($className, $name, $config);
 		$this->_loaded[$name] = $instance;
 		return $instance;
 	}
@@ -93,7 +99,7 @@ abstract class ObjectRegistry {
  *
  * @param string $class The class that is missing.
  * @param string $plugin The plugin $class is missing from.
- * @throw Cake\Exception
+ * @throws \Cake\Error\Exception
  */
 	abstract protected function _throwMissingClassError($class, $plugin);
 
@@ -105,10 +111,10 @@ abstract class ObjectRegistry {
  *
  * @param string $class The class to build.
  * @param string $alias The alias of the object.
- * @param array $settings The settings for construction
+ * @param array $config The Configuration settings for construction
  * @return mixed
  */
-	abstract protected function _create($class, $alias, $settings);
+	abstract protected function _create($class, $alias, $config);
 
 /**
  * Get the loaded object list, or get the object instance at a given name.
@@ -156,13 +162,13 @@ abstract class ObjectRegistry {
 	public function normalizeArray($objects) {
 		$normal = array();
 		foreach ($objects as $i => $objectName) {
-			$options = array();
+			$config = array();
 			if (!is_int($i)) {
-				$options = (array)$objectName;
+				$config = (array)$objectName;
 				$objectName = $i;
 			}
 			list(, $name) = pluginSplit($objectName);
-			$normal[$name] = array('class' => $objectName, 'settings' => $options);
+			$normal[$name] = array('class' => $objectName, 'config' => $config);
 		}
 		return $normal;
 	}
@@ -170,24 +176,52 @@ abstract class ObjectRegistry {
 /**
  * Clear loaded instances in the registry.
  *
+ * If the registry subclass has an event manager, the objects will be detached from events as well.
+ *
  * @return void
  */
 	public function reset() {
-		$this->_loaded = [];
+		foreach (array_keys($this->_loaded) as $name) {
+			$this->unload($name);
+		}
 	}
 
 /**
- * set an object directly into the registry by name
+ * Set an object directly into the registry by name.
  *
- * This is primarily to aide testing
+ * If this collection implements events, the passed object will
+ * be attached into the event manager
  *
- * @param string $objectName
+ * @param string $objectName The name of the object to set in the registry.
  * @param object $object instance to store in the registry
  * @return void
  */
 	public function set($objectName, $object) {
 		list($plugin, $name) = pluginSplit($objectName);
+		$this->unload($objectName);
+		if (isset($this->_eventManager)) {
+			$this->_eventManager->attach($object);
+		}
 		$this->_loaded[$name] = $object;
+	}
+
+/**
+ * Remove an object from the registry.
+ *
+ * If this registry has an event manager, the object will be detached from any events as well.
+ *
+ * @param string $objectName The name of the object to remove from the registry.
+ * @return void
+ */
+	public function unload($objectName) {
+		if (empty($this->_loaded[$objectName])) {
+			return;
+		}
+		$object = $this->_loaded[$objectName];
+		if (isset($this->_eventManager)) {
+			$this->_eventManager->detach($object);
+		}
+		unset($this->_loaded[$objectName]);
 	}
 
 }

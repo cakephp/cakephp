@@ -11,10 +11,12 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Network\Email;
+
+use Cake\Core\InstanceConfigTrait;
 
 /**
  * Abstract transport for sending email
@@ -22,17 +24,19 @@ namespace Cake\Network\Email;
  */
 abstract class AbstractTransport {
 
+	use InstanceConfigTrait;
+
 /**
- * Configurations
+ * Default config for this class
  *
  * @var array
  */
-	protected $_config = array();
+	protected $_defaultConfig = [];
 
 /**
  * Send mail
  *
- * @param Cake\Network\Email\Email $email
+ * @param \Cake\Network\Email\Email $email
  * @return array
  */
 	abstract public function send(Email $email);
@@ -42,21 +46,8 @@ abstract class AbstractTransport {
  *
  * @param array $config The configuration data for the transport.
  */
-	public function __construct($config = null) {
+	public function __construct($config = []) {
 		$this->config($config);
-	}
-
-/**
- * Set the config
- *
- * @param array $config
- * @return array Returns configs
- */
-	public function config($config = null) {
-		if (is_array($config)) {
-			$this->_config = $config + $this->_config;
-		}
-		return $this->_config;
 	}
 
 /**

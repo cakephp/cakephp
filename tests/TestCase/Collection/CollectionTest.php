@@ -9,11 +9,12 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Collection;
 
+use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\TestSuite\TestCase;
 
@@ -67,11 +68,25 @@ class CollectionTest extends TestCase {
 	}
 
 /**
+ * Test filter() with no callback.
+ *
+ * @return void
+ */
+	public function testFilterNoCallback() {
+		$items = [1, 2, 0, 3, false, 4, null, 5, ''];
+		$collection = new Collection($items);
+		$result = $collection->filter()->toArray();
+		$expected = [1, 2, 3, 4, 5];
+		$this->assertEquals($expected, array_values($result));
+	}
+
+/**
  * Tests that it is possible to chain filter() as it returns a collection object
  *
  * @return void
  */
 	public function testFilterChaining() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		$items = ['a' => 1, 'b' => 2, 'c' => 3];
 		$collection = new Collection($items);
 		$callable = $this->getMock('stdClass', ['__invoke']);
@@ -92,6 +107,7 @@ class CollectionTest extends TestCase {
  * @return void
  */
 	public function testReject() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		$items = ['a' => 1, 'b' => 2, 'c' => 3];
 		$collection = new Collection($items);
 		$result = $collection->reject(function ($v, $k, $items) use ($collection) {
@@ -296,7 +312,7 @@ class CollectionTest extends TestCase {
 		$this->assertEquals(['a' => ['b' => ['c' => 10]]], $collection->max('a.b.c'));
 
 		$callback = function($e) {
-			return sin($e['a']['b']['c']);
+			return $e['a']['b']['c'] * - 1;
 		};
 		$this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max($callback));
 	}
@@ -542,6 +558,7 @@ class CollectionTest extends TestCase {
  * @return void
  */
 	public function testMatch() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		$items = [
 			['id' => 1, 'name' => 'foo', 'thing' => ['parent_id' => 10]],
 			['id' => 2, 'name' => 'bar', 'thing' => ['parent_id' => 11]],
@@ -570,6 +587,7 @@ class CollectionTest extends TestCase {
  * @return void
  */
 	public function testFirstMatch() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		$items = [
 			['id' => 1, 'name' => 'foo', 'thing' => ['parent_id' => 10]],
 			['id' => 2, 'name' => 'bar', 'thing' => ['parent_id' => 11]],
@@ -629,6 +647,295 @@ class CollectionTest extends TestCase {
 		$compiled = $collection->map($callable)->compile();
 		$this->assertEquals(['a' => 4, 'b' => 5, 'c' => 6], $compiled->toArray());
 		$this->assertEquals(['a' => 4, 'b' => 5, 'c' => 6], $compiled->toArray());
+	}
+
+/**
+ * Tests the combine method
+ *
+ * @return void
+ */
+	public function testCombine() {
+		$items = [
+			['id' => 1, 'name' => 'foo', 'parent' => 'a'],
+			['id' => 2, 'name' => 'bar', 'parent' => 'b'],
+			['id' => 3, 'name' => 'baz', 'parent' => 'a']
+		];
+		$collection = (new Collection($items))->combine('id', 'name');
+		$expected = [1 => 'foo', 2 => 'bar', 3 => 'baz'];
+		$this->assertEquals($expected, $collection->toArray());
+
+		$expected = ['foo' => 1, 'bar' => 2, 'baz' => 3];
+		$collection = (new Collection($items))->combine('name', 'id');
+		$this->assertEquals($expected, $collection->toArray());
+
+		$collection = (new Collection($items))->combine('id', 'name', 'parent');
+		$expected = ['a' => [1 => 'foo', 3 => 'baz'], 'b' => [2 => 'bar']];
+		$this->assertEquals($expected, $collection->toArray());
+
+		$expected = [
+			'0-1' => ['foo-0-1' => '0-1-foo'],
+			'1-2' => ['bar-1-2' => '1-2-bar'],
+			'2-3' => ['baz-2-3' => '2-3-baz']
+		];
+		$collection = (new Collection($items))->combine(
+			function($value, $key) {
+				return $value['name'] . '-' . $key;
+			},
+			function($value, $key) {
+				return $key . '-' . $value['name'];
+			},
+			function($value, $key) {
+				return $key . '-' . $value['id'];
+			}
+		);
+		$this->assertEquals($expected, $collection->toArray());
+
+		$collection = (new Collection($items))->combine('id', 'crazy');
+		$this->assertEquals([1 => null, 2 => null, 3 => null], $collection->toArray());
+	}
+
+/**
+ * Tests the nest method with only one level
+ *
+ * @return void
+ */
+	public function testNest() {
+		$items = [
+			['id' => 1, 'parent_id' => null],
+			['id' => 2, 'parent_id' => 1],
+			['id' => 3, 'parent_id' => 1],
+			['id' => 4, 'parent_id' => 1],
+			['id' => 5, 'parent_id' => 6],
+			['id' => 6, 'parent_id' => null],
+			['id' => 7, 'parent_id' => 1],
+			['id' => 8, 'parent_id' => 6],
+			['id' => 9, 'parent_id' => 6],
+			['id' => 10, 'parent_id' => 6]
+		];
+		$collection = (new Collection($items))->nest('id', 'parent_id');
+		$expected = [
+			[
+				'id' => 1,
+				'parent_id' => null,
+				'children' => [
+					['id' => 2, 'parent_id' => 1, 'children' => []],
+					['id' => 3, 'parent_id' => 1, 'children' => []],
+					['id' => 4, 'parent_id' => 1, 'children' => []],
+					['id' => 7, 'parent_id' => 1, 'children' => []]
+				]
+			],
+			[
+				'id' => 6,
+				'parent_id' => null,
+				'children' => [
+					['id' => 5, 'parent_id' => 6, 'children' => []],
+					['id' => 8, 'parent_id' => 6, 'children' => []],
+					['id' => 9, 'parent_id' => 6, 'children' => []],
+					['id' => 10, 'parent_id' => 6, 'children' => []]
+				]
+			]
+		];
+		$this->assertEquals($expected, $collection->toArray());
+	}
+
+/**
+ * Tests the nest method with more than one level
+ *
+ * @return void
+ */
+	public function testNestMultiLevel() {
+		$items = [
+			['id' => 1, 'parent_id' => null],
+			['id' => 2, 'parent_id' => 1],
+			['id' => 3, 'parent_id' => 2],
+			['id' => 4, 'parent_id' => 2],
+			['id' => 5, 'parent_id' => 3],
+			['id' => 6, 'parent_id' => null],
+			['id' => 7, 'parent_id' => 3],
+			['id' => 8, 'parent_id' => 4],
+			['id' => 9, 'parent_id' => 6],
+			['id' => 10, 'parent_id' => 6]
+		];
+		$collection = (new Collection($items))->nest('id', 'parent_id');
+		$expected = [
+			[
+				'id' => 1,
+				'parent_id' => null,
+				'children' => [
+					[
+						'id' => 2,
+						'parent_id' => 1,
+						'children' => [
+							[
+								'id' => 3,
+								'parent_id' => 2,
+								'children' => [
+									['id' => 5, 'parent_id' => 3, 'children' => []],
+									['id' => 7, 'parent_id' => 3, 'children' => []]
+								]
+							],
+							[
+								'id' => 4,
+								'parent_id' => 2,
+								'children' => [
+									['id' => 8, 'parent_id' => 4, 'children' => []]
+								]
+							]
+						]
+					]
+				]
+			],
+			[
+				'id' => 6,
+				'parent_id' => null,
+				'children' => [
+					['id' => 9, 'parent_id' => 6, 'children' => []],
+					['id' => 10, 'parent_id' => 6, 'children' => []]
+				]
+			]
+		];
+		$this->assertEquals($expected, $collection->toArray());
+	}
+
+/**
+ * Tests the nest method with more than one level
+ *
+ * @return void
+ */
+	public function testNestObjects() {
+		$items = [
+			new ArrayObject(['id' => 1, 'parent_id' => null]),
+			new ArrayObject(['id' => 2, 'parent_id' => 1]),
+			new ArrayObject(['id' => 3, 'parent_id' => 2]),
+			new ArrayObject(['id' => 4, 'parent_id' => 2]),
+			new ArrayObject(['id' => 5, 'parent_id' => 3]),
+			new ArrayObject(['id' => 6, 'parent_id' => null]),
+			new ArrayObject(['id' => 7, 'parent_id' => 3]),
+			new ArrayObject(['id' => 8, 'parent_id' => 4]),
+			new ArrayObject(['id' => 9, 'parent_id' => 6]),
+			new ArrayObject(['id' => 10, 'parent_id' => 6])
+		];
+		$collection = (new Collection($items))->nest('id', 'parent_id');
+		$expected = [
+			new ArrayObject([
+				'id' => 1,
+				'parent_id' => null,
+				'children' => [
+					new ArrayObject([
+						'id' => 2,
+						'parent_id' => 1,
+						'children' => [
+							new ArrayObject([
+								'id' => 3,
+								'parent_id' => 2,
+								'children' => [
+									new ArrayObject(['id' => 5, 'parent_id' => 3, 'children' => []]),
+									new ArrayObject(['id' => 7, 'parent_id' => 3, 'children' => []])
+								]
+							]),
+							new ArrayObject([
+								'id' => 4,
+								'parent_id' => 2,
+								'children' => [
+									new ArrayObject(['id' => 8, 'parent_id' => 4, 'children' => []])
+								]
+							])
+						]
+					])
+				]
+			]),
+			new ArrayObject([
+				'id' => 6,
+				'parent_id' => null,
+				'children' => [
+					new ArrayObject(['id' => 9, 'parent_id' => 6, 'children' => []]),
+					new ArrayObject(['id' => 10, 'parent_id' => 6, 'children' => []])
+				]
+			])
+		];
+		$this->assertEquals($expected, $collection->toArray());
+	}
+
+/**
+ * Tests insert
+ *
+ * @return void
+ */
+	public function testInsert() {
+		$items = [['a' => 1], ['b' => 2]];
+		$collection = new Collection($items);
+		$iterator = $collection->insert('c', [3, 4]);
+		$this->assertInstanceOf('\Cake\Collection\Iterator\InsertIterator', $iterator);
+		$this->assertEquals(
+			[['a' => 1, 'c' => 3], ['b' => 2, 'c' => 4]],
+			iterator_to_array($iterator)
+		);
+	}
+
+/**
+ * Provider for testing each of the direcations for listNested
+ *
+ * @return void
+ */
+	public function nestedListProvider() {
+		return [
+			['desc', [1, 2, 3, 5, 7, 4, 8, 6, 9, 10]],
+			['asc', [5, 7, 3, 8, 4, 2, 1, 9, 10, 6]],
+			['leaves', [5, 7, 8, 9, 10]]
+		];
+	}
+
+/**
+ * Tests the listNested method with the default 'children' nesting key
+ *
+ * @dataProvider nestedListProvider
+ * @return void
+ */
+	public function testListNested($dir, $expected) {
+		$items = [
+			['id' => 1, 'parent_id' => null],
+			['id' => 2, 'parent_id' => 1],
+			['id' => 3, 'parent_id' => 2],
+			['id' => 4, 'parent_id' => 2],
+			['id' => 5, 'parent_id' => 3],
+			['id' => 6, 'parent_id' => null],
+			['id' => 7, 'parent_id' => 3],
+			['id' => 8, 'parent_id' => 4],
+			['id' => 9, 'parent_id' => 6],
+			['id' => 10, 'parent_id' => 6]
+		];
+		$collection = (new Collection($items))->nest('id', 'parent_id')->listNested($dir);
+		$this->assertEquals($expected, $collection->extract('id')->toArray(false));
+	}
+
+/**
+ * Tests using listNested with a different nesting key
+ *
+ * @return void
+ */
+	public function testListNestedCustomKey() {
+		$items = [
+			['id' => 1, 'stuff' => [['id' => 2, 'stuff' => [['id' => 3]]]]],
+			['id' => 4, 'stuff' => [['id' => 5]]]
+		];
+		$collection = (new Collection($items))->listNested('desc', 'stuff');
+		$this->assertEquals(range(1, 5), $collection->extract('id')->toArray(false));
+	}
+
+/**
+ * Tests flattening the collection using a custom callable function
+ *
+ * @return void
+ */
+	public function testListNestedWithCallable() {
+		$items = [
+			['id' => 1, 'stuff' => [['id' => 2, 'stuff' => [['id' => 3]]]]],
+			['id' => 4, 'stuff' => [['id' => 5]]]
+		];
+		$collection = (new Collection($items))->listNested('desc', function($item) {
+			return isset($item['stuff']) ? $item['stuff'] : [];
+		});
+		$this->assertEquals(range(1, 5), $collection->extract('id')->toArray(false));
 	}
 
 }

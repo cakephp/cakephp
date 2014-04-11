@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.2.9
+ * @since         0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
@@ -216,7 +216,7 @@ class File {
  *
  * @param string $data Data to write to this File.
  * @param string $mode Mode of writing. {@link http://php.net/fwrite See fwrite()}.
- * @param string $force Force the file to open
+ * @param boolean $force Force the file to open
  * @return boolean Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::write
  */
@@ -243,7 +243,7 @@ class File {
  * Append given data string to this file.
  *
  * @param string $data Data to write
- * @param string $force Force the file to open
+ * @param boolean $force Force the file to open
  * @return boolean Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::append
  */
@@ -555,7 +555,7 @@ class File {
 			if (!$finfo) {
 				return false;
 			}
-			list($type, $charset) = explode(';', $finfo);
+			list($type) = explode(';', $finfo);
 			return $type;
 		}
 		if (function_exists('mime_content_type')) {

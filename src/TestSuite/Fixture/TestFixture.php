@@ -9,16 +9,16 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4667
+ * @since         1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\App;
 use Cake\Database\Connection;
-use Cake\Database\ConnectionManager;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\Table;
+use Cake\Datasource\ConnectionManager;
 use Cake\Error;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
@@ -83,14 +83,14 @@ class TestFixture {
 /**
  * The Cake\Database\Schema\Table for this fixture.
  *
- * @var Cake\Database\Schema\Table;
+ * @var \Cake\Database\Schema\Table
  */
 	protected $_schema;
 
 /**
  * Instantiate the fixture.
  *
- * @throws Cake\Error\Exception on invalid datasource usage.
+ * @throws \Cake\Error\Exception on invalid datasource usage.
  */
 	public function __construct() {
 		$connection = 'test';
@@ -112,7 +112,7 @@ class TestFixture {
  * Initialize the fixture.
  *
  * @return void
- * @throws Cake\Error\MissingModelException Whe importing from a model that does not exist.
+ * @throws \Cake\Error\MissingModelException Whe importing from a model that does not exist.
  */
 	public function init() {
 		if ($this->table === null) {
@@ -147,7 +147,8 @@ class TestFixture {
 			}
 			// Trigger errors on deprecated usage.
 			if (is_array($data) && isset($data['key'])) {
-				$msg = 'Usage of the `key` options in columns is not supported. Try using the upgrade shell to migrate your fixtures.`';
+				$msg = 'Usage of the `key` options in columns is not supported. Try using the upgrade shell to migrate your fixtures.';
+				$msg .= ' You can download the upgrade shell from https://github.com/cakephp/upgrade.';
 				trigger_error($msg, E_USER_NOTICE);
 			}
 			$this->_schema->addColumn($field, $data);
@@ -161,6 +162,7 @@ class TestFixture {
 			// Trigger errors on deprecated usage.
 			if (empty($data['type'])) {
 				$msg = 'Indexes must define a type. Try using the upgrade shell to migrate your fixtures.';
+				$msg .= ' You can download the upgrade shell from https://github.com/cakephp/upgrade.';
 				trigger_error($msg, E_USER_NOTICE);
 			}
 			foreach ($this->fields['_indexes'] as $name => $data) {
@@ -176,7 +178,7 @@ class TestFixture {
  * Build fixture schema from a table in another datasource.
  *
  * @return void
- * @throws Cake\Error\Exception when trying to import from an empty table.
+ * @throws \Cake\Error\Exception when trying to import from an empty table.
  */
 	protected function _schemaFromImport() {
 		if (!is_array($this->import)) {
@@ -200,8 +202,8 @@ class TestFixture {
 /**
  * Get/Set the Cake\Database\Schema\Table instance used by this fixture.
  *
- * @param Cake\Database\Schema\Table $schema The table to set.
- * @return Cake\Database\Schema\Table|null
+ * @param \Cake\Database\Schema\Table $schema The table to set.
+ * @return \Cake\Database\Schema\Table|null
  */
 	public function schema(Table $schema = null) {
 		if ($schema) {
@@ -313,7 +315,7 @@ class TestFixture {
  * Truncates the current fixture. Can be overwritten by classes extending
  * CakeFixture to trigger other events before / after truncate.
  *
- * @param Connection DboSource $db A reference to a db instance
+ * @param Connection $db A reference to a db instance
  * @return boolean
  */
 	public function truncate(Connection $db) {

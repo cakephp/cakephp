@@ -11,11 +11,12 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.3
+ * @since         1.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Utility\Inflector;
 
+$isController = strtolower($type) === 'controller';
 echo "<?php\n";
 ?>
 namespace <?= $baseNamespace; ?>\Test\TestCase\<?= $subNamespace ?>;
@@ -23,7 +24,7 @@ namespace <?= $baseNamespace; ?>\Test\TestCase\<?= $subNamespace ?>;
 <?php foreach ($uses as $dependency): ?>
 use <?= $dependency; ?>;
 <?php endforeach; ?>
-<?php if ($type === 'Controller'): ?>
+<?php if ($isController): ?>
 use Cake\TestSuite\ControllerTestCase;
 <?php else: ?>
 use Cake\TestSuite\TestCase;
@@ -32,7 +33,7 @@ use Cake\TestSuite\TestCase;
 /**
  * <?= $fullClassName; ?> Test Case
  */
-<?php if ($type === 'Controller'): ?>
+<?php if ($isController): ?>
 class <?= $className; ?>Test extends ControllerTestCase {
 <?php else: ?>
 class <?= $className; ?>Test extends TestCase {

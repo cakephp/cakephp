@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console;
@@ -87,7 +87,7 @@ class ShellDispatcher {
  * Defines current working environment.
  *
  * @return void
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	protected function _initEnvironment() {
 		if (!$this->_bootstrap()) {
@@ -132,7 +132,7 @@ class ShellDispatcher {
  * Dispatch a request.
  *
  * @return boolean
- * @throws Cake\Error\MissingShellMethodException
+ * @throws \Cake\Error\MissingShellMethodException
  */
 	protected function _dispatch() {
 		$shell = $this->shiftArgs();
@@ -184,7 +184,7 @@ class ShellDispatcher {
  *
  * @param string $shell Optionally the name of a plugin
  * @return mixed An object
- * @throws Cake\Error\MissingShellException when errors are encountered.
+ * @throws \Cake\Error\MissingShellException when errors are encountered.
  */
 	protected function _getShell($shell) {
 		list($plugin, $shell) = pluginSplit($shell);
@@ -263,7 +263,7 @@ class ShellDispatcher {
 			$params = str_replace('/', '\\', $params);
 		}
 
-		$this->params = array_merge($this->params, $params);
+		$this->params = $params + $this->params;
 	}
 
 /**

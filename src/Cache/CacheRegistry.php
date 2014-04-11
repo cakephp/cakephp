@@ -9,6 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Cache;
@@ -21,8 +22,6 @@ use Cake\Utility\ObjectRegistry;
  * An object registry for cache engines.
  *
  * Used by Cake\Cache\Cache to load and manage cache engines.
- *
- * @since CakePHP 3.0
  */
 class CacheRegistry extends ObjectRegistry {
 
@@ -48,7 +47,7 @@ class CacheRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the cache is missing in.
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\Exception(sprintf('Cache engine %s is not available.', $class));
@@ -62,7 +61,7 @@ class CacheRegistry extends ObjectRegistry {
  * @param string $alias The alias of the object.
  * @param array $config An array of settings to use for the cache engine.
  * @return CacheEngine The constructed CacheEngine class.
- * @throws Cake\Error\Exception when an object doesn't implement
+ * @throws \Cake\Error\Exception when an object doesn't implement
  *    the correct interface.
  */
 	protected function _create($class, $alias, $config) {

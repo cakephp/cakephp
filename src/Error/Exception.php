@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html
- * @since         CakePHP(tm) v 3.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Error;
@@ -47,7 +47,7 @@ class Exception extends BaseException {
  *
  * @param string|array $message Either the string of the error message, or an array of attributes
  *   that are made available in the view, and sprintf()'d into Exception::$_messageTemplate
- * @param string $code The code of the error, is also the HTTP status code for the error.
+ * @param integer $code The code of the error, is also the HTTP status code for the error.
  */
 	public function __construct($message, $code = 500) {
 		if (is_array($message)) {

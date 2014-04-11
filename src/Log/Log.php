@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.2.9
+ * @since         0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Log;
@@ -116,13 +116,6 @@ class Log {
 	protected static $_dirtyConfig = false;
 
 /**
- * An array of configured loggers.
- *
- * @var array
- */
-	protected static $_config = [];
-
-/**
  * LogEngineRegistry class
  *
  * @var LogEngineRegistry
@@ -163,7 +156,7 @@ class Log {
 	);
 
 /**
- * initialize ObjectCollection
+ * Initializes registry and configurations
  *
  * @return void
  */
@@ -254,7 +247,7 @@ class Log {
  * @param string|array $key The name of the logger config, or an array of multiple configs.
  * @param array $config An array of name => config data for adapter.
  * @return mixed null when adding configuration and an array of configuration data when reading.
- * @throws Cake\Error\Exception When trying to modify an existing config.
+ * @throws \Cake\Error\Exception When trying to modify an existing config.
  * @see App/Config/logging.php
  */
 	public static function config($key, $config = null) {
@@ -269,7 +262,7 @@ class Log {
  * Get a logging engine.
  *
  * @param string $name Key name of a configured adapter to get.
- * @return $mixed instance of BaseLog or false if not found
+ * @return mixed Instance of BaseLog or false if not found
  */
 	public static function engine($name) {
 		static::_init();
@@ -325,7 +318,7 @@ class Log {
  * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean Success
- * @throws Cake\Error\Exception If invalid level is passed.
+ * @throws \Cake\Error\Exception If invalid level is passed.
  */
 	public static function write($level, $message, $scope = array()) {
 		static::_init();

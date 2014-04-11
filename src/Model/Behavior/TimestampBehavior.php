@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Model\Behavior;
@@ -36,7 +36,7 @@ class TimestampBehavior extends Behavior {
  *
  * @var array
  */
-	protected static $_defaultConfig = [
+	protected $_defaultConfig = [
 		'implementedFinders' => [],
 		'implementedMethods' => [
 			'timestamp' => 'timestamp',
@@ -59,6 +59,23 @@ class TimestampBehavior extends Behavior {
 	protected $_ts;
 
 /**
+ * Constructor
+ *
+ * If events are specified - do *not* merge them with existing events,
+ * overwrite the events to listen on
+ *
+ * @param Table $table The table this behavior is attached to.
+ * @param array $config The config for this behavior.
+ */
+	public function __construct(Table $table, array $config = []) {
+		parent::__construct($table, $config);
+
+		if (isset($config['events'])) {
+			$this->config('events', $config['events'], false);
+		}
+	}
+
+/**
  * handleEvent
  *
  * There is only one event handler, it can be configured to be called for any event
@@ -71,11 +88,12 @@ class TimestampBehavior extends Behavior {
  */
 	public function handleEvent(Event $event, Entity $entity) {
 		$eventName = $event->name();
-		$config = $this->config();
+		$events = $this->_config['events'];
 
 		$new = $entity->isNew() !== false;
+		$refresh = $this->_config['refreshTimestamp'];
 
-		foreach ($config['events'][$eventName] as $field => $when) {
+		foreach ($events[$eventName] as $field => $when) {
 			if (!in_array($when, ['always', 'new', 'existing'])) {
 				throw new \UnexpectedValueException(
 					sprintf('When should be one of "always", "new" or "existing". The passed value "%s" is invalid', $when)
@@ -86,7 +104,7 @@ class TimestampBehavior extends Behavior {
 				($when === 'new' && $new) ||
 				($when === 'existing' && !$new)
 			) {
-				$this->_updateField($entity, $field, $config['refreshTimestamp']);
+				$this->_updateField($entity, $field, $refresh);
 			}
 		}
 
@@ -140,18 +158,19 @@ class TimestampBehavior extends Behavior {
  * @return bool true if a field is updated, false if no action performed
  */
 	public function touch(Entity $entity, $eventName = 'Model.beforeSave') {
-		$config = $this->config();
-		if (!isset($config['events'][$eventName])) {
+		$events = $this->_config['events'];
+		if (empty($events[$eventName])) {
 			return false;
 		}
 
 		$return = false;
+		$refresh = $this->_config['refreshTimestamp'];
 
-		foreach ($config['events'][$eventName] as $field => $when) {
+		foreach ($events[$eventName] as $field => $when) {
 			if (in_array($when, ['always', 'existing'])) {
 				$return = true;
 				$entity->dirty($field, false);
-				$this->_updateField($entity, $field, $config['refreshTimestamp']);
+				$this->_updateField($entity, $field, $refresh);
 			}
 		}
 

@@ -69,6 +69,7 @@ class TestCachedPagesController extends Controller {
 /**
  * view method
  *
+ * @param $id
  * @return void
  */
 	public function view($id = null) {

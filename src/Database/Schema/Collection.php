@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Schema;
@@ -32,25 +30,38 @@ class Collection {
 /**
  * Connection object
  *
- * @var Cake\Database\Connection
+ * @var \Cake\Database\Connection
  */
 	protected $_connection;
 
 /**
  * Schema dialect instance.
  *
- * @var
+ * @var \Cake\Database\Schema\BaseSchema
  */
 	protected $_dialect;
 
 /**
+ * The name of the cache config key to use for caching table metadata,
+ * of false if disabled.
+ *
+ * @var string|boolean
+ */
+	protected $_cache = false;
+
+/**
  * Constructor.
  *
- * @param Cake\Database\Connection $connection
+ * @param \Cake\Database\Connection $connection
  */
 	public function __construct(Connection $connection) {
 		$this->_connection = $connection;
 		$this->_dialect = $connection->driver()->schemaDialect();
+		$config = $this->_connection->config();
+
+		if (!empty($config['cacheMetadata'])) {
+			$this->cacheMetadata(true);
+		}
 	}
 
 /**
@@ -76,14 +87,12 @@ class Collection {
  * configuration options. Defaults to _cake_model_ when true.
  *
  * @param string $name The name of the table to describe.
- * @return Cake\Database\Schema\Table Object with column metadata.
- * @throws Cake\Database\Exception when table cannot be described.
+ * @return \Cake\Database\Schema\Table Object with column metadata.
+ * @throws \Cake\Database\Exception when table cannot be described.
  */
 	public function describe($name) {
-		$config = $this->_connection->config();
-
-		if (!empty($config['cacheMetadata'])) {
-			$cacheConfig = ($config['cacheMetadata'] === true) ? '_cake_model_' : $config['cacheMetadata'];
+		$cacheConfig = $this->cacheMetadata();
+		if ($cacheConfig) {
 			$cacheKey = $this->_connection->configName() . '_' . $name;
 			$cached = Cache::read($cacheKey, $cacheConfig);
 			if ($cached !== false) {
@@ -91,6 +100,7 @@ class Collection {
 			}
 		}
 
+		$config = $this->_connection->config();
 		list($sql, $params) = $this->_dialect->describeTableSql($name, $config);
 		$statement = $this->_executeSql($sql, $params);
 		if (count($statement) === 0) {
@@ -115,10 +125,28 @@ class Collection {
 		}
 		$statement->closeCursor();
 
-		if (!empty($config['cacheMetadata'])) {
+		if (!empty($cacheConfig)) {
 			Cache::write($cacheKey, $table, $cacheConfig);
 		}
 		return $table;
+	}
+
+/**
+ * Sets the cache config name to use for caching table metadata, or
+ * disabels it if false is passed.
+ * If called with no arguments it returns the current configuration name.
+ *
+ * @param boolean $enable whether or not to enable caching
+ * @return string|boolean
+ */
+	public function cacheMetadata($enable = null) {
+		if ($enable === null) {
+			return $this->_cache;
+		}
+		if ($enable === true) {
+			$enable = '_cake_model_';
+		}
+		return $this->_cache = $enable;
 	}
 
 /**
@@ -126,8 +154,8 @@ class Collection {
  *
  * @param string $sql The sql to run.
  * @param array $params Parameters for the statement.
- * @return Cake\Database\Statement Prepared statement
- * @throws Cake\Database\Exception on query failure.
+ * @return \Cake\Database\StatementInterface Prepared statement
+ * @throws \Cake\Database\Exception on query failure.
  */
 	protected function _executeSql($sql, $params) {
 		try {

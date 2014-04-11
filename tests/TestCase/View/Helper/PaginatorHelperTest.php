@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Helper;
@@ -37,8 +37,7 @@ class PaginatorHelperTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('Config.language', 'eng');
-		$controller = null;
-		$this->View = new View($controller);
+		$this->View = new View();
 		$this->Paginator = new PaginatorHelper($this->View);
 		$this->Paginator->Js = $this->getMock('Cake\View\Helper\PaginatorHelper', array(), array($this->View));
 		$this->Paginator->request = new Request();
@@ -83,7 +82,12 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->templates([
 			'test' => 'val'
 		]);
-		$this->assertNull($result, 'Setting should return null');
+		$this->assertSame(
+			$this->Paginator,
+			$result,
+			'Setting should return the same object'
+		);
+
 		$result = $this->Paginator->templates();
 		$this->assertArrayHasKey('test', $result);
 		$this->assertEquals('val', $result['test']);
@@ -544,6 +548,35 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
+ * Test that generated URLs work without sort defined within the request
+ *
+ * @return void
+ */
+	public function testDefaultSortAndNoSort() {
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'articles', 'action' => 'index'),
+			array('base' => '/', 'here' => '/articles/', 'webroot' => '/')
+		));
+		$this->Paginator->request->params['paging'] = array(
+			'Article' => array(
+				'page' => 1, 'current' => 3, 'count' => 13,
+				'prevPage' => false, 'nextPage' => true, 'pageCount' => 8,
+				'sortDefault' => 'Article.title', 'directionDefault' => 'ASC',
+				'sort' => null
+			)
+		);
+		$result = $this->Paginator->next('Next');
+		$expected = array(
+			'li' => array('class' => 'next'),
+			'a' => array('rel' => 'next', 'href' => '/articles/index?page=2'),
+			'Next',
+			'/a',
+			'/li'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * testUrlGeneration method
  *
  * @return void
@@ -557,20 +590,20 @@ class PaginatorHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Paginator->url();
+		$result = $this->Paginator->generateUrl();
 		$this->assertEquals('/index', $result);
 
 		$this->Paginator->request->params['paging']['Article']['page'] = 2;
-		$result = $this->Paginator->url();
+		$result = $this->Paginator->generateUrl();
 		$this->assertEquals('/index?page=2', $result);
 
 		$options = array('sort' => 'Article', 'direction' => 'desc');
-		$result = $this->Paginator->url($options);
+		$result = $this->Paginator->generateUrl($options);
 		$this->assertEquals('/index?page=2&amp;sort=Article&amp;direction=desc', $result);
 
 		$this->Paginator->request->params['paging']['Article']['page'] = 3;
 		$options = array('sort' => 'Article.name', 'direction' => 'desc');
-		$result = $this->Paginator->url($options);
+		$result = $this->Paginator->generateUrl($options);
 		$this->assertEquals('/index?page=3&amp;sort=Article.name&amp;direction=desc', $result);
 	}
 
@@ -594,7 +627,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->request->params['paging']['Article']['prevPage'] = true;
 		$options = array('prefix' => 'members');
 
-		$result = $this->Paginator->url($options);
+		$result = $this->Paginator->generateUrl($options);
 		$expected = '/members/posts/index?page=2';
 		$this->assertEquals($expected, $result);
 
@@ -627,12 +660,12 @@ class PaginatorHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$options = array('prefix' => 'members', 'controller' => 'posts', 'sort' => 'name', 'direction' => 'desc');
-		$result = $this->Paginator->url($options);
+		$result = $this->Paginator->generateUrl($options);
 		$expected = '/members/posts/index?page=2&amp;sort=name&amp;direction=desc';
 		$this->assertEquals($expected, $result);
 
 		$options = array('controller' => 'posts', 'sort' => 'Article.name', 'direction' => 'desc');
-		$result = $this->Paginator->url($options);
+		$result = $this->Paginator->generateUrl($options);
 		$expected = '/posts/index?page=2&amp;sort=Article.name&amp;direction=desc';
 		$this->assertEquals($expected, $result);
 	}
@@ -727,6 +760,35 @@ class PaginatorHelperTest extends TestCase {
 		$expected = array(
 			'li' => array('class' => 'next'),
 			'a' => array('href' => '/articles/index/2?page=2&amp;foo=bar&amp;x=y', 'rel' => 'next'),
+			'Next',
+			'/a',
+			'/li'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that generated URLs don't include sort and direction parameters
+ *
+ * @return void
+ */
+	public function testDefaultSortRemovedFromUrl() {
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'articles', 'action' => 'index'),
+			array('base' => '/', 'here' => '/articles/', 'webroot' => '/')
+		));
+		$this->Paginator->request->params['paging'] = array(
+			'Article' => array(
+				'page' => 1, 'current' => 3, 'count' => 13,
+				'prevPage' => false, 'nextPage' => true, 'pageCount' => 8,
+				'sort' => 'Article.title', 'direction' => 'ASC',
+				'sortDefault' => 'Article.title', 'directionDefault' => 'ASC'
+			)
+		);
+		$result = $this->Paginator->next('Next');
+		$expected = array(
+			'li' => array('class' => 'next'),
+			'a' => array('rel' => 'next', 'href' => '/articles/index?page=2'),
 			'Next',
 			'/a',
 			'/li'
@@ -969,7 +1031,7 @@ class PaginatorHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Paginator->numbers(true);
+		$result = $this->Paginator->numbers(array('first' => 'first', 'last' => 'last'));
 		$expected = array(
 			array('li' => array('class' => 'first')), array('a' => array('href' => '/index')), 'first', '/a', '/li',
 			array('li' => array('class' => 'ellipsis')), '...', '/li',

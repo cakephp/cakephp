@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0.5012
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console;
@@ -23,11 +23,11 @@ use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Log\Engine\ConsoleLog;
 use Cake\Log\Log;
-use Cake\Utility\ClassRegistry;
+use Cake\Utility\ConventionsTrait;
 use Cake\Utility\File;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
-use Cake\Utility\RepositoryAwareTrait;
+use Cake\Utility\ModelAwareTrait;
 use Cake\Utility\String;
 
 /**
@@ -37,20 +37,26 @@ use Cake\Utility\String;
 class Shell extends Object {
 
 	use MergeVariablesTrait;
-	use RepositoryAwareTrait;
+	use ModelAwareTrait;
 
 /**
  * Output constant making verbose shells.
+ *
+ * @var integer
  */
 	const VERBOSE = 2;
 
 /**
  * Output constant for making normal shells.
+ *
+ * @var integer
  */
 	const NORMAL = 1;
 
 /**
  * Output constants for making quiet shells.
+ *
+ * @var integer
  */
 	const QUIET = 0;
 
@@ -162,13 +168,13 @@ class Shell extends Object {
  * @param ConsoleInput $stdin A ConsoleInput object for stdin.
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell
  */
-	public function __construct($stdout = null, $stderr = null, $stdin = null) {
+	public function __construct(ConsoleOutput $stdout = null, ConsoleOutput $stderr = null, ConsoleInput $stdin = null) {
 		if (!$this->name) {
 			list(, $class) = namespaceSplit(get_class($this));
 			$this->name = str_replace(['Shell', 'Task'], '', $class);
 		}
 		$this->_setModelClass($this->name);
-		$this->repositoryFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
+		$this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
 		$this->Tasks = new TaskRegistry($this);
 
 		$this->stdout = $stdout ? $stdout : new ConsoleOutput('php://stdout');
@@ -223,7 +229,7 @@ class Shell extends Object {
 	}
 
 /**
- * Lazy loads models using the repository() method if it matches modelClass
+ * Lazy loads models using the loadModel() method if it matches modelClass
  *
  * @param string $name
  * @return void
@@ -234,7 +240,7 @@ class Shell extends Object {
 			if (!$plugin) {
 				$plugin = $this->plugin ? $this->plugin . '.' : null;
 			}
-			return $this->repository($plugin . $this->modelClass);
+			return $this->loadModel($plugin . $this->modelClass);
 		}
 	}
 
@@ -421,7 +427,7 @@ class Shell extends Object {
 	public function __get($name) {
 		if (empty($this->{$name}) && in_array($name, $this->taskNames)) {
 			$properties = $this->_taskMap[$name];
-			$this->{$name} = $this->Tasks->load($properties['class'], $properties['settings']);
+			$this->{$name} = $this->Tasks->load($properties['class'], $properties['config']);
 			$this->{$name}->args =& $this->args;
 			$this->{$name}->params =& $this->params;
 			$this->{$name}->initialize();
@@ -474,7 +480,7 @@ class Shell extends Object {
  * @param string $prompt Prompt text.
  * @param string|array $options Array or string of options.
  * @param string $default Default input value.
- * @return Either the default value, or the user-provided input.
+ * @return string Either the default value, or the user-provided input.
  */
 	protected function _getInput($prompt, $options, $default) {
 		if (!is_array($options)) {
@@ -637,7 +643,7 @@ class Shell extends Object {
 
 		$this->out();
 
-		if (is_file($path) && empty($this->params['force']) && $this->interactive === true) {
+		if (is_file($path) && empty($this->params['force'])) {
 			$this->out(__d('cake_console', '<warning>File `%s` exists</warning>', $path));
 			$key = $this->in(__d('cake_console', 'Do you want to overwrite?'), ['y', 'n', 'q'], 'n');
 
@@ -665,31 +671,6 @@ class Shell extends Object {
 	}
 
 /**
- * Action to create a Unit Test
- *
- * @return boolean Success
- */
-	protected function _checkUnitTest() {
-		if (class_exists('PHPUnit_Framework_TestCase')) {
-			return true;
-			//@codingStandardsIgnoreStart
-		} elseif (@include 'PHPUnit/Autoload.php') {
-			//@codingStandardsIgnoreEnd
-			return true;
-		}
-
-		$prompt = __d('cake_console', 'PHPUnit is not installed. Do you want to bake unit test files anyway?');
-		$unitTest = $this->in($prompt, ['y', 'n'], 'y');
-		$result = strtolower($unitTest) === 'y' || strtolower($unitTest) === 'yes';
-
-		if ($result) {
-			$this->out();
-			$this->out(__d('cake_console', 'You can download PHPUnit from %s', 'http://phpunit.de'));
-		}
-		return $result;
-	}
-
-/**
  * Makes absolute file path easier to read
  *
  * @param string $file Absolute file path
@@ -699,110 +680,8 @@ class Shell extends Object {
 	public function shortPath($file) {
 		$shortPath = str_replace(ROOT, null, $file);
 		$shortPath = str_replace('..' . DS, '', $shortPath);
-		return str_replace(DS . DS, DS, $shortPath);
-	}
-
-/**
- * Creates the proper controller path for the specified controller class name
- *
- * @param string $name Controller class name
- * @return string Path to controller
- */
-	protected function _controllerPath($name) {
-		return Inflector::underscore($name);
-	}
-
-/**
- * Creates the proper controller plural name for the specified controller class name
- *
- * @param string $name Controller class name
- * @return string Controller plural name
- */
-	protected function _controllerName($name) {
-		return Inflector::pluralize(Inflector::camelize($name));
-	}
-
-/**
- * Creates the proper model camelized name (singularized) for the specified name
- *
- * @param string $name Name
- * @return string Camelized and singularized model name
- */
-	protected function _modelName($name) {
-		return Inflector::camelize(Inflector::singularize($name));
-	}
-
-/**
- * Creates the proper underscored model key for associations
- *
- * @param string $name Model class name
- * @return string Singular model key
- */
-	protected function _modelKey($name) {
-		return Inflector::underscore($name) . '_id';
-	}
-
-/**
- * Creates the proper model name from a foreign key
- *
- * @param string $key Foreign key
- * @return string Model name
- */
-	protected function _modelNameFromKey($key) {
-		return Inflector::camelize(str_replace('_id', '', $key));
-	}
-
-/**
- * creates the singular name for use in views.
- *
- * @param string $name
- * @return string $name
- */
-	protected function _singularName($name) {
-		return Inflector::variable(Inflector::singularize($name));
-	}
-
-/**
- * Creates the plural name for views
- *
- * @param string $name Name to use
- * @return string Plural name for views
- */
-	protected function _pluralName($name) {
-		return Inflector::variable(Inflector::pluralize($name));
-	}
-
-/**
- * Creates the singular human name used in views
- *
- * @param string $name Controller name
- * @return string Singular human name
- */
-	protected function _singularHumanName($name) {
-		return Inflector::humanize(Inflector::underscore(Inflector::singularize($name)));
-	}
-
-/**
- * Creates the plural human name used in views
- *
- * @param string $name Controller name
- * @return string Plural human name
- */
-	protected function _pluralHumanName($name) {
-		return Inflector::humanize(Inflector::underscore($name));
-	}
-
-/**
- * Find the correct path for a plugin. Scans $pluginPaths for the plugin you want.
- *
- * @param string $pluginName Name of the plugin you want ie. DebugKit
- * @return string $path path to the correct plugin.
- */
-	protected function _pluginPath($pluginName) {
-		if (Plugin::loaded($pluginName)) {
-			return Plugin::path($pluginName);
-		}
-		return current(App::path('Plugin')) . $pluginName . DS;
+		$shortPath = str_replace(DS, '/', $shortPath);
+		return str_replace('//', DS, $shortPath);
 	}
 
 /**
@@ -830,4 +709,5 @@ class Shell extends Object {
 		Log::config('stdout', ['engine' => $stdout]);
 		Log::config('stderr', ['engine' => $stderr]);
 	}
+
 }

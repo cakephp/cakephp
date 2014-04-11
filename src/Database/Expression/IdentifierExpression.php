@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Expression;
@@ -36,7 +34,6 @@ class IdentifierExpression implements ExpressionInterface {
  * Constructor
  *
  * @param string $identifier The identifier this expression represents
- * @return void
  */
 	public function __construct($identifier) {
 		$this->setIdentifier($identifier);
@@ -64,7 +61,7 @@ class IdentifierExpression implements ExpressionInterface {
 /**
  * Converts the expression to its string representation
  *
- * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @param \Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
 	public function sql(ValueBinder $generator) {
@@ -75,7 +72,7 @@ class IdentifierExpression implements ExpressionInterface {
  * This method is a no-op, this is a leaf type of expression,
  * hence there is nothing to traverse
  *
- * @param callable $visitor
+ * @param callable $callable
  * @return void
  */
 	public function traverse(callable $callable) {

@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.2
+ * @since         2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Log\Engine;
@@ -26,9 +26,21 @@ use Cake\Utility\Hash;
 class ConsoleLog extends BaseLog {
 
 /**
+ * Default config for this class
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [
+		'stream' => 'php://stderr',
+		'levels' => null,
+		'scopes' => [],
+		'outputAs' => 'see constructor'
+	];
+
+/**
  * Output stream
  *
- * @var Cake\Console\ConsoleOutput
+ * @var \Cake\Console\ConsoleOutput
  */
 	protected $_output = null;
 
@@ -43,22 +55,18 @@ class ConsoleLog extends BaseLog {
  * - `outputAs` integer or ConsoleOutput::[RAW|PLAIN|COLOR]
  *
  * @param array $config Options for the FileLog, see above.
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
-	public function __construct($config = array()) {
-		parent::__construct($config);
+	public function __construct(array $config = array()) {
 		if (DS === '\\' && !(bool)env('ANSICON')) {
-			$outputAs = ConsoleOutput::PLAIN;
+			$this->_defaultConfig['outputAs'] = ConsoleOutput::PLAIN;
 		} else {
-			$outputAs = ConsoleOutput::COLOR;
+			$this->_defaultConfig['outputAs'] = ConsoleOutput::COLOR;
 		}
-		$config = Hash::merge(array(
-			'stream' => 'php://stderr',
-			'levels' => null,
-			'scopes' => array(),
-			'outputAs' => $outputAs,
-			), $this->_config);
-		$config = $this->config($config);
+
+		parent::__construct($config);
+
+		$config = $this->_config;
 		if ($config['stream'] instanceof ConsoleOutput) {
 			$this->_output = $config['stream'];
 		} elseif (is_string($config['stream'])) {

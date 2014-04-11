@@ -9,16 +9,16 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
-use Cake\Database\ConnectionManager;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqliteSchema;
 use Cake\Database\Schema\Table;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -33,7 +33,7 @@ class SqliteSchemaTest extends TestCase {
  */
 	protected function _needsConnection() {
 		$config = ConnectionManager::config('test');
-		$this->skipIf(strpos($config['className'], 'Sqlite') === false, 'Not using Sqlite for test config');
+		$this->skipIf(strpos($config['driver'], 'Sqlite') === false, 'Not using Sqlite for test config');
 	}
 
 /**
@@ -155,6 +155,37 @@ class SqliteSchemaTest extends TestCase {
 	}
 
 /**
+ * Tests converting multiple rows into a primary constraint with multiple
+ * columns
+ *
+ * @return void
+ */
+	public function testConvertCompositePrimaryKey() {
+		$driver = $this->getMock('Cake\Database\Driver\Sqlite');
+		$dialect = new SqliteSchema($driver);
+
+		$field1 = [
+			'pk' => true,
+			'name' => 'field1',
+			'type' => 'INTEGER(11)',
+			'notnull' => false,
+			'dflt_value' => 0,
+		];
+		$field2 = [
+			'pk' => true,
+			'name' => 'field2',
+			'type' => 'INTEGER(11)',
+			'notnull' => false,
+			'dflt_value' => 1,
+		];
+
+		$table = new \Cake\Database\Schema\Table('table');
+		$dialect->convertFieldDescription($table, $field1);
+		$dialect->convertFieldDescription($table, $field2);
+		$this->assertEquals(['field1', 'field2'], $table->primaryKey());
+	}
+
+/**
  * Creates tables for testing listTables/describe()
  *
  * @param Connection $connection
@@ -162,8 +193,15 @@ class SqliteSchemaTest extends TestCase {
  */
 	protected function _createTables($connection) {
 		$this->_needsConnection();
-		$connection->execute('DROP TABLE IF EXISTS schema_articles');
-		$connection->execute('DROP TABLE IF EXISTS schema_authors');
+
+		$schema = new SchemaCollection($connection);
+		$result = $schema->listTables();
+		if (
+			in_array('schema_articles', $result) &&
+			in_array('schema_authors', $result)
+		) {
+			return;
+		}
 
 		$table = <<<SQL
 CREATE TABLE schema_authors (
@@ -204,10 +242,8 @@ SQL;
 		$result = $schema->listTables();
 
 		$this->assertInternalType('array', $result);
-		$this->assertCount(3, $result);
-		$this->assertEquals('schema_articles', $result[0]);
-		$this->assertEquals('schema_authors', $result[1]);
-		$this->assertEquals('sqlite_sequence', $result[2]);
+		$this->assertContains('schema_articles', $result);
+		$this->assertContains('schema_authors', $result);
 	}
 
 /**
@@ -681,6 +717,25 @@ SQL;
 			'CREATE INDEX "title_idx" ON "articles" ("title")',
 			$result[1]
 		);
+	}
+
+/**
+ * Tests creating temporary tables
+ *
+ * @return void
+ */
+	public function testCreateTemporary() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+		$table = (new Table('schema_articles'))->addColumn('id', [
+			'type' => 'integer',
+			'null' => false
+		]);
+		$table->temporary(true);
+		$sql = $table->createSql($connection);
+		$this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
 	}
 
 /**

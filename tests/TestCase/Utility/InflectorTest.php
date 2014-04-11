@@ -13,7 +13,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
@@ -89,6 +89,8 @@ class InflectorTest extends TestCase {
 		$this->assertEquals(Inflector::singularize('faxes'), 'fax');
 		$this->assertEquals(Inflector::singularize('waxes'), 'wax');
 		$this->assertEquals(Inflector::singularize('niches'), 'niche');
+		$this->assertEquals(Inflector::singularize('caves'), 'cave');
+		$this->assertEquals(Inflector::singularize('graves'), 'grave');
 		$this->assertEquals(Inflector::singularize('waves'), 'wave');
 		$this->assertEquals(Inflector::singularize('bureaus'), 'bureau');
 		$this->assertEquals(Inflector::singularize('genetic_analyses'), 'genetic_analysis');

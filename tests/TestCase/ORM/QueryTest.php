@@ -9,16 +9,16 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Core\Configure;
-use Cake\Database\ConnectionManager;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\TypeMap;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
@@ -86,6 +86,8 @@ class QueryTest extends TestCase {
 		$orders->hasOne('stuff');
 		$stuff->belongsTo('stuffTypes');
 		$companies->belongsTo('categories');
+
+		$this->fooTypeMap = new TypeMap(['foo.id' => 'integer', 'id' => 'integer']);
 	}
 
 /**
@@ -99,271 +101,24 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that fully defined belongsTo and hasOne relationships are joined correctly
- *
- * @return void
- **/
-	public function testContainToJoinsOneLevel() {
-		$contains = [
-			'clients' => [
-			'orders' => [
-					'orderTypes',
-					'stuff' => ['stuffTypes']
-				],
-				'companies' => [
-					'foreignKey' => 'organization_id',
-					'categories'
-				]
-			]
-		];
-
-		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
-
-		$query->expects($this->at(0))->method('join')
-			->with(['clients' => [
-				'table' => 'clients',
-				'type' => 'LEFT',
-				'conditions' => new QueryExpression([
-					['clients.id' => new IdentifierExpression('foo.client_id')]
-				])
-			]])
-			->will($this->returnValue($query));
-
-		$query->expects($this->at(1))->method('join')
-			->with(['orders' => [
-				'table' => 'orders',
-				'type' => 'INNER',
-				'conditions' => new QueryExpression([
-					['clients.id' => new IdentifierExpression('orders.client_id')]
-				])
-			]])
-			->will($this->returnValue($query));
-
-		$query->expects($this->at(2))->method('join')
-			->with(['orderTypes' => [
-				'table' => 'order_types',
-				'type' => 'LEFT',
-				'conditions' => new QueryExpression([
-					['orderTypes.id' => new IdentifierExpression('orders.order_type_id')]
-				])
-			]])
-			->will($this->returnValue($query));
-
-		$query->expects($this->at(3))->method('join')
-			->with(['stuff' => [
-				'table' => 'things',
-				'type' => 'INNER',
-				'conditions' => new QueryExpression([
-					['orders.id' => new IdentifierExpression('stuff.order_id')]
-				])
-			]])
-			->will($this->returnValue($query));
-
-		$query->expects($this->at(4))->method('join')
-			->with(['stuffTypes' => [
-				'table' => 'stuff_types',
-				'type' => 'LEFT',
-				'conditions' => new QueryExpression([
-					['stuffTypes.id' => new IdentifierExpression('stuff.stuff_type_id')]
-				])
-			]])
-			->will($this->returnValue($query));
-
-		$query->expects($this->at(5))->method('join')
-			->with(['companies' => [
-				'table' => 'organizations',
-				'type' => 'LEFT',
-				'conditions' => new QueryExpression([
-					['companies.id' => new IdentifierExpression('clients.organization_id')]
-				])
-			]])
-			->will($this->returnValue($query));
-
-		$query->expects($this->at(6))->method('join')
-			->with(['categories' => [
-				'table' => 'categories',
-				'type' => 'LEFT',
-				'conditions' => new QueryExpression([
-					['categories.id' => new IdentifierExpression('companies.category_id')]
-				])
-			]])
-			->will($this->returnValue($query));
-
-		$s = $query
-			->select('foo.id')
-			->contain($contains)->sql();
-	}
-
-/**
- * Tests setting containments using dot notation, additionally proves that options
- * are not overwritten when combining dot notation and array notation
+ * Provides strategies for associations that can be joined
  *
  * @return void
  */
-	public function testContainDotNotation() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
-		$query->contain([
-			'clients.orders.stuff',
-			'clients.companies.categories' => ['conditions' => ['a >' => 1]]
-		]);
-		$expected = new \ArrayObject([
-			'clients' => [
-				'orders' => [
-					'stuff' => []
-				],
-				'companies' => [
-					'categories' => [
-						'conditions' => ['a >' => 1]
-					]
-				]
-			]
-		]);
-		$this->assertEquals($expected, $query->contain());
-		$query->contain([
-			'clients.orders' => ['fields' => ['a', 'b']],
-			'clients' => ['sort' => ['a' => 'desc']],
-		]);
-
-		$expected['clients']['orders'] += ['fields' => ['a', 'b']];
-		$expected['clients'] += ['sort' => ['a' => 'desc']];
-		$this->assertEquals($expected, $query->contain());
-	}
-
-/**
- * Tests that it is possible to pass a function as the array value for contain
- *
- * @return void
- */
-	public function testContainClosure() {
-		$builder = function($query) {
-		};
-		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
-		$query->contain([
-			'clients.orders.stuff' => ['fields' => ['a']],
-			'clients' => $builder
-		]);
-
-		$expected = new \ArrayObject([
-			'clients' => [
-				'orders' => [
-					'stuff' => ['fields' => ['a']]
-				],
-				'queryBuilder' => $builder
-			]
-		]);
-		$this->assertEquals($expected, $query->contain());
-
-		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
-		$query->contain([
-			'clients.orders.stuff' => ['fields' => ['a']],
-			'clients' => ['queryBuilder' => $builder]
-		]);
-		$this->assertEquals($expected, $query->contain());
-	}
-
-/**
- * Test that fields for contained models are aliased and added to the select clause
- *
- * @return void
- **/
-	public function testContainToFieldsPredefined() {
-		$contains = [
-			'clients' => [
-				'fields' => ['name', 'company_id', 'clients.telephone'],
-				'orders' => [
-					'fields' => ['total', 'placed']
-				]
-			]
-		];
-
-		$table = TableRegistry::get('foo');
-		$query = new Query($this->connection, $table);
-
-		$query->select('foo.id')->contain($contains)->sql();
-		$select = $query->clause('select');
-		$expected = [
-			'foo__id' => 'foo.id', 'clients__name' => 'clients.name',
-			'clients__company_id' => 'clients.company_id',
-			'clients__telephone' => 'clients.telephone',
-			'orders__total' => 'orders.total', 'orders__placed' => 'orders.placed'
-		];
-		$expected = $this->_quoteArray($expected);
-		$this->assertEquals($expected, $select);
-	}
-
-/**
- * Tests that default fields for associations are added to the select clause when
- * none is specified
- *
- * @return void
- **/
-	public function testContainToFieldsDefault() {
-		$contains = ['clients' => ['orders']];
-
-		$query = new Query($this->connection, $this->table);
-		$query->select()->contain($contains)->sql();
-		$select = $query->clause('select');
-		$expected = [
-			'foo__id' => 'foo.id', 'clients__name' => 'clients.name',
-			'clients__id' => 'clients.id', 'clients__phone' => 'clients.phone',
-			'orders__id' => 'orders.id', 'orders__total' => 'orders.total',
-			'orders__placed' => 'orders.placed'
-		];
-		$expected = $this->_quoteArray($expected);
-		$this->assertEquals($expected, $select);
-
-		$contains['clients']['fields'] = ['name'];
-		$query = new Query($this->connection, $this->table);
-		$query->select('foo.id')->contain($contains)->sql();
-		$select = $query->clause('select');
-		$expected = ['foo__id' => 'foo.id', 'clients__name' => 'clients.name'];
-		$expected = $this->_quoteArray($expected);
-		$this->assertEquals($expected, $select);
-
-		$contains['clients']['fields'] = [];
-		$contains['clients']['orders']['fields'] = false;
-		$query = new Query($this->connection, $this->table);
-		$query->select()->contain($contains)->sql();
-		$select = $query->clause('select');
-		$expected = [
-			'foo__id' => 'foo.id',
-			'clients__id' => 'clients.id',
-			'clients__name' => 'clients.name',
-			'clients__phone' => 'clients.phone',
-		];
-		$expected = $this->_quoteArray($expected);
-		$this->assertEquals($expected, $select);
-	}
-
-/**
- * Helper function sued to quoted both keys and values in an array in case
- * the test suite is running with auto quoting enabled
- *
- * @param array $elements
- * @return array
- */
-	protected function _quoteArray($elements) {
-		if ($this->connection->driver()->autoQuoting()) {
-			$quoter = function($e) {
-				return $this->connection->driver()->quoteIdentifier($e);
-			};
-			return array_combine(
-				array_map($quoter, array_keys($elements)),
-				array_map($quoter, array_values($elements))
-			);
-		}
-		return $elements;
+	public function internalStategiesProvider() {
+		return [['join'], ['select'], ['subquery']];
 	}
 
 /**
  * Tests that results are grouped correctly when using contain()
  * and results are not hydrated
  *
+ * @dataProvider internalStategiesProvider
  * @return void
  */
-	public function testContainResultFetchingOneLevel() {
+	public function testContainResultFetchingOneLevel($strategy) {
 		$table = TableRegistry::get('articles', ['table' => 'articles']);
-		$table->belongsTo('authors');
+		$table->belongsTo('authors', ['strategy' => $strategy]);
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
@@ -431,7 +186,7 @@ class QueryTest extends TestCase {
 		$table = TableRegistry::get('authors');
 		TableRegistry::get('articles');
 		$table->hasMany('articles', [
-			'property' => 'articles',
+			'propertyName' => 'articles',
 			'strategy' => $strategy,
 			'sort' => ['articles.id' => 'asc']
 		]);
@@ -465,6 +220,7 @@ class QueryTest extends TestCase {
 			[
 				'id' => 2,
 				'name' => 'nate',
+				'articles' => [],
 			],
 			[
 				'id' => 3,
@@ -482,6 +238,7 @@ class QueryTest extends TestCase {
 			[
 				'id' => 4,
 				'name' => 'garrett',
+				'articles' => [],
 			]
 		];
 		$this->assertEquals($expected, $results);
@@ -491,9 +248,40 @@ class QueryTest extends TestCase {
 			->contain(['articles' => ['conditions' => ['id' => 2]]])
 			->hydrate(false)
 			->toArray();
-		unset($expected[0]['articles']);
+		$expected[0]['articles'] = [];
 		$this->assertEquals($expected, $results);
 		$this->assertEquals($table->association('articles')->strategy(), $strategy);
+	}
+
+/**
+ * Tests that it is possible to count results containing hasMany associations
+ * both hydrating and not hydrating the results.
+ *
+ * @dataProvider strategiesProvider
+ * @return void
+ */
+	public function testHasManyEagerLoadingCount($strategy) {
+		$table = TableRegistry::get('authors');
+		TableRegistry::get('articles');
+		$table->hasMany('articles', [
+			'property' => 'articles',
+			'strategy' => $strategy,
+			'sort' => ['articles.id' => 'asc']
+		]);
+		$query = new Query($this->connection, $table);
+
+		$query = $query->select()
+			->contain('articles');
+
+		$expected = 4;
+
+		$results = $query->hydrate(false)
+			->count();
+		$this->assertEquals($expected, $results);
+
+		$results = $query->hydrate(true)
+			->count();
+		$this->assertEquals($expected, $results);
 	}
 
 /**
@@ -505,7 +293,7 @@ class QueryTest extends TestCase {
 	public function testHasManyEagerLoadingFieldsAndOrderNoHydration($strategy) {
 		$table = TableRegistry::get('authors');
 		TableRegistry::get('articles');
-		$table->hasMany('articles', ['property' => 'articles'] + compact('strategy'));
+		$table->hasMany('articles', ['propertyName' => 'articles'] + compact('strategy'));
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
@@ -529,6 +317,7 @@ class QueryTest extends TestCase {
 			[
 				'id' => 2,
 				'name' => 'nate',
+				'articles' => [],
 			],
 			[
 				'id' => 3,
@@ -540,6 +329,7 @@ class QueryTest extends TestCase {
 			[
 				'id' => 4,
 				'name' => 'garrett',
+				'articles' => [],
 			],
 		];
 		$this->assertEquals($expected, $results);
@@ -555,8 +345,8 @@ class QueryTest extends TestCase {
 		$table = TableRegistry::get('authors');
 		$article = TableRegistry::get('articles');
 		$table->hasMany('articles', [
-			'property' => 'articles',
-			'stratgey' => $strategy,
+			'propertyName' => 'articles',
+			'strategy' => $strategy,
 			'sort' => ['articles.id' => 'asc']
 		]);
 		$article->belongsTo('authors');
@@ -591,7 +381,8 @@ class QueryTest extends TestCase {
 			],
 			[
 				'id' => 2,
-				'name' => 'nate'
+				'name' => 'nate',
+				'articles' => [],
 			],
 			[
 				'id' => 3,
@@ -609,7 +400,8 @@ class QueryTest extends TestCase {
 			],
 			[
 				'id' => 4,
-				'name' => 'garrett'
+				'name' => 'garrett',
+				'articles' => [],
 			]
 		];
 		$this->assertEquals($expected, $results);
@@ -779,6 +571,7 @@ class QueryTest extends TestCase {
 				'body' => 'Third Article Body',
 				'author_id' => 1,
 				'published' => 'Y',
+				'tags' => [],
 			],
 		];
 		$this->assertEquals($expected, $results);
@@ -794,6 +587,7 @@ class QueryTest extends TestCase {
 				'title' => 'First Article',
 				'body' => 'First Article Body',
 				'published' => 'Y',
+				'tags' => [],
 			],
 			[
 				'id' => 2,
@@ -815,6 +609,7 @@ class QueryTest extends TestCase {
 				'body' => 'Third Article Body',
 				'author_id' => 1,
 				'published' => 'Y',
+				'tags' => [],
 			],
 		];
 		$this->assertEquals($expected, $results);
@@ -886,7 +681,8 @@ class QueryTest extends TestCase {
 				'published' => 'Y',
 				'tags' => [
 					'id' => 3,
-					'name' => 'tag3'
+					'name' => 'tag3',
+					'_joinData' => ['article_id' => 2, 'tag_id' => 3]
 				]
 			]
 		];
@@ -908,7 +704,8 @@ class QueryTest extends TestCase {
 				'published' => 'Y',
 				'tags' => [
 					'id' => 2,
-					'name' => 'tag2'
+					'name' => 'tag2',
+					'_joinData' => ['article_id' => 1, 'tag_id' => 2]
 				]
 			]
 		];
@@ -946,7 +743,8 @@ class QueryTest extends TestCase {
 					'published' => 'Y',
 					'tags' => [
 						'id' => 2,
-						'name' => 'tag2'
+						'name' => 'tag2',
+						'_joinData' => ['article_id' => 1, 'tag_id' => 2]
 					]
 				]
 			]
@@ -991,16 +789,17 @@ class QueryTest extends TestCase {
 
 		$this->assertEquals(['field_a', 'field_b'], $query->clause('select'));
 
-		$expected = new QueryExpression($options['conditions']);
+		$expected = new QueryExpression($options['conditions'], $this->fooTypeMap);
 		$result = $query->clause('where');
 		$this->assertEquals($expected, $result);
 
 		$this->assertEquals(1, $query->clause('limit'));
 
 		$expected = new QueryExpression(['a > b']);
+		$expected->typeMap($this->fooTypeMap);
 		$result = $query->clause('join');
 		$this->assertEquals([
-			['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected]
+			'table_a' => ['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected]
 		], $result);
 
 		$expected = new OrderByExpression(['a' => 'ASC']);
@@ -1010,10 +809,27 @@ class QueryTest extends TestCase {
 		$this->assertEquals(['field_a'], $query->clause('group'));
 
 		$expected = new QueryExpression($options['having']);
+		$expected->typeMap($this->fooTypeMap);
 		$this->assertEquals($expected, $query->clause('having'));
 
-		$expected = new \ArrayObject(['table_a' => ['table_b' => []]]);
+		$expected = ['table_a' => ['table_b' => []]];
 		$this->assertEquals($expected, $query->contain());
+	}
+
+/**
+ * Test that page is applied after limit.
+ *
+ * @return void
+ */
+	public function testApplyOptionsPageIsLast() {
+		$query = new Query($this->connection, $this->table);
+		$opts = [
+			'page' => 3,
+			'limit' => 5
+		];
+		$query->applyOptions($opts);
+		$this->assertEquals(5, $query->clause('limit'));
+		$this->assertEquals(10, $query->clause('offset'));
 	}
 
 /**
@@ -1064,9 +880,9 @@ class QueryTest extends TestCase {
 			$query->mapReduce()
 		);
 
-		$this->assertEquals($query, $query->mapReduce($mapper1));
+		$this->assertEquals($query, $query->mapReduce($mapper2));
 		$result = $query->mapReduce();
-		$this->assertEquals(
+		$this->assertSame(
 			[
 				['mapper' => $mapper1, 'reducer' => null],
 				['mapper' => $mapper2, 'reducer' => null]
@@ -1143,7 +959,10 @@ class QueryTest extends TestCase {
 		$params = [$this->connection, $this->table];
 		$query = $this->getMock('\Cake\ORM\Query', ['execute'], $params);
 
-		$statement = $this->getMock('\Database\StatementInterface', ['fetch', 'closeCursor']);
+		$statement = $this->getMock(
+			'\Database\StatementInterface',
+			['fetch', 'closeCursor', 'rowCount']
+		);
 		$statement->expects($this->exactly(3))
 			->method('fetch')
 			->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2], false));
@@ -1264,11 +1083,11 @@ class QueryTest extends TestCase {
  *
  * @return void
  */
-	public function testHydrateWithHasMany() {
+	public function testHydrateHasMany() {
 		$table = TableRegistry::get('authors');
 		TableRegistry::get('articles');
 		$table->hasMany('articles', [
-			'property' => 'articles',
+			'propertyName' => 'articles',
 			'sort' => ['articles.id' => 'asc']
 		]);
 		$query = new Query($this->connection, $table);
@@ -1343,12 +1162,13 @@ class QueryTest extends TestCase {
 /**
  * Tests that belongsTo relations are correctly hydrated
  *
+ * @dataProvider internalStategiesProvider
  * @return void
  */
-	public function testHydrateBelongsTo() {
+	public function testHydrateBelongsTo($strategy) {
 		$table = TableRegistry::get('articles');
 		TableRegistry::get('authors');
-		$table->belongsTo('authors');
+		$table->belongsTo('authors', ['strategy' => $strategy]);
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
@@ -1366,16 +1186,17 @@ class QueryTest extends TestCase {
 /**
  * Tests that deeply nested associations are also hydrated correctly
  *
+ * @dataProvider internalStategiesProvider
  * @return void
  */
-	public function testHydrateDeep() {
+	public function testHydrateDeep($strategy) {
 		$table = TableRegistry::get('authors');
 		$article = TableRegistry::get('articles');
 		$table->hasMany('articles', [
-			'property' => 'articles',
+			'propertyName' => 'articles',
 			'sort' => ['articles.id' => 'asc']
 		]);
-		$article->belongsTo('authors');
+		$article->belongsTo('authors', ['strategy' => $strategy]);
 		$query = new Query($this->connection, $table);
 
 		$results = $query->select()
@@ -1387,7 +1208,7 @@ class QueryTest extends TestCase {
 		$this->assertInstanceOf('\Cake\ORM\Entity', $first->articles[0]->author);
 		$expected = ['id' => 1, 'name' => 'mariano'];
 		$this->assertEquals($expected, $first->articles[0]->author->toArray());
-		$this->assertFalse(isset($results[3]->articles));
+		$this->assertTrue(isset($results[3]->articles));
 	}
 
 /**
@@ -1423,7 +1244,7 @@ class QueryTest extends TestCase {
  *
  * @return void
  */
-	public function testHydrateWithHasManyCustomEntity() {
+	public function testHydrateHasManyCustomEntity() {
 		$authorEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
 		$articleEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
 		$table = TableRegistry::get('authors', [
@@ -1433,7 +1254,7 @@ class QueryTest extends TestCase {
 			'entityClass' => '\\' . $articleEntity
 		]);
 		$table->hasMany('articles', [
-			'property' => 'articles',
+			'propertyName' => 'articles',
 			'sort' => ['articles.id' => 'asc']
 		]);
 		$query = new Query($this->connection, $table);
@@ -1492,12 +1313,14 @@ class QueryTest extends TestCase {
 		$this->assertSame(3, $result);
 
 		$query = $table->find('all')
-			->where(['id >' => 1]);
+			->where(['id >' => 1])
+			->limit(1);
 		$result = $query->count();
 		$this->assertSame(2, $result);
 
 		$result = $query->all();
-		$this->assertEquals(['count' => 2], $result->first());
+		$this->assertCount(1, $result);
+		$this->assertEquals(2, $result->first()->id);
 	}
 
 /**
@@ -1507,8 +1330,31 @@ class QueryTest extends TestCase {
  */
 	public function testCountWithGroup() {
 		$table = TableRegistry::get('articles');
-		$query = $table->find('all')
-			->group(['published']);
+		$query = $table->find('all');
+		$query->select(['author_id', 's' => $query->func()->sum('id')])
+			->group(['author_id']);
+		$result = $query->count();
+		$this->assertEquals(2, $result);
+	}
+
+/**
+ * Tests that it is possible to provide a callback for calculating the count
+ * of a query
+ *
+ * @return void
+ */
+	public function testCountWithCustomCounter() {
+		$table = TableRegistry::get('articles');
+		$query = $table->find('all');
+		$query
+			->select(['author_id', 's' => $query->func()->sum('id')])
+			->where(['id >' => 2])
+			->group(['author_id'])
+			->counter(function($q) use ($query) {
+				$this->assertNotSame($q, $query);
+				return $q->select([], true)->group([], true)->count();
+			});
+
 		$result = $query->count();
 		$this->assertEquals(1, $result);
 	}
@@ -1605,13 +1451,13 @@ class QueryTest extends TestCase {
  */
 	public function testCollectionProxy($method, $arg) {
 		$query = $this->getMock(
-			'\Cake\ORM\Query', ['getResults'],
+			'\Cake\ORM\Query', ['all'],
 			[$this->connection, $this->table]
 		);
 		$query->select();
 		$resultSet = $this->getMock('\Cake\ORM\ResultSet', [], [$query, null]);
 		$query->expects($this->once())
-			->method('getResults')
+			->method('all')
 			->will($this->returnValue($resultSet));
 		$resultSet->expects($this->once())
 			->method($method)
@@ -1725,4 +1571,406 @@ class QueryTest extends TestCase {
 		$this->assertEquals([1], array_unique($ids));
 	}
 
+/**
+ * Tests the formatResults method
+ *
+ * @return void
+ */
+	public function testFormatResults() {
+		$callback1 = function() {
+		};
+		$callback2 = function() {
+		};
+		$table = TableRegistry::get('authors');
+		$query = new Query($this->connection, $table);
+		$this->assertSame($query, $query->formatResults($callback1));
+		$this->assertSame([$callback1], $query->formatResults());
+		$this->assertSame($query, $query->formatResults($callback2));
+		$this->assertSame([$callback1, $callback2], $query->formatResults());
+		$query->formatResults($callback2, true);
+		$this->assertSame([$callback2], $query->formatResults());
+		$query->formatResults(null, true);
+		$this->assertSame([], $query->formatResults());
+
+		$query->formatResults($callback1);
+		$query->formatResults($callback2, $query::PREPEND);
+		$this->assertSame([$callback2, $callback1], $query->formatResults());
+	}
+
+/**
+ * Test fetching results from a qurey with a custom formatter
+ *
+ * @return void
+ */
+	public function testQueryWithFormatter() {
+		$table = TableRegistry::get('authors');
+		$query = new Query($this->connection, $table);
+		$query->select()->formatResults(function($results, $q) use ($query) {
+			$this->assertSame($query, $q);
+			$this->assertInstanceOf('\Cake\ORM\ResultSet', $results);
+			return $results->indexBy('id');
+		});
+		$this->assertEquals([1, 2, 3, 4], array_keys($query->toArray()));
+	}
+
+/**
+ * Test fetching results from a qurey with a two custom formatters
+ *
+ * @return void
+ */
+	public function testQueryWithStackedFormatters() {
+		$table = TableRegistry::get('authors');
+		$query = new Query($this->connection, $table);
+		$query->select()->formatResults(function($results, $q) use ($query) {
+			$this->assertSame($query, $q);
+			$this->assertInstanceOf('\Cake\ORM\ResultSet', $results);
+			return $results->indexBy('id');
+		});
+
+		$query->formatResults(function($results) {
+			return $results->extract('name');
+		});
+
+		$expected = [
+			1 => 'mariano',
+			2 => 'nate',
+			3 => 'larry',
+			4 => 'garrett'
+		];
+		$this->assertEquals($expected, $query->toArray());
+	}
+
+/**
+ * Tests that getting results from a query having a contained association
+ * will no attach joins twice if count() is called on it afterwards
+ *
+ * @return void
+ */
+	public function testCountWithContainCallingAll() {
+		$table = TableRegistry::get('articles');
+		$table->belongsTo('authors');
+		$query = $table->find()
+			->select(['id', 'title'])
+			->contain('authors')
+			->limit(2);
+
+		$results = $query->all();
+		$this->assertCount(2, $results);
+		$this->assertEquals(3, $query->count());
+	}
+
+/**
+ * Tests that it is possible to apply formatters inside the query builder
+ * for belongsTo associations
+ *
+ * @return void
+ */
+	public function testFormatBelongsToRecords() {
+		$table = TableRegistry::get('articles');
+		$table->belongsTo('authors');
+
+		$query = $table->find()
+			->contain(['authors' => function($q) {
+				return $q
+					->formatResults(function($authors) {
+						return $authors->map(function($author) {
+							$author->idCopy = $author->id;
+							return $author;
+						});
+					})
+					->formatResults(function($authors) {
+						return $authors->map(function($author) {
+							$author->idCopy = $author->idCopy + 2;
+							return $author;
+						});
+					});
+			}]);
+
+		$query->formatResults(function($results) {
+			return $results->combine('id', 'author.idCopy');
+		});
+		$results = $query->toArray();
+		$expected = [1 => 3, 2 => 5, 3 => 3];
+		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Tests it is possible to apply formatters to deep relations.
+ *
+ * @return void
+ */
+	public function testFormatDeepAssocationRecords() {
+		$table = TableRegistry::get('ArticlesTags');
+		$table->belongsTo('Articles');
+		$table->association('Articles')->target()->belongsTo('Authors');
+
+		$builder = function($q) {
+			return $q
+				->formatResults(function($results) {
+					return $results->map(function($result) {
+						$result->idCopy = $result->id;
+						return $result;
+					});
+				})
+				->formatResults(function($results) {
+					return $results->map(function($result) {
+						$result->idCopy = $result->idCopy + 2;
+						return $result;
+					});
+				});
+		};
+		$query = $table->find()
+			->contain(['Articles' => $builder, 'Articles.Authors' => $builder]);
+		$query->formatResults(function($results) {
+			return $results->map(function($row) {
+				return sprintf(
+					'%s - %s - %s',
+					$row->tag_id,
+					$row->article->idCopy,
+					$row->article->author->idCopy
+				);
+			});
+		});
+
+		$expected = ['1 - 3 - 3', '2 - 3 - 3', '1 - 4 - 5', '3 - 4 - 5'];
+		$this->assertEquals($expected, $query->toArray());
+	}
+
+/**
+ * Tests that formatters cna be applied to deep associaitons that are fetched using
+ * additional queries
+ *
+ * @return void
+ */
+	public function testFormatDeepDistantAssociationRecords() {
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$articles = $table->association('articles')->target();
+		$articles->hasMany('articlesTags');
+		$articles->association('articlesTags')->target()->belongsTo('tags');
+
+		$query = $table->find()->contain(['articles.articlesTags.tags' => function($q) {
+			return $q->formatResults(function($results) {
+				return $results->map(function($tag) {
+					$tag->name .= ' - visited';
+					return $tag;
+				});
+			});
+		}]);
+
+		$query->mapReduce(function($row, $key, $mr) {
+			foreach ((array)$row->articles as $article) {
+				foreach ((array)$article->articles_tags as $articleTag) {
+					$mr->emit($articleTag->tag->name);
+				}
+			}
+		});
+
+		$expected = ['tag1 - visited', 'tag2 - visited', 'tag1 - visited', 'tag3 - visited'];
+		$this->assertEquals($expected, $query->toArray());
+	}
+
+/**
+ * Tests that it is possible to attach more association when using a query
+ * builder for other associaitons
+ *
+ * @return void
+ */
+	public function testContainInAssociationQuery() {
+		$table = TableRegistry::get('ArticlesTags');
+		$table->belongsTo('Articles');
+		$table->association('Articles')->target()->belongsTo('Authors');
+
+		$query = $table->find()->contain(['Articles' => function($q) {
+			return $q->contain('Authors');
+		}]);
+		$results = $query->extract('article.author.name')->toArray();
+		$expected = ['mariano', 'mariano', 'larry', 'larry'];
+		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Tests that it is possible to apply more `matching` conditions inside query
+ * builders for associations
+ *
+ * @return void
+ */
+	public function testContainInAssociationMatching() {
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$articles = $table->association('articles')->target();
+		$articles->hasMany('articlesTags');
+		$articles->association('articlesTags')->target()->belongsTo('tags');
+
+		$query = $table->find()->matching('articles.articlesTags', function($q) {
+			return $q->matching('tags', function($q) {
+				return $q->where(['tags.name' => 'tag3']);
+			});
+		});
+
+		$results = $query->toArray();
+		$this->assertCount(1, $results);
+		$this->assertEquals('tag3', $results[0]->articles->articles_tags->tag->name);
+	}
+
+/**
+ * Tests __debugInfo
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$query = $table->find()
+			->where(['id > ' => 1])
+			->bufferResults(false)
+			->hydrate(false)
+			->matching('articles')
+			->applyOptions(['foo' => 'bar'])
+			->formatResults(function($results) {
+				return $results;
+			})
+			->mapReduce(function($item, $key, $mr) {
+				$mr->emit($item);
+			});
+
+		$expected = [
+			'sql' => $query->sql(),
+			'params' => $query->valueBinder()->bindings(),
+			'defaultTypes' => [
+				'authors.id' => 'integer',
+				'id' => 'integer',
+				'authors.name' => 'string',
+				'name' => 'string'
+			],
+			'decorators' => 0,
+			'executed' => false,
+			'hydrate' => false,
+			'buffered' => false,
+			'formatters' => 1,
+			'mapReducers' => 1,
+			'contain' => [
+				'articles' => [
+					'queryBuilder' => null,
+					'matching' => true
+				]
+			],
+			'extraOptions' => ['foo' => 'bar'],
+			'repository' => $table
+		];
+		$this->assertSame($expected, $query->__debugInfo());
+	}
+
+/**
+ * Tests that the eagerLoaded function works and is transmitted correctly to eagerly
+ * loaded associations
+ *
+ * @return void
+ */
+	public function testEagerLoaded() {
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$query = $table->find()->contain(['articles' => function($q) {
+			$this->assertTrue($q->eagerLoaded());
+			return $q;
+		}]);
+		$this->assertFalse($query->eagerLoaded());
+
+		$table->getEventManager()->attach(function($e, $q, $o, $primary) {
+			$this->assertTrue($primary);
+		}, 'Model.beforeFind');
+
+		TableRegistry::get('articles')
+			->getEventManager()->attach(function($e, $q, $o, $primary) {
+				$this->assertFalse($primary);
+			}, 'Model.beforeFind');
+		$query->all();
+	}
+
+/**
+ * Tests that columns from manual joins are also contained in the result set
+ *
+ * @return void
+ */
+	public function testColumnsFromJoin() {
+		$table = TableRegistry::get('articles');
+		$results = $table->find()
+			->select(['title', 'person.name'])
+			->join([
+				'person' => [
+					'table' => 'authors',
+					'conditions' => ['person.id = articles.author_id']
+				]
+			])
+			->order(['articles.id' => 'ASC'])
+			->hydrate(false)
+			->toArray();
+		$expected = [
+			['title' => 'First Article', 'person' => ['name' => 'mariano']],
+			['title' => 'Second Article', 'person' => ['name' => 'larry']],
+			['title' => 'Third Article', 'person' => ['name' => 'mariano']],
+		];
+		$this->assertSame($expected, $results);
+	}
+
+/**
+ * Tests that it is possible to use the same association aliases in the association
+ * chain for contain
+ *
+ * @dataProvider internalStategiesProvider
+ * @return void
+ */
+	public function testRepeatedAssociationAliases($strategy) {
+		$table = TableRegistry::get('ArticlesTags');
+		$table->belongsTo('Articles', ['strategy' => $strategy]);
+		$table->belongsTo('Tags', ['strategy' => $strategy]);
+		TableRegistry::get('Tags')->belongsToMany('Articles');
+		$results = $table
+			->find()
+			->contain(['Articles', 'Tags.Articles'])
+			->hydrate(false)
+			->toArray();
+		$this->assertNotEmpty($results[0]['tag']['articles']);
+		$this->assertNotEmpty($results[0]['article']);
+		$this->assertNotEmpty($results[1]['tag']['articles']);
+		$this->assertNotEmpty($results[1]['article']);
+		$this->assertNotEmpty($results[2]['tag']['articles']);
+		$this->assertNotEmpty($results[2]['article']);
+	}
+
+/**
+ * Tests that it is not allowed to use matching on an association
+ * that is already added to containments.
+ *
+ * @expectedException RuntimeException
+ * @expectedExceptionMessage Cannot use "matching" on "Authors" as there is another association with the same alias
+ * @return void
+ */
+	public function testConflitingAliases() {
+		$table = TableRegistry::get('ArticlesTags');
+		$table->belongsTo('Articles')->target()->belongsTo('Authors');
+		$table->belongsTo('Tags');
+		$table->Tags->target()->hasOne('Authors');
+		$table->find()
+			->contain(['Articles.Authors'])
+			->matching('Tags.Authors')
+			->all();
+	}
+
+/**
+ * Tests that a hasOne association using the select strategy will still have the
+ * key present in the results when no match is found
+ *
+ * @return void
+ */
+	public function testAssociationKeyPresent() {
+		$table = TableRegistry::get('Articles');
+		$table->hasOne('ArticlesTags', ['strategy' => 'select']);
+		$article = $table->find()->where(['id' => 3])
+			->hydrate(false)
+			->contain('ArticlesTags')
+			->first();
+
+		$this->assertNull($article['articles_tag']);
+	}
 }

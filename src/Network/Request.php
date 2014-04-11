@@ -1,6 +1,6 @@
 <?php
 /**
- * CakeRequest
+ * Request
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Network;
@@ -27,7 +27,6 @@ use Cake\Utility\Hash;
  * Has both an Array and Object interface. You can access framework parameters using indexes:
  *
  * `$request['controller']` or `$request->controller`.
- *
  */
 class Request implements \ArrayAccess {
 
@@ -40,7 +39,8 @@ class Request implements \ArrayAccess {
 		'plugin' => null,
 		'controller' => null,
 		'action' => null,
-		'pass' => [],
+		'_ext' => null,
+		'pass' => []
 	);
 
 /**
@@ -106,7 +106,7 @@ class Request implements \ArrayAccess {
  * Only set to true if your application runs behind load balancers/proxies
  * that you control.
  *
- * @param boolean
+ * @var boolean
  */
 	public $trustProxy = false;
 
@@ -118,7 +118,7 @@ class Request implements \ArrayAccess {
  *
  * @var array
  */
-	protected $_detectors = array(
+	protected static $_detectors = array(
 		'get' => array('env' => 'REQUEST_METHOD', 'value' => 'GET'),
 		'post' => array('env' => 'REQUEST_METHOD', 'value' => 'POST'),
 		'put' => array('env' => 'REQUEST_METHOD', 'value' => 'PUT'),
@@ -129,12 +129,6 @@ class Request implements \ArrayAccess {
 		'ssl' => array('env' => 'HTTPS', 'value' => 1),
 		'ajax' => array('env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'),
 		'flash' => array('env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'),
-		'mobile' => array('env' => 'HTTP_USER_AGENT', 'options' => array(
-			'Android', 'AvantGo', 'BlackBerry', 'DoCoMo', 'Fennec', 'iPod', 'iPhone', 'iPad',
-			'J2ME', 'MIDP', 'NetFront', 'Nokia', 'Opera Mini', 'Opera Mobi', 'PalmOS', 'PalmSource',
-			'portalmmm', 'Plucker', 'ReqwirelessWeb', 'SonyEricsson', 'Symbian', 'UP\\.Browser',
-			'webOS', 'Windows CE', 'Windows Phone OS', 'Xiino'
-		)),
 		'requested' => array('param' => 'requested', 'value' => 1)
 	);
 
@@ -152,7 +146,7 @@ class Request implements \ArrayAccess {
  * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
  * the request.
  *
- * @return Cake\Network\Request
+ * @return \Cake\Network\Request
  */
 	public static function createFromGlobals() {
 		list($base, $webroot) = static::_base();
@@ -215,7 +209,7 @@ class Request implements \ArrayAccess {
  * @return void
  */
 	protected function _setConfig($config) {
-		if (!empty($config['url']) && $config['url'][0] == '/') {
+		if (!empty($config['url']) && $config['url'][0] === '/') {
 			$config['url'] = substr($config['url'], 1);
 		}
 
@@ -263,10 +257,13 @@ class Request implements \ArrayAccess {
 /**
  * Process the GET parameters and move things into the object.
  *
+ * @param array $query Contains querystring data such as `pag`
  * @return void
  */
 	protected function _processGet($query) {
-		unset($query['/' . str_replace('.', '_', urldecode($this->url))]);
+		$unsetUrl = '/' . str_replace('.', '_', urldecode($this->url));
+		unset($query[$unsetUrl]);
+		unset($query[$this->base . $unsetUrl]);
 		if (strpos($this->url, '?') !== false) {
 			list(, $querystr) = explode('?', $this->url);
 			parse_str($querystr, $queryArgs);
@@ -280,6 +277,7 @@ class Request implements \ArrayAccess {
  * by PHP. Following that, REQUEST_URI, PHP_SELF, HTTP_X_REWRITE_URL and argv are checked in that order.
  * Each of these server variables have the base path, and query strings stripped off
  *
+ * @param array $config
  * @return string URI The CakePHP request path that is being accessed.
  */
 	protected static function _url($config) {
@@ -383,7 +381,7 @@ class Request implements \ArrayAccess {
 /**
  * Process uploaded files and move things onto the post data.
  *
- * @param array $data Post data to merge files onto.
+ * @param array $post Post data to merge files onto.
  * @param array $files Uploaded files to merge in.
  * @return array merged post + file data.
  */
@@ -404,10 +402,10 @@ class Request implements \ArrayAccess {
  * Recursively walks the FILES array restructuring the data
  * into something sane and useable.
  *
+ * @param array $post The post data having files inserted into
  * @param string $path The dot separated path to insert $data into.
  * @param array $data The data to traverse/insert.
  * @param string $field The terminal field name, which is the top level key in $_FILES.
- * @param array $post The post data having files inserted into
  * @return void
  */
 	protected function _processFileData(&$post, $path, $data, $field) {
@@ -482,7 +480,7 @@ class Request implements \ArrayAccess {
  * @param string $name The method called
  * @param array $params Array of parameters for the method call
  * @return mixed
- * @throws Cake\Error\Exception when an invalid method is called.
+ * @throws \Cake\Error\Exception when an invalid method is called.
  */
 	public function __call($name, $params) {
 		if (strpos($name, 'is') === 0) {
@@ -535,10 +533,13 @@ class Request implements \ArrayAccess {
 			return count(array_filter($result)) > 0;
 		}
 		$type = strtolower($type);
-		if (!isset($this->_detectors[$type])) {
+		if (!isset(static::$_detectors[$type])) {
 			return false;
 		}
-		$detect = $this->_detectors[$type];
+		$detect = static::$_detectors[$type];
+		if (is_callable($detect)) {
+			return call_user_func($detect, $this);
+		}
 		if (isset($detect['env'])) {
 			if (isset($detect['value'])) {
 				return $this->env($detect['env']) == $detect['value'];
@@ -587,6 +588,14 @@ class Request implements \ArrayAccess {
  * Add a new detector to the list of detectors that a request can use.
  * There are several different formats and types of detectors that can be set.
  *
+ * ### Callback detectors
+ *
+ * Callback detectors allow you to provide a callable to handle the check.
+ * The callback will receive the request object as its only parameter.
+ *
+ * e.g `addDetector('custom', function($request) { //Return a boolean });`
+ * e.g `addDetector('custom', array('SomeClass', 'somemethod'));`
+ *
  * ### Environment value comparison
  *
  * An environment value comparison, compares a value fetched from `env()` to a known value
@@ -607,13 +616,6 @@ class Request implements \ArrayAccess {
  *
  * e.g `addDetector('mobile', array('env' => 'HTTP_USER_AGENT', 'options' => array('Fennec')));`
  *
- * ### Callback detectors
- *
- * Callback detectors allow you to provide a 'callback' type to handle the check. The callback will
- * receive the request object as its only parameter.
- *
- * e.g `addDetector('custom', array('callback' => array('SomeClass', 'somemethod')));`
- *
  * ### Request parameter detectors
  *
  * Allows for custom detectors on the request parameters.
@@ -627,15 +629,19 @@ class Request implements \ArrayAccess {
  * `addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'csv'))`
  *
  * @param string $name The name of the detector.
- * @param array $options The options for the detector definition. See above.
+ * @param callable|array $callable A callable or options array for the detector definition.
  * @return void
  */
-	public function addDetector($name, $options) {
+	public static function addDetector($name, $callable) {
 		$name = strtolower($name);
-		if (isset($this->_detectors[$name]) && isset($options['options'])) {
-			$options = Hash::merge($this->_detectors[$name], $options);
+		if (is_callable($callable)) {
+			static::$_detectors[$name] = $callable;
+			return;
 		}
-		$this->_detectors[$name] = $options;
+		if (isset(static::$_detectors[$name]) && isset($callable['options'])) {
+			$callable = Hash::merge(static::$_detectors[$name], $callable);
+		}
+		static::$_detectors[$name] = $callable;
 	}
 
 /**
@@ -643,10 +649,10 @@ class Request implements \ArrayAccess {
  * This modifies the parameters available through `$request->params`.
  *
  * @param array $params Array of parameters to merge in
- * @return The current object, you can chain this method.
+ * @return \Cake\Network\Request The current object, you can chain this method.
  */
-	public function addParams($params) {
-		$this->params = array_merge($this->params, (array)$params);
+	public function addParams(array $params) {
+		$this->params = array_merge($this->params, $params);
 		return $this;
 	}
 
@@ -655,9 +661,9 @@ class Request implements \ArrayAccess {
  * Provides an easy way to modify, here, webroot and base.
  *
  * @param array $paths Array of paths to merge in
- * @return Cake\Network\Request the current object, you can chain this method.
+ * @return \Cake\Network\Request the current object, you can chain this method.
  */
-	public function addPaths($paths) {
+	public function addPaths(array $paths) {
 		foreach (array('webroot', 'here', 'base') as $element) {
 			if (isset($paths[$element])) {
 				$this->{$element} = $paths[$element];
@@ -960,7 +966,7 @@ class Request implements \ArrayAccess {
  * @param string $callback A decoding callback that will convert the string data to another
  *     representation. Leave empty to access the raw input data. You can also
  *     supply additional parameters for the decoding callback using var args, see above.
- * @return The decoded/processed request data.
+ * @return string The decoded/processed request data.
  */
 	public function input($callback = null) {
 		$input = $this->_readInput();
@@ -992,7 +998,7 @@ class Request implements \ArrayAccess {
  *
  * @param string $key The key you want to read/write from/to.
  * @param string $value Value to set. Default null.
- * @return null|string|Cake\Network\Request Request instance if used as setter,
+ * @return null|string|\Cake\Network\Request Request instance if used as setter,
  *   if used as getter either the environment value, or null if the value doesn't exist.
  */
 	public function env($key, $value = null) {
@@ -1009,23 +1015,23 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Only allow certain HTTP request methods, if the request method does not match
+ * Allow only certain HTTP request methods, if the request method does not match
  * a 405 error will be shown and the required "Allow" response header will be set.
  *
  * Example:
  *
- * $this->request->onlyAllow('post', 'delete');
+ * $this->request->allowMethod('post', 'delete');
  * or
- * $this->request->onlyAllow(array('post', 'delete'));
+ * $this->request->allowMethod(array('post', 'delete'));
  *
  * If the request would be GET, response header "Allow: POST, DELETE" will be set
- * and a 405 error will be returned
+ * and a 405 error will be returned.
  *
- * @param string|array $methods Allowed HTTP request methods
+ * @param string|array $methods Allowed HTTP request methods.
  * @return boolean true
- * @throws Cake\Error\MethodNotAllowedException
+ * @throws \Cake\Error\MethodNotAllowedException
  */
-	public function onlyAllow($methods) {
+	public function allowMethod($methods) {
 		if (!is_array($methods)) {
 			$methods = func_get_args();
 		}

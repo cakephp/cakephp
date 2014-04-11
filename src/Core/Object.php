@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.2.9
+ * @since         0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Core;
@@ -53,7 +53,7 @@ class Object {
  * @param array $params Parameter list to use when calling $method
  * @return mixed Returns the result of the method call
  */
-	public function dispatchMethod($method, $params = []) {
+	public function dispatchMethod($method, array $params = []) {
 		switch (count($params)) {
 			case 0:
 				return $this->{$method}();

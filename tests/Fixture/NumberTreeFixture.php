@@ -1,9 +1,5 @@
 <?php
 /**
- * Tree behavior class.
- *
- * Enables a model object to act as a node-based tree.
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.5331
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
@@ -37,8 +33,95 @@ class NumberTreeFixture extends TestFixture {
 		'id' => ['type' => 'integer'],
 		'name' => ['type' => 'string', 'null' => false],
 		'parent_id' => 'integer',
-		'lft' => ['type' => 'integer', 'null' => false],
-		'rght' => ['type' => 'integer', 'null' => false],
+		'lft' => ['type' => 'integer'],
+		'rght' => ['type' => 'integer'],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
+
+/**
+ * Records
+ *
+ *	- electronics:1
+ *		- televisions:2
+ *			- tube:3
+ *			- lcd:4
+ *			- plasma:5
+ *		- portable:6
+ *			- mp3:7
+ *				- flash:8
+ *			- cd:9
+ *			- radios:10
+ *	- alien ware: 11
+ *
+ * @var array
+ */
+	public $records = array(
+		array(
+			'name' => 'electronics',
+			'parent_id' => null,
+			'lft' => '1',
+			'rght' => '20'
+		),
+		array(
+			'name' => 'televisions',
+			'parent_id' => '1',
+			'lft' => '2',
+			'rght' => '9'
+		),
+		array(
+			'name' => 'tube',
+			'parent_id' => '2',
+			'lft' => '3',
+			'rght' => '4'
+		),
+		array(
+			'name' => 'lcd',
+			'parent_id' => '2',
+			'lft' => '5',
+			'rght' => '6'
+		),
+		array(
+			'name' => 'plasma',
+			'parent_id' => '2',
+			'lft' => '7',
+			'rght' => '8'
+		),
+		array(
+			'name' => 'portable',
+			'parent_id' => '1',
+			'lft' => '10',
+			'rght' => '19'
+		),
+		array(
+			'name' => 'mp3',
+			'parent_id' => '6',
+			'lft' => '11',
+			'rght' => '14'
+		),
+		array(
+			'name' => 'flash',
+			'parent_id' => '7',
+			'lft' => '12',
+			'rght' => '13'
+		),
+		array(
+			'name' => 'cd',
+			'parent_id' => '6',
+			'lft' => '15',
+			'rght' => '16'
+		),
+		array(
+			'name' => 'radios',
+			'parent_id' => '6',
+			'lft' => '17',
+			'rght' => '18'
+		),
+		array(
+			'name' => 'alien hardware',
+			'parent_id' => null,
+			'lft' => '21',
+			'rght' => '22'
+		)
+	);
+
 }

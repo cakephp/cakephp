@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.2.9
+ * @since         0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Routing;
@@ -42,7 +42,7 @@ class Router {
 /**
  * RouteCollection object containing all the connected routes.
  *
- * @var Cake\Routing\RouteCollection
+ * @var \Cake\Routing\RouteCollection
  */
 	protected static $_routes;
 
@@ -67,24 +67,55 @@ class Router {
  *
  * @var array
  */
-	protected static $_prefixes = array();
+	protected static $_prefixes = [];
 
 /**
  * List of valid extensions to parse from a URL. If null, any extension is allowed.
  *
  * @var array
  */
-	protected static $_validExtensions = array();
+	protected static $_validExtensions = [];
 
 /**
- * 'Constant' regular expression definitions for named route elements
+ * Regular expression for action names
  *
+ * @var string
  */
 	const ACTION = 'index|show|add|create|edit|update|remove|del|delete|view|item';
+
+/**
+ * Regular expression for years
+ *
+ * @var string
+ */
 	const YEAR = '[12][0-9]{3}';
+
+/**
+ * Regular expression for months
+ *
+ * @var string
+ */
 	const MONTH = '0[1-9]|1[012]';
+
+/**
+ * Regular expression for days
+ *
+ * @var string
+ */
 	const DAY = '0[1-9]|[12][0-9]|3[01]';
+
+/**
+ * Regular expression for auto increment IDs
+ *
+ * @var string
+ */
 	const ID = '[0-9]+';
+
+/**
+ * Regular expression for UUIDs
+ *
+ * @var string
+ */
 	const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
 
 /**
@@ -120,7 +151,7 @@ class Router {
  *
  * @var array
  */
-	protected static $_resourceMapped = array();
+	protected static $_resourceMapped = [];
 
 /**
  * Maintains the request object stack for the current request.
@@ -128,7 +159,7 @@ class Router {
  *
  * @var array
  */
-	protected static $_requests = array();
+	protected static $_requests = [];
 
 /**
  * Initial state is populated the first time reload() is called which is at the bottom
@@ -137,7 +168,7 @@ class Router {
  *
  * @var array
  */
-	protected static $_initialState = array();
+	protected static $_initialState = [];
 
 /**
  * The stack of URL filters to apply against routing URLs before passing the
@@ -145,7 +176,7 @@ class Router {
  *
  * @var array
  */
-	protected static $_urlFilters = array();
+	protected static $_urlFilters = [];
 
 /**
  * Default route class to use
@@ -159,7 +190,7 @@ class Router {
  *
  * @param string $routeClass to set as default
  * @return mixed void|string
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public static function defaultRouteClass($routeClass = null) {
 		if ($routeClass === null) {
@@ -174,7 +205,7 @@ class Router {
  *
  * @param string $routeClass Route class name
  * @return string
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	protected static function _validateRouteClass($routeClass) {
 		if (
@@ -267,9 +298,11 @@ class Router {
  * - `routeClass` is used to extend and change how individual routes parse requests
  *   and handle reverse routing, via a custom routing class.
  *   Ex. `'routeClass' => 'SlugRoute'`
- * - `_name` Used to define a specific name for routes. This can be used to optimize
+ * - `_name` is used to define a specific name for routes. This can be used to optimize
  *   reverse routing lookups. If undefined a name will be generated for each
  *   connected route.
+ * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
+ *   See {@link Route::setExtensions()}.
  *
  * You can also add additional conditions for matching routes to the $defaults array.
  * The following conditions can be used:
@@ -293,20 +326,12 @@ class Router {
  *   custom routing class.
  * @see routes
  * @return void
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
-	public static function connect($route, $defaults = array(), $options = array()) {
+	public static function connect($route, $defaults = [], $options = []) {
 		static::$initialized = true;
 
-		if (!empty($defaults['prefix'])) {
-			static::$_prefixes[] = $defaults['prefix'];
-			static::$_prefixes = array_keys(array_flip(static::$_prefixes));
-		}
-		if (empty($defaults['prefix'])) {
-			unset($defaults['prefix']);
-		}
-
-		$defaults += array('plugin' => null);
+		$defaults += ['plugin' => null];
 		if (empty($options['action'])) {
 			$defaults += array('action' => 'index');
 		}
@@ -357,7 +382,7 @@ class Router {
  * @see routes
  * @return array Array of routes
  */
-	public static function redirect($route, $url, $options = array()) {
+	public static function redirect($route, $url, $options = []) {
 		$options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
 		if (is_string($url)) {
 			$url = array('redirect' => $url);
@@ -366,7 +391,9 @@ class Router {
 	}
 
 /**
- * Creates REST resource routes for the given controller(s).
+ * Generate REST resource routes for the given controller(s).
+ *
+ * A quick way to generate a default routes to a set of REST resources (controller(s)).
  *
  * ### Usage
  *
@@ -407,7 +434,7 @@ class Router {
  * @param array $options Options to use when generating REST routes
  * @return array Array of mapped resources
  */
-	public static function mapResources($controller, $options = array()) {
+	public static function mapResources($controller, $options = []) {
 		$options = array_merge(array(
 			'connectOptions' => [],
 			'id' => static::ID . '|' . static::UUID
@@ -423,9 +450,13 @@ class Router {
 			if ($plugin) {
 				$plugin = Inflector::underscore($plugin);
 			}
-			$prefix = '';
+
+			$prefix = $ext = null;
 			if (!empty($options['prefix'])) {
 				$prefix = $options['prefix'];
+			}
+			if (!empty($options['_ext'])) {
+				$ext = $options['_ext'];
 			}
 
 			foreach (static::$_resourceMap as $params) {
@@ -436,16 +467,16 @@ class Router {
 					'controller' => $urlName,
 					'action' => $params['action'],
 					'[method]' => $params['method'],
+					'_ext' => $ext
 				);
 				if ($prefix) {
 					$params['prefix'] = $prefix;
 				}
-				$options = array(
+				$routeOptions = array_merge(array(
 					'id' => $options['id'],
 					'pass' => array('id')
-				);
-				$options = array_merge($options, $connectOptions);
-				Router::connect($url, $params, $options);
+				), $connectOptions);
+				Router::connect($url, $params, $routeOptions);
 			}
 			static::$_resourceMapped[] = $urlName;
 		}
@@ -484,7 +515,7 @@ class Router {
 /**
  * Set the route collection object Router should use.
  *
- * @param Cake\Routing\RouteCollection $routes
+ * @param \Cake\Routing\RouteCollection $routes
  * @return void
  */
 	public static function setRouteCollection(RouteCollection $routes) {
@@ -502,7 +533,7 @@ class Router {
  * Will accept either a Cake\Network\Request object or an array of arrays. Support for
  * accepting arrays may be removed in the future.
  *
- * @param Cake\Network\Request|array $request Parameters and path information or a Cake\Network\Request object.
+ * @param \Cake\Network\Request|array $request Parameters and path information or a Cake\Network\Request object.
  * @return void
  */
 	public static function setRequestInfo($request) {
@@ -510,7 +541,7 @@ class Router {
 			static::pushRequest($request);
 		} else {
 			$requestData = $request;
-			$requestData += array(array(), array());
+			$requestData += array([], []);
 			$requestData[0] += array(
 				'controller' => false,
 				'action' => false,
@@ -526,7 +557,7 @@ class Router {
  * Push a request onto the request stack. Pushing a request
  * sets the request context used when generating URLs.
  *
- * @param Cake\Network\Request $request
+ * @param \Cake\Network\Request $request
  * @return void
  */
 	public static function pushRequest(Request $request) {
@@ -537,7 +568,7 @@ class Router {
 /**
  * Pops a request off of the request stack.  Used when doing requestAction
  *
- * @return Cake\Network\Request The request removed from the stack.
+ * @return \Cake\Network\Request The request removed from the stack.
  * @see Router::pushRequest()
  * @see Object::requestAction()
  */
@@ -555,7 +586,7 @@ class Router {
  * Get the either the current request object, or the first one.
  *
  * @param boolean $current Whether you want the request from the top of the stack or the first one.
- * @return Cake\Network\Request or null.
+ * @return \Cake\Network\Request or null.
  */
 	public static function getRequest($current = false) {
 		if ($current) {
@@ -680,16 +711,16 @@ class Router {
  *   If an array accepts the following keys.  If used with a named route you can provide
  *   a list of query string parameters.
  * @return string Full translated URL with base path.
- * @throws Cake\Error\Exception When the route name is not found
+ * @throws \Cake\Error\Exception When the route name is not found
  */
-	public static function url($url = null, $options = array()) {
+	public static function url($url = null, $options = []) {
 		if (!static::$initialized) {
 			static::_loadRoutes();
 		}
 
 		$full = false;
 		if (is_bool($options)) {
-			list($full, $options) = array($options, array());
+			list($full, $options) = array($options, []);
 		}
 		$urlType = gettype($url);
 		$hasLeadingSlash = $plainString = false;
@@ -712,7 +743,8 @@ class Router {
 		$params = array(
 			'plugin' => null,
 			'controller' => null,
-			'action' => 'index'
+			'action' => 'index',
+			'_ext' => null
 		);
 		$here = $base = $output = $frag = null;
 
@@ -764,18 +796,17 @@ class Router {
 				$url['action'] = $params['action'];
 			}
 
-			// Keep the current prefix around, or remove it if its falsey
-			if (!empty($params['prefix']) && !isset($url['prefix'])) {
+			// Keep the current prefix around if none set.
+			if (isset($params['prefix']) && !isset($url['prefix'])) {
 				$url['prefix'] = $params['prefix'];
-			}
-			if (empty($url['prefix'])) {
-				unset($url['prefix']);
 			}
 
 			$url += array(
-				'controller' => $params['controller'],
 				'plugin' => $params['plugin'],
-				'action' => 'index'
+				'controller' => $params['controller'],
+				'action' => 'index',
+				'_ext' => $params['_ext']
+
 			);
 			$url = static::_applyUrlFilters($url);
 			$output = static::$_routes->match($url);
@@ -850,21 +881,21 @@ class Router {
  * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
  * are used for CakePHP internals and should not normally be part of an output URL.
  *
- * @param Cake\Network\Request|array $params The params array or
+ * @param \Cake\Network\Request|array $params The params array or
  *     Cake\Network\Request object that needs to be reversed.
  * @param boolean $full Set to true to include the full URL including the
  *     protocol when reversing the URL.
  * @return string The string that is the reversed result of the array
  */
 	public static function reverse($params, $full = false) {
-		$url = array();
+		$url = [];
 		if ($params instanceof Request) {
 			$url = $params->query;
 			$params = $params->params;
 		} elseif (isset($params['url'])) {
 			$url = $params['url'];
 		}
-		$pass = isset($params['pass']) ? $params['pass'] : array();
+		$pass = isset($params['pass']) ? $params['pass'] : [];
 
 		unset(
 			$params['pass'], $params['paging'], $params['models'], $params['url'], $url['url'],
@@ -983,15 +1014,15 @@ class Router {
  *
  * @param Request $request The request object to modify.
  * @param array $options The array of options.
- * @return The modified request
+ * @return \Cake\Network\Request The modified request
  */
-	public static function parseNamedParams(Request $request, $options = array()) {
+	public static function parseNamedParams(Request $request, $options = []) {
 		$options += array('separator' => ':');
 		if (empty($request->params['pass'])) {
-			$request->params['named'] = array();
+			$request->params['named'] = [];
 			return $request;
 		}
-		$named = array();
+		$named = [];
 		foreach ($request->params['pass'] as $key => $value) {
 			if (strpos($value, $options['separator']) === false) {
 				continue;

@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.2
+ * @since         2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Log;
@@ -47,7 +47,7 @@ class LogEngineRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the logger is missing in.
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\Exception(sprintf('Could not load class %s', $class));
@@ -60,8 +60,8 @@ class LogEngineRegistry extends ObjectRegistry {
  * @param string|LogInterface $class The classname or object to make.
  * @param string $alias The alias of the object.
  * @param array $settings An array of settings to use for the logger.
- * @return LogEngine The constructed logger class.
- * @throws Cake\Error\Exception when an object doesn't implement
+ * @return \Cake\Log\LogInterface The constructed logger class.
+ * @throws \Cake\Error\Exception when an object doesn't implement
  *    the correct interface.
  */
 	protected function _create($class, $alias, $settings) {

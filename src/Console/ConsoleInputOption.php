@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console;
@@ -77,7 +77,7 @@ class ConsoleInputOption {
  * @param boolean $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
  * @param string $default The default value for this option.
  * @param array $choices Valid choices for this option.
- * @throws Cake\Error\ConsoleException
+ * @throws \Cake\Error\ConsoleException
  */
 	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = []) {
 		if (is_array($name) && isset($name['name'])) {
@@ -181,7 +181,7 @@ class ConsoleInputOption {
  *
  * @param string $value
  * @return boolean
- * @throws Cake\Error\ConsoleException
+ * @throws \Cake\Error\ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {
@@ -199,8 +199,8 @@ class ConsoleInputOption {
 /**
  * Append the option's xml into the parent.
  *
- * @param SimpleXmlElement $parent The parent element.
- * @return SimpleXmlElement The parent with this option appended.
+ * @param \SimpleXmlElement $parent The parent element.
+ * @return \SimpleXmlElement The parent with this option appended.
  */
 	public function xml(\SimpleXmlElement $parent) {
 		$option = $parent->addChild('option');

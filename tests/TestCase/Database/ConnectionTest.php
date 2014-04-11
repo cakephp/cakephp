@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,14 +9,14 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -26,16 +24,17 @@ use Cake\TestSuite\TestCase;
  */
 class ConnectionTest extends TestCase {
 
+	public $fixtures = ['core.thing'];
+
 	public function setUp() {
-		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
+		parent::setUp();
 	}
 
 	public function tearDown() {
-		parent::tearDown();
-		$this->connection->execute('DROP TABLE IF EXISTS things');
 		$this->connection->useSavePoints(false);
 		unset($this->connection);
+		parent::tearDown();
 	}
 
 /**
@@ -63,26 +62,48 @@ class ConnectionTest extends TestCase {
 	}
 
 /**
+ * Tests creating a connection using no driver throws an exception
+ *
+ * @expectedException \Cake\Database\Exception\MissingDriverException
+ * @expectedExceptionMessage Database driver "" could not be found.
+ * @return void
+ */
+	public function testNoDriver() {
+		$connection = new Connection([]);
+	}
+
+/**
  * Tests creating a connection using an invalid driver throws an exception
  *
- * @expectedException Cake\Database\Exception\MissingDriverException
- * @expectedExceptionMessage Database driver \Foo\InvalidDriver could not be found.
+ * @expectedException \Cake\Database\Exception\MissingDriverException
+ * @expectedExceptionMessage Database driver "" could not be found.
+ * @return void
+ */
+	public function testEmptyDriver() {
+		$connection = new Connection(['driver' => false]);
+	}
+
+/**
+ * Tests creating a connection using an invalid driver throws an exception
+ *
+ * @expectedException \Cake\Database\Exception\MissingDriverException
+ * @expectedExceptionMessage Database driver "\Foo\InvalidDriver" could not be found.
  * @return void
  */
 	public function testMissingDriver() {
-		$connection = new Connection(['datasource' => '\Foo\InvalidDriver']);
+		$connection = new Connection(['driver' => '\Foo\InvalidDriver']);
 	}
 
 /**
  * Tests trying to use a disabled driver throws an exception
  *
- * @expectedException Cake\Database\Exception\MissingExtensionException
+ * @expectedException \Cake\Database\Exception\MissingExtensionException
  * @expectedExceptionMessage Database driver DriverMock cannot be used due to a missing PHP extension or unmet dependency
  * @return void
  */
 	public function testDisabledDriver() {
 		$mock = $this->getMock('\Cake\Database\Connection\Driver', ['enabled'], [], 'DriverMock');
-		$connection = new Connection(['datasource' => $mock]);
+		$connection = new Connection(['driver' => $mock]);
 	}
 
 /**
@@ -99,18 +120,6 @@ class ConnectionTest extends TestCase {
 	}
 
 /**
- * Tests disconnecting from database
- *
- * @return void
- **/
-	public function testDisconnect() {
-		$this->assertTrue($this->connection->connect());
-		$this->assertTrue($this->connection->isConnected());
-		$this->connection->disconnect();
-		$this->assertFalse($this->connection->isConnected());
-	}
-
-/**
  * Tests creation of prepared statements
  *
  * @return void
@@ -120,6 +129,12 @@ class ConnectionTest extends TestCase {
 		$result = $this->connection->prepare($sql);
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
 		$this->assertEquals($sql, $result->queryString);
+
+		$query = $this->connection->newQuery()->select('1 + 1');
+		$result = $this->connection->prepare($query);
+		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+		$sql = '#SELECT [`"\[]?1 \+ 1[`"\]]?#';
+		$this->assertRegExp($sql, $result->queryString);
 	}
 
 /**
@@ -133,17 +148,20 @@ class ConnectionTest extends TestCase {
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch();
 		$this->assertEquals([2], $result);
+		$statement->closeCursor();
 
 		$sql = 'SELECT 1 + ? + ? AS total';
 		$statement = $this->connection->execute($sql, [2, 3], array('integer', 'integer'));
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch('assoc');
 		$this->assertEquals(['total' => 6], $result);
+		$statement->closeCursor();
 
 		$sql = 'SELECT 1 + :one + :two AS total';
 		$statement = $this->connection->execute($sql, ['one' => 2, 'two' => 3], array('one' => 'integer', 'two' => 'integer'));
 		$this->assertCount(1, $statement);
 		$result = $statement->fetch('assoc');
+		$statement->closeCursor();
 		$this->assertEquals(['total' => 6], $result);
 	}
 
@@ -156,12 +174,14 @@ class ConnectionTest extends TestCase {
 		$sql = "SELECT ? = '2012-01-01'";
 		$statement = $this->connection->execute($sql, [new \DateTime('2012-01-01')], ['date']);
 		$result = $statement->fetch();
+		$statement->closeCursor();
 		$this->assertTrue((bool)$result[0]);
 
 		$sql = "SELECT ? = '2012-01-01', ? = '2000-01-01 10:10:10', ? = 2";
 		$params = [new \DateTime('2012-01-01 10:10:10'), '2000-01-01 10:10:10', 2.1];
 		$statement = $this->connection->execute($sql, $params, ['date', 'string', 'integer']);
 		$result = $statement->fetch();
+		$statement->closeCursor();
 		$this->assertEquals($result, array_filter($result));
 	}
 
@@ -187,6 +207,7 @@ class ConnectionTest extends TestCase {
 		$result = $statement->fetch();
 		$this->assertCount(1, $result);
 		$this->assertEquals([1], $result);
+		$statement->closeCursor();
 	}
 
 /**
@@ -195,18 +216,18 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testInsertWithMatchingTypes() {
-		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
-		$this->connection->execute($table);
-		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
+		$data = ['id' => '3', 'title' => 'a title', 'body' => 'a body'];
 		$result = $this->connection->insert(
 			'things',
 			$data,
 			['id' => 'integer', 'title' => 'string', 'body' => 'string']
 		);
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-		$result = $this->connection->execute('SELECT * from things');
+		$result->closeCursor();
+		$result = $this->connection->execute('SELECT * from things where id = 3');
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
+		$result->closeCursor();
 		$this->assertEquals($data, $row);
 	}
 
@@ -216,40 +237,19 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testInsertWithPositionalTypes() {
-		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
-		$this->connection->execute($table);
-		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
+		$data = ['id' => '3', 'title' => 'a title', 'body' => 'a body'];
 		$result = $this->connection->insert(
 			'things',
 			$data,
 			['integer', 'string', 'string']
 		);
+		$result->closeCursor();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-		$result = $this->connection->execute('SELECT * from things');
+		$result = $this->connection->execute('SELECT * from things where id  = 3');
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
+		$result->closeCursor();
 		$this->assertEquals($data, $row);
-	}
-
-/**
- * Auxiliary function to insert a couple rows in a newly created table
- *
- * @return void
- **/
-	protected function _insertTwoRecords() {
-		$table = 'CREATE TEMPORARY TABLE things(id int, title varchar(20), body varchar(50))';
-		$this->connection->execute($table);
-		$data = ['id' => '1', 'title' => 'a title', 'body' => 'a body'];
-		$result = $this->connection->insert(
-			'things',
-			$data,
-			['id' => 'integer', 'title' => 'string', 'body' => 'string']
-		);
-
-		$result->bindValue(1, '2', 'integer');
-		$result->bindValue(2, 'another title');
-		$result->bindValue(3, 'another body');
-		$result->execute();
 	}
 
 /**
@@ -258,11 +258,10 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testStatementReusing() {
-		$this->_insertTwoRecords();
-
 		$total = $this->connection->execute('SELECT COUNT(*) AS total FROM things');
-		$total = $total->fetch('assoc');
-		$this->assertEquals(2, $total['total']);
+		$result = $total->fetch('assoc');
+		$this->assertEquals(2, $result['total']);
+		$total->closeCursor();
 
 		$result = $this->connection->execute('SELECT title, body  FROM things');
 		$row = $result->fetch('assoc');
@@ -270,6 +269,7 @@ class ConnectionTest extends TestCase {
 		$this->assertEquals('a body', $row['body']);
 
 		$row = $result->fetch('assoc');
+		$result->closeCursor();
 		$this->assertEquals('another title', $row['title']);
 		$this->assertEquals('another body', $row['body']);
 	}
@@ -280,12 +280,12 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testUpdateWithoutConditionsNorTypes() {
-		$this->_insertTwoRecords();
 		$title = 'changed the title!';
 		$body = 'changed the body!';
 		$this->connection->update('things', ['title' => $title, 'body' => $body]);
 		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
 		$this->assertCount(2, $result);
+		$result->closeCursor();
 	}
 
 /**
@@ -294,12 +294,12 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testUpdateWithConditionsNoTypes() {
-		$this->_insertTwoRecords();
 		$title = 'changed the title!';
 		$body = 'changed the body!';
 		$this->connection->update('things', ['title' => $title, 'body' => $body], ['id' => 2]);
 		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
 		$this->assertCount(1, $result);
+		$result->closeCursor();
 	}
 
 /**
@@ -308,12 +308,12 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testUpdateWithConditionsCombinedNoTypes() {
-		$this->_insertTwoRecords();
 		$title = 'changed the title!';
 		$body = 'changed the body!';
 		$this->connection->update('things', ['title' => $title, 'body' => $body], ['id' => 2, 'body is not null']);
 		$result = $this->connection->execute('SELECT * FROM things WHERE title = ? AND body = ?', [$title, $body]);
 		$this->assertCount(1, $result);
+		$result->closeCursor();
 	}
 
 /**
@@ -322,7 +322,6 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testUpdateWithTypes() {
-		$this->_insertTwoRecords();
 		$title = 'changed the title!';
 		$body = new \DateTime('2012-01-01');
 		$values = compact('title', 'body');
@@ -333,6 +332,7 @@ class ConnectionTest extends TestCase {
 		$this->assertEquals('2012-01-01', $row['body']);
 		$row = $result->fetch('assoc');
 		$this->assertEquals('2012-01-01', $row['body']);
+		$result->closeCursor();
 	}
 
 /**
@@ -341,7 +341,6 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testUpdateWithConditionsAndTypes() {
-		$this->_insertTwoRecords();
 		$title = 'changed the title!';
 		$body = new \DateTime('2012-01-01');
 		$values = compact('title', 'body');
@@ -350,6 +349,7 @@ class ConnectionTest extends TestCase {
 		$this->assertCount(1, $result);
 		$row = $result->fetch('assoc');
 		$this->assertEquals('2012-01-01', $row['body']);
+		$result->closeCursor();
 	}
 
 /**
@@ -358,10 +358,10 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testDeleteNoConditions() {
-		$this->_insertTwoRecords();
 		$this->connection->delete('things');
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(0, $result);
+		$result->closeCursor();
 	}
 
 /**
@@ -369,18 +369,20 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testDeleteWithConditions() {
-		$this->_insertTwoRecords();
 		$this->connection->delete('things', ['id' => '1-rest-is-ommited'], ['id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(1, $result);
+		$result->closeCursor();
 
 		$this->connection->delete('things', ['id' => '1-rest-is-ommited'], ['id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(1, $result);
+		$result->closeCursor();
 
 		$this->connection->delete('things', ['id' => '2-rest-is-ommited'], ['id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(0, $result);
+		$result->closeCursor();
 	}
 
 /**
@@ -389,12 +391,12 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testSimpleTransactions() {
-		$this->_insertTwoRecords();
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
 		$this->connection->rollback();
 		$result = $this->connection->execute('SELECT * FROM things');
 		$this->assertCount(2, $result);
+		$result->closeCursor();
 
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
@@ -410,8 +412,6 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testVirtualNestedTrasanction() {
-		$this->_insertTwoRecords();
-
 		//starting 3 virtual transaction
 		$this->connection->begin();
 		$this->connection->begin();
@@ -435,8 +435,6 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testVirtualNestedTrasanction2() {
-		$this->_insertTwoRecords();
-
 		//starting 3 virtual transaction
 		$this->connection->begin();
 		$this->connection->begin();
@@ -459,8 +457,6 @@ class ConnectionTest extends TestCase {
  **/
 
 	public function testVirtualNestedTrasanction3() {
-		$this->_insertTwoRecords();
-
 		//starting 3 virtual transaction
 		$this->connection->begin();
 		$this->connection->begin();
@@ -484,7 +480,6 @@ class ConnectionTest extends TestCase {
  **/
 	public function testSavePoints() {
 		$this->skipIf(!$this->connection->useSavePoints(true));
-		$this->_insertTwoRecords();
 
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
@@ -514,8 +509,6 @@ class ConnectionTest extends TestCase {
 
 	public function testSavePoints2() {
 		$this->skipIf(!$this->connection->useSavePoints(true));
-		$this->_insertTwoRecords();
-
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
 
@@ -566,7 +559,7 @@ class ConnectionTest extends TestCase {
 		$driver->expects($this->once())
 			->method('enabled')
 			->will($this->returnValue(true));
-		$connection = new Connection(['datasource' => $driver]);
+		$connection = new Connection(['driver' => $driver]);
 
 		$result = $connection->quoteIdentifier('name');
 		$expected = '"name"';
@@ -690,11 +683,13 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testLogBeginRollbackTransaction() {
-		$connection = $this->getMock(
-			'\Cake\Database\Connection',
-			['connect'],
-			[['log' => true]]
-		);
+		$connection = $this
+			->getMockBuilder('\Cake\Database\Connection')
+			->setMethods(['connect'])
+			->disableOriginalConstructor()
+			->getMock();
+		$connection->logQueries(true);
+
 		$driver = $this->getMockFormDriver();
 		$connection->driver($driver);
 
@@ -726,7 +721,7 @@ class ConnectionTest extends TestCase {
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect'],
-			[['datasource' => $driver]]
+			[['driver' => $driver]]
 		);
 
 		$logger = $this->getMock('\Cake\Database\Log\QueryLogger');
@@ -753,7 +748,7 @@ class ConnectionTest extends TestCase {
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect', 'commit', 'begin'],
-			[['datasource' => $driver]]
+			[['driver' => $driver]]
 		);
 		$connection->expects($this->at(0))->method('begin');
 		$connection->expects($this->at(1))->method('commit');
@@ -775,7 +770,7 @@ class ConnectionTest extends TestCase {
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect', 'commit', 'begin', 'rollback'],
-			[['datasource' => $driver]]
+			[['driver' => $driver]]
 		);
 		$connection->expects($this->at(0))->method('begin');
 		$connection->expects($this->at(1))->method('rollback');
@@ -800,7 +795,7 @@ class ConnectionTest extends TestCase {
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect', 'commit', 'begin', 'rollback'],
-			[['datasource' => $driver]]
+			[['driver' => $driver]]
 		);
 		$connection->expects($this->at(0))->method('begin');
 		$connection->expects($this->at(1))->method('rollback');

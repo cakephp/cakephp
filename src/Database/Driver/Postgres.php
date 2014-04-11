@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Driver;
@@ -96,6 +94,7 @@ class Postgres extends \Cake\Database\Driver {
 /**
  * Sets connection encoding
  *
+ * @param string $encoding
  * @return void
  */
 	public function setEncoding($encoding) {
@@ -107,6 +106,7 @@ class Postgres extends \Cake\Database\Driver {
  * Sets connection default schema, if any relation defined in a query is not fully qualified
  * postgres will fallback to looking the relation into defined default schema
  *
+ * @param string $schema
  * @return void
  */
 	public function setSchema($schema) {

@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Helper;
@@ -30,64 +30,6 @@ use Cake\Utility\Folder;
 use Cake\View\Helper\FormHelper;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
-
-class TestHtmlHelper extends HtmlHelper {
-
-/**
- * expose a method as public
- *
- * @param string $options
- * @param string $exclude
- * @param string $insertBefore
- * @param string $insertAfter
- * @return void
- */
-	public function parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
-		return $this->_parseAttributes($options, $exclude, $insertBefore, $insertAfter);
-	}
-
-/**
- * Get a protected attribute value
- *
- * @param string $attribute
- * @return mixed
- */
-	public function getAttribute($attribute) {
-		if (!isset($this->{$attribute})) {
-			return null;
-		}
-		return $this->{$attribute};
-	}
-
-}
-
-/**
- * Html5TestHelper class
- *
- */
-class Html5TestHelper extends TestHtmlHelper {
-
-/**
- * Minimized
- *
- * @var array
- */
-	protected $_minimizedAttributes = array('require', 'checked');
-
-/**
- * Allow compact use in HTML
- *
- * @var string
- */
-	protected $_minimizedAttributeFormat = '%s';
-
-/**
- * Test to attribute format
- *
- * @var string
- */
-	protected $_attributeFormat = 'data-%s="%s"';
-}
 
 /**
  * HtmlHelperTest class
@@ -124,8 +66,8 @@ class HtmlHelperTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$controller = $this->getMock('Cake\Controller\Controller');
-		$this->View = $this->getMock('Cake\View\View', array('append'), array($controller));
-		$this->Html = new TestHtmlHelper($this->View);
+		$this->View = $this->getMock('Cake\View\View', array('append'));
+		$this->Html = new HtmlHelper($this->View);
 		$this->Html->request = new Request();
 		$this->Html->request->webroot = '';
 
@@ -473,7 +415,7 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->image('cake.icon.png');
 		$this->assertTags($result, array('img' => array('src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '')));
 
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		Configure::write('Asset.timestamp', 'force');
 
 		$result = $this->Html->image('cake.icon.png');
@@ -499,7 +441,7 @@ class HtmlHelperTest extends TestCase {
 		new File($testfile, true);
 
 		Configure::write('Asset.timestamp', true);
-		Configure::write('debug', 1);
+		Configure::write('debug', true);
 
 		$this->Html->request->webroot = '/';
 		$this->Html->theme = 'test_theme';
@@ -532,14 +474,14 @@ class HtmlHelperTest extends TestCase {
 		$this->Html->theme = 'test_theme';
 		$result = $this->Html->css('webroot_test');
 		$expected = array(
-			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*theme\/test_theme\/css\/webroot_test\.css/')
+			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*theme\/test_theme\/css\/webroot_test\.css/')
 		);
 		$this->assertTags($result, $expected);
 
 		$this->Html->theme = 'test_theme';
 		$result = $this->Html->css('theme_webroot');
 		$expected = array(
-			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*theme\/test_theme\/css\/theme_webroot\.css/')
+			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*theme\/test_theme\/css\/theme_webroot\.css/')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -550,9 +492,6 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testStyle() {
-		$result = $this->Html->style('display: none;');
-		$this->assertEquals('display: none;', $result);
-
 		$result = $this->Html->style(array('display' => 'none', 'margin' => '10px'));
 		$expected = 'display:none; margin:10px;';
 		$this->assertRegExp('/^display\s*:\s*none\s*;\s*margin\s*:\s*10px\s*;?$/', $expected);
@@ -571,7 +510,7 @@ class HtmlHelperTest extends TestCase {
 	public function testCssLink() {
 		$result = $this->Html->css('screen');
 		$expected = array(
-			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*css\/screen\.css/')
+			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*css\/screen\.css/')
 		);
 		$this->assertTags($result, $expected);
 
@@ -579,7 +518,7 @@ class HtmlHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		Plugin::load('TestPlugin');
-		$result = $this->Html->css('TestPlugin.style', null, array('plugin' => false));
+		$result = $this->Html->css('TestPlugin.style', array('plugin' => false));
 		$expected['link']['href'] = 'preg:/.*css\/TestPlugin\.style\.css/';
 		$this->assertTags($result, $expected);
 		Plugin::unload('TestPlugin');
@@ -624,54 +563,19 @@ class HtmlHelperTest extends TestCase {
 			->method('append')
 			->with('css', $this->matchesRegularExpression('/more_css_in_head.css/'));
 
-		$result = $this->Html->css('css_in_head', array('inline' => false));
+		$result = $this->Html->css('css_in_head', array('block' => true));
 		$this->assertNull($result);
 
-		$result = $this->Html->css('more_css_in_head', array('inline' => false));
+		$result = $this->Html->css('more_css_in_head', array('block' => true));
 		$this->assertNull($result);
 
 		$result = $this->Html->css('screen', array('rel' => 'import'));
 		$expected = array(
-			'style' => array('type' => 'text/css'),
+			'<style',
 			'preg:/@import url\(.*css\/screen\.css\);/',
 			'/style'
 		);
 		$this->assertTags($result, $expected);
-	}
-
-/**
- * Test css link BC usage
- *
- * @return void
- */
-	public function testCssLinkBC() {
-		Configure::write('Asset.filter.css', false);
-
-		Plugin::load('TestPlugin');
-		$result = $this->Html->css('TestPlugin.style', null, array('plugin' => false));
-		$expected = array(
-			'link' => array(
-				'rel' => 'stylesheet',
-				'type' => 'text/css',
-				'href' => 'preg:/.*css\/TestPlugin\.style\.css/'
-			)
-		);
-		$this->assertTags($result, $expected);
-		Plugin::unload('TestPlugin');
-
-		$result = $this->Html->css('screen', 'import');
-		$expected = array(
-			'style' => array('type' => 'text/css'),
-			'preg:/@import url\(.*css\/screen\.css\);/',
-			'/style'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Html->css('css_in_head', null, array('inline' => false));
-		$this->assertNull($result);
-
-		$result = $this->Html->css('more_css_in_head', null, array('inline' => false));
-		$this->assertNull($result);
 	}
 
 /**
@@ -683,9 +587,9 @@ class HtmlHelperTest extends TestCase {
 		Configure::write('Asset.filter.css', false);
 		$here = $this->Html->url('/', true);
 
-		$result = $this->Html->css('screen', null, array('fullBase' => true));
+		$result = $this->Html->css('screen', array('fullBase' => true));
 		$expected = array(
-			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => $here . 'css/screen.css')
+			'link' => array('rel' => 'stylesheet', 'href' => $here . 'css/screen.css')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -700,7 +604,7 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->css('TestPlugin.test_plugin_asset');
 		$expected = array(
-			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*test_plugin\/css\/test_plugin_asset\.css/')
+			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*test_plugin\/css\/test_plugin_asset\.css/')
 		);
 		$this->assertTags($result, $expected);
 
@@ -731,18 +635,18 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testCssTimestamping() {
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		Configure::write('Asset.timestamp', true);
 
 		$expected = array(
-			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => '')
+			'link' => array('rel' => 'stylesheet', 'href' => '')
 		);
 
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css/';
@@ -773,18 +677,18 @@ class HtmlHelperTest extends TestCase {
 	public function testPluginCssTimestamping() {
 		Plugin::load('TestPlugin');
 
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		Configure::write('Asset.timestamp', true);
 
 		$expected = array(
-			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => '')
+			'link' => array('rel' => 'stylesheet', 'href' => '')
 		);
 
 		$result = $this->Html->css('TestPlugin.test_plugin_asset');
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 
 		$result = $this->Html->css('TestPlugin.test_plugin_asset');
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css/';
@@ -817,18 +721,18 @@ class HtmlHelperTest extends TestCase {
 	public function testScriptTimestamping() {
 		$this->skipIf(!is_writable(WWW_ROOT . 'js'), 'webroot/js is not Writable, timestamp testing has been skipped.');
 
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		Configure::write('Asset.timestamp', true);
 
 		touch(WWW_ROOT . 'js/__cake_js_test.js');
 		$timestamp = substr(strtotime('now'), 0, 8);
 
-		$result = $this->Html->script('__cake_js_test', array('inline' => true, 'once' => false));
+		$result = $this->Html->script('__cake_js_test', array('once' => false));
 		$this->assertRegExp('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		Configure::write('Asset.timestamp', 'force');
-		$result = $this->Html->script('__cake_js_test', array('inline' => true, 'once' => false));
+		$result = $this->Html->script('__cake_js_test', array('once' => false));
 		$this->assertRegExp('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 		unlink(WWW_ROOT . 'js/__cake_js_test.js');
 		Configure::write('Asset.timestamp', false);
@@ -846,18 +750,18 @@ class HtmlHelperTest extends TestCase {
 		$pluginJsPath = $pluginPath . 'webroot/js';
 		$this->skipIf(!is_writable($pluginJsPath), $pluginJsPath . ' is not Writable, timestamp testing has been skipped.');
 
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		Configure::write('Asset.timestamp', true);
 
 		touch($pluginJsPath . DS . '__cake_js_test.js');
 		$timestamp = substr(strtotime('now'), 0, 8);
 
-		$result = $this->Html->script('TestPlugin.__cake_js_test', array('inline' => true, 'once' => false));
+		$result = $this->Html->script('TestPlugin.__cake_js_test', array('once' => false));
 		$this->assertRegExp('/test_plugin\/js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		Configure::write('Asset.timestamp', 'force');
-		$result = $this->Html->script('TestPlugin.__cake_js_test', array('inline' => true, 'once' => false));
+		$result = $this->Html->script('TestPlugin.__cake_js_test', array('once' => false));
 		$this->assertRegExp('/test_plugin\/js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 		unlink($pluginJsPath . DS . '__cake_js_test.js');
 		Configure::write('Asset.timestamp', false);
@@ -874,64 +778,64 @@ class HtmlHelperTest extends TestCase {
 	public function testScript() {
 		$result = $this->Html->script('foo');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'js/foo.js')
+			'script' => array('src' => 'js/foo.js')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script(array('foobar', 'bar'));
 		$expected = array(
-			array('script' => array('type' => 'text/javascript', 'src' => 'js/foobar.js')),
+			array('script' => array('src' => 'js/foobar.js')),
 			'/script',
-			array('script' => array('type' => 'text/javascript', 'src' => 'js/bar.js')),
+			array('script' => array('src' => 'js/bar.js')),
 			'/script',
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script('jquery-1.3');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'js/jquery-1.3.js')
+			'script' => array('src' => 'js/jquery-1.3.js')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script('test.json');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'js/test.json.js')
+			'script' => array('src' => 'js/test.json.js')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script('http://example.com/test.json');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'http://example.com/test.json')
+			'script' => array('src' => 'http://example.com/test.json')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script('/plugin/js/jquery-1.3.2.js?someparam=foo');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => '/plugin/js/jquery-1.3.2.js?someparam=foo')
+			'script' => array('src' => '/plugin/js/jquery-1.3.2.js?someparam=foo')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script('test.json.js?foo=bar');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'js/test.json.js?foo=bar')
+			'script' => array('src' => 'js/test.json.js?foo=bar')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script('test.json.js?foo=bar&other=test');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'js/test.json.js?foo=bar&amp;other=test')
+			'script' => array('src' => 'js/test.json.js?foo=bar&amp;other=test')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script('foo2', array('pathPrefix' => '/my/custom/path/'));
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => '/my/custom/path/foo2.js')
+			'script' => array('src' => '/my/custom/path/foo2.js')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script('foo3', array('pathPrefix' => 'http://cakephp.org/assets/js/'));
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'http://cakephp.org/assets/js/foo3.js')
+			'script' => array('src' => 'http://cakephp.org/assets/js/foo3.js')
 		);
 		$this->assertTags($result, $expected);
 
@@ -939,7 +843,7 @@ class HtmlHelperTest extends TestCase {
 		Configure::write('App.jsBaseUrl', '//cdn.cakephp.org/js/');
 		$result = $this->Html->script('foo4');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => '//cdn.cakephp.org/js/foo4.js')
+			'script' => array('src' => '//cdn.cakephp.org/js/foo4.js')
 		);
 		$this->assertTags($result, $expected);
 		Configure::write('App.jsBaseUrl', $previousConfig);
@@ -950,12 +854,12 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->script(array('foo', 'bar', 'baz'));
 		$this->assertNotRegExp('/foo.js/', $result);
 
-		$result = $this->Html->script('foo', array('inline' => true, 'once' => false));
+		$result = $this->Html->script('foo', array('once' => false));
 		$this->assertNotNull($result);
 
 		$result = $this->Html->script('jquery-1.3.2', array('defer' => true, 'encoding' => 'utf-8'));
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8')
+			'script' => array('src' => 'js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -971,40 +875,40 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->script('TestPlugin.foo');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/foo.js')
+			'script' => array('src' => 'test_plugin/js/foo.js')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script(array('TestPlugin.foobar', 'TestPlugin.bar'));
 		$expected = array(
-			array('script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/foobar.js')),
+			array('script' => array('src' => 'test_plugin/js/foobar.js')),
 			'/script',
-			array('script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/bar.js')),
+			array('script' => array('src' => 'test_plugin/js/bar.js')),
 			'/script',
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script('TestPlugin.jquery-1.3');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/jquery-1.3.js')
+			'script' => array('src' => 'test_plugin/js/jquery-1.3.js')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script('TestPlugin.test.json');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/test.json.js')
+			'script' => array('src' => 'test_plugin/js/test.json.js')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script('TestPlugin./jquery-1.3.2.js?someparam=foo');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'test_plugin/jquery-1.3.2.js?someparam=foo')
+			'script' => array('src' => 'test_plugin/jquery-1.3.2.js?someparam=foo')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script('TestPlugin.test.json.js?foo=bar');
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/test.json.js?foo=bar')
+			'script' => array('src' => 'test_plugin/js/test.json.js?foo=bar')
 		);
 		$this->assertTags($result, $expected);
 
@@ -1014,12 +918,12 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->script(array('TestPlugin.foo', 'TestPlugin.bar', 'TestPlugin.baz'));
 		$this->assertNotRegExp('/test_plugin\/js\/foo.js/', $result);
 
-		$result = $this->Html->script('TestPlugin.foo', array('inline' => true, 'once' => false));
+		$result = $this->Html->script('TestPlugin.foo', array('once' => false));
 		$this->assertNotNull($result);
 
 		$result = $this->Html->script('TestPlugin.jquery-1.3.2', array('defer' => true, 'encoding' => 'utf-8'));
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'test_plugin/js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8')
+			'script' => array('src' => 'test_plugin/js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8')
 		);
 		$this->assertTags($result, $expected);
 
@@ -1038,16 +942,9 @@ class HtmlHelperTest extends TestCase {
 
 		$this->View->expects($this->at(1))
 			->method('append')
-			->with('script', $this->matchesRegularExpression('/bool_false.js/'));
-
-		$this->View->expects($this->at(2))
-			->method('append')
 			->with('headScripts', $this->matchesRegularExpression('/second_script.js/'));
 
-		$result = $this->Html->script('script_in_head', array('inline' => false));
-		$this->assertNull($result);
-
-		$result = $this->Html->script('bool_false', false);
+		$result = $this->Html->script('script_in_head', array('block' => true));
 		$this->assertNull($result);
 
 		$result = $this->Html->script('second_script', array('block' => 'headScripts'));
@@ -1064,15 +961,15 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->script('foo', array('fullBase' => true));
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => $here . 'js/foo.js')
+			'script' => array('src' => $here . 'js/foo.js')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->script(array('foobar', 'bar'), array('fullBase' => true));
 		$expected = array(
-			array('script' => array('type' => 'text/javascript', 'src' => $here . 'js/foobar.js')),
+			array('script' => array('src' => $here . 'js/foobar.js')),
 			'/script',
-			array('script' => array('type' => 'text/javascript', 'src' => $here . 'js/bar.js')),
+			array('script' => array('src' => $here . 'js/bar.js')),
 			'/script',
 		);
 		$this->assertTags($result, $expected);
@@ -1094,7 +991,7 @@ class HtmlHelperTest extends TestCase {
 		$this->Html->theme = 'test_theme';
 		$result = $this->Html->script('__test_js.js');
 		$expected = array(
-			'script' => array('src' => '/theme/test_theme/js/__test_js.js', 'type' => 'text/javascript')
+			'script' => array('src' => '/theme/test_theme/js/__test_js.js')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -1107,7 +1004,7 @@ class HtmlHelperTest extends TestCase {
 	public function testScriptBlock() {
 		$result = $this->Html->scriptBlock('window.foo = 2;');
 		$expected = array(
-			'script' => array('type' => 'text/javascript'),
+			'<script',
 			$this->cDataStart,
 			'window.foo = 2;',
 			$this->cDataEnd,
@@ -1127,7 +1024,7 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => false));
 		$expected = array(
-			'script' => array('type' => 'text/javascript'),
+			'<script',
 			'window.foo = 2;',
 			'/script',
 		);
@@ -1135,7 +1032,7 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => true));
 		$expected = array(
-			'script' => array('type' => 'text/javascript'),
+			'<script',
 			$this->cDataStart,
 			'window.foo = 2;',
 			$this->cDataEnd,
@@ -1151,7 +1048,7 @@ class HtmlHelperTest extends TestCase {
 			->method('append')
 			->with('scriptTop', $this->stringContains('alert('));
 
-		$result = $this->Html->scriptBlock('window.foo = 2;', array('inline' => false));
+		$result = $this->Html->scriptBlock('window.foo = 2;', array('block' => true));
 		$this->assertNull($result);
 
 		$result = $this->Html->scriptBlock('alert("hi")', array('block' => 'scriptTop'));
@@ -1159,7 +1056,7 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => false, 'encoding' => 'utf-8'));
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'encoding' => 'utf-8'),
+			'script' => array('encoding' => 'utf-8'),
 			'window.foo = 2;',
 			'/script',
 		);
@@ -1178,7 +1075,7 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->scriptEnd();
 		$expected = array(
-			'script' => array('type' => 'text/javascript'),
+			'<script',
 			$this->cDataStart,
 			'this is some javascript',
 			$this->cDataEnd,
@@ -1192,7 +1089,7 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->scriptEnd();
 		$expected = array(
-			'script' => array('type' => 'text/javascript'),
+			'<script',
 			'this is some javascript',
 			'/script'
 		);
@@ -1214,7 +1111,7 @@ class HtmlHelperTest extends TestCase {
 
 		$this->View->expects($this->once())
 			->method('append');
-		$result = $this->Html->scriptStart(array('safe' => false, 'inline' => false));
+		$result = $this->Html->scriptStart(array('safe' => false, 'block' => true));
 		$this->assertNull($result);
 		echo 'this is some javascript';
 
@@ -1329,9 +1226,11 @@ class HtmlHelperTest extends TestCase {
 
 /**
  * Test the array form of $startText
+ *
+ * @return void
  */
 	public function testGetCrumbFirstLink() {
-		$result = $this->Html->getCrumbList(null, 'Home');
+		$result = $this->Html->getCrumbList(array(), 'Home');
 		$this->assertTags(
 			$result,
 			array(
@@ -1605,22 +1504,14 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->meta('atom', array('controller' => 'posts', 'ext' => 'xml'), array('link' => '/articles.rss'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/articles\.rss/', 'type' => 'application/atom+xml', 'title' => 'atom')));
 
-		$result = $this->Html->meta(array('link' => 'favicon.ico', 'rel' => 'icon'));
-		$expected = array(
-			'link' => array('href' => 'preg:/.*favicon\.ico/', 'rel' => 'icon'),
-			array('link' => array('href' => 'preg:/.*favicon\.ico/', 'rel' => 'shortcut icon'))
-		);
-		$this->assertTags($result, $expected);
-
 		$result = $this->Html->meta('keywords', 'these, are, some, meta, keywords');
 		$this->assertTags($result, array('meta' => array('name' => 'keywords', 'content' => 'these, are, some, meta, keywords')));
-		$this->assertRegExp('/\s+\/>$/', $result);
 
 		$result = $this->Html->meta('description', 'this is the meta description');
 		$this->assertTags($result, array('meta' => array('name' => 'description', 'content' => 'this is the meta description')));
 
-		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'));
-		$this->assertTags($result, array('meta' => array('name' => 'ROBOTS', 'content' => 'ALL')));
+		$result = $this->Html->meta('robots', 'ALL');
+		$this->assertTags($result, array('meta' => array('name' => 'robots', 'content' => 'ALL')));
 	}
 
 /**
@@ -1672,17 +1563,19 @@ class HtmlHelperTest extends TestCase {
 
 /**
  * Test the inline and block options for meta()
+ *
+ * @return void
  */
 	public function testMetaWithBlocks() {
 		$this->View->expects($this->at(0))
 			->method('append')
-			->with('meta', $this->stringContains('ROBOTS'));
+			->with('meta', $this->stringContains('robots'));
 
 		$this->View->expects($this->at(1))
 			->method('append')
 			->with('metaTags', $this->stringContains('favicon.ico'));
 
-		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array('inline' => false));
+		$result = $this->Html->meta('robots', 'ALL', array('block' => true));
 		$this->assertNull($result);
 
 		$result = $this->Html->meta('icon', 'favicon.ico', array('block' => 'metaTags'));
@@ -1721,7 +1614,7 @@ class HtmlHelperTest extends TestCase {
 		$tr = array(
 			'td content 1',
 			array('td content 2', array("width" => "100px")),
-			array('td content 3', "width=100px")
+			array('td content 3', array('width' => '100px'))
 		);
 		$result = $this->Html->tableCells($tr);
 		$expected = array(
@@ -1808,25 +1701,6 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->tag('', '<em>stuff</em>');
 		$this->assertEquals('<em>stuff</em>', $result);
-	}
-
-/**
- * testUseTag method
- *
- * @return void
- */
-	public function testUseTag() {
-		$result = $this->Html->useTag('unknowntag');
-		$this->assertEquals('', $result);
-
-		$result = $this->Html->useTag('formend');
-		$this->assertTags($result, '/form');
-
-		$result = $this->Html->useTag('form', 'url', ' test');
-		$this->assertEquals('<form action="url" test>', $result);
-
-		$result = $this->Html->useTag('form', 'example.com', array('test' => 'ok'));
-		$this->assertTags($result, array('form' => array('test' => 'ok', 'action' => 'example.com')));
 	}
 
 /**
@@ -1931,7 +1805,6 @@ class HtmlHelperTest extends TestCase {
 /**
  * testCrumbList method
  *
- *
  * @return void
  */
 	public function testCrumbList() {
@@ -1963,12 +1836,14 @@ class HtmlHelperTest extends TestCase {
 
 /**
  * Test getCrumbList startText
+ *
+ * @return void
  */
 	public function testCrumbListFirstLink() {
 		$this->Html->addCrumb('First', '#first');
 		$this->Html->addCrumb('Second', '#second');
 
-		$result = $this->Html->getCrumbList(null, 'Home');
+		$result = $this->Html->getCrumbList(array(), 'Home');
 		$this->assertTags(
 			$result,
 			array(
@@ -1986,7 +1861,7 @@ class HtmlHelperTest extends TestCase {
 			)
 		);
 
-		$result = $this->Html->getCrumbList(null, array('url' => '/home', 'text' => '<img src="/home.png" />', 'escape' => false));
+		$result = $this->Html->getCrumbList(array(), array('url' => '/home', 'text' => '<img src="/home.png" />', 'escape' => false));
 		$this->assertTags(
 			$result,
 			array(
@@ -2070,88 +1945,6 @@ class HtmlHelperTest extends TestCase {
 				'/ul'
 			), true
 		);
-	}
-
-/**
- * testLoadConfig method
- *
- * @return void
- */
-
-	public function testLoadConfig() {
-		$path = TEST_APP . 'TestApp/Config/';
-
-		$result = $this->Html->loadConfig('htmlhelper_tags', $path);
-		$expected = array(
-			'tags' => array(
-				'form' => 'start form',
-				'formend' => 'finish form',
-				'hiddenblock' => '<div class="hidden">%s</div>'
-			)
-		);
-		$this->assertEquals($expected, $result);
-		$tags = $this->Html->getAttribute('_tags');
-		$this->assertEquals('start form', $tags['form']);
-		$this->assertEquals('finish form', $tags['formend']);
-		$this->assertEquals('</select>', $tags['selectend']);
-
-		$result = $this->Html->loadConfig(array('htmlhelper_minimized.ini', 'ini'), $path);
-		$expected = array(
-			'minimizedAttributeFormat' => 'format'
-		);
-		$this->assertEquals($expected, $result);
-		$this->assertEquals('format', $this->Html->getAttribute('_minimizedAttributeFormat'));
-	}
-
-/**
- * testLoadConfigWrongFile method
- *
- * @return void
- * @expectedException Cake\Error\ConfigureException
- */
-	public function testLoadConfigWrongFile() {
-		$this->Html->loadConfig('wrong_file');
-	}
-
-/**
- * testLoadConfigWrongEngine method
- *
- * @return void
- * @expectedException Cake\Error\ConfigureException
- */
-	public function testLoadConfigWrongEngine() {
-		$path = TEST_APP . 'TestApp/Config/';
-		$this->Html->loadConfig(array('htmlhelper_tags', 'wrong_engine'), $path);
-	}
-
-/**
- * test parsing attributes.
- *
- * @return void
- */
-	public function testParseAttributeCompact() {
-		$helper = new TestHtmlHelper($this->View);
-		$compact = array('compact', 'checked', 'declare', 'readonly', 'disabled',
-			'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
-
-		foreach ($compact as $attribute) {
-			foreach (array('true', true, 1, '1', $attribute) as $value) {
-				$attrs = array($attribute => $value);
-				$expected = ' ' . $attribute . '="' . $attribute . '"';
-				$this->assertEquals($expected, $helper->parseAttributes($attrs), '%s Failed on ' . $value);
-			}
-		}
-		$this->assertEquals(' compact="compact"', $helper->parseAttributes(array('compact')));
-
-		$attrs = array('class' => array('foo', 'bar'));
-		$expected = ' class="foo bar"';
-		$this->assertEquals(' class="foo bar"', $helper->parseAttributes($attrs));
-
-		$helper = new Html5TestHelper($this->View);
-		$expected = ' require';
-		$this->assertEquals($expected, $helper->parseAttributes(array('require')));
-		$this->assertEquals($expected, $helper->parseAttributes(array('require' => true)));
-		$this->assertEquals('', $helper->parseAttributes(array('require' => false)));
 	}
 
 }

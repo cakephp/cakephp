@@ -10,7 +10,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Routing;
@@ -57,20 +57,18 @@ class TestDispatcher extends Dispatcher {
 /**
  * invoke method
  *
- * @param Cake\Controller\Controller $controller
- * @param Cake\Network\Request $request
- * @param Cake\Network\Response $response
- * @return void
+ * @param \Cake\Controller\Controller $controller
+ * @return \Cake\Network\Response $response
  */
-	protected function _invoke(Controller $controller, Request $request, Response $response) {
+	protected function _invoke(Controller $controller) {
 		$this->controller = $controller;
-		return parent::_invoke($controller, $request, $response);
+		return parent::_invoke($controller);
 	}
 
 /**
  * Helper function to test single method attaching for dispatcher filters
  *
- * @param Cake\Event\Event $event
+ * @param \Cake\Event\Event $event
  * @return void
  */
 	public function filterTest($event) {
@@ -80,7 +78,7 @@ class TestDispatcher extends Dispatcher {
 /**
  * Helper function to test single method attaching for dispatcher filters
  *
- * @param Cake\Event\Event
+ * @param \Cake\Event\Event
  * @return void
  */
 	public function filterTest2($event) {
@@ -121,7 +119,7 @@ class MyPluginController extends MyPluginAppController {
  *
  * @var array
  */
-	public $uses = array();
+	public $uses = [];
 
 /**
  * index method
@@ -171,7 +169,7 @@ class OtherPagesController extends MyPluginAppController {
  *
  * @var array
  */
-	public $uses = array();
+	public $uses = [];
 
 /**
  * display method
@@ -219,7 +217,7 @@ class ArticlesTestController extends ArticlesTestAppController {
  *
  * @var array
  */
-	public $uses = array();
+	public $uses = [];
 
 /**
  * admin_index method
@@ -254,7 +252,7 @@ class DispatcherTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$_GET = array();
+		$_GET = [];
 
 		Configure::write('App.base', false);
 		Configure::write('App.baseUrl', false);
@@ -275,7 +273,7 @@ class DispatcherTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Plugin::unload();
-		Configure::write('Dispatcher.filters', array());
+		Configure::write('Dispatcher.filters', []);
 	}
 
 /**
@@ -335,7 +333,7 @@ class DispatcherTest extends TestCase {
 /**
  * testMissingController method
  *
- * @expectedException Cake\Error\MissingControllerException
+ * @expectedException \Cake\Error\MissingControllerException
  * @expectedExceptionMessage Controller class SomeController could not be found.
  * @return void
  */
@@ -353,7 +351,7 @@ class DispatcherTest extends TestCase {
 /**
  * testMissingControllerInterface method
  *
- * @expectedException Cake\Error\MissingControllerException
+ * @expectedException \Cake\Error\MissingControllerException
  * @expectedExceptionMessage Controller class DispatcherTestInterface could not be found.
  * @return void
  */
@@ -371,7 +369,7 @@ class DispatcherTest extends TestCase {
 /**
  * testMissingControllerInterface method
  *
- * @expectedException Cake\Error\MissingControllerException
+ * @expectedException \Cake\Error\MissingControllerException
  * @expectedExceptionMessage Controller class Abstract could not be found.
  * @return void
  */
@@ -611,7 +609,7 @@ class DispatcherTest extends TestCase {
 /**
  * Tests that attaching an inexistent class as filter will throw an exception
  *
- * @expectedException Cake\Error\MissingDispatcherFilterException
+ * @expectedException \Cake\Error\MissingDispatcherFilterException
  * @return void
  */
 	public function testDispatcherFilterSuscriberMissing() {
@@ -661,7 +659,7 @@ class DispatcherTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response', array('send'));
 		$dispatcher->dispatch($request, $response);
 		$this->assertEmpty($dispatcher->controller);
-		$expected = array('controller' => null, 'action' => null, 'plugin' => null, 'pass' => array());
+		$expected = array('controller' => null, 'action' => null, 'plugin' => null, '_ext' => null, 'pass' => []);
 		$this->assertEquals($expected, $request->params);
 
 		$dispatcher = new TestDispatcher();
@@ -757,31 +755,31 @@ class DispatcherTest extends TestCase {
 		return array(
 			array(
 				'theme/test_theme/flash/theme_test.swf',
-				'TestApp/View/Themed/TestTheme/webroot/flash/theme_test.swf'
+				'TestApp/Template/Themed/TestTheme/webroot/flash/theme_test.swf'
 			),
 			array(
 				'theme/test_theme/pdfs/theme_test.pdf',
-				'TestApp/View/Themed/TestTheme/webroot/pdfs/theme_test.pdf'
+				'TestApp/Template/Themed/TestTheme/webroot/pdfs/theme_test.pdf'
 			),
 			array(
 				'theme/test_theme/img/test.jpg',
-				'TestApp/View/Themed/TestTheme/webroot/img/test.jpg'
+				'TestApp/Template/Themed/TestTheme/webroot/img/test.jpg'
 			),
 			array(
 				'theme/test_theme/css/test_asset.css',
-				'TestApp/View/Themed/TestTheme/webroot/css/test_asset.css'
+				'TestApp/Template/Themed/TestTheme/webroot/css/test_asset.css'
 			),
 			array(
 				'theme/test_theme/js/theme.js',
-				'TestApp/View/Themed/TestTheme/webroot/js/theme.js'
+				'TestApp/Template/Themed/TestTheme/webroot/js/theme.js'
 			),
 			array(
 				'theme/test_theme/js/one/theme_one.js',
-				'TestApp/View/Themed/TestTheme/webroot/js/one/theme_one.js'
+				'TestApp/Template/Themed/TestTheme/webroot/js/one/theme_one.js'
 			),
 			array(
 				'theme/test_theme/space%20image.text',
-				'TestApp/View/Themed/TestTheme/webroot/space image.text'
+				'TestApp/Template/Themed/TestTheme/webroot/space image.text'
 			),
 			array(
 				'test_plugin/root.js',
@@ -888,7 +886,7 @@ class DispatcherTest extends TestCase {
 		Cache::enable();
 		Configure::write('Cache.disable', false);
 		Configure::write('Cache.check', true);
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 
 		Router::reload();
 		Router::connect('/', array('controller' => 'test_cached_pages', 'action' => 'index'));
@@ -934,7 +932,7 @@ class DispatcherTest extends TestCase {
 		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
 		$dispatcher->parseParams($event);
 		$expected = array(
-			'pass' => array(),
+			'pass' => [],
 			'plugin' => null,
 			'controller' => 'posts',
 			'action' => 'add',
@@ -1014,7 +1012,7 @@ class DispatcherTest extends TestCase {
 		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
 		$dispatcher->parseParams($event);
 		$expected = array(
-			'pass' => array(),
+			'pass' => [],
 			'plugin' => null,
 			'controller' => 'posts',
 			'action' => 'add',
@@ -1055,7 +1053,7 @@ class DispatcherTest extends TestCase {
 		foreach ($_SERVER as $key => $val) {
 			unset($_SERVER[$key]);
 		}
-		Configure::write('App', array());
+		Configure::write('App', []);
 	}
 
 /**
@@ -1100,7 +1098,7 @@ class DispatcherTest extends TestCase {
  */
 	protected function _cachePath($here) {
 		$path = $here;
-		if ($here == '/') {
+		if ($here === '/') {
 			$path = 'home';
 		}
 		$path = strtolower(Inflector::slug($path));

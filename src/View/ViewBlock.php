@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v2.1
+ * @since         2.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View;
@@ -30,14 +30,14 @@ class ViewBlock {
 /**
  * Append content
  *
- * @constant APPEND
+ * @var string
  */
 	const APPEND = 'append';
 
 /**
  * Prepend content
  *
- * @constant PREPEND
+ * @var string
  */
 	const PREPEND = 'prepend';
 
@@ -74,7 +74,7 @@ class ViewBlock {
  * using View::get();
  *
  * @param string $name The name of the block to capture for.
- * @throws Cake\Error\Exception When starting a block twice
+ * @throws \Cake\Error\Exception When starting a block twice
  * @return void
  */
 	public function start($name) {

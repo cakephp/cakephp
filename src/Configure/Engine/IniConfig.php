@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Configure\Engine;
@@ -94,7 +94,7 @@ class IniConfig implements ConfigEngineInterface {
  * @param string $key The identifier to read from. If the key has a . it will be treated
  *  as a plugin prefix. The chosen file must be on the engine's path.
  * @return array Parsed configuration values.
- * @throws Cake\Error\ConfigureException when files don't exist.
+ * @throws \Cake\Error\ConfigureException when files don't exist.
  *  Or when files contain '..' as this could lead to abusive reads.
  */
 	public function read($key) {
@@ -186,17 +186,17 @@ class IniConfig implements ConfigEngineInterface {
  * @param mixed $value to export.
  * @return string String value for ini file.
  */
-	protected function _value($val) {
-		if ($val === null) {
+	protected function _value($value) {
+		if ($value === null) {
 			return 'null';
 		}
-		if ($val === true) {
+		if ($value === true) {
 			return 'true';
 		}
-		if ($val === false) {
+		if ($value === false) {
 			return 'false';
 		}
-		return (string)$val;
+		return (string)$value;
 	}
 
 /**

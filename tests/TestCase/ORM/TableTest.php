@@ -9,15 +9,16 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
-use Cake\Database\ConnectionManager;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\TypeMap;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Validation\Validator;
@@ -52,6 +53,31 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
 		Configure::write('App.namespace', 'TestApp');
+
+		$this->usersTypeMap = new TypeMap([
+			'Users.id' => 'integer',
+			'id' => 'integer',
+			'Users.username' => 'string',
+			'username' => 'string',
+			'Users.password' => 'string',
+			'password' => 'string',
+			'Users.created' => 'timestamp',
+			'created' => 'timestamp',
+			'Users.updated' => 'timestamp',
+			'updated' => 'timestamp',
+		]);
+		$this->articlesTypeMap = new TypeMap([
+			'Articles.id' => 'integer',
+			'id' => 'integer',
+			'Articles.title' => 'string',
+			'title' => 'string',
+			'Articles.author_id' => 'integer',
+			'author_id' => 'integer',
+			'Articles.body' => 'text',
+			'body' => 'text',
+			'Articles.published' => 'string',
+			'published' => 'string',
+		]);
 	}
 
 	public function tearDown() {
@@ -137,6 +163,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('id', $table->primaryKey());
 		$table->primaryKey('thingID');
 		$this->assertEquals('thingID', $table->primaryKey());
+
+		$table->primaryKey(['thingID', 'user_id']);
+		$this->assertEquals(['thingID', 'user_id'], $table->primaryKey());
 	}
 
 /**
@@ -483,7 +512,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test that exceptions from the Query bubble up.
  *
- * @expectedException Cake\Database\Exception
+ * @expectedException \Cake\Database\Exception
  */
 	public function testUpdateAllFailure() {
 		$table = $this->getMock(
@@ -524,7 +553,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test that exceptions from the Query bubble up.
  *
- * @expectedException Cake\Database\Exception
+ * @expectedException \Cake\Database\Exception
  */
 	public function testDeleteAllFailure() {
 		$table = $this->getMock(
@@ -804,7 +833,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testRepositoryClassInApp() {
+	public function testTableClassInApp() {
 		$class = $this->getMockClass('\Cake\ORM\Entity');
 
 		if (!class_exists('TestApp\Model\Entity\TestUser')) {
@@ -821,7 +850,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testRepositoryClassInPlugin() {
+	public function testTableClassInPlugin() {
 		$class = $this->getMockClass('\Cake\ORM\Entity');
 
 		if (!class_exists('MyPlugin\Model\Entity\SuperUser')) {
@@ -839,11 +868,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * Tests that using a simple string for entityClass will throw an exception
  * when the class does not exist in the namespace
  *
- * @expectedException Cake\ORM\Error\MissingEntityException
+ * @expectedException \Cake\ORM\Error\MissingEntityException
  * @expectedExceptionMessage Entity class FooUser could not be found.
  * @return void
  */
-	public function testRepositoryClassNonExisting() {
+	public function testTableClassNonExisting() {
 		$table = new Table;
 		$this->assertFalse($table->entityClass('FooUser'));
 	}
@@ -854,8 +883,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testRepositoryClassConventionForAPP() {
-		$table = new \TestApp\Model\Repository\ArticlesTable;
+	public function testTableClassConventionForAPP() {
+		$table = new \TestApp\Model\Table\ArticlesTable;
 		$this->assertEquals('TestApp\Model\Entity\Article', $table->entityClass());
 	}
 
@@ -878,7 +907,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testReciprocalBelongsToLoading() {
-		$table = new \TestApp\Model\Repository\ArticlesTable([
+		$table = new \TestApp\Model\Table\ArticlesTable([
 			'connection' => $this->connection,
 		]);
 		$result = $table->find('all')->contain(['authors'])->first();
@@ -892,7 +921,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testReciprocalHasManyLoading() {
-		$table = new \TestApp\Model\Repository\ArticlesTable([
+		$table = new \TestApp\Model\Table\ArticlesTable([
 			'connection' => $this->connection,
 		]);
 		$result = $table->find('all')->contain(['authors' => ['articles']])->first();
@@ -909,7 +938,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testReciprocalBelongsToMany() {
-		$table = new \TestApp\Model\Repository\ArticlesTable([
+		$table = new \TestApp\Model\Table\ArticlesTable([
 			'connection' => $this->connection,
 		]);
 		$result = $table->find('all')->contain(['tags'])->first();
@@ -926,7 +955,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindCleanEntities() {
-		$table = new \TestApp\Model\Repository\ArticlesTable([
+		$table = new \TestApp\Model\Table\ArticlesTable([
 			'connection' => $this->connection,
 		]);
 		$results = $table->find('all')->contain(['tags', 'authors'])->toArray();
@@ -953,7 +982,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindPersistedEntities() {
-		$table = new \TestApp\Model\Repository\ArticlesTable([
+		$table = new \TestApp\Model\Table\ArticlesTable([
 			'connection' => $this->connection,
 		]);
 		$results = $table->find('all')->contain(['tags', 'authors'])->toArray();
@@ -1000,7 +1029,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Ensure exceptions are raised on missing behaviors.
  *
- * @expectedException Cake\Error\MissingBehaviorException
+ * @expectedException \Cake\Error\MissingBehaviorException
  */
 	public function testAddBehaviorMissing() {
 		$table = TableRegistry::get('article');
@@ -1097,6 +1126,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
 		$this->assertEquals($entity->toArray(), $row->toArray());
+	}
+
+/**
+ * Test that saving a new empty entity does nothing.
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveNewEmptyEntity() {
+		$entity = new \Cake\ORM\Entity();
+		$table = TableRegistry::get('users');
+		$this->assertFalse($table->save($entity));
 	}
 
 /**
@@ -1558,10 +1599,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
-		$statement->expects($this->once())->method('rowCount')
-			->will($this->returnValue(1));
+		$statement->expects($this->once())
+			->method('errorCode')
+			->will($this->returnValue('00000'));
 
-		$query->expects($this->once())->method('execute')
+		$query->expects($this->once())
+			->method('execute')
 			->will($this->returnValue($statement));
 
 		$query->expects($this->once())->method('set')
@@ -1592,6 +1635,23 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$entity = new \Cake\ORM\Entity([
 			'id' => 2,
 		], ['markNew' => false]);
+		$this->assertSame($entity, $table->save($entity));
+	}
+
+/**
+ * Tests that passing only the primary key to save will not execute any queries
+ * but still return success
+ *
+ * @group save
+ * @group integration
+ * @return void
+ */
+	public function testUpdateDirtyNoActualChanges() {
+		$table = TableRegistry::get('Articles');
+		$entity = $table->get(1);
+
+		$entity->accessible('*', true);
+		$entity->set($entity->toArray());
 		$this->assertSame($entity, $table->save($entity));
 	}
 
@@ -2003,14 +2063,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findByUsername('garrett');
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$expected = new QueryExpression(['username' => 'garrett'], ['username' => 'string']);
+
+		$expected = new QueryExpression(['username' => 'garrett'], $this->usersTypeMap);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
 
 /**
  * Test magic findByXX errors on missing arguments.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 0 required 1
  * @return void
  */
@@ -2023,7 +2084,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test magic findByXX errors on missing arguments.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 1 required 2
  * @return void
  */
@@ -2036,7 +2097,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test magic findByXX errors when there is a mix of or & and.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Cannot mix "and" & "or" in a magic finder. Use find() instead.
  * @return void
  */
@@ -2056,11 +2117,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findByUsernameAndId('garrett', 4);
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$expected = new QueryExpression(
-			['username' => 'garrett', 'id' => 4],
-			['username' => 'string', 'id' => 'integer'],
-			'AND'
-		);
+
+		$expected = new QueryExpression(['username' => 'garrett', 'id' => 4], $this->usersTypeMap);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
 
@@ -2074,13 +2132,13 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findByUsernameOrId('garrett', 4);
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$expected = new QueryExpression();
+
+		$expected = new QueryExpression([], $this->usersTypeMap);
 		$expected->add([
 			'OR' => [
 				'username' => 'garrett',
 				'id' => 4
-			]],
-			['username' => 'string', 'id' => 'integer']
+			]]
 		);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
@@ -2096,11 +2154,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$result = $table->findAllByAuthorId(1);
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
 		$this->assertNull($result->clause('limit'));
-		$expected = new QueryExpression(
-			['author_id' => 1],
-			['author_id' => 'integer'],
-			'AND'
-		);
+
+		$expected = new QueryExpression(['author_id' => 1], $this->articlesTypeMap);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
 
@@ -2116,7 +2171,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
 		$this->assertNull($result->clause('limit'));
 		$expected = new QueryExpression(
-			['author_id' => 1, 'published' => 'Y']
+			['author_id' => 1, 'published' => 'Y'],
+			$this->usersTypeMap
 		);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
@@ -2133,6 +2189,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
 		$this->assertNull($result->clause('limit'));
 		$expected = new QueryExpression();
+		$expected->typeMap()->defaults([
+			'Users.id' => 'integer',
+			'id' => 'integer',
+			'Users.username' => 'string',
+			'username' => 'string',
+			'Users.password' => 'string',
+			'password' => 'string',
+			'Users.created' => 'timestamp',
+			'created' => 'timestamp',
+			'Users.updated' => 'timestamp',
+			'updated' => 'timestamp',
+		]);
 		$expected->add(
 			['or' => ['author_id' => 1, 'published' => 'Y']]
 		);
@@ -2677,9 +2745,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
 		$tags = $article->tags;
 		$this->assertNotEmpty($tags);
-		$tags[] = new \TestApp\Model\Entity\Tag([
-			'name' => 'Something New'
-		]);
+		$tags[] = new \TestApp\Model\Entity\Tag(['name' => 'Something New']);
 		$article->tags = $tags;
 		$this->assertSame($article, $table->save($article));
 		$tags = $article->tags;
@@ -2765,15 +2831,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->with($entity->author->supervisor, ['name' => 'Marc'])
 			->will($this->returnValue($entity->author->supervisor));
 
-		$options = new \ArrayObject([
-			'validate' => false,
-			'atomic' => false,
-			'associated' => []
-		]);
-		$supervisors->expects($this->once())
-			->method('validate')
-			->with($entity->author->supervisor, $options)
-			->will($this->returnValue(true));
+		$supervisors->expects($this->never())->method('validate');
 
 		$tags->expects($this->never())->method('_insert');
 
@@ -2802,6 +2860,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = TableRegistry::get('articles');
 		$table->belongsToMany('tags');
 		$tagsTable = TableRegistry::get('tags');
+		$source = ['source' => 'tags'];
 		$options = ['markNew' => false];
 
 		$article = new \Cake\ORM\Entity([
@@ -2810,10 +2869,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$newTag = new \TestApp\Model\Entity\Tag([
 			'name' => 'Foo'
-		]);
+		], $source);
 		$tags[] = new \TestApp\Model\Entity\Tag([
 			'id' => 3
-		], $options);
+		], $options + $source);
 		$tags[] = $newTag;
 
 		$tagsTable->save($newTag);
@@ -2867,7 +2926,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$table->association('tags')->unlink($article, $tags);
 		$left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
-		$this->assertNull($left->tags);
+		$this->assertEmpty($left->tags);
 	}
 
 /**
@@ -2893,7 +2952,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$table->association('tags')->unlink($article, $tags);
 		$left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
-		$this->assertNull($left->tags);
+		$this->assertEmpty($left->tags);
 	}
 
 /**
@@ -2942,7 +3001,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->association('tags')->replaceLinks($article, $tags);
 		$this->assertSame($tags, $article->tags);
 		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
-		$this->assertNull($article->tags);
+		$this->assertEmpty($article->tags);
 	}
 
 /**
@@ -3030,7 +3089,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('where')
-			->with(['bar' => 10])
+			->with([$table->alias() . '.bar' => 10])
 			->will($this->returnSelf());
 		$query->expects($this->once())->method('first')
 			->will($this->returnValue($entity));
@@ -3073,7 +3132,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('where')
-			->with(['bar' => 10])
+			->with([$table->alias() . '.bar' => 10])
 			->will($this->returnSelf());
 		$query->expects($this->once())->method('first')
 			->will($this->returnValue(false));
@@ -3102,6 +3161,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
 		$table->belongsTo('users');
 		$table->hasMany('articles');
+		$table->schema([]);
+
 		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
 		$entity = $table->newEntity([]);
 
@@ -3121,6 +3182,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testValidateWithCustomOptions() {
 		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
+		$table->schema([]);
+
 		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
 		$entity = $table->newEntity([]);
 		$options = ['associated' => ['users'], 'validate' => 'foo'];
@@ -3143,6 +3206,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
 		$table->belongsTo('users');
 		$table->hasMany('articles');
+		$table->schema([]);
+
 		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
 		$entities = ['a', 'b'];
 
@@ -3162,6 +3227,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testValidateManyWithCustomOptions() {
 		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
+		$table->schema([]);
+
 		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
 		$entities = ['a', 'b', 'c'];
 		$options = ['associated' => ['users'], 'validate' => 'foo'];
@@ -3172,6 +3239,73 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->with($entities, $options)
 			->will($this->returnValue(false));
 		$this->assertFalse($table->validateMany($entities, $options));
+	}
+
+/**
+ * Tests that patchEntity delegates the task to the marshaller and passed
+ * all associations
+ *
+ * @return void
+ */
+	public function testPatchEntity() {
+		$table = $this->getMock('Cake\ORM\Table', ['marshaller']);
+		$marshaller = $this->getMock('Cake\ORM\Marshaller', [], [$table]);
+		$table->belongsTo('users');
+		$table->hasMany('articles');
+		$table->expects($this->once())->method('marshaller')
+			->will($this->returnValue($marshaller));
+
+		$entity = new \Cake\ORM\Entity;
+		$data = ['foo' => 'bar'];
+		$marshaller->expects($this->once())
+			->method('merge')
+			->with($entity, $data, ['users', 'articles'])
+			->will($this->returnValue($entity));
+		$table->patchEntity($entity, $data);
+	}
+
+/**
+ * Tests that patchEntities delegates the task to the marshaller and passed
+ * all associations
+ *
+ * @return void
+ */
+	public function testPatchEntities() {
+		$table = $this->getMock('Cake\ORM\Table', ['marshaller']);
+		$marshaller = $this->getMock('Cake\ORM\Marshaller', [], [$table]);
+		$table->belongsTo('users');
+		$table->hasMany('articles');
+		$table->expects($this->once())->method('marshaller')
+			->will($this->returnValue($marshaller));
+
+		$entities = [new \Cake\ORM\Entity];
+		$data = [['foo' => 'bar']];
+		$marshaller->expects($this->once())
+			->method('mergeMany')
+			->with($entities, $data, ['users', 'articles'])
+			->will($this->returnValue($entities));
+		$table->patchEntities($entities, $data);
+	}
+
+/**
+ * Tests __debugInfo
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$articles = TableRegistry::get('articles');
+		$articles->addBehavior('Timestamp');
+		$result = $articles->__debugInfo();
+		$expected = [
+			'table' => 'articles',
+			'alias' => 'articles',
+			'entityClass' => 'TestApp\Model\Entity\Article',
+			'associations' => ['authors', 'tags', 'articlestags'],
+			'behaviors' => ['Timestamp'],
+			'defaultConnection' => 'default',
+			'connectionName' => 'test'
+		];
+		$this->assertEquals($expected, $result);
 	}
 
 }

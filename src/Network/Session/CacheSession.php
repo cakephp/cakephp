@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Network\Session;
@@ -23,15 +23,15 @@ use SessionHandlerInterface;
 /**
  * CacheSession provides method for saving sessions into a Cache engine. Used with Session
  *
- * @see Cake\Model\Datasource\Session for configuration information.
+ * @see \Cake\Model\Datasource\Session for configuration information.
  */
 class CacheSession implements SessionHandlerInterface {
 
 /**
  * Method called on open of a database session.
  *
- * @param The path where to store/retrieve the session.
- * @param The session name.
+ * @param string $savePath The path where to store/retrieve the session.
+ * @param string $name The session name.
  * @return boolean Success
  */
 	public function open($savePath, $name) {

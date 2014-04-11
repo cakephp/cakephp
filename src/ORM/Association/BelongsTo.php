@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,15 +9,15 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association;
+use Cake\ORM\Association\SelectableAssociationTrait;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -31,12 +29,7 @@ use Cake\Utility\Inflector;
  */
 class BelongsTo extends Association {
 
-/**
- * Whether this association can be expressed directly in a query join
- *
- * @var boolean
- */
-	protected $_canBeJoined = true;
+	use SelectableAssociationTrait;
 
 /**
  * Sets the name of the field representing the foreign key to the target table.
@@ -61,7 +54,7 @@ class BelongsTo extends Association {
  *
  * BelongsTo associations are never cleared in a cascading delete scenario.
  *
- * @param Cake\ORM\Entity $entity The entity that started the cascaded delete.
+ * @param \Cake\ORM\Entity $entity The entity that started the cascaded delete.
  * @param array $options The options for the original delete.
  * @return boolean Success.
  */
@@ -93,10 +86,20 @@ class BelongsTo extends Association {
  * association. This means that rows in the 'target' table would miss important
  * or required information if the row in 'source' did not exist.
  *
+ * @param \Cake\ORM\Table $side The potential Table with ownership
  * @return boolean
  */
 	public function isOwningSide(Table $side) {
 		return $side === $this->target();
+	}
+
+/**
+ * Get the relationship type.
+ *
+ * @return string
+ */
+	public function type() {
+		return self::MANY_TO_ONE;
 	}
 
 /**
@@ -138,19 +141,70 @@ class BelongsTo extends Association {
  *
  * @param array $options list of options passed to attachTo method
  * @return array
+ * @throws \RuntimeException if the number of columns in the foreignKey do not
+ * match the number of columns in the target table primaryKey
  */
 	protected function _joinCondition(array $options) {
-		$field = sprintf(
-			'%s.%s',
-			$this->target()->alias(),
-			$this->_targetTable->primaryKey()
-		);
-		$value = new IdentifierExpression(sprintf(
-			'%s.%s',
-			$this->_sourceTable->alias(),
-			$options['foreignKey']
-		));
-		return [$field => $value];
+		$conditions = [];
+		$tAlias = $this->target()->alias();
+		$sAlias = $this->_sourceTable->alias();
+		$foreignKey = (array)$options['foreignKey'];
+		$primaryKey = (array)$this->_targetTable->primaryKey();
+
+		if (count($foreignKey) !== count($primaryKey)) {
+			$msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
+			throw new \RuntimeException(sprintf(
+				$msg,
+				$this->_name,
+				implode(', ', $foreignKey),
+				implode(', ', $primaryKey)
+			));
+		}
+
+		foreach ($foreignKey as $k => $f) {
+			$field = sprintf('%s.%s', $tAlias, $primaryKey[$k]);
+			$value = new IdentifierExpression(sprintf('%s.%s', $sAlias, $f));
+			$conditions[$field] = $value;
+		}
+
+		return $conditions;
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	protected function _linkField($options) {
+		$links = [];
+		$name = $this->name();
+
+		foreach ((array)$this->target()->primaryKey() as $key) {
+			$links[] = sprintf('%s.%s', $name, $key);
+		}
+
+		if (count($links) === 1) {
+			return $links[0];
+		}
+
+		return $links;
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	protected function _buildResultMap($fetchQuery, $options) {
+		$resultMap = [];
+		$key = (array)$this->target()->primaryKey();
+
+		foreach ($fetchQuery->all() as $result) {
+			$values = [];
+			foreach ($key as $k) {
+				$values[] = $result[$k];
+			}
+			$resultMap[implode(';', $values)] = $result;
+		}
+		return $resultMap;
 	}
 
 }

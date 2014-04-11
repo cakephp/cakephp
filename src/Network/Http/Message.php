@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network\Http;
@@ -21,19 +21,95 @@ namespace Cake\Network\Http;
  */
 class Message {
 
+/**
+ * HTTP 200 code
+ *
+ * @var integer
+ */
 	const STATUS_OK = 200;
+
+/**
+ * HTTP 201 code
+ *
+ * @var integer
+ */
 	const STATUS_CREATED = 201;
+
+/**
+ * HTTP 202 code
+ *
+ * @var integer
+ */
 	const STATUS_ACCEPTED = 202;
+
+/**
+ * HTTP 301 code
+ *
+ * @var integer
+ */
 	const STATUS_MOVED_PERMANENTLY = 301;
+
+/**
+ * HTTP 302 code
+ *
+ * @var integer
+ */
 	const STATUS_FOUND = 302;
+
+/**
+ * HTTP 303 code
+ *
+ * @var integer
+ */
 	const STATUS_SEE_OTHER = 303;
+
+/**
+ * HTTP 307 code
+ *
+ * @var integer
+ */
 	const STATUS_TEMPORARY_REDIRECT = 307;
 
+/**
+ * HTTP GET method
+ *
+ * @var string
+ */
 	const METHOD_GET = 'GET';
+
+/**
+ * HTTP POST method
+ *
+ * @var string
+ */
 	const METHOD_POST = 'POST';
+
+/**
+ * HTTP PUT method
+ *
+ * @var string
+ */
 	const METHOD_PUT = 'PUT';
+
+/**
+ * HTTP DELETE method
+ *
+ * @var string
+ */
 	const METHOD_DELETE = 'DELETE';
+
+/**
+ * HTTP PATCH method
+ *
+ * @var string
+ */
 	const METHOD_PATCH = 'PATCH';
+
+/**
+ * HTTP HEAD method
+ *
+ * @var string
+ */
 	const METHOD_HEAD = 'HEAD';
 
 /**
@@ -91,7 +167,6 @@ class Message {
 /**
  * Get the HTTP version used.
  *
- * @param null|string $version
  * @return string
  */
 	public function version() {

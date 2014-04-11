@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network\Http\Adapter;
@@ -57,7 +57,7 @@ class Stream {
 /**
  * Send a request and get a response back.
  *
- * @param Cake\Network\Http\Request $request The request object to send.
+ * @param \Cake\Network\Http\Request $request The request object to send.
  * @param array $options Array of options for the stream.
  * @return array Array of populated Response objects
  */
@@ -100,7 +100,7 @@ class Stream {
 /**
  * Build the stream context out of the request object.
  *
- * @param Cake\Network\Http\Request $request The request to build context from.
+ * @param \Cake\Network\Http\Request $request The request to build context from.
  * @param array $options Additional request options.
  * @return void
  */
@@ -124,7 +124,7 @@ class Stream {
  *
  * Creates cookies & headers.
  *
- * @param Cake\Network\Http\Request $request The request being sent.
+ * @param \Cake\Network\Http\Request $request The request being sent.
  * @param array $options Array of options to use.
  * @return void
  */
@@ -150,7 +150,7 @@ class Stream {
  * If the $request->body() is a string, it will be used as is.
  * Array data will be processed with Cake\Network\Http\FormData
  *
- * @param Cake\Network\Http\Request $request The request being sent.
+ * @param \Cake\Network\Http\Request $request The request being sent.
  * @param array $options Array of options to use.
  * @return void
  */
@@ -177,7 +177,7 @@ class Stream {
 /**
  * Build miscellaneous options for the request.
  *
- * @param Cake\Network\Http\Request $request The request being sent.
+ * @param \Cake\Network\Http\Request $request The request being sent.
  * @param array $options Array of options to use.
  * @return void
  */
@@ -197,7 +197,7 @@ class Stream {
 /**
  * Build SSL options for the request.
  *
- * @param Cake\Network\Http\Request $request The request being sent.
+ * @param \Cake\Network\Http\Request $request The request being sent.
  * @param array $options Array of options to use.
  * @return void
  */
@@ -231,7 +231,7 @@ class Stream {
  *
  * @param Request $request
  * @return array Array of populated Response objects
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	protected function _send(Request $request) {
 		$url = $request->url();
@@ -258,7 +258,7 @@ class Stream {
  *
  * @param string $url The url to connect to.
  * @return void
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	protected function _open($url) {
 		set_error_handler([$this, '_connectionErrorHandler']);

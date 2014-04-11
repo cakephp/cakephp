@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.3
+ * @since         1.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Routing\Route;
@@ -44,10 +44,13 @@ class PluginShortRoute extends Route {
  * are not the same the match is an auto fail.
  *
  * @param array $url Array of parameters to convert to a string.
+ * @param array $context An array of the current request context.
+ *   Contains information such as the current host, scheme, port, and base
+ *   directory.
  * @return mixed either false or a string URL.
  */
-	public function match($url, $context = array()) {
-		if (isset($url['controller']) && isset($url['plugin']) && $url['plugin'] != $url['controller']) {
+	public function match(array $url, array $context = array()) {
+		if (isset($url['controller']) && isset($url['plugin']) && $url['plugin'] !== $url['controller']) {
 			return false;
 		}
 		$this->defaults['controller'] = $url['controller'];

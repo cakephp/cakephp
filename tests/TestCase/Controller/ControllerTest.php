@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @since         CakePHP(tm) v 1.2.0.5436
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller;
@@ -89,7 +89,7 @@ class TestController extends ControllerTestAppController {
  * index method
  *
  * @param mixed $testId
- * @param mixed $test2Id
+ * @param mixed $testTwoId
  * @return void
  */
 	public function index($testId, $testTwoId) {
@@ -103,7 +103,7 @@ class TestController extends ControllerTestAppController {
  * view method
  *
  * @param mixed $testId
- * @param mixed $test2Id
+ * @param mixed $testTwoId
  * @return void
  */
 	public function view($testId, $testTwoId) {
@@ -149,6 +149,7 @@ class TestComponent extends Component {
 /**
  * initialize method
  *
+ * @param Event $event
  * @return void
  */
 	public function initialize(Event $event) {
@@ -157,6 +158,7 @@ class TestComponent extends Component {
 /**
  * startup method
  *
+ * @param Event $event
  * @return void
  */
 	public function startup(Event $event) {
@@ -165,6 +167,7 @@ class TestComponent extends Component {
 /**
  * shutdown method
  *
+ * @param Event $event
  * @return void
  */
 	public function shutdown(Event $event) {
@@ -173,6 +176,7 @@ class TestComponent extends Component {
 /**
  * beforeRender callback
  *
+ * @param Event $event
  * @return void
  */
 	public function beforeRender(Event $event) {
@@ -234,7 +238,7 @@ class ControllerTest extends TestCase {
  *
  * @return void
  */
-	public function testRepositoryAutoload() {
+	public function testTableAutoload() {
 		Configure::write('App.namespace', 'TestApp');
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response');
@@ -242,17 +246,17 @@ class ControllerTest extends TestCase {
 		$Controller->modelClass = 'Articles';
 
 		$this->assertInstanceOf(
-			'TestApp\Model\Repository\ArticlesTable',
+			'TestApp\Model\Table\ArticlesTable',
 			$Controller->Articles
 		);
 	}
 
 /**
- * testRepository method
+ * testLoadModel method
  *
  * @return void
  */
-	public function testRepository() {
+	public function testLoadModel() {
 		Configure::write('App.namespace', 'TestApp');
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response');
@@ -260,10 +264,10 @@ class ControllerTest extends TestCase {
 
 		$this->assertFalse(isset($Controller->Articles));
 
-		$result = $Controller->repository('Articles');
+		$result = $Controller->loadModel('Articles');
 		$this->assertTrue($result);
 		$this->assertInstanceOf(
-			'TestApp\Model\Repository\ArticlesTable',
+			'TestApp\Model\Table\ArticlesTable',
 			$Controller->Articles
 		);
 	}
@@ -282,10 +286,10 @@ class ControllerTest extends TestCase {
 
 		$this->assertFalse(isset($Controller->TestPluginComments));
 
-		$result = $Controller->repository('TestPlugin.TestPluginComments');
+		$result = $Controller->loadModel('TestPlugin.TestPluginComments');
 		$this->assertTrue($result);
 		$this->assertInstanceOf(
-			'TestPlugin\Model\Repository\TestPluginCommentsTable',
+			'TestPlugin\Model\Table\TestPluginCommentsTable',
 			$Controller->TestPluginComments
 		);
 	}
@@ -364,7 +368,7 @@ class ControllerTest extends TestCase {
  */
 	public function testBeforeRenderCallbackChangingViewClass() {
 		Configure::write('App.namespace', 'TestApp');
-		$Controller = new Controller($this->getMock('Cake\Network\Request'), new Response());
+		$Controller = new Controller(new Request, new Response());
 
 		$Controller->getEventManager()->attach(function ($event) {
 			$controller = $event->subject();
@@ -376,7 +380,7 @@ class ControllerTest extends TestCase {
 			'_serialize' => ['test']
 		]);
 		$debug = Configure::read('debug');
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$result = $Controller->render('index');
 		$this->assertEquals('{"test":"value"}', $result->body());
 		Configure::write('debug', $debug);
@@ -388,7 +392,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testBeforeRenderEventCancelsRender() {
-		$Controller = new Controller($this->getMock('Cake\Network\Request'), new Response());
+		$Controller = new Controller(new Request, new Response());
 
 		$Controller->getEventManager()->attach(function ($event) {
 			return false;
@@ -563,8 +567,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testReferer() {
-		$request = $this->getMock('Cake\Network\Request');
-
+		$request = $this->getMock('Cake\Network\Request', ['referer']);
 		$request->expects($this->any())->method('referer')
 			->with(true)
 			->will($this->returnValue('/posts/index'));
@@ -573,12 +576,15 @@ class ControllerTest extends TestCase {
 		$result = $Controller->referer(null, true);
 		$this->assertEquals('/posts/index', $result);
 
+		$request = $this->getMock('Cake\Network\Request', ['referer']);
+		$request->expects($this->any())->method('referer')
+			->with(true)
+			->will($this->returnValue('/posts/index'));
 		$Controller = new Controller($request);
-		$request->setReturnValue('referer', '/', array(true));
 		$result = $Controller->referer(array('controller' => 'posts', 'action' => 'index'), true);
 		$this->assertEquals('/posts/index', $result);
 
-		$request = $this->getMock('Cake\Network\Request');
+		$request = $this->getMock('Cake\Network\Request', ['referer']);
 
 		$request->expects($this->any())->method('referer')
 			->with(false)
@@ -714,7 +720,7 @@ class ControllerTest extends TestCase {
 /**
  * testMissingAction method
  *
- * @expectedException Cake\Error\MissingActionException
+ * @expectedException \Cake\Error\MissingActionException
  * @expectedExceptionMessage Action TestController::missing() could not be found.
  * @return void
  */
@@ -724,13 +730,13 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$Controller->invokeAction($url);
+		$Controller->invokeAction();
 	}
 
 /**
  * test invoking private methods.
  *
- * @expectedException Cake\Error\PrivateActionException
+ * @expectedException \Cake\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::private_m() is not directly accessible.
  * @return void
  */
@@ -740,13 +746,13 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$Controller->invokeAction($url);
+		$Controller->invokeAction();
 	}
 
 /**
  * test invoking protected methods.
  *
- * @expectedException Cake\Error\PrivateActionException
+ * @expectedException \Cake\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::protected_m() is not directly accessible.
  * @return void
  */
@@ -756,13 +762,13 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$Controller->invokeAction($url);
+		$Controller->invokeAction();
 	}
 
 /**
  * test invoking hidden methods.
  *
- * @expectedException Cake\Error\PrivateActionException
+ * @expectedException \Cake\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::_hidden() is not directly accessible.
  * @return void
  */
@@ -772,13 +778,13 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$Controller->invokeAction($url);
+		$Controller->invokeAction();
 	}
 
 /**
  * test invoking controller methods.
  *
- * @expectedException Cake\Error\PrivateActionException
+ * @expectedException \Cake\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::redirect() is not directly accessible.
  * @return void
  */
@@ -788,17 +794,18 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$Controller->invokeAction($url);
+		$Controller->invokeAction();
 	}
 
 /**
  * test invoking controller methods.
  *
- * @expectedException Cake\Error\PrivateActionException
+ * @expectedException \Cake\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::admin_add() is not directly accessible.
  * @return void
  */
 	public function testInvokeActionPrefixProtection() {
+		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
 		Router::connect('/admin/:controller/:action/*', array('prefix' => 'admin'));
 
@@ -807,7 +814,7 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$Controller->invokeAction($url);
+		$Controller->invokeAction();
 	}
 
 /**
@@ -825,7 +832,7 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$Controller = new TestController($url, $response);
-		$result = $Controller->invokeAction($url);
+		$result = $Controller->invokeAction();
 		$this->assertEquals('I am from the controller.', $result);
 	}
 
@@ -846,6 +853,40 @@ class ControllerTest extends TestCase {
 		$request = new Request('pages/home');
 		$Controller = new \TestApp\Controller\PagesController($request, $response);
 		$this->assertEquals('Pages', $Controller->viewPath);
+	}
+
+/**
+ * Test the components() method.
+ *
+ * @return void
+ */
+	public function testComponents() {
+		$request = new Request('/');
+		$response = $this->getMock('Cake\Network\Response');
+
+		$controller = new TestController($request, $response);
+		$this->assertInstanceOf('Cake\Controller\ComponentRegistry', $controller->components());
+
+		$result = $controller->components();
+		$this->assertSame($result, $controller->components());
+	}
+
+/**
+ * Test adding a component
+ *
+ * @return void
+ */
+	public function testAddComponent() {
+		$request = new Request('/');
+		$response = $this->getMock('Cake\Network\Response');
+
+		$controller = new TestController($request, $response);
+		$result = $controller->addComponent('Paginator');
+		$this->assertInstanceOf('Cake\Controller\Component\PaginatorComponent', $result);
+		$this->assertSame($result, $controller->Paginator);
+
+		$registry = $controller->components();
+		$this->assertTrue(isset($registry->Paginator));
 	}
 
 }

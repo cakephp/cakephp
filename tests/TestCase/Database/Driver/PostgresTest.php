@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Database\Driver;
@@ -18,6 +18,7 @@ use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Query;
+use Cake\Datasource\ConnectionManager;
 use \PDO;
 
 /**
@@ -142,11 +143,12 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 			['_connect', 'connection'],
 			[['dsn' => 'foo']]
 		);
-		$connection = $this->getMock(
-			'\Cake\Database\Connection',
-			['connect'],
-			[['log' => false]]
-		);
+		$connection = $this
+			->getMockBuilder('\Cake\Database\Connection')
+			->setMethods(['connect'])
+			->disableOriginalConstructor()
+			->getMock();
+
 		$query = new \Cake\Database\Query($connection);
 		$query->insert(['id', 'title'])
 			->into('articles')

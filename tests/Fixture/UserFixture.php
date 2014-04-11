@@ -1,9 +1,5 @@
 <?php
 /**
- * Short description for file.
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4667
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
@@ -35,8 +31,8 @@ class UserFixture extends TestFixture {
 		'id' => ['type' => 'integer'],
 		'username' => ['type' => 'string', 'null' => true],
 		'password' => ['type' => 'string', 'null' => true],
-		'created' => 'datetime',
-		'updated' => 'datetime',
+		'created' => ['type' => 'timestamp', 'null' => true],
+		'updated' => ['type' => 'timestamp', 'null' => true],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 

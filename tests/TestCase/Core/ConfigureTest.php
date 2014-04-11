@@ -13,7 +13,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.5432
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Core;
@@ -140,11 +140,11 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testDebugSettingDisplayErrors() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$result = ini_get('display_errors');
 		$this->assertEquals(0, $result);
 
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		$result = ini_get('display_errors');
 		$this->assertEquals(1, $result);
 	}
@@ -428,7 +428,8 @@ class ConfigureTest extends TestCase {
 	}
 
 /**
- * @expectedException Cake\Error\ConfigureException
+ * @expectedException \Cake\Error\ConfigureException
+ * @return void
  */
 	public function testDumpNoAdapter() {
 		Configure::dump(TMP . 'test.php', 'does_not_exist');

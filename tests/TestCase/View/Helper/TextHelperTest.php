@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Helper;
@@ -59,7 +59,7 @@ class TextHelperTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->View = new View(null);
+		$this->View = new View();
 		$this->Text = new TextHelper($this->View);
 
 		$this->_appNamespace = Configure::read('App.namespace');
@@ -79,11 +79,13 @@ class TextHelperTest extends TestCase {
 
 /**
  * test String class methods are called correctly
+ *
+ * @return void
  */
 	public function testTextHelperProxyMethodCalls() {
 		$methods = array(
-			'highlight', 'stripLinks', 'truncate', 'excerpt', 'toList',
-			);
+			'stripLinks', 'excerpt', 'toList',
+		);
 		$String = $this->getMock(__NAMESPACE__ . '\StringMock', $methods);
 		$Text = new TextHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\StringMock'));
 		$Text->attach($String);
@@ -91,10 +93,23 @@ class TextHelperTest extends TestCase {
 			$String->expects($this->at(0))->method($method);
 			$Text->{$method}('who', 'what', 'when', 'where', 'how');
 		}
+
+		$methods = array(
+			'highlight', 'truncate'
+		);
+		$String = $this->getMock(__NAMESPACE__ . '\StringMock', $methods);
+		$Text = new TextHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\StringMock'));
+		$Text->attach($String);
+		foreach ($methods as $method) {
+			$String->expects($this->at(0))->method($method);
+			$Text->{$method}('who', array('what'));
+		}
 	}
 
 /**
  * test engine override
+ *
+ * @return void
  */
 	public function testEngineOverride() {
 		$Text = new TextHelperTestObject($this->View, array('engine' => 'TestAppEngine'));
@@ -203,6 +218,8 @@ class TextHelperTest extends TestCase {
 
 /**
  * Data provider for autoLinking
+ *
+ * @return array
  */
 	public static function autoLinkProvider() {
 		return array(

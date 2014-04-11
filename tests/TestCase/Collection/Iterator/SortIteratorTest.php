@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Collection\Iterator;
@@ -51,14 +51,14 @@ class SortIteratorTest extends TestCase {
 	public function testSortNumbersCustom() {
 		$items = new ArrayObject([3, 5, 1, 2, 4]);
 		$callback = function($a) {
-			return sin($a);
+			return $a * -1;
 		};
 		$sorted = new SortIterator($items, $callback);
-		$expected = array_combine(range(4, 0), [3, 2, 1, 5, 4]);
+		$expected = array_combine(range(4, 0), [1, 2, 3, 4, 5]);
 		$this->assertEquals($expected, iterator_to_array($sorted));
 
 		$sorted = new SortIterator($items, $callback, SORT_ASC);
-		$expected = array_combine(range(4, 0), [5, 4, 2, 1, 3]);
+		$expected = array_combine(range(4, 0), [5, 4, 3, 2, 1]);
 		$this->assertEquals($expected, iterator_to_array($sorted));
 	}
 

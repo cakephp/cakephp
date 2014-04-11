@@ -1,7 +1,5 @@
 <?php
 /**
- * The Plugin Task handles creating an empty plugin, ready to be used
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,30 +9,23 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console\Command\Task;
 
+use Cake\Console\Command\Task\BakeTask;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Utility\File;
 use Cake\Utility\Folder;
-use Cake\Utility\Inflector;
 
 /**
  * The Plugin Task handles creating an empty plugin, ready to be used
  *
  */
-class PluginTask extends Shell {
-
-/**
- * path to plugins directory
- *
- * @var array
- */
-	public $path = null;
+class PluginTask extends BakeTask {
 
 /**
  * Path to the bootstrap file. Changed in tests.
@@ -44,13 +35,20 @@ class PluginTask extends Shell {
 	public $bootstrap = null;
 
 /**
+ * Tasks this task uses.
+ *
+ * @var array
+ */
+	public $tasks = ['Template'];
+
+/**
  * initialize
  *
  * @return void
  */
 	public function initialize() {
 		$this->path = current(App::path('Plugin'));
-		$this->bootstrap = APP . 'Config/bootstrap.php';
+		$this->bootstrap = APP . 'Config' . DS . 'bootstrap.php';
 	}
 
 /**
@@ -59,31 +57,18 @@ class PluginTask extends Shell {
  * @return void
  */
 	public function execute() {
-		if (isset($this->args[0])) {
-			$plugin = Inflector::camelize($this->args[0]);
-			$pluginPath = $this->_pluginPath($plugin);
-			if (is_dir($pluginPath)) {
-				$this->out(__d('cake_console', 'Plugin: %s already exists, no action taken', $plugin));
-				$this->out(__d('cake_console', 'Path: %s', $pluginPath));
-				return false;
-			}
-			$this->_interactive($plugin);
-		} else {
-			return $this->_interactive();
+		if (empty($this->args[0])) {
+			$this->err('<error>You must provide a plugin name in CamelCase format.</error>');
+			$this->err('To make an "Example" plugin, run <info>Console/cake bake plugin Example</info>.');
+			return false;
 		}
-	}
-
-/**
- * Interactive interface
- *
- * @param string $plugin
- * @return void
- */
-	protected function _interactive($plugin = null) {
-		while ($plugin === null) {
-			$plugin = $this->in(__d('cake_console', 'Enter the name of the plugin in CamelCase format'));
+		$plugin = $this->_camelize($this->args[0]);
+		$pluginPath = $this->_pluginPath($plugin);
+		if (is_dir($pluginPath)) {
+			$this->out(__d('cake_console', 'Plugin: %s already exists, no action taken', $plugin));
+			$this->out(__d('cake_console', 'Path: %s', $pluginPath));
+			return false;
 		}
-
 		if (!$this->bake($plugin)) {
 			$this->error(__d('cake_console', "An error occurred trying to bake: %s in %s", $plugin, $this->path . $plugin));
 		}
@@ -110,18 +95,19 @@ class PluginTask extends Shell {
 		if (strtolower($looksGood) === 'y') {
 			$Folder = new Folder($this->path . $plugin);
 			$directories = [
-				'Config/Schema',
-				'Model/Behavior',
-				'Model/Datasource',
-				'Console/Command/Task',
-				'Controller/Component',
+				'Config' . DS . 'Schema',
+				'Model' . DS . 'Behavior',
+				'Model' . DS . 'Table',
+				'Model' . DS . 'Entity',
+				'Console' . DS . 'Command' . DS . 'Task',
+				'Controller' . DS . 'Component',
 				'Lib',
-				'View/Helper',
-				'Test/Case/Controller/Component',
-				'Test/Case/View/Helper',
-				'Test/Case/Model/Behavior',
-				'Test/Fixture',
-				'vendor',
+				'View' . DS . 'Helper',
+				'Template',
+				'Test' . DS . 'TestCase' . DS . 'Controller' . DS . 'Component',
+				'Test' . DS . 'TestCase' . DS . 'View' . DS . 'Helper',
+				'Test' . DS . 'TestCase' . DS . 'Model' . DS . 'Behavior',
+				'Test' . DS . 'Fixture',
 				'webroot'
 			];
 
@@ -143,23 +129,18 @@ class PluginTask extends Shell {
 				return false;
 			}
 
-			$controllerFileName = $plugin . 'AppController.php';
+			$controllerFileName = 'AppController.php';
 
 			$out = "<?php\n\n";
-			$out .= "App::uses('AppController', 'Controller');\n\n";
-			$out .= "class {$plugin}AppController extends AppController {\n\n";
+			$out .= "namespace {$plugin}\\Controller;\n\n";
+			$out .= "use App\\Controller\\AppController; as BaseController\n\n";
+			$out .= "class AppController extends BaseController {\n\n";
 			$out .= "}\n";
-			$this->createFile($this->path . $plugin . DS . 'Controller/' . $controllerFileName, $out);
-
-			$modelFileName = $plugin . 'AppModel.php';
-
-			$out = "<?php\n\n";
-			$out .= "App::uses('AppModel', 'Model');\n\n";
-			$out .= "class {$plugin}AppModel extends AppModel {\n\n";
-			$out .= "}\n";
-			$this->createFile($this->path . $plugin . DS . 'Model/' . $modelFileName, $out);
+			$this->createFile($this->path . $plugin . DS . 'Controller' . DS . $controllerFileName, $out);
 
 			$this->_modifyBootstrap($plugin);
+			$this->_generatePhpunitXml($plugin, $this->path);
+			$this->_generateTestBootstrap($plugin, $this->path);
 
 			$this->hr();
 			$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $plugin, $this->path . $plugin), 2);
@@ -185,6 +166,43 @@ class PluginTask extends Shell {
 	}
 
 /**
+ * Generate a phpunit.xml stub for the plugin.
+ *
+ * @param string $plugin Name of plugin
+ * @param string $path The path to save the phpunit.xml file to.
+ * @return void
+ */
+	protected function _generatePhpunitXml($plugin, $path) {
+		$this->Template->set([
+			'plugin' => $plugin,
+			'path' => $path
+		]);
+		$this->out( __d('cake_console', 'Generating phpunit.xml file...'));
+		$out = $this->Template->generate('test', 'phpunit.xml');
+		$file = $path . $plugin . DS . 'phpunit.xml';
+		$this->createFile($file, $out);
+	}
+
+/**
+ * Generate a Test/bootstrap.php stub for the plugin.
+ *
+ * @param string $plugin Name of plugin
+ * @param string $path The path to save the phpunit.xml file to.
+ * @return void
+ */
+	protected function _generateTestBootstrap($plugin, $path) {
+		$this->Template->set([
+			'plugin' => $plugin,
+			'path' => $path,
+			'root' => ROOT
+		]);
+		$this->out( __d('cake_console', 'Generating Test/bootstrap.php file...'));
+		$out = $this->Template->generate('test', 'bootstrap');
+		$file = $path . $plugin . DS . 'Test' . DS . 'bootstrap.php';
+		$this->createFile($file, $out);
+	}
+
+/**
  * find and change $this->path to the user selection
  *
  * @param array $pathOptions
@@ -194,9 +212,11 @@ class PluginTask extends Shell {
 		$valid = false;
 		foreach ($pathOptions as $i => $path) {
 			if (!is_dir($path)) {
-				array_splice($pathOptions, $i, 1);
+				unset($pathOptions[$i]);
 			}
 		}
+		$pathOptions = array_values($pathOptions);
+
 		$max = count($pathOptions);
 		while (!$valid) {
 			foreach ($pathOptions as $i => $option) {
@@ -214,16 +234,16 @@ class PluginTask extends Shell {
 /**
  * Gets the option parser instance and configures it.
  *
- * @return ConsoleOptionParser
+ * @return \Cake\Console\ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		$parser->description(__d('cake_console',
-			'Create the directory structure, AppModel and AppController classes for a new plugin. ' .
+			'Create the directory structure, AppController class and testing setup for a new plugin. ' .
 			'Can create plugins in any of your bootstrapped plugin paths.'
 		))->addArgument('name', [
 			'help' => __d('cake_console', 'CamelCased name of the plugin to create.')
-		]);
+		])->removeOption('plugin');
 
 		return $parser;
 	}

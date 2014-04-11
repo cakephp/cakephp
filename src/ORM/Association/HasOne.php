@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,16 +9,15 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\ORM\Association;
 
-use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association;
 use Cake\ORM\Association\DependentDeleteTrait;
+use Cake\ORM\Association\SelectableAssociationTrait;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -33,13 +30,7 @@ use Cake\Utility\Inflector;
 class HasOne extends Association {
 
 	use DependentDeleteTrait;
-
-/**
- * Whether this association can be expressed directly in a query join
- *
- * @var boolean
- */
-	protected $_canBeJoined = true;
+	use SelectableAssociationTrait;
 
 /**
  * The type of join to be used when adding the association to a query
@@ -90,10 +81,20 @@ class HasOne extends Association {
  * association. This means that rows in the 'target' table would miss important
  * or required information if the row in 'source' did not exist.
  *
+ * @param \Cake\ORM\Table $side The potential Table with ownership
  * @return boolean
  */
 	public function isOwningSide(Table $side) {
 		return $side === $this->source();
+	}
+
+/**
+ * Get the relationship type.
+ *
+ * @return string
+ */
+	public function type() {
+		return self::ONE_TO_ONE;
 	}
 
 /**
@@ -130,21 +131,40 @@ class HasOne extends Association {
 	}
 
 /**
- * Returns a single or multiple conditions to be appended to the generated join
- * clause for getting the results on the target table.
+ * {@inheritdoc}
  *
- * @param array $options list of options passed to attachTo method
- * @return array
  */
-	protected function _joinCondition(array $options) {
-		$field = sprintf('%s.%s',
-			$this->_sourceTable->alias(),
-			$this->_sourceTable->primaryKey()
-		);
-		$value = new IdentifierExpression(sprintf(
-			'%s.%s', $this->_targetTable->alias(), $options['foreignKey']
-		));
-		return [$field => $value];
+	protected function _linkField($options) {
+		$links = [];
+		$name = $this->name();
+
+		foreach ((array)$options['foreignKey'] as $key) {
+			$links[] = sprintf('%s.%s', $name, $key);
+		}
+
+		if (count($links) === 1) {
+			return $links[0];
+		}
+
+		return $links;
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	protected function _buildResultMap($fetchQuery, $options) {
+		$resultMap = [];
+		$key = (array)$options['foreignKey'];
+
+		foreach ($fetchQuery->all() as $result) {
+			$values = [];
+			foreach ($key as $k) {
+				$values[] = $result[$k];
+			}
+			$resultMap[implode(';', $values)] = $result;
+		}
+		return $resultMap;
 	}
 
 }

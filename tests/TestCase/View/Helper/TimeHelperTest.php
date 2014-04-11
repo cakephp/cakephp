@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Helper;
@@ -63,7 +63,7 @@ class TimeHelperTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->View = new View(null);
+		$this->View = new View();
 
 		$this->_appNamespace = Configure::read('App.namespace');
 		Configure::write('App.namespace', 'TestApp');
@@ -82,6 +82,8 @@ class TimeHelperTest extends TestCase {
 
 /**
  * test Cake\Utility\Time class methods are called correctly
+ *
+ * @return void
  */
 	public function testTimeHelperProxyMethodCalls() {
 		$methods = array(
@@ -108,6 +110,8 @@ class TimeHelperTest extends TestCase {
 
 /**
  * test engine override
+ *
+ * @return void
  */
 	public function testEngineOverride() {
 		$Time = new TimeHelperTestObject($this->View, array('engine' => 'TestAppEngine'));

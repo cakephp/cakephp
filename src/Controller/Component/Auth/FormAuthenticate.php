@@ -11,6 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Auth;
@@ -21,20 +22,19 @@ use Cake\Network\Response;
 
 /**
  * An authentication adapter for AuthComponent. Provides the ability to authenticate using POST
- * data. Can be used by configuring AuthComponent to use it via the AuthComponent::$authenticate setting.
+ * data. Can be used by configuring AuthComponent to use it via the AuthComponent::$authenticate config.
  *
  * {{{
- *	$this->Auth->authenticate = array(
- *		'Form' => array(
- *			'scope' => array('Users.active' => 1)
- *		)
- *	)
+ *	$this->Auth->authenticate = [
+ *		'Form' => [
+ *			'scope' => ['Users.active' => 1]
+ *		]
+ *	]
  * }}}
  *
- * When configuring FormAuthenticate you can pass in settings to which fields, model and additional conditions
- * are used. See FormAuthenticate::$settings for more information.
+ * When configuring FormAuthenticate you can pass in config to which fields, model and additional conditions
+ * are used. See FormAuthenticate::$_config for more information.
  *
- * @since 2.0
  * @see AuthComponent::$authenticate
  */
 class FormAuthenticate extends BaseAuthenticate {
@@ -42,17 +42,13 @@ class FormAuthenticate extends BaseAuthenticate {
 /**
  * Checks the fields to ensure they are supplied.
  *
- * @param Cake\Network\Request $request The request that contains login information.
- * @param string $model The model used for login verification.
+ * @param \Cake\Network\Request $request The request that contains login information.
  * @param array $fields The fields to be checked.
  * @return boolean False if the fields have not been supplied. True if they exist.
  */
-	protected function _checkFields(Request $request, $model, $fields) {
-		if (empty($request->data[$model])) {
-			return false;
-		}
-		foreach (array($fields['username'], $fields['password']) as $field) {
-			$value = $request->data($model . '.' . $field);
+	protected function _checkFields(Request $request, array $fields) {
+		foreach ([$fields['username'], $fields['password']] as $field) {
+			$value = $request->data($field);
 			if (empty($value) || !is_string($value)) {
 				return false;
 			}
@@ -61,25 +57,22 @@ class FormAuthenticate extends BaseAuthenticate {
 	}
 
 /**
- * Authenticates the identity contained in a request. Will use the `settings.userModel`, and `settings.fields`
- * to find POST data that is used to find a matching record in the `settings.userModel`. Will return false if
+ * Authenticates the identity contained in a request. Will use the `config.userModel`, and `config.fields`
+ * to find POST data that is used to find a matching record in the `config.userModel`. Will return false if
  * there is no post data, either username or password is missing, or if the scope conditions have not been met.
  *
- * @param Cake\Network\Request $request The request that contains login information.
- * @param Cake\Network\Response $response Unused response object.
+ * @param \Cake\Network\Request $request The request that contains login information.
+ * @param \Cake\Network\Response $response Unused response object.
  * @return mixed False on login failure.  An array of User data on success.
  */
 	public function authenticate(Request $request, Response $response) {
-		$userModel = $this->settings['userModel'];
-		list(, $model) = pluginSplit($userModel);
-
-		$fields = $this->settings['fields'];
-		if (!$this->_checkFields($request, $model, $fields)) {
+		$fields = $this->_config['fields'];
+		if (!$this->_checkFields($request, $fields)) {
 			return false;
 		}
 		return $this->_findUser(
-			$request->data[$model][$fields['username']],
-			$request->data[$model][$fields['password']]
+			$request->data[$fields['username']],
+			$request->data[$fields['password']]
 		);
 	}
 

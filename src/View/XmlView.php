@@ -9,14 +9,17 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Event\EventManager;
+use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Utility\Set;
+use Cake\Utility\Hash;
 use Cake\Utility\Xml;
 
 /**
@@ -50,8 +53,6 @@ use Cake\Utility\Xml;
  *
  * If you don't use the `_serialize` key, you will need a view. You can use extended
  * views to provide layout like functionality.
- *
- * @since         CakePHP(tm) v 2.1.0
  */
 class XmlView extends View {
 
@@ -64,14 +65,17 @@ class XmlView extends View {
 
 /**
  * Constructor
- *
- * @param Controller $controller
+ * @param Request $request
+ * @param Response $response
+ * @param EventManager $eventManager
+ * @param array $viewOptions
  */
-	public function __construct(Controller $controller = null) {
-		parent::__construct($controller);
+	public function __construct(Request $request = null, Response $response = null,
+		EventManager $eventManager = null, array $viewOptions = []) {
+		parent::__construct($request, $response, $eventManager, $viewOptions);
 
-		if (isset($controller->response) && $controller->response instanceof Response) {
-			$controller->response->type('xml');
+		if ($response && $response instanceof Response) {
+			$response->type('xml');
 		}
 	}
 
@@ -127,7 +131,7 @@ class XmlView extends View {
 			}
 		} else {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
-			if (is_array($data) && Set::numeric(array_keys($data))) {
+			if (is_array($data) && Hash::numeric(array_keys($data))) {
 				$data = array($rootNode => array($serialize => $data));
 			}
 		}

@@ -13,7 +13,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @since         CakePHP v 1.2.0.7726
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Console\Command\Task;
@@ -72,7 +72,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExecute() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = TEST_APP . 'TestApp/View/Pages';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp/Template/Pages';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->expects($this->never())->method('err');
@@ -131,7 +131,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExtractCategory() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'View' . DS . 'Pages';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->params['merge'] = 'no';
@@ -156,7 +156,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExtractWithExclude() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = TEST_APP . 'TestApp/View';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp/Template';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude'] = 'Pages,Layout';
 		$this->Task->params['extract-core'] = 'no';
@@ -184,8 +184,8 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->interactive = false;
 
 		$this->Task->params['paths'] =
-			TEST_APP . 'TestApp/View/Pages,' .
-			TEST_APP . 'TestApp/View/Posts';
+			TEST_APP . 'TestApp/Template/Pages,' .
+			TEST_APP . 'TestApp/Template/Posts';
 
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
@@ -209,10 +209,10 @@ class ExtractTaskTest extends TestCase {
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
-			array('_isExtractingApp', '_extractValidationMessages', 'in', 'out', 'err', 'clear', '_stop'),
+			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);
-		$this->Task->expects($this->exactly(2))
+		$this->Task->expects($this->exactly(1))
 			->method('_isExtractingApp')
 			->will($this->returnValue(true));
 
@@ -243,103 +243,11 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['plugin'] = 'TestPlugin';
 
-		$this->markTestIncomplete('Extracting validation messages from plugin models is not working.');
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'default.pot');
 		$this->assertNotRegExp('#Pages#', $result);
 		$this->assertRegExp('/translate\.ctp:\d+/', $result);
 		$this->assertContains('This is a translatable string', $result);
-		$this->assertContains('I can haz plugin model validation message', $result);
-	}
-
-/**
- * Tests that the task will inspect application models and extract the validation messages from them
- *
- * @return void
- */
-	public function testExtractModelValidation() {
-		$this->markTestIncomplete('Extracting validation messages is not working right now.');
-		Configure::write('App.namespace', 'TestApp');
-		Plugin::load('TestPlugin');
-
-		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
-			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
-			array($this->out, $this->out, $this->in)
-		);
-		$this->Task->expects($this->exactly(2))
-			->method('_isExtractingApp')
-			->will($this->returnValue(true));
-
-		$this->Task->params['paths'] = TEST_APP . 'TestApp/';
-		$this->Task->params['output'] = $this->path . DS;
-		$this->Task->params['extract-core'] = 'no';
-		$this->Task->params['exclude-plugins'] = true;
-		$this->Task->params['ignore-model-validation'] = false;
-
-		$this->Task->execute();
-		$result = file_get_contents($this->path . DS . 'default.pot');
-
-		$pattern = preg_quote('#Model/PersisterOne.php:validation for field title#', '\\');
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = preg_quote('#Model/PersisterOne.php:validation for field body#', '\\');
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post title is required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "You may enter up to %s chars \(minimum is %s chars\)"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post body is required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post body is super required"#';
-		$this->assertRegExp($pattern, $result);
-	}
-
-/**
- *  Test that the extract shell can obtain validation messages from models inside a specific plugin
- *
- * @return void
- */
-	public function testExtractModelValidationInPlugin() {
-		$this->markTestIncomplete('Extracting validation messages is not working right now.');
-		Configure::write('App.namespace', 'TestApp');
-		Plugin::load('TestPlugin');
-		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
-			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
-			array($this->out, $this->out, $this->in)
-		);
-
-		$this->Task->params['output'] = $this->path . DS;
-		$this->Task->params['ignore-model-validation'] = false;
-		$this->Task->params['plugin'] = 'TestPlugin';
-
-		$this->Task->execute();
-		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
-
-		$pattern = preg_quote('#Model/TestPluginPost.php:validation for field title#', '\\');
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = preg_quote('#Model/TestPluginPost.php:validation for field body#', '\\');
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post title is required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post body is required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post body is super required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title#';
-		$this->assertNotRegExp($pattern, $result);
 	}
 
 /**

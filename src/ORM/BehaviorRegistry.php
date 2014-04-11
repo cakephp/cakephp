@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\ORM;
@@ -31,7 +31,7 @@ class BehaviorRegistry extends ObjectRegistry {
 /**
  * The table using this registry.
  *
- * @var Cake\ORM\Table
+ * @var \Cake\ORM\Table
  */
 	protected $_table;
 
@@ -40,7 +40,7 @@ class BehaviorRegistry extends ObjectRegistry {
  *
  * Behaviors constructed by this object will be subscribed to this manager.
  *
- * @var Cake\Event\EventManager
+ * @var \Cake\Event\EventManager
  */
 	protected $_eventManager;
 
@@ -61,7 +61,7 @@ class BehaviorRegistry extends ObjectRegistry {
 /**
  * Constructor
  *
- * @param Cake\ORM\Table $table
+ * @param \Cake\ORM\Table $table
  */
 	public function __construct(Table $table) {
 		$this->_table = $table;
@@ -87,7 +87,7 @@ class BehaviorRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the behavior is missing in.
- * @throws Cake\Error\MissingBehaviorException
+ * @throws \Cake\Error\MissingBehaviorException
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\MissingBehaviorException([
@@ -126,9 +126,11 @@ class BehaviorRegistry extends ObjectRegistry {
  * Methods starting with `_` will be ignored, as will methods
  * declared on Cake\ORM\Behavior
  *
- * @param Cake\ORM\Behavior $instance
+ * @param \Cake\ORM\Behavior $instance
+ * @param string $class The classname that is missing.
+ * @param string $alias The alias of the object.
  * @return void
- * @throws Cake\Error\Exception when duplicate methods are connected.
+ * @throws \Cake\Error\Exception when duplicate methods are connected.
  */
 	protected function _getMethods(Behavior $instance, $class, $alias) {
 		$finders = array_change_key_case($instance->implementedFinders());
@@ -199,7 +201,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @param string $method The method to invoke.
  * @param array $args The arguments you want to invoke the method with.
  * @return mixed The return value depends on the underlying behavior method.
- * @throws Cake\Error\Exception When the method is unknown.
+ * @throws \Cake\Error\Exception When the method is unknown.
  */
 	public function call($method, array $args = []) {
 		$method = strtolower($method);
@@ -217,7 +219,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @param string $type The finder type to invoke.
  * @param array $args The arguments you want to invoke the method with.
  * @return mixed The return value depends on the underlying behavior method.
- * @throws Cake\Error\Exception When the method is unknown.
+ * @throws \Cake\Error\Exception When the method is unknown.
  */
 	public function callFinder($type, array $args = []) {
 		$type = strtolower($type);

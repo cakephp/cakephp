@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v .0.10.0.1233
+ * @since         0.10.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
@@ -67,7 +67,7 @@ class Security {
  * you ensuring that each hashed password will have a *unique* salt.
  * - Comparing Hashes: Simply pass the originally hashed password as the salt.
  * The salt is prepended to the hash and php handles the parsing automagically.
- * For convenience the BlowfishAuthenticate adapter is available for use with
+ * For convenience the `BlowfishPasswordHasher` class is available for use with
  * the AuthComponent.
  * - Do NOT use a constant salt for blowfish!
  *
@@ -135,7 +135,7 @@ class Security {
  *
  * @param integer $cost Valid values are 4-31
  * @return void
- * @throws Cake\Error\Exception When cost is invalid.
+ * @throws \Cake\Error\Exception When cost is invalid.
  */
 	public static function setCost($cost) {
 		if ($cost < 4 || $cost > 31) {
@@ -153,7 +153,7 @@ class Security {
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use as the encryption key for encrypted data.
  * @param string $operation Operation to perform, encrypt or decrypt
- * @throws Cake\Error\Exception When there are errors.
+ * @throws \Cake\Error\Exception When there are errors.
  * @return string Encrypted/Decrypted string
  */
 	public static function rijndael($text, $key, $operation) {
@@ -204,7 +204,7 @@ class Security {
  * @param string $password The string to be encrypted.
  * @param mixed $salt false to generate a new salt or an existing salt.
  * @return string The hashed string or an empty string on error.
- * @throws Cake\Error\Exception on invalid salt values.
+ * @throws \Cake\Error\Exception on invalid salt values.
  */
 	protected static function _crypt($password, $salt = false) {
 		if ($salt === false) {
@@ -232,7 +232,7 @@ class Security {
  * @param string $key The 256 bit/32 byte key to use as a cipher key.
  * @param string $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
  * @return string Encrypted data.
- * @throws Cake\Error\Exception On invalid data or key.
+ * @throws \Cake\Error\Exception On invalid data or key.
  */
 	public static function encrypt($plain, $key, $hmacSalt = null) {
 		self::_checkKey($key, 'encrypt()');
@@ -260,7 +260,7 @@ class Security {
  * @param string $key
  * @param string $method The method the key is being checked for.
  * @return void
- * @throws Cake\Error\Exception When key length is not 256 bit/32 bytes
+ * @throws \Cake\Error\Exception When key length is not 256 bit/32 bytes
  */
 	protected static function _checkKey($key, $method) {
 		if (strlen($key) < 32) {
@@ -275,7 +275,7 @@ class Security {
  * @param string $key The 256 bit/32 byte key to use as a cipher key.
  * @param string $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
  * @return string Decrypted data. Any trailing null bytes will be removed.
- * @throws Cake\Error\Exception On invalid data or key.
+ * @throws \Cake\Error\Exception On invalid data or key.
  */
 	public static function decrypt($cipher, $key, $hmacSalt = null) {
 		self::_checkKey($key, 'decrypt()');

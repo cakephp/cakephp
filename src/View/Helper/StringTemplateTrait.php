@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View\Helper;
@@ -25,24 +25,9 @@ trait StringTemplateTrait {
 /**
  * StringTemplate instance.
  *
- * @var Cake\View\StringTemplate
+ * @var \Cake\View\StringTemplate
  */
 	protected $_templater;
-
-/**
- * Initializes the StringTemplate class and loads templates
- *
- * @param array $templates
- * @param string $templateClass Class name of the template class to instantiate
- * @return void
- */
-	public function initStringTemplates($templates = [], $templateClass = '\Cake\View\StringTemplate') {
-		$this->_templater = new $templateClass();
-		$this->_templater->add($templates);
-		if (isset($this->settings['templates'])) {
-			$this->_templater->load($this->settings['templates']);
-		}
-	}
 
 /**
  * Get/set templates to use.
@@ -53,9 +38,11 @@ trait StringTemplateTrait {
  */
 	public function templates($templates = null) {
 		if ($templates === null || is_string($templates)) {
-			return $this->_templater->get($templates);
+			return $this->templater()->get($templates);
 		}
-		return $this->_templater->add($templates);
+
+		$this->templater()->add($templates);
+		return $this;
 	}
 
 /**
@@ -66,15 +53,30 @@ trait StringTemplateTrait {
  * @return string
  */
 	public function formatTemplate($name, $data) {
-		return $this->_templater->format($name, $data);
+		return $this->templater()->format($name, $data);
 	}
 
 /**
- * Returns the template engine object
+ * templater
  *
- * @return StringTemplate
+ * @return void
  */
-	public function getTemplater() {
+	public function templater() {
+		if (empty($this->_templater)) {
+			$class = $this->config('templateClass') ?: '\Cake\View\StringTemplate';
+			$this->_templater = new $class;
+
+			$templates = $this->config('templates');
+			if ($templates) {
+				if (is_string($templates)) {
+					$this->_templater->add($this->_defaultConfig['templates']);
+					$this->_templater->load($templates);
+				} else {
+					$this->_templater->add($templates);
+				}
+			}
+		}
+
 		return $this->_templater;
 	}
 

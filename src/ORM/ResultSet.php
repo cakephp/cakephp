@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\ORM;
@@ -36,7 +34,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	use CollectionTrait;
 
 /**
- * Original query from where results where generated
+ * Original query from where results were generated
  *
  * @var Query
  */
@@ -114,24 +112,37 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	protected $_useBuffering = true;
 
 /**
+ * Holds the count of records in this result set
+ *
+ * @var integer
+ */
+	protected $_count;
+
+/**
  * Constructor
  *
- * @param Query from where results come
+ * @param \Cake\ORM\Query $query Query from where results come
  * @param \Cake\Database\StatementInterface $statement
- * @return void
  */
 	public function __construct($query, $statement) {
+		$repository = $query->repository();
 		$this->_query = $query;
 		$this->_statement = $statement;
 		$this->_defaultTable = $this->_query->repository();
 		$this->_calculateAssociationMap();
 		$this->_hydrate = $this->_query->hydrate();
-		$this->_entityClass = $query->repository()->entityClass();
+		$this->_entityClass = $repository->entityClass();
 		$this->_useBuffering = $query->bufferResults();
+
+		if ($statement) {
+			$this->count();
+		}
 	}
 
 /**
  * Returns the current record in the result iterator
+ *
+ * Part of Iterator interface.
  *
  * @return array|object
  */
@@ -142,6 +153,8 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 /**
  * Returns the key of the current record in the iterator
  *
+ * Part of Iterator interface.
+ *
  * @return integer
  */
 	public function key() {
@@ -151,6 +164,8 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 /**
  * Advances the iterator pointer to the next record
  *
+ * Part of Iterator interface.
+ *
  * @return void
  */
 	public function next() {
@@ -158,9 +173,11 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	}
 
 /**
- * Rewind a ResultSet.
+ * Rewinds a ResultSet.
  *
- * @throws Cake\Database\Exception
+ * Part of Iterator interface.
+ *
+ * @throws \Cake\Database\Exception
  * @return void
  */
 	public function rewind() {
@@ -179,6 +196,8 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 /**
  * Whether there are more results to be fetched from the iterator
  *
+ * Part of Iterator interface.
+ *
  * @return boolean
  */
 	public function valid() {
@@ -189,8 +208,9 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 
 		$this->_current = $this->_fetchResult();
 		$valid = $this->_current !== false;
+		$hasNext = $this->_index < $this->_count;
 
-		if (!$valid && $this->_statement) {
+		if ($this->_statement && !($valid && $hasNext)) {
 			$this->_statement->closeCursor();
 		}
 
@@ -202,7 +222,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	}
 
 /**
- * Serialize a resultset.
+ * Serializes a resultset.
  *
  * Part of Serializable interface.
  *
@@ -216,12 +236,11 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	}
 
 /**
- * Unserialize a resultset.
+ * Unserializes a resultset.
  *
  * Part of Serializable interface.
  *
- * @param string Serialized object
- * @return ResultSet The hydrated result set.
+ * @param string $serialized Serialized object
  */
 	public function unserialize($serialized) {
 		$this->_results = unserialize($serialized);
@@ -257,15 +276,18 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 /**
  * Gives the number of rows in the result set.
  *
- * Part of the countable interface.
+ * Part of the Countable interface.
  *
  * @return integer
  */
 	public function count() {
-		if ($this->_statement) {
-			return $this->_statement->rowCount();
+		if ($this->_count !== null) {
+			return $this->_count;
 		}
-		return count($this->_results);
+		if ($this->_statement) {
+			return $this->_count = $this->_statement->rowCount();
+		}
+		return $this->_count = count($this->_results);
 	}
 
 /**
@@ -275,8 +297,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * @return void
  */
 	protected function _calculateAssociationMap() {
-		$contain = $this->_query->normalizedContainments();
-
+		$contain = $this->_query->eagerLoader()->normalized($this->_defaultTable);
 		if (!$contain) {
 			return;
 		}
@@ -284,12 +305,14 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		$map = [];
 		$visitor = function($level) use (&$visitor, &$map) {
 			foreach ($level as $assoc => $meta) {
-				$map[$assoc] = [
+				$map[$meta['aliasPath']] = [
+					'alias' => $assoc,
 					'instance' => $meta['instance'],
 					'canBeJoined' => $meta['canBeJoined'],
-					'entityClass' => $meta['instance']->target()->entityClass()
+					'entityClass' => $meta['instance']->target()->entityClass(),
+					'nestKey' => $meta['canBeJoined'] ? $assoc : $meta['aliasPath']
 				];
-				if (!empty($meta['associations'])) {
+				if ($meta['canBeJoined'] && !empty($meta['associations'])) {
 					$visitor($meta['associations']);
 				}
 			}
@@ -317,16 +340,22 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	}
 
 /**
- * Correctly nest results keys including those coming from associations
+ * Correctly nests results keys including those coming from associations
  *
- * @return array
+ * @param mixed $row Array containing columns and values or false if there is no results
+ * @return array Results
  */
 	protected function _groupResult($row) {
 		$defaultAlias = $this->_defaultTable->alias();
-		$results = [];
+		$results = $presentAliases = [];
 		foreach ($row as $key => $value) {
 			$table = $defaultAlias;
 			$field = $key;
+
+			if (isset($this->_associationMap[$key])) {
+				$results[$key] = $value;
+				continue;
+			}
 
 			if (empty($this->_map[$key])) {
 				$parts = explode('__', $key);
@@ -339,9 +368,11 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 				list($table, $field) = $this->_map[$key];
 			}
 
+			$presentAliases[$table] = true;
 			$results[$table][$field] = $value;
 		}
 
+		unset($presentAliases[$defaultAlias]);
 		$results[$defaultAlias] = $this->_castValues(
 			$this->_defaultTable,
 			$results[$defaultAlias]
@@ -353,21 +384,41 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			'markNew' => false,
 			'guard' => false
 		];
-		foreach (array_reverse($this->_associationMap) as $alias => $assoc) {
+
+		foreach (array_reverse($this->_associationMap) as $assoc) {
+			$alias = $assoc['nestKey'];
+			$instance = $assoc['instance'];
+
 			if (!isset($results[$alias])) {
+				$results = $instance->defaultRowValue($results, $assoc['canBeJoined']);
 				continue;
 			}
-			$instance = $assoc['instance'];
-			$results[$alias] = $this->_castValues($instance->target(), $results[$alias]);
+
+			$target = $instance->target();
+			$options['source'] = $target->alias();
+			unset($presentAliases[$alias]);
+
+			if ($assoc['canBeJoined']) {
+				$results[$alias] = $this->_castValues($target, $results[$alias]);
+			}
 
 			if ($this->_hydrate && $assoc['canBeJoined']) {
 				$entity = new $assoc['entityClass']($results[$alias], $options);
 				$entity->clean();
 				$results[$alias] = $entity;
 			}
-			$results = $instance->transformRow($results);
+
+			$results = $instance->transformRow($results, $alias, $assoc['canBeJoined']);
 		}
 
+		foreach ($presentAliases as $alias => $present) {
+			if (!isset($results[$alias])) {
+				continue;
+			}
+			$results[$defaultAlias][$alias] = $results[$alias];
+		}
+
+		$options['source'] = $defaultAlias;
 		$results = $results[$defaultAlias];
 		if ($this->_hydrate && !($results instanceof Entity)) {
 			$results = new $this->_entityClass($results, $options);
@@ -414,6 +465,19 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		if ($this->_useBuffering) {
 			$this->_results[] = $result;
 		}
+	}
+
+/**
+ * Returns an array that can be used to describe the internal state of this
+ * object.
+ *
+ * @return array
+ */
+	public function __debugInfo() {
+		return [
+			'query' => $this->_query,
+			'items' => $this->toArray(),
+		];
 	}
 
 }

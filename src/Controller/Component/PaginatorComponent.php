@@ -9,14 +9,16 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Error;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
@@ -37,9 +39,12 @@ class PaginatorComponent extends Component {
  * When calling paginate() these settings will be merged with the configuration
  * you provide.
  *
- * - `maxLimit` The maximum limit users can choose to view. Defaults to 100
- * - `limit` The initial number of items per page. Defaults to 20.
- * - `page` The starting page, defaults to 1.
+ * - `maxLimit` - The maximum limit users can choose to view. Defaults to 100
+ * - `limit` - The initial number of items per page. Defaults to 20.
+ * - `page` - The starting page, defaults to 1.
+ * - `whitelist` - A list of parameters users are allowed to set using request
+ *   parameters. Modifying this list will allow users to have more influence
+ *   over pagination, be careful with what you permit.
  *
  * @var array
  */
@@ -47,17 +52,7 @@ class PaginatorComponent extends Component {
 		'page' => 1,
 		'limit' => 20,
 		'maxLimit' => 100,
-	);
-
-/**
- * A list of parameters users are allowed to set using request parameters. Modifying
- * this list will allow users to have more influence over pagination,
- * be careful with what you permit.
- *
- * @var array
- */
-	public $whitelist = array(
-		'limit', 'sort', 'page', 'direction'
+		'whitelist' => ['limit', 'sort', 'page', 'direction']
 	);
 
 /**
@@ -93,7 +88,7 @@ class PaginatorComponent extends Component {
  *  $results = $paginator->paginate($table, $settings);
  * }}}
  *
- * This would allow you to have different pagination settings for `Comments` and `Posts` tables.
+ * This would allow you to have different pagination settings for `Articles` and `Comments` tables.
  *
  * ### Controlling sort fields
  *
@@ -126,67 +121,63 @@ class PaginatorComponent extends Component {
  *
  * Would paginate using the `find('popular')` method.
  *
- * @param Table $object The table to paginate.
+ * You can also pass an already created instance of a query to this method:
+ *
+ * {{{
+ * $query = $this->Articles->find('popular')->matching('Tags', function($q) {
+ *	return $q->where(['name' => 'CakePHP'])
+ * });
+ * $results = $paginator->paginate($query);
+ * }}}
+ *
+ * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Query $object The table or query to paginate.
  * @param array $settings The settings/configuration used for pagination.
  * @return array Query results
- * @throws Cake\Error\NotFoundException
+ * @throws \Cake\Error\NotFoundException
  */
 	public function paginate($object, array $settings = []) {
-		$alias = $object->alias();
+		if ($object instanceof Query) {
+			$query = $object;
+			$object = $query->repository();
+		}
 
+		$alias = $object->alias();
 		$options = $this->mergeOptions($alias, $settings);
 		$options = $this->validateSort($object, $options);
 		$options = $this->checkLimit($options);
 
-		$conditions = $fields = $limit = $page = null;
-		$order = [];
+		$options += ['page' => 1];
+		$options['page'] = intval($options['page']) < 1 ? 1 : (int)$options['page'];
 
-		if (!isset($options['conditions'])) {
-			$options['conditions'] = [];
+		$type = !empty($options['findType']) ? $options['findType'] : 'all';
+		unset($options['findType'], $options['maxLimit']);
+
+		if (empty($query)) {
+			$query = $object->find($type);
 		}
 
-		extract($options);
-		$extra = array_diff_key($options, compact(
-			'conditions', 'fields', 'order', 'limit', 'page'
-		));
-
-		$type = 'all';
-		if (!empty($extra['findType'])) {
-			$type = $extra['findType'];
-		}
-		unset($extra['findType'], $extra['maxLimit']);
-
-		if (intval($page) < 1) {
-			$page = 1;
-		}
-		$page = $options['page'] = (int)$page;
-
-		$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
-		$query = $object->find($type, array_merge($parameters, $extra));
-
+		$query->applyOptions($options);
 		$results = $query->all();
 		$numResults = count($results);
+		$count = $numResults ? $query->count() : 0;
 
 		$defaults = $this->getDefaults($alias, $settings);
 		unset($defaults[0]);
 
-		if (!$numResults) {
-			$count = 0;
-		} else {
-			$parameters = compact('conditions');
-			$query = $object->find($type, array_merge($parameters, $extra));
-			$count = $query->count();
-		}
-
+		$page = $options['page'];
+		$limit = $options['limit'];
 		$pageCount = intval(ceil($count / $limit));
 		$requestedPage = $page;
 		$page = max(min($page, $pageCount), 1);
 		$request = $this->_registry->getController()->request;
 
-		if (!is_array($order)) {
-			$order = (array)$order;
+		$order = (array)$options['order'];
+		$sortDefault = $directionDefault = false;
+		if (!empty($defaults['order']) && count($defaults['order']) == 1) {
+			$sortDefault = key($defaults['order']);
+			$directionDefault = current($defaults['order']);
 		}
-		reset($order);
+
 		$paging = array(
 			'findType' => $type,
 			'page' => $page,
@@ -197,11 +188,13 @@ class PaginatorComponent extends Component {
 			'pageCount' => $pageCount,
 			'sort' => key($order),
 			'direction' => current($order),
-			'limit' => $defaults['limit'] != $options['limit'] ? $options['limit'] : null,
+			'limit' => $defaults['limit'] != $limit ? $limit : null,
+			'sortDefault' => $sortDefault,
+			'directionDefault' => $directionDefault
 		);
 
 		if (!isset($request['paging'])) {
-			$request['paging'] = array();
+			$request['paging'] = [];
 		}
 		$request['paging'] = array_merge(
 			(array)$request['paging'],
@@ -224,7 +217,7 @@ class PaginatorComponent extends Component {
  * - Request parameters
  *
  * The result of this method is the aggregate of all the option sets combined together. You can change
- * PaginatorComponent::$whitelist to modify which options/values can be set using request parameters.
+ * config value `whitelist` to modify which options/values can be set using request parameters.
  *
  * @param string $alias Model alias being paginated, if the general settings has a key with this value
  *   that key's settings will be used for pagination instead of the general ones.
@@ -234,7 +227,7 @@ class PaginatorComponent extends Component {
 	public function mergeOptions($alias, $settings) {
 		$defaults = $this->getDefaults($alias, $settings);
 		$request = $this->_registry->getController()->request;
-		$request = array_intersect_key($request->query, array_flip($this->whitelist));
+		$request = array_intersect_key($request->query, array_flip($this->_config['whitelist']));
 		return array_merge($defaults, $request);
 	}
 
@@ -276,7 +269,6 @@ class PaginatorComponent extends Component {
  *
  * @param Table $object The model being paginated.
  * @param array $options The pagination options being used for this request.
- * @param array $whitelist The list of columns that can be used for sorting. If empty all keys are allowed.
  * @return array An array of options with sort + direction removed and replaced with order if possible.
  */
 	public function validateSort(Table $object, array $options) {
@@ -296,7 +288,7 @@ class PaginatorComponent extends Component {
 			$options['order'] = [];
 		}
 		if (!is_array($options['order'])) {
-			$options['order'] = (array)$options['order'];
+			return $options;
 		}
 
 		if (!empty($options['sortWhitelist'])) {
@@ -308,13 +300,15 @@ class PaginatorComponent extends Component {
 			return $options;
 		}
 
-		if (is_array($options['order'])) {
-			$tableAlias = $object->alias();
-			$order = [];
+		$tableAlias = $object->alias();
+		$order = [];
 
-			foreach ($options['order'] as $key => $value) {
-				$field = $key;
-				$alias = $tableAlias;
+		foreach ($options['order'] as $key => $value) {
+			$field = $key;
+			$alias = $tableAlias;
+			if (is_numeric($key)) {
+				$order[] = $value;
+			} else {
 				if (strpos($key, '.') !== false) {
 					list($alias, $field) = explode('.', $key);
 				}
@@ -324,8 +318,8 @@ class PaginatorComponent extends Component {
 					$order[$tableAlias . '.' . $field] = $value;
 				}
 			}
-			$options['order'] = $order;
 		}
+		$options['order'] = $order;
 
 		return $options;
 	}

@@ -13,7 +13,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.2.0
+ * @since         2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Validation;
@@ -74,7 +74,7 @@ class ValidationRule {
  *
  * @param array $validator [optional] The validator properties
  */
-	public function __construct($validator = array()) {
+	public function __construct(array $validator = array()) {
 		$this->_addValidatorProps($validator);
 	}
 
@@ -105,14 +105,14 @@ class ValidationRule {
  * @throws \InvalidArgumentException when the supplied rule is not a valid
  * callable for the configured scope
  */
-	public function process($value, $providers, array $context = []) {
+	public function process($value, array $providers, array $context = []) {
 		$context += ['data' => [], 'newRecord' => true, 'providers' => $providers];
 
 		if ($this->_skip($context)) {
 			return true;
 		}
 
-		if (is_callable($this->_rule)) {
+		if (!is_string($this->_rule) && is_callable($this->_rule)) {
 			$callable = $this->_rule;
 			$isCallable = true;
 		} else {

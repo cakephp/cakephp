@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.5436
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller;
@@ -52,12 +52,12 @@ class PagesControllerTest extends TestCase {
 /**
  * Test that missing view renders 404 page in production
  *
- * @expectedException Cake\Error\NotFoundException
+ * @expectedException \Cake\Error\NotFoundException
  * @expectedExceptionCode 404
  * @return void
  */
 	public function testMissingView() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$Pages = new PagesController(new Request(), new Response());
 		$Pages->display('non_existing_page');
 	}
@@ -65,12 +65,12 @@ class PagesControllerTest extends TestCase {
 /**
  * Test that missing view in debug mode renders missing_view error page
  *
- * @expectedException Cake\Error\MissingViewException
+ * @expectedException \Cake\Error\MissingViewException
  * @expectedExceptionCode 500
  * @return void
  */
 	public function testMissingViewInDebug() {
-		Configure::write('debug', 1);
+		Configure::write('debug', true);
 		$Pages = new PagesController(new Request(), new Response());
 		$Pages->display('non_existing_page');
 	}

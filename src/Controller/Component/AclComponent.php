@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.10.0.1076
+ * @since         0.10.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component;
@@ -61,11 +61,11 @@ class AclComponent extends Component {
  * Constructor. Will return an instance of the correct ACL class as defined in `Configure::read('Acl.classname')`
  *
  * @param ComponentRegistry $collection
- * @param array $settings
- * @throws Cake\Error\Exception when Acl.classname could not be loaded.
+ * @param array $config
+ * @throws \Cake\Error\Exception when Acl.classname could not be loaded.
  */
-	public function __construct(ComponentRegistry $collection, $settings = array()) {
-		parent::__construct($collection, $settings);
+	public function __construct(ComponentRegistry $collection, array $config = array()) {
+		parent::__construct($collection, $config);
 		$classname = $name = Configure::read('Acl.classname');
 		if (!class_exists($classname)) {
 			$classname = App::classname($name, 'Controller/Component/Acl');
@@ -86,7 +86,7 @@ class AclComponent extends Component {
  *
  * @param AclInterface|string $adapter Instance of AclInterface or a string name of the class to use. (optional)
  * @return AclInterface|void either null, or the adapter implementation.
- * @throws Cake\Error\Exception when the given class is not an instance of AclInterface
+ * @throws \Cake\Error\Exception when the given class is not an instance of AclInterface
  */
 	public function adapter($adapter = null) {
 		if ($adapter) {

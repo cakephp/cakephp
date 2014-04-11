@@ -1,9 +1,5 @@
 <?php
 /**
- * Framework debugging and PHP error-handling class
- *
- * Provides enhanced logging, stack traces, and rendering debug views
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.4560
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
@@ -79,8 +75,7 @@ class Debugger {
 			'traceLine' => '{:reference} - {:path}, line {:line}',
 			'trace' => "Trace:\n{:trace}\n",
 			'context' => "Context:\n{:context}\n",
-		),
-		'log' => array(),
+		)
 	);
 
 /**
@@ -185,12 +180,13 @@ class Debugger {
  *
  * @param mixed $var Variable or content to log
  * @param integer $level type of log to use. Defaults to LOG_DEBUG
+ * @param int $depth The depth to output to. Defaults to 3.
  * @return void
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::log
  */
-	public static function log($var, $level = LOG_DEBUG) {
+	public static function log($var, $level = LOG_DEBUG, $depth = 3) {
 		$source = static::trace(array('start' => 1)) . "\n";
-		Log::write($level, "\n" . $source . static::exportVar($var));
+		Log::write($level, "\n" . $source . static::exportVar($var, $depth));
 	}
 
 /**
@@ -278,7 +274,7 @@ class Debugger {
  * @return mixed Formatted stack trace
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::trace
  */
-	public static function trace($options = array()) {
+	public static function trace(array $options = array()) {
 		$self = Debugger::getInstance();
 		$defaults = array(
 			'depth'		=> 999,
@@ -537,10 +533,9 @@ class Debugger {
 		$replace = array_intersect_key($secrets, $var);
 		$var = $replace + $var;
 
-		$out = "array(";
-		$n = $break = $end = null;
+		$out = "[";
+		$break = $end = null;
 		if (!empty($var)) {
-			$n = "\n";
 			$break = "\n" . str_repeat("\t", $indent);
 			$end = "\n" . str_repeat("\t", $indent - 1);
 		}
@@ -561,7 +556,7 @@ class Debugger {
 		} else {
 			$vars[] = $break . '[maximum depth reached]';
 		}
-		return $out . implode(',', $vars) . $end . ')';
+		return $out . implode(',', $vars) . $end . ']';
 	}
 
 /**
@@ -579,10 +574,16 @@ class Debugger {
 
 		$className = get_class($var);
 		$out .= 'object(' . $className . ') {';
+		$break = "\n" . str_repeat("\t", $indent);
+		$end = "\n" . str_repeat("\t", $indent - 1);
+
+		if (method_exists($var, '__debugInfo')) {
+			return $out . "\n" .
+				substr(static::_array($var->__debugInfo(), $depth - 1, $indent), 1, -1) .
+				$end . '}';
+		}
 
 		if ($depth > 0) {
-			$end = "\n" . str_repeat("\t", $indent - 1);
-			$break = "\n" . str_repeat("\t", $indent);
 			$objectVars = get_object_vars($var);
 			foreach ($objectVars as $key => $value) {
 				$value = static::_export($value, $depth - 1, $indent);
@@ -619,7 +620,7 @@ class Debugger {
  * @param string $format The format you want errors to be output as.
  *   Leave null to get the current format.
  * @return mixed Returns null when setting. Returns the current format when getting.
- * @throws Cake\Error\Exception when choosing a format that doesn't exist.
+ * @throws \Cake\Error\Exception when choosing a format that doesn't exist.
  */
 	public static function outputAs($format = null) {
 		$self = Debugger::getInstance();
@@ -669,7 +670,7 @@ class Debugger {
  * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
  *    straight HTML output, or 'txt' for unformatted text.
  * @param array $strings Template strings, or a callback to be used for the output format.
- * @return The resulting format string set.
+ * @return array The resulting format string set.
  */
 	public static function addFormat($format, array $strings) {
 		$self = Debugger::getInstance();
@@ -699,7 +700,7 @@ class Debugger {
  * @deprecated Use Debugger::outputAs() and Debugger::addFormat(). Will be removed
  *   in 3.0
  */
-	public function output($format = null, $strings = array()) {
+	public function output($format = null, array $strings = array()) {
 		$self = Debugger::getInstance();
 		$data = null;
 

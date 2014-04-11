@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Core\Plugin;
@@ -42,40 +42,38 @@ use Cake\Utility\Inflector;
  *
  * You can disable the connection of default routes by deleting the require inside APP/Config/routes.php.
  */
+
 $prefixes = Router::prefixes();
+$prefixPattern = implode('|', $prefixes);
+$plugins = Plugin::loaded();
+foreach ($plugins as $key => $value) {
+	$plugins[$key] = Inflector::underscore($value);
+}
+$pluginPattern = implode('|', $plugins);
+$indexParams = ['action' => 'index'];
+$pluginShortMatch = [
+	'routeClass' => 'Cake\Routing\Route\PluginShortRoute',
+	'_name' => '_plugin._controller:index'
+];
 
-if ($plugins = Plugin::loaded()) {
-	foreach ($plugins as $key => $value) {
-		$plugins[$key] = Inflector::underscore($value);
-	}
-	$pluginPattern = implode('|', $plugins);
+if ($prefixPattern && $pluginPattern) {
+	$match = ['prefix' => $prefixPattern, 'plugin' => $pluginPattern];
+	Router::connect('/:prefix/:plugin', $indexParams, $match + $pluginShortMatch);
+	Router::connect('/:prefix/:plugin/:controller', $indexParams, $match);
+	Router::connect('/:prefix/:plugin/:controller/:action/*', [], $match);
+}
+if ($pluginPattern) {
 	$match = ['plugin' => $pluginPattern];
-	$shortParams = [
-		'routeClass' => 'Cake\Routing\Route\PluginShortRoute',
-		'plugin' => $pluginPattern,
-		'_name' => '_plugin._controller:index',
-	];
-
-	foreach ($prefixes as $prefix) {
-		$params = ['prefix' => $prefix];
-		$indexParams = $params + ['action' => 'index'];
-		Router::connect("/{$prefix}/:plugin", $indexParams, $shortParams);
-		Router::connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
-		Router::connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
-	}
-	Router::connect('/:plugin', ['action' => 'index'], $shortParams);
-	Router::connect('/:plugin/:controller', ['action' => 'index'], $match);
+	Router::connect('/:plugin', $indexParams, $match + $pluginShortMatch);
+	Router::connect('/:plugin/:controller', $indexParams, $match);
 	Router::connect('/:plugin/:controller/:action/*', [], $match);
 }
-
-foreach ($prefixes as $prefix) {
-	$params = ['prefix' => $prefix];
-	$indexParams = $params + ['action' => 'index'];
-	Router::connect("/{$prefix}/:controller", $indexParams);
-	Router::connect("/{$prefix}/:controller/:action/*", $params);
+if ($prefixPattern) {
+	$match = ['prefix' => $prefixPattern];
+	Router::connect('/:prefix/:controller', $indexParams, $match);
+	Router::connect('/:prefix/:controller/:action/*', [], $match);
 }
 Router::connect('/:controller', ['action' => 'index']);
 Router::connect('/:controller/:action/*');
 
-unset($params, $indexParams, $prefix, $prefixes, $shortParams, $match,
-	$pluginPattern, $plugins, $key, $value);
+unset($prefixes, $prefixPattern, $plugins, $pluginPattern, $indexParams, $match);

@@ -9,23 +9,29 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v3.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View;
 
 use Cake\Configure\Engine\PhpConfig;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Plugin;
 use Cake\Error;
 
 /**
- * Provides a interface for registering and inserting
+ * Provides an interface for registering and inserting
  * content into simple logic-less string templates.
  *
  * Used by several helpers to provide simple flexible templates
  * for generating HTML and other content.
  */
 class StringTemplate {
+
+	use InstanceConfigTrait {
+		config as add;
+		config as get;
+	}
 
 /**
  * List of attributes that can be made compact.
@@ -39,14 +45,23 @@ class StringTemplate {
 	);
 
 /**
- * The templates this instance holds.
+ * The default templates this instance holds.
  *
  * @var array
  */
-	protected $_templates = [
+	protected $_defaultConfig = [
 		'attribute' => '{{name}}="{{value}}"',
 		'compactAttribute' => '{{name}}="{{value}}"',
 	];
+
+/**
+ * Constructor.
+ *
+ * @param array $templates A set of templates to add.
+ */
+	public function __construct(array $config = []) {
+		$this->config($config);
+	}
 
 /**
  * Load a config file containing templates.
@@ -59,40 +74,9 @@ class StringTemplate {
  * @return void
  */
 	public function load($file) {
-		list($plugin, $file) = pluginSplit($file);
-		$path = APP . 'Config/';
-		if ($plugin !== null) {
-			$path = Plugin::path($plugin) . 'Config/';
-		}
-		$loader = new PhpConfig($path);
+		$loader = new PhpConfig(APP . 'Config/');
 		$templates = $loader->read($file);
 		$this->add($templates);
-	}
-
-/**
- * Add one or more template strings.
- *
- * @param array $templates The templates to add.
- * @return void
- */
-	public function add(array $templates) {
-		$this->_templates = array_merge($this->_templates, $templates);
-	}
-
-/**
- * Get one or all templates.
- *
- * @param string $name Leave null to get all templates, provide a name to get a single template.
- * @return string|array|null Either the template(s) or null
- */
-	public function get($name = null) {
-		if ($name === null) {
-			return $this->_templates;
-		}
-		if (!isset($this->_templates[$name])) {
-			return null;
-		}
-		return $this->_templates[$name];
 	}
 
 /**
@@ -102,7 +86,7 @@ class StringTemplate {
  * @return void
  */
 	public function remove($name) {
-		unset($this->_templates[$name]);
+		$this->config($name, null);
 	}
 
 /**
@@ -159,7 +143,7 @@ class StringTemplate {
 			$exclude = [];
 		}
 
-		$exclude = ['escape' => true] + array_flip($exclude);
+		$exclude = ['escape' => true, 'idPrefix' => true] + array_flip($exclude);
 		$escape = $options['escape'];
 		$attributes = [];
 
@@ -177,7 +161,7 @@ class StringTemplate {
  * Works with minimized attributes that have the same value as their name such as 'disabled' and 'checked'
  *
  * @param string $key The name of the attribute to create
- * @param string $value The value of the attribute to create.
+ * @param string|array $value The value of the attribute to create.
  * @param boolean $escape Define if the value must be escaped
  * @return string The composed attribute.
  */

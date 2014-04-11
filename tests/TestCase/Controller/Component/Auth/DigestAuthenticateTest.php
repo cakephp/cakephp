@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller\Component\Auth;
@@ -46,8 +46,6 @@ class DigestAuthenticateTest extends TestCase {
 
 		$this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
 		$this->auth = new DigestAuthenticate($this->Collection, array(
-			'fields' => array('username' => 'username', 'password' => 'password'),
-			'userModel' => 'Users',
 			'realm' => 'localhost',
 			'nonce' => 123,
 			'opaque' => '123abc'
@@ -68,13 +66,13 @@ class DigestAuthenticateTest extends TestCase {
 	public function testConstructor() {
 		$object = new DigestAuthenticate($this->Collection, array(
 			'userModel' => 'AuthUser',
-			'fields' => array('username' => 'user', 'password' => 'password'),
+			'fields' => array('username' => 'user', 'password' => 'pass'),
 			'nonce' => 123456
 		));
-		$this->assertEquals('AuthUser', $object->settings['userModel']);
-		$this->assertEquals(array('username' => 'user', 'password' => 'password'), $object->settings['fields']);
-		$this->assertEquals(123456, $object->settings['nonce']);
-		$this->assertEquals(env('SERVER_NAME'), $object->settings['realm']);
+		$this->assertEquals('AuthUser', $object->config('userModel'));
+		$this->assertEquals(array('username' => 'user', 'password' => 'pass'), $object->config('fields'));
+		$this->assertEquals(123456, $object->config('nonce'));
+		$this->assertEquals(env('SERVER_NAME'), $object->config('realm'));
 	}
 
 /**
@@ -94,7 +92,7 @@ class DigestAuthenticateTest extends TestCase {
 /**
  * test the authenticate method
  *
- * @expectedException Cake\Error\UnauthorizedException
+ * @expectedException \Cake\Error\UnauthorizedException
  * @expectedExceptionCode 401
  * @return void
  */
@@ -179,12 +177,12 @@ DIGEST;
 /**
  * test scope failure.
  *
- * @expectedException Cake\Error\UnauthorizedException
+ * @expectedException \Cake\Error\UnauthorizedException
  * @expectedExceptionCode 401
  * @return void
  */
 	public function testAuthenticateFailReChallenge() {
-		$this->auth->settings['scope'] = array('username' => 'nate');
+		$this->auth->config('scope.username', 'nate');
 		$request = new Request([
 			'url' => 'posts/index',
 			'environment' => ['REQUEST_METHOD' => 'GET']
@@ -205,6 +203,24 @@ DIGEST;
 		$request->env('PHP_AUTH_DIGEST', $digest);
 
 		$this->auth->unauthenticated($request, $this->response);
+	}
+
+/**
+ * testLoginHeaders method
+ *
+ * @return void
+ */
+	public function testLoginHeaders() {
+		$request = new Request([
+			'environment' => ['SERVER_NAME' => 'localhost']
+		]);
+		$this->auth = new DigestAuthenticate($this->Collection, array(
+			'realm' => 'localhost',
+			'nonce' => '123'
+		));
+		$expected = 'WWW-Authenticate: Digest realm="localhost",qop="auth",nonce="123",opaque="421aa90e079fa326b6494f812ad13e79"';
+		$result = $this->auth->loginHeaders($request);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

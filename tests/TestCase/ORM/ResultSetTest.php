@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,13 +9,13 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
@@ -133,6 +131,8 @@ class ResultSetTest extends TestCase {
 		// Use a loop to test Iterator implementation
 		foreach ($results as $i => $row) {
 			$expected = new \Cake\ORM\Entity($this->fixtureData[$i]);
+			$expected->isNew(false);
+			$expected->source($this->table->alias());
 			$expected->clean();
 			$this->assertEquals($expected, $row, "Row $i does not match");
 		}
@@ -217,7 +217,11 @@ class ResultSetTest extends TestCase {
 	public function testGroupBy() {
 		$query = $this->table->find('all');
 		$results = $query->all()->groupBy('author_id')->toArray();
-		$options = ['markNew' => false, 'markClean' => true];
+		$options = [
+			'markNew' => false,
+			'markClean' => true,
+			'source' => $this->table->alias()
+		];
 		$expected = [
 			1 => [
 				new Entity($this->fixtureData[0], $options),
@@ -228,6 +232,21 @@ class ResultSetTest extends TestCase {
 			]
 		];
 		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Tests __debugInfo
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$query = $this->table->find('all');
+		$results = $query->all();
+		$expected = [
+			'query' => $query,
+			'items' => $results->toArray()
+		];
+		$this->assertSame($expected, $results->__debugInfo());
 	}
 
 }

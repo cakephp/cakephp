@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller;
@@ -30,21 +30,14 @@ class ComponentRegistry extends ObjectRegistry {
 /**
  * The controller that this collection was initialized with.
  *
- * @var Controller
+ * @var \Cake\Controller\Controller
  */
 	protected $_Controller = null;
 
 /**
- * The event manager to bind components to.
- *
- * @var Cake\Event\EventManager
- */
-	protected $_eventManager = null;
-
-/**
  * Constructor.
  *
- * @param Cake\Controller\Controller $Controller
+ * @param \Cake\Controller\Controller $Controller
  */
 	public function __construct(Controller $Controller = null) {
 		if ($Controller) {
@@ -83,7 +76,7 @@ class ComponentRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the component is missing in.
- * @throws Cake\Error\MissingComponentException
+ * @throws \Cake\Error\MissingComponentException
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\MissingComponentException([
@@ -100,30 +93,16 @@ class ComponentRegistry extends ObjectRegistry {
  *
  * @param string $class The classname to create.
  * @param string $alias The alias of the component.
- * @param array $settings An array of settings to use for the component.
+ * @param array $config An array of config to use for the component.
  * @return Component The constructed component class.
  */
-	protected function _create($class, $alias, $settings) {
-		$instance = new $class($this, $settings);
-		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
+	protected function _create($class, $alias, $config) {
+		$instance = new $class($this, $config);
+		$enable = isset($config['enabled']) ? $config['enabled'] : true;
 		if ($enable) {
 			$this->_eventManager->attach($instance);
 		}
 		return $instance;
-	}
-
-/**
- * Destroys all objects in the registry.
- *
- * Removes all attached listeners and destroys all stored instances.
- *
- * @return void
- */
-	public function reset() {
-		foreach ($this->_loaded as $component) {
-			$this->_eventManager->detach($component);
-		}
-		parent::reset();
 	}
 
 }

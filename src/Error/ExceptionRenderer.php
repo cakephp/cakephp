@@ -14,7 +14,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Error;
@@ -33,8 +33,8 @@ use Cake\View\View;
 /**
  * Exception Renderer.
  *
- * Captures and handles all unhandled exceptions. Displays helpful framework errors when debug > 1.
- * When debug < 1 a CakeException will render 404 or 500 errors. If an uncaught exception is thrown
+ * Captures and handles all unhandled exceptions. Displays helpful framework errors when debug is true.
+ * When debug is false a CakeException will render 404 or 500 errors. If an uncaught exception is thrown
  * and it is a type that ExceptionHandler does not know about it will be treated as a 500 error.
  *
  * ### Implementing application specific exception rendering
@@ -171,7 +171,7 @@ class ExceptionRenderer {
 /**
  * Generic handler for the internal framework errors CakePHP can generate.
  *
- * @param Cake\Error\Exception $error
+ * @param \Cake\Error\Exception $error
  * @return void
  */
 	protected function _cakeError(Exception $error) {
@@ -292,7 +292,7 @@ class ExceptionRenderer {
 		$this->controller->layout = 'error';
 		$this->controller->helpers = array('Form', 'Html', 'Session');
 
-		$view = new View($this->controller);
+		$view = $this->controller->createView();
 		$this->controller->response->body($view->render($template, 'error'));
 		$this->controller->response->type('html');
 		$this->controller->response->send();

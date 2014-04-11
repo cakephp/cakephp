@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.10.4.1076
+ * @since         0.10.4
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component;
@@ -39,14 +39,6 @@ use Cake\Utility\Xml;
 class RequestHandlerComponent extends Component {
 
 /**
- * The layout that will be switched to for Ajax requests
- *
- * @var string
- * @see RequestHandler::setAjax()
- */
-	public $ajaxLayout = 'ajax';
-
-/**
  * Determines whether or not callbacks will be fired on this component
  *
  * @var boolean
@@ -56,14 +48,14 @@ class RequestHandlerComponent extends Component {
 /**
  * Holds the reference to Controller::$request
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	public $request;
 
 /**
  * Holds the reference to Controller::$response
  *
- * @var Cake\Network\Response
+ * @var \Cake\Network\Response
  */
 	public $response;
 
@@ -81,6 +73,24 @@ class RequestHandlerComponent extends Component {
  * @var string
  */
 	protected $_renderType = null;
+
+/**
+ * Default config
+ *
+ * These are merged with user-provided config when the component is used.
+ *
+ * - `checkHttpCache` - Whether to check for http cache.
+ * - `viewClassMap` - Mapping between type and view class.
+ * - `ajaxLayout` - The layout that will be switched to for Ajax requests.
+ *   See RequestHandler::setAjax()
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [
+		'checkHttpCache' => true,
+		'viewClassMap' => '',
+		'ajaxLayout' => 'ajax'
+	];
 
 /**
  * A mapping between extensions and deserializers for request bodies of that type.
@@ -107,10 +117,10 @@ class RequestHandlerComponent extends Component {
  * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
  *
  * @param ComponentRegistry $collection ComponentRegistry object.
- * @param array $settings Array of settings.
+ * @param array $config Array of config.
  */
-	public function __construct(ComponentRegistry $collection, $settings = array()) {
-		parent::__construct($collection, $settings + array('checkHttpCache' => true));
+	public function __construct(ComponentRegistry $collection, array $config = array()) {
+		parent::__construct($collection, $config);
 		$this->addInputType('xml', array(array($this, 'convertXml')));
 
 		$Controller = $collection->getController();
@@ -135,8 +145,10 @@ class RequestHandlerComponent extends Component {
 		if (empty($this->ext) || $this->ext === 'html') {
 			$this->_setExtension();
 		}
-		if (!empty($this->settings['viewClassMap'])) {
-			$this->viewClassMap($this->settings['viewClassMap']);
+
+		$classMap = $this->_config['viewClassMap'];
+		if ($classMap) {
+			$this->viewClassMap($classMap);
 		}
 	}
 
@@ -160,7 +172,7 @@ class RequestHandlerComponent extends Component {
 			return;
 		}
 
-		$accepts = $this->response->mapType($this->request->parseAccept());
+		$accepts = $this->response->mapType($accept);
 		$preferedTypes = current($accepts);
 		if (array_intersect($preferedTypes, array('html', 'xhtml'))) {
 			return null;
@@ -196,7 +208,6 @@ class RequestHandlerComponent extends Component {
  *   to the $data property of the controller, which can then be saved to a model object.
  *
  * @param Event $event The startup event that was fired.
- * @param Controller $controller A reference to the controller
  * @return void
  */
 	public function startup(Event $event) {
@@ -248,7 +259,7 @@ class RequestHandlerComponent extends Component {
  *
  * @param Event $event The Controller.beforeRedirect event.
  * @param string|array $url A string or array containing the redirect location
- * @param Cake\Network\Response $response The response object.
+ * @param \Cake\Network\Response $response The response object.
  * @return void
  */
 	public function beforeRedirect(Event $event, $url, $response) {
@@ -278,11 +289,10 @@ class RequestHandlerComponent extends Component {
  * "304 Not Modified" header.
  *
  * @param Event $event The Controller.beforeRender event.
- * @param Controller $controller
  * @return boolean false if the render process should be aborted
  */
 	public function beforeRender(Event $event) {
-		if ($this->settings['checkHttpCache'] && $this->response->checkNotModified($this->request)) {
+		if ($this->_config['checkHttpCache'] && $this->response->checkNotModified($this->request)) {
 			return false;
 		}
 	}
@@ -489,19 +499,18 @@ class RequestHandlerComponent extends Component {
  * @see RequestHandlerComponent::setContent()
  * @see RequestHandlerComponent::respondAs()
  */
-	public function renderAs(Controller $controller, $type, $options = array()) {
+	public function renderAs(Controller $controller, $type, array $options = array()) {
 		$defaults = array('charset' => 'UTF-8');
 
 		if (Configure::read('App.encoding') !== null) {
 			$defaults['charset'] = Configure::read('App.encoding');
 		}
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 
 		if ($type === 'ajax') {
-			$controller->layout = $this->ajaxLayout;
+			$controller->layout = $this->_config['ajaxLayout'];
 			return $this->respondAs('html', $options);
 		}
-		$controller->ext = '.ctp';
 
 		$viewClassMap = $this->viewClassMap();
 		if (array_key_exists($type, $viewClassMap)) {
@@ -552,9 +561,9 @@ class RequestHandlerComponent extends Component {
  *    already been set by this method.
  * @see RequestHandlerComponent::setContent()
  */
-	public function respondAs($type, $options = array()) {
+	public function respondAs($type, array $options = array()) {
 		$defaults = array('index' => null, 'charset' => null, 'attachment' => false);
-		$options = $options + $defaults;
+		$options += $defaults;
 
 		$cType = $type;
 		if (strpos($type, '/') === false) {
@@ -627,7 +636,7 @@ class RequestHandlerComponent extends Component {
  *    be the handling callback, all other arguments should be additional parameters
  *    for the handler.
  * @return void
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public function addInputType($type, $handler) {
 		if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {

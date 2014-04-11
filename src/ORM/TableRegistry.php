@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,13 +9,13 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\ORM;
 
 use Cake\Core\App;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Inflector;
 use RuntimeException;
 
@@ -117,7 +115,7 @@ class TableRegistry {
  *
  * If $options does not contain `className` CakePHP will attempt to construct the
  * class name based on the alias. For example 'Users' would result in
- * `App\Model\Repository\UsersTable` being attempted. If this class does not exist,
+ * `App\Model\Table\UsersTable` being attempted. If this class does not exist,
  * then the default `Cake\ORM\Table` class will be used. By setting the `className`
  * option you can define the specific class to use. This className can
  * use a short class reference.
@@ -131,10 +129,10 @@ class TableRegistry {
  * @param string $alias The alias you want to get.
  * @param array $options The options you want to build the table with.
  *   If a table has already been loaded the options will be ignored.
- * @return Cake\Database\Table
+ * @return \Cake\ORM\Table
  * @throws RuntimeException When you try to configure an alias that already exists.
  */
-	public static function get($alias, $options = []) {
+	public static function get($alias, array $options = []) {
 		$exists = isset(static::$_instances[$alias]);
 		if ($exists && !empty($options)) {
 			throw new RuntimeException(sprintf(
@@ -151,7 +149,7 @@ class TableRegistry {
 
 		if (empty($options['className'])) {
 			$class = Inflector::camelize($alias);
-			$className = App::classname($class, 'Model/Repository', 'Table');
+			$className = App::classname($class, 'Model/Table', 'Table');
 			$options['className'] = $className ?: 'Cake\ORM\Table';
 		}
 
@@ -179,7 +177,7 @@ class TableRegistry {
  * Set an instance.
  *
  * @param string $alias The alias to set.
- * @param Cake\ORM\Table The table to set.
+ * @param \Cake\ORM\Table The table to set.
  * @return void
  */
 	public static function set($alias, Table $object) {

@@ -9,14 +9,32 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\View\Helper;
 
+use Cake\Core\InstanceConfigTrait;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\StringTemplate;
 use Cake\View\Helper\StringTemplateTrait;
+
+/**
+ * TestStringTemplate
+ *
+ */
+class TestStringTemplate {
+
+	use InstanceConfigTrait;
+	use StringTemplateTrait;
+
+/**
+ * _defaultConfig
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [];
+}
 
 /**
  * StringTemplateTraitTest class
@@ -31,7 +49,7 @@ class StringTemplateTraitTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Template = $this->getObjectForTrait('\Cake\View\Helper\StringTemplateTrait');
+		$this->Template = new TestStringTemplate;
 	}
 
 /**
@@ -43,14 +61,39 @@ class StringTemplateTraitTest extends TestCase {
 		$templates = [
 			'text' => '<p>{{text}}</p>',
 		];
-		$this->Template->initStringTemplates($templates);
+		$this->Template->templates($templates);
 
-		$result = $this->Template->templates(null);
-		$this->assertEquals($result, [
-			'attribute' => '{{name}}="{{value}}"',
-			'compactAttribute' => '{{name}}="{{value}}"',
-			'text' => '<p>{{text}}</p>'
-		]);
+		$this->assertEquals(
+			[
+				'attribute' => '{{name}}="{{value}}"',
+				'compactAttribute' => '{{name}}="{{value}}"',
+				'text' => '<p>{{text}}</p>'
+			],
+			$this->Template->templates(),
+			'newly added template should be inlcuded in template list'
+		);
+	}
+
+/**
+ * test settings['templates']
+ *
+ * @return void
+ */
+	public function testInitStringTemplatesArrayForm() {
+		$this->Template->config(
+			'templates.text',
+			'<p>{{text}}</p>'
+		);
+
+		$this->assertEquals(
+			[
+				'attribute' => '{{name}}="{{value}}"',
+				'compactAttribute' => '{{name}}="{{value}}"',
+				'text' => '<p>{{text}}</p>'
+			],
+			$this->Template->templates(),
+			'Configured templates should be included in template list'
+		);
 	}
 
 /**
@@ -62,11 +105,14 @@ class StringTemplateTraitTest extends TestCase {
 		$templates = [
 			'text' => '<p>{{text}}</p>',
 		];
-		$this->Template->initStringTemplates($templates);
+		$this->Template->templates($templates);
 		$result = $this->Template->formatTemplate('text', [
 			'text' => 'CakePHP'
 		]);
-		$this->assertEquals($result, '<p>CakePHP</p>');
+		$this->assertEquals(
+			'<p>CakePHP</p>',
+			$result
+		);
 	}
 
 /**
@@ -78,8 +124,8 @@ class StringTemplateTraitTest extends TestCase {
 		$templates = [
 			'text' => '<p>{{text}}</p>',
 		];
-		$this->Template->initStringTemplates($templates);
-		$result = $this->Template->getTemplater();
+		$this->Template->templates($templates);
+		$result = $this->Template->templater();
 		$this->assertInstanceOf('\Cake\View\StringTemplate', $result);
 	}
 

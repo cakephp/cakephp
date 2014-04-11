@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.2.0
+ * @since         2.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Validation;
@@ -45,11 +43,20 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	protected $_providers = [];
 
 /**
- * The translation domain to use when setting the error messages
+ * Contains the validation messages associated with checking the presence
+ * for each corresponding field.
  *
- * @var string
+ * @var array
  */
-	protected $_validationDomain = 'default';
+	protected $_presenceMessages = [];
+
+/**
+ * Contains the validation messages associated with checking the emptiness
+ * for each corresponding field.
+ *
+ * @var array
+ */
+	protected $_allowEmptyMessages = [];
 
 /**
  * Returns an array of fields that have failed validation. On the current model. This method will
@@ -62,11 +69,16 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  */
 	public function errors(array $data, $newRecord = true) {
 		$errors = [];
+		$requiredMessage = __d('cake', 'This field is required');
+		$emptyMessage = __d('cake', 'This field cannot be left empty');
+
 		foreach ($this->_fields as $name => $field) {
 			$keyPresent = array_key_exists($name, $data);
 
 			if (!$keyPresent && !$this->_checkPresence($field, $newRecord)) {
-				$errors[$name][] = __d('cake', 'This field is required');
+				$errors[$name][] = isset($this->_presenceMessages[$name])
+					? $this->_presenceMessages[$name]
+					: $requiredMessage;
 				continue;
 			}
 
@@ -78,7 +90,9 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 			$isEmpty = $this->_fieldIsEmpty($data[$name]);
 
 			if (!$canBeEmpty && $isEmpty) {
-				$errors[$name][] = __d('cake', 'This field cannot be left empty');
+				$errors[$name][] = isset($this->_allowEmptyMessages[$name])
+					? $this->_allowEmptyMessages[$name]
+					: $emptyMessage;
 				continue;
 			}
 
@@ -102,7 +116,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $name [optional] The fieldname to fetch.
  * @param \Cake\Validation\ValidationSet $set The set of rules for field
- * @return Cake\Validation\ValidationSet
+ * @return \Cake\Validation\ValidationSet
  */
 	public function field($name, ValidationSet $set = null) {
 		if (empty($this->_fields[$name])) {
@@ -110,6 +124,16 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 			$this->_fields[$name] = $set;
 		}
 		return $this->_fields[$name];
+	}
+
+/**
+ * Check whether or not a validator contains any rules for the given field.
+ *
+ * @param string $name The field name to check.
+ * @return boolean
+ */
+	public function hasField($name) {
+		return isset($this->_fields[$name]);
 	}
 
 /**
@@ -121,6 +145,8 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * If called with no arguments, it will return the provider stored under that name if
  * it exists, otherwise it returns this instance of chaining.
  *
+ * @param string $name
+ * @param null|object|string $object
  * @return Validator|object|string
  */
 	public function provider($name, $object = null) {
@@ -138,17 +164,6 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
- * Sets the I18n domain for validation messages. This method is chainable.
- *
- * @param string $validationDomain The validation domain to be used.
- * @return Cake\Validation
- */
-	public function setValidationDomain($validationDomain) {
-		$this->_validationDomain = $validationDomain;
-		return $this;
-	}
-
-/**
  * Returns whether a rule set is defined for a field or not
  *
  * @param string $field name of the field to check
@@ -162,7 +177,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns the rule set for a field
  *
  * @param string $field name of the field to check
- * @return Cake\Validation\ValidationSet
+ * @return \Cake\Validation\ValidationSet
  */
 	public function offsetGet($field) {
 		return $this->field($field);
@@ -172,7 +187,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Sets the rule set for a field
  *
  * @param string $field name of the field to set
- * @param array|Cake\Validation\ValidationSet $rules set of rules to apply to field
+ * @param array|\Cake\Validation\ValidationSet $rules set of rules to apply to field
  * @return void
  */
 	public function offsetSet($field, $rules) {
@@ -198,7 +213,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Returns an iterator for each of the fields to be validated
  *
- * @return ArrayIterator
+ * @return \ArrayIterator
  */
 	public function getIterator() {
 		return new \ArrayIterator($this->_fields);
@@ -233,15 +248,16 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field The name of the field from wich the rule will be removed
  * @param array|string $name The alias for a single rule or multiple rules array
- * @param array|Cake\Validation\ValidationRule $rule the rule to add
+ * @param array|\Cake\Validation\ValidationRule $rule the rule to add
  * @return Validator this instance
  */
 	public function add($field, $name, $rule = []) {
-		$rules = $rule;
 		$field = $this->field($field);
 
 		if (!is_array($name)) {
 			$rules = [$name => $rule];
+		} else {
+			$rules = $name;
 		}
 
 		foreach ($rules as $name => $rule) {
@@ -280,10 +296,15 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field the name of the field
  * @param boolean|string $mode Valid values are true, false, 'create', 'update'
+ * @param string $message The validation message to show if the field presence
+ * is required.
  * @return Validator this instance
  */
-	public function validatePresence($field, $mode = true) {
+	public function validatePresence($field, $mode = true, $message = null) {
 		$this->field($field)->isPresenceRequired($mode);
+		if ($message) {
+			$this->_presenceMessages[$field] = $message;
+		}
 		return $this;
 	}
 
@@ -293,10 +314,15 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field the name of the field
  * @param boolean|string $mode Valid values are true, false, 'create', 'update'
+ * @param string $message The validation message to show if the field is not
+ * allowed to be empty.
  * @return Validator this instance
  */
-	public function allowEmpty($field, $mode = true) {
+	public function allowEmpty($field, $mode = true, $message = null) {
 		$this->field($field)->isEmptyAllowed($mode);
+		if ($message) {
+			$this->_allowEmptyMessages[$field] = $message;
+		}
 		return $this;
 	}
 
@@ -304,7 +330,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns whether or not a field can be left empty for a new or already existing
  * record.
  *
- * @param string field
+ * @param string $field
  * @param boolean $newRecord whether the data to be validated is new or to be updated.
  * @return boolean
  */
@@ -316,7 +342,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns whether or not a field can be left out for a new or already existing
  * record.
  *
- * @param string field
+ * @param string $field
  * @param boolean $newRecord whether the data to be validated is new or to be updated.
  * @return boolean
  */
@@ -381,7 +407,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * from executing them
  *
  * @param ValidationSet $rules the list of rules for a field
- * @param mixed $value the value to be checked
+ * @param mixed $value The value to be checked
  * @param array $data the full data passed to the validator
  * @param boolean $newRecord whether is it a new record or an existing one
  * @return array
@@ -398,7 +424,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 
 			$errors[$name] = __d('cake', 'The provided value is invalid');
 			if (is_string($result)) {
-				$errors[$name] = __d($this->_validationDomain, $result);
+				$errors[$name] = $result;
 			}
 
 			if ($rule->isLast()) {

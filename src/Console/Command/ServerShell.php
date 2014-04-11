@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.3.0
+ * @since         2.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
@@ -28,11 +28,15 @@ class ServerShell extends Shell {
 
 /**
  * Default ServerHost
+ *
+ * @var string
  */
 	const DEFAULT_HOST = 'localhost';
 
 /**
  * Default ListenPort
+ *
+ * @var integer
  */
 	const DEFAULT_PORT = 80;
 
@@ -136,7 +140,7 @@ class ServerShell extends Shell {
 /**
  * Gets the option parser instance and configures it.
  *
- * @return ConsoleOptionParser
+ * @return \Cake\Console\ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();

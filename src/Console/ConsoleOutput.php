@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console;
@@ -46,21 +46,29 @@ class ConsoleOutput {
 
 /**
  * Raw output constant - no modification of output text.
+ *
+ * @var integer
  */
 	const RAW = 0;
 
 /**
  * Plain output - tags will be stripped.
+ *
+ * @var integer
  */
 	const PLAIN = 1;
 
 /**
  * Color output - Convert known tags in to ANSI color escape codes.
+ *
+ * @var integer
  */
 	const COLOR = 2;
 
 /**
  * Constant for a newline.
+ *
+ * @var string
  */
 	const LF = PHP_EOL;
 
@@ -153,7 +161,7 @@ class ConsoleOutput {
 	public function __construct($stream = 'php://stdout') {
 		$this->_output = fopen($stream, 'w');
 
-		if (DS == '\\' && !(bool)env('ANSICON')) {
+		if (DS === '\\' && !(bool)env('ANSICON')) {
 			$this->_outputAs = static::PLAIN;
 		}
 	}

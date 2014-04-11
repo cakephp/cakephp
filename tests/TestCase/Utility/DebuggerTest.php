@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @since         CakePHP(tm) v 1.2.0.5432
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
@@ -26,6 +26,14 @@ use Cake\View\View;
  *
  */
 class DebuggerTestCaseDebugger extends Debugger {
+}
+
+class DebuggableThing {
+
+	public function __debugInfo() {
+		return ['foo' => 'bar', 'inner' => new self()];
+	}
+
 }
 
 /**
@@ -46,7 +54,7 @@ class DebuggerTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		Configure::write('log', false);
 	}
 
@@ -211,7 +219,7 @@ class DebuggerTest extends TestCase {
 /**
  * Test that choosing a non-existent format causes an exception
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testOutputAsException() {
@@ -278,6 +286,8 @@ class DebuggerTest extends TestCase {
 
 /**
  * Test method for testing addFormat with callbacks.
+ *
+ * @return void
  */
 	public function customFormat($error, $strings) {
 		return $error['error'] . ': I eated an error ' . $error['file'];
@@ -302,65 +312,63 @@ class DebuggerTest extends TestCase {
 	public function testExportVar() {
 		$Controller = new Controller();
 		$Controller->helpers = array('Html', 'Form');
-		$View = new View($Controller);
+		$View = $Controller->createView();
 		$View->int = 2;
 		$View->float = 1.333;
 
 		$result = Debugger::exportVar($View);
 		$expected = <<<TEXT
 object(Cake\View\View) {
-	Helpers => object(Cake\View\HelperRegistry) {}
 	Blocks => object(Cake\View\ViewBlock) {}
 	plugin => null
 	name => ''
-	passedArgs => array()
-	helpers => array(
+	passedArgs => []
+	helpers => [
 		(int) 0 => 'Html',
 		(int) 1 => 'Form'
-	)
+	]
 	viewPath => ''
 	view => null
 	layout => 'default'
 	layoutPath => null
 	autoLayout => true
-	ext => '.ctp'
 	subDir => null
 	theme => null
 	cacheAction => false
-	validationErrors => array()
+	validationErrors => []
 	hasRendered => false
-	uuids => array()
+	uuids => []
 	request => object(Cake\Network\Request) {}
 	response => object(Cake\Network\Response) {}
 	elementCache => 'default'
-	elementCacheSettings => array()
-	viewVars => array()
+	elementCacheSettings => []
+	viewVars => []
 	Html => object(Cake\View\Helper\HtmlHelper) {}
 	Form => object(Cake\View\Helper\FormHelper) {}
 	int => (int) 2
 	float => (float) 1.333
-	[protected] _passedVars => array(
+	[protected] _helpers => object(Cake\View\HelperRegistry) {}
+	[protected] _ext => '.ctp'
+	[protected] _passedVars => [
 		(int) 0 => 'viewVars',
 		(int) 1 => 'autoLayout',
-		(int) 2 => 'ext',
-		(int) 3 => 'helpers',
-		(int) 4 => 'view',
-		(int) 5 => 'layout',
-		(int) 6 => 'name',
-		(int) 7 => 'theme',
-		(int) 8 => 'layoutPath',
-		(int) 9 => 'viewPath',
-		(int) 10 => 'request',
-		(int) 11 => 'plugin',
-		(int) 12 => 'passedArgs',
-		(int) 13 => 'cacheAction'
-	)
-	[protected] _scripts => array()
-	[protected] _paths => array()
-	[protected] _parents => array()
+		(int) 2 => 'helpers',
+		(int) 3 => 'view',
+		(int) 4 => 'layout',
+		(int) 5 => 'name',
+		(int) 6 => 'theme',
+		(int) 7 => 'layoutPath',
+		(int) 8 => 'viewPath',
+		(int) 9 => 'plugin',
+		(int) 10 => 'passedArgs',
+		(int) 11 => 'cacheAction'
+	]
+	[protected] _scripts => []
+	[protected] _paths => []
+	[protected] _parents => []
 	[protected] _current => null
 	[protected] _currentType => ''
-	[protected] _stack => array()
+	[protected] _stack => []
 	[protected] _eventManager => object(Cake\Event\EventManager) {}
 }
 TEXT;
@@ -373,10 +381,10 @@ TEXT;
 		);
 		$result = Debugger::exportVar($data);
 		$expected = <<<TEXT
-array(
+[
 	(int) 1 => 'Index one',
 	(int) 5 => 'Index five'
-)
+]
 TEXT;
 		$this->assertTextEquals($expected, $result);
 
@@ -387,11 +395,11 @@ TEXT;
 		);
 		$result = Debugger::exportVar($data, 1);
 		$expected = <<<TEXT
-array(
-	'key' => array(
+[
+	'key' => [
 		[maximum depth reached]
-	)
-)
+	]
+]
 TEXT;
 		$this->assertTextEquals($expected, $result);
 
@@ -423,13 +431,13 @@ TEXT;
 		);
 		$result = Debugger::exportVar($data);
 		$expected = <<<TEXT
-array(
+[
 	'nothing' => '',
 	'null' => null,
 	'false' => false,
 	'szero' => '0',
 	'zero' => (int) 0
-)
+]
 TEXT;
 		$this->assertTextEquals($expected, $result);
 	}
@@ -455,7 +463,6 @@ TEXT;
 			->with('debug', $this->logicalAnd(
 				$this->stringContains('DebuggerTest::testLog'),
 				$this->stringContains('[main]'),
-				$this->stringContains('array'),
 				$this->stringContains("'whatever',"),
 				$this->stringContains("'here'")
 			));
@@ -464,6 +471,29 @@ TEXT;
 		Debugger::log(array('whatever', 'here'));
 
 		Log::drop('test');
+	}
+
+/**
+ * test log() depth
+ *
+ * @return void
+ */
+	public function testLogDepth() {
+		$mock = $this->getMock('Cake\Log\Engine\BaseLog', ['write']);
+		Log::config('test', ['engine' => $mock]);
+
+		$mock->expects($this->at(0))
+			->method('write')
+			->with('debug', $this->logicalAnd(
+				$this->stringContains('DebuggerTest::testLog'),
+				$this->stringContains('test'),
+				$this->logicalNot($this->stringContains('val'))
+			));
+
+		$val = array(
+			'test' => array('key' => 'val')
+		);
+		Debugger::log($val, LOG_DEBUG, 0);
 	}
 
 /**
@@ -488,23 +518,23 @@ TEXT;
 		Debugger::dump($var);
 		$result = ob_get_clean();
 
-		$open = php_sapi_name() == 'cli' ? "\n" : '<pre>';
-		$close = php_sapi_name() == 'cli' ? "\n" : '</pre>';
+		$open = php_sapi_name() === 'cli' ? "\n" : '<pre>';
+		$close = php_sapi_name() === 'cli' ? "\n" : '</pre>';
 		$expected = <<<TEXT
-{$open}array(
-	'People' => array(
-		(int) 0 => array(
+{$open}[
+	'People' => [
+		(int) 0 => [
 			'name' => 'joeseph',
 			'coat' => 'technicolor',
 			'hair_color' => 'brown'
-		),
-		(int) 1 => array(
+		],
+		(int) 1 => [
 			'name' => 'Shaft',
 			'coat' => 'black',
 			'hair' => 'black'
-		)
-	)
-){$close}
+		]
+	]
+]{$close}
 TEXT;
 		$this->assertTextEquals($expected, $result);
 
@@ -512,14 +542,14 @@ TEXT;
 		Debugger::dump($var, 1);
 		$result = ob_get_clean();
 
-		$open = php_sapi_name() == 'cli' ? "\n" : '<pre>';
-		$close = php_sapi_name() == 'cli' ? "\n" : '</pre>';
+		$open = php_sapi_name() === 'cli' ? "\n" : '<pre>';
+		$close = php_sapi_name() === 'cli' ? "\n" : '</pre>';
 		$expected = <<<TEXT
-{$open}array(
-	'People' => array(
+{$open}[
+	'People' => [
 		[maximum depth reached]
-	)
-){$close}
+	]
+]{$close}
 TEXT;
 		$this->assertTextEquals($expected, $result);
 	}
@@ -602,4 +632,28 @@ TEXT;
 		));
 		$this->assertNotRegExp('/^Cake\\\Test\\\TestCase\\\Utility\\\DebuggerTest::testTraceExclude/', $result);
 	}
+
+/**
+ * Tests that __debugInfo is used when available
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$object = new DebuggableThing();
+		$result = Debugger::exportVar($object, 2);
+		$expected = <<<eos
+object(Cake\Test\TestCase\Utility\DebuggableThing) {
+
+	'foo' => 'bar',
+	'inner' => object(Cake\Test\TestCase\Utility\DebuggableThing) {
+
+		[maximum depth reached]
+	
+	}
+
+}
+eos;
+		$this->assertEquals($expected, $result);
+	}
+
 }

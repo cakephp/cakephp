@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v3.0.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller\Component;
@@ -107,7 +107,7 @@ class CsrfComponentTest extends TestCase {
  * Test that the X-CSRF-Token works with the various http methods.
  *
  * @dataProvider httpMethodProvider
- * @expectedException Cake\Error\ForbiddenException
+ * @expectedException \Cake\Error\ForbiddenException
  * @return void
  */
 	public function testInvalidTokenInHeader($method) {
@@ -149,7 +149,7 @@ class CsrfComponentTest extends TestCase {
  * Test that request data works with the various http methods.
  *
  * @dataProvider httpMethodProvider
- * @expectedException Cake\Error\ForbiddenException
+ * @expectedException \Cake\Error\ForbiddenException
  * @return void
  */
 	public function testInvalidTokenRequestData($method) {

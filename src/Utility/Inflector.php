@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.2.9
+ * @since         0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
@@ -116,7 +116,7 @@ class Inflector {
 			'/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|viri?)i$/i' => '\1us',
 			'/([ftw]ax)es/i' => '\1',
 			'/(cris|ax|test)es$/i' => '\1is',
-			'/(shoe|slave)s$/i' => '\1',
+			'/(shoe)s$/i' => '\1',
 			'/(o)es$/i' => '\1',
 			'/ouses$/' => 'ouse',
 			'/([^a])uses$/' => '\1us',
@@ -129,7 +129,7 @@ class Inflector {
 			'/(hive)s$/i' => '\1',
 			'/(drive)s$/i' => '\1',
 			'/([le])ves$/i' => '\1f',
-			'/([^rfo])ves$/i' => '\1fe',
+			'/([^rfoa])ves$/i' => '\1fe',
 			'/(^analy)ses$/i' => '\1sis',
 			'/(analy|diagno|^ba|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i' => '\1\2sis',
 			'/([ti])a$/i' => '\1um',
@@ -146,7 +146,6 @@ class Inflector {
 		),
 		'irregular' => array(
 			'foes' => 'foe',
-			'waves' => 'wave',
 		)
 	);
 
@@ -484,25 +483,26 @@ class Inflector {
 
 			default:
 				foreach ($rules as $rule => $pattern) {
-					if (is_array($pattern)) {
-						if ($reset) {
-							static::${$var}[$rule] = $pattern;
+					if (!is_array($pattern)) {
+						continue;
+					}
+					if ($reset) {
+						static::${$var}[$rule] = $pattern;
+					} else {
+						if ($rule === 'uninflected') {
+							static::${$var}[$rule] = array_merge($pattern, static::${$var}[$rule]);
 						} else {
-							if ($rule === 'uninflected') {
-								static::${$var}[$rule] = array_merge($pattern, static::${$var}[$rule]);
-							} else {
-								static::${$var}[$rule] = $pattern + static::${$var}[$rule];
-							}
+							static::${$var}[$rule] = $pattern + static::${$var}[$rule];
 						}
-						unset($rules[$rule], static::${$var}['cache' . ucfirst($rule)]);
-						if (isset(static::${$var}['merged'][$rule])) {
-							unset(static::${$var}['merged'][$rule]);
-						}
-						if ($type === 'plural') {
-							static::$_cache['pluralize'] = static::$_cache['tableize'] = array();
-						} elseif ($type === 'singular') {
-							static::$_cache['singularize'] = array();
-						}
+					}
+					unset($rules[$rule], static::${$var}['cache' . ucfirst($rule)]);
+					if (isset(static::${$var}['merged'][$rule])) {
+						unset(static::${$var}['merged'][$rule]);
+					}
+					if ($type === 'plural') {
+						static::$_cache['pluralize'] = static::$_cache['tableize'] = array();
+					} elseif ($type === 'singular') {
+						static::$_cache['singularize'] = array();
 					}
 				}
 				static::${$var}['rules'] = $rules + static::${$var}['rules'];

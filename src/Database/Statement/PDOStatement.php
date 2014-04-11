@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Statement;
@@ -29,7 +27,7 @@ class PDOStatement extends StatementDecorator {
  * Constructor
  *
  * @param \PDOStatement original statement to be decorated
- * @return void
+ * @param \Cake\Database\Driver instance $driver
  */
 	public function __construct(Statement $statement = null, $driver = null) {
 		$this->_statement = $statement;
@@ -55,7 +53,7 @@ class PDOStatement extends StatementDecorator {
  *	`$statement->bindValue(5, new \DateTime(), 'date');`
  *
  * @param string|integer $column name or param position to be bound
- * @param mixed $value the value to bind to variable in query
+ * @param mixed $value The value to bind to variable in query
  * @param string|integer $type PDO type or name of configured Type class
  * @return void
  */
@@ -83,7 +81,7 @@ class PDOStatement extends StatementDecorator {
  * }}}
  *
  * @param string $type 'num' for positional columns, assoc for named columns
- * @return mixed|boolean result array containing columns and values or false if no results
+ * @return mixed Result array containing columns and values or false if no results
  * are left
  */
 	public function fetch($type = 'num') {

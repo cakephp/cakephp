@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Statement;
@@ -34,8 +32,8 @@ class CallbackStatement extends StatementDecorator {
 /**
  * Constructor
  *
- * @param Cake\Database\StatementInterface $statement The statement to decorate.
- * @param Cake\Database\Driver $driver The driver instance used by the statement.
+ * @param \Cake\Database\StatementInterface $statement The statement to decorate.
+ * @param \Cake\Database\Driver $driver The driver instance used by the statement.
  * @param callable $callback The callback to apply to results before they are returned.
  */
 	public function __construct($statement, $driver, $callback) {

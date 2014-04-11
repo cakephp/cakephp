@@ -13,28 +13,34 @@ services:
   - memcached
 
 matrix:
+  allow_failures:
+    - php: hhvm
+  fast_finish: true
   include:
     - php: 5.4
-      env:
-        - PHPCS=1
+      env: PHPCS=1
+    - php: hhvm
+      env: HHVM=1 DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite::memory:'
+    - php: hhvm
+      env: HHVM=1 DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_login='travis' db_password=''
 
 before_script:
-  - sudo locale-gen de_DE
+  - sh -c "if [ '$PHPCS' != '1' ]; then sudo locale-gen de_DE; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test2;'; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test3;'; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi"
-  - sudo apt-get install lighttpd
+  - sh -c "if [ '$PHPCS' != '1' ]; then sudo apt-get install lighttpd; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
-  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - sh -c "if [ '$HHVM' != '1' ]; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
   - phpenv rehash
   - set +H
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ]; then phpunit --stderr; else phpcs -p --extensions=php --standard=CakePHP ./src; fi"
+  - sh -c "if [ '$PHPCS' != '1' ]; then phpunit --stderr; else phpcs -p --extensions=php --standard=CakePHP ./src ./tests; fi"
 
 notifications:
   email: false

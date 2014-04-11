@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database;
@@ -35,9 +33,9 @@ class Type {
 	protected static $_types = [
 		'binary' => 'Cake\Database\Type\BinaryType',
 		'date' => 'Cake\Database\Type\DateType',
+		'time' => 'Cake\Database\Type\TimeType',
 		'datetime' => 'Cake\Database\Type\DateTimeType',
 		'timestamp' => 'Cake\Database\Type\DateTimeType',
-		'time' => 'Cake\Database\Type\TimeType',
 		'uuid' => 'Cake\Database\Type\UuidType',
 	];
 
@@ -78,7 +76,6 @@ class Type {
  * Constructor
  *
  * @param string $name The name identifying this type
- * @return void
  */
 	public function __construct($name = null) {
 		$this->_name = $name;
@@ -178,7 +175,7 @@ class Type {
  * @return mixed
  */
 	protected function _basicTypeCast($value, Driver $driver) {
-		if (is_null($value)) {
+		if ($value === null) {
 			return null;
 		}
 
@@ -199,7 +196,7 @@ class Type {
  * @return mixed
  */
 	public function toStatement($value, Driver $driver) {
-		if (is_null($value)) {
+		if ($value === null) {
 			return PDO::PARAM_NULL;
 		}
 
@@ -233,10 +230,23 @@ class Type {
  * when entities are inserted.
  *
  * @return mixed A new primary key value.
- * @see Cake\Database\Type\UuidType
+ * @see \Cake\Database\Type\UuidType
  */
 	public function newId() {
 		return null;
+	}
+
+/**
+ * Marshalls flat data into PHP objects.
+ *
+ * Most useful for converting request data into PHP objects
+ * that make sense for the rest of the ORM/Database layers.
+ *
+ * @param mixed $value The value to convert.
+ * @return mixed Converted value.
+ */
+	public function marshal($value) {
+		return $value;
 	}
 
 }

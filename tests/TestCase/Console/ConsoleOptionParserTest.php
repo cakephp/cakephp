@@ -1,7 +1,5 @@
 <?php
 /**
- * ConsoleOptionParserTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Console;
@@ -69,6 +67,20 @@ class ConsoleOptionParserTest extends TestCase {
 		$parser = new ConsoleOptionParser('test', false);
 		$result = $parser->addOption('test');
 		$this->assertEquals($parser, $result, 'Did not return $this from addOption');
+	}
+
+/**
+ * test removing an option
+ *
+ * @return void
+ */
+	public function testRemoveOption() {
+		$parser = new ConsoleOptionParser('test', false);
+		$result = $parser->addOption('test')
+			->removeOption('test')
+			->removeOption('help');
+		$this->assertSame($parser, $result, 'Did not return $this from removeOption');
+		$this->assertEquals([], $result->options());
 	}
 
 /**
@@ -162,7 +174,7 @@ class ConsoleOptionParserTest extends TestCase {
  * Test that adding an option using a two letter short value causes an exception.
  * As they will not parse correctly.
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
  * @return void
  */
 	public function testAddOptionShortOneLetter() {
@@ -260,7 +272,8 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test parsing options that do not exist.
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
+ * @return void
  */
 	public function testOptionThatDoesNotExist() {
 		$parser = new ConsoleOptionParser('test', false);
@@ -272,7 +285,8 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test parsing short options that do not exist.
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
+ * @return void
  */
 	public function testShortOptionThatDoesNotExist() {
 		$parser = new ConsoleOptionParser('test', false);
@@ -284,7 +298,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test that options with choices enforce them.
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
  * @return void
  */
 	public function testOptionWithChoices() {
@@ -373,7 +387,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test parsing arguments.
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
  * @return void
  */
 	public function testParseArgumentTooMany() {
@@ -404,7 +418,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test that when there are not enough arguments an exception is raised
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
  * @return void
  */
 	public function testPositionalArgNotEnough() {
@@ -418,7 +432,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test that arguments with choices enforce them.
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
  * @return void
  */
 	public function testPositionalArgWithChoices() {

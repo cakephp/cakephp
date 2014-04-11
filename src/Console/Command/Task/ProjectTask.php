@@ -9,12 +9,12 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console\Command\Task;
 
-use Cake\Console\Shell;
+use Cake\Console\Command\Task\BakeTask;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Utility\File;
@@ -26,7 +26,7 @@ use Cake\Utility\String;
  * Task class for creating new project apps and plugins
  *
  */
-class ProjectTask extends Shell {
+class ProjectTask extends BakeTask {
 
 /**
  * App path (used in testing).
@@ -210,7 +210,7 @@ class ProjectTask extends Shell {
 /**
  * get the option parser.
  *
- * @return ConsoleOptionParser
+ * @return \Cake\Console\ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
@@ -227,7 +227,7 @@ class ProjectTask extends Shell {
 			])->addOption('composer', [
 				'default' => ROOT . '/composer.phar',
 				'help' => __d('cake_console', 'The path to the composer executable.')
-			]);
+			])->removeOption('plugin');
 	}
 
 }

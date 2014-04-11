@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Error;
@@ -43,6 +43,7 @@ class BlueberryComponent extends Component {
 /**
  * initialize method
  *
+ * @param Event $event
  * @return void
  */
 	public function initialize(Event $event) {
@@ -137,7 +138,7 @@ class ExceptionRendererTest extends TestCase {
 		$request = new Request();
 		$request->base = '';
 		Router::setRequestInfo($request);
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 	}
 
 /**
@@ -169,7 +170,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testSubclassMethodsNotBeingConvertedToError() {
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 
 		$exception = new MissingWidgetThingException('Widget not found');
 		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
@@ -187,7 +188,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testSubclassMethodsNotBeingConvertedDebug0() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$exception = new MissingWidgetThingException('Widget not found');
 		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
 
@@ -206,7 +207,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testSubclassConvertingFrameworkErrors() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 
 		$exception = new Error\MissingControllerException('PostsController');
 		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
@@ -240,7 +241,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testErrorMethodCoercion() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$exception = new Error\MissingActionException('Page not found');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
@@ -251,6 +252,8 @@ class ExceptionRendererTest extends TestCase {
 
 /**
  * test that helpers in custom CakeErrorController are not lost
+ *
+ * @return void
  */
 	public function testCakeErrorHelpersNotLost() {
 		Configure::write('App.namespace', 'TestApp');
@@ -310,7 +313,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testUnknownExceptionInProduction() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 
 		$exception = new \OutOfBoundsException('foul ball.');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
@@ -377,7 +380,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testerror400OnlyChangingCakeException() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 
 		$exception = new Error\NotFoundException('Custom message');
 		$ExceptionRenderer = $this->_mockResponse(new ExceptionRenderer($exception));
@@ -555,22 +558,6 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
-				new Error\MissingDatasourceConfigException(array('config' => 'default')),
-				array(
-					'/<h2>Missing Datasource Configuration<\/h2>/',
-					'/The datasource configuration <em>default<\/em> was not found in datasources.php/'
-				),
-				500
-			),
-			array(
-				new Error\MissingDatasourceException(array('class' => 'MyDatasource', 'plugin' => 'MyPlugin')),
-				array(
-					'/<h2>Missing Datasource<\/h2>/',
-					'/Datasource class <em>MyPlugin.MyDatasource<\/em> could not be found/'
-				),
-				500
-			),
-			array(
 				new Error\MissingHelperException(array('class' => 'MyCustomHelper')),
 				array(
 					'/<h2>Missing Helper<\/h2>/',
@@ -658,7 +645,7 @@ class ExceptionRendererTest extends TestCase {
 
 		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
 		$ExceptionRenderer->controller->helpers = array('Fail', 'Boom');
-		$ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
+		$ExceptionRenderer->controller->request = new Request;
 		$ExceptionRenderer->controller->expects($this->at(0))
 			->method('render')
 			->with('missingHelper')
@@ -685,7 +672,7 @@ class ExceptionRendererTest extends TestCase {
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('beforeRender'));
-		$ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
+		$ExceptionRenderer->controller->request = new Request;
 		$ExceptionRenderer->controller->expects($this->any())
 			->method('beforeRender')
 			->will($this->throwException($exception));
@@ -710,10 +697,9 @@ class ExceptionRendererTest extends TestCase {
 
 		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
 		$ExceptionRenderer->controller->helpers = array('Fail', 'Boom');
-		$ExceptionRenderer->controller->layoutPath = 'json';
-		$ExceptionRenderer->controller->subDir = 'json';
-		$ExceptionRenderer->controller->viewClass = 'Json';
-		$ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
+		$ExceptionRenderer->controller->layoutPath = 'boom';
+		$ExceptionRenderer->controller->subDir = 'boom';
+		$ExceptionRenderer->controller->request = new Request;
 
 		$ExceptionRenderer->controller->expects($this->once())
 			->method('render')

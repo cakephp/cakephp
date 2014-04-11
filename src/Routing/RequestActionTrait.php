@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Routing;
@@ -73,7 +73,7 @@ trait RequestActionTrait {
  * @return mixed Boolean true or false on success/failure, or contents
  *    of rendered action if 'return' is set in $extra.
  */
-	public function requestAction($url, $extra = array()) {
+	public function requestAction($url, array $extra = array()) {
 		if (empty($url)) {
 			return false;
 		}

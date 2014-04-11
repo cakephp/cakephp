@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Collection;
@@ -31,7 +31,7 @@ trait ExtractTrait {
  */
 	protected function _propertyExtractor($callback) {
 		if (is_string($callback)) {
-			$path = $path = explode('.', $callback);
+			$path = explode('.', $callback);
 			$callback = function($element) use ($path) {
 				return $this->_extract($element, $path);
 			};

@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.3
+ * @since         1.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Routing\Route;
@@ -33,21 +33,21 @@ class Route {
  *
  * @var array
  */
-	public $keys = array();
+	public $keys = [];
 
 /**
  * An array of additional parameters for the Route.
  *
  * @var array
  */
-	public $options = array();
+	public $options = [];
 
 /**
  * Default parameters for a Route
  *
  * @var array
  */
-	public $defaults = array();
+	public $defaults = [];
 
 /**
  * The routes template string.
@@ -83,18 +83,18 @@ class Route {
  *
  * @var array
  */
-	protected $_headerMap = array(
+	protected $_headerMap = [
 		'type' => 'content_type',
 		'method' => 'request_method',
 		'server' => 'server_name'
-	);
+	];
 
 /**
  * List of connected extensions for this route.
  *
  * @var array
  */
-	protected $_extensions = array();
+	protected $_extensions = [];
 
 /**
  * Constructor for a Route
@@ -107,13 +107,13 @@ class Route {
  * - `pass` - Copies the listed parameters into params['pass'].
  *
  * @param string $template Template string with parameter placeholders
- * @param array $defaults Array of defaults for the route.
+ * @param array|string $defaults Defaults for the route.
  * @param array $options Array of additional options for the Route
  */
-	public function __construct($template, $defaults = array(), $options = array()) {
+	public function __construct($template, $defaults = [], array $options = []) {
 		$this->template = $template;
 		$this->defaults = (array)$defaults;
-		$this->options = (array)$options;
+		$this->options = $options;
 		if (isset($this->options['_name'])) {
 			$this->_name = $this->options['_name'];
 		}
@@ -168,11 +168,11 @@ class Route {
 	protected function _writeRoute() {
 		if (empty($this->template) || ($this->template === '/')) {
 			$this->_compiledRoute = '#^/*$#';
-			$this->keys = array();
+			$this->keys = [];
 			return;
 		}
 		$route = $this->template;
-		$names = $routeParams = array();
+		$names = $routeParams = [];
 		$parsed = preg_quote($this->template, '#');
 
 		preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $route, $namedElements);
@@ -211,14 +211,16 @@ class Route {
 		foreach ($this->keys as $key) {
 			unset($this->defaults[$key]);
 		}
+
+		$keys = $this->keys;
+		sort($keys);
+		$this->keys = array_reverse($keys);
 	}
 
 /**
- * Get the standardized plugin.controller:action name
- * for a route. This will compile a route if it has not
- * already been compiled.
+ * Get the standardized plugin.controller:action name for a route.
  *
- * @return string.
+ * @return string
  */
 	public function getName() {
 		if (!empty($this->_name)) {
@@ -293,7 +295,7 @@ class Route {
 		for ($i = 0; $i <= $count; $i++) {
 			unset($route[$i]);
 		}
-		$route['pass'] = array();
+		$route['pass'] = [];
 
 		// Assign defaults, set passed args to pass
 		foreach ($this->defaults as $key => $value) {
@@ -307,12 +309,6 @@ class Route {
 			$route[$key] = $value;
 		}
 
-		foreach ($this->keys as $key) {
-			if (isset($route[$key])) {
-				$route[$key] = rawurldecode($route[$key]);
-			}
-		}
-
 		if (isset($route['_args_'])) {
 			$pass = $this->_parseArgs($route['_args_'], $route);
 			$route['pass'] = array_merge($route['pass'], $pass);
@@ -320,11 +316,11 @@ class Route {
 		}
 
 		if (isset($route['_trailing_'])) {
-			$route['pass'][] = rawurldecode($route['_trailing_']);
+			$route['pass'][] = $route['_trailing_'];
 			unset($route['_trailing_']);
 		}
 
-		if ($ext && empty($route['_ext'])) {
+		if (!empty($ext)) {
 			$route['_ext'] = $ext;
 		}
 
@@ -377,7 +373,7 @@ class Route {
  * @return array Array of passed args.
  */
 	protected function _parseArgs($args, $context) {
-		$pass = array();
+		$pass = [];
 		$args = explode('/', $args);
 
 		foreach ($args as $param) {
@@ -402,7 +398,7 @@ class Route {
  *   directory.
  * @return mixed Either a string url for the parameters if they match or false.
  */
-	public function match($url, $context = array()) {
+	public function match(array $url, array $context = []) {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
@@ -438,7 +434,7 @@ class Route {
 		}
 
 		// Missing defaults is a fail.
-		if (array_diff_key($defaults, $url) !== array()) {
+		if (array_diff_key($defaults, $url) !== []) {
 			return false;
 		}
 
@@ -453,9 +449,8 @@ class Route {
 			return false;
 		}
 
-		$prefixes = Router::prefixes();
-		$pass = array();
-		$query = array();
+		$pass = [];
+		$query = [];
 
 		foreach ($url as $key => $value) {
 			// keys that exist in the defaults and have different values is a match failure.
@@ -506,26 +501,30 @@ class Route {
  * Composes the string URL using the template
  * used to create the route.
  *
- * @param array $params The params to convert to a string url.
- * @param array $pass The additional passed arguments.
+ * @param array $params The params to convert to a string url
+ * @param array $pass The additional passed arguments
+ * @param array $query An array of parameters
  * @return string Composed route string.
  */
-	protected function _writeUrl($params, $pass = array(), $query = array()) {
+	protected function _writeUrl($params, $pass = [], $query = []) {
 		$pass = implode('/', array_map('rawurlencode', $pass));
 		$out = $this->template;
 
-		$search = $replace = array();
-		foreach ($this->keys as $key) {
-			$string = null;
-			if (isset($params[$key])) {
-				$string = $params[$key];
-			} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
-				$key .= '/';
+		if (!empty($this->keys)) {
+			$search = $replace = [];
+
+			foreach ($this->keys as $key) {
+				$string = null;
+				if (isset($params[$key])) {
+					$string = $params[$key];
+				} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
+					$key .= '/';
+				}
+				$search[] = ':' . $key;
+				$replace[] = $string;
 			}
-			$search[] = ':' . $key;
-			$replace[] = $string;
+			$out = str_replace($search, $replace, $out);
 		}
-		$out = str_replace($search, $replace, $out);
 
 		if (strpos($this->template, '*')) {
 			$out = str_replace('*', $pass, $out);

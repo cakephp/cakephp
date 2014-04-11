@@ -9,13 +9,14 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.2.9
+ * @since         0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Event\EventListener;
@@ -48,12 +49,7 @@ use Cake\Utility\Inflector;
  */
 class Helper extends Object implements EventListener {
 
-/**
- * Settings for this helper.
- *
- * @var array
- */
-	public $settings = array();
+	use InstanceConfigTrait;
 
 /**
  * List of helpers used by this helper
@@ -61,6 +57,13 @@ class Helper extends Object implements EventListener {
  * @var array
  */
 	public $helpers = array();
+
+/**
+ * Default config for this helper.
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [];
 
 /**
  * A helper lookup table used to lazy load helper objects.
@@ -79,7 +82,7 @@ class Helper extends Object implements EventListener {
 /**
  * Request object
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	public $request = null;
 
@@ -113,41 +116,6 @@ class Helper extends Object implements EventListener {
 	protected $_View;
 
 /**
- * A list of strings that should be treated as suffixes, or
- * sub inputs for a parent input. This is used for date/time
- * inputs primarily.
- *
- * @var array
- */
-	protected $_fieldSuffixes = array(
-		'year', 'month', 'day', 'hour', 'min', 'second', 'meridian'
-	);
-
-/**
- * The name of the current model entities are in scope of.
- *
- * @see Helper::setEntity()
- * @var string
- */
-	protected $_modelScope;
-
-/**
- * The name of the current model association entities are in scope of.
- *
- * @see Helper::setEntity()
- * @var string
- */
-	protected $_association;
-
-/**
- * The dot separated list of elements the current field entity is for.
- *
- * @see Helper::setEntity()
- * @var string
- */
-	protected $_entityPath;
-
-/**
  * Minimized attributes
  *
  * @var array
@@ -176,16 +144,16 @@ class Helper extends Object implements EventListener {
  * Default Constructor
  *
  * @param View $View The View this helper is being attached to.
- * @param array $settings Configuration settings for the helper.
+ * @param array $config Configuration settings for the helper.
  */
-	public function __construct(View $View, $settings = array()) {
+	public function __construct(View $View, array $config = array()) {
 		$this->_View = $View;
 		$this->request = $View->request;
-		if ($settings) {
-			$this->settings = Hash::merge($this->settings, $settings);
-		}
+
+		$this->config($config);
+
 		if (!empty($this->helpers)) {
-			$this->_helperMap = $View->Helpers->normalizeArray($this->helpers);
+			$this->_helperMap = $View->helpers()->normalizeArray($this->helpers);
 		}
 	}
 
@@ -209,8 +177,8 @@ class Helper extends Object implements EventListener {
  */
 	public function __get($name) {
 		if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
-			$settings = array_merge((array)$this->_helperMap[$name]['settings'], array('enabled' => false));
-			$this->{$name} = $this->_View->loadHelper($this->_helperMap[$name]['class'], $settings);
+			$settings = array_merge((array)$this->_helperMap[$name]['config'], array('enabled' => false));
+			$this->{$name} = $this->_View->addHelper($this->_helperMap[$name]['class'], $this->_config);
 		}
 		if (isset($this->{$name})) {
 			return $this->{$name};
@@ -281,7 +249,7 @@ class Helper extends Object implements EventListener {
  *   `plugin` False value will prevent parsing path as a plugin
  * @return string Generated URL
  */
-	public function assetUrl($path, $options = array()) {
+	public function assetUrl($path, array $options = array()) {
 		if (is_array($path)) {
 			return $this->url($path, !empty($options['fullBase']));
 		}
@@ -331,7 +299,7 @@ class Helper extends Object implements EventListener {
 
 /**
  * Adds a timestamp to a file based resource based on the value of `Asset.timestamp` in
- * Configure. If Asset.timestamp is true and debug > 0, or Asset.timestamp === 'force'
+ * Configure. If Asset.timestamp is true and debug is true, or Asset.timestamp === 'force'
  * a timestamp will be added.
  *
  * @param string $path The file path to timestamp, the path must be inside WWW_ROOT
@@ -339,7 +307,7 @@ class Helper extends Object implements EventListener {
  */
 	public function assetTimestamp($path) {
 		$stamp = Configure::read('Asset.timestamp');
-		$timestampEnabled = $stamp === 'force' || ($stamp === true && Configure::read('debug') > 0);
+		$timestampEnabled = $stamp === 'force' || ($stamp === true && Configure::read('debug'));
 		if ($timestampEnabled && strpos($path, '?') === false) {
 			$filepath = preg_replace(
 				'/^' . preg_quote($this->request->webroot, '/') . '/',
@@ -375,84 +343,6 @@ class Helper extends Object implements EventListener {
 	}
 
 /**
- * Returns a space-delimited string with items of the $options array. If a key
- * of $options array happens to be one of those listed in `Helper::$_minimizedAttributes`
- *
- * And its value is one of:
- *
- * - '1' (string)
- * - 1 (integer)
- * - true (boolean)
- * - 'true' (string)
- *
- * Then the value will be reset to be identical with key's name.
- * If the value is not one of these 3, the parameter is not output.
- *
- * 'escape' is a special option in that it controls the conversion of
- *  attributes to their html-entity encoded equivalents. Set to false to disable html-encoding.
- *
- * If value for any option key is set to `null` or `false`, that option will be excluded from output.
- *
- * @param array $options Array of options.
- * @param array $exclude Array of options to be excluded, the options here will not be part of the return.
- * @param string $insertBefore String to be inserted before options.
- * @param string $insertAfter String to be inserted after options.
- * @return string Composed attributes.
- * @deprecated This method will be moved to HtmlHelper in 3.0
- */
-	protected function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
-		if (!is_string($options)) {
-			$options = (array)$options + array('escape' => true);
-
-			if (!is_array($exclude)) {
-				$exclude = array();
-			}
-
-			$exclude = array('escape' => true) + array_flip($exclude);
-			$escape = $options['escape'];
-			$attributes = array();
-
-			foreach ($options as $key => $value) {
-				if (!isset($exclude[$key]) && $value !== false && $value !== null) {
-					$attributes[] = $this->_formatAttribute($key, $value, $escape);
-				}
-			}
-			$out = implode(' ', $attributes);
-		} else {
-			$out = $options;
-		}
-		return $out ? $insertBefore . $out . $insertAfter : '';
-	}
-
-/**
- * Formats an individual attribute, and returns the string value of the composed attribute.
- * Works with minimized attributes that have the same value as their name such as 'disabled' and 'checked'
- *
- * @param string $key The name of the attribute to create
- * @param string $value The value of the attribute to create.
- * @param boolean $escape Define if the value must be escaped
- * @return string The composed attribute.
- * @deprecated This method will be moved to HtmlHelper in 3.0
- */
-	protected function _formatAttribute($key, $value, $escape = true) {
-		if (is_array($value)) {
-			$value = implode(' ', $value);
-		}
-		if (is_numeric($key)) {
-			return sprintf($this->_minimizedAttributeFormat, $value, $value);
-		}
-		$truthy = array(1, '1', true, 'true', $key);
-		$isMinimized = in_array($key, $this->_minimizedAttributes);
-		if ($isMinimized && in_array($value, $truthy, true)) {
-			return sprintf($this->_minimizedAttributeFormat, $key, $key);
-		}
-		if ($isMinimized) {
-			return '';
-		}
-		return sprintf($this->_attributeFormat, $key, ($escape ? h($value) : $value));
-	}
-
-/**
  * Returns a string to be used as onclick handler for confirm dialogs.
  *
  * @param string $message Message to be displayed
@@ -471,260 +361,6 @@ class Helper extends Object implements EventListener {
 	}
 
 /**
- * Sets this helper's model and field properties to the dot-separated value-pair in $entity.
- *
- * @param string $entity A field name, like "ModelName.fieldName" or "ModelName.ID.fieldName"
- * @param boolean $setScope Sets the view scope to the model specified in $tagValue
- * @return void
- */
-	public function setEntity($entity, $setScope = false) {
-		if ($entity === null) {
-			$this->_modelScope = false;
-		}
-		if ($setScope === true) {
-			$this->_modelScope = $entity;
-		}
-		$parts = array_values(Hash::filter(explode('.', $entity)));
-		if (empty($parts)) {
-			return;
-		}
-		$count = count($parts);
-		$lastPart = isset($parts[$count - 1]) ? $parts[$count - 1] : null;
-
-		// Either 'body' or 'date.month' type inputs.
-		if (
-			($count === 1 && $this->_modelScope && !$setScope) ||
-			(
-				$count === 2 &&
-				in_array($lastPart, $this->_fieldSuffixes) &&
-				$this->_modelScope &&
-				$parts[0] !== $this->_modelScope
-			)
-		) {
-			$entity = $this->_modelScope . '.' . $entity;
-		}
-
-		// 0.name, 0.created.month style inputs. Excludes inputs with the modelScope in them.
-		if (
-			$count >= 2 &&
-			is_numeric($parts[0]) &&
-			!is_numeric($parts[1]) &&
-			$this->_modelScope &&
-			strpos($entity, $this->_modelScope) === false
-		) {
-			$entity = $this->_modelScope . '.' . $entity;
-		}
-
-		$this->_association = null;
-
-		$isHabtm = (
-			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) &&
-			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple'
-		);
-
-		// habtm models are special
-		if ($count === 1 && $isHabtm) {
-			$this->_association = $parts[0];
-			$entity = $parts[0] . '.' . $parts[0];
-		} else {
-			// check for associated model.
-			$reversed = array_reverse($parts);
-			foreach ($reversed as $i => $part) {
-				if ($i > 0 && preg_match('/^[A-Z]/', $part)) {
-					$this->_association = $part;
-					break;
-				}
-			}
-		}
-		$this->_entityPath = $entity;
-	}
-
-/**
- * Returns the entity reference of the current context as an array of identity parts
- *
- * @return array An array containing the identity elements of an entity
- */
-	public function entity() {
-		return explode('.', $this->_entityPath);
-	}
-
-/**
- * Gets the currently-used model of the rendering context.
- *
- * @return string
- */
-	public function model() {
-		if ($this->_association) {
-			return $this->_association;
-		}
-		return $this->_modelScope;
-	}
-
-/**
- * Gets the currently-used model field of the rendering context.
- * Strips off field suffixes such as year, month, day, hour, min, meridian
- * when the current entity is longer than 2 elements.
- *
- * @return string
- */
-	public function field() {
-		$entity = $this->entity();
-		$count = count($entity);
-		$last = $entity[$count - 1];
-		if ($count > 2 && in_array($last, $this->_fieldSuffixes)) {
-			$last = isset($entity[$count - 2]) ? $entity[$count - 2] : null;
-		}
-		return $last;
-	}
-
-/**
- * Generates a DOM ID for the selected element, if one is not set.
- * Uses the current View::entity() settings to generate a CamelCased id attribute.
- *
- * @param array|string $options Either an array of html attributes to add $id into, or a string
- *   with a view entity path to get a domId for.
- * @param string $id The name of the 'id' attribute.
- * @return mixed If $options was an array, an array will be returned with $id set. If a string
- *   was supplied, a string will be returned.
- */
-	public function domId($options = null, $id = 'id') {
-		if (is_array($options) && array_key_exists($id, $options) && $options[$id] === null) {
-			unset($options[$id]);
-			return $options;
-		} elseif (!is_array($options) && $options !== null) {
-			$this->setEntity($options);
-			return $this->domId();
-		}
-
-		$entity = $this->entity();
-		$model = array_shift($entity);
-		$dom = $model . implode('', array_map(array('Cake\Utility\Inflector', 'camelize'), $entity));
-
-		if (is_array($options) && !array_key_exists($id, $options)) {
-			$options[$id] = $dom;
-		} elseif ($options === null) {
-			return $dom;
-		}
-		return $options;
-	}
-
-/**
- * Gets the input field name for the current tag. Creates input name attributes
- * using CakePHP's `Model[field]` formatting.
- *
- * @param array|string $options If an array, should be an array of attributes that $key needs to be added to.
- *   If a string or null, will be used as the View entity.
- * @param string $field
- * @param string $key The name of the attribute to be set, defaults to 'name'
- * @return mixed If an array was given for $options, an array with $key set will be returned.
- *   If a string was supplied a string will be returned.
- */
-	protected function _name($options = array(), $field = null, $key = 'name') {
-		if ($options === null) {
-			$options = array();
-		} elseif (is_string($options)) {
-			$field = $options;
-			$options = 0;
-		}
-
-		if (!empty($field)) {
-			$this->setEntity($field);
-		}
-
-		if (is_array($options) && array_key_exists($key, $options)) {
-			return $options;
-		}
-
-		switch ($field) {
-			case '_method':
-				$name = $field;
-				break;
-			default:
-				$entity = $this->entity();
-				$first = array_shift($entity);
-				$name = $first . ($entity ? '[' . implode('][', $entity) . ']' : '');
-			break;
-		}
-
-		if (is_array($options)) {
-			$options[$key] = $name;
-			return $options;
-		}
-		return $name;
-	}
-
-/**
- * Gets the data for the current tag
- *
- * @param array|string $options If an array, should be an array of attributes that $key needs to be added to.
- *   If a string or null, will be used as the View entity.
- * @param string $field
- * @param string $key The name of the attribute to be set, defaults to 'value'
- * @return mixed If an array was given for $options, an array with $key set will be returned.
- *   If a string was supplied a string will be returned.
- */
-	public function value($options = array(), $field = null, $key = 'value') {
-		if ($options === null) {
-			$options = array();
-		} elseif (is_string($options)) {
-			$field = $options;
-			$options = 0;
-		}
-
-		if (is_array($options) && isset($options[$key])) {
-			return $options;
-		}
-
-		if (!empty($field)) {
-			$this->setEntity($field);
-		}
-		$result = null;
-		$data = $this->request->data;
-
-		$entity = $this->entity();
-		if (!empty($data) && is_array($data) && !empty($entity)) {
-			$result = Hash::get($data, implode('.', $entity));
-		}
-
-		$habtmKey = $this->field();
-		if (empty($result) && isset($data[$habtmKey][$habtmKey]) && is_array($data[$habtmKey])) {
-			$result = $data[$habtmKey][$habtmKey];
-		}
-
-		if (is_array($options)) {
-			if ($result === null && isset($options['default'])) {
-				$result = $options['default'];
-			}
-			unset($options['default']);
-		}
-
-		if (is_array($options)) {
-			$options[$key] = $result;
-			return $options;
-		}
-		return $result;
-	}
-
-/**
- * Sets the defaults for an input tag. Will set the
- * name, value, and id attributes for an array of html attributes.
- *
- * @param string $field The field name to initialize.
- * @param array $options Array of options to use while initializing an input field.
- * @return array Array options for the form input.
- */
-	protected function _initInputField($field, $options = array()) {
-		if ($field !== null) {
-			$this->setEntity($field);
-		}
-		$options = (array)$options;
-		$options = $this->_name($options);
-		$options = $this->value($options);
-		$options = $this->domId($options);
-		return $options;
-	}
-
-/**
  * Adds the given class to the element options
  *
  * @param array $options Array options/attributes to add a class to
@@ -732,7 +368,7 @@ class Helper extends Object implements EventListener {
  * @param string $key the key to use for class.
  * @return array Array of options with $key set.
  */
-	public function addClass($options = array(), $class = null, $key = 'class') {
+	public function addClass(array $options = array(), $class = null, $key = 'class') {
 		if (isset($options[$key]) && trim($options[$key])) {
 			$options[$key] .= ' ' . $class;
 		} else {
@@ -768,35 +404,6 @@ class Helper extends Object implements EventListener {
 			}
 		}
 		return $events;
-	}
-
-/**
- * Transforms a recordset from a hasAndBelongsToMany association to a list of selected
- * options for a multiple select element
- *
- * @param string|array $data
- * @param string $key
- * @return array
- */
-	protected function _selectedArray($data, $key = 'id') {
-		if (!is_array($data)) {
-			$model = $data;
-			if (!empty($this->request->data[$model][$model])) {
-				return $this->request->data[$model][$model];
-			}
-			if (!empty($this->request->data[$model])) {
-				$data = $this->request->data[$model];
-			}
-		}
-		$array = array();
-		if (!empty($data)) {
-			foreach ($data as $row) {
-				if (isset($row[$key])) {
-					$array[$row[$key]] = $row[$key];
-				}
-			}
-		}
-		return empty($array) ? null : $array;
 	}
 
 }

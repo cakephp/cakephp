@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.2.0
+ * @since         2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
@@ -174,7 +174,7 @@ class HashTest extends TestCase {
 /**
  * Test get()
  *
- * return void
+ * @return void
  */
 	public function testGet() {
 		$data = array('abc', 'def');
@@ -531,7 +531,7 @@ class HashTest extends TestCase {
 			'Validator',
 			'Transactional'
 		);
-		$this->assertEquals(Hash::merge($a, $b), $expected);
+		$this->assertEquals($expected, Hash::merge($a, $b));
 	}
 
 /**
@@ -920,6 +920,8 @@ class HashTest extends TestCase {
 
 /**
  * Test that extract() + matching can hit null things.
+ *
+ * @return void
  */
 	public function testExtractMatchesNull() {
 		$data = array(
@@ -1454,7 +1456,7 @@ class HashTest extends TestCase {
 			2 => array('Item' => array('id' => 3, 'title' => 'third')),
 			4 => array('Item' => array('id' => 5, 'title' => 'fifth')),
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -2294,7 +2296,7 @@ class HashTest extends TestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = Hash::mergeDiff($first, null);
+		$result = Hash::mergeDiff($first, array());
 		$this->assertEquals($result, $first);
 
 		$result = Hash::mergeDiff($first, $second);

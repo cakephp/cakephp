@@ -16,6 +16,7 @@ namespace Cake\Controller\Component\Auth;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\Auth\AbstractPasswordHasher;
 use Cake\Core\App;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -29,8 +30,10 @@ use Cake\Utility\Security;
  */
 abstract class BaseAuthenticate {
 
+	use InstanceConfigTrait;
+
 /**
- * Settings for this object.
+ * Default config for this object.
  *
  * - `fields` The fields to use to identify a user by.
  * - `userModel` The alias for users table, defaults to Users.
@@ -39,11 +42,11 @@ abstract class BaseAuthenticate {
  * - `contain` Extra models to contain and store in session.
  * - `passwordHasher` Password hasher class. Can be a string specifying class name
  *    or an array containing `className` key, any other keys will be passed as
- *    settings to the class. Defaults to 'Simple'.
+ *    config to the class. Defaults to 'Blowfish'.
  *
  * @var array
  */
-	public $settings = [
+	protected $_defaultConfig = [
 		'fields' => [
 			'username' => 'username',
 			'password' => 'password'
@@ -72,11 +75,11 @@ abstract class BaseAuthenticate {
  * Constructor
  *
  * @param ComponentRegistry $registry The Component registry used on this request.
- * @param array $settings Array of settings to use.
+ * @param array $config Array of config to use.
  */
-	public function __construct(ComponentRegistry $registry, $settings) {
+	public function __construct(ComponentRegistry $registry, $config) {
 		$this->_registry = $registry;
-		$this->settings = Hash::merge($this->settings, $settings);
+		$this->config($config);
 	}
 
 /**
@@ -91,20 +94,24 @@ abstract class BaseAuthenticate {
  * @return boolean|array Either false on failure, or an array of user data.
  */
 	protected function _findUser($username, $password = null) {
-		$userModel = $this->settings['userModel'];
+		$userModel = $this->_config['userModel'];
 		list(, $model) = pluginSplit($userModel);
-		$fields = $this->settings['fields'];
+		$fields = $this->_config['fields'];
 
 		$conditions = [$model . '.' . $fields['username'] => $username];
 
-		if (!empty($this->settings['scope'])) {
-			$conditions = array_merge($conditions, $this->settings['scope']);
+		$scope = $this->_config['scope'];
+		if ($scope) {
+			$conditions = array_merge($conditions, $scope);
 		}
 
 		$table = TableRegistry::get($userModel)->find('all');
-		if ($this->settings['contain']) {
-			$table = $table->contain($this->settings['contain']);
+
+		$contain = $this->_config['contain'];
+		if ($contain) {
+			$table = $table->contain($contain);
 		}
+
 		$result = $table
 			->where($conditions)
 			->hydrate(false)
@@ -128,7 +135,7 @@ abstract class BaseAuthenticate {
  * Return password hasher object
  *
  * @return AbstractPasswordHasher Password hasher instance
- * @throws Cake\Error\Exception If password hasher class not found or
+ * @throws \Cake\Error\Exception If password hasher class not found or
  *   it does not extend AbstractPasswordHasher
  */
 	public function passwordHasher() {
@@ -136,12 +143,14 @@ abstract class BaseAuthenticate {
 			return $this->_passwordHasher;
 		}
 
+		$passwordHasher = $this->_config['passwordHasher'];
+
 		$config = array();
-		if (is_string($this->settings['passwordHasher'])) {
-			$class = $this->settings['passwordHasher'];
+		if (is_string($passwordHasher)) {
+			$class = $passwordHasher;
 		} else {
-			$class = $this->settings['passwordHasher']['className'];
-			$config = $this->settings['passwordHasher'];
+			$class = $passwordHasher['className'];
+			$config = $passwordHasher;
 			unset($config['className']);
 		}
 
@@ -161,8 +170,8 @@ abstract class BaseAuthenticate {
 /**
  * Authenticate a user based on the request information.
  *
- * @param Cake\Network\Request $request Request to get authentication information from.
- * @param Cake\Network\Response $response A response object that can have headers added.
+ * @param \Cake\Network\Request $request Request to get authentication information from.
+ * @param \Cake\Network\Response $response A response object that can have headers added.
  * @return mixed Either false on failure, or an array of user data on success.
  */
 	abstract public function authenticate(Request $request, Response $response);
@@ -177,14 +186,14 @@ abstract class BaseAuthenticate {
  * @param array $user The user about to be logged out.
  * @return void
  */
-	public function logout($user) {
+	public function logout(array $user) {
 	}
 
 /**
  * Get a user based on information in the request. Primarily used by stateless authentication
  * systems like basic and digest auth.
  *
- * @param Cake\Network\Request $request Request object.
+ * @param \Cake\Network\Request $request Request object.
  * @return mixed Either false or an array of user information
  */
 	public function getUser(Request $request) {
@@ -192,12 +201,13 @@ abstract class BaseAuthenticate {
 	}
 
 /**
- * Handle unauthenticated access attempt.
+ * Handle unauthenticated access attempt. In implementation, will return true to indicate
+ * the unauthenticated request has been dealt with and no more action is required by
+ * AuthComponent or void (default).
  *
- * @param Cake\Network\Request $request A request object.
- * @param Cake\Network\Response $response A response object.
- * @return mixed Either true to indicate the unauthenticated request has been
- *  dealt with and no more action is required by AuthComponent or void (default).
+ * @param \Cake\Network\Request $request A request object.
+ * @param \Cake\Network\Response $response A response object.
+ * @return void
  */
 	public function unauthenticated(Request $request, Response $response) {
 	}

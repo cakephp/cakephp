@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.3
+ * @since         1.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Log\Engine;
@@ -183,6 +183,7 @@ class FileLogTest extends TestCase {
 /**
  * helper function to clears all log files in specified directory
  *
+ * @param string $dir
  * @return void
  */
 	protected function _deleteLogs($dir) {

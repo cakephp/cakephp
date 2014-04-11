@@ -9,13 +9,13 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4667
+ * @since         1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Configure;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\Model\Model;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;

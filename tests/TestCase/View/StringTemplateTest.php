@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v3.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View;
@@ -31,6 +31,19 @@ class StringTemplateTest extends TestCase {
 	}
 
 /**
+ * Test adding templates through the constructor.
+ *
+ * @return void
+ */
+	public function testConstructorAdd() {
+		$templates = [
+			'link' => '<a href="{{url}}">{{text}}</a>'
+		];
+		$template = new StringTemplate($templates);
+		$this->assertEquals($templates['link'], $template->get('link'));
+	}
+
+/**
  * test adding templates.
  *
  * @return void
@@ -40,7 +53,11 @@ class StringTemplateTest extends TestCase {
 			'link' => '<a href="{{url}}">{{text}}</a>'
 		];
 		$result = $this->template->add($templates);
-		$this->assertNull($result, 'No return');
+		$this->assertSame(
+			$this->template,
+			$result,
+			'The same instance should be returned'
+		);
 
 		$this->assertEquals($templates['link'], $this->template->get('link'));
 	}
@@ -107,7 +124,7 @@ class StringTemplateTest extends TestCase {
 /**
  * Test that loading non-existing templates causes errors.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Could not load configuration file
  */
 	public function testLoadErrorNoFile() {

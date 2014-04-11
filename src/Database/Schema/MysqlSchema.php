@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Schema;
@@ -50,7 +50,7 @@ class MysqlSchema extends BaseSchema {
  *
  * @param string $column The column type + length
  * @return array Array of column information.
- * @throws Cake\Database\Exception When column type cannot be parsed.
+ * @throws \Cake\Database\Exception When column type cannot be parsed.
  */
 	protected function _convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?\s*([a-z]+)?/i', $column, $matches);
@@ -80,7 +80,7 @@ class MysqlSchema extends BaseSchema {
 		if (strpos($col, 'bigint') !== false || $col === 'bigint') {
 			return ['type' => 'biginteger', 'length' => $length, 'unsigned' => $unsigned];
 		}
-		if (strpos($col, 'int') !== false) {
+		if (in_array($col, ['int', 'integer', 'tinyint', 'smallint', 'mediumint'])) {
 			return ['type' => 'integer', 'length' => $length, 'unsigned' => $unsigned];
 		}
 		if ($col === 'char' && $length === 36) {
@@ -232,7 +232,8 @@ class MysqlSchema extends BaseSchema {
  */
 	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$content = implode(",\n", array_merge($columns, $constraints, $indexes));
-		$content = sprintf("CREATE TABLE `%s` (\n%s\n)", $table->name(), $content);
+		$temporary = $table->temporary() ? ' TEMPORARY ' : ' ';
+		$content = sprintf("CREATE%sTABLE `%s` (\n%s\n)", $temporary, $table->name(), $content);
 		$options = $table->options();
 		if (isset($options['engine'])) {
 			$content .= sprintf(' ENGINE=%s', $options['engine']);

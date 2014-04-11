@@ -1,9 +1,5 @@
 <?php
 /**
- * Short description for after_tree_fixture.php
- *
- * Long description for after_tree_fixture.php
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  *
  * Licensed under The MIT License
@@ -12,7 +8,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://www.cakephp.org
- * @since         1.2
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;

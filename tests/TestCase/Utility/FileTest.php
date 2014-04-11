@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
@@ -125,6 +125,8 @@ class FileTest extends TestCase {
 
 /**
  * testPermission method
+ *
+ * @return void
  */
 	public function testPermission() {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', 'File permissions tests not supported on Windows.');
@@ -532,7 +534,7 @@ class FileTest extends TestCase {
 		$path = TEST_APP . 'webroot/img/cake.power.gif';
 		$file = new File($path);
 		$expected = 'image/gif';
-		if (function_exists('mime_content_type') && false === mime_content_type($file->pwd())) {
+		if (function_exists('mime_content_type') && mime_content_type($file->pwd()) === false) {
 			$expected = false;
 		}
 		$this->assertEquals($expected, $file->mime());
@@ -548,7 +550,7 @@ class FileTest extends TestCase {
 		$tmpFile = TMP . 'tests/cakephp.file.test.tmp';
 		if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
 			return $tmpFile;
-		};
+		}
 
 		if ($paintSkip) {
 			$trace = debug_backtrace();

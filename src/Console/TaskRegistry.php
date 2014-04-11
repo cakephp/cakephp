@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console;
@@ -59,7 +59,7 @@ class TaskRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the task is missing in.
- * @throws Cake\Error\MissingTaskException
+ * @throws \Cake\Error\MissingTaskException
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\MissingTaskException([
@@ -76,7 +76,7 @@ class TaskRegistry extends ObjectRegistry {
  * @param string $class The classname to create.
  * @param string $alias The alias of the task.
  * @param array $settings An array of settings to use for the task.
- * @return Component The constructed task class.
+ * @return \Cake\Console\Shell The constructed task class.
  */
 	protected function _create($class, $alias, $settings) {
 		return new $class(

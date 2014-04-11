@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.1
+ * @since         2.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Acl;
@@ -32,11 +32,15 @@ class PhpAcl extends Object implements AclInterface {
 
 /**
  * Constant for deny
+ *
+ * @var boolean
  */
 	const DENY = false;
 
 /**
  * Constant for allow
+ *
+ * @var boolean
  */
 	const ALLOW = true;
 
@@ -78,12 +82,13 @@ class PhpAcl extends Object implements AclInterface {
 /**
  * Initialize method
  *
- * @param AclComponent $Component Component instance
+ * @param Component $Component Component instance
  * @return void
  */
 	public function initialize(Component $Component) {
-		if (!empty($Component->settings['adapter'])) {
-			$this->options = array_merge($this->options, $Component->settings['adapter']);
+		$adapter = $Component->config('adapter');
+		if ($adapter) {
+			$this->options = $adapter + $this->options;
 		}
 
 		$engine = new PhpConfig(dirname($this->options['config']) . DS);
@@ -98,7 +103,7 @@ class PhpAcl extends Object implements AclInterface {
  *
  * @param array $config configuration array, see docs
  * @return void
- * @throws Cake\Error\AclException When required keys are missing.
+ * @throws \Cake\Error\AclException When required keys are missing.
  */
 	public function build(array $config) {
 		if (empty($config['roles'])) {
@@ -369,6 +374,8 @@ class PhpAro {
 /**
  * role to resolve to when a provided ARO is not listed in
  * the internal tree
+ *
+ * @var string
  */
 	const DEFAULT_ROLE = 'Role/default';
 
@@ -545,7 +552,7 @@ class PhpAro {
  * @return void
  */
 	public function addAlias(array $alias) {
-		$this->aliases = array_merge($this->aliases, $alias);
+		$this->aliases = $alias + $this->aliases;
 	}
 
 /**

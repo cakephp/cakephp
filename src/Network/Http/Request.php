@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network\Http;
@@ -60,7 +60,7 @@ class Request extends Message {
  *
  * @param string|null $method The method for the request.
  * @return mixed Either this or the current method.
- * @throws Cake\Error\Exception On invalid methods.
+ * @throws \Cake\Error\Exception On invalid methods.
  */
 	public function method($method = null) {
 		if ($method === null) {

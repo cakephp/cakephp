@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View;
@@ -135,7 +135,7 @@ class TestHelper extends Helper {
  *
  * @var array
  */
-	public $settings = array(
+	protected $_defaultConfig = array(
 		'key1' => 'val1',
 		'key2' => array('key2.1' => 'val2.1', 'key2.2' => 'val2.2')
 	);
@@ -177,8 +177,7 @@ class HelperTest extends TestCase {
 		parent::setUp();
 
 		Router::reload();
-		$null = null;
-		$this->View = new View($null);
+		$this->View = new View();
 		$this->Helper = new Helper($this->View);
 		$this->Helper->request = new Request();
 	}
@@ -197,46 +196,6 @@ class HelperTest extends TestCase {
 	}
 
 /**
- * Provider for setEntity test.
- *
- * @return array
- */
-	public static function entityProvider() {
-		return array(
-			array(
-				'HelperTestPost.id',
-				array('HelperTestPost', 'id'),
-				'HelperTestPost',
-				'id'
-			),
-			array(
-				'HelperTestComment.body',
-				array('HelperTestComment', 'body'),
-				'HelperTestComment',
-				'body'
-			),
-			array(
-				'HelperTest.1.Comment.body',
-				array('HelperTest', '1', 'Comment', 'body'),
-				'Comment',
-				'body'
-			),
-			array(
-				'HelperTestComment.BigField',
-				array('HelperTestComment', 'BigField'),
-				'HelperTestComment',
-				'BigField'
-			),
-			array(
-				'HelperTestComment.min',
-				array('HelperTestComment', 'min'),
-				'HelperTestComment',
-				'min'
-			)
-		);
-	}
-
-/**
  * Test settings merging
  *
  * @return void
@@ -251,260 +210,7 @@ class HelperTest extends TestCase {
 			'key2' => array('key2.1' => 'val2.1', 'key2.2' => 'newval'),
 			'key3' => 'val3'
 		);
-		$this->assertEquals($expected, $Helper->settings);
-	}
-
-/**
- * Test setting an entity and retrieving the entity, model and field.
- *
- * @dataProvider entityProvider
- * @return void
- */
-	public function testSetEntity($entity, $expected, $modelKey, $fieldKey) {
-		$this->Helper->setEntity($entity);
-		$this->assertEquals($expected, $this->Helper->entity());
-		$this->assertEquals($modelKey, $this->Helper->model());
-		$this->assertEquals($fieldKey, $this->Helper->field());
-	}
-
-/**
- * test setEntity with setting a scope.
- *
- * @return void
- */
-	public function testSetEntityScoped() {
-		$this->Helper->setEntity('HelperTestPost', true);
-		$this->assertEquals(array('HelperTestPost'), $this->Helper->entity());
-
-		$this->Helper->setEntity('id');
-		$expected = array('HelperTestPost', 'id');
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$this->Helper->setEntity('HelperTestComment.body');
-		$expected = array('HelperTestComment', 'body');
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$this->Helper->setEntity('body');
-		$expected = array('HelperTestPost', 'body');
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$this->Helper->setEntity('2.body');
-		$expected = array('HelperTestPost', '2', 'body');
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$this->Helper->setEntity('Something.else');
-		$expected = array('Something', 'else');
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$this->Helper->setEntity('HelperTestComment.5.id');
-		$expected = array('HelperTestComment', 5, 'id');
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$this->Helper->setEntity('HelperTestComment.id.time');
-		$expected = array('HelperTestComment', 'id', 'time');
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$this->Helper->setEntity('HelperTestComment.created.year');
-		$expected = array('HelperTestComment', 'created', 'year');
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$this->Helper->setEntity(null);
-		$this->Helper->setEntity('ModelThatDoesntExist.field_that_doesnt_exist');
-		$expected = array('ModelThatDoesntExist', 'field_that_doesnt_exist');
-		$this->assertEquals($expected, $this->Helper->entity());
-	}
-
-/**
- * Test that setEntity() and model()/field() work with associated models.
- *
- * @return void
- */
-	public function testSetEntityAssociated() {
-		$this->Helper->setEntity('HelperTestPost', true);
-
-		$this->Helper->setEntity('HelperTestPost.1.HelperTestComment.1.title');
-		$expected = array('HelperTestPost', '1', 'HelperTestComment', '1', 'title');
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$this->assertEquals('HelperTestComment', $this->Helper->model());
-	}
-
-/**
- * Test creating saveMany() compatible entities
- *
- * @return void
- */
-	public function testSetEntitySaveMany() {
-		$this->Helper->setEntity('HelperTestPost', true);
-
-		$this->Helper->setEntity('0.HelperTestPost.id');
-		$expected = array('0', 'HelperTestPost', 'id');
-		$this->assertEquals($expected, $this->Helper->entity());
-	}
-
-/**
- * Test that setEntity doesn't make CamelCase fields that are not associations an
- * associated model.
- *
- * @return void
- */
-	public function testSetEntityAssociatedCamelCaseField() {
-		$this->Helper->fieldset = array(
-			'HelperTestComment' => array(
-				'fields' => array('BigField' => array('type' => 'integer'))
-			)
-		);
-		$this->Helper->setEntity('HelperTestComment', true);
-		$this->Helper->setEntity('HelperTestComment.BigField');
-
-		$this->assertEquals('HelperTestComment', $this->Helper->model());
-		$this->assertEquals('BigField', $this->Helper->field());
-	}
-
-/**
- * Test that multiple fields work when they are camelcase and in fieldset
- *
- * @return void
- */
-	public function testSetEntityAssociatedCamelCaseFieldHabtmMultiple() {
-		$this->Helper->fieldset = array(
-			'HelperTestComment' => array(
-				'fields' => array('Tag' => array('type' => 'multiple'))
-			)
-		);
-		$this->Helper->setEntity('HelperTestComment', true);
-		$this->Helper->setEntity('Tag');
-
-		$this->assertEquals('Tag', $this->Helper->model());
-		$this->assertEquals('Tag', $this->Helper->field());
-		$this->assertEquals(array('Tag', 'Tag'), $this->Helper->entity());
-	}
-
-/**
- * Test that habtm associations can have property fields created.
- *
- * @return void
- */
-	public function testSetEntityHabtmPropertyFieldNames() {
-		$this->Helper->fieldset = array(
-			'HelperTestComment' => array(
-				'fields' => array('Tag' => array('type' => 'multiple'))
-			)
-		);
-		$this->Helper->setEntity('HelperTestComment', true);
-
-		$this->Helper->setEntity('Tag.name');
-		$this->assertEquals('Tag', $this->Helper->model());
-		$this->assertEquals('name', $this->Helper->field());
-		$this->assertEquals(array('Tag', 'name'), $this->Helper->entity());
-	}
-
-/**
- * test that 'view' doesn't break things.
- *
- * @return void
- */
-	public function testSetEntityWithView() {
-		$this->assertNull($this->Helper->setEntity('Allow.view.group_id'));
-		$this->assertNull($this->Helper->setEntity('Allow.view'));
-		$this->assertNull($this->Helper->setEntity('View.view'));
-	}
-
-/**
- * test getting values from Helper
- *
- * @return void
- */
-	public function testValue() {
-		$this->Helper->request->data = array('fullname' => 'This is me');
-		$this->Helper->setEntity('fullname');
-		$result = $this->Helper->value('fullname');
-		$this->assertEquals('This is me', $result);
-
-		$this->Helper->request->data = array(
-			'Post' => array('name' => 'First Post')
-		);
-		$this->Helper->setEntity('Post.name');
-		$result = $this->Helper->value('Post.name');
-		$this->assertEquals('First Post', $result);
-
-		$this->Helper->request->data = array(
-			'Post' => array(2 => array('name' => 'First Post'))
-		);
-		$this->Helper->setEntity('Post.2.name');
-		$result = $this->Helper->value('Post.2.name');
-		$this->assertEquals('First Post', $result);
-
-		$this->Helper->request->data = array(
-			'Post' => array(
-				2 => array('created' => array('year' => '2008'))
-			)
-		);
-		$this->Helper->setEntity('Post.2.created');
-		$result = $this->Helper->value('Post.2.created');
-		$this->assertEquals(array('year' => '2008'), $result);
-
-		$this->Helper->request->data = array(
-			'Post' => array(
-				2 => array('created' => array('year' => '2008'))
-			)
-		);
-		$this->Helper->setEntity('Post.2.created.year');
-		$result = $this->Helper->value('Post.2.created.year');
-		$this->assertEquals('2008', $result);
-	}
-
-/**
- * Test default values with value()
- *
- * @return void
- */
-	public function testValueWithDefault() {
-		$this->Helper->request->data = array('zero' => 0);
-		$this->Helper->setEntity('zero');
-		$result = $this->Helper->value(array('default' => 'something'), 'zero');
-		$this->assertEquals(array('value' => 0), $result);
-
-		$this->Helper->request->data = array('zero' => '0');
-		$result = $this->Helper->value(array('default' => 'something'), 'zero');
-		$this->assertEquals(array('value' => '0'), $result);
-
-		$this->Helper->setEntity('inexistent');
-		$result = $this->Helper->value(array('default' => 'something'), 'inexistent');
-		$this->assertEquals(array('value' => 'something'), $result);
-	}
-
-/**
- * Test habtm data fetching and ensure no pollution happens.
- *
- * @return void
- */
-	public function testValueHabtmKeys() {
-		$this->Helper->request->data = array(
-			'HelperTestTag' => array('HelperTestTag' => '')
-		);
-		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
-		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
-		$this->assertEquals('', $result);
-
-		$this->Helper->request->data = array(
-			'HelperTestTag' => array(
-				'HelperTestTag' => array(2, 3, 4)
-			)
-		);
-		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
-		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
-		$this->assertEquals(array(2, 3, 4), $result);
-
-		$this->Helper->request->data = array(
-			'HelperTestTag' => array(
-				'body' => '',
-				'title' => 'winning'
-			),
-		);
-		$this->Helper->setEntity('HelperTestTag.body');
-		$result = $this->Helper->value('HelperTestTag.body');
-		$this->assertEquals('', $result);
+		$this->assertEquals($expected, $Helper->config());
 	}
 
 /**
@@ -557,7 +263,7 @@ class HelperTest extends TestCase {
 		$this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
 
 		Configure::write('Asset.timestamp', true);
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 
 		$result = $this->Helper->assetTimestamp('/%3Cb%3E/cake.generic.css');
 		$this->assertEquals('/%3Cb%3E/cake.generic.css', $result);
@@ -566,12 +272,12 @@ class HelperTest extends TestCase {
 		$this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
 
 		Configure::write('Asset.timestamp', true);
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		$result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
 		$this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
 
 		Configure::write('Asset.timestamp', 'force');
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
 		$this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
 
@@ -690,157 +396,10 @@ class HelperTest extends TestCase {
 	}
 
 /**
- * testFieldsWithSameName method
+ * Test generating paths with webroot().
  *
  * @return void
  */
-	public function testFieldsWithSameName() {
-		$this->Helper->setEntity('HelperTestTag', true);
-
-		$this->Helper->setEntity('HelperTestTag.id');
-		$expected = array('HelperTestTag', 'id');
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$this->Helper->setEntity('My.id');
-		$expected = array('My', 'id');
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$this->Helper->setEntity('MyOther.id');
-		$expected = array('MyOther', 'id');
-		$this->assertEquals($expected, $this->Helper->entity());
-	}
-
-/**
- * testFieldSameAsModel method
- *
- * @return void
- */
-	public function testFieldSameAsModel() {
-		$this->Helper->setEntity('HelperTestTag', true);
-
-		$this->Helper->setEntity('helper_test_post');
-		$expected = array('HelperTestTag', 'helper_test_post');
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$this->Helper->setEntity('HelperTestTag');
-		$expected = array('HelperTestTag', 'HelperTestTag');
-		$this->assertEquals($expected, $this->Helper->entity());
-	}
-
-/**
- * testFieldSuffixForDate method
- *
- * @return void
- */
-	public function testFieldSuffixForDate() {
-		$this->Helper->setEntity('HelperTestPost', true);
-		$expected = array('HelperTestPost');
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		foreach (array('year', 'month', 'day', 'hour', 'min', 'meridian') as $d) {
-			$this->Helper->setEntity('date.' . $d);
-			$expected = array('HelperTestPost', 'date', $d);
-			$this->assertEquals($expected, $this->Helper->entity());
-		}
-	}
-
-/**
- * testMulitDimensionValue method
- *
- * @return void
- */
-	public function testMultiDimensionValue() {
-		$this->Helper->data = array();
-		for ($i = 0; $i < 2; $i++) {
-			$this->Helper->request->data['Model'][$i] = 'what';
-			$result[] = $this->Helper->value("Model.{$i}");
-			$this->Helper->request->data['Model'][$i] = array();
-			for ($j = 0; $j < 2; $j++) {
-				$this->Helper->request->data['Model'][$i][$j] = 'how';
-				$result[] = $this->Helper->value("Model.{$i}.{$j}");
-			}
-		}
-		$expected = array('what', 'how', 'how', 'what', 'how', 'how');
-		$this->assertEquals($expected, $result);
-
-		$this->Helper->request->data['HelperTestComment']['5']['id'] = 'ok';
-		$result = $this->Helper->value('HelperTestComment.5.id');
-		$this->assertEquals('ok', $result);
-
-		$this->Helper->setEntity('HelperTestPost', true);
-		$this->Helper->request->data['HelperTestPost']['5']['created']['month'] = '10';
-		$result = $this->Helper->value('5.created.month');
-		$this->assertEquals(10, $result);
-
-		$this->Helper->request->data['HelperTestPost']['0']['id'] = 100;
-		$result = $this->Helper->value('HelperTestPost.0.id');
-		$this->assertEquals(100, $result);
-	}
-
-/**
- * testDomId method
- *
- * @return void
- */
-	public function testDomId() {
-		$result = $this->Helper->domId('Foo.bar');
-		$this->assertEquals('FooBar', $result);
-	}
-
-/**
- * testMultiDimensionalField method
- *
- * @return void
- */
-	public function testMultiDimensionalField() {
-		$this->Helper->setEntity('HelperTestPost', true);
-
-		$entity = 'HelperTestPost.2.HelperTestComment.1.title';
-		$this->Helper->setEntity($entity);
-		$expected = array(
-			'HelperTestPost', '2', 'HelperTestComment', '1', 'title'
-		);
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$entity = 'HelperTestPost.1.HelperTestComment.1.HelperTestTag.1.created';
-		$this->Helper->setEntity($entity);
-		$expected = array(
-			'HelperTestPost', '1', 'HelperTestComment', '1',
-			'HelperTestTag', '1', 'created'
-		);
-		$this->assertEquals($expected, $this->Helper->entity());
-
-		$entity = 'HelperTestPost.0.HelperTestComment.1.HelperTestTag.1.fake';
-		$expected = array(
-			'HelperTestPost', '0', 'HelperTestComment', '1',
-			'HelperTestTag', '1', 'fake'
-		);
-		$this->Helper->setEntity($entity);
-
-		$entity = '1.HelperTestComment.1.HelperTestTag.created.year';
-		$this->Helper->setEntity($entity);
-
-		$this->Helper->request->data['HelperTestPost'][2]['HelperTestComment'][1]['title'] = 'My Title';
-		$result = $this->Helper->value('HelperTestPost.2.HelperTestComment.1.title');
-		$this->assertEquals('My Title', $result);
-
-		$this->Helper->request->data['HelperTestPost'][2]['HelperTestComment'][1]['created']['year'] = 2008;
-		$result = $this->Helper->value('HelperTestPost.2.HelperTestComment.1.created.year');
-		$this->assertEquals(2008, $result);
-
-		$this->Helper->request->data[2]['HelperTestComment'][1]['created']['year'] = 2008;
-		$result = $this->Helper->value('HelperTestPost.2.HelperTestComment.1.created.year');
-		$this->assertEquals(2008, $result);
-
-		$this->Helper->request->data['HelperTestPost']['title'] = 'My Title';
-		$result = $this->Helper->value('title');
-		$this->assertEquals('My Title', $result);
-
-		$this->Helper->request->data['My']['title'] = 'My Title';
-		$result = $this->Helper->value('My.title');
-		$this->assertEquals('My Title', $result);
-	}
-
 	public function testWebrootPaths() {
 		$this->Helper->request->webroot = '/';
 		$result = $this->Helper->webroot('/img/cake.power.gif');
@@ -858,7 +417,7 @@ class HelperTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$webRoot = Configure::read('App.www_root');
-		Configure::write('App.www_root', CAKE . 'Test/TestApp/webroot/');
+		Configure::write('App.www_root', TEST_APP . 'TestApp/webroot/');
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
 		$expected = '/theme/test_theme/img/cake.power.gif';

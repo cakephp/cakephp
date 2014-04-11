@@ -1,9 +1,5 @@
 <?php
 /**
- * Text Helper
- *
- * Text manipulations: Highlight, excerpt, truncate, strip of links, convert email addresses to mailto: links...
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.10.0.1076
+ * @since         0.10.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View\Helper;
@@ -43,6 +39,15 @@ class TextHelper extends Helper {
 	public $helpers = array('Html');
 
 /**
+ * Default config for this class
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [
+		'engine' => 'Cake\Utility\String'
+	];
+
+/**
  * An array of md5sums and their contents.
  * Used when inserting links into text.
  *
@@ -53,7 +58,7 @@ class TextHelper extends Helper {
 /**
  * String utility instance
  *
- * @var stdClass
+ * @var \stdClass
  */
 	protected $_engine;
 
@@ -66,22 +71,26 @@ class TextHelper extends Helper {
  *            The class needs to be placed in the `Utility` directory.
  *
  * @param View $View the view object the helper is attached to.
- * @param array $settings Settings array Settings array
- * @throws Cake\Error\Exception when the engine class could not be found.
+ * @param array $config Settings array Settings array
+ * @throws \Cake\Error\Exception when the engine class could not be found.
  */
-	public function __construct(View $View, $settings = array()) {
-		$settings = Hash::merge(array('engine' => 'Cake\Utility\String'), $settings);
-		parent::__construct($View, $settings);
-		$engineClass = App::classname($settings['engine'], 'Utility');
+	public function __construct(View $View, array $config = array()) {
+		parent::__construct($View, $config);
+
+		$config = $this->_config;
+		$engineClass = App::classname($config['engine'], 'Utility');
 		if ($engineClass) {
-			$this->_engine = new $engineClass($settings);
+			$this->_engine = new $engineClass($config);
 		} else {
-			throw new Error\Exception(sprintf('Class for %s could not be found', $settings['engine']));
+			throw new Error\Exception(sprintf('Class for %s could not be found', $config['engine']));
 		}
 	}
 
 /**
  * Call methods from String utility class
+ *
+ * @param string $method Method to invoke
+ * @param array $params Array of params for the method.
  * @return mixed Whatever is returned by called method, or false on failure
  */
 	public function __call($method, $params) {
@@ -101,7 +110,7 @@ class TextHelper extends Helper {
  * @return string The text with links
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoLinkUrls
  */
-	public function autoLinkUrls($text, $options = array()) {
+	public function autoLinkUrls($text, array $options = array()) {
 		$this->_placeholders = array();
 		$options += array('escape' => true);
 
@@ -182,7 +191,7 @@ class TextHelper extends Helper {
  * @return string The text with links
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoLinkEmails
  */
-	public function autoLinkEmails($text, $options = array()) {
+	public function autoLinkEmails($text, array $options = array()) {
 		$options += array('escape' => true);
 		$this->_placeholders = array();
 
@@ -210,12 +219,15 @@ class TextHelper extends Helper {
  * @return string The text with links
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoLink
  */
-	public function autoLink($text, $options = array()) {
+	public function autoLink($text, array $options = array()) {
 		$text = $this->autoLinkUrls($text, $options);
 		return $this->autoLinkEmails($text, array_merge($options, array('escape' => false)));
 	}
 
 /**
+ * Highlights a given phrase in a text. You can specify any expression in highlighter that
+ * may include the \1 expression to include the $phrase found.
+ *
  * @see String::highlight()
  *
  * @param string $text Text to search the phrase in
@@ -224,7 +236,7 @@ class TextHelper extends Helper {
  * @return string The highlighted text
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
  */
-	public function highlight($text, $phrase, $options = array()) {
+	public function highlight($text, $phrase, array $options = array()) {
 		return $this->_engine->highlight($text, $phrase, $options);
 	}
 
@@ -252,6 +264,8 @@ class TextHelper extends Helper {
 	}
 
 /**
+ * Strips given text of all links (<a href=....)
+ *
  * @see String::stripLinks()
  *
  * @param string $text Text
@@ -263,6 +277,16 @@ class TextHelper extends Helper {
 	}
 
 /**
+ * Truncates text starting from the end.
+ *
+ * Cuts a string to the length of $length and replaces the first characters
+ * with the ellipsis if the text is longer than length.
+ *
+ * ### Options:
+ *
+ * - `ellipsis` Will be used as Beginning and prepended to the trimmed string
+ * - `exact` If false, $text will not be cut mid-word
+ *
  * @see String::truncate()
  *
  * @param string $text String to truncate.
@@ -271,11 +295,14 @@ class TextHelper extends Helper {
  * @return string Trimmed string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
  */
-	public function truncate($text, $length = 100, $options = array()) {
+	public function truncate($text, $length = 100, array $options = array()) {
 		return $this->_engine->truncate($text, $length, $options);
 	}
 
 /**
+ * Extracts an excerpt from the text surrounding the phrase with a number of characters on each side
+ * determined by radius.
+ *
  * @see String::excerpt()
  *
  * @param string $text String to search the phrase in
@@ -290,6 +317,8 @@ class TextHelper extends Helper {
 	}
 
 /**
+ * Creates a comma separated list where the last two items are joined with 'and', forming natural English
+ *
  * @see String::toList()
  *
  * @param array $list The list to be joined
@@ -300,6 +329,15 @@ class TextHelper extends Helper {
  */
 	public function toList($list, $and = 'and', $separator = ', ') {
 		return $this->_engine->toList($list, $and, $separator);
+	}
+
+/**
+ * Event listeners.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [];
 	}
 
 }

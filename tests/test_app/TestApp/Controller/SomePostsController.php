@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestApp\Controller;
@@ -39,10 +39,11 @@ class SomePostsController extends Controller {
 /**
  * beforeFilter method
  *
+ * @param Event $event
  * @return void
  */
 	public function beforeFilter(Event $event) {
-		if ($this->request->params['action'] == 'index') {
+		if ($this->request->params['action'] === 'index') {
 			$this->request->params['action'] = 'view';
 		} else {
 			$this->request->params['action'] = 'change';
@@ -56,7 +57,6 @@ class SomePostsController extends Controller {
  * @return void
  */
 	public function index() {
-		return true;
 	}
 
 /**
@@ -65,7 +65,6 @@ class SomePostsController extends Controller {
  * @return void
  */
 	public function change() {
-		return true;
 	}
 
 }

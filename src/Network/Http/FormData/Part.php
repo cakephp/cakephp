@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network\Http\FormData;
@@ -77,7 +77,6 @@ class Part {
  * @param string $name The name of the data.
  * @param string $value The value of the data.
  * @param string $disposition The type of disposition to use, defaults to form-data.
- * @return void
  */
 	public function __construct($name, $value, $disposition = 'form-data') {
 		$this->_name = $name;
@@ -105,7 +104,7 @@ class Part {
  * Get/set the contentId for a part.
  *
  * @param null|string $id The content id.
- * @return mixed.
+ * @return mixed
  */
 	public function contentId($id = null) {
 		if ($id === null) {

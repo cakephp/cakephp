@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Network\Email;
@@ -27,9 +27,9 @@ class MailTransport extends AbstractTransport {
 /**
  * Send mail
  *
- * @param Cake\Network\Email\Email $email Cake Email
+ * @param \Cake\Network\Email\Email $email Cake Email
  * @return array
- * @throws SocketException When mail cannot be sent.
+ * @throws \Cake\Error\SocketException When mail cannot be sent.
  */
 	public function send(Email $email) {
 		$eol = PHP_EOL;
@@ -61,14 +61,17 @@ class MailTransport extends AbstractTransport {
  * @param string $message email's body
  * @param string $headers email's custom headers
  * @param string $params additional params for sending email
- * @throws Cake\Error\SocketException if mail could not be sent
+ * @throws \Cake\Error\SocketException if mail could not be sent
  * @return void
  */
 	protected function _mail($to, $subject, $message, $headers, $params = null) {
 		//@codingStandardsIgnoreStart
 		if (!@mail($to, $subject, $message, $headers, $params)) {
-			throw new Error\SocketException('Could not send email.');
+			$error = error_get_last();
+			$msg = 'Could not send email: ' . isset($error['message']) ? $error['message'] : 'unknown';
+			throw new Error\SocketException($msg);
 		}
+		//@codingStandardsIgnoreEnd
 	}
 
 }

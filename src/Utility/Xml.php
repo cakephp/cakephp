@@ -13,7 +13,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP v .0.10.3.1400
+ * @since         0.10.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
@@ -82,9 +82,9 @@ class Xml {
  * - If using array as input, you can pass `options` from Xml::fromArray.
  *
  * @param string|array $input XML string, a path to a file, a URL or an array
- * @param array $options The options to use
- * @return SimpleXMLElement|DOMDocument SimpleXMLElement or DOMDocument
- * @throws Cake\Error\XmlException
+ * @param string|array $options The options to use
+ * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
+ * @throws \Cake\Error\XmlException
  */
 	public static function build($input, $options = array()) {
 		if (!is_array($options)) {
@@ -94,7 +94,7 @@ class Xml {
 			'return' => 'simplexml',
 			'loadEntities' => false,
 		);
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 
 		if (is_array($input) || is_object($input)) {
 			return static::fromArray((array)$input, $options);
@@ -124,8 +124,8 @@ class Xml {
  *
  * @param string $input The input to load.
  * @param array $options The options to use. See Xml::build()
- * @return SimpleXmlElement|DOMDocument
- * @throws Cake\Error\XmlException
+ * @return \SimpleXmlElement|\DOMDocument
+ * @throws \Cake\Error\XmlException
  */
 	protected static function _loadXml($input, $options) {
 		$hasDisable = function_exists('libxml_disable_entity_loader');
@@ -187,9 +187,9 @@ class Xml {
  * `<root><tag id="1" value="defect">description</tag></root>`
  *
  * @param array $input Array with data
- * @param array $options The options to use
- * @return SimpleXMLElement|DOMDocument SimpleXMLElement or DOMDocument
- * @throws Cake\Error\XmlException
+ * @param string|array $options The options to use
+ * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
+ * @throws \Cake\Error\XmlException
  */
 	public static function fromArray($input, $options = array()) {
 		if (!is_array($input) || count($input) !== 1) {
@@ -210,7 +210,7 @@ class Xml {
 			'return' => 'simplexml',
 			'pretty' => false
 		);
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 
 		$dom = new DOMDocument($options['version'], $options['encoding']);
 		if ($options['pretty']) {
@@ -228,12 +228,12 @@ class Xml {
 /**
  * Recursive method to create childs from array
  *
- * @param DOMDocument $dom Handler to DOMDocument
- * @param DOMElement $node Handler to DOMElement (child)
+ * @param \DOMDocument $dom Handler to DOMDocument
+ * @param \DOMElement $node Handler to DOMElement (child)
  * @param array $data Array of data to append to the $node.
  * @param string $format Either 'attribute' or 'tags'. This determines where nested keys go.
  * @return void
- * @throws Cake\Error\XmlException
+ * @throws \Cake\Error\XmlException
  */
 	protected static function _fromArray($dom, $node, &$data, $format) {
 		if (empty($data) || !is_array($data)) {
@@ -329,9 +329,9 @@ class Xml {
 /**
  * Returns this XML structure as a array.
  *
- * @param SimpleXMLElement|DOMDocument|DOMNode $obj SimpleXMLElement, DOMDocument or DOMNode instance
+ * @param \SimpleXMLElement|\DOMDocument|\DOMNode $obj SimpleXMLElement, DOMDocument or DOMNode instance
  * @return array Array representation of the XML structure.
- * @throws Cake\Error\XmlException
+ * @throws \Cake\Error\XmlException
  */
 	public static function toArray($obj) {
 		if ($obj instanceof \DOMNode) {
@@ -349,7 +349,7 @@ class Xml {
 /**
  * Recursive method to toArray
  *
- * @param SimpleXMLElement $xml SimpleXMLElement object
+ * @param \SimpleXMLElement $xml SimpleXMLElement object
  * @param array $parentData Parent array with data
  * @param string $ns Namespace of current child
  * @param array $namespaces List of namespaces in XML

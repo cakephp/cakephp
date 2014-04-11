@@ -9,17 +9,17 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	  Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link		  http://cakephp.org CakePHP(tm) Project
- * @since		  CakePHP(tm) v 2.2
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 namespace Cake\Routing;
 
+use Cake\Core\InstanceConfigTrait;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
-use Cake\Utility\Hash;
 
 /**
  * This abstract class represents a filter to be applied to a dispatcher cycle. It acts as as
@@ -29,6 +29,8 @@ use Cake\Utility\Hash;
  */
 abstract class DispatcherFilter implements EventListener {
 
+	use InstanceConfigTrait;
+
 /**
  * Default priority for all methods in this filter
  *
@@ -37,19 +39,21 @@ abstract class DispatcherFilter implements EventListener {
 	public $priority = 10;
 
 /**
- * Settings for this filter
+ * Default config
+ *
+ * These are merged with user-provided config when the class is used.
  *
  * @var array
  */
-	public $settings = array();
+	protected $_defaultConfig = [];
 
 /**
  * Constructor.
  *
- * @param string $setting Configuration settings for the filter.
+ * @param array $config Settings for the filter.
  */
-	public function __construct($settings = array()) {
-		$this->settings = Hash::merge($this->settings, $settings);
+	public function __construct($config = []) {
+		$this->config($config);
 	}
 
 /**
@@ -80,9 +84,8 @@ abstract class DispatcherFilter implements EventListener {
  * If false is returned, the event will be stopped and no more listeners will be notified.
  * Alternatively you can call `$event->stopPropagation()` to achieve the same result.
  *
- * @param Cake\Event\Event $event container object having the `request`, `response` and `additionalParams`
+ * @param \Cake\Event\Event $event container object having the `request`, `response` and `additionalParams`
  *    keys in the data property.
- * @return Cake\Network\Response|boolean
  */
 	public function beforeDispatch(Event $event) {
 	}
@@ -95,9 +98,8 @@ abstract class DispatcherFilter implements EventListener {
  * If false is returned, the event will be stopped and no more listeners will be notified.
  * Alternatively you can call `$event->stopPropagation()` to achieve the same result.
  *
- * @param Cake\Event\Event $event container object having the `request` and  `response`
+ * @param \Cake\Event\Event $event container object having the `request` and  `response`
  *    keys in the data property.
- * @return mixed boolean to stop the event dispatching or null to continue
  */
 	public function afterDispatch(Event $event) {
 	}

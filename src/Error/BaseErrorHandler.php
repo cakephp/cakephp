@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Error;
@@ -46,7 +46,7 @@ abstract class BaseErrorHandler {
  * Subclasses should implement this method to display an uncaught exception as
  * desired for the runtime they operate in.
  *
- * @param \Exceptino $exception The uncaught exception.
+ * @param \Exception $exception The uncaught exception.
  * @return void
  */
 	abstract protected function _displayException($exception);
@@ -65,6 +65,9 @@ abstract class BaseErrorHandler {
 		set_error_handler([$this, 'handleError'], $level);
 		set_exception_handler([$this, 'handleException']);
 		register_shutdown_function(function () {
+			if (php_sapi_name() === 'cli') {
+				return;
+			}
 			$error = error_get_last();
 			if (!is_array($error)) {
 				return;

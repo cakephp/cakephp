@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View;
@@ -38,7 +38,7 @@ class HelperRegistry extends ObjectRegistry {
  *
  * Helpers constructed by this object will be subscribed to this manager.
  *
- * @var Cake\Event\EventManager
+ * @var \Cake\Event\EventManager
  */
 	protected $_eventManager;
 
@@ -59,7 +59,7 @@ class HelperRegistry extends ObjectRegistry {
  *
  * @param string $helper The helper name to be loaded
  * @return boolean whether the helper could be loaded or not
- * @throws MissingHelperException When a helper could not be found.
+ * @throws \Cake\Error\MissingHelperException When a helper could not be found.
  *    App helpers are searched, and then plugin helpers.
  */
 	public function __isset($helper) {
@@ -118,7 +118,7 @@ class HelperRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the helper is missing in.
- * @throws Cake\Error\MissingHelperException
+ * @throws \Cake\Error\MissingHelperException
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\MissingHelperException([
@@ -136,7 +136,7 @@ class HelperRegistry extends ObjectRegistry {
  * @param string $class The class to create.
  * @param string $alias The alias of the loaded helper.
  * @param array $settings An array of settings to use for the helper.
- * @return Component The constructed helper class.
+ * @return \Cake\Controller\Component The constructed helper class.
  */
 	protected function _create($class, $alias, $settings) {
 		$instance = new $class($this->_View, $settings);
@@ -149,20 +149,6 @@ class HelperRegistry extends ObjectRegistry {
 			$this->_eventManager->attach($instance);
 		}
 		return $instance;
-	}
-
-/**
- * Destroys all objects in the registry.
- *
- * Removes all attached listeners and destroys all stored instances.
- *
- * @return void
- */
-	public function reset() {
-		foreach ($this->_loaded as $helper) {
-			$this->_eventManager->detach($helper);
-		}
-		parent::reset();
 	}
 
 }

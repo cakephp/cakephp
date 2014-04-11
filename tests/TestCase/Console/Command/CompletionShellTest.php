@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @since         CakePHP v 2.5
+ * @since         2.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Console\Command;
@@ -112,7 +112,7 @@ class CompletionShellTest extends TestCase {
 		$this->Shell->runCommand('commands', array());
 		$output = $this->Shell->stdout->output;
 
-		$expected = "TestPlugin.example TestPluginTwo.example TestPluginTwo.welcome bake i18n server test upgrade sample\n";
+		$expected = "TestPlugin.example TestPluginTwo.example TestPluginTwo.welcome bake i18n server test sample\n";
 		$this->assertEquals($expected, $output);
 	}
 
@@ -164,7 +164,7 @@ class CompletionShellTest extends TestCase {
 		$this->Shell->runCommand('subCommands', array('subCommands', 'CORE.bake'));
 		$output = $this->Shell->stdout->output;
 
-		$expected = "controller db_config fixture model plugin project test view\n";
+		$expected = "behavior component controller fixture helper model plugin project test view widget zerg\n";
 		$this->assertEquals($expected, $output);
 	}
 
@@ -229,7 +229,7 @@ class CompletionShellTest extends TestCase {
 		$this->Shell->runCommand('subCommands', array('subCommands', 'bake'));
 		$output = $this->Shell->stdout->output;
 
-		$expected = "controller db_config fixture model plugin project test view\n";
+		$expected = "behavior component controller fixture helper model plugin project test view widget zerg\n";
 		$this->assertEquals($expected, $output);
 	}
 

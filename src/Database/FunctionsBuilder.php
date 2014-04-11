@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database;
@@ -141,8 +139,8 @@ class FunctionsBuilder {
  * @param array $types list of types to bind to the arguments
  * @return FunctionExpression
  */
-	public function dateDiff($dates, $types = []) {
-		return $this->_build('DATEDIFF', $dates, $types);
+	public function dateDiff($args, $types = []) {
+		return $this->_build('DATEDIFF', $args, $types);
 	}
 
 /**
@@ -172,7 +170,7 @@ class FunctionsBuilder {
  * @param array $args list with up to 2 arguments, first one being an array with
  * parameters for the SQL function and second one a list of types to bind to those
  * params
- * @return \Cake\Database\FunctionExpression
+ * @return \Cake\Database\Expression\FunctionExpression
  */
 	public function __call($name, $args) {
 		switch (count($args)) {

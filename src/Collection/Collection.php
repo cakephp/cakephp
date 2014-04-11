@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Collection;
@@ -32,7 +32,6 @@ class Collection extends IteratorIterator implements JsonSerializable {
  * Constructor. You can provide an array or any traversable object
  *
  * @param array|\Traversable $items
- * @return void
  * @throws InvalidArgumentException if passed incorrect type for items.
  */
 	public function __construct($items) {

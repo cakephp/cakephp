@@ -11,10 +11,12 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.4.0
+ * @since         2.4.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Auth;
+
+use Cake\Core\InstanceConfigTrait;
 
 /**
  * Abstract password hashing class
@@ -22,34 +24,24 @@ namespace Cake\Controller\Component\Auth;
  */
 abstract class AbstractPasswordHasher {
 
+	use InstanceConfigTrait;
+
 /**
- * Configurations for this object. Settings passed from authenticator class to
- * the constructor are merged with this property.
+ * Default config
+ *
+ * These are merged with user-provided config when the object is used.
  *
  * @var array
  */
-	protected $_config = array();
+	protected $_defaultConfig = [];
 
 /**
  * Constructor
  *
  * @param array $config Array of config.
  */
-	public function __construct($config = array()) {
+	public function __construct(array $config = array()) {
 		$this->config($config);
-	}
-
-/**
- * Get/Set the config
- *
- * @param array $config Sets config, if null returns existing config
- * @return array Returns configs
- */
-	public function config($config = null) {
-		if (is_array($config)) {
-			$this->_config = array_merge($this->_config, $config);
-		}
-		return $this->_config;
 	}
 
 /**
@@ -66,7 +58,7 @@ abstract class AbstractPasswordHasher {
  * and check against existing hash.
  *
  * @param string|array $password Plain text password to hash or data array.
- * @param string Existing hashed password.
+ * @param string $hashedPassword Existing hashed password.
  * @return boolean True if hashes match else false.
  */
 	abstract public function check($password, $hashedPassword);

@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller\Component;
@@ -18,7 +18,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\Error;
 use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
@@ -46,7 +46,14 @@ class PaginatorComponentTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.post', 'core.author');
+	public $fixtures = array('core.post');
+
+/**
+ * Don't load data for fixtures for all tests
+ *
+ * @var boolean
+ */
+	public $autoFixtures = false;
 
 /**
  * setup
@@ -116,28 +123,20 @@ class PaginatorComponentTest extends TestCase {
 		);
 		$table = $this->_getMockPosts(['find']);
 		$query = $this->_getMockFindQuery();
-		$table->expects($this->at(0))
+		$table->expects($this->once())
 			->method('find')
-			->with('all', [
-				'conditions' => [],
+			->with('all')
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())
+			->method('applyOptions')
+			->with([
 				'contain' => ['PaginatorAuthor'],
-				'fields' => null,
 				'group' => 'PaginatorPosts.published',
 				'limit' => 10,
 				'order' => ['PaginatorPosts.id' => 'ASC'],
 				'page' => 1,
-			])
-			->will($this->returnValue($query));
-
-		$table->expects($this->at(1))
-			->method('find')
-			->with('all', [
-				'conditions' => [],
-				'contain' => ['PaginatorAuthor'],
-				'group' => 'PaginatorPosts.published',
-			])
-			->will($this->returnValue($query));
-
+			]);
 		$this->Paginator->paginate($table, $settings);
 	}
 
@@ -180,22 +179,50 @@ class PaginatorComponentTest extends TestCase {
 		$table = $this->_getMockPosts(['find']);
 		$query = $this->_getMockFindQuery();
 
-		$table->expects($this->at(0))
+		$table->expects($this->once())
 			->method('find')
-			->with('all', [
-				'conditions' => [],
-				'fields' => null,
+			->with('all')
+			->will($this->returnValue($query));
+		$query->expects($this->once())
+			->method('applyOptions')
+			->with([
 				'limit' => 10,
 				'page' => 1,
 				'order' => ['PaginatorPosts.id' => 'DESC']
-			])
-			->will($this->returnValue($query));
-
-		$table->expects($this->at(1))
-			->method('find')
-			->will($this->returnValue($query));
+			]);
 
 		$this->Paginator->paginate($table, $settings);
+	}
+
+/**
+ * test that default sort and default direction are injected into request
+ *
+ * @return void
+ */
+	public function testDefaultPaginateParamsIntoRequest() {
+		$settings = array(
+			'order' => ['PaginatorPosts.id' => 'DESC'],
+			'maxLimit' => 10,
+		);
+
+		$table = $this->_getMockPosts(['find']);
+		$query = $this->_getMockFindQuery();
+
+		$table->expects($this->once())
+			->method('find')
+			->with('all')
+			->will($this->returnValue($query));
+		$query->expects($this->once())
+			->method('applyOptions')
+			->with([
+				'limit' => 10,
+				'page' => 1,
+				'order' => ['PaginatorPosts.id' => 'DESC']
+			]);
+
+		$this->Paginator->paginate($table, $settings);
+		$this->assertEquals('PaginatorPosts.id', $this->request->params['paging']['PaginatorPosts']['sortDefault']);
+		$this->assertEquals('DESC', $this->request->params['paging']['PaginatorPosts']['directionDefault']);
 	}
 
 /**
@@ -311,7 +338,7 @@ class PaginatorComponentTest extends TestCase {
 			'limit' => 20,
 			'maxLimit' => 100,
 		);
-		$this->Paginator->whitelist[] = 'fields';
+		$this->Paginator->config('whitelist', ['fields']);
 		$result = $this->Paginator->mergeOptions('Post', $settings);
 		$expected = array(
 			'page' => 10, 'limit' => 10, 'maxLimit' => 100, 'fields' => array('bad.stuff')
@@ -351,20 +378,16 @@ class PaginatorComponentTest extends TestCase {
 		$table = $this->_getMockPosts(['find']);
 		$query = $this->_getMockFindQuery();
 
-		$table->expects($this->at(0))
+		$table->expects($this->once())
 			->method('find')
-			->with('all', [
-				'fields' => null,
+			->with('all')
+			->will($this->returnValue($query));
+		$query->expects($this->once())->method('applyOptions')
+			->with([
 				'limit' => 20,
-				'conditions' => [],
 				'page' => 1,
-				'order' => ['PaginatorPosts.id' => 'asc'],
-			])
-			->will($this->returnValue($query));
-
-		$table->expects($this->at(1))
-			->method('find')
-			->will($this->returnValue($query));
+				'order' => ['PaginatorPosts.id' => 'asc']
+			]);
 
 		$this->request->query = [
 			'page' => 1,
@@ -402,6 +425,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testOutOfRangePageNumberGetsClamped() {
+		$this->loadFixtures('Post');
 		$this->request->query['page'] = 3000;
 
 		$table = TableRegistry::get('PaginatorPosts');
@@ -420,10 +444,11 @@ class PaginatorComponentTest extends TestCase {
 /**
  * Test that a really REALLY large page number gets clamped to the max page size.
  *
- * @expectedException Cake\Error\NotFoundException
+ * @expectedException \Cake\Error\NotFoundException
  * @return void
  */
 	public function testOutOfVeryBigPageNumberGetsClamped() {
+		$this->loadFixtures('Post');
 		$this->request->query = [
 			'page' => '3000000000000000000000000',
 		];
@@ -505,6 +530,27 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
+ * Tests that order strings can used by Paginator
+ *
+ * @return void
+ */
+	public function testValidateSortWithString() {
+		$model = $this->getMock('Cake\ORM\Table');
+		$model->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('model'));
+		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+
+		$options = array(
+			'order' => 'model.author_id DESC'
+		);
+		$result = $this->Paginator->validateSort($model, $options);
+		$expected = 'model.author_id DESC';
+
+		$this->assertEquals($expected, $result['order']);
+	}
+
+/**
  * Test that no sort doesn't trigger an error.
  *
  * @return void
@@ -570,6 +616,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateMaxLimit() {
+		$this->loadFixtures('Post');
 		$table = TableRegistry::get('PaginatorPosts');
 
 		$settings = [
@@ -594,6 +641,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateCustomFind() {
+		$this->loadFixtures('Post');
 		$idExtractor = function ($result) {
 			$ids = [];
 			foreach ($result as $record) {
@@ -643,6 +691,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateCustomFindFieldsArray() {
+		$this->loadFixtures('Post');
 		$table = TableRegistry::get('PaginatorPosts');
 		$data = array('author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
 		$table->save(new \Cake\ORM\Entity($data));
@@ -682,37 +731,102 @@ class PaginatorComponentTest extends TestCase {
 		);
 		$table = $this->_getMockPosts(['find']);
 		$query = $this->_getMockFindQuery();
-		$table->expects($this->at(0))
+		$table->expects($this->once())
 			->method('find')
-			->with('published', [
-				'conditions' => [],
-				'order' => [],
-				'limit' => 2,
-				'fields' => null,
-				'page' => 1,
-			])
+			->with('published')
 			->will($this->returnValue($query));
 
-		$table->expects($this->at(1))
-			->method('find')
-			->with('published', [
-				'conditions' => [],
-			])
-			->will($this->returnValue($query));
-
+		$query->expects($this->once())->method('applyOptions')
+			->with(['limit' => 2, 'page' => 1, 'order' => []]);
 		$this->Paginator->paginate($table, $settings);
+	}
+
+/**
+ * Tests that it is possible to pass an already made query object to
+ * paginate()
+ *
+ * @return void
+ */
+	public function testPaginateQuery() {
+		$this->request->query = array('page' => '-1');
+		$settings = array(
+			'PaginatorPosts' => array(
+				'contain' => array('PaginatorAuthor'),
+				'maxLimit' => 10,
+				'group' => 'PaginatorPosts.published',
+				'order' => array('PaginatorPosts.id' => 'ASC')
+			)
+		);
+		$table = $this->_getMockPosts(['find']);
+		$query = $this->_getMockFindQuery($table);
+		$table->expects($this->never())->method('find');
+		$query->expects($this->once())
+			->method('applyOptions')
+			->with([
+				'contain' => ['PaginatorAuthor'],
+				'group' => 'PaginatorPosts.published',
+				'limit' => 10,
+				'order' => ['PaginatorPosts.id' => 'ASC'],
+				'page' => 1,
+			]);
+		$this->Paginator->paginate($query, $settings);
+	}
+
+/**
+ * Tests that passing a query object with a limit clause set will
+ * overwrite it with the passed defaults.
+ *
+ * @return void
+ */
+	public function testPaginateQueryWithLimit() {
+		$this->request->query = array('page' => '-1');
+		$settings = array(
+			'PaginatorPosts' => array(
+				'contain' => array('PaginatorAuthor'),
+				'maxLimit' => 10,
+				'limit' => 5,
+				'group' => 'PaginatorPosts.published',
+				'order' => array('PaginatorPosts.id' => 'ASC')
+			)
+		);
+		$table = $this->_getMockPosts(['find']);
+		$query = $this->_getMockFindQuery($table);
+		$query->limit(2);
+		$table->expects($this->never())->method('find');
+		$query->expects($this->once())
+			->method('applyOptions')
+			->with([
+				'contain' => ['PaginatorAuthor'],
+				'group' => 'PaginatorPosts.published',
+				'limit' => 5,
+				'order' => ['PaginatorPosts.id' => 'ASC'],
+				'page' => 1,
+			]);
+		$this->Paginator->paginate($query, $settings);
 	}
 
 /**
  * Helper method for making mocks.
  *
+ * @param array $methods
  * @return Table
  */
 	protected function _getMockPosts($methods = []) {
 		return $this->getMock(
-			'TestApp\Model\Repository\PaginatorPostsTable',
+			'TestApp\Model\Table\PaginatorPostsTable',
 			$methods,
-			[['connection' => ConnectionManager::get('test'), 'alias' => 'PaginatorPosts']]
+			[[
+				'connection' => ConnectionManager::get('test'),
+				'alias' => 'PaginatorPosts',
+				'schema' => [
+					'id' => ['type' => 'integer'],
+					'author_id' => ['type' => 'integer', 'null' => false],
+					'title' => ['type' => 'string', 'null' => false],
+					'body' => 'text',
+					'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
+					'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+				]
+			]]
 		);
 	}
 
@@ -721,11 +835,14 @@ class PaginatorComponentTest extends TestCase {
  *
  * @return Query
  */
-	protected function _getMockFindQuery() {
-		$query = $this->getMock('Cake\ORM\Query', ['total', 'all'], [], '', false);
+	protected function _getMockFindQuery($table = null) {
+		$query = $this->getMockBuilder('Cake\ORM\Query')
+			->setMethods(['total', 'all', 'count', 'applyOptions'])
+			->disableOriginalConstructor()
+			->getMock();
 
 		$results = $this->getMock('Cake\ORM\ResultSet', [], [], '', false);
-		$results->expects($this->any())
+		$query->expects($this->any())
 			->method('count')
 			->will($this->returnValue(2));
 
@@ -737,6 +854,7 @@ class PaginatorComponentTest extends TestCase {
 			->method('count')
 			->will($this->returnValue(2));
 
+		$query->repository($table);
 		return $query;
 	}
 

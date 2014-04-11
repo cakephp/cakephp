@@ -1,9 +1,5 @@
 <?php
 /**
- * EventMangerTest file
- *
- * Test Case for EventManager class
- *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,10 +7,10 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link http://cakephp.org CakePHP Project
- * @since CakePHP v 2.1
- * @license http://www.opensource.org/licenses/mit-license.php MIT License
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP Project
+ * @since         2.1.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Event;
 
@@ -51,7 +47,7 @@ class EventTestListener {
 /**
  * Auxiliary function to help in stopPropagation testing
  *
- * @param Cake\Event\Event $event
+ * @param \Cake\Event\Event $event
  * @return void
  */
 	public function stopListener($event) {
@@ -474,6 +470,44 @@ class EventManagerTest extends TestCase {
 		$expected = array('listenerFunction', 'secondListenerFunction');
 		$this->assertEquals($expected, $listener->callStack);
 		EventManager::instance(new EventManager());
+	}
+
+/**
+ * test callback
+ */
+	public function onMyEvent($event) {
+		$event->data['callback'] = 'ok';
+	}
+
+/**
+ * Tests events dispatched by a local manager can be handled by
+ * handler registered in the global event manager
+ */
+	public function testDispatchLocalHandledByGlobal() {
+		$callback = array($this, 'onMyEvent');
+		EventManager::instance()->attach($callback, 'my_event');
+		$manager = new EventManager();
+		$event = new Event('my_event', $manager);
+		$manager->dispatch($event);
+		$this->assertEquals('ok', $event->data['callback']);
+	}
+
+/**
+ * Test that events are dispatched properly when there are global and local
+ * listeners at the same priority.
+ *
+ * @return void
+ */
+	public function testDispatchWithGlobalAndLocalEvents() {
+		$listener = new CustomTestEventListener();
+		EventManager::instance()->attach($listener);
+		$listener2 = new EventTestListener();
+		$manager = new EventManager();
+		$manager->attach(array($listener2, 'listenerFunction'), 'fake.event');
+
+		$manager->dispatch(new Event('fake.event', $this));
+		$this->assertEquals(array('listenerFunction'), $listener->callStack);
+		$this->assertEquals(array('listenerFunction'), $listener2->callStack);
 	}
 
 }

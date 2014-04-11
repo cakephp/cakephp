@@ -9,18 +9,22 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Collection;
 
 use AppendIterator;
+use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
+use Cake\Collection\Iterator\InsertIterator;
 use Cake\Collection\Iterator\MapReduce;
+use Cake\Collection\Iterator\NestIterator;
 use Cake\Collection\Iterator\ReplaceIterator;
 use Cake\Collection\Iterator\SortIterator;
+use Cake\Collection\Iterator\TreeIterator;
 use LimitIterator;
 
 /**
@@ -70,15 +74,21 @@ trait CollectionTrait {
  *
  * {{{
  * $collection = (new Collection([1, 2, 3]))->filter(function($value, $key) {
- *	return $value % 2 === 0;
+ *  return $value % 2 === 0;
  * });
  * }}}
  *
  * @param callable $c the method that will receive each of the elements and
- * returns true whether or not they should be in the resulting collection.
- * @return \Cake\Collection\Iterator\FilterIterator;
+ *   returns true whether or not they should be in the resulting collection.
+ *   If left null, a callback that filters out falsey values will be used.
+ * @return \Cake\Collection\Iterator\FilterIterator
  */
-	public function filter(callable $c) {
+	public function filter(callable $c = null) {
+		if ($c === null) {
+			$c = function ($v) {
+				return (bool)$v;
+			};
+		}
 		return new FilterIterator($this, $c);
 	}
 
@@ -103,7 +113,7 @@ trait CollectionTrait {
  *
  * @param callable $c the method that will receive each of the elements and
  * returns true whether or not they should be out of the resulting collection.
- * @return \Cake\Collection\Iterator\FilterIterator;
+ * @return \Cake\Collection\Iterator\FilterIterator
  */
 	public function reject(callable $c) {
 		return new FilterIterator($this, function ($key, $value, $items) use ($c) {
@@ -173,7 +183,7 @@ trait CollectionTrait {
  * Returns true if $value is present in this collection. Comparisons are made
  * both by value and type.
  *
- * @param mixed $value the value to check for
+ * @param mixed $value The value to check for
  * @return boolean true if $value is present in this collection
  */
 	public function contains($value) {
@@ -214,11 +224,11 @@ trait CollectionTrait {
 /**
  * Folds the values in this collection to a single value, as the result of
  * applying the callback function to all elements. $zero is the initial state
- * of the reduction, and each successive step should of it should be returned
+ * of the reduction, and each successive step of it should be returned
  * by the callback function.
  *
- * The callback function is
- *
+ * @param callable $c The callback function to be called
+ * @param mixed $zero The state of reduction
  * @return void
  */
 	public function reduce(callable $c, $zero) {
@@ -254,7 +264,7 @@ trait CollectionTrait {
  * ['Mark', 'Renan']
  * }}}
  *
- * @param string $path a dot separated string symbolizing the path to follow
+ * @param string $matcher a dot separated string symbolizing the path to follow
  * inside the hierarchy of each value so that the column can be extracted.
  * @return \Cake\Collection\Iterator\ExtractIterator
  */
@@ -280,10 +290,11 @@ trait CollectionTrait {
  * echo $max->name;
  * }}}
  *
- * @param callable|string the callback or column name to use for sorting
+ * @param callable|string $callback the callback or column name to use for sorting
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
  * @see \Cake\Collection\Collection::sortBy()
+ * @return mixed The value of the top element in the collection
  */
 	public function max($callback, $type = SORT_NUMERIC) {
 		$sorted = new SortIterator($this, $callback, SORT_DESC, $type);
@@ -309,10 +320,11 @@ trait CollectionTrait {
  * }}}
  *
  *
- * @param callable|string the callback or column name to use for sorting
+ * @param callable|string $callback the callback or column name to use for sorting
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
  * @see \Cake\Collection\Collection::sortBy()
+ * @return mixed The value of the bottom element in the collection
  */
 	public function min($callback, $type = SORT_NUMERIC) {
 		$sorted = new SortIterator($this, $callback, SORT_ASC, $type);
@@ -349,7 +361,7 @@ trait CollectionTrait {
  * }
  * }}}
  *
- * @param callable|string the callback or column name to use for sorting
+ * @param callable|string $callback the callback or column name to use for sorting
  * @param integer $dir either SORT_DESC or SORT_ASC
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
@@ -396,7 +408,7 @@ trait CollectionTrait {
  * ];
  * }}}
  *
- * @param callable|string the callback or column name to use for grouping
+ * @param callable|string $callback the callback or column name to use for grouping
  * or a function returning the grouping key out of the provided element
  * @return \Cake\Collection\Collection
  */
@@ -442,7 +454,7 @@ trait CollectionTrait {
  * ];
  * }}}
  *
- * @param callable|string the callback or column name to use for indexing
+ * @param callable|string $callback the callback or column name to use for indexing
  * or a function returning the indexing key out of the provided element
  * @return \Cake\Collection\Collection
  */
@@ -487,7 +499,7 @@ trait CollectionTrait {
  * ];
  * }}}
  *
- * @param callable|string the callback or column name to use for indexing
+ * @param callable|string $callback the callback or column name to use for indexing
  * or a function returning the indexing key out of the provided element
  * @return \Cake\Collection\Collection
  */
@@ -615,7 +627,7 @@ trait CollectionTrait {
  * Returns a new collection as the result of concatenating the list of elements
  * in this collection with the passed list of elements
  *
- * @param array|\Traversable
+ * @param array|\Traversable $items
  * @return \Cake\Collection\Collection
  */
 	public function append($items) {
@@ -623,6 +635,168 @@ trait CollectionTrait {
 		$list->append($this);
 		$list->append(new Collection($items));
 		return new Collection($list);
+	}
+
+/**
+ * Returns a new collection where the values extracted based on a value path
+ * and then indexed by a key path. Optionally this method can produce parent
+ * groups based on a group property path.
+ *
+ * ### Examples:
+ *
+ * {{{
+ * $items = [
+ *	['id' => 1, 'name' => 'foo', 'parent' => 'a'],
+ *	['id' => 2, 'name' => 'bar', 'parent' => 'b'],
+ *	['id' => 3, 'name' => 'baz', 'parent' => 'a'],
+ * ];
+ *
+ * $combined = (new Collection($items))->combine('id', 'name');
+ *
+ * //Result will look like this when converted to array
+ * [
+ *	1 => 'foo',
+ *	2 => 'bar',
+ *	3 => 'baz,
+ * ];
+ *
+ * $combined = (new Collection($items))->combine('id', 'name', 'parent');
+ *
+ * //Result will look like this when converted to array
+ * [
+ *	'a' => [1 => 'foo', 3 => 'baz'],
+ *	'b' => [2 => 'bar']
+ * ];
+ * }}}
+ *
+ * @param callable|string $keyPath the column name path to use for indexing
+ * or a function returning the indexing key out of the provided element
+ * @param callable|string $valuePath the column name path to use as the array value
+ * or a function returning the value out of the provided element
+ * @param callable|string $groupPath the column name path to use as the parent
+ * grouping key or a function returning the key out of the provided element
+ * @return \Cake\Collection\Collection
+ */
+	public function combine($keyPath, $valuePath, $groupPath = null) {
+		$options = [
+			'keyPath' => $this->_propertyExtractor($keyPath),
+			'valuePath' => $this->_propertyExtractor($valuePath),
+			'groupPath' => $groupPath ? $this->_propertyExtractor($groupPath) : null
+		];
+
+		$mapper = function($value, $key, $mapReduce) use ($options) {
+			$rowKey = $options['keyPath'];
+			$rowVal = $options['valuePath'];
+
+			if (!($options['groupPath'])) {
+				$mapReduce->emit($rowVal($value, $key), $rowKey($value, $key));
+				return;
+			}
+
+			$key = $options['groupPath']($value, $key);
+			$mapReduce->emitIntermediate(
+				[$rowKey($value, $key) => $rowVal($value, $key)],
+				$key
+			);
+		};
+
+		$reducer = function($values, $key, $mapReduce) {
+			$result = [];
+			foreach ($values as $value) {
+				$result += $value;
+			}
+			$mapReduce->emit($result, $key);
+		};
+
+		return new Collection(new MapReduce($this, $mapper, $reducer));
+	}
+
+/**
+ * Returns a new collection where the values are nested in a tree-like structure
+ * based on an id property path and a parent id property path.
+ *
+ * @param callable|string $idPath the column name path to use for determining
+ * whether an element is parent of another
+ * @param callable|string $parentPath the column name path to use for determining
+ * whether an element is child of another
+ * @return \Cake\Collection\Collection
+ */
+	public function nest($idPath, $parentPath) {
+		$parents = [];
+		$idPath = $this->_propertyExtractor($idPath);
+		$parentPath = $this->_propertyExtractor($parentPath);
+		$isObject = !is_array((new Collection($this))->first());
+
+		$mapper = function($row, $key, $mapReduce) use (&$parents, $idPath, $parentPath) {
+			$row['children'] = [];
+			$id = $idPath($row, $key);
+			$parentId = $parentPath($row, $key);
+			$parents[$id] =& $row;
+			$mapReduce->emitIntermediate($id, $parentId);
+		};
+
+		$reducer = function($values, $key, $mapReduce) use (&$parents, $isObject) {
+			if (empty($key) || !isset($parents[$key])) {
+				foreach ($values as $id) {
+					$parents[$id] = $isObject ? $parents[$id] : new ArrayObject($parents[$id]);
+					$mapReduce->emit($parents[$id]);
+				}
+				return;
+			}
+
+			foreach ($values as $id) {
+				$parents[$key]['children'][] =& $parents[$id];
+			}
+		};
+
+		$collection = new MapReduce($this, $mapper, $reducer);
+		if (!$isObject) {
+			$collection = (new Collection($collection))->map(function($value) {
+				return (array)$value;
+			});
+		}
+
+		return new Collection($collection);
+	}
+
+/**
+ * Returns a new collection containing each of the elements found in `$values` as
+ * a property inside the corresponding elements in this collection. The property
+ * where the values will be inserted is described by the `$path` parameter.
+ *
+ * The $path can be a string with a property name or a dot separated path of
+ * properties that should be followed to get the last one in the path.
+ *
+ * If a column or property could not be found for a particular element in the
+ * collection as part of the path, the element will be kept unchanged.
+ *
+ * ### Example:
+ *
+ * Insert ages into a collection containing users:
+ *
+ * {{{
+ * $items = [
+ *	['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
+ *	['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan']]
+ * ];
+ * $ages = [25, 28];
+ * $inserted = (new Collection($items))->insert('comment.user.age', $ages);
+ *
+ * //Result will look like this when converted to array
+ * [
+ *	['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark', 'age' => 25]],
+ *	['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan', 'age' => 28]]
+ * ];
+ * }}}
+ *
+ * @param string $path a dot separated string symbolizing the path to follow
+ * inside the hierarchy of each value so that the value can be inserted
+ * @param array|\Traversable The values to be inserted at the specified path,
+ * values are matched with the elements in this collection by its positional index.
+ * @return \Cake\Collection\Iterator\InsertIterator
+ */
+	public function insert($path, $values) {
+		return new InsertIterator($this, $path, $values);
 	}
 
 /**
@@ -683,6 +857,58 @@ trait CollectionTrait {
  */
 	public function compile($preserveKeys = true) {
 		return new Collection($this->toArray($preserveKeys));
+	}
+
+/**
+ * Returns a new collection with each of the elements of this collection
+ * after flattening the tree structure. The tree structure is defined
+ * by nesting elements under a key with a known name. It is possible
+ * to specify such name by using the '$nestingKey' parameter.
+ *
+ * By default all elements in the tree following a Depth First Search
+ * will be returned, that is, elements from the top parent to the leaves
+ * for each branch.
+ *
+ * It is possible to return all elements from bottom to top using a Breadth First
+ * Search approach by passing the '$dir' parameter with 'asc'. That is, it will
+ * return all elements for the same tree depth first and from bottom to top.
+ *
+ * Finally, you can specify to only get a collection with the leaf nodes in the
+ * tree structure. You do so by passing 'leaves' in the first argument.
+ *
+ * The possible values for the first argument are aliases for the following
+ * constants and it is valid to pass those instead of the alias:
+ *
+ * - desc: TreeIterator::SELF_FIRST
+ * - asc: TreeIterator::CHILD_FIRST
+ * - leaves: TreeIterator::LEAVES_ONLY
+ *
+ * ### Example:
+ *
+ * {{{
+ * $collection = new Collection([
+ *	['id' => 1, 'children' => [['id' => 2, 'children' => [['id' => 3]]]]],
+ *	['id' => 4, 'children' => [['id' => 5]]]
+ * ]);
+ * $flattenedIds = $collection->listNested()->extract('id'); // Yields [1, 2, 3, 4, 5]
+ * }}}
+ *
+ * @param string|integer $dir The direction in which to return the elements
+ * @param string|callable $nestingKey The key name under which children are nested
+ * or a callable function that will return the children list
+ * @return \Cake\Collection\Iterator\TreeIterator
+ */
+	public function listNested($dir = 'desc', $nestingKey = 'children') {
+		$dir = strtolower($dir);
+		$modes = [
+			'desc' => TreeIterator::SELF_FIRST,
+			'asc' => TreeIterator::CHILD_FIRST,
+			'leaves' => TreeIterator::LEAVES_ONLY
+		];
+		return new TreeIterator(
+			new NestIterator($this, $nestingKey),
+			isset($modes[$dir]) ? $modes[$dir] : $dir
+		);
 	}
 
 }

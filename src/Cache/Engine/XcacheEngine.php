@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0.4947
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Cache\Engine;
@@ -57,7 +57,7 @@ class XcacheEngine extends CacheEngine {
  * @param array $config array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($config = []) {
+	public function init(array $config = []) {
 		if (php_sapi_name() !== 'cli') {
 			if (!isset($config['prefix'])) {
 				$config['prefix'] = Inflector::slug(APP_DIR) . '_';
@@ -110,7 +110,7 @@ class XcacheEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to increment
- * @return New incremented value, false otherwise
+ * @return bool|int New incremented value, false otherwise
  */
 	public function increment($key, $offset = 1) {
 		$key = $this->_key($key);
@@ -124,7 +124,7 @@ class XcacheEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to subtract
- * @return New decremented value, false otherwise
+ * @return bool|int New decremented value, false otherwise
  */
 	public function decrement($key, $offset = 1) {
 		$key = $this->_key($key);
@@ -184,6 +184,7 @@ class XcacheEngine extends CacheEngine {
  * Increments the group value to simulate deletion of all keys under a group
  * old values will remain in storage until they expire.
  *
+ * @param string $group name of the group to be cleared
  * @return boolean success
  */
 	public function clearGroup($group) {

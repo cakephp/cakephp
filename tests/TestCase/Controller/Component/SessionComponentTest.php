@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.5436
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller\Component;
@@ -93,10 +93,6 @@ class SessionComponentTest extends TestCase {
 	public function testSessionIdConsistentAcrossRequestAction() {
 		Configure::write('App.namespace', 'TestApp');
 		Router::connect('/:controller/:action');
-
-		$Session = new SessionComponent($this->ComponentRegistry);
-		$Session->check('Test');
-		$this->assertTrue(isset($_SESSION));
 
 		$Controller = new Controller();
 		$Session = new SessionComponent($this->ComponentRegistry);
@@ -233,7 +229,7 @@ class SessionComponentTest extends TestCase {
 	public function testSessionId() {
 		unset($_SESSION);
 		$Session = new SessionComponent($this->ComponentRegistry);
-		$Session->check('test');
+		Session::start();
 		$this->assertEquals(session_id(), $Session->id());
 	}
 

@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0.4116
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\I18n;
@@ -80,7 +80,7 @@ class L10n {
 /**
  * Request object instance
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	protected $_request = null;
 
@@ -141,6 +141,7 @@ class L10n {
 		/* Kalaallisut (Greenlandic) */ 'kal' => 'kl',
 		/* Korean */ 'kor' => 'ko',
 		/* Latvian */ 'lav' => 'lv',
+		/* Limburgish */ 'lim' => 'li',
 		/* Lithuanian */ 'lit' => 'lt',
 		/* Macedonian */ 'mkd' => 'mk',
 		/* Macedonian - bibliographic */ 'mac' => 'mk',
@@ -283,6 +284,7 @@ class L10n {
 		'ko-kp' => array('language' => 'Korea (North)', 'locale' => 'ko_kp', 'localeFallback' => 'kor', 'charset' => 'kr', 'direction' => 'ltr'),
 		'ko-kr' => array('language' => 'Korea (South)', 'locale' => 'ko_kr', 'localeFallback' => 'kor', 'charset' => 'kr', 'direction' => 'ltr'),
 		'koi8-r' => array('language' => 'Russian', 'locale' => 'koi8_r', 'localeFallback' => 'rus', 'charset' => 'koi8-r', 'direction' => 'ltr'),
+		'li' => array('language' => 'Limburgish', 'locale' => 'lim', 'localeFallback' => 'nld', 'charset' => 'utf-8', 'direction' => 'ltr'),
 		'lt' => array('language' => 'Lithuanian', 'locale' => 'lit', 'localeFallback' => 'lit', 'charset' => 'utf-8', 'direction' => 'ltr'),
 		'lv' => array('language' => 'Latvian', 'locale' => 'lav', 'localeFallback' => 'lav', 'charset' => 'utf-8', 'direction' => 'ltr'),
 		'mk' => array('language' => 'FYRO Macedonian', 'locale' => 'mkd', 'localeFallback' => 'mkd', 'charset' => 'utf-8', 'direction' => 'ltr'),
@@ -332,7 +334,7 @@ class L10n {
 /**
  * Class constructor
  *
- * @param Cake\Network\Request $request Request object
+ * @param \Cake\Network\Request $request Request object
  */
 	public function __construct(Request $request) {
 		$this->_request = $request;

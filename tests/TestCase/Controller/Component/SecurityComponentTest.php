@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.5435
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller\Component;
@@ -85,7 +85,7 @@ class SecurityTestController extends Controller {
  * redirect method
  *
  * @param string|array $url
- * @param mixed $code
+ * @param mixed $status
  * @param mixed $exit
  * @return void
  */
@@ -138,7 +138,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller = new SecurityTestController($request);
 		$this->Controller->constructClasses();
 		$this->Controller->Security = $this->Controller->TestSecurity;
-		$this->Controller->Security->blackHoleCallback = 'fail';
+		$this->Controller->Security->config('blackHoleCallback', 'fail');
 		$this->Security = $this->Controller->Security;
 		Configure::write('Session', [
 			'defaults' => 'php'
@@ -164,7 +164,8 @@ class SecurityComponentTest extends TestCase {
  * Test that requests are still blackholed when controller has incorrect
  * visibility keyword in the blackhole callback
  *
- * @expectedException Cake\Error\BadRequestException
+ * @expectedException \Cake\Error\BadRequestException
+ * @return void
  */
 	public function testBlackholeWithBrokenCallback() {
 		$request = new Request('posts/index');
@@ -174,8 +175,8 @@ class SecurityComponentTest extends TestCase {
 		]);
 		$Controller = new \TestApp\Controller\SomePagesController($request);
 		$event = new Event('Controller.startup', $Controller, $this->Controller);
-		$Security = new SecurityComponent($Controller->Components);
-		$Security->blackHoleCallback = '_fail';
+		$Security = new SecurityComponent($Controller->components());
+		$Security->config('blackHoleCallback', '_fail');
 		$Security->startup($event);
 		$Security->blackHole($Controller, 'csrf');
 	}
@@ -207,7 +208,7 @@ class SecurityComponentTest extends TestCase {
 			'requireSecure' => array('update_account'),
 			'validatePost' => false,
 		);
-		$Security = new SecurityComponent($this->Controller->Components, $settings);
+		$Security = new SecurityComponent($this->Controller->components(), $settings);
 		$this->assertEquals($Security->validatePost, $settings['validatePost']);
 	}
 
@@ -443,7 +444,7 @@ class SecurityComponentTest extends TestCase {
 		$fields = '69f493434187b867ea14b901fdf58b55d27c935d%3A';
 		$unlocked = '';
 
-		$this->Controller->request->data = $data = array(
+		$this->Controller->request->data = array(
 			'Model' => array('username' => '', 'password' => ''),
 			'_Token' => compact('fields', 'unlocked')
 		);
@@ -597,7 +598,7 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testValidatePostWithDisabledFields() {
 		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->Security->disabledFields = array('Model.username', 'Model.password');
+		$this->Controller->Security->config('disabledFields', ['Model.username', 'Model.password']);
 		$this->Controller->Security->startup($event);
 		$fields = 'ef1082968c449397bcd849f963636864383278b1%3AModel.hidden';
 		$unlocked = '';
@@ -665,7 +666,7 @@ class SecurityComponentTest extends TestCase {
 /**
  * Test that validatePost fails when unlocked fields are changed.
  *
- * @return
+ * @return void
  */
 	public function testValidatePostFailDisabledFieldTampering() {
 		$event = new Event('Controller.startup', $this->Controller);
@@ -870,7 +871,7 @@ class SecurityComponentTest extends TestCase {
 		$this->assertFalse($result);
 
 		$this->Controller->Security->startup($event);
-		$this->Controller->Security->disabledFields = array('MyModel.name');
+		$this->Controller->Security->config('disabledFields', ['MyModel.name']);
 
 		$this->Controller->request->data = array(
 			'MyModel' => array('name' => 'some data'),

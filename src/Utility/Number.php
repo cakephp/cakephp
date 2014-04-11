@@ -13,7 +13,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.10.0.1076
+ * @since         0.10.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
@@ -80,7 +80,7 @@ class Number {
 	);
 
 /**
- * Default currency used by CakeNumber::currency()
+ * Default currency used by Number::currency()
  *
  * @var string
  */
@@ -133,7 +133,7 @@ class Number {
  * @param string $size Size in human readable string like '5MB', '5M', '500B', '50kb' etc.
  * @param mixed $default Value to be returned when invalid size was used, for example 'Unknown type'
  * @return mixed Number of bytes as integer on success, `$default` on failure if not false
- * @throws Cake\Error\Exception On invalid Unit type.
+ * @throws \Cake\Error\Exception On invalid Unit type.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::fromReadableSize
  */
 	public static function fromReadableSize($size, $default = false) {
@@ -177,7 +177,7 @@ class Number {
  * @return string Percentage string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toPercentage
  */
-	public static function toPercentage($value, $precision = 2, $options = array()) {
+	public static function toPercentage($value, $precision = 2, array $options = array()) {
 		$options += array('multiply' => false);
 		if ($options['multiply']) {
 			$value *= 100;
@@ -188,39 +188,25 @@ class Number {
 /**
  * Formats a number into a currency format.
  *
- * @param float $value A floating point number
- * @param integer $options If integer then places, if string then before, if (,.-) then use it
- *   or array with places and before keys
- * @return string formatted number
+ * Options:
+ *
+ * - `places` - Number of decimal places to use. ie. 2
+ * - `before` - The string to place before whole numbers. ie. '['
+ * - `after` - The string to place after decimal numbers. ie. ']'
+ * - `thousands` - Thousands separator ie. ','
+ * - `decimals` - Decimal separator symbol ie. '.'
+ * - `escape` - Set to false to prevent escaping
+ *
+ * @param float $value A floating point number.
+ * @param array $options An array with options.
+ * @return string Formatted number
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
  */
-	public static function format($value, $options = false) {
-		$places = 0;
-		if (is_int($options)) {
-			$places = $options;
-		}
-
-		$separators = array(',', '.', '-', ':');
-
-		$before = $after = null;
-		if (is_string($options) && !in_array($options, $separators)) {
-			$before = $options;
-		}
-		$thousands = ',';
-		if (!is_array($options) && in_array($options, $separators)) {
-			$thousands = $options;
-		}
-		$decimals = '.';
-		if (!is_array($options) && in_array($options, $separators)) {
-			$decimals = $options;
-		}
-
-		$escape = true;
-		if (is_array($options)) {
-			$defaults = array('before' => '$', 'places' => 2, 'thousands' => ',', 'decimals' => '.');
-			$options += $defaults;
-			extract($options);
-		}
+	public static function format($value, array $options = []) {
+		$defaults = array('before' => '', 'after' => '', 'places' => 2,
+			'thousands' => ',', 'decimals' => '.', 'escape' => true);
+		$options += $defaults;
+		extract($options);
 
 		$out = $before . number_format($value, $places, $decimals, $thousands) . $after;
 
@@ -247,7 +233,7 @@ class Number {
  * @return string formatted delta
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::formatDelta
  */
-	public static function formatDelta($value, $options = array()) {
+	public static function formatDelta($value, array $options = array()) {
 		$places = isset($options['places']) ? $options['places'] : 0;
 		$value = number_format($value, $places, '.', '');
 		$sign = $value > 0 ? '+' : '';
@@ -292,7 +278,7 @@ class Number {
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
-	public static function currency($value, $currency = null, $options = array()) {
+	public static function currency($value, $currency = null, array $options = array()) {
 		$default = static::$_currencyDefaults;
 		if ($currency === null) {
 			$currency = static::defaultCurrency();
@@ -304,7 +290,7 @@ class Number {
 			$options['before'] = $currency;
 		}
 
-		$options = array_merge($default, $options);
+		$options += $default;
 
 		if (isset($options['before']) && $options['before'] !== '') {
 			$options['wholeSymbol'] = $options['before'];
@@ -365,7 +351,7 @@ class Number {
  * @see NumberHelper::currency()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::addFormat
  */
-	public static function addFormat($formatName, $options) {
+	public static function addFormat($formatName, array $options) {
 		static::$_currencies[$formatName] = $options + static::$_currencyDefaults;
 	}
 

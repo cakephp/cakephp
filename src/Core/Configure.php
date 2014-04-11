@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.0.0.2363
+ * @since         1.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Core;
@@ -235,7 +235,7 @@ class Configure {
  * @param string $config Name of the configured engine to use to read the resource identified by $key.
  * @param boolean $merge if config files should be merged instead of simply overridden
  * @return mixed false if file not found, void if load successful.
- * @throws Cake\Error\ConfigureException Will throw any exceptions the engine raises.
+ * @throws \Cake\Error\ConfigureException Will throw any exceptions the engine raises.
  */
 	public static function load($key, $config = 'default', $merge = true) {
 		$engine = static::_getEngine($config);
@@ -279,7 +279,7 @@ class Configure {
  * @param array $keys The name of the top-level keys you want to dump.
  *   This allows you save only some data stored in Configure.
  * @return boolean success
- * @throws Cake\Error\ConfigureException if the adapter does not implement a `dump` method.
+ * @throws \Cake\Error\ConfigureException if the adapter does not implement a `dump` method.
  */
 	public static function dump($key, $config = 'default', $keys = []) {
 		$engine = static::_getEngine($config);

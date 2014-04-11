@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console;
@@ -53,7 +53,7 @@ class ConsoleErrorHandler extends BaseErrorHandler {
 /**
  * Prints an exception to stderr.
  *
- * @param Exception $exception The exception to handle
+ * @param \Exception $exception The exception to handle
  * @return void
  */
 	protected function _displayException($exception) {

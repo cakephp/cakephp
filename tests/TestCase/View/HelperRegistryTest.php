@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View;
@@ -17,14 +17,14 @@ namespace Cake\Test\TestCase\View;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use Cake\View\Helper;
 use Cake\View\HelperRegistry;
-use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
 
 /**
  * Extended HtmlHelper
  */
-class HtmlAliasHelper extends HtmlHelper {
+class HtmlAliasHelper extends Helper {
 
 	public function afterRender($viewFile) {
 	}
@@ -44,7 +44,7 @@ class HelperRegistryTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->View = new View(null);
+		$this->View = new View();
 		$this->Events = $this->View->getEventManager();
 		$this->Helpers = new HelperRegistry($this->View);
 	}
@@ -95,7 +95,7 @@ class HelperRegistryTest extends TestCase {
 /**
  * test lazy loading of helpers
  *
- * @expectedException Cake\Error\MissingHelperException
+ * @expectedException \Cake\Error\MissingHelperException
  * @return void
  */
 	public function testLazyLoadException() {
@@ -161,7 +161,7 @@ class HelperRegistryTest extends TestCase {
 /**
  * test missinghelper exception
  *
- * @expectedException Cake\Error\MissingHelperException
+ * @expectedException \Cake\Error\MissingHelperException
  * @return void
  */
 	public function testLoadMissingHelper() {
@@ -199,5 +199,23 @@ class HelperRegistryTest extends TestCase {
 		$this->assertCount(0, $this->Events->listeners('View.beforeRender'));
 
 		$this->assertNotSame($instance, $this->Helpers->load('Paginator'));
+	}
+
+/**
+ * Test unloading.
+ *
+ * @return void
+ */
+	public function testUnload() {
+		$instance = $this->Helpers->load('Paginator');
+		$this->assertSame(
+			$instance,
+			$this->Helpers->Paginator,
+			'Instance in registry should be the same as previously loaded'
+		);
+		$this->assertCount(1, $this->Events->listeners('View.beforeRender'));
+
+		$this->assertNull($this->Helpers->unload('Paginator'), 'No return expected');
+		$this->assertCount(0, $this->Events->listeners('View.beforeRender'));
 	}
 }

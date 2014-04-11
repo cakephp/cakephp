@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Database\Type;
@@ -55,6 +53,20 @@ class DateTimeTypeTest extends TestCase {
 	}
 
 /**
+ * Test datetime parsing when value include milliseconds.
+ *
+ * Postgres includes milliseconds in timestamp columns,
+ * data from those columns should work.
+ *
+ * @return void
+ */
+	public function testToPHPIncludingMilliseconds() {
+		$in = '2014-03-24 20:44:36.315113';
+		$result = $this->type->toPHP($in, $this->driver);
+		$this->assertInstanceOf('\DateTime', $result);
+	}
+
+/**
  * Test converting to database format
  *
  * @return void
@@ -67,6 +79,85 @@ class DateTimeTypeTest extends TestCase {
 		$date = new \DateTime('2013-08-12 15:16:17');
 		$result = $this->type->toDatabase($date, $this->driver);
 		$this->assertEquals('2013-08-12 15:16:17', $result);
+	}
+
+/**
+ * Data provider for marshal()
+ *
+ * @return array
+ */
+	public function marshalProvider() {
+		return [
+			// invalid types.
+			[null, null],
+			[false, false],
+			[true, true],
+			['', ''],
+			['derpy', 'derpy'],
+			['2013-nope!', '2013-nope!'],
+
+			// valid string types
+			['1392387900', new \DateTime('@1392387900')],
+			[1392387900, new \DateTime('@1392387900')],
+			['2014-02-14', new \DateTime('2014-02-14')],
+			['2014-02-14 13:14:15', new \DateTime('2014-02-14 13:14:15')],
+
+			// valid array types
+			[
+				['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
+				new \DateTime('2014-02-14 13:14:15')
+			],
+			[
+				[
+					'year' => 2014, 'month' => 2, 'day' => 14,
+					'hour' => 1, 'minute' => 14, 'second' => 15,
+					'meridian' => 'am'
+				],
+				new \DateTime('2014-02-14 01:14:15')
+			],
+			[
+				[
+					'year' => 2014, 'month' => 2, 'day' => 14,
+					'hour' => 1, 'minute' => 14, 'second' => 15,
+					'meridian' => 'pm'
+				],
+				new \DateTime('2014-02-14 13:14:15')
+			],
+			[
+				[
+					'year' => 2014, 'month' => 2, 'day' => 14,
+				],
+				new \DateTime('2014-02-14 00:00:00')
+			],
+
+			// Invalid array types
+			[
+				['year' => 'farts', 'month' => 'derp'],
+				new \DateTime(date('Y-m-d 00:00:00'))
+			],
+			[
+				['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
+				new \DateTime(date('Y-m-d 00:00:00'))
+			],
+			[
+				[
+					'year' => '2014', 'month' => '02', 'day' => '14',
+					'hour' => 'farts', 'minute' => 'farts'
+				],
+				new \DateTime('2014-02-14 00:00:00')
+			],
+		];
+	}
+
+/**
+ * test marshalling data.
+ *
+ * @dataProvider marshalProvider
+ * @return void
+ */
+	public function testMarshal($value, $expected) {
+		$result = $this->type->marshal($value);
+		$this->assertEquals($expected, $result);
 	}
 
 }

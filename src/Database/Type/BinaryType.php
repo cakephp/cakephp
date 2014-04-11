@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Type;
@@ -47,7 +45,7 @@ class BinaryType extends \Cake\Database\Type {
  * @param null|string|resource $value The value to convert.
  * @param Driver $driver The driver instance to convert with.
  * @return resource
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public function toPHP($value, Driver $driver) {
 		if ($value === null) {

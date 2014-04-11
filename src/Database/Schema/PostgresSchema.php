@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Schema;
@@ -62,7 +62,7 @@ class PostgresSchema extends BaseSchema {
  * Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
- * @throws Cake\Database\Exception when column cannot be parsed.
+ * @throws \Cake\Database\Exception when column cannot be parsed.
  * @return array Array of column information.
  */
 	protected function _convertColumn($column) {
@@ -81,7 +81,7 @@ class PostgresSchema extends BaseSchema {
 			return ['type' => $col, 'length' => null];
 		}
 		if (strpos($col, 'timestamp') !== false) {
-			return ['type' => 'datetime', 'length' => null];
+			return ['type' => 'timestamp', 'length' => null];
 		}
 		if ($col === 'serial' || $col === 'integer') {
 			return ['type' => 'integer', 'length' => 10];
@@ -419,8 +419,9 @@ class PostgresSchema extends BaseSchema {
 		$content = array_merge($columns, $constraints);
 		$content = implode(",\n", array_filter($content));
 		$tableName = $this->_driver->quoteIdentifier($table->name());
+		$temporary = $table->temporary() ? ' TEMPORARY ' : ' ';
 		$out = [];
-		$out[] = sprintf("CREATE TABLE %s (\n%s\n)", $tableName, $content);
+		$out[] = sprintf("CREATE%sTABLE %s (\n%s\n)", $temporary, $tableName, $content);
 		foreach ($indexes as $index) {
 			$out[] = $index;
 		}

@@ -9,11 +9,12 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\ORM;
 
+use Cake\Core\InstanceConfigTrait;
 use Cake\Error\Exception;
 use Cake\Event\EventListener;
 
@@ -87,10 +88,12 @@ use Cake\Event\EventListener;
  * }}}
  *
  *
- * @see Cake\ORM\Table::addBehavior()
- * @see Cake\Event\EventManager
+ * @see \Cake\ORM\Table::addBehavior()
+ * @see \Cake\Event\EventManager
  */
 class Behavior implements EventListener {
+
+	use InstanceConfigTrait;
 
 /**
  * Reflection method cache for behaviors.
@@ -109,14 +112,7 @@ class Behavior implements EventListener {
  *
  * @var array
  */
-	protected static $_defaultConfig = [];
-
-/**
- * Contains configuration.
- *
- * @var array
- */
-	protected $_config = [];
+	protected $_defaultConfig = [];
 
 /**
  * Constructor
@@ -130,16 +126,7 @@ class Behavior implements EventListener {
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
-		$this->_config = $config + static::$_defaultConfig;
-	}
-
-/**
- * Read the configuration being used.
- *
- * @return array
- */
-	public function config() {
-		return $this->_config;
+		$this->config($config);
 	}
 
 /**
@@ -148,7 +135,7 @@ class Behavior implements EventListener {
  * Check that implemented* keys contain values pointing at callable
  *
  * @return void
- * @throws Cake\Error\Exception if config are invalid
+ * @throws \Cake\Error\Exception if config are invalid
  */
 	public function verifyConfig() {
 		$keys = ['implementedFinders', 'implementedMethods'];

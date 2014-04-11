@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Helper;
@@ -57,7 +57,7 @@ class NumberHelperTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->View = new View(null);
+		$this->View = new View();
 
 		$this->_appNamespace = Configure::read('App.namespace');
 		Configure::write('App.namespace', 'TestApp');
@@ -79,16 +79,40 @@ class NumberHelperTest extends TestCase {
  */
 	public function testNumberHelperProxyMethodCalls() {
 		$methods = array(
-			'precision', 'toReadableSize', 'toPercentage', 'format',
-			'currency', 'addFormat',
+			'precision', 'toReadableSize',
 		);
 		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', $methods);
 		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
 		$Number->attach($CakeNumber);
+
 		foreach ($methods as $method) {
 			$CakeNumber->expects($this->at(0))->method($method);
 			$Number->{$method}('who', 'what', 'when', 'where', 'how');
 		}
+
+		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', array('toPercentage'));
+		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
+		$Number->attach($CakeNumber);
+		$CakeNumber->expects($this->at(0))->method('toPercentage');
+		$Number->toPercentage('who', 'what', array('when'));
+
+		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', array('currency'));
+		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
+		$Number->attach($CakeNumber);
+		$CakeNumber->expects($this->at(0))->method('currency');
+		$Number->currency('who', 'what', array('when'));
+
+		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', array('format'));
+		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
+		$Number->attach($CakeNumber);
+		$CakeNumber->expects($this->at(0))->method('format');
+		$Number->format('who', array('when'));
+
+		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', array('addFormat'));
+		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
+		$Number->attach($CakeNumber);
+		$CakeNumber->expects($this->at(0))->method('addFormat');
+		$Number->addFormat('who', array('when'));
 	}
 
 /**

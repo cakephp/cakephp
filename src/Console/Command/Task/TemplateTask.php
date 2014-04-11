@@ -11,13 +11,14 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.3
+ * @since         1.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Utility\ConventionsTrait;
 use Cake\Utility\Folder;
 use Cake\Utility\ViewVarsTrait;
 
@@ -28,6 +29,7 @@ use Cake\Utility\ViewVarsTrait;
  */
 class TemplateTask extends Shell {
 
+	use ConventionsTrait;
 	use ViewVarsTrait;
 
 /**

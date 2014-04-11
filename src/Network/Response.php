@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Network;
@@ -351,7 +351,7 @@ class Response {
  *
  * @var array
  */
-	protected $_fileRange = null;
+	protected $_fileRange = [];
 
 /**
  * The charset the response body is encoded with
@@ -380,6 +380,7 @@ class Response {
  *
  * @param array $options list of parameters to setup the response. Possible values are:
  *	- body: the response text that should be sent to the client
+ *	- statusCodes: additional allowable response codes
  *	- status: the HTTP status code to respond with
  *	- type: a complete mime-type string or an extension mapped in this class
  *	- charset: the charset for the response body
@@ -387,6 +388,9 @@ class Response {
 	public function __construct(array $options = array()) {
 		if (isset($options['body'])) {
 			$this->body($options['body']);
+		}
+		if (isset($options['statusCodes'])) {
+			$this->httpCodes($options['statusCodes']);
 		}
 		if (isset($options['status'])) {
 			$this->statusCode($options['status']);
@@ -615,7 +619,7 @@ class Response {
  *
  * @param integer $code the HTTP status code
  * @return integer current status code
- * @throws Cake\Error\Exception When an unknown status code is reached.
+ * @throws \Cake\Error\Exception When an unknown status code is reached.
  */
 	public function statusCode($code = null) {
 		if ($code === null) {
@@ -656,7 +660,7 @@ class Response {
  *
  * @return mixed associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
- * @throws Cake\Error\Exception If an attempt is made to add an invalid status code
+ * @throws \Cake\Error\Exception If an attempt is made to add an invalid status code
  */
 	public function httpCodes($code = null) {
 		if (empty($code)) {
@@ -889,7 +893,7 @@ class Response {
  * with the origin.
  * If called with no parameters, this function will return whether must-revalidate is present.
  *
- * @param integer $seconds if null, the method will return the current
+ * @param boolean $enable if null, the method will return the current
  *   must-revalidate value
  * @return boolean
  */
@@ -931,7 +935,7 @@ class Response {
  * `$response->expires(new DateTime('+1 day'))` Will set the expiration in next 24 hours
  * `$response->expires()` Will return the current expiration header value
  *
- * @param string|DateTime $time
+ * @param string|\DateTime $time
  * @return string
  */
 	public function expires($time = null) {
@@ -955,7 +959,7 @@ class Response {
  * `$response->modified(new DateTime('+1 day'))` Will set the modification date in the past 24 hours
  * `$response->modified()` Will return the current Last-Modified header value
  *
- * @param string|DateTime $time
+ * @param string|\DateTime $time
  * @return string
  */
 	public function modified($time = null) {
@@ -1030,14 +1034,14 @@ class Response {
  *
  * If no parameters are passed, current Etag header is returned.
  *
- * @param string $hash the unique has that identifies this response
+ * @param string $hash the unique hash that identifies this response
  * @param boolean $weak whether the response is semantically the same as
  *   other with the same hash or not
  * @return string
  */
-	public function etag($tag = null, $weak = false) {
-		if ($tag !== null) {
-			$this->_headers['Etag'] = sprintf('%s"%s"', ($weak) ? 'W/' : null, $tag);
+	public function etag($hash = null, $weak = false) {
+		if ($hash !== null) {
+			$this->_headers['Etag'] = sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash);
 		}
 		if (isset($this->_headers['Etag'])) {
 			return $this->_headers['Etag'];
@@ -1049,8 +1053,8 @@ class Response {
  * Returns a DateTime object initialized at the $time param and using UTC
  * as timezone
  *
- * @param string|integer|DateTime $time
- * @return DateTime
+ * @param string|integer|\DateTime $time
+ * @return \DateTime
  */
 	protected function _getUTCDate($time = null) {
 		if ($time instanceof \DateTime) {
@@ -1101,7 +1105,7 @@ class Response {
  * Sets the protocol to be used when sending the response. Defaults to HTTP/1.1
  * If called with no arguments, it will return the current configured protocol
  *
- * @param string protocol to be used for sending response
+ * @param string $protocol protocol to be used for sending response
  * @return string protocol currently set
  */
 	public function protocol($protocol = null) {
@@ -1138,7 +1142,7 @@ class Response {
  * the Last-Modified etag response header before calling this method. Otherwise
  * a comparison will not be possible.
  *
- * @param CakeRequest $request Request object
+ * @param Request $request Request object
  * @return boolean whether the response was marked as not modified or not.
  */
 	public function checkNotModified(Request $request) {
@@ -1183,7 +1187,7 @@ class Response {
  * If the method is called with an array as argument, it will set the cookie
  * configuration to the cookie container.
  *
- * @param array $options Either null to get all cookies, string for a specific cookie
+ * @param array|null $options Either null to get all cookies, string for a specific cookie
  *  or array to set cookie.
  *
  * ### Options (when setting a configuration)
@@ -1238,6 +1242,75 @@ class Response {
 	}
 
 /**
+ * Setup access for origin and methods on cross origin requests
+ *
+ * This method allow multiple ways to setup the domains, see the examples
+ *
+ * ### Full URI
+ * e.g `cors($request, 'http://www.cakephp.org');`
+ *
+ * ### URI with wildcard
+ * e.g `cors($request, 'http://*.cakephp.org');`
+ *
+ * ### Ignoring the requested protocol
+ * e.g `cors($request, 'www.cakephp.org');`
+ *
+ * ### Any URI
+ * e.g `cors($request, '*');`
+ *
+ * ### Whitelist of URIs
+ * e.g `cors($request, array('http://www.cakephp.org', '*.google.com', 'https://myproject.github.io'));`
+ *
+ * @param \Cake\Network\Request $request Request object
+ * @param string|array $allowedDomains List of allowed domains, see method description for more details
+ * @param string|array $allowedMethods List of HTTP verbs allowed
+ * @param string|array $allowedHeaders List of HTTP headers allowed
+ * @return void
+ */
+	public function cors(Request $request, $allowedDomains, $allowedMethods = array(), $allowedHeaders = array()) {
+		$origin = $request->header('Origin');
+		if (!$origin) {
+			return;
+		}
+
+		$allowedDomains = $this->_normalizeCorsDomains((array)$allowedDomains, $request->is('ssl'));
+		foreach ($allowedDomains as $domain) {
+			if (!preg_match($domain['preg'], $origin)) {
+				continue;
+			}
+			$this->header('Access-Control-Allow-Origin', $domain['original'] === '*' ? '*' : $origin);
+			$allowedMethods && $this->header('Access-Control-Allow-Methods', implode(', ', (array)$allowedMethods));
+			$allowedHeaders && $this->header('Access-Control-Allow-Headers', implode(', ', (array)$allowedHeaders));
+			break;
+		}
+	}
+
+/**
+ * Normalize the origin to regular expressions and put in an array format
+ *
+ * @param array $domains
+ * @param boolean $requestIsSSL
+ * @return array
+ */
+	protected function _normalizeCorsDomains($domains, $requestIsSSL = false) {
+		$result = array();
+		foreach ($domains as $domain) {
+			if ($domain === '*') {
+				$result[] = array('preg' => '@.@', 'original' => '*');
+				continue;
+			}
+
+			$original = $preg = $domain;
+			if (strpos($domain, '://') === false) {
+				$preg = ($requestIsSSL ? 'https://' : 'http://') . $domain;
+			}
+			$preg = '@' . str_replace('*', '.*', $domain) . '@';
+			$result[] = compact('original', 'preg');
+		}
+		return $result;
+	}
+
+/**
  * Setup for display or download the given file.
  *
  * If $_SERVER['HTTP_RANGE'] is set a slice of the file will be
@@ -1251,9 +1324,9 @@ class Response {
  * @param string $path Path to file
  * @param array $options Options See above.
  * @return void
- * @throws Cake\Error\NotFoundException
+ * @throws \Cake\Error\NotFoundException
  */
-	public function file($path, $options = array()) {
+	public function file($path, array $options = array()) {
 		$options += array(
 			'name' => null,
 			'download' => null

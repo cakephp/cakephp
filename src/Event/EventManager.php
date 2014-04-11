@@ -9,10 +9,10 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link http://cakephp.org CakePHP(tm) Project
- * @since CakePHP(tm) v 2.1
- * @license http://www.opensource.org/licenses/mit-license.php MIT License
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.1.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Event;
 
@@ -36,7 +36,7 @@ class EventManager {
 /**
  * The globally available instance, used for dispatching events attached from any scope
  *
- * @var Cake\Event\EventManager
+ * @var \Cake\Event\EventManager
  */
 	protected static $_generalManager = null;
 
@@ -62,8 +62,8 @@ class EventManager {
  *
  * If called with the first parameter, it will be set as the globally available instance
  *
- * @param Cake\Event\EventManager $manager
- * @return Cake\Event\EventManager the global event manager
+ * @param \Cake\Event\EventManager $manager
+ * @return \Cake\Event\EventManager the global event manager
  */
 	public static function instance($manager = null) {
 		if ($manager instanceof EventManager) {
@@ -80,7 +80,7 @@ class EventManager {
 /**
  * Adds a new listener to an event.
  *
- * @param callback|Cake\Event\EventListener $callable PHP valid callback type or instance of Cake\Event\EventListener to be called
+ * @param callback|\Cake\Event\EventListener $callable PHP valid callback type or instance of Cake\Event\EventListener to be called
  * when the event named with $eventKey is triggered. If a Cake\Event\EventListener instance is passed, then the `implementedEvents`
  * method will be called on the object to register the declared events individually as methods to be managed by this class.
  * It is possible to define multiple event handlers per event name.
@@ -93,10 +93,10 @@ class EventManager {
  * the order of insertion.
  *
  * @return void
- * @throws InvalidArgumentException When event key is missing or callable is not an
+ * @throws \InvalidArgumentException When event key is missing or callable is not an
  *   instance of Cake\Event\EventListener.
  */
-	public function attach($callable, $eventKey = null, $options = array()) {
+	public function attach($callable, $eventKey = null, array $options = array()) {
 		if (!$eventKey && !($callable instanceof EventListener)) {
 			throw new \InvalidArgumentException('The eventKey variable is required');
 		}
@@ -104,7 +104,7 @@ class EventManager {
 			$this->_attachSubscriber($callable);
 			return;
 		}
-		$options = $options + array('priority' => static::$defaultPriority);
+		$options += array('priority' => static::$defaultPriority);
 		$this->_listeners[$eventKey][$options['priority']][] = array(
 			'callable' => $callable,
 		);
@@ -114,7 +114,7 @@ class EventManager {
  * Auxiliary function to attach all implemented callbacks of a Cake\Event\EventListener class instance
  * as individual methods on this manager
  *
- * @param Cake\Event\EventListener $subscriber
+ * @param \Cake\Event\EventListener $subscriber
  * @return void
  */
 	protected function _attachSubscriber(EventListener $subscriber) {
@@ -142,7 +142,7 @@ class EventManager {
  * from the return value of the `implementedEvents` method on a Cake\Event\EventListener
  *
  * @param array $function the array taken from a handler definition for an event
- * @param Cake\Event\EventListener $object The handler object
+ * @param \Cake\Event\EventListener $object The handler object
  * @return callback
  */
 	protected function _extractCallable($function, $object) {
@@ -158,7 +158,7 @@ class EventManager {
 /**
  * Removes a listener from the active listeners.
  *
- * @param callback|Cake\Event\EventListener $callable any valid PHP callback type or an instance of EventListener
+ * @param callback|\Cake\Event\EventListener $callable any valid PHP callback type or an instance of EventListener
  * @param string $eventKey The event unique identifier name with which the callback has been associated
  * @return void
  */
@@ -188,7 +188,7 @@ class EventManager {
 /**
  * Auxiliary function to help detach all listeners provided by an object implementing EventListener
  *
- * @param Cake\Event\EventListener $subscriber the subscriber to be detached
+ * @param \Cake\Event\EventListener $subscriber the subscriber to be detached
  * @param string $eventKey optional event key name to unsubscribe the listener from
  * @return void
  */
@@ -217,8 +217,10 @@ class EventManager {
 /**
  * Dispatches a new event to all configured listeners
  *
- * @param string|Cake\Event\Event $event the event key name or instance of Event
- * @return void
+ * @param string|\Cake\Event\Event $event the event key name or instance of Event
+ * @return CakeEvent
+ * @param string|CakeEvent $event the event key name or instance of CakeEvent
+ * @return CakeEvent
  */
 	public function dispatch($event) {
 		if (is_string($event)) {
@@ -227,7 +229,7 @@ class EventManager {
 
 		$listeners = $this->listeners($event->name());
 		if (empty($listeners)) {
-			return;
+			return $event;
 		}
 
 		foreach ($listeners as $listener) {
@@ -242,6 +244,7 @@ class EventManager {
 				$event->result = $result;
 			}
 		}
+		return $event;
 	}
 
 /**
@@ -282,28 +285,27 @@ class EventManager {
  * @return array
  */
 	public function listeners($eventKey) {
-		$globalListeners = array();
+		$localListeners = array();
+		$priorities = array();
 		if (!$this->_isGlobal) {
-			$globalListeners = static::instance()->prioritisedListeners($eventKey);
+			$localListeners = $this->prioritisedListeners($eventKey);
+			$localListeners = empty($localListeners) ? array() : $localListeners;
 		}
+		$globalListeners = static::instance()->prioritisedListeners($eventKey);
+		$globalListeners = empty($globalListeners) ? array() : $globalListeners;
 
-		if (empty($this->_listeners[$eventKey]) && empty($globalListeners)) {
-			return [];
-		}
+		$priorities = array_merge(array_keys($globalListeners), array_keys($localListeners));
+		$priorities = array_unique($priorities);
+		asort($priorities);
 
-		$listeners = $this->_listeners[$eventKey];
-		foreach ($globalListeners as $priority => $priorityQ) {
-			if (!empty($listeners[$priority])) {
-				$listeners[$priority] = array_merge($priorityQ, $listeners[$priority]);
-				unset($globalListeners[$priority]);
-			}
-		}
-		$listeners = $listeners + $globalListeners;
-
-		ksort($listeners);
 		$result = array();
-		foreach ($listeners as $priorityQ) {
-			$result = array_merge($result, $priorityQ);
+		foreach ($priorities as $priority) {
+			if (isset($globalListeners[$priority])) {
+				$result = array_merge($result, $globalListeners[$priority]);
+			}
+			if (isset($localListeners[$priority])) {
+				$result = array_merge($result, $localListeners[$priority]);
+			}
 		}
 		return $result;
 	}

@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\ORM;
@@ -19,22 +19,22 @@ use Cake\Event\Event;
 /**
  * Contains logic for validating entities and their associations
  *
- * @see Cake\ORM\Table::validate()
- * @see Cake\ORM\Table::validateMany()
+ * @see \Cake\ORM\Table::validate()
+ * @see \Cake\ORM\Table::validateMany()
  */
 class EntityValidator {
 
 /**
  * The table instance this validator is for.
  *
- * @var Cake\ORM\Table
+ * @var \Cake\ORM\Table
  */
 	protected $_table;
 
 /**
  * Constructor.
  *
- * @param Cake\ORM\Table $table
+ * @param \Cake\ORM\Table $table
  */
 	public function __construct(Table $table) {
 		$this->_table = $table;
@@ -93,7 +93,8 @@ class EntityValidator {
 			}
 
 			$validator = $association->target()->entityValidator();
-			if ($association->type() === Association::ONE_TO_ONE) {
+			$types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
+			if (in_array($association->type(), $types)) {
 				$valid = $validator->one($value, $assoc['options']) && $valid;
 			} else {
 				$valid = $validator->many($value, $assoc['options']) && $valid;
@@ -116,10 +117,10 @@ class EntityValidator {
  * associations to also be validated.
  * @return boolean true if all validations passed, false otherwise
  */
-	public function many(array $entities, $include = []) {
+	public function many(array $entities, $options = []) {
 		$valid = true;
 		foreach ($entities as $entity) {
-			$valid = $this->one($entity, $include) && $valid;
+			$valid = $this->one($entity, $options) && $valid;
 		}
 		return $valid;
 	}

@@ -9,11 +9,12 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0.4933
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Cache;
 
+use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Inflector;
 
 /**
@@ -22,14 +23,7 @@ use Cake\Utility\Inflector;
  */
 abstract class CacheEngine {
 
-/**
- * Runtime config
- *
- * This is the config of a particular instance
- *
- * @var array
- */
-	protected $_config = [];
+	use InstanceConfigTrait;
 
 /**
  * The default cache configuration is overriden in most cache adapters. These are
@@ -69,8 +63,9 @@ abstract class CacheEngine {
  * @param array $config Associative array of parameters for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($config = []) {
-		$this->_config = $config + $this->_defaultConfig;
+	public function init(array $config = []) {
+		$this->config($config);
+
 		if (!empty($this->_config['groups'])) {
 			sort($this->_config['groups']);
 			$this->_groupPrefix = str_repeat('%s_', count($this->_config['groups']));
@@ -78,6 +73,7 @@ abstract class CacheEngine {
 		if (!is_numeric($this->_config['duration'])) {
 			$this->_config['duration'] = strtotime($this->_config['duration']) - time();
 		}
+
 		return true;
 	}
 
@@ -114,7 +110,7 @@ abstract class CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to add
- * @return New incremented value, false otherwise
+ * @return bool|int New incremented value, false otherwise
  */
 	abstract public function increment($key, $offset = 1);
 
@@ -123,7 +119,7 @@ abstract class CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to subtract
- * @return New incremented value, false otherwise
+ * @return bool|int New incremented value, false otherwise
  */
 	abstract public function decrement($key, $offset = 1);
 
@@ -148,7 +144,7 @@ abstract class CacheEngine {
  * to decide whether actually delete the keys or just simulate it to achieve
  * the same result.
  *
- * @param string $groups name of the group to be cleared
+ * @param string $group name of the group to be cleared
  * @return boolean
  */
 	public function clearGroup($group) {
@@ -164,15 +160,6 @@ abstract class CacheEngine {
  */
 	public function groups() {
 		return $this->_config['groups'];
-	}
-
-/**
- * Cache Engine config
- *
- * @return array config
- */
-	public function config() {
-		return $this->_config;
 	}
 
 /**
@@ -200,7 +187,7 @@ abstract class CacheEngine {
  *
  * @param string $key the key passed over
  * @return mixed string $key or false
- * @throws InvalidArgumentException If key's value is empty
+ * @throws \InvalidArgumentException If key's value is empty
  */
 	protected function _key($key) {
 		$key = $this->key($key);

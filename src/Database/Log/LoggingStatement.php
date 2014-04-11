@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Log;
@@ -19,7 +17,7 @@ namespace Cake\Database\Log;
 use Cake\Database\Statement\StatementDecorator;
 
 /**
- * Statement decorator used to 
+ * Statement decorator used to
  *
  * @return void
  */
@@ -35,7 +33,7 @@ class LoggingStatement extends StatementDecorator {
 /**
  * Holds bound params
  *
- * @return void
+ * @var array
  */
 	protected $_compiledParams = [];
 
@@ -43,7 +41,7 @@ class LoggingStatement extends StatementDecorator {
  * Wrapper for the execute function to calculate time spent
  * and log the query afterwards.
  *
- * $param array $params list of values to be bound to query
+ * @param array $params list of values to be bound to query
  * @return boolean true on success, false otherwise
  */
 	public function execute($params = null) {
@@ -65,9 +63,9 @@ class LoggingStatement extends StatementDecorator {
  * in the logger function.
  *
  * @param string|integer $column name or param position to be bound
- * @param mixed $value the value to bind to variable in query
+ * @param mixed $value The value to bind to variable in query
  * @param string|integer $type PDO type or name of configured Type class
- * @return void 
+ * @return void
  */
 	public function bindValue($column, $value, $type = 'string') {
 		parent::bindValue($column, $value, $type);

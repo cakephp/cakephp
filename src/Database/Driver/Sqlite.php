@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,12 +9,13 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Driver;
 
 use Cake\Database\Dialect\SqliteDialectTrait;
+use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
 use PDO;
@@ -84,12 +83,12 @@ class Sqlite extends \Cake\Database\Driver {
 /**
  * Prepares a sql statement to be executed
  *
- * @param string $sql
- * @return Cake\Database\Statement
+ * @param string|\Cake\Database\Query $query
+ * @return \Cake\Database\StatementInterface
  */
-	public function prepare($sql) {
+	public function prepare($query) {
 		$this->connect();
-		$statement = $this->_connection->prepare($sql);
+		$statement = $this->_connection->prepare((string)$query);
 		return new SqliteStatement(new PDOStatement($statement, $this), $this);
 	}
 

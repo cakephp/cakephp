@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Database\Log;
@@ -39,7 +37,7 @@ class LoggingStatementTest extends \Cake\TestSuite\TestCase {
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'SELECT bar FROM foo'),
-				$this->attributeEqualTo('took', 5, 60),
+				$this->attributeEqualTo('took', 5, 200),
 				$this->attributeEqualTo('numRows', 3),
 				$this->attributeEqualTo('params', [])
 			));

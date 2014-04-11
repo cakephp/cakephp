@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Schema;
@@ -64,6 +64,13 @@ class Table {
  * @var array
  */
 	protected $_options = [];
+
+/**
+ * Whether or not the table is temporary
+ *
+ * @var boolean
+ */
+	protected $_temporary = false;
 
 /**
  * The valid keys that can be used in a column
@@ -154,18 +161,70 @@ class Table {
 		self::ACTION_RESTRICT,
 	];
 
+/**
+ * Primary constraint type
+ *
+ * @var string
+ */
 	const CONSTRAINT_PRIMARY = 'primary';
+
+/**
+ * Unique constraint type
+ *
+ * @var string
+ */
 	const CONSTRAINT_UNIQUE = 'unique';
+
+/**
+ * Foreign constraint type
+ *
+ * @var string
+ */
 	const CONSTRAINT_FOREIGN = 'foreign';
 
+/**
+ * Index - index type
+ *
+ * @var string
+ */
 	const INDEX_INDEX = 'index';
+
+/**
+ * Fulltext index type
+ *
+ * @var string
+ */
 	const INDEX_FULLTEXT = 'fulltext';
 
+/**
+ * Foreign key cascade action
+ *
+ * @var string
+ */
 	const ACTION_CASCADE = 'cascade';
+
+/**
+ * Foreign key set null action
+ *
+ * @var string
+ */
 	const ACTION_SET_NULL = 'setNull';
-	const ACTION_SET_DEFAULT = 'setDefault';
+
+/**
+ * Foreign key no action
+ *
+ * @var string
+ */
 	const ACTION_NO_ACTION = 'noAction';
+
+/**
+ * Foreign key restrict action
+ *
+ * @var string
+ */
 	const ACTION_RESTRICT = 'restrict';
+
+	const ACTION_SET_DEFAULT = 'setDefault';
 
 /**
  * Constructor.
@@ -173,7 +232,7 @@ class Table {
  * @param string $table The table name.
  * @param array $columns The list of columns for the schema.
  */
-	public function __construct($table, $columns = array()) {
+	public function __construct($table, array $columns = array()) {
 		$this->_table = $table;
 		foreach ($columns as $field => $definition) {
 			$this->addColumn($field, $definition);
@@ -279,7 +338,7 @@ class Table {
  * @param string $name The name of the index.
  * @param array $attrs The attributes for the index.
  * @return Table $this
- * @throws Cake\Database\Exception
+ * @throws \Cake\Database\Exception
  */
 	public function addIndex($name, $attrs) {
 		if (is_string($attrs)) {
@@ -361,7 +420,7 @@ class Table {
  * @param string $name The name of the constraint.
  * @param array $attrs The attributes for the constraint.
  * @return Table $this
- * @throws Cake\Database\Exception
+ * @throws \Cake\Database\Exception
  */
 	public function addConstraint($name, $attrs) {
 		if (is_string($attrs)) {
@@ -395,7 +454,7 @@ class Table {
  *
  * @param array $attrs Attributes to set.
  * @return array
- * @throws Cake\Database\Exception When foreign key definition is not valid.
+ * @throws \Cake\Database\Exception When foreign key definition is not valid.
  */
 	protected function _checkForeignKey($attrs) {
 		if (count($attrs['references']) < 2) {
@@ -446,6 +505,20 @@ class Table {
 			return $this->_options;
 		}
 		$this->_options = array_merge($this->_options, $options);
+		return $this;
+	}
+
+/**
+ * Get/Set whether the table is temporary in the database
+ *
+ * @param boolean|null $set whether or not the table is to be temporary
+ * @return this|boolean Either the table instance, the current temporary setting
+ */
+	public function temporary($set = null) {
+		if ($set === null) {
+			return $this->_temporary;
+		}
+		$this->_temporary = (bool)$set;
 		return $this;
 	}
 

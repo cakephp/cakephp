@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,13 +9,13 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -159,25 +157,22 @@ class TableRegistryTest extends TestCase {
  */
 	public function testBuildConvention() {
 		$table = TableRegistry::get('articles');
-		$this->assertInstanceOf('\TestApp\Model\Repository\ArticlesTable', $table);
+		$this->assertInstanceOf('\TestApp\Model\Table\ArticlesTable', $table);
 		$table = TableRegistry::get('Articles');
-		$this->assertInstanceOf('\TestApp\Model\Repository\ArticlesTable', $table);
+		$this->assertInstanceOf('\TestApp\Model\Table\ArticlesTable', $table);
 
 		$table = TableRegistry::get('authors');
-		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorsTable', $table);
+		$this->assertInstanceOf('\TestApp\Model\Table\AuthorsTable', $table);
 		$table = TableRegistry::get('Authors');
-		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorsTable', $table);
+		$this->assertInstanceOf('\TestApp\Model\Table\AuthorsTable', $table);
 
 		$class = $this->getMockClass('\Cake\ORM\Table');
-		$class::staticExpects($this->once())
-			->method('defaultConnectionName')
-			->will($this->returnValue('test'));
 
-		if (!class_exists('MyPlugin\Model\Repository\SuperTestsTable')) {
-			class_alias($class, 'MyPlugin\Model\Repository\SuperTestsTable');
+		if (!class_exists('MyPlugin\Model\Table\SuperTestsTable')) {
+			class_alias($class, 'MyPlugin\Model\Table\SuperTestsTable');
 		}
 
-		$table = TableRegistry::get('MyPlugin.SuperTests');
+		$table = TableRegistry::get('MyPlugin.SuperTests', ['connection' => 'test']);
 		$this->assertInstanceOf($class, $table);
 	}
 

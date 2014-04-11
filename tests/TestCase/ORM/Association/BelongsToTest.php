@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,13 +9,14 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\TypeMap;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -55,6 +54,12 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 					'primary' => ['type' => 'primary', 'columns' => ['id']]
 				]
 			]
+		]);
+		$this->companiesTypeMap = new TypeMap([
+			'Companies.id' => 'integer',
+			'id' => 'integer',
+			'Companies.company_name' => 'string',
+			'company_name' => 'string',
 		]);
 	}
 
@@ -99,7 +104,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				]),
+				], $this->companiesTypeMap),
 				'table' => 'companies',
 				'type' => 'LEFT'
 			]
@@ -128,7 +133,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 			'Companies' => [
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => false
-				]),
+				], $this->companiesTypeMap),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
@@ -164,7 +169,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				]),
+				], $this->companiesTypeMap),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
@@ -191,10 +196,10 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('join')->with([
 			'Companies' => [
 				'conditions' => new QueryExpression([
+					'a' => 1,
 					'Companies.is_active' => true,
-					['Companies.id' => $field],
-					new QueryExpression(['a' => 1])
-				]),
+					['Companies.id' => $field]
+				], $this->companiesTypeMap),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
@@ -208,6 +213,39 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 			return $q->select(['a', 'b'])->where(['a' => 1]);
 		};
 		$association->attachTo($query, ['queryBuilder' => $builder]);
+	}
+
+/**
+ * Tests that by passing the matching option to `attachTo` the association
+ * is joinned using `INNER`
+ *
+ * @return void
+ */
+	public function testAttachToMatching() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => 'company_id',
+			'sourceTable' => $this->client,
+			'targetTable' => $this->company,
+			'conditions' => ['Companies.is_active' => true]
+		];
+		$association = new BelongsTo('Companies', $config);
+		$field = new IdentifierExpression('Clients.company_id');
+		$query->expects($this->once())->method('join')->with([
+			'Companies' => [
+				'conditions' => new QueryExpression([
+					'Companies.is_active' => true,
+					['Companies.id' => $field]
+				], $this->companiesTypeMap),
+				'table' => 'companies',
+				'type' => 'INNER'
+			]
+		]);
+		$query->expects($this->once())->method('select')->with([
+			'Companies__id' => 'Companies.id',
+			'Companies__company_name' => 'Companies.company_name'
+		]);
+		$association->attachTo($query, ['matching' => true]);
 	}
 
 /**
@@ -258,6 +296,73 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that using belongsto with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKey() {
+		$this->company->primaryKey(['id', 'tenant_id']);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => ['company_id', 'company_tenant_id'],
+			'sourceTable' => $this->client,
+			'targetTable' => $this->company,
+			'conditions' => ['Companies.is_active' => true]
+		];
+		$association = new BelongsTo('Companies', $config);
+		$field1 = new IdentifierExpression('Clients.company_id');
+		$field2 = new IdentifierExpression('Clients.company_tenant_id');
+		$query->expects($this->once())->method('join')->with([
+			'Companies' => [
+				'conditions' => new QueryExpression([
+					'Companies.is_active' => true,
+					['Companies.id' => $field1, 'Companies.tenant_id' => $field2]
+				], $this->companiesTypeMap),
+				'table' => 'companies',
+				'type' => 'LEFT'
+			]
+		]);
+		$query->expects($this->once())->method('select')->with([
+			'Companies__id' => 'Companies.id',
+			'Companies__company_name' => 'Companies.company_name'
+		]);
+		$association->attachTo($query);
+	}
+
+/**
+ * Tests that using belongsto with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Cannot match provided foreignKey for "Companies", got "(company_id)" but expected foreign key for "(id, tenant_id)"
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKeyMistmatch() {
+		$this->company->primaryKey(['id', 'tenant_id']);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => 'company_id',
+			'sourceTable' => $this->client,
+			'targetTable' => $this->company,
+			'conditions' => ['Companies.is_active' => true]
+		];
+		$association = new BelongsTo('Companies', $config);
+		$association->attachTo($query);
+	}
+
+/**
+ * Tests that property is being set using the constructor options.
+ *
+ * @return void
+ */
+	public function testPropertyOption() {
+		$config = ['propertyName' => 'thing_placeholder'];
+		$association = new BelongsTo('Thing', $config);
+		$this->assertEquals('thing_placeholder', $association->property());
+	}
+
+/**
  * Test that plugin names are omitted from property()
  *
  * @return void
@@ -270,6 +375,61 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new BelongsTo('Contacts.Companies', $config);
 		$this->assertEquals('company', $association->property());
+	}
+
+/**
+ * Tests that attaching an association to a query will trigger beforeFind
+ * for the target table
+ *
+ * @return void
+ */
+	public function testAttachToBeforeFind() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => 'company_id',
+			'sourceTable' => $this->client,
+			'targetTable' => $this->company
+		];
+		$listener = $this->getMock('stdClass', ['__invoke']);
+		$this->company->getEventManager()->attach($listener, 'Model.beforeFind');
+		$association = new BelongsTo('Companies', $config);
+		$listener->expects($this->once())->method('__invoke')
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				[],
+				false
+			);
+		$association->attachTo($query);
+	}
+
+/**
+ * Tests that attaching an association to a query will trigger beforeFind
+ * for the target table
+ *
+ * @return void
+ */
+	public function testAttachToBeforeFindExtraOptions() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => 'company_id',
+			'sourceTable' => $this->client,
+			'targetTable' => $this->company
+		];
+		$listener = $this->getMock('stdClass', ['__invoke']);
+		$this->company->getEventManager()->attach($listener, 'Model.beforeFind');
+		$association = new BelongsTo('Companies', $config);
+		$options = ['something' => 'more'];
+		$listener->expects($this->once())->method('__invoke')
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				$options,
+				false
+			);
+		$association->attachTo($query, ['queryBuilder' => function($q) {
+			return $q->applyOptions(['something' => 'more']);
+		}]);
 	}
 
 }

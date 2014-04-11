@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\ORM;
@@ -109,7 +109,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test load() on undefined class
  *
- * @expectedException Cake\Error\MissingBehaviorException
+ * @expectedException \Cake\Error\MissingBehaviorException
  * @return void
  */
 	public function testLoadMissingClass() {
@@ -119,7 +119,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test load() duplicate method error
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage TestApp\Model\Behavior\DuplicateBehavior contains duplicate method "slugify"
  * @return void
  */
@@ -180,7 +180,10 @@ class BehaviorRegistryTest extends TestCase {
  */
 	public function testCall() {
 		$this->Behaviors->load('Sluggable');
-		$mockedBehavior = $this->getMock('Behavior', ['slugify']);
+		$mockedBehavior = $this->getMockBuilder('Cake\ORM\Behavior')
+			->setMethods(['slugify'])
+			->disableOriginalConstructor()
+			->getMock();
 		$this->Behaviors->set('Sluggable', $mockedBehavior);
 
 		$mockedBehavior
@@ -195,7 +198,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test errors on unknown methods.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Cannot call "nope"
  */
 	public function testCallError() {
@@ -213,7 +216,10 @@ class BehaviorRegistryTest extends TestCase {
  */
 	public function testCallFinder() {
 		$this->Behaviors->load('Sluggable');
-		$mockedBehavior = $this->getMock('Behavior', ['findNoSlug']);
+		$mockedBehavior = $this->getMockBuilder('Cake\ORM\Behavior')
+			->setMethods(['findNoSlug'])
+			->disableOriginalConstructor()
+			->getMock();
 		$this->Behaviors->set('Sluggable', $mockedBehavior);
 
 		$query = $this->getMock('Cake\ORM\Query', [], [null, null]);
@@ -229,7 +235,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test errors on unknown methods.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Cannot call finder "nope"
  */
 	public function testCallFinderError() {

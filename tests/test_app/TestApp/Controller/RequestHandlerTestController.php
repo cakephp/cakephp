@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestApp\Controller;
@@ -44,6 +44,8 @@ class RequestHandlerTestController extends Controller {
 /**
  * test method for ajax redirection + parameter parsing
  *
+ * @param string $one
+ * @param string $two
  * @return void
  */
 	public function param_method($one = null, $two = null) {
@@ -57,9 +59,7 @@ class RequestHandlerTestController extends Controller {
  * @return void
  */
 	public function ajax2_layout() {
-		if ($this->autoLayout) {
-			$this->layout = 'ajax2';
-		}
+		$this->layout = 'ajax2';
 		$this->destination();
 	}
 }

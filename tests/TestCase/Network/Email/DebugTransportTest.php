@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 2.0.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Network\Email;
@@ -42,8 +42,7 @@ class DebugTransportTest extends TestCase {
  * @return void
  */
 	public function testSend() {
-		$this->getMock('Cake\Network\Email\Email', array('message'), array(), 'DebugCakeEmail');
-		$email = new \DebugCakeEmail();
+		$email = $this->getMock('Cake\Network\Email\Email', array('message'));
 		$email->from('noreply@cakephp.org', 'CakePHP Test');
 		$email->to('cake@cakephp.org', 'CakePHP');
 		$email->cc(array('mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso'));
@@ -51,8 +50,8 @@ class DebugTransportTest extends TestCase {
 		$email->messageID('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
 		$email->subject('Testing Message');
 		$date = date(DATE_RFC2822);
-		$email->setHeaders(array('X-Mailer' => \DebugCakeEmail::EMAIL_CLIENT, 'Date' => $date));
-		$email->expects($this->any())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '.Third Line', '')));
+		$email->setHeaders(array('X-Mailer' => Email::EMAIL_CLIENT, 'Date' => $date));
+		$email->expects($this->once())->method('message')->will($this->returnValue(array('First Line', 'Second Line', '.Third Line', '')));
 
 		$headers = "From: CakePHP Test <noreply@cakephp.org>\r\n";
 		$headers .= "To: CakePHP <cake@cakephp.org>\r\n";

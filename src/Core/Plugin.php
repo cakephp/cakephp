@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Core;
@@ -33,6 +33,13 @@ class Plugin {
  * @var array
  */
 	protected static $_plugins = [];
+
+/**
+ * Class loader instance
+ *
+ * @var \Cake\Core\ClassLoader
+ */
+	protected static $_loader;
 
 /**
  * Loads a plugin and optionally loads bootstrapping,
@@ -101,10 +108,10 @@ class Plugin {
  *
  * @param string|array $plugin name of the plugin to be loaded in CamelCase format or array or plugins to load
  * @param array $config configuration options for the plugin
- * @throws Cake\Error\MissingPluginException if the folder for the plugin to be loaded is not found
+ * @throws \Cake\Error\MissingPluginException if the folder for the plugin to be loaded is not found
  * @return void
  */
-	public static function load($plugin, $config = []) {
+	public static function load($plugin, array $config = []) {
 		if (is_array($plugin)) {
 			foreach ($plugin as $name => $conf) {
 				list($name, $conf) = (is_numeric($name)) ? [$conf, $config] : [$name, $conf];
@@ -140,9 +147,11 @@ class Plugin {
 		}
 
 		if ($config['autoload'] === true) {
-			$loader = new ClassLoader;
-			$loader->register();
-			$loader->addNamespace($config['namespace'], $config['path']);
+			if (empty(static::$_loader)) {
+				static::$_loader = new ClassLoader;
+				static::$_loader->register();
+			}
+			static::$_loader->addNamespace($config['namespace'], $config['path']);
 		}
 	}
 
@@ -167,7 +176,7 @@ class Plugin {
  * @param array $options
  * @return void
  */
-	public static function loadAll($options = []) {
+	public static function loadAll(array $options = []) {
 		$plugins = App::objects('Plugin');
 		foreach ($plugins as $p) {
 			$opts = isset($options[$p]) ? $options[$p] : null;
@@ -186,7 +195,7 @@ class Plugin {
  *
  * @param string $plugin name of the plugin in CamelCase format
  * @return string path to the plugin folder
- * @throws Cake\Error\MissingPluginException if the folder for plugin was not found or plugin has not been loaded
+ * @throws \Cake\Error\MissingPluginException if the folder for plugin was not found or plugin has not been loaded
  */
 	public static function path($plugin) {
 		if (empty(static::$_plugins[$plugin])) {

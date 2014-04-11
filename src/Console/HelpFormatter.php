@@ -11,6 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console;
@@ -25,8 +26,6 @@ use Cake\Utility\String;
  * how you would access help. Or via the `--help=xml` option on the command line.
  *
  * Xml output is useful for integration with other tools like IDE's or other build tools.
- *
- * @since  CakePHP(tm) v 2.0
  */
 class HelpFormatter {
 
@@ -174,7 +173,7 @@ class HelpFormatter {
  * Get the help as an xml string.
  *
  * @param boolean $string Return the SimpleXml object or a string. Defaults to true.
- * @return string|SimpleXmlElement See $string
+ * @return string|\SimpleXmlElement See $string
  */
 	public function xml($string = true) {
 		$parser = $this->_parser;

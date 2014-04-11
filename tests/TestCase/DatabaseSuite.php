@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,14 +9,15 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase;
 
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestPermutationDecorator;
 use Cake\TestSuite\TestSuite;
+use \PHPUnit_Framework_TestResult;
 
 /**
  * All tests related to database
@@ -33,10 +32,25 @@ class DatabaseSuite extends TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new TestSuite('Database related tests');
+		$suite = new self('Database related tests');
+		$suite->addTestFile(__DIR__ . DS . 'Database' . DS . 'ConnectionTest.php');
 		$suite->addTestDirectoryRecursive(__DIR__ . DS . 'Database');
 		$suite->addTestDirectoryRecursive(__DIR__ . DS . 'ORM');
+		$suite->addTestDirectoryRecursive(__DIR__ . DS . 'Model');
+		return $suite;
+	}
 
+	public function count() {
+		return parent::count() * 2;
+	}
+
+/**
+ * Runs the tests and collects their result in a TestResult.
+ *
+ * @param \PHPUnit_Framework_TestResult $result
+ * @return \PHPUnit_Framework_TestResult
+ */
+	public function run(PHPUnit_Framework_TestResult $result = null, $filter = false, array $groups = [], array $excludeGroups = [], $processIsolation = false) {
 		$permutations = [
 			'Identifier Quoting' => function() {
 				ConnectionManager::get('test')->driver()->autoQuoting(true);
@@ -46,8 +60,11 @@ class DatabaseSuite extends TestSuite {
 			}
 		];
 
-		$suite = new TestPermutationDecorator($suite, $permutations);
-		return $suite;
+		foreach ($permutations as $permutation) {
+			$permutation();
+			$result = parent::run($result, $filter, $groups, $excludeGroups, $processIsolation);
+		}
+		return $result;
 	}
 
 }

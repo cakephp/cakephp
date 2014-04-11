@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.2.9
+ * @since         0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
@@ -25,7 +25,7 @@ class Folder {
  * Default scheme for Folder::copy
  * Recursively merges subfolders with the same name
  *
- * @constant MERGE
+ * @var string
  */
 	const MERGE = 'merge';
 
@@ -33,7 +33,7 @@ class Folder {
  * Overwrite scheme for Folder::copy
  * subfolders with the same name will be replaced
  *
- * @constant OVERWRITE
+ * @var string
  */
 	const OVERWRITE = 'overwrite';
 
@@ -41,7 +41,7 @@ class Folder {
  * Skip scheme for Folder::copy
  * if a subfolder with the same name exists it will be skipped
  *
- * @constant SKIP
+ * @var string
  */
 	const SKIP = 'skip';
 
@@ -374,7 +374,7 @@ class Folder {
  * @return boolean Returns TRUE on success, FALSE on failure
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::chmod
  */
-	public function chmod($path, $mode = false, $recursive = true, $exceptions = array()) {
+	public function chmod($path, $mode = false, $recursive = true, array $exceptions = array()) {
 		if (!$mode) {
 			$mode = $this->mode;
 		}
@@ -644,7 +644,7 @@ class Folder {
 			$to = $options;
 			$options = array();
 		}
-		$options = array_merge(array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array(), 'scheme' => Folder::MERGE), $options);
+		$options += array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array(), 'scheme' => Folder::MERGE);
 
 		$fromDir = $options['from'];
 		$toDir = $options['to'];
@@ -694,13 +694,13 @@ class Folder {
 							chmod($to, $mode);
 							umask($old);
 							$this->_messages[] = sprintf('%s created', $to);
-							$options = array_merge($options, array('to' => $to, 'from' => $from));
+							$options = array('to' => $to, 'from' => $from) + $options;
 							$this->copy($options);
 						} else {
 							$this->_errors[] = sprintf('%s not created', $to);
 						}
 					} elseif (is_dir($from) && $options['scheme'] == Folder::MERGE) {
-						$options = array_merge($options, array('to' => $to, 'from' => $from));
+						$options = array('to' => $to, 'from' => $from) + $options;
 						$this->copy($options);
 					}
 				}
@@ -727,7 +727,7 @@ class Folder {
  * - `skip` Files/directories to skip.
  * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
  *
- * @param array $options (to, from, chmod, skip, scheme)
+ * @param array|string $options (to, from, chmod, skip, scheme)
  * @return boolean Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::move
  */
@@ -737,10 +737,7 @@ class Folder {
 			$to = $options;
 			$options = (array)$options;
 		}
-		$options = array_merge(
-			array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array()),
-			$options
-		);
+		$options += array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array());
 
 		if ($this->copy($options)) {
 			if ($this->delete($options['from'])) {

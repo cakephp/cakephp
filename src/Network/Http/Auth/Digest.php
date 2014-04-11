@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network\Http\Auth;
@@ -27,14 +27,14 @@ class Digest {
 /**
  * Instance of Cake\Network\Http\Client
  *
- * @var Cake\Network\Http\Client
+ * @var \Cake\Network\Http\Client
  */
 	protected $_client;
 
 /**
  * Constructor
  *
- * @param Cake\Network\Http\Client $client
+ * @param \Cake\Network\Http\Client $client
  * @param array $options
  */
 	public function __construct(Client $client, $options = null) {

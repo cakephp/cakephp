@@ -13,11 +13,9 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.3
+ * @since         1.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
-echo "<?php\n";
 ?>
 <?= '<?php' . "\n"; ?>
 namespace <?= $namespace; ?>\Test\Fixture;
@@ -25,10 +23,10 @@ namespace <?= $namespace; ?>\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * <?= $model; ?>Fixture
+ * <?= $name; ?>Fixture
  *
  */
-class <?= $model; ?>Fixture extends TestFixture {
+class <?= $name; ?>Fixture extends TestFixture {
 
 <?php if ($table): ?>
 /**

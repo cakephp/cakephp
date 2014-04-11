@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 2.5.0
+ * @since         2.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Cache\Engine;
@@ -69,6 +69,7 @@ class MemcachedEngineTest extends TestCase {
 /**
  * Helper method for testing.
  *
+ * @param array $config
  * @return void
  */
 	protected function _configCache($config = []) {
@@ -241,14 +242,14 @@ class MemcachedEngineTest extends TestCase {
 		);
 
 		$Memcached = new TestMemcachedEngine();
-		$settings = array(
+		$config = array(
 			'engine' => 'Memcached',
 			'servers' => array('127.0.0.1:11211'),
 			'persistent' => false,
 			'serialize' => 'msgpack'
 		);
 
-		$Memcached->init($settings);
+		$Memcached->init($config);
 		$this->assertEquals(Memcached::SERIALIZER_MSGPACK, $Memcached->getMemcached()->getOption(Memcached::OPT_SERIALIZER));
 	}
 
@@ -289,7 +290,7 @@ class MemcachedEngineTest extends TestCase {
 		);
 
 		$Memcached = new TestMemcachedEngine();
-		$settings = array(
+		$config = array(
 			'engine' => 'Memcached',
 			'servers' => array('127.0.0.1:11211'),
 			'persistent' => false,
@@ -299,7 +300,7 @@ class MemcachedEngineTest extends TestCase {
 		$this->setExpectedException(
 			'Cake\Error\Exception', 'msgpack is not a valid serializer engine for Memcached'
 		);
-		$Memcached->init($settings);
+		$Memcached->init($config);
 	}
 
 /**
@@ -656,6 +657,7 @@ class MemcachedEngineTest extends TestCase {
  * @return void
  */
 	public function testClear() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		Cache::config('memcached2', array(
 			'engine' => 'Memcached',
 			'prefix' => 'cake2_',

@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\ORM;
@@ -17,6 +17,8 @@ namespace Cake\ORM;
 use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
+use Cake\Datasource\EntityInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
@@ -26,7 +28,6 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
-use Cake\ORM\Entity;
 use Cake\ORM\Error\MissingEntityException;
 use Cake\ORM\Error\RecordNotFoundException;
 use Cake\ORM\Marshaller;
@@ -72,9 +73,9 @@ use Cake\Validation\Validator;
  * Table objects provide a few callbacks/events you can hook into to augment/replace
  * find operations. Each event uses the standard event subsystem in CakePHP
  *
- * - `beforeFind($event, $query, $options)` - Fired before each find operation. By stopping
- *   the event and supplying a return value you can bypass the find operation entirely. Any
- *   changes done to the $query instance will be retained for the rest of the find.
+ * - `beforeFind($event, $query, $options, $eagerLoaded)` - Fired before each find operation.
+ *   By stopping the event and supplying a return value you can bypass the find operation
+ *   entirely. Any changes done to the $query instance will be retained for the rest of the find.
  * - `beforeValidate($event, $entity, $options, $validator)` - Fired before an entity is validated.
  *   By stopping this event, you can abort the validate + save operations.
  * - `afterValidate($event, $entity, $options, $validator)` - Fired after an entity is validated.
@@ -86,9 +87,9 @@ use Cake\Validation\Validator;
  *   By stopping this event you will abort the delete operation.
  * - `afterDelete($event, $entity, $options)` - Fired after an entity has been deleted.
  *
- * @see Cake\Event\EventManager for reference on the events system.
+ * @see \Cake\Event\EventManager for reference on the events system.
  */
-class Table implements EventListener {
+class Table implements RepositoryInterface, EventListener {
 
 /**
  * Name of the table as it can be found in the database
@@ -122,7 +123,7 @@ class Table implements EventListener {
 /**
  * The name of the field that represents the primary key in the table
  *
- * @var array
+ * @var string|array
  */
 	protected $_primaryKey;
 
@@ -136,23 +137,23 @@ class Table implements EventListener {
 /**
  * The associations container for this Table.
  *
- * @var Cake\ORM\Associations
+ * @var \Cake\ORM\Associations
  */
-	protected $_associated;
+	protected $_associations;
 
 /**
  * EventManager for this table.
  *
  * All model/behavior callbacks will be dispatched on this manager.
  *
- * @var Cake\Event\EventManager
+ * @var \Cake\Event\EventManager
  */
 	protected $_eventManager;
 
 /**
  * BehaviorRegistry for this table
  *
- * @var Cake\ORM\BehaviorRegistry
+ * @var \Cake\ORM\BehaviorRegistry
  */
 	protected $_behaviors;
 
@@ -184,9 +185,9 @@ class Table implements EventListener {
  *   passed to it.
  * - eventManager: An instance of an event manager to use for internal events
  * - behaviors: A BehaviorRegistry. Generally not used outside of tests.
+ * - associations: An Associations instance.
  *
- * @param array config Lsit of options for this table
- * @return void
+ * @param array $config List of options for this table
  */
 	public function __construct(array $config = []) {
 		if (!empty($config['table'])) {
@@ -204,20 +205,19 @@ class Table implements EventListener {
 		if (!empty($config['entityClass'])) {
 			$this->entityClass($config['entityClass']);
 		}
-		$eventManager = $behaviors = null;
+		$eventManager = $behaviors = $associations = null;
 		if (!empty($config['eventManager'])) {
 			$eventManager = $config['eventManager'];
 		}
 		if (!empty($config['behaviors'])) {
 			$behaviors = $config['behaviors'];
 		}
-		$associations = null;
 		if (!empty($config['associations'])) {
 			$associations = $config['associations'];
 		}
 		$this->_eventManager = $eventManager ?: new EventManager();
-		$this->_associated = $associations ?: new Associations();
 		$this->_behaviors = $behaviors ?: new BehaviorRegistry($this);
+		$this->_associations = $associations ?: new Associations();
 
 		$this->initialize($config);
 		$this->_eventManager->attach($this);
@@ -230,7 +230,7 @@ class Table implements EventListener {
  * instance is created through the TableRegistry without a connection.
  *
  * @return string
- * @see Cake\ORM\TableRegistry::get()
+ * @see \Cake\ORM\TableRegistry::get()
  */
 	public static function defaultConnectionName() {
 		return 'default';
@@ -280,7 +280,7 @@ class Table implements EventListener {
 /**
  * Returns the table alias or sets a new one
  *
- * @param string $table the new table alias
+ * @param string $alias the new table alias
  * @return string
  */
 	public function alias($alias = null) {
@@ -311,7 +311,7 @@ class Table implements EventListener {
 /**
  * Get the event manager for this Table.
  *
- * @return Cake\Event\EventManager
+ * @return \Cake\Event\EventManager
  */
 	public function getEventManager() {
 		return $this->_eventManager;
@@ -374,16 +374,19 @@ class Table implements EventListener {
 /**
  * Returns the primary key field name or sets a new one
  *
- * @param string $key sets a new name to be used as primary key
- * @return string
+ * @param string|array $key sets a new name to be used as primary key
+ * @return string|array
  */
 	public function primaryKey($key = null) {
 		if ($key !== null) {
 			$this->_primaryKey = $key;
 		}
 		if ($this->_primaryKey === null) {
-			$key = current((array)$this->schema()->primaryKey());
-			$this->_primaryKey = $key ?: null;
+			$key = (array)$this->schema()->primaryKey();
+			if (count($key) === 1) {
+				$key = $key[0];
+			}
+			$this->_primaryKey = $key;
 		}
 		return $this->_primaryKey;
 	}
@@ -400,7 +403,8 @@ class Table implements EventListener {
 		}
 		if ($this->_displayField === null) {
 			$schema = $this->schema();
-			$this->_displayField = $this->primaryKey();
+			$primary = (array)$this->primaryKey();
+			$this->_displayField = array_shift($primary);
 			if ($schema->column('title')) {
 				$this->_displayField = 'title';
 			}
@@ -469,7 +473,7 @@ class Table implements EventListener {
  * @param string $name The name of the behavior. Can be a short class reference.
  * @param array $options The options for the behavior to use.
  * @return void
- * @see Cake\ORM\Behavior
+ * @see \Cake\ORM\Behavior
  */
 	public function addBehavior($name, $options = []) {
 		$this->_behaviors->load($name, $options);
@@ -501,19 +505,19 @@ class Table implements EventListener {
  * Returns a association objected configured for the specified alias if any
  *
  * @param string $name the alias used for the association
- * @return Cake\ORM\Association
+ * @return \Cake\ORM\Association
  */
 	public function association($name) {
-		return $this->_associated->get($name);
+		return $this->_associations->get($name);
 	}
 
 /**
  * Get the associations collection for this table.
  *
- * @return Cake\ORM\Associations
+ * @return \Cake\ORM\Associations
  */
 	public function associations() {
-		return $this->_associated;
+		return $this->_associations;
 	}
 
 /**
@@ -540,12 +544,12 @@ class Table implements EventListener {
  * @param string $associated the alias for the target table. This is used to
  * uniquely identify the association
  * @param array $options list of options to configure the association definition
- * @return Cake\ORM\Association\BelongsTo
+ * @return \Cake\ORM\Association\BelongsTo
  */
 	public function belongsTo($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new BelongsTo($associated, $options);
-		return $this->_associated->add($association->name(), $association);
+		return $this->_associations->add($association->name(), $association);
 	}
 
 /**
@@ -577,12 +581,12 @@ class Table implements EventListener {
  * @param string $associated the alias for the target table. This is used to
  * uniquely identify the association
  * @param array $options list of options to configure the association definition
- * @return Cake\ORM\Association\HasOne
+ * @return \Cake\ORM\Association\HasOne
  */
 	public function hasOne($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new HasOne($associated, $options);
-		return $this->_associated->add($association->name(), $association);
+		return $this->_associations->add($association->name(), $association);
 	}
 
 /**
@@ -618,12 +622,12 @@ class Table implements EventListener {
  * @param string $associated the alias for the target table. This is used to
  * uniquely identify the association
  * @param array $options list of options to configure the association definition
- * @return Cake\ORM\Association\HasMany
+ * @return \Cake\ORM\Association\HasMany
  */
 	public function hasMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new HasMany($associated, $options);
-		return $this->_associated->add($association->name(), $association);
+		return $this->_associations->add($association->name(), $association);
 	}
 
 /**
@@ -636,9 +640,10 @@ class Table implements EventListener {
  *
  * The options array accept the following keys:
  *
- * - className: The class name of the target table object
- * - targetTable: An instance of a table object to be used as the target table
- * - foreignKey: The name of the field to use as foreign key
+ * - className: The class name of the target table object.
+ * - targetTable: An instance of a table object to be used as the target table.
+ * - foreignKey: The name of the field to use as foreign key.
+ * - targetForeignKey: The name of the field to use as the target foreign key.
  * - joinTable: The name of the table representing the link between the two
  * - through: If you choose to use an already instantiated link table, set this
  *   key to a configured Table instance containing associations to both the source
@@ -646,8 +651,8 @@ class Table implements EventListener {
  * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
  *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
  *   When true join/junction table records will be loaded and then deleted.
- * - conditions: array with a list of conditions to filter the join with
- * - sort: The order in which results for this association should be returned
+ * - conditions: array with a list of conditions to filter the join with.
+ * - sort: The order in which results for this association should be returned.
  * - strategy: The strategy to be used for selecting results Either 'select'
  *   or 'subquery'. If subquery is selected the query used to return results
  *   in the source table will be used as conditions for getting rows in the
@@ -662,26 +667,19 @@ class Table implements EventListener {
  * @param string $associated the alias for the target table. This is used to
  * uniquely identify the association
  * @param array $options list of options to configure the association definition
- * @return Cake\ORM\Association\BelongsToMany
+ * @return \Cake\ORM\Association\BelongsToMany
  */
 	public function belongsToMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new BelongsToMany($associated, $options);
-		return $this->_associated->add($association->name(), $association);
+		return $this->_associations->add($association->name(), $association);
 	}
 
 /**
- * Creates a new Query for this table and applies some defaults based on the
- * type of search that was selected.
+ * {@inheritdoc}
  *
- * ### Model.beforeFind event
+ * By default, `$options` will recognize the following keys:
  *
- * Each find() will trigger a `Model.beforeFind` event for all attached
- * listeners. Any listener can set a valid result set using $query
- *
- * @param string $type the type of query to perform
- * @param array $options An array that will be passed to Query::applyOptions
- * By default it allows the following keys:
  * - fields
  * - conditions
  * - order
@@ -723,11 +721,47 @@ class Table implements EventListener {
  *
  * The results of this finder will be in the following form:
  *
- *	[
+ * {{{
+ * [
+ *	1 => 'value for id 1',
+ *	2 => 'value for id 2',
+ *	4 => 'value for id 4'
+ * ]
+ * }}}
+ *
+ * You can specify which property will be used as the key and which as value
+ * by using the `$options` array, when not specified, it will use the results
+ * of calling `primaryKey` and `displayField` respectively in this table:
+ *
+ * {{{
+ * $table->find('list', [
+ *	'idField' => 'name',
+ *	'valueField' => 'age'
+ * ]);
+ * }}}
+ *
+ * Results can be put together in bigger groups when they share a property, you
+ * can customize the property to use for grouping by setting `groupField`:
+ *
+ * {{{
+ * $table->find('list', [
+ *	'groupField' => 'category_id',
+ * ]);
+ * }}}
+ *
+ * When using a `groupField` results will be returned in this format:
+ *
+ * {{{
+ * [
+ *	'group_1' => [
  *		1 => 'value for id 1',
  *		2 => 'value for id 2',
+ *	]
+ *	'group_2' => [
  *		4 => 'value for id 4'
  *	]
+ * ]
+ * }}}
  *
  * @param \Cake\ORM\Query $query
  * @param array $options
@@ -737,29 +771,20 @@ class Table implements EventListener {
 		$options += [
 			'idField' => $this->primaryKey(),
 			'valueField' => $this->displayField(),
-			'groupField' => false
+			'groupField' => null
 		];
-		$mapper = function($row, $key, $mapReduce) use ($options) {
-			$rowKey = $options['idField'];
-			$rowVal = $options['valueField'];
-			if (!($options['groupField'])) {
-				$mapReduce->emit($row[$rowVal], $row[$rowKey]);
-				return;
-			}
+		$options = $this->_setFieldMatchers(
+			$options,
+			['idField', 'valueField', 'groupField']
+		);
 
-			$key = $row[$options['groupField']];
-			$mapReduce->emitIntermediate([$row[$rowKey] => $row[$rowVal]], $key);
-		};
-
-		$reducer = function($values, $key, $mapReduce) {
-			$result = [];
-			foreach ($values as $value) {
-				$result += $value;
-			}
-			$mapReduce->emit($result, $key);
-		};
-
-		return $query->mapReduce($mapper, $reducer);
+		return $query->formatResults(function($results) use ($options) {
+			return $results->combine(
+				$options['idField'],
+				$options['valueField'],
+				$options['groupField']
+			);
+		});
 	}
 
 /**
@@ -769,65 +794,83 @@ class Table implements EventListener {
  * Values belonging to a parent row based on their parent_id value will be
  * recursively nested inside the parent row values using the `children` property
  *
+ * You can customize what fields are used for nesting results, by default the
+ * primary key and the `parent_id` fields are used. If you you wish to change
+ * these defaults you need to provide the keys `idField` or `parentField` in
+ * `$options`:
+ *
+ * {{{
+ * $table->find('threaded', [
+ *	'idField' => 'id',
+ *	'parentField' => 'ancestor_id'
+ * ]);
+ * }}}
+ *
  * @param \Cake\ORM\Query $query
  * @param array $options
  * @return \Cake\ORM\Query
  */
 	public function findThreaded(Query $query, array $options = []) {
-		$parents = [];
-		$hydrate = $query->hydrate();
-		$mapper = function($row, $key, $mapReduce) use (&$parents) {
-			$row['children'] = [];
-			$parents[$row['id']] =& $row;
-			$mapReduce->emitIntermediate($row['id'], $row['parent_id']);
-		};
+		$options += [
+			'idField' => $this->primaryKey(),
+			'parentField' => 'parent_id',
+		];
+		$options = $this->_setFieldMatchers($options, ['idField', 'parentField']);
 
-		$reducer = function($values, $key, $mapReduce) use (&$parents, $hydrate) {
-			if (empty($key) || !isset($parents[$key])) {
-				foreach ($values as $id) {
-					$parents[$id] = $hydrate ? $parents[$id] : new \ArrayObject($parents[$id]);
-					$mapReduce->emit($parents[$id]);
-				}
-				return;
-			}
-
-			foreach ($values as $id) {
-				$parents[$key]['children'][] =& $parents[$id];
-			}
-		};
-
-		$query->mapReduce($mapper, $reducer);
-		if (!$hydrate) {
-			$query->mapReduce(function($row, $key, $mapReduce) {
-				$mapReduce->emit($row->getArrayCopy());
-			});
-		}
-
-		return $query;
+		return $query->formatResults(function($results) use ($options) {
+			return $results->nest($options['idField'], $options['parentField']);
+		});
 	}
 
 /**
- * Returns a single record after finding it by its primary key, if no record is
- * found this method throws an exception.
+ * Out of an options array, check if the keys described in `$keys` are arrays
+ * and change the values for closures that will concatenate the each of the
+ * properties in the value array when passed a row.
  *
- * ###Example:
+ * This is an auxiliary function used for result formatters that can accept
+ * composite keys when comparing values.
  *
- * {{{
- * $id = 10;
- * $article = $articles->get($id);
+ * @param array $options the original options passed to a finder
+ * @param array $keys the keys to check in $options to build matchers from
+ * the associated value
+ * @return array
+ */
+	protected function _setFieldMatchers($options, $keys) {
+		foreach ($keys as $field) {
+			if (!is_array($options[$field])) {
+				continue;
+			}
+
+			if (count($options[$field]) === 1) {
+				$options[$field] = current($options[$field]);
+				continue;
+			}
+
+			$fields = $options[$field];
+			$options[$field] = function($row) use ($fields) {
+				$matches = [];
+				foreach ($fields as $field) {
+					$matches[] = $row[$field];
+				}
+				return implode(';', $matches);
+			};
+		}
+
+		return $options;
+	}
+
+/**
+ * {@inheritdoc}
  *
- * $article = $articles->get($id, ['contain' => ['Comments]]);
- * }}}
- *
- * @param mixed primary key value to find
- * @param array $options options accepted by `Table::find()`
- * @throws Cake\ORM\Error\RecordNotFoundException if the record with such id
- * could not be found
- * @return \Cake\ORM\Entity
- * @see Table::find()
+ * @throws \Cake\ORM\Error\RecordNotFoundException if no record can be found give
+ * such primary key value.
  */
 	public function get($primaryKey, $options = []) {
 		$key = (array)$this->primaryKey();
+		$alias = $this->alias();
+		foreach ($key as $index => $keyname) {
+			$key[$index] = $alias . '.' . $keyname;
+		}
 		$conditions = array_combine($key, (array)$primaryKey);
 		$entity = $this->find('all', $options)->where($conditions)->first();
 
@@ -843,24 +886,16 @@ class Table implements EventListener {
 	}
 
 /**
- * Creates a new Query instance for this table
+ * {@inheritdoc}
  *
- * @return \Cake\ORM\Query
  */
 	public function query() {
 		return new Query($this->connection(), $this);
 	}
 
 /**
- * Update all matching rows.
+ * {@inheritdoc}
  *
- * Sets the $fields to the provided values based on $conditions.
- * This method will *not* trigger beforeSave/afterSave events. If you need those
- * first load a collection of records and update them.
- *
- * @param array $fields A hash of field => new value.
- * @param array $conditions An array of conditions, similar to those used with find()
- * @return boolean Success Returns true if one or more rows are effected.
  */
 	public function updateAll($fields, $conditions) {
 		$query = $this->query();
@@ -889,8 +924,8 @@ class Table implements EventListener {
  * public function validationForSubscription($validator) {
  *	return $validator
  *	->add('email', 'valid-email', ['rule' => 'email'])
- *	->add('password', 'valid', ['rule' => 'notEmpty']);
- *	->validatePresence('username')
+ *	->add('password', 'valid', ['rule' => 'notEmpty'])
+ *	->validatePresence('username');
  * }
  * }}}
  *
@@ -913,18 +948,18 @@ class Table implements EventListener {
  * @param \Cake\Validation\Validator $validator
  * @return \Cake\Validation\Validator
  */
-	public function validator($name = 'default', Validator $instance = null) {
-		if ($instance === null && isset($this->_validators[$name])) {
+	public function validator($name = 'default', Validator $validator = null) {
+		if ($validator === null && isset($this->_validators[$name])) {
 			return $this->_validators[$name];
 		}
 
-		if ($instance === null) {
-			$instance = new Validator();
-			$instance = $this->{'validation' . ucfirst($name)}($instance);
+		if ($validator === null) {
+			$validator = new Validator();
+			$validator = $this->{'validation' . ucfirst($name)}($validator);
 		}
 
-		$instance->provider('table', $this);
-		return $this->_validators[$name] = $instance;
+		$validator->provider('table', $this);
+		return $this->_validators[$name] = $validator;
 	}
 
 /**
@@ -940,20 +975,8 @@ class Table implements EventListener {
 	}
 
 /**
- * Delete all matching rows.
+ * {@inheritdoc}
  *
- * Deletes all rows matching the provided conditions.
- *
- * This method will *not* trigger beforeDelete/afterDelete events. If you
- * need those first load a collection of records and delete them.
- *
- * This method will *not* execute on associations `cascade` attribute. You should
- * use database foreign keys + ON CASCADE rules if you need cascading deletes combined
- * with this method.
- *
- * @param array $conditions An array of conditions, similar to those used with find()
- * @return boolean Success Returns true if one or more rows are effected.
- * @see Cake\ORM\Table::delete()
  */
 	public function deleteAll($conditions) {
 		$query = $this->query();
@@ -966,11 +989,8 @@ class Table implements EventListener {
 	}
 
 /**
- * Returns true if there is any row in this table matching the specified
- * conditions.
+ * {@inheritdoc}
  *
- * @param array $conditions list of conditions to pass to the query
- * @return boolean
  */
 	public function exists(array $conditions) {
 		return (bool)count($this->find('all')
@@ -982,9 +1002,7 @@ class Table implements EventListener {
 	}
 
 /**
- * Persists an entity based on the fields that are marked as dirty and
- * returns the same entity after a successful save or false in case
- * of any error.
+ * {@inheritdoc}
  *
  * ### Options
  *
@@ -1063,11 +1081,8 @@ class Table implements EventListener {
  * $articles->save($entity, ['associated' => false]);
  * }}}
  *
- * @param \Cake\ORM\Entity the entity to be saved
- * @param array $options
- * @return \Cake\ORM\Entity|boolean
  */
-	public function save(Entity $entity, array $options = []) {
+	public function save(EntityInterface $entity, array $options = []) {
 		$options = new \ArrayObject($options + [
 			'atomic' => true,
 			'validate' => true,
@@ -1093,9 +1108,9 @@ class Table implements EventListener {
 /**
  * Performs the actual saving of an entity based on the passed options.
  *
- * @param \Cake\ORM\Entity the entity to be saved
+ * @param \Cake\Datasource\EntityInterface the entity to be saved
  * @param array $options
- * @return \Cake\ORM\Entity|boolean
+ * @return \Cake\Datasource\EntityInterface|boolean
  */
 	protected function _processSave($entity, $options) {
 		$primary = $entity->extract((array)$this->primaryKey());
@@ -1107,17 +1122,14 @@ class Table implements EventListener {
 			$entity->isNew(true);
 		}
 
-		if ($options['associated'] === true) {
-			$options['associated'] = $this->_associated->keys();
-		}
-		$associated = array_filter((array)$options['associated']);
+		$associated = $options['associated'];
 		$options['associated'] = [];
 
-		if (!$this->validate($entity, $options)) {
+		if ($options['validate'] && !$this->validate($entity, $options)) {
 			return false;
 		}
 
-		$options['associated'] = $associated;
+		$options['associated'] = $this->_associations->normalizeKeys($associated);
 		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
 		$this->getEventManager()->dispatch($event);
 
@@ -1125,7 +1137,7 @@ class Table implements EventListener {
 			return $event->result;
 		}
 
-		$saved = $this->_associated->saveParents(
+		$saved = $this->_associations->saveParents(
 			$this,
 			$entity,
 			$options['associated'],
@@ -1147,7 +1159,7 @@ class Table implements EventListener {
 		}
 
 		if ($success) {
-			$success = $this->_associated->saveChildren(
+			$success = $this->_associations->saveChildren(
 				$this,
 				$entity,
 				$options['associated'],
@@ -1158,6 +1170,7 @@ class Table implements EventListener {
 				$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
 				$this->getEventManager()->dispatch($event);
 				$entity->isNew(false);
+				$entity->source($this->alias());
 				$success = true;
 			}
 		}
@@ -1175,32 +1188,53 @@ class Table implements EventListener {
 /**
  * Auxiliary function to handle the insert of an entity's data in the table
  *
- * @param \Cake\ORM\Entity the subject entity from were $data was extracted
+ * @param \Cake\Datasource\EntityInterface the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
- * @return \Cake\ORM\Entity|boolean
+ * @return \Cake\Datasource\EntityInterface|boolean
+ * @throws \RuntimeException if not all the primary keys where supplied or could
+ * be generated when the table has composite primary keys
  */
 	protected function _insert($entity, $data) {
-		$query = $this->query();
+		$primary = (array)$this->primaryKey();
+		$keys = array_fill(0, count($primary), null);
+		$id = (array)$this->_newId($primary) + $keys;
+		$primary = array_combine($primary, $id);
+		$filteredKeys = array_filter($primary, 'strlen');
+		$data = $filteredKeys + $data;
 
-		$primary = $this->primaryKey();
-		$id = $this->_newId($primary);
-		if ($id !== null) {
-			$data[$primary] = $id;
+		if (count($primary) > 1) {
+			foreach ($primary as $k => $v) {
+				if (!isset($data[$k])) {
+					$msg = 'Cannot insert row, some of the primary key values are missing. ';
+					$msg .= sprintf(
+						'Got (%s), expecting (%s)',
+						implode(', ', $filteredKeys + $entity->extract(array_keys($primary))),
+						implode(', ', array_keys($primary))
+					);
+					throw new \RuntimeException($msg);
+				}
+			}
 		}
 
-		$statement = $query->insert(array_keys($data))
+		$success = false;
+		if (empty($data)) {
+			return $success;
+		}
+
+		$statement = $this->query()->insert(array_keys($data))
 			->values($data)
 			->execute();
 
-		$success = false;
 		if ($statement->rowCount() > 0) {
-			if ($primary && !isset($data[$primary])) {
-				$id = $statement->lastInsertId($this->table(), $primary);
-			}
-			if ($primary && $id !== null) {
-				$entity->set($primary, $id);
-			}
 			$success = $entity;
+			$entity->set($filteredKeys, ['guard' => false]);
+			foreach ($primary as $key => $v) {
+				if (!isset($data[$key])) {
+					$id = $statement->lastInsertId($this->table(), $key);
+					$entity->set($key, $id);
+					break;
+				}
+			}
 		}
 		$statement->closeCursor();
 		return $success;
@@ -1213,14 +1247,14 @@ class Table implements EventListener {
  * value if possible. You can override this method if you have specific requirements
  * for id generation.
  *
- * @param string $primary The primary key column to get a new ID for.
- * @return null|mixed Either null or the new primary key value.
+ * @param array $primary The primary key columns to get a new ID for.
+ * @return mixed Either null or the new primary key value.
  */
 	protected function _newId($primary) {
-		if (!$primary) {
+		if (!$primary || count((array)$primary) > 1) {
 			return null;
 		}
-		$typeName = $this->schema()->columnType($primary);
+		$typeName = $this->schema()->columnType($primary[0]);
 		$type = Type::build($typeName);
 		return $type->newId();
 	}
@@ -1228,9 +1262,9 @@ class Table implements EventListener {
 /**
  * Auxiliary function to handle the update of an entity's data in the table
  *
- * @param \Cake\ORM\Entity the subject entity from were $data was extracted
+ * @param \Cake\Datasource\EntityInterface the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
- * @return \Cake\ORM\Entity|boolean
+ * @return \Cake\Datasource\EntityInterface|boolean
  * @throws \InvalidArgumentException When primary key data is missing.
  */
 	protected function _update($entity, $data) {
@@ -1243,7 +1277,7 @@ class Table implements EventListener {
 
 		$filtered = array_filter($primaryKey, 'strlen');
 		if (count($filtered) < count($primaryKey)) {
-			$message = 'A primary key value is needed for updating';
+			$message = 'All primary key value(s) are needed for updating';
 			throw new \InvalidArgumentException($message);
 		}
 
@@ -1254,7 +1288,7 @@ class Table implements EventListener {
 			->execute();
 
 		$success = false;
-		if ($statement->rowCount() > 0) {
+		if ($statement->errorCode() === '00000') {
 			$success = $entity;
 		}
 		$statement->closeCursor();
@@ -1262,10 +1296,8 @@ class Table implements EventListener {
 	}
 
 /**
- * Delete a single entity.
+ * {@inheritdoc}
  *
- * Deletes an entity and possibly related associations from the database
- * based on the 'dependent' option used when defining the association.
  * For HasMany and HasOne associations records will be removed based on
  * the dependent option. Join table records in BelongsToMany associations
  * will always be removed. You can use the `cascadeCallbacks` option
@@ -1286,11 +1318,8 @@ class Table implements EventListener {
  * for the duration of the callbacks, this allows listeners to modify
  * the options used in the delete operation.
  *
- * @param Entity $entity The entity to remove.
- * @param array $options The options fo the delete.
- * @return boolean success
  */
-	public function delete(Entity $entity, array $options = []) {
+	public function delete(EntityInterface $entity, array $options = []) {
 		$options = new \ArrayObject($options + ['atomic' => true]);
 
 		$process = function() use ($entity, $options) {
@@ -1309,8 +1338,8 @@ class Table implements EventListener {
  * Will delete the entity provided. Will remove rows from any
  * dependent associations, and clear out join tables for BelongsToMany associations.
  *
- * @param Entity $entity The entity to delete.
- * @param ArrayObject $options The options for the delete.
+ * @param \Cake\DataSource\EntityInterface $entity The entity to delete.
+ * @param \ArrayObject $options The options for the delete.
  * @throws \InvalidArgumentException if there are no primary key values of the
  * passed entity
  * @return boolean success
@@ -1337,6 +1366,8 @@ class Table implements EventListener {
 			throw new \InvalidArgumentException($msg);
 		}
 
+		$this->_associations->cascadeDelete($entity, $options->getArrayCopy());
+
 		$query = $this->query();
 		$statement = $query->delete()
 			->where($conditions)
@@ -1346,8 +1377,6 @@ class Table implements EventListener {
 		if (!$success) {
 			return $success;
 		}
-
-		$this->_associated->cascadeDelete($entity, $options->getArrayCopy());
 
 		$event = new Event('Model.afterDelete', $this, [
 			'entity' => $entity,
@@ -1364,7 +1393,7 @@ class Table implements EventListener {
  *
  * @param string $type name of the finder to be called
  * @param \Cake\ORM\Query $query The query object to apply the finder options to
- * @param array $args List of options to pass to the finder
+ * @param array $options List of options to pass to the finder
  * @return \Cake\ORM\Query
  * @throws \BadMethodCallException
  */
@@ -1390,8 +1419,8 @@ class Table implements EventListener {
  *
  * @param string $method The method name that was fired.
  * @param array $args List of arguments passed to the function.
- * @return mixed.
- * @throws Cake\Error\Exception when there are missing arguments, or when
+ * @return mixed
+ * @throws \Cake\Error\Exception when there are missing arguments, or when
  *  and & or are combined.
  */
 	protected function _dynamicFinder($method, $args) {
@@ -1472,6 +1501,37 @@ class Table implements EventListener {
 	}
 
 /**
+ * Returns the association named after the passed value if exists, otherwise
+ * throws an exception.
+ *
+ * @param string $property the association name
+ * @return \Cake\ORM\Association
+ * @throws \RuntimeException if no association with such name exists
+ */
+	public function __get($property) {
+		$association = $this->_associations->get($property);
+		if (!$association) {
+			throw new \RuntimeException(sprintf(
+				'Table "%s" is not associated with "%s"',
+				get_class($this),
+				$property
+			));
+		}
+		return $association;
+	}
+
+/**
+ * Returns whether an association named after the passed value
+ * exists for this table.
+ *
+ * @param string $property the association name
+ * @return boolean
+ */
+	public function __isset($property) {
+		return $this->_associations->has($property);
+	}
+
+/**
  * Get the object used to marshal/convert array data into objects.
  *
  * Override this method if you want a table object to use custom
@@ -1479,8 +1539,8 @@ class Table implements EventListener {
  *
  * @param boolean $safe Whether or not this marshaller
  *   should be in safe mode.
- * @return Cake\ORM\Marhsaller;
- * @see Cake\ORM\Marshaller
+ * @return \Cake\ORM\Marshaller
+ * @see \Cake\ORM\Marshaller
  */
 	public function marshaller($safe = false) {
 		return new Marshaller($this, $safe);
@@ -1499,18 +1559,7 @@ class Table implements EventListener {
 	}
 
 /**
- * Create a new entity + associated entities from an array.
- *
- * This is most useful when hydrating request data back into entities.
- * For example, in your controller code:
- *
- * {{{
- * $article = $this->Articles->newEntity($this->request->data());
- * }}}
- *
- * The hydrated entity will correctly do an insert/update based
- * on the primary key data existing in the database when the entity
- * is saved. Until the entity is saved, it will be a detached record.
+ * {@inheritdoc}
  *
  * By default all the associations on this table will be hydrated. You can
  * limit which associations are built, or include deeper associations
@@ -1523,30 +1572,19 @@ class Table implements EventListener {
  * );
  * }}}
  *
- * @param array $data The data to build an entity with.
- * @param array $associations A whitelist of associations
- *   to hydrate. Defaults to all associations
  */
-	public function newEntity(array $data, $associations = null) {
+	public function newEntity(array $data = [], $associations = null) {
 		if ($associations === null) {
-			$associations = $this->_associated->keys();
+			$associations = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
 		return $marshaller->one($data, $associations);
 	}
 
 /**
- * Create a list of entities + associated entities from an array.
+ * {@inheritdoc}
  *
- * This is most useful when hydrating request data back into entities.
- * For example, in your controller code:
- *
- * {{{
- * $articles = $this->Articles->newEntities($this->request->data());
- * }}}
- *
- * The hydrated entities can then be iterated and saved. By default
- * all the associations on this table will be hydrated. You can
+ * By default all the associations on this table will be hydrated. You can
  * limit which associations are built, or include deeper associations
  * using the associations parameter:
  *
@@ -1557,16 +1595,47 @@ class Table implements EventListener {
  * );
  * }}}
  *
- * @param array $data The data to build an entity with.
- * @param array $associations A whitelist of associations
- *   to hydrate. Defaults to all associations
  */
 	public function newEntities(array $data, $associations = null) {
 		if ($associations === null) {
-			$associations = $this->_associated->keys();
+			$associations = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
 		return $marshaller->many($data, $associations);
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ * When merging HasMany or BelongsToMany associations, all the entities in the
+ * `$data` array will appear, those that can be matched by primary key will get
+ * the data merged, but those that cannot, will be discarded.
+ */
+	public function patchEntity(EntityInterface $entity, array $data, $associations = null) {
+		if ($associations === null) {
+			$associations = $this->_associations->keys();
+		}
+		$marshaller = $this->marshaller();
+		return $marshaller->merge($entity, $data, $associations);
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ * Those entries in `$entities` that cannot be matched to any record in
+ * `$data` will be discarded. Records in `$data` that could not be matched will
+ * be marshalled as a new entity.
+ *
+ * When merging HasMany or BelongsToMany associations, all the entities in the
+ * `$data` array will appear, those that can be matched by primary key will get
+ * the data merged, but those that cannot, will be discarded.
+ */
+	public function patchEntities($entities, array $data, $associations = null) {
+		if ($associations === null) {
+			$associations = $this->_associations->keys();
+		}
+		$marshaller = $this->marshaller();
+		return $marshaller->mergeMany($entities, $data, $associations);
 	}
 
 /**
@@ -1604,7 +1673,7 @@ class Table implements EventListener {
  * ]);
  * }}}
  *
- * @param \Cake\ORM\Entity $entity The entity to be validated
+ * @param \Cake\Datasource\EntityInterface $entity The entity to be validated
  * @param array $options A list of options to use while validating, the following
  * keys are accepted:
  * - validate: The name of the validation set to use
@@ -1613,7 +1682,7 @@ class Table implements EventListener {
  */
 	public function validate($entity, $options = []) {
 		if (!isset($options['associated'])) {
-			$options['associated'] = $this->_associated->keys();
+			$options['associated'] = $this->_associations->keys();
 		}
 
 		$entityValidator = $this->entityValidator();
@@ -1664,7 +1733,7 @@ class Table implements EventListener {
  */
 	public function validateMany($entities, $options = []) {
 		if (!isset($options['associated'])) {
-			$options['associated'] = $this->_associated->keys();
+			$options['associated'] = $this->_associations->keys();
 		}
 
 		$entityValidator = $this->entityValidator();
@@ -1701,6 +1770,25 @@ class Table implements EventListener {
 			$events[$event] = $method;
 		}
 		return $events;
+	}
+
+/**
+ * Returns an array that can be used to describe the internal state of this
+ * object.
+ *
+ * @return array
+ */
+	public function __debugInfo() {
+		$conn = $this->connection();
+		return [
+			'table' => $this->table(),
+			'alias' => $this->alias(),
+			'entityClass' => $this->entityClass(),
+			'associations' => $this->_associations->keys(),
+			'behaviors' => $this->_behaviors->loaded(),
+			'defaultConnection' => $this->defaultConnectionName(),
+			'connectionName' => $conn ? $conn->configName() : null
+		];
 	}
 
 }

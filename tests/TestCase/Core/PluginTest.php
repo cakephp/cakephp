@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Core;
@@ -207,7 +207,7 @@ class PluginTest extends TestCase {
  * Tests that Plugin::load() throws an exception on unknown plugin
  *
  * @return void
- * @expectedException Cake\Error\MissingPluginException
+ * @expectedException \Cake\Error\MissingPluginException
  */
 	public function testLoadNotFound() {
 		Plugin::load('MissingPlugin');
@@ -221,17 +221,17 @@ class PluginTest extends TestCase {
 	public function testPath() {
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
-		$this->assertEquals(Plugin::path('TestPlugin'), $expected);
+		$this->assertPathEquals(Plugin::path('TestPlugin'), $expected);
 
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS;
-		$this->assertEquals(Plugin::path('TestPluginTwo'), $expected);
+		$this->assertPathEquals(Plugin::path('TestPluginTwo'), $expected);
 	}
 
 /**
  * Tests that Plugin::path() throws an exception on unknown plugin
  *
  * @return void
- * @expectedException Cake\Error\MissingPluginException
+ * @expectedException \Cake\Error\MissingPluginException
  */
 	public function testPathNotFound() {
 		Plugin::path('TestPlugin');

@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database;
@@ -50,7 +48,6 @@ abstract class Driver {
  * Constructor
  *
  * @param array $config The configuration for the driver.
- * @return void
  */
 	public function __construct($config = []) {
 		$config += $this->_baseConfig;
@@ -78,6 +75,7 @@ abstract class Driver {
  * Returns correct connection resource or object that is internally used
  * If first argument is passed,
  *
+ * @param null|\PDO instance $connection
  * @return void
  */
 	public abstract function connection($connection = null);
@@ -92,10 +90,10 @@ abstract class Driver {
 /**
  * Prepares a sql statement to be executed
  *
- * @param string $sql
- * @return Cake\Database\Statement
+ * @param string|\Cake\Database\Query $query
+ * @return \Cake\Database\StatementInterface
  */
-	public abstract function prepare($sql);
+	public abstract function prepare($query);
 
 /**
  * Starts a transaction
@@ -130,6 +128,8 @@ abstract class Driver {
 /**
  * Returns a value in a safe representation to be used in a query string
  *
+ * @param mixed $value
+ * @param string $type Type to be used for determining kind of quoting to perform
  * @return string
  */
 	public abstract function quote($value, $type);
@@ -163,7 +163,7 @@ abstract class Driver {
  * If all the tables that use this Driver specify their
  * own schemas, then this may return null.
  *
- * @return Cake\Database\Schema\BaseSchema
+ * @return \Cake\Database\Schema\BaseSchema
  */
 	public abstract function schemaDialect();
 
@@ -183,7 +183,7 @@ abstract class Driver {
  * @return string String for use in schema definitions.
  */
 	public function schemaValue($value) {
-		if (is_null($value)) {
+		if ($value === null) {
 			return 'NULL';
 		}
 		if ($value === false) {
@@ -208,7 +208,7 @@ abstract class Driver {
  * Returns last id generated for a table or sequence in database
  *
  * @param string $table table name or sequence to get last insert value from
- * @param string column the name of the column representing the primary key
+ * @param string $column the name of the column representing the primary key
  * @return string|integer
  */
 	public function lastInsertId($table = null, $column = null) {
@@ -243,8 +243,6 @@ abstract class Driver {
 
 /**
  * Destructor
- *
- * @return void
  */
 	public function __destruct() {
 		$this->_connection = null;

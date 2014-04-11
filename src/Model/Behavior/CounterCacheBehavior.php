@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Model\Behavior;
@@ -31,7 +31,7 @@ use Cake\Utility\Inflector;
  * Regular counter cache
  * {{{
  * [
- *     'User' => [
+ *     'Users' => [
  *         'post_count'
  *     ]
  * ]
@@ -40,7 +40,7 @@ use Cake\Utility\Inflector;
  * Counter cache with scope
  * {{{
  * [
- *     'User' => [
+ *     'Users' => [
  *         'posts_published' => [
  *             'conditions' => [
  *                 'published' => true
@@ -53,7 +53,7 @@ use Cake\Utility\Inflector;
  * Counter cache using custom find
  * {{{
  * [
- *     'User' => [
+ *     'Users' => [
  *         'posts_published' => [
  *             'findType' => 'published' // Will be using findPublished()
  *         ]
@@ -65,7 +65,7 @@ use Cake\Utility\Inflector;
  * This is equivalent to example #2
  * {{{
  * [
- *     'User' => [
+ *     'Users' => [
  *         'posts_published' => function (Event $event, Entity $entity, Table $table) {
  *             $query = $table->find('all')->where([
  *                 'published' => true,
@@ -84,7 +84,7 @@ class CounterCacheBehavior extends Behavior {
  * Keeping a reference to the table in order to,
  * be able to retrieve associations and fetch records for counting.
  *
- * @var array
+ * @var \Cake\ORM\Table
  */
 	protected $_table;
 

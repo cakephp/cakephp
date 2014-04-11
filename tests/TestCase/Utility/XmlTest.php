@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.5432
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
@@ -132,17 +132,18 @@ class XmlTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidDataProvider
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testBuildInvalidData($value) {
+		$this->assertFalse(defined('HHVM_VERSION') && !empty($value), 'Segfaults HHVM');
 		Xml::build($value);
 	}
 
 /**
  * Test that building SimpleXmlElement with invalid XML causes the right exception.
  *
- * @expectedException Cake\Error\XmlException
+ * @expectedException \Cake\Error\XmlException
  * @return void
  */
 	public function testBuildInvalidDataSimpleXml() {
@@ -153,7 +154,7 @@ class XmlTest extends TestCase {
 /**
  * test build with a single empty tag
  *
- * return void
+ * @return void
  */
 	public function testBuildEmptyTag() {
 		try {
@@ -500,6 +501,7 @@ XML;
  * testFromArrayFail method
  *
  * @dataProvider invalidArrayDataProvider
+ * @return void
  */
 	public function testFromArrayFail($value) {
 		try {
@@ -729,7 +731,7 @@ XML;
 			'pubDate' => 'Tue, 31 Aug 2010 01:42:00 -0500',
 			'guid' => 'http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn'
 		);
-		$this->assertSame($rssAsArray['rss']['channel']['item'][1], $expected);
+		$this->assertSame($expected, $rssAsArray['rss']['channel']['item'][1]);
 
 		$rss = array(
 			'rss' => array(
@@ -795,7 +797,7 @@ XML;
 				'params' => ''
 			)
 		);
-		$this->assertSame(Xml::toArray($xml), $expected);
+		$this->assertSame($expected, Xml::toArray($xml));
 
 		$xml = Xml::build('<methodCall><methodName>test</methodName><params><param><value><array><data><value><int>12</int></value><value><string>Egypt</string></value><value><boolean>0</boolean></value><value><int>-31</int></value></data></array></value></param></params></methodCall>');
 		$expected = array(
@@ -819,7 +821,7 @@ XML;
 				)
 			)
 		);
-		$this->assertSame(Xml::toArray($xml), $expected);
+		$this->assertSame($expected, Xml::toArray($xml));
 
 		$xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -861,7 +863,7 @@ XML;
 				)
 			)
 		);
-		$this->assertSame(Xml::toArray($xml), $expected);
+		$this->assertSame($expected, Xml::toArray($xml));
 
 		$xml = Xml::fromArray($expected, 'tags');
 		$this->assertXmlStringEqualsXmlString($xmlText, $xml->asXML());
@@ -985,7 +987,7 @@ XML;
 		);
 		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root><ns:attr xmlns:ns="http://cakephp.org">1</ns:attr></root>';
 		$xmlResponse = Xml::fromArray($xml);
-		$this->assertEquals(str_replace(array("\r", "\n"), '', $xmlResponse->asXML()), $expected);
+		$this->assertEquals($expected, str_replace(array("\r", "\n"), '', $xmlResponse->asXML()));
 
 		$xml = array(
 			'root' => array(
@@ -1069,7 +1071,8 @@ XML;
  * testToArrayFail method
  *
  * @dataProvider invalidToArrayDataProvider
- * @expectedException Cake\Error\XmlException
+ * @expectedException \Cake\Error\XmlException
+ * @return void
  */
 	public function testToArrayFail($value) {
 		Xml::toArray($value);

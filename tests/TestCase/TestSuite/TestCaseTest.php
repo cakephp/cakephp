@@ -13,7 +13,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @since         CakePHP v 1.2.0.4487
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\TestSuite;
@@ -55,24 +55,31 @@ class TestCaseTest extends TestCase {
 	}
 
 /**
- * testAssertGoodTags
+ * testAssertTags
  *
  * @return void
  */
-	public function testAssertTagsQuotes() {
+	public function testAssertTagsBasic() {
 		$test = new AssertTagsTestCase('testAssertTagsQuotes');
 		$result = $test->run();
 		$this->assertEquals(0, $result->errorCount());
 		$this->assertTrue($result->wasSuccessful());
 		$this->assertEquals(0, $result->failureCount());
+	}
 
+/**
+ * test assertTags works with single and double quotes
+ *
+ * @return void
+ */
+	public function testAssertTagsQuoting() {
 		$input = '<a href="/test.html" class="active">My link</a>';
 		$pattern = array(
 			'a' => array('href' => '/test.html', 'class' => 'active'),
 			'My link',
 			'/a'
 		);
-		$this->assertTrue($test->assertTags($input, $pattern), 'Double quoted attributes %s');
+		$this->assertTags($input, $pattern);
 
 		$input = "<a href='/test.html' class='active'>My link</a>";
 		$pattern = array(
@@ -80,7 +87,7 @@ class TestCaseTest extends TestCase {
 			'My link',
 			'/a'
 		);
-		$this->assertTrue($test->assertTags($input, $pattern), 'Single quoted attributes %s');
+		$this->assertTags($input, $pattern);
 
 		$input = "<a href='/test.html' class='active'>My link</a>";
 		$pattern = array(
@@ -88,7 +95,7 @@ class TestCaseTest extends TestCase {
 			'My link',
 			'/a'
 		);
-		$this->assertTrue($test->assertTags($input, $pattern), 'Single quoted attributes %s');
+		$this->assertTags($input, $pattern);
 
 		$input = "<span><strong>Text</strong></span>";
 		$pattern = array(
@@ -98,7 +105,7 @@ class TestCaseTest extends TestCase {
 			'/strong',
 			'/span'
 		);
-		$this->assertTrue($test->assertTags($input, $pattern), 'Tags with no attributes');
+		$this->assertTags($input, $pattern);
 
 		$input = "<span class='active'><strong>Text</strong></span>";
 		$pattern = array(
@@ -108,7 +115,34 @@ class TestCaseTest extends TestCase {
 			'/strong',
 			'/span'
 		);
-		$this->assertTrue($test->assertTags($input, $pattern), 'Test attribute presence');
+		$this->assertTags($input, $pattern);
+	}
+
+/**
+ * Test that assertTags runs quickly.
+ *
+ * @return void
+ */
+	public function testAssertTagsRuntimeComplexity() {
+		$pattern = array(
+			'div' => array(
+				'attr1' => 'val1',
+				'attr2' => 'val2',
+				'attr3' => 'val3',
+				'attr4' => 'val4',
+				'attr5' => 'val5',
+				'attr6' => 'val6',
+				'attr7' => 'val7',
+				'attr8' => 'val8',
+			),
+			'My div',
+			'/div'
+		);
+		$input = '<div attr8="val8" attr6="val6" attr4="val4" attr2="val2"' .
+			' attr1="val1" attr3="val3" attr5="val5" attr7="val7" />' .
+			'My div' .
+			'</div>';
+		$this->assertTags($input, $pattern);
 	}
 
 /**
@@ -141,24 +175,6 @@ class TestCaseTest extends TestCase {
 		$this->assertEquals(0, $result->errorCount());
 		$this->assertFalse($result->wasSuccessful());
 		$this->assertEquals(1, $result->failureCount());
-	}
-
-/**
- * testLoadFixtures
- *
- * @return void
- */
-	public function testLoadFixtures() {
-		$test = new FixturizedTestCase('testFixturePresent');
-		$manager = $this->getMock('Cake\TestSuite\Fixture\FixtureManager');
-		$manager->fixturize($test);
-		$test->fixtureManager = $manager;
-		$manager->expects($this->once())->method('load');
-		$manager->expects($this->once())->method('unload');
-		$result = $test->run();
-		$this->assertEquals(0, $result->errorCount());
-		$this->assertTrue($result->wasSuccessful());
-		$this->assertEquals(0, $result->failureCount());
 	}
 
 /**
@@ -352,7 +368,7 @@ class TestCaseTest extends TestCase {
 		$Posts = $this->getMockForModel('Posts');
 		$entity = new \Cake\ORM\Entity(array());
 
-		$this->assertInstanceOf('TestApp\Model\Repository\PostsTable', $Posts);
+		$this->assertInstanceOf('TestApp\Model\Table\PostsTable', $Posts);
 		$this->assertNull($Posts->save($entity));
 		$this->assertNull($Posts->table());
 
@@ -381,11 +397,11 @@ class TestCaseTest extends TestCase {
 		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments');
 
 		$result = TableRegistry::get('TestPlugin.TestPluginComments');
-		$this->assertInstanceOf('\TestPlugin\Model\Repository\TestPluginCommentsTable', $result);
+		$this->assertInstanceOf('\TestPlugin\Model\Table\TestPluginCommentsTable', $result);
 
 		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments', array('save'));
 
-		$this->assertInstanceOf('\TestPlugin\Model\Repository\TestPluginCommentsTable', $TestPluginComment);
+		$this->assertInstanceOf('\TestPlugin\Model\Table\TestPluginCommentsTable', $TestPluginComment);
 		$TestPluginComment->expects($this->at(0))
 			->method('save')
 			->will($this->returnValue(true));

@@ -12,7 +12,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.5432
+ * @since         1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Utility;
@@ -624,12 +624,12 @@ podeís adquirirla.</span></p>
 		$expected = '<p><b>strong</b>bow <strong>isn&rsquo;t</strong> real cider</p>';
 		$this->assertEquals($expected, $this->Text->highlight($text2, 'strong', $options));
 
-		$this->assertEquals($this->Text->highlight($text3, 'strong', $options), $text3);
+		$this->assertEquals($text3, $this->Text->highlight($text3, 'strong', $options));
 
-		$this->assertEquals($this->Text->highlight($text3, array('strong', 'what'), $options), $text3);
+		$this->assertEquals($text3, $this->Text->highlight($text3, array('strong', 'what'), $options));
 
 		$expected = '<b>What</b> a <b>strong</b> mouse: <img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
-		$this->assertEquals($this->Text->highlight($text4, array('strong', 'what'), $options), $expected);
+		$this->assertEquals($expected, $this->Text->highlight($text4, array('strong', 'what'), $options));
 	}
 
 /**

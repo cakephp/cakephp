@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network\Http;
@@ -57,7 +57,7 @@ class FormData implements \Countable {
  *
  * @param string $name The name of the part.
  * @param string $value The value to add.
- * @return Cake\Network\Http\FormData\Part
+ * @return \Cake\Network\Http\FormData\Part
  */
 	public function newPart($name, $value) {
 		return new Part($name, $value);

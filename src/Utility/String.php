@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0.5551
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
@@ -29,7 +29,7 @@ class String {
  * Generate a random UUID
  *
  * @see http://www.ietf.org/rfc/rfc4122.txt
- * @return RFC 4122 UUID
+ * @return string RFC 4122 UUID
  */
 	public static function uuid() {
 		$node = env('SERVER_ADDR');
@@ -195,7 +195,7 @@ class String {
  * @param array $options An array of options, see description above
  * @return string
  */
-	public static function insert($str, $data, $options = array()) {
+	public static function insert($str, $data, array $options = array()) {
 		$defaults = array(
 			'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false
 		);
@@ -259,7 +259,7 @@ class String {
  * @return string
  * @see String::insert()
  */
-	public static function cleanInsert($str, $options) {
+	public static function cleanInsert($str, array $options) {
 		$clean = $options['clean'];
 		if (!$clean) {
 			return $str;
@@ -412,17 +412,17 @@ class String {
  * @return string The highlighted text
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
  */
-	public static function highlight($text, $phrase, $options = array()) {
+	public static function highlight($text, $phrase, array $options = array()) {
 		if (empty($phrase)) {
 			return $text;
 		}
 
-		$default = array(
+		$defaults = array(
 			'format' => '<span class="highlight">\1</span>',
 			'html' => false,
 			'regex' => "|%s|iu"
 		);
-		$options = array_merge($default, $options);
+		$options += $defaults;
 		extract($options);
 
 		if (is_array($phrase)) {
@@ -477,11 +477,11 @@ class String {
  * @param array $options An array of options.
  * @return string Trimmed string.
  */
-	public static function tail($text, $length = 100, $options = array()) {
+	public static function tail($text, $length = 100, array $options = array()) {
 		$default = array(
 			'ellipsis' => '...', 'exact' => true
 		);
-		$options = array_merge($default, $options);
+		$options += $default;
 		extract($options);
 
 		if (mb_strlen($text) <= $length) {
@@ -515,14 +515,14 @@ class String {
  * @return string Trimmed string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
  */
-	public static function truncate($text, $length = 100, $options = array()) {
+	public static function truncate($text, $length = 100, array $options = array()) {
 		$default = array(
 			'ellipsis' => '...', 'exact' => true, 'html' => false
 		);
 		if (!empty($options['html']) && Configure::read('App.encoding') === 'UTF-8') {
 			$default['ellipsis'] = "\xe2\x80\xa6";
 		}
-		$options = array_merge($default, $options);
+		$options += $default;
 		extract($options);
 
 		if ($html) {
@@ -671,7 +671,7 @@ class String {
  * @return string The glued together string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::toList
  */
-	public static function toList($list, $and = 'and', $separator = ', ') {
+	public static function toList(array $list, $and = 'and', $separator = ', ') {
 		if (count($list) > 1) {
 			return implode($separator, array_slice($list, null, -1)) . ' ' . $and . ' ' . array_pop($list);
 		}
@@ -743,7 +743,7 @@ class String {
  * @param array $array
  * @return string
  */
-	public static function ascii($array) {
+	public static function ascii(array $array) {
 		$ascii = '';
 
 		foreach ($array as $utf8) {

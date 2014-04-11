@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.5.0
+ * @since         2.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Cache\Engine;
@@ -95,9 +95,9 @@ class MemcachedEngine extends CacheEngine {
  *
  * @param array $config array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
- * @throws Cake\Error\Exception when you try use authentication without Memcached compiled with SASL support
+ * @throws \Cake\Error\Exception when you try use authentication without Memcached compiled with SASL support
  */
-	public function init($config = []) {
+	public function init(array $config = []) {
 		if (!class_exists('Memcached')) {
 			return false;
 		}
@@ -111,6 +111,10 @@ class MemcachedEngine extends CacheEngine {
 		}
 
 		parent::init($config);
+
+		if (isset($config['servers'])) {
+			$this->config('servers', $config['servers'], false);
+		}
 
 		if (!is_array($this->_config['servers'])) {
 			$this->_config['servers'] = [$this->_config['servers']];
@@ -151,7 +155,7 @@ class MemcachedEngine extends CacheEngine {
 /**
  * Settings the memcached instance
  *
- * @throws Cake\Error\Exception when the Memcached extension is not built with the desired serializer engine
+ * @throws \Cake\Error\Exception when the Memcached extension is not built with the desired serializer engine
  */
 	protected function _setOptions() {
 		$this->_Memcached->setOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
@@ -245,8 +249,8 @@ class MemcachedEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to increment
- * @return New incremented value, false otherwise
- * @throws Cake\Error\Exception when you try to increment with compress = true
+ * @return bool|int New incremented value, false otherwise
+ * @throws \Cake\Error\Exception when you try to increment with compress = true
  */
 	public function increment($key, $offset = 1) {
 		$key = $this->_key($key);
@@ -259,8 +263,8 @@ class MemcachedEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to subtract
- * @return New decremented value, false otherwise
- * @throws Cake\Error\Exception when you try to decrement with compress = true
+ * @return bool|int New decremented value, false otherwise
+ * @throws \Cake\Error\Exception when you try to decrement with compress = true
  */
 	public function decrement($key, $offset = 1) {
 		$key = $this->_key($key);
@@ -340,6 +344,7 @@ class MemcachedEngine extends CacheEngine {
  * Increments the group value to simulate deletion of all keys under a group
  * old values will remain in storage until they expire.
  *
+ * @param string $group name of the group to be cleared
  * @return boolean success
  */
 	public function clearGroup($group) {

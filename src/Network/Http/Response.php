@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network\Http;
@@ -92,14 +92,14 @@ class Response extends Message {
 /**
  * Cached decoded XML data.
  *
- * @var SimpleXMLElement
+ * @var \SimpleXMLElement
  */
 	protected $_xml;
 
 /**
  * Cached decoded JSON data.
  *
- * @var SimpleXMLElement
+ * @var \SimpleXMLElement
  */
 	protected $_json;
 
@@ -340,7 +340,7 @@ class Response extends Message {
 /**
  * Get the response body as XML decoded data.
  *
- * @return null|SimpleXML
+ * @return null|\SimpleXMLElement
  */
 	protected function _getXml() {
 		if (!empty($this->_xml)) {
@@ -366,7 +366,7 @@ class Response extends Message {
 			return false;
 		}
 		$key = $this->_exposedProperties[$name];
-		if (substr($key, 0, 4) == '_get') {
+		if (substr($key, 0, 4) === '_get') {
 			return $this->{$key}();
 		}
 		return $this->{$key};
@@ -383,7 +383,7 @@ class Response extends Message {
 			return false;
 		}
 		$key = $this->_exposedProperties[$name];
-		if (substr($key, 0, 4) == '_get') {
+		if (substr($key, 0, 4) === '_get') {
 			$val = $this->{$key}();
 			return $val !== null;
 		}

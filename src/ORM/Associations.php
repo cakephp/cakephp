@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\ORM;
@@ -40,7 +40,7 @@ class Associations {
  * This makes using plugins simpler as the Plugin.Class syntax is frequently used.
  *
  * @param string $alias The association alias
- * @param Association The association to add.
+ * @param Association $association The association to add.
  * @return Association The association object being added.
  */
 	public function add($alias, Association $association) {
@@ -58,6 +58,21 @@ class Associations {
 		$alias = strtolower($alias);
 		if (isset($this->_items[$alias])) {
 			return $this->_items[$alias];
+		}
+		return null;
+	}
+
+/**
+ * Fetch an association by property name.
+ *
+ * @param string $prop The property to find an association by.
+ * @return Association|null Either the association or null.
+ */
+	public function getByProperty($prop) {
+		foreach ($this->_items as $assoc) {
+			if ($assoc->property() === $prop) {
+				return $assoc;
+			}
 		}
 		return null;
 	}
@@ -84,11 +99,13 @@ class Associations {
 /**
  * Get an array of associations matching a specific type.
  *
- * @return array
+ * @param string $class The type of associations you want. For example 'BelongsTo'
+ * @return array An array of Association objects.
  */
 	public function type($class) {
 		$out = array_filter($this->_items, function ($assoc) use ($class) {
-			return strpos(get_class($assoc), $class) !== false;
+			list($ns, $name) = namespaceSplit(get_class($assoc));
+			return $class === $name;
 		});
 		return array_values($out);
 	}
@@ -98,7 +115,7 @@ class Associations {
  *
  * Once removed the association will not longer be reachable
  *
- * @param string The alias name.
+ * @param string $alias The alias name.
  * @return void
  */
 	public function remove($alias) {
@@ -133,7 +150,6 @@ class Associations {
  *
  * @param Table $table The table entity is for.
  * @param Entity $entity The entity to save associated data for.
- * @param Entity $entity The entity to save associated data for.
  * @param array $associations The list of associations to save children from.
  *   associations not in this list will not be saved.
  * @param array $options The options for the save operation.
@@ -156,7 +172,7 @@ class Associations {
  * @param boolean $owningSide Compared with association classes'
  *   isOwningSide method.
  * @return boolean Success
- * @throws InvalidArgumentException When an unknown alias is used.
+ * @throws \InvalidArgumentException When an unknown alias is used.
  */
 	protected function _saveAssociations($table, $entity, $associations, $options, $owningSide) {
 		unset($options['associated']);
@@ -214,6 +230,35 @@ class Associations {
 		foreach ($this->_items as $assoc) {
 			$assoc->cascadeDelete($entity, $options);
 		}
+	}
+
+/**
+ * Returns an associative array of association names out a mixed
+ * array. If true is passed, then it returns all association names
+ * in this collection.
+ *
+ * @param boolean|array $keys the list of association names to normalize
+ * @return array
+ */
+	public function normalizeKeys($keys) {
+		if ($keys === true) {
+			$keys = $this->keys();
+		}
+
+		if (empty($keys)) {
+			return [];
+		}
+
+		$result = [];
+		foreach ($keys as $key => $value) {
+			if (is_int($key)) {
+				$key = $value;
+				$value = [];
+			}
+			$result[$key] = $value;
+		}
+
+		return $result;
 	}
 
 }

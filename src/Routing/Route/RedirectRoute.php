@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Routing\Route;
@@ -29,7 +29,7 @@ class RedirectRoute extends Route {
 /**
  * A Response object
  *
- * @var Cake\Network\Response
+ * @var \Cake\Network\Response
  */
 	public $response = null;
 
@@ -51,10 +51,10 @@ class RedirectRoute extends Route {
  * Constructor
  *
  * @param string $template Template string with parameter placeholders
- * @param array $defaults Array of defaults for the route.
+ * @param array|string $defaults Defaults for the route.
  * @param array $options Array of additional options for the Route
  */
-	public function __construct($template, $defaults = array(), $options = array()) {
+	public function __construct($template, $defaults = [], array $options = []) {
 		parent::__construct($template, $defaults, $options);
 		$this->redirect = (array)$defaults;
 	}
@@ -108,7 +108,7 @@ class RedirectRoute extends Route {
  * @param array $context Array of request context parameters.
  * @return mixed either false or a string url.
  */
-	public function match($url, $context = array()) {
+	public function match(array $url, array $context = array()) {
 		return false;
 	}
 
@@ -116,7 +116,7 @@ class RedirectRoute extends Route {
  * Stop execution of the current script. Wraps exit() making
  * testing easier.
  *
- * @param integer|string $status see http://php.net/exit for values
+ * @param integer|string $code see http://php.net/exit for values
  * @return void
  */
 	protected function _stop($code = 0) {

@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0.4933
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Cache;
@@ -33,7 +33,7 @@ use Cake\Utility\Inflector;
  *
  * {{{
  * Cache::config('shared', [
- *    'engine' => 'Cake\Cache\Engine\ApcEngine',
+ *    'className' => 'Cake\Cache\Engine\ApcEngine',
  *    'prefix' => 'my_app_'
  * ]);
  * }}}
@@ -63,7 +63,7 @@ use Cake\Utility\Inflector;
  * @param string $name Name of the configuration
  * @param array $config Optional associative array of settings passed to the engine
  * @return array [engine, settings] on success, false on failure
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 class Cache {
 
@@ -75,16 +75,6 @@ class Cache {
  * @var boolean
  */
 	protected static $_enabled = true;
-
-/**
- * Cache configuration.
- *
- * Keeps the permanent/default settings for each cache engine.
- * These settings are used to reset the engines after temporary modification.
- *
- * @var array
- */
-	protected static $_config = [];
 
 /**
  * Group to Config mapping
@@ -103,7 +93,7 @@ class Cache {
 /**
  * Cache Registry used for creating and using cache adapters.
  *
- * @var Cake\Cache\CacheRegistry
+ * @var \Cake\Cache\CacheRegistry
  */
 	protected static $_registry;
 
@@ -111,7 +101,7 @@ class Cache {
  * Finds and builds the instance of the required engine class.
  *
  * @param string $name Name of the config array that needs an engine instance built
- * @throws Cake\Error\Exception When a cache engine cannot be created.
+ * @throws \Cake\Error\Exception When a cache engine cannot be created.
  */
 	protected static function _buildEngine($name) {
 		if (empty(static::$_registry)) {
@@ -140,7 +130,7 @@ class Cache {
  * triggered.
  *
  * @param string $config The configuration name you want an engine for.
- * @return Cake\Cache\Engine
+ * @return \Cake\Cache\CacheEngine
  */
 	public static function engine($config) {
 		if (!static::$_enabled) {
@@ -345,7 +335,7 @@ class Cache {
  *
  * @param string $group group name or null to retrieve all group mappings
  * @return array map of group and all configuration that has the same group
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public static function groupConfigs($group = null) {
 		if ($group === null) {
@@ -412,6 +402,9 @@ class Cache {
  *   the cache key is empty. Can be any callable type supported by your PHP.
  * @param string $config The cache configuration to use for this operation.
  *   Defaults to default.
+ * @return mixed If the key is found: the cached data, false if the data
+ *   missing/expired, or an error.  If the key is not found: boolean of the
+ *   success of the write
  */
 	public static function remember($key, $callable, $config = 'default') {
 		$existing = self::read($key, $config);

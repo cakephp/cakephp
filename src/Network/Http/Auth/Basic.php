@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Network\Http\Auth;
@@ -41,8 +41,8 @@ class Basic {
 /**
  * Proxy Authentication
  *
- * @param HttpSocket $http
- * @param array $proxyInfo
+ * @param Request $request
+ * @param array $credentials
  * @return void
  * @see http://www.ietf.org/rfc/rfc2617.txt
  */

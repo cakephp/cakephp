@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Expression;
@@ -55,9 +53,8 @@ class FunctionExpression extends QueryExpression {
  * @param string $name the name of the function to be constructed
  * @param array $params list of arguments to be passed to the function
  * If associative the key would be used as argument when value is 'literal'
- * @param array types associative array of types to be associated with the
+ * @param array $types associative array of types to be associated with the
  * passed arguments
- * @return void
  */
 	public function __construct($name, $params = [], $types = []) {
 		$this->_name = $name;
@@ -84,7 +81,7 @@ class FunctionExpression extends QueryExpression {
  *
  * @param array $params list of arguments to be passed to the function
  * If associative the key would be used as argument when value is 'literal'
- * @param array types associative array of types to be associated with the
+ * @param array $types associative array of types to be associated with the
  * passed arguments
  * @see FunctionExpression::__construct() for more details.
  * @return FunctionExpression
@@ -114,7 +111,7 @@ class FunctionExpression extends QueryExpression {
  * in their place placeholders are put and can be replaced by the quoted values
  * accordingly.
  *
- * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @param \Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
 	public function sql(ValueBinder $generator) {

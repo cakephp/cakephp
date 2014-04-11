@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.5432
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Cache;
@@ -97,7 +97,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testWriteNonExistingConfig() {
@@ -107,7 +107,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testIncrementNonExistingConfig() {
@@ -117,7 +117,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testDecrementNonExistingConfig() {
@@ -163,7 +163,7 @@ class CacheTest extends TestCase {
 /**
  * testConfigInvalidEngine method
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testConfigInvalidEngine() {
@@ -175,7 +175,7 @@ class CacheTest extends TestCase {
 /**
  * test that trying to configure classes that don't extend CacheEngine fail.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testConfigInvalidObject() {
@@ -189,7 +189,7 @@ class CacheTest extends TestCase {
 /**
  * Ensure you cannot reconfigure a cache adapter.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testConfigErrorOnReconfigure() {
@@ -267,7 +267,7 @@ class CacheTest extends TestCase {
 
 /**
  * testGroupConfigsThrowsException method
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  */
 	public function testGroupConfigsThrowsException() {
 		Cache::groupConfigs('bogus');
@@ -275,7 +275,7 @@ class CacheTest extends TestCase {
 
 /**
  * test that configured returns an array of the currently configured cache
- * settings
+ * config
  *
  * @return void
  */

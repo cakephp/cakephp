@@ -11,6 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Auth;
@@ -33,7 +34,7 @@ use Cake\Network\Response;
  *
  * ### Using Digest auth
  *
- * In your controller's components array, add auth + the required settings.
+ * In your controller's components array, add auth + the required config
  * {{{
  *	public $components = array(
  *		'Auth' => array(
@@ -55,16 +56,14 @@ use Cake\Network\Response;
  * Its recommended that you store this digest auth only password separate from password hashes used for other
  * login methods. For example `User.digest_pass` could be used for a digest password, while `User.password` would
  * store the password hash for use with other methods like Basic or Form.
- *
- * @since 2.0
  */
 class DigestAuthenticate extends BasicAuthenticate {
 
 /**
- * Settings for this object.
+ * Default config for this object.
  *
  * - `fields` The fields to use to identify a user by.
- * - `userModel` The model name of the User, defaults to User.
+ * - `userModel` The model name of the User, defaults to Users.
  * - `scope` Additional conditions to use when looking up and authenticating users,
  *    i.e. `array('User.is_active' => 1).`
  * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
@@ -73,17 +72,17 @@ class DigestAuthenticate extends BasicAuthenticate {
  * - `nonce` A nonce used for authentication. Defaults to `uniqid()`.
  * - `qop` Defaults to auth, no other values are supported at this time.
  * - `opaque` A string that must be returned unchanged by clients.
- *    Defaults to `md5($settings['realm'])`
+ *    Defaults to `md5($config['realm'])`
  *
  * @var array
  */
-	public $settings = array(
-		'fields' => array(
+	protected $_defaultConfig = [
+		'fields' => [
 			'username' => 'username',
 			'password' => 'password'
-		),
-		'userModel' => 'User',
-		'scope' => array(),
+		],
+		'userModel' => 'Users',
+		'scope' => [],
 		'recursive' => 0,
 		'contain' => null,
 		'realm' => null,
@@ -91,12 +90,12 @@ class DigestAuthenticate extends BasicAuthenticate {
 		'nonce' => null,
 		'opaque' => null,
 		'passwordHasher' => 'Blowfish',
-	);
+	];
 
 /**
  * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
  *
- * @param Cake\Network\Request $request Request object.
+ * @param \Cake\Network\Request $request Request object.
  * @return mixed Either false or an array of user information
  */
 	public function getUser(Request $request) {
@@ -105,13 +104,16 @@ class DigestAuthenticate extends BasicAuthenticate {
 			return false;
 		}
 
-		list(, $model) = pluginSplit($this->settings['userModel']);
+		list(, $model) = pluginSplit($this->_config['userModel']);
 		$user = $this->_findUser($digest['username']);
 		if (empty($user)) {
 			return false;
 		}
-		$password = $user[$this->settings['fields']['password']];
-		unset($user[$this->settings['fields']['password']]);
+
+		$field = $this->_config['fields']['password'];
+		$password = $user[$field];
+		unset($user[$field]);
+
 		$hash = $this->generateResponseHash($digest, $password, $request->env('REQUEST_METHOD'));
 		if ($digest['response'] === $hash) {
 			return $user;
@@ -122,7 +124,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 /**
  * Gets the digest headers from the request/environment.
  *
- * @param Cake\Network\Request $request Request object.
+ * @param \Cake\Network\Request $request Request object.
  * @return array Array of digest information.
  */
 	protected function _getDigest(Request $request) {
@@ -195,16 +197,19 @@ class DigestAuthenticate extends BasicAuthenticate {
 /**
  * Generate the login headers
  *
- * @param Cake\Network\Request $request Request object.
+ * @param \Cake\Network\Request $request Request object.
  * @return string Headers for logging in.
  */
 	public function loginHeaders(Request $request) {
+		$realm = $this->_config['realm'] ?: $request->env('SERVER_NAME');
+
 		$options = array(
-			'realm' => $this->settings['realm'] ?: $request->env('SERVER_NAME'),
-			'qop' => $this->settings['qop'],
-			'nonce' => $this->settings['nonce'] ?: uniqid(''),
+			'realm' => $realm,
+			'qop' => $this->_config['qop'],
+			'nonce' => $this->_config['nonce'] ?: uniqid(''),
+			'opaque' => $this->_config['opaque'] ?: md5($realm)
 		);
-		$options['opaque'] = $this->settings['opaque'] ?: md5($options['realm']);
+
 		$opts = array();
 		foreach ($options as $k => $v) {
 			$opts[] = sprintf('%s="%s"', $k, $v);

@@ -9,13 +9,14 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Associations;
 use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
@@ -63,6 +64,20 @@ class AssociationsTest extends TestCase {
 	}
 
 /**
+ * Test getting associations by property.
+ *
+ * @return void
+ */
+	public function testGetByProperty() {
+		$belongsTo = new BelongsTo('Users', []);
+		$this->assertEquals('user', $belongsTo->property());
+		$this->associations->add('Users', $belongsTo);
+		$this->assertNull($this->associations->get('user'));
+
+		$this->assertSame($belongsTo, $this->associations->getByProperty('user'));
+	}
+
+/**
  * Test associations with plugin names.
  *
  * @return void
@@ -94,12 +109,18 @@ class AssociationsTest extends TestCase {
 
 /**
  * Test getting association names by type.
+ *
+ * @return void
  */
 	public function testType() {
 		$belongsTo = new BelongsTo([]);
 		$this->associations->add('Users', $belongsTo);
 
+		$belongsToMany = new BelongsToMany([]);
+		$this->associations->add('Tags', $belongsToMany);
+
 		$this->assertSame([$belongsTo], $this->associations->type('BelongsTo'));
+		$this->assertSame([$belongsToMany], $this->associations->type('BelongsToMany'));
 		$this->assertSame([], $this->associations->type('HasMany'));
 	}
 
@@ -287,6 +308,26 @@ class AssociationsTest extends TestCase {
 			['Profiles'],
 			['atomic' => true]
 		);
+	}
+
+/**
+ * Tests the normalizeKeys method
+ *
+ * @return void
+ */
+	public function testNormalizeKeys() {
+		$this->assertSame([], $this->associations->normalizeKeys([]));
+		$this->assertSame([], $this->associations->normalizeKeys(false));
+
+		$assocs = ['a', 'b', 'd' => ['something']];
+		$expected = ['a' => [], 'b' => [], 'd' => ['something']];
+		$this->assertSame($expected, $this->associations->normalizeKeys($assocs));
+
+		$belongsTo = new BelongsTo([]);
+		$this->associations->add('users', $belongsTo);
+		$this->associations->add('categories', $belongsTo);
+		$expected = ['users' => [], 'categories' => []];
+		$this->assertSame($expected, $this->associations->normalizeKeys(true));
 	}
 
 }

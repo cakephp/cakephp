@@ -11,6 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Auth;
@@ -29,7 +30,6 @@ use Cake\Routing\Router;
  * to create permission systems that focus more on what is being done to resources, rather than the specific actions
  * being visited.
  *
- * @since 2.0
  * @see AuthComponent::$authenticate
  * @see AclComponent::check()
  */
@@ -39,10 +39,10 @@ class CrudAuthorize extends BaseAuthorize {
  * Sets up additional actionMap values that match the configured `Routing.prefixes`.
  *
  * @param ComponentRegistry $registry The component registry from the controller.
- * @param string $settings An array of settings. This class does not use any settings.
+ * @param array $config An array of config. This class does not use any config.
  */
-	public function __construct(ComponentRegistry $registry, $settings = array()) {
-		parent::__construct($registry, $settings);
+	public function __construct(ComponentRegistry $registry, $config = array()) {
+		parent::__construct($registry, $config);
 		$this->_setPrefixMappings();
 	}
 
@@ -78,11 +78,13 @@ class CrudAuthorize extends BaseAuthorize {
  * Authorize a user using the mapped actions and the AclComponent.
  *
  * @param array $user The user to authorize
- * @param Cake\Network\Request $request The request needing authorization.
+ * @param \Cake\Network\Request $request The request needing authorization.
  * @return boolean
  */
 	public function authorize($user, Request $request) {
-		if (!isset($this->settings['actionMap'][$request->params['action']])) {
+		$mapped = $this->config('actionMap.' . $request->params['action']);
+
+		if (!$mapped) {
 			trigger_error(sprintf(
 				'CrudAuthorize::authorize() - Attempted access of un-mapped action "%1$s" in controller "%2$s"',
 				$request->action,
@@ -92,12 +94,12 @@ class CrudAuthorize extends BaseAuthorize {
 			);
 			return false;
 		}
-		$user = array($this->settings['userModel'] => $user);
+		$user = array($this->_config['userModel'] => $user);
 		$Acl = $this->_registry->load('Acl');
 		return $Acl->check(
 			$user,
 			$this->action($request, ':controller'),
-			$this->settings['actionMap'][$request->params['action']]
+			$mapped
 		);
 	}
 

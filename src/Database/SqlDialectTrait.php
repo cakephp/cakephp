@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,11 +9,14 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database;
 
+/**
+ * Sql dialect trait
+ */
 trait SqlDialectTrait {
 
 /**
@@ -82,10 +83,10 @@ trait SqlDialectTrait {
 				return $query;
 			}
 
-			$query->traverseExpressions(function($expression) use ($translators) {
+			$query->traverseExpressions(function($expression) use ($translators, $query) {
 				foreach ($translators as $class => $method) {
 					if ($expression instanceof $class) {
-						$this->{$method}($expression);
+						$this->{$method}($expression, $query);
 					}
 				}
 			});
@@ -162,7 +163,7 @@ trait SqlDialectTrait {
 /**
  * Returns a SQL snippet for creating a new transaction savepoint
  *
- * @param string save point name
+ * @param string $name save point name
  * @return string
  */
 	public function savePointSQL($name) {
@@ -172,7 +173,7 @@ trait SqlDialectTrait {
 /**
  * Returns a SQL snippet for releasing a previously created save point
  *
- * @param string save point name
+ * @param string $name save point name
  * @return string
  */
 	public function releaseSavePointSQL($name) {
@@ -182,7 +183,7 @@ trait SqlDialectTrait {
 /**
  * Returns a SQL snippet for rollbacking a previously created save point
  *
- * @param string save point name
+ * @param string $name save point name
  * @return string
  */
 	public function rollbackSavePointSQL($name) {

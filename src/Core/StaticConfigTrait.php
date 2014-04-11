@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v3.0.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Core;
@@ -26,6 +24,13 @@ use Cake\Error;
  * Implementing objects are expected to declare a static `$_config` property.
  */
 trait StaticConfigTrait {
+
+/**
+ * Configuration sets.
+ *
+ * @var array
+ */
+	protected static $_config = [];
 
 /**
  * This method can be used to define confguration adapters for an application
@@ -60,7 +65,7 @@ trait StaticConfigTrait {
  * @param string|array $key The name of the configuration, or an array of multiple configs.
  * @param array $config An array of name => configuration data for adapter.
  * @return mixed null when adding configuration and an array of configuration data when reading.
- * @throws Cake\Error\Exception When trying to modify an existing config.
+ * @throws \Cake\Error\Exception When trying to modify an existing config.
  */
 	public static function config($key, $config = null) {
 		// Read config.

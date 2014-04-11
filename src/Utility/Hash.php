@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.2.0
+ * @since         2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
@@ -430,7 +430,7 @@ class Hash {
  * The `$format` string can use any format options that `vsprintf()` and `sprintf()` do.
  *
  * @param array $data Source array from which to extract the data
- * @param string $paths An array containing one or more Hash::extract()-style key paths
+ * @param array $paths An array containing one or more Hash::extract()-style key paths
  * @param string $format Format string into which values will be inserted, see sprintf()
  * @return array An array of strings extracted from `$path` and formatted with `$format`
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::format
@@ -607,7 +607,7 @@ class Hash {
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::expand
  */
-	public static function expand($data, $separator = '.') {
+	public static function expand(array $data, $separator = '.') {
 		$result = array();
 		foreach ($data as $flat => $value) {
 			$keys = explode($separator, $flat);
@@ -661,7 +661,7 @@ class Hash {
 /**
  * Checks to see if all the values in the array are numeric
  *
- * @param array $array The array to check.
+ * @param array $data The array to check.
  * @return boolean true if values are numeric, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::numeric
  */
@@ -679,7 +679,7 @@ class Hash {
  * If you have an un-even or heterogenous array, consider using Hash::maxDimensions()
  * to get the dimensions of the array.
  *
- * @param array $array Array to count dimensions on
+ * @param array $data Array to count dimensions on
  * @return integer The number of dimensions in $data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::dimensions
  */
@@ -859,7 +859,7 @@ class Hash {
  * @param string $key The key for the data.
  * @return array
  */
-	protected static function _squash($data, $key = null) {
+	protected static function _squash(array $data, $key = null) {
 		$stack = array();
 		foreach ($data as $k => $r) {
 			$id = $k;
@@ -886,7 +886,7 @@ class Hash {
  *    The expression for this function is ($data - $compare) + ($compare - ($data - $compare))
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::diff
  */
-	public static function diff(array $data, $compare) {
+	public static function diff(array $data, array $compare) {
 		if (empty($data)) {
 			return (array)$compare;
 		}
@@ -912,7 +912,7 @@ class Hash {
  * @return array The merged array.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::mergeDiff
  */
-	public static function mergeDiff(array $data, $compare) {
+	public static function mergeDiff(array $data, array $compare) {
 		if (empty($data) && !empty($compare)) {
 			return $compare;
 		}
@@ -982,7 +982,7 @@ class Hash {
  * @see Hash::extract()
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::nest
  */
-	public static function nest(array $data, $options = array()) {
+	public static function nest(array $data, array $options = array()) {
 		if (!$data) {
 			return $data;
 		}

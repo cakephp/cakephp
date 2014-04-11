@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,13 +9,14 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\TypeMap;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -55,6 +54,14 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 					'primary' => ['type' => 'primary', 'columns' => ['id']]
 				]
 			]
+		]);
+		$this->profilesTypeMap = new TypeMap([
+			'Profiles.id' => 'integer',
+			'id' => 'integer',
+			'Profiles.first_name' => 'string',
+			'first_name' => 'string',
+			'Profiles.user_id' => 'integer',
+			'user_id' => 'integer',
 		]);
 	}
 
@@ -99,7 +106,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
-				]),
+				], $this->profilesTypeMap),
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]
@@ -130,7 +137,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			'Profiles' => [
 				'conditions' => new QueryExpression([
 					'Profiles.is_active' => false
-				]),
+				], $this->profilesTypeMap),
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]
@@ -166,7 +173,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
-				]),
+				], $this->profilesTypeMap),
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]
@@ -193,10 +200,10 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('join')->with([
 			'Profiles' => [
 				'conditions' => new QueryExpression([
+					'a' => 1,
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
-					new QueryExpression(['a' => 1])
-				]),
+				], $this->profilesTypeMap),
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]
@@ -210,6 +217,58 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			return $q->select(['a', 'b'])->where(['a' => 1]);
 		};
 		$association->attachTo($query, ['queryBuilder' => $builder]);
+	}
+
+/**
+ * Tests that using hasOne with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKey() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->user,
+			'targetTable' => $this->profile,
+			'conditions' => ['Profiles.is_active' => true],
+			'foreignKey' => ['user_id', 'user_site_id']
+		];
+		$this->user->primaryKey(['id', 'site_id']);
+		$association = new HasOne('Profiles', $config);
+		$field1 = new IdentifierExpression('Profiles.user_id');
+		$field2 = new IdentifierExpression('Profiles.user_site_id');
+		$query->expects($this->once())->method('join')->with([
+			'Profiles' => [
+				'conditions' => new QueryExpression([
+					'Profiles.is_active' => true,
+					['Users.id' => $field1, 'Users.site_id' => $field2],
+				], $this->profilesTypeMap),
+				'type' => 'INNER',
+				'table' => 'profiles'
+			]
+		]);
+		$query->expects($this->never())->method('select');
+		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
+ * Tests that using hasOne with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKeyMistmatch() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->user,
+			'targetTable' => $this->profile,
+			'conditions' => ['Profiles.is_active' => true],
+		];
+		$this->user->primaryKey(['id', 'site_id']);
+		$association = new HasOne('Profiles', $config);
+		$association->attachTo($query, ['includeFields' => false]);
 	}
 
 /**
@@ -239,6 +298,17 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that property is being set using the constructor options.
+ *
+ * @return void
+ */
+	public function testPropertyOption() {
+		$config = ['propertyName' => 'thing_placeholder'];
+		$association = new hasOne('Thing', $config);
+		$this->assertEquals('thing_placeholder', $association->property());
+	}
+
+/**
  * Test that plugin names are omitted from property()
  *
  * @return void
@@ -251,6 +321,61 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new HasOne('Contacts.Profiles', $config);
 		$this->assertEquals('profile', $association->property());
+	}
+
+/**
+ * Tests that attaching an association to a query will trigger beforeFind
+ * for the target table
+ *
+ * @return void
+ */
+	public function testAttachToBeforeFind() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => 'user_id',
+			'sourceTable' => $this->user,
+			'targetTable' => $this->profile,
+		];
+		$listener = $this->getMock('stdClass', ['__invoke']);
+		$this->profile->getEventManager()->attach($listener, 'Model.beforeFind');
+		$association = new HasOne('Profiles', $config);
+		$listener->expects($this->once())->method('__invoke')
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				[],
+				false
+			);
+		$association->attachTo($query);
+	}
+
+/**
+ * Tests that attaching an association to a query will trigger beforeFind
+ * for the target table
+ *
+ * @return void
+ */
+	public function testAttachToBeforeFindExtraOptions() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => 'user_id',
+			'sourceTable' => $this->user,
+			'targetTable' => $this->profile,
+		];
+		$listener = $this->getMock('stdClass', ['__invoke']);
+		$this->profile->getEventManager()->attach($listener, 'Model.beforeFind');
+		$association = new HasOne('Profiles', $config);
+		$opts = ['something' => 'more'];
+		$listener->expects($this->once())->method('__invoke')
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				$opts,
+				false
+			);
+		$association->attachTo($query, ['queryBuilder' => function($q) {
+			return $q->applyOptions(['something' => 'more']);
+		}]);
 	}
 
 }

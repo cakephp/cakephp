@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @since         CakePHP(tm) v 2.2
+ * @since         2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Cache\Engine;
@@ -33,6 +33,7 @@ class RedisEngineTest extends TestCase {
  * @return void
  */
 	public function setUp() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		parent::setUp();
 		$this->skipIf(!class_exists('Redis'), 'Redis is not installed or configured properly.');
 
@@ -55,6 +56,7 @@ class RedisEngineTest extends TestCase {
 /**
  * Helper method for testing.
  *
+ * @param array $config
  * @return void
  */
 	protected function _configCache($config = []) {

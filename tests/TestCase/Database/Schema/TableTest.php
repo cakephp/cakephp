@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Database\Schema;
@@ -175,7 +173,7 @@ class TableTest extends TestCase {
  * are added for fields that do not exist.
  *
  * @dataProvider addConstaintErrorProvider
- * @expectedException Cake\Database\Exception
+ * @expectedException \Cake\Database\Exception
  * @return void
  */
 	public function testAddConstraintError($props) {
@@ -226,7 +224,7 @@ class TableTest extends TestCase {
  * are added for fields that do not exist.
  *
  * @dataProvider addIndexErrorProvider
- * @expectedException Cake\Database\Exception
+ * @expectedException \Cake\Database\Exception
  * @return void
  */
 	public function testAddIndexError($props) {
@@ -345,13 +343,27 @@ class TableTest extends TestCase {
  * Add a foreign key constraint with bad data
  *
  * @dataProvider badForeignKeyProvider
- * @expectedException Cake\Database\Exception
+ * @expectedException \Cake\Database\Exception
  * @return void
  */
 	public function testAddConstraintForeignKeyBadData($data) {
 		$table = new Table('articles');
 		$table->addColumn('author_id', 'integer')
 			->addConstraint('author_id_idx', $data);
+	}
+
+/**
+ * Tests the temporary() method
+ *
+ * @return void
+ */
+	public function testTemporary() {
+		$table = new Table('articles');
+		$this->assertFalse($table->temporary());
+		$this->assertSame($table, $table->temporary(true));
+		$this->assertTrue($table->temporary());
+		$table->temporary(false);
+		$this->assertFalse($table->temporary());
 	}
 
 }

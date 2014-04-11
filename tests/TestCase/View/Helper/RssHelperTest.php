@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Helper;
@@ -36,8 +36,7 @@ class RssHelperTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$controller = null;
-		$this->View = new View($controller);
+		$this->View = new View();
 		$this->Rss = new RssHelper($this->View);
 	}
 

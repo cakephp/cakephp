@@ -13,7 +13,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @since         CakePHP v 1.2.0.7726
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Console;
@@ -176,31 +176,31 @@ class ShellTest extends TestCase {
 
 		$this->assertTrue(isset($this->Shell->TestPluginComments));
 		$this->assertInstanceOf(
-			'TestPlugin\Model\Repository\TestPluginCommentsTable',
+			'TestPlugin\Model\Table\TestPluginCommentsTable',
 			$this->Shell->TestPluginComments
 		);
 	}
 
 /**
- * test repository method
+ * test LoadModel method
  *
  * @return void
  */
-	public function testRepository() {
+	public function testLoadModel() {
 		Configure::write('App.namespace', 'TestApp');
 
 		$Shell = new MergeShell();
 		$this->assertInstanceOf(
-			'TestApp\Model\Repository\ArticlesTable',
+			'TestApp\Model\Table\ArticlesTable',
 			$Shell->Articles
 		);
 		$this->assertEquals('Articles', $Shell->modelClass);
 
 		Plugin::load('TestPlugin');
-		$this->Shell->repository('TestPlugin.TestPluginComments');
+		$this->Shell->loadModel('TestPlugin.TestPluginComments');
 		$this->assertTrue(isset($this->Shell->TestPluginComments));
 		$this->assertInstanceOf(
-			'TestPlugin\Model\Repository\TestPluginCommentsTable',
+			'TestPlugin\Model\Table\TestPluginCommentsTable',
 			$this->Shell->TestPluginComments
 		);
 	}
@@ -499,25 +499,25 @@ class ShellTest extends TestCase {
  */
 	public function testShortPath() {
 		$path = $expected = DS . 'tmp/ab/cd';
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
+		$this->assertPathEquals($expected, $this->Shell->shortPath($path));
 
 		$path = $expected = DS . 'tmp/ab/cd/';
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
+		$this->assertPathEquals($expected, $this->Shell->shortPath($path));
 
 		$path = $expected = DS . 'tmp/ab/index.php';
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
+		$this->assertPathEquals($expected, $this->Shell->shortPath($path));
 
 		$path = DS . 'tmp/ab/' . DS . 'cd';
 		$expected = DS . 'tmp/ab/cd';
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
+		$this->assertPathEquals($expected, $this->Shell->shortPath($path));
 
 		$path = 'tmp/ab';
 		$expected = 'tmp/ab';
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
+		$this->assertPathEquals($expected, $this->Shell->shortPath($path));
 
 		$path = 'tmp/ab';
 		$expected = 'tmp/ab';
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
+		$this->assertPathEquals($expected, $this->Shell->shortPath($path));
 
 		$path = APP;
 		$result = $this->Shell->shortPath($path);
@@ -531,68 +531,68 @@ class ShellTest extends TestCase {
  */
 	public function testCreateFileNonInteractive() {
 		$eol = PHP_EOL;
-
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
 
 		new Folder($path, true);
-
-		$this->Shell->interactive = false;
 
 		$contents = "<?php{$eol}echo 'test';${eol}\$te = 'st';{$eol}";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
 		$this->assertEquals(file_get_contents($file), $contents);
-
-		$contents = "<?php\necho 'another test';\n\$te = 'st';\n";
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertTrue($result);
-		$this->assertTrue(file_exists($file));
-		$this->assertTextEquals(file_get_contents($file), $contents);
 	}
 
 /**
- * test createFile when the shell is interactive.
+ * Test that files are not changed with a 'n' reply.
  *
  * @return void
  */
-	public function testCreateFileInteractive() {
+	public function testCreateFileNoReply() {
 		$eol = PHP_EOL;
-
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
+
 		new Folder($path, true);
 
-		$this->Shell->interactive = true;
-
-		$this->Shell->stdin->expects($this->at(0))
+		$this->Shell->stdin->expects($this->once())
 			->method('read')
 			->will($this->returnValue('n'));
 
-		$this->Shell->stdin->expects($this->at(1))
+		touch($file);
+		$this->assertTrue(file_exists($file));
+
+		$contents = "My content";
+		$result = $this->Shell->createFile($file, $contents);
+		$this->assertTrue(file_exists($file));
+		$this->assertTextEquals('', file_get_contents($file));
+		$this->assertFalse($result, 'Did not create file.');
+	}
+
+/**
+ * Test that files are changed with a 'y' reply.
+ *
+ * @return void
+ */
+	public function testCreateFileOverwrite() {
+		$eol = PHP_EOL;
+		$path = TMP . 'shell_test';
+		$file = $path . DS . 'file1.php';
+
+		new Folder($path, true);
+
+		$this->Shell->stdin->expects($this->once())
 			->method('read')
 			->will($this->returnValue('y'));
 
-		$contents = "<?php{$eol}echo 'yet another test';{$eol}\$te = 'st';{$eol}";
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertTrue($result);
+		touch($file);
 		$this->assertTrue(file_exists($file));
-		$this->assertEquals(file_get_contents($file), $contents);
 
-		// no overwrite
-		$contents = 'new contents';
+		$contents = "My content";
 		$result = $this->Shell->createFile($file, $contents);
-		$this->assertFalse($result);
 		$this->assertTrue(file_exists($file));
-		$this->assertNotEquals($contents, file_get_contents($file));
-
-		// overwrite
-		$contents = 'more new contents';
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertTrue($result);
-		$this->assertTrue(file_exists($file));
-		$this->assertEquals($contents, file_get_contents($file));
+		$this->assertTextEquals($contents, file_get_contents($file));
+		$this->assertTrue($result, 'Did create file.');
 	}
 
 /**
@@ -803,6 +803,8 @@ TEXT;
 
 /**
  * Test file and console and logging
+ *
+ * @return void
  */
 	public function testFileAndConsoleLogging() {
 		// file logging
@@ -847,6 +849,8 @@ TEXT;
 
 /**
  * Test file and console and logging quiet output
+ *
+ * @return void
  */
 	public function testQuietLog() {
 		$output = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);

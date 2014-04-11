@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.2
+ * @since         2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
@@ -72,7 +72,7 @@ class RedisEngine extends CacheEngine {
  * @param array $config array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($config = []) {
+	public function init(array $config = []) {
 		if (!class_exists('Redis')) {
 			return false;
 		}
@@ -96,7 +96,7 @@ class RedisEngine extends CacheEngine {
 				$persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
 				$return = $this->_Redis->pconnect($this->_config['server'], $this->_config['port'], $this->_config['timeout'], $persistentId);
 			}
-		} catch (RedisException $e) {
+		} catch (\RedisException $e) {
 			return false;
 		}
 		if ($return && $this->_config['password']) {
@@ -154,7 +154,7 @@ class RedisEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to increment
- * @return New incremented value, false otherwise
+ * @return bool|int New incremented value, false otherwise
  */
 	public function increment($key, $offset = 1) {
 		$key = $this->_key($key);
@@ -167,7 +167,7 @@ class RedisEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to subtract
- * @return New decremented value, false otherwise
+ * @return bool|int New decremented value, false otherwise
  */
 	public function decrement($key, $offset = 1) {
 		$key = $this->_key($key);
@@ -227,6 +227,7 @@ class RedisEngine extends CacheEngine {
  * Increments the group value to simulate deletion of all keys under a group
  * old values will remain in storage until they expire.
  *
+ * @param string $group name of the group to be cleared
  * @return boolean success
  */
 	public function clearGroup($group) {
@@ -237,7 +238,7 @@ class RedisEngine extends CacheEngine {
  * Disconnects from the redis server
  */
 	public function __destruct() {
-		if (!$this->_config['persistent']) {
+		if (empty($this->_config['persistent']) && $this->_Redis instanceof \Redis) {
 			$this->_Redis->close();
 		}
 	}

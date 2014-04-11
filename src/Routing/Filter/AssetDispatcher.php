@@ -1,7 +1,5 @@
 <?php
 /**
- * AssetDispatcher
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -9,9 +7,9 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	  Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link		  http://cakephp.org CakePHP(tm) Project
- * @since		  CakePHP(tm) v 2.2
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Routing\Filter;
@@ -43,8 +41,9 @@ class AssetDispatcher extends DispatcherFilter {
 /**
  * Checks if a requested asset exists and sends it to the browser
  *
- * @param Cake\Event\Event $event containing the request and response object
- * @return Cake\Network\Response if the client is requesting a recognized asset, null otherwise
+ * @param \Cake\Event\Event $event containing the request and response object
+ * @return \Cake\Network\Response if the client is requesting a recognized asset, null otherwise
+ * @throws NotFoundException When asset not found
  */
 	public function beforeDispatch(Event $event) {
 		$request = $event->data['request'];
@@ -55,12 +54,18 @@ class AssetDispatcher extends DispatcherFilter {
 		}
 
 		$assetFile = $this->_getAssetFile($url);
-		if ($assetFile === null || !file_exists($assetFile)) {
+		if ($assetFile === null) {
 			return null;
 		}
 
 		$response = $event->data['response'];
 		$event->stopPropagation();
+
+		if (!file_exists($assetFile)) {
+			$response->statusCode(404);
+			$response->send();
+			return $response;
+		}
 
 		$response->modified(filemtime($assetFile));
 		if ($response->checkNotModified($request)) {
@@ -101,8 +106,8 @@ class AssetDispatcher extends DispatcherFilter {
 /**
  * Sends an asset file to the client
  *
- * @param Cake\Network\Request $request The request object to use.
- * @param Cake\Network\Response $response The response object to use.
+ * @param \Cake\Network\Request $request The request object to use.
+ * @param \Cake\Network\Response $response The response object to use.
  * @param string $assetFile Path to the asset file in the file system
  * @param string $ext The extension of the file to determine its mime type
  * @return void

@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,15 +9,15 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
-use Cake\Database\ConnectionManager;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -848,6 +846,91 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that calling "in" and "notIn" will cast the passed values to an array
+ *
+ * @return void
+ */
+	public function testInValueCast() {
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function($exp) {
+				return $exp->in('created', '2007-03-18 10:45:23', 'datetime');
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function($exp) {
+				return $exp->notIn('created', '2007-03-18 10:45:23', 'datetime');
+			})
+			->execute();
+		$this->assertCount(5, $result);
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 4], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 5], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function($exp, $q) {
+				return $exp->in(
+					'created',
+					$q->newExpr()->add("'2007-03-18 10:45:23'"),
+					'datetime'
+				);
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function($exp, $q) {
+				return $exp->notIn(
+					'created',
+					$q->newExpr()->add("'2007-03-18 10:45:23'"),
+					'datetime'
+				);
+			})
+			->execute();
+		$this->assertCount(5, $result);
+	}
+
+/**
+ * Tests that calling "in" and "notIn" will cast the passed values to an array
+ *
+ * @return void
+ */
+	public function testInValueCast2() {
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['created IN' => '2007-03-18 10:45:23'])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['created NOT IN' => '2007-03-18 10:45:23'])
+			->execute();
+		$this->assertCount(5, $result);
+	}
+
+/**
  * Tests nesting query expressions both using arrays and closures
  *
  * @return void
@@ -1075,6 +1158,60 @@ class QueryTest extends TestCase {
 
 		$result = $query->select(['id'])->distinct(['author_id'])->execute();
 		$this->assertCount(2, $result);
+	}
+
+/**
+ * Test use of modifiers in the query
+ *
+ * Testing the generated SQL since the modifiers are usually different per driver
+ *
+ * @return void
+ */
+	public function testSelectModifiers() {
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['city', 'state', 'country'])
+			->from(['addresses'])
+			->modifier('DISTINCTROW');
+		$this->assertQuotedQuery(
+			'SELECT DISTINCTROW <city>, <state>, <country> FROM <addresses>',
+			$result->sql(),
+			true
+		);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['city', 'state', 'country'])
+			->from(['addresses'])
+			->modifier(['DISTINCTROW', 'SQL_NO_CACHE']);
+		$this->assertQuotedQuery(
+			'SELECT DISTINCTROW SQL_NO_CACHE <city>, <state>, <country> FROM <addresses>',
+			$result->sql(),
+			true
+		);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['city', 'state', 'country'])
+			->from(['addresses'])
+			->modifier('DISTINCTROW')
+			->modifier('SQL_NO_CACHE');
+		$this->assertQuotedQuery(
+			'SELECT DISTINCTROW SQL_NO_CACHE <city>, <state>, <country> FROM <addresses>',
+			$result->sql(),
+			true
+		);
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['city', 'state', 'country'])
+			->from(['addresses'])
+			->modifier(['TOP 10']);
+		$this->assertQuotedQuery(
+			'SELECT TOP 10 <city>, <state>, <country> FROM <addresses>',
+			$result->sql(),
+			true
+		);
 	}
 
 /**
@@ -1681,9 +1818,38 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Test update with array fields and types.
+ *
+ * @return void
+ */
+	public function testUpdateArrayFields() {
+		$query = new Query($this->connection);
+		$date = new \DateTime;
+		$query->update('comments')
+			->set(['comment' => 'mark', 'created' => $date], ['created' => 'date'])
+			->where(['id' => 1]);
+		$result = $query->sql();
+
+		$this->assertQuotedQuery(
+			'UPDATE <comments> SET <comment> = :c0 , <created> = :c1',
+			$result,
+			true
+		);
+
+		$this->assertQuotedQuery(' WHERE <id> = :c2$', $result, true);
+		$result = $query->execute();
+		$this->assertCount(1, $result);
+
+		$query = new Query($this->connection);
+		$result = $query->select('created')->from('comments')->where(['id' => 1])->execute();
+		$result = $result->fetchAll('assoc')[0]['created'];
+		$this->assertStringStartsWith($date->format('Y-m-d'), $result);
+	}
+
+/**
  * You cannot call values() before insert() it causes all sorts of pain.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testInsertValuesBeforeInsertFailure() {
@@ -1693,6 +1859,18 @@ class QueryTest extends TestCase {
 				'title' => 'mark',
 				'body' => 'test insert'
 			]);
+	}
+
+/**
+ * Inserting nothing should not generate an error.
+ *
+ * @expectedException RuntimeException
+ * @expectedExceptionMessage At least 1 column is required to perform an insert.
+ * @return void
+ */
+	public function testInsertNothing() {
+		$query = new Query($this->connection);
+		$query->insert([]);
 	}
 
 /**
@@ -1852,7 +2030,7 @@ class QueryTest extends TestCase {
 /**
  * Test that an exception is raised when mixing query + array types.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  */
 	public function testInsertFailureMixingTypesArrayFirst() {
 		$query = new Query($this->connection);
@@ -1865,7 +2043,7 @@ class QueryTest extends TestCase {
 /**
  * Test that an exception is raised when mixing query + array types.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  */
 	public function testInsertFailureMixingTypesQueryFirst() {
 		$query = new Query($this->connection);
@@ -1923,6 +2101,7 @@ class QueryTest extends TestCase {
 		$result = $query
 			->select(['d' => $query->func()->now('time')])
 			->execute();
+
 		$this->assertWithinMargin(
 			date('U'),
 			(new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
@@ -2218,11 +2397,62 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests converting a query to a string
+ *
+ * @return void
+ */
+	public function testToString() {
+		$query = new Query($this->connection);
+		$query
+			->select(['title'])
+			->from('articles');
+		$result = (string)$query;
+		$this->assertQuotedQuery('SELECT <title> FROM <articles>', $result, true);
+	}
+
+/**
+ * Tests __debugInfo
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$query = (new Query($this->connection))->select('*')
+			->from('articles')
+			->defaultTypes(['id' => 'integer'])
+			->where(['id' => '1']);
+
+		$expected = [
+			'sql' => $query->sql(),
+			'params' => [
+				':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0']
+			],
+			'defaultTypes' => ['id' => 'integer'],
+			'decorators' => 0,
+			'executed' => false
+		];
+		$result = $query->__debugInfo();
+		$this->assertEquals($expected, $result);
+
+		$query->execute();
+		$expected = [
+			'sql' => $query->sql(),
+			'params' => [
+				':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0']
+			],
+			'defaultTypes' => ['id' => 'integer'],
+			'decorators' => 0,
+			'executed' => true
+		];
+		$result = $query->__debugInfo();
+	}
+
+/**
  * Assertion for comparing a table's contents with what is in it.
  *
  * @param string $table
  * @param integer $count
  * @param array $rows
+ * @param array $conditions
  * @return void
  */
 	public function assertTable($table, $count, $rows, $conditions = []) {

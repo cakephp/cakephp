@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Utility;
@@ -80,19 +80,37 @@ trait MergeVariablesTrait {
 		}
 		foreach ($parentClasses as $class) {
 			$parentProperties = get_class_vars($class);
-			if (!isset($parentProperties[$property])) {
+			if (empty($parentProperties[$property])) {
 				continue;
 			}
 			$parentProperty = $parentProperties[$property];
-			if (empty($parentProperty) || $parentProperty === true) {
+			if (!is_array($parentProperty)) {
 				continue;
 			}
-			if ($isAssoc) {
-				$parentProperty = Hash::normalize($parentProperty);
-			}
-			$thisValue = Hash::merge($parentProperty, $thisValue);
+			$thisValue = $this->_mergePropertyData($thisValue, $parentProperty, $isAssoc);
 		}
 		$this->{$property} = $thisValue;
+	}
+
+/**
+ * Merge each of the keys in a property together.
+ *
+ * @param array $current The current merged value.
+ * @param array $parent The parent class' value.
+ * @param boolean $isAssoc Whether or not the merging should be done in associative mode.
+ * @return mixed The updated value.
+ */
+	protected function _mergePropertyData($current, $parent, $isAssoc) {
+		if (!$isAssoc) {
+			return array_merge($parent, $current);
+		}
+		$parent = Hash::normalize($parent);
+		foreach ($parent as $key => $value) {
+			if (!isset($current[$key])) {
+				$current[$key] = $value;
+			}
+		}
+		return $current;
 	}
 
 }

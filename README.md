@@ -17,14 +17,16 @@ a starting point. For existing applications you can add the following to your
 `composer.json` file:
 
 	"require": {
-		"cakephp/framework": "dev-3.0"
+		"cakephp/cakephp": "3.0.*-dev"
 	}
 
 And run `php composer.phar update`
 
 ## Running tests
 
-Assuming you have PHPUnit installed system wide via PEAR, you can run the tests for cakephp by doing the following:
+Assuming you have PHPUnit installed system wide using one of the methods stated
+[here](http://phpunit.de/manual/current/en/installation.html), you can run the
+tests for cakephp by doing the following:
 
 1. Copy `phpunit.xml.dist` to `phpunit.xml`
 2. Add the relevant database credentials to your phpunit.xml if you want to run tests against

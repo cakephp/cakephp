@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Validation;
@@ -50,9 +50,12 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
  */
 	public function testFieldDefault() {
 		$validator = new Validator;
+		$this->assertFalse($validator->hasField('foo'));
+
 		$field = $validator->field('foo');
 		$this->assertInstanceOf('\Cake\Validation\ValidationSet', $field);
 		$this->assertCount(0, $field);
+		$this->assertTrue($validator->hasField('foo'));
 	}
 
 /**
@@ -152,6 +155,19 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests custom error messages generated when a field presence is required
+ *
+ * @return void
+ */
+	public function testCustomErrorsWithPresenceRequired() {
+		$validator = new Validator;
+		$validator->validatePresence('title', true, 'Custom message');
+		$errors = $validator->errors(['foo' => 'something']);
+		$expected = ['title' => ['Custom message']];
+		$this->assertEquals($expected, $errors);
+	}
+
+/**
  * Tests the allowEmpty method
  *
  * @return void
@@ -223,6 +239,19 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 
 		$errors = $validator->errors(['title' => false]);
 		$this->assertEmpty($errors);
+	}
+
+/**
+ * Tests custom error mesages generated when a field is not allowed to be empty
+ *
+ * @return void
+ */
+	public function testCustomErrorsWithEmptyNotAllowed() {
+		$validator = new Validator;
+		$validator->allowEmpty('title', false, 'Custom message');
+		$errors = $validator->errors(['title' => '']);
+		$expected = ['title' => ['Custom message']];
+		$this->assertEquals($expected, $errors);
 	}
 
 /**
@@ -483,6 +512,27 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 			->add('email', 'alpha', ['rule' => 'alphanumeric'])
 			->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 		$this->assertCount(2, $validator);
+	}
+
+/**
+ * Tests adding rules via alternative syntax
+ *
+ * @return void
+ */
+	public function testAddMulitple() {
+		$validator = new Validator;
+		$validator->add('title', [
+			'notEmpty' => [
+				'rule' => 'notEmpty'
+			],
+			'length' => [
+				'rule' => ['minLength', 10],
+				'message' => 'Titles need to be at least 10 characters long'
+			]
+		]);
+		$set = $validator->field('title');
+		$this->assertInstanceOf('\Cake\Validation\ValidationSet', $set);
+		$this->assertCount(2, $set);
 	}
 
 }

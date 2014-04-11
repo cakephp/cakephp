@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,14 +9,18 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Driver;
 
+use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use PDO;
 
+/**
+ * PDO driver trait
+ */
 trait PDODriverTrait {
 
 /**
@@ -50,6 +52,7 @@ trait PDODriverTrait {
  * If first argument is passed, it will set internal conenction object or
  * result to the value passed
  *
+ * @param null|PDO instance $connection
  * @return mixed connection object used internally
  */
 	public function connection($connection = null) {
@@ -71,12 +74,12 @@ trait PDODriverTrait {
 /**
  * Prepares a sql statement to be executed
  *
- * @param string $sql
- * @return Cake\Database\Statement
+ * @param string|\Cake\Database\Query $query
+ * @return \Cake\Database\StatementInterface
  */
-	public function prepare($sql) {
+	public function prepare($query) {
 		$this->connect();
-		$statement = $this->_connection->prepare($sql);
+		$statement = $this->_connection->prepare((string)$query);
 		return new PDOStatement($statement, $this);
 	}
 
@@ -121,6 +124,8 @@ trait PDODriverTrait {
 /**
  * Returns a value in a safe representation to be used in a query string
  *
+ * @param mixed $value
+ * @param string $type Type to be used for determining kind of quoting to perform
  * @return string
  */
 	public function quote($value, $type) {
@@ -132,6 +137,7 @@ trait PDODriverTrait {
  * Returns last id generated for a table or sequence in database
  *
  * @param string $table table name or sequence to get last insert value from
+ * @param string $column the name of the column representing the primary key
  * @return string|integer
  */
 	public function lastInsertId($table = null, $column = null) {

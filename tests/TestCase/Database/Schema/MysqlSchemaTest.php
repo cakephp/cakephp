@@ -9,16 +9,16 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
-use Cake\Database\ConnectionManager;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\MysqlSchema;
 use Cake\Database\Schema\Table;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -33,7 +33,7 @@ class MysqlSchemaTest extends TestCase {
  */
 	protected function _needsConnection() {
 		$config = ConnectionManager::config('test');
-		$this->skipIf(strpos($config['className'], 'Mysql') === false, 'Not using Mysql for test config');
+		$this->skipIf(strpos($config['driver'], 'Mysql') === false, 'Not using Mysql for test config');
 	}
 
 /**
@@ -65,6 +65,10 @@ class MysqlSchemaTest extends TestCase {
 			],
 			[
 				'INTEGER(11)',
+				['type' => 'integer', 'length' => 11, 'unsigned' => false]
+			],
+			[
+				'MEDIUMINT(11)',
 				['type' => 'integer', 'length' => 11, 'unsigned' => false]
 			],
 			[
@@ -176,6 +180,7 @@ class MysqlSchemaTest extends TestCase {
 /**
  * Helper method for testing methods.
  *
+ * @param \Cake\Database\Connection $connection
  * @return void
  */
 	protected function _createTables($connection) {
@@ -223,9 +228,8 @@ SQL;
 		$result = $schema->listTables();
 
 		$this->assertInternalType('array', $result);
-		$this->assertCount(2, $result);
-		$this->assertEquals('schema_articles', $result[0]);
-		$this->assertEquals('schema_authors', $result[1]);
+		$this->assertContains('schema_articles', $result);
+		$this->assertContains('schema_authors', $result);
 	}
 
 /**
@@ -720,6 +724,25 @@ SQL;
 		$result = $table->createSql($connection);
 		$this->assertCount(1, $result);
 		$this->assertEquals($expected, $result[0]);
+	}
+
+/**
+ * Tests creating temporary tables
+ *
+ * @return void
+ */
+	public function testCreateTemporary() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+		$table = (new Table('schema_articles'))->addColumn('id', [
+			'type' => 'integer',
+			'null' => false
+		]);
+		$table->temporary(true);
+		$sql = $table->createSql($connection);
+		$this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
 	}
 
 /**

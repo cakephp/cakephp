@@ -10,7 +10,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Core;
@@ -19,6 +19,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use TestApp\Core\TestApp;
 
 /**
  * AppTest class
@@ -46,21 +47,18 @@ class AppTest extends TestCase {
  */
 	public function testClassname($class, $type, $suffix = '', $existsInBase = false, $expected = false) {
 		Configure::write('App.namespace', 'TestApp');
-		$mock = $this->getMockClass('Cake\Core\App', ['_classExistsInBase']);
-
-		$mock::staticExpects($this->at(0))
-			->method('_classExistsInBase')
-			->will($this->returnValue($existsInBase));
-
-		$checkCake = (!$existsInBase || strpos('.', $class));
-		if ($checkCake) {
-			$existsInCake = (bool)$expected;
-			$mock::staticExpects($this->at(1))
-				->method('_classExistsInBase')
-				->will($this->returnValue($existsInCake));
-		}
-
-		$return = $mock::classname($class, $type, $suffix);
+		$i = 0;
+		TestApp::$existsInBaseCallback = function($name, $namespace) use ($existsInBase, $class, $expected, &$i) {
+			if ($i++ === 0) {
+				return $existsInBase;
+			}
+			$checkCake = (!$existsInBase || strpos('.', $class));
+			if ($checkCake) {
+				return (bool)$expected;
+			}
+			return false;
+		};
+		$return = TestApp::classname($class, $type, $suffix);
 		$this->assertSame($expected, $return);
 	}
 
@@ -123,7 +121,7 @@ class AppTest extends TestCase {
 		Plugin::load('TestPlugin');
 
 		$result = App::path('Controller', 'TestPlugin');
-		$this->assertEquals($basepath . 'TestPlugin' . DS . 'Controller' . DS, $result[0]);
+		$this->assertPathEquals($basepath . 'TestPlugin' . DS . 'Controller' . DS, $result[0]);
 	}
 
 /**
@@ -173,7 +171,7 @@ class AppTest extends TestCase {
 		$result = App::objects('View/Helper', null, false);
 		$this->assertContains('BananaHelper', $result);
 
-		$result = App::objects('Model/Repository', null, false);
+		$result = App::objects('Model/Table', null, false);
 		$this->assertContains('ArticlesTable', $result);
 
 		$result = App::objects('file');
@@ -214,7 +212,7 @@ class AppTest extends TestCase {
 	public function testListObjectsInPlugin() {
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
-		$result = App::objects('TestPlugin.Model/Repository');
+		$result = App::objects('TestPlugin.Model/Table');
 		$this->assertContains('TestPluginCommentsTable', $result);
 
 		$result = App::objects('TestPlugin.Model/Behavior');
@@ -230,7 +228,7 @@ class AppTest extends TestCase {
 		$result = App::objects('TestPluginTwo.Model/Behavior');
 		$this->assertSame(array(), $result);
 
-		$result = App::objects('Model/Repository', null, false);
+		$result = App::objects('Model/Table', null, false);
 		$this->assertContains('PostsTable', $result);
 		$this->assertContains('ArticlesTable', $result);
 	}
@@ -245,11 +243,11 @@ class AppTest extends TestCase {
 
 		$path = App::pluginPath('TestPlugin');
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
-		$this->assertEquals($expected, $path);
+		$this->assertPathEquals($expected, $path);
 
 		$path = App::pluginPath('TestPluginTwo');
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS;
-		$this->assertEquals($expected, $path);
+		$this->assertPathEquals($expected, $path);
 	}
 
 /**
@@ -259,12 +257,12 @@ class AppTest extends TestCase {
  */
 	public function testThemePath() {
 		$path = App::themePath('test_theme');
-		$expected = TEST_APP . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
-		$this->assertEquals($expected, $path);
+		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Themed' . DS . 'TestTheme' . DS;
+		$this->assertPathEquals($expected, $path);
 
 		$path = App::themePath('TestTheme');
-		$expected = TEST_APP . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
-		$this->assertEquals($expected, $path);
+		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Themed' . DS . 'TestTheme' . DS;
+		$this->assertPathEquals($expected, $path);
 	}
 
 }

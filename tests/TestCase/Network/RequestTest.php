@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Network;
@@ -804,30 +804,12 @@ class RequestTest extends TestCase {
 		$request->env('HTTP_X_REQUESTED_WITH', 'XMLHTTPREQUEST');
 		$this->assertFalse($request->is('ajax'));
 		$this->assertFalse($request->isAjax());
-
-		$request->env('HTTP_USER_AGENT', 'Android 2.0');
-		$this->assertTrue($request->is('mobile'));
-		$this->assertTrue($request->isMobile());
-
-		$request->env(
-			'HTTP_USER_AGENT',
-			'Mozilla/5.0 (Windows NT 5.1; rv:2.0b6pre) Gecko/20100902 Firefox/4.0b6pre Fennec/2.0b1pre'
-		);
-		$this->assertTrue($request->is('mobile'));
-		$this->assertTrue($request->isMobile());
-
-		$request->env(
-			'HTTP_USER_AGENT',
-			'Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; OMNIA7)'
-		);
-		$this->assertTrue($request->is('mobile'));
-		$this->assertTrue($request->isMobile());
 	}
 
 /**
  * Test __call exceptions
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testMagicCallExceptionOnUnknownMethod() {
@@ -945,7 +927,19 @@ class RequestTest extends TestCase {
  */
 	public function testAddDetector() {
 		$request = new Request();
-		$request->addDetector('compare', array('env' => 'TEST_VAR', 'value' => 'something'));
+
+		Request::addDetector('closure', function ($request) {
+			return true;
+		});
+		$this->assertTrue($request->is('closure'));
+
+		Request::addDetector('get', function ($request) {
+			return $request->env('REQUEST_METHOD') === 'GET';
+		});
+		$request->env('REQUEST_METHOD', 'GET');
+		$this->assertTrue($request->is('get'));
+
+		Request::addDetector('compare', array('env' => 'TEST_VAR', 'value' => 'something'));
 
 		$request->env('TEST_VAR', 'something');
 		$this->assertTrue($request->is('compare'), 'Value match failed.');
@@ -953,7 +947,7 @@ class RequestTest extends TestCase {
 		$request->env('TEST_VAR', 'wrong');
 		$this->assertFalse($request->is('compare'), 'Value mis-match failed.');
 
-		$request->addDetector('compareCamelCase', array('env' => 'TEST_VAR', 'value' => 'foo'));
+		Request::addDetector('compareCamelCase', array('env' => 'TEST_VAR', 'value' => 'foo'));
 
 		$request->env('TEST_VAR', 'foo');
 		$this->assertTrue($request->is('compareCamelCase'), 'Value match failed.');
@@ -965,23 +959,20 @@ class RequestTest extends TestCase {
 		$this->assertFalse($request->is('comparecamelcase'), 'detectors should be case insensitive');
 		$this->assertFalse($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
 
-		$request->addDetector('banana', array('env' => 'TEST_VAR', 'pattern' => '/^ban.*$/'));
+		Request::addDetector('banana', array('env' => 'TEST_VAR', 'pattern' => '/^ban.*$/'));
 		$request->env('TEST_VAR', 'banana');
 		$this->assertTrue($request->isBanana());
 
 		$request->env('TEST_VAR', 'wrong value');
 		$this->assertFalse($request->isBanana());
 
-		$request->addDetector('mobile', array('options' => array('Imagination')));
+		Request::addDetector('mobile', array('env' => 'HTTP_USER_AGENT', 'options' => array('Imagination')));
 		$request->env('HTTP_USER_AGENT', 'Imagination land');
 		$this->assertTrue($request->isMobile());
 
-		$request->env('HTTP_USER_AGENT', 'iPhone 3.0');
-		$this->assertTrue($request->isMobile());
+		Request::addDetector('callme', array('env' => 'TEST_VAR', 'callback' => array($this, 'detectCallback')));
 
-		$request->addDetector('callme', array('env' => 'TEST_VAR', 'callback' => array($this, 'detectCallback')));
-
-		$request->addDetector('index', array('param' => 'action', 'value' => 'index'));
+		Request::addDetector('index', array('param' => 'action', 'value' => 'index'));
 		$request->params['action'] = 'index';
 		$this->assertTrue($request->isIndex());
 
@@ -994,7 +985,11 @@ class RequestTest extends TestCase {
 		$request->return = false;
 		$this->assertFalse($request->isCallMe());
 
-		$request->addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'png', 'txt')));
+		Request::addDetector('callme', array($this, 'detectCallback'));
+		$request->return = true;
+		$this->assertTrue($request->isCallMe());
+
+		Request::addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'png', 'txt')));
 		$request->params['ext'] = 'pdf';
 		$this->assertTrue($request->is('extension'));
 
@@ -1263,6 +1258,7 @@ class RequestTest extends TestCase {
  * - index.php/bananas/eat/tasty_banana
  *
  * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp/tickets/3318
+ * @return void
  */
 	public function testBaseUrlWithModRewriteAndIndexPhp() {
 		$_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php';
@@ -1451,10 +1447,18 @@ class RequestTest extends TestCase {
 	public function testGetParamsWithDot() {
 		$_GET = array();
 		$_GET['/posts/index/add_add'] = '';
+		$_SERVER['PHP_SELF'] = '/webroot/index.php';
+		$_SERVER['REQUEST_URI'] = '/posts/index/add.add';
+		$request = Request::createFromGlobals();
+		$this->assertEquals('', $request->base);
+		$this->assertEquals(array(), $request->query);
+
+		$_GET = array();
+		$_GET['/cake_dev/posts/index/add_add'] = '';
 		$_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
 		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/index/add.add';
-
 		$request = Request::createFromGlobals();
+		$this->assertEquals('/cake_dev', $request->base);
 		$this->assertEquals(array(), $request->query);
 	}
 
@@ -1466,10 +1470,18 @@ class RequestTest extends TestCase {
 	public function testGetParamWithUrlencodedElement() {
 		$_GET = array();
 		$_GET['/posts/add/∂∂'] = '';
+		$_SERVER['PHP_SELF'] = '/webroot/index.php';
+		$_SERVER['REQUEST_URI'] = '/posts/add/%E2%88%82%E2%88%82';
+		$request = Request::createFromGlobals();
+		$this->assertEquals('', $request->base);
+		$this->assertEquals(array(), $request->query);
+
+		$_GET = array();
+		$_GET['/cake_dev/posts/add/∂∂'] = '';
 		$_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
 		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/add/%E2%88%82%E2%88%82';
-
 		$request = Request::createFromGlobals();
+		$this->assertEquals('/cake_dev', $request->base);
 		$this->assertEquals(array(), $request->query);
 	}
 
@@ -1844,6 +1856,34 @@ class RequestTest extends TestCase {
 					'urlParams' => array()
 				),
 			),
+			array(
+				'Nginx - w/rewrite, document root set above top level cake dir, request root, no PATH_INFO, base parameter set',
+				array(
+					'App' => array(
+						'base' => false,
+						'baseUrl' => false,
+						'dir' => 'app',
+						'webroot' => 'webroot'
+					),
+					'GET' => array('/site/posts/add' => ''),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost',
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
+						'SCRIPT_NAME' => '/site/app/webroot/index.php',
+						'QUERY_STRING' => '/site/posts/add&',
+						'PHP_SELF' => '/site/webroot/index.php',
+						'PATH_INFO' => null,
+						'REQUEST_URI' => '/site/posts/add',
+					),
+				),
+				array(
+					'url' => 'posts/add',
+					'base' => '/site',
+					'webroot' => '/site/',
+					'urlParams' => array()
+				),
+			),
 		);
 	}
 
@@ -2165,42 +2205,42 @@ XML;
 	}
 
 /**
- * TestOnlyAllow
+ * TestAllowMethod
  *
  * @return void
  */
-	public function testOnlyAllow() {
+	public function testAllowMethod() {
 		$request = new Request(['environment' => [
 			'url' => '/posts/edit/1',
 			'REQUEST_METHOD' => 'PUT'
 		]]);
 
-		$this->assertTrue($request->onlyAllow(array('put')));
+		$this->assertTrue($request->allowMethod(array('put')));
 
 		$request->env('REQUEST_METHOD', 'DELETE');
-		$this->assertTrue($request->onlyAllow('post', 'delete'));
+		$this->assertTrue($request->allowMethod('post', 'delete'));
 	}
 
 /**
- * Test onlyAllow throwing exception
+ * Test allowMethod throwing exception
  *
  * @return void
  */
-	public function testOnlyAllowException() {
+	public function testAllowMethodException() {
 		$request = new Request([
 			'url' => '/posts/edit/1',
 			'environment' => ['REQUEST_METHOD' => 'PUT']
 		]);
 
 		try {
-			$request->onlyAllow('POST', 'DELETE');
+			$request->allowMethod('POST', 'DELETE');
 			$this->fail('An expected exception has not been raised.');
 		} catch (Error\MethodNotAllowedException $e) {
 			$this->assertEquals(array('Allow' => 'POST, DELETE'), $e->responseHeader());
 		}
 
 		$this->setExpectedException('Cake\Error\MethodNotAllowedException');
-		$request->onlyAllow('POST');
+		$request->allowMethod('POST');
 	}
 
 /**

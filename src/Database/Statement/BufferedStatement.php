@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,37 +9,70 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Statement;
 
+/**
+ * A statement decorator that implements buffered results.
+ *
+ * This statement decorator will save fetched results in memory, allowing
+ * the iterator to be rewound and reused.
+ */
 class BufferedStatement extends StatementDecorator {
 
+/**
+ * Records count
+ * @var integer
+ */
 	protected $_count = 0;
 
+/**
+ * Array of results
+ *
+ * @var array
+ */
 	protected $_records = [];
 
+/**
+ * If true, all rows were fetched
+ *
+ * @var boolean
+ */
 	protected $_allFetched = true;
 
+/**
+ * Current record pointer
+ * @var integer
+ */
 	protected $_counter = 0;
 
 /**
  * Constructor
  *
- * @param Statement implementation such as PDOStatement
- * @return void
+ * @param \Cake\Database\StatementInterface $statement Statement implementation such as PDOStatement
+ * @param \Cake\Database\Driver $driver Driver instance
  */
 	public function __construct($statement = null, $driver = null) {
 		parent::__construct($statement, $driver);
 		$this->_reset();
 	}
 
+/**
+ * Execute the statement and return the results.
+ *
+ * @param array $params list of values to be bound to query
+ * @return boolean true on success, false otherwise
+ */
 	public function execute($params = null) {
 		$this->_reset();
 		return parent::execute($params);
 	}
 
+/**
+ * {@inheritDoc}
+ */
 	public function fetch($type = 'num') {
 		if ($this->_allFetched) {
 			$row = ($this->_counter < $this->_count) ? $this->_records[$this->_counter++] : false;
@@ -63,6 +94,9 @@ class BufferedStatement extends StatementDecorator {
 		return $this->_records[] = $record;
 	}
 
+/**
+ * {@inheritDoc}
+ */
 	public function fetchAll($type = 'num') {
 		if ($this->_allFetched) {
 			return $this->_records;
@@ -75,6 +109,9 @@ class BufferedStatement extends StatementDecorator {
 		return $this->_records;
 	}
 
+/**
+ * {@inheritDoc}
+ */
 	public function rowCount() {
 		if (!$this->_allFetched) {
 			$counter = $this->_counter;
@@ -85,10 +122,16 @@ class BufferedStatement extends StatementDecorator {
 		return $this->_count;
 	}
 
+/**
+ * Rewind the _counter property
+ */
 	public function rewind() {
 		$this->_counter = 0;
 	}
 
+/**
+ * Reset all properties
+ */
 	protected function _reset() {
 		$this->_count = $this->_counter = 0;
 		$this->_records = [];

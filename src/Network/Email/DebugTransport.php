@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Network\Email;
@@ -26,7 +26,7 @@ class DebugTransport extends AbstractTransport {
 /**
  * Send mail
  *
- * @param Cake\Network\Email\Email $email Cake Email
+ * @param \Cake\Network\Email\Email $email Cake Email
  * @return array
  */
 	public function send(Email $email) {

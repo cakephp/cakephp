@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller\Component\Auth;
@@ -38,7 +38,7 @@ class ActionsAuthorizeTest extends TestCase {
 		$this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
 
 		$this->auth = new ActionsAuthorize($this->Collection);
-		$this->auth->settings['actionPath'] = '/controllers';
+		$this->auth->config('actionPath', '/controllers');
 	}
 
 /**
@@ -126,7 +126,7 @@ class ActionsAuthorizeTest extends TestCase {
 
 		$this->_mockAcl();
 
-		$this->auth->settings['userModel'] = 'TestPlugin.AuthUser';
+		$this->auth->config('userModel', 'TestPlugin.AuthUser');
 		$user = array(
 			'id' => 1,
 			'username' => 'mariano'
@@ -164,7 +164,7 @@ class ActionsAuthorizeTest extends TestCase {
  * @return void
  */
 	public function testActionNoDoubleSlash() {
-		$this->auth->settings['actionPath'] = '/controllers/';
+		$this->auth->config('actionPath', '/controllers/');
 		$request = new Request('/posts/index', false);
 		$request->addParams(array(
 			'plugin' => null,

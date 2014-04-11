@@ -8,7 +8,7 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestApp\Controller;
@@ -34,7 +34,6 @@ class TestDispatchPagesController extends Controller {
  * @return void
  */
 	public function admin_index() {
-		return true;
 	}
 
 /**
@@ -43,7 +42,6 @@ class TestDispatchPagesController extends Controller {
  * @return void
  */
 	public function camelCased() {
-		return true;
 	}
 
 }

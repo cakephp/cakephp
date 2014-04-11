@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @since         CakePHP v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Console\Command;
@@ -94,7 +94,7 @@ class CommandListShellTest extends TestCase {
 		$expected = "/\[.*TestPluginTwo.*\] example, welcome/";
 		$this->assertRegExp($expected, $output);
 
-		$expected = "/\[.*CORE.*\] bake, i18n, server, test, upgrade/";
+		$expected = "/\[.*CORE.*\] bake, i18n, server, test/";
 		$this->assertRegExp($expected, $output);
 
 		$expected = "/\[.*app.*\] sample/";
@@ -107,6 +107,7 @@ class CommandListShellTest extends TestCase {
  * @return void
  */
 	public function testMainXml() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Remove when travis updates to hhvm 2.5');
 		$this->Shell->params['xml'] = true;
 		$this->Shell->main();
 

@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\ORM;
@@ -507,13 +507,14 @@ class EntityTest extends TestCase {
 		$entity = new Entity([
 			'title' => 'Foo',
 		]);
+
 		$entity->dirty('title', false);
 		$this->assertFalse($entity->dirty('title'));
+
 		$entity->set('title', 'Foo');
-		$this->assertFalse($entity->dirty('title'));
+		$this->assertTrue($entity->dirty('title'));
+
 		$entity->set('title', 'Foo');
-		$this->assertFalse($entity->dirty('title'));
-		$entity->set('title', 'Something Else');
 		$this->assertTrue($entity->dirty('title'));
 
 		$entity->set('something', 'else');
@@ -859,6 +860,7 @@ class EntityTest extends TestCase {
  */
 	public function testAccessible() {
 		$entity = new Entity;
+		$entity->accessible('*', false);
 		$this->assertFalse($entity->accessible('foo'));
 		$this->assertFalse($entity->accessible('bar'));
 
@@ -935,6 +937,7 @@ class EntityTest extends TestCase {
 	public function testSetWithAccessible() {
 		$entity = new Entity(['foo' => 1, 'bar' => 2]);
 		$options = ['guard' => true];
+		$entity->accessible('*', false);
 		$entity->accessible('foo', true);
 		$entity->set('bar', 3, $options);
 		$entity->set('foo', 4, $options);
@@ -954,6 +957,7 @@ class EntityTest extends TestCase {
 	public function testSetWithAccessibleWithArray() {
 		$entity = new Entity(['foo' => 1, 'bar' => 2]);
 		$options = ['guard' => true];
+		$entity->accessible('*', false);
 		$entity->accessible('foo', true);
 		$entity->set(['bar' => 3, 'foo' => 4], $options);
 		$this->assertEquals(2, $entity->get('bar'));
@@ -968,10 +972,11 @@ class EntityTest extends TestCase {
 /**
  * Test that accessible() and single property setting works.
  *
- * @return
+ * @return void
  */
 	public function testSetWithAccessibleSingleProperty() {
 		$entity = new Entity(['foo' => 1, 'bar' => 2]);
+		$entity->accessible('*', false);
 		$entity->accessible('title', true);
 
 		$entity->set(['title' => 'test', 'body' => 'Nope']);
@@ -983,6 +988,85 @@ class EntityTest extends TestCase {
 
 		$entity->set('body', 'Yes');
 		$this->assertEquals('Yes', $entity->body, 'Single set should bypass guards.');
+	}
+
+/**
+ * Tests the entity's __toString method
+ *
+ * @return void
+ */
+	public function testToString() {
+		$entity = new Entity(['foo' => 1, 'bar' => 2]);
+		$this->assertEquals(json_encode($entity, JSON_PRETTY_PRINT), (string)$entity);
+	}
+
+/**
+ * Tests __debugInfo
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$entity = new Entity(['foo' => 'bar'], ['markClean' => true]);
+		$entity->accessible('name', true);
+		$entity->virtualProperties(['baz']);
+		$entity->dirty('foo', true);
+		$entity->errors('foo', ['An error']);
+		$entity->source('foos');
+		$result = $entity->__debugInfo();
+		$expected = [
+			'new' => null,
+			'accessible' => ['*' => true, 'name' => true],
+			'properties' => ['foo' => 'bar'],
+			'dirty' => ['foo' => true],
+			'virtual' => ['baz'],
+			'errors' => ['foo' => ['An error']],
+			'repository' => 'foos'
+		];
+		$this->assertSame($expected, $result);
+	}
+
+/**
+ * Tests the source method
+ *
+ * @return void
+ */
+	public function testSource() {
+		$entity = new Entity;
+		$this->assertNull($entity->source());
+		$entity->source('foos');
+		$this->assertEquals('foos', $entity->source());
+	}
+
+/**
+ * Provides empty values
+ *
+ * @return void
+ */
+	public function emptyNamesProvider() {
+		return [[''], [null], [false]];
+	}
+/**
+ * Tests that trying to get an empty propery name throws exception
+ *
+ * @dataProvider emptyNamesProvider
+ * @expectedException \InvalidArgumentException
+ * @return void
+ */
+	public function testEmptyProperties($property) {
+		$entity = new Entity();
+		$entity->get($property);
+	}
+
+/**
+ * Tests that setitng an empty property name does nothing
+ *
+ * @expectedException \InvalidArgumentException
+ * @dataProvider emptyNamesProvider
+ * @return void
+ */
+	public function testSetEmptyPropertyName($property) {
+		$entity = new Entity();
+		$entity->set($property, 'bar');
 	}
 
 }

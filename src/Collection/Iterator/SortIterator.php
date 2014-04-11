@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Collection\Iterator;
@@ -86,13 +86,12 @@ class SortIterator extends SplHeap {
  * @param integer $dir either SORT_DESC or SORT_ASC
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
- * @return void
  */
-	public function __construct($items, $c, $dir = SORT_DESC, $type = SORT_NUMERIC) {
+	public function __construct($items, $callback, $dir = SORT_DESC, $type = SORT_NUMERIC) {
 		$this->_items = $items;
 		$this->_dir = $dir;
 		$this->_type = $type;
-		$this->_callback = $this->_propertyExtractor($c);
+		$this->_callback = $this->_propertyExtractor($callback);
 	}
 
 /**

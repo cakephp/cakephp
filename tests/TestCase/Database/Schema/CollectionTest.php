@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Test\TestCase\Database\Schema;
@@ -19,9 +17,9 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Database\Connection;
-use Cake\Database\ConnectionManager;
 use Cake\Database\Schema\Collection;
 use Cake\Database\Schema\Table;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -61,7 +59,7 @@ class CollectionTest extends TestCase {
  * Tests for positive describe() calls are in each platformSchema
  * test case.
  *
- * @expectedException Cake\Database\Exception
+ * @expectedException \Cake\Database\Exception
  * @return void
  */
 	public function testDescribeIncorrectTable() {
@@ -75,15 +73,11 @@ class CollectionTest extends TestCase {
  * @return void
  */
 	public function testDescribeCache() {
+		$schema = $this->connection->schemaCollection();
 		$table = $this->connection->schemaCollection()->describe('users');
 
-		$config = $this->connection->config();
-		$config['cacheMetadata'] = true;
-
-		$connection = new Connection($config);
-		$schema = new Collection($connection);
-
 		Cache::delete('test_users', '_cake_model_');
+		$schema->cacheMetadata(true);
 		$result = $schema->describe('users');
 		$this->assertEquals($table, $result);
 

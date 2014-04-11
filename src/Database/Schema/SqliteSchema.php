@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Schema;
@@ -23,20 +23,13 @@ use Cake\Database\Schema\Table;
 class SqliteSchema extends BaseSchema {
 
 /**
- * Whether or not this connection contains sequences
- *
- * @return boolean
- */
-	protected $_hasSequences;
-
-/**
  * Convert a column definition to the abstract types.
  *
  * The returned type will be a type that
  * Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
- * @throws Cake\Database\Exception when unable to parse column type
+ * @throws \Cake\Database\Exception when unable to parse column type
  * @return array Array of column information.
  */
 	protected function _convertColumn($column) {
@@ -98,7 +91,11 @@ class SqliteSchema extends BaseSchema {
  *
  */
 	public function listTablesSql($config) {
-		return ['SELECT name FROM sqlite_master WHERE type="table" ORDER BY name', []];
+		return [
+			'SELECT name FROM sqlite_master WHERE type="table" ' .
+			'AND name != "sqlite_sequence" ORDER BY name',
+			[]
+		];
 	}
 
 /**
@@ -129,10 +126,12 @@ class SqliteSchema extends BaseSchema {
 		}
 		$table->addColumn($row['name'], $field);
 		if ($row['pk'] == true) {
-			$table->addConstraint('primary', [
+			$constraint = (array)$table->constraint('primary') + [
 				'type' => Table::CONSTRAINT_PRIMARY,
-				'columns' => [$row['name']]
-			]);
+				'columns' => []
+			];
+			$constraint['columns'] = array_merge($constraint['columns'], [$row['name']]);
+			$table->addConstraint('primary', $constraint);
 		}
 	}
 
@@ -210,7 +209,7 @@ class SqliteSchema extends BaseSchema {
 /**
  * {@inheritdoc}
  *
- * @throws Cake\Database\Exception when the column type is unknown
+ * @throws \Cake\Database\Exception when the column type is unknown
  */
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
@@ -343,7 +342,8 @@ class SqliteSchema extends BaseSchema {
 	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$lines = array_merge($columns, $constraints);
 		$content = implode(",\n", array_filter($lines));
-		$table = sprintf("CREATE TABLE \"%s\" (\n%s\n)", $table->name(), $content);
+		$temporary = $table->temporary() ? ' TEMPORARY ' : ' ';
+		$table = sprintf("CREATE%sTABLE \"%s\" (\n%s\n)", $temporary, $table->name(), $content);
 		$out = [$table];
 		foreach ($indexes as $index) {
 			$out[] = $index;
@@ -373,9 +373,6 @@ class SqliteSchema extends BaseSchema {
  * @return void
  */
 	public function hasSequences() {
-		if ($this->_hasSequences !== null) {
-			return $this->_hasSequences;
-		}
 		$result = $this->_driver
 			->prepare('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"');
 		$result->execute();

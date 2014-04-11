@@ -1,9 +1,10 @@
 # How to contribute
 
 CakePHP loves to welcome your contributions. There are several ways to help out:
+
 * Create an [issue](https://github.com/cakephp/cakephp/issues) on GitHub, if you have found a bug
-* Write testcases for open bug issues
-* Write patches for open bug/feature issues, preferably with testcases included
+* Write test cases for open bug issues
+* Write patches for open bug/feature issues, preferably with test cases included
 * Contribute to the [documentation](https://github.com/cakephp/docs)
 
 There are a few guidelines that we need contributors to follow so that we have a
@@ -30,7 +31,7 @@ chance of keeping on top of things.
 * Make commits of logical units.
 * Check for unnecessary whitespace with `git diff --check` before committing.
 * Use descriptive commit messages and reference the #issue number.
-* Core testcases should continue to pass. You can run tests locally or enable
+* Core test cases should continue to pass. You can run tests locally or enable
   [travis-ci](https://travis-ci.org/) for your fork, so all tests and codesniffs
   will be executed.
 * Your work should apply the CakePHP coding standards.
@@ -48,16 +49,23 @@ chance of keeping on top of things.
 * Submit a pull request to the repository in the cakephp organization, with the
   correct target branch.
 
-## Testcases and codesniffer
+## Test cases and codesniffer
 
 CakePHP tests requires [PHPUnit](http://www.phpunit.de/manual/current/en/installation.html)
-3.5 or higher. To run the testcases locally use the following command:
+3.5 or higher. To run the test cases locally use the following command:
 
-    ./lib/Cake/Console/cake test core AllTests --stderr
+    phpunit --stderr tests/TestCase/
+
+You can copy file `phpunit.xml.dist` to `phpunit.xml` and modify the database
+driver settings as required to run tests for particular database.
+
+You can also register on [Travis CI](https://travis-ci.org/) and from your
+[profile](https://travis-ci.org/profile) page enable the service hook for your
+cakephp fork on github for automated test builds.
 
 To run the sniffs for CakePHP coding standards:
 
-    phpcs -p --extensions=php --standard=CakePHP ./lib/Cake
+    phpcs -p --extensions=php --standard=CakePHP ./src
 
 Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
 repository to setup the CakePHP standard. The README contains installation info
@@ -65,7 +73,7 @@ for the sniff and phpcs.
 
 # Additional Resources
 
-* [CakePHP coding standards](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html)
+* [CakePHP coding standards](http://book.cakephp.org/3.0/en/contributing/cakephp-coding-conventions.html)
 * [Existing issues](https://github.com/cakephp/cakephp/issues)
 * [Development Roadmaps](https://github.com/cakephp/cakephp/wiki#roadmaps)
 * [General GitHub documentation](https://help.github.com/)

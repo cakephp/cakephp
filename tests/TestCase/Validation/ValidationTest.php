@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Validation;
@@ -30,7 +30,7 @@ class CustomValidator {
 /**
  * Makes sure that a given $email address is valid and unique
  *
- * @param string $email
+ * @param string $check
  * @return boolean
  */
 	public static function customValidate($check) {
@@ -60,6 +60,7 @@ class TestNlValidation {
 /**
  * ssn function for testing ssn pass through
  *
+ * @param string $check
  * @return void
  */
 	public static function ssn($check) {
@@ -991,6 +992,18 @@ class ValidationTest extends TestCase {
 	}
 
 /**
+ * testDateTimeObject
+ *
+ * @return void
+ */
+	public function testDateTimeObject() {
+		$dateTime = new \DateTime();
+		$this->assertTrue(Validation::date($dateTime));
+		$this->assertTrue(Validation::time($dateTime));
+		$this->assertTrue(Validation::dateTime($dateTime));
+	}
+
+/**
  * testDateDdmmyyyy method
  *
  * @return void
@@ -1651,6 +1664,26 @@ class ValidationTest extends TestCase {
 	public function testDecimalCustomRegex() {
 		$this->assertTrue(Validation::decimal('1.54321', null, '/^[-+]?[0-9]+(\\.[0-9]+)?$/s'));
 		$this->assertFalse(Validation::decimal('.54321', null, '/^[-+]?[0-9]+(\\.[0-9]+)?$/s'));
+	}
+
+/**
+ * Test localized floats with decimal.
+ *
+ * @return void
+ */
+	public function testDecimalLocaleSet() {
+		$this->skipIf(DS === '\\', 'The locale is not supported in Windows and affects other tests.');
+		$restore = setlocale(LC_NUMERIC, 0);
+		$this->skipIf(setlocale(LC_NUMERIC, 'de_DE') === false, "The German locale isn't available.");
+		$this->skipIf(strpos(',', (string)12345.67) === false, "The German locale does not include , for numbers.");
+
+		$this->assertTrue(Validation::decimal(1.54), '1.54 should be considered a valid float');
+		$this->assertTrue(Validation::decimal('1.54'), '"1.54" should be considered a valid float');
+
+		$this->assertTrue(Validation::decimal(12345.67), '12345.67 should be considered a valid float');
+		$this->assertTrue(Validation::decimal('12,345.67'), '"12,345.67" should be considered a valid float');
+
+		setlocale(LC_NUMERIC, $restore);
 	}
 
 /**
@@ -2355,11 +2388,14 @@ class ValidationTest extends TestCase {
 	public function testMimeType() {
 		$image = CORE_PATH . 'Cake/Test/TestApp/webroot/img/cake.power.gif';
 		$File = new File($image, false);
+
 		$this->skipIf(!$File->mime(), 'Cannot determine mimeType');
+
 		$this->assertTrue(Validation::mimeType($image, array('image/gif')));
 		$this->assertTrue(Validation::mimeType(array('tmp_name' => $image), array('image/gif')));
+		$this->assertTrue(Validation::mimeType(array('tmp_name' => $image), '#image/.+#'));
+		$this->assertTrue(Validation::mimeType($image, array('image/GIF')));
 
-		$this->assertFalse(Validation::mimeType($image, array('image/GIF')));
 		$this->assertFalse(Validation::mimeType($image, array('image/png')));
 		$this->assertFalse(Validation::mimeType(array('tmp_name' => $image), array('image/png')));
 	}
@@ -2367,7 +2403,7 @@ class ValidationTest extends TestCase {
 /**
  * testMimeTypeFalse method
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testMimeTypeFalse() {
@@ -2385,9 +2421,11 @@ class ValidationTest extends TestCase {
 	public function testUploadError() {
 		$this->assertTrue(Validation::uploadError(0));
 		$this->assertTrue(Validation::uploadError(array('error' => 0)));
+		$this->assertTrue(Validation::uploadError(array('error' => '0')));
 
 		$this->assertFalse(Validation::uploadError(2));
 		$this->assertFalse(Validation::uploadError(array('error' => 2)));
+		$this->assertFalse(Validation::uploadError(array('error' => '2')));
 	}
 
 /**

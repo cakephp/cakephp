@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\TestSuite\Fixture;
@@ -20,7 +20,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Connection;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\Error;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
@@ -56,7 +56,7 @@ class FixtureManager {
 /**
  * Inspects the test to look for unloaded fixtures and loads them
  *
- * @param Cake\TestSuite\TestCase $test the test case to inspect
+ * @param \Cake\TestSuite\TestCase $test the test case to inspect
  * @return void
  */
 	public function fixturize($test) {
@@ -64,7 +64,6 @@ class FixtureManager {
 		if (empty($test->fixtures) || !empty($this->_processed[get_class($test)])) {
 			return;
 		}
-		$test->db = ConnectionManager::get('test', false);
 		if (!is_array($test->fixtures)) {
 			$test->fixtures = array_map('trim', explode(',', $test->fixtures));
 		}
@@ -83,10 +82,11 @@ class FixtureManager {
 	protected function _aliasConnections() {
 		$connections = ConnectionManager::configured();
 		ConnectionManager::alias('test', 'default');
-		$map = [
-			'test' => 'default',
-		];
+		$map = [];
 		foreach ($connections as $connection) {
+			if ($connection === 'test' || $connection === 'default') {
+				continue;
+			}
 			if (isset($map[$connection])) {
 				continue;
 			}
@@ -117,9 +117,9 @@ class FixtureManager {
 /**
  * Looks for fixture files and instantiates the classes accordingly
  *
- * @param Cake\TestSuite\Testcase $test The test suite to load fixtures for.
+ * @param \Cake\TestSuite\Testcase $test The test suite to load fixtures for.
  * @return void
- * @throws UnexpectedValueException when a referenced fixture does not exist.
+ * @throws \UnexpectedValueException when a referenced fixture does not exist.
  */
 	protected function _loadFixtures($test) {
 		if (empty($test->fixtures)) {
@@ -130,20 +130,29 @@ class FixtureManager {
 				continue;
 			}
 
-			if (strpos($fixture, 'core.') === 0) {
-				list($core, $base) = explode('.', $fixture, 2);
+			list($type, $name) = explode('.', $fixture, 2);
+			$path = explode('/', $name);
+			$base = array_pop($path);
+			$additionalPath = implode('\\', $path);
+
+			if ($type === 'core') {
 				$baseNamespace = 'Cake';
-			} elseif (strpos($fixture, 'app.') === 0) {
-				list($app, $base) = explode('.', $fixture, 2);
+			} elseif ($type === 'app') {
 				$baseNamespace = Configure::read('App.namespace');
-			} elseif (strpos($fixture, 'plugin.') === 0) {
-				list($p, $plugin, $base) = explode('.', $fixture);
+			} elseif ($type === 'plugin') {
+				list($plugin, $additionalPath) = explode('.', $additionalPath);
 				$baseNamespace = Plugin::getNamespace($plugin);
 			} else {
 				$base = $fixture;
 			}
 			$base = Inflector::camelize($base);
-			$className = implode('\\', array($baseNamespace, 'Test\Fixture', $base . 'Fixture'));
+			$nameSegments = [
+				$baseNamespace,
+				'Test\Fixture',
+				$additionalPath,
+				$base . 'Fixture'
+			];
+			$className = implode('\\', array_filter($nameSegments));
 
 			if (class_exists($className)) {
 				$this->_loaded[$fixture] = new $className();
@@ -163,7 +172,7 @@ class FixtureManager {
 /**
  * Runs the drop and create commands on the fixtures if necessary.
  *
- * @param Cake\TestSuite\Fixture\TestFixture $fixture the fixture object to create
+ * @param \Cake\TestSuite\Fixture\TestFixture $fixture the fixture object to create
  * @param Connection $db the datasource instance to use
  * @param boolean $drop whether drop the fixture if it is already created or not
  * @return void
@@ -199,9 +208,9 @@ class FixtureManager {
 /**
  * Creates the fixtures tables and inserts data on them.
  *
- * @param Cake\TestSuite\TestCase $test the test to inspect for fixture loading
+ * @param \Cake\TestSuite\TestCase $test the test to inspect for fixture loading
  * @return void
- * @throws Cake\Error\Exception When fixture records cannot be inserted.
+ * @throws \Cake\Error\Exception When fixture records cannot be inserted.
  */
 	public function load(TestCase $test) {
 		if (empty($test->fixtures)) {
@@ -225,7 +234,9 @@ class FixtureManager {
 				$db = ConnectionManager::get($fixture->connection, false);
 				$db->transactional(function($db) use ($fixtures, $test) {
 					foreach ($fixtures as $fixture) {
-						$this->_setupTable($fixture, $db, $test->dropTables);
+						if (!in_array($db->configName(), (array)$fixture->created)) {
+							$this->_setupTable($fixture, $db, $test->dropTables);
+						}
 						$fixture->truncate($db);
 						$fixture->insert($db);
 					}
@@ -240,11 +251,11 @@ class FixtureManager {
 /**
  * Truncates the fixtures tables
  *
- * @param Cake\TestSuite\TestCase $test the test to inspect for fixture unloading
+ * @param \Cake\TestSuite\TestCase $test the test to inspect for fixture unloading
  * @return void
  */
 	public function unload(TestCase $test) {
-		$fixtures = !empty($test->fixtures) ? $test->fixtures : array();
+		$fixtures = !empty($test->fixtures) ? $test->fixtures : [];
 		foreach (array_reverse($fixtures) as $f) {
 			if (isset($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
@@ -265,7 +276,7 @@ class FixtureManager {
  * @param DataSource $db DataSource instance or leave null to get DataSource from the fixture
  * @param boolean $dropTables Whether or not tables should be dropped and re-created.
  * @return void
- * @throws UnexpectedValueException if $name is not a previously loaded class
+ * @throws \UnexpectedValueException if $name is not a previously loaded class
  */
 	public function loadSingle($name, $db = null, $dropTables = true) {
 		if (isset($this->_fixtureMap[$name])) {
@@ -273,7 +284,10 @@ class FixtureManager {
 			if (!$db) {
 				$db = ConnectionManager::get($fixture->connection);
 			}
-			$this->_setupTable($fixture, $db, $dropTables);
+
+			if (!in_array($db->configName(), (array)$fixture->created)) {
+				$this->_setupTable($fixture, $db, $dropTables);
+			}
 			$fixture->truncate($db);
 			$fixture->insert($db);
 		} else {
@@ -284,21 +298,16 @@ class FixtureManager {
 /**
  * Drop all fixture tables loaded by this class
  *
- * This will also close the session, as failing to do so will cause
- * fatal errors with database sessions.
- *
  * @return void
  */
 	public function shutDown() {
-		if (session_id()) {
-			session_write_close();
-		}
 		foreach ($this->_loaded as $fixture) {
 			if (!empty($fixture->created)) {
 				foreach ($fixture->created as $ds) {
 					$db = ConnectionManager::get($ds);
 					$fixture->drop($db);
 				}
+				$fixture->created = [];
 			}
 		}
 	}

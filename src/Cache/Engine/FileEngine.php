@@ -15,7 +15,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0.4933
+ * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Cache\Engine;
@@ -38,7 +38,7 @@ class FileEngine extends CacheEngine {
 /**
  * Instance of SplFileObject class
  *
- * @var File
+ * @var \SplFileObject
  */
 	protected $_File = null;
 
@@ -87,7 +87,7 @@ class FileEngine extends CacheEngine {
  * @param array $config array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($config = []) {
+	public function init(array $config = []) {
 		parent::init($config);
 
 		if (DS === '\\') {
@@ -325,7 +325,7 @@ class FileEngine extends CacheEngine {
  * @param string $key
  * @param integer $offset
  * @return void
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public function decrement($key, $offset = 1) {
 		throw new Error\Exception('Files cannot be atomically decremented.');
@@ -337,7 +337,7 @@ class FileEngine extends CacheEngine {
  * @param string $key
  * @param integer $offset
  * @return void
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public function increment($key, $offset = 1) {
 		throw new Error\Exception('Files cannot be atomically incremented.');
@@ -425,6 +425,7 @@ class FileEngine extends CacheEngine {
 /**
  * Recursively deletes all files under any directory named as $group
  *
+ * @param string $group name of the group to be cleared
  * @return boolean success
  */
 	public function clearGroup($group) {

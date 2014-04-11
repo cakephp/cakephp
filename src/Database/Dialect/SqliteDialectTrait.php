@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,16 +9,22 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Dialect;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Query;
 use Cake\Database\SqlDialectTrait;
 
+/**
+ * Sql dialect trait
+ */
 trait SqliteDialectTrait {
 
 	use SqlDialectTrait;
@@ -55,7 +59,8 @@ trait SqliteDialectTrait {
 	protected function _expressionTranslators() {
 		$namespace = 'Cake\Database\Expression';
 		return [
-			$namespace . '\FunctionExpression' => '_transformFunctionExpression'
+			$namespace . '\FunctionExpression' => '_transformFunctionExpression',
+			$namespace . '\TupleComparison' => '_transformTupleComparison'
 		];
 	}
 
@@ -63,7 +68,7 @@ trait SqliteDialectTrait {
  * Receives a FunctionExpression and changes it so that it conforms to this
  * SQL dialect.
  *
- * @param Cake\Database\Expression\FunctionExpression
+ * @param \Cake\Database\Expression\FunctionExpression
  * @return void
  */
 	protected function _transformFunctionExpression(FunctionExpression $expression) {
@@ -93,12 +98,61 @@ trait SqliteDialectTrait {
 	}
 
 /**
+ * Receives a TupleExpression and changes it so that it conforms to this
+ * SQL dialect.
+ *
+ * @param \Cake\Database\Expression\TupleComparison $expression
+ * @param \Cake\Database\Query $query
+ * @return void
+ */
+	protected function _transformTupleComparison(TupleComparison $expression, $query) {
+		$fields = $expression->getField();
+
+		if (!is_array($fields)) {
+			return;
+		}
+
+		$value = $expression->getValue();
+		$op = $expression->type();
+		$true = new QueryExpression('1');
+
+		if ($value instanceof Query) {
+			$selected = array_values($value->clause('select'));
+			foreach ($fields as $i => $field) {
+				$value->andWhere([$field . " $op" => new IdentifierExpression($selected[$i])]);
+			}
+			$value->select($true, true);
+			$expression->field($true);
+			$expression->type('=');
+			return;
+		}
+
+		$surrogate = $query->connection()
+			->newQuery()
+			->select($true);
+
+		foreach ($value as $tuple) {
+			$surrogate->orWhere(function($exp) use ($fields, $tuple) {
+				foreach ($tuple as $i => $value) {
+					$exp->add([$fields[$i] => $value]);
+				}
+				return $exp;
+			});
+		}
+
+		$expression->field($true);
+		$expression->value($surrogate);
+		$expression->type('=');
+	}
+
+/**
  * Transforms an insert query that is meant to insert multiple rows at a time,
  * otherwise it leaves the query untouched.
  *
  * The way SQLite works with multi insert is by having multiple select statements
  * joined with UNION.
  *
+ * @param \Cake\Database\Query $query The query to translate
  * @return Query
  */
 	protected function _insertQueryTranslator($query) {
@@ -141,7 +195,7 @@ trait SqliteDialectTrait {
  * Used by Cake\Database\Schema package to reflect schema and
  * generate schema.
  *
- * @return Cake\Database\Schema\SqliteSchema
+ * @return \Cake\Database\Schema\SqliteSchema
  */
 	public function schemaDialect() {
 		if (!$this->_schemaDialect) {
