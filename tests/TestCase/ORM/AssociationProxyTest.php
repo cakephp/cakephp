@@ -77,4 +77,18 @@ class AssociationProxyTest extends TestCase {
 		$this->assertEquals(3, $changed);
 	}
 
+/**
+ * Tests that the proxied deleteAll preserves conditions set for the association
+ *
+ * @return void
+ */
+	public function testDeleteAllFromAssociation() {
+		$articles = TableRegistry::get('articles');
+		$comments = TableRegistry::get('comments');
+		$articles->hasMany('comments', ['conditions' => ['published' => 'Y']]);
+		$articles->comments->deleteAll(['article_id' => 1]);
+		$remaining = $comments->find()->where(['article_id' => 1])->count();
+		$this->assertEquals(1, $remaining);
+	}
+
 }

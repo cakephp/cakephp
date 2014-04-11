@@ -481,7 +481,7 @@ abstract class Association {
 	}
 
 /**
- * Proxies the update to the target table's updateAll method
+ * Proxies the update operation to the target table's updateAll method
  *
  * @param array $fields A hash of field => new value.
  * @param mixed $conditions Conditions to be used, accepts anything Query::where()
@@ -491,9 +491,28 @@ abstract class Association {
  */
 	public function updateAll($fields, $conditions) {
 		$target = $this->target();
-		$expression = $target->query()->newExpr();
-		$expression->add($this->conditions())->add($conditions);
+		$expression = $target->query()
+			->where($this->conditions())
+			->where($conditions)
+			->clause('where');
 		return $target->updateAll($fields, $expression);
+	}
+
+/**
+ * Proxies the delete operation to the target table's deleteAll method
+ *
+ * @param mixed $conditions Conditions to be used, accepts anything Query::where()
+ * can take.
+ * @return boolean Success Returns true if one or more rows are affected.
+ * @see \Cake\ORM\Table::delteAll()
+ */
+	public function deleteAll($conditions) {
+		$target = $this->target();
+		$expression = $target->query()
+			->where($this->conditions())
+			->where($conditions)
+			->clause('where');
+		return $target->deleteAll($expression);
 	}
 
 /**
