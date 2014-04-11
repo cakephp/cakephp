@@ -1,6 +1,6 @@
 <?php
 /**
- * MissingLayoutException class
+ * MissingHelperException class
  *
  * PHP 5
  *
@@ -15,14 +15,16 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\View\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Used when a layout file cannot be found.
+ * Used when a helper cannot be found.
  *
  */
-class MissingLayoutException extends Exception {
+class MissingHelperException extends Exception {
 
-	protected $_messageTemplate = 'Layout file "%s" is missing.';
+	protected $_messageTemplate = 'Helper class %s could not be found.';
 
 }

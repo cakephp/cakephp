@@ -22,7 +22,6 @@ use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Cake\View\Error\MissingViewException;
 use Cake\View\Helper;
 use Cake\View\View;
 
@@ -557,7 +556,7 @@ class ViewTest extends TestCase {
 /**
  * Test for missing layouts
  *
- * @expectedException \Cake\Error\MissingLayoutException
+ * @expectedException \Cake\View\Error\MissingLayoutException
  * @return void
  */
 	public function testMissingLayout() {

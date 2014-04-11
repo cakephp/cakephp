@@ -20,7 +20,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
 use Cake\Core\Plugin;
-use Cake\Error;
+use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
@@ -29,7 +29,7 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\ViewVarsTrait;
-use Cake\View\Error\MissingViewException;
+use Cake\View\Error;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
@@ -881,7 +881,7 @@ class View extends Object {
 		$remainingBlocks = count($this->Blocks->unclosed());
 
 		if ($initialBlocks !== $remainingBlocks) {
-			throw new Error\Exception(sprintf(
+			throw new Exception(sprintf(
 				'The "%s" block was left open. Blocks are not allowed to cross files.',
 				$this->Blocks->active()
 			));
@@ -987,7 +987,7 @@ class View extends Object {
 				}
 			}
 		}
-		throw new MissingViewException(array('file' => $defaultPath . $name . $this->_ext));
+		throw new Error\MissingViewException(array('file' => $defaultPath . $name . $this->_ext));
 	}
 
 /**
@@ -1017,7 +1017,7 @@ class View extends Object {
  *
  * @param string $name The name of the layout to find.
  * @return string Filename for layout file (.ctp).
- * @throws \Cake\Error\MissingLayoutException when a layout cannot be located
+ * @throws \Cake\View\Error\MissingLayoutException when a layout cannot be located
  */
 	protected function _getLayoutFileName($name = null) {
 		if ($name === null) {

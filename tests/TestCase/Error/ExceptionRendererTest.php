@@ -26,6 +26,8 @@ use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Cake\View\Error\MissingHelperException;
+use Cake\View\Error\MissingLayoutException;
 use Cake\View\Error\MissingViewException;
 
 /**
@@ -518,7 +520,7 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
-				new Error\MissingLayoutException(array('file' => 'layouts/my_layout.ctp')),
+				new MissingLayoutException(array('file' => 'layouts/my_layout.ctp')),
 				array(
 					"/Missing Layout/",
 					"/layouts\/my_layout.ctp/"
@@ -526,7 +528,7 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
-				new Error\MissingHelperException(array('class' => 'MyCustomHelper')),
+				new MissingHelperException(array('class' => 'MyCustomHelper')),
 				array(
 					'/<h2>Missing Helper<\/h2>/',
 					'/<em>MyCustomHelper<\/em> could not be found./',
@@ -608,7 +610,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testMissingRenderSafe() {
-		$exception = new Error\MissingHelperException(array('class' => 'Fail'));
+		$exception = new MissingHelperException(array('class' => 'Fail'));
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
