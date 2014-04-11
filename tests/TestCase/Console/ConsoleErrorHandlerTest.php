@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleErrorHandler;
+use Cake\Controller\Error\MissingActionException;
 use Cake\Error;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -81,7 +82,7 @@ class ConsoleErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testCakeErrors() {
-		$exception = new Error\MissingActionException('Missing action');
+		$exception = new MissingActionException('Missing action');
 		$message = sprintf('Missing action in [%s, line %s]', $exception->getFile(), $exception->getLine());
 		$this->stderr->expects($this->once())->method('write')
 			->with($this->stringContains($message));

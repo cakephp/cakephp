@@ -14,6 +14,8 @@
  */
 namespace Cake\TestSuite;
 
+use Cake\Controller\Error\MissingComponentException;
+use Cake\Controller\Error\MissingControllerException;
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Event\Event;
@@ -306,14 +308,14 @@ abstract class ControllerTestCase extends TestCase {
  * @param string $controller Controller name
  * @param array $mocks List of classes and methods to mock
  * @return \Cake\Controller\Controller Mocked controller
- * @throws \Cake\Error\MissingControllerException When controllers could not be created.
- * @throws \Cake\Error\MissingComponentException When components could not be created.
+ * @throws \Cake\Controller\Error\MissingControllerException When controllers could not be created.
+ * @throws \Cake\Controller\Error\MissingComponentException When components could not be created.
  */
 	public function generate($controller, array $mocks = array()) {
 		$classname = App::classname($controller, 'Controller', 'Controller');
 		if (!$classname) {
 			list($plugin, $controller) = pluginSplit($controller);
-			throw new Error\MissingControllerException(array(
+			throw new MissingControllerException(array(
 				'class' => $controller . 'Controller',
 				'plugin' => $plugin
 			));
@@ -357,7 +359,7 @@ abstract class ControllerTestCase extends TestCase {
 			$componentClass = App::classname($component, 'Controller/Component', 'Component');
 			list(, $name) = pluginSplit($component, true);
 			if (!$componentClass) {
-				throw new Error\MissingComponentException(array(
+				throw new MissingComponentException(array(
 					'class' => $name . 'Component'
 				));
 			}

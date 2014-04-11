@@ -18,6 +18,10 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
+use Cake\Controller\Error\MissingActionException;
+use Cake\Controller\Error\MissingComponentException;
+use Cake\Controller\Error\MissingControllerException;
+use Cake\Controller\Error\PrivateActionException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
@@ -212,7 +216,7 @@ class ExceptionRendererTest extends TestCase {
 	public function testSubclassConvertingFrameworkErrors() {
 		Configure::write('debug', false);
 
-		$exception = new Error\MissingControllerException('PostsController');
+		$exception = new MissingControllerException('PostsController');
 		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
 
 		$this->assertEquals('error400', $ExceptionRenderer->method);
@@ -245,7 +249,7 @@ class ExceptionRendererTest extends TestCase {
  */
 	public function testErrorMethodCoercion() {
 		Configure::write('debug', false);
-		$exception = new Error\MissingActionException('Page not found');
+		$exception = new MissingActionException('Page not found');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$this->assertInstanceOf('Cake\Controller\ErrorController', $ExceptionRenderer->controller);
@@ -393,7 +397,7 @@ class ExceptionRendererTest extends TestCase {
 		$result = ob_get_clean();
 		$this->assertContains('Custom message', $result);
 
-		$exception = new Error\MissingActionException(array('controller' => 'PostsController', 'action' => 'index'));
+		$exception = new MissingActionException(array('controller' => 'PostsController', 'action' => 'index'));
 		$ExceptionRenderer = $this->_mockResponse(new ExceptionRenderer($exception));
 
 		ob_start();
@@ -469,7 +473,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testMissingController() {
-		$exception = new Error\MissingControllerException(array(
+		$exception = new MissingControllerException(array(
 			'class' => 'Posts',
 			'prefix' => '',
 			'plugin' => '',
@@ -492,7 +496,7 @@ class ExceptionRendererTest extends TestCase {
 	public static function testProvider() {
 		return array(
 			array(
-				new Error\MissingActionException(array(
+				new MissingActionException(array(
 					'controller' => 'PostsController',
 					'action' => 'index',
 					'prefix' => '',
@@ -505,7 +509,7 @@ class ExceptionRendererTest extends TestCase {
 				404
 			),
 			array(
-				new Error\PrivateActionException(array('controller' => 'PostsController', 'action' => '_secretSauce')),
+				new PrivateActionException(array('controller' => 'PostsController', 'action' => '_secretSauce')),
 				array(
 					'/<h2>Private Method in PostsController<\/h2>/',
 					'/<em>PostsController::_secretSauce\(\)<\/em>/'
@@ -547,7 +551,7 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
-				new Error\MissingComponentException(array('class' => 'SideboxComponent')),
+				new MissingComponentException(array('class' => 'SideboxComponent')),
 				array(
 					'/<h2>Missing Component<\/h2>/',
 					'/Create the class <em>SideboxComponent<\/em> below in file:/',

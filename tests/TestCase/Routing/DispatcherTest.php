@@ -17,6 +17,8 @@ namespace Cake\Test\TestCase\Routing;
 
 use Cake\Cache\Cache;
 use Cake\Controller\Controller;
+use Cake\Controller\Error\MissingActionException;
+use Cake\Controller\Error\MissingControllerException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -334,7 +336,7 @@ class DispatcherTest extends TestCase {
 /**
  * testMissingController method
  *
- * @expectedException \Cake\Error\MissingControllerException
+ * @expectedException \Cake\Controller\Error\MissingControllerException
  * @expectedExceptionMessage Controller class SomeController could not be found.
  * @return void
  */
@@ -352,7 +354,7 @@ class DispatcherTest extends TestCase {
 /**
  * testMissingControllerInterface method
  *
- * @expectedException \Cake\Error\MissingControllerException
+ * @expectedException \Cake\Controller\Error\MissingControllerException
  * @expectedExceptionMessage Controller class DispatcherTestInterface could not be found.
  * @return void
  */
@@ -370,7 +372,7 @@ class DispatcherTest extends TestCase {
 /**
  * testMissingControllerInterface method
  *
- * @expectedException \Cake\Error\MissingControllerException
+ * @expectedException \Cake\Controller\Error\MissingControllerException
  * @expectedExceptionMessage Controller class Abstract could not be found.
  * @return void
  */
@@ -698,7 +700,7 @@ class DispatcherTest extends TestCase {
 		try {
 			$Dispatcher->dispatch($url, $response, array('return' => 1));
 			$this->fail('No exception.');
-		} catch (Error\MissingActionException $e) {
+		} catch (MissingActionException $e) {
 			$this->assertEquals('Action SomePostsController::view() could not be found.', $e->getMessage());
 		}
 
@@ -730,14 +732,14 @@ class DispatcherTest extends TestCase {
 		try {
 			$Dispatcher->dispatch(new Request('theme/test_theme/../webroot/css/test_asset.css'), $response);
 			$this->fail('No exception');
-		} catch (Error\MissingControllerException $e) {
+		} catch (MissingControllerException $e) {
 			$this->assertEquals('Controller class Theme could not be found.', $e->getMessage());
 		}
 
 		try {
 			$Dispatcher->dispatch(new Request('theme/test_theme/pdfs'), $response);
 			$this->fail('No exception');
-		} catch (Error\MissingControllerException $e) {
+		} catch (MissingControllerException $e) {
 			$this->assertEquals('Controller class Theme could not be found.', $e->getMessage());
 		}
 	}
