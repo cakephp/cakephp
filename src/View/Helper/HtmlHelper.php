@@ -1088,7 +1088,7 @@ class HtmlHelper extends Helper {
  * @return string The nested list
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::nestedList
  */
-	public function nestedList(array $list, array $options = array(), array $itemOptions = array(), $tag = 'ul') {
+	public function nestedList(array $list, array $options = [], array $itemOptions = [], $tag = 'ul') {
 		$items = $this->_nestedListItem($list, $options, $itemOptions, $tag);
 		return $this->formatTemplate($tag, [
 			'attrs' => $this->templater()->formatAttributes($options),
