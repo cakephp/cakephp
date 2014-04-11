@@ -16,6 +16,8 @@ namespace Cake\Console;
 
 use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleOutput;
+use Cake\Log\Engine\ConsoleLog;
+use Cake\Log\Log;
 
 /**
  * A wrapper around the various IO operations shell tasks need to do.
@@ -234,6 +236,16 @@ class ConsoleIo {
 	}
 
 /**
+ * Change the output mode of the stdout stream
+ *
+ * @param int $mode
+ * @return void
+ */
+	public function outputAs($mode) {
+		$this->_out->outputAs($mode);
+	}
+
+/**
  * Prompts the user for input based on a list of options, and returns it.
  *
  * @param string $prompt Prompt text.
@@ -293,6 +305,34 @@ class ConsoleIo {
 			return $default;
 		}
 		return $result;
+	}
+
+/**
+ * Connects or disconnects the loggers to the console output.
+ *
+ * Used to enable or disable logging stream output to stdout and stderr
+ * If you don't wish all log output in stdout or stderr
+ * through Cake's Log class, call this function with `$enable=false`.
+ *
+ * @param boolean $enable Whether you want loggers on or off.
+ * @return void
+ */
+	public function setLoggers($enable) {
+		Log::drop('stdout');
+		Log::drop('stderr');
+		if (!$enable) {
+			return;
+		}
+		$stdout = new ConsoleLog([
+			'types' => ['notice', 'info', 'debug'],
+			'stream' => $this->_out
+		]);
+		Log::config('stdout', ['engine' => $stdout]);
+		$stderr = new ConsoleLog([
+			'types' => ['emergency', 'alert', 'critical', 'error', 'warning'],
+			'stream' => $this->_err,
+		]);
+		Log::config('stderr', ['engine' => $stderr]);
 	}
 
 }

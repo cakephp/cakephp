@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleIo;
+use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -308,6 +309,23 @@ class ConsoleIoTest extends TestCase {
 
 		$this->io->out('Some <info>text</info> I want to overwrite', 0);
 		$this->io->overwrite('Less text');
+	}
+
+/**
+ * Tests that setLoggers works properly
+ *
+ * @return void
+ */
+	public function testSetLoggers() {
+		Log::drop('stdout');
+		Log::drop('stderr');
+		$this->io->setLoggers(true);
+		$this->assertNotEmpty(Log::engine('stdout'));
+		$this->assertNotEmpty(Log::engine('stderr'));
+
+		$this->io->setLoggers(false);
+		$this->assertFalse(Log::engine('stdout'));
+		$this->assertFalse(Log::engine('stderr'));
 	}
 
 }

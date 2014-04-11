@@ -79,11 +79,7 @@ class TaskRegistry extends ObjectRegistry {
  * @return \Cake\Console\Shell The constructed task class.
  */
 	protected function _create($class, $alias, $settings) {
-		return new $class(
-			$this->_Shell->stdout,
-			$this->_Shell->stderr,
-			$this->_Shell->stdin
-		);
+		return new $class($this->_Shell->io());
 	}
 
 }
