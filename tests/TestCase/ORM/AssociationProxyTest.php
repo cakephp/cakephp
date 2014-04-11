@@ -105,4 +105,21 @@ class AssociationProxyTest extends TestCase {
 		$this->assertSame($authors->association('comments'), $articles->authors->comments);
 	}
 
+/**
+ * Tests that methods are proxied from the Association to the target table
+ *
+ * @return void
+ */
+	public function testAssociationMethodProxy() {
+		$articles = TableRegistry::get('articles');
+		$mock = $this->getMock('Cake\ORM\Table', ['crazy']);
+		$articles->belongsTo('authors', [
+			'targetTable' => $mock
+		]);
+
+		$mock->expects($this->once())->method('crazy')
+			->with('a', 'b')
+			->will($this->returnValue('thing'));
+		$this->assertEquals('thing', $articles->authors->crazy('a', 'b'));
+	}
 }

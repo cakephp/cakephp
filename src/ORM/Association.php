@@ -672,6 +672,18 @@ abstract class Association {
 	}
 
 /**
+ * Proxies method calls to the target table.
+ *
+ * @param string $method name of the method to be invoked
+ * @param array $args List of arguments passed to the function
+ * @return mixed
+ * @throws \BadMethodCallException
+ */
+	public function __call($method, $argument) {
+		return call_user_func_array([$this->target(), $method], $argument);
+	}
+
+/**
  * Get the relationship type.
  *
  * @return string Constant of either ONE_TO_ONE, MANY_TO_ONE, ONE_TO_MANY or MANY_TO_MANY.
