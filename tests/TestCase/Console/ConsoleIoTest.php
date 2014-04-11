@@ -190,7 +190,6 @@ class ConsoleIoTest extends TestCase {
 		$this->io->quiet('Quiet');
 	}
 
-
 /**
  * test that verbose and quiet output levels work
  *
