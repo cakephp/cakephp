@@ -220,6 +220,7 @@ class QueryTest extends TestCase {
 			[
 				'id' => 2,
 				'name' => 'nate',
+				'articles' => [],
 			],
 			[
 				'id' => 3,
@@ -237,6 +238,7 @@ class QueryTest extends TestCase {
 			[
 				'id' => 4,
 				'name' => 'garrett',
+				'articles' => [],
 			]
 		];
 		$this->assertEquals($expected, $results);
@@ -246,7 +248,7 @@ class QueryTest extends TestCase {
 			->contain(['articles' => ['conditions' => ['id' => 2]]])
 			->hydrate(false)
 			->toArray();
-		unset($expected[0]['articles']);
+		$expected[0]['articles'] = [];
 		$this->assertEquals($expected, $results);
 		$this->assertEquals($table->association('articles')->strategy(), $strategy);
 	}
@@ -315,6 +317,7 @@ class QueryTest extends TestCase {
 			[
 				'id' => 2,
 				'name' => 'nate',
+				'articles' => [],
 			],
 			[
 				'id' => 3,
@@ -326,6 +329,7 @@ class QueryTest extends TestCase {
 			[
 				'id' => 4,
 				'name' => 'garrett',
+				'articles' => [],
 			],
 		];
 		$this->assertEquals($expected, $results);
@@ -377,7 +381,8 @@ class QueryTest extends TestCase {
 			],
 			[
 				'id' => 2,
-				'name' => 'nate'
+				'name' => 'nate',
+				'articles' => [],
 			],
 			[
 				'id' => 3,
@@ -395,7 +400,8 @@ class QueryTest extends TestCase {
 			],
 			[
 				'id' => 4,
-				'name' => 'garrett'
+				'name' => 'garrett',
+				'articles' => [],
 			]
 		];
 		$this->assertEquals($expected, $results);
@@ -565,6 +571,7 @@ class QueryTest extends TestCase {
 				'body' => 'Third Article Body',
 				'author_id' => 1,
 				'published' => 'Y',
+				'tags' => [],
 			],
 		];
 		$this->assertEquals($expected, $results);
@@ -580,6 +587,7 @@ class QueryTest extends TestCase {
 				'title' => 'First Article',
 				'body' => 'First Article Body',
 				'published' => 'Y',
+				'tags' => [],
 			],
 			[
 				'id' => 2,
@@ -601,6 +609,7 @@ class QueryTest extends TestCase {
 				'body' => 'Third Article Body',
 				'author_id' => 1,
 				'published' => 'Y',
+				'tags' => [],
 			],
 		];
 		$this->assertEquals($expected, $results);
@@ -1199,7 +1208,7 @@ class QueryTest extends TestCase {
 		$this->assertInstanceOf('\Cake\ORM\Entity', $first->articles[0]->author);
 		$expected = ['id' => 1, 'name' => 'mariano'];
 		$this->assertEquals($expected, $first->articles[0]->author->toArray());
-		$this->assertFalse(isset($results[3]->articles));
+		$this->assertTrue(isset($results[3]->articles));
 	}
 
 /**
@@ -1756,6 +1765,7 @@ class QueryTest extends TestCase {
 				}
 			}
 		});
+
 		$expected = ['tag1 - visited', 'tag2 - visited', 'tag1 - visited', 'tag3 - visited'];
 		$this->assertEquals($expected, $query->toArray());
 	}
@@ -1947,4 +1957,20 @@ class QueryTest extends TestCase {
 			->all();
 	}
 
+/**
+ * Tests that a hasOne association using the select strategy will still have the
+ * key present in the results when no match is found
+ *
+ * @return void
+ */
+	public function testAssociationKeyPresent() {
+		$table = TableRegistry::get('Articles');
+		$table->hasOne('ArticlesTags', ['strategy' => 'select']);
+		$article = $table->find()->where(['id' => 3])
+			->hydrate(false)
+			->contain('ArticlesTags')
+			->first();
+
+		$this->assertNull($article['articles_tag']);
+	}
 }

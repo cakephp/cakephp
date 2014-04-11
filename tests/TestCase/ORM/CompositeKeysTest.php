@@ -108,7 +108,8 @@ class CompositeKeyTest extends TestCase {
 			[
 				'id' => 2,
 				'name' => 'juan',
-				'site_id' => 2
+				'site_id' => 2,
+				'articles' => [],
 			],
 			[
 				'id' => 3,
@@ -127,7 +128,8 @@ class CompositeKeyTest extends TestCase {
 			[
 				'id' => 4,
 				'name' => 'andy',
-				'site_id' => 1
+				'site_id' => 1,
+				'articles' => [],
 			]
 		];
 		$this->assertEquals($expected, $results);
@@ -137,7 +139,7 @@ class CompositeKeyTest extends TestCase {
 			->contain(['SiteArticles' => ['conditions' => ['id' => 2]]])
 			->hydrate(false)
 			->toArray();
-		unset($expected[0]['articles']);
+		$expected[0]['articles'] = [];
 		$this->assertEquals($expected, $results);
 		$this->assertEquals($table->association('SiteArticles')->strategy(), $strategy);
 	}
@@ -206,7 +208,8 @@ class CompositeKeyTest extends TestCase {
 				'title' => 'Third Article',
 				'body' => 'Third Article Body',
 				'author_id' => 1,
-				'site_id' => 2
+				'site_id' => 2,
+				'tags' => [],
 			],
 			[
 				'id' => 4,
