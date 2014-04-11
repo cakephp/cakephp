@@ -180,7 +180,7 @@ class CakeSocket {
 		 		$context
 		 	);
 		 	$scheme = "sslv".$iLatestSSLVersion--.'://';
-		}while (empty($errNum) && empty($errStr) && !$this->connection && strpos($scheme, 'ssl') === 0);*/		
+		 	* 		}while (empty($errNum) && empty($errStr) && !$this->connection && strpos($scheme, 'ssl') === 0);*/		
 		
 		restore_error_handler();
 
