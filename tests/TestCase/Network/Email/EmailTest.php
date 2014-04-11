@@ -134,7 +134,7 @@ class EmailTest extends TestCase {
 		$this->assertSame($this->CakeEmail->from(), $expected);
 		$this->assertSame($this->CakeEmail, $result);
 
-		$this->setExpectedException('Cake\Error\SocketException');
+		$this->setExpectedException('Cake\Network\Error\SocketException');
 		$result = $this->CakeEmail->from(array('cake@cakephp.org' => 'CakePHP', 'fail@cakephp.org' => 'From can only be one address'));
 	}
 
@@ -225,7 +225,7 @@ class EmailTest extends TestCase {
 		$this->assertSame($this->CakeEmail->to(), $expected);
 		$this->assertSame($this->CakeEmail, $result);
 
-		$this->setExpectedException('Cake\Error\SocketException');
+		$this->setExpectedException('Cake\Network\Error\SocketException');
 		$this->CakeEmail->to(array('cake@localhost', 'CakePHP'));
 	}
 
@@ -250,7 +250,7 @@ class EmailTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidEmails
- * @expectedException \Cake\Error\SocketException
+ * @expectedException \Cake\Network\Error\SocketException
  * @return void
  */
 	public function testInvalidEmail($value) {
@@ -261,7 +261,7 @@ class EmailTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidEmails
- * @expectedException \Cake\Error\SocketException
+ * @expectedException \Cake\Network\Error\SocketException
  * @return void
  */
 	public function testInvalidEmailAdd($value) {
@@ -456,7 +456,7 @@ class EmailTest extends TestCase {
  * testMessageIdInvalid method
  *
  * @return void
- * @expectedException \Cake\Error\SocketException
+ * @expectedException \Cake\Network\Error\SocketException
  */
 	public function testMessageIdInvalid() {
 		$this->CakeEmail->messageId('my-email@localhost');
@@ -637,7 +637,7 @@ class EmailTest extends TestCase {
  * testInvalidHeaders
  *
  * @dataProvider invalidHeaders
- * @expectedException \Cake\Error\SocketException
+ * @expectedException \Cake\Network\Error\SocketException
  * @return void
  */
 	public function testInvalidHeaders($value) {
@@ -648,7 +648,7 @@ class EmailTest extends TestCase {
  * testInvalidAddHeaders
  *
  * @dataProvider invalidHeaders
- * @expectedException \Cake\Error\SocketException
+ * @expectedException \Cake\Network\Error\SocketException
  * @return void
  */
 	public function testInvalidAddHeaders($value) {
@@ -744,7 +744,7 @@ class EmailTest extends TestCase {
 		);
 		$this->assertSame($this->CakeEmail->attachments(), $expected);
 
-		$this->setExpectedException('Cake\Error\SocketException');
+		$this->setExpectedException('Cake\Network\Error\SocketException');
 		$this->CakeEmail->attachments(array(array('nofile' => CAKE . 'basics.php', 'mimetype' => 'text/plain')));
 	}
 
@@ -1028,7 +1028,7 @@ class EmailTest extends TestCase {
 		$this->CakeEmail->to('cake@cakephp.org');
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->profile(array('empty'));
-		$this->setExpectedException('Cake\Error\SocketException');
+		$this->setExpectedException('Cake\Network\Error\SocketException');
 		$this->CakeEmail->send("Forgot to set From");
 	}
 
@@ -1042,7 +1042,7 @@ class EmailTest extends TestCase {
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->profile(array('empty'));
-		$this->setExpectedException('Cake\Error\SocketException');
+		$this->setExpectedException('Cake\Network\Error\SocketException');
 		$this->CakeEmail->send("Forgot to set To");
 	}
 
@@ -1933,7 +1933,7 @@ class EmailTest extends TestCase {
 		$result = $this->CakeEmail->emailFormat();
 		$this->assertEquals('html', $result);
 
-		$this->setExpectedException('Cake\Error\SocketException');
+		$this->setExpectedException('Cake\Network\Error\SocketException');
 		$result = $this->CakeEmail->emailFormat('invalid');
 	}
 

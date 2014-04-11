@@ -19,6 +19,7 @@
 namespace Cake\Utility;
 
 use Cake\Core\Configure;
+use Cake\Network\Error;
 use Cake\Network\Http\Client;
 use Cake\Utility\Error\XmlException;
 use \DOMDocument;
@@ -107,7 +108,7 @@ class Xml {
 					throw new XmlException('XML cannot be read.');
 				}
 				return static::_loadXml($response->body, $options);
-			} catch (Error\SocketException $e) {
+			} catch (SocketException $e) {
 				throw new XmlException('XML cannot be read.');
 			}
 		} elseif (!is_string($input)) {

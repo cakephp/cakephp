@@ -27,6 +27,7 @@ use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
+use Cake\Network\Error\SocketException;
 use Cake\Network\Request;
 use Cake\ORM\Error\MissingBehaviorException;
 use Cake\Routing\Router;
@@ -265,7 +266,7 @@ class ExceptionRendererTest extends TestCase {
  */
 	public function testCakeErrorHelpersNotLost() {
 		Configure::write('App.namespace', 'TestApp');
-		$exception = new Error\SocketException('socket exception');
+		$exception = new SocketException('socket exception');
 		$renderer = new \TestApp\Error\TestAppsExceptionRenderer($exception);
 
 		ob_start();
