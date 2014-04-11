@@ -170,7 +170,7 @@ class CakeSocket {
 		}
 		//The above lines of duplicated code can be replaced with a single do while.
 		// I've included it here in a comment if you want to use it instead, but I believe it hurts readability.
-		//Though it does have the distinct advantage of being  much more flexible to future SSL standards being created. 
+		//Though it does have the distinct advantage of being  much more flexible to future SSL standards being created.
 		/*$iLatestSSLVersion = 3; //Maybe this could become a class constant?
 		do {
 			$this->connection = stream_socket_client(
