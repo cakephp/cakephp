@@ -832,6 +832,39 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
+ * Test extracting based on attributes with boolean values.
+ *
+ * @return void
+ */
+	public function testExtractAttributeBoolean() {
+		$users = array(
+			array(
+				'id' => 2,
+				'username' => 'johndoe',
+				'active' => true
+			),
+			array(
+				'id' => 5,
+				'username' => 'kevin',
+				'active' => true
+			),
+			array(
+				'id' => 9,
+				'username' => 'samantha',
+				'active' => false
+			),
+		);
+		$result = Hash::extract($users, '{n}[active=false]');
+		$this->assertCount(1, $result);
+		$this->assertEquals($users[2], $result[0]);
+
+		$result = Hash::extract($users, '{n}[active=true]');
+		$this->assertCount(2, $result);
+		$this->assertEquals($users[0], $result[0]);
+		$this->assertEquals($users[1], $result[1]);
+	}
+
+/**
  * Test that attribute matchers don't cause errors on scalar data.
  *
  * @return void
