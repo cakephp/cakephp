@@ -15,7 +15,9 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\Core\Error;
+
+use Cake\Error\Exception;
 
 /**
  * Exception raised when a plugin could not be found

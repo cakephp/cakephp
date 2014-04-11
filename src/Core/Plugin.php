@@ -15,7 +15,6 @@
 namespace Cake\Core;
 
 use Cake\Core\ClassLoader;
-use Cake\Error;
 use Cake\Utility\Inflector;
 
 /**
@@ -108,7 +107,7 @@ class Plugin {
  *
  * @param string|array $plugin name of the plugin to be loaded in CamelCase format or array or plugins to load
  * @param array $config configuration options for the plugin
- * @throws \Cake\Error\MissingPluginException if the folder for the plugin to be loaded is not found
+ * @throws \Cake\Core\Error\MissingPluginException if the folder for the plugin to be loaded is not found
  * @return void
  */
 	public static function load($plugin, array $config = []) {
@@ -195,7 +194,7 @@ class Plugin {
  *
  * @param string $plugin name of the plugin in CamelCase format
  * @return string path to the plugin folder
- * @throws \Cake\Error\MissingPluginException if the folder for plugin was not found or plugin has not been loaded
+ * @throws \Cake\Core\Error\MissingPluginException if the folder for plugin was not found or plugin has not been loaded
  */
 	public static function path($plugin) {
 		if (empty(static::$_plugins[$plugin])) {
