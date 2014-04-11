@@ -32,7 +32,7 @@ interface RepositoryInterface {
  * listeners. Any listener can set a valid result set using $query
  *
  * @param string $type the type of query to perform
- * @param array $options An array that will be passed to Query::applyOptions()
+ * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
  * @return \Cake\ORM\Query
  */
 	public function find($type = 'all', $options = []);
@@ -51,7 +51,7 @@ interface RepositoryInterface {
  * }}}
  *
  * @param mixed $primaryKey primary key value to find
- * @param array $options options accepted by `Table::find()`
+ * @param array|\ArrayAccess $options options accepted by `Table::find()`
  * @throws \Cake\ORM\Error\RecordNotFoundException if the record with such id
  * could not be found
  * @return \Cake\Datasource\EntityInterface
@@ -103,10 +103,10 @@ interface RepositoryInterface {
  * Returns true if there is any record in this repository matching the specified
  * conditions.
  *
- * @param array $conditions list of conditions to pass to the query
+ * @param array|\ArrayAccess $conditions list of conditions to pass to the query
  * @return boolean
  */
-	public function exists(array $conditions);
+	public function exists($conditions);
 
 /**
  * Persists an entity based on the fields that are marked as dirty and
@@ -114,10 +114,10 @@ interface RepositoryInterface {
  * of any error.
  *
  * @param \Cake\Datasource\EntityInterface the entity to be saved
- * @param array $options
+ * @param array|\ArrayAccess $options
  * @return \Cake\Datasource\EntityInterface|boolean
  */
-	public function save(EntityInterface $entity, array $options = []);
+	public function save(EntityInterface $entity, $options = []);
 
 /**
  * Delete a single entity.
@@ -126,10 +126,10 @@ interface RepositoryInterface {
  * based on the 'dependent' option used when defining the association.
  *
  * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
- * @param array $options The options fo the delete.
+ * @param array|\ArrayAccess $options The options fo the delete.
  * @return boolean success
  */
-	public function delete(EntityInterface $entity, array $options = []);
+	public function delete(EntityInterface $entity, $options = []);
 
 /**
  * Create a new entity + associated entities from an array.

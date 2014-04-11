@@ -19,6 +19,7 @@ use Cake\Collection\Collection;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 
@@ -256,7 +257,7 @@ class TranslateBehavior extends Behavior {
  * @param array $options
  * @return \Cake\ORM\Query
  */
-	public function findTranslations($query, $options) {
+	public function findTranslations(Query $query, array $options) {
 		$locales = isset($options['locales']) ? $options['locales'] : [];
 		$table = $this->_config['translationTable'];
 		return $query

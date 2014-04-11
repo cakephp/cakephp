@@ -200,7 +200,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of in progress associations
  * @return array Associations with belongsTo added in.
  */
-	public function findBelongsTo($model, $associations) {
+	public function findBelongsTo($model, array $associations) {
 		$schema = $model->schema();
 		$primary = (array)$schema->primaryKey();
 		foreach ($schema->columns() as $fieldName) {
@@ -228,7 +228,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of in progress associations
  * @return array Associations with hasMany added in.
  */
-	public function findHasMany($model, $associations) {
+	public function findHasMany($model, array $associations) {
 		$schema = $model->schema();
 		$primaryKey = (array)$schema->primaryKey();
 		$tableName = $schema->name();
@@ -273,7 +273,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of in-progress associations
  * @return array Associations with belongsToMany added in.
  */
-	public function findBelongsToMany($model, $associations) {
+	public function findBelongsToMany($model, array $associations) {
 		$schema = $model->schema();
 		$primaryKey = (array)$schema->primaryKey();
 		$tableName = $schema->name();
@@ -418,9 +418,9 @@ class ModelTask extends BakeTask {
  * @param string $primaryKey
  * @return array Array of validation for the field.
  */
-	public function fieldValidation($fieldName, $metaData, $primaryKey) {
+	public function fieldValidation($fieldName, array $metaData, $primaryKey) {
 		$ignoreFields = array_merge($primaryKey, ['created', 'modified', 'updated']);
-		if ($metaData['null'] == true && in_array($fieldName, $ignoreFields)) {
+		if ($metaData['null'] === true && in_array($fieldName, $ignoreFields)) {
 			return false;
 		}
 
@@ -506,7 +506,7 @@ class ModelTask extends BakeTask {
  * @param array $data An array to use to generate the Table
  * @return string
  */
-	public function bakeEntity($model, $data = []) {
+	public function bakeEntity($model, array $data = []) {
 		if (!empty($this->params['no-entity'])) {
 			return;
 		}
@@ -544,7 +544,7 @@ class ModelTask extends BakeTask {
  * @param array $data An array to use to generate the Table
  * @return string
  */
-	public function bakeTable($model, $data = []) {
+	public function bakeTable($model, array $data = []) {
 		if (!empty($this->params['no-table'])) {
 			return;
 		}

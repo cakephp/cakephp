@@ -61,7 +61,7 @@ class Stream {
  * @param array $options Array of options for the stream.
  * @return array Array of populated Response objects
  */
-	public function send(Request $request, $options) {
+	public function send(Request $request, array $options) {
 		$this->_stream = null;
 		$this->_context = [];
 		$this->_connectionErrors = [];

@@ -157,7 +157,7 @@ class ControllerTask extends BakeTask {
  * @param array $data The data to turn into code.
  * @return string The generated controller file.
  */
-	public function bakeController($controllerName, $data) {
+	public function bakeController($controllerName, array $data) {
 		$data += [
 			'name' => null,
 			'namespace' => null,

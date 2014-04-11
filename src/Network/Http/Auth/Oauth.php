@@ -37,7 +37,7 @@ class Oauth {
  * @return void
  * @throws \Cake\Error\Exception On invalid signature types.
  */
-	public function authentication(Request $request, $credentials) {
+	public function authentication(Request $request, array $credentials) {
 		$hasKeys = isset(
 			$credentials['consumerSecret'],
 			$credentials['consumerKey'],

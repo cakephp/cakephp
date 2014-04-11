@@ -72,7 +72,7 @@ class HasMany extends Association {
  * @see Table::save()
  * @throws \InvalidArgumentException when the association data cannot be traversed.
  */
-	public function save(Entity $entity, $options = []) {
+	public function save(Entity $entity, array $options = []) {
 		$targetEntities = $entity->get($this->property());
 		if (empty($targetEntities)) {
 			return $entity;

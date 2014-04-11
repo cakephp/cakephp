@@ -674,11 +674,11 @@ class FormHelper extends Helper {
  * @param string $text Text that will appear in the label field. If
  *   $text is left undefined the text will be inflected from the
  *   fieldName.
- * @param array|string $options An array of HTML attributes, or a string, to be used as a class name.
+ * @param array $options An array of HTML attributes.
  * @return string The formatted LABEL element
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::label
  */
-	public function label($fieldName, $text = null, $options = array()) {
+	public function label($fieldName, $text = null, array $options = []) {
 		if ($text === null) {
 			$text = $fieldName;
 			if (substr($text, -5) === '._ids') {
@@ -692,10 +692,6 @@ class FormHelper extends Helper {
 				$text = substr($text, 0, -3);
 			}
 			$text = __(Inflector::humanize(Inflector::underscore($text)));
-		}
-
-		if (is_string($options)) {
-			$options = array('class' => $options);
 		}
 
 		if (isset($options['for'])) {
@@ -1094,10 +1090,10 @@ class FormHelper extends Helper {
 			$labelText = $label;
 		}
 
-		$labelAttributes = array_merge($labelAttributes, [
+		$labelAttributes = [
 			'for' => isset($options['id']) ? $options['id'] : null,
 			'input' => isset($options['input']) ? $options['input'] : null
-		]);
+		] + $labelAttributes;
 		return $this->label($fieldName, $labelText, $labelAttributes);
 	}
 

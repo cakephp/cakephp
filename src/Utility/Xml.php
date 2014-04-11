@@ -86,10 +86,7 @@ class Xml {
  * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
  * @throws \Cake\Error\XmlException
  */
-	public static function build($input, $options = array()) {
-		if (!is_array($options)) {
-			$options = array('return' => (string)$options);
-		}
+	public static function build($input, array $options = []) {
 		$defaults = array(
 			'return' => 'simplexml',
 			'loadEntities' => false,
@@ -191,8 +188,8 @@ class Xml {
  * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
  * @throws \Cake\Error\XmlException
  */
-	public static function fromArray($input, $options = array()) {
-		if (!is_array($input) || count($input) !== 1) {
+	public static function fromArray(array $input, $options = array()) {
+		if (count($input) !== 1) {
 			throw new Error\XmlException('Invalid input.');
 		}
 		$key = key($input);

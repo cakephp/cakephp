@@ -263,7 +263,7 @@ class BelongsToMany extends Association {
  * @param array $options list of options passed to attachTo method
  * @return boolean false
  */
-	protected function _joinCondition(array $options) {
+	protected function _joinCondition($options) {
 		return false;
 	}
 
@@ -305,7 +305,7 @@ class BelongsToMany extends Association {
  * @param array $options The options for the original delete.
  * @return boolean Success.
  */
-	public function cascadeDelete(Entity $entity, $options = []) {
+	public function cascadeDelete(Entity $entity, array $options = []) {
 		$foreignKey = (array)$this->foreignKey();
 		$primaryKey = (array)$this->source()->primaryKey();
 		$conditions = [];
@@ -382,7 +382,7 @@ class BelongsToMany extends Association {
  * @see Table::save()
  * @see BelongsToMany::replaceLinks()
  */
-	public function save(Entity $entity, $options = []) {
+	public function save(Entity $entity, array $options = []) {
 		$targetEntity = $entity->get($this->property());
 		$strategy = $this->saveStrategy();
 

@@ -759,7 +759,7 @@ class ShellTest extends TestCase {
  */
 	public function testWrapText() {
 		$text = 'This is the song that never ends. This is the song that never ends. This is the song that never ends.';
-		$result = $this->Shell->wrapText($text, 33);
+		$result = $this->Shell->wrapText($text, array('width' => 33));
 		$expected = <<<TEXT
 This is the song that never ends.
 This is the song that never ends.

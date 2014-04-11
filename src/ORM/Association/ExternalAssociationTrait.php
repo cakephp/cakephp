@@ -42,7 +42,7 @@ trait ExternalAssociationTrait {
  * @return boolean if the 'matching' key in $option is true then this function
  * will return true, false otherwise
  */
-	public function canBeJoined($options = []) {
+	public function canBeJoined(array $options = []) {
 		return !empty($options['matching']);
 	}
 

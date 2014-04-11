@@ -281,7 +281,7 @@ class ViewTask extends BakeTask {
  * @param array $vars
  * @return void
  */
-	public function bakeActions($actions, $vars) {
+	public function bakeActions(array $actions, $vars) {
 		foreach ($actions as $action) {
 			$content = $this->getContent($action, $vars);
 			$this->bake($action, $content);

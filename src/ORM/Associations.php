@@ -135,7 +135,7 @@ class Associations {
  * @param array $options The options for the save operation.
  * @return boolean Success
  */
-	public function saveParents(Table $table, Entity $entity, $associations, $options = []) {
+	public function saveParents(Table $table, Entity $entity, $associations, array $options = []) {
 		if (empty($associations)) {
 			return true;
 		}
@@ -155,7 +155,7 @@ class Associations {
  * @param array $options The options for the save operation.
  * @return boolean Success
  */
-	public function saveChildren(Table $table, Entity $entity, $associations, $options) {
+	public function saveChildren(Table $table, Entity $entity, array $associations, array $options) {
 		if (empty($associations)) {
 			return true;
 		}
@@ -226,7 +226,7 @@ class Associations {
  * @param array $options The options used in the delete operation.
  * @return void
  */
-	public function cascadeDelete(Entity $entity, $options) {
+	public function cascadeDelete(Entity $entity, array $options) {
 		foreach ($this->_items as $assoc) {
 			$assoc->cascadeDelete($entity, $options);
 		}

@@ -633,7 +633,7 @@ class Query extends DatabaseQuery {
  * @return \Cake\ORM\Query Returns a modified query.
  * @see \Cake\ORM\Table::find()
  */
-	public function find($finder, $options = []) {
+	public function find($finder, array $options = []) {
 		return $this->repository()->callFinder($finder, $this, $options);
 	}
 
@@ -689,7 +689,7 @@ class Query extends DatabaseQuery {
  * @param array $types A map between columns & their datatypes.
  * @return Query
  */
-	public function insert($columns, $types = []) {
+	public function insert(array $columns, array $types = []) {
 		$table = $this->repository()->table();
 		$this->into($table);
 		return parent::insert($columns, $types);

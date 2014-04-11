@@ -32,7 +32,7 @@ trait DependentDeleteTrait {
  * @param array $options The options for the original delete.
  * @return boolean Success.
  */
-	public function cascadeDelete(Entity $entity, $options = []) {
+	public function cascadeDelete(Entity $entity, array $options = []) {
 		if (!$this->dependent()) {
 			return true;
 		}

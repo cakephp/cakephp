@@ -76,7 +76,7 @@ class EntityValidator {
  * as well.
  *
  * @param \Cake\ORM\Entity $entity The entity to be validated
- * @param array $options options for validation, including an optional key of
+ * @param array|\ArrayObject $options options for validation, including an optional key of
  * associations to also be validated.
  * @return boolean true if all validations passed, false otherwise
  */
@@ -113,7 +113,7 @@ class EntityValidator {
  * table and traverses associations passed in $include to validate them as well.
  *
  * @param array $entities List of entities to be validated
- * @param array $options options for validation, including an optional key of
+ * @param array|\ArrayObject $options options for validation, including an optional key of
  * associations to also be validated.
  * @return boolean true if all validations passed, false otherwise
  */
