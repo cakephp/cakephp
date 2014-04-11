@@ -43,7 +43,7 @@ class IniAcl extends Object implements AclInterface {
 /**
  * Initialize method
  *
- * @param AclBase $component
+ * @param Component $component
  * @return void
  */
 	public function initialize(Component $component) {
