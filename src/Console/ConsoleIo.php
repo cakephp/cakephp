@@ -213,10 +213,10 @@ class ConsoleIo {
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
  *
  * @param integer $newlines Number of newlines to pre- and append
- * @param integer $width Width of the line, defaults to 63
+ * @param integer $width Width of the line, defaults to 79
  * @return void
  */
-	public function hr($newlines = 0, $width = 63) {
+	public function hr($newlines = 0, $width = 79) {
 		$this->out(null, $newlines);
 		$this->out(str_repeat('-', $width));
 		$this->out(null, $newlines);

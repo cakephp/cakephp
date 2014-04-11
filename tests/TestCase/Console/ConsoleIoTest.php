@@ -260,7 +260,7 @@ class ConsoleIoTest extends TestCase {
  * @return void
  */
 	public function testHr() {
-		$bar = '---------------------------------------------------------------';
+		$bar = str_repeat('-', 79);
 
 		$this->out->expects($this->at(0))->method('write')->with('', 0);
 		$this->out->expects($this->at(1))->method('write')->with($bar, 1);
