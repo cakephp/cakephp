@@ -149,7 +149,7 @@ class CakeSocket {
 		}
 
 		set_error_handler(array($this, '_connectionErrorHandler'));
-		/*$this->connection = stream_socket_client(
+		$this->connection = stream_socket_client(
 			$scheme . $this->config['host'] . ':' . $this->config['port'],
 			$errNum,
 			$errStr,
@@ -167,21 +167,23 @@ class CakeSocket {
 					$connectAs,
 					$context
 			);
-		}*/
-		//The above lines of duplicated code can be replaced with a single do while, and I've included it here in a commen if you want to use it instead, but I believe it hurts readability.
-		$iLatestSSLVersion = 3; //Maybe this could become a class constant?
-		do{
-		 	$this->connection = stream_socket_client(
-		 		$scheme . $this->config['host'] . ':' . $this->config['port'],
-		 		$errNum,
-		 		$errStr,
-		 		$this->config['timeout'],
-		 		$connectAs,
-		 		$context
-		 	);
-		 	$scheme = "sslv".$iLatestSSLVersion--.'://';
-		 	}while (empty($errNum) && empty($errStr) && !$this->connection && strpos($scheme, 'ssl') === 0);		
-		
+		}
+		//The above lines of duplicated code can be replaced with a single do while.
+		// I've included it here in a comment if you want to use it instead, but I believe it hurts readability.
+		//Though it does have the distinct advantage of being  much more flexible to future SSL standards being created. 
+		/*$iLatestSSLVersion = 3; //Maybe this could become a class constant?
+		do {
+			$this->connection = stream_socket_client(
+				$scheme . $this->config['host'] . ':' . $this->config['port'],
+				$errNum,
+				$errStr,
+				$this->config['timeout'],
+				$connectAs,
+				$context
+			);
+			$scheme = "sslv" . $iLatestSSLVersion-- . '://';
+		} while (empty($errNum) && empty($errStr) && !$this->connection && strpos($scheme, 'ssl') === 0);*/
+
 		restore_error_handler();
 
 		if (!empty($errNum) || !empty($errStr)) {
