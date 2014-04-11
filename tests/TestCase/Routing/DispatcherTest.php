@@ -25,6 +25,7 @@ use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Dispatcher;
+use Cake\Routing\Error\MissingDispatcherFilterException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;
@@ -609,7 +610,7 @@ class DispatcherTest extends TestCase {
 /**
  * Tests that attaching an inexistent class as filter will throw an exception
  *
- * @expectedException \Cake\Error\MissingDispatcherFilterException
+ * @expectedException \Cake\Routing\Error\MissingDispatcherFilterException
  * @return void
  */
 	public function testDispatcherFilterSuscriberMissing() {

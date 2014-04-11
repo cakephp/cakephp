@@ -29,6 +29,7 @@ use Cake\Event\EventListener;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Routing\Error\MissingDispatcherFilterException;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 
@@ -88,7 +89,7 @@ class Dispatcher implements EventListener {
  *
  * @param \Cake\Event\EventManager $manager
  * @return void
- * @throws \Cake\Error\MissingDispatcherFilterException
+ * @throws \Cake\Routing\Error\MissingDispatcherFilterException
  */
 	protected function _attachFilters($manager) {
 		$filters = Configure::read('Dispatcher.filters');
@@ -108,7 +109,7 @@ class Dispatcher implements EventListener {
 			if (is_string($filter['callable'])) {
 				$callable = App::classname($filter['callable'], 'Routing/Filter');
 				if (!$callable) {
-					throw new Error\MissingDispatcherFilterException($filter['callable']);
+					throw new MissingDispatcherFilterException($filter['callable']);
 				}
 				$manager->attach(new $callable($settings));
 			} else {
