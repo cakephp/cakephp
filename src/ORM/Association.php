@@ -649,6 +649,29 @@ abstract class Association {
 	}
 
 /**
+ * Proxies property retrieval to the target table. This is handy for getting this
+ * association's associations
+ *
+ * @param string $property the property name
+ * @return \Cake\ORM\Association
+ * @throws \RuntimeException if no association with such name exists
+ */
+	public function __get($property) {
+		return $this->target()->{$property};
+	}
+
+/**
+ * Proxies the isset call to the target table. This is handy to check if the
+ * target table has another association with the passed name
+ *
+ * @param string $property the property name
+ * @return boolean true if the property exists
+ */
+	public function __isset($property) {
+		return isset($this->target()->{$property});
+	}
+
+/**
  * Get the relationship type.
  *
  * @return string Constant of either ONE_TO_ONE, MANY_TO_ONE, ONE_TO_MANY or MANY_TO_MANY.

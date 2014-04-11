@@ -91,4 +91,18 @@ class AssociationProxyTest extends TestCase {
 		$this->assertEquals(1, $remaining);
 	}
 
+/**
+ * Tests that it is possible to get associations as a property
+ *
+ * @return void
+ */
+	public function testAssociationAsPropertyProxy() {
+		$articles = TableRegistry::get('articles');
+		$authors = TableRegistry::get('authors');
+		$articles->belongsTo('authors');
+		$authors->hasMany('comments');
+		$this->assertTrue(isset($articles->authors->comments));
+		$this->assertSame($authors->association('comments'), $articles->authors->comments);
+	}
+
 }
