@@ -14,7 +14,7 @@
  */
 namespace Cake\Database\Dialect;
 
-use Cake\Database\Dialect\TumpleComparisonTranslatorTrait;
+use Cake\Database\Dialect\TupleComparisonTranslatorTrait;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\SqlDialectTrait;
@@ -25,7 +25,7 @@ use Cake\Database\SqlDialectTrait;
 trait SqliteDialectTrait {
 
 	use SqlDialectTrait;
-	use TumpleComparisonTranslatorTrait;
+	use TupleComparisonTranslatorTrait;
 
 /**
  *  String used to start a database identifier quoting to make it safe

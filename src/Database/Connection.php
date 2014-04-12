@@ -21,6 +21,8 @@ use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
+use Cake\Database\Querycompiler;
+use Cake\Database\ValueBinder;
 
 /**
  * Represents a connection with a database server.
@@ -224,6 +226,54 @@ class Connection {
 			$statement = $this->query($query);
 		}
 		return $statement;
+	}
+
+/**
+ * Copiles a Query object into a SQL string according to the dialect for this
+ * connection's driver
+ *
+ * @param Cake\Database\$query The query to be compiled
+ * @param ValueBinder $generator The placeholder generator to use
+ * @return string
+ */
+	public function compileQuery(Query $query, ValueBinder $generator) {
+		$processor = new Querycompiler;
+		$query = $this->_transformQuery($query);
+		return $processor->compile($query, $generator);
+	}
+
+/**
+ * Executes the provided query after compiling it for the specific dirver
+ * dialect and returns the executed Statement object.
+ *
+ * @param Cake\Database\$query The query to be executed
+ * @return \Cake\Database\StatementInterface executed statement
+ */
+	public function run(Query $query) {
+		$binder = $query->valueBinder();
+		$binder->resetCount();
+		$query = $this->_transformQuery($query);
+
+		$processor = new Querycompiler;
+		$sql = $processor->compile($query, $binder);
+
+		$statement = $this->prepare($sql);
+		$processor->bindStatement($binder, $statement);
+		$statement->execute();
+
+		return $statement;
+	}
+
+/**
+ * Returns a query that has been translated to the specific SQL dialect for the
+ * driver
+ *
+ * @param \Cake\Database\Query $query The query to transform
+ * @return \Cake\Database\Query
+ */
+	protected function _transformQuery($query) {
+		$translator = $this->driver()->queryTranslator($query->type());
+		return $translator($query);
 	}
 
 /**

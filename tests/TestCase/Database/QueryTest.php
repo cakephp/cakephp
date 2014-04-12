@@ -1167,7 +1167,12 @@ class QueryTest extends TestCase {
 			$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
 			'Not implemented yet in SqlServer'
 		);
-		$result = $query->select(['id'])->distinct(['author_id'])->execute();
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id', 'author_id'])
+			->distinct(['author_id'])
+			->from(['a' => 'articles'])
+			->execute();
 		$this->assertCount(2, $result);
 	}
 
