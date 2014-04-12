@@ -265,7 +265,7 @@ abstract class Driver {
  * @return \Cake\Database\QueryCompiler
  */
 	public function newCompiler() {
-		return new Querycompiler;
+		return new QueryCompiler;
 	}
 
 /**
