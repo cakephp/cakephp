@@ -296,40 +296,44 @@ class SqlserverSchema extends BaseSchema {
 		$data = $table->column($name);
 		$out = $this->_driver->quoteIdentifier($name);
 		$typeMap = [
-			'biginteger' => ' BIGINT',
+			'integer' => 'INTEGER',
+			'biginteger' => 'BIGINT',
 			'boolean' => ' BIT',
 			'binary' => ' BINARY',
 			'float' => ' FLOAT',
 			'decimal' => ' DECIMAL',
-			'text' => ' TEXT',
+			'text' => ' NVARCHAR(MAX)',
 			'date' => ' DATE',
 			'time' => ' TIME',
 			'datetime' => ' DATETIME',
 			'timestamp' => ' DATETIME',
+			'uuid' => 'UNIQUEIDENTIFIER'
 		];
 
 		if (isset($typeMap[$data['type']])) {
 			$out .= $typeMap[$data['type']];
 		}
 
-		if ($data['type'] === 'integer') {
-			$type = ' INTEGER';
+		if ($data['type'] === 'integer' || $data['type'] === 'biginteger') {
 			$out .= $type;
+			if ([$name] === $table->primaryKey() || $data['autoIncrement'] === true) {
+				unset($data['null'], $data['default']);
+				$out .= ' IDENTITY(1, 1)';
+			}
 		}
 
 		if ($data['type'] === 'string') {
-			$isFixed = !empty($data['fixed']);
-			$type = ' VARCHAR';
-			if ($isFixed) {
-				$type = ' CHAR';
+			$type = ' NVARCHAR';
+
+			if (!empty($data['fixed'])) {
+				$type = ' NCHAR';
 			}
-			if ($isFixed && isset($data['length']) && $data['length'] == 36) {
-				$type = ' UNIQUEIDENTIFIER';
+
+			if (!isset($data['length'])) {
+				$data['length'] = 255;
 			}
-			$out .= $type;
-			if (isset($data['length']) && $data['length'] != 36) {
-				$out .= '(' . (int)$data['length'] . ')';
-			}
+
+			$out .= sprintf('%s(%d)', $type, $data['length']);
 		}
 
 		if ($data['type'] === 'float' && isset($data['precision'])) {
@@ -345,14 +349,17 @@ class SqlserverSchema extends BaseSchema {
 		if (isset($data['null']) && $data['null'] === false) {
 			$out .= ' NOT NULL';
 		}
+
 		if (isset($data['null']) && $data['null'] === true) {
 			$out .= ' DEFAULT NULL';
 			unset($data['default']);
 		}
+
 		if (isset($data['default']) && $data['type'] !== 'datetime') {
 			$default = is_bool($data['default']) ? (int)$data['default'] : $this->_driver->schemaValue($data['default']);
 			$out .= ' DEFAULT ' . $default;
 		}
+
 		return $out;
 	}
 
