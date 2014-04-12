@@ -60,7 +60,7 @@ class Sqlserver extends \Cake\Database\Driver {
 			$config['flags'][PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
 		}
 		if (empty($config['dsn'])) {
-			$config['dsn'] = "sqlsrv:Server={$config['host']};Database={$config['database']}";
+			$config['dsn'] = "sqlsrv:Server={$config['host']};Database={$config['database']};MultipleActiveResultSets=false";
 		}
 
 		$this->_connect($config);
@@ -90,7 +90,6 @@ class Sqlserver extends \Cake\Database\Driver {
 		return in_array('sqlsrv', PDO::getAvailableDrivers());
 	}
 
-	
 /**
  * Prepares a sql statement to be executed
  *
@@ -100,7 +99,7 @@ class Sqlserver extends \Cake\Database\Driver {
 	public function prepare($query) {
 		$this->connect();
 		$statement = $this->_connection->prepare((string)$query, [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL]);
-		return $this->_old = new PDOStatement($statement, $this);
+		return new PDOStatement($statement, $this);
 	}
 
 }

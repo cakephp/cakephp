@@ -51,7 +51,7 @@ class SqlserverTest extends \Cake\TestSuite\TestCase {
 		);
 
 		$expected = $config;
-		$expected['dsn'] = 'sqlsrv:Server=foo;Database=bar';
+		$expected['dsn'] = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
 		$expected['flags'] += [
 			PDO::ATTR_PERSISTENT => false,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
