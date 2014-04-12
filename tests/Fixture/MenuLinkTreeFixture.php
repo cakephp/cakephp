@@ -73,7 +73,6 @@ class MenuLinkTreeFixture extends TestFixture {
  */
 	public $records = array(
 		array(
-			'id' => '1',
 			'menu' => 'main-menu',
 			'lft' => '1',
 			'rght' => '10',
@@ -82,7 +81,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'Link 1',
 		),
 		array(
-			'id' => '2',
 			'menu' => 'main-menu',
 			'lft' => '2',
 			'rght' => '3',
@@ -91,7 +89,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'Link 2',
 		),
 		array(
-			'id' => '3',
 			'menu' => 'main-menu',
 			'lft' => '4',
 			'rght' => '9',
@@ -100,7 +97,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'Link 3',
 		),
 		array(
-			'id' => '4',
 			'menu' => 'main-menu',
 			'lft' => '5',
 			'rght' => '8',
@@ -109,7 +105,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'Link 4',
 		),
 		array(
-			'id' => '5',
 			'menu' => 'main-menu',
 			'lft' => '6',
 			'rght' => '7',
@@ -118,7 +113,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'Link 5',
 		),
 		array(
-			'id' => '6',
 			'menu' => 'main-menu',
 			'lft' => '11',
 			'rght' => '14',
@@ -127,7 +121,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'Link 6',
 		),
 		array(
-			'id' => '7',
 			'menu' => 'main-menu',
 			'lft' => '12',
 			'rght' => '13',
@@ -136,7 +129,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'Link 7',
 		),
 		array(
-			'id' => '8',
 			'menu' => 'main-menu',
 			'lft' => '15',
 			'rght' => '16',
@@ -145,7 +137,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'Link 8',
 		),
 		array(
-			'id' => '9',
 			'menu' => 'categories',
 			'lft' => '1',
 			'rght' => '10',
@@ -154,7 +145,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'electronics',
 		),
 		array(
-			'id' => '10',
 			'menu' => 'categories',
 			'lft' => '2',
 			'rght' => '9',
@@ -163,7 +153,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'televisions',
 		),
 		array(
-			'id' => '11',
 			'menu' => 'categories',
 			'lft' => '3',
 			'rght' => '4',
@@ -172,7 +161,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'tube',
 		),
 		array(
-			'id' => '12',
 			'menu' => 'categories',
 			'lft' => '5',
 			'rght' => '8',
@@ -181,7 +169,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'lcd',
 		),
 		array(
-			'id' => '13',
 			'menu' => 'categories',
 			'lft' => '6',
 			'rght' => '7',
@@ -190,7 +177,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'plasma',
 		),
 		array(
-			'id' => '14',
 			'menu' => 'categories',
 			'lft' => '11',
 			'rght' => '20',
@@ -199,7 +185,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'portable',
 		),
 		array(
-			'id' => '15',
 			'menu' => 'categories',
 			'lft' => '12',
 			'rght' => '15',
@@ -208,7 +193,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'mp3',
 		),
 		array(
-			'id' => '16',
 			'menu' => 'categories',
 			'lft' => '13',
 			'rght' => '14',
@@ -217,7 +201,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'flash',
 		),
 		array(
-			'id' => '17',
 			'menu' => 'categories',
 			'lft' => '16',
 			'rght' => '17',
@@ -226,7 +209,6 @@ class MenuLinkTreeFixture extends TestFixture {
 			'title' => 'cd',
 		),
 		array(
-			'id' => '18',
 			'menu' => 'categories',
 			'lft' => '18',
 			'rght' => '19',

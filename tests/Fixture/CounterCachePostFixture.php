@@ -31,8 +31,8 @@ class CounterCachePostFixture extends TestFixture {
 	);
 
 	public $records = array(
-		array('title' => 'Rock and Roll', 'user_id' => 66, 'published' => 0),
-		array('title' => 'Music', 'user_id' => 66, 'published' => 1),
-		array('title' => 'Food', 'user_id' => 301, 'published' => 1),
+		array('title' => 'Rock and Roll', 'user_id' => 1, 'published' => 0),
+		array('title' => 'Music', 'user_id' => 1, 'published' => 1),
+		array('title' => 'Food', 'user_id' => 2, 'published' => 1),
 	);
 }

@@ -273,16 +273,16 @@ class CounterCacheBehaviorTest extends TestCase {
 	protected function _getEntity() {
 		return new Entity([
 			'title' => 'Test 123',
-			'user_id' => 66
+			'user_id' => 1
 		]);
 	}
 
 /**
- * Returns entity for user 66
+ * Returns entity for user 1
  *
  * @return Entity
  */
 	protected function _getUser() {
-		return $this->user->find('all')->where(['id' => 66])->first();
+		return $this->user->find('all')->where(['id' => 1])->first();
 	}
 }
