@@ -17,6 +17,7 @@ namespace Cake\Database\Dialect;
 use Cake\Database\Dialect\TupleComparisonTranslatorTrait;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\SqlDialectTrait;
+use Cake\Database\SqlserverCompiler;
 
 /**
  * Contains functions that encapsulates the SQL dialect used by MySQL,
@@ -53,34 +54,12 @@ trait SqlserverDialectTrait {
 
 		if ($limit && $offset === null) {
 			$query->modifier(['_auto_top_' => sprintf('TOP %d', $limit)]);
-			$query->limit(null);
 		}
 
-		if ($offset !== null) {
-			$offsetSql = sprintf('%d ROWS', $offset);
-			if ($limit) {
-				$offsetSql .= sprintf(' FETCH FIRST %d ROWS ONLY', $limit);
-			}
-			$query->offset($query->newExpr()->add($offsetSql));
-			$query->limit(null);
-
-			if (!$query->clause('order')) {
-				$query->order([$query->connection()->newQuery()->select(['NULL'])]);
-			}
+		if ($offset !== null && !$query->clause('order')) {
+			$query->order([$query->connection()->newQuery()->select(['NULL'])]);
 		}
 
-		return $query;
-	}
-
-/**
- * Check identify before insert
- *
- * @param Cake\Database\Query $query
- * @return Cake\Database\Query
- */
-	protected function _insertQueryTranslator($query) {
-		// @todo check primary key and than execute: SET IDENTITY_INSERT [table] ON (before) and OFF after the insert
-		// @see https://github.com/cakephp/cakephp/blob/master/lib/Cake/Model/Datasource/Database/Sqlserver.php#L345
 		return $query;
 	}
 
@@ -168,6 +147,14 @@ trait SqlserverDialectTrait {
  */
 	public function rollbackSavePointSQL($name) {
 		return 'ROLLBACK TRANSACTION t' . $name;
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	public function newCompiler() {
+		return new SqlserverCompiler();
 	}
 
 }

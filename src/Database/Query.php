@@ -193,10 +193,9 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
- * Will iterate over every part that should be included for an specific query
- * type and execute the passed visitor function for each of them. Traversing
- * functions can aggregate results using variables in the closure or instance
- * variables. This function is commonly used as a way for traversing all query parts that
+ * Will iterate over every specified part. Traversing functions can aggregate
+ * results using variables in the closure or instance variables. This function
+ * is commonly used as a way for traversing all query parts that
  * are going to be used for constructing a query.
  *
  * The callback will receive 2 parameters, the first one is the value of the query
@@ -208,74 +207,19 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *		if ($clause === 'select') {
  *			var_dump($value);
  *		}
- *	});
+ *	}, ['select', 'from']);
  * }}}
  *
  * @param callable $visitor a function or callable to be executed for each part
+ * @param array $parts the query clasuses to traverse
  * @return Query
  */
-	public function traverse(callable $visitor) {
-		$this->{'_traverse' . ucfirst($this->_type)}($visitor);
+	public function traverse(callable $visitor, array $parts = []) {
+		$parts = $parts ?: array_keys($this->_parts);
+		foreach ($parts as $name) {
+			$visitor($this->_parts[$name], $name);
+		}
 		return $this;
-	}
-
-/**
- * Helper function that will iterate over all query parts needed for a SELECT statement
- * and execute the $visitor callback for each of them.
- *
- * The callback will receive 2 parameters, the first one is the value of the query
- * part that is being iterated and the second the name of such part.
- *
- * @param callable $visitor a function or callable to be executed for each part
- * @return void
- */
-	protected function _traverseSelect(callable $visitor) {
-		$parts = [
-			'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
-			'offset', 'union', 'epilog'
-		];
-		foreach ($parts as $name) {
-			$visitor($this->_parts[$name], $name);
-		}
-	}
-
-/**
- * Helper function that iterates the query parts needed for DELETE statements.
- *
- * @param callable $visitor A callable to execute for each part of the query.
- * @return void
- */
-	protected function _traverseDelete(callable $visitor) {
-		$parts = ['delete', 'from', 'where', 'epilog'];
-		foreach ($parts as $name) {
-			$visitor($this->_parts[$name], $name);
-		}
-	}
-
-/**
- * Helper function that iterates the query parts needed for UPDATE statements.
- *
- * @param callable $visitor A callable to execute for each part of the query.
- * @return void
- */
-	protected function _traverseUpdate(callable $visitor) {
-		$parts = ['update', 'set', 'where', 'epilog'];
-		foreach ($parts as $name) {
-			$visitor($this->_parts[$name], $name);
-		}
-	}
-
-/**
- * Helper function that iterates the query parts needed for INSERT statements.
- *
- * @param callable $visitor A callable to execute for each part of the query.
- * @return void
- */
-	protected function _traverseInsert(callable $visitor) {
-		$parts = ['insert', 'values', 'epilog'];
-		foreach ($parts as $name) {
-			$visitor($this->_parts[$name], $name);
-		}
 	}
 
 /**

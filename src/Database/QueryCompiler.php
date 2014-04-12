@@ -42,6 +42,36 @@ class QueryCompiler {
 		'epilog' => ' %s'
 	];
 
+/**
+ * The list of query clauses to traverse for generating a SELECT statment
+ *
+ * @var array
+ */
+	protected $_selectParts = [
+		'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
+		'offset', 'union', 'epilog'
+	];
+
+/**
+ * The list of query clauses to traverse for generating an UPDATE statment
+ *
+ * @var array
+ */
+	protected $_updateParts = ['update', 'set', 'where', 'epilog'];
+
+/**
+ * The list of query clauses to traverse for generating a DELETE statment
+ *
+ * @var array
+ */
+	protected $_deleteParts = ['delete', 'from', 'where', 'epilog'];
+
+/**
+ * The list of query clauses to traverse for generating an INSERT statment
+ *
+ * @var array
+ */
+	protected $_insertParts = ['insert', 'values', 'epilog'];
 
 /**
  * Returns the SQL representation of the provided query after generating
@@ -51,7 +81,11 @@ class QueryCompiler {
  */
 	public function compile($query, $generator) {
 		$sql = '';
-		$query->traverse($this->_sqlCompiler($sql, $query, $generator));
+		$type = $query->type();
+		$query->traverse(
+			$this->_sqlCompiler($sql, $query, $generator),
+			$this->{'_' . $type . 'Parts'}
+		);
 		return $sql;
 	}
 
@@ -86,6 +120,7 @@ class QueryCompiler {
  * DISTINCT clause for the query.
  *
  * @param array $parts list of fields to be transformed to string
+ * @param \Cake\Database\Query $query The query that is being compiled
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
@@ -126,6 +161,7 @@ class QueryCompiler {
  * converting expression objects to string.
  *
  * @param array $parts list of tables to be transformed to string
+ * @param \Cake\Database\Query $query The query that is being compiled
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
@@ -149,6 +185,7 @@ class QueryCompiler {
  * to be used.
  *
  * @param array $parts list of joins to be transformed to string
+ * @param \Cake\Database\Query $query The query that is being compiled
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
@@ -172,6 +209,7 @@ class QueryCompiler {
  * Helper function to generate SQL for SET expressions.
  *
  * @param array $parts List of keys & values to set.
+ * @param \Cake\Database\Query $query The query that is being compiled
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
@@ -195,6 +233,7 @@ class QueryCompiler {
  * dialect.
  *
  * @param array $parts list of queries to be operated with UNION
+ * @param \Cake\Database\Query $query The query that is being compiled
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
@@ -211,6 +250,7 @@ class QueryCompiler {
  * Builds the SQL fragment for INSERT INTO.
  *
  * @param array $parts
+ * @param \Cake\Database\Query $query The query that is being compiled
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string SQL fragment.
  */
@@ -224,6 +264,7 @@ class QueryCompiler {
  * Builds the SQL fragment for INSERT INTO.
  *
  * @param array $parts
+ * @param \Cake\Database\Query $query The query that is being compiled
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string SQL fragment.
  */
