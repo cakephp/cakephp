@@ -242,6 +242,29 @@ abstract class Driver {
 	}
 
 /**
+ * Transforms the passed query to this Driver's dialect and returns an instance
+ * of the transformed query and the full compiled SQL string
+ *
+ * @return array containing 2 entries. The first enty is the transformed query
+ * and the secod one the compiled SQL
+ */
+	public function compileQuery(Query $query, ValueBinder $generator) {
+		$processor = $this->newCompiler();
+		$translator = $this->queryTranslator($query->type());
+		$query = $translator($query);
+		return [$query, $processor->compile($query, $generator)];
+	}
+
+/**
+ * Returns an instance of a QueryCompiler
+ *
+ * @return \Cake\Database\QueryCompiler
+ */
+	public function newCompiler() {
+		return new Querycompiler;
+	}
+
+/**
  * Destructor
  */
 	public function __destruct() {

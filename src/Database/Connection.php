@@ -237,9 +237,7 @@ class Connection {
  * @return string
  */
 	public function compileQuery(Query $query, ValueBinder $generator) {
-		$processor = new Querycompiler;
-		$query = $this->_transformQuery($query);
-		return $processor->compile($query, $generator);
+		return $this->driver()->compileQuery($query, $generator)[1];
 	}
 
 /**
@@ -252,28 +250,34 @@ class Connection {
 	public function run(Query $query) {
 		$binder = $query->valueBinder();
 		$binder->resetCount();
-		$query = $this->_transformQuery($query);
-
-		$processor = new Querycompiler;
-		$sql = $processor->compile($query, $binder);
+		list($query, $sql) = $this->driver()->compileQuery($query, $binder);
 
 		$statement = $this->prepare($sql);
-		$processor->bindStatement($binder, $statement);
+		$this->_bindStatement($binder, $statement);
 		$statement->execute();
 
 		return $statement;
 	}
 
 /**
- * Returns a query that has been translated to the specific SQL dialect for the
- * driver
+ * Traverses all QueryExpression objects stored in every relevant for the passed
+ * type of query and binds every value to the statement object for each placeholder.
  *
- * @param \Cake\Database\Query $query The query to transform
- * @return \Cake\Database\Query
+ * @param \Cake\Database\ValueBinder $binder the object containing the bindings
+ * @param \Cake\Database\StatementInterface $statement
+ * @return void
  */
-	protected function _transformQuery($query) {
-		$translator = $this->driver()->queryTranslator($query->type());
-		return $translator($query);
+	protected function _bindStatement($binder, $statement) {
+		$bindings = $binder->bindings();
+		if (empty($bindings)) {
+			return;
+		}
+		$params = $types = [];
+		foreach ($bindings as $b) {
+			$params[$b['placeholder']] = $b['value'];
+			$types[$b['placeholder']] = $b['type'];
+		}
+		$statement->bind($params, $types);
 	}
 
 /**

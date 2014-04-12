@@ -18,8 +18,7 @@ use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 
 /**
- * Responsible of compiling a Query object into its SQL representation
- * and binding values to a placeholder from it.
+ * Responsible for compiling a Query object into its SQL representation
  *
  */
 class QueryCompiler {
@@ -54,27 +53,6 @@ class QueryCompiler {
 		$sql = '';
 		$query->traverse($this->_sqlCompiler($sql, $query, $generator));
 		return $sql;
-	}
-
-/**
- * Traverses all QueryExpression objects stored in every relevant for the passed
- * type of query and binds every value to the statement object for each placeholder.
- *
- * @param \Cake\Database\ValueBinder $binder the object containing the bindings
- * @param \Cake\Database\StatementInterface $statement
- * @return void
- */
-	public function bindStatement($binder, $statement) {
-		$bindings = $binder->bindings();
-		if (empty($bindings)) {
-			return;
-		}
-		$params = $types = [];
-		foreach ($bindings as $b) {
-			$params[$b['placeholder']] = $b['value'];
-			$types[$b['placeholder']] = $b['type'];
-		}
-		$statement->bind($params, $types);
 	}
 
 /**
