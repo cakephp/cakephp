@@ -17,7 +17,7 @@
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchema;
 use Cake\Database\Schema\Table;
@@ -331,38 +331,38 @@ SQL;
 			[
 				'title',
 				['type' => 'string', 'length' => 25, 'null' => false],
-				'[title] VARCHAR(25) NOT NULL'
+				'[title] NVARCHAR(25) NOT NULL'
 			],
 			[
 				'title',
 				['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-				'[title] VARCHAR(25) DEFAULT NULL'
+				'[title] NVARCHAR(25) DEFAULT NULL'
 			],
 			[
 				'id',
 				['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
-				'[id] CHAR(32) NOT NULL'
+				'[id] NCHAR(32) NOT NULL'
 			],
 			[
 				'id',
-				['type' => 'string', 'length' => 36, 'fixed' => true, 'null' => false],
+				['type' => 'uuid', 'null' => false],
 				'[id] UNIQUEIDENTIFIER NOT NULL'
 			],
 			[
 				'role',
 				['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
-				"[role] VARCHAR(10) NOT NULL DEFAULT [admin]"
+				"[role] NVARCHAR(10) NOT NULL DEFAULT [admin]"
 			],
 			[
 				'title',
 				['type' => 'string'],
-				'[title] VARCHAR'
+				'[title] NVARCHAR(255)'
 			],
 			// Text
 			[
 				'body',
 				['type' => 'text', 'null' => false],
-				'[body] TEXT NOT NULL'
+				'[body] NVARCHAR(MAX) NOT NULL'
 			],
 			// Integers
 			[
@@ -560,9 +560,9 @@ SQL;
 
 		$expected = <<<SQL
 CREATE TABLE [schema_articles] (
-[id] INTEGER NOT NULL,
-[title] VARCHAR NOT NULL,
-[body] TEXT,
+[id] INTEGER IDENTITY(1, 1),
+[title] NVARCHAR(255) NOT NULL,
+[body] NVARCHAR(MAX),
 [created] DATETIME,
 PRIMARY KEY ([id])
 )

@@ -294,8 +294,8 @@ class SqlserverSchema extends BaseSchema {
 		$data = $table->column($name);
 		$out = $this->_driver->quoteIdentifier($name);
 		$typeMap = [
-			'integer' => 'INTEGER',
-			'biginteger' => 'BIGINT',
+			'integer' => ' INTEGER',
+			'biginteger' => ' BIGINT',
 			'boolean' => ' BIT',
 			'binary' => ' BINARY',
 			'float' => ' FLOAT',
@@ -305,7 +305,7 @@ class SqlserverSchema extends BaseSchema {
 			'time' => ' TIME',
 			'datetime' => ' DATETIME',
 			'timestamp' => ' DATETIME',
-			'uuid' => 'UNIQUEIDENTIFIER'
+			'uuid' => ' UNIQUEIDENTIFIER'
 		];
 
 		if (isset($typeMap[$data['type']])) {
