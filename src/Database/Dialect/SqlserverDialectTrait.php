@@ -64,7 +64,7 @@ trait SqlserverDialectTrait {
 			$query->limit(null);
 
 			if (!$query->clause('order')) {
-				$query->order([(string)$query->connection()->newQuery()->select(['NULL'])]);
+				$query->order([$query->connection()->newQuery()->select(['NULL'])]);
 			}
 		}
 
