@@ -1086,8 +1086,8 @@ class HtmlHelper extends Helper {
  * - `odd` - Class to use for odd rows.
  *
  * @param array $list Set of elements to list
- * @param string|array $options Additional HTML attributes of the list (ol/ul) tag or if ul/ol use that as tag
- * @param array $itemOptions Additional HTML attributes of the list item (LI) tag
+ * @param array $options Options and additional HTML attributes of the list (ol/ul) tag.
+ * @param array $itemOptions Options and additional HTML attributes of the list item (LI) tag.
  * @return string The nested list
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::nestedList
  */
@@ -1103,9 +1103,9 @@ class HtmlHelper extends Helper {
 /**
  * Internal function to build a nested list (UL/OL) out of an associative array.
  *
- * @param array $items Set of elements to list
- * @param array $options Options and additional HTML attributes of the list (ol/ul) tag
- * @param array $itemOptions Additional HTML attributes of the list item (LI) tag
+ * @param array $items Set of elements to list.
+ * @param array $options Additional HTML attributes of the list (ol/ul) tag.
+ * @param array $itemOptions Options and additional HTML attributes of the list item (LI) tag.
  * @return string The nested list element
  * @see HtmlHelper::nestedList()
  */
