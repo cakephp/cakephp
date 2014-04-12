@@ -15,7 +15,7 @@
 namespace Cake\Database;
 
 use Cake\Database\Query;
-use Cake\Database\Querycompiler;
+use Cake\Database\QueryCompiler;
 use Cake\Database\ValueBinder;
 
 /**

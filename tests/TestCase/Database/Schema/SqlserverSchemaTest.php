@@ -85,7 +85,7 @@ SQL;
 		return [
 			[
 				'DATETIME',
-				['type' => 'datetime', 'length' => null]
+				['type' => 'timestamp', 'length' => null]
 			],
 			[
 				'DATE',

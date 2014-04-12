@@ -63,28 +63,18 @@ class SqlserverSchema extends BaseSchema {
  * The returned type will be a type that
  * Cake\Database\Type can handle.
  *
- * @param string $column The column type + length
+ * @param string $col The column type
+ * @param int $length the column length
  * @throws Cake\Database\Exception when column cannot be parsed.
  * @return array Array of column information.
  * @link http://technet.microsoft.com/en-us/library/ms187752.aspx
  */
-	protected function _convertColumn($column) {
-		preg_match('/([a-z\s]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
-		if (empty($matches)) {
-			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
-		}
-
-		$col = strtolower($matches[1]);
-		$length = null;
-		if (isset($matches[2])) {
-			$length = (int)$matches[2];
-		}
-
+	protected function _convertColumn($col, $length = null) {
 		if (in_array($col, array('date', 'time'))) {
 			return ['type' => $col, 'length' => null];
 		}
 		if (strpos($col, 'datetime') !== false) {
-			return ['type' => 'datetime', 'length' => null];
+			return ['type' => 'timestamp', 'length' => null];
 		}
 
 		if ($col === 'int' || $col === 'integer') {
@@ -109,16 +99,24 @@ class SqlserverSchema extends BaseSchema {
 		) {
 			return ['type' => 'decimal', 'length' => null];
 		}
+
 		if ($col === 'real' || $col === 'float') {
 			return ['type' => 'float', 'length' => null];
 		}
 
+		if (strpos($col, 'varchar') !== false && $length < 0) {
+			return ['type' => 'text', 'length' => null];
+		}
+
+
 		if (strpos($col, 'varchar') !== false) {
 			return ['type' => 'string', 'length' => $length];
 		}
+
 		if (strpos($col, 'char') !== false) {
 			return ['type' => 'string', 'fixed' => true, 'length' => $length];
 		}
+
 		if (strpos($col, 'text') !== false) {
 			return ['type' => 'text', 'length' => null];
 		}
@@ -140,7 +138,7 @@ class SqlserverSchema extends BaseSchema {
  *
  */
 	public function convertFieldDescription(Table $table, $row) {
-		$field = $this->_convertColumn($row['type']);
+		$field = $this->_convertColumn($row['type'], $row['char_length']);
 		if (!empty($row['default'])) {
 			$row['default'] = trim($row['default'], '()');
 		}
