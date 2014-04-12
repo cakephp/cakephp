@@ -14,6 +14,10 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Query;
+use Cake\Database\Querycompiler;
+use Cake\Database\ValueBinder;
+
 /**
  * Represents a database diver containing all specificities for
  * a database engine including its SQL dialect
