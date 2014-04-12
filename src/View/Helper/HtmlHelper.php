@@ -1076,21 +1076,26 @@ class HtmlHelper extends Helper {
 /**
  * Build a nested list (UL/OL) out of an associative array.
  *
+ * Options for $options:
+ *
+ * - `tag` - Type of list tag to use (ol/ul)
+ *
+ * Options for $itemOptions:
+ *
+ * - `even` - Class to use for even rows.
+ * - `odd` - Class to use for odd rows.
+ *
  * @param array $list Set of elements to list
- * @param string|array $options Additional HTML attributes of the list (ol/ul) tag or if ul/ol use that as tag
- * @param array $itemOptions Additional HTML attributes of the list item (LI) tag
- * @param string $tag Type of list tag to use (ol/ul)
+ * @param array $options Options and additional HTML attributes of the list (ol/ul) tag.
+ * @param array $itemOptions Options and additional HTML attributes of the list item (LI) tag.
  * @return string The nested list
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::nestedList
  */
-	public function nestedList($list, $options = array(), array $itemOptions = array(), $tag = 'ul') {
-		if (is_string($options)) {
-			$tag = $options;
-			$options = array();
-		}
-		$items = $this->_nestedListItem($list, $options, $itemOptions, $tag);
-		return $this->formatTemplate($tag, [
-			'attrs' => $this->templater()->formatAttributes($options),
+	public function nestedList(array $list, array $options = [], array $itemOptions = []) {
+		$options += array('tag' => 'ul');
+		$items = $this->_nestedListItem($list, $options, $itemOptions);
+		return $this->formatTemplate($options['tag'], [
+			'attrs' => $this->templater()->formatAttributes($options, ['tag']),
 			'content' => $items
 		]);
 	}
@@ -1098,20 +1103,19 @@ class HtmlHelper extends Helper {
 /**
  * Internal function to build a nested list (UL/OL) out of an associative array.
  *
- * @param array $items Set of elements to list
- * @param array $options Additional HTML attributes of the list (ol/ul) tag
- * @param array $itemOptions Additional HTML attributes of the list item (LI) tag
- * @param string $tag Type of list tag to use (ol/ul)
+ * @param array $items Set of elements to list.
+ * @param array $options Additional HTML attributes of the list (ol/ul) tag.
+ * @param array $itemOptions Options and additional HTML attributes of the list item (LI) tag.
  * @return string The nested list element
  * @see HtmlHelper::nestedList()
  */
-	protected function _nestedListItem($items, $options, array $itemOptions, $tag) {
+	protected function _nestedListItem($items, $options, $itemOptions) {
 		$out = '';
 
 		$index = 1;
 		foreach ($items as $key => $item) {
 			if (is_array($item)) {
-				$item = $key . $this->nestedList($item, $options, $itemOptions, $tag);
+				$item = $key . $this->nestedList($item, $options, $itemOptions);
 			}
 			if (isset($itemOptions['even']) && $index % 2 === 0) {
 				$itemOptions['class'] = $itemOptions['even'];
