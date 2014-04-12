@@ -1094,7 +1094,7 @@ class HtmlHelper extends Helper {
 	public function nestedList(array $list, array $options = [], array $itemOptions = []) {
 		$options += array('tag' => 'ul');
 		$items = $this->_nestedListItem($list, $options, $itemOptions);
-		return $this->formatTemplate($tag, [
+		return $this->formatTemplate($options['tag'], [
 			'attrs' => $this->templater()->formatAttributes($options, ['tag']),
 			'content' => $items
 		]);
