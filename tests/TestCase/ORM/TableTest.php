@@ -639,15 +639,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $query->toArray());
 
 		$query = $table->find('list', ['groupField' => 'odd'])
-			->select(['id', 'username', 'odd' => new QueryExpression('id % 2 = 0')])
+			->select(['id', 'username', 'odd' => new QueryExpression('id % 2')])
 			->hydrate(false)
 			->order('id');
 		$expected = [
-			0 => [
+			1 => [
 				1 => 'mariano',
 				3 => 'larry'
 			],
-			1 => [
+			0 => [
 				2 => 'nate',
 				4 => 'garrett'
 			]
@@ -801,15 +801,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $query->toArray());
 
 		$query = $table->find('list', ['groupField' => 'odd'])
-			->select(['id', 'username', 'odd' => new QueryExpression('id % 2 = 0')])
+			->select(['id', 'username', 'odd' => new QueryExpression('id % 2')])
 			->hydrate(true)
 			->order('id');
 		$expected = [
-			0 => [
+			1 => [
 				1 => 'mariano',
 				3 => 'larry'
 			],
-			1 => [
+			0 => [
 				2 => 'nate',
 				4 => 'garrett'
 			]
