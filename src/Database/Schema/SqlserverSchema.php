@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 3.0.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Database\Schema;
@@ -315,7 +315,6 @@ class SqlserverSchema extends BaseSchema {
 		}
 
 		if ($data['type'] === 'integer' || $data['type'] === 'biginteger') {
-			$out .= $type;
 			if ([$name] === $table->primaryKey() || $data['autoIncrement'] === true) {
 				unset($data['null'], $data['default']);
 				$out .= ' IDENTITY(1, 1)';

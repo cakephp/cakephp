@@ -1087,23 +1087,23 @@ class QueryTest extends TestCase {
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
 		$expression = $query->newExpr()
-			->add(['(id + :offset) % 2 = 0']);
+			->add(['(id + :offset) % 2']);
 		$result = $query
 			->order([$expression, 'id' => 'desc'], true)
 			->bind(':offset', 1, null)
 			->execute();
-		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 
 		$result = $query
 			->order($expression, true)
 			->order(['id' => 'asc'])
 			->bind(':offset', 1, null)
 			->execute();
-		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 	}
 
 /**
@@ -1137,8 +1137,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that it is possible to select distinct rows, even filtering by one column
- * this is testing that there is an specific implementation for DISTINCT ON
+ * Tests that it is possible to select distinct rows
  *
  * @return void
  */
@@ -1155,7 +1154,19 @@ class QueryTest extends TestCase {
 
 		$result = $query->select(['id'])->distinct(false)->execute();
 		$this->assertCount(3, $result);
+	}
 
+/**
+ * Tests that it is possible to select distinct rows, even filtering by one column
+ * this is testing that there is an specific implementation for DISTINCT ON
+ *
+ * @return void
+ */
+	public function testSelectDistinctON() {
+		$this->skipIf(
+			$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+			'Not implemented yet in SqlServer'
+		);
 		$result = $query->select(['id'])->distinct(['author_id'])->execute();
 		$this->assertCount(2, $result);
 	}
@@ -1344,14 +1355,9 @@ class QueryTest extends TestCase {
 		$result = $query->select('id')->from('articles')->limit(1)->execute();
 		$this->assertCount(1, $result);
 
-		$result = $query->limit(null)->execute();
-		$this->assertCount(3, $result);
-
-		$result = $query->limit(2)->execute();
+		$query = new Query($this->connection);
+		$result = $query->select('id')->from('articles')->limit(2)->execute();
 		$this->assertCount(2, $result);
-
-		$result = $query->limit(3)->execute();
-		$this->assertCount(3, $result);
 	}
 
 /**
@@ -1367,11 +1373,19 @@ class QueryTest extends TestCase {
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 
-		$result = $query->offset(1)->execute();
+		$query = new Query($this->connection);
+		$result = $query->select('id')->from('comments')
+			->limit(1)
+			->offset(1)
+			->execute();
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 
-		$result = $query->offset(2)->execute();
+		$query = new Query($this->connection);
+		$result = $query->select('id')->from('comments')
+			->limit(1)
+			->offset(2)
+			->execute();
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
@@ -1398,14 +1412,17 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query->select('id')->from('comments')
 			->limit(1)
-			->page(1)->execute();
+			->page(1)
+			->execute();
 
-		$this->assertEquals(0, $query->clause('offset'));
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 
-		$result = $query->page(2)->execute();
-		$this->assertEquals(1, $query->clause('offset'));
+		$query = new Query($this->connection);
+		$result = $query->select('id')->from('comments')
+			->limit(1)
+			->page(2)
+			->execute();
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 

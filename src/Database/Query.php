@@ -449,6 +449,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function modifier($modifiers, $overwrite = false) {
+		$this->_dirty();
 		if ($overwrite) {
 			$this->_parts['modifier'] = [];
 		}
@@ -1152,6 +1153,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function limit($num) {
+		$this->_dirty();
 		if ($num !== null && !is_object($num)) {
 			$num = (int)$num;
 		}
