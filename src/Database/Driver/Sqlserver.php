@@ -17,6 +17,7 @@
 namespace Cake\Database\Driver;
 
 use Cake\Database\Dialect\SqlserverDialectTrait;
+use Cake\Database\Statement\PDOStatement;
 use PDO;
 
 class Sqlserver extends \Cake\Database\Driver {
@@ -31,7 +32,7 @@ class Sqlserver extends \Cake\Database\Driver {
  */
 	protected $_baseConfig = [
 		'persistent' => true,
-		'host' => 'localhost',
+		'host' => 'localhost\SQLEXPRESS',
 		'login' => '',
 		'password' => '',
 		'database' => 'cake',
@@ -77,6 +78,7 @@ class Sqlserver extends \Cake\Database\Driver {
 				$connection->exec("SET {$key} {$value}");
 			}
 		}
+
 		return true;
 	}
 
@@ -88,6 +90,19 @@ class Sqlserver extends \Cake\Database\Driver {
 
 	public function enabled() {
 		return in_array('sqlsrv', PDO::getAvailableDrivers());
+	}
+
+	
+/**
+ * Prepares a sql statement to be executed
+ *
+ * @param string|\Cake\Database\Query $query
+ * @return \Cake\Database\StatementInterface
+ */
+	public function prepare($query) {
+		$this->connect();
+		$statement = $this->_connection->prepare((string)$query, [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL]);
+		return $this->_old = new PDOStatement($statement, $this);
 	}
 
 }

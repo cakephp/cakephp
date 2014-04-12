@@ -171,18 +171,11 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testExecuteWithArgumentsAndTypes() {
-		$sql = "SELECT ? = '2012-01-01'";
+		$sql = "SELECT '2012-01-01' = ?";
 		$statement = $this->connection->execute($sql, [new \DateTime('2012-01-01')], ['date']);
 		$result = $statement->fetch();
 		$statement->closeCursor();
 		$this->assertTrue((bool)$result[0]);
-
-		$sql = "SELECT ? = '2012-01-01', ? = '2000-01-01 10:10:10', ? = 2";
-		$params = [new \DateTime('2012-01-01 10:10:10'), '2000-01-01 10:10:10', 2.1];
-		$statement = $this->connection->execute($sql, $params, ['date', 'string', 'integer']);
-		$result = $statement->fetch();
-		$statement->closeCursor();
-		$this->assertEquals($result, array_filter($result));
 	}
 
 /**

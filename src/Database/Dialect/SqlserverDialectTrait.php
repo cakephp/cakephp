@@ -146,4 +146,34 @@ trait SqlserverDialectTrait {
 		return new \Cake\Database\Schema\SqlserverSchema($this);
 	}
 
+/**
+ * Returns a SQL snippet for creating a new transaction savepoint
+ *
+ * @param string $name save point name
+ * @return string
+ */
+	public function savePointSQL($name) {
+		return 'SAVE TRANSACTION t' . $name;
+	}
+
+/**
+ * Returns a SQL snippet for releasing a previously created save point
+ *
+ * @param string $name save point name
+ * @return string
+ */
+	public function releaseSavePointSQL($name) {
+		return 'COMMIT TRANSACTION t' . $name;
+	}
+
+/**
+ * Returns a SQL snippet for rollbacking a previously created save point
+ *
+ * @param string $name save point name
+ * @return string
+ */
+	public function rollbackSavePointSQL($name) {
+		return 'ROLLBACK TRANSACTION t' . $name;
+	}
+
 }
