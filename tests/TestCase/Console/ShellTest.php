@@ -1,9 +1,5 @@
 <?php
 /**
- * ShellTest file
- *
- * Test Case for Shell
- *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -137,10 +133,8 @@ class ShellTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$output = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$error = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Shell = new ShellTestShell($output, $error, $in);
+		$this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
+		$this->Shell = new ShellTestShell($this->io);
 
 		if (is_dir(TMP . 'shell_test')) {
 			$Folder = new Folder(TMP . 'shell_test');
@@ -155,9 +149,7 @@ class ShellTest extends TestCase {
  */
 	public function testConstruct() {
 		$this->assertEquals('ShellTestShell', $this->Shell->name);
-		$this->assertInstanceOf('Cake\Console\ConsoleInput', $this->Shell->stdin);
-		$this->assertInstanceOf('Cake\Console\ConsoleOutput', $this->Shell->stdout);
-		$this->assertInstanceOf('Cake\Console\ConsoleOutput', $this->Shell->stderr);
+		$this->assertInstanceOf('Cake\Console\ConsoleIo', $this->Shell->io());
 	}
 
 /**
@@ -211,47 +203,21 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testIn() {
-		$this->Shell->stdin->expects($this->at(0))
-			->method('read')
+		$this->io->expects($this->at(0))
+			->method('askChoice')
+			->with('Just a test?', ['y', 'n'], 'n')
 			->will($this->returnValue('n'));
 
-		$this->Shell->stdin->expects($this->at(1))
-			->method('read')
-			->will($this->returnValue('Y'));
-
-		$this->Shell->stdin->expects($this->at(2))
-			->method('read')
-			->will($this->returnValue('y'));
-
-		$this->Shell->stdin->expects($this->at(3))
-			->method('read')
-			->will($this->returnValue('y'));
-
-		$this->Shell->stdin->expects($this->at(4))
-			->method('read')
-			->will($this->returnValue('y'));
-
-		$this->Shell->stdin->expects($this->at(5))
-			->method('read')
-			->will($this->returnValue('0'));
+		$this->io->expects($this->at(1))
+			->method('ask')
+			->with('Just a test?', 'n')
+			->will($this->returnValue('n'));
 
 		$result = $this->Shell->in('Just a test?', array('y', 'n'), 'n');
 		$this->assertEquals('n', $result);
 
-		$result = $this->Shell->in('Just a test?', array('y', 'n'), 'n');
-		$this->assertEquals('Y', $result);
-
-		$result = $this->Shell->in('Just a test?', 'y,n', 'n');
-		$this->assertEquals('y', $result);
-
-		$result = $this->Shell->in('Just a test?', 'y/n', 'n');
-		$this->assertEquals('y', $result);
-
-		$result = $this->Shell->in('Just a test?', 'y', 'y');
-		$this->assertEquals('y', $result);
-
-		$result = $this->Shell->in('Just a test?', array(0, 1, 2), '0');
-		$this->assertEquals('0', $result);
+		$result = $this->Shell->in('Just a test?', null, 'n');
+		$this->assertEquals('n', $result);
 	}
 
 /**
@@ -260,6 +226,11 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testInNonInteractive() {
+		$this->io->expects($this->never())
+			->method('askChoice');
+		$this->io->expects($this->never())
+			->method('ask');
+
 		$this->Shell->interactive = false;
 
 		$result = $this->Shell->in('Just a test?', 'y/n', 'n');
@@ -272,67 +243,11 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testOut() {
-		$this->Shell->stdout->expects($this->at(0))
-			->method('write')
-			->with("Just a test", 1);
-
-		$this->Shell->stdout->expects($this->at(1))
-			->method('write')
-			->with(array('Just', 'a', 'test'), 1);
-
-		$this->Shell->stdout->expects($this->at(2))
-			->method('write')
-			->with(array('Just', 'a', 'test'), 2);
-
-		$this->Shell->stdout->expects($this->at(3))
-			->method('write')
-			->with('', 1);
+		$this->io->expects($this->once())
+			->method('out')
+			->with('Just a test', 1);
 
 		$this->Shell->out('Just a test');
-
-		$this->Shell->out(array('Just', 'a', 'test'));
-
-		$this->Shell->out(array('Just', 'a', 'test'), 2);
-
-		$this->Shell->out();
-	}
-
-/**
- * test that verbose and quiet output levels work
- *
- * @return void
- */
-	public function testVerboseOutput() {
-		$this->Shell->stdout->expects($this->at(0))->method('write')
-			->with('Verbose', 1);
-		$this->Shell->stdout->expects($this->at(1))->method('write')
-			->with('Normal', 1);
-		$this->Shell->stdout->expects($this->at(2))->method('write')
-			->with('Quiet', 1);
-
-		$this->Shell->params['verbose'] = true;
-		$this->Shell->params['quiet'] = false;
-
-		$this->Shell->out('Verbose', 1, Shell::VERBOSE);
-		$this->Shell->out('Normal', 1, Shell::NORMAL);
-		$this->Shell->out('Quiet', 1, Shell::QUIET);
-	}
-
-/**
- * test that verbose and quiet output levels work
- *
- * @return void
- */
-	public function testQuietOutput() {
-		$this->Shell->stdout->expects($this->once())->method('write')
-			->with('Quiet', 1);
-
-		$this->Shell->params['verbose'] = false;
-		$this->Shell->params['quiet'] = true;
-
-		$this->Shell->out('Verbose', 1, Shell::VERBOSE);
-		$this->Shell->out('Normal', 1, Shell::NORMAL);
-		$this->Shell->out('Quiet', 1, Shell::QUIET);
 	}
 
 /**
@@ -341,29 +256,11 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testErr() {
-		$this->Shell->stderr->expects($this->at(0))
-			->method('write')
-			->with("Just a test", 1);
-
-		$this->Shell->stderr->expects($this->at(1))
-			->method('write')
-			->with(array('Just', 'a', 'test'), 1);
-
-		$this->Shell->stderr->expects($this->at(2))
-			->method('write')
-			->with(array('Just', 'a', 'test'), 2);
-
-		$this->Shell->stderr->expects($this->at(3))
-			->method('write')
-			->with('', 1);
+		$this->io->expects($this->once())
+			->method('err')
+			->with('Just a test', 1);
 
 		$this->Shell->err('Just a test');
-
-		$this->Shell->err(array('Just', 'a', 'test'));
-
-		$this->Shell->err(array('Just', 'a', 'test'), 2);
-
-		$this->Shell->err();
 	}
 
 /**
@@ -372,15 +269,11 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testNl() {
-		$newLine = "\n";
-		if (DS === '\\') {
-			$newLine = "\r\n";
-		}
-		$this->assertEquals($this->Shell->nl(), $newLine);
-		$this->assertEquals($this->Shell->nl(true), $newLine);
-		$this->assertEquals("", $this->Shell->nl(false));
-		$this->assertEquals($this->Shell->nl(2), $newLine . $newLine);
-		$this->assertEquals($this->Shell->nl(1), $newLine);
+		$this->io->expects($this->once())
+			->method('nl')
+			->with(2);
+
+		$this->Shell->nl(2);
 	}
 
 /**
@@ -389,23 +282,9 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testHr() {
-		$bar = '---------------------------------------------------------------';
-
-		$this->Shell->stdout->expects($this->at(0))->method('write')->with('', 0);
-		$this->Shell->stdout->expects($this->at(1))->method('write')->with($bar, 1);
-		$this->Shell->stdout->expects($this->at(2))->method('write')->with('', 0);
-
-		$this->Shell->stdout->expects($this->at(3))->method('write')->with("", true);
-		$this->Shell->stdout->expects($this->at(4))->method('write')->with($bar, 1);
-		$this->Shell->stdout->expects($this->at(5))->method('write')->with("", true);
-
-		$this->Shell->stdout->expects($this->at(6))->method('write')->with("", 2);
-		$this->Shell->stdout->expects($this->at(7))->method('write')->with($bar, 1);
-		$this->Shell->stdout->expects($this->at(8))->method('write')->with("", 2);
-
-		$this->Shell->hr();
-
-		$this->Shell->hr(true);
+		$this->io->expects($this->once())
+			->method('hr')
+			->with(2);
 
 		$this->Shell->hr(2);
 	}
@@ -416,22 +295,13 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testError() {
-		$this->Shell->stderr->expects($this->at(0))
-			->method('write')
-			->with("<error>Error:</error> Foo Not Found", 1);
+		$this->io->expects($this->at(0))
+			->method('err')
+			->with('<error>Error:</error> Foo Not Found');
 
-		$this->Shell->stderr->expects($this->at(1))
-			->method('write')
-			->with("<error>Error:</error> Foo Not Found", 1);
-
-		$this->Shell->stderr->expects($this->at(2))
-			->method('write')
-			->with("Searched all...", 1);
-
-		$this->Shell->error('Foo Not Found');
-		$this->assertSame($this->Shell->stopped, 1);
-
-		$this->Shell->stopped = null;
+		$this->io->expects($this->at(1))
+			->method('err')
+			->with("Searched all...");
 
 		$this->Shell->error('Foo Not Found', 'Searched all...');
 		$this->assertSame($this->Shell->stopped, 1);
@@ -555,8 +425,8 @@ class ShellTest extends TestCase {
 
 		new Folder($path, true);
 
-		$this->Shell->stdin->expects($this->once())
-			->method('read')
+		$this->io->expects($this->once())
+			->method('askChoice')
 			->will($this->returnValue('n'));
 
 		touch($file);
@@ -581,8 +451,8 @@ class ShellTest extends TestCase {
 
 		new Folder($path, true);
 
-		$this->Shell->stdin->expects($this->once())
-			->method('read')
+		$this->io->expects($this->once())
+			->method('askChoice')
 			->will($this->returnValue('y'));
 
 		touch($file);
@@ -802,62 +672,23 @@ TEXT;
 	}
 
 /**
- * Test file and console and logging
- *
- * @return void
- */
-	public function testFileAndConsoleLogging() {
-		// file logging
-		$this->Shell->log_something();
-		$this->assertTrue(file_exists(LOGS . 'error.log'));
-
-		unlink(LOGS . 'error.log');
-		$this->assertFalse(file_exists(LOGS . 'error.log'));
-
-		$mock = $this->getMock(
-			'Cake\Log\Engine\ConsoleLog',
-			['write'],
-			[['types' => 'error']]
-		);
-		Log::config('console', $mock);
-		$mock->expects($this->once())
-			->method('write')
-			->with('error', $this->Shell->testMessage);
-		$this->Shell->log_something();
-		$this->assertTrue(file_exists(LOGS . 'error.log'));
-		$contents = file_get_contents(LOGS . 'error.log');
-		$this->assertContains($this->Shell->testMessage, $contents);
-
-		Log::drop('console');
-	}
-
-/**
- * Tests that _useLogger works properly
- *
- * @return void
- */
-	public function testProtectedUseLogger() {
-		Log::drop('stdout');
-		Log::drop('stderr');
-		$this->Shell->useLogger(true);
-		$this->assertNotEmpty(Log::engine('stdout'));
-		$this->assertNotEmpty(Log::engine('stderr'));
-		$this->Shell->useLogger(false);
-		$this->assertFalse(Log::engine('stdout'));
-		$this->assertFalse(Log::engine('stderr'));
-	}
-
-/**
  * Test file and console and logging quiet output
  *
  * @return void
  */
 	public function testQuietLog() {
-		$output = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$error = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Shell = $this->getMock(__NAMESPACE__ . '\ShellTestShell', array('_useLogger'), array($output, $error, $in));
-		$this->Shell->expects($this->once())->method('_useLogger')->with(false);
+		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
+		$io->expects($this->once())
+			->method('level')
+			->with(Shell::QUIET);
+		$io->expects($this->at(0))
+			->method('setLoggers')
+			->with(true);
+		$io->expects($this->at(2))
+			->method('setLoggers')
+			->with(false);
+
+		$this->Shell = $this->getMock(__NAMESPACE__ . '\ShellTestShell', array('_useLogger'), array($io));
 		$this->Shell->runCommand('foo', array('--quiet'));
 	}
 

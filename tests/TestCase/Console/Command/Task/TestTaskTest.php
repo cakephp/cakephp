@@ -47,15 +47,15 @@ class TestTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Console\Command\Task\TestTask',
 			array('in', 'err', 'createFile', '_stop', 'isLoadableClass'),
-			array($out, $out, $in)
+			array($this->io)
 		);
 		$this->Task->name = 'Test';
-		$this->Task->Template = new TemplateTask($out, $out, $in);
+		$this->Task->Template = new TemplateTask($this->io);
+		$this->Task->Template->interactive = false;
 	}
 
 /**
@@ -93,17 +93,17 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testOutputTypeChoices() {
-		$this->Task->stdout->expects($this->at(0))
-			->method('write')
+		$this->io->expects($this->at(0))
+			->method('out')
 			->with($this->stringContains('You must provide'));
-		$this->Task->stdout->expects($this->at(1))
-			->method('write')
+		$this->io->expects($this->at(1))
+			->method('out')
 			->with($this->stringContains('1. Entity'));
-		$this->Task->stdout->expects($this->at(2))
-			->method('write')
+		$this->io->expects($this->at(2))
+			->method('out')
 			->with($this->stringContains('2. Table'));
-		$this->Task->stdout->expects($this->at(3))
-			->method('write')
+		$this->io->expects($this->at(3))
+			->method('out')
 			->with($this->stringContains('3. Controller'));
 		$this->Task->outputTypeChoices();
 	}
@@ -148,20 +148,20 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testOutputClassOptionsForTable() {
-		$this->Task->stdout->expects($this->at(0))
-			->method('write')
+		$this->io->expects($this->at(0))
+			->method('out')
 			->with($this->stringContains('You must provide'));
-		$this->Task->stdout->expects($this->at(1))
-			->method('write')
+		$this->io->expects($this->at(1))
+			->method('out')
 			->with($this->stringContains('1. ArticlesTable'));
-		$this->Task->stdout->expects($this->at(2))
-			->method('write')
+		$this->io->expects($this->at(2))
+			->method('out')
 			->with($this->stringContains('2. ArticlesTagsTable'));
-		$this->Task->stdout->expects($this->at(3))
-			->method('write')
+		$this->io->expects($this->at(3))
+			->method('out')
 			->with($this->stringContains('3. AuthUsersTable'));
-		$this->Task->stdout->expects($this->at(4))
-			->method('write')
+		$this->io->expects($this->at(4))
+			->method('out')
 			->with($this->stringContains('4. AuthorsTable'));
 
 		$this->Task->outputClassChoices('Table');
@@ -176,11 +176,11 @@ class TestTaskTest extends TestCase {
 		Plugin::load('TestPlugin');
 
 		$this->Task->plugin = 'TestPlugin';
-		$this->Task->stdout->expects($this->at(0))
-			->method('write')
+		$this->io->expects($this->at(0))
+			->method('out')
 			->with($this->stringContains('You must provide'));
-		$this->Task->stdout->expects($this->at(1))
-			->method('write')
+		$this->io->expects($this->at(1))
+			->method('out')
 			->with($this->stringContains('1. TestPluginCommentsTable'));
 
 		$this->Task->outputClassChoices('Table');

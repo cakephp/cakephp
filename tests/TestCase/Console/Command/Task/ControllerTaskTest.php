@@ -58,23 +58,26 @@ class ControllerTaskTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ControllerTask',
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop'),
-			array($out, $out, $in)
+			array($io)
 		);
 		$this->Task->name = 'Controller';
 		$this->Task->connection = 'test';
 
-		$this->Task->Template = new TemplateTask($out, $out, $in);
+		$this->Task->Template = new TemplateTask($io);
 		$this->Task->Template->params['theme'] = 'default';
 
 		$this->Task->Model = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'out', 'err', 'createFile', '_stop'),
-			array($out, $out, $in)
+			array($io)
 		);
-		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\TestTask', array(), array($out, $out, $in));
+		$this->Task->Test = $this->getMock(
+			'Cake\Console\Command\Task\TestTask',
+			[],
+			[$io]
+		);
 
 		TableRegistry::get('BakeArticles', [
 			'className' => __NAMESPACE__ . '\BakeArticlesTable'

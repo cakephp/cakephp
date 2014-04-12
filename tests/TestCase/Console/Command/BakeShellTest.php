@@ -37,13 +37,12 @@ class BakeShellTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
+		$this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Shell = $this->getMock(
 			'Cake\Console\Command\BakeShell',
 			['in', 'out', 'hr', 'err', 'createFile', '_stop'],
-			[$out, $out, $in]
+			[$this->io]
 		);
 		Configure::write('App.namespace', 'TestApp');
 	}

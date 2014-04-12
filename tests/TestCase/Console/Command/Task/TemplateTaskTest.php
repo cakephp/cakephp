@@ -30,12 +30,11 @@ class TemplateTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Console\Command\Task\TemplateTask',
 			array('in', 'err', 'createFile', '_stop', 'clear'),
-			array($out, $out, $in)
+			array($io)
 		);
 	}
 

@@ -1,7 +1,5 @@
 <?php
 /**
- * Template Task can generate templated output Used in other Tasks
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

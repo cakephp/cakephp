@@ -31,20 +31,20 @@ class SimpleBakeTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
+		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock(
 			'Cake\Console\Command\Task\SimpleBakeTask',
 			['in', 'err', 'createFile', '_stop', 'name', 'template', 'fileName'],
-			[$out, $out, $in]
+			[$io]
 		);
 		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\TestTask',
 			[],
-			[$out, $out, $in]
+			[$io]
 		);
-		$this->Task->Template = new TemplateTask($out, $out, $in);
+		$this->Task->Template = new TemplateTask($io);
 		$this->Task->Template->initialize();
+		$this->Task->Template->interactive = false;
 
 		$this->Task->pathFragment = 'Model/Behavior/';
 
@@ -174,9 +174,8 @@ class SimpleBakeTaskTest extends TestCase {
  * @return void
  */
 	public function testImplementations($class) {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
-		$task = new $class($out, $out, $in);
+		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
+		$task = new $class($io);
 		$this->assertInternalType('string', $task->name());
 		$this->assertInternalType('string', $task->fileName('Example'));
 		$this->assertInternalType('string', $task->template());

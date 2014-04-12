@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Console\Command;
 
 use Cake\Console\Command\CommandListShell;
 use Cake\Console\Command\Task\CommandTask;
+use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOutput;
 use Cake\Core\App;
 use Cake\Core\Plugin;
@@ -25,7 +26,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Class TestStringOutput
- *
  */
 class TestStringOutput extends ConsoleOutput {
 
@@ -52,19 +52,19 @@ class CommandListShellTest extends TestCase {
 		parent::setUp();
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
-		$out = new TestStringOutput();
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$this->out = new TestStringOutput();
+		$io = new ConsoleIo($this->out);
 
 		$this->Shell = $this->getMock(
 			'Cake\Console\Command\CommandListShell',
-			array('in', '_stop', 'clear'),
-			array($out, $out, $in)
+			['in', 'err', '_stop', 'clear'],
+			[$io]
 		);
 
 		$this->Shell->Command = $this->getMock(
 			'Cake\Console\Command\Task\CommandTask',
-			array('in', '_stop', 'clear'),
-			array($out, $out, $in)
+			['in', '_stop', 'err', 'clear'],
+			[$io]
 		);
 	}
 
@@ -86,7 +86,7 @@ class CommandListShellTest extends TestCase {
  */
 	public function testMain() {
 		$this->Shell->main();
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$expected = "/\[.*TestPlugin.*\] example/";
 		$this->assertRegExp($expected, $output);
@@ -111,7 +111,7 @@ class CommandListShellTest extends TestCase {
 		$this->Shell->params['xml'] = true;
 		$this->Shell->main();
 
-		$output = $this->Shell->stdout->output;
+		$output = $this->out->output;
 
 		$find = '<shell name="sample" call_as="sample" provider="app" help="sample -h"/>';
 		$this->assertContains($find, $output);
