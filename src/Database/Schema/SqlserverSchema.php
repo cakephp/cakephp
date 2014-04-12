@@ -70,6 +70,7 @@ class SqlserverSchema extends BaseSchema {
  * @link http://technet.microsoft.com/en-us/library/ms187752.aspx
  */
 	protected function _convertColumn($col, $length = null) {
+		$col = strtolower($col);
 		if (in_array($col, array('date', 'time'))) {
 			return ['type' => $col, 'length' => null];
 		}
@@ -107,7 +108,6 @@ class SqlserverSchema extends BaseSchema {
 		if (strpos($col, 'varchar') !== false && $length < 0) {
 			return ['type' => 'text', 'length' => null];
 		}
-
 
 		if (strpos($col, 'varchar') !== false) {
 			return ['type' => 'string', 'length' => $length];

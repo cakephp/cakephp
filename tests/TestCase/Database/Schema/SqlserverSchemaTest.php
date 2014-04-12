@@ -85,63 +85,83 @@ SQL;
 		return [
 			[
 				'DATETIME',
+				null,
 				['type' => 'timestamp', 'length' => null]
 			],
 			[
 				'DATE',
+				null,
 				['type' => 'date', 'length' => null]
 			],
 			[
 				'TIME',
+				null,
 				['type' => 'time', 'length' => null]
 			],
 			[
 				'SMALLINT',
+				null,
 				['type' => 'integer', 'length' => 5]
 			],
 			[
 				'INTEGER',
+				null,
 				['type' => 'integer', 'length' => 10]
 			],
 			[
 				'BIGINT',
+				null,
 				['type' => 'biginteger', 'length' => 20]
 			],
 			[
 				'NUMERIC',
+				null,
 				['type' => 'decimal', 'length' => null]
 			],
 			[
-				'DECIMAL(10,2)',
+				'DECIMAL',
+				null,
 				['type' => 'decimal', 'length' => null]
 			],
 			[
 				'MONEY',
+				null,
 				['type' => 'decimal', 'length' => null]
 			],
 			[
 				'VARCHAR',
-				['type' => 'string', 'length' => null]
+				null,
+				['type' => 'string', 'length' => 255]
 			],
 			[
-				'VARCHAR(10)',
+				'VARCHAR',
+				10,
 				['type' => 'string', 'length' => 10]
 			],
 			[
-				'CHAR(10)',
+				'CHAR',
+				10,
 				['type' => 'string', 'fixed' => true, 'length' => 10]
 			],
 			[
 				'UNIQUEIDENTIFIER',
+				null,
 				['type' => 'string', 'fixed' => true, 'length' => 36]
 			],
 			[
 				'TEXT',
+				null,
 				['type' => 'text', 'length' => null]
 			],
 			[
 				'REAL',
+				null,
 				['type' => 'float', 'length' => null]
+			],
+			[
+				'VARCHAR',
+				-1,
+				['type' => 'text', 'length' => null]
 			],
 		];
 	}
@@ -152,13 +172,13 @@ SQL;
  * @dataProvider convertColumnProvider
  * @return void
  */
-	public function testConvertColumn($type, $expected) {
+	public function testConvertColumn($type, $length, $expected) {
 		$field = [
 			'name' => 'field',
 			'type' => $type,
 			'null' => 'YES',
 			'default' => 'Default value',
-			'char_length' => null,
+			'char_length' => $length,
 		];
 		$expected += [
 			'null' => true,
