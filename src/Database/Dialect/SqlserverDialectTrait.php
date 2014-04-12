@@ -51,8 +51,8 @@ trait SqlserverDialectTrait {
 		$offset = $query->clause('offset');
 
 		if ($limit && $offset === null) {
-			// @todo implement TOP
-			throw new \Cake\Error\NotImplementedException();
+			$query->modifier([sprintf('TOP %d', $limit)]);
+			$query->limit(null);
 		}
 
 		if ($offset) {

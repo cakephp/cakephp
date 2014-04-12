@@ -492,7 +492,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$modifiers = implode(' ', $modifiers) . ' ';
 		}
 
-		return sprintf($select, $distinct, $modifiers, implode(', ', $normalized));
+		return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
 	}
 
 /**
