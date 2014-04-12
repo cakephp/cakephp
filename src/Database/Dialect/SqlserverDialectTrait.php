@@ -14,6 +14,7 @@
  */
 namespace Cake\Database\Dialect;
 
+use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\SqlDialectTrait;
 
 /**
@@ -107,27 +108,19 @@ trait SqlserverDialectTrait {
 				// CONCAT function is expressed as exp1 + exp2
 				$expression->name('')->type(' +');
 				break;
-/*
-			@todo Implement prepend method on FunctionExpression
 			case 'DATEDIFF':
-				$expression
-					->name('')
-					->type('-')
-					->iterateParts(function($p) {
-						return new FunctionExpression('DATE', [$p['value']], [$p['type']]);
-					});
+				$expression->add(['day' => 'literal'], [], true);
 				break;
-*/
 			case 'CURRENT_DATE':
-				$time = new FunctionExpression('GETDATE');
+				$time = new FunctionExpression('GETUTCDATE');
 				$expression->name('CONVERT')->add(['date' => 'literal', $time]);
 				break;
 			case 'CURRENT_TIME':
-				$time = new FunctionExpression('GETDATE');
+				$time = new FunctionExpression('GETUTCDATE');
 				$expression->name('CONVERT')->add(['time' => 'literal', $time]);
 				break;
 			case 'NOW':
-				$expression->name('GETDATE');
+				$expression->name('GETUTCDATE');
 				break;
 		}
 	}
