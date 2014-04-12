@@ -482,7 +482,7 @@ class Query extends DatabaseQuery {
 				->execute();
 		} else {
 			// Forcing at least one field to be selected
-			$query->select($query->newExpr()->add('1'));
+			$query->select(['_one_' => $query->newExpr()->add('1')]);
 			$statement = $this->connection()->newQuery()
 				->select($count)
 				->from(['count_source' => $query])
