@@ -14,6 +14,7 @@
  */
 namespace Cake\Database\Dialect;
 
+use Cake\Database\Dialect\TupleComparisonTranslatorTrait;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\SqlDialectTrait;
 
@@ -24,6 +25,7 @@ use Cake\Database\SqlDialectTrait;
 trait SqlserverDialectTrait {
 
 	use SqlDialectTrait;
+	use TupleComparisonTranslatorTrait;
 
 /**
  *  String used to start a database identifier quoting to make it safe
@@ -91,7 +93,8 @@ trait SqlserverDialectTrait {
 	protected function _expressionTranslators() {
 		$namespace = 'Cake\Database\Expression';
 		return [
-			$namespace . '\FunctionExpression' => '_transformFunctionExpression'
+			$namespace . '\FunctionExpression' => '_transformFunctionExpression',
+			$namespace . '\TupleComparison' => '_transformTupleComparison'
 		];
 	}
 
