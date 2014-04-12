@@ -110,7 +110,7 @@ class SqlserverSchema extends BaseSchema {
 		}
 
 		if (strpos($col, 'varchar') !== false) {
-			return ['type' => 'string', 'length' => $length];
+			return ['type' => 'string', 'length' => $length ?: 255];
 		}
 
 		if (strpos($col, 'char') !== false) {
@@ -151,7 +151,6 @@ class SqlserverSchema extends BaseSchema {
 			'null' => $row['null'] === 'YES' ? true : false,
 			'default' => $row['default'],
 		];
-		$field['length'] = $row['char_length'] ?: $field['length'];
 		$table->addColumn($row['name'], $field);
 	}
 
