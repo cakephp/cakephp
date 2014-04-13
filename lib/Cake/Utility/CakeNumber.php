@@ -66,9 +66,9 @@ class CakeNumber {
 			'fractionExponent' => 0
 		),
 		'BRL' => array(
-			'wholeSymbol' => 'R$', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
+			'wholeSymbol' => 'R$ ', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
 			'zero' => 0, 'places' => 2, 'thousands' => '.', 'decimals' => ',', 'negative' => '()', 'escape' => true,
-			'fractionExponent' => 0
+			'fractionExponent' => 2
 		)
 	);
 
