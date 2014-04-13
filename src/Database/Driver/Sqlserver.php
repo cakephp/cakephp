@@ -18,6 +18,9 @@ use Cake\Database\Dialect\SqlserverDialectTrait;
 use Cake\Database\Statement\PDOStatement;
 use PDO;
 
+/**
+ * SQLServer driver.
+ */
 class Sqlserver extends \Cake\Database\Driver {
 
 	use PDODriverTrait;
@@ -76,16 +79,14 @@ class Sqlserver extends \Cake\Database\Driver {
 				$connection->exec("SET {$key} {$value}");
 			}
 		}
-
 		return true;
 	}
 
 /**
- * Returns whether php is able to use this driver for connecting to database
+ * Returns whether PHP is able to use this driver for connecting to database
  *
  * @return boolean true if it is valid to use this driver
  */
-
 	public function enabled() {
 		return in_array('sqlsrv', PDO::getAvailableDrivers());
 	}

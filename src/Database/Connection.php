@@ -21,7 +21,7 @@ use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
-use Cake\Database\Querycompiler;
+use Cake\Database\QueryCompiler;
 use Cake\Database\ValueBinder;
 
 /**
@@ -229,11 +229,11 @@ class Connection {
 	}
 
 /**
- * Copiles a Query object into a SQL string according to the dialect for this
+ * Compiles a Query object into a SQL string according to the dialect for this
  * connection's driver
  *
- * @param Cake\Database\$query The query to be compiled
- * @param ValueBinder $generator The placeholder generator to use
+ * @param \Cake\Database\Query $query The query to be compiled
+ * @param \Cake\Database\ValueBinder $generator The placeholder generator to use
  * @return string
  */
 	public function compileQuery(Query $query, ValueBinder $generator) {
@@ -244,7 +244,7 @@ class Connection {
  * Executes the provided query after compiling it for the specific dirver
  * dialect and returns the executed Statement object.
  *
- * @param Cake\Database\$query The query to be executed
+ * @param \Cake\Database\Query $query The query to be executed
  * @return \Cake\Database\StatementInterface executed statement
  */
 	public function run(Query $query) {

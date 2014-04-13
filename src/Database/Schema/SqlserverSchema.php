@@ -18,7 +18,7 @@ use Cake\Database\Exception;
 use Cake\Database\Schema\Table;
 
 /**
- * Schema management/reflection features for Postgres.
+ * Schema management/reflection features for SQLServer.
  */
 class SqlserverSchema extends BaseSchema {
 
@@ -69,7 +69,6 @@ class SqlserverSchema extends BaseSchema {
  * @param int $length the column length
  * @param int $precision The column precision
  * @param int $scale The column scale
- * @throws Cake\Database\Exception when column cannot be parsed.
  * @return array Array of column information.
  * @link http://technet.microsoft.com/en-us/library/ms187752.aspx
  */
