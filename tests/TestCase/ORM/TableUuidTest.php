@@ -94,6 +94,7 @@ class TableUuidTest extends TestCase {
 		$this->assertEquals($id, $entity->id, 'Should be 36 characters');
 
 		$row = $table->find('all')->where(['id' => $entity->id])->first();
+		$row->id = strtolower($row->id);
 		$this->assertEquals($entity->toArray(), $row->toArray());
 	}
 
