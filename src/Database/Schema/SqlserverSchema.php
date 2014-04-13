@@ -48,6 +48,8 @@ class SqlserverSchema extends BaseSchema {
 		"SELECT DISTINCT TABLE_SCHEMA AS [schema], COLUMN_NAME AS [name], DATA_TYPE AS [type],
 			IS_NULLABLE AS [null], COLUMN_DEFAULT AS [default],
 			CHARACTER_MAXIMUM_LENGTH AS [char_length],
+			NUMERIC_PRECISION AS [precision],
+			NUMERIC_SCALE AS [scale],
 			'' AS [comment], ORDINAL_POSITION AS [ordinal_position]
 		FROM INFORMATION_SCHEMA.COLUMNS
 		WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?
@@ -65,11 +67,13 @@ class SqlserverSchema extends BaseSchema {
  *
  * @param string $col The column type
  * @param int $length the column length
+ * @param int $precision The column precision
+ * @param int $scale The column scale
  * @throws Cake\Database\Exception when column cannot be parsed.
  * @return array Array of column information.
  * @link http://technet.microsoft.com/en-us/library/ms187752.aspx
  */
-	protected function _convertColumn($col, $length = null) {
+	protected function _convertColumn($col, $length = null, $precision = null, $scale = null) {
 		$col = strtolower($col);
 		if (in_array($col, array('date', 'time'))) {
 			return ['type' => $col, 'length' => null];
@@ -79,16 +83,16 @@ class SqlserverSchema extends BaseSchema {
 		}
 
 		if ($col === 'int' || $col === 'integer') {
-			return ['type' => 'integer', 'length' => 10];
+			return ['type' => 'integer', 'length' => $precision ?: 10];
 		}
 		if ($col === 'bigint') {
-			return ['type' => 'biginteger', 'length' => 20];
+			return ['type' => 'biginteger', 'length' => $precision ?: 20];
 		}
 		if ($col === 'smallint') {
-			return ['type' => 'integer', 'length' => 5];
+			return ['type' => 'integer', 'length' => $precision ?: 5];
 		}
 		if ($col === 'tinyint') {
-			return ['type' => 'integer', 'length' => 3];
+			return ['type' => 'integer', 'length' => $precision ?: 3];
 		}
 		if ($col === 'bit') {
 			return ['type' => 'boolean', 'length' => null];
@@ -98,7 +102,7 @@ class SqlserverSchema extends BaseSchema {
 			strpos($col, 'money') !== false ||
 			strpos($col, 'decimal') !== false
 		) {
-			return ['type' => 'decimal', 'length' => null];
+			return ['type' => 'decimal', 'length' => $precision, 'precision' => $scale];
 		}
 
 		if ($col === 'real' || $col === 'float') {
@@ -137,7 +141,12 @@ class SqlserverSchema extends BaseSchema {
  *
  */
 	public function convertFieldDescription(Table $table, $row) {
-		$field = $this->_convertColumn($row['type'], $row['char_length']);
+		$field = $this->_convertColumn(
+			$row['type'],
+			$row['char_length'],
+			$row['precision'],
+			$row['scale']
+		);
 		if (!empty($row['default'])) {
 			$row['default'] = trim($row['default'], '()');
 		}
@@ -159,17 +168,17 @@ class SqlserverSchema extends BaseSchema {
  */
 	public function describeIndexSql($table, $config) {
 		$sql = "
-			SELECT  
+			SELECT
 				I.[name] AS [index_name],
 				IC.[index_column_id] AS [index_order],
-				AC.[name] AS [column_name],  
-				I.[is_unique], I.[is_primary_key], 
+				AC.[name] AS [column_name],
+				I.[is_unique], I.[is_primary_key],
 				I.[is_unique_constraint]
 			FROM sys.[tables] AS T
 			INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
-			INNER JOIN sys.[indexes] I ON T.[object_id] = I.[object_id]  
+			INNER JOIN sys.[indexes] I ON T.[object_id] = I.[object_id]
 			INNER JOIN sys.[index_columns] IC ON I.[object_id] = IC.[object_id] AND I.[index_id] = IC.[index_id]
-			INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id] AND IC.[column_id] = AC.[column_id] 
+			INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id] AND IC.[column_id] = AC.[column_id]
 			WHERE T.[is_ms_shipped] = 0 AND I.[type_desc] <> 'HEAP' AND T.[name] = ? AND S.[name] = ?
 			ORDER BY I.[index_id], IC.[index_column_id]
 		";

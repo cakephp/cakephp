@@ -86,81 +86,120 @@ SQL;
 			[
 				'DATETIME',
 				null,
+				null,
+				null,
 				['type' => 'timestamp', 'length' => null]
 			],
 			[
 				'DATE',
+				null,
+				null,
 				null,
 				['type' => 'date', 'length' => null]
 			],
 			[
 				'TIME',
 				null,
+				null,
+				null,
 				['type' => 'time', 'length' => null]
 			],
 			[
 				'SMALLINT',
 				null,
-				['type' => 'integer', 'length' => 5]
+				4,
+				null,
+				['type' => 'integer', 'length' => 4]
 			],
 			[
 				'INTEGER',
 				null,
+				null,
+				null,
 				['type' => 'integer', 'length' => 10]
 			],
 			[
+				'INTEGER',
+				null,
+				8,
+				null,
+				['type' => 'integer', 'length' => 8]
+			],
+			[
 				'BIGINT',
+				null,
+				null,
 				null,
 				['type' => 'biginteger', 'length' => 20]
 			],
 			[
 				'NUMERIC',
 				null,
-				['type' => 'decimal', 'length' => null]
+				15,
+				5,
+				['type' => 'decimal', 'length' => 15, 'precision' => 5]
 			],
 			[
 				'DECIMAL',
 				null,
-				['type' => 'decimal', 'length' => null]
+				11,
+				3,
+				['type' => 'decimal', 'length' => 11, 'precision' => 3]
 			],
 			[
 				'MONEY',
 				null,
-				['type' => 'decimal', 'length' => null]
+				null,
+				null,
+				['type' => 'decimal', 'length' => null, 'precision' => null]
 			],
 			[
 				'VARCHAR',
+				null,
+				null,
 				null,
 				['type' => 'string', 'length' => 255]
 			],
 			[
 				'VARCHAR',
 				10,
+				null,
+				null,
 				['type' => 'string', 'length' => 10]
 			],
 			[
 				'CHAR',
 				10,
+				null,
+				null,
 				['type' => 'string', 'fixed' => true, 'length' => 10]
 			],
 			[
 				'UNIQUEIDENTIFIER',
+				null,
+				null,
 				null,
 				['type' => 'uuid']
 			],
 			[
 				'TEXT',
 				null,
+				null,
+				null,
 				['type' => 'text', 'length' => null]
 			],
 			[
 				'REAL',
+				null,
+				null,
 				null,
 				['type' => 'float', 'length' => null]
 			],
 			[
 				'VARCHAR',
 				-1,
+				null,
+				null,
 				['type' => 'text', 'length' => null]
 			],
 		];
@@ -172,13 +211,15 @@ SQL;
  * @dataProvider convertColumnProvider
  * @return void
  */
-	public function testConvertColumn($type, $length, $expected) {
+	public function testConvertColumn($type, $length, $precision, $scale, $expected) {
 		$field = [
 			'name' => 'field',
 			'type' => $type,
 			'null' => 'YES',
 			'default' => 'Default value',
 			'char_length' => $length,
+			'precision' => $precision,
+			'scale' => $scale
 		];
 		$expected += [
 			'null' => true,

@@ -106,7 +106,7 @@ class ValueBinder {
  * @param \Cake\Database\StatementInterface $statement
  * @return void
  */
-	protected function attachTo($statement) {
+	public function attachTo($statement) {
 		$bindings = $this->bindings();
 		if (empty($bindings)) {
 			return;
