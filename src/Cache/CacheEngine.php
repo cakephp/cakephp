@@ -98,12 +98,41 @@ abstract class CacheEngine {
 	abstract public function write($key, $value);
 
 /**
+ * Write data for many keys into cache
+ *
+ * @param array $data An array of data to be stored in the cache
+ * @return array of bools for each key provided, true if the data was successfully cached, false on failure
+ */
+	public function writeMany($data) {
+		$return = array();
+		foreach ($data as $key => $value) {
+			$return[$key] = $this->write($key, $value);
+		}
+		return $return;
+	}
+
+/**
  * Read a key from the cache
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
 	abstract public function read($key);
+
+/**
+ * Read multiple keys from the cache
+ *
+ * @param array $keys An array of identifiers for the data
+ * @return array For each cache key (given as the array key) the cache data associated or false if the data doesn't
+ * exist, has expired, or if there was an error fetching it
+ */
+	public function readMany($keys) {
+		$return = array();
+		foreach ($keys as $key) {
+			$return[$key] = $this->read($key);
+		}
+		return $return;
+	}
 
 /**
  * Increment a number under the key and return incremented value
@@ -130,6 +159,21 @@ abstract class CacheEngine {
  * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	abstract public function delete($key);
+
+/**
+ * Deletes keys from the cache
+ *
+ * @param array $keys An array of identifiers for the data
+ * @return array For each provided cache key (given back as the array key) true if the value was successfully deleted,
+ * false if it didn't exist or couldn't be removed
+ */
+	public function deleteMany($keys) {
+		$return = array();
+		foreach ($keys as $key) {
+			$return[$key] = $this->delete($key);
+		}
+		return $return;
+	}
 
 /**
  * Delete all keys from the cache
