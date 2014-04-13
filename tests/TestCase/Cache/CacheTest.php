@@ -350,7 +350,13 @@ class CacheTest extends TestCase {
  */
 	public function testReadWriteMany() {
 		$this->_configCache();
-		$data = array('App.falseTest' => false, 'App.trueTest' => true, 'App.nullTest' => null, 'App.zeroTest' => 0, 'App.zeroTest2' => '0');
+		$data = array(
+			'App.falseTest' => false,
+			'App.trueTest' => true,
+			'App.nullTest' => null,
+			'App.zeroTest' => 0,
+			'App.zeroTest2' => '0'
+		);
 		Cache::writeMany($data, 'tests');
 
 		$read = Cache::readMany(array_keys($data), 'tests');
@@ -369,17 +375,24 @@ class CacheTest extends TestCase {
  */
 	public function testDeleteMany() {
 		$this->_configCache();
-		$data = array('App.falseTest' => false, 'App.trueTest' => true, 'App.nullTest' => null, 'App.zeroTest' => 0, 'App.zeroTest2' => '0');
-		Cache::writeMany($data, 'tests');
+		$data = array(
+			'App.falseTest' => false,
+			'App.trueTest' => true,
+			'App.nullTest' => null,
+			'App.zeroTest' => 0,
+			'App.zeroTest2' => '0'
+		);
+		Cache::writeMany(array_merge($data, array('App.keepTest' => 'keepMe')), 'tests');
 
 		Cache::deleteMany(array_keys($data), 'tests');
-		$read = Cache::readMany(array_keys($data), 'tests');
+		$read = Cache::readMany(array_merge(array_keys($data), array('App.keepTest')), 'tests');
 
 		$this->assertSame($read['App.falseTest'], false);
 		$this->assertSame($read['App.trueTest'], false);
 		$this->assertSame($read['App.nullTest'], false);
 		$this->assertSame($read['App.zeroTest'], false);
 		$this->assertSame($read['App.zeroTest2'], false);
+		$this->assertSame($read['App.keepTest'], 'keepMe');
 	}
 
 /**
