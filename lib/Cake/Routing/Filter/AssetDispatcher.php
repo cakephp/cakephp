@@ -55,10 +55,17 @@ class AssetDispatcher extends DispatcherFilter {
 			return null;
 		}
 
+		$pathSegments = explode('.', $url);
+		$ext = array_pop($pathSegments);
+		$isFile = file_exists($assetFile);
+		if (in_array($ext, Router::extensions()) && !$isFile) {
+			return null;
+		}
+
 		$response = $event->data['response'];
 		$event->stopPropagation();
 
-		if (!file_exists($assetFile)) {
+		if (!$isFile) {
 			$response->statusCode(404);
 			$response->send();
 			return $response;
@@ -69,8 +76,6 @@ class AssetDispatcher extends DispatcherFilter {
 			return $response;
 		}
 
-		$pathSegments = explode('.', $url);
-		$ext = array_pop($pathSegments);
 		$this->_deliverAsset($response, $assetFile, $ext);
 		return $response;
 	}

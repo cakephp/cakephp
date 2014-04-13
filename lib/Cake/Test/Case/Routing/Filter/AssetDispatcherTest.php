@@ -84,6 +84,38 @@ class AssetDispatcherTest extends CakeTestCase {
 	}
 
 /**
+ * AssetDispatcher should not 404 extensions that could be handled
+ * by Routing.
+ *
+ * @return void
+ */
+	public function testNoHandleRoutedExtension() {
+		$filter = new AssetDispatcher();
+		$response = $this->getMock('CakeResponse', array('_sendHeader'));
+		Configure::write('Asset.filter', array(
+			'js' => '',
+			'css' => ''
+		));
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+		), App::RESET);
+		Router::parseExtensions('json');
+		Router::connect('/test_plugin/api/v1/:action', array('controller' => 'api'));
+		CakePlugin::load('TestPlugin');
+
+		$request = new CakeRequest('test_plugin/api/v1/forwarding.json');
+		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$this->assertNull($filter->beforeDispatch($event));
+		$this->assertFalse($event->isStopped(), 'Events for routed extensions should not be stopped');
+
+		$request = new CakeRequest('test_plugin/api/v1/forwarding.png');
+		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$this->assertSame($response, $filter->beforeDispatch($event));
+		$this->assertTrue($event->isStopped());
+	}
+
+/**
  * Tests that $response->checkNotModified() is called and bypasses
  * file dispatching
  *
