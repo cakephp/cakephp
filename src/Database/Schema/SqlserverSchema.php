@@ -126,9 +126,8 @@ class SqlserverSchema extends BaseSchema {
 		}
 
 		if ($col === 'uniqueidentifier') {
-			return ['type' => 'string', 'fixed' => true, 'length' => 36];
+			return ['type' => 'uuid'];
 		}
-		// @todo cursor, hierarchyid, sql_variant, table, xml
 
 		return ['type' => 'text', 'length' => null];
 	}

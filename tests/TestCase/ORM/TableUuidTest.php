@@ -73,6 +73,7 @@ class TableUuidTest extends TestCase {
 		$this->assertRegExp('/^[a-f0-9-]{36}$/', $entity->id, 'Should be 36 characters');
 
 		$row = $table->find('all')->where(['id' => $entity->id])->first();
+		$row->id = strtolower($row->id);
 		$this->assertEquals($entity->toArray(), $row->toArray());
 	}
 

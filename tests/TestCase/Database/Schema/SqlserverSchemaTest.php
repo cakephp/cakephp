@@ -146,7 +146,7 @@ SQL;
 			[
 				'UNIQUEIDENTIFIER',
 				null,
-				['type' => 'string', 'fixed' => true, 'length' => 36]
+				['type' => 'uuid']
 			],
 			[
 				'TEXT',
