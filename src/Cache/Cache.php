@@ -230,9 +230,9 @@ class Cache {
 		foreach ($return as $key => $success) {
 			if ($success === false && !empty($data[$key])) {
 				throw new Error\Exception(sprintf(
-					'%s cache was unable to write \'%s\' to %s cache', 
-					$config, 
-					$key, 
+					'%s cache was unable to write \'%s\' to %s cache',
+					$config,
+					$key,
 					get_class($engine)
 				));
 			}
