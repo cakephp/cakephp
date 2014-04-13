@@ -150,7 +150,7 @@ class Cache {
  *
  * Permanently remove all expired and deleted data
  *
- * @param string $config [optional] The config name you wish to have garbagecollected. Defaults to 'default'
+ * @param string $config [optional] The config name you wish to have garbage collected. Defaults to 'default'
  * @param integer $expires [optional] An expires timestamp. Defaults to NULL
  * @return void
  */
