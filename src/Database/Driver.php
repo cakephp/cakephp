@@ -249,6 +249,8 @@ abstract class Driver {
  * Transforms the passed query to this Driver's dialect and returns an instance
  * of the transformed query and the full compiled SQL string
  *
+ * @param \Cake\Database\Query $query The query to compile.
+ * @param \Cake\Database\ValueBinder $generator The value binder to use.
  * @return array containing 2 entries. The first enty is the transformed query
  * and the secod one the compiled SQL
  */

@@ -20,7 +20,7 @@ use Cake\Database\SqlDialectTrait;
 use Cake\Database\SqlserverCompiler;
 
 /**
- * Contains functions that encapsulates the SQL dialect used by MySQL,
+ * Contains functions that encapsulates the SQL dialect used by SQLServer,
  * including query translators and schema introspection.
  */
 trait SqlserverDialectTrait {
@@ -29,7 +29,7 @@ trait SqlserverDialectTrait {
 	use TupleComparisonTranslatorTrait;
 
 /**
- *  String used to start a database identifier quoting to make it safe
+ * String used to start a database identifier quoting to make it safe
  *
  * @var string
  */
@@ -64,7 +64,7 @@ trait SqlserverDialectTrait {
 	}
 
 /**
- * Returns an dictionary of expressions to be transformed when compiling a Query
+ * Returns a dictionary of expressions to be transformed when compiling a Query
  * to SQL. Array keys are method names to be called in this class
  *
  * @return array
