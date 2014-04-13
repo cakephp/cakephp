@@ -406,8 +406,8 @@ class String {
  * - `html` If true, will ignore any HTML tags, ensuring that only the correct text is highlighted
  * - `regex` a custom regex rule that is used to match words, default is '|$tag|iu'
  *
- * @param string $text Text to search the phrase in
- * @param string $phrase The phrase that will be searched
+ * @param string $text Text to search the phrase in.
+ * @param string|array $phrase The phrase or phrases that will be searched.
  * @param array $options An array of html attributes and options.
  * @return string The highlighted text
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
@@ -451,7 +451,7 @@ class String {
 	}
 
 /**
- * Strips given text of all links (<a href=....)
+ * Strips given text of all links (<a href=....).
  *
  * @param string $text Text
  * @return string The text without links
