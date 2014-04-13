@@ -123,7 +123,8 @@ abstract class CacheEngine {
  * Read multiple keys from the cache
  *
  * @param array $keys An array of identifiers for the data
- * @return array For each cache key (given as the array key) the cache data associated or false if the data doesn't exist, has expired, or if there was an error fetching it
+ * @return array For each cache key (given as the array key) the cache data associated or false if the data doesn't
+ * exist, has expired, or if there was an error fetching it
  */
 	public function readMany($keys) {
 		$return = array();
@@ -163,7 +164,8 @@ abstract class CacheEngine {
  * Deletes keys from the cache
  *
  * @param array $keys An array of identifiers for the data
- * @return array For each provided cache key (given back as the array key) true if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ * @return array For each provided cache key (given back as the array key) true if the value was successfully deleted,
+ * false if it didn't exist or couldn't be removed
  */
 	public function deleteMany($keys) {
 		$return = array();

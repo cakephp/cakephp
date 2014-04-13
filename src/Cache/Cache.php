@@ -150,7 +150,7 @@ class Cache {
  *
  * Permanently remove all expired and deleted data
  *
- * @param string $config [optional] The config name you wish to have garbage collected. Defaults to 'default'
+ * @param string $config [optional] The config name you wish to have garbagecollected. Defaults to 'default'
  * @param integer $expires [optional] An expires timestamp. Defaults to NULL
  * @return void
  */
@@ -229,7 +229,7 @@ class Cache {
 		$return = $engine->writeMany($data);
 		foreach ($return as $key => $success) {
 			if ($success === false && !empty($data[$key])) {
-				throw new Error\Exception(__d('cake_dev', '%s cache was unable to write \'%s\' to %s cache', $config, $key, get_class($engine)));
+				throw new Error\Exception(sprintf('%s cache was unable to write \'%s\' to %s cache', $config, $key, get_class($engine)));
 			}
 		}
 		return $return;
@@ -276,7 +276,8 @@ class Cache {
  *
  * @param array $keys an array of keys to fetch from the cache
  * @param string $config optional name of the configuration to use. Defaults to 'default'
- * @return array An array containing, for each of the given $keys, the cached data or false if cached data could not be retreived
+ * @return array An array containing, for each of the given $keys, the cached data or false if cached data could not be
+ * retreived
  */
 	public static function readMany($keys, $config = 'default') {
 		$engine = static::engine($config);
@@ -363,7 +364,8 @@ class Cache {
  *
  * @param array $keys Array of cache keys to be deleted
  * @param string $config name of the configuration to use. Defaults to 'default'
- * @return array of boolean values that are true if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ * @return array of boolean values that are true if the value was successfully deleted, false if it didn't exist or
+ * couldn't be removed
  */
 	public static function deleteMany($keys, $config = 'default') {
 		$engine = static::engine($config);
