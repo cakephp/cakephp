@@ -29,6 +29,16 @@ use Cake\TestSuite\TestCase;
 class SqlserverSchemaTest extends TestCase {
 
 /**
+ * Set up
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$this->skipUnless(defined('PDO::SQLSRV_ENCODING_UTF8'), 'SQL Server extension not present');
+	}
+
+/**
  * Helper method for skipping tests that need a real connection.
  *
  * @return void
