@@ -55,12 +55,8 @@ class SqlserverCompiler extends QueryCompiler {
  * @return string
  */
 	protected function _buildLimitPart($limit, $query) {
-		if ($limit === null) {
+		if ($limit === null || $query->clause('offset') === null) {
 			return '';
-		}
-
-		if ($query->clause('offset') === null) {
-			return;
 		}
 
 		return sprintf(' FETCH FIRST %d ROWS ONLY', $limit);
