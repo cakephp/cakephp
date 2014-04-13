@@ -229,7 +229,12 @@ class Cache {
 		$return = $engine->writeMany($data);
 		foreach ($return as $key => $success) {
 			if ($success === false && !empty($data[$key])) {
-				throw new Error\Exception(sprintf('%s cache was unable to write \'%s\' to %s cache', $config, $key, get_class($engine)));
+				throw new Error\Exception(sprintf(
+					'%s cache was unable to write \'%s\' to %s cache', 
+					$config, 
+					$key, 
+					get_class($engine)
+				));
 			}
 		}
 		return $return;
