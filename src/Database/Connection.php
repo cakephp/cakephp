@@ -253,31 +253,10 @@ class Connection {
 		list($query, $sql) = $this->driver()->compileQuery($query, $binder);
 
 		$statement = $this->prepare($sql);
-		$this->_bindStatement($binder, $statement);
+		$binder->attachTo($statement);
 		$statement->execute();
 
 		return $statement;
-	}
-
-/**
- * Traverses all QueryExpression objects stored in every relevant for the passed
- * type of query and binds every value to the statement object for each placeholder.
- *
- * @param \Cake\Database\ValueBinder $binder the object containing the bindings
- * @param \Cake\Database\StatementInterface $statement
- * @return void
- */
-	protected function _bindStatement($binder, $statement) {
-		$bindings = $binder->bindings();
-		if (empty($bindings)) {
-			return;
-		}
-		$params = $types = [];
-		foreach ($bindings as $b) {
-			$params[$b['placeholder']] = $b['value'];
-			$types[$b['placeholder']] = $b['type'];
-		}
-		$statement->bind($params, $types);
 	}
 
 /**
