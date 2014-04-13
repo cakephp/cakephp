@@ -57,7 +57,7 @@ trait SqlserverDialectTrait {
 		}
 
 		if ($offset !== null && !$query->clause('order')) {
-			$query->order([$query->connection()->newQuery()->select(['NULL'])]);
+			$query->order($query->newExpr()->add('SELECT NULL'));
 		}
 
 		return $query;
