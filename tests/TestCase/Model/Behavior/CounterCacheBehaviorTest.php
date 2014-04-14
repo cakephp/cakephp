@@ -76,6 +76,8 @@ class CounterCacheBehaviorTest extends TestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
+
 		unset($this->user, $this->post);
 		TableRegistry::clear();
 	}

@@ -28,6 +28,8 @@ class ViewVarsTraitTest extends TestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
+
 		$this->subject = $this->getObjectForTrait('Cake\Utility\ViewVarsTrait');
 	}
 

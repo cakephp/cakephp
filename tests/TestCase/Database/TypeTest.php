@@ -53,6 +53,8 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
+
 		Type::map($this->_originalMap);
 	}
 

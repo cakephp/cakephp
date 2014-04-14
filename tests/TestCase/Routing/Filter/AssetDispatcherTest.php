@@ -29,6 +29,8 @@ class AssetDispatcherTest extends TestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
+
 		Configure::write('Dispatcher.filters', array());
 	}
 
