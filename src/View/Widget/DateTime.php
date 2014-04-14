@@ -133,11 +133,12 @@ class DateTime implements WidgetInterface {
 
 		$selected = $this->_deconstructDate($data['val'], $data);
 
-		if (!isset($data['meridian']) &&
-			isset($data['hour']['format']) &&
-			$data['hour']['format'] == 12
-		) {
+		$timeFormat = isset($data['hour']['format']) ? $data['hour']['format'] : null;
+		if ($timeFormat === 12 && !isset($data['meridian'])) {
 			$data['meridian'] = [];
+		}
+		if ($timeFormat === 24) {
+			$data['meridian'] = false;
 		}
 
 		$templateOptions = [];

@@ -4024,6 +4024,26 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Ensure that timeFormat=24 has no merdian.
+ *
+ * @return void.
+ */
+	public function testTimeFormat24NoMeridian() {
+		$result = $this->Form->time('start_time', array(
+			'timeFormat' => 24,
+			'interval' => 5,
+			'value' => '2014-03-08 16:30:00'
+		));
+		$this->assertContains('<option value="16" selected="selected">16</option>', $result);
+		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
+		$this->assertNotContains('meridian', $result);
+		$this->assertNotContains('pm', $result);
+		$this->assertNotContains('year', $result);
+		$this->assertNotContains('month', $result);
+		$this->assertNotContains('day', $result);
+	}
+
+/**
  * Test the date type.
  *
  * @return void
@@ -4054,6 +4074,13 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->dateTime('Contact.date', array('empty' => false));
 		$now = strtotime('now');
 		$expected = array(
+			array('select' => array('name' => 'Contact[date][year]')),
+			$yearsRegex,
+			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
+			date('Y', $now),
+			'/option',
+			'*/select',
+
 			array('select' => array('name' => 'Contact[date][month]')),
 			$monthsRegex,
 			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
@@ -4065,13 +4092,6 @@ class FormHelperTest extends TestCase {
 			$daysRegex,
 			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
 			date('j', $now),
-			'/option',
-			'*/select',
-
-			array('select' => array('name' => 'Contact[date][year]')),
-			$yearsRegex,
-			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
-			date('Y', $now),
 			'/option',
 			'*/select',
 
@@ -4088,13 +4108,6 @@ class FormHelperTest extends TestCase {
 			date('i', $now),
 			'/option',
 			'*/select',
-
-			array('select' => array('name' => 'Contact[date][meridian]')),
-			$meridianRegex,
-			array('option' => array('value' => date('a', $now), 'selected' => 'selected')),
-			date('a', $now),
-			'/option',
-			'*/select'
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -4109,9 +4122,16 @@ class FormHelperTest extends TestCase {
 		$now = strtotime('now');
 
 		$result = $this->Form->dateTime('Contact.date', array(
+			'timeFormat' => 12,
 			'empty' => true,
 		));
 		$expected = array(
+			array('select' => array('name' => 'Contact[date][year]')),
+			$yearsRegex,
+			array('option' => array('value' => '')),
+			'/option',
+			'*/select',
+
 			array('select' => array('name' => 'Contact[date][month]')),
 			$monthsRegex,
 			array('option' => array('value' => '')),
@@ -4120,12 +4140,6 @@ class FormHelperTest extends TestCase {
 
 			array('select' => array('name' => 'Contact[date][day]')),
 			$daysRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select',
-
-			array('select' => array('name' => 'Contact[date][year]')),
-			$yearsRegex,
 			array('option' => array('value' => '')),
 			'/option',
 			'*/select',
@@ -4166,6 +4180,12 @@ class FormHelperTest extends TestCase {
 			'value' => ''
 		));
 		$expected = array(
+			array('select' => array('name' => 'Contact[date][year]')),
+			$yearsRegex,
+			array('option' => array('selected' => 'selected', 'value' => '')),
+			'/option',
+			'*/select',
+
 			array('select' => array('name' => 'Contact[date][month]')),
 			$monthsRegex,
 			array('option' => array('selected' => 'selected', 'value' => '')),
@@ -4174,12 +4194,6 @@ class FormHelperTest extends TestCase {
 
 			array('select' => array('name' => 'Contact[date][day]')),
 			$daysRegex,
-			array('option' => array('selected' => 'selected', 'value' => '')),
-			'/option',
-			'*/select',
-
-			array('select' => array('name' => 'Contact[date][year]')),
-			$yearsRegex,
 			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			'*/select',
@@ -4319,7 +4333,6 @@ class FormHelperTest extends TestCase {
 		$this->assertContains('Contact[1][updated][year]', $result);
 		$this->assertContains('Contact[1][updated][hour]', $result);
 		$this->assertContains('Contact[1][updated][minute]', $result);
-		$this->assertContains('Contact[1][updated][meridian]', $result);
 	}
 
 /**
@@ -4640,7 +4653,7 @@ class FormHelperTest extends TestCase {
 	public function testHour() {
 		extract($this->dateRegex);
 
-		$result = $this->Form->hour('Model.field', ['value' => '']);
+		$result = $this->Form->hour('Model.field', ['format' => 12, 'value' => '']);
 		$expected = array(
 			array('select' => array('name' => 'Model[field][hour]')),
 			array('option' => array('selected' => 'selected', 'value' => '')),
@@ -5451,7 +5464,6 @@ class FormHelperTest extends TestCase {
 		$this->assertContains('name="created[day]"', $result, 'day name attribute is wrong.');
 		$this->assertContains('name="created[hour]"', $result, 'hour name attribute is wrong.');
 		$this->assertContains('name="created[minute]"', $result, 'min name attribute is wrong.');
-		$this->assertContains('name="created[meridian]"', $result, 'meridian name attribute is wrong.');
 	}
 
 /**

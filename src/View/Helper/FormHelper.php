@@ -80,7 +80,7 @@ class FormHelper extends Helper {
 			'button' => '<button{{attrs}}>{{text}}</button>',
 			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
 			'checkboxContainer' => '<div class="checkbox">{{input}}{{label}}</div>',
-			'dateWidget' => '{{month}}{{day}}{{year}}{{hour}}{{minute}}{{second}}{{meridian}}',
+			'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}',
 			'error' => '<div class="error-message">{{content}}</div>',
 			'errorList' => '<ul>{{content}}</ul>',
 			'errorItem' => '<li>{{text}}</li>',
@@ -1763,7 +1763,7 @@ class FormHelper extends Helper {
  * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `value` The selected value of the input.
- * - `format` Set to 12 or 24 to use 12 or 24 hour formatting. Defaults to 12.
+ * - `format` Set to 12 or 24 to use 12 or 24 hour formatting. Defaults to 24.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param array $options List of HTML attributes
@@ -1771,7 +1771,7 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::hour
  */
 	public function hour($fieldName, array $options = []) {
-		$options += ['format' => 12];
+		$options += ['format' => 24];
 		$options = $this->_singleDatetime($options, 'hour');
 
 		$options['timeFormat'] = $options['format'];
@@ -1887,7 +1887,7 @@ class FormHelper extends Helper {
 			'minYear' => null,
 			'maxYear' => null,
 			'orderYear' => 'desc',
-			'timeFormat' => 12,
+			'timeFormat' => 24,
 			'second' => false,
 		];
 		$options = $this->_initInputField($fieldName, $options);
@@ -1982,7 +1982,7 @@ class FormHelper extends Helper {
 			'value' => null,
 			'interval' => 1,
 			'round' => null,
-			'timeFormat' => 12,
+			'timeFormat' => 24,
 			'second' => false,
 		];
 		$options['year'] = $options['month'] = $options['day'] = false;
