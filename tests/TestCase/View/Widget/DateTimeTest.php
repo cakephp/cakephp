@@ -519,6 +519,7 @@ class DateTimeTest extends TestCase {
 			$result,
 			'contains 17 hours'
 		);
+		$this->assertNotContains('meridian', $result, '24hrs has no meridian');
 	}
 
 /**
@@ -534,11 +535,13 @@ class DateTimeTest extends TestCase {
 			'month' => false,
 			'day' => false,
 			'hour' => [
+				'format' => 24,
 				'data-foo' => 'test'
 			],
 			'minute' => false,
 			'second' => false,
 			'val' => $now,
+			'meridian' => [],
 		]);
 		$this->assertContains('<select name="date[hour]" data-foo="test">', $result);
 		$this->assertContains('<option value="00">0</option>', $result);
