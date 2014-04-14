@@ -4097,8 +4097,8 @@ class FormHelperTest extends TestCase {
 
 			array('select' => array('name' => 'Contact[date][hour]')),
 			$hoursRegex,
-			array('option' => array('value' => date('h', $now), 'selected' => 'selected')),
-			date('g', $now),
+			array('option' => array('value' => date('H', $now), 'selected' => 'selected')),
+			date('H', $now),
 			'/option',
 			'*/select',
 
