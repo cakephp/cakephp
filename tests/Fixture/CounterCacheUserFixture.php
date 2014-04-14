@@ -31,7 +31,7 @@ class CounterCacheUserFixture extends TestFixture {
 	);
 
 	public $records = array(
-		array('id' => 66, 'name' => 'Alexander', 'post_count' => 2, 'posts_published' => 1),
-		array('id' => 301, 'name' => 'Steven', 'post_count' => 1, 'posts_published' => 1),
+		array('name' => 'Alexander', 'post_count' => 2, 'posts_published' => 1),
+		array('name' => 'Steven', 'post_count' => 1, 'posts_published' => 1),
 	);
 }

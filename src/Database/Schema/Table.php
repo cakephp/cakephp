@@ -156,6 +156,7 @@ class Table {
 	protected static $_validForeignKeyActions = [
 		self::ACTION_CASCADE,
 		self::ACTION_SET_NULL,
+		self::ACTION_SET_DEFAULT,
 		self::ACTION_NO_ACTION,
 		self::ACTION_RESTRICT,
 	];
@@ -222,6 +223,8 @@ class Table {
  * @var string
  */
 	const ACTION_RESTRICT = 'restrict';
+
+	const ACTION_SET_DEFAULT = 'setDefault';
 
 /**
  * Constructor.

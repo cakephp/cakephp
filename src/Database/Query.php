@@ -76,36 +76,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	];
 
 /**
- * List of sprintf templates that will be used for compiling the SQL for
- * this query. There are some clauses that can be built as just as the
- * direct concatenation of the internal parts, those are listed here.
- *
- * @var array
- */
-	protected $_templates = [
-		'delete' => 'DELETE',
-		'update' => 'UPDATE %s',
-		'where' => ' WHERE %s',
-		'group' => ' GROUP BY %s ',
-		'having' => ' HAVING %s ',
-		'order' => ' %s',
-		'limit' => ' LIMIT %s',
-		'offset' => ' OFFSET %s',
-		'epilog' => ' %s'
-	];
-
-/**
- * When compiling a query to its SQL representation, the connection being used
- * for its execution has the ability to internally change it or even create a
- * completely different Query object to save any differences with its dialect.
- * This property holds a reference to the Query object that resulted from
- * transforming this instance.
- *
- * @var Query
- */
-	protected $_transformedQuery;
-
-/**
  * Indicates whether internal state of this query was changed, this is used to
  * discard internal cached objects such as the transformed query or the reference
  * to the executed statement.
@@ -192,12 +162,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return \Cake\Database\StatementInterface
  */
 	public function execute() {
-		$query = $this->_transformQuery();
-		$statement = $this->_connection->prepare($query);
-		$query->_bindStatement($statement);
-		$statement->execute();
-
-		return $this->_iterator = $query->_decorateStatement($statement);
+		$statement = $this->_connection->run($this);
+		return $this->_iterator = $this->_decorateStatement($statement);
 	}
 
 /**
@@ -223,40 +189,13 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$generator->resetCount();
 		}
 
-		$query = $this->_transformQuery();
-		$query->traverse($query->_sqlCompiler($sql, $generator));
-		return $sql;
+		return $this->connection()->compileQuery($this, $generator);
 	}
 
 /**
- * Returns a callable object that can be used to compile a SQL string representation
- * of this query.
- *
- * @param string $sql initial sql string to append to
- * @param \Cake\Database\ValueBinder The placeholder and value binder object
- * @return \Closure
- */
-	protected function _sqlCompiler(&$sql, $generator) {
-		return function($parts, $name) use (&$sql, $generator) {
-			if (!count($parts)) {
-				return;
-			}
-			if ($parts instanceof ExpressionInterface) {
-				$parts = [$parts->sql($generator)];
-			}
-			if (isset($this->_templates[$name])) {
-				$parts = $this->_stringifyExpressions((array)$parts, $generator);
-				return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
-			}
-			return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $generator);
-		};
-	}
-
-/**
- * Will iterate over every part that should be included for an specific query
- * type and execute the passed visitor function for each of them. Traversing
- * functions can aggregate results using variables in the closure or instance
- * variables. This function is commonly used as a way for traversing all query parts that
+ * Will iterate over every specified part. Traversing functions can aggregate
+ * results using variables in the closure or instance variables. This function
+ * is commonly used as a way for traversing all query parts that
  * are going to be used for constructing a query.
  *
  * The callback will receive 2 parameters, the first one is the value of the query
@@ -268,74 +207,19 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *		if ($clause === 'select') {
  *			var_dump($value);
  *		}
- *	});
+ *	}, ['select', 'from']);
  * }}}
  *
  * @param callable $visitor a function or callable to be executed for each part
+ * @param array $parts the query clasuses to traverse
  * @return Query
  */
-	public function traverse(callable $visitor) {
-		$this->{'_traverse' . ucfirst($this->_type)}($visitor);
+	public function traverse(callable $visitor, array $parts = []) {
+		$parts = $parts ?: array_keys($this->_parts);
+		foreach ($parts as $name) {
+			$visitor($this->_parts[$name], $name);
+		}
 		return $this;
-	}
-
-/**
- * Helper function that will iterate over all query parts needed for a SELECT statement
- * and execute the $visitor callback for each of them.
- *
- * The callback will receive 2 parameters, the first one is the value of the query
- * part that is being iterated and the second the name of such part.
- *
- * @param callable $visitor a function or callable to be executed for each part
- * @return void
- */
-	protected function _traverseSelect(callable $visitor) {
-		$parts = [
-			'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
-			'offset', 'union', 'epilog'
-		];
-		foreach ($parts as $name) {
-			$visitor($this->_parts[$name], $name);
-		}
-	}
-
-/**
- * Helper function that iterates the query parts needed for DELETE statements.
- *
- * @param callable $visitor A callable to execute for each part of the query.
- * @return void
- */
-	protected function _traverseDelete(callable $visitor) {
-		$parts = ['delete', 'from', 'where', 'epilog'];
-		foreach ($parts as $name) {
-			$visitor($this->_parts[$name], $name);
-		}
-	}
-
-/**
- * Helper function that iterates the query parts needed for UPDATE statements.
- *
- * @param callable $visitor A callable to execute for each part of the query.
- * @return void
- */
-	protected function _traverseUpdate(callable $visitor) {
-		$parts = ['update', 'set', 'where', 'epilog'];
-		foreach ($parts as $name) {
-			$visitor($this->_parts[$name], $name);
-		}
-	}
-
-/**
- * Helper function that iterates the query parts needed for INSERT statements.
- *
- * @param callable $visitor A callable to execute for each part of the query.
- * @return void
- */
-	protected function _traverseInsert(callable $visitor) {
-		$parts = ['insert', 'values', 'epilog'];
-		foreach ($parts as $name) {
-			$visitor($this->_parts[$name], $name);
-		}
 	}
 
 /**
@@ -449,50 +333,12 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function modifier($modifiers, $overwrite = false) {
+		$this->_dirty();
 		if ($overwrite) {
 			$this->_parts['modifier'] = [];
 		}
 		$this->_parts['modifier'] = array_merge($this->_parts['modifier'], (array)$modifiers);
 		return $this;
-	}
-
-/**
- * Helper function used to build the string representation of a SELECT clause,
- * it constructs the field list taking care of aliasing and
- * converting expression objects to string. This function also constructs the
- * DISTINCT clause for the query.
- *
- * @param array $parts list of fields to be transformed to string
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string
- */
-	protected function _buildSelectPart($parts, $generator) {
-		$driver = $this->_connection->driver();
-		$select = 'SELECT %s%s%s';
-		$distinct = $modifiers = null;
-		$normalized = [];
-		$parts = $this->_stringifyExpressions($parts, $generator);
-		foreach ($parts as $k => $p) {
-			if (!is_numeric($k)) {
-				$p = $p . ' AS ' . $driver->quoteIdentifier($k);
-			}
-			$normalized[] = $p;
-		}
-
-		if ($this->_parts['distinct'] === true) {
-			$distinct = 'DISTINCT ';
-		}
-
-		if (is_array($this->_parts['distinct'])) {
-			$distinct = $this->_stringifyExpressions($this->_parts['distinct'], $generator);
-			$distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $distinct));
-		}
-		if ($this->_parts['modifier']) {
-			$modifiers = $this->_stringifyExpressions($this->_parts['modifier'], $generator);
-			$modifiers = implode(' ', $modifiers) . ' ';
-		}
-
-		return sprintf($select, $distinct, $modifiers, implode(', ', $normalized));
 	}
 
 /**
@@ -539,28 +385,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 		$this->_dirty();
 		return $this;
-	}
-
-/**
- * Helper function used to build the string representation of a FROM clause,
- * it constructs the tables list taking care of aliasing and
- * converting expression objects to string.
- *
- * @param array $parts list of tables to be transformed to string
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string
- */
-	protected function _buildFromPart($parts, $generator) {
-		$select = ' FROM %s';
-		$normalized = [];
-		$parts = $this->_stringifyExpressions($parts, $generator);
-		foreach ($parts as $k => $p) {
-			if (!is_numeric($k)) {
-				$p = $p . ' AS ' . $k;
-			}
-			$normalized[] = $p;
-		}
-		return sprintf($select, implode(', ', $normalized));
 	}
 
 /**
@@ -679,53 +503,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 		$this->_dirty();
 		return $this;
-	}
-
-/**
- * Helper function used to build the string representation of multiple JOIN clauses,
- * it constructs the joins list taking care of aliasing and converting
- * expression objects to string in both the table to be joined and the conditions
- * to be used.
- *
- * @param array $parts list of joins to be transformed to string
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string
- */
-	protected function _buildJoinPart($parts, $generator) {
-		$joins = '';
-		foreach ($parts as $join) {
-			if ($join['table'] instanceof ExpressionInterface) {
-				$join['table'] = '(' . $join['table']->sql($generator) . ')';
-			}
-			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
-			if (isset($join['conditions']) && count($join['conditions'])) {
-				$joins .= sprintf(' ON %s', $join['conditions']->sql($generator));
-			} else {
-				$joins .= ' ON 1 = 1';
-			}
-		}
-		return $joins;
-	}
-
-/**
- * Helper function to generate SQL for SET expressions.
- *
- * @param array $parts List of keys & values to set.
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string
- */
-	protected function _buildSetPart($parts, $generator) {
-		$set = [];
-		foreach ($parts as $part) {
-			if ($part instanceof ExpressionInterface) {
-				$part = $part->sql($generator);
-			}
-			if ($part[0] === '(') {
-				$part = substr($part, 1, -1);
-			}
-			$set[] = $part;
-		}
-		return ' SET ' . implode('', $set);
 	}
 
 /**
@@ -1017,7 +794,15 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function order($fields, $overwrite = false) {
-		if ($overwrite || !$this->_parts['order']) {
+		if ($overwrite) {
+			$this->_parts['order'] = null;
+		}
+
+		if (!$fields) {
+			return $this;
+		}
+
+		if (!$this->_parts['order']) {
 			$this->_parts['order'] = new OrderByExpression;
 		}
 		$this->_conjugate('order', $fields, '', []);
@@ -1152,6 +937,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Query
  */
 	public function limit($num) {
+		$this->_dirty();
 		if ($num !== null && !is_object($num)) {
 			$num = (int)$num;
 		}
@@ -1252,67 +1038,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		];
 		$this->_dirty();
 		return $this;
-	}
-
-/**
- * Builds the SQL string for all the UNION clauses in this query, when dealing
- * with query objects it will also transform them using their configured SQL
- * dialect.
- *
- * @param array $parts list of queries to be operated with UNION
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string
- */
-	protected function _buildUnionPart($parts, $generator) {
-		$parts = array_map(function($p) use ($generator) {
-			$p['query'] = $p['query']->sql($generator);
-			$p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
-			return $p['all'] ? 'ALL ' . $p['query'] : $p['query'];
-		}, $parts);
-		return sprintf("\nUNION %s", implode("\nUNION ", $parts));
-	}
-
-/**
- * Builds the SQL fragment for INSERT INTO.
- *
- * @param array $parts
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string SQL fragment.
- */
-	protected function _buildInsertPart($parts, $generator) {
-		$table = $parts[0];
-		$columns = $this->_stringifyExpressions($parts[1], $generator);
-		return sprintf('INSERT INTO %s (%s)', $table, implode(', ', $columns));
-	}
-
-/**
- * Builds the SQL fragment for INSERT INTO.
- *
- * @param array $parts
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string SQL fragment.
- */
-	protected function _buildValuesPart($parts, $generator) {
-		return implode('', $this->_stringifyExpressions($parts, $generator));
-	}
-
-/**
- * Helper function used to covert ExpressionInterface objects inside an array
- * into their string representation.
- *
- * @param array $expressions list of strings and ExpressionInterface objects
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return array
- */
-	protected function _stringifyExpressions(array $expressions, ValueBinder $generator) {
-		$result = [];
-		foreach ($expressions as $k => $expression) {
-			if ($expression instanceof ExpressionInterface) {
-				$expression = '(' . $expression->sql($generator) . ')';
-			}
-			$result[$k] = $expression;
-		}
-		return $result;
 	}
 
 /**
@@ -1718,53 +1443,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 		$this->_parts[$part] = $expression;
 		$this->_dirty();
-	}
-
-/**
- * Traverses all QueryExpression objects stored in every relevant for this type
- * of query and binds every value to the statement object for each placeholder.
- *
- * @param \Cake\Database\StatementInterface $statement
- * @return void
- */
-	protected function _bindStatement($statement) {
-		$bindings = $this->valueBinder()->bindings();
-		if (empty($bindings)) {
-			return;
-		}
-		$params = $types = [];
-		foreach ($bindings as $b) {
-			$params[$b['placeholder']] = $b['value'];
-			$types[$b['placeholder']] = $b['type'];
-		}
-		$statement->bind($params, $types);
-	}
-
-/**
- * Returns a query object as returned by the connection object as a result of
- * transforming this query instance to conform to any dialect specifics.
- *
- * @return Query
- */
-	protected function _transformQuery() {
-		if (!empty($this->_transformedQuery) && !$this->_dirty) {
-			return $this->_transformedQuery;
-		}
-
-		if ($this->_transformedQuery === false) {
-			return $this;
-		}
-
-		$translator = $this->connection()->driver()->queryTranslator($this->_type);
-		$transformed = $translator($this);
-		$transformed->_dirty = false;
-		$transformed->_transformedQuery = false;
-
-		if ($transformed !== $this) {
-			$this->_transformedQuery = $transformed;
-		}
-
-		return $transformed;
 	}
 
 /**

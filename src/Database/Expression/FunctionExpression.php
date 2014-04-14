@@ -83,23 +83,25 @@ class FunctionExpression extends QueryExpression {
  * If associative the key would be used as argument when value is 'literal'
  * @param array $types associative array of types to be associated with the
  * passed arguments
+ * @param boolean $prepend Whehter to prepend or append to the list of arguments
  * @see FunctionExpression::__construct() for more details.
  * @return FunctionExpression
  */
-	public function add($params, $types = []) {
+	public function add($params, $types = [], $prepend = false) {
+		$put = $prepend ? 'array_unshift' : 'array_push';
 		foreach ($params as $k => $p) {
 			if (is_string($k) && $p === 'literal') {
-				$this->_conditions[] = $k;
+				$put($this->_conditions, $k);
 				continue;
 			}
 
 			if ($p instanceof ExpressionInterface) {
-				$this->_conditions[] = $p;
+				$put($this->_conditions, $p);
 				continue;
 			}
 
 			$type = isset($types[$k]) ? $types[$k] : null;
-			$this->_conditions[] = ['value' => $p, 'type' => $type];
+			$put($this->_conditions, ['value' => $p, 'type' => $type]);
 		}
 
 		return $this;

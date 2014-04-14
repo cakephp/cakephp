@@ -18,6 +18,8 @@ use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
+use Cake\Database\QueryCompiler;
+use Cake\Database\ValueBinder;
 
 /**
  * Represents a connection with a database server.
@@ -220,6 +222,37 @@ class Connection {
 		} else {
 			$statement = $this->query($query);
 		}
+		return $statement;
+	}
+
+/**
+ * Compiles a Query object into a SQL string according to the dialect for this
+ * connection's driver
+ *
+ * @param \Cake\Database\Query $query The query to be compiled
+ * @param \Cake\Database\ValueBinder $generator The placeholder generator to use
+ * @return string
+ */
+	public function compileQuery(Query $query, ValueBinder $generator) {
+		return $this->driver()->compileQuery($query, $generator)[1];
+	}
+
+/**
+ * Executes the provided query after compiling it for the specific dirver
+ * dialect and returns the executed Statement object.
+ *
+ * @param \Cake\Database\Query $query The query to be executed
+ * @return \Cake\Database\StatementInterface executed statement
+ */
+	public function run(Query $query) {
+		$binder = $query->valueBinder();
+		$binder->resetCount();
+		list($query, $sql) = $this->driver()->compileQuery($query, $binder);
+
+		$statement = $this->prepare($sql);
+		$binder->attachTo($statement);
+		$statement->execute();
+
 		return $statement;
 	}
 

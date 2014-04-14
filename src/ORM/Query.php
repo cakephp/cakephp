@@ -15,6 +15,7 @@
 namespace Cake\ORM;
 
 use Cake\Database\Query as DatabaseQuery;
+use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryTrait;
 use Cake\ORM\EagerLoader;
 use Cake\ORM\ResultSet;
@@ -482,7 +483,7 @@ class Query extends DatabaseQuery {
 				->execute();
 		} else {
 			// Forcing at least one field to be selected
-			$query->select($query->newExpr()->add('1'));
+			$query->select(['_one_' => $query->newExpr()->add('1')]);
 			$statement = $this->connection()->newQuery()
 				->select($count)
 				->from(['count_source' => $query])
@@ -561,6 +562,24 @@ class Query extends DatabaseQuery {
 	}
 
 /**
+ * {@inheritdoc}
+ *
+ */
+	public function sql(ValueBinder $binder = null) {
+		$this->_transformQuery();
+		return parent::sql($binder);
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	public function execute() {
+		$this->_transformQuery();
+		return parent::execute();
+	}
+
+/**
  * Executes this query and returns a ResultSet object containing the results.
  * This will also setup the correct statement class in order to eager load deep
  * associations.
@@ -584,8 +603,9 @@ class Query extends DatabaseQuery {
  */
 	protected function _transformQuery() {
 		if (!$this->_dirty) {
-			return parent::_transformQuery();
+			return;
 		}
+
 		if ($this->_type === 'select') {
 			if (empty($this->_parts['from'])) {
 				$this->from([$this->_repository->alias() => $this->_repository->table()]);
@@ -593,7 +613,6 @@ class Query extends DatabaseQuery {
 			$this->_addDefaultFields();
 			$this->eagerLoader()->attachAssociations($this, $this->_repository, !$this->_hasFields);
 		}
-		return parent::_transformQuery();
 	}
 
 /**

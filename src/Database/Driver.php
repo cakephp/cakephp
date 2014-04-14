@@ -14,6 +14,10 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Query;
+use Cake\Database\QueryCompiler;
+use Cake\Database\ValueBinder;
+
 /**
  * Represents a database diver containing all specificities for
  * a database engine including its SQL dialect
@@ -239,6 +243,31 @@ abstract class Driver {
 			return $this->_autoQuoting;
 		}
 		return $this->_autoQuoting = (bool)$enable;
+	}
+
+/**
+ * Transforms the passed query to this Driver's dialect and returns an instance
+ * of the transformed query and the full compiled SQL string
+ *
+ * @param \Cake\Database\Query $query The query to compile.
+ * @param \Cake\Database\ValueBinder $generator The value binder to use.
+ * @return array containing 2 entries. The first enty is the transformed query
+ * and the secod one the compiled SQL
+ */
+	public function compileQuery(Query $query, ValueBinder $generator) {
+		$processor = $this->newCompiler();
+		$translator = $this->queryTranslator($query->type());
+		$query = $translator($query);
+		return [$query, $processor->compile($query, $generator)];
+	}
+
+/**
+ * Returns an instance of a QueryCompiler
+ *
+ * @return \Cake\Database\QueryCompiler
+ */
+	public function newCompiler() {
+		return new QueryCompiler;
 	}
 
 /**

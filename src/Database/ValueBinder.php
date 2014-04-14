@@ -100,4 +100,23 @@ class ValueBinder {
 		$this->_bindingsCount = 0;
 	}
 
+/**
+ * Binds all the stored values in this object to the passed statement.
+ *
+ * @param \Cake\Database\StatementInterface $statement
+ * @return void
+ */
+	public function attachTo($statement) {
+		$bindings = $this->bindings();
+		if (empty($bindings)) {
+			return;
+		}
+		$params = $types = [];
+		foreach ($bindings as $b) {
+			$params[$b['placeholder']] = $b['value'];
+			$types[$b['placeholder']] = $b['type'];
+		}
+		$statement->bind($params, $types);
+	}
+
 }
