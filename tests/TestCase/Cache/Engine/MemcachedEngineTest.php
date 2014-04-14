@@ -451,6 +451,85 @@ class MemcachedEngineTest extends TestCase {
 	}
 
 /**
+ * testReadMany method
+ *
+ * @return void
+ */
+	public function testReadMany() {
+		$this->_configCache(['duration' => 2]);
+		$data = array(
+			'App.falseTest' => false,
+			'App.trueTest' => true,
+			'App.nullTest' => null,
+			'App.zeroTest' => 0,
+			'App.zeroTest2' => '0'
+		);
+		foreach ($data as $key => $value) {
+			Cache::write($key, $value, 'memcached');
+		}
+
+		$read = Cache::readMany(array_keys($data), 'memcached');
+
+		$this->assertSame($read['App.falseTest'], false);
+		$this->assertSame($read['App.trueTest'], true);
+		$this->assertSame($read['App.nullTest'], null);
+		$this->assertSame($read['App.zeroTest'], 0);
+		$this->assertSame($read['App.zeroTest2'], '0');
+	}
+
+/**
+ * testWriteMany method
+ *
+ * @return void
+ */
+	public function testWriteMany() {
+		$this->_configCache(['duration' => 2]);
+		$data = array(
+			'App.falseTest' => false,
+			'App.trueTest' => true,
+			'App.nullTest' => null,
+			'App.zeroTest' => 0,
+			'App.zeroTest2' => '0'
+		);
+		Cache::writeMany($data, 'memcached');
+
+		$this->assertSame(Cache::read('App.falseTest', 'memcached'), false);
+		$this->assertSame(Cache::read('App.trueTest', 'memcached'), true);
+		$this->assertSame(Cache::read('App.nullTest', 'memcached'), null);
+		$this->assertSame(Cache::read('App.zeroTest', 'memcached'), 0);
+		$this->assertSame(Cache::read('App.zeroTest2', 'memcached'), '0');
+	}
+
+/**
+ * testDeleteMany method
+ *
+ * @return void
+ */
+	public function testDeleteMany() {
+		$this->_configCache();
+		$data = array(
+			'App.falseTest' => false,
+			'App.trueTest' => true,
+			'App.nullTest' => null,
+			'App.zeroTest' => 0,
+			'App.zeroTest2' => '0',
+		);
+		foreach ($data as $key => $value) {
+			Cache::write($key, $value, 'memcached');
+		}
+		Cache::write('App.keepTest', 'keepMe', 'memcached');
+
+		Cache::deleteMany(array_merge(array_keys($data), ['App.doesNotExist']), 'memcached');
+
+		$this->assertSame(Cache::read('App.falseTest', 'memcached'), false);
+		$this->assertSame(Cache::read('App.trueTest', 'memcached'), false);
+		$this->assertSame(Cache::read('App.nullTest', 'memcached'), false);
+		$this->assertSame(Cache::read('App.zeroTest', 'memcached'), false);
+		$this->assertSame(Cache::read('App.zeroTest2', 'memcached'), false);
+		$this->assertSame(Cache::read('App.keepTest', 'memcached'), 'keepMe');
+	}
+
+/**
  * testExpiry method
  *
  * @return void
