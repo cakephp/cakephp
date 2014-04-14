@@ -51,30 +51,19 @@ class AssetDispatcher extends DispatcherFilter {
 		}
 
 		$assetFile = $this->_getAssetFile($url);
-		if ($assetFile === null) {
+		if ($assetFile === null || !file_exists($assetFile)) {
 			return null;
 		}
-
-		$pathSegments = explode('.', $url);
-		$ext = array_pop($pathSegments);
-		$isFile = file_exists($assetFile);
-		if (in_array($ext, Router::extensions()) && !$isFile) {
-			return null;
-		}
-
 		$response = $event->data['response'];
 		$event->stopPropagation();
-
-		if (!$isFile) {
-			$response->statusCode(404);
-			$response->send();
-			return $response;
-		}
 
 		$response->modified(filemtime($assetFile));
 		if ($response->checkNotModified($event->data['request'])) {
 			return $response;
 		}
+
+		$pathSegments = explode('.', $url);
+		$ext = array_pop($pathSegments);
 
 		$this->_deliverAsset($response, $assetFile, $ext);
 		return $response;

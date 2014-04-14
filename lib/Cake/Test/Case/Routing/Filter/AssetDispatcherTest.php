@@ -108,11 +108,6 @@ class AssetDispatcherTest extends CakeTestCase {
 		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
 		$this->assertNull($filter->beforeDispatch($event));
 		$this->assertFalse($event->isStopped(), 'Events for routed extensions should not be stopped');
-
-		$request = new CakeRequest('test_plugin/api/v1/forwarding.png');
-		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
-		$this->assertSame($response, $filter->beforeDispatch($event));
-		$this->assertTrue($event->isStopped());
 	}
 
 /**
@@ -159,23 +154,6 @@ class AssetDispatcherTest extends CakeTestCase {
 
 		$this->assertSame($response, $filter->beforeDispatch($event));
 		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
-	}
-
-/**
- * Test 404 status code is set on missing asset.
- *
- * @return void
- */
-	public function test404OnMissingFile() {
-		$filter = new AssetDispatcher();
-
-		$response = $this->getMock('CakeResponse', array('_sendHeader'));
-		$request = new CakeRequest('/theme/test_theme/img/nope.gif');
-		$event = new CakeEvent('Dispatcher.beforeRequest', $this, compact('request', 'response'));
-
-		$response = $filter->beforeDispatch($event);
-		$this->assertTrue($event->isStopped());
-		$this->assertEquals(404, $response->statusCode());
 	}
 
 /**
