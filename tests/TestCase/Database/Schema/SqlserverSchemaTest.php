@@ -15,10 +15,10 @@
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
-use Cake\Datasource\ConnectionManager;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchema;
 use Cake\Database\Schema\Table;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -176,7 +176,21 @@ SQL;
 				['type' => 'string', 'length' => 10]
 			],
 			[
+				'NVARCHAR',
+				50,
+				null,
+				null,
+				['type' => 'string', 'length' => 50]
+			],
+			[
 				'CHAR',
+				10,
+				null,
+				null,
+				['type' => 'string', 'fixed' => true, 'length' => 10]
+			],
+			[
+				'NCHAR',
 				10,
 				null,
 				null,
