@@ -97,7 +97,7 @@ class Controller extends Object implements EventListener {
  *
  * Example: `public $helpers = array('Html', 'Js', 'Time', 'Ajax');`
  *
- * @var mixed A single name as a string or a list of names as an array.
+ * @var mixed
  * @link http://book.cakephp.org/2.0/en/controllers.html#components-helpers-and-uses
  */
 	public $helpers = array();
@@ -142,7 +142,7 @@ class Controller extends Object implements EventListener {
  * Set to true to automatically render the view
  * after action logic.
  *
- * @var boolean
+ * @var bool
  */
 	public $autoRender = true;
 
@@ -215,7 +215,7 @@ class Controller extends Object implements EventListener {
 /**
  * Holds any validation errors produced by the last call of the validateErrors() method/
  *
- * @var array Validation errors, or false if none
+ * @var array
  */
 	public $validationErrors = null;
 
@@ -304,7 +304,7 @@ class Controller extends Object implements EventListener {
  * Provides backwards compatibility to avoid problems with empty and isset to alias properties.
  *
  * @param string $name
- * @return boolean
+ * @return bool
  */
 	public function __get($name) {
 		if ($name === $this->modelClass) {
@@ -393,7 +393,7 @@ class Controller extends Object implements EventListener {
  *
  * @param \ReflectionMethod $method The method to be invoked.
  * @param \Cake\Network\Request $request The request to check.
- * @return boolean
+ * @return bool
  */
 	protected function _isPrivateAction(\ReflectionMethod $method, Request $request) {
 		$privateAction = (
@@ -539,8 +539,8 @@ class Controller extends Object implements EventListener {
  *
  * @param string|array $url A string or array-based URL pointing to another location within the app,
  *     or an absolute URL
- * @param integer $status Optional HTTP status code (eg: 404)
- * @param boolean $exit If true, exit() will be called after the redirect
+ * @param int $status Optional HTTP status code (eg: 404)
+ * @param bool $exit If true, exit() will be called after the redirect
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::redirect
  */
@@ -617,7 +617,7 @@ class Controller extends Object implements EventListener {
  * Returns the referring URL for this request.
  *
  * @param string $default Default URL to use if HTTP_REFERER cannot be read from headers
- * @param boolean $local If true, restrict referring URLs to local server
+ * @param bool $local If true, restrict referring URLs to local server
  * @return string Referring URL
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::referer
  */
@@ -710,8 +710,8 @@ class Controller extends Object implements EventListener {
  * @param Event $event An Event instance
  * @param string|array $url A string or array-based URL pointing to another location within the app,
  *     or an absolute URL
- * @param integer $status Optional HTTP status code (eg: 404)
- * @param boolean $exit If true, exit() will be called after the redirect
+ * @param int $status Optional HTTP status code (eg: 404)
+ * @param bool $exit If true, exit() will be called after the redirect
  *   false to stop redirection event,
  *   string controllers a new redirection URL or
  *   array with the keys url, status and exit to be used by the redirect method.

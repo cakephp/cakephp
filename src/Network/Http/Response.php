@@ -201,7 +201,7 @@ class Response extends Message {
 /**
  * Check if the response was OK
  *
- * @return boolean
+ * @return bool
  */
 	public function isOk() {
 		$codes = [
@@ -215,7 +215,7 @@ class Response extends Message {
 /**
  * Check if the response had a redirect status code.
  *
- * @return boolean
+ * @return bool
  */
 	public function isRedirect() {
 		$codes = [
@@ -282,7 +282,7 @@ class Response extends Message {
  *
  * @param string $name The name of the cookie you want. Leave
  *   null to get all cookies.
- * @param boolean $all Get all parts of the cookie. When false only
+ * @param bool $all Get all parts of the cookie. When false only
  *   the value will be returned.
  * @return mixed
  */
@@ -376,7 +376,7 @@ class Response extends Message {
  * isset/empty test with -> syntax.
  *
  * @param string $name
- * @return boolean
+ * @return bool
  */
 	public function __isset($name) {
 		if (!isset($this->_exposedProperties[$name])) {

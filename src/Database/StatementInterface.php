@@ -33,7 +33,7 @@ interface StatementInterface {
  *	`$statement->bindValue('active', true, 'boolean');`
  *	`$statement->bindValue(5, new \DateTime(), 'date');`
  *
- * @param string|integer $column name or param position to be bound
+ * @param string|int $column name or param position to be bound
  * @param mixed $value The value to bind to variable in query
  * @param string $type name of configured Type class
  * @return void
@@ -60,14 +60,14 @@ interface StatementInterface {
  *	echo $statement->columnCount(); // outputs 2
  * }}}
  *
- * @return integer
+ * @return int
  */
 	public function columnCount();
 
 /**
  * Returns the error code for the last error that occurred when executing this statement
  *
- * @return integer|string
+ * @return int|string
  */
 	public function errorCode();
 
@@ -86,7 +86,7 @@ interface StatementInterface {
  * as it would normally happen when calling `bindValue`
  *
  * @param array $params list of values to be bound to query
- * @return boolean true on success, false otherwise
+ * @return bool true on success, false otherwise
  */
 	public function execute($params = null);
 
@@ -136,7 +136,7 @@ interface StatementInterface {
  *	print_r($statement->rowCount()); // will show 1
  * }}}
  *
- * @return integer
+ * @return int
  */
 	public function rowCount();
 
@@ -144,7 +144,7 @@ interface StatementInterface {
  * Statements can be passed as argument for count()
  * to return the number for affected rows from last execution
  *
- * @return integer
+ * @return int
  */
 	public function count();
 

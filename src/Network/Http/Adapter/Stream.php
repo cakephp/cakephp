@@ -274,7 +274,7 @@ class Stream {
  * Local error handler to capture errors triggered during
  * stream connection.
  *
- * @param integer $code
+ * @param int $code
  * @param string $message
  * @return void
  */

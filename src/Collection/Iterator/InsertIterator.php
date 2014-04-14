@@ -34,7 +34,7 @@ class InsertIterator extends Collection {
 /**
  * Holds whether the values colelction is still valid. (has more records)
  *
- * @var boolean
+ * @var bool
  */
 	protected $_validValues = true;
 

@@ -42,7 +42,7 @@ class LoggingStatement extends StatementDecorator {
  * and log the query afterwards.
  *
  * @param array $params list of values to be bound to query
- * @return boolean true on success, false otherwise
+ * @return bool true on success, false otherwise
  */
 	public function execute($params = null) {
 		$t = microtime(true);
@@ -62,9 +62,9 @@ class LoggingStatement extends StatementDecorator {
  * Wrapper for bindValue function to gather each parameter to be later used
  * in the logger function.
  *
- * @param string|integer $column name or param position to be bound
+ * @param string|int $column name or param position to be bound
  * @param mixed $value The value to bind to variable in query
- * @param string|integer $type PDO type or name of configured Type class
+ * @param string|int $type PDO type or name of configured Type class
  * @return void
  */
 	public function bindValue($column, $value, $type = 'string') {

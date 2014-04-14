@@ -43,7 +43,7 @@ class AjaxAuthController extends Controller {
 /**
  * testUrl property
  *
- * @var mixed null
+ * @var mixed
  */
 	public $testUrl = null;
 

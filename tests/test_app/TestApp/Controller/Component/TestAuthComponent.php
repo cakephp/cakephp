@@ -28,14 +28,14 @@ class TestAuthComponent extends AuthComponent {
 /**
  * testStop property
  *
- * @var bool false
+ * @var bool
  */
 	public $testStop = false;
 
 /**
  * Helper method to add/set an authenticate object instance
  *
- * @param integer $index The index at which to add/set the object
+ * @param int $index The index at which to add/set the object
  * @param Object $object The object to add/set
  * @return void
  */
@@ -46,7 +46,7 @@ class TestAuthComponent extends AuthComponent {
 /**
  * Helper method to add/set an authorize object instance
  *
- * @param integer $index The index at which to add/set the object
+ * @param int $index The index at which to add/set the object
  * @param Object $object The object to add/set
  * @return void
  */

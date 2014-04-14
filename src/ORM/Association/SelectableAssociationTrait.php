@@ -26,7 +26,7 @@ trait SelectableAssociationTrait {
  * primary keys in order to use them as a filter in the finder query.
  *
  * @param array $options
- * @return boolean true if a list of keys will be required
+ * @return bool true if a list of keys will be required
  */
 	public function requiresKeys(array $options = []) {
 		$strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();

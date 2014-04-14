@@ -109,7 +109,7 @@ class BelongsToMany extends Association {
 /**
  * The table instance for the junction relation.
  *
- * @var string|\Cake\ORM\Table $table Name or instance for the join table
+ * @var string|\Cake\ORM\Table
  */
 	protected $_through;
 
@@ -261,7 +261,7 @@ class BelongsToMany extends Association {
  * Return false as join conditions are defined in the junction table
  *
  * @param array $options list of options passed to attachTo method
- * @return boolean false
+ * @return bool false
  */
 	protected function _joinCondition($options) {
 		return false;
@@ -303,7 +303,7 @@ class BelongsToMany extends Association {
  *
  * @param \Cake\ORM\Entity $entity The entity that started the cascading delete.
  * @param array $options The options for the original delete.
- * @return boolean Success.
+ * @return bool Success.
  */
 	public function cascadeDelete(Entity $entity, array $options = []) {
 		$foreignKey = (array)$this->foreignKey();
@@ -332,7 +332,7 @@ class BelongsToMany extends Association {
  * of the association via the joint table.
  *
  * @param \Cake\ORM\Table $side The potential Table with ownership
- * @return boolean
+ * @return bool
  */
 	public function isOwningSide(Table $side) {
 		return true;
@@ -377,7 +377,7 @@ class BelongsToMany extends Association {
  * the target table
  * @throws \InvalidArgumentException if the property representing the association
  * in the parent entity cannot be traversed
- * @return boolean|Entity false if $entity could not be saved, otherwise it returns
+ * @return bool|Entity false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()
  * @see BelongsToMany::replaceLinks()
@@ -412,7 +412,7 @@ class BelongsToMany extends Association {
  * @param array $options list of options accepted by Table::save()
  * @throws \InvalidArgumentException if the property representing the association
  * in the parent entity cannot be traversed
- * @return \Cake\ORM\Entity|boolean The parent entity after all links have been
+ * @return \Cake\ORM\Entity|bool The parent entity after all links have been
  * created if no errors happened, false otherwise
  */
 	protected function _saveTarget(Entity $parentEntity, $entities, $options) {
@@ -465,7 +465,7 @@ class BelongsToMany extends Association {
  * @param array $targetEntities list of entities to link to link to the source entity using the
  * junction table
  * @param array $options list of options accepted by Table::save()
- * @return boolean success
+ * @return bool success
  */
 	protected function _saveLinks(Entity $sourceEntity, $targetEntities, $options) {
 		$target = $this->target();
@@ -533,7 +533,7 @@ class BelongsToMany extends Association {
  * @param array $options list of options to be passed to the save method
  * @throws \InvalidArgumentException when any of the values in $targetEntities is
  * detected to not be already persisted
- * @return boolean true on success, false otherwise
+ * @return bool true on success, false otherwise
  */
 	public function link(Entity $sourceEntity, array $targetEntities, array $options = []) {
 		$this->_checkPersistenceStatus($sourceEntity, $targetEntities);
@@ -571,7 +571,7 @@ class BelongsToMany extends Association {
  * this association
  * @param array $targetEntities list of entities persisted in the target table for
  * this association
- * @param boolean $cleanProperty whether or not to remove all the objects in $targetEntities
+ * @param bool $cleanProperty whether or not to remove all the objects in $targetEntities
  * that are stored in $sourceEntity
  * @throws \InvalidArgumentException if non persisted entities are passed or if
  * any of them is lacking a primary key value
@@ -657,7 +657,7 @@ class BelongsToMany extends Association {
  * updating new links
  * @throws \InvalidArgumentException if non persisted entities are passed or if
  * any of them is lacking a primary key value
- * @return boolean success
+ * @return bool success
  */
 	public function replaceLinks(Entity $sourceEntity, array $targetEntities, array $options = []) {
 		$primaryKey = (array)$this->source()->primaryKey();
@@ -768,7 +768,7 @@ class BelongsToMany extends Association {
  * of this association
  * @param array $targetEntities list of entities belonging to the `target` side
  * of this association
- * @return boolean
+ * @return bool
  */
 	protected function _checkPersistenceStatus($sourceEntity, array $targetEntities) {
 		if ($sourceEntity->isNew() !== false) {

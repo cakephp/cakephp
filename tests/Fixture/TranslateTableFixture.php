@@ -25,7 +25,7 @@ class TranslateTableFixture extends TestFixture {
 /**
  * table property
  *
- * @var string 'another_i18n'
+ * @var string
  */
 	public $table = 'another_i18n';
 

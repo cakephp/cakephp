@@ -81,7 +81,7 @@ class Associations {
  * Check for an attached association by name.
  *
  * @param string $alias The association alias to get.
- * @return boolean Whether or not the association exists.
+ * @return bool Whether or not the association exists.
  */
 	public function has($alias) {
 		return isset($this->_items[strtolower($alias)]);
@@ -133,7 +133,7 @@ class Associations {
  * @param array $associations The list of associations to save parents from.
  *   associations not in this list will not be saved.
  * @param array $options The options for the save operation.
- * @return boolean Success
+ * @return bool Success
  */
 	public function saveParents(Table $table, Entity $entity, $associations, array $options = []) {
 		if (empty($associations)) {
@@ -153,7 +153,7 @@ class Associations {
  * @param array $associations The list of associations to save children from.
  *   associations not in this list will not be saved.
  * @param array $options The options for the save operation.
- * @return boolean Success
+ * @return bool Success
  */
 	public function saveChildren(Table $table, Entity $entity, array $associations, array $options) {
 		if (empty($associations)) {
@@ -169,9 +169,9 @@ class Associations {
  * @param Entity $entity The entity to save
  * @param array $associations Array of associations to save.
  * @param array $options Original options
- * @param boolean $owningSide Compared with association classes'
+ * @param bool $owningSide Compared with association classes'
  *   isOwningSide method.
- * @return boolean Success
+ * @return bool Success
  * @throws \InvalidArgumentException When an unknown alias is used.
  */
 	protected function _saveAssociations($table, $entity, $associations, $options, $owningSide) {
@@ -207,7 +207,7 @@ class Associations {
  * @param Entity $entity The entity to save
  * @param array $nested Options for deeper associations
  * @param array $options Original options
- * @return boolean Success
+ * @return bool Success
  */
 	protected function _save($association, $entity, $nested, $options) {
 		if (!$entity->dirty($association->property())) {
@@ -237,7 +237,7 @@ class Associations {
  * array. If true is passed, then it returns all association names
  * in this collection.
  *
- * @param boolean|array $keys the list of association names to normalize
+ * @param bool|array $keys the list of association names to normalize
  * @return array
  */
 	public function normalizeKeys($keys) {

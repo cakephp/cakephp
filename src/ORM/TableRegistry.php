@@ -167,7 +167,7 @@ class TableRegistry {
  * Check to see if an instance exists in the registry.
  *
  * @param string $alias The alias to check for.
- * @return boolean
+ * @return bool
  */
 	public static function exists($alias) {
 		return isset(static::$_instances[$alias]);

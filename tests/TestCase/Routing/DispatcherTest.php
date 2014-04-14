@@ -113,7 +113,7 @@ class MyPluginController extends MyPluginAppController {
 /**
  * name property
  *
- * @var string 'MyPlugin'
+ * @var string
  */
 	public $name = 'MyPlugin';
 
@@ -163,7 +163,7 @@ class OtherPagesController extends MyPluginAppController {
 /**
  * name property
  *
- * @var string 'OtherPages'
+ * @var string
  */
 	public $name = 'OtherPages';
 
@@ -211,7 +211,7 @@ class ArticlesTestController extends ArticlesTestAppController {
 /**
  * name property
  *
- * @var string 'ArticlesTest'
+ * @var string
  */
 	public $name = 'ArticlesTest';
 

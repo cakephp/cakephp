@@ -123,7 +123,7 @@ class IniAcl extends Object implements AclInterface {
  * @param string $aro ARO
  * @param string $aco ACO
  * @param string $action Action
- * @return boolean Success
+ * @return bool Success
  */
 	public function check($aro, $aco, $action = null) {
 		$aclConfig = $this->config();

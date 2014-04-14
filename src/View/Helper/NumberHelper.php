@@ -88,7 +88,7 @@ class NumberHelper extends Helper {
  * @see \Cake\Utility\Number::precision()
  *
  * @param float $number A floating point number.
- * @param integer $precision The precision of the returned number.
+ * @param int $precision The precision of the returned number.
  * @return float Formatted float.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
  */
@@ -101,7 +101,7 @@ class NumberHelper extends Helper {
  *
  * @see \Cake\Utility\Number::toReadableSize()
  *
- * @param integer $size Size in bytes
+ * @param int $size Size in bytes
  * @return string Human readable size
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toReadableSize
  */
@@ -119,7 +119,7 @@ class NumberHelper extends Helper {
  * @see \Cake\Utility\Number::toPercentage()
  *
  * @param float $number A floating point number
- * @param integer $precision The precision of the returned number
+ * @param int $precision The precision of the returned number
  * @param array $options Options
  * @return string Percentage string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toPercentage

@@ -32,7 +32,7 @@ class TreeIterator extends RecursiveIteratorIterator {
 /**
  * The iteration mode
  *
- * @var integer
+ * @var int
  */
 	protected $_mode;
 
@@ -40,8 +40,8 @@ class TreeIterator extends RecursiveIteratorIterator {
  * Constructor
  *
  * @param RecursiveIterator $items The iterator to flatten
- * @param integer $mode
- * @param integer $flags
+ * @param int $mode
+ * @param int $flags
  */
 	public function __construct(RecursiveIterator $items, $mode = RecursiveIteratorIterator::SELF_FIRST, $flags = 0) {
 		parent::__construct($items, $mode, $flags);

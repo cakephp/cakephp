@@ -36,14 +36,14 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Denotes whether the fieldname key must be present in data array
  *
- * @var boolean|string
+ * @var bool|string
  */
 	protected $_validatePresent = false;
 
 /**
  * Denotes if a field is allowed to be empty
  *
- * @var boolean|string
+ * @var bool|string
  */
 	protected $_allowEmpty = false;
 
@@ -52,8 +52,8 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * If no argument is passed the currently set `validatePresent` value will be returned.
  *
- * @param boolean|string $validatePresent Valid values are true, false, 'create', 'update'
- * @return boolean|string
+ * @param bool|string $validatePresent Valid values are true, false, 'create', 'update'
+ * @return bool|string
  */
 	public function isPresenceRequired($validatePresent = null) {
 		if ($validatePresent === null) {
@@ -67,8 +67,8 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * If no argument is passed the currently set `allowEmpty` value will be returned.
  *
- * @param boolean|string $allowEmpty Valid values are true, false, 'create', 'update'
- * @return boolean|string
+ * @param bool|string $allowEmpty Valid values are true, false, 'create', 'update'
+ * @return bool|string
  */
 	public function isEmptyAllowed($allowEmpty = null) {
 		if ($allowEmpty === null) {
@@ -144,7 +144,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns whether an index exists in the rule set
  *
  * @param string $index name of the rule
- * @return boolean
+ * @return bool
  */
 	public function offsetExists($index) {
 		return isset($this->_rules[$index]);
@@ -193,7 +193,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Returns the number of rules in this set
  *
- * @return integer
+ * @return int
  */
 	public function count() {
 		return count($this->_rules);

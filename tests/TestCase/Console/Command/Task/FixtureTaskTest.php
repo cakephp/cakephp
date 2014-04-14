@@ -193,7 +193,6 @@ class FixtureTaskTest extends TestCase {
 /**
  * test that execute passes runs bake depending with named model.
  *
- *
  * @return void
  */
 	public function testExecuteWithNamedModel() {

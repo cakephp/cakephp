@@ -30,7 +30,7 @@ class ValidationRuleTest extends TestCase {
 /**
  * Auxiliary method to test custom validators
  *
- * @return boolean
+ * @return bool
  */
 	public function myTestRule() {
 		return false;
@@ -39,7 +39,7 @@ class ValidationRuleTest extends TestCase {
 /**
  * Auxiliary method to test custom validators
  *
- * @return boolean
+ * @return bool
  */
 	public function myTestRule2() {
 		return true;

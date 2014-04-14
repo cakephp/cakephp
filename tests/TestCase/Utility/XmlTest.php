@@ -30,7 +30,7 @@ class XmlTest extends TestCase {
 /**
  * autoFixtures property
  *
- * @var boolean
+ * @var bool
  */
 	public $autoFixtures = false;
 

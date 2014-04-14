@@ -65,7 +65,7 @@ class BinaryType extends \Cake\Database\Type {
  *
  * @param mixed $value The value being bound.
  * @param Driver $driver The driver.
- * @return integer
+ * @return int
  */
 	public function toStatement($value, Driver $driver) {
 		return PDO::PARAM_LOB;

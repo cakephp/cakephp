@@ -174,7 +174,7 @@ class DateTime implements WidgetInterface {
 /**
  * Deconstructs the passed date value into all time units
  *
- * @param string|integer|array|DateTime $value
+ * @param string|int|array|DateTime $value
  * @param array $options Options for conversion.
  * @return array
  */
@@ -236,7 +236,7 @@ class DateTime implements WidgetInterface {
  *
  * @param int $value The value to adjust.
  * @param array $options The options containing interval and possibly round.
- * @return integer The amount to adjust $value by.
+ * @return int The amount to adjust $value by.
  */
 	protected function _adjustValue($value, $options) {
 		$options += ['interval' => 1, 'round' => null];
@@ -448,7 +448,7 @@ class DateTime implements WidgetInterface {
 /**
  * Returns a translated list of month names
  *
- * @param boolean $leadingZero
+ * @param bool $leadingZero
  * @return array
  */
 	protected function _getMonthNames($leadingZero = false) {
@@ -487,8 +487,8 @@ class DateTime implements WidgetInterface {
  * - leadingZeroValue - Set to true to add a leading 0 to single digit values.
  * - interval - The interval to generate numbers for. Defaults to 1.
  *
- * @param integer $start Start of the range of numbers to generate
- * @param integer $end End of the range of numbers to generate
+ * @param int $start Start of the range of numbers to generate
+ * @param int $end End of the range of numbers to generate
  * @param array $options
  * @return array
  */

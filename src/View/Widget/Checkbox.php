@@ -82,7 +82,7 @@ class Checkbox implements WidgetInterface {
  * Check whether or not the checkbox should be checked.
  *
  * @param array $data Data to look at and determine checked state.
- * @return boolean
+ * @return bool
  */
 	protected function _isChecked($data) {
 		if (!empty($data['checked'])) {

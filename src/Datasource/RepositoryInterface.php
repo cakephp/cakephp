@@ -76,7 +76,7 @@ interface RepositoryInterface {
  * @param array $fields A hash of field => new value.
  * @param mixed $conditions Conditions to be used, accepts anything Query::where()
  * can take.
- * @return boolean Success Returns true if one or more rows are affected.
+ * @return bool Success Returns true if one or more rows are affected.
  */
 	public function updateAll($fields, $conditions);
 
@@ -94,7 +94,7 @@ interface RepositoryInterface {
  *
  * @param mixed $conditions Conditions to be used, accepts anything Query::where()
  * can take.
- * @return boolean Success Returns true if one or more rows are affected.
+ * @return bool Success Returns true if one or more rows are affected.
  * @see RepositoryInterface::delete()
  */
 	public function deleteAll($conditions);
@@ -104,7 +104,7 @@ interface RepositoryInterface {
  * conditions.
  *
  * @param array|\ArrayAccess $conditions list of conditions to pass to the query
- * @return boolean
+ * @return bool
  */
 	public function exists($conditions);
 
@@ -115,7 +115,7 @@ interface RepositoryInterface {
  *
  * @param \Cake\Datasource\EntityInterface the entity to be saved
  * @param array|\ArrayAccess $options
- * @return \Cake\Datasource\EntityInterface|boolean
+ * @return \Cake\Datasource\EntityInterface|bool
  */
 	public function save(EntityInterface $entity, $options = []);
 
@@ -127,7 +127,7 @@ interface RepositoryInterface {
  *
  * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
  * @param array|\ArrayAccess $options The options fo the delete.
- * @return boolean success
+ * @return bool success
  */
 	public function delete(EntityInterface $entity, $options = []);
 

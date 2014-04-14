@@ -24,9 +24,9 @@ trait LogTrait {
  * for more information on writing to logs.
  *
  * @param string $msg Log message.
- * @param integer|string $level Error level.
+ * @param int|string $level Error level.
  * @param string|array $scope The name of the log scope.
- * @return boolean Success of log write.
+ * @return bool Success of log write.
  */
 	public function log($msg, $level = LOG_ERR, $scope = []) {
 		if (!is_string($msg)) {

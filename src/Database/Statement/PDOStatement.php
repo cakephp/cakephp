@@ -52,9 +52,9 @@ class PDOStatement extends StatementDecorator {
  *	`$statement->bindValue('active', true, 'boolean');`
  *	`$statement->bindValue(5, new \DateTime(), 'date');`
  *
- * @param string|integer $column name or param position to be bound
+ * @param string|int $column name or param position to be bound
  * @param mixed $value The value to bind to variable in query
- * @param string|integer $type PDO type or name of configured Type class
+ * @param string|int $type PDO type or name of configured Type class
  * @return void
  */
 	public function bindValue($column, $value, $type = 'string') {

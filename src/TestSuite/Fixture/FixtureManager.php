@@ -35,7 +35,7 @@ class FixtureManager {
 /**
  * Was this class already initialized?
  *
- * @var boolean
+ * @var bool
  */
 	protected $_initialized = false;
 
@@ -174,7 +174,7 @@ class FixtureManager {
  *
  * @param \Cake\TestSuite\Fixture\TestFixture $fixture the fixture object to create
  * @param Connection $db the datasource instance to use
- * @param boolean $drop whether drop the fixture if it is already created or not
+ * @param bool $drop whether drop the fixture if it is already created or not
  * @return void
  */
 	protected function _setupTable(TestFixture $fixture, Connection $db = null, $drop = true) {
@@ -274,7 +274,7 @@ class FixtureManager {
  *
  * @param string $name of the fixture
  * @param DataSource $db DataSource instance or leave null to get DataSource from the fixture
- * @param boolean $dropTables Whether or not tables should be dropped and re-created.
+ * @param bool $dropTables Whether or not tables should be dropped and re-created.
  * @return void
  * @throws \UnexpectedValueException if $name is not a previously loaded class
  */

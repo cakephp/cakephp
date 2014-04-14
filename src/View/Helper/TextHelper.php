@@ -290,7 +290,7 @@ class TextHelper extends Helper {
  * @see String::truncate()
  *
  * @param string $text String to truncate.
- * @param integer $length Length of returned string, including ellipsis.
+ * @param int $length Length of returned string, including ellipsis.
  * @param array $options An array of html attributes and options.
  * @return string Trimmed string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
@@ -307,7 +307,7 @@ class TextHelper extends Helper {
  *
  * @param string $text String to search the phrase in
  * @param string $phrase Phrase that will be searched for
- * @param integer $radius The amount of characters that will be returned on each side of the founded phrase
+ * @param int $radius The amount of characters that will be returned on each side of the founded phrase
  * @param string $ending Ending that will be appended
  * @return string Modified string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::excerpt

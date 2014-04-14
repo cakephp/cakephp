@@ -129,7 +129,7 @@ class ConsoleOptionParser {
  * Construct an OptionParser so you can define its behavior
  *
  * @param string $command The command name this parser is for. The command name is used for generating help.
- * @param boolean $defaultOptions Whether you want the verbose and quiet options set. Setting
+ * @param bool $defaultOptions Whether you want the verbose and quiet options set. Setting
  *  this to false will prevent the addition of `--verbose` & `--quiet` options.
  */
 	public function __construct($command = null, $defaultOptions = true) {
@@ -158,7 +158,7 @@ class ConsoleOptionParser {
  * Static factory method for creating new OptionParsers so you can chain methods off of them.
  *
  * @param string $command The command name this parser is for. The command name is used for generating help.
- * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
+ * @param bool $defaultOptions Whether you want the verbose and quiet options set.
  * @return ConsoleOptionParser
  */
 	public static function create($command, $defaultOptions = true) {
@@ -277,7 +277,7 @@ class ConsoleOptionParser {
  * @param ConsoleInputOption|string $name The long name you want to the value to be parsed out as when options are parsed.
  *   Will also accept an instance of ConsoleInputOption
  * @param array $options An array of parameters that define the behavior of the option
- * @return ConsoleOptionParser $this.
+ * @return ConsoleOptionParser this.
  */
 	public function addOption($name, $options = []) {
 		if (is_object($name) && $name instanceof ConsoleInputOption) {
@@ -306,7 +306,7 @@ class ConsoleOptionParser {
  * Remove an option from the option parser.
  *
  * @param string $name The option name to remove.
- * @return ConsoleOptionParser $this
+ * @return ConsoleOptionParser this
  */
 	public function removeOption($name) {
 		unset($this->_options[$name]);
@@ -328,7 +328,7 @@ class ConsoleOptionParser {
  *
  * @param ConsoleInputArgument|string $name The name of the argument. Will also accept an instance of ConsoleInputArgument
  * @param array $params Parameters for the argument, see above.
- * @return ConsoleOptionParser $this.
+ * @return ConsoleOptionParser this.
  */
 	public function addArgument($name, $params = []) {
 		if (is_object($name) && $name instanceof ConsoleInputArgument) {
@@ -358,7 +358,7 @@ class ConsoleOptionParser {
  *
  * @param array $args Array of arguments to add.
  * @see ConsoleOptionParser::addArgument()
- * @return ConsoleOptionParser $this
+ * @return ConsoleOptionParser this
  */
 	public function addArguments(array $args) {
 		foreach ($args as $name => $params) {
@@ -373,7 +373,7 @@ class ConsoleOptionParser {
  *
  * @param array $options Array of options to add.
  * @see ConsoleOptionParser::addOption()
- * @return ConsoleOptionParser $this
+ * @return ConsoleOptionParser this
  */
 	public function addOptions(array $options) {
 		foreach ($options as $name => $params) {
@@ -395,7 +395,7 @@ class ConsoleOptionParser {
  *
  * @param ConsoleInputSubcommand|string $name Name of the subcommand. Will also accept an instance of ConsoleInputSubcommand
  * @param array $options Array of params, see above.
- * @return ConsoleOptionParser $this.
+ * @return ConsoleOptionParser this.
  */
 	public function addSubcommand($name, $options = []) {
 		if (is_object($name) && $name instanceof ConsoleInputSubcommand) {
@@ -418,7 +418,7 @@ class ConsoleOptionParser {
  * Add multiple subcommands at once.
  *
  * @param array $commands Array of subcommands.
- * @return ConsoleOptionParser $this
+ * @return ConsoleOptionParser this
  */
 	public function addSubcommands(array $commands) {
 		foreach ($commands as $name => $params) {
@@ -510,7 +510,7 @@ class ConsoleOptionParser {
  * @param string $subcommand If present and a valid subcommand that has a linked parser.
  *    That subcommands help will be shown instead.
  * @param string $format Define the output format, can be text or xml
- * @param integer $width The width to format user content to. Defaults to 72
+ * @param int $width The width to format user content to. Defaults to 72
  * @return string Generated help.
  */
 	public function help($subcommand = null, $format = 'text', $width = 72) {
@@ -607,7 +607,7 @@ class ConsoleOptionParser {
  * Check to see if $name has an option (short/long) defined for it.
  *
  * @param string $name The name of the option.
- * @return boolean
+ * @return bool
  */
 	protected function _optionExists($name) {
 		if (substr($name, 0, 2) === '--') {

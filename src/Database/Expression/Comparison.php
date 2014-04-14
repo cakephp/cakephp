@@ -175,7 +175,7 @@ class Comparison extends QueryExpression {
 /**
  * Returns the number of expression this class represents
  *
- * @return integer
+ * @return int
  */
 	public function count() {
 		return 1;

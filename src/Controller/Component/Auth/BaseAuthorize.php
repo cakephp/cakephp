@@ -1,7 +1,6 @@
 <?php
 /**
  *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -89,7 +88,7 @@ abstract class BaseAuthorize {
  *
  * @param array $user Active user data
  * @param \Cake\Network\Request $request
- * @return boolean
+ * @return bool
  */
 	abstract public function authorize($user, Request $request);
 

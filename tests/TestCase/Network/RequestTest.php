@@ -1001,7 +1001,7 @@ class RequestTest extends TestCase {
  * Helper function for testing callbacks.
  *
  * @param $request
- * @return boolean
+ * @return bool
  */
 	public function detectCallback($request) {
 		return (bool)$request->return;

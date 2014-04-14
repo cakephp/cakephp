@@ -42,7 +42,7 @@ class RequestHandlerComponent extends Component {
 /**
  * Determines whether or not callbacks will be fired on this component
  *
- * @var boolean
+ * @var bool
  */
 	public $enabled = true;
 
@@ -290,7 +290,7 @@ class RequestHandlerComponent extends Component {
  * "304 Not Modified" header.
  *
  * @param Event $event The Controller.beforeRender event.
- * @return boolean false if the render process should be aborted
+ * @return bool false if the render process should be aborted
  */
 	public function beforeRender(Event $event) {
 		if ($this->_config['checkHttpCache'] && $this->response->checkNotModified($this->request)) {
@@ -301,7 +301,7 @@ class RequestHandlerComponent extends Component {
 /**
  * Returns true if the current call accepts an XML response, false otherwise
  *
- * @return boolean True if client accepts an XML response
+ * @return bool True if client accepts an XML response
  */
 	public function isXml() {
 		return $this->prefers('xml');
@@ -310,7 +310,7 @@ class RequestHandlerComponent extends Component {
 /**
  * Returns true if the current call accepts an RSS response, false otherwise
  *
- * @return boolean True if client accepts an RSS response
+ * @return bool True if client accepts an RSS response
  */
 	public function isRss() {
 		return $this->prefers('rss');
@@ -319,7 +319,7 @@ class RequestHandlerComponent extends Component {
 /**
  * Returns true if the current call accepts an Atom response, false otherwise
  *
- * @return boolean True if client accepts an RSS response
+ * @return bool True if client accepts an RSS response
  */
 	public function isAtom() {
 		return $this->prefers('atom');
@@ -329,7 +329,7 @@ class RequestHandlerComponent extends Component {
  * Returns true if user agent string matches a mobile web browser, or if the
  * client accepts WAP content.
  *
- * @return boolean True if user agent is a mobile web browser
+ * @return bool True if user agent is a mobile web browser
  */
 	public function isMobile() {
 		return $this->request->is('mobile') || $this->accepts('wap');
@@ -338,7 +338,7 @@ class RequestHandlerComponent extends Component {
 /**
  * Returns true if the client accepts WAP content
  *
- * @return boolean
+ * @return bool
  */
 	public function isWap() {
 		return $this->prefers('wap');
@@ -348,7 +348,7 @@ class RequestHandlerComponent extends Component {
  * Gets Prototype version if call is Ajax, otherwise empty string.
  * The Prototype library sets a special "Prototype version" HTTP header.
  *
- * @return string|boolean When Ajax the prototype version of component making the call otherwise false
+ * @return string|bool When Ajax the prototype version of component making the call otherwise false
  */
 	public function getAjaxVersion() {
 		$httpX = $this->request->env('HTTP_X_PROTOTYPE_VERSION');
@@ -557,7 +557,7 @@ class RequestHandlerComponent extends Component {
  *    like 'application/x-shockwave'.
  * @param array $options If $type is a friendly type name that is associated with
  *    more than one type of content, $index is used to select which content-type to use.
- * @return boolean Returns false if the friendly type name given in $type does
+ * @return bool Returns false if the friendly type name given in $type does
  *    not exist in the type map, or if the Content-type header has
  *    already been set by this method.
  * @see RequestHandlerComponent::setContent()

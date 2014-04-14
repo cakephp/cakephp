@@ -45,7 +45,7 @@ class Collection {
  * The name of the cache config key to use for caching table metadata,
  * of false if disabled.
  *
- * @var string|boolean
+ * @var string|bool
  */
 	protected $_cache = false;
 
@@ -136,8 +136,8 @@ class Collection {
  * disabels it if false is passed.
  * If called with no arguments it returns the current configuration name.
  *
- * @param boolean $enable whether or not to enable caching
- * @return string|boolean
+ * @param bool $enable whether or not to enable caching
+ * @return string|bool
  */
 	public function cacheMetadata($enable = null) {
 		if ($enable === null) {

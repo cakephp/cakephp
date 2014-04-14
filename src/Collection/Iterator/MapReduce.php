@@ -42,7 +42,7 @@ class MapReduce implements IteratorAggregate {
 /**
  * Whether the Map-Reduce routine has been executed already on the data
  *
- * @var boolean
+ * @var bool
  */
 	protected $_executed = false;
 

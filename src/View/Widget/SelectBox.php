@@ -183,7 +183,7 @@ class SelectBox implements WidgetInterface {
  * @param array $optgroup The opt group data.
  * @param array|null $disabled The options to disable.
  * @param array|string|null $selected The options to select.
- * @param boolean $escape Toggle HTML escaping
+ * @param bool $escape Toggle HTML escaping
  * @return string Formatted template string
  */
 	protected function _renderOptgroup($label, $optgroup, $disabled, $selected, $escape) {
@@ -211,7 +211,7 @@ class SelectBox implements WidgetInterface {
  * @param array $options The options to render.
  * @param array|null $disabled The options to disable.
  * @param array|string|null $selected The options to select.
- * @param boolean $escape Toggle HTML escaping.
+ * @param bool $escape Toggle HTML escaping.
  * @return array Option elements.
  */
 	protected function _renderOptions($options, $disabled, $selected, $escape) {
@@ -257,7 +257,7 @@ class SelectBox implements WidgetInterface {
  *
  * @param string $key The key to test.
  * @param array|string|null The selected values.
- * @return boolean
+ * @return bool
  */
 	protected function _isSelected($key, $selected) {
 		if ($selected === null) {
@@ -276,7 +276,7 @@ class SelectBox implements WidgetInterface {
  *
  * @param string $key The key to test.
  * @param array|null The disabled values.
- * @return boolean
+ * @return bool
  */
 	protected function _isDisabled($key, $disabled) {
 		if ($disabled === null) {

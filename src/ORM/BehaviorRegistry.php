@@ -174,7 +174,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * with the chosen name.
  *
  * @param string $method The method to check for.
- * @return boolean
+ * @return bool
  */
 	public function hasMethod($method) {
 		$method = strtolower($method);
@@ -188,7 +188,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * the chosen name.
  *
  * @param string $method The method to check for.
- * @return boolean
+ * @return bool
  */
 	public function hasFinder($method) {
 		$method = strtolower($method);

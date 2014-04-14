@@ -45,21 +45,21 @@ class ConsoleOutput {
 /**
  * Raw output constant - no modification of output text.
  *
- * @var integer
+ * @var int
  */
 	const RAW = 0;
 
 /**
  * Plain output - tags will be stripped.
  *
- * @var integer
+ * @var int
  */
 	const PLAIN = 1;
 
 /**
  * Color output - Convert known tags in to ANSI color escape codes.
  *
- * @var integer
+ * @var int
  */
 	const COLOR = 2;
 
@@ -80,7 +80,7 @@ class ConsoleOutput {
 /**
  * The current output type. Manipulated with ConsoleOutput::outputAs();
  *
- * @var integer
+ * @var int
  */
 	protected $_outputAs = self::COLOR;
 
@@ -169,8 +169,8 @@ class ConsoleOutput {
  * are passed, outputs just a newline.
  *
  * @param string|array $message A string or a an array of strings to output
- * @param integer $newlines Number of newlines to append
- * @return integer Returns the number of bytes returned from writing to stdout.
+ * @param int $newlines Number of newlines to append
+ * @return int Returns the number of bytes returned from writing to stdout.
  */
 	public function write($message, $newlines = 1) {
 		if (is_array($message)) {
@@ -230,7 +230,7 @@ class ConsoleOutput {
  * Writes a message to the output stream.
  *
  * @param string $message Message to write.
- * @return boolean success
+ * @return bool success
  */
 	protected function _write($message) {
 		return fwrite($this->_output, $message);
@@ -279,7 +279,7 @@ class ConsoleOutput {
 /**
  * Get/Set the output type to use. The output type how formatting tags are treated.
  *
- * @param integer $type The output type to use. Should be one of the class constants.
+ * @param int $type The output type to use. Should be one of the class constants.
  * @return mixed Either null or the value if getting.
  */
 	public function outputAs($type = null) {

@@ -54,14 +54,14 @@ class Email {
 /**
  * Line length - no should more - RFC 2822 - 2.1.1
  *
- * @var integer
+ * @var int
  */
 	const LINE_LENGTH_SHOULD = 78;
 
 /**
  * Line length - no must more - RFC 2822 - 2.1.1
  *
- * @var integer
+ * @var int
  */
 	const LINE_LENGTH_MUST = 998;
 
@@ -147,7 +147,7 @@ class Email {
 /**
  * Message ID
  *
- * @var boolean|string True to generate, False to ignore, String with value
+ * @var bool|string
  */
 	protected $_messageId = true;
 
@@ -519,7 +519,7 @@ class Email {
  * Charset setter/getter
  *
  * @param string $charset
- * @return string $this->charset
+ * @return string this->charset
  */
 	public function charset($charset = null) {
 		if ($charset === null) {
@@ -536,7 +536,7 @@ class Email {
  * HeaderCharset setter/getter
  *
  * @param string $charset
- * @return string $this->charset
+ * @return string this->charset
  */
 	public function headerCharset($charset = null) {
 		if ($charset === null) {
@@ -689,7 +689,7 @@ class Email {
  * Add header for the message
  *
  * @param array $headers
- * @return object $this
+ * @return object this
  * @throws \Cake\Network\Error\SocketException
  */
 	public function addHeaders($headers) {
@@ -813,8 +813,8 @@ class Email {
 /**
  * Template and layout
  *
- * @param boolean|string $template Template name or null to not use
- * @param boolean|string $layout Layout name or null to not use
+ * @param bool|string $template Template name or null to not use
+ * @param bool|string $layout Layout name or null to not use
  * @return array|\Cake\Network\Email\Email
  */
 	public function template($template = false, $layout = false) {
@@ -961,8 +961,8 @@ class Email {
 /**
  * Message-ID
  *
- * @param boolean|string $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
- * @return boolean|string|\Cake\Network\Email\Email
+ * @param bool|string $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
+ * @return bool|string|\Cake\Network\Email\Email
  * @throws \Cake\Network\Error\SocketException
  */
 	public function messageId($message = null) {
@@ -1225,7 +1225,7 @@ class Email {
  * @param string $subject String of subject or null to use 'subject' from transport config
  * @param string|array $message String with message or array with variables to be used in render
  * @param string|array $transportConfig String to use config from EmailConfig or array with configs
- * @param boolean $send Send the email or just return the instance pre-configured
+ * @param bool $send Send the email or just return the instance pre-configured
  * @return \Cake\Network\Email\Email Instance of Cake\Network\Email\Email
  * @throws \Cake\Network\Error\SocketException
  */
@@ -1376,7 +1376,7 @@ class Email {
  * Wrap the message to follow the RFC 2822 - 2.1.1
  *
  * @param string $message Message to wrap
- * @param integer $wrapLength The line length
+ * @param int $wrapLength The line length
  * @return array Wrapped message
  */
 	protected function _wrap($message, $wrapLength = Email::LINE_LENGTH_MUST) {

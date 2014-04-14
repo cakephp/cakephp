@@ -57,7 +57,7 @@ class AuthComponentTest extends TestCase {
 /**
  * initialized property
  *
- * @var boolean
+ * @var bool
  */
 	public $initialized = false;
 

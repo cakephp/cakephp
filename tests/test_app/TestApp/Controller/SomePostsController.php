@@ -32,7 +32,7 @@ class SomePostsController extends Controller {
 /**
  * autoRender property
  *
- * @var bool false
+ * @var bool
  */
 	public $autoRender = false;
 

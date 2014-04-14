@@ -1,7 +1,6 @@
 <?php
 /**
  *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -79,7 +78,7 @@ class CrudAuthorize extends BaseAuthorize {
  *
  * @param array $user The user to authorize
  * @param \Cake\Network\Request $request The request needing authorization.
- * @return boolean
+ * @return bool
  */
 	public function authorize($user, Request $request) {
 		$mapped = $this->config('actionMap.' . $request->params['action']);

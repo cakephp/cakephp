@@ -42,7 +42,7 @@ class WincacheEngine extends CacheEngine {
  * Called automatically by the cache frontend
  *
  * @param array $config array of setting for the engine
- * @return boolean True if the engine has been successfully initialized, false if not
+ * @return bool True if the engine has been successfully initialized, false if not
  */
 	public function init(array $config = []) {
 		if (!isset($config['prefix'])) {
@@ -57,7 +57,7 @@ class WincacheEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @return boolean True if the data was successfully cached, false on failure
+ * @return bool True if the data was successfully cached, false on failure
  */
 	public function write($key, $value) {
 		$key = $this->_key($key);
@@ -95,7 +95,7 @@ class WincacheEngine extends CacheEngine {
  * Increments the value of an integer cached key
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to increment
+ * @param int $offset How much to increment
  * @return bool|int New incremented value, false otherwise
  */
 	public function increment($key, $offset = 1) {
@@ -108,7 +108,7 @@ class WincacheEngine extends CacheEngine {
  * Decrements the value of an integer cached key
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to subtract
+ * @param int $offset How much to subtract
  * @return bool|int New decremented value, false otherwise
  */
 	public function decrement($key, $offset = 1) {
@@ -121,7 +121,7 @@ class WincacheEngine extends CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
 		$key = $this->_key($key);
@@ -133,9 +133,9 @@ class WincacheEngine extends CacheEngine {
  * Delete all keys from the cache. This will clear every
  * item in the cache matching the cache config prefix.
  *
- * @param boolean $check If true, nothing will be cleared, as entries will
+ * @param bool $check If true, nothing will be cleared, as entries will
  *   naturally expire in wincache..
- * @return boolean True Returns true.
+ * @return bool True Returns true.
  */
 	public function clear($check) {
 		if ($check) {
@@ -190,7 +190,7 @@ class WincacheEngine extends CacheEngine {
  * old values will remain in storage until they expire.
  *
  * @param string $group name of the group to be cleared
- * @return boolean success
+ * @return bool success
  */
 	public function clearGroup($group) {
 		$success = null;

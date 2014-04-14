@@ -77,7 +77,7 @@ class ConsoleErrorHandler extends BaseErrorHandler {
  * Template method of BaseErrorHandler.
  *
  * @param array $error An array of error data.
- * @param boolean $debug Whether or not the app is in debug mode.
+ * @param bool $debug Whether or not the app is in debug mode.
  * @return void
  */
 	protected function _displayError($error, $debug) {
@@ -96,7 +96,7 @@ class ConsoleErrorHandler extends BaseErrorHandler {
 /**
  * Stop the execution and set the exit code for the process.
  *
- * @param integer $code The exit code.
+ * @param int $code The exit code.
  * @return void
  */
 	protected function _stop($code) {

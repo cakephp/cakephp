@@ -47,7 +47,7 @@ class Exception extends BaseException {
  *
  * @param string|array $message Either the string of the error message, or an array of attributes
  *   that are made available in the view, and sprintf()'d into Exception::$_messageTemplate
- * @param integer $code The code of the error, is also the HTTP status code for the error.
+ * @param int $code The code of the error, is also the HTTP status code for the error.
  */
 	public function __construct($message, $code = 500) {
 		if (is_array($message)) {

@@ -146,7 +146,7 @@ abstract class ObjectRegistry {
  * Provide isset access to _loaded
  *
  * @param string $name Name of object being checked.
- * @return boolean
+ * @return bool
  */
 	public function __isset($name) {
 		return isset($this->_loaded[$name]);

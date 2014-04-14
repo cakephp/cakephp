@@ -110,7 +110,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * discard internal cached objects such as the transformed query or the reference
  * to the executed statement.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_dirty = false;
 
@@ -360,7 +360,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * }}}
  *
  * @param array|ExpressionInterface|string $fields fields to be added to the list
- * @param boolean $overwrite whether to reset fields with passed list or not
+ * @param bool $overwrite whether to reset fields with passed list or not
  * @return Query
  */
 	public function select($fields = [], $overwrite = false) {
@@ -405,7 +405,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * }}}
  *
  * @param array|ExpressionInterface fields to be filtered on
- * @param boolean $overwrite whether to reset fields with passed list or not
+ * @param bool $overwrite whether to reset fields with passed list or not
  * @return Query
  */
 	public function distinct($on = [], $overwrite = false) {
@@ -445,7 +445,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * }}}
  *
  * @param array|ExpressionInterface|string $modifiers modifiers to be applied to the query
- * @param boolean $overwrite whether to reset order with field list or not
+ * @param bool $overwrite whether to reset order with field list or not
  * @return Query
  */
 	public function modifier($modifiers, $overwrite = false) {
@@ -519,7 +519,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * }}}
  *
  * @param array|ExpressionInterface|string $tables tables to be added to the list
- * @param boolean $overwrite whether to reset tables with passed list or not
+ * @param bool $overwrite whether to reset tables with passed list or not
  * @return Query
  */
 	public function from($tables = [], $overwrite = false) {
@@ -645,7 +645,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param array|string $tables list of tables to be joined in the query
  * @param array $types associative array of type names used to bind values to query
- * @param boolean $overwrite whether to reset joins with passed list or not
+ * @param bool $overwrite whether to reset joins with passed list or not
  * @see \Cake\Database\Type
  * @return Query
  */
@@ -837,7 +837,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
- * @param boolean $overwrite whether to reset conditions with passed list or not
+ * @param bool $overwrite whether to reset conditions with passed list or not
  * @see \Cake\Database\Type
  * @see \Cake\Database\QueryExpression
  * @return Query
@@ -1013,7 +1013,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * ``ORDER BY (id %2 = 0), title ASC``
  *
  * @param array|ExpressionInterface|string $fields fields to be added to the list
- * @param boolean $overwrite whether to reset order with field list or not
+ * @param bool $overwrite whether to reset order with field list or not
  * @return Query
  */
 	public function order($fields, $overwrite = false) {
@@ -1040,7 +1040,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * }}}
  *
  * @param array|ExpressionInterface|string $fields fields to be added to the list
- * @param boolean $overwrite whether to reset fields with passed list or not
+ * @param bool $overwrite whether to reset fields with passed list or not
  * @return Query
  */
 	public function group($fields, $overwrite = false) {
@@ -1065,7 +1065,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
- * @param boolean $overwrite whether to reset conditions with passed list or not
+ * @param bool $overwrite whether to reset conditions with passed list or not
  * @see \Cake\Database\Query::where()
  * @return Query
  */
@@ -1118,7 +1118,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * Pages should start at 1.
  *
- * @param integer $num The page number you want.
+ * @param int $num The page number you want.
  * @return Query
  */
 	public function page($num) {
@@ -1148,7 +1148,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *	$query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
  * }}}
  *
- * @param integer|ExpressionInterface $num number of records to be returned
+ * @param int|ExpressionInterface $num number of records to be returned
  * @return Query
  */
 	public function limit($num) {
@@ -1174,7 +1174,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *	$query->limit($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
  * }}}
  *
- * @param integer|ExpressionInterface $num number of records to be skipped
+ * @param int|ExpressionInterface $num number of records to be skipped
  * @return Query
  */
 	public function offset($num) {
@@ -1206,7 +1206,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * ``SELECT id, name FROM things d UNION SELECT id, title FROM articles a``
  *
  * @param string|Query $query full SQL query to be used in UNION operator
- * @param boolean $overwrite whether to reset the list of queries to be operated or not
+ * @param bool $overwrite whether to reset the list of queries to be operated or not
  * @return Query
  */
 	public function union($query, $overwrite = false) {
@@ -1239,7 +1239,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * ``SELECT id, name FROM things d UNION ALL SELECT id, title FROM articles a``
  *
  * @param string|Query $query full SQL query to be used in UNION operator
- * @param boolean $overwrite whether to reset the list of queries to be operated or not
+ * @param bool $overwrite whether to reset the list of queries to be operated or not
  * @return Query
  */
 	public function unionAll($query, $overwrite = false) {
@@ -1588,7 +1588,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * }}}
  *
  * @param null|callable $callback
- * @param boolean $overwrite
+ * @param bool $overwrite
  * @return Query
  */
 	public function decorateResults($callback, $overwrite = false) {
@@ -1643,10 +1643,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * will create as many placeholders as values are in it. For example "string[]"
  * will create several placeholders of type string.
  *
- * @param string|integer $param placeholder to be replaced with quoted version
+ * @param string|int $param placeholder to be replaced with quoted version
  * of $value
  * @param mixed $value The value to be bound
- * @param string|integer $type the mapped type name, used for casting when sending
+ * @param string|int $type the mapped type name, used for casting when sending
  * to database
  * @return Query
  */

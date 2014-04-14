@@ -46,7 +46,7 @@ class Postgres extends \Cake\Database\Driver {
 /**
  * Establishes a connection to the databse server
  *
- * @return boolean true on success
+ * @return bool true on success
  */
 	public function connect() {
 		if ($this->_connection) {
@@ -85,7 +85,7 @@ class Postgres extends \Cake\Database\Driver {
 /**
  * Returns whether php is able to use this driver for connecting to database
  *
- * @return boolean true if it is valid to use this driver
+ * @return bool true if it is valid to use this driver
  */
 	public function enabled() {
 		return in_array('pgsql', PDO::getAvailableDrivers());

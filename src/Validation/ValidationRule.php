@@ -43,7 +43,7 @@ class ValidationRule {
 /**
  * The 'last' key
  *
- * @var boolean
+ * @var bool
  */
 	protected $_last = false;
 
@@ -82,7 +82,7 @@ class ValidationRule {
  * Returns whether this rule should break validation process for associated field
  * after it fails
  *
- * @return boolean
+ * @return bool
  */
 	public function isLast() {
 		return (bool)$this->_last;
@@ -101,7 +101,7 @@ class ValidationRule {
  * - newRecord: (boolean) whether or not the data to be validated belongs to a
  *   new record
  * - data: The full data that was passed to the validation process
- * @return boolean|string
+ * @return bool|string
  * @throws \InvalidArgumentException when the supplied rule is not a valid
  * callable for the configured scope
  */
@@ -151,7 +151,7 @@ class ValidationRule {
  * - data: The full data that was passed to the validation process
  * - providers associative array with objects or class names that will
  *   be passed as the last argument for the validation method
- * @return boolean True if the ValidationRule should be skipped
+ * @return bool True if the ValidationRule should be skipped
  */
 	protected function _skip($context) {
 		if (is_callable($this->_on)) {

@@ -39,21 +39,21 @@ class Shell extends Object {
 /**
  * Output constant making verbose shells.
  *
- * @var integer
+ * @var int
  */
 	const VERBOSE = ConsoleIo::VERBOSE;
 
 /**
  * Output constant for making normal shells.
  *
- * @var integer
+ * @var int
  */
 	const NORMAL = ConsoleIo::NORMAL;
 
 /**
  * Output constants for making quiet shells.
  *
- * @var integer
+ * @var int
  */
 	const QUIET = ConsoleIo::QUIET;
 
@@ -67,7 +67,7 @@ class Shell extends Object {
 /**
  * If true, the script will ask for permission to perform actions.
  *
- * @var boolean
+ * @var bool
  */
 	public $interactive = true;
 
@@ -239,7 +239,7 @@ class Shell extends Object {
 /**
  * Loads tasks defined in public $tasks
  *
- * @return boolean
+ * @return bool
  */
 	public function loadTasks() {
 		if ($this->tasks === true || empty($this->tasks) || empty($this->Tasks)) {
@@ -254,7 +254,7 @@ class Shell extends Object {
  * Check to see if this shell has a task with the provided name.
  *
  * @param string $task The task name to check.
- * @return boolean Success
+ * @return bool Success
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::hasTask
  */
 	public function hasTask($task) {
@@ -265,7 +265,7 @@ class Shell extends Object {
  * Check to see if this shell has a callable method by the given name.
  *
  * @param string $name The method name to check.
- * @return boolean
+ * @return bool
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::hasMethod
  */
 	public function hasMethod($name) {
@@ -462,7 +462,7 @@ class Shell extends Object {
  * - `indent` Indent the text with the string provided. Defaults to null.
  *
  * @param string $text Text the text to format.
- * @param integer|array $options Array of options to use, or an integer to wrap the text to.
+ * @param int|array $options Array of options to use, or an integer to wrap the text to.
  * @return string Wrapped / indented text
  * @see String::wrap()
  * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::wrapText
@@ -483,9 +483,9 @@ class Shell extends Object {
  * While using Shell::VERBOSE means it will only display when verbose output is toggled.
  *
  * @param string|array $message A string or a an array of strings to output
- * @param integer $newlines Number of newlines to append
- * @param integer $level The message's output level, see above.
- * @return integer|boolean Returns the number of bytes returned from writing to stdout.
+ * @param int $newlines Number of newlines to append
+ * @param int $level The message's output level, see above.
+ * @return int|bool Returns the number of bytes returned from writing to stdout.
  * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
  */
 	public function out($message = null, $newlines = 1, $level = Shell::NORMAL) {
@@ -497,7 +497,7 @@ class Shell extends Object {
  * are passed outputs just a newline.
  *
  * @param string|array $message A string or a an array of strings to output
- * @param integer $newlines Number of newlines to append
+ * @param int $newlines Number of newlines to append
  * @return void
  */
 	public function err($message = null, $newlines = 1) {
@@ -507,7 +507,7 @@ class Shell extends Object {
 /**
  * Returns a single or multiple linefeeds sequences.
  *
- * @param integer $multiplier Number of times the linefeed sequence should be repeated
+ * @param int $multiplier Number of times the linefeed sequence should be repeated
  * @return string
  * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::nl
  */
@@ -518,8 +518,8 @@ class Shell extends Object {
 /**
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
  *
- * @param integer $newlines Number of newlines to pre- and append
- * @param integer $width Width of the line, defaults to 63
+ * @param int $newlines Number of newlines to pre- and append
+ * @param int $width Width of the line, defaults to 63
  * @return void
  * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::hr
  */
@@ -566,7 +566,7 @@ class Shell extends Object {
  *
  * @param string $path Where to put the file.
  * @param string $contents Content to put in the file.
- * @return boolean Success
+ * @return bool Success
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::createFile
  */
 	public function createFile($path, $contents) {

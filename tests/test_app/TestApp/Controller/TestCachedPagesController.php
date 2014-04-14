@@ -44,7 +44,7 @@ class TestCachedPagesController extends Controller {
 /**
  * viewPath property
  *
- * @var string 'posts'
+ * @var string
  */
 	public $viewPath = 'Posts';
 

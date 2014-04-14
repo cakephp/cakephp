@@ -27,7 +27,7 @@ class InternalErrorException extends HttpException {
  * Constructor
  *
  * @param string $message If no message is given 'Internal Server Error' will be the message
- * @param integer $code Status code, defaults to 500
+ * @param int $code Status code, defaults to 500
  */
 	public function __construct($message = null, $code = 500) {
 		if (empty($message)) {

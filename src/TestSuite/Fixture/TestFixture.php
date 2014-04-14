@@ -217,7 +217,7 @@ class TestFixture {
  * Run before all tests execute, should return SQL statement to create table for this fixture could be executed successfully.
  *
  * @param Connection $db An instance of the database object used to create the fixture table
- * @return boolean True on success, false on failure
+ * @return bool True on success, false on failure
  */
 	public function create(Connection $db) {
 		if (empty($this->_schema)) {
@@ -247,7 +247,7 @@ class TestFixture {
  * Run after all tests executed, should return SQL statement to drop table for this fixture.
  *
  * @param Connection $db An instance of the database object used to create the fixture table
- * @return boolean True on success, false on failure
+ * @return bool True on success, false on failure
  */
 	public function drop(Connection $db) {
 		if (empty($this->_schema)) {
@@ -270,7 +270,7 @@ class TestFixture {
  * of this fixture could be executed successfully.
  *
  * @param Connection $db An instance of the database into which the records will be inserted
- * @return boolean on success or if there are no records to insert, or false on failure
+ * @return bool on success or if there are no records to insert, or false on failure
  */
 	public function insert(Connection $db) {
 		if (isset($this->records) && !empty($this->records)) {
@@ -316,7 +316,7 @@ class TestFixture {
  * CakeFixture to trigger other events before / after truncate.
  *
  * @param Connection $db A reference to a db instance
- * @return boolean
+ * @return bool
  */
 	public function truncate(Connection $db) {
 		$sql = $this->_schema->truncateSql($db);

@@ -91,7 +91,7 @@ abstract class BaseAuthenticate {
  * @param string $username The username/identifier.
  * @param string $password The password, if not provide password checking is skipped
  *   and result of find is returned.
- * @return boolean|array Either false on failure, or an array of user data.
+ * @return bool|array Either false on failure, or an array of user data.
  */
 	protected function _findUser($username, $password = null) {
 		$userModel = $this->_config['userModel'];

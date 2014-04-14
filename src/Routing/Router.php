@@ -49,7 +49,7 @@ class Router {
 /**
  * Have routes been loaded
  *
- * @var boolean
+ * @var bool
  */
 	public static $initialized = false;
 
@@ -585,7 +585,7 @@ class Router {
 /**
  * Get the either the current request object, or the first one.
  *
- * @param boolean $current Whether you want the request from the top of the stack or the first one.
+ * @param bool $current Whether you want the request from the top of the stack or the first one.
  * @return \Cake\Network\Request or null.
  */
 	public static function getRequest($current = false) {
@@ -620,9 +620,9 @@ class Router {
 /**
  * Promote a route (by default, the last one added) to the beginning of the list
  *
- * @param integer $which A zero-based array index representing the route to move. For example,
+ * @param int $which A zero-based array index representing the route to move. For example,
  *    if 3 routes have been added, the last route would be 2.
- * @return boolean Returns false if no route exists at the position specified by $which.
+ * @return bool Returns false if no route exists at the position specified by $which.
  */
 	public static function promote($which = null) {
 		return static::$_routes->promote($which);
@@ -707,7 +707,7 @@ class Router {
  * @param string|array $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
  *   or an array specifying any of the following: 'controller', 'action', 'plugin'
  *   additionally, you can provide routed elements or query string parameters.
- * @param boolean|array $options If (bool) true, the full base URL will be prepended to the result.
+ * @param bool|array $options If (bool) true, the full base URL will be prepended to the result.
  *   If an array accepts the following keys.  If used with a named route you can provide
  *   a list of query string parameters.
  * @return string Full translated URL with base path.
@@ -883,7 +883,7 @@ class Router {
  *
  * @param \Cake\Network\Request|array $params The params array or
  *     Cake\Network\Request object that needs to be reversed.
- * @param boolean $full Set to true to include the full URL including the
+ * @param bool $full Set to true to include the full URL including the
  *     protocol when reversing the URL.
  * @return string The string that is the reversed result of the array
  */
@@ -970,7 +970,7 @@ class Router {
  * To have the extensions parsed you still need to call `Router::parseExtensions()`
  *
  * @param array $extensions List of extensions to be added as valid extension
- * @param boolean $merge Default true will merge extensions. Set to false to override current extensions
+ * @param bool $merge Default true will merge extensions. Set to false to override current extensions
  * @return array
  */
 	public static function setExtensions($extensions, $merge = true) {

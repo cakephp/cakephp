@@ -124,7 +124,7 @@ class FormHelperTest extends TestCase {
 /**
  * Do not load the fixtures by default
  *
- * @var boolean
+ * @var bool
  */
 	public $autoFixtures = false;
 

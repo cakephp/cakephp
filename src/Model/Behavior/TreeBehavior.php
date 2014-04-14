@@ -285,9 +285,9 @@ class TreeBehavior extends Behavior {
  * Get the number of children nodes.
  *
  * @param \Cake\ORM\Entity $node The entity to count children for
- * @param boolean $direct whether to count all nodes in the subtree or just
+ * @param bool $direct whether to count all nodes in the subtree or just
  * direct children
- * @return integer Number of children nodes.
+ * @return int Number of children nodes.
  */
 	public function childCount(Entity $node, $direct = false) {
 		$config = $this->config();
@@ -441,9 +441,9 @@ class TreeBehavior extends Behavior {
  * this method will return false
  *
  * @param \Cake\ORM\Entity $node The node to move
- * @param integer|boolean $number How many places to move the node, or true to move to first position
+ * @param int|bool $number How many places to move the node, or true to move to first position
  * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
- * @return \Cake\ORM\Entity|boolean $node The node after being moved or false on failure
+ * @return \Cake\ORM\Entity|bool $node The node after being moved or false on failure
  */
 	public function moveUp(Entity $node, $number = 1) {
 		return $this->_table->connection()->transactional(function() use ($node, $number) {
@@ -456,9 +456,9 @@ class TreeBehavior extends Behavior {
  * Helper function used with the actual code for moveUp
  *
  * @param \Cake\ORM\Entity $node The node to move
- * @param integer|boolean $number How many places to move the node, or true to move to first position
+ * @param int|bool $number How many places to move the node, or true to move to first position
  * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
- * @return \Cake\ORM\Entity|boolean $node The node after being moved or false on failure
+ * @return \Cake\ORM\Entity|bool $node The node after being moved or false on failure
  */
 	protected function _moveUp($node, $number) {
 		$config = $this->config();
@@ -516,9 +516,9 @@ class TreeBehavior extends Behavior {
  * this method will return false
  *
  * @param \Cake\ORM\Entity $node The node to move
- * @param integer|boolean $number How many places to move the node or true to move to last position
+ * @param int|bool $number How many places to move the node or true to move to last position
  * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
- * @return \Cake\ORM\Entity|boolean the entity after being moved or false on failure
+ * @return \Cake\ORM\Entity|bool the entity after being moved or false on failure
  */
 	public function moveDown(Entity $node, $number = 1) {
 		return $this->_table->connection()->transactional(function() use ($node, $number) {
@@ -531,9 +531,9 @@ class TreeBehavior extends Behavior {
  * Helper function used with the actual code for moveDown
  *
  * @param \Cake\ORM\Entity $node The node to move
- * @param integer|boolean $number How many places to move the node, or true to move to last position
+ * @param int|bool $number How many places to move the node, or true to move to last position
  * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
- * @return \Cake\ORM\Entity|boolean $node The node after being moved or false on failure
+ * @return \Cake\ORM\Entity|bool $node The node after being moved or false on failure
  */
 	protected function _moveDown($node, $number) {
 		$config = $this->config();
@@ -627,9 +627,9 @@ class TreeBehavior extends Behavior {
 /**
  * Recursive method used to recover a single level of the tree
  *
- * @param integer $counter The Last left column value that was assigned
+ * @param int $counter The Last left column value that was assigned
  * @param mixed $parentId the parent id of the level to be recovered
- * @return integer Ne next value to use for the left column
+ * @return int Ne next value to use for the left column
  */
 	protected function _recoverTree($counter = 0, $parentId = null) {
 		$config = $this->config();
@@ -666,7 +666,7 @@ class TreeBehavior extends Behavior {
 /**
  * Returns the maximum index value in the table.
  *
- * @return integer
+ * @return int
  */
 	protected function _getMax() {
 		$config = $this->config();
@@ -688,11 +688,11 @@ class TreeBehavior extends Behavior {
  * Auxiliary function used to automatically alter the value of both the left and
  * right columns by a certain amount that match the passed conditions
  *
- * @param integer $shift the value to use for operating the left and right columns
+ * @param int $shift the value to use for operating the left and right columns
  * @param string $dir The operator to use for shifting the value (+/-)
  * @param string $conditions a SQL snipped to be used for comparing left or right
  * against it.
- * @param boolean $mark whether to mark the updated values so that they can not be
+ * @param bool $mark whether to mark the updated values so that they can not be
  * modified by future calls to this function.
  * @return void
  */

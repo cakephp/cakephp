@@ -32,14 +32,14 @@ class HelpFormatter {
 /**
  * The maximum number of arguments shown when generating usage.
  *
- * @var integer
+ * @var int
  */
 	protected $_maxArgs = 6;
 
 /**
  * The maximum number of options shown when generating usage.
  *
- * @var integer
+ * @var int
  */
 	protected $_maxOptions = 6;
 
@@ -55,7 +55,7 @@ class HelpFormatter {
 /**
  * Get the help as formatted text suitable for output on the command line.
  *
- * @param integer $width The width of the help output.
+ * @param int $width The width of the help output.
  * @return string
  */
 	public function text($width = 72) {
@@ -159,7 +159,7 @@ class HelpFormatter {
  * Iterate over a collection and find the longest named thing.
  *
  * @param array $collection
- * @return integer
+ * @return int
  */
 	protected function _getMaxLength($collection) {
 		$max = 0;
@@ -172,7 +172,7 @@ class HelpFormatter {
 /**
  * Get the help as an xml string.
  *
- * @param boolean $string Return the SimpleXml object or a string. Defaults to true.
+ * @param bool $string Return the SimpleXml object or a string. Defaults to true.
  * @return string|\SimpleXmlElement See $string
  */
 	public function xml($string = true) {

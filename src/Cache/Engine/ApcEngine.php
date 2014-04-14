@@ -39,7 +39,7 @@ class ApcEngine extends CacheEngine {
  * Called automatically by the cache frontend
  *
  * @param array $config array of setting for the engine
- * @return boolean True if the engine has been successfully initialized, false if not
+ * @return bool True if the engine has been successfully initialized, false if not
  */
 	public function init(array $config = []) {
 		if (!isset($config['prefix'])) {
@@ -54,7 +54,7 @@ class ApcEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @return boolean True if the data was successfully cached, false on failure
+ * @return bool True if the data was successfully cached, false on failure
  */
 	public function write($key, $value) {
 		$key = $this->_key($key);
@@ -89,7 +89,7 @@ class ApcEngine extends CacheEngine {
  * Increments the value of an integer cached key
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to increment
+ * @param int $offset How much to increment
  * @return bool|int New incremented value, false otherwise
  */
 	public function increment($key, $offset = 1) {
@@ -102,7 +102,7 @@ class ApcEngine extends CacheEngine {
  * Decrements the value of an integer cached key
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to subtract
+ * @param int $offset How much to subtract
  * @return bool|int New decremented value, false otherwise
  */
 	public function decrement($key, $offset = 1) {
@@ -115,7 +115,7 @@ class ApcEngine extends CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
 		$key = $this->_key($key);
@@ -126,9 +126,9 @@ class ApcEngine extends CacheEngine {
 /**
  * Delete all keys from the cache. This will clear every cache config using APC.
  *
- * @param boolean $check If true, nothing will be cleared, as entries are removed
+ * @param bool $check If true, nothing will be cleared, as entries are removed
  *    from APC as they expired. This flag is really only used by FileEngine.
- * @return boolean True Returns true.
+ * @return bool True Returns true.
  */
 	public function clear($check) {
 		if ($check) {
@@ -183,7 +183,7 @@ class ApcEngine extends CacheEngine {
  * old values will remain in storage until they expire.
  *
  * @param string $group name of the group to be cleared
- * @return boolean success
+ * @return bool success
  */
 	public function clearGroup($group) {
 		apc_inc($this->_config['prefix'] . $group, 1, $success);

@@ -106,7 +106,7 @@ class Request implements \ArrayAccess {
  * Only set to true if your application runs behind load balancers/proxies
  * that you control.
  *
- * @var boolean
+ * @var bool
  */
 	public $trustProxy = false;
 
@@ -452,7 +452,7 @@ class Request implements \ArrayAccess {
 /**
  * Returns the referer that referred this request.
  *
- * @param boolean $local Attempt to return a local address.
+ * @param bool $local Attempt to return a local address.
  *   Local addresses do not contain hostnames.
  * @return string The referring address for this request.
  */
@@ -510,7 +510,7 @@ class Request implements \ArrayAccess {
  * on routing parameters.
  *
  * @param string $name The property being accessed.
- * @return boolean Existence
+ * @return bool Existence
  */
 	public function __isset($name) {
 		return isset($this->params[$name]);
@@ -525,7 +525,7 @@ class Request implements \ArrayAccess {
  *
  * @param string|array $type The type of request you want to check. If an array
  *   this method will return true if the request matches any type.
- * @return boolean Whether or not the request is the type you are checking.
+ * @return bool Whether or not the request is the type you are checking.
  */
 	public function is($type) {
 		if (is_array($type)) {
@@ -576,7 +576,7 @@ class Request implements \ArrayAccess {
  * built-in types.
  *
  * @param array $types The types to check.
- * @return boolean Success.
+ * @return bool Success.
  * @see Request::is()
  */
 	public function isAll(array $types) {
@@ -675,7 +675,7 @@ class Request implements \ArrayAccess {
 /**
  * Get the value of the current requests URL. Will include named parameters and querystring arguments.
  *
- * @param boolean $base Include the base path, set to false to trim the base path off.
+ * @param bool $base Include the base path, set to false to trim the base path off.
  * @return string the current request URL including query string args.
  */
 	public function here($base = true) {
@@ -758,7 +758,7 @@ class Request implements \ArrayAccess {
 /**
  * Get the domain name and include $tldLength segments of the tld.
  *
- * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
+ * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
  *   While `example.co.uk` contains 2.
  * @return string Domain name without subdomains.
  */
@@ -771,7 +771,7 @@ class Request implements \ArrayAccess {
 /**
  * Get the subdomains for a host.
  *
- * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
+ * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
  *   While `example.co.uk` contains 2.
  * @return array An array of subdomains.
  */
@@ -1028,7 +1028,7 @@ class Request implements \ArrayAccess {
  * and a 405 error will be returned.
  *
  * @param string|array $methods Allowed HTTP request methods.
- * @return boolean true
+ * @return bool true
  * @throws \Cake\Error\MethodNotAllowedException
  */
 	public function allowMethod($methods) {
@@ -1095,7 +1095,7 @@ class Request implements \ArrayAccess {
  * Array access isset() implementation
  *
  * @param string $name thing to check.
- * @return boolean
+ * @return bool
  */
 	public function offsetExists($name) {
 		return isset($this->params[$name]);

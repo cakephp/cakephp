@@ -34,14 +34,14 @@ class TestObject extends Object {
 /**
  * firstName property
  *
- * @var string 'Joel'
+ * @var string
  */
 	public $firstName = 'Joel';
 
 /**
  * lastName property
  *
- * @var string 'Moss'
+ * @var string
  */
 	public $lastName = 'Moss';
 

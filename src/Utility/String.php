@@ -21,7 +21,6 @@ use Cake\Core\Configure;
 /**
  * String handling methods.
  *
- *
  */
 class String {
 
@@ -324,7 +323,7 @@ class String {
  * - `indentAt` 0 based index to start indenting at. Defaults to 0.
  *
  * @param string $text The text to format.
- * @param array|integer $options Array of options to use, or an integer to wrap the text to.
+ * @param array|int $options Array of options to use, or an integer to wrap the text to.
  * @return string Formatted text.
  */
 	public static function wrap($text, $options = []) {
@@ -351,9 +350,9 @@ class String {
  * Unicode aware version of wordwrap.
  *
  * @param string $text The text to format.
- * @param integer $width The width to wrap to. Defaults to 72.
+ * @param int $width The width to wrap to. Defaults to 72.
  * @param string $break The line is broken using the optional break parameter. Defaults to '\n'.
- * @param boolean $cut If the cut is set to true, the string is always wrapped at the specified width.
+ * @param bool $cut If the cut is set to true, the string is always wrapped at the specified width.
  * @return string Formatted text.
  */
 	public static function wordWrap($text, $width = 72, $break = "\n", $cut = false) {
@@ -473,7 +472,7 @@ class String {
  * - `exact` If false, $text will not be cut mid-word
  *
  * @param string $text String to truncate.
- * @param integer $length Length of returned string, including ellipsis.
+ * @param int $length Length of returned string, including ellipsis.
  * @param array $options An array of options.
  * @return string Trimmed string.
  */
@@ -510,7 +509,7 @@ class String {
  * - `html` If true, HTML tags would be handled correctly
  *
  * @param string $text String to truncate.
- * @param integer $length Length of returned string, including ellipsis.
+ * @param int $length Length of returned string, including ellipsis.
  * @param array $options An array of html attributes and options.
  * @return string Trimmed string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
@@ -624,7 +623,7 @@ class String {
  *
  * @param string $text String to search the phrase in
  * @param string $phrase Phrase that will be searched for
- * @param integer $radius The amount of characters that will be returned on each side of the founded phrase
+ * @param int $radius The amount of characters that will be returned on each side of the founded phrase
  * @param string $ellipsis Ending that will be appended
  * @return string Modified string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::excerpt
@@ -683,7 +682,7 @@ class String {
  * Check if the string contain multibyte characters
  *
  * @param string $string value to test
- * @return boolean
+ * @return bool
  */
 	public static function isMultibyte($string) {
 		$length = strlen($string);
