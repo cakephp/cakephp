@@ -1029,7 +1029,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Ensure exceptions are raised on missing behaviors.
  *
- * @expectedException \Cake\Error\MissingBehaviorException
+ * @expectedException \Cake\ORM\Error\MissingBehaviorException
  */
 	public function testAddBehaviorMissing() {
 		$table = TableRegistry::get('article');

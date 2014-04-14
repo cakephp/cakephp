@@ -19,7 +19,6 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
 use Cake\Core\Plugin;
-use Cake\Error;
 use Cake\Utility\ConventionsTrait;
 use Cake\Utility\File;
 use Cake\Utility\Inflector;

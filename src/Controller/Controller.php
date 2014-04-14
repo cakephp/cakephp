@@ -18,7 +18,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
 use Cake\Core\Plugin;
-use Cake\Error;
+use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
@@ -357,14 +357,14 @@ class Controller extends Object implements EventListener {
  *
  * @return mixed The resulting response.
  * @throws \Cake\Error\Exception When request is not set.
- * @throws \Cake\Error\PrivateActionException When actions are not public or prefixed by _
- * @throws \Cake\Error\MissingActionException When actions are not defined.
+ * @throws \Cake\Controller\Error\PrivateActionException When actions are not public or prefixed by _
+ * @throws \Cake\Controller\Error\MissingActionException When actions are not defined.
  */
 	public function invokeAction() {
 		try {
 			$request = $this->request;
 			if (!isset($request)) {
-				throw new Error\Exception('No Request object configured. Cannot invoke action');
+				throw new Exception('No Request object configured. Cannot invoke action');
 			}
 			$method = new \ReflectionMethod($this, $request->params['action']);
 			if ($this->_isPrivateAction($method, $request)) {

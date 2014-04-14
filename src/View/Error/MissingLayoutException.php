@@ -1,6 +1,6 @@
 <?php
 /**
- * MissingShellException class
+ * MissingLayoutException class
  *
  * PHP 5
  *
@@ -15,14 +15,16 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\View\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Used when a shell cannot be found.
+ * Used when a layout file cannot be found.
  *
  */
-class MissingShellException extends Exception {
+class MissingLayoutException extends Exception {
 
-	protected $_messageTemplate = 'Shell class for "%s" could not be found.';
+	protected $_messageTemplate = 'Layout file "%s" is missing.';
 
 }

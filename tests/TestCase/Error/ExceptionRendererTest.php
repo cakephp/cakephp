@@ -18,14 +18,23 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
+use Cake\Controller\Error\MissingActionException;
+use Cake\Controller\Error\MissingComponentException;
+use Cake\Controller\Error\MissingControllerException;
+use Cake\Controller\Error\PrivateActionException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
+use Cake\Network\Error\SocketException;
 use Cake\Network\Request;
+use Cake\ORM\Error\MissingBehaviorException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Cake\View\Error\MissingHelperException;
+use Cake\View\Error\MissingLayoutException;
+use Cake\View\Error\MissingViewException;
 
 /**
  * BlueberryComponent class
@@ -209,7 +218,7 @@ class ExceptionRendererTest extends TestCase {
 	public function testSubclassConvertingFrameworkErrors() {
 		Configure::write('debug', false);
 
-		$exception = new Error\MissingControllerException('PostsController');
+		$exception = new MissingControllerException('PostsController');
 		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
 
 		$this->assertEquals('error400', $ExceptionRenderer->method);
@@ -242,7 +251,7 @@ class ExceptionRendererTest extends TestCase {
  */
 	public function testErrorMethodCoercion() {
 		Configure::write('debug', false);
-		$exception = new Error\MissingActionException('Page not found');
+		$exception = new MissingActionException('Page not found');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$this->assertInstanceOf('Cake\Controller\ErrorController', $ExceptionRenderer->controller);
@@ -257,7 +266,7 @@ class ExceptionRendererTest extends TestCase {
  */
 	public function testCakeErrorHelpersNotLost() {
 		Configure::write('App.namespace', 'TestApp');
-		$exception = new Error\SocketException('socket exception');
+		$exception = new SocketException('socket exception');
 		$renderer = new \TestApp\Error\TestAppsExceptionRenderer($exception);
 
 		ob_start();
@@ -390,7 +399,7 @@ class ExceptionRendererTest extends TestCase {
 		$result = ob_get_clean();
 		$this->assertContains('Custom message', $result);
 
-		$exception = new Error\MissingActionException(array('controller' => 'PostsController', 'action' => 'index'));
+		$exception = new MissingActionException(array('controller' => 'PostsController', 'action' => 'index'));
 		$ExceptionRenderer = $this->_mockResponse(new ExceptionRenderer($exception));
 
 		ob_start();
@@ -466,7 +475,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testMissingController() {
-		$exception = new Error\MissingControllerException(array(
+		$exception = new MissingControllerException(array(
 			'class' => 'Posts',
 			'prefix' => '',
 			'plugin' => '',
@@ -489,7 +498,7 @@ class ExceptionRendererTest extends TestCase {
 	public static function testProvider() {
 		return array(
 			array(
-				new Error\MissingActionException(array(
+				new MissingActionException(array(
 					'controller' => 'PostsController',
 					'action' => 'index',
 					'prefix' => '',
@@ -502,7 +511,7 @@ class ExceptionRendererTest extends TestCase {
 				404
 			),
 			array(
-				new Error\PrivateActionException(array('controller' => 'PostsController', 'action' => '_secretSauce')),
+				new PrivateActionException(array('controller' => 'PostsController', 'action' => '_secretSauce')),
 				array(
 					'/<h2>Private Method in PostsController<\/h2>/',
 					'/<em>PostsController::_secretSauce\(\)<\/em>/'
@@ -510,30 +519,14 @@ class ExceptionRendererTest extends TestCase {
 				404
 			),
 			array(
-				new Error\MissingTableException(array('table' => 'articles', 'class' => 'Article', 'ds' => 'test')),
-				array(
-					'/<h2>Missing Database Table<\/h2>/',
-					'/Table <em>articles<\/em> for model <em>Article<\/em> was not found in datasource <em>test<\/em>/'
-				),
-				500
-			),
-			array(
-				new Error\MissingDatabaseException(array('connection' => 'default')),
-				array(
-					'/<h2>Missing Database Connection<\/h2>/',
-					'/Confirm you have created the file/'
-				),
-				500
-			),
-			array(
-				new Error\MissingViewException(array('file' => '/posts/about.ctp')),
+				new MissingViewException(array('file' => '/posts/about.ctp')),
 				array(
 					"/posts\/about.ctp/"
 				),
 				500
 			),
 			array(
-				new Error\MissingLayoutException(array('file' => 'layouts/my_layout.ctp')),
+				new MissingLayoutException(array('file' => 'layouts/my_layout.ctp')),
 				array(
 					"/Missing Layout/",
 					"/layouts\/my_layout.ctp/"
@@ -541,24 +534,7 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
-				new Error\MissingConnectionException(array('class' => 'Mysql')),
-				array(
-					'/<h2>Missing Database Connection<\/h2>/',
-					'/A Database connection using "Mysql" was missing or unable to connect./',
-				),
-				500
-			),
-			array(
-				new Error\MissingConnectionException(array('class' => 'Mysql', 'enabled' => false)),
-				array(
-					'/<h2>Missing Database Connection<\/h2>/',
-					'/A Database connection using "Mysql" was missing or unable to connect./',
-					'/Mysql driver is NOT enabled/'
-				),
-				500
-			),
-			array(
-				new Error\MissingHelperException(array('class' => 'MyCustomHelper')),
+				new MissingHelperException(array('class' => 'MyCustomHelper')),
 				array(
 					'/<h2>Missing Helper<\/h2>/',
 					'/<em>MyCustomHelper<\/em> could not be found./',
@@ -568,7 +544,7 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
-				new Error\MissingBehaviorException(array('class' => 'MyCustomBehavior')),
+				new MissingBehaviorException(array('class' => 'MyCustomBehavior')),
 				array(
 					'/<h2>Missing Behavior<\/h2>/',
 					'/Create the class <em>MyCustomBehavior<\/em> below in file:/',
@@ -577,7 +553,7 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
-				new Error\MissingComponentException(array('class' => 'SideboxComponent')),
+				new MissingComponentException(array('class' => 'SideboxComponent')),
 				array(
 					'/<h2>Missing Component<\/h2>/',
 					'/Create the class <em>SideboxComponent<\/em> below in file:/',
@@ -601,11 +577,6 @@ class ExceptionRendererTest extends TestCase {
 			),
 			array(
 				new Error\Exception('base class'),
-				array('/Internal Error/'),
-				500
-			),
-			array(
-				new Error\ConfigureException('No file'),
 				array('/Internal Error/'),
 				500
 			)
@@ -640,7 +611,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testMissingRenderSafe() {
-		$exception = new Error\MissingHelperException(array('class' => 'Fail'));
+		$exception = new MissingHelperException(array('class' => 'Fail'));
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));

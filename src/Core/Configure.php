@@ -235,7 +235,6 @@ class Configure {
  * @param string $config Name of the configured engine to use to read the resource identified by $key.
  * @param boolean $merge if config files should be merged instead of simply overridden
  * @return mixed false if file not found, void if load successful.
- * @throws \Cake\Error\ConfigureException Will throw any exceptions the engine raises.
  */
 	public static function load($key, $config = 'default', $merge = true) {
 		$engine = static::_getEngine($config);
@@ -279,15 +278,15 @@ class Configure {
  * @param array $keys The name of the top-level keys you want to dump.
  *   This allows you save only some data stored in Configure.
  * @return boolean success
- * @throws \Cake\Error\ConfigureException if the adapter does not implement a `dump` method.
+ * @throws \Cake\Error\Exception if the adapter does not implement a `dump` method.
  */
 	public static function dump($key, $config = 'default', $keys = []) {
 		$engine = static::_getEngine($config);
 		if (!$engine) {
-			throw new Error\ConfigureException(sprintf('There is no "%s" config engine.', $config));
+			throw new Error\Exception(sprintf('There is no "%s" config engine.', $config));
 		}
 		if (!method_exists($engine, 'dump')) {
-			throw new Error\ConfigureException(sprintf('The "%s" config engine, does not have a dump() method.', $config));
+			throw new Error\Exception(sprintf('The "%s" config engine, does not have a dump() method.', $config));
 		}
 		$values = static::$_values;
 		if (!empty($keys) && is_array($keys)) {

@@ -15,7 +15,6 @@
 namespace Cake\Controller;
 
 use Cake\Core\App;
-use Cake\Error;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
 use Cake\Utility\ObjectRegistry;
@@ -76,7 +75,7 @@ class ComponentRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the component is missing in.
- * @throws \Cake\Error\MissingComponentException
+ * @throws \Cake\Controller\Error\MissingComponentException
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\MissingComponentException([

@@ -94,17 +94,17 @@ class IniConfig implements ConfigEngineInterface {
  * @param string $key The identifier to read from. If the key has a . it will be treated
  *  as a plugin prefix. The chosen file must be on the engine's path.
  * @return array Parsed configuration values.
- * @throws \Cake\Error\ConfigureException when files don't exist.
+ * @throws \Cake\Error\Exception when files don't exist.
  *  Or when files contain '..' as this could lead to abusive reads.
  */
 	public function read($key) {
 		if (strpos($key, '..') !== false) {
-			throw new Error\ConfigureException('Cannot load configuration files with ../ in them.');
+			throw new Error\Exception('Cannot load configuration files with ../ in them.');
 		}
 
 		$file = $this->_getFilePath($key);
 		if (!is_file($file)) {
-			throw new Error\ConfigureException(sprintf('Could not load configuration file: %s', $file));
+			throw new Error\Exception(sprintf('Could not load configuration file: %s', $file));
 		}
 
 		$contents = parse_ini_file($file, true);

@@ -720,7 +720,7 @@ class ControllerTest extends TestCase {
 /**
  * testMissingAction method
  *
- * @expectedException \Cake\Error\MissingActionException
+ * @expectedException \Cake\Controller\Error\MissingActionException
  * @expectedExceptionMessage Action TestController::missing() could not be found.
  * @return void
  */
@@ -736,7 +736,7 @@ class ControllerTest extends TestCase {
 /**
  * test invoking private methods.
  *
- * @expectedException \Cake\Error\PrivateActionException
+ * @expectedException \Cake\Controller\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::private_m() is not directly accessible.
  * @return void
  */
@@ -752,7 +752,7 @@ class ControllerTest extends TestCase {
 /**
  * test invoking protected methods.
  *
- * @expectedException \Cake\Error\PrivateActionException
+ * @expectedException \Cake\Controller\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::protected_m() is not directly accessible.
  * @return void
  */
@@ -768,7 +768,7 @@ class ControllerTest extends TestCase {
 /**
  * test invoking hidden methods.
  *
- * @expectedException \Cake\Error\PrivateActionException
+ * @expectedException \Cake\Controller\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::_hidden() is not directly accessible.
  * @return void
  */
@@ -784,7 +784,7 @@ class ControllerTest extends TestCase {
 /**
  * test invoking controller methods.
  *
- * @expectedException \Cake\Error\PrivateActionException
+ * @expectedException \Cake\Controller\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::redirect() is not directly accessible.
  * @return void
  */
@@ -800,7 +800,7 @@ class ControllerTest extends TestCase {
 /**
  * test invoking controller methods.
  *
- * @expectedException \Cake\Error\PrivateActionException
+ * @expectedException \Cake\Controller\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::admin_add() is not directly accessible.
  * @return void
  */

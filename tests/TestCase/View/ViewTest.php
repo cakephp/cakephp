@@ -536,7 +536,7 @@ class ViewTest extends TestCase {
 /**
  * Test for missing views
  *
- * @expectedException \Cake\Error\MissingViewException
+ * @expectedException \Cake\View\Error\MissingViewException
  * @return void
  */
 	public function testMissingView() {
@@ -556,7 +556,7 @@ class ViewTest extends TestCase {
 /**
  * Test for missing layouts
  *
- * @expectedException \Cake\Error\MissingLayoutException
+ * @expectedException \Cake\View\Error\MissingLayoutException
  * @return void
  */
 	public function testMissingLayout() {

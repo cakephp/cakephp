@@ -1,6 +1,6 @@
 <?php
 /**
- * MissingControllerException class
+ * MissingBehaviorException class
  *
  * PHP 5
  *
@@ -15,19 +15,16 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\ORM\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Missing Controller exception - used when a controller
- * cannot be found.
+ * Used when a behavior cannot be found.
  *
  */
-class MissingControllerException extends Exception {
+class MissingBehaviorException extends Exception {
 
-	protected $_messageTemplate = 'Controller class %s could not be found.';
-
-	public function __construct($message, $code = 404) {
-		parent::__construct($message, $code);
-	}
+	protected $_messageTemplate = 'Behavior class %s could not be found.';
 
 }

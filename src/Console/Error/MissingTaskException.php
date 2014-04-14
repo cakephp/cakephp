@@ -1,6 +1,6 @@
 <?php
 /**
- * MissingPluginException class
+ * MissingTaskException class
  *
  * PHP 5
  *
@@ -15,14 +15,16 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\Console\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Exception raised when a plugin could not be found
+ * Used when a Task cannot be found.
  *
  */
-class MissingPluginException extends Exception {
+class MissingTaskException extends Exception {
 
-	protected $_messageTemplate = 'Plugin %s could not be found.';
+	protected $_messageTemplate = 'Task class %s could not be found.';
 
 }

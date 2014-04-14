@@ -1,6 +1,6 @@
 <?php
 /**
- * MissingViewException class
+ * MissingDispatcherFilterException class
  *
  * PHP 5
  *
@@ -15,14 +15,16 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\Routing\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Used when a view file cannot be found.
+ * Exception raised when a Dispatcher filter could not be found
  *
  */
-class MissingViewException extends Exception {
+class MissingDispatcherFilterException extends Exception {
 
-	protected $_messageTemplate = 'View file "%s" is missing.';
+	protected $_messageTemplate = 'Dispatcher filter %s could not be found.';
 
 }

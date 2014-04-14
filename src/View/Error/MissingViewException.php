@@ -1,6 +1,6 @@
 <?php
 /**
- * MissingConnectionException class
+ * MissingViewException class
  *
  * PHP 5
  *
@@ -15,21 +15,16 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\View\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Used when no connections can be found.
+ * Used when a view file cannot be found.
  *
  */
-class MissingConnectionException extends Exception {
+class MissingViewException extends Exception {
 
-	protected $_messageTemplate = 'Database connection "%s" is missing, or could not be created.';
-
-	public function __construct($message, $code = 500) {
-		if (is_array($message)) {
-			$message += array('enabled' => true);
-		}
-		parent::__construct($message, $code);
-	}
+	protected $_messageTemplate = 'View file "%s" is missing.';
 
 }

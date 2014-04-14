@@ -1,6 +1,6 @@
 <?php
 /**
- * XmlException class
+ * MissingComponentException class
  *
  * PHP 5
  *
@@ -15,12 +15,16 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\Controller\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Exception class for Xml.  This exception will be thrown from Xml when it
- * encounters an error.
+ * Used when a component cannot be found.
  *
  */
-class XmlException extends Exception {
+class MissingComponentException extends Exception {
+
+	protected $_messageTemplate = 'Component class %s could not be found.';
+
 }

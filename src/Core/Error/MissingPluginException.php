@@ -1,6 +1,6 @@
 <?php
 /**
- * MissingComponentException class
+ * MissingPluginException class
  *
  * PHP 5
  *
@@ -15,14 +15,16 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\Core\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Used when a component cannot be found.
+ * Exception raised when a plugin could not be found
  *
  */
-class MissingComponentException extends Exception {
+class MissingPluginException extends Exception {
 
-	protected $_messageTemplate = 'Component class %s could not be found.';
+	protected $_messageTemplate = 'Plugin %s could not be found.';
 
 }

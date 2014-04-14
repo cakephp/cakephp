@@ -16,7 +16,7 @@
  */
 namespace Cake\Network\Email;
 
-use Cake\Error;
+use Cake\Network\Error;
 
 /**
  * Send mail using mail() function
@@ -29,7 +29,7 @@ class MailTransport extends AbstractTransport {
  *
  * @param \Cake\Network\Email\Email $email Cake Email
  * @return array
- * @throws \Cake\Error\SocketException When mail cannot be sent.
+ * @throws \Cake\Network\Error\SocketException When mail cannot be sent.
  */
 	public function send(Email $email) {
 		$eol = PHP_EOL;
@@ -61,7 +61,7 @@ class MailTransport extends AbstractTransport {
  * @param string $message email's body
  * @param string $headers email's custom headers
  * @param string $params additional params for sending email
- * @throws \Cake\Error\SocketException if mail could not be sent
+ * @throws \Cake\Network\Error\SocketException if mail could not be sent
  * @return void
  */
 	protected function _mail($to, $subject, $message, $headers, $params = null) {

@@ -12,10 +12,15 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Database\Exception;
+namespace Cake\Database\Error;
 
-class MissingConnectionException extends \Cake\Error\Exception {
+use Cake\Error\Exception;
 
+class MissingConnectionException extends Exception {
+
+/**
+ * @inheritdoc
+ */
 	protected $_messageTemplate = 'Connection to database could not be established: %s';
 
 }

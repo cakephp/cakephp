@@ -19,7 +19,7 @@
 namespace Cake\Utility;
 
 use Cake\Core\Configure;
-use Cake\Error;
+use Cake\Network\Error\SocketException;
 use Cake\Network\Http\Client;
 use \DOMDocument;
 
@@ -84,7 +84,7 @@ class Xml {
  * @param string|array $input XML string, a path to a file, a URL or an array
  * @param string|array $options The options to use
  * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
- * @throws \Cake\Error\XmlException
+ * @throws \Cake\Utility\Error\XmlException
  */
 	public static function build($input, array $options = []) {
 		$defaults = array(
@@ -107,7 +107,7 @@ class Xml {
 					throw new Error\XmlException('XML cannot be read.');
 				}
 				return static::_loadXml($response->body, $options);
-			} catch (Error\SocketException $e) {
+			} catch (SocketException $e) {
 				throw new Error\XmlException('XML cannot be read.');
 			}
 		} elseif (!is_string($input)) {
@@ -122,7 +122,7 @@ class Xml {
  * @param string $input The input to load.
  * @param array $options The options to use. See Xml::build()
  * @return \SimpleXmlElement|\DOMDocument
- * @throws \Cake\Error\XmlException
+ * @throws \Cake\Utility\Error\XmlException
  */
 	protected static function _loadXml($input, $options) {
 		$hasDisable = function_exists('libxml_disable_entity_loader');
@@ -186,10 +186,10 @@ class Xml {
  * @param array $input Array with data
  * @param string|array $options The options to use
  * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
- * @throws \Cake\Error\XmlException
+ * @throws \Cake\Utility\Error\XmlException
  */
 	public static function fromArray(array $input, $options = array()) {
-		if (count($input) !== 1) {
+		if (!is_array($input) || count($input) !== 1) {
 			throw new Error\XmlException('Invalid input.');
 		}
 		$key = key($input);
@@ -230,7 +230,7 @@ class Xml {
  * @param array $data Array of data to append to the $node.
  * @param string $format Either 'attribute' or 'tags'. This determines where nested keys go.
  * @return void
- * @throws \Cake\Error\XmlException
+ * @throws \Cake\Utility\Error\XmlException
  */
 	protected static function _fromArray($dom, $node, &$data, $format) {
 		if (empty($data) || !is_array($data)) {
@@ -328,7 +328,7 @@ class Xml {
  *
  * @param \SimpleXMLElement|\DOMDocument|\DOMNode $obj SimpleXMLElement, DOMDocument or DOMNode instance
  * @return array Array representation of the XML structure.
- * @throws \Cake\Error\XmlException
+ * @throws \Cake\Utility\Error\XmlException
  */
 	public static function toArray($obj) {
 		if ($obj instanceof \DOMNode) {

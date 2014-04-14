@@ -1,6 +1,6 @@
 <?php
 /**
- * AclException class
+ * MissingControllerException class
  *
  * PHP 5
  *
@@ -15,11 +15,21 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\Controller\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Exception class for AclComponent and Interface implementations.
+ * Missing Controller exception - used when a controller
+ * cannot be found.
  *
  */
-class AclException extends Exception {
+class MissingControllerException extends Exception {
+
+	protected $_messageTemplate = 'Controller class %s could not be found.';
+
+	public function __construct($message, $code = 404) {
+		parent::__construct($message, $code);
+	}
+
 }

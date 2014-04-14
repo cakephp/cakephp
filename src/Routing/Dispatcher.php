@@ -20,10 +20,11 @@
 namespace Cake\Routing;
 
 use Cake\Controller\Controller;
+use Cake\Controller\Error\MissingControllerException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Error;
+use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
@@ -88,7 +89,7 @@ class Dispatcher implements EventListener {
  *
  * @param \Cake\Event\EventManager $manager
  * @return void
- * @throws \Cake\Error\MissingDispatcherFilterException
+ * @throws \Cake\Routing\Error\MissingDispatcherFilterException
  */
 	protected function _attachFilters($manager) {
 		$filters = Configure::read('Dispatcher.filters');
@@ -138,7 +139,7 @@ class Dispatcher implements EventListener {
  * @param \Cake\Network\Response $response Response object to put the results of the dispatch into.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return string|void if `$request['return']` is set then it returns response body, null otherwise
- * @throws \Cake\Error\MissingControllerException When the controller is missing.
+ * @throws \Cake\Controller\Error\MissingControllerException When the controller is missing.
  */
 	public function dispatch(Request $request, Response $response, array $additionalParams = array()) {
 		$beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response', 'additionalParams'));
@@ -156,7 +157,7 @@ class Dispatcher implements EventListener {
 		$controller = $this->_getController($request, $response);
 
 		if (!($controller instanceof Controller)) {
-			throw new Error\MissingControllerException(array(
+			throw new MissingControllerException(array(
 				'class' => Inflector::camelize($request->params['controller']),
 				'plugin' => empty($request->params['plugin']) ? null : Inflector::camelize($request->params['plugin']),
 				'prefix' => empty($request->params['prefix']) ? null : Inflector::camelize($request->params['prefix']),
@@ -191,7 +192,7 @@ class Dispatcher implements EventListener {
 
 		$response = $controller->invokeAction();
 		if ($response !== null && !($response instanceof Response)) {
-			throw new Error\Exception('Controller action can only return an instance of Response');
+			throw new Exception('Controller action can only return an instance of Response');
 		}
 
 		if (!$response && $controller->autoRender) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * MissingShellMethodException class
+ * XmlException class
  *
  * PHP 5
  *
@@ -15,14 +15,14 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\Utility\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Used when a shell method cannot be found.
+ * Exception class for Xml.  This exception will be thrown from Xml when it
+ * encounters an error.
  *
  */
-class MissingShellMethodException extends Exception {
-
-	protected $_messageTemplate = "Unknown command %1\$s %2\$s.\nFor usage try `cake %1\$s --help`";
-
+class XmlException extends Exception {
 }

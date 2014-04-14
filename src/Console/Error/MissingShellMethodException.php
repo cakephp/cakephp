@@ -1,6 +1,6 @@
 <?php
 /**
- * MissingDatabaseException class
+ * MissingShellMethodException class
  *
  * PHP 5
  *
@@ -15,14 +15,16 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\Console\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Runtime Exceptions for ConnectionManager
+ * Used when a shell method cannot be found.
  *
  */
-class MissingDatabaseException extends Exception {
+class MissingShellMethodException extends Exception {
 
-	protected $_messageTemplate = 'Database connection "%s" could not be found.';
+	protected $_messageTemplate = "Unknown command %1\$s %2\$s.\nFor usage try `cake %1\$s --help`";
 
 }

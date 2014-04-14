@@ -1,6 +1,6 @@
 <?php
 /**
- * MissingBehaviorException class
+ * MissingShellException class
  *
  * PHP 5
  *
@@ -15,14 +15,16 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\Console\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Used when a behavior cannot be found.
+ * Used when a shell cannot be found.
  *
  */
-class MissingBehaviorException extends Exception {
+class MissingShellException extends Exception {
 
-	protected $_messageTemplate = 'Behavior class %s could not be found.';
+	protected $_messageTemplate = 'Shell class for "%s" could not be found.';
 
 }
