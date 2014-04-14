@@ -37,7 +37,7 @@ class ResultSetDecorator extends Collection implements Countable, Serializable, 
  * will convert the underlying traversable object into an array and
  * get the count of the underlying data.
  *
- * @return integer
+ * @return int
  */
 	public function count() {
 		return count($this->toArray());

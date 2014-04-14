@@ -57,7 +57,7 @@ class HelperRegistry extends ObjectRegistry {
  * if any
  *
  * @param string $helper The helper name to be loaded
- * @return boolean whether the helper could be loaded or not
+ * @return bool whether the helper could be loaded or not
  * @throws \Cake\View\Error\MissingHelperException When a helper could not be found.
  *    App helpers are searched, and then plugin helpers.
  */

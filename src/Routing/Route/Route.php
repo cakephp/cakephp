@@ -135,7 +135,7 @@ class Route {
 /**
  * Check if a Route has been compiled into a regular expression.
  *
- * @return boolean
+ * @return bool
  */
 	public function compiled() {
 		return !empty($this->_compiledRoute);

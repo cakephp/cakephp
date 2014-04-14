@@ -43,7 +43,7 @@ class RulesProvider {
  *
  * @param string $method the validation method to call
  * @param array $arguments the list of arguments to pass to the method
- * @return boolean whether or not the validation rule passed
+ * @return bool whether or not the validation rule passed
  */
 	public function __call($method, $arguments) {
 		$arguments = array_slice($arguments, 0, -1);

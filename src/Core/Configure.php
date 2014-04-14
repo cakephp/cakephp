@@ -70,7 +70,7 @@ class Configure {
  * @param string|array $config The key to write, can be a dot notation value.
  * Alternatively can be an array containing key(s) and value(s).
  * @param mixed $value Value to set for var
- * @return boolean True if write was successful
+ * @return bool True if write was successful
  */
 	public static function write($config, $value = null) {
 		if (!is_array($config)) {
@@ -116,7 +116,7 @@ class Configure {
  * Returns true if given variable is set in Configure.
  *
  * @param string $var Variable name to check for
- * @return boolean True if variable is there
+ * @return bool True if variable is there
  */
 	public static function check($var = null) {
 		if (empty($var)) {
@@ -202,7 +202,7 @@ class Configure {
  * and make any future attempts to use it cause an Exception.
  *
  * @param string $name Name of the engine to drop.
- * @return boolean Success
+ * @return bool Success
  */
 	public static function drop($name) {
 		if (!isset(static::$_engines[$name])) {
@@ -233,7 +233,7 @@ class Configure {
  * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::load
  * @param string $key name of configuration resource to load.
  * @param string $config Name of the configured engine to use to read the resource identified by $key.
- * @param boolean $merge if config files should be merged instead of simply overridden
+ * @param bool $merge if config files should be merged instead of simply overridden
  * @return mixed false if file not found, void if load successful.
  */
 	public static function load($key, $config = 'default', $merge = true) {
@@ -277,7 +277,7 @@ class Configure {
  * @param string $config The name of the configured adapter to dump data with.
  * @param array $keys The name of the top-level keys you want to dump.
  *   This allows you save only some data stored in Configure.
- * @return boolean success
+ * @return bool success
  * @throws \Cake\Error\Exception if the adapter does not implement a `dump` method.
  */
 	public static function dump($key, $config = 'default', $keys = []) {
@@ -335,7 +335,7 @@ class Configure {
  * @param string $name The storage name for the saved configuration.
  * @param string $cacheConfig The cache configuration to save into. Defaults to 'default'
  * @param array $data Either an array of data to store, or leave empty to store all values.
- * @return boolean Success
+ * @return bool Success
  */
 	public static function store($name, $cacheConfig = 'default', $data = null) {
 		if ($data === null) {
@@ -350,7 +350,7 @@ class Configure {
  *
  * @param string $name Name of the stored config file to load.
  * @param string $cacheConfig Name of the Cache configuration to read from.
- * @return boolean Success.
+ * @return bool Success.
  */
 	public static function restore($name, $cacheConfig = 'default') {
 		$values = Cache::read($name, $cacheConfig);
@@ -363,7 +363,7 @@ class Configure {
 /**
  * Clear all values stored in Configure.
  *
- * @return boolean success.
+ * @return bool success.
  */
 	public static function clear() {
 		static::$_values = [];

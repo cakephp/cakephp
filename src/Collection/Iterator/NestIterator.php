@@ -57,7 +57,7 @@ class NestIterator extends Collection implements RecursiveIterator {
  * Returns true if there is an array or a traversable object stored under the
  * configured nestKey for the current item
  *
- * @return boolean
+ * @return bool
  */
 	public function hasChildren() {
 		$property = $this->_propertyExtractor($this->_nestKey);

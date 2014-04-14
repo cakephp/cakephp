@@ -240,7 +240,7 @@ class AuthComponent extends Component {
  * of login form data.
  *
  * @param Event $event The startup event.
- * @return boolean
+ * @return bool
  */
 	public function startup(Event $event) {
 		$controller = $event->subject();
@@ -275,7 +275,7 @@ class AuthComponent extends Component {
  * Checks whether current action is accessible without authentication.
  *
  * @param Controller $controller A reference to the instantiating controller object
- * @return boolean True if action is accessible without authentication else false
+ * @return bool True if action is accessible without authentication else false
  */
 	protected function _isAllowed(Controller $controller) {
 		$action = strtolower($controller->request->params['action']);
@@ -295,7 +295,7 @@ class AuthComponent extends Component {
  * is returned.
  *
  * @param Controller $controller A reference to the controller object.
- * @return boolean True if current action is login action else false.
+ * @return bool True if current action is login action else false.
  */
 	protected function _unauthenticated(Controller $controller) {
 		if (empty($this->_authenticateObjects)) {
@@ -338,7 +338,7 @@ class AuthComponent extends Component {
  * Normalizes config `loginAction` and checks if current request URL is same as login action.
  *
  * @param Controller $controller A reference to the controller object.
- * @return boolean True if current action is login action else false.
+ * @return bool True if current action is login action else false.
  */
 	protected function _isLoginAction(Controller $controller) {
 		$url = '';
@@ -355,7 +355,7 @@ class AuthComponent extends Component {
  * Handle unauthorized access attempt
  *
  * @param Controller $controller A reference to the controller object
- * @return boolean Returns false
+ * @return bool Returns false
  * @throws \Cake\Error\ForbiddenException
  */
 	protected function _unauthorized(Controller $controller) {
@@ -417,7 +417,7 @@ class AuthComponent extends Component {
  *
  * @param array $user The user to check the authorization of. If empty the user in the session will be used.
  * @param \Cake\Network\Request $request The request to authenticate for. If empty, the current request will be used.
- * @return boolean True if $user is authorized, otherwise false
+ * @return bool True if $user is authorized, otherwise false
  */
 	public function isAuthorized($user = null, Request $request = null) {
 		if (empty($user) && !$this->user()) {
@@ -559,7 +559,7 @@ class AuthComponent extends Component {
  * will also change the session id in order to help mitigate session replays.
  *
  * @param array $user Either an array of user data, or null to identify a user using the current request.
- * @return boolean True on login success, false on failure
+ * @return bool True on login success, false on failure
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#identifying-users-and-logging-them-in
  */
 	public function login($user = null) {
@@ -631,7 +631,7 @@ class AuthComponent extends Component {
  * Similar to AuthComponent::user() except if the session user cannot be found, connected authentication
  * objects will have their getUser() methods called. This lets stateless authentication methods function correctly.
  *
- * @return boolean true if a user can be found, false if one cannot.
+ * @return bool true if a user can be found, false if one cannot.
  */
 	protected function _getUser() {
 		$user = $this->user();

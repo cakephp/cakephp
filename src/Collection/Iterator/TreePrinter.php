@@ -59,7 +59,7 @@ class TreePrinter extends RecursiveIteratorIterator {
  * callable returning the key value.
  * @param string $spacer The string to use for prefixing the values according to
  * their depth in the tree
- * @param integer $mode
+ * @param int $mode
  */
 	public function __construct($items, $valuePath, $keyPath, $spacer, $mode = RecursiveIteratorIterator::SELF_FIRST) {
 		parent::__construct($items, $mode);

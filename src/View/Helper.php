@@ -28,7 +28,6 @@ use Cake\Utility\Inflector;
  * Abstract base class for all other Helpers in CakePHP.
  * Provides common methods and features.
  *
- *
  * ## Callback methods
  *
  * Helpers support a number of callback methods. These callbacks allow you to hook into
@@ -193,7 +192,7 @@ class Helper extends Object implements EventListener {
  * @param string|array $url Either a relative string url like `/products/view/23` or
  *    an array of URL parameters. Using an array for URLs will allow you to leverage
  *    the reverse routing features of CakePHP.
- * @param boolean $full If true, the full base URL will be prepended to the result
+ * @param bool $full If true, the full base URL will be prepended to the result
  * @return string Full translated URL with base path.
  * @link http://book.cakephp.org/2.0/en/views/helpers.html
  */

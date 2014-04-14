@@ -39,7 +39,7 @@ class Session {
 /**
  * True if the Session is still valid
  *
- * @var boolean
+ * @var bool
  */
 	public static $valid = false;
 
@@ -67,21 +67,21 @@ class Session {
 /**
  * Error number of last occurred error
  *
- * @var integer
+ * @var int
  */
 	public static $lastError = null;
 
 /**
  * Start time for this session.
  *
- * @var integer
+ * @var int
  */
 	public static $time = false;
 
 /**
  * Time when this session becomes invalid.
  *
- * @var integer
+ * @var int
  */
 	public static $sessionTime = false;
 
@@ -103,7 +103,7 @@ class Session {
  * Number of requests that can occur during a session time without the session being renewed.
  * This feature is only used when config value `Session.autoRegenerate` is set to true.
  *
- * @var integer
+ * @var int
  * @see \Cake\Network\Session::_checkValid()
  */
 	protected static $_requestCountdown = 10;
@@ -111,7 +111,7 @@ class Session {
 /**
  * Whether or not the init function in this class was already called
  *
- * @var boolean
+ * @var bool
  */
 	protected static $_initialized = false;
 
@@ -181,7 +181,7 @@ class Session {
 /**
  * Starts the Session.
  *
- * @return boolean True if session was started
+ * @return bool True if session was started
  */
 	public static function start() {
 		if (static::started()) {
@@ -203,7 +203,7 @@ class Session {
 /**
  * Determine if Session has been started.
  *
- * @return boolean True if session has been started.
+ * @return bool True if session has been started.
  */
 	public static function started() {
 		return isset($_SESSION) && session_id();
@@ -213,7 +213,7 @@ class Session {
  * Returns true if given variable is set in session.
  *
  * @param string $name Variable name to check for
- * @return boolean True if variable is there
+ * @return bool True if variable is there
  */
 	public static function check($name = null) {
 		if (empty($name) || !static::_hasSession() || !static::start()) {
@@ -252,7 +252,7 @@ class Session {
  * Removes a variable from session.
  *
  * @param string $name Session variable to remove
- * @return boolean Success
+ * @return bool Success
  */
 	public static function delete($name) {
 		if (static::check($name)) {
@@ -285,7 +285,7 @@ class Session {
 /**
  * Return error description for given error number.
  *
- * @param integer $errorNumber Error to set
+ * @param int $errorNumber Error to set
  * @return string Error as string
  */
 	protected static function _error($errorNumber) {
@@ -310,7 +310,7 @@ class Session {
 /**
  * Returns true if session is valid.
  *
- * @return boolean Success
+ * @return bool Success
  */
 	public static function valid() {
 		if (static::start() && static::read('Config')) {
@@ -330,7 +330,7 @@ class Session {
  * against the time the session is set to expire. The User agent is only checked
  * if Session.checkAgent == true.
  *
- * @return boolean
+ * @return bool
  */
 	protected static function _validAgentAndTime() {
 		$config = static::read('Config');
@@ -400,7 +400,7 @@ class Session {
  *
  * @param string|array $name Name of variable
  * @param string $value Value to write
- * @return boolean True if the write was successful, false if the write failed
+ * @return bool True if the write was successful, false if the write failed
  */
 	public static function write($name, $value = null) {
 		if (empty($name) || !static::start()) {
@@ -538,7 +538,7 @@ class Session {
 
 /**
  * Returns whether a session exists
- * @return boolean
+ * @return bool
  */
 	protected static function _hasSession() {
 		return static::started() || isset($_COOKIE[static::_cookieName()]);
@@ -567,7 +567,7 @@ class Session {
  * Get one of the prebaked default session configurations.
  *
  * @param string $name
- * @return boolean|array
+ * @return bool|array
  */
 	protected static function _defaultConfig($name) {
 		$defaults = array(
@@ -636,7 +636,7 @@ class Session {
 /**
  * Helper method to start a session
  *
- * @return boolean Success
+ * @return bool Success
  */
 	protected static function _startSession() {
 		static::init();
@@ -717,7 +717,7 @@ class Session {
 /**
  * Helper method to set an internal error message.
  *
- * @param integer $errorNumber Number of the error
+ * @param int $errorNumber Number of the error
  * @param string $errorMessage Description of the error
  * @return void
  */

@@ -94,7 +94,7 @@ class MemcachedEngine extends CacheEngine {
  * Called automatically by the cache frontend
  *
  * @param array $config array of setting for the engine
- * @return boolean True if the engine has been successfully initialized, false if not
+ * @return bool True if the engine has been successfully initialized, false if not
  * @throws \Cake\Error\Exception when you try use authentication without Memcached compiled with SASL support
  */
 	public function init(array $config = []) {
@@ -218,7 +218,7 @@ class MemcachedEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @return boolean True if the data was successfully cached, false on failure
+ * @return bool True if the data was successfully cached, false on failure
  * @see http://php.net/manual/en/memcache.set.php
  */
 	public function write($key, $value) {
@@ -248,7 +248,7 @@ class MemcachedEngine extends CacheEngine {
  * Increments the value of an integer cached key
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to increment
+ * @param int $offset How much to increment
  * @return bool|int New incremented value, false otherwise
  * @throws \Cake\Error\Exception when you try to increment with compress = true
  */
@@ -262,7 +262,7 @@ class MemcachedEngine extends CacheEngine {
  * Decrements the value of an integer cached key
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to subtract
+ * @param int $offset How much to subtract
  * @return bool|int New decremented value, false otherwise
  * @throws \Cake\Error\Exception when you try to decrement with compress = true
  */
@@ -276,7 +276,7 @@ class MemcachedEngine extends CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
 		$key = $this->_key($key);
@@ -287,8 +287,8 @@ class MemcachedEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @param boolean $check
- * @return boolean True if the cache was successfully cleared, false otherwise
+ * @param bool $check
+ * @return bool True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
 		if ($check) {
@@ -345,7 +345,7 @@ class MemcachedEngine extends CacheEngine {
  * old values will remain in storage until they expire.
  *
  * @param string $group name of the group to be cleared
- * @return boolean success
+ * @return bool success
  */
 	public function clearGroup($group) {
 		return (bool)$this->_Memcached->increment($this->_config['prefix'] . $group);

@@ -125,7 +125,7 @@ class ArrayContext implements ContextInterface {
  * must be defined in the 'schema' data, and the 'defaults' data must
  * contain a value for all fields in the key.
  *
- * @return boolean
+ * @return bool
  */
 	public function isCreate() {
 		$primary = $this->primaryKey();
@@ -164,7 +164,7 @@ class ArrayContext implements ContextInterface {
  * In this context class, this is simply defined by the 'required' array.
  *
  * @param string $field A dot separated path to check required-ness for.
- * @return boolean
+ * @return bool
  */
 	public function isRequired($field) {
 		if (!is_array($this->_context['required'])) {
@@ -217,7 +217,7 @@ class ArrayContext implements ContextInterface {
  * Check whether or not a field has an error attached to it
  *
  * @param string $field A dot separated path to check errors on.
- * @return boolean Returns true if the errors for the field are not empty.
+ * @return bool Returns true if the errors for the field are not empty.
  */
 	public function hasError($field) {
 		if (empty($this->_context['errors'])) {

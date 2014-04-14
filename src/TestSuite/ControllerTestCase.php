@@ -40,7 +40,7 @@ class ControllerTestDispatcher extends Dispatcher {
 /**
  * Use custom routes during tests
  *
- * @var boolean
+ * @var bool
  */
 	public $loadRoutes = true;
 
@@ -121,14 +121,14 @@ abstract class ControllerTestCase extends TestCase {
 /**
  * Automatically mock controllers that aren't mocked
  *
- * @var boolean
+ * @var bool
  */
 	public $autoMock = true;
 
 /**
  * Use custom routes during tests
  *
- * @var boolean
+ * @var bool
  */
 	public $loadRoutes = true;
 
@@ -172,7 +172,7 @@ abstract class ControllerTestCase extends TestCase {
  * Once a test has been run on a controller it should be rebuilt
  * to clean up properties.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_dirtyController = false;
 

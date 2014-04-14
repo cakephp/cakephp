@@ -38,21 +38,21 @@ class Query extends DatabaseQuery {
 /**
  * Indicates that the operation should append to the list
  *
- * @var integer
+ * @var int
  */
 	const APPEND = 0;
 
 /**
  * Indicates that the operation should prepend to the list
  *
- * @var integer
+ * @var int
  */
 	const PREPEND = 1;
 
 /**
  * Indicates that the operation should overwrite the list
  *
- * @var boolean
+ * @var bool
  */
 	const OVERWRITE = true;
 
@@ -60,7 +60,7 @@ class Query extends DatabaseQuery {
  * Whether the user select any fields before being executed, this is used
  * to determined if any fields should be automatically be selected.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_hasFields;
 
@@ -68,14 +68,14 @@ class Query extends DatabaseQuery {
  * Boolean for tracking whether or not buffered results
  * are enabled.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_useBufferedResults = true;
 
 /**
  * Whether to hydrate results into entity objects
  *
- * @var boolean
+ * @var bool
  */
 	protected $_hydrate = true;
 
@@ -235,7 +235,7 @@ class Query extends DatabaseQuery {
  * previous list will be emptied.
  *
  * @param array|string $associations list of table aliases to be queried
- * @param boolean $override whether override previous list with the one passed
+ * @param bool $override whether override previous list with the one passed
  * defaults to merging previous list with the new one.
  * @return array|\Cake\ORM\Query
  */
@@ -324,8 +324,8 @@ class Query extends DatabaseQuery {
  * If called with no arguments, it will return whether or not buffering is
  * enabled.
  *
- * @param boolean $enable whether or not to enable buffering
- * @return boolean|Query
+ * @param bool $enable whether or not to enable buffering
+ * @return bool|Query
  */
 	public function bufferResults($enable = null) {
 		if ($enable === null) {
@@ -459,7 +459,7 @@ class Query extends DatabaseQuery {
 /**
  * Returns the COUNT(*) for the query.
  *
- * @return integer
+ * @return int
  */
 	public function count() {
 		$query = clone $this;
@@ -519,9 +519,9 @@ class Query extends DatabaseQuery {
  *
  * If set to false array results will be returned
  *
- * @param boolean|null $enable Use a boolean to set the hydration mode.
+ * @param bool|null $enable Use a boolean to set the hydration mode.
  *   Null will fetch the current hydration mode.
- * @return boolean|Query A boolean when reading, and $this when setting the mode.
+ * @return bool|Query A boolean when reading, and $this when setting the mode.
  */
 	public function hydrate($enable = null) {
 		if ($enable === null) {

@@ -329,7 +329,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * Useful to determine if this expression object is void or it will generate
  * a non-empty string when compiled
  *
- * @return integer
+ * @return int
  */
 	public function count() {
 		return count($this->_conditions);

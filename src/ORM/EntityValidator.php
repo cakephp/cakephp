@@ -78,7 +78,7 @@ class EntityValidator {
  * @param \Cake\ORM\Entity $entity The entity to be validated
  * @param array|\ArrayObject $options options for validation, including an optional key of
  * associations to also be validated.
- * @return boolean true if all validations passed, false otherwise
+ * @return bool true if all validations passed, false otherwise
  */
 	public function one(Entity $entity, $options = []) {
 		$valid = true;
@@ -115,7 +115,7 @@ class EntityValidator {
  * @param array $entities List of entities to be validated
  * @param array|\ArrayObject $options options for validation, including an optional key of
  * associations to also be validated.
- * @return boolean true if all validations passed, false otherwise
+ * @return bool true if all validations passed, false otherwise
  */
 	public function many(array $entities, $options = []) {
 		$valid = true;
@@ -132,7 +132,7 @@ class EntityValidator {
  *
  * @param \Cake\ORM\Entity The entity to validate
  * @param \ArrayObject|array $options
- * @return boolean true if the entity is valid, false otherwise
+ * @return bool true if the entity is valid, false otherwise
  */
 	protected function _processValidation($entity, $options) {
 		$type = is_string($options['validate']) ? $options['validate'] : 'default';

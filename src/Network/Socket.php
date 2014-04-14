@@ -59,7 +59,7 @@ class Socket {
 /**
  * This boolean contains the current state of the Socket class
  *
- * @var boolean
+ * @var bool
  */
 	public $connected = false;
 
@@ -73,7 +73,7 @@ class Socket {
 /**
  * True if the socket stream is encrypted after a Cake\Network\Socket::enableCrypto() call
  *
- * @var boolean
+ * @var bool
  */
 	public $encrypted = false;
 
@@ -120,7 +120,7 @@ class Socket {
 /**
  * Connect the socket to the given host and port.
  *
- * @return boolean Success
+ * @return bool Success
  * @throws \Cake\Network\Error\SocketException
  */
 	public function connect() {
@@ -178,7 +178,7 @@ class Socket {
  *
  * Instead we need to handle those errors manually.
  *
- * @param integer $code
+ * @param int $code
  * @param string $message
  * @return void
  */
@@ -249,7 +249,7 @@ class Socket {
 /**
  * Set the last error.
  *
- * @param integer $errNum Error code
+ * @param int $errNum Error code
  * @param string $errStr Error string
  * @return void
  */
@@ -261,7 +261,7 @@ class Socket {
  * Write data to the socket.
  *
  * @param string $data The data to write to the socket
- * @return boolean Success
+ * @return bool Success
  */
 	public function write($data) {
 		if (!$this->connected) {
@@ -283,7 +283,7 @@ class Socket {
  * Read data from the socket. Returns false if no data is available or no connection could be
  * established.
  *
- * @param integer $length Optional buffer length to read; defaults to 1024
+ * @param int $length Optional buffer length to read; defaults to 1024
  * @return mixed Socket data
  */
 	public function read($length = 1024) {
@@ -308,7 +308,7 @@ class Socket {
 /**
  * Disconnect the socket from the current connection.
  *
- * @return boolean Success
+ * @return bool Success
  */
 	public function disconnect() {
 		if (!is_resource($this->connection)) {
@@ -334,7 +334,7 @@ class Socket {
  * Resets the state of this Socket instance to it's initial state (before Object::__construct got executed)
  *
  * @param array $state Array with key and values to reset
- * @return boolean True on success
+ * @return bool True on success
  */
 	public function reset($state = null) {
 		if (empty($state)) {
@@ -356,8 +356,8 @@ class Socket {
  *
  * @param string $type can be one of 'ssl2', 'ssl3', 'ssl23' or 'tls'
  * @param string $clientOrServer can be one of 'client', 'server'. Default is 'client'
- * @param boolean $enable enable or disable encryption. Default is true (enable)
- * @return boolean True on success
+ * @param bool $enable enable or disable encryption. Default is true (enable)
+ * @return bool True on success
  * @throws \InvalidArgumentException When an invalid encryption scheme is chosen.
  * @throws \Cake\Network\Error\SocketException When attempting to enable SSL/TLS fails
  * @see stream_socket_enable_crypto

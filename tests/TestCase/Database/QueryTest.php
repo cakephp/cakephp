@@ -2450,7 +2450,7 @@ class QueryTest extends TestCase {
  * Assertion for comparing a table's contents with what is in it.
  *
  * @param string $table
- * @param integer $count
+ * @param int $count
  * @param array $rows
  * @param array $conditions
  * @return void
@@ -2472,7 +2472,7 @@ class QueryTest extends TestCase {
  *
  * @param string $pattern
  * @param string $query the result to compare against
- * @param boolean $optional
+ * @param bool $optional
  * @return void
  */
 	public function assertQuotedQuery($pattern, $query, $optional = false) {

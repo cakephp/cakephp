@@ -29,7 +29,7 @@ class EventManager {
 /**
  * The default priority queue value for new, attached listeners
  *
- * @var integer
+ * @var int
  */
 	public static $defaultPriority = 10;
 
@@ -43,14 +43,14 @@ class EventManager {
 /**
  * List of listener callbacks associated to
  *
- * @var object $Listeners
+ * @var object
  */
 	protected $_listeners = array();
 
 /**
  * Internal flag to distinguish a common manager from the singleton
  *
- * @var boolean
+ * @var bool
  */
 	protected $_isGlobal = false;
 

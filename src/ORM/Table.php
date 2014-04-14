@@ -364,7 +364,7 @@ class Table implements RepositoryInterface, EventListener {
  * using the Schema\Table instance.
  *
  * @param string $field The field to check for.
- * @return boolean True if the field exists, false if it does not.
+ * @return bool True if the field exists, false if it does not.
  */
 	public function hasField($field) {
 		$schema = $this->schema();
@@ -1110,7 +1110,7 @@ class Table implements RepositoryInterface, EventListener {
  *
  * @param \Cake\Datasource\EntityInterface the entity to be saved
  * @param array $options
- * @return \Cake\Datasource\EntityInterface|boolean
+ * @return \Cake\Datasource\EntityInterface|bool
  */
 	protected function _processSave($entity, $options) {
 		$primary = $entity->extract((array)$this->primaryKey());
@@ -1190,7 +1190,7 @@ class Table implements RepositoryInterface, EventListener {
  *
  * @param \Cake\Datasource\EntityInterface the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
- * @return \Cake\Datasource\EntityInterface|boolean
+ * @return \Cake\Datasource\EntityInterface|bool
  * @throws \RuntimeException if not all the primary keys where supplied or could
  * be generated when the table has composite primary keys
  */
@@ -1264,7 +1264,7 @@ class Table implements RepositoryInterface, EventListener {
  *
  * @param \Cake\Datasource\EntityInterface the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
- * @return \Cake\Datasource\EntityInterface|boolean
+ * @return \Cake\Datasource\EntityInterface|bool
  * @throws \InvalidArgumentException When primary key data is missing.
  */
 	protected function _update($entity, $data) {
@@ -1342,7 +1342,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param \ArrayObject $options The options for the delete.
  * @throws \InvalidArgumentException if there are no primary key values of the
  * passed entity
- * @return boolean success
+ * @return bool success
  */
 	protected function _processDelete($entity, $options) {
 		$eventManager = $this->getEventManager();
@@ -1525,7 +1525,7 @@ class Table implements RepositoryInterface, EventListener {
  * exists for this table.
  *
  * @param string $property the association name
- * @return boolean
+ * @return bool
  */
 	public function __isset($property) {
 		return $this->_associations->has($property);
@@ -1537,7 +1537,7 @@ class Table implements RepositoryInterface, EventListener {
  * Override this method if you want a table object to use custom
  * marshalling logic.
  *
- * @param boolean $safe Whether or not this marshaller
+ * @param bool $safe Whether or not this marshaller
  *   should be in safe mode.
  * @return \Cake\ORM\Marshaller
  * @see \Cake\ORM\Marshaller
@@ -1678,7 +1678,7 @@ class Table implements RepositoryInterface, EventListener {
  * keys are accepted:
  * - validate: The name of the validation set to use
  * - associated: map of association names to validate as well
- * @return boolean true if the passed entity and its associations are valid
+ * @return bool true if the passed entity and its associations are valid
  */
 	public function validate($entity, $options = []) {
 		if (!isset($options['associated'])) {
@@ -1729,7 +1729,7 @@ class Table implements RepositoryInterface, EventListener {
  * keys are accepted:
  * - validate: The name of the validation set to use
  * - associated: map of association names to validate as well
- * @return boolean true if the passed entities and their associations are valid
+ * @return bool true if the passed entities and their associations are valid
  */
 	public function validateMany($entities, array $options = []) {
 		if (!isset($options['associated'])) {

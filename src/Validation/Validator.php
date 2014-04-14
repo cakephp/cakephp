@@ -63,7 +63,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * actually run validation rules over data, not just return the messages.
  *
  * @param array $data The data to be checked for errors
- * @param boolean $newRecord whether the data to be validated is new or to be updated.
+ * @param bool $newRecord whether the data to be validated is new or to be updated.
  * @return array Array of invalid fields
  * @see Validator::validates()
  */
@@ -130,7 +130,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Check whether or not a validator contains any rules for the given field.
  *
  * @param string $name The field name to check.
- * @return boolean
+ * @return bool
  */
 	public function hasField($name) {
 		return isset($this->_fields[$name]);
@@ -167,7 +167,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns whether a rule set is defined for a field or not
  *
  * @param string $field name of the field to check
- * @return boolean
+ * @return bool
  */
 	public function offsetExists($field) {
 		return isset($this->_fields[$field]);
@@ -222,7 +222,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Returns the number of fields having validation rules
  *
- * @return integer
+ * @return int
  */
 	public function count() {
 		return count($this->_fields);
@@ -295,7 +295,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Sets whether a field is required to be present in data array.
  *
  * @param string $field the name of the field
- * @param boolean|string $mode Valid values are true, false, 'create', 'update'
+ * @param bool|string $mode Valid values are true, false, 'create', 'update'
  * @param string $message The validation message to show if the field presence
  * is required.
  * @return Validator this instance
@@ -313,7 +313,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * rules will be ignored
  *
  * @param string $field the name of the field
- * @param boolean|string $mode Valid values are true, false, 'create', 'update'
+ * @param bool|string $mode Valid values are true, false, 'create', 'update'
  * @param string $message The validation message to show if the field is not
  * allowed to be empty.
  * @return Validator this instance
@@ -331,8 +331,8 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * record.
  *
  * @param string $field
- * @param boolean $newRecord whether the data to be validated is new or to be updated.
- * @return boolean
+ * @param bool $newRecord whether the data to be validated is new or to be updated.
+ * @return bool
  */
 	public function isEmptyAllowed($field, $newRecord) {
 		return $this->_canBeEmpty($this->field($field), $newRecord);
@@ -343,8 +343,8 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * record.
  *
  * @param string $field
- * @param boolean $newRecord whether the data to be validated is new or to be updated.
- * @return boolean
+ * @param bool $newRecord whether the data to be validated is new or to be updated.
+ * @return bool
  */
 	public function isPresenceRequired($field, $newRecord) {
 		return !$this->_checkPresence($this->field($field), $newRecord);
@@ -355,8 +355,8 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * due to the field missing in the data array
  *
  * @param ValidationSet $field the set of rules for a field
- * @param boolean $newRecord whether the data to be validated is new or to be updated.
- * @return boolean
+ * @param bool $newRecord whether the data to be validated is new or to be updated.
+ * @return bool
  */
 	protected function _checkPresence($field, $newRecord) {
 		$required = $field->isPresenceRequired();
@@ -374,8 +374,8 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns whether the field can be left blank according to `allowEmpty`
  *
  * @param ValidationSet $field the set of rules for a field
- * @param boolean $newRecord whether the data to be validated is new or to be updated.
- * @return boolean
+ * @param bool $newRecord whether the data to be validated is new or to be updated.
+ * @return bool
  */
 	protected function _canBeEmpty($field, $newRecord) {
 		$allowed = $field->isEmptyAllowed();
@@ -393,7 +393,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns true if the field is empty in the passed data array
  *
  * @param mixed $data value to check against
- * @return boolean
+ * @return bool
  */
 	protected function _fieldIsEmpty($data) {
 		if (empty($data) && $data !== '0' && $data !== false && $data !== 0) {
@@ -409,7 +409,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @param ValidationSet $rules the list of rules for a field
  * @param mixed $value The value to be checked
  * @param array $data the full data passed to the validator
- * @param boolean $newRecord whether is it a new record or an existing one
+ * @param bool $newRecord whether is it a new record or an existing one
  * @return array
  */
 	protected function _processRules(ValidationSet $rules, $value, $data, $newRecord) {

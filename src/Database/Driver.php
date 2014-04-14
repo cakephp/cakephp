@@ -60,7 +60,7 @@ abstract class Driver {
 /**
  * Establishes a connection to the database server
  *
- * @return boolean true con success
+ * @return bool true con success
  */
 	public abstract function connect();
 
@@ -83,7 +83,7 @@ abstract class Driver {
 /**
  * Returns whether php is able to use this driver for connecting to database
  *
- * @return boolean true if it is valid to use this driver
+ * @return bool true if it is valid to use this driver
  */
 	public abstract function enabled();
 
@@ -98,28 +98,28 @@ abstract class Driver {
 /**
  * Starts a transaction
  *
- * @return boolean true on success, false otherwise
+ * @return bool true on success, false otherwise
  */
 	public abstract function beginTransaction();
 
 /**
  * Commits a transaction
  *
- * @return boolean true on success, false otherwise
+ * @return bool true on success, false otherwise
  */
 	public abstract function commitTransaction();
 
 /**
  * Rollsback a transaction
  *
- * @return boolean true on success, false otherwise
+ * @return bool true on success, false otherwise
  */
 	public abstract function rollbackTransaction();
 
 /**
  * Returns whether this driver supports save points for nested transactions
  *
- * @return boolean true if save points are supported, false otherwise
+ * @return bool true if save points are supported, false otherwise
  */
 	public function supportsSavePoints() {
 		return true;
@@ -137,7 +137,7 @@ abstract class Driver {
 /**
  * Checks if the driver supports quoting
  *
- * @return boolean
+ * @return bool
  */
 	public function supportsQuoting() {
 		return true;
@@ -209,7 +209,7 @@ abstract class Driver {
  *
  * @param string $table table name or sequence to get last insert value from
  * @param string $column the name of the column representing the primary key
- * @return string|integer
+ * @return string|int
  */
 	public function lastInsertId($table = null, $column = null) {
 		return $this->_connection->lastInsertId($table, $column);
@@ -218,7 +218,7 @@ abstract class Driver {
 /**
  * Check whether or not the driver is connected.
  *
- * @return boolean
+ * @return bool
  */
 	public function isConnected() {
 		return $this->_connection !== null;
@@ -231,8 +231,8 @@ abstract class Driver {
  * If called with a boolean argument, it will toggle the auto quoting setting
  * to the passed value
  *
- * @param boolean $enable whether to enable auto quoting
- * @return boolean
+ * @param bool $enable whether to enable auto quoting
+ * @return bool
  */
 	public function autoQuoting($enable = null) {
 		if ($enable === null) {

@@ -34,7 +34,7 @@ interface ConfigEngineInterface {
  *
  * @param string $key The identifier to write to.
  * @param array $data The data to dump.
- * @return boolean True on success or false on failure.
+ * @return bool True on success or false on failure.
  */
 	public function dump($key, $data);
 

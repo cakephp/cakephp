@@ -36,7 +36,7 @@ class ServerShell extends Shell {
 /**
  * Default ListenPort
  *
- * @var integer
+ * @var int
  */
 	const DEFAULT_PORT = 80;
 

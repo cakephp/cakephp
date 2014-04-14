@@ -30,7 +30,7 @@ trait DependentDeleteTrait {
  *
  * @param \Cake\ORM\Entity $entity The entity that started the cascaded delete.
  * @param array $options The options for the original delete.
- * @return boolean Success.
+ * @return bool Success.
  */
 	public function cascadeDelete(Entity $entity, array $options = []) {
 		if (!$this->dependent()) {

@@ -111,7 +111,7 @@ class ErrorHandler extends BaseErrorHandler {
  * Only when debug > 2 will a formatted error be displayed.
  *
  * @param array $error An array of error data.
- * @param boolean $debug Whether or not the app is in debug mode.
+ * @param bool $debug Whether or not the app is in debug mode.
  * @return void
  */
 	protected function _displayError($error, $debug) {

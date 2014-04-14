@@ -245,7 +245,7 @@ class Plugin {
  *
  * @param string $plugin name of the plugin, if null will operate on all plugins having enabled the
  * loading of routes files
- * @return boolean
+ * @return bool
  */
 	public static function routes($plugin = null) {
 		if ($plugin === null) {
@@ -299,7 +299,7 @@ class Plugin {
  * Include file, ignoring include error if needed if file is missing
  *
  * @param string $file File to include
- * @param boolean $ignoreMissing Whether to ignore include error for missing files
+ * @param bool $ignoreMissing Whether to ignore include error for missing files
  * @return mixed
  */
 	protected static function _includeFile($file, $ignoreMissing = false) {

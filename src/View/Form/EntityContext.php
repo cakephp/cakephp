@@ -70,7 +70,7 @@ class EntityContext implements ContextInterface {
  * Boolean to track whether or not the entity is a
  * collection.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_isCollection = false;
 
@@ -152,7 +152,7 @@ class EntityContext implements ContextInterface {
  *
  * Gets the primary key columns from the root entity's schema.
  *
- * @return boolean
+ * @return bool
  */
 	public function primaryKey() {
 		return (array)$this->_tables[$this->_rootName]->primaryKey();
@@ -177,7 +177,7 @@ class EntityContext implements ContextInterface {
  * If the context is for a collection or array the first object in the
  * collection will be used.
  *
- * @return boolean
+ * @return bool
  */
 	public function isCreate() {
 		$entity = $this->_context['entity'];
@@ -244,7 +244,7 @@ class EntityContext implements ContextInterface {
  * will be returned.
  *
  * @param array $path Each one of the parts in a path for a field name
- * @return \Cake\DataSource\EntityInterface|boolean
+ * @return \Cake\DataSource\EntityInterface|bool
  * @throws \RuntimeException When properties cannot be read.
  */
 	protected function _getEntity($path) {
@@ -306,7 +306,7 @@ class EntityContext implements ContextInterface {
  * Check if a field should be marked as required.
  *
  * @param string $field The dot separated path to the field you want to check.
- * @return boolean
+ * @return bool
  */
 	public function isRequired($field) {
 		$parts = explode('.', $field);
@@ -362,8 +362,8 @@ class EntityContext implements ContextInterface {
  * Get the table instance from a property path
  *
  * @param array $parts Each one of the parts in a path for a field name
- * @param boolean $rootFallback
- * @return \Cake\ORM\Table|boolean Table instance or false
+ * @param bool $rootFallback
+ * @return \Cake\ORM\Table|bool Table instance or false
  */
 	protected function _getTable($parts, $rootFallback = true) {
 		if (count($parts) === 1) {
@@ -430,7 +430,7 @@ class EntityContext implements ContextInterface {
  * Check whether or not a field has an error attached to it
  *
  * @param string $field A dot separated path to check errors on.
- * @return boolean Returns true if the errors for the field are not empty.
+ * @return bool Returns true if the errors for the field are not empty.
  */
 	public function hasError($field) {
 		return $this->error($field) !== [];

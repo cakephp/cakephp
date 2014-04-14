@@ -78,7 +78,7 @@ trait QueryTrait {
 /**
  * Whether the query is standalone or the product of an eager load operation.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_eagerLoaded = false;
 
@@ -155,7 +155,6 @@ trait QueryTrait {
  * // Using a pre-built cache engine.
  * $query->cache('my_key', $engine);
  *
- *
  * // Disable caching
  * $query->cache(false);
  * }}}
@@ -179,7 +178,7 @@ trait QueryTrait {
  * Sets the query instance to be the eager loaded query. If no argument is
  * passed, the current configured query `_eagerLoaded` value is returned.
  *
- * @param boolean $value
+ * @param bool $value
  * @return \Cake\ORM\Query
  */
 	public function eagerLoaded($value = null) {
@@ -251,7 +250,7 @@ trait QueryTrait {
  *
  * @param callable $mapper
  * @param callable $reducer
- * @param boolean $overwrite
+ * @param bool $overwrite
  * @return \Cake\Datasource\QueryTrait|array
  * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
  */
@@ -302,7 +301,7 @@ trait QueryTrait {
  * }}}
  *
  * @param callable $formatter
- * @param boolean|integer $mode
+ * @param bool|int $mode
  * @return \Cake\Datasource\QueryTrait|array
  */
 	public function formatResults(callable $formatter = null, $mode = self::APPEND) {

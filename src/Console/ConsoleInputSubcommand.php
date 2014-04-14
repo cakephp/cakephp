@@ -81,7 +81,7 @@ class ConsoleInputSubcommand {
 /**
  * Generate the help for this this subcommand.
  *
- * @param integer $width The width to make the name of the subcommand.
+ * @param int $width The width to make the name of the subcommand.
  * @return string
  */
 	public function help($width = 0) {

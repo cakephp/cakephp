@@ -51,7 +51,7 @@ class PaginatorComponentTest extends TestCase {
 /**
  * Don't load data for fixtures for all tests
  *
- * @var boolean
+ * @var bool
  */
 	public $autoFixtures = false;
 

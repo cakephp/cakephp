@@ -1,7 +1,6 @@
 <?php
 /**
  *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -41,7 +40,7 @@ class BlowfishPasswordHasher extends AbstractPasswordHasher {
  *
  * @param string $password Plain text password to hash.
  * @param string $hashedPassword Existing hashed password.
- * @return boolean True if hashes match else false.
+ * @return bool True if hashes match else false.
  */
 	public function check($password, $hashedPassword) {
 		return $hashedPassword === Security::hash($password, 'blowfish', $hashedPassword);

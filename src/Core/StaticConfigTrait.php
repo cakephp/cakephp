@@ -101,7 +101,7 @@ trait StaticConfigTrait {
  * will also be unloaded from the registry.
  *
  * @param string $config An existing configuation you wish to remove.
- * @return boolean success of the removal, returns false when the config does not exist.
+ * @return bool success of the removal, returns false when the config does not exist.
  */
 	public static function drop($config) {
 		if (!isset(static::$_config[$config])) {

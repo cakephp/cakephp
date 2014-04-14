@@ -50,7 +50,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * If true, tables will still be dropped at the
  * end of each test runner execution.
  *
- * @var boolean
+ * @var bool
  */
 	public $dropTables = false;
 
@@ -71,9 +71,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * Overrides SimpleTestCase::skipIf to provide a boolean return value
  *
- * @param boolean $shouldSkip
+ * @param bool $shouldSkip
  * @param string $message
- * @return boolean
+ * @return bool
  */
 	public function skipIf($shouldSkip, $message = '') {
 		if ($shouldSkip) {
@@ -240,7 +240,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param string $needle
  * @param string $haystack
  * @param string $message
- * @param boolean $ignoreCase
+ * @param bool $ignoreCase
  * @return void
  */
 	public function assertTextContains($needle, $haystack, $message = '', $ignoreCase = false) {
@@ -256,7 +256,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param string $needle
  * @param string $haystack
  * @param string $message
- * @param boolean $ignoreCase
+ * @param bool $ignoreCase
  * @return void
  */
 	public function assertTextNotContains($needle, $haystack, $message = '', $ignoreCase = false) {
@@ -304,9 +304,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param string $string An HTML/XHTML/XML string
  * @param array $expected An array, see above
- * @param boolean $fullDebug Whether to debug the generated regex and subject in case of a
+ * @param bool $fullDebug Whether to debug the generated regex and subject in case of a
  *  matching failure.
- * @return boolean
+ * @return bool
  */
 	public function assertTags($string, $expected, $fullDebug = false) {
 		$regex = array();
@@ -513,9 +513,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * Compatibility function for skipping.
  *
- * @param boolean $condition Condition to trigger skipping
+ * @param bool $condition Condition to trigger skipping
  * @param string $message Message for skip
- * @return boolean
+ * @return bool
  */
 	protected function skipUnless($condition, $message = '') {
 		if (!$condition) {

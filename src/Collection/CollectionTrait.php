@@ -138,7 +138,7 @@ trait CollectionTrait {
  * }}}
  *
  * @param callable $c a callback function
- * @return boolean true if for all elements in this collection the provided
+ * @return bool true if for all elements in this collection the provided
  * callback returns true, false otherwise
  */
 	public function every(callable $c) {
@@ -167,7 +167,7 @@ trait CollectionTrait {
  * }}}
  *
  * @param callable $c a callback function
- * @return boolean true if for all elements in this collection the provided
+ * @return bool true if for all elements in this collection the provided
  * callback returns true, false otherwise
  */
 	public function some(callable $c) {
@@ -184,7 +184,7 @@ trait CollectionTrait {
  * both by value and type.
  *
  * @param mixed $value The value to check for
- * @return boolean true if $value is present in this collection
+ * @return bool true if $value is present in this collection
  */
 	public function contains($value) {
 		foreach ($this as $v) {
@@ -291,7 +291,7 @@ trait CollectionTrait {
  * }}}
  *
  * @param callable|string $callback the callback or column name to use for sorting
- * @param integer $type the type of comparison to perform, either SORT_STRING
+ * @param int $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
  * @see \Cake\Collection\Collection::sortBy()
  * @return mixed The value of the top element in the collection
@@ -319,9 +319,8 @@ trait CollectionTrait {
  * echo $min->name;
  * }}}
  *
- *
  * @param callable|string $callback the callback or column name to use for sorting
- * @param integer $type the type of comparison to perform, either SORT_STRING
+ * @param int $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
  * @see \Cake\Collection\Collection::sortBy()
  * @return mixed The value of the bottom element in the collection
@@ -362,8 +361,8 @@ trait CollectionTrait {
  * }}}
  *
  * @param callable|string $callback the callback or column name to use for sorting
- * @param integer $dir either SORT_DESC or SORT_ASC
- * @param integer $type the type of comparison to perform, either SORT_STRING
+ * @param int $dir either SORT_DESC or SORT_ASC
+ * @param int $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
  * @return \Cake\Collection\Collection
  */
@@ -532,7 +531,7 @@ trait CollectionTrait {
  * Returns a new collection with maximum $size random elements
  * from this collection
  *
- * @param integer $size the maximum number of elements to randomly
+ * @param int $size the maximum number of elements to randomly
  * take from this collection
  * @return \Cake\Collection\Collection
  */
@@ -545,9 +544,9 @@ trait CollectionTrait {
  * order this collection was created. If a second parameter is passed, it
  * will determine from what position to start taking elements.
  *
- * @param integer $size the maximum number of elements to take from
+ * @param int $size the maximum number of elements to take from
  * this collection
- * @param integer $from A positional offset from where to take the elements
+ * @param int $from A positional offset from where to take the elements
  * @return \Cake\Collection\Collection
  */
 	public function take($size = 1, $from = 0) {
@@ -802,7 +801,7 @@ trait CollectionTrait {
 /**
  * Returns an array representation of the results
  *
- * @param boolean $preserveKeys whether to use the keys returned by this
+ * @param bool $preserveKeys whether to use the keys returned by this
  * collection as the array keys. Keep in mind that it is valid for iterators
  * to return the same key for different elements, setting this value to false
  * can help getting all items if keys are not important in the result.
@@ -849,7 +848,7 @@ trait CollectionTrait {
  * You can think of this method as a way to create save points for complex
  * calculations in a collection.
  *
- * @param boolean $preserveKeys whether to use the keys returned by this
+ * @param bool $preserveKeys whether to use the keys returned by this
  * collection as the array keys. Keep in mind that it is valid for iterators
  * to return the same key for different elements, setting this value to false
  * can help getting all items if keys are not important in the result.
@@ -893,7 +892,7 @@ trait CollectionTrait {
  * $flattenedIds = $collection->listNested()->extract('id'); // Yields [1, 2, 3, 4, 5]
  * }}}
  *
- * @param string|integer $dir The direction in which to return the elements
+ * @param string|int $dir The direction in which to return the elements
  * @param string|callable $nestingKey The key name under which children are nested
  * or a callable function that will return the children list
  * @return \Cake\Collection\Iterator\TreeIterator

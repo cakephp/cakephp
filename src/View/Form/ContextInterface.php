@@ -31,14 +31,14 @@ interface ContextInterface {
  *
  * @param string $field A dot separated path to the field a value
  *   is needed for.
- * @return boolean
+ * @return bool
  */
 	public function isPrimaryKey($field);
 
 /**
  * Returns whether or not this form is for a create operation.
  *
- * @return boolean
+ * @return bool
  */
 	public function isCreate();
 
@@ -57,7 +57,7 @@ interface ContextInterface {
  * In this context class, this is simply defined by the 'required' array.
  *
  * @param string $field A dot separated path to check required-ness for.
- * @return boolean
+ * @return bool
  */
 	public function isRequired($field);
 
@@ -89,7 +89,7 @@ interface ContextInterface {
  * Check whether or not a field has an error attached to it
  *
  * @param string $field A dot separated path to check errors on.
- * @return boolean Returns true if the errors for the field are not empty.
+ * @return bool Returns true if the errors for the field are not empty.
  */
 	public function hasError($field);
 

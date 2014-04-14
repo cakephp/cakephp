@@ -35,7 +35,7 @@ abstract class BaseErrorHandler {
  * desired for the runtime they operate in.
  *
  * @param array $error An array of error data.
- * @param boolean $debug Whether or not the app is in debug mode.
+ * @param bool $debug Whether or not the app is in debug mode.
  * @return void
  */
 	abstract protected function _displayError($error, $debug);
@@ -99,12 +99,12 @@ abstract class BaseErrorHandler {
  * You can use the 'errorLevel' option to set what type of errors will be handled.
  * Stack traces for errors can be enabled with the 'trace' option.
  *
- * @param integer $code Code of error
+ * @param int $code Code of error
  * @param string $description Error description
  * @param string $file File on which error occurred
- * @param integer $line Line that triggered the error
+ * @param int $line Line that triggered the error
  * @param array $context Context
- * @return boolean true if error was handled
+ * @return bool true if error was handled
  */
 	public function handleError($code, $description, $file = null, $line = null, $context = null) {
 		if (error_reporting() === 0) {
@@ -158,7 +158,7 @@ abstract class BaseErrorHandler {
  *
  * Implemented in subclasses that need it.
  *
- * @param integer $code Exit code.
+ * @param int $code Exit code.
  * @return void
  */
 	protected function _stop($code) {
@@ -168,11 +168,11 @@ abstract class BaseErrorHandler {
 /**
  * Display/Log a fatal error.
  *
- * @param integer $code Code of error
+ * @param int $code Code of error
  * @param string $description Error description
  * @param string $file File on which error occurred
- * @param integer $line Line that triggered the error
- * @return boolean
+ * @param int $line Line that triggered the error
+ * @return bool
  */
 	public function handleFatalError($code, $description, $file, $line) {
 		$data = [
@@ -225,7 +225,7 @@ abstract class BaseErrorHandler {
  * Handles exception logging
  *
  * @param Exception $exception
- * @return boolean
+ * @return bool
  */
 	protected function _logException($exception) {
 		$config = $this->_options;
@@ -273,7 +273,7 @@ abstract class BaseErrorHandler {
 /**
  * Map an error code into an Error word, and log location.
  *
- * @param integer $code Error code to map
+ * @param int $code Error code to map
  * @return array Array of error word, and log location.
  */
 	public static function mapErrorCode($code) {

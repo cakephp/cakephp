@@ -24,49 +24,49 @@ class Message {
 /**
  * HTTP 200 code
  *
- * @var integer
+ * @var int
  */
 	const STATUS_OK = 200;
 
 /**
  * HTTP 201 code
  *
- * @var integer
+ * @var int
  */
 	const STATUS_CREATED = 201;
 
 /**
  * HTTP 202 code
  *
- * @var integer
+ * @var int
  */
 	const STATUS_ACCEPTED = 202;
 
 /**
  * HTTP 301 code
  *
- * @var integer
+ * @var int
  */
 	const STATUS_MOVED_PERMANENTLY = 301;
 
 /**
  * HTTP 302 code
  *
- * @var integer
+ * @var int
  */
 	const STATUS_FOUND = 302;
 
 /**
  * HTTP 303 code
  *
- * @var integer
+ * @var int
  */
 	const STATUS_SEE_OTHER = 303;
 
 /**
  * HTTP 307 code
  *
- * @var integer
+ * @var int
  */
 	const STATUS_TEMPORARY_REDIRECT = 307;
 

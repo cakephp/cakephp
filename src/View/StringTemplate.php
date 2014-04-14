@@ -162,7 +162,7 @@ class StringTemplate {
  *
  * @param string $key The name of the attribute to create
  * @param string|array $value The value of the attribute to create.
- * @param boolean $escape Define if the value must be escaped
+ * @param bool $escape Define if the value must be escaped
  * @return string The composed attribute.
  */
 	protected function _formatAttribute($key, $value, $escape = true) {

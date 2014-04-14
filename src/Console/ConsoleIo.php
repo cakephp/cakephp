@@ -52,28 +52,28 @@ class ConsoleIo {
 /**
  * Output constant making verbose shells.
  *
- * @var integer
+ * @var int
  */
 	const VERBOSE = 2;
 
 /**
  * Output constant for making normal shells.
  *
- * @var integer
+ * @var int
  */
 	const NORMAL = 1;
 
 /**
  * Output constants for making quiet shells.
  *
- * @var integer
+ * @var int
  */
 	const QUIET = 0;
 
 /**
  * The current output level.
  *
- * @var integer
+ * @var int
  */
 	protected $_level = ConsoleIo::NORMAL;
 
@@ -81,7 +81,7 @@ class ConsoleIo {
  * The number of bytes last written to the output stream
  * used when overwriting the previous message.
  *
- * @var integer
+ * @var int
  */
 	protected $_lastWritten = 0;
 
@@ -115,8 +115,8 @@ class ConsoleIo {
  * Output at the verbose level.
  *
  * @param string|array $message A string or a an array of strings to output
- * @param integer $newlines Number of newlines to append
- * @return integer|boolean Returns the number of bytes returned from writing to stdout.
+ * @param int $newlines Number of newlines to append
+ * @return int|bool Returns the number of bytes returned from writing to stdout.
  */
 	public function verbose($message, $newlines = 1) {
 		return $this->out($message, $newlines, self::VERBOSE);
@@ -126,8 +126,8 @@ class ConsoleIo {
  * Output at all levels.
  *
  * @param string|array $message A string or a an array of strings to output
- * @param integer $newlines Number of newlines to append
- * @return integer|boolean Returns the number of bytes returned from writing to stdout.
+ * @param int $newlines Number of newlines to append
+ * @return int|bool Returns the number of bytes returned from writing to stdout.
  */
 	public function quiet($message, $newlines = 1) {
 		return $this->out($message, $newlines, self::QUIET);
@@ -145,9 +145,9 @@ class ConsoleIo {
  * While using Shell::VERBOSE means it will only display when verbose output is toggled.
  *
  * @param string|array $message A string or a an array of strings to output
- * @param integer $newlines Number of newlines to append
- * @param integer $level The message's output level, see above.
- * @return integer|boolean Returns the number of bytes returned from writing to stdout.
+ * @param int $newlines Number of newlines to append
+ * @param int $level The message's output level, see above.
+ * @return int|bool Returns the number of bytes returned from writing to stdout.
  */
 	public function out($message = null, $newlines = 1, $level = ConsoleIo::NORMAL) {
 		if ($level <= $this->_level) {
@@ -166,10 +166,10 @@ class ConsoleIo {
  * **Warning** You cannot overwrite text that contains newlines.
  *
  * @param array|string $message The message to output.
- * @param integer $newlines Number of newlines to append.
- * @param integer $size The number of bytes to overwrite. Defaults to the
+ * @param int $newlines Number of newlines to append.
+ * @param int $size The number of bytes to overwrite. Defaults to the
  *    length of the last message output.
- * @return integer|boolean Returns the number of bytes returned from writing to stdout.
+ * @return int|bool Returns the number of bytes returned from writing to stdout.
  */
 	public function overwrite($message, $newlines = 1, $size = null) {
 		$size = $size ?: $this->_lastWritten;
@@ -194,7 +194,7 @@ class ConsoleIo {
  * are passed outputs just a newline.
  *
  * @param string|array $message A string or a an array of strings to output
- * @param integer $newlines Number of newlines to append
+ * @param int $newlines Number of newlines to append
  * @return void
  */
 	public function err($message = null, $newlines = 1) {
@@ -204,7 +204,7 @@ class ConsoleIo {
 /**
  * Returns a single or multiple linefeeds sequences.
  *
- * @param integer $multiplier Number of times the linefeed sequence should be repeated
+ * @param int $multiplier Number of times the linefeed sequence should be repeated
  * @return string
  */
 	public function nl($multiplier = 1) {
@@ -214,8 +214,8 @@ class ConsoleIo {
 /**
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
  *
- * @param integer $newlines Number of newlines to pre- and append
- * @param integer $width Width of the line, defaults to 79
+ * @param int $newlines Number of newlines to pre- and append
+ * @param int $width Width of the line, defaults to 79
  * @return void
  */
 	public function hr($newlines = 0, $width = 79) {
@@ -314,7 +314,7 @@ class ConsoleIo {
  * If you don't wish all log output in stdout or stderr
  * through Cake's Log class, call this function with `$enable=false`.
  *
- * @param boolean $enable Whether you want loggers on or off.
+ * @param bool $enable Whether you want loggers on or off.
  * @return void
  */
 	public function setLoggers($enable) {

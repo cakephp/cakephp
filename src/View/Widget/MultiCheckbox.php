@@ -175,7 +175,7 @@ class MultiCheckbox implements WidgetInterface {
  *
  * @param string $key The key to test.
  * @param array|string|null The selected values.
- * @return boolean
+ * @return bool
  */
 	protected function _isSelected($key, $selected) {
 		if ($selected === null) {
@@ -194,7 +194,7 @@ class MultiCheckbox implements WidgetInterface {
  *
  * @param string $key The key to test.
  * @param array|null The disabled values.
- * @return boolean
+ * @return bool
  */
 	protected function _isDisabled($key, $disabled) {
 		if ($disabled === null || $disabled === false) {

@@ -50,7 +50,7 @@ class ShellTestShell extends Shell {
 /**
  * stopped property
  *
- * @var integer
+ * @var int
  */
 	public $stopped;
 
@@ -64,7 +64,7 @@ class ShellTestShell extends Shell {
 /**
  * stop method
  *
- * @param integer $status
+ * @param int $status
  * @return void
  */
 	protected function _stop($status = 0) {

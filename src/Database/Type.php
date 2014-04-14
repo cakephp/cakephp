@@ -214,7 +214,7 @@ class Type {
  * Will convert string true/false into booleans.
  *
  * @param mixed $value The value to convert to a boolean.
- * @return boolean
+ * @return bool
  */
 	public static function boolval($value) {
 		if (is_string($value) && !is_numeric($value)) {

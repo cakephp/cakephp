@@ -180,10 +180,10 @@ class RouteCollection implements \Countable {
  * Also promotes the route to the head of its named slice in the named route
  * table.
  *
- * @param integer $which A zero-based array index representing
+ * @param int $which A zero-based array index representing
  *    the route to move. For example,
  *    if 3 routes have been added, the last route would be 2.
- * @return boolean Returns false if no route exists at the position
+ * @return bool Returns false if no route exists at the position
  *    specified by $which.
  */
 	public function promote($which) {
@@ -237,7 +237,7 @@ class RouteCollection implements \Countable {
 /**
  * Part of the countable interface.
  *
- * @return integer The number of connected routes.
+ * @return int The number of connected routes.
  */
 	public function count() {
 		return count($this->_routes);

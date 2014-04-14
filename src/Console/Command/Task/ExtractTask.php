@@ -47,7 +47,7 @@ class ExtractTask extends Shell {
 /**
  * Merge all domain and category strings into the default.pot file
  *
- * @var boolean
+ * @var bool
  */
 	protected $_merge = false;
 
@@ -96,14 +96,14 @@ class ExtractTask extends Shell {
 /**
  * Holds the validation string domain to use for validation messages when extracting
  *
- * @var boolean
+ * @var bool
  */
 	protected $_validationDomain = 'default';
 
 /**
  * Holds whether this call should extract the CakePHP Lib messages
  *
- * @var boolean
+ * @var bool
  */
 	protected $_extractCore = false;
 
@@ -563,8 +563,8 @@ class ExtractTask extends Shell {
 /**
  * Get the strings from the position forward
  *
- * @param integer $position Actual position on tokens array
- * @param integer $target Number of strings to extract
+ * @param int $position Actual position on tokens array
+ * @param int $target Number of strings to extract
  * @return array Strings extracted
  */
 	protected function _getStrings(&$position, $target) {
@@ -613,9 +613,9 @@ class ExtractTask extends Shell {
  * Indicate an invalid marker on a processed file
  *
  * @param string $file File where invalid marker resides
- * @param integer $line Line number
+ * @param int $line Line number
  * @param string $marker Marker found
- * @param integer $count Count
+ * @param int $count Count
  * @return void
  */
 	protected function _markerError($file, $line, $marker, $count) {
@@ -678,7 +678,7 @@ class ExtractTask extends Shell {
  * Returns whether this execution is meant to extract string only from directories in folder represented by the
  * APP constant, i.e. this task is extracting strings from same application.
  *
- * @return boolean
+ * @return bool
  */
 	protected function _isExtractingApp() {
 		return $this->_paths === [APP];
@@ -688,7 +688,7 @@ class ExtractTask extends Shell {
  * Checks whether or not a given path is usable for writing.
  *
  * @param string $path Path to folder
- * @return boolean true if it exists and is writable, false otherwise
+ * @return bool true if it exists and is writable, false otherwise
  */
 	protected function _isPathUsable($path) {
 		return is_dir($path) && is_writable($path);

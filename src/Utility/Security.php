@@ -52,7 +52,7 @@ class Security {
  * Validate authorization hash.
  *
  * @param string $authKey Authorization hash
- * @return boolean Success
+ * @return bool Success
  */
 	public static function validateAuthKey($authKey) {
 		return true;
@@ -133,7 +133,7 @@ class Security {
 /**
  * Sets the cost for they blowfish hash method.
  *
- * @param integer $cost Valid values are 4-31
+ * @param int $cost Valid values are 4-31
  * @return void
  * @throws \Cake\Error\Exception When cost is invalid.
  */
@@ -186,7 +186,7 @@ class Security {
  * The salt length should not exceed 27. The salt will be composed of
  * [./0-9A-Za-z]{$length}.
  *
- * @param integer $length The length of the returned salt
+ * @param int $length The length of the returned salt
  * @return string The generated salt
  */
 	protected static function _salt($length = 22) {

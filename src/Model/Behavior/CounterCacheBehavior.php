@@ -175,7 +175,7 @@ class CounterCacheBehavior extends Behavior {
  *
  * @param array $config The counter cache configuration for a single field
  * @param array $conditions Additional conditions given to the query
- * @return integer The number of relations matching the given config and conditions
+ * @return int The number of relations matching the given config and conditions
  */
 	protected function _getCount(array $config, array $conditions) {
 		$findType = 'all';

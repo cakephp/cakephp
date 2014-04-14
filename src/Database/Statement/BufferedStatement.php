@@ -24,7 +24,7 @@ class BufferedStatement extends StatementDecorator {
 
 /**
  * Records count
- * @var integer
+ * @var int
  */
 	protected $_count = 0;
 
@@ -38,13 +38,13 @@ class BufferedStatement extends StatementDecorator {
 /**
  * If true, all rows were fetched
  *
- * @var boolean
+ * @var bool
  */
 	protected $_allFetched = true;
 
 /**
  * Current record pointer
- * @var integer
+ * @var int
  */
 	protected $_counter = 0;
 
@@ -63,7 +63,7 @@ class BufferedStatement extends StatementDecorator {
  * Execute the statement and return the results.
  *
  * @param array $params list of values to be bound to query
- * @return boolean true on success, false otherwise
+ * @return bool true on success, false otherwise
  */
 	public function execute($params = null) {
 		$this->_reset();

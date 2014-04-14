@@ -115,7 +115,7 @@ class ConnectionManager {
  * defined. If you want the original unaliased connections use getOriginal()
  *
  * @param string $name The connection name.
- * @param boolean $useAliases Set to false to not use aliased connections.
+ * @param bool $useAliases Set to false to not use aliased connections.
  * @return \Cake\Database\Connection A connection object.
  * @throws \Cake\Datasource\Error\MissingDatasourceConfigException When config
  * data is missing.

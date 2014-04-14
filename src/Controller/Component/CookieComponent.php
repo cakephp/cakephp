@@ -167,8 +167,8 @@ class CookieComponent extends Component {
  *
  * @param string|array $key Key for the value
  * @param mixed $value Value
- * @param boolean $encrypt Set to true to encrypt value, false otherwise
- * @param integer|string $expires Can be either the number of seconds until a cookie
+ * @param bool $encrypt Set to true to encrypt value, false otherwise
+ * @param int|string $expires Can be either the number of seconds until a cookie
  *   expires, or a strtotime compatible time offset.
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::write
@@ -256,7 +256,7 @@ class CookieComponent extends Component {
  * Returns true if given key is set in the cookie.
  *
  * @param string $key Key to check for
- * @return boolean True if the key exists
+ * @return bool True if the key exists
  */
 	public function check($key = null) {
 		if (empty($key)) {
@@ -366,8 +366,8 @@ class CookieComponent extends Component {
  * CookieComponent::write(string, string, boolean, 8400);
  * CookieComponent::write(string, string, boolean, '5 Days');
  *
- * @param integer|string $expires Can be either Unix timestamp, or date string
- * @return integer Unix timestamp
+ * @param int|string $expires Can be either Unix timestamp, or date string
+ * @return int Unix timestamp
  */
 	protected function _expire($expires = null) {
 		if ($expires === null) {

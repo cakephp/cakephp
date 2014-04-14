@@ -73,7 +73,7 @@ trait EntityTrait {
  * Indicates whether or not this entity is yet to be persisted.
  * A null value indicates an unknown persistence status
  *
- * @var boolean
+ * @var bool
  */
 	protected $_new = null;
 
@@ -131,7 +131,7 @@ trait EntityTrait {
  *
  * @see \Cake\ORM\Entity::has()
  * @param string $property
- * @return boolean
+ * @return bool
  */
 	public function __isset($property) {
 		return $this->has($property);
@@ -274,7 +274,7 @@ trait EntityTrait {
  * }}}
  *
  * @param string $property
- * @return boolean
+ * @return bool
  */
 	public function has($property) {
 		return $this->get($property) !== null;
@@ -390,7 +390,7 @@ trait EntityTrait {
  * Implements isset($entity);
  *
  * @param mixed $offset
- * @return boolean Success
+ * @return bool Success
  */
 	public function offsetExists($offset) {
 		return $this->has($offset);
@@ -431,7 +431,7 @@ trait EntityTrait {
  * Determines whether a method exists in this class
  *
  * @param string $method the method to check for existence
- * @return boolean true if method exists
+ * @return bool true if method exists
  */
 	protected function _methodExists($method) {
 		if (empty(static::$_accessors[$this->_className])) {
@@ -445,7 +445,7 @@ trait EntityTrait {
  * stored in this entity, indexed by property name
  *
  * @param array $properties list of properties to be returned
- * @param boolean $onlyDirty Return the requested property only if it is dirty
+ * @param bool $onlyDirty Return the requested property only if it is dirty
  * @return array
  */
 	public function extract(array $properties, $onlyDirty = false) {
@@ -467,10 +467,10 @@ trait EntityTrait {
  * dirty property in the entity
  *
  * @param string $property the field to set or check status for
- * @param null|boolean true means the property was changed, false means
+ * @param null|bool true means the property was changed, false means
  * it was not changed and null will make the function return current state
  * for that property
- * @return boolean whether the property was changed or not
+ * @return bool whether the property was changed or not
  */
 	public function dirty($property = null, $isDirty = null) {
 		if ($property === null) {
@@ -512,8 +512,8 @@ trait EntityTrait {
  * true means that the instance is not yet persisted in the database, false
  * that it already is.
  *
- * @param boolean $new true if it is known this instance was persisted
- * @return boolean if it is known whether the entity was already persisted
+ * @param bool $new true if it is known this instance was persisted
+ * @return bool if it is known whether the entity was already persisted
  * null otherwise
  */
 	public function isNew($new = null) {
@@ -532,7 +532,7 @@ trait EntityTrait {
  * otherwise.
  *
  * @param \Cake\Validation\Validator $validator
- * @return boolean
+ * @return bool
  */
 	public function validate(Validator $validator) {
 		$data = $this->_properties;
@@ -654,9 +654,9 @@ trait EntityTrait {
  * }}}
  *
  * @param string|array single or list of properties to change its accessibility
- * @param boolean $set true marks the property as accessible, false will
+ * @param bool $set true marks the property as accessible, false will
  * mark it as protected.
- * @return \Cake\Datasource\EntityInterface|boolean
+ * @return \Cake\Datasource\EntityInterface|bool
  */
 	public function accessible($property, $set = null) {
 		if ($set === null) {

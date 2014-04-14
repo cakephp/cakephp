@@ -31,17 +31,17 @@ class ValueBinder {
 /**
  * A counter of the number of parameters bound in this expression object
  *
- * @var integer
+ * @var int
  */
 	protected $_bindingsCount = 0;
 
 /**
  * Associates a query placeholder to a value and a type
  *
- * @param string|integer $param placeholder to be replaced with quoted version
+ * @param string|int $param placeholder to be replaced with quoted version
  * of $value
  * @param mixed $value The value to be bound
- * @param string|integer $type the mapped type name, used for casting when sending
+ * @param string|int $type the mapped type name, used for casting when sending
  * to database
  * @return void
  */

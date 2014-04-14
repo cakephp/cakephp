@@ -36,7 +36,7 @@ class Marshaller {
 /**
  * Whether or not this marhshaller is in safe mode.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_safe;
 
@@ -51,7 +51,7 @@ class Marshaller {
  * Constructor.
  *
  * @param \Cake\ORM\Table $table
- * @param boolean $safe Whether or not this marshaller is in safe mode
+ * @param bool $safe Whether or not this marshaller is in safe mode
  */
 	public function __construct(Table $table, $safe = false) {
 		$this->_table = $table;

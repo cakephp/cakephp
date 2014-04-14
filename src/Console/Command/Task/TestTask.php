@@ -165,7 +165,7 @@ class TestTask extends BakeTask {
  *
  * @param string $type Type of object to bake test case for ie. Model, Controller
  * @param string $className the 'cake name' for the class ie. Posts for the PostsController
- * @return string|boolean
+ * @return string|bool
  */
 	public function bake($type, $className) {
 		$fullClassName = $this->getRealClassName($type, $className);
@@ -214,7 +214,7 @@ class TestTask extends BakeTask {
  * Currently only model, and controller are supported
  *
  * @param string $type The Type of object you are generating tests for eg. controller
- * @return boolean
+ * @return bool
  */
 	public function typeCanDetectFixtures($type) {
 		$type = strtolower($type);
@@ -396,7 +396,7 @@ class TestTask extends BakeTask {
  * Controllers require a mock class.
  *
  * @param string $type The type of object tests are being generated for eg. controller.
- * @return boolean
+ * @return bool
  */
 	public function hasMockClass($type) {
 		$type = strtolower($type);

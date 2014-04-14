@@ -47,7 +47,7 @@ class ShellDispatcher {
  * a status code of either 0 or 1 according to the result of the dispatch.
  *
  * @param array $args the argv from PHP
- * @param boolean $bootstrap Should the environment be bootstrapped.
+ * @param bool $bootstrap Should the environment be bootstrapped.
  */
 	public function __construct($args = [], $bootstrap = true) {
 		set_time_limit(0);
@@ -63,7 +63,7 @@ class ShellDispatcher {
  * Run the dispatcher
  *
  * @param array $argv The argv from PHP
- * @return integer The exit code of the shell process.
+ * @return int The exit code of the shell process.
  */
 	public static function run($argv) {
 		$dispatcher = new ShellDispatcher($argv);
@@ -109,7 +109,7 @@ class ShellDispatcher {
 /**
  * Initializes the environment and loads the CakePHP core.
  *
- * @return boolean Success.
+ * @return bool Success.
  */
 	protected function _bootstrap() {
 		if (!Configure::read('App.fullBaseUrl')) {
@@ -122,7 +122,7 @@ class ShellDispatcher {
 /**
  * Dispatches a CLI request
  *
- * @return integer The cli command exit code. 0 is success.
+ * @return int The cli command exit code. 0 is success.
  */
 	public function dispatch() {
 		return $this->_dispatch() === true ? 0 : 1;
@@ -131,7 +131,7 @@ class ShellDispatcher {
 /**
  * Dispatch a request.
  *
- * @return boolean
+ * @return bool
  * @throws \Cake\Console\Error\MissingShellMethodException
  */
 	protected function _dispatch() {
@@ -309,7 +309,7 @@ class ShellDispatcher {
 /**
  * Stop execution of the current script
  *
- * @param integer|string $status see http://php.net/exit for values
+ * @param int|string $status see http://php.net/exit for values
  * @return void
  */
 	protected function _stop($status = 0) {

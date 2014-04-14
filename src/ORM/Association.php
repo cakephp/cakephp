@@ -114,7 +114,7 @@ abstract class Association {
  * often used to indicate that records should be removed if the owning record in
  * the source table is deleted.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_dependent = false;
 
@@ -286,8 +286,8 @@ abstract class Association {
  *
  * If no parameters are passed the current setting is returned.
  *
- * @param boolean $dependent
- * @return boolean
+ * @param bool $dependent
+ * @return bool
  */
 	public function dependent($dependent = null) {
 		if ($dependent !== null) {
@@ -300,7 +300,7 @@ abstract class Association {
  * Whether this association can be expressed directly in a query join
  *
  * @param array $options custom options key that could alter the return value
- * @return boolean
+ * @return bool
  */
 	public function canBeJoined(array $options = []) {
 		$strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
@@ -449,7 +449,7 @@ abstract class Association {
  * @param array $row
  * @param string $nestKey The array key under which the results for this association
  * should be found
- * @param boolean $joined Whether or not the row is a result of a direct join
+ * @param bool $joined Whether or not the row is a result of a direct join
  * with this association
  * @return array
  */
@@ -469,7 +469,7 @@ abstract class Association {
  * joined or fetched externally.
  *
  * @param array $row
- * @param boolean $joined Whether or not the row is a result of a direct join
+ * @param bool $joined Whether or not the row is a result of a direct join
  * with this association
  * @return array
  */
@@ -505,7 +505,7 @@ abstract class Association {
  * @param mixed $conditions Conditions to be used, accepts anything Query::where()
  * can take.
  * @see \Cake\ORM\Table::updateAll()
- * @return boolean Success Returns true if one or more rows are affected.
+ * @return bool Success Returns true if one or more rows are affected.
  */
 	public function updateAll($fields, $conditions) {
 		$target = $this->target();
@@ -521,7 +521,7 @@ abstract class Association {
  *
  * @param mixed $conditions Conditions to be used, accepts anything Query::where()
  * can take.
- * @return boolean Success Returns true if one or more rows are affected.
+ * @return bool Success Returns true if one or more rows are affected.
  * @see \Cake\ORM\Table::delteAll()
  */
 	public function deleteAll($conditions) {
@@ -683,7 +683,7 @@ abstract class Association {
  * target table has another association with the passed name
  *
  * @param string $property the property name
- * @return boolean true if the property exists
+ * @return bool true if the property exists
  */
 	public function __isset($property) {
 		return isset($this->target()->{$property});
@@ -748,7 +748,7 @@ abstract class Association {
  *
  * @param \Cake\ORM\Entity $entity The entity that started the cascaded delete.
  * @param array $options The options for the original delete.
- * @return boolean Success
+ * @return bool Success
  */
 	public abstract function cascadeDelete(Entity $entity, array $options = []);
 
@@ -758,7 +758,7 @@ abstract class Association {
  * or required information if the row in 'source' did not exist.
  *
  * @param \Cake\ORM\Table $side The potential Table with ownership
- * @return boolean
+ * @return bool
  */
 	public abstract function isOwningSide(Table $side);
 
@@ -767,7 +767,7 @@ abstract class Association {
  *
  * @param \Cake\ORM\Entity $entity the data to be saved
  * @param array|\ArrayObject $options
- * @return boolean|Entity false if $entity could not be saved, otherwise it returns
+ * @return bool|Entity false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()
  */

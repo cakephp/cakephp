@@ -68,7 +68,7 @@ class Table {
 /**
  * Whether or not the table is temporary
  *
- * @var boolean
+ * @var bool
  */
 	protected $_temporary = false;
 
@@ -271,7 +271,7 @@ class Table {
  *
  * @param string $name The name of the column
  * @param array $attrs The attributes for the column.
- * @return Table $this
+ * @return Table this
  */
 	public function addColumn($name, $attrs) {
 		if (is_string($attrs)) {
@@ -334,7 +334,7 @@ class Table {
  *
  * @param string $name The name of the index.
  * @param array $attrs The attributes for the index.
- * @return Table $this
+ * @return Table this
  * @throws \Cake\Database\Exception
  */
 	public function addIndex($name, $attrs) {
@@ -416,7 +416,7 @@ class Table {
  *
  * @param string $name The name of the constraint.
  * @param array $attrs The attributes for the constraint.
- * @return Table $this
+ * @return Table this
  * @throws \Cake\Database\Exception
  */
 	public function addConstraint($name, $attrs) {
@@ -508,8 +508,8 @@ class Table {
 /**
  * Get/Set whether the table is temporary in the database
  *
- * @param boolean|null $set whether or not the table is to be temporary
- * @return this|boolean Either the table instance, the current temporary setting
+ * @param bool|null $set whether or not the table is to be temporary
+ * @return this|bool Either the table instance, the current temporary setting
  */
 	public function temporary($set = null) {
 		if ($set === null) {

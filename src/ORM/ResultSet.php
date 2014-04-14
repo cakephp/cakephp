@@ -50,7 +50,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 /**
  * Points to the next record number that should be fetched
  *
- * @var integer
+ * @var int
  */
 	protected $_index = 0;
 
@@ -93,7 +93,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 /**
  * Whether to hydrate results into objects or not
  *
- * @var boolean
+ * @var bool
  */
 	protected $_hydrate = true;
 
@@ -107,14 +107,14 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 /**
  * Whether or not to buffer results fetched from the statement
  *
- * @var boolean
+ * @var bool
  */
 	protected $_useBuffering = true;
 
 /**
  * Holds the count of records in this result set
  *
- * @var integer
+ * @var int
  */
 	protected $_count;
 
@@ -155,7 +155,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  *
  * Part of Iterator interface.
  *
- * @return integer
+ * @return int
  */
 	public function key() {
 		return $this->_index;
@@ -198,7 +198,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  *
  * Part of Iterator interface.
  *
- * @return boolean
+ * @return bool
  */
 	public function valid() {
 		if (isset($this->_results[$this->_index])) {
@@ -278,7 +278,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  *
  * Part of the Countable interface.
  *
- * @return integer
+ * @return int
  */
 	public function count() {
 		if ($this->_count !== null) {

@@ -34,7 +34,7 @@ trait PDODriverTrait {
  * Establishes a connection to the databse server
  *
  * @param array $config configuration to be used for creating connection
- * @return boolean true on success
+ * @return bool true on success
  */
 	protected function _connect(array $config) {
 		$connection = new PDO(
@@ -86,7 +86,7 @@ trait PDODriverTrait {
 /**
  * Starts a transaction
  *
- * @return boolean true on success, false otherwise
+ * @return bool true on success, false otherwise
  */
 	public function beginTransaction() {
 		$this->connect();
@@ -99,7 +99,7 @@ trait PDODriverTrait {
 /**
  * Commits a transaction
  *
- * @return boolean true on success, false otherwise
+ * @return bool true on success, false otherwise
  */
 	public function commitTransaction() {
 		$this->connect();
@@ -112,7 +112,7 @@ trait PDODriverTrait {
 /**
  * Rollsback a transaction
  *
- * @return boolean true on success, false otherwise
+ * @return bool true on success, false otherwise
  */
 	public function rollbackTransaction() {
 		if (!$this->_connection->inTransaction()) {
@@ -138,7 +138,7 @@ trait PDODriverTrait {
  *
  * @param string $table table name or sequence to get last insert value from
  * @param string $column the name of the column representing the primary key
- * @return string|integer
+ * @return string|int
  */
 	public function lastInsertId($table = null, $column = null) {
 		$this->connect();
@@ -148,7 +148,7 @@ trait PDODriverTrait {
 /**
  * Checks if the driver supports quoting, as PDO_ODBC does not support it.
  *
- * @return boolean
+ * @return bool
  */
 	public function supportsQuoting() {
 		$this->connect();

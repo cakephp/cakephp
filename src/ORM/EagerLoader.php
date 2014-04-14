@@ -231,7 +231,7 @@ class EagerLoader {
  *
  * @param \Cake\ORM\Query $query The query to be modified
  * @param \Cake\ORM\Table $repository The repository containing the associations
- * @param boolean $includeFields whether to append all fields from the associations
+ * @param bool $includeFields whether to append all fields from the associations
  * to the passed query. This can be overridden according to the settings defined
  * per association in the containments array
  * @return void
@@ -399,7 +399,7 @@ class EagerLoader {
  * @param \Cake\ORM\Query $query The query for which to eager load external
  * associations
  * @param \Cake\Database\StatementInterface $statement The statement created after executing the $query
- * @return CallbackStatement $statement modified statement with extra loaders
+ * @return CallbackStatement statement modified statement with extra loaders
  */
 	public function loadExternal($query, $statement) {
 		$external = $this->externalAssociations($query->repository());

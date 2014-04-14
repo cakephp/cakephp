@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Fixture
  * @since         2.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -17,7 +16,6 @@
 /**
  * Short description for class.
  *
- * @package       Cake.Test.Fixture
  */
 class UnsignedFixture extends CakeTestFixture {
 

@@ -1881,7 +1881,7 @@ class I18nTest extends TestCase {
  * Singular method
  *
  * @param string $domain
- * @param integer $category
+ * @param int $category
  * @return void
  */
 	protected function _domainCategorySingular($domain = 'test_plugin', $category = 3) {
@@ -1893,7 +1893,7 @@ class I18nTest extends TestCase {
  * Plural method
  *
  * @param string $domain
- * @param integer $category
+ * @param int $category
  * @return void
  */
 	protected function _domainCategoryPlural($domain = 'test_plugin', $category = 3) {
@@ -1932,7 +1932,7 @@ class I18nTest extends TestCase {
 /**
  * category method
  *
- * @param integer $category
+ * @param int $category
  * @return void
  */
 	protected function _category($category = I18n::LC_MONETARY) {

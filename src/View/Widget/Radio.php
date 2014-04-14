@@ -117,7 +117,7 @@ class Radio implements WidgetInterface {
  *
  * @param array $radio
  * @param array|null|true $disabled
- * @return boolean
+ * @return bool
  */
 	protected function _isDisabled($radio, $disabled) {
 		if (!$disabled) {
@@ -198,7 +198,7 @@ class Radio implements WidgetInterface {
  * @param array $radio The input properties.
  * @param false|string|array $label The properties for a label.
  * @param string $input The input widget.
- * @param boolean $escape Whether or not to HTML escape the label.
+ * @param bool $escape Whether or not to HTML escape the label.
  * @return string Generated label.
  */
 	protected function _renderLabel($radio, $label, $input, $escape) {

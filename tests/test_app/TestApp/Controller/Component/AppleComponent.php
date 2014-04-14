@@ -37,7 +37,7 @@ class AppleComponent extends Component {
 /**
  * testName property
  *
- * @var mixed null
+ * @var mixed
  */
 	public $testName = null;
 

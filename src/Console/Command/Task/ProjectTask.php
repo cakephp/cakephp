@@ -142,7 +142,7 @@ class ProjectTask extends BakeTask {
  * Enables Configure::read('Routing.prefixes') in /app/Config/routes.php
  *
  * @param string $name Name to use as admin routing
- * @return boolean Success
+ * @return bool Success
  */
 	public function cakeAdmin($name) {
 		$path = $this->appPath ?: APP;

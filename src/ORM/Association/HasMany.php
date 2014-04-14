@@ -52,7 +52,7 @@ class HasMany extends Association {
  * or required information if the row in 'source' did not exist.
  *
  * @param \Cake\ORM\Table $side The potential Table with ownership
- * @return boolean
+ * @return bool
  */
 	public function isOwningSide(Table $side) {
 		return $side === $this->source();
@@ -67,7 +67,7 @@ class HasMany extends Association {
  * @param \Cake\ORM\Entity $entity an entity from the source table
  * @param array|\ArrayObject $options options to be passed to the save method in
  * the target table
- * @return boolean|Entity false if $entity could not be saved, otherwise it returns
+ * @return bool|Entity false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()
  * @throws \InvalidArgumentException when the association data cannot be traversed.

@@ -30,7 +30,7 @@ class BananaComponent extends Component {
 /**
  * testField property
  *
- * @var string 'BananaField'
+ * @var string
  */
 	public $testField = 'BananaField';
 

@@ -59,14 +59,14 @@ class Connection {
  * Whether this connection can and should use savepoints for nested
  * transactions.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_useSavePoints = false;
 
 /**
  * Whether to log queries generated during this connection.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_logQueries = false;
 
@@ -158,7 +158,7 @@ class Connection {
  * Connects to the configured database.
  *
  * @throws \Cake\Database\Error\MissingConnectionException if credentials are invalid
- * @return boolean true on success or false if already connected.
+ * @return bool true on success or false if already connected.
  */
 	public function connect() {
 		try {
@@ -181,7 +181,7 @@ class Connection {
 /**
  * Returns whether connection to database server was already established.
  *
- * @return boolean
+ * @return bool
  */
 	public function isConnected() {
 		return $this->_driver->isConnected();
@@ -326,7 +326,7 @@ class Connection {
 /**
  * Commits current transaction.
  *
- * @return boolean true on success, false otherwise
+ * @return bool true on success, false otherwise
  */
 	public function commit() {
 		if (!$this->_transactionStarted) {
@@ -351,7 +351,7 @@ class Connection {
 /**
  * Rollback current transaction.
  *
- * @return boolean
+ * @return bool
  */
 	public function rollback() {
 		if (!$this->_transactionStarted) {
@@ -389,8 +389,8 @@ class Connection {
  * `$connection->useSavePoints(false)` Disables usage of savepoints and returns false
  * `$connection->useSavePoints()` Returns current status
  *
- * @param boolean|null $enable
- * @return boolean true if enabled, false otherwise
+ * @param bool|null $enable
+ * @return bool true if enabled, false otherwise
  */
 	public function useSavePoints($enable = null) {
 		if ($enable === null) {
@@ -490,7 +490,7 @@ class Connection {
 /**
  * Checks if the driver supports quoting.
  *
- * @return boolean
+ * @return bool
  */
 	public function supportsQuoting() {
 		return $this->_driver->supportsQuoting();
@@ -510,7 +510,7 @@ class Connection {
 /**
  * Enables or disables query logging for this connection.
  *
- * @param boolean $enable whether to turn logging on or disable it
+ * @param bool $enable whether to turn logging on or disable it
  * @return void
  */
 	public function logQueries($enable) {

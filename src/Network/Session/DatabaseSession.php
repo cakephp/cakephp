@@ -38,7 +38,7 @@ class DatabaseSession implements SessionHandlerInterface {
 /**
  * Number of seconds to mark the session as expired
  *
- * @var integer
+ * @var int
  */
 	protected $_timeout;
 
@@ -65,7 +65,7 @@ class DatabaseSession implements SessionHandlerInterface {
  *
  * @param string $savePath The path where to store/retrieve the session.
  * @param string $name The session name.
- * @return boolean Success
+ * @return bool Success
  */
 	public function open($savePath, $name) {
 		return true;
@@ -74,7 +74,7 @@ class DatabaseSession implements SessionHandlerInterface {
 /**
  * Method called on close of a database session.
  *
- * @return boolean Success
+ * @return bool Success
  */
 	public function close() {
 		return true;
@@ -83,7 +83,7 @@ class DatabaseSession implements SessionHandlerInterface {
 /**
  * Method used to read from a database session.
  *
- * @param integer|string $id The key of the value to read
+ * @param int|string $id The key of the value to read
  * @return mixed The value of the key or false if it does not exist
  */
 	public function read($id) {
@@ -104,9 +104,9 @@ class DatabaseSession implements SessionHandlerInterface {
 /**
  * Helper function called on write for database sessions.
  *
- * @param integer $id ID that uniquely identifies session in database
+ * @param int $id ID that uniquely identifies session in database
  * @param mixed $data The value of the data to be saved.
- * @return boolean True for successful write, false otherwise.
+ * @return bool True for successful write, false otherwise.
  */
 	public function write($id, $data) {
 		if (!$id) {
@@ -125,8 +125,8 @@ class DatabaseSession implements SessionHandlerInterface {
 /**
  * Method called on the destruction of a database session.
  *
- * @param integer $id ID that uniquely identifies session in database
- * @return boolean True for successful delete, false otherwise.
+ * @param int $id ID that uniquely identifies session in database
+ * @return bool True for successful delete, false otherwise.
  */
 	public function destroy($id) {
 		return $this->_table->delete(new Entity([$this->_table->primaryKey() => $id]));
@@ -136,7 +136,7 @@ class DatabaseSession implements SessionHandlerInterface {
  * Helper function called on gc for database sessions.
  *
  * @param string $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
- * @return boolean True on success, false on failure.
+ * @return bool True on success, false on failure.
  */
 	public function gc($maxlifetime) {
 		return $this->_table->deleteAll(['expires <' => time() - $maxlifetime]);

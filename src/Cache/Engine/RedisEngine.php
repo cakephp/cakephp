@@ -70,7 +70,7 @@ class RedisEngine extends CacheEngine {
  * Called automatically by the cache frontend
  *
  * @param array $config array of setting for the engine
- * @return boolean True if the engine has been successfully initialized, false if not
+ * @return bool True if the engine has been successfully initialized, false if not
  */
 	public function init(array $config = []) {
 		if (!class_exists('Redis')) {
@@ -84,7 +84,7 @@ class RedisEngine extends CacheEngine {
 /**
  * Connects to a Redis server
  *
- * @return boolean True if Redis server was connected
+ * @return bool True if Redis server was connected
  */
 	protected function _connect() {
 		$return = false;
@@ -113,7 +113,7 @@ class RedisEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @return boolean True if the data was successfully cached, false on failure
+ * @return bool True if the data was successfully cached, false on failure
  */
 	public function write($key, $value) {
 		$key = $this->_key($key);
@@ -153,7 +153,7 @@ class RedisEngine extends CacheEngine {
  * Increments the value of an integer cached key
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to increment
+ * @param int $offset How much to increment
  * @return bool|int New incremented value, false otherwise
  */
 	public function increment($key, $offset = 1) {
@@ -166,7 +166,7 @@ class RedisEngine extends CacheEngine {
  * Decrements the value of an integer cached key
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to subtract
+ * @param int $offset How much to subtract
  * @return bool|int New decremented value, false otherwise
  */
 	public function decrement($key, $offset = 1) {
@@ -179,7 +179,7 @@ class RedisEngine extends CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
 		$key = $this->_key($key);
@@ -190,8 +190,8 @@ class RedisEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @param boolean $check
- * @return boolean True if the cache was successfully cleared, false otherwise
+ * @param bool $check
+ * @return bool True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
 		if ($check) {
@@ -228,7 +228,7 @@ class RedisEngine extends CacheEngine {
  * old values will remain in storage until they expire.
  *
  * @param string $group name of the group to be cleared
- * @return boolean success
+ * @return bool success
  */
 	public function clearGroup($group) {
 		return (bool)$this->_Redis->incr($this->_config['prefix'] . $group);

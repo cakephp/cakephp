@@ -110,7 +110,7 @@ class AclComponent extends Component {
  * @param array|string|Model $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
  * @param array|string|Model $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
- * @return boolean Success
+ * @return bool Success
  */
 	public function check($aro, $aco, $action = "*") {
 		return $this->_Instance->check($aro, $aco, $action);
@@ -123,7 +123,7 @@ class AclComponent extends Component {
  * @param array|string|Model $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
  * @param array|string|Model $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
- * @return boolean Success
+ * @return bool Success
  */
 	public function allow($aro, $aco, $action = "*") {
 		return $this->_Instance->allow($aro, $aco, $action);
@@ -136,7 +136,7 @@ class AclComponent extends Component {
  * @param array|string|Model $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
  * @param array|string|Model $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
- * @return boolean Success
+ * @return bool Success
  */
 	public function deny($aro, $aco, $action = "*") {
 		return $this->_Instance->deny($aro, $aco, $action);
@@ -149,7 +149,7 @@ class AclComponent extends Component {
  * @param array|string|Model $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
  * @param array|string|Model $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
- * @return boolean Success
+ * @return bool Success
  */
 	public function inherit($aro, $aco, $action = "*") {
 		return $this->_Instance->inherit($aro, $aco, $action);

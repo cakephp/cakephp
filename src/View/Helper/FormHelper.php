@@ -223,7 +223,7 @@ class FormHelper extends Helper {
  * Returns if a field is required to be filled based on validation properties from the validating object.
  *
  * @param \Cake\Validation\ValidationSet $validationRules
- * @return boolean true if field is required to be filled, false otherwise
+ * @return bool true if field is required to be filled, false otherwise
  */
 	protected function _isRequiredField($validationRules) {
 		if (empty($validationRules) || count($validationRules) === 0) {
@@ -509,7 +509,7 @@ class FormHelper extends Helper {
  * Determine which fields of a form should be used for hash.
  * Populates $this->fields
  *
- * @param boolean $lock Whether this field should be part of the validation
+ * @param bool $lock Whether this field should be part of the validation
  *   or excluded as part of the unlockedFields.
  * @param string|array $field Reference to field to be secured. Can be dot
  *   separated string to indicate nesting or array of fieldname parts.
@@ -547,7 +547,7 @@ class FormHelper extends Helper {
  * Returns true if there is an error for the given field, otherwise false
  *
  * @param string $field This should be "Modelname.fieldname"
- * @return boolean If there are errors this method returns true, else false.
+ * @return bool If there are errors this method returns true, else false.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::isFieldError
  */
 	public function isFieldError($field) {
@@ -975,7 +975,7 @@ class FormHelper extends Helper {
  *
  * @param string $fieldName the name of the field to generate options for
  * @param array $options
- * @param boolean $allowOverride whether or not it is allowed for this method to
+ * @param bool $allowOverride whether or not it is allowed for this method to
  * overwrite the 'type' key in options
  * @return array
  */
@@ -1033,7 +1033,7 @@ class FormHelper extends Helper {
  *
  * @param string $fieldName
  * @param array $options
- * @return boolean|string false or Generated label element
+ * @return bool|string false or Generated label element
  */
 	protected function _getLabel($fieldName, $options) {
 		if (in_array($options['type'], ['radio', 'hidden'])) {
@@ -1363,7 +1363,7 @@ class FormHelper extends Helper {
  * @param string $title The content to be wrapped by <a> tags.
  * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
  * @param array $options Array of HTML attributes.
- * @param boolean|string $confirmMessage JavaScript confirmation message.
+ * @param bool|string $confirmMessage JavaScript confirmation message.
  * @return string An `<a />` element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */

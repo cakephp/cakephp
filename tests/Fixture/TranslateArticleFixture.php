@@ -25,7 +25,7 @@ class TranslateArticleFixture extends TestFixture {
 /**
  * table property
  *
- * @var string 'i18n'
+ * @var string
  */
 	public $table = 'article_i18n';
 

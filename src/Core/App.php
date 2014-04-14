@@ -63,7 +63,7 @@ class App {
 /**
  * Indicates whether the object cache should be stored again because of an addition to it
  *
- * @var boolean
+ * @var bool
  */
 	protected static $_objectCacheChange = false;
 
@@ -74,7 +74,7 @@ class App {
  * @param string $class Classname
  * @param string $type Type of class
  * @param string $suffix Classname suffix
- * @return boolean|string False if the class is not found or namespaced classname
+ * @return bool|string False if the class is not found or namespaced classname
  */
 	public static function classname($class, $type = '', $suffix = '') {
 		if (strpos($class, '\\') !== false) {
@@ -223,7 +223,7 @@ class App {
  *
  * @param string $type Type of object, i.e. 'Model', 'Controller', 'View/Helper', 'file', 'class' or 'Plugin'
  * @param string|array $path Optional Scan only the path given. If null, paths for the chosen type will be used.
- * @param boolean $cache Set to false to rescan objects of the chosen type. Defaults to true.
+ * @param bool $cache Set to false to rescan objects of the chosen type. Defaults to true.
  * @return mixed Either false on incorrect / miss. Or an array of found objects.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::objects
  */

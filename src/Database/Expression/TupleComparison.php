@@ -174,7 +174,7 @@ class TupleComparison extends Comparison {
  * Determines if each of the values in this expressions is a tuple in
  * itself
  *
- * @return boolean
+ * @return bool
  */
 	public function isMulti() {
 		return in_array(strtolower($this->_conjunction), ['in', 'not in']);

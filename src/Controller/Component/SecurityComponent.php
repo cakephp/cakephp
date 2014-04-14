@@ -193,7 +193,7 @@ class SecurityComponent extends Component {
  * Check if access requires secure connection
  *
  * @param Controller $controller Instantiating controller
- * @return boolean true if secure connection required
+ * @return bool true if secure connection required
  */
 	protected function _secureRequired(Controller $controller) {
 		if (is_array($this->_config['requireSecure']) &&
@@ -216,7 +216,7 @@ class SecurityComponent extends Component {
  * Check if authentication is required
  *
  * @param Controller $controller Instantiating controller
- * @return boolean true if authentication required
+ * @return bool true if authentication required
  */
 	protected function _authRequired(Controller $controller) {
 		if (is_array($this->_config['requireAuth']) &&
@@ -259,7 +259,7 @@ class SecurityComponent extends Component {
  * Validate submitted form
  *
  * @param Controller $controller Instantiating controller
- * @return boolean true if submitted form is valid
+ * @return bool true if submitted form is valid
  */
 	protected function _validatePost(Controller $controller) {
 		if (empty($controller->request->data)) {
@@ -341,7 +341,7 @@ class SecurityComponent extends Component {
  * Manually add CSRF token information into the provided request object.
  *
  * @param \Cake\Network\Request $request The request object to add into.
- * @return boolean
+ * @return bool
  */
 	public function generateToken(Request $request) {
 		if (isset($request->params['requested']) && $request->params['requested'] === 1) {

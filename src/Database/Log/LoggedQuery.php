@@ -44,7 +44,7 @@ class LoggedQuery {
 /**
  * Number of rows affected or returned by the query execution
  *
- * @var integer
+ * @var int
  */
 	public $numRows = 0;
 
