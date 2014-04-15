@@ -202,7 +202,7 @@ class Radio implements WidgetInterface {
  * @return string Generated label.
  */
 	protected function _renderLabel($radio, $label, $input, $escape) {
-		if (!$label) {
+		if ($label === false) {
 			return false;
 		}
 		$labelAttrs = is_array($label) ? $label : [];

@@ -50,6 +50,7 @@ class RadioTest extends TestCase {
 		$radio = new Radio($this->templates, $label);
 		$data = [
 			'name' => 'Crayons[color]',
+			'label' => null,
 			'options' => ['r' => 'Red', 'b' => 'Black']
 		];
 		$result = $radio->render($data);
