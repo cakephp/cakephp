@@ -15,7 +15,6 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use \DateTime;
 
 /**
  * Datetime type converter.
@@ -25,11 +24,30 @@ use \DateTime;
 class DateTimeType extends \Cake\Database\Type {
 
 /**
+ * The class to use for representing date objects
+ *
+ * @var string
+ */
+	public static $dateTimeClass = 'Carbon\Carbon';
+
+/**
  * String format to use for DateTime parsing
  *
  * @var string
  */
 	protected $_format = 'Y-m-d H:i:s';
+
+/**
+ * {@inheritdoc}
+ *
+ */
+	public function __construct($name = null) {
+		parent::__construct($name);
+
+		if (!class_exists(static::$dateTimeClass)) {
+			static::$dateTimeClass = 'DateTime';
+		}
+	}
 
 /**
  * Convert DateTime instance into strings.
@@ -50,30 +68,32 @@ class DateTimeType extends \Cake\Database\Type {
  *
  * @param string $value The value to convert.
  * @param Driver $driver The driver instance to convert with.
- * @return Datetime
+ * @return \Carbon\Carbon
  */
 	public function toPHP($value, Driver $driver) {
 		if ($value === null) {
 			return null;
 		}
 		list($value) = explode('.', $value);
-		return DateTime::createFromFormat($this->_format, $value);
+		$class = static::$dateTimeClass;
+		return $class::createFromFormat($this->_format, $value);
 	}
 
 /**
  * Convert request data into a datetime object.
  *
  * @param mixed $value Request data
- * @return \DateTime
+ * @return \Carbon\Carbon
  */
 	public function marshal($value) {
+		$class = static::$dateTimeClass;
 		try {
 			if ($value === '' || $value === null || $value === false || $value === true) {
 				return $value;
 			} elseif (is_numeric($value)) {
-				$date = new DateTime('@' . $value);
+				$date = new $class('@' . $value);
 			} elseif (is_string($value)) {
-				$date = new DateTime($value);
+				$date = new $class($value);
 			}
 			if (isset($date)) {
 				return $date;
@@ -84,7 +104,7 @@ class DateTimeType extends \Cake\Database\Type {
 
 		$value += ['second' => 0];
 
-		$date = new DateTime();
+		$date = new $class();
 		$date->setTime(0, 0, 0);
 		if (
 			isset($value['year'], $value['month'], $value['day']) &&
