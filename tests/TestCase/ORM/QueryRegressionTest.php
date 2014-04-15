@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Carbon\Carbon;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -51,8 +52,8 @@ class QueryRegressionTest extends TestCase {
 	public function testSelectTimestampColumn() {
 		$table = TableRegistry::get('users');
 		$user = $table->find()->where(['id' => 1])->first();
-		$this->assertEquals(new \DateTime('2007-03-17 01:16:23'), $user->created);
-		$this->assertEquals(new \DateTime('2007-03-17 01:18:31'), $user->updated);
+		$this->assertEquals(new Carbon('2007-03-17 01:16:23'), $user->created);
+		$this->assertEquals(new Carbon('2007-03-17 01:18:31'), $user->updated);
 	}
 
 /**

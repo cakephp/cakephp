@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Carbon\Carbon;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Table;
@@ -130,7 +131,7 @@ class MarshallerTest extends TestCase {
 		$marshall = new Marshaller($this->comments);
 		$result = $marshall->one($data, []);
 
-		$this->assertEquals(new \DateTime('2014-02-14 00:00:00'), $result->created);
+		$this->assertEquals(new Carbon('2014-02-14 00:00:00'), $result->created);
 
 		$data['created'] = [
 			'year' => '2014',
@@ -141,7 +142,7 @@ class MarshallerTest extends TestCase {
 			'meridian' => 'pm'
 		];
 		$result = $marshall->one($data, []);
-		$this->assertEquals(new \DateTime('2014-02-14 21:25:00'), $result->created);
+		$this->assertEquals(new Carbon('2014-02-14 21:25:00'), $result->created);
 
 		$data['created'] = [
 			'year' => '2014',
@@ -151,11 +152,11 @@ class MarshallerTest extends TestCase {
 			'minute' => 25,
 		];
 		$result = $marshall->one($data, []);
-		$this->assertEquals(new \DateTime('2014-02-14 09:25:00'), $result->created);
+		$this->assertEquals(new Carbon('2014-02-14 09:25:00'), $result->created);
 
 		$data['created'] = '2014-02-14 09:25:00';
 		$result = $marshall->one($data, []);
-		$this->assertEquals(new \DateTime('2014-02-14 09:25:00'), $result->created);
+		$this->assertEquals(new Carbon('2014-02-14 09:25:00'), $result->created);
 
 		$data['created'] = 1392387900;
 		$result = $marshall->one($data, []);

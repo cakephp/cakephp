@@ -16,6 +16,7 @@
  */
 namespace Cake\Test\TestCase\Controller\Component\Auth;
 
+use Carbon\Carbon;
 use Cake\Cache\Cache;
 use Cake\Controller\Component\Auth\FormAuthenticate;
 use Cake\Core\App;
@@ -199,8 +200,8 @@ class FormAuthenticateTest extends TestCase {
 		$expected = [
 			'id' => 1,
 			'username' => 'mariano',
-			'created' => new \DateTime('2007-03-17 01:16:23'),
-			'updated' => new \DateTime('2007-03-17 01:18:31')
+			'created' => new Carbon('2007-03-17 01:16:23'),
+			'updated' => new Carbon('2007-03-17 01:18:31')
 		];
 		$this->assertEquals($expected, $result);
 	}
@@ -248,8 +249,8 @@ class FormAuthenticateTest extends TestCase {
 		$expected = [
 			'id' => 1,
 			'username' => 'gwoo',
-			'created' => new \DateTime('2007-03-17 01:16:23'),
-			'updated' => new \DateTime('2007-03-17 01:18:31')
+			'created' => new Carbon('2007-03-17 01:16:23'),
+			'updated' => new Carbon('2007-03-17 01:18:31')
 		];
 		$this->assertEquals($expected, $result);
 		Plugin::unload();
@@ -287,8 +288,8 @@ class FormAuthenticateTest extends TestCase {
 		$expected = [
 			'id' => 1,
 			'username' => 'mariano',
-			'created' => new \DateTime('2007-03-17 01:16:23'),
-			'updated' => new \DateTime('2007-03-17 01:18:31')
+			'created' => new Carbon('2007-03-17 01:16:23'),
+			'updated' => new Carbon('2007-03-17 01:18:31')
 		];
 		$this->assertEquals($expected, $result);
 

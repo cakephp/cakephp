@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Carbon\Carbon;
 use Cake\Core\Configure;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -284,15 +285,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				'id' => 1,
 				'username' => 'mariano',
 				'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO',
-				'created' => new \DateTime('2007-03-17 01:16:23'),
-				'updated' => new \DateTime('2007-03-17 01:18:31'),
+				'created' => new Carbon('2007-03-17 01:16:23'),
+				'updated' => new Carbon('2007-03-17 01:18:31'),
 			],
 			[
 				'id' => 2,
 				'username' => 'nate',
 				'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO',
-				'created' => new \DateTime('2008-03-17 01:18:23'),
-				'updated' => new \DateTime('2008-03-17 01:20:31'),
+				'created' => new Carbon('2008-03-17 01:18:23'),
+				'updated' => new Carbon('2008-03-17 01:20:31'),
 			],
 		];
 		$this->assertEquals($expected, $results);
@@ -347,7 +348,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		]);
 		$query = $table->find('all')
 			->select(['id', 'username'])
-			->where(['created >=' => new \DateTime('2010-01-22 00:00')])
+			->where(['created >=' => new Carbon('2010-01-22 00:00')])
 			->hydrate(false)
 			->order('id');
 		$expected = [
@@ -356,7 +357,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->assertSame($expected, $query->toArray());
 
-		$query->orWhere(['users.created' => new \DateTime('2008-03-17 01:18:23')]);
+		$query->orWhere(['users.created' => new Carbon('2008-03-17 01:18:23')]);
 		$expected = [
 			['id' => 2, 'username' => 'nate'],
 			['id' => 3, 'username' => 'larry'],
@@ -1117,8 +1118,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$entity = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'password' => 'root',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00')
+			'created' => new Carbon('2013-10-10 00:00'),
+			'updated' => new Carbon('2013-10-10 00:00')
 		]);
 		$table = TableRegistry::get('users');
 		$this->assertSame($entity, $table->save($entity));
@@ -1152,8 +1153,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'username' => 'superuser',
 			'password' => 'root',
 			'crazyness' => 'super crazy value',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00'),
+			'created' => new Carbon('2013-10-10 00:00'),
+			'updated' => new Carbon('2013-10-10 00:00'),
 		]);
 		$table = TableRegistry::get('users');
 		$this->assertSame($entity, $table->save($entity));
@@ -1174,8 +1175,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = TableRegistry::get('users');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00')
+			'created' => new Carbon('2013-10-10 00:00'),
+			'updated' => new Carbon('2013-10-10 00:00')
 		]);
 		$listener = function($e, $entity, $options) use ($data) {
 			$this->assertSame($data, $entity);
@@ -1199,8 +1200,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'password' => 'foo',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00')
+			'created' => new Carbon('2013-10-10 00:00'),
+			'updated' => new Carbon('2013-10-10 00:00')
 		]);
 		$listener1 = function($e, $entity, $options) {
 			$options['crazy'] = true;
@@ -1228,8 +1229,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = TableRegistry::get('users');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00')
+			'created' => new Carbon('2013-10-10 00:00'),
+			'updated' => new Carbon('2013-10-10 00:00')
 		]);
 		$listener = function($e, $entity) {
 			$e->stopPropagation();
@@ -1252,8 +1253,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = TableRegistry::get('users');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00')
+			'created' => new Carbon('2013-10-10 00:00'),
+			'updated' => new Carbon('2013-10-10 00:00')
 		]);
 
 		$called = false;
@@ -1287,8 +1288,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00')
+			'created' => new Carbon('2013-10-10 00:00'),
+			'updated' => new Carbon('2013-10-10 00:00')
 		]);
 
 		$table->expects($this->once())->method('exists')
@@ -1335,8 +1336,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$connection->expects($this->once())->method('commit');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00')
+			'created' => new Carbon('2013-10-10 00:00'),
+			'updated' => new Carbon('2013-10-10 00:00')
 		]);
 		$this->assertSame($data, $table->save($data));
 	}
@@ -1382,8 +1383,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00')
+			'created' => new Carbon('2013-10-10 00:00'),
+			'updated' => new Carbon('2013-10-10 00:00')
 		]);
 		$table->save($data);
 	}
@@ -1433,8 +1434,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00')
+			'created' => new Carbon('2013-10-10 00:00'),
+			'updated' => new Carbon('2013-10-10 00:00')
 		]);
 		$table->save($data);
 	}
@@ -1450,8 +1451,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$entity = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'password' => 'root',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00')
+			'created' => new Carbon('2013-10-10 00:00'),
+			'updated' => new Carbon('2013-10-10 00:00')
 		]);
 		$entity->clean();
 		$entity->dirty('username', true);
@@ -1477,8 +1478,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$entity = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'password' => 'root',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00')
+			'created' => new Carbon('2013-10-10 00:00'),
+			'updated' => new Carbon('2013-10-10 00:00')
 		]);
 		$table = TableRegistry::get('users');
 		$this->assertSame($entity, $table->save($entity));
@@ -1498,8 +1499,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$entity = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'password' => 'root',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00')
+			'created' => new Carbon('2013-10-10 00:00'),
+			'updated' => new Carbon('2013-10-10 00:00')
 		]);
 		$table = TableRegistry::get('users');
 		$this->assertSame($entity, $table->save($entity));
