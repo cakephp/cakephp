@@ -706,7 +706,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param array $options
  * @return \Cake\ORM\Query
  */
-	public function findAll(Query $query, array $options = []) {
+	public function findAll(Query $query, array $options) {
 		return $query;
 	}
 
@@ -767,7 +767,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param array $options
  * @return \Cake\ORM\Query
  */
-	public function findList(Query $query, array $options = []) {
+	public function findList(Query $query, array $options) {
 		$options += [
 			'idField' => $this->primaryKey(),
 			'valueField' => $this->displayField(),
@@ -810,7 +810,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param array $options
  * @return \Cake\ORM\Query
  */
-	public function findThreaded(Query $query, array $options = []) {
+	public function findThreaded(Query $query, array $options) {
 		$options += [
 			'idField' => $this->primaryKey(),
 			'parentField' => 'parent_id',
