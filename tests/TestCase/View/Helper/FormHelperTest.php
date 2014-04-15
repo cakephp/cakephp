@@ -3864,6 +3864,11 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Form->multiCheckbox(
+			'category',
+			new Collection(['1', '2']),
+			['name' => 'fish']
+		);
 		$result = $this->Form->multiCheckbox('category', ['1', '2'], [
 			'name' => 'fish',
 		]);

@@ -1621,13 +1621,13 @@ class FormHelper extends Helper {
  * Can be used in place of a select box with the multiple attribute.
  *
  * @param string $fieldName Name attribute of the SELECT
- * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
+ * @param array $options|\Traversable Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
  *   checkboxes element.
  * @param array $attributes The HTML attributes of the select element.
  * @return string Formatted SELECT element
  * @see \Cake\View\Helper\FormHelper::select() for supported option formats.
  */
-	public function multiCheckbox($fieldName, array $options, array $attributes = []) {
+	public function multiCheckbox($fieldName, $options, array $attributes = []) {
 		$attributes += [
 			'disabled' => null,
 			'escape' => true,
