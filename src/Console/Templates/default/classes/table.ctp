@@ -71,19 +71,23 @@ $key = array_map(function($el) { return "'$el'"; }, (array)$primaryKey);
  */
 	public function validationDefault(Validator $validator) {
 		$validator
+<?php $countValidation = count($validation) - 1; ?>
+<?php $i = 0; ?>
 <?php foreach ($validation as $field => $rule): ?>
 <?php if ($rule['rule']): ?>
 			->add('<?= $field ?>', 'valid', ['rule' => '<?= $rule['rule'] ?>'])
 <?php endif; ?>
 <?php if (is_string($rule['allowEmpty'])): ?>
-			->allowEmpty('<?= $field ?>', '<?= $rule['allowEmpty'] ?>')
+			->allowEmpty('<?= $field ?>', '<?= $rule['allowEmpty'] ?>')<?= $i === $countValidation ? ";\n" : "\n" ?>
 <?php elseif ($rule['allowEmpty']): ?>
-			->allowEmpty('<?= $field ?>')
+			->allowEmpty('<?= $field ?>')<?= $i === $countValidation ? ";\n" : "\n" ?>
 <?php else: ?>
 			->validatePresence('<?= $field ?>', 'create')
-			->allowEmpty('<?= $field ?>', false)
+			->allowEmpty('<?= $field ?>', false)<?= $i === $countValidation ? ";\n" : "\n" ?>
 <?php endif ?>
-<?php endforeach ?>;
+<?php $i++; ?>
+<?php endforeach ?>
+<?php echo "\n"; ?>
 		return $validator;
 	}
 <?php endif ?>
