@@ -28,7 +28,7 @@ use Cake\TestSuite\TestCase;
  */
 class PostTable extends Table {
 
-	public function findPublished(Query $query, array $options = []) {
+	public function findPublished(Query $query, array $options) {
 		return $query->where(['published' => true]);
 	}
 

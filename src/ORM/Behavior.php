@@ -84,7 +84,7 @@ use Cake\Event\EventListener;
  * methods should expect the following arguments:
  *
  * {{{
- * findSlugged(Query $query, array $options = [])
+ * findSlugged(Query $query, array $options)
  * }}}
  *
  * @see \Cake\ORM\Table::addBehavior()

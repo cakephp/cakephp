@@ -17,6 +17,7 @@ namespace Cake\Model\Behavior;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
@@ -265,7 +266,7 @@ class TreeBehavior extends Behavior {
  * @return \Cake\ORM\Query
  * @throws \InvalidArgumentException If the 'for' key is missing in options
  */
-	public function findPath($query, array $options) {
+	public function findPath(Query $query, array $options) {
 		if (empty($options['for'])) {
 			throw new \InvalidArgumentException("The 'for' key is required for find('path')");
 		}
@@ -319,7 +320,7 @@ class TreeBehavior extends Behavior {
  * @return \Cake\ORM\Query
  * @throws \InvalidArgumentException When the 'for' key is not passed in $options
  */
-	public function findChildren($query, array $options) {
+	public function findChildren(Query $query, array $options) {
 		$config = $this->config();
 		$options += ['for' => null, 'direct' => false];
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
@@ -362,7 +363,7 @@ class TreeBehavior extends Behavior {
  * @param array $options Array of options as described above
  * @return \Cake\ORM\Query
  */
-	public function findTreeList($query, array $options) {
+	public function findTreeList(Query $query, array $options) {
 		return $this->_scope($query)
 			->find('threaded', ['parentField' => $this->config()['parent']])
 			->formatResults(function($results) use ($options) {
