@@ -1,7 +1,5 @@
 <?php
 /**
- * FormHelperTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -2409,6 +2407,13 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Form->input('email', [
+			'type' => 'select',
+			'options' => new \ArrayObject(['First', 'Second']),
+			'empty' => true
+		]);
+		$this->assertTags($result, $expected);
+
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$this->Form->request->data = array('Model' => array('user_id' => 'value'));
 
@@ -2480,10 +2485,10 @@ class FormHelperTest extends TestCase {
 
 		$this->Form->data = array();
 		$result = $this->Form->input('Publisher.id', array(
-				'label'		=> 'Publisher',
-				'type'		=> 'select',
-				'multiple'	=> 'checkbox',
-				'options'	=> array('Value 1' => 'Label 1', 'Value 2' => 'Label 2')
+				'label' => 'Publisher',
+				'type' => 'select',
+				'multiple' => 'checkbox',
+				'options' => array('Value 1' => 'Label 1', 'Value 2' => 'Label 2')
 		));
 		$expected = array(
 			array('div' => array('class' => 'input select')),
@@ -2637,7 +2642,7 @@ class FormHelperTest extends TestCase {
 	public function testInputMagicSelectChangeToRadio() {
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('type' => 'radio'));
-		$this->assertRegExp('/input type="radio"/', $result);
+		$this->assertContains('input type="radio"', $result);
 	}
 
 /**

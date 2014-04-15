@@ -873,6 +873,10 @@ class FormHelper extends Helper {
 				$opts = (array)$options['options'];
 				unset($options['options']);
 				return $this->select($fieldName, $opts, $options);
+			case 'radio':
+				$opts = (array)$options['options'];
+				unset($options['options']);
+				return $this->radio($fieldName, $opts, $options);
 			case 'url':
 				$options = $this->_initInputField($fieldName, $options);
 				return $this->widget($options['type'], $options);
@@ -999,7 +1003,8 @@ class FormHelper extends Helper {
 		}
 
 		$typesWithOptions = ['text', 'number', 'radio', 'select'];
-		if ($allowOverride && in_array($options['type'], $typesWithOptions)) {
+		$magicOptions = (in_array($options['type'], ['radio', 'select']) || $allowOverride);
+		if ($magicOptions && in_array($options['type'], $typesWithOptions)) {
 			$options = $this->_optionsOptions($fieldName, $options);
 		}
 
