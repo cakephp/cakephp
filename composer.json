@@ -20,7 +20,8 @@
     "require": {
         "php": ">=5.4.19",
         "ext-mcrypt": "*",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "nesbot/Carbon": "1.*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
