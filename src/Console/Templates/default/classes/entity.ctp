@@ -36,7 +36,6 @@ class <?= $name ?> extends Entity {
 	];
 
 <?php endif ?>
-
 <?php if (!empty($hidden)): ?>
 <?php
 $hidden = array_map(function($el) { return "'$el'"; }, $hidden);
