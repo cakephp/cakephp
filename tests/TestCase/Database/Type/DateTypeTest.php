@@ -14,10 +14,10 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Carbon\Carbon;
 use Cake\Database\Type;
 use Cake\Database\Type\DateType;
 use Cake\TestSuite\TestCase;
+use Carbon\Carbon;
 
 /**
  * Test for the Date type.

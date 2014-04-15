@@ -16,13 +16,13 @@
  */
 namespace Cake\Test\TestCase\Controller\Component\Auth;
 
-use Carbon\Carbon;
 use Cake\Controller\Component\Auth\DigestAuthenticate;
 use Cake\Error;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Carbon\Carbon;
 
 /**
  * Test case for DigestAuthentication

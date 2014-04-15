@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Carbon\Carbon;
 use Cake\Core\Configure;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -23,6 +22,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Validation\Validator;
+use Carbon\Carbon;
 
 /**
  * Used to test correct class is instantiated when using TableRegistry::get();

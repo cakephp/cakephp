@@ -14,11 +14,11 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Carbon\Carbon;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Carbon\Carbon;
 
 /**
  * Contains regression test for the Query builder
