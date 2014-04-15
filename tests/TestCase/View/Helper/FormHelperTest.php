@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
+use Cake\Collection\Collection;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -3060,6 +3061,9 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Form->radio('Model.field', new Collection(['option A']));
+		$this->assertTags($result, $expected);
+
 		$result = $this->Form->radio('Model.field', array('option A', 'option B'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => ''),
@@ -3192,6 +3196,9 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Form->select('Model.field', new Collection(['value' => 'good', 'other' => 'bad']));
+		$this->assertTags($result, $expected);
+
 		$this->Form->request->data = array();
 		$result = $this->Form->select('Model.field', array('value' => 'good', 'other' => 'bad'));
 		$expected = array(
@@ -3201,39 +3208,6 @@ class FormHelperTest extends TestCase {
 			'/option',
 			array('option' => array('value' => 'other')),
 			'bad',
-			'/option',
-			'/select'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->select(
-			'Model.field', array('first' => 'first "html" <chars>', 'second' => 'value'),
-			array('empty' => false)
-		);
-		$expected = array(
-			'select' => array('name' => 'Model[field]'),
-			array('option' => array('value' => 'first')),
-			'first &quot;html&quot; &lt;chars&gt;',
-			'/option',
-			array('option' => array('value' => 'second')),
-			'value',
-			'/option',
-			'/select'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->select(
-			'Model.field',
-			array('first' => 'first "html" <chars>', 'second' => 'value'),
-			array('escape' => false, 'empty' => false)
-		);
-		$expected = array(
-			'select' => array('name' => 'Model[field]'),
-			array('option' => array('value' => 'first')),
-			'first "html" <chars>',
-			'/option',
-			array('option' => array('value' => 'second')),
-			'value',
 			'/option',
 			'/select'
 		);
@@ -3283,6 +3257,46 @@ class FormHelperTest extends TestCase {
 			'select' => array('name' => 'Model[field]'),
 			array('option' => array('value' => '0', 'selected' => 'selected')), 'No', '/option',
 			array('option' => array('value' => '1')), 'Yes', '/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that select() escapes HTML.
+ *
+ * @return void
+ */
+	public function testSelectEscapeHtml() {
+		$result = $this->Form->select(
+			'Model.field', array('first' => 'first "html" <chars>', 'second' => 'value'),
+			array('empty' => false)
+		);
+		$expected = array(
+			'select' => array('name' => 'Model[field]'),
+			array('option' => array('value' => 'first')),
+			'first &quot;html&quot; &lt;chars&gt;',
+			'/option',
+			array('option' => array('value' => 'second')),
+			'value',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select(
+			'Model.field',
+			array('first' => 'first "html" <chars>', 'second' => 'value'),
+			array('escape' => false, 'empty' => false)
+		);
+		$expected = array(
+			'select' => array('name' => 'Model[field]'),
+			array('option' => array('value' => 'first')),
+			'first "html" <chars>',
+			'/option',
+			array('option' => array('value' => 'second')),
+			'value',
+			'/option',
 			'/select'
 		);
 		$this->assertTags($result, $expected);

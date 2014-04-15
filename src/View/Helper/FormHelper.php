@@ -870,11 +870,11 @@ class FormHelper extends Helper {
 	protected function _getInput($fieldName, $options) {
 		switch ($options['type']) {
 			case 'select':
-				$opts = (array)$options['options'];
+				$opts = $options['options'];
 				unset($options['options']);
 				return $this->select($fieldName, $opts, $options);
 			case 'radio':
-				$opts = (array)$options['options'];
+				$opts = $options['options'];
 				unset($options['options']);
 				return $this->radio($fieldName, $opts, $options);
 			case 'url':
@@ -1161,12 +1161,12 @@ class FormHelper extends Helper {
  *   the radio label will be 'empty'. Set this option to a string to control the label value.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
- * @param array $options Radio button options array.
+ * @param array|\Traversable $options Radio button options array.
  * @param array $attributes Array of HTML attributes, and special attributes above.
  * @return string Completed radio widget set.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
  */
-	public function radio($fieldName, array $options = [], array $attributes = []) {
+	public function radio($fieldName, $options = [], array $attributes = []) {
 		$attributes = $this->_initInputField($fieldName, $attributes);
 
 		$hiddenField = isset($attributes['hiddenField']) ? $attributes['hiddenField'] : true;
@@ -1555,14 +1555,14 @@ class FormHelper extends Helper {
  * }}}
  *
  * @param string $fieldName Name attribute of the SELECT
- * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
+ * @param array|\Traversable $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
  *   SELECT element
  * @param array $attributes The HTML attributes of the select element.
  * @return string Formatted SELECT element
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
  * @see \Cake\View\Helper\FormHelper::multiCheckbox() for creating multiple checkboxes.
  */
-	public function select($fieldName, array $options = [], array $attributes = []) {
+	public function select($fieldName, $options = [], array $attributes = []) {
 		$attributes += [
 			'disabled' => null,
 			'escape' => true,
