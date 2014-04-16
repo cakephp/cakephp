@@ -101,14 +101,14 @@ class RequestHandlerComponent extends Component {
 	);
 
 /**
- * A mapping between type and viewClass
- * By default only JSON, XML, and AJAX are mapped. Use RequestHandlerComponent::viewClassMap().
+ * A mapping between type and viewClass. By default only JSON, XML, and AJAX are mapped.
+ * Use {@link viewClassMap()} to manipulate this map.
  *
  * @var array
  */
 	protected $_viewClassMap = array(
 		'json' => 'Json',
-		'xml' => 'Xml',
+		'xml'  => 'Xml',
 		'ajax' => 'Ajax'
 	);
 
@@ -130,8 +130,9 @@ class RequestHandlerComponent extends Component {
 /**
  * Checks to see if a specific content type has been requested and sets RequestHandler::$ext
  * accordingly. Checks the following in order: 1. The '_ext' value parsed by the Router. 2. A specific
- * AJAX type request indicated by the presence of a header. 3. The Accept header.
- * With the exception of an ajax type request the type must have been configured in the Router.
+ * AJAX type request indicated by the presence of a header. 3. The Accept header. With the exception
+ * of an ajax request indicated using the second header based method above, the type must have
+ * been configured in {@link Cake\Routing\Router}.
  *
  * @param Event $event The initialize event that was fired.
  * @return void
@@ -157,10 +158,9 @@ class RequestHandlerComponent extends Component {
 /**
  * Set the extension based on the accept headers.
  * Compares the accepted types and configured extensions.
- * If there is one common type, that is assigned as the ext/content type
- * for the response.
- * Type with the highest weight will be set. If the highest weight has more
- * then one type matching the extensions, the order in which extensions are specified
+ * If there is one common type, that is assigned as the ext/content type for the response.
+ * The type with the highest weight will be set. If the highest weight has more
+ * than one type matching the extensions, the order in which extensions are specified
  * determines which type will be set.
  *
  * If html is one of the preferred types, no content type will be set, this
