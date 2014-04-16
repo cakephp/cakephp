@@ -27,6 +27,7 @@ use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
+use Cake\Utility\CellTrait;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\ModelAwareTrait;
@@ -78,6 +79,7 @@ use Cake\View\View;
  */
 class Controller extends Object implements EventListener {
 
+	use CellTrait;
 	use MergeVariablesTrait;
 	use ModelAwareTrait;
 	use RequestActionTrait;
@@ -731,23 +733,4 @@ class Controller extends Object implements EventListener {
 	public function afterFilter(Event $event) {
 	}
 
-/**
- * Constructs the view class instance based on controller properties.
- * Controller stashes view variables and view configuration options in the absence of an
- * instantiated view to set them on, and passes them to the View constructor here.
- *
- * @param string $viewClass Optional namespaced class name of the View class to instantiate.
- * @return View
- */
-	public function createView($viewClass = null) {
-		if ($viewClass === null) {
-			$viewClass = $this->viewClass;
-			if ($this->viewClass !== 'View') {
-				list($plugin, $viewClass) = pluginSplit($viewClass, true);
-				$viewClass = App::classname($viewClass, 'View', 'View');
-			}
-		}
-		$viewOptions = array_intersect_key(get_object_vars($this), array_flip($this->_validViewOptions));
-		return new $viewClass($this->request, $this->response, $this->getEventManager(), $viewOptions);
-	}
 }

@@ -27,6 +27,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
+use Cake\Utility\CellTrait;
 use Cake\Utility\Inflector;
 use Cake\Utility\ViewVarsTrait;
 
@@ -59,6 +60,7 @@ use Cake\Utility\ViewVarsTrait;
  */
 class View extends Object {
 
+	use CellTrait;
 	use RequestActionTrait;
 	use ViewVarsTrait;
 
