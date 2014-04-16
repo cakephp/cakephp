@@ -57,7 +57,13 @@ use Cake\Utility\Xml;
 class XmlView extends View {
 
 /**
- * The subdirectory. XML views are always in xml.
+ * XML layouts are always located in the xml sub directory of `Layouts/`
+ *
+ */
+	public $layoutPath = 'xml';
+
+/**
+ * XML views are always located in the 'xml' sub directory for controllers' views.
  *
  * @var string
  */

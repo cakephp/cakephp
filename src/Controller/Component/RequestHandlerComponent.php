@@ -108,7 +108,7 @@ class RequestHandlerComponent extends Component {
  */
 	protected $_viewClassMap = array(
 		'json' => 'Json',
-		'xml'  => 'Xml',
+		'xml' => 'Xml',
 		'ajax' => 'Ajax'
 	);
 
@@ -142,7 +142,7 @@ class RequestHandlerComponent extends Component {
 		if (isset($this->request->params['_ext'])) {
 			$this->ext = $this->request->params['_ext'];
 		}
-		if(empty($this->ext) && $this->request->is('ajax')) {
+		if (empty($this->ext) && $this->request->is('ajax')) {
 			$this->ext = 'ajax';
 		}
 		if (empty($this->ext) || in_array($this->ext, array('html', 'htm'))) {
@@ -518,17 +518,20 @@ class RequestHandlerComponent extends Component {
 
 		if ($viewClass) {
 			$controller->viewClass = $viewClass;
-		} elseif (empty($this->_renderType)) {
-			$controller->viewPath .= DS . $type;
 		} else {
-			$controller->viewPath = preg_replace(
-				"/([\/\\\\]{$this->_renderType})$/",
-				DS . $type,
-				$controller->viewPath
-			);
+			if (empty($this->_renderType)) {
+				$controller->viewPath .= DS . $type;
+			} else {
+				$controller->viewPath = preg_replace(
+					"/([\/\\\\]{$this->_renderType})$/",
+					DS . $type,
+					$controller->viewPath
+				);
+			}
+
+			$this->_renderType = $type;
+			$controller->layoutPath = $type;
 		}
-		$this->_renderType = $type;
-		$controller->layoutPath = $type;
 
 		if ($this->response->getMimeType($type)) {
 			$this->respondAs($type, $options);
