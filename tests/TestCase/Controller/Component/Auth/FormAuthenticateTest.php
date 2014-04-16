@@ -16,7 +16,6 @@
  */
 namespace Cake\Test\TestCase\Controller\Component\Auth;
 
-use Carbon\Carbon;
 use Cake\Cache\Cache;
 use Cake\Controller\Component\Auth\FormAuthenticate;
 use Cake\Core\App;
@@ -27,6 +26,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
+use Carbon\Carbon;
 
 /**
  * Test case for FormAuthentication
