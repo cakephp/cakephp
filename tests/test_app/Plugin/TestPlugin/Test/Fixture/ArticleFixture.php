@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         2.0.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace TestPlugin\Test\Fixture;
@@ -20,18 +20,19 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Plugin article fixture.
  */
 class ArticleFixture extends TestFixture {
+
 /**
  * fields property
  *
  * @var array
  */
-	public $fields = array(
+	public $fields = [
 		'id' => ['type' => 'integer'],
 		'author_id' => ['type' => 'integer', 'null' => true],
 		'title' => ['type' => 'string', 'null' => true],
 		'body' => 'text',
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-	);
+	];
 
 /**
  * records property
