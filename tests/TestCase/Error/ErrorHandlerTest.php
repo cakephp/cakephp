@@ -49,6 +49,8 @@ class ErrorHandlerTest extends TestCase {
 		Configure::write('debug', true);
 
 		$this->_logger = $this->getMock('Cake\Log\LogInterface');
+
+		Log::reset();
 		Log::config('error_test', [
 			'engine' => $this->_logger
 		]);
@@ -61,7 +63,7 @@ class ErrorHandlerTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Log::drop('error_test');
+		Log::reset();
 		if ($this->_restoreError) {
 			restore_error_handler();
 			restore_exception_handler();
