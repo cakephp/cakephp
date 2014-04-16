@@ -202,6 +202,8 @@ class PaginatorComponent extends Component {
 			$count = 0;
 		} elseif ($object->hasMethod('paginateCount')) {
 			$count = $object->paginateCount($conditions, $recursive, $extra);
+		} elseif (count($results)<$limit) {
+			$count = count($results); // no point in finding the count if it's less than our limit
 		} else {
 			$parameters = compact('conditions');
 			if ($recursive != $object->recursive) {
