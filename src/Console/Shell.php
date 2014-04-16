@@ -17,7 +17,6 @@ namespace Cake\Console;
 use Cake\Console\ConsoleIo;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Model\ModelAwareTrait;
 use Cake\Utility\ConventionsTrait;
@@ -31,7 +30,7 @@ use Cake\Utility\String;
  *
  * Is the equivalent of Cake\Controller\Controller on the command line.
  */
-class Shell extends Object {
+class Shell {
 
 	use MergeVariablesTrait;
 	use ModelAwareTrait;

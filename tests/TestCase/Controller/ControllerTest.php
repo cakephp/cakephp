@@ -18,7 +18,6 @@ use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Network\Request;

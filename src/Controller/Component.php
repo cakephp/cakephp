@@ -15,7 +15,6 @@
 namespace Cake\Controller;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Core\Object;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 
@@ -62,7 +61,7 @@ use Cake\Event\EventListener;
  * @link http://book.cakephp.org/2.0/en/controllers/components.html
  * @see Controller::$components
  */
-class Component extends Object implements EventListener {
+class Component implements EventListener {
 
 	use InstanceConfigTrait;
 

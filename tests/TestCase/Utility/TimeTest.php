@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Utility;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Object;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Time;
 
@@ -495,7 +494,7 @@ class TimeTest extends TestCase {
 		$expected = date('l jS \of F Y h:i:s A', $time);
 		$this->assertEquals($expected, $result);
 
-		$this->assertFalse($this->Time->toServer(time(), new Object()));
+		$this->assertFalse($this->Time->toServer(time(), new \stdClass()));
 
 		date_default_timezone_set('UTC');
 

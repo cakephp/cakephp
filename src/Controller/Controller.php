@@ -16,7 +16,6 @@ namespace Cake\Controller;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Error\Exception;
 use Cake\Event\Event;
@@ -77,7 +76,7 @@ use Cake\View\ViewVarsTrait;
  * @property      \Cake\Controller\Component\SessionComponent $Session
  * @link          http://book.cakephp.org/2.0/en/controllers.html
  */
-class Controller extends Object implements EventListener {
+class Controller implements EventListener {
 
 	use CellTrait;
 	use MergeVariablesTrait;

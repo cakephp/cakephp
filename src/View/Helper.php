@@ -17,7 +17,6 @@ namespace Cake\View;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Event\EventListener;
 use Cake\Routing\Router;
@@ -46,7 +45,7 @@ use Cake\Utility\Inflector;
  *   If a listener returns a non-null value, the output of the rendered file will be set to that.
  *
  */
-class Helper extends Object implements EventListener {
+class Helper implements EventListener {
 
 	use InstanceConfigTrait;
 

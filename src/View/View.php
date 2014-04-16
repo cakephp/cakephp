@@ -18,11 +18,11 @@ use Cake\Cache\Cache;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Log\LogTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\RequestActionTrait;
@@ -58,9 +58,10 @@ use Cake\View\ViewVarsTrait;
  * @property      \Cake\View\Helper\TimeHelper $Time
  * @property      \Cake\View\ViewBlock $Blocks
  */
-class View extends Object {
+class View {
 
 	use CellTrait;
+	use LogTrait;
 	use RequestActionTrait;
 	use ViewVarsTrait;
 

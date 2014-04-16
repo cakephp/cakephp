@@ -18,7 +18,6 @@ namespace Cake\Controller\Component\Acl;
 
 use Cake\Configure\Engine\PhpConfig;
 use Cake\Controller\Component;
-use Cake\Core\Object;
 use Cake\Error;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
@@ -28,7 +27,7 @@ use Cake\Utility\Inflector;
  * An example file can be found in app/Config/acl.php
  *
  */
-class PhpAcl extends Object implements AclInterface {
+class PhpAcl implements AclInterface {
 
 /**
  * Constant for deny
