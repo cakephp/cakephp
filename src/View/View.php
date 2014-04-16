@@ -341,8 +341,6 @@ class View extends Object {
  */
 	public function __construct(Request $request = null, Response $response = null,
 		EventManager $eventManager = null, array $viewOptions = []) {
-		parent::__construct();
-
 		foreach ($this->_passedVars as $var) {
 			if (isset($viewOptions[$var])) {
 				$this->{$var} = $viewOptions[$var];

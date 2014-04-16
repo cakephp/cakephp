@@ -29,13 +29,6 @@ class Object {
 	use LogTrait;
 
 /**
- * constructor, no-op
- *
- */
-	public function __construct() {
-	}
-
-/**
  * Object-to-string conversion.
  * Each class can override this method as necessary.
  *
