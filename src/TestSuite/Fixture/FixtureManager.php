@@ -1,7 +1,5 @@
 <?php
 /**
- * A factory class to manage the life cycle of test fixtures
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -72,6 +70,15 @@ class FixtureManager {
 	}
 
 /**
+ * Get the loaded fixtures.
+ *
+ * @return array
+ */
+	public function loaded() {
+		return $this->_loaded;
+	}
+
+/**
  * Add aliaes for all non test prefixed connections.
  *
  * This allows models to use the test connections without
@@ -130,9 +137,9 @@ class FixtureManager {
 				continue;
 			}
 
-			list($type, $name) = explode('.', $fixture, 2);
-			$path = explode('/', $name);
-			$base = array_pop($path);
+			list($type, $pathName) = explode('.', $fixture, 2);
+			$path = explode('/', $pathName);
+			$name = array_pop($path);
 			$additionalPath = implode('\\', $path);
 
 			if ($type === 'core') {
@@ -140,23 +147,27 @@ class FixtureManager {
 			} elseif ($type === 'app') {
 				$baseNamespace = Configure::read('App.namespace');
 			} elseif ($type === 'plugin') {
-				list($plugin, $additionalPath) = explode('.', $additionalPath);
-				$baseNamespace = Plugin::getNamespace($plugin);
+				if (strlen($additionalPath)) {
+					list($plugin, $additionalPath) = explode('.', $additionalPath);
+				} else {
+					list($plugin, $name) = explode('.', $name);
+				}
+				$baseNamespace = Plugin::getNamespace(Inflector::camelize($plugin));
 			} else {
-				$base = $fixture;
+				$name = $fixture;
 			}
-			$base = Inflector::camelize($base);
+			$name = Inflector::camelize($name);
 			$nameSegments = [
 				$baseNamespace,
 				'Test\Fixture',
 				$additionalPath,
-				$base . 'Fixture'
+				$name . 'Fixture'
 			];
 			$className = implode('\\', array_filter($nameSegments));
 
 			if (class_exists($className)) {
 				$this->_loaded[$fixture] = new $className();
-				$this->_fixtureMap[$base] = $this->_loaded[$fixture];
+				$this->_fixtureMap[$name] = $this->_loaded[$fixture];
 			} else {
 				$msg = sprintf(
 					'Referenced fixture class "%s" not found. Fixture "%s" was referenced in test case "%s".',
