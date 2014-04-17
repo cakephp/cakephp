@@ -12,11 +12,10 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Utility;
+namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Utility\Inflector;
-use Cake\View\Error;
 
 /**
  * Provides cell() method for usage in Controller and View classes.

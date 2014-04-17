@@ -11,10 +11,10 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Utility;
+namespace Cake\Test\TestCase\Model;
 
+use Cake\Model\ModelAwareTrait;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ModelAwareTrait;
 
 /**
  * Testing stub.

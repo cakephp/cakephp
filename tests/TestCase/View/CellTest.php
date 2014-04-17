@@ -19,8 +19,8 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\CellTrait;
 use Cake\View\Cell;
+use Cake\View\CellTrait;
 
 /**
  * CellTest class.

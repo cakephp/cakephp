@@ -16,11 +16,11 @@ namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Event\EventManager;
+use Cake\Model\ModelAwareTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Inflector;
-use Cake\Utility\ModelAwareTrait;
-use Cake\Utility\ViewVarsTrait;
+use Cake\View\ViewVarsTrait;
 
 /**
  * Cell base.

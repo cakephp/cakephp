@@ -12,9 +12,9 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Utility;
+namespace Cake\Model;
 
-use Cake\Error;
+use Cake\Error\Exception;
 use Cake\Utility\Inflector;
 
 /**
@@ -70,7 +70,7 @@ trait ModelAwareTrait {
  * @param string $type The type of repository to load. Defaults to 'Table' which
  *   delegates to Cake\ORM\TableRegistry.
  * @return bool True when single repository found and instance created.
- * @throws \Cake\Error\MissingModelException if the model class cannot be found.
+ * @throws \Cake\Model\Error\MissingModelException if the model class cannot be found.
  * @throws \Cake\Error\Exception When using a type that has not been registered.
  */
 	public function loadModel($modelClass = null, $type = 'Table') {
@@ -85,7 +85,7 @@ trait ModelAwareTrait {
 		list($plugin, $modelClass) = pluginSplit($modelClass, true);
 
 		if (!isset($this->_modelFactories[$type])) {
-			throw new Error\Exception(sprintf(
+			throw new Exception(sprintf(
 				'Unknown repository type "%s". Make sure you register a type before trying to use it.',
 				$type
 			));

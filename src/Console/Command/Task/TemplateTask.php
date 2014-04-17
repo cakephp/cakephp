@@ -18,7 +18,7 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Utility\ConventionsTrait;
 use Cake\Utility\Folder;
-use Cake\Utility\ViewVarsTrait;
+use Cake\View\ViewVarsTrait;
 
 /**
  * Template Task can generate templated output Used in other Tasks.
