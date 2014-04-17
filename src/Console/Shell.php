@@ -18,6 +18,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Log\LogTrait;
 use Cake\Model\ModelAwareTrait;
 use Cake\Utility\ConventionsTrait;
 use Cake\Utility\File;
@@ -32,6 +33,7 @@ use Cake\Utility\String;
  */
 class Shell {
 
+	use LogTrait;
 	use MergeVariablesTrait;
 	use ModelAwareTrait;
 

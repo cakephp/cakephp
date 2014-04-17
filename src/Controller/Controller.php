@@ -21,6 +21,7 @@ use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
+use Cake\Log\LogTrait;
 use Cake\Model\ModelAwareTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -79,6 +80,7 @@ use Cake\View\ViewVarsTrait;
 class Controller implements EventListener {
 
 	use CellTrait;
+	use LogTrait;
 	use MergeVariablesTrait;
 	use ModelAwareTrait;
 	use RequestActionTrait;
