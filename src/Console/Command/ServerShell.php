@@ -1,7 +1,5 @@
 <?php
 /**
- * built-in Server Shell
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -134,6 +132,7 @@ class ServerShell extends Shell {
 
 		$port = ($this->_port == static::DEFAULT_PORT) ? '' : ':' . $this->_port;
 		$this->out(__d('cake_console', 'built-in server is running in http://%s%s/', $this->_host, $port));
+		$this->out(__d('cake_console', 'You can exit with <info>CTRL-C</info>'));
 		system($command);
 	}
 
