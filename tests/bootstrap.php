@@ -17,6 +17,8 @@ use Cake\Datasource\ConnectionManager;
 use Cake\I18n\I18n;
 use Cake\Log\Log;
 
+require 'vendor/autoload.php';
+
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(__DIR__));
 define('APP_DIR', 'TestApp');
@@ -132,3 +134,5 @@ Log::config([
 
 // Initialize the empty language.
 I18n::translate('empty');
+
+Carbon\Carbon::setTestNow(Carbon\Carbon::now());

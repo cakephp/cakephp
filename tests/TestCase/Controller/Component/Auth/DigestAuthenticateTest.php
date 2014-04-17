@@ -22,6 +22,7 @@ use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Carbon\Carbon;
 
 /**
  * Test case for DigestAuthentication
@@ -168,8 +169,8 @@ DIGEST;
 		$expected = array(
 			'id' => 1,
 			'username' => 'mariano',
-			'created' => new \DateTime('2007-03-17 01:16:23'),
-			'updated' => new \DateTime('2007-03-17 01:18:31')
+			'created' => new Carbon('2007-03-17 01:16:23'),
+			'updated' => new Carbon('2007-03-17 01:18:31')
 		);
 		$this->assertEquals($expected, $result);
 	}

@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Database\Type;
 use Cake\Database\Type;
 use Cake\Database\Type\DateTimeType;
 use Cake\TestSuite\TestCase;
+use Carbon\Carbon;
 
 /**
  * Test for the DateTime type.
@@ -43,7 +44,7 @@ class DateTimeTypeTest extends TestCase {
 		$this->assertNull($this->type->toPHP(null, $this->driver));
 
 		$result = $this->type->toPHP('2001-01-04 12:13:14', $this->driver);
-		$this->assertInstanceOf('DateTime', $result);
+		$this->assertInstanceOf('Carbon\Carbon', $result);
 		$this->assertEquals('2001', $result->format('Y'));
 		$this->assertEquals('01', $result->format('m'));
 		$this->assertEquals('04', $result->format('d'));
@@ -63,7 +64,7 @@ class DateTimeTypeTest extends TestCase {
 	public function testToPHPIncludingMilliseconds() {
 		$in = '2014-03-24 20:44:36.315113';
 		$result = $this->type->toPHP($in, $this->driver);
-		$this->assertInstanceOf('\DateTime', $result);
+		$this->assertInstanceOf('Carbon\Carbon', $result);
 	}
 
 /**
@@ -76,7 +77,7 @@ class DateTimeTypeTest extends TestCase {
 		$result = $this->type->toDatabase($value, $this->driver);
 		$this->assertEquals($value, $result);
 
-		$date = new \DateTime('2013-08-12 15:16:17');
+		$date = new Carbon('2013-08-12 15:16:17');
 		$result = $this->type->toDatabase($date, $this->driver);
 		$this->assertEquals('2013-08-12 15:16:17', $result);
 	}
@@ -97,15 +98,15 @@ class DateTimeTypeTest extends TestCase {
 			['2013-nope!', '2013-nope!'],
 
 			// valid string types
-			['1392387900', new \DateTime('@1392387900')],
-			[1392387900, new \DateTime('@1392387900')],
-			['2014-02-14', new \DateTime('2014-02-14')],
-			['2014-02-14 13:14:15', new \DateTime('2014-02-14 13:14:15')],
+			['1392387900', new Carbon('@1392387900')],
+			[1392387900, new Carbon('@1392387900')],
+			['2014-02-14', new Carbon('2014-02-14')],
+			['2014-02-14 13:14:15', new Carbon('2014-02-14 13:14:15')],
 
 			// valid array types
 			[
 				['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-				new \DateTime('2014-02-14 13:14:15')
+				new Carbon('2014-02-14 13:14:15')
 			],
 			[
 				[
@@ -113,7 +114,7 @@ class DateTimeTypeTest extends TestCase {
 					'hour' => 1, 'minute' => 14, 'second' => 15,
 					'meridian' => 'am'
 				],
-				new \DateTime('2014-02-14 01:14:15')
+				new Carbon('2014-02-14 01:14:15')
 			],
 			[
 				[
@@ -121,30 +122,30 @@ class DateTimeTypeTest extends TestCase {
 					'hour' => 1, 'minute' => 14, 'second' => 15,
 					'meridian' => 'pm'
 				],
-				new \DateTime('2014-02-14 13:14:15')
+				new Carbon('2014-02-14 13:14:15')
 			],
 			[
 				[
 					'year' => 2014, 'month' => 2, 'day' => 14,
 				],
-				new \DateTime('2014-02-14 00:00:00')
+				new Carbon('2014-02-14 00:00:00')
 			],
 
 			// Invalid array types
 			[
 				['year' => 'farts', 'month' => 'derp'],
-				new \DateTime(date('Y-m-d 00:00:00'))
+				new Carbon(date('Y-m-d 00:00:00'))
 			],
 			[
 				['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-				new \DateTime(date('Y-m-d 00:00:00'))
+				new Carbon(date('Y-m-d 00:00:00'))
 			],
 			[
 				[
 					'year' => '2014', 'month' => '02', 'day' => '14',
 					'hour' => 'farts', 'minute' => 'farts'
 				],
-				new \DateTime('2014-02-14 00:00:00')
+				new Carbon('2014-02-14 00:00:00')
 			],
 		];
 	}
