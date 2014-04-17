@@ -459,8 +459,8 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testRedirectBeforeRedirectModifyingStatusCode() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('_stop'));
-		$Controller->response = new Response();
+		$Response = $this->getMock('Cake\Network\Response', array('stop'));
+		$Controller = new Controller(null, $Response);
 
 		$Controller->getEventManager()->attach(function ($event, $response, $url) {
 			$response->statusCode(302);
@@ -478,19 +478,20 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testRedirectBeforeRedirectListenerReturnFalse() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('_stop'));
-		$Controller->response = $this->getMock('Cake\Network\Response', array('header'));
+		$Response = $this->getMock('Cake\Network\Response', array('stop', 'header'));
+		$Controller = new Controller(null, $Response);
 
 		$Controller->getEventManager()->attach(function ($event, $response, $url, $status) {
 			return false;
 		}, 'Controller.beforeRedirect');
 
 		$Controller->response->expects($this->never())
+			->method('stop');
+		$Controller->response->expects($this->never())
 			->method('header');
 		$Controller->response->expects($this->never())
 			->method('statusCode');
 
-		$Controller->expects($this->never())->method('_stop');
 		$Controller->redirect('http://cakephp.org');
 	}
 

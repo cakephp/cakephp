@@ -27,7 +27,6 @@ use Cake\Network\Response;
 use Cake\Network\Session;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
-use Cake\Routing\Dispatcher;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
@@ -73,13 +72,14 @@ class AuthComponentTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 
 		$request = new Request();
+		$response = $this->getMock('Cake\Network\Response', array('stop'));
 
-		$this->Controller = new AuthTestController($request, $this->getMock('Cake\Network\Response'));
+		$this->Controller = new AuthTestController($request, $response);
 		$this->Controller->constructClasses();
 
 		$this->Auth = new TestAuthComponent($this->Controller->components());
 		$this->Auth->request = $request;
-		$this->Auth->response = $this->getMock('Cake\Network\Response');
+		$this->Auth->response = $response;
 		AuthComponent::$sessionKey = 'Auth.User';
 
 		$this->initialized = true;
@@ -899,17 +899,23 @@ class AuthComponentTest extends TestCase {
  * @return void
  */
 	public function testAjaxLogin() {
-		ob_start();
-		$request = new Request([
+		$this->Controller->request = new Request([
 			'url' => '/ajax_auth/add',
 			'environment' => ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
 		]);
-		$response = new Response();
-		$Dispatcher = new Dispatcher();
-		$Dispatcher->dispatch($request, $response, array('return' => 1));
+		$this->Controller->request->params['action'] = 'add';
+		$this->Controller->response->expects($this->once())->method('stop');
+
+		$event = new Event('Controller.startup', $this->Controller);
+		$this->Auth->config('ajaxLogin', 'test_element');
+		$this->Auth->RequestHandler->ajaxLayout = 'ajax2';
+		$this->Auth->initialize($event);
+
+		ob_start();
+		$this->Auth->startup($event);
 		$result = ob_get_clean();
 
-		$this->assertEquals(403, $response->statusCode());
+		$this->assertEquals(403, $this->Controller->response->statusCode());
 		$this->assertEquals("Ajax!\nthis is the test element", str_replace("\r\n", "\n", $result));
 	}
 

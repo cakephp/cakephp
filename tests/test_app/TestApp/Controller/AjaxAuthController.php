@@ -48,26 +48,12 @@ class AjaxAuthController extends Controller {
 	public $testUrl = null;
 
 /**
- * beforeFilter method
- *
- * @param Event $event
- * @return void
- */
-	public function beforeFilter(Event $event) {
-		$this->TestAuth->config('ajaxLogin', 'test_element');
-		$this->TestAuth->config('userModel', 'AuthUser');
-		$this->TestAuth->RequestHandler->ajaxLayout = 'ajax2';
-	}
-
-/**
  * add method
  *
  * @return void
  */
 	public function add() {
-		if ($this->TestAuth->testStop !== true) {
-			echo 'Added Record';
-		}
+		echo 'Added Record';
 	}
 
 /**

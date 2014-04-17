@@ -2708,9 +2708,8 @@ class RouterTest extends TestCase {
 
 		$routes->get(0)->response = $this->getMock(
 			'Cake\Network\Response',
-			array('_sendHeader')
+			array('_sendHeader', 'stop')
 		);
-		$routes->get(0)->stop = false;
 		$this->assertEquals(302, $routes->get(0)->options['status']);
 
 		Router::parse('/blog');

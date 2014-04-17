@@ -560,7 +560,7 @@ class Controller implements EventListener {
 
 		if ($exit) {
 			$response->send();
-			$this->_stop();
+			$response->stop();
 		}
 	}
 

@@ -276,7 +276,7 @@ abstract class ControllerTestCase extends TestCase {
 			$params['requested'] = 1;
 		}
 		$Dispatch->testController = $this->controller;
-		$Dispatch->response = $this->getMock('Cake\Network\Response', array('send'));
+		$Dispatch->response = $this->getMock('Cake\Network\Response', array('send', 'stop'));
 		$this->result = $Dispatch->dispatch($request, $Dispatch->response, $params);
 		$this->controller = $Dispatch->testController;
 		$this->vars = $this->controller->viewVars;
@@ -292,12 +292,12 @@ abstract class ControllerTestCase extends TestCase {
 
 /**
  * Generates a mocked controller and mocks any classes passed to `$mocks`. By
- * default, `_stop()` is stubbed as is sending the response headers, so to not
+ * default, `stop()` is stubbed as is sending the response headers, so to not
  * interfere with testing.
  *
  * ### Mocks:
  *
- * - `methods` Methods to mock on the controller. `_stop()` is mocked by default
+ * - `methods` Methods to mock on the controller.
  * - `models` Models to mock. Models are added to the ClassRegistry so any
  *   time they are instantiated the mock will be created. Pass as key value pairs
  *   with the value being specific methods on the model to mock. If `true` or
@@ -321,8 +321,8 @@ abstract class ControllerTestCase extends TestCase {
 			));
 		}
 
-		$mocks = array_merge_recursive(array(
-			'methods' => array('_stop'),
+		$mocks = array_merge(array(
+			'methods' => null,
 			'models' => array(),
 			'components' => array()
 		), $mocks);
@@ -330,7 +330,7 @@ abstract class ControllerTestCase extends TestCase {
 		$name = substr($controllerName, 0, -10);
 
 		$request = $this->getMock('Cake\Network\Request');
-		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
+		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', 'stop'));
 		$controller = $this->getMock(
 			$classname,
 			$mocks['methods'],

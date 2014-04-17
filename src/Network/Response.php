@@ -1502,4 +1502,14 @@ class Response {
 		//@codingStandardsIgnoreEnd
 	}
 
+/**
+ * Stop execution of the current script. Wraps exit() making
+ * testing easier.
+ *
+ * @param int|string $status see http://php.net/exit for values
+ * @return void
+ */
+	public function stop($status = 0) {
+		exit($status);
+	}
 }
