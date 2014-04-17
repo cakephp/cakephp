@@ -28,13 +28,6 @@ use Cake\Utility\Inflector;
 class ShellDispatcher {
 
 /**
- * Contains command switches parsed from the command line.
- *
- * @var array
- */
-	public $params = [];
-
-/**
  * Contains arguments parsed from the command line.
  *
  * @var array
