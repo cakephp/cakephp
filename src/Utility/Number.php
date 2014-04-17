@@ -18,7 +18,7 @@
  */
 namespace Cake\Utility;
 
-use Cake\Error;
+use Cake\Error\Exception;
 
 /**
  * Number helper library.
@@ -161,7 +161,7 @@ class Number {
 		if ($default !== false) {
 			return $default;
 		}
-		throw new Error\Exception('No unit type.');
+		throw new Exception('No unit type.');
 	}
 
 /**

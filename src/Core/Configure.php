@@ -17,7 +17,7 @@ namespace Cake\Core;
 use Cake\Cache\Cache;
 use Cake\Configure\ConfigEngineInterface;
 use Cake\Configure\Engine\PhpConfig;
-use Cake\Error;
+use Cake\Error\Exception;
 use Cake\Utility\Hash;
 
 /**
@@ -283,10 +283,10 @@ class Configure {
 	public static function dump($key, $config = 'default', $keys = []) {
 		$engine = static::_getEngine($config);
 		if (!$engine) {
-			throw new Error\Exception(sprintf('There is no "%s" config engine.', $config));
+			throw new Exception(sprintf('There is no "%s" config engine.', $config));
 		}
 		if (!method_exists($engine, 'dump')) {
-			throw new Error\Exception(sprintf('The "%s" config engine, does not have a dump() method.', $config));
+			throw new Exception(sprintf('The "%s" config engine, does not have a dump() method.', $config));
 		}
 		$values = static::$_values;
 		if (!empty($keys) && is_array($keys)) {

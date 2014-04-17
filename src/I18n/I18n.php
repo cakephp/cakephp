@@ -20,7 +20,7 @@ use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Error;
+use Cake\Error\Exception;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
@@ -239,7 +239,7 @@ class I18n {
 			$domain = static::$defaultDomain;
 		}
 		if ($domain === '') {
-			throw new Error\Exception('You cannot use "" as a domain.');
+			throw new Exception('You cannot use "" as a domain.');
 		}
 
 		$_this->domain = $domain . '_' . $_this->l10n->lang;

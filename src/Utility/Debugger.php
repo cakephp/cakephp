@@ -15,7 +15,7 @@
 namespace Cake\Utility;
 
 use Cake\Core\Configure;
-use Cake\Error;
+use Cake\Error\Exception;
 use Cake\Log\Log;
 
 /**
@@ -627,7 +627,7 @@ class Debugger {
 			return $self->_outputFormat;
 		}
 		if ($format !== false && !isset($self->_templates[$format])) {
-			throw new Error\Exception('Invalid Debugger output format.');
+			throw new Exception('Invalid Debugger output format.');
 		}
 		$self->_outputFormat = $format;
 	}

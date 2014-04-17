@@ -14,7 +14,7 @@
  */
 namespace Cake\Core;
 
-use Cake\Error;
+use Cake\Error\Exception;
 
 /**
  * A trait that provides a set of static methods to manage configuration
@@ -79,7 +79,7 @@ trait StaticConfigTrait {
 			return;
 		}
 		if (isset(static::$_config[$key])) {
-			throw new Error\Exception(sprintf('Cannot reconfigure existing key "%s"', $key));
+			throw new Exception(sprintf('Cannot reconfigure existing key "%s"', $key));
 		}
 		if (is_object($config)) {
 			$config = ['className' => $config];
