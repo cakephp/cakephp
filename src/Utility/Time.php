@@ -73,13 +73,6 @@ class Time extends Carbon {
  */
 	public static $wordEnd = '+1 month';
 
-/**
- * Temporary variable containing the timestamp value, used internally in convertSpecifiers()
- *
- * @var int
- */
-	protected static $_time = null;
-
 	public function __construct($time = null, $tz = null) {
 		if ($time instanceof \DateTime) {
 			list($time, $tz) = [$dt->format('Y-m-d H:i:s'), $dt->getTimeZone()];
@@ -147,53 +140,6 @@ class Time extends Carbon {
 		}
 
 		return $tz;
-	}
-
-/**
- * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
- *
- * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
- * @return string Parsed timestamp
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::fromString
- */
-	public static function fromString($dateString, $timezone = null) {
-		if (empty($dateString)) {
-			return false;
-		}
-
-		$containsDummyDate = (is_string($dateString) && substr($dateString, 0, 10) === '0000-00-00');
-		if ($containsDummyDate) {
-			return false;
-		}
-
-		if (is_int($dateString) || is_numeric($dateString)) {
-			$date = intval($dateString);
-		} elseif (
-			$dateString instanceof \DateTime &&
-			$dateString->getTimezone()->getName() !== date_default_timezone_get()
-		) {
-			$clone = clone $dateString;
-			$clone->setTimezone(new \DateTimeZone(date_default_timezone_get()));
-			$date = (int)$clone->format('U') + $clone->getOffset();
-		} elseif ($dateString instanceof \DateTime) {
-			$date = (int)$dateString->format('U');
-		} else {
-			$date = strtotime($dateString);
-		}
-
-		if ($date === -1 || empty($date)) {
-			return false;
-		}
-
-		if ($timezone === null) {
-			$timezone = Configure::read('Config.timezone');
-		}
-
-		if ($timezone !== null) {
-			return static::convert($date, $timezone);
-		}
-		return $date;
 	}
 
 /**
@@ -561,44 +507,12 @@ class Time extends Carbon {
  *   Cake\Utility\Time::format('2012-02-15 23:01:01', '%c', 'N/A', 'America/New_York'); // converts passed date to timezone
  * }}}
  *
- * @param int|string|\DateTime $date UNIX timestamp, strtotime() valid string or DateTime object (or a date format string)
- * @param int|string|\DateTime $format date format string (or UNIX timestamp, strtotime() valid string or DateTime object)
- * @param bool|string $default if an invalid date is passed it will output supplied default value. Pass false if you want raw conversion value
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
- * @return string Formatted date string
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::format
- * @see \Cake\Utility\Time::i18nFormat()
- */
-	public static function formatString($date, $format = null, $default = false, $timezone = null) {
-		//Backwards compatible params re-order test
-		$time = static::fromString($format, $timezone);
-
-		if ($time === false) {
-			return static::i18nFormat($date, $format, $default, $timezone);
-		}
-		return date($date, $time);
-	}
-
-/**
- * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
- * It takes into account the default date format for the current language if a LC_TIME file is used.
- *
- * @param int|string|\DateTime $date UNIX timestamp, strtotime() valid string or DateTime object
  * @param string $format strftime format string.
  * @param bool|string $default if an invalid date is passed it will output supplied default value. Pass false if you want raw conversion value
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Formatted and translated date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::i18nFormat
  */
-	public static function i18nFormat($date, $format = null, $default = false, $timezone = null) {
-		$date = static::fromString($date, $timezone);
-		if ($date === false && $default !== false) {
-			return $default;
-		}
-		if (empty($format)) {
-			$format = '%x';
-		}
-		return static::_strftime(static::convertSpecifiers($format, $date), $date);
+	public static function i18nFormat($format = null, $default = false) {
 	}
 
 /**
@@ -645,43 +559,6 @@ class Time extends Carbon {
 			return $groupedIdentifiers;
 		}
 		return array_combine($identifiers, $identifiers);
-	}
-
-/**
- * Multibyte wrapper for strftime.
- *
- * Handles utf8_encoding the result of strftime when necessary.
- *
- * @param string $format Format string.
- * @param int $date Timestamp to format.
- * @return string formatted string with correct encoding.
- */
-	protected static function _strftime($format, $date) {
-		$format = strftime($format, $date);
-		$encoding = Configure::read('App.encoding');
-
-		if ($encoding === 'UTF-8' && !mb_check_encoding($format, $encoding)) {
-			$format = utf8_encode($format);
-		}
-		return $format;
-	}
-
-/**
- * Evaluates if the provided date and time is within a time span.
- *
- * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
- * @param string $anchor The relative date and time to compare against
- * @param string $format The date and time format used for comparison
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
- * @return bool True if datetime string is within the time span
- */
-	protected static function _isWithinTimeSpan($dateString, $anchor, $format, $timezone = null) {
-		$dateTime = new \DateTime;
-		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
-			->format($format);
-		$now = $dateTime->setTimestamp(static::fromString($anchor, $timezone))
-			->format($format);
-		return $timestamp === $now;
 	}
 
 }
