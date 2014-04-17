@@ -275,45 +275,6 @@ class Time extends Carbon {
 	}
 
 /**
- * Returns a formatted date in server's timezone.
- *
- * If a DateTime object is given or the dateString has a timezone
- * segment, the timezone parameter will be ignored.
- *
- * If no timezone parameter is given and no DateTime object, the passed $dateString will be
- * considered to be in the UTC timezone.
- *
- * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
- * @param string $format date format string
- * @return mixed Formatted date
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::toServer
- */
-	public static function toServer($dateString, $timezone = null, $format = 'Y-m-d H:i:s') {
-		if ($timezone === null) {
-			$timezone = new \DateTimeZone('UTC');
-		} elseif (is_string($timezone)) {
-			$timezone = new \DateTimeZone($timezone);
-		} elseif (!($timezone instanceof \DateTimeZone)) {
-			return false;
-		}
-
-		if ($dateString instanceof \DateTime) {
-			$date = $dateString;
-		} elseif (is_int($dateString) || is_numeric($dateString)) {
-			$dateString = (int)$dateString;
-
-			$date = new \DateTime('@' . $dateString);
-			$date->setTimezone($timezone);
-		} else {
-			$date = new \DateTime($dateString, $timezone);
-		}
-
-		$date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
-		return $date->format($format);
-	}
-
-/**
  * Returns a date formatted for Atom RSS feeds.
  *
  * @param string $dateString Datetime string or Unix timestamp
