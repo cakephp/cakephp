@@ -14,7 +14,7 @@
  */
 namespace Cake\Core;
 
-use Cake\Error;
+use Cake\Error\Exception;
 use Cake\Utility\Hash;
 
 /**
@@ -156,7 +156,7 @@ trait InstanceConfigTrait {
 
 		foreach ($stack as $k) {
 			if (!is_array($update)) {
-				throw new Error\Exception(sprintf('Cannot set %s value', $key));
+				throw new Exception(sprintf('Cannot set %s value', $key));
 			}
 
 			if (!isset($update[$k])) {
@@ -188,7 +188,7 @@ trait InstanceConfigTrait {
 
 		foreach ($stack as $i => $k) {
 			if (!is_array($update)) {
-				throw new Error\Exception(sprintf('Cannot unset %s value', $key));
+				throw new Exception(sprintf('Cannot unset %s value', $key));
 			}
 
 			if (!isset($update[$k])) {
