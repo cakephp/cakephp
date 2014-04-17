@@ -239,39 +239,12 @@ class Time extends Carbon {
 	}
 
 /**
- * Returns true if given datetime string was yesterday.
- *
- * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
- * @return bool True if datetime string was yesterday
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::wasYesterday
- */
-	public static function wasYesterday($dateString, $timezone = null) {
-		return static::_isWithinTimeSpan($dateString, 'yesterday', 'Y-m-d', $timezone);
-	}
-
-/**
- * Returns true if given datetime string is tomorrow.
- *
- * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
- * @return bool True if datetime string was yesterday
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isTomorrow
- */
-	public static function _isTomorrow($dateString, $timezone = null) {
-		return static::_isWithinTimeSpan($dateString, 'tomorrow', 'Y-m-d', $timezone);
-	}
-
-/**
  * Returns the quarter
  *
- * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
- * @param bool $range if true returns a range in Y-m-d format
  * @return mixed 1, 2, 3, or 4 quarter of year or array if $range true
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::toQuarter
  */
-	public static function toQuarter($dateString, $range = false) {
-		$dateTime = new \DateTime;
+	public function toQuarter() {
+		$dateTime = $this;
 		$dateTime->setTimestamp(static::fromString($dateString));
 
 		$quarter = ceil($dateTime->format('m') / 3);
@@ -293,15 +266,12 @@ class Time extends Carbon {
 	}
 
 /**
- * Returns a UNIX timestamp from a textual datetime description. Wrapper for PHP function strtotime().
+ * Returns a UNIX timestamp.
  *
- * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return int Unix timestamp
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::toUnix
  */
-	public static function toUnix($dateString, $timezone = null) {
-		return static::fromString($dateString, $timezone);
+	public static function toUnix() {
+		return $this->format('U');
 	}
 
 /**
