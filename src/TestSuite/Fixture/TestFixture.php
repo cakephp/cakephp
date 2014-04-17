@@ -112,7 +112,7 @@ class TestFixture {
  * Initialize the fixture.
  *
  * @return void
- * @throws \Cake\Error\MissingModelException Whe importing from a model that does not exist.
+ * @throws \Cake\ORM\Error\MissingTableException When importing from a table that does not exist.
  */
 	public function init() {
 		if ($this->table === null) {

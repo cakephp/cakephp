@@ -70,7 +70,7 @@ trait ModelAwareTrait {
  * @param string $type The type of repository to load. Defaults to 'Table' which
  *   delegates to Cake\ORM\TableRegistry.
  * @return bool True when single repository found and instance created.
- * @throws \Cake\Model\Error\MissingModelException if the model class cannot be found.
+ * @throws \Cake\Model\Error\MissingModelException If the model class cannot be found.
  * @throws \Cake\Error\Exception When using a type that has not been registered.
  */
 	public function loadModel($modelClass = null, $type = 'Table') {
