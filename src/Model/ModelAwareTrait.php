@@ -93,7 +93,7 @@ trait ModelAwareTrait {
 		$factory = $this->_modelFactories[$type];
 		$this->{$modelClass} = $factory($plugin . $modelClass);
 		if (!$this->{$modelClass}) {
-			throw new Error\MissingModelException($modelClass);
+			throw new Error\MissingModelException([$modelClass, $type]);
 		}
 		return true;
 	}
