@@ -546,29 +546,6 @@ class Time extends Carbon {
 	}
 
 /**
- * Returns gmt as a UNIX timestamp.
- *
- * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
- * @return int UNIX timestamp
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::gmt
- */
-	public static function gmt($dateString = null) {
-		$dateTime = new \DateTime;
-		$time = $dateTime->getTimestamp();
-		if ($dateString) {
-			$time = static::fromString($dateString);
-		}
-		return gmmktime(
-			intval(date('G', $time)),
-			intval(date('i', $time)),
-			intval(date('s', $time)),
-			intval(date('n', $time)),
-			intval(date('j', $time)),
-			intval(date('Y', $time))
-		);
-	}
-
-/**
  * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
  * This function also accepts a time string and a format string as first and second parameters.
  * In that case this function behaves as a wrapper for TimeHelper::i18nFormat()
