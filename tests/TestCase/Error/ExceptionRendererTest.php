@@ -107,16 +107,6 @@ class TestErrorController extends Controller {
  *
  */
 class MyCustomExceptionRenderer extends ExceptionRenderer {
-
-/**
- * custom error message type.
- *
- * @return void
- */
-	public function missingWidgetThing() {
-		echo 'widget thing is missing';
-	}
-
 }
 
 /**
@@ -132,6 +122,9 @@ class MissingWidgetThingException extends Error\NotFoundException {
  */
 class ExceptionRendererTest extends TestCase {
 
+/**
+ * @var boolean
+ */
 	protected $_restoreError = false;
 
 /**
@@ -173,44 +166,6 @@ class ExceptionRendererTest extends TestCase {
 	}
 
 /**
- * test that methods declared in an ExceptionRenderer subclass are not converted
- * into error400 when debug > 0
- *
- * @return void
- */
-	public function testSubclassMethodsNotBeingConvertedToError() {
-		Configure::write('debug', true);
-
-		$exception = new MissingWidgetThingException('Widget not found');
-		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
-
-		ob_start();
-		$ExceptionRenderer->render();
-		$result = ob_get_clean();
-
-		$this->assertEquals('widget thing is missing', $result);
-	}
-
-/**
- * test that subclass methods are not converted when debug = 0
- *
- * @return void
- */
-	public function testSubclassMethodsNotBeingConvertedDebug0() {
-		Configure::write('debug', false);
-		$exception = new MissingWidgetThingException('Widget not found');
-		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
-
-		$this->assertEquals('missingWidgetThing', $ExceptionRenderer->method);
-
-		ob_start();
-		$ExceptionRenderer->render();
-		$result = ob_get_clean();
-
-		$this->assertEquals('widget thing is missing', $result, 'Method declared in subclass converted to error400');
-	}
-
-/**
  * test that ExceptionRenderer subclasses properly convert framework errors.
  *
  * @return void
@@ -220,8 +175,6 @@ class ExceptionRendererTest extends TestCase {
 
 		$exception = new MissingControllerException('PostsController');
 		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
-
-		$this->assertEquals('error400', $ExceptionRenderer->method);
 
 		ob_start();
 		$ExceptionRenderer->render();
@@ -240,23 +193,21 @@ class ExceptionRendererTest extends TestCase {
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$this->assertInstanceOf('Cake\Controller\ErrorController', $ExceptionRenderer->controller);
-		$this->assertEquals('error400', $ExceptionRenderer->method);
 		$this->assertEquals($exception, $ExceptionRenderer->error);
 	}
 
 /**
- * test that method gets coerced when debug = 0
+ * test that exception gets coerced when debug = 0
  *
  * @return void
  */
-	public function testErrorMethodCoercion() {
+	public function testExceptionCoercion() {
 		Configure::write('debug', false);
 		$exception = new MissingActionException('Page not found');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$this->assertInstanceOf('Cake\Controller\ErrorController', $ExceptionRenderer->controller);
-		$this->assertEquals('error400', $ExceptionRenderer->method);
-		$this->assertEquals($exception, $ExceptionRenderer->error);
+		$this->assertTrue($ExceptionRenderer->error instanceof Error\NotFoundException);
 	}
 
 /**
@@ -291,7 +242,6 @@ class ExceptionRendererTest extends TestCase {
 		$result = ob_get_clean();
 
 		$this->assertFalse(method_exists($ExceptionRenderer, 'missingWidgetThing'), 'no method should exist.');
-		$this->assertEquals('error400', $ExceptionRenderer->method, 'incorrect method coercion.');
 		$this->assertContains('coding fail', $result, 'Text should show up.');
 	}
 
@@ -312,7 +262,6 @@ class ExceptionRendererTest extends TestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertEquals('error500', $ExceptionRenderer->method, 'incorrect method coercion.');
 		$this->assertContains('foul ball.', $result, 'Text should show up as its debug mode.');
 	}
 
@@ -335,7 +284,6 @@ class ExceptionRendererTest extends TestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertEquals('error500', $ExceptionRenderer->method, 'incorrect method coercion.');
 		$this->assertNotContains('foul ball.', $result, 'Text should no show up.');
 		$this->assertContains('Internal Error', $result, 'Generic message only.');
 	}
@@ -355,7 +303,6 @@ class ExceptionRendererTest extends TestCase {
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
-		$this->assertEquals('error500', $ExceptionRenderer->method, 'incorrect method coercion.');
 		$this->assertContains('foul ball.', $result, 'Text should show up as its debug mode.');
 	}
 
@@ -480,12 +427,13 @@ class ExceptionRendererTest extends TestCase {
 			'prefix' => '',
 			'plugin' => '',
 		));
-		$ExceptionRenderer = $this->_mockResponse(new ExceptionRenderer($exception));
+		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
 
 		ob_start();
 		$ExceptionRenderer->render();
 		$result = ob_get_clean();
 
+		$this->assertEquals('missingController', $ExceptionRenderer->template);
 		$this->assertRegExp('/<h2>Missing Controller<\/h2>/', $result);
 		$this->assertRegExp('/<em>PostsController<\/em>/', $result);
 	}
