@@ -449,18 +449,13 @@ class Controller extends Object implements EventListener {
  * and components have their callbacks attached to the EventManager.
  * It is also at this time that Controller callbacks are bound.
  *
- * See Controller::repository(); for more information on how models are loaded.
- *
- * @return mixed true if models found and instance created.
- * @see Controller::repository()
+ * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::constructClasses
- * @throws MissingModelException
  */
 	public function constructClasses() {
 		$this->_mergeControllerVars();
 		$this->_loadComponents();
 		$this->getEventManager()->attach($this);
-		return true;
 	}
 
 /**
