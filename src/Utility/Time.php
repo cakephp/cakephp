@@ -270,59 +270,8 @@ class Time extends Carbon {
  *
  * @return int Unix timestamp
  */
-	public static function toUnix() {
+	public static function toUnixString() {
 		return $this->format('U');
-	}
-
-/**
- * Returns a date formatted for Atom RSS feeds.
- *
- * @param string $dateString Datetime string or Unix timestamp
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
- * @return string Formatted date string
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::toAtom
- */
-	public static function toAtom($dateString, $timezone = null) {
-		$dateTime = new \DateTime;
-		return $dateTime->setTimestamp(static::fromString($dateString, $timezone))
-			->format($dateTime::ATOM);
-	}
-
-/**
- * Formats date for RSS feeds
- *
- * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
- * @return string Formatted date string
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::toRSS
- */
-	public static function toRSS($dateString, $timezone = null) {
-		$dateTime = new \DateTime;
-		$date = static::fromString($dateString, $timezone);
-
-		if ($timezone === null) {
-			return $dateTime->setTimestamp($date)
-				->format('r');
-		}
-
-		$userOffset = $timezone;
-		if (!is_numeric($timezone)) {
-			if (!is_object($timezone)) {
-				$timezone = new \DateTimeZone($timezone);
-			}
-			$currentDate = new \DateTime('@' . $date);
-			$currentDate->setTimezone($timezone);
-			$userOffset = $timezone->getOffset($currentDate) / 60 / 60;
-		}
-
-		$timezone = '+0000';
-		if ($userOffset != 0) {
-			$hours = (int)floor(abs($userOffset));
-			$minutes = (int)(fmod(abs($userOffset), $hours) * 60);
-			$timezone = ($userOffset < 0 ? '-' : '+') . str_pad($hours, 2, '0', STR_PAD_LEFT) . str_pad($minutes, 2, '0', STR_PAD_LEFT);
-		}
-		return $dateTime->setTimestamp($date)
-			->format('D, d M Y H:i:s') . ' ' . $timezone;
 	}
 
 /**
@@ -559,48 +508,41 @@ class Time extends Carbon {
 	}
 
 /**
- * Returns true if specified datetime was within the interval specified, else false.
+ * Returns true this instance happened within the specified interval
  *
  * @param string|int $timeInterval the numeric value with space then time type.
  *    Example of valid types: 6 hours, 2 days, 1 minute.
- * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return bool
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::wasWithinLast
  */
-	public static function wasWithinLast($timeInterval, $dateString, $timezone = null) {
+	public function wasWithinLast($timeInterval) {
 		$tmp = str_replace(' ', '', $timeInterval);
 		if (is_numeric($tmp)) {
-			$timeInterval = $tmp . ' ' . __d('cake', 'days');
+			$timeInterval = $tmp . ' days';
 		}
 
-		$date = static::fromString($dateString, $timezone);
-		$interval = static::fromString('-' . $timeInterval);
-		$now = static::fromString('now', $timezone);
+		$interval = new static('-' . $timeInterval);
+		$now = new static();
 
-		return $date >= $interval && $date <= $now;
+		return $this >= $interval && $this <= $now;
 	}
 
 /**
- * Returns true if specified datetime is within the interval specified, else false.
+ * Returns true this instance will happen within the specified interval
  *
  * @param string|int $timeInterval the numeric value with space then time type.
  *    Example of valid types: 6 hours, 2 days, 1 minute.
- * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return bool
  */
-	public static function isWithinNext($timeInterval, $dateString, $timezone = null) {
+	public function isWithinNext($timeInterval) {
 		$tmp = str_replace(' ', '', $timeInterval);
 		if (is_numeric($tmp)) {
-			$timeInterval = $tmp . ' ' . __d('cake', 'days');
+			$timeInterval = $tmp . ' days';
 		}
 
-		$date = static::fromString($dateString, $timezone);
-		$interval = static::fromString('+' . $timeInterval);
-		$now = static::fromString('now', $timezone);
+		$interval = new static('+' . $timeInterval);
+		$now = new static();
 
-		return $date <= $interval && $date >= $now;
+		return $this <= $interval && $this >= $now;
 	}
 
 /**
