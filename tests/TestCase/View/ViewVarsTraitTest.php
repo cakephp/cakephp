@@ -11,10 +11,10 @@
  * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Utility;
+namespace Cake\Test\TestCase\View;
 
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ViewVarsTrait;
+use Cake\View\ViewVarsTrait;
 
 /**
  * ViewVarsTrait test case
@@ -30,7 +30,7 @@ class ViewVarsTraitTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->subject = $this->getObjectForTrait('Cake\Utility\ViewVarsTrait');
+		$this->subject = $this->getObjectForTrait('Cake\View\ViewVarsTrait');
 	}
 
 /**

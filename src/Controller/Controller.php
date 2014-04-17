@@ -22,17 +22,17 @@ use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
+use Cake\Model\ModelAwareTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
-use Cake\Utility\CellTrait;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
-use Cake\Utility\ModelAwareTrait;
-use Cake\Utility\ViewVarsTrait;
+use Cake\View\CellTrait;
 use Cake\View\View;
+use Cake\View\ViewVarsTrait;
 
 /**
  * Application controller class for organization of business logic.
