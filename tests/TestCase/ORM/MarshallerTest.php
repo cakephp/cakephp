@@ -907,4 +907,27 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals('Changed 2', $result[0]->comment);
 	}
 
+/**
+ * Tests merge with data types that need to be marshalled
+ *
+ * @return void
+ */
+	public function testMergeComplexType() {
+		$entity = new Entity(
+			['comment' => 'My Comment text'],
+			['markNew' => false, 'markClean' => true]
+		);
+		$data = [
+			'created' => [
+				'year' => '2014',
+				'month' => '2',
+				'day' => 14
+			]
+		];
+		$marshall = new Marshaller($this->comments);
+		$result = $marshall->merge($entity, $data);
+		$this->assertInstanceOf('DateTime', $entity->created);
+		$this->assertEquals('2014-02-14', $entity->created->format('Y-m-d'));
+	}
+
 }

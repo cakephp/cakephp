@@ -244,16 +244,24 @@ class Marshaller {
 			$data = $data[$tableName];
 		}
 
+		$schema = $this->_table->schema();
 		$properties = [];
 		foreach ($data as $key => $value) {
+			$columnType = $schema->columnType($key);
 			$original = $entity->get($key);
+
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
 				$nested = $propertyMap[$key]['nested'];
 				$value = $this->_mergeAssociation($original, $assoc, $value, $nested);
-			} elseif ($original == $value) {
-				continue;
+			} elseif ($columnType) {
+				$converter = Type::build($columnType);
+				$value = $converter->marshal($value);
+				if ($original == $value) {
+					continue;
+				}
 			}
+
 			$properties[$key] = $value;
 		}
 
