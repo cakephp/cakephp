@@ -195,7 +195,7 @@ class PostgresSchema extends BaseSchema {
 			$type = Table::CONSTRAINT_UNIQUE;
 		}
 		preg_match('/\(([^\)]+)\)/', $row['statement'], $matches);
-		$columns = explode(', ', $matches[1]);
+		$columns = $this->_convertColumnList($matches[1]);
 		if ($type === Table::CONSTRAINT_PRIMARY || $type === Table::CONSTRAINT_UNIQUE) {
 			$table->addConstraint($name, [
 				'type' => $type,
@@ -218,6 +218,20 @@ class PostgresSchema extends BaseSchema {
 			'type' => $type,
 			'columns' => $columns
 		]);
+	}
+
+/**
+ * Convert a column list into a clean array.
+ *
+ * @param string $columns comma separated column list.
+ * @return array
+ */
+	protected function _convertColumnList($columns) {
+		$columns = explode(', ', $columns);
+		foreach ($columns as &$column) {
+			$column = trim($column, '"');
+		}
+		return $columns;
 	}
 
 /**
@@ -255,7 +269,7 @@ class PostgresSchema extends BaseSchema {
 		$column = $matches[2];
 
 		preg_match('/FOREIGN KEY \(([^\)]+)\) REFERENCES/', $row['definition'], $matches);
-		$columns = explode(',', $matches[1]);
+		$columns = $this->_convertColumnList($matches[1]);
 
 		$data = [
 			'type' => Table::CONSTRAINT_FOREIGN,

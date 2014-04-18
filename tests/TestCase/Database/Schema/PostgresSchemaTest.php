@@ -53,8 +53,10 @@ CREATE TABLE schema_authors (
 id SERIAL,
 name VARCHAR(50),
 bio DATE,
+position INT,
 created TIMESTAMP,
-PRIMARY KEY (id)
+PRIMARY KEY (id),
+CONSTRAINT "unique_position" UNIQUE ("position")
 )
 SQL;
 		$connection->execute($table);
@@ -318,6 +320,35 @@ SQL;
 		foreach ($expected as $field => $definition) {
 			$this->assertEquals($definition, $result->column($field));
 		}
+	}
+
+/**
+ * Test describing a table with containing keywords
+ *
+ * @return void
+ */
+	public function testDescribeTableConstraintsWithKeywords() {
+		$connection = ConnectionManager::get('test');
+		$this->_createTables($connection);
+
+		$schema = new SchemaCollection($connection);
+		$result = $schema->describe('schema_authors');
+		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+		$expected = [
+			'primary' => [
+				'type' => 'primary',
+				'columns' => ['id'],
+				'length' => []
+			],
+			'unique_position' => [
+				'type' => 'unique',
+				'columns' => ['position'],
+				'length' => []
+			]
+		];
+		$this->assertCount(2, $result->constraints());
+		$this->assertEquals($expected['primary'], $result->constraint('primary'));
+		$this->assertEquals($expected['unique_position'], $result->constraint('unique_position'));
 	}
 
 /**
