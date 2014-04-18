@@ -123,7 +123,7 @@ class MissingWidgetThingException extends Error\NotFoundException {
 class ExceptionRendererTest extends TestCase {
 
 /**
- * @var boolean
+ * @var bool
  */
 	protected $_restoreError = false;
 
