@@ -51,7 +51,7 @@
 		-->
 		<!-- SQL Server
 		<env name="db_class" value="Cake\Database\Driver\Sqlserver"/>
-		<env name="db_dsn" value="sqlsrv:Server=localhost;Database=cake_test"/>
+		<env name="db_dsn" value="sqlsrv:Server=localhost;Database=cake_test;MultipleActiveResultSets=false"/>
 		<env name="db_login" value=""/>
 		<env name="db_password" value=""/>
 		-->
