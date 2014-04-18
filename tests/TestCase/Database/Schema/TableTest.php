@@ -168,6 +168,7 @@ class TableTest extends TestCase {
 			[['columns' => 'author_id', 'type' => 'derp']],
 		];
 	}
+
 /**
  * Test that an exception is raised when constraints
  * are added for fields that do not exist.
