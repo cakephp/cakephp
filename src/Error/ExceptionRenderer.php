@@ -79,15 +79,6 @@ class ExceptionRenderer {
  * @param \Exception $exception Exception
  */
 	public function __construct(\Exception $exception) {
-		if (!Configure::read('debug') && !($exception instanceof Error\HttpException)) {
-			$code = $this->_code($exception);
-			if ($code < 500) {
-				$exception = new Error\NotFoundException();
-			} else {
-				$exception = new Error\InternalErrorException();
-			}
-		}
-
 		$this->controller = $this->_getController($exception);
 		$this->error = $exception;
 	}
@@ -136,7 +127,7 @@ class ExceptionRenderer {
 		$exception = $this->error;
 		$code = $this->_code($exception);
 		$template = $this->_template($exception, $code);
-		$message = $this->error->getMessage();
+		$message = $this->_message($exception, $code);
 		$url = $this->controller->request->here();
 
 		$this->controller->response->statusCode($code);
@@ -156,12 +147,46 @@ class ExceptionRenderer {
 	}
 
 /**
- * Get template for rendering exception info
+ * Get error message.
+ *
+ * @param Exception $exception Exception
+ * @param int $code Error code
+ * @return string Error message
+ */
+	protected function _message(\Exception $exception, $code) {
+		$message = $this->error->getMessage();
+
+		if (!Configure::read('debug') &&
+			!($exception instanceof Error\HttpException)
+		) {
+			if ($code < 500) {
+				$message = __d('cake', 'Not Found');
+			} else {
+				$message = __d('cake', 'An Internal Error Has Occurred.');
+			}
+		}
+
+		return $message;
+	}
+
+/**
+ * Get template for rendering exception info.
+ *
  * @param \Exception $exception
  * @param int $code Error code
  * @return string Template name
  */
 	protected function _template(\Exception $exception, $code) {
+		if (!Configure::read('debug') &&
+			!($exception instanceof Error\HttpException)
+		) {
+			$template = 'error500';
+			if ($code < 500) {
+				$template = 'error400';
+			}
+			return $this->template = $template;
+		}
+
 		list(, $baseClass) = namespaceSplit(get_class($exception));
 		$baseClass = substr($baseClass, 0, -9);
 		$template = Inflector::variable($baseClass);

@@ -197,17 +197,25 @@ class ExceptionRendererTest extends TestCase {
 	}
 
 /**
- * test that exception gets coerced when debug = 0
+ * test that exception message gets coerced when debug = 0
  *
  * @return void
  */
-	public function testExceptionCoercion() {
+	public function testExceptionMessageCoercion() {
 		Configure::write('debug', false);
-		$exception = new MissingActionException('Page not found');
+		$exception = new MissingActionException('Secret info not to be leaked');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$this->assertInstanceOf('Cake\Controller\ErrorController', $ExceptionRenderer->controller);
-		$this->assertTrue($ExceptionRenderer->error instanceof Error\NotFoundException);
+		$this->assertEquals($exception, $ExceptionRenderer->error);
+
+		ob_start();
+		$ExceptionRenderer->render();
+		$result = ob_get_clean();
+
+		$this->assertEquals('error400', $ExceptionRenderer->template);
+		$this->assertContains('Not Found', $result);
+		$this->assertNotContains('Secret info not to be leaked', $result);
 	}
 
 /**
