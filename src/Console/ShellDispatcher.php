@@ -1,7 +1,5 @@
 <?php
 /**
- * ShellDispatcher file
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -23,15 +21,11 @@ use Cake\Utility\Inflector;
 
 /**
  * Shell dispatcher handles dispatching cli commands.
+ *
+ * Consult https://github.com/cakephp/app/tree/master/App/Console/cake.php
+ * for how this class is used in practice.
  */
 class ShellDispatcher {
-
-/**
- * Contains command switches parsed from the command line.
- *
- * @var array
- */
-	public $params = [];
 
 /**
  * Contains arguments parsed from the command line.
@@ -51,10 +45,9 @@ class ShellDispatcher {
  */
 	public function __construct($args = [], $bootstrap = true) {
 		set_time_limit(0);
-		$this->parseParams($args);
+		$this->args = $args;
 
 		if ($bootstrap) {
-			$this->_initConstants();
 			$this->_initEnvironment();
 		}
 	}
@@ -71,19 +64,6 @@ class ShellDispatcher {
 	}
 
 /**
- * Defines core configuration.
- *
- * @return void
- */
-	protected function _initConstants() {
-		if (function_exists('ini_set')) {
-			ini_set('html_errors', false);
-			ini_set('implicit_flush', true);
-			ini_set('max_execution_time', 0);
-		}
-	}
-
-/**
  * Defines current working environment.
  *
  * @return void
@@ -91,16 +71,14 @@ class ShellDispatcher {
  */
 	protected function _initEnvironment() {
 		if (!$this->_bootstrap()) {
-			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'lib' . DS . 'Cake exists in ' . CAKE_CORE_INCLUDE_PATH;
+			$message = "Unable to load CakePHP core.\nMake sure Cake exists in " . CAKE_CORE_INCLUDE_PATH;
 			throw new Exception($message);
 		}
 
-		if (!isset($this->args[0]) || !isset($this->params['working'])) {
-			$message = "This file has been loaded incorrectly and cannot continue.\n" .
-				"Please make sure that " . DS . 'lib' . DS . 'Cake' . DS . "Console is in your system path,\n" .
-				"and check the cookbook for the correct usage of this command.\n" .
-				"(http://book.cakephp.org/)";
-			throw new Exception($message);
+		if (function_exists('ini_set')) {
+			ini_set('html_errors', false);
+			ini_set('implicit_flush', true);
+			ini_set('max_execution_time', 0);
 		}
 
 		$this->shiftArgs();
@@ -204,87 +182,6 @@ class ShellDispatcher {
 		$Shell = new $class();
 		$Shell->plugin = trim($plugin, '.');
 		return $Shell;
-	}
-
-/**
- * Parses command line options and extracts the directory paths from $params
- *
- * @param array $args Parameters to parse
- * @return void
- */
-	public function parseParams($args) {
-		$this->_parsePaths($args);
-
-		$defaults = [
-			'app' => 'App',
-			'root' => dirname(dirname(dirname(__DIR__))),
-			'working' => null,
-			'webroot' => 'webroot'
-		];
-		$params = array_merge($defaults, array_intersect_key($this->params, $defaults));
-		$isWin = false;
-		foreach ($defaults as $default => $value) {
-			if (strpos($params[$default], '\\') !== false) {
-				$isWin = true;
-				break;
-			}
-		}
-		$params = str_replace('\\', '/', $params);
-
-		if (isset($params['working'])) {
-			$params['working'] = trim($params['working']);
-		}
-
-		if (!empty($params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0][0] !== '.')) {
-			if ($params['working'][0] === '.') {
-				$params['working'] = realpath($params['working']);
-			}
-			if (empty($this->params['app']) && $params['working'] != $params['root']) {
-				$params['root'] = dirname($params['working']);
-				$params['app'] = basename($params['working']);
-			} else {
-				$params['root'] = $params['working'];
-			}
-		}
-
-		if ($params['app'][0] === '/' || preg_match('/([a-z])(:)/i', $params['app'], $matches)) {
-			$params['root'] = dirname($params['app']);
-		} elseif (strpos($params['app'], '/')) {
-			$params['root'] .= '/' . dirname($params['app']);
-		}
-
-		$params['app'] = basename($params['app']);
-		$params['working'] = rtrim($params['root'], '/');
-		if (!$isWin || !preg_match('/^[A-Z]:$/i', $params['app'])) {
-			$params['working'] .= '/' . $params['app'];
-		}
-
-		if (!empty($matches[0]) || !empty($isWin)) {
-			$params = str_replace('/', '\\', $params);
-		}
-
-		$this->params = $params + $this->params;
-	}
-
-/**
- * Parses out the paths from from the argv
- *
- * @param array $args
- * @return void
- */
-	protected function _parsePaths($args) {
-		$parsed = [];
-		$keys = ['-working', '--working', '-app', '--app', '-root', '--root'];
-		foreach ($keys as $key) {
-			while (($index = array_search($key, $args)) !== false) {
-				$keyname = str_replace('-', '', $key);
-				$valueIndex = $index + 1;
-				$parsed[$keyname] = $args[$valueIndex];
-				array_splice($args, $index, 2);
-			}
-		}
-		$this->args = $args;
-		$this->params = $parsed;
 	}
 
 /**
