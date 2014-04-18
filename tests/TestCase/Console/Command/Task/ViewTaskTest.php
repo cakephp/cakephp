@@ -475,12 +475,11 @@ class ViewTaskTest extends TestCase {
  */
 	public function testExecuteIntoAll() {
 		$this->_setupTask(['in', 'err', 'createFile', 'all', '_stop']);
-		$this->Task->args[0] = 'all';
 
 		$this->Task->expects($this->once())
 			->method('all');
 
-		$this->Task->execute();
+		$this->Task->execute('all');
 	}
 
 /**
@@ -497,9 +496,14 @@ class ViewTaskTest extends TestCase {
 
 		$this->Task->expects($this->exactly(2))
 			->method('execute');
+		$this->Task->expects($this->at(0))
+			->method('execute')
+			->with('comments');
+		$this->Task->expects($this->at(1))
+			->method('execute')
+			->with('articles');
 
 		$this->Task->all();
-		$this->assertEquals('articles', $this->Task->args[0]);
 	}
 
 /**
@@ -509,14 +513,12 @@ class ViewTaskTest extends TestCase {
  */
 	public function testExecuteWithActionParam() {
 		$this->_setupTask(['in', 'err', 'createFile', 'bake', '_stop']);
-		$this->Task->args[0] = 'ViewTaskComments';
-		$this->Task->args[1] = 'view';
 
 		$this->Task->expects($this->once())
 			->method('bake')
 			->with('view', true);
 
-		$this->Task->execute();
+		$this->Task->execute('ViewTaskComments', 'view');
 	}
 
 /**
@@ -527,7 +529,6 @@ class ViewTaskTest extends TestCase {
  */
 	public function testExecuteWithController() {
 		$this->_setupTask(['in', 'err', 'createFile', 'bake', '_stop']);
-		$this->Task->args[0] = 'ViewTaskComments';
 
 		$this->Task->expects($this->exactly(4))
 			->method('bake');
@@ -548,7 +549,7 @@ class ViewTaskTest extends TestCase {
 			->method('bake')
 			->with('edit', $this->anything());
 
-		$this->Task->execute();
+		$this->Task->execute('ViewTaskComments');
 	}
 
 /**
@@ -566,7 +567,6 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithControllerFlag() {
-		$this->Task->args[0] = 'Posts';
 		$this->Task->params['controller'] = 'Blog';
 
 		$this->Task->expects($this->exactly(4))
@@ -580,7 +580,7 @@ class ViewTaskTest extends TestCase {
 					$this->anything()
 				);
 		}
-		$this->Task->execute();
+		$this->Task->execute('Posts');
 	}
 
 /**
@@ -589,7 +589,6 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithControllerAndAdminFlag() {
-		$this->Task->args[0] = 'Posts';
 		$this->Task->params['prefix'] = 'Admin';
 
 		$this->Task->expects($this->exactly(2))
@@ -603,7 +602,7 @@ class ViewTaskTest extends TestCase {
 					$this->anything()
 				);
 		}
-		$this->Task->execute();
+		$this->Task->execute('Posts');
 	}
 
 /**
@@ -615,13 +614,12 @@ class ViewTaskTest extends TestCase {
 		$this->_setupTask(['in', 'err', 'createFile', 'bake', '_stop']);
 
 		$this->Task->connection = 'test';
-		$this->Task->args = ['ViewTaskComments', 'index', 'list'];
 		$this->Task->params = [];
 
 		$this->Task->expects($this->once())
 			->method('bake')
 			->with('list', true);
-		$this->Task->execute();
+		$this->Task->execute('ViewTaskComments', 'index', 'list');
 	}
 
 /**

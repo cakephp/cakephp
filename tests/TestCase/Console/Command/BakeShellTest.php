@@ -78,7 +78,8 @@ class BakeShellTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$this->Shell->View->expects($this->once())
-			->method('execute');
+			->method('execute')
+			->with('Comments');
 
 		$this->Shell->expects($this->at(0))
 			->method('out')
@@ -90,10 +91,7 @@ class BakeShellTest extends TestCase {
 
 		$this->Shell->connection = '';
 		$this->Shell->params = [];
-		$this->Shell->args = ['Comment'];
-		$this->Shell->all();
-
-		$this->assertEquals('Comments', $this->Shell->View->args[0]);
+		$this->Shell->all('Comment');
 	}
 
 /**

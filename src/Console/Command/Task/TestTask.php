@@ -79,18 +79,17 @@ class TestTask extends BakeTask {
  *
  * @return void
  */
-	public function execute() {
+	public function execute($type = null, $name = null) {
 		parent::execute();
-		if (empty($this->args)) {
+		if (empty($type) && empty($name)) {
 			return $this->outputTypeChoices();
 		}
 
-		$count = count($this->args);
-		if ($count === 1) {
-			return $this->outputClassChoices($this->args[0]);
+		if (empty($name)) {
+			return $this->outputClassChoices($type);
 		}
 
-		if ($this->bake($this->args[0], $this->args[1])) {
+		if ($this->bake($type, $name)) {
 			$this->out('<success>Done</success>');
 		}
 	}

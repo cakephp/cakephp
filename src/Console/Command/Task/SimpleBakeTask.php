@@ -72,9 +72,9 @@ abstract class SimpleBakeTask extends BakeTask {
  *
  * @return void
  */
-	public function execute() {
+	public function execute($name = null) {
 		parent::execute();
-		$name = Inflector::classify($this->args[0]);
+		$name = Inflector::classify($name);
 		$this->bake($name);
 		$this->bakeTest($name);
 	}

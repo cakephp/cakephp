@@ -179,7 +179,6 @@ class FixtureTaskTest extends TestCase {
  */
 	public function testExecuteWithTableOption() {
 		$this->Task->connection = 'test';
-		$this->Task->args = array('article');
 		$this->Task->params = ['table' => 'comments'];
 		$filename = ROOT . '/Test/Fixture/ArticleFixture.php';
 
@@ -187,7 +186,7 @@ class FixtureTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename, $this->stringContains("public \$table = 'comments';"));
 
-		$this->Task->execute();
+		$this->Task->execute('article');
 	}
 
 /**
@@ -197,14 +196,13 @@ class FixtureTaskTest extends TestCase {
  */
 	public function testExecuteWithNamedModel() {
 		$this->Task->connection = 'test';
-		$this->Task->args = array('article');
 		$filename = ROOT . '/Test/Fixture/ArticleFixture.php';
 
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with($filename, $this->stringContains('class ArticleFixture'));
 
-		$this->Task->execute();
+		$this->Task->execute('article');
 	}
 
 /**
@@ -214,7 +212,6 @@ class FixtureTaskTest extends TestCase {
  */
 	public function testExecuteIntoAll() {
 		$this->Task->connection = 'test';
-		$this->Task->args = array('all');
 		$this->Task->Model->expects($this->any())
 			->method('listAll')
 			->will($this->returnValue(array('articles', 'comments')));
@@ -229,7 +226,7 @@ class FixtureTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename, $this->stringContains('class CommentFixture'));
 
-		$this->Task->execute();
+		$this->Task->execute('all');
 	}
 
 /**
@@ -239,7 +236,6 @@ class FixtureTaskTest extends TestCase {
  */
 	public function testAllWithCountAndRecordsFlags() {
 		$this->Task->connection = 'test';
-		$this->Task->args = ['all'];
 		$this->Task->params = ['count' => 10, 'records' => true];
 
 		$this->Task->Model->expects($this->any())->method('listAll')
@@ -266,7 +262,6 @@ class FixtureTaskTest extends TestCase {
  */
 	public function testAllWithSchemaImport() {
 		$this->Task->connection = 'test';
-		$this->Task->args = array('all');
 		$this->Task->params = array('schema' => true);
 
 		$this->Task->Model->expects($this->any())->method('listAll')

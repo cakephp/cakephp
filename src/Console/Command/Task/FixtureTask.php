@@ -90,13 +90,13 @@ class FixtureTask extends BakeTask {
  *
  * @return void
  */
-	public function execute() {
+	public function execute($name = null) {
 		parent::execute();
 		if (!isset($this->connection)) {
 			$this->connection = 'default';
 		}
 
-		if (empty($this->args)) {
+		if (empty($name)) {
 			$this->out(__d('cake_console', 'Choose a fixture to bake from the following:'));
 			foreach ($this->Model->listAll() as $table) {
 				$this->out('- ' . $this->_modelName($table));
@@ -104,14 +104,14 @@ class FixtureTask extends BakeTask {
 			return true;
 		}
 
-		if (strtolower($this->args[0]) === 'all') {
+		if (strtolower($name) === 'all') {
 			return $this->all();
 		}
 		$table = null;
 		if (isset($this->params['table'])) {
 			$table = $this->params['table'];
 		}
-		$model = $this->_modelName($this->args[0]);
+		$model = $this->_modelName($name);
 		$this->bake($model, $table);
 	}
 

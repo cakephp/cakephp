@@ -302,7 +302,6 @@ class ControllerTaskTest extends TestCase {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 		$this->Task->connection = 'test';
-		$this->Task->args = ['all'];
 		$this->Task->params = ['helpers' => 'Time,Text'];
 
 		$this->Task->Test->expects($this->atLeastOnce())
@@ -317,7 +316,7 @@ class ControllerTaskTest extends TestCase {
 			))
 			->will($this->returnValue(true));
 
-		$this->Task->execute();
+		$this->Task->execute('all');
 	}
 
 /**
@@ -339,13 +338,12 @@ class ControllerTaskTest extends TestCase {
  */
 	public function testExecuteWithControllerNameVariations($name) {
 		$this->Task->connection = 'test';
-		$this->Task->args = [$name];
 
 		$filename = APP . 'Controller/BakeArticlesController.php';
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with($filename, $this->stringContains('public function index()'));
-		$this->Task->execute();
+		$this->Task->execute($name);
 	}
 
 }

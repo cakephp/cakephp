@@ -190,7 +190,7 @@ class BakeShell extends Shell {
  *
  * @return void
  */
-	public function all() {
+	public function all($name = null) {
 		$this->out('Bake All');
 		$this->hr();
 
@@ -199,7 +199,7 @@ class BakeShell extends Shell {
 			$this->connection = $this->params['connection'];
 		}
 
-		if (empty($this->args)) {
+		if (empty($name)) {
 			$this->Model->connection = $this->connection;
 			$this->out(__d('cake_console', 'Possible model names based on your database'));
 			foreach ($this->Model->listAll() as $table) {
@@ -213,14 +213,12 @@ class BakeShell extends Shell {
 			$this->{$task}->connection = $this->connection;
 		}
 
-		$name = $this->args[0];
 		$name = $this->_modelName($name);
 
 		$this->Model->bake($name);
 		$this->Controller->bake($name);
 
-		$this->View->args = [$name];
-		$this->View->execute();
+		$this->View->execute($name);
 
 		$this->out(__d('cake_console', '<success>Bake All complete</success>'), 1, Shell::QUIET);
 		return true;
