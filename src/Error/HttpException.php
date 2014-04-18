@@ -19,5 +19,5 @@ namespace Cake\Error;
  * catch blocks can be specifically typed.
  *
  */
-class HttpException extends BaseException {
+class HttpException extends Exception {
 }
