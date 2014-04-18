@@ -20,7 +20,6 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\SessionComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Core\Object;
 use Cake\Network\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;

@@ -17,7 +17,6 @@ namespace Cake\Controller\Component\Acl;
 use Cake\Configure\Engine\IniConfig;
 use Cake\Controller\Component;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Core\Object;
 use Cake\Utility\Hash;
 
 /**
@@ -25,7 +24,7 @@ use Cake\Utility\Hash;
  * of the ini file used can be found in /config/acl.ini.php.
  *
  */
-class IniAcl extends Object implements AclInterface {
+class IniAcl implements AclInterface {
 
 	use InstanceConfigTrait {
 		config as protected _traitConfig;

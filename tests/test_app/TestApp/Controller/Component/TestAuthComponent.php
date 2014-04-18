@@ -26,13 +26,6 @@ use Cake\Controller\Component\AuthComponent;
 class TestAuthComponent extends AuthComponent {
 
 /**
- * testStop property
- *
- * @var bool
- */
-	public $testStop = false;
-
-/**
  * Helper method to add/set an authenticate object instance
  *
  * @param int $index The index at which to add/set the object
@@ -52,15 +45,6 @@ class TestAuthComponent extends AuthComponent {
  */
 	public function setAuthorizeObject($index, $object) {
 		$this->_authorizeObjects[$index] = $object;
-	}
-
-/**
- * stop method
- *
- * @return void
- */
-	protected function _stop($status = 0) {
-		$this->testStop = true;
 	}
 
 	public static function clearUser() {

@@ -190,9 +190,8 @@ class ShellDispatcherTest extends TestCase {
  */
 	public function testDispatchNotAShellWithMain() {
 		$Dispatcher = new TestShellDispatcher();
-		$methods = get_class_methods('Cake\Core\Object');
-		array_push($methods, 'main', 'initdb', 'initialize', 'loadTasks', 'startup', '_secret');
-		$Shell = $this->getMock('Cake\Core\Object', $methods);
+		$methods = ['main', 'initdb', 'initialize', 'loadTasks', 'startup', '_secret'];
+		$Shell = $this->getMock('stdClass', $methods);
 
 		$Shell->expects($this->never())->method('initialize');
 		$Shell->expects($this->once())->method('startup');
@@ -204,7 +203,7 @@ class ShellDispatcherTest extends TestCase {
 		$this->assertEquals(0, $result);
 		$this->assertEquals(array(), $Dispatcher->args);
 
-		$Shell = $this->getMock('Cake\Core\Object', $methods);
+		$Shell = $this->getMock('stdClass', $methods);
 		$Shell->expects($this->once())->method('initdb')->will($this->returnValue(true));
 		$Shell->expects($this->once())->method('startup');
 		$Dispatcher->TestShell = $Shell;
@@ -221,9 +220,8 @@ class ShellDispatcherTest extends TestCase {
  */
 	public function testDispatchNotAShellWithoutMain() {
 		$Dispatcher = new TestShellDispatcher();
-		$methods = get_class_methods('Cake\Core\Object');
-		array_push($methods, 'main', 'initdb', 'initialize', 'loadTasks', 'startup', '_secret');
-		$Shell = $this->getMock('Cake\Core\Object', $methods);
+		$methods = ['main', 'initdb', 'initialize', 'loadTasks', 'startup', '_secret'];
+		$Shell = $this->getMock('stdClass', $methods);
 
 		$Shell->expects($this->never())->method('initialize');
 		$Shell->expects($this->once())->method('startup');
@@ -235,7 +233,7 @@ class ShellDispatcherTest extends TestCase {
 		$this->assertEquals(0, $result);
 		$this->assertEquals(array(), $Dispatcher->args);
 
-		$Shell = $this->getMock('Cake\Core\Object', $methods);
+		$Shell = $this->getMock('stdClass', $methods);
 		$Shell->expects($this->once())->method('initdb')->will($this->returnValue(true));
 		$Shell->expects($this->once())->method('startup');
 		$Dispatcher->TestShell = $Shell;

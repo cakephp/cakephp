@@ -41,13 +41,6 @@ class RedirectRoute extends Route {
 	public $redirect;
 
 /**
- * Flag for disabling exit() when this route parses a URL.
- *
- * @var bool
- */
-	public $stop = true;
-
-/**
  * Constructor
  *
  * @param string $template Template string with parameter placeholders
@@ -98,7 +91,7 @@ class RedirectRoute extends Route {
 		));
 		$this->response->statusCode($status);
 		$this->response->send();
-		$this->_stop();
+		$this->response->stop();
 	}
 
 /**
@@ -111,18 +104,4 @@ class RedirectRoute extends Route {
 	public function match(array $url, array $context = array()) {
 		return false;
 	}
-
-/**
- * Stop execution of the current script. Wraps exit() making
- * testing easier.
- *
- * @param int|string $code see http://php.net/exit for values
- * @return void
- */
-	protected function _stop($code = 0) {
-		if ($this->stop) {
-			exit($code);
-		}
-	}
-
 }

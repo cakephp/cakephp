@@ -17,8 +17,8 @@ namespace Cake\Console;
 use Cake\Console\ConsoleIo;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Object;
 use Cake\Core\Plugin;
+use Cake\Log\LogTrait;
 use Cake\Model\ModelAwareTrait;
 use Cake\Utility\ConventionsTrait;
 use Cake\Utility\File;
@@ -31,8 +31,9 @@ use Cake\Utility\String;
  *
  * Is the equivalent of Cake\Controller\Controller on the command line.
  */
-class Shell extends Object {
+class Shell {
 
+	use LogTrait;
 	use MergeVariablesTrait;
 	use ModelAwareTrait;
 
@@ -613,6 +614,17 @@ class Shell extends Object {
 		$shortPath = str_replace('..' . DS, '', $shortPath);
 		$shortPath = str_replace(DS, '/', $shortPath);
 		return str_replace('//', DS, $shortPath);
+	}
+
+/**
+ * Stop execution of the current script. Wraps exit() making
+ * testing easier.
+ *
+ * @param int|string $status see http://php.net/exit for values
+ * @return void
+ */
+	protected function _stop($status = 0) {
+		exit($status);
 	}
 
 }

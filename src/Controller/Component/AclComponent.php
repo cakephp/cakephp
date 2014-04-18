@@ -20,7 +20,6 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\Acl\AclInterface;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Object;
 use Cake\Error;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;

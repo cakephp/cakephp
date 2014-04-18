@@ -327,7 +327,7 @@ class AuthComponent extends Component {
 			$controller->response->statusCode(403);
 			$controller->viewPath = 'Element';
 			echo $controller->render($this->_config['ajaxLogin'], $this->RequestHandler->ajaxLayout);
-			$this->_stop();
+			$controller->response->stop();
 			return false;
 		}
 		$controller->redirect(null, 403);

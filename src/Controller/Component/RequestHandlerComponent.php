@@ -280,7 +280,7 @@ class RequestHandlerComponent extends Component {
 		$controller = $event->subject();
 		$response->body($controller->requestAction($url, array('return', 'bare' => false)));
 		$response->send();
-		$this->_stop();
+		$response->stop();
 	}
 
 /**
