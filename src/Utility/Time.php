@@ -85,63 +85,6 @@ class Time extends Carbon {
 		parent::__construct($time, $tz);
 	}
 
-
-/**
- * Converts given time (in server's time zone) to user's local time, given his/her timezone.
- *
- * @param string $serverTime UNIX timestamp
- * @param string|\DateTimeZone $timezone User's timezone string or DateTimeZone object
- * @return int UNIX timestamp
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::convert
- */
-	public static function convert($serverTime, $timezone) {
-		static $serverTimezone = null;
-		if ($serverTimezone === null || (date_default_timezone_get() !== $serverTimezone->getName())) {
-			$serverTimezone = new \DateTimeZone(date_default_timezone_get());
-		}
-		$serverOffset = $serverTimezone->getOffset(new \DateTime('@' . $serverTime));
-		$gmtTime = $serverTime - $serverOffset;
-		if (is_numeric($timezone)) {
-			$userOffset = $timezone * (60 * 60);
-		} else {
-			$timezone = static::timezone($timezone);
-			$userOffset = $timezone->getOffset(new \DateTime('@' . $gmtTime));
-		}
-		$userTime = $gmtTime + $userOffset;
-		return (int)$userTime;
-	}
-
-/**
- * Returns a timezone object from a string or the user's timezone object
- *
- * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
- * 	If null it tries to get timezone from 'Config.timezone' config var
- * @return \DateTimeZone Timezone object
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::timezone
- */
-	public static function newTimezone($timezone = null) {
-		static $tz = null;
-
-		if (is_object($timezone)) {
-			if ($tz === null || $tz->getName() !== $timezone->getName()) {
-				$tz = $timezone;
-			}
-		} else {
-			if ($timezone === null) {
-				$timezone = Configure::read('Config.timezone');
-				if ($timezone === null) {
-					$timezone = date_default_timezone_get();
-				}
-			}
-
-			if ($tz === null || $tz->getName() !== $timezone) {
-				$tz = new \DateTimeZone($timezone);
-			}
-		}
-
-		return $tz;
-	}
-
 /**
  * Returns a nicely formatted date string for given Datetime string.
  *
