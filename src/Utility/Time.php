@@ -97,7 +97,7 @@ class Time extends Carbon {
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::nice
  */
-	public static function nice($date = null, $timezone = null, $format = null) {
+	public function nice($date = null, $timezone = null, $format = null) {
 	}
 
 /**
@@ -106,7 +106,7 @@ class Time extends Carbon {
  * @return bool
  */
 	public function isThisWeek() {
-		return static::_isWithinTimeSpan($dateString, 'now', 'W o', $timezone);
+		return static::now($this->getTimezone())->format('W o') == $this->format('W o');
 	}
 
 /**
@@ -115,7 +115,7 @@ class Time extends Carbon {
  * @return bool
  */
 	public function isThisMonth() {
-		return static::_isWithinTimeSpan($dateString, 'now', 'm Y', $timezone);
+		return static::now($this->getTimezone())->format('m Y') == $this->format('m Y');
 	}
 
 /**
@@ -123,8 +123,8 @@ class Time extends Carbon {
  *
  * @return bool
  */
-	public static function isThisYear() {
-		return static::_isWithinTimeSpan($dateString, 'now', 'Y', $timezone);
+	public function isThisYear() {
+		return static::now($this->getTimezone())->format('Y') == $this->format('Y');
 	}
 
 /**
@@ -133,15 +133,12 @@ class Time extends Carbon {
  * @return mixed 1, 2, 3, or 4 quarter of year or array if $range true
  */
 	public function toQuarter() {
-		$dateTime = $this;
-		$dateTime->setTimestamp(static::fromString($dateString));
-
-		$quarter = ceil($dateTime->format('m') / 3);
+		$quarter = ceil($this->format('m') / 3);
 		if ($range === false) {
 			return $quarter;
 		}
 
-		$year = $dateTime->format('Y');
+		$year = $this->format('Y');
 		switch ($quarter) {
 			case 1:
 				return array($year . '-01-01', $year . '-03-31');
@@ -165,8 +162,7 @@ class Time extends Carbon {
 
 /**
  * Returns either a relative or a formatted absolute date depending
- * on the difference between the current time and given datetime.
- * $datetime should be in a *strtotime* - parsable format, like MySQL's datetime datatype.
+ * on the difference between the current time this object.
  *
  * ### Options:
  *
@@ -196,12 +192,11 @@ class Time extends Carbon {
  *
  * NOTE: If the difference is one week or more, the lowest level of accuracy is day
  *
- * @param int|string|\DateTime $dateTime Datetime UNIX timestamp, strtotime() valid string or DateTime object.
  * @param array $options Array of options.
  * @return string Relative time string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::timeAgoInWords
  */
-	public static function timeAgoInWords($dateTime, array $options = []) {
+	public function timeAgoInWords(array $options = []) {
 		$timezone = null;
 		$format = static::$wordFormat;
 		$end = static::$wordEnd;
@@ -239,8 +234,8 @@ class Time extends Carbon {
 		}
 		unset($options['end'], $options['format']);
 
-		$now = static::fromString(time(), $timezone);
-		$inSeconds = static::fromString($dateTime, $timezone);
+		$now = static::now()->format('U');
+		$inSeconds = $this->format('U');
 		$backwards = ($inSeconds > $now);
 
 		$futureTime = $now;
