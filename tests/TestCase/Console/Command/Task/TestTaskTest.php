@@ -123,8 +123,7 @@ class TestTaskTest extends TestCase {
 		$this->Task->expects($this->once())
 			->method('outputClassChoices');
 
-		$this->Task->args = ['Entity'];
-		$this->Task->execute();
+		$this->Task->execute('Entity');
 	}
 
 /**
@@ -133,13 +132,12 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithTwoArgs() {
-		$this->Task->args = ['Table', 'TestTaskTag'];
 		$this->Task->expects($this->once())->method('createFile')
 			->with(
 				$this->stringContains('TestCase' . DS . 'Model' . DS . 'Table' . DS . 'TestTaskTagTableTest.php'),
 				$this->stringContains('class TestTaskTagTableTest extends TestCase')
 			);
-		$this->Task->execute();
+		$this->Task->execute('Table', 'TestTaskTag');
 	}
 
 /**

@@ -751,7 +751,6 @@ class ModelTaskTest extends TestCase {
  */
 	public function testExecuteWithNamedModel() {
 		$this->Task->connection = 'test';
-		$this->Task->args = ['BakeArticles'];
 
 		$tableFile = $this->_normalizePath(APP . 'Model/Table/BakeArticlesTable.php');
 		$this->Task->expects($this->at(0))
@@ -763,7 +762,7 @@ class ModelTaskTest extends TestCase {
 			->method('createFile')
 			->with($entityFile, $this->stringContains('class BakeArticle extends Entity'));
 
-		$this->Task->execute();
+		$this->Task->execute('BakeArticles');
 	}
 
 /**
@@ -786,13 +785,12 @@ class ModelTaskTest extends TestCase {
 	public function testExecuteWithNamedModelVariations($name) {
 		$this->Task->connection = 'test';
 
-		$this->Task->args = array($name);
 		$filename = $this->_normalizePath(APP . 'Model/Table/BakeArticlesTable.php');
 
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with($filename, $this->stringContains('class BakeArticlesTable extends Table {'));
-		$this->Task->execute();
+		$this->Task->execute($name);
 	}
 
 /**
@@ -807,7 +805,6 @@ class ModelTaskTest extends TestCase {
 		}
 
 		$this->Task->connection = 'test';
-		$this->Task->args = ['all'];
 
 		$this->Task->Fixture->expects($this->exactly($count))
 			->method('bake');
@@ -864,7 +861,7 @@ class ModelTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename, $this->stringContains('class CategoryThread extends'));
 
-		$this->Task->execute();
+		$this->Task->execute('all');
 	}
 
 /**
@@ -879,7 +876,6 @@ class ModelTaskTest extends TestCase {
 		}
 
 		$this->Task->connection = 'test';
-		$this->Task->args = ['all'];
 		$this->Task->skipTables = ['bake_tags'];
 
 		$this->Task->Fixture->expects($this->exactly(7))
@@ -917,7 +913,7 @@ class ModelTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename);
 
-		$this->Task->execute();
+		$this->Task->execute('all');
 	}
 
 }

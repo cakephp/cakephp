@@ -124,7 +124,6 @@ class PluginTaskTest extends TestCase {
 		$this->Task->expects($this->never())
 			->method('createFile');
 
-		$this->Task->args = array();
 		$this->Task->execute();
 
 		$Folder = new Folder($path);
@@ -153,8 +152,7 @@ class PluginTaskTest extends TestCase {
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
-		$this->Task->args = array('BakeTestPlugin');
-		$this->Task->execute();
+		$this->Task->execute('BakeTestPlugin');
 
 		$Folder = new Folder($this->Task->path . 'BakeTestPlugin');
 		$Folder->delete();

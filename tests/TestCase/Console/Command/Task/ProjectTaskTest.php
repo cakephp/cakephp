@@ -72,12 +72,11 @@ class ProjectTaskTest extends TestCase {
  */
 	public function testExecuteWithAbsolutePath() {
 		$this->markTestIncomplete('Need to figure this out');
-		$path = $this->Task->args[0] = TMP . 'BakeTestApp';
 		$this->Task->params['skel'] = CAKE . 'Console/Templates/skel';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->execute();
+		$this->Task->execute(TMP . 'BakeTestApp');
 
-		$this->assertTrue(is_dir($this->Task->args[0]), 'No project dir');
+		$this->assertTrue(is_dir(TMP . 'BakeTestApp'), 'No project dir');
 		$File = new File($path . DS . 'Config/paths.php');
 		$contents = $File->read();
 		$this->assertRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', .*?DS/', $contents);

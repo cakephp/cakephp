@@ -44,14 +44,14 @@ class ControllerTask extends BakeTask {
  *
  * @return void
  */
-	public function execute() {
+	public function execute($name = null) {
 		parent::execute();
 
 		if (!isset($this->connection)) {
 			$this->connection = 'default';
 		}
 
-		if (empty($this->args)) {
+		if (empty($name)) {
 			$this->out(__d('cake_console', 'Possible controllers based on your current database:'));
 			foreach ($this->listAll() as $table) {
 				$this->out('- ' . $this->_controllerName($table));
@@ -59,11 +59,11 @@ class ControllerTask extends BakeTask {
 			return true;
 		}
 
-		if (strtolower($this->args[0]) === 'all') {
+		if (strtolower($name) === 'all') {
 			return $this->all();
 		}
 
-		$controller = $this->_controllerName($this->args[0]);
+		$controller = $this->_controllerName($name);
 		$this->bake($controller);
 	}
 

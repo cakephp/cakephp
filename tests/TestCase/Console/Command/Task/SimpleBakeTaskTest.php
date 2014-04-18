@@ -67,7 +67,6 @@ class SimpleBakeTaskTest extends TestCase {
  * @return void
  */
 	public function testExecute() {
-		$this->Task->args = ['Example'];
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with(
@@ -78,7 +77,7 @@ class SimpleBakeTaskTest extends TestCase {
 			->method('bake')
 			->with('behavior', 'Example');
 
-		$this->Task->execute();
+		$this->Task->execute('Example');
 	}
 
 /**

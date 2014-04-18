@@ -375,10 +375,10 @@ class Shell {
 			return $this->{$command}->runCommand('execute', $argv);
 		}
 		if ($isMethod) {
-			return $this->{$command}();
+			return call_user_func_array([$this, $command], $this->args);
 		}
 		if ($isMain) {
-			return $this->main();
+			return call_user_func_array([$this, 'main'], $this->args);
 		}
 		$this->out($this->OptionParser->help($command));
 		return false;

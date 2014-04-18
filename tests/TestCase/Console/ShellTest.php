@@ -523,10 +523,14 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testRunCommandMain() {
-		$Mock = $this->getMock('Cake\Console\Shell', array('main', 'startup'), array(), '', false);
+		$io = $this->getMock('Cake\Console\ConsoleIo');
+		$Mock = $this->getMock('Cake\Console\Shell', ['main', 'startup'], [$io]);
 
-		$Mock->expects($this->once())->method('main')->will($this->returnValue(true));
-		$result = $Mock->runCommand(null, array());
+		$Mock->expects($this->once())->method('startup');
+		$Mock->expects($this->once())->method('main')
+			->with('cakes')
+			->will($this->returnValue(true));
+		$result = $Mock->runCommand(null, ['cakes', '--verbose']);
 		$this->assertTrue($result);
 	}
 
@@ -536,10 +540,14 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testRunCommandWithMethod() {
-		$Mock = $this->getMock('Cake\Console\Shell', array('hit_me', 'startup'), array(), '', false);
+		$io = $this->getMock('Cake\Console\ConsoleIo');
+		$Mock = $this->getMock('Cake\Console\Shell', ['hit_me', 'startup'], [$io]);
 
-		$Mock->expects($this->once())->method('hit_me')->will($this->returnValue(true));
-		$result = $Mock->runCommand('hit_me', array());
+		$Mock->expects($this->once())->method('startup');
+		$Mock->expects($this->once())->method('hit_me')
+			->with('cakes')
+			->will($this->returnValue(true));
+		$result = $Mock->runCommand('hit_me', ['hit_me', 'cakes', '--verbose']);
 		$this->assertTrue($result);
 	}
 
@@ -606,11 +614,11 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testRunCommandHittingTask() {
-		$Shell = $this->getMock('Cake\Console\Shell', array('hasTask', 'startup'), array(), '', false);
-		$task = $this->getMock('Cake\Console\Shell', array('execute', 'runCommand'), array(), '', false);
+		$Shell = $this->getMock('Cake\Console\Shell', ['hasTask', 'startup'], [], '', false);
+		$task = $this->getMock('Cake\Console\Shell', ['execute', 'runCommand'], [], '', false);
 		$task->expects($this->any())
 			->method('runCommand')
-			->with('execute', array('one', 'value'));
+			->with('execute', ['one', 'value']);
 
 		$Shell->expects($this->once())->method('startup');
 		$Shell->expects($this->any())
@@ -619,7 +627,7 @@ class ShellTest extends TestCase {
 
 		$Shell->RunCommand = $task;
 
-		$Shell->runCommand('run_command', array('run_command', 'one', 'value'));
+		$Shell->runCommand('run_command', ['run_command', 'one', 'value']);
 	}
 
 /**
