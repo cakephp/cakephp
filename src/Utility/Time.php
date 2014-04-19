@@ -132,7 +132,7 @@ class Time extends Carbon {
  *
  * @return mixed 1, 2, 3, or 4 quarter of year or array if $range true
  */
-	public function toQuarter() {
+	public function toQuarter($range = false) {
 		$quarter = ceil($this->format('m') / 3);
 		if ($range === false) {
 			return $quarter;
@@ -250,7 +250,7 @@ class Time extends Carbon {
 			return __d('cake', 'just now', 'just now');
 		}
 
-		if ($diff > abs($now - self::fromString($end))) {
+		if ($diff > abs($now - (new static($end))->format('U'))) {
 			return sprintf($absoluteString, date($format, $inSeconds));
 		}
 
