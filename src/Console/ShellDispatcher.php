@@ -77,6 +77,15 @@ class ShellDispatcher {
 	}
 
 /**
+ * Clear any aliases that have been set.
+ *
+ * @return void
+ */
+	public static function resetAliases() {
+		static::$_aliases = [];
+	}
+
+/**
  * Run the dispatcher
  *
  * @param array $argv The argv from PHP
@@ -148,7 +157,7 @@ class ShellDispatcher {
 			return true;
 		}
 
-		$Shell = $this->_getShell($shell);
+		$Shell = $this->findShell($shell);
 
 		$command = null;
 		if (isset($this->args[0])) {
@@ -188,27 +197,36 @@ class ShellDispatcher {
  * @return mixed An object
  * @throws \Cake\Console\Error\MissingShellException when errors are encountered.
  */
-	protected function _getShell($shell) {
-		if (isset(static::$_aliases[$shell])) {
+	public function findShell($shell) {
+		$classname = $this->_shellExists($shell);
+		if (!$classname && isset(static::$_aliases[$shell])) {
 			$shell = static::$_aliases[$shell];
+			$classname = $this->_shellExists($shell);
 		}
-		list($plugin, $shell) = pluginSplit($shell);
+		if ($classname) {
+			list($plugin) = pluginSplit($shell);
+			$instance = new $classname();
+			$instance->plugin = Inflector::camelize(trim($plugin, '.'));
+			return $instance;
+		}
+		throw new Error\MissingShellException([
+			'class' => $shell,
+		]);
+	}
 
-		$plugin = Inflector::camelize($plugin);
+/**
+ * Check if a shell class exists for the given name.
+ *
+ * @param string $shell The shell name to look for.
+ * @return string|boolean Either the classname or false.
+ */
+	protected function _shellExists($shell) {
 		$class = Inflector::camelize($shell);
-		if ($plugin) {
-			$class = $plugin . '.' . $class;
-		}
 		$class = App::classname($class, 'Console/Command', 'Shell');
-
-		if (!class_exists($class)) {
-			throw new Error\MissingShellException([
-				'class' => $shell,
-			]);
+		if (class_exists($class)) {
+			return $class;
 		}
-		$Shell = new $class();
-		$Shell->plugin = trim($plugin, '.');
-		return $Shell;
+		return false;
 	}
 
 /**
