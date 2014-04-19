@@ -160,14 +160,15 @@ class TableTest extends TestCase {
 			// No properties
 			[[]],
 			// Empty columns
-			[['columns' => '']],
-			[['columns' => []]],
+			[['columns' => '', 'type' => Table::CONSTRAINT_UNIQUE]],
+			[['columns' => [], 'type' => Table::CONSTRAINT_UNIQUE]],
 			// Missing column
-			[['columns' => ['derp']]],
+			[['columns' => ['derp'], 'type' => Table::CONSTRAINT_UNIQUE]],
 			// Invalid type
 			[['columns' => 'author_id', 'type' => 'derp']],
 		];
 	}
+
 /**
  * Test that an exception is raised when constraints
  * are added for fields that do not exist.
@@ -209,13 +210,13 @@ class TableTest extends TestCase {
 		return [
 			// Empty
 			[[]],
-			// No columns
-			[['columns' => '']],
-			[['columns' => []]],
-			// Missing column
-			[['columns' => ['not_there']]],
 			// Invalid type
 			[['columns' => 'author_id', 'type' => 'derp']],
+			// No columns
+			[['columns' => ''], 'type' => Table::INDEX_INDEX],
+			[['columns' => [], 'type' => Table::INDEX_INDEX]],
+			// Missing column
+			[['columns' => ['not_there'], 'type' => Table::INDEX_INDEX]],
 		];
 	}
 

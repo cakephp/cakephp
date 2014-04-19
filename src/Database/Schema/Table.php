@@ -352,12 +352,17 @@ class Table {
 			throw new Exception(sprintf('Invalid index type "%s"', $attrs['type']));
 		}
 		if (empty($attrs['columns'])) {
-			throw new Exception('Indexes must define columns.');
+			throw new Exception('Indexes must have at least one column.');
 		}
 		$attrs['columns'] = (array)$attrs['columns'];
 		foreach ($attrs['columns'] as $field) {
 			if (empty($this->_columns[$field])) {
-				throw new Exception('Columns used in indexes must already exist.');
+				$msg = sprintf(
+					'Columns used in indexes must be added to the Table schema first. ' .
+					'The column "%s" was not found.',
+					$field
+				);
+				throw new Exception($msg);
 			}
 		}
 		$this->_indexes[$name] = $attrs;
@@ -432,12 +437,17 @@ class Table {
 			throw new Exception(sprintf('Invalid constraint type "%s"', $attrs['type']));
 		}
 		if (empty($attrs['columns'])) {
-			throw new Exception('Constraints must define columns.');
+			throw new Exception('Constraints must have at least one column.');
 		}
 		$attrs['columns'] = (array)$attrs['columns'];
 		foreach ($attrs['columns'] as $field) {
 			if (empty($this->_columns[$field])) {
-				throw new Exception('Columns used in constraints must already exist.');
+				$msg = sprintf(
+					'Columns used in constraints must be added to the Table schema first. ' .
+					'The column "%s" was not found.',
+					$field
+				);
+				throw new Exception($msg);
 			}
 		}
 		if ($attrs['type'] === static::CONSTRAINT_FOREIGN) {
