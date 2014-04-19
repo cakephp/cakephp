@@ -112,6 +112,7 @@ class ShellDispatcherTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Plugin::load('TestPlugin');
+		Configure::write('App.namespace', 'TestApp');
 	}
 
 /**
@@ -120,10 +121,6 @@ class ShellDispatcherTest extends TestCase {
  * @return void
  */
 	public function testGetShell() {
-		$this->skipIf(class_exists('SampleShell'), 'SampleShell Class already loaded.');
-		$this->skipIf(class_exists('ExampleShell'), 'ExampleShell Class already loaded.');
-
-		Configure::write('App.namespace', 'TestApp');
 		$Dispatcher = new TestShellDispatcher();
 
 		$result = $Dispatcher->getShell('sample');
@@ -138,6 +135,21 @@ class ShellDispatcherTest extends TestCase {
 		$Dispatcher = new TestShellDispatcher();
 		$result = $Dispatcher->getShell('TestPlugin.example');
 		$this->assertInstanceOf('TestPlugin\Console\Command\ExampleShell', $result);
+	}
+
+/**
+ * Test getting shells with aliases.
+ *
+ * @return void
+ */
+	public function testGetShellAliased() {
+		TestShellDispatcher::alias('short', 'test_plugin.example');
+
+		$dispatcher = new TestShellDispatcher();
+		$result = $dispatcher->getShell('short');
+		$this->assertInstanceOf('TestPlugin\Console\Command\ExampleShell', $result);
+		$this->assertEquals('TestPlugin', $result->plugin);
+		$this->assertEquals('Example', $result->name);
 	}
 
 /**

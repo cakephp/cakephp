@@ -35,6 +35,13 @@ class ShellDispatcher {
 	public $args = [];
 
 /**
+ * List of connected aliases.
+ *
+ * @var array
+ */
+	protected static $_aliases = [];
+
+/**
  * Constructor
  *
  * The execution of the script is stopped after dispatching the request with
@@ -50,6 +57,23 @@ class ShellDispatcher {
 		if ($bootstrap) {
 			$this->_initEnvironment();
 		}
+	}
+
+/**
+ * Add an alias for a shell command.
+ *
+ * Aliases allow you to call shells by alternate names. This is most
+ * useful when dealing with plugin shells that you want to have shorter
+ * names for.
+ *
+ * If you re-use an alias the last alias set will be the one available.
+ *
+ * @param string $short The new short name for the shell.
+ * @param string $original The original full name for the shell.
+ * @return void
+ */
+	public static function alias($short, $original) {
+		static::$_aliases[$short] = $original;
 	}
 
 /**
@@ -165,6 +189,9 @@ class ShellDispatcher {
  * @throws \Cake\Console\Error\MissingShellException when errors are encountered.
  */
 	protected function _getShell($shell) {
+		if (isset(static::$_aliases[$shell])) {
+			$shell = static::$_aliases[$shell];
+		}
 		list($plugin, $shell) = pluginSplit($shell);
 
 		$plugin = Inflector::camelize($plugin);
