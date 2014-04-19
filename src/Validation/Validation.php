@@ -722,8 +722,8 @@ class Validation {
  * $check is a legal finite on this platform
  *
  * @param string $check Value to check
- * @param int $lower Lower limit
- * @param int $upper Upper limit
+ * @param int|float $lower Lower limit
+ * @param int|float $upper Upper limit
  * @return bool Success
  */
 	public static function range($check, $lower = null, $upper = null) {

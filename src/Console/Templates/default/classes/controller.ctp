@@ -66,7 +66,9 @@ class <?= $name; ?>Controller extends AppController {
 		echo "];\n\n";
 	endif;
 
-	echo trim($actions);
+	if (!empty($actions)) {
+		echo trim($actions) . "\n";
+	}
 
 ?>
 }
