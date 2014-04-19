@@ -177,9 +177,17 @@ class ExceptionRenderer {
  * @return string Template name
  */
 	protected function _template(\Exception $exception, $code) {
-		if (!Configure::read('debug') &&
-			!($exception instanceof Error\HttpException)
-		) {
+		$isHttpException = $exception instanceof Error\HttpException;
+
+		if (!Configure::read('debug') && !$isHttpException) {
+			$template = 'error500';
+			if ($code < 500) {
+				$template = 'error400';
+			}
+			return $this->template = $template;
+		}
+
+		if ($isHttpException) {
 			$template = 'error500';
 			if ($code < 500) {
 				$template = 'error400';
@@ -189,19 +197,10 @@ class ExceptionRenderer {
 
 		list(, $baseClass) = namespaceSplit(get_class($exception));
 		$baseClass = substr($baseClass, 0, -9);
-		$template = Inflector::variable($baseClass);
-
-		if (empty($template) || $template === 'internalError') {
-			$template = 'error500';
-		}
+		$template = Inflector::variable($baseClass) ?: 'error500';
 
 		if ($exception instanceof \PDOException) {
 			$template = 'pdo_error';
-		} elseif ($exception instanceof Error\HttpException) {
-			$template = 'error500';
-			if ($code < 500) {
-				$template = 'error400';
-			}
 		}
 
 		return $this->template = $template;
