@@ -98,10 +98,6 @@ class ExceptionRenderer {
 		}
 		$response = new Response();
 
-		if (method_exists($exception, 'responseHeader')) {
-			$response->header($exception->responseHeader());
-		}
-
 		try {
 			$controller = new ErrorController($request, $response);
 			$controller->startupProcess();
@@ -130,6 +126,9 @@ class ExceptionRenderer {
 		$message = $this->_message($exception, $code);
 		$url = $this->controller->request->here();
 
+		if (method_exists($exception, 'responseHeader')) {
+			$this->controller->response->header($exception->responseHeader());
+		}
 		$this->controller->response->statusCode($code);
 		$this->controller->set(array(
 			'message' => h($message),
