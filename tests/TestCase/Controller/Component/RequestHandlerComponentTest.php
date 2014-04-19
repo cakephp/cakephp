@@ -394,6 +394,19 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
+ * test configured extension but no view class set.
+ */
+	public function testNoViewClassExtension() {
+		Router::parseExtensions('json', 'xml', 'ajax', 'csv');
+		$this->Controller->request->params['_ext'] = 'csv';
+		$event = new Event('Controller.startup', $this->Controller);
+		$this->RequestHandler->initialize($event);
+		$this->RequestHandler->startup($event);
+		$this->assertEquals('RequestHandlerTest/csv', $this->Controller->viewPath);
+		$this->assertEquals('csv', $this->Controller->layoutPath);
+	}
+
+/**
  * testStartupCallback method
  *
  * @return void
