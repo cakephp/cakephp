@@ -107,6 +107,16 @@ class TestErrorController extends Controller {
  *
  */
 class MyCustomExceptionRenderer extends ExceptionRenderer {
+
+/**
+ * custom error message type.
+ *
+ * @return void
+ */
+	public function missingWidgetThing() {
+		echo 'widget thing is missing';
+	}
+
 }
 
 /**
@@ -163,6 +173,43 @@ class ExceptionRendererTest extends TestCase {
 	protected function _mockResponse($error) {
 		$error->controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		return $error;
+	}
+
+/**
+ * test that methods declared in an ExceptionRenderer subclass are not converted
+ * into error400 when debug > 0
+ *
+ * @return void
+ */
+	public function testSubclassMethodsNotBeingConvertedToError() {
+		Configure::write('debug', true);
+
+		$exception = new MissingWidgetThingException('Widget not found');
+		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
+
+		ob_start();
+		$ExceptionRenderer->render();
+		$result = ob_get_clean();
+
+		$this->assertEquals('widget thing is missing', $result);
+	}
+
+/**
+ * test that subclass methods are not converted when debug = 0
+ *
+ * @return void
+ */
+	public function testSubclassMethodsNotBeingConvertedDebug0() {
+		Configure::write('debug', false);
+		$exception = new MissingWidgetThingException('Widget not found');
+		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
+
+		ob_start();
+		$ExceptionRenderer->render();
+		$result = ob_get_clean();
+
+		$this->assertEquals('missingWidgetThing', $ExceptionRenderer->method);
+		$this->assertEquals('widget thing is missing', $result, 'Method declared in subclass converted to error400');
 	}
 
 /**

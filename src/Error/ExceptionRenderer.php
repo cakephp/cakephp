@@ -65,9 +65,16 @@ class ExceptionRenderer {
 	public $template = '';
 
 /**
+ * The method corresponding to the Exception this object is for.
+ *
+ * @var string
+ */
+	public $method = '';
+
+/**
  * The exception being handled.
  *
- * @var Exception
+ * @var \Exception
  */
 	public $error = null;
 
@@ -89,7 +96,7 @@ class ExceptionRenderer {
  * This method returns the built in `ErrorController` normally, or if an error is repeated
  * a bare controller will be used.
  *
- * @param Exception $exception The exception to get a controller for.
+ * @param \Exception $exception The exception to get a controller for.
  * @return Controller
  */
 	protected function _getController($exception) {
@@ -122,7 +129,17 @@ class ExceptionRenderer {
 	public function render() {
 		$exception = $this->error;
 		$code = $this->_code($exception);
-		$template = $this->_template($exception, $code);
+		$method = $this->_method($exception);
+		$template = $this->_template($exception, $method, $code);
+
+		$isDebug = Configure::read('debug');
+		if (($isDebug || $exception instanceof Error\HttpException) &&
+			method_exists($this, $method)
+		) {
+			call_user_func_array(array($this, $method), array($exception));
+			return;
+		}
+
 		$message = $this->_message($exception, $code);
 		$url = $this->controller->request->here();
 
@@ -138,7 +155,7 @@ class ExceptionRenderer {
 			'_serialize' => array('message', 'url', 'code')
 		));
 
-		if ($exception instanceof Error\Exception && Configure::read('debug')) {
+		if ($exception instanceof Error\Exception && $isDebug) {
 			$this->controller->set($this->error->getAttributes());
 		}
 
@@ -146,9 +163,22 @@ class ExceptionRenderer {
 	}
 
 /**
+ * Get method name
+ *
+ * @param \Exception $exception
+ * @return string
+ */
+	protected function _method(\Exception $exception) {
+		list(, $baseClass) = namespaceSplit(get_class($exception));
+		$baseClass = substr($baseClass, 0, -9);
+		$method = Inflector::variable($baseClass) ?: 'error500';
+		return $this->method = $method;
+	}
+
+/**
  * Get error message.
  *
- * @param Exception $exception Exception
+ * @param \Exception $exception Exception
  * @param int $code Error code
  * @return string Error message
  */
@@ -172,10 +202,11 @@ class ExceptionRenderer {
  * Get template for rendering exception info.
  *
  * @param \Exception $exception
+ * @param string $method Method name
  * @param int $code Error code
  * @return string Template name
  */
-	protected function _template(\Exception $exception, $code) {
+	protected function _template(\Exception $exception, $method, $code) {
 		$isHttpException = $exception instanceof Error\HttpException;
 
 		if (!Configure::read('debug') && !$isHttpException) {
@@ -194,9 +225,7 @@ class ExceptionRenderer {
 			return $this->template = $template;
 		}
 
-		list(, $baseClass) = namespaceSplit(get_class($exception));
-		$baseClass = substr($baseClass, 0, -9);
-		$template = Inflector::variable($baseClass) ?: 'error500';
+		$template = $method ?: 'error500';
 
 		if ($exception instanceof \PDOException) {
 			$template = 'pdo_error';
