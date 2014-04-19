@@ -295,7 +295,9 @@ class ConsoleOutput {
  * Clean up and close handles
  */
 	public function __destruct() {
-		fclose($this->_output);
+		if (is_resource($this->_output)) {
+			fclose($this->_output);
+		}
 	}
 
 }

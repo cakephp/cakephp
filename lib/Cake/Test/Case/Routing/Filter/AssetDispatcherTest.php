@@ -84,6 +84,33 @@ class AssetDispatcherTest extends CakeTestCase {
 	}
 
 /**
+ * AssetDispatcher should not 404 extensions that could be handled
+ * by Routing.
+ *
+ * @return void
+ */
+	public function testNoHandleRoutedExtension() {
+		$filter = new AssetDispatcher();
+		$response = $this->getMock('CakeResponse', array('_sendHeader'));
+		Configure::write('Asset.filter', array(
+			'js' => '',
+			'css' => ''
+		));
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+		), App::RESET);
+		Router::parseExtensions('json');
+		Router::connect('/test_plugin/api/v1/:action', array('controller' => 'api'));
+		CakePlugin::load('TestPlugin');
+
+		$request = new CakeRequest('test_plugin/api/v1/forwarding.json');
+		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$this->assertNull($filter->beforeDispatch($event));
+		$this->assertFalse($event->isStopped(), 'Events for routed extensions should not be stopped');
+	}
+
+/**
  * Tests that $response->checkNotModified() is called and bypasses
  * file dispatching
  *
@@ -127,23 +154,6 @@ class AssetDispatcherTest extends CakeTestCase {
 
 		$this->assertSame($response, $filter->beforeDispatch($event));
 		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
-	}
-
-/**
- * Test 404 status code is set on missing asset.
- *
- * @return void
- */
-	public function test404OnMissingFile() {
-		$filter = new AssetDispatcher();
-
-		$response = $this->getMock('CakeResponse', array('_sendHeader'));
-		$request = new CakeRequest('/theme/test_theme/img/nope.gif');
-		$event = new CakeEvent('Dispatcher.beforeRequest', $this, compact('request', 'response'));
-
-		$response = $filter->beforeDispatch($event);
-		$this->assertTrue($event->isStopped());
-		$this->assertEquals(404, $response->statusCode());
 	}
 
 /**
