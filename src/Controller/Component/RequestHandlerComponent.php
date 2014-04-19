@@ -102,7 +102,7 @@ class RequestHandlerComponent extends Component {
 
 /**
  * A mapping between type and viewClass. By default only JSON, XML, and AJAX are mapped.
- * Use {@link viewClassMap()} to manipulate this map.
+ * Use RequestHandlerComponent::viewClassMap() to manipulate this map.
  *
  * @var array
  */
