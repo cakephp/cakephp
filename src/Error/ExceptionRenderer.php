@@ -86,8 +86,8 @@ class ExceptionRenderer {
  * @param \Exception $exception Exception
  */
 	public function __construct(\Exception $exception) {
-		$this->controller = $this->_getController($exception);
 		$this->error = $exception;
+		$this->controller = $this->_getController();
 	}
 
 /**
@@ -96,10 +96,9 @@ class ExceptionRenderer {
  * This method returns the built in `ErrorController` normally, or if an error is repeated
  * a bare controller will be used.
  *
- * @param \Exception $exception The exception to get a controller for.
- * @return Controller
+ * @return \Cake\Controller\Controller
  */
-	protected function _getController($exception) {
+	protected function _getController() {
 		if (!$request = Router::getRequest(true)) {
 			$request = Request::createFromGlobals();
 		}
