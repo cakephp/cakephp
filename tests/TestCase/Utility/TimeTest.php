@@ -363,6 +363,9 @@ class TimeTest extends TestCase {
 		$result = $time->nice('America/New_York');
 		$this->assertEquals('Apr 20, 2014, 4:00 PM', $result);
 		$this->assertEquals('UTC', $time->getTimezone()->getName());
+
+		$this->assertEquals('20 avr. 2014 20:00', $time->nice(null, 'fr-FR'));
+		$this->assertEquals('20 avr. 2014 16:00', $time->nice('America/New_York', 'fr-FR'));
 	}
 
 /**

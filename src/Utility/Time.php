@@ -46,6 +46,13 @@ class Time extends Carbon {
 	public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::SHORT];
 
 /**
+ * The default locale to be used for displaying formatted date strings.
+ *
+ * @var string
+ */
+	public static $defaultLocale;
+
+/**
  * The format to use when formatting a time using `Cake\Utility\Time::timeAgoInWords()`
  * and the difference is more than `Cake\Utility\Time::$wordEnd`
  *
@@ -101,7 +108,7 @@ class Time extends Carbon {
  * be changed.
  * @return string Formatted date string
  */
-	public function nice($timezone = null) {
+	public function nice($timezone = null, $locale = null) {
 		$time = $this;
 
 		if ($timezone) {
@@ -109,7 +116,8 @@ class Time extends Carbon {
 			$time->timezone($timezone);
 		}
 
-		return IntlDateFormatter::formatObject($time, static::$niceFormat);
+		$locale = $locale ?: static::$defaultLocale;
+		return IntlDateFormatter::formatObject($time, static::$niceFormat, $locale);
 	}
 
 /**
