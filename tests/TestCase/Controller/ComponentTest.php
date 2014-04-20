@@ -1,9 +1,5 @@
 <?php
 /**
- * ComponentTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

@@ -1,9 +1,5 @@
 <?php
 /**
- * ValidationRuleTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
