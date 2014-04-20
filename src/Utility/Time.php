@@ -32,8 +32,13 @@ class Time extends Carbon {
 /**
  * The format to use when formatting a time using `Cake\Utility\Time::nice()`
  *
- * The format should use the locale strings as defined in the PHP docs under
- * `strftime` (http://php.net/manual/en/function.strftime.php)
+ * The format should be eiter the formatting constants from IntDateFormatter as
+ * described in (http://www.php.net/manual/en/class.intldateformatter.php) or a pattern
+ * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
+ *
+ * It is possible to provide an array of 2 constants. In this case, the first position
+ * will be used for formatting the date part of the object and the second position
+ * will be used to format the time part.
  *
  * @var mixed
  * @see \Cake\Utility\Time::nice()
@@ -87,15 +92,14 @@ class Time extends Carbon {
 	}
 
 /**
- * Returns a nicely formatted date string for given Datetime string.
+ * Returns a nicely formatted date string for this object.
  *
- * See http://php.net/manual/en/function.strftime.php for information on formatting
- * using locale strings.
+ * The format to be used is stored in the static property `Time::niceFormat`.
  *
- * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
+ * in which the date will be displayed. The timezone stored for this object will not
+ * be changed.
  * @return string Formatted date string
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::nice
  */
 	public function nice($timezone = null) {
 		$time = $this;
@@ -164,7 +168,7 @@ class Time extends Carbon {
  *
  * @return int Unix timestamp
  */
-	public static function toUnixString() {
+	public function toUnixString() {
 		return $this->format('U');
 	}
 
