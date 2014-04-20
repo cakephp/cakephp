@@ -24,13 +24,6 @@ use Cake\Routing\Router;
 class ErrorController extends Controller {
 
 /**
- * Uses Property
- *
- * @var array
- */
-	public $uses = array();
-
-/**
  * Constructor
  *
  * @param \Cake\Network\Request $request
