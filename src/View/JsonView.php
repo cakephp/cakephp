@@ -56,8 +56,14 @@ use Cake\Network\Response;
 class JsonView extends View {
 
 /**
- * JSON views are always located in the 'json' sub directory for
- * controllers' views.
+ * JSON layouts are located in the json sub directory of `Layouts/`
+ *
+ * @var string 
+ */
+	public $layoutPath = 'json';
+
+/**
+ * JSON views are located in the 'json' sub directory for controllers' views.
  *
  * @var string
  */

@@ -82,15 +82,12 @@ class RequestHandlerComponent extends Component {
  *
  * - `checkHttpCache` - Whether to check for http cache.
  * - `viewClassMap` - Mapping between type and view class.
- * - `ajaxLayout` - The layout that will be switched to for Ajax requests.
- *   See RequestHandler::setAjax()
  *
  * @var array
  */
 	protected $_defaultConfig = [
 		'checkHttpCache' => true,
 		'viewClassMap' => '',
-		'ajaxLayout' => 'ajax'
 	];
 
 /**
@@ -104,14 +101,15 @@ class RequestHandlerComponent extends Component {
 	);
 
 /**
- * A mapping between type and viewClass
- * By default only JSON and XML are mapped, use RequestHandlerComponent::viewClassMap()
+ * A mapping between type and viewClass. By default only JSON, XML, and AJAX are mapped.
+ * Use RequestHandlerComponent::viewClassMap() to manipulate this map.
  *
  * @var array
  */
 	protected $_viewClassMap = array(
 		'json' => 'Json',
-		'xml' => 'Xml'
+		'xml' => 'Xml',
+		'ajax' => 'Ajax'
 	);
 
 /**
@@ -130,10 +128,11 @@ class RequestHandlerComponent extends Component {
 	}
 
 /**
- * Checks to see if a file extension has been parsed by the Router, or if the
- * HTTP_ACCEPT_TYPE has matches only one content type with the supported extensions.
- * If there is only one matching type between the supported content types & extensions,
- * and the requested mime-types, RequestHandler::$ext is set to that value.
+ * Checks to see if a specific content type has been requested and sets RequestHandler::$ext
+ * accordingly. Checks the following in order: 1. The '_ext' value parsed by the Router. 2. A specific
+ * AJAX type request indicated by the presence of a header. 3. The Accept header. With the exception
+ * of an ajax request indicated using the second header based method above, the type must have
+ * been configured in {@link Cake\Routing\Router}.
  *
  * @param Event $event The initialize event that was fired.
  * @return void
@@ -143,7 +142,10 @@ class RequestHandlerComponent extends Component {
 		if (isset($this->request->params['_ext'])) {
 			$this->ext = $this->request->params['_ext'];
 		}
-		if (empty($this->ext) || $this->ext === 'html') {
+		if (empty($this->ext) && $this->request->is('ajax')) {
+			$this->ext = 'ajax';
+		}
+		if (empty($this->ext) || in_array($this->ext, array('html', 'htm'))) {
 			$this->_setExtension();
 		}
 
@@ -156,10 +158,9 @@ class RequestHandlerComponent extends Component {
 /**
  * Set the extension based on the accept headers.
  * Compares the accepted types and configured extensions.
- * If there is one common type, that is assigned as the ext/content type
- * for the response.
- * Type with the highest weight will be set. If the highest weight has more
- * then one type matching the extensions, the order in which extensions are specified
+ * If there is one common type, that is assigned as the ext/content type for the response.
+ * The type with the highest weight will be set. If the highest weight has more
+ * than one type matching the extensions, the order in which extensions are specified
  * determines which type will be set.
  *
  * If html is one of the preferred types, no content type will be set, this
@@ -176,7 +177,7 @@ class RequestHandlerComponent extends Component {
 		$accepts = $this->response->mapType($accept);
 		$preferedTypes = current($accepts);
 		if (array_intersect($preferedTypes, array('html', 'xhtml'))) {
-			return null;
+			return;
 		}
 
 		$extensions = Router::extensions();
@@ -193,7 +194,6 @@ class RequestHandlerComponent extends Component {
  * The startup method of the RequestHandler enables several automatic behaviors
  * related to the detection of certain properties of the HTTP request, including:
  *
- * - Disabling layout rendering for Ajax requests (based on the HTTP_X_REQUESTED_WITH header)
  * - If Router::parseExtensions() is enabled, the layout and template type are
  *   switched based on the parsed extension or Accept-Type header. For example, if `controller/action.xml`
  *   is requested, the view path becomes `app/View/Controller/xml/action.ctp`. Also if
@@ -221,8 +221,6 @@ class RequestHandlerComponent extends Component {
 
 		if (!empty($this->ext) && $isRecognized) {
 			$this->renderAs($controller, $this->ext);
-		} elseif ($this->request->is('ajax')) {
-			$this->renderAs($controller, 'ajax');
 		} elseif (empty($this->ext) || in_array($this->ext, array('html', 'htm'))) {
 			$this->respondAs('html', array('charset' => Configure::read('App.encoding')));
 		}
@@ -481,7 +479,8 @@ class RequestHandlerComponent extends Component {
 	}
 
 /**
- * Sets the layout and template paths for the content type defined by $type.
+ * Sets either the view class if one exists or the layout and template path of the view.
+ * The names of these are derived from the $type input parameter.
  *
  * ### Usage:
  *
@@ -502,18 +501,14 @@ class RequestHandlerComponent extends Component {
  */
 	public function renderAs(Controller $controller, $type, array $options = array()) {
 		$defaults = array('charset' => 'UTF-8');
+		$view = null;
+		$viewClassMap = $this->viewClassMap();
 
 		if (Configure::read('App.encoding') !== null) {
 			$defaults['charset'] = Configure::read('App.encoding');
 		}
 		$options += $defaults;
 
-		if ($type === 'ajax') {
-			$controller->layout = $this->_config['ajaxLayout'];
-			return $this->respondAs('html', $options);
-		}
-
-		$viewClassMap = $this->viewClassMap();
 		if (array_key_exists($type, $viewClassMap)) {
 			$view = $viewClassMap[$type];
 		} else {
@@ -523,17 +518,20 @@ class RequestHandlerComponent extends Component {
 
 		if ($viewClass) {
 			$controller->viewClass = $viewClass;
-		} elseif (empty($this->_renderType)) {
-			$controller->viewPath .= DS . $type;
 		} else {
-			$controller->viewPath = preg_replace(
-				"/([\/\\\\]{$this->_renderType})$/",
-				DS . $type,
-				$controller->viewPath
-			);
+			if (empty($this->_renderType)) {
+				$controller->viewPath .= DS . $type;
+			} else {
+				$controller->viewPath = preg_replace(
+					"/([\/\\\\]{$this->_renderType})$/",
+					DS . $type,
+					$controller->viewPath
+				);
+			}
+
+			$this->_renderType = $type;
+			$controller->layoutPath = $type;
 		}
-		$this->_renderType = $type;
-		$controller->layoutPath = $type;
 
 		if ($this->response->getMimeType($type)) {
 			$this->respondAs($type, $options);

@@ -93,13 +93,11 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testConstructorConfig() {
 		$config = array(
-			'ajaxLayout' => 'test_ajax',
 			'viewClassMap' => array('json' => 'MyPlugin.MyJson')
 		);
 		$controller = $this->getMock('Cake\Controller\Controller');
 		$collection = new ComponentRegistry($controller);
 		$requestHandler = new RequestHandlerComponent($collection, $config);
-		$this->assertEquals('test_ajax', $requestHandler->config('ajaxLayout'));
 		$this->assertEquals(array('json' => 'MyPlugin.MyJson'), $requestHandler->config('viewClassMap'));
 	}
 
@@ -295,7 +293,8 @@ class RequestHandlerComponentTest extends TestCase {
 		$result = $this->RequestHandler->viewClassMap();
 		$expected = array(
 			'json' => 'CustomJson',
-			'xml' => 'Xml'
+			'xml' => 'Xml',
+			'ajax' => 'Ajax'
 		);
 		$this->assertEquals($expected, $result);
 
@@ -303,6 +302,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$expected = array(
 			'json' => 'CustomJson',
 			'xml' => 'Xml',
+			'ajax' => 'Ajax',
 			'xls' => 'Excel.Excel'
 		);
 		$this->assertEquals($expected, $result);
@@ -334,16 +334,76 @@ class RequestHandlerComponentTest extends TestCase {
 	public function testAutoAjaxLayout() {
 		$event = new Event('Controller.startup', $this->Controller);
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->RequestHandler->initialize($event);
 		$this->RequestHandler->startup($event);
-		$this->assertEquals($this->Controller->layout, $this->RequestHandler->config('ajaxLayout'));
+		$this->assertEquals($this->Controller->viewClass, 'Cake\View\AjaxView');
+		$view = $this->Controller->createView();
+		$this->assertEquals('ajax', $view->layout);
 
 		$this->_init();
 		$this->Controller->request->params['_ext'] = 'js';
 		$this->RequestHandler->initialize($event);
 		$this->RequestHandler->startup($event);
-		$this->assertNotEquals('ajax', $this->Controller->layout);
+		$this->assertNotEquals($this->Controller->viewClass, 'Cake\View\AjaxView');
 
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+	}
+
+/**
+ * test custom JsonView class is loaded and correct.
+ */
+	public function testJsonViewLoaded() {
+		Router::parseExtensions('json', 'xml', 'ajax');
+		$this->Controller->request->params['_ext'] = 'json';
+		$event = new Event('Controller.startup', $this->Controller);
+		$this->RequestHandler->initialize($event);
+		$this->RequestHandler->startup($event);
+		$this->assertEquals('Cake\View\JsonView', $this->Controller->viewClass);
+		$view = $this->Controller->createView();
+		$this->assertEquals('json', $view->layoutPath);
+		$this->assertEquals('json', $view->subDir);
+	}
+
+/**
+ * test custom XmlView class is loaded and correct.
+ */
+	public function testXmlViewLoaded() {
+		Router::parseExtensions('json', 'xml', 'ajax');
+		$this->Controller->request->params['_ext'] = 'xml';
+		$event = new Event('Controller.startup', $this->Controller);
+		$this->RequestHandler->initialize($event);
+		$this->RequestHandler->startup($event);
+		$this->assertEquals('Cake\View\XmlView', $this->Controller->viewClass);
+		$view = $this->Controller->createView();
+		$this->assertEquals('xml', $view->layoutPath);
+		$this->assertEquals('xml', $view->subDir);
+	}
+
+/**
+ * test custom AjaxView class is loaded and correct.
+ */
+	public function testAjaxViewLoaded() {
+		Router::parseExtensions('json', 'xml', 'ajax');
+		$this->Controller->request->params['_ext'] = 'ajax';
+		$event = new Event('Controller.startup', $this->Controller);
+		$this->RequestHandler->initialize($event);
+		$this->RequestHandler->startup($event);
+		$this->assertEquals('Cake\View\AjaxView', $this->Controller->viewClass);
+		$view = $this->Controller->createView();
+		$this->assertEquals('ajax', $view->layout);
+	}
+
+/**
+ * test configured extension but no view class set.
+ */
+	public function testNoViewClassExtension() {
+		Router::parseExtensions('json', 'xml', 'ajax', 'csv');
+		$this->Controller->request->params['_ext'] = 'csv';
+		$event = new Event('Controller.startup', $this->Controller);
+		$this->RequestHandler->initialize($event);
+		$this->RequestHandler->startup($event);
+		$this->assertEquals('RequestHandlerTest/csv', $this->Controller->viewPath);
+		$this->assertEquals('csv', $this->Controller->layoutPath);
 	}
 
 /**
