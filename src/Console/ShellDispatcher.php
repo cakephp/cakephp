@@ -174,7 +174,7 @@ class ShellDispatcher {
  * All paths in the loaded shell paths are searched.
  *
  * @param string $shell Optionally the name of a plugin
- * @return mixed An object
+ * @return \Cake\Console\Shell A shell instance.
  * @throws \Cake\Console\Error\MissingShellException when errors are encountered.
  */
 	public function findShell($shell) {
