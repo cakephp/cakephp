@@ -273,6 +273,8 @@ class TestTaskTest extends TestCase {
 			['helper', 'FormHelper', 'App\View\Helper\FormHelper'],
 			['Component', 'Auth', 'App\Controller\Component\AuthComponent'],
 			['component', 'AuthComponent', 'App\Controller\Component\AuthComponent'],
+			['Shell', 'Example', 'App\Console\Command\ExampleShell'],
+			['shell', 'Example', 'App\Console\Command\ExampleShell'],
 		];
 	}
 
@@ -472,6 +474,29 @@ class TestTaskTest extends TestCase {
 	}
 
 /**
+ * Test baking a test for a concrete model.
+ *
+ * @return void
+ */
+	public function testBakeShellTest() {
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->will($this->returnValue(true));
+
+		$result = $this->Task->bake('Shell', 'Articles');
+
+		$this->assertContains("use App\Console\Command\ArticlesShell", $result);
+		$this->assertContains('class ArticlesShellTest extends TestCase', $result);
+
+		$this->assertContains('function setUp()', $result);
+		$this->assertContains("\$this->io = \$this->getMock('Cake\Console\ConsoleIo');", $result);
+		$this->assertContains("\$this->Articles = new ArticlesShell(\$this->io);", $result);
+
+		$this->assertContains('function tearDown()', $result);
+		$this->assertContains('unset($this->Articles)', $result);
+	}
+
+/**
  * test Constructor generation ensure that constructClasses is called for controllers
  *
  * @return void
@@ -579,6 +604,8 @@ class TestTaskTest extends TestCase {
 			array('controller', 'App\Controller\PostsController', 'TestCase/Controller/PostsControllerTest.php'),
 			array('behavior', 'App\Model\Behavior\TreeBehavior', 'TestCase/Model/Behavior/TreeBehaviorTest.php'),
 			array('component', 'App\Controller\Component\AuthComponent', 'TestCase/Controller/Component/AuthComponentTest.php'),
+			['Shell', 'App\Console\Command\ExampleShell', 'TestCase/Console/Command/ExampleShellTest.php'],
+			['shell', 'App\Console\Command\ExampleShell', 'TestCase/Console/Command/ExampleShellTest.php'],
 		);
 	}
 
