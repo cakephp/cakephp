@@ -35,6 +35,13 @@ class ShellDispatcher {
 	public $args = [];
 
 /**
+ * List of connected aliases.
+ *
+ * @var array
+ */
+	protected static $_aliases = [];
+
+/**
  * Constructor
  *
  * The execution of the script is stopped after dispatching the request with
@@ -50,6 +57,32 @@ class ShellDispatcher {
 		if ($bootstrap) {
 			$this->_initEnvironment();
 		}
+	}
+
+/**
+ * Add an alias for a shell command.
+ *
+ * Aliases allow you to call shells by alternate names. This is most
+ * useful when dealing with plugin shells that you want to have shorter
+ * names for.
+ *
+ * If you re-use an alias the last alias set will be the one available.
+ *
+ * @param string $short The new short name for the shell.
+ * @param string $original The original full name for the shell.
+ * @return void
+ */
+	public static function alias($short, $original) {
+		static::$_aliases[$short] = $original;
+	}
+
+/**
+ * Clear any aliases that have been set.
+ *
+ * @return void
+ */
+	public static function resetAliases() {
+		static::$_aliases = [];
 	}
 
 /**
@@ -124,35 +157,15 @@ class ShellDispatcher {
 			return true;
 		}
 
-		$Shell = $this->_getShell($shell);
+		$Shell = $this->findShell($shell);
 
 		$command = null;
 		if (isset($this->args[0])) {
 			$command = $this->args[0];
 		}
 
-		if ($Shell instanceof Shell) {
-			$Shell->initialize();
-			return $Shell->runCommand($command, $this->args);
-		}
-
-		$methods = array_diff(get_class_methods($Shell), get_class_methods('Cake\Console\Shell'));
-		$added = in_array($command, $methods);
-		$private = $command[0] === '_' && method_exists($Shell, $command);
-
-		if (!$private) {
-			if ($added) {
-				$this->shiftArgs();
-				$Shell->startup();
-				return $Shell->{$command}();
-			}
-			if (method_exists($Shell, 'main')) {
-				$Shell->startup();
-				return $Shell->main();
-			}
-		}
-
-		throw new Error\MissingShellMethodException(['shell' => $shell, 'method' => $command]);
+		$Shell->initialize();
+		return $Shell->runCommand($command, $this->args);
 	}
 
 /**
@@ -161,27 +174,40 @@ class ShellDispatcher {
  * All paths in the loaded shell paths are searched.
  *
  * @param string $shell Optionally the name of a plugin
- * @return mixed An object
+ * @return \Cake\Console\Shell A shell instance.
  * @throws \Cake\Console\Error\MissingShellException when errors are encountered.
  */
-	protected function _getShell($shell) {
-		list($plugin, $shell) = pluginSplit($shell);
-
-		$plugin = Inflector::camelize($plugin);
-		$class = Inflector::camelize($shell);
-		if ($plugin) {
-			$class = $plugin . '.' . $class;
+	public function findShell($shell) {
+		$classname = $this->_shellExists($shell);
+		if (!$classname && isset(static::$_aliases[$shell])) {
+			$shell = static::$_aliases[$shell];
+			$classname = $this->_shellExists($shell);
 		}
+		if ($classname) {
+			list($plugin) = pluginSplit($shell);
+			$instance = new $classname();
+			$instance->plugin = Inflector::camelize(trim($plugin, '.'));
+			return $instance;
+		}
+		throw new Error\MissingShellException([
+			'class' => $shell,
+		]);
+	}
+
+/**
+ * Check if a shell class exists for the given name.
+ *
+ * @param string $shell The shell name to look for.
+ * @return string|boolean Either the classname or false.
+ */
+	protected function _shellExists($shell) {
+		$class = array_map('Cake\Utility\Inflector::camelize', explode('.', $shell));
+		$class = implode('.', $class);
 		$class = App::classname($class, 'Console/Command', 'Shell');
-
-		if (!class_exists($class)) {
-			throw new Error\MissingShellException([
-				'class' => $shell,
-			]);
+		if (class_exists($class)) {
+			return $class;
 		}
-		$Shell = new $class();
-		$Shell->plugin = trim($plugin, '.');
-		return $Shell;
+		return false;
 	}
 
 /**
