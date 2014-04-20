@@ -18,6 +18,7 @@ namespace Cake\Utility;
 
 use Cake\Core\Configure;
 use Carbon\Carbon;
+use IntlDateFormatter;
 
 /**
  * Time Helper class for easy use of time data.
@@ -34,10 +35,10 @@ class Time extends Carbon {
  * The format should use the locale strings as defined in the PHP docs under
  * `strftime` (http://php.net/manual/en/function.strftime.php)
  *
- * @var string
- * @see \Cake\Utility\Time::format()
+ * @var mixed
+ * @see \Cake\Utility\Time::nice()
  */
-	public static $niceFormat = '%a, %b %eS %Y, %H:%M';
+	public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::SHORT];
 
 /**
  * The format to use when formatting a time using `Cake\Utility\Time::timeAgoInWords()`
@@ -93,11 +94,18 @@ class Time extends Carbon {
  *
  * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
- * @param string $format The format to use. If null, `TimeHelper::$niceFormat` is used
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::nice
  */
-	public function nice($date = null, $timezone = null, $format = null) {
+	public function nice($timezone = null) {
+		$time = $this;
+
+		if ($timezone) {
+			$time = clone $this;
+			$time->timezone($timezone);
+		}
+
+		return IntlDateFormatter::formatObject($time, static::$niceFormat);
 	}
 
 /**

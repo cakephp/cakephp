@@ -357,39 +357,12 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function testNice() {
-		$time = time() + 2 * DAY;
-		$this->assertEquals(date('D, M jS Y, H:i', $time), $this->Time->nice($time));
+		$time = new Time('2014-04-20 20:00', 'UTC');
+		$this->assertEquals('Apr 20, 2014, 8:00 PM', $time->nice());
 
-		$time = time() - 2 * DAY;
-		$this->assertEquals(date('D, M jS Y, H:i', $time), $this->Time->nice($time));
-
-		$time = time();
-		$this->assertEquals(date('D, M jS Y, H:i', $time), $this->Time->nice($time));
-
-		$time = 0;
-		$this->assertEquals(date('D, M jS Y, H:i', time()), $this->Time->nice($time));
-
-		$time = null;
-		$this->assertEquals(date('D, M jS Y, H:i', time()), $this->Time->nice($time));
-
-		$time = time();
-		$this->assertEquals(date('D', $time), $this->Time->nice($time, null, '%a'));
-		$this->assertEquals(date('M d, Y', $time), $this->Time->nice($time, null, '%b %d, %Y'));
-
-		Time::$niceFormat = '%Y-%d-%m';
-		$this->assertEquals(date('Y-d-m', $time), $this->Time->nice($time));
-		$this->assertEquals('%Y-%d-%m', Time::$niceFormat);
-
-		Time::$niceFormat = '%Y-%d-%m %H:%M';
-		$this->assertEquals(date('Y-d-m H:i', $time), $this->Time->nice($time));
-		$this->assertEquals('%Y-%d-%m %H:%M', Time::$niceFormat);
-
-		date_default_timezone_set('UTC');
-		$result = $this->Time->nice(null, 'America/New_York');
-		$expected = $this->Time->nice(time(), 'America/New_York');
-		$this->assertEquals(substr($expected, 0, -1), substr($result, 0, -1));
-
-		$this->_restoreSystemTimezone();
+		$result = $time->nice('America/New_York');
+		$this->assertEquals('Apr 20, 2014, 4:00 PM', $result);
+		$this->assertEquals('UTC', $time->getTimezone()->getName());
 	}
 
 /**
