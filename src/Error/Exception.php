@@ -14,11 +14,10 @@
 namespace Cake\Error;
 
 /**
- * Exception is used a base class for CakePHP's internal exceptions.
- * In general framework errors are interpreted as 500 code errors.
+ * Base class that all CakePHP Exceptions extend.
  *
  */
-class Exception extends BaseException {
+class Exception extends \RuntimeException {
 
 /**
  * Array of attributes that are passed in from the constructor, and
@@ -34,6 +33,13 @@ class Exception extends BaseException {
  * @var string
  */
 	protected $_messageTemplate = '';
+
+/**
+ * Array of headers to be passed to Cake\Network\Response::header()
+ *
+ * @var array
+ */
+	protected $_responseHeaders = null;
 
 /**
  * Constructor.
@@ -60,6 +66,27 @@ class Exception extends BaseException {
  */
 	public function getAttributes() {
 		return $this->_attributes;
+	}
+
+/**
+ * Get/set the response header to be used
+ *
+ * See also Cake\Network\Response::header()
+ *
+ * @param string|array $header. An array of header strings or a single header string
+ *	- an associative array of "header name" => "header value"
+ *	- an array of string headers is also accepted
+ * @param string $value The header value.
+ * @return array
+ */
+	public function responseHeader($header = null, $value = null) {
+		if ($header) {
+			if (is_array($header)) {
+				return $this->_responseHeaders = $header;
+			}
+			$this->_responseHeaders = array($header => $value);
+		}
+		return $this->_responseHeaders;
 	}
 
 }
