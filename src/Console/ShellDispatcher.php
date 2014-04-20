@@ -164,28 +164,8 @@ class ShellDispatcher {
 			$command = $this->args[0];
 		}
 
-		if ($Shell instanceof Shell) {
-			$Shell->initialize();
-			return $Shell->runCommand($command, $this->args);
-		}
-
-		$methods = array_diff(get_class_methods($Shell), get_class_methods('Cake\Console\Shell'));
-		$added = in_array($command, $methods);
-		$private = $command[0] === '_' && method_exists($Shell, $command);
-
-		if (!$private) {
-			if ($added) {
-				$this->shiftArgs();
-				$Shell->startup();
-				return $Shell->{$command}();
-			}
-			if (method_exists($Shell, 'main')) {
-				$Shell->startup();
-				return $Shell->main();
-			}
-		}
-
-		throw new Error\MissingShellMethodException(['shell' => $shell, 'method' => $command]);
+		$Shell->initialize();
+		return $Shell->runCommand($command, $this->args);
 	}
 
 /**
