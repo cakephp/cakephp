@@ -382,37 +382,6 @@ class TimeTest extends TestCase {
 	}
 
 /**
- * testToAtom method
- *
- * @return void
- */
-	public function testToAtom() {
-		$dateTime = new \DateTime;
-		$this->assertEquals($dateTime->format($dateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
-	}
-
-/**
- * testToRss method
- *
- * @return void
- */
-	public function testToRss() {
-		$date = '2012-08-12 12:12:45';
-		$time = strtotime($date);
-		$this->assertEquals(date('r', $time), $this->Time->toRss($time));
-
-		$timezones = array('Europe/London', 'Europe/Brussels', 'UTC', 'America/Denver', 'America/Caracas', 'Asia/Kathmandu');
-		foreach ($timezones as $timezone) {
-			$yourTimezone = new \DateTimeZone($timezone);
-			$yourTime = new \DateTime($date, $yourTimezone);
-			$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;
-			$time = $yourTime->format('U');
-			$this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $userOffset), "Failed on $timezone");
-			$this->assertEquals($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
-		}
-	}
-
-/**
  * testFormat method
  *
  * @return void
@@ -437,56 +406,6 @@ class TimeTest extends TestCase {
 
 		$result = $this->Time->format('0000-00-00', '%d-%m-%Y', 'invalid');
 		$this->assertEquals('invalid', $result);
-	}
-
-/**
- * testIsToday method
- *
- * @return void
- */
-	public function testIsToday() {
-		$result = $this->Time->isToday('+1 day');
-		$this->assertFalse($result);
-		$result = $this->Time->isToday('+1 days');
-		$this->assertFalse($result);
-		$result = $this->Time->isToday('+0 day');
-		$this->assertTrue($result);
-		$result = $this->Time->isToday('-1 day');
-		$this->assertFalse($result);
-	}
-
-/**
- * testIsFuture method
- *
- * @return void
- */
-	public function testIsFuture() {
-		$this->assertTrue($this->Time->isFuture('+1 month'));
-		$this->assertTrue($this->Time->isFuture('+1 days'));
-		$this->assertTrue($this->Time->isFuture('+1 minute'));
-		$this->assertTrue($this->Time->isFuture('+1 second'));
-
-		$this->assertFalse($this->Time->isFuture('-1 second'));
-		$this->assertFalse($this->Time->isFuture('-1 day'));
-		$this->assertFalse($this->Time->isFuture('-1 week'));
-		$this->assertFalse($this->Time->isFuture('-1 month'));
-	}
-
-/**
- * testIsPast method
- *
- * @return void
- */
-	public function testIsPast() {
-		$this->assertFalse($this->Time->isPast('+1 month'));
-		$this->assertFalse($this->Time->isPast('+1 days'));
-		$this->assertFalse($this->Time->isPast('+1 minute'));
-		$this->assertFalse($this->Time->isPast('+1 second'));
-
-		$this->assertTrue($this->Time->isPast('-1 second'));
-		$this->assertTrue($this->Time->isPast('-1 day'));
-		$this->assertTrue($this->Time->isPast('-1 week'));
-		$this->assertTrue($this->Time->isPast('-1 month'));
 	}
 
 /**

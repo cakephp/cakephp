@@ -182,7 +182,7 @@ class Time extends Carbon {
 
 /**
  * Returns either a relative or a formatted absolute date depending
- * on the difference between the current time this object.
+ * on the difference between the current time and this object.
  *
  * ### Options:
  *
