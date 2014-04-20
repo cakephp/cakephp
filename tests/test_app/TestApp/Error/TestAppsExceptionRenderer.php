@@ -12,7 +12,10 @@ use TestApp\Controller\TestAppsErrorController;
 
 class TestAppsExceptionRenderer extends ExceptionRenderer {
 
-	protected function _getController($exception) {
+/**
+ * @inheritdoc
+ */
+	protected function _getController() {
 		if (!$request = Router::getRequest(true)) {
 			$request = new Request();
 		}
