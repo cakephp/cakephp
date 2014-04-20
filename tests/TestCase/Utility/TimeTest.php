@@ -374,12 +374,11 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function testToUnix() {
-		$this->assertEquals(time(), $this->Time->toUnix(time()));
-		$this->assertEquals(strtotime('+1 day'), $this->Time->toUnix('+1 day'));
-		$this->assertEquals(strtotime('+0 days'), $this->Time->toUnix('+0 days'));
-		$this->assertEquals(strtotime('-1 days'), $this->Time->toUnix('-1 days'));
-		$this->assertEquals(false, $this->Time->toUnix(''));
-		$this->assertEquals(false, $this->Time->toUnix(null));
+		$time = new Time('2014-04-20 08:00:00');
+		$this->assertEquals('1397980800', $time->toUnixString());
+
+		$time = new Time('2021-12-11 07:00:01');
+		$this->assertEquals('1639206001', $time->toUnixString());
 	}
 
 /**

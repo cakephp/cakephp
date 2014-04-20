@@ -174,7 +174,7 @@ class Time extends Carbon {
 /**
  * Returns a UNIX timestamp.
  *
- * @return int Unix timestamp
+ * @return string Unix timestamp
  */
 	public function toUnixString() {
 		return $this->format('U');
