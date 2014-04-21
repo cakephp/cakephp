@@ -25,6 +25,7 @@ matrix:
       env: HHVM=1 DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_login='travis' db_password=''
 
 before_script:
+  - sudo apt-get install php5-intl
   - composer self-update
   - composer install --prefer-source --no-interaction --dev
   - sh -c "if [ '$PHPCS' != '1' ]; then sudo locale-gen de_DE; fi"

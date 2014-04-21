@@ -19,6 +19,7 @@
     },
     "require": {
         "php": ">=5.4.19",
+        "ext-intl": "*",
         "ext-mcrypt": "*",
         "ext-mbstring": "*",
         "nesbot/Carbon": "1.8.*"
