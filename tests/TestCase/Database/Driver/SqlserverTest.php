@@ -91,16 +91,21 @@ class SqlserverTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Test select with limit only
+ * Test select with limit only and SQLServer2012+
  *
  * @return void
  */
-	public function testSelectLimit() {
+	public function testSelectLimitVersion12() {
 		$driver = $this->getMock(
 			'Cake\Database\Driver\Sqlserver',
-			['_connect', 'connection'],
+			['_connect', 'connection', '_version'],
 			[['dsn' => 'foo']]
 		);
+		$driver
+			->expects($this->any())
+			->method('_version')
+			->will($this->returnValue(12));
+
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect', 'driver'],
@@ -137,6 +142,70 @@ class SqlserverTest extends \Cake\TestSuite\TestCase {
 			->from('articles')
 			->limit(10);
 		$this->assertEquals('SELECT TOP 10 id, title FROM articles', $query->sql());
+	}
+
+/**
+ * Test select with limit on lte SQLServer2008
+ *
+ * @return void
+ */
+	public function testSelectLimitOldServer() {
+		$driver = $this->getMock(
+			'Cake\Database\Driver\Sqlserver',
+			['_connect', 'connection', '_version'],
+			[['dsn' => 'foo']]
+		);
+		$driver
+			->expects($this->any())
+			->method('_version')
+			->will($this->returnValue(8));
+
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['connect', 'driver'],
+			[['log' => false]]
+		);
+		$connection
+			->expects($this->any())
+			->method('driver')
+			->will($this->returnValue($driver));
+
+		$query = new \Cake\Database\Query($connection);
+		$query->select(['id', 'title'])
+			->from('articles')
+			->limit(10);
+		$expected = 'SELECT TOP 10 id, title FROM articles';
+		$this->assertEquals($expected, $query->sql());
+
+		$query = new \Cake\Database\Query($connection);
+		$query->select(['id', 'title'])
+			->from('articles')
+			->offset(10);
+		$expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY (SELECT NULL))) AS [_cake_page_rownum_] ' .
+			'FROM articles) AS _cake_paging_ ' .
+			'WHERE _cake_paging_._cake_page_rownum_ > :c0';
+		$this->assertEquals($expected, $query->sql());
+
+		$query = new \Cake\Database\Query($connection);
+		$query->select(['id', 'title'])
+			->from('articles')
+			->order(['id'])
+			->offset(10);
+		$expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS [_cake_page_rownum_] ' .
+			'FROM articles) AS _cake_paging_ ' .
+			'WHERE _cake_paging_._cake_page_rownum_ > :c0';
+		$this->assertEquals($expected, $query->sql());
+
+		$query = new \Cake\Database\Query($connection);
+		$query->select(['id', 'title'])
+			->from('articles')
+			->order(['id'])
+			->limit(10)
+			->offset(50);
+		$expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS [_cake_page_rownum_] ' .
+			'FROM articles) AS _cake_paging_ ' .
+			'WHERE (_cake_paging_._cake_page_rownum_ > :c0 AND _cake_paging_._cake_page_rownum_ <= :c1)';
+		$this->assertEquals($expected, $query->sql());
 	}
 
 }
