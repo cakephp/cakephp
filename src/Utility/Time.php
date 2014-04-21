@@ -498,6 +498,14 @@ class Time extends Carbon {
 	}
 
 /**
+ * {@inheritdoc}
+ *
+ */
+	public function __toString() {
+		return $this->i18nFormat();
+	}
+
+/**
  * Get list of timezone identifiers
  *
  * @param int|string $filter A regex to filter identifer
