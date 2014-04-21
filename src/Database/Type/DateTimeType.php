@@ -28,7 +28,7 @@ class DateTimeType extends \Cake\Database\Type {
  *
  * @var string
  */
-	public static $dateTimeClass = 'Carbon\Carbon';
+	public static $dateTimeClass = 'Cake\Utility\Time';
 
 /**
  * String format to use for DateTime parsing
