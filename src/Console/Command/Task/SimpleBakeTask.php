@@ -74,6 +74,9 @@ abstract class SimpleBakeTask extends BakeTask {
  */
 	public function execute($name = null) {
 		parent::execute();
+		if (empty($name)) {
+			return $this->error('You must provide a name to bake a ' . $this->name());
+		}
 		$name = Inflector::classify($name);
 		$this->bake($name);
 		$this->bakeTest($name);

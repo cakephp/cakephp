@@ -50,7 +50,8 @@ class TestTask extends BakeTask {
 		'Controller' => 'Controller',
 		'Component' => 'Controller\Component',
 		'Behavior' => 'Model\Behavior',
-		'Helper' => 'View\Helper'
+		'Helper' => 'View\Helper',
+		'Shell' => 'Console\Command',
 	];
 
 /**
@@ -64,7 +65,8 @@ class TestTask extends BakeTask {
 		'controller' => 'Controller',
 		'component' => 'Component',
 		'behavior' => 'Behavior',
-		'helper' => 'Helper'
+		'helper' => 'Helper',
+		'shell' => 'Shell',
 	];
 
 /**
@@ -428,6 +430,10 @@ class TestTask extends BakeTask {
 		if ($type === 'component') {
 			$pre = "\$registry = new ComponentRegistry();\n";
 			$construct = "new {$className}(\$registry);\n";
+		}
+		if ($type === 'shell') {
+			$pre = "\$this->io = \$this->getMock('Cake\Console\ConsoleIo');\n";
+			$construct = "new {$className}(\$this->io);\n";
 		}
 		return [$pre, $construct, $post];
 	}
