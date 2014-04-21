@@ -233,9 +233,14 @@ class Time extends Carbon {
 		$relativeString = __d('cake', '%s ago');
 		$absoluteString = __d('cake', 'on %s');
 		$accuracy = static::$wordAccuracy;
+		$from = static::now();
+		$opts = ['timezone', 'format', 'end', 'relativeString', 'absoluteString', 'from'];
 
-		if (isset($options['timezone'])) {
-			$timezone = $options['timezone'];
+		foreach ($opts as $option) {
+			if (isset($options[$option])) {
+				$$option = $options[$option];
+				unset($options[$option]);
+			}
 		}
 
 		if (isset($options['accuracy'])) {
@@ -248,25 +253,7 @@ class Time extends Carbon {
 			}
 		}
 
-		if (isset($options['format'])) {
-			$format = $options['format'];
-		}
-		if (isset($options['end'])) {
-			$end = $options['end'];
-		}
-		if (isset($options['relativeString'])) {
-			$relativeString = $options['relativeString'];
-			unset($options['relativeString']);
-		}
-		if (isset($options['absoluteString'])) {
-			$absoluteString = $options['absoluteString'];
-			unset($options['absoluteString']);
-		}
-
-		$now = empty($options['from']) ? static::now() : $options['from'];
-		unset($options['end'], $options['format'], $options['from']);
-
-		$now = $now->format('U');
+		$now = $from->format('U');
 		$inSeconds = $this->format('U');
 		$backwards = ($inSeconds > $now);
 
