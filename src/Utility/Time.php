@@ -14,7 +14,6 @@
  */
 namespace Cake\Utility;
 
-use Cake\Core\Configure;
 use Carbon\Carbon;
 use IntlDateFormatter;
 

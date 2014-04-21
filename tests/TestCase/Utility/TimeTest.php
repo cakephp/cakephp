@@ -16,8 +16,6 @@
  */
 namespace Cake\Test\TestCase\Utility;
 
-use Cake\Core\App;
-use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Time;
 
@@ -26,13 +24,6 @@ use Cake\Utility\Time;
  *
  */
 class TimeTest extends TestCase {
-
-/**
- * Default system timezone identifier
- *
- * @var string
- */
-	protected $_systemTimezoneIdentifier = null;
 
 /**
  * setUp method
