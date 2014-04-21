@@ -70,7 +70,7 @@ class SimpleBakeTaskTest extends TestCase {
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with(
-				APP . 'Model/Behavior/ExampleBehavior.php',
+				$this->_normalizePath(APP . 'Model/Behavior/ExampleBehavior.php'),
 				$this->stringContains('class ExampleBehavior extends Behavior')
 			);
 		$this->Task->Test->expects($this->once())
@@ -91,7 +91,7 @@ class SimpleBakeTaskTest extends TestCase {
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with(
-				APP . 'Model/Behavior/ExampleBehavior.php',
+				$this->_normalizePath(APP . 'Model/Behavior/ExampleBehavior.php'),
 				$this->stringContains('class ExampleBehavior extends Behavior')
 			);
 
@@ -143,7 +143,7 @@ class SimpleBakeTaskTest extends TestCase {
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with(
-				$path . 'Model/Behavior/ExampleBehavior.php',
+				$this->_normalizePath($path . 'Model/Behavior/ExampleBehavior.php'),
 				$this->stringContains('class ExampleBehavior extends Behavior')
 			);
 
