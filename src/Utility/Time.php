@@ -528,7 +528,41 @@ class Time extends Carbon {
 
 		$format = $format !== null ? $format : static::$_toStringFormat;
 		$locale = $locale ?: static::$defaultLocale;
-		return IntlDateFormatter::formatObject($time, $format, $locale);
+		return $this->_formatObject($time, $format, $locale);
+	}
+
+/**
+ * Returns a translated and localized date string.
+ * Implements what IntlDateFormatter::formatObject() is in PHP 5.5+
+ *
+ * @param \DateTime $date
+ * @param string|int|array $format
+ * @param string $locale
+ * @return string
+ */
+	protected function _formatObject($date, $format, $locale) {
+		$pattern = $dateFormat = $timeFormat = $calendar = null;
+
+		if (is_array($format)) {
+			list($dateFormat, $timeFormat) = $format;
+		} elseif (is_numeric($format)) {
+			$dateFormat = $format;
+		} else {
+			$dateFormat = $timeFormat = IntlDateFormatter::FULL;
+			$pattern = $format;
+		}
+
+		$timezone = $date->getTimezone();
+		$formatter = datefmt_create(
+			$locale,
+			$dateFormat,
+			$timeFormat,
+			$timezone,
+			$calendar,
+			$pattern
+		);
+
+		return $formatter->format($date);
 	}
 
 /**
