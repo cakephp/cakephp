@@ -200,11 +200,12 @@ class SqlserverTest extends \Cake\TestSuite\TestCase {
 		$query->select(['id', 'title'])
 			->from('articles')
 			->order(['id'])
+			->where(['title' => 'Something'])
 			->limit(10)
 			->offset(50);
 		$expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS [_cake_page_rownum_] ' .
-			'FROM articles) AS _cake_paging_ ' .
-			'WHERE (_cake_paging_._cake_page_rownum_ > :c0 AND _cake_paging_._cake_page_rownum_ <= :c1)';
+			'FROM articles WHERE title = :c0) AS _cake_paging_ ' .
+			'WHERE (_cake_paging_._cake_page_rownum_ > :c1 AND _cake_paging_._cake_page_rownum_ <= :c2)';
 		$this->assertEquals($expected, $query->sql());
 	}
 
