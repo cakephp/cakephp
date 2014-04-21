@@ -14,9 +14,9 @@
  */
 namespace Cake\View\Helper;
 
+use Cake\Utility\Time;
 use Cake\View\Helper;
 use Cake\View\Helper\StringTemplateTrait;
-use Cake\Utility\Time;
 
 /**
  * Time Helper class for easy use of time data.
@@ -331,6 +331,7 @@ class TimeHelper extends Helper {
  * @param string|\DateTimeZone $timezone User's timezone string or DateTimeZone object
  * @return string Formatted and translated date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
+ * @throws \InvalidArgumentException When the date cannot be parsed
  */
 	public function i18nFormat($date, $format = null, $invalid = false, $timezone = null) {
 		try {
