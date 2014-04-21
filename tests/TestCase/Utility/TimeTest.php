@@ -465,43 +465,21 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function testWasWithinLast() {
-		$this->assertTrue($this->Time->wasWithinLast('1 day', '-1 day'));
-		$this->assertTrue($this->Time->wasWithinLast('1 week', '-1 week'));
-		$this->assertTrue($this->Time->wasWithinLast('1 year', '-1 year'));
-		$this->assertTrue($this->Time->wasWithinLast('1 second', '-1 second'));
-		$this->assertTrue($this->Time->wasWithinLast('1 minute', '-1 minute'));
-		$this->assertTrue($this->Time->wasWithinLast('1 year', '-1 year'));
-		$this->assertTrue($this->Time->wasWithinLast('1 month', '-1 month'));
-		$this->assertTrue($this->Time->wasWithinLast('1 day', '-1 day'));
+		$this->assertTrue((new Time('-1 day'))->wasWithinLast('1 day'));
+		$this->assertTrue((new Time('-1 week'))->wasWithinLast('1 week'));
+		$this->assertTrue((new Time('-1 year'))->wasWithinLast('1 year'));
+		$this->assertTrue((new Time('-1 second'))->wasWithinLast('1 second'));
+		$this->assertTrue((new Time('-1 day'))->wasWithinLast('1 week'));
+		$this->assertTrue((new Time('-1 week'))->wasWithinLast('2 week'));
+		$this->assertTrue((new Time('-1 second'))->wasWithinLast('10 minutes'));
+		$this->assertTrue((new Time('-1 month'))->wasWithinLast('13 month'));
+		$this->assertTrue((new Time('-1 seconds'))->wasWithinLast('1 hour'));
 
-		$this->assertTrue($this->Time->wasWithinLast('1 week', '-1 day'));
-		$this->assertTrue($this->Time->wasWithinLast('2 week', '-1 week'));
-		$this->assertFalse($this->Time->wasWithinLast('1 second', '-1 year'));
-		$this->assertTrue($this->Time->wasWithinLast('10 minutes', '-1 second'));
-		$this->assertTrue($this->Time->wasWithinLast('23 minutes', '-1 minute'));
-		$this->assertFalse($this->Time->wasWithinLast('0 year', '-1 year'));
-		$this->assertTrue($this->Time->wasWithinLast('13 month', '-1 month'));
-		$this->assertTrue($this->Time->wasWithinLast('2 days', '-1 day'));
+		$this->assertFalse((new Time('-1 year'))->wasWithinLast('1 second'));
+		$this->assertFalse((new Time('-1 year'))->wasWithinLast('0 year'));
+		$this->assertFalse((new Time('-1 weeks'))->wasWithinLast('1 day'));
 
-		$this->assertFalse($this->Time->wasWithinLast('1 week', '-2 weeks'));
-		$this->assertFalse($this->Time->wasWithinLast('1 second', '-2 seconds'));
-		$this->assertFalse($this->Time->wasWithinLast('1 day', '-2 days'));
-		$this->assertFalse($this->Time->wasWithinLast('1 hour', '-2 hours'));
-		$this->assertFalse($this->Time->wasWithinLast('1 month', '-2 months'));
-		$this->assertFalse($this->Time->wasWithinLast('1 year', '-2 years'));
-
-		$this->assertFalse($this->Time->wasWithinLast('1 day', '-2 weeks'));
-		$this->assertFalse($this->Time->wasWithinLast('1 day', '-2 days'));
-		$this->assertFalse($this->Time->wasWithinLast('0 days', '-2 days'));
-		$this->assertTrue($this->Time->wasWithinLast('1 hour', '-20 seconds'));
-		$this->assertTrue($this->Time->wasWithinLast('1 year', '-60 minutes -30 seconds'));
-		$this->assertTrue($this->Time->wasWithinLast('3 years', '-2 months'));
-		$this->assertTrue($this->Time->wasWithinLast('5 months', '-4 months'));
-
-		$this->assertTrue($this->Time->wasWithinLast('5 ', '-3 days'));
-		$this->assertTrue($this->Time->wasWithinLast('1   ', '-1 hour'));
-		$this->assertTrue($this->Time->wasWithinLast('1   ', '-1 minute'));
-		$this->assertTrue($this->Time->wasWithinLast('1   ', '-23 hours -59 minutes -59 seconds'));
+		$this->assertTrue((new Time('-3 days'))->wasWithinLast('5'));
 	}
 
 /**
