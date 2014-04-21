@@ -379,33 +379,6 @@ class TimeTest extends TestCase {
 	}
 
 /**
- * testFormat method
- *
- * @return void
- */
-	public function testFormat() {
-		$format = 'D-M-Y';
-		$tz = date_default_timezone_get();
-		$arr = array(time(), strtotime('+1 days'), strtotime('+1 days'), strtotime('+0 days'));
-		foreach ($arr as $val) {
-			$this->assertEquals(date($format, $val), $this->Time->format($format, $val));
-			$this->assertEquals(date($format, $val), $this->Time->format($format, $val, false, $tz));
-		}
-
-		$result = $this->Time->format('Y-m-d', null, 'never');
-		$this->assertEquals('never', $result);
-
-		$result = $this->Time->format('2012-01-13', '%d-%m-%Y', 'invalid');
-		$this->assertEquals('13-01-2012', $result);
-
-		$result = $this->Time->format('nonsense', '%d-%m-%Y', 'invalid', 'UTC');
-		$this->assertEquals('invalid', $result);
-
-		$result = $this->Time->format('0000-00-00', '%d-%m-%Y', 'invalid');
-		$this->assertEquals('invalid', $result);
-	}
-
-/**
  * testIsThisWeek method
  *
  * @return void
@@ -586,21 +559,6 @@ class TimeTest extends TestCase {
 		$return = Time::listTimezones(\DateTimeZone::PER_COUNTRY, 'US', false);
 		$this->assertTrue(isset($return['Pacific/Honolulu']));
 		$this->assertFalse(isset($return['Asia/Bangkok']));
-	}
-
-/**
- * Tests that using Cake\Utility\Time::format() with the correct sytax actually converts
- * from one timezone to the other correctly
- *
- * @return void
- */
-	public function testCorrectTimezoneConversion() {
-		date_default_timezone_set('UTC');
-		$date = '2012-01-01 10:00:00';
-		$converted = Time::format($date, '%Y-%m-%d %H:%M', '', 'Europe/Copenhagen');
-		$expected = new \DateTime($date);
-		$expected->setTimezone(new \DateTimeZone('Europe/Copenhagen'));
-		$this->assertEquals($expected->format('Y-m-d H:i'), $converted);
 	}
 
 }
