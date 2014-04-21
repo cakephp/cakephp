@@ -68,6 +68,30 @@ class TimeHelper extends Helper {
 	}
 
 /**
+ * Returns true if given datetime string is in the future.
+ *
+ * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|\DateTimeZone $timezone User's timezone string or DateTimeZone object
+ * @return bool True if datetime string is today
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
+ */
+	public function isFuture($dateString, $timezone = null) {
+		return (new Time($dateString, $timezone))->isFuture();
+	}
+
+/**
+ * Returns true if given datetime string is in the past.
+ *
+ * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|\DateTimeZone $timezone User's timezone string or DateTimeZone object
+ * @return bool True if datetime string is today
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
+ */
+	public function isPast($dateString, $timezone = null) {
+		return (new Time($dateString, $timezone))->isPast();
+	}
+
+/**
  * Returns true if given datetime string is within this week.
  *
  * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
@@ -167,7 +191,8 @@ class TimeHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function toAtom($dateString, $timezone = null) {
-		return (new Time($dateString, $timezone))->toATOMString();
+		$timezone = $timezone ?: date_default_timezone_get();
+		return (new Time($dateString))->timezone($timezone)->toATOMString();
 	}
 
 /**
@@ -179,7 +204,8 @@ class TimeHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function toRSS($dateString, $timezone = null) {
-		return (new Time($dateString, $timezone))->toRSSString();
+		$timezone = $timezone ?: date_default_timezone_get();
+		return (new Time($dateString))->timezone($timezone)->toRSSString();
 	}
 
 /**
