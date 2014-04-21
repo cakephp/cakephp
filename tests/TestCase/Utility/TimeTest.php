@@ -41,9 +41,7 @@ class TimeTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Time = new Time();
-		$this->_systemTimezoneIdentifier = date_default_timezone_get();
-		Configure::write('Config.language', 'eng');
+		$this->now = Time::getTestNow();
 	}
 
 /**
@@ -53,8 +51,7 @@ class TimeTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->Time);
-		$this->_restoreSystemTimezone();
+		 Time::setTestNow($this->now);
 	}
 
 /**
@@ -447,10 +444,19 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function testIsThisYear() {
-		$result = $this->Time->isThisYear('+0 day');
-		$this->assertTrue($result);
-		$result = $this->Time->isThisYear(mktime(0, 0, 0, mt_rand(1, 12), mt_rand(1, 28), date('Y')));
-		$this->assertTrue($result);
+		$time = new Time();
+		$this->assertTrue($time->isThisYear());
+
+		$time->year = $time->year + 1;
+		$this->assertFalse($time->isThisYear());
+
+		$thisYear = date('Y');
+		$time = new Time("$thisYear-01-01 00:00", 'Australia/Sydney');
+
+		$now = clone $time;
+		$now->timezone('UTC');
+		Time::setTestNow($now);
+		$this->assertFalse($time->isThisYear());
 	}
 
 /**
