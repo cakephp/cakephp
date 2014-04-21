@@ -41,7 +41,8 @@ class DatatypeFixture extends TestFixture {
  *
  * @var array
  */
-	public $records = array(
-		array('id' => 1, 'float_field' => 42.23, 'huge_int' => '1234567891234567891', 'bool' => 0),
-	);
+	public $records = [
+		['float_field' => 42.23, 'huge_int' => '1234567891234567891', 'bool' => 0],
+	];
+
 }
