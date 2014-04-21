@@ -558,4 +558,22 @@ class TimeTest extends TestCase {
 		$this->assertEquals('20/04/2014 22:10', (string)$time);
 	}
 
+
+/**
+ * Tests diffForHumans
+ *
+ * @return void
+ */
+	public function testDiffForHumans() {
+		$time = new Time('2014-04-20 10:10:10');
+		$other = new Time('2014-04-27 10:10:10');
+		$this->assertEquals('1 week ago', $time->diffForHumans($other));
+
+		$other = new Time('2014-04-21 09:10:10');
+		$this->assertEquals('23 hours ago', $time->diffForHumans($other));
+
+		$other = new Time('2014-04-13 09:10:10');
+		$this->assertEquals('1 week', $time->diffForHumans($other));
+	}
+
 }

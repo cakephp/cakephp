@@ -196,6 +196,7 @@ class Time extends Carbon {
  *
  * ### Options:
  *
+ * - `from` => another Time object representing the "now" time
  * - `format` => a fall back format if the relative time is longer than the duration specified by end
  * - `accuracy` => Specifies how accurate the date should be described (array)
  *    - year =>   The format if years > 0   (default "day")
@@ -262,9 +263,11 @@ class Time extends Carbon {
 			$absoluteString = $options['absoluteString'];
 			unset($options['absoluteString']);
 		}
-		unset($options['end'], $options['format']);
 
-		$now = static::now()->format('U');
+		$now = empty($options['from']) ? static::now() : $options['from'];
+		unset($options['end'], $options['format'], $options['from']);
+
+		$now = $now->format('U');
 		$inSeconds = $this->format('U');
 		$backwards = ($inSeconds > $now);
 
@@ -420,6 +423,23 @@ class Time extends Carbon {
 		}
 
 		return $relativeDate;
+	}
+
+/**
+ * Returns the difference between this date and the provided one in a human
+ * readable format.
+ *
+ * See `Time::timeAgoInWords()` for a full list of options that can be passed
+ * to this method.
+ *
+ * @param \Carbon\Carbon $other the date to diff with
+ * @param array $options options accepted by timeAgoInWords
+ * @return string
+ * @see Time::timeAgoInWords()
+ */
+	public function diffForHumans(Carbon $other = null, array $options = []) {
+		$options = ['from' => $other] + $options;
+		return $this->timeAgoInWords($options);
 	}
 
 /**
