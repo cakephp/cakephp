@@ -39,7 +39,7 @@ class Time extends Carbon {
  * @var mixed
  * @see \Cake\Utility\Time::i18nFormat()
  */
-	protected static $toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
+	protected static $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
 
 /**
  * The format to use when formatting a time using `Cake\Utility\Time::nice()`
@@ -539,7 +539,7 @@ class Time extends Carbon {
 			$time->timezone($timezone);
 		}
 
-		$format = $format !== null ? $format : static::$toStringFormat;
+		$format = $format !== null ? $format : static::$_toStringFormat;
 		$locale = $locale ?: static::$defaultLocale;
 		return IntlDateFormatter::formatObject($time, $format, $locale);
 	}
@@ -596,6 +596,24 @@ class Time extends Carbon {
 			return $groupedIdentifiers;
 		}
 		return array_combine($identifiers, $identifiers);
+	}
+
+/**
+ * Resets the format used to the default when converting an instance of this type to
+ * a string
+ *
+ */
+	public static function resetToStringFormat() {
+		static::setToStringFormat([IntlDateFormatter::SHORT, IntlDateFormatter::SHORT]);
+	}
+
+/**
+ * Sets the default format used when type converting instances of this type to string
+ *
+ * @param  string|int $format
+ */
+	public static function setToStringFormat($format) {
+		static::$_toStringFormat = $format;
 	}
 
 }

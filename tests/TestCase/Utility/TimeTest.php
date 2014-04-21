@@ -45,6 +45,7 @@ class TimeTest extends TestCase {
 		parent::tearDown();
 		Time::setTestNow($this->now);
 		Time::$defaultLocale = $this->locale;
+		Time::resetToStringFormat();
 	}
 
 /**
@@ -547,8 +548,10 @@ class TimeTest extends TestCase {
 
 		Time::$defaultLocale = 'fr-FR';
 		$this->assertEquals('20/04/2014 22:10', (string)$time);
-	}
 
+		Time::setToStringFormat(\IntlDateFormatter::FULL);
+		$this->assertEquals('dimanche 20 avril 2014 22:10:00 UTC', (string)$time);
+	}
 
 /**
  * Tests diffForHumans
