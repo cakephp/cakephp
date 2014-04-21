@@ -23,7 +23,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
-use Carbon\Carbon;
+use Cake\Utility\Time;
 
 /**
  * Test case for BasicAuthentication
@@ -173,8 +173,8 @@ class BasicAuthenticateTest extends TestCase {
 		$expected = array(
 			'id' => 1,
 			'username' => 'mariano',
-			'created' => new Carbon('2007-03-17 01:16:23'),
-			'updated' => new Carbon('2007-03-17 01:18:31')
+			'created' => new Time('2007-03-17 01:16:23'),
+			'updated' => new Time('2007-03-17 01:18:31')
 		);
 		$this->assertEquals($expected, $result);
 	}
@@ -230,8 +230,8 @@ class BasicAuthenticateTest extends TestCase {
 		$expected = array(
 			'id' => 1,
 			'username' => 'mariano',
-			'created' => new Carbon('2007-03-17 01:16:23'),
-			'updated' => new Carbon('2007-03-17 01:18:31')
+			'created' => new Time('2007-03-17 01:16:23'),
+			'updated' => new Time('2007-03-17 01:18:31')
 		);
 		$this->assertEquals($expected, $result);
 	}
