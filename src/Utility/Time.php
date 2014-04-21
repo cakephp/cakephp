@@ -552,12 +552,12 @@ class Time extends Carbon {
 			$pattern = $format;
 		}
 
-		$timezone = $date->getTimezone();
+		$timezone = $date->getTimezone()->getName();
 		$formatter = datefmt_create(
 			$locale,
 			$dateFormat,
 			$timeFormat,
-			$timezone,
+			$timezone === '+00:00' ? 'UTC' : $timezone,
 			$calendar,
 			$pattern
 		);
