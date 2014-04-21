@@ -72,7 +72,7 @@ class Time extends Carbon {
  * @var string
  * @see \Cake\Utility\Time::timeAgoInWords()
  */
-	public static $wordFormat = 'j/n/y';
+	public static $wordFormat = 'd/M/YY';
 
 /**
  * The format to use when formatting a time using `Cake\Utility\Time::timeAgoInWords()`
@@ -211,7 +211,8 @@ class Time extends Carbon {
  * - 3 weeks, 4 days ago
  * - 15 seconds ago
  *
- * Default date formatting is d/m/yy e.g: on 18/2/09
+ * Default date formatting is d/M/YY e.g: on 18/2/09. Formatting is done internally using
+ * `i18nFormat`, see the method for the valid formatting strings
  *
  * The returned string includes 'ago' or 'on' and assumes you'll properly add a word
  * like 'Posted ' before the function output.
@@ -277,7 +278,8 @@ class Time extends Carbon {
 		}
 
 		if ($diff > abs($now - (new static($end))->format('U'))) {
-			return sprintf($absoluteString, date($format, $inSeconds));
+			$absoluteTime = new static($inSeconds);
+			return sprintf($absoluteString, $absoluteTime->i18nFormat($format));
 		}
 
 		// If more than a week, then take into account the length of months
