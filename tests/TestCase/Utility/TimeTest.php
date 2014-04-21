@@ -488,46 +488,20 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function testIsWithinNext() {
-		$this->assertFalse($this->Time->isWithinNext('1 day', '-1 day'));
-		$this->assertFalse($this->Time->isWithinNext('1 week', '-1 week'));
-		$this->assertFalse($this->Time->isWithinNext('1 year', '-1 year'));
-		$this->assertFalse($this->Time->isWithinNext('1 second', '-1 second'));
-		$this->assertFalse($this->Time->isWithinNext('1 minute', '-1 minute'));
-		$this->assertFalse($this->Time->isWithinNext('1 year', '-1 year'));
-		$this->assertFalse($this->Time->isWithinNext('1 month', '-1 month'));
-		$this->assertFalse($this->Time->isWithinNext('1 day', '-1 day'));
+		$this->assertFalse((new Time('-1 day'))->isWithinNext('1 day'));
+		$this->assertFalse((new Time('-1 week'))->isWithinNext('1 week'));
+		$this->assertFalse((new Time('-1 year'))->isWithinNext('1 year'));
+		$this->assertFalse((new Time('-1 second'))->isWithinNext('1 second'));
+		$this->assertFalse((new Time('-1 day'))->isWithinNext('1 week'));
+		$this->assertFalse((new Time('-1 week'))->isWithinNext('2 week'));
+		$this->assertFalse((new Time('-1 second'))->isWithinNext('10 minutes'));
+		$this->assertFalse((new Time('-1 month'))->isWithinNext('13 month'));
+		$this->assertFalse((new Time('-1 seconds'))->isWithinNext('1 hour'));
 
-		$this->assertFalse($this->Time->isWithinNext('1 week', '-1 day'));
-		$this->assertFalse($this->Time->isWithinNext('2 week', '-1 week'));
-		$this->assertFalse($this->Time->isWithinNext('1 second', '-1 year'));
-		$this->assertFalse($this->Time->isWithinNext('10 minutes', '-1 second'));
-		$this->assertFalse($this->Time->isWithinNext('23 minutes', '-1 minute'));
-		$this->assertFalse($this->Time->isWithinNext('0 year', '-1 year'));
-		$this->assertFalse($this->Time->isWithinNext('13 month', '-1 month'));
-		$this->assertFalse($this->Time->isWithinNext('2 days', '-1 day'));
-
-		$this->assertFalse($this->Time->isWithinNext('1 week', '-2 weeks'));
-		$this->assertFalse($this->Time->isWithinNext('1 second', '-2 seconds'));
-		$this->assertFalse($this->Time->isWithinNext('1 day', '-2 days'));
-		$this->assertFalse($this->Time->isWithinNext('1 hour', '-2 hours'));
-		$this->assertFalse($this->Time->isWithinNext('1 month', '-2 months'));
-		$this->assertFalse($this->Time->isWithinNext('1 year', '-2 years'));
-
-		$this->assertFalse($this->Time->isWithinNext('1 day', '-2 weeks'));
-		$this->assertFalse($this->Time->isWithinNext('1 day', '-2 days'));
-		$this->assertFalse($this->Time->isWithinNext('0 days', '-2 days'));
-		$this->assertFalse($this->Time->isWithinNext('1 hour', '-20 seconds'));
-		$this->assertFalse($this->Time->isWithinNext('1 year', '-60 minutes -30 seconds'));
-		$this->assertFalse($this->Time->isWithinNext('3 years', '-2 months'));
-		$this->assertFalse($this->Time->isWithinNext('5 months', '-4 months'));
-
-		$this->assertFalse($this->Time->isWithinNext('5 ', '-3 days'));
-		$this->assertFalse($this->Time->isWithinNext('1   ', '-1 hour'));
-		$this->assertFalse($this->Time->isWithinNext('1   ', '-1 minute'));
-		$this->assertFalse($this->Time->isWithinNext('1   ', '-23 hours -59 minutes -59 seconds'));
-
-		$this->assertTrue($this->Time->isWithinNext('7 days', '6 days, 23 hours, 59 minutes, 59 seconds'));
-		$this->assertFalse($this->Time->isWithinNext('7 days', '6 days, 23 hours, 59 minutes, 61 seconds'));
+		$this->assertTrue((new Time('+1 day'))->isWithinNext('1 day'));
+		$this->assertTrue((new Time('+1 week'))->isWithinNext('7 day'));
+		$this->assertTrue((new Time('+1 second'))->isWithinNext('1 minute'));
+		$this->assertTrue((new Time('+1 month'))->isWithinNext('1 month'));
 	}
 
 /**
