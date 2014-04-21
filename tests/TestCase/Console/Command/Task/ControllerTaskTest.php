@@ -171,7 +171,7 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with(
-				$filename,
+				$this->_normalizePath($filename),
 				$this->stringContains('class BakeArticlesController')
 			);
 		$result = $this->Task->bake('BakeArticles');
@@ -220,7 +220,7 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with(
-				$path,
+				$this->_normalizePath($path),
 				$this->stringContains('BakeArticlesController extends AppController')
 			)->will($this->returnValue(true));
 
@@ -307,7 +307,7 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->Test->expects($this->atLeastOnce())
 			->method('bake');
 
-		$filename = APP . 'Controller/BakeArticlesController.php';
+		$filename = $this->_normalizePath(APP . 'Controller/BakeArticlesController.php');
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with($filename, $this->logicalAnd(
@@ -339,7 +339,7 @@ class ControllerTaskTest extends TestCase {
 	public function testExecuteWithControllerNameVariations($name) {
 		$this->Task->connection = 'test';
 
-		$filename = APP . 'Controller/BakeArticlesController.php';
+		$filename = $this->_normalizePath(APP . 'Controller/BakeArticlesController.php');
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with($filename, $this->stringContains('public function index()'));

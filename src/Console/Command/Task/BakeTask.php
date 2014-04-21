@@ -71,7 +71,7 @@ class BakeTask extends Shell {
 		if (isset($this->plugin)) {
 			$path = $this->_pluginPath($this->plugin) . $this->pathFragment;
 		}
-		return $path;
+		return str_replace('/', DS, $path);
 	}
 
 /**

@@ -79,8 +79,8 @@ Configure::write('App', [
 	'jsBaseUrl' => 'js/',
 	'cssBaseUrl' => 'css/',
 	'paths' => [
-		'plugins' => [TEST_APP . 'Plugin/'],
-		'templates' => [APP . 'Template/']
+		'plugins' => [TEST_APP . 'Plugin' . DS],
+		'templates' => [APP . 'Template' . DS]
 	]
 ]);
 
