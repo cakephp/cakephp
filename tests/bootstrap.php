@@ -55,8 +55,6 @@ require CAKE . 'Core/ClassLoader.php';
 $loader = new Cake\Core\ClassLoader;
 $loader->register();
 
-$loader->addNamespace('Cake', CAKE);
-$loader->addNamespace('Cake\Test', CORE_TESTS);
 $loader->addNamespace('TestApp', APP);
 $loader->addNamespace('TestPlugin', TEST_APP . 'Plugin/TestPlugin');
 $loader->addNamespace('TestPluginTwo', TEST_APP . 'Plugin/TestPluginTwo');
