@@ -483,50 +483,24 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function testI18nFormat() {
-		Configure::write('Config.language', 'es');
+		$time = new Time('Thu Jan 14 13:59:28 2010');
+		$result = $time->i18nFormat();
 
-		$time = strtotime('Thu Jan 14 13:59:28 2010');
-
-		$result = $this->Time->i18nFormat($time);
-		$expected = '14/01/10';
+		$expected = '1/14/10, 1:59 PM';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Time->i18nFormat($time, '%c');
-		$expected = 'jue 14 ene 2010 13:59:28 ' . utf8_encode(strftime('%Z', $time));
+		$result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
+		$expected = 'jueves, 14 de enero de 2010, 13:59:28 (GMT)';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Time->i18nFormat($time, 'Time is %r, and date is %x');
-		$expected = 'Time is 01:59:28 PM, and date is 14/01/10';
+		$format = [\IntlDateFormatter::NONE, \IntlDateFormatter::SHORT];
+		$result = $time->i18nFormat($format);
+		$expected = '1:59 PM';
 		$this->assertEquals($expected, $result);
 
-		$time = strtotime('Wed Jan 13 13:59:28 2010');
-
-		$result = $this->Time->i18nFormat($time);
-		$expected = '13/01/10';
+		$result = $time->i18nFormat('HH:mm:ss', 'Australia/Sydney');
+		$expected = '00:59:28';
 		$this->assertEquals($expected, $result);
-
-		$result = $this->Time->i18nFormat($time, '%c');
-		$expected = 'mié 13 ene 2010 13:59:28 ' . utf8_encode(strftime('%Z', $time));
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Time->i18nFormat($time, 'Time is %r, and date is %x');
-		$expected = 'Time is 01:59:28 PM, and date is 13/01/10';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Time->i18nFormat('invalid date', '%x', 'Date invalid');
-		$expected = 'Date invalid';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test new format() syntax which inverts first and second parameters
- *
- * @return void
- */
-	public function testFormatNewSyntax() {
-		$time = time();
-		$this->assertEquals($this->Time->format($time), $this->Time->i18nFormat($time));
-		$this->assertEquals($this->Time->format($time, '%c'), $this->Time->i18nFormat($time, '%c'));
 	}
 
 /**

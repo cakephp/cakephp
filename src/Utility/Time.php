@@ -29,6 +29,24 @@ use IntlDateFormatter;
  */
 class Time extends Carbon {
 
+
+/**
+ * The format to use when formatting a time using `Cake\Utility\Time::i18nFormat()`
+ * and `__toString`
+ *
+ * The format should be eiter the formatting constants from IntDateFormatter as
+ * described in (http://www.php.net/manual/en/class.intldateformatter.php) or a pattern
+ * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
+ *
+ * It is possible to provide an array of 2 constants. In this case, the first position
+ * will be used for formatting the date part of the object and the second position
+ * will be used to format the time part.
+ *
+ * @var mixed
+ * @see \Cake\Utility\Time::i18nFormat()
+ */
+	protected static $toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
+
 /**
  * The format to use when formatting a time using `Cake\Utility\Time::nice()`
  *
@@ -106,18 +124,11 @@ class Time extends Carbon {
  * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
  * in which the date will be displayed. The timezone stored for this object will not
  * be changed.
+ * @param $locale The locale name in which the date should be displayed (e.g. pt-BR)
  * @return string Formatted date string
  */
 	public function nice($timezone = null, $locale = null) {
-		$time = $this;
-
-		if ($timezone) {
-			$time = clone $this;
-			$time->timezone($timezone);
-		}
-
-		$locale = $locale ?: static::$defaultLocale;
-		return IntlDateFormatter::formatObject($time, static::$niceFormat, $locale);
+		return $this->i18nFormat(static::$niceFormat, $timezone, $locale);
 	}
 
 /**
@@ -466,11 +477,24 @@ class Time extends Carbon {
  * }}}
  *
  * @param string $format strftime format string.
- * @param bool|string $default if an invalid date is passed it will output supplied default value. Pass false if you want raw conversion value
+ * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
+ * in which the date will be displayed. The timezone stored for this object will not
+ * be changed.
+ * @param $locale The locale name in which the date should be displayed (e.g. pt-BR)
  * @return string Formatted and translated date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::i18nFormat
  */
-	public static function i18nFormat($format = null, $default = false) {
+	public function i18nFormat($format = null, $timezone = null, $locale = null) {
+		$time = $this;
+
+		if ($timezone) {
+			$time = clone $this;
+			$time->timezone($timezone);
+		}
+
+		$format = $format !== null ? $format : static::$toStringFormat;
+		$locale = $locale ?: static::$defaultLocale;
+		return IntlDateFormatter::formatObject($time, $format, $locale);
 	}
 
 /**
