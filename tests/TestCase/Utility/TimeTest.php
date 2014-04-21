@@ -431,14 +431,14 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function testIsThisMonth() {
-		$result = $this->Time->isThisMonth('+0 day');
-		$this->assertTrue($result);
-		$result = $this->Time->isThisMonth($time = mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y')));
-		$this->assertTrue($result);
-		$result = $this->Time->isThisMonth(mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y') - mt_rand(1, 12)));
-		$this->assertFalse($result);
-		$result = $this->Time->isThisMonth(mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y') + mt_rand(1, 12)));
-		$this->assertFalse($result);
+		$time = new Time();
+		$this->assertTrue($time->isThisMonth());
+
+		$time->year = $time->year + 1;
+		$this->assertFalse($time->isThisMonth());
+
+		$time = new Time();
+		$this->assertFalse($time->modify('next month')->isThisMonth());
 	}
 
 /**
