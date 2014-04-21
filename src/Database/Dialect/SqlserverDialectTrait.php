@@ -64,7 +64,7 @@ trait SqlserverDialectTrait {
 			$query->order($query->newExpr()->add('SELECT NULL'));
 		}
 
-		if ($this->_version() < 11 && $offset) {
+		if ($this->_version() < 11 && $offset !== null) {
 			return $this->_pagingSubquery($query, $limit, $offset);
 		}
 
@@ -91,9 +91,10 @@ trait SqlserverDialectTrait {
  * @param int $offset The number of rows to offset.
  * @return \Cake\Database\Query Modified query object.
  */
-	protected function _pagingSubquery($query, $limit, $offset) {
+	protected function _pagingSubquery($original, $limit, $offset) {
 		$field = '_cake_paging_._cake_page_rownum_';
 
+		$query = clone $original;
 		$order = $query->clause('order') ?: new OrderByExpression('NULL');
 		$query->select([
 				'_cake_page_rownum_' => new UnaryExpression($order, [], 'ROW_NUMBER() OVER')
@@ -104,18 +105,24 @@ trait SqlserverDialectTrait {
 		$outer = new Query($query->connection());
 		$outer->select('*')
 			->from(['_cake_paging_' => $query]);
+
 		if ($offset) {
 			$outer->where(["$field >" => $offset]);
 		}
 		if ($limit) {
 			$outer->where(["$field <=" => (int)$offset + (int)$limit]);
 		}
-		return $outer->decorateResults(function ($row) {
+
+		// Decorate the original query as that is what the
+		// end developer will be calling execute() on originally.
+		$original->decorateResults(function ($row) {
 			if (isset($row['_cake_page_rownum_'])) {
 				unset($row['_cake_page_rownum_']);
 			}
 			return $row;
 		});
+
+		return $outer;
 	}
 
 /**
