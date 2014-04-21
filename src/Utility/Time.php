@@ -1,7 +1,5 @@
 <?php
 /**
- * Cake Time utility class file.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,8 +9,8 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         0.10.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @since         3.0.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\Utility;
 
@@ -21,14 +19,11 @@ use Carbon\Carbon;
 use IntlDateFormatter;
 
 /**
- * Time Helper class for easy use of time data.
+ * Extends the built-in DateTime class to provide handy methods and locale-aware
+ * formatting helpers
  *
- * Manipulation of time data.
- *
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html
  */
 class Time extends Carbon {
-
 
 /**
  * The format to use when formatting a time using `Cake\Utility\Time::i18nFormat()`
@@ -461,28 +456,56 @@ class Time extends Carbon {
 	}
 
 /**
- * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
- * This function also accepts a time string and a format string as first and second parameters.
- * In that case this function behaves as a wrapper for TimeHelper::i18nFormat()
+ * Returns a formatted string for this time object using the preferred format and
+ * language for the specified locale.
+ *
+ * It is possible to specify the desired format for the string to be displayed.
+ * You can either pass `IntlDateFormatter` constants as the first argument of this
+ * function, or pass a full ICU date formatting string as specified in the following
+ * resource: http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details.
  *
  * ## Examples
  *
- * Create localized & formatted time:
- *
  * {{{
- *   Cake\Utility\Time::format('2012-02-15', '%m-%d-%Y'); // returns 02-15-2012
- *   Cake\Utility\Time::format('2012-02-15 23:01:01', '%c'); // returns preferred date and time based on configured locale
- *   Cake\Utility\Time::format('0000-00-00', '%d-%m-%Y', 'N/A'); // return N/A becuase an invalid date was passed
- *   Cake\Utility\Time::format('2012-02-15 23:01:01', '%c', 'N/A', 'America/New_York'); // converts passed date to timezone
+ * $time = new Time('2014-04-20 22:10');
+ * $time->i18nFormat(); // outputs '4/20/14, 10:10 PM' for the en-US locale
+ * $time->i18nFormat(\IntlDateFormatter::FULL); // Use the full date and time format
+ * $time->i18nFormat([\IntlDateFormatter::FULL, \IntlDateFormatter::Short]); // Use full date but short time format
+ * $time->i18nFormat('YYYY-MM-dd HH:mm:ss'); // outputs '2014-04-20 22:10'
  * }}}
  *
- * @param string $format strftime format string.
+ * If you wish to control the default format to be used for this method, you can alter
+ * the value of the static `Time::$defaultLocale` variable and set it to one of the
+ * possible formats accepted by this function.
+ *
+ * You can read about the available IntlDateFormatter constants at
+ * http://www.php.net/manual/en/class.intldateformatter.php
+ *
+ * If you need to display the date in a different timezone than the one being used for
+ * this Time object without altering its internal state, you can pass a timezone
+ * string or object as the second parameter.
+ *
+ * Finally, should you need to use a different locale for displaying this time object,
+ * pass a locale string as the third parameter to this function.
+ *
+ * ## Examples
+ *
+ * {{{
+ * $time = new Time('2014-04-20 22:10');
+ * $time->i18nFormat(null, null, 'de-DE');
+ * $time->i18nFormat(\IntlDateFormatter::FULL, 'Europe/Berlin', 'de-DE');
+ * }}}
+ *
+ * You can control the default locale to be used by setting the static variable
+ * `Time::$defaultLocale` to a  valid locale string. If empty, the default will be
+ * taken from the `intl.default_locale` ini config.
+ *
+ * @param string|int $format
  * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
  * in which the date will be displayed. The timezone stored for this object will not
  * be changed.
  * @param $locale The locale name in which the date should be displayed (e.g. pt-BR)
  * @return string Formatted and translated date string
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::i18nFormat
  */
 	public function i18nFormat($format = null, $timezone = null, $locale = null) {
 		$time = $this;
