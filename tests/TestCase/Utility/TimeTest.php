@@ -454,26 +454,6 @@ class TimeTest extends TestCase {
 	}
 
 /**
- * testWasYesterday method
- *
- * @return void
- */
-	public function testWasYesterday() {
-		$result = $this->Time->wasYesterday('+1 day');
-		$this->assertFalse($result);
-		$result = $this->Time->wasYesterday('+1 days');
-		$this->assertFalse($result);
-		$result = $this->Time->wasYesterday('+0 day');
-		$this->assertFalse($result);
-		$result = $this->Time->wasYesterday('-1 day');
-		$this->assertTrue($result);
-		$result = $this->Time->wasYesterday('-1 days');
-		$this->assertTrue($result);
-		$result = $this->Time->wasYesterday('-2 days');
-		$this->assertFalse($result);
-	}
-
-/**
  * testIsTomorrow method
  *
  * @return void
