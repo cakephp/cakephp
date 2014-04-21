@@ -75,8 +75,8 @@ class Time extends Carbon {
 	public static $wordFormat = 'd/M/YY';
 
 /**
- * The format to use when formatting a time using `Cake\Utility\Time::timeAgoInWords()`
- * and the difference is less than `Cake\Utility\Time::$wordEnd`
+ * The format to use when formatting a time using `Time::timeAgoInWords()`
+ * and the difference is less than `Time::$wordEnd`
  *
  * @var array
  * @see \Cake\Utility\Time::timeAgoInWords()
@@ -99,6 +99,10 @@ class Time extends Carbon {
  */
 	public static $wordEnd = '+1 month';
 
+/**
+ * {@inheritdoc}
+ *
+ */
 	public function __construct($time = null, $tz = null) {
 		if ($time instanceof \DateTime) {
 			list($time, $tz) = [$dt->format('Y-m-d H:i:s'), $dt->getTimeZone()];
@@ -221,7 +225,6 @@ class Time extends Carbon {
  *
  * @param array $options Array of options.
  * @return string Relative time string.
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::timeAgoInWords
  */
 	public function timeAgoInWords(array $options = []) {
 		$timezone = null;
