@@ -414,19 +414,15 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function testIsThisWeek() {
-		// A map of days which goes from -1 day of week to +1 day of week
-		$map = array(
-			'Mon' => array(-1, 7), 'Tue' => array(-2, 6), 'Wed' => array(-3, 5),
-			'Thu' => array(-4, 4), 'Fri' => array(-5, 3), 'Sat' => array(-6, 2),
-			'Sun' => array(-7, 1)
-		);
-		$days = $map[date('D')];
+		$time = new Time('this sunday');
+		$this->assertTrue($time->isThisWeek());
 
-		for ($day = $days[0] + 1; $day < $days[1]; $day++) {
-			$this->assertTrue($this->Time->isThisWeek(($day > 0 ? '+' : '') . $day . ' days'));
-		}
-		$this->assertFalse($this->Time->isThisWeek($days[0] . ' days'));
-		$this->assertFalse($this->Time->isThisWeek('+' . $days[1] . ' days'));
+		$this->assertTrue($time->modify('-1 day')->isThisWeek());
+		$this->assertFalse($time->modify('-6 days')->isThisWeek());
+
+		$time = new Time();
+		$time->year = $time->year - 1;
+		$this->assertFalse($time->isThisWeek());
 	}
 
 /**
