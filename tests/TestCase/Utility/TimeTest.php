@@ -460,22 +460,6 @@ class TimeTest extends TestCase {
 	}
 
 /**
- * testIsTomorrow method
- *
- * @return void
- */
-	public function testIsTomorrow() {
-		$result = $this->Time->isTomorrow('+1 day');
-		$this->assertTrue($result);
-		$result = $this->Time->isTomorrow('+1 days');
-		$this->assertTrue($result);
-		$result = $this->Time->isTomorrow('+0 day');
-		$this->assertFalse($result);
-		$result = $this->Time->isTomorrow('-1 day');
-		$this->assertFalse($result);
-	}
-
-/**
  * testWasWithinLast method
  *
  * @return void
