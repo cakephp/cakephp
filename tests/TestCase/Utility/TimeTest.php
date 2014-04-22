@@ -577,7 +577,7 @@ class TimeTest extends TestCase {
 	public function assertTimeFormat($expected, $result) {
 		return $this->assertEquals(
 			str_replace([',', '(', ')', ' at'], '', $expected),
-			str_replace([',', '(', ')', ' at'], '',$result)
+			str_replace([',', '(', ')', ' at'], '', $result)
 		);
 	}
 

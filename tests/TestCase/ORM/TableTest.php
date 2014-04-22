@@ -21,8 +21,8 @@ use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Cake\Validation\Validator;
 use Cake\Utility\Time;
+use Cake\Validation\Validator;
 
 /**
  * Used to test correct class is instantiated when using TableRegistry::get();
