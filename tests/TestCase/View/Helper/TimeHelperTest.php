@@ -425,14 +425,27 @@ class TimeHelperTest extends TestCase {
 
 		$result = $this->Time->format($time);
 		$expected = '1/14/10, 1:59 PM';
-		$this->assertEquals($expected, $result);
+		$this->assertTimeFormat($expected, $result);
 
 		$result = $this->Time->format($time, \IntlDateFormatter::FULL);
 		$expected = 'Thursday, January 14, 2010 at 1:59:28 PM GMT';
+		$this->assertTimeFormat($expected, $result);
 
 		$result = $this->Time->format('invalid date', null, 'Date invalid');
 		$expected = 'Date invalid';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Cusotm assert to allow for variation in the version of the intl library, where
+ * some translations contain a few extra commas.
+ *
+ * @param string $expected
+ * @param string $result
+ * @return void
+ */
+	public function assertTimeFormat($expected, $result) {
+		return $this->assertEquals(str_replace(',', '', $expected), str_replace(',', '',$result));
 	}
 
 }
