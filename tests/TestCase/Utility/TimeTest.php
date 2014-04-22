@@ -544,8 +544,6 @@ class TimeTest extends TestCase {
  */
 	public function testToString() {
 		$time = new Time('2014-04-20 22:10');
-		$this->assertTimeFormat('4/20/14, 10:10 PM', (string)$time);
-
 		Time::$defaultLocale = 'fr-FR';
 		$this->assertTimeFormat('20/04/2014 22:10', (string)$time);
 
@@ -579,7 +577,10 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function assertTimeFormat($expected, $result) {
-		return $this->assertEquals(str_replace(',', '', $expected), str_replace(',', '',$result));
+		return $this->assertEquals(
+			str_replace([',', '(', ')', ' at ', '  '], '', $expected),
+			str_replace([',', '(', ')', ' at ', '  '], '',$result)
+		);
 	}
 
 }

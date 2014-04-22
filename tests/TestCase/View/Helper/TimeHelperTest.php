@@ -115,10 +115,10 @@ class TimeHelperTest extends TestCase {
  */
 	public function testNice() {
 		$time = '2014-04-20 20:00';
-		$this->assertEquals('Apr 20, 2014, 8:00 PM', $this->Time->nice($time));
+		$this->assertTimeFormat('Apr 20, 2014, 8:00 PM', $this->Time->nice($time));
 
 		$result = $this->Time->nice($time, 'America/New_York');
-		$this->assertEquals('Apr 20, 2014, 4:00 PM', $result);
+		$this->assertTimeFormat('Apr 20, 2014, 4:00 PM', $result);
 	}
 
 /**
@@ -127,10 +127,7 @@ class TimeHelperTest extends TestCase {
  * @return void
  */
 	public function testToUnix() {
-		$this->assertEquals(time(), $this->Time->toUnix(time()));
-		$this->assertEquals(strtotime('+1 day'), $this->Time->toUnix('+1 day'));
-		$this->assertEquals(strtotime('+0 days'), $this->Time->toUnix('+0 days'));
-		$this->assertEquals(strtotime('-1 days'), $this->Time->toUnix('-1 days'));
+		$this->assertEquals(1397980800, $this->Time->toUnix('2014-04-20 08:00:00'));
 	}
 
 /**
@@ -168,24 +165,7 @@ class TimeHelperTest extends TestCase {
  * @return void
  */
 	public function testGmt() {
-		$hour = 3;
-		$min = 4;
-		$sec = 2;
-		$month = 5;
-		$day = 14;
-		$year = 2007;
-		$time = mktime($hour, $min, $sec, $month, $day, $year);
-		$expected = gmmktime($hour, $min, $sec, $month, $day, $year);
-		$this->assertEquals($expected, $this->Time->gmt(date('Y-n-j G:i:s', $time)));
-
-		$hour = date('H');
-		$min = date('i');
-		$sec = date('s');
-		$month = date('m');
-		$day = date('d');
-		$year = date('Y');
-		$expected = gmmktime($hour, $min, $sec, $month, $day, $year);
-		$this->assertEquals($expected, $this->Time->gmt(null));
+		$this->assertEquals(1397980800, $this->Time->gmt('2014-04-20 08:00:00'));
 	}
 
 /**
@@ -406,13 +386,10 @@ class TimeHelperTest extends TestCase {
 		$this->assertFalse($this->Time->isWithinNext('3 years', '-2 months'));
 		$this->assertFalse($this->Time->isWithinNext('5 months', '-4 months'));
 
-		$this->assertFalse($this->Time->isWithinNext('5 ', '-3 days'));
-		$this->assertFalse($this->Time->isWithinNext('1   ', '-1 hour'));
-		$this->assertFalse($this->Time->isWithinNext('1   ', '-1 minute'));
-		$this->assertFalse($this->Time->isWithinNext('1   ', '-23 hours -59 minutes -59 seconds'));
-
-		$this->assertTrue($this->Time->isWithinNext('7 days', '6 days, 23 hours, 59 minutes, 59 seconds'));
-		$this->assertFalse($this->Time->isWithinNext('7 days', '6 days, 23 hours, 59 minutes, 61 seconds'));
+		$this->assertTrue($this->Time->isWithinNext('1 day', '+1 day'));
+		$this->assertTrue($this->Time->isWithinNext('7 day', '+1 week'));
+		$this->assertTrue($this->Time->isWithinNext('1 minute', '+1 second'));
+		$this->assertTrue($this->Time->isWithinNext('1 month', '+1 month'));
 	}
 
 /**
@@ -445,7 +422,10 @@ class TimeHelperTest extends TestCase {
  * @return void
  */
 	public function assertTimeFormat($expected, $result) {
-		return $this->assertEquals(str_replace(',', '', $expected), str_replace(',', '',$result));
+		return $this->assertEquals(
+			str_replace([',', '(', ')', ' at ', '  '], '', $expected),
+			str_replace([',', '(', ')', ' at ', '  '], '',$result)
+		);
 	}
 
 }
