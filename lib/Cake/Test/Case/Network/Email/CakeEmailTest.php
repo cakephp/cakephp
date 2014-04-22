@@ -1783,6 +1783,7 @@ class CakeEmailTest extends CakeTestCase {
 			'to' => 'test@example.com',
 			'subject' => 'Test mail subject',
 			'transport' => 'Debug',
+			'layout' => 'test_layout',
 		);
 		$this->CakeEmail = new CakeEmail($configs);
 
@@ -1805,6 +1806,10 @@ class CakeEmailTest extends CakeTestCase {
 
 		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
 		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
+
+		$result = $this->CakeEmail->template();
+		$this->assertEquals($configs['layout'], $result['layout']);
+		$this->assertEquals('', $result['template']);
 	}
 
 /**
