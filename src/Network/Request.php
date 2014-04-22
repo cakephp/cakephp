@@ -1,7 +1,5 @@
 <?php
 /**
- * Request
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -386,7 +384,7 @@ class Request implements \ArrayAccess {
  * @return array merged post + file data.
  */
 	protected function _processFiles($post, $files) {
-		if (isset($files) && is_array($files)) {
+		if (is_array($files)) {
 			foreach ($files as $key => $data) {
 				if (!is_numeric($key)) {
 					$this->_processFileData($post, '', $data, $key);
@@ -417,7 +415,11 @@ class Request implements \ArrayAccess {
 			if (is_array($fields)) {
 				$this->_processFileData($post, $newPath, $fields, $field);
 			} else {
-				$newPath .= '.' . $field;
+				if (strpos($newPath, '.') === false) {
+					$newPath = $field . '.' . $key;
+				} else {
+					$newPath .= '.' . $field;
+				}
 				$post = Hash::insert($post, $newPath, $fields);
 			}
 		}
