@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -524,31 +525,105 @@ class ShellTest extends TestCase {
  */
 	public function testRunCommandMain() {
 		$io = $this->getMock('Cake\Console\ConsoleIo');
-		$Mock = $this->getMock('Cake\Console\Shell', ['main', 'startup'], [$io]);
+		$shell = $this->getMock('Cake\Console\Shell', ['main', 'startup'], [$io]);
 
-		$Mock->expects($this->once())->method('startup');
-		$Mock->expects($this->once())->method('main')
+		$shell->expects($this->once())->method('startup');
+		$shell->expects($this->once())->method('main')
 			->with('cakes')
 			->will($this->returnValue(true));
-		$result = $Mock->runCommand(null, ['cakes', '--verbose']);
+		$result = $shell->runCommand('cakes', ['cakes', '--verbose']);
 		$this->assertTrue($result);
 	}
 
 /**
- * test run command calling a legit method.
+ * test run command calling a real method with no subcommands defined.
  *
  * @return void
  */
 	public function testRunCommandWithMethod() {
 		$io = $this->getMock('Cake\Console\ConsoleIo');
-		$Mock = $this->getMock('Cake\Console\Shell', ['hit_me', 'startup'], [$io]);
+		$shell = $this->getMock('Cake\Console\Shell', ['hit_me', 'startup'], [$io]);
 
-		$Mock->expects($this->once())->method('startup');
-		$Mock->expects($this->once())->method('hit_me')
+		$shell->expects($this->once())->method('startup');
+		$shell->expects($this->once())->method('hit_me')
 			->with('cakes')
 			->will($this->returnValue(true));
-		$result = $Mock->runCommand('hit_me', ['hit_me', 'cakes', '--verbose']);
+		$result = $shell->runCommand('hit_me', ['hit_me', 'cakes', '--verbose']);
 		$this->assertTrue($result);
+	}
+
+/**
+ * test run command calling a real method with mismatching subcommands defined.
+ *
+ * @return void
+ */
+	public function testRunCommandWithMethodNotInSubcommands() {
+		$parser = $this->getMock('Cake\Console\ConsoleOptionParser', ['help'], ['knife']);
+		$io = $this->getMock('Cake\Console\ConsoleIo');
+		$shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'roll', 'startup'], [$io]);
+
+		$parser->addSubCommand('slice');
+
+		$shell->expects($this->any())
+			->method('getOptionParser')
+			->will($this->returnValue($parser));
+
+		$parser->expects($this->once())
+			->method('help');
+
+		$shell->expects($this->never())->method('startup');
+		$shell->expects($this->never())->method('roll');
+
+		$result = $shell->runCommand('roll', ['roll', 'cakes', '--verbose']);
+		$this->assertFalse($result);
+	}
+
+/**
+ * test run command calling a real method with subcommands defined.
+ *
+ * @return void
+ */
+	public function testRunCommandWithMethodInSubcommands() {
+		$parser = $this->getMock('Cake\Console\ConsoleOptionParser', ['help'], ['knife']);
+		$io = $this->getMock('Cake\Console\ConsoleIo');
+		$shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'slice', 'startup'], [$io]);
+
+		$parser->addSubCommand('slice');
+
+		$shell->expects($this->any())
+			->method('getOptionParser')
+			->will($this->returnValue($parser));
+
+		$shell->expects($this->once())->method('startup');
+		$shell->expects($this->once())
+			->method('slice')
+			->with('cakes');
+
+		$shell->runCommand('slice', ['slice', 'cakes', '--verbose']);
+	}
+
+/**
+ * test run command calling a missing method with subcommands defined.
+ *
+ * @return void
+ */
+	public function testRunCommandWithMissingMethodInSubcommands() {
+		$parser = $this->getMock('Cake\Console\ConsoleOptionParser', ['help'], ['knife']);
+		$parser->addSubCommand('slice');
+
+		$io = $this->getMock('Cake\Console\ConsoleIo');
+		$shell = $this->getMock('Cake\Console\Shell', ['getOptionParser', 'startup'], [$io]);
+		$shell->expects($this->any())
+			->method('getOptionParser')
+			->will($this->returnValue($parser));
+
+		$shell->expects($this->never())
+			->method('startup');
+
+		$parser->expects($this->once())
+			->method('help');
+
+		$shell->runCommand('slice', ['slice', 'cakes', '--verbose']);
 	}
 
 /**
@@ -557,16 +632,16 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testRunCommandBaseclassMethod() {
-		$Mock = $this->getMock('Cake\Console\Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
-		$Parser = $this->getMock('Cake\Console\ConsoleOptionParser', array(), array(), '', false);
+		$shell = $this->getMock('Cake\Console\Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
+		$parser = $this->getMock('Cake\Console\ConsoleOptionParser', array(), array(), '', false);
 
-		$Parser->expects($this->once())->method('help');
-		$Mock->expects($this->once())->method('getOptionParser')
-			->will($this->returnValue($Parser));
-		$Mock->expects($this->never())->method('hr');
-		$Mock->expects($this->once())->method('out');
+		$parser->expects($this->once())->method('help');
+		$shell->expects($this->once())->method('getOptionParser')
+			->will($this->returnValue($parser));
+		$shell->expects($this->never())->method('hr');
+		$shell->expects($this->once())->method('out');
 
-		$Mock->runCommand('hr', array());
+		$shell->runCommand('hr', array());
 	}
 
 /**
@@ -575,16 +650,15 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testRunCommandMissingMethod() {
-		$Mock = $this->getMock('Cake\Console\Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
-		$Parser = $this->getMock('Cake\Console\ConsoleOptionParser', array(), array(), '', false);
+		$shell = $this->getMock('Cake\Console\Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
+		$parser = $this->getMock('Cake\Console\ConsoleOptionParser', array(), array(), '', false);
 
-		$Parser->expects($this->once())->method('help');
-		$Mock->expects($this->never())->method('idontexist');
-		$Mock->expects($this->once())->method('getOptionParser')
-			->will($this->returnValue($Parser));
-		$Mock->expects($this->once())->method('out');
+		$parser->expects($this->once())->method('help');
+		$shell->expects($this->once())->method('getOptionParser')
+			->will($this->returnValue($parser));
+		$shell->expects($this->once())->method('out');
 
-		$result = $Mock->runCommand('idontexist', array());
+		$result = $shell->runCommand('idontexist', array());
 		$this->assertFalse($result);
 	}
 
@@ -609,25 +683,53 @@ class ShellTest extends TestCase {
 	}
 
 /**
+ * test that runCommand will not call runCommand on tasks that are not subcommands.
+ *
+ * @return void
+ */
+	public function testRunCommandNotCallUnexposedTask() {
+		$shell = $this->getMock('Cake\Console\Shell', ['startup', 'hasTask', 'out'], [], '', false);
+		$task = $this->getMock('Cake\Console\Shell', ['runCommand'], [], '', false);
+
+		$task->expects($this->never())
+			->method('runCommand');
+
+		$shell->expects($this->any())
+			->method('hasTask')
+			->will($this->returnValue(true));
+		$shell->expects($this->never())->method('startup');
+		$shell->expects($this->once())->method('out');
+		$shell->RunCommand = $task;
+
+		$result = $shell->runCommand('run_command', ['run_command', 'one']);
+		$this->assertFalse($result);
+	}
+
+/**
  * test that runCommand will call runCommand on the task.
  *
  * @return void
  */
-	public function testRunCommandHittingTask() {
-		$Shell = $this->getMock('Cake\Console\Shell', ['hasTask', 'startup'], [], '', false);
+	public function testRunCommandHittingTaskInSubcommand() {
+		$parser = new ConsoleOptionParser('knife');
+		$parser->addSubcommand('slice');
+
+		$shell = $this->getMock('Cake\Console\Shell', ['hasTask', 'startup', 'getOptionParser'], [], '', false);
 		$task = $this->getMock('Cake\Console\Shell', ['execute', 'runCommand'], [], '', false);
 		$task->expects($this->any())
 			->method('runCommand')
-			->with('execute', ['one', 'value']);
+			->with('execute', ['one']);
 
-		$Shell->expects($this->once())->method('startup');
-		$Shell->expects($this->any())
+		$shell->expects($this->once())->method('getOptionParser')
+			->will($this->returnValue($parser));
+
+		$shell->expects($this->once())->method('startup');
+		$shell->expects($this->any())
 			->method('hasTask')
 			->will($this->returnValue(true));
 
-		$Shell->RunCommand = $task;
-
-		$Shell->runCommand('run_command', ['run_command', 'one', 'value']);
+		$shell->Slice = $task;
+		$shell->runCommand('slice', ['slice', 'one']);
 	}
 
 /**

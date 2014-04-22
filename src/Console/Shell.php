@@ -328,6 +328,10 @@ class Shell {
  * If a shell implements a `main()` method, all missing method calls will be sent to
  * `main()` with the original method name in the argv.
  *
+ * For tasks to be invoked they *must* be exposed as subcommands. If you define any subcommands,
+ * you must define all the subcommands your shell needs, whether they be methods on this class
+ * or methods on tasks.
+ *
  * @param string $command The command name to run on this shell. If this argument is empty,
  *   and the shell has a `main()` method, that will be called instead.
  * @param array $argv Array of arguments to run the shell with. This array should be missing the shell name.
@@ -335,13 +339,6 @@ class Shell {
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::runCommand
  */
 	public function runCommand($command, $argv) {
-		$isTask = $this->hasTask($command);
-		$isMethod = $this->hasMethod($command);
-		$isMain = $this->hasMethod('main');
-
-		if ($isTask || $isMethod && $command !== 'execute') {
-			array_shift($argv);
-		}
 
 		$this->OptionParser = $this->getOptionParser();
 		try {
@@ -366,20 +363,36 @@ class Shell {
 			return $this->_displayHelp($command);
 		}
 
-		if (($isTask || $isMethod || $isMain) && $command !== 'execute') {
+		$subcommands = $this->OptionParser->subcommands();
+
+		// Method when there are no subcommands.
+		$isMethod = $this->hasMethod($command);
+		if ($isMethod && count($subcommands) === 0) {
+			array_shift($this->args);
 			$this->startup();
+			return call_user_func_array([$this, $command], $this->args);
 		}
 
-		if ($isTask) {
+		// Method when there is a subcommand
+		if ($isMethod && isset($subcommands[$command])) {
+			array_shift($this->args);
+			$this->startup();
+			return call_user_func_array([$this, $command], $this->args);
+		}
+
+		// Exposed task.
+		if ($this->hasTask($command) && isset($subcommands[$command])) {
+			array_shift($argv);
+			$this->startup();
 			$command = Inflector::camelize($command);
 			return $this->{$command}->runCommand('execute', $argv);
 		}
-		if ($isMethod) {
-			return call_user_func_array([$this, $command], $this->args);
-		}
-		if ($isMain) {
+
+		if ($this->hasMethod('main')) {
+			$this->startup();
 			return call_user_func_array([$this, 'main'], $this->args);
 		}
+
 		$this->out($this->OptionParser->help($command));
 		return false;
 	}
