@@ -34,6 +34,7 @@ class TimeTest extends TestCase {
 		parent::setUp();
 		$this->now = Time::getTestNow();
 		$this->locale = Time::$defaultLocale;
+		Time::$defaultLocale = 'en-GB';
 	}
 
 /**
@@ -349,10 +350,10 @@ class TimeTest extends TestCase {
  */
 	public function testNice() {
 		$time = new Time('2014-04-20 20:00', 'UTC');
-		$this->assertEquals('Apr 20, 2014, 8:00 PM', $time->nice());
+		$this->assertEquals('20 Apr 2014 20:00', $time->nice());
 
 		$result = $time->nice('America/New_York');
-		$this->assertEquals('Apr 20, 2014, 4:00 PM', $result);
+		$this->assertEquals('20 Apr 2014 16:00', $result);
 		$this->assertEquals('UTC', $time->getTimezone()->getName());
 
 		$this->assertEquals('20 avr. 2014 20:00', $time->nice(null, 'fr-FR'));
@@ -479,7 +480,7 @@ class TimeTest extends TestCase {
 	public function testI18nFormat() {
 		$time = new Time('Thu Jan 14 13:59:28 2010');
 		$result = $time->i18nFormat();
-		$expected = '1/14/10, 1:59 PM';
+		$expected = '14/01/2010 13:59';
 		$this->assertEquals($expected, $result);
 
 		$result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
@@ -488,7 +489,7 @@ class TimeTest extends TestCase {
 
 		$format = [\IntlDateFormatter::NONE, \IntlDateFormatter::SHORT];
 		$result = $time->i18nFormat($format);
-		$expected = '1:59 PM';
+		$expected = '13:59';
 		$this->assertEquals($expected, $result);
 
 		$result = $time->i18nFormat('HH:mm:ss', 'Australia/Sydney');
@@ -544,7 +545,7 @@ class TimeTest extends TestCase {
  */
 	public function testToString() {
 		$time = new Time('2014-04-20 22:10');
-		$this->assertEquals('4/20/14, 10:10 PM', (string)$time);
+		$this->assertEquals('20/04/2014 22:10', (string)$time);
 
 		Time::$defaultLocale = 'fr-FR';
 		$this->assertEquals('20/04/2014 22:10', (string)$time);
