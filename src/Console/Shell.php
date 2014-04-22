@@ -338,11 +338,11 @@ class Shell {
  * @return void
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::runCommand
  */
-	public function runCommand($command, $argv) {
-
+	public function runCommand($argv) {
+		$command = isset($argv[0]) ? $argv[0] : null;
 		$this->OptionParser = $this->getOptionParser();
 		try {
-			list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
+			list($this->params, $this->args) = $this->OptionParser->parse($argv);
 		} catch (Error\ConsoleException $e) {
 			$this->err('<error>Error: ' . $e->getMessage() . '</error>');
 			$this->out($this->OptionParser->help($command));
@@ -367,21 +367,22 @@ class Shell {
 		$subcommands = $this->OptionParser->subcommands();
 		$isMethod = $this->hasMethod($command);
 
-		if (
-			$isMethod &&
-			(count($subcommands) === 0 || isset($subcommands[$command]))
-		) {
+		if ($isMethod && count($subcommands) === 0) {
 			array_shift($this->args);
 			$this->startup();
 			return call_user_func_array([$this, $command], $this->args);
 		}
 
+		if ($isMethod && isset($subcommands[$command])) {
+			$this->startup();
+			return call_user_func_array([$this, $command], $this->args);
+		}
+
 		if ($this->hasTask($command) && isset($subcommands[$command])) {
-			array_shift($argv);
 			$this->startup();
 			$command = Inflector::camelize($command);
-			// TODO this is suspicious.
-			return $this->{$command}->runCommand('execute', $argv);
+			$argv[0] = 'execute';
+			return $this->{$command}->runCommand($argv);
 		}
 
 		if ($this->hasMethod('main')) {

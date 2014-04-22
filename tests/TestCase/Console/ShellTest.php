@@ -531,7 +531,7 @@ class ShellTest extends TestCase {
 		$shell->expects($this->once())->method('main')
 			->with('cakes')
 			->will($this->returnValue(true));
-		$result = $shell->runCommand('cakes', ['cakes', '--verbose']);
+		$result = $shell->runCommand(['cakes', '--verbose']);
 		$this->assertTrue($result);
 	}
 
@@ -548,7 +548,7 @@ class ShellTest extends TestCase {
 		$shell->expects($this->once())->method('hit_me')
 			->with('cakes')
 			->will($this->returnValue(true));
-		$result = $shell->runCommand('hit_me', ['hit_me', 'cakes', '--verbose']);
+		$result = $shell->runCommand(['hit_me', 'cakes', '--verbose']);
 		$this->assertTrue($result);
 	}
 
@@ -574,7 +574,7 @@ class ShellTest extends TestCase {
 		$shell->expects($this->never())->method('startup');
 		$shell->expects($this->never())->method('roll');
 
-		$result = $shell->runCommand('roll', ['roll', 'cakes', '--verbose']);
+		$result = $shell->runCommand(['roll', 'cakes', '--verbose']);
 		$this->assertFalse($result);
 	}
 
@@ -599,7 +599,7 @@ class ShellTest extends TestCase {
 			->method('slice')
 			->with('cakes');
 
-		$shell->runCommand('slice', ['slice', 'cakes', '--verbose']);
+		$shell->runCommand(['slice', 'cakes', '--verbose']);
 	}
 
 /**
@@ -623,7 +623,7 @@ class ShellTest extends TestCase {
 		$parser->expects($this->once())
 			->method('help');
 
-		$shell->runCommand('slice', ['slice', 'cakes', '--verbose']);
+		$shell->runCommand(['slice', 'cakes', '--verbose']);
 	}
 
 /**
@@ -641,7 +641,7 @@ class ShellTest extends TestCase {
 		$shell->expects($this->never())->method('hr');
 		$shell->expects($this->once())->method('out');
 
-		$shell->runCommand('hr', array());
+		$shell->runCommand(['hr']);
 	}
 
 /**
@@ -658,7 +658,7 @@ class ShellTest extends TestCase {
 			->will($this->returnValue($parser));
 		$shell->expects($this->once())->method('out');
 
-		$result = $shell->runCommand('idontexist', array());
+		$result = $shell->runCommand(['idontexist']);
 		$this->assertFalse($result);
 	}
 
@@ -679,7 +679,7 @@ class ShellTest extends TestCase {
 			->will($this->returnValue($Parser));
 		$Shell->expects($this->once())->method('out');
 
-		$Shell->runCommand(null, array('--help'));
+		$Shell->runCommand(['--help']);
 	}
 
 /**
@@ -701,7 +701,7 @@ class ShellTest extends TestCase {
 		$shell->expects($this->once())->method('out');
 		$shell->RunCommand = $task;
 
-		$result = $shell->runCommand('run_command', ['run_command', 'one']);
+		$result = $shell->runCommand(['run_command', 'one']);
 		$this->assertFalse($result);
 	}
 
@@ -718,7 +718,7 @@ class ShellTest extends TestCase {
 		$task = $this->getMock('Cake\Console\Shell', ['execute', 'runCommand'], [], '', false);
 		$task->expects($this->any())
 			->method('runCommand')
-			->with('execute', ['one']);
+			->with(['execute', 'one']);
 
 		$shell->expects($this->once())->method('getOptionParser')
 			->will($this->returnValue($parser));
@@ -729,7 +729,7 @@ class ShellTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$shell->Slice = $task;
-		$shell->runCommand('slice', ['slice', 'one']);
+		$shell->runCommand(['slice', 'one']);
 	}
 
 /**
@@ -799,7 +799,7 @@ TEXT;
 			->with(false);
 
 		$this->Shell = $this->getMock(__NAMESPACE__ . '\ShellTestShell', array('_useLogger'), array($io));
-		$this->Shell->runCommand('foo', array('--quiet'));
+		$this->Shell->runCommand(['foo', '--quiet']);
 	}
 
 }

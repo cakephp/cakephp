@@ -107,8 +107,6 @@ class CompletionShell extends Shell {
 			'help' => __d('cake_console', 'Output a list of available commands'),
 			'parser' => [
 				'description' => __d('cake_console', 'List all availables'),
-				'arguments' => [
-				]
 			]
 		])->addSubcommand('subcommands', [
 			'help' => __d('cake_console', 'Output a list of available subcommands'),
@@ -117,7 +115,7 @@ class CompletionShell extends Shell {
 				'arguments' => [
 					'command' => [
 						'help' => __d('cake_console', 'The command name'),
-						'required' => true,
+						'required' => false,
 					]
 				]
 			]

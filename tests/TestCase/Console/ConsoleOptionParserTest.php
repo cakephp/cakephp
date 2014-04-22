@@ -633,7 +633,7 @@ TEXT;
 				)
 			));
 
-		$result = $parser->parse(array('--secondary', '--fourth', '4', 'c'), 'sub');
+		$result = $parser->parse(array('sub', '--secondary', '--fourth', '4', 'c'));
 		$expected = array(array(
 			'secondary' => true,
 			'fourth' => '4',

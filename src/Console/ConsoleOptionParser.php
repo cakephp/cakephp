@@ -463,9 +463,12 @@ class ConsoleOptionParser {
  * @return Array [$params, $args]
  * @throws \Cake\Console\Error\ConsoleException When an invalid parameter is encountered.
  */
-	public function parse($argv, $command = null) {
-		if (isset($this->_subcommands[$command]) && $this->_subcommands[$command]->parser()) {
+	public function parse($argv) {
+		$command = isset($argv[0]) ? $argv[0] : null;
+		if (isset($this->_subcommands[$command])) {
 			array_shift($argv);
+		}
+		if (isset($this->_subcommands[$command]) && $this->_subcommands[$command]->parser()) {
 			return $this->_subcommands[$command]->parser()->parse($argv);
 		}
 		$params = $args = [];
