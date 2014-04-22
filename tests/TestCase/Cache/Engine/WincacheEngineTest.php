@@ -1,7 +1,5 @@
 <?php
 /**
- * WincacheEngineTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -34,6 +32,7 @@ class WincacheEngineTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->skipIf(!function_exists('wincache_ucache_set'), 'Wincache is not installed or configured properly.');
+		$this->skipIf(!ini_get('wincache.enablecli'), 'Wincache is not enabled on the CLI.');
 		Cache::enable();
 		$this->_configCache();
 	}

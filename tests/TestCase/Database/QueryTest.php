@@ -1374,7 +1374,9 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query->select('id')->from('comments')
 			->limit(1)
-			->offset(0)->execute();
+			->offset(0)
+			->order(['id' => 'ASC'])
+			->execute();
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 
@@ -1396,9 +1398,10 @@ class QueryTest extends TestCase {
 
 		$query = new Query($this->connection);
 		$result = $query->select('id')->from('articles')
-			->order(['id' => 'desc'])
+			->order(['id' => 'DESC'])
 			->limit(1)
-			->offset(0)->execute();
+			->offset(0)
+			->execute();
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 

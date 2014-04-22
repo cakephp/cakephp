@@ -16,8 +16,12 @@ namespace Cake\Database\Dialect;
 
 use Cake\Database\Dialect\TupleComparisonTranslatorTrait;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Expression\UnaryExpression;
+use Cake\Database\Query;
 use Cake\Database\SqlDialectTrait;
 use Cake\Database\SqlserverCompiler;
+use PDO;
 
 /**
  * Contains functions that encapsulates the SQL dialect used by SQLServer,
@@ -60,7 +64,65 @@ trait SqlserverDialectTrait {
 			$query->order($query->newExpr()->add('SELECT NULL'));
 		}
 
+		if ($this->_version() < 11 && $offset !== null) {
+			return $this->_pagingSubquery($query, $limit, $offset);
+		}
+
 		return $query;
+	}
+
+/**
+ * Get the version of SQLserver we are connected to.
+ *
+ * @return int
+ */
+	public function _version() {
+		return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+	}
+
+/**
+ * Generate a paging subquery for older versions of SQLserver.
+ *
+ * Prior to SQLServer 2012 there was no equivalent to LIMIT OFFSET, so a subquery must
+ * be used.
+ *
+ * @param \Cake\Database\Query $query The query to wrap in a subquery.
+ * @param int $limit The number of rows to fetch.
+ * @param int $offset The number of rows to offset.
+ * @return \Cake\Database\Query Modified query object.
+ */
+	protected function _pagingSubquery($original, $limit, $offset) {
+		$field = '_cake_paging_._cake_page_rownum_';
+
+		$query = clone $original;
+		$order = $query->clause('order') ?: new OrderByExpression('NULL');
+		$query->select([
+				'_cake_page_rownum_' => new UnaryExpression($order, [], 'ROW_NUMBER() OVER')
+			])->limit(null)
+			->offset(null)
+			->order([], true);
+
+		$outer = new Query($query->connection());
+		$outer->select('*')
+			->from(['_cake_paging_' => $query]);
+
+		if ($offset) {
+			$outer->where(["$field >" => $offset]);
+		}
+		if ($limit) {
+			$outer->where(["$field <=" => (int)$offset + (int)$limit]);
+		}
+
+		// Decorate the original query as that is what the
+		// end developer will be calling execute() on originally.
+		$original->decorateResults(function ($row) {
+			if (isset($row['_cake_page_rownum_'])) {
+				unset($row['_cake_page_rownum_']);
+			}
+			return $row;
+		});
+
+		return $outer;
 	}
 
 /**
