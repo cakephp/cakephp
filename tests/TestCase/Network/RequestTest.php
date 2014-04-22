@@ -1,7 +1,5 @@
 <?php
 /**
- * CakeRequest Test case file.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -490,25 +488,34 @@ class RequestTest extends TestCase {
 			)
 		);
 		$this->assertEquals($expected, $request->data);
+	}
 
-		$files = array(
-			'name' => array('birth_cert' => 'born on.txt'),
-			'type' => array('birth_cert' => 'application/octet-stream'),
-			'tmp_name' => array('birth_cert' => '/private/var/tmp/phpbsUWfH'),
-			'error' => array('birth_cert' => 0),
-			'size' => array('birth_cert' => 123)
-		);
+/**
+ * Test processing a file input with no .'s in it.
+ *
+ * @return void
+ */
+	public function testProcessFilesFlat() {
+		$files = [
+			'birth_cert' => [
+				'name' => 'born on.txt',
+				'type' => 'application/octet-stream',
+				'tmp_name' => '/private/var/tmp/phpbsUWfH',
+				'error' => 0,
+				'size' => 123,
+			]
+		];
 
 		$request = new Request(compact('files'));
-		$expected = array(
-			'birth_cert' => array(
+		$expected = [
+			'birth_cert' => [
 				'name' => 'born on.txt',
 				'type' => 'application/octet-stream',
 				'tmp_name' => '/private/var/tmp/phpbsUWfH',
 				'error' => 0,
 				'size' => 123
-			)
-		);
+			]
+		];
 		$this->assertEquals($expected, $request->data);
 	}
 
