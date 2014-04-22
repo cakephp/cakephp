@@ -95,7 +95,7 @@ class PaginatorHelper extends Helper {
 			$model = $this->defaultModel();
 		}
 		if (!isset($this->request->params['paging']) || empty($this->request->params['paging'][$model])) {
-			return null;
+			return [];
 		}
 		return $this->request->params['paging'][$model];
 	}
@@ -465,6 +465,9 @@ class PaginatorHelper extends Helper {
 			$model = null;
 		}
 		$paging = $this->params($model);
+		if ($paging === []) {
+			return false;
+		}
 		return $page <= $paging['pageCount'];
 	}
 
