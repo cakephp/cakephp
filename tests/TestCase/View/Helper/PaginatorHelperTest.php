@@ -150,6 +150,12 @@ class PaginatorHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Paginator->sort('title', null, ['model' => 'Nope']);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->sort('title', null, ['model' => 'Article']);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Paginator->sort('date');
 		$expected = array(
 			'a' => array('href' => '/accounts/index/param?sort=date&amp;direction=desc', 'class' => 'asc'),
@@ -1548,7 +1554,7 @@ class PaginatorHelperTest extends TestCase {
 			'pageCount' => 5,
 		);
 
-		$result = $this->Paginator->first('first', ['model' => 'Article:']);
+		$result = $this->Paginator->first('first', ['model' => 'Article']);
 		$this->assertEquals('', $result);
 
 		$result = $this->Paginator->first('first', ['model' => 'Client']);
@@ -1642,6 +1648,9 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->params();
 		$this->assertArrayHasKey('page', $result);
 		$this->assertArrayHasKey('pageCount', $result);
+
+		$result = $this->Paginator->params('Nope');
+		$this->assertEquals([], $result);
 	}
 
 /**
@@ -1766,7 +1775,7 @@ class PaginatorHelperTest extends TestCase {
 			'pageCount' => 5,
 		);
 
-		$result = $this->Paginator->last('last', ['model' => 'Article:']);
+		$result = $this->Paginator->last('last', ['model' => 'Article']);
 		$this->assertEquals('', $result);
 
 		$result = $this->Paginator->last('last', ['model' => 'Client']);
