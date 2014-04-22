@@ -170,8 +170,12 @@ class Marshaller {
  * @return array An array of built entities.
  */
 	protected function _belongsToMany(Association $assoc, array $data, $include = []) {
-		if (isset($data['_ids']) && is_array($data['_ids'])) {
+		$hasIds = isset($data['_ids']);
+		if ($hasIds && is_array($data['_ids'])) {
 			return $this->_loadBelongsToMany($assoc, $data['_ids']);
+		}
+		if ($hasIds) {
+			return [];
 		}
 
 		$records = $this->many($data, $include);
