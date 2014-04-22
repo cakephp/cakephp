@@ -238,7 +238,7 @@ class Time extends Carbon {
 
 		foreach ($opts as $option) {
 			if (isset($options[$option])) {
-				$$option = $options[$option];
+				${$option} = $options[$option];
 				unset($options[$option]);
 			}
 		}
