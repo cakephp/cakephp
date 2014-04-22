@@ -1224,15 +1224,14 @@ class CakeEmail {
 			$this->setHeaders($config['headers']);
 			unset($config['headers']);
 		}
+
 		if (array_key_exists('template', $config)) {
-			$layout = false;
-			if (array_key_exists('layout', $config)) {
-				$layout = $config['layout'];
-				unset($config['layout']);
-			}
-			$this->template($config['template'], $layout);
-			unset($config['template']);
+			$this->_template = $config['template'];
 		}
+		if (array_key_exists('layout', $config)) {
+			$this->_layout = $config['layout'];
+		}
+
 		$this->transportClass()->config($config);
 	}
 
