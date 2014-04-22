@@ -161,7 +161,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommandsCorePlugin() {
-		$this->Shell->runCommand('subCommands', array('subCommands', 'CORE.bake'));
+		$this->Shell->runCommand('subcommands', array('subcommands', 'CORE.bake'));
 		$output = $this->out->output;
 
 		$expected = "behavior component controller fixture helper model plugin project shell test view widget zerg\n";
@@ -174,7 +174,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommandsAppPlugin() {
-		$this->Shell->runCommand('subCommands', array('subCommands', 'app.sample'));
+		$this->Shell->runCommand('subcommands', array('subcommands', 'app.sample'));
 		$output = $this->out->output;
 
 		$expected = '';
@@ -187,7 +187,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommandsPlugin() {
-		$this->Shell->runCommand('subCommands', array('subCommands', 'TestPluginTwo.welcome'));
+		$this->Shell->runCommand('subcommands', array('subcommands', 'TestPluginTwo.welcome'));
 		$output = $this->out->output;
 
 		$expected = "say_hello\n";
@@ -200,7 +200,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommandsNoArguments() {
-		$this->Shell->runCommand('subCommands', array());
+		$this->Shell->runCommand('subcommands', array());
 		$output = $this->out->output;
 
 		$expected = '';
@@ -213,7 +213,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommandsNonExistingCommand() {
-		$this->Shell->runCommand('subCommands', array('subCommands', 'foo'));
+		$this->Shell->runCommand('subcommands', array('subcommands', 'foo'));
 		$output = $this->out->output;
 
 		$expected = '';
@@ -226,7 +226,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommands() {
-		$this->Shell->runCommand('subCommands', array('subCommands', 'bake'));
+		$this->Shell->runCommand('subcommands', array('subcommands', 'bake'));
 		$output = $this->out->output;
 
 		$expected = "behavior component controller fixture helper model plugin project shell test view widget zerg\n";

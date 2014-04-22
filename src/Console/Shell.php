@@ -344,6 +344,7 @@ class Shell {
 		try {
 			list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
 		} catch (Error\ConsoleException $e) {
+			$this->err('<error>Error: ' . $e->getMessage() . '</error>');
 			$this->out($this->OptionParser->help($command));
 			return false;
 		}
@@ -364,27 +365,22 @@ class Shell {
 		}
 
 		$subcommands = $this->OptionParser->subcommands();
-
-		// Method when there are no subcommands.
 		$isMethod = $this->hasMethod($command);
-		if ($isMethod && count($subcommands) === 0) {
+
+		if (
+			$isMethod &&
+			(count($subcommands) === 0 || isset($subcommands[$command]))
+		) {
 			array_shift($this->args);
 			$this->startup();
 			return call_user_func_array([$this, $command], $this->args);
 		}
 
-		// Method when there is a subcommand
-		if ($isMethod && isset($subcommands[$command])) {
-			array_shift($this->args);
-			$this->startup();
-			return call_user_func_array([$this, $command], $this->args);
-		}
-
-		// Exposed task.
 		if ($this->hasTask($command) && isset($subcommands[$command])) {
 			array_shift($argv);
 			$this->startup();
 			$command = Inflector::camelize($command);
+			// TODO this is suspicious.
 			return $this->{$command}->runCommand('execute', $argv);
 		}
 
