@@ -113,6 +113,7 @@ class BakeTask extends Shell {
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		])->addOption('connection', [
 			'short' => 'c',
+			'default' => 'default',
 			'help' => __d('cake_console', 'The datasource connection to get data from.')
 		])->addOption('theme', [
 			'short' => 't',

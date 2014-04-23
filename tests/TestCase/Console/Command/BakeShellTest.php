@@ -78,7 +78,7 @@ class BakeShellTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$this->Shell->View->expects($this->once())
-			->method('execute')
+			->method('main')
 			->with('Comments');
 
 		$this->Shell->expects($this->at(0))

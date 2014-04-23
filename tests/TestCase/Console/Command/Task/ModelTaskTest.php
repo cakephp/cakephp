@@ -732,7 +732,7 @@ class ModelTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteNoArgs() {
+	public function testMainNoArgs() {
 		$this->_useMockedOut();
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
@@ -741,7 +741,7 @@ class ModelTaskTest extends TestCase {
 			->method('out')
 			->with($this->stringContains('Choose a model to bake from the following:'));
 
-		$this->Task->execute();
+		$this->Task->main();
 	}
 
 /**
@@ -749,7 +749,7 @@ class ModelTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteWithNamedModel() {
+	public function testMainWithNamedModel() {
 		$this->Task->connection = 'test';
 
 		$tableFile = $this->_normalizePath(APP . 'Model/Table/BakeArticlesTable.php');
@@ -762,11 +762,11 @@ class ModelTaskTest extends TestCase {
 			->method('createFile')
 			->with($entityFile, $this->stringContains('class BakeArticle extends Entity'));
 
-		$this->Task->execute('BakeArticles');
+		$this->Task->main('BakeArticles');
 	}
 
 /**
- * data provider for testExecuteWithNamedModelVariations
+ * data provider for testMainWithNamedModelVariations
  *
  * @return void
  */
@@ -782,7 +782,7 @@ class ModelTaskTest extends TestCase {
  * @dataProvider nameVariations
  * @return void
  */
-	public function testExecuteWithNamedModelVariations($name) {
+	public function testMainWithNamedModelVariations($name) {
 		$this->Task->connection = 'test';
 
 		$filename = $this->_normalizePath(APP . 'Model/Table/BakeArticlesTable.php');
@@ -790,7 +790,7 @@ class ModelTaskTest extends TestCase {
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with($filename, $this->stringContains('class BakeArticlesTable extends Table {'));
-		$this->Task->execute($name);
+		$this->Task->main($name);
 	}
 
 /**
@@ -798,7 +798,7 @@ class ModelTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteIntoAll() {
+	public function testMainIntoAll() {
 		$count = count($this->Task->listAll());
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
@@ -861,7 +861,7 @@ class ModelTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename, $this->stringContains('class CategoryThread extends'));
 
-		$this->Task->execute('all');
+		$this->Task->all();
 	}
 
 /**
@@ -913,7 +913,7 @@ class ModelTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename);
 
-		$this->Task->execute('all');
+		$this->Task->all();
 	}
 
 }

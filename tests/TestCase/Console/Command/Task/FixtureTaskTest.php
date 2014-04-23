@@ -177,7 +177,7 @@ class FixtureTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteWithTableOption() {
+	public function testMainWithTableOption() {
 		$this->Task->connection = 'test';
 		$this->Task->params = ['table' => 'comments'];
 		$filename = $this->_normalizePath(ROOT . '/Test/Fixture/ArticleFixture.php');
@@ -186,7 +186,7 @@ class FixtureTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename, $this->stringContains("public \$table = 'comments';"));
 
-		$this->Task->execute('article');
+		$this->Task->main('article');
 	}
 
 /**
@@ -194,7 +194,7 @@ class FixtureTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteWithNamedModel() {
+	public function testMainWithNamedModel() {
 		$this->Task->connection = 'test';
 		$filename = $this->_normalizePath(ROOT . '/Test/Fixture/ArticleFixture.php');
 
@@ -202,7 +202,7 @@ class FixtureTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename, $this->stringContains('class ArticleFixture'));
 
-		$this->Task->execute('article');
+		$this->Task->main('article');
 	}
 
 /**
@@ -210,7 +210,7 @@ class FixtureTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteIntoAll() {
+	public function testMainIntoAll() {
 		$this->Task->connection = 'test';
 		$this->Task->Model->expects($this->any())
 			->method('listAll')
@@ -226,7 +226,7 @@ class FixtureTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename, $this->stringContains('class CommentFixture'));
 
-		$this->Task->execute('all');
+		$this->Task->all();
 	}
 
 /**
@@ -284,7 +284,7 @@ class FixtureTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteNoArgs() {
+	public function testMainNoArgs() {
 		$this->Task->connection = 'test';
 
 		$this->Task->Model->expects($this->any())
@@ -295,7 +295,7 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->expects($this->never())
 			->method('createFile');
 
-		$this->Task->execute();
+		$this->Task->main();
 	}
 
 /**

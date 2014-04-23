@@ -455,7 +455,7 @@ class ViewTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteNoArgs() {
+	public function testMainNoArgs() {
 		$this->_setupTask(['in', 'err', 'bake', 'createFile', '_stop']);
 
 		$this->Task->Model->expects($this->once())
@@ -465,21 +465,7 @@ class ViewTaskTest extends TestCase {
 		$this->Task->expects($this->never())
 			->method('bake');
 
-		$this->Task->execute();
-	}
-
-/**
- * Test all()
- *
- * @return void
- */
-	public function testExecuteIntoAll() {
-		$this->_setupTask(['in', 'err', 'createFile', 'all', '_stop']);
-
-		$this->Task->expects($this->once())
-			->method('all');
-
-		$this->Task->execute('all');
+		$this->Task->main();
 	}
 
 /**
@@ -487,20 +473,20 @@ class ViewTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testAllCallsExecute() {
-		$this->_setupTask(['in', 'err', 'createFile', 'execute', '_stop']);
+	public function testAllCallsMain() {
+		$this->_setupTask(['in', 'err', 'createFile', 'main', '_stop']);
 
 		$this->Task->Model->expects($this->once())
 			->method('listAll')
 			->will($this->returnValue(['comments', 'articles']));
 
 		$this->Task->expects($this->exactly(2))
-			->method('execute');
+			->method('main');
 		$this->Task->expects($this->at(0))
-			->method('execute')
+			->method('main')
 			->with('comments');
 		$this->Task->expects($this->at(1))
-			->method('execute')
+			->method('main')
 			->with('articles');
 
 		$this->Task->all();
@@ -511,14 +497,14 @@ class ViewTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteWithActionParam() {
+	public function testMainWithActionParam() {
 		$this->_setupTask(['in', 'err', 'createFile', 'bake', '_stop']);
 
 		$this->Task->expects($this->once())
 			->method('bake')
 			->with('view', true);
 
-		$this->Task->execute('ViewTaskComments', 'view');
+		$this->Task->main('ViewTaskComments', 'view');
 	}
 
 /**
@@ -527,7 +513,7 @@ class ViewTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteWithController() {
+	public function testMainWithController() {
 		$this->_setupTask(['in', 'err', 'createFile', 'bake', '_stop']);
 
 		$this->Task->expects($this->exactly(4))
@@ -549,7 +535,7 @@ class ViewTaskTest extends TestCase {
 			->method('bake')
 			->with('edit', $this->anything());
 
-		$this->Task->execute('ViewTaskComments');
+		$this->Task->main('ViewTaskComments');
 	}
 
 /**
@@ -566,7 +552,7 @@ class ViewTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteWithControllerFlag() {
+	public function testMainWithControllerFlag() {
 		$this->Task->params['controller'] = 'Blog';
 
 		$this->Task->expects($this->exactly(4))
@@ -580,7 +566,7 @@ class ViewTaskTest extends TestCase {
 					$this->anything()
 				);
 		}
-		$this->Task->execute('Posts');
+		$this->Task->main('Posts');
 	}
 
 /**
@@ -588,7 +574,7 @@ class ViewTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteWithControllerAndAdminFlag() {
+	public function testMainWithControllerAndAdminFlag() {
 		$this->Task->params['prefix'] = 'Admin';
 
 		$this->Task->expects($this->exactly(2))
@@ -602,7 +588,7 @@ class ViewTaskTest extends TestCase {
 					$this->anything()
 				);
 		}
-		$this->Task->execute('Posts');
+		$this->Task->main('Posts');
 	}
 
 /**
@@ -610,7 +596,7 @@ class ViewTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteWithAlternateTemplates() {
+	public function testMainWithAlternateTemplates() {
 		$this->_setupTask(['in', 'err', 'createFile', 'bake', '_stop']);
 
 		$this->Task->connection = 'test';
@@ -619,7 +605,7 @@ class ViewTaskTest extends TestCase {
 		$this->Task->expects($this->once())
 			->method('bake')
 			->with('list', true);
-		$this->Task->execute('ViewTaskComments', 'index', 'list');
+		$this->Task->main('ViewTaskComments', 'index', 'list');
 	}
 
 /**

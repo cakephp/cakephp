@@ -194,7 +194,6 @@ class BakeShell extends Shell {
 		$this->out('Bake All');
 		$this->hr();
 
-		$this->connection = 'default';
 		if (!empty($this->params['connection'])) {
 			$this->connection = $this->params['connection'];
 		}
@@ -218,7 +217,7 @@ class BakeShell extends Shell {
 		$this->Model->bake($name);
 		$this->Controller->bake($name);
 
-		$this->View->execute($name);
+		$this->View->main($name);
 
 		$this->out(__d('cake_console', '<success>Bake All complete</success>'), 1, Shell::QUIET);
 		return true;
