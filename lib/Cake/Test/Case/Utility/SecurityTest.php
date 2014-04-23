@@ -158,7 +158,7 @@ class SecurityTest extends CakeTestCase {
 		Security::setHash($hashType);
 
 		$this->assertSame(Security::$hashType, $hashType);
-		$this->assertSame(strlen(Security::hash($key, null, false)), 60);
+		$this->assertSame(60, strlen(Security::hash($key, null, false)));
 
 		$password = $submittedPassword = $key;
 		$storedPassword = Security::hash($password);
@@ -171,7 +171,7 @@ class SecurityTest extends CakeTestCase {
 		$this->assertNotSame($storedPassword, $hashedPassword);
 
 		$result = Security::hash('somevalue', 'blowfish', true);
-		$this->assertSame(strlen($result), 60);
+		$this->assertSame(60, strlen($result));
 
 		$expected = sha1('customsaltsomevalue');
 		$result = Security::hash('somevalue', 'sha1', 'customsalt');
