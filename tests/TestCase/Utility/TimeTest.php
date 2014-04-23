@@ -567,6 +567,31 @@ class TimeTest extends TestCase {
 	}
 
 /**
+ * Tests encoding a Time object as json
+ *
+ * @return void
+ */
+	public function testJsonEnconde() {
+		$time = new Time('2014-04-20 10:10:10');
+		$this->assertEquals('"2014-04-20T10:10:10+0000"', json_encode($time));
+	}
+
+/**
+ * Tests debugInfo
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$time = new Time('2014-04-20 10:10:10');
+		$expected = [
+			'time' => '2014-04-20T10:10:10+0000',
+			'timezone' => 'UTC',
+			'fixedNowTime' => Time::getTestNow()->toISO8601String()
+		];
+		$this->assertEquals($expected, $time->__debugInfo());
+	}
+
+/**
  * Cusotm assert to allow for variation in the version of the intl library, where
  * some translations contain a few extra commas.
  *
