@@ -715,10 +715,10 @@ class ShellTest extends TestCase {
 		$parser->addSubcommand('slice');
 
 		$shell = $this->getMock('Cake\Console\Shell', ['hasTask', 'startup', 'getOptionParser'], [], '', false);
-		$task = $this->getMock('Cake\Console\Shell', ['execute', 'runCommand'], [], '', false);
-		$task->expects($this->any())
+		$task = $this->getMock('Cake\Console\Shell', ['main', 'runCommand'], [], '', false);
+		$task->expects($this->once())
 			->method('runCommand')
-			->with(['execute', 'one']);
+			->with(['one']);
 
 		$shell->expects($this->once())->method('getOptionParser')
 			->will($this->returnValue($parser));

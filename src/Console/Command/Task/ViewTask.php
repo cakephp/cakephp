@@ -98,8 +98,8 @@ class ViewTask extends BakeTask {
  *
  * @return mixed
  */
-	public function execute($name = null, $template = null, $action = null) {
-		parent::execute();
+	public function main($name = null, $template = null, $action = null) {
+		parent::main();
 
 		if (!isset($this->connection)) {
 			$this->connection = 'default';

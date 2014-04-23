@@ -80,7 +80,7 @@ class BakeTask extends Shell {
  *
  * @return void
  */
-	public function execute() {
+	public function main() {
 		foreach ($this->args as $i => $arg) {
 			if (strpos($arg, '.')) {
 				list($this->params['plugin'], $this->args[$i]) = pluginSplit($arg);

@@ -41,7 +41,7 @@ class ProjectTask extends BakeTask {
  *
  * @return mixed
  */
-	public function execute() {
+	public function main() {
 		$project = null;
 		if (isset($this->args[0])) {
 			$project = $this->args[0];

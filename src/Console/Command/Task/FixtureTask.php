@@ -90,8 +90,8 @@ class FixtureTask extends BakeTask {
  *
  * @return void
  */
-	public function execute($name = null) {
-		parent::execute();
+	public function main($name = null) {
+		parent::main();
 		if (!isset($this->connection)) {
 			$this->connection = 'default';
 		}

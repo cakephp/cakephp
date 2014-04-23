@@ -381,7 +381,7 @@ class Shell {
 		if ($this->hasTask($command) && isset($subcommands[$command])) {
 			$this->startup();
 			$command = Inflector::camelize($command);
-			$argv[0] = 'execute';
+			array_shift($argv);
 			return $this->{$command}->runCommand($argv);
 		}
 
