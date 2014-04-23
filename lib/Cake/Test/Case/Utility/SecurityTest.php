@@ -65,16 +65,6 @@ class SecurityTest extends CakeTestCase {
 	}
 
 /**
- * testHashInvalidSalt method
- *
- * @expectedException PHPUnit_Framework_Error
- * @return void
- */
-	public function testHashInvalidSalt() {
-		Security::hash('someKey', 'blowfish', true);
-	}
-
-/**
  * testHashAnotherInvalidSalt
  *
  * @expectedException PHPUnit_Framework_Error
@@ -168,7 +158,7 @@ class SecurityTest extends CakeTestCase {
 		Security::setHash($hashType);
 
 		$this->assertSame(Security::$hashType, $hashType);
-		$this->assertSame(strlen(Security::hash($key, null, false)), 60);
+		$this->assertSame(60, strlen(Security::hash($key, null, false)));
 
 		$password = $submittedPassword = $key;
 		$storedPassword = Security::hash($password);
@@ -179,6 +169,9 @@ class SecurityTest extends CakeTestCase {
 		$submittedPassword = 'someOtherKey';
 		$hashedPassword = Security::hash($submittedPassword, null, $storedPassword);
 		$this->assertNotSame($storedPassword, $hashedPassword);
+
+		$result = Security::hash('somevalue', 'blowfish', true);
+		$this->assertSame(60, strlen($result));
 
 		$expected = sha1('customsaltsomevalue');
 		$result = Security::hash('somevalue', 'sha1', 'customsalt');
