@@ -16,13 +16,14 @@ namespace Cake\Utility;
 
 use Carbon\Carbon;
 use IntlDateFormatter;
+use JsonSerializable;
 
 /**
  * Extends the built-in DateTime class to provide handy methods and locale-aware
  * formatting helpers
  *
  */
-class Time extends Carbon {
+class Time extends Carbon implements JsonSerializable {
 
 /**
  * The format to use when formatting a time using `Cake\Utility\Time::i18nFormat()`
@@ -635,6 +636,15 @@ class Time extends Carbon {
  */
 	public static function setToStringFormat($format) {
 		static::$_toStringFormat = $format;
+	}
+
+/**
+ * Returns a string that should be serialized when converting this object to json
+ *
+ * @return string
+ */
+	public function jsonSerialize() {
+		return $this->format(static::ISO8601);
 	}
 
 }
