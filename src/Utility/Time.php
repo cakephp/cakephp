@@ -647,4 +647,17 @@ class Time extends Carbon implements JsonSerializable {
 		return $this->format(static::ISO8601);
 	}
 
+/**
+ * Returns the data that should be displayed when debugging this object
+ *
+ * @return array
+ */
+	public function __debugInfo() {
+		return [
+			'time' => $this->format(static::ISO8601),
+			'timezone' => $this->getTimezone()->getName(),
+			'fixedNowTime' => $this->hasTestNow() ? $this->getTestNow()->format(static::ISO8601) : false
+		];
+	}
+
 }
