@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Database\Type;
 use Cake\Database\Type;
 use Cake\Database\Type\DateType;
 use Cake\TestSuite\TestCase;
-use Carbon\Carbon;
+use Cake\Utility\Time;
 
 /**
  * Test for the Date type.
@@ -70,11 +70,11 @@ class DateTypeTest extends TestCase {
 		$result = $this->type->toDatabase($value, $this->driver);
 		$this->assertEquals($value, $result);
 
-		$date = new Carbon('2013-08-12');
+		$date = new Time('2013-08-12');
 		$result = $this->type->toDatabase($date, $this->driver);
 		$this->assertEquals('2013-08-12', $result);
 
-		$date = new Carbon('2013-08-12 15:16:18');
+		$date = new Time('2013-08-12 15:16:18');
 		$result = $this->type->toDatabase($date, $this->driver);
 		$this->assertEquals('2013-08-12', $result);
 	}
@@ -85,7 +85,7 @@ class DateTypeTest extends TestCase {
  * @return array
  */
 	public function marshalProvider() {
-		$date = new Carbon('@1392387900');
+		$date = new Time('@1392387900');
 		$date->setTime(0, 0, 0);
 
 		return [
@@ -100,13 +100,13 @@ class DateTypeTest extends TestCase {
 			// valid string types
 			['1392387900', $date],
 			[1392387900, $date],
-			['2014-02-14', new Carbon('2014-02-14')],
-			['2014-02-14 13:14:15', new Carbon('2014-02-14 00:00:00')],
+			['2014-02-14', new Time('2014-02-14')],
+			['2014-02-14 13:14:15', new Time('2014-02-14 00:00:00')],
 
 			// valid array types
 			[
 				['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-				new Carbon('2014-02-14 00:00:00')
+				new Time('2014-02-14 00:00:00')
 			],
 			[
 				[
@@ -114,7 +114,7 @@ class DateTypeTest extends TestCase {
 					'hour' => 1, 'minute' => 14, 'second' => 15,
 					'meridian' => 'am'
 				],
-				new Carbon('2014-02-14 00:00:00')
+				new Time('2014-02-14 00:00:00')
 			],
 			[
 				[
@@ -122,30 +122,30 @@ class DateTypeTest extends TestCase {
 					'hour' => 1, 'minute' => 14, 'second' => 15,
 					'meridian' => 'pm'
 				],
-				new Carbon('2014-02-14 00:00:00')
+				new Time('2014-02-14 00:00:00')
 			],
 			[
 				[
 					'year' => 2014, 'month' => 2, 'day' => 14,
 				],
-				new Carbon('2014-02-14 00:00:00')
+				new Time('2014-02-14 00:00:00')
 			],
 
 			// Invalid array types
 			[
 				['year' => 'farts', 'month' => 'derp'],
-				new Carbon(date('Y-m-d 00:00:00'))
+				new Time(date('Y-m-d 00:00:00'))
 			],
 			[
 				['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-				new Carbon(date('Y-m-d 00:00:00'))
+				new Time(date('Y-m-d 00:00:00'))
 			],
 			[
 				[
 					'year' => '2014', 'month' => '02', 'day' => '14',
 					'hour' => 'farts', 'minute' => 'farts'
 				],
-				new Carbon('2014-02-14 00:00:00')
+				new Time('2014-02-14 00:00:00')
 			],
 		];
 	}
