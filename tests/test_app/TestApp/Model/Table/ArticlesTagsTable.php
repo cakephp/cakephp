@@ -7,7 +7,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @since         3.0.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace TestApp\Model\Table;
 
