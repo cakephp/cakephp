@@ -1865,9 +1865,9 @@ class Model extends Object implements CakeEventListener {
 				$success = $this->data;
 			}
 
-			$this->data = false;
 			$this->_clearCache();
 			$this->validationErrors = array();
+			$this->data = false;
 		}
 
 		$this->whitelist = $_whitelist;
