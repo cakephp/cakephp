@@ -548,8 +548,27 @@ class ShellTest extends TestCase {
 		$shell->expects($this->once())->method('hit_me')
 			->with('cakes')
 			->will($this->returnValue(true));
-		$result = $shell->runCommand(['hit_me', 'cakes', '--verbose']);
+		$result = $shell->runCommand(['hit_me', 'cakes', '--verbose'], true);
 		$this->assertTrue($result);
+	}
+
+/**
+ * Test that runCommand() doesn't call public methods when the second arg is false.
+ *
+ * @return void
+ */
+	public function testRunCommandAutoMethodOff() {
+		$io = $this->getMock('Cake\Console\ConsoleIo');
+		$shell = $this->getMock('Cake\Console\Shell', ['hit_me', 'startup'], [$io]);
+
+		$shell->expects($this->never())->method('startup');
+		$shell->expects($this->never())->method('hit_me');
+
+		$result = $shell->runCommand(['hit_me', 'baseball'], false);
+		$this->assertFalse($result);
+
+		$result = $shell->runCommand(['hit_me', 'baseball']);
+		$this->assertFalse($result, 'Default value of runCommand() should be false');
 	}
 
 /**
@@ -718,7 +737,7 @@ class ShellTest extends TestCase {
 		$task = $this->getMock('Cake\Console\Shell', ['main', 'runCommand'], [], '', false);
 		$task->expects($this->once())
 			->method('runCommand')
-			->with(['one']);
+			->with(['one'], false);
 
 		$shell->expects($this->once())->method('getOptionParser')
 			->will($this->returnValue($parser));

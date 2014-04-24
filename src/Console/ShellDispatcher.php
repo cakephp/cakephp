@@ -160,7 +160,7 @@ class ShellDispatcher {
 		$Shell = $this->findShell($shell);
 
 		$Shell->initialize();
-		return $Shell->runCommand($this->args);
+		return $Shell->runCommand($this->args, true);
 	}
 
 /**
