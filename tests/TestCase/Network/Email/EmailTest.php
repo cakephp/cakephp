@@ -1,7 +1,5 @@
 <?php
 /**
- * CakeEmailTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -27,7 +25,7 @@ use Cake\Utility\File;
 use Cake\View\Error\MissingViewException;
 
 /**
- * Help to test CakeEmail
+ * Help to test Email
  *
  */
 class TestEmail extends Email {
@@ -1866,6 +1864,26 @@ class EmailTest extends TestCase {
 
 		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
 		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
+	}
+
+/**
+ * testConfigArrayWithLayoutWithoutTemplate method
+ *
+ * @return void
+ */
+	public function testConfigArrayWithLayoutWithoutTemplate() {
+		$configs = array(
+			'from' => array('some@example.com' => 'My website'),
+			'to' => 'test@example.com',
+			'subject' => 'Test mail subject',
+			'transport' => 'debug',
+			'layout' => 'custom'
+		);
+		$this->CakeEmail = new Email($configs);
+
+		$result = $this->CakeEmail->template();
+		$this->assertEquals('', $result['template']);
+		$this->assertEquals($configs['layout'], $result['layout']);
 	}
 
 /**

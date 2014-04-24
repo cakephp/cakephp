@@ -1322,7 +1322,8 @@ class Response {
  * - name: Alternate download name
  * - download: If `true` sets download header and forces file to be downloaded rather than displayed in browser
  *
- * @param string $path Path to file
+ * @param string $path Path to file. If the path is not an absolute path that resolves
+ *   to a file, `APP` will be prepended to the path.
  * @param array $options Options See above.
  * @return void
  * @throws \Cake\Error\NotFoundException
@@ -1332,6 +1333,13 @@ class Response {
 			'name' => null,
 			'download' => null
 		);
+
+		if (strpos($path, '..') !== false) {
+			throw new Error\NotFoundException(__d(
+				'cake_dev',
+				'The requested file contains `..` and will not be read.'
+			));
+		}
 
 		if (!is_file($path)) {
 			$path = APP . $path;

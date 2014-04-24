@@ -273,6 +273,13 @@ class View {
 	protected $_paths = array();
 
 /**
+ * Holds an array of plugin paths.
+ *
+ * @var array
+ */
+	protected $_pathsForPlugin = array();
+
+/**
  * The names of views and their parents used with View::extend();
  *
  * @var array
@@ -1085,8 +1092,13 @@ class View {
  * @return array paths
  */
 	protected function _paths($plugin = null, $cached = true) {
-		if ($plugin === null && $cached === true && !empty($this->_paths)) {
-			return $this->_paths;
+		if ($cached === true) {
+			if ($plugin === null && !empty($this->_paths)) {
+				return $this->_paths;
+			}
+			if ($plugin !== null && isset($this->_pathsForPlugin[$plugin])) {
+				return $this->_pathsForPlugin[$plugin];
+			}
 		}
 		$paths = array();
 		$viewPaths = App::path('Template');
@@ -1118,7 +1130,7 @@ class View {
 		}
 		$paths = array_merge($paths, $corePaths);
 		if ($plugin !== null) {
-			return $paths;
+			return $this->_pathsForPlugin[$plugin] = $paths;
 		}
 		return $this->_paths = $paths;
 	}

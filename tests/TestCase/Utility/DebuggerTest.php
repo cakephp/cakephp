@@ -365,6 +365,7 @@ object(Cake\View\View) {
 	]
 	[protected] _scripts => []
 	[protected] _paths => []
+	[protected] _pathsForPlugin => []
 	[protected] _parents => []
 	[protected] _current => null
 	[protected] _currentType => ''

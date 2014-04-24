@@ -1167,6 +1167,17 @@ class ResponseTest extends TestCase {
 	}
 
 /**
+ * test file with ..
+ *
+ * @expectedException Cake\Error\NotFoundException
+ * @return void
+ */
+	public function testFileWithPathTraversal() {
+		$response = new Response();
+		$response->file('my/../cat.gif');
+	}
+
+/**
  * testFile method
  *
  * @return void
