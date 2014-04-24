@@ -1808,6 +1808,26 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testConfigArrayWithLayoutWithoutTemplate method
+ *
+ * @return void
+ */
+	public function testConfigArrayWithLayoutWithoutTemplate() {
+		$configs = array(
+			'from' => array('some@example.com' => 'My website'),
+			'to' => 'test@example.com',
+			'subject' => 'Test mail subject',
+			'transport' => 'Debug',
+			'layout' => 'custom'
+		);
+		$this->CakeEmail = new CakeEmail($configs);
+
+		$result = $this->CakeEmail->template();
+		$this->assertEquals('', $result['template']);
+		$this->assertEquals($configs['layout'], $result['layout']);
+	}
+
+/**
  * testConstructWithConfigString method
  *
  * @return void

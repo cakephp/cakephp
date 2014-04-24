@@ -362,6 +362,7 @@ TEXT;
 	)
 	[protected] _scripts => array()
 	[protected] _paths => array()
+	[protected] _pathsForPlugin => array()
 	[protected] _parents => array()
 	[protected] _current => null
 	[protected] _currentType => ''
