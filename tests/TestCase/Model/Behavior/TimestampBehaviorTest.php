@@ -92,7 +92,8 @@ class TimestampBehaviorTest extends TestCase {
 
 		$return = $this->Behavior->handleEvent($event, $entity);
 		$this->assertTrue($return, 'Handle Event is expected to always return true');
-		$this->assertSame($ts, $entity->created, 'Created timestamp is expected to be the mocked value');
+		$this->assertInstanceOf('Cake\Utility\Time', $entity->created);
+		$this->assertSame($ts->format('c'), $entity->created->format('c'), 'Created timestamp is not the same');
 	}
 
 /**
@@ -152,7 +153,8 @@ class TimestampBehaviorTest extends TestCase {
 
 		$return = $this->Behavior->handleEvent($event, $entity);
 		$this->assertTrue($return, 'Handle Event is expected to always return true');
-		$this->assertSame($ts, $entity->modified, 'Modified timestamp is expected to be the mocked value');
+		$this->assertInstanceOf('Cake\Utility\Time', $entity->modified);
+		$this->assertSame($ts->format('c'), $entity->modified->format('c'), 'Modified timestamp is not the same');
 	}
 
 /**
@@ -174,7 +176,8 @@ class TimestampBehaviorTest extends TestCase {
 
 		$return = $this->Behavior->handleEvent($event, $entity);
 		$this->assertTrue($return, 'Handle Event is expected to always return true');
-		$this->assertSame($ts, $entity->modified, 'Modified timestamp is expected to be updated');
+		$this->assertInstanceOf('Cake\Utility\Time', $entity->modified);
+		$this->assertSame($ts->format('c'), $entity->modified->format('c'), 'Modified timestamp is expected to be updated');
 	}
 
 /**
@@ -269,9 +272,9 @@ class TimestampBehaviorTest extends TestCase {
 		$this->Behavior->timestamp($ts);
 		$return = $this->Behavior->timestamp();
 
-		$this->assertSame(
-			$ts,
-			$return,
+		$this->assertEquals(
+			$ts->format('c'),
+			$return->format('c'),
 			'Should return the same value as initially set'
 		);
 	}

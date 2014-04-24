@@ -18,6 +18,7 @@ use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
+use Cake\Utility\Time;
 
 class TimestampBehavior extends Behavior {
 
@@ -131,16 +132,16 @@ class TimestampBehavior extends Behavior {
  *
  * @param \DateTime $ts
  * @param bool $refreshTimestamp
- * @return \DateTime
+ * @return \Cake\Utility\Time
  */
 	public function timestamp(\DateTime $ts = null, $refreshTimestamp = false) {
 		if ($ts) {
 			if ($this->_config['refreshTimestamp']) {
 				$this->_config['refreshTimestamp'] = false;
 			}
-			$this->_ts = $ts;
+			$this->_ts = new Time($ts);
 		} elseif ($this->_ts === null || $refreshTimestamp) {
-			$this->_ts = new \DateTime();
+			$this->_ts = new Time();
 		}
 
 		return $this->_ts;

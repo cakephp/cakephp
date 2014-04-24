@@ -105,7 +105,7 @@ class Time extends Carbon implements JsonSerializable {
  */
 	public function __construct($time = null, $tz = null) {
 		if ($time instanceof \DateTime) {
-			list($time, $tz) = [$dt->format('Y-m-d H:i:s'), $dt->getTimeZone()];
+			list($time, $tz) = [$time->format('Y-m-d H:i:s'), $time->getTimeZone()];
 		}
 
 		if (is_numeric($time)) {
