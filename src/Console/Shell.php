@@ -332,8 +332,6 @@ class Shell {
  * you must define all the subcommands your shell needs, whether they be methods on this class
  * or methods on tasks.
  *
- * @param string $command The command name to run on this shell. If this argument is empty,
- *   and the shell has a `main()` method, that will be called instead.
  * @param array $argv Array of arguments to run the shell with. This array should be missing the shell name.
  * @param boolean $autoMethod Set to true to allow any public method to be called even if it
  *   was not defined as a subcommand. This is used by ShellDispatcher to make building simple shells easy.
