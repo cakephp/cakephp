@@ -8359,6 +8359,26 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that create() works without raising errors with a Mock Model
+ *
+ * @return void
+ */
+	public function testCreateNoErrorsWithMockModel() {
+		$encoding = strtolower(Configure::read('App.encoding'));
+		$ContactMock = $this->getMockBuilder('Contact')
+				->disableOriginalConstructor()
+				->getMock();
+		ClassRegistry::removeObject('Contact');
+		ClassRegistry::addObject('Contact', $ContactMock);
+		$result = $this->Form->create('Contact', array('type' => 'GET'));
+		$expected = array('form' => array(
+			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add',
+			'accept-charset' => $encoding
+		));
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test creating a get form, and get form inputs.
  *
  * @return void
