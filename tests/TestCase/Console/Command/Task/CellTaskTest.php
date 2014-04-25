@@ -52,7 +52,7 @@ class CellTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecute() {
+	public function testMain() {
 		$this->Task->Test->expects($this->once())
 			->method('bake')
 			->with('cell', 'Example');
@@ -70,7 +70,7 @@ class CellTaskTest extends TestCase {
 				$this->stringContains('class ExampleCell extends Cell')
 			);
 
-		$this->Task->execute('Example');
+		$this->Task->main('Example');
 	}
 
 /**
@@ -78,7 +78,7 @@ class CellTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecutePlugin() {
+	public function testMainPlugin() {
 		Plugin::load('TestPlugin');
 
 		$path = Plugin::path('TestPlugin');
