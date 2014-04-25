@@ -676,7 +676,7 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * By default, `$options` will recognize the following keys:
  *
@@ -860,7 +860,7 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * @throws \Cake\ORM\Error\RecordNotFoundException if no record can be found give
  * such primary key value.
@@ -886,16 +886,14 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function query() {
 		return new Query($this->connection(), $this);
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function updateAll($fields, $conditions) {
 		$query = $this->query();
@@ -975,8 +973,7 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function deleteAll($conditions) {
 		$query = $this->query();
@@ -989,8 +986,7 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function exists($conditions) {
 		return (bool)count($this->find('all')
@@ -1002,7 +998,7 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * ### Options
  *
@@ -1296,7 +1292,7 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * For HasMany and HasOne associations records will be removed based on
  * the dependent option. Join table records in BelongsToMany associations
@@ -1559,7 +1555,7 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * By default all the associations on this table will be hydrated. You can
  * limit which associations are built, or include deeper associations
@@ -1582,7 +1578,7 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * By default all the associations on this table will be hydrated. You can
  * limit which associations are built, or include deeper associations
@@ -1605,7 +1601,7 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * When merging HasMany or BelongsToMany associations, all the entities in the
  * `$data` array will appear, those that can be matched by primary key will get
@@ -1620,7 +1616,7 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * Those entries in `$entities` that cannot be matched to any record in
  * `$data` will be discarded. Records in `$data` that could not be matched will

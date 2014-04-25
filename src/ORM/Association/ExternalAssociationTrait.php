@@ -78,8 +78,7 @@ trait ExternalAssociationTrait {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function defaultRowValue($row, $joined) {
 		$sourceAlias = $this->source()->alias();
@@ -101,8 +100,7 @@ trait ExternalAssociationTrait {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	protected function _buildResultMap($fetchQuery, $options) {
 		$resultMap = [];

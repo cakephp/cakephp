@@ -100,8 +100,7 @@ class Time extends Carbon implements JsonSerializable {
 	public static $wordEnd = '+1 month';
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function __construct($time = null, $tz = null) {
 		if ($time instanceof \DateTime) {
@@ -567,8 +566,7 @@ class Time extends Carbon implements JsonSerializable {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function __toString() {
 		return $this->i18nFormat();

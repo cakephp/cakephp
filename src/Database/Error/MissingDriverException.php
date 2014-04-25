@@ -19,7 +19,7 @@ use Cake\Error\Exception;
 class MissingDriverException extends \Cake\Error\Exception {
 
 /**
- * @inheritdoc
+ * {@inheritDoc}
  */
 	protected $_messageTemplate = 'Database driver "%s" could not be found.';
 

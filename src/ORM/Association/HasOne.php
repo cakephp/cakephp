@@ -131,8 +131,7 @@ class HasOne extends Association {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	protected function _linkField($options) {
 		$links = [];
@@ -150,8 +149,7 @@ class HasOne extends Association {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	protected function _buildResultMap($fetchQuery, $options) {
 		$resultMap = [];

@@ -19,7 +19,7 @@ use Cake\Error\Exception;
 class MissingExtensionException extends \Cake\Error\Exception {
 
 /**
- * @inheritdoc
+ * {@inheritDoc}
  */
 	protected $_messageTemplate = 'Database driver %s cannot be used due to a missing PHP extension or unmet dependency';
 

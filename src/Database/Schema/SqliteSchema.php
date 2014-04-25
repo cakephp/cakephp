@@ -87,8 +87,7 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function listTablesSql($config) {
 		return [
@@ -99,8 +98,7 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function describeTableSql($name, $config) {
 		$sql = sprintf(
@@ -111,8 +109,7 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function convertFieldDescription(Table $table, $row) {
 		$field = $this->_convertColumn($row['type']);
@@ -136,8 +133,7 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function describeIndexSql($table, $config) {
 		$sql = sprintf(
@@ -148,7 +144,7 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * Since SQLite does not have a way to get metadata about all indexes at once,
  * additional queries are done here. Sqlite constraint names are not
@@ -182,8 +178,7 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function describeForeignKeySql($table, $config) {
 		$sql = sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($table));
@@ -191,8 +186,7 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function convertForeignKeyDescription(Table $table, $row) {
 		$data = [
@@ -207,7 +201,7 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * @throws \Cake\Database\Exception when the column type is unknown
  */
@@ -274,7 +268,7 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * Note integer primary keys will return ''. This is intentional as Sqlite requires
  * that integer primary keys be defined in the column definition.
@@ -319,8 +313,7 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function indexSql(Table $table, $name) {
 		$data = $table->index($name);
@@ -336,8 +329,7 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$lines = array_merge($columns, $constraints);
@@ -352,8 +344,7 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function truncateTableSql(Table $table) {
 		$name = $table->name();

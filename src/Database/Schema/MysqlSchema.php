@@ -23,21 +23,21 @@ use Cake\Database\Schema\Table;
 class MysqlSchema extends BaseSchema {
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  */
 	public function listTablesSql($config) {
 		return ['SHOW TABLES FROM ' . $this->_driver->quoteIdentifier($config['database']), []];
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  */
 	public function describeTableSql($name, $config) {
 		return ['SHOW FULL COLUMNS FROM ' . $this->_driver->quoteIdentifier($name), []];
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  */
 	public function describeIndexSql($table, $config) {
 		return ['SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($table), []];
@@ -118,7 +118,7 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  */
 	public function convertFieldDescription(Table $table, $row) {
 		$field = $this->_convertColumn($row['Type']);
@@ -135,7 +135,7 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  */
 	public function convertIndexDescription(Table $table, $row) {
 		$type = null;
@@ -190,8 +190,7 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function describeForeignKeySql($table, $config) {
 		$sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
@@ -203,8 +202,7 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function convertForeignKeyDescription(Table $table, $row) {
 		$data = [
@@ -219,16 +217,14 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function truncateTableSql(Table $table) {
 		return [sprintf('TRUNCATE TABLE `%s`', $table->name())];
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$content = implode(",\n", array_merge($columns, $constraints, $indexes));
@@ -248,8 +244,7 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
@@ -335,8 +330,7 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function constraintSql(Table $table, $name) {
 		$data = $table->constraint($name);
@@ -358,8 +352,7 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function indexSql(Table $table, $name) {
 		$data = $table->index($name);

@@ -19,7 +19,7 @@ use Cake\Error\Exception;
 class MissingConnectionException extends Exception {
 
 /**
- * @inheritdoc
+ * {@inheritDoc}
  */
 	protected $_messageTemplate = 'Connection to database could not be established: %s';
 

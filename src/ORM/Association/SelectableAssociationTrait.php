@@ -34,8 +34,7 @@ trait SelectableAssociationTrait {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function eagerLoader(array $options) {
 		$options += $this->_defaultOptions();

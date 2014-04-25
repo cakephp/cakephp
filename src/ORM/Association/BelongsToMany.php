@@ -235,8 +235,7 @@ class BelongsToMany extends Association {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function transformRow($row, $nestKey, $joined) {
 		$alias = $this->junction()->alias();

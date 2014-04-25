@@ -25,8 +25,7 @@ class SqlserverSchema extends BaseSchema {
 	const DEFAULT_SCHEMA_NAME = 'dbo';
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function listTablesSql($config) {
 		$sql = '
@@ -40,8 +39,7 @@ class SqlserverSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function describeTableSql($name, $config) {
 		$sql =
@@ -136,8 +134,7 @@ class SqlserverSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function convertFieldDescription(Table $table, $row) {
 		$field = $this->_convertColumn(
@@ -162,8 +159,7 @@ class SqlserverSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function describeIndexSql($table, $config) {
 		$sql = "
@@ -187,8 +183,7 @@ class SqlserverSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function convertIndexDescription(Table $table, $row) {
 		$type = Table::INDEX_INDEX;
@@ -225,8 +220,7 @@ class SqlserverSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function describeForeignKeySql($table, $config) {
 		$sql = "
@@ -248,8 +242,7 @@ class SqlserverSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function convertForeignKeyDescription(Table $table, $row) {
 		$data = [
@@ -264,8 +257,7 @@ class SqlserverSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	protected function _foreignOnClause($on) {
 		$parent = parent::_foreignOnClause($on);
@@ -273,8 +265,7 @@ class SqlserverSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	protected function _convertOnClause($clause) {
 		switch ($clause) {
@@ -291,8 +282,7 @@ class SqlserverSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
@@ -365,8 +355,7 @@ class SqlserverSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function indexSql(Table $table, $name) {
 		$data = $table->index($name);
@@ -382,8 +371,7 @@ class SqlserverSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function constraintSql(Table $table, $name) {
 		$data = $table->constraint($name);
@@ -423,8 +411,7 @@ class SqlserverSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$content = array_merge($columns, $constraints);
@@ -439,8 +426,7 @@ class SqlserverSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function truncateTableSql(Table $table) {
 		$name = $this->_driver->quoteIdentifier($table->name());
