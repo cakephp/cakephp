@@ -36,7 +36,7 @@ class ServerShell extends Shell {
  *
  * @var int
  */
-	const DEFAULT_PORT = 80;
+	const DEFAULT_PORT = 8765;
 
 /**
  * server host
