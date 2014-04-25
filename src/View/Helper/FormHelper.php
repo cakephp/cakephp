@@ -842,19 +842,21 @@ class FormHelper extends Helper {
 		}
 
 		$input = $this->_getInput($fieldName, $options);
-		$label = $this->_getLabel($fieldName, compact('input', 'label') + $options);
+		if ($options['type'] === 'hidden') {
+			$this->templates($originalTemplates);
+			return $input;
+		}
+
+		$label = $this->_getLabel($fieldName, compact('input', 'label', 'error') + $options);
 
 		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
-		$result = $this->formatTemplate($groupTemplate, compact('input', 'label'));
-
-		if ($options['type'] !== 'hidden') {
-			$result = $this->formatTemplate($template, [
-				'content' => $result,
-				'error' => $error,
-				'required' => $options['required'] ? ' required' : '',
-				'type' => $options['type'],
-			]);
-		}
+		$result = $this->formatTemplate($groupTemplate, compact('input', 'label', 'error'));
+		$result = $this->formatTemplate($template, [
+			'content' => $result,
+			'error' => $error,
+			'required' => $options['required'] ? ' required' : '',
+			'type' => $options['type'],
+		]);
 
 		$this->templates($originalTemplates);
 		return $result;
