@@ -19,6 +19,7 @@ use Cake\Model\Behavior\TimestampBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Time;
 
 /**
  * Behavior test case
@@ -213,10 +214,8 @@ class TimestampBehaviorTest extends TestCase {
 			'Should return a timestamp object'
 		);
 
-		$now = time();
-		$ts = $return->getTimestamp();
-
-		$this->assertLessThan(3, abs($now - $ts), "Timestamp is expected to within 3 seconds of the current timestamp");
+		$now = Time::now();
+		$this->assertEquals($now, $return);
 
 		return $this->Behavior;
 	}
@@ -374,12 +373,8 @@ class TimestampBehaviorTest extends TestCase {
 
 		$row = $table->find('all')->where(['id' => $entity->id])->first();
 
-		$now = time();
-
-		$storedValue = $row->created->getTimestamp();
-		$this->assertLessThan(3, abs($storedValue - $now), "The stored created timestamp is expected to within 3 seconds of the current timestamp");
-
-		$storedValue = $row->updated->getTimestamp();
-		$this->assertLessThan(3, abs($storedValue - $now), "The stored updated timestamp is expected to within 3 seconds of the current timestamp");
+		$now = Time::now();
+		$this->assertEquals($now, $row->created);
+		$this->assertEquals($now, $row->updated);
 	}
 }
