@@ -75,7 +75,7 @@ class CompletionShell extends Shell {
  *
  * @return void
  */
-	public function subCommands() {
+	public function subcommands() {
 		if (!$this->args) {
 			return $this->_output();
 		}
@@ -86,7 +86,7 @@ class CompletionShell extends Shell {
 
 /**
  * Guess autocomplete from the whole argument string
- * 
+ *
  * @return void
  */
 	public function fuzzy() {
@@ -107,8 +107,6 @@ class CompletionShell extends Shell {
 			'help' => __d('cake_console', 'Output a list of available commands'),
 			'parser' => [
 				'description' => __d('cake_console', 'List all availables'),
-				'arguments' => [
-				]
 			]
 		])->addSubcommand('subcommands', [
 			'help' => __d('cake_console', 'Output a list of available subcommands'),
@@ -117,7 +115,7 @@ class CompletionShell extends Shell {
 				'arguments' => [
 					'command' => [
 						'help' => __d('cake_console', 'The command name'),
-						'required' => true,
+						'required' => false,
 					]
 				]
 			]
@@ -132,6 +130,8 @@ class CompletionShell extends Shell {
 					]
 				]
 			]
+		])->addSubcommand('fuzzy', [
+			'help' => __d('cake_console', 'Guess autocomplete')
 		])->epilog([
 			__d('cake_console', 'This command is not intended to be called manually'),
 		]);

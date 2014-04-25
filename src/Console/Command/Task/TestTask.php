@@ -81,8 +81,8 @@ class TestTask extends BakeTask {
  *
  * @return void
  */
-	public function execute($type = null, $name = null) {
-		parent::execute();
+	public function main($type = null, $name = null) {
+		parent::main();
 		if (empty($type) && empty($name)) {
 			return $this->outputTypeChoices();
 		}

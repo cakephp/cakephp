@@ -75,12 +75,8 @@ class ModelTask extends BakeTask {
  *
  * @return void
  */
-	public function execute($name = null) {
-		parent::execute();
-
-		if (!isset($this->connection)) {
-			$this->connection = 'default';
-		}
+	public function main($name = null) {
+		parent::main();
 
 		if (empty($name)) {
 			$this->out(__d('cake_console', 'Choose a model to bake from the following:'));
@@ -88,10 +84,6 @@ class ModelTask extends BakeTask {
 				$this->out('- ' . $this->_modelName($table));
 			}
 			return true;
-		}
-
-		if (strtolower($name) === 'all') {
-			return $this->all();
 		}
 
 		$this->bake($this->_modelName($name));

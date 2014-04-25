@@ -328,25 +328,23 @@ class Shell {
  * If a shell implements a `main()` method, all missing method calls will be sent to
  * `main()` with the original method name in the argv.
  *
- * @param string $command The command name to run on this shell. If this argument is empty,
- *   and the shell has a `main()` method, that will be called instead.
+ * For tasks to be invoked they *must* be exposed as subcommands. If you define any subcommands,
+ * you must define all the subcommands your shell needs, whether they be methods on this class
+ * or methods on tasks.
+ *
  * @param array $argv Array of arguments to run the shell with. This array should be missing the shell name.
+ * @param boolean $autoMethod Set to true to allow any public method to be called even if it
+ *   was not defined as a subcommand. This is used by ShellDispatcher to make building simple shells easy.
  * @return void
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::runCommand
  */
-	public function runCommand($command, $argv) {
-		$isTask = $this->hasTask($command);
-		$isMethod = $this->hasMethod($command);
-		$isMain = $this->hasMethod('main');
-
-		if ($isTask || $isMethod && $command !== 'execute') {
-			array_shift($argv);
-		}
-
+	public function runCommand($argv, $autoMethod = false) {
+		$command = isset($argv[0]) ? $argv[0] : null;
 		$this->OptionParser = $this->getOptionParser();
 		try {
-			list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
+			list($this->params, $this->args) = $this->OptionParser->parse($argv);
 		} catch (Error\ConsoleException $e) {
+			$this->err('<error>Error: ' . $e->getMessage() . '</error>');
 			$this->out($this->OptionParser->help($command));
 			return false;
 		}
@@ -366,20 +364,32 @@ class Shell {
 			return $this->_displayHelp($command);
 		}
 
-		if (($isTask || $isMethod || $isMain) && $command !== 'execute') {
-			$this->startup();
-		}
+		$subcommands = $this->OptionParser->subcommands();
+		$isMethod = $this->hasMethod($command);
 
-		if ($isTask) {
-			$command = Inflector::camelize($command);
-			return $this->{$command}->runCommand('execute', $argv);
-		}
-		if ($isMethod) {
+		if ($isMethod && $autoMethod && count($subcommands) === 0) {
+			array_shift($this->args);
+			$this->startup();
 			return call_user_func_array([$this, $command], $this->args);
 		}
-		if ($isMain) {
+
+		if ($isMethod && isset($subcommands[$command])) {
+			$this->startup();
+			return call_user_func_array([$this, $command], $this->args);
+		}
+
+		if ($this->hasTask($command) && isset($subcommands[$command])) {
+			$this->startup();
+			$command = Inflector::camelize($command);
+			array_shift($argv);
+			return $this->{$command}->runCommand($argv, false);
+		}
+
+		if ($this->hasMethod('main')) {
+			$this->startup();
 			return call_user_func_array([$this, 'main'], $this->args);
 		}
+
 		$this->out($this->OptionParser->help($command));
 		return false;
 	}

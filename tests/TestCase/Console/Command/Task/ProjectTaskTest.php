@@ -74,7 +74,7 @@ class ProjectTaskTest extends TestCase {
 		$this->markTestIncomplete('Need to figure this out');
 		$this->Task->params['skel'] = CAKE . 'Console/Templates/skel';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->execute(TMP . 'BakeTestApp');
+		$this->Task->main(TMP . 'BakeTestApp');
 
 		$this->assertTrue(is_dir(TMP . 'BakeTestApp'), 'No project dir');
 		$File = new File($path . DS . 'Config/paths.php');

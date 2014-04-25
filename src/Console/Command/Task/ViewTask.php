@@ -98,12 +98,8 @@ class ViewTask extends BakeTask {
  *
  * @return mixed
  */
-	public function execute($name = null, $template = null, $action = null) {
-		parent::execute();
-
-		if (!isset($this->connection)) {
-			$this->connection = 'default';
-		}
+	public function main($name = null, $template = null, $action = null) {
+		parent::main();
 
 		if (empty($name)) {
 			$this->out(__d('cake_console', 'Possible tables to bake views for based on your current database:'));
@@ -112,10 +108,6 @@ class ViewTask extends BakeTask {
 				$this->out('- ' . $this->_controllerName($table));
 			}
 			return true;
-		}
-
-		if (strtolower($name) === 'all') {
-			return $this->all();
 		}
 
 		$controller = null;
@@ -219,7 +211,7 @@ class ViewTask extends BakeTask {
 		$tables = $this->Model->listAll();
 
 		foreach ($tables as $table) {
-			$this->execute($table);
+			$this->main($table);
 		}
 	}
 

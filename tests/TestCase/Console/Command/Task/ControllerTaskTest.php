@@ -280,7 +280,7 @@ class ControllerTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteNoArgs() {
+	public function testMainNoArgs() {
 		$this->Task->expects($this->never())
 			->method('createFile');
 
@@ -288,7 +288,7 @@ class ControllerTaskTest extends TestCase {
 			->method('out')
 			->with($this->stringContains('Possible controllers based on your current database'));
 
-		$this->Task->execute();
+		$this->Task->main();
 	}
 
 /**
@@ -296,7 +296,7 @@ class ControllerTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteIntoAll() {
+	public function testMainIntoAll() {
 		$count = count($this->Task->listAll());
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
@@ -316,11 +316,11 @@ class ControllerTaskTest extends TestCase {
 			))
 			->will($this->returnValue(true));
 
-		$this->Task->execute('all');
+		$this->Task->all();
 	}
 
 /**
- * data provider for testExecuteWithControllerNameVariations
+ * data provider for testMainWithControllerNameVariations
  *
  * @return void
  */
@@ -336,14 +336,14 @@ class ControllerTaskTest extends TestCase {
  * @dataProvider nameVariations
  * @return void
  */
-	public function testExecuteWithControllerNameVariations($name) {
+	public function testMainWithControllerNameVariations($name) {
 		$this->Task->connection = 'test';
 
 		$filename = $this->_normalizePath(APP . 'Controller/BakeArticlesController.php');
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with($filename, $this->stringContains('public function index()'));
-		$this->Task->execute($name);
+		$this->Task->main($name);
 	}
 
 }

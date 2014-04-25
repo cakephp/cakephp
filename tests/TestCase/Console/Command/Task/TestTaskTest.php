@@ -84,7 +84,7 @@ class TestTaskTest extends TestCase {
 		$this->Task->expects($this->once())
 			->method('outputTypeChoices');
 
-		$this->Task->execute();
+		$this->Task->main();
 	}
 
 /**
@@ -123,7 +123,7 @@ class TestTaskTest extends TestCase {
 		$this->Task->expects($this->once())
 			->method('outputClassChoices');
 
-		$this->Task->execute('Entity');
+		$this->Task->main('Entity');
 	}
 
 /**
@@ -137,7 +137,7 @@ class TestTaskTest extends TestCase {
 				$this->stringContains('TestCase' . DS . 'Model' . DS . 'Table' . DS . 'TestTaskTagTableTest.php'),
 				$this->stringContains('class TestTaskTagTableTest extends TestCase')
 			);
-		$this->Task->execute('Table', 'TestTaskTag');
+		$this->Task->main('Table', 'TestTaskTag');
 	}
 
 /**

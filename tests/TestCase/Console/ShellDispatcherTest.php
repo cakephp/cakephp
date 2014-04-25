@@ -130,7 +130,7 @@ class ShellDispatcherTest extends TestCase {
 
 		$Shell->expects($this->once())->method('initialize');
 		$Shell->expects($this->once())->method('runCommand')
-			->with(null, array())
+			->with([])
 			->will($this->returnValue(true));
 
 		$dispatcher->expects($this->any())
@@ -155,7 +155,7 @@ class ShellDispatcherTest extends TestCase {
 
 		$Shell->expects($this->once())->method('initialize');
 		$Shell->expects($this->once())->method('runCommand')
-			->with('initdb', array('initdb'))
+			->with(['initdb'])
 			->will($this->returnValue(true));
 
 		$dispatcher->expects($this->any())

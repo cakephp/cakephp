@@ -77,7 +77,7 @@ class SimpleBakeTaskTest extends TestCase {
 			->method('bake')
 			->with('behavior', 'Example');
 
-		$this->Task->execute('Example');
+		$this->Task->main('Example');
 	}
 
 /**

@@ -75,7 +75,7 @@ class ExtractTaskTest extends TestCase {
 			->will($this->returnValue('y'));
 		$this->Task->expects($this->never())->method('_stop');
 
-		$this->Task->execute();
+		$this->Task->main();
 		$this->assertTrue(file_exists($this->path . DS . 'default.pot'));
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
@@ -135,7 +135,7 @@ class ExtractTaskTest extends TestCase {
 			->will($this->returnValue('y'));
 		$this->Task->expects($this->never())->method('_stop');
 
-		$this->Task->execute();
+		$this->Task->main();
 		$this->assertTrue(file_exists($this->path . DS . 'LC_TIME' . DS . 'default.pot'));
 
 		$result = file_get_contents($this->path . DS . 'default.pot');
@@ -159,7 +159,7 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->expects($this->any())->method('in')
 			->will($this->returnValue('y'));
 
-		$this->Task->execute();
+		$this->Task->main();
 		$this->assertTrue(file_exists($this->path . DS . 'default.pot'));
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
@@ -186,7 +186,7 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->expects($this->never())->method('err');
 		$this->Task->expects($this->never())->method('_stop');
-		$this->Task->execute();
+		$this->Task->main();
 
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
@@ -213,7 +213,7 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude-plugins'] = true;
 
-		$this->Task->execute();
+		$this->Task->main();
 		$result = file_get_contents($this->path . DS . 'default.pot');
 		$this->assertNotRegExp('#TestPlugin#', $result);
 	}
@@ -234,7 +234,7 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['plugin'] = 'TestPlugin';
 
-		$this->Task->execute();
+		$this->Task->main();
 		$result = file_get_contents($this->path . DS . 'default.pot');
 		$this->assertNotRegExp('#Pages#', $result);
 		$this->assertRegExp('/translate\.ctp:\d+/', $result);
@@ -259,7 +259,7 @@ class ExtractTaskTest extends TestCase {
 		$this->assertTrue(file_exists($this->path . DS . 'default.pot'));
 		$original = file_get_contents($this->path . DS . 'default.pot');
 
-		$this->Task->execute();
+		$this->Task->main();
 		$result = file_get_contents($this->path . DS . 'default.pot');
 		$this->assertNotEquals($original, $result);
 	}
@@ -277,7 +277,7 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'yes';
 
-		$this->Task->execute();
+		$this->Task->main();
 		$this->assertTrue(file_exists($this->path . DS . 'cake.pot'));
 		$result = file_get_contents($this->path . DS . 'cake.pot');
 

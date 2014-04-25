@@ -145,7 +145,7 @@ class ExtractTask extends Shell {
  *
  * @return void
  */
-	public function execute() {
+	public function main() {
 		if (!empty($this->params['exclude'])) {
 			$this->_exclude = explode(',', $this->params['exclude']);
 		}

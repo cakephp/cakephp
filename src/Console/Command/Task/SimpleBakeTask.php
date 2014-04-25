@@ -72,8 +72,8 @@ abstract class SimpleBakeTask extends BakeTask {
  *
  * @return void
  */
-	public function execute($name = null) {
-		parent::execute();
+	public function main($name = null) {
+		parent::main();
 		if (empty($name)) {
 			return $this->error('You must provide a name to bake a ' . $this->name());
 		}

@@ -83,7 +83,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testStartup() {
-		$this->Shell->runCommand('main', array());
+		$this->Shell->runCommand(['main']);
 		$output = $this->out->output;
 
 		$needle = 'Welcome to CakePHP';
@@ -96,7 +96,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testMain() {
-		$this->Shell->runCommand('main', array());
+		$this->Shell->runCommand(['main']);
 		$output = $this->out->output;
 
 		$expected = "/This command is not intended to be called manually/";
@@ -109,7 +109,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testCommands() {
-		$this->Shell->runCommand('commands', array());
+		$this->Shell->runCommand(['commands']);
 		$output = $this->out->output;
 
 		$expected = "TestPlugin.example TestPluginTwo.example TestPluginTwo.welcome bake i18n server test sample\n";
@@ -122,7 +122,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testOptionsNoArguments() {
-		$this->Shell->runCommand('options', array());
+		$this->Shell->runCommand(['options']);
 		$output = $this->out->output;
 
 		$expected = "--help -h --verbose -v --quiet -q\n";
@@ -135,7 +135,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testOptionsNonExistingCommand() {
-		$this->Shell->runCommand('options', array('options', 'foo'));
+		$this->Shell->runCommand(['options', 'foo']);
 		$output = $this->out->output;
 
 		$expected = "--help -h --verbose -v --quiet -q\n";
@@ -148,7 +148,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testOptions() {
-		$this->Shell->runCommand('options', array('options', 'bake'));
+		$this->Shell->runCommand(['options', 'bake']);
 		$output = $this->out->output;
 
 		$expected = "--help -h --verbose -v --quiet -q --connection -c --theme -t\n";
@@ -161,7 +161,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommandsCorePlugin() {
-		$this->Shell->runCommand('subCommands', array('subCommands', 'CORE.bake'));
+		$this->Shell->runCommand(['subcommands', 'CORE.bake']);
 		$output = $this->out->output;
 
 		$expected = "behavior component controller fixture helper model plugin project shell test view widget zerg\n";
@@ -174,7 +174,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommandsAppPlugin() {
-		$this->Shell->runCommand('subCommands', array('subCommands', 'app.sample'));
+		$this->Shell->runCommand(['subcommands', 'app.sample']);
 		$output = $this->out->output;
 
 		$expected = '';
@@ -187,7 +187,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommandsPlugin() {
-		$this->Shell->runCommand('subCommands', array('subCommands', 'TestPluginTwo.welcome'));
+		$this->Shell->runCommand(['subcommands', 'TestPluginTwo.welcome']);
 		$output = $this->out->output;
 
 		$expected = "say_hello\n";
@@ -200,7 +200,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommandsNoArguments() {
-		$this->Shell->runCommand('subCommands', array());
+		$this->Shell->runCommand(['subcommands']);
 		$output = $this->out->output;
 
 		$expected = '';
@@ -213,7 +213,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommandsNonExistingCommand() {
-		$this->Shell->runCommand('subCommands', array('subCommands', 'foo'));
+		$this->Shell->runCommand(['subcommands', 'foo']);
 		$output = $this->out->output;
 
 		$expected = '';
@@ -226,7 +226,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testSubCommands() {
-		$this->Shell->runCommand('subCommands', array('subCommands', 'bake'));
+		$this->Shell->runCommand(['subcommands', 'bake']);
 		$output = $this->out->output;
 
 		$expected = "behavior component controller fixture helper model plugin project shell test view widget zerg\n";
@@ -239,7 +239,7 @@ class CompletionShellTest extends TestCase {
  * @return void
  */
 	public function testFuzzy() {
-		$this->Shell->runCommand('fuzzy', array());
+		$this->Shell->runCommand(['fuzzy']);
 		$output = $this->out->output;
 
 		$expected = '';

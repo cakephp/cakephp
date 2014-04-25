@@ -90,11 +90,8 @@ class FixtureTask extends BakeTask {
  *
  * @return void
  */
-	public function execute($name = null) {
-		parent::execute();
-		if (!isset($this->connection)) {
-			$this->connection = 'default';
-		}
+	public function main($name = null) {
+		parent::main();
 
 		if (empty($name)) {
 			$this->out(__d('cake_console', 'Choose a fixture to bake from the following:'));
@@ -104,9 +101,6 @@ class FixtureTask extends BakeTask {
 			return true;
 		}
 
-		if (strtolower($name) === 'all') {
-			return $this->all();
-		}
 		$table = null;
 		if (isset($this->params['table'])) {
 			$table = $this->params['table'];

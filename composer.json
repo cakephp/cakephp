@@ -32,8 +32,5 @@
 			"Cake\\": "src",
 			"Cake\\Test\\": "tests"
 		}
-	},
-	"bin": [
-		"src/Console/cake"
-	]
+	}
 }
