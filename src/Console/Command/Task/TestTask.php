@@ -52,6 +52,7 @@ class TestTask extends BakeTask {
 		'Behavior' => 'Model\Behavior',
 		'Helper' => 'View\Helper',
 		'Shell' => 'Console\Command',
+		'Cell' => 'View\Cell',
 	];
 
 /**
@@ -67,6 +68,7 @@ class TestTask extends BakeTask {
 		'behavior' => 'Behavior',
 		'helper' => 'Helper',
 		'shell' => 'Shell',
+		'cell' => 'Cell',
 	];
 
 /**
@@ -417,6 +419,11 @@ class TestTask extends BakeTask {
 		if ($type === 'shell') {
 			$pre = "\$this->io = \$this->getMock('Cake\Console\ConsoleIo');\n";
 			$construct = "new {$className}(\$this->io);\n";
+		}
+		if ($type === 'cell') {
+			$pre = "\$this->request = \$this->getMock('Cake\Network\Request');\n";
+			$pre .= "\t\t\$this->response = \$this->getMock('Cake\Network\Response');\n";
+			$construct = "new {$className}(\$this->request, \$this->response);\n";
 		}
 		return [$pre, $construct, $post];
 	}
