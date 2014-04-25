@@ -2196,6 +2196,30 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test that input() does not create wrapping div and label tag for hidden fields
+ *
+ * @return void
+ */
+	public function testInputHidden() {
+		TableRegistry::get('ValidateUsers', [
+			'className' => __NAMESPACE__ . '\ValidateUsersTable'
+		]);
+		$this->Form->create([], ['context' => ['table' => 'ValidateUsers']]);
+
+		$result = $this->Form->input('ValidateUser.id');
+		$expected = array(
+			'input' => array('name', 'type' => 'hidden', 'id')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('ValidateUser.custom', ['type' => 'hidden']);
+		$expected = array(
+			'input' => array('name', 'type' => 'hidden', 'id')
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test form->input() with datetime
  *
  * @return void
