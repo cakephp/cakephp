@@ -28,16 +28,20 @@ trait CellTrait {
  *
  * Example:
  *
- *     // Taxonomy\View\Cell\TagCloudCell::smallList()
- *     $cell = $this->cell('Taxonomy.TagCloud::smallList', ['limit' => 10]);
+ * {{{
+ * // Taxonomy\View\Cell\TagCloudCell::smallList()
+ * $cell = $this->cell('Taxonomy.TagCloud::smallList', ['limit' => 10]);
  *
- *     // App\View\Cell\TagCloudCell::smallList()
- *     $cell = $this->cell('TagCloud::smallList', ['limit' => 10]);
+ * // App\View\Cell\TagCloudCell::smallList()
+ * $cell = $this->cell('TagCloud::smallList', ['limit' => 10]);
+ * }}}
  *
  * The `display` action will be used by default when no action is provided:
  *
- *     // Taxonomy\View\Cell\TagCloudCell::display()
- *     $cell = $this->cell('Taxonomy.TagCloud');
+ * {{{
+ * // Taxonomy\View\Cell\TagCloudCell::display()
+ * $cell = $this->cell('Taxonomy.TagCloud');
+ * }}}
  *
  * Cells are not rendered until they are echoed.
  *

@@ -87,7 +87,7 @@ abstract class Cell {
 	protected $_eventManager = null;
 
 /**
- * These properties are settable directly on Cell and passed to the View as options.
+ * These properties can be set directly on Cell and passed to the View as options.
  *
  * @var array
  * @see \Cake\View\View
@@ -98,6 +98,8 @@ abstract class Cell {
 
 /**
  * List of valid options (constructor's fourth arguments)
+ * Override this property in subclasses to whitelist
+ * which options you want set as properties in your Cell.
  *
  * @var array
  */
@@ -112,7 +114,7 @@ abstract class Cell {
  * @param array $cellOptions
  */
 	public function __construct(Request $request = null, Response $response = null,
-		EventManager $eventManager = null, array $cellOptions = []) {
+			EventManager $eventManager = null, array $cellOptions = []) {
 		$this->_eventManager = $eventManager;
 		$this->request = $request;
 		$this->response = $response;
@@ -126,7 +128,7 @@ abstract class Cell {
 	}
 
 /**
- * Rendering method.
+ * Render the cell.
  *
  * @param string $action Custom template name to render. If not provided (null), the last
  * value will be used. This value is automatically set by `CellTrait::cell()`.
@@ -137,7 +139,14 @@ abstract class Cell {
 			$this->action = $action;
 		}
 
-		return $this->__toString();
+		$this->View = $this->createView();
+
+		$this->View->layout = false;
+		$className = explode('\\', get_class($this));
+		$className = array_pop($className);
+		$this->View->subDir = 'Cell' . DS . substr($className, 0, strpos($className, 'Cell'));
+
+		return $this->View->render(Inflector::underscore($this->action));
 	}
 
 /**
@@ -148,14 +157,7 @@ abstract class Cell {
  * @return string Rendered cell
  */
 	public function __toString() {
-		$this->View = $this->createView();
-
-		$this->View->layout = false;
-		$className = explode('\\', get_class($this));
-		$className = array_pop($className);
-		$this->View->subDir = 'Cell' . DS . substr($className, 0, strpos($className, 'Cell'));
-
-		return $this->View->render(Inflector::underscore($this->action));
+		return $this->render();
 	}
 
 /**
