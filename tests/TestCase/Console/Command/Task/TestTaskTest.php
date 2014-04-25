@@ -240,21 +240,6 @@ class TestTaskTest extends TestCase {
 	}
 
 /**
- * Test the user interaction for defining additional fixtures.
- *
- * @return void
- */
-	public function testGetUserFixtures() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')
-			->will($this->returnValue('app.pizza, app.topping, app.side_dish'));
-
-		$result = $this->Task->getUserFixtures();
-		$expected = array('app.pizza', 'app.topping', 'app.side_dish');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * Dataprovider for class name generation.
  *
  * @return array
