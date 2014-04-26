@@ -240,21 +240,6 @@ class TestTaskTest extends TestCase {
 	}
 
 /**
- * Test the user interaction for defining additional fixtures.
- *
- * @return void
- */
-	public function testGetUserFixtures() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')
-			->will($this->returnValue('app.pizza, app.topping, app.side_dish'));
-
-		$result = $this->Task->getUserFixtures();
-		$expected = array('app.pizza', 'app.topping', 'app.side_dish');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * Dataprovider for class name generation.
  *
  * @return array
@@ -275,6 +260,8 @@ class TestTaskTest extends TestCase {
 			['component', 'AuthComponent', 'App\Controller\Component\AuthComponent'],
 			['Shell', 'Example', 'App\Console\Command\ExampleShell'],
 			['shell', 'Example', 'App\Console\Command\ExampleShell'],
+			['Cell', 'Example', 'App\View\Cell\ExampleCell'],
+			['cell', 'Example', 'App\View\Cell\ExampleCell'],
 		];
 	}
 
@@ -320,6 +307,27 @@ class TestTaskTest extends TestCase {
 		$this->assertContains('app.comments', $result);
 		$this->assertContains('app.user', $result);
 		$this->assertNotContains("''", $result);
+	}
+
+/**
+ * Test baking a test for a cell.
+ *
+ * @return void
+ */
+	public function testBakeCellTest() {
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->will($this->returnValue(true));
+
+		$result = $this->Task->bake('Cell', 'Articles');
+
+		$this->assertContains("use App\View\Cell\ArticlesCell", $result);
+		$this->assertContains('class ArticlesCellTest extends TestCase', $result);
+
+		$this->assertContains('function setUp()', $result);
+		$this->assertContains("\$this->request = \$this->getMock('Cake\Network\Request')", $result);
+		$this->assertContains("\$this->response = \$this->getMock('Cake\Network\Response')", $result);
+		$this->assertContains("\$this->Articles = new ArticlesCell(\$this->request, \$this->response", $result);
 	}
 
 /**

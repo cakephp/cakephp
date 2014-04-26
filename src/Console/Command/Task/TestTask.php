@@ -52,6 +52,7 @@ class TestTask extends BakeTask {
 		'Behavior' => 'Model\Behavior',
 		'Helper' => 'View\Helper',
 		'Shell' => 'Console\Command',
+		'Cell' => 'View\Cell',
 	];
 
 /**
@@ -67,6 +68,7 @@ class TestTask extends BakeTask {
 		'behavior' => 'Behavior',
 		'helper' => 'Helper',
 		'shell' => 'Shell',
+		'cell' => 'Cell',
 	];
 
 /**
@@ -376,23 +378,6 @@ class TestTask extends BakeTask {
 	}
 
 /**
- * Interact with the user to get additional fixtures they want to use.
- *
- * @return array Array of fixtures the user wants to add.
- */
-	public function getUserFixtures() {
-		$proceed = $this->in(__d('cake_console', 'Bake could not detect fixtures, would you like to add some?'), ['y', 'n'], 'n');
-		$fixtures = [];
-		if (strtolower($proceed) === 'y') {
-			$fixtureList = $this->in(__d('cake_console', "Please provide a comma separated list of the fixtures names you'd like to use.\nExample: 'app.comment, app.post, plugin.forums.post'"));
-			$fixtureListTrimmed = str_replace(' ', '', $fixtureList);
-			$fixtures = explode(',', $fixtureListTrimmed);
-		}
-		$this->_fixtures = array_merge($this->_fixtures, $fixtures);
-		return $fixtures;
-	}
-
-/**
  * Is a mock class required for this type of test?
  * Controllers require a mock class.
  *
@@ -434,6 +419,11 @@ class TestTask extends BakeTask {
 		if ($type === 'shell') {
 			$pre = "\$this->io = \$this->getMock('Cake\Console\ConsoleIo');\n";
 			$construct = "new {$className}(\$this->io);\n";
+		}
+		if ($type === 'cell') {
+			$pre = "\$this->request = \$this->getMock('Cake\Network\Request');\n";
+			$pre .= "\t\t\$this->response = \$this->getMock('Cake\Network\Response');\n";
+			$construct = "new {$className}(\$this->request, \$this->response);\n";
 		}
 		return [$pre, $construct, $post];
 	}

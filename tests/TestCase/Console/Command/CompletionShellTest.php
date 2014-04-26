@@ -164,7 +164,7 @@ class CompletionShellTest extends TestCase {
 		$this->Shell->runCommand(['subcommands', 'CORE.bake']);
 		$output = $this->out->output;
 
-		$expected = "behavior component controller fixture helper model plugin project shell test view widget zerg\n";
+		$expected = "behavior cell component controller fixture helper model plugin project shell test view widget zerg\n";
 		$this->assertEquals($expected, $output);
 	}
 
@@ -229,7 +229,7 @@ class CompletionShellTest extends TestCase {
 		$this->Shell->runCommand(['subcommands', 'bake']);
 		$output = $this->out->output;
 
-		$expected = "behavior component controller fixture helper model plugin project shell test view widget zerg\n";
+		$expected = "behavior cell component controller fixture helper model plugin project shell test view widget zerg\n";
 		$this->assertEquals($expected, $output);
 	}
 
