@@ -266,6 +266,10 @@ class TextHelperTest extends CakeTestCase {
 				'Text with a url <a href="http://www.not--work.com">http://www.not--work.com</a> and more',
 			),
 			array(
+				'Text with a url http://www.sub_domain.domain.pl and more',
+				'Text with a url <a href="http://www.sub_domain.domain.pl">http://www.sub_domain.domain.pl</a> and more',
+			),
+			array(
 				'Text with a partial www.küchenschöhn-not-working.de URL',
 				'Text with a partial <a href="http://www.küchenschöhn-not-working.de">www.küchenschöhn-not-working.de</a> URL'
 			),
