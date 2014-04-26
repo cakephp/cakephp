@@ -663,7 +663,8 @@ class SecurityComponent extends Object {
 		ksort($lockedFields, SORT_STRING);
 
 		$fieldList += $lockedFields;
-		$check = Security::hash(serialize($fieldList) . Configure::read('Security.salt'));
+		$url = $controller->here;
+		$check = Security::hash($url . serialize($fieldList) . Configure::read('Security.salt'));
 		return ($token === $check);
 	}
 

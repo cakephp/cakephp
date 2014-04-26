@@ -81,7 +81,6 @@ class FormHelper extends AppHelper {
  */
 	var $defaultModel = null;
 
-
 /**
  * Persistent default options used by input(). Set by FormHelper::create().
  *
@@ -89,6 +88,14 @@ class FormHelper extends AppHelper {
  * @access protected
  */
 	var $_inputDefaults = array();
+
+/**
+ * The action attribute value of the last created form.
+ * Used to make form/request specific hashes for SecurityComponent.
+ *
+ * @var string
+ */
+	var $_lastAction = '';
 
 /**
  * Introspects model information and extracts information related
@@ -322,6 +329,7 @@ class FormHelper extends AppHelper {
 			$append = sprintf($this->Html->tags['block'], ' style="display:none;"', $append);
 		}
 
+		$this->_lastAction = parse_url($action, PHP_URL_PATH);
 		$this->setEntity($model . '.', true);
 		$attributes = sprintf('action="%s" ', $action) . $this->_parseAttributes($htmlAttributes, null, '');
 		return sprintf($this->Html->tags['form'], $attributes) . $append;
@@ -403,7 +411,11 @@ class FormHelper extends AppHelper {
 		ksort($locked, SORT_STRING);
 		$fields += $locked;
 
-		$fields = Security::hash(serialize($fields) . Configure::read('Security.salt'));
+		$fields = Security::hash(
+			$this->_lastAction .
+			serialize($fields) .
+			Configure::read('Security.salt')
+		);
 		$locked = implode(array_keys($locked), '|');
 
 		$out = $this->hidden('_Token.fields', array(
