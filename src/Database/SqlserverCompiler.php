@@ -24,8 +24,7 @@ use Cake\Database\QueryCompiler;
 class SqlserverCompiler extends QueryCompiler {
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	protected $_templates = [
 		'delete' => 'DELETE',
@@ -39,8 +38,7 @@ class SqlserverCompiler extends QueryCompiler {
 	];
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	protected $_selectParts = [
 		'select', 'from', 'join', 'where', 'group', 'having', 'order', 'offset',

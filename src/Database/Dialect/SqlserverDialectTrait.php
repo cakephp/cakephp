@@ -212,8 +212,7 @@ trait SqlserverDialectTrait {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function newCompiler() {
 		return new SqlserverCompiler();

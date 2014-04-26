@@ -535,7 +535,7 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * @return Query The query instance.
  * @throws \RuntimeException When you attempt to cache a non-select query.
@@ -548,7 +548,7 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * @throws \RuntimeException if this method is called on a non-select Query.
  */
@@ -562,8 +562,7 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function sql(ValueBinder $binder = null) {
 		$this->_transformQuery();
@@ -571,8 +570,7 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function execute() {
 		$this->_transformQuery();
@@ -715,7 +713,7 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  *
  * @throws \BadMethodCallException if the method is called for a non-select query
  */
@@ -730,7 +728,7 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * {@inheritdoc}
+ * {@inheritDoc}
  */
 	public function __debugInfo() {
 		return parent::__debugInfo() + [

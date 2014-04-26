@@ -118,8 +118,7 @@ class HasMany extends Association {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	protected function _linkField($options) {
 		$links = [];

@@ -23,8 +23,7 @@ use Cake\Database\Schema\Table;
 class PostgresSchema extends BaseSchema {
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function listTablesSql($config) {
 		$sql = 'SELECT table_name as name FROM information_schema.tables WHERE table_schema = ? ORDER BY name';
@@ -33,8 +32,7 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function describeTableSql($name, $config) {
 		$sql =
@@ -124,8 +122,7 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function convertFieldDescription(Table $table, $row) {
 		$field = $this->_convertColumn($row['type']);
@@ -149,8 +146,7 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function describeIndexSql($table, $config) {
 		$sql = 'SELECT
@@ -182,8 +178,7 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function convertIndexDescription(Table $table, $row) {
 		$type = Table::INDEX_INDEX;
@@ -235,8 +230,7 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function describeForeignKeySql($table, $config) {
 		$sql = "SELECT
@@ -260,8 +254,7 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function convertForeignKeyDescription(Table $table, $row) {
 		preg_match('/REFERENCES ([^\)]+)\(([^\)]+)\)/', $row['definition'], $matches);
@@ -283,8 +276,7 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	protected function _convertOnClause($clause) {
 		if ($clause === 'r') {
@@ -300,8 +292,7 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
@@ -368,8 +359,7 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function indexSql(Table $table, $name) {
 		$data = $table->index($name);
@@ -385,8 +375,7 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function constraintSql(Table $table, $name) {
 		$data = $table->constraint($name);
@@ -426,8 +415,7 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$content = array_merge($columns, $constraints);
@@ -453,8 +441,7 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function truncateTableSql(Table $table) {
 		$name = $this->_driver->quoteIdentifier($table->name());

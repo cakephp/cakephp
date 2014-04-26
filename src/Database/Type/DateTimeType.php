@@ -38,8 +38,7 @@ class DateTimeType extends \Cake\Database\Type {
 	protected $_format = 'Y-m-d H:i:s';
 
 /**
- * {@inheritdoc}
- *
+ * {@inheritDoc}
  */
 	public function __construct($name = null) {
 		parent::__construct($name);
