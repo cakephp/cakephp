@@ -1067,7 +1067,7 @@ class SecurityComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testRadio() {
+	public function testValidatePostRadio() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '3be63770e7953c6d2119f5377a9303372040f66f%3An%3A0%3A%7B%7D';
@@ -1100,6 +1100,38 @@ class SecurityComponentTest extends CakeTestCase {
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 	}
+
+/**
+ * test validatePost uses here() as a hash input.
+ *
+ * @return void
+ */
+	public function testValidatePostUrlAsHashInput() {
+		$this->Controller->Security->startup($this->Controller);
+
+		$key = $this->Controller->request->params['_Token']['key'];
+		$fields = '5415d31b4483c1e09ddb58d2a91ba9650b12aa83%3A';
+		$unlocked = '';
+
+		$this->Controller->request->data = array(
+			'Model' => array('username' => '', 'password' => ''),
+			'_Token' => compact('key', 'fields', 'unlocked')
+		);
+		$this->assertTrue($this->Controller->Security->validatePost($this->Controller));
+
+		$request = $this->getMock('CakeRequest', array('here'), array('articles/edit/1', false));
+		$request->expects($this->at(0))
+			->method('here')
+			->will($this->returnValue('/posts/index?page=1'));
+		$request->expects($this->at(1))
+			->method('here')
+			->will($this->returnValue('/posts/edit/1'));
+
+		$this->Controller->Security->request = $request;
+		$this->assertFalse($this->Controller->Security->validatePost($this->Controller));
+		$this->assertFalse($this->Controller->Security->validatePost($this->Controller));
+	}
+
 
 /**
  * test that a requestAction's controller will have the _Token appended to
