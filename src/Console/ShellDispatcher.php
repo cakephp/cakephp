@@ -52,7 +52,7 @@ class ShellDispatcher {
  */
 	public function __construct($args = [], $bootstrap = true) {
 		set_time_limit(0);
-		$this->args = $args;
+		$this->args = (array)$args;
 
 		if ($bootstrap) {
 			$this->_initEnvironment();

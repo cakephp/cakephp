@@ -163,6 +163,14 @@ class FormHelper extends Helper {
 	protected $_contextProviders;
 
 /**
+ * The action attribute value of the last created form.
+ * Used to make form/request specific hashes for SecurityComponent.
+ *
+ * @var string
+ */
+	protected $_lastAction = '';
+
+/**
  * Construct the widgets and binds the default context providers
  *
  * @param \Cake\View\View $View The View this helper is being attached to.
@@ -337,6 +345,8 @@ class FormHelper extends Helper {
 		if (!empty($append)) {
 			$append = $templater->format('hiddenblock', ['content' => $append]);
 		}
+		$this->_lastAction = $action;
+
 		$actionAttr = $templater->formatAttributes(['action' => $action, 'escape' => false]);
 		return $templater->format('formstart', [
 			'attrs' => $templater->formatAttributes($htmlAttributes) . $actionAttr
@@ -468,7 +478,13 @@ class FormHelper extends Helper {
 
 		$locked = implode(array_keys($locked), '|');
 		$unlocked = implode($unlockedFields, '|');
-		$fields = Security::hash(serialize($fields) . $unlocked . Configure::read('Security.salt'), 'sha1');
+		$hashParts = array(
+			$this->_lastAction,
+			serialize($fields),
+			$unlocked,
+			Configure::read('Security.salt')
+		);
+		$fields = Security::hash(implode('', $hashParts), 'sha1');
 
 		$tokenFields = array_merge($secureAttributes, array(
 			'value' => urlencode($fields . ':' . $locked),

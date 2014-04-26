@@ -133,8 +133,12 @@ class SecurityComponentTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$request = new Request('posts/index');
+		$request = $this->getMock('Cake\Network\Request', ['here'], ['posts/index']);
 		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
+		$request->expects($this->any())
+			->method('here')
+			->will($this->returnValue('/articles/index'));
+
 		$this->Controller = new SecurityTestController($request);
 		$this->Controller->constructClasses();
 		$this->Controller->Security = $this->Controller->TestSecurity;
@@ -321,7 +325,7 @@ class SecurityComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
 
-		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
+		$fields = '68730b0747d4889ec2766f9117405f9635f5fd5e%3AModel.valid';
 		$unlocked = '';
 
 		$this->Controller->request->data = array(
@@ -401,7 +405,7 @@ class SecurityComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
 
-		$fields = 'f7d573650a295b94e0938d32b323fde775e5f32b%3A';
+		$fields = '8e26ef05379e5402c2c619f37ee91152333a0264%3A';
 		$unlocked = '';
 
 		$this->Controller->request->data = array(
@@ -420,7 +424,7 @@ class SecurityComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
 
-		$fields = '540ac9c60d323c22bafe997b72c0790f39a8bdef%3A';
+		$fields = 'a1c3724b7ba85e7022413611e30ba2c6181d5aba%3A';
 		$unlocked = '';
 
 		$this->Controller->request->data = array(
@@ -441,7 +445,7 @@ class SecurityComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
 
-		$fields = '69f493434187b867ea14b901fdf58b55d27c935d%3A';
+		$fields = 'b0914d06dfb04abf1fada53e16810e87d157950b%3A';
 		$unlocked = '';
 
 		$this->Controller->request->data = array(
@@ -462,7 +466,7 @@ class SecurityComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
 
-		$fields = 'c9118120e680a7201b543f562e5301006ccfcbe2%3AAddresses.0.id%7CAddresses.1.id';
+		$fields = 'b65c7463e44a61d8d2eaecce2c265b406c9c4742%3AAddresses.0.id%7CAddresses.1.id';
 		$unlocked = '';
 
 		$this->Controller->request->data = array(
@@ -491,7 +495,7 @@ class SecurityComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
 
-		$fields = '422cde416475abc171568be690a98cad20e66079%3A';
+		$fields = '8d8da68ba03b3d6e7e145b948abfe26741422169%3A';
 		$unlocked = '';
 
 		$this->Controller->request->data = array(
@@ -515,7 +519,7 @@ class SecurityComponentTest extends TestCase {
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
-		$fields = '19464422eafe977ee729c59222af07f983010c5f%3A';
+		$fields = 'eae2adda1628b771a30cc133342d16220c6520fe%3A';
 		$this->Controller->request->data = array(
 			'User.password' => 'bar', 'User.name' => 'foo', 'User.is_valid' => '1',
 			'Tag' => array('Tag' => array(1)),
@@ -536,7 +540,7 @@ class SecurityComponentTest extends TestCase {
 	public function testValidatePostCheckbox() {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
-		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
+		$fields = '68730b0747d4889ec2766f9117405f9635f5fd5e%3AModel.valid';
 		$unlocked = '';
 
 		$this->Controller->request->data = array(
@@ -547,7 +551,7 @@ class SecurityComponentTest extends TestCase {
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
-		$fields = '874439ca69f89b4c4a5f50fb9c36ff56a28f5d42%3A';
+		$fields = 'f63e4a69b2edd31f064e8e602a04dd59307cfe9c%3A';
 
 		$this->Controller->request->data = array(
 			'Model' => array('username' => '', 'password' => '', 'valid' => '0'),
@@ -577,7 +581,7 @@ class SecurityComponentTest extends TestCase {
 	public function testValidatePostHidden() {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
-		$fields = '51ccd8cb0997c7b3d4523ecde5a109318405ef8c%3AModel.hidden%7CModel.other_hidden';
+		$fields = '973a8939a68ac014cc6f7666cec9aa6268507350%3AModel.hidden%7CModel.other_hidden';
 		$unlocked = '';
 
 		$this->Controller->request->data = array(
@@ -600,7 +604,7 @@ class SecurityComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->config('disabledFields', ['Model.username', 'Model.password']);
 		$this->Controller->Security->startup($event);
-		$fields = 'ef1082968c449397bcd849f963636864383278b1%3AModel.hidden';
+		$fields = '1c59acfbca98bd870c11fb544d545cbf23215880%3AModel.hidden';
 		$unlocked = '';
 
 		$this->Controller->request->data = array(
@@ -624,7 +628,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->Security->startup($event);
 		$unlocked = 'Model.username';
 		$fields = array('Model.hidden', 'Model.password');
-		$fields = urlencode(Security::hash(serialize($fields) . $unlocked . Configure::read('Security.salt')));
+		$fields = urlencode(Security::hash('/articles/index' . serialize($fields) . $unlocked . Configure::read('Security.salt')));
 
 		$this->Controller->request->data = array(
 			'Model' => array(
@@ -699,7 +703,7 @@ class SecurityComponentTest extends TestCase {
 	public function testValidateHiddenMultipleModel() {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
-		$fields = 'a2d01072dc4660eea9d15007025f35a7a5b58e18%3AModel.valid%7CModel2.valid%7CModel3.valid';
+		$fields = '075ca6c26c38a09a78d871201df89faf52cbbeb8%3AModel.valid%7CModel2.valid%7CModel3.valid';
 		$unlocked = '';
 
 		$this->Controller->request->data = array(
@@ -720,7 +724,7 @@ class SecurityComponentTest extends TestCase {
 	public function testValidateHasManyModel() {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
-		$fields = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
+		$fields = '24a753fb62ef7839389987b58e3f7108f564e529%3AModel.0.hidden%7CModel.0.valid';
 		$fields .= '%7CModel.1.hidden%7CModel.1.valid';
 		$unlocked = '';
 
@@ -750,7 +754,7 @@ class SecurityComponentTest extends TestCase {
 	public function testValidateHasManyRecordsPass() {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
-		$fields = '7a203edb3d345bbf38fe0dccae960da8842e11d7%3AAddress.0.id%7CAddress.0.primary%7C';
+		$fields = '8f7d82bf7656cf068822d9bdab109ebed1be1825%3AAddress.0.id%7CAddress.0.primary%7C';
 		$fields .= 'Address.1.id%7CAddress.1.primary';
 		$unlocked = '';
 
@@ -794,7 +798,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->Security->startup($event);
 		$unlocked = '';
 		$hashFields = array('TaxonomyData');
-		$fields = urlencode(Security::hash(serialize($hashFields) . $unlocked . Configure::read('Security.salt')));
+		$fields = urlencode(Security::hash('/articles/index' . serialize($hashFields) . $unlocked . Configure::read('Security.salt')));
 
 		$this->Controller->request->data = array(
 			'TaxonomyData' => array(
@@ -860,7 +864,7 @@ class SecurityComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 
 		$this->Controller->Security->startup($event);
-		$fields = '11842060341b9d0fc3808b90ba29fdea7054d6ad%3An%3A0%3A%7B%7D';
+		$fields = '9da2b3fa2b5b8ac0bfbc1bbce145e58059629125%3An%3A0%3A%7B%7D';
 		$unlocked = '';
 
 		$this->Controller->request->data = array(
@@ -890,7 +894,7 @@ class SecurityComponentTest extends TestCase {
 	public function testRadio() {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
-		$fields = '575ef54ca4fc8cab468d6d898e9acd3a9671c17e%3An%3A0%3A%7B%7D';
+		$fields = 'c2226a8879c3f4b513691295fc2519a29c44c8bb%3An%3A0%3A%7B%7D';
 		$unlocked = '';
 
 		$this->Controller->request->data = array(
