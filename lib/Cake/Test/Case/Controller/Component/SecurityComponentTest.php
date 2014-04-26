@@ -142,7 +142,7 @@ class SecurityComponentTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$request = $this->getMock('CakeRequest', ['here'], ['posts/index', false]);
+		$request = $this->getMock('CakeRequest', array('here'), array('posts/index', false));
 		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
 		$request->expects($this->any())
 			->method('here')
@@ -794,7 +794,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$unlocked = 'Model.username';
 		$fields = array('Model.hidden', 'Model.password');
 		$fields = urlencode(Security::hash(
-			'/posts/index' . 
+			'/posts/index' .
 			serialize($fields) .
 			$unlocked .
 			Configure::read('Security.salt'))
