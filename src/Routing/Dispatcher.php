@@ -187,7 +187,10 @@ class Dispatcher implements EventListener {
  */
 	protected function _invoke(Controller $controller) {
 		$controller->constructClasses();
-		$controller->startupProcess();
+		$result = $controller->startupProcess();
+		if ($result instanceof Response) {
+			return $result;
+		}
 
 		$response = $controller->invokeAction();
 		if ($response !== null && !($response instanceof Response)) {

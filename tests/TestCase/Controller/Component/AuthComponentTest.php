@@ -219,12 +219,12 @@ class AuthComponentTest extends TestCase {
 
 		$this->Auth->Session->delete('Auth');
 		$result = $this->Controller->Auth->startup($event);
-		$this->assertFalse($result);
+		$this->assertInstanceOf('Cake\Network\Response', $result);
 		$this->assertTrue($this->Auth->Session->check('Message.auth'));
 
 		$this->Controller->request->addParams(Router::parse('auth_test/camelCase'));
 		$result = $this->Controller->Auth->startup($event);
-		$this->assertFalse($result);
+		$this->assertInstanceOf('Cake\Network\Response', $result);
 	}
 
 /**
@@ -384,10 +384,10 @@ class AuthComponentTest extends TestCase {
 		$this->assertTrue($this->Controller->Auth->startup($event));
 
 		$this->Controller->request['action'] = 'add';
-		$this->assertFalse($this->Controller->Auth->startup($event));
+		$this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
 
 		$this->Controller->request['action'] = 'camelCase';
-		$this->assertFalse($this->Controller->Auth->startup($event));
+		$this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
 
 		$this->Controller->Auth->allow();
 		$this->Controller->Auth->deny(array('add', 'camelCase'));
@@ -396,25 +396,25 @@ class AuthComponentTest extends TestCase {
 		$this->assertTrue($this->Controller->Auth->startup($event));
 
 		$this->Controller->request['action'] = 'camelCase';
-		$this->assertFalse($this->Controller->Auth->startup($event));
+		$this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
 
 		$this->Controller->Auth->allow('*');
 		$this->Controller->Auth->deny();
 
 		$this->Controller->request['action'] = 'camelCase';
-		$this->assertFalse($this->Controller->Auth->startup($event));
+		$this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
 
 		$this->Controller->request['action'] = 'add';
-		$this->assertFalse($this->Controller->Auth->startup($event));
+		$this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
 
 		$this->Controller->Auth->allow('camelCase');
 		$this->Controller->Auth->deny();
 
 		$this->Controller->request['action'] = 'camelCase';
-		$this->assertFalse($this->Controller->Auth->startup($event));
+		$this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
 
 		$this->Controller->request['action'] = 'login';
-		$this->assertFalse($this->Controller->Auth->startup($event));
+		$this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
 
 		$this->Controller->Auth->deny();
 		$this->Controller->Auth->allow(null);
@@ -426,7 +426,7 @@ class AuthComponentTest extends TestCase {
 		$this->Controller->Auth->deny(null);
 
 		$this->Controller->request['action'] = 'camelCase';
-		$this->assertFalse($this->Controller->Auth->startup($event));
+		$this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
 	}
 
 /**
@@ -444,12 +444,12 @@ class AuthComponentTest extends TestCase {
 		$this->Controller->request->addParams(Router::parse($url));
 		$this->Controller->request->query['url'] = Router::normalize($url);
 
-		$this->assertFalse($this->Controller->Auth->startup($event));
+		$this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
 
 		$url = '/auth_test/CamelCase';
 		$this->Controller->request->addParams(Router::parse($url));
 		$this->Controller->request->query['url'] = Router::normalize($url);
-		$this->assertFalse($this->Controller->Auth->startup($event));
+		$this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
 	}
 
 /**
@@ -480,8 +480,7 @@ class AuthComponentTest extends TestCase {
 		$this->assertTrue($result, 'startup() should return true, as action is allowed. %s');
 
 		$this->Controller->Auth->allowedActions = array('delete', 'add');
-		$result = $this->Controller->Auth->startup($event);
-		$this->assertFalse($result, 'startup() should return false, as action is not allowed. %s');
+		$this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
 
 		$url = '/auth_test/delete';
 		$this->Controller->request->addParams(Router::parse($url));
@@ -904,19 +903,19 @@ class AuthComponentTest extends TestCase {
 			'environment' => ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
 		]);
 		$this->Controller->request->params['action'] = 'add';
-		$this->Controller->response->expects($this->once())->method('stop');
 
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->config('ajaxLogin', 'test_element');
 		$this->Auth->RequestHandler->ajaxLayout = 'ajax2';
 		$this->Auth->initialize($event);
 
-		ob_start();
-		$this->Auth->startup($event);
-		$result = ob_get_clean();
+		$response = $this->Auth->startup($event);
 
-		$this->assertEquals(403, $this->Controller->response->statusCode());
-		$this->assertEquals("Ajax!\nthis is the test element", str_replace("\r\n", "\n", $result));
+		$this->assertEquals(403, $response->statusCode());
+		$this->assertEquals(
+			"Ajax!\nthis is the test element",
+			str_replace("\r\n", "\n", $response->body())
+		);
 	}
 
 /**
@@ -1331,8 +1330,7 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->response->expects($this->never())->method('statusCode');
 		$this->Auth->response->expects($this->never())->method('send');
 
-		$result = $this->Auth->startup($event);
-		$this->assertFalse($result);
+		$this->assertInstanceOf('Cake\Network\Response', $this->Auth->startup($event));
 
 		$this->assertEquals('/users/login', $this->Controller->testUrl);
 	}

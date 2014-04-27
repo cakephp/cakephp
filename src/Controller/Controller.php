@@ -515,7 +515,10 @@ class Controller implements EventListener {
  */
 	public function startupProcess() {
 		$this->getEventManager()->dispatch(new Event('Controller.initialize', $this));
-		$this->getEventManager()->dispatch(new Event('Controller.startup', $this));
+		$result = $this->getEventManager()->dispatch(new Event('Controller.startup', $this));
+		if ($result instanceof Response) {
+			return $result;
+		}
 	}
 
 /**

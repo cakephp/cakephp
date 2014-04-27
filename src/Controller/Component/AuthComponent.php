@@ -291,7 +291,8 @@ class AuthComponent extends Component {
  * is returned.
  *
  * @param Controller $controller A reference to the controller object.
- * @return bool True if current action is login action else false.
+ * @return bool|\Cake\Network\Response True if current action is login action
+ *   else false or response object if Controller::redirect() is called.
  */
 	protected function _unauthenticated(Controller $controller) {
 		if (empty($this->_authenticateObjects)) {
@@ -315,19 +316,19 @@ class AuthComponent extends Component {
 		if (!$controller->request->is('ajax')) {
 			$this->flash($this->_config['authError']);
 			$this->Session->write('Auth.redirect', $controller->request->here(false));
-			$controller->redirect($this->_config['loginAction']);
-			return false;
+			return $controller->redirect($this->_config['loginAction']);
 		}
 
 		if (!empty($this->_config['ajaxLogin'])) {
-			$controller->response->statusCode(403);
 			$controller->viewPath = 'Element';
-			echo $controller->render($this->_config['ajaxLogin'], $this->RequestHandler->ajaxLayout);
-			$controller->response->stop();
-			return false;
+			$response = $controller->render(
+				$this->_config['ajaxLogin'],
+				$this->RequestHandler->ajaxLayout
+			);
+			$response->statusCode(403);
+			return $response;
 		}
-		$controller->redirect(null, 403);
-		return false;
+		return $controller->redirect(null, 403);
 	}
 
 /**
@@ -351,7 +352,7 @@ class AuthComponent extends Component {
  * Handle unauthorized access attempt
  *
  * @param Controller $controller A reference to the controller object
- * @return bool Returns false
+ * @return \Cake\Network\Response
  * @throws \Cake\Error\ForbiddenException
  */
 	protected function _unauthorized(Controller $controller) {
@@ -369,8 +370,7 @@ class AuthComponent extends Component {
 		} else {
 			$url = $this->_config['unauthorizedRedirect'];
 		}
-		$controller->redirect($url, null, true);
-		return false;
+		return $controller->redirect($url, null, true);
 	}
 
 /**
