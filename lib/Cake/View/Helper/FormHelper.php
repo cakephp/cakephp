@@ -234,7 +234,7 @@ class FormHelper extends AppHelper {
 
 		if ($key === 'validates' && !isset($this->fieldset[$model]['validates'])) {
 			$validates = array();
-			foreach ($object->validator() as $validateField => $validateProperties) {
+			foreach (iterator_to_array($object->validator(), true) as $validateField => $validateProperties) {
 				if ($this->_isRequiredField($validateProperties)) {
 					$validates[$validateField] = true;
 				}
