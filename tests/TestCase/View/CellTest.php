@@ -108,6 +108,20 @@ class CellTest extends TestCase {
 	}
 
 /**
+ * Test rendering a cell with a theme.
+ *
+ * @return void
+ */
+	public function testCellRenderThemed() {
+		$this->View->theme = 'TestTheme';
+		$cell = $this->View->cell('Articles', ['msg' => 'hello world!']);
+
+		$this->assertEquals($this->View->theme, $cell->theme);
+		$this->assertContains('Themed cell content.', $cell->render());
+		$this->assertEquals($cell->View->theme, $cell->theme);
+	}
+
+/**
  * Tests that using plugin's cells works.
  *
  * @return void

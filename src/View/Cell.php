@@ -79,6 +79,13 @@ abstract class Cell {
 	public $viewClass = 'Cake\View\View';
 
 /**
+ * The theme name that will be used to render.
+ *
+ * @var string
+ */
+	public $theme;
+
+/**
  * Instance of the Cake\Event\EventManager this cell is using
  * to dispatch inner events.
  *
@@ -93,7 +100,7 @@ abstract class Cell {
  * @see \Cake\View\View
  */
 	protected $_validViewOptions = [
-		'viewVars', 'helpers', 'viewPath', 'plugin',
+		'viewVars', 'helpers', 'viewPath', 'plugin', 'theme'
 	];
 
 /**
