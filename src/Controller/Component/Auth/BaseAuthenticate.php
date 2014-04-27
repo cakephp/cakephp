@@ -201,9 +201,12 @@ abstract class BaseAuthenticate {
 	}
 
 /**
- * Handle unauthenticated access attempt. In implementation, will return true to indicate
- * the unauthenticated request has been dealt with and no more action is required by
- * AuthComponent or void (default).
+ * Handle unauthenticated access attempt. In implementation valid return values
+ * can be:
+ *
+ * - Null - No action taken, AuthComponent should return appropriate response.
+ * - Cake\Network\Response - A response object, which will cause AuthComponent to
+ *   simply return that response.
  *
  * @param \Cake\Network\Request $request A request object.
  * @param \Cake\Network\Response $response A response object.

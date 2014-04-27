@@ -299,8 +299,9 @@ class AuthComponent extends Component {
 			$this->constructAuthenticate();
 		}
 		$auth = $this->_authenticateObjects[count($this->_authenticateObjects) - 1];
-		if ($auth->unauthenticated($this->request, $this->response)) {
-			return false;
+		$result = $auth->unauthenticated($this->request, $this->response);
+		if ($result !== null) {
+			return $result;
 		}
 
 		if ($this->_isLoginAction($controller)) {
