@@ -321,7 +321,9 @@ class ExceptionRenderer {
 			$viewClass = $viewClass . 'View';
 			App::uses($viewClass, $plugin . 'View');
 		}
-
+		if (!class_exists($viewClass)) {
+			$viewClass = 'View';
+		}
 		return new $viewClass($controller);
 	}
 }
