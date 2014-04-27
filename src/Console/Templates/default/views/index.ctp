@@ -19,9 +19,9 @@ use Cake\Utility\Inflector;
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 	<?php foreach ($fields as $field): ?>
-		<th><?= "<?= \$this->Paginator->sort('{$field}'); ?>"; ?></th>
+	<th><?= "<?= \$this->Paginator->sort('{$field}'); ?>"; ?></th>
 	<?php endforeach; ?>
-		<th class="actions"><?= "<?= __('Actions'); ?>"; ?></th>
+	<th class="actions"><?= "<?= __('Actions'); ?>"; ?></th>
 	</tr>
 	<?php
 	echo "<?php foreach (\${$pluralVar} as \${$singularVar}): ?>\n";
@@ -51,13 +51,10 @@ use Cake\Utility\Inflector;
 		echo "\t\t</td>\n";
 	echo "\t</tr>\n";
 
-	echo "<?php endforeach; ?>\n";
+	echo "\t<?php endforeach; ?>\n";
 	?>
 	</table>
-	<p>
-	<?= "<?php
-	echo \$this->Paginator->counter();
-	?>"; ?></p>
+	<p><?= "<?= \$this->Paginator->counter(); ?>"; ?></p>
 	<div class="paging">
 	<?php
 		echo "<?php\n";
