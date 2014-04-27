@@ -538,11 +538,10 @@ class Controller implements EventListener {
  * @param string|array $url A string or array-based URL pointing to another location within the app,
  *     or an absolute URL
  * @param int $status Optional HTTP status code (eg: 404)
- * @param bool $exit If true, exit() will be called after the redirect
- * @return void
- * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::redirect
+ * @return void|\Cake\Network\Response
+ * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::redirect
  */
-	public function redirect($url, $status = null, $exit = true) {
+	public function redirect($url, $status = null) {
 		$this->autoRender = false;
 
 		$response = $this->response;
@@ -560,10 +559,7 @@ class Controller implements EventListener {
 			$response->location(Router::url($url, true));
 		}
 
-		if ($exit) {
-			$response->send();
-			$response->stop();
-		}
+		return $response;
 	}
 
 /**

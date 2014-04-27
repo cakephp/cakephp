@@ -429,9 +429,9 @@ class ControllerTest extends TestCase {
 		$Controller = new Controller(null);
 		$Controller->response = new Response();
 
-		$Controller->redirect('http://cakephp.org', (int)$code, false);
-		$this->assertEquals($code, $Controller->response->statusCode());
-		$this->assertEquals('http://cakephp.org', $Controller->response->header()['Location']);
+		$response = $Controller->redirect('http://cakephp.org', (int)$code, false);
+		$this->assertEquals($code, $response->statusCode());
+		$this->assertEquals('http://cakephp.org', $response->header()['Location']);
 		$this->assertFalse($Controller->autoRender);
 	}
 
@@ -448,9 +448,9 @@ class ControllerTest extends TestCase {
 			$response->location('http://book.cakephp.org');
 		}, 'Controller.beforeRedirect');
 
-		$Controller->redirect('http://cakephp.org', 301, false);
-		$this->assertEquals('http://book.cakephp.org', $Controller->response->header()['Location']);
-		$this->assertEquals(301, $Controller->response->statusCode());
+		$response = $Controller->redirect('http://cakephp.org', 301, false);
+		$this->assertEquals('http://book.cakephp.org', $response->header()['Location']);
+		$this->assertEquals(301, $response->statusCode());
 	}
 
 /**
@@ -466,10 +466,10 @@ class ControllerTest extends TestCase {
 			$response->statusCode(302);
 		}, 'Controller.beforeRedirect');
 
-		$Controller->redirect('http://cakephp.org', 301, false);
+		$response = $Controller->redirect('http://cakephp.org', 301, false);
 
-		$this->assertEquals('http://cakephp.org', $Controller->response->header()['Location']);
-		$this->assertEquals(302, $Controller->response->statusCode());
+		$this->assertEquals('http://cakephp.org', $response->header()['Location']);
+		$this->assertEquals(302, $response->statusCode());
 	}
 
 /**
@@ -492,7 +492,8 @@ class ControllerTest extends TestCase {
 		$Controller->response->expects($this->never())
 			->method('statusCode');
 
-		$Controller->redirect('http://cakephp.org');
+		$result = $Controller->redirect('http://cakephp.org');
+		$this->assertNull($result);
 	}
 
 /**
