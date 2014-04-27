@@ -64,12 +64,10 @@ class CellTest extends TestCase {
 		$cell = $this->View->cell('Articles::teaserList');
 		$render = "{$cell}";
 
-		$this->assertTrue(
-			strpos($render, '<h2>Lorem ipsum</h2>') !== false &&
-			strpos($render, '<h2>Usectetur adipiscing eli</h2>') !== false &&
-			strpos($render, '<h2>Topis semper blandit eu non</h2>') !== false &&
-			strpos($render, '<h2>Suspendisse gravida neque</h2>') !== false
-		);
+		$this->assertContains('<h2>Lorem ipsum</h2>', $render);
+		$this->assertContains('<h2>Usectetur adipiscing eli</h2>', $render);
+		$this->assertContains('<h2>Topis semper blandit eu non</h2>', $render);
+		$this->assertContains('<h2>Suspendisse gravida neque</h2>', $render);
 	}
 
 /**
@@ -80,7 +78,7 @@ class CellTest extends TestCase {
 	public function testCellWithArguments() {
 		$cell = $this->View->cell('Articles::doEcho', ['msg1' => 'dummy', 'msg2' => ' message']);
 		$render = "{$cell}";
-		$this->assertTrue(strpos($render, 'dummy message') !== false);
+		$this->assertContains('dummy message', $render);
 	}
 
 /**
@@ -90,10 +88,10 @@ class CellTest extends TestCase {
  */
 	public function testDefaultCellAction() {
 		$appCell = $this->View->cell('Articles');
-		$this->assertTrue(strpos("{$appCell}", 'dummy') !== false);
+		$this->assertContains('dummy', "{$appCell}");
 
 		$pluginCell = $this->View->cell('TestPlugin.Dummy');
-		$this->assertTrue(strpos("{$pluginCell}", 'dummy') !== false);
+		$this->assertContains('dummy', "{$pluginCell}");
 	}
 
 /**
@@ -103,10 +101,10 @@ class CellTest extends TestCase {
  */
 	public function testCellManualRender() {
 		$cell = $this->View->cell('Articles::doEcho', ['msg1' => 'dummy', 'msg2' => ' message']);
-		$this->assertTrue(strpos($cell->render(), 'dummy message') !== false);
+		$this->assertContains('dummy message', $cell->render());
 
 		$cell->teaserList();
-		$this->assertTrue(strpos($cell->render('teaser_list'), '<h2>Lorem ipsum</h2>') !== false);
+		$this->assertContains('<h2>Lorem ipsum</h2>', $cell->render('teaser_list'));
 	}
 
 /**
@@ -116,7 +114,7 @@ class CellTest extends TestCase {
  */
 	public function testPluginCell() {
 		$cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
-		$this->assertTrue(strpos("{$cell}", 'hello world!') !== false);
+		$this->assertContains('hello world!', "{$cell}");
 	}
 
 /**
