@@ -757,27 +757,6 @@ class View {
 	}
 
 /**
- * Adds a script block or other element to be inserted in $scripts_for_layout in
- * the `<head />` of a document layout
- *
- * @param string $name Either the key name for the script, or the script content. Name can be used to
- *   update/replace a script element.
- * @param string $content The content of the script being added, optional.
- * @return void
- * @deprecated Will be removed in 3.0. Superseded by blocks functionality.
- * @see View::start()
- */
-	public function addScript($name, $content = null) {
-		if (empty($content)) {
-			if (!in_array($name, array_values($this->_scripts))) {
-				$this->_scripts[] = $name;
-			}
-		} else {
-			$this->_scripts[$name] = $content;
-		}
-	}
-
-/**
  * Generates a unique, non-random DOM ID for an object, based on the object type and the target URL.
  *
  * @param string $object Type of object, i.e. 'form' or 'link'
