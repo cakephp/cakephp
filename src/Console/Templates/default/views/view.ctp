@@ -15,7 +15,7 @@
 use Cake\Utility\Inflector;
 ?>
 <div class="<?= $pluralVar; ?> view">
-<h2><?= "<?= __('{$singularHumanName}'); ?>"; ?></h2>
+	<h2><?= "<?= __('{$singularHumanName}'); ?>"; ?></h2>
 	<dl>
 <?php
 foreach ($fields as $field) {
@@ -103,16 +103,16 @@ foreach ($relations as $alias => $details):
 	<h3><?= "<?= __('Related " . $otherPluralHumanName . "'); ?>"; ?></h3>
 	<?= "<?php if (!empty(\${$singularVar}->{$details['property']})): ?>\n"; ?>
 	<table cellpadding="0" cellspacing="0">
-	<tr>
+		<tr>
 <?php
 			foreach ($details['fields'] as $field) {
-				echo "\t\t<th><?= __('" . Inflector::humanize($field) . "'); ?></th>\n";
+				echo "\t\t\t<th><?= __('" . Inflector::humanize($field) . "'); ?></th>\n";
 			}
 ?>
-		<th class="actions"><?= "<?= __('Actions'); ?>"; ?></th>
-	</tr>
+			<th class="actions"><?= "<?= __('Actions'); ?>"; ?></th>
+		</tr>
 <?php
-echo "\t<?php foreach (\${$singularVar}->{$details['property']} as \${$otherSingularVar}): ?>\n";
+echo "\t\t<?php foreach (\${$singularVar}->{$details['property']} as \${$otherSingularVar}): ?>\n";
 		echo "\t\t<tr>\n";
 			foreach ($details['fields'] as $field) {
 				echo "\t\t\t<td><?= h(\${$otherSingularVar}->{$field}) ?></td>\n";
@@ -127,10 +127,10 @@ echo "\t<?php foreach (\${$singularVar}->{$details['property']} as \${$otherSing
 			echo "\t\t\t</td>\n";
 		echo "\t\t</tr>\n";
 
-echo "\t<?php endforeach; ?>\n";
+echo "\t\t<?php endforeach; ?>\n";
 ?>
 	</table>
-<?= "<?php endif; ?>\n\n"; ?>
+<?= "\t<?php endif; ?>\n"; ?>
 	<div class="actions">
 		<ul>
 			<li><?= "<?= \$this->Html->link(__('New " . Inflector::humanize(Inflector::underscore($alias)) . "'), ['controller' => '{$details['controller']}', 'action' => 'add']); ?>"; ?> </li>
