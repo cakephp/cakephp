@@ -303,10 +303,27 @@ class ExceptionRenderer {
 		$this->controller->layout = 'error';
 		$this->controller->helpers = array('Form', 'Html', 'Session');
 
-		$view = new View($this->controller);
+		$view = $this->_getViewObject($this->controller);
 		$this->controller->response->body($view->render($template, 'error'));
 		$this->controller->response->type('html');
 		$this->controller->response->send();
 	}
 
+/**
+ * Constructs the view class instance based on the Exception config
+ *
+ * @return View
+ */
+	protected function _getViewObject(Controller $controller) {
+		$viewClass = Configure::read('Exception.viewClass');
+		if ($viewClass !== 'View') {
+			list($plugin, $viewClass) = pluginSplit($viewClass, true);
+			$viewClass = $viewClass . 'View';
+			App::uses($viewClass, $plugin . 'View');
+		}
+		if (!class_exists($viewClass)) {
+			$viewClass = 'View';
+		}
+		return new $viewClass($controller);
+	}
 }

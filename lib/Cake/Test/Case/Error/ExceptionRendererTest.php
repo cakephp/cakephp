@@ -20,6 +20,16 @@ App::uses('ExceptionRenderer', 'Error');
 App::uses('Controller', 'Controller');
 App::uses('Component', 'Controller');
 App::uses('Router', 'Routing');
+App::uses('View', 'View');
+
+/**
+ * TestView class
+ *
+ * @package       Cake.Test.Case.Error
+ */
+class TestView extends View {
+
+}
 
 /**
  * Short description for class.
@@ -117,6 +127,15 @@ class MyCustomExceptionRenderer extends ExceptionRenderer {
  */
 	public function missingWidgetThing() {
 		echo 'widget thing is missing';
+	}
+
+/**
+ * name of view class is used for render.
+ *
+ * @return void
+ */
+	public function getViewObjectName() {
+		return get_class($this->_getViewObject($this->controller));
 	}
 
 }
@@ -810,4 +829,22 @@ class ExceptionRendererTest extends CakeTestCase {
 		$this->assertContains(h('SELECT * from poo_query < 5 and :seven'), $result);
 		$this->assertContains("'seven' => (int) 7", $result);
 	}
+
+/**
+ * Test View class
+ *
+ * @return void
+ */
+	public function testViewClassRender() {
+		$exception = new NotFoundException('Not there, sorry');
+
+		Configure::write('Exception.viewClass', 'View');
+		$ExceptionRenderer = new MyCustomExceptionRenderer($exception);
+		$this->assertEquals('View', $ExceptionRenderer->getViewObjectName());
+
+		Configure::write('Exception.viewClass', 'Test');
+		$ExceptionRenderer = new MyCustomExceptionRenderer($exception);
+		$this->assertEquals('TestView', $ExceptionRenderer->getViewObjectName());
+	}
+
 }

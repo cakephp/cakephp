@@ -71,12 +71,14 @@
  * - `skipLog` - array - list of exceptions to skip for logging. Exceptions that
  *   extend one of the listed exceptions will also be skipped for logging.
  *   Example: `'skipLog' => array('NotFoundException', 'UnauthorizedException')`
+ * - `viewClass` - string - The name of the View class.
  *
  * @see ErrorHandler for more information on exception handling and configuration.
  */
 	Configure::write('Exception', array(
 		'handler' => 'ErrorHandler::handleException',
 		'renderer' => 'ExceptionRenderer',
+		'viewClass' => 'View',
 		'log' => true
 	));
 
