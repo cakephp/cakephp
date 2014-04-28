@@ -17,9 +17,12 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Controller\ComponentRegistry;
 use Cake\Error\InternalErrorException;
 use Cake\Event\Event;
 use Cake\Network\Session;
+use Cake\Utility\Hash;
+use Cake\Utility\String;
 
 /**
  * The CakePHP FlashComponent provides a way to easily set flash messages of any
@@ -28,13 +31,23 @@ use Cake\Network\Session;
 class FlashComponent extends Component {
 
 /**
+ * The controller.
+ *
+ * @var \Cake\Controller\Controller
+ */
+	protected $_controller;
+
+/**
  * Default config
  *
  * - `element` - Element to wrap flash message in.
  * - `key` - Message key, default is 'flash'.
+ * - `modelName` - Name of the model to use in the default CRUD templates, default is 'record'
+ *      or `Controller::$modelName` if not empty.
  * - `redirect` - A string or array-based URL pointing to another location within the app,
  *     or an absolute URL. If true, the result of `Controller::referer()` is used. Default
  *     to false.
+ * - `templates` - Re-usable message templates.
  * - `type` - The message type, default is 'notice'.
  *
  * @var array
@@ -42,9 +55,58 @@ class FlashComponent extends Component {
 	protected $_defaultConfig = [
 		'element' => 'default',
 		'key' => 'flash',
+		'modelName' => 'record',
 		'redirect' => false,
+		'templates' => [],
 		'type' => 'notice',
 	];
+
+/**
+ * Constructor
+ *
+ * @param ComponentRegistry $collection A ComponentRegistry for this component
+ * @param array $config Array of config.
+ */
+	public function __construct(ComponentRegistry $registry, array $config = []) {
+		$this->_defaultConfig['templates'] = [
+			'create' => [
+				'success' => [
+					'message' => __d('cake', 'Successfully created {{modelName}}.'),
+					'redirect' => ['action' => 'index'],
+				],
+				'failure' => [
+					'message' => __d('cake', 'There was a problem creating your {{modelName}}, fix the error(s) and try again.'),
+					'type' => 'error',
+				],
+			],
+			'read' => [
+				'failure' => [
+					'message' => __d('cake', 'Invalid {{modelName}}, please try again.'),
+					'type' => 'error',
+					'redirect' => true,
+				],
+			],
+			'update' => [
+				'success' => [
+					'message' => __d('cake', 'Successfully updated {{modelName}}.'),
+				],
+				'failure' => [
+					'message' => __d('cake', 'There was a problem updating your {{modelName}}, fix the error(s) and try again.'),
+					'type' => 'error',
+				]
+			],
+			'delete' => [
+				'success' => [
+					'message' => __d('cake', 'Successfully deleted {{modelName}}.'),
+				],
+				'failure' => [
+					'message' => __d('cake', 'There was a problem deleting your {{modelName}}, please try again.'),
+					'type' => 'error',
+				]
+			],
+		];
+		parent::__construct($registry, $config);
+	}
 
 /**
  * Startup callback.
@@ -55,7 +117,10 @@ class FlashComponent extends Component {
  * @return void
  */
 	public function startup(Event $event) {
-		$this->_Controller = $event->subject();
+		$this->_controller = $event->subject();
+		if (!empty($this->_controller->modelName)) {
+			$this->_config['modelName'] = $this->_controller->modelName;
+		}
 	}
 
 /**
@@ -81,6 +146,21 @@ class FlashComponent extends Component {
 			$message = $message->getMessage();
 		}
 
+		if (Hash::check($this->_config, 'templates.' . $message)) {
+			$template = Hash::extract($this->_config, 'templates.' . $message);
+
+			if (!is_array($template)) {
+				$template = ['message' => $template];
+			}
+
+			$options += $template;
+
+			if (!empty($options['message'])) {
+				$message = $options['message'];
+				unset($options['message']);
+			}
+		}
+
 		$params = $options + $this->_config;
 
 		list($plugin, $element) = pluginSplit($params['element']);
@@ -88,22 +168,30 @@ class FlashComponent extends Component {
 			$params += compact('plugin');
 		}
 
+		$message = String::insert(
+			$message,
+			$params,
+			['before' => '{{', 'after' => '}}', 'clean' => true]
+		);
+
 		$key = $params['key'];
 		$redirect = $params['redirect'];
 
 		unset(
 			$params['element'],
 			$params['key'],
-			$params['redirect']
+			$params['modelName'],
+			$params['redirect'],
+			$params['templates']
 		);
 
 		Session::write('Message.' . $key, compact('message', 'element', 'params'));
 
 		if (!empty($redirect)) {
 			if (true === $redirect) {
-				$redirect = $this->_Controller->referer();
+				$redirect = $this->_controller->referer();
 			}
-			$this->_Controller->redirect($redirect);
+			$this->_controller->redirect($redirect);
 		}
 	}
 

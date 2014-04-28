@@ -127,6 +127,16 @@ class FlashComponentTest extends TestCase {
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
 
+		$Flash->set('create.failure');
+		$expected = ['message' => __d('cake', 'There was a problem creating your record, fix the error(s) and try again.'), 'element' => 'default', 'params' => ['type' => 'error']];
+		$result = Session::read('Message.flash');
+		$this->assertEquals($expected, $result);
+
+		$Flash->set('Hello {{username}}', ['username' => 'foobar']);
+		$expected = ['message' => 'Hello foobar', 'element' => 'default', 'params' => ['type' => 'notice', 'username' => 'foobar']];
+		$result = Session::read('Message.flash');
+		$this->assertEquals($expected, $result);
+
 		$Controller->expects($this->once())
 			->method('referer')
 			->with()
@@ -154,6 +164,7 @@ class FlashComponentTest extends TestCase {
  */
 	public function testCall() {
 		$Flash = new FlashComponent($this->ComponentRegistry);
+		$Flash->startup(new Event('Controller.startup', new Controller()));
 
 		$this->assertNull(Session::read('Message.flash'));
 
