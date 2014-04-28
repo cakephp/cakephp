@@ -236,7 +236,7 @@ class AuthComponent extends Component {
  * of login form data.
  *
  * @param Event $event The startup event.
- * @return bool
+ * @return bool|\Cake\Network\Response
  */
 	public function startup(Event $event) {
 		$controller = $event->subject();
@@ -254,7 +254,11 @@ class AuthComponent extends Component {
 		}
 
 		if (!$this->_getUser()) {
-			return $this->_unauthenticated($controller);
+			$result = $this->_unauthenticated($controller);
+			if ($result instanceof Response) {
+				$event->stopPropagation();
+			}
+			return $result;
 		}
 
 		if ($this->_isLoginAction($controller) ||
@@ -264,7 +268,11 @@ class AuthComponent extends Component {
 			return true;
 		}
 
-		return $this->_unauthorized($controller);
+		$result = $this->_unauthorized($controller);
+		if ($result instanceof Response) {
+			$event->stopPropagation();
+		}
+		return $result;
 	}
 
 /**

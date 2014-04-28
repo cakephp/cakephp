@@ -219,6 +219,7 @@ class AuthComponentTest extends TestCase {
 
 		$this->Auth->Session->delete('Auth');
 		$result = $this->Controller->Auth->startup($event);
+		$this->assertTrue($event->isStopped());
 		$this->assertInstanceOf('Cake\Network\Response', $result);
 		$this->assertTrue($this->Auth->Session->check('Message.auth'));
 
@@ -398,7 +399,7 @@ class AuthComponentTest extends TestCase {
 		$this->Controller->request['action'] = 'camelCase';
 		$this->assertInstanceOf('Cake\Network\Response', $this->Controller->Auth->startup($event));
 
-		$this->Controller->Auth->allow('*');
+		$this->Controller->Auth->allow();
 		$this->Controller->Auth->deny();
 
 		$this->Controller->request['action'] = 'camelCase';
@@ -911,6 +912,7 @@ class AuthComponentTest extends TestCase {
 
 		$response = $this->Auth->startup($event);
 
+		$this->assertTrue($event->isStopped());
 		$this->assertEquals(403, $response->statusCode());
 		$this->assertEquals(
 			"Ajax!\nthis is the test element",
