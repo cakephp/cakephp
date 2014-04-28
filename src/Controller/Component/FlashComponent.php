@@ -132,7 +132,7 @@ class FlashComponent extends Component {
  * You can also set additional parameters when rendering flash messages. See SessionHelper::flash()
  * for more information on how to do that.
  *
- * @param string $message Message to be flashed
+ * @param string|Exception $message Message to be flashed or \Exception.
  * @param string|array $options
  * @return void
  */
