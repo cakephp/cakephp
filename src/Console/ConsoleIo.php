@@ -240,9 +240,24 @@ class ConsoleIo {
  *
  * @param int $mode
  * @return void
+ * @see \Cake\Console\ConsoleOutput::outputAs()
  */
 	public function outputAs($mode) {
 		$this->_out->outputAs($mode);
+	}
+
+/**
+ * Add a new output style or get defined styles.
+ *
+ * @param string $style The style to get or create.
+ * @param array $definition The array definition of the style to change or create a style
+ *   or false to remove a style.
+ * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
+ *   styles true will be returned.
+ * @see \Cake\Console\ConsoleOutput::styles()
+ */
+	public function styles($style = null, $definition = null) {
+		$this->_out->styles($style, $definition);
 	}
 
 /**
