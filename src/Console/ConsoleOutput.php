@@ -241,15 +241,15 @@ class ConsoleOutput {
  *
  * ### Get a style definition
  *
- * `$this->output->styles('error');`
+ * `$output->styles('error');`
  *
  * ### Get all the style definitions
  *
- * `$this->output->styles();`
+ * `$output->styles();`
  *
  * ### Create or modify an existing style
  *
- * `$this->output->styles('annoy', ['text' => 'purple', 'background' => 'yellow', 'blink' => true]);`
+ * `$output->styles('annoy', ['text' => 'purple', 'background' => 'yellow', 'blink' => true]);`
  *
  * ### Remove a style
  *

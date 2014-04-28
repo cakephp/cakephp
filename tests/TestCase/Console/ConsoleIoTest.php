@@ -327,4 +327,16 @@ class ConsoleIoTest extends TestCase {
 		$this->assertFalse(Log::engine('stderr'));
 	}
 
+/**
+ * Ensure that styles() just proxies to stdout.
+ *
+ * @return void
+ */
+	public function testStyles() {
+		$this->out->expects($this->once())
+			->method('styles')
+			->with('name', 'props');
+		$this->io->styles('name', 'props');
+	}
+
 }
