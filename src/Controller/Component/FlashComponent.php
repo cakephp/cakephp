@@ -204,7 +204,7 @@ class FlashComponent extends Component {
 			if (true === $redirect) {
 				$redirect = $this->_controller->referer();
 			}
-			$this->_controller->redirect($redirect);
+			return $this->_controller->redirect($redirect);
 		}
 	}
 
