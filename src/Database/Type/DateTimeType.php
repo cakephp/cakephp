@@ -56,7 +56,7 @@ class DateTimeType extends \Cake\Database\Type {
  * @return string
  */
 	public function toDatabase($value, Driver $driver) {
-		if (is_string($value)) {
+		if ($value === null || is_string($value)) {
 			return $value;
 		}
 		return $value->format($this->_format);
