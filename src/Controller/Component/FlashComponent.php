@@ -210,6 +210,14 @@ class FlashComponent extends Component {
 		}
 	}
 
+/**
+ * Magic method to create messages of different types.
+ *
+ * @param string $name Type to use.
+ * @param array $args Parameters to pass when calling `FlashComponent::set`.
+ * @return void
+ * @throws \Cake\Error\InternalErrorException If missing the flash message.
+ */
 	public function __call($name, $args) {
 		$options = ['type' => $name];
 
