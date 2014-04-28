@@ -172,18 +172,23 @@ class FlashComponent extends Component {
 
 		$insertOpts = ['before' => '{{', 'after' => '}}', 'clean' => true];
 
-		$message = String::insert($message, $params, $insertOpts);
+		$message = String::insert($message, array_filter($params, 'is_string'), $insertOpts);
 
 		$key = $params['key'];
 		$redirect = $params['redirect'];
 
 		if (!empty($params['log'])) {
-			$log = ['level' => $params['type'], 'message' => $message, 'scope' => []];
 			if (is_string($params['log'])) {
 				$params['log'] = ['message' => String::insert($params['log'], $params, $insertOpts)];
 			}
-			$log = $params['log'] + $log;
-			$this->_controller->log($log['message'], $log['level'], $log['scope']);
+
+			if (is_callable($params['log'])) {
+				call_user_func_array($params['log'], compact('message', 'params'));
+			} else {
+				$log = ['level' => $params['type'], 'message' => $message, 'scope' => []];
+				$log = $params['log'] + $log;
+				$this->_controller->log($log['message'], $log['level'], $log['scope']);
+			}
 		}
 
 		unset(

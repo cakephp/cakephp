@@ -137,12 +137,23 @@ class FlashComponentTest extends TestCase {
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
 
-		$Controller->expects($this->once())
+		$Controller->expects($this->exactly(2))
 			->method('log')
 			->with('foobar tried accessing record #123.', 'notice', []);
 
 		$Flash->set('Un-authorized access', ['id' => '123', 'username' => 'foobar', 'log' => '{{username}} tried accessing {{modelName}} #{{id}}.']);
 		$expected = ['message' => 'Un-authorized access', 'element' => 'default', 'params' => ['type' => 'notice', 'username' => 'foobar', 'id' => '123']];
+		$result = Session::read('Message.flash');
+		$this->assertEquals($expected, $result);
+
+		$user = ['id' => '321', 'name' => 'foobar'];
+		$object = ['id' => '123', 'name' => 'Bar Foo'];
+		$callback = function() use ($Controller, $user, $object) {
+			$Controller->log(sprintf('%s tried accessing record #%s.', $user['name'], $object['id']), 'notice', []);
+		};
+
+		$Flash->set('Un-authorized access', ['log' => $callback]);
+		$expected = ['message' => 'Un-authorized access', 'element' => 'default', 'params' => ['type' => 'notice']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
 
