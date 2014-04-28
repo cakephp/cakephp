@@ -632,7 +632,9 @@ class ControllerTest extends TestCase {
 					$this->attributeEqualTo('_name', 'Controller.initialize'),
 					$this->attributeEqualTo('_subject', $Controller)
 				)
-			);
+			)
+			->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
+
 		$eventManager->expects($this->at(1))->method('dispatch')
 			->with(
 				$this->logicalAnd(
@@ -640,9 +642,12 @@ class ControllerTest extends TestCase {
 					$this->attributeEqualTo('_name', 'Controller.startup'),
 					$this->attributeEqualTo('_subject', $Controller)
 				)
-			);
+			)
+			->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
+
 		$Controller->expects($this->exactly(2))->method('getEventManager')
 			->will($this->returnValue($eventManager));
+
 		$Controller->startupProcess();
 	}
 
@@ -662,9 +667,12 @@ class ControllerTest extends TestCase {
 					$this->attributeEqualTo('_name', 'Controller.shutdown'),
 					$this->attributeEqualTo('_subject', $Controller)
 				)
-			);
+			)
+			->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
+
 		$Controller->expects($this->once())->method('getEventManager')
 			->will($this->returnValue($eventManager));
+
 		$Controller->shutdownProcess();
 	}
 

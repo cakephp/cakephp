@@ -514,13 +514,13 @@ class Controller implements EventListener {
  * @return void|\Cake\Network\Response
  */
 	public function startupProcess() {
-		$result = $this->getEventManager()->dispatch(new Event('Controller.initialize', $this));
-		if ($result instanceof Response) {
-			return $result;
+		$event = $this->getEventManager()->dispatch(new Event('Controller.initialize', $this));
+		if ($event->result instanceof Response) {
+			return $event->result;
 		}
-		$result = $this->getEventManager()->dispatch(new Event('Controller.startup', $this));
-		if ($result instanceof Response) {
-			return $result;
+		$event = $this->getEventManager()->dispatch(new Event('Controller.startup', $this));
+		if ($event->result instanceof Response) {
+			return $event->result;
 		}
 	}
 
@@ -534,9 +534,9 @@ class Controller implements EventListener {
  * @return void|\Cake\Network\Response
  */
 	public function shutdownProcess() {
-		$result = $this->getEventManager()->dispatch(new Event('Controller.shutdown', $this));
-		if ($result instanceof Response) {
-			return $result;
+		$event = $this->getEventManager()->dispatch(new Event('Controller.shutdown', $this));
+		if ($event->result instanceof Response) {
+			return $event->result;
 		}
 	}
 
@@ -559,9 +559,9 @@ class Controller implements EventListener {
 		}
 
 		$event = new Event('Controller.beforeRedirect', $this, [$response, $url, $status]);
-		$result = $this->getEventManager()->dispatch($event);
-		if ($result instanceof Response) {
-			return $response;
+		$event = $this->getEventManager()->dispatch($event);
+		if ($event->result instanceof Response) {
+			return $event->result;
 		}
 		if ($event->isStopped()) {
 			return;
@@ -606,10 +606,10 @@ class Controller implements EventListener {
  */
 	public function render($view = null, $layout = null) {
 		$event = new Event('Controller.beforeRender', $this);
-		$result = $this->getEventManager()->dispatch($event);
-		if ($result instanceof Response) {
+		$event = $this->getEventManager()->dispatch($event);
+		if ($event->result instanceof Response) {
 			$this->autoRender = false;
-			return $result;
+			return $event->result;
 		}
 		if ($event->isStopped()) {
 			$this->autoRender = false;
