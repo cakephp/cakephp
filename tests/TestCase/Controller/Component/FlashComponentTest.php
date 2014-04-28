@@ -91,7 +91,7 @@ class FlashComponentTest extends TestCase {
  * @covers \Cake\Controller\Component\FlashComponent::set
  */
 	public function testSet() {
-		$Controller = $this->getMock('\Cake\Controller\Controller', ['referer', 'redirect']);
+		$Controller = $this->getMock('\Cake\Controller\Controller', ['log', 'referer', 'redirect']);
 		$Flash = new FlashComponent($this->ComponentRegistry);
 		$Flash->startup(new Event('Controller.startup', $Controller));
 
@@ -134,6 +134,15 @@ class FlashComponentTest extends TestCase {
 
 		$Flash->set('Hello {{username}}', ['username' => 'foobar']);
 		$expected = ['message' => 'Hello foobar', 'element' => 'default', 'params' => ['type' => 'notice', 'username' => 'foobar']];
+		$result = Session::read('Message.flash');
+		$this->assertEquals($expected, $result);
+
+		$Controller->expects($this->once())
+			->method('log')
+			->with('foobar tried accessing record #123.', 'notice', []);
+
+		$Flash->set('Un-authorized access', ['id' => '123', 'username' => 'foobar', 'log' => '{{username}} tried accessing {{modelName}} #{{id}}.']);
+		$expected = ['message' => 'Un-authorized access', 'element' => 'default', 'params' => ['type' => 'notice', 'username' => 'foobar', 'id' => '123']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
 

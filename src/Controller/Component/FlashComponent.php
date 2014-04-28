@@ -42,6 +42,7 @@ class FlashComponent extends Component {
  *
  * - `element` - Element to wrap flash message in.
  * - `key` - Message key, default is 'flash'.
+ * - `log` - Adds associated log entry. If true, uses the flash message. Default to false.
  * - `modelName` - Name of the model to use in the default CRUD templates, default is 'record'
  *      or `Controller::$modelName` if not empty.
  * - `redirect` - A string or array-based URL pointing to another location within the app,
@@ -55,6 +56,7 @@ class FlashComponent extends Component {
 	protected $_defaultConfig = [
 		'element' => 'default',
 		'key' => 'flash',
+		'log' => false,
 		'modelName' => 'record',
 		'redirect' => false,
 		'templates' => [],
@@ -168,18 +170,26 @@ class FlashComponent extends Component {
 			$params += compact('plugin');
 		}
 
-		$message = String::insert(
-			$message,
-			$params,
-			['before' => '{{', 'after' => '}}', 'clean' => true]
-		);
+		$insertOpts = ['before' => '{{', 'after' => '}}', 'clean' => true];
+
+		$message = String::insert($message, $params, $insertOpts);
 
 		$key = $params['key'];
 		$redirect = $params['redirect'];
 
+		if (!empty($params['log'])) {
+			$log = ['level' => $params['type'], 'message' => $message, 'scope' => []];
+			if (is_string($params['log'])) {
+				$params['log'] = ['message' => String::insert($params['log'], $params, $insertOpts)];
+			}
+			$log = $params['log'] + $log;
+			$this->_controller->log($log['message'], $log['level'], $log['scope']);
+		}
+
 		unset(
 			$params['element'],
 			$params['key'],
+			$params['log'],
 			$params['modelName'],
 			$params['redirect'],
 			$params['templates']
