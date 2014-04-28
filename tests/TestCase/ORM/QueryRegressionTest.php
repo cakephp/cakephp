@@ -107,4 +107,16 @@ class QueryRegressionTest extends TestCase {
 		$this->assertEquals(3, $results[3]->author->favorite_tag->id);
 	}
 
+/**
+ * Test for https://github.com/cakephp/cakephp/issues/3410
+ *
+ * @return void
+ */
+	public function testNullableTimeColumn() {
+		$table = TableRegistry::get('users');
+		$entity = $table->newEntity(['username' => 'derp', 'created' => null]);
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertNull($entity->created);
+	}
+
 }
