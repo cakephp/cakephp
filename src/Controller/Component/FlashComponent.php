@@ -18,6 +18,7 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Error\InternalErrorException;
+use Cake\Event\Event;
 use Cake\Network\Session;
 
 /**
@@ -31,6 +32,9 @@ class FlashComponent extends Component {
  *
  * - `element` - Element to wrap flash message in.
  * - `key` - Message key, default is 'flash'.
+ * - `redirect` - A string or array-based URL pointing to another location within the app,
+ *     or an absolute URL. If true, the result of `Controller::referer()` is used. Default
+ *     to false.
  * - `type` - The message type, default is 'notice'.
  *
  * @var array
@@ -38,8 +42,21 @@ class FlashComponent extends Component {
 	protected $_defaultConfig = [
 		'element' => 'default',
 		'key' => 'flash',
+		'redirect' => false,
 		'type' => 'notice',
 	];
+
+/**
+ * Startup callback.
+ *
+ * Sets controller to be used for redirects.
+ *
+ * @param \Cake\Event\Event $event
+ * @return void
+ */
+	public function startup(Event $event) {
+		$this->_Controller = $event->subject();
+	}
 
 /**
  * Used to set a session message that can be used to output messages in the view.
@@ -72,13 +89,22 @@ class FlashComponent extends Component {
 		}
 
 		$key = $params['key'];
+		$redirect = $params['redirect'];
 
 		unset(
 			$params['element'],
-			$params['key']
+			$params['key'],
+			$params['redirect']
 		);
 
 		Session::write('Message.' . $key, compact('message', 'element', 'params'));
+
+		if (!empty($redirect)) {
+			if (true === $redirect) {
+				$redirect = $this->_Controller->referer();
+			}
+			$this->_Controller->redirect($redirect);
+		}
 	}
 
 	public function __call($name, $args) {

@@ -20,6 +20,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 
@@ -90,7 +91,9 @@ class FlashComponentTest extends TestCase {
  * @covers \Cake\Controller\Component\FlashComponent::set
  */
 	public function testSet() {
+		$Controller = $this->getMock('\Cake\Controller\Controller', ['referer', 'redirect']);
 		$Flash = new FlashComponent($this->ComponentRegistry);
+		$Flash->startup(new Event('Controller.startup', $Controller));
 
 		$this->assertNull(Session::read('Message.flash'));
 
@@ -123,6 +126,22 @@ class FlashComponentTest extends TestCase {
 		$expected = ['message' => 'This is a test message', 'element' => 'default', 'params' => ['type' => 'error']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
+
+		$Controller->expects($this->once())
+			->method('referer')
+			->with()
+			->will($this->returnValue('http://foo.bar'));
+		$Controller->expects($this->exactly(2))
+			->method('redirect')
+			->with('http://foo.bar');
+
+		$Flash->set('This is a test message', ['redirect' => true]);
+		$expected = ['message' => 'This is a test message', 'element' => 'default', 'params' => ['type' => 'notice']];
+		$result = Session::read('Message.flash');
+
+		$Flash->set('This is a test message', ['redirect' => 'http://foo.bar']);
+		$expected = ['message' => 'This is a test message', 'element' => 'default', 'params' => ['type' => 'notice']];
+		$result = Session::read('Message.flash');
 
 		Session::delete('Message');
 	}
