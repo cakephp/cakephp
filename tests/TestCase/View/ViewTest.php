@@ -598,21 +598,6 @@ class ViewTest extends TestCase {
 	}
 
 /**
- * Test addInlineScripts method
- *
- * @return void
- */
-	public function testAddInlineScripts() {
-		$View = new TestView();
-		$View->addScript('prototype.js');
-		$View->addScript('prototype.js');
-		$this->assertEquals(array('prototype.js'), $View->scripts());
-
-		$View->addScript('mainEvent', 'Event.observe(window, "load", function() { doSomething(); }, true);');
-		$this->assertEquals(array('prototype.js', 'mainEvent' => 'Event.observe(window, "load", function() { doSomething(); }, true);'), $View->scripts());
-	}
-
-/**
  * Test elementExists method
  *
  * @return void

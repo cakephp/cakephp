@@ -40,13 +40,12 @@ abstract class Cell {
 	public $View;
 
 /**
- * Name of the action that was invoked.
- *
- * Action name will be inflected to get the template name when rendering.
+ * Name of the template that will be rendered.
+ * This property is inflected from the action name that was invoked.
  *
  * @var string
  */
-	public $action;
+	public $template;
 
 /**
  * Automatically set to the name of a plugin.
@@ -79,6 +78,13 @@ abstract class Cell {
 	public $viewClass = 'Cake\View\View';
 
 /**
+ * The theme name that will be used to render.
+ *
+ * @var string
+ */
+	public $theme;
+
+/**
  * Instance of the Cake\Event\EventManager this cell is using
  * to dispatch inner events.
  *
@@ -93,7 +99,7 @@ abstract class Cell {
  * @see \Cake\View\View
  */
 	protected $_validViewOptions = [
-		'viewVars', 'helpers', 'viewPath', 'plugin',
+		'viewVars', 'helpers', 'viewPath', 'plugin', 'theme'
 	];
 
 /**
@@ -130,13 +136,16 @@ abstract class Cell {
 /**
  * Render the cell.
  *
- * @param string $action Custom template name to render. If not provided (null), the last
+ * @param string $template Custom template name to render. If not provided (null), the last
  * value will be used. This value is automatically set by `CellTrait::cell()`.
  * @return void
  */
-	public function render($action = null) {
-		if ($action !== null) {
-			$this->action = $action;
+	public function render($template = null) {
+		if ($template !== null) {
+			$template = Inflector::underscore($template);
+		}
+		if (empty($template)) {
+			$template = $this->template;
 		}
 
 		$this->View = $this->createView();
@@ -146,7 +155,7 @@ abstract class Cell {
 		$className = array_pop($className);
 		$this->View->subDir = 'Cell' . DS . substr($className, 0, strpos($className, 'Cell'));
 
-		return $this->View->render(Inflector::underscore($this->action));
+		return $this->View->render($template);
 	}
 
 /**
@@ -168,7 +177,7 @@ abstract class Cell {
 	public function __debugInfo() {
 		return [
 			'plugin' => $this->plugin,
-			'action' => $this->action,
+			'template' => $this->template,
 			'viewClass' => $this->viewClass,
 			'request' => $this->request,
 			'response' => $this->response,
