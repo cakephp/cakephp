@@ -71,8 +71,9 @@ trait CellTrait {
 		}
 
 		$cellInstance = new $className($this->request, $this->response, $this->getEventManager(), $options);
-		$cellInstance->action = Inflector::underscore($action);
+		$cellInstance->template = Inflector::underscore($action);
 		$cellInstance->plugin = !empty($plugin) ? $plugin : null;
+		$cellInstance->theme = !empty($this->theme) ? $this->theme : null;
 		$length = count($data);
 
 		if ($length) {
