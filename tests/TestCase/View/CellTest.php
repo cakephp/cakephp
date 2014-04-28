@@ -64,6 +64,7 @@ class CellTest extends TestCase {
 		$cell = $this->View->cell('Articles::teaserList');
 		$render = "{$cell}";
 
+		$this->assertEquals('teaser_list', $cell->template);
 		$this->assertContains('<h2>Lorem ipsum</h2>', $render);
 		$this->assertContains('<h2>Usectetur adipiscing eli</h2>', $render);
 		$this->assertContains('<h2>Topis semper blandit eu non</h2>', $render);
@@ -88,10 +89,13 @@ class CellTest extends TestCase {
  */
 	public function testDefaultCellAction() {
 		$appCell = $this->View->cell('Articles');
+
+		$this->assertEquals('display', $appCell->template);
 		$this->assertContains('dummy', "{$appCell}");
 
 		$pluginCell = $this->View->cell('TestPlugin.Dummy');
 		$this->assertContains('dummy', "{$pluginCell}");
+		$this->assertEquals('display', $pluginCell->template);
 	}
 
 /**
