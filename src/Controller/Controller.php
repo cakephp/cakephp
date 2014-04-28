@@ -511,10 +511,13 @@ class Controller implements EventListener {
  * - Calls the controller `beforeFilter`.
  * - triggers Component `startup` methods.
  *
- * @return void
+ * @return void|\Cake\Network\Response
  */
 	public function startupProcess() {
-		$this->getEventManager()->dispatch(new Event('Controller.initialize', $this));
+		$result = $this->getEventManager()->dispatch(new Event('Controller.initialize', $this));
+		if ($result instanceof Response) {
+			return $result;
+		}
 		$result = $this->getEventManager()->dispatch(new Event('Controller.startup', $this));
 		if ($result instanceof Response) {
 			return $result;
@@ -528,10 +531,13 @@ class Controller implements EventListener {
  * - triggers the component `shutdown` callback.
  * - calls the Controller's `afterFilter` method.
  *
- * @return void
+ * @return void|\Cake\Network\Response
  */
 	public function shutdownProcess() {
-		$this->getEventManager()->dispatch(new Event('Controller.shutdown', $this));
+		$result = $this->getEventManager()->dispatch(new Event('Controller.shutdown', $this));
+		if ($result instanceof Response) {
+			return $result;
+		}
 	}
 
 /**
@@ -597,7 +603,11 @@ class Controller implements EventListener {
  */
 	public function render($view = null, $layout = null) {
 		$event = new Event('Controller.beforeRender', $this);
-		$this->getEventManager()->dispatch($event);
+		$result = $this->getEventManager()->dispatch($event);
+		if ($result instanceof Response) {
+			$this->autoRender = false;
+			return $result;
+		}
 		if ($event->isStopped()) {
 			$this->autoRender = false;
 			return $this->response;

@@ -203,7 +203,11 @@ class Dispatcher implements EventListener {
 			$response = $controller->response;
 		}
 
-		$controller->shutdownProcess();
+		$result = $controller->shutdownProcess();
+		if ($result instanceof Response) {
+			return $result;
+		}
+
 		return $response;
 	}
 
