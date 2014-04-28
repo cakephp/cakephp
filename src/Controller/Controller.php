@@ -559,7 +559,10 @@ class Controller implements EventListener {
 		}
 
 		$event = new Event('Controller.beforeRedirect', $this, [$response, $url, $status]);
-		$this->getEventManager()->dispatch($event);
+		$result = $this->getEventManager()->dispatch($event);
+		if ($result instanceof Response) {
+			return $response;
+		}
 		if ($event->isStopped()) {
 			return;
 		}
