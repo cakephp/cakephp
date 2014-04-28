@@ -302,7 +302,7 @@ class Router {
  *   reverse routing lookups. If undefined a name will be generated for each
  *   connected route.
  * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
- *   See {@link Route::setExtensions()}.
+ *   See {@link Route::parseExtensions()}.
  *
  * You can also add additional conditions for matching routes to the $defaults array.
  * The following conditions can be used:
@@ -961,7 +961,7 @@ class Router {
  *   current extensions
  * @return array
  */
-	public static function setExtensions($extensions = null, $merge = true) {
+	public static function parseExtensions($extensions = null, $merge = true) {
 		if ($extensions === null) {
 			return static::$_validExtensions;
 		}
@@ -969,15 +969,14 @@ class Router {
 		if ($merge) {
 			$extensions = array_merge(static::$_validExtensions, $extensions);
 		}
-		static::$_routes->setExtensions($extensions);
+		static::$_routes->parseExtensions($extensions);
 		return static::$_validExtensions = $extensions;
 	}
 
 /**
  * Get the list of extensions that can be parsed by Router.
  *
- * To initially set extensions use `Router::parseExtensions()`
- * To add more see `setExtensions()`
+ * To add / update extensions use `Router::parseExtensions()`
  *
  * @return array Array of extensions Router is configured to parse.
  */

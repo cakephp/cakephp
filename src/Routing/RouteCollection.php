@@ -265,9 +265,9 @@ class RouteCollection implements \Countable {
  * @param array $extensions The extensions for routes to use.
  * @return void
  */
-	public function setExtensions(array $extensions) {
+	public function parseExtensions(array $extensions) {
 		foreach ($this->_routes as $route) {
-			$route->setExtensions($extensions);
+			$route->parseExtensions($extensions);
 		}
 	}
 
