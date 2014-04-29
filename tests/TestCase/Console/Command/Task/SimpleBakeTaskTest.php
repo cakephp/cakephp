@@ -163,6 +163,7 @@ class SimpleBakeTaskTest extends TestCase {
 			['Cake\Console\Command\Task\BehaviorTask'],
 			['Cake\Console\Command\Task\ComponentTask'],
 			['Cake\Console\Command\Task\HelperTask'],
+			['Cake\Console\Command\Task\ShellTask'],
 		];
 	}
 
