@@ -121,7 +121,7 @@ class TranslateBehavior extends ModelBehavior {
 		$this->_joinTable = $joinTable;
 		$this->_runtimeModel = $RuntimeModel;
 
-		if (is_string($query['fields']) && "COUNT(*) AS {$db->name('count')}" == $query['fields']) {
+		if (is_string($query['fields']) && $query['fields'] === "COUNT(*) AS {$db->name('count')}") {
 			$query['fields'] = "COUNT(DISTINCT({$db->name($Model->escapeField())})) {$db->alias}count";
 			$query['joins'][] = array(
 				'type' => 'INNER',

@@ -23,7 +23,7 @@
 <?php
 		echo "\t<?php\n";
 		foreach ($fields as $field) {
-			if (strpos($action, 'add') !== false && $field == $primaryKey) {
+			if (strpos($action, 'add') !== false && $field === $primaryKey) {
 				continue;
 			} elseif (!in_array($field, array('created', 'modified', 'updated'))) {
 				echo "\t\techo \$this->Form->input('{$field}');\n";

@@ -664,7 +664,7 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertEquals($expected, TestCakeSession::id());
 
 		TestCakeSession::renew();
-		$this->assertFalse($expected == TestCakeSession::id());
+		$this->assertFalse($expected === TestCakeSession::id());
 
 		$expected = session_id();
 		$this->assertEquals($expected, TestCakeSession::id());

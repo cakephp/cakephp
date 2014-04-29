@@ -228,7 +228,8 @@ class TreeBehavior extends ModelBehavior {
 
 				if (($node[$left] < $parentNode[$left]) && ($parentNode[$right] < $node[$right])) {
 					return false;
-				} elseif ($node[$Model->primaryKey] == $parentNode[$Model->primaryKey]) {
+				}
+				if ($node[$Model->primaryKey] === $parentNode[$Model->primaryKey]) {
 					return false;
 				}
 			}
@@ -951,7 +952,7 @@ class TreeBehavior extends ModelBehavior {
 			}
 			$parentNode = $parentNode[0];
 
-			if (($Model->id == $parentId)) {
+			if (($Model->id === $parentId)) {
 				return false;
 			} elseif (($node[$left] < $parentNode[$left]) && ($parentNode[$right] < $node[$right])) {
 				return false;

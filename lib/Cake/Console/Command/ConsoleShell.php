@@ -304,7 +304,7 @@ class ConsoleShell extends AppShell {
 		$validCurrentAssociation = false;
 
 		foreach ($currentAssociations as $model => $currentAssociation) {
-			if ($model == $modelB && $association == $currentAssociation) {
+			if ($model === $modelB && $association === $currentAssociation) {
 				$validCurrentAssociation = true;
 			}
 		}

@@ -165,7 +165,7 @@ class FileLog extends BaseLog {
 
 		if (!empty($this->_file)) {
 			$filename = $this->_file;
-		} elseif ($type == 'error' || $type == 'warning') {
+		} elseif ($type === 'error' || $type === 'warning') {
 			$filename = 'error.log';
 		} elseif (in_array($type, $debugTypes)) {
 			$filename = 'debug.log';
