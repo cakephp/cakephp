@@ -83,7 +83,7 @@ class RequestHandlerComponentTest extends TestCase {
 		if (!headers_sent()) {
 			header('Content-type: text/html'); //reset content type.
 		}
-		call_user_func_array('Cake\Routing\Router::parseExtensions', $this->_extensions);
+		call_user_func_array('Cake\Routing\Router::parseExtensions', [$this->_extensions, false]);
 	}
 
 /**
@@ -122,7 +122,7 @@ class RequestHandlerComponentTest extends TestCase {
 	public function testInitializeContentTypeSettingExt() {
 		$event = new Event('Controller.initialize', $this->Controller);
 		$_SERVER['HTTP_ACCEPT'] = 'application/json';
-		Router::parseExtensions('json');
+		Router::parseExtensions('json', false);
 
 		$this->assertNull($this->RequestHandler->ext);
 
@@ -139,7 +139,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$_SERVER['HTTP_ACCEPT'] = 'application/json, application/javascript, */*; q=0.01';
 		$event = new Event('Controller.initialize', $this->Controller);
 		$this->assertNull($this->RequestHandler->ext);
-		Router::parseExtensions('json');
+		Router::parseExtensions('json', false);
 
 		$this->RequestHandler->initialize($event);
 		$this->assertEquals('json', $this->RequestHandler->ext);
@@ -154,7 +154,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$_SERVER['HTTP_ACCEPT'] = 'text/plain, */*; q=0.01';
 		$event = new Event('Controller.initialize', $this->Controller);
 		$this->assertNull($this->RequestHandler->ext);
-		Router::parseExtensions('csv');
+		Router::parseExtensions('csv', false);
 
 		$this->RequestHandler->initialize($event);
 		$this->assertNull($this->RequestHandler->ext);
@@ -170,7 +170,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$_SERVER['HTTP_ACCEPT'] = 'application/json, application/javascript, */*; q=0.01';
 		$event = new Event('Controller.initialize', $this->Controller);
 		$this->assertNull($this->RequestHandler->ext);
-		Router::parseExtensions('rss', 'json');
+		Router::parseExtensions(['rss', 'json'], false);
 
 		$this->RequestHandler->initialize($event);
 		$this->assertEquals('json', $this->RequestHandler->ext);
@@ -185,7 +185,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/html, */*; q=0.01';
 		$event = new Event('Controller.initialize', $this->Controller);
 		$this->assertNull($this->RequestHandler->ext);
-		Router::parseExtensions('json');
+		Router::parseExtensions('json', false);
 
 		$this->RequestHandler->initialize($event);
 		$this->assertNull($this->RequestHandler->ext);
@@ -203,13 +203,13 @@ class RequestHandlerComponentTest extends TestCase {
 		$_SERVER['HTTP_ACCEPT'] = 'application/json, application/javascript, application/xml, */*; q=0.01';
 		$event = new Event('Controller.initialize', $this->Controller);
 		$this->assertNull($this->RequestHandler->ext);
-		Router::parseExtensions('xml', 'json');
+		Router::parseExtensions(['xml', 'json'], false);
 
 		$this->RequestHandler->initialize($event);
 		$this->assertEquals('xml', $this->RequestHandler->ext);
 
 		$this->RequestHandler->ext = null;
-		Router::setExtensions(array('json', 'xml'), false);
+		Router::parseExtensions(array('json', 'xml'), false);
 
 		$this->RequestHandler->initialize($event);
 		$this->assertEquals('json', $this->RequestHandler->ext);
@@ -224,7 +224,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$_SERVER['HTTP_ACCEPT'] = 'text/csv;q=1.0, application/json;q=0.8, application/xml;q=0.7';
 		$event = new Event('Controller.initialize', $this->Controller);
 		$this->assertNull($this->RequestHandler->ext);
-		Router::parseExtensions('xml', 'json');
+		Router::parseExtensions(['xml', 'json'], false);
 
 		$this->RequestHandler->initialize($event);
 		$this->assertEquals('json', $this->RequestHandler->ext);
@@ -239,7 +239,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$_SERVER['HTTP_ACCEPT'] = 'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
 		$event = new Event('Controller.initialize', $this->Controller);
 		$this->assertNull($this->RequestHandler->ext);
-		Router::parseExtensions('html', 'xml');
+		Router::parseExtensions(['html', 'xml'], false);
 
 		$this->RequestHandler->initialize($event);
 		$this->assertNull($this->RequestHandler->ext);
@@ -252,7 +252,7 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testInititalizeFirefoxHeaderNotXml() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8';
-		Router::parseExtensions('xml', 'json');
+		Router::parseExtensions(['xml', 'json'], false);
 
 		$event = new Event('Controller.initialize', $this->Controller);
 		$this->RequestHandler->initialize($event);
@@ -268,7 +268,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$event = new Event('Controller.initialize', $this->Controller);
 		$this->assertNull($this->RequestHandler->ext);
 		$extensions = Router::extensions();
-		Router::parseExtensions('xml');
+		Router::parseExtensions('xml', false);
 
 		$this->Controller->request = $this->getMock('Cake\Network\Request', ['accepts']);
 		$this->Controller->request->expects($this->any())
@@ -278,7 +278,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$this->RequestHandler->initialize($event);
 		$this->assertNull($this->RequestHandler->ext);
 
-		call_user_func_array(array('Cake\Routing\Router', 'parseExtensions'), $extensions);
+		call_user_func_array(array('Cake\Routing\Router', 'parseExtensions'), [$extensions, false]);
 	}
 
 /**
@@ -353,7 +353,7 @@ class RequestHandlerComponentTest extends TestCase {
  * test custom JsonView class is loaded and correct.
  */
 	public function testJsonViewLoaded() {
-		Router::parseExtensions('json', 'xml', 'ajax');
+		Router::parseExtensions(['json', 'xml', 'ajax'], false);
 		$this->Controller->request->params['_ext'] = 'json';
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->RequestHandler->initialize($event);
@@ -368,7 +368,7 @@ class RequestHandlerComponentTest extends TestCase {
  * test custom XmlView class is loaded and correct.
  */
 	public function testXmlViewLoaded() {
-		Router::parseExtensions('json', 'xml', 'ajax');
+		Router::parseExtensions(['json', 'xml', 'ajax'], false);
 		$this->Controller->request->params['_ext'] = 'xml';
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->RequestHandler->initialize($event);
@@ -383,7 +383,7 @@ class RequestHandlerComponentTest extends TestCase {
  * test custom AjaxView class is loaded and correct.
  */
 	public function testAjaxViewLoaded() {
-		Router::parseExtensions('json', 'xml', 'ajax');
+		Router::parseExtensions(['json', 'xml', 'ajax'], false);
 		$this->Controller->request->params['_ext'] = 'ajax';
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->RequestHandler->initialize($event);
@@ -397,7 +397,7 @@ class RequestHandlerComponentTest extends TestCase {
  * test configured extension but no view class set.
  */
 	public function testNoViewClassExtension() {
-		Router::parseExtensions('json', 'xml', 'ajax', 'csv');
+		Router::parseExtensions(['json', 'xml', 'ajax', 'csv'], false);
 		$this->Controller->request->params['_ext'] = 'csv';
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->RequestHandler->initialize($event);

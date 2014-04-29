@@ -302,7 +302,7 @@ class Router {
  *   reverse routing lookups. If undefined a name will be generated for each
  *   connected route.
  * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
- *   See {@link Route::setExtensions()}.
+ *   See {@link Route::parseExtensions()}.
  *
  * You can also add additional conditions for matching routes to the $defaults array.
  * The following conditions can be used:
@@ -944,51 +944,39 @@ class Router {
 	}
 
 /**
- * Instructs the router to parse out file extensions from the URL. For example,
- * http://example.com/posts.rss would yield an file extension of "rss".
- * The file extension itself is made available in the controller as
- * `$this->params['_ext']`, and is used by the RequestHandler component to
- * automatically switch to alternate layouts and templates, and load helpers
- * corresponding to the given content, i.e. RssHelper. Switching layouts and helpers
- * requires that the chosen extension has a defined mime type in `Cake\Network\Response`
+ * Set/add valid extensions. Instructs the router to parse out file extensions
+ * from the URL. For example, http://example.com/posts.rss would yield an file
+ * extension of "rss". The file extension itself is made available in the
+ * controller as `$this->params['_ext']`, and is used by the RequestHandler
+ * component to automatically switch to alternate layouts and templates, and
+ * load helpers corresponding to the given content, i.e. RssHelper. Switching
+ * layouts and helpers requires that the chosen extension has a defined mime type
+ * in `Cake\Network\Response`.
  *
- * A list of valid extension can be passed to this method, i.e. Router::parseExtensions('rss', 'xml');
- * If no parameters are given, anything after the first . (dot) after the last / in the URL will be
- * parsed, excluding querystring parameters (i.e. ?q=...).
+ * An array of valid extension can be passed to this method. If called without
+ * any parameters it will return current list of set extensions.
  *
- * @return void
- * @see RequestHandler::startup()
- */
-	public static function parseExtensions() {
-		if (func_num_args() > 0) {
-			static::setExtensions(func_get_args(), false);
-		}
-	}
-
-/**
- * Set/add valid extensions.
- * To have the extensions parsed you still need to call `Router::parseExtensions()`
- *
- * @param array $extensions List of extensions to be added as valid extension
- * @param bool $merge Default true will merge extensions. Set to false to override current extensions
+ * @param array|string $extensions List of extensions to be added as valid extension
+ * @param bool $merge Default true will merge extensions. Set to false to override
+ *   current extensions
  * @return array
  */
-	public static function setExtensions($extensions, $merge = true) {
-		if (!is_array($extensions)) {
+	public static function parseExtensions($extensions = null, $merge = true) {
+		if ($extensions === null) {
 			return static::$_validExtensions;
 		}
+		$extensions = (array)$extensions;
 		if ($merge) {
 			$extensions = array_merge(static::$_validExtensions, $extensions);
 		}
-		static::$_routes->setExtensions($extensions);
+		static::$_routes->parseExtensions($extensions);
 		return static::$_validExtensions = $extensions;
 	}
 
 /**
  * Get the list of extensions that can be parsed by Router.
  *
- * To initially set extensions use `Router::parseExtensions()`
- * To add more see `setExtensions()`
+ * To add / update extensions use `Router::parseExtensions()`
  *
  * @return array Array of extensions Router is configured to parse.
  */

@@ -128,7 +128,7 @@ class Route {
  * @param array $extensions The extensions to set.
  * @return void
  */
-	public function setExtensions(array $extensions) {
+	public function parseExtensions(array $extensions) {
 		$this->_extensions = $extensions;
 	}
 
