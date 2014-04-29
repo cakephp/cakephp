@@ -1136,11 +1136,11 @@ class MysqlTest extends CakeTestCase {
 				$linkModel = $this->Model->Category2->{$assoc};
 				$external = isset($assocData['external']);
 
-				if ($this->Model->Category2->alias == $linkModel->alias && $type !== 'hasAndBelongsToMany' && $type !== 'hasMany') {
+				if ($this->Model->Category2->alias === $linkModel->alias && $type !== 'hasAndBelongsToMany' && $type !== 'hasMany') {
 					$result = $this->Dbo->generateAssociationQuery($this->Model->Category2, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
 					$this->assertFalse(empty($result));
 				} else {
-					if ($this->Model->Category2->useDbConfig == $linkModel->useDbConfig) {
+					if ($this->Model->Category2->useDbConfig === $linkModel->useDbConfig) {
 						$result = $this->Dbo->generateAssociationQuery($this->Model->Category2, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
 						$this->assertFalse(empty($result));
 					}

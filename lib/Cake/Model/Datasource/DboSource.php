@@ -991,7 +991,7 @@ class DboSource extends DataSource {
 		for ($i = 0; $i < $count; $i++) {
 			$valueInsert[] = $this->value($values[$i], $model->getColumnType($fields[$i]));
 			$fieldInsert[] = $this->name($fields[$i]);
-			if ($fields[$i] == $model->primaryKey) {
+			if ($fields[$i] === $model->primaryKey) {
 				$id = $values[$i];
 			}
 		}
@@ -1283,7 +1283,7 @@ class DboSource extends DataSource {
 								if ($type1 === 'belongsTo' || ($deepModel->alias === $modelAlias && $type === 'belongsTo') || ($deepModel->alias !== $modelAlias)) {
 									$tmpStack = $stack;
 									$tmpStack[] = $assoc1;
-									if ($linkModel->useDbConfig == $deepModel->useDbConfig) {
+									if ($linkModel->useDbConfig === $deepModel->useDbConfig) {
 										$db = $this;
 									} else {
 										$db = ConnectionManager::getDataSource($deepModel->useDbConfig);
@@ -1973,7 +1973,7 @@ class DboSource extends DataSource {
 		$joins = array_merge($model->getAssociated('hasOne'), $model->getAssociated('belongsTo'));
 
 		foreach ($joins as $assoc) {
-			if (isset($model->{$assoc}) && $model->useDbConfig == $model->{$assoc}->useDbConfig && $model->{$assoc}->getDataSource()) {
+			if (isset($model->{$assoc}) && $model->useDbConfig === $model->{$assoc}->useDbConfig && $model->{$assoc}->getDataSource()) {
 				$assocData = $model->getAssociated($assoc);
 				$join[] = $this->buildJoinStatement(array(
 					'table' => $model->{$assoc},
@@ -2969,7 +2969,7 @@ class DboSource extends DataSource {
 		$out = '';
 
 		foreach ($schema->tables as $curTable => $columns) {
-			if (!$tableName || $tableName == $curTable) {
+			if (!$tableName || $tableName === $curTable) {
 				$cols = $indexes = $tableParameters = array();
 				$primary = null;
 				$table = $this->fullTableName($curTable);

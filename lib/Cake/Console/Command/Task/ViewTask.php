@@ -151,7 +151,7 @@ class ViewTask extends BakeTask {
 					unset($methods[$i]);
 				}
 			}
-			if ($method[0] === '_' || $method == strtolower($this->controllerName . 'Controller')) {
+			if ($method[0] === '_' || $method === strtolower($this->controllerName . 'Controller')) {
 				unset($methods[$i]);
 			}
 		}

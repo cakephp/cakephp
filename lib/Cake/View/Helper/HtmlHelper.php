@@ -453,7 +453,7 @@ class HtmlHelper extends AppHelper {
 			}
 		}
 
-		if ($options['rel'] == 'import') {
+		if ($options['rel'] === 'import') {
 			$out = sprintf(
 				$this->_tags['style'],
 				$this->_parseAttributes($options, array('rel', 'block'), '', ' '),

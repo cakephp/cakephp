@@ -493,8 +493,8 @@ TEXT;
 		Debugger::dump($var);
 		$result = ob_get_clean();
 
-		$open = php_sapi_name() == 'cli' ? "\n" : '<pre>';
-		$close = php_sapi_name() == 'cli' ? "\n" : '</pre>';
+		$open = php_sapi_name() === 'cli' ? "\n" : '<pre>';
+		$close = php_sapi_name() === 'cli' ? "\n" : '</pre>';
 		$expected = <<<TEXT
 {$open}array(
 	'People' => array(
