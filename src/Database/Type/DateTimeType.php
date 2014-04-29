@@ -101,23 +101,22 @@ class DateTimeType extends \Cake\Database\Type {
 			return $value;
 		}
 
-		$value += ['second' => 0];
+		$value += ['hour' => 0, 'minute' => 0, 'second' => 0];
 
-		$date = new $class();
-		$date->setTime(0, 0, 0);
+		$format = '';
 		if (
 			isset($value['year'], $value['month'], $value['day']) &&
 			(is_numeric($value['year']) & is_numeric($value['month']) && is_numeric($value['day']))
 		) {
-			$date->setDate($value['year'], $value['month'], $value['day']);
+			$format .= sprintf('%d-%02d-%02d', $value['year'], $value['month'], $value['day']);
 		}
-		if (isset($value['hour'], $value['minute'])) {
-			if (isset($value['meridian'])) {
-				$value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
-			}
-			$date->setTime((int)$value['hour'], (int)$value['minute'], (int)$value['second']);
+
+		if (isset($value['meridian'])) {
+			$value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
 		}
-		return $date;
+		$format .= sprintf('%02d:%02d:%02d', $value['hour'], $value['minute'], $value['second']);
+
+		return new $class($format);
 	}
 
 }
