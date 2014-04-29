@@ -236,7 +236,7 @@ class AuthComponent extends Component {
  * of login form data.
  *
  * @param Event $event The startup event.
- * @return bool|\Cake\Network\Response
+ * @return void|\Cake\Network\Response
  */
 	public function startup(Event $event) {
 		$controller = $event->subject();
@@ -244,13 +244,13 @@ class AuthComponent extends Component {
 		$action = strtolower($controller->request->params['action']);
 
 		if (!isset($methods[$action])) {
-			return true;
+			return;
 		}
 
 		$this->_setDefaults();
 
 		if ($this->_isAllowed($controller)) {
-			return true;
+			return;
 		}
 
 		if (!$this->_getUser()) {
@@ -265,7 +265,7 @@ class AuthComponent extends Component {
 			empty($this->_config['authorize']) ||
 			$this->isAuthorized($this->user())
 		) {
-			return true;
+			return;
 		}
 
 		$result = $this->_unauthorized($controller);
@@ -299,8 +299,8 @@ class AuthComponent extends Component {
  * is returned.
  *
  * @param Controller $controller A reference to the controller object.
- * @return bool|\Cake\Network\Response True if current action is login action
- *   else false or response object if Controller::redirect() is called.
+ * @return void|\Cake\Network\Response Null if current action is login action
+ *   else response object returned by authenticate object or Controller::redirect().
  */
 	protected function _unauthenticated(Controller $controller) {
 		if (empty($this->_authenticateObjects)) {
@@ -319,7 +319,7 @@ class AuthComponent extends Component {
 			) {
 				$this->Session->write('Auth.redirect', $controller->referer(null, true));
 			}
-			return true;
+			return;
 		}
 
 		if (!$controller->request->is('ajax')) {
