@@ -1790,6 +1790,8 @@ class FormHelper extends AppHelper {
 			unset($options['target']);
 		}
 
+		$this->_lastAction = $formUrl;
+
 		$out = $this->Html->useTag('form', $formUrl, $formOptions);
 		$out .= $this->Html->useTag('hidden', '_method', array(
 			'value' => $requestMethod
