@@ -1153,7 +1153,7 @@ class Response {
 			$etagMatches = in_array('*', $etags) || in_array($responseTag, $etags);
 		}
 		if ($modifiedSince) {
-			$timeMatches = strtotime($this->modified()) == strtotime($modifiedSince);
+			$timeMatches = strtotime($this->modified()) === strtotime($modifiedSince);
 		}
 		$checks = compact('etagMatches', 'timeMatches');
 		if (empty($checks)) {

@@ -467,7 +467,7 @@ class PhpAro {
 			$mapped = '';
 
 			if (is_array($aro)) {
-				if (isset($aro['model']) && isset($aro['foreign_key']) && $aro['model'] == $aroGroup) {
+				if (isset($aro['model']) && isset($aro['foreign_key']) && $aro['model'] === $aroGroup) {
 					$mapped = $aroGroup . '/' . $aro['foreign_key'];
 				} elseif (isset($aro[$model][$field])) {
 					$mapped = $aroGroup . '/' . $aro[$model][$field];
@@ -484,7 +484,7 @@ class PhpAro {
 
 					$aroModel = Inflector::camelize($aroModel);
 
-					if ($aroModel == $model || $aroModel == $aroGroup) {
+					if ($aroModel === $model || $aroModel === $aroGroup) {
 						$mapped = $aroGroup . '/' . $aroValue;
 					}
 				}

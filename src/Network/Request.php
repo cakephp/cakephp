@@ -930,7 +930,7 @@ class Request implements \ArrayAccess {
  */
 	public function data($name) {
 		$args = func_get_args();
-		if (count($args) == 2) {
+		if (count($args) === 2) {
 			$this->data = Hash::insert($this->data, $name, $args[1]);
 			return $this;
 		}
