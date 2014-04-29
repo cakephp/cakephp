@@ -268,11 +268,8 @@ class AuthComponent extends Component {
 			return;
 		}
 
-		$result = $this->_unauthorized($controller);
-		if ($result instanceof Response) {
-			$event->stopPropagation();
-		}
-		return $result;
+		$event->stopPropagation();
+		return $this->_unauthorized($controller);
 	}
 
 /**
