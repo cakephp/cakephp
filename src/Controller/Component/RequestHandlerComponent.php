@@ -426,7 +426,7 @@ class RequestHandlerComponent extends Component {
 			return $this->response->mapType($contentType);
 		}
 		if (is_string($type)) {
-			return ($type == $this->response->mapType($contentType));
+			return ($type === $this->response->mapType($contentType));
 		}
 	}
 
