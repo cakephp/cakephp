@@ -392,7 +392,7 @@ class PaginatorComponent extends Component {
 				if (strpos($key, '.') !== false) {
 					list($alias, $field) = explode('.', $key);
 				}
-				$correctAlias = ($object->alias == $alias);
+				$correctAlias = ($object->alias === $alias);
 
 				if ($correctAlias && $object->hasField($field)) {
 					$order[$object->alias . '.' . $field] = $value;
