@@ -70,6 +70,9 @@ class FlashComponentTest extends TestCase {
 		$_SESSION = null;
 		Configure::write('App.namespace', 'TestApp');
 		$this->ComponentRegistry = new ComponentRegistry();
+		$this->Controller = $this->getMock('\Cake\Controller\Controller', ['log', 'referer', 'redirect']);
+		$this->Flash = new FlashComponent($this->ComponentRegistry);
+		$this->Flash->startup(new Event('Controller.startup', $this->Controller));
 	}
 
 /**
@@ -89,85 +92,113 @@ class FlashComponentTest extends TestCase {
  * @covers \Cake\Controller\Component\FlashComponent::set
  */
 	public function testSet() {
-		$Controller = $this->getMock('\Cake\Controller\Controller', ['log', 'referer', 'redirect']);
-		$Flash = new FlashComponent($this->ComponentRegistry);
-		$Flash->startup(new Event('Controller.startup', $Controller));
-
 		$this->assertNull(Session::read('Message.flash'));
 
-		$Flash->set('This is a test message');
+		$this->Flash->set('This is a test message');
 		$expected = ['message' => 'This is a test message', 'element' => 'default', 'params' => ['type' => 'notice']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
 
-		$Flash->set('This is a test message', ['foo' => 'bar', 'element' => 'test']);
+		$this->Flash->set('This is a test message', ['foo' => 'bar', 'element' => 'test']);
 		$expected = ['message' => 'This is a test message', 'element' => 'test', 'params' => ['foo' => 'bar', 'type' => 'notice']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
 
-		$Flash->set('This is a test message', ['element' => 'MyPlugin.alert']);
+		$this->Flash->set('This is a test message', ['element' => 'MyPlugin.alert']);
 		$expected = ['message' => 'This is a test message', 'element' => 'alert', 'params' => ['type' => 'notice', 'plugin' => 'MyPlugin']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
 
-		$Flash->set('This is a test message', ['key' => 'foobar']);
+		$this->Flash->set('This is a test message', ['key' => 'foobar']);
 		$expected = ['message' => 'This is a test message', 'element' => 'default', 'params' => ['type' => 'notice']];
 		$result = Session::read('Message.foobar');
 		$this->assertEquals($expected, $result);
 
-		$Flash->set('This is a test message', 'error');
+		$this->Flash->set('This is a test message', 'error');
 		$expected = ['message' => 'This is a test message', 'element' => 'default', 'params' => ['type' => 'error']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
+	}
 
-		$Flash->set(new \Exception('This is a test message'));
+/**
+ * testSetWithException method
+ *
+ * @return void
+ * @covers \Cake\Controller\Component\FlashComponent::set
+ */
+	public function testSetWithException() {
+		$this->Flash->set(new \Exception('This is a test message'));
 		$expected = ['message' => 'This is a test message', 'element' => 'default', 'params' => ['type' => 'error']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
+	}
 
-		$Flash->set('create.failure');
+/**
+ * testSetWithTemplate method
+ *
+ * @return void
+ * @covers \Cake\Controller\Component\FlashComponent::set
+ */
+	public function testSetWithTemplate() {
+		$this->Flash->set('create.failure');
 		$expected = ['message' => __d('cake', 'There was a problem creating your record, fix the error(s) and try again.'), 'element' => 'default', 'params' => ['type' => 'error']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
 
-		$Flash->set('Hello {{username}}', ['username' => 'foobar']);
+		$this->Flash->set('Hello {{username}}', ['username' => 'foobar']);
 		$expected = ['message' => 'Hello foobar', 'element' => 'default', 'params' => ['type' => 'notice', 'username' => 'foobar']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
+	}
 
-		$Controller->expects($this->exactly(2))
+/**
+ * testSetWithLog method
+ *
+ * @return void
+ * @covers \Cake\Controller\Component\FlashComponent::set
+ */
+	public function testSetWithLog() {
+		$this->Controller->expects($this->exactly(2))
 			->method('log')
 			->with('foobar tried accessing record #123.', 'notice', []);
 
-		$Flash->set('Un-authorized access', ['id' => '123', 'username' => 'foobar', 'log' => '{{username}} tried accessing {{modelName}} #{{id}}.']);
+		$this->Flash->set('Un-authorized access', ['id' => '123', 'username' => 'foobar', 'log' => '{{username}} tried accessing {{modelName}} #{{id}}.']);
 		$expected = ['message' => 'Un-authorized access', 'element' => 'default', 'params' => ['type' => 'notice', 'username' => 'foobar', 'id' => '123']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
 
 		$user = ['id' => '321', 'name' => 'foobar'];
 		$object = ['id' => '123', 'name' => 'Bar Foo'];
-		$callback = function() use ($Controller, $user, $object) {
-			$Controller->log(sprintf('%s tried accessing record #%s.', $user['name'], $object['id']), 'notice', []);
+		$callback = function() use ($user, $object) {
+			$this->Controller->log(sprintf('%s tried accessing record #%s.', $user['name'], $object['id']), 'notice', []);
 		};
 
-		$Flash->set('Un-authorized access', ['log' => $callback]);
+		$this->Flash->set('Un-authorized access', ['log' => $callback]);
 		$expected = ['message' => 'Un-authorized access', 'element' => 'default', 'params' => ['type' => 'notice']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
+	}
 
-		$Controller->expects($this->once())
+/**
+ * testSetWithRedirect method
+ *
+ * @return void
+ * @covers \Cake\Controller\Component\FlashComponent::set
+ */
+	public function testSetWithRedirect() {
+		$this->Controller->expects($this->once())
 			->method('referer')
 			->with()
 			->will($this->returnValue('http://foo.bar'));
-		$Controller->expects($this->exactly(2))
+		$this->Controller->expects($this->exactly(2))
 			->method('redirect')
 			->with('http://foo.bar');
 
-		$Flash->set('This is a test message', ['redirect' => true]);
+		$this->Flash->set('This is a test message', ['redirect' => true]);
 		$expected = ['message' => 'This is a test message', 'element' => 'default', 'params' => ['type' => 'notice']];
 		$result = Session::read('Message.flash');
 
-		$Flash->set('This is a test message', ['redirect' => 'http://foo.bar']);
+		$this->Flash->set('This is a test message', ['redirect' => 'http://foo.bar']);
 		$expected = ['message' => 'This is a test message', 'element' => 'default', 'params' => ['type' => 'notice']];
 		$result = Session::read('Message.flash');
 
@@ -181,17 +212,14 @@ class FlashComponentTest extends TestCase {
  * @covers \Cake\Controller\Component\FlashComponent::__call
  */
 	public function testCall() {
-		$Flash = new FlashComponent($this->ComponentRegistry);
-		$Flash->startup(new Event('Controller.startup', new Controller()));
-
 		$this->assertNull(Session::read('Message.flash'));
 
-		$Flash->error('This is a test message');
+		$this->Flash->error('This is a test message');
 		$expected = ['message' => 'This is a test message', 'element' => 'default', 'params' => ['type' => 'error']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
 
-		$Flash->customType('This is a test message');
+		$this->Flash->customType('This is a test message');
 		$expected = ['message' => 'This is a test message', 'element' => 'default', 'params' => ['type' => 'customType']];
 		$result = Session::read('Message.flash');
 		$this->assertEquals($expected, $result);
