@@ -533,9 +533,9 @@ class PaginatorHelper extends Helper {
 		}
 		$start = 0;
 		if ($paging['count'] >= 1) {
-			$start = (($paging['page'] - 1) * $paging['limit']) + 1;
+			$start = (($paging['page'] - 1) * $paging['perPage']) + 1;
 		}
-		$end = $start + $paging['limit'] - 1;
+		$end = $start + $paging['perPage'] - 1;
 		if ($paging['count'] < $end) {
 			$end = $paging['count'];
 		}
