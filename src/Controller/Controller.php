@@ -511,11 +511,17 @@ class Controller implements EventListener {
  * - Calls the controller `beforeFilter`.
  * - triggers Component `startup` methods.
  *
- * @return void
+ * @return void|\Cake\Network\Response
  */
 	public function startupProcess() {
-		$this->getEventManager()->dispatch(new Event('Controller.initialize', $this));
-		$this->getEventManager()->dispatch(new Event('Controller.startup', $this));
+		$event = $this->getEventManager()->dispatch(new Event('Controller.initialize', $this));
+		if ($event->result instanceof Response) {
+			return $event->result;
+		}
+		$event = $this->getEventManager()->dispatch(new Event('Controller.startup', $this));
+		if ($event->result instanceof Response) {
+			return $event->result;
+		}
 	}
 
 /**
@@ -525,10 +531,13 @@ class Controller implements EventListener {
  * - triggers the component `shutdown` callback.
  * - calls the Controller's `afterFilter` method.
  *
- * @return void
+ * @return void|\Cake\Network\Response
  */
 	public function shutdownProcess() {
-		$this->getEventManager()->dispatch(new Event('Controller.shutdown', $this));
+		$event = $this->getEventManager()->dispatch(new Event('Controller.shutdown', $this));
+		if ($event->result instanceof Response) {
+			return $event->result;
+		}
 	}
 
 /**
@@ -538,11 +547,10 @@ class Controller implements EventListener {
  * @param string|array $url A string or array-based URL pointing to another location within the app,
  *     or an absolute URL
  * @param int $status Optional HTTP status code (eg: 404)
- * @param bool $exit If true, exit() will be called after the redirect
- * @return void
- * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::redirect
+ * @return void|\Cake\Network\Response
+ * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::redirect
  */
-	public function redirect($url, $status = null, $exit = true) {
+	public function redirect($url, $status = null) {
 		$this->autoRender = false;
 
 		$response = $this->response;
@@ -551,7 +559,10 @@ class Controller implements EventListener {
 		}
 
 		$event = new Event('Controller.beforeRedirect', $this, [$response, $url, $status]);
-		$this->getEventManager()->dispatch($event);
+		$event = $this->getEventManager()->dispatch($event);
+		if ($event->result instanceof Response) {
+			return $event->result;
+		}
 		if ($event->isStopped()) {
 			return;
 		}
@@ -560,10 +571,7 @@ class Controller implements EventListener {
 			$response->location(Router::url($url, true));
 		}
 
-		if ($exit) {
-			$response->send();
-			$response->stop();
-		}
+		return $response;
 	}
 
 /**
@@ -598,7 +606,11 @@ class Controller implements EventListener {
  */
 	public function render($view = null, $layout = null) {
 		$event = new Event('Controller.beforeRender', $this);
-		$this->getEventManager()->dispatch($event);
+		$event = $this->getEventManager()->dispatch($event);
+		if ($event->result instanceof Response) {
+			$this->autoRender = false;
+			return $event->result;
+		}
 		if ($event->isStopped()) {
 			$this->autoRender = false;
 			return $this->response;

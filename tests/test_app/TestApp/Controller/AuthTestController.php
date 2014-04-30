@@ -23,13 +23,6 @@ use Cake\Routing\Router;
 class AuthTestController extends Controller {
 
 /**
- * uses property
- *
- * @var array
- */
-	public $uses = array('Users');
-
-/**
  * components property
  *
  * @var array
@@ -109,12 +102,11 @@ class AuthTestController extends Controller {
  *
  * @param mixed $url
  * @param mixed $status
- * @param mixed $exit
- * @return void
+ * @return void|\Cake\Network\Response
  */
-	public function redirect($url, $status = null, $exit = true) {
+	public function redirect($url, $status = null) {
 		$this->testUrl = Router::url($url);
-		return false;
+		return parent::redirect($url, $status);
 	}
 
 /**

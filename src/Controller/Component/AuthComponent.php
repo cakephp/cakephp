@@ -1,9 +1,5 @@
 <?php
 /**
- * Authentication component
- *
- * Manages user logins and permissions.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -240,7 +236,7 @@ class AuthComponent extends Component {
  * of login form data.
  *
  * @param Event $event The startup event.
- * @return bool
+ * @return void|\Cake\Network\Response
  */
 	public function startup(Event $event) {
 		$controller = $event->subject();
@@ -248,26 +244,31 @@ class AuthComponent extends Component {
 		$action = strtolower($controller->request->params['action']);
 
 		if (!isset($methods[$action])) {
-			return true;
+			return;
 		}
 
 		$this->_setDefaults();
 
 		if ($this->_isAllowed($controller)) {
-			return true;
+			return;
 		}
 
 		if (!$this->_getUser()) {
-			return $this->_unauthenticated($controller);
+			$result = $this->_unauthenticated($controller);
+			if ($result instanceof Response) {
+				$event->stopPropagation();
+			}
+			return $result;
 		}
 
 		if ($this->_isLoginAction($controller) ||
 			empty($this->_config['authorize']) ||
 			$this->isAuthorized($this->user())
 		) {
-			return true;
+			return;
 		}
 
+		$event->stopPropagation();
 		return $this->_unauthorized($controller);
 	}
 
@@ -295,15 +296,17 @@ class AuthComponent extends Component {
  * is returned.
  *
  * @param Controller $controller A reference to the controller object.
- * @return bool True if current action is login action else false.
+ * @return void|\Cake\Network\Response Null if current action is login action
+ *   else response object returned by authenticate object or Controller::redirect().
  */
 	protected function _unauthenticated(Controller $controller) {
 		if (empty($this->_authenticateObjects)) {
 			$this->constructAuthenticate();
 		}
 		$auth = $this->_authenticateObjects[count($this->_authenticateObjects) - 1];
-		if ($auth->unauthenticated($this->request, $this->response)) {
-			return false;
+		$result = $auth->unauthenticated($this->request, $this->response);
+		if ($result !== null) {
+			return $result;
 		}
 
 		if ($this->_isLoginAction($controller)) {
@@ -313,25 +316,25 @@ class AuthComponent extends Component {
 			) {
 				$this->Session->write('Auth.redirect', $controller->referer(null, true));
 			}
-			return true;
+			return;
 		}
 
 		if (!$controller->request->is('ajax')) {
 			$this->flash($this->_config['authError']);
 			$this->Session->write('Auth.redirect', $controller->request->here(false));
-			$controller->redirect($this->_config['loginAction']);
-			return false;
+			return $controller->redirect($this->_config['loginAction']);
 		}
 
 		if (!empty($this->_config['ajaxLogin'])) {
-			$controller->response->statusCode(403);
 			$controller->viewPath = 'Element';
-			echo $controller->render($this->_config['ajaxLogin'], $this->RequestHandler->ajaxLayout);
-			$controller->response->stop();
-			return false;
+			$response = $controller->render(
+				$this->_config['ajaxLogin'],
+				$this->RequestHandler->ajaxLayout
+			);
+			$response->statusCode(403);
+			return $response;
 		}
-		$controller->redirect(null, 403);
-		return false;
+		return $controller->redirect(null, 403);
 	}
 
 /**
@@ -355,7 +358,7 @@ class AuthComponent extends Component {
  * Handle unauthorized access attempt
  *
  * @param Controller $controller A reference to the controller object
- * @return bool Returns false
+ * @return \Cake\Network\Response
  * @throws \Cake\Error\ForbiddenException
  */
 	protected function _unauthorized(Controller $controller) {
@@ -373,8 +376,7 @@ class AuthComponent extends Component {
 		} else {
 			$url = $this->_config['unauthorizedRedirect'];
 		}
-		$controller->redirect($url, null, true);
-		return false;
+		return $controller->redirect($url);
 	}
 
 /**
