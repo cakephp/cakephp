@@ -627,12 +627,14 @@ class PaginatorComponentTest extends TestCase {
 		];
 		$this->Paginator->paginate($table, $settings);
 		$this->assertEquals(100, $this->request->params['paging']['PaginatorPosts']['limit']);
+		$this->assertEquals(100, $this->request->params['paging']['PaginatorPosts']['perPage']);
 
 		$this->request->query = [
 			'limit' => '10'
 		];
 		$this->Paginator->paginate($table, $settings);
 		$this->assertEquals(10, $this->request->params['paging']['PaginatorPosts']['limit']);
+		$this->assertEquals(10, $this->request->params['paging']['PaginatorPosts']['perPage']);
 	}
 
 /**
@@ -683,6 +685,8 @@ class PaginatorComponentTest extends TestCase {
 		$this->assertEquals(2, $result['pageCount']);
 		$this->assertTrue($result['nextPage']);
 		$this->assertFalse($result['prevPage']);
+		$this->assertEquals(2, $result['perPage']);
+		$this->assertNull($result['limit']);
 	}
 
 /**

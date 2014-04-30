@@ -183,6 +183,7 @@ class PaginatorComponent extends Component {
 			'page' => $page,
 			'current' => $numResults,
 			'count' => $count,
+			'perPage' => $limit,
 			'prevPage' => ($page > 1),
 			'nextPage' => ($count > ($page * $limit)),
 			'pageCount' => $pageCount,
