@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -155,7 +156,7 @@ class TableRegistryTest extends TestCase {
  *
  * @return void
  */
-	public function testBuildConvention() {
+	public function testGetWithConventions() {
 		$table = TableRegistry::get('articles');
 		$this->assertInstanceOf('\TestApp\Model\Table\ArticlesTable', $table);
 		$table = TableRegistry::get('Articles');
@@ -165,15 +166,70 @@ class TableRegistryTest extends TestCase {
 		$this->assertInstanceOf('\TestApp\Model\Table\AuthorsTable', $table);
 		$table = TableRegistry::get('Authors');
 		$this->assertInstanceOf('\TestApp\Model\Table\AuthorsTable', $table);
+	}
 
-		$class = $this->getMockClass('\Cake\ORM\Table');
+/**
+ * Test get() with plugin syntax aliases
+ *
+ * @return void
+ */
+	public function testGetPlugin() {
+		Plugin::load('TestPlugin');
+		$table = TableRegistry::get('TestPlugin.TestPluginComments', ['connection' => 'test']);
 
-		if (!class_exists('MyPlugin\Model\Table\SuperTestsTable')) {
-			class_alias($class, 'MyPlugin\Model\Table\SuperTestsTable');
-		}
-
-		$table = TableRegistry::get('MyPlugin.SuperTests', ['connection' => 'test']);
+		$class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
 		$this->assertInstanceOf($class, $table);
+		$this->assertTrue(
+			TableRegistry::exists('TestPluginComments'),
+			'Short form should exist'
+		);
+		$this->assertTrue(
+			TableRegistry::exists('TestPlugin.TestPluginComments'),
+			'Long form should exist'
+		);
+
+		$second = TableRegistry::get('TestPlugin.TestPluginComments');
+		$this->assertSame($table, $second, 'Can fetch long form');
+
+		$second = TableRegistry::get('TestPluginComments');
+		$this->assertSame($table, $second);
+	}
+
+/**
+ * Test get() with plugin aliases + className option.
+ *
+ * @return void
+ */
+	public function testGetPluginWithClassNameOption() {
+		Plugin::load('TestPlugin');
+		$table = TableRegistry::get('Comments', [
+			'className' => 'TestPlugin.TestPluginComments',
+			'connection' => 'test'
+		]);
+		$class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
+		$this->assertInstanceOf($class, $table);
+		$this->assertFalse(TableRegistry::exists('TestPluginComments'), 'Class name should not exist');
+		$this->assertTrue(TableRegistry::exists('Comments'), 'Class name should exist');
+
+		$second = TableRegistry::get('Comments');
+		$this->assertSame($table, $second);
+	}
+
+/**
+ * Test get() with full namespaced classname
+ *
+ * @return void
+ */
+	public function testGetPluginWithFullNamespaceName() {
+		Plugin::load('TestPlugin');
+		$class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
+		$table = TableRegistry::get('Comments', [
+			'className' => $class,
+			'connection' => 'test'
+		]);
+		$this->assertInstanceOf($class, $table);
+		$this->assertFalse(TableRegistry::exists('TestPluginComments'), 'Class name should not exist');
+		$this->assertTrue(TableRegistry::exists('Comments'), 'Class name should exist');
 	}
 
 /**
