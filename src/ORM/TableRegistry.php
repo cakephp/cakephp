@@ -118,7 +118,11 @@ class TableRegistry {
  * `App\Model\Table\UsersTable` being attempted. If this class does not exist,
  * then the default `Cake\ORM\Table` class will be used. By setting the `className`
  * option you can define the specific class to use. This className can
- * use a short class reference.
+ * use a plugin short class reference.
+ *
+ * If you use a `$name` that uses plugin syntax only the name part will be used as
+ * key in the registry. This means that if two plugins, or a plugin and app provide
+ * the same alias, the registry will only store the first instance.
  *
  * If no `table` option is passed, the table name will be the underscored version
  * of the provided $alias.
@@ -126,13 +130,14 @@ class TableRegistry {
  * If no `connection` option is passed the table's defaultConnectionName() method
  * will be called to get the default connection name to use.
  *
- * @param string $alias The alias you want to get.
+ * @param string $name The alias name you want to get.
  * @param array $options The options you want to build the table with.
  *   If a table has already been loaded the options will be ignored.
  * @return \Cake\ORM\Table
  * @throws RuntimeException When you try to configure an alias that already exists.
  */
-	public static function get($alias, array $options = []) {
+	public static function get($name, array $options = []) {
+		list($plugin, $alias) = pluginSplit($name);
 		$exists = isset(static::$_instances[$alias]);
 		if ($exists && !empty($options)) {
 			throw new RuntimeException(sprintf(
@@ -143,15 +148,13 @@ class TableRegistry {
 		if ($exists) {
 			return static::$_instances[$alias];
 		}
-
-		list($plugin, $baseClass) = pluginSplit($alias);
-		$options = ['alias' => $baseClass] + $options;
+		$options = ['alias' => $alias] + $options;
 
 		if (empty($options['className'])) {
-			$class = Inflector::camelize($alias);
-			$className = App::classname($class, 'Model/Table', 'Table');
-			$options['className'] = $className ?: 'Cake\ORM\Table';
+			$options['className'] = Inflector::camelize($name);
 		}
+		$className = App::classname($options['className'], 'Model/Table', 'Table');
+		$options['className'] = $className ?: 'Cake\ORM\Table';
 
 		if (isset(static::$_config[$alias])) {
 			$options = array_merge(static::$_config[$alias], $options);
@@ -166,10 +169,14 @@ class TableRegistry {
 /**
  * Check to see if an instance exists in the registry.
  *
+ * Plugin names will be trimmed off of aliases as instances
+ * stored in the registry will be without the plugin name as well.
+ *
  * @param string $alias The alias to check for.
  * @return bool
  */
 	public static function exists($alias) {
+		list($plugin, $alias) = pluginSplit($alias);
 		return isset(static::$_instances[$alias]);
 	}
 
