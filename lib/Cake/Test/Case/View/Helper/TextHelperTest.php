@@ -79,7 +79,7 @@ class TextHelperTest extends CakeTestCase {
  */
 	public function testTextHelperProxyMethodCalls() {
 		$methods = array(
-			'highlight', 'stripLinks', 'truncate', 'excerpt', 'toList',
+			'highlight', 'stripLinks', 'truncate', 'tail', 'excerpt', 'toList',
 			);
 		$String = $this->getMock('StringMock', $methods);
 		$Text = new TextHelperTestObject($this->View, array('engine' => 'StringMock'));
