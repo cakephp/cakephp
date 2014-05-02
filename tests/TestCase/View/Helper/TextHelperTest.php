@@ -84,7 +84,7 @@ class TextHelperTest extends TestCase {
  */
 	public function testTextHelperProxyMethodCalls() {
 		$methods = array(
-			'stripLinks', 'excerpt', 'toList',
+			'stripLinks', 'excerpt', 'toList', 'tail',
 		);
 		$String = $this->getMock(__NAMESPACE__ . '\StringMock', $methods);
 		$Text = new TextHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\StringMock'));
