@@ -267,15 +267,16 @@ class TextHelper extends AppHelper {
 	}
 
 /**
- * Truncates text starting from the end.
+ * Truncates text.
  *
- * Cuts a string to the length of $length and replaces the first characters
+ * Cuts a string to the length of $length and replaces the last characters
  * with the ellipsis if the text is longer than length.
  *
  * ### Options:
  *
- * - `ellipsis` Will be used as Beginning and prepended to the trimmed string
+ * - `ellipsis` Will be used as Ending and appended to the trimmed string (`ending` is deprecated)
  * - `exact` If false, $text will not be cut mid-word
+ * - `html` If true, HTML tags would be handled correctly
  *
  * @see String::truncate()
  *
@@ -287,6 +288,29 @@ class TextHelper extends AppHelper {
  */
 	public function truncate($text, $length = 100, $options = array()) {
 		return $this->_engine->truncate($text, $length, $options);
+	}
+
+/**
+ * Truncates text starting from the end.
+ *
+ * Cuts a string to the length of $length and replaces the first characters
+ * with the ellipsis if the text is longer than length.
+ *
+ * ### Options:
+ *
+ * - `ellipsis` Will be used as Beginning and prepended to the trimmed string
+ * - `exact` If false, $text will not be cut mid-word
+ *
+ * @see String::tail()
+ *
+ * @param string $text String to truncate.
+ * @param integer $length Length of returned string, including ellipsis.
+ * @param array $options An array of html attributes and options.
+ * @return string Trimmed string.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::tail
+ */
+	public function tail($text, $length = 100, $options = array()) {
+		return $this->_engine->tail($text, $length, $options);
 	}
 
 /**
