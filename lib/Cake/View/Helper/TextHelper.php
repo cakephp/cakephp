@@ -301,7 +301,7 @@ class TextHelper extends AppHelper {
  * - `ellipsis` Will be used as Beginning and prepended to the trimmed string
  * - `exact` If false, $text will not be cut mid-word
  *
- * @see String::truncate()
+ * @see String::tail()
  *
  * @param string $text String to truncate.
  * @param integer $length Length of returned string, including ellipsis.
