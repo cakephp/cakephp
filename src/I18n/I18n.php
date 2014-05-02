@@ -372,20 +372,13 @@ class I18n {
  */
 	protected function _translations($domain, array $locales, $category) {
 		$this->_noLocale = true;
-		$translations = false;
 
-		if ($category === 'LC_TIME' && isset(static::$_config['_LC_TIME_'])) {
-			$translations = static::engine('_LC_TIME_')->read($domain, $locales, $category);
+		$config = 'default';
+		if (isset(static::$_config[$domain])) {
+			$config = $domain;
 		}
 
-		if ($category !== 'LC_TIME' || $translations === false) {
-			$config = 'default';
-			if (isset(static::$_config[$domain])) {
-				$config = $domain;
-			}
-
-			$translations = static::engine($config)->read($domain, $locales, $category);
-		}
+		$translations = static::engine($config)->read($domain, $locales, $category);
 
 		if ($translations !== false) {
 			$this->_noLocale = false;

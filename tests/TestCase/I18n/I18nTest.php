@@ -1329,48 +1329,6 @@ class I18nTest extends TestCase {
 	}
 
 /**
- * testTimeDefinition method
- *
- * @return void
- */
-	public function testTimeDefinition() {
-		Configure::write('Config.language', 'po');
-		$result = __c('d_fmt', 5);
-		$expected = '%m/%d/%Y';
-		$this->assertEquals($expected, $result);
-
-		$result = __c('am_pm', 5);
-		$expected = array('AM', 'PM');
-		$this->assertEquals($expected, $result);
-
-		$result = __c('abmon', 5);
-		$expected = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * testTimeDefinitionJapanese method
- *
- * @return void
- */
-	public function testTimeDefinitionJapanese() {
-		Configure::write('Config.language', 'ja_jp');
-		$result = __c('d_fmt', 5);
-
-		$expected = "%Y年%m月%d日";
-
-		$this->assertEquals($expected, $result);
-
-		$result = __c('am_pm', 5);
-		$expected = array("午前", "午後");
-		$this->assertEquals($expected, $result);
-
-		$result = __c('abmon', 5);
-		$expected = array(" 1月", " 2月", " 3月", " 4月", " 5月", " 6月", " 7月", " 8月", " 9月", "10月", "11月", "12月");
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * testTranslateLanguageParam method
  *
  * @return void
