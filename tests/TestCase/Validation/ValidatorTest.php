@@ -177,14 +177,24 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($validator, $validator->allowEmpty('title'));
 		$this->assertTrue($validator->field('title')->isEmptyAllowed());
 
-		$validator->allowEmpty('title', false);
-		$this->assertFalse($validator->field('title')->isEmptyAllowed());
-
-		$validator->allowEmpty('title', 'created');
+		$validator->allowEmpty('title', null, 'created');
 		$this->assertEquals('created', $validator->field('title')->isEmptyAllowed());
 
-		$validator->allowEmpty('title', 'updated');
+		$validator->allowEmpty('title', null, 'updated');
 		$this->assertEquals('updated', $validator->field('title')->isEmptyAllowed());
+	}
+
+/**
+ * Test the notEmpty() method.
+ *
+ * @return void
+ */
+	public function testNotEmpty() {
+		$validator->notEmpty('title');
+		$this->assertFalse($validator->field('title')->isEmptyAllowed());
+
+		$validator->allowEmpty('title');
+		$this->assertTrue($validator->field('title')->isEmptyAllowed());
 	}
 
 /**
@@ -198,15 +208,15 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertTrue($validator->isEmptyAllowed('title', true));
 		$this->assertTrue($validator->isEmptyAllowed('title', false));
 
-		$validator->allowEmpty('title', false);
+		$validator->notEmpty('title');
 		$this->assertFalse($validator->isEmptyAllowed('title', true));
 		$this->assertFalse($validator->isEmptyAllowed('title', false));
 
-		$validator->allowEmpty('title', 'create');
+		$validator->allowEmpty('title', null, 'create');
 		$this->assertTrue($validator->isEmptyAllowed('title', true));
 		$this->assertFalse($validator->isEmptyAllowed('title', false));
 
-		$validator->allowEmpty('title', 'update');
+		$validator->allowEmpty('title', null, 'update');
 		$this->assertTrue($validator->isEmptyAllowed('title', false));
 		$this->assertFalse($validator->isEmptyAllowed('title', true));
 	}
@@ -218,7 +228,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
  */
 	public function testErrorsWithEmptyNotAllowed() {
 		$validator = new Validator;
-		$validator->allowEmpty('title', false);
+		$validator->notEmpty('title');
 		$errors = $validator->errors(['title' => '']);
 		$expected = ['title' => ['This field cannot be left empty']];
 		$this->assertEquals($expected, $errors);
@@ -248,7 +258,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
  */
 	public function testCustomErrorsWithEmptyNotAllowed() {
 		$validator = new Validator;
-		$validator->allowEmpty('title', false, 'Custom message');
+		$validator->notEmpty('title', 'Custom message');
 		$errors = $validator->errors(['title' => '']);
 		$expected = ['title' => ['Custom message']];
 		$this->assertEquals($expected, $errors);

@@ -309,17 +309,37 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
- * Sets whether a field is allowed to be empty. If it is,  all other validation
- * rules will be ignored
+ * Allows a field to be empty.
+ *
+ * This is the opposite of notEmpty() which requires a field to not be empty.
  *
  * @param string $field the name of the field
- * @param bool|string $mode Valid values are true, false, 'create', 'update'
  * @param string $message The validation message to show if the field is not
+ * @param bool|string $mode Valid values are true, 'create', 'update'
  * allowed to be empty.
  * @return Validator this instance
  */
-	public function allowEmpty($field, $mode = true, $message = null) {
+	public function allowEmpty($field, $message = null, $mode = true) {
 		$this->field($field)->isEmptyAllowed($mode);
+		if ($message) {
+			$this->_allowEmptyMessages[$field] = $message;
+		}
+		return $this;
+	}
+
+/**
+ * Sets a field to be required as notEmpty.
+ *
+ * This is the opposite of allowEmpty() which allows a field to be empty.
+ *
+ * @param string $field the name of the field
+ * @param string $message The validation message to show if the field is not
+ * @param bool|string $mode Valid values are false, 'create', 'update'
+ * allowed to be empty.
+ * @return Validator this instance
+ */
+	public function notEmpty($field, $message = null) {
+		$this->field($field)->isEmptyAllowed(false);
 		if ($message) {
 			$this->_allowEmptyMessages[$field] = $message;
 		}
