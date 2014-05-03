@@ -734,17 +734,16 @@ class FormHelper extends Helper {
  * ]);
  * }}}
  *
- * You can exclude fields using the `$blacklist` parameter:
+ * You can exclude fields by specifying them as false:
  *
  * {{{
- * $this->Form->inputs([], ['title']);
+ * $this->Form->inputs(['title' => false]);
  * }}}
  *
  * In the above example, no field would be generated for the title field.
  *
  * @param array $fields An array of customizations for the fields that will be
  *   generated. This array allows you to set custom types, labels, or other options.
- * @param array $blacklist A list of fields to not create inputs for.
  * @param array $options Options array. Valid keys are:
  * - `fieldset` Set to false to disable the fieldset.
  * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
@@ -752,7 +751,7 @@ class FormHelper extends Helper {
  * @return string Completed form inputs.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::inputs
  */
-	public function inputs(array $fields = [], array $blacklist = [], array $options = []) {
+	public function inputs(array $fields = [], array $options = []) {
 		$fieldset = $legend = true;
 		$context = $this->_getContext();
 
@@ -782,18 +781,15 @@ class FormHelper extends Helper {
 
 		$out = null;
 		foreach ($fields as $name => $options) {
+			if ($options === false) {
+				continue;
+			}
+
 			if (is_numeric($name) && !is_array($options)) {
 				$name = $options;
 				$options = [];
 			}
 			$entity = explode('.', $name);
-			$blacklisted = (
-				!empty($blacklist) &&
-				(in_array($name, $blacklist) || in_array(end($entity), $blacklist))
-			);
-			if ($blacklisted) {
-				continue;
-			}
 			$out .= $this->input($name, (array)$options);
 		}
 
