@@ -2798,6 +2798,52 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * testFormInputsBlacklist
+ *
+ * @return void
+ */
+	public function testFormInputsBlacklist() {
+		$this->Form->create($this->article);
+		$result = $this->Form->inputs([
+			'id' => false
+		]);
+		$expected = array(
+			'<fieldset',
+			'<legend', 'New Article', '/legend',
+			array('div' => array('class' => 'input select required')),
+			'*/div',
+			array('div' => array('class' => 'input text required')),
+			'*/div',
+			array('div' => array('class' => 'input text')),
+			'*/div',
+			array('div' => array('class' => 'input text')),
+			'*/div',
+			'/fieldset',
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->create($this->article);
+		$result = $this->Form->inputs([
+			'id' => []
+		]);
+		$expected = array(
+			'<fieldset',
+			'<legend', 'New Article', '/legend',
+			'input' => array('type' => 'hidden', 'name' => 'id', 'id' => 'id'),
+			array('div' => array('class' => 'input select required')),
+			'*/div',
+			array('div' => array('class' => 'input text required')),
+			'*/div',
+			array('div' => array('class' => 'input text')),
+			'*/div',
+			array('div' => array('class' => 'input text')),
+			'*/div',
+			'/fieldset',
+		);
+		$this->assertTags($result, $expected, 'A falsey value (array) should not remove the input');
+	}
+
+/**
  * testSelectAsCheckbox method
  *
  * test multi-select widget with checkbox formatting.
