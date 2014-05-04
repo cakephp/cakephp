@@ -2679,7 +2679,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testFormInputsLegendFieldset() {
 		$this->Form->create($this->article);
-		$result = $this->Form->inputs([], [], array('legend' => 'The Legend'));
+		$result = $this->Form->inputs([], array('legend' => 'The Legend'));
 		$expected = array(
 			'<fieldset',
 			'<legend',
@@ -2689,15 +2689,15 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->inputs([], [], array('fieldset' => true, 'legend' => 'Field of Dreams'));
+		$result = $this->Form->inputs([], array('fieldset' => true, 'legend' => 'Field of Dreams'));
 		$this->assertContains('<legend>Field of Dreams</legend>', $result);
 		$this->assertContains('<fieldset>', $result);
 
-		$result = $this->Form->inputs([], [], array('fieldset' => false, 'legend' => false));
+		$result = $this->Form->inputs([], array('fieldset' => false, 'legend' => false));
 		$this->assertNotContains('<legend>', $result);
 		$this->assertNotContains('<fieldset>', $result);
 
-		$result = $this->Form->inputs([], [], array('fieldset' => false, 'legend' => 'Hello'));
+		$result = $this->Form->inputs([], array('fieldset' => false, 'legend' => 'Hello'));
 		$this->assertNotContains('<legend>', $result);
 		$this->assertNotContains('<fieldset>', $result);
 
@@ -2760,7 +2760,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->create($this->article);
-		$result = $this->Form->inputs([], [], ['legend' => 'Hello']);
+		$result = $this->Form->inputs([], ['legend' => 'Hello']);
 		$expected = array(
 			'fieldset' => array(),
 			'legend' => array(),
@@ -2792,10 +2792,55 @@ class FormHelperTest extends TestCase {
 		);
 		$result = $this->Form->inputs(
 			array('foo' => array('type' => 'text')),
-			array(),
 			array('legend' => false)
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * testFormInputsBlacklist
+ *
+ * @return void
+ */
+	public function testFormInputsBlacklist() {
+		$this->Form->create($this->article);
+		$result = $this->Form->inputs([
+			'id' => false
+		]);
+		$expected = array(
+			'<fieldset',
+			'<legend', 'New Article', '/legend',
+			array('div' => array('class' => 'input select required')),
+			'*/div',
+			array('div' => array('class' => 'input text required')),
+			'*/div',
+			array('div' => array('class' => 'input text')),
+			'*/div',
+			array('div' => array('class' => 'input text')),
+			'*/div',
+			'/fieldset',
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->create($this->article);
+		$result = $this->Form->inputs([
+			'id' => []
+		]);
+		$expected = array(
+			'<fieldset',
+			'<legend', 'New Article', '/legend',
+			'input' => array('type' => 'hidden', 'name' => 'id', 'id' => 'id'),
+			array('div' => array('class' => 'input select required')),
+			'*/div',
+			array('div' => array('class' => 'input text required')),
+			'*/div',
+			array('div' => array('class' => 'input text')),
+			'*/div',
+			array('div' => array('class' => 'input text')),
+			'*/div',
+			'/fieldset',
+		);
+		$this->assertTags($result, $expected, 'A falsey value (array) should not remove the input');
 	}
 
 /**
