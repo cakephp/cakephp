@@ -1034,7 +1034,7 @@ EXPECTED;
  * @return void
  */
 	public function testPr() {
-		$this->skipIf(php_sapi_name() == 'cli', 'Skipping web test in cli mode');
+		$this->skipIf(php_sapi_name() === 'cli', 'Skipping web test in cli mode');
 		ob_start();
 		pr('this is a test');
 		$result = ob_get_clean();

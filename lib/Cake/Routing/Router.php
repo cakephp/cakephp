@@ -700,10 +700,10 @@ class Router {
 	}
 
 /**
- * Get the either the current request object, or the first one.
+ * Gets the current request object, or the first one.
  *
- * @param boolean $current Whether you want the request from the top of the stack or the first one.
- * @return CakeRequest or null.
+ * @param boolean $current True to get the current request object, or false to get the first one.
+ * @return CakeRequest|null Null if stack is empty.
  */
 	public static function getRequest($current = false) {
 		if ($current) {

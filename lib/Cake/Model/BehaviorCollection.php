@@ -190,7 +190,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 			parent::unload($name);
 		}
 		foreach ($this->_methods as $m => $callback) {
-			if (is_array($callback) && $callback[0] == $name) {
+			if (is_array($callback) && $callback[0] === $name) {
 				unset($this->_methods[$m]);
 			}
 		}

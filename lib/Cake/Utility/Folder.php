@@ -683,7 +683,7 @@ class Folder {
 						}
 					}
 
-					if (is_dir($from) && file_exists($to) && $options['scheme'] == Folder::OVERWRITE) {
+					if (is_dir($from) && file_exists($to) && $options['scheme'] === Folder::OVERWRITE) {
 						$this->delete($to);
 					}
 
@@ -700,7 +700,7 @@ class Folder {
 						} else {
 							$this->_errors[] = __d('cake_dev', '%s not created', $to);
 						}
-					} elseif (is_dir($from) && $options['scheme'] == Folder::MERGE) {
+					} elseif (is_dir($from) && $options['scheme'] === Folder::MERGE) {
 						$options = array('to' => $to, 'from' => $from) + $options;
 						$this->copy($options);
 					}

@@ -998,7 +998,7 @@ class DboSource extends DataSource {
 		for ($i = 0; $i < $count; $i++) {
 			$valueInsert[] = $this->value($values[$i], $Model->getColumnType($fields[$i]));
 			$fieldInsert[] = $this->name($fields[$i]);
-			if ($fields[$i] == $Model->primaryKey) {
+			if ($fields[$i] === $Model->primaryKey) {
 				$id = $values[$i];
 			}
 		}
@@ -3196,7 +3196,7 @@ class DboSource extends DataSource {
 		$out = '';
 
 		foreach ($schema->tables as $curTable => $columns) {
-			if (!$tableName || $tableName == $curTable) {
+			if (!$tableName || $tableName === $curTable) {
 				$cols = $indexes = $tableParameters = array();
 				$primary = null;
 				$table = $this->fullTableName($curTable);

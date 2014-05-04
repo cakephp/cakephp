@@ -1195,7 +1195,7 @@ class FormHelper extends AppHelper {
 			} elseif (isset($map[$type])) {
 				$options['type'] = $map[$type];
 			}
-			if ($fieldKey == $primaryKey) {
+			if ($fieldKey === $primaryKey) {
 				$options['type'] = 'hidden';
 			}
 			if (
@@ -1820,6 +1820,8 @@ class FormHelper extends AppHelper {
 			$formOptions['target'] = $options['target'];
 			unset($options['target']);
 		}
+
+		$this->_lastAction = $formUrl;
 
 		$out = $this->Html->useTag('form', $formUrl, $formOptions);
 		$out .= $this->Html->useTag('hidden', '_method', array(

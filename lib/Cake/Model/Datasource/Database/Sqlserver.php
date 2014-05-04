@@ -688,7 +688,7 @@ class Sqlserver extends DboSource {
 			} else {
 				$result = str_replace('DEFAULT NULL', 'NULL', $result);
 			}
-		} elseif (array_keys($column) == array('type', 'name')) {
+		} elseif (array_keys($column) === array('type', 'name')) {
 			$result .= ' NULL';
 		} elseif (strpos($result, "DEFAULT N'")) {
 			$result = str_replace("DEFAULT N'", "DEFAULT '", $result);
