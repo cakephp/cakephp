@@ -2679,7 +2679,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testFormInputsLegendFieldset() {
 		$this->Form->create($this->article);
-		$result = $this->Form->inputs([], array('legend' => 'The Legend'));
+		$result = $this->Form->allInputs([], array('legend' => 'The Legend'));
 		$expected = array(
 			'<fieldset',
 			'<legend',
@@ -2689,15 +2689,15 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->inputs([], array('fieldset' => true, 'legend' => 'Field of Dreams'));
+		$result = $this->Form->allInputs([], array('fieldset' => true, 'legend' => 'Field of Dreams'));
 		$this->assertContains('<legend>Field of Dreams</legend>', $result);
 		$this->assertContains('<fieldset>', $result);
 
-		$result = $this->Form->inputs([], array('fieldset' => false, 'legend' => false));
+		$result = $this->Form->allInputs([], array('fieldset' => false, 'legend' => false));
 		$this->assertNotContains('<legend>', $result);
 		$this->assertNotContains('<fieldset>', $result);
 
-		$result = $this->Form->inputs([], array('fieldset' => false, 'legend' => 'Hello'));
+		$result = $this->Form->allInputs([], array('fieldset' => false, 'legend' => 'Hello'));
 		$this->assertNotContains('<legend>', $result);
 		$this->assertNotContains('<fieldset>', $result);
 
@@ -2705,7 +2705,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->params['prefix'] = 'admin';
 		$this->Form->request->params['action'] = 'admin_edit';
 		$this->Form->request->params['controller'] = 'articles';
-		$result = $this->Form->inputs();
+		$result = $this->Form->allInputs();
 		$expected = [
 			'<fieldset',
 			'<legend',
@@ -2723,7 +2723,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testFormInputs() {
 		$this->Form->create($this->article);
-		$result = $this->Form->inputs();
+		$result = $this->Form->allInputs();
 		$expected = array(
 			'<fieldset',
 			'<legend', 'New Article', '/legend',
@@ -2740,7 +2740,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->inputs([
+		$result = $this->Form->allInputs([
 			'published' => ['type' => 'boolean']
 		]);
 		$expected = array(
@@ -2760,7 +2760,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->create($this->article);
-		$result = $this->Form->inputs([], ['legend' => 'Hello']);
+		$result = $this->Form->allInputs([], ['legend' => 'Hello']);
 		$expected = array(
 			'fieldset' => array(),
 			'legend' => array(),
@@ -2790,7 +2790,7 @@ class FormHelperTest extends TestCase {
 			'*/div',
 			'/fieldset'
 		);
-		$result = $this->Form->inputs(
+		$result = $this->Form->allInputs(
 			array('foo' => array('type' => 'text')),
 			array('legend' => false)
 		);
@@ -2804,7 +2804,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testFormInputsBlacklist() {
 		$this->Form->create($this->article);
-		$result = $this->Form->inputs([
+		$result = $this->Form->allInputs([
 			'id' => false
 		]);
 		$expected = array(
@@ -2823,7 +2823,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->create($this->article);
-		$result = $this->Form->inputs([
+		$result = $this->Form->allInputs([
 			'id' => []
 		]);
 		$expected = array(

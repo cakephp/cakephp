@@ -729,7 +729,7 @@ class FormHelper extends Helper {
  *
  * You can customize individual inputs through `$fields`.
  * {{{
- * $this->Form->inputs([
+ * $this->Form->allInputs([
  *   'name' => ['label' => 'custom label']
  * ]);
  * }}}
@@ -737,7 +737,7 @@ class FormHelper extends Helper {
  * You can exclude fields by specifying them as false:
  *
  * {{{
- * $this->Form->inputs(['title' => false]);
+ * $this->Form->allInputs(['title' => false]);
  * }}}
  *
  * In the above example, no field would be generated for the title field.
@@ -751,8 +751,7 @@ class FormHelper extends Helper {
  * @return string Completed form inputs.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::inputs
  */
-	public function inputs(array $fields = [], array $options = []) {
-		$fieldset = $legend = true;
+	public function allInputs(array $fields = [], array $options = []) {
 		$context = $this->_getContext();
 
 		$modelFields = $context->fieldNames();
@@ -761,6 +760,61 @@ class FormHelper extends Helper {
 			Hash::normalize($modelFields),
 			Hash::normalize($fields)
 		);
+
+		return $this->inputs($fields, $options);
+	}
+
+/**
+ * Generate a set of inputs for `$fields`
+ *
+ * You can customize individual inputs through `$fields`.
+ * {{{
+ * $this->Form->inputs([
+ *   'name' => ['label' => 'custom label']
+ * ]);
+ * }}}
+ *
+ * In the above example, no field would be generated for the title field.
+ *
+ * @param array $fields An array of customizations for the fields that will be
+ *   generated. This array allows you to set custom types, labels, or other options.
+ * @param array $options Options array. Valid keys are:
+ * - `fieldset` Set to false to disable the fieldset.
+ * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
+ *    to customize the legend text.
+ * @return string Completed form inputs.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::inputs
+ */
+	public function inputs(array $fields, array $options = []) {
+		$fields = Hash::normalize($fields);
+
+		$out = '';
+		foreach ($fields as $name => $opts) {
+			if ($opts === false) {
+				continue;
+			}
+
+			$out .= $this->input($name, (array)$opts);
+		}
+
+		return $this->fieldset($out, $options);
+	}
+
+/**
+ * Wrap a set of inputs in a fieldset
+ *
+ * @param string $fields the form inputs to wrap in a fieldset
+ * @param array $options Options array. Valid keys are:
+ * - `fieldset` Set to false to disable the fieldset.
+ * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
+ *    to customize the legend text.
+ * @return string Completed form inputs.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::inputs
+ */
+	public function fieldset($fields = '', array $options = []) {
+		$fieldset = $legend = true;
+		$context = $this->_getContext();
+		$out = $fields;
 
 		if (isset($options['legend'])) {
 			$legend = $options['legend'];
@@ -777,20 +831,6 @@ class FormHelper extends Helper {
 			}
 			$modelName = Inflector::humanize(Inflector::singularize($this->request->params['controller']));
 			$legend = sprintf($actionName, $modelName);
-		}
-
-		$out = null;
-		foreach ($fields as $name => $options) {
-			if ($options === false) {
-				continue;
-			}
-
-			if (is_numeric($name) && !is_array($options)) {
-				$name = $options;
-				$options = [];
-			}
-			$entity = explode('.', $name);
-			$out .= $this->input($name, (array)$options);
 		}
 
 		if ($fieldset) {
