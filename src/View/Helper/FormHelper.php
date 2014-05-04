@@ -775,8 +775,8 @@ class FormHelper extends Helper {
  * ]);
  * }}}
  *
- * @param array $fields An array of customizations for the fields that will be
- *   generated. This array allows you to set custom types, labels, or other options.
+ * @param array $fields An array of the fields to generate. This array allows you to set custom
+ *   types, labels, or other options.
  * @param array $options Options array. Valid keys are:
  * - `fieldset` Set to false to disable the fieldset.
  * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
