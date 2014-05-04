@@ -344,6 +344,9 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @return Validator this instance
  */
 	public function notEmpty($field, $message = null, $mode = false) {
+		if ($mode === 'create' || $mode === 'update') {
+			$mode = $mode === 'create' ? 'update': 'create';
+		}
 		$this->field($field)->isEmptyAllowed($mode);
 		if ($message) {
 			$this->_allowEmptyMessages[$field] = $message;
