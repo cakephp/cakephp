@@ -770,11 +770,10 @@ class FormHelper extends Helper {
  * You can customize individual inputs through `$fields`.
  * {{{
  * $this->Form->inputs([
- *   'name' => ['label' => 'custom label']
+ *   'name' => ['label' => 'custom label'],
+ *   'email'
  * ]);
  * }}}
- *
- * In the above example, no field would be generated for the title field.
  *
  * @param array $fields An array of customizations for the fields that will be
  *   generated. This array allows you to set custom types, labels, or other options.
