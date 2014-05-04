@@ -223,6 +223,29 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test interactions between notEmpty() and isAllowed().
+ *
+ * @return void
+ */
+	public function testNotEmptyAndIsAllowed() {
+		$validator = new Validator;
+		$validator->allowEmpty('title')
+			->notEmpty('title', 'Need it', 'update');
+		$this->assertTrue($validator->isEmptyAllowed('title', true));
+		$this->assertFalse($validator->isEmptyAllowed('title', false));
+
+		$validator->allowEmpty('title')
+			->notEmpty('title');
+		$this->assertFalse($validator->isEmptyAllowed('title', true));
+		$this->assertFalse($validator->isEmptyAllowed('title', false));
+
+		$validator->notEmpty('title')
+			->allowEmpty('title', 'create');
+		$this->assertTrue($validator->isEmptyAllowed('title', true));
+		$this->assertFalse($validator->isEmptyAllowed('title', false));
+	}
+
+/**
  * Tests the isEmptyAllowed method
  *
  * @return void
