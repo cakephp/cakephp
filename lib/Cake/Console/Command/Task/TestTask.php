@@ -302,7 +302,7 @@ class TestTask extends BakeTask {
 
 		$position = strpos($class, $type);
 
-		if ($position !== false && strlen($class) - $position == strlen($type)) {
+		if ($position !== false && (strlen($class) - $position) === strlen($type)) {
 			return $class;
 		}
 		return $class . $type;

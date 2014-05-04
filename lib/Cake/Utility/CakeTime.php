@@ -472,7 +472,7 @@ class CakeTime {
 	public static function isToday($dateString, $timezone = null) {
 		$timestamp = self::fromString($dateString, $timezone);
 		$now = self::fromString('now', $timezone);
-		return date('Y-m-d', $timestamp) == date('Y-m-d', $now);
+		return date('Y-m-d', $timestamp) === date('Y-m-d', $now);
 	}
 
 /**
