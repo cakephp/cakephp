@@ -83,7 +83,7 @@ $key = array_map(function($el) { return "'$el'"; }, (array)$primaryKey);
 			->allowEmpty('<?= $field ?>')<?= $i === $countValidation ? ";\n" : "\n" ?>
 <?php else: ?>
 			->validatePresence('<?= $field ?>', 'create')
-			->allowEmpty('<?= $field ?>', false)<?= $i === $countValidation ? ";\n" : "\n" ?>
+			->notEmpty('<?= $field ?>')<?= $i === $countValidation ? ";\n" : "\n" ?>
 <?php endif ?>
 <?php $i++; ?>
 <?php endforeach ?>

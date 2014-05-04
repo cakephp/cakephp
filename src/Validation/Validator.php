@@ -309,16 +309,44 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
- * Sets whether a field is allowed to be empty. If it is,  all other validation
- * rules will be ignored
+ * Allows a field to be empty.
+ *
+ * This is the opposite of notEmpty() which requires a field to not be empty.
+ * By using $mode equal to 'create' or 'update', you can allow fields to be empty
+ * when records are first created, or when they are updated.
+ *
+ * Because this and `notEmpty()` modify the same internal state, the last
+ * method called will take precedence.
  *
  * @param string $field the name of the field
- * @param bool|string $mode Valid values are true, false, 'create', 'update'
+ * @param bool|string $mode Valid values are true, 'create', 'update'
+ * @return Validator this instance
+ */
+	public function allowEmpty($field, $mode = true) {
+		$this->field($field)->isEmptyAllowed($mode);
+		return $this;
+	}
+
+/**
+ * Sets a field to require a non-empty value.
+ *
+ * This is the opposite of allowEmpty() which allows a field to be empty.
+ * By using $mode equal to 'create' or 'update', you can make fields required
+ * when records are first created, or when they are updated.
+ *
+ * Because this and `allowEmpty()` modify the same internal state, the last
+ * method called will take precedence.
+ *
+ * @param string $field the name of the field
  * @param string $message The validation message to show if the field is not
+ * @param bool|string $mode Valid values are false, 'create', 'update'
  * allowed to be empty.
  * @return Validator this instance
  */
-	public function allowEmpty($field, $mode = true, $message = null) {
+	public function notEmpty($field, $message = null, $mode = false) {
+		if ($mode === 'create' || $mode === 'update') {
+			$mode = $mode === 'create' ? 'update': 'create';
+		}
 		$this->field($field)->isEmptyAllowed($mode);
 		if ($message) {
 			$this->_allowEmptyMessages[$field] = $message;
