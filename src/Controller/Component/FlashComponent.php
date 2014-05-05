@@ -18,6 +18,7 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Error\InternalErrorException;
 use Cake\Event\Event;
+use Cake\Log\LogTrait;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
 use Cake\Utility\String;
@@ -27,6 +28,8 @@ use Cake\Utility\String;
  * type (i.e. notice, error, success, etc.).
  */
 class FlashComponent extends Component {
+
+	use LogTrait;
 
 /**
  * The controller.
@@ -185,7 +188,7 @@ class FlashComponent extends Component {
 			} else {
 				$log = ['level' => $params['type'], 'message' => $message, 'scope' => []];
 				$log = $params['log'] + $log;
-				$this->_controller->log($log['message'], $log['level'], $log['scope']);
+				$this->log($log['message'], $log['level'], $log['scope']);
 			}
 		}
 

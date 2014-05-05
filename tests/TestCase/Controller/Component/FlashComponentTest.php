@@ -70,8 +70,8 @@ class FlashComponentTest extends TestCase {
 		$_SESSION = null;
 		Configure::write('App.namespace', 'TestApp');
 		$this->ComponentRegistry = new ComponentRegistry();
-		$this->Controller = $this->getMock('\Cake\Controller\Controller', ['log', 'referer', 'redirect']);
-		$this->Flash = new FlashComponent($this->ComponentRegistry);
+		$this->Controller = $this->getMock('\Cake\Controller\Controller', ['referer', 'redirect']);
+		$this->Flash = $this->getMock('\Cake\Controller\Component\FlashComponent', ['log'], [$this->ComponentRegistry]);
 		$this->Flash->startup(new Event('Controller.startup', $this->Controller));
 	}
 
@@ -158,7 +158,7 @@ class FlashComponentTest extends TestCase {
  * @covers \Cake\Controller\Component\FlashComponent::set
  */
 	public function testSetWithLog() {
-		$this->Controller->expects($this->exactly(2))
+		$this->Flash->expects($this->once())
 			->method('log')
 			->with('foobar tried accessing record #123.', 'notice', []);
 
