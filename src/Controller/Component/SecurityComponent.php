@@ -132,12 +132,12 @@ class SecurityComponent extends Component {
 /**
  * Sets the actions that require a request that is SSL-secured, or empty for all actions
  *
+ * @param string|array $actions
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireSecure
  */
-	public function requireSecure() {
-		$args = func_get_args();
-		$this->_requireMethod('Secure', $args);
+	public function requireSecure($actions) {
+		$this->_requireMethod('Secure', (array)$actions);
 	}
 
 /**
@@ -147,12 +147,12 @@ class SecurityComponent extends Component {
  * set in SecurityComponent::$allowedControllers and
  * SecurityComponent::$allowedActions.
  *
+ * @param string|array $actions
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireAuth
  */
-	public function requireAuth() {
-		$args = func_get_args();
-		$this->_requireMethod('Auth', $args);
+	public function requireAuth($actions) {
+		$this->_requireMethod('Auth', (array)$actions);
 	}
 
 /**
