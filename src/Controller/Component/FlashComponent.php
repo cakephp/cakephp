@@ -59,7 +59,6 @@ class FlashComponent extends Component {
 		'key' => 'flash',
 		'log' => false,
 		'modelName' => 'record',
-		'redirect' => false,
 		'templates' => [],
 		'type' => 'notice',
 	];
@@ -75,7 +74,6 @@ class FlashComponent extends Component {
 			'create' => [
 				'success' => [
 					'message' => __d('cake', 'Successfully created {{modelName}}.'),
-					'redirect' => ['action' => 'index'],
 				],
 				'failure' => [
 					'message' => __d('cake', 'There was a problem creating your {{modelName}}, fix the error(s) and try again.'),
@@ -86,7 +84,6 @@ class FlashComponent extends Component {
 				'failure' => [
 					'message' => __d('cake', 'Invalid {{modelName}}, please try again.'),
 					'type' => 'error',
-					'redirect' => true,
 				],
 			],
 			'update' => [
@@ -176,7 +173,6 @@ class FlashComponent extends Component {
 		$message = String::insert($message, array_filter($params, 'is_string'), $insertOpts);
 
 		$key = $params['key'];
-		$redirect = $params['redirect'];
 
 		if (!empty($params['log'])) {
 			if (is_string($params['log'])) {
@@ -197,18 +193,10 @@ class FlashComponent extends Component {
 			$params['key'],
 			$params['log'],
 			$params['modelName'],
-			$params['redirect'],
 			$params['templates']
 		);
 
 		Session::write('Message.' . $key, compact('message', 'element', 'params'));
-
-		if (!empty($redirect)) {
-			if (true === $redirect) {
-				$redirect = $this->_controller->referer();
-			}
-			return $this->_controller->redirect($redirect);
-		}
 	}
 
 /**
