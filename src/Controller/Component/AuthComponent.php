@@ -477,53 +477,45 @@ class AuthComponent extends Component {
  * Takes a list of actions in the current controller for which authentication is not required, or
  * no parameters to allow all actions.
  *
- * You can use allow with either an array, or var args.
+ * You can use allow with either an array or a simple string.
  *
- * `$this->Auth->allow(array('edit', 'add'));` or
- * `$this->Auth->allow('edit', 'add');` or
+ * `$this->Auth->allow('view');`
+ * `$this->Auth->allow(['edit', 'add']);`
  * `$this->Auth->allow();` to allow all actions
  *
- * @param string|array $action,... Controller action name or array of actions
+ * @param string|array $actions Controller action name or array of actions
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#making-actions-public
  */
-	public function allow($action = null) {
-		$args = func_get_args();
-		if (empty($args) || $action === null) {
+	public function allow($actions = null) {
+		if ($actions === null) {
 			$this->allowedActions = $this->_methods;
 			return;
 		}
-		if (isset($args[0]) && is_array($args[0])) {
-			$args = $args[0];
-		}
-		$this->allowedActions = array_merge($this->allowedActions, $args);
+		$this->allowedActions = array_merge($this->allowedActions, (array)$actions);
 	}
 
 /**
  * Removes items from the list of allowed/no authentication required actions.
  *
- * You can use deny with either an array, or var args.
+ * You can use deny with either an array or a simple string.
  *
- * `$this->Auth->deny(array('edit', 'add'));` or
- * `$this->Auth->deny('edit', 'add');` or
+ * `$this->Auth->deny('view');`
+ * `$this->Auth->deny(['edit', 'add']);`
  * `$this->Auth->deny();` to remove all items from the allowed list
  *
- * @param string|array $action,... Controller action name or array of actions
+ * @param string|array $actions Controller action name or array of actions
  * @return void
  * @see AuthComponent::allow()
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#making-actions-require-authorization
  */
-	public function deny($action = null) {
-		$args = func_get_args();
-		if (empty($args) || $action === null) {
+	public function deny($actions = null) {
+		if ($actions === null) {
 			$this->allowedActions = array();
 			return;
 		}
-		if (isset($args[0]) && is_array($args[0])) {
-			$args = $args[0];
-		}
-		foreach ($args as $arg) {
-			$i = array_search($arg, $this->allowedActions);
+		foreach ((array)$actions as $action) {
+			$i = array_search($action, $this->allowedActions);
 			if (is_int($i)) {
 				unset($this->allowedActions[$i]);
 			}

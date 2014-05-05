@@ -1022,9 +1022,9 @@ class Request implements \ArrayAccess {
  *
  * Example:
  *
- * $this->request->allowMethod('post', 'delete');
+ * $this->request->allowMethod('post');
  * or
- * $this->request->allowMethod(array('post', 'delete'));
+ * $this->request->allowMethod(['post', 'delete']);
  *
  * If the request would be GET, response header "Allow: POST, DELETE" will be set
  * and a 405 error will be returned.
@@ -1034,9 +1034,7 @@ class Request implements \ArrayAccess {
  * @throws \Cake\Error\MethodNotAllowedException
  */
 	public function allowMethod($methods) {
-		if (!is_array($methods)) {
-			$methods = func_get_args();
-		}
+		$methods = (array)$methods;
 		foreach ($methods as $method) {
 			if ($this->is($method)) {
 				return true;

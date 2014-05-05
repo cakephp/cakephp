@@ -2222,10 +2222,10 @@ XML;
 			'REQUEST_METHOD' => 'PUT'
 		]]);
 
-		$this->assertTrue($request->allowMethod(array('put')));
+		$this->assertTrue($request->allowMethod('put'));
 
 		$request->env('REQUEST_METHOD', 'DELETE');
-		$this->assertTrue($request->allowMethod('post', 'delete'));
+		$this->assertTrue($request->allowMethod(['post', 'delete']));
 	}
 
 /**
@@ -2240,7 +2240,7 @@ XML;
 		]);
 
 		try {
-			$request->allowMethod('POST', 'DELETE');
+			$request->allowMethod(['POST', 'DELETE']);
 			$this->fail('An expected exception has not been raised.');
 		} catch (Error\MethodNotAllowedException $e) {
 			$this->assertEquals(array('Allow' => 'POST, DELETE'), $e->responseHeader());

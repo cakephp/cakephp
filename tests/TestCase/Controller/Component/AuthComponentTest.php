@@ -379,7 +379,7 @@ class AuthComponentTest extends TestCase {
 		$this->Controller->Auth->initialize($event);
 
 		$this->Controller->Auth->allow();
-		$this->Controller->Auth->deny('add', 'camelCase');
+		$this->Controller->Auth->deny(['add', 'camelCase']);
 
 		$this->Controller->request['action'] = 'delete';
 		$this->assertNull($this->Controller->Auth->startup($event));
@@ -439,7 +439,7 @@ class AuthComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Auth->initialize($event);
 		$this->Controller->Auth->allow();
-		$this->Controller->Auth->deny('add', 'camelCase');
+		$this->Controller->Auth->deny(['add', 'camelCase']);
 
 		$url = '/auth_test/camelCase';
 		$this->Controller->request->addParams(Router::parse($url));
@@ -501,7 +501,7 @@ class AuthComponentTest extends TestCase {
 		$this->Controller->request->query['url'] = Router::normalize($url);
 		$event = new Event('Controller.initialize', $this->Controller);
 		$this->Controller->Auth->initialize($event);
-		$this->Controller->Auth->allow('action_name', 'anotherAction');
+		$this->Controller->Auth->allow(['action_name', 'anotherAction']);
 		$this->assertEquals(array('action_name', 'anotherAction'), $this->Controller->Auth->allowedActions);
 	}
 
