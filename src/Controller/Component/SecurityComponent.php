@@ -110,7 +110,7 @@ class SecurityComponent extends Component {
 			$controller->request->params['requested'] != 1
 		);
 
-		if ($this->_action == $this->_config['blackHoleCallback']) {
+		if ($this->_action === $this->_config['blackHoleCallback']) {
 			return $this->blackHole($controller, 'auth');
 		}
 
@@ -199,7 +199,7 @@ class SecurityComponent extends Component {
 		) {
 			$requireSecure = $this->_config['requireSecure'];
 
-			if (in_array($this->_action, $requireSecure) || $requireSecure == array('*')) {
+			if (in_array($this->_action, $requireSecure) || $requireSecure === array('*')) {
 				if (!$this->request->is('ssl')) {
 					if (!$this->blackHole($controller, 'secure')) {
 						return null;
@@ -263,17 +263,16 @@ class SecurityComponent extends Component {
 		if (empty($controller->request->data)) {
 			return true;
 		}
-		$data = $controller->request->data;
+		$check = $controller->request->data;
 
-		if (!isset($data['_Token']) ||
-			!isset($data['_Token']['fields']) ||
-			!isset($data['_Token']['unlocked'])
+		if (!isset($check['_Token']) ||
+			!isset($check['_Token']['fields']) ||
+			!isset($check['_Token']['unlocked'])
 		) {
 			return false;
 		}
 
 		$locked = '';
-		$check = $controller->request->data;
 		$token = urldecode($check['_Token']['fields']);
 		$unlocked = urldecode($check['_Token']['unlocked']);
 
@@ -332,7 +331,7 @@ class SecurityComponent extends Component {
 		$fieldList += $lockedFields;
 		$unlocked = implode('|', $unlocked);
 		$hashParts = array(
-			$this->request->here(),
+			$controller->request->here(),
 			serialize($fieldList),
 			$unlocked,
 			Configure::read('Security.salt')

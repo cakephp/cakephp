@@ -1414,6 +1414,7 @@ class FormHelper extends Helper {
 		$out = $this->formatTemplate('formstart', [
 			'attrs' => $this->templater()->formatAttributes($formOptions)
 		]);
+		$this->_lastAction = $formOptions['action'];
 		$out .= $this->hidden('_method', ['value' => $requestMethod]);
 		$out .= $this->_csrfField();
 

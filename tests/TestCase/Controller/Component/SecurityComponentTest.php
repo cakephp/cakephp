@@ -1,7 +1,5 @@
 <?php
 /**
- * SecurityComponentTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -887,11 +885,11 @@ class SecurityComponentTest extends TestCase {
 	}
 
 /**
- * testRadio method
+ * test validatePost with radio buttons
  *
  * @return void
  */
-	public function testRadio() {
+	public function testValidatePostRadio() {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
 		$fields = 'c2226a8879c3f4b513691295fc2519a29c44c8bb%3An%3A0%3A%7B%7D';
@@ -923,6 +921,38 @@ class SecurityComponentTest extends TestCase {
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
+	}
+
+/**
+ * test validatePost uses here() as a hash input.
+ *
+ * @return void
+ */
+	public function testValidatePostUrlAsHashInput() {
+		$event = new Event('Controller.startup', $this->Controller);
+		$this->Security->startup($event);
+
+		$fields = 'b0914d06dfb04abf1fada53e16810e87d157950b%3A';
+		$unlocked = '';
+
+		$this->Controller->request->data = array(
+			'Model' => array('username' => '', 'password' => ''),
+			'_Token' => compact('fields', 'unlocked')
+		);
+		$this->assertTrue($this->Security->validatePost($this->Controller));
+
+		$request = $this->getMock('Cake\Network\Request', ['here']);
+		$request->expects($this->at(0))
+			->method('here')
+			->will($this->returnValue('/posts/index?page=1'));
+		$request->expects($this->at(1))
+			->method('here')
+			->will($this->returnValue('/posts/edit/1'));
+		$request->data = $this->Controller->request->data;
+		$this->Controller->request = $request;
+
+		$this->assertFalse($this->Security->validatePost($this->Controller));
+		$this->assertFalse($this->Security->validatePost($this->Controller));
 	}
 
 /**

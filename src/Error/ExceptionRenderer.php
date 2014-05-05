@@ -1,10 +1,5 @@
 <?php
 /**
- * Exception Renderer
- *
- * Provides Exception rendering features. Which allow exceptions to be rendered
- * as HTML pages.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
