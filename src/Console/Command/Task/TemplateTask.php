@@ -23,7 +23,6 @@ use Cake\View\ViewVarsTrait;
 /**
  * Template Task can generate templated output Used in other Tasks.
  * Acts like a simplified View class.
- *
  */
 class TemplateTask extends Shell {
 
@@ -64,9 +63,6 @@ class TemplateTask extends Shell {
 		}
 
 		$core = current(App::core('Console'));
-		$separator = DS === '/' ? '/' : '\\\\';
-		$core = preg_replace('#shells' . $separator . '$#', '', $core);
-
 		$Folder = new Folder($core . 'Templates/default');
 
 		$contents = $Folder->read();
@@ -78,21 +74,22 @@ class TemplateTask extends Shell {
 			$paths[$i] = rtrim($path, DS) . DS;
 		}
 
+		$this->_io->verbose('Found the following bake themes:');
+
 		$themes = [];
 		foreach ($paths as $path) {
 			$Folder = new Folder($path . 'Templates', false);
 			$contents = $Folder->read();
 			$subDirs = $contents[0];
 			foreach ($subDirs as $dir) {
-				if (empty($dir) || preg_match('@^skel$|_skel$@', $dir)) {
-					continue;
-				}
 				$Folder = new Folder($path . 'Templates/' . $dir);
 				$contents = $Folder->read();
 				$subDirs = $contents[0];
 				if (array_intersect($contents[0], $themeFolders)) {
 					$templateDir = $path . 'Templates/' . $dir . DS;
 					$themes[$dir] = $templateDir;
+
+					$this->_io->verbose(sprintf("- %s -> %s", $dir, $templateDir));
 				}
 			}
 		}
@@ -134,32 +131,17 @@ class TemplateTask extends Shell {
  * If there is more than one installed theme user interaction will happen
  *
  * @return string returns the path to the selected theme.
+ * @throws \RuntimeException When the chosen theme cannot be found.
  */
 	public function getThemePath() {
-		if (count($this->templatePaths) === 1) {
-			$paths = array_values($this->templatePaths);
-			return $paths[0];
+		if (empty($this->params['theme'])) {
+			$this->params['theme'] = 'default';
 		}
-		if (!empty($this->params['theme']) && isset($this->templatePaths[$this->params['theme']])) {
-			return $this->templatePaths[$this->params['theme']];
+		if (!isset($this->templatePaths[$this->params['theme']])) {
+			throw new \RuntimeException('Unable to locate templates to bake with.');
 		}
-
-		$this->hr();
-		$this->out(__d('cake_console', 'You have more than one set of templates installed.'));
-		$this->out(__d('cake_console', 'Please choose the template set you wish to use:'));
-		$this->hr();
-
-		$i = 1;
-		$indexedPaths = [];
-		foreach ($this->templatePaths as $key => $path) {
-			$this->out($i . '. ' . $key);
-			$indexedPaths[$i] = $path;
-			$i++;
-		}
-		$index = $this->in(__d('cake_console', 'Which bake theme would you like to use?'), range(1, $i - 1), 1);
-		$themeNames = array_keys($this->templatePaths);
-		$this->params['theme'] = $themeNames[$index - 1];
-		return $indexedPaths[$index];
+		$this->_io->verbose(sprintf('Using "%s" bake theme', $this->params['theme']));
+		return $this->templatePaths[$this->params['theme']];
 	}
 
 /**

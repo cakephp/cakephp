@@ -67,22 +67,20 @@ class TemplateTaskTest extends TestCase {
  */
 	public function testGetThemePath() {
 		$defaultTheme = CAKE . 'Console/Templates/default/';
-		$this->Task->templatePaths = array('default' => $defaultTheme);
-
-		$this->Task->expects($this->exactly(1))->method('in')->will($this->returnValue('1'));
+		$this->Task->templatePaths = ['default' => $defaultTheme];
 
 		$result = $this->Task->getThemePath();
 		$this->assertEquals($defaultTheme, $result);
 
-		$this->Task->templatePaths = array('other' => '/some/path', 'default' => $defaultTheme);
+		$this->Task->templatePaths = ['other' => '/some/path', 'default' => $defaultTheme];
 		$this->Task->params['theme'] = 'other';
 		$result = $this->Task->getThemePath();
 		$this->assertEquals('/some/path', $result);
 
 		$this->Task->params = array();
 		$result = $this->Task->getThemePath();
-		$this->assertEquals('/some/path', $result);
-		$this->assertEquals('other', $this->Task->params['theme']);
+		$this->assertEquals($defaultTheme, $result);
+		$this->assertEquals('default', $this->Task->params['theme']);
 	}
 
 /**
