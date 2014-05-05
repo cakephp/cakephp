@@ -116,6 +116,7 @@ class BakeTask extends Shell {
 			'help' => __d('cake_console', 'The datasource connection to get data from.')
 		])->addOption('theme', [
 			'short' => 't',
+			'default' => 'default',
 			'help' => __d('cake_console', 'Theme to use when baking code.')
 		]);
 		return $parser;
