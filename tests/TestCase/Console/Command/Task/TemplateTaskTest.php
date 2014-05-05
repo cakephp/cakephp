@@ -60,6 +60,20 @@ class TemplateTaskTest extends TestCase {
 	}
 
 /**
+ * test using an invalid theme name.
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Unable to locate "nope" bake theme
+ * @return void
+ */
+	public function testGetThemePathInvalid() {
+		$defaultTheme = CAKE . 'Console/Templates/default/';
+		$this->Task->templatePaths = ['default' => $defaultTheme];
+		$this->Task->params['theme'] = 'nope';
+		$this->Task->getThemePath();
+	}
+
+/**
  * test getting the correct theme name. Ensure that with only one theme, or a theme param
  * that the user is not bugged. If there are more, find and return the correct theme name
  *

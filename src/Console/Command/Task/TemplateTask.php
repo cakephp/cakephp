@@ -138,7 +138,8 @@ class TemplateTask extends Shell {
 			$this->params['theme'] = 'default';
 		}
 		if (!isset($this->templatePaths[$this->params['theme']])) {
-			throw new \RuntimeException('Unable to locate templates to bake with.');
+			$msg = sprintf('Unable to locate "%s" bake theme templates.', $this->params['theme']);
+			throw new \RuntimeException($msg);
 		}
 		$this->_io->verbose(sprintf('Using "%s" bake theme', $this->params['theme']));
 		return $this->templatePaths[$this->params['theme']];
