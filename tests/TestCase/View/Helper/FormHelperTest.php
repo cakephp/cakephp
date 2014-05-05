@@ -5305,7 +5305,8 @@ class FormHelperTest extends TestCase {
 			'/a'
 		));
 	}
- /**
+
+/**
  * Test that security hashes for postLink include the url.
  *
  * @return void
