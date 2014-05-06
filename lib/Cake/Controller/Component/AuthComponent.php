@@ -776,6 +776,10 @@ class AuthComponent extends Component {
 			unset($config[AuthComponent::ALL]);
 		}
 		foreach ($config as $class => $settings) {
+			if (!empty($settings['className'])) {
+				$class = $settings['className'];
+				unset($settings['className']);
+			}
 			list($plugin, $class) = pluginSplit($class, true);
 			$className = $class . 'Authenticate';
 			App::uses($className, $plugin . 'Controller/Component/Auth');
