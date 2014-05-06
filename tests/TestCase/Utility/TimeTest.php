@@ -550,6 +550,33 @@ class TimeTest extends TestCase {
 	}
 
 /**
+ * Data provider for invalid values.
+ *
+ * @return array
+ */
+	public function invalidDataProvider() {
+		return [
+			[null],
+			[false],
+			[''],
+			['0000-00-00'],
+			['0000-00-00 00:00:00'],
+		];
+	}
+
+/**
+ * Test that invalid datetime values do not trigger errors.
+ *
+ * @dataProvider invalidDataProvider
+ * @return void
+ */
+	public function testToStringInvalid($value) {
+		$time = new Time($value);
+		$this->assertInternalType('string', (string)$time);
+		$this->assertNotEmpty((string)$time);
+	}
+
+/**
  * Tests diffForHumans
  *
  * @return void
