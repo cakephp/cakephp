@@ -60,6 +60,20 @@ class TemplateTaskTest extends TestCase {
 	}
 
 /**
+ * test using an invalid theme name.
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Unable to locate "nope" bake theme
+ * @return void
+ */
+	public function testGetThemePathInvalid() {
+		$defaultTheme = CAKE . 'Console/Templates/default/';
+		$this->Task->templatePaths = ['default' => $defaultTheme];
+		$this->Task->params['theme'] = 'nope';
+		$this->Task->getThemePath();
+	}
+
+/**
  * test getting the correct theme name. Ensure that with only one theme, or a theme param
  * that the user is not bugged. If there are more, find and return the correct theme name
  *
@@ -67,22 +81,20 @@ class TemplateTaskTest extends TestCase {
  */
 	public function testGetThemePath() {
 		$defaultTheme = CAKE . 'Console/Templates/default/';
-		$this->Task->templatePaths = array('default' => $defaultTheme);
-
-		$this->Task->expects($this->exactly(1))->method('in')->will($this->returnValue('1'));
+		$this->Task->templatePaths = ['default' => $defaultTheme];
 
 		$result = $this->Task->getThemePath();
 		$this->assertEquals($defaultTheme, $result);
 
-		$this->Task->templatePaths = array('other' => '/some/path', 'default' => $defaultTheme);
+		$this->Task->templatePaths = ['other' => '/some/path', 'default' => $defaultTheme];
 		$this->Task->params['theme'] = 'other';
 		$result = $this->Task->getThemePath();
 		$this->assertEquals('/some/path', $result);
 
 		$this->Task->params = array();
 		$result = $this->Task->getThemePath();
-		$this->assertEquals('/some/path', $result);
-		$this->assertEquals('other', $this->Task->params['theme']);
+		$this->assertEquals($defaultTheme, $result);
+		$this->assertEquals('default', $this->Task->params['theme']);
 	}
 
 /**
