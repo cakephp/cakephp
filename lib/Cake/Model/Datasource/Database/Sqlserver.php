@@ -208,7 +208,7 @@ class Sqlserver extends DboSource {
 		}
 
 		$fields = array();
-		$schema = $model->schemaName;
+		$schema = is_object($model) ? $model->schemaName : false;
 
 		$cols = $this->_execute(
 			"SELECT
