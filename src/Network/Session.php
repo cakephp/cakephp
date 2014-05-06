@@ -23,7 +23,7 @@ namespace Cake\Network;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Error;
+use Cakedd\Error;
 use Cake\Utility\Hash;
 use SessionHandlerInterface;
 
@@ -121,6 +121,179 @@ class Session {
  * @var string
  */
 	protected static $_cookieName = null;
+
+
+	public static function create($config = []) {
+		
+	}
+
+/**
+ * Helper method to initialize a session, based on CakePHP core settings.
+ *
+ * Sessions can be configured with a few shortcut names as well as have any number of ini settings declared.
+ *
+ * @return void
+ * @throws \Cake\Error\Exception Throws exceptions when ini_set() fails.
+ */
+	protected static function _configureSession($sessionConfig) {
+		if (isset($sessionConfig['defaults'])) {
+			$defaults = static::_defaultConfig($sessionConfig['defaults']);
+			if ($defaults) {
+				$sessionConfig = Hash::merge($defaults, $sessionConfig);
+			}
+		}
+
+		if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS')) {
+			$sessionConfig['ini']['session.cookie_secure'] = 1;
+		}
+
+		if (isset($sessionConfig['timeout']) && !isset($sessionConfig['cookieTimeout'])) {
+			$sessionConfig['cookieTimeout'] = $sessionConfig['timeout'];
+		}
+
+		if (!isset($sessionConfig['ini']['session.cookie_lifetime'])) {
+			$sessionConfig['ini']['session.cookie_lifetime'] = $sessionConfig['cookieTimeout'] * 60;
+		}
+
+		if (!isset($sessionConfig['ini']['session.name'])) {
+			$sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
+		}
+		static::$_cookieName = $sessionConfig['ini']['session.name'];
+
+		if (!empty($sessionConfig['handler'])) {
+			$sessionConfig['ini']['session.save_handler'] = 'user';
+		}
+
+		if (!isset($sessionConfig['ini']['session.gc_maxlifetime'])) {
+			$sessionConfig['ini']['session.gc_maxlifetime'] = $sessionConfig['timeout'] * 60;
+		}
+
+		if (!isset($sessionConfig['ini']['session.cookie_httponly'])) {
+			$sessionConfig['ini']['session.cookie_httponly'] = 1;
+		}
+
+		if (empty($_SESSION)) {
+			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {
+				foreach ($sessionConfig['ini'] as $setting => $value) {
+					if (ini_set($setting, $value) === false) {
+						throw new Error\Exception(sprintf(
+							sprintf('Unable to configure the session, setting %s failed.'),
+							$setting
+						));
+					}
+				}
+			}
+		}
+
+		if (!empty($sessionConfig['handler']) && !isset($sessionConfig['handler']['engine'])) {
+			call_user_func_array('session_set_save_handler', $sessionConfig['handler']);
+		}
+
+		if (empty($sessionConfig['handler']['engine'])) {
+			$sessionConfig['handler']['engine'] = 'Native';
+		}
+
+		$handler = static::_getEngine($sessionConfig['handler']['engine']);
+		session_set_save_handler(
+			array($handler, 'open'),
+			array($handler, 'close'),
+			array($handler, 'read'),
+			array($handler, 'write'),
+			array($handler, 'destroy'),
+			array($handler, 'gc')
+		);
+		return $handler;
+	}
+
+/**
+ * Find the handler class and make sure it implements the correct interface.
+ *
+ * @param string $class
+ * @return void
+ * @throws \Cake\Error\Exception
+ */
+	protected static function _getEngine($class) {
+		$class = App::className($class, 'Network/Session');
+		if (!class_exists($class)) {
+			throw new Error\Exception(sprintf('Could not load %s to handle the session.', $class));
+		}
+		$handler = new $class();
+		if ($handler instanceof SessionHandlerInterface) {
+			return $handler;
+		}
+		throw new Error\Exception('Chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used with an engine key.');
+	}
+
+/**
+ * Get one of the prebaked default session configurations.
+ *
+ * @param string $name
+ * @return bool|array
+ */
+	protected static function _defaultConfig($name) {
+		$defaults = array(
+			'php' => array(
+				'checkAgent' => false,
+				'cookie' => 'CAKEPHP',
+				'timeout' => 240,
+				'ini' => array(
+					'session.use_trans_sid' => 0,
+					'session.cookie_path' => static::$path
+				)
+			),
+			'cake' => array(
+				'checkAgent' => false,
+				'cookie' => 'CAKEPHP',
+				'timeout' => 240,
+				'ini' => array(
+					'session.use_trans_sid' => 0,
+					'url_rewriter.tags' => '',
+					'session.serialize_handler' => 'php',
+					'session.use_cookies' => 1,
+					'session.cookie_path' => static::$path,
+					'session.save_path' => TMP . 'sessions',
+					'session.save_handler' => 'files'
+				)
+			),
+			'cache' => array(
+				'checkAgent' => false,
+				'cookie' => 'CAKEPHP',
+				'timeout' => 240,
+				'ini' => array(
+					'session.use_trans_sid' => 0,
+					'url_rewriter.tags' => '',
+					'session.use_cookies' => 1,
+					'session.cookie_path' => static::$path,
+					'session.save_handler' => 'user',
+				),
+				'handler' => array(
+					'engine' => 'CacheSession',
+					'config' => 'default'
+				)
+			),
+			'database' => array(
+				'checkAgent' => false,
+				'cookie' => 'CAKEPHP',
+				'timeout' => 240,
+				'ini' => array(
+					'session.use_trans_sid' => 0,
+					'url_rewriter.tags' => '',
+					'session.use_cookies' => 1,
+					'session.cookie_path' => static::$path,
+					'session.save_handler' => 'user',
+					'session.serialize_handler' => 'php',
+				),
+				'handler' => array(
+					'engine' => 'DatabaseSession'
+				)
+			)
+		);
+
+		if (isset($defaults[$name])) {
+			return $defaults[$name];
+		}
+		return false;
+	}
 
 /**
  * Pseudo constructor.
@@ -449,78 +622,6 @@ class Session {
 	}
 
 /**
- * Helper method to initialize a session, based on CakePHP core settings.
- *
- * Sessions can be configured with a few shortcut names as well as have any number of ini settings declared.
- *
- * @return void
- * @throws \Cake\Error\Exception Throws exceptions when ini_set() fails.
- */
-	protected static function _configureSession() {
-		$sessionConfig = Configure::read('Session');
-
-		if (isset($sessionConfig['defaults'])) {
-			$defaults = static::_defaultConfig($sessionConfig['defaults']);
-			if ($defaults) {
-				$sessionConfig = Hash::merge($defaults, $sessionConfig);
-			}
-		}
-		if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS')) {
-			$sessionConfig['ini']['session.cookie_secure'] = 1;
-		}
-		if (isset($sessionConfig['timeout']) && !isset($sessionConfig['cookieTimeout'])) {
-			$sessionConfig['cookieTimeout'] = $sessionConfig['timeout'];
-		}
-		if (!isset($sessionConfig['ini']['session.cookie_lifetime'])) {
-			$sessionConfig['ini']['session.cookie_lifetime'] = $sessionConfig['cookieTimeout'] * 60;
-		}
-
-		if (!isset($sessionConfig['ini']['session.name'])) {
-			$sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
-		}
-		static::$_cookieName = $sessionConfig['ini']['session.name'];
-
-		if (!empty($sessionConfig['handler'])) {
-			$sessionConfig['ini']['session.save_handler'] = 'user';
-		}
-		if (!isset($sessionConfig['ini']['session.gc_maxlifetime'])) {
-			$sessionConfig['ini']['session.gc_maxlifetime'] = $sessionConfig['timeout'] * 60;
-		}
-		if (!isset($sessionConfig['ini']['session.cookie_httponly'])) {
-			$sessionConfig['ini']['session.cookie_httponly'] = 1;
-		}
-
-		if (empty($_SESSION)) {
-			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {
-				foreach ($sessionConfig['ini'] as $setting => $value) {
-					if (ini_set($setting, $value) === false) {
-						throw new Error\Exception(sprintf(
-							sprintf('Unable to configure the session, setting %s failed.'),
-							$setting
-						));
-					}
-				}
-			}
-		}
-		if (!empty($sessionConfig['handler']) && !isset($sessionConfig['handler']['engine'])) {
-			call_user_func_array('session_set_save_handler', $sessionConfig['handler']);
-		}
-		if (!empty($sessionConfig['handler']['engine'])) {
-			$handler = static::_getHandler($sessionConfig['handler']['engine']);
-			session_set_save_handler(
-				array($handler, 'open'),
-				array($handler, 'close'),
-				array($handler, 'read'),
-				array($handler, 'write'),
-				array($handler, 'destroy'),
-				array($handler, 'gc')
-			);
-		}
-		Configure::write('Session', $sessionConfig);
-		static::$sessionTime = static::$time + ($sessionConfig['timeout'] * 60);
-	}
-
-/**
  * Get session cookie name.
  *
  * @return string
@@ -542,95 +643,6 @@ class Session {
  */
 	protected static function _hasSession() {
 		return static::started() || isset($_COOKIE[static::_cookieName()]);
-	}
-
-/**
- * Find the handler class and make sure it implements the correct interface.
- *
- * @param string $class
- * @return void
- * @throws \Cake\Error\Exception
- */
-	protected static function _getHandler($class) {
-		$class = App::className($class, 'Network/Session');
-		if (!class_exists($class)) {
-			throw new Error\Exception(sprintf('Could not load %s to handle the session.', $class));
-		}
-		$handler = new $class();
-		if ($handler instanceof SessionHandlerInterface) {
-			return $handler;
-		}
-		throw new Error\Exception('Chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used with an engine key.');
-	}
-
-/**
- * Get one of the prebaked default session configurations.
- *
- * @param string $name
- * @return bool|array
- */
-	protected static function _defaultConfig($name) {
-		$defaults = array(
-			'php' => array(
-				'checkAgent' => false,
-				'cookie' => 'CAKEPHP',
-				'timeout' => 240,
-				'ini' => array(
-					'session.use_trans_sid' => 0,
-					'session.cookie_path' => static::$path
-				)
-			),
-			'cake' => array(
-				'checkAgent' => false,
-				'cookie' => 'CAKEPHP',
-				'timeout' => 240,
-				'ini' => array(
-					'session.use_trans_sid' => 0,
-					'url_rewriter.tags' => '',
-					'session.serialize_handler' => 'php',
-					'session.use_cookies' => 1,
-					'session.cookie_path' => static::$path,
-					'session.save_path' => TMP . 'sessions',
-					'session.save_handler' => 'files'
-				)
-			),
-			'cache' => array(
-				'checkAgent' => false,
-				'cookie' => 'CAKEPHP',
-				'timeout' => 240,
-				'ini' => array(
-					'session.use_trans_sid' => 0,
-					'url_rewriter.tags' => '',
-					'session.use_cookies' => 1,
-					'session.cookie_path' => static::$path,
-					'session.save_handler' => 'user',
-				),
-				'handler' => array(
-					'engine' => 'CacheSession',
-					'config' => 'default'
-				)
-			),
-			'database' => array(
-				'checkAgent' => false,
-				'cookie' => 'CAKEPHP',
-				'timeout' => 240,
-				'ini' => array(
-					'session.use_trans_sid' => 0,
-					'url_rewriter.tags' => '',
-					'session.use_cookies' => 1,
-					'session.cookie_path' => static::$path,
-					'session.save_handler' => 'user',
-					'session.serialize_handler' => 'php',
-				),
-				'handler' => array(
-					'engine' => 'DatabaseSession'
-				)
-			)
-		);
-		if (isset($defaults[$name])) {
-			return $defaults[$name];
-		}
-		return false;
 	}
 
 /**
