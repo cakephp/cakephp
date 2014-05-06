@@ -124,6 +124,8 @@ class Session {
 
 	protected $_engine;
 
+	protected $_started;
+
 
 	public static function create($sessionConfig = []) {
 		if (isset($sessionConfig['defaults'])) {
@@ -242,6 +244,7 @@ class Session {
 		}
 
 		if (!empty($config['handler']) && !isset($config['handler']['engine'])) {
+			//TODO: REmove this feature
 			call_user_func_array('session_set_save_handler', $config['handler']);
 		}
 
@@ -280,7 +283,7 @@ class Session {
 	}
 
 	public function options(array $options) {
-		if (session_status() === PHP_SESSION_ACTIVE) {
+		if (session_status() === \PHP_SESSION_ACTIVE) {
 			return;
 		}
 
@@ -295,81 +298,31 @@ class Session {
 	}
 
 /**
- * Pseudo constructor.
- *
- * @param string $base The base path for the Session
- * @return void
- */
-	public static function init($base = null) {
-		static::$time = time();
-
-		if (env('HTTP_USER_AGENT')) {
-			static::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
-		}
-
-		static::_setPath($base);
-		static::_setHost(env('HTTP_HOST'));
-
-		if (!static::$_initialized) {
-			register_shutdown_function('session_write_close');
-		}
-
-		static::$_initialized = true;
-	}
-
-/**
- * Setup the Path variable
- *
- * @param string $base base path
- * @return void
- */
-	protected static function _setPath($base = null) {
-		if (empty($base)) {
-			static::$path = '/';
-			return;
-		}
-		if (strpos($base, 'index.php') !== false) {
-			$base = str_replace('index.php', '', $base);
-		}
-		if (strpos($base, '?') !== false) {
-			$base = str_replace('?', '', $base);
-		}
-		static::$path = $base;
-	}
-
-/**
- * Set the host name
- *
- * @param string $host Hostname
- * @return void
- */
-	protected static function _setHost($host) {
-		static::$host = $host;
-		if (strpos(static::$host, ':') !== false) {
-			static::$host = substr(static::$host, 0, strpos(static::$host, ':'));
-		}
-	}
-
-/**
  * Starts the Session.
  *
  * @return bool True if session was started
  */
-	public static function start() {
-		if (static::started()) {
+	public function start() {
+		if ($this->_started) {
 			return true;
 		}
 
-		$id = static::id();
-		static::_startSession();
-
-		if (!$id && static::started()) {
-			static::_checkValid();
+		if (session_status() === \PHP_SESSION_ACTIVE) {
+			throw new \RuntimeException('Session was already started');
 		}
 
-		static::$error = false;
-		static::$valid = true;
-		return static::started();
+		if (ini_get('session.use_cookies') && headers_sent($file, $line)) {
+			throw new \RuntimeException(
+				sprintf('Cannot start session, headers already sent in "%s" at line %d', $file, $line)
+			);
+		}
+
+		if (!session_start()) {
+			throw new \RuntimeException('Could not start the session');
+		}
+
+		$this->_started = true;
+		return true;
 	}
 
 /**
@@ -378,7 +331,7 @@ class Session {
  * @return bool True if session has been started.
  */
 	public static function started() {
-		return isset($_SESSION) && session_id();
+		return $this->_started || session_status() === \PHP_SESSION_ACTIVE;
 	}
 
 /**
@@ -387,8 +340,8 @@ class Session {
  * @param string $name Variable name to check for
  * @return bool True if variable is there
  */
-	public static function check($name = null) {
-		if (empty($name) || !static::_hasSession() || !static::start()) {
+	public function check($name = null) {
+		if (empty($name) || !$this->_hasSession() || !$this->start()) {
 			return false;
 		}
 
@@ -640,8 +593,9 @@ class Session {
  * Returns whether a session exists
  * @return bool
  */
-	protected static function _hasSession() {
-		return static::started() || isset($_COOKIE[static::_cookieName()]);
+	protected function _hasSession() {
+		$present = !ini_get('session.use_cookies') || isset($_COOKIE[session_name()]);
+		return $this->started() || $preset;
 	}
 
 /**
