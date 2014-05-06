@@ -122,20 +122,10 @@ class Session {
  */
 	protected static $_cookieName = null;
 
+	protected $_engine;
 
-	public static function create($config = []) {
-		
-	}
 
-/**
- * Helper method to initialize a session, based on CakePHP core settings.
- *
- * Sessions can be configured with a few shortcut names as well as have any number of ini settings declared.
- *
- * @return void
- * @throws \Cake\Error\Exception Throws exceptions when ini_set() fails.
- */
-	protected static function _configureSession($sessionConfig) {
+	public static function create($sessionConfig = []) {
 		if (isset($sessionConfig['defaults'])) {
 			$defaults = static::_defaultConfig($sessionConfig['defaults']);
 			if ($defaults) {
@@ -172,56 +162,7 @@ class Session {
 			$sessionConfig['ini']['session.cookie_httponly'] = 1;
 		}
 
-		if (empty($_SESSION)) {
-			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {
-				foreach ($sessionConfig['ini'] as $setting => $value) {
-					if (ini_set($setting, $value) === false) {
-						throw new Error\Exception(sprintf(
-							sprintf('Unable to configure the session, setting %s failed.'),
-							$setting
-						));
-					}
-				}
-			}
-		}
-
-		if (!empty($sessionConfig['handler']) && !isset($sessionConfig['handler']['engine'])) {
-			call_user_func_array('session_set_save_handler', $sessionConfig['handler']);
-		}
-
-		if (empty($sessionConfig['handler']['engine'])) {
-			$sessionConfig['handler']['engine'] = 'Native';
-		}
-
-		$handler = static::_getEngine($sessionConfig['handler']['engine']);
-		session_set_save_handler(
-			array($handler, 'open'),
-			array($handler, 'close'),
-			array($handler, 'read'),
-			array($handler, 'write'),
-			array($handler, 'destroy'),
-			array($handler, 'gc')
-		);
-		return $handler;
-	}
-
-/**
- * Find the handler class and make sure it implements the correct interface.
- *
- * @param string $class
- * @return void
- * @throws \Cake\Error\Exception
- */
-	protected static function _getEngine($class) {
-		$class = App::className($class, 'Network/Session');
-		if (!class_exists($class)) {
-			throw new Error\Exception(sprintf('Could not load %s to handle the session.', $class));
-		}
-		$handler = new $class();
-		if ($handler instanceof SessionHandlerInterface) {
-			return $handler;
-		}
-		throw new Error\Exception('Chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used with an engine key.');
+		return new static($config);
 	}
 
 /**
@@ -293,6 +234,70 @@ class Session {
 			return $defaults[$name];
 		}
 		return false;
+	}
+
+	public function __construct($config = []) {
+		if (!empty($config['ini']) && is_array($config['ini'])) {
+			$this->options($config['ini']);
+		}
+
+		if (!empty($config['handler']) && !isset($config['handler']['engine'])) {
+			call_user_func_array('session_set_save_handler', $config['handler']);
+		}
+
+		if (!empty($config['handler']['engine'])) {
+			$handler = $this->engine($config['handler']['engine']);
+			session_set_save_handler(
+				array($handler, 'open'),
+				array($handler, 'close'),
+				array($handler, 'read'),
+				array($handler, 'write'),
+				array($handler, 'destroy'),
+				array($handler, 'gc')
+			);
+		}
+	}
+
+/**
+ * Find the handler class and make sure it implements the correct interface.
+ *
+ * @param string $class
+ * @return void
+ * @throws \Cake\Error\Exception
+ */
+	public function engine($class = null) {
+		if ($class === null) {
+			return $this->_engine;
+		}
+
+		$class = App::className($class, 'Network/Session');
+		if (!class_exists($class)) {
+			throw new Error\Exception(sprintf('Could not load %s to handle the session.', $class));
+		}
+
+		$handler = new $class();
+		if (!($handler instanceof SessionHandlerInterface)) {
+			throw new Error\Exception(
+				'Chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used with an engine key.'
+			);
+		}
+
+		$this->_engine = $engine;
+	}
+
+	public function options(array $options) {
+		if (session_status() === PHP_SESSION_ACTIVE) {
+			return;
+		}
+
+		foreach ($options as $setting => $value) {
+			if (ini_set($setting, $value) === false) {
+				throw new Error\Exception(sprintf(
+					sprintf('Unable to configure the session, setting %s failed.'),
+					$setting
+				));
+			}
+		}
 	}
 
 /**
