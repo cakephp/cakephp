@@ -80,7 +80,7 @@ class RedisEngine extends CacheEngine {
 		$return = false;
 		try {
 			$this->_Redis = new Redis();
-			if(!empty($this->settings['unix_socket'])) {
+			if (!empty($this->settings['unix_socket'])) {
 				$return = $this->_Redis->connect($this->settings['unix_socket']);
 			} elseif (empty($this->settings['persistent'])) {
 				$return = $this->_Redis->connect($this->settings['server'], $this->settings['port'], $this->settings['timeout']);
