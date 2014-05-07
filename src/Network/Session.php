@@ -37,20 +37,6 @@ use SessionHandlerInterface;
 class Session {
 
 /**
- * Path to where the session is active.
- *
- * @var string
- */
-	public static $path = '/';
-
-/**
- * Current Session id
- *
- * @var string
- */
-	public static $id = null;
-
-/**
  * Session cookie name
  *
  * @var string
@@ -61,7 +47,6 @@ class Session {
 
 	protected $_started;
 
-	protected $_id;
 
 	public static function create($sessionConfig = []) {
 		if (isset($sessionConfig['defaults'])) {
@@ -117,7 +102,6 @@ class Session {
 				'timeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
-					'session.cookie_path' => static::$path
 				)
 			),
 			'cake' => array(
@@ -129,7 +113,6 @@ class Session {
 					'url_rewriter.tags' => '',
 					'session.serialize_handler' => 'php',
 					'session.use_cookies' => 1,
-					'session.cookie_path' => static::$path,
 					'session.save_path' => TMP . 'sessions',
 					'session.save_handler' => 'files'
 				)
@@ -142,7 +125,6 @@ class Session {
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
 					'session.use_cookies' => 1,
-					'session.cookie_path' => static::$path,
 					'session.save_handler' => 'user',
 				),
 				'handler' => array(
@@ -158,7 +140,6 @@ class Session {
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
 					'session.use_cookies' => 1,
-					'session.cookie_path' => static::$path,
 					'session.save_handler' => 'user',
 					'session.serialize_handler' => 'php',
 				),
@@ -353,15 +334,12 @@ class Session {
  * @param string $id Id to replace the current session id
  * @return string Session id
  */
-	public static function id($id = null) {
+	public function id($id = null) {
 		if ($id) {
-			static::$id = $id;
-			session_id(static::$id);
+			session_id($id);
 		}
-		if (static::started()) {
-			return session_id();
-		}
-		return static::$id;
+
+		return session_id();
 	}
 
 /**
@@ -427,8 +405,7 @@ class Session {
  * @return bool
  */
 	protected function _hasSession() {
-		$present = !ini_get('session.use_cookies') || isset($_COOKIE[session_name()]);
-		return $this->started() || $present;
+		return !ini_get('session.use_cookies') || isset($_COOKIE[session_name()]);
 	}
 
 /**
