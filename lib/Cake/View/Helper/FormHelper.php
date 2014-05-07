@@ -466,7 +466,12 @@ class FormHelper extends AppHelper {
 			$this->setEntity($model, true);
 			$this->_introspectModel($model, 'fields');
 		}
-		$this->_lastAction = $action;
+		$query = parse_url($action, PHP_URL_QUERY);
+		if ($query) {
+			$query .= '?';
+		}
+		$this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
+
 		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
 	}
 
