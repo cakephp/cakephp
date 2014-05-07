@@ -475,7 +475,7 @@ class Validation {
 	}
 
 /**
- * Check that value is exactly $comparedTo.
+ * Checks that value is exactly $comparedTo.
  *
  * @param mixed $check Value to check
  * @param mixed $comparedTo Value to compare
@@ -486,7 +486,7 @@ class Validation {
 	}
 
 /**
- * Check that value has a valid file extension.
+ * Checks that value has a valid file extension.
  *
  * @param string|array $check Value to check
  * @param array $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
@@ -564,7 +564,7 @@ class Validation {
 	}
 
 /**
- * Validate a multiple select. Comparison is case sensitive by default.
+ * Validates a multiple select. Comparison is case sensitive by default.
  *
  * Valid Options
  *
@@ -632,7 +632,7 @@ class Validation {
 	}
 
 /**
- * Check that a value is a valid phone number.
+ * Checks that a value is a valid phone number.
  *
  * @param string|array $check Value to check (string or array)
  * @param string $regex Regular expression to use
@@ -717,9 +717,11 @@ class Validation {
 	}
 
 /**
- * Validate that a number is in specified range.
- * if $lower and $upper are not set, will return true if
- * $check is a legal finite on this platform
+ * Validates that a number is in specified range.
+ *
+ * If $lower and $upper are set the range is inclusive.
+ * If they are not set, will return true if $check is a
+ * legal finite on this platform.
  *
  * @param string $check Value to check
  * @param int|float $lower Lower limit
