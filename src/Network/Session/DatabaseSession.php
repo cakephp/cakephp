@@ -17,7 +17,6 @@
 
 namespace Cake\Network\Session;
 
-use Cake\Core\Configure;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use SessionHandlerInterface;
@@ -46,9 +45,11 @@ class DatabaseSession implements SessionHandlerInterface {
  * Constructor. Looks at Session configuration information and
  * sets up the session model.
  *
+ * @param array $config The configuration for this engine. It requires the 'model'
+ * key to be present corresponding to the Table to use for managing the sessions.
  */
-	public function __construct() {
-		$modelAlias = Configure::read('Session.handler.model');
+	public function __construct(array $config) {
+		$modelAlias = $config['model'];
 
 		if (empty($modelAlias)) {
 			$config = TableRegistry::exists('Sessions') ? [] : ['table' => 'cake_sessions'];

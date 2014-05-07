@@ -158,7 +158,9 @@ class Session {
 		}
 
 		if (!empty($config['handler']['engine'])) {
-			session_set_save_handler($this->engine($config['handler']['engine']), false);
+			$class = $config['handler']['engine'];
+			unset($config['handler']['engine']);
+			session_set_save_handler($this->engine($class, $config['handler']), false);
 		}
 
 		session_register_shutdown();
@@ -167,11 +169,10 @@ class Session {
 /**
  * Find the handler class and make sure it implements the correct interface.
  *
- * @param string $class
  * @return void
  * @throws \Cake\Error\Exception
  */
-	public function engine($class = null) {
+	public function engine($class = null, $options = []) {
 		if ($class === null) {
 			return $this->_engine;
 		}
@@ -181,14 +182,14 @@ class Session {
 			throw new Error\Exception(sprintf('Could not load %s to handle the session.', $class));
 		}
 
-		$handler = new $class();
+		$handler = new $class($options);
 		if (!($handler instanceof SessionHandlerInterface)) {
 			throw new Error\Exception(
 				'Chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used with an engine key.'
 			);
 		}
 
-		$this->_engine = $engine;
+		return $this->_engine = $handler;
 	}
 
 	public function options(array $options) {
