@@ -36,13 +36,6 @@ use SessionHandlerInterface;
  */
 class Session {
 
-/**
- * Session cookie name
- *
- * @var string
- */
-	protected static $_cookieName = null;
-
 	protected $_engine;
 
 	protected $_started;
@@ -71,7 +64,6 @@ class Session {
 		if (!isset($sessionConfig['ini']['session.name'])) {
 			$sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
 		}
-		static::$_cookieName = $sessionConfig['ini']['session.name'];
 
 		if (!empty($sessionConfig['handler'])) {
 			$sessionConfig['ini']['session.save_handler'] = 'user';
@@ -85,7 +77,7 @@ class Session {
 			$sessionConfig['ini']['session.cookie_httponly'] = 1;
 		}
 
-		return new static($config);
+		return new static($sessionConfig);
 	}
 
 /**
