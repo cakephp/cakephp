@@ -251,9 +251,7 @@ class Configure {
 				}
 			}
 			static::write($values);
-		}
-
-		else {
+		} else {
 			static::$_values = $values;
 			if (isset($values['debug']) && function_exists('ini_set')) {
 				if ($values['debug']) {
