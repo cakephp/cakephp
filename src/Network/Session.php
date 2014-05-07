@@ -23,7 +23,7 @@ namespace Cake\Network;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cakedd\Error;
+use Cake\Error;
 use Cake\Utility\Hash;
 use SessionHandlerInterface;
 
@@ -61,6 +61,7 @@ class Session {
 
 	protected $_started;
 
+	protected $_id;
 
 	public static function create($sessionConfig = []) {
 		if (isset($sessionConfig['defaults'])) {
@@ -370,11 +371,9 @@ class Session {
  * @return bool Success
  */
 	public function delete($name) {
-		if (static::check($name)) {
-			static::_overwrite($_SESSION, Hash::remove($_SESSION, $name));
-			return !static::check($name);
+		if ($this->check($name)) {
+			$this->_overwrite($_SESSION, Hash::remove($_SESSION, $name));
 		}
-		return false;
 	}
 
 /**
@@ -402,16 +401,15 @@ class Session {
  *
  * @return void
  */
-	public static function destroy() {
-		if (!static::started()) {
-			static::_startSession();
+	public function destroy() {
+		if ($this->_hasSession() && !$this->started()) {
+			$this->start();
 		}
 
 		session_destroy();
 
 		$_SESSION = null;
-		static::$id = null;
-		static::$_cookieName = null;
+		$this->_started = false;
 	}
 
 /**
@@ -420,9 +418,8 @@ class Session {
  * @return void
  */
 	public static function clear() {
-		$_SESSION = null;
-		static::$id = null;
-		static::renew();
+		$_SESSION = [];
+		$this->renew();
 	}
 
 /**
@@ -440,12 +437,17 @@ class Session {
  * @return void
  */
 	public static function renew() {
-		if (session_id()) {
-			if (session_id() || isset($_COOKIE[session_name()])) {
-				setcookie(Configure::read('Session.cookie'), '', time() - 42000, static::$path);
-			}
-			session_regenerate_id(true);
+		if (!$this->_hasSession()) {
+			return;
 		}
+
+		$params = session_get_cookie_params();
+		setcookie(
+			session_name(), '', time() - 42000,
+			$params['path'], $params['domain'],
+			$params['secure'], $params['httponly']
+		);
+		session_regenerate_id(true);
 	}
 
 }
