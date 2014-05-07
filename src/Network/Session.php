@@ -417,7 +417,7 @@ class Session {
  *
  * @return void
  */
-	public static function clear() {
+	public function clear() {
 		$_SESSION = [];
 		$this->renew();
 	}
@@ -436,7 +436,7 @@ class Session {
  *
  * @return void
  */
-	public static function renew() {
+	public function renew() {
 		if (!$this->_hasSession()) {
 			return;
 		}
