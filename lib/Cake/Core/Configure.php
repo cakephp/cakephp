@@ -306,7 +306,7 @@ class Configure {
 			}
 		}
 
-		return self::write($values);
+		self::write($values);
 	}
 
 /**
