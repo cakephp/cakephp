@@ -250,9 +250,21 @@ class Configure {
 					$values[$key] = Hash::merge($c, $values[$key]);
 				}
 			}
+			static::write($values);
 		}
 
-		return static::write($values);
+		else {
+			static::$_values = $values;
+			if (isset($values['debug']) && function_exists('ini_set')) {
+				if ($values['debug']) {
+					ini_set('display_errors', 1);
+				} else {
+					ini_set('display_errors', 0);
+				}
+			}
+		}
+
+		return true;
 	}
 
 /**
