@@ -2011,6 +2011,10 @@ class ValidationTest extends TestCase {
 		$this->assertTrue(Validation::range(5));
 		$this->assertTrue(Validation::range(-5, -10, 1));
 		$this->assertFalse(Validation::range('word'));
+		$this->assertTrue(Validation::range(5.1));
+		$this->assertTrue(Validation::range(2.1, 2.1, 3.2));
+		$this->assertTrue(Validation::range(3.2, 2.1, 3.2));
+		$this->assertFalse(Validation::range(2.099, 2.1, 3.2));
 	}
 
 /**

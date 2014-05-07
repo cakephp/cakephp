@@ -731,7 +731,7 @@ class Validation {
 			return false;
 		}
 		if (isset($lower) && isset($upper)) {
-			return ($check > $lower && $check < $upper);
+			return ($check >= $lower && $check <= $upper);
 		}
 		return is_finite($check);
 	}
