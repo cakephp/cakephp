@@ -1275,7 +1275,7 @@ class FormHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testFormSecuredFileInput() {
+	public function testSecuredFileInput() {
 		$this->Form->request['_Token'] = array('key' => 'testKey');
 		$this->assertEquals(array(), $this->Form->fields);
 
@@ -1292,7 +1292,7 @@ class FormHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testFormSecuredMultipleSelect() {
+	public function testSecuredMultipleSelect() {
 		$this->Form->request['_Token'] = array('key' => 'testKey');
 		$this->assertEquals(array(), $this->Form->fields);
 		$options = array('1' => 'one', '2' => 'two');
@@ -1311,7 +1311,7 @@ class FormHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testFormSecuredRadio() {
+	public function testSecuredRadio() {
 		$this->Form->request['_Token'] = array('key' => 'testKey');
 		$this->assertEquals(array(), $this->Form->fields);
 		$options = array('1' => 'option1', '2' => 'option2');
@@ -1326,7 +1326,7 @@ class FormHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testFormSecuredAndDisabledNotAssoc() {
+	public function testSecuredAndDisabledNotAssoc() {
 		$this->Form->request['_Token'] = array('key' => 'testKey');
 
 		$this->Form->select('Model.select', array(1, 2), array('disabled'));
@@ -1348,7 +1348,7 @@ class FormHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testFormSecuredAndDisabled() {
+	public function testSecuredAndDisabled() {
 		$this->Form->request['_Token'] = array('key' => 'testKey');
 
 		$this->Form->checkbox('Model.checkbox', array('disabled' => true));
