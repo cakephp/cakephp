@@ -1378,7 +1378,7 @@ class FormHelperTest extends CakeTestCase {
 	public function testSecuredFormUrlIgnoresHost() {
 		$this->Form->request['_Token'] = array('key' => 'testKey');
 
-		$expected = '5181b484c13caea4776618ed26a3aebbb026ecd8%3A';
+		$expected = '0ff0c85cd70584d8fd18fa136846d22c66c21e2d%3A';
 		$this->Form->create('Address', array(
 			'url' => array('controller' => 'articles', 'action' => 'view', 1, '?' => array('page' => 1))
 		));

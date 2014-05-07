@@ -468,7 +468,7 @@ class FormHelper extends AppHelper {
 		}
 		$query = parse_url($action, PHP_URL_QUERY);
 		if ($query) {
-			$query .= '?';
+			$query = '?' . $query;
 		}
 		$this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
 
