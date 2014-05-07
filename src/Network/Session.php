@@ -310,6 +310,35 @@ class Session {
 	}
 
 /**
+ * Writes value to given session variable name.
+ *
+ * @param string|array $name Name of variable
+ * @param string $value Value to write
+ * @return bool True if the write was successful, false if the write failed
+ */
+	public function write($name, $value = null) {
+		if (empty($name)) {
+			return;
+		}
+
+		if (!$this->started()) {
+			$this->start();
+		}
+
+		$write = $name;
+		if (!is_array($name)) {
+			$write = array($name => $value);
+		}
+
+		$data = $_SESSION ?: [];
+		foreach ($write as $key => $val) {
+			$data = Hash::insert($data, $key, $val);
+		}
+
+		$this->_overwrite($_SESSION, $data);
+	}
+
+/**
  * Returns the session id.
  * Calling this method will not auto start the session. You might have to manually
  * assert a started session.
@@ -355,7 +384,7 @@ class Session {
  * @param array $new New set of variable => value
  * @return void
  */
-	protected static function _overwrite(&$old, $new) {
+	protected function _overwrite(&$old, $new) {
 		if (!empty($old)) {
 			foreach ($old as $key => $var) {
 				if (!isset($new[$key])) {
@@ -366,31 +395,6 @@ class Session {
 		foreach ($new as $key => $var) {
 			$old[$key] = $var;
 		}
-	}
-
-/**
- * Writes value to given session variable name.
- *
- * @param string|array $name Name of variable
- * @param string $value Value to write
- * @return bool True if the write was successful, false if the write failed
- */
-	public static function write($name, $value = null) {
-		if (empty($name) || !static::start()) {
-			return false;
-		}
-
-		$write = $name;
-		if (!is_array($name)) {
-			$write = array($name => $value);
-		}
-		foreach ($write as $key => $val) {
-			static::_overwrite($_SESSION, Hash::insert($_SESSION, $key, $val));
-			if (Hash::get($_SESSION, $key) !== $val) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 /**
