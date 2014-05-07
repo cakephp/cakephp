@@ -287,6 +287,29 @@ class Session {
 	}
 
 /**
+ * Returns given session variable, or all of them, if no parameters given.
+ *
+ * @param string|array $name The name of the session variable (or a path as sent to Set.extract)
+ * @return mixed The value of the session variable, null if session not available,
+ *   session not started, or provided name not found in the session.
+ */
+	public function read($name = null) {
+		if (empty($name) && $name !== null) {
+			return null;
+		}
+
+		if ($this->_hasSession() && !$this->started()) {
+			$this->start();
+		}
+
+		if ($name === null) {
+			return $_SESSION ?: [];
+		}
+
+		return Hash::get($_SESSION, $name);
+	}
+
+/**
  * Returns the session id.
  * Calling this method will not auto start the session. You might have to manually
  * assert a started session.
@@ -343,44 +366,6 @@ class Session {
 		foreach ($new as $key => $var) {
 			$old[$key] = $var;
 		}
-	}
-
-/**
- * Returns given session variable, or all of them, if no parameters given.
- *
- * @param string|array $name The name of the session variable (or a path as sent to Set.extract)
- * @return mixed The value of the session variable, null if session not available,
- *   session not started, or provided name not found in the session.
- */
-	public static function read($name = null) {
-		if (empty($name) && $name !== null) {
-			return false;
-		}
-		if (!static::_hasSession() || !static::start()) {
-			return null;
-		}
-		if ($name === null) {
-			return static::_returnSessionVars();
-		}
-		$result = Hash::get($_SESSION, $name);
-
-		if (isset($result)) {
-			return $result;
-		}
-		return null;
-	}
-
-/**
- * Returns all session variables.
- *
- * @return mixed Full $_SESSION array, or false on error.
- */
-	protected static function _returnSessionVars() {
-		if (!empty($_SESSION)) {
-			return $_SESSION;
-		}
-		static::_setError(2, 'No Session vars set');
-		return false;
 	}
 
 /**
