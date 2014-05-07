@@ -719,7 +719,7 @@ class Validation {
 /**
  * Validates that a number is in specified range.
  *
- * If $lower and $upper are set the range is inclusive.
+ * If $lower and $upper are set, the range is inclusive.
  * If they are not set, will return true if $check is a
  * legal finite on this platform.
  *
