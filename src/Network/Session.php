@@ -37,27 +37,6 @@ use SessionHandlerInterface;
 class Session {
 
 /**
- * True if the Session is still valid
- *
- * @var bool
- */
-	public static $valid = false;
-
-/**
- * Error messages for this session
- *
- * @var array
- */
-	public static $error = false;
-
-/**
- * User agent string
- *
- * @var string
- */
-	protected static $_userAgent = '';
-
-/**
  * Path to where the session is active.
  *
  * @var string
@@ -65,55 +44,11 @@ class Session {
 	public static $path = '/';
 
 /**
- * Error number of last occurred error
- *
- * @var int
- */
-	public static $lastError = null;
-
-/**
- * Start time for this session.
- *
- * @var int
- */
-	public static $time = false;
-
-/**
- * Time when this session becomes invalid.
- *
- * @var int
- */
-	public static $sessionTime = false;
-
-/**
  * Current Session id
  *
  * @var string
  */
 	public static $id = null;
-
-/**
- * Hostname
- *
- * @var string
- */
-	public static $host = null;
-
-/**
- * Number of requests that can occur during a session time without the session being renewed.
- * This feature is only used when config value `Session.autoRegenerate` is set to true.
- *
- * @var int
- * @see \Cake\Network\Session::_checkValid()
- */
-	protected static $_requestCountdown = 10;
-
-/**
- * Whether or not the init function in this class was already called
- *
- * @var bool
- */
-	protected static $_initialized = false;
 
 /**
  * Session cookie name
@@ -321,8 +256,7 @@ class Session {
 			throw new \RuntimeException('Could not start the session');
 		}
 
-		$this->_started = true;
-		return true;
+		return $this->_started = true;
 	}
 
 /**
@@ -330,7 +264,7 @@ class Session {
  *
  * @return bool True if session has been started.
  */
-	public static function started() {
+	public function started() {
 		return $this->_started || session_status() === \PHP_SESSION_ACTIVE;
 	}
 
@@ -341,8 +275,12 @@ class Session {
  * @return bool True if variable is there
  */
 	public function check($name = null) {
-		if (empty($name) || !$this->_hasSession() || !$this->start()) {
+		if (empty($name)) {
 			return false;
+		}
+
+		if ($this->_hasSession() && !$this->started()) {
+			$this->start();
 		}
 
 		return Hash::get($_SESSION, $name) !== null;
@@ -379,7 +317,7 @@ class Session {
  * @param string $name Session variable to remove
  * @return bool Success
  */
-	public static function delete($name) {
+	public function delete($name) {
 		if (static::check($name)) {
 			static::_overwrite($_SESSION, Hash::remove($_SESSION, $name));
 			return !static::check($name);
@@ -405,81 +343,6 @@ class Session {
 		foreach ($new as $key => $var) {
 			$old[$key] = $var;
 		}
-	}
-
-/**
- * Return error description for given error number.
- *
- * @param int $errorNumber Error to set
- * @return string Error as string
- */
-	protected static function _error($errorNumber) {
-		if (!is_array(static::$error) || !array_key_exists($errorNumber, static::$error)) {
-			return false;
-		}
-		return static::$error[$errorNumber];
-	}
-
-/**
- * Returns last occurred error as a string, if any.
- *
- * @return mixed Error description as a string, or false.
- */
-	public static function error() {
-		if (static::$lastError) {
-			return static::_error(static::$lastError);
-		}
-		return false;
-	}
-
-/**
- * Returns true if session is valid.
- *
- * @return bool Success
- */
-	public static function valid() {
-		if (static::start() && static::read('Config')) {
-			if (static::_validAgentAndTime() && static::$error === false) {
-				static::$valid = true;
-			} else {
-				static::$valid = false;
-				static::_setError(1, 'Session Highjacking Attempted !!!');
-			}
-		}
-		return static::$valid;
-	}
-
-/**
- * Tests that the user agent is valid and that the session hasn't 'timed out'.
- * Since timeouts are implemented in Session it checks the current static::$time
- * against the time the session is set to expire. The User agent is only checked
- * if Session.checkAgent == true.
- *
- * @return bool
- */
-	protected static function _validAgentAndTime() {
-		$config = static::read('Config');
-		$validAgent = (
-			Configure::read('Session.checkAgent') === false ||
-			static::$_userAgent == $config['userAgent']
-		);
-		return ($validAgent && static::$time <= $config['time']);
-	}
-
-/**
- * Get / Set the user agent
- *
- * @param string $userAgent Set the user agent
- * @return string Current user agent
- */
-	public static function userAgent($userAgent = null) {
-		if ($userAgent) {
-			static::$_userAgent = $userAgent;
-		}
-		if (empty(static::$_userAgent)) {
-			Session::init(static::$path);
-		}
-		return static::$_userAgent;
 	}
 
 /**
@@ -574,95 +437,12 @@ class Session {
 	}
 
 /**
- * Get session cookie name.
- *
- * @return string
- */
-	protected static function _cookieName() {
-		if (static::$_cookieName !== null) {
-			return static::$_cookieName;
-		}
-
-		static::init();
-		static::_configureSession();
-
-		return static::$_cookieName = session_name();
-	}
-
-/**
  * Returns whether a session exists
  * @return bool
  */
 	protected function _hasSession() {
 		$present = !ini_get('session.use_cookies') || isset($_COOKIE[session_name()]);
-		return $this->started() || $preset;
-	}
-
-/**
- * Helper method to start a session
- *
- * @return bool Success
- */
-	protected static function _startSession() {
-		static::init();
-		session_write_close();
-		static::_configureSession();
-
-		if (headers_sent()) {
-			if (empty($_SESSION)) {
-				$_SESSION = array();
-			}
-		} else {
-			// For IE<=8
-			session_cache_limiter("must-revalidate");
-			session_start();
-		}
-		return true;
-	}
-
-/**
- * Helper method to create a new session.
- *
- * @return void
- */
-	protected static function _checkValid() {
-		$config = static::read('Config');
-		if ($config) {
-			$sessionConfig = Configure::read('Session');
-
-			if (static::valid()) {
-				static::write('Config.time', static::$sessionTime);
-				if (isset($sessionConfig['autoRegenerate']) && $sessionConfig['autoRegenerate'] === true) {
-					$check = $config['countdown'];
-					$check -= 1;
-					static::write('Config.countdown', $check);
-
-					if ($check < 1) {
-						static::renew();
-						static::write('Config.countdown', $requestCountdown);
-					}
-				}
-			} else {
-				$_SESSION = array();
-				static::destroy();
-				static::_setError(1, 'Session Highjacking Attempted !!!');
-				static::_startSession();
-				static::_writeConfig();
-			}
-		} else {
-			static::_writeConfig();
-		}
-	}
-
-/**
- * Writes configuration variables to the session
- *
- * @return void
- */
-	protected static function _writeConfig() {
-		static::write('Config.userAgent', static::$_userAgent);
-		static::write('Config.time', static::$sessionTime);
-		static::write('Config.countdown', static::$_requestCountdown);
+		return $this->started() || $present;
 	}
 
 /**
@@ -677,21 +457,6 @@ class Session {
 			}
 			session_regenerate_id(true);
 		}
-	}
-
-/**
- * Helper method to set an internal error message.
- *
- * @param int $errorNumber Number of the error
- * @param string $errorMessage Description of the error
- * @return void
- */
-	protected static function _setError($errorNumber, $errorMessage) {
-		if (static::$error === false) {
-			static::$error = array();
-		}
-		static::$error[$errorNumber] = $errorMessage;
-		static::$lastError = $errorNumber;
 	}
 
 }
