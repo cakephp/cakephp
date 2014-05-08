@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,7 +12,6 @@
  * @since         2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Routing;
 
 use Cake\Core\InstanceConfigTrait;
@@ -57,7 +55,7 @@ use Cake\Event\EventListener;
  * callback as the conditions could change during the dispatch cycle.
  *
  */
-abstract class DispatcherFilter implements EventListener {
+class DispatcherFilter implements EventListener {
 
 	use InstanceConfigTrait;
 
