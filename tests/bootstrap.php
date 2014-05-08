@@ -17,7 +17,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\I18n\I18n;
 use Cake\Log\Log;
 
-require 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(__DIR__));
@@ -60,7 +60,7 @@ $loader->addNamespace('TestPlugin', TEST_APP . 'Plugin/TestPlugin');
 $loader->addNamespace('TestPluginTwo', TEST_APP . 'Plugin/TestPluginTwo');
 $loader->addNamespace('PluginJs', TEST_APP . 'Plugin/PluginJs');
 
-require CAKE . 'bootstrap.php';
+require_once CAKE . 'bootstrap.php';
 
 date_default_timezone_set('UTC');
 mb_internal_encoding('UTF-8');

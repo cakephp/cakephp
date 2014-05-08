@@ -217,6 +217,11 @@ class Session {
 			return true;
 		}
 
+		if (php_sapi_name() === 'cli') {
+			$_SESSION = [];
+			return $this->_started = true;
+		}
+
 		if (session_status() === \PHP_SESSION_ACTIVE) {
 			throw new \RuntimeException('Session was already started');
 		}
@@ -277,8 +282,12 @@ class Session {
 			$this->start();
 		}
 
+		if (!isset($_SESSION)) {
+			return null;
+		}
+
 		if ($name === null) {
-			return $_SESSION ?: [];
+			return isset($_SESSION) ? $_SESSION : [];
 		}
 
 		return Hash::get($_SESSION, $name);
@@ -379,7 +388,7 @@ class Session {
 
 		session_destroy();
 
-		$_SESSION = null;
+		$_SESSION = [];
 		$this->_started = false;
 	}
 
