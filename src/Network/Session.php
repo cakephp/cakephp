@@ -337,7 +337,7 @@ class Session {
  * @return string Session id
  */
 	public function id($id = null) {
-		if ($id) {
+		if ($id !== null) {
 			session_id($id);
 		}
 
@@ -386,9 +386,12 @@ class Session {
 			$this->start();
 		}
 
-		session_destroy();
+		if (php_sapi_name() !== 'cli') {
+			session_destroy();
+		}
 
 		$_SESSION = [];
+		$this->id('');
 		$this->_started = false;
 	}
 

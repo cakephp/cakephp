@@ -223,8 +223,7 @@ class SessionTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$session->id('MySessionId');
-		$result = $session->id();
-		$this->assertEquals('MySessionId', $result);
+		$this->assertEquals('MySessionId', $session->id());
 		$this->assertEquals('MySessionId', session_id());
 
 		$session->id('');
@@ -237,12 +236,10 @@ class SessionTest extends TestCase {
  * @return void
  */
 	public function testStarted() {
-		unset($_SESSION);
-		$_SESSION = null;
-
-		$this->assertFalse(TestCakeSession::started());
-		$this->assertTrue(TestCakeSession::start());
-		$this->assertTrue(TestCakeSession::started());
+		$session = new Session();
+		$this->assertFalse($session->started());
+		$this->assertTrue($session->start());
+		$this->assertTrue($session->started());
 	}
 
 /**
@@ -251,15 +248,16 @@ class SessionTest extends TestCase {
  * @return void
  */
 	public function testDelete() {
-		$this->assertTrue(TestCakeSession::write('Delete.me', 'Clearing out'));
-		$this->assertTrue(TestCakeSession::delete('Delete.me'));
-		$this->assertFalse(TestCakeSession::check('Delete.me'));
-		$this->assertTrue(TestCakeSession::check('Delete'));
+		$session = new Session();
+		$session->write('Delete.me', 'Clearing out');
+		$session->delete('Delete.me');
+		$this->assertFalse($session->check('Delete.me'));
+		$this->assertTrue($session->check('Delete'));
 
-		$this->assertTrue(TestCakeSession::write('Clearing.sale', 'everything must go'));
-		$this->assertTrue(TestCakeSession::delete('Clearing'));
-		$this->assertFalse(TestCakeSession::check('Clearing.sale'));
-		$this->assertFalse(TestCakeSession::check('Clearing'));
+		$session->write('Clearing.sale', 'everything must go');
+		$session->delete('Clearing');
+		$this->assertFalse($session->check('Clearing.sale'));
+		$this->assertFalse($session->check('Clearing'));
 	}
 
 /**
@@ -268,12 +266,14 @@ class SessionTest extends TestCase {
  * @return void
  */
 	public function testDestroy() {
-		TestCakeSession::write('bulletProof', 'invincible');
-		$id = TestCakeSession::id();
-		TestCakeSession::destroy();
+		$session = new Session();
+		$session->start();
+		$session->write('bulletProof', 'invincible');
+		$session->id('foo');
+		$session->destroy();
 
-		$this->assertFalse(TestCakeSession::check('bulletProof'));
-		$this->assertNotEquals(TestCakeSession::id(), $id);
+		$this->assertFalse($session->check('bulletProof'));
+		$this->assertEmpty($session->id());
 	}
 
 /**
