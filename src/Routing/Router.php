@@ -340,7 +340,7 @@ class Router {
 		}
 		$routeClass = static::$_routeClass;
 		if (isset($options['routeClass'])) {
-			$routeClass = App::classname($options['routeClass'], 'Routing/Route');
+			$routeClass = App::className($options['routeClass'], 'Routing/Route');
 			$routeClass = static::_validateRouteClass($routeClass);
 			unset($options['routeClass']);
 		}

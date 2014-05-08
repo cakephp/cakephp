@@ -107,7 +107,7 @@ class HelperRegistry extends ObjectRegistry {
  * @return string|false Either the correct classname or false.
  */
 	protected function _resolveClassName($class) {
-		return App::classname($class, 'View/Helper', 'Helper');
+		return App::className($class, 'View/Helper', 'Helper');
 	}
 
 /**

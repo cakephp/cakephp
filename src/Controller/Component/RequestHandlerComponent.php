@@ -514,7 +514,7 @@ class RequestHandlerComponent extends Component {
 		} else {
 			$view = Inflector::classify($type);
 		}
-		$viewClass = App::classname($view, 'View', 'View');
+		$viewClass = App::className($view, 'View', 'View');
 
 		if ($viewClass) {
 			$controller->viewClass = $viewClass;
@@ -540,7 +540,7 @@ class RequestHandlerComponent extends Component {
 		$helper = ucfirst($type);
 
 		if (!in_array($helper, $controller->helpers) && empty($controller->helpers[$helper])) {
-			$helperClass = App::classname($helper, 'View/Helper', 'Helper');
+			$helperClass = App::className($helper, 'View/Helper', 'Helper');
 			if ($helperClass) {
 				$controller->helpers[] = $helper;
 			}

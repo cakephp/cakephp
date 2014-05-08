@@ -37,7 +37,7 @@ class CacheRegistry extends ObjectRegistry {
 		if (is_object($class)) {
 			return $class;
 		}
-		return App::classname($class, 'Cache/Engine', 'Engine');
+		return App::className($class, 'Cache/Engine', 'Engine');
 	}
 
 /**

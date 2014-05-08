@@ -150,7 +150,7 @@ class WidgetRegistry {
 		}
 
 		$class = array_shift($widget);
-		$className = App::classname($class, 'View/Input');
+		$className = App::className($class, 'View/Input');
 		if ($className === false || !class_exists($className)) {
 			throw new \RuntimeException(sprintf('Unable to locate widget class "%s"', $class));
 		}

@@ -173,14 +173,14 @@ class ShellDispatcher {
  * @throws \Cake\Console\Error\MissingShellException when errors are encountered.
  */
 	public function findShell($shell) {
-		$classname = $this->_shellExists($shell);
-		if (!$classname && isset(static::$_aliases[$shell])) {
+		$className = $this->_shellExists($shell);
+		if (!$className && isset(static::$_aliases[$shell])) {
 			$shell = static::$_aliases[$shell];
-			$classname = $this->_shellExists($shell);
+			$className = $this->_shellExists($shell);
 		}
-		if ($classname) {
+		if ($className) {
 			list($plugin) = pluginSplit($shell);
-			$instance = new $classname();
+			$instance = new $className();
 			$instance->plugin = Inflector::camelize(trim($plugin, '.'));
 			return $instance;
 		}
@@ -198,7 +198,7 @@ class ShellDispatcher {
 	protected function _shellExists($shell) {
 		$class = array_map('Cake\Utility\Inflector::camelize', explode('.', $shell));
 		$class = implode('.', $class);
-		$class = App::classname($class, 'Console/Command', 'Shell');
+		$class = App::className($class, 'Console/Command', 'Shell');
 		if (class_exists($class)) {
 			return $class;
 		}

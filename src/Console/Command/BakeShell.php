@@ -169,18 +169,18 @@ class BakeShell extends Shell {
  */
 	protected function _findTaskClasses($files) {
 		$classes = [];
-		foreach ($files as $classname) {
-			if (!class_exists($classname)) {
+		foreach ($files as $className) {
+			if (!class_exists($className)) {
 				continue;
 			}
-			$reflect = new \ReflectionClass($classname);
+			$reflect = new \ReflectionClass($className);
 			if (!$reflect->isInstantiable()) {
 				continue;
 			}
 			if (!$reflect->isSubclassOf('Cake\Console\Command\Task\BakeTask')) {
 				continue;
 			}
-			$classes[] = $classname;
+			$classes[] = $className;
 		}
 		return $classes;
 	}

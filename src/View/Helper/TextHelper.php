@@ -78,7 +78,7 @@ class TextHelper extends Helper {
 		parent::__construct($View, $config);
 
 		$config = $this->_config;
-		$engineClass = App::classname($config['engine'], 'Utility');
+		$engineClass = App::className($config['engine'], 'Utility');
 		if ($engineClass) {
 			$this->_engine = new $engineClass($config);
 		} else {

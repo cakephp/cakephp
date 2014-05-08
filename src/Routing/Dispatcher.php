@@ -106,7 +106,7 @@ class Dispatcher implements EventListener {
 				$filter = array('callable' => $filter);
 			}
 			if (is_string($filter['callable'])) {
-				$callable = App::classname($filter['callable'], 'Routing/Filter');
+				$callable = App::className($filter['callable'], 'Routing/Filter');
 				if (!$callable) {
 					throw new Error\MissingDispatcherFilterException($filter['callable']);
 				}
@@ -271,7 +271,7 @@ class Dispatcher implements EventListener {
 			$namespace .= '/' . Inflector::camelize($request->params['prefix']);
 		}
 		if ($pluginPath . $controller) {
-			return App::classname($pluginPath . $controller, $namespace, 'Controller');
+			return App::className($pluginPath . $controller, $namespace, 'Controller');
 		}
 		return false;
 	}
