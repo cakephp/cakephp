@@ -19,10 +19,6 @@ use Cake\Routing\Dispatcher;
 /**
  * A factory for creating dispatchers with all the desired middleware
  * connected.
- *
- * ### Adding middleware
- *
- * ### Adding lazy middleware
  */
 class DispatcherFactory {
 

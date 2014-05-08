@@ -47,6 +47,13 @@ class Dispatcher {
 	protected $_eventManager;
 
 /**
+ * Connected middleware objects
+ *
+ * @var array
+ */
+	protected $_middleware = [];
+
+/**
  * Constructor.
  *
  * @param string $base The base directory for the application. Writes `App.base` to Configure.
@@ -217,8 +224,12 @@ class Dispatcher {
 	}
 
 	public function add($filter) {
-		$this->_filters[] = $filter;
+		$this->_middleware[] = $filter;
 		$this->getEventManager()->attach($filter);
+	}
+
+	public function middleware() {
+		return $this->_middleware;
 	}
 
 }

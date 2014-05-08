@@ -1,0 +1,59 @@
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Routing;
+
+use Cake\Routing\DispatcherFactory;
+use Cake\TestSuite\TestCase;
+
+/**
+ * Dispatcher factory test case.
+ */
+class DispatcherFactoryTest extends TestCase {
+
+/**
+ * setup function
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		DispatcherFactory::clear();
+	}
+
+/**
+ * Test add middleware
+ *
+ * @return void
+ */
+	public function testAddMiddleware() {
+		$mw = $this->getMock('Cake\Routing\DispatcherFilter', ['beforeDispatch']);
+		$result = DispatcherFactory::add($mw);
+		$this->assertNull($result);
+	}
+
+/**
+ * Test creating a dispatcher with the factory
+ *
+ * @return void
+ */
+	public function testCreate() {
+		$mw = $this->getMock('Cake\Routing\DispatcherFilter', ['beforeDispatch']);
+		DispatcherFactory::add($mw);
+		$result = DispatcherFactory::create();
+		$this->assertInstanceOf('Cake\Routing\Dispatcher', $result);
+		$this->assertCount(1, $result->middleware());
+	}
+
+}
