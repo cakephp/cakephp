@@ -947,15 +947,15 @@ class Email {
 		}
 
 		$config = static::$_transportConfig[$name];
-		$classname = App::className($config['className'], 'Network/Email', 'Transport');
-		if (!$classname) {
+		$className = App::className($config['className'], 'Network/Email', 'Transport');
+		if (!$className) {
 			throw new Exception(sprintf('Transport class "%s" not found.', $name));
-		} elseif (!method_exists($classname, 'send')) {
-			throw new Exception(sprintf('The "%s" does not have a send() method.', $classname));
+		} elseif (!method_exists($className, 'send')) {
+			throw new Exception(sprintf('The "%s" does not have a send() method.', $className));
 		}
 
 		unset($config['className']);
-		return new $classname($config);
+		return new $className($config);
 	}
 
 /**

@@ -253,7 +253,7 @@ class TestTask extends BakeTask {
  *
  * @param string $type The Type of object you are generating tests for eg. controller.
  * @param string $class the Classname of the class the test is being generated for.
- * @return string Real classname
+ * @return string Real class name
  */
 	public function getRealClassName($type, $class) {
 		$namespace = Configure::read('App.namespace');

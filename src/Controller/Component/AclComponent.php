@@ -65,14 +65,14 @@ class AclComponent extends Component {
  */
 	public function __construct(ComponentRegistry $collection, array $config = array()) {
 		parent::__construct($collection, $config);
-		$classname = $name = Configure::read('Acl.classname');
-		if (!class_exists($classname)) {
-			$classname = App::className($name, 'Controller/Component/Acl');
-			if (!$classname) {
+		$className = $name = Configure::read('Acl.classname');
+		if (!class_exists($className)) {
+			$className = App::className($name, 'Controller/Component/Acl');
+			if (!$className) {
 				throw new Error\Exception(sprintf('Could not find %s.', $name));
 			}
 		}
-		$this->adapter($classname);
+		$this->adapter($className);
 	}
 
 /**
