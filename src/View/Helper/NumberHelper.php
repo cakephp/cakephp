@@ -63,7 +63,7 @@ class NumberHelper extends Helper {
 
 		$config = $this->_config;
 
-		$engineClass = App::classname($config['engine'], 'Utility');
+		$engineClass = App::className($config['engine'], 'Utility');
 		if ($engineClass) {
 			$this->_engine = new $engineClass($config);
 		} else {

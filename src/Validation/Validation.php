@@ -852,7 +852,7 @@ class Validation {
  * @return mixed Return of Passed method, false on failure
  */
 	protected static function _pass($method, $check, $classPrefix) {
-		$className = App::classname($classPrefix, 'Validation', 'Validation');
+		$className = App::className($classPrefix, 'Validation', 'Validation');
 		if (!$className) {
 			trigger_error('Could not find class for validation, unable to complete validation.', E_USER_WARNING);
 			return false;

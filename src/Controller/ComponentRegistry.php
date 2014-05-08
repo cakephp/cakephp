@@ -65,7 +65,7 @@ class ComponentRegistry extends ObjectRegistry {
  * @return string|false Either the correct classname or false.
  */
 	protected function _resolveClassName($class) {
-		return App::classname($class, 'Controller/Component', 'Component');
+		return App::className($class, 'Controller/Component', 'Component');
 	}
 
 /**

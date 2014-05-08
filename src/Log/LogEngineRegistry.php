@@ -37,7 +37,7 @@ class LogEngineRegistry extends ObjectRegistry {
 			return $class;
 		}
 
-		return App::classname($class, 'Log/Engine', 'Log');
+		return App::className($class, 'Log/Engine', 'Log');
 	}
 
 /**

@@ -155,7 +155,7 @@ abstract class BaseAuthenticate {
 		}
 
 		list($plugin, $class) = pluginSplit($class, true);
-		$className = App::classname($class, 'Controller/Component/Auth', 'PasswordHasher');
+		$className = App::className($class, 'Controller/Component/Auth', 'PasswordHasher');
 		if (!class_exists($className)) {
 			throw new Error\Exception(sprintf('Password hasher class "%s" was not found.', $class));
 		}

@@ -77,7 +77,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @return string|false Either the correct classname or false.
  */
 	protected function _resolveClassName($class) {
-		return App::classname($class, 'Model/Behavior', 'Behavior');
+		return App::className($class, 'Model/Behavior', 'Behavior');
 	}
 
 /**

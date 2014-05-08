@@ -153,7 +153,7 @@ class TableRegistry {
 		if (empty($options['className'])) {
 			$options['className'] = Inflector::camelize($name);
 		}
-		$className = App::classname($options['className'], 'Model/Table', 'Table');
+		$className = App::className($options['className'], 'Model/Table', 'Table');
 		$options['className'] = $className ?: 'Cake\ORM\Table';
 
 		if (isset(static::$_config[$alias])) {

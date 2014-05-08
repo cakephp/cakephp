@@ -947,7 +947,7 @@ class Email {
 		}
 
 		$config = static::$_transportConfig[$name];
-		$classname = App::classname($config['className'], 'Network/Email', 'Transport');
+		$classname = App::className($config['className'], 'Network/Email', 'Transport');
 		if (!$classname) {
 			throw new Exception(sprintf('Transport class "%s" not found.', $name));
 		} elseif (!method_exists($classname, 'send')) {
@@ -1685,9 +1685,9 @@ class Email {
 		}
 		$viewClass = $this->_viewRender;
 		if ($viewClass === 'View') {
-			$viewClass = App::classname('View', 'View');
+			$viewClass = App::className('View', 'View');
 		} else {
-			$viewClass = App::classname($viewClass, 'View', 'View');
+			$viewClass = App::className($viewClass, 'View', 'View');
 		}
 		$viewClass = 'Cake\View\View';
 

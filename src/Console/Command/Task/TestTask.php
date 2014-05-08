@@ -269,7 +269,7 @@ class TestTask extends BakeTask {
 	}
 
 /**
- * Map the types that TestTask uses to concrete types that App::classname can use.
+ * Map the types that TestTask uses to concrete types that App::className can use.
  *
  * @param string $type The type of thing having a test generated.
  * @return string

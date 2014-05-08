@@ -441,7 +441,7 @@ class Table implements RepositoryInterface, EventListener {
 		}
 
 		if ($name !== null) {
-			$class = App::classname($name, 'Model/Entity');
+			$class = App::className($name, 'Model/Entity');
 			$this->_entityClass = $class;
 		}
 

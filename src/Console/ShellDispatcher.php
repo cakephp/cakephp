@@ -198,7 +198,7 @@ class ShellDispatcher {
 	protected function _shellExists($shell) {
 		$class = array_map('Cake\Utility\Inflector::camelize', explode('.', $shell));
 		$class = implode('.', $class);
-		$class = App::classname($class, 'Console/Command', 'Shell');
+		$class = App::className($class, 'Console/Command', 'Shell');
 		if (class_exists($class)) {
 			return $class;
 		}

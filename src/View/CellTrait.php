@@ -64,7 +64,7 @@ trait CellTrait {
 
 		list($plugin, $cellName) = pluginSplit($pluginAndCell);
 
-		$className = App::classname($pluginAndCell, 'View/Cell', 'Cell');
+		$className = App::className($pluginAndCell, 'View/Cell', 'Cell');
 
 		if (!$className) {
 			throw new Error\MissingCellException(array('className' => $pluginAndCell . 'Cell'));

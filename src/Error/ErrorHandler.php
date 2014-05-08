@@ -129,7 +129,7 @@ class ErrorHandler extends BaseErrorHandler {
  * @throws \Exception When the chosen exception renderer is invalid.
  */
 	protected function _displayException($exception) {
-		$renderer = App::classname($this->_options['exceptionRenderer'], 'Error');
+		$renderer = App::className($this->_options['exceptionRenderer'], 'Error');
 		try {
 			if (!$renderer) {
 				throw new \Exception("$renderer is an invalid class.");

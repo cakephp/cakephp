@@ -42,7 +42,7 @@ trait ViewVarsTrait {
 			$viewClass = $this->viewClass;
 			if ($this->viewClass !== 'View') {
 				list($plugin, $viewClass) = pluginSplit($viewClass, true);
-				$viewClass = App::classname($viewClass, 'View', 'View');
+				$viewClass = App::className($viewClass, 'View', 'View');
 			}
 		}
 		$viewOptions = array_intersect_key(get_object_vars($this), array_flip($this->_validViewOptions));

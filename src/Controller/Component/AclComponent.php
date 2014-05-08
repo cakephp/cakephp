@@ -67,7 +67,7 @@ class AclComponent extends Component {
 		parent::__construct($collection, $config);
 		$classname = $name = Configure::read('Acl.classname');
 		if (!class_exists($classname)) {
-			$classname = App::classname($name, 'Controller/Component/Acl');
+			$classname = App::className($name, 'Controller/Component/Acl');
 			if (!$classname) {
 				throw new Error\Exception(sprintf('Could not find %s.', $name));
 			}
