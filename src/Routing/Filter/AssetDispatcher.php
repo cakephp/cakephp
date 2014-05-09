@@ -36,7 +36,7 @@ class AssetDispatcher extends DispatcherFilter {
  *
  * @var int
  */
-	public $priority = 9;
+	protected $_priority = 9;
 
 /**
  * Checks if a requested asset exists and sends it to the browser

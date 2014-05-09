@@ -36,6 +36,31 @@ class DispatcherFilterTest extends TestCase {
 	}
 
 /**
+ * Test setting priority
+ *
+ * @return void
+ */
+	public function testConstructPriority() {
+		$filter = new DispatcherFilter();
+		$this->assertEquals(10, $filter->config('priority'));
+
+		$filter = new DispatcherFilter(['priority' => 100]);
+		$this->assertEquals(100, $filter->config('priority'));
+	}
+
+/**
+ * Test implemented events
+ *
+ * @return void
+ */
+	public function testImplementedEvents() {
+		$filter = new DispatcherFilter(['priority' => 100]);
+		$events = $filter->implementedEvents();
+		$this->assertEquals(100, $events['Dispatcher.beforeDispatch']['priority']);
+		$this->assertEquals(100, $events['Dispatcher.afterDispatch']['priority']);
+	}
+
+/**
  * Test constructor error invalid when
  *
  * @expectedException Cake\Error\Exception

@@ -65,7 +65,7 @@ class DispatcherFilter implements EventListener {
  *
  * @var int
  */
-	public $priority = 10;
+	protected $_priority = 10;
 
 /**
  * Default config
@@ -79,6 +79,7 @@ class DispatcherFilter implements EventListener {
 	protected $_defaultConfig = [
 		'when' => null,
 		'for' => null,
+		'priority' => null,
 	];
 
 /**
@@ -87,6 +88,9 @@ class DispatcherFilter implements EventListener {
  * @param array $config Settings for the filter.
  */
 	public function __construct($config = []) {
+		if (!isset($config['priority'])) {
+			$config['priority'] = $this->_priority;
+		}
 		$this->config($config);
 		if (isset($config['when']) && !is_callable($config['when'])) {
 			throw new Error\Exception('"when" conditions must be a callable.');
@@ -104,8 +108,14 @@ class DispatcherFilter implements EventListener {
  */
 	public function implementedEvents() {
 		return array(
-			'Dispatcher.beforeDispatch' => array('callable' => 'handle', 'priority' => $this->priority),
-			'Dispatcher.afterDispatch' => array('callable' => 'handle', 'priority' => $this->priority),
+			'Dispatcher.beforeDispatch' => [
+				'callable' => 'handle',
+				'priority' => $this->_config['priority']
+			],
+			'Dispatcher.afterDispatch' => [
+				'callable' => 'handle',
+				'priority' => $this->_config['priority']
+			],
 		);
 	}
 
