@@ -6,9 +6,23 @@ use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
 use Cake\Routing\Router;
 
+/**
+ * A dispatcher filter that applies routing rules to the request.
+ *
+ * This filter will call Router::parse() when the request has no controller
+ * parameter defined.
+ */
 class RoutingFilter extends DispatcherFilter {
 
-	public $priority = -10;
+/**
+ * Priority setting.
+ *
+ * This filter is normally fired last just before the request
+ * is dispatched.
+ *
+ * @var int
+ */
+	protected $_priority = -10;
 
 /**
  * Applies Routing and additionalParameters to the request to be dispatched.
