@@ -134,7 +134,7 @@ class CakeSocket {
 			$this->disconnect();
 		}
         
-        if(is_numeric($this->config['protocol'])){
+        if (is_numeric($this->config['protocol'])) {
             $this->config['protocol'] = getprotobynumber($this->config['protocol']);
         }
 
