@@ -950,7 +950,7 @@ class Email {
 
 		if (is_object($config['className'])) {
 			return $config['className'];
-		};
+		}
 
 		$className = App::className($config['className'], 'Network/Email', 'Transport');
 		if (!$className) {
