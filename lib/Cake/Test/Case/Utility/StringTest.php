@@ -228,6 +228,26 @@ class StringTest extends CakeTestCase {
 	}
 
 /**
+ * testInsertFlatten()
+ *
+ * @return void
+ */
+	public function testInsertFlatten() {
+		$user = array(
+			'User' => array('name' => 'nick', 'last_name' => 'baker'),
+			'Profile' => array('age' => '19', 'gender' => 'male'),
+		);
+		$result = String::insert(
+			'Hello :User.name. You are :Profile.age years old.',
+			$user,
+			array('flatten' => true)
+		);
+		$expected = 'Hello nick. You are 19 years old.';
+		debug($result);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test Clean Insert
  *
  * @return void
