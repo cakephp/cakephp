@@ -791,7 +791,7 @@ class HttpSocket extends CakeSocket {
 			$uri['port'] = array_shift($uri['port']);
 		}
 	        if (isset($uri['scheme']) && $uri['scheme'] === 'https') {
-	            if($this->config['protocol']==='tcp'){
+	            if ($this->config['protocol'] === 'tcp') {
         	        $this->config['protocol'] = 'ssl';
             	    }
         	}
