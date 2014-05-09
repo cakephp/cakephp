@@ -117,7 +117,7 @@ class CakeSocket {
 	public function __construct($config = array()) {
 		$this->config = array_merge($this->_baseConfig, $config);
 		if (!is_numeric($this->config['protocol'])) {
-			if($protocol = getprotobyname($this->config['protocol'])) {
+			if ($protocol = getprotobyname($this->config['protocol'])) {
                 $this->config['protocol'] = $protocol;
             }
 		}
@@ -133,7 +133,7 @@ class CakeSocket {
 		if ($this->connection) {
 			$this->disconnect();
 		}
-        
+ 
         if (is_numeric($this->config['protocol'])) {
             $this->config['protocol'] = getprotobynumber($this->config['protocol']);
         }
