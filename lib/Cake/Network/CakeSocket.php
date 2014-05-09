@@ -116,6 +116,11 @@ class CakeSocket {
  */
 	public function __construct($config = array()) {
 		$this->config = array_merge($this->_baseConfig, $config);
+		if (!is_numeric($this->config['protocol'])) {
+			if($protocol = getprotobyname($this->config['protocol'])) {
+                $this->config['protocol'] = $protocol;
+            }
+		}
 	}
 
 /**
@@ -128,6 +133,10 @@ class CakeSocket {
 		if ($this->connection) {
 			$this->disconnect();
 		}
+        
+        if(is_numeric($this->config['protocol'])){
+            $this->config['protocol'] = getprotobynumber($this->config['protocol']);
+        }
 
 		if (!empty($this->config['context'])) {
 			$context = stream_context_create($this->config['context']);
@@ -139,7 +148,6 @@ class CakeSocket {
 		if ($this->config['persistent']) {
 			$connectAs |= STREAM_CLIENT_PERSISTENT;
 		}
-
 		set_error_handler(array($this, '_connectionErrorHandler'));
 		$this->connection = stream_socket_client(
 			$this->config['protocol'] . '://' . $this->config['host'] . ':' . $this->config['port'],
