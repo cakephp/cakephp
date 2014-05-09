@@ -63,7 +63,7 @@ class ProjectTask extends BakeTask {
 		if (!preg_match('/^\w[\w\d_]+$/', $namespace)) {
 			$this->err(__d('cake_console', 'Project Name/Namespace needs to start with a letter and can only contain letters, digits and underscore'));
 			$this->args = [];
-			return $this->execute();
+			return $this->main();
 		}
 
 		if ($project && !Folder::isAbsolute($project) && isset($_SERVER['PWD'])) {
@@ -86,8 +86,47 @@ class ProjectTask extends BakeTask {
 
 		if ($this->bake($project)) {
 			$this->out(__d('cake_console', '<success>Project baked successfully!</success>'));
-			return $path;
+			return $project;
 		}
+	}
+
+/**
+ * Uses either the CLI option or looks in $PATH and cwd for composer.
+ *
+ * @return string|false Either the path to composer or false if it cannot be found.
+ */
+	public function findComposer() {
+		if (!empty($this->params['composer'])) {
+			$path = $this->params['composer'];
+			if (file_exists($path)) {
+				return $path;
+			}
+			return false;
+		}
+		$composer = false;
+		if (!empty($_SERVER['PATH'])) {
+			$path = explode(PATH_SEPARATOR, $_SERVER['PATH']);
+			$composer = $this->_searchPath($path);
+		}
+		return $composer;
+	}
+
+/**
+ * Search the $PATH for composer.
+ *
+ * @param array $path The paths to search.
+ * @return string|boolean
+ */
+	protected function _searchPath($path) {
+		$composer = ['composer.phar', 'composer'];
+		foreach ($path as $dir) {
+			foreach ($composer as $cmd) {
+				if (file_exists($dir . DS . $cmd)) {
+					return $dir . DS . $cmd;
+				}
+			}
+		}
+		return false;
 	}
 
 /**
@@ -97,9 +136,9 @@ class ProjectTask extends BakeTask {
  * @return mixed
  */
 	public function bake($path) {
-		$composer = $this->params['composer'];
-		if (!file_exists($composer)) {
-			$this->error(__d('cake_console', 'Cannot bake project. Could not find composer at "%s".', $composer));
+		$composer = $this->findComposer();
+		if (!$composer) {
+			$this->error(__d('cake_console', 'Cannot bake project. Could not find composer. Add composer to your PATH, or use the -composer option.'));
 			return false;
 		}
 		$this->out(__d('cake_console', '<info>Downloading a new cakephp app from packagist.org</info>'));
