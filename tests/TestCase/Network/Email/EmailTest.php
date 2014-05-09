@@ -2364,7 +2364,6 @@ HTML;
 		$this->assertEquals($expected, $result['message']);
 	}
 
-
 /**
  * CakeEmailTest::testMockTransport()
  */
