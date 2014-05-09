@@ -350,7 +350,7 @@ class CakeSocket {
 /**
  * Encrypts current stream socket, using one of the defined encryption methods
  *
- * @param string $type can be one of 'ssl2', 'ssl3', 'ssl23' or 'tls'
+ * @param string $type can be one of 'sslv2', 'sslv3', 'sslv23' or 'tls'
  * @param string $clientOrServer can be one of 'client', 'server'. Default is 'client'
  * @param boolean $enable enable or disable encryption. Default is true (enable)
  * @return boolean True on success
