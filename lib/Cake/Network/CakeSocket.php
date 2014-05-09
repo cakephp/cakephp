@@ -142,7 +142,7 @@ class CakeSocket {
 
 		set_error_handler(array($this, '_connectionErrorHandler'));
 		$this->connection = stream_socket_client(
-			$this->config['protocol'] . "://" . $this->config['host'] . ':' . $this->config['port'],
+			$this->config['protocol'] . '://' . $this->config['host'] . ':' . $this->config['port'],
 			$errNum,
 			$errStr,
 			$this->config['timeout'],
