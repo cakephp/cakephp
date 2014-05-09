@@ -117,25 +117,27 @@ class DispatcherFilterTest extends TestCase {
 	}
 
 /**
- * Test matching with when option.
- *
- * @expectedException \RuntimeException
- * @expectedExceptionMessage 'when' conditions must be a callable.
- * @return void
- */
-	public function testMatchesWithWhenInvalid() {
-		$this->markTestIncomplete('not done');
-
-	}
-
-/**
  * Test event bindings have use condition checker
  *
  * @return void
  */
 	public function testImplementedEventsMethodName() {
-		$this->markTestIncomplete('not done');
+		$request = new Request(['url' => '/articles/view']);
+		$response = new Response();
 
+		$beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('response', 'request'));
+		$afterEvent = new Event('Dispatcher.afterDispatch', $this, compact('response', 'request'));
+
+		$filter = $this->getMock('Cake\Routing\DispatcherFilter', ['beforeDispatch', 'afterDispatch']);
+		$filter->expects($this->at(0))
+			->method('beforeDispatch')
+			->with($beforeEvent);
+		$filter->expects($this->at(1))
+			->method('afterDispatch')
+			->with($afterEvent);
+
+		$filter->handle($beforeEvent);
+		$filter->handle($afterEvent);
 	}
 
 /**
@@ -144,8 +146,20 @@ class DispatcherFilterTest extends TestCase {
  * @return void
  */
 	public function testHandleAppliesFor() {
-		$this->markTestIncomplete('not done');
+		$request = new Request(['url' => '/articles/view']);
+		$response = new Response();
 
+		$event = new Event('Dispatcher.beforeDispatch', $this, compact('response', 'request'));
+
+		$filter = $this->getMock(
+			'Cake\Routing\DispatcherFilter',
+			['beforeDispatch'],
+			[['for' => '/admin']]
+		);
+		$filter->expects($this->never())
+			->method('beforeDispatch');
+
+		$filter->handle($event);
 	}
 
 /**
@@ -154,8 +168,23 @@ class DispatcherFilterTest extends TestCase {
  * @return void
  */
 	public function testHandleAppliesWhen() {
-		$this->markTestIncomplete('not done');
+		$request = new Request(['url' => '/articles/view']);
+		$response = new Response();
 
+		$event = new Event('Dispatcher.beforeDispatch', $this, compact('response', 'request'));
+		$matcher = function() {
+			return false;
+		};
+
+		$filter = $this->getMock(
+			'Cake\Routing\DispatcherFilter',
+			['beforeDispatch'],
+			[['when' => $matcher]]
+		);
+		$filter->expects($this->never())
+			->method('beforeDispatch');
+
+		$filter->handle($event);
 	}
 
 }

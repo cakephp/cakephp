@@ -24,7 +24,7 @@ use Cake\Event\EventListener;
  * event listener with the ability to alter the request or response as needed before it is handled
  * by a controller or after the response body has already been built.
  *
- * ### Limiting middleware to specific paths
+ * ### Limiting filters to specific paths
  *
  * By using the `for` option you can limit with request paths a filter is applied to.
  * Both the before and after event will have the same conditions applied to them. For
@@ -37,7 +37,7 @@ use Cake\Event\EventListener;
  * When the above middleware is connected to a dispatcher it will only fire
  * its `beforeDispatch` and `afterDispatch` methods on requests that start with `/blog`.
  *
- * ### Limiting middleware based on conditions
+ * ### Limiting filters based on conditions
  *
  * In addition to simple path based matching you can use a closure to match on arbitrary request
  * or response conditions. For example:
