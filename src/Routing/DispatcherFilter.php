@@ -15,6 +15,7 @@
 namespace Cake\Routing;
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\Error;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 
@@ -87,6 +88,9 @@ class DispatcherFilter implements EventListener {
  */
 	public function __construct($config = []) {
 		$this->config($config);
+		if (isset($config['when']) && !is_callable($config['when'])) {
+			throw new Error\Exception('"when" conditions must be a callable.');
+		}
 	}
 
 /**
@@ -100,9 +104,45 @@ class DispatcherFilter implements EventListener {
  */
 	public function implementedEvents() {
 		return array(
-			'Dispatcher.beforeDispatch' => array('callable' => 'beforeDispatch', 'priority' => $this->priority),
-			'Dispatcher.afterDispatch' => array('callable' => 'afterDispatch', 'priority' => $this->priority),
+			'Dispatcher.beforeDispatch' => array('callable' => 'handle', 'priority' => $this->priority),
+			'Dispatcher.afterDispatch' => array('callable' => 'handle', 'priority' => $this->priority),
 		);
+	}
+
+/**
+ * Handler method that applies conditions and resolves the correct method to call.
+ *
+ * @param \Cake\Event\Event $event The event instance.
+ * @return mixed
+ */
+	public function handle(Event $event) {
+		$name = $event->name();
+		list($_, $method) = explode('.', $name);
+		if (empty($this->_config['for']) && empty($this->_config['when'])) {
+			return $this->{$method}($event);
+		}
+		if ($this->matches($event)) {
+			return $this->{$method}($event);
+		}
+	}
+
+/**
+ * Check to see if the incoming request matches this filter's criteria.
+ *
+ * @param \Cake\Event\Event $event The event to match.
+ * @return boolean
+ */
+	public function matches(Event $event) {
+		$request = $event->data['request'];
+		$pass = true;
+		if (!empty($this->_config['for'])) {
+			$pass = strpos($request->here(false), $this->_config['for']) === 0;
+		}
+		if ($pass && !empty($this->_config['when'])) {
+			$response = $event->data['response'];
+			$pass = $this->_config['when']($request, $response);
+		}
+		return $pass;
 	}
 
 /**
@@ -136,4 +176,5 @@ class DispatcherFilter implements EventListener {
  */
 	public function afterDispatch(Event $event) {
 	}
+
 }
