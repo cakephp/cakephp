@@ -947,6 +947,11 @@ class Email {
 		}
 
 		$config = static::$_transportConfig[$name];
+
+		if (is_object($config['className'])) {
+			return $config['className'];
+		};
+
 		$className = App::className($config['className'], 'Network/Email', 'Transport');
 		if (!$className) {
 			throw new Exception(sprintf('Transport class "%s" not found.', $name));

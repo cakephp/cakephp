@@ -2364,6 +2364,22 @@ HTML;
 		$this->assertEquals($expected, $result['message']);
 	}
 
+
+/**
+ * CakeEmailTest::testMockTransport()
+ */
+	public function testMockTransport() {
+		$mock = $this->getMock('\Cake\Network\Email\AbstractTransport');
+		$config = array('from' => 'tester@example.org', 'transport' => 'default');
+
+		Email::config('default', $config);
+		Email::configTransport('default', $mock);
+
+		$em = new Email('default');
+
+		$this->assertSame($mock, $em->transport());
+	}
+
 /**
  * CakeEmailTest::assertLineLengths()
  *
