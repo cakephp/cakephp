@@ -25,6 +25,7 @@ use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Dispatcher;
+use Cake\Routing\Filter\AssetDispatcher;
 use Cake\Routing\Error\MissingDispatcherFilterException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -541,116 +542,52 @@ class DispatcherTest extends TestCase {
 	}
 
 /**
- * Tests that it is possible to attach filter classes to the dispatch cycle
+ * Test dispatcher filters being called.
  *
  * @return void
  */
-	public function testDispatcherFilterSuscriber() {
-		$this->markTestIncomplete();
-		Plugin::load('TestPlugin');
-		Configure::write('Dispatcher.filters', array(
-			array('callable' => 'TestPlugin.TestDispatcherFilter')
-		));
+	public function testDispatcherFilter() {
 		$dispatcher = new TestDispatcher();
-		$request = new Request('/');
-		$request->params['altered'] = false;
-		$response = $this->getMock('Cake\Network\Response', array('send'));
+		$filter = $this->getMock(
+			'Cake\Routing\DispatcherFilter',
+			['beforeDispatch', 'afterDispatch']
+		);
 
-		$dispatcher->dispatch($request, $response);
-		$this->assertTrue($request->params['altered']);
-		$this->assertEquals(304, $response->statusCode());
+		$filter->expects($this->at(0))
+			->method('beforeDispatch');
+		$filter->expects($this->at(1))
+			->method('afterDispatch');
+		$dispatcher->add($filter);
 
-		Configure::write('Dispatcher.filters', array(
-			'TestPlugin.Test2DispatcherFilter',
-			'TestPlugin.TestDispatcherFilter'
-		));
-		$dispatcher = new TestDispatcher();
-		$request = new Request('/');
-		$request->params['altered'] = false;
-		$response = $this->getMock('Cake\Network\Response', array('send'));
-
-		$dispatcher->dispatch($request, $response);
-		$this->assertFalse($request->params['altered']);
-		$this->assertEquals(500, $response->statusCode());
-		$this->assertNull($dispatcher->controller);
-	}
-
-/**
- * Tests that attaching an inexistent class as filter will throw an exception
- *
- * @expectedException \Cake\Routing\Error\MissingDispatcherFilterException
- * @return void
- */
-	public function testDispatcherFilterSuscriberMissing() {
-		$this->markTestIncomplete();
-		Plugin::load('TestPlugin');
-		Configure::write('Dispatcher.filters', array(
-			array('callable' => 'TestPlugin.NotAFilter')
-		));
-		$dispatcher = new TestDispatcher();
-		$request = new Request('/');
-		$response = $this->getMock('Cake\Network\Response', array('send'));
+		$request = new Request([
+			'url' => '/',
+			'params' => [
+				'controller' => 'pages',
+				'action' => 'display',
+				'home',
+				'pass' => []
+			]
+		]);
+		$response = $this->getMock('Cake\Network\Response', ['send']);
 		$dispatcher->dispatch($request, $response);
 	}
 
 /**
- * Tests it is possible to attach single callables as filters
+ * Test dispatcher filters being called and changing the response.
  *
  * @return void
  */
-	public function testDispatcherFilterCallable() {
+	public function testBeforeDispatchAbortDispatch() {
 		$this->markTestIncomplete();
-		$dispatcher = new TestDispatcher();
-		Configure::write('Dispatcher.filters', array(
-			array('callable' => array($dispatcher, 'filterTest'), 'on' => 'before')
-		));
+	}
 
-		$request = new Request('/');
-		$response = $this->getMock('Cake\Network\Response', array('send'));
-		$dispatcher->dispatch($request, $response);
-		$this->assertEquals('Dispatcher.beforeDispatch', $request->params['eventName']);
-
-		$dispatcher = new TestDispatcher();
-		Configure::write('Dispatcher.filters', array(
-			array('callable' => array($dispatcher, 'filterTest'), 'on' => 'after')
-		));
-
-		$request = new Request('/');
-		$response = $this->getMock('Cake\Network\Response', array('send'));
-		$dispatcher->dispatch($request, $response);
-		$this->assertEquals('Dispatcher.afterDispatch', $request->params['eventName']);
-
-		// Test that it is possible to skip the route connection process
-		$dispatcher = new TestDispatcher();
-		Configure::write('Dispatcher.filters', array(
-			array('callable' => array($dispatcher, 'filterTest2'), 'on' => 'before', 'priority' => 1)
-		));
-
-		$request = new Request('/');
-		$response = $this->getMock('Cake\Network\Response', array('send'));
-		$dispatcher->dispatch($request, $response);
-		$this->assertEmpty($dispatcher->controller);
-		$expected = array('controller' => null, 'action' => null, 'plugin' => null, '_ext' => null, 'pass' => []);
-		$this->assertEquals($expected, $request->params);
-
-		$dispatcher = new TestDispatcher();
-		Configure::write('Dispatcher.filters', array(
-			array('callable' => array($dispatcher, 'filterTest2'), 'on' => 'before', 'priority' => 1)
-		));
-
-		$request = new Request('/');
-		$request->params['return'] = true;
-		$response = $this->getMock('Cake\Network\Response', array('send'));
-		$response->body('this is a body');
-		$result = $dispatcher->dispatch($request, $response);
-		$this->assertEquals('this is a body', $result);
-
-		$request = new Request('/');
-		$response = $this->getMock('Cake\Network\Response', array('send'));
-		$response->expects($this->once())->method('send');
-		$response->body('this is a body');
-		$result = $dispatcher->dispatch($request, $response);
-		$this->assertNull($result);
+/**
+ * Test dispatcher filters being called and changing the response.
+ *
+ * @return void
+ */
+	public function testAfterDispatchAbortDispatch() {
+		$this->markTestIncomplete();
 	}
 
 /**
@@ -805,13 +742,13 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testAsset($url, $file) {
-		$this->markTestIncomplete();
 		Router::reload();
 
 		Plugin::load(array('TestPlugin', 'PluginJs'));
 		Configure::write('Dispatcher.filters', array('AssetDispatcher'));
 
 		$Dispatcher = new TestDispatcher();
+		$Dispatcher->add(new AssetDispatcher());
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 
 		$Dispatcher->dispatch(new Request($url), $response);
