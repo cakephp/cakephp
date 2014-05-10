@@ -348,52 +348,21 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testDispatchBasic() {
-		$this->markTestIncomplete();
-		Router::connect('/pages/*', array('controller' => 'Pages', 'action' => 'display'));
-		Router::connect('/:controller/:action/*');
-
 		$Dispatcher = new TestDispatcher();
-		$url = new Request('pages/home');
+		$url = new Request([
+			'url' => 'pages/home',
+			'params' => [
+				'controller' => 'pages',
+				'action' => 'display',
+				'pass' => ['extract'],
+				'return' => 1
+			]
+		]);
 		$response = $this->getMock('Cake\Network\Response');
 
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
+		$Dispatcher->dispatch($url, $response);
 		$expected = 'Pages';
 		$this->assertEquals($expected, $Dispatcher->controller->name);
-
-		$expected = array('0' => 'home');
-		$this->assertSame($expected, $Dispatcher->controller->request->params['pass']);
-
-		Configure::write('App.baseUrl', '/pages/index.php');
-
-		$url = new Request('pages/home');
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
-
-		$expected = 'Pages';
-		$this->assertEquals($expected, $Dispatcher->controller->name);
-
-		$url = new Request('pages/home/');
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
-		$this->assertNull($Dispatcher->controller->plugin);
-
-		$expected = 'Pages';
-		$this->assertEquals($expected, $Dispatcher->controller->name);
-
-		unset($Dispatcher);
-
-		require CAKE . 'Config/routes.php';
-		$Dispatcher = new TestDispatcher();
-
-		$url = new Request('test_dispatch_pages/camelCased');
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
-		$this->assertEquals('TestDispatchPages', $Dispatcher->controller->name);
-
-		$url = new Request('test_dispatch_pages/camelCased/something. .');
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
-		$this->assertEquals(
-			'something. .',
-			$url->params['pass'][0],
-			'Period was chopped off. %s'
-		);
 	}
 
 /**
@@ -402,10 +371,16 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testDispatchActionReturnsResponse() {
-		$this->markTestIncomplete();
 		Router::connect('/:controller/:action');
 		$Dispatcher = new Dispatcher();
-		$request = new Request('some_pages/responseGenerator');
+		$request = new Request([
+			'url' => 'some_pages/responseGenerator',
+			'params' => [
+				'controller' => 'some_pages',
+				'action' => 'responseGenerator',
+				'pass' => []
+			]
+		]);
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 
 		ob_start();
@@ -421,25 +396,25 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testPrefixDispatch() {
-		$this->markTestIncomplete();
 		$Dispatcher = new TestDispatcher();
-		Configure::write('Routing.prefixes', array('admin'));
-		$request = new Request('admin/posts/index');
+		$request = new Request([
+			'url' => 'admin/posts/index',
+			'params' => [
+				'prefix' => 'admin',
+				'controller' => 'posts',
+				'action' => 'index',
+				'pass' => [],
+				'return' => 1
+			]
+		]);
 		$response = $this->getMock('Cake\Network\Response');
 
-		Router::reload();
-		require CAKE . 'Config/routes.php';
-
-		$Dispatcher->dispatch($request, $response, array('return' => 1));
+		$Dispatcher->dispatch($request, $response);
 
 		$this->assertInstanceOf(
 			'TestApp\Controller\Admin\PostsController',
 			$Dispatcher->controller
 		);
-		$this->assertEquals('admin', $request->params['prefix']);
-		$this->assertEquals('posts', $request->params['controller']);
-		$this->assertEquals('index', $request->params['action']);
-
 		$expected = '/admin/posts/index';
 		$this->assertSame($expected, $request->here);
 	}
@@ -450,91 +425,28 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testPrefixDispatchPlugin() {
-		$this->markTestIncomplete();
-		Configure::write('Routing.prefixes', array('admin'));
 		Plugin::load('TestPlugin');
 
-		$request = new Request('admin/posts/index');
+		$request = new Request([
+			'url' => 'admin/test_plugin/comments/index',
+			'params' => [
+				'plugin' => 'test_plugin',
+				'prefix' => 'admin',
+				'controller' => 'comments',
+				'action' => 'index',
+				'pass' => [],
+				'return' => 1
+			]
+		]);
 		$response = $this->getMock('Cake\Network\Response');
 
-		Router::reload();
-		require CAKE . 'Config/routes.php';
-
 		$Dispatcher = new TestDispatcher();
-		$Dispatcher->dispatch($request, $response, array('return' => 1));
+		$Dispatcher->dispatch($request, $response);
 
 		$this->assertInstanceOf(
-			'TestApp\Controller\Admin\PostsController',
+			'TestPlugin\Controller\Admin\CommentsController',
 			$Dispatcher->controller
 		);
-		$this->assertEquals('admin', $request->params['prefix']);
-		$this->assertEquals('posts', $request->params['controller']);
-		$this->assertEquals('index', $request->params['action']);
-
-		$expected = '/admin/posts/index';
-		$this->assertSame($expected, $request->here);
-	}
-
-/**
- * test plugin shortcut urls with controllers that need to be loaded,
- * the above test uses a controller that has already been included.
- *
- * @return void
- */
-	public function testPluginShortCutUrlsWithControllerThatNeedsToBeLoaded() {
-		$this->markTestIncomplete();
-		Router::reload();
-		Plugin::load(['TestPlugin', 'TestPluginTwo']);
-
-		$Dispatcher = new TestDispatcher();
-		$Dispatcher->base = false;
-
-		$url = new Request('test_plugin/');
-		$response = $this->getMock('Cake\Network\Response');
-
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
-		$this->assertEquals('test_plugin', $url->params['controller']);
-		$this->assertEquals('test_plugin', $url->params['plugin']);
-		$this->assertEquals('index', $url->params['action']);
-		$this->assertFalse(isset($url->params['pass'][0]));
-
-		$url = new Request('/test_plugin/tests/index');
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
-		$this->assertEquals('tests', $url->params['controller']);
-		$this->assertEquals('test_plugin', $url->params['plugin']);
-		$this->assertEquals('index', $url->params['action']);
-		$this->assertFalse(isset($url->params['pass'][0]));
-
-		$url = new Request('/test_plugin/tests/index/some_param');
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
-		$this->assertEquals('tests', $url->params['controller']);
-		$this->assertEquals('test_plugin', $url->params['plugin']);
-		$this->assertEquals('index', $url->params['action']);
-		$this->assertEquals('some_param', $url->params['pass'][0]);
-	}
-
-/**
- * Test dispatching into the TestPlugin in the TestApp
- *
- * @return void
- */
-	public function testTestPluginDispatch() {
-		$this->markTestIncomplete();
-		$Dispatcher = new TestDispatcher();
-		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
-		Router::reload();
-		Router::parse('/');
-
-		$url = new Request('/test_plugin/tests/index');
-		$response = $this->getMock('Cake\Network\Response');
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
-		$this->assertTrue(class_exists('TestPlugin\Controller\TestsController'));
-		$this->assertTrue(class_exists('TestPlugin\Controller\TestPluginAppController'));
-		$this->assertTrue(class_exists('TestPlugin\Controller\Component\PluginsComponent'));
-
-		$this->assertEquals('tests', $url->params['controller']);
-		$this->assertEquals('test_plugin', $url->params['plugin']);
-		$this->assertEquals('index', $url->params['action']);
 	}
 
 /**
@@ -574,7 +486,25 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testBeforeDispatchAbortDispatch() {
-		$this->markTestIncomplete();
+		$response = $this->getMock('Cake\Network\Response', ['send']);
+		$response->expects($this->once())
+			->method('send');
+
+		$filter = $this->getMock(
+			'Cake\Routing\DispatcherFilter',
+			['beforeDispatch', 'afterDispatch']);
+		$filter->expects($this->once())
+			->method('beforeDispatch')
+			->will($this->returnValue($response));
+
+		$filter->expects($this->never())
+			->method('afterDispatch');
+
+		$request = new Request();
+		$res = new Response();
+		$dispatcher = new Dispatcher();
+		$dispatcher->add($filter);
+		$dispatcher->dispatch($request, $res);
 	}
 
 /**
@@ -582,40 +512,31 @@ class DispatcherTest extends TestCase {
  *
  * @return void
  */
-	public function testAfterDispatchAbortDispatch() {
-		$this->markTestIncomplete();
+	public function testAfterDispatchReplaceResponse() {
+		$response = $this->getMock('Cake\Network\Response', ['send']);
+		$response->expects($this->once())
+			->method('send');
+
+		$filter = $this->getMock(
+			'Cake\Routing\DispatcherFilter',
+			['beforeDispatch', 'afterDispatch']);
+
+		$filter->expects($this->once())
+			->method('afterDispatch')
+			->will($this->returnValue($response));
+
+		$request = new Request([
+			'url' => '/posts',
+			'params' => [
+				'plugin' => null,
+				'controller' => 'posts',
+				'action' => 'index',
+				'pass' => [],
+			]
+		]);
+		$dispatcher = new Dispatcher();
+		$dispatcher->add($filter);
+		$dispatcher->dispatch($request, $response);
 	}
 
-/**
- * testChangingParamsFromBeforeFilter method
- *
- * @return void
- */
-	public function testChangingParamsFromBeforeFilter() {
-		$this->markTestIncomplete();
-		Router::connect('/:controller/:action/*');
-
-		$Dispatcher = new TestDispatcher();
-		$response = $this->getMock('Cake\Network\Response');
-		$url = new Request('some_posts/index/param:value/param2:value2');
-
-		try {
-			$Dispatcher->dispatch($url, $response, array('return' => 1));
-			$this->fail('No exception.');
-		} catch (MissingActionException $e) {
-			$this->assertEquals('Action SomePostsController::view() could not be found.', $e->getMessage());
-		}
-
-		$url = new Request('some_posts/something_else/param:value/param2:value2');
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
-
-		$expected = 'SomePosts';
-		$this->assertEquals($expected, $Dispatcher->controller->name);
-
-		$expected = 'change';
-		$this->assertEquals($expected, $url->action);
-
-		$expected = array('changed');
-		$this->assertSame($expected, $url->params['pass']);
-	}
 }

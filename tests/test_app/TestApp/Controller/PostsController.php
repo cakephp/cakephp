@@ -31,4 +31,12 @@ class PostsController extends AppController {
 		'RequestHandler',
 		'Auth'
 	);
+
+/**
+ * Index method.
+ *
+ * @return void
+ */
+	public function index() {
+	}
 }

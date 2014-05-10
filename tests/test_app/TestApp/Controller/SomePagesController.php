@@ -23,20 +23,12 @@ use Cake\Network\Response;
 class SomePagesController extends Controller {
 
 /**
- * uses property
- *
- * @var array
- */
-	public $uses = array();
-
-/**
  * display method
  *
  * @param mixed $page
  * @return void
  */
 	public function display($page = null) {
-		return $page;
 	}
 
 /**
