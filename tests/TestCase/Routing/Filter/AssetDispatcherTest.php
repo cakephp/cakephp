@@ -15,6 +15,7 @@ namespace Cake\Test\TestCase\Routing\Filter;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -86,6 +87,138 @@ class AssetDispatcherTest extends TestCase {
 
 		$this->assertNull($filter->beforeDispatch($event));
 		$this->assertFalse($event->isStopped());
+	}
+
+/**
+ * Test that 404's are returned when .. is in the URL
+ *
+ * @return voi
+ */
+	public function test404OnDoubleDot() {
+		$filter = new AssetDispatcher();
+
+		$response = $this->getMock('Response', array('_sendHeader'));
+		$request = new Request('theme/test_theme/../webroot/css/test_asset.css');
+		$event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
+
+		$this->assertNull($filter->beforeDispatch($event));
+		$this->assertFalse($event->isStopped());
+
+		$request = new Request('theme/test_theme/%3e./webroot/css/test_asset.css');
+		$event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
+
+		$this->assertNull($filter->beforeDispatch($event));
+		$this->assertFalse($event->isStopped());
+	}
+
+/**
+ * Data provider for asset filter
+ *
+ * - theme assets.
+ * - plugin assets.
+ * - plugin assets in sub directories.
+ * - unknown plugin assets.
+ *
+ * @return array
+ */
+	public static function assetProvider() {
+		return array(
+			array(
+				'theme/test_theme/flash/theme_test.swf',
+				'TestApp/Template/Themed/TestTheme/webroot/flash/theme_test.swf'
+			),
+			array(
+				'theme/test_theme/pdfs/theme_test.pdf',
+				'TestApp/Template/Themed/TestTheme/webroot/pdfs/theme_test.pdf'
+			),
+			array(
+				'theme/test_theme/img/test.jpg',
+				'TestApp/Template/Themed/TestTheme/webroot/img/test.jpg'
+			),
+			array(
+				'theme/test_theme/css/test_asset.css',
+				'TestApp/Template/Themed/TestTheme/webroot/css/test_asset.css'
+			),
+			array(
+				'theme/test_theme/js/theme.js',
+				'TestApp/Template/Themed/TestTheme/webroot/js/theme.js'
+			),
+			array(
+				'theme/test_theme/js/one/theme_one.js',
+				'TestApp/Template/Themed/TestTheme/webroot/js/one/theme_one.js'
+			),
+			array(
+				'theme/test_theme/space%20image.text',
+				'TestApp/Template/Themed/TestTheme/webroot/space image.text'
+			),
+			array(
+				'test_plugin/root.js',
+				'Plugin/TestPlugin/webroot/root.js'
+			),
+			array(
+				'test_plugin/flash/plugin_test.swf',
+				'Plugin/TestPlugin/webroot/flash/plugin_test.swf'
+			),
+			array(
+				'test_plugin/pdfs/plugin_test.pdf',
+				'Plugin/TestPlugin/webroot/pdfs/plugin_test.pdf'
+			),
+			array(
+				'test_plugin/js/test_plugin/test.js',
+				'Plugin/TestPlugin/webroot/js/test_plugin/test.js'
+			),
+			array(
+				'test_plugin/css/test_plugin_asset.css',
+				'Plugin/TestPlugin/webroot/css/test_plugin_asset.css'
+			),
+			array(
+				'test_plugin/img/cake.icon.gif',
+				'Plugin/TestPlugin/webroot/img/cake.icon.gif'
+			),
+			array(
+				'plugin_js/js/plugin_js.js',
+				'Plugin/PluginJs/webroot/js/plugin_js.js'
+			),
+			array(
+				'plugin_js/js/one/plugin_one.js',
+				'Plugin/PluginJs/webroot/js/one/plugin_one.js'
+			),
+			array(
+				'test_plugin/css/unknown.extension',
+				'Plugin/TestPlugin/webroot/css/unknown.extension'
+			),
+			array(
+				'test_plugin/css/theme_one.htc',
+				'Plugin/TestPlugin/webroot/css/theme_one.htc'
+			),
+		);
+	}
+
+/**
+ * Test assets
+ *
+ * @dataProvider assetProvider
+ * @outputBuffering enabled
+ * @return void
+ */
+	public function testAsset($url, $file) {
+		Plugin::load(array('TestPlugin', 'PluginJs'));
+
+		$filter = new AssetDispatcher();
+		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
+		$request = new Request($url);
+		$event = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
+
+		$filter->beforeDispatch($event);
+		$result = ob_get_clean();
+
+		$path = TEST_APP . str_replace('/', DS, $file);
+		$file = file_get_contents($path);
+		$this->assertEquals($file, $result);
+
+		$expected = filesize($path);
+		$headers = $response->header();
+		$this->assertEquals($expected, $headers['Content-Length']);
 	}
 
 }
