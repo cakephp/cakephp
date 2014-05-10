@@ -13,7 +13,6 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
-use Cake\Cache\Cache;
 use Cake\Controller\Controller;
 use Cake\Controller\Error\MissingActionException;
 use Cake\Controller\Error\MissingControllerException;
@@ -260,8 +259,6 @@ class DispatcherTest extends TestCase {
 		Configure::write('App.webroot', 'webroot');
 		Configure::write('App.namespace', 'TestApp');
 
-		Cache::disable();
-
 		App::objects('Plugin', null, false);
 	}
 
@@ -342,7 +339,6 @@ class DispatcherTest extends TestCase {
 			]
 		]);
 		$response = $this->getMock('Cake\Network\Response');
-
 		$Dispatcher->dispatch($request, $response, array('return' => 1));
 	}
 
@@ -621,200 +617,5 @@ class DispatcherTest extends TestCase {
 
 		$expected = array('changed');
 		$this->assertSame($expected, $url->params['pass']);
-	}
-
-/**
- * Data provider for cached actions.
- *
- * - Test simple views
- * - Test views with nocache tags
- * - Test requests with named + passed params.
- * - Test requests with query string params
- * - Test themed views.
- *
- * @return array
- */
-	public static function cacheActionProvider() {
-		return array(
-			array('/'),
-			array('test_cached_pages/index'),
-			array('TestCachedPages/index'),
-			array('test_cached_pages/test_nocache_tags'),
-			array('TestCachedPages/test_nocache_tags'),
-			array('test_cached_pages/view/param/param'),
-			array('test_cached_pages/view?q=cakephp'),
-			array('test_cached_pages/themed'),
-		);
-	}
-
-/**
- * testFullPageCachingDispatch method
- *
- * @dataProvider cacheActionProvider
- * @return void
- */
-	public function testFullPageCachingDispatch($url) {
-		$this->markTestIncomplete();
-		Cache::enable();
-		Configure::write('Cache.disable', false);
-		Configure::write('Cache.check', true);
-		Configure::write('debug', true);
-
-		Router::reload();
-		Router::connect('/', array('controller' => 'test_cached_pages', 'action' => 'index'));
-		Router::connect('/:controller/:action/*');
-
-		$dispatcher = new TestDispatcher();
-		$request = new Request($url);
-		$response = $this->getMock('Cake\Network\Response', array('send'));
-
-		$dispatcher->dispatch($request, $response);
-		$out = $response->body();
-
-		Configure::write('Dispatcher.filters', array('CacheDispatcher'));
-		$request = new Request($url);
-		$response = $this->getMock('Cake\Network\Response', array('send'));
-		$dispatcher = new TestDispatcher();
-		$dispatcher->dispatch($request, $response);
-		$cached = $response->body();
-
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-
-		$this->assertTextEquals($out, $cached);
-
-		$filename = $this->_cachePath($request->here());
-		unlink($filename);
-	}
-
-/**
- * testHttpMethodOverrides method
- *
- * @return void
- */
-	public function testHttpMethodOverrides() {
-		$this->markTestIncomplete();
-		Router::reload();
-		Router::mapResources('Posts');
-
-		$dispatcher = new Dispatcher();
-
-		$request = new Request([
-			'url' => '/posts',
-			'environment' => ['REQUEST_METHOD' => 'POST']
-		]);
-		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
-		$dispatcher->parseParams($event);
-		$expected = array(
-			'pass' => [],
-			'plugin' => null,
-			'controller' => 'posts',
-			'action' => 'add',
-			'[method]' => 'POST'
-		);
-		foreach ($expected as $key => $value) {
-			$this->assertEquals($value, $request[$key], 'Value mismatch for ' . $key . ' %s');
-		}
-
-		$request = new Request([
-			'url' => '/posts/5',
-			'environment' => [
-				'REQUEST_METHOD' => 'GET',
-				'HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT'
-			]
-		]);
-		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
-		$dispatcher->parseParams($event);
-		$expected = array(
-			'pass' => array('5'),
-			'id' => '5',
-			'plugin' => null,
-			'controller' => 'posts',
-			'action' => 'edit',
-			'[method]' => 'PUT'
-		);
-		foreach ($expected as $key => $value) {
-			$this->assertEquals($value, $request[$key], 'Value mismatch for ' . $key . ' %s');
-		}
-
-		$request = new Request([
-			'url' => '/posts/5',
-			'environment' => [
-				'REQUEST_METHOD' => 'GET'
-			]
-		]);
-		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
-		$dispatcher->parseParams($event);
-		$expected = array(
-			'pass' => array('5'),
-			'id' => '5',
-			'plugin' => null,
-			'controller' => 'posts',
-			'action' => 'view',
-			'[method]' => 'GET'
-		);
-		foreach ($expected as $key => $value) {
-			$this->assertEquals($value, $request[$key], 'Value mismatch for ' . $key . ' %s');
-		}
-
-		$request = new Request([
-			'url' => '/posts/5',
-			'post' => array('_method' => 'PUT')
-		]);
-		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
-		$dispatcher->parseParams($event);
-		$expected = array(
-			'pass' => array('5'),
-			'id' => '5',
-			'plugin' => null,
-			'controller' => 'posts',
-			'action' => 'edit',
-			'[method]' => 'PUT'
-		);
-		foreach ($expected as $key => $value) {
-			$this->assertEquals($value, $request[$key], 'Value mismatch for ' . $key . ' %s');
-		}
-
-		$request = new Request(array(
-			'url' => '/posts',
-			'post' => array(
-				'_method' => 'POST',
-				'Post' => array('title' => 'New Post'),
-				'extra' => 'data'
-			),
-		));
-		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
-		$dispatcher->parseParams($event);
-		$expected = array(
-			'pass' => [],
-			'plugin' => null,
-			'controller' => 'posts',
-			'action' => 'add',
-			'[method]' => 'POST',
-			'data' => array('extra' => 'data', 'Post' => array('title' => 'New Post')),
-		);
-		foreach ($expected as $key => $value) {
-			$this->assertEquals($value, $request[$key], 'Value mismatch for ' . $key . ' %s');
-		}
-	}
-
-/**
- * cachePath method
- *
- * @param string $here
- * @return string
- */
-	protected function _cachePath($here) {
-		$path = $here;
-		if ($here === '/') {
-			$path = 'home';
-		}
-		$path = strtolower(Inflector::slug($path));
-
-		$filename = CACHE . 'views/' . $path . '.php';
-
-		if (!file_exists($filename)) {
-			$filename = CACHE . 'views/' . $path . '_index.php';
-		}
-		return $filename;
 	}
 }
