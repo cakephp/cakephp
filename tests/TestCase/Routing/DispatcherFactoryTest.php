@@ -37,10 +37,30 @@ class DispatcherFactoryTest extends TestCase {
  *
  * @return void
  */
-	public function testAddMiddleware() {
+	public function testAddFilter() {
 		$mw = $this->getMock('Cake\Routing\DispatcherFilter', ['beforeDispatch']);
 		$result = DispatcherFactory::add($mw);
-		$this->assertNull($result);
+		$this->assertSame($mw, $result);
+	}
+
+/**
+ * Test add middleware as a string
+ *
+ * @return void
+ */
+	public function testAddFilterString() {
+		$result = DispatcherFactory::add('RoutingFilter');
+		$this->assertInstanceOf('Cake\Routing\Filter\RoutingFilter', $result);
+	}
+
+/**
+ * Test add middleware missing
+ *
+ * @expectedException Cake\Routing\Error\MissingDispatcherFilterException
+ * @return void
+ */
+	public function testAddFilterMissing() {
+		DispatcherFactory::add('NopeSauce');
 	}
 
 /**

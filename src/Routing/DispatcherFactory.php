@@ -14,7 +14,9 @@
  */
 namespace Cake\Routing;
 
+use Cake\Core\App;
 use Cake\Routing\Dispatcher;
+use Cake\Routing\Error\MissingDispatcherFilterException;
 
 /**
  * A factory for creating dispatchers with all the desired middleware
@@ -33,14 +35,34 @@ class DispatcherFactory {
  * Add a new middleware object to the stack of middleware
  * that will be executed.
  *
- * @param \Cake\Routing\Middleware $middleware
- * @return void
+ * Instances of filters will be re-used across all sub-requests
+ * in a request.
+ *
+ * @param string|\Cake\Routing\DispatcherFilter $filter Either the classname of the filter
+ *   or an instance to use.
+ * @return \Cake\Routing\DispatcherFilter
  */
-	public static function add($middleware) {
-		if (is_string($middleware)) {
-			$middleware = static::_createMiddleware($middleware);
+	public static function add($filter) {
+		if (is_string($filter)) {
+			$filter = static::_createFilter($filter);
 		}
-		static::$_stack[] = $middleware;
+		static::$_stack[] = $filter;
+		return $filter;
+	}
+
+/**
+ * Create an instance of a filter.
+ *
+ * @param string $name The name of the filter to build.
+ * @return \Cake\Routing\DispatcherFilter
+ */
+	protected static function _createFilter($name) {
+		$className = App::className($name, 'Routing/Filter');
+		if (!$className) {
+			$msg = sprintf('Cannot locate dispatcher filter named "%s".', $name);
+			throw new MissingDispatcherFilterException($msg);
+		}
+		return new $className();
 	}
 
 /**
