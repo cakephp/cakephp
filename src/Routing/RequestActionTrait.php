@@ -16,7 +16,7 @@ namespace Cake\Routing;
 use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Routing\Dispatcher;
+use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 
 /**
@@ -95,19 +95,23 @@ trait RequestActionTrait {
 		}
 		unset($extra['post'], $extra['query']);
 
-		if (is_string($url) && strpos($url, Configure::read('App.fullBaseUrl')) === 0) {
-			$url = Router::normalize(str_replace(Configure::read('App.fullBaseUrl'), '', $url));
+		$baseUrl = Configure::read('App.fullBaseUrl');
+		if (is_string($url) && strpos($url, $baseUrl) === 0) {
+			$url = Router::normalize(str_replace($baseUrl, '', $url));
 		}
 		if (is_string($url)) {
 			$params = [
 				'url' => $url
 			];
 		} elseif (is_array($url)) {
-			$params = array_merge($url, [
-				'pass' => [],
+			$params = [
+				'params' => $url,
 				'base' => false,
 				'url' => Router::reverse($url)
-			]);
+			];
+			if (empty($params['params']['pass'])) {
+				$params['params']['pass'] = [];
+			}
 		}
 		if (!empty($post)) {
 			$params['post'] = $post;
@@ -116,8 +120,9 @@ trait RequestActionTrait {
 			$params['query'] = $query;
 		}
 		$request = new Request($params);
-		$dispatcher = new Dispatcher();
-		$result = $dispatcher->dispatch($request, new Response(), $extra);
+		$request->addParams($extra);
+		$dispatcher = DispatcherFactory::create();
+		$result = $dispatcher->dispatch($request, new Response());
 		Router::popRequest();
 		return $result;
 	}

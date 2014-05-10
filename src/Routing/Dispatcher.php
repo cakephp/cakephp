@@ -94,8 +94,8 @@ class Dispatcher {
  * @return string|void if `$request['return']` is set then it returns response body, null otherwise
  * @throws \Cake\Controller\Error\MissingControllerException When the controller is missing.
  */
-	public function dispatch(Request $request, Response $response, array $additionalParams = array()) {
-		$beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response', 'additionalParams'));
+	public function dispatch(Request $request, Response $response) {
+		$beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
 		$this->getEventManager()->dispatch($beforeEvent);
 
 		$request = $beforeEvent->data['request'];
