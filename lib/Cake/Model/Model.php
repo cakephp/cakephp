@@ -2106,7 +2106,7 @@ class Model extends Object implements CakeEventListener {
 	protected function _prepareUpdateFields($data) {
 		$foreignKeys = array();
 		foreach ($this->belongsTo as $assoc => $info) {
-			if ($info['counterCache']) {
+			if (isset($info['counterCache']) && $info['counterCache']) {
 				$foreignKeys[$assoc] = $info['foreignKey'];
 			}
 		}
