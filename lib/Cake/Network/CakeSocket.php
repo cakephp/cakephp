@@ -117,7 +117,9 @@ class CakeSocket {
 	public function __construct($config = array()) {
 		$this->config = array_merge($this->_baseConfig, $config);
 		if (!is_numeric($this->config['protocol'])) {
-			$this->config['protocol'] = getprotobyname($this->config['protocol']);
+			if ($protocol = getprotobyname($this->config['protocol'])) {
+                $this->config['protocol'] = $protocol;
+            }
 		}
 	}
 
@@ -131,11 +133,10 @@ class CakeSocket {
 		if ($this->connection) {
 			$this->disconnect();
 		}
-
-		$scheme = null;
-		if (isset($this->config['request']['uri']) && $this->config['request']['uri']['scheme'] === 'https') {
-			$scheme = 'ssl://';
-		}
+ 
+        if (is_numeric($this->config['protocol'])) {
+            $this->config['protocol'] = getprotobynumber($this->config['protocol']);
+        }
 
 		if (!empty($this->config['context'])) {
 			$context = stream_context_create($this->config['context']);
@@ -147,10 +148,9 @@ class CakeSocket {
 		if ($this->config['persistent']) {
 			$connectAs |= STREAM_CLIENT_PERSISTENT;
 		}
-
 		set_error_handler(array($this, '_connectionErrorHandler'));
 		$this->connection = stream_socket_client(
-			$scheme . $this->config['host'] . ':' . $this->config['port'],
+			$this->config['protocol'] . '://' . $this->config['host'] . ':' . $this->config['port'],
 			$errNum,
 			$errStr,
 			$this->config['timeout'],
@@ -358,7 +358,7 @@ class CakeSocket {
 /**
  * Encrypts current stream socket, using one of the defined encryption methods
  *
- * @param string $type can be one of 'ssl2', 'ssl3', 'ssl23' or 'tls'
+ * @param string $type can be one of 'sslv2', 'sslv3', 'sslv23' or 'tls'
  * @param string $clientOrServer can be one of 'client', 'server'. Default is 'client'
  * @param boolean $enable enable or disable encryption. Default is true (enable)
  * @return boolean True on success

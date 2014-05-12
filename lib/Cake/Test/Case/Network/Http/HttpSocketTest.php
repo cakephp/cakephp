@@ -218,7 +218,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->__construct(array('host' => 'foo-bar'));
 		$baseConfig['host'] = 'foo-bar';
 		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
-		$this->assertEquals($this->Socket->config, $baseConfig);
+		$this->assertEquals($baseConfig, $this->Socket->config);
 
 		$this->Socket->reset();
 		$baseConfig = $this->Socket->config;
@@ -227,11 +227,11 @@ class HttpSocketTest extends CakeTestCase {
 		$baseConfig['port'] = $baseConfig['request']['uri']['port'] = 23;
 		$baseConfig['request']['uri']['scheme'] = 'http';
 		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
-		$this->assertEquals($this->Socket->config, $baseConfig);
+		$this->assertEquals($baseConfig, $this->Socket->config);
 
 		$this->Socket->reset();
 		$this->Socket->__construct(array('request' => array('uri' => 'http://www.cakephp.org:23/')));
-		$this->assertEquals($this->Socket->config, $baseConfig);
+		$this->assertEquals($baseConfig, $this->Socket->config);
 	}
 
 /**
@@ -557,9 +557,8 @@ class HttpSocketTest extends CakeTestCase {
 
 			$raw = $expectation['request']['raw'];
 			$expectation['request']['raw'] = $expectation['request']['line'] . $expectation['request']['header'] . "\r\n" . $raw;
-
 			$r = array('config' => $this->Socket->config, 'request' => $this->Socket->request);
-			$this->assertEquals($r, $expectation, 'Failed test #' . $i . ' ');
+			$this->assertEquals($expectation,$r, 'Failed test #' . $i . ' ');
 			$expectation['request']['raw'] = $raw;
 		}
 
@@ -637,7 +636,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
 		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
 		$response = (string)$this->Socket->request($request);
-		$this->assertEquals($response, "<h1>Hello, your lucky number is " . $number . "</h1>");
+		$this->assertEquals("<h1>Hello, your lucky number is " . $number . "</h1>", $response);
 	}
 
 /**
@@ -658,7 +657,7 @@ class HttpSocketTest extends CakeTestCase {
 			)
 		);
 		$this->assertEquals($expect, $result);
-		$this->assertEquals($this->Socket->config['request']['cookies']['www.cakephp.org'], $expect);
+		$this->assertEquals($expect, $this->Socket->config['request']['cookies']['www.cakephp.org']);
 		$this->assertFalse($this->Socket->connected);
 	}
 
@@ -712,7 +711,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertEquals('', $result);
 		$this->assertEquals('CakeHttp Server', $this->Socket->response['header']['Server']);
 		fclose($f);
-		$this->assertEquals(file_get_contents(TMP . 'download.txt'), '<h1>This is a test!</h1>');
+		$this->assertEquals('<h1>This is a test!</h1>', file_get_contents(TMP . 'download.txt'));
 		unlink(TMP . 'download.txt');
 
 		$this->Socket->setContentResource(false);
@@ -1072,7 +1071,7 @@ class HttpSocketTest extends CakeTestCase {
 				'pass' => 'hunter2'
 			)
 		));
-		$this->assertEquals($this->Socket->request['auth'], array('Basic' => array('user' => 'joel', 'pass' => 'hunter2')));
+		$this->assertEquals(array('Basic' => array('user' => 'joel', 'pass' => 'hunter2')), $this->Socket->request['auth']);
 		$this->assertTrue(strpos($this->Socket->request['header'], 'Authorization: Basic am9lbDpodW50ZXIy') !== false);
 	}
 
@@ -1283,7 +1282,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertEquals(array('path' => '/my-cool-path'), $uri);
 
 		$uri = $this->Socket->parseUri('http://bob:foo123@www.cakephp.org:40/search?q=dessert#results');
-		$this->assertEquals($uri, array(
+		$this->assertEquals(array(
 			'scheme' => 'http',
 			'host' => 'www.cakephp.org',
 			'port' => 40,
@@ -1292,17 +1291,17 @@ class HttpSocketTest extends CakeTestCase {
 			'path' => '/search',
 			'query' => array('q' => 'dessert'),
 			'fragment' => 'results'
-		));
+		), $uri);
 
 		$uri = $this->Socket->parseUri('http://www.cakephp.org/');
-		$this->assertEquals($uri, array(
+		$this->assertEquals(array(
 			'scheme' => 'http',
 			'host' => 'www.cakephp.org',
 			'path' => '/'
-		));
+		),$uri);
 
 		$uri = $this->Socket->parseUri('http://www.cakephp.org', true);
-		$this->assertEquals($uri, array(
+		$this->assertEquals(array(
 			'scheme' => 'http',
 			'host' => 'www.cakephp.org',
 			'port' => 80,
@@ -1311,10 +1310,10 @@ class HttpSocketTest extends CakeTestCase {
 			'path' => '/',
 			'query' => array(),
 			'fragment' => null
-		));
+		), $uri);
 
 		$uri = $this->Socket->parseUri('https://www.cakephp.org', true);
-		$this->assertEquals($uri, array(
+		$this->assertEquals(array(
 			'scheme' => 'https',
 			'host' => 'www.cakephp.org',
 			'port' => 443,
@@ -1323,10 +1322,10 @@ class HttpSocketTest extends CakeTestCase {
 			'path' => '/',
 			'query' => array(),
 			'fragment' => null
-		));
+		), $uri);
 
 		$uri = $this->Socket->parseUri('www.cakephp.org:443/query?foo', true);
-		$this->assertEquals($uri, array(
+		$this->assertEquals(array(
 			'scheme' => 'https',
 			'host' => 'www.cakephp.org',
 			'port' => 443,
@@ -1335,39 +1334,39 @@ class HttpSocketTest extends CakeTestCase {
 			'path' => '/query',
 			'query' => array('foo' => ""),
 			'fragment' => null
-		));
+		), $uri);
 
 		$uri = $this->Socket->parseUri('http://www.cakephp.org', array('host' => 'piephp.org', 'user' => 'bob', 'fragment' => 'results'));
-		$this->assertEquals($uri, array(
+		$this->assertEquals(array(
 			'host' => 'www.cakephp.org',
 			'user' => 'bob',
 			'fragment' => 'results',
 			'scheme' => 'http'
-		));
+		), $uri);
 
 		$uri = $this->Socket->parseUri('https://www.cakephp.org', array('scheme' => 'http', 'port' => 23));
-		$this->assertEquals($uri, array(
+		$this->assertEquals(array(
 			'scheme' => 'https',
 			'port' => 23,
 			'host' => 'www.cakephp.org'
-		));
+		), $uri);
 
 		$uri = $this->Socket->parseUri('www.cakephp.org:59', array('scheme' => array('http', 'https'), 'port' => 80));
-		$this->assertEquals($uri, array(
+		$this->assertEquals(array(
 			'scheme' => 'http',
 			'port' => 59,
 			'host' => 'www.cakephp.org'
-		));
+		), $uri);
 
 		$uri = $this->Socket->parseUri(array('scheme' => 'http', 'host' => 'www.google.com', 'port' => 8080), array('scheme' => array('http', 'https'), 'host' => 'www.google.com', 'port' => array(80, 443)));
-		$this->assertEquals($uri, array(
+		$this->assertEquals(array(
 			'scheme' => 'http',
 			'host' => 'www.google.com',
 			'port' => 8080
-		));
+		), $uri);
 
 		$uri = $this->Socket->parseUri('http://www.cakephp.org/?param1=value1&param2=value2%3Dvalue3');
-		$this->assertEquals($uri, array(
+		$this->assertEquals(array(
 			'scheme' => 'http',
 			'host' => 'www.cakephp.org',
 			'path' => '/',
@@ -1375,10 +1374,10 @@ class HttpSocketTest extends CakeTestCase {
 				'param1' => 'value1',
 				'param2' => 'value2=value3'
 			)
-		));
+		), $uri);
 
 		$uri = $this->Socket->parseUri('http://www.cakephp.org/?param1=value1&param2=value2=value3');
-		$this->assertEquals($uri, array(
+		$this->assertEquals(array(
 			'scheme' => 'http',
 			'host' => 'www.cakephp.org',
 			'path' => '/',
@@ -1386,7 +1385,7 @@ class HttpSocketTest extends CakeTestCase {
 				'param1' => 'value1',
 				'param2' => 'value2=value3'
 			)
-		));
+		), $uri);
 	}
 
 /**

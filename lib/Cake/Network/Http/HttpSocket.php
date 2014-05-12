@@ -454,7 +454,6 @@ class HttpSocket extends CakeSocket {
 			}
 			$uri = $this->_buildUri($uri);
 		}
-
 		$request = Hash::merge(array('method' => 'GET', 'uri' => $uri), $request);
 		return $this->request($request);
 	}
@@ -785,10 +784,16 @@ class HttpSocket extends CakeSocket {
 		if (isset($uri['scheme']) && is_array($uri['scheme'])) {
 			$uri['scheme'] = array_shift($uri['scheme']);
 		}
+
+        if (isset($uri['scheme']) && $uri['scheme'] === 'https') {
+	        if ($this->config['protocol'] === 'tcp') {
+        	    $this->config['protocol'] = 'ssl';
+            }
+        }
+
 		if (isset($uri['port']) && is_array($uri['port'])) {
 			$uri['port'] = array_shift($uri['port']);
 		}
-
 		if (array_key_exists('query', $uri)) {
 			$uri['query'] = $this->_parseQuery($uri['query']);
 		}
