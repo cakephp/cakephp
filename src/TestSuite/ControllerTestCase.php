@@ -20,6 +20,7 @@ use Cake\Core\App;
 use Cake\Error;
 use Cake\Event\Event;
 use Cake\Routing\Dispatcher;
+use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
@@ -36,13 +37,6 @@ class ControllerTestDispatcher extends Dispatcher {
  * @var \Cake\Controller\Controller
  */
 	public $testController = null;
-
-/**
- * Use custom routes during tests
- *
- * @var bool
- */
-	public $loadRoutes = true;
 
 /**
  * Returns the test controller
@@ -70,18 +64,6 @@ class ControllerTestDispatcher extends Dispatcher {
 			}
 		}
 		return $this->testController;
-	}
-
-/**
- * Loads routes and resets if the test case dictates it should
- *
- * @return void
- */
-	protected function _loadRoutes() {
-		parent::_loadRoutes();
-		if (!$this->loadRoutes) {
-			Router::reload();
-		}
 	}
 
 }
@@ -254,17 +236,24 @@ abstract class ControllerTestCase extends TestCase {
 				->will($this->returnValue($options['data']));
 		}
 
-		$Dispatch = new ControllerTestDispatcher();
-		$Dispatch->loadRoutes = $this->loadRoutes;
-		$Dispatch->parseParams(new Event('ControllerTestCase', $Dispatch, array('request' => $request)));
+		if ($this->loadRoutes) {
+			Router::reload();
+		}
+		$request->addParams(Router::parse($request->url));
+
+		// Handle redirect routes.
 		if (!isset($request->params['controller']) && Router::getRequest()) {
 			$this->headers = Router::getRequest()->response->header();
 			return;
 		}
+
+		$Dispatch = new ControllerTestDispatcher();
+		foreach (DispatcherFactory::filters() as $filter) {
+			$Dispatch->add($filter);
+		}
 		if ($this->_dirtyController) {
 			$this->controller = null;
 		}
-
 		$plugin = empty($request->params['plugin']) ? '' : Inflector::camelize($request->params['plugin']) . '.';
 		if ($this->controller === null && $this->autoMock) {
 			$this->generate($plugin . Inflector::camelize($request->params['controller']));
@@ -275,9 +264,12 @@ abstract class ControllerTestCase extends TestCase {
 			$params['bare'] = 1;
 			$params['requested'] = 1;
 		}
+		$request->addParams($params);
+
 		$Dispatch->testController = $this->controller;
 		$Dispatch->response = $this->getMock('Cake\Network\Response', array('send', 'stop'));
-		$this->result = $Dispatch->dispatch($request, $Dispatch->response, $params);
+		$this->result = $Dispatch->dispatch($request, $Dispatch->response);
+
 		$this->controller = $Dispatch->testController;
 		$this->vars = $this->controller->viewVars;
 		$this->contents = $this->controller->response->body();

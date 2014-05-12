@@ -79,6 +79,15 @@ class DispatcherFactory {
 	}
 
 /**
+ * Get the connected dispatcher filters.
+ *
+ * @return array
+ */
+	public static function filters() {
+		return static::$_stack;
+	}
+
+/**
  * Clear the middleware stack.
  *
  * @return void
