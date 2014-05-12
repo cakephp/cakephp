@@ -15,6 +15,7 @@
  * @since         CakePHP(tm) v 1.2.0.5551
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+App::uses('Hash', 'Utility');
 
 /**
  * String handling methods.
@@ -186,6 +187,7 @@ class String {
  * - escape: The character or string used to escape the before character / string (Defaults to `\`)
  * - format: A regex to use for matching variable placeholders. Default is: `/(?<!\\)\:%s/`
  *   (Overwrites before, after, breaks escape / clean)
+ * - flatten: If a deep data array should be flattened using `.` as separator
  * - clean: A boolean or array with instructions for String::cleanInsert
  *
  * @param string $str A string containing variable placeholders
@@ -196,13 +198,17 @@ class String {
  */
 	public static function insert($str, $data, $options = array()) {
 		$defaults = array(
-			'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false
+			'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false,
+			'flatten' => false
 		);
 		$options += $defaults;
 		$format = $options['format'];
 		$data = (array)$data;
 		if (empty($data)) {
 			return ($options['clean']) ? String::cleanInsert($str, $options) : $str;
+		}
+		if ($options['flatten']) {
+			$data = Hash::flatten($data);
 		}
 
 		if (!isset($format)) {
