@@ -77,13 +77,13 @@ class BakeShell extends Shell {
 			$this->out(__d('cake_console', 'Add your database connection information to App/Config/app.php.'));
 			return false;
 		}
-		$this->out(__d('cake_console', 'The following commands you can generate skeleton code your your application.'));
+		$this->out(__d('cake_console', 'The following commands you can use to generate skeleton code for your application.'));
 		$this->out('');
 		$this->out(__d('cake_console', '<info>Available bake commands:</info>'));
 		$this->out('');
 		foreach ($this->tasks as $task) {
 			list($p, $name) = pluginSplit($task);
-			$this->out(Inflector::underscore($name));
+			$this->out('- ' . Inflector::underscore($name));
 		}
 		$this->out('');
 		$this->out(__d('cake_console', 'By using <info>Console/cake bake [name]</info> you can invoke a specific bake task.'));
