@@ -138,7 +138,10 @@ class CakeTestSuiteDispatcher {
 		}
 		foreach (App::path('vendors') as $vendor) {
 			$vendor = rtrim($vendor, DS);
-			if (is_dir($vendor . DS . 'PHPUnit')) {
+			if (is_dir($vendor . DS . 'phpunit' . DS . 'phpunit' . DS . 'PHPUnit')) {
+				ini_set('include_path', $vendor . DS . 'phpunit' . DS . 'phpunit' . PATH_SEPARATOR . ini_get('include_path'));
+				break;
+			} elseif (is_dir($vendor . DS . 'PHPUnit')) {
 				ini_set('include_path', $vendor . PATH_SEPARATOR . ini_get('include_path'));
 				break;
 			}
