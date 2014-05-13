@@ -123,7 +123,8 @@ class Mysql extends DboSource {
 		'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
 		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary' => array('name' => 'blob'),
-		'boolean' => array('name' => 'tinyint', 'limit' => '1')
+		'boolean' => array('name' => 'tinyint', 'limit' => '1'),
+		'point' => array('name' => 'point')
 	);
 
 /**
@@ -487,7 +488,7 @@ class Mysql extends DboSource {
 					$col = array();
 					$index[$idx->Key_name]['column'] = $idx->Column_name;
 
-					if ($idx->Index_type === 'FULLTEXT') {
+					if (in_array($idx->Index_type, array('FULLTEXT', 'SPATIAL'))) {
 						$index[$idx->Key_name]['type'] = strtolower($idx->Index_type);
 					} else {
 						$index[$idx->Key_name]['unique'] = intval($idx->Non_unique == 0);
@@ -499,7 +500,7 @@ class Mysql extends DboSource {
 					$col[] = $idx->Column_name;
 					$index[$idx->Key_name]['column'] = $col;
 				}
-				if (!empty($idx->Sub_part)) {
+				if (!empty($idx->Sub_part) && $idx->Index_type !== 'SPATIAL') {
 					if (!isset($index[$idx->Key_name]['length'])) {
 						$index[$idx->Key_name]['length'] = array();
 					}
@@ -611,6 +612,9 @@ class Mysql extends DboSource {
 			$out = '';
 			if ($name === 'PRIMARY') {
 				$out .= 'PRIMARY ';
+				$name = null;
+			} elseif (isset($value['type']) && $value['type'] === 'spatial') {
+				$out .= 'SPATIAL ';
 				$name = null;
 			} else {
 				if (!empty($value['unique'])) {
@@ -753,6 +757,9 @@ class Mysql extends DboSource {
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
+		}
+		if ((strpos($col, 'point') !== false) || $col === 'point') {
+			return 'point';
 		}
 		if (($col === 'tinyint' && $limit === 1) || $col === 'boolean') {
 			return 'boolean';
