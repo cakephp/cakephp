@@ -208,12 +208,12 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	public function testBetween() {
-		$this->assertTrue(Validation::between('abcdefg', 1, 7));
-		$this->assertTrue(Validation::between('', 0, 7));
-		$this->assertTrue(Validation::between('אกあアꀀ豈', 1, 7));
+		$this->assertTrue(Validation::lengthBetween('abcdefg', 1, 7));
+		$this->assertTrue(Validation::lengthBetween('', 0, 7));
+		$this->assertTrue(Validation::lengthBetween('אกあアꀀ豈', 1, 7));
 
-		$this->assertFalse(Validation::between('abcdefg', 1, 6));
-		$this->assertFalse(Validation::between('ÆΔΩЖÇ', 1, 3));
+		$this->assertFalse(Validation::lengthBetween('abcdefg', 1, 6));
+		$this->assertFalse(Validation::lengthBetween('ÆΔΩЖÇ', 1, 3));
 	}
 
 /**

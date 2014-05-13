@@ -104,7 +104,7 @@ class Validation {
  * @param integer $max Maximum value in range (inclusive)
  * @return boolean Success
  */
-	public static function between($check, $min, $max) {
+	public static function lengthBetween($check, $min, $max) {
 		$length = mb_strlen($check);
 		return ($length >= $min && $length <= $max);
 	}
