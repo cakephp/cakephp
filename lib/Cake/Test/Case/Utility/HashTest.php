@@ -217,6 +217,10 @@ class HashTest extends CakeTestCase {
 
 		$result = Hash::get($data, array('1', 'Article'));
 		$this->assertEquals($data[1]['Article'], $result);
+
+		$dataObject = new ArrayObject($data, ArrayObject::ARRAY_AS_PROPS);
+		$result = Hash::get($dataObject, array('1', 'Article'));
+		$this->assertEquals($dataObject[1]['Article'], $result);
 	}
 
 /**
