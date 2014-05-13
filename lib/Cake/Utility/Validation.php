@@ -110,6 +110,20 @@ class Validation {
 	}
 
 /**
+ * Alias of Validator::lengthBetween() for backwards compatibility.
+ *
+ * @see Validator::lengthBetween()
+ * @deprecated Deprecated since 2.6, use Validator::lengthBetween() instead.
+ * @param string $check Value to check for length
+ * @param integer $min Minimum value in range (inclusive)
+ * @param integer $max Maximum value in range (inclusive)
+ * @return boolean Success
+ */
+	public static function between($check, $min, $max) {
+		return self::lengthBetween($check, $min, $max);
+	}
+
+/**
  * Returns true if field is left blank -OR- only whitespace characters are present in its value
  * Whitespace characters include Space, Tab, Carriage Return, Newline
  *
