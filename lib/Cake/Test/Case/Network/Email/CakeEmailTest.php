@@ -1302,6 +1302,52 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * testSendRender both method
+ *
+ * @return void
+ */
+	public function testSendRenderBoth() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->template('default', 'default');
+		$this->CakeEmail->emailFormat('both');
+		$result = $this->CakeEmail->send();
+
+		$this->assertContains('Message-ID: ', $result['headers']);
+		$this->assertContains('To: ', $result['headers']);
+
+		$boundary = $this->CakeEmail->getBoundary();
+		$this->assertContains('Content-Type: multipart/alternative; boundary="' . $boundary . '"', $result['headers']);
+
+		$expected = "--$boundary\r\n" .
+			"Content-Type: text/plain; charset=UTF-8\r\n" .
+			"Content-Transfer-Encoding: 8bit\r\n" .
+			"\r\n" .
+			"\r\n" .
+			"\r\n" .
+			"This email was sent using the CakePHP Framework, http://cakephp.org." .
+			"\r\n" .
+			"\r\n" .
+			"--$boundary\r\n" .
+			"Content-Type: text/html; charset=UTF-8\r\n" .
+			"Content-Transfer-Encoding: 8bit\r\n" .
+			"\r\n" .
+			"<!DOCTYPE html";
+		$this->assertStringStartsWith($expected, $result['message']);
+
+		$expected = "</html>\r\n" .
+			"\r\n" .
+			"\r\n" .
+			"--$boundary--\r\n";
+		$this->assertStringEndsWith($expected, $result['message']);
+	}
+
+/**
  * testSendRender method for ISO-2022-JP
  *
  * @return void
@@ -1542,8 +1588,6 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertFalse(empty($boundary));
 		$this->assertContains('--' . $boundary, $message);
 		$this->assertContains('--' . $boundary . '--', $message);
-		$this->assertContains('--alt-' . $boundary, $message);
-		$this->assertContains('--alt-' . $boundary . '--', $message);
 
 		$this->CakeEmail->attachments(array('fake.php' => __FILE__));
 		$this->CakeEmail->send();
@@ -2005,7 +2049,7 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 	protected function _checkContentTransferEncoding($message, $charset) {
-		$boundary = '--alt-' . $this->CakeEmail->getBoundary();
+		$boundary = '--' . $this->CakeEmail->getBoundary();
 		$result['text'] = false;
 		$result['html'] = false;
 		$length = count($message);
