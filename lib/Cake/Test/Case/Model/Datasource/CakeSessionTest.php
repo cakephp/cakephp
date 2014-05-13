@@ -114,7 +114,6 @@ class CakeSessionTest extends CakeTestCase {
 			'cookieTimeout' => 120,
 			'ini' => array(),
 		));
-		TestCakeSession::init();
 	}
 
 /**
@@ -441,10 +440,10 @@ class CakeSessionTest extends CakeTestCase {
 	public function testKeyExploit() {
 		$key = "a'] = 1; phpinfo(); \$_SESSION['a";
 		$result = TestCakeSession::write($key, 'haxored');
-		$this->assertTrue($result);
+		$this->assertFalse($result);
 
 		$result = TestCakeSession::read($key);
-		$this->assertEquals('haxored', $result);
+		$this->assertNull($result);
 	}
 
 /**

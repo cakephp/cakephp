@@ -652,13 +652,13 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->connected = true;
 		$this->Socket->request($request);
 		$result = $this->Socket->response['cookies'];
-		$expect = array(
+		$expected = array(
 			'foo' => array(
 				'value' => 'bar'
 			)
 		);
-		$this->assertEquals($expect, $result);
-		$this->assertEquals($this->Socket->config['request']['cookies']['www.cakephp.org'], $expect);
+		$this->assertEquals($expected, $result);
+		$this->assertEquals($expected, $this->Socket->config['request']['cookies']['www.cakephp.org']);
 		$this->assertFalse($this->Socket->connected);
 	}
 

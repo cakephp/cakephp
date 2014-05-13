@@ -82,6 +82,15 @@ class CakeTestFixture {
 	public $primaryKey = null;
 
 /**
+ * Fixture data can be stored in memory by default.
+ * When table is created for a fixture the MEMORY engine is used
+ * where possible. Set $canUseMemory to false if you don't want this.
+ *
+ * @var boolean
+ */
+	public $canUseMemory = true;
+
+/**
  * Instantiate the fixture.
  *
  * @throws CakeException on invalid datasource usage.
@@ -199,7 +208,7 @@ class CakeTestFixture {
 		}
 
 		if (empty($this->fields['tableParameters']['engine'])) {
-			$canUseMemory = true;
+			$canUseMemory = $this->canUseMemory;
 			foreach ($this->fields as $args) {
 
 				if (is_string($args)) {

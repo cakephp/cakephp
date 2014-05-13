@@ -480,10 +480,10 @@ class Router {
 		}
 
 		if ($named === true || $named === false) {
-			$options = array_merge(array('default' => $named, 'reset' => true, 'greedy' => $named), $options);
+			$options += array('default' => $named, 'reset' => true, 'greedy' => $named);
 			$named = array();
 		} else {
-			$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
+			$options += array('default' => false, 'reset' => false, 'greedy' => true);
 		}
 
 		if ($options['reset'] || self::$_namedConfig['rules'] === false) {
@@ -532,12 +532,15 @@ class Router {
  */
 	public static function mapResources($controller, $options = array()) {
 		$hasPrefix = isset($options['prefix']);
-		$options = array_merge(array(
+		$options += array(
+			'connectOptions' => array(),
 			'prefix' => '/',
 			'id' => self::ID . '|' . self::UUID
-		), $options);
+		);
 
 		$prefix = $options['prefix'];
+		$connectOptions = $options['connectOptions'];
+		unset($options['connectOptions']);
 		if (strpos($prefix, '/') !== 0) {
 			$prefix = '/' . $prefix;
 		}
@@ -563,7 +566,10 @@ class Router {
 						'action' => $params['action'],
 						'[method]' => $params['method']
 					),
-					array('id' => $options['id'], 'pass' => array('id'))
+					array_merge(
+						array('id' => $options['id'], 'pass' => array('id')),
+						$connectOptions
+					)
 				);
 			}
 			self::$_resourceMapped[] = $urlName;
@@ -1074,7 +1080,7 @@ class Router {
 		}
 		$addition = http_build_query($q, null, $join);
 
-		if ($out && $addition && substr($out, strlen($join) * -1, strlen($join)) != $join) {
+		if ($out && $addition && substr($out, strlen($join) * -1, strlen($join)) !== $join) {
 			$out .= $join;
 		}
 

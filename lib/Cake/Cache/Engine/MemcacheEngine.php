@@ -21,7 +21,8 @@
  * control you have over expire times far in the future. See MemcacheEngine::write() for
  * more information.
  *
- * @package       Cake.Cache.Engine
+ * @package Cake.Cache.Engine
+ * @deprecated You should use the Memcached adapter instead.
  */
 class MemcacheEngine extends CacheEngine {
 

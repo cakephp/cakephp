@@ -371,18 +371,6 @@ class CakeLog {
 	}
 
 /**
- * Configures the automatic/default stream a FileLog.
- *
- * @return void
- */
-	protected static function _autoConfig() {
-		self::$_Collection->load('default', array(
-			'engine' => 'File',
-			'path' => LOGS,
-		));
-	}
-
-/**
  * Writes the given message and type to all of the configured log adapters.
  * Configured adapters are passed both the $type and $message variables. $type
  * is one of the following strings/values.
@@ -453,11 +441,7 @@ class CakeLog {
 				$logged = true;
 			}
 		}
-		if (!$logged) {
-			self::_autoConfig();
-			self::stream('default')->write($type, $message);
-		}
-		return true;
+		return $logged;
 	}
 
 /**

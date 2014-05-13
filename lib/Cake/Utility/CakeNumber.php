@@ -323,18 +323,18 @@ class CakeNumber {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
 	public static function currency($value, $currency = null, $options = array()) {
-		$default = self::$_currencyDefaults;
+		$defaults = self::$_currencyDefaults;
 		if ($currency === null) {
 			$currency = self::defaultCurrency();
 		}
 
 		if (isset(self::$_currencies[$currency])) {
-			$default = self::$_currencies[$currency];
+			$defaults = self::$_currencies[$currency];
 		} elseif (is_string($currency)) {
 			$options['before'] = $currency;
 		}
 
-		$options = array_merge($default, $options);
+		$options += $defaults;
 
 		if (isset($options['before']) && $options['before'] !== '') {
 			$options['wholeSymbol'] = $options['before'];

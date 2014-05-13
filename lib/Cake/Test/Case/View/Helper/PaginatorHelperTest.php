@@ -232,6 +232,53 @@ class PaginatorHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testSortLinksWithLockOption method
+ *
+ * @return void
+ */
+	public function testSortLinksWithLockOption() {
+		Router::reload();
+		Router::parse('/');
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'url' => array('url' => 'accounts/')),
+			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/')
+		));
+		$this->Paginator->options(array('url' => array('param')));
+		$this->Paginator->request['paging'] = array(
+			'Article' => array(
+				'current' => 9,
+				'count' => 62,
+				'prevPage' => false,
+				'nextPage' => true,
+				'pageCount' => 7,
+				'options' => array(
+					'page' => 1,
+					'order' => array('date' => 'asc'),
+					'conditions' => array()
+				),
+				'paramType' => 'named'
+			)
+		);
+
+		$result = $this->Paginator->sort('distance', null, array('lock' => true));
+		$expected = array(
+			'a' => array('href' => '/officespace/accounts/index/param/sort:distance/direction:asc'),
+			'Distance',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Paginator->request->params['paging']['Article']['options']['sort'] = 'distance';
+		$result = $this->Paginator->sort('distance', null, array('lock' => true));
+		$expected = array(
+			'a' => array('href' => '/officespace/accounts/index/param/sort:distance/direction:asc', 'class' => 'asc locked'),
+			'Distance',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test that sort() works with virtual field order options.
  *
  * @return void

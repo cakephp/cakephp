@@ -275,6 +275,9 @@ class CakeEmailTest extends CakeTestCase {
 		);
 		$this->assertSame($this->CakeEmail->to(), $expected);
 		$this->assertSame($this->CakeEmail, $result);
+
+		$this->setExpectedException('SocketException');
+		$this->CakeEmail->to(array('cake@localhost', 'CakePHP'));
 	}
 
 /**
@@ -1802,6 +1805,26 @@ class CakeEmailTest extends CakeTestCase {
 
 		$this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
 		$this->assertTrue((bool)strpos($result['headers'], 'To: '));
+	}
+
+/**
+ * testConfigArrayWithLayoutWithoutTemplate method
+ *
+ * @return void
+ */
+	public function testConfigArrayWithLayoutWithoutTemplate() {
+		$configs = array(
+			'from' => array('some@example.com' => 'My website'),
+			'to' => 'test@example.com',
+			'subject' => 'Test mail subject',
+			'transport' => 'Debug',
+			'layout' => 'custom'
+		);
+		$this->CakeEmail = new CakeEmail($configs);
+
+		$result = $this->CakeEmail->template();
+		$this->assertEquals('', $result['template']);
+		$this->assertEquals($configs['layout'], $result['layout']);
 	}
 
 /**

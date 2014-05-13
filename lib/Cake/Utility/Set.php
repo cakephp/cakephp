@@ -327,7 +327,7 @@ class Set {
 			return $data;
 		}
 		$contexts = $data;
-		$options = array_merge(array('flatten' => true), $options);
+		$options += array('flatten' => true);
 		if (!isset($contexts[0])) {
 			$current = current($data);
 			if ((is_array($current) && count($data) < 1) || !is_array($current) || !Set::numeric(array_keys($data))) {
@@ -735,7 +735,7 @@ class Set {
  * @return integer The number of dimensions in $array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::countDim
  */
-	public static function countDim($array = null, $all = false, $count = 0) {
+	public static function countDim($array, $all = false, $count = 0) {
 		if ($all) {
 			$depth = array($count);
 			if (is_array($array) && reset($array) !== false) {
@@ -1010,7 +1010,7 @@ class Set {
  */
 	public static function apply($path, $data, $callback, $options = array()) {
 		$defaults = array('type' => 'pass');
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 		$extracted = Set::extract($path, $data);
 
 		if ($options['type'] === 'map') {

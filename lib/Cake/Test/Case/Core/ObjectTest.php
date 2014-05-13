@@ -375,62 +375,62 @@ class ObjectTest extends CakeTestCase {
 	public function testMethodDispatching() {
 		$this->object->emptyMethod();
 		$expected = array('emptyMethod');
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 
 		$this->object->oneParamMethod('Hello');
 		$expected[] = array('oneParamMethod' => array('Hello'));
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 
 		$this->object->twoParamMethod(true, false);
 		$expected[] = array('twoParamMethod' => array(true, false));
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 
 		$this->object->threeParamMethod(true, false, null);
 		$expected[] = array('threeParamMethod' => array(true, false, null));
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 
 		$this->object->crazyMethod(1, 2, 3, 4, 5, 6, 7);
 		$expected[] = array('crazyMethod' => array(1, 2, 3, 4, 5, 6, 7));
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 
 		$this->object = new TestObject();
 		$this->assertSame($this->object->methodCalls, array());
 
 		$this->object->dispatchMethod('emptyMethod');
 		$expected = array('emptyMethod');
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 
 		$this->object->dispatchMethod('oneParamMethod', array('Hello'));
 		$expected[] = array('oneParamMethod' => array('Hello'));
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 
 		$this->object->dispatchMethod('twoParamMethod', array(true, false));
 		$expected[] = array('twoParamMethod' => array(true, false));
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 
 		$this->object->dispatchMethod('threeParamMethod', array(true, false, null));
 		$expected[] = array('threeParamMethod' => array(true, false, null));
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 
 		$this->object->dispatchMethod('fourParamMethod', array(1, 2, 3, 4));
 		$expected[] = array('fourParamMethod' => array(1, 2, 3, 4));
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 
 		$this->object->dispatchMethod('fiveParamMethod', array(1, 2, 3, 4, 5));
 		$expected[] = array('fiveParamMethod' => array(1, 2, 3, 4, 5));
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 
 		$this->object->dispatchMethod('crazyMethod', array(1, 2, 3, 4, 5, 6, 7));
 		$expected[] = array('crazyMethod' => array(1, 2, 3, 4, 5, 6, 7));
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 
 		$this->object->dispatchMethod('methodWithOptionalParam', array('Hello'));
 		$expected[] = array('methodWithOptionalParam' => array("Hello"));
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 
 		$this->object->dispatchMethod('methodWithOptionalParam');
 		$expected[] = array('methodWithOptionalParam' => array(null));
-		$this->assertSame($this->object->methodCalls, $expected);
+		$this->assertSame($expected, $this->object->methodCalls);
 	}
 
 /**

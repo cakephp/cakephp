@@ -288,4 +288,92 @@ class Security {
 		return crypt($password, $salt);
 	}
 
+/**
+ * Encrypt a value using AES-256.
+ *
+ * *Caveat* You cannot properly encrypt/decrypt data with trailing null bytes.
+ * Any trailing null bytes will be removed on decryption due to how PHP pads messages
+ * with nulls prior to encryption.
+ *
+ * @param string $plain The value to encrypt.
+ * @param string $key The 256 bit/32 byte key to use as a cipher key.
+ * @param string $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
+ * @return string Encrypted data.
+ * @throws CakeException On invalid data or key.
+ */
+	public static function encrypt($plain, $key, $hmacSalt = null) {
+		self::_checkKey($key, 'encrypt()');
+
+		if ($hmacSalt === null) {
+			$hmacSalt = Configure::read('Security.salt');
+		}
+
+		// Generate the encryption and hmac key.
+		$key = substr(hash('sha256', $key . $hmacSalt), 0, 32);
+
+		$algorithm = MCRYPT_RIJNDAEL_128;
+		$mode = MCRYPT_MODE_CBC;
+
+		$ivSize = mcrypt_get_iv_size($algorithm, $mode);
+		$iv = mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
+		$ciphertext = $iv . mcrypt_encrypt($algorithm, $key, $plain, $mode, $iv);
+		$hmac = hash_hmac('sha256', $ciphertext, $key);
+		return $hmac . $ciphertext;
+	}
+
+/**
+ * Check the encryption key for proper length.
+ *
+ * @param string $key
+ * @param string $method The method the key is being checked for.
+ * @return void
+ * @throws CakeException When key length is not 256 bit/32 bytes
+ */
+	protected static function _checkKey($key, $method) {
+		if (strlen($key) < 32) {
+			throw new CakeException(__d('cake_dev', 'Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method));
+		}
+	}
+
+/**
+ * Decrypt a value using AES-256.
+ *
+ * @param string $cipher The ciphertext to decrypt.
+ * @param string $key The 256 bit/32 byte key to use as a cipher key.
+ * @param string $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
+ * @return string Decrypted data. Any trailing null bytes will be removed.
+ * @throws CakeException On invalid data or key.
+ */
+	public static function decrypt($cipher, $key, $hmacSalt = null) {
+		self::_checkKey($key, 'decrypt()');
+		if (empty($cipher)) {
+			throw new CakeException(__d('cake_dev', 'The data to decrypt cannot be empty.'));
+		}
+		if ($hmacSalt === null) {
+			$hmacSalt = Configure::read('Security.salt');
+		}
+
+		// Generate the encryption and hmac key.
+		$key = substr(hash('sha256', $key . $hmacSalt), 0, 32);
+
+		// Split out hmac for comparison
+		$macSize = 64;
+		$hmac = substr($cipher, 0, $macSize);
+		$cipher = substr($cipher, $macSize);
+
+		$compareHmac = hash_hmac('sha256', $cipher, $key);
+		if ($hmac !== $compareHmac) {
+			return false;
+		}
+
+		$algorithm = MCRYPT_RIJNDAEL_128;
+		$mode = MCRYPT_MODE_CBC;
+		$ivSize = mcrypt_get_iv_size($algorithm, $mode);
+
+		$iv = substr($cipher, 0, $ivSize);
+		$cipher = substr($cipher, $ivSize);
+		$plain = mcrypt_decrypt($algorithm, $key, $cipher, $mode, $iv);
+		return rtrim($plain, "\0");
+	}
+
 }

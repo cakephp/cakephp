@@ -559,6 +559,8 @@ if (!function_exists('__')) {
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 1);
 		}
+
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 
@@ -583,12 +585,14 @@ if (!function_exists('__n')) {
 		}
 
 		App::uses('I18n', 'I18n');
-		$translated = I18n::translate($singular, $plural, null, 6, $count);
+		$translated = I18n::translate($singular, $plural, null, I18n::LC_MESSAGES, $count);
 		if ($args === null) {
 			return $translated;
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 3);
 		}
+
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 
@@ -616,6 +620,8 @@ if (!function_exists('__d')) {
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 2);
 		}
+
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 
@@ -641,12 +647,14 @@ if (!function_exists('__dn')) {
 			return;
 		}
 		App::uses('I18n', 'I18n');
-		$translated = I18n::translate($singular, $plural, $domain, 6, $count);
+		$translated = I18n::translate($singular, $plural, $domain, I18n::LC_MESSAGES, $count);
 		if ($args === null) {
 			return $translated;
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 4);
 		}
+
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 
@@ -661,15 +669,15 @@ if (!function_exists('__dc')) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value, instead of the constant name. The values are:
+ * Note that the category must be specified with a class constant of I18n, instead of the constant name. The values are:
  *
- * - LC_ALL       0
- * - LC_COLLATE   1
- * - LC_CTYPE     2
- * - LC_MONETARY  3
- * - LC_NUMERIC   4
- * - LC_TIME      5
- * - LC_MESSAGES  6
+ * - LC_ALL       I18n::LC_ALL
+ * - LC_COLLATE   I18n::LC_COLLATE
+ * - LC_CTYPE     I18n::LC_CTYPE
+ * - LC_MONETARY  I18n::LC_MONETARY
+ * - LC_NUMERIC   I18n::LC_NUMERIC
+ * - LC_TIME      I18n::LC_TIME
+ * - LC_MESSAGES  I18n::LC_MESSAGES
  *
  * @param string $domain Domain
  * @param string $msg Message to translate
@@ -689,6 +697,8 @@ if (!function_exists('__dc')) {
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 3);
 		}
+
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 
@@ -705,15 +715,15 @@ if (!function_exists('__dcn')) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value, instead of the constant name. The values are:
+ * Note that the category must be specified with a class constant of I18n, instead of the constant name. The values are:
  *
- * - LC_ALL       0
- * - LC_COLLATE   1
- * - LC_CTYPE     2
- * - LC_MONETARY  3
- * - LC_NUMERIC   4
- * - LC_TIME      5
- * - LC_MESSAGES  6
+ * - LC_ALL       I18n::LC_ALL
+ * - LC_COLLATE   I18n::LC_COLLATE
+ * - LC_CTYPE     I18n::LC_CTYPE
+ * - LC_MONETARY  I18n::LC_MONETARY
+ * - LC_NUMERIC   I18n::LC_NUMERIC
+ * - LC_TIME      I18n::LC_TIME
+ * - LC_MESSAGES  I18n::LC_MESSAGES
  *
  * @param string $domain Domain
  * @param string $singular Singular string to translate
@@ -735,6 +745,8 @@ if (!function_exists('__dcn')) {
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 5);
 		}
+
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 
@@ -746,15 +758,15 @@ if (!function_exists('__c')) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value, instead of the constant name. The values are:
+ * Note that the category must be specified with a class constant of I18n, instead of the constant name. The values are:
  *
- * - LC_ALL       0
- * - LC_COLLATE   1
- * - LC_CTYPE     2
- * - LC_MONETARY  3
- * - LC_NUMERIC   4
- * - LC_TIME      5
- * - LC_MESSAGES  6
+ * - LC_ALL       I18n::LC_ALL
+ * - LC_COLLATE   I18n::LC_COLLATE
+ * - LC_CTYPE     I18n::LC_CTYPE
+ * - LC_MONETARY  I18n::LC_MONETARY
+ * - LC_NUMERIC   I18n::LC_NUMERIC
+ * - LC_TIME      I18n::LC_TIME
+ * - LC_MESSAGES  I18n::LC_MESSAGES
  *
  * @param string $msg String to translate
  * @param integer $category Category
@@ -773,6 +785,8 @@ if (!function_exists('__c')) {
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 2);
 		}
+
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 

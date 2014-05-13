@@ -222,22 +222,19 @@ class CakeEventManager {
  * Dispatches a new event to all configured listeners
  *
  * @param string|CakeEvent $event the event key name or instance of CakeEvent
- * @return void
+ * @return CakeEvent
  */
 	public function dispatch($event) {
 		if (is_string($event)) {
 			$event = new CakeEvent($event);
 		}
 
-		if (!$this->_isGlobal) {
-			self::instance()->dispatch($event);
+		$listeners = $this->listeners($event->name());
+		if (empty($listeners)) {
+			return $event;
 		}
 
-		if (empty($this->_listeners[$event->name()])) {
-			return;
-		}
-
-		foreach ($this->listeners($event->name()) as $listener) {
+		foreach ($listeners as $listener) {
 			if ($event->isStopped()) {
 				break;
 			}
@@ -253,6 +250,7 @@ class CakeEventManager {
 				$event->result = $result;
 			}
 		}
+		return $event;
 	}
 
 /**
@@ -262,15 +260,41 @@ class CakeEventManager {
  * @return array
  */
 	public function listeners($eventKey) {
-		if (empty($this->_listeners[$eventKey])) {
-			return array();
+		$localListeners = array();
+		$priorities = array();
+		if (!$this->_isGlobal) {
+			$localListeners = $this->prioritisedListeners($eventKey);
+			$localListeners = empty($localListeners) ? array() : $localListeners;
 		}
-		ksort($this->_listeners[$eventKey]);
+		$globalListeners = self::instance()->prioritisedListeners($eventKey);
+		$globalListeners = empty($globalListeners) ? array() : $globalListeners;
+
+		$priorities = array_merge(array_keys($globalListeners), array_keys($localListeners));
+		$priorities = array_unique($priorities);
+		asort($priorities);
+
 		$result = array();
-		foreach ($this->_listeners[$eventKey] as $priorityQ) {
-			$result = array_merge($result, $priorityQ);
+		foreach ($priorities as $priority) {
+			if (isset($globalListeners[$priority])) {
+				$result = array_merge($result, $globalListeners[$priority]);
+			}
+			if (isset($localListeners[$priority])) {
+				$result = array_merge($result, $localListeners[$priority]);
+			}
 		}
 		return $result;
 	}
 
+/**
+ * Returns the listeners for the specified event key indexed by priority
+ *
+ * @param string $eventKey
+ * @return array
+ */
+	public function prioritisedListeners($eventKey) {
+		if (empty($this->_listeners[$eventKey])) {
+			return array();
+		}
+		return $this->_listeners[$eventKey];
+	}
 }

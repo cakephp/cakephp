@@ -128,7 +128,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
 		$defaultOptions = array(
 			'prefix' => '', 'postfix' => '',
 		);
-		$options = array_merge($defaultOptions, $options);
+		$options += $defaultOptions;
 
 		return $options['prefix'] . json_encode($data) . $options['postfix'];
 	}

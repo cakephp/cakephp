@@ -80,8 +80,9 @@ Cache::config('default', array('engine' => 'File'));
  *
  * Configure::write('Dispatcher.filters', array(
  *		'MyCacheFilter', //  will use MyCacheFilter class from the Routing/Filter package in your app.
+ *		'MyCacheFilter' => array('prefix' => 'my_cache_'), //  will use MyCacheFilter class from the Routing/Filter package in your app with settings array.
  *		'MyPlugin.MyFilter', // will use MyFilter class from the Routing/Filter package in MyPlugin plugin.
- * 		array('callable' => $aFunction, 'on' => 'before', 'priority' => 9), // A valid PHP callback type to be called on beforeDispatch
+ *		array('callable' => $aFunction, 'on' => 'before', 'priority' => 9), // A valid PHP callback type to be called on beforeDispatch
  *		array('callable' => $anotherMethod, 'on' => 'after'), // A valid PHP callback type to be called on afterDispatch
  *
  * ));

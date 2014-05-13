@@ -50,7 +50,7 @@ class AssetDispatcherTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
-		), APP::RESET);
+		), App::RESET);
 
 		$request = new CakeRequest('theme/test_theme/ccss/cake.generic.css');
 		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
@@ -81,6 +81,33 @@ class AssetDispatcherTest extends CakeTestCase {
 		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
 		$this->assertNull($filter->beforeDispatch($event));
 		$this->assertFalse($event->isStopped());
+	}
+
+/**
+ * AssetDispatcher should not 404 extensions that could be handled
+ * by Routing.
+ *
+ * @return void
+ */
+	public function testNoHandleRoutedExtension() {
+		$filter = new AssetDispatcher();
+		$response = $this->getMock('CakeResponse', array('_sendHeader'));
+		Configure::write('Asset.filter', array(
+			'js' => '',
+			'css' => ''
+		));
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+		), App::RESET);
+		Router::parseExtensions('json');
+		Router::connect('/test_plugin/api/v1/:action', array('controller' => 'api'));
+		CakePlugin::load('TestPlugin');
+
+		$request = new CakeRequest('test_plugin/api/v1/forwarding.json');
+		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
+		$this->assertNull($filter->beforeDispatch($event));
+		$this->assertFalse($event->isStopped(), 'Events for routed extensions should not be stopped');
 	}
 
 /**
@@ -154,7 +181,7 @@ class AssetDispatcherTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
-		), APP::RESET);
+		), App::RESET);
 
 		$response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$request = new CakeRequest('theme/test_theme/../../../../../../VERSION.txt');
@@ -176,7 +203,7 @@ class AssetDispatcherTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
-		), APP::RESET);
+		), App::RESET);
 
 		$response = $this->getMock('CakeResponse', array('_sendHeader', 'send'));
 		$request = new CakeRequest('theme/test_theme/%2e./%2e./%2e./%2e./%2e./%2e./VERSION.txt');

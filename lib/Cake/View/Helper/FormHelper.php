@@ -368,14 +368,14 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$options = array_merge(array(
+		$options += array(
 			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
 			'action' => null,
 			'url' => null,
 			'default' => true,
 			'encoding' => strtolower(Configure::read('App.encoding')),
-			'inputDefaults' => array()),
-		$options);
+			'inputDefaults' => array()
+		);
 		$this->inputDefaults($options['inputDefaults']);
 		unset($options['inputDefaults']);
 
@@ -514,11 +514,16 @@ class FormHelper extends AppHelper {
  * array('label' => 'save', 'name' => 'Whatever', 'div' => array('class' => 'good')); <div class="good"> value="save" name="Whatever"
  * }}}
  *
+ * If $secureAttributes is set, these html attributes will be merged into the hidden input tags generated for the
+ * Security Component. This is especially useful to set HTML5 attributes like 'form'
+ *
  * @param string|array $options as a string will use $options as the value of button,
+ * @param array $secureAttributes will be passed as html attributes into the hidden input elements generated for the
+ *   Security Component.
  * @return string a closing FORM tag optional submit button.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#closing-the-form
  */
-	public function end($options = null) {
+	public function end($options = null, $secureAttributes = array()) {
 		$out = null;
 		$submit = null;
 
@@ -540,7 +545,7 @@ class FormHelper extends AppHelper {
 			isset($this->request['_Token']) &&
 			!empty($this->request['_Token'])
 		) {
-			$out .= $this->secure($this->fields);
+			$out .= $this->secure($this->fields, $secureAttributes);
 			$this->fields = array();
 		}
 		$this->setEntity(null);
@@ -552,13 +557,21 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Generates a hidden field with a security hash based on the fields used in the form.
+ * Generates a hidden field with a security hash based on the fields used in
+ * the form.
  *
- * @param array $fields The list of fields to use when generating the hash
+ * If $secureAttributes is set, these html attributes will be merged into
+ * the hidden input tags generated for the Security Component. This is
+ * especially useful to set HTML5 attributes like 'form'.
+ *
+ * @param array|null $fields If set specifies the list of fields to use when
+ *    generating the hash, else $this->fields is being used.
+ * @param array $secureAttributes will be passed as html attributes into the hidden
+ *    input elements generated for the Security Component.
  * @return string A hidden input field with a security hash
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::secure
  */
-	public function secure($fields = array()) {
+	public function secure($fields = array(), $secureAttributes = array()) {
 		if (!isset($this->request['_Token']) || empty($this->request['_Token'])) {
 			return;
 		}
@@ -587,14 +600,16 @@ class FormHelper extends AppHelper {
 		);
 		$fields = Security::hash(implode('', $hashParts), 'sha1');
 
-		$out = $this->hidden('_Token.fields', array(
+		$tokenFields = array_merge($secureAttributes, array(
 			'value' => urlencode($fields . ':' . $locked),
-			'id' => 'TokenFields' . mt_rand()
+			'id' => 'TokenFields' . mt_rand(),
 		));
-		$out .= $this->hidden('_Token.unlocked', array(
+		$out = $this->hidden('_Token.fields', $tokenFields);
+		$tokenUnlocked = array_merge($secureAttributes, array(
 			'value' => urlencode($unlocked),
-			'id' => 'TokenUnlocked' . mt_rand()
+			'id' => 'TokenUnlocked' . mt_rand(),
 		));
+		$out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
 		return $this->Html->useTag('hiddenblock', $out);
 	}
 
@@ -628,9 +643,9 @@ class FormHelper extends AppHelper {
  *
  * @param boolean $lock Whether this field should be part of the validation
  *     or excluded as part of the unlockedFields.
- * @param string $field Reference to field to be secured. Should be dot separated to indicate nesting.
+ * @param string|array $field Reference to field to be secured. Should be dot separated to indicate nesting.
  * @param mixed $value Field value, if value should not be tampered with.
- * @return mixed|null Not used yet
+ * @return void
  */
 	protected function _secure($lock, $field = null, $value = null) {
 		if (!$field) {
@@ -692,7 +707,7 @@ class FormHelper extends AppHelper {
  */
 	public function error($field, $text = null, $options = array()) {
 		$defaults = array('wrap' => true, 'class' => 'error-message', 'escape' => true);
-		$options = array_merge($defaults, $options);
+		$options += $defaults;
 		$this->setEntity($field);
 
 		$error = $this->tagIsInvalid();
@@ -1178,7 +1193,8 @@ class FormHelper extends AppHelper {
 				'boolean' => 'checkbox', 'timestamp' => 'datetime',
 				'text' => 'textarea', 'time' => 'time',
 				'date' => 'date', 'float' => 'number',
-				'integer' => 'number'
+				'integer' => 'number', 'decimal' => 'number',
+				'binary' => 'file'
 			);
 
 			if (isset($this->map[$type])) {
@@ -1191,10 +1207,14 @@ class FormHelper extends AppHelper {
 			}
 			if (
 				$options['type'] === 'number' &&
-				$type === 'float' &&
 				!isset($options['step'])
 			) {
-				$options['step'] = 'any';
+				if ($type === 'decimal') {
+					$decimalPlaces = substr($fieldDef['length'], strpos($fieldDef['length'], ',') + 1);
+					$options['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
+				} elseif ($type === 'float') {
+					$options['step'] = 'any';
+				}
 			}
 		}
 
@@ -1763,7 +1783,12 @@ class FormHelper extends AppHelper {
  * - `data` - Array with key/value to pass in input hidden
  * - `method` - Request method to use. Set to 'delete' to simulate HTTP/1.1 DELETE request. Defaults to 'post'.
  * - `confirm` - Can be used instead of $confirmMessage.
- * - Other options is the same of HtmlHelper::link() method.
+ * - `inline` - Whether or not the associated form tag should be output inline.
+ *   Set to false to have the form tag appended to the 'postLink' view block.
+ *   Defaults to true.
+ * - `block` - Choose a custom block to append the form tag to. Using this option
+ *   will override the inline option.
+ * - Other options are the same of HtmlHelper::link() method.
  * - The option `onclick` will be replaced.
  *
  * @param string $title The content to be wrapped by <a> tags.
@@ -1774,6 +1799,12 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */
 	public function postLink($title, $url = null, $options = array(), $confirmMessage = false) {
+		$options += array('inline' => true, 'block' => null);
+		if (!$options['inline'] && empty($options['block'])) {
+			$options['block'] = __FUNCTION__;
+		}
+		unset($options['inline']);
+
 		$requestMethod = 'POST';
 		if (!empty($options['method'])) {
 			$requestMethod = strtoupper($options['method']);
@@ -1815,6 +1846,12 @@ class FormHelper extends AppHelper {
 		}
 		$out .= $this->secure($fields);
 		$out .= $this->Html->useTag('formend');
+
+		if ($options['block']) {
+			$this->_View->append($options['block'], $out);
+			$out = '';
+		}
+		unset($options['block']);
 
 		$url = '#';
 		$onClick = 'document.' . $formName . '.submit();';

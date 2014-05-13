@@ -287,7 +287,7 @@ class Configure {
  * @param string $key name of configuration resource to load.
  * @param string $config Name of the configured reader to use to read the resource identified by $key.
  * @param boolean $merge if config files should be merged instead of simply overridden
- * @return mixed false if file not found, void if load successful.
+ * @return boolean False if file not found, true if load successful.
  * @throws ConfigureException Will throw any exceptions the reader raises.
  */
 	public static function load($key, $config = 'default', $merge = true) {
@@ -424,6 +424,7 @@ class Configure {
 		self::$_values = array();
 		return true;
 	}
+
 /**
  * Set the error and exception handlers.
  *
@@ -444,4 +445,5 @@ class Configure {
 			set_exception_handler($exception['handler']);
 		}
 	}
+
 }

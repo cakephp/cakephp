@@ -95,7 +95,12 @@ class Dispatcher implements CakeEventListener {
 			return;
 		}
 
-		foreach ($filters as $filter) {
+		foreach ($filters as $index => $filter) {
+			$settings = array();
+			if (is_array($filter) && !is_int($index)) {
+				$settings = $filter;
+				$filter = $index;
+			}
 			if (is_string($filter)) {
 				$filter = array('callable' => $filter);
 			}
@@ -105,7 +110,7 @@ class Dispatcher implements CakeEventListener {
 				if (!class_exists($callable)) {
 					throw new MissingDispatcherFilterException($callable);
 				}
-				$manager->attach(new $callable);
+				$manager->attach(new $callable($settings));
 			} else {
 				$on = strtolower($filter['on']);
 				$options = array();
@@ -157,7 +162,7 @@ class Dispatcher implements CakeEventListener {
 			));
 		}
 
-		$response = $this->_invoke($controller, $request, $response);
+		$response = $this->_invoke($controller, $request);
 		if (isset($request->params['return'])) {
 			return $response->body();
 		}
@@ -169,18 +174,19 @@ class Dispatcher implements CakeEventListener {
 
 /**
  * Initializes the components and models a controller will be using.
- * Triggers the controller action, and invokes the rendering if Controller::$autoRender is true and echo's the output.
- * Otherwise the return value of the controller action are returned.
+ * Triggers the controller action, and invokes the rendering if Controller::$autoRender
+ * is true and echo's the output. Otherwise the return value of the controller
+ * action are returned.
  *
  * @param Controller $controller Controller to invoke
  * @param CakeRequest $request The request object to invoke the controller for.
- * @param CakeResponse $response The response object to receive the output
  * @return CakeResponse the resulting response object
  */
-	protected function _invoke(Controller $controller, CakeRequest $request, CakeResponse $response) {
+	protected function _invoke(Controller $controller, CakeRequest $request) {
 		$controller->constructClasses();
 		$controller->startupProcess();
 
+		$response = $controller->response;
 		$render = true;
 		$result = $controller->invokeAction($request);
 		if ($result instanceof CakeResponse) {

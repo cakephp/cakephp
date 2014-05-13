@@ -113,14 +113,11 @@ abstract class ObjectCollection {
 			$parts = explode('.', $event->name());
 			$callback = array_pop($parts);
 		}
-		$options = array_merge(
-			array(
-				'break' => false,
-				'breakOn' => false,
-				'collectReturn' => false,
-				'modParams' => false
-			),
-			$options
+		$options += array(
+			'break' => false,
+			'breakOn' => false,
+			'collectReturn' => false,
+			'modParams' => false
 		);
 		$collected = array();
 		$list = array_keys($this->_enabled);

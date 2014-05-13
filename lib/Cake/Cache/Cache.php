@@ -130,7 +130,7 @@ class Cache {
 		}
 
 		if (!empty($settings)) {
-			self::$_config[$name] = array_merge($current, $settings);
+			self::$_config[$name] = $settings + $current;
 		}
 
 		if (empty(self::$_config[$name]['engine'])) {
@@ -253,7 +253,7 @@ class Cache {
 				if (is_string($settings) && $value !== null) {
 					$settings = array($settings => $value);
 				}
-				$settings = array_merge(self::$_config[$config], $settings);
+				$settings += self::$_config[$config];
 				if (isset($settings['duration']) && !is_numeric($settings['duration'])) {
 					$settings['duration'] = strtotime($settings['duration']) - time();
 				}
@@ -536,6 +536,40 @@ class Cache {
 			return array($group => self::$_groups[$group]);
 		}
 		throw new CacheException(__d('cake_dev', 'Invalid cache group %s', $group));
+	}
+
+/**
+ * Provides the ability to easily do read-through caching.
+ *
+ * When called if the $key is not set in $config, the $callable function
+ * will be invoked. The results will then be stored into the cache config
+ * at key.
+ *
+ * Examples:
+ *
+ * Using a Closure to provide data, assume $this is a Model:
+ *
+ * {{{
+ * $model = $this;
+ * $results = Cache::remember('all_articles', function() use ($model) {
+ *      return $model->find('all');
+ * });
+ * }}}
+ *
+ * @param string $key The cache key to read/store data at.
+ * @param callable $callable The callable that provides data in the case when
+ *   the cache key is empty. Can be any callable type supported by your PHP.
+ * @param string $config The cache configuration to use for this operation.
+ *   Defaults to default.
+ */
+	public static function remember($key, $callable, $config = 'default') {
+		$existing = self::read($key, $config);
+		if ($existing !== false) {
+			return $existing;
+		}
+		$results = call_user_func($callable);
+		self::write($key, $results, $config);
+		return $results;
 	}
 
 }

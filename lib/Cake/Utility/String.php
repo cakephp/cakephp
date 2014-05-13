@@ -99,17 +99,17 @@ class String {
 
 /**
  * Tokenizes a string using $separator, ignoring any instance of $separator that appears between
- * $leftBound and $rightBound
+ * $leftBound and $rightBound.
  *
- * @param string $data The data to tokenize
+ * @param string $data The data to tokenize.
  * @param string $separator The token to split the data on.
  * @param string $leftBound The left boundary to ignore separators in.
  * @param string $rightBound The right boundary to ignore separators in.
  * @return mixed Array of tokens in $data or original input if empty.
  */
 	public static function tokenize($data, $separator = ',', $leftBound = '(', $rightBound = ')') {
-		if (empty($data) || is_array($data)) {
-			return $data;
+		if (empty($data)) {
+			return array();
 		}
 
 		$depth = 0;
@@ -405,8 +405,8 @@ class String {
  * - `html` If true, will ignore any HTML tags, ensuring that only the correct text is highlighted
  * - `regex` a custom regex rule that is used to match words, default is '|$tag|iu'
  *
- * @param string $text Text to search the phrase in
- * @param string $phrase The phrase that will be searched
+ * @param string $text Text to search the phrase in.
+ * @param string|array $phrase The phrase or phrases that will be searched.
  * @param array $options An array of html attributes and options.
  * @return string The highlighted text
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
@@ -416,12 +416,12 @@ class String {
 			return $text;
 		}
 
-		$default = array(
+		$defaults = array(
 			'format' => '<span class="highlight">\1</span>',
 			'html' => false,
 			'regex' => "|%s|iu"
 		);
-		$options = array_merge($default, $options);
+		$options += $defaults;
 		extract($options);
 
 		if (is_array($phrase)) {
@@ -450,7 +450,7 @@ class String {
 	}
 
 /**
- * Strips given text of all links (<a href=....)
+ * Strips given text of all links (<a href=....).
  *
  * @param string $text Text
  * @return string The text without links
@@ -477,10 +477,10 @@ class String {
  * @return string Trimmed string.
  */
 	public static function tail($text, $length = 100, $options = array()) {
-		$default = array(
+		$defaults = array(
 			'ellipsis' => '...', 'exact' => true
 		);
-		$options = array_merge($default, $options);
+		$options += $defaults;
 		extract($options);
 
 		if (!function_exists('mb_strlen')) {
@@ -519,15 +519,15 @@ class String {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
  */
 	public static function truncate($text, $length = 100, $options = array()) {
-		$default = array(
+		$defaults = array(
 			'ellipsis' => '...', 'exact' => true, 'html' => false
 		);
 		if (isset($options['ending'])) {
-			$default['ellipsis'] = $options['ending'];
+			$defaults['ellipsis'] = $options['ending'];
 		} elseif (!empty($options['html']) && Configure::read('App.encoding') === 'UTF-8') {
-			$default['ellipsis'] = "\xe2\x80\xa6";
+			$defaults['ellipsis'] = "\xe2\x80\xa6";
 		}
-		$options = array_merge($default, $options);
+		$options += $defaults;
 		extract($options);
 
 		if (!function_exists('mb_strlen')) {

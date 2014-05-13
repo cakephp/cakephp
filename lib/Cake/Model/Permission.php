@@ -83,7 +83,7 @@ class Permission extends AppModel {
 		$acoPath = $this->Aco->node($aco);
 
 		if (!$aroPath) {
-			trigger_error(__d('cake_dev',
+			$this->log(__d('cake_dev',
 					"%s - Failed ARO node lookup in permissions check. Node references:\nAro: %s\nAco: %s",
 					'DbAcl::check()',
 					print_r($aro, true),
@@ -94,7 +94,7 @@ class Permission extends AppModel {
 		}
 
 		if (!$acoPath) {
-			trigger_error(__d('cake_dev',
+			$this->log(__d('cake_dev',
 					"%s - Failed ACO node lookup in permissions check. Node references:\nAro: %s\nAco: %s",
 					'DbAcl::check()',
 					print_r($aro, true),
@@ -105,7 +105,7 @@ class Permission extends AppModel {
 		}
 
 		if ($action !== '*' && !in_array('_' . $action, $permKeys)) {
-			trigger_error(__d('cake_dev', "ACO permissions key %s does not exist in %s", $action, 'DbAcl::check()'), E_USER_NOTICE);
+			$this->log(__d('cake_dev', "ACO permissions key %s does not exist in %s", $action, 'DbAcl::check()'), E_USER_NOTICE);
 			return false;
 		}
 
@@ -176,7 +176,7 @@ class Permission extends AppModel {
 		$save = array();
 
 		if (!$perms) {
-			trigger_error(__d('cake_dev', '%s - Invalid node', 'DbAcl::allow()'), E_USER_WARNING);
+			$this->log(__d('cake_dev', '%s - Invalid node', 'DbAcl::allow()'), E_USER_WARNING);
 			return false;
 		}
 		if (isset($perms[0])) {

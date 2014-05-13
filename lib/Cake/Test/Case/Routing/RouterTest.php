@@ -191,6 +191,28 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * testMapResources with custom connectOptions
+ */
+	public function testMapResourcesConnectOptions() {
+		App::build(array(
+			'Plugin' => array(
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
+			)
+		));
+		CakePlugin::load('TestPlugin');
+		App::uses('TestRoute', 'TestPlugin.Routing/Route');
+		$resources = Router::mapResources('Posts', array(
+			'connectOptions' => array(
+				'routeClass' => 'TestPlugin.TestRoute',
+				'foo' => '^(bar)$',
+			),
+		));
+		$route = end(Router::$routes);
+		$this->assertInstanceOf('TestRoute', $route);
+		$this->assertEquals('^(bar)$', $route->options['foo']);
+	}
+
+/**
  * Test mapResources with a plugin and prefix.
  *
  * @return void
@@ -2299,10 +2321,10 @@ class RouterTest extends CakeTestCase {
 			'named' => array(), 'pass' => array(),
 			'param1' => '1', 'param2' => '2',
 		);
-		$this->assertEquals(Router::getParams(), $expected);
-		$this->assertEquals(Router::getParam('controller'), false);
-		$this->assertEquals(Router::getParam('param1'), '1');
-		$this->assertEquals(Router::getParam('param2'), '2');
+		$this->assertEquals($expected, Router::getParams());
+		$this->assertEquals(false, Router::getParam('controller'));
+		$this->assertEquals('1', Router::getParam('param1'));
+		$this->assertEquals('2', Router::getParam('param2'));
 
 		Router::reload();
 
@@ -2312,8 +2334,8 @@ class RouterTest extends CakeTestCase {
 			'plugin' => null, 'controller' => 'pages', 'action' => 'display',
 			'named' => array(), 'pass' => array(),
 		);
-		$this->assertEquals(Router::getParams(), $expected);
-		$this->assertEquals(Router::getParams(true), $expected);
+		$this->assertEquals($expected, Router::getParams());
+		$this->assertEquals($expected, Router::getParams(true));
 	}
 
 /**

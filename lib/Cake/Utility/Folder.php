@@ -321,12 +321,14 @@ class Folder {
  * Returns $path with $element added, with correct slash in-between.
  *
  * @param string $path Path
- * @param string $element Element to and at end of path
+ * @param string|array $element Element to add at end of path
  * @return string Combined path
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::addPathElement
  */
 	public static function addPathElement($path, $element) {
-		return rtrim($path, DS) . DS . $element;
+		$element = (array)$element;
+		array_unshift($element, rtrim($path, DS));
+		return implode(DS, $element);
 	}
 
 /**
@@ -643,7 +645,7 @@ class Folder {
 			$to = $options;
 			$options = array();
 		}
-		$options = array_merge(array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array(), 'scheme' => Folder::MERGE), $options);
+		$options += array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array(), 'scheme' => Folder::MERGE);
 
 		$fromDir = $options['from'];
 		$toDir = $options['to'];
@@ -693,13 +695,13 @@ class Folder {
 							chmod($to, $mode);
 							umask($old);
 							$this->_messages[] = __d('cake_dev', '%s created', $to);
-							$options = array_merge($options, array('to' => $to, 'from' => $from));
+							$options = array('to' => $to, 'from' => $from) + $options;
 							$this->copy($options);
 						} else {
 							$this->_errors[] = __d('cake_dev', '%s not created', $to);
 						}
 					} elseif (is_dir($from) && $options['scheme'] === Folder::MERGE) {
-						$options = array_merge($options, array('to' => $to, 'from' => $from));
+						$options = array('to' => $to, 'from' => $from) + $options;
 						$this->copy($options);
 					}
 				}
@@ -736,10 +738,7 @@ class Folder {
 			$to = $options;
 			$options = (array)$options;
 		}
-		$options = array_merge(
-			array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array()),
-			$options
-		);
+		$options += array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array());
 
 		if ($this->copy($options)) {
 			if ($this->delete($options['from'])) {

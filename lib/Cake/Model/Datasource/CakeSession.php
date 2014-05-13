@@ -128,6 +128,13 @@ class CakeSession {
 	protected static $_initialized = false;
 
 /**
+ * Session cookie name
+ *
+ * @var string
+ */
+	protected static $_cookieName = null;
+
+/**
  * Pseudo constructor.
  *
  * @param string $base The base path for the Session
@@ -221,12 +228,10 @@ class CakeSession {
  * @return boolean True if variable is there
  */
 	public static function check($name = null) {
-		if (!self::start()) {
+		if (empty($name) || !self::_hasSession() || !self::start()) {
 			return false;
 		}
-		if (empty($name)) {
-			return false;
-		}
+
 		return Hash::get($_SESSION, $name) !== null;
 	}
 
@@ -320,7 +325,7 @@ class CakeSession {
  * @return boolean Success
  */
 	public static function valid() {
-		if (self::read('Config')) {
+		if (self::start() && self::read('Config')) {
 			if (self::_validAgentAndTime() && self::$error === false) {
 				self::$valid = true;
 			} else {
@@ -368,17 +373,18 @@ class CakeSession {
  * Returns given session variable, or all of them, if no parameters given.
  *
  * @param string|array $name The name of the session variable (or a path as sent to Set.extract)
- * @return mixed The value of the session variable
+ * @return mixed The value of the session variable, null if session not available,
+ *   session not started, or provided name not found in the session.
  */
 	public static function read($name = null) {
-		if (!self::start()) {
+		if (empty($name) && $name !== null) {
 			return false;
+		}
+		if (!self::_hasSession() || !self::start()) {
+			return null;
 		}
 		if ($name === null) {
 			return self::_returnSessionVars();
-		}
-		if (empty($name)) {
-			return false;
 		}
 		$result = Hash::get($_SESSION, $name);
 
@@ -409,12 +415,10 @@ class CakeSession {
  * @return boolean True if the write was successful, false if the write failed
  */
 	public static function write($name, $value = null) {
-		if (!self::start()) {
+		if (empty($name) || !self::start()) {
 			return false;
 		}
-		if (empty($name)) {
-			return false;
-		}
+
 		$write = $name;
 		if (!is_array($name)) {
 			$write = array($name => $value);
@@ -442,6 +446,7 @@ class CakeSession {
 
 		$_SESSION = null;
 		self::$id = null;
+		self::$_cookieName = null;
 	}
 
 /**
@@ -481,9 +486,12 @@ class CakeSession {
 		if (!isset($sessionConfig['ini']['session.cookie_lifetime'])) {
 			$sessionConfig['ini']['session.cookie_lifetime'] = $sessionConfig['cookieTimeout'] * 60;
 		}
+
 		if (!isset($sessionConfig['ini']['session.name'])) {
 			$sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
 		}
+		self::$_cookieName = $sessionConfig['ini']['session.name'];
+
 		if (!empty($sessionConfig['handler'])) {
 			$sessionConfig['ini']['session.save_handler'] = 'user';
 		}
@@ -519,6 +527,30 @@ class CakeSession {
 		}
 		Configure::write('Session', $sessionConfig);
 		self::$sessionTime = self::$time + ($sessionConfig['timeout'] * 60);
+	}
+
+/**
+ * Get session cookie name.
+ *
+ * @return string
+ */
+	protected static function _cookieName() {
+		if (self::$_cookieName !== null) {
+			return self::$_cookieName;
+		}
+
+		self::init();
+		self::_configureSession();
+
+		return self::$_cookieName = session_name();
+	}
+
+/**
+ * Returns whether a session exists
+ * @return boolean
+ */
+	protected static function _hasSession() {
+		return self::started() || isset($_COOKIE[self::_cookieName()]);
 	}
 
 /**

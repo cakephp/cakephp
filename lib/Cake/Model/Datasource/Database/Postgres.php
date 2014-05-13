@@ -45,7 +45,8 @@ class Postgres extends DboSource {
 		'database' => 'cake',
 		'schema' => 'public',
 		'port' => 5432,
-		'encoding' => ''
+		'encoding' => '',
+		'flags' => array()
 	);
 
 /**
@@ -60,6 +61,7 @@ class Postgres extends DboSource {
 		'integer' => array('name' => 'integer', 'formatter' => 'intval'),
 		'biginteger' => array('name' => 'bigint', 'limit' => '20'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
+		'decimal' => array('name' => 'decimal', 'formatter' => 'floatval'),
 		'datetime' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
@@ -109,7 +111,7 @@ class Postgres extends DboSource {
 		$config = $this->config;
 		$this->connected = false;
 
-		$flags = array(
+		$flags = $config['flags'] + array(
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);
@@ -675,7 +677,7 @@ class Postgres extends DboSource {
 		}
 
 		$floats = array(
-			'float', 'float4', 'float8', 'double', 'double precision', 'decimal', 'real', 'numeric'
+			'float', 'float4', 'float8', 'double', 'double precision', 'real'
 		);
 
 		switch (true) {
@@ -695,6 +697,8 @@ class Postgres extends DboSource {
 				return 'text';
 			case (strpos($col, 'bytea') !== false):
 				return 'binary';
+			case ($col === 'decimal' || $col === 'numeric'):
+				return 'decimal';
 			case (in_array($col, $floats)):
 				return 'float';
 			default:

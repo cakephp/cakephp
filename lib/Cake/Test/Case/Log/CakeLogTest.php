@@ -124,27 +124,20 @@ class CakeLogTest extends CakeTestCase {
 	}
 
 /**
- * Test that CakeLog autoconfigures itself to use a FileLogger with the LOGS dir.
- * When no streams are there.
+ * Test that CakeLog does not auto create logs when no streams are there to listen.
  *
  * @return void
  */
-	public function testAutoConfig() {
+	public function testNoStreamListenting() {
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
 		}
-		CakeLog::write(LOG_WARNING, 'Test warning');
-		$this->assertTrue(file_exists(LOGS . 'error.log'));
+		$res = CakeLog::write(LOG_WARNING, 'Test warning');
+		$this->assertFalse($res);
+		$this->assertFalse(file_exists(LOGS . 'error.log'));
 
 		$result = CakeLog::configured();
-		$this->assertEquals(array('default'), $result);
-
-		$testMessage = 'custom message';
-		CakeLog::write('custom', $testMessage);
-		$content = file_get_contents(LOGS . 'custom.log');
-		$this->assertContains($testMessage, $content);
-		unlink(LOGS . 'error.log');
-		unlink(LOGS . 'custom.log');
+		$this->assertEquals(array(), $result);
 	}
 
 /**
@@ -195,6 +188,10 @@ class CakeLogTest extends CakeTestCase {
  * @return void
  */
 	public function testLogFileWriting() {
+		CakeLog::config('file', array(
+			'engine' => 'File',
+			'path' => LOGS
+		));
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
 		}
@@ -515,6 +512,11 @@ class CakeLogTest extends CakeTestCase {
 	public function testBogusTypeAndScope() {
 		$this->_resetLogConfig();
 		$this->_deleteLogs();
+
+		CakeLog::config('file', array(
+			'engine' => 'File',
+			'path' => LOGS
+		));
 
 		CakeLog::write('bogus', 'bogus message');
 		$this->assertTrue(file_exists(LOGS . 'bogus.log'));
