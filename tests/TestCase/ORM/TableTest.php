@@ -1028,6 +1028,45 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test removing a behavior from a table.
+ *
+ * @return void
+ */
+	public function testRemoveBehavior() {
+		$mock = $this->getMock('Cake\ORM\BehaviorRegistry', [], [], '', false);
+		$mock->expects($this->once())
+			->method('unload')
+			->with('Sluggable');
+
+		$table = new Table([
+			'table' => 'articles',
+			'behaviors' => $mock
+		]);
+		$table->removeBehavior('Sluggable');
+	}
+
+/**
+ * Test getting a behavior instance from a table.
+ *
+ * @return void
+ */
+	public function testGetBehavior() {
+		$returnValue = 'MockSlugInstance';
+		$mock = $this->getMock('Cake\ORM\BehaviorRegistry', [], [], '', false);
+		$mock->expects($this->once())
+			->method('__get')
+			->with('Sluggable')
+			->will($this->returnValue($returnValue));
+
+		$table = new Table([
+			'table' => 'articles',
+			'behaviors' => $mock
+		]);
+		$result = $table->getBehavior('Sluggable');
+		$this->assertSame($returnValue, $result);
+	}
+
+/**
  * Ensure exceptions are raised on missing behaviors.
  *
  * @expectedException \Cake\ORM\Error\MissingBehaviorException

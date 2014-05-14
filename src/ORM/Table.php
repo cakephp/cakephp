@@ -480,6 +480,28 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
+ * Removes a behavior.
+ *
+ * Removes a behavior from this table's behavior collection.
+ *
+ * Example:
+ *
+ * Unload a behavior, with some settings.
+ *
+ * {{{
+ * $this->removeBehavior('Tree');
+ * }}}
+ *
+ * @param string $name    The alias that the behavior was added with.
+ *
+ * @return void
+ * @see \Cake\ORM\Behavior
+ */
+	public function removeBehavior($name) {
+		$this->_behaviors->unload($name);
+	}
+
+/**
  * Get the list of Behaviors loaded.
  *
  * This method will return the *aliases* of the behaviors attached
@@ -502,6 +524,17 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
+ * Returns a behavior instance with the given alias.
+ *
+ * @param string $name The behavior alias to check.
+ *
+ * @return \Cake\ORM\Behavior or null
+ */
+	public function getBehavior($name) {
+		return $this->_behaviors->{$name};
+	}
+
+	/**
  * Returns a association objected configured for the specified alias if any
  *
  * @param string $name the alias used for the association
