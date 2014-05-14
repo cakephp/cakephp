@@ -528,13 +528,13 @@ class Table implements RepositoryInterface, EventListener {
  *
  * @param string $name The behavior alias to check.
  *
- * @return \Cake\ORM\Behavior or null
+ * @return \Cake\ORM\Behavior|null
  */
 	public function getBehavior($name) {
 		return $this->_behaviors->{$name};
 	}
 
-	/**
+/**
  * Returns a association objected configured for the specified alias if any
  *
  * @param string $name the alias used for the association
