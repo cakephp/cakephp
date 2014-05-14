@@ -28,7 +28,7 @@ trait LogTrait {
  * @param string|array $scope The name of the log scope.
  * @return bool Success of log write.
  */
-	public function log($msg, $level = LOG_ERR, $scope = []) {
+	protected function _log($msg, $level = LOG_ERR, $scope = []) {
 		if (!is_string($msg)) {
 			$msg = print_r($msg, true);
 		}

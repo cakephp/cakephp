@@ -83,7 +83,7 @@ class ShellTestShell extends Shell {
 	}
 
 	public function log_something() {
-		$this->log($this->testMessage);
+		$this->_log($this->testMessage);
 	}
 	//@codingStandardsIgnoreEnd
 
