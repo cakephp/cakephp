@@ -200,11 +200,11 @@ class BakeShell extends Shell {
 
 		if (empty($name)) {
 			$this->Model->connection = $this->connection;
-			$this->out(__d('cake_console', 'Possible model names based on your database'));
+			$this->out(__d('cake_console', 'Possible model names based on your database:'));
 			foreach ($this->Model->listAll() as $table) {
 				$this->out('- ' . $table);
 			}
-			$this->out(__d('cake_console', 'Run <info>cake bake all [name]</info>. To generate skeleton files.'));
+			$this->out(__d('cake_console', 'Run <info>cake bake all [name]</info> to generate skeleton files.'));
 			return false;
 		}
 
@@ -219,7 +219,7 @@ class BakeShell extends Shell {
 
 		$this->View->main($name);
 
-		$this->out(__d('cake_console', '<success>Bake All complete</success>'), 1, Shell::QUIET);
+		$this->out(__d('cake_console', '<success>Bake All complete.</success>'), 1, Shell::QUIET);
 		return true;
 	}
 
@@ -236,7 +236,7 @@ class BakeShell extends Shell {
 			' If run with no command line arguments, Bake guides the user through the class creation process.' .
 			' You can customize the generation process by telling Bake where different parts of your application are using command line arguments.'
 		))->addSubcommand('all', [
-			'help' => __d('cake_console', 'Bake a complete MVC. optional <name> of a Model'),
+			'help' => __d('cake_console', 'Bake a complete MVC skeleton. Optional: <name> of a model.'),
 		])->addOption('connection', [
 			'help' => __d('cake_console', 'Database connection to use in conjunction with `bake all`.'),
 			'short' => 'c',

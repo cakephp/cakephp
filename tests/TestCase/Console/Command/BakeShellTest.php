@@ -87,7 +87,7 @@ class BakeShellTest extends TestCase {
 
 		$this->Shell->expects($this->at(2))
 			->method('out')
-			->with('<success>Bake All complete</success>');
+			->with('<success>Bake All complete.</success>');
 
 		$this->Shell->connection = '';
 		$this->Shell->params = [];
