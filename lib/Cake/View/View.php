@@ -605,6 +605,9 @@ class View extends Object {
  * @return mixed The content of the named var if its set, otherwise $default.
  */
 	public function get($var, $default = null) {
+		if ($this->Blocks->exists($var)) {
+			return $this->Blocks->get($var, $default);
+		}
 		if (!isset($this->viewVars[$var])) {
 			return $default;
 		}
