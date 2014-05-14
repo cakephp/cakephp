@@ -273,6 +273,18 @@ class AuthComponent extends Component {
 	}
 
 /**
+ * Events supported by this component.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [
+			'Controller.initialize' => 'initialize',
+			'Controller.startup' => 'startup',
+		];
+	}
+
+/**
  * Checks whether current action is accessible without authentication.
  *
  * @param Controller $controller A reference to the instantiating controller object

@@ -130,6 +130,17 @@ class SecurityComponent extends Component {
 	}
 
 /**
+ * Events supported by this component.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [
+			'Controller.startup' => 'startup',
+		];
+	}
+
+/**
  * Sets the actions that require a request that is SSL-secured, or empty for all actions
  *
  * @param string|array $actions

@@ -96,6 +96,17 @@ class CsrfComponent extends Component {
 	}
 
 /**
+ * Events supported by this component.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [
+			'Controller.startup' => 'startup',
+		];
+	}
+
+/**
  * Set the cookie in the response.
  *
  * Also sets the request->params['_csrfToken'] so the newly minted

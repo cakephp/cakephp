@@ -154,6 +154,17 @@ class CookieComponent extends Component {
 	}
 
 /**
+ * Events supported by this component.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [
+			'Controller.startup' => 'startup',
+		];
+	}
+
+/**
  * Write a value to the $_COOKIE[$key];
  *
  * Optional [Name.], required key, optional $value, optional $encrypt, optional $expires
