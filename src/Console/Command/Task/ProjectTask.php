@@ -63,7 +63,7 @@ class ProjectTask extends BakeTask {
 		if (!preg_match('/^\w[\w\d_]+$/', $namespace)) {
 			$this->err(__d('cake_console', 'Project Name/Namespace needs to start with a letter and can only contain letters, digits and underscore'));
 			$this->args = [];
-			return $this->execute();
+			return $this->main();
 		}
 
 		if ($project && !Folder::isAbsolute($project) && isset($_SERVER['PWD'])) {
@@ -86,8 +86,47 @@ class ProjectTask extends BakeTask {
 
 		if ($this->bake($project)) {
 			$this->out(__d('cake_console', '<success>Project baked successfully!</success>'));
-			return $path;
+			return $project;
 		}
+	}
+
+/**
+ * Uses either the CLI option or looks in $PATH and cwd for composer.
+ *
+ * @return string|false Either the path to composer or false if it cannot be found.
+ */
+	public function findComposer() {
+		if (!empty($this->params['composer'])) {
+			$path = $this->params['composer'];
+			if (file_exists($path)) {
+				return $path;
+			}
+		}
+		$composer = false;
+		if (!empty($_SERVER['PATH'])) {
+			$path = explode(PATH_SEPARATOR, $_SERVER['PATH']);
+			$composer = $this->_searchPath($path);
+		}
+		return $composer;
+	}
+
+/**
+ * Search the $PATH for composer.
+ *
+ * @param array $path The paths to search.
+ * @return string|boolean
+ */
+	protected function _searchPath($path) {
+		$composer = ['composer.phar', 'composer'];
+		foreach ($path as $dir) {
+			foreach ($composer as $cmd) {
+				if (file_exists($dir . DS . $cmd)) {
+					$this->_io->verbose('Found composer executable in ' . $dir);
+					return $dir . DS . $cmd;
+				}
+			}
+		}
+		return false;
 	}
 
 /**
@@ -97,20 +136,21 @@ class ProjectTask extends BakeTask {
  * @return mixed
  */
 	public function bake($path) {
-		$composer = $this->params['composer'];
-		if (!file_exists($composer)) {
-			$this->error(__d('cake_console', 'Cannot bake project. Could not find composer at "%s".', $composer));
+		$composer = $this->findComposer();
+		if (!$composer) {
+			$this->error(__d('cake_console', 'Cannot bake project. Could not find composer. Add composer to your PATH, or use the -composer option.'));
 			return false;
 		}
 		$this->out(__d('cake_console', '<info>Downloading a new cakephp app from packagist.org</info>'));
 
-		$command = 'php ' . escapeshellarg($composer) . ' create-project --dev cakephp/app ' . escapeshellarg($path);
+		$command = 'php ' . escapeshellarg($composer) . ' create-project -s dev cakephp/app ' . escapeshellarg($path);
 
 		$descriptorSpec = [
 			0 => ['pipe', 'r'],
 			1 => ['pipe', 'w'],
 			2 => ['pipe', 'w']
 		];
+		$this->_io->verbose('Running ' . $command);
 		$process = proc_open(
 			$command,
 			$descriptorSpec,
@@ -136,75 +176,6 @@ class ProjectTask extends BakeTask {
 		}
 		$this->out($output);
 		return true;
-	}
-
-/**
- * Enables Configure::read('Routing.prefixes') in /app/Config/routes.php
- *
- * @param string $name Name to use as admin routing
- * @return bool Success
- */
-	public function cakeAdmin($name) {
-		$path = $this->appPath ?: APP;
-		$path .= 'Config/';
-		$File = new File($path . 'routes.php');
-		$contents = $File->read();
-		if (preg_match('%(\s*[/]*Configure::write\(\'Routing.prefixes\',[\s\'a-z,\)\(\]\[]*\);)%', $contents, $match)) {
-			$result = str_replace($match[0], "\n" . 'Configure::write(\'Routing.prefixes\', [\'' . $name . '\']);', $contents);
-			if ($File->write($result)) {
-				Configure::write('Routing.prefixes', [$name]);
-				return true;
-			}
-		}
-		return false;
-	}
-
-/**
- * Checks for Configure::read('Routing.prefixes') and forces user to input it if not enabled
- *
- * @return string Admin route to use
- */
-	public function getPrefix() {
-		$admin = '';
-		$prefixes = Configure::read('Routing.prefixes');
-		if (!empty($prefixes)) {
-			if (count($prefixes) === 1) {
-				return $prefixes[0] . '_';
-			}
-			if ($this->interactive) {
-				$this->out();
-				$this->out(__d('cake_console', 'You have more than one routing prefix configured'));
-			}
-			$options = [];
-			foreach ($prefixes as $i => $prefix) {
-				$options[] = $i + 1;
-				if ($this->interactive) {
-					$this->out($i + 1 . '. ' . $prefix);
-				}
-			}
-			$selection = $this->in(__d('cake_console', 'Please choose a prefix to bake with.'), $options, 1);
-			return $prefixes[$selection - 1] . '_';
-		}
-		if ($this->interactive) {
-			$this->hr();
-			$this->out(__d('cake_console', 'You need to enable %s in %s to use prefix routing.',
-					'Configure::write(\'Routing.prefixes\', [\'admin\'])',
-					'/app/Config/routes.php'));
-			$this->out(__d('cake_console', 'What would you like the prefix route to be?'));
-			$this->out(__d('cake_console', 'Example: %s', 'www.example.com/admin/controller'));
-			while (!$admin) {
-				$admin = $this->in(__d('cake_console', 'Enter a routing prefix:'), null, 'admin');
-			}
-			if ($this->cakeAdmin($admin) !== true) {
-				$this->out(__d('cake_console', '<error>Unable to write to</error> %s.', '/app/Config/routes.php'));
-				$this->out(__d('cake_console', 'You need to enable %s in %s to use prefix routing.',
-					'Configure::write(\'Routing.prefixes\', [\'admin\'])',
-					'/app/Config/routes.php'));
-				return $this->_stop();
-			}
-			return $admin . '_';
-		}
-		return '';
 	}
 
 /**
