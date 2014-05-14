@@ -144,7 +144,7 @@ class ProjectTask extends BakeTask {
 		}
 		$this->out(__d('cake_console', '<info>Downloading a new cakephp app from packagist.org</info>'));
 
-		$command = 'php ' . escapeshellarg($composer) . ' create-project --dev cakephp/app ' . escapeshellarg($path);
+		$command = 'php ' . escapeshellarg($composer) . ' create-project -s dev cakephp/app ' . escapeshellarg($path);
 
 		$descriptorSpec = [
 			0 => ['pipe', 'r'],
