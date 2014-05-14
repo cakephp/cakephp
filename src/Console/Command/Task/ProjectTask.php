@@ -122,6 +122,7 @@ class ProjectTask extends BakeTask {
 		foreach ($path as $dir) {
 			foreach ($composer as $cmd) {
 				if (file_exists($dir . DS . $cmd)) {
+					$this->_io->verbose('Found composer executable on ' . $dir);
 					return $dir . DS . $cmd;
 				}
 			}
@@ -150,6 +151,7 @@ class ProjectTask extends BakeTask {
 			1 => ['pipe', 'w'],
 			2 => ['pipe', 'w']
 		];
+		$this->_io->verbose('Running ' . $command);
 		$process = proc_open(
 			$command,
 			$descriptorSpec,
