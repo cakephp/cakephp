@@ -199,6 +199,16 @@ class ViewBlock {
 	}
 
 /**
+ * Checks if a block has been defined.
+ *
+ * @param string $name Name of the block
+ * @return boolean
+ */
+	public function exists($name) {
+		return isset($this->_blocks[$name]);
+	}
+
+/**
  * Get the names of all the existing blocks.
  *
  * @return array An array containing the blocks.
