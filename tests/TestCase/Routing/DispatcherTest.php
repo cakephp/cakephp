@@ -24,8 +24,6 @@ use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Dispatcher;
-use Cake\Routing\Filter\AssetDispatcher;
-use Cake\Routing\Error\MissingDispatcherFilterException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;

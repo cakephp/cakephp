@@ -19,17 +19,17 @@ use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Dispatcher;
-use Cake\Routing\Filter\CacheDispatcher;
+use Cake\Routing\Filter\CacheFilter;
 use Cake\Routing\Filter\RoutingFilter;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;
 
 /**
- * CacheDispatcherTest class
+ * CacheFilterTest class
  *
  */
-class CacheDispatcherTest extends TestCase {
+class CacheFilterTest extends TestCase {
 
 /**
  * setUp method
@@ -99,7 +99,7 @@ class CacheDispatcherTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response', array('send'));
 		$dispatcher = new Dispatcher();
 		$dispatcher->add(new RoutingFilter());
-		$dispatcher->add(new CacheDispatcher());
+		$dispatcher->add(new CacheFilter());
 		$dispatcher->dispatch($request, $response);
 		$cached = $response->body();
 

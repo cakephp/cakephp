@@ -50,7 +50,7 @@ class SessionComponentTest extends TestCase {
 			'timeout' => 100,
 			'cookie' => 'test'
 		));
-		DispatcherFactory::add('RoutingFilter');
+		DispatcherFactory::add('Routing');
 	}
 
 /**

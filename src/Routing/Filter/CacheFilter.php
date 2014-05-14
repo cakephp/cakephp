@@ -25,7 +25,7 @@ use Cake\View\View;
  * and served it back to the client if appropriate.
  *
  */
-class CacheDispatcher extends DispatcherFilter {
+class CacheFilter extends DispatcherFilter {
 
 /**
  * Default priority for all methods in this filter

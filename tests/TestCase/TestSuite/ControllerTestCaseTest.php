@@ -79,7 +79,7 @@ class ControllerTestCaseTest extends TestCase {
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$this->Case = $this->getMockForAbstractClass('Cake\TestSuite\ControllerTestCase');
-		DispatcherFactory::add('RoutingFilter');
+		DispatcherFactory::add('Routing');
 		Router::reload();
 		TableRegistry::clear();
 	}

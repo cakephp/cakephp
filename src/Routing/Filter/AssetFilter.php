@@ -28,7 +28,7 @@ use Cake\Utility\Inflector;
  * serves the file to the client if appropriate.
  *
  */
-class AssetDispatcher extends DispatcherFilter {
+class AssetFilter extends DispatcherFilter {
 
 /**
  * Default priority for all methods in this filter

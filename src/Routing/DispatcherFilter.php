@@ -86,6 +86,7 @@ class DispatcherFilter implements EventListener {
  * Constructor.
  *
  * @param array $config Settings for the filter.
+ * @throws \Cake\Error\Exception When 'when' conditions are not callable.
  */
 	public function __construct($config = []) {
 		if (!isset($config['priority'])) {
@@ -127,7 +128,7 @@ class DispatcherFilter implements EventListener {
  */
 	public function handle(Event $event) {
 		$name = $event->name();
-		list($_, $method) = explode('.', $name);
+		list($unused, $method) = explode('.', $name);
 		if (empty($this->_config['for']) && empty($this->_config['when'])) {
 			return $this->{$method}($event);
 		}

@@ -54,7 +54,7 @@ class RequestHandlerComponentTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('App.namespace', 'TestApp');
-		DispatcherFactory::add('RoutingFilter');
+		DispatcherFactory::add('Routing');
 		$this->_init();
 	}
 

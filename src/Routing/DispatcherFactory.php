@@ -55,9 +55,10 @@ class DispatcherFactory {
  *
  * @param string $name The name of the filter to build.
  * @return \Cake\Routing\DispatcherFilter
+ * @throws \Cake\Routing\Error\MissingDispatcherFilterException When filters cannot be found.
  */
 	protected static function _createFilter($name) {
-		$className = App::className($name, 'Routing/Filter');
+		$className = App::className($name, 'Routing/Filter', 'Filter');
 		if (!$className) {
 			$msg = sprintf('Cannot locate dispatcher filter named "%s".', $name);
 			throw new MissingDispatcherFilterException($msg);

@@ -49,7 +49,7 @@ class DispatcherFactoryTest extends TestCase {
  * @return void
  */
 	public function testAddFilterString() {
-		$result = DispatcherFactory::add('RoutingFilter');
+		$result = DispatcherFactory::add('Routing');
 		$this->assertInstanceOf('Cake\Routing\Filter\RoutingFilter', $result);
 	}
 

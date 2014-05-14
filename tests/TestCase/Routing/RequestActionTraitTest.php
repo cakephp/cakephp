@@ -41,7 +41,7 @@ class RequestActionTraitTest extends TestCase {
 		parent::setUp();
 		Configure::write('App.namespace', 'TestApp');
 		Configure::write('Security.salt', 'not-the-default');
-		DispatcherFactory::add('RoutingFilter');
+		DispatcherFactory::add('Routing');
 		$this->object = $this->getObjectForTrait('Cake\Routing\RequestActionTrait');
 	}
 

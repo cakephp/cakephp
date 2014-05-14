@@ -19,21 +19,10 @@ use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Routing\Filter\AssetDispatcher;
+use Cake\Routing\Filter\AssetFilter;
 use Cake\TestSuite\TestCase;
 
-class AssetDispatcherTest extends TestCase {
-
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-
-		Configure::write('Dispatcher.filters', array());
-	}
+class AssetFilterTest extends TestCase {
 
 /**
  * Tests that $response->checkNotModified() is called and bypasses
@@ -42,7 +31,7 @@ class AssetDispatcherTest extends TestCase {
  * @return void
  */
 	public function testNotModified() {
-		$filter = new AssetDispatcher();
+		$filter = new AssetFilter();
 		$time = filemtime(App::themePath('TestTheme') . 'webroot/img/cake.power.gif');
 		$time = new \DateTime('@' . $time);
 
@@ -79,7 +68,7 @@ class AssetDispatcherTest extends TestCase {
  * @return void
  */
 	public function test404OnDoubleSlash() {
-		$filter = new AssetDispatcher();
+		$filter = new AssetFilter();
 
 		$response = $this->getMock('Response', array('_sendHeader'));
 		$request = new Request('//index.php');
@@ -95,7 +84,7 @@ class AssetDispatcherTest extends TestCase {
  * @return voi
  */
 	public function test404OnDoubleDot() {
-		$filter = new AssetDispatcher();
+		$filter = new AssetFilter();
 
 		$response = $this->getMock('Response', array('_sendHeader'));
 		$request = new Request('theme/test_theme/../webroot/css/test_asset.css');
@@ -204,7 +193,7 @@ class AssetDispatcherTest extends TestCase {
 	public function testAsset($url, $file) {
 		Plugin::load(array('TestPlugin', 'PluginJs'));
 
-		$filter = new AssetDispatcher();
+		$filter = new AssetFilter();
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		$request = new Request($url);
 		$event = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));

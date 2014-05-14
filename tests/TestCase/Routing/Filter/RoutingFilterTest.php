@@ -16,8 +16,8 @@ namespace Cake\Test\TestCase\Routing;
 
 use Cake\Event\Event;
 use Cake\Network\Request;
-use Cake\Routing\Router;
 use Cake\Routing\Filter\RoutingFilter;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
 /**
