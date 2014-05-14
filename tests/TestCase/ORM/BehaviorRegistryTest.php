@@ -200,6 +200,8 @@ class BehaviorRegistryTest extends TestCase {
  *
  * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Cannot call "nope"
+ * 
+ * @return void
  */
 	public function testCallError() {
 		$this->Behaviors->load('Sluggable');
@@ -237,6 +239,8 @@ class BehaviorRegistryTest extends TestCase {
  *
  * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Cannot call finder "nope"
+ *
+ * @return void
  */
 	public function testCallFinderError() {
 		$this->Behaviors->load('Sluggable');
@@ -248,6 +252,8 @@ class BehaviorRegistryTest extends TestCase {
  *
  * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Cannot call "slugify"
+ * 
+ * @return void
  */
 	public function testCallRemoved() {
 		$this->Behaviors->load('Sluggable');

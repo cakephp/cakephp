@@ -257,7 +257,9 @@ class BehaviorRegistry extends ObjectRegistry {
 	}
 
 /**
- * Remove a behavior from the registry, also removes any methods or finders that were added when the behavior was loaded.
+ * Removes a behavior from the registry.
+ * 
+ * Will remove any methods or finders that were added when the behavior was loaded.
  *
  * @param string $objectName The alias of the behavior to remove from the registry.
  *
