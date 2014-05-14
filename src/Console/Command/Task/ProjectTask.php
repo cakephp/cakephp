@@ -121,7 +121,7 @@ class ProjectTask extends BakeTask {
 		foreach ($path as $dir) {
 			foreach ($composer as $cmd) {
 				if (file_exists($dir . DS . $cmd)) {
-					$this->_io->verbose('Found composer executable on ' . $dir);
+					$this->_io->verbose('Found composer executable in ' . $dir);
 					return $dir . DS . $cmd;
 				}
 			}
