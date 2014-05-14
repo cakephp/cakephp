@@ -232,4 +232,43 @@ class BehaviorRegistry extends ObjectRegistry {
 		throw new Exception(sprintf('Cannot call finder "%s" it does not belong to any attached behavior.', $type));
 	}
 
+/**
+ * Removes the behavior methods during the removal of a behavior.
+ *
+ * @param \Cake\ORM\Behavior $instance
+ *
+ * @return void
+ */
+	protected function _removeMethods(Behavior $instance) {
+		$finders = array_change_key_case($instance->implementedFinders());
+		$methods = array_change_key_case($instance->implementedMethods());
+
+		foreach ($finders as $finder => $methodName) {
+			if (isset($this->_finderMap[$finder])) {
+				unset($this->_finderMap[$finder]);
+			}
+		}
+
+		foreach ($methods as $method => $methodName) {
+			if (isset($this->_methodMap[$method])) {
+				unset($this->_methodMap[$method]);
+			}
+		}
+	}
+
+/**
+ * Remove a behavior from the registry, also removes any methods or finders that were added when the behavior was loaded.
+ *
+ * @param string $objectName The alias of the behavior to remove from the registry.
+ *
+ * @return void
+ */
+	public function remove($objectName) {
+		$behavior = $this->{$objectName};
+		if ($behavior) {
+			$this->_removeMethods($behavior);
+		}
+		$this->unload($objectName);
+	}
+
 }
