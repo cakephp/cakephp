@@ -1168,6 +1168,48 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * Test setting inline attachments and HTML only messages.
+ *
+ * @return void
+ */
+	public function testSendWithInlineAttachmentsHtmlOnly() {
+		$this->CakeEmail->transport('debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->emailFormat('html');
+		$this->CakeEmail->attachments(array(
+			'cake.png' => array(
+				'file' => CAKE . 'VERSION.txt',
+				'contentId' => 'abc123'
+			)
+		));
+		$result = $this->CakeEmail->send('Hello');
+
+		$boundary = $this->CakeEmail->getBoundary();
+		$this->assertContains('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
+		$expected = "--$boundary\r\n" .
+			"Content-Type: multipart/related; boundary=\"rel-$boundary\"\r\n" .
+			"\r\n" .
+			"--rel-$boundary\r\n" .
+			"Content-Type: text/html; charset=UTF-8\r\n" .
+			"Content-Transfer-Encoding: 8bit\r\n" .
+			"\r\n" .
+			"Hello" .
+			"\r\n" .
+			"\r\n" .
+			"\r\n" .
+			"--rel-$boundary\r\n" .
+			"Content-Type: application/octet-stream\r\n" .
+			"Content-Transfer-Encoding: base64\r\n" .
+			"Content-ID: <abc123>\r\n" .
+			"Content-Disposition: inline; filename=\"cake.png\"\r\n\r\n";
+		$this->assertContains($expected, $result['message']);
+		$this->assertContains('--rel-' . $boundary . '--', $result['message']);
+		$this->assertContains('--' . $boundary . '--', $result['message']);
+	}
+
+/**
  * Test disabling content-disposition.
  *
  * @return void

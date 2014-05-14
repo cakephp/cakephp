@@ -1567,7 +1567,7 @@ class CakeEmail {
 			$msg[] = '';
 		}
 
-		if ($textBoundary !== $boundary) {
+		if ($textBoundary !== $relBoundary) {
 			$msg[] = '--' . $textBoundary . '--';
 			$msg[] = '';
 		}
