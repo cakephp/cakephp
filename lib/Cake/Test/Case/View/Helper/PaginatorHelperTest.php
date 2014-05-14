@@ -41,6 +41,8 @@ class PaginatorHelperTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('Config.language', 'eng');
+		Configure::delete('L10n.decimals');
+		Configure::delete('L10n.thousands');
 		$controller = null;
 		$this->View = new View($controller);
 		$this->Paginator = new PaginatorHelper($this->View);
@@ -2406,6 +2408,46 @@ class PaginatorHelperTest extends CakeTestCase {
 
 		$result = $this->Paginator->counter('Showing %page% of %pages% %model%');
 		$this->assertEquals('Showing 1 of 5 clients', $result);
+	}
+
+/**
+ * testCounterLocalized method
+ *
+ * @return void
+ */
+	public function testCounterLocalized() {
+		$this->Paginator->request->params['paging'] = array(
+			'Client' => array(
+				'page' => 1001,
+				'current' => 3,
+				'count' => 6006,
+				'prevPage' => true,
+				'nextPage' => true,
+				'pageCount' => 3003,
+				'limit' => 3,
+				'options' => array(
+					'page' => 3,
+					'order' => array('Client.name' => 'DESC'),
+				),
+				'paramType' => 'named'
+			)
+		);
+		$input = 'Page %page% of %pages%, showing %current% records out of %count% total, ';
+		$input .= 'starting on record %start%, ending on %end%';
+
+		$result = $this->Paginator->counter($input);
+		$expected = 'Page 1,001 of 3,003, showing 3 records out of 6,006 total, starting on record 3,001, ';
+		$expected .= 'ending on 3,003';
+		$this->assertEquals($expected, $result);
+
+		// German format
+		Configure::write('L10n.decimals', ',');
+		Configure::write('L10n.thousands', '.');
+
+		$result = $this->Paginator->counter($input);
+		$expected = 'Page 1.001 of 3.003, showing 3 records out of 6.006 total, starting on record 3.001, ';
+		$expected .= 'ending on 3.003';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
