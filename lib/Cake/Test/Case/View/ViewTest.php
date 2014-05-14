@@ -1500,6 +1500,17 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test block exists
+ *
+ * @return void
+ */
+	public function testBlockExists() {
+		$this->assertFalse($this->View->Blocks->exists('exists'));
+		$this->View->assign('exists', 'Hello World');
+		$this->assertTrue($this->View->Blocks->exists('exists'));
+	}
+
+/**
  * Test that blocks can be nested.
  *
  * @return void
