@@ -101,7 +101,6 @@ class ProjectTask extends BakeTask {
 			if (file_exists($path)) {
 				return $path;
 			}
-			return false;
 		}
 		$composer = false;
 		if (!empty($_SERVER['PATH'])) {
