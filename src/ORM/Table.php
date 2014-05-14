@@ -498,7 +498,7 @@ class Table implements RepositoryInterface, EventListener {
  * @see \Cake\ORM\Behavior
  */
 	public function removeBehavior($name) {
-		$this->_behaviors->unload($name);
+		$this->_behaviors->remove($name);
 	}
 
 /**

@@ -1035,7 +1035,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testRemoveBehavior() {
 		$mock = $this->getMock('Cake\ORM\BehaviorRegistry', [], [], '', false);
 		$mock->expects($this->once())
-			->method('unload')
+			->method('remove')
 			->with('Sluggable');
 
 		$table = new Table([
