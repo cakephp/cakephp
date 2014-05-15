@@ -49,6 +49,13 @@ class Configure {
 	protected static $_engines = [];
 
 /**
+ * Flag to track whether or not ini_set exists.
+ *
+ * @return void
+ */
+	protected static $_hasIniSet = null;
+
+/**
  * Used to store a dynamic variable in Configure.
  *
  * Usage:
@@ -81,11 +88,12 @@ class Configure {
 			static::$_values = Hash::insert(static::$_values, $name, $value);
 		}
 
-		if (isset($config['debug']) && function_exists('ini_set')) {
-			if (static::$_values['debug']) {
-				ini_set('display_errors', 1);
-			} else {
-				ini_set('display_errors', 0);
+		if (isset($config['debug'])) {
+			if (static::$_hasIniSet === null) {
+				static::$_hasIniSet = function_exists('ini_set');
+			}
+			if (static::$_hasIniSet) {
+				ini_set('display_errors', $config['debug'] ? 1 : 0);
 			}
 		}
 		return true;
