@@ -40,11 +40,13 @@ class DispatcherFactory {
  *
  * @param string|\Cake\Routing\DispatcherFilter $filter Either the classname of the filter
  *   or an instance to use.
+ * @param array $options Constructor arguments/options for the filter if you are using a string name.
+ *   If you are passing an instance, this argument will be ignored.
  * @return \Cake\Routing\DispatcherFilter
  */
-	public static function add($filter) {
+	public static function add($filter, array $options = []) {
 		if (is_string($filter)) {
-			$filter = static::_createFilter($filter);
+			$filter = static::_createFilter($filter, $options);
 		}
 		static::$_stack[] = $filter;
 		return $filter;
@@ -54,16 +56,17 @@ class DispatcherFactory {
  * Create an instance of a filter.
  *
  * @param string $name The name of the filter to build.
+ * @param array $options Constructor arguments/options for the filter.
  * @return \Cake\Routing\DispatcherFilter
  * @throws \Cake\Routing\Error\MissingDispatcherFilterException When filters cannot be found.
  */
-	protected static function _createFilter($name) {
+	protected static function _createFilter($name, $options) {
 		$className = App::className($name, 'Routing/Filter', 'Filter');
 		if (!$className) {
 			$msg = sprintf('Cannot locate dispatcher filter named "%s".', $name);
 			throw new MissingDispatcherFilterException($msg);
 		}
-		return new $className();
+		return new $className($options);
 	}
 
 /**

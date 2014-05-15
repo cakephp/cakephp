@@ -64,6 +64,19 @@ class DispatcherFactoryTest extends TestCase {
 	}
 
 /**
+ * Test add filter
+ *
+ * @return void
+ */
+	public function testAddFilterWithOptions() {
+		$config = ['config' => 'value', 'priority' => 999];
+		$result = DispatcherFactory::add('Routing', $config);
+		$this->assertInstanceOf('Cake\Routing\Filter\RoutingFilter', $result);
+		$this->assertEquals($config['config'], $result->config('config'));
+		$this->assertEquals($config['priority'], $result->config('priority'));
+	}
+
+/**
  * Test creating a dispatcher with the factory
  *
  * @return void
