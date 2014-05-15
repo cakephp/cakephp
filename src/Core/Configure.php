@@ -254,8 +254,9 @@ class Configure {
 		if ($merge) {
 			$keys = array_keys($values);
 			foreach ($keys as $key) {
-				if (($c = static::read($key)) && is_array($values[$key]) && is_array($c)) {
-					$values[$key] = Hash::merge($c, $values[$key]);
+				$current = Hash::get(static::$_values, $key);
+				if ($current && is_array($values[$key]) && is_array($current)) {
+					$values[$key] = Hash::merge($current, $values[$key]);
 				}
 			}
 		}
