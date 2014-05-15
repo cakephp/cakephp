@@ -243,4 +243,46 @@ class BehaviorRegistryTest extends TestCase {
 		$this->Behaviors->callFinder('nope');
 	}
 
+/**
+ * Test errors on unloaded behavior methods.
+ *
+ * @expectedException \Cake\Error\Exception
+ * @expectedExceptionMessage Cannot call "slugify" it does not belong to any attached behavior.
+ */
+	public function testUnloadBehaviorThenCall() {
+		$this->Behaviors->load('Sluggable');
+		$this->Behaviors->unload('Sluggable');
+
+		$this->Behaviors->call('slugify');
+	}
+
+/**
+ * Test errors on unloaded behavior finders.
+ *
+ * @expectedException \Cake\Error\Exception
+ * @expectedExceptionMessage Cannot call finder "noslug" it does not belong to any attached behavior.
+ */
+	public function testUnloadBehaviorThenCallFinder() {
+		$this->Behaviors->load('Sluggable');
+		$this->Behaviors->unload('Sluggable');
+
+		$this->Behaviors->callFinder('noSlug');
+	}
+
+/**
+ * Test that unloading then reloading a behavior does not throw any errors.
+ *
+ * @return void
+ */
+	public function testUnloadBehaviorThenReload() {
+		$this->Behaviors->load('Sluggable');
+		$this->Behaviors->unload('Sluggable');
+
+		$this->assertEmpty($this->Behaviors->loaded());
+
+		$this->Behaviors->load('Sluggable');
+
+		$this->assertEquals(['Sluggable'], $this->Behaviors->loaded());
+	}
+
 }
