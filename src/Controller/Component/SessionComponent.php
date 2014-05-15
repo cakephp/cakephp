@@ -185,4 +185,13 @@ class SessionComponent extends Component {
 		return Session::started();
 	}
 
+/**
+ * Events supported by this component.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [];
+	}
+
 }

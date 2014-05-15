@@ -56,6 +56,15 @@ class PaginatorComponent extends Component {
 	);
 
 /**
+ * Events supported by this component.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [];
+	}
+
+/**
  * Handles automatic pagination of model records.
  *
  * ## Configuring pagination
@@ -125,7 +134,7 @@ class PaginatorComponent extends Component {
  *
  * {{{
  * $query = $this->Articles->find('popular')->matching('Tags', function($q) {
- *	return $q->where(['name' => 'CakePHP'])
+ *   return $q->where(['name' => 'CakePHP'])
  * });
  * $results = $paginator->paginate($query);
  * }}}

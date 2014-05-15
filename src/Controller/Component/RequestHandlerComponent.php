@@ -128,6 +128,20 @@ class RequestHandlerComponent extends Component {
 	}
 
 /**
+ * Events supported by this component.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [
+			'Controller.initialize' => 'initialize',
+			'Controller.startup' => 'startup',
+			'Controller.beforeRender' => 'beforeRender',
+			'Controller.beforeRedirect' => 'beforeRedirect',
+		];
+	}
+
+/**
  * Checks to see if a specific content type has been requested and sets RequestHandler::$ext
  * accordingly. Checks the following in order: 1. The '_ext' value parsed by the Router. 2. A specific
  * AJAX type request indicated by the presence of a header. 3. The Accept header. With the exception

@@ -54,9 +54,9 @@ class AuthComponent extends Component {
  *
  *   {{{
  *   $this->Auth->config('authenticate', [
- *    	'Form' => [
- *  		'userModel' => 'Users.Users'
- *  	]
+ *      'Form' => [
+ *         'userModel' => 'Users.Users'
+ *      ]
  *   ]);
  *   }}}
  *
@@ -65,13 +65,13 @@ class AuthComponent extends Component {
  *   config that should be set to all authentications objects using the 'all' key:
  *
  *   {{{
- *	 $this->Auth->config('authenticate', [
- *  	AuthComponent::ALL => [
- *  		'userModel' => 'Users.Users',
- *  		'scope' => ['Users.active' => 1]
- *  	],
- *  	'Form',
- *  	'Basic'
+ *   $this->Auth->config('authenticate', [
+ *       AuthComponent::ALL => [
+ *          'userModel' => 'Users.Users',
+ *          'scope' => ['Users.active' => 1]
+ *      ],
+ *     'Form',
+ *     'Basic'
  *   ]);
  *   }}}
  *
@@ -81,9 +81,9 @@ class AuthComponent extends Component {
  *
  *   {{{
  *   $this->Auth->config('authorize', [
- *  	'Crud' => [
- *  		'actionPath' => 'controllers/'
- *  	]
+ *      'Crud' => [
+ *          'actionPath' => 'controllers/'
+ *      ]
  *   ]);
  *   }}}
  *
@@ -93,11 +93,11 @@ class AuthComponent extends Component {
  *
  *   {{{
  *   $this->Auth->config('authorize', [
- *  	AuthComponent::ALL => [
- *  		'actionPath' => 'controllers/'
- *  	],
- *  	'Crud',
- *  	'CustomAuth'
+ *      AuthComponent::ALL => [
+ *          'actionPath' => 'controllers/'
+ *      ],
+ *      'Crud',
+ *      'CustomAuth'
  *   ]);
  *   }}}
  *
@@ -270,6 +270,18 @@ class AuthComponent extends Component {
 
 		$event->stopPropagation();
 		return $this->_unauthorized($controller);
+	}
+
+/**
+ * Events supported by this component.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [
+			'Controller.initialize' => 'initialize',
+			'Controller.startup' => 'startup',
+		];
 	}
 
 /**
