@@ -1050,20 +1050,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testGetBehavior() {
-		$returnValue = 'MockSlugInstance';
-		$mock = $this->getMock('Cake\ORM\BehaviorRegistry', [], [], '', false);
-		$mock->expects($this->once())
-			->method('__get')
-			->with('Sluggable')
-			->will($this->returnValue($returnValue));
-
-		$table = new Table([
-			'table' => 'articles',
-			'behaviors' => $mock
-		]);
-		$result = $table->getBehavior('Sluggable');
-		$this->assertSame($returnValue, $result);
+	public function testBehaviors() {
+		$table = TableRegistry::get('article');
+		$result = $table->behaviors();
+		$this->assertInstanceOf('\Cake\ORM\BehaviorRegistry', $result);
 	}
 
 /**
@@ -2255,10 +2245,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testBehaviorIntrospection() {
 		$table = TableRegistry::get('users');
-		$this->assertEquals([], $table->behaviors(), 'no loaded behaviors');
 
 		$table->addBehavior('Timestamp');
-		$this->assertEquals(['Timestamp'], $table->behaviors(), 'Should have loaded behavior');
 		$this->assertTrue($table->hasBehavior('Timestamp'), 'should be true on loaded behavior');
 		$this->assertFalse($table->hasBehavior('Tree'), 'should be false on unloaded behavior');
 	}
