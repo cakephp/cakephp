@@ -2243,6 +2243,25 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
+ * Tests that nest() returns an empty array for invalid input instead of throwing notices.
+ *
+ * @return void
+ */
+	public function testNestInvalid() {
+		$input = array(
+			array(
+				'ParentCategory' => array(
+					'id' => '1',
+					'name' => 'Lorem ipsum dolor sit amet',
+					'parent_id' => '1'
+				)
+			)
+		);
+		$result = Hash::nest($input);
+		$this->assertSame(array(), $result);
+	}
+
+/**
  * testMergeDiff method
  *
  * @return void
