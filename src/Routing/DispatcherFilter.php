@@ -24,6 +24,8 @@ use Cake\Event\EventListener;
  * event listener with the ability to alter the request or response as needed before it is handled
  * by a controller or after the response body has already been built.
  *
+ * Subclasses of this class use a class naming convention having a `Filter` suffix.
+ *
  * ### Limiting filters to specific paths
  *
  * By using the `for` option you can limit with request paths a filter is applied to.
@@ -31,10 +33,10 @@ use Cake\Event\EventListener;
  * example, if you only wanted a filter applied to blog requests you could do:
  *
  * {{{
- * $ware = new BlogMiddleware(['for' => '/blog']);
+ * $filter = new BlogFilter(['for' => '/blog']);
  * }}}
  *
- * When the above middleware is connected to a dispatcher it will only fire
+ * When the above filter is connected to a dispatcher it will only fire
  * its `beforeDispatch` and `afterDispatch` methods on requests that start with `/blog`.
  *
  * ### Limiting filters based on conditions
@@ -43,7 +45,7 @@ use Cake\Event\EventListener;
  * or response conditions. For example:
  *
  * {{{
- * $cookieMonster = new CookieMiddleware([
+ * $cookieMonster = new CookieFilter([
  *   'when' => function ($req, $res) {
  *     // Custom code goes here.
  *   }

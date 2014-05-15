@@ -1,10 +1,5 @@
 <?php
 /**
- * Dispatcher takes the URL information, parses it for parameters and
- * tells the involved controllers what to do.
- *
- * This is the heart of CakePHP's operation.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -26,6 +21,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error\Exception;
 use Cake\Event\Event;
+use Cake\Event\EventListener;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -47,11 +43,11 @@ class Dispatcher {
 	protected $_eventManager;
 
 /**
- * Connected middleware objects
+ * Connected filter objects
  *
  * @var array
  */
-	protected $_middleware = [];
+	protected $_filters = [];
 
 /**
  * Constructor.
@@ -223,13 +219,28 @@ class Dispatcher {
 		return false;
 	}
 
-	public function add($filter) {
-		$this->_middleware[] = $filter;
+/**
+ * Add a filter to this dispatcher.
+ *
+ * The added filter will be attached to the event manager used
+ * by this dispatcher.
+ *
+ * @param \Cake\Event\EventListener $filter The filter to connect. Can be
+ *   any EventListener. Typically an instance of \Cake\Routing\DispatcherFilter.
+ * @return void
+ */
+	public function addFilter(EventListener $filter) {
+		$this->_filters[] = $filter;
 		$this->getEventManager()->attach($filter);
 	}
 
-	public function middleware() {
-		return $this->_middleware;
+/**
+ * Get the list of connected filters.
+ *
+ * @return array
+ */
+	public function filters() {
+		return $this->_filters;
 	}
 
 }

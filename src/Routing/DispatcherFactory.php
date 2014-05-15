@@ -74,7 +74,7 @@ class DispatcherFactory {
 	public static function create() {
 		$dispatcher = new Dispatcher();
 		foreach (static::$_stack as $middleware) {
-			$dispatcher->add($middleware);
+			$dispatcher->addFilter($middleware);
 		}
 		return $dispatcher;
 	}

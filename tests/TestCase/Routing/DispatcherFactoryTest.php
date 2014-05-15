@@ -33,7 +33,7 @@ class DispatcherFactoryTest extends TestCase {
 	}
 
 /**
- * Test add middleware
+ * Test add filter
  *
  * @return void
  */
@@ -44,7 +44,7 @@ class DispatcherFactoryTest extends TestCase {
 	}
 
 /**
- * Test add middleware as a string
+ * Test add filter as a string
  *
  * @return void
  */
@@ -54,7 +54,7 @@ class DispatcherFactoryTest extends TestCase {
 	}
 
 /**
- * Test add middleware missing
+ * Test add filter missing
  *
  * @expectedException Cake\Routing\Error\MissingDispatcherFilterException
  * @return void
@@ -73,7 +73,7 @@ class DispatcherFactoryTest extends TestCase {
 		DispatcherFactory::add($mw);
 		$result = DispatcherFactory::create();
 		$this->assertInstanceOf('Cake\Routing\Dispatcher', $result);
-		$this->assertCount(1, $result->middleware());
+		$this->assertCount(1, $result->filters());
 	}
 
 }

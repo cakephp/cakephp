@@ -463,7 +463,7 @@ class DispatcherTest extends TestCase {
 			->method('beforeDispatch');
 		$filter->expects($this->at(1))
 			->method('afterDispatch');
-		$dispatcher->add($filter);
+		$dispatcher->addFilter($filter);
 
 		$request = new Request([
 			'url' => '/',
@@ -501,7 +501,7 @@ class DispatcherTest extends TestCase {
 		$request = new Request();
 		$res = new Response();
 		$dispatcher = new Dispatcher();
-		$dispatcher->add($filter);
+		$dispatcher->addFilter($filter);
 		$dispatcher->dispatch($request, $res);
 	}
 
@@ -533,7 +533,7 @@ class DispatcherTest extends TestCase {
 			]
 		]);
 		$dispatcher = new Dispatcher();
-		$dispatcher->add($filter);
+		$dispatcher->addFilter($filter);
 		$dispatcher->dispatch($request, $response);
 	}
 

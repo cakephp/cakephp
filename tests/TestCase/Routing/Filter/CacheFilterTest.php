@@ -88,7 +88,7 @@ class CacheFilterTest extends TestCase {
 		Router::connect('/:controller/:action/*');
 
 		$dispatcher = new Dispatcher();
-		$dispatcher->add(new RoutingFilter());
+		$dispatcher->addFilter(new RoutingFilter());
 		$request = new Request($url);
 		$response = $this->getMock('Cake\Network\Response', array('send'));
 
@@ -98,8 +98,8 @@ class CacheFilterTest extends TestCase {
 		$request = new Request($url);
 		$response = $this->getMock('Cake\Network\Response', array('send'));
 		$dispatcher = new Dispatcher();
-		$dispatcher->add(new RoutingFilter());
-		$dispatcher->add(new CacheFilter());
+		$dispatcher->addFilter(new RoutingFilter());
+		$dispatcher->addFilter(new CacheFilter());
 		$dispatcher->dispatch($request, $response);
 		$cached = $response->body();
 

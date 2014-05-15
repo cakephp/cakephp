@@ -22,6 +22,9 @@ use Cake\Network\Response;
 use Cake\Routing\Filter\AssetFilter;
 use Cake\TestSuite\TestCase;
 
+/**
+ * Asset filter test case.
+ */
 class AssetFilterTest extends TestCase {
 
 /**

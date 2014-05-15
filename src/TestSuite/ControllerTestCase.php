@@ -249,7 +249,7 @@ abstract class ControllerTestCase extends TestCase {
 
 		$Dispatch = new ControllerTestDispatcher();
 		foreach (DispatcherFactory::filters() as $filter) {
-			$Dispatch->add($filter);
+			$Dispatch->addFilter($filter);
 		}
 		if ($this->_dirtyController) {
 			$this->controller = null;
