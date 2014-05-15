@@ -252,13 +252,7 @@ class Configure {
 		$values = $engine->read($key);
 
 		if ($merge) {
-			$keys = array_keys($values);
-			foreach ($keys as $key) {
-				$current = Hash::get(static::$_values, $key);
-				if ($current && is_array($values[$key]) && is_array($current)) {
-					$values[$key] = Hash::merge($current, $values[$key]);
-				}
-			}
+			$values = Hash::merge(static::$_values, $values);
 		}
 
 		return static::write($values);
