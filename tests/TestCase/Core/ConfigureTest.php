@@ -1,9 +1,5 @@
 <?php
 /**
- * ConfigureTest file
- *
- * Holds several tests
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -301,6 +297,40 @@ class ConfigureTest extends TestCase {
 		$this->assertEquals('value2', Configure::read('Read'));
 		$this->assertEquals('buried2', Configure::read('Deep.Second.SecondDeepest'));
 		$this->assertNull(Configure::read('Deep.Deeper.Deepest'));
+	}
+
+/**
+ * Test load() replacing existing data
+ *
+ * @return void
+ */
+	public function testLoadWithExistingData() {
+		Configure::config('test', new PhpConfig(TEST_APP . 'TestApp/Config/'));
+		Configure::write('my_key', 'value');
+
+		Configure::load('var_test', 'test');
+		$this->assertEquals('value', Configure::read('my_key'), 'Should not overwrite existing data.');
+		$this->assertEquals('value', Configure::read('Read'), 'Should load new data.');
+	}
+
+/**
+ * Test load() merging on top of existing data
+ *
+ * @return void
+ */
+	public function testLoadMergeWithExistingData() {
+		Configure::config('test', new PhpConfig(TEST_APP . 'TestApp/Config/'));
+		Configure::write('my_key', 'value');
+		Configure::write('Read', 'old');
+		Configure::write('Deep.old', 'old');
+		Configure::write('TestAcl.classname', 'old');
+
+		Configure::load('var_test', 'test', true);
+		$this->assertEquals('value', Configure::read('Read'), 'Should load new data.');
+		$this->assertEquals('buried', Configure::read('Deep.Deeper.Deepest'), 'Should load new data');
+		$this->assertEquals('old', Configure::read('Deep.old'), 'Should not destroy old data.');
+		$this->assertEquals('value', Configure::read('my_key'), 'Should not destroy data.');
+		$this->assertEquals('Original', Configure::read('TestAcl.classname'), 'No arrays');
 	}
 
 /**
