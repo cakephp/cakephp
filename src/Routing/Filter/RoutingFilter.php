@@ -34,7 +34,7 @@ class RoutingFilter extends DispatcherFilter {
  *
  * @var int
  */
-	protected $_priority = -10;
+	protected $_priority = 10;
 
 /**
  * Applies Routing and additionalParameters to the request to be dispatched.
