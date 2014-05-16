@@ -323,12 +323,14 @@ class ConfigureTest extends TestCase {
 		Configure::write('my_key', 'value');
 		Configure::write('Read', 'old');
 		Configure::write('Deep.old', 'old');
+		Configure::write('TestAcl.classname', 'old');
 
 		Configure::load('var_test', 'test', true);
 		$this->assertEquals('value', Configure::read('Read'), 'Should load new data.');
 		$this->assertEquals('buried', Configure::read('Deep.Deeper.Deepest'), 'Should load new data');
 		$this->assertEquals('old', Configure::read('Deep.old'), 'Should not destroy old data.');
 		$this->assertEquals('value', Configure::read('my_key'), 'Should not destroy data.');
+		$this->assertEquals('Original', Configure::read('TestAcl.classname'), 'No arrays');
 	}
 
 /**
