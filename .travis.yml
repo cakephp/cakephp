@@ -3,6 +3,7 @@ language: php
 php:
   - 5.4
   - 5.5
+  - 5.6
 
 env:
   - DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_login='travis' db_password=''
@@ -15,6 +16,7 @@ services:
 matrix:
   allow_failures:
     - php: hhvm-nightly
+    - php: 5.6
   fast_finish: true
   include:
     - php: 5.4
