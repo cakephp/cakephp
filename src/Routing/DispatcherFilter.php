@@ -148,7 +148,9 @@ class DispatcherFilter implements EventListener {
 	public function matches(Event $event) {
 		$request = $event->data['request'];
 		$pass = true;
-		if (!empty($this->_config['for'])) {
+		if ($this->_config['for'] instanceof Route\Route) {
+			$pass = (bool)$this->_config['for']->parse('/' . $request->url);
+		} elseif (!empty($this->_config['for'])) {
 			$pass = strpos($request->here(false), $this->_config['for']) === 0;
 		}
 		if ($pass && !empty($this->_config['when'])) {
