@@ -30,7 +30,6 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
-use Cake\View\CellTrait;
 use Cake\View\View;
 use Cake\View\ViewVarsTrait;
 
@@ -79,7 +78,6 @@ use Cake\View\ViewVarsTrait;
  */
 class Controller implements EventListener {
 
-	use CellTrait;
 	use LogTrait;
 	use MergeVariablesTrait;
 	use ModelAwareTrait;
