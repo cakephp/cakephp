@@ -28,7 +28,7 @@ use Cake\Utility\Inflector;
  * serves the file to the client if appropriate.
  *
  */
-class AssetDispatcher extends DispatcherFilter {
+class AssetFilter extends DispatcherFilter {
 
 /**
  * Default priority for all methods in this filter
@@ -36,7 +36,7 @@ class AssetDispatcher extends DispatcherFilter {
  *
  * @var int
  */
-	public $priority = 9;
+	protected $_priority = 9;
 
 /**
  * Checks if a requested asset exists and sends it to the browser

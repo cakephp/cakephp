@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\Reporter\HtmlReporter;
 use Cake\TestSuite\TestCase;
@@ -78,6 +79,8 @@ class ControllerTestCaseTest extends TestCase {
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$this->Case = $this->getMockForAbstractClass('Cake\TestSuite\ControllerTestCase');
+		DispatcherFactory::add('Routing');
+		DispatcherFactory::add('ControllerFactory');
 		Router::reload();
 		TableRegistry::clear();
 	}
@@ -90,6 +93,7 @@ class ControllerTestCaseTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Plugin::unload();
+		DispatcherFactory::clear();
 		$this->Case->controller = null;
 	}
 

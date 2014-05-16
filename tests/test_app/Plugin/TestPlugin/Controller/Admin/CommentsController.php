@@ -30,13 +30,6 @@ class CommentsController extends Controller {
 	public $components = array();
 
 /**
- * components
- *
- * @var array
- */
-	public $uses = array();
-
-/**
  * index action
  *
  * @return void

@@ -25,7 +25,7 @@ use Cake\View\View;
  * and served it back to the client if appropriate.
  *
  */
-class CacheDispatcher extends DispatcherFilter {
+class CacheFilter extends DispatcherFilter {
 
 /**
  * Default priority for all methods in this filter
@@ -33,7 +33,7 @@ class CacheDispatcher extends DispatcherFilter {
  *
  * @var int
  */
-	public $priority = 9;
+	protected $_priority = 9;
 
 /**
  * Checks whether the response was cached and set the body accordingly.

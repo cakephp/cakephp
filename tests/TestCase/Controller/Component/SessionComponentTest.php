@@ -1,7 +1,5 @@
 <?php
 /**
- * SessionComponentTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -21,6 +19,7 @@ use Cake\Controller\Component\SessionComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Network\Session;
+use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
@@ -51,6 +50,8 @@ class SessionComponentTest extends TestCase {
 			'timeout' => 100,
 			'cookie' => 'test'
 		));
+		DispatcherFactory::add('Routing');
+		DispatcherFactory::add('ControllerFactory');
 	}
 
 /**
@@ -60,6 +61,7 @@ class SessionComponentTest extends TestCase {
  */
 	public static function teardownAfterClass() {
 		Configure::write('Session', static::$_sessionBackup);
+		DispatcherFactory::clear();
 	}
 
 /**

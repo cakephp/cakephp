@@ -1,10 +1,5 @@
 <?php
 /**
- * Dispatcher takes the URL information, parses it for parameters and
- * tells the involved controllers what to do.
- *
- * This is the heart of CakePHP's operation.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -38,7 +33,7 @@ use Cake\Utility\Inflector;
  * the controller.
  *
  */
-class Dispatcher implements EventListener {
+class Dispatcher {
 
 /**
  * Event manager, used to handle dispatcher filters
@@ -48,15 +43,11 @@ class Dispatcher implements EventListener {
 	protected $_eventManager;
 
 /**
- * Constructor.
+ * Connected filter objects
  *
- * @param string $base The base directory for the application. Writes `App.base` to Configure.
+ * @var array
  */
-	public function __construct($base = false) {
-		if ($base !== false) {
-			Configure::write('App.base', $base);
-		}
-	}
+	protected $_filters = [];
 
 /**
  * Returns the Cake\Event\EventManager instance or creates one if none was
@@ -67,59 +58,8 @@ class Dispatcher implements EventListener {
 	public function getEventManager() {
 		if (!$this->_eventManager) {
 			$this->_eventManager = new EventManager();
-			$this->_eventManager->attach($this);
-			$this->_attachFilters($this->_eventManager);
 		}
 		return $this->_eventManager;
-	}
-
-/**
- * Returns the list of events this object listens to.
- *
- * @return array
- */
-	public function implementedEvents() {
-		return array('Dispatcher.beforeDispatch' => 'parseParams');
-	}
-
-/**
- * Attaches all event listeners for this dispatcher instance. Loads the
- * dispatcher filters from the configured locations.
- *
- * @param \Cake\Event\EventManager $manager
- * @return void
- * @throws \Cake\Routing\Error\MissingDispatcherFilterException
- */
-	protected function _attachFilters($manager) {
-		$filters = Configure::read('Dispatcher.filters');
-		if (empty($filters)) {
-			return;
-		}
-
-		foreach ($filters as $index => $filter) {
-			$settings = array();
-			if (is_array($filter) && !is_int($index)) {
-				$settings = $filter;
-				$filter = $index;
-			}
-			if (is_string($filter)) {
-				$filter = array('callable' => $filter);
-			}
-			if (is_string($filter['callable'])) {
-				$callable = App::className($filter['callable'], 'Routing/Filter');
-				if (!$callable) {
-					throw new Error\MissingDispatcherFilterException($filter['callable']);
-				}
-				$manager->attach(new $callable($settings));
-			} else {
-				$on = strtolower($filter['on']);
-				$options = array();
-				if (isset($filter['priority'])) {
-					$options = array('priority' => $filter['priority']);
-				}
-				$manager->attach($filter['callable'], 'Dispatcher.' . $on . 'Dispatch', $options);
-			}
-		}
 	}
 
 /**
@@ -136,12 +76,11 @@ class Dispatcher implements EventListener {
  *
  * @param \Cake\Network\Request $request Request object to dispatch.
  * @param \Cake\Network\Response $response Response object to put the results of the dispatch into.
- * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return string|void if `$request['return']` is set then it returns response body, null otherwise
  * @throws \Cake\Controller\Error\MissingControllerException When the controller is missing.
  */
-	public function dispatch(Request $request, Response $response, array $additionalParams = array()) {
-		$beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response', 'additionalParams'));
+	public function dispatch(Request $request, Response $response) {
+		$beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
 		$this->getEventManager()->dispatch($beforeEvent);
 
 		$request = $beforeEvent->data['request'];
@@ -153,7 +92,10 @@ class Dispatcher implements EventListener {
 			return;
 		}
 
-		$controller = $this->_getController($request, $response);
+		$controller = false;
+		if (isset($beforeEvent->data['controller'])) {
+			$controller = $beforeEvent->data['controller'];
+		}
 
 		if (!($controller instanceof Controller)) {
 			throw new MissingControllerException(array(
@@ -212,68 +154,27 @@ class Dispatcher implements EventListener {
 	}
 
 /**
- * Applies Routing and additionalParameters to the request to be dispatched.
- * If Routes have not been loaded they will be loaded, and app/Config/routes.php will be run.
+ * Add a filter to this dispatcher.
  *
- * @param \Cake\Event\Event $event containing the request, response and additional params
+ * The added filter will be attached to the event manager used
+ * by this dispatcher.
+ *
+ * @param \Cake\Event\EventListener $filter The filter to connect. Can be
+ *   any EventListener. Typically an instance of \Cake\Routing\DispatcherFilter.
  * @return void
  */
-	public function parseParams(Event $event) {
-		$request = $event->data['request'];
-		Router::setRequestInfo($request);
-
-		if (empty($request->params['controller'])) {
-			$params = Router::parse($request->url);
-			$request->addParams($params);
-		}
-
-		if (!empty($event->data['additionalParams'])) {
-			$request->addParams($event->data['additionalParams']);
-		}
+	public function addFilter(EventListener $filter) {
+		$this->_filters[] = $filter;
+		$this->getEventManager()->attach($filter);
 	}
 
 /**
- * Get controller to use, either plugin controller or application controller
+ * Get the list of connected filters.
  *
- * @param \Cake\Network\Request $request Request object
- * @param \Cake\Network\Response $response Response for the controller.
- * @return mixed name of controller if not loaded, or object if loaded
+ * @return array
  */
-	protected function _getController($request, $response) {
-		$ctrlClass = $this->_loadController($request);
-		if (!$ctrlClass) {
-			return false;
-		}
-		$reflection = new \ReflectionClass($ctrlClass);
-		if ($reflection->isAbstract() || $reflection->isInterface()) {
-			return false;
-		}
-		return $reflection->newInstance($request, $response);
-	}
-
-/**
- * Load controller and return controller class name
- *
- * @param \Cake\Network\Request $request
- * @return string|bool Name of controller class name
- */
-	protected function _loadController($request) {
-		$pluginName = $pluginPath = $controller = null;
-		$namespace = 'Controller';
-		if (!empty($request->params['plugin'])) {
-			$pluginName = Inflector::camelize($request->params['plugin']);
-			$pluginPath = $pluginName . '.';
-		}
-		if (!empty($request->params['controller'])) {
-			$controller = Inflector::camelize($request->params['controller']);
-		}
-		if (!empty($request->params['prefix'])) {
-			$namespace .= '/' . Inflector::camelize($request->params['prefix']);
-		}
-		if ($pluginPath . $controller) {
-			return App::className($pluginPath . $controller, $namespace, 'Controller');
-		}
-		return false;
+	public function filters() {
+		return $this->_filters;
 	}
 
 }

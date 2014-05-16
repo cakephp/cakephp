@@ -1,7 +1,5 @@
 <?php
 /**
- * RequestHandlerComponentTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -24,6 +22,7 @@ use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\RequestHandlerTestController;
@@ -55,6 +54,8 @@ class RequestHandlerComponentTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('App.namespace', 'TestApp');
+		DispatcherFactory::add('Routing');
+		DispatcherFactory::add('ControllerFactory');
 		$this->_init();
 	}
 
@@ -79,6 +80,8 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
+		DispatcherFactory::clear();
+		$this->_init();
 		unset($this->RequestHandler, $this->Controller);
 		if (!headers_sent()) {
 			header('Content-type: text/html'); //reset content type.
