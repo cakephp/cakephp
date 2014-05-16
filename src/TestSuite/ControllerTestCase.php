@@ -19,24 +19,41 @@ use Cake\Controller\Error\MissingControllerException;
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Event\Event;
-use Cake\Routing\Dispatcher;
+use Cake\Routing\DispatcherFilter;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
 
 /**
- * ControllerTestDispatcher class
+ * StubControllerFilter
+ *
+ * A test harness dispatcher filter that allows
+ * pre-generated controllers to be injected into the dispatch cycle.
  *
  */
-class ControllerTestDispatcher extends Dispatcher {
+class StubControllerFilter extends DispatcherFilter {
+
+/**
+ * Attempts to always run last.
+ *
+ * @var int
+ */
+	protected $_priority = 9999;
 
 /**
  * The controller to use in the dispatch process
  *
  * @var \Cake\Controller\Controller
  */
-	public $testController = null;
+	public $testController;
+
+/**
+ * Response stub to apply on the controller.
+ *
+ * @var \Cake\Network\Response
+ */
+	public $response;
 
 /**
  * Returns the test controller
@@ -45,15 +62,26 @@ class ControllerTestDispatcher extends Dispatcher {
  * @param \Cake\Network\Response $response Response for the controller.
  * @return \Cake\Controller\Controller
  */
-	protected function _getController($request, $response) {
-		if ($this->testController === null) {
-			$this->testController = parent::_getController($request, $response);
+	public function beforeDispatch(Event $event) {
+		if (empty($event->data['controller'])) {
+			return;
 		}
-		$default = array('InterceptContent' => array('className' => 'Cake\TestSuite\InterceptContentHelper'));
-		$this->testController->helpers = array_merge($default, $this->testController->helpers);
-		$this->testController->setRequest($request);
-		$this->testController->response = $this->response;
-		$registry = $this->testController->components();
+		if ($this->testController !== null) {
+			$event->data['controller'] = $this->testController;
+		}
+		$request = $event->data['request'];
+		$response = $event->data['response'];
+		$controller = $event->data['controller'];
+
+		$default = array(
+			'InterceptContent' => array(
+				'className' => 'Cake\TestSuite\InterceptContentHelper'
+			)
+		);
+		$controller->helpers = array_merge($default, $controller->helpers);
+		$controller->setRequest($request);
+		$controller->response = $this->response;
+		$registry = $controller->components();
 		foreach ($registry->loaded() as $component) {
 			$object = $registry->{$component};
 			if (isset($object->response)) {
@@ -63,7 +91,6 @@ class ControllerTestDispatcher extends Dispatcher {
 				$object->request = $request;
 			}
 		}
-		return $this->testController;
 	}
 
 }
@@ -247,10 +274,10 @@ abstract class ControllerTestCase extends TestCase {
 			return;
 		}
 
-		$Dispatch = new ControllerTestDispatcher();
-		foreach (DispatcherFactory::filters() as $filter) {
-			$Dispatch->addFilter($filter);
-		}
+		$stubFilter = new StubControllerFilter();
+		$dispatch = DispatcherFactory::create();
+		$dispatch->addFilter($stubFilter);
+
 		if ($this->_dirtyController) {
 			$this->controller = null;
 		}
@@ -266,18 +293,19 @@ abstract class ControllerTestCase extends TestCase {
 		}
 		$request->addParams($params);
 
-		$Dispatch->testController = $this->controller;
-		$Dispatch->response = $this->getMock('Cake\Network\Response', array('send', 'stop'));
-		$this->result = $Dispatch->dispatch($request, $Dispatch->response);
+		$response = $this->getMock('Cake\Network\Response', array('send', 'stop'));
+		$stubFilter->response = $response;
+		$stubFilter->testController = $this->controller;
+		$this->result = $dispatch->dispatch($request, $response);
 
-		$this->controller = $Dispatch->testController;
+		$this->controller = $stubFilter->testController;
 		$this->vars = $this->controller->viewVars;
 		$this->contents = $this->controller->response->body();
 		if (isset($this->controller->View)) {
 			$this->view = $this->controller->View->fetch('__view_no_layout__');
 		}
 		$this->_dirtyController = true;
-		$this->headers = $Dispatch->response->header();
+		$this->headers = $response->header();
 
 		return $this->{$options['return']};
 	}

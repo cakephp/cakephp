@@ -24,6 +24,7 @@ use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Dispatcher;
+use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;
@@ -62,27 +63,6 @@ class TestDispatcher extends Dispatcher {
 		return parent::_invoke($controller);
 	}
 
-/**
- * Helper function to test single method attaching for dispatcher filters
- *
- * @param \Cake\Event\Event $event
- * @return void
- */
-	public function filterTest($event) {
-		$event->data['request']->params['eventName'] = $event->name();
-	}
-
-/**
- * Helper function to test single method attaching for dispatcher filters
- *
- * @param \Cake\Event\Event
- * @return void
- */
-	public function filterTest2($event) {
-		$event->stopPropagation();
-		return $event->data['response'];
-	}
-
 }
 
 /**
@@ -110,13 +90,6 @@ class MyPluginController extends MyPluginAppController {
  * @var string
  */
 	public $name = 'MyPlugin';
-
-/**
- * uses property
- *
- * @var array
- */
-	public $uses = [];
 
 /**
  * index method
@@ -162,13 +135,6 @@ class OtherPagesController extends MyPluginAppController {
 	public $name = 'OtherPages';
 
 /**
- * uses property
- *
- * @var array
- */
-	public $uses = [];
-
-/**
  * display method
  *
  * @param string $page
@@ -208,13 +174,6 @@ class ArticlesTestController extends ArticlesTestAppController {
  * @var string
  */
 	public $name = 'ArticlesTest';
-
-/**
- * uses property
- *
- * @var array
- */
-	public $uses = [];
 
 /**
  * admin_index method
@@ -258,6 +217,9 @@ class DispatcherTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 
 		App::objects('Plugin', null, false);
+
+		$this->dispatcher = new TestDispatcher();
+		$this->dispatcher->addFilter(new ControllerFactoryFilter());
 	}
 
 /**
@@ -278,10 +240,6 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testMissingController() {
-		Router::connect('/:controller/:action/*');
-
-		$Dispatcher = new TestDispatcher();
-		Configure::write('App.baseUrl', '/index.php');
 		$request = new Request([
 			'url' => 'some_controller/home',
 			'params' => [
@@ -290,8 +248,7 @@ class DispatcherTest extends TestCase {
 			]
 		]);
 		$response = $this->getMock('Cake\Network\Response');
-
-		$Dispatcher->dispatch($request, $response, array('return' => 1));
+		$this->dispatcher->dispatch($request, $response, array('return' => 1));
 	}
 
 /**
@@ -302,10 +259,6 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testMissingControllerInterface() {
-		Router::connect('/:controller/:action/*');
-
-		$Dispatcher = new TestDispatcher();
-		Configure::write('App.baseUrl', '/index.php');
 		$request = new Request([
 			'url' => 'dispatcher_test_interface/index',
 			'params' => [
@@ -315,7 +268,7 @@ class DispatcherTest extends TestCase {
 		]);
 		$url = new Request('dispatcher_test_interface/index');
 		$response = $this->getMock('Cake\Network\Response');
-		$Dispatcher->dispatch($request, $response, array('return' => 1));
+		$this->dispatcher->dispatch($request, $response, array('return' => 1));
 	}
 
 /**
@@ -326,9 +279,6 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testMissingControllerAbstract() {
-		Router::connect('/:controller/:action/*');
-
-		$Dispatcher = new TestDispatcher();
 		$request = new Request([
 			'url' => 'abstract/index',
 			'params' => [
@@ -337,7 +287,7 @@ class DispatcherTest extends TestCase {
 			]
 		]);
 		$response = $this->getMock('Cake\Network\Response');
-		$Dispatcher->dispatch($request, $response, array('return' => 1));
+		$this->dispatcher->dispatch($request, $response, array('return' => 1));
 	}
 
 /**
@@ -346,7 +296,6 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testDispatchBasic() {
-		$Dispatcher = new TestDispatcher();
 		$url = new Request([
 			'url' => 'pages/home',
 			'params' => [
@@ -358,9 +307,9 @@ class DispatcherTest extends TestCase {
 		]);
 		$response = $this->getMock('Cake\Network\Response');
 
-		$Dispatcher->dispatch($url, $response);
+		$this->dispatcher->dispatch($url, $response);
 		$expected = 'Pages';
-		$this->assertEquals($expected, $Dispatcher->controller->name);
+		$this->assertEquals($expected, $this->dispatcher->controller->name);
 	}
 
 /**
@@ -369,8 +318,6 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testDispatchActionReturnsResponse() {
-		Router::connect('/:controller/:action');
-		$Dispatcher = new Dispatcher();
 		$request = new Request([
 			'url' => 'some_pages/responseGenerator',
 			'params' => [
@@ -382,7 +329,7 @@ class DispatcherTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 
 		ob_start();
-		$Dispatcher->dispatch($request, $response);
+		$this->dispatcher->dispatch($request, $response);
 		$result = ob_get_clean();
 
 		$this->assertEquals('new response', $result);
@@ -394,7 +341,6 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testPrefixDispatch() {
-		$Dispatcher = new TestDispatcher();
 		$request = new Request([
 			'url' => 'admin/posts/index',
 			'params' => [
@@ -407,11 +353,11 @@ class DispatcherTest extends TestCase {
 		]);
 		$response = $this->getMock('Cake\Network\Response');
 
-		$Dispatcher->dispatch($request, $response);
+		$this->dispatcher->dispatch($request, $response);
 
 		$this->assertInstanceOf(
 			'TestApp\Controller\Admin\PostsController',
-			$Dispatcher->controller
+			$this->dispatcher->controller
 		);
 		$expected = '/admin/posts/index';
 		$this->assertSame($expected, $request->here);
@@ -438,12 +384,11 @@ class DispatcherTest extends TestCase {
 		]);
 		$response = $this->getMock('Cake\Network\Response');
 
-		$Dispatcher = new TestDispatcher();
-		$Dispatcher->dispatch($request, $response);
+		$this->dispatcher->dispatch($request, $response);
 
 		$this->assertInstanceOf(
 			'TestPlugin\Controller\Admin\CommentsController',
-			$Dispatcher->controller
+			$this->dispatcher->controller
 		);
 	}
 
@@ -453,7 +398,6 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testDispatcherFilter() {
-		$dispatcher = new TestDispatcher();
 		$filter = $this->getMock(
 			'Cake\Routing\DispatcherFilter',
 			['beforeDispatch', 'afterDispatch']
@@ -463,7 +407,7 @@ class DispatcherTest extends TestCase {
 			->method('beforeDispatch');
 		$filter->expects($this->at(1))
 			->method('afterDispatch');
-		$dispatcher->addFilter($filter);
+		$this->dispatcher->addFilter($filter);
 
 		$request = new Request([
 			'url' => '/',
@@ -475,7 +419,7 @@ class DispatcherTest extends TestCase {
 			]
 		]);
 		$response = $this->getMock('Cake\Network\Response', ['send']);
-		$dispatcher->dispatch($request, $response);
+		$this->dispatcher->dispatch($request, $response);
 	}
 
 /**
@@ -500,9 +444,8 @@ class DispatcherTest extends TestCase {
 
 		$request = new Request();
 		$res = new Response();
-		$dispatcher = new Dispatcher();
-		$dispatcher->addFilter($filter);
-		$dispatcher->dispatch($request, $res);
+		$this->dispatcher->addFilter($filter);
+		$this->dispatcher->dispatch($request, $res);
 	}
 
 /**
@@ -532,9 +475,8 @@ class DispatcherTest extends TestCase {
 				'pass' => [],
 			]
 		]);
-		$dispatcher = new Dispatcher();
-		$dispatcher->addFilter($filter);
-		$dispatcher->dispatch($request, $response);
+		$this->dispatcher->addFilter($filter);
+		$this->dispatcher->dispatch($request, $response);
 	}
 
 }

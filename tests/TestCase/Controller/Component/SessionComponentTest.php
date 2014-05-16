@@ -51,6 +51,7 @@ class SessionComponentTest extends TestCase {
 			'cookie' => 'test'
 		));
 		DispatcherFactory::add('Routing');
+		DispatcherFactory::add('ControllerFactory');
 	}
 
 /**

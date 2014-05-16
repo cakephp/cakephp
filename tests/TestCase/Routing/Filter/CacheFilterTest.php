@@ -20,6 +20,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Dispatcher;
 use Cake\Routing\Filter\CacheFilter;
+use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\Routing\Filter\RoutingFilter;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -89,6 +90,7 @@ class CacheFilterTest extends TestCase {
 
 		$dispatcher = new Dispatcher();
 		$dispatcher->addFilter(new RoutingFilter());
+		$dispatcher->addFilter(new ControllerFactoryFilter());
 		$request = new Request($url);
 		$response = $this->getMock('Cake\Network\Response', array('send'));
 
@@ -100,6 +102,7 @@ class CacheFilterTest extends TestCase {
 		$dispatcher = new Dispatcher();
 		$dispatcher->addFilter(new RoutingFilter());
 		$dispatcher->addFilter(new CacheFilter());
+		$dispatcher->addFilter(new ControllerFactoryFilter());
 		$dispatcher->dispatch($request, $response);
 		$cached = $response->body();
 

@@ -80,6 +80,7 @@ class ControllerTestCaseTest extends TestCase {
 
 		$this->Case = $this->getMockForAbstractClass('Cake\TestSuite\ControllerTestCase');
 		DispatcherFactory::add('Routing');
+		DispatcherFactory::add('ControllerFactory');
 		Router::reload();
 		TableRegistry::clear();
 	}

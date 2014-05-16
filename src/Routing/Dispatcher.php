@@ -103,7 +103,10 @@ class Dispatcher {
 			return;
 		}
 
-		$controller = $this->_getController($request, $response);
+		$controller = false;
+		if (isset($beforeEvent->data['controller'])) {
+			$controller = $beforeEvent->data['controller'];
+		}
 
 		if (!($controller instanceof Controller)) {
 			throw new MissingControllerException(array(
@@ -159,64 +162,6 @@ class Dispatcher {
 		}
 
 		return $response;
-	}
-
-/**
- * Get controller to use, either plugin controller or application controller
- *
- * @param \Cake\Network\Request $request Request object
- * @param \Cake\Network\Response $response Response for the controller.
- * @return mixed name of controller if not loaded, or object if loaded
- */
-	protected function _getController($request, $response) {
-		$pluginPath = $controller = null;
-		$namespace = 'Controller';
-		if (!empty($request->params['plugin'])) {
-			$pluginPath = Inflector::camelize($request->params['plugin']) . '.';
-		}
-		if (!empty($request->params['controller'])) {
-			$controller = Inflector::camelize($request->params['controller']);
-		}
-		if (!empty($request->params['prefix'])) {
-			$namespace .= '/' . Inflector::camelize($request->params['prefix']);
-		}
-		$className = false;
-		if ($pluginPath . $controller) {
-			$className = App::classname($pluginPath . $controller, $namespace, 'Controller');
-		}
-		if (!$className) {
-			return false;
-		}
-		$reflection = new \ReflectionClass($className);
-		if ($reflection->isAbstract() || $reflection->isInterface()) {
-			return false;
-		}
-		return $reflection->newInstance($request, $response);
-	}
-
-/**
- * Load controller and return controller class name
- *
- * @param \Cake\Network\Request $request
- * @return string|bool Name of controller class name
- */
-	protected function _loadController($request) {
-		$pluginName = $pluginPath = $controller = null;
-		$namespace = 'Controller';
-		if (!empty($request->params['plugin'])) {
-			$pluginName = Inflector::camelize($request->params['plugin']);
-			$pluginPath = $pluginName . '.';
-		}
-		if (!empty($request->params['controller'])) {
-			$controller = Inflector::camelize($request->params['controller']);
-		}
-		if (!empty($request->params['prefix'])) {
-			$namespace .= '/' . Inflector::camelize($request->params['prefix']);
-		}
-		if ($pluginPath . $controller) {
-			return App::className($pluginPath . $controller, $namespace, 'Controller');
-		}
-		return false;
 	}
 
 /**
