@@ -81,13 +81,8 @@ class Configure {
 			static::$_values = Hash::insert(static::$_values, $name, $value);
 		}
 
-		if (isset($config['debug']) && function_exists('ini_set')) {
-			if (static::$_values['debug']) {
-				ini_set('display_errors', 1);
-			} else {
-				ini_set('display_errors', 0);
-			}
-		}
+		static::_setDisplayErrors();
+
 		return true;
 	}
 
@@ -250,9 +245,13 @@ class Configure {
 					$values[$key] = Hash::merge($c, $values[$key]);
 				}
 			}
+			static::write($values);
+		} else {
+			static::$_values = $values;
+			static::_setDisplayErrors();
 		}
 
-		return static::write($values);
+		return true;
 	}
 
 /**
@@ -368,6 +367,21 @@ class Configure {
 	public static function clear() {
 		static::$_values = [];
 		return true;
+	}
+
+/**
+ * Sets display_errors according to 'debug' setting.
+ *
+ * @return void
+ */
+	protected static function _setDisplayErrors() {
+		if (isset(static::$_values['debug']) && function_exists('ini_set')) {
+			if (static::$_values['debug']) {
+				ini_set('display_errors', 1);
+			} else {
+				ini_set('display_errors', 0);
+			}
+		}
 	}
 
 }
