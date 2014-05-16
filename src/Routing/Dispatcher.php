@@ -50,17 +50,6 @@ class Dispatcher {
 	protected $_filters = [];
 
 /**
- * Constructor.
- *
- * @param string $base The base directory for the application. Writes `App.base` to Configure.
- */
-	public function __construct($base = false) {
-		if ($base !== false) {
-			Configure::write('App.base', $base);
-		}
-	}
-
-/**
  * Returns the Cake\Event\EventManager instance or creates one if none was
  * created. Attaches the default listeners and filters
  *
