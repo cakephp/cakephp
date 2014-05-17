@@ -466,7 +466,14 @@ class FormHelper extends AppHelper {
 			$this->setEntity($model, true);
 			$this->_introspectModel($model, 'fields');
 		}
+
 		$this->_lastAction = $action;
+		if (strpos($action, '://')) {
+			$query = parse_url($action, PHP_URL_QUERY);
+			$query = $query ? '?' . $query : '';
+			$this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
+		}
+
 		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
 	}
 
@@ -1792,7 +1799,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */
 	public function postLink($title, $url = null, $options = array(), $confirmMessage = false) {
-		$options += array('inline' => true, 'block' => null);
+		$options = (array)$options + array('inline' => true, 'block' => null);
 		if (!$options['inline'] && empty($options['block'])) {
 			$options['block'] = __FUNCTION__;
 		}

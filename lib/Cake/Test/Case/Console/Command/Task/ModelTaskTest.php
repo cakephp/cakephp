@@ -1052,8 +1052,8 @@ TEXT;
 		$this->Task->args = array('all');
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
 
-		$this->Task->Fixture->expects($this->exactly(5))->method('bake');
-		$this->Task->Test->expects($this->exactly(5))->method('bake');
+		$this->Task->Fixture->expects($this->exactly(6))->method('bake');
+		$this->Task->Test->expects($this->exactly(6))->method('bake');
 
 		$filename = '/my/path/BakeArticle.php';
 		$this->Task->expects($this->at(1))->method('createFile')
@@ -1082,6 +1082,10 @@ TEXT;
 		$filename = '/my/path/CategoryThread.php';
 		$this->Task->expects($this->at(5))->method('createFile')
 			->with($filename, $this->stringContains('class CategoryThread'));
+
+		$filename = '/my/path/NumberTree.php';
+		$this->Task->expects($this->at(6))->method('createFile')
+			->with($filename, $this->stringContains('class NumberTree'));
 
 		$this->Task->execute();
 
@@ -1216,7 +1220,7 @@ TEXT;
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->skipTables = array('bake_tags');
+		$this->Task->skipTables = array('bake_tags', 'number_trees');
 
 		$this->Task->Fixture->expects($this->exactly(4))->method('bake');
 		$this->Task->Test->expects($this->exactly(4))->method('bake');

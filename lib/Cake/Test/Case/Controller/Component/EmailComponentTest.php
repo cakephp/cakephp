@@ -272,20 +272,17 @@ HTMLBLOC;
 		$this->assertTextEquals($expected, DebugCompTransport::$lastEmail);
 
 		$this->Controller->EmailTest->sendAs = 'both';
-		$expected = str_replace('{CONTENTTYPE}', 'multipart/mixed; boundary="{boundary}"', $header);
+		$expected = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="{boundary}"', $header);
 		$expected .= "--{boundary}\n" .
-			'Content-Type: multipart/alternative; boundary="alt-{boundary}"' . "\n\n" .
-			'--alt-{boundary}' . "\n" .
 			'Content-Type: text/plain; charset=UTF-8' . "\n" .
 			'Content-Transfer-Encoding: 8bit' . "\n\n" .
 			$text .
 			"\n\n" .
-			'--alt-{boundary}' . "\n" .
+			'--{boundary}' . "\n" .
 			'Content-Type: text/html; charset=UTF-8' . "\n" .
 			'Content-Transfer-Encoding: 8bit' . "\n\n" .
 			$html .
-			"\n\n" .
-			'--alt-{boundary}--' . "\n\n\n" .
+			"\n\n\n" .
 			'--{boundary}--' . "\n";
 
 		$expected = '<pre>' . $expected . '</pre>';
