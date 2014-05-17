@@ -273,7 +273,6 @@ class SessionTest extends TestCase {
 		$session->destroy();
 
 		$this->assertFalse($session->check('bulletProof'));
-		$this->assertEmpty($session->id());
 	}
 
 /**
