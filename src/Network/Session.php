@@ -42,9 +42,6 @@ class Session {
 
 	protected $_lifetime;
 
-	protected $_timeout;
-
-
 	public static function create($sessionConfig = []) {
 		if (isset($sessionConfig['defaults'])) {
 			$defaults = static::_defaultConfig($sessionConfig['defaults']);
@@ -157,7 +154,6 @@ class Session {
 		}
 
 		$this->_lifetime = ini_get('session.cookie_lifetime');
-		$this->_timeout = time() + $this->_lifetime;
 		session_register_shutdown();
 	}
 
@@ -393,7 +389,6 @@ class Session {
 		}
 
 		$_SESSION = [];
-		$this->id('');
 		$this->_started = false;
 	}
 
@@ -441,14 +436,16 @@ class Session {
  * @return boolean
  */
 	protected function _timedOut() {
-		$time = $this->read('Config.time') ?: $this->_timeout;
+		$time = $this->read('Config.time');
+		$result = false;
 
-		if (!$this->_lifetime) {
-			return false;
+		$checkTime = $time !== null && $this->_lifetime > 0;
+		if ($checkTime && (time() - $time > $this->_lifetime)) {
+			$result = true;
 		}
 
-		$this->write('Config.time', $this->_timeout);
-		return $time > $this->_timeout;
+		$this->write('Config.time', time());
+		return $result;
 	}
 
 }
