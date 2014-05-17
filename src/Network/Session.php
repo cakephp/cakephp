@@ -40,6 +40,10 @@ class Session {
 
 	protected $_started;
 
+	protected $_lifetime;
+
+	protected $_timeout;
+
 
 	public static function create($sessionConfig = []) {
 		if (isset($sessionConfig['defaults'])) {
@@ -53,24 +57,12 @@ class Session {
 			$sessionConfig['ini']['session.cookie_secure'] = 1;
 		}
 
-		if (isset($sessionConfig['timeout']) && !isset($sessionConfig['cookieTimeout'])) {
-			$sessionConfig['cookieTimeout'] = $sessionConfig['timeout'];
-		}
-
-		if (!isset($sessionConfig['ini']['session.cookie_lifetime'])) {
-			$sessionConfig['ini']['session.cookie_lifetime'] = $sessionConfig['cookieTimeout'] * 60;
-		}
-
 		if (!isset($sessionConfig['ini']['session.name'])) {
 			$sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
 		}
 
 		if (!empty($sessionConfig['handler'])) {
 			$sessionConfig['ini']['session.save_handler'] = 'user';
-		}
-
-		if (!isset($sessionConfig['ini']['session.gc_maxlifetime'])) {
-			$sessionConfig['ini']['session.gc_maxlifetime'] = $sessionConfig['timeout'] * 60;
 		}
 
 		if (!isset($sessionConfig['ini']['session.cookie_httponly'])) {
@@ -91,7 +83,6 @@ class Session {
 			'php' => array(
 				'checkAgent' => false,
 				'cookie' => 'CAKEPHP',
-				'timeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 				)
@@ -99,7 +90,6 @@ class Session {
 			'cake' => array(
 				'checkAgent' => false,
 				'cookie' => 'CAKEPHP',
-				'timeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
@@ -112,7 +102,6 @@ class Session {
 			'cache' => array(
 				'checkAgent' => false,
 				'cookie' => 'CAKEPHP',
-				'timeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
@@ -127,7 +116,6 @@ class Session {
 			'database' => array(
 				'checkAgent' => false,
 				'cookie' => 'CAKEPHP',
-				'timeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
@@ -148,6 +136,11 @@ class Session {
 	}
 
 	public function __construct($config = []) {
+		if (isset($config['timeout'])) {
+			$config['ini']['session.cookie_lifetime'] = 60 * $config['timeout'];
+			$config['ini']['session.gc_maxlifetime'] = 60 * $config['timeout'];
+		}
+
 		if (!empty($config['ini']) && is_array($config['ini'])) {
 			$this->options($config['ini']);
 		}
@@ -163,6 +156,8 @@ class Session {
 			session_set_save_handler($this->engine($class, $config['handler']), false);
 		}
 
+		$this->_lifetime = ini_get('session.cookie_lifetime');
+		$this->_timeout = time() + $this->_lifetime;
 		session_register_shutdown();
 	}
 
@@ -235,8 +230,15 @@ class Session {
 		if (!session_start()) {
 			throw new \RuntimeException('Could not start the session');
 		}
+		
+		$this->_started = true;
 
-		return $this->_started = true;
+		if ($this->_timedOut()) {
+			$this->destroy();
+			return $this->start();
+		}
+
+		return $this->_started;
 	}
 
 /**
@@ -430,6 +432,17 @@ class Session {
 			$params['secure'], $params['httponly']
 		);
 		session_regenerate_id(true);
+	}
+
+	protected function _timedOut() {
+		$time = $this->read('Config.time') ?: $this->_timeout;
+
+		if (!$this->_lifetime) {
+			return false;
+		}
+
+		$this->write('Config.time', $this->_timeout);
+		return $time > $this->_timeout;
 	}
 
 }

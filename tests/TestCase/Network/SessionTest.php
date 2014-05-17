@@ -397,89 +397,19 @@ class SessionTest extends TestCase {
 	}
 
 /**
- * testSessionTimeout method
- *
- * @return void
- */
-	public function testSessionTimeout() {
-		Configure::write('debug', true);
-		Configure::write('Session.defaults', 'cake');
-		Configure::write('Session.autoRegenerate', false);
-
-		$timeoutSeconds = Configure::read('Session.timeout') * 60;
-
-		TestCakeSession::destroy();
-		TestCakeSession::write('Test', 'some value');
-
-		$this->assertWithinMargin(time() + $timeoutSeconds, Session::$sessionTime, 1);
-		$this->assertEquals(10, $_SESSION['Config']['countdown']);
-		$this->assertWithinMargin(Session::$sessionTime, $_SESSION['Config']['time'], 1);
-		$this->assertWithinMargin(time(), Session::$time, 1);
-		$this->assertWithinMargin(time() + $timeoutSeconds, $_SESSION['Config']['time'], 1);
-
-		Configure::write('Session.harden', true);
-		TestCakeSession::destroy();
-
-		TestCakeSession::write('Test', 'some value');
-		$this->assertWithinMargin(time() + $timeoutSeconds, Session::$sessionTime, 1);
-		$this->assertEquals(10, $_SESSION['Config']['countdown']);
-		$this->assertWithinMargin(Session::$sessionTime, $_SESSION['Config']['time'], 1);
-		$this->assertWithinMargin(time(), Session::$time, 1);
-		$this->assertWithinMargin(Session::$time + $timeoutSeconds, $_SESSION['Config']['time'], 1);
-	}
-
-/**
  * Test that cookieTimeout matches timeout when unspecified.
  *
  * @return void
  */
 	public function testCookieTimeoutFallback() {
-		$_SESSION = null;
-		Configure::write('Session', array(
+		$config = [
 			'defaults' => 'cake',
 			'timeout' => 400,
-		));
-		TestCakeSession::start();
-		$this->assertEquals(400, Configure::read('Session.cookieTimeout'));
-		$this->assertEquals(400, Configure::read('Session.timeout'));
+		];
+
+		$session = new Session($config);
 		$this->assertEquals(400 * 60, ini_get('session.cookie_lifetime'));
 		$this->assertEquals(400 * 60, ini_get('session.gc_maxlifetime'));
-
-		$_SESSION = null;
-		Configure::write('Session', array(
-			'defaults' => 'cake',
-			'timeout' => 400,
-			'cookieTimeout' => 600
-		));
-		TestCakeSession::start();
-		$this->assertEquals(600, Configure::read('Session.cookieTimeout'));
-		$this->assertEquals(400, Configure::read('Session.timeout'));
-	}
-
-/**
- * Proves that invalid sessions will be destroyed and re-created
- * if invalid
- *
- * @return void
- */
-	public function testInvalidSessionRenew() {
-		TestCakeSession::start();
-		$this->assertNotEmpty($_SESSION['Config']);
-		$data = $_SESSION;
-
-		session_write_close();
-		$_SESSION = null;
-
-		TestCakeSession::start();
-		$this->assertEquals($data, $_SESSION);
-		TestCakeSession::write('Foo', 'Bar');
-
-		session_write_close();
-		$_SESSION = null;
-
-		TestCakeSession::userAgent('bogus!');
-		TestCakeSession::start();
-		$this->assertNotEquals($data, $_SESSION);
 	}
 
 }
