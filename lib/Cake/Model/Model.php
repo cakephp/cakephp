@@ -1691,7 +1691,8 @@ class Model extends Object implements CakeEventListener {
 	public function save($data = null, $validate = true, $fieldList = array()) {
 		$defaults = array(
 			'validate' => true, 'fieldList' => array(),
-			'callbacks' => true, 'counterCache' => true
+			'callbacks' => true, 'counterCache' => true,
+			'atomic' => true
 		);
 		$_whitelist = $this->whitelist;
 		$fields = array();
@@ -1748,6 +1749,10 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		$db = $this->getDataSource();
+		if ($options['atomic']) {
+			$transactionBegun = $db->begin();
+		}
+
 		$now = time();
 
 		foreach ($dateFields as $updateCol) {
@@ -1778,8 +1783,6 @@ class Model extends Object implements CakeEventListener {
 				return false;
 			}
 		}
-
-		$db = $this->getDataSource();
 
 		if (empty($this->data[$this->alias][$this->primaryKey])) {
 			unset($this->data[$this->alias][$this->primaryKey]);
@@ -1873,6 +1876,21 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		$this->whitelist = $_whitelist;
+
+		if (!$options['atomic']) {
+			return $success;
+		}
+
+		if ($transactionBegun) {
+			if ($success) {
+				$success = $db->commit();
+			}
+
+			if (!$success) {
+				$db->rollback();
+			}
+		}
+
 		return $success;
 	}
 
