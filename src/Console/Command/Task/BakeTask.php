@@ -80,18 +80,28 @@ class BakeTask extends Shell {
  * @return void
  */
 	public function main() {
-		foreach ($this->args as $i => $arg) {
-			if (strpos($arg, '.')) {
-				list($this->params['plugin'], $this->args[$i]) = pluginSplit($arg);
-				break;
-			}
-		}
 		if (isset($this->params['plugin'])) {
 			$this->plugin = $this->params['plugin'];
 		}
 		if (isset($this->params['connection'])) {
 			$this->connection = $this->params['connection'];
 		}
+	}
+
+/**
+ * Handles splitting up the plugin prefix and classname.
+ *
+ * Sets the plugin parameter and plugin property.
+ *
+ * @param string $name The name to possibly split.
+ * @return string The name without the plugin prefix.
+ */
+	protected function _getName($name) {
+		if (strpos($name, '.')) {
+			list($plugin, $name) = pluginSplit($name);
+			$this->plugin = $this->params['plugin'] = $plugin;
+		}
+		return $name;
 	}
 
 /**
