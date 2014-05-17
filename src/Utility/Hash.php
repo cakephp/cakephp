@@ -42,7 +42,14 @@ class Hash {
 		if (empty($data)) {
 			return $default;
 		}
-		if (is_string($path) || is_numeric($path)) {
+
+		$isString = is_string($path);
+
+		if ($isString && strpos($path, '.') === false) {
+			return isset($data[$path]) ? $data[$path] : $default;
+		}
+
+		if ($isString || is_numeric($path)) {
 			$parts = explode('.', $path);
 		} else {
 			$parts = $path;
@@ -240,13 +247,19 @@ class Hash {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::insert
  */
 	public static function insert(array $data, $path, $values = null) {
-		if (strpos($path, '[') === false) {
+		$noTokens = strpos($path, '[') === false;
+		if ($noTokens && strpos($path, '.') === false) {
+			$data[$path] = $values;
+			return $data;
+		}
+
+		if ($noTokens) {
 			$tokens = explode('.', $path);
 		} else {
 			$tokens = String::tokenize($path, '.', '[', ']');
 		}
 
-		if (strpos($path, '{') === false && strpos($path, '[') === false) {
+		if ($noTokens && strpos($path, '{') === false) {
 			return static::_simpleOp('insert', $data, $tokens, $values);
 		}
 
@@ -323,13 +336,17 @@ class Hash {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::remove
  */
 	public static function remove(array $data, $path) {
-		if (strpos($path, '[') === false) {
-			$tokens = explode('.', $path);
-		} else {
-			$tokens = String::tokenize($path, '.', '[', ']');
+		$noTokens = strpos($path, '[') === false;
+		$noExpansion = strpos($path, '{') === false;
+
+		if ($noExpansion && $noTokens && strpos($path, '.') === false) {
+			unset($data[$path]);
+			return $data;
 		}
 
-		if (strpos($path, '{') === false && strpos($path, '[') === false) {
+		$tokens = $noTokens ? explode('.', $path) : String::tokenize($path, '.', '[', ']');
+
+		if ($noExpansion && $noTokens) {
 			return static::_simpleOp('remove', $data, $tokens);
 		}
 
