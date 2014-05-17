@@ -370,6 +370,27 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
+ * test defining the same Authenticate object but with different password hashers
+ *
+ * @return void
+ */
+	public function testSameAuthenticateWithDifferentHashers() {
+		$this->Controller->Auth->config('authenticate', [
+			'FormSimple' => ['className' => 'Form', 'passwordHasher' => 'Simple'],
+			'FormBlowfish' => ['className' => 'Form', 'passwordHasher' => 'Blowfish'],
+		]);
+
+		$objects = $this->Controller->Auth->constructAuthenticate();
+		$this->assertEquals(2, count($objects));
+
+		$this->assertInstanceOf('Cake\Controller\Component\Auth\FormAuthenticate', $objects[0]);
+		$this->assertInstanceOf('Cake\Controller\Component\Auth\FormAuthenticate', $objects[1]);
+
+		$this->assertInstanceOf('Cake\Controller\Component\Auth\SimplePasswordHasher', $objects[0]->passwordHasher());
+		$this->assertInstanceOf('Cake\Controller\Component\Auth\BlowfishPasswordHasher', $objects[1]->passwordHasher());
+	}
+
+/**
  * Tests that deny always takes precedence over allow
  *
  * @return void
@@ -715,7 +736,7 @@ class AuthComponentTest extends TestCase {
 		);
 		$event = new Event('Controller.startup', $Controller);
 
-		$expected = Router::url($this->Auth->config('loginRedirect'), true);
+		$expected = Router::url($this->Auth->config('loginRedirect'));
 		$Controller->expects($this->once())
 			->method('redirect')
 			->with($this->equalTo($expected));

@@ -1,7 +1,5 @@
 <?php
 /**
- * Redis storage engine for cache
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -48,6 +46,7 @@ class RedisEngine extends CacheEngine {
  *    cache::gc from ever being called automatically.
  * - `server` URL or ip to the Redis server host.
  * - `timeout` timeout in seconds (float).
+ * - `unix_socket` Path to the unix socket file (default: false)
  *
  * @var array
  */
@@ -61,7 +60,8 @@ class RedisEngine extends CacheEngine {
 		'prefix' => null,
 		'probability' => 100,
 		'server' => '127.0.0.1',
-		'timeout' => 0
+		'timeout' => 0,
+		'unix_socket' => false,
 	];
 
 /**
@@ -90,7 +90,9 @@ class RedisEngine extends CacheEngine {
 		$return = false;
 		try {
 			$this->_Redis = new \Redis();
-			if (empty($this->_config['persistent'])) {
+			if (!empty($this->settings['unix_socket'])) {
+				$return = $this->_Redis->connect($this->settings['unix_socket']);
+			} elseif (empty($this->_config['persistent'])) {
 				$return = $this->_Redis->connect($this->_config['server'], $this->_config['port'], $this->_config['timeout']);
 			} else {
 				$persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];

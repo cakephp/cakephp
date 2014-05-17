@@ -605,8 +605,18 @@ class View {
 	}
 
 /**
- * Returns the contents of the given View variable or a block.
- * Blocks are checked before view variables.
+ * Returns the contents of the given View variable(s)
+ *
+ * @param string $var The view var you want the contents of.
+ * @return mixed The content of the named var if its set, otherwise null.
+ * @deprecated Will be removed in 3.0. Use View::get() instead.
+ */
+	public function getVar($var) {
+		return $this->get($var);
+	}
+
+/**
+ * Returns the contents of the given View variable.
  *
  * @param string $var The view var you want the contents of.
  * @param mixed $default The default/fallback content of $var.

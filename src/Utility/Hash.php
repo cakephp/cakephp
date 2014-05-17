@@ -1030,6 +1030,8 @@ class Hash {
 
 		if ($options['root']) {
 			$root = $options['root'];
+		} elseif (!$return) {
+			return array();
 		} else {
 			$root = static::get($return[0], $parentKeys);
 		}

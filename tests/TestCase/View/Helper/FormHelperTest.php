@@ -1589,6 +1589,34 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test that only the path + query elements of a form's URL show up in their hash.
+ *
+ * @return void
+ */
+	public function testSecuredFormUrlIgnoresHost() {
+		$this->Form->request['_Token'] = array('key' => 'testKey');
+
+		$expected = '0ff0c85cd70584d8fd18fa136846d22c66c21e2d%3A';
+		$this->Form->create($this->article, array(
+			'url' => array('controller' => 'articles', 'action' => 'view', 1, '?' => array('page' => 1))
+		));
+		$result = $this->Form->secure();
+		$this->assertContains($expected, $result);
+
+		$this->Form->create($this->article, array('url' => 'http://localhost/articles/view/1?page=1'));
+		$result = $this->Form->secure();
+		$this->assertContains($expected, $result, 'Full URL should only use path and query.');
+
+		$this->Form->create($this->article, array('url' => '/articles/view/1?page=1'));
+		$result = $this->Form->secure();
+		$this->assertContains($expected, $result, 'URL path + query should work.');
+
+		$this->Form->create($this->article, array('url' => '/articles/view/1'));
+		$result = $this->Form->secure();
+		$this->assertNotContains($expected, $result, 'URL is different');
+	}
+
+/**
  * test error message display
  *
  * @return void

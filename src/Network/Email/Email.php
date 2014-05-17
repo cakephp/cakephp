@@ -772,8 +772,10 @@ class Email {
 		}
 
 		$headers['MIME-Version'] = '1.0';
-		if (!empty($this->_attachments) || $this->_emailFormat === 'both') {
+		if (!empty($this->_attachments)) {
 			$headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->_boundary . '"';
+		} elseif ($this->_emailFormat === 'both') {
+			$headers['Content-Type'] = 'multipart/alternative; boundary="' . $this->_boundary . '"';
 		} elseif ($this->_emailFormat === 'text') {
 			$headers['Content-Type'] = 'text/plain; charset=' . $this->_getContentTypeCharset();
 		} elseif ($this->_emailFormat === 'html') {
@@ -1067,7 +1069,7 @@ class Email {
 				$fileName = $fileInfo['file'];
 				$fileInfo['file'] = realpath($fileInfo['file']);
 				if ($fileInfo['file'] === false || !file_exists($fileInfo['file'])) {
-					throw new Error\SocketException('File not found: "%s"', $fileName);
+					throw new Error\SocketException(sprintf('File not found: "%s"', $fileName));
 				}
 				if (is_int($name)) {
 					$name = basename($fileInfo['file']);
@@ -1590,6 +1592,7 @@ class Email {
 		$hasInlineAttachments = count($contentIds) > 0;
 		$hasAttachments = !empty($this->_attachments);
 		$hasMultipleTypes = count($rendered) > 1;
+		$multiPart = ($hasAttachments || $hasMultipleTypes);
 
 		$boundary = $relBoundary = $textBoundary = $this->_boundary;
 
@@ -1600,7 +1603,7 @@ class Email {
 			$relBoundary = $textBoundary = 'rel-' . $boundary;
 		}
 
-		if ($hasMultipleTypes) {
+		if ($hasMultipleTypes && $hasAttachments) {
 			$msg[] = '--' . $relBoundary;
 			$msg[] = 'Content-Type: multipart/alternative; boundary="alt-' . $boundary . '"';
 			$msg[] = '';
@@ -1608,7 +1611,7 @@ class Email {
 		}
 
 		if (isset($rendered['text'])) {
-			if ($textBoundary !== $boundary || $hasAttachments) {
+			if ($multiPart) {
 				$msg[] = '--' . $textBoundary;
 				$msg[] = 'Content-Type: text/plain; charset=' . $this->_getContentTypeCharset();
 				$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
@@ -1621,7 +1624,7 @@ class Email {
 		}
 
 		if (isset($rendered['html'])) {
-			if ($textBoundary !== $boundary || $hasAttachments) {
+			if ($multiPart) {
 				$msg[] = '--' . $textBoundary;
 				$msg[] = 'Content-Type: text/html; charset=' . $this->_getContentTypeCharset();
 				$msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
@@ -1633,7 +1636,7 @@ class Email {
 			$msg[] = '';
 		}
 
-		if ($hasMultipleTypes) {
+		if ($textBoundary !== $relBoundary) {
 			$msg[] = '--' . $textBoundary . '--';
 			$msg[] = '';
 		}

@@ -699,7 +699,7 @@ class Debugger {
  * @deprecated Use Debugger::outputAs() and Debugger::addFormat(). Will be removed
  *   in 3.0
  */
-	public function output($format = null, array $strings = array()) {
+	public static function output($format = null, $strings = array()) {
 		$self = Debugger::getInstance();
 		$data = null;
 

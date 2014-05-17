@@ -739,6 +739,10 @@ class AuthComponent extends Component {
 			unset($authenticate[AuthComponent::ALL]);
 		}
 		foreach ($authenticate as $class => $config) {
+			if (!empty($config['className'])) {
+				$class = $config['className'];
+				unset($config['className']);
+			}
 			$className = App::className($class, 'Controller/Component/Auth', 'Authenticate');
 			if (!class_exists($className)) {
 				throw new Error\Exception(sprintf('Authentication adapter "%s" was not found.', $class));

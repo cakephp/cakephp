@@ -345,7 +345,13 @@ class FormHelper extends Helper {
 		if (!empty($append)) {
 			$append = $templater->format('hiddenblock', ['content' => $append]);
 		}
+
 		$this->_lastAction = $action;
+		if (strpos($action, '://')) {
+			$query = parse_url($action, PHP_URL_QUERY);
+			$query = $query ? '?' . $query : '';
+			$this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
+		}
 
 		$actionAttr = $templater->formatAttributes(['action' => $action, 'escape' => false]);
 		return $templater->format('formstart', [
