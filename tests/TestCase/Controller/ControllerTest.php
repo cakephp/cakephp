@@ -315,7 +315,6 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testRender() {
-		$this->markTestIncomplete('Need to sort out a few more things with the ORM first.');
 		Configure::write('App.namespace', 'TestApp');
 		Plugin::load('TestPlugin');
 
@@ -335,30 +334,7 @@ class ControllerTest extends TestCase {
 		$result = $Controller->render('/Element/test_element');
 		$this->assertRegExp('/this is the test element/', (string)$result);
 		$Controller->view = null;
-
-		$Controller = new TestController($request, new Response());
-		$Controller->uses = ['TestPlugin.TestPluginComment'];
-		$Controller->helpers = array('Html');
-		$Controller->constructClasses();
-		$expected = ['title' => 'tooShort'];
-		$Controller->TestPluginComment->validationErrors = $expected;
-
-		$Controller->viewPath = 'Posts';
-		$result = $Controller->render('index');
-		$View = $Controller->View;
-		$this->assertTrue(isset($View->validationErrors['TestPluginComment']));
-		$this->assertEquals($expected, $View->validationErrors['TestPluginComment']);
-
-		$expectedModels = [
-			'TestPluginComment' => [
-				'className' => 'TestPlugin\Model\TestPluginComment'
-			],
-			'Post' => [
-				'className' => 'TestApp\Model\Post'
-			]
-		];
-		$this->assertEquals($expectedModels, $Controller->request->params['models']);
-	}
+		}
 
 /**
  * test that a component beforeRender can change the controller view class.
