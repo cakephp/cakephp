@@ -365,13 +365,16 @@ class SessionTest extends TestCase {
 		$config = [
 			'defaults' => 'cake',
 			'handler' => array(
-				'engine' => 'TestAppLibSession'
+				'engine' => 'TestAppLibSession',
+				'these' => 'are',
+				'a few' => 'options'
 			)
 		];
 
 		$session = Session::create($config);
 		$this->assertInstanceOf('TestApp\Network\Session\TestAppLibSession', $session->engine());
 		$this->assertEquals('user', ini_get('session.save_handler'));
+		$this->assertEquals(['these' => 'are', 'a few' => 'options'], $session->engine()->options);
 	}
 
 /**
@@ -393,6 +396,22 @@ class SessionTest extends TestCase {
 		$session = Session::create($config);
 		$this->assertInstanceOf('TestPlugin\Network\Session\TestPluginSession', $session->engine());
 		$this->assertEquals('user', ini_get('session.save_handler'));
+	}
+
+/**
+ * Tests that it is possible to pass an already made instance as the session engine
+ *
+ * @return void
+ */
+	public function testEngineWithPreMadeInstance() {
+		\Cake\Core\Configure::write('App.namespace', 'TestApp');
+		$engine = new \TestApp\Network\Session\TestAppLibSession;
+		$session = new Session(['handler' => ['engine' => $engine]]);
+		$this->assertSame($engine, $session->engine());
+
+		$session = new Session();
+		$session->engine($engine);
+		$this->assertSame($engine, $session->engine());
 	}
 
 /**

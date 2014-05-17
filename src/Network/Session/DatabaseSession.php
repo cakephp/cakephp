@@ -58,7 +58,7 @@ class DatabaseSession implements SessionHandlerInterface {
 			$this->_table = TableRegistry::get($modelAlias);
 		}
 
-		$this->_timeout = Configure::read('Session.timeout') * 60;
+		$this->_timeout = ini_get('session.gc_maxlifetime');
 	}
 
 /**

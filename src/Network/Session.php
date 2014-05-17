@@ -142,18 +142,13 @@ class Session {
 			$this->options($config['ini']);
 		}
 
-		if (!empty($config['handler']) && !isset($config['handler']['engine'])) {
-			//TODO: REmove this feature
-			call_user_func_array('session_set_save_handler', $config['handler']);
-		}
-
 		if (!empty($config['handler']['engine'])) {
 			$class = $config['handler']['engine'];
 			unset($config['handler']['engine']);
 			session_set_save_handler($this->engine($class, $config['handler']), false);
 		}
 
-		$this->_lifetime = ini_get('session.cookie_lifetime');
+		$this->_lifetime = ini_get('session.gc_maxlifetime');
 		session_register_shutdown();
 	}
 
@@ -164,6 +159,10 @@ class Session {
  * @throws \Cake\Error\Exception
  */
 	public function engine($class = null, $options = []) {
+		if ($class instanceof SessionHandlerInterface) {
+			return $this->_engine = $class;
+		}
+
 		if ($class === null) {
 			return $this->_engine;
 		}
