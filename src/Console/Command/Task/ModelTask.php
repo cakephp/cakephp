@@ -85,7 +85,7 @@ class ModelTask extends BakeTask {
 			}
 			return true;
 		}
-
+		list(,$name) = pluginSplit($name);
 		$this->bake($this->_modelName($name));
 	}
 
