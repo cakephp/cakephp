@@ -434,6 +434,12 @@ class Session {
 		session_regenerate_id(true);
 	}
 
+/**
+ * Returns true if the session is no longer valid because the last time it was
+ * accessed was after the configured timeout.
+ *
+ * @return boolean
+ */
 	protected function _timedOut() {
 		$time = $this->read('Config.time') ?: $this->_timeout;
 
