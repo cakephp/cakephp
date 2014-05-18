@@ -109,6 +109,7 @@ class ViewTask extends BakeTask {
 			}
 			return true;
 		}
+		$name = $this->_getName($name);
 
 		$controller = null;
 		if (!empty($this->params['controller'])) {
