@@ -427,6 +427,7 @@ class ModelTaskTest extends TestCase {
 			'title' => ['rule' => false, 'allowEmpty' => false],
 			'body' => ['rule' => false, 'allowEmpty' => true],
 			'published' => ['rule' => 'boolean', 'allowEmpty' => true],
+			'id' => ['rule' => 'numeric', 'allowEmpty' => 'create']
 		];
 		$this->assertEquals($expected, $result);
 
@@ -436,7 +437,8 @@ class ModelTaskTest extends TestCase {
 			'bake_article_id' => ['rule' => 'numeric', 'allowEmpty' => false],
 			'bake_user_id' => ['rule' => 'numeric', 'allowEmpty' => false],
 			'comment' => ['rule' => false, 'allowEmpty' => true],
-			'published' => ['rule' => false,'allowEmpty' => true]
+			'published' => ['rule' => false,'allowEmpty' => true],
+			'otherid' => ['rule' => 'numeric', 'allowEmpty' => 'create']
 		];
 		$this->assertEquals($expected, $result);
 	}
