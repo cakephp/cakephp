@@ -486,7 +486,9 @@ class Session {
  * @return bool
  */
 	protected function _hasSession() {
-		return !ini_get('session.use_cookies') || isset($_COOKIE[session_name()]);
+		return !ini_get('session.use_cookies')
+			|| isset($_COOKIE[session_name()])
+			|| php_sapi_name() === 'cli';
 	}
 
 /**
@@ -495,7 +497,7 @@ class Session {
  * @return void
  */
 	public function renew() {
-		if (!$this->_hasSession()) {
+		if (!$this->_hasSession() ||  php_sapi_name() === 'cli') {
 			return;
 		}
 
