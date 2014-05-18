@@ -412,8 +412,8 @@ class ModelTask extends BakeTask {
  * @return array Array of validation for the field.
  */
 	public function fieldValidation($fieldName, array $metaData, $primaryKey) {
-		$ignoreFields = array_merge($primaryKey, ['created', 'modified', 'updated']);
-		if ($metaData['null'] === true && in_array($fieldName, $ignoreFields)) {
+		$ignoreFields = ['created', 'modified', 'updated'];
+		if (in_array($fieldName, $ignoreFields)) {
 			return false;
 		}
 
