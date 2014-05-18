@@ -334,7 +334,7 @@ class ControllerTest extends TestCase {
 		$result = $Controller->render('/Element/test_element');
 		$this->assertRegExp('/this is the test element/', (string)$result);
 		$Controller->view = null;
-		}
+	}
 
 /**
  * test that a component beforeRender can change the controller view class.
