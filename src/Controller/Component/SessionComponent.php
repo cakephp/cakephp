@@ -122,7 +122,7 @@ class SessionComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#creating-notification-messages
  */
 	public function setFlash($message, $element = 'default', array $params = array(), $key = 'flash') {
-		$this->write('Message.' . $key, compact('message', 'element', 'params'));
+		$this->_session->flash($message, 'info', $params + compact('element', 'key'));
 	}
 
 /**

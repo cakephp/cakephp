@@ -171,18 +171,11 @@ class SessionComponentTest extends TestCase {
 		$this->assertNull($Session->read('Message.flash'));
 
 		$Session->setFlash('This is a test message');
-		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'default', 'params' => array()), $Session->read('Message.flash'));
-
-		$Session->setFlash('This is a test message', 'test', array('name' => 'Joel Moss'));
-		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'test', 'params' => array('name' => 'Joel Moss')), $Session->read('Message.flash'));
-
-		$Session->setFlash('This is a test message', 'default', array(), 'myFlash');
-		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'default', 'params' => array()), $Session->read('Message.myFlash'));
-
-		$Session->setFlash('This is a test message', 'non_existing_layout');
-		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'default', 'params' => array()), $Session->read('Message.myFlash'));
-
-		$Session->delete('Message');
+		$this->assertEquals(array(
+				'message' => 'This is a test message',
+				'params' => array('element' => 'default'),
+				'type' => 'info'
+			), $Session->read('Message.flash'));
 	}
 
 /**
