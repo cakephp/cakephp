@@ -92,6 +92,7 @@ class FixtureTask extends BakeTask {
  */
 	public function main($name = null) {
 		parent::main();
+		$name = $this->_getName($name);
 
 		if (empty($name)) {
 			$this->out(__d('cake_console', 'Choose a fixture to bake from the following:'));

@@ -74,11 +74,36 @@ class CellTaskTest extends TestCase {
 	}
 
 /**
- * Test baking within a plugin.
+ * Test main within a plugin.
  *
  * @return void
  */
 	public function testMainPlugin() {
+		Plugin::load('TestPlugin');
+		$path = Plugin::path('TestPlugin');
+
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with(
+				$this->_normalizePath($path . 'Template/Cell/Example/display.ctp'),
+				''
+			);
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with(
+				$this->_normalizePath($path . 'View/Cell/ExampleCell.php'),
+				$this->stringContains('class ExampleCell extends Cell')
+			);
+
+		$this->Task->main('TestPlugin.Example');
+	}
+
+/**
+ * Test baking within a plugin.
+ *
+ * @return void
+ */
+	public function testBakePlugin() {
 		Plugin::load('TestPlugin');
 
 		$path = Plugin::path('TestPlugin');

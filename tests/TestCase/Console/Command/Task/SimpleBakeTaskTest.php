@@ -62,11 +62,11 @@ class SimpleBakeTaskTest extends TestCase {
 	}
 
 /**
- * Test the excute method.
+ * Test the main method.
  *
  * @return void
  */
-	public function testExecute() {
+	public function testMain() {
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with(
@@ -78,6 +78,27 @@ class SimpleBakeTaskTest extends TestCase {
 			->with('behavior', 'Example');
 
 		$this->Task->main('Example');
+	}
+
+/**
+ * Test the main with plugin.name method.
+ *
+ * @return void
+ */
+	public function testMainWithPlugin() {
+		Plugin::load('TestPlugin');
+		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/Model/Behavior/ExampleBehavior.php');
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->with(
+				$filename,
+				$this->stringContains('class ExampleBehavior extends Behavior')
+			);
+		$this->Task->Test->expects($this->once())
+			->method('bake')
+			->with('behavior', 'Example');
+
+		$this->Task->main('TestPlugin.Example');
 	}
 
 /**

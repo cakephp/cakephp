@@ -539,6 +539,25 @@ class ViewTaskTest extends TestCase {
 	}
 
 /**
+ * test that plugin.name works.
+ *
+ * @return void
+ */
+	public function testMainWithPluginName() {
+		$this->_setupTask(['in', 'err', 'createFile']);
+
+		$this->Task->connection = 'test';
+		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/Template/ViewTaskComments/index.ctp');
+
+		Plugin::load('TestPlugin');
+
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with($filename);
+		$this->Task->main('TestPlugin.ViewTaskComments');
+	}
+
+/**
  * static dataprovider for test cases
  *
  * @return void

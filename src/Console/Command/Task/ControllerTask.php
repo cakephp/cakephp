@@ -46,6 +46,7 @@ class ControllerTask extends BakeTask {
  */
 	public function main($name = null) {
 		parent::main();
+		$name = $this->_getName($name);
 
 		if (empty($name)) {
 			$this->out(__d('cake_console', 'Possible controllers based on your current database:'));

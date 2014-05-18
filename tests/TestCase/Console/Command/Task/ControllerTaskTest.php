@@ -213,7 +213,6 @@ class ControllerTaskTest extends TestCase {
 	public function testBakeWithPlugin() {
 		$this->Task->plugin = 'ControllerTest';
 
-		//fake plugin path
 		Plugin::load('ControllerTest', array('path' => APP . 'Plugin/ControllerTest/'));
 		$path = APP . 'Plugin/ControllerTest/Controller/BakeArticlesController.php';
 
@@ -227,11 +226,11 @@ class ControllerTaskTest extends TestCase {
 		$result = $this->Task->bake('BakeArticles');
 		$this->assertContains('namespace ControllerTest\Controller;', $result);
 		$this->assertContains('use ControllerTest\Controller\AppController;', $result);
-
 		Plugin::unload();
 	}
 
 /**
+ *
  * test that bakeActions is creating the correct controller Code. (Using sessions)
  *
  * @return void
@@ -344,6 +343,27 @@ class ControllerTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename, $this->stringContains('public function index()'));
 		$this->Task->main($name);
+	}
+
+/**
+ * test main with plugin.name
+ *
+ * @return void
+ */
+	public function testMainWithPluginDot() {
+		$this->Task->connection = 'test';
+
+		Plugin::load('ControllerTest', array('path' => APP . 'Plugin/ControllerTest/'));
+		$path = APP . 'Plugin/ControllerTest/Controller/BakeArticlesController.php';
+
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with(
+				$this->_normalizePath($path),
+				$this->stringContains('BakeArticlesController extends AppController')
+			)->will($this->returnValue(true));
+
+		$this->Task->main('ControllerTest.BakeArticles');
 	}
 
 }

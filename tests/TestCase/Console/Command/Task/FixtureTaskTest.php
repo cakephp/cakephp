@@ -206,6 +206,24 @@ class FixtureTaskTest extends TestCase {
 	}
 
 /**
+ * test that execute passes runs bake depending with named model.
+ *
+ * @return void
+ */
+	public function testMainWithPluginModel() {
+		$this->Task->connection = 'test';
+		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/Test/Fixture/ArticleFixture.php');
+
+		Plugin::load('TestPlugin');
+
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with($filename, $this->stringContains('class ArticleFixture'));
+
+		$this->Task->main('TestPlugin.Article');
+	}
+
+/**
  * test that execute runs all() when args[0] = all
  *
  * @return void
