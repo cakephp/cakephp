@@ -29,6 +29,13 @@ class SessionTestController extends Controller {
 	public $uses = array();
 
 /**
+ * List of components
+ *
+ * @var array
+ */
+	public $components = ['Session'];
+
+/**
  * session_id method
  *
  * @return void
