@@ -16,6 +16,7 @@ namespace Cake\Network;
 
 use Cake\Core\Configure;
 use Cake\Error;
+use Cake\Network\Session;
 use Cake\Utility\Hash;
 
 /**
@@ -139,6 +140,13 @@ class Request implements \ArrayAccess {
 	protected $_input = '';
 
 /**
+ * Instance of a Session object relative to this request
+ *
+ * @var \Cake\Network\Session
+ */
+	protected $_session;
+
+/**
  * Wrapper method to create a new request from PHP superglobals.
  *
  * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
@@ -156,6 +164,7 @@ class Request implements \ArrayAccess {
 			'environment' => $_SERVER + $_ENV,
 			'base' => $base,
 			'webroot' => $webroot,
+			'session' => new Session()
 		);
 		$config['url'] = static::_url($config);
 		return new static($config);
@@ -177,6 +186,7 @@ class Request implements \ArrayAccess {
  * - `base` The base url for the request.
  * - `webroot` The webroot directory for the request.
  * - `input` The data that would come from php://input this is useful for simulating
+ * - `session` An instance of a Session object
  *   requests with put, patch or delete data.
  *
  * @param string|array $config An array of request data to create a request with.
@@ -196,6 +206,7 @@ class Request implements \ArrayAccess {
 			'base' => '',
 			'webroot' => '',
 			'input' => null,
+			'session' => null
 		);
 		$this->_setConfig($config);
 	}
@@ -225,6 +236,7 @@ class Request implements \ArrayAccess {
 		$this->data = $this->_processFiles($config['post'], $config['files']);
 		$this->query = $this->_processGet($config['query']);
 		$this->params = $config['params'];
+		$this->_session = $config['session'];
 	}
 
 /**
@@ -423,6 +435,15 @@ class Request implements \ArrayAccess {
 				$post = Hash::insert($post, $newPath, $fields);
 			}
 		}
+	}
+
+/**
+ * Returns the instance of the Session object for this request
+ *
+ * @return \Cake\Network\Session
+ */
+	public function session() {
+		return $this->_session;
 	}
 
 /**

@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Network;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Network\Request;
+use Cake\Network\Session;
 use Cake\Routing\Dispatcher;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Xml;
@@ -2248,6 +2249,20 @@ XML;
 
 		$this->setExpectedException('Cake\Error\MethodNotAllowedException');
 		$request->allowMethod('POST');
+	}
+
+/**
+ * Tests getting the sessions from the request
+ *
+ * @return void
+ */
+	public function testSession() {
+		$session = new Session;
+		$request = new Request(['session' => $session]);
+		$this->assertSame($session, $request->session());
+
+		$request = Request::createFromGlobals();
+		$this->assertEquals($session, $request->session());
 	}
 
 /**
