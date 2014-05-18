@@ -1,12 +1,5 @@
 <?php
 /**
- * Session class for CakePHP.
- *
- * CakePHP abstracts the handling of sessions.
- * There are several convenient methods to access session information.
- * This class is the implementation of those methods.
- * They are mostly used by the Session Component.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -36,7 +29,7 @@ use SessionHandlerInterface;
  * an instance of a new session by just instantiating this class and passing the full
  * options you want to use.
  *
- * When specific options are ommited, this class will take its defaults from the configuration
+ * When specific options are omitted, this class will take its defaults from the configuration
  * values from the `session.*` directives in php.ini. This class will also alter such
  * directives when configuration values are provided.
  */
@@ -215,9 +208,20 @@ class Session {
 	}
 
 /**
- * Find the handler class and make sure it implements the correct interface.
+ * Sets the session handler instance to use for this session.
+ * If a string is passed for the first argument, it will be treated as the
+ * class name and the second argument will be passed as the first argument
+ * in the constructor.
  *
- * @return void
+ * If an instance of a SessionHandlerInterface is provided as the first argument,
+ * the handler will be set to it.
+ *
+ * If no arguments are passed it will return the currently configured handler instance
+ * or null if none exists.
+ *
+ * @param string|\SessionHandlerInterface $class The session handler to use
+ * @param array $options the options to pass to the SessionHandler constructor
+ * @return \SessionHandlerInterface|null
  * @throws \InvalidArgumentException
  */
 	public function engine($class = null, $options = []) {
@@ -244,6 +248,17 @@ class Session {
 		return $this->_engine = $handler;
 	}
 
+/**
+ * Calls ini_set for each of the keys in `$options` and set them
+ * to the respective value in the passed array.
+ *
+ * ### Example:
+ *
+ * `$session->options(['session.use_cookies' => 1]);`
+ *
+ * @return void
+ * @throws \RuntimeException if any directive could not be set
+ */
 	public function options(array $options) {
 		if (session_status() === \PHP_SESSION_ACTIVE) {
 			return;
@@ -251,7 +266,7 @@ class Session {
 
 		foreach ($options as $setting => $value) {
 			if (ini_set($setting, $value) === false) {
-				throw new Error\Exception(sprintf(
+				throw new \RuntimeException(sprintf(
 					sprintf('Unable to configure the session, setting %s failed.'),
 					$setting
 				));
@@ -263,6 +278,8 @@ class Session {
  * Starts the Session.
  *
  * @return bool True if session was started
+ * @throws \RuntimeException if the session was already started or headers were already
+ * sent
  */
 	public function start() {
 		if ($this->_started) {
@@ -299,7 +316,7 @@ class Session {
 	}
 
 /**
- * Determine if Session has been started.
+ * Determine if Session has already been started.
  *
  * @return bool True if session has been started.
  */
@@ -308,7 +325,7 @@ class Session {
 	}
 
 /**
- * Returns true if given variable is set in session.
+ * Returns true if given variable name is set in session.
  *
  * @param string $name Variable name to check for
  * @return bool True if variable is there
