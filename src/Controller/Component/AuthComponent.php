@@ -151,7 +151,7 @@ class AuthComponent extends Component {
  *
  * @var array
  */
-	public $components = array('Session', 'RequestHandler');
+	public $components = array('RequestHandler');
 
 /**
  * Objects that will be used for authentication checks.
