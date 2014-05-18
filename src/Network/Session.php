@@ -67,7 +67,7 @@ class Session {
  * - cache: Use the CakePHP caching system as an storage for the session, you will need
  *   to pass the `config` key with the name of an already configured Cache engine.
  * - database: Use the CakePHP ORM to persist and manage sessions. By default this requires
- *   a table in your database named `cake_sessions` or a `model` key in the configuration
+ *   a table in your database named `sessions` or a `model` key in the configuration
  *   to indicate which Table object to use.
  * - cake: Use files for storing the sessions, but let CakePHP manage them and decide
  *   where to store them.

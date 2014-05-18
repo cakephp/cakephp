@@ -31,41 +31,11 @@ use Cake\TestSuite\TestCase;
 class DatabaseSessionTest extends TestCase {
 
 /**
- * sessionBackup
- *
- * @var array
- */
-	protected static $_sessionBackup;
-
-/**
  * fixtures
  *
  * @var string
  */
 	public $fixtures = ['core.session'];
-
-/**
- * test case startup
- *
- * @return void
- */
-	public static function setupBeforeClass() {
-		static::$_sessionBackup = Configure::read('Session');
-
-		Configure::write('Session.handler', array(
-			'model' => 'Sessions'
-		));
-		Configure::write('Session.timeout', 100);
-	}
-
-/**
- * cleanup after test case.
- *
- * @return void
- */
-	public static function teardownAfterClass() {
-		Configure::write('Session', static::$_sessionBackup);
-	}
 
 /**
  * setUp
@@ -129,7 +99,7 @@ class DatabaseSessionTest extends TestCase {
 		unset($result['expires']);
 		$this->assertEquals($expected, $result);
 
-		$expected = time() + (Configure::read('Session.timeout') * 60);
+		$expected = time() + ini_get('session.gc_maxlifetime');
 		$this->assertWithinMargin($expires, $expected, 1);
 	}
 
@@ -178,8 +148,8 @@ class DatabaseSessionTest extends TestCase {
  */
 	public function testGc() {
 		TableRegistry::clear();
-		Configure::write('Session.timeout', 0);
 
+		ini_set('session.gc_maxlifetime', 0);
 		$storage = new DatabaseSession();
 		$storage->write('foo', 'Some value');
 
@@ -187,4 +157,5 @@ class DatabaseSessionTest extends TestCase {
 		$storage->gc(0);
 		$this->assertFalse($storage->read('foo'));
 	}
+
 }

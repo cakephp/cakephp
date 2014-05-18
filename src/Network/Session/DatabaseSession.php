@@ -48,14 +48,12 @@ class DatabaseSession implements SessionHandlerInterface {
  * @param array $config The configuration for this engine. It requires the 'model'
  * key to be present corresponding to the Table to use for managing the sessions.
  */
-	public function __construct(array $config) {
-		$modelAlias = $config['model'];
-
-		if (empty($modelAlias)) {
-			$config = TableRegistry::exists('Sessions') ? [] : ['table' => 'cake_sessions'];
+	public function __construct(array $config = []) {
+		if (empty($config['model'])) {
+			$config = TableRegistry::exists('Sessions') ? [] : ['table' => 'sessions'];
 			$this->_table = TableRegistry::get('Sessions', $config);
 		} else {
-			$this->_table = TableRegistry::get($modelAlias);
+			$this->_table = TableRegistry::get($config['model']);
 		}
 
 		$this->_timeout = ini_get('session.gc_maxlifetime');
