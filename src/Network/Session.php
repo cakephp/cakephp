@@ -28,20 +28,68 @@ use Cake\Utility\Hash;
 use SessionHandlerInterface;
 
 /**
- * Session class for CakePHP.
+ * This class is a wrapper for the native PHP session functions. It provides
+ * with several defaults for the most common use cases for utilizing the session
+ * via external handlers and helps with using session in cli without any warnings.
  *
- * CakePHP abstracts the handling of sessions. There are several convenient methods to access session information.
- * This class is the implementation of those methods. They are mostly used by the Session Component.
+ * Sessions can be created out of defaults using `Session::create()` or you can get
+ * an instance of a new session by just instantiating this class and passing the full
+ * options you want to use.
  *
+ * When specific options are ommited, this class will take its defaults from the configuration
+ * values from the `session.*` directives in php.ini. This class will also alter such
+ * directives when configuration values are provided.
  */
 class Session {
 
+/**
+ * The Session handler instace used as an engine for persisting the session data.
+ *
+ * @var SessionHandlerInterface
+ */
 	protected $_engine;
 
+/**
+ * Indicates whether the sessions has already started
+ *
+ * @var boolean
+ */
 	protected $_started;
 
+/**
+ * The time in seconds the session will be valid for
+ *
+ * @var int
+ */
 	protected $_lifetime;
 
+/**
+ * Returns a new instance of a session after building a configuration bundle for it.
+ * This function allows an options array which will be used for configuring the session
+ * and the handler to be used. The most important key in the configuration array is
+ * `defaults`, which indicates the set of configurations to inherit from, the possible
+ * defaults are:
+ *
+ * - php: just use session as configured in php.ini
+ * - cache: Use the CakePHP caching system as an storage for the session, you will need
+ *   to pass the `config` key with the name of an already configured Cache engine.
+ * - database: Use the CakePHP ORM to persist and manage sessions. By default this requires
+ *   a table in your database named `cake_sessions` or a `model` key in the configuration
+ *   to indicate which Table object to use.
+ * - cake: Use files for storing the sessions, but let CakePHP manage them and decide
+ *   where to store them.
+ *
+ * The full list of options follows:
+ *
+ * - defaults: either 'php', 'database', 'cache' or 'cake' as explained above.
+ * - handler: An array containing the handler configuration
+ * - ini: A list of php.ini directives to set before the session starts.
+ * - timeout: The time in minutes the session should stay active
+ *
+ * @param array $sessionConfig
+ * @return Cake\Network\Session
+ * @see Session::__construct()
+ */
 	public static function create($sessionConfig = []) {
 		if (isset($sessionConfig['defaults'])) {
 			$defaults = static::_defaultConfig($sessionConfig['defaults']);
@@ -132,7 +180,21 @@ class Session {
 		return false;
 	}
 
-	public function __construct($config = []) {
+/**
+ * Constructor.
+ *
+ * ### Configuration:
+ *
+ * - timeout: The time in minutes the session should be valid for
+ * - ini: A list of ini directives to change before the session start.
+ * - handler: An array containing at least the `class` key. To be used as the session
+ *   engine for persisting data. The rest of the keys in the array will be passed as
+ *   the configuration array for the engine. You can set the `class` key to an already
+ *   instantiated session handler object.
+ *
+ * @param array The Configuration to apply to this session object
+ */
+	public function __construct(array $config = []) {
 		if (isset($config['timeout'])) {
 			$config['ini']['session.cookie_lifetime'] = 60 * $config['timeout'];
 			$config['ini']['session.gc_maxlifetime'] = 60 * $config['timeout'];
@@ -156,7 +218,7 @@ class Session {
  * Find the handler class and make sure it implements the correct interface.
  *
  * @return void
- * @throws \Cake\Error\Exception
+ * @throws \InvalidArgumentException
  */
 	public function engine($class = null, $options = []) {
 		if ($class instanceof SessionHandlerInterface) {
@@ -169,12 +231,12 @@ class Session {
 
 		$class = App::className($class, 'Network/Session');
 		if (!class_exists($class)) {
-			throw new Error\Exception(sprintf('Could not load %s to handle the session.', $class));
+			throw new \InvalidArgumentException(sprintf('The class %s does not exist.', $class));
 		}
 
 		$handler = new $class($options);
 		if (!($handler instanceof SessionHandlerInterface)) {
-			throw new Error\Exception(
+			throw new \InvalidArgumentException(
 				'Chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used with an engine key.'
 			);
 		}
