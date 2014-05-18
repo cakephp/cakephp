@@ -18,6 +18,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\SessionComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
@@ -44,12 +45,6 @@ class SessionComponentTest extends TestCase {
  * @return void
  */
 	public static function setupBeforeClass() {
-		static::$_sessionBackup = Configure::read('Session');
-		Configure::write('Session', array(
-			'defaults' => 'php',
-			'timeout' => 100,
-			'cookie' => 'test'
-		));
 		DispatcherFactory::add('Routing');
 		DispatcherFactory::add('ControllerFactory');
 	}
@@ -60,7 +55,6 @@ class SessionComponentTest extends TestCase {
  * @return void
  */
 	public static function teardownAfterClass() {
-		Configure::write('Session', static::$_sessionBackup);
 		DispatcherFactory::clear();
 	}
 
@@ -71,9 +65,10 @@ class SessionComponentTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$_SESSION = null;
+		$_SESSION = [];
 		Configure::write('App.namespace', 'TestApp');
-		$this->ComponentRegistry = new ComponentRegistry();
+		$controller = new Controller(new Request(['session' => new Session()]));
+		$this->ComponentRegistry = new ComponentRegistry($controller);
 	}
 
 /**
@@ -83,7 +78,6 @@ class SessionComponentTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Session::destroy();
 	}
 
 /**
@@ -107,36 +101,6 @@ class SessionComponentTest extends TestCase {
 	}
 
 /**
- * testSessionValid method
- *
- * @return void
- */
-	public function testSessionValid() {
-		$Session = new SessionComponent($this->ComponentRegistry);
-
-		$this->assertTrue($Session->valid());
-
-		Configure::write('Session.checkAgent', true);
-		$Session->userAgent('rweerw');
-		$this->assertFalse($Session->valid());
-
-		$Session = new SessionComponent($this->ComponentRegistry);
-		$Session->time = $Session->read('Config.time') + 1;
-		$this->assertFalse($Session->valid());
-	}
-
-/**
- * testSessionError method
- *
- * @return void
- */
-	public function testSessionError() {
-		Session::$lastError = null;
-		$Session = new SessionComponent($this->ComponentRegistry);
-		$this->assertFalse($Session->error());
-	}
-
-/**
  * testSessionReadWrite method
  *
  * @return void
@@ -146,24 +110,24 @@ class SessionComponentTest extends TestCase {
 
 		$this->assertNull($Session->read('Test'));
 
-		$this->assertTrue($Session->write('Test', 'some value'));
+		$Session->write('Test', 'some value');
 		$this->assertEquals('some value', $Session->read('Test'));
 		$Session->delete('Test');
 
-		$this->assertTrue($Session->write('Test.key.path', 'some value'));
+		$Session->write('Test.key.path', 'some value');
 		$this->assertEquals('some value', $Session->read('Test.key.path'));
 		$this->assertEquals(array('path' => 'some value'), $Session->read('Test.key'));
-		$this->assertTrue($Session->write('Test.key.path2', 'another value'));
+		$Session->write('Test.key.path2', 'another value');
 		$this->assertEquals(array('path' => 'some value', 'path2' => 'another value'), $Session->read('Test.key'));
 		$Session->delete('Test');
 
 		$array = array('key1' => 'val1', 'key2' => 'val2', 'key3' => 'val3');
-		$this->assertTrue($Session->write('Test', $array));
+		$Session->write('Test', $array);
 		$this->assertEquals($Session->read('Test'), $array);
 		$Session->delete('Test');
 
-		$this->assertTrue($Session->write(array('Test'), 'some value'));
-		$this->assertTrue($Session->write(array('Test' => 'some value')));
+		$Session->write(array('Test'), 'some value');
+		$Session->write(array('Test' => 'some value'));
 		$this->assertEquals('some value', $Session->read('Test'));
 		$Session->delete('Test');
 	}
@@ -176,10 +140,9 @@ class SessionComponentTest extends TestCase {
 	public function testSessionDelete() {
 		$Session = new SessionComponent($this->ComponentRegistry);
 
-		$this->assertFalse($Session->delete('Test'));
-
 		$Session->write('Test', 'some value');
-		$this->assertTrue($Session->delete('Test'));
+		$Session->delete('Test');
+		$this->assertNull($Session->read('Test'));
 	}
 
 /**
@@ -228,9 +191,7 @@ class SessionComponentTest extends TestCase {
  * @return void
  */
 	public function testSessionId() {
-		unset($_SESSION);
 		$Session = new SessionComponent($this->ComponentRegistry);
-		Session::start();
 		$this->assertEquals(session_id(), $Session->id());
 	}
 
