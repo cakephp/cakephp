@@ -175,7 +175,7 @@ class AuthComponent extends Component {
  *
  * @var string
  */
-	public static $sessionKey = 'Auth.User';
+	public $sessionKey = 'Auth.User';
 
 /**
  * The current user, used for stateless authentication when
@@ -183,7 +183,7 @@ class AuthComponent extends Component {
  *
  * @var array
  */
-	protected static $_user = array();
+	protected $_user = array();
 
 /**
  * Controller actions for which user validation is not required.
@@ -215,6 +215,13 @@ class AuthComponent extends Component {
 	protected $_methods = array();
 
 /**
+ * Instance of the Session object
+ *
+ * @return void
+ */
+	protected $_session;
+
+/**
  * Initializes AuthComponent for use in the controller.
  *
  * @param Event $event The initialize event.
@@ -225,6 +232,7 @@ class AuthComponent extends Component {
 		$this->request = $controller->request;
 		$this->response = $controller->response;
 		$this->_methods = $controller->methods;
+		$this->_session = $controller->request->session();
 
 		if (Configure::read('debug')) {
 			Debugger::checkSecurityKeys();
@@ -323,17 +331,17 @@ class AuthComponent extends Component {
 
 		if ($this->_isLoginAction($controller)) {
 			if (empty($controller->request->data) &&
-				!$this->Session->check('Auth.redirect') &&
+				!$this->_session->check('Auth.redirect') &&
 				$this->request->env('HTTP_REFERER')
 			) {
-				$this->Session->write('Auth.redirect', $controller->referer(null, true));
+				$this->_session->write('Auth.redirect', $controller->referer(null, true));
 			}
 			return;
 		}
 
 		if (!$controller->request->is('ajax')) {
 			$this->flash($this->_config['authError']);
-			$this->Session->write('Auth.redirect', $controller->request->here(false));
+			$this->_session->write('Auth.redirect', $controller->request->here(false));
 			return $controller->redirect($this->_config['loginAction']);
 		}
 
@@ -575,8 +583,8 @@ class AuthComponent extends Component {
 			$user = $this->identify($this->request, $this->response);
 		}
 		if ($user) {
-			$this->Session->renew();
-			$this->Session->write(static::$sessionKey, $user);
+			$this->_session->renew();
+			$this->_session->write($this->_sessionKey, $user);
 		}
 		return (bool)$this->user();
 	}
@@ -602,28 +610,28 @@ class AuthComponent extends Component {
 		foreach ($this->_authenticateObjects as $auth) {
 			$auth->logout($user);
 		}
-		$this->Session->delete(static::$sessionKey);
-		$this->Session->delete('Auth.redirect');
-		$this->Session->renew();
+		$this->_session->delete($this->sessionKey);
+		$this->_session->delete('Auth.redirect');
+		$this->_session->renew();
 		return Router::normalize($this->_config['logoutRedirect']);
 	}
 
 /**
  * Get the current user.
  *
- * Will prefer the static user cache over sessions. The static user
- * cache is primarily used for stateless authentication. For stateful authentication,
+ * Will prefer the user cache over sessions. The user cache is primarily used for
+ * stateless authentication. For stateful authentication,
  * cookies + sessions will be used.
  *
  * @param string $key field to retrieve. Leave null to get entire User record
  * @return mixed User record. or null if no user is logged in.
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#accessing-the-logged-in-user
  */
-	public static function user($key = null) {
-		if (!empty(static::$_user)) {
-			$user = static::$_user;
-		} elseif (static::$sessionKey && Session::check(static::$sessionKey)) {
-			$user = Session::read(static::$sessionKey);
+	public function user($key = null) {
+		if (!empty($this->_user)) {
+			$user = $this->_user;
+		} elseif ($this->_sessionKey && $this->_session->check($this->sessionKey)) {
+			$user = $this->_session->read($this->_sessionKey);
 		} else {
 			return null;
 		}
@@ -642,7 +650,7 @@ class AuthComponent extends Component {
 	protected function _getUser() {
 		$user = $this->user();
 		if ($user) {
-			$this->Session->delete('Auth.redirect');
+			$this->_session->delete('Auth.redirect');
 			return true;
 		}
 
@@ -652,7 +660,7 @@ class AuthComponent extends Component {
 		foreach ($this->_authenticateObjects as $auth) {
 			$result = $auth->getUser($this->request);
 			if (!empty($result) && is_array($result)) {
-				static::$_user = $result;
+				$this->_user = $result;
 				return true;
 			}
 		}
@@ -681,10 +689,10 @@ class AuthComponent extends Component {
 	public function redirectUrl($url = null) {
 		if ($url !== null) {
 			$redir = $url;
-			$this->Session->write('Auth.redirect', $redir);
-		} elseif ($this->Session->check('Auth.redirect')) {
-			$redir = $this->Session->read('Auth.redirect');
-			$this->Session->delete('Auth.redirect');
+			$this->_session->write('Auth.redirect', $redir);
+		} elseif ($this->_session->check('Auth.redirect')) {
+			$redir = $this->_session->read('Auth.redirect');
+			$this->_session->delete('Auth.redirect');
 
 			if (Router::normalize($redir) === Router::normalize($this->_config['loginAction'])) {
 				$redir = $this->_config['loginRedirect'];
@@ -767,7 +775,7 @@ class AuthComponent extends Component {
 			return;
 		}
 		$flashConfig = $this->_config['flash'];
-		$this->Session->setFlash(
+		$this->_session->setFlash(
 			$message,
 			$flashConfig['element'],
 			$flashConfig['params'],
