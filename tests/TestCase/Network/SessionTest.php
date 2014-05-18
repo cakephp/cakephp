@@ -430,4 +430,46 @@ class SessionTest extends TestCase {
 		$this->assertEquals(400 * 60, ini_get('session.gc_maxlifetime'));
 	}
 
+/**
+ * Tests setting, reading and deleting flash messages
+ *
+ * @return void
+ */
+	public function testFlash() {
+		$session = new Session();
+		$session->flash('Hello there!');
+		$expected = [
+			'message' => 'Hello there!',
+			'type' => 'info',
+			'params' => []
+		];
+		$this->assertEquals($expected, $session->readFlash());
+
+		$this->assertEquals($expected, $session->readFlash());
+		$session->deleteFlash();
+		$this->assertNull($session->readFlash());
+	}
+
+/**
+ * Tests using the key option in the flash method
+ *
+ * @return void
+ */
+	public function testFlashKey() {
+		$session = new Session();
+		$session->flash('Hello there!', 'success', ['key' => 'foo']);
+		$expected = [
+			'message' => 'Hello there!',
+			'type' => 'success',
+			'params' => []
+		];
+
+		$this->assertNull($session->readFlash());
+		$this->assertEquals($expected, $session->readFlash('foo'));
+		$session->deleteFlash();
+		$this->assertEquals($expected, $session->readFlash('foo'));
+		$session->deleteFlash('foo');
+		$this->assertNull($session->readFlash('foo'));
+	}
+
 }
