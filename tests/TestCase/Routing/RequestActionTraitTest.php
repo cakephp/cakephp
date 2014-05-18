@@ -306,4 +306,25 @@ class RequestActionTraitTest extends TestCase {
 		$this->assertEquals('value', $result['query']['get']);
 	}
 
+/**
+ * Tests that it is possible to transmit the session for the request
+ *
+ * @return void
+ */
+	public function testRequestActionSession() {
+		$result = $this->object->requestAction('/request_action/session_test');
+		$this->assertNull($result);
+
+		$session = $this->getMock('Cake\Network\Session');
+		$session->expects($this->once())
+			->method('read')
+			->with('foo')
+			->will($this->returnValue('bar'));
+		$result = $this->object->requestAction(
+			'/request_action/session_test',
+			['session' => $session]
+		);
+		$this->assertEquals('bar', $result);
+	}
+
 }
