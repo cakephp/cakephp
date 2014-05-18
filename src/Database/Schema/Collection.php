@@ -93,7 +93,7 @@ class Collection {
 	public function describe($name) {
 		$cacheConfig = $this->cacheMetadata();
 		if ($cacheConfig) {
-			$cacheKey = $this->_connection->configName() . '_' . $name;
+			$cacheKey = $this->cacheKey($name);
 			$cached = Cache::read($cacheKey, $cacheConfig);
 			if ($cached !== false) {
 				return $cached;
@@ -129,6 +129,16 @@ class Collection {
 			Cache::write($cacheKey, $table, $cacheConfig);
 		}
 		return $table;
+	}
+
+/**
+ * Get the cache key for a given name.
+ *
+ * @param string $name The name to get a cache key for.
+ * @return string The cache key.
+ */
+	public function cacheKey($name) {
+		return $this->_connection->configName() . '_' . $name;
 	}
 
 /**

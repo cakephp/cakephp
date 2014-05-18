@@ -14,6 +14,7 @@
  */
 namespace Cake\Console\Command;
 
+use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\Datasource\ConnectionManager;
 
@@ -56,6 +57,7 @@ class OrmCacheShell extends Shell {
 			$this->_io->verbose('Building metadata cache for ' . $table);
 			$schema->describe($table);
 		}
+		$this->out('<success>Cache build complete</success>');
 	}
 
 /**
@@ -66,6 +68,27 @@ class OrmCacheShell extends Shell {
  */
 	public function clear($name = null) {
 		$source = ConnectionManager::get($this->params['connection']);
+		$schema = $source->schemaCollection();
+		$tables = [$name];
+		if (empty($name)) {
+			$tables = $schema->listTables();
+		}
+		if (!$schema->cacheMetadata()) {
+			$this->_io->verbose('Metadata cache was disabled in config. Enabling to clear cache.');
+			$schema->cacheMetadata(true);
+		}
+		$configName = $schema->cacheMetadata();
+
+		foreach ($tables as $table) {
+			$this->_io->verbose(sprintf(
+				'Clearing metadata cache from "%s" for %s', 
+				$configName,
+				$table
+			));
+			$key = $schema->cacheKey($table);
+			Cache::delete($key, $configName);
+		}
+		$this->out('<success>Cache clear complete</success>');
 	}
 
 /**
