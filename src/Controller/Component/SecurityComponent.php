@@ -71,13 +71,6 @@ class SecurityComponent extends Component {
 	];
 
 /**
- * Other components used by the Security component
- *
- * @var array
- */
-	public $components = array('Session');
-
-/**
  * Holds the current action of the controller
  *
  * @var string
@@ -92,6 +85,13 @@ class SecurityComponent extends Component {
 	public $request;
 
 /**
+ * The Session object
+ *
+ * @var \Cake\Network\Session
+ */
+	public $session;
+
+/**
  * Component startup. All security checking happens here.
  *
  * @param Event $event An Event instance
@@ -100,6 +100,7 @@ class SecurityComponent extends Component {
 	public function startup(Event $event) {
 		$controller = $event->subject();
 		$this->request = $controller->request;
+		$this->session = $this->request->session();
 		$this->_action = $this->request->params['action'];
 		$this->_secureRequired($controller);
 		$this->_authRequired($controller);
@@ -241,8 +242,8 @@ class SecurityComponent extends Component {
 					}
 				}
 
-				if ($this->Session->check('_Token')) {
-					$tData = $this->Session->read('_Token');
+				if ($this->session->check('_Token')) {
+					$tData = $this->session->read('_Token');
 
 					if (
 						!empty($tData['allowedControllers']) &&
@@ -359,8 +360,8 @@ class SecurityComponent extends Component {
  */
 	public function generateToken(Request $request) {
 		if (isset($request->params['requested']) && $request->params['requested'] === 1) {
-			if ($this->Session->check('_Token')) {
-				$request->params['_Token'] = $this->Session->read('_Token');
+			if ($this->session->check('_Token')) {
+				$request->params['_Token'] = $this->session->read('_Token');
 			}
 			return false;
 		}
@@ -371,10 +372,10 @@ class SecurityComponent extends Component {
 		);
 
 		$tokenData = array();
-		if ($this->Session->check('_Token')) {
-			$tokenData = $this->Session->read('_Token');
+		if ($this->session->check('_Token')) {
+			$tokenData = $this->session->read('_Token');
 		}
-		$this->Session->write('_Token', $token);
+		$this->session->write('_Token', $token);
 		$request->params['_Token'] = array(
 			'unlockedFields' => $token['unlockedFields']
 		);
