@@ -222,9 +222,6 @@ class I18n {
 		}
 
 		if (empty($language)) {
-			if (Session::started()) {
-				$language = Session::read('Config.language');
-			}
 			if (empty($language)) {
 				$language = Configure::read('Config.language');
 			}
