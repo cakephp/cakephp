@@ -40,7 +40,10 @@ class CacheSession implements SessionHandlerInterface {
  * It requires the key 'config' which is the name of the Cache config to use for
  * storign the session
  */
-	public function __construct(array $config) {
+	public function __construct(array $config = []) {
+		if (empty($config['config'])) {
+			throw new \InvalidArgumentException('The cache configuration name to use is required');
+		}
 		$this->_options = $config;
 	}
 
