@@ -43,7 +43,7 @@ before_script:
   - set +H
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ]; then vendor/bin/phpunit --stderr; fi"
+  - sh -c "if [ '$PHPCS' != '1' ]; then phpunit; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then phpcs -p --extensions=php --standard=CakePHP ./src ./tests; fi"
 
 notifications:

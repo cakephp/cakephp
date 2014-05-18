@@ -24,9 +24,6 @@
 		"ext-mbstring": "*",
 		"nesbot/Carbon": "1.8.*"
 	},
-	"require-dev": {
-		"phpunit/phpunit": "3.7.33"
-	},
 	"autoload": {
 		"psr-4": {
 			"Cake\\": "src",
