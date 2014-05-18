@@ -36,15 +36,10 @@ class OrmCacheShell extends Shell {
  * @return boolean
  */
 	public function build($name = null) {
-		$source = ConnectionManager::get($this->params['connection']);
-		if (!method_exists($source, 'schemaCollection')) {
-			$msg = sprintf('The "%s" connection is not compatible with orm caching, ' .
-				'as it does not implement a "schemaCollection()" method.',
-				$this->params['connection']);
-			$this->error($msg);
+		$schema = $this->_getSchema();
+		if (!$schema) {
 			return false;
 		}
-		$schema = $source->schemaCollection();
 		if (!$schema->cacheMetadata()) {
 			$this->_io->verbose('Metadata cache was disabled in config. Enabling to write cache.');
 			$schema->cacheMetadata(true);
@@ -64,11 +59,13 @@ class OrmCacheShell extends Shell {
  * Clear metadata.
  *
  * @param $name string
- * @return void
+ * @return boolean
  */
 	public function clear($name = null) {
-		$source = ConnectionManager::get($this->params['connection']);
-		$schema = $source->schemaCollection();
+		$schema = $this->_getSchema();
+		if (!$schema) {
+			return false;
+		}
 		$tables = [$name];
 		if (empty($name)) {
 			$tables = $schema->listTables();
@@ -89,6 +86,23 @@ class OrmCacheShell extends Shell {
 			Cache::delete($key, $configName);
 		}
 		$this->out('<success>Cache clear complete</success>');
+	}
+
+/**
+ * Helper method to get the schema collection.
+ *
+ * @return \Cake\Database\Schema\Collection
+ */
+	protected function _getSchema() {
+		$source = ConnectionManager::get($this->params['connection']);
+		if (!method_exists($source, 'schemaCollection')) {
+			$msg = sprintf('The "%s" connection is not compatible with orm caching, ' .
+				'as it does not implement a "schemaCollection()" method.',
+				$this->params['connection']);
+			$this->error($msg);
+			return false;
+		}
+		return $source->schemaCollection();
 	}
 
 /**
