@@ -305,7 +305,7 @@ class Session {
 		if (!session_start()) {
 			throw new \RuntimeException('Could not start the session');
 		}
-		
+
 		$this->_started = true;
 
 		if ($this->_timedOut()) {
@@ -497,7 +497,7 @@ class Session {
  * @return void
  */
 	public function renew() {
-		if (!$this->_hasSession() ||  php_sapi_name() === 'cli') {
+		if (!$this->_hasSession() || php_sapi_name() === 'cli') {
 			return;
 		}
 

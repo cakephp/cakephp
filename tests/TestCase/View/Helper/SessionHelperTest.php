@@ -43,7 +43,6 @@ class SessionHelperTest extends TestCase {
 		$this->View->request = new Request(['session' => $session]);
 		$this->Session = new SessionHelper($this->View);
 
-
 		$session->write(array(
 			'test' => 'info',
 			'Message' => array(
@@ -62,7 +61,7 @@ class SessionHelperTest extends TestCase {
 					'message' => 'This is a test of the emergency broadcasting system',
 				),
 				'classy' => array(
-					'type' =>  'success',
+					'type' => 'success',
 					'params' => array('class' => 'positive'),
 					'message' => 'Recorded'
 				)
