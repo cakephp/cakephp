@@ -19,6 +19,7 @@ use Cake\Controller\Error\MissingControllerException;
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Event\Event;
+use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\DispatcherFilter;
 use Cake\Routing\Router;
@@ -246,6 +247,7 @@ abstract class ControllerTestCase extends TestCase {
 			'url' => $url,
 			'cookies' => $options['cookies'],
 			'query' => $options['query'],
+			'session' => new Session()
 		);
 		if (is_array($options['data'])) {
 			$requestData['post'] = $options['data'];

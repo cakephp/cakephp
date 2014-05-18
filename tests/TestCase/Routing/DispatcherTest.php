@@ -23,6 +23,7 @@ use Cake\Error;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Network\Session;
 use Cake\Routing\Dispatcher;
 use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\Routing\Router;
@@ -473,7 +474,8 @@ class DispatcherTest extends TestCase {
 				'controller' => 'posts',
 				'action' => 'index',
 				'pass' => [],
-			]
+			],
+			'session' => new Session
 		]);
 		$this->dispatcher->addFilter($filter);
 		$this->dispatcher->dispatch($request, $response);
