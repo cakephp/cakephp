@@ -2260,9 +2260,6 @@ XML;
 		$session = new Session;
 		$request = new Request(['session' => $session]);
 		$this->assertSame($session, $request->session());
-
-		$request = Request::createFromGlobals();
-		$this->assertEquals($session, $request->session());
 	}
 
 /**
