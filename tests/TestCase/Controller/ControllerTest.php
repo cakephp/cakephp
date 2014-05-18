@@ -490,7 +490,6 @@ class ControllerTest extends TestCase {
 		$this->assertEquals($expected, $TestController->helpers);
 
 		$expected = [
-			'Session' => null,
 			'Security' => null,
 			'Cookie' => null,
 		];
