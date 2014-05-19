@@ -1429,7 +1429,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->create('Address', array(
 			'url' => array('controller' => 'articles', 'action' => 'view', 1, '?' => array('page' => 1, 'limit' => 10), '#' => 'result')
 		));
-		$result = $this->Form->secure();;
+		$result = $this->Form->secure();
 		$this->assertContains($expected, $result);
 
 		$this->Form->create('Address', array('url' => 'http://localhost/articles/view/1?page=1&limit=10#result'));

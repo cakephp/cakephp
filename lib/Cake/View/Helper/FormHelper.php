@@ -3002,9 +3002,10 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Set the last creaated form action.
+ * Sets the last creaated form action.
  *
  * @var mixed
+ * @return void
  */
 	protected function _lastAction($url) {
 		$action = Router::url($url, true);
