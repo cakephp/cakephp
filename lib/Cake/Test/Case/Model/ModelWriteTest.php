@@ -858,34 +858,7 @@ class ModelWriteTest extends BaseModelTest {
 				'updated' => '2007-03-18 10:45:31'
 		)));
 
-		if (count($result) != 3) {
-			// Database doesn't support transactions
-			$expectedPosts[] = array(
-				'Post' => array(
-					'id' => '4',
-					'author_id' => 1,
-					'title' => 'New Fourth Post',
-					'body' => null,
-					'published' => 'N',
-					'created' => self::date(),
-					'updated' => self::date()
-			));
-
-			$expectedPosts[] = array(
-				'Post' => array(
-					'id' => '5',
-					'author_id' => 1,
-					'title' => 'New Fifth Post',
-					'body' => null,
-					'published' => 'N',
-					'created' => self::date(),
-					'updated' => self::date()
-			));
-
-			$this->assertEquals($expectedPosts, $result);
-			// Skip the rest of the transactional tests
-			return;
-		}
+		$this->skipIf(count($result) != 3, 'Database does not support transactions.');
 
 		$this->assertEquals($expectedPosts, $result);
 
