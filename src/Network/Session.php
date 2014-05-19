@@ -234,12 +234,14 @@ class Session {
 			return $this->_engine;
 		}
 
-		$class = App::className($class, 'Network/Session');
-		if (!class_exists($class)) {
-			throw new \InvalidArgumentException(sprintf('The class %s does not exist.', $class));
+		$className = App::className($class, 'Network/Session');
+		if (!$className) {
+			throw new \InvalidArgumentException(
+				sprintf('The class "%s" does not exist and cannot be used as a session engine', $class)
+			);
 		}
 
-		$handler = new $class($options);
+		$handler = new $className($options);
 		if (!($handler instanceof SessionHandlerInterface)) {
 			throw new \InvalidArgumentException(
 				'Chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used with an engine key.'

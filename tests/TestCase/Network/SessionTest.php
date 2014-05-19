@@ -415,6 +415,18 @@ class SessionTest extends TestCase {
 	}
 
 /**
+ * Tests instantiating a missing engine
+ *
+ * @expectedException InvalidArgumentException
+ * @expectedExceptionMessage The class "Derp" does not exist and cannot be used as a session engine
+ * @return void
+ */
+	public function testBadEngine() {
+		$session = new Session();
+		$session->engine('Derp');
+	}
+
+/**
  * Test that cookieTimeout matches timeout when unspecified.
  *
  * @return void
