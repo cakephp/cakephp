@@ -477,7 +477,22 @@ class MarshallerTest extends TestCase {
 		];
 		$marshall = new Marshaller($this->articles);
 		$result = $marshall->one($data, ['Tags']);
+		$this->assertCount(0, $result->tags);
 
+		$data = [
+			'title' => 'Haz tags',
+			'body' => 'Some content here',
+			'tags' => ['_ids' => false]
+		];
+		$result = $marshall->one($data, ['Tags']);
+		$this->assertCount(0, $result->tags);
+
+		$data = [
+			'title' => 'Haz tags',
+			'body' => 'Some content here',
+			'tags' => ['_ids' => null]
+		];
+		$result = $marshall->one($data, ['Tags']);
 		$this->assertCount(0, $result->tags);
 
 		$data = [
@@ -723,6 +738,46 @@ class MarshallerTest extends TestCase {
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[2]);
+	}
+
+/**
+ * Tests that merging data to an entity containing belongsToMany and _ids
+ * will ignore empty values.
+ *
+ * @return void
+ */
+	public function testMergeBelongsToManyEntitiesFromIdsEmptyValue() {
+		$entity = new Entity([
+			'title' => 'Haz tags',
+			'body' => 'Some content here',
+			'tags' => [
+				new Entity(['id' => 1, 'name' => 'Cake']),
+				new Entity(['id' => 2, 'name' => 'PHP'])
+			]
+		]);
+
+		$data = [
+			'title' => 'Haz moar tags',
+			'tags' => ['_ids' => '']
+		];
+		$entity->accessible('*', true);
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->merge($entity, $data, ['Tags']);
+		$this->assertCount(0, $result->tags);
+
+		$data = [
+			'title' => 'Haz moar tags',
+			'tags' => ['_ids' => false]
+		];
+		$result = $marshall->merge($entity, $data, ['Tags']);
+		$this->assertCount(0, $result->tags);
+
+		$data = [
+			'title' => 'Haz moar tags',
+			'tags' => ['_ids' => null]
+		];
+		$result = $marshall->merge($entity, $data, ['Tags']);
+		$this->assertCount(0, $result->tags);
 	}
 
 /**
