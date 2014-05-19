@@ -1240,7 +1240,83 @@ class BelongsToManyTest extends TestCase {
 	}
 
 /**
- * Tests that replaceLinks will delete entities not present in the passed
+ * Test that replaceLinks() can save an empty set, removing all rows.
+ *
+ * @return void
+ */
+	public function testReplaceLinksUpdateToEmptySet() {
+		$connection = ConnectionManager::get('test');
+		$joint = $this->getMock(
+			'\Cake\ORM\Table',
+			['delete', 'find'],
+			[['alias' => 'ArticlesTags', 'connection' => $connection]]
+		);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'through' => $joint,
+			'joinTable' => 'tags_articles'
+		];
+		$assoc = $this->getMock(
+			'\Cake\ORM\Association\BelongsToMany',
+			['_collectJointEntities', '_saveTarget'],
+			['tags', $config]
+		);
+		$assoc->junction();
+
+		$this->article
+			->association('ArticlesTags')
+			->conditions(['foo' => 1]);
+
+		$query1 = $this->getMock(
+			'\Cake\ORM\Query',
+			['where', 'andWhere', 'addDefaultTypes'],
+			[$connection, $joint]
+		);
+
+		$joint->expects($this->at(0))->method('find')
+			->with('all')
+			->will($this->returnValue($query1));
+
+		$query1->expects($this->at(0))
+			->method('where')
+			->with(['foo' => 1])
+			->will($this->returnSelf());
+		$query1->expects($this->at(1))
+			->method('where')
+			->with(['article_id' => 1])
+			->will($this->returnSelf());
+
+		$existing = [
+			new Entity(['article_id' => 1, 'tag_id' => 2]),
+			new Entity(['article_id' => 1, 'tag_id' => 4]),
+		];
+		$query1->setResult(new \ArrayIterator($existing));
+
+		$tags = [];
+		$entity = new Entity(['id' => 1, 'test' => $tags]);
+
+		$assoc->expects($this->once())->method('_collectJointEntities')
+			->with($entity, $tags)
+			->will($this->returnValue([]));
+
+		$joint->expects($this->at(1))
+			->method('delete')
+			->with($existing[0]);
+		$joint->expects($this->at(2))
+			->method('delete')
+			->with($existing[1]);
+
+		$assoc->expects($this->never())
+			->method('_saveTarget');
+
+		$assoc->replaceLinks($entity, $tags);
+		$this->assertSame([], $entity->tags);
+		$this->assertFalse($entity->dirty('tags'));
+	}
+
+/**
+ * Tests that replaceLinks will delete entities not present in the passed,
  * array, maintain those are already persisted and were passed and also
  * insert the rest.
  *
@@ -1332,6 +1408,30 @@ class BelongsToManyTest extends TestCase {
 		$assoc->replaceLinks($entity, $tags, $options);
 		$this->assertSame($tags, $entity->tags);
 		$this->assertFalse($entity->dirty('tags'));
+	}
+
+/**
+ * Test that saving an empty set on create works.
+ *
+ * @return void
+ */
+	public function testSaveEmptySetSuccess() {
+		$assoc = $this->getMock(
+			'\Cake\ORM\Association\BelongsToMany',
+			['_saveTarget', 'replaceLinks'],
+			['tags']
+		);
+		$entity = new Entity([
+			'id' => 1,
+			'tags' => []
+		], ['markNew' => true]);
+
+		$assoc->saveStrategy(BelongsToMany::SAVE_REPLACE);
+		$assoc->expects($this->never())
+			->method('replaceLinks');
+		$assoc->expects($this->never())
+			->method('_saveTarget');
+		$this->assertSame($entity, $assoc->save($entity));
 	}
 
 /**

@@ -1503,7 +1503,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testsASavedEntityIsClean() {
+	public function testASavedEntityIsClean() {
 		$entity = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'password' => 'root',
@@ -1524,7 +1524,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testsASavedEntityIsNotNew() {
+	public function testASavedEntityIsNotNew() {
 		$entity = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'password' => 'root',
@@ -2591,6 +2591,59 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(4, $entity->tags[1]->_joinData->article_id);
 		$this->assertEquals(4, $entity->tags[0]->_joinData->tag_id);
 		$this->assertEquals(5, $entity->tags[1]->_joinData->tag_id);
+	}
+
+/**
+ * Tests saving belongsToMany records can delete all links.
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToManyDeleteAllLinks() {
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags', [
+			'saveStrategy' => 'replace',
+		]);
+
+		$entity = $table->get(1, ['contain' => 'Tags']);
+		$this->assertCount(2, $entity->tags, 'Fixture data did not change.');
+
+		$entity->tags = [];
+		$result = $table->save($entity);
+		$this->assertSame($result, $entity);
+		$this->assertSame([], $entity->tags, 'No tags on the entity.');
+
+		$entity = $table->get(1, ['contain' => 'Tags']);
+		$this->assertSame([], $entity->tags, 'No tags in the db either.');
+	}
+
+/**
+ * Tests saving belongsToMany records can delete some links.
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToManyDeleteSomeLinks() {
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags', [
+			'saveStrategy' => 'replace',
+		]);
+
+		$entity = $table->get(1, ['contain' => 'Tags']);
+		$this->assertCount(2, $entity->tags, 'Fixture data did not change.');
+
+		$tag = new \Cake\ORM\Entity([
+			'id' => 2,
+		]);
+		$entity->tags = [$tag];
+		$result = $table->save($entity);
+		$this->assertSame($result, $entity);
+		$this->assertCount(1, $entity->tags, 'Only one tag left.');
+		$this->assertEquals($tag, $entity->tags[0]);
+
+		$entity = $table->get(1, ['contain' => 'Tags']);
+		$this->assertCount(1, $entity->tags, 'Only one tag in the db.');
+		$this->assertEquals($tag->id, $entity->tags[0]->id);
 	}
 
 /**

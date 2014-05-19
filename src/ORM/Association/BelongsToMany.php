@@ -385,8 +385,12 @@ class BelongsToMany extends Association {
 		$targetEntity = $entity->get($this->property());
 		$strategy = $this->saveStrategy();
 
-		if (!$targetEntity) {
+		if ($targetEntity === null) {
 			return false;
+		}
+
+		if ($targetEntity === [] && $entity->isNew()) {
+			return $entity;
 		}
 
 		if ($strategy === self::SAVE_APPEND) {
@@ -516,7 +520,7 @@ class BelongsToMany extends Association {
  *
  * This method does not check link uniqueness.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $newTags = $tags->find('relevant')->execute();
@@ -682,12 +686,17 @@ class BelongsToMany extends Association {
 					return false;
 				}
 
+				$inserted = [];
 				$property = $this->property();
-				$inserted = array_combine(
-					array_keys($inserts),
-					(array)$sourceEntity->get($property)
-				);
-				$targetEntities = $inserted + $targetEntities;
+
+				if (count($inserts)) {
+					$inserted = array_combine(
+						array_keys($inserts),
+						(array)$sourceEntity->get($property)
+					);
+					$targetEntities = $inserted + $targetEntities;
+				}
+
 				ksort($targetEntities);
 				$sourceEntity->set($property, array_values($targetEntities));
 				$sourceEntity->dirty($property, false);

@@ -170,7 +170,7 @@ class Marshaller {
  * @return array An array of built entities.
  */
 	protected function _belongsToMany(Association $assoc, array $data, $include = []) {
-		$hasIds = isset($data['_ids']);
+		$hasIds = array_key_exists('_ids', $data);
 		if ($hasIds && is_array($data['_ids'])) {
 			return $this->_loadBelongsToMany($assoc, $data['_ids']);
 		}
@@ -361,8 +361,12 @@ class Marshaller {
  * @return mixed
  */
 	protected function _mergeBelongsToMany($original, $assoc, $value, $include) {
-		if (isset($value['_ids']) && is_array($value['_ids'])) {
+		$hasIds = array_key_exists('_ids', $value);
+		if ($hasIds && is_array($value['_ids'])) {
 			return $this->_loadBelongsToMany($assoc, $value['_ids']);
+		}
+		if ($hasIds) {
+			return [];
 		}
 
 		if (!in_array('_joinData', $include) && !isset($include['_joinData'])) {
