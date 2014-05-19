@@ -22,11 +22,11 @@ use SessionHandlerInterface;
 
 /**
  * This class is a wrapper for the native PHP session functions. It provides
- * with several defaults for the most common use cases for utilizing the session
+ * several defaults for the most common session configuration
  * via external handlers and helps with using session in cli without any warnings.
  *
- * Sessions can be created out of defaults using `Session::create()` or you can get
- * an instance of a new session by just instantiating this class and passing the full
+ * Sessions can be created from the defaults using `Session::create()` or you can get
+ * an instance of a new session by just instantiating this class and passing the complete
  * options you want to use.
  *
  * When specific options are omitted, this class will take its defaults from the configuration
@@ -242,7 +242,7 @@ class Session {
 		$handler = new $class($options);
 		if (!($handler instanceof SessionHandlerInterface)) {
 			throw new \InvalidArgumentException(
-				'Chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used with an engine key.'
+				'The chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used as an engine.'
 			);
 		}
 
