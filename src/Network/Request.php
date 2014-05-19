@@ -440,7 +440,7 @@ class Request implements \ArrayAccess {
 /**
  * Returns the instance of the Session object for this request
  *
- * If a session obkect is passed as first argument it will be set as
+ * If a session object is passed as first argument it will be set as
  * the session to use for this request
  *
  * @param \Cake\Network\Session $session the session object to use
