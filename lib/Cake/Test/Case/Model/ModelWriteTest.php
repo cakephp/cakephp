@@ -793,7 +793,7 @@ class ModelWriteTest extends BaseModelTest {
 /**
 * test callback used in testSaveTransaction method
 */
-	public function testSaveTransactionCallback($event) {
+	public function callbackForTestSaveTransaction($event) {
 		$TestModel = new Article();
 
 		// Create record. Do not use same model as in testSaveTransaction
@@ -898,7 +898,7 @@ class ModelWriteTest extends BaseModelTest {
 			'title' => ''
 		));
 
-		$callback = array($this, 'testSaveTransactionCallback');
+		$callback = array($this, 'callbackForTestSaveTransaction');
 		CakeEventManager::instance()->attach($callback, 'Model.beforeSave');
 
 		$PostModel->create();
@@ -908,7 +908,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $PostModel->find('all', array('recursive' => -1));
 		$this->assertEquals($expectedPosts, $result);
 
-		// Check record we created in testSaveTransactionCallback
+		// Check record we created in callbackForTestSaveTransaction method.
 		// record should not exist due to rollback
 
 		$ArticleModel = new Article();
