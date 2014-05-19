@@ -18,6 +18,7 @@ use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\DispatcherFilter;
+use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -72,17 +73,39 @@ class DispatcherFilterTest extends TestCase {
 	}
 
 /**
- * Test basic matching with for option.
+ * Test basic matching with for option with string.
  *
  * @return void
  */
-	public function testMatchesWithFor() {
+	public function testMatchesWithForString() {
 		$request = new Request(['url' => '/articles/view']);
 		$event = new Event('Dispatcher.beforeDispatch', $this, compact('request'));
 		$filter = new DispatcherFilter(['for' => '/articles']);
 		$this->assertTrue($filter->matches($event));
 
 		$request = new Request(['url' => '/blog/articles']);
+		$event = new Event('Dispatcher.beforeDispatch', $this, compact('request'));
+		$this->assertFalse($filter->matches($event), 'Does not start with /articles');
+	}
+
+/**
+ * Test basic matching with for option with Route instance.
+ *
+ * @return void
+ */
+	public function testMatchesWithForRoute() {
+		$route = new Route('/articles/:action/:id', [], ['action' => 'index|view', 'id' => '\d+']);
+		$filter = new DispatcherFilter(['for' => $route]);
+
+		$request = new Request(['url' => '/articles/view/1']);
+		$event = new Event('Dispatcher.beforeDispatch', $this, compact('request'));
+		$this->assertTrue($filter->matches($event));
+
+		$request = new Request(['url' => '/articles/edit/1']);
+		$event = new Event('Dispatcher.beforeDispatch', $this, compact('request'));
+		$this->assertFalse($filter->matches($event), 'Action edit is not part of route');
+
+		$request = new Request(['url' => '/blog/articles/view/1']);
 		$event = new Event('Dispatcher.beforeDispatch', $this, compact('request'));
 		$this->assertFalse($filter->matches($event), 'Does not start with /articles');
 	}
