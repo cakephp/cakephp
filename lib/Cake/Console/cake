@@ -24,12 +24,12 @@ canonicalize() {
 	if [ -f "$NAME" ]
 	then
 		DIR=$(dirname -- "$NAME")
-		NAME=$(cd -P "$DIR" && pwd -P)/$(basename -- "$NAME")
+		NAME=$(cd -P "$DIR" > /dev/null && pwd -P)/$(basename -- "$NAME")
 	fi
 	while [ -h "$NAME" ]; do
 		DIR=$(dirname -- "$NAME")
 		SYM=$(readlink "$NAME")
-		NAME=$(cd "$DIR" && cd $(dirname -- "$SYM") && pwd)/$(basename -- "$SYM")
+		NAME=$(cd "$DIR" > /dev/null && cd $(dirname -- "$SYM") > /dev/null && pwd)/$(basename -- "$SYM")
 	done
 	echo "$NAME"
 }
