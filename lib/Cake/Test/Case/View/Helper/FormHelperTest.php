@@ -1418,7 +1418,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * Test that url has html entity and fragment identifer show up in their hash.
+ * URL, HTML and identifier - and "URL + its hash" or "URLs + their hashes".
  *
  * @return void
  */
