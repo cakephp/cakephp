@@ -164,7 +164,7 @@ class Request implements \ArrayAccess {
 			'environment' => $_SERVER + $_ENV,
 			'base' => $base,
 			'webroot' => $webroot,
-			'session' => null
+			'session' => Session::create(Configure::read('Session'))
 		);
 		$config['url'] = static::_url($config);
 		return new static($config);
