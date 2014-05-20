@@ -100,16 +100,38 @@ class OrmCacheShellTest extends TestCase {
  * @return void
  */
 	public function testBuildOverwritesExistingData() {
-		$this->markTestIncomplete();
+		$this->cache->expects($this->once())
+			->method('write')
+			->with('test_articles');
+		$this->cache->expects($this->never())
+			->method('read');
+		$this->cache->expects($this->never())
+			->method('delete');
+
+		$this->shell->params['connection'] = 'test';
+		$this->shell->build('articles');
 	}
 
 /**
  * Test build() with a non-existing connection name.
  *
+ * @expectedException Cake\Datasource\Error\MissingDatasourceConfigException
  * @return void
  */
 	public function testBuildInvalidConnection() {
-		$this->markTestIncomplete();
+		$this->shell->params['connection'] = 'derpy-derp';
+		$this->shell->build('articles');
+	}
+
+/**
+ * Test clear() with an invalid connection name.
+ *
+ * @expectedException Cake\Datasource\Error\MissingDatasourceConfigException
+ * @return void
+ */
+	public function testClearInvalidConnection() {
+		$this->shell->params['connection'] = 'derpy-derp';
+		$this->shell->clear('articles');
 	}
 
 /**
@@ -117,17 +139,13 @@ class OrmCacheShellTest extends TestCase {
  *
  * @return void
  */
-	public function testClearInvalidConnection() {
-		$this->markTestIncomplete();
-	}
-
-/**
- * Test clear() with once arg.
- *
- * @return void
- */
 	public function testClearNoArgs() {
-		$this->markTestIncomplete();
+		$this->cache->expects($this->at(2))
+			->method('delete')
+			->with('test_articles');
+
+		$this->shell->params['connection'] = 'test';
+		$this->shell->clear();
 	}
 
 /**
