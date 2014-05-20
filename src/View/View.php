@@ -1096,9 +1096,7 @@ class View {
 		if (!empty($plugin)) {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
-				if (!in_array($viewPaths[$i], $corePaths)) {
-					$paths[] = $viewPaths[$i] . 'Plugin' . DS . $plugin . DS;
-				}
+				$paths[] = $viewPaths[$i] . 'Plugin' . DS . $plugin . DS;
 			}
 			$paths = array_merge($paths, App::path('Template', $plugin));
 		}
@@ -1106,21 +1104,24 @@ class View {
 		$paths = array_unique(array_merge($paths, $viewPaths));
 		if (!empty($this->theme)) {
 			$theme = Inflector::camelize($this->theme);
-			$themePaths = array();
-			foreach ($paths as $path) {
-				if (strpos($path, DS . 'Plugin' . DS) === false) {
-					if ($plugin) {
-						$themePaths[] = $path . 'Themed' . DS . $theme . DS . 'Plugin' . DS . $plugin . DS;
-					}
-					$themePaths[] = $path . 'Themed' . DS . $theme . DS;
+			$themePaths = App::path('Template', $theme);
+
+			if ($plugin) {
+				$count = count($viewPaths);
+				for ($i = 0; $i < $count; $i++) {
+					$themePaths[] = $themePaths[$i] . 'Plugin' . DS . $plugin . DS;
 				}
 			}
+
 			$paths = array_merge($themePaths, $paths);
 		}
+
 		$paths = array_merge($paths, $corePaths);
+
 		if ($plugin !== null) {
 			return $this->_pathsForPlugin[$plugin] = $paths;
 		}
+
 		return $this->_paths = $paths;
 	}
 
