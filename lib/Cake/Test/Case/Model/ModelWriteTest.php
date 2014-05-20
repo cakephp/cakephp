@@ -779,15 +779,14 @@ class ModelWriteTest extends BaseModelTest {
 		$Post = new TestPost();
 		$Post->setDataSourceObject($db);
 
-		$Post->validate = array(
-			'title' => array('rule' => array('notEmpty'))
-		);
+		$callback = array($this, 'callbackForTestSaveTransaction');
+		$Post->getEventManager()->attach($callback, 'Model.beforeSave');
 
 		$data = array('Post' => array(
 			'author_id' => 1,
-			'title' => ''
+			'title' => 'New Fourth Post'
 		));
-		$Post->save($data, array('atomic' => true, 'validate' => true));
+		$Post->save($data, array('atomic' => true));
 	}
 
 /**
