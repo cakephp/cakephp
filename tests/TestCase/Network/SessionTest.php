@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Network;
 
 use Cake\Cache\Cache;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Session;
 use Cake\Network\Session\CacheSession;
@@ -361,7 +362,7 @@ class SessionTest extends TestCase {
  * @return void
  */
 	public function testUsingAppLibsHandler() {
-		\Cake\Core\Configure::write('App.namespace', 'TestApp');
+		Configure::write('App.namespace', 'TestApp');
 		$config = [
 			'defaults' => 'cake',
 			'handler' => array(
@@ -383,7 +384,7 @@ class SessionTest extends TestCase {
  * @return void
  */
 	public function testUsingPluginHandler() {
-		\Cake\Core\Configure::write('App.namespace', 'TestApp');
+		Configure::write('App.namespace', 'TestApp');
 		\Cake\Core\Plugin::load('TestPlugin');
 
 		$config = [
@@ -404,7 +405,7 @@ class SessionTest extends TestCase {
  * @return void
  */
 	public function testEngineWithPreMadeInstance() {
-		\Cake\Core\Configure::write('App.namespace', 'TestApp');
+		Configure::write('App.namespace', 'TestApp');
 		$engine = new \TestApp\Network\Session\TestAppLibSession;
 		$session = new Session(['handler' => ['engine' => $engine]]);
 		$this->assertSame($engine, $session->engine());
