@@ -208,7 +208,7 @@ class Helper implements EventListener {
 	public function webroot($file) {
 		$asset = explode('?', $file);
 		$asset[1] = isset($asset[1]) ? '?' . $asset[1] : null;
-		$webPath = "{$this->request->webroot}" . $asset[0];
+		$webPath = $this->request->webroot . $asset[0];
 		$file = $asset[0];
 
 		if (!empty($this->theme)) {
@@ -220,7 +220,7 @@ class Helper implements EventListener {
 			}
 
 			if (file_exists(Configure::read('App.www_root') . $theme . $file)) {
-				$webPath = "{$this->request->webroot}" . $theme . $asset[0];
+				$webPath = $this->request->webroot . $theme . $asset[0];
 			} else {
 				$themePath = Plugin::path($this->theme);
 				$path = $themePath . 'webroot/' . $file;

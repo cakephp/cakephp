@@ -318,7 +318,7 @@ class ViewTest extends TestCase {
 		$result = $ThemeView->getViewFileName('/Posts/index');
 		$this->assertPathEquals($expected, $result);
 
-		$expected =  Plugin::path('TestTheme') . 'Template' . DS . 'Layout' . DS . 'default.ctp';
+		$expected = Plugin::path('TestTheme') . 'Template' . DS . 'Layout' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertPathEquals($expected, $result);
 
@@ -370,7 +370,7 @@ class ViewTest extends TestCase {
 		];
 
 		$ThemeView = new TestThemeView(null, null, null, $viewOptions);
-		$themePath =  Plugin::path('TestTheme') . 'Template' . DS;
+		$themePath = Plugin::path('TestTheme') . 'Template' . DS;
 
 		$expected = $themePath . 'Plugin' . DS . 'TestPlugin' . DS . 'Tests' . DS . 'index.ctp';
 		$result = $ThemeView->getViewFileName('index');
