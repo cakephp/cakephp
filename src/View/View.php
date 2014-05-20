@@ -42,10 +42,10 @@ use Cake\View\ViewVarsTrait;
  *
  * Since 2.1, the base View class also includes support for themes by default. Theme views are regular
  * view files that can provide unique HTML and static assets. If theme views are not found for the
- * current view the default app view files will be used. You can set `$this->theme = 'mytheme'`
+ * current view the default app view files will be used. You can set `$this->theme = 'Mytheme'`
  * in your Controller to use the Themes.
  *
- * Example of theme path with `$this->theme = 'SuperHot';` Would be `app/Template/Themed/SuperHot/Posts`
+ * Example of theme path with `$this->theme = 'SuperHot';` Would be `Plugin/SuperHot/Template/Posts`
  *
  * @property      \Cake\View\Helper\CacheHelper $Cache
  * @property      \Cake\View\Helper\FormHelper $Form

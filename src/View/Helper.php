@@ -213,19 +213,19 @@ class Helper implements EventListener {
 
 		if (!empty($this->theme)) {
 			$file = trim($file, '/');
-			$theme = $this->theme . '/';
+			$theme = Inflector::underscore($this->theme) . '/';
 
 			if (DS === '\\') {
 				$file = str_replace('/', '\\', $file);
 			}
 
-			if (file_exists(Configure::read('App.www_root') . 'theme/' . $this->theme . DS . $file)) {
-				$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
+			if (file_exists(Configure::read('App.www_root') . $theme . DS . $file)) {
+				$webPath = "{$this->request->webroot}" . $theme . $asset[0];
 			} else {
-				$themePath = App::themePath($this->theme);
+				$themePath = Plugin::path($this->theme);
 				$path = $themePath . 'webroot/' . $file;
 				if (file_exists($path)) {
-					$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
+					$webPath = "{$this->request->webroot}" . $theme . $asset[0];
 				}
 			}
 		}
@@ -319,22 +319,13 @@ class Helper implements EventListener {
 				//@codingStandardsIgnoreEnd
 			}
 			$segments = explode('/', ltrim($filepath, '/'));
-			if ($segments[0] === 'theme') {
-				$theme = $segments[1];
-				unset($segments[0], $segments[1]);
-				$themePath = App::themePath($theme) . 'webroot' . DS . implode(DS, $segments);
+			$plugin = Inflector::camelize($segments[0]);
+			if (Plugin::loaded($plugin)) {
+				unset($segments[0]);
+				$pluginPath = Plugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
 				//@codingStandardsIgnoreStart
-				return $path . '?' . @filemtime($themePath);
+				return $path . '?' . @filemtime($pluginPath);
 				//@codingStandardsIgnoreEnd
-			} else {
-				$plugin = Inflector::camelize($segments[0]);
-				if (Plugin::loaded($plugin)) {
-					unset($segments[0]);
-					$pluginPath = Plugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
-					//@codingStandardsIgnoreStart
-					return $path . '?' . @filemtime($pluginPath);
-					//@codingStandardsIgnoreEnd
-				}
 			}
 		}
 		return $path;

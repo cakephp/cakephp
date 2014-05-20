@@ -180,6 +180,9 @@ class HelperTest extends TestCase {
 		$this->View = new View();
 		$this->Helper = new Helper($this->View);
 		$this->Helper->request = new Request();
+
+		Configure::write('App.namespace', 'TestApp');
+		Plugin::load(['TestTheme']);
 	}
 
 /**
@@ -406,7 +409,7 @@ class HelperTest extends TestCase {
 		$expected = '/img/cake.power.gif';
 		$this->assertEquals($expected, $result);
 
-		$this->Helper->theme = 'test_theme';
+		$this->Helper->theme = 'TestTheme';
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
 		$expected = '/theme/test_theme/img/cake.power.gif';

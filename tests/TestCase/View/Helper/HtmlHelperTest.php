@@ -71,6 +71,8 @@ class HtmlHelperTest extends TestCase {
 		$this->Html->request = new Request();
 		$this->Html->request->webroot = '';
 
+		Configure::write('App.namespace', 'TestApp');
+		Plugin::load(['TestTheme']);
 		Configure::write('Asset.timestamp', false);
 	}
 
@@ -81,6 +83,7 @@ class HtmlHelperTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
+		Plugin::unload('TestTheme');
 		unset($this->Html, $this->View);
 	}
 
@@ -444,7 +447,7 @@ class HtmlHelperTest extends TestCase {
 		Configure::write('debug', true);
 
 		$this->Html->request->webroot = '/';
-		$this->Html->theme = 'test_theme';
+		$this->Html->theme = 'TestTheme';
 		$result = $this->Html->image('__cake_test_image.gif');
 		$this->assertTags($result, array(
 			'img' => array(
@@ -471,14 +474,14 @@ class HtmlHelperTest extends TestCase {
 		$webRoot = Configure::read('App.www_root');
 		Configure::write('App.www_root', TEST_APP . 'webroot/');
 
-		$this->Html->theme = 'test_theme';
+		$this->Html->theme = 'TestTheme';
 		$result = $this->Html->css('webroot_test');
 		$expected = array(
 			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*theme\/test_theme\/css\/webroot_test\.css/')
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Html->theme = 'test_theme';
+		$this->Html->theme = 'TestTheme';
 		$result = $this->Html->css('theme_webroot');
 		$expected = array(
 			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*theme\/test_theme\/css\/theme_webroot\.css/')
@@ -988,7 +991,7 @@ class HtmlHelperTest extends TestCase {
 		new File($testfile, true);
 
 		$this->Html->request->webroot = '/';
-		$this->Html->theme = 'test_theme';
+		$this->Html->theme = 'TestTheme';
 		$result = $this->Html->script('__test_js.js');
 		$expected = array(
 			'script' => array('src' => '/theme/test_theme/js/__test_js.js')
