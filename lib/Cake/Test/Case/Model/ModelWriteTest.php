@@ -794,11 +794,6 @@ class ModelWriteTest extends BaseModelTest {
  * test callback used in testSaveTransaction method
  */
 	public function callbackForTestSaveTransaction($event) {
-		if ($event->subject()->name === 'Article') {
-			$event->stopPropagation();
-			return false;
-		}
-
 		$TestModel = new Article();
 
 		// Create record. Do not use same model as in testSaveTransaction
@@ -812,6 +807,10 @@ class ModelWriteTest extends BaseModelTest {
 		));
 		$result = $TestModel->create() && $TestModel->save($data);
 		$this->assertFalse(empty($result));
+		
+		// force transaction to be rolled back in Post model
+		$event-stopPropagation();
+		return false;
 	}
 
 /**
@@ -875,7 +874,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 
 		$callback = array($this, 'callbackForTestSaveTransaction');
-		CakeEventManager::instance()->attach($callback, 'Model.beforeSave');
+		$PostModel->getEventManager()->attach($callback, 'Model.beforeSave');
 
 		$PostModel->create();
 		$result = $PostModel->save($data, array('atomic' => true));
