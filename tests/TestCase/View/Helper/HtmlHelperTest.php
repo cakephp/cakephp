@@ -451,7 +451,7 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->image('__cake_test_image.gif');
 		$this->assertTags($result, array(
 			'img' => array(
-				'src' => 'preg:/\/theme\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
+				'src' => 'preg:/\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
 				'alt' => ''
 		)));
 
@@ -460,7 +460,7 @@ class HtmlHelperTest extends TestCase {
 
 		$this->assertTags($result, array(
 			'img' => array(
-				'src' => 'preg:/\/testing\/theme\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
+				'src' => 'preg:/\/testing\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
 				'alt' => ''
 		)));
 	}

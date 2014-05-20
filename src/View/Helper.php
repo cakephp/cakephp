@@ -219,7 +219,7 @@ class Helper implements EventListener {
 				$file = str_replace('/', '\\', $file);
 			}
 
-			if (file_exists(Configure::read('App.www_root') . $theme . DS . $file)) {
+			if (file_exists(Configure::read('App.www_root') . $theme . $file)) {
 				$webPath = "{$this->request->webroot}" . $theme . $asset[0];
 			} else {
 				$themePath = Plugin::path($this->theme);
