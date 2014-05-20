@@ -477,14 +477,14 @@ class HtmlHelperTest extends TestCase {
 		$this->Html->theme = 'TestTheme';
 		$result = $this->Html->css('webroot_test');
 		$expected = array(
-			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*theme\/test_theme\/css\/webroot_test\.css/')
+			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*test_theme\/css\/webroot_test\.css/')
 		);
 		$this->assertTags($result, $expected);
 
 		$this->Html->theme = 'TestTheme';
 		$result = $this->Html->css('theme_webroot');
 		$expected = array(
-			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*theme\/test_theme\/css\/theme_webroot\.css/')
+			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*test_theme\/css\/theme_webroot\.css/')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -985,16 +985,15 @@ class HtmlHelperTest extends TestCase {
  */
 	public function testScriptInTheme() {
 		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
-		$themeExists = is_dir(WWW_ROOT . 'theme');
 
-		$testfile = WWW_ROOT . 'theme/test_theme/js/__test_js.js';
+		$testfile = WWW_ROOT . '/test_theme/js/__test_js.js';
 		new File($testfile, true);
 
 		$this->Html->request->webroot = '/';
 		$this->Html->theme = 'TestTheme';
 		$result = $this->Html->script('__test_js.js');
 		$expected = array(
-			'script' => array('src' => '/theme/test_theme/js/__test_js.js')
+			'script' => array('src' => '/test_theme/js/__test_js.js')
 		);
 		$this->assertTags($result, $expected);
 	}
