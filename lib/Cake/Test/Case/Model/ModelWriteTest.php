@@ -766,15 +766,18 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveTransactionNoRollback() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Post', 'Article');
 
 		$db = $this->getMock('DboSource', array('begin', 'connect', 'rollback', 'describe'));
 
 		$db->expects($this->once())
 			->method('describe')
 			->will($this->returnValue(array()));
-		$db->expects($this->once())->method('begin');
-		$db->expects($this->once())->method('rollback');
+		$db->expects($this->once())
+			->method('begin')
+			->will($this->returnValue(true));
+		$db->expects($this->once())
+			->method('rollback');
 
 		$Post = new TestPost();
 		$Post->setDataSourceObject($db);
