@@ -888,28 +888,31 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $ArticleModel->find('all', array('recursive' => -1));
 		$expectedArticles = array(
 			array('Article' => array(
-				'user_id' => 1,
+				'user_id' => '1',
 				'title' => 'First Article',
 				'body' => 'First Article Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:39:23',
-				'updated' => '2007-03-18 10:41:31'
+				'updated' => '2007-03-18 10:41:31',
+				'id' => '1'
 			)),
 			array('Article' => array(
-				'user_id' => 3,
+				'user_id' => '3',
 				'title' => 'Second Article',
 				'body' => 'Second Article Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:41:23',
-				'updated' => '2007-03-18 10:43:31'
+				'updated' => '2007-03-18 10:43:31',
+				'id' => '2'
 			)),
 			array('Article' => array(
-				'user_id' => 1,
+				'user_id' => '1',
 				'title' => 'Third Article',
 				'body' => 'Third Article Body',
 				'published' => 'Y',
 				'created' => '2007-03-18 10:43:23',
-				'updated' => '2007-03-18 10:45:31'
+				'updated' => '2007-03-18 10:45:31',
+				'id' => '3'
 			))
 		);
 		$this->assertEquals($expectedArticles, $result);
