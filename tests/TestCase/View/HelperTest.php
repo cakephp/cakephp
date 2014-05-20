@@ -391,11 +391,11 @@ class HelperTest extends TestCase {
 		$result = $this->Helper->assetTimestamp('/test_plugin/css/i_dont_exist.css');
 		$this->assertRegExp('#/test_plugin/css/i_dont_exist.css\?$#', $result, 'No error on missing file');
 
-		$result = $this->Helper->assetTimestamp('/theme/test_theme/js/theme.js');
-		$this->assertRegExp('#/theme/test_theme/js/theme.js\?[0-9]+$#', $result, 'Missing timestamp theme');
+		$result = $this->Helper->assetTimestamp('/test_theme/js/theme.js');
+		$this->assertRegExp('#/test_theme/js/theme.js\?[0-9]+$#', $result, 'Missing timestamp theme');
 
-		$result = $this->Helper->assetTimestamp('/theme/test_theme/js/non_existant.js');
-		$this->assertRegExp('#/theme/test_theme/js/non_existant.js\?$#', $result, 'No error on missing file');
+		$result = $this->Helper->assetTimestamp('/test_theme/js/non_existant.js');
+		$this->assertRegExp('#/test_theme/js/non_existant.js\?$#', $result, 'No error on missing file');
 	}
 
 /**
@@ -412,22 +412,22 @@ class HelperTest extends TestCase {
 		$this->Helper->theme = 'TestTheme';
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
-		$expected = '/theme/test_theme/img/cake.power.gif';
+		$expected = '/test_theme/img/cake.power.gif';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Helper->webroot('/img/test.jpg');
-		$expected = '/theme/test_theme/img/test.jpg';
+		$expected = '/test_theme/img/test.jpg';
 		$this->assertEquals($expected, $result);
 
 		$webRoot = Configure::read('App.www_root');
 		Configure::write('App.www_root', TEST_APP . 'TestApp/webroot/');
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
-		$expected = '/theme/test_theme/img/cake.power.gif';
+		$expected = '/test_theme/img/cake.power.gif';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Helper->webroot('/img/test.jpg');
-		$expected = '/theme/test_theme/img/test.jpg';
+		$expected = '/test_theme/img/test.jpg';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Helper->webroot('/img/cake.icon.gif');
