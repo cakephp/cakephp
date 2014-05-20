@@ -872,7 +872,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 
 		$callback = array($this, 'callbackForTestSaveTransaction');
-		CakeEventManager::instance()->attach($callback, 'Model.beforeSave');
+		$PostModel->getEventManager()->attach($callback, 'Model.beforeSave');
 
 		$PostModel->create();
 		$result = $PostModel->save($data, array('atomic' => true));
