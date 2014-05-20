@@ -206,8 +206,12 @@ class Request implements \ArrayAccess {
 			'base' => '',
 			'webroot' => '',
 			'input' => null,
-			'session' => null
 		);
+
+		if (empty($config['session'])) {
+			$config['session'] = new Session();
+		}
+
 		$this->_setConfig($config);
 	}
 
