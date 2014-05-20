@@ -1712,14 +1712,12 @@ class Model extends Object implements CakeEventListener {
 		try {
 			$success = $this->_doSave($data, $options);
 			if ($transactionBegun) {
-				return $success;
-			}
-
-			if ($success) {
-				$db->commit();
-			}
-			else {
-				$db->rollback();
+				if ($success) {
+					$db->commit();
+				}
+				else {
+					$db->rollback();
+				}
 			}
 			return $success;
 		}
