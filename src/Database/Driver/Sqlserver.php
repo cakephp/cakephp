@@ -15,7 +15,7 @@
 namespace Cake\Database\Driver;
 
 use Cake\Database\Dialect\SqlserverDialectTrait;
-use Cake\Database\Statement\PDOStatement;
+use Cake\Database\Statement\SqlserverStatement;
 use PDO;
 
 /**
@@ -100,7 +100,7 @@ class Sqlserver extends \Cake\Database\Driver {
 	public function prepare($query) {
 		$this->connect();
 		$statement = $this->_connection->prepare((string)$query, [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL]);
-		return new PDOStatement($statement, $this);
+		return new SqlserverStatement($statement, $this);
 	}
 
 }
