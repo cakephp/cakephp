@@ -794,6 +794,11 @@ class ModelWriteTest extends BaseModelTest {
  * test callback used in testSaveTransaction method
  */
 	public function callbackForTestSaveTransaction($event) {
+		if ($event->subject()->name === 'Article') {
+			$event->stopPropagation();
+			return false;
+		}
+
 		$TestModel = new Article();
 
 		// Create record. Do not use same model as in testSaveTransaction
@@ -864,15 +869,13 @@ class ModelWriteTest extends BaseModelTest {
 
 		// Database supports transactions --> continue tests
 
-		$PostModel->validate = array('title' => 'notEmpty');
-
 		$data = array('Post' => array(
 			'author_id' => 1,
-			'title' => ''
+			'title' => 'New Fourth Post'
 		));
 
 		$callback = array($this, 'callbackForTestSaveTransaction');
-		$PostModel->getEventManager()->attach($callback, 'Model.beforeSave');
+		CakeEventManager::instance()->attach($callback, 'Model.beforeSave');
 
 		$PostModel->create();
 		$result = $PostModel->save($data, array('atomic' => true));
