@@ -96,7 +96,7 @@ class Collection {
  * @return \Cake\Database\Schema\Table Object with column metadata.
  * @throws \Cake\Database\Exception when table cannot be described.
  */
-	public function describe($name, array $options) {
+	public function describe($name, array $options = []) {
 		$options += ['forceRefresh' => false];
 		$cacheConfig = $this->cacheMetadata();
 		$cacheKey = $this->cacheKey($name);

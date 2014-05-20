@@ -53,6 +53,7 @@ class OrmCacheShell extends Shell {
 			$schema->describe($table, ['forceRefresh' => true]);
 		}
 		$this->out('<success>Cache build complete</success>');
+		return true;
 	}
 
 /**
@@ -78,7 +79,7 @@ class OrmCacheShell extends Shell {
 
 		foreach ($tables as $table) {
 			$this->_io->verbose(sprintf(
-				'Clearing metadata cache from "%s" for %s', 
+				'Clearing metadata cache from "%s" for %s',
 				$configName,
 				$table
 			));
@@ -86,12 +87,13 @@ class OrmCacheShell extends Shell {
 			Cache::delete($key, $configName);
 		}
 		$this->out('<success>Cache clear complete</success>');
+		return true;
 	}
 
 /**
  * Helper method to get the schema collection.
  *
- * @return \Cake\Database\Schema\Collection
+ * @return false|\Cake\Database\Schema\Collection
  */
 	protected function _getSchema() {
 		$source = ConnectionManager::get($this->params['connection']);
@@ -116,7 +118,7 @@ class OrmCacheShell extends Shell {
 			'help' => 'Clear all metadata caches for the connection. If a ' .
 				'table name is provided, only that table will be removed.',
 		])->addSubcommand('build', [
-		'help' => 'Build all metadata caches for the connection. If a ' .
+			'help' => 'Build all metadata caches for the connection. If a ' .
 			'table name is provided, only that table will be cached.',
 		])->addOption('connection', [
 			'help' => 'The connection to build/clear metadata cache data for.',
