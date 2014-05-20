@@ -287,7 +287,7 @@ class PluginTest extends TestCase {
 		));
 		Plugin::routes();
 
-		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginTwo'];
+		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginTwo', 'TestTheme'];
 		$this->assertEquals($expected, Plugin::loaded());
 		$this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
 		$this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));

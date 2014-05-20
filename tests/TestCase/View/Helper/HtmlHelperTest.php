@@ -440,7 +440,7 @@ class HtmlHelperTest extends TestCase {
 	public function testImageTagWithTheme() {
 		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
 
-		$testfile = WWW_ROOT . 'theme/test_theme/img/__cake_test_image.gif';
+		$testfile = WWW_ROOT . 'test_theme/img/__cake_test_image.gif';
 		new File($testfile, true);
 
 		Configure::write('Asset.timestamp', true);

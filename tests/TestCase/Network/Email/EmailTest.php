@@ -1484,10 +1484,10 @@ class EmailTest extends TestCase {
 		$result = $this->CakeEmail->send();
 
 		$this->assertContains('In TestTheme', $result['message']);
-		$this->assertContains('/theme/TestTheme/img/test.jpg', $result['message']);
+		$this->assertContains('/test_theme/img/test.jpg', $result['message']);
 		$this->assertContains('Message-ID: ', $result['headers']);
 		$this->assertContains('To: ', $result['headers']);
-		$this->assertContains('/theme/TestTheme/img/test.jpg', $result['message']);
+		$this->assertContains('/test_theme/img/test.jpg', $result['message']);
 	}
 
 /**
