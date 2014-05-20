@@ -1714,8 +1714,7 @@ class Model extends Object implements CakeEventListener {
 			if ($transactionBegun) {
 				if ($success) {
 					$db->commit();
-				}
-				else {
+				} else {
 					$db->rollback();
 				}
 			}
