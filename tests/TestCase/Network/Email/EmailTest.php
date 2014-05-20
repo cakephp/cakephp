@@ -1471,6 +1471,7 @@ class EmailTest extends TestCase {
  * @return void
  */
 	public function testSendRenderThemed() {
+		Plugin::load('TestTheme');
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('debug');
 
@@ -1613,7 +1614,7 @@ class EmailTest extends TestCase {
  * @return void
  */
 	public function testSendRenderPlugin() {
-		Plugin::load(['TestPlugin', 'TestPluginTwo']);
+		Plugin::load(['TestPlugin', 'TestPluginTwo', 'TestTheme']);
 
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('debug');
