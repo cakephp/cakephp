@@ -887,7 +887,7 @@ class ModelWriteTest extends BaseModelTest {
 		$ArticleModel = new Article();
 		$result = $ArticleModel->find('all', array('recursive' => -1));
 		$expectedArticles = array(
-			array('Articles' => array(
+			array('Article' => array(
 				'user_id' => 1,
 				'title' => 'First Article',
 				'body' => 'First Article Body',
@@ -895,7 +895,7 @@ class ModelWriteTest extends BaseModelTest {
 				'created' => '2007-03-18 10:39:23',
 				'updated' => '2007-03-18 10:41:31'
 			)),
-			array('Articles' => array(
+			array('Article' => array(
 				'user_id' => 3,
 				'title' => 'Second Article',
 				'body' => 'Second Article Body',
@@ -903,7 +903,7 @@ class ModelWriteTest extends BaseModelTest {
 				'created' => '2007-03-18 10:41:23',
 				'updated' => '2007-03-18 10:43:31'
 			)),
-			array('Articles' => array(
+			array('Article' => array(
 				'user_id' => 1,
 				'title' => 'Third Article',
 				'body' => 'Third Article Body',
