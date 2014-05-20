@@ -145,7 +145,7 @@ class AuthComponentTest extends TestCase {
 		);
 		$this->Auth->session = $this->getMock(
 			'Cake\Network\Session',
-			array('renew'), array(), '', false
+			array('renew')
 		);
 
 		$this->Auth->setAuthenticateObject(0, $AuthLoginFormAuthenticate);

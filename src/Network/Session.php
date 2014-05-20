@@ -473,7 +473,7 @@ class Session {
 			$this->start();
 		}
 
-		if ($this->_isCli) {
+		if (!$this->_isCli) {
 			session_destroy();
 		}
 
