@@ -3002,18 +3002,16 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Sets the last creaated form action.
+ * Sets the last created form action.
  *
  * @var mixed
  * @return void
  */
 	protected function _lastAction($url) {
 		$action = Router::url($url, true);
-		if (strpos($action, '://')) {
-			$query = parse_url($action, PHP_URL_QUERY);
-			$query = $query ? '?' . $query : '';
-			$this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
-		}
+		$query = parse_url($action, PHP_URL_QUERY);
+		$query = $query ? '?' . $query : '';
+		$this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
 	}
 
 /**
