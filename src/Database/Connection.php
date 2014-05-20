@@ -551,6 +551,19 @@ class Connection {
 	}
 
 /**
+ * Enables or disables metadata caching for this connectino
+ *
+ * Changing this setting will not modify existing schema collections objects.
+ *
+ * @param bool|string $cache Either boolean false to disable meta dataing caching, or
+ *   true to use `_cake_model_` or the name of the cache config to use.
+ * @return void
+ */
+	public function cacheMetadata($cache) {
+		$this->_config['cacheMetadata'] = $cache;
+	}
+
+/**
  * Sets the logger object instance. When called with no arguments
  * it returns the currently setup logger instance.
  *
