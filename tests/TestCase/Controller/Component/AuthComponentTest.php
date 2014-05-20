@@ -70,7 +70,7 @@ class AuthComponentTest extends TestCase {
 		Configure::write('Security.salt', 'YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 		Configure::write('App.namespace', 'TestApp');
 
-		$request = new Request(['session' => new Session()]);
+		$request = new Request();
 		$response = $this->getMock('Cake\Network\Response', array('stop'));
 
 		$this->Controller = new AuthTestController($request, $response);
@@ -635,7 +635,6 @@ class AuthComponentTest extends TestCase {
 
 		$url = '/posts/add';
 		$this->Auth->request = $this->Controller->request = new Request($url);
-		$this->Controller->request->session(new Session());
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->request->url = Router::normalize($url);
 
@@ -657,7 +656,6 @@ class AuthComponentTest extends TestCase {
 		$request->env('HTTP_REFERER', 'http://webmail.example.com/view/message');
 		$request->query = array();
 		$this->Auth->request = $this->Controller->request = $request;
-		$this->Controller->request->session(new Session());
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
 		$event = new Event('Controller.initialize', $this->Controller);
@@ -675,7 +673,6 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->request->env('HTTP_REFERER', 'http://webmail.example.com/view/message');
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->request->url = Router::normalize($url);
-		$this->Auth->request->session(new Session());
 		$event = new Event('Controller.initialize', $this->Controller);
 		$this->Auth->initialize($event);
 		$this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
@@ -721,7 +718,6 @@ class AuthComponentTest extends TestCase {
 	public function testDefaultToLoginRedirect() {
 		$url = '/party/on';
 		$this->Auth->request = $Request = new Request($url);
-		$this->Auth->request->session(new Session());
 		$Request->env('HTTP_REFERER', false);
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->config('authorize', ['Controller']);
@@ -926,7 +922,6 @@ class AuthComponentTest extends TestCase {
 		$this->Controller->request = new Request([
 			'url' => '/ajax_auth/add',
 			'environment' => ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
-			'session' => new Session
 		]);
 		$this->Controller->request->params['action'] = 'add';
 
