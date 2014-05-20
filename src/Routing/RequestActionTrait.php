@@ -67,10 +67,10 @@ trait RequestActionTrait {
  * ]);
  * }}}
  *
- * ### Trasmitting the session
+ * ### Transmitting the session
  *
- * By default action dispatched by this method will use a vanialla session object. If you want the
- * a particular session instance to be used, you need to specify it.
+ * By default actions dispatched with this method will use the standard session object.
+ * If you want a particular session instance to be used, you need to specify it.
  *
  * {{{
  * $vars = $this->requestAction('/articles/popular', [
