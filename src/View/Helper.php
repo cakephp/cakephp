@@ -225,7 +225,7 @@ class Helper implements EventListener {
 				$themePath = Plugin::path($this->theme);
 				$path = $themePath . 'webroot/' . $file;
 				if (file_exists($path)) {
-					$webPath = "{$this->request->webroot}" . $theme . $asset[0];
+					$webPath = $this->request->webroot . $theme . $asset[0];
 				}
 			}
 		}
