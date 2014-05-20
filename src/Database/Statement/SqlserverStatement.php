@@ -42,4 +42,4 @@ class SqlserverStatement extends PDOStatement {
 			$this->_statement->bindValue($column, $value, $type);
 		}
 	}
-} 
+}
