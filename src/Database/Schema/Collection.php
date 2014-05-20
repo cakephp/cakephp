@@ -60,7 +60,7 @@ class Collection {
 		$config = $this->_connection->config();
 
 		if (!empty($config['cacheMetadata'])) {
-			$this->cacheMetadata(true);
+			$this->cacheMetadata($config['cacheMetadata']);
 		}
 	}
 
