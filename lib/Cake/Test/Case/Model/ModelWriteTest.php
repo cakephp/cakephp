@@ -809,7 +809,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse(empty($result));
 		
 		// force transaction to be rolled back in Post model
-		$event-stopPropagation();
+		$event->stopPropagation();
 		return false;
 	}
 
