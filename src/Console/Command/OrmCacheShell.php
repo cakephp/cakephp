@@ -50,7 +50,7 @@ class OrmCacheShell extends Shell {
 		}
 		foreach ($tables as $table) {
 			$this->_io->verbose('Building metadata cache for ' . $table);
-			$schema->describe($table);
+			$schema->describe($table, ['forceRefresh' => true]);
 		}
 		$this->out('<success>Cache build complete</success>');
 	}
