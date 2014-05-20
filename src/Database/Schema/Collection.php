@@ -60,7 +60,7 @@ class Collection {
 		$config = $this->_connection->config();
 
 		if (!empty($config['cacheMetadata'])) {
-			$this->cacheMetadata(true);
+			$this->cacheMetadata($config['cacheMetadata']);
 		}
 	}
 
@@ -86,14 +86,22 @@ class Collection {
  * Caching will be applied if `cacheMetadata` key is present in the Connection
  * configuration options. Defaults to _cake_model_ when true.
  *
+ * ### Options
+ *
+ * - `forceRefresh` - Set to true to force rebuilding the cached metadata.
+ *   Defaults to false.
+ *
  * @param string $name The name of the table to describe.
+ * @param array $options The options to use, see above.
  * @return \Cake\Database\Schema\Table Object with column metadata.
  * @throws \Cake\Database\Exception when table cannot be described.
  */
-	public function describe($name) {
+	public function describe($name, array $options = []) {
+		$options += ['forceRefresh' => false];
 		$cacheConfig = $this->cacheMetadata();
-		if ($cacheConfig) {
-			$cacheKey = $this->_connection->configName() . '_' . $name;
+		$cacheKey = $this->cacheKey($name);
+
+		if (!empty($cacheConfig) && !$options['forceRefresh']) {
 			$cached = Cache::read($cacheKey, $cacheConfig);
 			if ($cached !== false) {
 				return $cached;
@@ -129,6 +137,16 @@ class Collection {
 			Cache::write($cacheKey, $table, $cacheConfig);
 		}
 		return $table;
+	}
+
+/**
+ * Get the cache key for a given name.
+ *
+ * @param string $name The name to get a cache key for.
+ * @return string The cache key.
+ */
+	public function cacheKey($name) {
+		return $this->_connection->configName() . '_' . $name;
 	}
 
 /**
