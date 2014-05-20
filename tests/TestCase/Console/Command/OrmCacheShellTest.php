@@ -16,12 +16,20 @@ namespace Cake\Test\TestCase\Console\Command;
 
 use Cake\Console\Command\OrmCacheShell;
 use Cake\Cache\Cache;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
  * OrmCacheShell test.
  */
 class OrmCacheShellTest extends TestCase {
+
+/**
+ * Fixtures.
+ *
+ * @var array
+ */
+	public $fixtures = ['core.article', 'core.tag'];
 
 /**
  * setup method
@@ -31,7 +39,29 @@ class OrmCacheShellTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->io = $this->getMock('Cake\Console\ConsoleIo');
-		$this->Shell = new OrmCacheShell($this->io);
+		$this->shell = new OrmCacheShell($this->io);
+
+		$this->cache = $this->getMock('Cake\Cache\CacheEngine');
+		$this->cache->expects($this->any())
+			->method('init')
+			->will($this->returnValue(true));
+		Cache::config('orm_cache', $this->cache);
+
+		$ds = ConnectionManager::get('test');
+		$ds->cacheMetadata('orm_cache');
+	}
+
+/**
+ * Teardown
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		Cache::drop('orm_cache');
+
+		$ds = ConnectionManager::get('test');
+		$ds->cacheMetadata(false);
 	}
 
 /**
@@ -40,7 +70,12 @@ class OrmCacheShellTest extends TestCase {
  * @return void
  */
 	public function testBuildNoArgs() {
-		$this->markTestIncomplete();
+		$this->cache->expects($this->at(2))
+			->method('write')
+			->with('test_articles');
+
+		$this->shell->params['connection'] = 'test';
+		$this->shell->build();
 	}
 
 /**
@@ -49,6 +84,22 @@ class OrmCacheShellTest extends TestCase {
  * @return void
  */
 	public function testBuildNamedModel() {
+		$this->cache->expects($this->once())
+			->method('write')
+			->with('test_articles');
+		$this->cache->expects($this->never())
+			->method('delete');
+
+		$this->shell->params['connection'] = 'test';
+		$this->shell->build('articles');
+	}
+
+/**
+ * Test build() overwrites cached data.
+ *
+ * @return void
+ */
+	public function testBuildOverwritesExistingData() {
 		$this->markTestIncomplete();
 	}
 
@@ -85,7 +136,14 @@ class OrmCacheShellTest extends TestCase {
  * @return void
  */
 	public function testClearNamedModel() {
-		$this->markTestIncomplete();
+		$this->cache->expects($this->never())
+			->method('write');
+		$this->cache->expects($this->once())
+			->method('delete')
+			->with('test_articles');
+
+		$this->shell->params['connection'] = 'test';
+		$this->shell->clear('articles');
 	}
 
 }
