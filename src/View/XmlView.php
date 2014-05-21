@@ -134,12 +134,18 @@ class XmlView extends View {
 				if (is_numeric($alias)) {
 					$alias = $key;
 				}
-				$data[$rootNode][$alias] = $this->viewVars[$key];
+				if ($this->viewVars[$key] instanceof \Traversable) {
+					$data[$rootNode][$alias] = iterator_to_array($this->viewVars[$key]);
+				} else {
+					$data[$rootNode][$alias] = $this->viewVars[$key];
+				}
 			}
 		} else {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
 			if (is_array($data) && Hash::numeric(array_keys($data))) {
 				$data = array($rootNode => array($serialize => $data));
+			} elseif ($data instanceof \Traversable) {
+				$data = array($rootNode => array($serialize => iterator_to_array($data)));
 			}
 		}
 

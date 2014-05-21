@@ -31,6 +31,10 @@ use Cake\View\XmlView;
  */
 class XmlViewTest extends TestCase {
 
+	public $fixtures = array(
+		'core.article'
+	);
+
 	public function setUp() {
 		parent::setUp();
 		Configure::write('debug', false);
@@ -80,6 +84,27 @@ class XmlViewTest extends TestCase {
 		$output = $View->render(false);
 
 		$expected = Xml::build(array('custom_name' => array('users' => $data)))->asXML();
+		$this->assertSame($expected, $output);
+
+		Configure::write('App.namespace', 'TestApp');
+		$result = $Controller->loadModel('Articles');
+		$this->assertTrue($result);
+		$this->assertInstanceOf(
+				'TestApp\Model\Table\ArticlesTable',
+				$Controller->Articles
+		);
+
+		$data = $Controller->Articles->find()->limit(1);
+
+		$Controller->set('_rootNode', 'response');
+		$Controller->set(array('articles' => $data, '_serialize' => 'articles'));
+		$Controller->viewClass = 'Xml';
+		$View = $Controller->createView();
+		$output = $View->render(false);
+
+		$dataAsArray = $data->toArray();
+
+		$expected = Xml::build(array('response' => array('articles' => $dataAsArray)))->asXML();
 		$this->assertSame($expected, $output);
 	}
 
