@@ -1,7 +1,5 @@
 <?php
 /**
- * XmlTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -16,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Utility;
 
+use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Error\XmlException;
@@ -109,6 +108,27 @@ class XmlTest extends TestCase {
 
 		$obj = Xml::build($xml, array('return' => 'domdocument', 'encoding' => null));
 		$this->assertNotRegExp('/encoding/', $obj->saveXML());
+	}
+
+/**
+ * Test build() with a Collection instance.
+ *
+ * @return void
+ */
+	public function testBuildCollection() {
+		$xml = new Collection(['tag' => 'value']);
+		$obj = Xml::build($xml);
+
+		$this->assertEquals('tag', $obj->getName());
+		$this->assertEquals('value', (string)$obj);
+
+		$xml = new Collection([
+			'response' => [
+				'users' => new Collection(['leonardo', 'raphael'])
+			]
+		]);
+		$obj = Xml::build($xml);
+		$this->assertContains('<users>leonardo</users>', $obj->saveXML());
 	}
 
 /**
