@@ -1093,7 +1093,7 @@ class View {
 		$viewPaths = App::path('Template');
 		$corePaths = App::core('Template');
 
-		if (!empty($plugin)) {
+		if ($plugin) {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
 				$paths[] = $viewPaths[$i] . 'Plugin' . DS . $plugin . DS;
@@ -1103,7 +1103,7 @@ class View {
 
 		$paths = array_merge($paths, $viewPaths);
 
-		if (!empty($this->theme)) {
+		if ($this->theme) {
 			$themePaths = array();
 			foreach ((array)$this->theme as $theme) {
 				$pluginTemplatePaths = App::path('Template', Inflector::camelize($theme));
@@ -1111,7 +1111,7 @@ class View {
 				if ($plugin) {
 					$count = count($viewPaths);
 					for ($i = 0; $i < $count; $i++) {
-						$themePaths[] = $themePaths[$i] . 'Plugin' . DS . $plugin . DS;
+						$themePaths[] = $pluginTemplatePaths[$i] . 'Plugin' . DS . $plugin . DS;
 					}
 				}
 
