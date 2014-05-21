@@ -14,7 +14,6 @@
  */
 namespace Cake\Utility;
 
-use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Network\Error\SocketException;
 use Cake\Network\Http\Client;
