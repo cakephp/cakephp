@@ -17,26 +17,37 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Network\Session;
+use Cake\Controller\ComponentRegistry;
 
 /**
  * The CakePHP SessionComponent provides a way to persist client data between
  * page requests. It acts as a wrapper for the `$_SESSION` as well as providing
  * convenience methods for several `$_SESSION` related functions.
  *
+ * This class is here for backwards compatibility with CakePHP 2.x
+ *
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html
  * @link http://book.cakephp.org/2.0/en/development/sessions.html
+ * @deprecated
  */
 class SessionComponent extends Component {
 
 /**
- * Get / Set the userAgent
+ * The Session object instance
  *
- * @param string $userAgent Set the userAgent
- * @return void
+ * @var Cake\Network\Session
  */
-	public function userAgent($userAgent = null) {
-		return Session::userAgent($userAgent);
+	protected $_session;
+
+/**
+ * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
+ *
+ * @param ComponentRegistry $collection ComponentRegistry object.
+ * @param array $config Array of config.
+ */
+	public function __construct(ComponentRegistry $collection, array $config = array()) {
+		parent::__construct($collection, $config);
+		$this->_session = $collection->getController()->request->session();
 	}
 
 /**
@@ -47,11 +58,11 @@ class SessionComponent extends Component {
  * @param string $name The name of the key your are setting in the session.
  * 							This should be in a Controller.key format for better organizing
  * @param string $value The value you want to store in a session.
- * @return bool Success
+ * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::write
  */
 	public function write($name, $value = null) {
-		return Session::write($name, $value);
+		$this->_session->write($name, $value);
 	}
 
 /**
@@ -65,7 +76,7 @@ class SessionComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::read
  */
 	public function read($name = null) {
-		return Session::read($name);
+		return $this->_session->read($name);
 	}
 
 /**
@@ -74,11 +85,11 @@ class SessionComponent extends Component {
  * In your controller: $this->Session->delete('Controller.sessKey');
  *
  * @param string $name the name of the session key you want to delete
- * @return bool true is session variable is set and can be deleted, false is variable was not set.
+ * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::delete
  */
 	public function delete($name) {
-		return Session::delete($name);
+		$this->_session->delete($name);
 	}
 
 /**
@@ -91,18 +102,7 @@ class SessionComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::check
  */
 	public function check($name) {
-		return Session::check($name);
-	}
-
-/**
- * Used to determine the last error in a session.
- *
- * In your controller: $this->Session->error();
- *
- * @return string Last session error
- */
-	public function error() {
-		return Session::error();
+		return $this->_session->check($name);
 	}
 
 /**
@@ -122,7 +122,7 @@ class SessionComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#creating-notification-messages
  */
 	public function setFlash($message, $element = 'default', array $params = array(), $key = 'flash') {
-		Session::write('Message.' . $key, compact('message', 'element', 'params'));
+		$this->_session->flash($message, 'info', $params + compact('element', 'key'));
 	}
 
 /**
@@ -133,18 +133,7 @@ class SessionComponent extends Component {
  * @return void
  */
 	public function renew() {
-		return Session::renew();
-	}
-
-/**
- * Used to check for a valid session.
- *
- * In your controller: $this->Session->valid();
- *
- * @return bool true is session is valid, false is session is invalid
- */
-	public function valid() {
-		return Session::valid();
+		$this->_session->renew();
 	}
 
 /**
@@ -156,7 +145,7 @@ class SessionComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::destroy
  */
 	public function destroy() {
-		return Session::destroy();
+		$this->_session->destroy();
 	}
 
 /**
@@ -170,10 +159,12 @@ class SessionComponent extends Component {
  * @return string The current session id.
  */
 	public function id($id = null) {
-		if (empty($id)) {
-			Session::start();
+		if ($id === null) {
+			$session = $this->_session;
+			$session->start();
+			return $session->id();
 		}
-		return Session::id($id);
+		$this->_session->id($id);
 	}
 
 /**
@@ -182,7 +173,7 @@ class SessionComponent extends Component {
  * @return bool
  */
 	public function started() {
-		return Session::started();
+		return $this->_session->started();
 	}
 
 /**

@@ -19,6 +19,7 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Network\Request;
+use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 
@@ -131,8 +132,10 @@ class SecurityComponentTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
+		$session = new Session();
 		$request = $this->getMock('Cake\Network\Request', ['here'], ['posts/index']);
 		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
+		$request->session($session);
 		$request->expects($this->any())
 			->method('here')
 			->will($this->returnValue('/articles/index'));
@@ -142,10 +145,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->Security = $this->Controller->TestSecurity;
 		$this->Controller->Security->config('blackHoleCallback', 'fail');
 		$this->Security = $this->Controller->Security;
-		Configure::write('Session', [
-			'defaults' => 'php'
-		]);
-
+		$this->Security->session = $session;
 		Configure::write('Security.salt', 'foo!');
 	}
 
@@ -156,7 +156,7 @@ class SecurityComponentTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		$this->Controller->Session->delete('_Token');
+		$this->Security->session->delete('_Token');
 		unset($this->Controller->Security);
 		unset($this->Controller->Component);
 		unset($this->Controller);
@@ -170,7 +170,10 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testBlackholeWithBrokenCallback() {
-		$request = new Request('posts/index');
+		$request = new Request([
+			'url' => 'posts/index',
+			'session' => $this->Security->session
+		]);
 		$request->addParams([
 			'controller' => 'posts',
 			'action' => 'index'
@@ -222,7 +225,7 @@ class SecurityComponentTest extends TestCase {
 	public function testStartup() {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
-		$this->assertTrue($this->Controller->Session->check('_Token'));
+		$this->assertTrue($this->Security->session->check('_Token'));
 	}
 
 /**
@@ -269,14 +272,14 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->Security->startup($event);
 		$this->assertTrue($this->Controller->failed);
 
-		$this->Controller->Session->write('_Token', array('allowedControllers' => array()));
+		$this->Security->session->write('_Token', array('allowedControllers' => array()));
 		$this->Controller->request->data = array('username' => 'willy', 'password' => 'somePass');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireAuth('posted');
 		$this->Controller->Security->startup($event);
 		$this->assertTrue($this->Controller->failed);
 
-		$this->Controller->Session->write('_Token', array(
+		$this->Security->session->write('_Token', array(
 			'allowedControllers' => array('SecurityTest'), 'allowedActions' => array('posted2')
 		));
 		$this->Controller->request->data = array('username' => 'willy', 'password' => 'somePass');
@@ -299,7 +302,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->Security->startup($event);
 		$this->assertFalse($this->Controller->failed);
 
-		$this->Controller->Security->Session->write('_Token', array(
+		$this->Controller->Security->session->write('_Token', array(
 			'allowedControllers' => array('SecurityTest'), 'allowedActions' => array('posted')
 		));
 		$this->Controller->request['controller'] = 'SecurityTest';
@@ -341,7 +344,7 @@ class SecurityComponentTest extends TestCase {
 	public function testValidatePostNoSession() {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
-		$this->Controller->Session->delete('_Token');
+		$this->Security->session->delete('_Token');
 
 		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
 
@@ -967,7 +970,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->Security->startup($event);
 
 		$this->Controller->Security->blackHole($this->Controller, 'auth');
-		$this->assertTrue($this->Controller->Security->Session->check('_Token'), '_Token was deleted by blackHole %s');
+		$this->assertTrue($this->Controller->Security->session->check('_Token'), '_Token was deleted by blackHole %s');
 	}
 
 /**

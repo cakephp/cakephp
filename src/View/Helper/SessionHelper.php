@@ -37,7 +37,7 @@ class SessionHelper extends Helper {
  */
 	protected $_defaultConfig = [
 		'templates' => [
-			'flash' => '<div id="{{key}}-message" class="{{class}}">{{message}}</div>'
+			'flash' => '<div id="{{key}}-message" class="message-{{class}}">{{message}}</div>'
 		]
 	];
 
@@ -52,7 +52,7 @@ class SessionHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::read
  */
 	public function read($name = null) {
-		return Session::read($name);
+		return $this->request->session()->read($name);
 	}
 
 /**
@@ -65,23 +65,11 @@ class SessionHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::check
  */
 	public function check($name) {
-		return Session::check($name);
+		return $this->request->session()->check($name);
 	}
 
 /**
- * Returns last error encountered in a session
- *
- * In your view: `$this->Session->error();`
- *
- * @return string last error
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#displaying-notifications-or-flash-messages
- */
-	public function error() {
-		return Session::error();
-	}
-
-/**
- * Used to render the message set in Controller::Session::setFlash()
+ * Used to render the message set in Controller::$this->request->session()->setFlash()
  *
  * In your view: $this->Session->flash('somekey');
  * Will default to flash if no param is passed
@@ -128,51 +116,40 @@ class SessionHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::flash
  */
 	public function flash($key = 'flash', $attrs = []) {
-		if (!Session::check('Message.' . $key)) {
+		$flash = $this->request->session()->readFlash($key);
+
+		if (!$flash) {
 			return '';
 		}
 
-		$flash = Session::read('Message.' . $key);
-		$message = $flash['message'];
-		unset($flash['message']);
+		$this->request->session()->deleteFlash($key);
 
 		if (!empty($attrs)) {
 			$flash = array_merge($flash, $attrs);
 		}
 
-		if ($flash['element'] === 'default') {
-			$class = 'message';
-			if (!empty($flash['params']['class'])) {
-				$class = $flash['params']['class'];
+		$message = $flash['message'];
+		$class = $flash['type'];
+		$params = $flash['params'];
+
+		if (isset($flash['element'])) {
+			$params['element'] = $flash['element'];
+		}
+
+		if (empty($params['element'])) {
+			if (!empty($flash['class'])) {
+				$class = $flash['class'];
 			}
-			$out = $this->formatTemplate('flash', [
+			return $this->formatTemplate('flash', [
 				'class' => $class,
 				'key' => $key,
 				'message' => $message
 			]);
-		} elseif (!$flash['element']) {
-			$out = $message;
-		} else {
-			$options = array();
-			if (isset($flash['params']['plugin'])) {
-				$options['plugin'] = $flash['params']['plugin'];
-			}
-			$tmpVars = $flash['params'];
-			$tmpVars['message'] = $message;
-			$out = $this->_View->element($flash['element'], $tmpVars, $options);
 		}
-		Session::delete('Message.' . $key);
-		return $out;
-	}
 
-/**
- * Used to check is a session is valid in a view
- *
- * @return bool
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::valid
- */
-	public function valid() {
-		return Session::valid();
+		$params['message'] = $message;
+		$params['type'] = $class;
+		return $this->_View->element($params['element'], $params);
 	}
 
 /**

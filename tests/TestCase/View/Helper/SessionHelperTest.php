@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\View\Helper;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Plugin;
+use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\SessionHelper;
@@ -38,39 +39,35 @@ class SessionHelperTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->View = new View();
+		$session = new Session();
+		$this->View->request = new Request(['session' => $session]);
 		$this->Session = new SessionHelper($this->View);
-		Session::start();
 
-		if (!Session::started()) {
-			Session::start();
-		}
-
-		$_SESSION = array(
+		$session->write(array(
 			'test' => 'info',
 			'Message' => array(
 				'flash' => array(
-					'element' => 'default',
+					'type' => 'info',
 					'params' => array(),
 					'message' => 'This is a calling'
 				),
 				'notification' => array(
-					'element' => 'session_helper',
-					'params' => array('title' => 'Notice!', 'name' => 'Alert!'),
+					'type' => 'info',
+					'params' => array(
+						'title' => 'Notice!',
+						'name' => 'Alert!',
+						'element' => 'session_helper'
+					),
 					'message' => 'This is a test of the emergency broadcasting system',
 				),
 				'classy' => array(
-					'element' => 'default',
+					'type' => 'success',
 					'params' => array('class' => 'positive'),
 					'message' => 'Recorded'
-				),
-				'bare' => array(
-					'element' => null,
-					'message' => 'Bare message',
-					'params' => array(),
-				),
+				)
 			),
 			'Deeply' => array('nested' => array('key' => 'value')),
-		);
+		));
 	}
 
 /**
@@ -105,11 +102,8 @@ class SessionHelperTest extends TestCase {
  */
 	public function testCheck() {
 		$this->assertTrue($this->Session->check('test'));
-
-		$this->assertTrue($this->Session->check('Message.flash.element'));
-
+		$this->assertTrue($this->Session->check('Message.flash'));
 		$this->assertFalse($this->Session->check('Does.not.exist'));
-
 		$this->assertFalse($this->Session->check('Nope'));
 	}
 
@@ -119,12 +113,12 @@ class SessionHelperTest extends TestCase {
  * @return void
  */
 	public function testFlash() {
-		$result = $this->Session->flash('flash');
-		$expected = '<div id="flash-message" class="message">This is a calling</div>';
+		$result = $this->Session->flash();
+		$expected = '<div id="flash-message" class="message-info">This is a calling</div>';
 		$this->assertEquals($expected, $result);
 		$this->assertFalse($this->Session->check('Message.flash'));
 
-		$expected = '<div id="classy-message" class="positive">Recorded</div>';
+		$expected = '<div id="classy-message" class="message-success">Recorded</div>';
 		$result = $this->Session->flash('classy');
 		$this->assertEquals($expected, $result);
 
@@ -133,11 +127,6 @@ class SessionHelperTest extends TestCase {
 		$expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a test of the emergency broadcasting system</p>\n</div>";
 		$this->assertEquals($expected, $result);
 		$this->assertFalse($this->Session->check('Message.notification'));
-
-		$result = $this->Session->flash('bare');
-		$expected = 'Bare message';
-		$this->assertEquals($expected, $result);
-		$this->assertFalse($this->Session->check('Message.bare'));
 	}
 
 /**
@@ -146,8 +135,8 @@ class SessionHelperTest extends TestCase {
  * @return void
  */
 	public function testFlashAttributes() {
-		$result = $this->Session->flash('flash', array('params' => array('class' => 'test-message')));
-		$expected = '<div id="flash-message" class="test-message">This is a calling</div>';
+		$result = $this->Session->flash('flash', array('class' => 'crazy'));
+		$expected = '<div id="flash-message" class="message-crazy">This is a calling</div>';
 		$this->assertEquals($expected, $result);
 		$this->assertFalse($this->Session->check('Message.flash'));
 	}

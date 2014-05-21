@@ -122,4 +122,14 @@ class RequestActionController extends AppController {
 		$this->response->body($content);
 	}
 
+/**
+ * Tests session transmission
+ *
+ * @return void
+ */
+	public function session_test() {
+		$this->response->body($this->request->session()->read('foo'));
+		return $this->response;
+	}
+
 }

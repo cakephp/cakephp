@@ -146,18 +146,12 @@ class ControllerTestCaseTest extends TestCase {
 			'models' => array('Posts'),
 			'components' => array(
 				'RequestHandler' => array('isPut'),
-				'Session'
 			)
 		));
 		$Posts->RequestHandler->expects($this->once())
 			->method('isPut')
 			->will($this->returnValue(true));
 		$this->assertTrue($Posts->RequestHandler->isPut());
-
-		$Posts->Auth->Session->expects($this->any())
-			->method('write')
-			->will($this->returnValue('written!'));
-		$this->assertEquals('written!', $Posts->Auth->Session->write('something'));
 	}
 
 /**

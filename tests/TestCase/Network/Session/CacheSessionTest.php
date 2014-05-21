@@ -31,42 +31,14 @@ class CacheSessionTest extends TestCase {
 	protected static $_sessionBackup;
 
 /**
- * test case startup
- *
- * @return void
- */
-	public static function setupBeforeClass() {
-		Cache::enable();
-		Cache::config('session_test', [
-			'engine' => 'File',
-			'path' => TMP . 'sessions',
-			'prefix' => 'session_test'
-		]);
-		static::$_sessionBackup = Configure::read('Session');
-
-		Configure::write('Session.handler.config', 'session_test');
-	}
-
-/**
- * cleanup after test case.
- *
- * @return void
- */
-	public static function teardownAfterClass() {
-		Cache::clear(false, 'session_test');
-		Cache::drop('session_test');
-
-		Configure::write('Session', static::$_sessionBackup);
-	}
-
-/**
  * setup
  *
  * @return void
  */
 	public function setUp() {
 		parent::setUp();
-		$this->storage = new CacheSession();
+		Cache::config(['session_test' => ['engine' => 'File']]);
+		$this->storage = new CacheSession(['config' => 'session_test']);
 	}
 
 /**
@@ -76,6 +48,8 @@ class CacheSessionTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
+		Cache::clear(false, 'session_test');
+		Cache::drop('session_test');
 		unset($this->storage);
 	}
 
@@ -118,6 +92,17 @@ class CacheSessionTest extends TestCase {
 		$this->assertTrue($this->storage->destroy('test_one'), 'Value was not deleted.');
 
 		$this->assertFalse(Cache::read('test_one', 'session_test'), 'Value stuck around.');
+	}
+
+/**
+ * Tests that a cache config is required
+ *
+ * @expectedException InvalidArgumentException
+ * @expectedExceptionMessage The cache configuration name to use is required
+ * @return void
+ */
+	public function testMissingConfig() {
+		new CacheSession(['foo' => 'bar']);
 	}
 
 }

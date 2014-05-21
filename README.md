@@ -31,7 +31,7 @@ tests for cakephp by doing the following:
 1. Copy `phpunit.xml.dist` to `phpunit.xml`
 2. Add the relevant database credentials to your phpunit.xml if you want to run tests against
    a non-SQLite datasource.
-3. Run `phpunit --stderr`
+3. Run `phpunit`
 
 ## Contributing
 

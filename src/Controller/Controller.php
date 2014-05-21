@@ -163,7 +163,7 @@ class Controller implements EventListener {
  * @var array
  * @link http://book.cakephp.org/2.0/en/controllers/components.html
  */
-	public $components = array('Session');
+	public $components = array();
 
 /**
  * The name of the View class this controller sends output to.

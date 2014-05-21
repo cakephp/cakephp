@@ -9,6 +9,12 @@ use SessionHandlerInterface;
  */
 class TestAppLibSession implements SessionHandlerInterface {
 
+	public $options = [];
+
+	public function __construct($options = []) {
+		$this->options = $options;
+	}
+
 	public function open($savePath, $name) {
 		return true;
 	}

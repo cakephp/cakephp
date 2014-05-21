@@ -16,6 +16,7 @@ namespace Cake\Routing;
 use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 
@@ -66,6 +67,17 @@ trait RequestActionTrait {
  * ]);
  * }}}
  *
+ * ### Transmitting the session
+ *
+ * By default actions dispatched with this method will use the standard session object.
+ * If you want a particular session instance to be used, you need to specify it.
+ *
+ * {{{
+ * $vars = $this->requestAction('/articles/popular', [
+ *   'session' => new Session($someSessionConfig)
+ * ]);
+ * }}}
+ *
  * @param string|array $url String or array-based url.  Unlike other url arrays in CakePHP, this
  *    url will not automatically handle passed arguments in the $url parameter.
  * @param array $extra if array includes the key "return" it sets the autoRender to true.  Can
@@ -113,12 +125,17 @@ trait RequestActionTrait {
 				$params['params']['pass'] = [];
 			}
 		}
+
 		if (!empty($post)) {
 			$params['post'] = $post;
 		}
+
 		if (!empty($query)) {
 			$params['query'] = $query;
 		}
+
+		$params['session'] = isset($extra['session']) ? $extra['session'] : new Session();
+
 		$request = new Request($params);
 		$request->addParams($extra);
 		$dispatcher = DispatcherFactory::create();

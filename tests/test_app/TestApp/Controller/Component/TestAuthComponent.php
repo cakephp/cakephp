@@ -43,8 +43,4 @@ class TestAuthComponent extends AuthComponent {
 		$this->_authorizeObjects[$index] = $object;
 	}
 
-	public static function clearUser() {
-		static::$_user = array();
-	}
-
 }

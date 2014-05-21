@@ -1,12 +1,5 @@
 <?php
 /**
- * Session class for CakePHP.
- *
- * CakePHP abstracts the handling of sessions.
- * There are several convenient methods to access session information.
- * This class is the implementation of those methods.
- * They are mostly used by the Session Component.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -28,153 +21,267 @@ use Cake\Utility\Hash;
 use SessionHandlerInterface;
 
 /**
- * Session class for CakePHP.
+ * This class is a wrapper for the native PHP session functions. It provides
+ * several defaults for the most common session configuration
+ * via external handlers and helps with using session in cli without any warnings.
  *
- * CakePHP abstracts the handling of sessions. There are several convenient methods to access session information.
- * This class is the implementation of those methods. They are mostly used by the Session Component.
+ * Sessions can be created from the defaults using `Session::create()` or you can get
+ * an instance of a new session by just instantiating this class and passing the complete
+ * options you want to use.
  *
+ * When specific options are omitted, this class will take its defaults from the configuration
+ * values from the `session.*` directives in php.ini. This class will also alter such
+ * directives when configuration values are provided.
  */
 class Session {
 
 /**
- * True if the Session is still valid
+ * The Session handler instace used as an engine for persisting the session data.
  *
- * @var bool
+ * @var SessionHandlerInterface
  */
-	public static $valid = false;
+	protected $_engine;
 
 /**
- * Error messages for this session
+ * Indicates whether the sessions has already started
  *
- * @var array
+ * @var boolean
  */
-	public static $error = false;
+	protected $_started;
 
 /**
- * User agent string
- *
- * @var string
- */
-	protected static $_userAgent = '';
-
-/**
- * Path to where the session is active.
- *
- * @var string
- */
-	public static $path = '/';
-
-/**
- * Error number of last occurred error
+ * The time in seconds the session will be valid for
  *
  * @var int
  */
-	public static $lastError = null;
+	protected $_lifetime;
 
 /**
- * Start time for this session.
+ * Whehter this session is running under a CLI environment
  *
- * @var int
+ * @var boolean
  */
-	public static $time = false;
+	protected $_isCli = false;
 
 /**
- * Time when this session becomes invalid.
+ * Returns a new instance of a session after building a configuration bundle for it.
+ * This function allows an options array which will be used for configuring the session
+ * and the handler to be used. The most important key in the configuration array is
+ * `defaults`, which indicates the set of configurations to inherit from, the possible
+ * defaults are:
  *
- * @var int
- */
-	public static $sessionTime = false;
-
-/**
- * Current Session id
+ * - php: just use session as configured in php.ini
+ * - cache: Use the CakePHP caching system as an storage for the session, you will need
+ *   to pass the `config` key with the name of an already configured Cache engine.
+ * - database: Use the CakePHP ORM to persist and manage sessions. By default this requires
+ *   a table in your database named `sessions` or a `model` key in the configuration
+ *   to indicate which Table object to use.
+ * - cake: Use files for storing the sessions, but let CakePHP manage them and decide
+ *   where to store them.
  *
- * @var string
- */
-	public static $id = null;
-
-/**
- * Hostname
+ * The full list of options follows:
  *
- * @var string
- */
-	public static $host = null;
-
-/**
- * Number of requests that can occur during a session time without the session being renewed.
- * This feature is only used when config value `Session.autoRegenerate` is set to true.
+ * - defaults: either 'php', 'database', 'cache' or 'cake' as explained above.
+ * - handler: An array containing the handler configuration
+ * - ini: A list of php.ini directives to set before the session starts.
+ * - timeout: The time in minutes the session should stay active
  *
- * @var int
- * @see \Cake\Network\Session::_checkValid()
+ * @param array $sessionConfig
+ * @return Cake\Network\Session
+ * @see Session::__construct()
  */
-	protected static $_requestCountdown = 10;
-
-/**
- * Whether or not the init function in this class was already called
- *
- * @var bool
- */
-	protected static $_initialized = false;
-
-/**
- * Session cookie name
- *
- * @var string
- */
-	protected static $_cookieName = null;
-
-/**
- * Pseudo constructor.
- *
- * @param string $base The base path for the Session
- * @return void
- */
-	public static function init($base = null) {
-		static::$time = time();
-
-		if (env('HTTP_USER_AGENT')) {
-			static::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
+	public static function create($sessionConfig = []) {
+		if (isset($sessionConfig['defaults'])) {
+			$defaults = static::_defaultConfig($sessionConfig['defaults']);
+			if ($defaults) {
+				$sessionConfig = Hash::merge($defaults, $sessionConfig);
+			}
 		}
 
-		static::_setPath($base);
-		static::_setHost(env('HTTP_HOST'));
-
-		if (!static::$_initialized) {
-			register_shutdown_function('session_write_close');
+		if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS')) {
+			$sessionConfig['ini']['session.cookie_secure'] = 1;
 		}
 
-		static::$_initialized = true;
+		if (!isset($sessionConfig['ini']['session.name'])) {
+			$sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
+		}
+
+		if (!empty($sessionConfig['handler'])) {
+			$sessionConfig['ini']['session.save_handler'] = 'user';
+		}
+
+		if (!isset($sessionConfig['ini']['session.cookie_httponly'])) {
+			$sessionConfig['ini']['session.cookie_httponly'] = 1;
+		}
+
+		return new static($sessionConfig);
 	}
 
 /**
- * Setup the Path variable
+ * Get one of the prebaked default session configurations.
  *
- * @param string $base base path
- * @return void
+ * @param string $name
+ * @return bool|array
  */
-	protected static function _setPath($base = null) {
-		if (empty($base)) {
-			static::$path = '/';
+	protected static function _defaultConfig($name) {
+		$defaults = array(
+			'php' => array(
+				'checkAgent' => false,
+				'cookie' => 'CAKEPHP',
+				'ini' => array(
+					'session.use_trans_sid' => 0,
+				)
+			),
+			'cake' => array(
+				'checkAgent' => false,
+				'cookie' => 'CAKEPHP',
+				'ini' => array(
+					'session.use_trans_sid' => 0,
+					'url_rewriter.tags' => '',
+					'session.serialize_handler' => 'php',
+					'session.use_cookies' => 1,
+					'session.save_path' => TMP . 'sessions',
+					'session.save_handler' => 'files'
+				)
+			),
+			'cache' => array(
+				'checkAgent' => false,
+				'cookie' => 'CAKEPHP',
+				'ini' => array(
+					'session.use_trans_sid' => 0,
+					'url_rewriter.tags' => '',
+					'session.use_cookies' => 1,
+					'session.save_handler' => 'user',
+				),
+				'handler' => array(
+					'engine' => 'CacheSession',
+					'config' => 'default'
+				)
+			),
+			'database' => array(
+				'checkAgent' => false,
+				'cookie' => 'CAKEPHP',
+				'ini' => array(
+					'session.use_trans_sid' => 0,
+					'url_rewriter.tags' => '',
+					'session.use_cookies' => 1,
+					'session.save_handler' => 'user',
+					'session.serialize_handler' => 'php',
+				),
+				'handler' => array(
+					'engine' => 'DatabaseSession'
+				)
+			)
+		);
+
+		if (isset($defaults[$name])) {
+			return $defaults[$name];
+		}
+
+		return false;
+	}
+
+/**
+ * Constructor.
+ *
+ * ### Configuration:
+ *
+ * - timeout: The time in minutes the session should be valid for
+ * - ini: A list of ini directives to change before the session start.
+ * - handler: An array containing at least the `class` key. To be used as the session
+ *   engine for persisting data. The rest of the keys in the array will be passed as
+ *   the configuration array for the engine. You can set the `class` key to an already
+ *   instantiated session handler object.
+ *
+ * @param array The Configuration to apply to this session object
+ */
+	public function __construct(array $config = []) {
+		if (isset($config['timeout'])) {
+			$config['ini']['session.cookie_lifetime'] = 60 * $config['timeout'];
+			$config['ini']['session.gc_maxlifetime'] = 60 * $config['timeout'];
+		}
+
+		if (!empty($config['ini']) && is_array($config['ini'])) {
+			$this->options($config['ini']);
+		}
+
+		if (!empty($config['handler']['engine'])) {
+			$class = $config['handler']['engine'];
+			unset($config['handler']['engine']);
+			session_set_save_handler($this->engine($class, $config['handler']), false);
+		}
+
+		$this->_lifetime = ini_get('session.gc_maxlifetime');
+		$this->_isCli = php_sapi_name() === 'cli';
+		session_register_shutdown();
+	}
+
+/**
+ * Sets the session handler instance to use for this session.
+ * If a string is passed for the first argument, it will be treated as the
+ * class name and the second argument will be passed as the first argument
+ * in the constructor.
+ *
+ * If an instance of a SessionHandlerInterface is provided as the first argument,
+ * the handler will be set to it.
+ *
+ * If no arguments are passed it will return the currently configured handler instance
+ * or null if none exists.
+ *
+ * @param string|\SessionHandlerInterface $class The session handler to use
+ * @param array $options the options to pass to the SessionHandler constructor
+ * @return \SessionHandlerInterface|null
+ * @throws \InvalidArgumentException
+ */
+	public function engine($class = null, $options = []) {
+		if ($class instanceof SessionHandlerInterface) {
+			return $this->_engine = $class;
+		}
+
+		if ($class === null) {
+			return $this->_engine;
+		}
+
+		$className = App::className($class, 'Network/Session');
+		if (!$className) {
+			throw new \InvalidArgumentException(
+				sprintf('The class "%s" does not exist and cannot be used as a session engine', $class)
+			);
+		}
+
+		$handler = new $className($options);
+		if (!($handler instanceof SessionHandlerInterface)) {
+			throw new \InvalidArgumentException(
+				'The chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used as an engine.'
+			);
+		}
+
+		return $this->_engine = $handler;
+	}
+
+/**
+ * Calls ini_set for each of the keys in `$options` and set them
+ * to the respective value in the passed array.
+ *
+ * ### Example:
+ *
+ * `$session->options(['session.use_cookies' => 1]);`
+ *
+ * @return void
+ * @throws \RuntimeException if any directive could not be set
+ */
+	public function options(array $options) {
+		if (session_status() === \PHP_SESSION_ACTIVE) {
 			return;
 		}
-		if (strpos($base, 'index.php') !== false) {
-			$base = str_replace('index.php', '', $base);
-		}
-		if (strpos($base, '?') !== false) {
-			$base = str_replace('?', '', $base);
-		}
-		static::$path = $base;
-	}
 
-/**
- * Set the host name
- *
- * @param string $host Hostname
- * @return void
- */
-	protected static function _setHost($host) {
-		static::$host = $host;
-		if (strpos(static::$host, ':') !== false) {
-			static::$host = substr(static::$host, 0, strpos(static::$host, ':'));
+		foreach ($options as $setting => $value) {
+			if (ini_set($setting, $value) === false) {
+				throw new \RuntimeException(sprintf(
+					sprintf('Unable to configure the session, setting %s failed.'),
+					$setting
+				));
+			}
 		}
 	}
 
@@ -182,45 +289,124 @@ class Session {
  * Starts the Session.
  *
  * @return bool True if session was started
+ * @throws \RuntimeException if the session was already started or headers were already
+ * sent
  */
-	public static function start() {
-		if (static::started()) {
+	public function start() {
+		if ($this->_started) {
 			return true;
 		}
 
-		$id = static::id();
-		static::_startSession();
-
-		if (!$id && static::started()) {
-			static::_checkValid();
+		if ($this->_isCli) {
+			$_SESSION = [];
+			return $this->_started = true;
 		}
 
-		static::$error = false;
-		static::$valid = true;
-		return static::started();
+		if (session_status() === \PHP_SESSION_ACTIVE) {
+			throw new \RuntimeException('Session was already started');
+		}
+
+		if (ini_get('session.use_cookies') && headers_sent($file, $line)) {
+			throw new \RuntimeException(
+				sprintf('Cannot start session, headers already sent in "%s" at line %d', $file, $line)
+			);
+		}
+
+		if (!session_start()) {
+			throw new \RuntimeException('Could not start the session');
+		}
+
+		$this->_started = true;
+
+		if ($this->_timedOut()) {
+			$this->destroy();
+			return $this->start();
+		}
+
+		return $this->_started;
 	}
 
 /**
- * Determine if Session has been started.
+ * Determine if Session has already been started.
  *
  * @return bool True if session has been started.
  */
-	public static function started() {
-		return isset($_SESSION) && session_id();
+	public function started() {
+		return $this->_started || session_status() === \PHP_SESSION_ACTIVE;
 	}
 
 /**
- * Returns true if given variable is set in session.
+ * Returns true if given variable name is set in session.
  *
  * @param string $name Variable name to check for
  * @return bool True if variable is there
  */
-	public static function check($name = null) {
-		if (empty($name) || !static::_hasSession() || !static::start()) {
+	public function check($name = null) {
+		if (empty($name)) {
 			return false;
 		}
 
+		if ($this->_hasSession() && !$this->started()) {
+			$this->start();
+		}
+
 		return Hash::get($_SESSION, $name) !== null;
+	}
+
+/**
+ * Returns given session variable, or all of them, if no parameters given.
+ *
+ * @param string|array $name The name of the session variable (or a path as sent to Set.extract)
+ * @return mixed The value of the session variable, null if session not available,
+ *   session not started, or provided name not found in the session.
+ */
+	public function read($name = null) {
+		if (empty($name) && $name !== null) {
+			return null;
+		}
+
+		if ($this->_hasSession() && !$this->started()) {
+			$this->start();
+		}
+
+		if (!isset($_SESSION)) {
+			return null;
+		}
+
+		if ($name === null) {
+			return isset($_SESSION) ? $_SESSION : [];
+		}
+
+		return Hash::get($_SESSION, $name);
+	}
+
+/**
+ * Writes value to given session variable name.
+ *
+ * @param string|array $name Name of variable
+ * @param string $value Value to write
+ * @return bool True if the write was successful, false if the write failed
+ */
+	public function write($name, $value = null) {
+		if (empty($name)) {
+			return;
+		}
+
+		if (!$this->started()) {
+			$this->start();
+		}
+
+		$write = $name;
+		if (!is_array($name)) {
+			$write = array($name => $value);
+		}
+
+		$data = $_SESSION ?: [];
+		foreach ($write as $key => $val) {
+			$data = Hash::insert($data, $key, $val);
+		}
+
+		$this->_overwrite($_SESSION, $data);
 	}
 
 /**
@@ -237,15 +423,12 @@ class Session {
  * @param string $id Id to replace the current session id
  * @return string Session id
  */
-	public static function id($id = null) {
-		if ($id) {
-			static::$id = $id;
-			session_id(static::$id);
+	public function id($id = null) {
+		if ($id !== null) {
+			session_id($id);
 		}
-		if (static::started()) {
-			return session_id();
-		}
-		return static::$id;
+
+		return session_id();
 	}
 
 /**
@@ -254,12 +437,10 @@ class Session {
  * @param string $name Session variable to remove
  * @return bool Success
  */
-	public static function delete($name) {
-		if (static::check($name)) {
-			static::_overwrite($_SESSION, Hash::remove($_SESSION, $name));
-			return !static::check($name);
+	public function delete($name) {
+		if ($this->check($name)) {
+			$this->_overwrite($_SESSION, Hash::remove($_SESSION, $name));
 		}
-		return false;
 	}
 
 /**
@@ -269,7 +450,7 @@ class Session {
  * @param array $new New set of variable => value
  * @return void
  */
-	protected static function _overwrite(&$old, $new) {
+	protected function _overwrite(&$old, $new) {
 		if (!empty($old)) {
 			foreach ($old as $key => $var) {
 				if (!isset($new[$key])) {
@@ -283,158 +464,21 @@ class Session {
 	}
 
 /**
- * Return error description for given error number.
- *
- * @param int $errorNumber Error to set
- * @return string Error as string
- */
-	protected static function _error($errorNumber) {
-		if (!is_array(static::$error) || !array_key_exists($errorNumber, static::$error)) {
-			return false;
-		}
-		return static::$error[$errorNumber];
-	}
-
-/**
- * Returns last occurred error as a string, if any.
- *
- * @return mixed Error description as a string, or false.
- */
-	public static function error() {
-		if (static::$lastError) {
-			return static::_error(static::$lastError);
-		}
-		return false;
-	}
-
-/**
- * Returns true if session is valid.
- *
- * @return bool Success
- */
-	public static function valid() {
-		if (static::start() && static::read('Config')) {
-			if (static::_validAgentAndTime() && static::$error === false) {
-				static::$valid = true;
-			} else {
-				static::$valid = false;
-				static::_setError(1, 'Session Highjacking Attempted !!!');
-			}
-		}
-		return static::$valid;
-	}
-
-/**
- * Tests that the user agent is valid and that the session hasn't 'timed out'.
- * Since timeouts are implemented in Session it checks the current static::$time
- * against the time the session is set to expire. The User agent is only checked
- * if Session.checkAgent == true.
- *
- * @return bool
- */
-	protected static function _validAgentAndTime() {
-		$config = static::read('Config');
-		$validAgent = (
-			Configure::read('Session.checkAgent') === false ||
-			static::$_userAgent == $config['userAgent']
-		);
-		return ($validAgent && static::$time <= $config['time']);
-	}
-
-/**
- * Get / Set the user agent
- *
- * @param string $userAgent Set the user agent
- * @return string Current user agent
- */
-	public static function userAgent($userAgent = null) {
-		if ($userAgent) {
-			static::$_userAgent = $userAgent;
-		}
-		if (empty(static::$_userAgent)) {
-			Session::init(static::$path);
-		}
-		return static::$_userAgent;
-	}
-
-/**
- * Returns given session variable, or all of them, if no parameters given.
- *
- * @param string|array $name The name of the session variable (or a path as sent to Set.extract)
- * @return mixed The value of the session variable, null if session not available,
- *   session not started, or provided name not found in the session.
- */
-	public static function read($name = null) {
-		if (empty($name) && $name !== null) {
-			return false;
-		}
-		if (!static::_hasSession() || !static::start()) {
-			return null;
-		}
-		if ($name === null) {
-			return static::_returnSessionVars();
-		}
-		$result = Hash::get($_SESSION, $name);
-
-		if (isset($result)) {
-			return $result;
-		}
-		return null;
-	}
-
-/**
- * Returns all session variables.
- *
- * @return mixed Full $_SESSION array, or false on error.
- */
-	protected static function _returnSessionVars() {
-		if (!empty($_SESSION)) {
-			return $_SESSION;
-		}
-		static::_setError(2, 'No Session vars set');
-		return false;
-	}
-
-/**
- * Writes value to given session variable name.
- *
- * @param string|array $name Name of variable
- * @param string $value Value to write
- * @return bool True if the write was successful, false if the write failed
- */
-	public static function write($name, $value = null) {
-		if (empty($name) || !static::start()) {
-			return false;
-		}
-
-		$write = $name;
-		if (!is_array($name)) {
-			$write = array($name => $value);
-		}
-		foreach ($write as $key => $val) {
-			static::_overwrite($_SESSION, Hash::insert($_SESSION, $key, $val));
-			if (Hash::get($_SESSION, $key) !== $val) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-/**
  * Helper method to destroy invalid sessions.
  *
  * @return void
  */
-	public static function destroy() {
-		if (!static::started()) {
-			static::_startSession();
+	public function destroy() {
+		if ($this->_hasSession() && !$this->started()) {
+			$this->start();
 		}
 
-		session_destroy();
+		if (!$this->_isCli) {
+			session_destroy();
+		}
 
-		$_SESSION = null;
-		static::$id = null;
-		static::$_cookieName = null;
+		$_SESSION = [];
+		$this->_started = false;
 	}
 
 /**
@@ -442,262 +486,19 @@ class Session {
  *
  * @return void
  */
-	public static function clear() {
-		$_SESSION = null;
-		static::$id = null;
-		static::renew();
-	}
-
-/**
- * Helper method to initialize a session, based on CakePHP core settings.
- *
- * Sessions can be configured with a few shortcut names as well as have any number of ini settings declared.
- *
- * @return void
- * @throws \Cake\Error\Exception Throws exceptions when ini_set() fails.
- */
-	protected static function _configureSession() {
-		$sessionConfig = Configure::read('Session');
-
-		if (isset($sessionConfig['defaults'])) {
-			$defaults = static::_defaultConfig($sessionConfig['defaults']);
-			if ($defaults) {
-				$sessionConfig = Hash::merge($defaults, $sessionConfig);
-			}
-		}
-		if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS')) {
-			$sessionConfig['ini']['session.cookie_secure'] = 1;
-		}
-		if (isset($sessionConfig['timeout']) && !isset($sessionConfig['cookieTimeout'])) {
-			$sessionConfig['cookieTimeout'] = $sessionConfig['timeout'];
-		}
-		if (!isset($sessionConfig['ini']['session.cookie_lifetime'])) {
-			$sessionConfig['ini']['session.cookie_lifetime'] = $sessionConfig['cookieTimeout'] * 60;
-		}
-
-		if (!isset($sessionConfig['ini']['session.name'])) {
-			$sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
-		}
-		static::$_cookieName = $sessionConfig['ini']['session.name'];
-
-		if (!empty($sessionConfig['handler'])) {
-			$sessionConfig['ini']['session.save_handler'] = 'user';
-		}
-		if (!isset($sessionConfig['ini']['session.gc_maxlifetime'])) {
-			$sessionConfig['ini']['session.gc_maxlifetime'] = $sessionConfig['timeout'] * 60;
-		}
-		if (!isset($sessionConfig['ini']['session.cookie_httponly'])) {
-			$sessionConfig['ini']['session.cookie_httponly'] = 1;
-		}
-
-		if (empty($_SESSION)) {
-			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {
-				foreach ($sessionConfig['ini'] as $setting => $value) {
-					if (ini_set($setting, $value) === false) {
-						throw new Error\Exception(sprintf(
-							sprintf('Unable to configure the session, setting %s failed.'),
-							$setting
-						));
-					}
-				}
-			}
-		}
-		if (!empty($sessionConfig['handler']) && !isset($sessionConfig['handler']['engine'])) {
-			call_user_func_array('session_set_save_handler', $sessionConfig['handler']);
-		}
-		if (!empty($sessionConfig['handler']['engine'])) {
-			$handler = static::_getHandler($sessionConfig['handler']['engine']);
-			session_set_save_handler(
-				array($handler, 'open'),
-				array($handler, 'close'),
-				array($handler, 'read'),
-				array($handler, 'write'),
-				array($handler, 'destroy'),
-				array($handler, 'gc')
-			);
-		}
-		Configure::write('Session', $sessionConfig);
-		static::$sessionTime = static::$time + ($sessionConfig['timeout'] * 60);
-	}
-
-/**
- * Get session cookie name.
- *
- * @return string
- */
-	protected static function _cookieName() {
-		if (static::$_cookieName !== null) {
-			return static::$_cookieName;
-		}
-
-		static::init();
-		static::_configureSession();
-
-		return static::$_cookieName = session_name();
+	public function clear() {
+		$_SESSION = [];
+		$this->renew();
 	}
 
 /**
  * Returns whether a session exists
  * @return bool
  */
-	protected static function _hasSession() {
-		return static::started() || isset($_COOKIE[static::_cookieName()]);
-	}
-
-/**
- * Find the handler class and make sure it implements the correct interface.
- *
- * @param string $class
- * @return void
- * @throws \Cake\Error\Exception
- */
-	protected static function _getHandler($class) {
-		$class = App::className($class, 'Network/Session');
-		if (!class_exists($class)) {
-			throw new Error\Exception(sprintf('Could not load %s to handle the session.', $class));
-		}
-		$handler = new $class();
-		if ($handler instanceof SessionHandlerInterface) {
-			return $handler;
-		}
-		throw new Error\Exception('Chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used with an engine key.');
-	}
-
-/**
- * Get one of the prebaked default session configurations.
- *
- * @param string $name
- * @return bool|array
- */
-	protected static function _defaultConfig($name) {
-		$defaults = array(
-			'php' => array(
-				'checkAgent' => false,
-				'cookie' => 'CAKEPHP',
-				'timeout' => 240,
-				'ini' => array(
-					'session.use_trans_sid' => 0,
-					'session.cookie_path' => static::$path
-				)
-			),
-			'cake' => array(
-				'checkAgent' => false,
-				'cookie' => 'CAKEPHP',
-				'timeout' => 240,
-				'ini' => array(
-					'session.use_trans_sid' => 0,
-					'url_rewriter.tags' => '',
-					'session.serialize_handler' => 'php',
-					'session.use_cookies' => 1,
-					'session.cookie_path' => static::$path,
-					'session.save_path' => TMP . 'sessions',
-					'session.save_handler' => 'files'
-				)
-			),
-			'cache' => array(
-				'checkAgent' => false,
-				'cookie' => 'CAKEPHP',
-				'timeout' => 240,
-				'ini' => array(
-					'session.use_trans_sid' => 0,
-					'url_rewriter.tags' => '',
-					'session.use_cookies' => 1,
-					'session.cookie_path' => static::$path,
-					'session.save_handler' => 'user',
-				),
-				'handler' => array(
-					'engine' => 'CacheSession',
-					'config' => 'default'
-				)
-			),
-			'database' => array(
-				'checkAgent' => false,
-				'cookie' => 'CAKEPHP',
-				'timeout' => 240,
-				'ini' => array(
-					'session.use_trans_sid' => 0,
-					'url_rewriter.tags' => '',
-					'session.use_cookies' => 1,
-					'session.cookie_path' => static::$path,
-					'session.save_handler' => 'user',
-					'session.serialize_handler' => 'php',
-				),
-				'handler' => array(
-					'engine' => 'DatabaseSession'
-				)
-			)
-		);
-		if (isset($defaults[$name])) {
-			return $defaults[$name];
-		}
-		return false;
-	}
-
-/**
- * Helper method to start a session
- *
- * @return bool Success
- */
-	protected static function _startSession() {
-		static::init();
-		session_write_close();
-		static::_configureSession();
-
-		if (headers_sent()) {
-			if (empty($_SESSION)) {
-				$_SESSION = array();
-			}
-		} else {
-			// For IE<=8
-			session_cache_limiter("must-revalidate");
-			session_start();
-		}
-		return true;
-	}
-
-/**
- * Helper method to create a new session.
- *
- * @return void
- */
-	protected static function _checkValid() {
-		$config = static::read('Config');
-		if ($config) {
-			$sessionConfig = Configure::read('Session');
-
-			if (static::valid()) {
-				static::write('Config.time', static::$sessionTime);
-				if (isset($sessionConfig['autoRegenerate']) && $sessionConfig['autoRegenerate'] === true) {
-					$check = $config['countdown'];
-					$check -= 1;
-					static::write('Config.countdown', $check);
-
-					if ($check < 1) {
-						static::renew();
-						static::write('Config.countdown', $requestCountdown);
-					}
-				}
-			} else {
-				$_SESSION = array();
-				static::destroy();
-				static::_setError(1, 'Session Highjacking Attempted !!!');
-				static::_startSession();
-				static::_writeConfig();
-			}
-		} else {
-			static::_writeConfig();
-		}
-	}
-
-/**
- * Writes configuration variables to the session
- *
- * @return void
- */
-	protected static function _writeConfig() {
-		static::write('Config.userAgent', static::$_userAgent);
-		static::write('Config.time', static::$sessionTime);
-		static::write('Config.countdown', static::$_requestCountdown);
+	protected function _hasSession() {
+		return !ini_get('session.use_cookies')
+			|| isset($_COOKIE[session_name()])
+			|| $this->_isCli;
 	}
 
 /**
@@ -705,28 +506,88 @@ class Session {
  *
  * @return void
  */
-	public static function renew() {
-		if (session_id()) {
-			if (session_id() || isset($_COOKIE[session_name()])) {
-				setcookie(Configure::read('Session.cookie'), '', time() - 42000, static::$path);
-			}
-			session_regenerate_id(true);
+	public function renew() {
+		if (!$this->_hasSession() || $this->_isCli) {
+			return;
 		}
+
+		$params = session_get_cookie_params();
+		setcookie(
+			session_name(), '', time() - 42000,
+			$params['path'], $params['domain'],
+			$params['secure'], $params['httponly']
+		);
+		session_regenerate_id(true);
 	}
 
 /**
- * Helper method to set an internal error message.
+ * Stores a single string under the "Message.flash" session key. This is useful
+ * for persisting messages from one request to another that should be displayed
+ * to the user.
  *
- * @param int $errorNumber Number of the error
- * @param string $errorMessage Description of the error
+ * The options array accepts `key`, this is is useful for assigning a domain
+ * to the flash message since you can only store one per domain.
+ *
+ * ### Example
+ *
+ * {{{
+ *	$session->flash('Welcome, Mark', 'success');
+ *	$session->flash('This is a message in a different domain', 'info', ['key' => 'another']);
+ * }}}
+ *
+ * @param string $message the message to display to persist
+ * @param string $type the type of message
+ * @param array $options A list of extra options to persist related to this message
  * @return void
  */
-	protected static function _setError($errorNumber, $errorMessage) {
-		if (static::$error === false) {
-			static::$error = array();
+	public function flash($message, $type = 'info', $options = []) {
+		$options += ['key' => 'flash'];
+		$key = $options['key'];
+		unset($options['key']);
+		$this->write("Message.$key", [
+			'message' => $message,
+			'type' => $type,
+			'params' => $options
+		]);
+	}
+
+/**
+ * Returns the flash message stored in the given key if exists.
+ *
+ * @param string $key the message domain
+ * @return array|null
+ */
+	public function readFlash($key = 'flash') {
+		return $this->read("Message.$key");
+	}
+
+/**
+ * Deletes the flash message stored in the given key
+ *
+ * @param string $key the message domain
+ * @return void
+ */
+	public function deleteFlash($key = 'flash') {
+		$this->delete("Message.$key");
+	}
+
+/**
+ * Returns true if the session is no longer valid because the last time it was
+ * accessed was after the configured timeout.
+ *
+ * @return boolean
+ */
+	protected function _timedOut() {
+		$time = $this->read('Config.time');
+		$result = false;
+
+		$checkTime = $time !== null && $this->_lifetime > 0;
+		if ($checkTime && (time() - $time > $this->_lifetime)) {
+			$result = true;
 		}
-		static::$error[$errorNumber] = $errorMessage;
-		static::$lastError = $errorNumber;
+
+		$this->write('Config.time', time());
+		return $result;
 	}
 
 }

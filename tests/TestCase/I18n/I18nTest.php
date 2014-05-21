@@ -1518,6 +1518,7 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testSetLanguageWithSession() {
+		$this->markTestIncomplete('This needs to be re-done');
 		Session::start();
 		Session::write('Config.language', 'po');
 
