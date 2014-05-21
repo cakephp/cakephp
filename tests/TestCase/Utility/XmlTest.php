@@ -1096,53 +1096,6 @@ XML;
 	}
 
 /**
- * testWithModel method
- *
- * @return void
- */
-	public function testWithModel() {
-		$this->markTestIncomplete('Models do not work right now');
-		$this->loadFixtures('User', 'Article');
-
-		$user = new XmlUser();
-		$data = $user->read(null, 1);
-
-		$obj = Xml::build(compact('data'));
-		$expected = <<<XML
-<?xml version="1.0" encoding="UTF-8"?><data>
-<User><id>1</id><user>mariano</user><password>5f4dcc3b5aa765d61d8327deb882cf99</password>
-<created>2007-03-17 01:16:23</created><updated>2007-03-17 01:18:31</updated></User>
-<Article><id>1</id><user_id>1</user_id><title>First Article</title><body>First Article Body</body>
-<published>Y</published><created>2007-03-18 10:39:23</created><updated>2007-03-18 10:41:31</updated></Article>
-<Article><id>3</id><user_id>1</user_id><title>Third Article</title><body>Third Article Body</body>
-<published>Y</published><created>2007-03-18 10:43:23</created><updated>2007-03-18 10:45:31</updated></Article>
-</data>
-XML;
-		$this->assertXmlStringEqualsXmlString($expected, $obj->asXML());
-
-		//multiple model results - without a records key it would fatal error
-		$data = $user->find('all', array('limit' => 2));
-		$data = array('records' => $data);
-		$obj = Xml::build(compact('data'));
-		$expected = <<<XML
-<?xml version="1.0" encoding="UTF-8"?><data>
-<records>
-<User><id>1</id><user>mariano</user><password>5f4dcc3b5aa765d61d8327deb882cf99</password>
-<created>2007-03-17 01:16:23</created><updated>2007-03-17 01:18:31</updated></User>
-<Article><id>1</id><user_id>1</user_id><title>First Article</title><body>First Article Body</body>
-<published>Y</published><created>2007-03-18 10:39:23</created><updated>2007-03-18 10:41:31</updated></Article>
-<Article><id>3</id><user_id>1</user_id><title>Third Article</title><body>Third Article Body</body>
-<published>Y</published><created>2007-03-18 10:43:23</created><updated>2007-03-18 10:45:31</updated></Article>
-</records><records><User><id>2</id><user>nate</user><password>5f4dcc3b5aa765d61d8327deb882cf99</password>
-<created>2007-03-17 01:18:23</created><updated>2007-03-17 01:20:31</updated></User><Article/>
-</records>
-</data>
-XML;
-		$obj->asXML();
-		$this->assertXmlStringEqualsXmlString($expected, $obj->asXML());
-	}
-
-/**
  * Test ampersand in text elements.
  *
  * @return void
