@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Utility;
 
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Error\XmlException;
 use Cake\Utility\Xml;
@@ -129,6 +130,24 @@ class XmlTest extends TestCase {
 		]);
 		$obj = Xml::build($xml);
 		$this->assertContains('<users>leonardo</users>', $obj->saveXML());
+	}
+
+/**
+ * Test build() with ORM\Entity instances wrapped in a Collection.
+ *
+ * @return void
+ */
+	public function testBuildOrmEntity() {
+		$user = new Entity(['username' => 'mark', 'email' => 'mark@example.com']);
+		$xml = new Collection([
+			'response' => [
+				'users' => new Collection([$user])
+			]
+		]);
+		$obj = Xml::build($xml);
+		$output = $obj->saveXML();
+		$this->assertContains('<username>mark</username>', $output);
+		$this->assertContains('<email>mark@example.com</email>', $output);
 	}
 
 /**

@@ -302,6 +302,9 @@ class Xml {
 	protected static function _createChild($data) {
 		extract($data);
 		$childNS = $childValue = null;
+		if (method_exists($value, 'toArray')) {
+			$value = $value->toArray();
+		}
 		if (is_array($value)) {
 			if (isset($value['@'])) {
 				$childValue = (string)$value['@'];
