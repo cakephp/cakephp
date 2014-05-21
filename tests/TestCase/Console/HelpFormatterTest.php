@@ -41,7 +41,7 @@ class HelpFormatterTest extends TestCase {
 
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->text(30);
-		$expected = <<<TEXT
+		$expected = <<<txt
 This is fifteen This is
 fifteen This is fifteen
 
@@ -67,7 +67,7 @@ four  this is help text this
       is help text
       <comment>(optional)</comment>
 
-TEXT;
+txt;
 		$this->assertTextEquals($expected, $result, 'Generated help is too wide');
 	}
 
@@ -88,7 +88,7 @@ TEXT;
 
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->text();
-		$expected = <<<TEXT
+		$expected = <<<txt
 <info>Usage:</info>
 cake mycommand [-h] [--test one|two] <aco|aro> [<other_longer>]
 
@@ -102,7 +102,7 @@ cake mycommand [-h] [--test one|two] <aco|aro> [<other_longer>]
 type          Resource type. <comment>(choices: aco|aro)</comment>
 other_longer  Another argument. <comment>(optional)</comment>
 
-TEXT;
+txt;
 		$this->assertTextEquals($expected, $result, 'Help does not match');
 	}
 
@@ -120,7 +120,7 @@ TEXT;
 
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->text();
-		$expected = <<<TEXT
+		$expected = <<<txt
 Description text
 
 <info>Usage:</info>
@@ -137,7 +137,7 @@ model  The model to make.
 
 epilog text
 
-TEXT;
+txt;
 		$this->assertTextEquals($expected, $result, 'Help is wrong.');
 	}
 
@@ -153,7 +153,7 @@ TEXT;
 
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->text();
-		$expected = <<<TEXT
+		$expected = <<<txt
 <info>Usage:</info>
 cake mycommand [subcommand] [-h] [--test]
 
@@ -168,7 +168,7 @@ To see help on a subcommand use <info>`cake mycommand [subcommand] --help`</info
 --help, -h  Display this help.
 --test      A test option.
 
-TEXT;
+txt;
 		$this->assertTextEquals($expected, $result, 'Help is not correct.');
 	}
 
@@ -186,7 +186,7 @@ TEXT;
 
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->text();
-		$expected = <<<TEXT
+		$expected = <<<txt
 <info>Usage:</info>
 cake mycommand [-h] [--test] [-c default]
 
@@ -197,7 +197,7 @@ cake mycommand [-h] [--test] [-c default]
 --connection, -c  The connection to use. <comment>(default:
                   default)</comment>
 
-TEXT;
+txt;
 		$this->assertTextEquals($expected, $result, 'Help does not match');
 	}
 
@@ -214,7 +214,7 @@ TEXT;
 
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->text();
-		$expected = <<<TEXT
+		$expected = <<<xml
 <info>Usage:</info>
 cake mycommand [-h] [--test] <model> [<other_longer>]
 
@@ -228,7 +228,7 @@ cake mycommand [-h] [--test] <model> [<other_longer>]
 model         The model to make.
 other_longer  Another argument. <comment>(optional)</comment>
 
-TEXT;
+xml;
 		$this->assertTextEquals($expected, $result, 'Help does not match');
 	}
 
@@ -297,7 +297,7 @@ TEXT;
 
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->xml();
-		$expected = <<<TEXT
+		$expected = <<<xml
 <?xml version="1.0"?>
 <shell>
 <name>mycommand</name>
@@ -326,8 +326,8 @@ TEXT;
 </arguments>
 <epilog>epilog text</epilog>
 </shell>
-TEXT;
-		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+xml;
+		$this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
 	}
 
 /**
@@ -344,7 +344,7 @@ TEXT;
 
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->xml();
-		$expected = <<<TEXT
+		$expected = <<<xml
 <?xml version="1.0"?>
 <shell>
 <name>mycommand</name>
@@ -367,8 +367,8 @@ TEXT;
 </arguments>
 <epilog>epilog text</epilog>
 </shell>
-TEXT;
-		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+xml;
+		$this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
 	}
 
 /**
@@ -383,7 +383,7 @@ TEXT;
 
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->xml();
-		$expected = <<<TEXT
+		$expected = <<<xml
 <?xml version="1.0"?>
 <shell>
 <name>mycommand</name>
@@ -404,8 +404,8 @@ TEXT;
 <arguments/>
 <epilog/>
 </shell>
-TEXT;
-		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+xml;
+		$this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
 	}
 
 /**
@@ -422,7 +422,7 @@ TEXT;
 
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->xml();
-		$expected = <<<TEXT
+		$expected = <<<xml
 <?xml version="1.0"?>
 <shell>
 <name>mycommand</name>
@@ -445,8 +445,8 @@ TEXT;
 <arguments/>
 <epilog/>
 </shell>
-TEXT;
-		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+xml;
+		$this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
 	}
 
 /**
@@ -462,7 +462,7 @@ TEXT;
 
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->xml();
-		$expected = <<<TEXT
+		$expected = <<<xml
 <?xml version="1.0"?>
 <shell>
 	<name>mycommand</name>
@@ -488,8 +488,8 @@ TEXT;
 	</arguments>
 	<epilog/>
 </shell>
-TEXT;
-		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+xml;
+		$this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
 	}
 
 /**
