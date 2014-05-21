@@ -1,9 +1,5 @@
 <?php
 /**
- * XML handling for Cake.
- *
- * The methods in these classes enable the datasources that use XML to work.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -94,7 +90,7 @@ class Xml {
 		$options += $defaults;
 
 		if (is_array($input) || is_object($input)) {
-			return static::fromArray((array)$input, $options);
+			return static::fromArray($input, $options);
 		} elseif (strpos($input, '<') !== false) {
 			return static::_loadXml($input, $options);
 		} elseif (file_exists($input)) {
@@ -183,12 +179,15 @@ class Xml {
  *
  * `<root><tag id="1" value="defect">description</tag></root>`
  *
- * @param array $input Array with data
+ * @param array|\Cake\Collection\Collection $input Array with data or a collection instance.
  * @param string|array $options The options to use
  * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
  * @throws \Cake\Utility\Error\XmlException
  */
-	public static function fromArray(array $input, $options = array()) {
+	public static function fromArray($input, $options = array()) {
+		if (method_exists($input, 'toArray')) {
+			$input = $input->toArray();
+		}
 		if (!is_array($input) || count($input) !== 1) {
 			throw new Error\XmlException('Invalid input.');
 		}
@@ -238,6 +237,10 @@ class Xml {
 		}
 		foreach ($data as $key => $value) {
 			if (is_string($key)) {
+				if (method_exists($value, 'toArray')) {
+					$value = $value->toArray();
+				}
+
 				if (!is_array($value)) {
 					if (is_bool($value)) {
 						$value = (int)$value;
@@ -298,6 +301,9 @@ class Xml {
 	protected static function _createChild($data) {
 		extract($data);
 		$childNS = $childValue = null;
+		if (method_exists($value, 'toArray')) {
+			$value = $value->toArray();
+		}
 		if (is_array($value)) {
 			if (isset($value['@'])) {
 				$childValue = (string)$value['@'];

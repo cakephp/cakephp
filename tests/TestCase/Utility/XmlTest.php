@@ -1,7 +1,5 @@
 <?php
 /**
- * XmlTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -16,7 +14,9 @@
  */
 namespace Cake\Test\TestCase\Utility;
 
+use Cake\Collection\Collection;
 use Cake\Core\Configure;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Error\XmlException;
 use Cake\Utility\Xml;
@@ -109,6 +109,45 @@ class XmlTest extends TestCase {
 
 		$obj = Xml::build($xml, array('return' => 'domdocument', 'encoding' => null));
 		$this->assertNotRegExp('/encoding/', $obj->saveXML());
+	}
+
+/**
+ * Test build() with a Collection instance.
+ *
+ * @return void
+ */
+	public function testBuildCollection() {
+		$xml = new Collection(['tag' => 'value']);
+		$obj = Xml::build($xml);
+
+		$this->assertEquals('tag', $obj->getName());
+		$this->assertEquals('value', (string)$obj);
+
+		$xml = new Collection([
+			'response' => [
+				'users' => new Collection(['leonardo', 'raphael'])
+			]
+		]);
+		$obj = Xml::build($xml);
+		$this->assertContains('<users>leonardo</users>', $obj->saveXML());
+	}
+
+/**
+ * Test build() with ORM\Entity instances wrapped in a Collection.
+ *
+ * @return void
+ */
+	public function testBuildOrmEntity() {
+		$user = new Entity(['username' => 'mark', 'email' => 'mark@example.com']);
+		$xml = new Collection([
+			'response' => [
+				'users' => new Collection([$user])
+			]
+		]);
+		$obj = Xml::build($xml);
+		$output = $obj->saveXML();
+		$this->assertContains('<username>mark</username>', $output);
+		$this->assertContains('<email>mark@example.com</email>', $output);
 	}
 
 /**
@@ -1073,53 +1112,6 @@ XML;
  */
 	public function testToArrayFail($value) {
 		Xml::toArray($value);
-	}
-
-/**
- * testWithModel method
- *
- * @return void
- */
-	public function testWithModel() {
-		$this->markTestIncomplete('Models do not work right now');
-		$this->loadFixtures('User', 'Article');
-
-		$user = new XmlUser();
-		$data = $user->read(null, 1);
-
-		$obj = Xml::build(compact('data'));
-		$expected = <<<XML
-<?xml version="1.0" encoding="UTF-8"?><data>
-<User><id>1</id><user>mariano</user><password>5f4dcc3b5aa765d61d8327deb882cf99</password>
-<created>2007-03-17 01:16:23</created><updated>2007-03-17 01:18:31</updated></User>
-<Article><id>1</id><user_id>1</user_id><title>First Article</title><body>First Article Body</body>
-<published>Y</published><created>2007-03-18 10:39:23</created><updated>2007-03-18 10:41:31</updated></Article>
-<Article><id>3</id><user_id>1</user_id><title>Third Article</title><body>Third Article Body</body>
-<published>Y</published><created>2007-03-18 10:43:23</created><updated>2007-03-18 10:45:31</updated></Article>
-</data>
-XML;
-		$this->assertXmlStringEqualsXmlString($expected, $obj->asXML());
-
-		//multiple model results - without a records key it would fatal error
-		$data = $user->find('all', array('limit' => 2));
-		$data = array('records' => $data);
-		$obj = Xml::build(compact('data'));
-		$expected = <<<XML
-<?xml version="1.0" encoding="UTF-8"?><data>
-<records>
-<User><id>1</id><user>mariano</user><password>5f4dcc3b5aa765d61d8327deb882cf99</password>
-<created>2007-03-17 01:16:23</created><updated>2007-03-17 01:18:31</updated></User>
-<Article><id>1</id><user_id>1</user_id><title>First Article</title><body>First Article Body</body>
-<published>Y</published><created>2007-03-18 10:39:23</created><updated>2007-03-18 10:41:31</updated></Article>
-<Article><id>3</id><user_id>1</user_id><title>Third Article</title><body>Third Article Body</body>
-<published>Y</published><created>2007-03-18 10:43:23</created><updated>2007-03-18 10:45:31</updated></Article>
-</records><records><User><id>2</id><user>nate</user><password>5f4dcc3b5aa765d61d8327deb882cf99</password>
-<created>2007-03-17 01:18:23</created><updated>2007-03-17 01:20:31</updated></User><Article/>
-</records>
-</data>
-XML;
-		$obj->asXML();
-		$this->assertXmlStringEqualsXmlString($expected, $obj->asXML());
 	}
 
 /**
