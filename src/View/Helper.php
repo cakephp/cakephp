@@ -228,7 +228,7 @@ class Helper implements EventListener {
 		if (!empty($queryString)) {
 			$webPath .= '?' . $queryString;
 		}
-		return$webPath;
+		return $webPath;
 	}
 
 /**
