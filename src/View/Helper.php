@@ -71,9 +71,9 @@ class Helper implements EventListener {
 	protected $_helperMap = array();
 
 /**
- * The current theme name if any.
+ * The current theme(s) name if any.
  *
- * @var string
+ * @var string|array
  */
 	public $theme = null;
 
@@ -200,39 +200,35 @@ class Helper implements EventListener {
 	}
 
 /**
- * Checks if a file exists when theme is used, if no file is found default location is returned
+ * Checks if a file exists when themes are used, if no file is found default location is returned
  *
  * @param string $file The file to create a webroot path to.
  * @return string Web accessible path to file.
  */
 	public function webroot($file) {
-		$asset = explode('?', $file);
-		$asset[1] = isset($asset[1]) ? '?' . $asset[1] : null;
-		$webPath = $this->request->webroot . $asset[0];
-		$file = $asset[0];
+		$file = trim($file, '/');
+		if (strpos($file, '?') !== false) {
+			list($file, $queryString) = explode('?', $file, 2);
+		}
 
-		if (!empty($this->theme)) {
-			$file = trim($file, '/');
-			$theme = Inflector::underscore($this->theme) . '/';
+		$webPath = $this->request->webroot . $file;
 
-			if (DS === '\\') {
-				$file = str_replace('/', '\\', $file);
+		foreach ((array)$this->theme as $theme) {
+			$themeBaseUrl = Inflector::underscore($theme) . '/';
+			if (file_exists(Configure::read('App.www_root') . $themeBaseUrl . $file)) {
+				$webPath = $this->request->webroot . $themeBaseUrl . $file;
+				break;
 			}
-
-			if (file_exists(Configure::read('App.www_root') . $theme . $file)) {
-				$webPath = $this->request->webroot . $theme . $asset[0];
-			} else {
-				$themePath = Plugin::path($this->theme);
-				$path = $themePath . 'webroot/' . $file;
-				if (file_exists($path)) {
-					$webPath = $this->request->webroot . $theme . $asset[0];
-				}
+			if (file_exists(Plugin::path($theme) . 'webroot/' . $file)) {
+				$webPath = $this->request->webroot . $themeBaseUrl . $file;
+				break;
 			}
 		}
-		if (strpos($webPath, '//') !== false) {
-			return str_replace('//', '/', $webPath . $asset[1]);
+
+		if (!empty($queryString)) {
+			$webPath .= '?' . $queryString;
 		}
-		return $webPath . $asset[1];
+		return$webPath;
 	}
 
 /**

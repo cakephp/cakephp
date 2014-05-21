@@ -166,7 +166,7 @@ class View {
 /**
  * The view theme to use.
  *
- * @var string
+ * @var string|array
  */
 	public $theme = null;
 
@@ -1101,22 +1101,26 @@ class View {
 			$paths = array_merge($paths, App::path('Template', $plugin));
 		}
 
-		$paths = array_unique(array_merge($paths, $viewPaths));
+		$paths = array_merge($paths, $viewPaths);
+
 		if (!empty($this->theme)) {
-			$theme = Inflector::camelize($this->theme);
-			$themePaths = App::path('Template', $theme);
+			$themePaths = array();
+			foreach ((array)$this->theme as $theme) {
+				$pluginTemplatePaths = App::path('Template', Inflector::camelize($theme));
 
-			if ($plugin) {
-				$count = count($viewPaths);
-				for ($i = 0; $i < $count; $i++) {
-					$themePaths[] = $themePaths[$i] . 'Plugin' . DS . $plugin . DS;
+				if ($plugin) {
+					$count = count($viewPaths);
+					for ($i = 0; $i < $count; $i++) {
+						$themePaths[] = $themePaths[$i] . 'Plugin' . DS . $plugin . DS;
+					}
 				}
-			}
 
+				$themePaths = array_merge($themePaths, $pluginTemplatePaths);
+			}
 			$paths = array_merge($themePaths, $paths);
 		}
 
-		$paths = array_merge($paths, $corePaths);
+		$paths = array_unique(array_merge($paths, $corePaths));
 
 		if ($plugin !== null) {
 			return $this->_pathsForPlugin[$plugin] = $paths;
