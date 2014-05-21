@@ -134,8 +134,8 @@ class XmlView extends View {
 				if (is_numeric($alias)) {
 					$alias = $key;
 				}
-				if (is_object($this->viewVars[$key]) && is_a($this->viewVars[$key], '\IteratorAggregate')) {
-					$data[$rootNode][$alias] = $this->__iteratorAggregateToArray($this->viewVars[$key]);
+				if ($this->viewVars[$key] instanceof \Traversable) {
+					$data[$rootNode][$alias] = iterator_to_array($this->viewVars[$key]);
 				} else {
 					$data[$rootNode][$alias] = $this->viewVars[$key];
 				}
@@ -144,8 +144,8 @@ class XmlView extends View {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
 			if (is_array($data) && Hash::numeric(array_keys($data))) {
 				$data = array($rootNode => array($serialize => $data));
-			} elseif (is_object($data) && is_a($data, '\IteratorAggregate')) {
-				$data = array($rootNode => array($serialize => $this->__iteratorAggregateToArray($data)));
+			} elseif ($data instanceof \Traversable) {
+				$data = array($rootNode => array($serialize => iterator_to_array($data)));
 			}
 		}
 
@@ -155,22 +155,6 @@ class XmlView extends View {
 		}
 
 		return Xml::fromArray($data, $options)->asXML();
-	}
-
-/**
- * __iteratorAggregateToArray
- *
- * A shallow conversion of an IteratorAggregate to an array
- *
- * @param \IteratorAggregate $data
- * @return array The data as an array
- */
-	private function __iteratorAggregateToArray(\IteratorAggregate $data) {
-		$result = array();
-		foreach ($data as $item) {
-			$result[] = $item;
-		}
-		return $result;
 	}
 
 }

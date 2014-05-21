@@ -102,10 +102,7 @@ class XmlViewTest extends TestCase {
 		$View = $Controller->createView();
 		$output = $View->render(false);
 
-		$dataAsArray = array();
-		foreach ($data as $item) {
-			$dataAsArray[] = $item;
-		}
+		$dataAsArray = $data->toArray();
 
 		$expected = Xml::build(array('response' => array('articles' => $dataAsArray)))->asXML();
 		$this->assertSame($expected, $output);
