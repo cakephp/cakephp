@@ -1,6 +1,9 @@
-.PHONY: help
 
 VERSION="unset"
+
+
+ALL: help
+.PHONY: help
 
 help:
 	@echo "CakePHP Makefile"
@@ -15,3 +18,27 @@ help:
 	@echo ""
 	@echo "bump-version"
 	@echo "  Bumps the version to VERSION"
+
+
+# Download composer
+composer.phar:
+	curl -sS https://getcomposer.org/installer | php
+
+# Install dependencies
+install: composer.phar
+	php composer.phar install
+
+test: install
+	vendor/bin/phpunit
+
+# Update VERSION.txt to new version.
+bump-version:
+	@if [ $(VERSION) = "unset" ]; \
+	then \
+		echo "You must specify a version to bump to."; \
+		exit 1; \
+	fi;
+	# Work around bash being bad.
+	mv VERSION.txt VERSION.old
+	cat VERSION.old | sed s'/^[0-9]\.[0-9]\.[0-9].*/$(VERSION)/' > VERSION.txt
+	rm VERSION.old
