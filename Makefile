@@ -35,6 +35,18 @@ help:
 	@echo "All other tasks are not intended to be run directly."
 
 
+test: install
+	vendor/bin/phpunit
+
+
+# Utility target for checking required parameters
+guard-%:
+	@if [ "$($*)" = '' ]; then \
+		echo "Missing required $* variable."; \
+		exit 1; \
+	fi;
+
+
 # Download composer
 composer.phar:
 	curl -sS https://getcomposer.org/installer | php
@@ -43,15 +55,9 @@ composer.phar:
 install: composer.phar
 	php composer.phar install
 
-test: install
-	vendor/bin/phpunit
 
-guard-%:
-	@if [ "$($*)" = '' ]; then \
-		echo "Missing required $* variable."; \
-		exit 1; \
-	fi;
 
+# Version bumping & tagging for CakePHP itself
 # Update VERSION.txt to new version.
 bump-version: guard-VERSION
 	@echo "Update VERSION.txt to $(VERSION)"
@@ -69,7 +75,9 @@ tag-release: guard-VERSION bump-version
 	git push $(REMOTE)
 	git push $(REMOTE) --tags
 
-# Tasks for tagging the app skeletong and
+
+
+# Tasks for tagging the app skeleton and
 # creating a zipball of a fully built app skeleton.
 .PHONY: clean tag-app build-app package
 
@@ -90,9 +98,6 @@ tag-app: guard-VERSION build/app
 	cd build/app && git push $(REMOTE)
 	cd build/app && git push $(REMOTE) --tags
 
-# Easier to type alias for zip balls
-package: tag-app dist/cakephp-$(VERSION).zip
-
 dist/cakephp-$(VERSION).zip: composer.phar
 	@if [ ! -d dist ]; \
 	then \
@@ -105,6 +110,10 @@ dist/cakephp-$(VERSION).zip: composer.phar
 	# intended for quick start non-git, non-cli users
 	@echo "Building zipball for $(VERSION)"
 	find build/app -not -path '*.git*' | zip dist/cakephp-$(VERSION).zip -@
+
+# Easier to type alias for zip balls
+package: tag-app dist/cakephp-$(VERSION).zip
+
 
 
 # Tasks to publish zipballs to github.
