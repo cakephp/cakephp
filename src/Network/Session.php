@@ -126,14 +126,12 @@ class Session {
 	protected static function _defaultConfig($name) {
 		$defaults = array(
 			'php' => array(
-				'checkAgent' => false,
 				'cookie' => 'CAKEPHP',
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 				)
 			),
 			'cake' => array(
-				'checkAgent' => false,
 				'cookie' => 'CAKEPHP',
 				'ini' => array(
 					'session.use_trans_sid' => 0,
@@ -145,7 +143,6 @@ class Session {
 				)
 			),
 			'cache' => array(
-				'checkAgent' => false,
 				'cookie' => 'CAKEPHP',
 				'ini' => array(
 					'session.use_trans_sid' => 0,
@@ -159,7 +156,6 @@ class Session {
 				)
 			),
 			'database' => array(
-				'checkAgent' => false,
 				'cookie' => 'CAKEPHP',
 				'ini' => array(
 					'session.use_trans_sid' => 0,
@@ -199,6 +195,10 @@ class Session {
 		if (isset($config['timeout'])) {
 			$config['ini']['session.cookie_lifetime'] = 60 * $config['timeout'];
 			$config['ini']['session.gc_maxlifetime'] = 60 * $config['timeout'];
+		}
+
+		if (!empty($config['cookie'])) {
+			$config['ini']['session.name'] = $config['cookie'];
 		}
 
 		if (!empty($config['ini']) && is_array($config['ini'])) {
