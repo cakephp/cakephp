@@ -68,7 +68,6 @@ class CacheFilterTest extends TestCase {
 			array('TestCachedPages/test_nocache_tags'),
 			array('test_cached_pages/view/param/param'),
 			array('test_cached_pages/view?q=cakephp'),
-			array('test_cached_pages/themed'),
 		);
 	}
 

@@ -79,14 +79,6 @@ class AssetFilter extends DispatcherFilter {
  */
 	protected function _getAssetFile($url) {
 		$parts = explode('/', $url);
-		if ($parts[0] === 'theme') {
-			$themeName = $parts[1];
-			unset($parts[0], $parts[1]);
-			$fileFragment = implode(DS, $parts);
-			$path = App::themePath($themeName) . 'webroot' . DS;
-			return $path . $fileFragment;
-		}
-
 		$plugin = Inflector::camelize($parts[0]);
 		if ($plugin && Plugin::loaded($plugin)) {
 			unset($parts[0]);

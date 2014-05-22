@@ -35,11 +35,10 @@ use Cake\Utility\Inflector;
  * It is also possible to inspect paths for plugin classes, for instance, to get
  * the path to a plugin's helpers you would call `App::path('View/Helper', 'MyPlugin')`
  *
- * ### Locating plugins and themes
+ * ### Locating plugins
  *
- * Plugins and Themes can be located with App as well. Using App::pluginPath('DebugKit') for example, will
- * give you the full path to the DebugKit plugin. App::themePath('purple'), would give the full path to the
- * `purple` theme.
+ * Plugins can be located with App as well. Using App::pluginPath('DebugKit') for example, will
+ * give you the full path to the DebugKit plugin.
  *
  * ### Inspecting known objects
  *
@@ -161,28 +160,6 @@ class App {
  */
 	public static function pluginPath($plugin) {
 		return Plugin::path($plugin);
-	}
-
-/**
- * Finds the path that a theme is on. Searches through the defined theme paths.
- *
- * Usage:
- *
- * `App::themePath('MyTheme');` will return the full path to the 'MyTheme' theme.
- *
- * @param string $theme theme name to find the path of.
- * @return string full path to the theme.
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::themePath
- */
-	public static function themePath($theme) {
-		$themeDir = 'Themed' . DS . Inflector::camelize($theme);
-		$paths = static::path('Template');
-		foreach ($paths as $path) {
-			if (is_dir($path . $themeDir)) {
-				return $path . $themeDir . DS;
-			}
-		}
-		return $paths[0] . $themeDir . DS;
 	}
 
 /**

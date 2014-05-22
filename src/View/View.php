@@ -42,10 +42,10 @@ use Cake\View\ViewVarsTrait;
  *
  * Since 2.1, the base View class also includes support for themes by default. Theme views are regular
  * view files that can provide unique HTML and static assets. If theme views are not found for the
- * current view the default app view files will be used. You can set `$this->theme = 'mytheme'`
+ * current view the default app view files will be used. You can set `$this->theme = 'Mytheme'`
  * in your Controller to use the Themes.
  *
- * Example of theme path with `$this->theme = 'SuperHot';` Would be `app/Template/Themed/SuperHot/Posts`
+ * Example of theme path with `$this->theme = 'SuperHot';` Would be `Plugin/SuperHot/Template/Posts`
  *
  * @property      \Cake\View\Helper\CacheHelper $Cache
  * @property      \Cake\View\Helper\FormHelper $Form
@@ -1096,9 +1096,7 @@ class View {
 		if (!empty($plugin)) {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
-				if (!in_array($viewPaths[$i], $corePaths)) {
-					$paths[] = $viewPaths[$i] . 'Plugin' . DS . $plugin . DS;
-				}
+				$paths[] = $viewPaths[$i] . 'Plugin' . DS . $plugin . DS;
 			}
 			$paths = array_merge($paths, App::path('Template', $plugin));
 		}
@@ -1106,21 +1104,24 @@ class View {
 		$paths = array_unique(array_merge($paths, $viewPaths));
 		if (!empty($this->theme)) {
 			$theme = Inflector::camelize($this->theme);
-			$themePaths = array();
-			foreach ($paths as $path) {
-				if (strpos($path, DS . 'Plugin' . DS) === false) {
-					if ($plugin) {
-						$themePaths[] = $path . 'Themed' . DS . $theme . DS . 'Plugin' . DS . $plugin . DS;
-					}
-					$themePaths[] = $path . 'Themed' . DS . $theme . DS;
+			$themePaths = App::path('Template', $theme);
+
+			if ($plugin) {
+				$count = count($viewPaths);
+				for ($i = 0; $i < $count; $i++) {
+					$themePaths[] = $themePaths[$i] . 'Plugin' . DS . $plugin . DS;
 				}
 			}
+
 			$paths = array_merge($themePaths, $paths);
 		}
+
 		$paths = array_merge($paths, $corePaths);
+
 		if ($plugin !== null) {
 			return $this->_pathsForPlugin[$plugin] = $paths;
 		}
+
 		return $this->_paths = $paths;
 	}
 

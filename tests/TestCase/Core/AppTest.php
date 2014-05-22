@@ -248,19 +248,4 @@ class AppTest extends TestCase {
 		$this->assertPathEquals($expected, $path);
 	}
 
-/**
- * test that themePath can find paths for themes.
- *
- * @return void
- */
-	public function testThemePath() {
-		$path = App::themePath('test_theme');
-		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Themed' . DS . 'TestTheme' . DS;
-		$this->assertPathEquals($expected, $path);
-
-		$path = App::themePath('TestTheme');
-		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Themed' . DS . 'TestTheme' . DS;
-		$this->assertPathEquals($expected, $path);
-	}
-
 }

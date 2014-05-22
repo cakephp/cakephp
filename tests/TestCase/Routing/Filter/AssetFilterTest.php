@@ -28,6 +28,26 @@ use Cake\TestSuite\TestCase;
 class AssetFilterTest extends TestCase {
 
 /**
+ * setUp method
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		Plugin::load(['TestTheme']);
+	}
+
+/**
+ * tearDown method
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		Plugin::unload();
+	}
+
+/**
  * Tests that $response->checkNotModified() is called and bypasses
  * file dispatching
  *
@@ -35,11 +55,11 @@ class AssetFilterTest extends TestCase {
  */
 	public function testNotModified() {
 		$filter = new AssetFilter();
-		$time = filemtime(App::themePath('TestTheme') . 'webroot/img/cake.power.gif');
+		$time = filemtime(Plugin::path('TestTheme') . 'webroot/img/cake.power.gif');
 		$time = new \DateTime('@' . $time);
 
 		$response = $this->getMock('Cake\Network\Response', array('send', 'checkNotModified'));
-		$request = new Request('theme/test_theme/img/cake.power.gif');
+		$request = new Request('test_theme/img/cake.power.gif');
 
 		$response->expects($this->once())->method('checkNotModified')
 			->with($request)
@@ -53,7 +73,7 @@ class AssetFilterTest extends TestCase {
 		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
 
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', 'checkNotModified'));
-		$request = new Request('theme/test_theme/img/cake.power.gif');
+		$request = new Request('test_theme/img/cake.power.gif');
 
 		$response->expects($this->once())->method('checkNotModified')
 			->with($request)
@@ -90,13 +110,13 @@ class AssetFilterTest extends TestCase {
 		$filter = new AssetFilter();
 
 		$response = $this->getMock('Response', array('_sendHeader'));
-		$request = new Request('theme/test_theme/../webroot/css/test_asset.css');
+		$request = new Request('test_theme/../webroot/css/test_asset.css');
 		$event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
 
 		$this->assertNull($filter->beforeDispatch($event));
 		$this->assertFalse($event->isStopped());
 
-		$request = new Request('theme/test_theme/%3e./webroot/css/test_asset.css');
+		$request = new Request('test_theme/%3e./webroot/css/test_asset.css');
 		$event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
 
 		$this->assertNull($filter->beforeDispatch($event));
@@ -116,32 +136,32 @@ class AssetFilterTest extends TestCase {
 	public static function assetProvider() {
 		return array(
 			array(
-				'theme/test_theme/flash/theme_test.swf',
-				'TestApp/Template/Themed/TestTheme/webroot/flash/theme_test.swf'
+				'test_theme/flash/theme_test.swf',
+				'Plugin/TestTheme/webroot/flash/theme_test.swf'
 			),
 			array(
-				'theme/test_theme/pdfs/theme_test.pdf',
-				'TestApp/Template/Themed/TestTheme/webroot/pdfs/theme_test.pdf'
+				'test_theme/pdfs/theme_test.pdf',
+				'Plugin/TestTheme/webroot/pdfs/theme_test.pdf'
 			),
 			array(
-				'theme/test_theme/img/test.jpg',
-				'TestApp/Template/Themed/TestTheme/webroot/img/test.jpg'
+				'test_theme/img/test.jpg',
+				'Plugin/TestTheme/webroot/img/test.jpg'
 			),
 			array(
-				'theme/test_theme/css/test_asset.css',
-				'TestApp/Template/Themed/TestTheme/webroot/css/test_asset.css'
+				'test_theme/css/test_asset.css',
+				'Plugin/TestTheme/webroot/css/test_asset.css'
 			),
 			array(
-				'theme/test_theme/js/theme.js',
-				'TestApp/Template/Themed/TestTheme/webroot/js/theme.js'
+				'test_theme/js/theme.js',
+				'Plugin/TestTheme/webroot/js/theme.js'
 			),
 			array(
-				'theme/test_theme/js/one/theme_one.js',
-				'TestApp/Template/Themed/TestTheme/webroot/js/one/theme_one.js'
+				'test_theme/js/one/theme_one.js',
+				'Plugin/TestTheme/webroot/js/one/theme_one.js'
 			),
 			array(
-				'theme/test_theme/space%20image.text',
-				'TestApp/Template/Themed/TestTheme/webroot/space image.text'
+				'test_theme/space%20image.text',
+				'Plugin/TestTheme/webroot/space image.text'
 			),
 			array(
 				'test_plugin/root.js',

@@ -272,7 +272,7 @@ class ViewTest extends TestCase {
 
 		App::objects('Plugin', null, false);
 
-		Plugin::load(array('TestPlugin', 'TestPlugin', 'PluginJs'));
+		Plugin::load(array('TestPlugin', 'TestPlugin', 'PluginJs', 'TestTheme'));
 		Configure::write('debug', true);
 	}
 
@@ -314,11 +314,11 @@ class ViewTest extends TestCase {
 		$result = $ThemeView->getViewFileName('home');
 		$this->assertPathEquals($expected, $result);
 
-		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Themed' . DS . 'TestTheme' . DS . 'Posts' . DS . 'index.ctp';
+		$expected = Plugin::path('TestTheme') . 'Template' . DS . 'Posts' . DS . 'index.ctp';
 		$result = $ThemeView->getViewFileName('/Posts/index');
 		$this->assertPathEquals($expected, $result);
 
-		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Themed' . DS . 'TestTheme' . DS . 'Layout' . DS . 'default.ctp';
+		$expected = Plugin::path('TestTheme') . 'Template' . DS . 'Layout' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertPathEquals($expected, $result);
 
@@ -370,7 +370,7 @@ class ViewTest extends TestCase {
 		];
 
 		$ThemeView = new TestThemeView(null, null, null, $viewOptions);
-		$themePath = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Themed' . DS . 'TestTheme' . DS;
+		$themePath = Plugin::path('TestTheme') . 'Template' . DS;
 
 		$expected = $themePath . 'Plugin' . DS . 'TestPlugin' . DS . 'Tests' . DS . 'index.ctp';
 		$result = $ThemeView->getViewFileName('index');
@@ -1051,9 +1051,6 @@ class ViewTest extends TestCase {
 
 		$result = $View->getViewFileName('../Element/test_element');
 		$this->assertRegExp('/Element(\/|\\\)test_element.ctp/', $result);
-
-		$result = $View->getViewFileName('../Themed/TestTheme/Posts/index');
-		$this->assertRegExp('/Themed(\/|\\\)TestTheme(\/|\\\)Posts(\/|\\\)index.ctp/', $result);
 
 		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Posts' . DS . 'index.ctp';
 		$result = $View->getViewFileName('../Posts/index');

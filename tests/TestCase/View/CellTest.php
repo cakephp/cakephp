@@ -38,7 +38,7 @@ class CellTest extends TestCase {
 		parent::setUp();
 		Configure::write('App.namespace', 'TestApp');
 		Configure::write('debug', 2);
-		Plugin::load('TestPlugin');
+		Plugin::load(['TestPlugin', 'TestTheme']);
 		$request = $this->getMock('Cake\Network\Request');
 		$response = $this->getMock('Cake\Network\Response');
 		$this->View = new \Cake\View\View($request, $response);
@@ -52,6 +52,7 @@ class CellTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Plugin::unload('TestPlugin');
+		Plugin::unload('TestTheme');
 		unset($this->View);
 	}
 

@@ -1471,6 +1471,7 @@ class EmailTest extends TestCase {
  * @return void
  */
 	public function testSendRenderThemed() {
+		Plugin::load('TestTheme');
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('debug');
 
@@ -1483,10 +1484,10 @@ class EmailTest extends TestCase {
 		$result = $this->CakeEmail->send();
 
 		$this->assertContains('In TestTheme', $result['message']);
-		$this->assertContains('/theme/TestTheme/img/test.jpg', $result['message']);
+		$this->assertContains('/test_theme/img/test.jpg', $result['message']);
 		$this->assertContains('Message-ID: ', $result['headers']);
 		$this->assertContains('To: ', $result['headers']);
-		$this->assertContains('/theme/TestTheme/img/test.jpg', $result['message']);
+		$this->assertContains('/test_theme/img/test.jpg', $result['message']);
 	}
 
 /**
@@ -1613,7 +1614,7 @@ class EmailTest extends TestCase {
  * @return void
  */
 	public function testSendRenderPlugin() {
-		Plugin::load(['TestPlugin', 'TestPluginTwo']);
+		Plugin::load(['TestPlugin', 'TestPluginTwo', 'TestTheme']);
 
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('debug');
