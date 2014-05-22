@@ -1762,10 +1762,12 @@ class HttpSocketTest extends CakeTestCase {
  */
 	public function statusProvider() {
 		return array(
-			array('HTTP/1.1 200 '),
-			array('HTTP/1.1 200    '),
-			array('HTTP/1.1 200'),
-			array('HTTP/1.1 200  OK', 'OK'),
+			array('HTTP/1.1 200 ', '200'),
+			array('HTTP/1.1 200    ', '200'),
+			array('HTTP/1.1 200', '200'),
+			array('HTTP/1.1 200  OK', '200', 'OK'),
+			array('HTTP/1.1 404 Not Found', '404', 'Not Found'),
+			array('HTTP/1.1 404    Not Found', '404', 'Not Found'),
 		);
 	}
 
@@ -1775,7 +1777,7 @@ class HttpSocketTest extends CakeTestCase {
  * @dataProvider statusProvider
  * @return void
  */
-	public function testResponseStatusParsing($status, $msg = '') {
+	public function testResponseStatusParsing($status, $code, $msg = '') {
 		$this->Socket->connected = true;
 		$serverResponse = $status . "\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\n\r\n<h1>This is a test!</h1>";
 		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
@@ -1785,7 +1787,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertInstanceOf('HttpSocketResponse', $response);
 		$expected = array(
 			'http-version' => 'HTTP/1.1',
-			'code' => '200',
+			'code' => $code,
 			'reason-phrase' => $msg
 		);
 		$this->assertEquals($expected, $response['status']);
