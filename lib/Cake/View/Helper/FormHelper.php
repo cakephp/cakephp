@@ -436,6 +436,7 @@ class FormHelper extends AppHelper {
 		$this->requestType = strtolower($options['type']);
 
 		$action = $this->url($options['action']);
+		$this->_lastAction($options['action']);
 		unset($options['type'], $options['action']);
 
 		if (!$options['default']) {
@@ -465,13 +466,6 @@ class FormHelper extends AppHelper {
 		if ($model !== false) {
 			$this->setEntity($model, true);
 			$this->_introspectModel($model, 'fields');
-		}
-
-		$this->_lastAction = $action;
-		if (strpos($action, '://')) {
-			$query = parse_url($action, PHP_URL_QUERY);
-			$query = $query ? '?' . $query : '';
-			$this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
 		}
 
 		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
@@ -1828,7 +1822,7 @@ class FormHelper extends AppHelper {
 			unset($options['target']);
 		}
 
-		$this->_lastAction = $formUrl;
+		$this->_lastAction($url);
 
 		$out = $this->Html->useTag('form', $formUrl, $formOptions);
 		$out .= $this->Html->useTag('hidden', '_method', array(
@@ -3005,6 +2999,19 @@ class FormHelper extends AppHelper {
 			}
 		}
 		return null;
+	}
+
+/**
+ * Sets the last created form action.
+ *
+ * @var mixed
+ * @return void
+ */
+	protected function _lastAction($url) {
+		$action = Router::url($url, true);
+		$query = parse_url($action, PHP_URL_QUERY);
+		$query = $query ? '?' . $query : '';
+		$this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
 	}
 
 /**

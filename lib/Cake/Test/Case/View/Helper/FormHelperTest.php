@@ -1418,6 +1418,39 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that URL, HTML and identifer show up in their hashs.
+ *
+ * @return void
+ */
+	public function testSecuredFormUrlHasHtmlAndIdentifer() {
+		$this->Form->request['_Token'] = array('key' => 'testKey');
+
+		$expected = 'ece0693fb1b19ca116133db1832ac29baaf41ce5%3A';
+		$this->Form->create('Address', array(
+			'url' => array(
+				'controller' => 'articles',
+				'action' => 'view',
+				'?' => array(
+					'page' => 1,
+					'limit' => 10,
+					'html' => '<>"',
+				),
+				'#' => 'result',
+			),
+		));
+		$result = $this->Form->secure();
+		$this->assertContains($expected, $result);
+
+		$this->Form->create('Address', array('url' => 'http://localhost/articles/view?page=1&limit=10&html=%3C%3E%22#result'));
+		$result = $this->Form->secure();
+		$this->assertContains($expected, $result, 'Full URL should only use path and query.');
+
+		$this->Form->create('Address', array('url' => '/articles/view?page=1&limit=10&html=%3C%3E%22#result'));
+		$result = $this->Form->secure();
+		$this->assertContains($expected, $result, 'URL path + query should work.');
+	}
+
+/**
  * testDisableSecurityUsingForm method
  *
  * @return void
