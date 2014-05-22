@@ -1,9 +1,5 @@
 <?php
 /**
- * CakeTestCaseTest file
- *
- * Test Case for CakeTestCase class
- *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -183,8 +179,6 @@ class TestCaseTest extends TestCase {
  * @return void
  */
 	public function testLoadFixturesOnDemand() {
-		$this->markTestIncomplete('Cannot work until fixtures are fixed');
-
 		$test = new FixturizedTestCase('testFixtureLoadOnDemand');
 		$test->autoFixtures = false;
 		$manager = $this->getMock('Cake\TestSuite\Fixture\FixtureManager');
@@ -193,40 +187,6 @@ class TestCaseTest extends TestCase {
 		$manager->expects($this->once())->method('loadSingle');
 		$result = $test->run();
 		$this->assertEquals(0, $result->errorCount());
-	}
-
-/**
- * testLoadFixturesOnDemand
- *
- * @return void
- */
-	public function testUnoadFixturesAfterFailure() {
-		$this->markTestIncomplete('Cannot work until fixtures are fixed');
-		$test = new FixturizedTestCase('testFixtureLoadOnDemand');
-		$test->autoFixtures = false;
-		$manager = $this->getMock('Cake\TestSuite\Fixture\FixtureManager');
-		$manager->fixturize($test);
-		$test->fixtureManager = $manager;
-		$manager->expects($this->once())->method('loadSingle');
-		$result = $test->run();
-		$this->assertEquals(0, $result->errorCount());
-	}
-
-/**
- * testThrowException
- *
- * @return void
- */
-	public function testThrowException() {
-		$this->markTestIncomplete('Cannot work until fixtures are fixed');
-		$test = new FixturizedTestCase('testThrowException');
-		$test->autoFixtures = false;
-		$manager = $this->getMock('Cake\TestSuite\Fixture\FixtureManager');
-		$manager->fixturize($test);
-		$test->fixtureManager = $manager;
-		$manager->expects($this->once())->method('unload');
-		$result = $test->run();
-		$this->assertEquals(1, $result->errorCount());
 	}
 
 /**
@@ -235,7 +195,6 @@ class TestCaseTest extends TestCase {
  * @return void
  */
 	public function testSkipIf() {
-		$this->markTestIncomplete('Cannot work until fixtures are fixed');
 		$test = new FixturizedTestCase('testSkipIfTrue');
 		$result = $test->run();
 		$this->assertEquals(1, $result->skippedCount());
