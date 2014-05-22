@@ -1,10 +1,17 @@
-
-VERSION=""
+VERSION=
 REMOTE="origin"
 
+# Use the version number to figure out if the release
+# is a pre-release
+PRERELEASE=$(shell echo $(VERSION) | grep -E 'dev|rc|alpha|beta' --quiet && echo 'true' || echo 'false')
+
+# Github settings
+UPLOAD_HOST=https://uploads.github.com
+API_HOST=https://api.github.com
+GITHUB_USER=
 
 ALL: help
-.PHONY: help install test bump-version tag-version
+.PHONY: help install test need-version bump-version tag-version
 
 help:
 	@echo "CakePHP Makefile"
@@ -34,13 +41,14 @@ install: composer.phar
 test: install
 	vendor/bin/phpunit
 
-# Update VERSION.txt to new version.
-bump-version:
-	@if [ $(VERSION) = "" ]; \
-	then \
-		echo "You must specify a version to bump to."; \
+guard-%:
+	@if [ "$($*)" = '' ]; then \
+		echo "Missing required $* variable."; \
 		exit 1; \
 	fi;
+
+# Update VERSION.txt to new version.
+bump-version: guard-VERSION
 	@echo "Update VERSION.txt to $(VERSION)"
 	# Work around bash being bad.
 	mv VERSION.txt VERSION.old
@@ -50,7 +58,7 @@ bump-version:
 	git commit -m "Update version number to $(VERSION)"
 
 # Tag a release
-tag-release: bump-version
+tag-release: guard-VERSION bump-version
 	@echo "Tagging $(VERSION)"
 	git tag -s $(VERSION) -m "CakePHP $(VERSION)"
 	git push $(REMOTE)
@@ -71,21 +79,16 @@ build/app:
 	fi;
 	git clone git@github.com:cakephp/app.git build/app
 
-tag-app: build/app
-	@if [ $(VERSION) = "" ]; \
-	then \
-		echo "You must specify a version to tag."; \
-		exit 1; \
-	fi;
+tag-app: guard-VERSION build/app
 	@echo "Tagging new version of application skeleton"
 	cd build/app && git tag -s $(VERSION) -m "CakePHP App $(VERSION)"
 	cd build/app && git push $(REMOTE)
 	cd build/app && git push $(REMOTE) --tags
 
 # Easier to type alias for zip balls
-package: dist/cakephp-$(VERSION).zip
+package: tag-app dist/cakephp-$(VERSION).zip
 
-dist/cakephp-$(VERSION).zip: composer.phar tag-app
+dist/cakephp-$(VERSION).zip: composer.phar
 	@if [ ! -d dist ]; \
 	then \
 		mkdir dist; \
@@ -102,6 +105,24 @@ dist/cakephp-$(VERSION).zip: composer.phar tag-app
 # Tasks to publish zipballs to github.
 .PHONY: publish
 
-publish: dist/cakephp-$(VERSION).zip
-	@echo "Publishing zipball for $(VERSION)"
-
+publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(VERSION).zip
+	@echo "Creating draft release for $(VERSION). prerelease=$(PRERELEASE)"
+	curl -u $(GITHUB_USER) -p -XPOST $(API_HOST)/repos/cakephp/cakephp/releases -d '{ \
+		"tag_name": "$(VERSION)", \
+		"target_commitish": "3.0", \
+		"name": "CakePHP $(VERSION) released", \
+		"draft": true, \
+		"prerelease": $(PRERELEASE) \
+	}' > release.json
+	# Extract id out of response json.
+	php -r '$$f = file_get_contents("./release.json"); \
+		$$d = json_decode($$f, true); \
+		file_put_contents("./id.txt", $$d["id"]);'
+	@echo "Uploading zip file to github."
+	curl -u $(GITHUB_USER) -p -XPOST \
+		$(UPLOAD_HOST)/repos/cakephp/cakephp/releases/`cat ./id.txt`/assets?name=cakephp-$(VERSION).zip \
+		-H 'Content-Type: application/zip' \
+		-d '@dist/cakephp-$(VERSION).zip'
+	# Cleanup files.
+	rm release.json
+	rm id.txt
