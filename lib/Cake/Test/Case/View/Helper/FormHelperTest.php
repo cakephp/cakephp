@@ -1418,6 +1418,55 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Ensure named parameters work correctly with hash generation.
+ *
+ * @return void
+ */
+	public function testSecuredFormUrlWorksWithNamedParameter() {
+		$this->Form->request['_Token'] = array('key' => 'testKey');
+
+		$expected = 'c890c5f041b1d83d1610dee8f52cd257df7ce618%3A';
+		$this->Form->create('Address', array(
+			'url' => array('controller' => 'articles', 'action' => 'view', 1, 'type' => 'red')
+		));
+		$result = $this->Form->secure();
+		$this->assertContains($expected, $result);
+	}
+
+/**
+ * Test that URL, HTML and identifer show up in their hashs.
+ *
+ * @return void
+ */
+	public function testSecuredFormUrlHasHtmlAndIdentifer() {
+		$this->Form->request['_Token'] = array('key' => 'testKey');
+
+		$expected = 'ece0693fb1b19ca116133db1832ac29baaf41ce5%3A';
+		$this->Form->create('Address', array(
+			'url' => array(
+				'controller' => 'articles',
+				'action' => 'view',
+				'?' => array(
+					'page' => 1,
+					'limit' => 10,
+					'html' => '<>"',
+				),
+				'#' => 'result',
+			),
+		));
+		$result = $this->Form->secure();
+		$this->assertContains($expected, $result);
+
+		$this->Form->create('Address', array('url' => 'http://localhost/articles/view?page=1&limit=10&html=%3C%3E%22#result'));
+		$result = $this->Form->secure();
+		$this->assertContains($expected, $result, 'Full URL should only use path and query.');
+
+		$this->Form->create('Address', array('url' => '/articles/view?page=1&limit=10&html=%3C%3E%22#result'));
+		$result = $this->Form->secure();
+		$this->assertContains($expected, $result, 'URL path + query should work.');
+	}
+
+/**
  * testDisableSecurityUsingForm method
  *
  * @return void
