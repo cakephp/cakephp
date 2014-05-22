@@ -18,8 +18,11 @@ help:
 	@echo "================"
 	@echo ""
 	@echo "release"
-	@echo "  Create a new release of CakePHP. Requires the VERSION parameter."
+	@echo "  Create a new release of CakePHP. Requires the VERSION and GITHUB_USER parameter."
 	@echo "  Packages up a new app skeleton tarball and uploads it to github."
+	@echo ""
+	@echo "package"
+	@echo "  Build the app package with all its dependencies."
 	@echo ""
 	@echo "publish"
 	@echo "  Publish the dist/cakephp-VERSION.zip to github."
@@ -103,7 +106,7 @@ dist/cakephp-$(VERSION).zip: composer.phar
 
 
 # Tasks to publish zipballs to github.
-.PHONY: publish
+.PHONY: publish release
 
 publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(VERSION).zip
 	@echo "Creating draft release for $(VERSION). prerelease=$(PRERELEASE)"
@@ -126,3 +129,6 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(VERSION).zip
 	# Cleanup files.
 	rm release.json
 	rm id.txt
+
+# Top level alias for doing a release.
+release: guard-VERSION guard-GITHUB_USER package publish
