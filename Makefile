@@ -57,7 +57,7 @@ install: composer.phar
 # Update VERSION.txt to new version.
 bump-version: guard-VERSION
 	@echo "Update VERSION.txt to $(VERSION)"
-	# Work around bash being bad.
+	# Work around sed being bad.
 	mv VERSION.txt VERSION.old
 	cat VERSION.old | sed s'/^[0-9]\.[0-9]\.[0-9].*/$(VERSION)/' > VERSION.txt
 	rm VERSION.old
