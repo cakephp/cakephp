@@ -42,3 +42,11 @@ bump-version:
 	mv VERSION.txt VERSION.old
 	cat VERSION.old | sed s'/^[0-9]\.[0-9]\.[0-9].*/$(VERSION)/' > VERSION.txt
 	rm VERSION.old
+	git add VERSION.txt
+	git commit -m "Update version number to $(VERSION)"
+
+# Tag a release
+tag-release: bump-version
+	git tag -s $(VERSION) -m "CakePHP $(VERSION)"
+	git push origin
+	git push origin --tags
