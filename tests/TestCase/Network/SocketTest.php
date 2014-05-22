@@ -383,8 +383,8 @@ class SocketTest extends TestCase {
 			)
 		);
 		try {
-		$this->Socket = new Socket($config);
-		$this->Socket->connect();
+			$this->Socket = new Socket($config);
+			$this->Socket->connect();
 		} catch (SocketException $e) {
 			$this->markTestSkipped('No network, skipping test.');
 		}
