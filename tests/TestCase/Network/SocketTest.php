@@ -1,7 +1,5 @@
 <?php
 /**
- * SocketTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -17,6 +15,7 @@
 namespace Cake\Test\TestCase\Network;
 
 use Cake\Network\Socket;
+use Cake\Network\Error\SocketException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -383,8 +382,12 @@ class SocketTest extends TestCase {
 				'ssl' => array('capture_peer' => true)
 			)
 		);
+		try {
 		$this->Socket = new Socket($config);
 		$this->Socket->connect();
+		} catch (SocketException $e) {
+			$this->markTestSkipped('No network, skipping test.');
+		}
 		$result = $this->Socket->context();
 		$this->assertEquals($config['context'], $result);
 	}
