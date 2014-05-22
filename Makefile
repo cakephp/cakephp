@@ -58,17 +58,18 @@ tag-release: bump-version
 
 # Tasks for tagging the app skeletong and
 # creating a zipball of a fully built app skeleton.
-.PHONY: clean tag-app build-app
+.PHONY: clean tag-app build-app package
 
 clean:
 	rm -rf build
 	rm -rf dist
 
-tag-app: composer.phar dist/cakephp-$(VERSION).zip
-
 build/app:
-	mkdir build
-	git clone git@github.com/cakephp/app.git build/app
+	@if [ ! -d build ]; \
+	then \
+		mkdir build; \
+	fi;
+	git clone git@github.com:cakephp/app.git build/app
 
 tag-app: build/app
 	@if [ $(VERSION) = "" ]; \
@@ -81,17 +82,26 @@ tag-app: build/app
 	cd build/app && git push $(REMOTE)
 	cd build/app && git push $(REMOTE) --tags
 
-dist/cakephp-$(VERSION).zip: clean composer.phar tag-app
+# Easier to type alias for zip balls
+package: dist/cakephp-$(VERSION).zip
+
+dist/cakephp-$(VERSION).zip: composer.phar tag-app
+	@if [ ! -d dist ]; \
+	then \
+		mkdir dist; \
+	fi;
 	@echo "Installing app dependencies with composer"
 	cd build/app && php ../../composer.phar install
 	# Make a zipball of all the files that are not in .git dirs
 	# Including .git will make zip balls huge, and the zipball is
 	# intended for quick start non-git, non-cli users
 	@echo "Building zipball for $(VERSION)"
-	cd build/app && find . -path '.git' -prune | zip dist/cakephp-$(VERSION).zip -@
+	find build/app -not -path '*.git*' | zip dist/cakephp-$(VERSION).zip -@
+
 
 # Tasks to publish zipballs to github.
 .PHONY: publish
 
 publish: dist/cakephp-$(VERSION).zip
 	@echo "Publishing zipball for $(VERSION)"
+
