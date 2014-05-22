@@ -1,6 +1,3 @@
-VERSION=
-REMOTE="origin"
-
 # Use the version number to figure out if the release
 # is a pre-release
 PRERELEASE=$(shell echo $(VERSION) | grep -E 'dev|rc|alpha|beta' --quiet && echo 'true' || echo 'false')
@@ -8,9 +5,8 @@ PRERELEASE=$(shell echo $(VERSION) | grep -E 'dev|rc|alpha|beta' --quiet && echo
 # Github settings
 UPLOAD_HOST=https://uploads.github.com
 API_HOST=https://api.github.com
-GITHUB_USER=
-GITHUB_PASS=
 OWNER='cakephp'
+REMOTE="origin"
 
 ALL: help
 .PHONY: help install test need-version bump-version tag-version
@@ -141,4 +137,4 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(VERSION).zip
 	rm id.txt
 
 # Top level alias for doing a release.
-release: guard-VERSION guard-GITHUB_USER package publish
+release: guard-VERSION guard-GITHUB_USER tag-release package publish
