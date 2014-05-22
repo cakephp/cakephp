@@ -1,9 +1,10 @@
 
-VERSION="unset"
+VERSION=""
+REMOTE="origin"
 
 
 ALL: help
-.PHONY: help
+.PHONY: help install test bump-version tag-version
 
 help:
 	@echo "CakePHP Makefile"
@@ -33,11 +34,12 @@ test: install
 
 # Update VERSION.txt to new version.
 bump-version:
-	@if [ $(VERSION) = "unset" ]; \
+	@if [ $(VERSION) = "" ]; \
 	then \
 		echo "You must specify a version to bump to."; \
 		exit 1; \
 	fi;
+	@echo "Update VERSION.txt to $(VERSION)"
 	# Work around bash being bad.
 	mv VERSION.txt VERSION.old
 	cat VERSION.old | sed s'/^[0-9]\.[0-9]\.[0-9].*/$(VERSION)/' > VERSION.txt
@@ -47,6 +49,7 @@ bump-version:
 
 # Tag a release
 tag-release: bump-version
+	@echo "Tagging $(VERSION)"
 	git tag -s $(VERSION) -m "CakePHP $(VERSION)"
-	git push origin
-	git push origin --tags
+	git push $(REMOTE)
+	git push $(REMOTE) --tags
