@@ -9,6 +9,8 @@ PRERELEASE=$(shell echo $(VERSION) | grep -E 'dev|rc|alpha|beta' --quiet && echo
 UPLOAD_HOST=https://uploads.github.com
 API_HOST=https://api.github.com
 GITHUB_USER=
+GITHUB_PASS=
+OWNER='cakephp'
 
 ALL: help
 .PHONY: help install test need-version bump-version tag-version
@@ -80,7 +82,7 @@ build/app:
 	then \
 		mkdir build; \
 	fi;
-	git clone git@github.com:cakephp/app.git build/app
+	git clone git@github.com:$(OWNER)/app.git build/app
 
 tag-app: guard-VERSION build/app
 	@echo "Tagging new version of application skeleton"
@@ -110,9 +112,8 @@ dist/cakephp-$(VERSION).zip: composer.phar
 
 publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(VERSION).zip
 	@echo "Creating draft release for $(VERSION). prerelease=$(PRERELEASE)"
-	curl -u $(GITHUB_USER) -p -XPOST $(API_HOST)/repos/cakephp/cakephp/releases -d '{ \
+	curl -u $(GITHUB_USER) -p$(GITHUB_PASS) -XPOST $(API_HOST)/repos/$(OWNER)/cakephp/releases -d '{ \
 		"tag_name": "$(VERSION)", \
-		"target_commitish": "3.0", \
 		"name": "CakePHP $(VERSION) released", \
 		"draft": true, \
 		"prerelease": $(PRERELEASE) \
@@ -122,8 +123,8 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(VERSION).zip
 		$$d = json_decode($$f, true); \
 		file_put_contents("./id.txt", $$d["id"]);'
 	@echo "Uploading zip file to github."
-	curl -u $(GITHUB_USER) -p -XPOST \
-		$(UPLOAD_HOST)/repos/cakephp/cakephp/releases/`cat ./id.txt`/assets?name=cakephp-$(VERSION).zip \
+	curl -u $(GITHUB_USER) -p$(GITHUB_PASS) -XPOST \
+		$(UPLOAD_HOST)/repos/$(OWNER)/cakephp/releases/`cat ./id.txt`/assets?name=cakephp-$(VERSION).zip \
 		-H 'Content-Type: application/zip' \
 		-d '@dist/cakephp-$(VERSION).zip'
 	# Cleanup files.
