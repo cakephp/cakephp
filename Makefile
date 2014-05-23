@@ -82,10 +82,7 @@ clean:
 	rm -rf dist
 
 build/app:
-	@if [ ! -d build ]; \
-	then \
-		mkdir build; \
-	fi;
+	mkdir -p build
 	git clone git@github.com:$(OWNER)/app.git build/app
 
 tag-app: guard-VERSION build/app
@@ -95,10 +92,7 @@ tag-app: guard-VERSION build/app
 	cd build/app && git push $(REMOTE) --tags
 
 dist/cakephp-$(VERSION).zip: composer.phar
-	@if [ ! -d dist ]; \
-	then \
-		mkdir dist; \
-	fi;
+	mkdir -p dist
 	@echo "Installing app dependencies with composer"
 	cd build/app && php ../../composer.phar install
 	# Make a zipball of all the files that are not in .git dirs
