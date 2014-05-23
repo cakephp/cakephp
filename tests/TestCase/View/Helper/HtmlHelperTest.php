@@ -1,7 +1,5 @@
 <?php
 /**
- * HtmlHelperTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -1514,6 +1512,12 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->meta('robots', 'ALL');
 		$this->assertTags($result, array('meta' => array('name' => 'robots', 'content' => 'ALL')));
+
+		$result = $this->Html->meta('viewport', 'width=device-width');
+		$expected = [
+			'meta' => ['name' => 'viewport', 'content' => 'width=device-width']
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**
