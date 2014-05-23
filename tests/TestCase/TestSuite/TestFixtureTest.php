@@ -234,7 +234,7 @@ class TestFixtureTest extends TestCase {
 
 		$query->expects($this->once())
 			->method('insert')
-			->with(['name', 'created'], ['string', 'datetime'])
+			->with(['name', 'created'], ['name' => 'string', 'created' => 'datetime'])
 			->will($this->returnSelf());
 
 		$query->expects($this->once())
@@ -285,7 +285,7 @@ class TestFixtureTest extends TestCase {
 
 		$query->expects($this->once())
 			->method('insert')
-			->with(['name', 'email', 'age'], ['string', 'string', 'integer'])
+			->with(['name', 'email', 'age'], ['name' => 'string', 'email' => 'string', 'age' => 'integer'])
 			->will($this->returnSelf());
 
 		$query->expects($this->once())

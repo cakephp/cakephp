@@ -43,7 +43,7 @@ class SqlserverSchemaTest extends TestCase {
  */
 	protected function _needsConnection() {
 		$config = ConnectionManager::config('test');
-		$this->skipIf(strpos($config['className'], 'Sqlserver') === false, 'Not using Sqlserver for test config');
+		$this->skipIf(strpos($config['driver'], 'Sqlserver') === false, 'Not using Sqlserver for test config');
 	}
 
 /**
@@ -290,7 +290,7 @@ SQL;
 				'type' => 'biginteger',
 				'null' => false,
 				'default' => null,
-				'length' => 20,
+				'length' => 19,
 				'precision' => null,
 				'unsigned' => null,
 				'autoIncrement' => null,
@@ -343,7 +343,7 @@ SQL;
 				'comment' => null,
 			],
 			'created' => [
-				'type' => 'datetime',
+				'type' => 'timestamp',
 				'null' => true,
 				'default' => null,
 				'length' => null,
@@ -489,7 +489,7 @@ SQL;
 			[
 				'img',
 				['type' => 'binary'],
-				'[img] BINARY'
+				'[img] VARBINARY(MAX)'
 			],
 			// Boolean
 			[
