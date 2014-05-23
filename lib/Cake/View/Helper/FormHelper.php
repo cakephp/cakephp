@@ -2091,7 +2091,11 @@ class FormHelper extends AppHelper {
 			) {
 				$this->_secure(true, $this->_secureFieldName($attributes));
 			}
-			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => null, 'value' => null)));
+			$filter = array('name' => null, 'value' => null);
+			if (is_array($attributes['disabled'])) {
+				$filter['disabled'] = null;
+			}
+			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, $filter));
 		}
 		$emptyMulti = (
 			$showEmpty !== null && $showEmpty !== false && !(

@@ -4939,7 +4939,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testSelectMultipleWithDisabledElements() {
 		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
-		$disabled = array(2, 3);
+		$disabled = array(1);
 		$result = $this->Form->select('Contact.multiple', $options, array('multiple' => 'multiple', 'disabled' => $disabled));
 		$expected = array(
 			'input' => array(
@@ -4948,13 +4948,13 @@ class FormHelperTest extends CakeTestCase {
 			'select' => array(
 				'name' => 'data[Contact][multiple][]', 'multiple' => 'multiple', 'id' => 'ContactMultiple'
 			),
-			array('option' => array('value' => '1')),
+			array('option' => array('value' => '1', 'disabled' => 'disabled')),
 			'One',
 			'/option',
-			array('option' => array('value' => '2', 'disabled' => 'disabled')),
+			array('option' => array('value' => '2')),
 			'Two',
 			'/option',
-			array('option' => array('value' => '3', 'disabled' => 'disabled')),
+			array('option' => array('value' => '3')),
 			'Three',
 			'/option',
 			array('option' => array('value' => '3x')),
