@@ -485,4 +485,14 @@ class SessionTest extends TestCase {
 		$this->assertNull($session->readFlash('foo'));
 	}
 
+/**
+ * Tests that the cookie name can be changed with configuration
+ *
+ * @return void
+ */
+	public function testSessionName() {
+		new Session(['cookie' => 'made_up_name']);
+		$this->assertEquals('made_up_name', session_name());
+	}
+
 }
