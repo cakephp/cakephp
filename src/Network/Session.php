@@ -349,6 +349,10 @@ class Session {
 		if ($this->_hasSession() && !$this->started()) {
 			$this->start();
 		}
+		
+		if (!isset($_SESSION)) {
+			return null;
+		}		
 
 		return Hash::get($_SESSION, $name) !== null;
 	}
