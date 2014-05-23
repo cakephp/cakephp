@@ -489,7 +489,7 @@ SQL;
 			[
 				'img',
 				['type' => 'binary'],
-				'[img] BINARY'
+				'[img] VARBINARY(MAX)'
 			],
 			// Boolean
 			[

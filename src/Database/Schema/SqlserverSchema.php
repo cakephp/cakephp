@@ -291,7 +291,7 @@ class SqlserverSchema extends BaseSchema {
 			'integer' => ' INTEGER',
 			'biginteger' => ' BIGINT',
 			'boolean' => ' BIT',
-			'binary' => ' BINARY',
+			'binary' => ' VARBINARY(MAX)',
 			'float' => ' FLOAT',
 			'decimal' => ' DECIMAL',
 			'text' => ' NVARCHAR(MAX)',
