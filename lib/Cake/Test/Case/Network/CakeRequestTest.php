@@ -2114,6 +2114,31 @@ class CakeRequestTest extends CakeTestCase {
 		);
 	}
 
+	public function testParamWriting() {
+		$request = new CakeRequest('/');
+		$request->addParams(array(
+			'action' => 'index',
+		));
+
+		$this->assertInstanceOf('CakeRequest', $request->param('some', 'thing'), 'Method has not returned $this');
+
+		$request->param('Post.null', null);
+		$this->assertNull($request->params['Post']['null']);
+
+		$request->param('Post.false', false);
+		$this->assertFalse($request->params['Post']['false']);
+
+		$request->param('Post.zero', 0);
+		$this->assertSame(0, $request->params['Post']['zero']);
+
+		$request->param('Post.empty', '');
+		$this->assertSame('', $request->params['Post']['empty']);
+
+		$this->assertSame('index', $request->action);
+		$request->param('action', 'edit');
+		$this->assertSame('edit', $request->action);
+	}
+
 /**
  * Test accept language
  *
