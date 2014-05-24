@@ -81,9 +81,14 @@ clean:
 	rm -rf build
 	rm -rf dist
 
-build/app:
+build:
 	mkdir -p build
-	git clone git@github.com:$(OWNER)/app.git build/app
+
+build/app: build
+	git clone git@github.com:$(OWNER)/app.git build/app/
+
+build/cakephp: build
+	git checkout-index -a -f --prefix=build/cakephp/
 
 tag-app: guard-VERSION build/app
 	@echo "Tagging new version of application skeleton"
@@ -91,15 +96,20 @@ tag-app: guard-VERSION build/app
 	cd build/app && git push $(REMOTE)
 	cd build/app && git push $(REMOTE) --tags
 
-dist/cakephp-$(VERSION).zip: composer.phar
+dist/cakephp-$(VERSION).zip: build/app build/cakephp composer.phar
 	mkdir -p dist
 	@echo "Installing app dependencies with composer"
+	# Install deps with composer
 	cd build/app && php ../../composer.phar install
+	# Copy the current cakephp libs up so we don't have to wait
+	# for packagist to refresh.
+	rm -rf build/app/vendor/cakephp/cakephp
+	cp -r build/cakephp build/app/vendor/cakephp/cakephp
 	# Make a zipball of all the files that are not in .git dirs
 	# Including .git will make zip balls huge, and the zipball is
 	# intended for quick start non-git, non-cli users
 	@echo "Building zipball for $(VERSION)"
-	find build/app -not -path '*.git*' | zip dist/cakephp-$(VERSION).zip -@
+	cd build/app && find . -not -path '*.git*' | zip ../../dist/cakephp-$(VERSION).zip -@
 
 # Easier to type alias for zip balls
 package: tag-app dist/cakephp-$(VERSION).zip
