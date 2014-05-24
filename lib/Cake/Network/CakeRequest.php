@@ -875,7 +875,7 @@ class CakeRequest implements ArrayAccess {
  */
 	public function param($name) {
 		if (!isset($this->params[$name])) {
-			return Hash::get($this->params, $name);
+			return Hash::get($this->params, $name, false);
 		}
 		return $this->params[$name];
 	}

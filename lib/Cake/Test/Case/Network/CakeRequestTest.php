@@ -1996,26 +1996,6 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
- * Test using param()
- *
- * @return void
- */
-	public function testReadingParams() {
-		$request = new CakeRequest();
-		$request->addParams(array(
-			'controller' => 'posts',
-			'admin' => true,
-			'truthy' => 1,
-			'zero' => '0',
-		));
-		$this->assertFalse($request->param('not_set'));
-		$this->assertTrue($request->param('admin'));
-		$this->assertEquals(1, $request->param('truthy'));
-		$this->assertEquals('posts', $request->param('controller'));
-		$this->assertEquals('0', $request->param('zero'));
-	}
-
-/**
  * Test the data() method reading
  *
  * @return void
@@ -2075,6 +2055,63 @@ class CakeRequestTest extends CakeTestCase {
 
 		$request->data('Post.empty', '');
 		$this->assertSame('', $request->data['Post']['empty']);
+	}
+
+/**
+ * @dataProvider paramReadingDataProvider
+ */
+	public function testParamReading($toRead, $expected) {
+		$request = new CakeRequest('/');
+		$request->addParams(array(
+			'action' => 'index',
+			'foo' => 'bar',
+			'baz' => array(
+				'a' => array(
+					'b' => 'c',
+				),
+			),
+			'admin' => true,
+			'truthy' => 1,
+			'zero' => '0',
+		));
+		$this->assertEquals($expected, $request->param($toRead));
+	}
+
+	public function paramReadingDataProvider() {
+		return array(
+			array(
+				'action',
+				'index',
+			),
+			array(
+				'baz',
+				array(
+					'a' => array(
+						'b' => 'c',
+					),
+				),
+			),
+			array(
+				'baz.a.b',
+				'c',
+			),
+			array(
+				'does_not_exist',
+				false,
+			),
+			array(
+				'admin',
+				true,
+			),
+			array(
+				'truthy',
+				1,
+			),
+			array(
+				'zero',
+				'0',
+			),
+		);
 	}
 
 /**
