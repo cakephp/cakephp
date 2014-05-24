@@ -142,8 +142,8 @@ class Model extends Object implements CakeEventListener {
  *
  * {{{
  * public $validate = array(
- *     'age' => array(
- *         'rule' => array('between', 5, 25)
+ *     'length' => array(
+ *         'rule' => array('lengthBetween', 5, 25)
  *     )
  * );
  * }}}
@@ -171,9 +171,9 @@ class Model extends Object implements CakeEventListener {
  *
  * {{{
  * public $validate = array(
- *     'age' => array(
- *         'rule' => array('between', 5, 25),
- *         'message' => array('The age must be between %d and %d.')
+ *     'length' => array(
+ *         'rule' => array('lengthBetween', 5, 15),
+ *         'message' => array('Between %d to %d characters')
  *     )
  * );
  * }}}

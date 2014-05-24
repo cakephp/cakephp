@@ -539,7 +539,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  *			->add('user_id', 'valid', array('rule' => 'numeric', 'message' => 'Invalid User'))
  *
  *		$validator->add('password', array(
- *			'size' => array('rule' => array('between', 8, 20)),
+ *			'size' => array('rule' => array('lengthBetween', 8, 20)),
  *			'hasSpecialCharacter' => array('rule' => 'validateSpecialchar', 'message' => 'not valid')
  *		));
  * }}}
