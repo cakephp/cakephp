@@ -476,6 +476,23 @@ class SelectBoxTest extends TestCase {
 			'/select'
 		];
 		$this->assertTags($result, $expected);
+
+		$select = new SelectBox($this->templates);
+		$data = [
+			'disabled' => [1],
+			'name' => 'numbers',
+			'options' => ['1' => 'One', '2' => 'Two'],
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => [
+				'name' => 'numbers',
+			],
+			['option' => ['value' => '1', 'disabled' => 'disabled']], 'One', '/option',
+			['option' => ['value' => '2']], 'Two', '/option',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**
