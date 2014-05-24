@@ -214,6 +214,7 @@ class HtmlHelper extends Helper {
 			'keywords' => array('name' => 'keywords', 'content' => $content),
 			'description' => array('name' => 'description', 'content' => $content),
 			'robots' => array('name' => 'robots', 'content' => $content),
+			'viewport' => array('name' => 'viewport', 'content' => $content),
 		);
 
 		if ($type === 'icon' && $content === null) {
