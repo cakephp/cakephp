@@ -193,7 +193,7 @@ class TestFixture {
 			throw new Error\Exception('Cannot import from undefined table.');
 		}
 
-		$db = ConnectionManager::get($import['connection']);
+		$db = ConnectionManager::get($import['connection'], false);
 		$schemaCollection = $db->schemaCollection();
 		$table = $schemaCollection->describe($import['table']);
 		$this->_schema = $table;
