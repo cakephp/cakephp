@@ -111,7 +111,6 @@ class ImportFixture extends TestFixture {
  */
 	public $import = ['table' => 'posts', 'connection' => 'test'];
 
-
 /**
  * Records property
  *
@@ -279,11 +278,11 @@ class TestFixtureTest extends TestCase {
 		$this->assertSame($statement, $fixture->insert($db));
 	}
 
-	/**
-	 * test the insert method
-	 *
-	 * @return void
-	 */
+/**
+ * test the insert method
+ *
+ * @return void
+ */
 	public function testInsertImport() {
 		$fixture = new ImportFixture();
 
