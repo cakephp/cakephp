@@ -966,7 +966,10 @@ class Request implements \ArrayAccess {
 			$this->data = Hash::insert($this->data, $name, $args[1]);
 			return $this;
 		}
-		return Hash::get($this->data, $name);
+		if ($name !== null) {
+			return Hash::get($this->data, $name);
+		}
+		return $this->data;
 	}
 
 /**

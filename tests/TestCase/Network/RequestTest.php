@@ -1991,6 +1991,9 @@ class RequestTest extends TestCase {
 		$result = $request->data('Model');
 		$this->assertEquals($post['Model'], $result);
 
+		$result = $request->data();
+		$this->assertEquals($post, $result);
+
 		$result = $request->data('Model.imaginary');
 		$this->assertNull($result);
 	}

@@ -32,13 +32,13 @@ class Hash {
  * but is faster for simple read operations.
  *
  * @param array $data Array of data to operate on.
- * @param string|array|null $path The path being searched for. Either a dot
+ * @param string|array $path The path being searched for. Either a dot
  *   separated string, or an array of path segments, or null.
  * @param mixed $default The return value when the path does not exist
  * @return mixed The value fetched from the array, or null.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::get
  */
-	public static function get(array $data, $path = null, $default = null) {
+	public static function get(array $data, $path, $default = null) {
 		if (empty($data)) {
 			return $default;
 		}
@@ -54,14 +54,11 @@ class Hash {
 		} else {
 			$parts = $path;
 		}
-
-		if ($path !== null) {
-			foreach ($parts as $key) {
-				if (is_array($data) && isset($data[$key])) {
-					$data =& $data[$key];
-				} else {
-					return $default;
-				}
+		foreach ($parts as $key) {
+			if (is_array($data) && isset($data[$key])) {
+				$data =& $data[$key];
+			} else {
+				return $default;
 			}
 		}
 		return $data;
