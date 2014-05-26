@@ -191,6 +191,8 @@ class TestFixture {
 
 		if (empty($import['table'])) {
 			throw new Error\Exception('Cannot import from undefined table.');
+		} else {
+			$this->table = $import['table'];
 		}
 
 		$db = ConnectionManager::get($import['connection'], false);
@@ -297,8 +299,9 @@ class TestFixture {
  */
 	protected function _getRecords() {
 		$fields = $values = $types = [];
+		$columns = $this->_schema->columns();
 		foreach ($this->records as $record) {
-			$fields = array_merge($fields, array_keys(array_intersect_key($record, $this->fields)));
+			$fields = array_merge($fields, array_intersect(array_keys($record), $columns));
 		}
 		$fields = array_values(array_unique($fields));
 		foreach ($fields as $field) {

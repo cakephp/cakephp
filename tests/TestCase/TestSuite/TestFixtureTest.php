@@ -110,6 +110,16 @@ class ImportFixture extends TestFixture {
  * @var mixed
  */
 	public $import = ['table' => 'posts', 'connection' => 'test'];
+
+
+/**
+ * Records property
+ *
+ * @var array
+ */
+	public $records = array(
+		array('title' => 'Hello!', 'body' => 'Hello world!')
+	);
 }
 
 /**
@@ -258,6 +268,47 @@ class TestFixtureTest extends TestCase {
 		$query->expects($this->at(4))
 			->method('values')
 			->with($expected[2])
+			->will($this->returnSelf());
+
+		$statement = $this->getMock('\PDOStatement', ['closeCursor']);
+		$statement->expects($this->once())->method('closeCursor');
+		$query->expects($this->once())
+			->method('execute')
+			->will($this->returnValue($statement));
+
+		$this->assertSame($statement, $fixture->insert($db));
+	}
+
+	/**
+	 * test the insert method
+	 *
+	 * @return void
+	 */
+	public function testInsertImport() {
+		$fixture = new ImportFixture();
+
+		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$query = $this->getMock('Cake\Database\Query', [], [$db]);
+		$db->expects($this->once())
+			->method('newQuery')
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())
+			->method('insert')
+			->with(['title', 'body'], ['title' => 'string', 'body' => 'text'])
+			->will($this->returnSelf());
+
+		$query->expects($this->once())
+			->method('into')
+			->with('posts')
+			->will($this->returnSelf());
+
+		$expected = [
+			['title' => 'Hello!', 'body' => 'Hello world!'],
+		];
+		$query->expects($this->at(2))
+			->method('values')
+			->with($expected[0])
 			->will($this->returnSelf());
 
 		$statement = $this->getMock('\PDOStatement', ['closeCursor']);
