@@ -335,7 +335,6 @@ object(Cake\View\View) {
 	subDir => null
 	theme => null
 	cacheAction => false
-	validationErrors => []
 	hasRendered => false
 	uuids => []
 	request => object(Cake\Network\Request) {}

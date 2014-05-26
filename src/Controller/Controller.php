@@ -214,13 +214,6 @@ class Controller implements EventListener {
 	public $methods = array();
 
 /**
- * Holds any validation errors produced by the last call of the validateErrors() method/
- *
- * @var array
- */
-	public $validationErrors = null;
-
-/**
  * Instance of the Cake\Event\EventManager this controller is using
  * to dispatch inner events.
  *

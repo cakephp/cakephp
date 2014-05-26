@@ -193,13 +193,6 @@ class View {
 	public $cacheAction = false;
 
 /**
- * Holds current errors for the model validation.
- *
- * @var array
- */
-	public $validationErrors = array();
-
-/**
  * True when the view has been rendered.
  *
  * @var bool
