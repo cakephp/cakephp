@@ -1,7 +1,5 @@
 <?php
 /**
- * Cookie Component
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -71,6 +69,16 @@ class CookieComponent extends Component {
 	];
 
 /**
+ * Config specific to a given top level key name.
+ *
+ * The values in this array are merged with the general config
+ * to generate the configuration for a given top level cookie name.
+ *
+ * @var array
+ */
+	protected $_keyConfig = [];
+
+/**
  * Values stored in the cookie.
  *
  * Accessed in the controller using $this->Cookie->read('Name.key');
@@ -79,22 +87,6 @@ class CookieComponent extends Component {
  * @var string
  */
 	protected $_values = array();
-
-/**
- * Used to reset cookie time if $expire is passed to CookieComponent::write()
- *
- * @var string
- */
-	protected $_reset = null;
-
-/**
- * Expire time of the cookie
- *
- * This is controlled by CookieComponent::time;
- *
- * @var string
- */
-	protected $_expires = 0;
 
 /**
  * A reference to the Controller's Cake\Network\Response object
@@ -139,6 +131,27 @@ class CookieComponent extends Component {
 		} else {
 			$this->_response = new Response();
 		}
+	}
+
+/**
+ * Set the configuration for a specific top level key.
+ *
+ * @param string $keyname The top level keyname to configure.
+ * @param null|string|array $option Either the option name to set, or an array of options to set,
+ *   or null to read config options for a given key.
+ * @param string|null $value Either the value to set, or empty when $option is an array.
+ * @return void
+ */
+	public function configKey($keyname, $option = null, $value = null) {
+		if ($option === null) {
+			$default = $this->_config;
+			$local = isset($this->_keyConfig[$keyname]) ? $this->_keyConfig[$keyname] : [];
+			return $local + $default;
+		}
+		if (!is_array($option)) {
+			$option = [$option => $value];
+		}
+		$this->_keyConfig[$keyname] = $option;
 	}
 
 /**

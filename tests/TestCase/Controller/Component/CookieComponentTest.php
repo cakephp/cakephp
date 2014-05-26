@@ -1,7 +1,5 @@
 <?php
 /**
- * CookieComponentTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -69,6 +67,53 @@ class CookieComponentTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		$this->Cookie->destroy();
+	}
+
+/**
+ * Test setting config per key.
+ *
+ * @return void
+ */
+	public function testConfigKey() {
+		$this->Cookie->configKey('User', 'expires', '+3 days');
+		$result = $this->Cookie->configKey('User');
+		$expected = [
+			'expires' => '+3 days',
+			'path' => '/',
+			'domain' => '',
+			'key' => 'somerandomhaskeysomerandomhaskey',
+			'secure' => false,
+			'httpOnly' => false,
+			'encryption' => 'aes',
+			'name' => 'CakeTestCookie',
+			'time' => 10,
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test setting config per key.
+ *
+ * @return void
+ */
+	public function testConfigKeyArray() {
+		$this->Cookie->configKey('User', [
+			'expires' => '+3 days',
+			'path' => '/shop'
+		]);
+		$result = $this->Cookie->configKey('User');
+		$expected = [
+			'expires' => '+3 days',
+			'path' => '/shop',
+			'domain' => '',
+			'key' => 'somerandomhaskeysomerandomhaskey',
+			'secure' => false,
+			'httpOnly' => false,
+			'encryption' => 'aes',
+			'name' => 'CakeTestCookie',
+			'time' => 10,
+		];
+		$this->assertEquals($expected, $result);
 	}
 
 /**
