@@ -957,16 +957,19 @@ class Request implements \ArrayAccess {
  * You can write to any value, even paths/keys that do not exist, and the arrays
  * will be created for you.
  *
- * @param string $name,... Dot separated name of the value to read/write
+ * @param string|null $name Dot separated name of the value to read/write
  * @return mixed Either the value being read, or this so you can chain consecutive writes.
  */
-	public function data($name) {
+	public function data($name = null) {
 		$args = func_get_args();
 		if (count($args) === 2) {
 			$this->data = Hash::insert($this->data, $name, $args[1]);
 			return $this;
 		}
-		return Hash::get($this->data, $name);
+		if ($name !== null) {
+			return Hash::get($this->data, $name);
+		}
+		return $this->data;
 	}
 
 /**
