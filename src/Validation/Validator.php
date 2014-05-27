@@ -100,7 +100,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 				continue;
 			}
 
-			$result = $this->_processRules($field, $data[$name], $data, $newRecord);
+			$result = $this->_processRules($name, $field, $data, $newRecord);
 			if ($result) {
 				$errors[$name] = $result;
 			}
@@ -434,18 +434,19 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Iterates over each rule in the validation set and collects the errors resulting
  * from executing them
  *
+ * @param string $field The name of the field that is being processed
  * @param ValidationSet $rules the list of rules for a field
- * @param mixed $value The value to be checked
  * @param array $data the full data passed to the validator
  * @param bool $newRecord whether is it a new record or an existing one
  * @return array
  */
-	protected function _processRules(ValidationSet $rules, $value, $data, $newRecord) {
+	protected function _processRules($field, ValidationSet $rules, $data, $newRecord) {
+		$value = $data[$field];
 		$errors = [];
 		// Loading default provider in case there is none
 		$this->provider('default');
 		foreach ($rules as $name => $rule) {
-			$result = $rule->process($value, $this->_providers, compact('newRecord', 'data'));
+			$result = $rule->process($value, $this->_providers, compact('newRecord', 'data', 'field'));
 			if ($result === true) {
 				continue;
 			}

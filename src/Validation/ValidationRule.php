@@ -101,6 +101,7 @@ class ValidationRule {
  * - newRecord: (boolean) whether or not the data to be validated belongs to a
  *   new record
  * - data: The full data that was passed to the validation process
+ * - field: The name of the field that is being processed
  * @return bool|string
  * @throws \InvalidArgumentException when the supplied rule is not a valid
  * callable for the configured scope
