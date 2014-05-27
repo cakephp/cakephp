@@ -447,10 +447,21 @@ class ModelTask extends BakeTask {
 			$allowEmpty = true;
 		}
 
-		return [
-			'rule' => $rule,
-			'allowEmpty' => $allowEmpty,
+		$validation = [
+			'valid' => [
+				'rule' => $rule,
+				'allowEmpty' => $allowEmpty,
+			]
 		];
+
+		if (in_array($fieldName, ['email', 'username'])) {
+			$validation['unique'] = [
+				'rule' => 'validateUnique',
+				'provider' => 'table'
+			];
+		}
+
+		return $validation;
 	}
 
 /**
