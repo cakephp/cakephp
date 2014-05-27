@@ -436,6 +436,7 @@ class FormHelper extends AppHelper {
 		$this->requestType = strtolower($options['type']);
 
 		$action = $this->url($options['action']);
+		$this->_lastAction($options['action']);
 		unset($options['type'], $options['action']);
 
 		if (!$options['default']) {
@@ -465,13 +466,6 @@ class FormHelper extends AppHelper {
 		if ($model !== false) {
 			$this->setEntity($model, true);
 			$this->_introspectModel($model, 'fields');
-		}
-
-		$this->_lastAction = $action;
-		if (strpos($action, '://')) {
-			$query = parse_url($action, PHP_URL_QUERY);
-			$query = $query ? '?' . $query : '';
-			$this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
 		}
 
 		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
@@ -1799,7 +1793,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */
 	public function postLink($title, $url = null, $options = array(), $confirmMessage = false) {
-		$options += array('inline' => true, 'block' => null);
+		$options = (array)$options + array('inline' => true, 'block' => null);
 		if (!$options['inline'] && empty($options['block'])) {
 			$options['block'] = __FUNCTION__;
 		}
@@ -1828,7 +1822,7 @@ class FormHelper extends AppHelper {
 			unset($options['target']);
 		}
 
-		$this->_lastAction = $formUrl;
+		$this->_lastAction($url);
 
 		$out = $this->Html->useTag('form', $formUrl, $formOptions);
 		$out .= $this->Html->useTag('hidden', '_method', array(
@@ -2097,7 +2091,11 @@ class FormHelper extends AppHelper {
 			) {
 				$this->_secure(true, $this->_secureFieldName($attributes));
 			}
-			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => null, 'value' => null)));
+			$filter = array('name' => null, 'value' => null);
+			if (is_array($attributes['disabled'])) {
+				$filter['disabled'] = null;
+			}
+			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, $filter));
 		}
 		$emptyMulti = (
 			$showEmpty !== null && $showEmpty !== false && !(
@@ -3005,6 +3003,19 @@ class FormHelper extends AppHelper {
 			}
 		}
 		return null;
+	}
+
+/**
+ * Sets the last created form action.
+ *
+ * @var mixed
+ * @return void
+ */
+	protected function _lastAction($url) {
+		$action = Router::url($url, true);
+		$query = parse_url($action, PHP_URL_QUERY);
+		$query = $query ? '?' . $query : '';
+		$this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
 	}
 
 /**
