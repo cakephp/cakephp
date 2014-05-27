@@ -22,10 +22,10 @@ class FatalErrorException extends Exception {
 /**
  * Constructor
  *
- * @param string $message
- * @param int $code
- * @param string $file
- * @param int $line
+ * @param string $message Message string.
+ * @param int $code Code.
+ * @param string $file File name.
+ * @param int $line Line number.
  */
 	public function __construct($message, $code = 500, $file = null, $line = null) {
 		parent::__construct($message, $code);

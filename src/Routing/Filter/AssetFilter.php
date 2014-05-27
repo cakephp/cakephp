@@ -74,7 +74,7 @@ class AssetFilter extends DispatcherFilter {
 /**
  * Builds asset file path based off url
  *
- * @param string $url
+ * @param string $url Asset URL
  * @return string Absolute path for asset file
  */
 	protected function _getAssetFile($url) {

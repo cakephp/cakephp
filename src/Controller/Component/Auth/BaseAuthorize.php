@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -87,7 +86,7 @@ abstract class BaseAuthorize {
  * Checks user authorization.
  *
  * @param array $user Active user data
- * @param \Cake\Network\Request $request
+ * @param \Cake\Network\Request $request Request instance.
  * @return bool
  */
 	abstract public function authorize($user, Request $request);
@@ -115,8 +114,8 @@ abstract class BaseAuthorize {
  * that need to get information about the plugin, controller, and action being invoked.
  *
  * @param \Cake\Network\Request $request The request a path is needed for.
- * @param string $path
- * @return string the action path for the given request.
+ * @param string $path Path
+ * @return string The action path for the given request.
  */
 	public function action(Request $request, $path = '/:plugin/:controller/:action') {
 		$plugin = empty($request['plugin']) ? null : Inflector::camelize($request['plugin']) . '/';

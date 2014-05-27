@@ -31,8 +31,8 @@ class Collection extends IteratorIterator implements JsonSerializable {
 /**
  * Constructor. You can provide an array or any traversable object
  *
- * @param array|\Traversable $items
- * @throws InvalidArgumentException if passed incorrect type for items.
+ * @param array|\Traversable $items Items.
+ * @throws InvalidArgumentException If passed incorrect type for items.
  */
 	public function __construct($items) {
 		if (is_array($items)) {

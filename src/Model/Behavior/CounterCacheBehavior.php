@@ -91,7 +91,7 @@ class CounterCacheBehavior extends Behavior {
 /**
  * Constructor
  *
- * @param Table $table The table this behavior is attached to.
+ * @param \Cake\ORM\Table $table The table this behavior is attached to.
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
@@ -104,8 +104,8 @@ class CounterCacheBehavior extends Behavior {
  *
  * Makes sure to update counter cache when a new record is created or updated.
  *
- * @param Event $event
- * @param Entity $entity
+ * @param \Cake\Event\Event $event The afterSave event that was fired.
+ * @param \Cake\ORM\Entity $entity The entity that was saved.
  * @return void
  */
 	public function afterSave(Event $event, Entity $entity) {
@@ -117,8 +117,8 @@ class CounterCacheBehavior extends Behavior {
  *
  * Makes sure to update counter cache when a record is deleted.
  *
- * @param Event $event
- * @param Entity $entity
+ * @param \Cake\Event\Event $event The afterDelete event that was fired.
+ * @param \Cake\ORM\Entity $entity The entity that was deleted.
  * @return void
  */
 	public function afterDelete(Event $event, Entity $entity) {
@@ -128,8 +128,8 @@ class CounterCacheBehavior extends Behavior {
 /**
  * Iterate all associations and update counter caches.
  *
- * @param Event $event
- * @param Entity $entity
+ * @param \Cake\Event\Event $event Event instance.
+ * @param \Cake\ORM\Entity $entity Entity
  * @return void
  */
 	protected function _processAssociations(Event $event, Entity $entity) {
@@ -142,8 +142,8 @@ class CounterCacheBehavior extends Behavior {
 /**
  * Updates counter cache for a single association
  *
- * @param Event $event
- * @param Entity $entity
+ * @param \Cake\Event\Event $event Event instance.
+ * @param \Cake\ORM\Entity $entity Entity
  * @param Association $assoc The association object
  * @param array $settings The settings for for counter cache for this association
  * @return void

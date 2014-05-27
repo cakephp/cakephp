@@ -159,7 +159,7 @@ class ExceptionRenderer {
 /**
  * Get method name
  *
- * @param \Exception $exception
+ * @param \Exception $exception Exception instance.
  * @return string
  */
 	protected function _method(\Exception $exception) {
@@ -195,7 +195,7 @@ class ExceptionRenderer {
 /**
  * Get template for rendering exception info.
  *
- * @param \Exception $exception
+ * @param \Exception $exception Exception instance.
  * @param string $method Method name
  * @param int $code Error code
  * @return string Template name

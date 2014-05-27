@@ -626,7 +626,7 @@ trait CollectionTrait {
  * Returns a new collection as the result of concatenating the list of elements
  * in this collection with the passed list of elements
  *
- * @param array|\Traversable $items
+ * @param array|\Traversable $items Items list.
  * @return \Cake\Collection\Collection
  */
 	public function append($items) {
@@ -790,7 +790,7 @@ trait CollectionTrait {
  *
  * @param string $path a dot separated string symbolizing the path to follow
  * inside the hierarchy of each value so that the value can be inserted
- * @param array|\Traversable The values to be inserted at the specified path,
+ * @param mixed $values The values to be inserted at the specified path,
  * values are matched with the elements in this collection by its positional index.
  * @return \Cake\Collection\Iterator\InsertIterator
  */

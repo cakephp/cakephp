@@ -1,7 +1,5 @@
 <?php
 /**
- * Send mail using SMTP protocol
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -118,7 +116,7 @@ class SmtpTransport extends AbstractTransport {
 /**
  * Parses and stores the reponse lines in `'code' => 'message'` format.
  *
- * @param array $responseLines
+ * @param array $responseLines Response to parse.
  * @return void
  */
 	protected function _bufferResponseLines(array $responseLines) {

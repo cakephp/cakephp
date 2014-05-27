@@ -19,8 +19,14 @@ namespace Cake\Error;
  */
 class NotImplementedException extends Exception {
 
+/**
+ * {@inheritDoc}
+ */
 	protected $_messageTemplate = '%s is not implemented.';
 
+/**
+ * {@inheritDoc}
+ */
 	public function __construct($message, $code = 501) {
 		parent::__construct($message, $code);
 	}

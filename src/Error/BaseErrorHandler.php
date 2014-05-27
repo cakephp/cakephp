@@ -142,12 +142,12 @@ abstract class BaseErrorHandler {
  * Uses a template method provided by subclasses to display errors in an
  * environment appropriate way.
  *
- * @param \Exception $exception
+ * @param \Exception $exception Exception instance.
  * @return void
  * @throws Exception When renderer class not found
  * @see http://php.net/manual/en/function.set-exception-handler.php
  */
-	public function handleException($exception) {
+	public function handleException(\Exception $exception) {
 		$this->_displayException($exception);
 		$this->_logException($exception);
 		$this->_stop($exception->getCode() ?: 1);
@@ -224,10 +224,10 @@ abstract class BaseErrorHandler {
 /**
  * Handles exception logging
  *
- * @param Exception $exception
+ * @param Exception $exception Exception instance.
  * @return bool
  */
-	protected function _logException($exception) {
+	protected function _logException(\Exception $exception) {
 		$config = $this->_options;
 		if (empty($config['log'])) {
 			return false;
@@ -249,7 +249,7 @@ abstract class BaseErrorHandler {
  * @param Exception $exception Exception instance
  * @return string Formatted message
  */
-	protected function _getMessage($exception) {
+	protected function _getMessage(\Exception $exception) {
 		$message = sprintf("[%s] %s",
 			get_class($exception),
 			$exception->getMessage()

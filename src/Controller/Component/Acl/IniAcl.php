@@ -75,7 +75,7 @@ class IniAcl implements AclInterface {
 /**
  * Initialize method
  *
- * @param Component $component
+ * @param Component $component Component instance.
  * @return void
  */
 	public function initialize(Component $component) {

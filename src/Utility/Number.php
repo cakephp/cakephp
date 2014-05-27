@@ -1,9 +1,5 @@
 <?php
 /**
- * Cake Number Utility.
- *
- * Methods to make numbers more readable.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -229,7 +225,7 @@ class Number {
  * - `decimals` - Decimal separator symbol ie. '.'
  *
  * @param float $value A floating point number
- * @param array $options
+ * @param array $options Options.
  * @return string formatted delta
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::formatDelta
  */
@@ -271,10 +267,10 @@ class Number {
  *   By default all currencies contain utf-8 symbols and don't need this changed. If you require
  *   non HTML encoded symbols you will need to update the settings with the correct bytes.
  *
- * @param float $value
+ * @param float $value Value to format.
  * @param string $currency Shortcut to default options. Valid values are
  *   'USD', 'EUR', 'GBP', otherwise set at least 'before' and 'after' options.
- * @param array $options
+ * @param array $options Options.
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */

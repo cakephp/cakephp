@@ -144,7 +144,7 @@ class SecurityComponent extends Component {
 /**
  * Sets the actions that require a request that is SSL-secured, or empty for all actions
  *
- * @param string|array $actions
+ * @param string|array $actions Actions list
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireSecure
  */
@@ -159,7 +159,7 @@ class SecurityComponent extends Component {
  * set in SecurityComponent::$allowedControllers and
  * SecurityComponent::$allowedActions.
  *
- * @param string|array $actions
+ * @param string|array $actions Actions list
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireAuth
  */

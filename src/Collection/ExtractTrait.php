@@ -44,8 +44,8 @@ trait ExtractTrait {
  * Returns a column from $data that can be extracted
  * by iterating over the column names contained in $path
  *
- * @param array|\ArrayAccess $data
- * @param array $path
+ * @param array|\ArrayAccess $data Data.
+ * @param array $path Path to extract from.
  * @return mixed
  */
 	protected function _extract($data, $path) {

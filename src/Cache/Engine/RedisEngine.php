@@ -192,7 +192,7 @@ class RedisEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @param bool $check
+ * @param bool $check If true will check expiration, otherwise delete all.
  * @return bool True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {

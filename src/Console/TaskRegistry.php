@@ -33,7 +33,7 @@ class TaskRegistry extends ObjectRegistry {
 /**
  * Constructor
  *
- * @param Shell $Shell
+ * @param Shell $Shell Shell instance
  */
 	public function __construct(Shell $Shell) {
 		$this->_Shell = $Shell;
@@ -58,6 +58,7 @@ class TaskRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the task is missing in.
+ * @return void
  * @throws \Cake\Console\Error\MissingTaskException
  */
 	protected function _throwMissingClassError($class, $plugin) {

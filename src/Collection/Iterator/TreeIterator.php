@@ -39,9 +39,9 @@ class TreeIterator extends RecursiveIteratorIterator {
 /**
  * Constructor
  *
- * @param RecursiveIterator $items The iterator to flatten
- * @param int $mode
- * @param int $flags
+ * @param RecursiveIterator $items The iterator to flatten.
+ * @param int $mode Iterator mode.
+ * @param int $flags Iterator flags.
  */
 	public function __construct(RecursiveIterator $items, $mode = RecursiveIteratorIterator::SELF_FIRST, $flags = 0) {
 		parent::__construct($items, $mode, $flags);

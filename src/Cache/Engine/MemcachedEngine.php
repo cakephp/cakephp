@@ -155,6 +155,7 @@ class MemcachedEngine extends CacheEngine {
 /**
  * Settings the memcached instance
  *
+ * @return void
  * @throws \Cake\Error\Exception when the Memcached extension is not built with the desired serializer engine
  */
 	protected function _setOptions() {
@@ -351,7 +352,7 @@ class MemcachedEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @param bool $check
+ * @param bool $check If true will check expiration, otherwise delete all.
  * @return bool True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {

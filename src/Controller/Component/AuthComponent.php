@@ -767,6 +767,7 @@ class AuthComponent extends Component {
  * Set a flash message. Uses the Session component, and values from `flash` config.
  *
  * @param string $message The message to set.
+ * @param string $type Message type. Defaults to 'error'.
  * @return void
  */
 	public function flash($message, $type = 'error') {

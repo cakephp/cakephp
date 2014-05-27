@@ -85,10 +85,10 @@ trait ConventionsTrait {
 	}
 
 /**
- * creates the singular name for use in views.
+ * Creates the singular name for use in views.
  *
- * @param string $name
- * @return string name
+ * @param string $name Name to use
+ * @return string Variable name
  */
 	protected function _singularName($name) {
 		return Inflector::variable(Inflector::singularize($name));

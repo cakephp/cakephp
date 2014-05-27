@@ -86,7 +86,7 @@ class Session {
  * - ini: A list of php.ini directives to set before the session starts.
  * - timeout: The time in minutes the session should stay active
  *
- * @param array $sessionConfig
+ * @param array $sessionConfig Session config.
  * @return Cake\Network\Session
  * @see Session::__construct()
  */
@@ -120,7 +120,7 @@ class Session {
 /**
  * Get one of the prebaked default session configurations.
  *
- * @param string $name
+ * @param string $name Config name.
  * @return bool|array
  */
 	protected static function _defaultConfig($name) {
@@ -189,7 +189,7 @@ class Session {
  *   the configuration array for the engine. You can set the `class` key to an already
  *   instantiated session handler object.
  *
- * @param array The Configuration to apply to this session object
+ * @param array $config The Configuration to apply to this session object
  */
 	public function __construct(array $config = []) {
 		if (isset($config['timeout'])) {
@@ -267,6 +267,7 @@ class Session {
  *
  * `$session->options(['session.use_cookies' => 1]);`
  *
+ * @param array $options Ini options to set.
  * @return void
  * @throws \RuntimeException if any directive could not be set
  */
@@ -349,10 +350,10 @@ class Session {
 		if ($this->_hasSession() && !$this->started()) {
 			$this->start();
 		}
-		
+
 		if (!isset($_SESSION)) {
 			return null;
-		}		
+		}
 
 		return Hash::get($_SESSION, $name) !== null;
 	}
@@ -450,7 +451,7 @@ class Session {
 /**
  * Used to write new data to _SESSION, since PHP doesn't like us setting the _SESSION var itself.
  *
- * @param array $old Set of old variables => values
+ * @param array &$old Set of old variables => values
  * @param array $new New set of variable => value
  * @return void
  */
@@ -497,6 +498,7 @@ class Session {
 
 /**
  * Returns whether a session exists
+ *
  * @return bool
  */
 	protected function _hasSession() {
