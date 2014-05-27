@@ -38,9 +38,7 @@ class CookieComponent extends Component {
 /**
  * Default config
  *
- * - `name` - The name of the cookie.
- * - `time` - The time a cookie will remain valid. Can be either integer
- *   unix timestamp or a date string.
+ * - `expires` - How long the cookies should last for by default.
  * - `path` - The path on the server in which the cookie will be available on.
  *   If path is set to '/foo/', the cookie will only be available within the
  *   /foo/ directory and all sub-directories such as /foo/bar/ of domain.
@@ -58,14 +56,13 @@ class CookieComponent extends Component {
  * @var array
  */
 	protected $_defaultConfig = [
-		'name' => 'CakeCookie',
-		'time' => null,
 		'path' => '/',
 		'domain' => '',
 		'secure' => false,
 		'key' => null,
 		'httpOnly' => false,
-		'encryption' => 'aes'
+		'encryption' => 'aes',
+		'expires' => null,
 	];
 
 /**
@@ -115,10 +112,6 @@ class CookieComponent extends Component {
 			$this->config('key', Configure::read('Security.salt'));
 		}
 
-		if ($this->_config['time']) {
-			$this->_expire($this->_config['time']);
-		}
-
 		$controller = $collection->getController();
 		if ($controller && isset($controller->request)) {
 			$this->_request = $controller->request;
@@ -155,33 +148,16 @@ class CookieComponent extends Component {
 	}
 
 /**
- * Start CookieComponent for use in the controller
- *
- * @param Event $event An Event instance
- * @return void
- */
-	public function startup(Event $event) {
-		$this->_expire($this->_config['time']);
-
-		$this->_values[$this->_config['name']] = array();
-	}
-
-/**
  * Events supported by this component.
  *
  * @return array
  */
 	public function implementedEvents() {
-		return [
-			'Controller.startup' => 'startup',
-		];
+		return [];
 	}
 
 /**
  * Write a value to the $_COOKIE[$key];
- *
- * Optional [Name.], required key, optional $value, optional $encrypt, optional $expires
- * $this->Cookie->write('[Name.]key, $value);
  *
  * By default all values are encrypted.
  * You must pass $encrypt false to store values in clear test
@@ -191,89 +167,53 @@ class CookieComponent extends Component {
  *
  * @param string|array $key Key for the value
  * @param mixed $value Value
- * @param bool $encrypt Set to true to encrypt value, false otherwise
- * @param int|string $expires Can be either the number of seconds until a cookie
- *   expires, or a strtotime compatible time offset.
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::write
  */
-	public function write($key, $value = null, $encrypt = true, $expires = null) {
-		$cookieName = $this->config('name');
-		if (empty($this->_values[$cookieName])) {
-			$this->read();
+	public function write($key, $value = null) {
+		if (empty($this->_values)) {
+			$this->_load();
 		}
-
-		if ($encrypt === null) {
-			$encrypt = true;
-		}
-		$this->_encrypted = $encrypt;
-		$this->_expire($expires);
 
 		if (!is_array($key)) {
 			$key = array($key => $value);
 		}
 
 		foreach ($key as $name => $value) {
-			$names = array($name);
-			if (strpos($name, '.') !== false) {
-				$names = explode('.', $name, 2);
-			}
-			$firstName = $names[0];
-			$isMultiValue = (is_array($value) || count($names) > 1);
-
-			if (!isset($this->_values[$cookieName][$firstName]) && $isMultiValue) {
-				$this->_values[$cookieName][$firstName] = array();
-			}
-
-			if (count($names) > 1) {
-				$this->_values[$cookieName][$firstName] = Hash::insert(
-					$this->_values[$cookieName][$firstName],
-					$names[1],
-					$value
-				);
-			} else {
-				$this->_values[$cookieName][$firstName] = $value;
-			}
-			$this->_write('[' . $firstName . ']', $this->_values[$cookieName][$firstName]);
+			$this->_values = Hash::insert($this->_values, $name, $value);
 		}
-		$this->_encrypted = true;
+		// TODO write cookie data out.
 	}
 
 /**
- * Read the value of the $_COOKIE[$key];
- *
- * Optional [Name.], required key
- * $this->Cookie->read(Name.key);
+ * Read the value of key path from request cookies.
  *
  * @param string $key Key of the value to be obtained. If none specified, obtain map key => values
  * @return string or null, value for specified key
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::read
  */
 	public function read($key = null) {
-		$cookieName = $this->config('name');
-		$values = $this->_request->cookie($cookieName);
-		if (empty($this->_values[$cookieName]) && $values) {
-			$this->_values[$cookieName] = $this->_decrypt($values);
-		}
-		if (empty($this->_values[$cookieName])) {
-			$this->_values[$cookieName] = array();
+		if (empty($this->_values)) {
+			$this->_load();
 		}
 		if ($key === null) {
-			return $this->_values[$cookieName];
+			return $this->_values;
 		}
+		return Hash::get($this->_values, $key);
+	}
 
-		if (strpos($key, '.') !== false) {
-			$names = explode('.', $key, 2);
-			$key = $names[0];
+/**
+ * Load the cookie data from the request and response objects.
+ *
+ * Based on the configuration data, cookies will be decrypted. When cookies
+ * contain array data, that data will be expanded.
+ *
+ * @return void
+ */
+	protected function _load() {
+		foreach ($this->_request->cookies as $name => $value) {
+			$this->_values[$name] = $this->_decrypt($value);
 		}
-		if (!isset($this->_values[$cookieName][$key])) {
-			return null;
-		}
-
-		if (!empty($names[1])) {
-			return Hash::get($this->_values[$cookieName][$key], $names[1]);
-		}
-		return $this->_values[$cookieName][$key];
 	}
 
 /**
@@ -291,9 +231,6 @@ class CookieComponent extends Component {
 
 /**
  * Delete a cookie value
- *
- * Optional [Name.], required key
- * $this->Cookie->delete('Name.key);
  *
  * You must use this method before any output is sent to the browser.
  * Failure to do so will result in header already sent errors.
@@ -381,36 +318,6 @@ class CookieComponent extends Component {
 	}
 
 /**
- * Set the expire time for a session variable.
- *
- * Creates a new expire time for a session variable.
- * $expire can be either integer Unix timestamp or a date string.
- *
- * Used by write()
- * CookieComponent::write(string, string, boolean, 8400);
- * CookieComponent::write(string, string, boolean, '5 Days');
- *
- * @param int|string $expires Can be either Unix timestamp, or date string
- * @return int Unix timestamp
- */
-	protected function _expire($expires = null) {
-		if ($expires === null) {
-			return $this->_expires;
-		}
-		$this->_reset = $this->_expires;
-		if (!$expires) {
-			return $this->_expires = 0;
-		}
-		$now = new \DateTime();
-
-		if (is_int($expires) || is_numeric($expires)) {
-			return $this->_expires = $now->format('U') + intval($expires);
-		}
-		$now->modify($expires);
-		return $this->_expires = $now->format('U');
-	}
-
-/**
  * Set cookie
  *
  * @param string $name Name for cookie
@@ -419,20 +326,18 @@ class CookieComponent extends Component {
  */
 	protected function _write($name, $value) {
 		$config = $this->config();
+
+		$expires = new \DateTime($config['expires']);
+
 		$this->_response->cookie(array(
-			'name' => $config['name'] . $name,
+			'name' => $name,
 			'value' => $this->_encrypt($value),
-			'expire' => $this->_expires,
+			'expire' => $expires->format('U'),
 			'path' => $config['path'],
 			'domain' => $config['domain'],
 			'secure' => $config['secure'],
 			'httpOnly' => $config['httpOnly']
 		));
-
-		if (!empty($this->_reset)) {
-			$this->_expires = $this->_reset;
-			$this->_reset = null;
-		}
 	}
 
 /**
