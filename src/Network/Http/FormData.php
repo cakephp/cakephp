@@ -93,6 +93,7 @@ class FormData implements \Countable {
  * Add multiple parts at once.
  *
  * Iterates the parameter and adds all the key/values.
+ *
  * @param array $data Array of data to add.
  * @return FormData this
  */
