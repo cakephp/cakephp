@@ -334,6 +334,7 @@ class HtmlHelper extends AppHelper {
 		$escapeTitle = true;
 		if ($url !== null) {
 			$url = $this->url($url);
+			$url = str_replace('%2F', '/', $url);
 		} else {
 			$url = $this->url($title);
 			$title = htmlspecialchars_decode($url, ENT_QUOTES);
