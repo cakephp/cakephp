@@ -88,7 +88,7 @@ trait InstanceConfigTrait {
 /**
  * Read a config variable
  *
- * @param string|null $key
+ * @param string|null $key Key to read.
  * @return mixed
  */
 	protected function _configRead($key) {
@@ -118,11 +118,11 @@ trait InstanceConfigTrait {
 /**
  * Write a config variable
  *
- * @throws Cake\Error\Exception if attempting to clobber existing config
- * @param string|array $key
- * @param mixed $value
- * @param bool $merge
+ * @param string|array $key Key to write to.
+ * @param mixed $value Value to write.
+ * @param bool $merge Whether to merge or overwrite value.
  * @return void
+ * @throws Cake\Error\Exception if attempting to clobber existing config
  */
 	protected function _configWrite($key, $value, $merge = null) {
 		if (is_string($key) && $value === null) {
@@ -172,9 +172,9 @@ trait InstanceConfigTrait {
 /**
  * Delete a single config key
  *
- * @throws Cake\Error\Exception if attempting to clobber existing config
- * @param string $key
+ * @param string $key Key to delete.
  * @return void
+ * @throws Cake\Error\Exception if attempting to clobber existing config
  */
 	protected function _configDelete($key) {
 		if (strpos($key, '.') === false) {
