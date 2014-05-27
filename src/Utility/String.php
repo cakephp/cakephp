@@ -1,7 +1,5 @@
 <?php
 /**
- * String handling methods.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -253,8 +251,8 @@ class String {
  * is to replace all whitespace and unneeded markup around placeholders that did not get replaced
  * by String::insert().
  *
- * @param string $str
- * @param array $options
+ * @param string $str String to clean
+ * @param array $options Options
  * @return string
  * @see String::insert()
  */
@@ -700,7 +698,7 @@ class String {
  * Converts a multibyte character string
  * to the decimal value of the character
  *
- * @param string $string
+ * @param string $string String to convert.
  * @return array
  */
 	public static function utf8($string) {
@@ -739,7 +737,7 @@ class String {
  * Converts the decimal value of a multibyte character string
  * to a string
  *
- * @param array $array
+ * @param array $array Array
  * @return string
  */
 	public static function ascii(array $array) {

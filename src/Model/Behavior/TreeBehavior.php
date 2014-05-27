@@ -70,7 +70,7 @@ class TreeBehavior extends Behavior {
 /**
  * Constructor
  *
- * @param Table $table The table this behavior is attached to.
+ * @param \Cake\ORM\Table $table The table this behavior is attached to.
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
@@ -83,8 +83,8 @@ class TreeBehavior extends Behavior {
  * Transparently manages setting the lft and rght fields if the parent field is
  * included in the parameters to be saved.
  *
- * @param \Cake\Event\Event the beforeSave event that was fired
- * @param \Cake\ORM\Entity the entity that is going to be saved
+ * @param \Cake\Event\Event $event The beforeSave event that was fired
+ * @param \Cake\ORM\Entity $entity the entity that is going to be saved
  * @return void
  * @throws \RuntimeException if the parent to set for the node is invalid
  */
@@ -125,8 +125,8 @@ class TreeBehavior extends Behavior {
 /**
  * Also deletes the nodes in the subtree of the entity to be delete
  *
- * @param \Cake\Event\Event the beforeDelete event that was fired
- * @param \Cake\ORM\Entity the entity that is going to be saved
+ * @param \Cake\Event\Event $event The beforeDelete event that was fired
+ * @param \Cake\ORM\Entity $entity The entity that is going to be saved
  * @return void
  */
 	public function beforeDelete(Event $event, Entity $entity) {
@@ -315,7 +315,7 @@ class TreeBehavior extends Behavior {
  *
  * If the direct option is set to true, only the direct children are returned (based upon the parent_id field)
  *
- * @param \Cake\ORM\Query $query
+ * @param \Cake\ORM\Query $query Query.
  * @param array $options Array of options as described above
  * @return \Cake\ORM\Query
  * @throws \InvalidArgumentException When the 'for' key is not passed in $options
@@ -359,7 +359,7 @@ class TreeBehavior extends Behavior {
  *  return the value out of the provided row.
  *  - spacer: A string to be used as prefix for denoting the depth in the tree for each item
  *
- * @param \Cake\ORM\Query $query
+ * @param \Cake\ORM\Query $query Query.
  * @param array $options Array of options as described above
  * @return \Cake\ORM\Query
  */
@@ -592,8 +592,8 @@ class TreeBehavior extends Behavior {
 /**
  * Returns a single node from the tree from its primary key
  *
- * @param mixed $id
- * @return Cake\ORM\Entity
+ * @param mixed $id Record id.
+ * @return \Cake\ORM\Entity
  * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  */
 	protected function _getNode($id) {

@@ -1,7 +1,5 @@
 <?php
 /**
- * Event Manager
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -62,7 +60,7 @@ class EventManager {
  *
  * If called with the first parameter, it will be set as the globally available instance
  *
- * @param \Cake\Event\EventManager $manager
+ * @param \Cake\Event\EventManager $manager Event manager instance.
  * @return \Cake\Event\EventManager the global event manager
  */
 	public static function instance($manager = null) {
@@ -114,7 +112,7 @@ class EventManager {
  * Auxiliary function to attach all implemented callbacks of a Cake\Event\EventListener class instance
  * as individual methods on this manager
  *
- * @param \Cake\Event\EventListener $subscriber
+ * @param \Cake\Event\EventListener $subscriber Event listerner.
  * @return void
  */
 	protected function _attachSubscriber(EventListener $subscriber) {
@@ -254,7 +252,7 @@ class EventManager {
  * Optimize the common cases to provide improved performance.
  *
  * @param callable $listener The listener to trigger.
- * @param Event $event
+ * @param \Cake\Event\Event $event Event instance.
  * @return mixed The result of the $listener function.
  */
 	protected function _callListener(callable $listener, Event $event) {
@@ -281,7 +279,7 @@ class EventManager {
 /**
  * Returns a list of all listeners for an eventKey in the order they should be called
  *
- * @param string $eventKey
+ * @param string $eventKey Event key.
  * @return array
  */
 	public function listeners($eventKey) {
@@ -313,7 +311,7 @@ class EventManager {
 /**
  * Returns the listeners for the specified event key indexed by priority
  *
- * @param string $eventKey
+ * @param string $eventKey Event key.
  * @return array
  */
 	public function prioritisedListeners($eventKey) {

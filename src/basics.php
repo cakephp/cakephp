@@ -1,9 +1,5 @@
 <?php
 /**
- * Basic CakePHP functionality.
- *
- * Core functions for including other source files, loading models and so forth.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -128,7 +124,7 @@ if (!function_exists('sortByKey')) {
 /**
  * Sorts given $array by key $sortBy.
  *
- * @param array $array Array to sort
+ * @param array &$array Array to sort
  * @param string $sortBy Sort by this key
  * @param string $order Sort order asc/desc (ascending or descending).
  * @param int $type Type of sorting to perform
@@ -258,9 +254,9 @@ if (!function_exists('pr')) {
  * In terminals this will act the same as using print_r() directly, when not run on cli
  * print_r() will wrap <PRE> tags around the output of given array. Similar to debug().
  *
- * @see debug()
  * @param mixed $var Variable to print out
  * @return void
+ * @see debug()
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pr
  */
 	function pr($var) {
@@ -812,7 +808,7 @@ if (!function_exists('convertSlash')) {
 /**
  * Convert forward slashes to underscores and removes first and last underscores in a string
  *
- * @param string String to convert
+ * @param string $string String to convert
  * @return string with underscore remove from start and end of string
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#convertSlash
  */

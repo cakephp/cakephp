@@ -1,7 +1,5 @@
 <?php
 /**
- * Convenience class for reading, writing and appending to files.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -199,7 +197,7 @@ class File {
  * all other platforms will use "\n"
  *
  * @param string $data Data to prepare for writing.
- * @param bool $forceWindows
+ * @param bool $forceWindows If true forces Windows new line string.
  * @return string The with converted line endings.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::prepare
  */

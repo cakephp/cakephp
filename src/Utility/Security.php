@@ -1,7 +1,5 @@
 <?php
 /**
- * Core Security
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -262,7 +260,7 @@ class Security {
 /**
  * Check the encryption key for proper length.
  *
- * @param string $key
+ * @param string $key Key to check.
  * @param string $method The method the key is being checked for.
  * @return void
  * @throws \Cake\Error\Exception When key length is not 256 bit/32 bytes

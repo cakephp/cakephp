@@ -101,6 +101,7 @@ class Cache {
  * Finds and builds the instance of the required engine class.
  *
  * @param string $name Name of the config array that needs an engine instance built
+ * @return void
  * @throws \Cake\Error\Exception When a cache engine cannot be created.
  */
 	protected static function _buildEngine($name) {
