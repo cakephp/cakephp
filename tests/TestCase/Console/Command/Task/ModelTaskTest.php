@@ -444,6 +444,31 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
+ * Tests that a username column will get a validateUnique rule applied
+ *
+ * @return void
+ */
+	public function testGetValidationWithUnique() {
+		$model = TableRegistry::get('Users');
+		$result = $this->Task->getValidation($model);
+		$expected = [
+			'password' => ['valid' => ['rule' => false, 'allowEmpty' => true]],
+			'id' => ['valid' => ['rule' => 'numeric', 'allowEmpty' => 'create']],
+			'username' => [
+				'valid' => [
+					'rule' => false,
+					'allowEmpty' => true
+				],
+				'unique' => [
+					'rule' => 'validateUnique',
+					'provider' => 'table'
+				]
+			]
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test non interactive doActsAs
  *
  * @return void
