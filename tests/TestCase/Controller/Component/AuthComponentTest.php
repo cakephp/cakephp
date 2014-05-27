@@ -1141,14 +1141,23 @@ class AuthComponentTest extends TestCase {
  */
 	public function testFlashSettings() {
 		$this->Auth->session = $this->getMock('Cake\Network\Session');
-		$this->Auth->session->expects($this->once())
+		$this->Auth->session->expects($this->at(0))
 			->method('flash')
 			->with('Auth failure', 'error', array('key' => 'auth-key', 'element' => 'custom'));
+
+		$this->Auth->session->expects($this->at(1))
+			->method('flash')
+			->with('Auth failure', 'error', array('key' => 'auth-key'));
 
 		$this->Auth->config('flash', [
 			'params' => array('element' => 'custom'),
 			'key' => 'auth-key'
 		]);
+		$this->Auth->flash('Auth failure');
+
+		$this->Auth->config('flash', [
+			'key' => 'auth-key'
+		], false);
 		$this->Auth->flash('Auth failure');
 	}
 
