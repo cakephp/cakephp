@@ -345,7 +345,6 @@ class FormHelper extends Helper {
 		if (!empty($append)) {
 			$append = $templater->format('hiddenblock', ['content' => $append]);
 		}
-
 		$this->_lastAction = $action;
 		if (strpos($action, '://')) {
 			$query = parse_url($action, PHP_URL_QUERY);
@@ -1955,8 +1954,20 @@ class FormHelper extends Helper {
 			'timeFormat' => 24,
 			'second' => false,
 		];
+		$secure = true;
+		if (isset($options['secure'])) {
+			$secure = $options['secure'];
+		}
+		$options['secure'] = static::SECURE_SKIP;
+
 		$options = $this->_initInputField($fieldName, $options);
 		$options = $this->_datetimeOptions($options);
+
+		foreach ($this->_datetimeParts as $type) {
+			if ($options[$type] !== false) {
+				$this->_secure($secure, $fieldName . '.' . $type);
+			}
+		}
 
 		return $this->widget('datetime', $options);
 	}
@@ -2080,8 +2091,21 @@ class FormHelper extends Helper {
 		];
 		$options['hour'] = $options['minute'] = false;
 		$options['meridian'] = $options['second'] = false;
+
+		$secure = true;
+		if (isset($options['secure'])) {
+			$secure = $options['secure'];
+		}
+		$options['secure'] = static::SECURE_SKIP;
+
 		$options = $this->_initInputField($fieldName, $options);
 		$options = $this->_datetimeOptions($options);
+
+		foreach ($this->_datetimeParts as $type) {
+			if ($options[$type] !== false) {
+				$this->_secure($secure, $fieldName . '.' . $type);
+			}
+		}
 
 		return $this->widget('datetime', $options);
 	}

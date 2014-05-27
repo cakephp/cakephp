@@ -4234,6 +4234,34 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test that datetime fields are added to protected fields list.
+ *
+ * @return void
+ */
+	public function testDateTimeSecured() {
+		$this->Form->request->params['_Token'] = ['unlockedFields' => []];
+		$this->Form->dateTime('Contact.date');
+		$expected = [
+			'Contact.date.year',
+			'Contact.date.month',
+			'Contact.date.day',
+			'Contact.date.hour',
+			'Contact.date.minute',
+			'Contact.date.meridian',
+		];
+		$this->assertEquals($expected, $this->Form->fields);
+
+		$this->Form->fields = [];
+		$this->Form->date('Contact.published');
+		$expected = [
+			'Contact.published.year',
+			'Contact.published.month',
+			'Contact.published.day',
+		];
+		$this->assertEquals($expected, $this->Form->fields);
+	}
+
+/**
  * Test empty defaulting to true for datetime.
  *
  * @return void
