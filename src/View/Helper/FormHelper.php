@@ -1955,6 +1955,9 @@ class FormHelper extends Helper {
 			'second' => false,
 		];
 		$secure = true;
+		if (!empty($options['disabled'])) {
+			$secure = false;
+		}
 		if (isset($options['secure'])) {
 			$secure = $options['secure'];
 		}
@@ -2093,6 +2096,9 @@ class FormHelper extends Helper {
 		$options['meridian'] = $options['second'] = false;
 
 		$secure = true;
+		if (!empty($options['disabled'])) {
+			$secure = false;
+		}
 		if (isset($options['secure'])) {
 			$secure = $options['secure'];
 		}
