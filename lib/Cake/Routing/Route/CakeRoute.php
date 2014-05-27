@@ -536,7 +536,10 @@ class CakeRoute {
 			$out = str_replace($search, $replace, $out);
 		}
 
-		if (strpos($this->template, '*')) {
+		if (strpos($this->template, '**')) {
+			$out = str_replace('**', $params['pass'], $out);
+		} 
+		elseif (strpos($this->template, '*')) {
 			$out = str_replace('*', $params['pass'], $out);
 		}
 		$out = str_replace('//', '/', $out);
