@@ -212,7 +212,12 @@ class Security {
 			$salt = vsprintf('$2y$%02d$%s', array(static::$hashCost, $salt));
 		}
 
-		if ($salt === true || strpos($salt, '$2y$') !== 0 || strlen($salt) < 29) {
+		$invalidCipher = (
+			strpos($salt, '$2y$') !== 0 &&
+			strpos($salt, '$2x$') !== 0 &&
+			strpos($salt, '$2a$') !== 0
+		);
+		if ($salt === true || $invalidCipher || strlen($salt) < 29) {
 			throw new Exception(sprintf(
 				'Invalid salt: %s for blowfish Please visit http://www.php.net/crypt and read the appropriate section for building blowfish salts.',
 				$salt

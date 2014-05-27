@@ -775,7 +775,11 @@ class AuthComponent extends Component {
 		}
 		$flashConfig = $this->_config['flash'];
 		$key = $flashConfig['key'];
-		$this->session->flash($message, 'error', $flashConfig['params'] + compact('key'));
+		$params = [];
+		if (isset($flashConfig['params'])) {
+			$params = $flashConfig['params'];
+		}
+		$this->session->flash($message, 'error', $params + compact('key'));
 	}
 
 }
