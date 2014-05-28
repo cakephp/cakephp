@@ -179,10 +179,16 @@ class CookieComponent extends Component {
 			$key = array($key => $value);
 		}
 
+		$keys = [];
 		foreach ($key as $name => $value) {
 			$this->_values = Hash::insert($this->_values, $name, $value);
+			$parts = explode('.', $name);
+			$keys[] = $parts[0];
 		}
-		// TODO write cookie data out.
+
+		foreach ($keys as $name) {
+			$this->_write($name, $this->_values[$name]);
+		}
 	}
 
 /**
@@ -212,7 +218,8 @@ class CookieComponent extends Component {
  */
 	protected function _load() {
 		foreach ($this->_request->cookies as $name => $value) {
-			$this->_values[$name] = $this->_decrypt($value);
+			$config = $this->configKey($name);
+			$this->_values[$name] = $this->_decrypt($value, $config['encryption']);
 		}
 	}
 
@@ -325,12 +332,12 @@ class CookieComponent extends Component {
  * @return void
  */
 	protected function _write($name, $value) {
-		$config = $this->config();
+		$config = $this->configKey($name);
 		$expires = new \DateTime($config['expires']);
 
 		$this->_response->cookie(array(
 			'name' => $name,
-			'value' => $this->_encrypt($value),
+			'value' => $this->_encrypt($value, $config['encryption']),
 			'expire' => $expires->format('U'),
 			'path' => $config['path'],
 			'domain' => $config['domain'],
@@ -346,7 +353,7 @@ class CookieComponent extends Component {
  * @return void
  */
 	protected function _delete($name) {
-		$config = $this->config();
+		$config = $this->configKey($name);
 		$expires = new \DateTime($config['expires']);
 
 		$this->_response->cookie(array(
@@ -364,20 +371,22 @@ class CookieComponent extends Component {
  * Encrypts $value using public $type method in Security class
  *
  * @param string $value Value to encrypt
+ * @param string|bool $encrypt Encryption mode to use. False
+ *   disabled encryption.
  * @return string Encoded values
  */
-	protected function _encrypt($value) {
+	protected function _encrypt($value, $encrypt) {
 		if (is_array($value)) {
 			$value = $this->_implode($value);
 		}
-		if (!$this->_encrypted) {
+		if (!$encrypt) {
 			return $value;
 		}
 		$prefix = "Q2FrZQ==.";
-		if ($this->_config['encryption'] === 'rijndael') {
+		if ($encrypt === 'rijndael') {
 			$cipher = Security::rijndael($value, $this->_config['key'], 'encrypt');
 		}
-		if ($this->_config['encryption'] === 'aes') {
+		if ($encrypt === 'aes') {
 			$cipher = Security::encrypt($value, $this->_config['key']);
 		}
 		return $prefix . base64_encode($cipher);
@@ -387,21 +396,22 @@ class CookieComponent extends Component {
  * Decrypts $value using public $type method in Security class
  *
  * @param array $values Values to decrypt
+ * @param string|bool $mode Encryption mode
  * @return string decrypted string
  */
-	protected function _decrypt($values) {
+	protected function _decrypt($values, $mode) {
 		if (is_string($values)) {
-			return $this->_decode($values);
+			return $this->_decode($values, $mode);
 		}
 
 		$decrypted = array();
 		foreach ($values as $name => $value) {
 			if (is_array($value)) {
 				foreach ($value as $key => $val) {
-					$decrypted[$name][$key] = $this->_decode($val);
+					$decrypted[$name][$key] = $this->_decode($val, $mode);
 				}
 			} else {
-				$decrypted[$name] = $this->_decode($value);
+				$decrypted[$name] = $this->_decode($value, $mode);
 			}
 		}
 		return $decrypted;
@@ -411,22 +421,23 @@ class CookieComponent extends Component {
  * Decodes and decrypts a single value.
  *
  * @param string $value The value to decode & decrypt.
+ * @param string|false $encryption The encryption cipher to use.
  * @return string Decoded value.
  */
-	protected function _decode($value) {
+	protected function _decode($value, $encryption) {
 		$prefix = 'Q2FrZQ==.';
 		$pos = strpos($value, $prefix);
-		if ($pos === false) {
+		if (!$encryption) {
 			return $this->_explode($value);
 		}
 		$value = base64_decode(substr($value, strlen($prefix)));
-		if ($this->_config['encryption'] === 'rijndael') {
-			$plain = Security::rijndael($value, $this->_config['key'], 'decrypt');
+		if ($encryption === 'rijndael') {
+			$value = Security::rijndael($value, $this->_config['key'], 'decrypt');
 		}
-		if ($this->_config['encryption'] === 'aes') {
-			$plain = Security::decrypt($value, $this->_config['key']);
+		if ($encryption === 'aes') {
+			$value = Security::decrypt($value, $this->_config['key']);
 		}
-		return $this->_explode($plain);
+		return $this->_explode($value);
 	}
 
 /**
