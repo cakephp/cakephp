@@ -47,6 +47,7 @@ class ConnectionRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the driver is missing in.
+ * @return void
  * @throws \Cake\Datasource\Error\MissingDatasourceException
  */
 	protected function _throwMissingClassError($class, $plugin) {

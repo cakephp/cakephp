@@ -297,7 +297,7 @@ class Controller implements EventListener {
 /**
  * Provides backwards compatibility to avoid problems with empty and isset to alias properties.
  *
- * @param string $name
+ * @param string $name Property name
  * @return bool
  */
 	public function __get($name) {
@@ -326,7 +326,7 @@ class Controller implements EventListener {
  * - View::$view - To the $request->params['action']
  * - View::$autoLayout - To the false if $request->params['bare']; is set.
  *
- * @param \Cake\Network\Request $request
+ * @param \Cake\Network\Request $request Request instance.
  * @return void
  */
 	public function setRequest(Request $request) {
@@ -487,10 +487,10 @@ class Controller implements EventListener {
  *
  * Useful for testing
  *
- * @param \Cake\Event\EventManager $eventManager
+ * @param \Cake\Event\EventManager $eventManager Event manager instance
  * @return void
  */
-	public function setEventManager($eventManager) {
+	public function setEventManager(EventManager $eventManager) {
 		$this->_eventManager = $eventManager;
 	}
 

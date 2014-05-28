@@ -122,7 +122,7 @@ class Time extends Carbon implements JsonSerializable {
  * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
  * in which the date will be displayed. The timezone stored for this object will not
  * be changed.
- * @param $locale The locale name in which the date should be displayed (e.g. pt-BR)
+ * @param string $locale The locale name in which the date should be displayed (e.g. pt-BR)
  * @return string Formatted date string
  */
 	public function nice($timezone = null, $locale = null) {
@@ -159,6 +159,7 @@ class Time extends Carbon implements JsonSerializable {
 /**
  * Returns the quarter
  *
+ * @param bool $range Range.
  * @return mixed 1, 2, 3, or 4 quarter of year or array if $range true
  */
 	public function toQuarter($range = false) {
@@ -511,11 +512,11 @@ class Time extends Carbon implements JsonSerializable {
  * `Time::$defaultLocale` to a  valid locale string. If empty, the default will be
  * taken from the `intl.default_locale` ini config.
  *
- * @param string|int $format
+ * @param string|int $format Format string.
  * @param string|\DateTimeZone $timezone Timezone string or DateTimeZone object
  * in which the date will be displayed. The timezone stored for this object will not
  * be changed.
- * @param $locale The locale name in which the date should be displayed (e.g. pt-BR)
+ * @param string $locale The locale name in which the date should be displayed (e.g. pt-BR)
  * @return string Formatted and translated date string
  */
 	public function i18nFormat($format = null, $timezone = null, $locale = null) {
@@ -535,9 +536,9 @@ class Time extends Carbon implements JsonSerializable {
  * Returns a translated and localized date string.
  * Implements what IntlDateFormatter::formatObject() is in PHP 5.5+
  *
- * @param \DateTime $date
- * @param string|int|array $format
- * @param string $locale
+ * @param \DateTime $date Date.
+ * @param string|int|array $format Format.
+ * @param string $locale The locale name in which the date should be displayed.
  * @return string
  */
 	protected function _formatObject($date, $format, $locale) {
@@ -622,6 +623,7 @@ class Time extends Carbon implements JsonSerializable {
  * Resets the format used to the default when converting an instance of this type to
  * a string
  *
+ * @return void
  */
 	public static function resetToStringFormat() {
 		static::setToStringFormat([IntlDateFormatter::SHORT, IntlDateFormatter::SHORT]);
@@ -630,7 +632,8 @@ class Time extends Carbon implements JsonSerializable {
 /**
  * Sets the default format used when type converting instances of this type to string
  *
- * @param  string|int $format
+ * @param string|int $format Format.
+ * @return void
  */
 	public static function setToStringFormat($format) {
 		static::$_toStringFormat = $format;

@@ -1,7 +1,5 @@
 <?php
 /**
- * Cake Response
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -561,10 +559,10 @@ class Response {
  *  e.g `header('WWW-Authenticate: Negotiate'); header('WWW-Authenticate: Not-Negotiate');`
  * will have the same effect as only doing `header('WWW-Authenticate: Not-Negotiate');`
  *
- * @param string|array $header. An array of header strings or a single header string
+ * @param string|array $header An array of header strings or a single header string
  *	- an associative array of "header name" => "header value" is also accepted
  *	- an array of string headers is also accepted
- * @param string|array $value. The header value(s)
+ * @param string|array $value The header value(s)
  * @return array list of headers to be sent
  */
 	public function header($header = null, $value = null) {
@@ -588,6 +586,7 @@ class Response {
  * Acccessor for the location header.
  *
  * Get/Set the Location header value.
+ *
  * @param null|string $url Either null to get the current location, or a string to set one.
  * @return string|null When setting the location null will be returned. When reading the location
  *    a string of the current location header value (if any) will be returned.
@@ -704,7 +703,7 @@ class Response {
  *
  * e.g `type(array('jpg' => 'text/plain'));`
  *
- * @param string $contentType
+ * @param string $contentType Content type.
  * @return mixed current content type or false if supplied an invalid content type
  */
 	public function type($contentType = null) {
@@ -767,7 +766,7 @@ class Response {
  * Sets the response charset
  * if $charset is null the current charset is returned
  *
- * @param string $charset
+ * @param string $charset Character set.
  * @return string current charset
  */
 	public function charset($charset = null) {
@@ -936,7 +935,7 @@ class Response {
  * `$response->expires(new DateTime('+1 day'))` Will set the expiration in next 24 hours
  * `$response->expires()` Will return the current expiration header value
  *
- * @param string|\DateTime $time
+ * @param string|\DateTime $time Valid time string or \DateTime instance.
  * @return string
  */
 	public function expires($time = null) {
@@ -960,7 +959,7 @@ class Response {
  * `$response->modified(new DateTime('+1 day'))` Will set the modification date in the past 24 hours
  * `$response->modified()` Will return the current Last-Modified header value
  *
- * @param string|\DateTime $time
+ * @param string|\DateTime $time Valid time string or \Datatime instance.
  * @return string
  */
 	public function modified($time = null) {
@@ -1054,7 +1053,7 @@ class Response {
  * Returns a DateTime object initialized at the $time param and using UTC
  * as timezone
  *
- * @param string|int|\DateTime $time
+ * @param string|int|\DateTime $time Valid time string or \Datatime instance.
  * @return \DateTime
  */
 	protected function _getUTCDate($time = null) {
@@ -1289,8 +1288,8 @@ class Response {
 /**
  * Normalize the origin to regular expressions and put in an array format
  *
- * @param array $domains
- * @param bool $requestIsSSL
+ * @param array $domains Domain names.
+ * @param bool $requestIsSSL Whether it's a SSL request.
  * @return array
  */
 	protected function _normalizeCorsDomains($domains, $requestIsSSL = false) {

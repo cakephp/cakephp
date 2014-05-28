@@ -65,7 +65,7 @@ class TimestampBehavior extends Behavior {
  * If events are specified - do *not* merge them with existing events,
  * overwrite the events to listen on
  *
- * @param Table $table The table this behavior is attached to.
+ * @param \Cake\ORM\Table $table The table this behavior is attached to.
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
@@ -77,12 +77,10 @@ class TimestampBehavior extends Behavior {
 	}
 
 /**
- * handleEvent
- *
  * There is only one event handler, it can be configured to be called for any event
  *
- * @param Event $event
- * @param Entity $entity
+ * @param \Cake\Event\Event $event Event instance.
+ * @param \Cake\ORM\Entity $entity Entity instance.
  * @throws \UnexpectedValueException if a field's when value is misdefined
  * @return true (irrespective of the behavior logic, the save will not be prevented)
  * @throws \UnexpectedValueException When the value for an event is not 'always', 'new' or 'existing'
@@ -130,8 +128,8 @@ class TimestampBehavior extends Behavior {
  * If an explicit date time is passed, the config option `refreshTimestamp` is
  * automatically set to false.
  *
- * @param \DateTime $ts
- * @param bool $refreshTimestamp
+ * @param \DateTime $ts Timestamp
+ * @param bool $refreshTimestamp If true timestamp is refreshed.
  * @return \Cake\Utility\Time
  */
 	public function timestamp(\DateTime $ts = null, $refreshTimestamp = false) {
@@ -154,8 +152,8 @@ class TimestampBehavior extends Behavior {
  * "always" or "existing", update the timestamp value. This method will overwrite
  * any pre-existing value.
  *
- * @param Entity $entity
- * @param string $eventName
+ * @param \Cake\ORM\Entity $entity Entity instance.
+ * @param string $eventName Event name.
  * @return bool true if a field is updated, false if no action performed
  */
 	public function touch(Entity $entity, $eventName = 'Model.beforeSave') {
@@ -181,9 +179,9 @@ class TimestampBehavior extends Behavior {
 /**
  * Update a field, if it hasn't been updated already
  *
- * @param Entity $entity
- * @param string $field
- * @param bool $refreshTimestamp
+ * @param \Cake\ORM\Entity $entity Entity instance.
+ * @param string $field Field name
+ * @param bool $refreshTimestamp Whether to refresh timestamp.
  * @return void
  */
 	protected function _updateField(Entity $entity, $field, $refreshTimestamp) {

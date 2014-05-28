@@ -1,7 +1,5 @@
 <?php
 /**
- * Xcache storage engine for cache.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -147,7 +145,8 @@ class XcacheEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @param bool $check
+ * @param bool $check If true will check expiration, otherwise delete all.
+ *   Unused for Xcache engine.
  * @return bool True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {

@@ -69,7 +69,7 @@ class CsrfComponent extends Component {
  * RequestAction requests do not get checked, nor will
  * they set a cookie should it be missing.
  *
- * @param \Cake\Event\Event $event
+ * @param \Cake\Event\Event $event Event instance.
  * @return void
  */
 	public function startup(Event $event) {
@@ -114,6 +114,7 @@ class CsrfComponent extends Component {
  *
  * @param \Cake\Network\Request $request The request object.
  * @param \Cake\Network\Response $response The response object.
+ * @return void
  */
 	protected function _setCookie(Request $request, Response $response) {
 		$value = Security::hash(String::uuid(), 'sha1', true);

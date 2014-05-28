@@ -1,7 +1,5 @@
 <?php
 /**
- * Abstract send email
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -36,7 +34,7 @@ abstract class AbstractTransport {
 /**
  * Send mail
  *
- * @param \Cake\Network\Email\Email $email
+ * @param \Cake\Network\Email\Email $email Email instance.
  * @return array
  */
 	abstract public function send(Email $email);
@@ -54,7 +52,7 @@ abstract class AbstractTransport {
  * Help to convert headers in string
  *
  * @param array $headers Headers in format key => value
- * @param string $eol
+ * @param string $eol End of line string.
  * @return string
  */
 	protected function _headersToString($headers, $eol = "\r\n") {

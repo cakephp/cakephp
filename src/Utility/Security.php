@@ -1,7 +1,5 @@
 <?php
 /**
- * Core Security
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -212,7 +210,12 @@ class Security {
 			$salt = vsprintf('$2y$%02d$%s', array(static::$hashCost, $salt));
 		}
 
-		if ($salt === true || strpos($salt, '$2y$') !== 0 || strlen($salt) < 29) {
+		$invalidCipher = (
+			strpos($salt, '$2y$') !== 0 &&
+			strpos($salt, '$2x$') !== 0 &&
+			strpos($salt, '$2a$') !== 0
+		);
+		if ($salt === true || $invalidCipher || strlen($salt) < 29) {
 			throw new Exception(sprintf(
 				'Invalid salt: %s for blowfish Please visit http://www.php.net/crypt and read the appropriate section for building blowfish salts.',
 				$salt
@@ -257,7 +260,7 @@ class Security {
 /**
  * Check the encryption key for proper length.
  *
- * @param string $key
+ * @param string $key Key to check.
  * @param string $method The method the key is being checked for.
  * @return void
  * @throws \Cake\Error\Exception When key length is not 256 bit/32 bytes

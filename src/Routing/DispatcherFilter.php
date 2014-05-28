@@ -172,6 +172,7 @@ class DispatcherFilter implements EventListener {
  *
  * @param \Cake\Event\Event $event container object having the `request`, `response` and `additionalParams`
  *    keys in the data property.
+ * @return void
  */
 	public function beforeDispatch(Event $event) {
 	}
@@ -186,6 +187,7 @@ class DispatcherFilter implements EventListener {
  *
  * @param \Cake\Event\Event $event container object having the `request` and  `response`
  *    keys in the data property.
+ * @return void
  */
 	public function afterDispatch(Event $event) {
 	}

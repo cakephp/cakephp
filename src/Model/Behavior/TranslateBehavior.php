@@ -123,8 +123,8 @@ class TranslateBehavior extends Behavior {
  * table. It modifies the passed query by eager loading the translated fields
  * and adding a formatter to copy the values into the main table records.
  *
- * @param \Cake\Event\Event $event
- * @param \Cake\ORM\Query $query
+ * @param \Cake\Event\Event $event The beforeFind event that was fired.
+ * @param \Cake\ORM\Query $query Query
  * @return void
  */
 	public function beforeFind(Event $event, $query) {
@@ -157,8 +157,8 @@ class TranslateBehavior extends Behavior {
  * Modifies the entity before it is saved so that translated fields are persisted
  * in the database too.
  *
- * @param \Cake\Event\Event the beforeSave event that was fired
- * @param \Cake\ORM\Entity the entity that is going to be saved
+ * @param \Cake\Event\Event $event The beforeSave event that was fired
+ * @param \Cake\ORM\Entity $entity The entity that is going to be saved
  * @param \ArrayObject $options the options passed to the save method
  * @return void
  */
@@ -212,8 +212,8 @@ class TranslateBehavior extends Behavior {
 /**
  * Unsets the temporary `_i18n` property after the entity has been saved
  *
- * @param \Cake\Event\Event the beforeSave event that was fired
- * @param \Cake\ORM\Entity the entity that is going to be saved
+ * @param \Cake\Event\Event $event The beforeSave event that was fired
+ * @param \Cake\ORM\Entity $entity The entity that is going to be saved
  * @return void
  */
 	public function afterSave(Event $event, Entity $entity) {
@@ -253,8 +253,8 @@ class TranslateBehavior extends Behavior {
  * If the `locales` array is not passed, it will bring all translations found
  * for each record.
  *
- * @param \Cake\ORM\Query $query the original query to modify
- * @param array $options
+ * @param \Cake\ORM\Query $query The original query to modify
+ * @param array $options Options
  * @return \Cake\ORM\Query
  */
 	public function findTranslations(Query $query, array $options) {
@@ -274,8 +274,8 @@ class TranslateBehavior extends Behavior {
  * Modifies the results from a table find in order to merge the translated fields
  * into each entity for a given locale.
  *
- * @param \Cake\DataSource\ResultSetDecorator $results
- * @param string $locale
+ * @param \Cake\DataSource\ResultSetDecorator $results Results to map.
+ * @param string $locale Locale string
  * @return \Cake\Collection\Collection
  */
 	protected function _rowMapper($results, $locale) {
@@ -308,7 +308,7 @@ class TranslateBehavior extends Behavior {
  * Modifies the results from a table find in order to merge full translation records
  * into each entity under the `_translations` key
  *
- * @param \Cake\Datasource\ResultSetDecorator $results
+ * @param \Cake\Datasource\ResultSetDecorator $results Results to modify.
  * @return \Cake\Collection\Collection
  */
 	public function groupTranslations($results) {
@@ -339,7 +339,7 @@ class TranslateBehavior extends Behavior {
  * out of the data found in the `_translations` property in the passed
  * entity. The result will be put into its `_i18n` property
  *
- * @param \Cake\ORM\Entity $entity
+ * @param \Cake\ORM\Entity $entity Entity
  * @return void
  */
 	protected function _bundleTranslatedFields($entity) {

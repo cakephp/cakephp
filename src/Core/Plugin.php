@@ -172,7 +172,7 @@ class Plugin {
  *
  * If a plugin has been loaded already, it will not be reloaded by loadAll().
  *
- * @param array $options
+ * @param array $options Options.
  * @return void
  */
 	public static function loadAll(array $options = []) {
@@ -268,9 +268,9 @@ class Plugin {
  * Returns true if the plugin $plugin is already loaded
  * If plugin is null, it will return a list of all loaded plugins
  *
- * @param string $plugin
+ * @param string $plugin Plugin name.
  * @return mixed boolean true if $plugin is already loaded.
- * If $plugin is null, returns a list of plugins that have been loaded
+ *   If $plugin is null, returns a list of plugins that have been loaded
  */
 	public static function loaded($plugin = null) {
 		if ($plugin) {

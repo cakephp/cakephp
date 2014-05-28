@@ -1754,6 +1754,65 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
+ * Validator method used to check the uniqueness of a value for a column.
+ * This is meant to be used with the validation API and not to be called
+ * directly.
+ *
+ * ### Example:
+ *
+ * {{{
+ * $validator->add('email', [
+ *	'unique' => ['rule' => 'validateUnique', 'provider' => 'table']
+ * ])
+ * }}}
+ *
+ * Unique validation can be scoped to the value of another column:
+ *
+ * {{{
+ * $validator->add('email', [
+ *	'unique' => [
+ *		'rule' => ['validateUnique', ['scope' => 'site_id']],
+ *		'provider' => 'table'
+ *	]
+ * ]);
+ * }}}
+ *
+ * In the above example, the email uniqueness will be scoped to only rows having
+ * the same site_id. Scoping will only be used if the scoping field is present in
+ * the data to be validated.
+ *
+ * @param mixed $value The value of column to be checked for uniqueness
+ * @param array $options The options array, optionally containing the 'scope' key
+ * @param array $context The validation context as provided by the validation routine
+ * @return boolean true if the value is unique
+ */
+	public function validateUnique($value, array $options, array $context = []) {
+		if (empty($context)) {
+			$context = $options;
+		}
+
+		$conditions = [$context['field'] => $value];
+		if (!empty($options['scope']) && isset($context['data'][$options['scope']])) {
+			$scope = $options['scope'];
+			$scopedValue = $context['data'][$scope];
+			$conditions[$scope] = $scopedValue;
+		}
+
+		if (!$context['newRecord']) {
+			$keys = (array)$this->primaryKey();
+			$not = [];
+			foreach ($keys as $key) {
+				if (isset($context['data'][$key])) {
+					$not[$key] = $context['data'][$key];
+				}
+			}
+			$conditions['NOT'] = $not;
+		}
+
+		return !$this->exists($conditions);
+	}
+
+/**
  * Get the Model callbacks this table is interested in.
  *
  * By implementing the conventional methods a table class is assumed

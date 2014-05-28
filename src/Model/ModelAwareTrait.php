@@ -48,7 +48,7 @@ trait ModelAwareTrait {
  *
  * If the properties are already set they will not be overwritten
  *
- * @param string $name
+ * @param string $name Class name.
  * @return void
  */
 	protected function _setModelClass($name) {

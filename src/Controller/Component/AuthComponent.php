@@ -767,6 +767,7 @@ class AuthComponent extends Component {
  * Set a flash message. Uses the Session component, and values from `flash` config.
  *
  * @param string $message The message to set.
+ * @param string $type Message type. Defaults to 'error'.
  * @return void
  */
 	public function flash($message, $type = 'error') {
@@ -775,7 +776,11 @@ class AuthComponent extends Component {
 		}
 		$flashConfig = $this->_config['flash'];
 		$key = $flashConfig['key'];
-		$this->session->flash($message, 'error', $flashConfig['params'] + compact('key'));
+		$params = [];
+		if (isset($flashConfig['params'])) {
+			$params = $flashConfig['params'];
+		}
+		$this->session->flash($message, 'error', $params + compact('key'));
 	}
 
 }

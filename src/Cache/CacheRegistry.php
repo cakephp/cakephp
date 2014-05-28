@@ -47,6 +47,7 @@ class CacheRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the cache is missing in.
+ * @return void
  * @throws \Cake\Error\Exception
  */
 	protected function _throwMissingClassError($class, $plugin) {
@@ -57,6 +58,7 @@ class CacheRegistry extends ObjectRegistry {
  * Create the cache engine instance.
  *
  * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ *
  * @param string|CacheEngine $class The classname or object to make.
  * @param string $alias The alias of the object.
  * @param array $config An array of settings to use for the cache engine.

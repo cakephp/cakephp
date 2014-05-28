@@ -698,7 +698,7 @@ class Inflector {
 /**
  * Returns camelBacked version of an underscored string.
  *
- * @param string $string
+ * @param string $string String to convert.
  * @return string in variable form
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::variable
  */

@@ -515,7 +515,7 @@ class Router {
 /**
  * Set the route collection object Router should use.
  *
- * @param \Cake\Routing\RouteCollection $routes
+ * @param \Cake\Routing\RouteCollection $routes Routes collection.
  * @return void
  */
 	public static function setRouteCollection(RouteCollection $routes) {
@@ -557,7 +557,7 @@ class Router {
  * Push a request onto the request stack. Pushing a request
  * sets the request context used when generating URLs.
  *
- * @param \Cake\Network\Request $request
+ * @param \Cake\Network\Request $request Request instance.
  * @return void
  */
 	public static function pushRequest(Request $request) {

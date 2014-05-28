@@ -144,7 +144,7 @@ class Debugger {
 /**
  * Returns a reference to the Debugger singleton object instance.
  *
- * @param string $class
+ * @param string $class Class name.
  * @return object
  */
 	public static function getInstance($class = null) {
@@ -723,7 +723,7 @@ class Debugger {
 /**
  * Takes a processed array of data from an error and displays it in the chosen format.
  *
- * @param string $data
+ * @param string $data Data.
  * @return void
  */
 	public function outputError($data) {

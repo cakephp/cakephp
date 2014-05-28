@@ -37,8 +37,8 @@ class ReplaceIterator extends Collection {
  * in the current iteration, the key of the element and the passed $items iterator
  * as arguments, in that order.
  *
- * @param array|\Traversable $items the items to be filtered
- * @param callable $callback
+ * @param array|\Traversable $items The items to be filtered.
+ * @param callable $callback Callback.
  */
 	public function __construct($items, callable $callback) {
 		$this->_callback = $callback;

@@ -59,6 +59,8 @@ class MemcachedEngine extends CacheEngine {
  *    appropriate serializer support.
  * - `servers` String or array of memcached servers. If an array MemcacheEngine will use
  *    them as a pool.
+ * - `options` - Additional options for the memcached client. Should be an array of option => value.
+ *    Use the Memcached::OPT_* constants as keys.
  *
  * @var array
  */
@@ -73,6 +75,7 @@ class MemcachedEngine extends CacheEngine {
 		'probability' => 100,
 		'serialize' => 'php',
 		'servers' => ['127.0.0.1'],
+		'options' => [],
 	];
 
 /**
@@ -140,6 +143,12 @@ class MemcachedEngine extends CacheEngine {
 			return false;
 		}
 
+		if (is_array($this->_config['options'])) {
+			foreach ($this->_config['options'] as $opt => $value) {
+				$this->_Memcached->setOption($opt, $value);
+			}
+		}
+
 		if ($this->_config['login'] !== null && $this->_config['password'] !== null) {
 			if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
 				throw new Error\Exception(
@@ -155,6 +164,7 @@ class MemcachedEngine extends CacheEngine {
 /**
  * Settings the memcached instance
  *
+ * @return void
  * @throws \Cake\Error\Exception when the Memcached extension is not built with the desired serializer engine
  */
 	protected function _setOptions() {
@@ -351,7 +361,7 @@ class MemcachedEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @param bool $check
+ * @param bool $check If true will check expiration, otherwise delete all.
  * @return bool True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {

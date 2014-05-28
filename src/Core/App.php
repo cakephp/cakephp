@@ -105,8 +105,8 @@ class App {
  *
  * Test isolation wrapper
  *
- * @param string $name
- * @param string $namespace
+ * @param string $name Class name.
+ * @param string $namespace Namespace.
  * @return bool
  */
 	protected static function _classExistsInBase($name, $namespace) {
@@ -171,8 +171,8 @@ class App {
  *
  * Will return the full path to the cache engines package.
  *
- * @param string $type
- * @return array full path to package
+ * @param string $type Package type.
+ * @return array Full path to package
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::core
  */
 	public static function core($type) {

@@ -423,22 +423,47 @@ class ModelTaskTest extends TestCase {
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->getValidation($model);
 		$expected = [
-			'bake_user_id' => ['rule' => 'numeric', 'allowEmpty' => false],
-			'title' => ['rule' => false, 'allowEmpty' => false],
-			'body' => ['rule' => false, 'allowEmpty' => true],
-			'published' => ['rule' => 'boolean', 'allowEmpty' => true],
-			'id' => ['rule' => 'numeric', 'allowEmpty' => 'create']
+			'bake_user_id' => ['valid' => ['rule' => 'numeric', 'allowEmpty' => false]],
+			'title' => ['valid' => ['rule' => false, 'allowEmpty' => false]],
+			'body' => ['valid' => ['rule' => false, 'allowEmpty' => true]],
+			'published' => ['valid' => ['rule' => 'boolean', 'allowEmpty' => true]],
+			'id' => ['valid' => ['rule' => 'numeric', 'allowEmpty' => 'create']]
 		];
 		$this->assertEquals($expected, $result);
 
 		$model = TableRegistry::get('BakeComments');
 		$result = $this->Task->getValidation($model);
 		$expected = [
-			'bake_article_id' => ['rule' => 'numeric', 'allowEmpty' => false],
-			'bake_user_id' => ['rule' => 'numeric', 'allowEmpty' => false],
-			'comment' => ['rule' => false, 'allowEmpty' => true],
-			'published' => ['rule' => false, 'allowEmpty' => true],
-			'otherid' => ['rule' => 'numeric', 'allowEmpty' => 'create']
+			'bake_article_id' => ['valid' => ['rule' => 'numeric', 'allowEmpty' => false]],
+			'bake_user_id' => ['valid' => ['rule' => 'numeric', 'allowEmpty' => false]],
+			'comment' => ['valid' => ['rule' => false, 'allowEmpty' => true]],
+			'published' => ['valid' => ['rule' => false, 'allowEmpty' => true]],
+			'otherid' => ['valid' => ['rule' => 'numeric', 'allowEmpty' => 'create']]
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Tests that a username column will get a validateUnique rule applied
+ *
+ * @return void
+ */
+	public function testGetValidationWithUnique() {
+		$model = TableRegistry::get('Users');
+		$result = $this->Task->getValidation($model);
+		$expected = [
+			'password' => ['valid' => ['rule' => false, 'allowEmpty' => true]],
+			'id' => ['valid' => ['rule' => 'numeric', 'allowEmpty' => 'create']],
+			'username' => [
+				'valid' => [
+					'rule' => false,
+					'allowEmpty' => true
+				],
+				'unique' => [
+					'rule' => 'validateUnique',
+					'provider' => 'table'
+				]
+			]
 		];
 		$this->assertEquals($expected, $result);
 	}
@@ -546,20 +571,30 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeTableValidation() {
-		$validation = array(
-			'id' => array(
-				'allowEmpty' => 'create',
-				'rule' => 'numeric',
-			),
-			'name' => array(
-				'allowEmpty' => false,
-				'rule' => false,
-			),
-			'email' => array(
-				'allowEmpty' => true,
-				'rule' => 'email',
-			),
-		);
+		$validation = [
+			'id' => [
+				'valid' => array(
+					'allowEmpty' => 'create',
+					'rule' => 'numeric',
+				)
+			],
+			'name' => [
+				'valid' => [
+					'allowEmpty' => false,
+					'rule' => false,
+				]
+			],
+			'email' => [
+				'valid' => [
+					'allowEmpty' => true,
+					'rule' => 'email'
+				],
+				'unique' => [
+					'rule' => 'validateUnique',
+					'provider' => 'table'
+				]
+			]
+		];
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->bakeTable($model, compact('validation'));
 
@@ -570,6 +605,10 @@ class ModelTaskTest extends TestCase {
 		$this->assertContains('public function validationDefault(Validator $validator) {', $result);
 		$this->assertContains("->add('id', 'valid', ['rule' => 'numeric'])", $result);
 		$this->assertContains("->add('email', 'valid', ['rule' => 'email'])", $result);
+		$this->assertContains(
+			"->add('email', 'unique', ['rule' => 'validateUnique', 'provider' => 'table'])",
+			$result)
+		;
 		$this->assertContains("->allowEmpty('id', 'create')", $result);
 		$this->assertContains("->allowEmpty('email')", $result);
 		$this->assertContains("->validatePresence('name', 'create')", $result);

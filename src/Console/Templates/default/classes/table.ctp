@@ -73,10 +73,14 @@ $key = array_map(function($el) { return "'$el'"; }, (array)$primaryKey);
 		$validator
 <?php $countValidation = count($validation) - 1; ?>
 <?php $i = 0; ?>
-<?php foreach ($validation as $field => $rule): ?>
-<?php if ($rule['rule']): ?>
-			->add('<?= $field ?>', 'valid', ['rule' => '<?= $rule['rule'] ?>'])
+<?php foreach ($validation as $field => $rules): ?>
+<?php foreach ($rules as $ruleName => $rule): ?>
+<?php if ($rule['rule'] && !isset($rule['provider'])): ?>
+			->add('<?= $field ?>', '<?= $ruleName ?>', ['rule' => '<?= $rule['rule'] ?>'])
+<?php elseif ($rule['rule'] && isset($rule['provider'])): ?>
+			->add('<?= $field ?>', '<?= $ruleName ?>', ['rule' => '<?= $rule['rule'] ?>', 'provider' => '<?= $rule['provider'] ?>'])
 <?php endif; ?>
+<?php if (isset($rule['allowEmpty'])) : ?>
 <?php if (is_string($rule['allowEmpty'])): ?>
 			->allowEmpty('<?= $field ?>', '<?= $rule['allowEmpty'] ?>')<?= $i === $countValidation ? ";\n" : "\n" ?>
 <?php elseif ($rule['allowEmpty']): ?>
@@ -85,6 +89,8 @@ $key = array_map(function($el) { return "'$el'"; }, (array)$primaryKey);
 			->validatePresence('<?= $field ?>', 'create')
 			->notEmpty('<?= $field ?>')<?= $i === $countValidation ? ";\n" : "\n" ?>
 <?php endif ?>
+<?php endif ?>
+<?php endforeach ?>
 <?php $i++; ?>
 <?php endforeach ?>
 <?php echo "\n"; ?>

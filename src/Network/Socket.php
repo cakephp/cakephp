@@ -1,7 +1,5 @@
 <?php
 /**
- * CakePHP Socket connection class.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -178,8 +176,8 @@ class Socket {
  *
  * Instead we need to handle those errors manually.
  *
- * @param int $code
- * @param string $message
+ * @param int $code Code number.
+ * @param string $message Message.
  * @return void
  */
 	protected function _connectionErrorHandler($code, $message) {

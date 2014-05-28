@@ -134,7 +134,8 @@ class Response extends Message {
  * - Decodes the status code.
  * - Parses and normalizes header names + values.
  *
- * @param array $headers
+ * @param array $headers Headers to parse.
+ * @return void
  */
 	protected function _parseHeaders($headers) {
 		foreach ($headers as $key => $value) {
@@ -358,7 +359,7 @@ class Response extends Message {
 /**
  * Read values as properties.
  *
- * @param string $name
+ * @param string $name Property name.
  * @return mixed
  */
 	public function __get($name) {
@@ -375,7 +376,7 @@ class Response extends Message {
 /**
  * isset/empty test with -> syntax.
  *
- * @param string $name
+ * @param string $name Property name.
  * @return bool
  */
 	public function __isset($name) {
