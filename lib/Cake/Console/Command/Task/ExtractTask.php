@@ -242,10 +242,10 @@ class ExtractTask extends AppShell {
  *
  * Takes care of duplicate translations
  *
- * @param string $category
- * @param string $domain
- * @param string $msgid
- * @param array $details
+ * @param string $category The category
+ * @param string $domain The domain
+ * @param string $msgid The message string
+ * @param array $details The file and line references
  * @return void
  */
 	protected function _addTranslation($category, $domain, $msgid, $details = array()) {
@@ -582,10 +582,10 @@ class ExtractTask extends AppShell {
 /**
  * Prepare a file to be stored
  *
- * @param string $category
- * @param string $domain
- * @param string $header
- * @param string $sentence
+ * @param string $category The category
+ * @param string $domain The domain
+ * @param string $header The header content.
+ * @param string $sentence The sentence to store.
  * @return void
  */
 	protected function _store($category, $domain, $header, $sentence) {
@@ -678,7 +678,7 @@ class ExtractTask extends AppShell {
 /**
  * Get the strings from the position forward
  *
- * @param integer $position Actual position on tokens array
+ * @param integer &$position Actual position on tokens array
  * @param integer $target Number of strings to extract
  * @return array Strings extracted
  */

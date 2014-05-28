@@ -18,7 +18,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-/*
+/**
  *
  * Using the Schema command line utility
  * cake schema run create DbAcl
@@ -26,10 +26,22 @@
  */
 class DbAclSchema extends CakeSchema {
 
+/**
+ * Before event.
+ *
+ * @param array $event The event data.
+ * @return boolean success
+ */
 	public function before($event = array()) {
 		return true;
 	}
 
+/**
+ * After event.
+ *
+ * @param array $event The event data.
+ * @return void
+ */
 	public function after($event = array()) {
 	}
 

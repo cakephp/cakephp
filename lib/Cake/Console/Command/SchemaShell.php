@@ -311,8 +311,8 @@ class SchemaShell extends AppShell {
  * Create database from Schema object
  * Should be called via the run method
  *
- * @param CakeSchema $Schema
- * @param string $table
+ * @param CakeSchema $Schema The schema instance to create.
+ * @param string $table The table name.
  * @return void
  */
 	protected function _create(CakeSchema $Schema, $table = null) {
@@ -362,8 +362,8 @@ class SchemaShell extends AppShell {
  * Update database with Schema object
  * Should be called via the run method
  *
- * @param CakeSchema $Schema
- * @param string $table
+ * @param CakeSchema &$Schema The schema instance
+ * @param string $table The table name.
  * @return void
  */
 	protected function _update(&$Schema, $table = null) {
@@ -417,9 +417,9 @@ class SchemaShell extends AppShell {
 /**
  * Runs sql from _create() or _update()
  *
- * @param array $contents
- * @param string $event
- * @param CakeSchema $Schema
+ * @param array $contents The contents to execute.
+ * @param string $event The event to fire
+ * @param CakeSchema $Schema The schema instance.
  * @return void
  */
 	protected function _run($contents, $event, CakeSchema $Schema) {

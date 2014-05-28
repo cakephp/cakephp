@@ -324,7 +324,7 @@ class Security {
 /**
  * Check the encryption key for proper length.
  *
- * @param string $key
+ * @param string $key Key to check.
  * @param string $method The method the key is being checked for.
  * @return void
  * @throws CakeException When key length is not 256 bit/32 bytes

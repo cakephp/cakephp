@@ -243,7 +243,7 @@ class CakeNumber {
  * - `decimals` - Decimal separator symbol ie. '.'
  *
  * @param float $value A floating point number
- * @param array $options
+ * @param array $options Options list.
  * @return string formatted delta
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::formatDelta
  */
@@ -258,10 +258,10 @@ class CakeNumber {
 /**
  * Alternative number_format() to accommodate multibyte decimals and thousands < PHP 5.4
  *
- * @param float $value
- * @param integer $places
- * @param string $decimals
- * @param string $thousands
+ * @param float $value Value to format.
+ * @param integer $places Decimal places to use.
+ * @param string $decimals Decimal position string.
+ * @param string $thousands Thousands separator string.
  * @return string
  */
 	protected static function _numberFormat($value, $places = 0, $decimals = '.', $thousands = ',') {
@@ -315,10 +315,10 @@ class CakeNumber {
  *   By default all currencies contain utf-8 symbols and don't need this changed. If you require
  *   non HTML encoded symbols you will need to update the settings with the correct bytes.
  *
- * @param float $value
+ * @param float $value Value to format.
  * @param string $currency Shortcut to default options. Valid values are
  *   'USD', 'EUR', 'GBP', otherwise set at least 'before' and 'after' options.
- * @param array $options
+ * @param array $options Options list.
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
