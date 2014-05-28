@@ -1846,7 +1846,7 @@ class Model extends Object implements CakeEventListener {
 		if ($success) {
 			if (!empty($joined)) {
 				$this->_saveMulti($joined, $this->id, $db);
-			} else if ($count === 0) {
+			} elseif ($count === 0) {
 				$success = false;
 			}
 		}
