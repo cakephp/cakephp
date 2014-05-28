@@ -2037,7 +2037,7 @@ class Model extends Object implements CakeEventListener {
 						$Model->create();
 					}
 
-					$Model->save($data);
+					$Model->save($data, array('atomic' => false));
 				}
 			}
 
@@ -2281,9 +2281,9 @@ class Model extends Object implements CakeEventListener {
 			$saved = false;
 			if ($validates) {
 				if ($options['deep']) {
-					$saved = $this->saveAssociated($record, array_merge($options, array('atomic' => false)));
+					$saved = $this->saveAssociated($record, array('atomic' => false) + $options);
 				} else {
-					$saved = $this->save($record, $options);
+					$saved = $this->save($record, array('atomic' => false) + $options);
 				}
 			}
 
@@ -2435,7 +2435,7 @@ class Model extends Object implements CakeEventListener {
 			$return[$association] = $validates;
 		}
 
-		if ($validates && !($this->create(null) !== null && $this->save($data, $options))) {
+		if ($validates && !($this->create(null) !== null && $this->save($data, array('atomic' => false) + $options))) {
 			$validationErrors[$this->alias] = $this->validationErrors;
 			$validates = false;
 		}
@@ -2471,7 +2471,7 @@ class Model extends Object implements CakeEventListener {
 						if ($options['deep']) {
 							$saved = $Model->saveAssociated($values, array('atomic' => false) + $options);
 						} else {
-							$saved = $Model->save($values, $options);
+							$saved = $Model->save($values, array('atomic' => false) + $options);
 						}
 					}
 
