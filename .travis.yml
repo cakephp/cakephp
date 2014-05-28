@@ -16,10 +16,16 @@ services:
   - memcached
 
 matrix:
+  fast_finish: true
+  allow_failures:
+    - php: 5.4
+      env:
+        - PHPCS=1
   include:
     - php: 5.4
       env:
         - PHPCS=1
+
 
 before_script:
   - sh -c "if [ '$TRAVIS_PHP_VERSION' != '5.2' ]; then composer global require 'phpunit/phpunit=3.7.33'; fi"
