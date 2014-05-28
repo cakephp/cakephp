@@ -18,6 +18,7 @@ use Cake\Core\Configure;
 use Cake\Error;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
+use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Utility\Security;
@@ -305,8 +306,11 @@ class FormHelper extends Helper {
 		}
 		unset($options['templates']);
 
-		$action = $this->url($this->_formUrl($context, $options));
+		$url = $this->_formUrl($context, $options);
+		$action = $this->url($url);
 		unset($options['url'], $options['action'], $options['idPrefix']);
+
+		$this->_lastAction($url);
 
 		$htmlAttributes = [];
 		switch (strtolower($options['type'])) {
@@ -344,13 +348,6 @@ class FormHelper extends Helper {
 
 		if (!empty($append)) {
 			$append = $templater->format('hiddenblock', ['content' => $append]);
-		}
-
-		$this->_lastAction = $action;
-		if (strpos($action, '://')) {
-			$query = parse_url($action, PHP_URL_QUERY);
-			$query = $query ? '?' . $query : '';
-			$this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
 		}
 
 		$actionAttr = $templater->formatAttributes(['action' => $action, 'escape' => false]);
@@ -396,6 +393,19 @@ class FormHelper extends Helper {
 		if (is_string($options['url'])) {
 			return $options['url'];
 		}
+	}
+
+/**
+ * Correctly store the last created form action URL.
+ *
+ * @param string|array $url The URL of the last form.
+ * @return void
+ */
+	protected function _lastAction($url) {
+		$action = Router::url($url, true);
+		$query = parse_url($action, PHP_URL_QUERY);
+		$query = $query ? '?' . $query : '';
+		$this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
 	}
 
 /**
@@ -1456,10 +1466,11 @@ class FormHelper extends Helper {
 			unset($options['target']);
 		}
 
+		$this->_lastAction($url);
+
 		$out = $this->formatTemplate('formstart', [
 			'attrs' => $this->templater()->formatAttributes($formOptions)
 		]);
-		$this->_lastAction = $formOptions['action'];
 		$out .= $this->hidden('_method', ['value' => $requestMethod]);
 		$out .= $this->_csrfField();
 

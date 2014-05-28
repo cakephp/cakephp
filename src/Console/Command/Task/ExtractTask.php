@@ -123,7 +123,7 @@ class ExtractTask extends Shell {
 			);
 			$response = $this->in($message, null, $defaultPath);
 			if (strtoupper($response) === 'Q') {
-				$this->out(__d('cake_console', 'Extract Aborted'));
+				$this->err(__d('cake_console', 'Extract Aborted'));
 				return $this->_stop();
 			} elseif (strtoupper($response) === 'D' && count($this->_paths)) {
 				$this->out();
@@ -197,7 +197,7 @@ class ExtractTask extends Shell {
 			while (true) {
 				$response = $this->in($message, null, rtrim($this->_paths[0], DS) . DS . 'Locale');
 				if (strtoupper($response) === 'Q') {
-					$this->out(__d('cake_console', 'Extract Aborted'));
+					$this->err(__d('cake_console', 'Extract Aborted'));
 					return $this->_stop();
 				} elseif ($this->_isPathUsable($response)) {
 					$this->_output = $response . DS;
@@ -619,16 +619,16 @@ class ExtractTask extends Shell {
  * @return void
  */
 	protected function _markerError($file, $line, $marker, $count) {
-		$this->out(__d('cake_console', "Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
+		$this->err(__d('cake_console', "Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
 		$count += 2;
 		$tokenCount = count($this->_tokens);
 		$parenthesis = 1;
 
 		while ((($tokenCount - $count) > 0) && $parenthesis) {
 			if (is_array($this->_tokens[$count])) {
-				$this->out($this->_tokens[$count][1], false);
+				$this->err($this->_tokens[$count][1], false);
 			} else {
-				$this->out($this->_tokens[$count], false);
+				$this->err($this->_tokens[$count], false);
 				if ($this->_tokens[$count] === '(') {
 					$parenthesis++;
 				}
@@ -639,7 +639,7 @@ class ExtractTask extends Shell {
 			}
 			$count++;
 		}
-		$this->out("\n", true);
+		$this->err("\n", true);
 	}
 
 /**

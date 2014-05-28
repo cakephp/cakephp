@@ -59,6 +59,8 @@ class MemcachedEngine extends CacheEngine {
  *    appropriate serializer support.
  * - `servers` String or array of memcached servers. If an array MemcacheEngine will use
  *    them as a pool.
+ * - `options` - Additional options for the memcached client. Should be an array of option => value.
+ *    Use the Memcached::OPT_* constants as keys.
  *
  * @var array
  */
@@ -73,6 +75,7 @@ class MemcachedEngine extends CacheEngine {
 		'probability' => 100,
 		'serialize' => 'php',
 		'servers' => ['127.0.0.1'],
+		'options' => [],
 	];
 
 /**
@@ -138,6 +141,12 @@ class MemcachedEngine extends CacheEngine {
 
 		if (!$this->_Memcached->addServers($servers)) {
 			return false;
+		}
+
+		if (is_array($this->_config['options'])) {
+			foreach ($this->_config['options'] as $opt => $value) {
+				$this->_Memcached->setOption($opt, $value);
+			}
 		}
 
 		if ($this->_config['login'] !== null && $this->_config['password'] !== null) {
