@@ -567,69 +567,12 @@ class CookieComponentTest extends TestCase {
 	}
 
 /**
- * testReadingCookieDataWithoutStartup
- *
- * @return void
- */
-	public function testReadingCookieDataWithoutStartup() {
-		$this->markTestIncomplete();
-		$data = $this->Cookie->read('Encrytped_array');
-		$expected = null;
-		$this->assertEquals($expected, $data);
-
-		$data = $this->Cookie->read('Encrytped_multi_cookies');
-		$expected = null;
-		$this->assertEquals($expected, $data);
-
-		$data = $this->Cookie->read('Plain_array');
-		$expected = null;
-		$this->assertEquals($expected, $data);
-
-		$data = $this->Cookie->read('Plain_multi_cookies');
-		$expected = null;
-		$this->assertEquals($expected, $data);
-
-		$this->request->cookies['CakeTestCookie'] = array(
-			'Encrytped_array' => $this->_encrypt(array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!')),
-			'Encrytped_multi_cookies' => array(
-				'name' => $this->_encrypt('CakePHP'),
-				'version' => $this->_encrypt('1.2.0.x'),
-				'tag' => $this->_encrypt('CakePHP Rocks!')
-			),
-			'Plain_array' => '{"name":"CakePHP","version":"1.2.0.x","tag":"CakePHP Rocks!"}',
-			'Plain_multi_cookies' => array(
-				'name' => 'CakePHP',
-				'version' => '1.2.0.x',
-				'tag' => 'CakePHP Rocks!'
-			)
-		);
-
-		$data = $this->Cookie->read('Encrytped_array');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
-		$this->assertEquals($expected, $data);
-
-		$data = $this->Cookie->read('Encrytped_multi_cookies');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
-		$this->assertEquals($expected, $data);
-
-		$data = $this->Cookie->read('Plain_array');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
-		$this->assertEquals($expected, $data);
-
-		$data = $this->Cookie->read('Plain_multi_cookies');
-		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!');
-		$this->assertEquals($expected, $data);
-		$this->Cookie->destroy();
-	}
-
-/**
  * Test Reading legacy cookie values.
  *
  * @return void
  */
 	public function testReadLegacyCookieValue() {
-		$this->markTestIncomplete();
-		$this->request->cookies['CakeTestCookie'] = array(
+		$this->request->cookies = array(
 			'Legacy' => array('value' => $this->_oldImplode(array(1, 2, 3)))
 		);
 		$result = $this->Cookie->read('Legacy.value');
@@ -643,8 +586,7 @@ class CookieComponentTest extends TestCase {
  * @return void
  */
 	public function testReadEmpty() {
-		$this->markTestIncomplete();
-		$this->request->cookies['CakeTestCookie'] = array(
+		$this->request->cookies = array(
 			'JSON' => '{"name":"value"}',
 			'Empty' => '',
 			'String' => '{"somewhat:"broken"}',
@@ -658,24 +600,11 @@ class CookieComponentTest extends TestCase {
 	}
 
 /**
- * test that no error is issued for non array data.
- *
- * @return void
- */
-	public function testNoErrorOnNonArrayData() {
-		$this->markTestIncomplete();
-		$this->request->cookies['CakeTestCookie'] = 'kaboom';
-
-		$this->assertNull($this->Cookie->read('value'));
-	}
-
-/**
  * testCheck method
  *
  * @return void
  */
 	public function testCheck() {
-		$this->markTestIncomplete();
 		$this->Cookie->write('CookieComponentTestCase', 'value');
 		$this->assertTrue($this->Cookie->check('CookieComponentTestCase'));
 
@@ -688,7 +617,6 @@ class CookieComponentTest extends TestCase {
  * @return void
  */
 	public function testCheckingSavedEmpty() {
-		$this->markTestIncomplete();
 		$this->Cookie->write('CookieComponentTestCase', 0);
 		$this->assertTrue($this->Cookie->check('CookieComponentTestCase'));
 
@@ -702,7 +630,6 @@ class CookieComponentTest extends TestCase {
  * @return void
  */
 	public function testCheckKeyWithSpaces() {
-		$this->markTestIncomplete();
 		$this->Cookie->write('CookieComponent Test', "test");
 		$this->assertTrue($this->Cookie->check('CookieComponent Test'));
 		$this->Cookie->delete('CookieComponent Test');
@@ -717,7 +644,6 @@ class CookieComponentTest extends TestCase {
  * @return void
  */
 	public function testCheckEmpty() {
-		$this->markTestIncomplete();
 		$this->assertFalse($this->Cookie->check());
 	}
 

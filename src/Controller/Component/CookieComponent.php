@@ -326,7 +326,6 @@ class CookieComponent extends Component {
  */
 	protected function _write($name, $value) {
 		$config = $this->config();
-
 		$expires = new \DateTime($config['expires']);
 
 		$this->_response->cookie(array(
@@ -348,10 +347,12 @@ class CookieComponent extends Component {
  */
 	protected function _delete($name) {
 		$config = $this->config();
+		$expires = new \DateTime($config['expires']);
+
 		$this->_response->cookie(array(
-			'name' => $config['name'] . $name,
+			'name' => $name,
 			'value' => '',
-			'expire' => time() - 42000,
+			'expire' => $expires->format('U') - 42000,
 			'path' => $config['path'],
 			'domain' => $config['domain'],
 			'secure' => $config['secure'],
@@ -389,9 +390,12 @@ class CookieComponent extends Component {
  * @return string decrypted string
  */
 	protected function _decrypt($values) {
-		$decrypted = array();
+		if (is_string($values)) {
+			return $this->_decode($values);
+		}
 
-		foreach ((array)$values as $name => $value) {
+		$decrypted = array();
+		foreach ($values as $name => $value) {
 			if (is_array($value)) {
 				foreach ($value as $key => $val) {
 					$decrypted[$name][$key] = $this->_decode($val);
