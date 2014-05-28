@@ -199,7 +199,7 @@ class DbConfigTask extends AppShell {
 /**
  * Output verification message and bake if it looks good
  *
- * @param array $config
+ * @param array $config The config data.
  * @return boolean True if user says it looks good, false otherwise
  */
 	protected function _verify($config) {

@@ -53,9 +53,9 @@ class CommandTask extends AppShell {
 /**
  * Scan the provided paths for shells, and append them into $shellList
  *
- * @param string $type
- * @param array $shells
- * @param array $shellList
+ * @param string $type The type of object.
+ * @param array $shells The shell name.
+ * @param array &$shellList List of shells.
  * @return void
  */
 	protected function _appendShells($type, $shells, &$shellList) {
@@ -90,7 +90,7 @@ class CommandTask extends AppShell {
 /**
  * Return a list of subcommands for a given command
  *
- * @param string $commandName
+ * @param string $commandName The command you want subcommands from.
  * @return array
  */
 	public function subCommands($commandName) {
@@ -127,7 +127,7 @@ class CommandTask extends AppShell {
 /**
  * Get Shell instance for the given command
  *
- * @param mixed $commandName
+ * @param mixed $commandName The command you want.
  * @return mixed
  */
 	public function getShell($commandName) {
@@ -157,7 +157,7 @@ class CommandTask extends AppShell {
 /**
  * Get Shell instance for the given command
  *
- * @param mixed $commandName
+ * @param mixed $commandName The command to get options for.
  * @return array
  */
 	public function options($commandName) {

@@ -334,9 +334,9 @@ class TestShell extends Shell {
 /**
  * Find the test case for the passed file. The file could itself be a test.
  *
- * @param string $file
- * @param string $category
- * @param boolean $throwOnMissingFile
+ * @param string $file The file to map.
+ * @param string $category The test file category.
+ * @param boolean $throwOnMissingFile Whether or not to throw an exception.
  * @return array array(type, case)
  * @throws Exception
  */
@@ -411,7 +411,7 @@ class TestShell extends Shell {
 /**
  * For the given file, what category of test is it? returns app, core or the name of the plugin
  *
- * @param string $file
+ * @param string $file The file to map.
  * @return string
  */
 	protected function _mapFileToCategory($file) {
