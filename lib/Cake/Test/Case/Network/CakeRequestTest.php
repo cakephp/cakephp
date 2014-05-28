@@ -2058,6 +2058,8 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Test reading params
+ *
  * @dataProvider paramReadingDataProvider
  */
 	public function testParamReading($toRead, $expected) {
@@ -2077,6 +2079,11 @@ class CakeRequestTest extends CakeTestCase {
 		$this->assertEquals($expected, $request->param($toRead));
 	}
 
+/**
+ * Data provider for testing reading values with CakeRequest::param()
+ * 
+ * @return array
+ */
 	public function paramReadingDataProvider() {
 		return array(
 			array(
@@ -2114,6 +2121,11 @@ class CakeRequestTest extends CakeTestCase {
 		);
 	}
 
+/**
+ * test writing request params with param()
+ *
+ * @return void
+ */
 	public function testParamWriting() {
 		$request = new CakeRequest('/');
 		$request->addParams(array(
