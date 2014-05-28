@@ -1807,6 +1807,11 @@ class Model extends Object implements CakeEventListener {
 			}
 		}
 
+		if (empty($fields) && empty($joined)) {
+			$this->whitelist = $_whitelist;
+			return false;
+		}
+
 		$count = count($fields);
 
 		if (!$exists && $count > 0) {
@@ -1843,38 +1848,33 @@ class Model extends Object implements CakeEventListener {
 			}
 		}
 
-		if ($success) {
-			if (!empty($joined)) {
-				$this->_saveMulti($joined, $this->id, $db);
-			} elseif ($count === 0) {
-				$success = false;
-			}
-		}
-
-		if ($success) {
-			if ($count > 0) {
-				if (!empty($this->data)) {
-					if ($created) {
-						$this->data[$this->alias][$this->primaryKey] = $this->id;
-					}
-				}
-
-				if ($options['callbacks'] === true || $options['callbacks'] === 'after') {
-					$event = new CakeEvent('Model.afterSave', $this, array($created, $options));
-					$this->getEventManager()->dispatch($event);
-				}
-			}
-
-			if (!empty($this->data)) {
-				$success = $this->data;
-			}
-
-			$this->_clearCache();
-			$this->validationErrors = array();
-			$this->data = false;
+		if ($success && !empty($joined)) {
+			$this->_saveMulti($joined, $this->id, $db);
 		}
 
 		$this->whitelist = $_whitelist;
+
+		if (!$success) {
+			return $success;
+		}
+
+		if ($count > 0) {
+			if ($created) {
+				$this->data[$this->alias][$this->primaryKey] = $this->id;
+			}
+
+			if ($options['callbacks'] === true || $options['callbacks'] === 'after') {
+				$event = new CakeEvent('Model.afterSave', $this, array($created, $options));
+				$this->getEventManager()->dispatch($event);
+			}
+		}
+
+		$success = $this->data;
+
+		$this->_clearCache();
+		$this->validationErrors = array();
+		$this->data = false;
+
 		return $success;
 	}
 
