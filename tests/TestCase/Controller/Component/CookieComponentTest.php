@@ -195,6 +195,19 @@ class CookieComponentTest extends TestCase {
 	}
 
 /**
+ * Test writes don't omit request data from being read.
+ *
+ * @return void
+ */
+	public function testWriteThanRead() {
+		$this->request->cookies = [
+			'User' => ['name' => 'mark']
+		];
+		$this->Cookie->write('Testing', 'value');
+		$this->assertEquals('mark', $this->Cookie->read('User.name'));
+	}
+
+/**
  * test write() encrypted data with falsey value
  *
  * @return void

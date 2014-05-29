@@ -267,33 +267,6 @@ class CookieComponent extends Component {
 	}
 
 /**
- * Destroy current cookie
- *
- * You must use this method before any output is sent to the browser.
- * Failure to do so will result in header already sent errors.
- *
- * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::destroy
- */
-	public function destroy() {
-		$cookieName = $this->config('name');
-		if (empty($this->_values[$cookieName])) {
-			$this->read();
-		}
-
-		foreach ($this->_values[$cookieName] as $name => $value) {
-			if (is_array($value)) {
-				foreach ($value as $key => $val) {
-					unset($this->_values[$cookieName][$name][$key]);
-					$this->_delete("[$name][$key]");
-				}
-			}
-			unset($this->_values[$cookieName][$name]);
-			$this->_delete("[$name]");
-		}
-	}
-
-/**
  * Get / set encryption type. Use this method in ex: AppController::beforeFilter()
  * before you have read or written any cookies.
  *
