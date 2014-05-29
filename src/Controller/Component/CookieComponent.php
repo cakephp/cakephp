@@ -100,6 +100,13 @@ class CookieComponent extends Component {
 	protected $_request;
 
 /**
+ * Valid cipher names for encrypted cookies.
+ *
+ * @var array
+ */
+	protected $_validCiphers = ['aes', 'rijndael'];
+
+/**
  * Constructor
  *
  * @param ComponentRegistry $collection A ComponentRegistry for this component
@@ -327,6 +334,7 @@ class CookieComponent extends Component {
 		if (!$encrypt) {
 			return $value;
 		}
+		$this->_checkCipher($encrypt);
 		$prefix = "Q2FrZQ==.";
 		if ($encrypt === 'rijndael') {
 			$cipher = Security::rijndael($value, $this->_config['key'], 'encrypt');
@@ -335,6 +343,23 @@ class CookieComponent extends Component {
 			$cipher = Security::encrypt($value, $this->_config['key']);
 		}
 		return $prefix . base64_encode($cipher);
+	}
+
+/**
+ * Helper method for validating encryption cipher names.
+ *
+ * @param string $encrypt The cipher name.
+ * @return void
+ * @throws \RuntimeException When an invalid cipher is provided.
+ */
+	protected function _checkCipher($encrypt) {
+		if (!in_array($encrypt, $this->_validCiphers)) {
+			$msg = sprintf(
+				'Invalid encryption cipher. Must be one of %s.',
+				implode(', ', $this->_validCiphers)
+			);
+			throw new \RuntimeException($msg);
+		}
 	}
 
 /**
@@ -366,20 +391,20 @@ class CookieComponent extends Component {
  * Decodes and decrypts a single value.
  *
  * @param string $value The value to decode & decrypt.
- * @param string|false $encryption The encryption cipher to use.
+ * @param string|false $encrypt The encryption cipher to use.
  * @return string Decoded value.
  */
-	protected function _decode($value, $encryption) {
-		$prefix = 'Q2FrZQ==.';
-		$pos = strpos($value, $prefix);
-		if (!$encryption) {
+	protected function _decode($value, $encrypt) {
+		if (!$encrypt) {
 			return $this->_explode($value);
 		}
+		$this->_checkCipher($encrypt);
+		$prefix = 'Q2FrZQ==.';
 		$value = base64_decode(substr($value, strlen($prefix)));
-		if ($encryption === 'rijndael') {
+		if ($encrypt === 'rijndael') {
 			$value = Security::rijndael($value, $this->_config['key'], 'decrypt');
 		}
-		if ($encryption === 'aes') {
+		if ($encrypt === 'aes') {
 			$value = Security::decrypt($value, $this->_config['key']);
 		}
 		return $this->_explode($value);

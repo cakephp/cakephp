@@ -132,6 +132,21 @@ class CookieComponentTest extends TestCase {
 	}
 
 /**
+ * Test read when an invalid cipher is configured.
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Invalid encryption cipher. Must be one of aes, rijndael.
+ * @return void
+ */
+	public function testReadInvalidCipher() {
+		$this->request->cookies = [
+			'Test' => $this->_encrypt('value'),
+		];
+		$this->Cookie->config('encryption', 'derp');
+		$this->Cookie->read('Test');
+	}
+
+/**
  * testReadEncryptedCookieData
  *
  * @return void
@@ -192,6 +207,18 @@ class CookieComponentTest extends TestCase {
 		$result = $this->Cookie->read('Testing');
 
 		$this->assertEquals('value', $result);
+	}
+
+/**
+ * Test write when an invalid cipher is configured.
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Invalid encryption cipher. Must be one of aes, rijndael.
+ * @return void
+ */
+	public function testWriteInvalidCipher() {
+		$this->Cookie->config('encryption', 'derp');
+		$this->Cookie->write('Test', 'nope');
 	}
 
 /**
