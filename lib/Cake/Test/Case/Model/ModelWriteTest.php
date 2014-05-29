@@ -1824,7 +1824,9 @@ class ModelWriteTest extends BaseModelTest {
 
 		$data = array('Item' => array('Item' => array(1, 2)));
 		$TestModel->id = 2;
-		$TestModel->save($data);
+		$result = $TestModel->save($data);
+		$this->assertTrue((bool)$result);
+
 		$result = $TestModel->findById(2);
 		$result['Item'] = Hash::sort($result['Item'], '{n}.id', 'asc');
 		$expected = array(

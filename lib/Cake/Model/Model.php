@@ -1784,7 +1784,7 @@ class Model extends Object implements CakeEventListener {
 		if (empty($this->data[$this->alias][$this->primaryKey])) {
 			unset($this->data[$this->alias][$this->primaryKey]);
 		}
-		$fields = $values = array();
+		$joined = $fields = $values = array();
 
 		foreach ($this->data as $n => $v) {
 			if (isset($this->hasAndBelongsToMany[$n])) {
@@ -1805,6 +1805,11 @@ class Model extends Object implements CakeEventListener {
 					}
 				}
 			}
+		}
+
+		if (empty($fields) && empty($joined)) {
+			$this->whitelist = $_whitelist;
+			return false;
 		}
 
 		$count = count($fields);
@@ -1843,36 +1848,35 @@ class Model extends Object implements CakeEventListener {
 			}
 		}
 
-		if (!empty($joined) && $success === true) {
+		if ($success && !empty($joined)) {
 			$this->_saveMulti($joined, $this->id, $db);
 		}
 
-		if ($success && $count === 0) {
-			$success = false;
+		$this->whitelist = $_whitelist;
+
+		if (!$success) {
+			return $success;
 		}
 
-		if ($success && $count > 0) {
-			if (!empty($this->data)) {
-				if ($created) {
-					$this->data[$this->alias][$this->primaryKey] = $this->id;
-				}
+		if ($count > 0) {
+			if ($created) {
+				$this->data[$this->alias][$this->primaryKey] = $this->id;
 			}
 
 			if ($options['callbacks'] === true || $options['callbacks'] === 'after') {
 				$event = new CakeEvent('Model.afterSave', $this, array($created, $options));
 				$this->getEventManager()->dispatch($event);
 			}
-
-			if (!empty($this->data)) {
-				$success = $this->data;
-			}
-
-			$this->_clearCache();
-			$this->validationErrors = array();
-			$this->data = false;
 		}
 
-		$this->whitelist = $_whitelist;
+		if (!empty($this->data)) {
+			$success = $this->data;
+		}
+
+		$this->_clearCache();
+		$this->validationErrors = array();
+		$this->data = false;
+
 		return $success;
 	}
 
