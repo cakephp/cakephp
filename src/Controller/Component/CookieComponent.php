@@ -245,33 +245,25 @@ class CookieComponent extends Component {
  * This method will delete both the top level and 2nd level cookies set.
  * For example assuming that $name = App, deleting `User` will delete
  * both `App[User]` and any other cookie values like `App[User][email]`
- * This is done to clean up cookie storage from before 2.4.3, where cookies
- * were stored inconsistently.
  *
  * @param string $key Key of the value to be deleted
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::delete
  */
 	public function delete($key) {
-		$cookieName = $this->config('name');
-		if (empty($this->_values[$cookieName])) {
-			$this->read();
+		if (empty($this->_values)) {
+			$this->_load();
 		}
-		if (strpos($key, '.') === false) {
-			if (isset($this->_values[$cookieName][$key]) && is_array($this->_values[$cookieName][$key])) {
-				foreach ($this->_values[$cookieName][$key] as $idx => $val) {
-					$this->_delete("[$key][$idx]");
-				}
-			}
-			$this->_delete("[$key]");
-			unset($this->_values[$cookieName][$key]);
-			return;
+
+		$this->_values = Hash::remove($this->_values, $key);
+		$parts = explode('.', $key);
+		$top = $parts[0];
+
+		if (isset($this->_values[$top])) {
+			$this->_write($top, $this->_values[$top]);
+		} else {
+			$this->_delete($top);
 		}
-		$names = explode('.', $key, 2);
-		if (isset($this->_values[$cookieName][$names[0]])) {
-			$this->_values[$cookieName][$names[0]] = Hash::remove($this->_values[$cookieName][$names[0]], $names[1]);
-		}
-		$this->_delete('[' . implode('][', $names) . ']');
 	}
 
 /**
@@ -347,14 +339,17 @@ class CookieComponent extends Component {
 	}
 
 /**
- * Sets a cookie expire time to remove cookie value
+ * Sets a cookie expire time to remove cookie value.
+ *
+ * This is only done once all values in a cookie key have been
+ * removed with delete.
  *
  * @param string $name Name of cookie
  * @return void
  */
 	protected function _delete($name) {
 		$config = $this->configKey($name);
-		$expires = new \DateTime($config['expires']);
+		$expires = new \DateTime('now');
 
 		$this->_response->cookie(array(
 			'name' => $name,
