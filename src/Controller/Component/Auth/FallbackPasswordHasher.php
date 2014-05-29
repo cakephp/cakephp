@@ -1,0 +1,84 @@
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Controller\Component\Auth;
+
+use Cake\Controller\Component\Auth\AbstractPasswordHasher;
+
+/**
+ * A password hasher that can use multiple different hashes where only
+ * one is the preferred one. This is useful when trying to migrate an
+ * existing database of users from one password type to another.
+ *
+ */
+class FallbackPasswordHasher extends AbstractPasswordHasher {
+
+/**
+ * Default config for this object.
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [
+		'hashers' => ['Simple', 'Weak']
+	];
+
+/**
+ * Holds the list of password hasher objects that will be used
+ *
+ * @var array
+ */
+	protected $_hashers = [];
+
+/**
+ * Constructor
+ *
+ */
+	protected function __construct() {
+		foreach ($this->_config['hashers'] as $hasher) {
+			$this->_hashers = PasswordHasherFactory::build($hasher);
+		}
+	}
+
+/**
+ * Generates password hash.
+ *
+ * Uses the first password hasher in the list to generate the hash
+ *
+ * @param string $password Plain text password to hash.
+ * @return string Password hash
+ */
+	public function hash($password) {
+		return $this->_hashers[0]->hash($password);
+	}
+
+/**
+ * Verifies that the provided password corresponds to its hashed version
+ *
+ * This will iterate over all configured hashers until one of them return
+ * true.
+ *
+ * @param string $password Plain text password to hash.
+ * @param string $hashedPassword Existing hashed password.
+ * @return bool True if hashes match else false.
+ */
+	public function check($password, $hashedPassword) {
+		foreach ($this->_hashers as $hasher) {
+			if ($hasher->check($password, $hashedPassword)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+}
