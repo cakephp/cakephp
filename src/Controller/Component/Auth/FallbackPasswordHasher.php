@@ -30,7 +30,7 @@ class FallbackPasswordHasher extends AbstractPasswordHasher {
  * @var array
  */
 	protected $_defaultConfig = [
-		'hashers' => ['Simple', 'Weak']
+		'hashers' => []
 	];
 
 /**
@@ -44,9 +44,10 @@ class FallbackPasswordHasher extends AbstractPasswordHasher {
  * Constructor
  *
  */
-	protected function __construct() {
+	public function __construct(array $config = array()) {
+		parent::__construct($config);
 		foreach ($this->_config['hashers'] as $hasher) {
-			$this->_hashers = PasswordHasherFactory::build($hasher);
+			$this->_hashers[] = PasswordHasherFactory::build($hasher);
 		}
 	}
 
