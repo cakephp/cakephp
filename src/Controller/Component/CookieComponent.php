@@ -267,29 +267,6 @@ class CookieComponent extends Component {
 	}
 
 /**
- * Get / set encryption type. Use this method in ex: AppController::beforeFilter()
- * before you have read or written any cookies.
- *
- * @param string|null $type Encryption type to set or null to get current type.
- * @return string|null
- * @throws \Cake\Error\Exception When an unknown type is used.
- */
-	public function encryption($type = null) {
-		if ($type === null) {
-			return $this->_config['encryption'];
-		}
-
-		$availableTypes = [
-			'rijndael',
-			'aes'
-		];
-		if (!in_array($type, $availableTypes)) {
-			throw new Error\Exception('You must use rijndael, or aes for cookie encryption type');
-		}
-		$this->config('encryption', $type);
-	}
-
-/**
  * Set cookie
  *
  * @param string $name Name for cookie

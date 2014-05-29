@@ -213,8 +213,10 @@ class CookieComponentTest extends TestCase {
  * @return void
  */
 	public function testWriteWithFalseyValue() {
-		$this->Cookie->encryption('aes');
-		$this->Cookie->key = 'qSI232qs*&sXOw!adre@34SAv!@*(XSL#$%)asGb$@11~_+!@#HKis~#^';
+		$this->Cookie->config([
+			'encryption' => 'aes',
+			'key' => 'qSI232qs*&sXOw!adre@34SAv!@*(XSL#$%)asGb$@11~_+!@#HKis~#^',
+		]);
 
 		$this->Cookie->write('Testing');
 		$result = $this->Cookie->read('Testing');
