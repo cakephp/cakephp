@@ -301,6 +301,12 @@ class FormAuthenticateTest extends TestCase {
 			'className' => 'Blowfish'
 		]);
 		$this->assertEquals($expected, $this->auth->authenticate($request, $this->response));
+
+		$User->updateAll(
+			['password' => '$2y$10$/G9GBQDZhWUM4w/WLes3b.XBZSK1hGohs5dMi0vh/oen0l0a7DUyK'],
+			['username' => 'mariano']
+		);
+		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
 }
