@@ -14,20 +14,20 @@
  */
 namespace Cake\Test\TestCase\Controller\Component\Auth;
 
+use Cake\Controller\Component\Auth\FallbackPasswordHasher;
 use Cake\Controller\Component\Auth\SimplePasswordHasher;
 use Cake\Controller\Component\Auth\WeakPasswordHasher;
-use Cake\Controller\Component\Auth\FallbackPasswordHasher;
 use Cake\TestSuite\TestCase;
 
 /**
- * Test case for SimplePasswordHasher
+ * Test case for FallbackPasswordHasher
  *
  */
 class FallbackPasswordHasherTest extends TestCase {
 
 
 /**
- * Tests that only the first hasher is user for hashig a password
+ * Tests that only the first hasher is user for hashing a password
  *
  * @return void
  */
@@ -42,7 +42,7 @@ class FallbackPasswordHasherTest extends TestCase {
 	}
 
 /**
- * Tests that the check mehthod will chek with configured hashers until a match
+ * Tests that the check method will check with configured hashers until a match
  * is found
  *
  * @return void
@@ -56,5 +56,21 @@ class FallbackPasswordHasherTest extends TestCase {
 		$otherHash = $weak->hash('foo');
 		$this->assertTrue($hasher->check('foo', $hash));
 		$this->assertTrue($hasher->check('foo', $otherHash));
+	}
+
+/**
+ * Tests that the password only needs to be re-built according to the first hasher
+ *
+ * @return void
+ */
+	public function testNeedsRehash() {
+		$hasher = new FallbackPasswordHasher(['hashers' => ['Simple', 'Weak']]);
+		$weak = new WeakPasswordHasher();
+		$otherHash = $weak->hash('foo');
+		$this->assertTrue($hasher->needsRehash($otherHash));
+
+		$simple = new SimplePasswordHasher();
+		$hash = $simple->hash('foo');
+		$this->assertFalse($hasher->needsRehash($hash));
 	}
 }

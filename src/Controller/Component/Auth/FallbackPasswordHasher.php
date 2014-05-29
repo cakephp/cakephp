@@ -82,4 +82,15 @@ class FallbackPasswordHasher extends AbstractPasswordHasher {
 		return false;
 	}
 
+/**
+ * Returns true if the password need to be rehashed, with the first hasher present
+ * in the list of hashers
+ *
+ * @param string $password The password to verify
+ * @return boolean
+ */
+	public function needsRehash($password) {
+		return $this->_hashers[0]->needsRehash($password);
+	}
+
 }
