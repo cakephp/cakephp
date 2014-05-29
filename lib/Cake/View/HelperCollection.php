@@ -38,7 +38,7 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
 /**
  * Constructor
  *
- * @param View $view
+ * @param View $view View instance.
  */
 	public function __construct(View $view) {
 		$this->_View = $view;
@@ -184,8 +184,7 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
  *    Any non-null value will modify the parameter index indicated.
  *    Defaults to false.
  *
- *
- * @param string $callback|CakeEvent Method to fire on all the objects. Its assumed all the objects implement
+ * @param string|CakeEvent $callback Method to fire on all the objects. Its assumed all the objects implement
  *   the method you are calling. If an instance of CakeEvent is provided, then then Event name will parsed to
  *   get the callback name. This is done by getting the last word after any dot in the event name
  *   (eg. `Model.afterSave` event will trigger the `afterSave` callback)

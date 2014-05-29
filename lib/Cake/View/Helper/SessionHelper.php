@@ -48,7 +48,7 @@ class SessionHelper extends AppHelper {
  *
  * In your view: `$this->Session->check('Controller.sessKey');`
  *
- * @param string $name
+ * @param string $name Session key to check.
  * @return boolean
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::check
  */
