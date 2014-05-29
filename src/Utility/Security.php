@@ -47,16 +47,6 @@ class Security {
 	}
 
 /**
- * Validate authorization hash.
- *
- * @param string $authKey Authorization hash
- * @return bool Success
- */
-	public static function validateAuthKey($authKey) {
-		return true;
-	}
-
-/**
  * Create a hash from string using given method or fallback on next available method.
  *
  * #### Using Blowfish

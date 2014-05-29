@@ -34,16 +34,6 @@ class SecurityTest extends TestCase {
 	}
 
 /**
- * testValidateAuthKey method
- *
- * @return void
- */
-	public function testValidateAuthKey() {
-		$authKey = Security::generateAuthKey();
-		$this->assertTrue(Security::validateAuthKey($authKey));
-	}
-
-/**
  * testHashInvalidSalt method
  *
  * @expectedException \Cake\Error\Exception
