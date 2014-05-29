@@ -1869,7 +1869,9 @@ class Model extends Object implements CakeEventListener {
 			}
 		}
 
-		$success = $this->data;
+		if (!empty($this->data)) {
+			$success = $this->data;
+		}
 
 		$this->_clearCache();
 		$this->validationErrors = array();
