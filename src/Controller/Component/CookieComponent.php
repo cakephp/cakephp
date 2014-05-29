@@ -376,13 +376,7 @@ class CookieComponent extends Component {
 
 		$decrypted = array();
 		foreach ($values as $name => $value) {
-			if (is_array($value)) {
-				foreach ($value as $key => $val) {
-					$decrypted[$name][$key] = $this->_decode($val, $mode);
-				}
-			} else {
-				$decrypted[$name] = $this->_decode($value, $mode);
-			}
+			$decrypted[$name] = $this->_decode($value, $mode);
 		}
 		return $decrypted;
 	}
