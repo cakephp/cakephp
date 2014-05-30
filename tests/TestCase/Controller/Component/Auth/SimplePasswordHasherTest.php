@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 class SimplePasswordHasherTest extends TestCase {
 
 /**
- * Tests that a pssword not produced by SimplePasswordHasher needs
+ * Tests that a password not produced by SimplePasswordHasher needs
  * to be rehashed
  *
  * @return void

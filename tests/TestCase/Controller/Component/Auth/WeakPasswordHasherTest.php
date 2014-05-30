@@ -33,6 +33,7 @@ class WeakPasswordHasherTest extends TestCase {
 		$hasher = new WeakPasswordHasher();
 		$this->assertTrue($hasher->needsRehash(md5('foo')));
 		$this->assertTrue($hasher->needsRehash('bar'));
+		$this->assertFalse($hasher->needsRehash('$2y$10$juOA0XVFpvZa0KTxRxEYVuX5kIS7U1fKDRcxyYhhUQECN1oHYnBMy'));
 	}
 
 /**

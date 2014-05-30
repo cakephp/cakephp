@@ -72,7 +72,7 @@ abstract class AbstractPasswordHasher {
  * @return boolean
  */
 	public function needsRehash($password) {
-		return true;
+		return password_needs_rehash($password, PASSWORD_DEFAULT);
 	}
 
 }

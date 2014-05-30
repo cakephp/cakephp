@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Auth;
@@ -19,8 +19,8 @@ use Cake\Utility\Security;
 
 /**
  * Password hashing class that use weak hashing algorithms. This class is
- * intended only to be used with legacy databases where passwords have not
- * been migrated yet to a stronger algorithm.
+ * intended only to be used with legacy databases where passwords have
+ * not been migrated to a stronger algorithm yet.
  *
  */
 class WeakPasswordHasher extends AbstractPasswordHasher {
