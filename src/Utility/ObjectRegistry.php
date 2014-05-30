@@ -23,6 +23,9 @@ namespace Cake\Utility;
  * Each subclass needs to implement the various abstract methods to complete
  * the template method load().
  *
+ * The ObjectRegistry is EventManager aware, but each extending class will need to use
+ * \Cake\Event\EventManagerTrait to attach and detach on set and bind
+ *
  * @see \Cake\Controller\ComponentRegistry
  * @see \Cake\View\HelperRegistry
  * @see \Cake\Console\TaskRegistry
@@ -35,13 +38,6 @@ abstract class ObjectRegistry {
  * @var array
  */
 	protected $_loaded = [];
-
-/**
- * The event manager to bind components to.
- *
- * @var \Cake\Event\EventManager
- */
-	protected $_eventManager;
 
 /**
  * Loads/constructs a object instance.
@@ -201,7 +197,7 @@ abstract class ObjectRegistry {
 		list($plugin, $name) = pluginSplit($objectName);
 		$this->unload($objectName);
 		if (isset($this->_eventManager)) {
-			$this->_eventManager->attach($object);
+			$this->eventManager()->attach($object);
 		}
 		$this->_loaded[$name] = $object;
 	}
@@ -220,7 +216,7 @@ abstract class ObjectRegistry {
 		}
 		$object = $this->_loaded[$objectName];
 		if (isset($this->_eventManager)) {
-			$this->_eventManager->detach($object);
+			$this->eventManager()->detach($object);
 		}
 		unset($this->_loaded[$objectName]);
 	}

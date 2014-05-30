@@ -805,7 +805,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 
 		$listener = $this->getMock('stdClass', ['__invoke']);
 		$association = new HasMany('Articles', $config);
-		$this->article->getEventManager()->attach($listener, 'Model.beforeFind');
+		$this->article->eventManager()->attach($listener, 'Model.beforeFind');
 		$listener->expects($this->once())->method('__invoke')
 			->with(
 				$this->isInstanceOf('\Cake\Event\Event'),
@@ -831,7 +831,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 
 		$listener = $this->getMock('stdClass', ['__invoke']);
 		$association = new HasMany('Articles', $config);
-		$this->article->getEventManager()->attach($listener, 'Model.beforeFind');
+		$this->article->eventManager()->attach($listener, 'Model.beforeFind');
 		$opts = ['something' => 'more'];
 		$listener->expects($this->once())->method('__invoke')
 			->with(

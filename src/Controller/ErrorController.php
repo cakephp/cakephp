@@ -37,7 +37,7 @@ class ErrorController extends Controller {
 		) {
 			$this->addComponent('RequestHandler');
 		}
-		$eventManager = $this->getEventManager();
+		$eventManager = $this->eventManager();
 		if (isset($this->Auth)) {
 			$eventManager->detach($this->Auth);
 		}

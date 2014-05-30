@@ -16,6 +16,7 @@ namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Event\EventManager;
+use Cake\Event\EventManagerTrait;
 use Cake\Utility\ObjectRegistry;
 use Cake\View\View;
 
@@ -25,6 +26,8 @@ use Cake\View\View;
  */
 class HelperRegistry extends ObjectRegistry {
 
+	use EventManagerTrait;
+
 /**
  * View object to use when making helpers.
  *
@@ -33,22 +36,13 @@ class HelperRegistry extends ObjectRegistry {
 	protected $_View;
 
 /**
- * EventManager instance.
- *
- * Helpers constructed by this object will be subscribed to this manager.
- *
- * @var \Cake\Event\EventManager
- */
-	protected $_eventManager;
-
-/**
  * Constructor
  *
  * @param View $view
  */
 	public function __construct(View $view) {
 		$this->_View = $view;
-		$this->_eventManager = $view->getEventManager();
+		$this->eventManager($view->eventManager());
 	}
 
 /**
@@ -145,7 +139,7 @@ class HelperRegistry extends ObjectRegistry {
 		}
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable) {
-			$this->_eventManager->attach($instance);
+			$this->eventManager()->attach($instance);
 		}
 		return $instance;
 	}

@@ -337,7 +337,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->profile,
 		];
 		$listener = $this->getMock('stdClass', ['__invoke']);
-		$this->profile->getEventManager()->attach($listener, 'Model.beforeFind');
+		$this->profile->eventManager()->attach($listener, 'Model.beforeFind');
 		$association = new HasOne('Profiles', $config);
 		$listener->expects($this->once())->method('__invoke')
 			->with(
@@ -363,7 +363,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->profile,
 		];
 		$listener = $this->getMock('stdClass', ['__invoke']);
-		$this->profile->getEventManager()->attach($listener, 'Model.beforeFind');
+		$this->profile->eventManager()->attach($listener, 'Model.beforeFind');
 		$association = new HasOne('Profiles', $config);
 		$opts = ['something' => 'more'];
 		$listener->expects($this->once())->method('__invoke')

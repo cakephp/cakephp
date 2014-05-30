@@ -22,6 +22,7 @@ use Cake\Datasource\RepositoryInterface;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
+use Cake\Event\EventManagerTrait;
 use Cake\ORM\Associations;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
@@ -91,6 +92,8 @@ use Cake\Validation\Validator;
  */
 class Table implements RepositoryInterface, EventListener {
 
+	use EventManagerTrait;
+
 /**
  * Name of the table as it can be found in the database
  *
@@ -140,15 +143,6 @@ class Table implements RepositoryInterface, EventListener {
  * @var \Cake\ORM\Associations
  */
 	protected $_associations;
-
-/**
- * EventManager for this table.
- *
- * All model/behavior callbacks will be dispatched on this manager.
- *
- * @var \Cake\Event\EventManager
- */
-	protected $_eventManager;
 
 /**
  * BehaviorRegistry for this table
@@ -306,15 +300,6 @@ class Table implements RepositoryInterface, EventListener {
 			return $this->_connection;
 		}
 		return $this->_connection = $conn;
-	}
-
-/**
- * Get the event manager for this Table.
- *
- * @return \Cake\Event\EventManager
- */
-	public function getEventManager() {
-		return $this->_eventManager;
 	}
 
 /**
@@ -1144,7 +1129,7 @@ class Table implements RepositoryInterface, EventListener {
 
 		$options['associated'] = $this->_associations->normalizeKeys($associated);
 		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
-		$this->getEventManager()->dispatch($event);
+		$this->eventManager()->dispatch($event);
 
 		if ($event->isStopped()) {
 			return $event->result;
@@ -1181,7 +1166,7 @@ class Table implements RepositoryInterface, EventListener {
 			if ($success || !$options['atomic']) {
 				$entity->clean();
 				$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
-				$this->getEventManager()->dispatch($event);
+				$this->eventManager()->dispatch($event);
 				$entity->isNew(false);
 				$entity->source($this->alias());
 				$success = true;
@@ -1358,7 +1343,7 @@ class Table implements RepositoryInterface, EventListener {
  * @return bool success
  */
 	protected function _processDelete($entity, $options) {
-		$eventManager = $this->getEventManager();
+		$eventManager = $this->eventManager();
 		$event = new Event('Model.beforeDelete', $this, [
 			'entity' => $entity,
 			'options' => $options

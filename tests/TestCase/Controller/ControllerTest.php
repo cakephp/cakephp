@@ -345,7 +345,7 @@ class ControllerTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 		$Controller = new Controller(new Request, new Response());
 
-		$Controller->getEventManager()->attach(function ($event) {
+		$Controller->eventManager()->attach(function ($event) {
 			$controller = $event->subject();
 			$controller->viewClass = 'Json';
 		}, 'Controller.beforeRender');
@@ -369,7 +369,7 @@ class ControllerTest extends TestCase {
 	public function testBeforeRenderEventCancelsRender() {
 		$Controller = new Controller(new Request, new Response());
 
-		$Controller->getEventManager()->attach(function ($event) {
+		$Controller->eventManager()->attach(function ($event) {
 			return false;
 		}, 'Controller.beforeRender');
 
@@ -420,7 +420,7 @@ class ControllerTest extends TestCase {
 		$Controller = new Controller(null);
 		$Controller->response = new Response();
 
-		$Controller->getEventManager()->attach(function ($event, $response, $url) {
+		$Controller->eventManager()->attach(function ($event, $response, $url) {
 			$response->location('http://book.cakephp.org');
 		}, 'Controller.beforeRedirect');
 
@@ -438,7 +438,7 @@ class ControllerTest extends TestCase {
 		$Response = $this->getMock('Cake\Network\Response', array('stop'));
 		$Controller = new Controller(null, $Response);
 
-		$Controller->getEventManager()->attach(function ($event, $response, $url) {
+		$Controller->eventManager()->attach(function ($event, $response, $url) {
 			$response->statusCode(302);
 		}, 'Controller.beforeRedirect');
 
@@ -457,7 +457,7 @@ class ControllerTest extends TestCase {
 		$Response = $this->getMock('Cake\Network\Response', array('stop', 'header'));
 		$Controller = new Controller(null, $Response);
 
-		$Controller->getEventManager()->attach(function ($event, $response, $url, $status) {
+		$Controller->eventManager()->attach(function ($event, $response, $url, $status) {
 			return false;
 		}, 'Controller.beforeRedirect');
 
@@ -597,7 +597,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testStartupProcess() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('getEventManager'));
+		$Controller = $this->getMock('Cake\Controller\Controller', array('eventManager'));
 
 		$eventManager = $this->getMock('Cake\Event\EventManager');
 		$eventManager->expects($this->at(0))->method('dispatch')
@@ -620,7 +620,7 @@ class ControllerTest extends TestCase {
 			)
 			->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
 
-		$Controller->expects($this->exactly(2))->method('getEventManager')
+		$Controller->expects($this->exactly(2))->method('eventManager')
 			->will($this->returnValue($eventManager));
 
 		$Controller->startupProcess();
@@ -632,7 +632,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testShutdownProcess() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('getEventManager'));
+		$Controller = $this->getMock('Cake\Controller\Controller', array('eventManager'));
 
 		$eventManager = $this->getMock('Cake\Event\EventManager');
 		$eventManager->expects($this->once())->method('dispatch')
@@ -645,7 +645,7 @@ class ControllerTest extends TestCase {
 			)
 			->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
 
-		$Controller->expects($this->once())->method('getEventManager')
+		$Controller->expects($this->once())->method('eventManager')
 			->will($this->returnValue($eventManager));
 
 		$Controller->shutdownProcess();

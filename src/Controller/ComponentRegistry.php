@@ -17,6 +17,7 @@ namespace Cake\Controller;
 use Cake\Core\App;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
+use Cake\Event\EventManagerTrait;
 use Cake\Utility\ObjectRegistry;
 
 /**
@@ -25,6 +26,8 @@ use Cake\Utility\ObjectRegistry;
  * Handles loading, constructing and binding events for component class objects.
  */
 class ComponentRegistry extends ObjectRegistry {
+
+	use EventManagerTrait;
 
 /**
  * The controller that this collection was initialized with.
@@ -41,9 +44,7 @@ class ComponentRegistry extends ObjectRegistry {
 	public function __construct(Controller $Controller = null) {
 		if ($Controller) {
 			$this->_Controller = $Controller;
-			$this->_eventManager = $Controller->getEventManager();
-		} else {
-			$this->_eventManager = new EventManager();
+			$this->eventManager($Controller->eventManager());
 		}
 	}
 
@@ -100,7 +101,7 @@ class ComponentRegistry extends ObjectRegistry {
 		$instance = new $class($this, $config);
 		$enable = isset($config['enabled']) ? $config['enabled'] : true;
 		if ($enable) {
-			$this->_eventManager->attach($instance);
+			$this->eventManager()->attach($instance);
 		}
 		return $instance;
 	}

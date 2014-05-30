@@ -22,6 +22,7 @@ use Cake\Core\Plugin;
 use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Event\EventManagerTrait;
 use Cake\Log\LogTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -61,6 +62,7 @@ use Cake\View\ViewVarsTrait;
 class View {
 
 	use CellTrait;
+	use EventManagerTrait;
 	use LogTrait;
 	use RequestActionTrait;
 	use ViewVarsTrait;
@@ -302,16 +304,6 @@ class View {
 	protected $_stack = array();
 
 /**
- * Instance of the Cake\Event\EventManager this View object is using
- * to dispatch inner events. Usually the manager is shared with
- * the controller, so it it possible to register view events in
- * the controller layer.
- *
- * @var \Cake\Event\EventManager
- */
-	protected $_eventManager = null;
-
-/**
  * Constant for view file type 'view'
  *
  * @var string
@@ -348,7 +340,7 @@ class View {
 				$this->{$var} = $viewOptions[$var];
 			}
 		}
-		$this->_eventManager = $eventManager;
+		$this->eventManager($eventManager);
 		$this->request = $request;
 		$this->response = $response;
 		if (empty($this->request)) {
@@ -364,32 +356,6 @@ class View {
 		}
 		$this->Blocks = new ViewBlock();
 		$this->loadHelpers();
-	}
-
-/**
- * Returns the Cake\Event\EventManager manager instance that is handling any callbacks.
- * You can use this instance to register any new listeners or callbacks to the
- * controller events, or create your own events and trigger them at will.
- *
- * @return \Cake\Event\EventManager
- */
-	public function getEventManager() {
-		if (empty($this->_eventManager)) {
-			$this->_eventManager = new EventManager();
-		}
-		return $this->_eventManager;
-	}
-
-/**
- * Set the Eventmanager used by View.
- *
- * Primarily useful for testing.
- *
- * @param \Cake\Event\EventManager $eventManager Event manager instance.
- * @return void
- */
-	public function setEventManager(EventManager $eventManager) {
-		$this->_eventManager = $eventManager;
 	}
 
 /**
@@ -480,9 +446,9 @@ class View {
 
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
 			$this->_currentType = static::TYPE_VIEW;
-			$this->getEventManager()->dispatch(new Event('View.beforeRender', $this, array($viewFileName)));
+			$this->eventManager()->dispatch(new Event('View.beforeRender', $this, array($viewFileName)));
 			$this->Blocks->set('content', $this->_render($viewFileName));
-			$this->getEventManager()->dispatch(new Event('View.afterRender', $this, array($viewFileName)));
+			$this->eventManager()->dispatch(new Event('View.afterRender', $this, array($viewFileName)));
 		}
 
 		if ($layout === null) {
@@ -530,7 +496,7 @@ class View {
 		} else {
 			$this->Blocks->set('content', $content);
 		}
-		$this->getEventManager()->dispatch(new Event('View.beforeLayout', $this, array($layoutFileName)));
+		$this->eventManager()->dispatch(new Event('View.beforeLayout', $this, array($layoutFileName)));
 
 		$scripts = implode("\n\t", $this->_scripts);
 		$scripts .= $this->Blocks->get('meta') . $this->Blocks->get('css') . $this->Blocks->get('script');
@@ -554,7 +520,7 @@ class View {
 		$this->_currentType = static::TYPE_LAYOUT;
 		$this->Blocks->set('content', $this->_render($layoutFileName));
 
-		$this->getEventManager()->dispatch(new Event('View.afterLayout', $this, array($layoutFileName)));
+		$this->eventManager()->dispatch(new Event('View.afterLayout', $this, array($layoutFileName)));
 		return $this->Blocks->get('content');
 	}
 
@@ -848,7 +814,7 @@ class View {
 		$this->_current = $viewFile;
 		$initialBlocks = count($this->Blocks->unclosed());
 
-		$eventManager = $this->getEventManager();
+		$eventManager = $this->eventManager();
 		$beforeEvent = new Event('View.beforeRenderFile', $this, array($viewFile));
 
 		$eventManager->dispatch($beforeEvent);
@@ -1140,7 +1106,7 @@ class View {
  */
 	protected function _renderElement($file, $data, $options) {
 		if ($options['callbacks']) {
-			$this->getEventManager()->dispatch(new Event('View.beforeRender', $this, array($file)));
+			$this->eventManager()->dispatch(new Event('View.beforeRender', $this, array($file)));
 		}
 
 		$current = $this->_current;
@@ -1153,7 +1119,7 @@ class View {
 		$this->_current = $current;
 
 		if ($options['callbacks']) {
-			$this->getEventManager()->dispatch(new Event('View.afterRender', $this, array($file, $element)));
+			$this->eventManager()->dispatch(new Event('View.afterRender', $this, array($file, $element)));
 		}
 		if (isset($options['cache'])) {
 			Cache::write($this->elementCacheSettings['key'], $element, $this->elementCacheSettings['config']);

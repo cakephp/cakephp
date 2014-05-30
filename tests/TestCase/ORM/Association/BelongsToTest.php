@@ -391,7 +391,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->company
 		];
 		$listener = $this->getMock('stdClass', ['__invoke']);
-		$this->company->getEventManager()->attach($listener, 'Model.beforeFind');
+		$this->company->eventManager()->attach($listener, 'Model.beforeFind');
 		$association = new BelongsTo('Companies', $config);
 		$listener->expects($this->once())->method('__invoke')
 			->with(
@@ -417,7 +417,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->company
 		];
 		$listener = $this->getMock('stdClass', ['__invoke']);
-		$this->company->getEventManager()->attach($listener, 'Model.beforeFind');
+		$this->company->eventManager()->attach($listener, 'Model.beforeFind');
 		$association = new BelongsTo('Companies', $config);
 		$options = ['something' => 'more'];
 		$listener->expects($this->once())->method('__invoke')

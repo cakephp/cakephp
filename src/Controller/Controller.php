@@ -21,6 +21,7 @@ use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
+use Cake\Event\EventManagerTrait;
 use Cake\Log\LogTrait;
 use Cake\Model\ModelAwareTrait;
 use Cake\Network\Request;
@@ -78,6 +79,7 @@ use Cake\View\ViewVarsTrait;
  */
 class Controller implements EventListener {
 
+	use EventManagerTrait;
 	use LogTrait;
 	use MergeVariablesTrait;
 	use ModelAwareTrait;
@@ -212,14 +214,6 @@ class Controller implements EventListener {
  * @var array
  */
 	public $methods = array();
-
-/**
- * Instance of the Cake\Event\EventManager this controller is using
- * to dispatch inner events.
- *
- * @var \Cake\Event\EventManager
- */
-	protected $_eventManager = null;
 
 /**
  * Constructor.
@@ -447,7 +441,7 @@ class Controller implements EventListener {
 	public function constructClasses() {
 		$this->_mergeControllerVars();
 		$this->_loadComponents();
-		$this->getEventManager()->attach($this);
+		$this->eventManager()->attach($this);
 	}
 
 /**
@@ -468,33 +462,6 @@ class Controller implements EventListener {
 	}
 
 /**
- * Returns the Cake\Event\EventManager manager instance for this controller.
- *
- * You can use this instance to register any new listeners or callbacks to the
- * controller events, or create your own events and trigger them at will.
- *
- * @return \Cake\Event\EventManager
- */
-	public function getEventManager() {
-		if (empty($this->_eventManager)) {
-			$this->_eventManager = new EventManager();
-		}
-		return $this->_eventManager;
-	}
-
-/**
- * Overwrite the existing EventManager
- *
- * Useful for testing
- *
- * @param \Cake\Event\EventManager $eventManager Event manager instance
- * @return void
- */
-	public function setEventManager(EventManager $eventManager) {
-		$this->_eventManager = $eventManager;
-	}
-
-/**
  * Perform the startup process for this controller.
  * Fire the Components and Controller callbacks in the correct order.
  *
@@ -505,11 +472,11 @@ class Controller implements EventListener {
  * @return void|\Cake\Network\Response
  */
 	public function startupProcess() {
-		$event = $this->getEventManager()->dispatch(new Event('Controller.initialize', $this));
+		$event = $this->eventManager()->dispatch(new Event('Controller.initialize', $this));
 		if ($event->result instanceof Response) {
 			return $event->result;
 		}
-		$event = $this->getEventManager()->dispatch(new Event('Controller.startup', $this));
+		$event = $this->eventManager()->dispatch(new Event('Controller.startup', $this));
 		if ($event->result instanceof Response) {
 			return $event->result;
 		}
@@ -525,7 +492,7 @@ class Controller implements EventListener {
  * @return void|\Cake\Network\Response
  */
 	public function shutdownProcess() {
-		$event = $this->getEventManager()->dispatch(new Event('Controller.shutdown', $this));
+		$event = $this->eventManager()->dispatch(new Event('Controller.shutdown', $this));
 		if ($event->result instanceof Response) {
 			return $event->result;
 		}
@@ -550,7 +517,7 @@ class Controller implements EventListener {
 		}
 
 		$event = new Event('Controller.beforeRedirect', $this, [$response, $url, $status]);
-		$event = $this->getEventManager()->dispatch($event);
+		$event = $this->eventManager()->dispatch($event);
 		if ($event->result instanceof Response) {
 			return $event->result;
 		}
@@ -597,7 +564,7 @@ class Controller implements EventListener {
  */
 	public function render($view = null, $layout = null) {
 		$event = new Event('Controller.beforeRender', $this);
-		$event = $this->getEventManager()->dispatch($event);
+		$event = $this->eventManager()->dispatch($event);
 		if ($event->result instanceof Response) {
 			$this->autoRender = false;
 			return $event->result;

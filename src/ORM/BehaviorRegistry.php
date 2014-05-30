@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use Cake\Core\App;
 use Cake\Error\Exception;
+use Cake\Event\EventManagerTrait;
 use Cake\ORM\Behavior;
 use Cake\ORM\Table;
 use Cake\Utility\ObjectRegistry;
@@ -28,21 +29,14 @@ use Cake\Utility\ObjectRegistry;
  */
 class BehaviorRegistry extends ObjectRegistry {
 
+	use EventManagerTrait;
+
 /**
  * The table using this registry.
  *
  * @var \Cake\ORM\Table
  */
 	protected $_table;
-
-/**
- * EventManager instance.
- *
- * Behaviors constructed by this object will be subscribed to this manager.
- *
- * @var \Cake\Event\EventManager
- */
-	protected $_eventManager;
 
 /**
  * Method mappings.
@@ -65,7 +59,7 @@ class BehaviorRegistry extends ObjectRegistry {
  */
 	public function __construct(Table $table) {
 		$this->_table = $table;
-		$this->_eventManager = $table->getEventManager();
+		$this->eventManager($table->eventManager());
 	}
 
 /**
@@ -111,7 +105,7 @@ class BehaviorRegistry extends ObjectRegistry {
 		$instance = new $class($this->_table, $config);
 		$enable = isset($config['enabled']) ? $config['enabled'] : true;
 		if ($enable) {
-			$this->_eventManager->attach($instance);
+			$this->eventManager()->attach($instance);
 		}
 		$methods = $this->_getMethods($instance, $class, $alias);
 		$this->_methodMap += $methods['methods'];
