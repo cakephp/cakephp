@@ -28,17 +28,21 @@ use Cake\Utility\Security;
 /**
  * Cookie Component.
  *
- * Cookie handling for the controller.
+ * Provides enhanced cookie handling features for use in the controller layer.
+ * In addition to the basic features offered be Cake\Network\Response, this class lets you:
+ *
+ * - Create and read encrypted cookies.
+ * - Store non-scalar data.
+ * - Use hash compatible syntax to read/write/delete values.
  *
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html
- *
  */
 class CookieComponent extends Component {
 
 /**
  * Default config
  *
- * - `expires` - How long the cookies should last for by default.
+ * - `expires` - How long the cookies should last for. Defaults to 1 month.
  * - `path` - The path on the server in which the cookie will be available on.
  *   If path is set to '/foo/', the cookie will only be available within the
  *   /foo/ directory and all sub-directories such as /foo/bar/ of domain.
@@ -48,7 +52,7 @@ class CookieComponent extends Component {
  * - `secure` - Indicates that the cookie should only be transmitted over a
  *   secure HTTPS connection. When set to true, the cookie will only be set if
  *   a secure connection exists.
- * - `key` - Encryption key.
+ * - `key` - Encryption key used when encrypted cookies are enabled. Defaults to Security.salt.
  * - `httpOnly` - Set to true to make HTTP only cookies. Cookies that are HTTP only
  *   are not accessible in JavaScript. Default false.
  * - `encryption` - Type of encryption to use. Defaults to 'aes'.
@@ -62,7 +66,7 @@ class CookieComponent extends Component {
 		'key' => null,
 		'httpOnly' => false,
 		'encryption' => 'aes',
-		'expires' => null,
+		'expires' => '+1 month',
 	];
 
 /**
