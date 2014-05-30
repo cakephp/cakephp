@@ -140,6 +140,23 @@ class CookieComponent extends Component {
 /**
  * Set the configuration for a specific top level key.
  *
+ * ### Examples:
+ *
+ * Set a single config option for a key:
+ *
+ * {{{
+ * $this->Cookie->configKey('User', 'expires', '+3 months');
+ * }}}
+ *
+ * Set multiple options:
+ *
+ * {{{
+ * $this->Cookie->configKey('User', [
+ *   'expires', '+3 months',
+ *   'httpOnly' => true,
+ * ]);
+ * }}}
+ *
  * @param string $keyname The top level keyname to configure.
  * @param null|string|array $option Either the option name to set, or an array of options to set,
  *   or null to read config options for a given key.
@@ -168,10 +185,7 @@ class CookieComponent extends Component {
 	}
 
 /**
- * Write a value to the $_COOKIE[$key];
- *
- * By default all values are encrypted.
- * You must pass $encrypt false to store values in clear test
+ * Write a value to the response cookies.
  *
  * You must use this method before any output is sent to the browser.
  * Failure to do so will result in header already sent errors.
@@ -204,6 +218,9 @@ class CookieComponent extends Component {
 
 /**
  * Read the value of key path from request cookies.
+ *
+ * This method will also allow you to read cookies that have been written in this
+ * request, but not yet sent to the client.
  *
  * @param string $key Key of the value to be obtained. If none specified, obtain map key => values
  * @return string or null, value for specified key
@@ -253,9 +270,8 @@ class CookieComponent extends Component {
  * You must use this method before any output is sent to the browser.
  * Failure to do so will result in header already sent errors.
  *
- * This method will delete both the top level and 2nd level cookies set.
- * For example assuming that $name = App, deleting `User` will delete
- * both `App[User]` and any other cookie values like `App[User][email]`
+ * Deleting a top level key will delete all keys nested within that key.
+ * For example deleting the `User` key, will also delete `User.email`.
  *
  * @param string $key Key of the value to be deleted
  * @return void
