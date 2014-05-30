@@ -874,8 +874,13 @@ class CakeRequest implements ArrayAccess {
  *   return false if the parameter doesn't exist or is falsey.
  */
 	public function param($name) {
+		$args = func_get_args();
+		if (count($args) === 2) {
+			$this->params = Hash::insert($this->params, $name, $args[1]);
+			return $this;
+		}
 		if (!isset($this->params[$name])) {
-			return false;
+			return Hash::get($this->params, $name, false);
 		}
 		return $this->params[$name];
 	}
