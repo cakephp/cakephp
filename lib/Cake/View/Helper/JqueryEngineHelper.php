@@ -243,7 +243,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * If the 'update' key is set, success callback will be overridden.
  *
- * @param string|array $url
+ * @param string|array $url URL
  * @param array $options See JsHelper::request() for options.
  * @return string The completed ajax call.
  * @see JsBaseEngineHelper::request() for options list.

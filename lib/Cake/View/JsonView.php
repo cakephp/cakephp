@@ -63,7 +63,7 @@ class JsonView extends View {
 /**
  * Constructor
  *
- * @param Controller $controller
+ * @param Controller $controller Controller instance.
  */
 	public function __construct(Controller $controller = null) {
 		parent::__construct($controller);

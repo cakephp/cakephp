@@ -105,7 +105,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Before render callback. Overridden to merge passed args with URL options.
  *
- * @param string $viewFile
+ * @param string $viewFile View file name.
  * @return void
  */
 	public function beforeRender($viewFile) {
@@ -454,7 +454,7 @@ class PaginatorHelper extends AppHelper {
  * Converts the keys being used into the format set by options.paramType
  *
  * @param array $url Array of URL params to convert
- * @param string $type
+ * @param string $type Keys type.
  * @return array converted URL params.
  */
 	protected function _convertUrlKeys($url, $type) {
@@ -476,11 +476,11 @@ class PaginatorHelper extends AppHelper {
 /**
  * Protected method for generating prev/next links
  *
- * @param string $which
- * @param string $title
- * @param array $options
- * @param string $disabledTitle
- * @param array $disabledOptions
+ * @param string $which Link type: 'Prev', 'Next'.
+ * @param string $title Link title.
+ * @param array $options Options list.
+ * @param string $disabledTitle Disabled link title.
+ * @param array $disabledOptions Disabled link options.
  * @return string
  */
 	protected function _pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
@@ -621,6 +621,7 @@ class PaginatorHelper extends AppHelper {
  * - `separator` The separator string to use, default to ' of '
  *
  * The `%page%` style placeholders also work, but are deprecated and will be removed in a future version.
+ *
  * @param array $options Options for the counter string. See #options for list of keys.
  * @return string Counter string.
  * @deprecated The %page% style placeholders are deprecated.

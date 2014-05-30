@@ -64,7 +64,7 @@ class CacheHelper extends AppHelper {
 /**
  * Parses the view file and stores content for cache file building.
  *
- * @param string $viewFile
+ * @param string $viewFile View file name.
  * @param string $output The output for the file.
  * @return string Updated content.
  */
@@ -77,7 +77,7 @@ class CacheHelper extends AppHelper {
 /**
  * Parses the layout file and stores content for cache file building.
  *
- * @param string $layoutFile
+ * @param string $layoutFile Layout file name.
  * @return void
  */
 	public function afterLayout($layoutFile) {
@@ -266,7 +266,8 @@ class CacheHelper extends AppHelper {
  *
  * @param string $content view content to write to a cache file.
  * @param string $timestamp Duration to set for cache file.
- * @param boolean $useCallbacks
+ * @param boolean $useCallbacks Whether to include statements in cached file which
+ *   run callbacks.
  * @return boolean success of caching view.
  */
 	protected function _writeFile($content, $timestamp, $useCallbacks = false) {

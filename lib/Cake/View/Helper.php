@@ -224,7 +224,7 @@ class Helper extends Object {
  * Provides backwards compatibility access for setting values to the request object.
  *
  * @param string $name Name of the property being accessed.
- * @param mixed $value
+ * @param mixed $value Value to set.
  * @return void
  * @deprecated This method will be removed in 3.0
  */
@@ -299,7 +299,7 @@ class Helper extends Object {
  * Generate URL for given asset file. Depending on options passed provides full URL with domain name.
  * Also calls Helper::assetTimestamp() to add timestamp to local files
  *
- * @param string|array Path string or URL array
+ * @param string|array $path Path string or URL array
  * @param array $options Options array. Possible keys:
  *   `fullBase` Return full URL with domain name
  *   `pathPrefix` Path prefix for relative URLs
@@ -665,7 +665,7 @@ class Helper extends Object {
  *
  * @param array|string $options If an array, should be an array of attributes that $key needs to be added to.
  *   If a string or null, will be used as the View entity.
- * @param string $field
+ * @param string $field Field name.
  * @param string $key The name of the attribute to be set, defaults to 'name'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
  *   If a string was supplied a string will be returned.
@@ -706,7 +706,7 @@ class Helper extends Object {
  *
  * @param array|string $options If an array, should be an array of attributes that $key needs to be added to.
  *   If a string or null, will be used as the View entity.
- * @param string $field
+ * @param string $field Field name.
  * @param string $key The name of the attribute to be set, defaults to 'value'
  * @return mixed If an array was given for $options, an array with $key set will be returned.
  *   If a string was supplied a string will be returned.
@@ -881,8 +881,8 @@ class Helper extends Object {
  * Transforms a recordset from a hasAndBelongsToMany association to a list of selected
  * options for a multiple select element
  *
- * @param string|array $data
- * @param string $key
+ * @param string|array $data Data array or model name.
+ * @param string $key Field name.
  * @return array
  */
 	protected function _selectedArray($data, $key = 'id') {
