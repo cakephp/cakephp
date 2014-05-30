@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller\Component\Auth;
@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  *
  */
 class FallbackPasswordHasherTest extends TestCase {
-
 
 /**
  * Tests that only the first hasher is user for hashing a password

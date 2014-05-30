@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Auth;
@@ -43,6 +43,9 @@ class FallbackPasswordHasher extends AbstractPasswordHasher {
 /**
  * Constructor
  *
+ * @param array $config configuration options for this object. Requires the
+ * `hashers` key to be present in the array with a list of other hashers to be
+ * used
  */
 	public function __construct(array $config = array()) {
 		parent::__construct($config);

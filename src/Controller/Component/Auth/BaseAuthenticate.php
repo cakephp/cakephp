@@ -135,7 +135,7 @@ abstract class BaseAuthenticate {
  * Return password hasher object
  *
  * @return AbstractPasswordHasher Password hasher instance
- * @throws RuntimeException If password hasher class not found or
+ * @throws \RuntimeException If password hasher class not found or
  *   it does not extend AbstractPasswordHasher
  */
 	public function passwordHasher() {

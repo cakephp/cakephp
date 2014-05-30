@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Auth;
@@ -28,7 +28,7 @@ class PasswordHasherFactory {
  * @param string|array $passwordHasher name of the password hasher or an array with
  * at least the key `className` set to the name of the class to use
  * @return AbstractPasswordHasher Password hasher instance
- * @throws RuntimeException If password hasher class not found or
+ * @throws \RuntimeException If password hasher class not found or
  *   it does not extend AbstractPasswordHasher
  */
 	public static function build($passwordHasher) {
@@ -44,7 +44,7 @@ class PasswordHasherFactory {
 		list($plugin, $class) = pluginSplit($class, true);
 		$className = App::className($class, 'Controller/Component/Auth', 'PasswordHasher');
 		if (!class_exists($className)) {
-			throw new Error\Exception(sprintf('Password hasher class "%s" was not found.', $class));
+			throw new \RuntimeException(sprintf('Password hasher class "%s" was not found.', $class));
 		}
 
 		$hasher = new $className($config);
