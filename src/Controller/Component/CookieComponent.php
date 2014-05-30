@@ -84,10 +84,9 @@ class CookieComponent extends Component {
  *
  * Accessed in the controller using $this->Cookie->read('Name.key');
  *
- * @see CookieComponent::read();
  * @var string
  */
-	protected $_values = array();
+	protected $_values = [];
 
 /**
  * A reference to the Controller's Cake\Network\Response object
