@@ -317,7 +317,7 @@ class ShellDispatcher {
 /**
  * Parses out the paths from from the argv
  *
- * @param array $args
+ * @param array $args The argv to parse.
  * @return void
  */
 	protected function _parsePaths($args) {

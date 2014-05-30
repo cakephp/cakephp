@@ -73,7 +73,7 @@ class PluginTask extends AppShell {
 /**
  * Interactive interface
  *
- * @param string $plugin
+ * @param string $plugin The plugin name.
  * @return void
  */
 	protected function _interactive($plugin = null) {
@@ -184,7 +184,7 @@ class PluginTask extends AppShell {
 /**
  * find and change $this->path to the user selection
  *
- * @param array $pathOptions
+ * @param array $pathOptions The list of paths to look in.
  * @return void
  */
 	public function findPath($pathOptions) {

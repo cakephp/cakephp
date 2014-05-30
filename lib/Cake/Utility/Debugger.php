@@ -148,7 +148,7 @@ class Debugger {
 /**
  * Returns a reference to the Debugger singleton object instance.
  *
- * @param string $class
+ * @param string $class Debugger class name.
  * @return object
  */
 	public static function getInstance($class = null) {
@@ -166,7 +166,6 @@ class Debugger {
 
 /**
  * Recursively formats and outputs the contents of the supplied variable.
- *
  *
  * @param mixed $var the variable to dump
  * @param int $depth The depth to output to. Defaults to 3.
@@ -724,7 +723,7 @@ class Debugger {
 /**
  * Takes a processed array of data from an error and displays it in the chosen format.
  *
- * @param string $data
+ * @param string $data Data to output.
  * @return void
  */
 	public function outputError($data) {
