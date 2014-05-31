@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -66,7 +64,7 @@ abstract class AbstractPasswordHasher {
  * and check against existing hash.
  *
  * @param string|array $password Plain text password to hash or data array.
- * @param string Existing hashed password.
+ * @param string $hashedPassword Existing hashed password.
  * @return boolean True if hashes match else false.
  */
 	abstract public function check($password, $hashedPassword);

@@ -182,8 +182,8 @@ class CakeSocket {
  *
  * Instead we need to handle those errors manually.
  *
- * @param integer $code
- * @param string $message
+ * @param integer $code Code.
+ * @param string $message Message.
  * @return void
  */
 	protected function _connectionErrorHandler($code, $message) {

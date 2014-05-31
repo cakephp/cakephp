@@ -157,7 +157,7 @@ class CakeValidationRule {
  * Checks whether the field failed the `field should be present` validation
  *
  * @param string $field Field name
- * @param array $data Data to check rule against
+ * @param array &$data Data to check rule against
  * @return boolean
  */
 	public function checkRequired($field, &$data) {
@@ -174,7 +174,7 @@ class CakeValidationRule {
  * Checks if the allowEmpty key applies
  *
  * @param string $field Field name
- * @param array $data data to check rule against
+ * @param array &$data data to check rule against
  * @return boolean
  */
 	public function checkEmpty($field, &$data) {
@@ -259,8 +259,8 @@ class CakeValidationRule {
  * Dispatches the validation rule to the given validator method
  *
  * @param string $field Field name
- * @param array $data Data array
- * @param array $methods Methods list
+ * @param array &$data Data array
+ * @param array &$methods Methods list
  * @return boolean True if the rule could be dispatched, false otherwise
  */
 	public function process($field, &$data, &$methods) {
@@ -334,7 +334,7 @@ class CakeValidationRule {
  * Parses the rule and sets the rule and ruleParams
  *
  * @param string $field Field name
- * @param array $data Data array
+ * @param array &$data Data array
  * @return void
  */
 	protected function _parseRule($field, &$data) {

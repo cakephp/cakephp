@@ -512,7 +512,7 @@ class AuthComponent extends Component {
  * `$this->Auth->allow('edit', 'add');` or
  * `$this->Auth->allow();` to allow all actions
  *
- * @param string|array $action,... Controller action name or array of actions
+ * @param string|array $action Controller action name or array of actions
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#making-actions-public
  */
@@ -537,7 +537,7 @@ class AuthComponent extends Component {
  * `$this->Auth->deny('edit', 'add');` or
  * `$this->Auth->deny();` to remove all items from the allowed list
  *
- * @param string|array $action,... Controller action name or array of actions
+ * @param string|array $action Controller action name or array of actions
  * @return void
  * @see AuthComponent::allow()
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#making-actions-require-authorization

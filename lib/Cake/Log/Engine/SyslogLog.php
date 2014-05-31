@@ -87,7 +87,7 @@ class SyslogLog extends BaseLog {
  * Make sure the configuration contains the format parameter, by default it uses
  * the error number and the type as a prefix to the message
  *
- * @param array $config
+ * @param array $config Options list.
  */
 	public function __construct($config = array()) {
 		$config += $this->_defaults;
@@ -142,8 +142,8 @@ class SyslogLog extends BaseLog {
  * Extracts the call to syslog() in order to run unit tests on it. This function
  * will perform the actual write in the system logger
  *
- * @param integer $priority
- * @param string $message
+ * @param integer $priority Message priority.
+ * @param string $message Message to log.
  * @return boolean
  */
 	protected function _write($priority, $message) {

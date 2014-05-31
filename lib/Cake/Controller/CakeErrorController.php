@@ -39,8 +39,8 @@ class CakeErrorController extends AppController {
 /**
  * Constructor
  *
- * @param CakeRequest $request
- * @param CakeResponse $response
+ * @param CakeRequest $request Request instance.
+ * @param CakeResponse $response Response instance.
  */
 	public function __construct($request = null, $response = null) {
 		parent::__construct($request, $response);
