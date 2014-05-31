@@ -12,9 +12,9 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Controller\Component\Auth;
+namespace Cake\Test\TestCase\Auth;
 
-use Cake\Controller\Component\Auth\SimplePasswordHasher;
+use Cake\Auth\SimplePasswordHasher;
 use Cake\TestSuite\TestCase;
 
 /**

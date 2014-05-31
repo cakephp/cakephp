@@ -331,7 +331,7 @@ class AuthComponentTest extends TestCase {
 	public function testAllConfigWithAuthorize() {
 		$this->Controller->Auth->config('authorize', [
 			AuthComponent::ALL => array('actionPath' => 'controllers/'),
-			'Actions'
+			'Controller',
 		]);
 		$objects = $this->Controller->Auth->constructAuthorize();
 		$result = $objects[0];
@@ -381,11 +381,11 @@ class AuthComponentTest extends TestCase {
 		$objects = $this->Controller->Auth->constructAuthenticate();
 		$this->assertEquals(2, count($objects));
 
-		$this->assertInstanceOf('Cake\Controller\Component\Auth\FormAuthenticate', $objects[0]);
-		$this->assertInstanceOf('Cake\Controller\Component\Auth\FormAuthenticate', $objects[1]);
+		$this->assertInstanceOf('Cake\Auth\FormAuthenticate', $objects[0]);
+		$this->assertInstanceOf('Cake\Auth\FormAuthenticate', $objects[1]);
 
-		$this->assertInstanceOf('Cake\Controller\Component\Auth\SimplePasswordHasher', $objects[0]->passwordHasher());
-		$this->assertInstanceOf('Cake\Controller\Component\Auth\FallbackPasswordHasher', $objects[1]->passwordHasher());
+		$this->assertInstanceOf('Cake\Auth\SimplePasswordHasher', $objects[0]->passwordHasher());
+		$this->assertInstanceOf('Cake\Auth\FallbackPasswordHasher', $objects[1]->passwordHasher());
 	}
 
 /**

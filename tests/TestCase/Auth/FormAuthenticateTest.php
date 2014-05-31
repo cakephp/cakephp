@@ -14,10 +14,10 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Controller\Component\Auth;
+namespace Cake\Test\TestCase\Auth;
 
+use Cake\Auth\FormAuthenticate;
 use Cake\Cache\Cache;
-use Cake\Controller\Component\Auth\FormAuthenticate;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -133,7 +133,7 @@ class FormAuthenticateTest extends TestCase {
 		];
 
 		$this->auth = $this->getMock(
-			'Cake\Controller\Component\Auth\FormAuthenticate',
+			'Cake\Auth\FormAuthenticate',
 			['_checkFields'],
 			[
 				$this->Collection,
