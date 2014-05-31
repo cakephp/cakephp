@@ -53,8 +53,8 @@ class AclComponent extends Component {
 /**
  * Constructor. Will return an instance of the correct ACL class as defined in `Configure::read('Acl.classname')`
  *
- * @param ComponentCollection $collection
- * @param array $settings
+ * @param ComponentCollection $collection Collection instance.
+ * @param array $settings Settings list.
  * @throws CakeException when Acl.classname could not be loaded.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {

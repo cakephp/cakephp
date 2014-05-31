@@ -26,8 +26,8 @@ class BasicAuthentication {
 /**
  * Authentication
  *
- * @param HttpSocket $http
- * @param array $authInfo
+ * @param HttpSocket $http Http socket instance.
+ * @param array &$authInfo Authentication info.
  * @return void
  * @see http://www.ietf.org/rfc/rfc2617.txt
  */
@@ -40,8 +40,8 @@ class BasicAuthentication {
 /**
  * Proxy Authentication
  *
- * @param HttpSocket $http
- * @param array $proxyInfo
+ * @param HttpSocket $http Http socket instance.
+ * @param array &$proxyInfo Proxy info.
  * @return void
  * @see http://www.ietf.org/rfc/rfc2617.txt
  */
@@ -54,8 +54,8 @@ class BasicAuthentication {
 /**
  * Generate basic [proxy] authentication header
  *
- * @param string $user
- * @param string $pass
+ * @param string $user Username.
+ * @param string $pass Password.
  * @return string
  */
 	protected static function _generateHeader($user, $pass) {

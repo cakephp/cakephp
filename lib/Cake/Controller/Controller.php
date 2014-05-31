@@ -346,7 +346,7 @@ class Controller extends Object implements CakeEventListener {
  * Provides backwards compatibility to avoid problems with empty and isset to alias properties.
  * Lazy loads models using the loadModel() method if declared in $uses
  *
- * @param string $name
+ * @param string $name Property name to check.
  * @return boolean
  */
 	public function __isset($name) {
@@ -412,8 +412,8 @@ class Controller extends Object implements CakeEventListener {
 /**
  * Provides backwards compatibility access for setting values to the request object.
  *
- * @param string $name
- * @param mixed $value
+ * @param string $name Property name to set.
+ * @param mixed $value Value to set.
  * @return void
  */
 	public function __set($name, $value) {
@@ -448,7 +448,7 @@ class Controller extends Object implements CakeEventListener {
  * - $this->autoRender - To false if $request->params['return'] == 1
  * - $this->passedArgs - The the combined results of params['named'] and params['pass]
  *
- * @param CakeRequest $request
+ * @param CakeRequest $request Request instance.
  * @return void
  */
 	public function setRequest(CakeRequest $request) {
@@ -471,7 +471,7 @@ class Controller extends Object implements CakeEventListener {
  * Dispatches the controller action. Checks that the action
  * exists and isn't private.
  *
- * @param CakeRequest $request
+ * @param CakeRequest $request Request instance.
  * @return mixed The resulting response.
  * @throws PrivateActionException When actions are not public or prefixed by _
  * @throws MissingActionException When actions are not defined and scaffolding is
@@ -528,7 +528,7 @@ class Controller extends Object implements CakeEventListener {
 /**
  * Returns a scaffold object to use for dynamically scaffolded controllers.
  *
- * @param CakeRequest $request
+ * @param CakeRequest $request Request instance.
  * @return Scaffold
  */
 	protected function _getScaffold(CakeRequest $request) {
@@ -887,11 +887,11 @@ class Controller extends Object implements CakeEventListener {
 	}
 
 /**
- * Validates models passed by parameters. Example:
+ * Validates models passed by parameters. Takes a list of models as a variable argument.
+ * Example:
  *
  * `$errors = $this->validateErrors($this->Article, $this->User);`
  *
- * @param mixed A list of models as a variable argument
  * @return array Validation errors, or false if none
  * @deprecated This method will be removed in 3.0
  */
@@ -1145,7 +1145,7 @@ class Controller extends Object implements CakeEventListener {
 /**
  * Alias to beforeScaffold()
  *
- * @param string $method
+ * @param string $method Method name.
  * @return boolean
  * @see Controller::beforeScaffold()
  * @deprecated Will be removed in 3.0.
@@ -1168,7 +1168,7 @@ class Controller extends Object implements CakeEventListener {
 /**
  * Alias to afterScaffoldSave()
  *
- * @param string $method
+ * @param string $method Method name.
  * @return boolean
  * @see Controller::afterScaffoldSave()
  * @deprecated Will be removed in 3.0.
@@ -1191,7 +1191,7 @@ class Controller extends Object implements CakeEventListener {
 /**
  * Alias to afterScaffoldSaveError()
  *
- * @param string $method
+ * @param string $method Method name.
  * @return boolean
  * @see Controller::afterScaffoldSaveError()
  * @deprecated Will be removed in 3.0.
@@ -1216,7 +1216,7 @@ class Controller extends Object implements CakeEventListener {
 /**
  * Alias to scaffoldError()
  *
- * @param string $method
+ * @param string $method Method name.
  * @return boolean
  * @see Controller::scaffoldError()
  * @deprecated Will be removed in 3.0.
