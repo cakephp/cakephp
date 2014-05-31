@@ -173,7 +173,7 @@ class SessionComponentTest extends TestCase {
 		$Session->setFlash('This is a test message');
 		$this->assertEquals(array(
 				'message' => 'This is a test message',
-				'params' => array('element' => 'default'),
+				'params' => array('element' => null),
 				'type' => 'info'
 			), $Session->read('Message.flash'));
 	}
