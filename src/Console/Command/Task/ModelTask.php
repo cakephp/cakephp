@@ -454,7 +454,7 @@ class ModelTask extends BakeTask {
 			]
 		];
 
-		if (in_array($fieldName, ['email', 'username'])) {
+		if (in_array($fieldName, ['email', 'username', 'login'])) {
 			$validation['unique'] = [
 				'rule' => 'validateUnique',
 				'provider' => 'table'
