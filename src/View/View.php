@@ -644,39 +644,30 @@ class View {
 	}
 
 /**
- * Start capturing output for a 'block' if it has no content
+ * Append to an existing or new block.
  *
- * @param string $name The name of the block to capture for.
- * @return void
- * @see ViewBlock::startIfEmpty()
- */
-	public function startIfEmpty($name) {
-		$this->Blocks->startIfEmpty($name);
-	}
-
-/**
- * Append to an existing or new block. Appending to a new
- * block will create the block.
+ * Appending to a new block will create the block.
  *
  * @param string $name Name of the block
  * @param mixed $value The content for the block.
  * @return void
  * @see ViewBlock::concat()
  */
-	public function append($name, $value = null) {
+	public function append($name, $value) {
 		$this->Blocks->concat($name, $value);
 	}
 
 /**
- * Prepend to an existing or new block. Prepending to a new
- * block will create the block.
+ * Prepend to an existing or new block.
+ *
+ * Prepending to a new block will create the block.
  *
  * @param string $name Name of the block
  * @param mixed $value The content for the block.
  * @return void
  * @see ViewBlock::concat()
  */
-	public function prepend($name, $value = null) {
+	public function prepend($name, $value) {
 		$this->Blocks->concat($name, $value, ViewBlock::PREPEND);
 	}
 
