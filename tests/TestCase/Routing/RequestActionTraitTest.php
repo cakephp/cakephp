@@ -225,8 +225,7 @@ class RequestActionTraitTest extends TestCase {
 			array('post' => $_POST)
 		);
 		$result = json_decode($result, true);
-		$expected = $_POST;
-		$this->assertEquals($expected, $result);
+		$this->assertEquals($_POST, $result);
 	}
 
 /**
@@ -304,6 +303,24 @@ class RequestActionTraitTest extends TestCase {
 		);
 		$result = json_decode($result, true);
 		$this->assertEquals('value', $result['query']['get']);
+	}
+
+/**
+ * Test that environment overrides can be set.
+ *
+ * @return void
+ */
+	public function testRequestActionEnvironment() {
+		$result = $this->object->requestAction('/request_action/params_pass');
+		$result = json_decode($result, true);
+		$this->assertEquals('', $result['contentType'], 'Original content type not found.');
+
+		$result = $this->object->requestAction(
+			'/request_action/params_pass',
+			['environment' => ['CONTENT_TYPE' => 'application/json']]
+		);
+		$result = json_decode($result, true);
+		$this->assertEquals('application/json', $result['contentType']);
 	}
 
 /**

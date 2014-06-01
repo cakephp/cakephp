@@ -125,7 +125,10 @@ trait RequestActionTrait {
 		if (isset($extra['query'])) {
 			$params['query'] = $extra['query'];
 		}
-		unset($extra['post'], $extra['query']);
+		if (isset($extra['environment'])) {
+			$params['environment'] = $extra['environment'] + $_SERVER + $_ENV;
+		}
+		unset($extra['environment'], $extra['post'], $extra['query']);
 
 		$params['session'] = isset($extra['session']) ? $extra['session'] : new Session();
 
