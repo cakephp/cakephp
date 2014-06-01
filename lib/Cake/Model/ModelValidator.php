@@ -544,7 +544,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  *		));
  * }}}
  *
- * @param string $field The name of the field from which the rule will be removed
+ * @param string $field The name of the field where the rule is to be added
  * @param string|array|CakeValidationSet $name name of the rule to be added or list of rules for the field
  * @param array|CakeValidationRule $rule or list of rules to be added to the field's rule set
  * @return ModelValidator this instance
