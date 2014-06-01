@@ -67,6 +67,17 @@ trait RequestActionTrait {
  * ]);
  * }}}
  *
+ * ### Sending environment or header values
+ *
+ * By default actions dispatched with this method will use the global $_SERVER and $_ENV
+ * values. If you want to override those values for a request action, you can specify the values:
+ *
+ * {{{
+ * $vars = $this->requestAction('/articles/popular', [
+ *   'environment' => ['CONTENT_TYPE' => 'application/json']
+ * ]);
+ * }}}
+ *
  * ### Transmitting the session
  *
  * By default actions dispatched with this method will use the standard session object.
