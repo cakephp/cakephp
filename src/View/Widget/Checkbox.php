@@ -94,4 +94,11 @@ class Checkbox implements WidgetInterface {
 		return false;
 	}
 
+/**
+ * {@inheritDoc}
+ */
+	public function secureFields(array $data) {
+		return [$data['name']];
+	}
+
 }

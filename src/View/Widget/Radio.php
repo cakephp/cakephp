@@ -215,4 +215,11 @@ class Radio implements WidgetInterface {
 		return $this->_label->render($labelAttrs);
 	}
 
+/**
+ * {@inheritDoc}
+ */
+	public function secureFields(array $data) {
+		return [$data['name']];
+	}
+
 }

@@ -62,4 +62,11 @@ class Textarea implements WidgetInterface {
 		]);
 	}
 
+/**
+ * {@inheritDoc}
+ */
+	public function secureFields(array $data) {
+		return [$data['name']];
+	}
+
 }

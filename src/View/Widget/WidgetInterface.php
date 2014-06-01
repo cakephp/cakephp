@@ -23,8 +23,17 @@ interface WidgetInterface {
  * Converts the $data into one or many HTML elements.
  *
  * @param array $data The data to render.
- * @return string
+ * @return string Generated HTML for the widget element.
  */
 	public function render(array $data);
+
+/**
+ * Returns a list of fields that need to be secured for
+ * this widget. Fields are in the form of Model[field][suffix]
+ *
+ * @param array $data The data to render.
+ * @return array Array of fields to secure.
+ */
+	public function secureFields(array $data);
 
 }
