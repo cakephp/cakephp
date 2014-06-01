@@ -113,11 +113,11 @@ class Cache {
  * - `user` Used by Xcache. Username for XCache
  * - `password` Used by Xcache/Redis. Password for XCache/Redis
  *
- * @see app/Config/core.php for configuration settings
  * @param string $name Name of the configuration
  * @param array $settings Optional associative array of settings passed to the engine
  * @return array array(engine, settings) on success, false on failure
  * @throws CacheException
+ * @see app/Config/core.php for configuration settings
  */
 	public static function config($name = null, $settings = array()) {
 		if (is_array($name)) {
@@ -561,6 +561,7 @@ class Cache {
  *   the cache key is empty. Can be any callable type supported by your PHP.
  * @param string $config The cache configuration to use for this operation.
  *   Defaults to default.
+ * @return mixed The results of the callable or unserialized results.
  */
 	public static function remember($key, $callable, $config = 'default') {
 		$existing = self::read($key, $config);

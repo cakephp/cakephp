@@ -303,8 +303,8 @@ class FileEngine extends CacheEngine {
 /**
  * Not implemented
  *
- * @param string $key
- * @param integer $offset
+ * @param string $key The key to decrement
+ * @param integer $offset The number to offset
  * @return void
  * @throws CacheException
  */
@@ -315,8 +315,8 @@ class FileEngine extends CacheEngine {
 /**
  * Not implemented
  *
- * @param string $key
- * @param integer $offset
+ * @param string $key The key to decrement
+ * @param integer $offset The number to offset
  * @return void
  * @throws CacheException
  */
@@ -405,6 +405,7 @@ class FileEngine extends CacheEngine {
 /**
  * Recursively deletes all files under any directory named as $group
  *
+ * @param string $group The group to clear.
  * @return boolean success
  */
 	public function clearGroup($group) {
