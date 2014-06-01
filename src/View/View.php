@@ -335,10 +335,11 @@ class View {
 /**
  * Constructor
  *
- * @param Request $request
- * @param Response $response
- * @param EventManager $eventManager
- * @param array $viewOptions
+ * @param \Cake\Network\Request $request Request instance.
+ * @param \Cake\Network\Response $response Response instance.
+ * @param \Cake\Event\EventManager $eventManager Event manager instance.
+ * @param array $viewOptions View options. See View::$_passedVars for list of
+ *   options which get set as class properties.
  */
 	public function __construct(Request $request = null, Response $response = null,
 		EventManager $eventManager = null, array $viewOptions = []) {
@@ -384,7 +385,7 @@ class View {
  *
  * Primarily useful for testing.
  *
- * @param \Cake\Event\EventManager $eventManager.
+ * @param \Cake\Event\EventManager $eventManager Event manager instance.
  * @return void
  */
 	public function setEventManager(EventManager $eventManager) {
@@ -957,12 +958,9 @@ class View {
 			}
 		}
 		$paths = $this->_paths($plugin);
-		$exts = $this->_getExtensions();
-		foreach ($exts as $ext) {
-			foreach ($paths as $path) {
-				if (file_exists($path . $name . $ext)) {
-					return $path . $name . $ext;
-				}
+		foreach ($paths as $path) {
+			if (file_exists($path . $name . $this->_ext)) {
+				return $path . $name . $this->_ext;
 			}
 		}
 		$defaultPath = $paths[0];
@@ -1021,28 +1019,12 @@ class View {
 		$paths = $this->_paths($plugin);
 		$file = 'Layout' . DS . $subDir . $name;
 
-		$exts = $this->_getExtensions();
-		foreach ($exts as $ext) {
-			foreach ($paths as $path) {
-				if (file_exists($path . $file . $ext)) {
-					return $path . $file . $ext;
-				}
+		foreach ($paths as $path) {
+			if (file_exists($path . $file . $this->_ext)) {
+				return $path . $file . $this->_ext;
 			}
 		}
 		throw new Error\MissingLayoutException(array('file' => $paths[0] . $file . $this->_ext));
-	}
-
-/**
- * Get the extensions that view files can use.
- *
- * @return array Array of extensions view files use.
- */
-	protected function _getExtensions() {
-		$exts = array($this->_ext);
-		if ($this->_ext !== '.ctp') {
-			$exts[] = '.ctp';
-		}
-		return $exts;
 	}
 
 /**
@@ -1055,12 +1037,9 @@ class View {
 		list($plugin, $name) = $this->pluginSplit($name);
 
 		$paths = $this->_paths($plugin);
-		$exts = $this->_getExtensions();
-		foreach ($exts as $ext) {
-			foreach ($paths as $path) {
-				if (file_exists($path . 'Element' . DS . $name . $ext)) {
-					return $path . 'Element' . DS . $name . $ext;
-				}
+		foreach ($paths as $path) {
+			if (file_exists($path . 'Element' . DS . $name . $this->_ext)) {
+				return $path . 'Element' . DS . $name . $this->_ext;
 			}
 		}
 		return false;
