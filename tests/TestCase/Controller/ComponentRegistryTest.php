@@ -104,7 +104,7 @@ class ComponentRegistryTest extends TestCase {
 		$mock->expects($this->never())
 			->method('attach');
 
-		$this->Components->getController()->setEventManager($mock);
+		$this->Components->getController()->eventManager($mock);
 
 		$result = $this->Components->load('Cookie', array('enabled' => false));
 		$this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $result);
@@ -164,7 +164,7 @@ class ComponentRegistryTest extends TestCase {
  * @return void
  */
 	public function testReset() {
-		$eventManager = $this->Components->getController()->getEventManager();
+		$eventManager = $this->Components->getController()->eventManager();
 		$instance = $this->Components->load('Auth');
 		$this->assertSame(
 			$instance,
@@ -185,7 +185,7 @@ class ComponentRegistryTest extends TestCase {
  * @return void
  */
 	public function testUnload() {
-		$eventManager = $this->Components->getController()->getEventManager();
+		$eventManager = $this->Components->getController()->eventManager();
 
 		$result = $this->Components->load('Auth');
 		$this->Components->unload('Auth');
@@ -200,7 +200,7 @@ class ComponentRegistryTest extends TestCase {
  * @return void
  */
 	public function testSet() {
-		$eventManager = $this->Components->getController()->getEventManager();
+		$eventManager = $this->Components->getController()->eventManager();
 		$this->assertCount(0, $eventManager->listeners('Controller.startup'));
 
 		$auth = new AuthComponent($this->Components);

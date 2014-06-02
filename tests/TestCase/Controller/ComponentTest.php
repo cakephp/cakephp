@@ -77,7 +77,7 @@ class ComponentTest extends TestCase {
 	public function testInnerComponentsAreNotEnabled() {
 		$mock = $this->getMock('Cake\Event\EventManager');
 		$controller = new Controller();
-		$controller->setEventManager($mock);
+		$controller->eventManager($mock);
 
 		$mock->expects($this->once())
 			->method('attach')

@@ -139,7 +139,7 @@ class EntityValidator {
 		$validator = $this->_table->validator($type);
 		$pass = compact('entity', 'options', 'validator');
 		$event = new Event('Model.beforeValidate', $this->_table, $pass);
-		$this->_table->getEventManager()->dispatch($event);
+		$this->_table->eventManager()->dispatch($event);
 
 		if ($event->isStopped()) {
 			return (bool)$event->result;
@@ -152,7 +152,7 @@ class EntityValidator {
 		$success = $entity->validate($validator);
 
 		$event = new Event('Model.afterValidate', $this->_table, $pass);
-		$this->_table->getEventManager()->dispatch($event);
+		$this->_table->eventManager()->dispatch($event);
 
 		if ($event->isStopped()) {
 			$success = (bool)$event->result;

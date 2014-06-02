@@ -376,7 +376,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'table' => 'users',
 			'connection' => $this->connection,
 		]);
-		$table->getEventManager()->attach(function ($event, $query, $options) {
+		$table->eventManager()->attach(function ($event, $query, $options) {
 			$query->limit(1);
 		}, 'Model.beforeFind');
 
@@ -396,7 +396,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'connection' => $this->connection,
 		]);
 		$expected = ['One', 'Two', 'Three'];
-		$table->getEventManager()->attach(function ($event, $query, $options) use ($expected) {
+		$table->eventManager()->attach(function ($event, $query, $options) use ($expected) {
 			$query->setResult($expected);
 			$event->stopPropagation();
 		}, 'Model.beforeFind');
@@ -1211,7 +1211,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			$this->assertSame($data, $entity);
 			$entity->set('password', 'foo');
 		};
-		$table->getEventManager()->attach($listener, 'Model.beforeSave');
+		$table->eventManager()->attach($listener, 'Model.beforeSave');
 		$this->assertSame($data, $table->save($data));
 		$this->assertEquals($data->id, self::$nextUserId);
 		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
@@ -1238,8 +1238,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$listener2 = function($e, $entity, $options) {
 			$this->assertTrue($options['crazy']);
 		};
-		$table->getEventManager()->attach($listener1, 'Model.beforeSave');
-		$table->getEventManager()->attach($listener2, 'Model.beforeSave');
+		$table->eventManager()->attach($listener1, 'Model.beforeSave');
+		$table->eventManager()->attach($listener2, 'Model.beforeSave');
 		$this->assertSame($data, $table->save($data));
 		$this->assertEquals($data->id, self::$nextUserId);
 
@@ -1265,7 +1265,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			$e->stopPropagation();
 			return $entity;
 		};
-		$table->getEventManager()->attach($listener, 'Model.beforeSave');
+		$table->eventManager()->attach($listener, 'Model.beforeSave');
 		$this->assertSame($data, $table->save($data));
 		$this->assertNull($data->id);
 		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
@@ -1291,7 +1291,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			$this->assertSame($data, $entity);
 			$called = true;
 		};
-		$table->getEventManager()->attach($listener, 'Model.afterSave');
+		$table->eventManager()->attach($listener, 'Model.afterSave');
 		$this->assertSame($data, $table->save($data));
 		$this->assertEquals($data->id, self::$nextUserId);
 		$this->assertTrue($called);
@@ -1336,7 +1336,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$listener = function($e, $entity, $options) use ($data, &$called) {
 			$called = true;
 		};
-		$table->getEventManager()->attach($listener, 'Model.afterSave');
+		$table->eventManager()->attach($listener, 'Model.afterSave');
 		$this->assertFalse($table->save($data));
 		$this->assertFalse($called);
 	}
@@ -1578,7 +1578,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			$this->assertFalse($entity->isNew());
 			$called = true;
 		};
-		$table->getEventManager()->attach($listener, 'Model.beforeSave');
+		$table->eventManager()->attach($listener, 'Model.beforeSave');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertTrue($called);
 	}
@@ -2029,7 +2029,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'username' => 'superuser'
 		]);
 		$table = TableRegistry::get('users');
-		$table->getEventManager()->attach(function($ev, $en, $opt, $val) use ($entity) {
+		$table->eventManager()->attach(function($ev, $en, $opt, $val) use ($entity) {
 			$this->assertSame($entity, $en);
 			$this->assertTrue($opt['crazy']);
 			$this->assertSame($ev->subject()->validator('default'), $val);
@@ -2049,7 +2049,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'username' => 'superuser'
 		]);
 		$table = TableRegistry::get('users');
-		$table->getEventManager()->attach(function($ev, $en) {
+		$table->eventManager()->attach(function($ev, $en) {
 			$en->errors('username', 'Not good');
 			return false;
 		}, 'Model.beforeValidate');
@@ -2069,7 +2069,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		]);
 		$table = TableRegistry::get('users');
 		$table->validator()->validatePresence('password');
-		$table->getEventManager()->attach(function($ev, $en, $opt, $val) use ($entity) {
+		$table->eventManager()->attach(function($ev, $en, $opt, $val) use ($entity) {
 			$this->assertSame($entity, $en);
 			$this->assertTrue($opt['crazy']);
 			$this->assertSame($ev->subject()->validator('default'), $val);

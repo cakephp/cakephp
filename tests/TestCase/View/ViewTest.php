@@ -667,7 +667,7 @@ class ViewTest extends TestCase {
 		$callback = function ($event, $file) use (&$count) {
 			$count++;
 		};
-		$events = $this->View->getEventManager();
+		$events = $this->View->eventManager();
 		$events->attach($callback, 'View.beforeRender');
 		$events->attach($callback, 'View.afterRender');
 
@@ -808,7 +808,7 @@ class ViewTest extends TestCase {
 		$View = $this->PostsController->createView();
 
 		$manager = $this->getMock('Cake\Event\EventManager');
-		$View->setEventManager($manager);
+		$View->eventManager($manager);
 
 		$manager->expects($this->at(0))->method('dispatch')
 			->with(

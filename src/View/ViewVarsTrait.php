@@ -46,7 +46,7 @@ trait ViewVarsTrait {
 			}
 		}
 		$viewOptions = array_intersect_key(get_object_vars($this), array_flip($this->_validViewOptions));
-		return new $viewClass($this->request, $this->response, $this->getEventManager(), $viewOptions);
+		return new $viewClass($this->request, $this->response, $this->eventManager(), $viewOptions);
 	}
 
 /**

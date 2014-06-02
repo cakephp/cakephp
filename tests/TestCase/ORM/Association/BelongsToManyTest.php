@@ -1607,7 +1607,7 @@ class BelongsToManyTest extends TestCase {
 		$table = TableRegistry::get('ArticlesTags');
 		$association = new BelongsToMany('Tags', $config);
 		$listener = $this->getMock('stdClass', ['__invoke']);
-		$this->tag->getEventManager()->attach($listener, 'Model.beforeFind');
+		$this->tag->eventManager()->attach($listener, 'Model.beforeFind');
 		$listener->expects($this->once())->method('__invoke')
 			->with(
 				$this->isInstanceOf('\Cake\Event\Event'),
@@ -1617,7 +1617,7 @@ class BelongsToManyTest extends TestCase {
 			);
 
 		$listener2 = $this->getMock('stdClass', ['__invoke']);
-		$table->getEventManager()->attach($listener2, 'Model.beforeFind');
+		$table->eventManager()->attach($listener2, 'Model.beforeFind');
 		$listener2->expects($this->once())->method('__invoke')
 			->with(
 				$this->isInstanceOf('\Cake\Event\Event'),
@@ -1644,7 +1644,7 @@ class BelongsToManyTest extends TestCase {
 		$table = TableRegistry::get('ArticlesTags');
 		$association = new BelongsToMany('Tags', $config);
 		$listener = $this->getMock('stdClass', ['__invoke']);
-		$this->tag->getEventManager()->attach($listener, 'Model.beforeFind');
+		$this->tag->eventManager()->attach($listener, 'Model.beforeFind');
 		$opts = ['something' => 'more'];
 		$listener->expects($this->once())->method('__invoke')
 			->with(
@@ -1655,7 +1655,7 @@ class BelongsToManyTest extends TestCase {
 			);
 
 		$listener2 = $this->getMock('stdClass', ['__invoke']);
-		$table->getEventManager()->attach($listener2, 'Model.beforeFind');
+		$table->eventManager()->attach($listener2, 'Model.beforeFind');
 		$listener2->expects($this->once())->method('__invoke')
 			->with(
 				$this->isInstanceOf('\Cake\Event\Event'),

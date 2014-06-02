@@ -23,6 +23,7 @@ use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
+use Cake\Event\EventManagerTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Inflector;
@@ -35,12 +36,7 @@ use Cake\Utility\Inflector;
  */
 class Dispatcher {
 
-/**
- * Event manager, used to handle dispatcher filters
- *
- * @var \Cake\Event\EventManager
- */
-	protected $_eventManager;
+	use EventManagerTrait;
 
 /**
  * Connected filter objects
@@ -48,19 +44,6 @@ class Dispatcher {
  * @var array
  */
 	protected $_filters = [];
-
-/**
- * Returns the Cake\Event\EventManager instance or creates one if none was
- * created. Attaches the default listeners and filters
- *
- * @return \Cake\Event\EventManager
- */
-	public function getEventManager() {
-		if (!$this->_eventManager) {
-			$this->_eventManager = new EventManager();
-		}
-		return $this->_eventManager;
-	}
 
 /**
  * Dispatches and invokes given Request, handing over control to the involved controller. If the controller is set
@@ -81,7 +64,7 @@ class Dispatcher {
  */
 	public function dispatch(Request $request, Response $response) {
 		$beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
-		$this->getEventManager()->dispatch($beforeEvent);
+		$this->eventManager()->dispatch($beforeEvent);
 
 		$request = $beforeEvent->data['request'];
 		if ($beforeEvent->result instanceof Response) {
@@ -112,7 +95,7 @@ class Dispatcher {
 		}
 
 		$afterEvent = new Event('Dispatcher.afterDispatch', $this, compact('request', 'response'));
-		$this->getEventManager()->dispatch($afterEvent);
+		$this->eventManager()->dispatch($afterEvent);
 		$afterEvent->data['response']->send();
 	}
 
@@ -165,7 +148,7 @@ class Dispatcher {
  */
 	public function addFilter(EventListener $filter) {
 		$this->_filters[] = $filter;
-		$this->getEventManager()->attach($filter);
+		$this->eventManager()->attach($filter);
 	}
 
 /**

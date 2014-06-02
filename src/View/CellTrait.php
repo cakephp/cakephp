@@ -70,7 +70,7 @@ trait CellTrait {
 			throw new Error\MissingCellException(array('className' => $pluginAndCell . 'Cell'));
 		}
 
-		$cellInstance = new $className($this->request, $this->response, $this->getEventManager(), $options);
+		$cellInstance = new $className($this->request, $this->response, $this->eventManager(), $options);
 		$cellInstance->template = Inflector::underscore($action);
 		$cellInstance->plugin = !empty($plugin) ? $plugin : null;
 		$cellInstance->theme = !empty($this->theme) ? $this->theme : null;

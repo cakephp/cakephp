@@ -16,6 +16,7 @@ namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Event\EventManager;
+use Cake\Event\EventManagerTrait;
 use Cake\Model\ModelAwareTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -28,6 +29,7 @@ use Cake\View\ViewVarsTrait;
  */
 abstract class Cell {
 
+	use EventManagerTrait;
 	use ModelAwareTrait;
 	use ViewVarsTrait;
 
@@ -85,14 +87,6 @@ abstract class Cell {
 	public $theme;
 
 /**
- * Instance of the Cake\Event\EventManager this cell is using
- * to dispatch inner events.
- *
- * @var \Cake\Event\EventManager
- */
-	protected $_eventManager = null;
-
-/**
  * These properties can be set directly on Cell and passed to the View as options.
  *
  * @var array
@@ -114,14 +108,14 @@ abstract class Cell {
 /**
  * Constructor.
  *
- * @param \Cake\Network\Request $request
- * @param \Cake\Network\Response $response
- * @param \Cake\Event\EventManager $eventManager
- * @param array $cellOptions
+ * @param \Cake\Network\Request $request the request to use in the cell
+ * @param \Cake\Network\Response $response the response to use in the cell
+ * @param \Cake\Event\EventManager $eventManager then eventManager to bind events to
+ * @param array $cellOptions cell options to apply
  */
 	public function __construct(Request $request = null, Response $response = null,
 			EventManager $eventManager = null, array $cellOptions = []) {
-		$this->_eventManager = $eventManager;
+		$this->eventManager($eventManager);
 		$this->request = $request;
 		$this->response = $response;
 		$this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
@@ -182,21 +176,6 @@ abstract class Cell {
 			'request' => $this->request,
 			'response' => $this->response,
 		];
-	}
-
-/**
- * Returns the Cake\Event\EventManager manager instance for this cell.
- *
- * You can use this instance to register any new listeners or callbacks to the
- * cell events, or create your own events and trigger them at will.
- *
- * @return \Cake\Event\EventManager
- */
-	public function getEventManager() {
-		if (empty($this->_eventManager)) {
-			$this->_eventManager = new EventManager();
-		}
-		return $this->_eventManager;
 	}
 
 }

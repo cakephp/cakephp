@@ -1876,12 +1876,12 @@ class QueryTest extends TestCase {
 		}]);
 		$this->assertFalse($query->eagerLoaded());
 
-		$table->getEventManager()->attach(function($e, $q, $o, $primary) {
+		$table->eventManager()->attach(function($e, $q, $o, $primary) {
 			$this->assertTrue($primary);
 		}, 'Model.beforeFind');
 
 		TableRegistry::get('articles')
-			->getEventManager()->attach(function($e, $q, $o, $primary) {
+			->eventManager()->attach(function($e, $q, $o, $primary) {
 				$this->assertFalse($primary);
 			}, 'Model.beforeFind');
 		$query->all();
