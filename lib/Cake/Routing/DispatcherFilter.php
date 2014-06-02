@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -44,7 +42,7 @@ abstract class DispatcherFilter implements CakeEventListener {
 /**
  * Constructor.
  *
- * @param string $setting Configuration settings for the filter.
+ * @param array $settings Configuration settings for the filter.
  */
 	public function __construct($settings = array()) {
 		$this->settings = Hash::merge($this->settings, $settings);

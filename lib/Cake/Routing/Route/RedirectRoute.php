@@ -113,7 +113,7 @@ class RedirectRoute extends CakeRoute {
  * Stop execution of the current script. Wraps exit() making
  * testing easier.
  *
- * @param integer|string $status see http://php.net/exit for values
+ * @param integer|string $code See http://php.net/exit for values
  * @return void
  */
 	protected function _stop($code = 0) {

@@ -48,7 +48,7 @@ class Multibyte {
  * Converts a multibyte character string
  * to the decimal value of the character
  *
- * @param string $string
+ * @param string $string String to convert.
  * @return array
  */
 	public static function utf8($string) {
@@ -87,7 +87,7 @@ class Multibyte {
  * Converts the decimal value of a multibyte character string
  * to a string
  *
- * @param array $array
+ * @param array $array Values array.
  * @return string
  */
 	public static function ascii($array) {
@@ -728,7 +728,7 @@ class Multibyte {
  *
  * @param string $string value to encode
  * @param string $charset charset to use for encoding. defaults to UTF-8
- * @param string $newline
+ * @param string $newline Newline string.
  * @return string
  */
 	public static function mimeEncode($string, $charset = null, $newline = "\r\n") {
@@ -774,7 +774,7 @@ class Multibyte {
 /**
  * Return the Code points range for Unicode characters
  *
- * @param integer $decimal
+ * @param integer $decimal Decimal value.
  * @return string
  */
 	protected static function _codepoint($decimal) {
@@ -823,7 +823,7 @@ class Multibyte {
  * Find the related code folding values for $char
  *
  * @param integer $char decimal value of character
- * @param string $type
+ * @param string $type Type 'lower' or 'upper'. Defaults to 'lower'.
  * @return array
  */
 	protected static function _find($char, $type = 'lower') {
@@ -860,7 +860,8 @@ class Multibyte {
 
 /**
  * Check the $string for multibyte characters
- * @param string $string value to test
+ *
+ * @param string $string Value to test.
  * @return boolean
  */
 	public static function checkMultibyte($string) {

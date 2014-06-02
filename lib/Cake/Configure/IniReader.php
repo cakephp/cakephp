@@ -181,7 +181,7 @@ class IniReader implements ConfigReaderInterface {
 /**
  * Converts a value into the ini equivalent
  *
- * @param mixed $value to export.
+ * @param mixed $val Value to export.
  * @return string String value for ini file.
  */
 	protected function _value($val) {

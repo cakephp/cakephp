@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -64,7 +62,7 @@ class CakeEventManager {
  *
  * If called with the first parameter, it will be set as the globally available instance
  *
- * @param CakeEventManager $manager
+ * @param CakeEventManager $manager Optional event manager instance.
  * @return CakeEventManager the global event manager
  */
 	public static function instance($manager = null) {
@@ -118,7 +116,7 @@ class CakeEventManager {
  * Auxiliary function to attach all implemented callbacks of a CakeEventListener class instance
  * as individual methods on this manager
  *
- * @param CakeEventListener $subscriber
+ * @param CakeEventListener $subscriber Event listener.
  * @return void
  */
 	protected function _attachSubscriber(CakeEventListener $subscriber) {
@@ -256,7 +254,7 @@ class CakeEventManager {
 /**
  * Returns a list of all listeners for an eventKey in the order they should be called
  *
- * @param string $eventKey
+ * @param string $eventKey Event key.
  * @return array
  */
 	public function listeners($eventKey) {
@@ -288,7 +286,7 @@ class CakeEventManager {
 /**
  * Returns the listeners for the specified event key indexed by priority
  *
- * @param string $eventKey
+ * @param string $eventKey Event key.
  * @return array
  */
 	public function prioritisedListeners($eventKey) {

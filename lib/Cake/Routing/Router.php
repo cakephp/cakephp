@@ -636,7 +636,7 @@ class Router {
 /**
  * Parses a file extension out of a URL, if Router::parseExtensions() is enabled.
  *
- * @param string $url
+ * @param string $url URL.
  * @return array Returns an array containing the altered URL and the parsed extension.
  */
 	protected static function _parseExtension($url) {
