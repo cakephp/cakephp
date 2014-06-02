@@ -119,13 +119,20 @@ class Plugin {
 			return;
 		}
 
-		$config += ['autoload' => false, 'bootstrap' => false, 'routes' => false, 'namespace' => $plugin, 'ignoreMissing' => false];
+		$config += [
+			'autoload' => false,
+			'bootstrap' => false,
+			'routes' => false,
+			'namespace' => str_replace('/', '\\', $plugin),
+			'ignoreMissing' => false
+		];
 		if (empty($config['path'])) {
 			$paths = App::path('Plugin');
 			foreach ($paths as $path) {
 				$namespacePath = str_replace('\\', DS, $config['namespace']);
-				if (is_dir($path . $plugin)) {
-					$config += ['path' => $path . $plugin . DS];
+				$pluginPath = str_replace('/', DS, $plugin);
+				if (is_dir($path . $pluginPath)) {
+					$config += ['path' => $path . $pluginPath . DS];
 					break;
 				}
 				if ($plugin !== $config['namespace'] && is_dir($path . $namespacePath)) {

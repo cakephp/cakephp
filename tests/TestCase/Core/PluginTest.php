@@ -55,8 +55,8 @@ class PluginTest extends TestCase {
 
 		$this->assertEquals('TestPluginTwo', Plugin::getNamespace('TestPluginTwo'));
 
-		Plugin::load('TestPluginThree', array('namespace' => 'Company\TestPluginThree'));
-		$this->assertEquals('Company\TestPluginThree', Plugin::getNamespace('TestPluginThree'));
+		Plugin::load('Company/TestPluginThree');
+		$this->assertEquals('Company\TestPluginThree', Plugin::getNamespace('Company/TestPluginThree'));
 
 		Plugin::load('CustomPlugin', array('namespace' => 'Company\TestPluginThree'));
 		$this->assertEquals('Company\TestPluginThree', Plugin::getNamespace('CustomPlugin'));
@@ -102,9 +102,7 @@ class PluginTest extends TestCase {
  */
 	public function testLoadSingleWithAutoload() {
 		$this->assertFalse(class_exists('Company\TestPluginThree\Utility\Hello'));
-		Plugin::load('TestPluginThree', [
-			'namespace' => 'Company\TestPluginThree',
-			'path' => TEST_APP . 'Plugin/Company/TestPluginThree',
+		Plugin::load('Company/TestPluginThree', [
 			'autoload' => true,
 		]);
 		$this->assertTrue(
@@ -122,6 +120,15 @@ class PluginTest extends TestCase {
 		Plugin::load('TestPlugin', array('bootstrap' => true));
 		$this->assertTrue(Plugin::loaded('TestPlugin'));
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
+
+		Plugin::load('Company/TestPluginThree', array('bootstrap' => true));
+		$this->assertTrue(Plugin::loaded('Company/TestPluginThree'));
+		$this->assertEquals('loaded plugin three bootstrap', Configure::read('PluginTest.test_plugin_three.bootstrap'));
+
+		Configure::delete('PluginTest.test_plugin_three.bootstrap');
+		Plugin::load('NewName', array('namespace' => 'Company\TestPluginThree', 'bootstrap' => true));
+		$this->assertTrue(Plugin::loaded('NewName'));
+		$this->assertEquals('loaded plugin three bootstrap', Configure::read('PluginTest.test_plugin_three.bootstrap'));
 	}
 
 /**
@@ -219,12 +226,15 @@ class PluginTest extends TestCase {
  * @return void
  */
 	public function testPath() {
-		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
+		Plugin::load(array('TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree'));
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
 		$this->assertPathEquals(Plugin::path('TestPlugin'), $expected);
 
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS;
 		$this->assertPathEquals(Plugin::path('TestPluginTwo'), $expected);
+
+		$expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS;
+		$this->assertPathEquals(Plugin::path('Company/TestPluginThree'), $expected);
 	}
 
 /**
@@ -293,6 +303,9 @@ class PluginTest extends TestCase {
 		$this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));
 		$this->assertEquals(null, Configure::read('PluginTest.test_plugin.bootstrap'));
 		$this->assertEquals('loaded plugin two bootstrap', Configure::read('PluginTest.test_plugin_two.bootstrap'));
+
+		// TestPluginThree won't get loaded by loadAll() since it's in a sub directory.
+		$this->assertEquals(null, Configure::read('PluginTest.test_plugin_three.bootstrap'));
 	}
 
 }
