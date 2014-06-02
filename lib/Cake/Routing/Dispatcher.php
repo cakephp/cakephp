@@ -85,7 +85,7 @@ class Dispatcher implements CakeEventListener {
  * Attaches all event listeners for this dispatcher instance. Loads the
  * dispatcher filters from the configured locations.
  *
- * @param CakeEventManager $manager
+ * @param CakeEventManager $manager Event manager instance.
  * @return void
  * @throws MissingDispatcherFilterException
  */
@@ -244,7 +244,7 @@ class Dispatcher implements CakeEventListener {
 /**
  * Load controller and return controller class name
  *
- * @param CakeRequest $request
+ * @param CakeRequest $request Request instance.
  * @return string|boolean Name of controller class name
  */
 	protected function _loadController($request) {

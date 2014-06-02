@@ -119,7 +119,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * If you do not want this to happen, make a copy of `$data` before passing it
  * to this method
  *
- * @param array $data Record data to validate. This should be an array indexed by association name.
+ * @param array &$data Record data to validate. This should be an array indexed by association name.
  * @param array $options Options to use when validating record data (see above), See also $options of validates().
  * @return array|boolean If atomic: True on success, or false on failure.
  *    Otherwise: array similar to the $data array passed, but values are set to true/false
@@ -196,7 +196,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * If you do not want this to happen, make a copy of `$data` before passing it
  * to this method
  *
- * @param array $data Record data to validate. This should be a numerically-indexed array
+ * @param array &$data Record data to validate. This should be a numerically-indexed array
  * @param array $options Options to use when validating record data (see above), See also $options of validates().
  * @return mixed If atomic: True on success, or false on failure.
  *    Otherwise: array similar to the $data array passed, but values are set to true/false
@@ -442,7 +442,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 /**
  * Propagates beforeValidate event
  *
- * @param array $options
+ * @param array $options Options to pass to callback.
  * @return boolean
  */
 	protected function _triggerBeforeValidate($options = array()) {

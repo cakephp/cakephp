@@ -115,7 +115,7 @@ class CakePlugin {
  * The above example will load the bootstrap file for all plugins, but for DebugKit it will only load
  * the routes file and will not look for any bootstrap script.
  *
- * @param array $options
+ * @param array $options Options list. See CakePlugin::load() for valid options.
  * @return void
  */
 	public static function loadAll($options = array()) {
@@ -206,7 +206,7 @@ class CakePlugin {
  * Returns true if the plugin $plugin is already loaded
  * If plugin is null, it will return a list of all loaded plugins
  *
- * @param string $plugin
+ * @param string $plugin Plugin name to check.
  * @return mixed boolean true if $plugin is already loaded.
  * If $plugin is null, returns a list of plugins that have been loaded
  */
