@@ -1128,6 +1128,43 @@ class ViewTest extends TestCase {
  *
  * @return void
  */
+	public function testBlockCaptureOverwrite() {
+		$this->View->start('test');
+		echo 'Block content';
+		$this->View->end();
+
+		$this->View->start('test');
+		echo 'New content';
+		$this->View->end();
+
+		$result = $this->View->fetch('test');
+		$this->assertEquals('New content', $result);
+	}
+
+/**
+ * Test that blocks can be fetched inside a block with the same name
+ *
+ * @return void
+ */
+	public function testBlockExtend() {
+		$this->View->start('test');
+		echo 'Block content';
+		$this->View->end();
+
+		$this->View->start('test');
+		echo $this->View->fetch('test');
+		echo 'New content';
+		$this->View->end();
+
+		$result = $this->View->fetch('test');
+		$this->assertEquals('Block contentNew content', $result);
+	}
+
+/**
+ * Test creating a block with capturing output.
+ *
+ * @return void
+ */
 	public function testBlockCapture() {
 		$this->View->start('test');
 		echo 'Block content';
@@ -1135,42 +1172,6 @@ class ViewTest extends TestCase {
 
 		$result = $this->View->fetch('test');
 		$this->assertEquals('Block content', $result);
-	}
-
-/**
- * Test block with startIfEmpty
- *
- * @return void
- */
-	public function testBlockCaptureStartIfEmpty() {
-		$this->View->startIfEmpty('test');
-		echo "Block content 1";
-		$this->View->end();
-
-		$this->View->startIfEmpty('test');
-		echo "Block content 2";
-		$this->View->end();
-
-		$result = $this->View->fetch('test');
-		$this->assertEquals('Block content 1', $result);
-	}
-
-/**
- * Test block with startIfEmpty
- *
- * @return void
- */
-	public function testBlockCaptureStartStartIfEmpty() {
-		$this->View->start('test');
-		echo "Block content 1";
-		$this->View->end();
-
-		$this->View->startIfEmpty('test');
-		echo "Block content 2";
-		$this->View->end();
-
-		$result = $this->View->fetch('test');
-		$this->assertEquals('Block content 1', $result);
 	}
 
 /**
@@ -1183,9 +1184,7 @@ class ViewTest extends TestCase {
 		echo 'Block';
 		$this->View->end();
 
-		$this->View->append('test');
-		echo ' content';
-		$this->View->end();
+		$this->View->append('test', ' content');
 
 		$result = $this->View->fetch('test');
 		$this->assertEquals('Block content', $result);

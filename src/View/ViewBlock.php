@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -85,26 +84,6 @@ class ViewBlock {
 	}
 
 /**
- * Start capturing output for a 'block' if it is empty
- *
- * Blocks allow you to create slots or blocks of dynamic content in the layout.
- * view files can implement some or all of a layout's slots.
- *
- * You can end capturing blocks using View::end(). Blocks can be output
- * using View::get();
- *
- * @param string $name The name of the block to capture for.
- * @return void
- */
-	public function startIfEmpty($name) {
-		if (empty($this->_blocks[$name])) {
-			return $this->start($name);
-		}
-		$this->_discardActiveBufferOnEnd = true;
-		ob_start();
-	}
-
-/**
  * End a capturing block. The compliment to ViewBlock::start()
  *
  * @return void
@@ -119,10 +98,7 @@ class ViewBlock {
 		if (!empty($this->_active)) {
 			$active = end($this->_active);
 			$content = ob_get_clean();
-			if (!isset($this->_blocks[$active])) {
-				$this->_blocks[$active] = '';
-			}
-			$this->_blocks[$active] .= $content;
+			$this->_blocks[$active] = $content;
 			array_pop($this->_active);
 		}
 	}
@@ -141,18 +117,14 @@ class ViewBlock {
  *   If ViewBlock::PREPEND it will be prepended.
  * @return void
  */
-	public function concat($name, $value = null, $mode = ViewBlock::APPEND) {
-		if (isset($value)) {
-			if (!isset($this->_blocks[$name])) {
-				$this->_blocks[$name] = '';
-			}
-			if ($mode === ViewBlock::PREPEND) {
-				$this->_blocks[$name] = $value . $this->_blocks[$name];
-			} else {
-				$this->_blocks[$name] .= $value;
-			}
+	public function concat($name, $value, $mode = ViewBlock::APPEND) {
+		if (!isset($this->_blocks[$name])) {
+			$this->_blocks[$name] = '';
+		}
+		if ($mode === ViewBlock::PREPEND) {
+			$this->_blocks[$name] = $value . $this->_blocks[$name];
 		} else {
-			$this->start($name);
+			$this->_blocks[$name] .= $value;
 		}
 	}
 
