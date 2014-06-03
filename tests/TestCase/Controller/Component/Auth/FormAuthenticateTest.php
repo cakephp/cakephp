@@ -298,7 +298,7 @@ class FormAuthenticateTest extends TestCase {
 			'userModel' => 'Users'
 		]);
 		$this->auth->config('passwordHasher', [
-			'className' => 'Blowfish'
+			'className' => 'Simple'
 		]);
 		$this->assertEquals($expected, $this->auth->authenticate($request, $this->response));
 
