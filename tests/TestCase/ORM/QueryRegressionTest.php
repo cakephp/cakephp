@@ -135,7 +135,7 @@ class QueryRegressionTest extends TestCase {
  */
 	public function testCreateJointData() {
 		$articles = TableRegistry::get('Articles');
-		$articles->belongsToMany('Highligths', [
+		$articles->belongsToMany('Highlights', [
 			'className' => 'TestApp\Model\Table\TagsTable',
 			'foreignKey' => 'article_id',
 			'targetForeignKey' => 'tag_id',
@@ -144,18 +144,18 @@ class QueryRegressionTest extends TestCase {
 		$entity = $articles->get(2);
 		$data = [
 			'id' => 2,
-			'highligths' => [
+			'highlights' => [
 				[
 					'name' => 'New Special Tag',
 					'_joinData' => ['highlighted' => true, 'highlighted_time' => '2014-06-01 10:10:00']
 				]
 			]
 		];
-		$entity = $articles->patchEntity($entity, $data, ['Highligths' => ['associated' => ['_joinData']]]);
+		$entity = $articles->patchEntity($entity, $data, ['Highlights' => ['associated' => ['_joinData']]]);
 		$articles->save($entity);
-		$entity = $articles->get(2, ['contain' => ['Highligths']]);
-		$this->assertEquals(4, $entity->highligths[0]->_joinData->tag_id);
-		$this->assertEquals('2014-06-01', $entity->highligths[0]->_joinData->highlighted_time->format('Y-m-d'));
+		$entity = $articles->get(2, ['contain' => ['Highlights']]);
+		$this->assertEquals(4, $entity->highlights[0]->_joinData->tag_id);
+		$this->assertEquals('2014-06-01', $entity->highlights[0]->_joinData->highlighted_time->format('Y-m-d'));
 	}
 
 }
