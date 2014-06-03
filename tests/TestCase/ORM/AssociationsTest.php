@@ -64,6 +64,23 @@ class AssociationsTest extends TestCase {
 	}
 
 /**
+ * Test removeAll method
+ *
+ * @return void
+ */
+	public function testRemoveAll() {
+		$this->assertEmpty($this->associations->keys());
+
+		$belongsTo = new BelongsTo([]);
+		$this->assertSame($belongsTo, $this->associations->add('Users', $belongsTo));
+		$belongsToMany = new BelongsToMany([]);
+		$this->assertSame($belongsToMany, $this->associations->add('Cart', $belongsToMany));
+
+		$this->associations->removeAll();
+		$this->assertEmpty($this->associations->keys());
+	}
+
+/**
  * Test getting associations by property.
  *
  * @return void

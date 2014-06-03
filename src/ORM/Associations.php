@@ -123,6 +123,19 @@ class Associations {
 	}
 
 /**
+ * Remove all registered associations.
+ *
+ * Once removed associations will not longer be reachable
+ *
+ * @return void
+ */
+	public function removeAll() {
+		foreach ($this->_items as $alias => $object) {
+			$this->remove($alias);
+		}
+	}
+
+/**
  * Save all the associations that are parents of the given entity.
  *
  * Parent associations include any association where the given table
