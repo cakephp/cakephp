@@ -31,7 +31,14 @@ class QueryRegressionTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.user', 'core.article', 'core.tag', 'core.articles_tag', 'core.author'];
+	public $fixtures = [
+		'core.user',
+		'core.article',
+		'core.tag',
+		'core.articles_tag',
+		'core.author',
+		'core.special_tag'
+	];
 
 /**
  * Tear down
@@ -117,6 +124,38 @@ class QueryRegressionTest extends TestCase {
 		$entity = $table->newEntity(['username' => 'derp', 'created' => null]);
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertNull($entity->created);
+	}
+
+
+/**
+ * Test for https://github.com/cakephp/cakephp/issues/3626
+ *
+ * Checks that join data is actually created and not tried to be updated every time
+ * @return void
+ */
+	public function testCreateJointData() {
+		$articles = TableRegistry::get('Articles');
+		$articles->belongsToMany('Highlights', [
+			'className' => 'TestApp\Model\Table\TagsTable',
+			'foreignKey' => 'article_id',
+			'targetForeignKey' => 'tag_id',
+			'through' => 'SpecialTags'
+		]);
+		$entity = $articles->get(2);
+		$data = [
+			'id' => 2,
+			'highlights' => [
+				[
+					'name' => 'New Special Tag',
+					'_joinData' => ['highlighted' => true, 'highlighted_time' => '2014-06-01 10:10:00']
+				]
+			]
+		];
+		$entity = $articles->patchEntity($entity, $data, ['Highlights' => ['associated' => ['_joinData']]]);
+		$articles->save($entity);
+		$entity = $articles->get(2, ['contain' => ['Highlights']]);
+		$this->assertEquals(4, $entity->highlights[0]->_joinData->tag_id);
+		$this->assertEquals('2014-06-01', $entity->highlights[0]->_joinData->highlighted_time->format('Y-m-d'));
 	}
 
 }
