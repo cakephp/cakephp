@@ -85,6 +85,10 @@ class DateTimeType extends \Cake\Database\Type {
  * @return \Carbon\Carbon
  */
 	public function marshal($value) {
+		if ($value instanceof \DateTime) {
+			return $value;
+		}
+
 		$class = static::$dateTimeClass;
 		try {
 			if ($value === '' || $value === null || $value === false || $value === true) {
