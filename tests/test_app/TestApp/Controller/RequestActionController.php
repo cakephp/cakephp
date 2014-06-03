@@ -104,7 +104,8 @@ class RequestActionController extends AppController {
 		$this->response->body(json_encode([
 			'params' => $this->request->params,
 			'query' => $this->request->query,
-			'url' => $this->request->url
+			'url' => $this->request->url,
+			'contentType' => $this->request->env('CONTENT_TYPE'),
 		]));
 	}
 

@@ -67,6 +67,17 @@ trait RequestActionTrait {
  * ]);
  * }}}
  *
+ * ### Sending environment or header values
+ *
+ * By default actions dispatched with this method will use the global $_SERVER and $_ENV
+ * values. If you want to override those values for a request action, you can specify the values:
+ *
+ * {{{
+ * $vars = $this->requestAction('/articles/popular', [
+ *   'environment' => ['CONTENT_TYPE' => 'application/json']
+ * ]);
+ * }}}
+ *
  * ### Transmitting the session
  *
  * By default actions dispatched with this method will use the standard session object.
@@ -98,14 +109,6 @@ trait RequestActionTrait {
 			['autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1],
 			$extra
 		);
-		$post = $query = [];
-		if (isset($extra['post'])) {
-			$post = $extra['post'];
-		}
-		if (isset($extra['query'])) {
-			$query = $extra['query'];
-		}
-		unset($extra['post'], $extra['query']);
 
 		$baseUrl = Configure::read('App.fullBaseUrl');
 		if (is_string($url) && strpos($url, $baseUrl) === 0) {
@@ -126,13 +129,17 @@ trait RequestActionTrait {
 			}
 		}
 
-		if (!empty($post)) {
-			$params['post'] = $post;
+		$params['post'] = $params['query'] = [];
+		if (isset($extra['post'])) {
+			$params['post'] = $extra['post'];
 		}
-
-		if (!empty($query)) {
-			$params['query'] = $query;
+		if (isset($extra['query'])) {
+			$params['query'] = $extra['query'];
 		}
+		if (isset($extra['environment'])) {
+			$params['environment'] = $extra['environment'] + $_SERVER + $_ENV;
+		}
+		unset($extra['environment'], $extra['post'], $extra['query']);
 
 		$params['session'] = isset($extra['session']) ? $extra['session'] : new Session();
 
