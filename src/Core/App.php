@@ -84,7 +84,7 @@ class App {
 		} else {
 			$base = Configure::read('App.namespace');
 		}
-		$base = rtrim($base, '\\');
+		$base = str_replace('/', '\\', rtrim($base, '\\'));
 
 		$fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
 
