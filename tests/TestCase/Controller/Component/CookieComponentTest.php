@@ -22,6 +22,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
+use Cake\Utility\Time;
 
 /**
  * CookieComponentTest class
@@ -278,7 +279,7 @@ class CookieComponentTest extends TestCase {
 	public function testWriteFarFuture() {
 		$this->Cookie->configKey('Testing', 'expires', '+90 years');
 		$this->Cookie->write('Testing', 'value');
-		$future = new \DateTime('now');
+		$future = new Time('now');
 		$future->modify('+90 years');
 
 		$expected = array(
@@ -310,7 +311,7 @@ class CookieComponentTest extends TestCase {
 		$expected = array(
 			'name' => 'Testing',
 			'value' => 'value',
-			'expire' => time() + 10,
+			'expire' => (new Time('+10 seconds'))->format('U'),
 			'path' => '/',
 			'domain' => '',
 			'secure' => false,
@@ -361,7 +362,7 @@ class CookieComponentTest extends TestCase {
 		$expected = array(
 			'name' => 'Testing',
 			'value' => '',
-			'expire' => time() - 42000,
+			'expire' => (new Time('now'))->format('U') - 42000,
 			'path' => '/',
 			'domain' => '',
 			'secure' => false,
@@ -387,7 +388,8 @@ class CookieComponentTest extends TestCase {
 		);
 		$result = $this->Controller->response->cookie('Testing');
 
-		$this->assertWithinMargin($result['expire'], time() + 10, 1);
+		$time = new Time('now');
+		$this->assertWithinMargin($result['expire'], $time->format('U') + 10, 1);
 		unset($result['expire']);
 		$this->assertEquals($expected, $result);
 	}

@@ -16,7 +16,6 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Event\Event;
@@ -24,6 +23,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
+use Cake\Utility\Time;
 
 /**
  * Cookie Component.
@@ -301,7 +301,7 @@ class CookieComponent extends Component {
  */
 	protected function _write($name, $value) {
 		$config = $this->configKey($name);
-		$expires = new \DateTime($config['expires']);
+		$expires = new Time($config['expires']);
 
 		$this->_response->cookie(array(
 			'name' => $name,
@@ -325,7 +325,7 @@ class CookieComponent extends Component {
  */
 	protected function _delete($name) {
 		$config = $this->configKey($name);
-		$expires = new \DateTime('now');
+		$expires = new Time('now');
 
 		$this->_response->cookie(array(
 			'name' => $name,
