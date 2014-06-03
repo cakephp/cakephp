@@ -69,7 +69,7 @@ class FallbackPasswordHasher extends AbstractPasswordHasher {
 /**
  * Verifies that the provided password corresponds to its hashed version
  *
- * This will iterate over all configured hashers until one of them return
+ * This will iterate over all configured hashers until one of them returns
  * true.
  *
  * @param string $password Plain text password to hash.

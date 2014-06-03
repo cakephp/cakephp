@@ -23,7 +23,7 @@ use Cake\Core\App;
 class PasswordHasherFactory {
 
 /**
- * Return password hasher object out of a hasher name or a configuration array
+ * Returns password hasher object out of a hasher name or a configuration array
  *
  * @param string|array $passwordHasher name of the password hasher or an array with
  * at least the key `className` set to the name of the class to use
