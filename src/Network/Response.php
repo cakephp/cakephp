@@ -703,7 +703,7 @@ class Response {
  *
  * e.g `type(array('jpg' => 'text/plain'));`
  *
- * @param string $contentType Content type.
+ * @param string $contentType Content type key.
  * @return mixed current content type or false if supplied an invalid content type
  */
 	public function type($contentType = null) {
@@ -766,7 +766,7 @@ class Response {
  * Sets the response charset
  * if $charset is null the current charset is returned
  *
- * @param string $charset Character set.
+ * @param string $charset Character set string.
  * @return string current charset
  */
 	public function charset($charset = null) {
@@ -894,7 +894,7 @@ class Response {
  * If called with no parameters, this function will return whether must-revalidate is present.
  *
  * @param bool $enable if null, the method will return the current
- *   must-revalidate value
+ *   must-revalidate value. If boolean sets or unsets the directive.
  * @return bool
  */
 	public function mustRevalidate($enable = null) {
@@ -959,7 +959,7 @@ class Response {
  * `$response->modified(new DateTime('+1 day'))` Will set the modification date in the past 24 hours
  * `$response->modified()` Will return the current Last-Modified header value
  *
- * @param string|\DateTime $time Valid time string or \Datatime instance.
+ * @param string|\DateTime $time Valid time string or \DateTime instance.
  * @return string
  */
 	public function modified($time = null) {
@@ -1053,7 +1053,7 @@ class Response {
  * Returns a DateTime object initialized at the $time param and using UTC
  * as timezone
  *
- * @param string|int|\DateTime $time Valid time string or \Datatime instance.
+ * @param string|int|\DateTime $time Valid time string or \DateTime instance.
  * @return \DateTime
  */
 	protected function _getUTCDate($time = null) {
@@ -1105,7 +1105,7 @@ class Response {
  * Sets the protocol to be used when sending the response. Defaults to HTTP/1.1
  * If called with no arguments, it will return the current configured protocol
  *
- * @param string $protocol protocol to be used for sending response
+ * @param string $protocol Protocol to be used for sending response.
  * @return string protocol currently set
  */
 	public function protocol($protocol = null) {

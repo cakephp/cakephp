@@ -526,7 +526,10 @@ class Route {
 			$out = str_replace($search, $replace, $out);
 		}
 
-		if (strpos($this->template, '*')) {
+		if (strpos($this->template, '**') !== false) {
+			$out = str_replace('**', $pass, $out);
+			$out = str_replace('%2F', '/', $out);
+		} elseif (strpos($this->template, '*') !== false) {
 			$out = str_replace('*', $pass, $out);
 		}
 

@@ -133,8 +133,8 @@ class SyslogLog extends BaseLog {
  * Extracts the call to syslog() in order to run unit tests on it. This function
  * will perform the actual write in the system logger
  *
- * @param int $priority
- * @param string $message
+ * @param int $priority Message priority.
+ * @param string $message Message to log.
  * @return bool
  */
 	protected function _write($priority, $message) {

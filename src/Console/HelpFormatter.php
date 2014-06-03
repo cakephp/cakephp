@@ -158,7 +158,7 @@ class HelpFormatter {
 /**
  * Iterate over a collection and find the longest named thing.
  *
- * @param array $collection
+ * @param array $collection The collection to find a max length of.
  * @return int
  */
 	protected function _getMaxLength($collection) {

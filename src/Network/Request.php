@@ -896,7 +896,7 @@ class Request implements \ArrayAccess {
  * Only qualifiers will be extracted, any other accept extensions will be
  * discarded as they are not frequently used.
  *
- * @param string $header Header string.
+ * @param string $header Header to parse.
  * @return array
  */
 	protected function _parseAcceptWithQualifier($header) {
@@ -980,8 +980,13 @@ class Request implements \ArrayAccess {
  *   return false if the parameter doesn't exist or is falsey.
  */
 	public function param($name) {
+		$args = func_get_args();
+		if (count($args) === 2) {
+			$this->params = Hash::insert($this->params, $name, $args[1]);
+			return $this;
+		}
 		if (!isset($this->params[$name])) {
-			return false;
+			return Hash::get($this->params, $name, false);
 		}
 		return $this->params[$name];
 	}

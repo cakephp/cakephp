@@ -92,7 +92,7 @@ class RssHelper extends Helper {
  * Returns an RSS document wrapped in `<rss />` tags
  *
  * @param array $attrib `<rss />` tag attributes
- * @param string $content
+ * @param string $content Tag content.
  * @return string An RSS document
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::document
  */
@@ -269,7 +269,7 @@ class RssHelper extends Helper {
 /**
  * Converts a time in any format to an RSS time
  *
- * @param int|string|\DateTime $time
+ * @param int|string|\DateTime $time UNIX timestamp or valid time string or DateTime object.
  * @return string An RSS-formatted timestamp
  * @see TimeHelper::toRSS
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::time

@@ -201,7 +201,7 @@ class ConsoleOutput {
 /**
  * Replace tags with color codes.
  *
- * @param array $matches.
+ * @param array $matches An array of matches to replace.
  * @return string
  */
 	protected function _replaceTags($matches) {

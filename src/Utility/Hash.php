@@ -813,12 +813,12 @@ class Hash {
  *
  * @param array $data An array of data to sort
  * @param string $path A Set-compatible path to the array value
- * @param string $dir See directions above.
+ * @param string $dir See directions above. Defaults to 'asc'.
  * @param string $type See direction types above. Defaults to 'regular'.
  * @return array Sorted array of data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::sort
  */
-	public static function sort(array $data, $path, $dir, $type = 'regular') {
+	public static function sort(array $data, $path, $dir = 'asc', $type = 'regular') {
 		if (empty($data)) {
 			return array();
 		}

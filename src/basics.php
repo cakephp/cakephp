@@ -258,6 +258,7 @@ if (!function_exists('pr')) {
  * @return void
  * @see debug()
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pr
+ * @see debug()
  */
 	function pr($var) {
 		if (Configure::read('debug')) {

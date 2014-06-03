@@ -130,8 +130,33 @@ class BasicAuthenticateTest extends TestCase {
 		$request->addParams(array('pass' => array()));
 
 		$this->assertFalse($this->auth->getUser($request));
-
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
+	}
+
+/**
+ * Test that username of 0 works.
+ *
+ * @return void
+ */
+	public function testAuthenticateUsernameZero() {
+		$User = TableRegistry::get('Users');
+		$User->updateAll(['username' => '0'], ['username' => 'mariano']);
+
+		$request = new Request('posts/index');
+		$request->data = array('User' => array(
+			'user' => '0',
+			'password' => 'password'
+		));
+		$_SERVER['PHP_AUTH_USER'] = '0';
+		$_SERVER['PHP_AUTH_PW'] = 'password';
+
+		$expected = array(
+			'id' => 1,
+			'username' => '0',
+			'created' => new Time('2007-03-17 01:16:23'),
+			'updated' => new Time('2007-03-17 01:18:31'),
+		);
+		$this->assertEquals($expected, $this->auth->authenticate($request, $this->response));
 	}
 
 /**
@@ -207,7 +232,7 @@ class BasicAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateWithBlowfish() {
 		$hash = Security::hash('password', 'blowfish');
-		$this->skipIf(strpos($hash, '$2a$') === false, 'Skipping blowfish tests as hashing is not working');
+		$this->skipIf(strpos($hash, '$2y$') === false, 'Skipping blowfish tests as hashing is not working');
 
 		$request = new Request([
 			'url' => 'posts/index',

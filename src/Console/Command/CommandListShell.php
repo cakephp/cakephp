@@ -75,7 +75,7 @@ class CommandListShell extends Shell {
 /**
  * Output text.
  *
- * @param array $shellList
+ * @param array $shellList The shell list.
  * @return void
  */
 	protected function _asText($shellList) {
@@ -93,7 +93,7 @@ class CommandListShell extends Shell {
 /**
  * Output as XML
  *
- * @param array $shellList
+ * @param array $shellList The shell list.
  * @return void
  */
 	protected function _asXml($shellList) {

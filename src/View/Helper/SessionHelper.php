@@ -60,7 +60,7 @@ class SessionHelper extends Helper {
  *
  * In your view: `$this->Session->check('Controller.sessKey');`
  *
- * @param string $name
+ * @param string $name Session key to check.
  * @return bool
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::check
  */

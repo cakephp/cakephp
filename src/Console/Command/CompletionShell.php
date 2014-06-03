@@ -142,7 +142,7 @@ class CompletionShell extends Shell {
 /**
  * Emit results as a string, space delimited
  *
- * @param array $options
+ * @param array $options The options to output
  * @return void
  */
 	protected function _output($options = []) {

@@ -54,6 +54,7 @@ class PluginTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
+ * @param string $name The name of the plugin to bake.
  * @return void
  */
 	public function main($name = null) {
@@ -205,7 +206,7 @@ class PluginTask extends BakeTask {
 /**
  * find and change $this->path to the user selection
  *
- * @param array $pathOptions
+ * @param array $pathOptions The list of paths to look in.
  * @return void
  */
 	public function findPath(array $pathOptions) {

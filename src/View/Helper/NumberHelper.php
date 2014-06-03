@@ -85,11 +85,11 @@ class NumberHelper extends Helper {
 /**
  * Formats a number with a level of precision.
  *
- * @see \Cake\Utility\Number::precision()
  *
  * @param float $number A floating point number.
  * @param int $precision The precision of the returned number.
  * @return float Formatted float.
+ * @see \Cake\Utility\Number::precision()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
  */
 	public function precision($number, $precision = 3) {
@@ -99,10 +99,9 @@ class NumberHelper extends Helper {
 /**
  * Returns a formatted-for-humans file size.
  *
- * @see \Cake\Utility\Number::toReadableSize()
- *
- * @param int $size Size in bytes
+ * @param integer $size Size in bytes
  * @return string Human readable size
+ * @see \Cake\Utility\Number::toReadableSize()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toReadableSize
  */
 	public function toReadableSize($size) {
@@ -116,12 +115,11 @@ class NumberHelper extends Helper {
  *
  * - `multiply`: Multiply the input value by 100 for decimal percentages.
  *
- * @see \Cake\Utility\Number::toPercentage()
- *
  * @param float $number A floating point number
  * @param int $precision The precision of the returned number
  * @param array $options Options
  * @return string Percentage string
+ * @see \Cake\Utility\Number::toPercentage()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toPercentage
  */
 	public function toPercentage($number, $precision = 2, array $options = array()) {
@@ -131,11 +129,10 @@ class NumberHelper extends Helper {
 /**
  * Formats a number into a currency format.
  *
- * @see \Cake\Utility\Number::format()
- *
  * @param float $number A floating point number.
  * @param array $options Array of options.
  * @return string Formatted number
+ * @see \Cake\Utility\Number::format()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
  */
 	public function format($number, array $options = []) {
@@ -172,14 +169,13 @@ class NumberHelper extends Helper {
  *   By default all currencies contain utf-8 symbols and don't need this changed. If you require
  *   non HTML encoded symbols you will need to update the settings with the correct bytes.
  *
- * @see \Cake\Utility\Number::currency()
- *
- * @param float $number
+ * @param float $number Number to format.
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
  *   set at least 'before' and 'after' options.
  * 'USD' is the default currency, use Number::defaultCurrency() to change this default.
  * @param array $options
  * @return string Number formatted as a currency.
+ * @see Cake\Utility\Number::currency()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
 	public function currency($number, $currency = null, array $options = array()) {
@@ -199,11 +195,10 @@ class NumberHelper extends Helper {
  * Added formats are merged with the defaults defined in Cake\Utility\Number::$_currencyDefaults
  * See Cake\Utility\Number::currency() for more information on the various options and their function.
  *
- * @see \Cake\Utility\Number::addFormat()
- *
  * @param string $formatName The format name to be used in the future.
  * @param array $options The array of options for this format.
  * @return void
+ * @see \Cake\Utility\Number::addFormat()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::addFormat
  */
 	public function addFormat($formatName, array $options) {
@@ -213,10 +208,9 @@ class NumberHelper extends Helper {
 /**
  * Getter/setter for default currency
  *
- * @see  \Cake\Utility\Number::defaultCurrency()
- *
  * @param string $currency The currency to be used in the future.
  * @return string Currency
+ * @see \Cake\Utility\Number::defaultCurrency()
  */
 	public function defaultCurrency($currency) {
 		return $this->_engine->defaultCurrency($currency);

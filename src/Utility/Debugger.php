@@ -723,7 +723,7 @@ class Debugger {
 /**
  * Takes a processed array of data from an error and displays it in the chosen format.
  *
- * @param string $data Data.
+ * @param string $data Data to output.
  * @return void
  */
 	public function outputError($data) {

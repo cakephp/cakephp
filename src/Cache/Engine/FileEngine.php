@@ -316,8 +316,8 @@ class FileEngine extends CacheEngine {
 /**
  * Not implemented
  *
- * @param string $key Cache key.
- * @param int $offset Offset.
+ * @param string $key The key to decrement
+ * @param integer $offset The number to offset
  * @return void
  * @throws \Cake\Error\Exception
  */
@@ -328,8 +328,8 @@ class FileEngine extends CacheEngine {
 /**
  * Not implemented
  *
- * @param string $key Cache key.
- * @param int $offset Offset.
+ * @param string $key The key to decrement
+ * @param integer $offset The number to offset
  * @return void
  * @throws \Cake\Error\Exception
  */
@@ -419,7 +419,7 @@ class FileEngine extends CacheEngine {
 /**
  * Recursively deletes all files under any directory named as $group
  *
- * @param string $group name of the group to be cleared
+ * @param string $group The group to clear.
  * @return bool success
  */
 	public function clearGroup($group) {

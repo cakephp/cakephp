@@ -251,7 +251,7 @@ class RequestHandlerComponent extends Component {
  * Helper method to parse xml input data, due to lack of anonymous functions
  * this lives here.
  *
- * @param string $xml Xml string
+ * @param string $xml XML string.
  * @return array Xml array data
  */
 	public function convertXml($xml) {

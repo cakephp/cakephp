@@ -417,7 +417,7 @@ class Validation {
  * - 1..N => Exactly that many number of decimal places. The '.' is required.
  *
  * @param float $check The value the test for decimal
- * @param int $places
+ * @param int $places Decimal places.
  * @param string $regex If a custom regular expression is used, this is the only validation that will occur.
  * @return bool Success
  */
@@ -919,8 +919,8 @@ class Validation {
 /**
  * Luhn algorithm
  *
- * @param string|array $check
- * @param bool $deep
+ * @param string|array $check Value to check.
+ * @param bool $deep If true performs deep check.
  * @return bool Success
  * @see http://en.wikipedia.org/wiki/Luhn_algorithm
  */
@@ -952,7 +952,7 @@ class Validation {
 /**
  * Checks the mime type of a file.
  *
- * @param string|array $check
+ * @param string|array $check Value to check.
  * @param array|string $mimeTypes Array of mime types or regex pattern to check.
  * @return bool Success
  * @throws \Cake\Error\Exception when mime type can not be determined.
@@ -982,9 +982,9 @@ class Validation {
 /**
  * Checks the filesize
  *
- * @param string|array $check
- * @param int|string $size Size in bytes or human readable string like '5MB'
- * @param string $operator See `Validation::comparison()`
+ * @param string|array $check Value to check.
+ * @param string $operator See `Validation::comparison()`.
+ * @param int|string $size Size in bytes or human readable string like '5MB'.
  * @return bool Success
  */
 	public static function fileSize($check, $operator = null, $size = null) {
@@ -1003,7 +1003,7 @@ class Validation {
 /**
  * Checking for upload errors
  *
- * @param string|array $check
+ * @param string|array $check Value to check.
  * @return bool
  * @see http://www.php.net/manual/en/features.file-upload.errors.php
  */

@@ -145,9 +145,10 @@ class XcacheEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @param bool $check If true will check expiration, otherwise delete all.
+ * @param boolean $check If true no deletes will occur and instead CakePHP will rely
+ *   on key TTL values.
  *   Unused for Xcache engine.
- * @return bool True if the cache was successfully cleared, false otherwise
+ * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
 		$this->_auth();
@@ -183,7 +184,7 @@ class XcacheEngine extends CacheEngine {
  * Increments the group value to simulate deletion of all keys under a group
  * old values will remain in storage until they expire.
  *
- * @param string $group name of the group to be cleared
+ * @param string $group The group to clear.
  * @return bool success
  */
 	public function clearGroup($group) {

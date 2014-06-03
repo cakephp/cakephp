@@ -139,6 +139,7 @@ class FileLog extends BaseLog {
 
 /**
  * Get filename
+ *
  * @param string $level The level of log.
  * @return string File name
  */

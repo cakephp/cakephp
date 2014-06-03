@@ -80,7 +80,7 @@ class Event {
 /**
  * Dynamically returns the name and subject if accessed directly
  *
- * @param string $attribute Attribute name
+ * @param string $attribute Attribute name.
  * @return mixed
  */
 	public function __get($attribute) {

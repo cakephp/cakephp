@@ -23,6 +23,11 @@ use Cake\Utility\Hash;
  */
 class HashTest extends TestCase {
 
+/**
+ * Data provider
+ *
+ * @return array
+ */
 	public static function articleData() {
 		return array(
 			array(
@@ -136,6 +141,11 @@ class HashTest extends TestCase {
 		);
 	}
 
+/**
+ * Data provider
+ *
+ * @return array
+ */
 	public static function userData() {
 		return array(
 			array(
@@ -1021,7 +1031,7 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testSort() {
-		$result = Hash::sort(array(), '{n}.name', 'asc');
+		$result = Hash::sort(array(), '{n}.name');
 		$this->assertEquals(array(), $result);
 
 		$a = array(
@@ -1044,7 +1054,7 @@ class HashTest extends TestCase {
 				'Friend' => array(array('name' => 'Nate'))
 			)
 		);
-		$a = Hash::sort($a, '{n}.Friend.{n}.name', 'asc');
+		$a = Hash::sort($a, '{n}.Friend.{n}.name');
 		$this->assertEquals($a, $b);
 
 		$b = array(
@@ -1779,6 +1789,11 @@ class HashTest extends TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * testApply
+ *
+ * @return void
+ */
 	public function testApply() {
 		$data = static::articleData();
 
@@ -1801,8 +1816,8 @@ class HashTest extends TestCase {
 /**
  * testing method for map callbacks.
  *
- * @param mixed $value
- * @return mixed.
+ * @param mixed $value Value
+ * @return mixed
  */
 	public function mapCallback($value) {
 		return $value * 2;
@@ -1811,9 +1826,9 @@ class HashTest extends TestCase {
 /**
  * testing method for reduce callbacks.
  *
- * @param mixed $one
- * @param mixed $two
- * @return mixed.
+ * @param mixed $one First param
+ * @param mixed $two Second param
+ * @return mixed
  */
 	public function reduceCallback($one, $two) {
 		return $one + $two;
