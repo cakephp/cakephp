@@ -599,7 +599,7 @@ class CakeSchema extends Object {
 /**
  * Formats Schema columns from Model Object
  *
- * @param array $Obj model object
+ * @param array &$Obj model object
  * @return array Formatted columns
  */
 	protected function _columns(&$Obj) {

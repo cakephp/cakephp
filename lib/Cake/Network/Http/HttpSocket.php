@@ -543,7 +543,7 @@ class HttpSocket extends CakeSocket {
  *
  * Would return `/search?q=socket`.
  *
- * @param string|array Either a string or array of URL options to create a URL with.
+ * @param string|array $url Either a string or array of URL options to create a URL with.
  * @param string $uriTemplate A template string to use for URL formatting.
  * @return mixed Either false on failure or a string containing the composed URL.
  */
@@ -910,7 +910,7 @@ class HttpSocket extends CakeSocket {
  * Builds the header.
  *
  * @param array $header Header to build
- * @param string $mode
+ * @param string $mode Mode
  * @return string Header built from array
  */
 	protected function _buildHeader($header, $mode = 'standard') {
@@ -972,7 +972,7 @@ class HttpSocket extends CakeSocket {
  * Escapes a given $token according to RFC 2616 (HTTP 1.1 specs)
  *
  * @param string $token Token to escape
- * @param array $chars
+ * @param array $chars Characters to escape
  * @return string Escaped token
  */
 	protected function _escapeToken($token, $chars = null) {
@@ -985,7 +985,7 @@ class HttpSocket extends CakeSocket {
  * Gets escape chars according to RFC 2616 (HTTP 1.1 specs).
  *
  * @param boolean $hex true to get them as HEX values, false otherwise
- * @param array $chars
+ * @param array $chars Characters to escape
  * @return array Escape chars
  */
 	protected function _tokenEscapeChars($hex = true, $chars = null) {

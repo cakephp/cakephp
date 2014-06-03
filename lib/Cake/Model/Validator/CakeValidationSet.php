@@ -74,8 +74,8 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 /**
  * Constructor
  *
- * @param string $fieldName The fieldname
- * @param array $ruleset
+ * @param string $fieldName The fieldname.
+ * @param array $ruleSet Rules set.
  */
 	public function __construct($fieldName, $ruleSet) {
 		$this->field = $fieldName;
@@ -93,7 +93,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 /**
  * Sets the list of methods to use for validation
  *
- * @param array $methods Methods list
+ * @param array &$methods Methods list
  * @return void
  */
 	public function setMethods(&$methods) {
@@ -160,7 +160,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 /**
  * Gets a rule for a given name if exists
  *
- * @param string $name
+ * @param string $name Field name.
  * @return CakeValidationRule
  */
 	public function getRule($name) {
@@ -330,11 +330,10 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  * This is a wrapper for ArrayAccess. Use setRule() directly for
  * chainable access.
  *
- * @see http://www.php.net/manual/en/arrayobject.offsetset.php
- *
- * @param string $index name of the rule
- * @param CakeValidationRule|array rule to add to $index
+ * @param string $index Name of the rule.
+ * @param CakeValidationRule|array $rule Rule to add to $index.
  * @return void
+ * @see http://www.php.net/manual/en/arrayobject.offsetset.php
  */
 	public function offsetSet($index, $rule) {
 		$this->setRule($index, $rule);

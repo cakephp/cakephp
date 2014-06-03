@@ -874,6 +874,23 @@ class CakeRouteTest extends CakeTestCase {
 	}
 
 /**
+ * Test match() with trailing ** style routes.
+ *
+ * @return void
+ */
+	public function testMatchTrailing() {
+		$route = new CakeRoute('/pages/**', array('controller' => 'pages', 'action' => 'display'));
+		$id = 'test/ spaces/漢字/la†în';
+		$result = $route->match(array(
+			'controller' => 'pages',
+			'action' => 'display',
+			$id
+		));
+		$expected = '/pages/test/%20spaces/%E6%BC%A2%E5%AD%97/la%E2%80%A0%C3%AEn';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test restructuring args with pass key
  *
  * @return void

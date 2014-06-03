@@ -424,7 +424,7 @@ if (!function_exists('mb_encode_mimeheader')) {
  * @param string $str The string being encoded
  * @param string $charset specifies the name of the character set in which str is represented in.
  *    The default value is determined by the current NLS setting (mbstring.language).
- * @param string $transfer_encoding specifies the scheme of MIME encoding.
+ * @param string $transferEncoding specifies the scheme of MIME encoding.
  *    It should be either "B" (Base64) or "Q" (Quoted-Printable). Falls back to "B" if not given.
  * @param string $linefeed specifies the EOL (end-of-line) marker with which
  *    mb_encode_mimeheader() performs line-folding

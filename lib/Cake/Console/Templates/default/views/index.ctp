@@ -19,12 +19,15 @@
 <div class="<?php echo $pluralVar; ?> index">
 	<h2><?php echo "<?php echo __('{$pluralHumanName}'); ?>"; ?></h2>
 	<table cellpadding="0" cellspacing="0">
+	<thead>
 	<tr>
 	<?php foreach ($fields as $field): ?>
 		<th><?php echo "<?php echo \$this->Paginator->sort('{$field}'); ?>"; ?></th>
 	<?php endforeach; ?>
 		<th class="actions"><?php echo "<?php echo __('Actions'); ?>"; ?></th>
 	</tr>
+	</thead>
+	<tbody>
 	<?php
 	echo "<?php foreach (\${$pluralVar} as \${$singularVar}): ?>\n";
 	echo "\t<tr>\n";
@@ -53,6 +56,7 @@
 
 	echo "<?php endforeach; ?>\n";
 	?>
+	</tbody>
 	</table>
 	<p>
 	<?php echo "<?php

@@ -83,7 +83,7 @@ class FileLog extends BaseLog {
  * - `mask` A mask is applied when log files are created. Left empty no chmod
  *   is made.
  *
- * @param array $options Options for the FileLog, see above.
+ * @param array $config Options for the FileLog, see above.
  */
 	public function __construct($config = array()) {
 		$config = Hash::merge($this->_defaults, $config);
@@ -157,6 +157,7 @@ class FileLog extends BaseLog {
 
 /**
  * Get filename
+ *
  * @param string $type The type of log.
  * @return string File name
  */

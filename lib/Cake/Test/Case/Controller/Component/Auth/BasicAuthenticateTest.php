@@ -126,8 +126,33 @@ class BasicAuthenticateTest extends CakeTestCase {
 		$_SERVER['PHP_AUTH_PW'] = "' OR 1 = 1";
 
 		$this->assertFalse($this->auth->getUser($request));
-
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
+	}
+
+/**
+ * Test that username of 0 works.
+ *
+ * @return void
+ */
+	public function testAuthenticateUsernameZero() {
+		$User = ClassRegistry::init('User');
+		$User->updateAll(array('user' => $User->getDataSource()->value('0')), array('user' => 'mariano'));
+
+		$request = new CakeRequest('posts/index', false);
+		$request->data = array('User' => array(
+			'user' => '0',
+			'password' => 'password'
+		));
+		$_SERVER['PHP_AUTH_USER'] = '0';
+		$_SERVER['PHP_AUTH_PW'] = 'password';
+
+		$expected = array(
+			'id' => 1,
+			'user' => '0',
+			'created' => '2007-03-17 01:16:23',
+			'updated' => '2007-03-17 01:18:31'
+		);
+		$this->assertEquals($expected, $this->auth->authenticate($request, $this->response));
 	}
 
 /**
