@@ -101,8 +101,8 @@ class TestThemeView extends View {
 /**
  * renderElement method
  *
- * @param string $name
- * @param array $params
+ * @param string $name Element name.
+ * @param array $params Params list.
  * @return string The given name
  */
 	public function renderElement($name, $params = array()) {
@@ -195,7 +195,7 @@ class TestBeforeAfterHelper extends Helper {
 /**
  * beforeLayout method
  *
- * @param string $viewFile
+ * @param string $viewFile View file name.
  * @return void
  */
 	public function beforeLayout($viewFile) {
@@ -205,7 +205,7 @@ class TestBeforeAfterHelper extends Helper {
 /**
  * afterLayout method
  *
- * @param string $layoutFile
+ * @param string $layoutFile Layout file name.
  * @return void
  */
 	public function afterLayout($layoutFile) {
@@ -221,6 +221,11 @@ class TestBeforeAfterHelper extends Helper {
  */
 class TestObjectWithToString {
 
+/**
+ * Return string value.
+ *
+ * @return string
+ */
 	public function __toString() {
 		return "I'm ObjectWithToString";
 	}
@@ -272,7 +277,7 @@ class ViewTest extends TestCase {
 
 		App::objects('Plugin', null, false);
 
-		Plugin::load(array('TestPlugin', 'TestPlugin', 'PluginJs', 'TestTheme'));
+		Plugin::load(['TestPlugin', 'PluginJs', 'TestTheme', 'Company/TestPluginThree']);
 		Configure::write('debug', true);
 	}
 
@@ -301,7 +306,8 @@ class ViewTest extends TestCase {
 		$request = $this->getMock('Cake\Network\Request');
 		$response = $this->getMock('Cake\Network\Response');
 
-		$viewOptions = [ 'plugin' => null,
+		$viewOptions = [
+			'plugin' => null,
 			'name' => 'Pages',
 			'viewPath' => 'Pages'
 		];
@@ -329,6 +335,13 @@ class ViewTest extends TestCase {
 
 		$ThemeView->layoutPath = 'Email' . DS . 'html';
 		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Layout' . DS . 'Email' . DS . 'html' . DS . 'default.ctp';
+		$result = $ThemeView->getLayoutFileName();
+		$this->assertPathEquals($expected, $result);
+
+		$ThemeView = new TestThemeView(null, null, null, $viewOptions);
+
+		$ThemeView->theme = 'Company/TestPluginThree';
+		$expected = Plugin::path('Company/TestPluginThree') . 'Template' . DS . 'Layout' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertPathEquals($expected, $result);
 	}
@@ -1279,8 +1292,9 @@ class ViewTest extends TestCase {
 /**
  * Test appending to a block with append.
  *
- * @dataProvider blockValueProvider
+ * @param mixed $value Value
  * @return void
+ * @dataProvider blockValueProvider
  */
 	public function testBlockAppend($value) {
 		$this->View->assign('testBlock', 'Block');
@@ -1308,8 +1322,9 @@ class ViewTest extends TestCase {
 /**
  * Test prepending to a block with prepend.
  *
- * @dataProvider blockValueProvider
+ * @param mixed $value Value
  * @return void
+ * @dataProvider blockValueProvider
  */
 	public function testBlockPrepend($value) {
 		$this->View->assign('test', 'Block');
