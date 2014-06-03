@@ -145,7 +145,7 @@ class Shell {
 	protected $_io;
 
 /**
- *  Constructs this Shell instance.
+ * Constructs this Shell instance.
  *
  * @param \Cake\Console\ConsoleIo $io An io instance.
  * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell
@@ -157,7 +157,6 @@ class Shell {
 		}
 		$this->_io = $io ?: new ConsoleIo();
 
-		$this->_setModelClass($this->name);
 		$this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
 		$this->Tasks = new TaskRegistry($this);
 
@@ -166,6 +165,10 @@ class Shell {
 			['tasks'],
 			['associative' => ['tasks']]
 		);
+
+		if (isset($this->modelClass)) {
+			$this->loadModel();
+		}
 	}
 
 /**
@@ -219,22 +222,6 @@ class Shell {
 		$this->out(__d('cake_console', 'App : %s', APP_DIR));
 		$this->out(__d('cake_console', 'Path: %s', APP));
 		$this->hr();
-	}
-
-/**
- * Lazy loads models using the loadModel() method if it matches modelClass
- *
- * @param string $name
- * @return void
- */
-	public function __isset($name) {
-		if ($name === $this->modelClass) {
-			list($plugin, $class) = pluginSplit($name, true);
-			if (!$plugin) {
-				$plugin = $this->plugin ? $this->plugin . '.' : null;
-			}
-			return $this->loadModel($plugin . $this->modelClass);
-		}
 	}
 
 /**
