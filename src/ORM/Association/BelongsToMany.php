@@ -822,7 +822,6 @@ class BelongsToMany extends Association {
 				continue;
 			}
 
-			$joint->isNew(false);
 			$result[] = $joint;
 		}
 
