@@ -147,6 +147,10 @@ class DateTimeTypeTest extends TestCase {
 				],
 				new Time('2014-02-14 00:00:00')
 			],
+			[
+				Time::now(),
+				Time::now()
+			]
 		];
 	}
 
