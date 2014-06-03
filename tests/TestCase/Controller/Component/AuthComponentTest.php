@@ -375,7 +375,7 @@ class AuthComponentTest extends TestCase {
 	public function testSameAuthenticateWithDifferentHashers() {
 		$this->Controller->Auth->config('authenticate', [
 			'FormSimple' => ['className' => 'Form', 'passwordHasher' => 'Simple'],
-			'FormBlowfish' => ['className' => 'Form', 'passwordHasher' => 'Blowfish'],
+			'FormBlowfish' => ['className' => 'Form', 'passwordHasher' => 'Fallback'],
 		]);
 
 		$objects = $this->Controller->Auth->constructAuthenticate();
@@ -385,7 +385,7 @@ class AuthComponentTest extends TestCase {
 		$this->assertInstanceOf('Cake\Controller\Component\Auth\FormAuthenticate', $objects[1]);
 
 		$this->assertInstanceOf('Cake\Controller\Component\Auth\SimplePasswordHasher', $objects[0]->passwordHasher());
-		$this->assertInstanceOf('Cake\Controller\Component\Auth\BlowfishPasswordHasher', $objects[1]->passwordHasher());
+		$this->assertInstanceOf('Cake\Controller\Component\Auth\FallbackPasswordHasher', $objects[1]->passwordHasher());
 	}
 
 /**

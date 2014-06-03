@@ -14,7 +14,7 @@
 namespace Cake\Controller\Component\Auth;
 
 use Cake\Controller\ComponentRegistry;
-use Cake\Controller\Component\Auth\AbstractPasswordHasher;
+use Cake\Controller\Component\Auth\PasswordHasherFactory;
 use Cake\Core\App;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error;
@@ -42,7 +42,7 @@ abstract class BaseAuthenticate {
  * - `contain` Extra models to contain and store in session.
  * - `passwordHasher` Password hasher class. Can be a string specifying class name
  *    or an array containing `className` key, any other keys will be passed as
- *    config to the class. Defaults to 'Blowfish'.
+ *    config to the class. Defaults to 'Simple'.
  *
  * @var array
  */
@@ -54,7 +54,7 @@ abstract class BaseAuthenticate {
 		'userModel' => 'Users',
 		'scope' => [],
 		'contain' => null,
-		'passwordHasher' => 'Blowfish'
+		'passwordHasher' => 'Simple'
 	];
 
 /**
@@ -135,7 +135,7 @@ abstract class BaseAuthenticate {
  * Return password hasher object
  *
  * @return AbstractPasswordHasher Password hasher instance
- * @throws \Cake\Error\Exception If password hasher class not found or
+ * @throws \RuntimeException If password hasher class not found or
  *   it does not extend AbstractPasswordHasher
  */
 	public function passwordHasher() {
@@ -144,27 +144,7 @@ abstract class BaseAuthenticate {
 		}
 
 		$passwordHasher = $this->_config['passwordHasher'];
-
-		$config = array();
-		if (is_string($passwordHasher)) {
-			$class = $passwordHasher;
-		} else {
-			$class = $passwordHasher['className'];
-			$config = $passwordHasher;
-			unset($config['className']);
-		}
-
-		list($plugin, $class) = pluginSplit($class, true);
-		$className = App::className($class, 'Controller/Component/Auth', 'PasswordHasher');
-		if (!class_exists($className)) {
-			throw new Error\Exception(sprintf('Password hasher class "%s" was not found.', $class));
-		}
-
-		$this->_passwordHasher = new $className($config);
-		if (!($this->_passwordHasher instanceof AbstractPasswordHasher)) {
-			throw new Error\Exception('Password hasher must extend AbstractPasswordHasher class.');
-		}
-		return $this->_passwordHasher;
+		return $this->_passwordHasher = PasswordHasherFactory::build($passwordHasher);
 	}
 
 /**

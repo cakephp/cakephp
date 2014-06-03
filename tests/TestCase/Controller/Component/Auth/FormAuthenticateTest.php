@@ -264,14 +264,14 @@ class FormAuthenticateTest extends TestCase {
 	public function testPasswordHasherSettings() {
 		$this->auth->config('passwordHasher', [
 			'className' => 'Simple',
-			'hashType' => 'md5'
+			'hashType' => PASSWORD_BCRYPT
 		]);
 
 		$passwordHasher = $this->auth->passwordHasher();
 		$result = $passwordHasher->config();
-		$this->assertEquals('md5', $result['hashType']);
+		$this->assertEquals(PASSWORD_BCRYPT, $result['hashType']);
 
-		$hash = Security::hash('mypass', 'md5', true);
+		$hash = password_hash('mypass', PASSWORD_BCRYPT);
 		$User = TableRegistry::get('Users');
 		$User->updateAll(
 			['password' => $hash],
@@ -298,9 +298,14 @@ class FormAuthenticateTest extends TestCase {
 			'userModel' => 'Users'
 		]);
 		$this->auth->config('passwordHasher', [
-			'className' => 'Simple',
-			'hashType' => 'sha1'
+			'className' => 'Simple'
 		]);
+		$this->assertEquals($expected, $this->auth->authenticate($request, $this->response));
+
+		$User->updateAll(
+			['password' => '$2y$10$/G9GBQDZhWUM4w/WLes3b.XBZSK1hGohs5dMi0vh/oen0l0a7DUyK'],
+			['username' => 'mariano']
+		);
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 

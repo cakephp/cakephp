@@ -22,7 +22,8 @@
 		"ext-intl": "*",
 		"ext-mcrypt": "*",
 		"ext-mbstring": "*",
-		"nesbot/Carbon": "1.8.*"
+		"nesbot/Carbon": "1.8.*",
+		"ircmaxell/password-compat": "1.0.*"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "*"
