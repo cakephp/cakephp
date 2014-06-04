@@ -40,8 +40,13 @@ class AppTest extends TestCase {
  *
  * $checkCake and $existsInCake are derived from the input parameters
  *
- * @dataProvider classnameProvider
+ * @param string $class Class name
+ * @param string $type Class type
+ * @param string $suffix Class suffix
+ * @param bool $existsInBase Whether class exists in base.
+ * @param mixed $expected Expected value.
  * @return void
+ * @dataProvider classnameProvider
  */
 	public function testClassname($class, $type, $suffix = '', $existsInBase = false, $expected = false) {
 		Configure::write('App.namespace', 'TestApp');
@@ -88,6 +93,12 @@ class AppTest extends TestCase {
 			['MyPlugin.Also', 'Exists/In/Subfolder', 'Suffix', true, 'MyPlugin\Exists\In\Subfolder\AlsoSuffix'],
 			['MyPlugin.No', 'Suffix', '', true, 'MyPlugin\Suffix\No'],
 
+			['Vend/MPlugin.Exists', 'In', 'Suffix', true, 'Vend\MPlugin\In\ExistsSuffix'],
+			['Vend/MPlugin.Also/Exists', 'In', 'Suffix', true, 'Vend\MPlugin\In\Also\ExistsSuffix'],
+			['Vend/MPlugin.Also', 'Exists/In', 'Suffix', true, 'Vend\MPlugin\Exists\In\AlsoSuffix'],
+			['Vend/MPlugin.Also', 'Exists/In/Subfolder', 'Suffix', true, 'Vend\MPlugin\Exists\In\Subfolder\AlsoSuffix'],
+			['Vend/MPlugin.No', 'Suffix', '', true, 'Vend\MPlugin\Suffix\No'],
+
 			['Exists', 'In', 'Cake', false, 'Cake\In\ExistsCake'],
 			['Also/Exists', 'In', 'Cake', false, 'Cake\In\Also\ExistsCake'],
 			['Also', 'Exists/In', 'Cake', false, 'Cake\Exists\In\AlsoCake'],
@@ -120,6 +131,11 @@ class AppTest extends TestCase {
 
 		$result = App::path('Controller', 'TestPlugin');
 		$this->assertPathEquals($basepath . 'TestPlugin' . DS . 'Controller' . DS, $result[0]);
+
+		Plugin::load('Company/TestPluginThree');
+		$result = App::path('Controller', 'Company/TestPluginThree');
+		$expected = $basepath . 'Company' . DS . 'TestPluginThree' . DS . 'Controller' . DS;
+		$this->assertPathEquals($expected, $result[0]);
 	}
 
 /**
@@ -189,6 +205,8 @@ class AppTest extends TestCase {
 
 /**
  * Make sure that .svn and friends are excluded from App::objects('Plugin')
+ *
+ * @return void
  */
 	public function testListObjectsIgnoreDotDirectories() {
 		$path = TEST_APP . 'Plugin/';
@@ -208,10 +226,13 @@ class AppTest extends TestCase {
  * @return void
  */
 	public function testListObjectsInPlugin() {
-		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
+		Plugin::load(array('TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree'));
 
 		$result = App::objects('TestPlugin.Model/Table');
 		$this->assertContains('TestPluginCommentsTable', $result);
+
+		$result = App::objects('Company/TestPluginThree.Model/Table');
+		$this->assertContains('TestPluginThreeCommentsTable', $result);
 
 		$result = App::objects('TestPlugin.Model/Behavior');
 		$this->assertTrue(in_array('PersisterOneBehavior', $result));
@@ -237,7 +258,7 @@ class AppTest extends TestCase {
  * @return void
  */
 	public function testPluginPath() {
-		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
+		Plugin::load(['TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree']);
 
 		$path = App::pluginPath('TestPlugin');
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
@@ -245,6 +266,10 @@ class AppTest extends TestCase {
 
 		$path = App::pluginPath('TestPluginTwo');
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS;
+		$this->assertPathEquals($expected, $path);
+
+		$path = App::pluginPath('Company/TestPluginThree');
+		$expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS;
 		$this->assertPathEquals($expected, $path);
 	}
 
