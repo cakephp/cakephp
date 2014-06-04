@@ -15,7 +15,6 @@
 namespace Cake\Model;
 
 use Cake\Error\Exception;
-use Cake\Utility\Inflector;
 
 /**
  * Provides functionality for loading table classes
@@ -27,8 +26,8 @@ use Cake\Utility\Inflector;
 trait ModelAwareTrait {
 
 /**
- * This object's primary model class name, the Inflector::pluralized()'ed version of
- * the object's $name property.
+ * This object's primary model class name. Should be a plural form.
+ * CakePHP will not inflect the name.
  *
  * Example: For a object named 'Comments', the modelClass would be 'Comments'
  *
@@ -53,7 +52,7 @@ trait ModelAwareTrait {
  */
 	protected function _setModelClass($name) {
 		if (empty($this->modelClass)) {
-			$this->modelClass = Inflector::pluralize($name);
+			$this->modelClass = $name;
 		}
 	}
 

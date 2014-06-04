@@ -164,8 +164,9 @@ class ShellTest extends TestCase {
 		Plugin::load('TestPlugin');
 		$this->Shell->tasks = array('DbConfig' => array('one', 'two'));
 		$this->Shell->plugin = 'TestPlugin';
-		$this->Shell->modelClass = 'TestPluginComments';
+		$this->Shell->modelClass = 'TestPlugin.TestPluginComments';
 		$this->Shell->initialize();
+		$this->Shell->loadModel();
 
 		$this->assertTrue(isset($this->Shell->TestPluginComments));
 		$this->assertInstanceOf(
