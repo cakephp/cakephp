@@ -587,7 +587,7 @@ class FormHelper extends AppHelper {
 		$locked = implode(array_keys($locked), '|');
 		$unlocked = implode($unlockedFields, '|');
 		$hashParts = array(
-			$this->_lastAction,
+			html_entity_decode($this->_lastAction),
 			serialize($fields),
 			$unlocked,
 			Configure::read('Security.salt')
