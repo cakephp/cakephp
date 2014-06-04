@@ -33,10 +33,10 @@ class ConsoleLogTest extends TestCase {
 		$output->expects($this->at(0))
 			->method('outputAs');
 
-		$message = '<error>' . date('Y-m-d H:i:s') . " Error: oh noes\n</error>";
+		$message = " Error: oh noes\n</error>";
 		$output->expects($this->at(1))
 			->method('write')
-			->with($message);
+			->with($this->stringContains($message));
 
 		$log = new ConsoleLog([
 			'stream' => $output
@@ -44,6 +44,11 @@ class ConsoleLogTest extends TestCase {
 		$log->write('error', 'oh noes');
 	}
 
+/**
+ * Test writing to a file stream
+ *
+ * @return void
+ */
 	public function testWriteToFileStream() {
 		$filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
 		$log = new ConsoleLog([
