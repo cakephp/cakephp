@@ -60,6 +60,19 @@ class BakeTask extends Shell {
 	}
 
 /**
+ * Initialize hook.
+ *
+ * Populates the connection property, which is useful for tasks of tasks.
+ *
+ * @return void
+ */
+	public function initialize() {
+		if (empty($this->connection) && !empty($this->params['connection'])) {
+			$this->connection = $this->params['connection'];
+		}
+	}
+
+/**
  * Gets the path for output. Checks the plugin property
  * and returns the correct path.
  *

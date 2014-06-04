@@ -67,6 +67,19 @@ class FixtureTaskTest extends TestCase {
 	}
 
 /**
+ * Test that initialize() copies the connection property over.
+ *
+ * @return void
+ */
+	public function testInitializeCopyConnection() {
+		$this->assertEquals('', $this->Task->connection);
+		$this->Task->params = ['connection' => 'test'];
+
+		$this->Task->initialize();
+		$this->assertEquals('test', $this->Task->connection);
+	}
+
+/**
  * test that initialize sets the path
  *
  * @return void
