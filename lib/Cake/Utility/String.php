@@ -253,8 +253,8 @@ class String {
  * is to replace all whitespace and unneeded markup around placeholders that did not get replaced
  * by String::insert().
  *
- * @param string $str
- * @param array $options
+ * @param string $str String to clean.
+ * @param array $options Options list.
  * @return string
  * @see String::insert()
  */

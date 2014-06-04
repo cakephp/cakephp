@@ -54,8 +54,8 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 /**
  * Attaches a model object and loads a list of behaviors
  *
- * @param string $modelName
- * @param array $behaviors
+ * @param string $modelName Model name.
+ * @param array $behaviors Behaviors list.
  * @return void
  */
 	public function init($modelName, $behaviors = array()) {
@@ -71,8 +71,8 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 /**
  * Backwards compatible alias for load()
  *
- * @param string $behavior
- * @param array $config
+ * @param string $behavior Behavior name.
+ * @param array $config Configuration options.
  * @return void
  * @deprecated Will be removed in 3.0. Replaced with load().
  */
