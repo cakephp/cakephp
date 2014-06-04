@@ -80,6 +80,10 @@ class DateTimeTypeTest extends TestCase {
 		$date = new Time('2013-08-12 15:16:17');
 		$result = $this->type->toDatabase($date, $this->driver);
 		$this->assertEquals('2013-08-12 15:16:17', $result);
+
+		$date = 1401906995;
+		$result = $this->type->toDatabase($date, $this->driver);
+		$this->assertEquals('2014-06-04 18:36:35', $result);
 	}
 
 /**
