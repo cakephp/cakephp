@@ -44,23 +44,28 @@ class FlashHelperTest extends TestCase {
 		$session->write(array(
 			'Message' => array(
 				'flash' => array(
-					'type' => 'info',
-					'params' => array(),
-					'message' => 'This is a calling'
+					'key' => 'flash',
+					'message' => 'This is a calling',
+					'element' => null,
+					'class' => 'info',
+					'params' => array()
 				),
 				'notification' => array(
-					'type' => 'info',
+					'key' => 'notification',
+					'message' => 'This is a test of the emergency broadcasting system',
+					'element' => 'flash_helper',
+					'class' => 'info',
 					'params' => array(
 						'title' => 'Notice!',
-						'name' => 'Alert!',
-						'element' => 'session_helper'
-					),
-					'message' => 'This is a test of the emergency broadcasting system',
+						'name' => 'Alert!'
+					)
 				),
 				'classy' => array(
-					'type' => 'success',
-					'params' => array('class' => 'positive'),
-					'message' => 'Recorded'
+					'key' => 'classy',
+					'message' => 'Recorded',
+					'element' => null,
+					'class' => 'positive',
+					'params' => array()
 				)
 			)
 		));
@@ -88,7 +93,7 @@ class FlashHelperTest extends TestCase {
 		$expected = '<div id="flash-message" class="message-info">This is a calling</div>';
 		$this->assertEquals($expected, $result);
 
-		$expected = '<div id="classy-message" class="message-success">Recorded</div>';
+		$expected = '<div id="classy-message" class="message-positive">Recorded</div>';
 		$result = $this->Flash->out('classy');
 		$this->assertEquals($expected, $result);
 
@@ -115,11 +120,11 @@ class FlashHelperTest extends TestCase {
  * @return void
  */
 	public function testFlashElementInAttrs() {
-		$result = $this->Flash->out('flash', array(
-			'element' => 'session_helper',
+		$result = $this->Flash->out('notification', array(
+			'element' => 'flash_helper',
 			'params' => array('title' => 'Notice!', 'name' => 'Alert!')
 		));
-		$expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a calling</p>\n</div>";
+		$expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a test of the emergency broadcasting system</p>\n</div>";
 		$this->assertTextEquals($expected, $result);
 	}
 
