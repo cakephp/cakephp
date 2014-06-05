@@ -12,7 +12,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Controller\Component\Auth;
+namespace Cake\Auth;
 
 use Cake\Core\App;
 
@@ -42,7 +42,7 @@ class PasswordHasherFactory {
 		}
 
 		list($plugin, $class) = pluginSplit($class, true);
-		$className = App::className($class, 'Controller/Component/Auth', 'PasswordHasher');
+		$className = App::className($class, 'Auth', 'PasswordHasher');
 		if (!class_exists($className)) {
 			throw new \RuntimeException(sprintf('Password hasher class "%s" was not found.', $class));
 		}

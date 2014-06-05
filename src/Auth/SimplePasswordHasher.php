@@ -12,9 +12,9 @@
  * @since         2.4.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Controller\Component\Auth;
+namespace Cake\Auth;
 
-use Cake\Controller\Component\Auth\AbstractPasswordHasher;
+use Cake\Auth\AbstractPasswordHasher;
 use Cake\Utility\Security;
 
 /**

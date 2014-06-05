@@ -11,10 +11,11 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Controller\Component\Auth;
+namespace Cake\Auth;
 
+use Cake\Auth\AbstractPasswordHasher;
+use Cake\Auth\PasswordHasherFactory;
 use Cake\Controller\ComponentRegistry;
-use Cake\Controller\Component\Auth\PasswordHasherFactory;
 use Cake\Core\App;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error;
