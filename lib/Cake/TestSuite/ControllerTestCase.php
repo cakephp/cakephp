@@ -48,6 +48,8 @@ class ControllerTestDispatcher extends Dispatcher {
 /**
  * Returns the test controller
  *
+ * @param CakeRequest $request The request instance.
+ * @param CakeResponse $response The response instance.
  * @return Controller
  */
 	protected function _getController($request, $response) {
