@@ -221,6 +221,23 @@ class AuthComponent extends Component {
 	protected $_methods = array();
 
 /**
+ * The instance of the Authenticate provider that was used for
+ * successfully logging in the current user after calling `login()`
+ * in the same request
+ *
+ * @var Cake\Auth\BaseAuthenticate
+ */
+	protected $_authenticateProvider;
+
+/**
+ * The instance of the Authorize provider that was used to grant
+ * access to the current user to the url they are requesting.
+ *
+ * @var Cake\Auth\BaseAuthorize
+ */
+	protected $_authorizationProvider;
+
+/**
  * Initializes AuthComponent for use in the controller.
  *
  * @param Event $event The initialize event.
@@ -455,6 +472,7 @@ class AuthComponent extends Component {
 		}
 		foreach ($this->_authorizeObjects as $authorizer) {
 			if ($authorizer->authorize($user, $request) === true) {
+				$this->_authorizationProvider = $authorizer;
 				return true;
 			}
 		}
@@ -722,6 +740,7 @@ class AuthComponent extends Component {
 		foreach ($this->_authenticateObjects as $auth) {
 			$result = $auth->authenticate($request, $response);
 			if (!empty($result) && is_array($result)) {
+				$this->_authenticateProvider = $auth;
 				return $result;
 			}
 		}
@@ -783,4 +802,25 @@ class AuthComponent extends Component {
 		$this->session->flash($message, 'error', $params + compact('key'));
 	}
 
+/**
+ * If login was called during this request and the suer was successfully
+ * authenticated, this function will return the instance of the authentication
+ * object that was used for logging the user in.
+ *
+ * @return \Cake\Auth\BaseAuthenticate|null
+ */
+	public function loginProvider() {
+		return $this->_authenticateProvider;
+	}
+
+/**
+ * If there was any authorization processing for the current request, this function
+ * will return the instance of the Authorization object that granted access to the
+ * user to the current address.
+ *
+ * @return \Cake\Auth\BaseAuthorize|null
+ */
+	public function authorizationProvider() {
+		return $this->_authenticateProvider;
+	}
 }
