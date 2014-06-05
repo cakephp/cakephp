@@ -67,13 +67,12 @@ class FlashHelper extends Helper {
  * echo $this->Flash->out('flash', [element' => 'my_custom_element']);
  * }}}
  *
- * If you want to use an element from a plugin for rendering your flash message you can do that using the
- * plugin param:
+ * If you want to use an element from a plugin for rendering your flash message
+ * you can use the dot notation for the plugin's element name:
  *
  * {{{
- * echo $this->Session->flash('flash', [
- *   'element' => 'my_custom_element',
- *   'params' => ['plugin' => 'my_plugin'])
+ * echo $this->Flash->out('flash', [
+ *   'element' => 'MyPlugin.my_custom_element',
  * ]);
  * }}}
  *
