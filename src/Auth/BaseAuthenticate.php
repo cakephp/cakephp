@@ -73,6 +73,17 @@ abstract class BaseAuthenticate {
 	protected $_passwordHasher;
 
 /**
+ * Contains a key indicated whether or not the user authenticated by this class
+ * requires their password to be rehashed with another algorithm.
+ *
+ * @var array
+ */
+	protected $passwordInfo = [
+		'password' => null,
+		'needsRehash' => false
+	];
+
+/**
  * Constructor
  *
  * @param ComponentRegistry $registry The Component registry used on this request.
@@ -123,9 +134,14 @@ abstract class BaseAuthenticate {
 		}
 
 		if ($password !== null) {
-			if (!$this->passwordHasher()->check($password, $result[$fields['password']])) {
+			$hasher = $this->passwordHasher();
+			$hashedPassword = $result[$fields['password']];
+			if (!$hasher->check($password, $hashedPassword)) {
 				return false;
 			}
+
+			$this->_passwordInfo['password'] = $password;
+			$this->_passwordInfo['needsRehash'] = $hasher->needsRehash($hashedPassword);
 			unset($result[$fields['password']]);
 		}
 
@@ -146,6 +162,31 @@ abstract class BaseAuthenticate {
 
 		$passwordHasher = $this->_config['passwordHasher'];
 		return $this->_passwordHasher = PasswordHasherFactory::build($passwordHasher);
+	}
+
+/**
+ * Returns whether or not the password stored in the repository for the logged in user
+ * requires to be rehashed with another algorithm
+ *
+ * @return bool
+ */
+	public function needsPasswordRehash() {
+		return $this->_passwordInfo['needsRehash'];
+	}
+
+/**
+ * Returns a freshly hashed password using the hashing alogrithm from the configured
+ * password hasher. This method uses the plain password provided when successfully
+ * authenticating the user.
+ *
+ * @return string
+ * @throws \RuntimeException if no user has been authenticated using this object
+ */
+	public function rehashPassword() {
+		if ($this->_passwordInfo['password'] === null) {
+			throw new \RuntimeException('No user has been authenticated using this provider');
+		}
+		return $this->passwordHasher()->hash($this->_passwordInfo['password']);
 	}
 
 /**

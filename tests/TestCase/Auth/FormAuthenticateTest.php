@@ -52,7 +52,7 @@ class FormAuthenticateTest extends TestCase {
 		$this->auth = new FormAuthenticate($this->Collection, [
 			'userModel' => 'Users'
 		]);
-		$password = Security::hash('password', 'blowfish', false);
+		$password = password_hash('password', PASSWORD_DEFAULT);
 		$Users = TableRegistry::get('Users');
 		$Users->updateAll(['password' => $password], []);
 		$this->response = $this->getMock('Cake\Network\Response');
@@ -307,6 +307,47 @@ class FormAuthenticateTest extends TestCase {
 			['username' => 'mariano']
 		);
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
+	}
+
+/**
+ * Tests that using default means password don't need to be rehashed
+ *
+ * @return void
+ */
+	public function testAuthenticateNoRehash() {
+		$request = new Request('posts/index');
+		$request->data = [
+			'username' => 'mariano',
+			'password' => 'password'
+		];
+		$result = $this->auth->authenticate($request, $this->response);
+		$this->assertNotEmpty($result);
+		$this->assertFalse($this->auth->needsPasswordRehash());
+	}
+
+/**
+ * Tests that not using the Simple password hasher means that the password
+ * needs to be rehashed
+ *
+ * @return void
+ */
+	public function testAuthenticateRehash() {
+		$this->auth = new FormAuthenticate($this->Collection, [
+			'userModel' => 'Users',
+			'passwordHasher' => 'Weak'
+		]);
+		$password = $this->auth->passwordHasher()->hash('password');
+		TableRegistry::get('Users')->updateAll(['password' => $password], []);
+
+		$request = new Request('posts/index');
+		$request->data = [
+			'username' => 'mariano',
+			'password' => 'password'
+		];
+		$result = $this->auth->authenticate($request, $this->response);
+		$this->assertNotEmpty($result);
+		$this->assertTrue($this->auth->needsPasswordRehash());
+		$this->assertSame($password, $this->auth->rehashPassword());
 	}
 
 }
