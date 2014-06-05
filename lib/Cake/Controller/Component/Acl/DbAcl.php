@@ -53,7 +53,7 @@ class DbAcl extends Object implements AclInterface {
 /**
  * Initializes the containing component and sets the Aro/Aco objects to it.
  *
- * @param AclComponent $component
+ * @param AclComponent $component The AclComponent instance.
  * @return void
  */
 	public function initialize(Component $component) {

@@ -65,7 +65,7 @@ interface AclInterface {
 /**
  * Initialization method for the Acl implementation
  *
- * @param AclComponent $component
+ * @param Component $component The AclComponent instance.
  * @return void
  */
 	public function initialize(Component $component);
