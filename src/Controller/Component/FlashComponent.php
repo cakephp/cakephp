@@ -54,6 +54,22 @@ class FlashComponent extends Component {
 		$this->_session = $collection->getController()->request->session();
 	}
 
+/**
+ * Used to set a session variable that can be used to output messages in the view.
+ *
+ * In your controller: $this->Flash->set('This has been saved');
+ *
+ * ### Options:
+ *
+ * - `key` The key to set under the session's Message key
+ * - `element` The element used to render the flash message
+ * - `class` The class to give the flash message whenever an element isn't supplied
+ * - `params` An array of variables to make available when using an element
+ *
+ * @param string $message Message to be flashed
+ * @param array $options An array of options
+ * @return void
+ */
 	public function set($message, array $options = []) {
 		$opts = array_merge($this->_defaultConfig, $options);
 
@@ -70,6 +86,15 @@ class FlashComponent extends Component {
 		]);
 	}
 
+
+/**
+ * Magic method for verbose flash methods based on element names.
+ *
+ * @param string $name Element name to use, omitting the "flash_" prefix.
+ * @param array $args Parameters to pass when calling `FlashComponent::set`.
+ * @return void
+ * @throws \Cake\Error\InternalErrorException If missing the flash message.
+*/
 	public function __call($name, $args) {
 		$options = ['element' => 'flash_' . $name];
 
