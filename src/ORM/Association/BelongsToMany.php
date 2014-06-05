@@ -184,7 +184,8 @@ class BelongsToMany extends Association {
 			$target->belongsToMany($sAlias, [
 				'sourceTable' => $source,
 				'foreignKey' => $this->targetForeignKey(),
-				'targetForeignKey' => $this->foreignKey()
+				'targetForeignKey' => $this->foreignKey(),
+				'through' => $table
 			]);
 			$target->hasMany($junctionAlias, [
 				'targetTable' => $table,
