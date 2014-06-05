@@ -69,4 +69,18 @@ class FlashComponent extends Component {
 			'params' => $opts['params']
 		]);
 	}
+
+	public function __call($name, $args) {
+		$options = ['element' => 'flash_' . $name];
+
+		if (count($args) < 1) {
+			throw new InternalErrorException('Flash message missing.');
+		}
+
+		if (!empty($args[1])) {
+			$options += (array)$args[1];
+		}
+
+		$this->set($args[0], $options);
+	}
 }
