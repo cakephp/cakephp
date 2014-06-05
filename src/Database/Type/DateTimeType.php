@@ -51,13 +51,16 @@ class DateTimeType extends \Cake\Database\Type {
 /**
  * Convert DateTime instance into strings.
  *
- * @param string|DateTime $value The value to convert.
+ * @param string|integer|DateTime $value The value to convert.
  * @param Driver $driver The driver instance to convert with.
  * @return string
  */
 	public function toDatabase($value, Driver $driver) {
 		if ($value === null || is_string($value)) {
 			return $value;
+		}
+		if (is_int($value)) {
+			$value = new static::$dateTimeClass('@' . $value);
 		}
 		return $value->format($this->_format);
 	}
