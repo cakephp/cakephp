@@ -158,4 +158,22 @@ class QueryRegressionTest extends TestCase {
 		$this->assertEquals('2014-06-01', $entity->highlights[0]->_joinData->highlighted_time->format('Y-m-d'));
 	}
 
+/**
+ * Tests that the juction table instance taken from both sides of a belongsToMany
+ * relationship is actually the same object.
+ *
+ * @return void
+ */
+	public function testReciprocalBelongsToMany() {
+		$articles = TableRegistry::get('Articles');
+		$tags = TableRegistry::get('Tags');
+
+		$articles->belongsToMany('Tags');
+		$tags->belongsToMany('Articles');
+
+		$left = $articles->Tags->junction();
+		$right = $tags->Articles->junction();
+		$this->assertSame($left, $right);
+	}
+
 }
