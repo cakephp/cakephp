@@ -159,7 +159,7 @@ class QueryRegressionTest extends TestCase {
 	}
 
 /**
- * Tests that the juction table instance taken from both sides of a belongsToMany
+ * Tests that the junction table instance taken from both sides of a belongsToMany
  * relationship is actually the same object.
  *
  * @return void
