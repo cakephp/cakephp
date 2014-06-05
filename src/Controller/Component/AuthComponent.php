@@ -821,6 +821,6 @@ class AuthComponent extends Component {
  * @return \Cake\Auth\BaseAuthorize|null
  */
 	public function authorizationProvider() {
-		return $this->_authenticateProvider;
+		return $this->_authorizationProvider;
 	}
 }
