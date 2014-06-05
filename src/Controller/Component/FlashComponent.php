@@ -43,6 +43,9 @@ class FlashComponent extends Component {
 	}
 
 	public function set($message, $element = null, array $params = array(), $key = 'flash') {
+		if ($message instanceof \Exception) {
+			$message = $message->getMessage();
+		}
 		$this->_writeFlash($message, 'info', $params + compact('element', 'key'));
 	}
 

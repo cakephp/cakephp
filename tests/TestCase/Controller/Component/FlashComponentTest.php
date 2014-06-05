@@ -115,4 +115,19 @@ class FlashComponentTest extends TestCase {
 		$result = $this->Session->read('Message.foobar');
 		$this->assertEquals($expected, $result);
 	}
+
+/**
+ * testSetWithException method
+ *
+ * @return void
+ * @covers \Cake\Controller\Component\FlashComponent::set
+ */
+	public function testSetWithException() {
+		$this->assertNull($this->Session->read('Message.flash'));
+
+		$this->Flash->set(new \Exception('This is a test message'));
+		$expected = ['message' => 'This is a test message', 'params' => ['element' => null], 'type' => 'info'];
+		$result = $this->Session->read('Message.flash');
+		$this->assertEquals($expected, $result);
+	}
 }
