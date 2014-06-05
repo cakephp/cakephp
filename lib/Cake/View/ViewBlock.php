@@ -192,7 +192,7 @@ class ViewBlock {
  * @return string The block content or $default if the block does not exist.
  */
 	public function get($name, $default = '') {
-		if (!isset($this->_blocks[$name])) {
+		if (!isset($this->_blocks[$name]) || empty($this->_blocks[$name] ) ) {
 			return $default;
 		}
 		return $this->_blocks[$name];
