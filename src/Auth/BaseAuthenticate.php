@@ -73,16 +73,12 @@ abstract class BaseAuthenticate {
 	protected $_passwordHasher;
 
 /**
- * Contains a key indicated whether or not the user authenticated by this class
+ * Whether or not the user authenticated by this class
  * requires their password to be rehashed with another algorithm.
  *
- * @var array
+ * @var bool
  */
-	protected $passwordInfo = [
-		'password' => null,
-		'needsRehash' => false
-	];
-
+	protected $_needsPasswordRehash = false;
 /**
  * Constructor
  *
@@ -140,8 +136,7 @@ abstract class BaseAuthenticate {
 				return false;
 			}
 
-			$this->_passwordInfo['password'] = $password;
-			$this->_passwordInfo['needsRehash'] = $hasher->needsRehash($hashedPassword);
+			$this->_needsPasswordRehash = $hasher->needsRehash($hashedPassword);
 			unset($result[$fields['password']]);
 		}
 
@@ -171,22 +166,7 @@ abstract class BaseAuthenticate {
  * @return bool
  */
 	public function needsPasswordRehash() {
-		return $this->_passwordInfo['needsRehash'];
-	}
-
-/**
- * Returns a freshly hashed password using the hashing alogrithm from the configured
- * password hasher. This method uses the plain password provided when successfully
- * authenticating the user.
- *
- * @return string
- * @throws \RuntimeException if no user has been authenticated using this object
- */
-	public function rehashPassword() {
-		if ($this->_passwordInfo['password'] === null) {
-			throw new \RuntimeException('No user has been authenticated using this provider');
-		}
-		return $this->passwordHasher()->hash($this->_passwordInfo['password']);
+		return $this->_needsPasswordRehash;
 	}
 
 /**

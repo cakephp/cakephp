@@ -347,7 +347,6 @@ class FormAuthenticateTest extends TestCase {
 		$result = $this->auth->authenticate($request, $this->response);
 		$this->assertNotEmpty($result);
 		$this->assertTrue($this->auth->needsPasswordRehash());
-		$this->assertSame($password, $this->auth->rehashPassword());
 	}
 
 }
