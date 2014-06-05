@@ -32,6 +32,18 @@ class FlashComponent extends Component {
 	protected $_session;
 
 /**
+ * Default configuration
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [
+		'key' => 'flash',
+		'element' => null,
+		'class' => 'info',
+		'params' => []
+	];
+
+/**
  * Constructor
  *
  * @param ComponentRegistry $collection A ComponentRegistry for this component
@@ -42,21 +54,19 @@ class FlashComponent extends Component {
 		$this->_session = $collection->getController()->request->session();
 	}
 
-	public function set($message, $element = null, array $params = array(), $key = 'flash') {
+	public function set($message, array $options = []) {
+		$opts = array_merge($this->_defaultConfig, $options);
+
 		if ($message instanceof \Exception) {
 			$message = $message->getMessage();
 		}
-		$this->_writeFlash($message, 'info', $params + compact('element', 'key'));
-	}
 
-	protected function _writeFlash($message, $type = 'info', $options = []) {
-		$options += ['key' => 'flash'];
-		$key = $options['key'];
-		unset($options['key']);
-		$this->_session->write("Message.$key", [
+		$this->_session->write("Message.{$opts['key']}", [
 			'message' => $message,
-			'type' => $type,
-			'params' => $options
+			'key' => $opts['key'],
+			'element' => $opts['element'],
+			'class' => $opts['class'],
+			'params' => $opts['params']
 		]);
 	}
 }

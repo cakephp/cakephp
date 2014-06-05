@@ -39,33 +39,17 @@ class FlashHelper extends Helper {
 			return '';
 		}
 
-		if (!empty($attrs)) {
-			$flash = array_merge($flash, $attrs);
-		}
+		$flash = array_merge($flash, $attrs);
 
-		$message = $flash['message'];
-		$class = $flash['type'];
-		$params = $flash['params'];
-
-		if (isset($flash['element'])) {
-			$params['element'] = $flash['element'];
-		}
-
-		if (empty($params['element'])) {
-			if (!empty($flash['class'])) {
-				$class = $flash['class'];
-			}
+		if ($flash['element'] === null) {
 			return $this->formatTemplate('flash', [
-				'class' => $class,
 				'key' => $key,
-				'message' => $message
+				'class' => $flash['class'],
+				'message' => $flash['message']
 			]);
 		}
 
-		$params['message'] = $message;
-		$params['type'] = $class;
-
-		return $this->_View->element($params['element'], $params);
+		return $this->_View->element($flash['element'], $flash);
 	}
 
 /**
