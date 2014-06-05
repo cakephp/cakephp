@@ -30,11 +30,11 @@ class PersonFixture extends TestFixture {
 	public $fields = array(
 		'id' => ['type' => 'integer', 'null' => false],
 		'name' => ['type' => 'string', 'null' => false, 'length' => 32],
-		'mother_id' => ['type' => 'integer', 'null' => false],
-		'father_id' => ['type' => 'integer', 'null' => false],
+		'mother_id' => ['type' => 'integer', 'null' => true],
+		'father_id' => ['type' => 'integer', 'null' => true],
 		'_constraints' => [
 			'primary' => ['type' => 'primary', 'columns' => ['id']],
-			'mother_idx' => ['type' => 'unique', 'columns' => ['mother_id', 'father_id']]
+			'mother_idx' => ['type' => 'unique', 'columns' => ['mother_id', 'father_id']],
 		]
 	);
 
@@ -47,9 +47,9 @@ class PersonFixture extends TestFixture {
 		array('name' => 'person', 'mother_id' => 2, 'father_id' => 3),
 		array('name' => 'mother', 'mother_id' => 4, 'father_id' => 5),
 		array('name' => 'father', 'mother_id' => 6, 'father_id' => 7),
-		array('name' => 'mother - grand mother', 'mother_id' => 0, 'father_id' => 0),
-		array('name' => 'mother - grand father', 'mother_id' => 0, 'father_id' => 0),
-		array('name' => 'father - grand mother', 'mother_id' => 0, 'father_id' => 0),
-		array('name' => 'father - grand father', 'mother_id' => 0, 'father_id' => 0)
+		array('name' => 'mother - grand mother', 'mother_id' => null, 'father_id' => null),
+		array('name' => 'mother - grand father', 'mother_id' => null, 'father_id' => null),
+		array('name' => 'father - grand mother', 'mother_id' => null, 'father_id' => null),
+		array('name' => 'father - grand father', 'mother_id' => null, 'father_id' => null)
 	);
 }
