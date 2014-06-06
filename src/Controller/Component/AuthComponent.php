@@ -803,7 +803,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * If login was called during this request and the suer was successfully
+ * If login was called during this request and the user was successfully
  * authenticated, this function will return the instance of the authentication
  * object that was used for logging the user in.
  *
