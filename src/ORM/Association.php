@@ -763,7 +763,8 @@ abstract class Association {
 	public abstract function isOwningSide(Table $side);
 
 /**
- * Proxies the saving operation for an entity to the target table
+ * Extract the target's associaiton data our from the passed entity and proxies
+ * the saving operation to the target table.
  *
  * @param \Cake\ORM\Entity $entity the data to be saved
  * @param array|\ArrayObject $options
@@ -771,6 +772,6 @@ abstract class Association {
  * the saved entity
  * @see Table::save()
  */
-	public abstract function save(Entity $entity, array $options = []);
+	public abstract function saveAssociated(Entity $entity, array $options = []);
 
 }

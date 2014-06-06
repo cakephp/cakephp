@@ -382,7 +382,7 @@ class BelongsToMany extends Association {
  * @see Table::save()
  * @see BelongsToMany::replaceLinks()
  */
-	public function save(Entity $entity, array $options = []) {
+	public function saveAssociated(Entity $entity, array $options = []) {
 		$targetEntity = $entity->get($this->property());
 		$strategy = $this->saveStrategy();
 

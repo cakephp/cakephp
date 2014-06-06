@@ -175,13 +175,13 @@ class AssociationsTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table', [], [[]]);
 		$mockOne = $this->getMock(
 			'Cake\ORM\Association\BelongsTo',
-			['save'],
+			['saveAssociated'],
 			['Parent', [
 				'sourceTable' => $table,
 			]]);
 		$mockTwo = $this->getMock(
 			'Cake\ORM\Association\HasMany',
-			['save'],
+			['saveAssociated'],
 			['Child', [
 				'sourceTable' => $table
 			]]);
@@ -196,12 +196,12 @@ class AssociationsTest extends TestCase {
 		$options = ['option' => 'value'];
 
 		$mockOne->expects($this->once())
-			->method('save')
+			->method('saveAssociated')
 			->with($entity, $options)
 			->will($this->returnValue(true));
 
 		$mockTwo->expects($this->never())
-			->method('save');
+			->method('saveAssociated');
 
 		$result = $this->associations->saveParents(
 			$table,
@@ -221,13 +221,13 @@ class AssociationsTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table', [], [[]]);
 		$mockOne = $this->getMock(
 			'Cake\ORM\Association\BelongsTo',
-			['save'],
+			['saveAssociated'],
 			['Parents', [
 				'sourceTable' => $table,
 			]]);
 		$mockTwo = $this->getMock(
 			'Cake\ORM\Association\BelongsTo',
-			['save'],
+			['saveAssociated'],
 			['Categories', [
 				'sourceTable' => $table
 			]]);
@@ -242,12 +242,12 @@ class AssociationsTest extends TestCase {
 		$options = ['atomic' => true];
 
 		$mockOne->expects($this->once())
-			->method('save')
+			->method('saveAssociated')
 			->with($entity, ['atomic' => true, 'associated' => ['Others']])
 			->will($this->returnValue(true));
 
 		$mockTwo->expects($this->never())
-			->method('save');
+			->method('saveAssociated');
 
 		$result = $this->associations->saveParents(
 			$table,
@@ -267,13 +267,13 @@ class AssociationsTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table', [], [[]]);
 		$mockOne = $this->getMock(
 			'Cake\ORM\Association\HasMany',
-			['save'],
+			['saveAssociated'],
 			['Comments', [
 				'sourceTable' => $table,
 			]]);
 		$mockTwo = $this->getMock(
 			'Cake\ORM\Association\HasOne',
-			['save'],
+			['saveAssociated'],
 			['Profiles', [
 				'sourceTable' => $table
 			]]);
@@ -288,12 +288,12 @@ class AssociationsTest extends TestCase {
 		$options = ['atomic' => true];
 
 		$mockOne->expects($this->once())
-			->method('save')
+			->method('saveAssociated')
 			->with($entity, $options + ['associated' => ['Other']])
 			->will($this->returnValue(true));
 
 		$mockTwo->expects($this->never())
-			->method('save');
+			->method('saveAssociated');
 
 		$result = $this->associations->saveChildren(
 			$table,

@@ -199,7 +199,7 @@ class BelongsToManyTest extends TestCase {
 	}
 
 /**
- * Tests that it is possible to pass the save strategy in the constructor
+ * Tests that it is possible to pass the saveAssociated strategy in the constructor
  *
  * @return void
  */
@@ -1240,7 +1240,7 @@ class BelongsToManyTest extends TestCase {
 	}
 
 /**
- * Test that replaceLinks() can save an empty set, removing all rows.
+ * Test that replaceLinks() can saveAssociated an empty set, removing all rows.
  *
  * @return void
  */
@@ -1415,7 +1415,7 @@ class BelongsToManyTest extends TestCase {
  *
  * @return void
  */
-	public function testSaveEmptySetSuccess() {
+	public function testSaveAssociatedEmptySetSuccess() {
 		$assoc = $this->getMock(
 			'\Cake\ORM\Association\BelongsToMany',
 			['_saveTarget', 'replaceLinks'],
@@ -1431,7 +1431,7 @@ class BelongsToManyTest extends TestCase {
 			->method('replaceLinks');
 		$assoc->expects($this->never())
 			->method('_saveTarget');
-		$this->assertSame($entity, $assoc->save($entity));
+		$this->assertSame($entity, $assoc->saveAssociated($entity));
 	}
 
 /**
@@ -1439,7 +1439,7 @@ class BelongsToManyTest extends TestCase {
  *
  * @return void
  */
-	public function testSaveWithReplace() {
+	public function testSaveAssociatedWithReplace() {
 		$assoc = $this->getMock(
 			'\Cake\ORM\Association\BelongsToMany',
 			['replaceLinks'],
@@ -1457,7 +1457,7 @@ class BelongsToManyTest extends TestCase {
 		$assoc->expects($this->once())->method('replaceLinks')
 			->with($entity, $entity->tags, $options)
 			->will($this->returnValue(true));
-		$this->assertSame($entity, $assoc->save($entity, $options));
+		$this->assertSame($entity, $assoc->saveAssociated($entity, $options));
 	}
 
 /**
@@ -1465,7 +1465,7 @@ class BelongsToManyTest extends TestCase {
  *
  * @return void
  */
-	public function testSaveWithReplaceReturnFalse() {
+	public function testSaveAssociatedWithReplaceReturnFalse() {
 		$assoc = $this->getMock(
 			'\Cake\ORM\Association\BelongsToMany',
 			['replaceLinks'],
@@ -1483,19 +1483,19 @@ class BelongsToManyTest extends TestCase {
 		$assoc->expects($this->once())->method('replaceLinks')
 			->with($entity, $entity->tags, $options)
 			->will($this->returnValue(false));
-		$this->assertFalse($assoc->save($entity, $options));
+		$this->assertFalse($assoc->saveAssociated($entity, $options));
 	}
 
 /**
- * Test that save() ignores non entity values.
+ * Test that saveAssociated() ignores non entity values.
  *
  * @return void
  */
-	public function testSaveOnlyEntities() {
+	public function testSaveAssociatedOnlyEntities() {
 		$connection = ConnectionManager::get('test');
 		$mock = $this->getMock(
 			'Cake\ORM\Table',
-			['save', 'schema'],
+			['saveAssociated', 'schema'],
 			[['table' => 'tags', 'connection' => $connection]]
 		);
 		$mock->primaryKey('id');
@@ -1516,10 +1516,10 @@ class BelongsToManyTest extends TestCase {
 		]);
 
 		$mock->expects($this->never())
-			->method('save');
+			->method('saveAssociated');
 
 		$association = new BelongsToMany('Tags', $config);
-		$association->save($entity);
+		$association->saveAssociated($entity);
 	}
 
 /**

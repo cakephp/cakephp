@@ -110,7 +110,7 @@ class HasOne extends Association {
  * the saved entity
  * @see Table::save()
  */
-	public function save(Entity $entity, array $options = []) {
+	public function saveAssociated(Entity $entity, array $options = []) {
 		$targetEntity = $entity->get($this->property());
 		if (empty($targetEntity) || !($targetEntity instanceof Entity)) {
 			return $entity;
