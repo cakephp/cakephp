@@ -157,7 +157,10 @@ class Plugin {
 				static::$_loader = new ClassLoader;
 				static::$_loader->register();
 			}
-			static::$_loader->addNamespace($config['namespace'], $config['path']);
+			static::$_loader->addNamespace(
+				$config['namespace'],
+				$config['path'] . 'src' . DS
+			);
 		}
 	}
 
@@ -241,7 +244,7 @@ class Plugin {
 		$path = static::path($plugin);
 		if ($config['bootstrap'] === true) {
 			return static::_includeFile(
-				$path . 'Config/bootstrap.php',
+				$path . 'src' . DS . 'Config' . DS . 'bootstrap.php',
 				$config['ignoreMissing']
 			);
 		}
@@ -266,7 +269,7 @@ class Plugin {
 			return false;
 		}
 		return (bool)static::_includeFile(
-			static::path($plugin) . 'Config' . DS . 'routes.php',
+			static::path($plugin) . 'src' . DS . 'Config' . DS . 'routes.php',
 			$config['ignoreMissing']
 		);
 	}

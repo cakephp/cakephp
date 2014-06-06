@@ -140,7 +140,7 @@ class App {
 			return (array)Configure::read('App.paths.templates');
 		}
 		if (!empty($plugin)) {
-			return [static::pluginPath($plugin) . $type . DS];
+			return [static::pluginPath($plugin) . 'src' . DS . $type . DS];
 		}
 		return [APP . $type . DS];
 	}

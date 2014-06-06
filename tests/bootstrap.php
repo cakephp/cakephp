@@ -56,9 +56,9 @@ $loader = new Cake\Core\ClassLoader;
 $loader->register();
 
 $loader->addNamespace('TestApp', APP);
-$loader->addNamespace('TestPlugin', TEST_APP . 'Plugin/TestPlugin');
-$loader->addNamespace('TestPluginTwo', TEST_APP . 'Plugin/TestPluginTwo');
-$loader->addNamespace('PluginJs', TEST_APP . 'Plugin/PluginJs');
+$loader->addNamespace('TestPlugin', TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src');
+$loader->addNamespace('TestPluginTwo', TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'src');
+$loader->addNamespace('PluginJs', TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'src');
 
 require_once CAKE . 'bootstrap.php';
 

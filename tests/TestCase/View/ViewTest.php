@@ -309,11 +309,11 @@ class ViewTest extends TestCase {
 		$result = $ThemeView->getViewFileName('home');
 		$this->assertPathEquals($expected, $result);
 
-		$expected = Plugin::path('TestTheme') . 'Template' . DS . 'Posts' . DS . 'index.ctp';
+		$expected = Plugin::path('TestTheme') . 'src' . DS . 'Template' . DS . 'Posts' . DS . 'index.ctp';
 		$result = $ThemeView->getViewFileName('/Posts/index');
 		$this->assertPathEquals($expected, $result);
 
-		$expected = Plugin::path('TestTheme') . 'Template' . DS . 'Layout' . DS . 'default.ctp';
+		$expected = Plugin::path('TestTheme') . 'src' . DS . 'Template' . DS . 'Layout' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertPathEquals($expected, $result);
 
@@ -330,7 +330,7 @@ class ViewTest extends TestCase {
 		$ThemeView = new TestThemeView(null, null, null, $viewOptions);
 
 		$ThemeView->theme = 'Company/TestPluginThree';
-		$expected = Plugin::path('Company/TestPluginThree') . 'Template' . DS . 'Layout' . DS . 'default.ctp';
+		$expected = Plugin::path('Company/TestPluginThree') . 'src' . DS . 'Template' . DS . 'Layout' . DS . 'default.ctp';
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertPathEquals($expected, $result);
 	}
@@ -349,11 +349,11 @@ class ViewTest extends TestCase {
 
 		$View = new TestView(null, null, null, $viewOptions);
 
-		$expected = Plugin::path('TestPlugin') . 'Template' . DS . 'Tests' . DS . 'index.ctp';
+		$expected = Plugin::path('TestPlugin') . 'src' . DS . 'Template' . DS . 'Tests' . DS . 'index.ctp';
 		$result = $View->getViewFileName('index');
 		$this->assertEquals($expected, $result);
 
-		$expected = Plugin::path('TestPlugin') . 'Template' . DS . 'Layout' . DS . 'default.ctp';
+		$expected = Plugin::path('TestPlugin') . 'src' . DS . 'Template' . DS . 'Layout' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertEquals($expected, $result);
 	}
@@ -372,7 +372,7 @@ class ViewTest extends TestCase {
 		];
 
 		$ThemeView = new TestThemeView(null, null, null, $viewOptions);
-		$themePath = Plugin::path('TestTheme') . 'Template' . DS;
+		$themePath = Plugin::path('TestTheme') . 'src' . DS . 'Template' . DS;
 
 		$expected = $themePath . 'Plugin' . DS . 'TestPlugin' . DS . 'Tests' . DS . 'index.ctp';
 		$result = $ThemeView->getViewFileName('index');
@@ -408,7 +408,7 @@ class ViewTest extends TestCase {
 		$pluginPath = Plugin::path('TestPlugin');
 		$expected = array(
 			TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
-			$pluginPath . 'Template' . DS,
+			$pluginPath . 'src' . DS . 'Template' . DS,
 			TEST_APP . 'TestApp' . DS . 'Template' . DS,
 			CAKE . 'Template' . DS,
 		);
@@ -430,11 +430,12 @@ class ViewTest extends TestCase {
 		$View = new TestView(null, null, null, $viewOptions);
 
 		$pluginPath = Plugin::path('TestPlugin');
-		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'Template' . DS . 'Tests' . DS . 'index.ctp';
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS .
+			'Template' . DS . 'Tests' . DS . 'index.ctp';
 		$result = $View->getViewFileName('index');
 		$this->assertPathEquals($expected, $result);
 
-		$expected = $pluginPath . 'Template' . DS . 'Layout' . DS . 'default.ctp';
+		$expected = $pluginPath . 'src' . DS . 'Template' . DS . 'Layout' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertPathEquals($expected, $result);
 	}
@@ -476,7 +477,8 @@ class ViewTest extends TestCase {
 		$this->assertPathEquals($expected, $result, 'Plugin is missing the view, cascade to app.');
 
 		$View->viewPath = 'Tests';
-		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'Template' . DS . 'Tests' . DS . 'index.ctp';
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS .
+			'Template' . DS . 'Tests' . DS . 'index.ctp';
 		$result = $View->getViewFileName('TestPlugin.index');
 		$this->assertPathEquals($expected, $result);
 	}
@@ -525,12 +527,14 @@ class ViewTest extends TestCase {
 		$View = new TestView(null, null, null, $viewOptions);
 		Plugin::load('TestPlugin');
 
-		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'Template' . DS . 'Layout' . DS . 'default.ctp';
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS .
+			'Template' . DS . 'Layout' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName('TestPlugin.default');
 		$this->assertPathEquals($expected, $result);
 
 		$View->plugin = 'TestPlugin';
-		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'Template' . DS . 'Layout' . DS . 'default.ctp';
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS .
+			'Template' . DS . 'Layout' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName('default');
 		$this->assertPathEquals($expected, $result);
 	}
@@ -1013,7 +1017,7 @@ class ViewTest extends TestCase {
 		$View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
 		$pluginPath = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
 		$result = $View->getViewFileName('sub_dir/sub_element');
-		$expected = $pluginPath . 'Template' . DS . 'Element' . DS . 'sub_dir' . DS . 'sub_element.ctp';
+		$expected = $pluginPath . 'src' . DS . 'Template' . DS . 'Element' . DS . 'sub_dir' . DS . 'sub_element.ctp';
 		$this->assertPathEquals($expected, $result);
 	}
 
