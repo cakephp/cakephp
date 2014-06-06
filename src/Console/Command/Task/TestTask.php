@@ -81,6 +81,8 @@ class TestTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
+ * @param string $type Class type.
+ * @param string $name Name.
  * @return void
  */
 	public function main($type = null, $name = null) {
@@ -152,7 +154,7 @@ class TestTask extends BakeTask {
 		$classes = [];
 		$base = APP;
 		if ($this->plugin) {
-			$base = Plugin::path($this->plugin);
+			$base = Plugin::path($this->plugin) . 'src' . DS;
 		}
 		$path = $base . str_replace('\\', DS, $namespace);
 		$folder = new Folder($path);
@@ -432,7 +434,6 @@ class TestTask extends BakeTask {
  * Generate the uses() calls for a type & class name
  *
  * @param string $type The Type of object you are generating tests for eg. controller
- * @param string $realType The package name for the class.
  * @param string $fullClassName The Classname of the class the test is being generated for.
  * @return array An array containing used classes
  */

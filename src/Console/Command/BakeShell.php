@@ -108,7 +108,7 @@ class BakeShell extends Shell {
 		foreach (Plugin::loaded() as $plugin) {
 			$tasks = $this->_findTasks(
 				$tasks,
-				Plugin::path($plugin),
+				Plugin::path($plugin) . 'src' . DS,
 				Plugin::getNamespace($plugin),
 				$plugin
 			);
@@ -146,6 +146,7 @@ class BakeShell extends Shell {
  * Find task classes in a given path.
  *
  * @param string $path The path to scan.
+ * @param string $namespace Namespace.
  * @return array An array of files that may contain bake tasks.
  */
 	protected function _findClassFiles($path, $namespace) {
@@ -188,6 +189,7 @@ class BakeShell extends Shell {
 /**
  * Quickly bake the MVC
  *
+ * @param string $name Name.
  * @return void
  */
 	public function all($name = null) {
