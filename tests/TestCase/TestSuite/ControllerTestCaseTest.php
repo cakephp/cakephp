@@ -26,36 +26,6 @@ use Cake\TestSuite\Reporter\HtmlReporter;
 use Cake\TestSuite\TestCase;
 
 /**
- * AppController class
- *
- */
-class AppController extends Controller {
-
-/**
- * helpers property
- *
- * @var array
- */
-	public $helpers = array('Html');
-
-/**
- * components property
- *
- * @var array
- */
-	public $components = array('Cookie');
-}
-
-
-/**
- * ControllerTestCaseTest controller
- *
- */
-class ControllerTestCaseTestController extends AppController {
-
-}
-
-/**
  * ControllerTestCaseTest
  *
  */
@@ -226,6 +196,24 @@ class ControllerTestCaseTest extends TestCase {
 			'Location' => 'http://cakephp.org'
 		);
 		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Test testAction() with prefix routes.
+ *
+ * @return void
+ */
+	public function testActionWithPrefix() {
+		Configure::write('Routing.prefixes', ['admin']);
+		Plugin::load('TestPlugin');
+
+		$result = $this->Case->testAction('/admin/posts/index', ['return' => 'view']);
+		$expected = '<h1>Admin Post Index</h1>';
+		$this->assertContains($expected, $result);
+
+		$result = $this->Case->testAction('/admin/test_plugin/comments/index', ['return' => 'view']);
+		$expected = '<h1>TestPlugin Admin Comments</h1>';
+		$this->assertContains($expected, $result);
 	}
 
 /**
