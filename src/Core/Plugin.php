@@ -161,6 +161,10 @@ class Plugin {
 				$config['namespace'],
 				$config['path'] . 'src' . DS
 			);
+			static::$_loader->addNamespace(
+				$config['namespace'] . '\Test',
+				$config['path'] . 'tests' . DS
+			);
 		}
 	}
 

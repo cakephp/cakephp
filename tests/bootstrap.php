@@ -57,6 +57,7 @@ $loader->register();
 
 $loader->addNamespace('TestApp', APP);
 $loader->addNamespace('TestPlugin', TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src');
+$loader->addNamespace('TestPlugin\Test', TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'tests');
 $loader->addNamespace('TestPluginTwo', TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'src');
 $loader->addNamespace('PluginJs', TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'src');
 
