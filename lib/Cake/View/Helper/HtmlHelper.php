@@ -112,11 +112,11 @@ class HtmlHelper extends AppHelper {
 	protected $_crumbs = array();
 
 /**
- * Names of script files that have been included once
+ * Names of script & css files that have been included once
  *
  * @var array
  */
-	protected $_includedScripts = array();
+	protected $_includedAssets = array();
 
 /**
  * Options for the currently opened script block buffer if any.
@@ -397,6 +397,9 @@ class HtmlHelper extends AppHelper {
  *
  * - `inline` If set to false, the generated tag will be appended to the 'css' block,
  *   and included in the `$scripts_for_layout` layout variable. Defaults to true.
+ * - `once` Whether or not the css file should be checked for uniqueness. If true css
+ *   files  will only be included once, use false to allow the same
+ *   css to be included more than once per request.
  * - `block` Set the name of the block link/style tag will be appended to.
  *   This overrides the `inline` option.
  * - `plugin` False value will prevent parsing path as a plugin
@@ -423,7 +426,12 @@ class HtmlHelper extends AppHelper {
 			unset($rel);
 		}
 
-		$options += array('block' => null, 'inline' => true, 'rel' => 'stylesheet');
+		$options += array(
+			'block' => null,
+			'inline' => true,
+			'once' => false,
+			'rel' => 'stylesheet'
+		);
 		if (!$options['inline'] && empty($options['block'])) {
 			$options['block'] = __FUNCTION__;
 		}
@@ -439,6 +447,12 @@ class HtmlHelper extends AppHelper {
 			}
 			return;
 		}
+
+		if ($options['once'] && isset($this->_includedAssets[$path])) {
+			return '';
+		}
+		unset($options['once']);
+		$this->_includedAssets[$path] = true;
 
 		if (strpos($path, '//') !== false) {
 			$url = $path;
@@ -538,10 +552,10 @@ class HtmlHelper extends AppHelper {
 			}
 			return null;
 		}
-		if ($options['once'] && isset($this->_includedScripts[$url])) {
+		if ($options['once'] && isset($this->_includedAssets[$url])) {
 			return null;
 		}
-		$this->_includedScripts[$url] = true;
+		$this->_includedAssets[$url] = true;
 
 		if (strpos($url, '//') === false) {
 			$url = $this->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js'));
