@@ -407,9 +407,9 @@ class PhpAro {
 /**
  * Constructor
  *
- * @param array $aro
- * @param array $map
- * @param array $aliases
+ * @param array $aro The aro data
+ * @param array $map The identifier mappings
+ * @param array $aliases The aliases to map.
  */
 	public function __construct(array $aro = array(), array $map = array(), array $aliases = array()) {
 		if (!empty($map)) {
