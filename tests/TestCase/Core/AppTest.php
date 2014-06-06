@@ -261,15 +261,15 @@ class AppTest extends TestCase {
 		Plugin::load(['TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree']);
 
 		$path = App::pluginPath('TestPlugin');
-		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS;
 		$this->assertPathEquals($expected, $path);
 
 		$path = App::pluginPath('TestPluginTwo');
-		$expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS;
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'src' . DS;
 		$this->assertPathEquals($expected, $path);
 
 		$path = App::pluginPath('Company/TestPluginThree');
-		$expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS;
+		$expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS;
 		$this->assertPathEquals($expected, $path);
 	}
 

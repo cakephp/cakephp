@@ -220,7 +220,7 @@ class IniConfig implements ConfigEngineInterface {
 		}
 
 		if ($plugin) {
-			$file = App::pluginPath($plugin) . 'src' . DS . 'Config' . DS . $key;
+			$file = App::pluginPath($plugin) . 'Config' . DS . $key;
 		} else {
 			$file = $this->_path . $key;
 		}

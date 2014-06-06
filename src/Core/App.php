@@ -140,7 +140,7 @@ class App {
 			return (array)Configure::read('App.paths.templates');
 		}
 		if (!empty($plugin)) {
-			return [static::pluginPath($plugin) . 'src' . DS . $type . DS];
+			return [static::pluginPath($plugin) . $type . DS];
 		}
 		return [APP . $type . DS];
 	}
@@ -159,7 +159,7 @@ class App {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::pluginPath
  */
 	public static function pluginPath($plugin) {
-		return Plugin::path($plugin);
+		return Plugin::path($plugin) . 'src' . DS;
 	}
 
 /**
