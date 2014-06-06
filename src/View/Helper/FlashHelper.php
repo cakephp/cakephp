@@ -39,14 +39,14 @@ class FlashHelper extends Helper {
 /**
  * Used to render the message set in FlashCompnet::set()
  *
- * In your view: $this->Flash->out('somekey');
+ * In your view: $this->Flash->render('somekey');
  * Will default to flash if no param is passed
  *
  * You can pass additional information into the flash message generation. This allows you
  * to consolidate all the parameters for a given type of flash message into the view.
  *
  * {{{
- * echo $this->Flash->out('flash', ['class' => 'new-flash']);
+ * echo $this->Flash->render('flash', ['class' => 'new-flash']);
  * }}}
  *
  * The above would generate a flash message with a custom class name. Using $attrs['params'] you
@@ -54,7 +54,7 @@ class FlashHelper extends Helper {
  * when the element is rendered:
  *
  * {{{
- * echo $this->Flash->out('flash', ['params' => ['name' => $user['User']['name']]]);
+ * echo $this->Flash->render('flash', ['params' => ['name' => $user['User']['name']]]);
  * }}}
  *
  * This would pass the current user's name into the flash message, so you could create personalized
@@ -64,14 +64,14 @@ class FlashHelper extends Helper {
  * custom elements allows you to fully customize how flash messages are generated.
  *
  * {{{
- * echo $this->Flash->out('flash', [element' => 'my_custom_element']);
+ * echo $this->Flash->render('flash', [element' => 'my_custom_element']);
  * }}}
  *
  * If you want to use an element from a plugin for rendering your flash message
  * you can use the dot notation for the plugin's element name:
  *
  * {{{
- * echo $this->Flash->out('flash', [
+ * echo $this->Flash->render('flash', [
  *   'element' => 'MyPlugin.my_custom_element',
  * ]);
  * }}}
@@ -81,7 +81,7 @@ class FlashHelper extends Helper {
  *    Supports the 'params', and 'element' keys that are used in the helper.
  * @return string
  */
-	public function out($key = 'flash', $attrs = []) {
+	public function render($key = 'flash', $attrs = []) {
 		$flash = $this->request->session()->read("Message.$key");
 		$this->request->session()->delete("Message.$key");
 

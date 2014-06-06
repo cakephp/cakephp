@@ -89,15 +89,15 @@ class FlashHelperTest extends TestCase {
  * @return void
  */
 	public function testFlash() {
-		$result = $this->Flash->out();
+		$result = $this->Flash->render();
 		$expected = '<div id="flash-message" class="message-info">This is a calling</div>';
 		$this->assertEquals($expected, $result);
 
 		$expected = '<div id="classy-message" class="message-positive">Recorded</div>';
-		$result = $this->Flash->out('classy');
+		$result = $this->Flash->render('classy');
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Flash->out('notification');
+		$result = $this->Flash->render('notification');
 		$result = str_replace("\r\n", "\n", $result);
 		$expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a test of the emergency broadcasting system</p>\n</div>";
 		$this->assertEquals($expected, $result);
@@ -109,7 +109,7 @@ class FlashHelperTest extends TestCase {
  * @return void
  */
 	public function testFlashAttributes() {
-		$result = $this->Flash->out('flash', array('class' => 'crazy'));
+		$result = $this->Flash->render('flash', array('class' => 'crazy'));
 		$expected = '<div id="flash-message" class="message-crazy">This is a calling</div>';
 		$this->assertEquals($expected, $result);
 	}
@@ -120,7 +120,7 @@ class FlashHelperTest extends TestCase {
  * @return void
  */
 	public function testFlashElementInAttrs() {
-		$result = $this->Flash->out('notification', array(
+		$result = $this->Flash->render('notification', array(
 			'element' => 'flash_helper',
 			'params' => array('title' => 'Notice!', 'name' => 'Alert!')
 		));
@@ -136,7 +136,7 @@ class FlashHelperTest extends TestCase {
 	public function testFlashWithPluginElement() {
 		Plugin::load('TestPlugin');
 
-		$result = $this->Flash->out('flash', array('element' => 'TestPlugin.plugin_element'));
+		$result = $this->Flash->render('flash', array('element' => 'TestPlugin.plugin_element'));
 		$expected = 'this is the plugin element using params[plugin]';
 		$this->assertEquals($expected, $result);
 	}
