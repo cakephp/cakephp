@@ -227,7 +227,7 @@ class AuthComponent extends Component {
  *
  * @var Cake\Auth\BaseAuthenticate
  */
-	protected $_authenticateProvider;
+	protected $_authenticationProvider;
 
 /**
  * The instance of the Authorize provider that was used to grant
@@ -740,7 +740,7 @@ class AuthComponent extends Component {
 		foreach ($this->_authenticateObjects as $auth) {
 			$result = $auth->authenticate($request, $response);
 			if (!empty($result) && is_array($result)) {
-				$this->_authenticateProvider = $auth;
+				$this->_authenticationProvider = $auth;
 				return $result;
 			}
 		}
@@ -809,8 +809,8 @@ class AuthComponent extends Component {
  *
  * @return \Cake\Auth\BaseAuthenticate|null
  */
-	public function loginProvider() {
-		return $this->_authenticateProvider;
+	public function authenticationProvider() {
+		return $this->_authenticationProvider;
 	}
 
 /**

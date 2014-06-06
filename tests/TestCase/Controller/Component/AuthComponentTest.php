@@ -175,7 +175,7 @@ class AuthComponentTest extends TestCase {
 
 		$this->assertTrue((bool)$this->Auth->user());
 		$this->assertEquals($user, $this->Auth->user());
-		$this->assertSame($AuthLoginFormAuthenticate, $this->Auth->loginProvider());
+		$this->assertSame($AuthLoginFormAuthenticate, $this->Auth->authenticationProvider());
 	}
 
 /**
