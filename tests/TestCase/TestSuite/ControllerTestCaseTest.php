@@ -26,36 +26,6 @@ use Cake\TestSuite\Reporter\HtmlReporter;
 use Cake\TestSuite\TestCase;
 
 /**
- * AppController class
- *
- */
-class AppController extends Controller {
-
-/**
- * helpers property
- *
- * @var array
- */
-	public $helpers = array('Html');
-
-/**
- * components property
- *
- * @var array
- */
-	public $components = array('Cookie');
-}
-
-
-/**
- * ControllerTestCaseTest controller
- *
- */
-class ControllerTestCaseTestController extends AppController {
-
-}
-
-/**
  * ControllerTestCaseTest
  *
  */
