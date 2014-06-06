@@ -474,7 +474,9 @@ class ConsoleOptionParser {
 		$params = $args = [];
 		$this->_tokens = $argv;
 		while (($token = array_shift($this->_tokens)) !== null) {
-			if (substr($token, 0, 2) === '--') {
+			if (isset($this->_subcommands[$token])) {
+				continue;
+			} elseif (substr($token, 0, 2) === '--') {
 				$params = $this->_parseLongOption($token, $params);
 			} elseif (substr($token, 0, 1) === '-') {
 				$params = $this->_parseShortOption($token, $params);
