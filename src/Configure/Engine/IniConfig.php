@@ -183,7 +183,7 @@ class IniConfig implements ConfigEngineInterface {
 /**
  * Converts a value into the ini equivalent
  *
- * @param mixed $val Value to export.
+ * @param mixed $value Value to export.
  * @return string String value for ini file.
  */
 	protected function _value($value) {
@@ -220,7 +220,7 @@ class IniConfig implements ConfigEngineInterface {
 		}
 
 		if ($plugin) {
-			$file = App::pluginPath($plugin) . 'Config' . DS . $key;
+			$file = App::pluginPath($plugin) . 'src' . DS . 'Config' . DS . $key;
 		} else {
 			$file = $this->_path . $key;
 		}
