@@ -199,6 +199,24 @@ class ControllerTestCaseTest extends TestCase {
 	}
 
 /**
+ * Test testAction() with prefix routes.
+ *
+ * @return void
+ */
+	public function testActionWithPrefix() {
+		Configure::write('Routing.prefixes', ['admin']);
+		Plugin::load('TestPlugin');
+
+		$result = $this->Case->testAction('/admin/posts/index', ['return' => 'view']);
+		$expected = '<h1>Admin Post Index</h1>';
+		$this->assertContains($expected, $result);
+
+		$result = $this->Case->testAction('/admin/test_plugin/comments/index', ['return' => 'view']);
+		$expected = '<h1>TestPlugin Admin Comments</h1>';
+		$this->assertContains($expected, $result);
+	}
+
+/**
  * Make sure testAction() can hit plugin controllers.
  *
  * @return void

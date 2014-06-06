@@ -283,9 +283,16 @@ abstract class ControllerTestCase extends TestCase {
 		if ($this->_dirtyController) {
 			$this->controller = null;
 		}
-		$plugin = empty($request->params['plugin']) ? '' : Inflector::camelize($request->params['plugin']) . '.';
 		if ($this->controller === null && $this->autoMock) {
-			$this->generate($plugin . Inflector::camelize($request->params['controller']));
+			$plugin = '';
+			if (!empty($request->params['plugin'])) {
+				$plugin = Inflector::camelize($request->params['plugin']) . '.';
+			}
+			$controllerName = Inflector::camelize($request->params['controller']);
+			if (!empty($request->params['prefix'])) {
+				$controllerName = Inflector::camelize($request->params['prefix']) . '/' . $controllerName;
+			}
+			$this->generate($plugin . $controllerName, [], $request);
 		}
 		$params = array();
 		if ($options['return'] === 'result') {
@@ -313,9 +320,7 @@ abstract class ControllerTestCase extends TestCase {
 	}
 
 /**
- * Generates a mocked controller and mocks any classes passed to `$mocks`. By
- * default, `stop()` is stubbed as is sending the response headers, so to not
- * interfere with testing.
+ * Generates a mocked controller and mocks any classes passed to `$mocks`.
  *
  * ### Mocks:
  *
@@ -329,11 +334,13 @@ abstract class ControllerTestCase extends TestCase {
  *
  * @param string $controller Controller name
  * @param array $mocks List of classes and methods to mock
+ * @param \Cake\Network\Request $request A request object to build the controller with.
+ *   This parameter is required when mocking prefixed controllers.
  * @return \Cake\Controller\Controller Mocked controller
  * @throws \Cake\Controller\Error\MissingControllerException When controllers could not be created.
  * @throws \Cake\Controller\Error\MissingComponentException When components could not be created.
  */
-	public function generate($controller, array $mocks = array()) {
+	public function generate($controller, array $mocks = array(), $request = null) {
 		$className = App::className($controller, 'Controller', 'Controller');
 		if (!$className) {
 			list($plugin, $controller) = pluginSplit($controller);
@@ -343,15 +350,15 @@ abstract class ControllerTestCase extends TestCase {
 			));
 		}
 
-		$mocks = array_merge(array(
+		$mocks += [
 			'methods' => null,
-			'models' => array(),
-			'components' => array()
-		), $mocks);
+			'models' => [],
+			'components' => []
+		];
 		list(, $controllerName) = namespaceSplit($className);
 		$name = substr($controllerName, 0, -10);
 
-		$request = $this->getMock('Cake\Network\Request');
+		$request = $request ?: $this->getMock('Cake\Network\Request');
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', 'stop'));
 		$controller = $this->getMock(
 			$className,
