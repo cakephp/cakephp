@@ -212,7 +212,7 @@ class Mysql extends DboSource {
 /**
  * Returns an array of sources (tables) in the database.
  *
- * @param mixed $data
+ * @param mixed $data List of tables.
  * @return array Array of table names in the database
  */
 	public function listSources($data = null) {
@@ -240,7 +240,7 @@ class Mysql extends DboSource {
 /**
  * Builds a map of the columns contained in a result
  *
- * @param PDOStatement $results
+ * @param PDOStatement $results The results to format.
  * @return void
  */
 	public function resultSet($results) {
@@ -374,10 +374,10 @@ class Mysql extends DboSource {
 /**
  * Generates and executes an SQL UPDATE statement for given model, fields, and values.
  *
- * @param Model $model
- * @param array $fields
- * @param array $values
- * @param mixed $conditions
+ * @param Model $model The model to update.
+ * @param array $fields The fields to update.
+ * @param array $values The values to set.
+ * @param mixed $conditions The conditions to use.
  * @return array
  */
 	public function update(Model $model, $fields = array(), $values = null, $conditions = null) {
@@ -418,8 +418,8 @@ class Mysql extends DboSource {
 /**
  * Generates and executes an SQL DELETE statement for given id/conditions on given model.
  *
- * @param Model $model
- * @param mixed $conditions
+ * @param Model $model The model to delete from.
+ * @param mixed $conditions The conditions to use.
  * @return boolean Success
  */
 	public function delete(Model $model, $conditions = null) {
@@ -516,7 +516,7 @@ class Mysql extends DboSource {
  * Generate a MySQL Alter Table syntax for the given Schema comparison
  *
  * @param array $compare Result of a CakeSchema::compare()
- * @param string $table
+ * @param string $table The table name.
  * @return array Array of alter statements to make.
  */
 	public function alterSchema($compare, $table = null) {
