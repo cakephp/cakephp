@@ -320,4 +320,19 @@ class EventManager {
 		}
 		return $this->_listeners[$eventKey];
 	}
+
+/**
+ * Debug friendly object properties.
+ *
+ * @return array
+ */
+	public function __debugInfo() {
+		$properties = get_object_vars($this);
+		$properties['_generalManager'] = '(object) EventManager';
+		$properties['_listeners'] = [];
+		foreach ($this->_listeners as $key => $listeners) {
+			$properties['_listeners'][$key] = count($listeners) . ' listener(s)';
+		}
+		return $properties;
+	}
 }
