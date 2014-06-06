@@ -127,7 +127,7 @@ HTML;
 /**
  * Guess the class name the test was for based on the test case filename.
  *
- * @param ReflectionClass $testReflection.
+ * @param ReflectionClass $testReflection The class to reflect
  * @return string Possible test subject name.
  */
 	protected function _guessSubjectName($testReflection) {
@@ -143,10 +143,10 @@ HTML;
 /**
  * Renders the HTML for a single line in the HTML diff.
  *
- * @param string $line
- * @param integer $linenumber
- * @param string $class
- * @param array $coveringTests
+ * @param string $line The line content.
+ * @param integer $linenumber The line number
+ * @param string $class The classname to use.
+ * @param array $coveringTests The tests covering the line.
  * @return string
  */
 	protected function _paintLine($line, $linenumber, $class, $coveringTests) {
@@ -195,8 +195,8 @@ HTML;
 /**
  * Generate an HTML snippet for coverage headers
  *
- * @param string $filename
- * @param string $percent
+ * @param string $filename The file name being covered
+ * @param string $percent The percentage covered
  * @return string
  */
 	public function coverageHeader($filename, $percent) {

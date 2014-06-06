@@ -373,7 +373,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  *
  * @param string $string An HTML/XHTML/XML string
  * @param array $expected An array, see above
- * @param string $message SimpleTest failure output string
+ * @param string $fullDebug Whether or not more verbose output should be used.
  * @return boolean
  */
 	public function assertTags($string, $expected, $fullDebug = false) {
