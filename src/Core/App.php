@@ -147,23 +147,6 @@ class App {
 	}
 
 /**
- * Gets the path that a plugin is on. Searches through the defined plugin paths.
- *
- * Usage:
- *
- * `App::pluginPath('MyPlugin');`
- *
- * Will return the full path to 'MyPlugin' plugin
- *
- * @param string $plugin Name of the plugin in CamelCase format.
- * @return string full path to the plugin.
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::pluginPath
- */
-	public static function pluginPath($plugin) {
-		return Plugin::path($plugin);
-	}
-
-/**
  * Returns the full path to a package inside the CakePHP core
  *
  * Usage:
