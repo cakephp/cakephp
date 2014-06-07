@@ -218,6 +218,20 @@ class Plugin {
 	}
 
 /**
+ * Returns the filesystem path for plugin's folder containing class folders.
+ *
+ * @param string $plugin name of the plugin in CamelCase format.
+ * @return string Path to the plugin folder container class folders.
+ * @throws \Cake\Core\Error\MissingPluginException If plugin has not been loaded.
+ */
+	public static function classPath($plugin) {
+		if (empty(static::$_plugins[$plugin])) {
+			throw new Error\MissingPluginException(['plugin' => $plugin]);
+		}
+		return static::$_plugins[$plugin]['path'] . 'src' . DS;
+	}
+
+/**
  * Return the namespace for a plugin
  *
  * If a plugin is unknown, the plugin name will be used as the namespace.

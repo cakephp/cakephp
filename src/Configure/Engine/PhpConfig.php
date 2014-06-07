@@ -1,7 +1,5 @@
 <?php
 /**
- * PhpConfig file
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -51,8 +49,8 @@ class PhpConfig implements ConfigEngineInterface {
 /**
  * Read a config file and return its contents.
  *
- * Files with `.` in the name will be treated as values in plugins. Instead of reading from
- * the initialized path, plugin keys will be located using App::pluginPath().
+ * Files with `.` in the name will be treated as values in plugins. Instead of
+ * reading from the initialized path, plugin keys will be located using App::path().
  *
  * @param string $key The identifier to read from. If the key has a . it will be treated
  *  as a plugin prefix.
@@ -108,7 +106,7 @@ class PhpConfig implements ConfigEngineInterface {
 		$key .= '.php';
 
 		if ($plugin) {
-			$file = App::pluginPath($plugin) . 'Config' . DS . $key;
+			$file = App::path('Config', $plugin)[0] . $key;
 		} else {
 			$file = $this->_path . $key;
 		}

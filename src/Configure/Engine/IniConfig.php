@@ -1,7 +1,5 @@
 <?php
 /**
- * IniConfig
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -220,7 +218,7 @@ class IniConfig implements ConfigEngineInterface {
 		}
 
 		if ($plugin) {
-			$file = App::pluginPath($plugin) . 'Config' . DS . $key;
+			$file = App::path('Config', $plugin)[0] . $key;
 		} else {
 			$file = $this->_path . $key;
 		}

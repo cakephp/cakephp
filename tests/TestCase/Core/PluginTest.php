@@ -248,6 +248,33 @@ class PluginTest extends TestCase {
 	}
 
 /**
+ * Tests that Plugin::classPath() returns the correct path for the loaded plugins
+ *
+ * @return void
+ */
+	public function testClassPath() {
+		Plugin::load(array('TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree'));
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS;
+		$this->assertPathEquals(Plugin::classPath('TestPlugin'), $expected);
+
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'src' . DS;
+		$this->assertPathEquals(Plugin::classPath('TestPluginTwo'), $expected);
+
+		$expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS;
+		$this->assertPathEquals(Plugin::classPath('Company/TestPluginThree'), $expected);
+	}
+
+/**
+ * Tests that Plugin::classPath() throws an exception on unknown plugin
+ *
+ * @return void
+ * @expectedException \Cake\Core\Error\MissingPluginException
+ */
+	public function testClassPathNotFound() {
+		Plugin::classPath('TestPlugin');
+	}
+
+/**
  * Tests that Plugin::loadAll() will load all plgins in the configured folder
  *
  * @return void
