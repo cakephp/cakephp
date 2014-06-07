@@ -19,7 +19,10 @@ use Cake\View\Helper;
 use Cake\View\View;
 
 /**
- * FlashHelper
+ * FlashHelper class to render flash messages.
+ *
+ * After setting messsages in your controllers with FlashComponent, you can use
+ * this class to output your flash messages in your views.
  */
 class FlashHelper extends Helper {
 
@@ -37,7 +40,7 @@ class FlashHelper extends Helper {
 	];
 
 /**
- * Used to render the message set in FlashCompnet::set()
+ * Used to render the message set in FlashComponent::set()
  *
  * In your view: $this->Flash->render('somekey');
  * Will default to flash if no param is passed
