@@ -22,7 +22,7 @@ $noLogs = !isset($sqlLogs);
 if ($noLogs):
 	$sources = ConnectionManager::sourceList();
 
-	$sqlLogs = array();
+	$sqlLogs = [];
 	foreach ($sources as $source):
 		$db = ConnectionManager::getDataSource($source);
 		if (!method_exists($db, 'getLog')):

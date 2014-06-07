@@ -34,13 +34,13 @@ class Request implements \ArrayAccess {
  *
  * @var array
  */
-	public $params = array(
+	public $params = [
 		'plugin' => null,
 		'controller' => null,
 		'action' => null,
 		'_ext' => null,
 		'pass' => []
-	);
+	];
 
 /**
  * Array of POST data. Will contain form data as well as uploaded files.
@@ -117,19 +117,19 @@ class Request implements \ArrayAccess {
  *
  * @var array
  */
-	protected static $_detectors = array(
-		'get' => array('env' => 'REQUEST_METHOD', 'value' => 'GET'),
-		'post' => array('env' => 'REQUEST_METHOD', 'value' => 'POST'),
-		'put' => array('env' => 'REQUEST_METHOD', 'value' => 'PUT'),
-		'patch' => array('env' => 'REQUEST_METHOD', 'value' => 'PATCH'),
-		'delete' => array('env' => 'REQUEST_METHOD', 'value' => 'DELETE'),
-		'head' => array('env' => 'REQUEST_METHOD', 'value' => 'HEAD'),
-		'options' => array('env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'),
-		'ssl' => array('env' => 'HTTPS', 'value' => 1),
-		'ajax' => array('env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'),
-		'flash' => array('env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'),
-		'requested' => array('param' => 'requested', 'value' => 1)
-	);
+	protected static $_detectors = [
+		'get' => ['env' => 'REQUEST_METHOD', 'value' => 'GET'],
+		'post' => ['env' => 'REQUEST_METHOD', 'value' => 'POST'],
+		'put' => ['env' => 'REQUEST_METHOD', 'value' => 'PUT'],
+		'patch' => ['env' => 'REQUEST_METHOD', 'value' => 'PATCH'],
+		'delete' => ['env' => 'REQUEST_METHOD', 'value' => 'DELETE'],
+		'head' => ['env' => 'REQUEST_METHOD', 'value' => 'HEAD'],
+		'options' => ['env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'],
+		'ssl' => ['env' => 'HTTPS', 'value' => 1],
+		'ajax' => ['env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'],
+		'flash' => ['env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'],
+		'requested' => ['param' => 'requested', 'value' => 1],
+	];
 
 /**
  * Copy of php://input. Since this stream can only be read once in most SAPI's
@@ -156,7 +156,7 @@ class Request implements \ArrayAccess {
  */
 	public static function createFromGlobals() {
 		list($base, $webroot) = static::_base();
-		$config = array(
+		$config = [
 			'query' => $_GET,
 			'post' => $_POST,
 			'files' => $_FILES,
@@ -165,7 +165,7 @@ class Request implements \ArrayAccess {
 			'base' => $base,
 			'webroot' => $webroot,
 			'session' => Session::create(Configure::read('Session'))
-		);
+		];
 		$config['url'] = static::_url($config);
 		return new static($config);
 	}
@@ -191,22 +191,22 @@ class Request implements \ArrayAccess {
  *
  * @param string|array $config An array of request data to create a request with.
  */
-	public function __construct($config = array()) {
+	public function __construct($config = []) {
 		if (is_string($config)) {
-			$config = array('url' => $config);
+			$config = ['url' => $config];
 		}
-		$config += array(
+		$config += [
 			'params' => $this->params,
-			'query' => array(),
-			'post' => array(),
-			'files' => array(),
-			'cookies' => array(),
-			'environment' => array(),
+			'query' => [],
+			'post' => [],
+			'files' => [],
+			'cookies' => [],
+			'environment' => [],
 			'url' => '',
 			'base' => '',
 			'webroot' => '',
 			'input' => null,
-		);
+		];
 
 		if (empty($config['session'])) {
 			$config['session'] = new Session();
@@ -252,7 +252,7 @@ class Request implements \ArrayAccess {
  */
 	protected function _processPost($data) {
 		if (
-			in_array($this->env('REQUEST_METHOD'), array('PUT', 'DELETE', 'PATCH')) &&
+			in_array($this->env('REQUEST_METHOD'), ['PUT', 'DELETE', 'PATCH']) &&
 			strpos($this->env('CONTENT_TYPE'), 'application/x-www-form-urlencoded') === 0
 		) {
 			$data = $this->input();
@@ -352,7 +352,7 @@ class Request implements \ArrayAccess {
 		extract($config);
 
 		if ($base !== false && $base !== null) {
-			return array($base, $base . '/');
+			return [$base, $base . '/'];
 		}
 
 		if (!$baseUrl) {
@@ -370,7 +370,7 @@ class Request implements \ArrayAccess {
 				$base = '';
 			}
 			$base = implode('/', array_map('rawurlencode', explode('/', $base)));
-			return array($base, $base . '/');
+			return [$base, $base . '/'];
 		}
 
 		$file = '/' . basename($baseUrl);
@@ -389,7 +389,7 @@ class Request implements \ArrayAccess {
 				$webrootDir .= $webroot . '/';
 			}
 		}
-		return array($base . $file, $webrootDir);
+		return [$base . $file, $webrootDir];
 	}
 
 /**
@@ -563,7 +563,7 @@ class Request implements \ArrayAccess {
  */
 	public function is($type) {
 		if (is_array($type)) {
-			$result = array_map(array($this, 'is'), $type);
+			$result = array_map([$this, 'is'], $type);
 			return count(array_filter($result)) > 0;
 		}
 		$type = strtolower($type);
@@ -614,7 +614,7 @@ class Request implements \ArrayAccess {
  * @see Request::is()
  */
 	public function isAll(array $types) {
-		$result = array_filter(array_map(array($this, 'is'), $types));
+		$result = array_filter(array_map([$this, 'is'], $types));
 		return count($result) === count($types);
 	}
 
@@ -628,39 +628,39 @@ class Request implements \ArrayAccess {
  * The callback will receive the request object as its only parameter.
  *
  * e.g `addDetector('custom', function($request) { //Return a boolean });`
- * e.g `addDetector('custom', array('SomeClass', 'somemethod'));`
+ * e.g `addDetector('custom', ['SomeClass', 'somemethod']);`
  *
  * ### Environment value comparison
  *
  * An environment value comparison, compares a value fetched from `env()` to a known value
  * the environment value is equality checked against the provided value.
  *
- * e.g `addDetector('post', array('env' => 'REQUEST_METHOD', 'value' => 'POST'))`
+ * e.g `addDetector('post', ['env' => 'REQUEST_METHOD', 'value' => 'POST'])`
  *
  * ### Pattern value comparison
  *
  * Pattern value comparison allows you to compare a value fetched from `env()` to a regular expression.
  *
- * e.g `addDetector('iphone', array('env' => 'HTTP_USER_AGENT', 'pattern' => '/iPhone/i'));`
+ * e.g `addDetector('iphone', ['env' => 'HTTP_USER_AGENT', 'pattern' => '/iPhone/i']);`
  *
  * ### Option based comparison
  *
  * Option based comparisons use a list of options to create a regular expression. Subsequent calls
  * to add an already defined options detector will merge the options.
  *
- * e.g `addDetector('mobile', array('env' => 'HTTP_USER_AGENT', 'options' => array('Fennec')));`
+ * e.g `addDetector('mobile', ['env' => 'HTTP_USER_AGENT', 'options' => ['Fennec']]);`
  *
  * ### Request parameter detectors
  *
  * Allows for custom detectors on the request parameters.
  *
- * e.g `addDetector('requested', array('param' => 'requested', 'value' => 1)`
+ * e.g `addDetector('requested', ['param' => 'requested', 'value' => 1])`
  *
  * You can also make parameter detectors that accept multiple values
  * using the `options` key. This is useful when you want to check
  * if a request parameter is in a list of options.
  *
- * `addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'csv'))`
+ * `addDetector('extension', ['param' => 'ext', 'options' => ['pdf', 'csv']])`
  *
  * @param string $name The name of the detector.
  * @param callable|array $callable A callable or options array for the detector definition.
@@ -698,7 +698,7 @@ class Request implements \ArrayAccess {
  * @return \Cake\Network\Request the current object, you can chain this method.
  */
 	public function addPaths(array $paths) {
-		foreach (array('webroot', 'here', 'base') as $element) {
+		foreach (['webroot', 'here', 'base'] as $element) {
 			if (isset($paths[$element])) {
 				$this->{$element} = $paths[$element];
 			}
@@ -835,7 +835,7 @@ class Request implements \ArrayAccess {
  */
 	public function accepts($type = null) {
 		$raw = $this->parseAccept();
-		$accept = array();
+		$accept = [];
 		foreach ($raw as $types) {
 			$accept = array_merge($accept, $types);
 		}
@@ -852,7 +852,7 @@ class Request implements \ArrayAccess {
  * Generally you want to use Cake\Network\Request::accept() to get a simple list
  * of the accepted content types.
  *
- * @return array An array of prefValue => array(content/types)
+ * @return array An array of prefValue => [content/types]
  */
 	public function parseAccept() {
 		return $this->_parseAcceptWithQualifier($this->header('accept'));
@@ -874,7 +874,7 @@ class Request implements \ArrayAccess {
  */
 	public function acceptLanguage($language = null) {
 		$raw = $this->_parseAcceptWithQualifier($this->header('Accept-Language'));
-		$accept = array();
+		$accept = [];
 		foreach ($raw as $languages) {
 			foreach ($languages as &$lang) {
 				if (strpos($lang, '_')) {
@@ -900,7 +900,7 @@ class Request implements \ArrayAccess {
  * @return array
  */
 	protected function _parseAcceptWithQualifier($header) {
-		$accept = array();
+		$accept = [];
 		$header = explode(',', $header);
 		foreach (array_filter($header) as $value) {
 			$prefValue = '1.0';
@@ -919,7 +919,7 @@ class Request implements \ArrayAccess {
 			}
 
 			if (!isset($accept[$prefValue])) {
-				$accept[$prefValue] = array();
+				$accept[$prefValue] = [];
 			}
 			if ($prefValue) {
 				$accept[$prefValue][] = $value;
@@ -1001,7 +1001,7 @@ class Request implements \ArrayAccess {
  *
  * Getting input using a decoding function, and additional params:
  *
- * `$this->request->input('Xml::build', array('return' => 'DOMDocument'));`
+ * `$this->request->input('Xml::build', ['return' => 'DOMDocument']);`
  *
  * Any additional parameters are applied to the callback in the order they are given.
  *

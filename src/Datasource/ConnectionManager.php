@@ -156,7 +156,7 @@ class ConnectionManager {
  * @return DataSource A reference to the DataSource object, or null if creation failed
  * @deprecated Will be removed in 3.0 stable
  */
-	public static function create($name = '', array $config = array()) {
+	public static function create($name = '', array $config = []) {
 		static::config($name, $config);
 		return static::get($name);
 	}

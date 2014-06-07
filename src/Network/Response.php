@@ -329,7 +329,7 @@ class Response {
  *
  * @var array
  */
-	protected $_headers = array();
+	protected $_headers = [];
 
 /**
  * Buffer string for response message
@@ -365,14 +365,14 @@ class Response {
  *
  * @var string
  */
-	protected $_cacheDirectives = array();
+	protected $_cacheDirectives = [];
 
 /**
  * Holds cookies to be sent to the client
  *
  * @var array
  */
-	protected $_cookies = array();
+	protected $_cookies = [];
 
 /**
  * Constructor
@@ -384,7 +384,7 @@ class Response {
  *	- type: a complete mime-type string or an extension mapped in this class
  *	- charset: the charset for the response body
  */
-	public function __construct(array $options = array()) {
+	public function __construct(array $options = []) {
 		if (isset($options['body'])) {
 			$this->body($options['body']);
 		}
@@ -1267,7 +1267,7 @@ class Response {
  * @param string|array $allowedHeaders List of HTTP headers allowed
  * @return void
  */
-	public function cors(Request $request, $allowedDomains, $allowedMethods = array(), $allowedHeaders = array()) {
+	public function cors(Request $request, $allowedDomains, $allowedMethods = [], $allowedHeaders = []) {
 		$origin = $request->header('Origin');
 		if (!$origin) {
 			return;
@@ -1293,7 +1293,7 @@ class Response {
  * @return array
  */
 	protected function _normalizeCorsDomains($domains, $requestIsSSL = false) {
-		$result = array();
+		$result = [];
 		foreach ($domains as $domain) {
 			if ($domain === '*') {
 				$result[] = array('preg' => '@.@', 'original' => '*');
@@ -1327,7 +1327,7 @@ class Response {
  * @return void
  * @throws \Cake\Error\NotFoundException
  */
-	public function file($path, array $options = array()) {
+	public function file($path, array $options = []) {
 		$options += array(
 			'name' => null,
 			'download' => null

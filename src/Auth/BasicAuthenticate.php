@@ -32,11 +32,11 @@ use Cake\Network\Response;
  *
  * In your controller's components array, add auth + the required config
  * {{{
- *	public $components = array(
- *		'Auth' => array(
- *			'authenticate' => array('Basic')
- *		)
- *	);
+ *	public $components = [
+ *		'Auth' => [
+ *			'authenticate' => ['Basic']
+ *		]
+ *	];
  * }}}
  *
  * In your login function just call `$this->Auth->login()` without any checks for POST data. This
@@ -82,7 +82,7 @@ class BasicAuthenticate extends BaseAuthenticate {
  */
 	public function unauthenticated(Request $request, Response $response) {
 		$Exception = new Error\UnauthorizedException();
-		$Exception->responseHeader(array($this->loginHeaders($request)));
+		$Exception->responseHeader([$this->loginHeaders($request)]);
 		throw $Exception;
 	}
 

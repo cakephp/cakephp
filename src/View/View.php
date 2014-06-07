@@ -102,14 +102,14 @@ class View {
  *
  * @var array
  */
-	public $passedArgs = array();
+	public $passedArgs = [];
 
 /**
  * An array of names of built-in helpers to include.
  *
  * @var mixed
  */
-	public $helpers = array();
+	public $helpers = [];
 
 /**
  * The name of the views subfolder containing views for this View.
@@ -206,7 +206,7 @@ class View {
  *
  * @var array
  */
-	public $uuids = array();
+	public $uuids = [];
 
 /**
  * An instance of a Cake\Network\Request object that contains information about the current request.
@@ -241,7 +241,7 @@ class View {
  * @see View::_elementCache();
  * @see View::_renderElement
  */
-	public $elementCacheSettings = array();
+	public $elementCacheSettings = [];
 
 /**
  * List of variables to collect from the associated controller.
@@ -258,28 +258,28 @@ class View {
  *
  * @var array
  */
-	protected $_scripts = array();
+	protected $_scripts = [];
 
 /**
  * Holds an array of paths.
  *
  * @var array
  */
-	protected $_paths = array();
+	protected $_paths = [];
 
 /**
  * Holds an array of plugin paths.
  *
  * @var array
  */
-	protected $_pathsForPlugin = array();
+	protected $_pathsForPlugin = [];
 
 /**
  * The names of views and their parents used with View::extend();
  *
  * @var array
  */
-	protected $_parents = array();
+	protected $_parents = [];
 
 /**
  * The currently rendering view file. Used for resolving parent files.
@@ -301,7 +301,7 @@ class View {
  *
  * @var array
  */
-	protected $_stack = array();
+	protected $_stack = [];
 
 /**
  * Constant for view file type 'view'
@@ -378,7 +378,7 @@ class View {
  * - `ignoreMissing` - Used to allow missing elements. Set to true to not trigger notices.
  * @return string Rendered Element
  */
-	public function element($name, array $data = array(), array $options = array()) {
+	public function element($name, array $data = [], array $options = []) {
 		$file = $plugin = null;
 
 		if (!isset($options['callbacks'])) {
@@ -798,7 +798,7 @@ class View {
  * @return string Rendered output
  * @throws \Cake\Error\Exception when a block is left open.
  */
-	protected function _render($viewFile, $data = array()) {
+	protected function _render($viewFile, $data = []) {
 		if (empty($data)) {
 			$data = $this->viewVars;
 		}
@@ -1018,7 +1018,7 @@ class View {
 				return $this->_pathsForPlugin[$plugin];
 			}
 		}
-		$paths = array();
+		$paths = [];
 		$viewPaths = App::path('Template');
 		$corePaths = App::core('Template');
 

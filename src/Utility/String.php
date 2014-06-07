@@ -107,13 +107,13 @@ class String {
  */
 	public static function tokenize($data, $separator = ',', $leftBound = '(', $rightBound = ')') {
 		if (empty($data)) {
-			return array();
+			return [];
 		}
 
 		$depth = 0;
 		$offset = 0;
 		$buffer = '';
-		$results = array();
+		$results = [];
 		$length = strlen($data);
 		$open = false;
 
@@ -168,7 +168,7 @@ class String {
 			return array_map('trim', $results);
 		}
 
-		return array();
+		return [];
 	}
 
 /**
@@ -192,7 +192,7 @@ class String {
  * @param array $options An array of options, see description above
  * @return string
  */
-	public static function insert($str, $data, array $options = array()) {
+	public static function insert($str, $data, array $options = []) {
 		$defaults = array(
 			'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false
 		);
@@ -355,7 +355,7 @@ class String {
  */
 	public static function wordWrap($text, $width = 72, $break = "\n", $cut = false) {
 		if ($cut) {
-			$parts = array();
+			$parts = [];
 			while (mb_strlen($text) > 0) {
 				$part = mb_substr($text, 0, $width);
 				$parts[] = trim($part);
@@ -364,7 +364,7 @@ class String {
 			return implode($break, $parts);
 		}
 
-		$parts = array();
+		$parts = [];
 		while (mb_strlen($text) > 0) {
 			if ($width >= mb_strlen($text)) {
 				$parts[] = trim($text);
@@ -409,7 +409,7 @@ class String {
  * @return string The highlighted text
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
  */
-	public static function highlight($text, $phrase, array $options = array()) {
+	public static function highlight($text, $phrase, array $options = []) {
 		if (empty($phrase)) {
 			return $text;
 		}
@@ -423,8 +423,8 @@ class String {
 		extract($options);
 
 		if (is_array($phrase)) {
-			$replace = array();
-			$with = array();
+			$replace = [];
+			$with = [];
 
 			foreach ($phrase as $key => $segment) {
 				$segment = '(' . preg_quote($segment, '|') . ')';
@@ -474,7 +474,7 @@ class String {
  * @param array $options An array of options.
  * @return string Trimmed string.
  */
-	public static function tail($text, $length = 100, array $options = array()) {
+	public static function tail($text, $length = 100, array $options = []) {
 		$default = array(
 			'ellipsis' => '...', 'exact' => true
 		);
@@ -512,7 +512,7 @@ class String {
  * @return string Trimmed string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
  */
-	public static function truncate($text, $length = 100, array $options = array()) {
+	public static function truncate($text, $length = 100, array $options = []) {
 		$default = array(
 			'ellipsis' => '...', 'exact' => true, 'html' => false
 		);
@@ -527,7 +527,7 @@ class String {
 				return $text;
 			}
 			$totalLength = mb_strlen(strip_tags($ellipsis));
-			$openTags = array();
+			$openTags = [];
 			$truncate = '';
 
 			preg_match_all('/(<\/?([\w+]+)[^>]*>)?([^<>]*)/', $text, $tags, PREG_SET_ORDER);
@@ -702,9 +702,9 @@ class String {
  * @return array
  */
 	public static function utf8($string) {
-		$map = array();
+		$map = [];
 
-		$values = array();
+		$values = [];
 		$find = 1;
 		$length = strlen($string);
 
@@ -725,7 +725,7 @@ class String {
 					} else {
 						$map[] = (($values[0] % 32) * 64) + ($values[1] % 64);
 					}
-					$values = array();
+					$values = [];
 					$find = 1;
 				}
 			}

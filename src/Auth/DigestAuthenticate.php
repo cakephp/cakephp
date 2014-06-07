@@ -35,11 +35,11 @@ use Cake\Network\Response;
  *
  * In your controller's components array, add auth + the required config
  * {{{
- *	public $components = array(
- *		'Auth' => array(
- *			'authenticate' => array('Digest')
- *		)
- *	);
+ *	public $components = [
+ *		'Auth' => [
+ *			'authenticate' => ['Digest']
+ *		]
+ *	];
  * }}}
  *
  * In your login function just call `$this->Auth->login()` without any checks for POST data. This
@@ -64,7 +64,7 @@ class DigestAuthenticate extends BasicAuthenticate {
  * - `fields` The fields to use to identify a user by.
  * - `userModel` The model name of the User, defaults to Users.
  * - `scope` Additional conditions to use when looking up and authenticating users,
- *    i.e. `array('User.is_active' => 1).`
+ *    i.e. `['User.is_active' => 1]`
  * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
  * - `contain` Extra models to contain and store in session.
  * - `realm` The realm authentication is for, Defaults to the servername.
@@ -150,8 +150,8 @@ class DigestAuthenticate extends BasicAuthenticate {
 		if (substr($digest, 0, 7) === 'Digest ') {
 			$digest = substr($digest, 7);
 		}
-		$keys = $match = array();
-		$req = array('nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1);
+		$keys = $match = [];
+		$req = ['nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1];
 		preg_match_all('/(\w+)=([\'"]?)([a-zA-Z0-9@=.\/_-]+)\2/', $digest, $match, PREG_SET_ORDER);
 
 		foreach ($match as $i) {
@@ -202,14 +202,14 @@ class DigestAuthenticate extends BasicAuthenticate {
 	public function loginHeaders(Request $request) {
 		$realm = $this->_config['realm'] ?: $request->env('SERVER_NAME');
 
-		$options = array(
+		$options = [
 			'realm' => $realm,
 			'qop' => $this->_config['qop'],
 			'nonce' => $this->_config['nonce'] ?: uniqid(''),
 			'opaque' => $this->_config['opaque'] ?: md5($realm)
-		);
+		];
 
-		$opts = array();
+		$opts = [];
 		foreach ($options as $k => $v) {
 			$opts[] = sprintf('%s="%s"', $k, $v);
 		}

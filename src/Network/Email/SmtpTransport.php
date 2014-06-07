@@ -63,7 +63,7 @@ class SmtpTransport extends AbstractTransport {
  *
  * @var array
  */
-	protected $_lastResponse = array();
+	protected $_lastResponse = [];
 
 /**
  * Returns the response of the last sent SMTP command.
@@ -71,21 +71,21 @@ class SmtpTransport extends AbstractTransport {
  * A response consists of one or more lines containing a response
  * code and an optional response message text:
  * {{{
- * array(
- *     array(
+ * [
+ *     [
  *         'code' => '250',
  *         'message' => 'mail.example.com'
- *     ),
- *     array(
+ *     ],
+ *     [
  *         'code' => '250',
  *         'message' => 'PIPELINING'
- *     ),
- *     array(
+ *     ],
+ *     [
  *         'code' => '250',
  *         'message' => '8BITMIME'
- *     ),
+ *     ],
  *     // etc...
- * )
+ * ]
  * }}}
  *
  * @return array
@@ -120,13 +120,13 @@ class SmtpTransport extends AbstractTransport {
  * @return void
  */
 	protected function _bufferResponseLines(array $responseLines) {
-		$response = array();
+		$response = [];
 		foreach ($responseLines as $responseLine) {
 			if (preg_match('/^(\d{3})(?:[ -]+(.*))?$/', $responseLine, $match)) {
-				$response[] = array(
+				$response[] = [
 					'code' => $match[1],
 					'message' => isset($match[2]) ? $match[2] : null
-				);
+				];
 			}
 		}
 		$this->_lastResponse = array_merge($this->_lastResponse, $response);
@@ -250,7 +250,7 @@ class SmtpTransport extends AbstractTransport {
  * @return array
  */
 	protected function _prepareMessageHeaders() {
-		return $this->_cakeEmail->getHeaders(array('from', 'sender', 'replyTo', 'readReceipt', 'to', 'cc', 'subject'));
+		return $this->_cakeEmail->getHeaders(['from', 'sender', 'replyTo', 'readReceipt', 'to', 'cc', 'subject']);
 	}
 
 /**
@@ -260,7 +260,7 @@ class SmtpTransport extends AbstractTransport {
  */
 	protected function _prepareMessage() {
 		$lines = $this->_cakeEmail->message();
-		$messages = array();
+		$messages = [];
 		foreach ($lines as $line) {
 			if ((!empty($line)) && ($line[0] === '.')) {
 				$messages[] = '.' . $line;
@@ -300,7 +300,7 @@ class SmtpTransport extends AbstractTransport {
 		$message = $this->_prepareMessage();
 
 		$this->_smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");
-		$this->_content = array('headers' => $headers, 'message' => $message);
+		$this->_content = ['headers' => $headers, 'message' => $message];
 	}
 
 /**
@@ -333,7 +333,7 @@ class SmtpTransport extends AbstractTransport {
  * @throws \Cake\Network\Error\SocketException
  */
 	protected function _smtpSend($data, $checkCode = '250') {
-		$this->_lastResponse = array();
+		$this->_lastResponse = [];
 
 		if ($data !== null) {
 			$this->_socket->write($data . "\r\n");

@@ -249,14 +249,14 @@ class MemcachedEngine extends CacheEngine {
  * @return array of bools for each key provided, true if the data was successfully cached, false on failure
  */
 	public function writeMany($data) {
-		$cacheData = array();
+		$cacheData = [];
 		foreach ($data as $key => $value) {
 			$cacheData[$this->_key($key)] = $value;
 		}
 
 		$success = $this->_Memcached->setMulti($cacheData);
 
-		$return = array();
+		$return = [];
 		foreach (array_keys($data) as $key) {
 			$return[$key] = $success;
 		}
@@ -283,13 +283,13 @@ class MemcachedEngine extends CacheEngine {
  * retreived
  */
 	public function readMany($keys) {
-		$cacheKeys = array();
+		$cacheKeys = [];
 		foreach ($keys as $key) {
 			$cacheKeys[] = $this->_key($key);
 		}
 
 		$values = $this->_Memcached->getMulti($cacheKeys);
-		$return = array();
+		$return = [];
 		foreach ($keys as &$key) {
 			$return[$key] = array_key_exists($this->_key($key), $values) ? $values[$this->_key($key)] : false;
 		}
@@ -344,14 +344,14 @@ class MemcachedEngine extends CacheEngine {
  * couldn't be removed
  */
 	public function deleteMany($keys) {
-		$cacheKeys = array();
+		$cacheKeys = [];
 		foreach ($keys as $key) {
 			$cacheKeys[] = $this->_key($key);
 		}
 
 		$success = $this->_Memcached->deleteMulti($cacheKeys);
 
-		$return = array();
+		$return = [];
 		foreach ($keys as $key) {
 			$return[$key] = $success;
 		}

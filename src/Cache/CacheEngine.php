@@ -104,7 +104,7 @@ abstract class CacheEngine {
  * @return array of bools for each key provided, true if the data was successfully cached, false on failure
  */
 	public function writeMany($data) {
-		$return = array();
+		$return = [];
 		foreach ($data as $key => $value) {
 			$return[$key] = $this->write($key, $value);
 		}
@@ -127,7 +127,7 @@ abstract class CacheEngine {
  * exist, has expired, or if there was an error fetching it
  */
 	public function readMany($keys) {
-		$return = array();
+		$return = [];
 		foreach ($keys as $key) {
 			$return[$key] = $this->read($key);
 		}
@@ -168,7 +168,7 @@ abstract class CacheEngine {
  * false if it didn't exist or couldn't be removed
  */
 	public function deleteMany($keys) {
-		$return = array();
+		$return = [];
 		foreach ($keys as $key) {
 			$return[$key] = $this->delete($key);
 		}

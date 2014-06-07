@@ -58,7 +58,7 @@ class NumberHelper extends Helper {
  * @param array $config Configuration settings for the helper
  * @throws \Cake\Error\Exception When the engine class could not be found.
  */
-	public function __construct(View $View, array $config = array()) {
+	public function __construct(View $View, array $config = []) {
 		parent::__construct($View, $config);
 
 		$config = $this->_config;
@@ -122,7 +122,7 @@ class NumberHelper extends Helper {
  * @see \Cake\Utility\Number::toPercentage()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toPercentage
  */
-	public function toPercentage($number, $precision = 2, array $options = array()) {
+	public function toPercentage($number, $precision = 2, array $options = []) {
 		return $this->_engine->toPercentage($number, $precision, $options);
 	}
 
@@ -178,7 +178,7 @@ class NumberHelper extends Helper {
  * @see Cake\Utility\Number::currency()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
-	public function currency($number, $currency = null, array $options = array()) {
+	public function currency($number, $currency = null, array $options = []) {
 		return $this->_engine->currency($number, $currency, $options);
 	}
 

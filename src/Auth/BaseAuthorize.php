@@ -75,7 +75,7 @@ abstract class BaseAuthorize {
  * @param ComponentRegistry $registry The controller for this request.
  * @param array $config An array of config. This class does not use any config.
  */
-	public function __construct(ComponentRegistry $registry, array $config = array()) {
+	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$this->_registry = $registry;
 		$controller = $registry->getController();
 		$this->controller($controller);
@@ -120,8 +120,8 @@ abstract class BaseAuthorize {
 	public function action(Request $request, $path = '/:plugin/:controller/:action') {
 		$plugin = empty($request['plugin']) ? null : Inflector::camelize($request['plugin']) . '/';
 		$path = str_replace(
-			array(':controller', ':action', ':plugin/'),
-			array(Inflector::camelize($request['controller']), $request['action'], $plugin),
+			[':controller', ':action', ':plugin/'],
+			[Inflector::camelize($request['controller']), $request['action'], $plugin],
 			$this->_config['actionPath'] . $path
 		);
 		$path = str_replace('//', '/', $path);
@@ -134,19 +134,19 @@ abstract class BaseAuthorize {
  * Create additional mappings for a standard CRUD operation:
  *
  * {{{
- * $this->Auth->mapActions(array('create' => array('add', 'register'));
+ * $this->Auth->mapActions(['create' => ['add', 'register']]);
  * }}}
  *
  * Or equivalently:
  *
  * {{{
- * $this->Auth->mapActions(array('register' => 'create', 'add' => 'create'));
+ * $this->Auth->mapActions(['register' => 'create', 'add' => 'create']);
  * }}}
  *
  * Create mappings for custom CRUD operations:
  *
  * {{{
- * $this->Auth->mapActions(array('range' => 'search'));
+ * $this->Auth->mapActions(['range' => 'search']);
  * }}}
  *
  * You can use the custom CRUD operations to create additional generic permissions
@@ -159,7 +159,7 @@ abstract class BaseAuthorize {
  * @return mixed Either the current mappings or null when setting.
  * @see AuthComponent::mapActions()
  */
-	public function mapActions(array $map = array()) {
+	public function mapActions(array $map = []) {
 		if (empty($map)) {
 			return $this->_config['actionMap'];
 		}

@@ -72,7 +72,7 @@ class RedirectRoute extends Route {
 			$redirect = $this->redirect[0];
 		}
 		if (isset($this->options['persist']) && is_array($redirect)) {
-			$redirect += array('pass' => $params['pass'], 'url' => array());
+			$redirect += array('pass' => $params['pass'], 'url' => []);
 			if (is_array($this->options['persist'])) {
 				foreach ($this->options['persist'] as $elem) {
 					if (isset($params[$elem])) {
@@ -101,7 +101,7 @@ class RedirectRoute extends Route {
  * @param array $context Array of request context parameters.
  * @return mixed either false or a string url.
  */
-	public function match(array $url, array $context = array()) {
+	public function match(array $url, array $context = []) {
 		return false;
 	}
 }

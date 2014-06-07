@@ -42,7 +42,7 @@ class File {
  * @var array
  * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::$info
  */
-	public $info = array();
+	public $info = [];
 
 /**
  * Holds the file handler resource if the file is opened

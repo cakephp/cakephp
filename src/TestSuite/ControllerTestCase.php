@@ -225,13 +225,13 @@ abstract class ControllerTestCase extends TestCase {
  * @param array $options See options
  * @return mixed
  */
-	protected function _testAction($url = '', $options = array()) {
+	protected function _testAction($url = '', $options = []) {
 		$this->vars = $this->result = $this->view = $this->contents = $this->headers = null;
 
 		$options += array(
-			'query' => array(),
-			'data' => array(),
-			'cookies' => array(),
+			'query' => [],
+			'data' => [],
+			'cookies' => [],
 			'method' => 'GET',
 			'return' => 'result'
 		);
@@ -241,7 +241,7 @@ abstract class ControllerTestCase extends TestCase {
 
 		if ($method === 'GET' && is_array($options['data']) && empty($options['query'])) {
 			$options['query'] = $options['data'];
-			$options['data'] = array();
+			$options['data'] = [];
 		}
 		$requestData = array(
 			'url' => $url,
@@ -294,7 +294,7 @@ abstract class ControllerTestCase extends TestCase {
 			}
 			$this->generate($plugin . $controllerName, [], $request);
 		}
-		$params = array();
+		$params = [];
 		if ($options['return'] === 'result') {
 			$params['return'] = 1;
 			$params['bare'] = 1;
@@ -340,7 +340,7 @@ abstract class ControllerTestCase extends TestCase {
  * @throws \Cake\Controller\Error\MissingControllerException When controllers could not be created.
  * @throws \Cake\Controller\Error\MissingComponentException When components could not be created.
  */
-	public function generate($controller, array $mocks = array(), $request = null) {
+	public function generate($controller, array $mocks = [], $request = null) {
 		$className = App::className($controller, 'Controller', 'Controller');
 		if (!$className) {
 			list($plugin, $controller) = pluginSplit($controller);
@@ -372,7 +372,7 @@ abstract class ControllerTestCase extends TestCase {
 				$methods = true;
 			}
 			if ($methods === true) {
-				$methods = array();
+				$methods = [];
 			}
 			$this->getMockForModel($model, $methods);
 		}
@@ -383,7 +383,7 @@ abstract class ControllerTestCase extends TestCase {
 				$methods = true;
 			}
 			if ($methods === true) {
-				$methods = array();
+				$methods = [];
 			}
 			$componentClass = App::className($component, 'Controller/Component', 'Component');
 			list(, $name) = pluginSplit($component, true);
@@ -394,7 +394,7 @@ abstract class ControllerTestCase extends TestCase {
 			}
 			$registry = $controller->components();
 
-			$config = isset($controller->components[$component]) ? $controller->components[$component] : array();
+			$config = isset($controller->components[$component]) ? $controller->components[$component] : [];
 			$component = $this->getMock($componentClass, $methods, array($registry, $config));
 			$registry->set($name, $component);
 		}

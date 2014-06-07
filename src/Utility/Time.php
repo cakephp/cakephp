@@ -605,7 +605,7 @@ class Time extends Carbon implements JsonSerializable {
 		}
 
 		if ($group) {
-			$groupedIdentifiers = array();
+			$groupedIdentifiers = [];
 			foreach ($identifiers as $key => $tz) {
 				$item = explode('/', $tz, 2);
 				if (isset($item[1])) {

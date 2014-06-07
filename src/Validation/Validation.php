@@ -43,7 +43,7 @@ class Validation {
  *
  * @var array
  */
-	public static $errors = array();
+	public static $errors = [];
 
 /**
  * Checks that a string contains something other than whitespace
@@ -591,7 +591,7 @@ class Validation {
  * @param bool $caseInsensitive Set to true for case insensitive comparison.
  * @return bool Success
  */
-	public static function multiple($check, array $options = array(), $caseInsensitive = false) {
+	public static function multiple($check, array $options = [], $caseInsensitive = false) {
 		$defaults = array('in' => null, 'max' => null, 'min' => null);
 		$options += $defaults;
 
@@ -957,7 +957,7 @@ class Validation {
  * @return bool Success
  * @throws \Cake\Error\Exception when mime type can not be determined.
  */
-	public static function mimeType($check, $mimeTypes = array()) {
+	public static function mimeType($check, $mimeTypes = []) {
 		if (is_array($check) && isset($check['tmp_name'])) {
 			$check = $check['tmp_name'];
 		}
@@ -1051,7 +1051,7 @@ class Validation {
  * @return void
  */
 	protected static function _reset() {
-		static::$errors = array();
+		static::$errors = [];
 	}
 
 }
