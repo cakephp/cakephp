@@ -2265,6 +2265,32 @@ XML;
 	}
 
 /**
+ * Test is('rest') and isRest()
+ *
+ * @return void
+ */
+	public function testIsRest() {
+		$request = new CakeRequest('/posts/index');
+		$request->addParams(array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'plugin' => null,
+			'[method]' => 'post'
+		));
+		$this->assertTrue($request->is('rest'));
+		$this->assertTrue($request->isRest());
+
+		$request = new CakeRequest('/posts/index');
+		$request->addParams(array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'plugin' => null,
+		));
+		$this->assertFalse($request->is('rest'));
+		$this->assertFalse($request->isRest());
+	}
+
+/**
  * loadEnvironment method
  *
  * @param array $env

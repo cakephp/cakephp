@@ -144,6 +144,10 @@ class CakeRequest implements ArrayAccess {
 			$this->_processFiles();
 		}
 		$this->here = $this->base . '/' . $this->url;
+
+		$this->addDetector('rest', array('callback' => function (\CakeRequest $request) {
+			return isset($request->params['[method]']);
+		}));
 	}
 
 /**
