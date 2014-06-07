@@ -16,8 +16,10 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use Cake\Utility\Inflector;
 use Cake\Error\InternalErrorException;
 use Cake\Event\Event;
+
 
 /**
  * FlashComponent
@@ -96,7 +98,7 @@ class FlashComponent extends Component {
  * @throws \Cake\Error\InternalErrorException If missing the flash message.
 */
 	public function __call($name, $args) {
-		$options = ['element' => 'flash_' . $name];
+		$options = ['element' => 'flash_' . Inflector::underscore($name)];
 
 		if (count($args) < 1) {
 			throw new InternalErrorException('Flash message missing.');
