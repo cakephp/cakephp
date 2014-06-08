@@ -101,6 +101,8 @@ class Plugin {
  * - `namespace` - string - A custom namespace for the plugin. It will default to the plugin name.
  * - `ignoreMissing` - boolean - Set to true to ignore missing bootstrap/routes files.
  * - `path` - string - The path the plugin can be found on. If empty the default plugin path (App.pluginPaths) will be used.
+ * - `classBase` - The path relative to `path` which contains the folders with class files.
+ *    Defaults to "src".
  * - `autoload` - boolean - Whether or not you want an autoloader registered. This defaults to false. The framework
  *   assumes you have configured autoloaders using composer. However, if your application source tree is made up of
  *   plugins, this can be a useful option.
@@ -124,6 +126,7 @@ class Plugin {
 			'bootstrap' => false,
 			'routes' => false,
 			'namespace' => str_replace('/', '\\', $plugin),
+			'classBase' => 'src',
 			'ignoreMissing' => false
 		];
 		if (empty($config['path'])) {
@@ -146,6 +149,8 @@ class Plugin {
 			throw new Error\MissingPluginException(['plugin' => $plugin]);
 		}
 
+		$config['classPath'] = $config['path'] . $config['classBase'] . DS;
+
 		static::$_plugins[$plugin] = $config;
 
 		if ($config['bootstrap'] === true) {
@@ -159,7 +164,7 @@ class Plugin {
 			}
 			static::$_loader->addNamespace(
 				$config['namespace'],
-				$config['path'] . 'src' . DS
+				$config['path'] . $config['classBase'] . DS
 			);
 			static::$_loader->addNamespace(
 				$config['namespace'] . '\Test',
@@ -228,7 +233,7 @@ class Plugin {
 		if (empty(static::$_plugins[$plugin])) {
 			throw new Error\MissingPluginException(['plugin' => $plugin]);
 		}
-		return static::$_plugins[$plugin]['path'] . 'src' . DS;
+		return static::$_plugins[$plugin]['classPath'];
 	}
 
 /**
@@ -262,7 +267,7 @@ class Plugin {
 		$path = static::path($plugin);
 		if ($config['bootstrap'] === true) {
 			return static::_includeFile(
-				$path . 'src' . DS . 'Config' . DS . 'bootstrap.php',
+				$config['classPath'] . 'Config' . DS . 'bootstrap.php',
 				$config['ignoreMissing']
 			);
 		}
@@ -287,7 +292,7 @@ class Plugin {
 			return false;
 		}
 		return (bool)static::_includeFile(
-			static::path($plugin) . 'src' . DS . 'Config' . DS . 'routes.php',
+			$config['classPath'] . 'Config' . DS . 'routes.php',
 			$config['ignoreMissing']
 		);
 	}

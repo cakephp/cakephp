@@ -154,7 +154,7 @@ class TestTask extends BakeTask {
 		$classes = [];
 		$base = APP;
 		if ($this->plugin) {
-			$base = Plugin::path($this->plugin) . 'src' . DS;
+			$base = Plugin::classPath($this->plugin);
 		}
 		$path = $base . str_replace('\\', DS, $namespace);
 		$folder = new Folder($path);

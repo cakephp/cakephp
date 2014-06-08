@@ -108,7 +108,7 @@ class BakeShell extends Shell {
 		foreach (Plugin::loaded() as $plugin) {
 			$tasks = $this->_findTasks(
 				$tasks,
-				Plugin::path($plugin) . 'src' . DS,
+				Plugin::classPath($plugin),
 				Plugin::getNamespace($plugin),
 				$plugin
 			);
