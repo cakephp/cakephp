@@ -14,6 +14,7 @@
  */
 namespace Cake\View\Widget;
 
+use Cake\View\Form\ContextInterface;
 use Cake\View\Widget\WidgetInterface;
 
 /**
@@ -45,9 +46,10 @@ class Textarea implements WidgetInterface {
  * All other keys will be converted into HTML attributes.
  *
  * @param array $data The data to build a textarea with.
+ * @param \Cake\View\Form\ContextInterface The current form context.
  * @return string HTML elements.
  */
-	public function render(array $data) {
+	public function render(array $data, ContextInterface $context) {
 		$data += [
 			'val' => '',
 			'name' => '',

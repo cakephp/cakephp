@@ -29,6 +29,7 @@ class ButtonTest extends TestCase {
 			'button' => '<button{{attrs}}>{{text}}</button>',
 		];
 		$this->templates = new StringTemplate($templates);
+		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
 	}
 
 /**
@@ -38,7 +39,7 @@ class ButtonTest extends TestCase {
  */
 	public function testRenderSimple() {
 		$button = new Button($this->templates);
-		$result = $button->render(['name' => 'my_input']);
+		$result = $button->render(['name' => 'my_input'], $this->context);
 		$expected = [
 			'button' => ['type' => 'submit', 'name' => 'my_input'],
 			'/button'
@@ -58,7 +59,7 @@ class ButtonTest extends TestCase {
 			'type' => 'button',
 			'text' => 'Some button'
 		];
-		$result = $button->render($data);
+		$result = $button->render($data, $this->context);
 		$expected = [
 			'button' => ['type' => 'button', 'name' => 'my_input'],
 			'Some button',
@@ -77,7 +78,7 @@ class ButtonTest extends TestCase {
 		$data = [
 			'text' => 'Some <value>'
 		];
-		$result = $button->render($data);
+		$result = $button->render($data, $this->context);
 		$expected = [
 			'button' => ['type' => 'submit'],
 			'Some <value>',
@@ -86,7 +87,7 @@ class ButtonTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$data['escape'] = true;
-		$result = $button->render($data);
+		$result = $button->render($data, $this->context);
 		$expected = [
 			'button' => ['type' => 'submit'],
 			'Some &lt;value&gt;',
@@ -108,7 +109,7 @@ class ButtonTest extends TestCase {
 			'class' => 'btn',
 			'required' => true
 		];
-		$result = $button->render($data);
+		$result = $button->render($data, $this->context);
 		$expected = [
 			'button' => [
 				'type' => 'submit',

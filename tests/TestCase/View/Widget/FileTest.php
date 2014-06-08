@@ -34,6 +34,7 @@ class FileTest extends TestCase {
 			'file' => '<input type="file" name="{{name}}"{{attrs}}>',
 		];
 		$this->templates = new StringTemplate($templates);
+		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
 	}
 
 /**
@@ -43,7 +44,7 @@ class FileTest extends TestCase {
  */
 	public function testRenderSimple() {
 		$input = new File($this->templates);
-		$result = $input->render(['name' => 'image']);
+		$result = $input->render(['name' => 'image'], $this->context);
 		$expected = [
 			'input' => ['type' => 'file', 'name' => 'image'],
 		];
@@ -58,7 +59,7 @@ class FileTest extends TestCase {
 	public function testRenderAttributes() {
 		$input = new File($this->templates);
 		$data = ['name' => 'image', 'required' => true, 'val' => 'nope'];
-		$result = $input->render($data);
+		$result = $input->render($data, $this->context);
 		$expected = [
 			'input' => ['type' => 'file', 'required' => 'required', 'name' => 'image'],
 		];

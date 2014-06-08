@@ -14,6 +14,7 @@
  */
 namespace Cake\View\Widget;
 
+use Cake\View\Form\ContextInterface;
 use Cake\View\Widget\WidgetInterface;
 
 /**
@@ -53,9 +54,10 @@ class Basic implements WidgetInterface {
  * Any other keys provided in $data will be converted into HTML attributes.
  *
  * @param array $data The data to build an input with.
+ * @param \Cake\View\Form\ContextInterface The current form context.
  * @return string
  */
-	public function render(array $data) {
+	public function render(array $data, ContextInterface $context) {
 		$data += [
 			'name' => '',
 			'val' => null,

@@ -36,6 +36,7 @@ class SelectBoxTest extends TestCase {
 			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
 		];
+		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
 		$this->templates = new StringTemplate($templates);
 	}
 
@@ -51,7 +52,7 @@ class SelectBoxTest extends TestCase {
 			'name' => 'Birds[name]',
 			'options' => []
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
 			'/select'
@@ -71,7 +72,7 @@ class SelectBoxTest extends TestCase {
 			'name' => 'Birds[name]',
 			'options' => ['a' => 'Albatross', 'b' => 'Budgie']
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
 			['option' => ['value' => 'a']], 'Albatross', '/option',
@@ -94,7 +95,7 @@ class SelectBoxTest extends TestCase {
 			'options' => $options,
 			'empty' => true
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => ['name' => 'Birds[name]'],
 			['option' => ['value' => '']], '/option',
@@ -120,7 +121,7 @@ class SelectBoxTest extends TestCase {
 				['value' => 'b', 'text' => 'Budgie', 'data-foo' => 'bar'],
 			]
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
 			['option' => ['value' => 'a']],
@@ -152,7 +153,7 @@ class SelectBoxTest extends TestCase {
 				'2x' => 'two x',
 			]
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
 			['option' => ['value' => '1', 'selected' => 'selected']], 'one', '/option',
@@ -164,7 +165,7 @@ class SelectBoxTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$data['val'] = 2;
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
 			['option' => ['value' => '1']], 'one', '/option',
@@ -189,7 +190,7 @@ class SelectBoxTest extends TestCase {
 			'multiple' => true,
 			'options' => ['a' => 'Albatross', 'b' => 'Budgie']
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => [
 				'name' => 'Birds[name][]',
@@ -222,7 +223,7 @@ class SelectBoxTest extends TestCase {
 				'2x' => 'two x',
 			]
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => [
 				'name' => 'Birds[name][]',
@@ -258,7 +259,7 @@ class SelectBoxTest extends TestCase {
 				]
 			]
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => [
 				'name' => 'Birds[name]',
@@ -299,7 +300,7 @@ class SelectBoxTest extends TestCase {
 				],
 			]
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => [
 				'name' => 'Birds[name]',
@@ -314,7 +315,7 @@ class SelectBoxTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$data['escape'] = false;
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => [
 				'name' => 'Birds[name]',
@@ -349,7 +350,7 @@ class SelectBoxTest extends TestCase {
 				]
 			]
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => [
 				'name' => 'Birds[name]',
@@ -385,7 +386,7 @@ class SelectBoxTest extends TestCase {
 				]
 			]
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => [
 				'name' => 'Birds[name]',
@@ -433,7 +434,7 @@ class SelectBoxTest extends TestCase {
 				]
 			]
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => [
 				'name' => 'Birds[name]',
@@ -465,7 +466,7 @@ class SelectBoxTest extends TestCase {
 			'options' => ['a' => 'Albatross', 'b' => 'Budgie'],
 			'val' => 'a',
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => [
 				'name' => 'Birds[name]',
@@ -483,7 +484,7 @@ class SelectBoxTest extends TestCase {
 			'name' => 'numbers',
 			'options' => ['1' => 'One', '2' => 'Two'],
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => [
 				'name' => 'numbers',
@@ -512,7 +513,7 @@ class SelectBoxTest extends TestCase {
 				'c' => 'Canary',
 			]
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => [
 				'name' => 'Birds[name]',
@@ -544,7 +545,7 @@ class SelectBoxTest extends TestCase {
 			'empty' => true,
 			'options' => ['a' => 'Albatross', 'b' => 'Budgie']
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
 			['option' => ['value' => '']], '/option',
@@ -555,7 +556,7 @@ class SelectBoxTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$data['empty'] = 'empty';
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
 			['option' => ['value' => '']], 'empty', '/option',
@@ -567,7 +568,7 @@ class SelectBoxTest extends TestCase {
 
 		$data['empty'] = 'empty';
 		$data['val'] = '';
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
 			['option' => ['value' => '', 'selected' => 'selected']], 'empty', '/option',
@@ -578,7 +579,7 @@ class SelectBoxTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$data['val'] = false;
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$this->assertTags($result, $expected);
 	}
 
@@ -597,7 +598,7 @@ class SelectBoxTest extends TestCase {
 				'c' => '>Canary',
 			]
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => [
 				'name' => 'Birds[name]',
@@ -622,7 +623,7 @@ class SelectBoxTest extends TestCase {
 				'>a' => '>Albatross',
 			]
 		];
-		$result = $select->render($data);
+		$result = $select->render($data, $this->context);
 		$expected = [
 			'select' => [
 				'name' => 'Birds[name]',

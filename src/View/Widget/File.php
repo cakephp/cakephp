@@ -14,6 +14,7 @@
  */
 namespace Cake\View\Widget;
 
+use Cake\View\Form\ContextInterface;
 use Cake\View\Widget\WidgetInterface;
 
 /**
@@ -46,9 +47,10 @@ class File implements WidgetInterface {
  * ignored.
  *
  * @param array $data The data to build a file input with.
+ * @param \Cake\View\Form\ContextInterface The current form context.
  * @return string HTML elements.
  */
-	public function render(array $data) {
+	public function render(array $data, ContextInterface $context) {
 		$data += [
 			'name' => '',
 			'escape' => true,

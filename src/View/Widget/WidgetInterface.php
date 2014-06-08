@@ -14,6 +14,8 @@
  */
 namespace Cake\View\Widget;
 
+use Cake\View\Form\ContextInterface;
+
 /**
  * Interface for input widgets.
  */
@@ -23,9 +25,10 @@ interface WidgetInterface {
  * Converts the $data into one or many HTML elements.
  *
  * @param array $data The data to render.
+ * @param \Cake\View\Form\ContextInterface The current form context.
  * @return string Generated HTML for the widget element.
  */
-	public function render(array $data);
+	public function render(array $data, ContextInterface $context);
 
 /**
  * Returns a list of fields that need to be secured for

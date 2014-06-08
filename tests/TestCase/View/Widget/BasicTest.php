@@ -29,6 +29,7 @@ class BasicTest extends TestCase {
 			'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
 		];
 		$this->templates = new StringTemplate($templates);
+		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
 	}
 
 /**
@@ -38,7 +39,7 @@ class BasicTest extends TestCase {
  */
 	public function testRenderSimple() {
 		$text = new Basic($this->templates);
-		$result = $text->render(['name' => 'my_input']);
+		$result = $text->render(['name' => 'my_input'], $this->context);
 		$expected = [
 			'input' => ['type' => 'text', 'name' => 'my_input']
 		];
@@ -56,7 +57,7 @@ class BasicTest extends TestCase {
 			'name' => 'my_input',
 			'type' => 'email',
 		];
-		$result = $text->render($data);
+		$result = $text->render($data, $this->context);
 		$expected = [
 			'input' => ['type' => 'email', 'name' => 'my_input']
 		];
@@ -75,7 +76,7 @@ class BasicTest extends TestCase {
 			'type' => 'email',
 			'val' => 'Some <value>'
 		];
-		$result = $text->render($data);
+		$result = $text->render($data, $this->context);
 		$expected = [
 			'input' => [
 				'type' => 'email',
@@ -99,7 +100,7 @@ class BasicTest extends TestCase {
 			'class' => 'form-control',
 			'required' => true
 		];
-		$result = $text->render($data);
+		$result = $text->render($data, $this->context);
 		$expected = [
 			'input' => [
 				'type' => 'email',
