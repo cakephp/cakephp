@@ -73,6 +73,18 @@ class CellTest extends TestCase {
 	}
 
 /**
+ * Test __toString() hitting an error when rendering views.
+ *
+ * @return void
+ */
+	public function testCellImplictRenderWithError() {
+		$cell = $this->View->cell('Articles::teaserList');
+		$cell->template = 'nope';
+		$output = "{$cell}";
+		$this->assertStringStartsWith("Error: Could not render cell - View file", $output);
+	}
+
+/**
  * Tests that we are able pass multiple arguments to cell methods.
  *
  * @return void

@@ -160,7 +160,11 @@ abstract class Cell {
  * @return string Rendered cell
  */
 	public function __toString() {
-		return $this->render();
+		try {
+			return $this->render();
+		} catch (\Exception $e) {
+			return "Error: Could not render cell - " . $e->getMessage();
+		}
 	}
 
 /**
