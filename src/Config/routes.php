@@ -46,6 +46,9 @@ use Cake\Utility\Inflector;
 $prefixes = Router::prefixes();
 $prefixPattern = implode('|', $prefixes);
 $plugins = Plugin::loaded();
+foreach ($plugins as $key => $value) {
+	$plugins[$key] = Inflector::underscore($value);
+}
 $pluginPattern = implode('|', $plugins);
 $indexParams = ['action' => 'index'];
 $pluginShortMatch = [
