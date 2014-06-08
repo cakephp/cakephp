@@ -2275,7 +2275,7 @@ class FormHelper extends Helper {
 		}
 		unset($data['secure']);
 
-		return $widget->render($data);
+		return $widget->render($data, $this->context());
 	}
 
 /**
