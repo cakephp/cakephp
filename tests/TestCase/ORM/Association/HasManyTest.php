@@ -737,11 +737,11 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Test that save() ignores non entity values.
+ * Test that saveAssociated() ignores non entity values.
  *
  * @return void
  */
-	public function testSaveOnlyEntities() {
+	public function testSaveAssociatedOnlyEntities() {
 		$mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
 		$config = [
 			'sourceTable' => $this->author,
@@ -758,10 +758,10 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		]);
 
 		$mock->expects($this->never())
-			->method('save');
+			->method('saveAssociated');
 
 		$association = new HasMany('Articles', $config);
-		$association->save($entity);
+		$association->saveAssociated($entity);
 	}
 
 /**

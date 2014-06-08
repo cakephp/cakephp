@@ -229,7 +229,7 @@ class Associations {
 		if (!empty($nested)) {
 			$options = (array)$nested + $options;
 		}
-		return (bool)$association->save($entity, $options);
+		return (bool)$association->saveAssociated($entity, $options);
 	}
 
 /**

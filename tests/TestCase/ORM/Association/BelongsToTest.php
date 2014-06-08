@@ -270,18 +270,18 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Test that save() ignores non entity values.
+ * Test that saveAssociated() ignores non entity values.
  *
  * @return void
  */
-	public function testSaveOnlyEntities() {
+	public function testSaveAssociatedOnlyEntities() {
 		$mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
 		$config = [
 			'sourceTable' => $this->client,
 			'targetTable' => $mock,
 		];
 		$mock->expects($this->never())
-			->method('save');
+			->method('saveAssociated');
 
 		$entity = new Entity([
 			'title' => 'A Title',
@@ -290,7 +290,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		]);
 
 		$association = new BelongsTo('Authors', $config);
-		$result = $association->save($entity);
+		$result = $association->saveAssociated($entity);
 		$this->assertSame($result, $entity);
 		$this->assertNull($entity->author_id);
 	}
