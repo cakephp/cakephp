@@ -73,6 +73,13 @@ abstract class BaseAuthenticate {
 	protected $_passwordHasher;
 
 /**
+ * Whether or not the user authenticated by this class
+ * requires their password to be rehashed with another algorithm.
+ *
+ * @var bool
+ */
+	protected $_needsPasswordRehash = false;
+/**
  * Constructor
  *
  * @param ComponentRegistry $registry The Component registry used on this request.
@@ -123,9 +130,13 @@ abstract class BaseAuthenticate {
 		}
 
 		if ($password !== null) {
-			if (!$this->passwordHasher()->check($password, $result[$fields['password']])) {
+			$hasher = $this->passwordHasher();
+			$hashedPassword = $result[$fields['password']];
+			if (!$hasher->check($password, $hashedPassword)) {
 				return false;
 			}
+
+			$this->_needsPasswordRehash = $hasher->needsRehash($hashedPassword);
 			unset($result[$fields['password']]);
 		}
 
@@ -146,6 +157,16 @@ abstract class BaseAuthenticate {
 
 		$passwordHasher = $this->_config['passwordHasher'];
 		return $this->_passwordHasher = PasswordHasherFactory::build($passwordHasher);
+	}
+
+/**
+ * Returns whether or not the password stored in the repository for the logged in user
+ * requires to be rehashed with another algorithm
+ *
+ * @return bool
+ */
+	public function needsPasswordRehash() {
+		return $this->_needsPasswordRehash;
 	}
 
 /**

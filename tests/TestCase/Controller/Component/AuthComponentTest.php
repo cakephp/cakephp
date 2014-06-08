@@ -175,6 +175,7 @@ class AuthComponentTest extends TestCase {
 
 		$this->assertTrue((bool)$this->Auth->user());
 		$this->assertEquals($user, $this->Auth->user());
+		$this->assertSame($AuthLoginFormAuthenticate, $this->Auth->authenticationProvider());
 	}
 
 /**
@@ -273,6 +274,7 @@ class AuthComponentTest extends TestCase {
 			->method('authorize');
 
 		$this->assertTrue($this->Auth->isAuthorized(array('User'), $request));
+		$this->assertSame($AuthMockTwoAuthorize, $this->Auth->authorizationProvider());
 	}
 
 /**
