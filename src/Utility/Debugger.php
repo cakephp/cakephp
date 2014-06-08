@@ -576,7 +576,7 @@ class Debugger {
 		$break = "\n" . str_repeat("\t", $indent);
 		$end = "\n" . str_repeat("\t", $indent - 1);
 
-		if (method_exists($var, '__debugInfo')) {
+		if ($depth > 0 && method_exists($var, '__debugInfo')) {
 			return $out . "\n" .
 				substr(static::_array($var->__debugInfo(), $depth - 1, $indent), 1, -1) .
 				$end . '}';
