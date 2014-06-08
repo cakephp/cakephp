@@ -259,7 +259,7 @@ class Shell {
 	public function hasMethod($name) {
 		try {
 			$method = new \ReflectionMethod($this, $name);
-			if (!$method->isPublic() || substr($name, 0, 1) === '_') {
+			if (!$method->isPublic()) {
 				return false;
 			}
 			if ($method->getDeclaringClass()->name === 'Cake\Console\Shell') {
@@ -352,24 +352,24 @@ class Shell {
 		}
 
 		$subcommands = $this->OptionParser->subcommands();
-		$isMethod = $this->hasMethod($command);
+		$method = Inflector::camelize($command);
+		$isMethod = $this->hasMethod($method);
 
 		if ($isMethod && $autoMethod && count($subcommands) === 0) {
 			array_shift($this->args);
 			$this->startup();
-			return call_user_func_array([$this, $command], $this->args);
+			return call_user_func_array([$this, $method], $this->args);
 		}
 
 		if ($isMethod && isset($subcommands[$command])) {
 			$this->startup();
-			return call_user_func_array([$this, $command], $this->args);
+			return call_user_func_array([$this, $method], $this->args);
 		}
 
 		if ($this->hasTask($command) && isset($subcommands[$command])) {
 			$this->startup();
-			$command = Inflector::camelize($command);
 			array_shift($argv);
-			return $this->{$command}->runCommand($argv, false);
+			return $this->{$method}->runCommand($argv, false);
 		}
 
 		if ($this->hasMethod('main')) {

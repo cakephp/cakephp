@@ -76,13 +76,13 @@ class ShellTestShell extends Shell {
 	}
 
 	//@codingStandardsIgnoreStart
-	public function do_something() {
+	public function doSomething() {
 	}
 
-	protected function no_access() {
+	protected function noAccess() {
 	}
 
-	public function log_something() {
+	public function logSomething() {
 		$this->log($this->testMessage);
 	}
 	//@codingStandardsIgnoreEnd
@@ -513,7 +513,7 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testHasMethod() {
-		$this->assertTrue($this->Shell->hasMethod('do_something'));
+		$this->assertTrue($this->Shell->hasMethod('doSomething'));
 		$this->assertFalse($this->Shell->hasMethod('hr'), 'hr is callable');
 		$this->assertFalse($this->Shell->hasMethod('_secret'), '_secret is callable');
 		$this->assertFalse($this->Shell->hasMethod('no_access'), 'no_access is callable');
@@ -543,10 +543,10 @@ class ShellTest extends TestCase {
  */
 	public function testRunCommandWithMethod() {
 		$io = $this->getMock('Cake\Console\ConsoleIo');
-		$shell = $this->getMock('Cake\Console\Shell', ['hit_me', 'startup'], [$io]);
+		$shell = $this->getMock('Cake\Console\Shell', ['hitMe', 'startup'], [$io]);
 
 		$shell->expects($this->once())->method('startup');
-		$shell->expects($this->once())->method('hit_me')
+		$shell->expects($this->once())->method('hitMe')
 			->with('cakes')
 			->will($this->returnValue(true));
 		$result = $shell->runCommand(['hit_me', 'cakes', '--verbose'], true);
