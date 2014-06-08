@@ -47,8 +47,11 @@ class LogTraitTest extends TestCase {
 		Log::config('trait_test', ['engine' => $mock]);
 		$subject = $this->getObjectForTrait('Cake\Log\LogTrait');
 
-		$subject->log('Testing');
-		$subject->log(array(1, 2), 'debug');
+		$reflectionMethod = new \ReflectionMethod($subject, '_log');
+		$reflectionMethod->setAccessible(true);
+
+		$reflectionMethod->invoke($subject, 'Testing');
+		$reflectionMethod->invoke($subject, array(1, 2), 'debug');
 	}
 
 }
