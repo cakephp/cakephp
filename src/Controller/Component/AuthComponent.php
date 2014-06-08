@@ -151,21 +151,21 @@ class AuthComponent extends Component {
  *
  * @var array
  */
-	public $components = array('RequestHandler');
+	public $components = ['RequestHandler'];
 
 /**
  * Objects that will be used for authentication checks.
  *
  * @var array
  */
-	protected $_authenticateObjects = array();
+	protected $_authenticateObjects = [];
 
 /**
  * Objects that will be used for authorization checks.
  *
  * @var array
  */
-	protected $_authorizeObjects = array();
+	protected $_authorizeObjects = [];
 
 /**
  * The session key name where the record of the current user is stored. Default
@@ -182,7 +182,7 @@ class AuthComponent extends Component {
  *
  * @var array
  */
-	protected $_user = array();
+	protected $_user = [];
 
 /**
  * Controller actions for which user validation is not required.
@@ -190,7 +190,7 @@ class AuthComponent extends Component {
  * @var array
  * @see AuthComponent::allow()
  */
-	public $allowedActions = array();
+	public $allowedActions = [];
 
 /**
  * Request object
@@ -218,7 +218,7 @@ class AuthComponent extends Component {
  *
  * @var array
  */
-	protected $_methods = array();
+	protected $_methods = [];
 
 /**
  * The instance of the Authenticate provider that was used for
@@ -489,9 +489,9 @@ class AuthComponent extends Component {
 		if (empty($this->_config['authorize'])) {
 			return;
 		}
-		$this->_authorizeObjects = array();
+		$this->_authorizeObjects = [];
 		$authorize = Hash::normalize((array)$this->_config['authorize']);
-		$global = array();
+		$global = [];
 		if (isset($authorize[AuthComponent::ALL])) {
 			$global = $authorize[AuthComponent::ALL];
 			unset($authorize[AuthComponent::ALL]);
@@ -548,7 +548,7 @@ class AuthComponent extends Component {
  */
 	public function deny($actions = null) {
 		if ($actions === null) {
-			$this->allowedActions = array();
+			$this->allowedActions = [];
 			return;
 		}
 		foreach ((array)$actions as $action) {
@@ -572,7 +572,7 @@ class AuthComponent extends Component {
  * @see BaseAuthorize::mapActions()
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#mapping-actions-when-using-crudauthorize
  */
-	public function mapActions(array $map = array()) {
+	public function mapActions(array $map = []) {
 		if (empty($this->_authorizeObjects)) {
 			$this->constructAuthorize();
 		}
@@ -720,7 +720,7 @@ class AuthComponent extends Component {
 			$redir = '/';
 		}
 		if (is_array($redir)) {
-			return Router::url($redir + array('base' => false));
+			return Router::url($redir + ['base' => false]);
 		}
 		return $redir;
 	}
@@ -757,9 +757,9 @@ class AuthComponent extends Component {
 		if (empty($this->_config['authenticate'])) {
 			return;
 		}
-		$this->_authenticateObjects = array();
+		$this->_authenticateObjects = [];
 		$authenticate = Hash::normalize((array)$this->_config['authenticate']);
-		$global = array();
+		$global = [];
 		if (isset($authenticate[AuthComponent::ALL])) {
 			$global = $authenticate[AuthComponent::ALL];
 			unset($authenticate[AuthComponent::ALL]);

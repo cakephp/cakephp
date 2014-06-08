@@ -54,7 +54,7 @@ class Helper implements EventListener {
  *
  * @var array
  */
-	public $helpers = array();
+	public $helpers = [];
 
 /**
  * Default config for this helper.
@@ -68,7 +68,7 @@ class Helper implements EventListener {
  *
  * @var array
  */
-	protected $_helperMap = array();
+	protected $_helperMap = [];
 
 /**
  * The current theme name if any.
@@ -97,14 +97,14 @@ class Helper implements EventListener {
  *
  * @var array
  */
-	public $fieldset = array();
+	public $fieldset = [];
 
 /**
  * Holds tag templates.
  *
  * @var array
  */
-	public $tags = array();
+	public $tags = [];
 
 /**
  * The View instance this helper is attached to
@@ -144,7 +144,7 @@ class Helper implements EventListener {
  * @param View $View The View this helper is being attached to.
  * @param array $config Configuration settings for the helper.
  */
-	public function __construct(View $View, array $config = array()) {
+	public function __construct(View $View, array $config = []) {
 		$this->_View = $View;
 		$this->request = $View->request;
 
@@ -247,7 +247,7 @@ class Helper implements EventListener {
  *   `plugin` False value will prevent parsing path as a plugin
  * @return string Generated URL
  */
-	public function assetUrl($path, array $options = array()) {
+	public function assetUrl($path, array $options = []) {
 		if (is_array($path)) {
 			return $this->url($path, !empty($options['fullBase']));
 		}
@@ -340,7 +340,7 @@ class Helper implements EventListener {
  * @param array $options Array of options
  * @return string onclick JS code
  */
-	protected function _confirm($message, $okCode, $cancelCode = '', $options = array()) {
+	protected function _confirm($message, $okCode, $cancelCode = '', $options = []) {
 		$message = json_encode($message);
 		$confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
 		if (isset($options['escape']) && $options['escape'] === false) {
@@ -357,7 +357,7 @@ class Helper implements EventListener {
  * @param string $key the key to use for class.
  * @return array Array of options with $key set.
  */
-	public function addClass(array $options = array(), $class = null, $key = 'class') {
+	public function addClass(array $options = [], $class = null, $key = 'class') {
 		if (isset($options[$key]) && trim($options[$key])) {
 			$options[$key] .= ' ' . $class;
 		} else {

@@ -36,7 +36,7 @@ class CacheHelper extends Helper {
  *
  * @var array
  */
-	protected $_replace = array();
+	protected $_replace = [];
 
 /**
  * Array of string that are replace with there var replace above.
@@ -44,7 +44,7 @@ class CacheHelper extends Helper {
  *
  * @var array
  */
-	protected $_match = array();
+	protected $_match = [];
 
 /**
  * Counter used for counting nocache section tags.

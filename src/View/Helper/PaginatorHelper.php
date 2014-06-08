@@ -124,10 +124,10 @@ class PaginatorHelper extends Helper {
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::options
  */
-	public function options(array $options = array()) {
+	public function options(array $options = []) {
 		if (!empty($options['paging'])) {
 			if (!isset($this->request->params['paging'])) {
-				$this->request->params['paging'] = array();
+				$this->request->params['paging'] = [];
 			}
 			$this->request->params['paging'] = array_merge($this->request->params['paging'], $options['paging']);
 			unset($options['paging']);
@@ -136,7 +136,7 @@ class PaginatorHelper extends Helper {
 
 		if (!empty($options[$model])) {
 			if (!isset($this->request->params['paging'][$model])) {
-				$this->request->params['paging'][$model] = array();
+				$this->request->params['paging'][$model] = [];
 			}
 			$this->request->params['paging'][$model] = array_merge(
 				$this->request->params['paging'][$model], $options[$model]
@@ -171,7 +171,7 @@ class PaginatorHelper extends Helper {
  *  null if the results are not currently sorted.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortKey
  */
-	public function sortKey($model = null, array $options = array()) {
+	public function sortKey($model = null, array $options = []) {
 		if (empty($options)) {
 			$options = $this->params($model);
 		}
@@ -190,7 +190,7 @@ class PaginatorHelper extends Helper {
  *  null if the results are not currently sorted.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortDir
  */
-	public function sortDir($model = null, array $options = array()) {
+	public function sortDir($model = null, array $options = []) {
 		$dir = null;
 
 		if (empty($options)) {
@@ -337,7 +337,7 @@ class PaginatorHelper extends Helper {
  */
 	public function sort($key, $title = null, array $options = []) {
 		$options = array_merge(
-			['url' => array(), 'model' => null, 'escape' => true],
+			['url' => [], 'model' => null, 'escape' => true],
 			$options
 		);
 		$url = $options['url'];
@@ -401,7 +401,7 @@ class PaginatorHelper extends Helper {
  * @return mixed By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::url
  */
-	public function generateUrl(array $options = array(), $model = null, $full = false) {
+	public function generateUrl(array $options = [], $model = null, $full = false) {
 		$paging = $this->params($model);
 		$paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
 		$url = [
@@ -588,7 +588,7 @@ class PaginatorHelper extends Helper {
  * @return string numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::numbers
  */
-	public function numbers(array $options = array()) {
+	public function numbers(array $options = []) {
 		$defaults = array(
 			'before' => null, 'after' => null, 'model' => $this->defaultModel(),
 			'modulus' => 8, 'first' => null, 'last' => null,
@@ -766,7 +766,7 @@ class PaginatorHelper extends Helper {
  * @return string numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::last
  */
-	public function last($last = 'last >>', array $options = array()) {
+	public function last($last = 'last >>', array $options = []) {
 		$options = array_merge(
 			['model' => $this->defaultModel(), 'escape' => true],
 			$options

@@ -32,7 +32,7 @@ class Debugger {
  *
  * @var array
  */
-	public $errors = array();
+	public $errors = [];
 
 /**
  * The current output format.
@@ -58,7 +58,7 @@ class Debugger {
 			'trace' => '<pre class="stack-trace">{:trace}</pre>',
 			'code' => '',
 			'context' => '',
-			'links' => array(),
+			'links' => [],
 			'escapeContext' => true,
 		),
 		'html' => array(
@@ -83,7 +83,7 @@ class Debugger {
  *
  * @var string
  */
-	protected $_data = array();
+	protected $_data = [];
 
 /**
  * Constructor.
@@ -114,7 +114,7 @@ class Debugger {
 		$t .= '{:context}{:code}{:trace}</div>';
 		$this->_templates['js']['info'] = $t;
 
-		$links = array();
+		$links = [];
 		$link = '<a href="javascript:void(0);" onclick="document.getElementById(\'{:id}-code\')';
 		$link .= '.style.display = (document.getElementById(\'{:id}-code\').style.display == ';
 		$link .= '\'none\' ? \'\' : \'none\')">Code</a>';
@@ -148,7 +148,7 @@ class Debugger {
  * @return object
  */
 	public static function getInstance($class = null) {
-		static $instance = array();
+		static $instance = [];
 		if (!empty($class)) {
 			if (!$instance || strtolower($class) != strtolower(get_class($instance[0]))) {
 				$instance[0] = new $class();
@@ -273,7 +273,7 @@ class Debugger {
  * @return mixed Formatted stack trace
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::trace
  */
-	public static function trace(array $options = array()) {
+	public static function trace(array $options = []) {
 		$self = Debugger::getInstance();
 		$defaults = array(
 			'depth'		=> 999,
@@ -287,7 +287,7 @@ class Debugger {
 
 		$backtrace = debug_backtrace();
 		$count = count($backtrace);
-		$back = array();
+		$back = [];
 
 		$_trace = array(
 			'line' => '??',
@@ -308,7 +308,7 @@ class Debugger {
 					$signature = $next['class'] . '::' . $next['function'];
 					$reference = $signature . '(';
 					if ($options['args'] && isset($next['args'])) {
-						$args = array();
+						$args = [];
 						foreach ($next['args'] as $arg) {
 							$args[] = Debugger::exportVar($arg);
 						}
@@ -386,9 +386,9 @@ class Debugger {
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::excerpt
  */
 	public static function excerpt($file, $line, $context = 2) {
-		$lines = array();
+		$lines = [];
 		if (!file_exists($file)) {
-			return array();
+			return [];
 		}
 		$data = file_get_contents($file);
 		if (empty($data)) {
@@ -538,7 +538,7 @@ class Debugger {
 			$break = "\n" . str_repeat("\t", $indent);
 			$end = "\n" . str_repeat("\t", $indent - 1);
 		}
-		$vars = array();
+		$vars = [];
 
 		if ($depth >= 0) {
 			foreach ($var as $key => $val) {
@@ -569,7 +569,7 @@ class Debugger {
  */
 	protected static function _object($var, $depth, $indent) {
 		$out = '';
-		$props = array();
+		$props = [];
 
 		$className = get_class($var);
 		$out .= 'object(' . $className . ') {';
@@ -699,7 +699,7 @@ class Debugger {
  * @deprecated Use Debugger::outputAs() and Debugger::addFormat(). Will be removed
  *   in 3.0
  */
-	public static function output($format = null, $strings = array()) {
+	public static function output($format = null, $strings = []) {
 		$self = Debugger::getInstance();
 		$data = null;
 
@@ -713,7 +713,7 @@ class Debugger {
 
 		if ($format === true && !empty($self->_data)) {
 			$data = $self->_data;
-			$self->_data = array();
+			$self->_data = [];
 			$format = false;
 		}
 		Debugger::outputAs($format);
@@ -734,7 +734,7 @@ class Debugger {
 			'description' => '',
 			'file' => '',
 			'line' => 0,
-			'context' => array(),
+			'context' => [],
 			'start' => 2,
 		);
 		$data += $defaults;
@@ -752,8 +752,8 @@ class Debugger {
 		}
 		$trace = $this->trace(array('start' => $data['start'], 'depth' => '20'));
 		$insertOpts = array('before' => '{:', 'after' => '}');
-		$context = array();
-		$links = array();
+		$context = [];
+		$links = [];
 		$info = '';
 
 		foreach ((array)$data['context'] as $var => $value) {

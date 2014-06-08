@@ -184,7 +184,7 @@ class Xml {
  * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
  * @throws \Cake\Utility\Error\XmlException
  */
-	public static function fromArray($input, $options = array()) {
+	public static function fromArray($input, $options = []) {
 		if (method_exists($input, 'toArray')) {
 			$input = $input->toArray();
 		}
@@ -293,7 +293,7 @@ class Xml {
 	}
 
 /**
- * Helper to _fromArray(). It will create childs of arrays
+ * Helper to _from[]. It will create childs of arrays
  *
  * @param array $data Array with informations to create childs
  * @return void
@@ -343,7 +343,7 @@ class Xml {
 		if (!($obj instanceof \SimpleXMLElement)) {
 			throw new Error\XmlException('The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.');
 		}
-		$result = array();
+		$result = [];
 		$namespaces = array_merge(array('' => ''), $obj->getNamespaces(true));
 		static::_toArray($obj, $result, '', array_keys($namespaces));
 		return $result;
@@ -359,7 +359,7 @@ class Xml {
  * @return void
  */
 	protected static function _toArray($xml, &$parentData, $ns, $namespaces) {
-		$data = array();
+		$data = [];
 
 		foreach ($namespaces as $namespace) {
 			foreach ($xml->attributes($namespace, true) as $key => $value) {

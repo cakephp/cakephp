@@ -98,12 +98,12 @@ class Controller implements EventListener {
  * An array containing the names of helpers this controller uses. The array elements should
  * not contain the "Helper" part of the class name.
  *
- * Example: `public $helpers = array('Html', 'Js', 'Time', 'Ajax');`
+ * Example: `public $helpers = ['Html', 'Js', 'Time', 'Ajax'];`
  *
  * @var mixed
  * @link http://book.cakephp.org/2.0/en/controllers.html#components-helpers-and-uses
  */
-	public $helpers = array();
+	public $helpers = [];
 
 /**
  * An instance of a Cake\Network\Request object that contains information about the current request.
@@ -160,12 +160,12 @@ class Controller implements EventListener {
  * Array containing the names of components this controller uses. Component names
  * should not contain the "Component" portion of the class name.
  *
- * Example: `public $components = array('Session', 'RequestHandler', 'Acl');`
+ * Example: `public $components = ['Session', 'RequestHandler', 'Acl'];`
  *
  * @var array
  * @link http://book.cakephp.org/2.0/en/controllers/components.html
  */
-	public $components = array();
+	public $components = [];
 
 /**
  * The name of the View class this controller sends output to.
@@ -205,7 +205,7 @@ class Controller implements EventListener {
  *
  * @var mixed
  */
-	public $passedArgs = array();
+	public $passedArgs = [];
 
 /**
  * Holds current methods of the controller. This is a list of all the methods reachable
@@ -213,7 +213,7 @@ class Controller implements EventListener {
  *
  * @var array
  */
-	public $methods = array();
+	public $methods = [];
 
 /**
  * Constructor.
@@ -356,22 +356,22 @@ class Controller implements EventListener {
 			}
 			$method = new \ReflectionMethod($this, $request->params['action']);
 			if ($this->_isPrivateAction($method, $request)) {
-				throw new Error\PrivateActionException(array(
+				throw new Error\PrivateActionException([
 					'controller' => $this->name . "Controller",
 					'action' => $request->params['action'],
 					'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
 					'plugin' => $request->params['plugin'],
-				));
+				]);
 			}
 			return $method->invokeArgs($this, $request->params['pass']);
 
 		} catch (\ReflectionException $e) {
-			throw new Error\MissingActionException(array(
+			throw new Error\MissingActionException([
 				'controller' => $this->name . "Controller",
 				'action' => $request->params['action'],
 				'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
 				'plugin' => $request->params['plugin'],
-			));
+			]);
 		}
 	}
 
@@ -420,12 +420,12 @@ class Controller implements EventListener {
  * @return array
  */
 	public function implementedEvents() {
-		return array(
+		return [
 			'Controller.initialize' => 'beforeFilter',
 			'Controller.beforeRender' => 'beforeRender',
 			'Controller.beforeRedirect' => 'beforeRedirect',
 			'Controller.shutdown' => 'afterFilter',
-		);
+		];
 	}
 
 /**
@@ -551,7 +551,7 @@ class Controller implements EventListener {
 		$this->view = $action;
 		$args = func_get_args();
 		unset($args[0]);
-		return call_user_func_array(array(&$this, $action), $args);
+		return call_user_func_array([&$this, $action], $args);
 	}
 
 /**

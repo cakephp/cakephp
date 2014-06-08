@@ -21,7 +21,7 @@ use Cake\Utility\Debugger;
 <?php foreach ($error->getTrace() as $i => $stack): ?>
 	<li><?php
 	$excerpt = $arguments = '';
-	$params = array();
+	$params = [];
 
 	if (isset($stack['file']) && isset($stack['line'])):
 		printf(
@@ -38,7 +38,7 @@ use Cake\Utility\Debugger;
 	endif;
 	echo ' &rarr; ';
 	if ($stack['function']):
-		$args = array();
+		$args = [];
 		if (!empty($stack['args'])):
 			foreach ((array)$stack['args'] as $arg):
 				$args[] = Debugger::getType($arg);

@@ -127,7 +127,7 @@ class Log {
  *
  * @var array
  */
-	protected static $_levels = array(
+	protected static $_levels = [
 		LOG_EMERG => 'emergency',
 		LOG_ALERT => 'alert',
 		LOG_CRIT => 'critical',
@@ -136,14 +136,14 @@ class Log {
 		LOG_NOTICE => 'notice',
 		LOG_INFO => 'info',
 		LOG_DEBUG => 'debug',
-	);
+	];
 
 /**
  * Mapped log levels
  *
  * @var array
  */
-	protected static $_levelMap = array(
+	protected static $_levelMap = [
 		'emergency' => LOG_EMERG,
 		'alert' => LOG_ALERT,
 		'critical' => LOG_CRIT,
@@ -152,7 +152,7 @@ class Log {
 		'notice' => LOG_NOTICE,
 		'info' => LOG_INFO,
 		'debug' => LOG_DEBUG,
-	);
+	];
 
 /**
  * Initializes registry and configurations
@@ -319,7 +319,7 @@ class Log {
  * @return bool Success
  * @throws \Cake\Error\Exception If invalid level is passed.
  */
-	public static function write($level, $message, $scope = array()) {
+	public static function write($level, $message, $scope = []) {
 		static::_init();
 		if (is_int($level) && isset(static::$_levels[$level])) {
 			$level = static::$_levels[$level];
@@ -361,7 +361,7 @@ class Log {
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return bool Success
  */
-	public static function emergency($message, $scope = array()) {
+	public static function emergency($message, $scope = []) {
 		return static::write(static::$_levelMap['emergency'], $message, $scope);
 	}
 
@@ -373,7 +373,7 @@ class Log {
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return bool Success
  */
-	public static function alert($message, $scope = array()) {
+	public static function alert($message, $scope = []) {
 		return static::write(static::$_levelMap['alert'], $message, $scope);
 	}
 
@@ -385,7 +385,7 @@ class Log {
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return bool Success
  */
-	public static function critical($message, $scope = array()) {
+	public static function critical($message, $scope = []) {
 		return static::write(static::$_levelMap['critical'], $message, $scope);
 	}
 
@@ -397,7 +397,7 @@ class Log {
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return bool Success
  */
-	public static function error($message, $scope = array()) {
+	public static function error($message, $scope = []) {
 		return static::write(static::$_levelMap['error'], $message, $scope);
 	}
 
@@ -409,7 +409,7 @@ class Log {
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return bool Success
  */
-	public static function warning($message, $scope = array()) {
+	public static function warning($message, $scope = []) {
 		return static::write(static::$_levelMap['warning'], $message, $scope);
 	}
 
@@ -421,7 +421,7 @@ class Log {
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return bool Success
  */
-	public static function notice($message, $scope = array()) {
+	public static function notice($message, $scope = []) {
 		return static::write(static::$_levelMap['notice'], $message, $scope);
 	}
 
@@ -433,7 +433,7 @@ class Log {
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return bool Success
  */
-	public static function debug($message, $scope = array()) {
+	public static function debug($message, $scope = []) {
 		return static::write(static::$_levelMap['debug'], $message, $scope);
 	}
 
@@ -445,7 +445,7 @@ class Log {
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return bool Success
  */
-	public static function info($message, $scope = array()) {
+	public static function info($message, $scope = []) {
 		return static::write(static::$_levelMap['info'], $message, $scope);
 	}
 

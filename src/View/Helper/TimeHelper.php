@@ -226,7 +226,7 @@ class TimeHelper extends Helper {
  * @return string Relative time string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function timeAgoInWords($dateTime, array $options = array()) {
+	public function timeAgoInWords($dateTime, array $options = []) {
 		$element = null;
 
 		if (!empty($options['element'])) {

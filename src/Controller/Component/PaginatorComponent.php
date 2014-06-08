@@ -48,12 +48,12 @@ class PaginatorComponent extends Component {
  *
  * @var array
  */
-	protected $_defaultConfig = array(
+	protected $_defaultConfig = [
 		'page' => 1,
 		'limit' => 20,
 		'maxLimit' => 100,
 		'whitelist' => ['limit', 'sort', 'page', 'direction']
-	);
+	];
 
 /**
  * Events supported by this component.
@@ -120,11 +120,11 @@ class PaginatorComponent extends Component {
  * You can paginate with any find type defined on your table using the `findType` option.
  *
  * {{{
- *  $settings = array(
- *    'Articles' => array(
+ *  $settings = [
+ *    'Articles' => [
  *      'findType' => 'popular'
- *    )
- *  );
+ *    ]
+ *  ];
  *  $results = $paginator->paginate($table, $settings);
  * }}}
  *
@@ -187,7 +187,7 @@ class PaginatorComponent extends Component {
 			$directionDefault = current($defaults['order']);
 		}
 
-		$paging = array(
+		$paging = [
 			'findType' => $type,
 			'page' => $page,
 			'current' => $numResults,
@@ -201,14 +201,14 @@ class PaginatorComponent extends Component {
 			'limit' => $defaults['limit'] != $limit ? $limit : null,
 			'sortDefault' => $sortDefault,
 			'directionDefault' => $directionDefault
-		);
+		];
 
 		if (!isset($request['paging'])) {
 			$request['paging'] = [];
 		}
 		$request['paging'] = array_merge(
 			(array)$request['paging'],
-			array($alias => $paging)
+			[$alias => $paging]
 		);
 
 		if ($requestedPage > $page) {
@@ -259,7 +259,7 @@ class PaginatorComponent extends Component {
 			$defaults['maxLimit'] = $defaults['limit'];
 		}
 		return array_merge(
-			array('page' => 1, 'limit' => 20, 'maxLimit' => 100),
+			['page' => 1, 'limit' => 20, 'maxLimit' => 100],
 			$defaults
 		);
 	}
@@ -287,10 +287,10 @@ class PaginatorComponent extends Component {
 			if (isset($options['direction'])) {
 				$direction = strtolower($options['direction']);
 			}
-			if (!in_array($direction, array('asc', 'desc'))) {
+			if (!in_array($direction, ['asc', 'desc'])) {
 				$direction = 'asc';
 			}
-			$options['order'] = array($options['sort'] => $direction);
+			$options['order'] = [$options['sort'] => $direction];
 		}
 		unset($options['sort'], $options['direction']);
 

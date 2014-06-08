@@ -115,7 +115,7 @@ class CookieComponent extends Component {
  * @param ComponentRegistry $collection A ComponentRegistry for this component
  * @param array $config Array of config.
  */
-	public function __construct(ComponentRegistry $collection, array $config = array()) {
+	public function __construct(ComponentRegistry $collection, array $config = []) {
 		parent::__construct($collection, $config);
 
 		if (!$this->_config['key']) {
@@ -200,7 +200,7 @@ class CookieComponent extends Component {
 		}
 
 		if (!is_array($key)) {
-			$key = array($key => $value);
+			$key = [$key => $value];
 		}
 
 		$keys = [];
@@ -303,15 +303,15 @@ class CookieComponent extends Component {
 		$config = $this->configKey($name);
 		$expires = new Time($config['expires']);
 
-		$this->_response->cookie(array(
+		$this->_response->cookie([
 			'name' => $name,
 			'value' => $this->_encrypt($value, $config['encryption']),
 			'expire' => $expires->format('U'),
 			'path' => $config['path'],
 			'domain' => $config['domain'],
 			'secure' => $config['secure'],
-			'httpOnly' => $config['httpOnly']
-		));
+			'httpOnly' => $config['httpOnly'],
+		]);
 	}
 
 /**
@@ -327,15 +327,15 @@ class CookieComponent extends Component {
 		$config = $this->configKey($name);
 		$expires = new Time('now');
 
-		$this->_response->cookie(array(
+		$this->_response->cookie([
 			'name' => $name,
 			'value' => '',
 			'expire' => $expires->format('U') - 42000,
 			'path' => $config['path'],
 			'domain' => $config['domain'],
 			'secure' => $config['secure'],
-			'httpOnly' => $config['httpOnly']
-		));
+			'httpOnly' => $config['httpOnly'],
+		]);
 	}
 
 /**
@@ -393,7 +393,7 @@ class CookieComponent extends Component {
 			return $this->_decode($values, $mode);
 		}
 
-		$decrypted = array();
+		$decrypted = [];
 		foreach ($values as $name => $value) {
 			$decrypted[$name] = $this->_decode($value, $mode);
 		}
@@ -446,7 +446,7 @@ class CookieComponent extends Component {
 			$ret = json_decode($string, true);
 			return ($ret !== null) ? $ret : $string;
 		}
-		$array = array();
+		$array = [];
 		foreach (explode(',', $string) as $pair) {
 			$key = explode('|', $pair);
 			if (!isset($key[1])) {

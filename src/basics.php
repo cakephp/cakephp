@@ -169,7 +169,7 @@ if (!function_exists('h')) {
  */
 	function h($text, $double = true, $charset = null) {
 		if (is_array($text)) {
-			$texts = array();
+			$texts = [];
 			foreach ($text as $k => $t) {
 				$texts[$k] = h($t, $double, $charset);
 			}
@@ -278,7 +278,7 @@ if (!function_exists('am')) {
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#am
  */
 	function am() {
-		$r = array();
+		$r = [];
 		$args = func_get_args();
 		foreach ($args as $a) {
 			if (!is_array($a)) {
@@ -501,7 +501,7 @@ if (!function_exists('clearCache')) {
 				CACHE . $type . DS . '*' . $params . $ext,
 				CACHE . $type . DS . '*' . $params . '_*' . $ext
 			);
-			$files = array();
+			$files = [];
 			while ($search = array_shift($cache)) {
 				$results = glob($search);
 				if ($results !== false) {

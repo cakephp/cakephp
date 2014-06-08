@@ -37,7 +37,7 @@ use Cake\Utility\Xml;
  * When the view is rendered, the `$posts` view variable will be serialized
  * into XML.
  *
- * **Note** The view variable you specify must be compatible with Xml::fromArray().
+ * **Note** The view variable you specify must be compatible with Xml::from[].
  *
  * You can also define `'_serialize'` as an array. This will create an additional
  * top level element named `<response>` containing all the named view variables:
@@ -130,7 +130,7 @@ class XmlView extends View {
 		$rootNode = isset($this->viewVars['_rootNode']) ? $this->viewVars['_rootNode'] : 'response';
 
 		if (is_array($serialize)) {
-			$data = array($rootNode => array());
+			$data = array($rootNode => []);
 			foreach ($serialize as $alias => $key) {
 				if (is_numeric($alias)) {
 					$alias = $key;
@@ -144,7 +144,7 @@ class XmlView extends View {
 			}
 		}
 
-		$options = array();
+		$options = [];
 		if (Configure::read('debug')) {
 			$options['pretty'] = true;
 		}

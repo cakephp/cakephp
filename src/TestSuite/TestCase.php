@@ -59,14 +59,14 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @var array
  */
-	protected $_configure = array();
+	protected $_configure = [];
 
 /**
  * Path settings to restore at the end of the test.
  *
  * @var array
  */
-	protected $_pathRestore = array();
+	protected $_pathRestore = [];
 
 /**
  * Overrides SimpleTestCase::skipIf to provide a boolean return value
@@ -309,8 +309,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @return bool
  */
 	public function assertTags($string, $expected, $fullDebug = false) {
-		$regex = array();
-		$normalized = array();
+		$regex = [];
+		$normalized = [];
 		foreach ((array)$expected as $key => $val) {
 			if (!is_numeric($key)) {
 				$normalized[] = array($key => $val);
@@ -325,7 +325,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 			}
 			$i++;
 			if (is_string($tags) && $tags{0} === '<') {
-				$tags = array(substr($tags, 1) => array());
+				$tags = array(substr($tags, 1) => []);
 			} elseif (is_string($tags)) {
 				$tagsTrimmed = preg_replace('/\s+/m', '', $tags);
 
@@ -363,10 +363,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 					$i,
 				);
 				if ($attributes === true) {
-					$attributes = array();
+					$attributes = [];
 				}
-				$attrs = array();
-				$explanations = array();
+				$attrs = [];
+				$explanations = [];
 				$i = 1;
 				foreach ($attributes as $attr => $val) {
 					if (is_numeric($attr) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
@@ -535,7 +535,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @throws \Cake\ORM\Error\MissingTableClassException
  * @return Model
  */
-	public function getMockForModel($alias, array $methods = array(), array $options = array()) {
+	public function getMockForModel($alias, array $methods = [], array $options = []) {
 		if (empty($options['className'])) {
 			$class = Inflector::camelize($alias);
 			$className = App::className($class, 'Model/Table', 'Table');

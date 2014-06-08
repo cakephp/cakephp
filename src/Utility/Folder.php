@@ -75,14 +75,14 @@ class Folder {
  *
  * @var array
  */
-	protected $_messages = array();
+	protected $_messages = [];
 
 /**
  * Holds errors from last method.
  *
  * @var array
  */
-	protected $_errors = array();
+	protected $_errors = [];
 
 /**
  * Holds array of complete directory paths.
@@ -162,7 +162,7 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::read
  */
 	public function read($sort = true, $exceptions = false, $fullPath = false) {
-		$dirs = $files = array();
+		$dirs = $files = [];
 
 		if (!$this->pwd()) {
 			return array($dirs, $files);
@@ -225,7 +225,7 @@ class Folder {
  */
 	public function findRecursive($pattern = '.*', $sort = false) {
 		if (!$this->pwd()) {
-			return array();
+			return [];
 		}
 		$startsOn = $this->path;
 		$out = $this->_findRecursive($pattern, $sort);
@@ -242,7 +242,7 @@ class Folder {
  */
 	protected function _findRecursive($pattern, $sort = false) {
 		list($dirs, $files) = $this->read($sort);
-		$found = array();
+		$found = [];
 
 		foreach ($files as $file) {
 			if (preg_match('/^' . $pattern . '$/i', $file)) {
@@ -374,7 +374,7 @@ class Folder {
  * @return bool Returns TRUE on success, FALSE on failure
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::chmod
  */
-	public function chmod($path, $mode = false, $recursive = true, array $exceptions = array()) {
+	public function chmod($path, $mode = false, $recursive = true, array $exceptions = []) {
 		if (!$mode) {
 			$mode = $this->mode;
 		}
@@ -434,7 +434,7 @@ class Folder {
 		if (!$path) {
 			$path = $this->path;
 		}
-		$files = array();
+		$files = [];
 		$directories = array($path);
 
 		if (is_array($exceptions)) {
@@ -453,9 +453,9 @@ class Folder {
 			$iterator = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::SELF_FIRST);
 		} catch (\Exception $e) {
 			if ($type === null) {
-				return array(array(), array());
+				return array([], []);
 			}
-			return array();
+			return [];
 		}
 
 		foreach ($iterator as $itemPath => $fsIterator) {
@@ -642,9 +642,9 @@ class Folder {
 		$to = null;
 		if (is_string($options)) {
 			$to = $options;
-			$options = array();
+			$options = [];
 		}
-		$options += array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array(), 'scheme' => Folder::MERGE);
+		$options += array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => [], 'scheme' => Folder::MERGE);
 
 		$fromDir = $options['from'];
 		$toDir = $options['to'];
@@ -737,7 +737,7 @@ class Folder {
 			$to = $options;
 			$options = (array)$options;
 		}
-		$options += array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array());
+		$options += array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => []);
 
 		if ($this->copy($options)) {
 			if ($this->delete($options['from'])) {
@@ -757,7 +757,7 @@ class Folder {
 	public function messages($reset = true) {
 		$messages = $this->_messages;
 		if ($reset) {
-			$this->_messages = array();
+			$this->_messages = [];
 		}
 		return $messages;
 	}
@@ -772,7 +772,7 @@ class Folder {
 	public function errors($reset = true) {
 		$errors = $this->_errors;
 		if ($reset) {
-			$this->_errors = array();
+			$this->_errors = [];
 		}
 		return $errors;
 	}
@@ -793,7 +793,7 @@ class Folder {
 			return $path;
 		}
 		$parts = explode(DS, $path);
-		$newparts = array();
+		$newparts = [];
 		$newpath = '';
 		if ($path[0] === DS) {
 			$newpath = DS;

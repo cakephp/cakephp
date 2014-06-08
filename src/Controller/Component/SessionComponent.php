@@ -45,7 +45,7 @@ class SessionComponent extends Component {
  * @param ComponentRegistry $collection ComponentRegistry object.
  * @param array $config Array of config.
  */
-	public function __construct(ComponentRegistry $collection, array $config = array()) {
+	public function __construct(ComponentRegistry $collection, array $config = []) {
 		parent::__construct($collection, $config);
 		$this->_session = $collection->getController()->request->session();
 	}
@@ -121,7 +121,7 @@ class SessionComponent extends Component {
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#creating-notification-messages
  */
-	public function setFlash($message, $element = null, array $params = array(), $key = 'flash') {
+	public function setFlash($message, $element = null, array $params = [], $key = 'flash') {
 		$this->_session->flash($message, 'info', $params + compact('element', 'key'));
 	}
 

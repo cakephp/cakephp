@@ -71,7 +71,7 @@ class ConsoleInput {
  * @return bool True for data available, false otherwise
  */
 	public function dataAvailable($timeout = 0) {
-		$readFds = array($this->_input);
+		$readFds = [$this->_input];
 		$readyFds = stream_select($readFds, $writeFds, $errorFds, $timeout);
 		return ($readyFds > 0);
 	}

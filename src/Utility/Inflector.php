@@ -416,14 +416,14 @@ class Inflector {
  *
  * @var array
  */
-	protected static $_cache = array();
+	protected static $_cache = [];
 
 /**
  * The initial state of Inflector so reset() works.
  *
  * @var array
  */
-	protected static $_initialState = array();
+	protected static $_initialState = [];
 
 /**
  * Cache inflected values, and return if already available
@@ -516,9 +516,9 @@ class Inflector {
 						unset(static::${$var}['merged'][$rule]);
 					}
 					if ($type === 'plural') {
-						static::$_cache['pluralize'] = static::$_cache['tableize'] = array();
+						static::$_cache['pluralize'] = static::$_cache['tableize'] = [];
 					} elseif ($type === 'singular') {
-						static::$_cache['singularize'] = array();
+						static::$_cache['singularize'] = [];
 					}
 				}
 				static::${$var}['rules'] = $rules + static::${$var}['rules'];

@@ -157,9 +157,9 @@ abstract class ObjectRegistry {
  * @return array Array of normalized objects.
  */
 	public function normalizeArray($objects) {
-		$normal = array();
+		$normal = [];
 		foreach ($objects as $i => $objectName) {
-			$config = array();
+			$config = [];
 			if (!is_int($i)) {
 				$config = (array)$objectName;
 				$objectName = $i;

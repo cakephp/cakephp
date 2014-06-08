@@ -49,7 +49,7 @@ class TestFixture {
  *
  * @var array
  */
-	public $created = array();
+	public $created = [];
 
 /**
  * Fields / Schema for the fixture.
@@ -60,7 +60,7 @@ class TestFixture {
  *
  * @var array
  */
-	public $fields = array();
+	public $fields = [];
 
 /**
  * Configuration for importing fixture schema
@@ -78,7 +78,7 @@ class TestFixture {
  *
  * @var array
  */
-	public $records = array();
+	public $records = [];
 
 /**
  * The Cake\Database\Schema\Table for this fixture.

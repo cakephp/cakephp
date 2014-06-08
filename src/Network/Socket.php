@@ -66,7 +66,7 @@ class Socket {
  *
  * @var array
  */
-	public $lastError = array();
+	public $lastError = [];
 
 /**
  * True if the socket stream is encrypted after a Cake\Network\Socket::enableCrypto() call
@@ -99,7 +99,7 @@ class Socket {
  *
  * @var array
  */
-	protected $_connectionErrors = array();
+	protected $_connectionErrors = [];
 
 /**
  * Constructor.
@@ -107,7 +107,7 @@ class Socket {
  * @param array $config Socket configuration, which will be merged with the base configuration
  * @see Socket::$_baseConfig
  */
-	public function __construct(array $config = array()) {
+	public function __construct(array $config = []) {
 		$this->config($config);
 
 		if (!is_numeric($this->_config['protocol'])) {
@@ -336,7 +336,7 @@ class Socket {
  */
 	public function reset($state = null) {
 		if (empty($state)) {
-			static $initalState = array();
+			static $initalState = [];
 			if (empty($initalState)) {
 				$initalState = get_class_vars(__CLASS__);
 			}

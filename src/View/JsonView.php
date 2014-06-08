@@ -144,7 +144,7 @@ class JsonView extends View {
  */
 	protected function _serialize($serialize) {
 		if (is_array($serialize)) {
-			$data = array();
+			$data = [];
 			foreach ($serialize as $alias => $key) {
 				if (is_numeric($alias)) {
 					$alias = $key;

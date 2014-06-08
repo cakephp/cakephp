@@ -96,9 +96,9 @@ class RequestHandlerComponent extends Component {
  *
  * @var array
  */
-	protected $_inputTypeMap = array(
-		'json' => array('json_decode', true)
-	);
+	protected $_inputTypeMap = [
+		'json' => ['json_decode', true]
+	];
 
 /**
  * A mapping between type and viewClass. By default only JSON, XML, and AJAX are mapped.
@@ -106,11 +106,11 @@ class RequestHandlerComponent extends Component {
  *
  * @var array
  */
-	protected $_viewClassMap = array(
+	protected $_viewClassMap = [
 		'json' => 'Json',
 		'xml' => 'Xml',
 		'ajax' => 'Ajax'
-	);
+	];
 
 /**
  * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
@@ -118,9 +118,9 @@ class RequestHandlerComponent extends Component {
  * @param ComponentRegistry $collection ComponentRegistry object.
  * @param array $config Array of config.
  */
-	public function __construct(ComponentRegistry $collection, array $config = array()) {
+	public function __construct(ComponentRegistry $collection, array $config = []) {
 		parent::__construct($collection, $config);
-		$this->addInputType('xml', array(array($this, 'convertXml')));
+		$this->addInputType('xml', [[$this, 'convertXml']]);
 
 		$Controller = $collection->getController();
 		$this->request = $Controller->request;
@@ -159,7 +159,7 @@ class RequestHandlerComponent extends Component {
 		if (empty($this->ext) && $this->request->is('ajax')) {
 			$this->ext = 'ajax';
 		}
-		if (empty($this->ext) || in_array($this->ext, array('html', 'htm'))) {
+		if (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
 			$this->_setExtension();
 		}
 
@@ -190,7 +190,7 @@ class RequestHandlerComponent extends Component {
 
 		$accepts = $this->response->mapType($accept);
 		$preferedTypes = current($accepts);
-		if (array_intersect($preferedTypes, array('html', 'xhtml'))) {
+		if (array_intersect($preferedTypes, ['html', 'xhtml'])) {
 			return;
 		}
 
@@ -229,19 +229,19 @@ class RequestHandlerComponent extends Component {
 		$controller = $event->subject();
 		$controller->request->params['isAjax'] = $this->request->is('ajax');
 		$isRecognized = (
-			!in_array($this->ext, array('html', 'htm')) &&
+			!in_array($this->ext, ['html', 'htm']) &&
 			$this->response->getMimeType($this->ext)
 		);
 
 		if (!empty($this->ext) && $isRecognized) {
 			$this->renderAs($controller, $this->ext);
-		} elseif (empty($this->ext) || in_array($this->ext, array('html', 'htm'))) {
-			$this->respondAs('html', array('charset' => Configure::read('App.encoding')));
+		} elseif (empty($this->ext) || in_array($this->ext, ['html', 'htm'])) {
+			$this->respondAs('html', ['charset' => Configure::read('App.encoding')]);
 		}
 
 		foreach ($this->_inputTypeMap as $type => $handler) {
 			if ($this->requestedWith($type)) {
-				$input = call_user_func_array(array($controller->request, 'input'), $handler);
+				$input = call_user_func_array([$controller->request, 'input'], $handler);
 				$controller->request->data = $input;
 			}
 		}
@@ -262,7 +262,7 @@ class RequestHandlerComponent extends Component {
 			}
 			return Xml::toArray($xml);
 		} catch (XmlException $e) {
-			return array();
+			return [];
 		}
 	}
 
@@ -287,10 +287,10 @@ class RequestHandlerComponent extends Component {
 			unset($_POST[$key]);
 		}
 		if (is_array($url)) {
-			$url = Router::url($url + array('base' => false));
+			$url = Router::url($url + ['base' => false]);
 		}
 		$controller = $event->subject();
-		$response->body($controller->requestAction($url, array('return', 'bare' => false)));
+		$response->body($controller->requestAction($url, ['return', 'bare' => false]));
 		$response->send();
 		$response->stop();
 	}
@@ -374,7 +374,7 @@ class RequestHandlerComponent extends Component {
  *
  * Usage:
  *
- * `$this->RequestHandler->accepts(array('xml', 'html', 'json'));`
+ * `$this->RequestHandler->accepts(['xml', 'html', 'json']);`
  *
  * Returns true if the client accepts any of the supplied types.
  *
@@ -504,7 +504,7 @@ class RequestHandlerComponent extends Component {
  *
  * Render the response as an xml file and force the result as a file download.
  *
- * `$this->RequestHandler->renderAs($this, 'xml', array('attachment' => 'myfile.xml');`
+ * `$this->RequestHandler->renderAs($this, 'xml', ['attachment' => 'myfile.xml']);`
  *
  * @param Controller $controller A reference to a controller object
  * @param string $type Type of response to send (e.g: 'ajax')
@@ -513,8 +513,8 @@ class RequestHandlerComponent extends Component {
  * @see RequestHandlerComponent::setContent()
  * @see RequestHandlerComponent::respondAs()
  */
-	public function renderAs(Controller $controller, $type, array $options = array()) {
-		$defaults = array('charset' => 'UTF-8');
+	public function renderAs(Controller $controller, $type, array $options = []) {
+		$defaults = ['charset' => 'UTF-8'];
 		$view = null;
 		$viewClassMap = $this->viewClassMap();
 
@@ -574,8 +574,8 @@ class RequestHandlerComponent extends Component {
  *    already been set by this method.
  * @see RequestHandlerComponent::setContent()
  */
-	public function respondAs($type, array $options = array()) {
-		$defaults = array('index' => null, 'charset' => null, 'attachment' => false);
+	public function respondAs($type, array $options = []) {
+		$defaults = ['index' => null, 'charset' => null, 'attachment' => false];
 		$options += $defaults;
 
 		$cType = $type;
@@ -628,7 +628,7 @@ class RequestHandlerComponent extends Component {
  */
 	public function mapAlias($alias) {
 		if (is_array($alias)) {
-			return array_map(array($this, 'mapAlias'), $alias);
+			return array_map([$this, 'mapAlias'], $alias);
 		}
 		$type = $this->response->getMimeType($alias);
 		if ($type) {
@@ -661,7 +661,7 @@ class RequestHandlerComponent extends Component {
 /**
  * Getter/setter for viewClassMap
  *
- * @param array|string $type The type string or array with format `array('type' => 'viewClass')` to map one or more
+ * @param array|string $type The type string or array with format `['type' => 'viewClass']` to map one or more
  * @param array $viewClass The viewClass to be used for the type without `View` appended
  * @return array|string Returns viewClass when only string $type is set, else array with viewClassMap
  */

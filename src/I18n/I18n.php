@@ -73,7 +73,7 @@ class I18n {
  *
  * @var array
  */
-	protected $_domains = array();
+	protected $_domains = [];
 
 /**
  * Set to true when I18N::_bindTextDomain() is called for the first time.
@@ -88,9 +88,9 @@ class I18n {
  *
  * @var array
  */
-	protected $_categories = array(
+	protected $_categories = [
 		'LC_ALL', 'LC_COLLATE', 'LC_CTYPE', 'LC_MONETARY', 'LC_NUMERIC', 'LC_TIME', 'LC_MESSAGES'
-	);
+	];
 
 /**
  * Constants for the translation categories.
@@ -185,7 +185,7 @@ class I18n {
  * @return I18n
  */
 	public static function getInstance() {
-		static $instance = array();
+		static $instance = [];
 		if (!$instance) {
 			$instance[0] = new I18n(Request::createFromGlobals());
 		}
@@ -306,7 +306,7 @@ class I18n {
  */
 	public static function clear() {
 		$self = I18n::getInstance();
-		$self->_domains = array();
+		$self->_domains = [];
 	}
 
 /**
@@ -377,7 +377,7 @@ class I18n {
 	protected function _bindTextDomain($domain) {
 		$this->_noLocale = true;
 		$core = true;
-		$merge = array();
+		$merge = [];
 		$searchPaths = App::path('Locale');
 		$plugins = Plugin::loaded();
 
@@ -442,7 +442,7 @@ class I18n {
 		}
 
 		if (empty($this->_domains[$domain][$this->_lang][$this->category])) {
-			$this->_domains[$domain][$this->_lang][$this->category] = array();
+			$this->_domains[$domain][$this->_lang][$this->category] = [];
 			return $domain;
 		}
 
@@ -482,7 +482,7 @@ class I18n {
 		// @codingStandardsIgnoreStart
 		// Binary files extracted makes non-standard local variables
 		if ($data = file_get_contents($filename)) {
-			$translations = array();
+			$translations = [];
 			$header = substr($data, 0, 20);
 			$header = unpack('L1magic/L1version/L1count/L1o_msg/L1o_trn', $header);
 			extract($header);
@@ -527,7 +527,7 @@ class I18n {
 		}
 
 		$type = 0;
-		$translations = array();
+		$translations = [];
 		$translationKey = '';
 		$plural = 0;
 		$header = '';
@@ -600,7 +600,7 @@ class I18n {
 			return false;
 		}
 
-		$definitions = array();
+		$definitions = [];
 		$comment = '#';
 		$escape = '\\';
 		$currentToken = false;
@@ -636,14 +636,14 @@ class I18n {
 				continue;
 			}
 
-			$mustEscape = array($escape . ',', $escape . ';', $escape . '<', $escape . '>', $escape . $escape);
+			$mustEscape = [$escape . ',', $escape . ';', $escape . '<', $escape . '>', $escape . $escape];
 			$replacements = array_map('crc32', $mustEscape);
 			$value = str_replace($mustEscape, $replacements, $value);
 			$value = explode(';', $value);
 			$_this->_escape = $escape;
 			foreach ($value as $i => $val) {
 				$val = trim($val, '"');
-				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/', array(&$_this, '_parseLiteralValue'), $val);
+				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/', [&$_this, '_parseLiteralValue'], $val);
 				$val = str_replace($replacements, $mustEscape, $val);
 				$value[$i] = $val;
 			}
@@ -682,7 +682,7 @@ class I18n {
 			return implode('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
 		}
 		if (preg_match('/U([0-9a-fA-F]{4})/', $string, $match)) {
-			return String::ascii(array(hexdec($match[1])));
+			return String::ascii([hexdec($match[1])]);
 		}
 		return $string;
 	}
