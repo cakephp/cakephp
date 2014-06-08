@@ -147,4 +147,15 @@ class CellTest extends TestCase {
 		$cell = $this->View->cell('Void::echoThis', ['arg1' => 'v1', 'arg2' => 'v2']);
 	}
 
+/**
+ * Tests missing method errors
+ *
+ * @expectedException \BadMethodCallException
+ * @expectedExceptionMessage Class TestApp\View\Cell\ArticlesCell does not have a "nope" method.
+ * @return void
+ */
+	public function testCellMissingMethod() {
+		$this->View->cell('Articles::nope');
+	}
+
 }
