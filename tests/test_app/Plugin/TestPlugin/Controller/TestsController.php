@@ -21,8 +21,6 @@ namespace TestPlugin\Controller;
 
 class TestsController extends TestPluginAppController {
 
-	public $uses = array();
-
 	public $helpers = array('TestPlugin.OtherHelper', 'Html');
 
 	public $components = array('TestPlugin.Plugins');

@@ -89,6 +89,8 @@ class Controller implements EventListener {
 /**
  * The name of this controller. Controller names are plural, named after the model they manipulate.
  *
+ * Set automatically using conventions in Controller::__construct().
+ *
  * @var string
  * @link http://book.cakephp.org/2.0/en/controllers.html#controller-attributes
  */
@@ -216,7 +218,20 @@ class Controller implements EventListener {
 	public $methods = array();
 
 /**
+ * The path to this controllers view templates.
+ * Example `Articles`
+ *
+ * Set automatically using conventions in Controller::__construct().
+ *
+ * @var string
+ */
+	public $viewPath;
+
+/**
  * Constructor.
+ *
+ * Sets a number of properties based on conventions if they are empty. To override the
+ * conventions CakePHP uses you can define properties in your class declaration.
  *
  * @param \Cake\Network\Request $request Request object for this controller. Can be null for testing,
  *  but expect that features that use the request parameters will not work.
@@ -240,13 +255,9 @@ class Controller implements EventListener {
 			$this->viewPath = $viewPath;
 		}
 
-		$this->_setModelClass($this->name);
-		$this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
-
 		$childMethods = get_class_methods($this);
-		$parentMethods = get_class_methods('Cake\Controller\Controller');
-
-		$this->methods = array_diff($childMethods, $parentMethods);
+		$baseMethods = get_class_methods('Cake\Controller\Controller');
+		$this->methods = array_diff($childMethods, $baseMethods);
 
 		if ($request instanceof Request) {
 			$this->setRequest($request);
@@ -254,6 +265,10 @@ class Controller implements EventListener {
 		if ($response instanceof Response) {
 			$this->response = $response;
 		}
+
+		$this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
+		$modelClass = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
+		$this->_setModelClass($modelClass);
 	}
 
 /**
