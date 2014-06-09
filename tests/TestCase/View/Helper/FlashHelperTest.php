@@ -98,9 +98,27 @@ class FlashHelperTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Flash->render('notification');
-		$result = str_replace("\r\n", "\n", $result);
-		$expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a test of the emergency broadcasting system</p>\n</div>";
-		$this->assertEquals($expected, $result);
+		
+		$children = [
+			['tag' => 'h1', 'content' => 'Alert!'],
+			['tag' => 'h3', 'content' => 'Notice!'],
+			['tag' => 'p', 'content' => 'This is a test of the emergency broadcasting system']
+		];
+
+		$expected = [
+			'tag' => 'div',
+			'id' => 'notificationLayout',
+			'child' => []
+		];
+
+		$expected['child'] = ['tag' => 'h1', 'content' => 'Alert!'];
+		$this->assertTag($expected, $result);
+
+		$expected['child'] = ['tag' => 'h3', 'content' => 'Notice!'];
+		$this->assertTag($expected, $result);
+
+		$expected['child'] = ['tag' => 'p', 'content' => 'This is a test of the emergency broadcasting system'];
+		$this->assertTag($expected, $result);
 	}
 
 /**
@@ -124,8 +142,27 @@ class FlashHelperTest extends TestCase {
 			'element' => 'flash_helper',
 			'params' => array('title' => 'Notice!', 'name' => 'Alert!')
 		));
-		$expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a test of the emergency broadcasting system</p>\n</div>";
-		$this->assertTextEquals($expected, $result);
+
+		$children = [
+			['tag' => 'h1', 'content' => 'Alert!'],
+			['tag' => 'h3', 'content' => 'Notice!'],
+			['tag' => 'p', 'content' => 'This is a test of the emergency broadcasting system']
+		];
+
+		$expected = [
+			'tag' => 'div',
+			'id' => 'notificationLayout',
+			'child' => []
+		];
+
+		$expected['child'] = ['tag' => 'h1', 'content' => 'Alert!'];
+		$this->assertTag($expected, $result);
+
+		$expected['child'] = ['tag' => 'h3', 'content' => 'Notice!'];
+		$this->assertTag($expected, $result);
+
+		$expected['child'] = ['tag' => 'p', 'content' => 'This is a test of the emergency broadcasting system'];
+		$this->assertTag($expected, $result);
 	}
 
 /**
