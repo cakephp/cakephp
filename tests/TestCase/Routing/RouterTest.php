@@ -1191,7 +1191,7 @@ class RouterTest extends TestCase {
 
 		Router::connect(
 			'/posts/:value/:somevalue/:othervalue/*',
-			array('controller' => 'posts', 'action' => 'view'),
+			array('controller' => 'Posts', 'action' => 'view'),
 			array('value', 'somevalue', 'othervalue')
 		);
 		$result = Router::parse('/posts/2007/08/01/title-of-post-here');
@@ -1199,7 +1199,7 @@ class RouterTest extends TestCase {
 			'value' => '2007',
 			'somevalue' => '08',
 			'othervalue' => '01',
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'view',
 			'plugin' => null,
 			'pass' => array('0' => 'title-of-post-here')
@@ -1283,7 +1283,7 @@ class RouterTest extends TestCase {
 		$expected = array(
 			'plugin' => null,
 			'pass' => array('home'),
-			'controller' => 'pages',
+			'controller' => 'Pages',
 			'action' => 'display'
 		);
 		$this->assertEquals($expected, $result);
@@ -1675,7 +1675,7 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/posts.rss');
 		$expected = array(
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'index',
 			'_ext' => 'rss',
 			'pass' => []
@@ -1685,7 +1685,7 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/posts/view/1.rss');
 		$expected = array(
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'view',
 			'pass' => array('1'),
 			'_ext' => 'rss'
@@ -1703,7 +1703,7 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/posts.xml');
 		$expected = array(
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'index',
 			'_ext' => 'xml',
 			'pass' => []
@@ -1713,7 +1713,7 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/posts.atom?hello=goodbye');
 		$expected = array(
 			'plugin' => null,
-			'controller' => 'posts.atom',
+			'controller' => 'Posts.atom',
 			'action' => 'index',
 			'pass' => [],
 			'?' => array('hello' => 'goodbye')
@@ -2327,12 +2327,12 @@ class RouterTest extends TestCase {
 		Router::reload();
 		require CAKE . 'Config/routes.php';
 
-		$result = Router::url(array('plugin' => 'plugin_js', 'controller' => 'js_file', 'action' => 'index'));
+		$result = Router::url(array('plugin' => 'PluginJs', 'controller' => 'JsFile', 'action' => 'index'));
 		$this->assertEquals('/plugin_js/js_file', $result);
 
 		$result = Router::parse('/plugin_js/js_file');
 		$expected = array(
-			'plugin' => 'plugin_js', 'controller' => 'js_file', 'action' => 'index',
+			'plugin' => 'PluginJs', 'controller' => 'JsFile', 'action' => 'index',
 			'pass' => []
 		);
 		$this->assertEquals($expected, $result);
@@ -2342,8 +2342,8 @@ class RouterTest extends TestCase {
 
 		$result = Router::parse('/test_plugin');
 		$expected = array(
-			'plugin' => 'test_plugin',
-			'controller' => 'test_plugin',
+			'plugin' => 'TestPlugin',
+			'controller' => 'TestPlugin',
 			'action' => 'index',
 			'pass' => []
 		);

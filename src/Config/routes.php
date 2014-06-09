@@ -64,7 +64,7 @@ if ($prefixPattern && $pluginPattern) {
 		'defaultRoute' => true,
 		'routeClass' => 'Cake\Routing\Route\InflectedRoute'
 	];
-	Router::connect('/:prefix/:plugin', $indexParams, $match + $pluginShortMatch);
+	Router::connect('/:prefix/:plugin', $indexParams, $pluginShortMatch + $match);
 	Router::connect('/:prefix/:plugin/:controller', $indexParams, $match);
 	Router::connect('/:prefix/:plugin/:controller/:action/*', [], $match);
 }
@@ -74,7 +74,7 @@ if ($pluginPattern) {
 		'defaultRoute' => true,
 		'routeClass' => 'Cake\Routing\Route\InflectedRoute'
 	];
-	Router::connect('/:plugin', $indexParams, $match + $pluginShortMatch);
+	Router::connect('/:plugin', $indexParams, $pluginShortMatch + $match);
 	Router::connect('/:plugin/:controller', $indexParams, $match);
 	Router::connect('/:plugin/:controller/:action/*', [], $match);
 }
