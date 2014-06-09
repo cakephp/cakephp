@@ -219,6 +219,7 @@ class ControllerTest extends TestCase {
 		parent::setUp();
 
 		App::objects('Plugin', null, false);
+		Configure::write('App.namespace', 'TestApp');
 		Router::reload();
 	}
 
@@ -238,7 +239,6 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testTableAutoload() {
-		Configure::write('App.namespace', 'TestApp');
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response');
 		$Controller = new Controller($request, $response);
@@ -256,7 +256,6 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testLoadModel() {
-		Configure::write('App.namespace', 'TestApp');
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response');
 		$Controller = new Controller($request, $response);
@@ -277,7 +276,6 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testLoadModelInPlugins() {
-		Configure::write('App.namespace', 'TestApp');
 		Plugin::load('TestPlugin');
 
 		$Controller = new TestPluginController();
@@ -294,12 +292,32 @@ class ControllerTest extends TestCase {
 	}
 
 /**
+ * Test that the constructor sets modelClass properly.
+ *
+ * @return void
+ */
+	public function testConstructSetModelClass() {
+		Plugin::load('TestPlugin');
+
+		$request = new Request();
+		$response = new Response();
+		$controller = new \TestApp\Controller\PostsController($request, $response);
+		$this->assertEquals('Posts', $controller->modelClass);
+
+		$controller = new \TestApp\Controller\Admin\PostsController($request, $response);
+		$this->assertEquals('Posts', $controller->modelClass);
+
+		$request->params['plugin'] = 'TestPlugin';
+		$controller = new \TestPlugin\Controller\Admin\CommentsController($request, $response);
+		$this->assertEquals('TestPlugin.Comments', $controller->modelClass);
+	}
+
+/**
  * testConstructClassesWithComponents method
  *
  * @return void
  */
 	public function testConstructClassesWithComponents() {
-		Configure::write('App.namespace', 'TestApp');
 		Plugin::load('TestPlugin');
 
 		$Controller = new TestPluginController(new Request(), new Response());
@@ -315,7 +333,6 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testRender() {
-		Configure::write('App.namespace', 'TestApp');
 		Plugin::load('TestPlugin');
 
 		$request = new Request('controller_posts/index');
@@ -342,7 +359,6 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testBeforeRenderCallbackChangingViewClass() {
-		Configure::write('App.namespace', 'TestApp');
 		$Controller = new Controller(new Request, new Response());
 
 		$Controller->eventManager()->attach(function ($event) {

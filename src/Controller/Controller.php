@@ -240,13 +240,9 @@ class Controller implements EventListener {
 			$this->viewPath = $viewPath;
 		}
 
-		$this->_setModelClass($this->name);
-		$this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
-
 		$childMethods = get_class_methods($this);
-		$parentMethods = get_class_methods('Cake\Controller\Controller');
-
-		$this->methods = array_diff($childMethods, $parentMethods);
+		$baseMethods = get_class_methods('Cake\Controller\Controller');
+		$this->methods = array_diff($childMethods, $baseMethods);
 
 		if ($request instanceof Request) {
 			$this->setRequest($request);
@@ -254,6 +250,10 @@ class Controller implements EventListener {
 		if ($response instanceof Response) {
 			$this->response = $response;
 		}
+
+		$this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
+		$modelClass = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
+		$this->_setModelClass($modelClass);
 	}
 
 /**
