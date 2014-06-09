@@ -78,14 +78,23 @@ class CellTest extends TestCase {
  * @return void
  */
 	public function testCellImplictRenderWithError() {
+		$capture = function ($errno, $msg) {
+			restore_error_handler();
+			$this->assertEquals(E_USER_WARNING, $errno);
+			$this->assertContains('Could not render cell - View file', $msg);
+		};
+		set_error_handler($capture);
+
 		$cell = $this->View->cell('Articles::teaserList');
 		$cell->template = 'nope';
-		$output = "{$cell}";
-		$this->assertStringStartsWith("Error: Could not render cell - View file", $output);
+		$result = "{$cell}";
 	}
 
 /**
  * Tests that we are able pass multiple arguments to cell methods.
+ *
+ * This test sets its own error handler, as PHPUnit won't convert
+ * errors into exceptions when the caller is a __toString() method.
  *
  * @return void
  */

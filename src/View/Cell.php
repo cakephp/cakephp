@@ -157,13 +157,17 @@ abstract class Cell {
  *
  * Starts the rendering process when Cell is echoed.
  *
+ * *Note* This method will trigger an error when view rendering has a problem.
+ * This is because PHP will not allow a __toString() method to throw an exception.
+ *
  * @return string Rendered cell
  */
 	public function __toString() {
 		try {
 			return $this->render();
 		} catch (\Exception $e) {
-			return "Error: Could not render cell - " . $e->getMessage();
+			trigger_error('Could not render cell - ' . $e->getMessage(), E_USER_WARNING);
+			return '';
 		}
 	}
 

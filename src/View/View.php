@@ -377,7 +377,8 @@ class View {
  *   Defaults to false.
  * - `ignoreMissing` - Used to allow missing elements. Set to true to not throw exceptions.
  * @return string Rendered Element
- * @throws
+ * @throws \Cake\View\Error\MissingElementException When an element is missing and `ignoreMissing`
+ *   is false.
  */
 	public function element($name, array $data = array(), array $options = array()) {
 		$file = $plugin = null;
