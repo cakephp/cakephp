@@ -58,23 +58,42 @@ $pluginShortMatch = [
 ];
 
 if ($prefixPattern && $pluginPattern) {
-	$match = ['prefix' => $prefixPattern, 'plugin' => $pluginPattern, 'defaultRoute' => true];
+	$match = [
+		'prefix' => $prefixPattern,
+		'plugin' => $pluginPattern,
+		'defaultRoute' => true,
+		'routeClass' => 'Cake\Routing\Route\InflectedRoute'
+	];
 	Router::connect('/:prefix/:plugin', $indexParams, $match + $pluginShortMatch);
 	Router::connect('/:prefix/:plugin/:controller', $indexParams, $match);
 	Router::connect('/:prefix/:plugin/:controller/:action/*', [], $match);
 }
 if ($pluginPattern) {
-	$match = ['plugin' => $pluginPattern, 'defaultRoute' => true];
+	$match = [
+		'plugin' => $pluginPattern,
+		'defaultRoute' => true,
+		'routeClass' => 'Cake\Routing\Route\InflectedRoute'
+	];
 	Router::connect('/:plugin', $indexParams, $match + $pluginShortMatch);
 	Router::connect('/:plugin/:controller', $indexParams, $match);
 	Router::connect('/:plugin/:controller/:action/*', [], $match);
 }
 if ($prefixPattern) {
-	$match = ['prefix' => $prefixPattern, 'defaultRoute' => true];
+	$match = [
+		'prefix' => $prefixPattern,
+		'defaultRoute' => true,
+		'routeClass' => 'Cake\Routing\Route\InflectedRoute'
+	];
 	Router::connect('/:prefix/:controller', $indexParams, $match);
 	Router::connect('/:prefix/:controller/:action/*', [], $match);
 }
-Router::connect('/:controller', ['action' => 'index']);
-Router::connect('/:controller/:action/*');
+Router::connect('/:controller', ['action' => 'index'], [
+	'defaultRoute' => true,
+	'routeClass' => 'Cake\Routing\Route\InflectedRoute'
+]);
+Router::connect('/:controller/:action/*', [], [
+	'defaultRoute' => true,
+	'routeClass' => 'Cake\Routing\Route\InflectedRoute'
+]);
 
 unset($prefixes, $prefixPattern, $plugins, $pluginPattern, $indexParams, $match);
