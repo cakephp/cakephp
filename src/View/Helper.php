@@ -319,7 +319,7 @@ class Helper implements EventListener {
 				//@codingStandardsIgnoreEnd
 			}
 			$segments = explode('/', ltrim($filepath, '/'));
-			$plugin = Inflector::camelize($segments[0]);
+			$plugin = $segments[0];
 			if (Plugin::loaded($plugin)) {
 				unset($segments[0]);
 				$pluginPath = Plugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);

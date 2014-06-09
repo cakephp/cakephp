@@ -325,7 +325,7 @@ class Controller implements EventListener {
  */
 	public function setRequest(Request $request) {
 		$this->request = $request;
-		$this->plugin = isset($request->params['plugin']) ? Inflector::camelize($request->params['plugin']) : null;
+		$this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
 		$this->view = isset($request->params['action']) ? $request->params['action'] : null;
 
 		if (isset($request->params['pass'])) {

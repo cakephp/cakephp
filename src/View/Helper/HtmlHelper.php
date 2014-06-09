@@ -18,7 +18,6 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Network\Response;
-use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\Helper\StringTemplateTrait;
 use Cake\View\View;
