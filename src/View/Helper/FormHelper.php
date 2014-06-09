@@ -1238,22 +1238,25 @@ class FormHelper extends Helper {
 	public function radio($fieldName, $options = [], array $attributes = []) {
 		$attributes = $this->_initInputField($fieldName, $attributes);
 
+		$value = $attributes['val'];
 		$hiddenField = isset($attributes['hiddenField']) ? $attributes['hiddenField'] : true;
 		unset($attributes['hiddenField']);
 
-		$value = $attributes['val'];
+		$attributes['options'] = $options;
+		$attributes['idPrefix'] = $this->_idPrefix;
+
+		$radio = $this->widget('radio', $attributes);
+
 		$hidden = '';
 		if ($hiddenField && (!isset($value) || $value === '')) {
 			$hidden = $this->hidden($fieldName, [
 				'value' => '',
 				'form' => isset($attributes['form']) ? $attributes['form'] : null,
-				'name' => $attributes['name']
+				'name' => $attributes['name'],
 			]);
 		}
-		$attributes['options'] = $options;
-		$attributes['idPrefix'] = $this->_idPrefix;
 
-		return $hidden . $this->widget('radio', $attributes);
+		return $hidden . $radio;
 	}
 
 /**
@@ -1328,7 +1331,7 @@ class FormHelper extends Helper {
 		));
 
 		if ($secure === true) {
-			$this->_secure(true, $this->_secureFieldName($options), (string)$options['val']);
+			$this->_secure(true, $this->_secureFieldName($options['name']), (string)$options['val']);
 		}
 
 		$options['type'] = 'hidden';
@@ -1345,17 +1348,7 @@ class FormHelper extends Helper {
  */
 	public function file($fieldName, array $options = array()) {
 		$options += array('secure' => true);
-		$secure = $options['secure'];
-		$options['secure'] = static::SECURE_SKIP;
-
 		$options = $this->_initInputField($fieldName, $options);
-
-		foreach (array('name', 'type', 'tmp_name', 'error', 'size') as $suffix) {
-			$this->_secure(
-				$secure,
-				$this->_secureFieldName(['name' => $options['name'] . '[' . $suffix . ']'])
-			);
-		}
 
 		unset($options['type']);
 		return $this->widget('file', $options);
@@ -1378,11 +1371,6 @@ class FormHelper extends Helper {
  */
 	public function button($title, array $options = array()) {
 		$options += array('type' => 'submit', 'escape' => false, 'secure' => false);
-		if (isset($options['name'])) {
-			$this->_secure($options['secure'], $this->_secureFieldName($options));
-		}
-		unset($options['secure']);
-
 		$options['text'] = $title;
 		return $this->widget('button', $options);
 	}
@@ -1532,7 +1520,7 @@ class FormHelper extends Helper {
 		$options += ['type' => 'submit', 'secure' => false];
 
 		if (isset($options['name'])) {
-			$this->_secure($options['secure'], $this->_secureFieldName($options));
+			$this->_secure($options['secure'], $this->_secureFieldName($options['name']));
 		}
 		unset($options['secure']);
 
@@ -1966,24 +1954,8 @@ class FormHelper extends Helper {
 			'timeFormat' => 24,
 			'second' => false,
 		];
-		$secure = true;
-		if (!empty($options['disabled'])) {
-			$secure = false;
-		}
-		if (isset($options['secure'])) {
-			$secure = $options['secure'];
-		}
-		$options['secure'] = static::SECURE_SKIP;
-
 		$options = $this->_initInputField($fieldName, $options);
 		$options = $this->_datetimeOptions($options);
-
-		foreach ($this->_datetimeParts as $type) {
-			if ($options[$type] !== false) {
-				$this->_secure($secure, $fieldName . '.' . $type);
-			}
-		}
-
 		return $this->widget('datetime', $options);
 	}
 
@@ -2107,24 +2079,8 @@ class FormHelper extends Helper {
 		$options['hour'] = $options['minute'] = false;
 		$options['meridian'] = $options['second'] = false;
 
-		$secure = true;
-		if (!empty($options['disabled'])) {
-			$secure = false;
-		}
-		if (isset($options['secure'])) {
-			$secure = $options['secure'];
-		}
-		$options['secure'] = static::SECURE_SKIP;
-
 		$options = $this->_initInputField($fieldName, $options);
 		$options = $this->_datetimeOptions($options);
-
-		foreach ($this->_datetimeParts as $type) {
-			if ($options[$type] !== false) {
-				$this->_secure($secure, $fieldName . '.' . $type);
-			}
-		}
-
 		return $this->widget('datetime', $options);
 	}
 
@@ -2152,10 +2108,8 @@ class FormHelper extends Helper {
  * @return array Array of options for the input.
  */
 	protected function _initInputField($field, $options = []) {
-		$secure = !empty($this->request->params['_Token']);
-		if (isset($options['secure'])) {
-			$secure = $options['secure'];
-			unset($options['secure']);
+		if (!isset($options['secure'])) {
+			$options['secure'] = !empty($this->request->params['_Token']);
 		}
 		$context = $this->_getContext();
 
@@ -2186,19 +2140,15 @@ class FormHelper extends Helper {
 		if ($context->hasError($field)) {
 			$options = $this->addClass($options, $this->_config['errorClass']);
 		}
-		if (!empty($options['disabled']) || $secure === static::SECURE_SKIP) {
+		if (!empty($options['disabled'])) {
+			$options['secure'] = self::SECURE_SKIP;
+		}
+		if ($options['secure'] === self::SECURE_SKIP) {
 			return $options;
 		}
-
-		if (!isset($options['required']) && $context->isRequired($field)) {
+		if (!isset($options['required']) && empty($options['disabled']) && $context->isRequired($field)) {
 			$options['required'] = true;
 		}
-
-		if ($secure === self::SECURE_SKIP) {
-			return $options;
-		}
-
-		$this->_secure($secure, $this->_secureFieldName($options));
 		return $options;
 	}
 
@@ -2209,18 +2159,15 @@ class FormHelper extends Helper {
  * in secured field hash. If filename is of form Model[field] an array of
  * fieldname parts like ['Model', 'field'] is returned.
  *
- * @param array $options An array of options possibly containing a name key.
+ * @param string $name The form inputs name attribute.
  * @return string|array|null Dot separated string like Foo.bar, array of filename
  *   params like ['Model', 'field'] or null if options does not contain name.
  */
-	protected function _secureFieldName($options) {
-		if (!isset($options['name'])) {
-			return null;
+	protected function _secureFieldName($name) {
+		if (strpos($name, '[') === false) {
+			return [$name];
 		}
-		if (strpos($options['name'], '[') === false) {
-			return [$options['name']];
-		}
-		$parts = explode('[', $options['name']);
+		$parts = explode('[', $name);
 		$parts = array_map(function($el) {
 			return trim($el, ']');
 		}, $parts);
@@ -2317,7 +2264,18 @@ class FormHelper extends Helper {
  * @return string
  */
 	public function widget($name, array $data = []) {
-		return $this->_registry->get($name)->render($data);
+		$widget = $this->_registry->get($name);
+		if (
+			isset($data['secure'], $data['name']) &&
+			$data['secure'] !== self::SECURE_SKIP
+		) {
+			foreach ($widget->secureFields($data) as $field) {
+				$this->_secure($data['secure'], $this->_secureFieldName($field));
+			}
+		}
+		unset($data['secure']);
+
+		return $widget->render($data);
 	}
 
 /**

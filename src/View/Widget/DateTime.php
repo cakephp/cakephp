@@ -517,4 +517,17 @@ class DateTime implements WidgetInterface {
 		return $numbers;
 	}
 
+/**
+ * {@inheritDoc}
+ */
+	public function secureFields(array $data) {
+		$fields = [];
+		foreach ($this->_selects as $type) {
+			if ($data[$type] !== false) {
+				$fields[] = $data['name'] . '[' . $type . ']';
+			}
+		}
+		return $fields;
+	}
+
 }

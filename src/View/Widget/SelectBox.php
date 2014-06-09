@@ -286,4 +286,11 @@ class SelectBox implements WidgetInterface {
 		return in_array((string)$key, $disabled, $strict);
 	}
 
+/**
+ * {@inheritDoc}
+ */
+	public function secureFields(array $data) {
+		return [$data['name']];
+	}
+
 }

@@ -63,4 +63,15 @@ class File implements WidgetInterface {
 		]);
 	}
 
+/**
+ * {@inheritDoc}
+ */
+	public function secureFields(array $data) {
+		$fields = [];
+		foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $suffix) {
+			$fields[] = $data['name'] . '[' . $suffix . ']';
+		}
+		return $fields;
+	}
+
 }

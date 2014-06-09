@@ -73,4 +73,11 @@ class Label implements WidgetInterface {
 		]);
 	}
 
+/**
+ * {@inheritDoc}
+ */
+	public function secureFields(array $data) {
+		return [];
+	}
+
 }

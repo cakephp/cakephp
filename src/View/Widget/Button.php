@@ -68,4 +68,14 @@ class Button implements WidgetInterface {
 		]);
 	}
 
+/**
+ * {@inheritDoc}
+ */
+	public function secureFields(array $data) {
+		if (!isset($data['name'])) {
+			return [];
+		}
+		return [$data['name']];
+	}
+
 }
