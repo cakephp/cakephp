@@ -45,8 +45,8 @@ class InflectedRoute extends Route {
 	}
 
 /**
- * Reverse route plugin shortcut URLs. If the plugin and controller
- * are not the same the match is an auto fail.
+ * Underscores the controller and plugin params before passing them on to the
+ * parent class
  *
  * @param array $url Array of parameters to convert to a string.
  * @param array $context An array of the current request context.
@@ -65,4 +65,3 @@ class InflectedRoute extends Route {
 	}
 
 }
-
