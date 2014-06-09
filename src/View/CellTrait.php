@@ -80,9 +80,17 @@ trait CellTrait {
 			$data = array_values($data);
 		}
 
-		call_user_func_array([$cellInstance, $action], $data);
-
-		return $cellInstance;
+		try {
+			$reflect = new \ReflectionMethod($cellInstance, $action);
+			$reflect->invokeArgs($cellInstance, $data);
+			return $cellInstance;
+		} catch (\ReflectionException $e) {
+			throw new \BadMethodCallException(sprintf(
+				'Class %s does not have a "%s" method.',
+				$className,
+				$action
+			));
+		}
 	}
 
 }

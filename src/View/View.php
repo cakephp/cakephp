@@ -375,8 +375,10 @@ class View {
  *   - `key` - Used to define the key used in the Cache::write(). It will be prefixed with `element_`
  * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this element.
  *   Defaults to false.
- * - `ignoreMissing` - Used to allow missing elements. Set to true to not trigger notices.
+ * - `ignoreMissing` - Used to allow missing elements. Set to true to not throw exceptions.
  * @return string Rendered Element
+ * @throws \Cake\View\Error\MissingElementException When an element is missing and `ignoreMissing`
+ *   is false.
  */
 	public function element($name, array $data = array(), array $options = array()) {
 		$file = $plugin = null;
@@ -401,7 +403,7 @@ class View {
 			list ($plugin, $name) = pluginSplit($name, true);
 			$name = str_replace('/', DS, $name);
 			$file = $plugin . 'Element' . DS . $name . $this->_ext;
-			trigger_error(sprintf('Element Not Found: %s', $file), E_USER_NOTICE);
+			throw new Error\MissingElementException($file);
 		}
 	}
 

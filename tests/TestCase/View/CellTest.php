@@ -73,7 +73,28 @@ class CellTest extends TestCase {
 	}
 
 /**
+ * Test __toString() hitting an error when rendering views.
+ *
+ * @return void
+ */
+	public function testCellImplictRenderWithError() {
+		$capture = function ($errno, $msg) {
+			restore_error_handler();
+			$this->assertEquals(E_USER_WARNING, $errno);
+			$this->assertContains('Could not render cell - View file', $msg);
+		};
+		set_error_handler($capture);
+
+		$cell = $this->View->cell('Articles::teaserList');
+		$cell->template = 'nope';
+		$result = "{$cell}";
+	}
+
+/**
  * Tests that we are able pass multiple arguments to cell methods.
+ *
+ * This test sets its own error handler, as PHPUnit won't convert
+ * errors into exceptions when the caller is a __toString() method.
  *
  * @return void
  */
@@ -145,6 +166,17 @@ class CellTest extends TestCase {
 	public function testUnexistingCell() {
 		$cell = $this->View->cell('TestPlugin.Void::echoThis', ['arg1' => 'v1']);
 		$cell = $this->View->cell('Void::echoThis', ['arg1' => 'v1', 'arg2' => 'v2']);
+	}
+
+/**
+ * Tests missing method errors
+ *
+ * @expectedException \BadMethodCallException
+ * @expectedExceptionMessage Class TestApp\View\Cell\ArticlesCell does not have a "nope" method.
+ * @return void
+ */
+	public function testCellMissingMethod() {
+		$this->View->cell('Articles::nope');
 	}
 
 }

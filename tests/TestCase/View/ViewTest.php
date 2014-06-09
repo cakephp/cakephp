@@ -99,17 +99,6 @@ class ThemePostsController extends Controller {
 class TestThemeView extends View {
 
 /**
- * renderElement method
- *
- * @param string $name Element name.
- * @param array $params Params list.
- * @return string The given name
- */
-	public function renderElement($name, $params = array()) {
-		return $name;
-	}
-
-/**
  * getViewFileName method
  *
  * @param string $name Controller action to find template filename for
@@ -653,7 +642,7 @@ class ViewTest extends TestCase {
 /**
  * Test elementInexistent method
  *
- * @expectedException PHPUnit_Framework_Error_Notice
+ * @expectedException Cake\View\Error\MissingElementException
  * @return void
  */
 	public function testElementInexistent() {
@@ -663,7 +652,7 @@ class ViewTest extends TestCase {
 /**
  * Test elementInexistent3 method
  *
- * @expectedException PHPUnit_Framework_Error_Notice
+ * @expectedException Cake\View\Error\MissingElementException
  * @return void
  */
 	public function testElementInexistent3() {
