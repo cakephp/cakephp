@@ -44,6 +44,8 @@ class RequestActionTraitTest extends TestCase {
 		DispatcherFactory::add('Routing');
 		DispatcherFactory::add('ControllerFactory');
 		$this->object = $this->getObjectForTrait('Cake\Routing\RequestActionTrait');
+		Router::connect('/request_action/:action/*', ['controller' => 'RequestAction']);
+		Router::connect('/tests_apps/:action/*', ['controller' => 'TestsApps']);
 	}
 
 /**
@@ -54,6 +56,7 @@ class RequestActionTraitTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		DispatcherFactory::clear();
+		Router::reload();
 	}
 
 /**
@@ -105,6 +108,7 @@ class RequestActionTraitTest extends TestCase {
 	public function testRequestActionPlugins() {
 		Plugin::load('TestPlugin');
 		Router::reload();
+		Router::connect('/test_plugin/tests/:action/*', ['controller' => 'Tests', 'plugin' => 'TestPlugin']);
 
 		$result = $this->object->requestAction('/test_plugin/tests/index', array('return'));
 		$expected = 'test plugin index';
@@ -115,7 +119,7 @@ class RequestActionTraitTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction(
-			array('controller' => 'tests', 'action' => 'index', 'plugin' => 'test_plugin'), array('return')
+			array('controller' => 'Tests', 'action' => 'index', 'plugin' => 'TestPlugin'), array('return')
 		);
 		$expected = 'test plugin index';
 		$this->assertEquals($expected, $result);
@@ -125,7 +129,7 @@ class RequestActionTraitTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction(
-			array('controller' => 'tests', 'action' => 'some_method', 'plugin' => 'test_plugin')
+			array('controller' => 'Tests', 'action' => 'some_method', 'plugin' => 'TestPlugin')
 		);
 		$expected = 25;
 		$this->assertEquals($expected, $result);
@@ -140,41 +144,41 @@ class RequestActionTraitTest extends TestCase {
 		Plugin::load(array('TestPlugin'));
 
 		$result = $this->object->requestAction(
-			array('controller' => 'request_action', 'action' => 'test_request_action')
+			array('controller' => 'RequestAction', 'action' => 'test_request_action')
 		);
 		$expected = 'This is a test';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction(
-			array('controller' => 'request_action', 'action' => 'another_ra_test'),
+			array('controller' => 'RequestAction', 'action' => 'another_ra_test'),
 			array('pass' => array('5', '7'))
 		);
 		$expected = 12;
 		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction(
-			array('controller' => 'tests_apps', 'action' => 'index'), array('return')
+			array('controller' => 'TestsApps', 'action' => 'index'), array('return')
 		);
 		$expected = 'This is the TestsAppsController index view ';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->object->requestAction(array('controller' => 'tests_apps', 'action' => 'some_method'));
+		$result = $this->object->requestAction(array('controller' => 'TestsApps', 'action' => 'some_method'));
 		$expected = 5;
 		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction(
-			array('controller' => 'request_action', 'action' => 'normal_request_action')
+			array('controller' => 'RequestAction', 'action' => 'normal_request_action')
 		);
 		$expected = 'Hello World';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->object->requestAction(
-			array('controller' => 'request_action', 'action' => 'paginate_request_action')
+			array('controller' => 'RequestAction', 'action' => 'paginate_request_action')
 		);
 		$this->assertNull($result);
 
 		$result = $this->object->requestAction(
-			array('controller' => 'request_action', 'action' => 'paginate_request_action'),
+			array('controller' => 'RequestAction', 'action' => 'paginate_request_action'),
 			array('pass' => array(5))
 		);
 		$this->assertNull($result);
@@ -201,7 +205,7 @@ class RequestActionTraitTest extends TestCase {
 		$result = $this->object->requestAction('/request_action/params_pass');
 		$result = json_decode($result, true);
 		$this->assertEquals('request_action/params_pass', $result['url']);
-		$this->assertEquals('request_action', $result['params']['controller']);
+		$this->assertEquals('RequestAction', $result['params']['controller']);
 		$this->assertEquals('params_pass', $result['params']['action']);
 		$this->assertNull($result['params']['plugin']);
 	}
@@ -216,12 +220,12 @@ class RequestActionTraitTest extends TestCase {
 		$_POST = array(
 			'item' => 'value'
 		);
-		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'post_pass'));
+		$result = $this->object->requestAction(array('controller' => 'RequestAction', 'action' => 'post_pass'));
 		$result = json_decode($result, true);
 		$this->assertEmpty($result);
 
 		$result = $this->object->requestAction(
-			array('controller' => 'request_action', 'action' => 'post_pass'),
+			array('controller' => 'RequestAction', 'action' => 'post_pass'),
 			array('post' => $_POST)
 		);
 		$result = json_decode($result, true);
@@ -235,18 +239,16 @@ class RequestActionTraitTest extends TestCase {
  * @return void
  */
 	public function testRequestActionWithQueryString() {
-		Router::reload();
-		require CAKE . 'Config/routes.php';
 		$query = ['page' => 1, 'sort' => 'title'];
 		$result = $this->object->requestAction(
-			['controller' => 'request_action', 'action' => 'query_pass'],
+			['controller' => 'RequestAction', 'action' => 'query_pass'],
 			['query' => $query]
 		);
 		$result = json_decode($result, true);
 		$this->assertEquals($query, $result);
 
 		$result = $this->object->requestAction([
-			'controller' => 'request_action',
+			'controller' => 'RequestAction',
 			'action' => 'query_pass',
 			'?' => $query
 		]);
@@ -271,7 +273,7 @@ class RequestActionTraitTest extends TestCase {
 			'Post' => array('id' => 2)
 		);
 		$result = $this->object->requestAction(
-			array('controller' => 'request_action', 'action' => 'post_pass'),
+			array('controller' => 'RequestAction', 'action' => 'post_pass'),
 			array('post' => $data)
 		);
 		$result = json_decode($result, true);
@@ -298,7 +300,7 @@ class RequestActionTraitTest extends TestCase {
 		$this->assertEquals('value', $result['query']['get']);
 
 		$result = $this->object->requestAction(
-			array('controller' => 'request_action', 'action' => 'params_pass'),
+			array('controller' => 'RequestAction', 'action' => 'params_pass'),
 			array('query' => array('get' => 'value', 'limit' => 5))
 		);
 		$result = json_decode($result, true);

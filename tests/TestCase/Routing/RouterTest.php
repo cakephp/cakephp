@@ -38,7 +38,6 @@ class RouterTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('Routing', array('admin' => null, 'prefixes' => []));
-		Router::reload();
 		Router::fullbaseUrl('');
 		Configure::write('App.fullBaseUrl', 'http://localhost');
 	}
@@ -53,6 +52,7 @@ class RouterTest extends TestCase {
 		Plugin::unload();
 		Router::fullBaseUrl('');
 		Configure::write('App.fullBaseUrl', 'http://localhost');
+		Router::reload();
 	}
 
 /**
@@ -1507,6 +1507,7 @@ class RouterTest extends TestCase {
  * @dataProvider parseReverseSymmetryData
  */
 	public function testParseReverseSymmetry($url) {
+		require CAKE . 'Config/routes.php';
 		$this->assertSame($url, Router::reverse(Router::parse($url) + array('url' => [])));
 	}
 

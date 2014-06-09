@@ -431,7 +431,7 @@ class ViewTask extends BakeTask {
 					'primaryKey' => (array)$target->primaryKey(),
 					'displayField' => $target->displayField(),
 					'foreignKey' => $assoc->foreignKey(),
-					'controller' => Inflector::underscore($alias),
+					'controller' => $alias,
 					'fields' => $target->schema()->columns(),
 				];
 			}

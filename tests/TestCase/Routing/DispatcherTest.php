@@ -322,7 +322,7 @@ class DispatcherTest extends TestCase {
 		$request = new Request([
 			'url' => 'some_pages/responseGenerator',
 			'params' => [
-				'controller' => 'some_pages',
+				'controller' => 'SomePages',
 				'action' => 'responseGenerator',
 				'pass' => []
 			]
@@ -345,8 +345,8 @@ class DispatcherTest extends TestCase {
 		$request = new Request([
 			'url' => 'admin/posts/index',
 			'params' => [
-				'prefix' => 'admin',
-				'controller' => 'posts',
+				'prefix' => 'Admin',
+				'controller' => 'Posts',
 				'action' => 'index',
 				'pass' => [],
 				'return' => 1
@@ -375,9 +375,9 @@ class DispatcherTest extends TestCase {
 		$request = new Request([
 			'url' => 'admin/test_plugin/comments/index',
 			'params' => [
-				'plugin' => 'test_plugin',
-				'prefix' => 'admin',
-				'controller' => 'comments',
+				'plugin' => 'TestPlugin',
+				'prefix' => 'Admin',
+				'controller' => 'Comments',
 				'action' => 'index',
 				'pass' => [],
 				'return' => 1
