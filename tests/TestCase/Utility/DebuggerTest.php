@@ -645,11 +645,7 @@ TEXT;
 object(Cake\Test\TestCase\Utility\DebuggableThing) {
 
 	'foo' => 'bar',
-	'inner' => object(Cake\Test\TestCase\Utility\DebuggableThing) {
-
-		[maximum depth reached]
-	
-	}
+	'inner' => object(Cake\Test\TestCase\Utility\DebuggableThing) {}
 
 }
 eos;

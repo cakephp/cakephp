@@ -221,4 +221,16 @@ abstract class ObjectRegistry {
 		unset($this->_loaded[$objectName]);
 	}
 
+/**
+ * Debug friendly object properties.
+ *
+ * @return array
+ */
+	public function __debugInfo() {
+		$properties = get_object_vars($this);
+		$properties['_loaded'] = array_keys($properties['_loaded']);
+		return $properties;
+	}
+
+
 }
