@@ -101,6 +101,7 @@ class Plugin {
  * - `namespace` - string - A custom namespace for the plugin. It will default to the plugin name.
  * - `ignoreMissing` - boolean - Set to true to ignore missing bootstrap/routes files.
  * - `path` - string - The path the plugin can be found on. If empty the default plugin path (App.pluginPaths) will be used.
+ * - `base` - string - The base path of the plugin. If empty, the computed value of `path` will be used.
  * - `autoload` - boolean - Whether or not you want an autoloader registered. This defaults to false. The framework
  *   assumes you have configured autoloaders using composer. However, if your application source tree is made up of
  *   plugins, this can be a useful option.
@@ -126,21 +127,7 @@ class Plugin {
 			'namespace' => str_replace('/', '\\', $plugin),
 			'ignoreMissing' => false
 		];
-		if (empty($config['path'])) {
-			$paths = App::path('Plugin');
-			foreach ($paths as $path) {
-				$namespacePath = str_replace('\\', DS, $config['namespace']);
-				$pluginPath = str_replace('/', DS, $plugin);
-				if (is_dir($path . $pluginPath)) {
-					$config += ['path' => $path . $pluginPath . DS];
-					break;
-				}
-				if ($plugin !== $config['namespace'] && is_dir($path . $namespacePath)) {
-					$config += ['path' => $path . $namespacePath . DS];
-					break;
-				}
-			}
-		}
+		$config = static::_configurePaths($plugin, $config);
 
 		if (empty($config['path'])) {
 			throw new Error\MissingPluginException(['plugin' => $plugin]);
@@ -159,6 +146,64 @@ class Plugin {
 			}
 			static::$_loader->addNamespace($config['namespace'], $config['path']);
 		}
+	}
+
+/**
+ * Configure plugin path
+ *
+ * Computes the three path configuration values:
+ *
+ * - `path` - If not specified, values will be computed from the registered default plugin paths
+ * - `base` - Relative to `path` where the files conforming to the plugin namespace are stored
+ * - `classPath` - The full path where plugin class files can be found
+ *
+ * @param string|array $plugin name of the plugin to be loaded in CamelCase format or array or plugins to load
+ * @param array $config configuration options for the plugin
+ * @throws \Cake\Core\Error\MissingPluginException if the folder for the plugin to be loaded is not found
+ * @return array configuration options for the plugin with computed paths added
+ */
+	protected static function _configurePaths($plugin, array $config) {
+		if (isset($config['path'])) {
+			$basePath = isset($config['base']) ? trim($config['base'], DS) : null;
+			if ($basePath) {
+				$config['classPath'] = $config['path'] . DS . $basePath . DS;
+			} else {
+				$config['classPath'] = $config['path'];
+			}
+			return $config;
+		}
+
+		$paths = App::path('Plugin');
+		foreach ($paths as $path) {
+			$namespacePath = str_replace('\\', DS, $config['namespace']);
+			$pluginPath = str_replace('/', DS, $plugin);
+			$basePath = isset($config['base']) ? trim($config['base'], DS) : null;
+			if (is_dir($path . $pluginPath)) {
+				$classPath = $path . $pluginPath;
+				if ($basePath) {
+					$classPath .= DS . $basePath;
+				}
+				return $config += [
+					'path' => $path . $pluginPath . DS,
+					'base' => $basePath . DS,
+					'classPath' => $classPath . DS,
+				];
+			}
+			if ($plugin !== $config['namespace'] && is_dir($path . $namespacePath)) {
+				$classPath = $path . $namespacePath . DS;
+				if ($basePath) {
+					$classPath .= $basePath;
+				}
+				return $config += [
+					'path' => $path . $namespacePath . DS,
+					'base' => $basePath . DS,
+					'classPath' => $classPath . DS,
+				];
+				break;
+			}
+		}
+
+		return $config;
 	}
 
 /**
@@ -204,6 +249,20 @@ class Plugin {
  * @throws \Cake\Core\Error\MissingPluginException if the folder for plugin was not found or plugin has not been loaded
  */
 	public static function path($plugin) {
+		if (empty(static::$_plugins[$plugin])) {
+			throw new Error\MissingPluginException(['plugin' => $plugin]);
+		}
+		return static::$_plugins[$plugin]['classPath'];
+	}
+
+/**
+ * Returns the absolute root path for a plugin
+ *
+ * @param string $plugin name of the plugin in CamelCase format
+ * @return string path to the plugin folder
+ * @throws \Cake\Core\Error\MissingPluginException if the folder for plugin was not found or plugin has not been loaded
+ */
+	public static function root($plugin) {
 		if (empty(static::$_plugins[$plugin])) {
 			throw new Error\MissingPluginException(['plugin' => $plugin]);
 		}
