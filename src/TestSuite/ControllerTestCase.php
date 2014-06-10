@@ -286,9 +286,9 @@ abstract class ControllerTestCase extends TestCase {
 		if ($this->controller === null && $this->autoMock) {
 			$plugin = '';
 			if (!empty($request->params['plugin'])) {
-				$plugin = Inflector::camelize($request->params['plugin']) . '.';
+				$plugin = $request->params['plugin'] . '.';
 			}
-			$controllerName = Inflector::camelize($request->params['controller']);
+			$controllerName = $request->params['controller'];
 			if (!empty($request->params['prefix'])) {
 				$controllerName = Inflector::camelize($request->params['prefix']) . '/' . $controllerName;
 			}

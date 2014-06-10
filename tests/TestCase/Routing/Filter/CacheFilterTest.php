@@ -63,9 +63,7 @@ class CacheFilterTest extends TestCase {
 		return array(
 			array('/'),
 			array('test_cached_pages/index'),
-			array('TestCachedPages/index'),
 			array('test_cached_pages/test_nocache_tags'),
-			array('TestCachedPages/test_nocache_tags'),
 			array('test_cached_pages/view/param/param'),
 			array('test_cached_pages/view?q=cakephp'),
 		);
@@ -84,8 +82,8 @@ class CacheFilterTest extends TestCase {
 		Configure::write('debug', true);
 
 		Router::reload();
-		Router::connect('/', array('controller' => 'test_cached_pages', 'action' => 'index'));
-		Router::connect('/:controller/:action/*');
+		Router::connect('/', array('controller' => 'TestCachedPages', 'action' => 'index'));
+		Router::connect('/test_cached_pages/:action/*', ['controller' => 'TestCachedPages']);
 
 		$dispatcher = new Dispatcher();
 		$dispatcher->addFilter(new RoutingFilter());

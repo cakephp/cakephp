@@ -87,7 +87,8 @@ class SessionComponentTest extends TestCase {
  */
 	public function testSessionIdConsistentAcrossRequestAction() {
 		Configure::write('App.namespace', 'TestApp');
-		Router::connect('/:controller/:action');
+		Router::connect('/session_test/:action', ['controller' => 'SessionTest']);
+		Router::connect('/orange_session_test/:action', ['controller' => 'OrangeSessionTest']);
 
 		$Controller = new Controller();
 		$Session = new SessionComponent($this->ComponentRegistry);

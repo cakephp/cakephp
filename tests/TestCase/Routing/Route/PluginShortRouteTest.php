@@ -46,8 +46,8 @@ class PluginShortRouteTest extends TestCase {
 		$route = new PluginShortRoute('/:plugin', array('action' => 'index'), array('plugin' => 'foo|bar'));
 
 		$result = $route->parse('/foo');
-		$this->assertEquals('foo', $result['plugin']);
-		$this->assertEquals('foo', $result['controller']);
+		$this->assertEquals('Foo', $result['plugin']);
+		$this->assertEquals('Foo', $result['controller']);
 		$this->assertEquals('index', $result['action']);
 
 		$result = $route->parse('/wrong');

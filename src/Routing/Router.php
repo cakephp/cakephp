@@ -446,12 +446,9 @@ class Router {
 		foreach ((array)$controller as $name) {
 			list($plugin, $name) = pluginSplit($name);
 			$urlName = Inflector::underscore($name);
-
-			if ($plugin) {
-				$plugin = Inflector::underscore($plugin);
-			}
-
+			$pluginUrl = $plugin ? Inflector::underscore($plugin) : null;
 			$prefix = $ext = null;
+
 			if (!empty($options['prefix'])) {
 				$prefix = $options['prefix'];
 			}
@@ -461,10 +458,10 @@ class Router {
 
 			foreach (static::$_resourceMap as $params) {
 				$id = $params['id'] ? ':id' : '';
-				$url = '/' . implode('/', array_filter(array($prefix, $plugin, $urlName, $id)));
+				$url = '/' . implode('/', array_filter(array($prefix, $pluginUrl, $urlName, $id)));
 				$params = array(
 					'plugin' => $plugin,
-					'controller' => $urlName,
+					'controller' => $name,
 					'action' => $params['action'],
 					'[method]' => $params['method'],
 					'_ext' => $ext

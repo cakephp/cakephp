@@ -52,6 +52,7 @@ class ControllerTestCaseTest extends TestCase {
 		DispatcherFactory::add('Routing');
 		DispatcherFactory::add('ControllerFactory');
 		Router::reload();
+		require CAKE . 'Config/routes.php';
 		TableRegistry::clear();
 	}
 
@@ -228,36 +229,12 @@ class ControllerTestCaseTest extends TestCase {
 	}
 
 /**
- * Tests using loaded routes during tests
- *
- * @return void
- */
-	public function testUseRoutes() {
-		Router::connect('/:controller/:action/*');
-		include APP . '/Config/routes.php';
-
-		$controller = $this->Case->generate('TestsApps');
-		$controller->components()->load('RequestHandler');
-		$result = $this->Case->testAction('/tests_apps/index.json', array('return' => 'contents'));
-		$result = json_decode($result, true);
-		$expected = array('cakephp' => 'cool');
-		$this->assertEquals($expected, $result);
-
-		include APP . '/Config/routes.php';
-		$result = $this->Case->testAction('/some_alias');
-		$this->assertEquals(5, $result);
-	}
-
-/**
  * Tests not using loaded routes during tests
  *
  * @expectedException \Cake\Controller\Error\MissingActionException
  * @return void
  */
 	public function testSkipRoutes() {
-		Router::connect('/:controller/:action/*');
-		include APP . 'Config/routes.php';
-
 		$this->Case->loadRoutes = false;
 		$this->Case->testAction('/tests_apps/missing_action.json', array('return' => 'view'));
 	}

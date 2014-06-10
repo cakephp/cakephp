@@ -38,7 +38,6 @@ class RouterTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('Routing', array('admin' => null, 'prefixes' => []));
-		Router::reload();
 		Router::fullbaseUrl('');
 		Configure::write('App.fullBaseUrl', 'http://localhost');
 	}
@@ -53,6 +52,7 @@ class RouterTest extends TestCase {
 		Plugin::unload();
 		Router::fullBaseUrl('');
 		Configure::write('App.fullBaseUrl', 'http://localhost');
+		Router::reload();
 	}
 
 /**
@@ -114,7 +114,7 @@ class RouterTest extends TestCase {
 		$expected = [
 			'pass' => [],
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'index',
 			'[method]' => 'GET',
 			'_ext' => null
@@ -127,7 +127,7 @@ class RouterTest extends TestCase {
 		$expected = [
 			'pass' => ['13'],
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'view',
 			'id' => '13',
 			'[method]' => 'GET',
@@ -140,7 +140,7 @@ class RouterTest extends TestCase {
 		$expected = [
 			'pass' => [],
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'add',
 			'[method]' => 'POST',
 			'_ext' => null
@@ -152,7 +152,7 @@ class RouterTest extends TestCase {
 		$expected = [
 			'pass' => ['13'],
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'edit',
 			'id' => '13',
 			'[method]' => 'PUT',
@@ -164,7 +164,7 @@ class RouterTest extends TestCase {
 		$expected = [
 			'pass' => ['475acc39-a328-44d3-95fb-015000000000'],
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'edit',
 			'id' => '475acc39-a328-44d3-95fb-015000000000',
 			'[method]' => 'PUT',
@@ -177,7 +177,7 @@ class RouterTest extends TestCase {
 		$expected = [
 			'pass' => ['13'],
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'delete',
 			'id' => '13',
 			'[method]' => 'DELETE',
@@ -198,7 +198,7 @@ class RouterTest extends TestCase {
 		$expected = [
 			'pass' => ['add'],
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'view',
 			'id' => 'add',
 			'[method]' => 'GET',
@@ -211,7 +211,7 @@ class RouterTest extends TestCase {
 		$expected = [
 			'pass' => ['name'],
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'edit',
 			'id' => 'name',
 			'[method]' => 'PUT',
@@ -233,8 +233,8 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/test_plugin/test_plugin');
 		$expected = array(
 			'pass' => [],
-			'plugin' => 'test_plugin',
-			'controller' => 'test_plugin',
+			'plugin' => 'TestPlugin',
+			'controller' => 'TestPlugin',
 			'action' => 'index',
 			'[method]' => 'GET',
 			'_ext' => null
@@ -246,8 +246,8 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/test_plugin/test_plugin/13');
 		$expected = array(
 			'pass' => array('13'),
-			'plugin' => 'test_plugin',
-			'controller' => 'test_plugin',
+			'plugin' => 'TestPlugin',
+			'controller' => 'TestPlugin',
 			'action' => 'view',
 			'id' => '13',
 			'[method]' => 'GET',
@@ -270,7 +270,7 @@ class RouterTest extends TestCase {
 
 		$expected = array(
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'index',
 			'pass' => [],
 			'prefix' => 'api',
@@ -294,7 +294,7 @@ class RouterTest extends TestCase {
 
 		$expected = array(
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'index',
 			'pass' => [],
 			'[method]' => 'GET',
@@ -361,8 +361,8 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/api/test_plugin/test_plugin');
 		$expected = array(
 			'pass' => [],
-			'plugin' => 'test_plugin',
-			'controller' => 'test_plugin',
+			'plugin' => 'TestPlugin',
+			'controller' => 'TestPlugin',
 			'prefix' => 'api',
 			'action' => 'index',
 			'[method]' => 'GET',
@@ -378,7 +378,7 @@ class RouterTest extends TestCase {
 		$expected = array(
 			'pass' => [],
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'index',
 			'[method]' => 'GET',
 			'prefix' => 'api',
@@ -427,7 +427,7 @@ class RouterTest extends TestCase {
 		Router::mapResources('Posts');
 
 		$result = Router::url([
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'index',
 			'[method]' => 'GET'
 		]);
@@ -435,7 +435,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Router::url([
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'view',
 			'[method]' => 'GET',
 			'id' => 10
@@ -443,19 +443,19 @@ class RouterTest extends TestCase {
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(['controller' => 'posts', 'action' => 'add', '[method]' => 'POST']);
+		$result = Router::url(['controller' => 'Posts', 'action' => 'add', '[method]' => 'POST']);
 		$expected = '/posts';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(['controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'id' => 10]);
+		$result = Router::url(['controller' => 'Posts', 'action' => 'edit', '[method]' => 'PUT', 'id' => 10]);
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(['controller' => 'posts', 'action' => 'delete', '[method]' => 'DELETE', 'id' => 10]);
+		$result = Router::url(['controller' => 'Posts', 'action' => 'delete', '[method]' => 'DELETE', 'id' => 10]);
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(['controller' => 'posts', 'action' => 'edit', '[method]' => 'POST', 'id' => 10]);
+		$result = Router::url(['controller' => 'Posts', 'action' => 'edit', '[method]' => 'POST', 'id' => 10]);
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 	}
@@ -1191,7 +1191,7 @@ class RouterTest extends TestCase {
 
 		Router::connect(
 			'/posts/:value/:somevalue/:othervalue/*',
-			array('controller' => 'posts', 'action' => 'view'),
+			array('controller' => 'Posts', 'action' => 'view'),
 			array('value', 'somevalue', 'othervalue')
 		);
 		$result = Router::parse('/posts/2007/08/01/title-of-post-here');
@@ -1199,7 +1199,7 @@ class RouterTest extends TestCase {
 			'value' => '2007',
 			'somevalue' => '08',
 			'othervalue' => '01',
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'view',
 			'plugin' => null,
 			'pass' => array('0' => 'title-of-post-here')
@@ -1283,7 +1283,7 @@ class RouterTest extends TestCase {
 		$expected = array(
 			'plugin' => null,
 			'pass' => array('home'),
-			'controller' => 'pages',
+			'controller' => 'Pages',
 			'action' => 'display'
 		);
 		$this->assertEquals($expected, $result);
@@ -1507,6 +1507,7 @@ class RouterTest extends TestCase {
  * @dataProvider parseReverseSymmetryData
  */
 	public function testParseReverseSymmetry($url) {
+		require CAKE . 'Config/routes.php';
 		$this->assertSame($url, Router::reverse(Router::parse($url) + array('url' => [])));
 	}
 
@@ -1674,7 +1675,7 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/posts.rss');
 		$expected = array(
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'index',
 			'_ext' => 'rss',
 			'pass' => []
@@ -1684,7 +1685,7 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/posts/view/1.rss');
 		$expected = array(
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'view',
 			'pass' => array('1'),
 			'_ext' => 'rss'
@@ -1702,7 +1703,7 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/posts.xml');
 		$expected = array(
 			'plugin' => null,
-			'controller' => 'posts',
+			'controller' => 'Posts',
 			'action' => 'index',
 			'_ext' => 'xml',
 			'pass' => []
@@ -1712,7 +1713,7 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/posts.atom?hello=goodbye');
 		$expected = array(
 			'plugin' => null,
-			'controller' => 'posts.atom',
+			'controller' => 'Posts.atom',
 			'action' => 'index',
 			'pass' => [],
 			'?' => array('hello' => 'goodbye')
@@ -2326,12 +2327,12 @@ class RouterTest extends TestCase {
 		Router::reload();
 		require CAKE . 'Config/routes.php';
 
-		$result = Router::url(array('plugin' => 'plugin_js', 'controller' => 'js_file', 'action' => 'index'));
+		$result = Router::url(array('plugin' => 'PluginJs', 'controller' => 'JsFile', 'action' => 'index'));
 		$this->assertEquals('/plugin_js/js_file', $result);
 
 		$result = Router::parse('/plugin_js/js_file');
 		$expected = array(
-			'plugin' => 'plugin_js', 'controller' => 'js_file', 'action' => 'index',
+			'plugin' => 'PluginJs', 'controller' => 'JsFile', 'action' => 'index',
 			'pass' => []
 		);
 		$this->assertEquals($expected, $result);
@@ -2341,8 +2342,8 @@ class RouterTest extends TestCase {
 
 		$result = Router::parse('/test_plugin');
 		$expected = array(
-			'plugin' => 'test_plugin',
-			'controller' => 'test_plugin',
+			'plugin' => 'TestPlugin',
+			'controller' => 'TestPlugin',
 			'action' => 'index',
 			'pass' => []
 		);

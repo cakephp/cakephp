@@ -9,23 +9,23 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         1.3.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Routing\Route;
 
-use Cake\Routing\Route\InflectedRoute;
+use Cake\Routing\Route\Route;
+use Cake\Utility\Inflector;
 
 /**
- * Plugin short route, that copies the plugin param to the controller parameters
- * It is used for supporting /:plugin routes.
- *
+ * This route class will transparently inflect the controller and plugin routing
+ * parameters, so that requesting `/my_controller` is parsed as `['controller' => 'MyController']`
  */
-class PluginShortRoute extends InflectedRoute {
+class InflectedRoute extends Route {
 
 /**
- * Parses a string URL into an array. If a plugin key is found, it will be copied to the
- * controller parameter
+ * Parses a string URL into an array. If it mathes, it will convert the prefix, controller and
+ * plugin keys to their camelized form
  *
  * @param string $url The URL to parse
  * @return mixed false on failure, or an array of request parameters
@@ -35,13 +35,21 @@ class PluginShortRoute extends InflectedRoute {
 		if (!$params) {
 			return false;
 		}
-		$params['controller'] = $params['plugin'];
+		if (!empty($params['controller'])) {
+			$params['controller'] = Inflector::camelize($params['controller']);
+		}
+		if (!empty($params['plugin'])) {
+			$params['plugin'] = Inflector::camelize($params['plugin']);
+		}
+		if (!empty($params['prefix'])) {
+			$params['prefix'] = Inflector::camelize($params['prefix']);
+		}
 		return $params;
 	}
 
 /**
- * Reverse route plugin shortcut URLs. If the plugin and controller
- * are not the same the match is an auto fail.
+ * Underscores the prefix, controller and plugin params before passing them on to the
+ * parent class
  *
  * @param array $url Array of parameters to convert to a string.
  * @param array $context An array of the current request context.
@@ -50,13 +58,16 @@ class PluginShortRoute extends InflectedRoute {
  * @return mixed either false or a string URL.
  */
 	public function match(array $url, array $context = array()) {
-		if (isset($url['controller']) && isset($url['plugin']) && $url['plugin'] !== $url['controller']) {
-			return false;
+		if (!empty($url['controller'])) {
+			$url['controller'] = Inflector::underscore($url['controller']);
 		}
-		$this->defaults['controller'] = $url['controller'];
-		$result = parent::match($url, $context);
-		unset($this->defaults['controller']);
-		return $result;
+		if (!empty($url['plugin'])) {
+			$url['plugin'] = Inflector::underscore($url['plugin']);
+		}
+		if (!empty($url['prefix'])) {
+			$url['prefix'] = Inflector::underscore($url['prefix']);
+		}
+		return parent::match($url, $context);
 	}
 
 }

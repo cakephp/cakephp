@@ -59,13 +59,13 @@ class ControllerFactoryFilter extends DispatcherFilter {
 		$pluginPath = $controller = null;
 		$namespace = 'Controller';
 		if (!empty($request->params['plugin'])) {
-			$pluginPath = Inflector::camelize($request->params['plugin']) . '.';
+			$pluginPath = $request->params['plugin'] . '.';
 		}
 		if (!empty($request->params['controller'])) {
-			$controller = Inflector::camelize($request->params['controller']);
+			$controller = $request->params['controller'];
 		}
 		if (!empty($request->params['prefix'])) {
-			$namespace .= '/' . Inflector::camelize($request->params['prefix']);
+			$namespace .= '/' . $request->params['prefix'];
 		}
 		$className = false;
 		if ($pluginPath . $controller) {
