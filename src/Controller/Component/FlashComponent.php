@@ -41,7 +41,7 @@ class FlashComponent extends Component {
 	protected $_defaultConfig = [
 		'key' => 'flash',
 		'element' => null,
-		'class' => 'info',
+		'escape' => true,
 		'params' => []
 	];
 
@@ -65,7 +65,7 @@ class FlashComponent extends Component {
  *
  * - `key` The key to set under the session's Message key
  * - `element` The element used to render the flash message
- * - `class` The class to give the flash message whenever an element isn't supplied
+ * - `escape` Whether or not to escape the flash message, defaults to true
  * - `params` An array of variables to make available when using an element
  *
  * @param string $message Message to be flashed
@@ -79,15 +79,17 @@ class FlashComponent extends Component {
 			$message = $message->getMessage();
 		}
 
+		if ($opts['escape'] === true) {
+			$message = h($message);
+		}
+
 		$this->_session->write("Message.{$opts['key']}", [
 			'message' => $message,
 			'key' => $opts['key'],
 			'element' => $opts['element'],
-			'class' => $opts['class'],
 			'params' => $opts['params']
 		]);
 	}
-
 
 /**
  * Magic method for verbose flash methods based on element names.
