@@ -1214,7 +1214,7 @@ class Email {
 				if (!is_array($this->_profile['log'])) {
 					$this->_profile['log'] = ['level' => $this->_profile['log']];
 				}
-				$config = array_merge($config, $this->_profile['log']);
+				$config = $this->_profile['log'] + $config;
 			}
 			Log::write(
 				$config['level'],

@@ -270,7 +270,7 @@ class PaginatorHelper extends Helper {
 			'disabledTitle' => $title,
 			'escape' => true,
 		];
-		$options = array_merge($defaults, (array)$options);
+		$options += $defaults;
 		$options['step'] = -1;
 
 		$enabled = $this->hasPrev($options['model']);
@@ -305,7 +305,7 @@ class PaginatorHelper extends Helper {
 			'disabledTitle' => $title,
 			'escape' => true,
 		];
-		$options = array_merge($defaults, (array)$options);
+		$options += $defaults;
 		$options['step'] = 1;
 
 		$enabled = $this->hasNext($options['model']);

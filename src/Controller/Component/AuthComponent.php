@@ -504,7 +504,7 @@ class AuthComponent extends Component {
 			if (!method_exists($className, 'authorize')) {
 				throw new Error\Exception('Authorization objects must implement an authorize() method.');
 			}
-			$config = array_merge($global, (array)$config);
+			$config = (array)$config + $global;
 			$this->_authorizeObjects[] = new $className($this->_registry, $config);
 		}
 		return $this->_authorizeObjects;

@@ -467,7 +467,8 @@ class HtmlHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::script
  */
 	public function script($url, array $options = array()) {
-		$options = array_merge(array('block' => null, 'once' => true), $options);
+		$defaults = array('block' => null, 'once' => true);
+		$options += $defaults;
 
 		if (is_array($url)) {
 			$out = '';

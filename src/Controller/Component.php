@@ -119,7 +119,7 @@ class Component implements EventListener {
  */
 	public function __get($name) {
 		if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
-			$config = array_merge((array)$this->_componentMap[$name]['config'], array('enabled' => false));
+			$config = array('enabled' => false) + (array)$this->_componentMap[$name]['config'];
 			$this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $config);
 		}
 		if (isset($this->{$name})) {

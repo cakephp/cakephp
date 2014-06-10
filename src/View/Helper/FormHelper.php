@@ -339,7 +339,7 @@ class FormHelper extends Helper {
 		}
 		unset($options['type'], $options['encoding']);
 
-		$htmlAttributes = array_merge($options, $htmlAttributes);
+		$htmlAttributes += $options;
 
 		$this->fields = array();
 		if ($this->requestType !== 'get') {
