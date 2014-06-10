@@ -310,7 +310,7 @@ class Controller implements EventListener {
  * @return bool
  */
 	public function __get($name) {
-		if ($name === $this->modelClass) {
+		if (strpos($this->modelClass, $name) !== false) {
 			list($plugin, $class) = pluginSplit($name, true);
 			if (!$plugin) {
 				$plugin = $this->plugin ? $this->plugin . '.' : null;

@@ -303,13 +303,16 @@ class ControllerTest extends TestCase {
 		$response = new Response();
 		$controller = new \TestApp\Controller\PostsController($request, $response);
 		$this->assertEquals('Posts', $controller->modelClass);
+		$this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
 
 		$controller = new \TestApp\Controller\Admin\PostsController($request, $response);
 		$this->assertEquals('Posts', $controller->modelClass);
+		$this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
 
 		$request->params['plugin'] = 'TestPlugin';
 		$controller = new \TestPlugin\Controller\Admin\CommentsController($request, $response);
 		$this->assertEquals('TestPlugin.Comments', $controller->modelClass);
+		$this->assertInstanceOf('Cake\ORM\Table', $controller->Comments);
 	}
 
 /**
