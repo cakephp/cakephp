@@ -329,10 +329,22 @@ class FormHelper extends AppHelper {
 			$append = sprintf($this->Html->tags['block'], ' style="display:none;"', $append);
 		}
 
-		$this->_lastAction = parse_url($action, PHP_URL_PATH);
+		$this->_lastAction($action);
 		$this->setEntity($model . '.', true);
 		$attributes = sprintf('action="%s" ', $action) . $this->_parseAttributes($htmlAttributes, null, '');
 		return sprintf($this->Html->tags['form'], $attributes) . $append;
+	}
+
+/**
+ * Sets the last created form action.
+ *
+ * @param string|array $url URL.
+ * @return void
+ */
+	function _lastAction($url) {
+		$action = Router::url($url, true);
+		$parts = parse_url($action);
+		$this->_lastAction = $parts['path'];
 	}
 
 /**

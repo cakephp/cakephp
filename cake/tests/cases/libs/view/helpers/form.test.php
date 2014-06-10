@@ -1012,6 +1012,27 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test form security hash generation with relative urls.
+ *
+ * @return void
+ */
+	function testFormSecurityRelativeUrl() {
+		$key = 'testKey';
+		$this->Form->params['_Token']['key'] = $key;
+
+		$expected = Security::hash(
+			'/posts/edit/type:5' .
+			serialize(array()) .
+			Configure::read('Security.salt')
+		);
+		$this->Form->create('Post', array(
+			'url' => array('controller' => 'posts', 'action' => 'edit', 'type' => 5)
+		));
+		$result = $this->Form->secure($this->Form->fields);
+		$this->assertTrue(strpos($result, $expected) !== false);
+	}
+
+/**
  * testFormSecurityMultipleInputDisabledFields method
  *
  * test secure form generation with multiple records and disabled fields.
