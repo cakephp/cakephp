@@ -103,9 +103,10 @@ class ProjectTask extends BakeTask {
 			}
 		}
 		$composer = false;
-		if (!empty($_SERVER['PATH'])) {
-			$path = explode(PATH_SEPARATOR, $_SERVER['PATH']);
-			$composer = $this->_searchPath($path);
+		$path = env('PATH');
+		if (!empty($path)) {
+			$paths = explode(PATH_SEPARATOR, $path);
+			$composer = $this->_searchPath($paths);
 		}
 		return $composer;
 	}
