@@ -29,38 +29,6 @@ use Cake\TestSuite\TestCase;
  */
 class FlashComponentTest extends TestCase {
 
-	protected static $_sessionBackup;
-
-/**
- * fixtures
- *
- * @var string
- */
-	public $fixtures = array('core.session');
-
-/**
- * test case startup
- *
- * @return void
- */
-	public static function setupBeforeClass() {
-		static::$_sessionBackup = Configure::read('Session');
-		Configure::write('Session', array(
-			'defaults' => 'php',
-			'timeout' => 100,
-			'cookie' => 'test'
-		));
-	}
-
-/**
- * cleanup after test case.
- *
- * @return void
- */
-	public static function teardownAfterClass() {
-		Configure::write('Session', static::$_sessionBackup);
-	}
-
 /**
  * setUp method
  *
@@ -68,7 +36,6 @@ class FlashComponentTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$_SESSION = [];
 		Configure::write('App.namespace', 'TestApp');
 		$controller = new Controller(new Request(['session' => new Session()]));
 		$this->ComponentRegistry = new ComponentRegistry($controller);
