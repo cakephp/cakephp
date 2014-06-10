@@ -26,19 +26,6 @@ use Cake\View\View;
  */
 class FlashHelper extends Helper {
 
-	use StringTemplateTrait;
-
-/**
- * Default config for this class
- *
- * @var array
- */
-	protected $_defaultConfig = [
-		'templates' => [
-			'flash' => '<div id="{{key}}-message" class="message-{{class}}">{{message}}</div>'
-		]
-	];
-
 /**
  * Used to render the message set in FlashComponent::set()
  *
@@ -95,11 +82,7 @@ class FlashHelper extends Helper {
 		$flash = array_merge($flash, $attrs);
 
 		if ($flash['element'] === null) {
-			return $this->formatTemplate('flash', [
-				'key' => $key,
-				'class' => $flash['class'],
-				'message' => $flash['message']
-			]);
+			return $flash['message'];
 		}
 
 		return $this->_View->element($flash['element'], $flash);

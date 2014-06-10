@@ -47,14 +47,12 @@ class FlashHelperTest extends TestCase {
 					'key' => 'flash',
 					'message' => 'This is a calling',
 					'element' => null,
-					'class' => 'info',
 					'params' => array()
 				),
 				'notification' => array(
 					'key' => 'notification',
 					'message' => 'This is a test of the emergency broadcasting system',
 					'element' => 'flash_helper',
-					'class' => 'info',
 					'params' => array(
 						'title' => 'Notice!',
 						'name' => 'Alert!'
@@ -63,8 +61,7 @@ class FlashHelperTest extends TestCase {
 				'classy' => array(
 					'key' => 'classy',
 					'message' => 'Recorded',
-					'element' => null,
-					'class' => 'positive',
+					'element' => 'flash_classy',
 					'params' => array()
 				)
 			)
@@ -90,21 +87,14 @@ class FlashHelperTest extends TestCase {
  */
 	public function testFlash() {
 		$result = $this->Flash->render();
-		$expected = '<div id="flash-message" class="message-info">This is a calling</div>';
+		$expected = 'This is a calling';
 		$this->assertEquals($expected, $result);
 
-		$expected = '<div id="classy-message" class="message-positive">Recorded</div>';
+		$expected = '<div id="classy-message">Recorded</div>';
 		$result = $this->Flash->render('classy');
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Flash->render('notification');
-		
-		$children = [
-			['tag' => 'h1', 'content' => 'Alert!'],
-			['tag' => 'h3', 'content' => 'Notice!'],
-			['tag' => 'p', 'content' => 'This is a test of the emergency broadcasting system']
-		];
-
 		$expected = [
 			'tag' => 'div',
 			'id' => 'notificationLayout',
@@ -122,17 +112,6 @@ class FlashHelperTest extends TestCase {
 	}
 
 /**
- * test flash() with the attributes.
- *
- * @return void
- */
-	public function testFlashAttributes() {
-		$result = $this->Flash->render('flash', array('class' => 'crazy'));
-		$expected = '<div id="flash-message" class="message-crazy">This is a calling</div>';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * test setting the element from the attrs.
  *
  * @return void
@@ -142,12 +121,6 @@ class FlashHelperTest extends TestCase {
 			'element' => 'flash_helper',
 			'params' => array('title' => 'Notice!', 'name' => 'Alert!')
 		));
-
-		$children = [
-			['tag' => 'h1', 'content' => 'Alert!'],
-			['tag' => 'h3', 'content' => 'Notice!'],
-			['tag' => 'p', 'content' => 'This is a test of the emergency broadcasting system']
-		];
 
 		$expected = [
 			'tag' => 'div',
