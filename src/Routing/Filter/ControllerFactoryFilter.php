@@ -65,7 +65,7 @@ class ControllerFactoryFilter extends DispatcherFilter {
 			$controller = $request->params['controller'];
 		}
 		if (!empty($request->params['prefix'])) {
-			$namespace .= '/' . ucfirst($request->params['prefix']);
+			$namespace .= '/' . $request->params['prefix'];
 		}
 		$className = false;
 		if ($pluginPath . $controller) {

@@ -24,7 +24,7 @@ use Cake\Utility\Inflector;
 class InflectedRoute extends Route {
 
 /**
- * Parses a string URL into an array. If it mathes, it will convert the controller and
+ * Parses a string URL into an array. If it mathes, it will convert the prefix, controller and
  * plugin keys to their camelized form
  *
  * @param string $url The URL to parse
@@ -41,11 +41,14 @@ class InflectedRoute extends Route {
 		if (!empty($params['plugin'])) {
 			$params['plugin'] = Inflector::camelize($params['plugin']);
 		}
+		if (!empty($params['prefix'])) {
+			$params['prefix'] = Inflector::camelize($params['prefix']);
+		}
 		return $params;
 	}
 
 /**
- * Underscores the controller and plugin params before passing them on to the
+ * Underscores the prefix, controller and plugin params before passing them on to the
  * parent class
  *
  * @param array $url Array of parameters to convert to a string.
@@ -60,6 +63,9 @@ class InflectedRoute extends Route {
 		}
 		if (!empty($url['plugin'])) {
 			$url['plugin'] = Inflector::underscore($url['plugin']);
+		}
+		if (!empty($url['prefix'])) {
+			$url['prefix'] = Inflector::underscore($url['prefix']);
 		}
 		return parent::match($url, $context);
 	}
