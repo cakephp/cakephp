@@ -41,7 +41,6 @@ class FlashComponent extends Component {
 	protected $_defaultConfig = [
 		'key' => 'flash',
 		'element' => null,
-		'escape' => true,
 		'params' => []
 	];
 
@@ -77,10 +76,6 @@ class FlashComponent extends Component {
 
 		if ($message instanceof \Exception) {
 			$message = $message->getMessage();
-		}
-
-		if ($opts['escape'] === true) {
-			$message = h($message);
 		}
 
 		$this->_session->write("Message.{$opts['key']}", [

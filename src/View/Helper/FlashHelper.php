@@ -67,11 +67,11 @@ class FlashHelper extends Helper {
  * }}}
  *
  * @param string $key The [Message.]key you are rendering in the view.
- * @param array $attrs Additional attributes to use for the creation of this flash message.
+ * @param array $options Additional options to use for the creation of this flash message.
  *    Supports the 'params', and 'element' keys that are used in the helper.
  * @return string
  */
-	public function render($key = 'flash', $attrs = []) {
+	public function render($key = 'flash', $options = []) {
 		$flash = $this->request->session()->read("Message.$key");
 		$this->request->session()->delete("Message.$key");
 
@@ -79,7 +79,7 @@ class FlashHelper extends Helper {
 			return '';
 		}
 
-		$flash = array_merge($flash, $attrs);
+		$flash = array_merge($flash, $options);
 
 		if ($flash['element'] === null) {
 			return $flash['message'];

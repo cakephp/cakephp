@@ -137,36 +137,6 @@ class FlashComponentTest extends TestCase {
 	}
 
 /**
- * testSetWithEscape method
- *
- * @return void
- * @covers \Cake\Controller\Component\FlashComponent::set
- */
-	public function testSetWithEscape() {
-		$this->assertNull($this->Session->read('Message.flash'));
-
-		$this->Flash->set('Hello <b>Beakman</b>!');
-		$expected = [
-			'message' => 'Hello &lt;b&gt;Beakman&lt;/b&gt;!',
-			'key' => 'flash',
-			'element' => null,
-			'params' => []
-		];
-		$result = $this->Session->read('Message.flash');
-		$this->assertEquals($expected, $result);
-
-		$this->Flash->set('Hello <b>Beakman</b>!', ['escape' => false]);
-		$expected = [
-			'message' => 'Hello <b>Beakman</b>!',
-			'key' => 'flash',
-			'element' => null,
-			'params' => []
-		];
-		$result = $this->Session->read('Message.flash');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * testSetWithException method
  *
  * @return void
