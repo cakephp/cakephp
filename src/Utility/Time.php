@@ -246,7 +246,7 @@ class Time extends Carbon implements JsonSerializable {
 
 		if (isset($options['accuracy'])) {
 			if (is_array($options['accuracy'])) {
-				$accuracy = array_merge($accuracy, $options['accuracy']);
+				$accuracy = $options['accuracy'] + $accuracy;
 			} else {
 				foreach ($accuracy as $key => $level) {
 					$accuracy[$key] = $options['accuracy'];

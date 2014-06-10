@@ -105,10 +105,7 @@ trait RequestActionTrait {
 			$extra['autoRender'] = 1;
 			unset($extra[$index]);
 		}
-		$extra = array_merge(
-			['autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1],
-			$extra
-		);
+		$extra += ['autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1];
 
 		$baseUrl = Configure::read('App.fullBaseUrl');
 		if (is_string($url) && strpos($url, $baseUrl) === 0) {

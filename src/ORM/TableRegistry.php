@@ -157,7 +157,7 @@ class TableRegistry {
 		$options['className'] = $className ?: 'Cake\ORM\Table';
 
 		if (isset(static::$_config[$alias])) {
-			$options = array_merge(static::$_config[$alias], $options);
+			$options += static::$_config[$alias];
 		}
 		if (empty($options['connection'])) {
 			$connectionName = $options['className']::defaultConnectionName();

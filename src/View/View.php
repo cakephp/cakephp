@@ -1082,7 +1082,7 @@ class View {
 				'config' => $this->elementCache,
 				'key' => $this->elementCacheSettings['key']
 			);
-			$this->elementCacheSettings = array_merge($defaults, $options['cache']);
+			$this->elementCacheSettings = $options['cache'] + $defaults;
 		}
 		$this->elementCacheSettings['key'] = 'element_' . $this->elementCacheSettings['key'];
 		return Cache::read($this->elementCacheSettings['key'], $this->elementCacheSettings['config']);

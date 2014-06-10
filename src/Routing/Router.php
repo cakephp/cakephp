@@ -435,10 +435,10 @@ class Router {
  * @return array Array of mapped resources
  */
 	public static function mapResources($controller, $options = []) {
-		$options = array_merge(array(
+		$options += array(
 			'connectOptions' => [],
 			'id' => static::ID . '|' . static::UUID
-		), $options);
+		);
 
 		$connectOptions = $options['connectOptions'];
 		unset($options['connectOptions']);

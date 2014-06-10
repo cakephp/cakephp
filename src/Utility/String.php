@@ -269,11 +269,11 @@ class String {
 		}
 		switch ($clean['method']) {
 			case 'html':
-				$clean = array_merge(array(
+				$clean += array(
 					'word' => '[\w,.]+',
 					'andText' => true,
 					'replacement' => '',
-				), $clean);
+				);
 				$kleenex = sprintf(
 					'/[\s]*[a-z]+=(")(%s%s%s[\s]*)+\\1/i',
 					preg_quote($options['before'], '/'),
@@ -287,11 +287,11 @@ class String {
 				}
 				break;
 			case 'text':
-				$clean = array_merge(array(
+				$clean += array(
 					'word' => '[\w,.]+',
 					'gap' => '[\s]*(?:(?:and|or)[\s]*)?',
 					'replacement' => '',
-				), $clean);
+				);
 
 				$kleenex = sprintf(
 					'/(%s%s%s%s|%s%s%s%s)/',
