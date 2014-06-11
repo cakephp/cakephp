@@ -197,7 +197,7 @@ class FormHelper extends Helper {
 	public function widgetRegistry(WidgetRegistry $instance = null, $widgets = []) {
 		if ($instance === null) {
 			if ($this->_registry === null) {
-				$this->_registry = new WidgetRegistry($this->templater(), $widgets);
+				$this->_registry = new WidgetRegistry($this->templater(), $this->_View, $widgets);
 			}
 			return $this->_registry;
 		}

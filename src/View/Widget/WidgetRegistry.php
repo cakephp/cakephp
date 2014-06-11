@@ -16,6 +16,7 @@ namespace Cake\View\Widget;
 
 use Cake\Core\App;
 use Cake\View\StringTemplate;
+use Cake\View\View;
 use Cake\View\Widget\WidgetInterface;
 use \ReflectionClass;
 
@@ -31,6 +32,8 @@ use \ReflectionClass;
  *
  * Each widget should expect a StringTemplate instance as their first
  * argument. All other dependencies will be included after.
+ *
+ * Widgets can ask for the current view by using the `_view` widget.
  */
 class WidgetRegistry {
 
@@ -62,14 +65,16 @@ class WidgetRegistry {
 /**
  * Constructor
  *
- * @param StringTemplate $templates Templates instance to use.
+ * @param \Cake\View\StringTemplate $templates Templates instance to use.
+ * @param \Cake\View\View $view The view instance to set as a widget.
  * @param array $widgets See add() method for more information.
  */
-	public function __construct(StringTemplate $templates, array $widgets = []) {
+	public function __construct(StringTemplate $templates, View $view, array $widgets = []) {
 		$this->_templates = $templates;
 		if (!empty($widgets)) {
 			$this->add($widgets);
 		}
+		$this->add(['_view' => $view]);
 	}
 
 /**
