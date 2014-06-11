@@ -429,7 +429,7 @@ class AuthComponent extends Component {
 				'params' => []
 			],
 			'loginAction' => [
-				'controller' => 'users',
+				'controller' => 'Users',
 				'action' => 'login',
 				'plugin' => null
 			],
