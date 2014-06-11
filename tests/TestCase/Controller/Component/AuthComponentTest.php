@@ -538,8 +538,8 @@ class AuthComponentTest extends TestCase {
 			'AuthUsers' => array('id' => '1', 'username' => 'nate')
 		));
 
-		$this->Auth->request->addParams(Router::parse('users/login'));
-		$this->Auth->request->url = 'users/login';
+		$this->Auth->request->addParams(Router::parse('Users/login'));
+		$this->Auth->request->url = 'Users/login';
 		$this->Auth->request->env('HTTP_REFERER', false);
 		$event = new Event('Controller.initialize', $this->Controller);
 		$this->Auth->initialize($event);
@@ -1044,7 +1044,7 @@ class AuthComponentTest extends TestCase {
  */
 	public function testLogout() {
 		$this->Auth->session->write('Auth.User.id', '1');
-		$this->Auth->session->write('Auth.redirect', '/users/login');
+		$this->Auth->session->write('Auth.redirect', '/Users/login');
 		$this->Auth->config('logoutRedirect', '/');
 		$result = $this->Auth->logout();
 
@@ -1330,6 +1330,6 @@ class AuthComponentTest extends TestCase {
 
 		$this->assertInstanceOf('Cake\Network\Response', $this->Auth->startup($event));
 
-		$this->assertEquals('/users/login', $this->Controller->testUrl);
+		$this->assertEquals('/Users/login', $this->Controller->testUrl);
 	}
 }
