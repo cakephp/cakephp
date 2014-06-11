@@ -1044,7 +1044,7 @@ class TreeBehavior extends ModelBehavior {
  * @param integer $shift Shift by.
  * @param string $dir Direction.
  * @param array $conditions Conditions.
- * @param boolean $created Wheter it's a new record.
+ * @param boolean $created Whether it's a new record.
  * @param string $field Field type.
  * @return void
  */
