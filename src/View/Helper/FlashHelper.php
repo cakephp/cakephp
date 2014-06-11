@@ -42,7 +42,7 @@ class FlashHelper extends Helper {
  * This would pass the current user's name into the flash message, so you could create personalized
  * messages without the controller needing access to that data.
  *
- * Lastly you can choose the element that is rendered when rendering the flash message. Using
+ * Lastly you can choose the element that is used for rendering the flash message. Using
  * custom elements allows you to fully customize how flash messages are generated.
  *
  * {{{
