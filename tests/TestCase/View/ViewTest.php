@@ -550,9 +550,7 @@ class ViewTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$View = new TestView($request, $response, null, $viewOptions);
-		ob_start();
 		$View->getViewFileName('does_not_exist');
-		ob_get_clean();
 	}
 
 /**
@@ -568,9 +566,7 @@ class ViewTest extends TestCase {
 			'layout' => 'whatever'
 		];
 		$View = new TestView(null, null, null, $viewOptions);
-		ob_start();
 		$View->getLayoutFileName();
-		ob_get_clean();
 	}
 
 /**
@@ -1181,15 +1177,17 @@ class ViewTest extends TestCase {
  *
  * @return void
  */
-	public function testBlockCaptureAppend() {
+	public function testBlockAppendCapture() {
 		$this->View->start('test');
-		echo 'Block';
+		echo 'Content ';
 		$this->View->end();
 
-		$this->View->append('test', ' content');
+		$this->View->append('test');
+		echo 'appended';
+		$this->View->end();
 
 		$result = $this->View->fetch('test');
-		$this->assertEquals('Block content', $result);
+		$this->assertEquals('Content appended', $result);
 	}
 
 /**
@@ -1271,7 +1269,6 @@ class ViewTest extends TestCase {
 	public static function blockValueProvider() {
 		return array(
 			'string' => array('A string value'),
-			'null' => array(null),
 			'decimal' => array(1.23456),
 			'object with __toString' => array(new TestObjectWithToString()),
 		);
