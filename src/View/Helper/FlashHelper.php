@@ -36,21 +36,13 @@ class FlashHelper extends Helper {
  * to consolidate all the parameters for a given type of flash message into the view.
  *
  * {{{
- * echo $this->Flash->render('flash', ['class' => 'new-flash']);
- * }}}
- *
- * The above would generate a flash message with a custom class name. Using $attrs['params'] you
- * can pass additional data into the element rendering that will be made available as local variables
- * when the element is rendered:
- *
- * {{{
  * echo $this->Flash->render('flash', ['params' => ['name' => $user['User']['name']]]);
  * }}}
  *
  * This would pass the current user's name into the flash message, so you could create personalized
  * messages without the controller needing access to that data.
  *
- * Lastly you can choose the element that is rendered when creating the flash message. Using
+ * Lastly you can choose the element that is rendered when rendering the flash message. Using
  * custom elements allows you to fully customize how flash messages are generated.
  *
  * {{{
@@ -71,7 +63,7 @@ class FlashHelper extends Helper {
  *    Supports the 'params', and 'element' keys that are used in the helper.
  * @return string
  */
-	public function render($key = 'flash', $options = []) {
+	public function render($key = 'flash', array $options = []) {
 		$flash = $this->request->session()->read("Message.$key");
 		$this->request->session()->delete("Message.$key");
 
@@ -79,7 +71,7 @@ class FlashHelper extends Helper {
 			return '';
 		}
 
-		$flash = array_merge($flash, $options);
+		$flash = $options + $flash;
 
 		if ($flash['element'] === null) {
 			return $flash['message'];

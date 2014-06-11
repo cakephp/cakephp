@@ -20,14 +20,15 @@ use Cake\Utility\Inflector;
 use Cake\Error\InternalErrorException;
 use Cake\Event\Event;
 
-
 /**
- * FlashComponent
+ * The CakePHP FlashComponent provides a way for you to write a flash variable
+ * to the session from your controllers, to be rendered in a view with the
+ * FlashHelper.
  */
 class FlashComponent extends Component {
 
 /**
- * The session
+ * The Session object instance
  *
  * @var \Cake\Network\Session
  */
@@ -64,7 +65,6 @@ class FlashComponent extends Component {
  *
  * - `key` The key to set under the session's Message key
  * - `element` The element used to render the flash message
- * - `escape` Whether or not to escape the flash message, defaults to true
  * - `params` An array of variables to make available when using an element
  *
  * @param string $message Message to be flashed
@@ -88,6 +88,9 @@ class FlashComponent extends Component {
 
 /**
  * Magic method for verbose flash methods based on element names.
+ *
+ * For example: $this->Flash->success('My message') would use the
+ * flash_success.ctp element for rendering the flash message.
  *
  * @param string $name Element name to use, omitting the "flash_" prefix.
  * @param array $args Parameters to pass when calling `FlashComponent::set`.
