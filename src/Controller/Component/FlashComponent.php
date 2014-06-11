@@ -63,7 +63,7 @@ class FlashComponent extends Component {
  *
  * ### Options:
  *
- * - `key` The key to set under the session's Message key
+ * - `key` The key to set under the session's Flash key
  * - `element` The element used to render the flash message
  * - `params` An array of variables to make available when using an element
  *
@@ -78,7 +78,7 @@ class FlashComponent extends Component {
 			$message = $message->getMessage();
 		}
 
-		$this->_session->write("Message.{$opts['key']}", [
+		$this->_session->write("Flash.{$opts['key']}", [
 			'message' => $message,
 			'key' => $opts['key'],
 			'element' => $opts['element'],

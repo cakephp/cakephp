@@ -60,7 +60,7 @@ class FlashComponentTest extends TestCase {
  * @covers \Cake\Controller\Component\FlashComponent::set
  */
 	public function testSet() {
-		$this->assertNull($this->Session->read('Message.flash'));
+		$this->assertNull($this->Session->read('Flash.flash'));
 
 		$this->Flash->set('This is a test message');
 		$expected = [
@@ -69,7 +69,7 @@ class FlashComponentTest extends TestCase {
 			'element' => null,
 			'params' => []
 		];
-		$result = $this->Session->read('Message.flash');
+		$result = $this->Session->read('Flash.flash');
 		$this->assertEquals($expected, $result);
 
 		$this->Flash->set('This is a test message', ['element' => 'test', 'params' => ['foo' => 'bar']]);
@@ -79,7 +79,7 @@ class FlashComponentTest extends TestCase {
 			'element' => 'test',
 			'params' => ['foo' => 'bar']
 		];
-		$result = $this->Session->read('Message.flash');
+		$result = $this->Session->read('Flash.flash');
 		$this->assertEquals($expected, $result);
 
 		$this->Flash->set('This is a test message', ['element' => 'MyPlugin.alert']);
@@ -89,7 +89,7 @@ class FlashComponentTest extends TestCase {
 			'element' => 'MyPlugin.alert',
 			'params' => []
 		];
-		$result = $this->Session->read('Message.flash');
+		$result = $this->Session->read('Flash.flash');
 		$this->assertEquals($expected, $result);
 
 		$this->Flash->set('This is a test message', ['key' => 'foobar']);
@@ -99,7 +99,7 @@ class FlashComponentTest extends TestCase {
 			'element' => null,
 			'params' => []
 		];
-		$result = $this->Session->read('Message.foobar');
+		$result = $this->Session->read('Flash.foobar');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -110,7 +110,7 @@ class FlashComponentTest extends TestCase {
  * @covers \Cake\Controller\Component\FlashComponent::set
  */
 	public function testSetWithException() {
-		$this->assertNull($this->Session->read('Message.flash'));
+		$this->assertNull($this->Session->read('Flash.flash'));
 
 		$this->Flash->set(new \Exception('This is a test message'));
 		$expected = [
@@ -119,7 +119,7 @@ class FlashComponentTest extends TestCase {
 			'element' => null,
 			'params' => []
 		];
-		$result = $this->Session->read('Message.flash');
+		$result = $this->Session->read('Flash.flash');
 		$this->assertEquals($expected, $result);
 	}
 }

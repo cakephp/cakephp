@@ -42,7 +42,7 @@ class FlashHelperTest extends TestCase {
 		$this->Flash = new FlashHelper($this->View);
 
 		$session->write(array(
-			'Message' => array(
+			'Flash' => array(
 				'flash' => array(
 					'key' => 'flash',
 					'message' => 'This is a calling',

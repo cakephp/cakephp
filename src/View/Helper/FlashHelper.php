@@ -58,14 +58,14 @@ class FlashHelper extends Helper {
  * ]);
  * }}}
  *
- * @param string $key The [Message.]key you are rendering in the view.
+ * @param string $key The [Flash.]key you are rendering in the view.
  * @param array $options Additional options to use for the creation of this flash message.
  *    Supports the 'params', and 'element' keys that are used in the helper.
  * @return string
  */
 	public function render($key = 'flash', array $options = []) {
-		$flash = $this->request->session()->read("Message.$key");
-		$this->request->session()->delete("Message.$key");
+		$flash = $this->request->session()->read("Flash.$key");
+		$this->request->session()->delete("Flash.$key");
 
 		if (!$flash) {
 			return '';
