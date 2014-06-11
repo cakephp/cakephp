@@ -15,6 +15,7 @@
 namespace Cake\Core;
 
 use Cake\Cache\Cache;
+use Cake\Core\Plugin;
 use Cake\Error\ErrorHandler;
 use Cake\Utility\Inflector;
 
@@ -140,26 +141,9 @@ class App {
 			return (array)Configure::read('App.paths.templates');
 		}
 		if (!empty($plugin)) {
-			return [static::pluginPath($plugin) . $type . DS];
+			return [Plugin::classPath($plugin) . $type . DS];
 		}
 		return [APP . $type . DS];
-	}
-
-/**
- * Gets the path that a plugin is on. Searches through the defined plugin paths.
- *
- * Usage:
- *
- * `App::pluginPath('MyPlugin');`
- *
- * Will return the full path to 'MyPlugin' plugin
- *
- * @param string $plugin CamelCased/lower_cased plugin name to find the path of.
- * @return string full path to the plugin.
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::pluginPath
- */
-	public static function pluginPath($plugin) {
-		return Plugin::path($plugin);
 	}
 
 /**

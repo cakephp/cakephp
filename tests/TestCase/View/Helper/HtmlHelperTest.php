@@ -747,7 +747,7 @@ class HtmlHelperTest extends TestCase {
 	public function testPluginScriptTimestamping() {
 		Plugin::load('TestPlugin');
 
-		$pluginPath = App::pluginPath('TestPlugin');
+		$pluginPath = Plugin::path('TestPlugin');
 		$pluginJsPath = $pluginPath . 'webroot/js';
 		$this->skipIf(!is_writable($pluginJsPath), $pluginJsPath . ' is not Writable, timestamp testing has been skipped.');
 

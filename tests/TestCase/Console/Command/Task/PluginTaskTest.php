@@ -85,19 +85,19 @@ class PluginTaskTest extends TestCase {
 		$this->assertTrue(is_dir($path), 'No plugin dir');
 
 		$directories = array(
-			'Config/Schema',
-			'Model/Behavior',
-			'Model/Table',
-			'Model/Entity',
-			'Console/Command/Task',
-			'Controller/Component',
-			'Lib',
-			'View/Helper',
-			'Test/TestCase/Controller/Component',
-			'Test/TestCase/View/Helper',
-			'Test/TestCase/Model/Behavior',
-			'Test/Fixture',
-			'Template',
+			'src/Config/Schema',
+			'src/Model/Behavior',
+			'src/Model/Table',
+			'src/Model/Entity',
+			'src/Console/Command/Task',
+			'src/Controller/Component',
+			'src/Lib',
+			'src/View/Helper',
+			'tests/TestCase/Controller/Component',
+			'tests/TestCase/View/Helper',
+			'tests/TestCase/Model/Behavior',
+			'tests/Fixture',
+			'src/Template',
 			'webroot'
 		);
 		foreach ($directories as $dir) {
@@ -148,7 +148,7 @@ class PluginTaskTest extends TestCase {
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
-		$file = $path . DS . 'Test' . DS . 'bootstrap.php';
+		$file = $path . DS . 'tests' . DS . 'bootstrap.php';
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 

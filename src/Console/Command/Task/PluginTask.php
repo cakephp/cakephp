@@ -91,24 +91,26 @@ class PluginTask extends BakeTask {
 		$this->out(__d('cake_console', "<info>Plugin Directory:</info> %s", $this->path . $plugin));
 		$this->hr();
 
+		$classBase = 'src';
+
 		$looksGood = $this->in(__d('cake_console', 'Look okay?'), ['y', 'n', 'q'], 'y');
 
 		if (strtolower($looksGood) === 'y') {
 			$Folder = new Folder($this->path . $plugin);
 			$directories = [
-				'Config' . DS . 'Schema',
-				'Model' . DS . 'Behavior',
-				'Model' . DS . 'Table',
-				'Model' . DS . 'Entity',
-				'Console' . DS . 'Command' . DS . 'Task',
-				'Controller' . DS . 'Component',
-				'Lib',
-				'View' . DS . 'Helper',
-				'Template',
-				'Test' . DS . 'TestCase' . DS . 'Controller' . DS . 'Component',
-				'Test' . DS . 'TestCase' . DS . 'View' . DS . 'Helper',
-				'Test' . DS . 'TestCase' . DS . 'Model' . DS . 'Behavior',
-				'Test' . DS . 'Fixture',
+				$classBase . DS . 'Config' . DS . 'Schema',
+				$classBase . DS . 'Model' . DS . 'Behavior',
+				$classBase . DS . 'Model' . DS . 'Table',
+				$classBase . DS . 'Model' . DS . 'Entity',
+				$classBase . DS . 'Console' . DS . 'Command' . DS . 'Task',
+				$classBase . DS . 'Controller' . DS . 'Component',
+				$classBase . DS . 'Lib',
+				$classBase . DS . 'View' . DS . 'Helper',
+				$classBase . DS . 'Template',
+				'tests' . DS . 'TestCase' . DS . 'Controller' . DS . 'Component',
+				'tests' . DS . 'TestCase' . DS . 'View' . DS . 'Helper',
+				'tests' . DS . 'TestCase' . DS . 'Model' . DS . 'Behavior',
+				'tests' . DS . 'Fixture',
 				'webroot'
 			];
 
@@ -197,9 +199,9 @@ class PluginTask extends BakeTask {
 			'path' => $path,
 			'root' => ROOT
 		]);
-		$this->out( __d('cake_console', 'Generating Test/bootstrap.php file...'));
+		$this->out( __d('cake_console', 'Generating tests/bootstrap.php file...'));
 		$out = $this->Template->generate('test', 'bootstrap');
-		$file = $path . $plugin . DS . 'Test' . DS . 'bootstrap.php';
+		$file = $path . $plugin . DS . 'tests' . DS . 'bootstrap.php';
 		$this->createFile($file, $out);
 	}
 

@@ -248,13 +248,40 @@ class PluginTest extends TestCase {
 	}
 
 /**
+ * Tests that Plugin::classPath() returns the correct path for the loaded plugins
+ *
+ * @return void
+ */
+	public function testClassPath() {
+		Plugin::load(array('TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree'));
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS;
+		$this->assertPathEquals(Plugin::classPath('TestPlugin'), $expected);
+
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'src' . DS;
+		$this->assertPathEquals(Plugin::classPath('TestPluginTwo'), $expected);
+
+		$expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS;
+		$this->assertPathEquals(Plugin::classPath('Company/TestPluginThree'), $expected);
+	}
+
+/**
+ * Tests that Plugin::classPath() throws an exception on unknown plugin
+ *
+ * @return void
+ * @expectedException \Cake\Core\Error\MissingPluginException
+ */
+	public function testClassPathNotFound() {
+		Plugin::classPath('TestPlugin');
+	}
+
+/**
  * Tests that Plugin::loadAll() will load all plgins in the configured folder
  *
  * @return void
  */
 	public function testLoadAll() {
 		Plugin::loadAll();
-		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginTwo', 'TestTheme'];
+		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginFour', 'TestPluginTwo', 'TestTheme'];
 		$this->assertEquals($expected, Plugin::loaded());
 	}
 
@@ -277,7 +304,7 @@ class PluginTest extends TestCase {
 	public function testLoadAllWithDefaults() {
 		$defaults = array('bootstrap' => true, 'ignoreMissing' => true);
 		Plugin::loadAll(array($defaults));
-		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginTwo', 'TestTheme'];
+		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginFour', 'TestPluginTwo', 'TestTheme'];
 		$this->assertEquals($expected, Plugin::loaded());
 		$this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
@@ -293,16 +320,18 @@ class PluginTest extends TestCase {
 	public function testLoadAllWithDefaultsAndOverride() {
 		Plugin::loadAll(array(
 			array('bootstrap' => true, 'ignoreMissing' => true),
-			'TestPlugin' => array('routes' => true)
+			'TestPlugin' => array('routes' => true),
+			'TestPluginFour' => array('bootstrap' => true, 'classBase' => '')
 		));
 		Plugin::routes();
 
-		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginTwo', 'TestTheme'];
+		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginFour', 'TestPluginTwo', 'TestTheme'];
 		$this->assertEquals($expected, Plugin::loaded());
 		$this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
 		$this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));
 		$this->assertEquals(null, Configure::read('PluginTest.test_plugin.bootstrap'));
 		$this->assertEquals('loaded plugin two bootstrap', Configure::read('PluginTest.test_plugin_two.bootstrap'));
+		$this->assertEquals('loaded plugin four bootstrap', Configure::read('PluginTest.test_plugin_four.bootstrap'));
 
 		// TestPluginThree won't get loaded by loadAll() since it's in a sub directory.
 		$this->assertEquals(null, Configure::read('PluginTest.test_plugin_three.bootstrap'));
