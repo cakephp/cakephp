@@ -14,6 +14,7 @@
  */
 namespace Cake\View\Widget;
 
+use Cake\View\Form\ContextInterface;
 use Cake\View\Helper\IdGeneratorTrait;
 use Cake\View\Widget\WidgetInterface;
 
@@ -96,10 +97,11 @@ class MultiCheckbox implements WidgetInterface {
  * This form **requires** that both the `value` and `text` keys be defined.
  * If either is not set options will not be generated correctly.
  *
- * @param array $data
+ * @param array $data The data to generate a checkbox set with.
+ * @param \Cake\View\Form\ContextInterface The current form context.
  * @return string
  */
-	public function render(array $data) {
+	public function render(array $data, ContextInterface $context) {
 		$data += [
 			'name' => '',
 			'escape' => true,
@@ -132,7 +134,7 @@ class MultiCheckbox implements WidgetInterface {
 				$checkbox['id'] = $this->_id($checkbox['name'], $checkbox['value']);
 			}
 
-			$out[] = $this->_renderInput($checkbox);
+			$out[] = $this->_renderInput($checkbox, $context);
 		}
 		return implode('', $out);
 	}
@@ -141,9 +143,10 @@ class MultiCheckbox implements WidgetInterface {
  * Render a single checkbox & wrapper.
  *
  * @param array $checkbox An array containing checkbox key/value option pairs
+ * @param \Cake\View\Form\ContextInterface Context object.
  * @return string
  */
-	protected function _renderInput($checkbox) {
+	protected function _renderInput($checkbox, $context) {
 		$input = $this->_templates->format('checkbox', [
 			'name' => $checkbox['name'] . '[]',
 			'value' => $checkbox['escape'] ? h($checkbox['value']) : $checkbox['value'],
@@ -162,7 +165,7 @@ class MultiCheckbox implements WidgetInterface {
 		if (!empty($checkbox['checked']) && empty($labelAttrs['class'])) {
 			$labelAttrs['class'] = 'selected';
 		}
-		$label = $this->_label->render($labelAttrs);
+		$label = $this->_label->render($labelAttrs, $context);
 
 		return $this->_templates->format('checkboxContainer', [
 			'label' => $label,

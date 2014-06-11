@@ -34,6 +34,7 @@ class LabelTest extends TestCase {
 			'label' => '<label{{attrs}}>{{text}}</label>',
 		];
 		$this->templates = new StringTemplate($templates);
+		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
 	}
 
 /**
@@ -46,7 +47,7 @@ class LabelTest extends TestCase {
 		$data = [
 			'text' => 'My text',
 		];
-		$result = $label->render($data);
+		$result = $label->render($data, $this->context);
 		$expected = [
 			'label' => [],
 			'My text',
@@ -67,7 +68,7 @@ class LabelTest extends TestCase {
 			'for' => 'Some > value',
 			'escape' => false,
 		];
-		$result = $label->render($data);
+		$result = $label->render($data, $this->context);
 		$expected = [
 			'label' => ['for' => 'Some > value'],
 			'My > text',
@@ -89,7 +90,7 @@ class LabelTest extends TestCase {
 			'id' => 'some-id',
 			'data-foo' => 'value',
 		];
-		$result = $label->render($data);
+		$result = $label->render($data, $this->context);
 		$expected = [
 			'label' => ['id' => 'some-id', 'data-foo' => 'value', 'for' => 'some-id'],
 			'My &gt; text',

@@ -38,6 +38,7 @@ class DateTimeTest extends TestCase {
 			'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}'
 		];
 		$this->templates = new StringTemplate($templates);
+		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
 		$this->selectBox = new SelectBox($this->templates);
 		$this->DateTime = new DateTime($this->templates, $this->selectBox);
 	}
@@ -67,7 +68,7 @@ class DateTimeTest extends TestCase {
  * @return void
  */
 	public function testRenderSelectedInvalid($selected) {
-		$result = $this->DateTime->render(['val' => $selected]);
+		$result = $this->DateTime->render(['val' => $selected], $this->context);
 		$now = new \DateTime();
 		$format = '<option value="%s" selected="selected">%s</option>';
 		$this->assertContains(
@@ -101,7 +102,7 @@ class DateTimeTest extends TestCase {
  * @return void
  */
 	public function testRenderSelected($selected) {
-		$result = $this->DateTime->render(['val' => $selected]);
+		$result = $this->DateTime->render(['val' => $selected], $this->context);
 		$this->assertContains('<option value="2014" selected="selected">2014</option>', $result);
 		$this->assertContains('<option value="01" selected="selected">1</option>', $result);
 		$this->assertContains('<option value="20" selected="selected">20</option>', $result);
@@ -120,7 +121,7 @@ class DateTimeTest extends TestCase {
 			'year' => '2014', 'month' => '01', 'day' => '20',
 			'hour' => '12', 'minute' => '30'
 		];
-		$result = $this->DateTime->render(['name' => 'created', 'val' => $selected]);
+		$result = $this->DateTime->render(['name' => 'created', 'val' => $selected], $this->context);
 		$this->assertContains('name="created[year]"', $result);
 		$this->assertContains('<option value="2014" selected="selected">2014</option>', $result);
 		$this->assertContains('name="created[month]"', $result);
@@ -145,7 +146,7 @@ class DateTimeTest extends TestCase {
 			'year' => '2014', 'month' => '01', 'day' => '20',
 			'hour' => '7', 'minute' => '30', 'meridian' => 'pm'
 		];
-		$result = $this->DateTime->render(['val' => $selected]);
+		$result = $this->DateTime->render(['val' => $selected], $this->context);
 		$this->assertContains('<option value="2014" selected="selected">2014</option>', $result);
 		$this->assertContains('<option value="01" selected="selected">1</option>', $result);
 		$this->assertContains('<option value="20" selected="selected">20</option>', $result);
@@ -166,7 +167,7 @@ class DateTimeTest extends TestCase {
 			'minute' => ['empty' => 'MINUTE'],
 			'second' => ['empty' => 'SECOND'],
 			'meridian' => ['empty' => 'MERIDIAN'],
-		]);
+		], $this->context);
 		$this->assertContains('<option value="" selected="selected">YEAR</option>', $result);
 		$this->assertContains('<option value="" selected="selected">MONTH</option>', $result);
 		$this->assertContains('<option value="" selected="selected">DAY</option>', $result);
@@ -190,7 +191,7 @@ class DateTimeTest extends TestCase {
 			'minute' => false,
 			'second' => false,
 			'val' => $now,
-		]);
+		], $this->context);
 		$year = $now->format('Y');
 		$format = '<option value="%s" selected="selected">%s</option>';
 		$this->assertContains(sprintf($format, $year, $year), $result);
@@ -230,7 +231,7 @@ class DateTimeTest extends TestCase {
 			'second' => false,
 			'val' => $now,
 			'orderYear' => 'asc',
-		]);
+		], $this->context);
 		$expected = [
 			'select' => ['name' => 'date[year]', 'data-foo' => 'test'],
 			['option' => ['value' => '2013']], '2013', '/option',
@@ -253,7 +254,7 @@ class DateTimeTest extends TestCase {
 			'minute' => false,
 			'second' => false,
 			'val' => $now,
-		]);
+		], $this->context);
 		$expected = [
 			'select' => ['name' => 'date[year]'],
 			['option' => ['value' => '2015']], '2015', '/option',
@@ -284,7 +285,7 @@ class DateTimeTest extends TestCase {
 			'minute' => false,
 			'second' => false,
 			'val' => $now,
-		]);
+		], $this->context);
 		$expected = [
 			'select' => ['name' => 'date[year]'],
 			['option' => ['value' => '2015']], '2015', '/option',
@@ -310,7 +311,7 @@ class DateTimeTest extends TestCase {
 			'minute' => false,
 			'second' => false,
 			'val' => $now,
-		]);
+		], $this->context);
 		$expected = [
 			'select' => ['name' => 'date[year]'],
 			['option' => ['value' => '2013', 'selected' => 'selected']], '2013', '/option',
@@ -337,7 +338,7 @@ class DateTimeTest extends TestCase {
 			'minute' => false,
 			'second' => false,
 			'val' => $now,
-		]);
+		], $this->context);
 		$expected = [
 			'select' => ['name' => 'date[month]'],
 			['option' => ['value' => '01']], '1', '/option',
@@ -373,7 +374,7 @@ class DateTimeTest extends TestCase {
 			'second' => false,
 			'month' => ['data-foo' => 'test', 'names' => true],
 			'val' => $now,
-		]);
+		], $this->context);
 		$expected = [
 			'select' => ['name' => 'date[month]', 'data-foo' => 'test'],
 			['option' => ['value' => '01']], 'January', '/option',
@@ -411,7 +412,7 @@ class DateTimeTest extends TestCase {
 				'names' => ['01' => 'Jan', '02' => 'Feb']
 			],
 			'val' => $now,
-		]);
+		], $this->context);
 		$expected = [
 			'select' => ['name' => 'date[month]'],
 			['option' => ['value' => '01']], 'Jan', '/option',
@@ -439,7 +440,7 @@ class DateTimeTest extends TestCase {
 			'minute' => false,
 			'second' => false,
 			'val' => $now,
-		]);
+		], $this->context);
 		$expected = [
 			'select' => ['name' => 'date[day]', 'data-foo' => 'test'],
 			['option' => ['value' => '01']], '1', '/option',
@@ -497,7 +498,7 @@ class DateTimeTest extends TestCase {
 			'minute' => false,
 			'second' => false,
 			'val' => $now,
-		]);
+		], $this->context);
 		$this->assertContains('<select name="date[hour]">', $result);
 		$this->assertNotContains(
 			'<option value="01">1</option>',
@@ -542,7 +543,7 @@ class DateTimeTest extends TestCase {
 			'second' => false,
 			'val' => $now,
 			'meridian' => [],
-		]);
+		], $this->context);
 		$this->assertContains('<select name="date[hour]" data-foo="test">', $result);
 		$this->assertContains('<option value="00">0</option>', $result);
 		$this->assertContains(
@@ -585,11 +586,11 @@ class DateTimeTest extends TestCase {
 			'second' => false,
 			'val' => $now,
 		];
-		$result = $this->DateTime->render($data);
+		$result = $this->DateTime->render($data, $this->context);
 		$this->assertContains('<option value="23" selected="selected">23</option>', $result);
 
 		$data['val'] = '2010-09-09 23:00:00';
-		$result = $this->DateTime->render($data);
+		$result = $this->DateTime->render($data, $this->context);
 		$this->assertContains('<option value="23" selected="selected">23</option>', $result);
 	}
 
@@ -612,7 +613,7 @@ class DateTimeTest extends TestCase {
 			'minute' => false,
 			'second' => false,
 			'val' => $now,
-		]);
+		], $this->context);
 		$this->assertContains('<select name="date[hour]" data-foo="test">', $result);
 		$this->assertContains(
 			'<option value="01" selected="selected">1</option>',
@@ -659,7 +660,7 @@ class DateTimeTest extends TestCase {
 			'minute' => false,
 			'second' => false,
 			'val' => $now,
-		]);
+		], $this->context);
 		$this->assertContains(
 			'<option value="12" selected="selected">12</option>',
 			$result,
@@ -686,7 +687,7 @@ class DateTimeTest extends TestCase {
 			'minute' => false,
 			'second' => false,
 			'val' => $now,
-		]);
+		], $this->context);
 		$this->assertContains('<select name="date[hour]">', $result);
 		$this->assertContains(
 			'<option value="08">8</option>',
@@ -733,7 +734,7 @@ class DateTimeTest extends TestCase {
 			],
 			'second' => false,
 			'val' => $now,
-		]);
+		], $this->context);
 		$this->assertContains('<select name="date[minute]" data-foo="test">', $result);
 		$this->assertContains(
 			'<option value="00">00</option>',
@@ -776,7 +777,7 @@ class DateTimeTest extends TestCase {
 			],
 			'second' => false,
 			'val' => $now,
-		]);
+		], $this->context);
 		$this->assertContains('<select name="date[minute]">', $result);
 		$this->assertContains(
 			'<option value="00">00</option>',
@@ -825,7 +826,7 @@ class DateTimeTest extends TestCase {
 			'second' => false,
 			'val' => $now,
 		];
-		$result = $this->DateTime->render($data);
+		$result = $this->DateTime->render($data, $this->context);
 		$this->assertContains(
 			'<option value="25" selected="selected">25</option>',
 			$result,
@@ -834,7 +835,7 @@ class DateTimeTest extends TestCase {
 		$this->assertNotContains('value="23"', $result, 'No 23 value');
 
 		$data['minute']['round'] = 'down';
-		$result = $this->DateTime->render($data);
+		$result = $this->DateTime->render($data, $this->context);
 		$this->assertContains(
 			'<option value="20" selected="selected">20</option>',
 			$result,
@@ -860,7 +861,7 @@ class DateTimeTest extends TestCase {
 			],
 			'second' => false,
 			'val' => $now,
-		]);
+		], $this->context);
 
 		$this->assertContains(
 			'<option value="00" selected="selected">00</option>',
@@ -892,7 +893,7 @@ class DateTimeTest extends TestCase {
 				'data-foo' => 'test',
 			],
 			'val' => $now,
-		]);
+		], $this->context);
 		$this->assertContains('<select name="date[second]" data-foo="test">', $result);
 		$this->assertContains(
 			'<option value="01">01</option>',
@@ -935,7 +936,7 @@ class DateTimeTest extends TestCase {
 			'second' => false,
 			'meridian' => [],
 			'val' => $now,
-		]);
+		], $this->context);
 		$expected = [
 			'select' => ['name' => 'date[meridian]'],
 			['option' => ['value' => 'am']], 'am', '/option',
@@ -955,7 +956,7 @@ class DateTimeTest extends TestCase {
 			'second' => false,
 			'meridian' => [],
 			'val' => $now,
-		]);
+		], $this->context);
 		$expected = [
 			'select' => ['name' => 'date[meridian]'],
 			['option' => ['value' => 'am', 'selected' => 'selected']], 'am', '/option',

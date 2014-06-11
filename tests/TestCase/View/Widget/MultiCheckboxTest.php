@@ -37,6 +37,7 @@ class MultiCheckboxTest extends TestCase {
 			'checkboxContainer' => '<div class="checkbox">{{input}}{{label}}</div>',
 		];
 		$this->templates = new StringTemplate($templates);
+		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
 	}
 
 /**
@@ -54,7 +55,7 @@ class MultiCheckboxTest extends TestCase {
 				2 => 'Development',
 			]
 		];
-		$result = $input->render($data);
+		$result = $input->render($data, $this->context);
 		$expected = [
 			['div' => ['class' => 'checkbox']],
 			['input' => [
@@ -97,7 +98,7 @@ class MultiCheckboxTest extends TestCase {
 				['value' => '2', 'text' => 'Development', 'class' => 'custom'],
 			]
 		];
-		$result = $input->render($data);
+		$result = $input->render($data, $this->context);
 		$expected = [
 			['div' => ['class' => 'checkbox']],
 			['input' => [
@@ -141,7 +142,7 @@ class MultiCheckboxTest extends TestCase {
 				'>' => '>>',
 			]
 		];
-		$result = $input->render($data);
+		$result = $input->render($data, $this->context);
 		$expected = [
 			['div' => ['class' => 'checkbox']],
 			['input' => [
@@ -175,7 +176,7 @@ class MultiCheckboxTest extends TestCase {
 			'val' => [1],
 			'disabled' => false
 		];
-		$result = $input->render($data);
+		$result = $input->render($data, $this->context);
 		$expected = [
 			['div' => ['class' => 'checkbox']],
 			['input' => [
@@ -204,11 +205,11 @@ class MultiCheckboxTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$data['val'] = 1;
-		$result = $input->render($data);
+		$result = $input->render($data, $this->context);
 		$this->assertTags($result, $expected);
 
 		$data['val'] = '1';
-		$result = $input->render($data);
+		$result = $input->render($data, $this->context);
 		$this->assertTags($result, $expected);
 	}
 
@@ -228,7 +229,7 @@ class MultiCheckboxTest extends TestCase {
 			],
 			'disabled' => true,
 		];
-		$result = $input->render($data);
+		$result = $input->render($data, $this->context);
 		$expected = [
 			['div' => ['class' => 'checkbox']],
 			['input' => [
@@ -258,7 +259,7 @@ class MultiCheckboxTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$data['disabled'] = 'a string';
-		$result = $input->render($data);
+		$result = $input->render($data, $this->context);
 		$this->assertTags($result, $expected);
 
 		$data['disabled'] = ['1', '1x'];
@@ -272,7 +273,7 @@ class MultiCheckboxTest extends TestCase {
 			],
 			'disabled' => [1]
 		];
-		$result = $input->render($data);
+		$result = $input->render($data, $this->context);
 		$expected = [
 			['div' => ['class' => 'checkbox']],
 			['input' => [

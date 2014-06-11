@@ -15,6 +15,7 @@
 namespace Cake\View\Widget;
 
 use Cake\Utility\Time;
+use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\WidgetInterface;
 
@@ -113,10 +114,11 @@ class DateTime implements WidgetInterface {
  *   should be rounded to match the select options.
  *
  * @param array $data Data to render with.
+ * @param \Cake\View\Form\ContextInterface The current form context.
  * @return string A generated select box.
  * @throws \RuntimeException When option data is invalid.
  */
-	public function render(array $data) {
+	public function render(array $data, ContextInterface $context) {
 		$data += [
 			'name' => '',
 			'empty' => false,
@@ -164,7 +166,7 @@ class DateTime implements WidgetInterface {
 			if (!isset($data[$select]['disabled'])) {
 				$data[$select]['disabled'] = $data['disabled'];
 			}
-			$templateOptions[$select] = $this->{$method}($data[$select]);
+			$templateOptions[$select] = $this->{$method}($data[$select], $context);
 			unset($data[$select]);
 		}
 		unset($data['name'], $data['empty'], $data['disabled'], $data['val']);
@@ -259,9 +261,10 @@ class DateTime implements WidgetInterface {
  * Generates a year select
  *
  * @param array $options
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string
  */
-	protected function _yearSelect($options = []) {
+	protected function _yearSelect($options, $context) {
 		$options += [
 			'name' => '',
 			'val' => null,
@@ -282,16 +285,17 @@ class DateTime implements WidgetInterface {
 			$options['options'] = array_reverse($options['options'], true);
 		}
 		unset($options['start'], $options['end'], $options['order']);
-		return $this->_select->render($options);
+		return $this->_select->render($options, $context);
 	}
 
 /**
  * Generates a month select
  *
- * @param array $options
+ * @param array $options The options to build the month select with
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string
  */
-	protected function _monthSelect($options = []) {
+	protected function _monthSelect($options, $context) {
 		$options += [
 			'name' => '',
 			'names' => false,
@@ -311,16 +315,17 @@ class DateTime implements WidgetInterface {
 		}
 
 		unset($options['leadingZeroKey'], $options['leadingZeroValue'], $options['names']);
-		return $this->_select->render($options);
+		return $this->_select->render($options, $context);
 	}
 
 /**
  * Generates a day select
  *
- * @param array $options
+ * @param array $options The options to generate a day select with.
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string
  */
-	protected function _daySelect($options = []) {
+	protected function _daySelect($options, $context) {
 		$options += [
 			'name' => '',
 			'val' => null,
@@ -330,16 +335,17 @@ class DateTime implements WidgetInterface {
 		$options['options'] = $this->_generateNumbers(1, 31, $options);
 
 		unset($options['names'], $options['leadingZeroKey'], $options['leadingZeroValue']);
-		return $this->_select->render($options);
+		return $this->_select->render($options, $context);
 	}
 
 /**
  * Generates a hour select
  *
- * @param array $options
+ * @param array $options The options to generate an hour select with
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string
  */
-	protected function _hourSelect($options = []) {
+	protected function _hourSelect($options, $context) {
 		$options += [
 			'name' => '',
 			'val' => null,
@@ -380,16 +386,17 @@ class DateTime implements WidgetInterface {
 			$options['format'], $options['leadingZeroKey'],
 			$options['leadingZeroValue']
 		);
-		return $this->_select->render($options);
+		return $this->_select->render($options, $context);
 	}
 
 /**
  * Generates a minute select
  *
- * @param array $options
+ * @param array $options The options to generate a minute select with.
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string
  */
-	protected function _minuteSelect($options = []) {
+	protected function _minuteSelect($options, $context) {
 		$options += [
 			'name' => '',
 			'val' => null,
@@ -409,16 +416,17 @@ class DateTime implements WidgetInterface {
 			$options['interval'],
 			$options['round']
 		);
-		return $this->_select->render($options);
+		return $this->_select->render($options, $context);
 	}
 
 /**
  * Generates a second select
  *
- * @param array $options
+ * @param array $options The options to generate a second select with
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string
  */
-	protected function _secondSelect($options = []) {
+	protected function _secondSelect($options, $context) {
 		$options += [
 			'name' => '',
 			'val' => null,
@@ -428,22 +436,23 @@ class DateTime implements WidgetInterface {
 		];
 
 		unset($options['leadingZeroKey'], $options['leadingZeroValue']);
-		return $this->_select->render($options);
+		return $this->_select->render($options, $context);
 	}
 
 /**
  * Generates a meridian select
  *
- * @param array $options
+ * @param array $options The options to generate a meridian select with.
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string
  */
-	protected function _meridianSelect($options = []) {
+	protected function _meridianSelect($options, $context) {
 		$options += [
 			'name' => '',
 			'val' => null,
 			'options' => ['am' => 'am', 'pm' => 'pm']
 		];
-		return $this->_select->render($options);
+		return $this->_select->render($options, $context);
 	}
 
 /**

@@ -33,6 +33,7 @@ class TextareaTest extends TestCase {
 		$templates = [
 			'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
 		];
+		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
 		$this->templates = new StringTemplate($templates);
 	}
 
@@ -43,7 +44,7 @@ class TextareaTest extends TestCase {
  */
 	public function testRenderSimple() {
 		$input = new Textarea($this->templates);
-		$result = $input->render(['name' => 'comment']);
+		$result = $input->render(['name' => 'comment'], $this->context);
 		$expected = [
 			'textarea' => ['name' => 'comment'],
 			'/textarea',
@@ -59,7 +60,7 @@ class TextareaTest extends TestCase {
 	public function testRenderWithValue() {
 		$input = new Textarea($this->templates);
 		$data = ['name' => 'comment', 'data-foo' => '<val>', 'val' => 'some <html>'];
-		$result = $input->render($data);
+		$result = $input->render($data, $this->context);
 		$expected = [
 			'textarea' => ['name' => 'comment', 'data-foo' => '&lt;val&gt;'],
 			'some &lt;html&gt;',
@@ -68,7 +69,7 @@ class TextareaTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$data['escape'] = false;
-		$result = $input->render($data);
+		$result = $input->render($data, $this->context);
 		$expected = [
 			'textarea' => ['name' => 'comment', 'data-foo' => '<val>'],
 			'some <html>',

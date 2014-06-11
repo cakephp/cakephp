@@ -34,6 +34,7 @@ class CheckboxTest extends TestCase {
 			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
 		];
 		$this->templates = new StringTemplate($templates);
+		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
 	}
 
 /**
@@ -46,7 +47,7 @@ class CheckboxTest extends TestCase {
 		$data = [
 			'name' => 'Comment[spam]',
 		];
-		$result = $checkbox->render($data);
+		$result = $checkbox->render($data, $this->context);
 		$expected = [
 			'input' => [
 				'type' => 'checkbox',
@@ -60,7 +61,7 @@ class CheckboxTest extends TestCase {
 			'name' => 'Comment[spam]',
 			'value' => 99,
 		];
-		$result = $checkbox->render($data);
+		$result = $checkbox->render($data, $this->context);
 		$expected = [
 			'input' => [
 				'type' => 'checkbox',
@@ -82,7 +83,7 @@ class CheckboxTest extends TestCase {
 			'name' => 'Comment[spam]',
 			'disabled' => true,
 		];
-		$result = $checkbox->render($data);
+		$result = $checkbox->render($data, $this->context);
 		$expected = [
 			'input' => [
 				'type' => 'checkbox',
@@ -106,7 +107,7 @@ class CheckboxTest extends TestCase {
 			'value' => 1,
 			'checked' => 1,
 		];
-		$result = $checkbox->render($data);
+		$result = $checkbox->render($data, $this->context);
 		$expected = [
 			'input' => [
 				'type' => 'checkbox',
@@ -122,11 +123,11 @@ class CheckboxTest extends TestCase {
 			'value' => 1,
 			'val' => 1,
 		];
-		$result = $checkbox->render($data);
+		$result = $checkbox->render($data, $this->context);
 		$this->assertTags($result, $expected);
 
 		$data['val'] = '1';
-		$result = $checkbox->render($data);
+		$result = $checkbox->render($data, $this->context);
 		$this->assertTags($result, $expected);
 
 		$data = [
@@ -134,7 +135,7 @@ class CheckboxTest extends TestCase {
 			'value' => 1,
 			'val' => '1x',
 		];
-		$result = $checkbox->render($data);
+		$result = $checkbox->render($data, $this->context);
 		$expected = [
 			'input' => [
 				'type' => 'checkbox',
@@ -172,7 +173,7 @@ class CheckboxTest extends TestCase {
 			'value' => 1,
 			'checked' => $checked,
 		];
-		$result = $checkbox->render($data);
+		$result = $checkbox->render($data, $this->context);
 		$expected = [
 			'input' => [
 				'type' => 'checkbox',

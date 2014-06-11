@@ -14,6 +14,7 @@
  */
 namespace Cake\View\Widget;
 
+use Cake\View\Form\ContextInterface;
 use Cake\View\Widget\WidgetInterface;
 use Traversable;
 
@@ -111,10 +112,11 @@ class SelectBox implements WidgetInterface {
  * nest complex types as required.
  *
  * @param array $data Data to render with.
+ * @param \Cake\View\Form\ContextInterface The current form context.
  * @return string A generated select box.
  * @throws \RuntimeException when the name attribute is empty.
  */
-	public function render(array $data) {
+	public function render(array $data, ContextInterface $context) {
 		$data += [
 			'name' => '',
 			'empty' => false,

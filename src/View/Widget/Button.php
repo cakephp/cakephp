@@ -14,6 +14,7 @@
  */
 namespace Cake\View\Widget;
 
+use Cake\View\Form\ContextInterface;
 use Cake\View\Widget\WidgetInterface;
 
 /**
@@ -54,9 +55,10 @@ class Button implements WidgetInterface {
  * Any other keys provided in $data will be converted into HTML attributes.
  *
  * @param array $data The data to build a button with.
+ * @param \Cake\View\Form\ContextInterface The current form context.
  * @return string
  */
-	public function render(array $data) {
+	public function render(array $data, ContextInterface $context) {
 		$data += [
 			'text' => '',
 			'type' => 'submit',

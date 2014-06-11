@@ -14,6 +14,7 @@
  */
 namespace Cake\View\Widget;
 
+use Cake\View\Form\ContextInterface;
 use Cake\View\Helper\IdGeneratorTrait;
 use Cake\View\Widget\WidgetInterface;
 use Traversable;
@@ -78,9 +79,10 @@ class Radio implements WidgetInterface {
  * - `idPrefix` Prefix for generated ID attributes.
  *
  * @param array $data The data to build radio buttons with.
+ * @param \Cake\View\Form\ContextInterface The current form context.
  * @return string
  */
-	public function render(array $data) {
+	public function render(array $data, ContextInterface $context) {
 		$data += [
 			'name' => '',
 			'options' => [],
@@ -107,7 +109,7 @@ class Radio implements WidgetInterface {
 		$this->_clearIds();
 		$opts = [];
 		foreach ($options as $val => $text) {
-			$opts[] = $this->_renderInput($val, $text, $data);
+			$opts[] = $this->_renderInput($val, $text, $data, $context);
 		}
 		return implode('', $opts);
 	}
@@ -136,9 +138,10 @@ class Radio implements WidgetInterface {
  * @param string|int $val The value of the radio input.
  * @param string|array $text The label text, or complex radio type.
  * @param array $data Additional options for input generation.
+ * @param \Cake\View\Form\ContextInterface The form context
  * @return string
  */
-	protected function _renderInput($val, $text, $data) {
+	protected function _renderInput($val, $text, $data, $context) {
 		$escape = $data['escape'];
 		if (is_int($val) && isset($text['text'], $text['value'])) {
 			$radio = $text;
@@ -180,6 +183,7 @@ class Radio implements WidgetInterface {
 			$radio,
 			$data['label'],
 			$input,
+			$context,
 			$escape
 		);
 
@@ -198,10 +202,11 @@ class Radio implements WidgetInterface {
  * @param array $radio The input properties.
  * @param false|string|array $label The properties for a label.
  * @param string $input The input widget.
+ * @param \Cake\View\Form\ContextInterface $context The form context.
  * @param bool $escape Whether or not to HTML escape the label.
  * @return string Generated label.
  */
-	protected function _renderLabel($radio, $label, $input, $escape) {
+	protected function _renderLabel($radio, $label, $input, $context, $escape) {
 		if ($label === false) {
 			return false;
 		}
@@ -212,7 +217,7 @@ class Radio implements WidgetInterface {
 			'text' => $radio['text'],
 			'input' => $input,
 		];
-		return $this->_label->render($labelAttrs);
+		return $this->_label->render($labelAttrs, $context);
 	}
 
 /**

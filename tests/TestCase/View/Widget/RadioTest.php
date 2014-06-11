@@ -38,6 +38,7 @@ class RadioTest extends TestCase {
 			'radioContainer' => '{{input}}{{label}}',
 		];
 		$this->templates = new StringTemplate($templates);
+		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
 	}
 
 /**
@@ -53,7 +54,7 @@ class RadioTest extends TestCase {
 			'label' => null,
 			'options' => ['r' => 'Red', 'b' => 'Black']
 		];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$expected = [
 			['input' => [
 				'type' => 'radio',
@@ -80,7 +81,7 @@ class RadioTest extends TestCase {
 			'name' => 'Crayons[color]',
 			'options' => new Collection(['r' => 'Red', 'b' => 'Black'])
 		];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$this->assertTags($result, $expected);
 	}
 
@@ -99,7 +100,7 @@ class RadioTest extends TestCase {
 				['value' => 'b', 'text' => 'Black', 'id' => 'my_id_2', 'data-test' => 'test'],
 			]
 		];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$expected = [
 			['input' => [
 				'type' => 'radio',
@@ -136,7 +137,7 @@ class RadioTest extends TestCase {
 			'name' => 'Thing[value]',
 			'options' => ['a>b' => 'First', 'a<b' => 'Second']
 		];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$expected = [
 			['input' => [
 				'type' => 'radio',
@@ -173,7 +174,7 @@ class RadioTest extends TestCase {
 			'options' => ['1' => 'Yes', '0' => 'No'],
 			'val' => '0'
 		];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$expected = array(
 			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1')),
 			array('label' => array('for' => 'model-field-1')),
@@ -187,11 +188,11 @@ class RadioTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$data['val'] = 0;
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$this->assertTags($result, $expected);
 
 		$data['val'] = false;
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$this->assertTags($result, $expected);
 
 		$expected = array(
@@ -205,11 +206,11 @@ class RadioTest extends TestCase {
 			'/label',
 		);
 		$data['val'] = null;
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$this->assertTags($result, $expected);
 
 		$data['val'] = '';
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$this->assertTags($result, $expected);
 
 		$expected = array(
@@ -223,15 +224,15 @@ class RadioTest extends TestCase {
 			'/label',
 		);
 		$data['val'] = '1';
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$this->assertTags($result, $expected);
 
 		$data['val'] = 1;
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$this->assertTags($result, $expected);
 
 		$data['val'] = true;
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$this->assertTags($result, $expected);
 	}
 
@@ -249,7 +250,7 @@ class RadioTest extends TestCase {
 			'required' => true,
 			'form' => 'my-form',
 		];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$expected = [
 			['input' => ['type' => 'radio', 'name' => 'published', 'value' => '0',
 				'id' => 'published-0', 'required' => 'required', 'form' => 'my-form']],
@@ -278,7 +279,7 @@ class RadioTest extends TestCase {
 			'options' => ['r' => 'Red'],
 			'empty' => true,
 		];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$expected = [
 			['input' => [
 				'type' => 'radio',
@@ -302,7 +303,7 @@ class RadioTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$data['empty'] = 'Choose one';
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$expected = [
 			['input' => [
 				'type' => 'radio',
@@ -342,7 +343,7 @@ class RadioTest extends TestCase {
 			'name' => 'Crayons[color]',
 			'options' => ['r' => 'Red'],
 		];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$expected = [
 			['label' => ['for' => 'crayons-color-r']],
 			['input' => [
@@ -374,7 +375,7 @@ class RadioTest extends TestCase {
 				'2' => 'two',
 			]
 		];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$expected = [
 			['input' => [
 				'id' => 'versions-ver-1',
@@ -425,7 +426,7 @@ class RadioTest extends TestCase {
 			],
 			'disabled' => true,
 		];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$expected = [
 			['input' => [
 				'id' => 'versions-ver-1',
@@ -451,11 +452,11 @@ class RadioTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$data['disabled'] = 'a string';
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$this->assertTags($result, $expected);
 
 		$data['disabled'] = ['1'];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$expected = [
 			['input' => [
 				'id' => 'versions-ver-1',
@@ -497,7 +498,7 @@ class RadioTest extends TestCase {
 			],
 			'label' => false,
 		];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$expected = [
 			['input' => [
 				'id' => 'versions-ver-1',
@@ -525,7 +526,7 @@ class RadioTest extends TestCase {
 				'class' => 'my-class',
 			]
 		];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$expected = [
 			['input' => [
 				'id' => 'versions-ver-1',
@@ -569,7 +570,7 @@ class RadioTest extends TestCase {
 				'2' => 'two',
 			],
 		];
-		$result = $radio->render($data);
+		$result = $radio->render($data, $this->context);
 		$this->assertContains(
 			'<div class="radio"><input type="radio"',
 			$result
