@@ -622,8 +622,13 @@ class View {
  * @return void
  * @see ViewBlock::concat()
  */
-	public function append($name, $value) {
-		$this->Blocks->concat($name, $value);
+	public function append($name, $value = null) {
+		if ($value !== null) {
+			$this->Blocks->concat($name, $value);
+			return;
+		}
+		$this->Blocks->start($name);
+		echo $this->Blocks->get($name);
 	}
 
 /**
