@@ -176,4 +176,49 @@ class QueryRegressionTest extends TestCase {
 		$this->assertSame($left, $right);
 	}
 
+/**
+ * Test for https://github.com/cakephp/cakephp/issues/3677
+ *
+ * Checks that only relevant associations are passed when saving _joinData
+ * cand tests that _joinData can also save deeper associations
+ * @return void
+ */
+	public function testBelongsToManyDeepSave() {
+		$articles = TableRegistry::get('Articles');
+		$articles->belongsToMany('Highlights', [
+			'className' => 'TestApp\Model\Table\TagsTable',
+			'foreignKey' => 'article_id',
+			'targetForeignKey' => 'tag_id',
+			'through' => 'SpecialTags'
+		]);
+		$articles->Highlights->junction()->belongsTo('Authors');
+		$entity = $articles->get(2, ['contain' => ['Highlights']]);
+
+		$data = [
+			'id' => 2,
+			'highlights' => [
+				[
+					'name' => 'New Special Tag',
+					'_joinData' => [
+						'highlighted' => true,
+						'highlighted_time' => '2014-06-01 10:10:00',
+						'author' => [
+							'name' => 'jose'
+						]
+					]
+				]
+			]
+		];
+		$entity = $articles->patchEntity($entity, $data, [
+			'Highlights' => ['associated' => ['_joinData' => ['associated' => ['Authors']]]]
+		]);
+		$articles->save($entity, [
+			'associated' => [
+				'Highlights' => ['associated' => ['_joinData' => ['associated' => ['Authors']]]]
+			]
+		]);
+		$entity = $articles->get(2, ['contain' => ['SpecialTags.Authors']]);
+		$this->assertEquals('jose', $entity->special_tags[0]->author->name);
+	}
+
 }

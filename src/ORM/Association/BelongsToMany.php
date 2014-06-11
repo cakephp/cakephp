@@ -681,7 +681,12 @@ class BelongsToMany extends Association {
 
 				$jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
 				$inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
-				$options += ['associated' => false];
+
+				$associations = false;
+				if (!empty($options['associated'][$this->_junctionProperty]['associated'])) {
+					$associations = $options['associated'][$this->_junctionProperty]['associated'];
+				}
+				$options['associated'] = $associations;
 
 				if ($inserts && !$this->_saveTarget($sourceEntity, $inserts, $options)) {
 					return false;
