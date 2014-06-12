@@ -493,7 +493,7 @@ class HttpSocketTest extends CakeTestCase {
 					)
 				)
 			),
-			'reset9' => array(
+			'reset10' => array(
 				'config.protocol' => 'ssl'
 			),
 			array(
@@ -523,6 +523,9 @@ class HttpSocketTest extends CakeTestCase {
 						'header' => "Host: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 38\r\n"
 					)
 				)
+			),
+			'reset11' => array(
+				'config.protocol' => 'ssl'
 			),
 			array(
 				'request' => array(

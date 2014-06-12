@@ -341,7 +341,7 @@ class HttpSocket extends CakeSocket {
 		if (!empty($this->request['body']) && !isset($this->request['header']['Content-Length'])) {
 			$this->request['header']['Content-Length'] = strlen($this->request['body']);
 		}
-		if (isset($this->request['uri']['scheme']) && $this->request['uri']['scheme'] === 'https' && empty($this->config['protocol'])) {
+		if (isset($this->request['uri']['scheme']) && $this->request['uri']['scheme'] === 'https' && in_array($this->config['protocol'], array(false, 'tcp'))) {
 			$this->config['protocol'] = 'ssl';
 		}
 
