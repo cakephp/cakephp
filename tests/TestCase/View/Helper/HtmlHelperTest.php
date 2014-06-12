@@ -515,7 +515,7 @@ class HtmlHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->css('screen.css');
+		$result = $this->Html->css('screen.css', array('once' => false));
 		$this->assertTags($result, $expected);
 
 		Plugin::load('TestPlugin');
@@ -1977,6 +1977,25 @@ class HtmlHelperTest extends TestCase {
 				'/ul'
 			), true
 		);
+	}
+
+/**
+ * Tests that CSS and Javascript files of the same name don't conflict with the 'once' test
+ *
+ * @return void
+ */
+	public function testCssAndScriptWithSameName() {
+		$result = $this->Html->css('foo');
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*css\/foo\.css/')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('foo');
+		$expected = array(
+			'script' => array('src' => 'js/foo.js')
+		);
+		$this->assertTags($result, $expected);
 	}
 
 }

@@ -405,18 +405,18 @@ class HtmlHelper extends Helper {
 			return;
 		}
 
-		if ($options['once'] && isset($this->_includedAssets[$path])) {
-			return '';
-		}
-		unset($options['once']);
-		$this->_includedAssets[$path] = true;
-
 		if (strpos($path, '//') !== false) {
 			$url = $path;
 		} else {
 			$url = $this->assetUrl($path, $options + array('pathPrefix' => Configure::read('App.cssBaseUrl'), 'ext' => '.css'));
 			$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 		}
+
+		if ($options['once'] && isset($this->_includedAssets[$url])) {
+			return '';
+		}
+		unset($options['once']);
+		$this->_includedAssets[$url] = true;
 
 		if ($options['rel'] === 'import') {
 			$out = $this->formatTemplate('style', [
@@ -489,15 +489,17 @@ class HtmlHelper extends Helper {
 			}
 			return null;
 		}
-		if ($options['once'] && isset($this->_includedAssets[$url])) {
-			return null;
-		}
-		$this->_includedAssets[$url] = true;
 
 		if (strpos($url, '//') === false) {
 			$url = $this->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js'));
 			$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 		}
+
+		if ($options['once'] && isset($this->_includedAssets[$url])) {
+			return null;
+		}
+		$this->_includedAssets[$url] = true;
+
 		$out = $this->formatTemplate('javascriptlink', [
 			'url' => $url,
 			'attrs' => $this->templater()->formatAttributes($options, ['block', 'once']),
