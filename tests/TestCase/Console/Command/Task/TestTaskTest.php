@@ -179,7 +179,10 @@ class TestTaskTest extends TestCase {
 			->with($this->stringContains('You must provide'));
 		$this->io->expects($this->at(1))
 			->method('out')
-			->with($this->stringContains('1. TestPluginCommentsTable'));
+			->with($this->stringContains('1. CommentsTable'));
+		$this->io->expects($this->at(2))
+			->method('out')
+			->with($this->stringContains('2. TestPluginCommentsTable'));
 
 		$this->Task->outputClassChoices('Table');
 	}

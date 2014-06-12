@@ -312,7 +312,7 @@ class ControllerTest extends TestCase {
 		$request->params['plugin'] = 'TestPlugin';
 		$controller = new \TestPlugin\Controller\Admin\CommentsController($request, $response);
 		$this->assertEquals('TestPlugin.Comments', $controller->modelClass);
-		$this->assertInstanceOf('Cake\ORM\Table', $controller->Comments);
+		$this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->Comments);
 	}
 
 /**

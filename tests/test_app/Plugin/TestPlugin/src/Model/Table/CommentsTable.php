@@ -17,13 +17,9 @@ namespace TestPlugin\Model\Table;
 use Cake\ORM\Table;
 
 /**
- * Class TestPluginCommentsTable
+ * Class CommentsTable
  *
  */
-class TestPluginCommentsTable extends Table {
-
-	public function initialize(array $config) {
-		$this->table('test_plugin_comments');
-	}
+class CommentsTable extends Table {
 
 }
