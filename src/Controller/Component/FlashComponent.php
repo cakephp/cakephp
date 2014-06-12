@@ -78,7 +78,7 @@ class FlashComponent extends Component {
 			$message = $message->getMessage();
 		}
 
-		$this->_session->write("Flash.{$opts['key']}", [
+		$this->_session->write('Flash.' . $opts['key'], [
 			'message' => $message,
 			'key' => $opts['key'],
 			'element' => $opts['element'],
