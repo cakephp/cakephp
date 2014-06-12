@@ -196,7 +196,6 @@ class QueryRegressionTest extends TestCase {
 		$entity = $articles->get(2, ['contain' => ['Highlights']]);
 
 		$data = [
-			'id' => 2,
 			'highlights' => [
 				[
 					'name' => 'New Special Tag',
