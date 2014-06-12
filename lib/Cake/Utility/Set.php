@@ -120,7 +120,7 @@ class Set {
  * returned object (recursively). If $key is numeric will maintain array
  * structure
  *
- * @param array $array Array to map
+ * @param array &$array Array to map
  * @param string $class Class name
  * @param boolean $primary whether to assign first array key as the _name_
  * @return mixed Mapped object
@@ -458,7 +458,7 @@ class Set {
  * @param string|array $conditions An array of condition strings or an XPath expression
  * @param array $data An array of data to execute the match on
  * @param integer $i Optional: The 'nth'-number of the item being matched.
- * @param integer $length
+ * @param integer $length Length.
  * @return boolean
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::matches
  */
@@ -851,6 +851,7 @@ class Set {
 
 /**
  * Converts an object into an array.
+ *
  * @param object $object Object to reverse
  * @return array Array representation of given object
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::reverse
@@ -926,8 +927,8 @@ class Set {
 /**
  * Flattens an array for sorting
  *
- * @param array $results
- * @param string $key
+ * @param array $results Array to flatten.
+ * @param string $key Key.
  * @return array
  */
 	protected static function _flatten($results, $key = null) {
@@ -1026,7 +1027,7 @@ class Set {
 /**
  * Takes in a flat array and returns a nested array
  *
- * @param mixed $data
+ * @param mixed $data Data
  * @param array $options Options are:
  *      children   - the key name to use in the resultset for children
  *      idPath     - the path to a key that identifies each entry

@@ -42,8 +42,8 @@ class AclBehavior extends ModelBehavior {
 /**
  * Sets up the configuration for the model, and loads ACL models if they haven't been already
  *
- * @param Model $model
- * @param array $config
+ * @param Model $model Model using this behavior.
+ * @param array $config Configuration options.
  * @return void
  */
 	public function setup(Model $model, $config = array()) {
@@ -70,7 +70,7 @@ class AclBehavior extends ModelBehavior {
 /**
  * Retrieves the Aro/Aco node for this model
  *
- * @param Model $model
+ * @param Model $model Model using this behavior.
  * @param string|array|Model $ref Array with 'model' and 'foreign_key', model object, or string value
  * @param string $type Only needed when Acl is set up as 'both', specify 'Aro' or 'Aco' to get the correct node
  * @return array
@@ -93,7 +93,7 @@ class AclBehavior extends ModelBehavior {
 /**
  * Creates a new ARO/ACO node bound to this record
  *
- * @param Model $model
+ * @param Model $model Model using this behavior.
  * @param boolean $created True if this is a new record
  * @param array $options Options passed from Model::save().
  * @return void
@@ -125,7 +125,7 @@ class AclBehavior extends ModelBehavior {
 /**
  * Destroys the ARO/ACO node bound to the deleted record
  *
- * @param Model $model
+ * @param Model $model Model using this behavior.
  * @return void
  */
 	public function afterDelete(Model $model) {
