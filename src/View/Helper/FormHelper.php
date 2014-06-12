@@ -80,7 +80,8 @@ class FormHelper extends Helper {
 		'templates' => [
 			'button' => '<button{{attrs}}>{{text}}</button>',
 			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
-			'checkboxContainer' => '<div class="checkbox">{{input}}{{label}}</div>',
+			'checkboxFormGroup' => '{{input}}{{label}}',
+			'checkboxWrapper' => '<div class="checkbox">{{input}}{{label}}</div>',
 			'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}',
 			'error' => '<div class="error-message">{{content}}</div>',
 			'errorList' => '<ul>{{content}}</ul>',
@@ -89,9 +90,12 @@ class FormHelper extends Helper {
 			'fieldset' => '<fieldset>{{content}}</fieldset>',
 			'formstart' => '<form{{attrs}}>',
 			'formend' => '</form>',
+			'formGroup' => '{{label}}{{input}}',
 			'hiddenblock' => '<div style="display:none;">{{content}}</div>',
 			'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
 			'inputsubmit' => '<input type="{{type}}"{{attrs}}>',
+			'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
+			'inputContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
 			'label' => '<label{{attrs}}>{{text}}</label>',
 			'legend' => '<legend>{{text}}</legend>',
 			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
@@ -99,12 +103,8 @@ class FormHelper extends Helper {
 			'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
 			'selectMultiple' => '<select name="{{name}}[]" multiple="multiple"{{attrs}}>{{content}}</select>',
 			'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
-			'radioContainer' => '{{input}}{{label}}',
+			'radioWrapper' => '{{input}}{{label}}',
 			'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
-			'formGroup' => '{{label}}{{input}}',
-			'checkboxFormGroup' => '{{input}}{{label}}',
-			'groupContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
-			'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
 			'submitContainer' => '<div class="submit">{{content}}</div>',
 		]
 	];
@@ -895,13 +895,14 @@ class FormHelper extends Helper {
 		$this->templates($options['templates']);
 		unset($options['templates']);
 
-		$template = 'groupContainer';
 		$error = null;
+		$errorSuffix = '';
 		if ($options['type'] !== 'hidden' && $options['error'] !== false) {
 			$error = $this->error($fieldName, $options['error']);
-			$template = empty($error) ? $template : 'groupContainerError';
+			$errorSuffix = empty($error) ? '' : 'Error';
 			unset($options['error']);
 		}
+		$template = 'inputContainer' . $errorSuffix;
 
 		$label = $options['label'];
 		if ($options['type'] !== 'radio') {

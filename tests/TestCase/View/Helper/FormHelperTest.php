@@ -1683,7 +1683,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('Article.title', [
 			'templates' => [
-				'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}</div>'
+				'inputContainerError' => '<div class="input {{type}}{{required}} error">{{content}}</div>'
 			]
 		]);
 
@@ -1902,7 +1902,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.email', array(
-			'templates' => ['groupContainer' => '<div>{{content}}</div>']
+			'templates' => ['inputContainer' => '<div>{{content}}</div>']
 		));
 		$expected = array(
 			'<div',
@@ -2031,7 +2031,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('Contact.field', array(
 			'templates' => [
-				'groupContainerError' => '{{content}}{{error}}',
+				'inputContainerError' => '{{content}}{{error}}',
 				'error' => '<span class="error-message">{{content}}</span>'
 			]
 		));
@@ -3253,7 +3253,7 @@ class FormHelperTest extends TestCase {
 	public function testRadioInputInsideLabel() {
 		$this->Form->templates([
 			'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
-			'radioContainer' => '{{label}}'
+			'radioWrapper' => '{{label}}'
 		]);
 
 		$result = $this->Form->radio('Model.field', ['option A', 'option B']);
@@ -5710,7 +5710,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testForMagicInputNonExistingNorValidated() {
 		$result = $this->Form->create($this->article);
-		$this->Form->templates(['groupContainer' => '{{content}}']);
+		$this->Form->templates(['inputContainer' => '{{content}}']);
 		$result = $this->Form->input('non_existing_nor_validated');
 		$expected = array(
 			'label' => array('for' => 'non-existing-nor-validated'),
@@ -5761,7 +5761,7 @@ class FormHelperTest extends TestCase {
 			'className' => __NAMESPACE__ . '\ContactsTable'
 		]);
 		$this->Form->create([], ['context' => ['table' => 'Contacts']]);
-		$this->Form->templates(['groupContainer' => '{{content}}']);
+		$this->Form->templates(['inputContainer' => '{{content}}']);
 
 		$result = $this->Form->input('Contacts.name', array('label' => 'My label'));
 		$expected = array(
@@ -5973,7 +5973,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testHtml5InputWithInput() {
 		$this->Form->create();
-		$this->Form->templates(['groupContainer' => '{{content}}']);
+		$this->Form->templates(['inputContainer' => '{{content}}']);
 		$result = $this->Form->input('website', array(
 			'type' => 'url',
 			'val' => 'http://domain.tld',
