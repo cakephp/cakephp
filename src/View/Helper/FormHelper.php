@@ -902,7 +902,11 @@ class FormHelper extends Helper {
 			$errorSuffix = empty($error) ? '' : 'Error';
 			unset($options['error']);
 		}
-		$template = 'inputContainer' . $errorSuffix;
+
+		$template = $options['type'] . 'Container' . $errorSuffix;
+		if (!$this->templates($template)) {
+			$template = 'inputContainer' . $errorSuffix;
+		}
 
 		$label = $options['label'];
 		if ($options['type'] !== 'radio') {

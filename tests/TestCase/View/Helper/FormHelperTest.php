@@ -6068,6 +6068,50 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test that *Container templates are used by input.
+ *
+ * @return void
+ */
+	public function testInputContainerTemplates() {
+		$this->Form->templates([
+			'checkboxContainer' => '<div class="check">{{content}}</div>',
+			'radioContainer' => '<div class="rad">{{content}}</div>',
+			'radioContainerError' => '<div class="rad err">{{content}}</div>',
+		]);
+
+		$this->article['errors'] = [
+			'Article' => ['published' => 'error message']
+		];
+		$this->Form->create($this->article);
+
+		$result = $this->Form->input('accept', [
+			'type' => 'checkbox'
+		]);
+		$expected = [
+			'div' => ['class' => 'check'],
+			['input' => ['type' => 'hidden', 'name' => 'accept', 'value' => 0]],
+			['input' => ['id' => 'accept', 'type' => 'checkbox', 'name' => 'accept', 'value' => 1]],
+			'label' => ['for' => 'accept'],
+			'Accept',
+			'/label',
+			'/div'
+		];
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('accept', [
+			'type' => 'radio',
+			'options' => ['Y', 'N']
+		]);
+		$this->assertContains('<div class="rad">', $result);
+
+		$result = $this->Form->input('Article.published', [
+			'type' => 'radio',
+			'options' => ['Y', 'N']
+		]);
+		$this->assertContains('<div class="rad err">', $result);
+	}
+
+/**
  * Test resetting templates.
  *
  * @return void
