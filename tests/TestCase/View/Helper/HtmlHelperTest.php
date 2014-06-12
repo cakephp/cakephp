@@ -549,8 +549,8 @@ class HtmlHelperTest extends TestCase {
 		$expected['link']['href'] = 'preg:/.*example\.com\/css\/cake\.generic\.css/';
 		$this->assertTags($result, $expected);
 
-		$result = explode("\n", trim($this->Html->css(array('cake.generic', 'vendor.generic'))));
-		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css/';
+		$result = explode("\n", trim($this->Html->css(array('cake', 'vendor.generic'))));
+		$expected['link']['href'] = 'preg:/.*css\/cake\.css/';
 		$this->assertTags($result[0], $expected);
 		$expected['link']['href'] = 'preg:/.*css\/vendor\.generic\.css/';
 		$this->assertTags($result[1], $expected);
@@ -570,11 +570,34 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->css('more_css_in_head', array('block' => true));
 		$this->assertNull($result);
 
-		$result = $this->Html->css('screen', array('rel' => 'import'));
+		$result = $this->Html->css('import-screen', array('rel' => 'import'));
 		$expected = array(
 			'<style',
-			'preg:/@import url\(.*css\/screen\.css\);/',
+			'preg:/@import url\(.*css\/import-screen\.css\);/',
 			'/style'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test css() with once option.
+ *
+ * @return void
+ */
+	public function testCssLinkOnce() {
+		$result = $this->Html->css('screen', array('once' => true));
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*css\/screen\.css/')
+		);
+		$this->assertTags($result, $expected);
+
+		// Default is once=true
+		$result = $this->Html->css('screen');
+		$this->assertEquals('', $result);
+
+		$result = $this->Html->css('screen', ['once' => false]);
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*css\/screen\.css/')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -609,7 +632,7 @@ class HtmlHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->css('TestPlugin.test_plugin_asset.css');
+		$result = $this->Html->css('TestPlugin.test_plugin_asset.css', ['once' => false]);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->css('TestPlugin.my.css.library');
@@ -620,7 +643,10 @@ class HtmlHelperTest extends TestCase {
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?1234/';
 		$this->assertTags($result, $expected);
 
-		$result = explode("\n", trim($this->Html->css(array('TestPlugin.test_plugin_asset', 'TestPlugin.vendor.generic'))));
+		$result = explode("\n", trim($this->Html->css(
+			['TestPlugin.test_plugin_asset', 'TestPlugin.vendor.generic'],
+			['once' => false]
+		)));
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css/';
 		$this->assertTags($result[0], $expected);
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/vendor\.generic\.css/';
@@ -643,29 +669,29 @@ class HtmlHelperTest extends TestCase {
 			'link' => array('rel' => 'stylesheet', 'href' => '')
 		);
 
-		$result = $this->Html->css('cake.generic');
+		$result = $this->Html->css('cake.generic', ['once' => false]);
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
 		Configure::write('debug', false);
 
-		$result = $this->Html->css('cake.generic');
+		$result = $this->Html->css('cake.generic', ['once' => false]);
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css/';
 		$this->assertTags($result, $expected);
 
 		Configure::write('Asset.timestamp', 'force');
 
-		$result = $this->Html->css('cake.generic');
+		$result = $this->Html->css('cake.generic', ['once' => false]);
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
 		$this->Html->request->webroot = '/testing/';
-		$result = $this->Html->css('cake.generic');
+		$result = $this->Html->css('cake.generic', ['once' => false]);
 		$expected['link']['href'] = 'preg:/\/testing\/css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
 		$this->Html->request->webroot = '/testing/longer/';
-		$result = $this->Html->css('cake.generic');
+		$result = $this->Html->css('cake.generic', ['once' => false]);
 		$expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 	}
@@ -685,29 +711,29 @@ class HtmlHelperTest extends TestCase {
 			'link' => array('rel' => 'stylesheet', 'href' => '')
 		);
 
-		$result = $this->Html->css('TestPlugin.test_plugin_asset');
+		$result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
 		Configure::write('debug', false);
 
-		$result = $this->Html->css('TestPlugin.test_plugin_asset');
+		$result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css/';
 		$this->assertTags($result, $expected);
 
 		Configure::write('Asset.timestamp', 'force');
 
-		$result = $this->Html->css('TestPlugin.test_plugin_asset');
+		$result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
 		$this->Html->request->webroot = '/testing/';
-		$result = $this->Html->css('TestPlugin.test_plugin_asset');
+		$result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
 		$expected['link']['href'] = 'preg:/\/testing\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
 		$this->Html->request->webroot = '/testing/longer/';
-		$result = $this->Html->css('TestPlugin.test_plugin_asset');
+		$result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
 		$expected['link']['href'] = 'preg:/\/testing\/longer\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 

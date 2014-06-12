@@ -368,8 +368,9 @@ class Email {
 /**
  * From
  *
- * @param string|array $email
- * @param string $name
+ * @param string|array $email Null to get, String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
  * @return array|\Cake\Network\Email\Email
  * @throws \Cake\Network\Error\SocketException
  */
@@ -383,8 +384,9 @@ class Email {
 /**
  * Sender
  *
- * @param string|array $email
- * @param string $name
+ * @param string|array $email Null to get, String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
  * @return array|\Cake\Network\Email\Email
  * @throws \Cake\Network\Error\SocketException
  */
@@ -398,8 +400,9 @@ class Email {
 /**
  * Reply-To
  *
- * @param string|array $email
- * @param string $name
+ * @param string|array $email Null to get, String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
  * @return array|\Cake\Network\Email\Email
  * @throws \Cake\Network\Error\SocketException
  */
@@ -413,8 +416,9 @@ class Email {
 /**
  * Read Receipt (Disposition-Notification-To header)
  *
- * @param string|array $email
- * @param string $name
+ * @param string|array $email Null to get, String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
  * @return array|\Cake\Network\Email\Email
  * @throws \Cake\Network\Error\SocketException
  */
@@ -428,8 +432,9 @@ class Email {
 /**
  * Return Path
  *
- * @param string|array $email
- * @param string $name
+ * @param string|array $email Null to get, String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
  * @return array|\Cake\Network\Email\Email
  * @throws \Cake\Network\Error\SocketException
  */
@@ -443,8 +448,9 @@ class Email {
 /**
  * To
  *
- * @param string|array $email Null to get, String with email, Array with email as key, name as value or email as value (without name)
- * @param string $name
+ * @param string|array $email Null to get, String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
  * @return array|\Cake\Network\Email\Email
  */
 	public function to($email = null, $name = null) {
@@ -457,8 +463,9 @@ class Email {
 /**
  * Add To
  *
- * @param string|array $email String with email, Array with email as key, name as value or email as value (without name)
- * @param string $name
+ * @param string|array $email Null to get, String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
  * @return \Cake\Network\Email\Email $this
  */
 	public function addTo($email, $name = null) {
@@ -468,8 +475,9 @@ class Email {
 /**
  * Cc
  *
- * @param string|array $email String with email, Array with email as key, name as value or email as value (without name)
- * @param string $name
+ * @param string|array $email Null to get, String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
  * @return array|\Cake\Network\Email\Email
  */
 	public function cc($email = null, $name = null) {
@@ -482,8 +490,9 @@ class Email {
 /**
  * Add Cc
  *
- * @param string|array $email String with email, Array with email as key, name as value or email as value (without name)
- * @param string $name
+ * @param string|array $email Null to get, String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
  * @return \Cake\Network\Email\Email $this
  */
 	public function addCc($email, $name = null) {
@@ -493,8 +502,9 @@ class Email {
 /**
  * Bcc
  *
- * @param string|array $email String with email, Array with email as key, name as value or email as value (without name)
- * @param string $name
+ * @param string|array $email Null to get, String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
  * @return array|\Cake\Network\Email\Email
  */
 	public function bcc($email = null, $name = null) {
@@ -507,8 +517,9 @@ class Email {
 /**
  * Add Bcc
  *
- * @param string|array $email String with email, Array with email as key, name as value or email as value (without name)
- * @param string $name
+ * @param string|array $email Null to get, String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
  * @return \Cake\Network\Email\Email $this
  */
 	public function addBcc($email, $name = null) {
@@ -518,8 +529,8 @@ class Email {
 /**
  * Charset setter/getter
  *
- * @param string $charset
- * @return string this->charset
+ * @param string $charset Character set.
+ * @return string $this->charset
  */
 	public function charset($charset = null) {
 		if ($charset === null) {
@@ -535,8 +546,8 @@ class Email {
 /**
  * HeaderCharset setter/getter
  *
- * @param string $charset
- * @return string this->charset
+ * @param string $charset Character set.
+ * @return string $this->charset
  */
 	public function headerCharset($charset = null) {
 		if ($charset === null) {
@@ -562,9 +573,10 @@ class Email {
 /**
  * Set email
  *
- * @param string $varName
- * @param string|array $email
- * @param string $name
+ * @param string $varName Property name
+ * @param string|array $email String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
  * @return \Cake\Network\Email\Email $this
  * @throws \Cake\Network\Error\SocketException
  */
@@ -609,10 +621,11 @@ class Email {
 /**
  * Set only 1 email
  *
- * @param string $varName
- * @param string|array $email
- * @param string $name
- * @param string $throwMessage
+ * @param string $varName Property name
+ * @param string|array $email String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
+ * @param string $throwMessage Exception message
  * @return \Cake\Network\Email\Email $this
  * @throws \Cake\Network\Error\SocketException
  */
@@ -629,9 +642,10 @@ class Email {
 /**
  * Add email
  *
- * @param string $varName
- * @param string|array $email
- * @param string $name
+ * @param string $varName Property name
+ * @param string|array $email String with email,
+ *   Array with email as key, name as value or email as value (without name)
+ * @param string $name Name
  * @return \Cake\Network\Email\Email $this
  * @throws \Cake\Network\Error\SocketException
  */
@@ -659,7 +673,7 @@ class Email {
 /**
  * Get/Set Subject.
  *
- * @param string $subject
+ * @param string $subject Subject string.
  * @return string|\Cake\Network\Email\Email
  */
 	public function subject($subject = null) {
@@ -688,8 +702,8 @@ class Email {
 /**
  * Add header for the message
  *
- * @param array $headers
- * @return object this
+ * @param array $headers Headers to set.
+ * @return object $this
  * @throws \Cake\Network\Error\SocketException
  */
 	public function addHeaders($headers) {
@@ -714,14 +728,19 @@ class Email {
  * - `bcc`
  * - `subject`
  *
- * @param array $include
+ * @param array $include List of headers.
  * @return array
  */
 	public function getHeaders(array $include = array()) {
 		if ($include == array_values($include)) {
 			$include = array_fill_keys($include, true);
 		}
-		$defaults = array_fill_keys(array('from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc', 'subject'), false);
+		$defaults = array_fill_keys(
+			array(
+				'from', 'sender', 'replyTo', 'readReceipt', 'returnPath',
+				'to', 'cc', 'bcc', 'subject'),
+			false
+		);
 		$include += $defaults;
 
 		$headers = array();
@@ -793,7 +812,7 @@ class Email {
  * be quoted as characters like `:` and `,` are known to cause issues
  * in address header fields.
  *
- * @param array $address
+ * @param array $address Addresses to format.
  * @return array
  */
 	protected function _formatAddress($address) {
@@ -836,7 +855,7 @@ class Email {
 /**
  * View class for render
  *
- * @param string $viewClass
+ * @param string $viewClass View class name.
  * @return string|\Cake\Network\Email\Email
  */
 	public function viewRender($viewClass = null) {
@@ -850,7 +869,7 @@ class Email {
 /**
  * Variables to be set on render
  *
- * @param array $viewVars
+ * @param array $viewVars Variables to set for view.
  * @return array|\Cake\Network\Email\Email
  */
 	public function viewVars($viewVars = null) {
@@ -864,7 +883,7 @@ class Email {
 /**
  * Theme to use when rendering
  *
- * @param string $theme
+ * @param string $theme Theme name.
  * @return string|\Cake\Network\Email\Email
  */
 	public function theme($theme = null) {
@@ -878,7 +897,7 @@ class Email {
 /**
  * Helpers to be used in render
  *
- * @param array $helpers
+ * @param array $helpers Helpers list.
  * @return array|\Cake\Network\Email\Email
  */
 	public function helpers($helpers = null) {
@@ -892,7 +911,7 @@ class Email {
 /**
  * Email format
  *
- * @param string $format
+ * @param string $format Formatting string.
  * @return string|\Cake\Network\Email\Email
  * @throws \Cake\Network\Error\SocketException
  */
@@ -1262,7 +1281,7 @@ class Email {
 /**
  * Apply the config to an instance
  *
- * @param string|array $config
+ * @param string|array $config Configuration options.
  * @return void
  * @throws \Cake\Error\Exception When using a configuration that doesn't exist.
  */

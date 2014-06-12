@@ -42,7 +42,7 @@ abstract class AbstractTransport {
 /**
  * Constructor
  *
- * @param array $config The configuration data for the transport.
+ * @param array $config Configuration options.
  */
 	public function __construct($config = []) {
 		$this->config($config);

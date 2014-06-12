@@ -38,7 +38,7 @@ use Cake\Utility\Inflector;
  *
  * ### Locating plugins
  *
- * Plugins can be located with App as well. Using App::pluginPath('DebugKit') for example, will
+ * Plugins can be located with App as well. Using Plugin::path('DebugKit') for example, will
  * give you the full path to the DebugKit plugin.
  *
  * ### Inspecting known objects

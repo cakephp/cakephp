@@ -1,7 +1,5 @@
 <?php
 /**
- * Cake TestCase file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -129,6 +127,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * Chooses which fixtures to load for a given test
  *
+ * Each parameter is a model name that corresponds to a fixture, i.e. 'Post', 'Author', etc.
+ *
  * @return void
  * @see \Cake\TestSuite\TestCase::$autoFixtures
  * @throws \Exception when no fixture manager is available.
@@ -177,9 +177,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * Asserts that a string starts with a given prefix, ignoring differences in newlines.
  * Helpful for doing cross platform tests of blocks of text.
  *
- * @param string $prefix
- * @param string $string
- * @param string $message
+ * @param string $prefix The prefix to check for.
+ * @param string $string The string to search in.
+ * @param string $message The message to use for failure.
  * @return void
  */
 	public function assertTextStartsWith($prefix, $string, $message = '') {
@@ -192,9 +192,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * Asserts that a string starts not with a given prefix, ignoring differences in newlines.
  * Helpful for doing cross platform tests of blocks of text.
  *
- * @param string $prefix
- * @param string $string
- * @param string $message
+ * @param string $prefix The prefix to not find.
+ * @param string $string The string to search.
+ * @param string $message The message to use for failure.
  * @return void
  */
 	public function assertTextStartsNotWith($prefix, $string, $message = '') {
@@ -207,9 +207,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * Asserts that a string ends with a given prefix, ignoring differences in newlines.
  * Helpful for doing cross platform tests of blocks of text.
  *
- * @param string $suffix
- * @param string $string
- * @param string $message
+ * @param string $suffix The suffix to find.
+ * @param string $string The string to search.
+ * @param string $message The message to use for failure.
  * @return void
  */
 	public function assertTextEndsWith($suffix, $string, $message = '') {
@@ -222,9 +222,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * Asserts that a string ends not with a given prefix, ignoring differences in newlines.
  * Helpful for doing cross platform tests of blocks of text.
  *
- * @param string $suffix
- * @param string $string
- * @param string $message
+ * @param string $suffix The suffix to not find.
+ * @param string $string The string to search.
+ * @param string $message The message to use for failure.
  * @return void
  */
 	public function assertTextEndsNotWith($suffix, $string, $message = '') {
@@ -237,10 +237,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * Assert that a string contains another string, ignoring differences in newlines.
  * Helpful for doing cross platform tests of blocks of text.
  *
- * @param string $needle
- * @param string $haystack
- * @param string $message
- * @param bool $ignoreCase
+ * @param string $needle The string to search for.
+ * @param string $haystack The string to search through.
+ * @param string $message The message to display on failure.
+ * @param boolean $ignoreCase Whether or not the search should be case-sensitive.
  * @return void
  */
 	public function assertTextContains($needle, $haystack, $message = '', $ignoreCase = false) {
@@ -253,10 +253,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * Assert that a text doesn't contain another text, ignoring differences in newlines.
  * Helpful for doing cross platform tests of blocks of text.
  *
- * @param string $needle
- * @param string $haystack
- * @param string $message
- * @param bool $ignoreCase
+ * @param string $needle The string to search for.
+ * @param string $haystack The string to search through.
+ * @param string $message The message to display on failure.
+ * @param boolean $ignoreCase Whether or not the search should be case-sensitive.
  * @return void
  */
 	public function assertTextNotContains($needle, $haystack, $message = '', $ignoreCase = false) {
@@ -304,9 +304,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param string $string An HTML/XHTML/XML string
  * @param array $expected An array, see above
- * @param bool $fullDebug Whether to debug the generated regex and subject in case of a
- *  matching failure.
- * @return bool
+ * @param string $fullDebug Whether or not more verbose output should be used.
+ * @return void
  */
 	public function assertTags($string, $expected, $fullDebug = false) {
 		$regex = array();
@@ -529,9 +528,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * Mock a model, maintain fixtures and table association
  *
- * @param string $alias
- * @param array $methods
- * @param array $options
+ * @param string $model The model to get a mock for.
+ * @param mixed $methods The list of methods to mock
+ * @param array $config The config data for the mock's constructor.
  * @throws \Cake\ORM\Error\MissingTableClassException
  * @return Model
  */

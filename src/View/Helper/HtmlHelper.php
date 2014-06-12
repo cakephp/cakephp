@@ -87,11 +87,11 @@ class HtmlHelper extends Helper {
 	protected $_crumbs = array();
 
 /**
- * Names of script files that have been included once
+ * Names of script & css files that have been included once
  *
  * @var array
  */
-	protected $_includedScripts = array();
+	protected $_includedAssets = array();
 
 /**
  * Options for the currently opened script block buffer if any.
@@ -377,6 +377,9 @@ class HtmlHelper extends Helper {
  *
  * - `block` Set to true to append output to view block "css" or provide
  *   custom block name.
+ * - `once` Whether or not the css file should be checked for uniqueness. If true css
+ *   files  will only be included once, use false to allow the same
+ *   css to be included more than once per request.
  * - `plugin` False value will prevent parsing path as a plugin
  * - `rel` Defaults to 'stylesheet'. If equal to 'import' the stylesheet will be imported.
  * - `fullBase` If true the URL will get a full address for the css file.
@@ -389,7 +392,7 @@ class HtmlHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::css
  */
 	public function css($path, array $options = array()) {
-		$options += array('block' => null, 'rel' => 'stylesheet');
+		$options += array('once' => true, 'block' => null, 'rel' => 'stylesheet');
 
 		if (is_array($path)) {
 			$out = '';
@@ -401,6 +404,12 @@ class HtmlHelper extends Helper {
 			}
 			return;
 		}
+
+		if ($options['once'] && isset($this->_includedAssets[$path])) {
+			return '';
+		}
+		unset($options['once']);
+		$this->_includedAssets[$path] = true;
 
 		if (strpos($path, '//') !== false) {
 			$url = $path;
@@ -480,10 +489,10 @@ class HtmlHelper extends Helper {
 			}
 			return null;
 		}
-		if ($options['once'] && isset($this->_includedScripts[$url])) {
+		if ($options['once'] && isset($this->_includedAssets[$url])) {
 			return null;
 		}
-		$this->_includedScripts[$url] = true;
+		$this->_includedAssets[$url] = true;
 
 		if (strpos($url, '//') === false) {
 			$url = $this->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js'));
