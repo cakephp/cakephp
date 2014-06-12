@@ -103,9 +103,10 @@ class ProjectTask extends BakeTask {
 			}
 		}
 		$composer = false;
-		if (!empty($_SERVER['PATH'])) {
-			$path = explode(PATH_SEPARATOR, $_SERVER['PATH']);
-			$composer = $this->_searchPath($path);
+		$path = env('PATH');
+		if (!empty($path)) {
+			$paths = explode(PATH_SEPARATOR, $path);
+			$composer = $this->_searchPath($paths);
 		}
 		return $composer;
 	}
@@ -120,7 +121,7 @@ class ProjectTask extends BakeTask {
 		$composer = ['composer.phar', 'composer'];
 		foreach ($path as $dir) {
 			foreach ($composer as $cmd) {
-				if (file_exists($dir . DS . $cmd)) {
+				if (is_file($dir . DS . $cmd)) {
 					$this->_io->verbose('Found composer executable in ' . $dir);
 					return $dir . DS . $cmd;
 				}
