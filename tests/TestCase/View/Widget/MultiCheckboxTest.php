@@ -34,7 +34,7 @@ class MultiCheckboxTest extends TestCase {
 		$templates = [
 			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
 			'label' => '<label{{attrs}}>{{text}}</label>',
-			'checkboxContainer' => '<div class="checkbox">{{input}}{{label}}</div>',
+			'checkboxWrapper' => '<div class="checkbox">{{input}}{{label}}</div>',
 		];
 		$this->templates = new StringTemplate($templates);
 		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
