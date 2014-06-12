@@ -91,7 +91,10 @@ class HtmlHelper extends Helper {
  *
  * @var array
  */
-	protected $_includedAssets = array();
+	protected $_includedAssets = array(
+		'css' => array(),
+		'script' => array()
+	);
 
 /**
  * Options for the currently opened script block buffer if any.
@@ -405,11 +408,11 @@ class HtmlHelper extends Helper {
 			return;
 		}
 
-		if ($options['once'] && isset($this->_includedAssets[$path])) {
+		if ($options['once'] && isset($this->_includedAssets['css'][$path])) {
 			return '';
 		}
 		unset($options['once']);
-		$this->_includedAssets[$path] = true;
+		$this->_includedAssets['css'][$path] = true;
 
 		if (strpos($path, '//') !== false) {
 			$url = $path;
@@ -489,10 +492,10 @@ class HtmlHelper extends Helper {
 			}
 			return null;
 		}
-		if ($options['once'] && isset($this->_includedAssets[$url])) {
+		if ($options['once'] && isset($this->_includedAssets['script'][$url])) {
 			return null;
 		}
-		$this->_includedAssets[$url] = true;
+		$this->_includedAssets['script'][$url] = true;
 
 		if (strpos($url, '//') === false) {
 			$url = $this->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js'));

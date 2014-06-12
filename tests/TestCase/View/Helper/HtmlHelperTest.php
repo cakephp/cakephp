@@ -1979,4 +1979,23 @@ class HtmlHelperTest extends TestCase {
 		);
 	}
 
+/**
+ * Tests that CSS and Javascript files of the same name don't conflict with the 'once' test
+ *
+ * @return void
+ */
+	public function testCssAndScriptWithSameName() {
+		$result = $this->Html->css('foo');
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*css\/foo\.css/')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('foo');
+		$expected = array(
+			'script' => array('src' => 'js/foo.js')
+		);
+		$this->assertTags($result, $expected);
+	}
+
 }
