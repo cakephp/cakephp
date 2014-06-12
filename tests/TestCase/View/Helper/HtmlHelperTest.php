@@ -515,7 +515,7 @@ class HtmlHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->css('screen.css');
+		$result = $this->Html->css('screen.css', array('once' => false));
 		$this->assertTags($result, $expected);
 
 		Plugin::load('TestPlugin');
