@@ -131,8 +131,8 @@ class CakeSocket {
 		}
 
 		$scheme = null;
-		if (!empty($this->config['protocol']) &&  strpos($this->config['host'], '://') === false)  {
-			$scheme = $this->config['protocol'].'://';
+		if (!empty($this->config['protocol']) && strpos($this->config['host'], '://') === false) {
+			$scheme = $this->config['protocol'] . '://';
 		}
 
 		if (!empty($this->config['context'])) {

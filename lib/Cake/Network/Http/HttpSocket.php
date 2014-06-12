@@ -341,8 +341,8 @@ class HttpSocket extends CakeSocket {
 		if (!empty($this->request['body']) && !isset($this->request['header']['Content-Length'])) {
 			$this->request['header']['Content-Length'] = strlen($this->request['body']);
 		}
-		if(isset($this->request['uri']['scheme']) && $this->request['uri']['scheme'] === 'https'){
-			$this->config['protocol'] = 'ssl'; 
+		if (isset($this->request['uri']['scheme']) && $this->request['uri']['scheme'] === 'https' && empty($this->config['protocol'])) {
+			$this->config['protocol'] = 'ssl';
 		}
 
 		$connectionType = null;
@@ -525,7 +525,7 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * Issues a HEADER request to the specified URI, query, and request.
+ * Issues a HEAD request to the specified URI, query, and request.
  *
  * @param string|array $uri URI to request (see {@link _parseUri()})
  * @param array $data Array of request body data keys and values.
@@ -536,8 +536,6 @@ class HttpSocket extends CakeSocket {
 		$request = Hash::merge(array('method' => 'HEAD', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
-
-
 
 /**
  * Normalizes URLs into a $uriTemplate. If no template is provided
