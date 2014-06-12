@@ -180,7 +180,8 @@ class QueryRegressionTest extends TestCase {
  * Test for https://github.com/cakephp/cakephp/issues/3677
  *
  * Checks that only relevant associations are passed when saving _joinData
- * cand tests that _joinData can also save deeper associations
+ * Tests that _joinData can also save deeper associations
+ * 
  * @return void
  */
 	public function testBelongsToManyDeepSave() {
