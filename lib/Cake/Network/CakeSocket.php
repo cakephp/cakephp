@@ -116,7 +116,6 @@ class CakeSocket {
  */
 	public function __construct($config = array()) {
 		$this->config = array_merge($this->_baseConfig, $config);
-		//if(isset())
 	}
 
 /**
