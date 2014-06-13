@@ -868,9 +868,18 @@ class HashTest extends CakeTestCase {
 				'active' => false
 			),
 		);
+		$result = Hash::extract($users, '{n}[active=0]');
+		$this->assertCount(1, $result);
+		$this->assertEquals($users[2], $result[0]);
+
 		$result = Hash::extract($users, '{n}[active=false]');
 		$this->assertCount(1, $result);
 		$this->assertEquals($users[2], $result[0]);
+
+		$result = Hash::extract($users, '{n}[active=1]');
+		$this->assertCount(2, $result);
+		$this->assertEquals($users[0], $result[0]);
+		$this->assertEquals($users[1], $result[1]);
 
 		$result = Hash::extract($users, '{n}[active=true]');
 		$this->assertCount(2, $result);
