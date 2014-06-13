@@ -16,15 +16,29 @@
 use Cake\Core\Plugin;
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
+if (empty($plugin)) {
+	$filePath = APP_DIR . DS;
+}
+if (!empty($plugin) && Plugin::loaded($plugin)) {
+	$filePath = Plugin::path($plugin);
+}
+if (!empty($plugin) && !Plugin::loaded($plugin)) {
+	$filePath = APP_DIR . DS . 'Plugin' . DS . h($plugin) . DS;
+}
 ?>
 <h2>Missing Helper</h2>
 <p class="error">
 	<strong>Error: </strong>
 	<?= sprintf('<em>%s</em> could not be found.', h($pluginDot . $class)); ?>
+	<?php
+		if (!empty($plugin) && !Plugin::loaded($plugin)):
+			echo sprintf('Make sure your plugin %s is in the %s directory and was loaded.', h($plugin), APP_DIR . DS . 'Plugin');
+		endif;
+	?>
 </p>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), (empty($plugin) ? APP_DIR . DS : Plugin::path($plugin)) . 'View' . DS . 'Helper' . DS . h($class) . '.php'); ?>
+	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'View' . DS . 'Helper' . DS . h($class) . '.php'); ?>
 </p>
 <pre>
 &lt;?php

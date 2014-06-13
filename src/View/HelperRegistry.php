@@ -115,7 +115,7 @@ class HelperRegistry extends ObjectRegistry {
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\MissingHelperException([
-			'class' => $class,
+			'class' => $class . 'Helper',
 			'plugin' => $plugin
 		]);
 	}
