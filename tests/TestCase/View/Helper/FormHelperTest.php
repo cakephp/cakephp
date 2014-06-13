@@ -6077,6 +6077,7 @@ class FormHelperTest extends TestCase {
 			'checkboxContainer' => '<div class="check">{{content}}</div>',
 			'radioContainer' => '<div class="rad">{{content}}</div>',
 			'radioContainerError' => '<div class="rad err">{{content}}</div>',
+			'datetimeContainer' => '<div class="dt">{{content}}</div>',
 		]);
 
 		$this->article['errors'] = [
@@ -6109,6 +6110,11 @@ class FormHelperTest extends TestCase {
 			'options' => ['Y', 'N']
 		]);
 		$this->assertContains('<div class="rad err">', $result);
+
+		$result = $this->Form->input('Article.created', [
+			'type' => 'datetime',
+		]);
+		$this->assertContains('<div class="dt">', $result);
 	}
 
 /**
