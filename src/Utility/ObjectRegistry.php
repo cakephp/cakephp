@@ -69,13 +69,12 @@ abstract class ObjectRegistry {
 			return $this->_loaded[$name];
 		}
 		if (is_array($config) && isset($config['className'])) {
-			$className = $this->_resolveClassName($config['className']);
+			$objectName = $config['className'];
 		}
-		if (!isset($className)) {
-			$className = $this->_resolveClassName($objectName);
-		}
+		$className = $this->_resolveClassName($objectName);
 		if (!$className) {
-			$this->_throwMissingClassError($objectName, substr($plugin, 0, -1));
+			list($plugin, $objectName) = pluginSplit($objectName);
+			$this->_throwMissingClassError($objectName, $plugin);
 		}
 		$instance = $this->_create($className, $name, $config);
 		$this->_loaded[$name] = $instance;
