@@ -45,6 +45,18 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Queries need a default type to prevent fatal errors
+ * when an uninitialized query has its sql() method called.
+ *
+ * @return void
+ */
+	public function testDefaultType() {
+		$query = new Query($this->connection);
+		$this->assertEquals('', $query->sql());
+		$this->assertEquals('select', $query->type());
+	}
+
+/**
  * Tests that it is possible to obtain expression results from a query
  *
  * @return void

@@ -113,6 +113,7 @@ trait SqliteDialectTrait {
 
 		$newQuery = $query->connection()->newQuery();
 		$cols = $v->columns();
+		$replaceQuery = false;
 		foreach ($v->values() as $k => $val) {
 			$fillLength = count($cols) - count($val);
 			if ($fillLength > 0) {
@@ -124,6 +125,7 @@ trait SqliteDialectTrait {
 
 			$select = array_combine($cols, $val);
 			if ($k === 0) {
+				$replaceQuery = true;
 				$newQuery->select($select);
 				continue;
 			}
@@ -132,7 +134,7 @@ trait SqliteDialectTrait {
 			$newQuery->unionAll($q->select($select));
 		}
 
-		if ($newQuery->type()) {
+		if ($replaceQuery) {
 			$v->query($newQuery);
 		}
 
