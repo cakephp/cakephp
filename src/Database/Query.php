@@ -47,7 +47,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @var string
  */
-	protected $_type;
+	protected $_type = 'select';
 
 /**
  * List of SQL parts that will be used to build this query.
