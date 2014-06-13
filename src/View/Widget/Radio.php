@@ -50,7 +50,7 @@ class Radio implements WidgetInterface {
  *
  * - `radio` Used to generate the input for a radio button.
  *   Can use the following variables `name`, `value`, `attrs`.
- * - `radioContainer` Used to generate the container element for
+ * - `radioWrapper` Used to generate the container element for
  *   the radio + input element. Can use the `input` and `label`
  *   variables.
  *
@@ -187,7 +187,7 @@ class Radio implements WidgetInterface {
 			$escape
 		);
 
-		return $this->_templates->format('radioContainer', [
+		return $this->_templates->format('radioWrapper', [
 			'input' => $input,
 			'label' => $label,
 		]);

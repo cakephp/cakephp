@@ -1683,7 +1683,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('Article.title', [
 			'templates' => [
-				'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}</div>'
+				'inputContainerError' => '<div class="input {{type}}{{required}} error">{{content}}</div>'
 			]
 		]);
 
@@ -1902,7 +1902,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.email', array(
-			'templates' => ['groupContainer' => '<div>{{content}}</div>']
+			'templates' => ['inputContainer' => '<div>{{content}}</div>']
 		));
 		$expected = array(
 			'<div',
@@ -2031,7 +2031,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('Contact.field', array(
 			'templates' => [
-				'groupContainerError' => '{{content}}{{error}}',
+				'inputContainerError' => '{{content}}{{error}}',
 				'error' => '<span class="error-message">{{content}}</span>'
 			]
 		));
@@ -3253,7 +3253,7 @@ class FormHelperTest extends TestCase {
 	public function testRadioInputInsideLabel() {
 		$this->Form->templates([
 			'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
-			'radioContainer' => '{{label}}'
+			'radioWrapper' => '{{label}}'
 		]);
 
 		$result = $this->Form->radio('Model.field', ['option A', 'option B']);
@@ -5710,7 +5710,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testForMagicInputNonExistingNorValidated() {
 		$result = $this->Form->create($this->article);
-		$this->Form->templates(['groupContainer' => '{{content}}']);
+		$this->Form->templates(['inputContainer' => '{{content}}']);
 		$result = $this->Form->input('non_existing_nor_validated');
 		$expected = array(
 			'label' => array('for' => 'non-existing-nor-validated'),
@@ -5761,7 +5761,7 @@ class FormHelperTest extends TestCase {
 			'className' => __NAMESPACE__ . '\ContactsTable'
 		]);
 		$this->Form->create([], ['context' => ['table' => 'Contacts']]);
-		$this->Form->templates(['groupContainer' => '{{content}}']);
+		$this->Form->templates(['inputContainer' => '{{content}}']);
 
 		$result = $this->Form->input('Contacts.name', array('label' => 'My label'));
 		$expected = array(
@@ -5973,7 +5973,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testHtml5InputWithInput() {
 		$this->Form->create();
-		$this->Form->templates(['groupContainer' => '{{content}}']);
+		$this->Form->templates(['inputContainer' => '{{content}}']);
 		$result = $this->Form->input('website', array(
 			'type' => 'url',
 			'val' => 'http://domain.tld',
@@ -6065,6 +6065,56 @@ class FormHelperTest extends TestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that *Container templates are used by input.
+ *
+ * @return void
+ */
+	public function testInputContainerTemplates() {
+		$this->Form->templates([
+			'checkboxContainer' => '<div class="check">{{content}}</div>',
+			'radioContainer' => '<div class="rad">{{content}}</div>',
+			'radioContainerError' => '<div class="rad err">{{content}}</div>',
+			'datetimeContainer' => '<div class="dt">{{content}}</div>',
+		]);
+
+		$this->article['errors'] = [
+			'Article' => ['published' => 'error message']
+		];
+		$this->Form->create($this->article);
+
+		$result = $this->Form->input('accept', [
+			'type' => 'checkbox'
+		]);
+		$expected = [
+			'div' => ['class' => 'check'],
+			['input' => ['type' => 'hidden', 'name' => 'accept', 'value' => 0]],
+			['input' => ['id' => 'accept', 'type' => 'checkbox', 'name' => 'accept', 'value' => 1]],
+			'label' => ['for' => 'accept'],
+			'Accept',
+			'/label',
+			'/div'
+		];
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('accept', [
+			'type' => 'radio',
+			'options' => ['Y', 'N']
+		]);
+		$this->assertContains('<div class="rad">', $result);
+
+		$result = $this->Form->input('Article.published', [
+			'type' => 'radio',
+			'options' => ['Y', 'N']
+		]);
+		$this->assertContains('<div class="rad err">', $result);
+
+		$result = $this->Form->input('Article.created', [
+			'type' => 'datetime',
+		]);
+		$this->assertContains('<div class="dt">', $result);
 	}
 
 /**

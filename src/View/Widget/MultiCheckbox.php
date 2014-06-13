@@ -47,7 +47,7 @@ class MultiCheckbox implements WidgetInterface {
  *
  * - `checkbox` Renders checkbox input controls. Accepts
  *   the `name`, `value` and `attrs` variables.
- * - `checkboxContainer` Renders the containing div/element for
+ * - `checkboxWrapper` Renders the containing div/element for
  *   a checkbox and its label. Accepts the `input`, and `label`
  *   variables.
  *
@@ -167,7 +167,7 @@ class MultiCheckbox implements WidgetInterface {
 		}
 		$label = $this->_label->render($labelAttrs, $context);
 
-		return $this->_templates->format('checkboxContainer', [
+		return $this->_templates->format('checkboxWrapper', [
 			'label' => $label,
 			'input' => $input
 		]);

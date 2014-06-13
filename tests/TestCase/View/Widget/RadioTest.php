@@ -35,7 +35,7 @@ class RadioTest extends TestCase {
 		$templates = [
 			'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
 			'label' => '<label{{attrs}}>{{text}}</label>',
-			'radioContainer' => '{{input}}{{label}}',
+			'radioWrapper' => '{{input}}{{label}}',
 		];
 		$this->templates = new StringTemplate($templates);
 		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
@@ -335,7 +335,7 @@ class RadioTest extends TestCase {
 	public function testRenderInputInsideLabel() {
 		$this->templates->add([
 			'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
-			'radioContainer' => '{{label}}',
+			'radioWrapper' => '{{label}}',
 		]);
 		$label = new Label($this->templates);
 		$radio = new Radio($this->templates, $label);
@@ -558,7 +558,7 @@ class RadioTest extends TestCase {
  */
 	public function testRenderContainerTemplate() {
 		$this->templates->add([
-			'radioContainer' => '<div class="radio">{{input}}{{label}}</div>'
+			'radioWrapper' => '<div class="radio">{{input}}{{label}}</div>'
 		]);
 		$label = new Label($this->templates);
 		$radio = new Radio($this->templates, $label);
