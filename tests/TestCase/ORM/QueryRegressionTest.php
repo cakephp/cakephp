@@ -193,6 +193,9 @@ class QueryRegressionTest extends TestCase {
 			'through' => 'SpecialTags'
 		]);
 		$articles->Highlights->junction()->belongsTo('Authors');
+		$articles->Highlights->hasOne('Authors', [
+			'foreignKey' => 'id'
+		]);
 		$entity = $articles->get(2, ['contain' => ['Highlights']]);
 
 		$data = [
@@ -205,20 +208,22 @@ class QueryRegressionTest extends TestCase {
 						'author' => [
 							'name' => 'jose'
 						]
-					]
+					],
+					'author' => ['name' => 'mark']
 				]
 			]
 		];
 		$entity = $articles->patchEntity($entity, $data, [
-			'Highlights' => ['associated' => ['_joinData' => ['associated' => ['Authors']]]]
+			'Highlights' => ['associated' => ['_joinData' => ['associated' => ['Authors']], 'Authors']]
 		]);
 		$articles->save($entity, [
 			'associated' => [
-				'Highlights' => ['associated' => ['_joinData' => ['associated' => ['Authors']]]]
+				'Highlights' => ['associated' => ['_joinData' => ['associated' => ['Authors']], 'Authors']]
 			]
 		]);
-		$entity = $articles->get(2, ['contain' => ['SpecialTags.Authors']]);
+		$entity = $articles->get(2, ['contain' => ['SpecialTags.Authors', 'Highlights.Authors']]);
 		$this->assertEquals('jose', $entity->special_tags[0]->author->name);
+		$this->assertEquals('mark', $entity->highlights[0]->author->name);
 	}
 
 }
