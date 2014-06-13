@@ -65,8 +65,8 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testSetOneParamWithSetter() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['setName']);
-		$entity->expects($this->once())->method('setName')
+		$entity = $this->getMock('\Cake\ORM\Entity', ['_setName']);
+		$entity->expects($this->once())->method('_setName')
 			->with('Jones')
 			->will($this->returnCallback(function($name) {
 				$this->assertEquals('Jones', $name);
@@ -82,15 +82,15 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testMultipleWithSetter() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['setName', 'setStuff']);
+		$entity = $this->getMock('\Cake\ORM\Entity', ['_setName', '_setStuff']);
 		$entity->accessible('*', true);
-		$entity->expects($this->once())->method('setName')
+		$entity->expects($this->once())->method('_setName')
 			->with('Jones')
 			->will($this->returnCallback(function($name) {
 				$this->assertEquals('Jones', $name);
 				return 'Dr. ' . $name;
 			}));
-		$entity->expects($this->once())->method('setStuff')
+		$entity->expects($this->once())->method('_setStuff')
 			->with(['a', 'b'])
 			->will($this->returnCallback(function($stuff) {
 				$this->assertEquals(['a', 'b'], $stuff);
@@ -107,11 +107,11 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testBypassSetters() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['setName', 'setStuff']);
+		$entity = $this->getMock('\Cake\ORM\Entity', ['_setName', '_setStuff']);
 		$entity->accessible('*', true);
 
-		$entity->expects($this->never())->method('setName');
-		$entity->expects($this->never())->method('setStuff');
+		$entity->expects($this->never())->method('_setName');
+		$entity->expects($this->never())->method('_setStuff');
 
 		$entity->set('name', 'Jones', ['setter' => false]);
 		$this->assertEquals('Jones', $entity->name);
@@ -179,8 +179,8 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testGetCustomGetters() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
-		$entity->expects($this->once())->method('getName')
+		$entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
+		$entity->expects($this->once())->method('_getName')
 			->with('Jones')
 			->will($this->returnCallback(function($name) {
 				$this->assertSame('Jones', $name);
@@ -209,8 +209,8 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testMagicSetWithSetter() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['setName']);
-		$entity->expects($this->once())->method('setName')
+		$entity = $this->getMock('\Cake\ORM\Entity', ['_setName']);
+		$entity->expects($this->once())->method('_setName')
 			->with('Jones')
 			->will($this->returnCallback(function($name) {
 				$this->assertEquals('Jones', $name);
@@ -226,8 +226,8 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testMagicGetWithGetter() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
-		$entity->expects($this->once())->method('getName')
+		$entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
+		$entity->expects($this->once())->method('_getName')
 			->with('Jones')
 			->will($this->returnCallback(function($name) {
 				$this->assertSame('Jones', $name);
@@ -255,8 +255,8 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testIndirectModificationWithGetter() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['getThings']);
-		$entity->expects($this->atLeastOnce())->method('getThings')
+		$entity = $this->getMock('\Cake\ORM\Entity', ['_getThings']);
+		$entity->expects($this->atLeastOnce())->method('_getThings')
 			->will($this->returnArgument(0));
 		$entity->things = ['a', 'b'];
 		$entity->things[] = 'c';
@@ -275,8 +275,8 @@ class EntityTest extends TestCase {
 		$this->assertFalse($entity->has('foo'));
 		$this->assertFalse($entity->has('last_name'));
 
-		$entity = $this->getMock('\Cake\ORM\Entity', ['getThings']);
-		$entity->expects($this->once())->method('getThings')
+		$entity = $this->getMock('\Cake\ORM\Entity', ['_getThings']);
+		$entity->expects($this->once())->method('_getThings')
 			->will($this->returnValue(0));
 		$this->assertTrue($entity->has('things'));
 	}
@@ -412,11 +412,11 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testMethodCache() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['setFoo', 'getBar']);
-		$entity2 = $this->getMock('\Cake\ORM\Entity', ['setBar']);
-		$entity->expects($this->once())->method('setFoo');
-		$entity->expects($this->once())->method('getBar');
-		$entity2->expects($this->once())->method('setBar');
+		$entity = $this->getMock('\Cake\ORM\Entity', ['_setFoo', '_getBar']);
+		$entity2 = $this->getMock('\Cake\ORM\Entity', ['_setBar']);
+		$entity->expects($this->once())->method('_setFoo');
+		$entity->expects($this->once())->method('_getBar');
+		$entity2->expects($this->once())->method('_setBar');
 
 		$entity->set('foo', 1);
 		$entity->get('bar');
@@ -429,9 +429,9 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testSetGetLongProperyNames() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['getVeryLongProperty', 'setVeryLongProperty']);
-		$entity->expects($this->once())->method('getVeryLongProperty');
-		$entity->expects($this->once())->method('setVeryLongProperty');
+		$entity = $this->getMock('\Cake\ORM\Entity', ['_getVeryLongProperty', '_setVeryLongProperty']);
+		$entity->expects($this->once())->method('_getVeryLongProperty');
+		$entity->expects($this->once())->method('_setVeryLongProperty');
 		$entity->get('very_long_property');
 		$entity->set('very_long_property', 1);
 	}
@@ -667,11 +667,11 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testToArrayWithAccessor() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
+		$entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
 		$entity->accessible('*', true);
 		$entity->set(['name' => 'Mark', 'email' => 'mark@example.com']);
 		$entity->expects($this->any())
-			->method('getName')
+			->method('_getName')
 			->will($this->returnValue('Jose'));
 
 		$expected = ['name' => 'Jose', 'email' => 'mark@example.com'];
@@ -696,11 +696,11 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testToArrayVirtualProperties() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
+		$entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
 		$entity->accessible('*', true);
 
 		$entity->expects($this->any())
-			->method('getName')
+			->method('_getName')
 			->will($this->returnValue('Jose'));
 		$entity->set(['email' => 'mark@example.com']);
 

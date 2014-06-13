@@ -226,7 +226,7 @@ trait EntityTrait {
 				continue;
 			}
 
-			$setter = 'set' . Inflector::camelize($p);
+			$setter = '_set' . Inflector::camelize($p);
 			if ($this->_methodExists($setter)) {
 				$value = $this->{$setter}($value);
 			}
@@ -248,7 +248,7 @@ trait EntityTrait {
 		}
 
 		$value = null;
-		$method = 'get' . Inflector::camelize($property);
+		$method = '_get' . Inflector::camelize($property);
 
 		if (isset($this->_properties[$property])) {
 			$value =& $this->_properties[$property];
