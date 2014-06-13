@@ -179,10 +179,6 @@ class Marshaller {
 		}
 
 		$records = $this->many($data, $include);
-		if (!in_array('_joinData', $include) && !isset($include['_joinData'])) {
-			return $records;
-		}
-
 		$joint = $assoc->junction();
 		$jointMarshaller = $joint->marshaller();
 

@@ -298,9 +298,7 @@ class MarshallerTest extends TestCase {
 		];
 		$marshall = new Marshaller($this->articles);
 		$result = $marshall->one($data, [
-			'Tags' => [
-				'associated' => ['_joinData']
-			]
+			'Tags'
 		]);
 
 		$this->assertEquals($data['title'], $result->title);
