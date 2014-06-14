@@ -278,7 +278,26 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isAbsolute
  */
 	public static function isAbsolute($path) {
-		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) === '\\\\');
+		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) === '\\\\' || self::isRegisteredStreamWrapper($path));
+	}
+
+/**
+ * Returns true if given $path is a registered stream wrapper.
+ *
+ * @param string $path Path to check
+ * @return boolean true if path is registered stream wrapper.
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isRegisteredStreamWrapper
+ */
+	public static function isRegisteredStreamWrapper($path) {
+		if(!empty($path)){
+			preg_match('/^[A-Z]*(?=:\/\/)/i', $path, $matches);
+			if(!empty($matches[0])){
+				if(in_array($matches[0], stream_get_wrappers())){
+					return TRUE;
+				}
+			}
+		}
+		return FALSE;
 	}
 
 /**
