@@ -342,7 +342,7 @@ class FormHelper extends AppHelper {
  * @return void
  */
 	function _lastAction($url) {
-		$action = Router::url($url, true);
+		$action = FULL_BASE_URL . $url;
 		$parts = parse_url($action);
 		$this->_lastAction = $parts['path'];
 	}
