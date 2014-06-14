@@ -549,6 +549,7 @@ class FolderTest extends CakeTestCase {
 		$this->assertFalse(Folder::isAbsolute('\\path/to/file'));
 		$this->assertFalse(Folder::isAbsolute('\\path\\to\\file'));
 		$this->assertFalse(Folder::isAbsolute('notRegisteredStreamWrapper://example'));
+		$this->assertFalse(Folder::isAbsolute('://example'));
 
 		$this->assertTrue(Folder::isAbsolute('/usr/local'));
 		$this->assertTrue(Folder::isAbsolute('//path/to/file'));
