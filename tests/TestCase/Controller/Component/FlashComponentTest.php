@@ -76,7 +76,7 @@ class FlashComponentTest extends TestCase {
 		$expected = [
 			'message' => 'This is a test message',
 			'key' => 'flash',
-			'element' => 'test',
+			'element' => 'Flash/test',
 			'params' => ['foo' => 'bar']
 		];
 		$result = $this->Session->read('Flash.flash');
@@ -86,7 +86,7 @@ class FlashComponentTest extends TestCase {
 		$expected = [
 			'message' => 'This is a test message',
 			'key' => 'flash',
-			'element' => 'MyPlugin.alert',
+			'element' => 'MyPlugin.Flash/alert',
 			'params' => []
 		];
 		$result = $this->Session->read('Flash.flash');

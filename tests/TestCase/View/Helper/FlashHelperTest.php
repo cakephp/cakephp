@@ -146,8 +146,8 @@ class FlashHelperTest extends TestCase {
 	public function testFlashWithPluginElement() {
 		Plugin::load('TestPlugin');
 
-		$result = $this->Flash->render('flash', array('element' => 'TestPlugin.plugin_element'));
-		$expected = 'this is the plugin element using params[plugin]';
+		$result = $this->Flash->render('flash', array('element' => 'TestPlugin.Flash/plugin_element'));
+		$expected = 'this is the plugin element';
 		$this->assertEquals($expected, $result);
 	}
 }

@@ -78,6 +78,16 @@ class FlashComponent extends Component {
 			$message = $message->getMessage();
 		}
 
+		if ($opts['element'] !== null) {
+			list($plugin, $element) = pluginSplit($opts['element']);
+
+			if ($plugin) {
+				$opts['element'] = $plugin . '.Flash/' . $element;
+			} else {
+				$opts['element'] = 'Flash/' . $element;
+			}
+		}
+
 		$this->_session->write('Flash.' . $opts['key'], [
 			'message' => $message,
 			'key' => $opts['key'],
@@ -90,15 +100,16 @@ class FlashComponent extends Component {
  * Magic method for verbose flash methods based on element names.
  *
  * For example: $this->Flash->success('My message') would use the
- * flash_success.ctp element for rendering the flash message.
+ * success.ctp element under `Template/Element/Flash` for rendering the
+ * flash message.
  *
- * @param string $name Element name to use, omitting the "flash_" prefix.
- * @param array $args Parameters to pass when calling `FlashComponent::set`.
+ * @param string $name Element name to use.
+ * @param array $args Parameters to pass when calling `FlashComponent::set()`.
  * @return void
  * @throws \Cake\Error\InternalErrorException If missing the flash message.
 */
 	public function __call($name, $args) {
-		$options = ['element' => 'flash_' . Inflector::underscore($name)];
+		$options = ['element' => Inflector::underscore($name)];
 
 		if (count($args) < 1) {
 			throw new InternalErrorException('Flash message missing.');
