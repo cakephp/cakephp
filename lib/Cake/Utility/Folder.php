@@ -289,13 +289,8 @@ class Folder {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isRegisteredStreamWrapper
  */
 	public static function isRegisteredStreamWrapper($path) {
-		if (!empty($path)) {
-			preg_match('/^[A-Z]+(?=:\/\/)/i', $path, $matches);
-			if (!empty($matches[0])) {
-				if (in_array($matches[0], stream_get_wrappers())) {
-					return true;
-				}
-			}
+		if (preg_match('/^[A-Z]+(?=:\/\/)/i', $path, $matches) && in_array($matches[0], stream_get_wrappers())) {
+			return true;
 		}
 		return false;
 	}
