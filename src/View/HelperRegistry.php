@@ -38,7 +38,7 @@ class HelperRegistry extends ObjectRegistry {
 /**
  * Constructor
  *
- * @param View $view
+ * @param \Cake\View\View $view View object.
  */
 	public function __construct(View $view) {
 		$this->_View = $view;
@@ -111,6 +111,7 @@ class HelperRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the helper is missing in.
+ * @return void
  * @throws \Cake\View\Error\MissingHelperException
  */
 	protected function _throwMissingClassError($class, $plugin) {

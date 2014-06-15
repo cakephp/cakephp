@@ -76,8 +76,8 @@ class ArrayContext implements ContextInterface {
 /**
  * Constructor.
  *
- * @param \Cake\Network\Request
- * @param array
+ * @param \Cake\Network\Request $request The request object.
+ * @param array $context Context info.
  */
 	public function __construct(Request $request, array $context) {
 		$this->_request = $request;

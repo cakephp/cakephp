@@ -32,7 +32,7 @@ class Checkbox implements WidgetInterface {
 /**
  * Constructor
  *
- * @param \Cake\View\StringTemplate $templates
+ * @param \Cake\View\StringTemplate $templates Templates list.
  */
 	public function __construct($templates) {
 		$this->_templates = $templates;
@@ -52,7 +52,7 @@ class Checkbox implements WidgetInterface {
  * Any other attributes passed in will be treated as HTML attributes.
  *
  * @param array $data The data to create a checkbox with.
- * @param \Cake\View\Form\ContextInterface The current form context.
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string Generated HTML string.
  */
 	public function render(array $data, ContextInterface $context) {

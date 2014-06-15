@@ -28,7 +28,7 @@ class Textarea implements WidgetInterface {
 /**
  * Constructor
  *
- * @param \Cake\View\StringTemplate $templates
+ * @param \Cake\View\StringTemplate $templates Templates list.
  */
 	public function __construct($templates) {
 		$this->_templates = $templates;
@@ -46,7 +46,7 @@ class Textarea implements WidgetInterface {
  * All other keys will be converted into HTML attributes.
  *
  * @param array $data The data to build a textarea with.
- * @param \Cake\View\Form\ContextInterface The current form context.
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string HTML elements.
  */
 	public function render(array $data, ContextInterface $context) {

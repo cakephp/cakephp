@@ -57,7 +57,7 @@ class StringTemplate {
 /**
  * Constructor.
  *
- * @param array $templates A set of templates to add.
+ * @param array $config A set of templates to add.
  */
 	public function __construct(array $config = []) {
 		$this->config($config);

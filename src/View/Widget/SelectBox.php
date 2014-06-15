@@ -36,7 +36,7 @@ class SelectBox implements WidgetInterface {
 /**
  * Constructor
  *
- * @param \Cake\View\StringTemplate $templates
+ * @param \Cake\View\StringTemplate $templates Templates list.
  */
 	public function __construct($templates) {
 		$this->_templates = $templates;
@@ -112,7 +112,7 @@ class SelectBox implements WidgetInterface {
  * nest complex types as required.
  *
  * @param array $data Data to render with.
- * @param \Cake\View\Form\ContextInterface The current form context.
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string A generated select box.
  * @throws \RuntimeException when the name attribute is empty.
  */
@@ -258,7 +258,7 @@ class SelectBox implements WidgetInterface {
  * Helper method for deciding what options are selected.
  *
  * @param string $key The key to test.
- * @param array|string|null The selected values.
+ * @param array|string|null $selected The selected values.
  * @return bool
  */
 	protected function _isSelected($key, $selected) {
@@ -277,7 +277,7 @@ class SelectBox implements WidgetInterface {
  * Helper method for deciding what options are disabled.
  *
  * @param string $key The key to test.
- * @param array|null The disabled values.
+ * @param array|null $disabled The disabled values.
  * @return bool
  */
 	protected function _isDisabled($key, $disabled) {

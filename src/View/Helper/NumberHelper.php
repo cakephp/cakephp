@@ -85,7 +85,6 @@ class NumberHelper extends Helper {
 /**
  * Formats a number with a level of precision.
  *
- *
  * @param float $number A floating point number.
  * @param int $precision The precision of the returned number.
  * @return float Formatted float.
@@ -173,7 +172,7 @@ class NumberHelper extends Helper {
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
  *   set at least 'before' and 'after' options.
  * 'USD' is the default currency, use Number::defaultCurrency() to change this default.
- * @param array $options
+ * @param array $options Options list.
  * @return string Number formatted as a currency.
  * @see Cake\Utility\Number::currency()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
