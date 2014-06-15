@@ -1405,7 +1405,7 @@ class BelongsToManyTest extends TestCase {
 				return true;
 			}));
 
-		$assoc->replaceLinks($entity, $tags, $options);
+		$assoc->replaceLinks($entity, $tags, $options + ['associated' => false]);
 		$this->assertSame($tags, $entity->tags);
 		$this->assertFalse($entity->dirty('tags'));
 	}
