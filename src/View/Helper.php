@@ -239,7 +239,7 @@ class Helper implements EventListener {
  * Generate URL for given asset file. Depending on options passed provides full URL with domain name.
  * Also calls Helper::assetTimestamp() to add timestamp to local files
  *
- * @param string|array Path string or URL array
+ * @param string|array $path Path string or URL array
  * @param array $options Options array. Possible keys:
  *   `fullBase` Return full URL with domain name
  *   `pathPrefix` Path prefix for relative URLs

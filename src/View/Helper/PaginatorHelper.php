@@ -73,7 +73,7 @@ class PaginatorHelper extends Helper {
  * Before render callback. Overridden to merge passed args with URL options.
  *
  * @param \Cake\Event\Event $event The event instance.
- * @param string $viewFile
+ * @param string $viewFile The view file being rendered.
  * @return void
  */
 	public function beforeRender($event, $viewFile) {

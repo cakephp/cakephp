@@ -51,8 +51,8 @@ class MultiCheckbox implements WidgetInterface {
  *   a checkbox and its label. Accepts the `input`, and `label`
  *   variables.
  *
- * @param \Cake\View\StringTemplate $templates
- * @param \Cake\View\Widget\Label $label
+ * @param \Cake\View\StringTemplate $templates Templates list.
+ * @param \Cake\View\Widget\Label $label Label widget instance.
  */
 	public function __construct($templates, $label) {
 		$this->_templates = $templates;
@@ -98,7 +98,7 @@ class MultiCheckbox implements WidgetInterface {
  * If either is not set options will not be generated correctly.
  *
  * @param array $data The data to generate a checkbox set with.
- * @param \Cake\View\Form\ContextInterface The current form context.
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string
  */
 	public function render(array $data, ContextInterface $context) {
@@ -143,7 +143,7 @@ class MultiCheckbox implements WidgetInterface {
  * Render a single checkbox & wrapper.
  *
  * @param array $checkbox An array containing checkbox key/value option pairs
- * @param \Cake\View\Form\ContextInterface Context object.
+ * @param \Cake\View\Form\ContextInterface $context Context object.
  * @return string
  */
 	protected function _renderInput($checkbox, $context) {
@@ -177,7 +177,7 @@ class MultiCheckbox implements WidgetInterface {
  * Helper method for deciding what options are selected.
  *
  * @param string $key The key to test.
- * @param array|string|null The selected values.
+ * @param array|string|null $selected The selected values.
  * @return bool
  */
 	protected function _isSelected($key, $selected) {
@@ -196,7 +196,7 @@ class MultiCheckbox implements WidgetInterface {
  * Helper method for deciding what options are disabled.
  *
  * @param string $key The key to test.
- * @param array|null The disabled values.
+ * @param array|null $disabled The disabled values.
  * @return bool
  */
 	protected function _isDisabled($key, $disabled) {

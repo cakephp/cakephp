@@ -231,7 +231,7 @@ class FormHelper extends Helper {
 /**
  * Returns if a field is required to be filled based on validation properties from the validating object.
  *
- * @param \Cake\Validation\ValidationSet $validationRules
+ * @param \Cake\Validation\ValidationSet $validationRules Validation rules set.
  * @return bool true if field is required to be filled, false otherwise
  */
 	protected function _isRequiredField($validationRules) {
@@ -962,8 +962,8 @@ class FormHelper extends Helper {
 /**
  * Generates input options array
  *
- * @param string $fieldName the name of the field to parse options for
- * @param array $options
+ * @param string $fieldName The name of the field to parse options for.
+ * @param array $options Options list.
  * @return array Options
  */
 	protected function _parseOptions($fieldName, $options) {
@@ -1024,8 +1024,8 @@ class FormHelper extends Helper {
  * Selects the variable containing the options for a select field if present,
  * and sets the value to the 'options' key in the options array.
  *
- * @param string $fieldName the name of the field to find options for
- * @param array $options
+ * @param string $fieldName The name of the field to find options for.
+ * @param array $options Options list.
  * @return array
  */
 	protected function _optionsOptions($fieldName, $options) {
@@ -1051,10 +1051,10 @@ class FormHelper extends Helper {
 /**
  * Magically set option type and corresponding options
  *
- * @param string $fieldName the name of the field to generate options for
- * @param array $options
- * @param bool $allowOverride whether or not it is allowed for this method to
- * overwrite the 'type' key in options
+ * @param string $fieldName The name of the field to generate options for.
+ * @param array $options Options list.
+ * @param bool $allowOverride Whether or not it is allowed for this method to
+ * overwrite the 'type' key in options.
  * @return array
  */
 	protected function _magicOptions($fieldName, $options, $allowOverride) {
@@ -1110,8 +1110,8 @@ class FormHelper extends Helper {
 /**
  * Generate label for input
  *
- * @param string $fieldName
- * @param array $options
+ * @param string $fieldName The name of the field to generate label for.
+ * @param array $options Options list.
  * @return bool|string false or Generated label element
  */
 	protected function _getLabel($fieldName, $options) {
@@ -1151,9 +1151,9 @@ class FormHelper extends Helper {
  * $options can contain a hash of id overrides. These overrides will be
  * used instead of the generated values if present.
  *
- * @param string $fieldName
- * @param string $label
- * @param array $options Options for the label element. 'NONE' option is deprecated and will be removed in 3.0
+ * @param string $fieldName The name of the field to generate label for.
+ * @param string $label Label text.
+ * @param array $options Options for the label element.
  * @return string Generated label element
  */
 	protected function _inputLabel($fieldName, $label, $options) {
@@ -1685,8 +1685,8 @@ class FormHelper extends Helper {
  * Can be used in place of a select box with the multiple attribute.
  *
  * @param string $fieldName Name attribute of the SELECT
- * @param array $options|\Traversable Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
- *   checkboxes element.
+ * @param array|\Traversable $options Array of the OPTION elements
+ *   (as 'value'=>'Text' pairs) to be used in the checkboxes element.
  * @param array $attributes The HTML attributes of the select element.
  * @return string Formatted SELECT element
  * @see \Cake\View\Helper\FormHelper::select() for supported option formats.
@@ -2248,8 +2248,8 @@ class FormHelper extends Helper {
  * Allows you to add or replace widget instances with custom code.
  *
  * @param string $name The name of the widget. e.g. 'text'.
- * @param array|\Cake\View\Widget\WidgetInterface Either a string class name or an object
- *    implementing the WidgetInterface.
+ * @param array|\Cake\View\Widget\WidgetInterface $spec Either a string class
+ *   name or an object implementing the WidgetInterface.
  * @return void
  */
 	public function addWidget($name, $spec) {
