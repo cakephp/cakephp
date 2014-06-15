@@ -34,8 +34,8 @@ class Digest {
 /**
  * Constructor
  *
- * @param \Cake\Network\Http\Client $client
- * @param array $options
+ * @param \Cake\Network\Http\Client $client Http client object.
+ * @param array $options Options list.
  */
 	public function __construct(Client $client, $options = null) {
 		$this->_client = $client;
@@ -44,8 +44,8 @@ class Digest {
 /**
  * Add Authorization header to the request.
  *
- * @param Request $request
- * @param array $credentials
+ * @param \Cake\Network\Request $request The request object.
+ * @param array $credentials Authentication credentials.
  * @return void
  * @see http://www.ietf.org/rfc/rfc2617.txt
  */
@@ -70,8 +70,8 @@ class Digest {
  * another request without authentication to get authentication
  * challenge.
  *
- * @param Request $request
- * @param array $credentials
+ * @param \Cake\Network\Request $request The request object.
+ * @param array $credentials Authentication credentials.
  * @return Array modified credentials.
  */
 	protected function _getServerInfo(Request $request, $credentials) {
@@ -102,8 +102,8 @@ class Digest {
 /**
  * Generate the header Authorization
  *
- * @param Request $request
- * @param array $credentials
+ * @param \Cake\Network\Request $request The request object.
+ * @param array $credentials Authentication credentials.
  * @return string
  */
 	protected function _generateHeader(Request $request, $credentials) {

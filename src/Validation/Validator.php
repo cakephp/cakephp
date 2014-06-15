@@ -145,8 +145,8 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * If called with no arguments, it will return the provider stored under that name if
  * it exists, otherwise it returns this instance of chaining.
  *
- * @param string $name
- * @param null|object|string $object
+ * @param string $name  The name under which the provider should be set.
+ * @param null|object|string $object Provider object or class name.
  * @return Validator|object|string
  */
 	public function provider($name, $object = null) {
@@ -358,7 +358,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns whether or not a field can be left empty for a new or already existing
  * record.
  *
- * @param string $field
+ * @param string $field Field name.
  * @param bool $newRecord whether the data to be validated is new or to be updated.
  * @return bool
  */
@@ -370,7 +370,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns whether or not a field can be left out for a new or already existing
  * record.
  *
- * @param string $field
+ * @param string $field Field name.
  * @param bool $newRecord whether the data to be validated is new or to be updated.
  * @return bool
  */

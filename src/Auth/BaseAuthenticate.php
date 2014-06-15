@@ -79,10 +79,11 @@ abstract class BaseAuthenticate {
  * @var bool
  */
 	protected $_needsPasswordRehash = false;
+
 /**
  * Constructor
  *
- * @param ComponentRegistry $registry The Component registry used on this request.
+ * @param \Cake\Controller\ComponentRegistry $registry The Component registry used on this request.
  * @param array $config Array of config to use.
  */
 	public function __construct(ComponentRegistry $registry, $config) {

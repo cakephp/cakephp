@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -107,12 +106,12 @@ class Validation {
 /**
  * Alias of Validator::lengthBetween() for backwards compatibility.
  *
- * @see Validator::lengthBetween()
- * @deprecated Deprecated since 2.6, use Validator::lengthBetween() instead.
  * @param string $check Value to check for length
  * @param integer $min Minimum value in range (inclusive)
  * @param integer $max Maximum value in range (inclusive)
  * @return boolean Success
+ * @see Validator::lengthBetween()
+ * @deprecated 2.6 Use Validator::lengthBetween() instead.
  */
 	public static function between($check, $min, $max) {
 		return self::lengthBetween($check, $min, $max);

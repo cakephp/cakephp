@@ -1,9 +1,5 @@
 <?php
 /**
- * ValidationSet.
- *
- * Provides the Model validation logic.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -80,7 +76,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Gets a rule for a given name if exists
  *
- * @param string $name
+ * @param string $name The name under which the rule is set.
  * @return \Cake\Validation\ValidationRule
  */
 	public function rule($name) {
@@ -164,7 +160,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Sets or replace a validation rule
  *
  * @param string $index name of the rule
- * @param \Cake\Validation\ValidationRule|array rule to add to $index
+ * @param \Cake\Validation\ValidationRule|array $rule Rule to add to $index
  * @return void
  */
 	public function offsetSet($index, $rule) {
