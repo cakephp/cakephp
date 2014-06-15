@@ -263,12 +263,37 @@ class Associations {
 		}
 
 		$result = [];
-		foreach ($keys as $key => $value) {
-			if (is_int($key)) {
-				$key = $value;
-				$value = [];
+		foreach ($keys as $table => $options) {
+			$pointer =& $result;
+
+			if (is_int($table)) {
+				$table = $options;
+				$options = [];
 			}
-			$result[$key] = $value;
+
+			if (!strpos($table, '.')) {
+				$result[$table] = $options;
+				continue;
+			}
+
+			$path = explode('.', $table);
+			$table = array_pop($path);
+			$first = array_shift($path);
+
+			if (isset($pointer[$first])) {
+				$pointer =& $pointer[$first];
+				$pointer += ['associated' => []];
+			}
+
+			foreach ($path as $t) {
+				$pointer += ['associated' => []];
+				$pointer['associated'] += [$t => []];
+				$pointer['associated'][$t] += ['associated' => []];
+				$pointer =& $pointer['associated'][$t];
+			}
+
+			$pointer['associated'] += [$table => []];
+			$pointer['associated'][$table] = $options + $pointer['associated'][$table];
 		}
 
 		return $result;

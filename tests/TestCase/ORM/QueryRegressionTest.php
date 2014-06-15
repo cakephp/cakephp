@@ -218,7 +218,7 @@ class QueryRegressionTest extends TestCase {
 		]);
 		$articles->save($entity, [
 			'associated' => [
-				'Highlights' => ['associated' => ['_joinData' => ['associated' => ['Authors']], 'Authors']]
+				'Highlights._joinData.Authors', 'Highlights.Authors'
 			]
 		]);
 		$entity = $articles->get(2, ['contain' => ['SpecialTags.Authors', 'Highlights.Authors']]);
