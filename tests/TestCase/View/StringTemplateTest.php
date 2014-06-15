@@ -194,4 +194,19 @@ class StringTemplateTest extends TestCase {
 		);
 	}
 
+/**
+ * Tests that compile information is refreshed on adds and removes
+ *
+ * @return void
+ */
+	public function testCopiledInfoRefresh() {
+		$compilation = $this->template->compile('link');
+		$this->template->add([
+			'link' => '<a bar="{{foo}}">{{baz}}</a>'
+		]);
+		$this->assertNotEquals($compilation, $this->template->compile('link'));
+		$this->template->remove('link');
+		$this->assertEquals([null, null], $this->template->compile('link'));
+	}
+
 }
