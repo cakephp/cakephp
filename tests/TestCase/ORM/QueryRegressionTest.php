@@ -236,8 +236,9 @@ class QueryRegressionTest extends TestCase {
 		]);
 		$entity = $articles->get(2, [
 			'contain' => [
-				'SpecialTags.Authors' => ['sort' => ['Authors.id']],
-				'Highlights.Authors' => ['sort' => ['Authors.id']]
+				'SpecialTags' => ['sort' => ['SpecialTags.id' => 'ASC']],
+				'SpecialTags.Authors',
+				'Highlights.Authors'
 			]
 		]);
 		$this->assertEquals('mariano', end($entity->special_tags)->author->name);
