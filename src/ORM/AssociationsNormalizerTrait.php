@@ -25,7 +25,7 @@ trait AssociationsNormalizerTrait {
  * is transformed into nested arrays so that they can be parsed by other routines
  *
  * @param array $associations The array of included associations.
- * @return array An array having dot notation trnasformed into nested arrays
+ * @return array An array having dot notation transformed into nested arrays
  */
 	protected function _normalizeAssociations($associations) {
 		$result = [];
