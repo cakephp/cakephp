@@ -29,7 +29,6 @@ use Cake\Error;
 class StringTemplate {
 
 	use InstanceConfigTrait {
-		config as add;
 		config as get;
 	}
 
@@ -55,12 +54,40 @@ class StringTemplate {
 	];
 
 /**
+ * Contains the list of compiled templates
+ *
+ * @var array
+ */
+	protected $_compiled = [];
+
+/**
  * Constructor.
  *
  * @param array $config A set of templates to add.
  */
 	public function __construct(array $config = []) {
 		$this->config($config);
+	}
+
+/**
+ * Registers a list of templates by name
+ *
+ * ### Example:
+ *
+ * {{{
+ * $templater->add([
+ *	'link' => '<a href="{{url}}">{{title}}</a>'
+ *	'button' => '<button>{{text}}</button>'
+ * ]);
+ * }}}
+ *
+ * @param array an associative list of named templates
+ * @return \Cake\View\StringTemplate same instance
+ */
+	public function add(array $templates) {
+		$this->config($templates);
+		$this->_compiled = array_diff_key($this->_compiled, $templates);
+		return $this;
 	}
 
 /**
@@ -87,6 +114,32 @@ class StringTemplate {
  */
 	public function remove($name) {
 		$this->config($name, null);
+		unset($this->_compiled[$name]);
+	}
+
+/**
+ * Returns an array containing the compiled template to be used with
+ * the sprintf function and a list of placeholder names that were found
+ * in the template in the order that they should be replaced.
+ *
+ * @param string $name The compiled template info
+ * @return array
+ */
+	public function compile($name) {
+		if (isset($this->_compiled[$name])) {
+			return $this->_compiled[$name];
+		}
+
+		$template = $this->get($name);
+		if ($template === null) {
+			return $this->_compiled[$name] = [null, null];
+		}
+
+		preg_match_all('#\{\{(\w+)\}\}#', $template, $matches);
+		return $this->_compiled[$name] = [
+			str_replace($matches[0], '%s', $template),
+			$matches[1]
+		];
 	}
 
 /**
@@ -97,16 +150,15 @@ class StringTemplate {
  * @return string
  */
 	public function format($name, array $data) {
-		$template = $this->get($name);
+		list($template, $placeholders) = $this->compile($name);
 		if ($template === null) {
 			return '';
 		}
 		$replace = [];
-		$keys = array_keys($data);
-		foreach ($keys as $key) {
-			$replace['{{' . $key . '}}'] = $data[$key];
+		foreach ($placeholders as $placeholder) {
+			$replace[] = isset($data[$placeholder]) ? $data[$placeholder] : null;
 		}
-		return strtr($template, $replace);
+		return vsprintf($template, $replace);
 	}
 
 /**
