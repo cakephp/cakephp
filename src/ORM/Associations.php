@@ -279,11 +279,9 @@ class Associations {
 			$path = explode('.', $table);
 			$table = array_pop($path);
 			$first = array_shift($path);
-
-			if (isset($pointer[$first])) {
-				$pointer =& $pointer[$first];
-				$pointer += ['associated' => []];
-			}
+			$pointer += [$first => []];
+			$pointer =& $pointer[$first];
+			$pointer += ['associated' => []];
 
 			foreach ($path as $t) {
 				$pointer += ['associated' => []];
@@ -296,7 +294,7 @@ class Associations {
 			$pointer['associated'][$table] = $options + $pointer['associated'][$table];
 		}
 
-		return $result;
+		return isset($result['associated']) ? $result['associated'] : $result;
 	}
 
 }
