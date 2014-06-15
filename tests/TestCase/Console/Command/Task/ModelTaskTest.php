@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Console\Command\Task;
 
 use Cake\Console\Command\Task\ModelTask;
 use Cake\Console\Command\Task\TemplateTask;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Model\Model;
 use Cake\ORM\TableRegistry;
@@ -154,6 +155,80 @@ class ModelTaskTest extends TestCase {
 		$this->Task->params['no-associations'] = true;
 		$articles = TableRegistry::get('BakeArticle');
 		$this->assertEquals([], $this->Task->getAssociations($articles));
+	}
+
+/**
+ * Test applying associations.
+ *
+ * @return void
+ */
+	public function testApplyAssociations() {
+		$articles = TableRegistry::get('BakeArticles');
+		$assocs = [
+			'belongsTo' => [
+				[
+					'alias' => 'BakeUsers',
+					'foreignKey' => 'bake_user_id',
+				],
+			],
+			'hasMany' => [
+				[
+					'alias' => 'BakeComments',
+					'foreignKey' => 'bake_article_id',
+				],
+			],
+			'belongsToMany' => [
+				[
+					'alias' => 'BakeTags',
+					'foreignKey' => 'bake_article_id',
+					'joinTable' => 'bake_articles_bake_tags',
+					'targetForeignKey' => 'bake_tag_id',
+				],
+			],
+		];
+		$original = $articles->associations()->keys();
+		$this->assertEquals([], $original);
+
+		$this->Task->applyAssociations($articles, $assocs);
+		$new = $articles->associations()->keys();
+		$expected = ['bakeusers', 'bakecomments', 'baketags'];
+		$this->assertEquals($expected, $new);
+	}
+
+/**
+ * Test applying associations does nothing on a concrete class
+ *
+ * @return void
+ */
+	public function testApplyAssociationsConcreteClass() {
+		Configure::write('App.namespace', 'TestApp');
+		$articles = TableRegistry::get('Articles');
+		$assocs = [
+			'belongsTo' => [
+				[
+					'alias' => 'BakeUsers',
+					'foreignKey' => 'bake_user_id',
+				],
+			],
+			'hasMany' => [
+				[
+					'alias' => 'BakeComments',
+					'foreignKey' => 'bake_article_id',
+				],
+			],
+			'belongsToMany' => [
+				[
+					'alias' => 'BakeTags',
+					'foreignKey' => 'bake_article_id',
+					'joinTable' => 'bake_articles_bake_tags',
+					'targetForeignKey' => 'bake_tag_id',
+				],
+			],
+		];
+		$original = $articles->associations()->keys();
+		$this->Task->applyAssociations($articles, $assocs);
+		$new = $articles->associations()->keys();
+		$this->assertEquals($original, $new);
 	}
 
 /**
