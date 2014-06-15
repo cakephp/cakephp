@@ -177,20 +177,33 @@ class QueryRegressionTest extends TestCase {
 	}
 
 /**
- * Test for https://github.com/cakephp/cakephp/issues/3677
+ * Returns an array with the saving strategies for a belongsTo association
+ *
+ * @return array
+ */
+	public function strategyProvider() {
+		return [['append', 'replace']];
+	}
+
+/**
+ * Test for https://github.com/cakephp/cakephp/issues/3677 and
+ * https://github.com/cakephp/cakephp/issues/3714
  *
  * Checks that only relevant associations are passed when saving _joinData
  * Tests that _joinData can also save deeper associations
  * 
+ * @dataProvider strategyProvider
+ * @param string $strategy
  * @return void
  */
-	public function testBelongsToManyDeepSave() {
+	public function testBelongsToManyDeepSave($strategy) {
 		$articles = TableRegistry::get('Articles');
 		$articles->belongsToMany('Highlights', [
 			'className' => 'TestApp\Model\Table\TagsTable',
 			'foreignKey' => 'article_id',
 			'targetForeignKey' => 'tag_id',
-			'through' => 'SpecialTags'
+			'through' => 'SpecialTags',
+			'saveStrategy' => $strategy
 		]);
 		$articles->Highlights->junction()->belongsTo('Authors');
 		$articles->Highlights->hasOne('Authors', [
@@ -206,7 +219,7 @@ class QueryRegressionTest extends TestCase {
 						'highlighted' => true,
 						'highlighted_time' => '2014-06-01 10:10:00',
 						'author' => [
-							'name' => 'jose'
+							'name' => 'mariano'
 						]
 					],
 					'author' => ['name' => 'mark']
@@ -222,8 +235,8 @@ class QueryRegressionTest extends TestCase {
 			]
 		]);
 		$entity = $articles->get(2, ['contain' => ['SpecialTags.Authors', 'Highlights.Authors']]);
-		$this->assertEquals('jose', $entity->special_tags[0]->author->name);
-		$this->assertEquals('mark', $entity->highlights[0]->author->name);
+		$this->assertEquals('mariano', end($entity->special_tags)->author->name);
+		$this->assertEquals('mark', end($entity->highlights)->author->name);
 	}
 
 }

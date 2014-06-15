@@ -420,6 +420,12 @@ class BelongsToMany extends Association {
  * created if no errors happened, false otherwise
  */
 	protected function _saveTarget(Entity $parentEntity, $entities, $options) {
+		$associations = false;
+		if (!empty($options['associated'][$this->_junctionProperty]['associated'])) {
+			$associations = $options['associated'][$this->_junctionProperty]['associated'];
+		}
+		$options['associated'] = $associations;
+
 		if (!(is_array($entities) || $entities instanceof \Traversable)) {
 			$name = $this->property();
 			$message = sprintf('Could not save %s, it cannot be traversed', $name);
@@ -681,12 +687,6 @@ class BelongsToMany extends Association {
 
 				$jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
 				$inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
-
-				$associations = false;
-				if (!empty($options['associated'][$this->_junctionProperty]['associated'])) {
-					$associations = $options['associated'][$this->_junctionProperty]['associated'];
-				}
-				$options['associated'] = $associations;
 
 				if ($inserts && !$this->_saveTarget($sourceEntity, $inserts, $options)) {
 					return false;
