@@ -1150,7 +1150,7 @@ class Email {
  *
  * @param string|array $key The configuration name to read/write. Or
  *   an array of multiple transports to set.
- * @param array|AbstractTransport Either an array of configuration
+ * @param array|AbstractTransport $config Either an array of configuration
  *   data, or a transport instance.
  * @return mixed Either null when setting or an array of data when reading.
  * @throws \Cake\Error\Exception When modifying an existing configuration.

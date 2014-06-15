@@ -229,7 +229,7 @@ class Stream {
 /**
  * Open the stream and send the request.
  *
- * @param Request $request
+ * @param \Cake\Network\Request $request The request object.
  * @return array Array of populated Response objects
  * @throws \Cake\Error\Exception
  */
@@ -274,8 +274,8 @@ class Stream {
  * Local error handler to capture errors triggered during
  * stream connection.
  *
- * @param int $code
- * @param string $message
+ * @param int $code Error code.
+ * @param string $message Error message.
  * @return void
  */
 	protected function _connectionErrorHandler($code, $message) {

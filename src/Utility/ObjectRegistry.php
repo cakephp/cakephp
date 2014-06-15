@@ -231,5 +231,4 @@ abstract class ObjectRegistry {
 		return $properties;
 	}
 
-
 }

@@ -32,8 +32,8 @@ class Oauth {
 /**
  * Add headers for Oauth authorization.
  *
- * @param Request $request
- * @param array $credentials
+ * @param \Cake\Network\Request $request The request object.
+ * @param array $credentials Authentication credentials.
  * @return void
  * @throws \Cake\Error\Exception On invalid signature types.
  */
@@ -74,8 +74,8 @@ class Oauth {
  * You should only ever use PLAINTEXT when dealing with SSL
  * services.
  *
- * @param Request $request
- * @param array $credentials
+ * @param \Cake\Network\Request $request The request object.
+ * @param array $credentials Authentication credentials.
  * @return string Authorization header.
  */
 	protected function _plaintext($request, $credentials) {
@@ -102,8 +102,8 @@ class Oauth {
  *
  * This method is suitable for plain HTTP or HTTPS.
  *
- * @param Request $request
- * @param array $credentials
+ * @param \Cake\Network\Request $request The request object.
+ * @param array $credentials Authentication credentials.
  * @return string
  */
 	protected function _hmacSha1($request, $credentials) {
@@ -141,8 +141,8 @@ class Oauth {
  * - The request URL (without querystring) is normalized.
  * - The HTTP method, URL and request parameters are concatenated and returnned.
  *
- * @param Request $request
- * @param array $oauthValues
+ * @param \Cake\Network\Request $request The request object.
+ * @param array $oauthValues Oauth values.
  * @return string
  */
 	public function baseString($request, $oauthValues) {
@@ -160,7 +160,7 @@ class Oauth {
  *
  * Section 9.1.2. of the Oauth spec
  *
- * @param string $url
+ * @param string $url URL
  * @return string Normalized URL
  * @throws \Cake\Error\Exception On invalid URLs
  */
@@ -192,8 +192,8 @@ class Oauth {
  * - URL encode keys + values.
  * - Sort keys & values by byte value.
  *
- * @param Request $request
- * @param array $oauthValues
+ * @param \Cake\Network\Request $request The request object.
+ * @param array $oauthValues Oauth values.
  * @return string sorted and normalized values
  */
 	protected function _normalizedParams($request, $oauthValues) {
@@ -244,7 +244,7 @@ class Oauth {
 /**
  * URL Encodes a value based on rules of rfc3986
  *
- * @param string $value
+ * @param string $value Value to encode.
  * @return string
  */
 	protected function _encode($value) {
