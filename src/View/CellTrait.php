@@ -51,7 +51,8 @@ trait CellTrait {
  *    `cell('TagCloud::smallList', ['a1' => 'v1', 'a2' => 'v2'])` maps to `View\Cell\TagCloud::smallList(v1, v2)`
  * @param array $options Options for Cell's constructor
  * @return \Cake\View\Cell The cell instance
- * @throws \Cake\View\Error\MissingCellException If Cell class was not found
+ * @throws \Cake\View\Error\MissingCellException If Cell class was not found.
+ * @throws \BadMethodCallException If Cell class does not specified cell action.
  */
 	public function cell($cell, $data = [], $options = []) {
 		$parts = explode('::', $cell);

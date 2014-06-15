@@ -36,7 +36,7 @@ class Button implements WidgetInterface {
 /**
  * Constructor.
  *
- * @param \Cake\View\StringTemplate $templates
+ * @param \Cake\View\StringTemplate $templates Templates list.
  */
 	public function __construct($templates) {
 		$this->_templates = $templates;
@@ -55,7 +55,7 @@ class Button implements WidgetInterface {
  * Any other keys provided in $data will be converted into HTML attributes.
  *
  * @param array $data The data to build a button with.
- * @param \Cake\View\Form\ContextInterface The current form context.
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string
  */
 	public function render(array $data, ContextInterface $context) {

@@ -54,8 +54,8 @@ class Radio implements WidgetInterface {
  *   the radio + input element. Can use the `input` and `label`
  *   variables.
  *
- * @param \Cake\View\StringTemplate $templates
- * @param \Cake\View\Widget\Label $label
+ * @param \Cake\View\StringTemplate $templates Templates list.
+ * @param \Cake\View\Widget\Label $label Label widget instance.
  */
 	public function __construct($templates, $label) {
 		$this->_templates = $templates;
@@ -79,7 +79,7 @@ class Radio implements WidgetInterface {
  * - `idPrefix` Prefix for generated ID attributes.
  *
  * @param array $data The data to build radio buttons with.
- * @param \Cake\View\Form\ContextInterface The current form context.
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string
  */
 	public function render(array $data, ContextInterface $context) {
@@ -117,8 +117,8 @@ class Radio implements WidgetInterface {
 /**
  * Disabled attribute detection.
  *
- * @param array $radio
- * @param array|null|true $disabled
+ * @param array $radio Radio info.
+ * @param array|null|true $disabled The disabled values.
  * @return bool
  */
 	protected function _isDisabled($radio, $disabled) {
@@ -138,7 +138,7 @@ class Radio implements WidgetInterface {
  * @param string|int $val The value of the radio input.
  * @param string|array $text The label text, or complex radio type.
  * @param array $data Additional options for input generation.
- * @param \Cake\View\Form\ContextInterface The form context
+ * @param \Cake\View\Form\ContextInterface $context The form context
  * @return string
  */
 	protected function _renderInput($val, $text, $data, $context) {

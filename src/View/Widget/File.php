@@ -28,7 +28,7 @@ class File implements WidgetInterface {
 /**
  * Constructor
  *
- * @param \Cake\View\StringTemplate $templates
+ * @param \Cake\View\StringTemplate $templates Templates list.
  */
 	public function __construct($templates) {
 		$this->_templates = $templates;
@@ -47,7 +47,7 @@ class File implements WidgetInterface {
  * ignored.
  *
  * @param array $data The data to build a file input with.
- * @param \Cake\View\Form\ContextInterface The current form context.
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string HTML elements.
  */
 	public function render(array $data, ContextInterface $context) {

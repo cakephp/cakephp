@@ -59,8 +59,8 @@ class DateTime implements WidgetInterface {
 /**
  * Constructor
  *
- * @param \Cake\View\StringTemplate $templates
- * @param \Cake\View\Widget\SelectBox $selectBox
+ * @param \Cake\View\StringTemplate $templates Templates list.
+ * @param \Cake\View\Widget\SelectBox $selectBox Selectbox widget instance.
  */
 	public function __construct($templates, $selectBox) {
 		$this->_select = $selectBox;
@@ -114,7 +114,7 @@ class DateTime implements WidgetInterface {
  *   should be rounded to match the select options.
  *
  * @param array $data Data to render with.
- * @param \Cake\View\Form\ContextInterface The current form context.
+ * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string A generated select box.
  * @throws \RuntimeException When option data is invalid.
  */
@@ -177,7 +177,7 @@ class DateTime implements WidgetInterface {
 /**
  * Deconstructs the passed date value into all time units
  *
- * @param string|int|array|DateTime $value
+ * @param string|int|array|DateTime $value Value to deconstruct.
  * @param array $options Options for conversion.
  * @return array
  */
@@ -260,7 +260,7 @@ class DateTime implements WidgetInterface {
 /**
  * Generates a year select
  *
- * @param array $options
+ * @param array $options Options list.
  * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string
  */
@@ -458,7 +458,7 @@ class DateTime implements WidgetInterface {
 /**
  * Returns a translated list of month names
  *
- * @param bool $leadingZero
+ * @param bool $leadingZero Whether to generate month keys with leading zero.
  * @return array
  */
 	protected function _getMonthNames($leadingZero = false) {
@@ -499,7 +499,7 @@ class DateTime implements WidgetInterface {
  *
  * @param int $start Start of the range of numbers to generate
  * @param int $end End of the range of numbers to generate
- * @param array $options
+ * @param array $options Options list.
  * @return array
  */
 	protected function _generateNumbers($start, $end, $options = []) {
