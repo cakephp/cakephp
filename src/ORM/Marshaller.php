@@ -19,6 +19,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use Cake\ORM\AssociationsNormalizerTrait;
 use Cake\ORM\Table;
 
 /**
@@ -32,6 +33,8 @@ use Cake\ORM\Table;
  * @see \Cake\ORM\Table::patchEntities()
  */
 class Marshaller {
+
+	use AssociationsNormalizerTrait;
 
 /**
  * Whether or not this marhshaller is in safe mode.
@@ -82,40 +85,6 @@ class Marshaller {
 			}
 		}
 		return $map;
-	}
-
-/**
- * Returns an array out of the original passed associations list where dot notation
- * is transformed into nested arrays so that they can be parsed by other association
- * marshallers.
- *
- * @param array $associations The array of included associations.
- * @return array An array having dot notation trnasformed into nested arrays
- */
-	protected function _normalizeAssociations($associations) {
-		$result = [];
-		foreach ($associations as $table => $options) {
-			$pointer =& $result;
-
-			if (is_int($table)) {
-				$table = $options;
-				$options = [];
-			}
-
-			if (strpos($table, '.')) {
-				$path = explode('.', $table);
-				$table = array_pop($path);
-				foreach ($path as $t) {
-					$pointer += [$t => ['associated' => []]];
-					$pointer =& $pointer[$t]['associated'];
-				}
-			}
-
-			$pointer += [$table => []];
-			$pointer[$table] = $options + $pointer[$table];
-		}
-
-		return $result;
 	}
 
 /**

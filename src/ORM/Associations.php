@@ -15,6 +15,7 @@
 namespace Cake\ORM;
 
 use Cake\ORM\Association;
+use Cake\ORM\AssociationsNormalizerTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 
@@ -25,6 +26,8 @@ use Cake\ORM\Table;
  * ordering operations around saving and deleting.
  */
 class Associations {
+
+	use AssociationsNormalizerTrait;
 
 /**
  * Stored associations
@@ -262,39 +265,7 @@ class Associations {
 			return [];
 		}
 
-		$result = [];
-		foreach ($keys as $table => $options) {
-			$pointer =& $result;
-
-			if (is_int($table)) {
-				$table = $options;
-				$options = [];
-			}
-
-			if (!strpos($table, '.')) {
-				$result[$table] = $options;
-				continue;
-			}
-
-			$path = explode('.', $table);
-			$table = array_pop($path);
-			$first = array_shift($path);
-			$pointer += [$first => []];
-			$pointer =& $pointer[$first];
-			$pointer += ['associated' => []];
-
-			foreach ($path as $t) {
-				$pointer += ['associated' => []];
-				$pointer['associated'] += [$t => []];
-				$pointer['associated'][$t] += ['associated' => []];
-				$pointer =& $pointer['associated'][$t];
-			}
-
-			$pointer['associated'] += [$table => []];
-			$pointer['associated'][$table] = $options + $pointer['associated'][$table];
-		}
-
-		return isset($result['associated']) ? $result['associated'] : $result;
+		return $this->_normalizeAssociations($keys);
 	}
 
 }
