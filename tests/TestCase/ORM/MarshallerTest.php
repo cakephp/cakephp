@@ -352,13 +352,7 @@ class MarshallerTest extends TestCase {
 		$articlesTags->belongsTo('Users');
 
 		$marshall = new Marshaller($this->articles);
-		$result = $marshall->one($data, [
-			'Tags' => [
-				'associated' => [
-					'_joinData' => ['associated' => ['Users']]
-				]
-			]
-		]);
+		$result = $marshall->one($data, ['Tags._joinData.Users']);
 		$this->assertInstanceOf(
 			'Cake\ORM\Entity',
 			$result->tags[0]->_joinData->user,
@@ -392,7 +386,7 @@ class MarshallerTest extends TestCase {
 			]
 		];
 		$marshall = new Marshaller($this->comments);
-		$result = $marshall->one($data, ['Articles' => ['associated' => ['Users']]]);
+		$result = $marshall->one($data, ['Articles.Users']);
 
 		$this->assertEquals(
 			$data['article']['title'],
@@ -870,13 +864,7 @@ class MarshallerTest extends TestCase {
 		$articlesTags = TableRegistry::get('ArticlesTags');
 		$articlesTags->belongsTo('Users');
 
-		$options = [
-			'Tags' => [
-				'associated' => [
-					'_joinData' => ['associated' => ['Users']]
-				]
-			]
-		];
+		$options = ['Tags._joinData.Users'];
 		$marshall = new Marshaller($this->articles);
 		$entity = $marshall->one($data, $options);
 		$entity->accessible('*', true);

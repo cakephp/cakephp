@@ -66,6 +66,7 @@ class Marshaller {
  */
 	protected function _buildPropertyMap($include) {
 		$map = [];
+		$include = $this->_normalizeAssociations($include);
 		foreach ($include as $key => $nested) {
 			if (is_int($key) && is_scalar($nested)) {
 				$key = $nested;
@@ -81,6 +82,40 @@ class Marshaller {
 			}
 		}
 		return $map;
+	}
+
+/**
+ * Returns an array out of the original passed associations list where dot notation
+ * is transformed into nested arrays so that they can be parsed by other association
+ * marshallers.
+ *
+ * @param array $associations The array of included associations.
+ * @return array An array having dot notation trnasformed into nested arrays
+ */
+	protected function _normalizeAssociations($associations) {
+		$result = [];
+		foreach ($associations as $table => $options) {
+			$pointer =& $result;
+
+			if (is_int($table)) {
+				$table = $options;
+				$options = [];
+			}
+
+			if (strpos($table, '.')) {
+				$path = explode('.', $table);
+				$table = array_pop($path);
+				foreach ($path as $t) {
+					$pointer += [$t => ['associated' => []]];
+					$pointer =& $pointer[$t]['associated'];
+				}
+			}
+
+			$pointer += [$table => []];
+			$pointer[$table] = $options + $pointer[$table];
+		}
+
+		return $result;
 	}
 
 /**

@@ -151,7 +151,7 @@ class QueryRegressionTest extends TestCase {
 				]
 			]
 		];
-		$entity = $articles->patchEntity($entity, $data, ['Highlights' => ['associated' => ['_joinData']]]);
+		$entity = $articles->patchEntity($entity, $data, ['Highlights._joinData']);
 		$articles->save($entity);
 		$entity = $articles->get(2, ['contain' => ['Highlights']]);
 		$this->assertEquals(4, $entity->highlights[0]->_joinData->tag_id);
@@ -214,7 +214,7 @@ class QueryRegressionTest extends TestCase {
 			]
 		];
 		$entity = $articles->patchEntity($entity, $data, [
-			'Highlights' => ['associated' => ['_joinData' => ['associated' => ['Authors']], 'Authors']]
+			'Highlights._joinData.Authors', 'Highlights.Authors'
 		]);
 		$articles->save($entity, [
 			'associated' => [
