@@ -19,6 +19,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use Cake\ORM\AssociationsNormalizerTrait;
 use Cake\ORM\Table;
 
 /**
@@ -32,6 +33,8 @@ use Cake\ORM\Table;
  * @see \Cake\ORM\Table::patchEntities()
  */
 class Marshaller {
+
+	use AssociationsNormalizerTrait;
 
 /**
  * Whether or not this marhshaller is in safe mode.
@@ -66,6 +69,7 @@ class Marshaller {
  */
 	protected function _buildPropertyMap($include) {
 		$map = [];
+		$include = $this->_normalizeAssociations($include);
 		foreach ($include as $key => $nested) {
 			if (is_int($key) && is_scalar($nested)) {
 				$key = $nested;

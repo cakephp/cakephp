@@ -2919,14 +2919,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($entity, $articles->save($entity, [
 			'associated' => [
 				'authors' => [
-					'validate' => 'special',
-					'associated' => [
-						'supervisors' => [
-							'atomic' => false,
-							'validate' => false,
-							'associated' => false
-						]
-					]
+					'validate' => 'special'
+				],
+				'authors.supervisors' => [
+					'atomic' => false,
+					'validate' => false,
+					'associated' => false
 				]
 			]
 		]));

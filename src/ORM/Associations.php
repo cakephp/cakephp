@@ -15,6 +15,7 @@
 namespace Cake\ORM;
 
 use Cake\ORM\Association;
+use Cake\ORM\AssociationsNormalizerTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 
@@ -25,6 +26,8 @@ use Cake\ORM\Table;
  * ordering operations around saving and deleting.
  */
 class Associations {
+
+	use AssociationsNormalizerTrait;
 
 /**
  * Stored associations
@@ -262,16 +265,7 @@ class Associations {
 			return [];
 		}
 
-		$result = [];
-		foreach ($keys as $key => $value) {
-			if (is_int($key)) {
-				$key = $value;
-				$value = [];
-			}
-			$result[$key] = $value;
-		}
-
-		return $result;
+		return $this->_normalizeAssociations($keys);
 	}
 
 }

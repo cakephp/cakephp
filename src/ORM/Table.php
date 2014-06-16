@@ -1566,7 +1566,7 @@ class Table implements RepositoryInterface, EventListener {
  * {{{
  * $articles = $this->Articles->newEntity(
  *   $this->request->data(),
- *   ['Tags', 'Comments' => ['associated' => ['Users']]]
+ *   ['Tags', 'Comments.Users']
  * );
  * }}}
  *
@@ -1589,7 +1589,7 @@ class Table implements RepositoryInterface, EventListener {
  * {{{
  * $articles = $this->Articles->newEntities(
  *   $this->request->data(),
- *   ['Tags', 'Comments' => ['associated' => ['Users']]]
+ *   ['Tags', 'Comments.Users']
  * );
  * }}}
  *
