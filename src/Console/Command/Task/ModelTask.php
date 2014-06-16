@@ -99,7 +99,10 @@ class ModelTask extends BakeTask {
 	public function bake($name) {
 		$table = $this->getTable($name);
 		$model = $this->getTableObject($name, $table);
+
 		$associations = $this->getAssociations($model);
+		$this->applyAssociations($model, $associations);
+
 		$primaryKey = $this->getPrimaryKey($model);
 		$displayField = $this->getDisplayField($model);
 		$fields = $this->getFields($model);
@@ -184,6 +187,26 @@ class ModelTask extends BakeTask {
 		$associations = $this->findHasMany($table, $associations);
 		$associations = $this->findBelongsToMany($table, $associations);
 		return $associations;
+	}
+
+/**
+ * Sync the in memory table object.
+ *
+ * Composer's class cache prevents us from loading the
+ * newly generated class. Applying associations if we have a
+ * generic table object means fields will be detected correctly.
+ */
+	public function applyAssociations($model, $associations) {
+		if (get_class($model) !== 'Cake\ORM\Table') {
+			return;
+		}
+		foreach ($associations as $type => $assocs) {
+			foreach ($assocs as $assoc) {
+				$alias = $assoc['alias'];
+				unset($assoc['alias']);
+				$model->{$type}($alias, $assoc);
+			}
+		}
 	}
 
 /**
