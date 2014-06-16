@@ -66,7 +66,8 @@ trait SqliteDialectTrait {
  * Receives a FunctionExpression and changes it so that it conforms to this
  * SQL dialect.
  *
- * @param \Cake\Database\Expression\FunctionExpression
+ * @param \Cake\Database\Expression\FunctionExpression $expression The function expression
+ *   to translate for SQLite.
  * @return void
  */
 	protected function _transformFunctionExpression(FunctionExpression $expression) {

@@ -21,7 +21,6 @@ use Cake\Database\Expression\OrderByExpression;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object
- *
  */
 class IdentifierQuoter {
 
@@ -35,7 +34,7 @@ class IdentifierQuoter {
 /**
  * Constructor
  *
- * @param \Cake\Database\Driver The driver instance used to do the identifier quoting
+ * @param \Cake\Database\Driver $driver The driver instance used to do the identifier quoting
  */
 	public function __construct(Driver $driver) {
 		$this->_driver = $driver;
@@ -45,8 +44,8 @@ class IdentifierQuoter {
  * Iterates over each of the clauses in a query looking for identifiers and
  * quotes them
  *
- * @param Query $query The query to have its identifiers quoted
- * @return Query
+ * @param \Cake\Database\Query $query The query to have its identifiers quoted
+ * @return \Cake\Database\Query
  */
 	public function quote(Query $query) {
 		$binder = $query->valueBinder();
@@ -66,7 +65,7 @@ class IdentifierQuoter {
 /**
  * Quotes identifiers inside expression objects
  *
- * @param \Cake\Database\ExpressionInterface $expression
+ * @param \Cake\Database\ExpressionInterface $expression The expression object to walk and quote.
  * @return void
  */
 	public function quoteExpression($expression) {
@@ -89,7 +88,7 @@ class IdentifierQuoter {
 /**
  * Quotes all identifiers in each of the clauses of a query
  *
- * @param Query
+ * @param \Cake\Database\Query $query The query to quote.
  * @return void
  */
 	protected function _quoteParts($query) {
@@ -133,7 +132,7 @@ class IdentifierQuoter {
  * Quotes both the table and alias for an array of joins as stored in a Query
  * object
  *
- * @param array $joins
+ * @param array $joins The joins to quote.
  * @return array
  */
 	protected function _quoteJoins($joins) {
@@ -158,7 +157,7 @@ class IdentifierQuoter {
 /**
  * Quotes the table name and columns for an insert query
  *
- * @param Query $query
+ * @param \Cake\Database\Query $query The insert query to quote.
  * @return void
  */
 	protected function _quoteInsert($query) {
@@ -175,7 +174,7 @@ class IdentifierQuoter {
 /**
  * Quotes identifiers in comparison expression objects
  *
- * @param \Cake\Database\Expression\Comparison $expression
+ * @param \Cake\Database\Expression\Comparison $expression The comparison expression to quote.
  * @return void
  */
 	protected function _quoteComparison(Comparison $expression) {
@@ -217,7 +216,7 @@ class IdentifierQuoter {
 /**
  * Quotes identifiers in "order by" expression objects
  *
- * @param \Cake\Database\Expression\IdentifierExpression $expression
+ * @param \Cake\Database\Expression\IdentifierExpression $expression The identifiers to quote.
  * @return void
  */
 	protected function _quoteIndetifierExpression(IdentifierExpression $expression) {

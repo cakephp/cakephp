@@ -26,8 +26,8 @@ class PDOStatement extends StatementDecorator {
 /**
  * Constructor
  *
- * @param \PDOStatement original statement to be decorated
- * @param \Cake\Database\Driver instance $driver
+ * @param \PDOStatement $statement Original statement to be decorated.
+ * @param \Cake\Database\Driver $driver Driver instance.
  */
 	public function __construct(Statement $statement = null, $driver = null) {
 		$this->_statement = $statement;
@@ -47,10 +47,12 @@ class PDOStatement extends StatementDecorator {
  *
  * ## Examples:
  *
- *	`$statement->bindValue(1, 'a title');`
- *	`$statement->bindValue(2, 5, PDO::INT);`
- *	`$statement->bindValue('active', true, 'boolean');`
- *	`$statement->bindValue(5, new \DateTime(), 'date');`
+ * {{{
+ * $statement->bindValue(1, 'a title');
+ * $statement->bindValue(2, 5, PDO::INT);
+ * $statement->bindValue('active', true, 'boolean');
+ * $statement->bindValue(5, new \DateTime(), 'date');
+ * }}}
  *
  * @param string|int $column name or param position to be bound
  * @param mixed $value The value to bind to variable in query

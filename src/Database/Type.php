@@ -107,7 +107,7 @@ class Type {
  * If $className is omitted it will return mapped class for $type
  *
  * @param string|array $type if string name of type to map, if array list of arrays to be mapped
- * @param string $className
+ * @param string $className The classname to register.
  * @return array|string|null if $type is null then array with current map, if $className is null string
  * configured class name for give $type, null otherwise
  */

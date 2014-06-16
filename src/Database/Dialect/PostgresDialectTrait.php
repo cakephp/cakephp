@@ -62,7 +62,7 @@ trait PostgresDialectTrait {
  * Modifies the original insert query to append a "RETURNING *" epilogue
  * so that the latest insert id can be retrieved
  *
- * @param \Cake\Database\Query $query
+ * @param \Cake\Database\Query $query The query to translate.
  * @return \Cake\Database\Query
  */
 	protected function _insertQueryTranslator($query) {
@@ -89,7 +89,8 @@ trait PostgresDialectTrait {
  * Receives a FunctionExpression and changes it so that it conforms to this
  * SQL dialect.
  *
- * @param \Cake\Database\Expression\FunctionExpression
+ * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to convert
+ *   to postgres SQL.
  * @return void
  */
 	protected function _transformFunctionExpression(FunctionExpression $expression) {
