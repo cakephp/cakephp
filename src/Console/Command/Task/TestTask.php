@@ -20,6 +20,8 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error;
+use Cake\Network\Request;
+use Cake\Network\Response;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -236,6 +238,7 @@ class TestTask extends BakeTask {
  */
 	public function buildTestSubject($type, $class) {
 		TableRegistry::clear();
+			debug($type);
 		if (strtolower($type) === 'table') {
 			list($namespace, $name) = namespaceSplit($class);
 			$name = str_replace('Table', '', $name);
@@ -243,6 +246,8 @@ class TestTask extends BakeTask {
 				$name = $this->plugin . '.' . $name;
 			}
 			$instance = TableRegistry::get($name);
+		} elseif (strtolower($type) === 'controller') {
+			$instance = new $class(new Request(), new Response());
 		} else {
 			$instance = new $class();
 		}
