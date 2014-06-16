@@ -238,7 +238,6 @@ class TestTask extends BakeTask {
  */
 	public function buildTestSubject($type, $class) {
 		TableRegistry::clear();
-			debug($type);
 		if (strtolower($type) === 'table') {
 			list($namespace, $name) = namespaceSplit($class);
 			$name = str_replace('Table', '', $name);
