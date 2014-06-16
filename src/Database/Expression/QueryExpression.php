@@ -26,6 +26,7 @@ use \Countable;
  * expressions that can be compiled by converting this object to string
  * and will contain a correctly parenthesized and nested expression.
  *
+ * @internal
  */
 class QueryExpression implements ExpressionInterface, Countable {
 

@@ -22,6 +22,8 @@ use Cake\Database\SqlDialectTrait;
 /**
  * Contains functions that encapsulates the SQL dialect used by Postgres,
  * including query translators and schema introspection.
+ *
+ * @internal
  */
 trait PostgresDialectTrait {
 

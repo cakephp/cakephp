@@ -20,6 +20,7 @@ use Cake\Database\ValueBinder;
 /**
  * Represents a single identifier name in the database
  *
+ * @internal
  */
 class IdentifierExpression implements ExpressionInterface {
 

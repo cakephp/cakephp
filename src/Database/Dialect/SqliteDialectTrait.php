@@ -20,7 +20,9 @@ use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\SqlDialectTrait;
 
 /**
- * Sql dialect trait
+ * SQLite dialect trait
+ *
+ * @internal
  */
 trait SqliteDialectTrait {
 

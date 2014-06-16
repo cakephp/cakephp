@@ -21,6 +21,8 @@ use Cake\Database\Query;
 
 /**
  * Provides a translator method for tuple comparisons
+ *
+ * @internal
  */
 trait TupleComparisonTranslatorTrait {
 

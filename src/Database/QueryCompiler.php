@@ -20,6 +20,7 @@ use Cake\Database\ValueBinder;
 /**
  * Responsible for compiling a Query object into its SQL representation
  *
+ * @internal
  */
 class QueryCompiler {
 

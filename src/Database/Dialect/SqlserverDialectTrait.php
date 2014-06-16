@@ -26,6 +26,8 @@ use PDO;
 /**
  * Contains functions that encapsulates the SQL dialect used by SQLServer,
  * including query translators and schema introspection.
+ *
+ * @internal
  */
 trait SqlserverDialectTrait {
 

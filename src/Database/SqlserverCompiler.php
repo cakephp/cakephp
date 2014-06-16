@@ -20,6 +20,7 @@ use Cake\Database\QueryCompiler;
  * Responsible for compiling a Query object into its SQL representation
  * for SQL Server
  *
+ * @internal
  */
 class SqlserverCompiler extends QueryCompiler {
 

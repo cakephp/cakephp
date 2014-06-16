@@ -26,6 +26,8 @@ use \Countable;
  *
  * Helps generate SQL with the correct number of placeholders and bind
  * values correctly into the statement.
+ *
+ * @internal
  */
 class ValuesExpression implements ExpressionInterface {
 

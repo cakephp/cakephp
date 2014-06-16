@@ -134,7 +134,7 @@ class Connection {
  *
  * If no params are passed it will return the current driver instance.
  *
- * @param string|Driver $driver The driver instance to use.
+ * @param string|\Cake\Database\Driver $driver The driver instance to use.
  * @param array|null $config Either config for a new driver or null.
  * @throws \Cake\Database\Error\MissingDriverException When a driver class is missing.
  * @throws \Cake\Database\Error\MissingExtensionException When a driver's PHP extension is missing.

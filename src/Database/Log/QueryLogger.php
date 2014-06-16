@@ -22,6 +22,7 @@ use Cake\Utility\String;
  * This class is a bridge used to write LoggedQuery objects into a real log.
  * by default this class use the built-in CakePHP Log class to accomplish this
  *
+ * @internal
  */
 class QueryLogger {
 

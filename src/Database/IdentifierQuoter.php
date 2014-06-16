@@ -21,6 +21,8 @@ use Cake\Database\Expression\OrderByExpression;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object
+ *
+ * @internal
  */
 class IdentifierQuoter {
 

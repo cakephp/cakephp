@@ -20,6 +20,7 @@ use PDO;
 /**
  * Statement class meant to be used by an Sqlserver driver
  *
+ * @internal
  */
 class SqlserverStatement extends PDOStatement {
 
