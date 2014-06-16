@@ -52,7 +52,7 @@ trait PDODriverTrait {
  * If first argument is passed, it will set internal conenction object or
  * result to the value passed
  *
- * @param null|PDO instance $connection The PDO connection instance.
+ * @param null|\PDO instance $connection The PDO connection instance.
  * @return mixed connection object used internally
  */
 	public function connection($connection = null) {
