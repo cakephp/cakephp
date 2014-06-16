@@ -563,8 +563,8 @@ class ExtractTask extends Shell {
 /**
  * Get the strings from the position forward
  *
- * @param integer &$position Actual position on tokens array
- * @param integer $target Number of strings to extract
+ * @param int &$position Actual position on tokens array
+ * @param int $target Number of strings to extract
  * @return array Strings extracted
  */
 	protected function _getStrings(&$position, $target) {

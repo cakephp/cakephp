@@ -241,7 +241,7 @@ class Number {
  * Alternative number_format() to accommodate multibyte decimals and thousands < PHP 5.4
  *
  * @param float $value Value to format.
- * @param integer $places Decimal places to use.
+ * @param int $places Decimal places to use.
  * @param string $decimals Decimal position string.
  * @param string $thousands Thousands separator string.
  * @return string

@@ -320,7 +320,7 @@ class Shell {
  * or methods on tasks.
  *
  * @param array $argv Array of arguments to run the shell with. This array should be missing the shell name.
- * @param boolean $autoMethod Set to true to allow any public method to be called even if it
+ * @param bool $autoMethod Set to true to allow any public method to be called even if it
  *   was not defined as a subcommand. This is used by ShellDispatcher to make building simple shells easy.
  * @return void
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::runCommand

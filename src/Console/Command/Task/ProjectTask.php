@@ -115,7 +115,7 @@ class ProjectTask extends BakeTask {
  * Search the $PATH for composer.
  *
  * @param array $path The paths to search.
- * @return string|boolean
+ * @return string|bool
  */
 	protected function _searchPath($path) {
 		$composer = ['composer.phar', 'composer'];

@@ -1769,7 +1769,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param mixed $value The value of column to be checked for uniqueness
  * @param array $options The options array, optionally containing the 'scope' key
  * @param array $context The validation context as provided by the validation routine
- * @return boolean true if the value is unique
+ * @return bool true if the value is unique
  */
 	public function validateUnique($value, array $options, array $context = []) {
 		if (empty($context)) {

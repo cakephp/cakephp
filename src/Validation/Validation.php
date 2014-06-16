@@ -107,9 +107,9 @@ class Validation {
  * Alias of Validator::lengthBetween() for backwards compatibility.
  *
  * @param string $check Value to check for length
- * @param integer $min Minimum value in range (inclusive)
- * @param integer $max Maximum value in range (inclusive)
- * @return boolean Success
+ * @param int $min Minimum value in range (inclusive)
+ * @param int $max Maximum value in range (inclusive)
+ * @return bool Success
  * @see Validator::lengthBetween()
  * @deprecated 2.6 Use Validator::lengthBetween() instead.
  */

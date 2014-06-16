@@ -58,7 +58,7 @@ class JsonView extends View {
 /**
  * JSON layouts are located in the json sub directory of `Layouts/`
  *
- * @var string 
+ * @var string
  */
 	public $layoutPath = 'json';
 
