@@ -892,7 +892,11 @@ class FormHelper extends Helper {
 		$options += ['id' => $this->_domId($fieldName)];
 
 		$originalTemplates = $this->templates();
-		$this->templates($options['templates']);
+		$newTemplates = $options['templates'];
+
+		if ($newTemplates) {
+			$this->templates($options['templates']);
+		}
 		unset($options['templates']);
 
 		$error = null;
@@ -930,7 +934,10 @@ class FormHelper extends Helper {
 			'type' => $options['type'],
 		]);
 
-		$this->templates($originalTemplates);
+		if ($newTemplates) {
+			$this->templates($originalTemplates);
+		}
+
 		return $result;
 	}
 
