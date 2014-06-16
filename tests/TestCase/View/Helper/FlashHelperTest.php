@@ -74,10 +74,8 @@ class FlashHelperTest extends TestCase {
  * @return void
  */
 	public function tearDown() {
-		$_SESSION = [];
-		unset($this->View, $this->Session);
-		Plugin::unload();
 		parent::tearDown();
+		unset($this->View, $this->Session);
 	}
 
 /**
