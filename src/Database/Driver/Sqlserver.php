@@ -94,7 +94,7 @@ class Sqlserver extends \Cake\Database\Driver {
 /**
  * Prepares a sql statement to be executed
  *
- * @param string|\Cake\Database\Query $query
+ * @param string|\Cake\Database\Query $query The query to prepare.
  * @return \Cake\Database\StatementInterface
  */
 	public function prepare($query) {

@@ -52,7 +52,7 @@ trait PDODriverTrait {
  * If first argument is passed, it will set internal conenction object or
  * result to the value passed
  *
- * @param null|PDO instance $connection
+ * @param null|PDO instance $connection The PDO connection instance.
  * @return mixed connection object used internally
  */
 	public function connection($connection = null) {
@@ -74,7 +74,7 @@ trait PDODriverTrait {
 /**
  * Prepares a sql statement to be executed
  *
- * @param string|\Cake\Database\Query $query
+ * @param string|\Cake\Database\Query $query The query to turn into a prepared statement.
  * @return \Cake\Database\StatementInterface
  */
 	public function prepare($query) {
@@ -124,7 +124,7 @@ trait PDODriverTrait {
 /**
  * Returns a value in a safe representation to be used in a query string
  *
- * @param mixed $value
+ * @param mixed $value The value to quote.
  * @param string $type Type to be used for determining kind of quoting to perform
  * @return string
  */

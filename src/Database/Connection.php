@@ -134,11 +134,11 @@ class Connection {
  *
  * If no params are passed it will return the current driver instance.
  *
- * @param string|Driver $driver
+ * @param string|Driver $driver The driver instance to use.
  * @param array|null $config Either config for a new driver or null.
  * @throws \Cake\Database\Error\MissingDriverException When a driver class is missing.
  * @throws \Cake\Database\Error\MissingExtensionException When a driver's PHP extension is missing.
- * @return Driver
+ * @return \Cake\Database\Driver
  */
 	public function driver($driver = null, $config = null) {
 		if ($driver === null) {
@@ -192,7 +192,7 @@ class Connection {
 /**
  * Prepares a SQL statement to be executed.
  *
- * @param string|\Cake\Database\Query $sql
+ * @param string|\Cake\Database\Query $sql The SQL to convert into a prepared statement.
  * @return \Cake\Database\StatementInterface
  */
 	public function prepare($sql) {
@@ -259,7 +259,7 @@ class Connection {
 /**
  * Executes a SQL statement and returns the Statement object as result.
  *
- * @param string $sql
+ * @param string $sql The SQL query to execute.
  * @return \Cake\Database\StatementInterface
  */
 	public function query($sql) {
@@ -271,7 +271,7 @@ class Connection {
 /**
  * Create a new Query instance for this connection.
  *
- * @return Query
+ * @return \Cake\Database\Query
  */
 	public function newQuery() {
 		return new Query($this);
@@ -422,7 +422,7 @@ class Connection {
  * `$connection->useSavePoints(false)` Disables usage of savepoints and returns false
  * `$connection->useSavePoints()` Returns current status
  *
- * @param bool|null $enable
+ * @param bool|null $enable Whether or not save points should be used.
  * @return bool true if enabled, false otherwise
  */
 	public function useSavePoints($enable = null) {
@@ -440,7 +440,7 @@ class Connection {
 /**
  * Creates a new save point for nested transactions.
  *
- * @param string $name
+ * @param string $name The save point name.
  * @return void
  */
 	public function createSavePoint($name) {
@@ -450,7 +450,7 @@ class Connection {
 /**
  * Releases a save point by its name.
  *
- * @param string $name
+ * @param string $name The save point name.
  * @return void
  */
 	public function releaseSavePoint($name) {
@@ -460,7 +460,7 @@ class Connection {
 /**
  * Rollback a save point by its name.
  *
- * @param string $name
+ * @param string $name The save point name.
  * @return void
  */
 	public function rollbackSavepoint($name) {
@@ -480,7 +480,7 @@ class Connection {
  *
  * {{{
  * $connection->transactional(function($connection) {
- *	$connection->newQuery()->delete('users')->execute();
+ *   $connection->newQuery()->delete('users')->execute();
  * });
  * }}}
  *
@@ -511,7 +511,7 @@ class Connection {
 /**
  * Quotes value to be used safely in database query.
  *
- * @param mixed $value
+ * @param mixed $value The value to quote.
  * @param string $type Type to be used for determining kind of quoting to perform
  * @return mixed quoted value
  */
@@ -533,7 +533,7 @@ class Connection {
  * Quotes a database identifier (a column name, table name, etc..) to
  * be used safely in queries without the risk of using reserved words.
  *
- * @param string $identifier
+ * @param string $identifier The identifier to quote.
  * @return string
  */
 	public function quoteIdentifier($identifier) {
