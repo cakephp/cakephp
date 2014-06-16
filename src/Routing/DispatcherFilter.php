@@ -143,7 +143,7 @@ class DispatcherFilter implements EventListener {
  * Check to see if the incoming request matches this filter's criteria.
  *
  * @param \Cake\Event\Event $event The event to match.
- * @return boolean
+ * @return bool
  */
 	public function matches(Event $event) {
 		$request = $event->data['request'];

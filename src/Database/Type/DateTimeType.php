@@ -51,7 +51,7 @@ class DateTimeType extends \Cake\Database\Type {
 /**
  * Convert DateTime instance into strings.
  *
- * @param string|integer|DateTime $value The value to convert.
+ * @param string|int|\DateTime $value The value to convert.
  * @param Driver $driver The driver instance to convert with.
  * @return string
  */

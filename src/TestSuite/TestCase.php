@@ -240,7 +240,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param string $needle The string to search for.
  * @param string $haystack The string to search through.
  * @param string $message The message to display on failure.
- * @param boolean $ignoreCase Whether or not the search should be case-sensitive.
+ * @param bool $ignoreCase Whether or not the search should be case-sensitive.
  * @return void
  */
 	public function assertTextContains($needle, $haystack, $message = '', $ignoreCase = false) {
@@ -256,7 +256,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param string $needle The string to search for.
  * @param string $haystack The string to search through.
  * @param string $message The message to display on failure.
- * @param boolean $ignoreCase Whether or not the search should be case-sensitive.
+ * @param bool $ignoreCase Whether or not the search should be case-sensitive.
  * @return void
  */
 	public function assertTextNotContains($needle, $haystack, $message = '', $ignoreCase = false) {

@@ -45,7 +45,7 @@ class Session {
 /**
  * Indicates whether the sessions has already started
  *
- * @var boolean
+ * @var bool
  */
 	protected $_started;
 
@@ -59,7 +59,7 @@ class Session {
 /**
  * Whehter this session is running under a CLI environment
  *
- * @var boolean
+ * @var bool
  */
 	protected $_isCli = false;
 
@@ -581,7 +581,7 @@ class Session {
  * Returns true if the session is no longer valid because the last time it was
  * accessed was after the configured timeout.
  *
- * @return boolean
+ * @return bool
  */
 	protected function _timedOut() {
 		$time = $this->read('Config.time');

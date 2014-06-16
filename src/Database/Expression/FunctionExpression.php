@@ -83,7 +83,7 @@ class FunctionExpression extends QueryExpression {
  * If associative the key would be used as argument when value is 'literal'
  * @param array $types associative array of types to be associated with the
  * passed arguments
- * @param boolean $prepend Whehter to prepend or append to the list of arguments
+ * @param bool $prepend Whehter to prepend or append to the list of arguments
  * @see FunctionExpression::__construct() for more details.
  * @return FunctionExpression
  */

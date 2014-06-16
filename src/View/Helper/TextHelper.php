@@ -309,7 +309,7 @@ class TextHelper extends Helper {
  * - `exact` If false, $text will not be cut mid-word
  *
  * @param string $text String to truncate.
- * @param integer $length Length of returned string, including ellipsis.
+ * @param int $length Length of returned string, including ellipsis.
  * @param array $options An array of html attributes and options.
  * @return string Trimmed string.
  * @see String::tail()

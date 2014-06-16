@@ -145,10 +145,10 @@ class XcacheEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @param boolean $check If true no deletes will occur and instead CakePHP will rely
+ * @param bool $check If true no deletes will occur and instead CakePHP will rely
  *   on key TTL values.
  *   Unused for Xcache engine.
- * @return boolean True if the cache was successfully cleared, false otherwise
+ * @return bool True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
 		$this->_auth();

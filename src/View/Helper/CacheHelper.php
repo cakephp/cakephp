@@ -284,7 +284,7 @@ class CacheHelper extends Helper {
  *
  * @param string $content view content to write to a cache file.
  * @param string $timestamp Duration to set for cache file.
- * @param boolean $useCallbacks Whether to include statements in cached file which
+ * @param bool $useCallbacks Whether to include statements in cached file which
  *   run callbacks.
  * @return bool success of caching view.
  */

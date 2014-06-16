@@ -317,7 +317,7 @@ class FileEngine extends CacheEngine {
  * Not implemented
  *
  * @param string $key The key to decrement
- * @param integer $offset The number to offset
+ * @param int $offset The number to offset
  * @return void
  * @throws \Cake\Error\Exception
  */
@@ -329,7 +329,7 @@ class FileEngine extends CacheEngine {
  * Not implemented
  *
  * @param string $key The key to decrement
- * @param integer $offset The number to offset
+ * @param int $offset The number to offset
  * @return void
  * @throws \Cake\Error\Exception
  */

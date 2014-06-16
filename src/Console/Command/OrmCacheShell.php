@@ -33,7 +33,7 @@ class OrmCacheShell extends Shell {
  * Build metadata.
  *
  * @param $name string
- * @return boolean
+ * @return bool
  */
 	public function build($name = null) {
 		$schema = $this->_getSchema();
@@ -60,7 +60,7 @@ class OrmCacheShell extends Shell {
  * Clear metadata.
  *
  * @param $name string
- * @return boolean
+ * @return bool
  */
 	public function clear($name = null) {
 		$schema = $this->_getSchema();

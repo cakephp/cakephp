@@ -193,7 +193,7 @@ class ShellDispatcher {
  * Check if a shell class exists for the given name.
  *
  * @param string $shell The shell name to look for.
- * @return string|boolean Either the classname or false.
+ * @return string|bool Either the classname or false.
  */
 	protected function _shellExists($shell) {
 		$class = array_map('Cake\Utility\Inflector::camelize', explode('.', $shell));

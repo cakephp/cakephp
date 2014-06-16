@@ -98,7 +98,7 @@ class NumberHelper extends Helper {
 /**
  * Returns a formatted-for-humans file size.
  *
- * @param integer $size Size in bytes
+ * @param int $size Size in bytes
  * @return string Human readable size
  * @see \Cake\Utility\Number::toReadableSize()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toReadableSize
