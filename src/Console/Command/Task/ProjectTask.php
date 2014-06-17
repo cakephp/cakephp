@@ -146,6 +146,18 @@ class ProjectTask extends BakeTask {
 
 		$command = 'php ' . escapeshellarg($composer) . ' create-project -s dev cakephp/app ' . escapeshellarg($path);
 
+		try {
+			$this->callComposer($command);
+		} catch (\RuntimeException $e) {
+			$error = $e->getMessage();
+			$this->error(__d('cake_console', 'Installation from packagist.org failed with: %s', $error));
+			return false;
+		}
+
+		return true;
+	}
+
+	public function callComposer($command) {
 		$descriptorSpec = [
 			0 => ['pipe', 'r'],
 			1 => ['pipe', 'w'],
@@ -172,11 +184,10 @@ class ProjectTask extends BakeTask {
 		proc_close($process);
 
 		if ($error) {
-			$this->error(__d('cake_console', 'Installation from packagist.org failed with: %s', $error));
-			return false;
+			throw new \RuntimeException($error);
 		}
+
 		$this->out($output);
-		return true;
 	}
 
 /**
