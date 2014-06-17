@@ -157,7 +157,7 @@ class PluginTask extends BakeTask {
  * Update the app's bootstrap.php file.
  *
  * @param string $plugin Name of plugin
- * @param boolean $hasAutoloader Whether or there is an autoloader configured for
+ * @param boolean $hasAutoloader Whether or not there is an autoloader configured for
  * the plugin
  * @return void
  */
