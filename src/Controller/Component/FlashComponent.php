@@ -100,7 +100,7 @@ class FlashComponent extends Component {
  * Magic method for verbose flash methods based on element names.
  *
  * For example: $this->Flash->success('My message') would use the
- * success.ctp element under `Template/Element/Flash` for rendering the
+ * success.ctp element under `App/Template/Element/Flash` for rendering the
  * flash message.
  *
  * @param string $name Element name to use.
