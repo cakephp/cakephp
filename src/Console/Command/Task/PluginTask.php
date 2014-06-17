@@ -139,7 +139,7 @@ class PluginTask extends BakeTask {
 			$out .= "use App\\Controller\\AppController as BaseController;\n\n";
 			$out .= "class AppController extends BaseController {\n\n";
 			$out .= "}\n";
-			$this->createFile($this->path . $plugin . DS . 'Controller' . DS . $controllerFileName, $out);
+			$this->createFile($this->path . $plugin . DS . $classBase . DS . 'Controller' . DS . $controllerFileName, $out);
 
 			$this->_modifyBootstrap($plugin);
 			$this->_generatePhpunitXml($plugin, $this->path);

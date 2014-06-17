@@ -75,7 +75,7 @@ class PluginTaskTest extends TestCase {
 
 		$path = $this->Task->path . 'BakeTestPlugin';
 
-		$file = $path . DS . 'Controller' . DS . 'AppController.php';
+		$file = $path . DS . 'src' . DS . 'Controller' . DS . 'AppController.php';
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with($file, $this->stringContains('namespace BakeTestPlugin\Controller;'));
 
@@ -140,7 +140,7 @@ class PluginTaskTest extends TestCase {
 			->will($this->returnValue('y'));
 
 		$path = $this->Task->path . 'BakeTestPlugin';
-		$file = $path . DS . 'Controller' . DS . 'AppController.php';
+		$file = $path . DS . 'src' . DS . 'Controller' . DS . 'AppController.php';
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with($file, $this->stringContains('class AppController extends BaseController {'));
 
