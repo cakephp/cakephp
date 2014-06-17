@@ -415,6 +415,17 @@ class TextHelperTest extends CakeTestCase {
 				array('class' => 'link'),
 			),
 
+			array(
+				'<p>mark@example.com</p>',
+				'<p><a href="mailto:mark@example.com">mark@example.com</a></p>',
+				array('escape' => false)
+			),
+
+			array(
+				'Some&nbsp;mark@example.com&nbsp;Text',
+				'Some&nbsp;<a href="mailto:mark@example.com">mark@example.com</a>&nbsp;Text',
+				array('escape' => false)
+			),
 		);
 	}
 
