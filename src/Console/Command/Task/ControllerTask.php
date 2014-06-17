@@ -127,6 +127,7 @@ class ControllerTask extends BakeTask {
 		$namespace = Configure::read('App.namespace');
 		if ($this->plugin) {
 			$namespace = $this->plugin;
+			$this->pathFragment = 'src/' . $this->pathFragment;
 		}
 
 		$data = compact(

@@ -90,6 +90,10 @@ abstract class SimpleBakeTask extends BakeTask {
  * @return void
  */
 	public function bake($name) {
+		if ($this->plugin) {
+			$this->pathFragment = 'src/' . $this->pathFragment;
+		}
+
 		$this->Template->set('name', $name);
 		$this->Template->set($this->templateData());
 		$contents = $this->Template->generate('classes', $this->template());

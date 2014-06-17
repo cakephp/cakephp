@@ -313,6 +313,9 @@ class ViewTask extends BakeTask {
  * @return string Generated file content.
  */
 	public function bake($action, $content = '') {
+		if ($this->plugin) {
+			$this->pathFragment = 'src/' . $this->pathFragment;
+		}
 		if ($content === true) {
 			$content = $this->getContent($action);
 		}
