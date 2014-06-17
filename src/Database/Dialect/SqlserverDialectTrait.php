@@ -26,6 +26,8 @@ use PDO;
 /**
  * Contains functions that encapsulates the SQL dialect used by SQLServer,
  * including query translators and schema introspection.
+ *
+ * @internal
  */
 trait SqlserverDialectTrait {
 
@@ -86,7 +88,7 @@ trait SqlserverDialectTrait {
  * Prior to SQLServer 2012 there was no equivalent to LIMIT OFFSET, so a subquery must
  * be used.
  *
- * @param \Cake\Database\Query $query The query to wrap in a subquery.
+ * @param \Cake\Database\Query $original The query to wrap in a subquery.
  * @param int $limit The number of rows to fetch.
  * @param int $offset The number of rows to offset.
  * @return \Cake\Database\Query Modified query object.
@@ -143,7 +145,7 @@ trait SqlserverDialectTrait {
  * Receives a FunctionExpression and changes it so that it conforms to this
  * SQL dialect.
  *
- * @param Cake\Database\Expression\FunctionExpression
+ * @param Cake\Database\Expression\FunctionExpression $expression The function expression to convert to TSQL.
  * @return void
  */
 	protected function _transformFunctionExpression(FunctionExpression $expression) {
@@ -213,6 +215,8 @@ trait SqlserverDialectTrait {
 
 /**
  * {@inheritDoc}
+ *
+ * @return \Cake\Database\SqlserverCompiler
  */
 	public function newCompiler() {
 		return new SqlserverCompiler();

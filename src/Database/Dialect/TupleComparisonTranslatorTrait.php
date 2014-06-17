@@ -21,11 +21,12 @@ use Cake\Database\Query;
 
 /**
  * Provides a translator method for tuple comparisons
+ *
+ * @internal
  */
 trait TupleComparisonTranslatorTrait {
 
 /**
- *
  * Receives a TupleExpression and changes it so that it conforms to this
  * SQL dialect.
  *
@@ -40,8 +41,8 @@ trait TupleComparisonTranslatorTrait {
  *
  * 1 = (SELECT 1 FROM a_table WHERE (a = c) AND (b = d))
  *
- * @param \Cake\Database\Expression\TupleComparison $expression
- * @param \Cake\Database\Query $query
+ * @param \Cake\Database\Expression\TupleComparison $expression The expression to transform
+ * @param \Cake\Database\Query $query The query to update.
  * @return void
  */
 	protected function _transformTupleComparison(TupleComparison $expression, $query) {

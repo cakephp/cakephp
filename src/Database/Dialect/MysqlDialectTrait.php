@@ -19,6 +19,8 @@ use Cake\Database\SqlDialectTrait;
 /**
  * Contains functions that encapsulates the SQL dialect used by MySQL,
  * including query translators and schema introspection.
+ *
+ * @internal
  */
 trait MysqlDialectTrait {
 

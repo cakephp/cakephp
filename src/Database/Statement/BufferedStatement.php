@@ -24,6 +24,7 @@ class BufferedStatement extends StatementDecorator {
 
 /**
  * Records count
+ *
  * @var int
  */
 	protected $_count = 0;
@@ -72,6 +73,9 @@ class BufferedStatement extends StatementDecorator {
 
 /**
  * {@inheritDoc}
+ *
+ * @param string $type The type to fetch.
+ * @return mixed
  */
 	public function fetch($type = 'num') {
 		if ($this->_allFetched) {
@@ -96,6 +100,9 @@ class BufferedStatement extends StatementDecorator {
 
 /**
  * {@inheritDoc}
+ *
+ * @param string $type The type to fetch.
+ * @return mixed
  */
 	public function fetchAll($type = 'num') {
 		if ($this->_allFetched) {
@@ -124,6 +131,8 @@ class BufferedStatement extends StatementDecorator {
 
 /**
  * Rewind the _counter property
+ *
+ * @return void
  */
 	public function rewind() {
 		$this->_counter = 0;
@@ -131,6 +140,8 @@ class BufferedStatement extends StatementDecorator {
 
 /**
  * Reset all properties
+ *
+ * @return void
  */
 	protected function _reset() {
 		$this->_count = $this->_counter = 0;

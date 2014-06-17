@@ -94,7 +94,7 @@ class Postgres extends \Cake\Database\Driver {
 /**
  * Sets connection encoding
  *
- * @param string $encoding
+ * @param string $encoding The encoding to use.
  * @return void
  */
 	public function setEncoding($encoding) {
@@ -106,7 +106,7 @@ class Postgres extends \Cake\Database\Driver {
  * Sets connection default schema, if any relation defined in a query is not fully qualified
  * postgres will fallback to looking the relation into defined default schema
  *
- * @param string $schema
+ * @param string $schema The schema names to set `search_path` to.
  * @return void
  */
 	public function setSchema($schema) {

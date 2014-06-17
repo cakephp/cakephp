@@ -19,7 +19,7 @@ use Cake\Database\Statement\StatementDecorator;
 /**
  * Statement decorator used to
  *
- * @return void
+ * @internal
  */
 class LoggingStatement extends StatementDecorator {
 

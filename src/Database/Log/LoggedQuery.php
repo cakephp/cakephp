@@ -17,6 +17,8 @@ namespace Cake\Database\Log;
 /**
  * Contains a query string, the params used to executed it, time taken to do it
  * and the number of rows found or affected by its execution.
+ *
+ * @internal
  */
 class LoggedQuery {
 

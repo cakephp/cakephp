@@ -23,8 +23,8 @@ trait TypeConverterTrait {
  * Converts a give value to a suitable database value based on type
  * and return relevant internal statement type
  *
- * @param mixed $value
- * @param string $type
+ * @param mixed $value The value to cast
+ * @param \Cake\Database\Type|string $type The type name or type instance to use.
  * @return array list containing converted value and internal type
  */
 	public function cast($value, $type) {

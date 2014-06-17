@@ -17,6 +17,7 @@ namespace Cake\Database\Statement;
 /**
  * Statement class meant to be used by an Sqlite driver
  *
+ * @internal
  */
 class SqliteStatement extends BufferedStatement {
 

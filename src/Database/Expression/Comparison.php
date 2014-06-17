@@ -22,6 +22,7 @@ use Cake\Database\ValueBinder;
  * involving a field an operator and a value. In its most common form the
  * string representation of a comparison is `field = value`
  *
+ * @internal
  */
 class Comparison extends QueryExpression {
 
