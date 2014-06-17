@@ -59,7 +59,7 @@ class TemplateTask extends Shell {
 
 		$plugins = App::objects('Plugin');
 		foreach ($plugins as $plugin) {
-			$paths[] = $this->_pluginPath($plugin) . 'Console/';
+			$paths[] = $this->_pluginPath($plugin) . 'src/Console/';
 		}
 
 		$core = current(App::core('Console'));

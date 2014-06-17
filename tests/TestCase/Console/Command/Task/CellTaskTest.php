@@ -85,13 +85,13 @@ class CellTaskTest extends TestCase {
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with(
-				$this->_normalizePath($path . 'Template/Cell/Example/display.ctp'),
+				$this->_normalizePath($path . 'src/Template/Cell/Example/display.ctp'),
 				''
 			);
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with(
-				$this->_normalizePath($path . 'View/Cell/ExampleCell.php'),
+				$this->_normalizePath($path . 'src/View/Cell/ExampleCell.php'),
 				$this->stringContains('class ExampleCell extends Cell')
 			);
 
@@ -112,13 +112,13 @@ class CellTaskTest extends TestCase {
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with(
-				$this->_normalizePath($path . 'Template/Cell/Example/display.ctp'),
+				$this->_normalizePath($path . 'src/Template/Cell/Example/display.ctp'),
 				''
 			);
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with(
-				$this->_normalizePath($path . 'View/Cell/ExampleCell.php'),
+				$this->_normalizePath($path . 'src/View/Cell/ExampleCell.php'),
 				$this->stringContains('class ExampleCell extends Cell')
 			);
 

@@ -87,7 +87,7 @@ class SimpleBakeTaskTest extends TestCase {
  */
 	public function testMainWithPlugin() {
 		Plugin::load('TestPlugin');
-		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/Model/Behavior/ExampleBehavior.php');
+		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/src/Model/Behavior/ExampleBehavior.php');
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with(
@@ -164,7 +164,7 @@ class SimpleBakeTaskTest extends TestCase {
 		$this->Task->expects($this->once())
 			->method('createFile')
 			->with(
-				$this->_normalizePath($path . 'Model/Behavior/ExampleBehavior.php'),
+				$this->_normalizePath($path . 'src/Model/Behavior/ExampleBehavior.php'),
 				$this->stringContains('class ExampleBehavior extends Behavior')
 			);
 

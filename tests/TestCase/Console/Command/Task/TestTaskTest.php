@@ -587,7 +587,7 @@ class TestTaskTest extends TestCase {
 		$this->Task->plugin = 'TestPlugin';
 
 		Plugin::load('TestPlugin');
-		$path = TEST_APP . 'Plugin/TestPlugin/Test/TestCase/View/Helper/FormHelperTest.php';
+		$path = TEST_APP . 'Plugin/TestPlugin/tests/TestCase/View/Helper/FormHelperTest.php';
 		$path = str_replace('/', DS, $path);
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, $this->anything());
@@ -645,7 +645,7 @@ class TestTaskTest extends TestCase {
 		$class = 'TestPlugin\Model\Entity\Post';
 		$result = $this->Task->testCaseFileName('entity', $class);
 
-		$expected = TEST_APP . 'Plugin/TestPlugin/Test/TestCase/Model/Entity/PostTest.php';
+		$expected = TEST_APP . 'Plugin/TestPlugin/tests/TestCase/Model/Entity/PostTest.php';
 		$this->assertPathEquals($expected, $result);
 	}
 

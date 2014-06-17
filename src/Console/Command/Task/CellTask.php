@@ -71,6 +71,10 @@ class CellTask extends SimpleBakeTask {
 		$restore = $this->pathFragment;
 		$this->pathFragment = $templatePath;
 
+		if ($this->plugin) {
+			$this->pathFragment = 'src/' . $this->pathFragment;
+		}
+
 		$path = $this->getPath();
 		$this->pathFragment = $restore;
 

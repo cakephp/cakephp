@@ -547,7 +547,7 @@ class ViewTaskTest extends TestCase {
 		$this->_setupTask(['in', 'err', 'createFile']);
 
 		$this->Task->connection = 'test';
-		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/Template/ViewTaskComments/index.ctp');
+		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/src/Template/ViewTaskComments/index.ctp');
 
 		Plugin::load('TestPlugin');
 

@@ -214,7 +214,7 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->plugin = 'ControllerTest';
 
 		Plugin::load('ControllerTest', array('path' => APP . 'Plugin/ControllerTest/'));
-		$path = APP . 'Plugin/ControllerTest/Controller/BakeArticlesController.php';
+		$path = APP . 'Plugin/ControllerTest/src/Controller/BakeArticlesController.php';
 
 		$this->Task->expects($this->at(1))
 			->method('createFile')
@@ -354,7 +354,7 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->connection = 'test';
 
 		Plugin::load('ControllerTest', array('path' => APP . 'Plugin/ControllerTest/'));
-		$path = APP . 'Plugin/ControllerTest/Controller/BakeArticlesController.php';
+		$path = APP . 'Plugin/ControllerTest/src/Controller/BakeArticlesController.php';
 
 		$this->Task->expects($this->at(1))
 			->method('createFile')
