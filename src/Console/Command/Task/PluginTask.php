@@ -249,7 +249,7 @@ class PluginTask extends BakeTask {
 		try {
 			$command = 'cd ' . escapeshellarg($path) . '; ';
 			$command .= 'php ' . escapeshellarg($composer) . ' dump-autoload ';
-			$this->Project->callComposer($command);
+			$this->callProcess($command);
 		} catch (\RuntimeException $e) {
 			$error = $e->getMessage();
 			$this->error(__d('cake_console', 'Could not run `composer dump-autoload`: %s', $error));

@@ -102,6 +102,46 @@ class BakeTask extends Shell {
 	}
 
 /**
+ * Executes an external shell command and pipes its output to the stdout
+ *
+ * @param string $command the command to execute
+ * @return void
+ * @throws \RuntimeExeception if any errors occurred during the execution
+ */
+	public function callProcess($command) {
+		$descriptorSpec = [
+			0 => ['pipe', 'r'],
+			1 => ['pipe', 'w'],
+			2 => ['pipe', 'w']
+		];
+		$this->_io->verbose('Running ' . $command);
+		$process = proc_open(
+			$command,
+			$descriptorSpec,
+			$pipes
+		);
+		if (!is_resource($process)) {
+			$this->error(__d('cake_console', 'Could not start subprocess.'));
+			return false;
+		}
+		$output = $error = '';
+		fclose($pipes[0]);
+
+		$output = stream_get_contents($pipes[1]);
+		fclose($pipes[1]);
+
+		$error = stream_get_contents($pipes[2]);
+		fclose($pipes[2]);
+		proc_close($process);
+
+		if ($error) {
+			throw new \RuntimeException($error);
+		}
+
+		$this->out($output);
+	}
+
+/**
  * Handles splitting up the plugin prefix and classname.
  *
  * Sets the plugin parameter and plugin property.
