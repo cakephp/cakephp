@@ -213,6 +213,14 @@ class PluginTask extends BakeTask {
 		$this->createFile($file, $out);
 	}
 
+/**
+ * Modifies App's coposer.json to include the plugin and tries to call
+ * composer dump-autoload to refresh the autoloader cache
+ *
+ * @param string $plugin Name of plugin
+ * @param string $path The path to save the phpunit.xml file to.
+ * @return boolean True if composer could be modified correctly
+ */
 	protected function _modifyAutoloader($plugin, $path) {
 		$path = dirname($path);
 
@@ -239,7 +247,8 @@ class PluginTask extends BakeTask {
 		}
 
 		try {
-			$command = 'php ' . escapeshellarg($composer) . ' dump-autoload ';
+			$command = 'cd ' . escapeshellarg($path) . '; ';
+			$command .= 'php ' . escapeshellarg($composer) . ' dump-autoload ';
 			$this->Project->callComposer($command);
 		} catch (\RuntimeException $e) {
 			$error = $e->getMessage();
