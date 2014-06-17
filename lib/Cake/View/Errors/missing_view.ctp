@@ -25,6 +25,19 @@
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
 	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', h($file)); ?>
 </p>
+
+<p>
+	You should create "<?php echo h($file); ?>" in one of he following paths:
+</p>
+<ul>
+<?php
+	$paths = $this->_paths($this->plugin);
+	foreach ($paths as $path):
+		echo sprintf('<li>%s%s%s</li>', h($path), DS, h($file));
+	endforeach;
+?>
+</ul>
+
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
 	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Errors' . DS . 'missing_view.ctp'); ?>
