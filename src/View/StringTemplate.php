@@ -16,8 +16,6 @@ namespace Cake\View;
 
 use Cake\Configure\Engine\PhpConfig;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Core\Plugin;
-use Cake\Error;
 
 /**
  * Provides an interface for registering and inserting
