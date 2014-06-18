@@ -225,14 +225,12 @@ class ModelTask extends BakeTask {
 				$tmpModelName = $this->_modelNameFromKey($fieldName);
 				$associations['belongsTo'][] = [
 					'alias' => $tmpModelName,
-					'foreignKey' => $fieldName,
-					'table' => Inflector::underscore($tmpModelName)
+					'foreignKey' => $fieldName
 				];
 			} elseif ($fieldName === 'parent_id') {
 				$associations['belongsTo'][] = [
 					'alias' => 'Parent' . $model->alias(),
-					'foreignKey' => $fieldName,
-					'table' => $model->table()
+					'foreignKey' => $fieldName
 				];
 			}
 		}
@@ -530,7 +528,7 @@ class ModelTask extends BakeTask {
 		$counterCache = [];
 		foreach ($belongsTo['belongsTo'] as $otherTable) {
 			$otherAlias = $otherTable['alias'];
-			$otherModel = $this->getTableObject($this->_modelName($otherAlias), $otherTable['table']);
+			$otherModel = $this->getTableObject($this->_modelName($otherAlias), Inflector::underscore($otherAlias));
 
 			try {
 				$otherSchema = $otherModel->schema();

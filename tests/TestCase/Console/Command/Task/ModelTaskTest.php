@@ -243,8 +243,7 @@ class ModelTaskTest extends TestCase {
 			'belongsTo' => [
 				[
 					'alias' => 'BakeUsers',
-					'foreignKey' => 'bake_user_id',
-					'table' => 'bake_users'
+					'foreignKey' => 'bake_user_id'
 				],
 			],
 			'hasMany' => [
@@ -277,13 +276,11 @@ class ModelTaskTest extends TestCase {
 			'belongsTo' => [
 				[
 					'alias' => 'BakeArticles',
-					'foreignKey' => 'bake_article_id',
-					'table' => 'bake_articles'
+					'foreignKey' => 'bake_article_id'
 				],
 				[
 					'alias' => 'BakeUsers',
-					'foreignKey' => 'bake_user_id',
-					'table' => 'bake_users'
+					'foreignKey' => 'bake_user_id'
 				],
 			]
 		];
@@ -295,8 +292,7 @@ class ModelTaskTest extends TestCase {
 			'belongsTo' => [
 				[
 					'alias' => 'ParentCategoryThreads',
-					'foreignKey' => 'parent_id',
-					'table' => 'category_threads'
+					'foreignKey' => 'parent_id'
 				],
 			]
 		];
