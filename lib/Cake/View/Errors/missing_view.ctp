@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -21,19 +19,16 @@
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
 	<?php echo __d('cake_dev', 'The view for %1$s%2$s was not found.', '<em>' . h(Inflector::camelize($this->request->controller)) . 'Controller::</em>', '<em>' . h($this->request->action) . '()</em>'); ?>
 </p>
-<p class="error">
-	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', h($file)); ?>
-</p>
 
 <p>
-	You should create "<?php echo h($file); ?>" in one of he following paths:
+	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', h($file)); ?>
+	in one of the following paths:
 </p>
 <ul>
 <?php
 	$paths = $this->_paths($this->plugin);
 	foreach ($paths as $path):
-		echo sprintf('<li>%s%s%s</li>', h($path), DS, h($file));
+		echo sprintf('<li>%s%s</li>', h($path), h($file));
 	endforeach;
 ?>
 </ul>

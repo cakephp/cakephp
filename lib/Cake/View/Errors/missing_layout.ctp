@@ -21,19 +21,16 @@
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
 	<?php echo __d('cake_dev', 'The layout file %s can not be found or does not exist.', '<em>' . h($file) . '</em>'); ?>
 </p>
-<p class="error">
-	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', '<em>' . h($file) . '</em>'); ?>
-</p>
 
 <p>
-	You should create "<?php echo h($file); ?>" in one of he following paths:
+	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', h($file)); ?>
+	in one of the following paths:
 </p>
 <ul>
 <?php
 	$paths = $this->_paths($this->plugin);
 	foreach ($paths as $path):
-		echo sprintf('<li>%s%s%s</li>', h($path), DS, h($file));
+		echo sprintf('<li>%s%s</li>', h($path), h($file));
 	endforeach;
 ?>
 </ul>
