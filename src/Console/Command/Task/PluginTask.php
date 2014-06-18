@@ -214,7 +214,7 @@ class PluginTask extends BakeTask {
 	}
 
 /**
- * Modifies App's coposer.json to include the plugin and tries to call
+ * Modifies App's composer.json to include the plugin and tries to call
  * composer dump-autoload to refresh the autoloader cache
  *
  * @param string $plugin Name of plugin
