@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -23,73 +22,74 @@ use Cake\Network\Response;
 /**
  * Digest Authentication adapter for AuthComponent.
  *
- * Provides Digest HTTP authentication support for AuthComponent. Unlike most AuthComponent adapters,
- * DigestAuthenticate requires a special password hash that conforms to RFC2617. You can create this
- * password using `DigestAuthenticate::password()`. If you wish to use digest authentication alongside other
- * authentication methods, its recommended that you store the digest authentication separately.
- *
- * Clients using Digest Authentication must support cookies. Since AuthComponent identifies users based
- * on Session contents, clients without support for cookies will not function properly.
+ * Provides Digest HTTP authentication support for AuthComponent.
  *
  * ### Using Digest auth
  *
  * In your controller's components array, add auth + the required config
  * {{{
- *	public $components = array(
- *		'Auth' => array(
- *			'authenticate' => array('Digest')
- *		)
- *	);
+ *	public $components = [
+ *		'Auth' => [
+ *			'authenticate' => ['Digest']
+ *		]
+ *	];
  * }}}
  *
- * In your login function just call `$this->Auth->login()` without any checks for POST data. This
- * will send the authentication headers, and trigger the login dialog in the browser/client.
+ * You should also set `AuthComponent::$sessionKey = false;` in your AppController's
+ * beforeFilter() to prevent CakePHP from sending a session cookie to the client.
+ *
+ * Since HTTP Digest Authentication is stateless you don't need a login() action
+ * in your controller. The user credentials will be checked on each request. If
+ * valid credentials are not provided, required authentication headers will be sent
+ * by this authentication provider which triggers the login dialog in the browser/client.
+ *
+ * You may also want to use `$this->Auth->unauthorizedRedirect = false;`.
+ * This causes AuthComponent to throw a ForbiddenException exception instead of
+ * redirecting to another page.
  *
  * ### Generating passwords compatible with Digest authentication.
  *
- * Due to the Digest authentication specification, digest auth requires a special password value. You
- * can generate this password using `DigestAuthenticate::password()`
+ * DigestAuthenticate requires a special password hash that conforms to RFC2617.
+ * You can generate this password using `DigestAuthenticate::password()`
  *
  * `$digestPass = DigestAuthenticate::password($username, env('SERVER_NAME'), $password);`
  *
- * Its recommended that you store this digest auth only password separate from password hashes used for other
- * login methods. For example `User.digest_pass` could be used for a digest password, while `User.password` would
- * store the password hash for use with other methods like Basic or Form.
+ * If you wish to use digest authentication alongside other authentication methods,
+ * its recommended that you store the digest authentication separately. For
+ * example `User.digest_pass` could be used for a digest password, while
+ * `User.password` would store the password hash for use with other methods like
+ * Basic or Form.
  */
 class DigestAuthenticate extends BasicAuthenticate {
 
 /**
- * Default config for this object.
+ * Constructor
  *
- * - `fields` The fields to use to identify a user by.
- * - `userModel` The model name of the User, defaults to Users.
- * - `scope` Additional conditions to use when looking up and authenticating users,
- *    i.e. `array('User.is_active' => 1).`
- * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
- * - `contain` Extra models to contain and store in session.
+ * Besides the keys specified in BaseAuthenticate::$_defaultConfig,
+ * DigestAuthenticate uses the following extra keys:
+ *
  * - `realm` The realm authentication is for, Defaults to the servername.
  * - `nonce` A nonce used for authentication. Defaults to `uniqid()`.
- * - `qop` Defaults to auth, no other values are supported at this time.
+ * - `qop` Defaults to 'auth', no other values are supported at this time.
  * - `opaque` A string that must be returned unchanged by clients.
  *    Defaults to `md5($config['realm'])`
  *
- * @var array
+ * @param \Cake\Controller\ComponentRegistry $registry The Component registry
+ *   used on this request.
+ * @param array $config Array of config to use.
  */
-	protected $_defaultConfig = [
-		'fields' => [
-			'username' => 'username',
-			'password' => 'password'
-		],
-		'userModel' => 'Users',
-		'scope' => [],
-		'recursive' => 0,
-		'contain' => null,
-		'realm' => null,
-		'qop' => 'auth',
-		'nonce' => null,
-		'opaque' => null,
-		'passwordHasher' => 'Blowfish',
-	];
+	public function __construct(ComponentRegistry $registry, $config) {
+		$this->_registry = $registry;
+
+		$this->config([
+			'realm' => null,
+			'qop' => 'auth',
+			'nonce' => uniqid(''),
+			'opaque' => null,
+		]);
+
+		$this->config($config);
+	}
 
 /**
  * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
@@ -205,7 +205,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 		$options = array(
 			'realm' => $realm,
 			'qop' => $this->_config['qop'],
-			'nonce' => $this->_config['nonce'] ?: uniqid(''),
+			'nonce' => $this->_config['nonce'],
 			'opaque' => $this->_config['opaque'] ?: md5($realm)
 		);
 
