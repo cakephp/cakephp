@@ -253,7 +253,7 @@ class MysqlSchema extends BaseSchema {
 			'integer' => ' INTEGER',
 			'biginteger' => ' BIGINT',
 			'boolean' => ' BOOLEAN',
-			'binary' => ' BLOB',
+			'binary' => ' LONGBLOB',
 			'float' => ' FLOAT',
 			'decimal' => ' DECIMAL',
 			'text' => ' TEXT',
