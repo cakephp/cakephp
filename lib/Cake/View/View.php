@@ -1008,17 +1008,6 @@ class View extends Object {
 				}
 			}
 		}
-		$defaultPath = $paths[0];
-
-		if ($this->plugin) {
-			$pluginPaths = App::path('plugins');
-			foreach ($paths as $path) {
-				if (strpos($path, $pluginPaths[0]) === 0) {
-					$defaultPath = $path;
-					break;
-				}
-			}
-		}
 		throw new MissingViewException(array('file' => $name . $this->ext));
 	}
 
