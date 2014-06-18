@@ -67,7 +67,7 @@ trait InstanceConfigTrait {
  *
  * @param string|array|null $key The key to get/set, or a complete array of configs.
  * @param mixed|null $value The value to set.
- * @param bool $merge Whether to merge or overwrite existing config defaults to true.
+ * @param bool $merge Whether to merge or overwrite existing config, defaults to true.
  * @return mixed Config value being read, or the object itself on write operations.
  * @throws \Cake\Error\Exception When trying to set a key that is invalid.
  */
@@ -124,7 +124,7 @@ trait InstanceConfigTrait {
  * @return void
  * @throws Cake\Error\Exception if attempting to clobber existing config
  */
-	protected function _configWrite($key, $value, $merge = null) {
+	protected function _configWrite($key, $value, $merge = false) {
 		if (is_string($key) && $value === null) {
 			return $this->_configDelete($key);
 		}
