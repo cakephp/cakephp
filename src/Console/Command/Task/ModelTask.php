@@ -226,11 +226,13 @@ class ModelTask extends BakeTask {
 				$associations['belongsTo'][] = [
 					'alias' => $tmpModelName,
 					'foreignKey' => $fieldName,
+					'table' => Inflector::underscore($tmpModelName)
 				];
 			} elseif ($fieldName === 'parent_id') {
 				$associations['belongsTo'][] = [
 					'alias' => 'Parent' . $model->alias(),
 					'foreignKey' => $fieldName,
+					'table' => $model->table()
 				];
 			}
 		}
@@ -528,15 +530,20 @@ class ModelTask extends BakeTask {
 		$counterCache = [];
 		foreach ($belongsTo['belongsTo'] as $otherTable) {
 			$otherAlias = $otherTable['alias'];
-			$otherModel = $this->getTableObject($this->_modelName($otherAlias), Inflector::underscore($otherAlias));
-			$otherSchema = $otherModel->schema();
+			$otherModel = $this->getTableObject($this->_modelName($otherAlias), $otherTable['table']);
+
+			try {
+				$otherSchema = $otherModel->schema();
+			} catch (\Cake\Database\Exception $e) {
+				continue;
+			}
+
 			$otherFields = $otherSchema->columns();
 			$alias = $model->alias();
 			$field = Inflector::singularize(Inflector::underscore($alias)) . '_count';
-			if (!in_array($field, $otherFields, true)) {
-				continue;
+			if (in_array($field, $otherFields, true)) {
+				$counterCache[] = "'{$otherAlias}' => ['{$field}']";
 			}
-			$counterCache[] = "'{$otherAlias}' => ['{$field}']";
 		}
 		return $counterCache;
 	}
