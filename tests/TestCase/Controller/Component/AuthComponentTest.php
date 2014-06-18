@@ -722,7 +722,7 @@ class AuthComponentTest extends TestCase {
 		$Request->env('HTTP_REFERER', false);
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->config('authorize', ['Controller']);
-		$this->Auth->login(array('username' => 'mariano', 'password' => 'cake'));
+		$this->Auth->setUser(array('username' => 'mariano', 'password' => 'cake'));
 		$this->Auth->config('loginRedirect', [
 			'controller' => 'something', 'action' => 'else'
 		]);
@@ -759,7 +759,7 @@ class AuthComponentTest extends TestCase {
 		]);
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->config('authorize', ['Controller']);
-		$this->Auth->login(array('username' => 'admad', 'password' => 'cake'));
+		$this->Auth->setUser(array('username' => 'admad', 'password' => 'cake'));
 
 		$expected = ['controller' => 'no_can_do', 'action' => 'jack'];
 		$this->Auth->config('unauthorizedRedirect', $expected);
@@ -796,7 +796,7 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->request = $Request = new Request($url);
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->config('authorize', ['Controller']);
-		$this->Auth->login(array('username' => 'admad', 'password' => 'cake'));
+		$this->Auth->setUser(array('username' => 'admad', 'password' => 'cake'));
 		$expected = ['controller' => 'no_can_do', 'action' => 'jack'];
 		$this->Auth->config('unauthorizedRedirect', $expected);
 		$this->Auth->config('authError', false);
@@ -833,7 +833,7 @@ class AuthComponentTest extends TestCase {
 			'authorize' => ['Controller'],
 			'unauthorizedRedirect' => false
 		]);
-		$this->Auth->login(array('username' => 'baker', 'password' => 'cake'));
+		$this->Auth->setUser(array('username' => 'baker', 'password' => 'cake'));
 
 		$response = new Response();
 		$Controller = $this->getMock(
@@ -1093,11 +1093,11 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
- * test logging in.
+ * test setting user info to session.
  *
  * @return void
  */
-	public function testLogin() {
+	public function testSetUser() {
 		$this->Auth->session = $this->getMock(
 			'Cake\Network\Session',
 			array('renew', 'write')
@@ -1112,15 +1112,15 @@ class AuthComponentTest extends TestCase {
 			->method('write')
 			->with($this->Auth->sessionKey, $user);
 
-		$this->Auth->login($user);
+		$this->Auth->setUser($user);
 	}
 
 /**
- * testGettingUserAfterLogin
+ * testGettingUserAfterSetUser
  *
  * @return void
  */
-	public function testGettingUserAfterLogin() {
+	public function testGettingUserAfterSetUser() {
 		$this->assertFalse((bool)$this->Auth->user());
 
 		$user = array(
@@ -1129,7 +1129,7 @@ class AuthComponentTest extends TestCase {
 			'created' => new \DateTime('2007-03-17 01:16:23'),
 			'updated' => new \DateTime('2007-03-17 01:18:31')
 		);
-		$this->Auth->login($user);
+		$this->Auth->setUser($user);
 		$this->assertTrue((bool)$this->Auth->user());
 		$this->assertEquals($user['username'], $this->Auth->user('username'));
 	}

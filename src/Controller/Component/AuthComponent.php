@@ -582,17 +582,16 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Log a user in.
+ * Set provided user info to session as logged in user.
  *
- * The provided user data will be stored as the logged in user. The user record
- * is written to the session key specified in AuthComponent::$sessionKey. Logging
- * in will also change the session id in order to help mitigate session replays.
+ * The user recordis written to the session key specified in AuthComponent::$sessionKey.
+ * Thehe session id will also be changed in order to help mitigate session replays.
  *
  * @param array $user Array of user data.
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#identifying-users-and-logging-them-in
  */
-	public function login(array $user) {
+	public function setUser(array $user) {
 		$this->_setDefaults();
 
 		$this->session->renew();
