@@ -291,7 +291,6 @@ class ModelTask extends BakeTask {
  */
 	public function findBelongsToMany($model, array $associations) {
 		$schema = $model->schema();
-		$primaryKey = (array)$schema->primaryKey();
 		$tableName = $schema->name();
 		$foreignKey = $this->_modelKey($tableName);
 
@@ -511,19 +510,35 @@ class ModelTask extends BakeTask {
 			$behaviors['Tree'] = [];
 		}
 
-		$counterCache = [];
-		foreach ($fields as $field) {
-			if (strpos($field, '_count') === false) {
-				continue;
-			}
-			list($name) = explode('_count', $field);
-			$assoc = $this->_modelName($name);
-			$counterCache[] = "'{$assoc}' => ['{$field}']";
-		}
+		$counterCache = $this->getCounterCache($model);
 		if (!empty($counterCache)) {
 			$behaviors['CounterCache'] = $counterCache;
 		}
 		return $behaviors;
+	}
+
+/**
+ * Get CounterCaches
+ *
+ * @param \Cake\ORM\Table $model
+ * @return array CounterCache configurations
+ */
+	public function getCounterCache($model) {
+		$belongsTo = $this->findBelongsTo($model, ['belongsTo' => []]);
+		$counterCache = [];
+		foreach ($belongsTo['belongsTo'] as $otherTable) {
+			$otherAlias = $otherTable['alias'];
+			$otherModel = $this->getTableObject($this->_modelName($otherAlias), Inflector::underscore($otherAlias));
+			$otherSchema = $otherModel->schema();
+			$otherFields = $otherSchema->columns();
+			$alias = $model->alias();
+			$field = Inflector::singularize(Inflector::underscore($alias)) . '_count';
+			if (!in_array($field, $otherFields, true)) {
+				continue;
+			}
+			$counterCache[] = "'{$otherAlias}' => ['{$field}']";
+		}
+		return $counterCache;
 	}
 
 /**
