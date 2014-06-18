@@ -129,11 +129,11 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
- * testLogin method
+ * testIdentify method
  *
  * @return void
  */
-	public function testLogin() {
+	public function testIdentify() {
 		$AuthLoginFormAuthenticate = $this->getMock(
 			'Cake\Controller\Component\Auth\FormAuthenticate',
 			array('authenticate'), array(), '', false
@@ -142,10 +142,6 @@ class AuthComponentTest extends TestCase {
 			'AuthLoginForm' => array(
 				'userModel' => 'AuthUsers'
 			)
-		);
-		$this->Auth->session = $this->getMock(
-			'Cake\Network\Session',
-			array('renew')
 		);
 
 		$this->Auth->setAuthenticateObject(0, $AuthLoginFormAuthenticate);
@@ -167,14 +163,8 @@ class AuthComponentTest extends TestCase {
 			->with($this->Auth->request)
 			->will($this->returnValue($user));
 
-		$this->Auth->session->expects($this->once())
-			->method('renew');
-
-		$result = $this->Auth->login();
-		$this->assertTrue($result);
-
-		$this->assertTrue((bool)$this->Auth->user());
-		$this->assertEquals($user, $this->Auth->user());
+		$result = $this->Auth->identify();
+		$this->assertEquals($user, $result);
 		$this->assertSame($AuthLoginFormAuthenticate, $this->Auth->authenticationProvider());
 	}
 
@@ -228,6 +218,8 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
+ * testIsAuthorizedMissingFile function
+ *
  * @expectedException \Cake\Error\Exception
  * @return void
  */
@@ -317,6 +309,8 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
+ * testLoadAuthenticateNoFile function
+ *
  * @expectedException \Cake\Error\Exception
  * @return void
  */
@@ -516,6 +510,11 @@ class AuthComponentTest extends TestCase {
 		$this->assertNull($result, 'startup() should return null, as action is allowed. %s');
 	}
 
+/**
+ * testAllowedActionsSetWithAllowMethod method
+ *
+ * @return void
+ */
 	public function testAllowedActionsSetWithAllowMethod() {
 		$url = '/auth_test/action_name';
 		$this->Controller->request->addParams(Router::parse($url));
@@ -822,6 +821,7 @@ class AuthComponentTest extends TestCase {
 
 /**
  * Throw ForbiddenException if config `unauthorizedRedirect` is set to false
+ *
  * @expectedException \Cake\Error\ForbiddenException
  * @return void
  */
@@ -1093,36 +1093,34 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
- * test logging in with a request.
+ * test logging in.
  *
  * @return void
  */
-	public function testLoginWithRequestData() {
-		$RequestLoginMockAuthenticate = $this->getMock(
-			'Cake\Controller\Component\Auth\FormAuthenticate',
-			array('authenticate'), array(), '', false
+	public function testLogin() {
+		$this->Auth->session = $this->getMock(
+			'Cake\Network\Session',
+			array('renew', 'write')
 		);
-		$request = new Request('users/login');
+
 		$user = array('username' => 'mark', 'role' => 'admin');
 
-		$this->Auth->request = $request;
-		$this->Auth->authenticate = array('RequestLoginMock');
-		$this->Auth->setAuthenticateObject(0, $RequestLoginMockAuthenticate);
-		$RequestLoginMockAuthenticate->expects($this->once())
-			->method('authenticate')
-			->with($request)
-			->will($this->returnValue($user));
+		$this->Auth->session->expects($this->once())
+			->method('renew');
 
-		$this->assertTrue($this->Auth->login());
-		$this->assertEquals($user['username'], $this->Auth->user('username'));
+		$this->Auth->session->expects($this->once())
+			->method('write')
+			->with($this->Auth->sessionKey, $user);
+
+		$this->Auth->login($user);
 	}
 
 /**
- * test login() with user data
+ * testGettingUserAfterLogin
  *
  * @return void
  */
-	public function testLoginWithUserData() {
+	public function testGettingUserAfterLogin() {
 		$this->assertFalse((bool)$this->Auth->user());
 
 		$user = array(
@@ -1131,7 +1129,7 @@ class AuthComponentTest extends TestCase {
 			'created' => new \DateTime('2007-03-17 01:16:23'),
 			'updated' => new \DateTime('2007-03-17 01:18:31')
 		);
-		$this->assertTrue($this->Auth->login($user));
+		$this->Auth->login($user);
 		$this->assertTrue((bool)$this->Auth->user());
 		$this->assertEquals($user['username'], $this->Auth->user('username'));
 	}

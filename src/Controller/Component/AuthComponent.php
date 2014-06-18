@@ -584,26 +584,19 @@ class AuthComponent extends Component {
 /**
  * Log a user in.
  *
- * If a $user is provided that data will be stored as the logged in user. If `$user` is empty or not
- * specified, the request will be used to identify a user. If the identification was successful,
- * the user record is written to the session key specified in AuthComponent::$sessionKey. Logging in
- * will also change the session id in order to help mitigate session replays.
+ * The provided user data will be stored as the logged in user. The user record
+ * is written to the session key specified in AuthComponent::$sessionKey. Logging
+ * in will also change the session id in order to help mitigate session replays.
  *
- * @param array $user Either an array of user data, or null to identify a user using the current request.
- * @return bool True on login success, false on failure
+ * @param array $user Array of user data.
+ * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#identifying-users-and-logging-them-in
  */
-	public function login($user = null) {
+	public function login(array $user) {
 		$this->_setDefaults();
 
-		if (empty($user)) {
-			$user = $this->identify($this->request, $this->response);
-		}
-		if ($user) {
-			$this->session->renew();
-			$this->session->write($this->sessionKey, $user);
-		}
-		return (bool)$this->user();
+		$this->session->renew();
+		$this->session->write($this->sessionKey, $user);
 	}
 
 /**
@@ -729,16 +722,16 @@ class AuthComponent extends Component {
  * Use the configured authentication adapters, and attempt to identify the user
  * by credentials contained in $request.
  *
- * @param \Cake\Network\Request $request The request that contains authentication data.
- * @param \Cake\Network\Response $response The response
  * @return array User record data, or false, if the user could not be identified.
  */
-	public function identify(Request $request, Response $response) {
+	public function identify() {
+		$this->_setDefaults();
+
 		if (empty($this->_authenticateObjects)) {
 			$this->constructAuthenticate();
 		}
 		foreach ($this->_authenticateObjects as $auth) {
-			$result = $auth->authenticate($request, $response);
+			$result = $auth->authenticate($this->request, $this->response);
 			if (!empty($result) && is_array($result)) {
 				$this->_authenticationProvider = $auth;
 				return $result;
