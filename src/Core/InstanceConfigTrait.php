@@ -124,7 +124,7 @@ trait InstanceConfigTrait {
  * @return void
  * @throws Cake\Error\Exception if attempting to clobber existing config
  */
-	protected function _configWrite($key, $value, $merge = null) {
+	protected function _configWrite($key, $value, $merge = false) {
 		if (is_string($key) && $value === null) {
 			return $this->_configDelete($key);
 		}
