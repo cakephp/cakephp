@@ -248,11 +248,11 @@ class ViewTaskTest extends TestCase {
 
 		$this->Task->params['plugin'] = $this->Task->plugin = 'TestPlugin';
 		$result = $this->Task->getPath();
-		$this->assertPathEquals($pluginPath . 'Template/Posts/', $result);
+		$this->assertPathEquals($pluginPath . 'src/Template/Posts/', $result);
 
 		$this->Task->params['prefix'] = 'admin';
 		$result = $this->Task->getPath();
-		$this->assertPathEquals($pluginPath . 'Template/Admin/Posts/', $result);
+		$this->assertPathEquals($pluginPath . 'src/Template/Admin/Posts/', $result);
 
 		Plugin::unload('TestPlugin');
 	}

@@ -81,7 +81,7 @@ class BakeTask extends Shell {
 	public function getPath() {
 		$path = APP . $this->pathFragment;
 		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . $this->pathFragment;
+			$path = $this->_pluginPath($this->plugin) . 'src/' . $this->pathFragment;
 		}
 		return str_replace('/', DS, $path);
 	}
@@ -106,7 +106,7 @@ class BakeTask extends Shell {
  *
  * @param string $command the command to execute
  * @return void
- * @throws \RuntimeExeception if any errors occurred during the execution
+ * @throws \RuntimeException if any errors occurred during the execution
  */
 	public function callProcess($command) {
 		$descriptorSpec = [

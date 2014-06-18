@@ -109,10 +109,6 @@ class ModelTask extends BakeTask {
 		$validation = $this->getValidation($model);
 		$behaviors = $this->getBehaviors($model);
 
-		if ($this->plugin) {
-			$this->pathFragment = 'src/' . $this->pathFragment;
-		}
-
 		$data = compact(
 			'associations', 'primaryKey', 'displayField',
 			'table', 'fields', 'validation', 'behaviors'
