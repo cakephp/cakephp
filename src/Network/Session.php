@@ -527,57 +527,6 @@ class Session {
 	}
 
 /**
- * Stores a single string under the "Message.flash" session key. This is useful
- * for persisting messages from one request to another that should be displayed
- * to the user.
- *
- * The options array accepts `key`, this is is useful for assigning a domain
- * to the flash message since you can only store one per domain.
- *
- * ### Example
- *
- * {{{
- *	$session->flash('Welcome, Mark', 'success');
- *	$session->flash('This is a message in a different domain', 'info', ['key' => 'another']);
- * }}}
- *
- * @param string $message the message to display to persist
- * @param string $type the type of message
- * @param array $options A list of extra options to persist related to this message
- * @return void
- */
-	public function flash($message, $type = 'info', $options = []) {
-		$options += ['key' => 'flash'];
-		$key = $options['key'];
-		unset($options['key']);
-		$this->write("Message.$key", [
-			'message' => $message,
-			'type' => $type,
-			'params' => $options
-		]);
-	}
-
-/**
- * Returns the flash message stored in the given key if exists.
- *
- * @param string $key the message domain
- * @return array|null
- */
-	public function readFlash($key = 'flash') {
-		return $this->read("Message.$key");
-	}
-
-/**
- * Deletes the flash message stored in the given key
- *
- * @param string $key the message domain
- * @return void
- */
-	public function deleteFlash($key = 'flash') {
-		$this->delete("Message.$key");
-	}
-
-/**
  * Returns true if the session is no longer valid because the last time it was
  * accessed was after the configured timeout.
  *

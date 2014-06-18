@@ -151,7 +151,7 @@ class AuthComponent extends Component {
  *
  * @var array
  */
-	public $components = array('RequestHandler');
+	public $components = ['RequestHandler', 'Flash'];
 
 /**
  * Objects that will be used for authentication checks.
@@ -799,7 +799,10 @@ class AuthComponent extends Component {
 		if (isset($flashConfig['params'])) {
 			$params = $flashConfig['params'];
 		}
-		$this->session->flash($message, 'error', $params + compact('key'));
+		if (empty($params['element'])) {
+			$params['element'] = 'error';
+		}
+		$this->Flash->set($message, $params + compact('key'));
 	}
 
 /**

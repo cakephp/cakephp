@@ -116,13 +116,13 @@ class SessionHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::flash
  */
 	public function flash($key = 'flash', $attrs = []) {
-		$flash = $this->request->session()->readFlash($key);
+		$flash = $this->request->session()->read('Flash.' . $key);
 
 		if (!$flash) {
 			return '';
 		}
 
-		$this->request->session()->deleteFlash($key);
+		$this->request->session()->delete('Flash.' . $key);
 
 		if (!empty($attrs)) {
 			$flash = array_merge($flash, $attrs);

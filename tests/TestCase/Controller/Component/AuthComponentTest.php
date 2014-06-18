@@ -220,7 +220,7 @@ class AuthComponentTest extends TestCase {
 		$result = $this->Controller->Auth->startup($event);
 		$this->assertTrue($event->isStopped());
 		$this->assertInstanceOf('Cake\Network\Response', $result);
-		$this->assertTrue($this->Auth->session->check('Message.auth'));
+		$this->assertTrue($this->Auth->session->check('Flash.auth'));
 
 		$this->Controller->request->addParams(Router::parse('auth_test/camelCase'));
 		$result = $this->Controller->Auth->startup($event);
@@ -750,9 +750,10 @@ class AuthComponentTest extends TestCase {
  */
 	public function testRedirectToUnauthorizedRedirect() {
 		$url = '/party/on';
-		$this->Auth->session = $this->getMock(
-			'Cake\Network\Session',
-			array('flash')
+		$this->Auth->Flash = $this->getMock(
+			'Cake\Controller\Component\FlashComponent',
+			['set'],
+			[$this->Controller->components()]
 		);
 		$this->Auth->request = $request = new Request([
 			'url' => $url,
@@ -776,8 +777,8 @@ class AuthComponentTest extends TestCase {
 			->method('redirect')
 			->with($this->equalTo($expected));
 
-		$this->Auth->session->expects($this->once())
-			->method('flash');
+		$this->Auth->Flash->expects($this->once())
+			->method('set');
 
 		$event = new Event('Controller.startup', $Controller);
 		$this->Auth->startup($event);
@@ -1142,14 +1143,18 @@ class AuthComponentTest extends TestCase {
  * @return void
  */
 	public function testFlashSettings() {
-		$this->Auth->session = $this->getMock('Cake\Network\Session');
-		$this->Auth->session->expects($this->at(0))
-			->method('flash')
-			->with('Auth failure', 'error', array('key' => 'auth-key', 'element' => 'custom'));
+		$this->Auth->Flash = $this->getMock(
+			'Cake\Controller\Component\FlashComponent',
+			[],
+			[$this->Controller->components()]
+		);
+		$this->Auth->Flash->expects($this->at(0))
+			->method('set')
+			->with('Auth failure', array('key' => 'auth-key', 'element' => 'custom'));
 
-		$this->Auth->session->expects($this->at(1))
-			->method('flash')
-			->with('Auth failure', 'error', array('key' => 'auth-key'));
+		$this->Auth->Flash->expects($this->at(1))
+			->method('set')
+			->with('Auth failure', array('element' => 'error', 'key' => 'auth-key'));
 
 		$this->Auth->config('flash', [
 			'params' => array('element' => 'custom'),
