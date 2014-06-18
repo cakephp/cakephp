@@ -592,8 +592,6 @@ class AuthComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#identifying-users-and-logging-them-in
  */
 	public function setUser(array $user) {
-		$this->_setDefaults();
-
 		$this->session->renew();
 		$this->session->write($this->sessionKey, $user);
 	}
