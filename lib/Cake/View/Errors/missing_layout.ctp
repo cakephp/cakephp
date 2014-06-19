@@ -30,6 +30,9 @@
 <?php
 	$paths = $this->_paths($this->plugin);
 	foreach ($paths as $path):
+		if (strpos($path, CORE_PATH) !== false) {
+			continue;
+		}
 		echo sprintf('<li>%s%s</li>', h($path), h($file));
 	endforeach;
 ?>
