@@ -39,7 +39,7 @@ class PluginTask extends BakeTask {
  *
  * @var array
  */
-	public $tasks = ['Template'];
+	public $tasks = ['Template', 'Project'];
 
 /**
  * initialize
@@ -139,9 +139,10 @@ class PluginTask extends BakeTask {
 			$out .= "use App\\Controller\\AppController as BaseController;\n\n";
 			$out .= "class AppController extends BaseController {\n\n";
 			$out .= "}\n";
-			$this->createFile($this->path . $plugin . DS . 'Controller' . DS . $controllerFileName, $out);
+			$this->createFile($this->path . $plugin . DS . $classBase . DS . 'Controller' . DS . $controllerFileName, $out);
 
-			$this->_modifyBootstrap($plugin);
+			$hasAutoloader = $this->_modifyAutoloader($plugin, $this->path);
+			$this->_modifyBootstrap($plugin, $hasAutoloader);
 			$this->_generatePhpunitXml($plugin, $this->path);
 			$this->_generateTestBootstrap($plugin, $this->path);
 
@@ -156,13 +157,20 @@ class PluginTask extends BakeTask {
  * Update the app's bootstrap.php file.
  *
  * @param string $plugin Name of plugin
+ * @param boolean $hasAutoloader Whether or not there is an autoloader configured for
+ * the plugin
  * @return void
  */
-	protected function _modifyBootstrap($plugin) {
+	protected function _modifyBootstrap($plugin, $hasAutoloader) {
 		$bootstrap = new File($this->bootstrap, false);
 		$contents = $bootstrap->read();
 		if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
-			$bootstrap->append("\nPlugin::load('$plugin', ['bootstrap' => false, 'routes' => false]);\n");
+			$autoload = $hasAutoloader ? null : "'autoload' => true, ";
+			$bootstrap->append(sprintf(
+				"\nPlugin::load('%s', [%s'bootstrap' => false, 'routes' => false]);\n",
+				$plugin,
+				$autoload
+			));
 			$this->out('');
 			$this->out(sprintf('%s modified', $this->bootstrap));
 		}
@@ -203,6 +211,53 @@ class PluginTask extends BakeTask {
 		$out = $this->Template->generate('test', 'bootstrap');
 		$file = $path . $plugin . DS . 'tests' . DS . 'bootstrap.php';
 		$this->createFile($file, $out);
+	}
+
+/**
+ * Modifies App's composer.json to include the plugin and tries to call
+ * composer dump-autoload to refresh the autoloader cache
+ *
+ * @param string $plugin Name of plugin
+ * @param string $path The path to save the phpunit.xml file to.
+ * @return boolean True if composer could be modified correctly
+ */
+	protected function _modifyAutoloader($plugin, $path) {
+		$path = dirname($path);
+
+		if (!file_exists($path . DS . 'composer.json')) {
+			return false;
+		}
+
+		$file = $path . DS . 'composer.json';
+		$config = json_decode(file_get_contents($file), true);
+		$config['autoload']['psr-4'][$plugin . '\\'] = "./Plugin/$plugin/src";
+		$config['autoload']['psr-4'][$plugin . '\\Test\\'] = "./Plugin/$plugin/tests";
+
+		$this->out(__d('cake_console', '<info>Modifying composer autoloader</info>'));
+
+		file_put_contents(
+			$file,
+			json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+		);
+
+		$composer = $this->Project->findComposer();
+
+		if (!$composer) {
+			$this->error(__d('cake_console', 'Could not locate composer, Add composer to your PATH, or use the -composer option.'));
+			return false;
+		}
+
+		try {
+			$command = 'cd ' . escapeshellarg($path) . '; ';
+			$command .= 'php ' . escapeshellarg($composer) . ' dump-autoload ';
+			$this->callProcess($command);
+		} catch (\RuntimeException $e) {
+			$error = $e->getMessage();
+			$this->error(__d('cake_console', 'Could not run `composer dump-autoload`: %s', $error));
+			return false;
+		}
+
+		return true;
 	}
 
 /**

@@ -81,7 +81,7 @@ class BakeTask extends Shell {
 	public function getPath() {
 		$path = APP . $this->pathFragment;
 		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . $this->pathFragment;
+			$path = $this->_pluginPath($this->plugin) . 'src/' . $this->pathFragment;
 		}
 		return str_replace('/', DS, $path);
 	}
@@ -99,6 +99,46 @@ class BakeTask extends Shell {
 		if (isset($this->params['connection'])) {
 			$this->connection = $this->params['connection'];
 		}
+	}
+
+/**
+ * Executes an external shell command and pipes its output to the stdout
+ *
+ * @param string $command the command to execute
+ * @return void
+ * @throws \RuntimeException if any errors occurred during the execution
+ */
+	public function callProcess($command) {
+		$descriptorSpec = [
+			0 => ['pipe', 'r'],
+			1 => ['pipe', 'w'],
+			2 => ['pipe', 'w']
+		];
+		$this->_io->verbose('Running ' . $command);
+		$process = proc_open(
+			$command,
+			$descriptorSpec,
+			$pipes
+		);
+		if (!is_resource($process)) {
+			$this->error(__d('cake_console', 'Could not start subprocess.'));
+			return false;
+		}
+		$output = $error = '';
+		fclose($pipes[0]);
+
+		$output = stream_get_contents($pipes[1]);
+		fclose($pipes[1]);
+
+		$error = stream_get_contents($pipes[2]);
+		fclose($pipes[2]);
+		proc_close($process);
+
+		if ($error) {
+			throw new \RuntimeException($error);
+		}
+
+		$this->out($output);
 	}
 
 /**

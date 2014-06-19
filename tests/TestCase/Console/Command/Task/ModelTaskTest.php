@@ -823,7 +823,7 @@ class ModelTaskTest extends TestCase {
 
 		// fake plugin path
 		Plugin::load('ControllerTest', array('path' => APP . 'Plugin' . DS . 'ControllerTest' . DS));
-		$path = $this->_normalizePath(APP . 'Plugin/ControllerTest/Model/Table/BakeArticlesTable.php');
+		$path = $this->_normalizePath(APP . 'Plugin/ControllerTest/src/Model/Table/BakeArticlesTable.php');
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, $this->logicalAnd(
 				$this->stringContains('namespace ControllerTest\\Model\\Table;'),
@@ -845,7 +845,7 @@ class ModelTaskTest extends TestCase {
 
 		// fake plugin path
 		Plugin::load('ControllerTest', array('path' => APP . 'Plugin' . DS . 'ControllerTest' . DS));
-		$path = APP . 'Plugin' . DS . 'ControllerTest' . DS . 'Model' . DS . 'Entity' . DS . 'BakeArticle.php';
+		$path = APP . 'Plugin' . DS . 'ControllerTest' . DS . 'src' . DS . 'Model' . DS . 'Entity' . DS . 'BakeArticle.php';
 		$path = $this->_normalizePath($path);
 		$this->Task->expects($this->once())->method('createFile')
 			->with($path, $this->logicalAnd(

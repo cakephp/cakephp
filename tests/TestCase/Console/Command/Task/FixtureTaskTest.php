@@ -225,7 +225,7 @@ class FixtureTaskTest extends TestCase {
  */
 	public function testMainWithPluginModel() {
 		$this->Task->connection = 'test';
-		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/Test/Fixture/ArticleFixture.php');
+		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/tests/Fixture/ArticleFixture.php');
 
 		Plugin::load('TestPlugin');
 
@@ -407,7 +407,7 @@ class FixtureTaskTest extends TestCase {
 	public function testGeneratePluginFixtureFile() {
 		$this->Task->connection = 'test';
 		$this->Task->plugin = 'TestPlugin';
-		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/Test/Fixture/ArticleFixture.php');
+		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/tests/Fixture/ArticleFixture.php');
 
 		Plugin::load('TestPlugin');
 		$this->Task->expects($this->at(0))->method('createFile')

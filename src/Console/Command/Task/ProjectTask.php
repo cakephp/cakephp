@@ -146,36 +146,14 @@ class ProjectTask extends BakeTask {
 
 		$command = 'php ' . escapeshellarg($composer) . ' create-project -s dev cakephp/app ' . escapeshellarg($path);
 
-		$descriptorSpec = [
-			0 => ['pipe', 'r'],
-			1 => ['pipe', 'w'],
-			2 => ['pipe', 'w']
-		];
-		$this->_io->verbose('Running ' . $command);
-		$process = proc_open(
-			$command,
-			$descriptorSpec,
-			$pipes
-		);
-		if (!is_resource($process)) {
-			$this->error(__d('cake_console', 'Could not start subprocess.'));
-			return false;
-		}
-		$output = $error = '';
-		fclose($pipes[0]);
-
-		$output = stream_get_contents($pipes[1]);
-		fclose($pipes[1]);
-
-		$error = stream_get_contents($pipes[2]);
-		fclose($pipes[2]);
-		proc_close($process);
-
-		if ($error) {
+		try {
+			$this->callProcess($command);
+		} catch (\RuntimeException $e) {
+			$error = $e->getMessage();
 			$this->error(__d('cake_console', 'Installation from packagist.org failed with: %s', $error));
 			return false;
 		}
-		$this->out($output);
+
 		return true;
 	}
 
