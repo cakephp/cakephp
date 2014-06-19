@@ -129,11 +129,11 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
- * testLogin method
+ * testIdentify method
  *
  * @return void
  */
-	public function testLogin() {
+	public function testIdentify() {
 		$AuthLoginFormAuthenticate = $this->getMock(
 			'Cake\Controller\Component\Auth\FormAuthenticate',
 			array('authenticate'), array(), '', false
@@ -142,10 +142,6 @@ class AuthComponentTest extends TestCase {
 			'AuthLoginForm' => array(
 				'userModel' => 'AuthUsers'
 			)
-		);
-		$this->Auth->session = $this->getMock(
-			'Cake\Network\Session',
-			array('renew')
 		);
 
 		$this->Auth->setAuthenticateObject(0, $AuthLoginFormAuthenticate);
@@ -167,14 +163,8 @@ class AuthComponentTest extends TestCase {
 			->with($this->Auth->request)
 			->will($this->returnValue($user));
 
-		$this->Auth->session->expects($this->once())
-			->method('renew');
-
-		$result = $this->Auth->login();
-		$this->assertTrue($result);
-
-		$this->assertTrue((bool)$this->Auth->user());
-		$this->assertEquals($user, $this->Auth->user());
+		$result = $this->Auth->identify();
+		$this->assertEquals($user, $result);
 		$this->assertSame($AuthLoginFormAuthenticate, $this->Auth->authenticationProvider());
 	}
 
@@ -228,6 +218,8 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
+ * testIsAuthorizedMissingFile function
+ *
  * @expectedException \Cake\Error\Exception
  * @return void
  */
@@ -317,6 +309,8 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
+ * testLoadAuthenticateNoFile function
+ *
  * @expectedException \Cake\Error\Exception
  * @return void
  */
@@ -516,6 +510,11 @@ class AuthComponentTest extends TestCase {
 		$this->assertNull($result, 'startup() should return null, as action is allowed. %s');
 	}
 
+/**
+ * testAllowedActionsSetWithAllowMethod method
+ *
+ * @return void
+ */
 	public function testAllowedActionsSetWithAllowMethod() {
 		$url = '/auth_test/action_name';
 		$this->Controller->request->addParams(Router::parse($url));
@@ -723,7 +722,7 @@ class AuthComponentTest extends TestCase {
 		$Request->env('HTTP_REFERER', false);
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->config('authorize', ['Controller']);
-		$this->Auth->login(array('username' => 'mariano', 'password' => 'cake'));
+		$this->Auth->setUser(array('username' => 'mariano', 'password' => 'cake'));
 		$this->Auth->config('loginRedirect', [
 			'controller' => 'something', 'action' => 'else'
 		]);
@@ -761,7 +760,7 @@ class AuthComponentTest extends TestCase {
 		]);
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->config('authorize', ['Controller']);
-		$this->Auth->login(array('username' => 'admad', 'password' => 'cake'));
+		$this->Auth->setUser(array('username' => 'admad', 'password' => 'cake'));
 
 		$expected = ['controller' => 'no_can_do', 'action' => 'jack'];
 		$this->Auth->config('unauthorizedRedirect', $expected);
@@ -798,7 +797,7 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->request = $Request = new Request($url);
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->config('authorize', ['Controller']);
-		$this->Auth->login(array('username' => 'admad', 'password' => 'cake'));
+		$this->Auth->setUser(array('username' => 'admad', 'password' => 'cake'));
 		$expected = ['controller' => 'no_can_do', 'action' => 'jack'];
 		$this->Auth->config('unauthorizedRedirect', $expected);
 		$this->Auth->config('authError', false);
@@ -823,6 +822,7 @@ class AuthComponentTest extends TestCase {
 
 /**
  * Throw ForbiddenException if config `unauthorizedRedirect` is set to false
+ *
  * @expectedException \Cake\Error\ForbiddenException
  * @return void
  */
@@ -834,7 +834,7 @@ class AuthComponentTest extends TestCase {
 			'authorize' => ['Controller'],
 			'unauthorizedRedirect' => false
 		]);
-		$this->Auth->login(array('username' => 'baker', 'password' => 'cake'));
+		$this->Auth->setUser(array('username' => 'baker', 'password' => 'cake'));
 
 		$response = new Response();
 		$Controller = $this->getMock(
@@ -1094,36 +1094,34 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
- * test logging in with a request.
+ * test setting user info to session.
  *
  * @return void
  */
-	public function testLoginWithRequestData() {
-		$RequestLoginMockAuthenticate = $this->getMock(
-			'Cake\Controller\Component\Auth\FormAuthenticate',
-			array('authenticate'), array(), '', false
+	public function testSetUser() {
+		$this->Auth->session = $this->getMock(
+			'Cake\Network\Session',
+			array('renew', 'write')
 		);
-		$request = new Request('users/login');
+
 		$user = array('username' => 'mark', 'role' => 'admin');
 
-		$this->Auth->request = $request;
-		$this->Auth->authenticate = array('RequestLoginMock');
-		$this->Auth->setAuthenticateObject(0, $RequestLoginMockAuthenticate);
-		$RequestLoginMockAuthenticate->expects($this->once())
-			->method('authenticate')
-			->with($request)
-			->will($this->returnValue($user));
+		$this->Auth->session->expects($this->once())
+			->method('renew');
 
-		$this->assertTrue($this->Auth->login());
-		$this->assertEquals($user['username'], $this->Auth->user('username'));
+		$this->Auth->session->expects($this->once())
+			->method('write')
+			->with($this->Auth->sessionKey, $user);
+
+		$this->Auth->setUser($user);
 	}
 
 /**
- * test login() with user data
+ * testGettingUserAfterSetUser
  *
  * @return void
  */
-	public function testLoginWithUserData() {
+	public function testGettingUserAfterSetUser() {
 		$this->assertFalse((bool)$this->Auth->user());
 
 		$user = array(
@@ -1132,7 +1130,7 @@ class AuthComponentTest extends TestCase {
 			'created' => new \DateTime('2007-03-17 01:16:23'),
 			'updated' => new \DateTime('2007-03-17 01:18:31')
 		);
-		$this->assertTrue($this->Auth->login($user));
+		$this->Auth->setUser($user);
 		$this->assertTrue((bool)$this->Auth->user());
 		$this->assertEquals($user['username'], $this->Auth->user('username'));
 	}
