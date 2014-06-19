@@ -51,6 +51,13 @@ class LoggedQuery {
 	public $numRows = 0;
 
 /**
+ * The exception that was thrown by the exceution of this query
+ *
+ * @var \Exception
+ */
+	public $error;
+
+/**
  * Returns the string representation of this logged query
  *
  * @return void
