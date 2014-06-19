@@ -387,7 +387,6 @@ class RequestHandlerComponent extends Component {
  *   types the client accepts. If a string is passed, returns true
  *   if the client accepts it. If an array is passed, returns true
  *   if the client accepts one or more elements in the array.
- * @see RequestHandlerComponent::setContent()
  */
 	public function accepts($type = null) {
 		$accepted = $this->request->accepts();
@@ -458,7 +457,6 @@ class RequestHandlerComponent extends Component {
  *    a boolean will be returned if that type is preferred.
  *    If an array of types are provided then the first preferred type is returned.
  *    If no type is provided the first preferred type is returned.
- * @see RequestHandlerComponent::setContent()
  */
 	public function prefers($type = null) {
 		$acceptRaw = $this->request->parseAccept();
@@ -509,7 +507,6 @@ class RequestHandlerComponent extends Component {
  * @param string $type Type of response to send (e.g: 'ajax')
  * @param array $options Array of options to use
  * @return void
- * @see RequestHandlerComponent::setContent()
  * @see RequestHandlerComponent::respondAs()
  */
 	public function renderAs(Controller $controller, $type, array $options = array()) {
@@ -571,7 +568,6 @@ class RequestHandlerComponent extends Component {
  * @return bool Returns false if the friendly type name given in $type does
  *    not exist in the type map, or if the Content-type header has
  *    already been set by this method.
- * @see RequestHandlerComponent::setContent()
  */
 	public function respondAs($type, array $options = array()) {
 		$defaults = array('index' => null, 'charset' => null, 'attachment' => false);
