@@ -56,7 +56,7 @@ class SessionComponent extends Component {
  * In your controller: $this->Session->write('Controller.sessKey', 'session value');
  *
  * @param string $name The name of the key your are setting in the session.
- * 							This should be in a Controller.key format for better organizing
+ *    This should be in a Controller.key format for better organizing
  * @param string $value The value you want to store in a session.
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::write
@@ -122,7 +122,12 @@ class SessionComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#creating-notification-messages
  */
 	public function setFlash($message, $element = null, array $params = array(), $key = 'flash') {
-		$this->_session->flash($message, 'info', $params + compact('element', 'key'));
+		$this->_session->write('Flash.' . $key, [
+			'message' => $message,
+			'key' => $key,
+			'element' => $element,
+			'params' => $params
+		]);
 	}
 
 /**

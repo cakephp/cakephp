@@ -45,7 +45,7 @@ class SessionHelperTest extends TestCase {
 
 		$session->write(array(
 			'test' => 'info',
-			'Message' => array(
+			'Flash' => array(
 				'flash' => array(
 					'type' => 'info',
 					'params' => array(),
@@ -102,7 +102,7 @@ class SessionHelperTest extends TestCase {
  */
 	public function testCheck() {
 		$this->assertTrue($this->Session->check('test'));
-		$this->assertTrue($this->Session->check('Message.flash'));
+		$this->assertTrue($this->Session->check('Flash.flash'));
 		$this->assertFalse($this->Session->check('Does.not.exist'));
 		$this->assertFalse($this->Session->check('Nope'));
 	}
