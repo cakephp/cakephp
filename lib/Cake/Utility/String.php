@@ -672,7 +672,7 @@ class String {
 	}
 
 /**
- * Creates a comma separated list where the last two items are joined with 'and', forming natural English.
+ * Creates a comma separated list where the last two items are joined with 'and', forming natural language.
  *
  * @param array $list The list to be joined.
  * @param string $and The word used to join the last and second last items together with. Defaults to 'and'.
