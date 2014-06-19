@@ -37,7 +37,7 @@ class ModelTaskTest extends TestCase {
 	public $fixtures = array(
 		'core.bake_article', 'core.bake_comment', 'core.bake_articles_bake_tag',
 		'core.bake_tag', 'core.user', 'core.category_thread', 'core.number_tree',
-		'core.counter_cache_user'
+		'core.counter_cache_user', 'core.counter_cache_post'
 	);
 
 /**
@@ -243,7 +243,7 @@ class ModelTaskTest extends TestCase {
 			'belongsTo' => [
 				[
 					'alias' => 'BakeUsers',
-					'foreignKey' => 'bake_user_id',
+					'foreignKey' => 'bake_user_id'
 				],
 			],
 			'hasMany' => [
@@ -276,11 +276,11 @@ class ModelTaskTest extends TestCase {
 			'belongsTo' => [
 				[
 					'alias' => 'BakeArticles',
-					'foreignKey' => 'bake_article_id',
+					'foreignKey' => 'bake_article_id'
 				],
 				[
 					'alias' => 'BakeUsers',
-					'foreignKey' => 'bake_user_id',
+					'foreignKey' => 'bake_user_id'
 				],
 			]
 		];
@@ -292,7 +292,7 @@ class ModelTaskTest extends TestCase {
 			'belongsTo' => [
 				[
 					'alias' => 'ParentCategoryThreads',
-					'foreignKey' => 'parent_id',
+					'foreignKey' => 'parent_id'
 				],
 			]
 		];
@@ -557,10 +557,16 @@ class ModelTaskTest extends TestCase {
 		$result = $this->Task->getBehaviors($model);
 		$this->assertEquals(['Timestamp' => []], $result);
 
-		$model = TableRegistry::get('CounterCacheUsers');
+		TableRegistry::clear();
+		TableRegistry::get('Users', [
+			'table' => 'counter_cache_users'
+		]);
+		$model = TableRegistry::get('Posts', [
+			'table' => 'counter_cache_posts'
+		]);
 		$result = $this->Task->getBehaviors($model);
 		$expected = [
-			'CounterCache' => ["'Posts' => ['post_count']"]
+			'CounterCache' => ["'Users' => ['post_count']"]
 		];
 		$this->assertEquals($expected, $result);
 	}
@@ -1001,7 +1007,7 @@ class ModelTaskTest extends TestCase {
 		}
 
 		$this->Task->connection = 'test';
-		$this->Task->skipTables = ['bake_tags'];
+		$this->Task->skipTables = ['bake_tags', 'counter_cache_posts'];
 
 		$this->Task->Fixture->expects($this->exactly(7))
 			->method('bake');
