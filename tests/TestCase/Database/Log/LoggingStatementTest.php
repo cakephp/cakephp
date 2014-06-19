@@ -61,7 +61,7 @@ class LoggingStatementTest extends \Cake\TestSuite\TestCase {
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'SELECT bar FROM foo'),
-				$this->attributeEqualTo('took', 5, 5),
+				$this->attributeEqualTo('took', 5, 200),
 				$this->attributeEqualTo('numRows', 4),
 				$this->attributeEqualTo('params', ['a' => 1, 'b' => 2])
 			));
@@ -85,7 +85,7 @@ class LoggingStatementTest extends \Cake\TestSuite\TestCase {
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'SELECT bar FROM foo'),
-				$this->attributeEqualTo('took', 5, 5),
+				$this->attributeEqualTo('took', 5, 200),
 				$this->attributeEqualTo('numRows', 4),
 				$this->attributeEqualTo('params', ['a' => 1, 'b' => '2013-01-01'])
 			));
@@ -94,7 +94,7 @@ class LoggingStatementTest extends \Cake\TestSuite\TestCase {
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'SELECT bar FROM foo'),
-				$this->attributeEqualTo('took', 5, 5),
+				$this->attributeEqualTo('took', 5, 200),
 				$this->attributeEqualTo('numRows', 4),
 				$this->attributeEqualTo('params', ['a' => 1, 'b' => '2014-01-01'])
 			));
@@ -112,4 +112,31 @@ class LoggingStatementTest extends \Cake\TestSuite\TestCase {
 		$st->execute();
 	}
 
+/**
+ * Tests that queries are logged despite database errors
+ *
+ * @expectedException \LogicException
+ * @expectedExceptionMessage This is bad
+ * @return void
+ */
+	public function testExecuteWithError() {
+		$exception = new \LogicException('This is bad');
+		$inner = $this->getMock('PDOStatement');
+		$inner->expects($this->once())->method('execute')
+			->will($this->throwException($exception));
+		$logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+		$logger->expects($this->once())
+			->method('log')
+			->with($this->logicalAnd(
+				$this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+				$this->attributeEqualTo('query', 'SELECT bar FROM foo'),
+				$this->attributeEqualTo('took', 5, 200),
+				$this->attributeEqualTo('params', []),
+				$this->attributeEqualTo('error', $exception)
+			));
+		$st = new LoggingStatement($inner);
+		$st->queryString = 'SELECT bar FROM foo';
+		$st->logger($logger);
+		$st->execute();
+	}
 }

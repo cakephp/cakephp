@@ -56,6 +56,7 @@ class LoggingStatement extends StatementDecorator {
 			throw $e;
 		}
 
+		$query->numRows = $this->rowCount();
 		$this->_log($query, $params, $t);
 		return $result;
 	}
@@ -71,7 +72,6 @@ class LoggingStatement extends StatementDecorator {
  */
 	protected function _log($query, $params, $startTime) {
 		$query->took = round((microtime(true) - $startTime) * 1000, 0);
-		$query->numRows = $this->rowCount();
 		$query->params = $params ?: $this->_compiledParams;
 		$query->query = $this->queryString;
 		$this->logger()->log($query);
