@@ -51,7 +51,7 @@ class Hash {
 			$parts = $path;
 		}
 		
-		if(is_array($parts)) {
+		if (is_array($parts)) {
 			foreach ($parts as $key) {
 				if (is_array($data) && isset($data[$key])) {
 					$data =& $data[$key];
