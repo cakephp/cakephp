@@ -24,7 +24,7 @@ install:
   - echo extension=php_sqlsrv.dll >> php.ini
   - echo extension=php_pdo_sqlsrv.dll >> php.ini
   - echo extension=php_intl.dll >> php.ini
-  - echo extension=php_mcrypt.dll >> php.ini
+  - echo extension=php_mbstring.dll >> php.ini
   - cd C:\projects\cakephp
   - php -r "readfile('https://getcomposer.org/installer');" | php
   - php composer.phar install
