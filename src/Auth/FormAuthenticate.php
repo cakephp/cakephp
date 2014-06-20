@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -65,14 +64,40 @@ class FormAuthenticate extends BaseAuthenticate {
  * @return mixed False on login failure.  An array of User data on success.
  */
 	public function authenticate(Request $request, Response $response) {
+		if (!$request->is('post') &&
+			$request->session()->check($this->_config['sessionKey'])
+		) {
+			return $request->session()->read($this->_config['sessionKey']);
+		}
+
 		$fields = $this->_config['fields'];
 		if (!$this->_checkFields($request, $fields)) {
 			return false;
 		}
-		return $this->_findUser(
+
+		$user = $this->_findUser(
 			$request->data[$fields['username']],
 			$request->data[$fields['password']]
 		);
+
+		if ($user) {
+			$request->session()->renew();
+			$request->session()->write($this->_config['sessionKey'], $user);
+			return $user;
+		}
+		return false;
+	}
+
+/**
+ * Delete user info from session.
+ *
+ * @param \Cake\Network\Request $request A request object.
+ * @param array $user The user about to be logged out.
+ * @return void
+ */
+	public function logout(Request $request, array $user) {
+		$request->session()->delete($this->_config['sessionKey']);
+		$request->session()->renew();
 	}
 
 }

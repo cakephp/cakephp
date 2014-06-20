@@ -83,7 +83,7 @@ class BasicAuthenticateTest extends TestCase {
 		$this->response->expects($this->never())
 			->method('header');
 
-		$this->assertFalse($this->auth->getUser($request));
+		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
 /**
@@ -129,7 +129,6 @@ class BasicAuthenticateTest extends TestCase {
 		]);
 		$request->addParams(array('pass' => array()));
 
-		$this->assertFalse($this->auth->getUser($request));
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 

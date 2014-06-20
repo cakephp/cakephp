@@ -41,6 +41,8 @@ abstract class BaseAuthenticate {
  * - `scope` Additional conditions to use when looking up and authenticating users,
  *    i.e. `['Users.is_active' => 1].`
  * - `contain` Extra models to contain and store in session.
+ * - `sessionKey` The session key under which to store authenticated user's info.
+ *    Stateless authentication schemes won't use this value.
  * - `passwordHasher` Password hasher class. Can be a string specifying class name
  *    or an array containing `className` key, any other keys will be passed as
  *    config to the class. Defaults to 'Simple'.
@@ -55,6 +57,7 @@ abstract class BaseAuthenticate {
 		'userModel' => 'Users',
 		'scope' => [],
 		'contain' => null,
+		'sessionKey' => 'Auth.User',
 		'passwordHasher' => 'Simple'
 	];
 
@@ -183,24 +186,14 @@ abstract class BaseAuthenticate {
  * Allows you to hook into AuthComponent::logout(),
  * and implement specialized logout behavior.
  *
- * All attached authentication objects will have this method
+ * The authentication object which authenticated the user will have this method
  * called when a user logs out.
  *
+ * @param \Cake\Network\Request $request A request object.
  * @param array $user The user about to be logged out.
  * @return void
  */
-	public function logout(array $user) {
-	}
-
-/**
- * Get a user based on information in the request. Primarily used by stateless authentication
- * systems like basic and digest auth.
- *
- * @param \Cake\Network\Request $request Request object.
- * @return mixed Either false or an array of user information
- */
-	public function getUser(Request $request) {
-		return false;
+	public function logout(Request $request, array $user) {
 	}
 
 /**

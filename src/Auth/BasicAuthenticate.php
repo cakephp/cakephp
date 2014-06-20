@@ -61,20 +61,14 @@ class BasicAuthenticate extends BaseAuthenticate {
  * @return mixed Either false on failure, or an array of user data on success.
  */
 	public function authenticate(Request $request, Response $response) {
-		return $this->getUser($request);
-	}
-
-/**
- * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
- *
- * @param \Cake\Network\Request $request Request object.
- * @return mixed Either false or an array of user information
- */
-	public function getUser(Request $request) {
 		$username = $request->env('PHP_AUTH_USER');
 		$pass = $request->env('PHP_AUTH_PW');
 
-		if (!is_string($username) || $username === '' || !is_string($pass) || $pass === '') {
+		if (!is_string($username) ||
+			$username === '' ||
+			!is_string($pass) ||
+			$pass === ''
+		) {
 			return false;
 		}
 		return $this->_findUser($username, $pass);
