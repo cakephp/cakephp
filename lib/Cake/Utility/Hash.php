@@ -50,11 +50,14 @@ class Hash {
 		} else {
 			$parts = $path;
 		}
-		foreach ($parts as $key) {
-			if (is_array($data) && isset($data[$key])) {
-				$data =& $data[$key];
-			} else {
-				return $default;
+		
+		if(is_array($parts)) {
+			foreach ($parts as $key) {
+				if (is_array($data) && isset($data[$key])) {
+					$data =& $data[$key];
+				} else {
+					return $default;
+				}
 			}
 		}
 		return $data;
