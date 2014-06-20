@@ -702,6 +702,19 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * Test that generated names for routes are case-insensitive.
+ *
+ * @return void
+ */
+	public function testRouteNameCasing() {
+		Router::connect('/articles/:id', ['controller' => 'Articles', 'action' => 'view']);
+		Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
+		$result = Router::url(['controller' => 'Articles', 'action' => 'view', 'id' => 10]);
+		$expected = '/articles/10';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test generation of routes with query string parameters.
  *
  * @return void
