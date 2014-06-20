@@ -1,4 +1,5 @@
 build: false
+shallow_clone: true
 environment:
   global:
     db_class: 'Cake\Database\Driver\SqlServer'
@@ -14,8 +15,7 @@ init:
   - SET PATH=C:\php\;%PATH%
 install:
   - cd c:\
-  - ps: Start-FileDownload 'http://robmorgan.s3.amazonaws.com/php55/php-5.5.7-nts-Win32-VC11-x86.zip'
-  - 7z x php-5.5.7-nts-Win32-VC11-x86.zip -oc:\php
+  - cinst php
   - cd c:\php
   - copy php.ini-production php.ini
   - echo date.timezone="UTC" >> php.ini
