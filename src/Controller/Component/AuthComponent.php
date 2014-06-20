@@ -584,8 +584,8 @@ class AuthComponent extends Component {
 /**
  * Set provided user info to session as logged in user.
  *
- * The user recordis written to the session key specified in AuthComponent::$sessionKey.
- * Thehe session id will also be changed in order to help mitigate session replays.
+ * The user record is written to the session key specified in AuthComponent::$sessionKey.
+ * The session id will also be changed in order to help mitigate session replays.
  *
  * @param array $user Array of user data.
  * @return void
