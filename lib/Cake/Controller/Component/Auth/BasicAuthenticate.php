@@ -41,9 +41,9 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
  * by this authentication provider which triggers the login dialog in the browser/client.
  *
  * You may also want to use `$this->Auth->unauthorizedRedirect = false;`.
- * By default unauthorized user is redirected to the referrer URL or
- * AuthComponent::$loginAction or '/'. If unauthorizedRedirect is set to false a
- * ForbiddenException exception is thrown instead of redirecting.
+ * By default, unauthorized users are redirected to the referrer URL,
+ * `AuthComponent::$loginAction`, or '/'. If unauthorizedRedirect is set to
+ * false, a ForbiddenException exception is thrown instead of redirecting.
  *
  * @package       Cake.Controller.Component.Auth
  * @since 2.0

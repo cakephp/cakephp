@@ -16,8 +16,11 @@
  * @since         CakePHP(tm) v 2.0
  */
 
-$ds = DIRECTORY_SEPARATOR;
-$dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
+if (!defined('DS')) {
+	define('DS', DIRECTORY_SEPARATOR);
+}
+
+$dispatcher = 'Cake' . DS . 'Console' . DS . 'ShellDispatcher.php';
 
 if (function_exists('ini_set')) {
 	$root = dirname(dirname(dirname(__FILE__)));
@@ -25,11 +28,12 @@ if (function_exists('ini_set')) {
 	// the following line differs from its sibling
 	// /app/Console/cake.php
 	ini_set('include_path', $root . PATH_SEPARATOR . __CAKE_PATH__ . PATH_SEPARATOR . ini_get('include_path'));
+	unset($root);
 }
 
 if (!include $dispatcher) {
 	trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
 }
-unset($paths, $path, $dispatcher, $root, $ds);
+unset($dispatcher);
 
 return ShellDispatcher::run($argv);
