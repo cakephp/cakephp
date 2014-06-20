@@ -79,7 +79,6 @@ class AuthComponentTest extends TestCase {
 		$this->Auth = new TestAuthComponent($this->Controller->components());
 		$this->Auth->request = $request;
 		$this->Auth->response = $response;
-		$this->Auth->sessionKey = 'Auth.User';
 		$this->Auth->session = $request->session();
 
 		$this->initialized = true;
@@ -129,11 +128,11 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
- * testIdentify method
+ * testAuthenticate method
  *
  * @return void
  */
-	public function testIdentify() {
+	public function testAuthenticate() {
 		$AuthLoginFormAuthenticate = $this->getMock(
 			'Cake\Controller\Component\Auth\FormAuthenticate',
 			array('authenticate'), array(), '', false
@@ -163,7 +162,7 @@ class AuthComponentTest extends TestCase {
 			->with($this->Auth->request)
 			->will($this->returnValue($user));
 
-		$result = $this->Auth->identify();
+		$result = $this->Auth->authenticate();
 		$this->assertEquals($user, $result);
 		$this->assertSame($AuthLoginFormAuthenticate, $this->Auth->authenticationProvider());
 	}
@@ -198,7 +197,7 @@ class AuthComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$Users = TableRegistry::get('Users');
 		$user = $Users->find('all')->hydrate(false)->first();
-		$this->Auth->session->write('Auth.User', $user);
+		$this->Controller->Auth->setUser($user);
 		$this->Controller->Auth->config('userModel', 'Users');
 		$this->Controller->Auth->config('authorize', false);
 		$this->Controller->request->addParams(Router::parse('auth_test/add'));
@@ -206,7 +205,7 @@ class AuthComponentTest extends TestCase {
 		$result = $this->Controller->Auth->startup($event);
 		$this->assertNull($result);
 
-		$this->Auth->session->delete('Auth');
+		$this->Controller->Auth->logout();
 		$result = $this->Controller->Auth->startup($event);
 		$this->assertTrue($event->isStopped());
 		$this->assertInstanceOf('Cake\Network\Response', $result);
@@ -270,31 +269,6 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
- * test that isAuthorized will use the session user if none is given.
- *
- * @return void
- */
-	public function testIsAuthorizedUsingUserInSession() {
-		$AuthMockFourAuthorize = $this->getMock(
-			'Cake\Controller\Component\Auth\BaseAuthorize',
-			array('authorize'), array(), '', false
-		);
-		$this->Auth->config('authorize', ['AuthMockFour']);
-		$this->Auth->setAuthorizeObject(0, $AuthMockFourAuthorize);
-
-		$user = array('user' => 'mark');
-		$this->Auth->session->write('Auth.User', $user);
-		$request = $this->Controller->request;
-
-		$AuthMockFourAuthorize->expects($this->once())
-			->method('authorize')
-			->with($user, $request)
-			->will($this->returnValue(true));
-
-		$this->assertTrue($this->Auth->isAuthorized(null, $request));
-	}
-
-/**
  * test that loadAuthorize resets the loaded objects each time.
  *
  * @return void
@@ -316,7 +290,7 @@ class AuthComponentTest extends TestCase {
  */
 	public function testLoadAuthenticateNoFile() {
 		$this->Controller->Auth->config('authenticate', 'Missing');
-		$this->Controller->Auth->identify($this->Controller->request, $this->Controller->response);
+		$this->Controller->Auth->authenticate($this->Controller->request, $this->Controller->response);
 	}
 
 /**
@@ -1067,6 +1041,7 @@ class AuthComponentTest extends TestCase {
 
 		$this->Auth->config('authenticate', ['LogoutTriggerMock']);
 		$this->Auth->setAuthenticateObject(0, $LogoutTriggerMockAuthenticate);
+		$this->Auth->setAuthenticationProvider($LogoutTriggerMockAuthenticate);
 		$LogoutTriggerMockAuthenticate->expects($this->once())
 			->method('logout');
 
@@ -1091,29 +1066,6 @@ class AuthComponentTest extends TestCase {
 			->with(array('create' => array('my_action')));
 
 		$this->Auth->mapActions(array('create' => array('my_action')));
-	}
-
-/**
- * test setting user info to session.
- *
- * @return void
- */
-	public function testSetUser() {
-		$this->Auth->session = $this->getMock(
-			'Cake\Network\Session',
-			array('renew', 'write')
-		);
-
-		$user = array('username' => 'mark', 'role' => 'admin');
-
-		$this->Auth->session->expects($this->once())
-			->method('renew');
-
-		$this->Auth->session->expects($this->once())
-			->method('write')
-			->with($this->Auth->sessionKey, $user);
-
-		$this->Auth->setUser($user);
 	}
 
 /**
@@ -1269,26 +1221,25 @@ class AuthComponentTest extends TestCase {
  */
 	public function testUser() {
 		$data = array(
-			'User' => array(
-				'id' => '2',
-				'username' => 'mark',
-				'group_id' => 1,
-				'Group' => array(
-					'id' => '1',
-					'name' => 'Members'
-				),
-				'is_admin' => false,
-		));
-		$this->Auth->session->write('Auth', $data);
+			'id' => '2',
+			'username' => 'mark',
+			'group_id' => 1,
+			'Group' => array(
+				'id' => '1',
+				'name' => 'Members'
+			),
+			'is_admin' => false,
+		);
+		$this->Auth->setUser($data);
 
 		$result = $this->Auth->user();
-		$this->assertEquals($data['User'], $result);
+		$this->assertEquals($data, $result);
 
 		$result = $this->Auth->user('username');
-		$this->assertEquals($data['User']['username'], $result);
+		$this->assertEquals($data['username'], $result);
 
 		$result = $this->Auth->user('Group.name');
-		$this->assertEquals($data['User']['Group']['name'], $result);
+		$this->assertEquals($data['Group']['name'], $result);
 
 		$result = $this->Auth->user('invalid');
 		$this->assertEquals(null, $result);
