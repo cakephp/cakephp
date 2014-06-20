@@ -41,7 +41,6 @@ class Hash {
  * @throws InvalidArgumentException
  * @return mixed The value fetched from the array, or null.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::get
- 
  */
 	public static function get(array $data, $path, $default = null) {
 		if (empty($data)) {
