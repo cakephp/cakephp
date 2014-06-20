@@ -81,6 +81,9 @@ class ShellDispatcher {
 		if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 			define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
 			define('CAKEPHP_SHELL', true);
+			if (!defined('DS')) {
+				define('DS', DIRECTORY_SEPARATOR);
+			}
 			if (!defined('CORE_PATH')) {
 				define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 			}
