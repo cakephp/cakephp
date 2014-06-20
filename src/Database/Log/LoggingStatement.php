@@ -46,16 +46,35 @@ class LoggingStatement extends StatementDecorator {
  */
 	public function execute($params = null) {
 		$t = microtime(true);
-		$result = parent::execute($params);
-
 		$query = new LoggedQuery;
-		$query->took = round((microtime(true) - $t) * 1000, 0);
+
+		try {
+			$result = parent::execute($params);
+		} catch (\Exception $e) {
+			$query->error = $e;
+			$this->_log($query, $params, $t);
+			throw $e;
+		}
+
 		$query->numRows = $this->rowCount();
+		$this->_log($query, $params, $t);
+		return $result;
+	}
+
+/**
+ * Copies the logging data to the passed LoggedQuery and sends it
+ * to the logging system.
+ *
+ * @param \Cake\Database\Log\LoggedQuery $query
+ * @param array $params list of values to be bound to query
+ * @param float $startTime the microtime when the query was executed
+ * @return void
+ */
+	protected function _log($query, $params, $startTime) {
+		$query->took = round((microtime(true) - $startTime) * 1000, 0);
 		$query->params = $params ?: $this->_compiledParams;
 		$query->query = $this->queryString;
 		$this->logger()->log($query);
-
-		return $result;
 	}
 
 /**
