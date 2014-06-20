@@ -225,7 +225,7 @@ class AuthComponent extends Component {
  * successfully logging in the current user after calling `login()`
  * in the same request
  *
- * @var Cake\Auth\BaseAuthenticate
+ * @var \Cake\Auth\BaseAuthenticate
  */
 	protected $_authenticationProvider;
 
@@ -233,14 +233,14 @@ class AuthComponent extends Component {
  * The instance of the Authorize provider that was used to grant
  * access to the current user to the url they are requesting.
  *
- * @var Cake\Auth\BaseAuthorize
+ * @var \Cake\Auth\BaseAuthorize
  */
 	protected $_authorizationProvider;
 
 /**
  * Initializes AuthComponent for use in the controller.
  *
- * @param Event $event The initialize event.
+ * @param \Cake\Event\Event $event The initialize event.
  * @return void
  */
 	public function initialize(Event $event) {
@@ -259,7 +259,7 @@ class AuthComponent extends Component {
  * Main execution method. Handles redirecting of invalid users, and processing
  * of login form data.
  *
- * @param Event $event The startup event.
+ * @param \Cake\Event\Event $event The startup event.
  * @return void|\Cake\Network\Response
  */
 	public function startup(Event $event) {
@@ -311,7 +311,8 @@ class AuthComponent extends Component {
 /**
  * Checks whether current action is accessible without authentication.
  *
- * @param Controller $controller A reference to the instantiating controller object
+ * @param \Cake\Controller\Controller $controller A reference to the instantiating
+ *   controller object
  * @return bool True if action is accessible without authentication else false
  */
 	protected function _isAllowed(Controller $controller) {
@@ -331,7 +332,7 @@ class AuthComponent extends Component {
  * `ajaxLogin` is specified that element is rendered else a 403 http status code
  * is returned.
  *
- * @param Controller $controller A reference to the controller object.
+ * @param \Cake\Controller\Controller $controller A reference to the controller object.
  * @return void|\Cake\Network\Response Null if current action is login action
  *   else response object returned by authenticate object or Controller::redirect().
  */
@@ -376,7 +377,7 @@ class AuthComponent extends Component {
 /**
  * Normalizes config `loginAction` and checks if current request URL is same as login action.
  *
- * @param Controller $controller A reference to the controller object.
+ * @param \Cake\Controller\Controller $controller A reference to the controller object.
  * @return bool True if current action is login action else false.
  */
 	protected function _isLoginAction(Controller $controller) {
@@ -393,7 +394,7 @@ class AuthComponent extends Component {
 /**
  * Handle unauthorized access attempt
  *
- * @param Controller $controller A reference to the controller object
+ * @param \Cake\Controller\Controller $controller A reference to the controller object
  * @return \Cake\Network\Response
  * @throws \Cake\Error\ForbiddenException
  */
