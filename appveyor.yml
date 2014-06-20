@@ -4,7 +4,7 @@ platform: 'x86'
 environment:
   global:
     db_class: 'Cake\Database\Driver\SqlServer'
-    db_dsn: 'mysql:host=0.0.0.0;dbname=cakephp'
+    db_dsn: 'sqlsrv:Server=.\SQL2008R2SP2;Database=cakephp;MultipleActiveResultSets=false'
     db_database: 'cakephp'
     db_login: 'sa'
     db_password: 'Password12!'
