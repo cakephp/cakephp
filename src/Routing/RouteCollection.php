@@ -142,7 +142,7 @@ class RouteCollection implements \Countable {
 			];
 		}
 		foreach ($fallbacks as $i => $template) {
-			$fallbacks[$i] = sprintf($template, $plugin, $url['controller'], $url['action']);
+			$fallbacks[$i] = strtolower(sprintf($template, $plugin, $url['controller'], $url['action']));
 		}
 		if ($name) {
 			array_unshift($fallbacks, $name);
