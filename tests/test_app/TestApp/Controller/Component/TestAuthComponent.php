@@ -43,4 +43,14 @@ class TestAuthComponent extends AuthComponent {
 		$this->_authorizeObjects[$index] = $object;
 	}
 
+/**
+ * Helper method to set authentication object used for login
+ *
+ * @param Object $object The object to set.
+ * @return void
+ */
+	public function setAuthenticationProvider($object) {
+		$this->_authenticationProvider = $object;
+	}
+
 }

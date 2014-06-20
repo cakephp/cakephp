@@ -92,12 +92,14 @@ class DigestAuthenticate extends BasicAuthenticate {
 	}
 
 /**
- * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
+ * Authenticate a user using HTTP auth. Will use the configured User model and attempt a
+ * login using HTTP auth.
  *
- * @param \Cake\Network\Request $request Request object.
- * @return mixed Either false or an array of user information
+ * @param \Cake\Network\Request $request The request to authenticate with.
+ * @param \Cake\Network\Response $response The response to add headers to.
+ * @return mixed Either false on failure, or an array of user data on success.
  */
-	public function getUser(Request $request) {
+	public function authenticate(Request $request, Response $response) {
 		$digest = $this->_getDigest($request);
 		if (empty($digest)) {
 			return false;

@@ -1,7 +1,5 @@
 <?php
 /**
- * FormAuthenticateTest file
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -207,6 +205,82 @@ class FormAuthenticateTest extends TestCase {
 	}
 
 /**
+ * testAuthenticateFromSession
+ *
+ * @return void
+ */
+	public function testAuthenticateFromSession() {
+		$auth = $this->getMock(
+			'Cake\Auth\FormAuthenticate',
+			['_findUser'],
+			[$this->Collection, ['userModel' => 'Users']]
+		);
+
+		$request = new Request('posts/index');
+		$request->data = [
+			'username' => 'mariano',
+			'password' => 'password'
+		];
+		$expected = [
+			'id' => 1,
+			'username' => 'mariano',
+			'created' => new Time('2007-03-17 01:16:23'),
+			'updated' => new Time('2007-03-17 01:18:31')
+		];
+
+		$auth->expects($this->exactly(1))
+			->method('_findUser')
+			->with($request->data['username'], $request->data['password'])
+			->will($this->returnValue($expected));
+
+		$result = $auth->authenticate($request, $this->response);
+		$this->assertEquals($expected, $result);
+
+		// Call authenticate again to ensure user record is returned from session
+		// and not using _findUser()
+		$result = $auth->authenticate($request, $this->response);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test that authenticate() doesn't return user record from session if it's a
+ * post request
+ *
+ * @return void
+ */
+	public function testAuthenticatePostNoSession() {
+		$auth = $this->getMock(
+			'Cake\Auth\FormAuthenticate',
+			['_findUser'],
+			[$this->Collection, ['userModel' => 'Users']]
+		);
+
+		$request = new Request('posts/index');
+		$request->data = [
+			'username' => 'mariano',
+			'password' => 'password'
+		];
+		$expected = [
+			'id' => 1,
+			'username' => 'mariano',
+			'created' => new Time('2007-03-17 01:16:23'),
+			'updated' => new Time('2007-03-17 01:18:31')
+		];
+
+		$auth->expects($this->exactly(2))
+			->method('_findUser')
+			->with($request->data['username'], $request->data['password'])
+			->will($this->returnValue($expected));
+
+		$result = $auth->authenticate($request, $this->response);
+		$this->assertEquals($expected, $result);
+
+		$request->env('REQUEST_METHOD', 'POST');
+		$result = $auth->authenticate($request, $this->response);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test scope failure.
  *
  * @return void
@@ -292,6 +366,7 @@ class FormAuthenticateTest extends TestCase {
 			'updated' => new Time('2007-03-17 01:18:31')
 		];
 		$this->assertEquals($expected, $result);
+		$request->session()->delete('Auth.User');
 
 		$this->auth = new FormAuthenticate($this->Collection, [
 			'fields' => ['username' => 'username', 'password' => 'password'],
@@ -301,6 +376,7 @@ class FormAuthenticateTest extends TestCase {
 			'className' => 'Simple'
 		]);
 		$this->assertEquals($expected, $this->auth->authenticate($request, $this->response));
+		$request->session()->delete('Auth.User');
 
 		$User->updateAll(
 			['password' => '$2y$10$/G9GBQDZhWUM4w/WLes3b.XBZSK1hGohs5dMi0vh/oen0l0a7DUyK'],

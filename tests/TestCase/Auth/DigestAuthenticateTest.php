@@ -87,7 +87,7 @@ class DigestAuthenticateTest extends TestCase {
 		$this->response->expects($this->never())
 			->method('header');
 
-		$this->assertFalse($this->auth->getUser($request, $this->response));
+		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
 /**

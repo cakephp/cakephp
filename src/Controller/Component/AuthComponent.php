@@ -168,15 +168,6 @@ class AuthComponent extends Component {
 	protected $_authorizeObjects = array();
 
 /**
- * The session key name where the record of the current user is stored. Default
- * key is "Auth.User". If you are using only stateless authenticators set this
- * to false to ensure session is not started.
- *
- * @var string
- */
-	public $sessionKey = 'Auth.User';
-
-/**
  * The current user, used for stateless authentication when
  * sessions are not available.
  *
@@ -209,7 +200,7 @@ class AuthComponent extends Component {
 /**
  * Instance of the Session object
  *
- * @return void
+ * @var \Cake\Network\Session
  */
 	public $session;
 
@@ -225,7 +216,7 @@ class AuthComponent extends Component {
  * successfully logging in the current user after calling `login()`
  * in the same request
  *
- * @var Cake\Auth\BaseAuthenticate
+ * @var \Cake\Auth\BaseAuthenticate
  */
 	protected $_authenticationProvider;
 
@@ -233,14 +224,14 @@ class AuthComponent extends Component {
  * The instance of the Authorize provider that was used to grant
  * access to the current user to the url they are requesting.
  *
- * @var Cake\Auth\BaseAuthorize
+ * @var \Cake\Auth\BaseAuthorize
  */
 	protected $_authorizationProvider;
 
 /**
  * Initializes AuthComponent for use in the controller.
  *
- * @param Event $event The initialize event.
+ * @param \Cake\Event\Event $event The initialize event.
  * @return void
  */
 	public function initialize(Event $event) {
@@ -259,7 +250,7 @@ class AuthComponent extends Component {
  * Main execution method. Handles redirecting of invalid users, and processing
  * of login form data.
  *
- * @param Event $event The startup event.
+ * @param \Cake\Event\Event $event The startup event.
  * @return void|\Cake\Network\Response
  */
 	public function startup(Event $event) {
@@ -277,7 +268,10 @@ class AuthComponent extends Component {
 			return;
 		}
 
-		if (!$this->_getUser()) {
+		$user = $this->user() || $this->authenticate();
+		if ($user) {
+			$this->session->delete('Auth.redirect');
+		} else {
 			$result = $this->_unauthenticated($controller);
 			if ($result instanceof Response) {
 				$event->stopPropagation();
@@ -287,7 +281,7 @@ class AuthComponent extends Component {
 
 		if ($this->_isLoginAction($controller) ||
 			empty($this->_config['authorize']) ||
-			$this->isAuthorized($this->user())
+			$this->isAuthorized($user)
 		) {
 			return;
 		}
@@ -311,7 +305,7 @@ class AuthComponent extends Component {
 /**
  * Checks whether current action is accessible without authentication.
  *
- * @param Controller $controller A reference to the instantiating controller object
+ * @param \Cake\Controller\Controller $controller A reference to the instantiating controller object
  * @return bool True if action is accessible without authentication else false
  */
 	protected function _isAllowed(Controller $controller) {
@@ -331,7 +325,7 @@ class AuthComponent extends Component {
  * `ajaxLogin` is specified that element is rendered else a 403 http status code
  * is returned.
  *
- * @param Controller $controller A reference to the controller object.
+ * @param \Cake\Controller\Controller $controller A reference to the controller object.
  * @return void|\Cake\Network\Response Null if current action is login action
  *   else response object returned by authenticate object or Controller::redirect().
  */
@@ -376,7 +370,7 @@ class AuthComponent extends Component {
 /**
  * Normalizes config `loginAction` and checks if current request URL is same as login action.
  *
- * @param Controller $controller A reference to the controller object.
+ * @param \Cake\Controller\Controller $controller A reference to the controller object.
  * @return bool True if current action is login action else false.
  */
 	protected function _isLoginAction(Controller $controller) {
@@ -393,7 +387,7 @@ class AuthComponent extends Component {
 /**
  * Handle unauthorized access attempt
  *
- * @param Controller $controller A reference to the controller object
+ * @param \Cake\Controller\Controller $controller A reference to the controller object
  * @return \Cake\Network\Response
  * @throws \Cake\Error\ForbiddenException
  */
@@ -582,18 +576,13 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Set provided user info to session as logged in user.
- *
- * The user record is written to the session key specified in AuthComponent::$sessionKey.
- * The session id will also be changed in order to help mitigate session replays.
+ * Set provided user info as logged in user.
  *
  * @param array $user Array of user data.
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#identifying-users-and-logging-them-in
  */
 	public function setUser(array $user) {
-		$this->session->renew();
-		$this->session->write($this->sessionKey, $user);
+		$this->_user = $user;
 	}
 
 /**
@@ -613,66 +602,35 @@ class AuthComponent extends Component {
 		if (empty($this->_authenticateObjects)) {
 			$this->constructAuthenticate();
 		}
+		$this->session->delete('Auth.redirect');
 		$user = (array)$this->user();
 		foreach ($this->_authenticateObjects as $auth) {
-			$auth->logout($user);
+			$auth->logout($this->request, $user);
 		}
-		$this->session->delete($this->sessionKey);
-		$this->session->delete('Auth.redirect');
-		$this->session->renew();
+		$this->_user = [];
 		return Router::normalize($this->_config['logoutRedirect']);
 	}
-
 /**
  * Get the current user.
  *
- * Will prefer the user cache over sessions. The user cache is primarily used for
- * stateless authentication. For stateful authentication,
- * cookies + sessions will be used.
+ * Normally contains the user info returned by a provider upon successful
+ * authentication or the user info set using `setUser()`.
  *
- * @param string $key field to retrieve. Leave null to get entire User record
+ * @param string $key Field to retrieve. Leave null to get entire User record
  * @return mixed User record. or null if no user is logged in.
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#accessing-the-logged-in-user
  */
 	public function user($key = null) {
 		if (!empty($this->_user)) {
 			$user = $this->_user;
-		} elseif ($this->sessionKey && $this->session->check($this->sessionKey)) {
-			$user = $this->session->read($this->sessionKey);
 		} else {
 			return null;
 		}
+
 		if ($key === null) {
 			return $user;
 		}
 		return Hash::get($user, $key);
-	}
-
-/**
- * Similar to AuthComponent::user() except if the session user cannot be found, connected authentication
- * objects will have their getUser() methods called. This lets stateless authentication methods function correctly.
- *
- * @return bool true if a user can be found, false if one cannot.
- */
-	protected function _getUser() {
-		$user = $this->user();
-		if ($user) {
-			$this->session->delete('Auth.redirect');
-			return true;
-		}
-
-		if (empty($this->_authenticateObjects)) {
-			$this->constructAuthenticate();
-		}
-		foreach ($this->_authenticateObjects as $auth) {
-			$result = $auth->getUser($this->request);
-			if (!empty($result) && is_array($result)) {
-				$this->_user = $result;
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 /**
@@ -721,7 +679,7 @@ class AuthComponent extends Component {
  *
  * @return array User record data, or false, if the user could not be identified.
  */
-	public function identify() {
+	public function authenticate() {
 		$this->_setDefaults();
 
 		if (empty($this->_authenticateObjects)) {
@@ -730,6 +688,7 @@ class AuthComponent extends Component {
 		foreach ($this->_authenticateObjects as $auth) {
 			$result = $auth->authenticate($this->request, $this->response);
 			if (!empty($result) && is_array($result)) {
+				$this->_user = $result;
 				$this->_authenticationProvider = $auth;
 				return $result;
 			}
