@@ -125,12 +125,19 @@ class ApcEngine extends CacheEngine {
 		if ($check) {
 			return true;
 		}
-		$info = apc_cache_info('user');
-		$cacheKeys = $info['cache_list'];
-		unset($info);
-		foreach ($cacheKeys as $key) {
-			if (strpos($key['info'], $this->settings['prefix']) === 0) {
-				apc_delete($key['info']);
+		if (class_exists('APCIterator')) {
+			$iterator = new APCIterator(
+				'user',
+				'/^' . preg_quote($this->settings['prefix'], '/') . '/',
+				APC_ITER_NONE
+			);
+			apc_delete($iterator);
+		} else {
+			$cache = apc_cache_info('user');
+			foreach ($cache['cache_list'] as $key) {
+				if (strpos($key['info'], $this->settings['prefix']) === 0) {
+					apc_delete($key['info']);
+				}
 			}
 		}
 		return true;
