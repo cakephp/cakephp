@@ -38,8 +38,10 @@ class Hash {
  * @param string|array $path The path being searched for. Either a dot
  *   separated string, or an array of path segments.
  * @param mixed $default The return value when the path does not exist
+ * @throws InvalidArgumentException
  * @return mixed The value fetched from the array, or null.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::get
+ 
  */
 	public static function get(array $data, $path, $default = null) {
 		if (empty($data)) {
@@ -51,15 +53,18 @@ class Hash {
 			$parts = $path;
 		}
 		
-		if (is_array($parts)) {
-			foreach ($parts as $key) {
-				if (is_array($data) && isset($data[$key])) {
-					$data =& $data[$key];
-				} else {
-					return $default;
-				}
+ 		if (!is_array($parts)) {
+            		throw new InvalidArgumentException("Invalid parameter passed");
+		}
+		
+		foreach ($parts as $key) {
+			if (is_array($data) && isset($data[$key])) {
+				$data =& $data[$key];
+			} else {
+				return $default;
 			}
 		}
+
 		return $data;
 	}
 
