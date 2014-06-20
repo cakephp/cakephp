@@ -658,6 +658,26 @@ class I18n {
 	}
 
 /**
+ * Puts the parameters in raw translated strings
+ *
+ * @param string $translated The raw translated string
+ * @param array $args The arguments to put in the translation
+ * @return string Translated string with arguments
+ */
+	public static function insertArgs($translated, array $args) {
+		if (empty($args)) {
+			return $translated;
+		}
+
+		if (is_array($args[0])) {
+			$args = $args[0];
+		}
+
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
+		return vsprintf($translated, $args);
+	}
+
+/**
  * Auxiliary function to parse a symbol from a locale definition file
  *
  * @param string $string Symbol to be parsed

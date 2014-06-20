@@ -20,10 +20,23 @@ use Cake\Utility\Inflector;
 	<strong>Error: </strong>
 	<?= sprintf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)); ?>
 </p>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Confirm you have created the file: %s', h($file)); ?>
+
+<p>
+	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', h($file)); ?>
+	in one of the following paths:
 </p>
+<ul>
+<?php
+	$paths = $this->_paths($this->plugin);
+	foreach ($paths as $path):
+		if (strpos($path, CORE_PATH) !== false) {
+			continue;
+		}
+		echo sprintf('<li>%s%s</li>', h($path), h($file));
+	endforeach;
+?>
+</ul>
+
 <p class="notice">
 	<strong>Notice: </strong>
 	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_view.ctp'); ?>

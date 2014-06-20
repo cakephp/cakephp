@@ -248,7 +248,9 @@ class FixtureManager {
 						if (!in_array($db->configName(), (array)$fixture->created)) {
 							$this->_setupTable($fixture, $db, $test->dropTables);
 						}
-						$fixture->truncate($db);
+						if (!$test->dropTables) {
+							$fixture->truncate($db);
+						}
 						$fixture->insert($db);
 					}
 				});
@@ -299,7 +301,9 @@ class FixtureManager {
 			if (!in_array($db->configName(), (array)$fixture->created)) {
 				$this->_setupTable($fixture, $db, $dropTables);
 			}
-			$fixture->truncate($db);
+			if (!$dropTables) {
+				$fixture->truncate($db);
+			}
 			$fixture->insert($db);
 		} else {
 			throw new \UnexpectedValueException(sprintf('Referenced fixture class %s not found', $name));

@@ -19,10 +19,23 @@
 	<strong>Error: </strong>
 	<?= sprintf('The layout file <em>%s</em> can not be found or does not exist.', h($file)); ?>
 </p>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Confirm you have created the file: <em>%s</em>', h($file)); ?>
+
+<p>
+	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', h($file)); ?>
+	in one of the following paths:
 </p>
+<ul>
+<?php
+	$paths = $this->_paths($this->plugin);
+	foreach ($paths as $path):
+		if (strpos($path, CORE_PATH) !== false) {
+			continue;
+		}
+		echo sprintf('<li>%s%s</li>', h($path), h($file));
+	endforeach;
+?>
+</ul>
+
 <p class="notice">
 	<strong>Notice: </strong>
 	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_layout.ctp'); ?>

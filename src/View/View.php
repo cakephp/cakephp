@@ -927,18 +927,7 @@ class View {
 				return $path . $name . $this->_ext;
 			}
 		}
-		$defaultPath = $paths[0];
-
-		if ($this->plugin) {
-			$pluginPaths = App::objects('Plugin');
-			foreach ($paths as $path) {
-				if (strpos($path, $pluginPaths[0]) === 0) {
-					$defaultPath = $path;
-					break;
-				}
-			}
-		}
-		throw new Error\MissingViewException(array('file' => $defaultPath . $name . $this->_ext));
+		throw new Error\MissingViewException(array('file' => $name . $this->_ext));
 	}
 
 /**
@@ -988,7 +977,7 @@ class View {
 				return $path . $file . $this->_ext;
 			}
 		}
-		throw new Error\MissingLayoutException(array('file' => $paths[0] . $file . $this->_ext));
+		throw new Error\MissingLayoutException(array('file' => $file . $this->_ext));
 	}
 
 /**

@@ -547,14 +547,8 @@ if (!function_exists('__')) {
 		}
 
 		$translated = I18n::translate($singular);
-		if ($args === null) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 1);
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 1));
 	}
 
 }
@@ -578,14 +572,8 @@ if (!function_exists('__n')) {
 		}
 
 		$translated = I18n::translate($singular, $plural, null, I18n::LC_MESSAGES, $count);
-		if ($args === null) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 3);
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 3));
 	}
 
 }
@@ -606,14 +594,8 @@ if (!function_exists('__d')) {
 			return;
 		}
 		$translated = I18n::translate($msg, null, $domain);
-		if ($args === null) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 2);
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 2));
 	}
 
 }
@@ -638,14 +620,8 @@ if (!function_exists('__dn')) {
 			return;
 		}
 		$translated = I18n::translate($singular, $plural, $domain, I18n::LC_MESSAGES, $count);
-		if ($args === null) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 4);
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 4));
 	}
 
 }
@@ -681,14 +657,8 @@ if (!function_exists('__dc')) {
 			return;
 		}
 		$translated = I18n::translate($msg, null, $domain, $category);
-		if ($args === null) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 3);
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 3));
 	}
 
 }
@@ -728,14 +698,8 @@ if (!function_exists('__dcn')) {
 			return;
 		}
 		$translated = I18n::translate($singular, $plural, $domain, $category, $count);
-		if ($args === null) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 5);
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 5));
 	}
 
 }
@@ -767,14 +731,8 @@ if (!function_exists('__c')) {
 			return;
 		}
 		$translated = I18n::translate($msg, null, null, $category);
-		if ($args === null) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 2);
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 2));
 	}
 
 }

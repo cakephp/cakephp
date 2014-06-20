@@ -212,7 +212,10 @@ class Hash {
 			if (isset($data[$attr])) {
 				$prop = $data[$attr];
 			}
-			if ($prop === true || $prop === false) {
+			$isBool = is_bool($prop);
+			if ($isBool && is_numeric($val)) {
+				$prop = $prop ? '1' : '0';
+			} elseif ($isBool) {
 				$prop = $prop ? 'true' : 'false';
 			}
 
