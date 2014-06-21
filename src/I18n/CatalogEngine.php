@@ -47,7 +47,7 @@ abstract class CatalogEngine {
 			foreach ($plugins as $plugin) {
 				$pluginDomain = Inflector::underscore($plugin);
 				if ($pluginDomain === $domain) {
-					$searchPaths[] = Plugin::path($plugin) . 'Locale/';
+					$searchPaths[] = App::path('Locale', $plugin)[0];
 					$searchPaths = array_reverse($searchPaths);
 					break;
 				}
@@ -73,7 +73,7 @@ abstract class CatalogEngine {
  * Write translations to catalog
  *
  * @param string $domain Domain name
- * @param array $locales Locale to write translations for
+ * @param string $locale Locale to write translations for
  * @param string $category Category name
  * @param array $data Translations to write
  * @return boolean True on success else false
