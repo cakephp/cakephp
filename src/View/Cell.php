@@ -14,7 +14,6 @@
  */
 namespace Cake\View;
 
-use Cake\Core\App;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
 use Cake\Model\ModelAwareTrait;

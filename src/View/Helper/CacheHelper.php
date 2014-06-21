@@ -17,6 +17,7 @@
 namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
 
@@ -70,7 +71,7 @@ class CacheHelper extends Helper {
  * @param string $output The output for the file.
  * @return string Updated content.
  */
-	public function afterRenderFile($event, $viewFile, $output) {
+	public function afterRenderFile(Event $event, $viewFile, $output) {
 		if ($this->_enabled()) {
 			return $this->_parseContent($viewFile, $output);
 		}
@@ -83,7 +84,7 @@ class CacheHelper extends Helper {
  * @param string $layoutFile Layout file name.
  * @return void
  */
-	public function afterLayout($event, $layoutFile) {
+	public function afterLayout(Event $event, $layoutFile) {
 		if ($this->_enabled()) {
 			$this->_View->assign(
 				'content',

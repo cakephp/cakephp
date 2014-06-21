@@ -14,9 +14,7 @@
  */
 namespace Cake\View\Helper;
 
-use Cake\Network\Session;
 use Cake\View\Helper;
-use Cake\View\View;
 
 /**
  * FlashHelper class to render flash messages.

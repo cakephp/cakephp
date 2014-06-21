@@ -15,7 +15,6 @@
 namespace Cake\View;
 
 use Cake\Core\App;
-use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
 use Cake\Utility\ObjectRegistry;
 use Cake\View\View;

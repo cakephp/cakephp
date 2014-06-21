@@ -15,7 +15,6 @@
 namespace Cake\View;
 
 use Cake\Cache\Cache;
-use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
