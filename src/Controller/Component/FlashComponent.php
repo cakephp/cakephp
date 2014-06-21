@@ -107,7 +107,7 @@ class FlashComponent extends Component {
  * @param array $args Parameters to pass when calling `FlashComponent::set()`.
  * @return void
  * @throws \Cake\Error\InternalErrorException If missing the flash message.
-*/
+ */
 	public function __call($name, $args) {
 		$options = ['element' => Inflector::underscore($name)];
 

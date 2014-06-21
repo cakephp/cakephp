@@ -345,7 +345,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  */
 	public function notEmpty($field, $message = null, $mode = false) {
 		if ($mode === 'create' || $mode === 'update') {
-			$mode = $mode === 'create' ? 'update': 'create';
+			$mode = $mode === 'create' ? 'update' : 'create';
 		}
 		$this->field($field)->isEmptyAllowed($mode);
 		if ($message) {
