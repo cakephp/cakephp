@@ -24,6 +24,7 @@ services:
 init:
   - SET PATH=C:\php\;%PATH%
 install:
+  - cinst ansicon
   - cd c:\
   - ps: Start-FileDownload 'http://ci.cakephp.org/php.zip'
   - 7z x php.zip -oc:\php
