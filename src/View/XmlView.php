@@ -14,7 +14,6 @@
  */
 namespace Cake\View;
 
-use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Network\Request;

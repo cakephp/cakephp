@@ -16,7 +16,6 @@ namespace Cake\View\Helper;
 
 use Cake\Core\App;
 use Cake\Error;
-use Cake\Utility\Hash;
 use Cake\View\Helper;
 use Cake\View\View;
 

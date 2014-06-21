@@ -14,9 +14,9 @@
  */
 namespace Cake\View\Widget;
 
-use Cake\Utility\Time;
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
+use Cake\View\Widget\SelectBox;
 use Cake\View\Widget\WidgetInterface;
 
 /**
@@ -62,7 +62,7 @@ class DateTime implements WidgetInterface {
  * @param \Cake\View\StringTemplate $templates Templates list.
  * @param \Cake\View\Widget\SelectBox $selectBox Selectbox widget instance.
  */
-	public function __construct($templates, $selectBox) {
+	public function __construct(StringTemplate $templates, SelectBox $selectBox) {
 		$this->_select = $selectBox;
 		$this->_templates = $templates;
 	}

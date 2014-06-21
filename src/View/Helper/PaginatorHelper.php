@@ -14,9 +14,9 @@
  */
 namespace Cake\View\Helper;
 
+use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
-use Cake\View\View;
 
 /**
  * Pagination Helper class for easy generation of pagination links.
@@ -76,7 +76,7 @@ class PaginatorHelper extends Helper {
  * @param string $viewFile The view file being rendered.
  * @return void
  */
-	public function beforeRender($event, $viewFile) {
+	public function beforeRender(Event $event, $viewFile) {
 		$this->config(
 			'options.url',
 			array_merge($this->request->params['pass'], $this->request->query)

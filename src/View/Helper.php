@@ -14,13 +14,11 @@
  */
 namespace Cake\View;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Plugin;
 use Cake\Event\EventListener;
 use Cake\Routing\Router;
-use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
 /**

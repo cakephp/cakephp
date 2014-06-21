@@ -14,10 +14,8 @@
  */
 namespace Cake\View\Helper;
 
-use Cake\Network\Session;
 use Cake\View\Helper;
 use Cake\View\Helper\StringTemplateTrait;
-use Cake\View\View;
 
 /**
  * Session Helper.
