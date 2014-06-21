@@ -2,6 +2,10 @@ build: false
 shallow_clone: true
 platform: 'x86'
 clone_folder: c:\projects\cakephp
+branches:
+  only:
+    - 3.0
+    - 3.0-windows-ci
 environment:
   global:
     db_class: 'Cake\Database\Driver\SqlServer'
