@@ -22,7 +22,7 @@ init:
 install:
   - cd c:\
   - ps: Start-FileDownload 'http://ci.cakephp.org/php.zip'
-  - 7z x php-5.5.7-nts-Win32-VC11-x86.zip -oc:\php
+  - 7z x php.zip -oc:\php
   - cd c:\php
   - copy php.ini-production php.ini
   - echo date.timezone="UTC" >> php.ini
