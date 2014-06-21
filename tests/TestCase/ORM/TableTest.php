@@ -3193,6 +3193,22 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test that an exception is raised when there are not enough keys.
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Incorrect number of primary key values. Expected 1 got 0.
+ * @return void
+ */
+	public function testGetExceptionOnIncorrectData() {
+		$table = new Table([
+			'name' => 'Articles',
+			'connection' => $this->connection,
+			'table' => 'articles',
+		]);
+		$table->get(null);
+	}
+
+/**
  * Tests entityValidator
  *
  * @return void
