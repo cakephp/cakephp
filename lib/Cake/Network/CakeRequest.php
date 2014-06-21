@@ -919,6 +919,7 @@ class CakeRequest implements ArrayAccess {
  * Modify data originally from `php://input`. Useful for altering json/xml data
  * in middleware or DispatcherFilters before it gets to RequestHandlerComponent
  *
+ * @param string $input A string to replace original parsed data from input()
  * @return void
  */
 	public function setInput($input) {
