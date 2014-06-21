@@ -150,7 +150,7 @@ class Route {
  * @return array Returns a string regular expression of the compiled route.
  */
 	public function compile() {
-		if ($this->compiled()) {
+		if (!empty($this->compiledRoute)) {
 			return $this->_compiledRoute;
 		}
 		$this->_writeRoute();
@@ -259,7 +259,7 @@ class Route {
 	public function parse($url) {
 		$request = Router::getRequest(true) ?: Request::createFromGlobals();
 
-		if (!$this->compiled()) {
+		if (empty($this->_compiledRoute)) {
 			$this->compile();
 		}
 		list($url, $ext) = $this->_parseExtension($url);
@@ -399,7 +399,7 @@ class Route {
  * @return mixed Either a string url for the parameters if they match or false.
  */
 	public function match(array $url, array $context = []) {
-		if (!$this->compiled()) {
+		if (empty($this->_compiledRoute)) {
 			$this->compile();
 		}
 		$defaults = $this->defaults;
