@@ -3183,39 +3183,29 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @expectedExceptionMessage Record "10" not found in table "articles"
  * @return void
  */
-	public function testGetException() {
-		$table = $this->getMock(
-			'\Cake\ORM\Table',
-			['callFinder', 'query'],
-			[[
-				'connection' => $this->connection,
-				'table' => 'articles',
-				'schema' => [
-					'id' => ['type' => 'integer'],
-					'bar' => ['type' => 'integer'],
-					'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]]
-				]
-			]]
-		);
+	public function testGetNotFoundException() {
+		$table = new Table([
+			'name' => 'Articles',
+			'connection' => $this->connection,
+			'table' => 'articles',
+		]);
+		$table->get(10);
+	}
 
-		$query = $this->getMock(
-			'\Cake\ORM\Query',
-			['addDefaultTypes', 'first', 'where'],
-			[$this->connection, $table]
-		);
-
-		$table->expects($this->once())->method('query')
-			->will($this->returnValue($query));
-		$table->expects($this->once())->method('callFinder')
-			->with('all', $query, ['contain' => ['foo']])
-			->will($this->returnValue($query));
-
-		$query->expects($this->once())->method('where')
-			->with([$table->alias() . '.bar' => 10])
-			->will($this->returnSelf());
-		$query->expects($this->once())->method('first')
-			->will($this->returnValue(false));
-		$result = $table->get(10, ['contain' => ['foo']]);
+/**
+ * Test that an exception is raised when there are not enough keys.
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Incorrect number of primary key values. Expected 1 got 0.
+ * @return void
+ */
+	public function testGetExceptionOnIncorrectData() {
+		$table = new Table([
+			'name' => 'Articles',
+			'connection' => $this->connection,
+			'table' => 'articles',
+		]);
+		$table->get(null);
 	}
 
 /**

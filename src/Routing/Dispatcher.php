@@ -26,7 +26,6 @@ use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Utility\Inflector;
 
 /**
  * Dispatcher converts Requests into controller actions. It uses the dispatched Request
@@ -82,9 +81,9 @@ class Dispatcher {
 
 		if (!($controller instanceof Controller)) {
 			throw new MissingControllerException(array(
-				'class' => Inflector::camelize($request->params['controller']),
-				'plugin' => empty($request->params['plugin']) ? null : Inflector::camelize($request->params['plugin']),
-				'prefix' => empty($request->params['prefix']) ? null : Inflector::camelize($request->params['prefix']),
+				'class' => $request->params['controller'],
+				'plugin' => empty($request->params['plugin']) ? null : $request->params['plugin'],
+				'prefix' => empty($request->params['prefix']) ? null : $request->params['prefix'],
 				'_ext' => empty($request->params['_ext']) ? null : $request->params['_ext']
 			));
 		}

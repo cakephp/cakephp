@@ -864,8 +864,9 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * {@inheritDoc}
  *
- * @throws \Cake\ORM\Error\RecordNotFoundException if no record can be found give
- * such primary key value.
+ * @throws \Cake\ORM\Error\RecordNotFoundException if no record can be found given
+ * a primary key value.
+ * @throws \InvalidArgumentException When $primaryKey has an incorrect number of elements.
  */
 	public function get($primaryKey, $options = []) {
 		$key = (array)$this->primaryKey();
@@ -873,18 +874,25 @@ class Table implements RepositoryInterface, EventListener {
 		foreach ($key as $index => $keyname) {
 			$key[$index] = $alias . '.' . $keyname;
 		}
-		$conditions = array_combine($key, (array)$primaryKey);
-		$entity = $this->find('all', $options)->where($conditions)->first();
-
-		if (!$entity) {
-			throw new RecordNotFoundException(sprintf(
-				'Record "%s" not found in table "%s"',
-				implode(',', (array)$primaryKey),
-				$this->table()
+		$primaryKey = (array)$primaryKey;
+		if (count($key) !== count($primaryKey)) {
+			throw new \InvalidArgumentException(sprintf(
+				"Incorrect number of primary key values. Expected %d got %d.",
+				count($key),
+				count($primaryKey)
 			));
 		}
+		$conditions = array_combine($key, $primaryKey);
+		$entity = $this->find('all', $options)->where($conditions)->first();
 
-		return $entity;
+		if ($entity) {
+			return $entity;
+		}
+		throw new RecordNotFoundException(sprintf(
+			'Record "%s" not found in table "%s"',
+			implode(',', (array)$primaryKey),
+			$this->table()
+		));
 	}
 
 /**

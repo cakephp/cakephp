@@ -244,7 +244,7 @@ class DispatcherTest extends TestCase {
 		$request = new Request([
 			'url' => 'some_controller/home',
 			'params' => [
-				'controller' => 'some_controller',
+				'controller' => 'SomeController',
 				'action' => 'home',
 			]
 		]);
@@ -263,7 +263,7 @@ class DispatcherTest extends TestCase {
 		$request = new Request([
 			'url' => 'dispatcher_test_interface/index',
 			'params' => [
-				'controller' => 'dispatcher_test_interface',
+				'controller' => 'DispatcherTestInterface',
 				'action' => 'index',
 			]
 		]);
@@ -283,7 +283,7 @@ class DispatcherTest extends TestCase {
 		$request = new Request([
 			'url' => 'abstract/index',
 			'params' => [
-				'controller' => 'abstract',
+				'controller' => 'Abstract',
 				'action' => 'index',
 			]
 		]);
@@ -300,7 +300,7 @@ class DispatcherTest extends TestCase {
 		$url = new Request([
 			'url' => 'pages/home',
 			'params' => [
-				'controller' => 'pages',
+				'controller' => 'Pages',
 				'action' => 'display',
 				'pass' => ['extract'],
 				'return' => 1
