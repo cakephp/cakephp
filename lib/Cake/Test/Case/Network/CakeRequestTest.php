@@ -2081,7 +2081,7 @@ class CakeRequestTest extends CakeTestCase {
 
 /**
  * Data provider for testing reading values with CakeRequest::param()
- * 
+ *
  * @return array
  */
 	public function paramReadingDataProvider() {
@@ -2216,6 +2216,22 @@ class CakeRequestTest extends CakeTestCase {
 
 		$result = $request->here(false);
 		$this->assertEquals('/posts/base_path/1/name:value?test=value', $result);
+	}
+
+/**
+ * Test the input() method.
+ *
+ * @return void
+ */
+	public function testSetInput() {
+		$request = new CakeRequest('/');
+
+		$request->setInput('I came from setInput');
+		$result = $request->input();
+		$this->assertEquals('I came from setInput', $result);
+
+		$result = $request->input();
+		$this->assertEquals('I came from setInput', $result);
 	}
 
 /**
