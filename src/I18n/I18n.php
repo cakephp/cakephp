@@ -295,10 +295,6 @@ class I18n {
 			Cache::write($_this->domain, $_this->_domains[$domain][$_this->_lang], '_cake_core_');
 		}
 
-		if ($_this->category === 'LC_TIME') {
-			return $_this->_translateTime($singular, $domain);
-		}
-
 		return $_this->_translateString($singular, $plural, $domain, $_this->category, $count, $_this->_lang);
 	}
 
@@ -469,19 +465,23 @@ class I18n {
 	}
 
 /**
- * Returns a Time format definition from corresponding domain
+ * Puts the parameters in raw translated strings
  *
- * @param string $format Format to be translated
- * @param string $domain Domain where format is stored
- * @return mixed translated format string if only value or array of translated strings for corresponding format.
+ * @param string $translated The raw translated string
+ * @param array $args The arguments to put in the translation
+ * @return string Translated string with arguments
  */
-	protected function _translateTime($format, $domain) {
-		if (!empty($this->_domains[$domain][$this->_lang]['LC_TIME'][$format])) {
-			if (($trans = $this->_domains[$domain][$this->_lang][$this->category][$format])) {
-				return $trans;
-			}
+	public static function insertArgs($translated, array $args) {
+		if (empty($args)) {
+			return $translated;
 		}
-		return $format;
+
+		if (is_array($args[0])) {
+			$args = $args[0];
+		}
+
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
+		return vsprintf($translated, $args);
 	}
 
 }
