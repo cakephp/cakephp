@@ -13,26 +13,22 @@ environment:
     - PHP: "C:/PHP"
 services:
   - mssql2008r2sp2
-branches:
-  only:
-    - 3.0-windows-ci
 init:
   - SET PATH=C:\php\;%PATH%
 install:
   - cd c:\
-  - cinst php
-  - cd c:\php\ext
-  - ps: Start-FileDownload 'http://cakephp.org/files/CI/php_pdo_sqlsrv.dll'
-  - cd ..
+  - ps: Start-FileDownload 'http://robmorgan.s3.amazonaws.com/php55/php-5.5.7-nts-Win32-VC11-x86.zip'
+  - 7z x php-5.5.7-nts-Win32-VC11-x86.zip -oc:\php
+  - cd c:\php
   - copy php.ini-production php.ini
   - echo date.timezone="UTC" >> php.ini
   - echo extension_dir=ext >> php.ini
   - echo extension=php_openssl.dll >> php.ini
+  - echo extension=php_sqlsrv.dll >> php.ini
   - echo extension=php_pdo_sqlsrv.dll >> php.ini
   - echo extension=php_pdo_mysql.dll >> php.ini
   - echo extension=php_intl.dll >> php.ini
   - echo extension=php_mbstring.dll >> php.ini
-  - ps: ls C:\
   - cd C:\projects\cakephp
   - php -r "readfile('https://getcomposer.org/installer');" | php
   - php composer.phar install
