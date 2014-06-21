@@ -900,6 +900,32 @@ class EntityContextTest extends TestCase {
 		$context->isRequired('title');
 		$articles = TableRegistry::get('Articles');
 		$this->assertSame($row,  $articles->validator()->provider('entity'));
+
+		$row = new Article([
+			'title' => 'First post',
+			'user' => new Entity([
+				'username' => 'mark',
+				'fname' => 'Mark',
+				'articles' => [
+					new Article(['title' => 'First post']),
+					new Article(['title' => 'Second post']),
+				]
+			]),
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+
+		$validator = $articles->validator();
+		$context->isRequired('user.articles.0.title');
+		$this->assertSame($row->user->articles[0], $validator->provider('entity'));
+
+		$context->isRequired('user.articles.1.title');
+		$this->assertSame($row->user->articles[1], $validator->provider('entity'));
+
+		$context->isRequired('title');
+		$this->assertSame($row, $validator->provider('entity'));
 	}
 
 }
