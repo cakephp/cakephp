@@ -54,7 +54,8 @@ class Hash {
 		
  		if (!is_array($parts)) {
             		throw new InvalidArgumentException(sprintf("Invalid Parameter %s, should be dot separated path or array",$path));
-		
+ 		}
+ 		
 		foreach ($parts as $key) {
 			if (is_array($data) && isset($data[$key])) {
 				$data =& $data[$key];
