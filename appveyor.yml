@@ -35,4 +35,4 @@ test_script:
   - sqlcmd -S ".\SQL2008R2SP2" -U sa -P Password12! -Q "create database cakephp;"
   - cd C:\projects\cakephp
   - "%PHP%/php.exe --version"
-  - vendor\bin\phpunit.bat tests\TestCase\DatabaseSuite
+  - vendor\bin\phpunit.bat --no-configuration --bootstrap tests/bootstrap.php tests/TestCase/DatabaseSuite.php
