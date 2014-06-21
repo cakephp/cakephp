@@ -86,7 +86,9 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 				continue;
 			}
 
-			$canBeEmpty = $this->_canBeEmpty($field, $newRecord);
+			$providers = $this->_providers;
+			$context = compact('data', 'newRecord', 'field', 'providers');
+			$canBeEmpty = $this->_canBeEmpty($field, $context);
 			$isEmpty = $this->_fieldIsEmpty($data[$name]);
 
 			if (!$canBeEmpty && $isEmpty) {
@@ -314,7 +316,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * This is the opposite of notEmpty() which requires a field to not be empty.
  * By using $mode equal to 'create' or 'update', you can allow fields to be empty
  * when records are first created, or when they are updated.
- * 
+ *
  * ### Example:
  *
  * {{{
@@ -387,7 +389,12 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	public function notEmpty($field, $message = null, $when = false) {
 		if ($when === 'create' || $when === 'update') {
 			$when = $when === 'create' ? 'update' : 'create';
+		} elseif (is_callable($when)) {
+			$when = function($context) use ($when) {
+				return !$when($context);
+			};
 		}
+
 		$this->field($field)->isEmptyAllowed($when);
 		if ($message) {
 			$this->_allowEmptyMessages[$field] = $message;
@@ -443,11 +450,17 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns whether the field can be left blank according to `allowEmpty`
  *
  * @param ValidationSet $field the set of rules for a field
- * @param bool $newRecord whether the data to be validated is new or to be updated.
+ * @param array $context a key value list of data containing the validation context.
  * @return bool
  */
-	protected function _canBeEmpty($field, $newRecord) {
+	protected function _canBeEmpty($field, $context) {
 		$allowed = $field->isEmptyAllowed();
+
+		if (!is_string($allowed) && is_callable($allowed)) {
+			return $allowed($context);
+		}
+
+		$newRecord = $context['newRecord'];
 		if (in_array($allowed, array('create', 'update'), true)) {
 			$allowed = (
 				($allowed === 'create' && $newRecord) ||
