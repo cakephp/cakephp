@@ -2223,6 +2223,24 @@ class CakeRequestTest extends CakeTestCase {
  *
  * @return void
  */
+	public function testSetInput() {
+		$request = $this->getMock('CakeRequest', array('_readInput'));
+		$request->expects($this->once())->method('_readInput')
+			->will($this->returnValue('I came from stdin'));
+
+		$result = $request->input();
+		$this->assertEquals('I came from stdin', $result);
+
+		$request->setInput('I came from setInput');
+		$result = $request->input();
+		$this->assertEquals('I came from setInput', $result);
+	}
+
+/**
+ * Test the input() method.
+ *
+ * @return void
+ */
 	public function testInput() {
 		$request = $this->getMock('CakeRequest', array('_readInput'));
 		$request->expects($this->once())->method('_readInput')
