@@ -314,16 +314,36 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * This is the opposite of notEmpty() which requires a field to not be empty.
  * By using $mode equal to 'create' or 'update', you can allow fields to be empty
  * when records are first created, or when they are updated.
+ * 
+ * ### Example:
+ *
+ * {{{
+ * $validator->allowEmpty('email'); // Email cannot be empty
+ * $validator->allowEmpty('email', 'create'); // Email can be empty on create
+ * $validator->allowEmpty('email', 'update'); // Email can be empty on update
+ * }}}
+ *
+ * It is possible to conditionally allow emptiness on a field by passing a callback
+ * as a second argument. The callback will receive the validation context array as
+ * argument:
+ *
+ * {{{
+ * $validator->allowEmpty('email', function($context) {
+ *	return !$context['newRecord'] || $context['data']['role'] === 'admin';
+ * });
+ * }}}
  *
  * Because this and `notEmpty()` modify the same internal state, the last
  * method called will take precedence.
  *
  * @param string $field the name of the field
- * @param bool|string $mode Valid values are true, 'create', 'update'
+ * @param bool|string|callable $when Indicates when the field is allowed to be empty
+ * Valid values are true (always), 'create', 'update'. If a callable is passed then
+ * the field will allowed to be empty only when the callaback returns true.
  * @return Validator this instance
  */
-	public function allowEmpty($field, $mode = true) {
-		$this->field($field)->isEmptyAllowed($mode);
+	public function allowEmpty($field, $when = true) {
+		$this->field($field)->isEmptyAllowed($when);
 		return $this;
 	}
 
@@ -334,20 +354,41 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * By using $mode equal to 'create' or 'update', you can make fields required
  * when records are first created, or when they are updated.
  *
+ * ### Example:
+ *
+ * {{{
+ * $message = 'This field cannot be empty';
+ * $validator->notEmpty('email'); // Email cannot be empty
+ * $validator->notEmpty('email', $message, 'create'); // Email can be empty on update
+ * $validator->notEmpty('email', $message, update); // Email can be empty on create
+ * }}}
+ *
+ * It is possible to conditionally disallow emptiness on a field by passing a callback
+ * as a second argument. The callback will receive the validation context array as
+ * argument:
+ *
+ * {{{
+ * $validator->notEmpty('email', function($context) {
+ *	return $context['newRecord'] && $context['data']['role'] !== 'admin';
+ * });
+ * }}}
+ *
  * Because this and `allowEmpty()` modify the same internal state, the last
  * method called will take precedence.
  *
  * @param string $field the name of the field
  * @param string $message The validation message to show if the field is not
- * @param bool|string $mode Valid values are false, 'create', 'update'
- * allowed to be empty.
+ * @param bool|string|callable $when  Indicates when the field is not allowed
+ * to be empty. Valid values are true (always), 'create', 'update'. If a
+ * callable is passed then the field will allowed be empty only when
+ * the callaback returns false.
  * @return Validator this instance
  */
-	public function notEmpty($field, $message = null, $mode = false) {
-		if ($mode === 'create' || $mode === 'update') {
-			$mode = $mode === 'create' ? 'update' : 'create';
+	public function notEmpty($field, $message = null, $when = false) {
+		if ($when === 'create' || $when === 'update') {
+			$when = $when === 'create' ? 'update' : 'create';
 		}
-		$this->field($field)->isEmptyAllowed($mode);
+		$this->field($field)->isEmptyAllowed($when);
 		if ($message) {
 			$this->_allowEmptyMessages[$field] = $message;
 		}
