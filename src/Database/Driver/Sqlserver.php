@@ -32,7 +32,7 @@ class Sqlserver extends \Cake\Database\Driver {
  * @var array
  */
 	protected $_baseConfig = [
-		'persistent' => true,
+		'persistent' => false,
 		'host' => 'localhost\SQLEXPRESS',
 		'login' => '',
 		'password' => '',
