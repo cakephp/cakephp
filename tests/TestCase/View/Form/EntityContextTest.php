@@ -883,4 +883,23 @@ class EntityContextTest extends TestCase {
 		$this->assertEquals($articles->schema()->columns(), $context->fieldNames());
 	}
 
+/**
+ * Test automatic entity provider setting
+ *
+ * @return void
+ */
+	public function testValidatorEntityProvider() {
+		$row = new Article([
+			'title' => 'Test entity',
+			'body' => 'Something new'
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+		$context->isRequired('title');
+		$articles = TableRegistry::get('Articles');
+		$this->assertSame($row,  $articles->validator()->provider('entity'));
+	}
+
 }

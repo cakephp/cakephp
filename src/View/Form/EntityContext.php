@@ -81,6 +81,13 @@ class EntityContext implements ContextInterface {
 	protected $_tables = [];
 
 /**
+ * A Hash of validators indexed by the entity key
+ *
+ * @var array
+ */
+	protected $_validator = [];
+
+/**
  * Constructor.
  *
  * @param \Cake\Network\Request $request The request object.
@@ -345,6 +352,11 @@ class EntityContext implements ContextInterface {
  * @return \Cake\Validation\Validator
  */
 	protected function _getValidator($parts) {
+		$key = implode('.', $parts);
+		if (isset($this->_validator[$key])) {
+			return $this->_validator[$key];
+		}
+
 		$table = $this->_getTable($parts);
 		$alias = $table->alias();
 
@@ -354,7 +366,10 @@ class EntityContext implements ContextInterface {
 		} elseif (isset($this->_context['validator'][$alias])) {
 			$method = $this->_context['validator'][$alias];
 		}
-		return $table->validator($method);
+
+		$validator = $table->validator($method);
+		$validator->provider('entity', $this->_context['entity']);
+		return $this->_validator[$key] = $validator;
 	}
 
 /**
