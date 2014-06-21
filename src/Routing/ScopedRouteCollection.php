@@ -55,18 +55,25 @@ class ScopedRouteCollection {
 	);
 
 /**
+ * The extensions that should be set into the routes connected.
+ *
+ * @var array
+ */
+	protected $_extensions;
+
+/**
  * The path prefix scope that this collection uses.
  *
  * @var string
  */
-	protected $path;
+	protected $_path;
 
 /**
  * The scope parameters if there are any.
  *
  * @var array
  */
-	protected $params;
+	protected $_params;
 
 /**
  * The routes connected to this collection.
@@ -88,9 +95,25 @@ class ScopedRouteCollection {
  * @param string $path The path prefix the scope is for.
  * @param array $params The scope's routing parameters.
  */
-	public function __construct($path, array $params = []) {
+	public function __construct($path, array $params = [], array $extensions = []) {
 		$this->_path = $path;
 		$this->_params = $params;
+		$this->_extensions = $extensions;
+	}
+
+/**
+ * Get or set the extensions in this route collection.
+ *
+ * Setting extensions does not modify existing routes.
+ *
+ * @param null|array $extensions Either the extensions to use or null.
+ * @return array|void
+ */
+	public function extensions($extensions = null) {
+		if ($extensions === null) {
+			return $this->_extensions;
+		}
+		$this->_extensions = $extensions;
 	}
 
 /**
@@ -99,6 +122,10 @@ class ScopedRouteCollection {
  * @return string
  */
 	public function path() {
+		$routeKey = strpos($this->_path, ':');
+		if ($routeKey !== false) {
+			return substr($this->_path, 0, $routeKey);
+		}
 		return $this->_path;
 	}
 
@@ -308,7 +335,7 @@ class ScopedRouteCollection {
 		}
 
 		if (empty($options['_ext'])) {
-			$options['_ext'] = Router::extensions();
+			$options['_ext'] = $this->_extensions;
 		}
 
 		// TODO don't hardcode
@@ -325,10 +352,6 @@ class ScopedRouteCollection {
 		$route = str_replace('//', '/', $this->_path . $route);
 		if (is_array($defaults)) {
 			$defaults += $this->_params;
-		}
-
-		if (isset($options['_name']) && !empty($this->_named[$options['_name']])) {
-			throw new Error\Exception('Cannot have duplicated named routes.');
 		}
 
 		// Store the route and named index if possible.
