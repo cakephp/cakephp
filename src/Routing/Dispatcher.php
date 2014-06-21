@@ -26,7 +26,6 @@ use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Utility\Inflector;
 
 /**
  * Dispatcher converts Requests into controller actions. It uses the dispatched Request
