@@ -885,15 +885,14 @@ class Table implements RepositoryInterface, EventListener {
 		$conditions = array_combine($key, $primaryKey);
 		$entity = $this->find('all', $options)->where($conditions)->first();
 
-		if (!$entity) {
-			throw new RecordNotFoundException(sprintf(
-				'Record "%s" not found in table "%s"',
-				implode(',', (array)$primaryKey),
-				$this->table()
-			));
+		if ($entity) {
+			return $entity;
 		}
-
-		return $entity;
+		throw new RecordNotFoundException(sprintf(
+			'Record "%s" not found in table "%s"',
+			implode(',', (array)$primaryKey),
+			$this->table()
+		));
 	}
 
 /**
