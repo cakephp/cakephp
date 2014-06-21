@@ -1,6 +1,7 @@
 build: false
 shallow_clone: true
 platform: 'x86'
+clone_folder: c:\projects\cakephp
 environment:
   global:
     db_class: 'Cake\Database\Driver\SqlServer'
@@ -12,6 +13,9 @@ environment:
     - PHP: "C:/PHP"
 services:
   - mssql2008r2sp2
+branches:
+  only:
+    - 3.0-windows-ci
 init:
   - SET PATH=C:\php\;%PATH%
 install:
