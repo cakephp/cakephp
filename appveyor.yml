@@ -9,14 +9,18 @@ branches:
 environment:
   global:
     db_class: 'Cake\Database\Driver\SqlServer'
-    db_dsn: 'sqlsrv:Server=.\SQL2008R2SP2;Database=cakephp;MultipleActiveResultSets=false'
     db_database: 'cakephp'
     db_login: 'sa'
     db_password: 'Password12!'
+    PHP: "C:/PHP"
   matrix:
-    - PHP: "C:/PHP"
+      - db: 2008
+        db_dsn: 'sqlsrv:Server=.\SQL2008R2SP2;Database=cakephp;MultipleActiveResultSets=false'
+      - db: 2012
+        db_dsn: 'sqlsrv:Server=.\SQL2012SP1;Database=cakephp;MultipleActiveResultSets=false'
 services:
   - mssql2008r2sp2
+  - mssql2012sp1
 init:
   - SET PATH=C:\php\;%PATH%
 install:
@@ -38,5 +42,6 @@ install:
   - php composer.phar install
 test_script:
   - sqlcmd -S ".\SQL2008R2SP2" -U sa -P Password12! -Q "create database cakephp;"
+  - sqlcmd -S ".\SQL2012SP1" -U sa -P Password12! -Q "create database cakephp;"
   - cd C:\projects\cakephp
   - vendor\bin\phpunit.bat tests\TestCase\DatabaseSuite
