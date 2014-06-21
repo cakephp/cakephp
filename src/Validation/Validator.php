@@ -411,7 +411,10 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @return bool
  */
 	public function isEmptyAllowed($field, $newRecord) {
-		return $this->_canBeEmpty($this->field($field), $newRecord);
+		$providers = $this->_providers;
+		$data = [];
+		$context = compact('data', 'newRecord', 'field', 'providers');
+		return $this->_canBeEmpty($this->field($field), $context);
 	}
 
 /**
