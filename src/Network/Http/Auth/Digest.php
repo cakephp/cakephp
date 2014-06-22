@@ -74,7 +74,7 @@ class Digest {
  * @param array $credentials Authentication credentials.
  * @return Array modified credentials.
  */
-	protected function _getServerInfo(Request $request, $credentials) {
+	protected function _getServerInfo($request, $credentials) {
 		$response = $this->_client->get(
 			$request->url(),
 			[],
@@ -106,7 +106,7 @@ class Digest {
  * @param array $credentials Authentication credentials.
  * @return string
  */
-	protected function _generateHeader(Request $request, $credentials) {
+	protected function _generateHeader($request, $credentials) {
 		$path = parse_url($request->url(), PHP_URL_PATH);
 		$a1 = md5($credentials['username'] . ':' . $credentials['realm'] . ':' . $credentials['password']);
 		$a2 = md5($request->method() . ':' . $path);

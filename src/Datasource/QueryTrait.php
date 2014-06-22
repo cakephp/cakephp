@@ -109,7 +109,7 @@ trait QueryTrait {
  *
  * This method is most useful when combined with results stored in a persistent cache.
  *
- * @param \Cake\ORM\ResultSet $results The results this query should return.
+ * @param \Cake\ORM\ResultSet|\ArrayIterator $results The results this query should return.
  * @return \Cake\ORM\Query The query instance.
  */
 	public function setResult($results) {

@@ -17,7 +17,6 @@ namespace Cake\Console\Command\Task;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 
@@ -415,7 +414,7 @@ class ViewTask extends BakeTask {
  * @param Table $model
  * @return array associations
  */
-	protected function _associations(Table $model) {
+	protected function _associations($model) {
 		$keys = ['BelongsTo', 'HasOne', 'HasMany', 'BelongsToMany'];
 		$associations = [];
 

@@ -126,7 +126,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @return void
  * @throws \Cake\Error\Exception when duplicate methods are connected.
  */
-	protected function _getMethods(Behavior $instance, $class, $alias) {
+	protected function _getMethods($instance, $class, $alias) {
 		$finders = array_change_key_case($instance->implementedFinders());
 		$methods = array_change_key_case($instance->implementedMethods());
 

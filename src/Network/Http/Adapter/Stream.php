@@ -104,7 +104,7 @@ class Stream {
  * @param array $options Additional request options.
  * @return void
  */
-	protected function _buildContext(Request $request, $options) {
+	protected function _buildContext($request, $options) {
 		$this->_buildContent($request, $options);
 		$this->_buildHeaders($request, $options);
 		$this->_buildOptions($request, $options);
@@ -128,7 +128,7 @@ class Stream {
  * @param array $options Array of options to use.
  * @return void
  */
-	protected function _buildHeaders(Request $request, $options) {
+	protected function _buildHeaders($request, $options) {
 		$headers = [];
 		foreach ($request->headers() as $name => $value) {
 			$headers[] = "$name: $value";
@@ -154,7 +154,7 @@ class Stream {
  * @param array $options Array of options to use.
  * @return void
  */
-	protected function _buildContent(Request $request, $options) {
+	protected function _buildContent($request, $options) {
 		$content = $request->body();
 		if (empty($content)) {
 			return;
@@ -201,7 +201,7 @@ class Stream {
  * @param array $options Array of options to use.
  * @return void
  */
-	protected function _buildSslContext(Request $request, $options) {
+	protected function _buildSslContext($request, $options) {
 		$sslOptions = [
 			'ssl_verify_peer',
 			'ssl_verify_depth',
@@ -233,7 +233,7 @@ class Stream {
  * @return array Array of populated Response objects
  * @throws \Cake\Error\Exception
  */
-	protected function _send(Request $request) {
+	protected function _send($request) {
 		$url = $request->url();
 		$this->_open($url);
 		$content = '';

@@ -187,7 +187,7 @@ class FixtureManager {
  * @param bool $drop whether drop the fixture if it is already created or not
  * @return void
  */
-	protected function _setupTable(TestFixture $fixture, Connection $db = null, $drop = true) {
+	protected function _setupTable($fixture, $db = null, $drop = true) {
 		if (!$db) {
 			if (!empty($fixture->connection)) {
 				$db = ConnectionManager::get($fixture->connection, false);

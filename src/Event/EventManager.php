@@ -113,7 +113,7 @@ class EventManager {
  * @param \Cake\Event\EventListener $subscriber Event listerner.
  * @return void
  */
-	protected function _attachSubscriber(EventListener $subscriber) {
+	protected function _attachSubscriber($subscriber) {
 		foreach ((array)$subscriber->implementedEvents() as $eventKey => $function) {
 			$options = array();
 			$method = $function;
@@ -188,7 +188,7 @@ class EventManager {
  * @param string $eventKey optional event key name to unsubscribe the listener from
  * @return void
  */
-	protected function _detachSubscriber(EventListener $subscriber, $eventKey = null) {
+	protected function _detachSubscriber($subscriber, $eventKey = null) {
 		$events = (array)$subscriber->implementedEvents();
 		if (!empty($eventKey) && empty($events[$eventKey])) {
 			return;
@@ -253,7 +253,7 @@ class EventManager {
  * @param \Cake\Event\Event $event Event instance.
  * @return mixed The result of the $listener function.
  */
-	protected function _callListener(callable $listener, Event $event) {
+	protected function _callListener($listener, $event) {
 		$data = $event->data();
 		$length = count($data);
 		if ($length) {

@@ -440,7 +440,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @param bool $newRecord whether is it a new record or an existing one
  * @return array
  */
-	protected function _processRules($field, ValidationSet $rules, $data, $newRecord) {
+	protected function _processRules($field, $rules, $data, $newRecord) {
 		$value = $data[$field];
 		$errors = [];
 		// Loading default provider in case there is none

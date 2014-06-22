@@ -45,7 +45,7 @@ trait TupleComparisonTranslatorTrait {
  * @param \Cake\Database\Query $query The query to update.
  * @return void
  */
-	protected function _transformTupleComparison(TupleComparison $expression, $query) {
+	protected function _transformTupleComparison($expression, $query) {
 		$fields = $expression->getField();
 
 		if (!is_array($fields)) {

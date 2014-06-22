@@ -14,6 +14,8 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\StatementInterface;
+
 /**
  * Value binder class manages list of values bound to conditions.
  *
@@ -108,7 +110,7 @@ class ValueBinder {
  * @param \Cake\Database\StatementInterface $statement
  * @return void
  */
-	public function attachTo($statement) {
+	public function attachTo(StatementInterface $statement) {
 		$bindings = $this->bindings();
 		if (empty($bindings)) {
 			return;

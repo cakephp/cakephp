@@ -131,7 +131,7 @@ class CounterCacheBehavior extends Behavior {
  * @param \Cake\ORM\Entity $entity Entity
  * @return void
  */
-	protected function _processAssociations(Event $event, Entity $entity) {
+	protected function _processAssociations($event, $entity) {
 		foreach ($this->_config as $assoc => $settings) {
 			$assoc = $this->_table->association($assoc);
 			$this->_processAssociation($event, $entity, $assoc, $settings);
@@ -147,7 +147,7 @@ class CounterCacheBehavior extends Behavior {
  * @param array $settings The settings for for counter cache for this association
  * @return void
  */
-	protected function _processAssociation(Event $event, Entity $entity, Association $assoc, array $settings) {
+	protected function _processAssociation($event, $entity, $assoc, $settings) {
 		$foreignKeys = (array)$assoc->foreignKey();
 		$primaryKeys = (array)$assoc->target()->primaryKey();
 		$countConditions = $entity->extract($foreignKeys);
@@ -176,7 +176,7 @@ class CounterCacheBehavior extends Behavior {
  * @param array $conditions Additional conditions given to the query
  * @return int The number of relations matching the given config and conditions
  */
-	protected function _getCount(array $config, array $conditions) {
+	protected function _getCount($config, $conditions) {
 		$findType = 'all';
 		if (!empty($config['findType'])) {
 			$findType = $config['findType'];

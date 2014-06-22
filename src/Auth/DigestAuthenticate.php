@@ -77,7 +77,7 @@ class DigestAuthenticate extends BasicAuthenticate {
  *   used on this request.
  * @param array $config Array of config to use.
  */
-	public function __construct(ComponentRegistry $registry, $config) {
+	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$this->_registry = $registry;
 
 		$this->config([
@@ -125,7 +125,7 @@ class DigestAuthenticate extends BasicAuthenticate {
  * @param \Cake\Network\Request $request Request object.
  * @return array Array of digest information.
  */
-	protected function _getDigest(Request $request) {
+	protected function _getDigest($request) {
 		$digest = $request->env('PHP_AUTH_DIGEST');
 		if (empty($digest) && function_exists('apache_request_headers')) {
 			$headers = apache_request_headers();

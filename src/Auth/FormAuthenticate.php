@@ -44,7 +44,7 @@ class FormAuthenticate extends BaseAuthenticate {
  * @param array $fields The fields to be checked.
  * @return bool False if the fields have not been supplied. True if they exist.
  */
-	protected function _checkFields(Request $request, array $fields) {
+	protected function _checkFields($request, $fields) {
 		foreach ([$fields['username'], $fields['password']] as $field) {
 			$value = $request->data($field);
 			if (empty($value) || !is_string($value)) {

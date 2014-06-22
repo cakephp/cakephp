@@ -957,7 +957,7 @@ class QueryTest extends TestCase {
  */
 	public function testResultsAreWrappedInMapReduce() {
 		$params = [$this->connection, $this->table];
-		$query = $this->getMock('\Cake\ORM\Query', ['execute'], $params);
+		$query = $this->getMock('\Cake\ORM\Query', [], $params);
 
 		$statement = $this->getMock(
 			'\Database\StatementInterface',

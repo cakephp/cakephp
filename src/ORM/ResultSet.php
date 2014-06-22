@@ -16,7 +16,9 @@ namespace Cake\ORM;
 
 use Cake\Collection\CollectionTrait;
 use Cake\Database\Exception;
+use Cake\Database\StatementInterface;
 use Cake\Database\Type;
+use Cake\ORM\Query;
 use \Countable;
 use \Iterator;
 use \JsonSerializable;
@@ -124,7 +126,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * @param \Cake\ORM\Query $query Query from where results come
  * @param \Cake\Database\StatementInterface $statement
  */
-	public function __construct($query, $statement) {
+	public function __construct(Query $query, StatementInterface $statement = null) {
 		$repository = $query->repository();
 		$this->_query = $query;
 		$this->_statement = $statement;
