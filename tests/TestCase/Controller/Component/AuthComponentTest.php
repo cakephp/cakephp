@@ -77,10 +77,6 @@ class AuthComponentTest extends TestCase {
 		$this->Controller->constructClasses();
 
 		$this->Auth = new TestAuthComponent($this->Controller->components());
-		$this->Auth->request = $request;
-		$this->Auth->response = $response;
-		$this->Auth->sessionKey = 'Auth.User';
-		$this->Auth->session = $request->session();
 
 		$this->initialized = true;
 		Router::reload();
@@ -118,7 +114,6 @@ class AuthComponentTest extends TestCase {
  */
 	public function testIsErrorOrTests() {
 		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->Auth->initialize($event);
 
 		$this->Controller->name = 'Error';
 		$this->assertNull($this->Controller->Auth->startup($event));
@@ -202,7 +197,6 @@ class AuthComponentTest extends TestCase {
 		$this->Controller->Auth->config('userModel', 'Users');
 		$this->Controller->Auth->config('authorize', false);
 		$this->Controller->request->addParams(Router::parse('auth_test/add'));
-		$this->Controller->Auth->initialize($event);
 		$result = $this->Controller->Auth->startup($event);
 		$this->assertNull($result);
 
@@ -391,7 +385,6 @@ class AuthComponentTest extends TestCase {
  */
 	public function testAllowDenyAll() {
 		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->Auth->initialize($event);
 
 		$this->Controller->Auth->allow();
 		$this->Controller->Auth->deny(['add', 'camelCase']);
@@ -452,7 +445,6 @@ class AuthComponentTest extends TestCase {
  */
 	public function testDenyWithCamelCaseMethods() {
 		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->Auth->initialize($event);
 		$this->Controller->Auth->allow();
 		$this->Controller->Auth->deny(['add', 'camelCase']);
 
@@ -478,7 +470,6 @@ class AuthComponentTest extends TestCase {
 		$url = '/auth_test/camelCase';
 		$this->Controller->request->addParams(Router::parse($url));
 		$this->Controller->request->query['url'] = Router::normalize($url);
-		$this->Controller->Auth->initialize($event);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUsers';
 		$this->Controller->Auth->allow();
@@ -488,7 +479,6 @@ class AuthComponentTest extends TestCase {
 		$url = '/auth_test/camelCase';
 		$this->Controller->request->addParams(Router::parse($url));
 		$this->Controller->request->query['url'] = Router::normalize($url);
-		$this->Controller->Auth->initialize($event);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUsers';
 		$this->Controller->Auth->allowedActions = array('delete', 'camelCase', 'add');
@@ -501,7 +491,6 @@ class AuthComponentTest extends TestCase {
 		$url = '/auth_test/delete';
 		$this->Controller->request->addParams(Router::parse($url));
 		$this->Controller->request->query['url'] = Router::normalize($url);
-		$this->Controller->Auth->initialize($event);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUsers';
 
@@ -519,8 +508,6 @@ class AuthComponentTest extends TestCase {
 		$url = '/auth_test/action_name';
 		$this->Controller->request->addParams(Router::parse($url));
 		$this->Controller->request->query['url'] = Router::normalize($url);
-		$event = new Event('Controller.initialize', $this->Controller);
-		$this->Controller->Auth->initialize($event);
 		$this->Controller->Auth->allow(['action_name', 'anotherAction']);
 		$this->assertEquals(array('action_name', 'anotherAction'), $this->Controller->Auth->allowedActions);
 	}
@@ -540,8 +527,6 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->request->addParams(Router::parse('Users/login'));
 		$this->Auth->request->url = 'Users/login';
 		$this->Auth->request->env('HTTP_REFERER', false);
-		$event = new Event('Controller.initialize', $this->Controller);
-		$this->Auth->initialize($event);
 
 		$this->Auth->config('loginRedirect', [
 			'controller' => 'pages', 'action' => 'display', 'welcome'
@@ -563,8 +548,6 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->request->env('HTTP_REFERER', false);
 		array_push($this->Controller->methods, 'view', 'edit', 'index');
 
-		$event = new Event('Controller.initialize', $this->Controller);
-		$this->Auth->initialize($event);
 		$this->Auth->config('authorize', 'controller');
 
 		$this->Auth->config('loginAction', [
@@ -582,8 +565,6 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->request->params['action'] = 'login';
 		$this->Auth->request->url = 'auth_test/login';
 		$this->Controller->request->env('HTTP_REFERER', Router::url('/admin', true));
-		$event = new Event('Controller.initialize', $this->Controller);
-		$this->Auth->initialize($event);
 		$this->Auth->config('loginAction', 'auth_test/login');
 		$this->Auth->config('loginRedirect', false);
 		$event = new Event('Controller.startup', $this->Controller);
@@ -596,8 +577,6 @@ class AuthComponentTest extends TestCase {
 		$url = '/posts/view/1';
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
-		$event = new Event('Controller.initialize', $this->Controller);
-		$this->Auth->initialize($event);
 		$this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->startup($event);
@@ -614,8 +593,6 @@ class AuthComponentTest extends TestCase {
 			'refer' => 'menu'
 		);
 
-		$event = new Event('Controller.initialize', $this->Controller);
-		$this->Auth->initialize($event);
 		$this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->startup($event);
@@ -639,8 +616,6 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->request->url = Router::normalize($url);
 
-		$event = new Event('Controller.initialize', $this->Controller);
-		$this->Auth->initialize($event);
 		$this->Auth->config('loginAction', ['controller' => 'users', 'action' => 'login']);
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->startup($event);
@@ -659,8 +634,6 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->request = $this->Controller->request = $request;
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
-		$event = new Event('Controller.initialize', $this->Controller);
-		$this->Auth->initialize($event);
 		$this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->startup($event);
@@ -674,8 +647,6 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->request->env('HTTP_REFERER', 'http://webmail.example.com/view/message');
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->request->url = Router::normalize($url);
-		$event = new Event('Controller.initialize', $this->Controller);
-		$this->Auth->initialize($event);
 		$this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->startup($event);
@@ -880,7 +851,6 @@ class AuthComponentTest extends TestCase {
 	public function testNoRedirectOn404() {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->session->delete('Auth');
-		$this->Auth->initialize($event);
 		$this->Auth->request->addParams(Router::parse('auth_test/something_totally_wrong'));
 		$result = $this->Auth->startup($event);
 		$this->assertNull($result, 'Auth redirected a missing action %s');
@@ -904,7 +874,6 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->request->base = '';
 
 		Router::setRequestInfo($this->Auth->request);
-		$this->Auth->initialize($event);
 
 		$this->Auth->config('loginAction', [
 			'prefix' => 'admin', 'controller' => 'auth_test', 'action' => 'login'
@@ -931,7 +900,6 @@ class AuthComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->config('ajaxLogin', 'test_element');
 		$this->Auth->RequestHandler->ajaxLayout = 'ajax2';
-		$this->Auth->initialize($event);
 
 		$response = $this->Auth->startup($event);
 
@@ -970,7 +938,6 @@ class AuthComponentTest extends TestCase {
 		$request->url = ltrim($url, '/');
 		Router::setRequestInfo($request);
 
-		$this->Auth->initialize($event);
 		$this->Auth->config('loginAction', [
 			'prefix' => 'admin',
 			'controller' => 'auth_test',
