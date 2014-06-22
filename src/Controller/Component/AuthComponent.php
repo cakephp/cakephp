@@ -235,13 +235,15 @@ class AuthComponent extends Component {
 	protected $_authorizationProvider;
 
 /**
- * Initializes AuthComponent for use in the controller.
+ * Constructor
  *
- * @param \Cake\Event\Event $event The initialize event.
- * @return void
+ * @param ComponentRegistry $registry A ComponentRegistry object.
+ * @param array $config Array of configuration settings.
  */
-	public function initialize(Event $event) {
-		$controller = $event->subject();
+	public function __construct(ComponentRegistry $registry, array $config = []) {
+		parent::__construct($registry, $config);
+
+		$controller = $registry->getController();
 		$this->request = $controller->request;
 		$this->response = $controller->response;
 		$this->_methods = $controller->methods;
@@ -300,7 +302,6 @@ class AuthComponent extends Component {
  */
 	public function implementedEvents() {
 		return [
-			'Controller.initialize' => 'initialize',
 			'Controller.startup' => 'startup',
 		];
 	}
