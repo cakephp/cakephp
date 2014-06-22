@@ -304,7 +304,7 @@ trait QueryTrait {
  * @param bool|int $mode
  * @return \Cake\Datasource\QueryTrait|array
  */
-	public function formatResults(callable $formatter = null, $mode = self::APPEND) {
+	public function formatResults(callable $formatter = null, $mode = 0) {
 		if ($mode === self::OVERWRITE) {
 			$this->_formatters = [];
 		}
