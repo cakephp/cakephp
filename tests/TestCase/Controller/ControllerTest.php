@@ -439,11 +439,11 @@ class ControllerTest extends TestCase {
 		$Controller = new Controller(null);
 		$Controller->response = new Response();
 
-		$Controller->eventManager()->attach(function ($event, $response, $url) {
+		$Controller->eventManager()->attach(function ($event, $url, $response) {
 			$response->location('http://book.cakephp.org');
 		}, 'Controller.beforeRedirect');
 
-		$response = $Controller->redirect('http://cakephp.org', 301, false);
+		$response = $Controller->redirect('http://cakephp.org', 301);
 		$this->assertEquals('http://book.cakephp.org', $response->header()['Location']);
 		$this->assertEquals(301, $response->statusCode());
 	}
@@ -457,7 +457,7 @@ class ControllerTest extends TestCase {
 		$Response = $this->getMock('Cake\Network\Response', array('stop'));
 		$Controller = new Controller(null, $Response);
 
-		$Controller->eventManager()->attach(function ($event, $response, $url) {
+		$Controller->eventManager()->attach(function ($event, $url, $response) {
 			$response->statusCode(302);
 		}, 'Controller.beforeRedirect');
 
@@ -476,7 +476,7 @@ class ControllerTest extends TestCase {
 		$Response = $this->getMock('Cake\Network\Response', array('stop', 'header'));
 		$Controller = new Controller(null, $Response);
 
-		$Controller->eventManager()->attach(function ($event, $response, $url, $status) {
+		$Controller->eventManager()->attach(function ($event, $url, $response) {
 			return false;
 		}, 'Controller.beforeRedirect');
 
