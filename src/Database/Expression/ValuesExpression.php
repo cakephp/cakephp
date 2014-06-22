@@ -19,7 +19,6 @@ use Cake\Database\Query;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
 use Cake\Error;
-use \Countable;
 
 /**
  * An expression object to contain values being inserted.

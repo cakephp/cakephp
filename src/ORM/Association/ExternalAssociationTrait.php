@@ -15,7 +15,6 @@
 namespace Cake\ORM\Association;
 
 use Cake\ORM\Association\SelectableAssociationTrait;
-use Cake\ORM\Query;
 use Cake\Utility\Inflector;
 
 /**

@@ -15,8 +15,6 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Query;
-use Cake\Database\TypeMap;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
 use \Countable;

@@ -18,10 +18,8 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Route\Route;
-use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
 /**

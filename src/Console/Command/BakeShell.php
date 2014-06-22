@@ -16,7 +16,6 @@ namespace Cake\Console\Command;
 
 use Cake\Cache\Cache;
 use Cake\Console\Shell;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;

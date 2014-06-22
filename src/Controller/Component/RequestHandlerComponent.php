@@ -21,7 +21,6 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error\Exception;
 use Cake\Event\Event;
-use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Error\XmlException;

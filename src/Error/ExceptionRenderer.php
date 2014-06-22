@@ -24,7 +24,6 @@ use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Error\MissingViewException;
-use Cake\View\View;
 
 /**
  * Exception Renderer.

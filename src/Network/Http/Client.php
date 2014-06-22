@@ -18,7 +18,6 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Error;
 use Cake\Network\Http\Cookies;
 use Cake\Network\Http\Request;
-use Cake\Network\Http\Response;
 use Cake\Utility\Hash;
 
 /**

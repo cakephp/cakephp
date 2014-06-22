@@ -14,14 +14,11 @@
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\Core\App;
 use Cake\Database\Connection;
-use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error;
 use Cake\Log\Log;
-use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
 /**

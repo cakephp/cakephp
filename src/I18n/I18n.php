@@ -22,7 +22,6 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error\Exception;
 use Cake\Network\Request;
-use Cake\Network\Session;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Utility\String;

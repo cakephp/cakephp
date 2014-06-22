@@ -21,7 +21,6 @@ use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\File;
 use Cake\Utility\Folder;
-use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
 /**

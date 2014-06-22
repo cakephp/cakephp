@@ -16,7 +16,6 @@ namespace Cake\Core;
 
 use Cake\Cache\Cache;
 use Cake\Core\Plugin;
-use Cake\Error\ErrorHandler;
 use Cake\Utility\Inflector;
 
 /**

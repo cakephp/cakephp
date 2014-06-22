@@ -14,7 +14,6 @@
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Connection;

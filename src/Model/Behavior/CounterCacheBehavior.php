@@ -19,7 +19,6 @@ use Cake\ORM\Association;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
-use Cake\Utility\Inflector;
 
 /**
  * CounterCache behavior

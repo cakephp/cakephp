@@ -19,8 +19,6 @@ use Cake\Controller\Controller;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error;
 use Cake\Network\Request;
-use Cake\Network\Response;
-use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
 /**

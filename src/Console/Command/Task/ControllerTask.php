@@ -15,7 +15,6 @@
 namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 

@@ -14,13 +14,10 @@
  */
 namespace Cake\Datasource;
 
-use ArrayIterator;
 use Cake\Collection\Collection;
 use Countable;
-use IteratorIterator;
 use JsonSerializable;
 use Serializable;
-use Traversable;
 
 /**
  * Generic ResultSet decorator. This will make any traversable object appear to

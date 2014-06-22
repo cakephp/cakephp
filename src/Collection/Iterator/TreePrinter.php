@@ -14,7 +14,6 @@
  */
 namespace Cake\Collection\Iterator;
 
-use Cake\Collection\Collection;
 use Cake\Collection\CollectionTrait;
 use Cake\Collection\Iterator\TreePrinter;
 use RecursiveIteratorIterator;

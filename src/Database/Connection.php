@@ -18,7 +18,6 @@ use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
-use Cake\Database\QueryCompiler;
 use Cake\Database\ValueBinder;
 
 /**

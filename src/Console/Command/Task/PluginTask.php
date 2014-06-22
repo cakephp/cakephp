@@ -17,7 +17,6 @@ namespace Cake\Console\Command\Task;
 use Cake\Console\Command\Task\BakeTask;
 use Cake\Console\Shell;
 use Cake\Core\App;
-use Cake\Core\Configure;
 use Cake\Utility\File;
 use Cake\Utility\Folder;
 

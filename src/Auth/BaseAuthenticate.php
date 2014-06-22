@@ -13,17 +13,12 @@
  */
 namespace Cake\Auth;
 
-use Cake\Auth\AbstractPasswordHasher;
 use Cake\Auth\PasswordHasherFactory;
 use Cake\Controller\ComponentRegistry;
-use Cake\Core\App;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Hash;
-use Cake\Utility\Security;
 
 /**
  * Base Authentication class with common methods and properties.

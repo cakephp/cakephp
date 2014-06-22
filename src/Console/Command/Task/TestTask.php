@@ -16,7 +16,6 @@ namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
 use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error;

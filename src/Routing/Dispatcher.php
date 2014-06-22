@@ -16,13 +16,9 @@ namespace Cake\Routing;
 
 use Cake\Controller\Controller;
 use Cake\Controller\Error\MissingControllerException;
-use Cake\Core\App;
-use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
-use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;

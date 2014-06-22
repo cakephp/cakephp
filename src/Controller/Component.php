@@ -15,7 +15,6 @@
 namespace Cake\Controller;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Event\Event;
 use Cake\Event\EventListener;
 
 /**

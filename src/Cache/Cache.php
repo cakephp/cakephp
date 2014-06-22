@@ -14,11 +14,8 @@
  */
 namespace Cake\Cache;
 
-use Cake\Core\App;
-use Cake\Core\Configure;
 use Cake\Core\StaticConfigTrait;
 use Cake\Error;
-use Cake\Utility\Inflector;
 
 /**
  * Cache provides a consistent interface to Caching in your application. It allows you

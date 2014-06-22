@@ -15,7 +15,6 @@
 namespace Cake\Cache;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Utility\Inflector;
 
 /**
  * Storage engine for CakePHP caching

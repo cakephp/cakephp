@@ -14,7 +14,6 @@
  */
 namespace Cake\Database\Log;
 
-use Cake\Database\Type;
 use Cake\Log\Log;
 use Cake\Utility\String;
 

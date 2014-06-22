@@ -14,13 +14,9 @@
  */
 namespace Cake\Controller;
 
-use Cake\Core\App;
-use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
-use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
 use Cake\Log\LogTrait;
 use Cake\Model\ModelAwareTrait;
