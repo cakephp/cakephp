@@ -35,7 +35,7 @@ class TimeHelper extends Helper {
  *
  * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|\DateTimeZone $timezone User's timezone string or DateTimeZone object
- * @return Cake\Utility\Time
+ * @return \Cake\Utility\Time
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
 	public function fromString($dateString, $timezone = null) {

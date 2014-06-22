@@ -26,7 +26,7 @@ class Basic {
 /**
  * Add Authorization header to the request.
  *
- * @param Cake\Network\Request $request Request instance.
+ * @param \Cake\Network\Request $request Request instance.
  * @param array $credentials Credentials.
  * @return void
  * @see http://www.ietf.org/rfc/rfc2617.txt
@@ -41,7 +41,7 @@ class Basic {
 /**
  * Proxy Authentication
  *
- * @param Cake\Network\Request $request Request instance.
+ * @param \Cake\Network\Request $request Request instance.
  * @param array $credentials Credentials.
  * @return void
  * @see http://www.ietf.org/rfc/rfc2617.txt

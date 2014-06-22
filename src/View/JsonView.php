@@ -71,9 +71,9 @@ class JsonView extends View {
 /**
  * Constructor
  *
- * @param Cake\Network\Request $request Request instance.
- * @param Cake\Network\Response $response Response instance.
- * @param Cake\Event\EventManager $eventManager EventManager instance.
+ * @param \Cake\Network\Request $request Request instance.
+ * @param \Cake\Network\Response $response Response instance.
+ * @param \Cake\Event\EventManager $eventManager EventManager instance.
  * @param array $viewOptions An array of view options
  */
 	public function __construct(Request $request = null, Response $response = null,

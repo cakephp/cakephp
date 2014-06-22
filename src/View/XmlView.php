@@ -72,9 +72,9 @@ class XmlView extends View {
 /**
  * Constructor
  *
- * @param Cake\Network\Request $request Request instance
- * @param Cake\Network\Response $response Response instance
- * @param Cake\Event\EventManager $eventManager Event Manager
+ * @param \Cake\Network\Request $request Request instance
+ * @param \Cake\Network\Response $response Response instance
+ * @param \Cake\Event\EventManager $eventManager Event Manager
  * @param array $viewOptions View options.
  */
 	public function __construct(Request $request = null, Response $response = null,

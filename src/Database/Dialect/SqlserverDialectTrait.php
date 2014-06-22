@@ -51,8 +51,8 @@ trait SqlserverDialectTrait {
 /**
  * Modify the limit/offset to TSQL
  *
- * @param Cake\Database\Query $query The query to translate
- * @return Cake\Database\Query The modified query
+ * @param \Cake\Database\Query $query The query to translate
+ * @return \Cake\Database\Query The modified query
  */
 	protected function _selectQueryTranslator($query) {
 		$limit = $query->clause('limit');
@@ -145,7 +145,7 @@ trait SqlserverDialectTrait {
  * Receives a FunctionExpression and changes it so that it conforms to this
  * SQL dialect.
  *
- * @param Cake\Database\Expression\FunctionExpression $expression The function expression to convert to TSQL.
+ * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to convert to TSQL.
  * @return void
  */
 	protected function _transformFunctionExpression(FunctionExpression $expression) {
@@ -177,7 +177,7 @@ trait SqlserverDialectTrait {
  * Used by Cake\Schema package to reflect schema and
  * generate schema.
  *
- * @return Cake\Database\Schema\MysqlSchema
+ * @return \Cake\Database\Schema\MysqlSchema
  */
 	public function schemaDialect() {
 		return new \Cake\Database\Schema\SqlserverSchema($this);
