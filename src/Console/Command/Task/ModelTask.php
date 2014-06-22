@@ -15,12 +15,10 @@
 namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 
 /**

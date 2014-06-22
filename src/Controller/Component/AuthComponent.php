@@ -15,7 +15,6 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -23,11 +22,9 @@ use Cake\Error;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Network\Session;
 use Cake\Routing\Router;
 use Cake\Utility\Debugger;
 use Cake\Utility\Hash;
-use Cake\Utility\Security;
 
 /**
  * Authentication control component class

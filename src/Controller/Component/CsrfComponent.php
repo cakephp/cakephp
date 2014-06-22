@@ -15,7 +15,6 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Core\Configure;
 use Cake\Error\ForbiddenException;
 use Cake\Event\Event;
 use Cake\Network\Request;

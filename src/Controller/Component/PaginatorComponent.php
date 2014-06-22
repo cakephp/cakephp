@@ -15,8 +15,6 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentRegistry;
-use Cake\Datasource\RepositoryInterface;
 use Cake\Error;
 use Cake\ORM\Query;
 use Cake\ORM\Table;

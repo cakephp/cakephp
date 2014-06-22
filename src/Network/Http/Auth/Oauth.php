@@ -14,7 +14,6 @@
 namespace Cake\Network\Http\Auth;
 
 use Cake\Error;
-use Cake\Network\Http\Client;
 use Cake\Network\Http\Request;
 
 /**

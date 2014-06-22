@@ -15,7 +15,6 @@
 namespace Cake\Auth;
 
 use Cake\Auth\AbstractPasswordHasher;
-use Cake\Utility\Security;
 
 /**
  * Simple password hashing class.

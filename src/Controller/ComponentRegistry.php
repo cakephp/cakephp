@@ -15,8 +15,6 @@
 namespace Cake\Controller;
 
 use Cake\Core\App;
-use Cake\Event\EventListener;
-use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
 use Cake\Utility\ObjectRegistry;
 

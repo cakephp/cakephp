@@ -15,7 +15,6 @@
 namespace Cake\Core;
 
 use Cake\Core\ClassLoader;
-use Cake\Utility\Inflector;
 
 /**
  * Plugin is used to load and locate plugins.

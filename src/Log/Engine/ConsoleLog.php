@@ -18,7 +18,6 @@ namespace Cake\Log\Engine;
 
 use Cake\Console\ConsoleOutput;
 use Cake\Error;
-use Cake\Utility\Hash;
 
 /**
  * Console logging. Writes logs to console output.

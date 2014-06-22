@@ -16,7 +16,6 @@ namespace Cake\Console\Command;
 
 use Cake\Console\ConsoleOutput;
 use Cake\Console\Shell;
-use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 

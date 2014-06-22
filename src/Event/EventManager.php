@@ -14,8 +14,6 @@
  */
 namespace Cake\Event;
 
-use Cake\Error;
-
 /**
  * The event manager is responsible for keeping track of event listeners, passing the correct
  * data to them, and firing them in the correct order, when associated events are triggered. You

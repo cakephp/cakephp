@@ -15,8 +15,6 @@
 namespace Cake\Network;
 
 use Cake\Core\App;
-use Cake\Core\Configure;
-use Cake\Error;
 use Cake\Utility\Hash;
 use SessionHandlerInterface;
 

@@ -18,7 +18,6 @@ namespace Cake\Log\Engine;
 
 use Cake\Core\Configure;
 use Cake\Log\Engine\BaseLog;
-use Cake\Utility\Hash;
 
 /**
  * File Storage stream for Logging. Writes logs to different files
