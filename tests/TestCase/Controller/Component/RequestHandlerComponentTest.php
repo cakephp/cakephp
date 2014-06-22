@@ -354,6 +354,8 @@ class RequestHandlerComponentTest extends TestCase {
 
 /**
  * test custom JsonView class is loaded and correct.
+ *
+ * @return void
  */
 	public function testJsonViewLoaded() {
 		Router::parseExtensions(['json', 'xml', 'ajax'], false);
@@ -369,6 +371,8 @@ class RequestHandlerComponentTest extends TestCase {
 
 /**
  * test custom XmlView class is loaded and correct.
+ *
+ * @return void
  */
 	public function testXmlViewLoaded() {
 		Router::parseExtensions(['json', 'xml', 'ajax'], false);
@@ -384,6 +388,8 @@ class RequestHandlerComponentTest extends TestCase {
 
 /**
  * test custom AjaxView class is loaded and correct.
+ *
+ * @return void
  */
 	public function testAjaxViewLoaded() {
 		Router::parseExtensions(['json', 'xml', 'ajax'], false);
@@ -398,6 +404,8 @@ class RequestHandlerComponentTest extends TestCase {
 
 /**
  * test configured extension but no view class set.
+ *
+ * @return void
  */
 	public function testNoViewClassExtension() {
 		Router::parseExtensions(['json', 'xml', 'ajax', 'csv'], false);
@@ -483,7 +491,7 @@ class RequestHandlerComponentTest extends TestCase {
 	public function testAjaxRedirectWithNoUrl() {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->response = $this->getMock('CakeResponse');
+		$this->Controller->response = $this->getMock('Cake\Network\Response');
 
 		$this->Controller->response->expects($this->never())
 			->method('body');
@@ -841,6 +849,8 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
+ * testAddInputTypeException method
+ *
  * @expectedException \Cake\Error\Exception
  * @return void
  */

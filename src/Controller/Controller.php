@@ -528,7 +528,7 @@ class Controller implements EventListener {
 			$response->statusCode($status);
 		}
 
-		$event = new Event('Controller.beforeRedirect', $this, [$response, $url, $status]);
+		$event = new Event('Controller.beforeRedirect', $this, [$url, $response]);
 		$event = $this->eventManager()->dispatch($event);
 		if ($event->result instanceof Response) {
 			return $event->result;
@@ -690,11 +690,11 @@ class Controller implements EventListener {
  * @param Event $event An Event instance
  * @param string|array $url A string or array-based URL pointing to another location within the app,
  *     or an absolute URL
- * @param int $status Optional HTTP status code (eg: 404)
+ * @param \Cake\Network\Response $response The response object.
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
-	public function beforeRedirect(Event $event, $url, $status = null) {
+	public function beforeRedirect(Event $event, $url, Response $response) {
 	}
 
 /**
