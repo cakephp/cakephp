@@ -78,9 +78,11 @@ class QueryCompiler {
  * Returns the SQL representation of the provided query after generating
  * the placeholders for the bound values using the provided generator
  *
- * @return void
+ * @param \Cake\Database\Query $query The query that is being compiled
+ * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+ * @return \Closure
  */
-	public function compile($query, $generator) {
+	public function compile(Query $query, ValueBinder $generator) {
 		$sql = '';
 		$type = $query->type();
 		$query->traverse(
@@ -95,6 +97,7 @@ class QueryCompiler {
  * of this query.
  *
  * @param string $sql initial sql string to append to
+ * @param \Cake\Database\Query $query The query that is being compiled
  * @param \Cake\Database\ValueBinder The placeholder and value binder object
  * @return \Closure
  */
@@ -281,7 +284,7 @@ class QueryCompiler {
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return array
  */
-	protected function _stringifyExpressions(array $expressions, ValueBinder $generator) {
+	protected function _stringifyExpressions($expressions, $generator) {
 		$result = [];
 		foreach ($expressions as $k => $expression) {
 			if ($expression instanceof ExpressionInterface) {
