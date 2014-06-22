@@ -528,7 +528,7 @@ class Controller implements EventListener {
 			$response->statusCode($status);
 		}
 
-		$event = new Event('Controller.beforeRedirect', $this, [$response, $url, $status]);
+		$event = new Event('Controller.beforeRedirect', $this, [$url, $response]);
 		$event = $this->eventManager()->dispatch($event);
 		if ($event->result instanceof Response) {
 			return $event->result;
