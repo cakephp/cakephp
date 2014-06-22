@@ -580,6 +580,7 @@ class MemcachedEngineTest extends TestCase {
  * @return void
  */
 	public function testDeleteMany() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		$this->_configCache();
 		$data = array(
 			'App.falseTest' => false,
