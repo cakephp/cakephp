@@ -483,7 +483,7 @@ class RequestHandlerComponentTest extends TestCase {
 	public function testAjaxRedirectWithNoUrl() {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->response = $this->getMock('CakeResponse');
+		$this->Controller->response = $this->getMock('Response');
 
 		$this->Controller->response->expects($this->never())
 			->method('body');

@@ -275,7 +275,7 @@ class RequestHandlerComponent extends Component {
  * @param \Cake\Network\Response $response The response object.
  * @return void
  */
-	public function beforeRedirect(Event $event, $url, $response) {
+	public function beforeRedirect(Event $event, $url, Response $response) {
 		if (!$this->request->is('ajax')) {
 			return;
 		}
