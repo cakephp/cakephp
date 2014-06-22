@@ -52,7 +52,7 @@ use Cake\Event\EventListener;
  * - `intitalize(Event $event)`
  * - `startup(Event $event)`
  * - `beforeRender(Event $event)`
- * - `beforeRedirect(Event $event $url, Response $response)`
+ * - `beforeRedirect(Event $event, $url, Response $response)`
  * - `shutdown(Event $event)`
  *
  * While the controller is not an explicit argument it is the subject of each event
