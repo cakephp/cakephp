@@ -311,7 +311,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCrypto() {
-		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
+		$this->skipIf(!function_exists('stream_socket_enable_crypto'), 'Broken on HHVM');
 		// testing on ssl server
 		$this->_connectSocketToSslTls();
 		$this->assertTrue($this->Socket->enableCrypto('sslv3', 'client'));
@@ -330,7 +330,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoExceptionEnableTwice() {
-		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
+		$this->skipIf(!function_exists('stream_socket_enable_crypto'), 'Broken on HHVM');
 		// testing on tls server
 		$this->_connectSocketToSslTls();
 		$this->Socket->enableCrypto('tls', 'client');
@@ -344,7 +344,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoExceptionDisableTwice() {
-		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
+		$this->skipIf(!function_exists('stream_socket_enable_crypto'), 'Broken on HHVM');
 		// testing on tls server
 		$this->_connectSocketToSslTls();
 		$this->Socket->enableCrypto('tls', 'client', false);
@@ -356,7 +356,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoEnableStatus() {
-		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
+		$this->skipIf(!function_exists('stream_socket_enable_crypto'), 'Broken on HHVM');
 		// testing on tls server
 		$this->_connectSocketToSslTls();
 		$this->assertFalse($this->Socket->encrypted);
