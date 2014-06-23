@@ -54,11 +54,8 @@ class Hash {
  			}
  			
  			$parts = $path;
- 		
 		}
 		
- 		
- 		
 		foreach ($parts as $key) {
 			if (is_array($data) && isset($data[$key])) {
 				$data =& $data[$key];
