@@ -51,9 +51,10 @@ class Hash {
 		} else {
 			if (!is_array($path)) {
             			throw new InvalidArgumentException(sprintf("Invalid Parameter %s, should be dot separated path or array", $path));
- 			} else {
- 				$parts = $path;
  			}
+ 			
+ 			$parts = $path;
+ 		
 		}
 		
  		
