@@ -243,6 +243,29 @@ DIGEST;
 	}
 
 /**
+ * Test parsing a full URI. While not part of the spec some mobile clients will do it wrong.
+ *
+ * @return void
+ */
+	public function testParseAuthDataFullUri() {
+		$digest = <<<DIGEST
+			Digest username="admin",
+			realm="192.168.0.2",
+			nonce="53a7f9b83f61b",
+			uri="http://192.168.0.2/pvcollection/sites/pull/HFD%200001.json#fragment",
+			qop=auth,
+			nc=00000001,
+			cnonce="b85ff144e496e6e18d1c73020566ea3b",
+			response="5894f5d9cd41d012bac09eeb89d2ddf2",
+			opaque="6f65e91667cf98dd13464deaf2739fde"
+DIGEST;
+
+		$expected = 'http://192.168.0.2/pvcollection/sites/pull/HFD%200001.json#fragment';
+		$result = $this->auth->parseAuthData($digest);
+		$this->assertSame($expected, $result['uri']);
+	}
+
+/**
  * test parsing digest information with email addresses
  *
  * @return void
