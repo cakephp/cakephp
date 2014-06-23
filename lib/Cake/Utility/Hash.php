@@ -49,12 +49,14 @@ class Hash {
 		if (is_string($path) || is_numeric($path)) {
 			$parts = explode('.', $path);
 		} else {
-			$parts = $path;
+			if (!is_array($path)) {
+            			throw new InvalidArgumentException(sprintf("Invalid Parameter %s, should be dot separated path or array", $path));
+ 			} else {
+ 				$parts = $path;
+ 			}
 		}
 		
- 		if (!is_array($parts)) {
-            		throw new InvalidArgumentException(sprintf("Invalid Parameter %s, should be dot separated path or array", $path));
- 		}
+ 		
  		
 		foreach ($parts as $key) {
 			if (is_array($data) && isset($data[$key])) {
