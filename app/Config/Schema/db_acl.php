@@ -58,8 +58,8 @@ class DbAclSchema extends CakeSchema {
 		'rght' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10),
 		'indexes' => array(
                     'PRIMARY' => array('column' => 'id', 'unique' => 1),
-                    'idx_acos_lft_rght' => array('column' => array('lft', 'rght'),'unique' => 0),
-                    'idx_acos_alias' => array('column' => 'alias','unique' => 0)
+                    'idx_acos_lft_rght' => array('column' => array('lft', 'rght'), 'unique' => 0),
+                    'idx_acos_alias' => array('column' => 'alias', 'unique' => 0)
                 )
 	);
 
@@ -76,8 +76,8 @@ class DbAclSchema extends CakeSchema {
 		'rght' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10),
 		'indexes' => array(
                     'PRIMARY' => array('column' => 'id','unique' => 1), 
-                    'idx_aros_lft_rght' => array('column' => array('lft', 'rght'),'unique' => 0),
-                    'idx_aros_alias' => array('column' => 'alias','unique' => 0)
+                    'idx_aros_lft_rght' => array('column' => array('lft', 'rght'), 'unique' => 0),
+                    'idx_aros_alias' => array('column' => 'alias', 'unique' => 0)
                 )
 	);
 
