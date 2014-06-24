@@ -120,7 +120,7 @@ class Query extends DatabaseQuery {
  * This method returns the same query object for chaining.
  *
  * @param \Cake\ORM\Table $table
- * @return Query
+ * @return $this
  */
 	public function addDefaultTypes(Table $table) {
 		$alias = $table->alias();
@@ -140,7 +140,7 @@ class Query extends DatabaseQuery {
  * currently configured instance.
  *
  * @param \Cake\ORM\EagerLoader $instance
- * @return \Cake\ORM\EagerLoader|\Cake\ORM\Query
+ * @return \Cake\ORM\EagerLoader|$this
  */
 	public function eagerLoader(EagerLoader $instance = null) {
 		if ($instance === null) {
@@ -238,7 +238,7 @@ class Query extends DatabaseQuery {
  * @param array|string $associations list of table aliases to be queried
  * @param bool $override whether override previous list with the one passed
  * defaults to merging previous list with the new one.
- * @return array|\Cake\ORM\Query
+ * @return array|$this
  */
 	public function contain($associations = null, $override = false) {
 		if (empty($associations) && $override) {
@@ -304,7 +304,7 @@ class Query extends DatabaseQuery {
  * @param string $assoc The association to filter by
  * @param callable $builder a function that will receive a pre-made query object
  * that can be used to add custom conditions or selecting some fields
- * @return Query
+ * @return $this
  */
 	public function matching($assoc, callable $builder = null) {
 		$this->eagerLoader()->matching($assoc, $builder);
@@ -326,7 +326,7 @@ class Query extends DatabaseQuery {
  * enabled.
  *
  * @param bool $enable whether or not to enable buffering
- * @return bool|Query
+ * @return bool|$this
  */
 	public function bufferResults($enable = null) {
 		if ($enable === null) {
@@ -429,7 +429,7 @@ class Query extends DatabaseQuery {
  * - join: Maps to the join method
  * - page: Maps to the page method
  *
- * @return \Cake\ORM\Query
+ * @return $this
  */
 	public function applyOptions(array $options) {
 		$valid = [
@@ -508,7 +508,7 @@ class Query extends DatabaseQuery {
  * query itself.
  *
  * @param callable $counter
- * @return \Cake\ORM\Query
+ * @return $this
  */
 	public function counter($counter) {
 		$this->_counter = $counter;
@@ -522,7 +522,7 @@ class Query extends DatabaseQuery {
  *
  * @param bool|null $enable Use a boolean to set the hydration mode.
  *   Null will fetch the current hydration mode.
- * @return bool|Query A boolean when reading, and $this when setting the mode.
+ * @return bool|$this A boolean when reading, and $this when setting the mode.
  */
 	public function hydrate($enable = null) {
 		if ($enable === null) {
@@ -537,7 +537,7 @@ class Query extends DatabaseQuery {
 /**
  * {@inheritDoc}
  *
- * @return Query The query instance.
+ * @return $this
  * @throws \RuntimeException When you attempt to cache a non-select query.
  */
 	public function cache($key, $config = 'default') {
@@ -597,7 +597,7 @@ class Query extends DatabaseQuery {
  * using `contain`
  *
  * @see \Cake\Database\Query::execute()
- * @return Query
+ * @return $this
  */
 	protected function _transformQuery() {
 		if (!$this->_dirty) {
@@ -647,7 +647,7 @@ class Query extends DatabaseQuery {
  *
  * @param string $finder The finder method to use.
  * @param array $options The options for the finder.
- * @return \Cake\ORM\Query Returns a modified query.
+ * @return $this Returns a modified query.
  * @see \Cake\ORM\Table::find()
  */
 	public function find($finder, array $options = []) {
@@ -672,7 +672,7 @@ class Query extends DatabaseQuery {
  * Can be combined with set() and where() methods to create update queries.
  *
  * @param string $table Unused parameter.
- * @return Query
+ * @return $this
  */
 	public function update($table = null) {
 		$table = $this->repository()->table();
@@ -686,7 +686,7 @@ class Query extends DatabaseQuery {
  * Can be combined with the where() method to create delete queries.
  *
  * @param string $table Unused parameter.
- * @return Query
+ * @return $this
  */
 	public function delete($table = null) {
 		$table = $this->repository()->table();
@@ -704,7 +704,7 @@ class Query extends DatabaseQuery {
  *
  * @param array $columns The columns to insert into.
  * @param array $types A map between columns & their datatypes.
- * @return Query
+ * @return $this
  */
 	public function insert(array $columns, array $types = []) {
 		$table = $this->repository()->table();
