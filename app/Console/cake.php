@@ -25,11 +25,18 @@ $dispatcher = 'Cake' . DS . 'Console' . DS . 'ShellDispatcher.php';
 
 if (function_exists('ini_set')) {
 	$root = dirname(dirname(dirname(__FILE__)));
+	$appDir = basename(dirname(dirname(__FILE__)));
+	$install = $root . DS . 'lib';
+	$composerInstall = $root . DS . $appDir . DS . 'Vendor' . DS . 'cakephp' . DS . 'cakephp' . DS . 'lib';
 
-	// the following line differs from its sibling
+	// the following lines differ from its sibling
 	// /lib/Cake/Console/Templates/skel/Console/cake.php
-	ini_set('include_path', $root . DS . 'lib' . PATH_SEPARATOR . ini_get('include_path'));
-	unset($root);
+	if (file_exists($composerInstall . DS . $dispatcher)) {
+		$install = $composerInstall;
+	}
+
+	ini_set('include_path', $install . PATH_SEPARATOR . ini_get('include_path'));
+	unset($root, $appDir, $install, $composerInstall);
 }
 
 if (!include $dispatcher) {
