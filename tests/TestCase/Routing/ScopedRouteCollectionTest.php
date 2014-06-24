@@ -149,4 +149,23 @@ class ScopedRouteCollectionTest extends TestCase {
 		$routes->connect('/:controller', [], ['routeClass' => '\StdClass']);
 	}
 
+/**
+ * Test connecting redirect routes.
+ *
+ * @return void
+ */
+	public function testRedirect() {
+		$routes = new ScopedRouteCollection('/');
+		$routes->redirect('/p/:id', ['controller' => 'posts', 'action' => 'view'], ['status' => 301]);
+		$route = $routes->routes()[0];
+
+		$this->assertInstanceOf('Cake\Routing\Route\RedirectRoute', $route);
+
+		$routes->redirect('/old', '/forums', ['status' => 301]);
+		$route = $routes->routes()[1];
+
+		$this->assertInstanceOf('Cake\Routing\Route\RedirectRoute', $route);
+		$this->assertEquals('/forums', $route->redirect[0]);
+	}
+
 }
