@@ -497,16 +497,17 @@ class ScopedRouteCollection {
 			list($url, $queryParameters) = explode('?', $url, 2);
 			parse_str($queryParameters, $queryParameters);
 		}
-		$out = array();
+		$out = [];
 		for ($i = 0, $len = count($this->_routes); $i < $len; $i++) {
 			$r = $this->_routes[$i]->parse($url);
-			if ($r !== false && $queryParameters) {
+			if ($r === false) {
+				continue;
+			}
+			if ($queryParameters) {
 				$r['?'] = $queryParameters;
 				return $r;
 			}
-			if ($r !== false) {
-				return $r;
-			}
+			return $r;
 		}
 		return $out;
 	}
@@ -518,7 +519,7 @@ class ScopedRouteCollection {
  * @param array $url The url to match.
  * @param array $context The request context to use. Contains _base, _port,
  *    _host, and _scheme keys.
- * @return void
+ * @return string|false Either a string on match, or false on failure.
  */
 	public function match($url, $context) {
 		foreach ($this->_getNames($url) as $name) {
@@ -532,7 +533,7 @@ class ScopedRouteCollection {
 				}
 			}
 		}
-		return '/';
+		return false;
 	}
 
 /**

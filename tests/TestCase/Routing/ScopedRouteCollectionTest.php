@@ -261,4 +261,31 @@ class ScopedRouteCollectionTest extends TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Test matching routes.
+ *
+ * @return void
+ */
+	public function testMatch() {
+		$context = [
+			'_base' => '/',
+			'_scheme' => 'http',
+			'_host' => 'example.org',
+		];
+		$routes = new ScopedRouteCollection('/b');
+		$routes->connect('/', ['controller' => 'Articles']);
+		$routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+
+		$result = $routes->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'index'], $context);
+		$this->assertEquals('b', $result);
+
+		$result = $routes->match(
+			['id' => 'thing', 'plugin' => null, 'controller' => 'Articles', 'action' => 'view'],
+			$context);
+		$this->assertEquals('b/thing', $result);
+
+		$result = $routes->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'add'], $context);
+		$this->assertFalse($result, 'No matches');
+	}
+
 }
