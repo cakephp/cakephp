@@ -89,6 +89,8 @@ class AclNode extends Model {
 				)),
 				'order' => $db->name("{$type}.lft") . ' DESC'
 			);
+                                
+                        $conditionsAfterJoin = array();
 
 			foreach ($path as $i => $alias) {
 				$j = $i - 1;
@@ -98,18 +100,23 @@ class AclNode extends Model {
 					'alias' => "{$type}{$i}",
 					'type' => 'INNER',
 					'conditions' => array(
-						$db->name("{$type}{$i}.lft") . ' > ' . $db->name("{$type}{$j}.lft"),
-						$db->name("{$type}{$i}.rght") . ' < ' . $db->name("{$type}{$j}.rght"),
-						$db->name("{$type}{$i}.alias") . ' = ' . $db->value($alias, 'string'),
-						$db->name("{$type}{$j}.id") . ' = ' . $db->name("{$type}{$i}.parent_id")
+						$db->name("{$type}{$i}.alias") . ' = ' . $db->value($alias, 'string')
 					)
 				);
+                                                
+                                // it will be better if this conditions will performs after join operation
+                                $conditionsAfterJoin[] = $db->name("{$type}{$j}.id") . ' = ' . $db->name("{$type}{$i}.parent_id");
+                                $conditionsAfterJoin[] = $db->name("{$type}{$i}.rght") . ' < ' . $db->name("{$type}{$j}.rght");
+                                $conditionsAfterJoin[] = $db->name("{$type}{$i}.lft") . ' > ' . $db->name("{$type}{$j}.lft");
 
 				$queryData['conditions'] = array('or' => array(
 					$db->name("{$type}.lft") . ' <= ' . $db->name("{$type}0.lft") . ' AND ' . $db->name("{$type}.rght") . ' >= ' . $db->name("{$type}0.rght"),
 					$db->name("{$type}.lft") . ' <= ' . $db->name("{$type}{$i}.lft") . ' AND ' . $db->name("{$type}.rght") . ' >= ' . $db->name("{$type}{$i}.rght"))
 				);
 			}
+                        
+                        $queryData['conditions'] = array_merge($queryData['conditions'], $conditionsAfterJoin);
+                        
 			$result = $db->read($this, $queryData, -1);
 			$path = array_values($path);
 
