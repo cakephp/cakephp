@@ -198,4 +198,31 @@ class ScopedRouteCollectionTest extends TestCase {
 		$this->assertNull($res);
 	}
 
+/**
+ * Test creating sub-scopes with plugin()
+ *
+ * @return void
+ */
+	public function testNestedPlugin() {
+		$routes = new ScopedRouteCollection('/b', ['key' => 'value']);
+		$res = $routes->plugin('Contacts', function($r) {
+			$this->assertEquals('/b/contacts', $r->path());
+			$this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
+		});
+		$this->assertNull($res);
+	}
+
+/**
+ * Test creating sub-scopes with plugin() + path option
+ *
+ * @return void
+ */
+	public function testNestedPluginPathOption() {
+		$routes = new ScopedRouteCollection('/b', ['key' => 'value']);
+		$routes->plugin('Contacts', ['path' => '/people'], function($r) {
+			$this->assertEquals('/b/people', $r->path());
+			$this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
+		});
+	}
+
 }

@@ -471,18 +471,18 @@ class ScopedRouteCollection {
 * @param callable $callback The callback to invoke that builds the plugin routes.
 *   Only required when $options is defined.
 * @return void
-* @throws \Cake\Error\Exception When an invalid callback is provided
 */
 	public function plugin($name, $options = [], $callback = null) {
 		if ($callback === null) {
 			$callback = $options;
 			$options = [];
 		}
-		$params = ['plugin' => $name];
-		if (empty($optons['path'])) {
+		$params = ['plugin' => $name] + $this->_params;
+		if (empty($options['path'])) {
 			$options['path'] = '/' . Inflector::underscore($name);
 		}
-		return Router::scope($options['path'], $params, $callback);
+		$options['path'] = $this->_path . $options['path'];
+		Router::scope($options['path'], $params, $callback);
 	}
 
 /**
