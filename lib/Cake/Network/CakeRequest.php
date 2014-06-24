@@ -144,6 +144,8 @@ class CakeRequest implements ArrayAccess {
 			$this->_processFiles();
 		}
 		$this->here = $this->base . '/' . $this->url;
+
+		$this->addDetector('rest', array('callback' => array($this, '_checkForRest')));
 	}
 
 /**
@@ -1022,5 +1024,16 @@ class CakeRequest implements ArrayAccess {
 	public function offsetUnset($name) {
 		unset($this->params[$name]);
 	}
+
+	/**
+	 * Checks whenever a request is done using a REST request
+	 *
+	 * @param CakeRequest $request The request to run the check on
+	 * @return bool
+	 */
+	protected function _checkForRest(CakeRequest $request) {
+		return isset($request->params['[method]']);
+	}
+
 
 }
