@@ -219,6 +219,10 @@ class ScopedRouteCollection {
  * @return array Array of mapped resources
  */
 	public function resource($name, $options = [], $callback = null) {
+		if (is_callable($options) && $callback === null) {
+			$callback = $options;
+			$options = [];
+		}
 		$options += array(
 			'connectOptions' => [],
 			'id' => static::ID . '|' . static::UUID
@@ -227,8 +231,8 @@ class ScopedRouteCollection {
 		unset($options['connectOptions']);
 
 		$urlName = Inflector::underscore($name);
-		$ext = null;
 
+		$ext = null;
 		if (!empty($options['_ext'])) {
 			$ext = $options['_ext'];
 		}
@@ -251,7 +255,7 @@ class ScopedRouteCollection {
 
 		if (is_callable($callback)) {
 			$idName = Inflector::singularize($urlName) . '_id';
-			$path = '/' . $urlName . '/:' . $idName;
+			$path = $this->_path . '/' . $urlName . '/:' . $idName;
 			Router::scope($path, $this->params(), $callback);
 		}
 	}

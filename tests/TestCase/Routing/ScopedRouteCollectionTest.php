@@ -125,6 +125,8 @@ class ScopedRouteCollectionTest extends TestCase {
  */
 	public function testConnectExtensions() {
 		$routes = new ScopedRouteCollection('/l', [], ['json']);
+		$this->assertEquals(['json'], $routes->extensions());
+
 		$routes->connect('/:controller');
 		$route = $routes->routes()[0];
 
@@ -286,6 +288,64 @@ class ScopedRouteCollectionTest extends TestCase {
 
 		$result = $routes->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'add'], $context);
 		$this->assertFalse($result, 'No matches');
+	}
+
+/**
+ * Test matching plugin routes.
+ *
+ * @return void
+ */
+	public function testMatchPlugin() {
+		$context = [
+			'_base' => '/',
+			'_scheme' => 'http',
+			'_host' => 'example.org',
+		];
+		$routes = new ScopedRouteCollection('/contacts', ['plugin' => 'Contacts']);
+		$routes->connect('/', ['controller' => 'Contacts']);
+
+		$result = $routes->match(
+			['plugin' => 'Contacts', 'controller' => 'Contacts', 'action' => 'index'],
+			$context
+		);
+		$this->assertFalse($result);
+
+		$result = $routes->match(['controller' => 'Contacts', 'action' => 'index'], $context);
+		$this->assertFalse($result);
+	}
+
+/**
+ * Test connecting resources.
+ *
+ * @return void
+ */
+	public function testResource() {
+		$routes = new ScopedRouteCollection('/api', ['prefix' => 'api']);
+		$routes->resource('Articles', ['_ext' => 'json']);
+
+		$all = $routes->routes();
+		$this->assertCount(6, $all);
+
+		$this->assertEquals('/api/articles', $all[0]->template);
+		$this->assertEquals('json', $all[0]->defaults['_ext']);
+		$this->assertEquals('Articles', $all[0]->defaults['controller']);
+	}
+
+/**
+ * Test nesting resources
+ *
+ * @return void
+ */
+	public function testResourceNested() {
+		$routes = new ScopedRouteCollection('/api', ['prefix' => 'api']);
+		$routes->resource('Articles', function($routes) {
+			$this->assertEquals('/api/articles/', $routes->path());
+			$this->assertEquals(['prefix' => 'api'], $routes->params());
+
+			$routes->resource('Comments');
+			$route = $routes->routes()[0];
+			$this->assertEquals('/api/articles/:article_id/comments', $route->template);
+		});
 	}
 
 }
