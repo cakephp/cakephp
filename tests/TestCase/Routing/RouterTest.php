@@ -2856,4 +2856,33 @@ class RouterTest extends TestCase {
 		$this->assertEquals('/en/posts/index', $result, 'promote() should move 2nd route ahead.');
 	}
 
+/**
+ * Test the scope() method
+ *
+ * @return void
+ */
+	public function testScope() {
+		Router::scope('/path', ['param' => 'value'], function($routes) {
+			$this->assertInstanceOf('Cake\Routing\ScopedRouteCollection', $routes);
+			$this->assertCount(0, $routes->routes());
+			$this->assertEquals('/path', $routes->path());
+			$this->assertEquals(['param' => 'value'], $routes->params());
+
+			$routes->connect('/articles', ['controller' => 'Articles']);
+		});
+		Router::scope('/path', function($routes) {
+			$this->assertCount(0, $routes->routes());
+		});
+	}
+
+/**
+ * Test the scope() method
+ *
+ * @expectedException \InvalidArgumentException
+ * @return void
+ */
+	public function testScopeError() {
+		Router::scope('/path', 'derpy');
+	}
+
 }

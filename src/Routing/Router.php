@@ -1076,6 +1076,7 @@ class Router {
  * @param array $params An array of routing defaults to add to each connected route.
  *   If you have no parameters, this argument can be a callable.
  * @param callable $callback The callback to invoke with the scoped collection.
+ * @throws \InvalidArgumentException When an invalid callable is provided.
  * @return void
  */
 	public static function scope($path, $params = [], $callback = null) {
@@ -1085,7 +1086,7 @@ class Router {
 		}
 		if (!is_callable($callback)) {
 			$msg = 'Need a callable function/object to connect routes.';
-			throw Error\Exception($msg);
+			throw new \InvalidArgumentException($msg);
 		}
 
 		$collection = new ScopedRouteCollection($path, $params, static::$_validExtensions);
