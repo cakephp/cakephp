@@ -225,4 +225,40 @@ class ScopedRouteCollectionTest extends TestCase {
 		});
 	}
 
+/**
+ * Test parsing routes.
+ *
+ * @return void
+ */
+	public function testParse() {
+		$routes = new ScopedRouteCollection('/b', ['key' => 'value']);
+		$routes->connect('/', ['controller' => 'Articles']);
+		$routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+
+		$result = $routes->parse('/');
+		$this->assertEquals([], $result, 'Should not match, missing /b');
+
+		$result = $routes->parse('/b/');
+		$expected = [
+			'controller' => 'Articles',
+			'action' => 'index',
+			'pass' => [],
+			'plugin' => null,
+			'key' => 'value',
+		];
+		$this->assertEquals($expected, $result);
+
+		$result = $routes->parse('/b/the-thing?one=two');
+		$expected = [
+			'controller' => 'Articles',
+			'action' => 'view',
+			'id' => 'the-thing',
+			'pass' => [],
+			'plugin' => null,
+			'key' => 'value',
+			'?' => ['one' => 'two'],
+		];
+		$this->assertEquals($expected, $result);
+	}
+
 }
