@@ -105,7 +105,7 @@ class CounterCacheBehavior extends Behavior {
  *
  * @param \Cake\Event\Event $event The afterSave event that was fired.
  * @param \Cake\ORM\Entity $entity The entity that was saved.
- * @return void
+ * @return void
  */
 	public function afterSave(Event $event, Entity $entity) {
 		$this->_processAssociations($event, $entity);
@@ -118,7 +118,7 @@ class CounterCacheBehavior extends Behavior {
  *
  * @param \Cake\Event\Event $event The afterDelete event that was fired.
  * @param \Cake\ORM\Entity $entity The entity that was deleted.
- * @return void
+ * @return void
  */
 	public function afterDelete(Event $event, Entity $entity) {
 		$this->_processAssociations($event, $entity);
@@ -128,8 +128,8 @@ class CounterCacheBehavior extends Behavior {
  * Iterate all associations and update counter caches.
  *
  * @param \Cake\Event\Event $event Event instance.
- * @param \Cake\ORM\Entity $entity Entity
- * @return void
+ * @param \Cake\ORM\Entity $entity Entity.
+ * @return void
  */
 	protected function _processAssociations(Event $event, Entity $entity) {
 		foreach ($this->_config as $assoc => $settings) {

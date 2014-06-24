@@ -16,8 +16,8 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Cake\Utility\Inflector;
 use Cake\Error\InternalErrorException;
+use Cake\Utility\Inflector;
 
 /**
  * The CakePHP FlashComponent provides a way for you to write a flash variable
