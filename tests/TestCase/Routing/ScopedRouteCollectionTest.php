@@ -168,4 +168,34 @@ class ScopedRouteCollectionTest extends TestCase {
 		$this->assertEquals('/forums', $route->redirect[0]);
 	}
 
+/**
+ * Test creating sub-scopes with prefix()
+ *
+ * @return void
+ */
+	public function testPrefix() {
+		$routes = new ScopedRouteCollection('/path', ['key' => 'value']);
+		$res = $routes->prefix('admin', function($r) {
+			$this->assertInstanceOf('Cake\Routing\ScopedRouteCollection', $r);
+			$this->assertCount(0, $r->routes());
+			$this->assertEquals('/path/admin', $r->path());
+			$this->assertEquals(['prefix' => 'admin', 'key' => 'value'], $r->params());
+		});
+		$this->assertNull($res);
+	}
+
+/**
+ * Test creating sub-scopes with prefix()
+ *
+ * @return void
+ */
+	public function testNestedPrefix() {
+		$routes = new ScopedRouteCollection('/admin', ['prefix' => 'admin']);
+		$res = $routes->prefix('api', function($r) {
+			$this->assertEquals('/admin/api', $r->path());
+			$this->assertEquals(['prefix' => 'admin/api'], $r->params());
+		});
+		$this->assertNull($res);
+	}
+
 }

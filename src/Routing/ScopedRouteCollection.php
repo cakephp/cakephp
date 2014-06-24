@@ -427,30 +427,31 @@ class ScopedRouteCollection {
 	}
 
 /**
-* Add prefixed routes.
-*
-* This method creates a new scoped route collection that includes
-* relevant prefix information.
-*
-* The path parameter is used to generate the routing parameter name.
-* For example a path of `admin` would result in `'prefix' => 'admin'` being
-* applied to all connected routes.
-*
-* You can re-open a prefix as many times as necessary, as well as nest prefixes.
-* Nested prefixes will result in prefix values like `admin/api` which translates
-* to the `Controller\Admin\Api\` namespace.
-*
-* @param string $name The prefix name to use.
-* @param callable $callback The callback to invoke that builds the prefixed routes.
-* @return void
-*/
+ * Add prefixed routes.
+ *
+ * This method creates a new scoped route collection that includes
+ * relevant prefix information.
+ *
+ * The path parameter is used to generate the routing parameter name.
+ * For example a path of `admin` would result in `'prefix' => 'admin'` being
+ * applied to all connected routes.
+ *
+ * You can re-open a prefix as many times as necessary, as well as nest prefixes.
+ * Nested prefixes will result in prefix values like `admin/api` which translates
+ * to the `Controller\Admin\Api\` namespace.
+ *
+ * @param string $name The prefix name to use.
+ * @param callable $callback The callback to invoke that builds the prefixed routes.
+ * @return void
+ */
 	public function prefix($name, callable $callback) {
+		$name = Inflector::underscore($name);
+		$path = $this->_path . '/' . $name;
 		if (isset($this->_params['prefix'])) {
 			$name = $this->_params['prefix'] . '/' . $name;
 		}
-		$params = ['prefix' => $name];
-		$path = '/' . Inflector::underscore($name);
-		return Router::scope($path, $params, $callback);
+		$params = ['prefix' => $name] + $this->_params;
+		Router::scope($path, $params, $callback);
 	}
 
 /**
