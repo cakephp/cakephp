@@ -263,7 +263,7 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function testPasswordHasherSettings() {
 		$this->auth->config('passwordHasher', [
-			'className' => 'Simple',
+			'className' => 'Default',
 			'hashType' => PASSWORD_BCRYPT
 		]);
 
@@ -298,7 +298,7 @@ class FormAuthenticateTest extends TestCase {
 			'userModel' => 'Users'
 		]);
 		$this->auth->config('passwordHasher', [
-			'className' => 'Simple'
+			'className' => 'Default'
 		]);
 		$this->assertEquals($expected, $this->auth->authenticate($request, $this->response));
 
@@ -326,7 +326,7 @@ class FormAuthenticateTest extends TestCase {
 	}
 
 /**
- * Tests that not using the Simple password hasher means that the password
+ * Tests that not using the Default password hasher means that the password
  * needs to be rehashed
  *
  * @return void
