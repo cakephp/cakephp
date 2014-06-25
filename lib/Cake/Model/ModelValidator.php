@@ -362,7 +362,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * Sets the I18n domain for validation messages. This method is chainable.
  *
  * @param string $validationDomain [optional] The validation domain to be used.
- * @return ModelValidator
+ * @return $this
  */
 	public function setValidationDomain($validationDomain = null) {
 		if (empty($validationDomain)) {
@@ -547,7 +547,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * @param string $field The name of the field where the rule is to be added
  * @param string|array|CakeValidationSet $name name of the rule to be added or list of rules for the field
  * @param array|CakeValidationRule $rule or list of rules to be added to the field's rule set
- * @return ModelValidator this instance
+ * @return $this
  */
 	public function add($field, $name, $rule = null) {
 		$this->_parseRules();
@@ -586,7 +586,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  *
  * @param string $field The name of the field from which the rule will be removed
  * @param string $rule the name of the rule to be removed
- * @return ModelValidator this instance
+ * @return $this
  */
 	public function remove($field, $rule = null) {
 		$this->_parseRules();

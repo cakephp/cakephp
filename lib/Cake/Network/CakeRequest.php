@@ -602,7 +602,7 @@ class CakeRequest implements ArrayAccess {
  * This modifies the parameters available through `$request->params`.
  *
  * @param array $params Array of parameters to merge in
- * @return The current object, you can chain this method.
+ * @return $this
  */
 	public function addParams($params) {
 		$this->params = array_merge($this->params, (array)$params);
@@ -614,7 +614,7 @@ class CakeRequest implements ArrayAccess {
  * Provides an easy way to modify, here, webroot and base.
  *
  * @param array $paths Array of paths to merge in
- * @return CakeRequest the current object, you can chain this method.
+ * @return $this
  */
 	public function addPaths($paths) {
 		foreach (array('webroot', 'here', 'base') as $element) {
@@ -855,7 +855,7 @@ class CakeRequest implements ArrayAccess {
  * will be created for you.
  *
  * @param string $name Dot separated name of the value to read/write, one or more args.
- * @return mixed Either the value being read, or this so you can chain consecutive writes.
+ * @return mixed|$this Either the value being read, or $this so you can chain consecutive writes.
  */
 	public function data($name) {
 		$args = func_get_args();
