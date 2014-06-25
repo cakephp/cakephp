@@ -39,7 +39,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Denotes if a field is allowed to be empty
  *
- * @var bool|string
+ * @var bool|string|callable
  */
 	protected $_allowEmpty = false;
 
@@ -63,8 +63,9 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * If no argument is passed the currently set `allowEmpty` value will be returned.
  *
- * @param bool|string $allowEmpty Valid values are true, false, 'create', 'update'
- * @return bool|string
+ * @param bool|string|callable $allowEmpty Valid values are true, false,
+ * 'create', 'update'
+ * @return bool|string|callable
  */
 	public function isEmptyAllowed($allowEmpty = null) {
 		if ($allowEmpty === null) {
