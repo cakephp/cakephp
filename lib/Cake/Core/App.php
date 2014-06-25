@@ -17,6 +17,7 @@
  */
 
 App::uses('Inflector', 'Utility');
+App::uses('CakePlugin', 'Core');
 
 /**
  * App is responsible for path management, class location and class loading.
@@ -223,7 +224,7 @@ class App {
 
 		if (!empty($plugin)) {
 			$path = array();
-			$pluginPath = self::pluginPath($plugin);
+			$pluginPath = CakePlugin::path($plugin);
 			$packageFormat = self::_packageFormat();
 			if (!empty($packageFormat[$type])) {
 				foreach ($packageFormat[$type] as $f) {
@@ -360,7 +361,7 @@ class App {
  * @param string $plugin CamelCased/lower_cased plugin name to find the path of.
  * @return string full path to the plugin.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::pluginPath
- * @deprecated 2.6 Use `CakePlugin::path()` instead.
+ * @deprecated Use `CakePlugin::path()` instead.
  */
 	public static function pluginPath($plugin) {
 		return CakePlugin::path($plugin);
@@ -553,7 +554,7 @@ class App {
 			$paths[] = APP . $package . DS;
 			$paths[] = CAKE . $package . DS;
 		} else {
-			$pluginPath = self::pluginPath($plugin);
+			$pluginPath = CakePlugin::path($plugin);
 			$paths[] = $pluginPath . 'Lib' . DS . $package . DS;
 			$paths[] = $pluginPath . $package . DS;
 		}
