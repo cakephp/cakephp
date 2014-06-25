@@ -230,6 +230,16 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
+ * Test get() with an invalid path
+ *
+ * @expectedException InvalidArgumentException
+ * @return void
+ */
+	public function testGetInvalidPath() {
+		Hash::get(array('one' => 'two'), true);
+	}
+
+/**
  * Test dimensions.
  *
  * @return void
