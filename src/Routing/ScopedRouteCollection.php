@@ -139,7 +139,7 @@ class ScopedRouteCollection {
 	}
 
 /**
- * Get the explicity named routes in the collectio.
+ * Get the explicity named routes in the collection.
  *
  * @return array An array of named routes indexed by their name.
  */
@@ -150,7 +150,6 @@ class ScopedRouteCollection {
 /**
  * Get all the routes in this collection.
  *
- * @return array
  * @return array An array of routes.
  */
 	public function routes() {
@@ -182,35 +181,47 @@ class ScopedRouteCollection {
  * Connect resource routes for an app controller:
  *
  * {{{
- * Router::mapResources('Posts');
+ * $routes->resources('Posts');
  * }}}
  *
- * Connect resource routes for the Comment controller in the
+ * Connect resource routes for the Comments controller in the
  * Comments plugin:
  *
  * {{{
- * Router::mapResources('Comments.Comment');
+ * Router::plugin('Comments', function ($routes) {
+ *   $routes->resource('Comments');
+ * });
  * }}}
  *
  * Plugins will create lower_case underscored resource routes. e.g
- * `/comments/comment`
+ * `/comments/comments`
  *
- * Connect resource routes for the Posts controller in the
+ * Connect resource routes for the Articles controller in the
  * Admin prefix:
  *
  * {{{
- * Router::mapResources('Posts', ['prefix' => 'admin']);
+ * Router::prefix('admin', function ($routes) {
+ *   $routes->resource('Articles');
+ * });
  * }}}
  *
  * Prefixes will create lower_case underscored resource routes. e.g
  * `/admin/posts`
  *
+ * You can create nested resources by passing a callback in:
+ *
+ * {{{
+ * $routes->resource('Articles', function($routes) {
+ *   $routes->resource('Comments');
+ * });
+ * }}}
+ *
+ * The above would generate both resource routes for `/articles`, and `/articles/:article_id/comments`.
+ *
  * ### Options:
  *
  * - 'id' - The regular expression fragment to use when matching IDs. By default, matches
  *    integer values and UUIDs.
- * - 'prefix' - Routing prefix to use for the generated routes. Defaults to ''.
- *   Using this option will create prefixed routes, similar to using Routing.prefixes.
  *
  * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
  * @param array $options Options to use when generating REST routes
@@ -246,10 +257,10 @@ class ScopedRouteCollection {
 				'[method]' => $params['method'],
 				'_ext' => $ext
 			);
-			$routeOptions = array_merge(array(
+			$routeOptions = $connectOptions + [
 				'id' => $options['id'],
-				'pass' => array('id')
-			), $connectOptions);
+				'pass' => ['id']
+			];
 			$this->connect($url, $params, $routeOptions);
 		}
 
@@ -276,7 +287,7 @@ class ScopedRouteCollection {
  * it will match requests like `/posts/index` as well as requests
  * like `/posts/edit/1/foo/bar`.
  *
- * `$routes->connect('/home-page', ['controller' => 'pages', 'action' => 'display', 'home']);`
+ * `$routes->connect('/home-page', ['controller' => 'Pages', 'action' => 'display', 'home']);`
  *
  * The above shows the use of route parameter defaults. And providing routing
  * parameters for a static route.
@@ -306,7 +317,7 @@ class ScopedRouteCollection {
  *   reverse routing lookups. If undefined a name will be generated for each
  *   connected route.
  * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
- *   See {@link Route::parseExtensions()}.
+ *   See {@link ScopedRouteCollection::extensions()}.
  *
  * You can also add additional conditions for matching routes to the $defaults array.
  * The following conditions can be used:
@@ -317,7 +328,7 @@ class ScopedRouteCollection {
  *
  * Example of using the `[method]` condition:
  *
- * `$routes->connect('/tasks', array('controller' => 'tasks', 'action' => 'index', '[method]' => 'GET'));`
+ * `$routes->connect('/tasks', array('controller' => 'Tasks', 'action' => 'index', '[method]' => 'GET'));`
  *
  * The above route will only be matched for GET requests. POST requests will fail to match this route.
  *
@@ -328,7 +339,6 @@ class ScopedRouteCollection {
  *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
  *   custom routing class.
- * @see routes
  * @return void
  * @throws \Cake\Error\Exception
  */
@@ -374,7 +384,7 @@ class ScopedRouteCollection {
 	}
 
 /**
- * Validates that the passed route class exists and is a subclass of Cake Route
+ * Validates that the passed route class exists and is a subclass of Cake\Routing\Route\Route
  *
  * @param string $routeClass Route class name
  * @return string
@@ -382,7 +392,7 @@ class ScopedRouteCollection {
  */
 	protected function _validateRouteClass($routeClass) {
 		if (
-			$routeClass != 'Cake\Routing\Route\Route' &&
+			$routeClass !== 'Cake\Routing\Route\Route' &&
 			(!class_exists($routeClass) || !is_subclass_of($routeClass, 'Cake\Routing\Route\Route'))
 		) {
 			throw new Error\Exception('Route class not found, or route class is not a subclass of Cake\Routing\Route\Route');
@@ -419,7 +429,6 @@ class ScopedRouteCollection {
  * @param array $options An array matching the named elements in the route to regular expressions which that
  *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
- * @see routes
  * @return array Array of routes
  */
 	public function redirect($route, $url, $options = []) {
