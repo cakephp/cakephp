@@ -371,7 +371,7 @@ class Email {
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
- * @return array|\Cake\Network\Email\Email
+ * @return array|$this
  * @throws \Cake\Network\Error\SocketException
  */
 	public function from($email = null, $name = null) {
@@ -387,7 +387,7 @@ class Email {
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
- * @return array|\Cake\Network\Email\Email
+ * @return array|$this
  * @throws \Cake\Network\Error\SocketException
  */
 	public function sender($email = null, $name = null) {
@@ -403,7 +403,7 @@ class Email {
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
- * @return array|\Cake\Network\Email\Email
+ * @return array|$this
  * @throws \Cake\Network\Error\SocketException
  */
 	public function replyTo($email = null, $name = null) {
@@ -419,7 +419,7 @@ class Email {
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
- * @return array|\Cake\Network\Email\Email
+ * @return array|$this
  * @throws \Cake\Network\Error\SocketException
  */
 	public function readReceipt($email = null, $name = null) {
@@ -435,7 +435,7 @@ class Email {
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
- * @return array|\Cake\Network\Email\Email
+ * @return array|$this
  * @throws \Cake\Network\Error\SocketException
  */
 	public function returnPath($email = null, $name = null) {
@@ -451,7 +451,7 @@ class Email {
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
- * @return array|\Cake\Network\Email\Email
+ * @return array|$this
  */
 	public function to($email = null, $name = null) {
 		if ($email === null) {
@@ -466,7 +466,7 @@ class Email {
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
- * @return \Cake\Network\Email\Email $this
+ * @return $this
  */
 	public function addTo($email, $name = null) {
 		return $this->_addEmail('_to', $email, $name);
@@ -478,7 +478,7 @@ class Email {
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
- * @return array|\Cake\Network\Email\Email
+ * @return array|$this
  */
 	public function cc($email = null, $name = null) {
 		if ($email === null) {
@@ -493,7 +493,7 @@ class Email {
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
- * @return \Cake\Network\Email\Email $this
+ * @return $this
  */
 	public function addCc($email, $name = null) {
 		return $this->_addEmail('_cc', $email, $name);
@@ -505,7 +505,7 @@ class Email {
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
- * @return array|\Cake\Network\Email\Email
+ * @return array|$this
  */
 	public function bcc($email = null, $name = null) {
 		if ($email === null) {
@@ -520,7 +520,7 @@ class Email {
  * @param string|array $email Null to get, String with email,
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
- * @return \Cake\Network\Email\Email $this
+ * @return $this
  */
 	public function addBcc($email, $name = null) {
 		return $this->_addEmail('_bcc', $email, $name);
@@ -560,7 +560,7 @@ class Email {
  * EmailPattern setter/getter
  *
  * @param string $regex for email address validation
- * @return string|\Cake\Network\Email\Email
+ * @return string|$this
  */
 	public function emailPattern($regex = null) {
 		if ($regex === null) {
@@ -577,7 +577,7 @@ class Email {
  * @param string|array $email String with email,
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
- * @return \Cake\Network\Email\Email $this
+ * @return $this
  * @throws \Cake\Network\Error\SocketException
  */
 	protected function _setEmail($varName, $email, $name) {
@@ -626,7 +626,7 @@ class Email {
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
  * @param string $throwMessage Exception message
- * @return \Cake\Network\Email\Email $this
+ * @return $this
  * @throws \Cake\Network\Error\SocketException
  */
 	protected function _setEmailSingle($varName, $email, $name, $throwMessage) {
@@ -646,7 +646,7 @@ class Email {
  * @param string|array $email String with email,
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
- * @return \Cake\Network\Email\Email $this
+ * @return $this
  * @throws \Cake\Network\Error\SocketException
  */
 	protected function _addEmail($varName, $email, $name) {
@@ -674,7 +674,7 @@ class Email {
  * Get/Set Subject.
  *
  * @param string $subject Subject string.
- * @return string|\Cake\Network\Email\Email
+ * @return string|$this
  */
 	public function subject($subject = null) {
 		if ($subject === null) {
@@ -688,7 +688,7 @@ class Email {
  * Sets headers for the message
  *
  * @param array $headers Associative array containing headers to be set.
- * @return \Cake\Network\Email\Email $this
+ * @return $this
  * @throws \Cake\Network\Error\SocketException
  */
 	public function setHeaders($headers) {
@@ -703,7 +703,7 @@ class Email {
  * Add header for the message
  *
  * @param array $headers Headers to set.
- * @return object $this
+ * @return $this
  * @throws \Cake\Network\Error\SocketException
  */
 	public function addHeaders($headers) {
@@ -836,7 +836,7 @@ class Email {
  *
  * @param bool|string $template Template name or null to not use
  * @param bool|string $layout Layout name or null to not use
- * @return array|\Cake\Network\Email\Email
+ * @return array|$this
  */
 	public function template($template = false, $layout = false) {
 		if ($template === false) {
@@ -856,7 +856,7 @@ class Email {
  * View class for render
  *
  * @param string $viewClass View class name.
- * @return string|\Cake\Network\Email\Email
+ * @return string|$this
  */
 	public function viewRender($viewClass = null) {
 		if ($viewClass === null) {
@@ -870,7 +870,7 @@ class Email {
  * Variables to be set on render
  *
  * @param array $viewVars Variables to set for view.
- * @return array|\Cake\Network\Email\Email
+ * @return array|$this
  */
 	public function viewVars($viewVars = null) {
 		if ($viewVars === null) {
@@ -884,7 +884,7 @@ class Email {
  * Theme to use when rendering
  *
  * @param string $theme Theme name.
- * @return string|\Cake\Network\Email\Email
+ * @return string|$this
  */
 	public function theme($theme = null) {
 		if ($theme === null) {
@@ -898,7 +898,7 @@ class Email {
  * Helpers to be used in render
  *
  * @param array $helpers Helpers list.
- * @return array|\Cake\Network\Email\Email
+ * @return array|$this
  */
 	public function helpers($helpers = null) {
 		if ($helpers === null) {
@@ -912,7 +912,7 @@ class Email {
  * Email format
  *
  * @param string $format Formatting string.
- * @return string|\Cake\Network\Email\Email
+ * @return string|$this
  * @throws \Cake\Network\Error\SocketException
  */
 	public function emailFormat($format = null) {
@@ -934,7 +934,7 @@ class Email {
  *
  * @param string|AbstractTransport $name Either the name of a configured
  *   transport, or a transport instance.
- * @return AbstractTransport|\Cake\Network\Email\Email
+ * @return \Cake\Network\Email\AbstractTransport|$this
  * @throws \Cake\Network\Error\SocketException When the chosen transport lacks a send method.
  */
 	public function transport($name = null) {
@@ -959,7 +959,7 @@ class Email {
  * Build a transport instance from configuration data.
  *
  * @param string $name The transport configuration name to build.
- * @return AbstractTransport
+ * @return \Cake\Network\Email\AbstractTransport
  * @throws \Cake\Error\Exception When transport configuration is missing or invalid.
  */
 	protected function _constructTransport($name) {
@@ -988,7 +988,7 @@ class Email {
  * Message-ID
  *
  * @param bool|string $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
- * @return bool|string|\Cake\Network\Email\Email
+ * @return bool|string|$this
  * @throws \Cake\Network\Error\SocketException
  */
 	public function messageId($message = null) {
@@ -1010,7 +1010,7 @@ class Email {
  * Domain as top level (the part after @)
  *
  * @param string $domain Manually set the domain for CLI mailing
- * @return string|\Cake\Network\Email\Email
+ * @return string|$this
  */
 	public function domain($domain = null) {
 		if ($domain === null) {
@@ -1064,7 +1064,7 @@ class Email {
  * attachment compatibility with outlook email clients.
  *
  * @param string|array $attachments String with the filename or array with filenames
- * @return array|\Cake\Network\Email\Email Either the array of attachments when getting or $this when setting.
+ * @return array|$this Either the array of attachments when getting or $this when setting.
  * @throws \Cake\Network\Error\SocketException
  */
 	public function attachments($attachments = null) {
@@ -1107,7 +1107,7 @@ class Email {
  * Add attachments
  *
  * @param string|array $attachments String with the filename or array with filenames
- * @return \Cake\Network\Email\Email $this
+ * @return $this
  * @throws \Cake\Network\Error\SocketException
  * @see \Cake\Network\Email\Email::attachments()
  */
@@ -1189,7 +1189,7 @@ class Email {
  *
  * @param null|string|array $config String with configuration name, or
  *    an array with config or null to return current config.
- * @return string|array|\Cake\Network\Email\Email
+ * @return string|array|$this
  */
 	public function profile($config = null) {
 		if ($config === null) {
@@ -1331,7 +1331,7 @@ class Email {
 /**
  * Reset all the internal variables to be able to send out a new email.
  *
- * @return \Cake\Network\Email\Email $this
+ * @return $this
  */
 	public function reset() {
 		$this->_to = array();

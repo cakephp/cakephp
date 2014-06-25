@@ -172,7 +172,6 @@ class XmlTest extends TestCase {
  * @return void
  */
 	public function testBuildInvalidData($value) {
-		$this->assertFalse(defined('HHVM_VERSION') && !empty($value), 'Segfaults HHVM');
 		Xml::build($value);
 	}
 

@@ -17,6 +17,7 @@ namespace Cake\Controller;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListener;
+use Cake\Log\LogTrait;
 
 /**
  * Base class for an individual Component. Components provide reusable bits of
@@ -64,6 +65,7 @@ use Cake\Event\EventListener;
 class Component implements EventListener {
 
 	use InstanceConfigTrait;
+	use LogTrait;
 
 /**
  * Component registry class used to lazy load components.

@@ -345,6 +345,17 @@ class EntityContext implements ContextInterface {
  * @return \Cake\Validation\Validator
  */
 	protected function _getValidator($parts) {
+		$keyParts = array_filter(array_slice($parts, 0, -1), function($part) {
+			return !is_numeric($part);
+		});
+		$key = implode('.', $keyParts);
+		$entity = $this->_getEntity($parts) ?: null;
+
+		if (isset($this->_validator[$key])) {
+			$this->_validator[$key]->provider('entity', $entity);
+			return $this->_validator[$key];
+		}
+
 		$table = $this->_getTable($parts);
 		$alias = $table->alias();
 
@@ -354,7 +365,10 @@ class EntityContext implements ContextInterface {
 		} elseif (isset($this->_context['validator'][$alias])) {
 			$method = $this->_context['validator'][$alias];
 		}
-		return $table->validator($method);
+
+		$validator = $table->validator($method);
+		$validator->provider('entity', $entity);
+		return $this->_validator[$key] = $validator;
 	}
 
 /**

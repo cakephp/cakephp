@@ -20,6 +20,8 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Network\Request;
+use Cake\Network\Response;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -222,7 +224,7 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testFixtureArrayGenerationFromController() {
-		$subject = new PostsController();
+		$subject = new PostsController(new Request(), new Response());
 		$result = $this->Task->generateFixtureList($subject);
 		$expected = [
 			'app.post',

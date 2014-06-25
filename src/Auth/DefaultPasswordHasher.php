@@ -17,10 +17,10 @@ namespace Cake\Auth;
 use Cake\Auth\AbstractPasswordHasher;
 
 /**
- * Simple password hashing class.
+ * Default password hashing class.
  *
  */
-class SimplePasswordHasher extends AbstractPasswordHasher {
+class DefaultPasswordHasher extends AbstractPasswordHasher {
 
 /**
  * Default config for this object.

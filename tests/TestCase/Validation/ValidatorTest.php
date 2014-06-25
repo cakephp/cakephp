@@ -246,6 +246,46 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests the allowEmpty method when passing a callback
+ *
+ * @return void
+ */
+	public function testAllowEmptyCallback() {
+		$validator = new Validator;
+		$allow = true;
+		$validator->allowEmpty('title', function($context) use (&$allow) {
+			$this->assertEquals([], $context['data']);
+			$this->assertEquals([], $context['providers']);
+			$this->assertTrue($context['newRecord']);
+			return $allow;
+		});
+		$this->assertTrue($validator->isEmptyAllowed('title', true));
+
+		$allow = false;
+		$this->assertFalse($validator->isEmptyAllowed('title', true));
+	}
+
+/**
+ * Tests the notEmpty method when passing a callback
+ *
+ * @return void
+ */
+	public function testNotEmptyCallback() {
+		$validator = new Validator;
+		$prevent = true;
+		$validator->notEmpty('title', 'error message', function($context) use (&$prevent) {
+			$this->assertEquals([], $context['data']);
+			$this->assertEquals([], $context['providers']);
+			$this->assertFalse($context['newRecord']);
+			return $prevent;
+		});
+		$this->assertFalse($validator->isEmptyAllowed('title', false));
+
+		$prevent = false;
+		$this->assertTrue($validator->isEmptyAllowed('title', false));
+	}
+
+/**
  * Tests the isEmptyAllowed method
  *
  * @return void

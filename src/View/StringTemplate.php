@@ -79,8 +79,8 @@ class StringTemplate {
  * ]);
  * }}}
  *
- * @param array an associative list of named templates
- * @return \Cake\View\StringTemplate same instance
+ * @param array $templates An associative list of named templates.
+ * @return $this
  */
 	public function add(array $templates) {
 		$this->config($templates);

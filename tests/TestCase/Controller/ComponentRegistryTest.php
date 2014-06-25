@@ -20,6 +20,8 @@ use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Plugin;
+use Cake\Network\Request;
+use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -37,7 +39,7 @@ class ComponentRegistryTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$controller = new Controller();
+		$controller = new Controller(new Request(), new Response());
 		$this->Components = new ComponentRegistry($controller);
 	}
 

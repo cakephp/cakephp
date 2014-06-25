@@ -15,6 +15,8 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
@@ -234,13 +236,15 @@ class AuthComponent extends Component {
 	protected $_authorizationProvider;
 
 /**
- * Initializes AuthComponent for use in the controller.
+ * Constructor
  *
- * @param \Cake\Event\Event $event The initialize event.
- * @return void
+ * @param ComponentRegistry $registry A ComponentRegistry object.
+ * @param array $config Array of configuration settings.
  */
-	public function initialize(Event $event) {
-		$controller = $event->subject();
+	public function __construct(ComponentRegistry $registry, array $config = []) {
+		parent::__construct($registry, $config);
+
+		$controller = $registry->getController();
 		$this->request = $controller->request;
 		$this->response = $controller->response;
 		$this->_methods = $controller->methods;
@@ -299,7 +303,6 @@ class AuthComponent extends Component {
  */
 	public function implementedEvents() {
 		return [
-			'Controller.initialize' => 'initialize',
 			'Controller.startup' => 'startup',
 		];
 	}
@@ -311,7 +314,7 @@ class AuthComponent extends Component {
  *   controller object
  * @return bool True if action is accessible without authentication else false
  */
-	protected function _isAllowed($controller) {
+	protected function _isAllowed(Controller $controller) {
 		$action = strtolower($controller->request->params['action']);
 		if (in_array($action, array_map('strtolower', $this->allowedActions))) {
 			return true;
@@ -332,7 +335,7 @@ class AuthComponent extends Component {
  * @return void|\Cake\Network\Response Null if current action is login action
  *   else response object returned by authenticate object or Controller::redirect().
  */
-	protected function _unauthenticated($controller) {
+	protected function _unauthenticated(Controller $controller) {
 		if (empty($this->_authenticateObjects)) {
 			$this->constructAuthenticate();
 		}
@@ -376,7 +379,7 @@ class AuthComponent extends Component {
  * @param \Cake\Controller\Controller $controller A reference to the controller object.
  * @return bool True if current action is login action else false.
  */
-	protected function _isLoginAction($controller) {
+	protected function _isLoginAction(Controller $controller) {
 		$url = '';
 		if (isset($controller->request->url)) {
 			$url = $controller->request->url;
@@ -394,7 +397,7 @@ class AuthComponent extends Component {
  * @return \Cake\Network\Response
  * @throws \Cake\Error\ForbiddenException
  */
-	protected function _unauthorized($controller) {
+	protected function _unauthorized(Controller $controller) {
 		if ($this->_config['unauthorizedRedirect'] === false) {
 			throw new Error\ForbiddenException($this->_config['authError']);
 		}

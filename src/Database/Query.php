@@ -127,7 +127,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * When called with a null argument, it will return the current connection instance.
  *
  * @param \Cake\Database\Connection $connection instance
- * @return Query|\Cake\Database\Connection
+ * @return $this|\Cake\Database\Connection
  */
 	public function connection($connection = null) {
 		if ($connection === null) {
@@ -209,7 +209,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param callable $visitor a function or callable to be executed for each part
  * @param array $parts the query clasuses to traverse
- * @return Query
+ * @return $this
  */
 	public function traverse(callable $visitor, array $parts = []) {
 		$parts = $parts ?: array_keys($this->_parts);
@@ -242,7 +242,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param array|ExpressionInterface|string $fields fields to be added to the list
  * @param bool $overwrite whether to reset fields with passed list or not
- * @return Query
+ * @return $this
  */
 	public function select($fields = [], $overwrite = false) {
 		if (is_callable($fields)) {
@@ -287,7 +287,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param array|ExpressionInterface $on fields to be filtered on
  * @param bool $overwrite whether to reset fields with passed list or not
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function distinct($on = [], $overwrite = false) {
 		if ($on === []) {
@@ -327,7 +327,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param array|ExpressionInterface|string $modifiers modifiers to be applied to the query
  * @param bool $overwrite whether to reset order with field list or not
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function modifier($modifiers, $overwrite = false) {
 		$this->_dirty();
@@ -363,7 +363,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param array|ExpressionInterface|string $tables tables to be added to the list
  * @param bool $overwrite whether to reset tables with passed list or not
- * @return Query
+ * @return $this
  */
 	public function from($tables = [], $overwrite = false) {
 		if (empty($tables)) {
@@ -468,7 +468,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $types associative array of type names used to bind values to query
  * @param bool $overwrite whether to reset joins with passed list or not
  * @see \Cake\Database\Type
- * @return Query
+ * @return $this
  */
 	public function join($tables = null, $types = [], $overwrite = false) {
 		if ($tables === null) {
@@ -614,7 +614,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param bool $overwrite whether to reset conditions with passed list or not
  * @see \Cake\Database\Type
  * @see \Cake\Database\QueryExpression
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function where($conditions = null, $types = [], $overwrite = false) {
 		if ($overwrite) {
@@ -678,7 +678,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $types associative array of type names used to bind values to query
  * @see \Cake\Database\Query::where()
  * @see \Cake\Database\Type
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function andWhere($conditions, $types = []) {
 		$this->_conjugate('where', $conditions, 'AND', $types);
@@ -739,7 +739,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $types associative array of type names used to bind values to query
  * @see \Cake\Database\Query::where()
  * @see \Cake\Database\Type
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function orWhere($conditions, $types = []) {
 		$this->_conjugate('where', $conditions, 'OR', $types);
@@ -788,7 +788,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param array|\Cake\Database\ExpressionInterface|string $fields fields to be added to the list
  * @param bool $overwrite whether to reset order with field list or not
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function order($fields, $overwrite = false) {
 		if ($overwrite) {
@@ -826,7 +826,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param array|ExpressionInterface|string $fields fields to be added to the list
  * @param bool $overwrite whether to reset fields with passed list or not
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function group($fields, $overwrite = false) {
 		if ($overwrite) {
@@ -852,7 +852,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $types associative array of type names used to bind values to query
  * @param bool $overwrite whether to reset conditions with passed list or not
  * @see \Cake\Database\Query::where()
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function having($conditions = null, $types = [], $overwrite = false) {
 		if ($overwrite) {
@@ -871,7 +871,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param string|array|ExpressionInterface|callback $conditions The AND conditions for HAVING.
  * @param array $types associative array of type names used to bind values to query
  * @see \Cake\Database\Query::andWhere()
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function andHaving($conditions, $types = []) {
 		$this->_conjugate('having', $conditions, 'AND', $types);
@@ -887,7 +887,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param string|array|ExpressionInterface|callback $conditions The OR conditions for HAVING.
  * @param array $types associative array of type names used to bind values to query.
  * @see \Cake\Database\Query::orWhere()
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function orHaving($conditions, $types = []) {
 		$this->_conjugate('having', $conditions, 'OR', $types);
@@ -904,7 +904,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Pages should start at 1.
  *
  * @param int $num The page number you want.
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function page($num) {
 		$limit = $this->clause('limit');
@@ -934,7 +934,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * }}}
  *
  * @param int|ExpressionInterface $num number of records to be returned
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function limit($num) {
 		$this->_dirty();
@@ -961,7 +961,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * }}}
  *
  * @param int|ExpressionInterface $num number of records to be skipped
- * @return Query
+ * @return $this
  */
 	public function offset($num) {
 		if ($num !== null && !is_object($num)) {
@@ -993,7 +993,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param string|Query $query full SQL query to be used in UNION operator
  * @param bool $overwrite whether to reset the list of queries to be operated or not
- * @return Query
+ * @return $this
  */
 	public function union($query, $overwrite = false) {
 		if ($overwrite) {
@@ -1026,7 +1026,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param string|Query $query full SQL query to be used in UNION operator
  * @param bool $overwrite whether to reset the list of queries to be operated or not
- * @return Query
+ * @return $this
  */
 	public function unionAll($query, $overwrite = false) {
 		if ($overwrite) {
@@ -1048,7 +1048,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param array $columns The columns to insert into.
  * @param array $types A map between columns & their datatypes.
- * @return Query
+ * @return $this
  * @throws \RuntimeException When there are 0 columns.
  */
 	public function insert(array $columns, array $types = []) {
@@ -1070,7 +1070,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Set the table name for insert queries.
  *
  * @param string $table The table name to insert into.
- * @return Query
+ * @return $this
  */
 	public function into($table) {
 		$this->_dirty();
@@ -1087,7 +1087,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * instance to insert data from another SELECT statement.
  *
  * @param array|Query $data The data to insert.
- * @return Query
+ * @return $this
  * @throws \Cake\Database\Exception if you try to set values before declaring columns.
  *   Or if you try to set values on non-insert queries.
  */
@@ -1119,7 +1119,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Can be combined with set() and where() methods to create update queries.
  *
  * @param string $table The table you want to update.
- * @return Query
+ * @return $this
  */
 	public function update($table) {
 		$this->_dirty();
@@ -1137,7 +1137,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *    array or QueryExpression. When $key is an array, this parameter will be
  *    used as $types instead.
  * @param array $types The column types to treat data as.
- * @return Query
+ * @return $this
  */
 	public function set($key, $value = null, $types = []) {
 		if (empty($this->_parts['set'])) {
@@ -1165,7 +1165,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * create delete queries with specific conditions.
  *
  * @param string $table The table to use when deleting. This
- * @return Query
+ * @return $this
  */
 	public function delete($table = null) {
 		$this->_dirty();
@@ -1189,7 +1189,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * }}}
  *
  * @param string|\Cake\Database\QueryExpression $expression The expression to be appended
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function epilog($expression = null) {
 		$this->_dirty();
@@ -1314,7 +1314,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param null|callable $callback The callback to invoke when results are fetched.
  * @param bool $overwrite Whether or not this should append or replace all existing decorators.
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function decorateResults($callback, $overwrite = false) {
 		if ($overwrite) {
@@ -1338,7 +1338,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param callable $callback the function to be executed for each ExpressionInterface
  *   found inside this query.
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function traverseExpressions(callable $callback) {
 		$visitor = function($expression) use (&$visitor, $callback) {
@@ -1373,7 +1373,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param mixed $value The value to be bound
  * @param string|int $type the mapped type name, used for casting when sending
  *   to database
- * @return \Cake\Database\Query
+ * @return $this
  */
 	public function bind($param, $value, $type = 'string') {
 		$this->valueBinder()->bind($param, $value, $type);
@@ -1390,7 +1390,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param \Cake\Database\ValueBinder $binder new instance to be set. If no value is passed the
  *   default one will be returned
- * @return \Cake\Database\Query|\Cake\Database\ValueBinder
+ * @return $this|\Cake\Database\ValueBinder
  */
 	public function valueBinder($binder = null) {
 		if ($binder === null) {
