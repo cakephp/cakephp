@@ -148,7 +148,7 @@ trait SqlserverDialectTrait {
  * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to convert to TSQL.
  * @return void
  */
-	protected function _transformFunctionExpression($expression) {
+	protected function _transformFunctionExpression(FunctionExpression $expression) {
 		switch ($expression->name()) {
 			case 'CONCAT':
 				// CONCAT function is expressed as exp1 + exp2

@@ -14,7 +14,6 @@
  */
 namespace Cake\Controller;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListener;
 use Cake\Log\LogTrait;

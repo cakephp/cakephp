@@ -234,7 +234,7 @@ class Controller implements EventListener {
  * @param \Cake\Network\Response $response Response object for this controller.
  * @param string $name Override the name useful in testing when using mocks.
  */
-	public function __construct(Request $request = null, Response $response = null, $name = null) {
+	public function __construct($request = null, $response = null, $name = null) {
 		if ($this->name === null && $name === null) {
 			list(, $name) = namespaceSplit(get_class($this));
 			$name = substr($name, 0, -10);
@@ -391,7 +391,7 @@ class Controller implements EventListener {
  * @param \Cake\Network\Request $request The request to check.
  * @return bool
  */
-	protected function _isPrivateAction($method, $request) {
+	protected function _isPrivateAction(\ReflectionMethod $method, Request $request) {
 		$privateAction = (
 			$method->name[0] === '_' ||
 			!$method->isPublic() ||

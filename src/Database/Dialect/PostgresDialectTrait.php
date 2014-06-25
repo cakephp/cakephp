@@ -94,7 +94,7 @@ trait PostgresDialectTrait {
  *   to postgres SQL.
  * @return void
  */
-	protected function _transformFunctionExpression($expression) {
+	protected function _transformFunctionExpression(FunctionExpression $expression) {
 		switch ($expression->name()) {
 			case 'CONCAT':
 				// CONCAT function is expressed as exp1 || exp2

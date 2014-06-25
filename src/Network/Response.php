@@ -1142,7 +1142,7 @@ class Response {
  * the Last-Modified etag response header before calling this method. Otherwise
  * a comparison will not be possible.
  *
- * @param \Cake\Network\Request $request Request object
+ * @param Request $request Request object
  * @return bool whether the response was marked as not modified or not.
  */
 	public function checkNotModified(Request $request) {

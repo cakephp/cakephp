@@ -995,11 +995,11 @@ class Router {
  *
  * - `separator` The string to use as a separator.  Defaults to `:`.
  *
- * @param \Cake\Network\Request $request The request object to modify.
+ * @param Request $request The request object to modify.
  * @param array $options The array of options.
  * @return \Cake\Network\Request The modified request
  */
-	public static function parseNamedParams(Request $request, array $options = []) {
+	public static function parseNamedParams(Request $request, $options = []) {
 		$options += array('separator' => ':');
 		if (empty($request->params['pass'])) {
 			$request->params['named'] = [];
