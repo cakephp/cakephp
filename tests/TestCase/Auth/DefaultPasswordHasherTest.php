@@ -14,23 +14,23 @@
  */
 namespace Cake\Test\TestCase\Auth;
 
-use Cake\Auth\SimplePasswordHasher;
+use Cake\Auth\DefaultPasswordHasher;
 use Cake\TestSuite\TestCase;
 
 /**
- * Test case for SimplePasswordHasher
+ * Test case for DefaultPasswordHasher
  *
  */
-class SimplePasswordHasherTest extends TestCase {
+class DefaultPasswordHasherTest extends TestCase {
 
 /**
- * Tests that a password not produced by SimplePasswordHasher needs
+ * Tests that a password not produced by DefaultPasswordHasher needs
  * to be rehashed
  *
  * @return void
  */
 	public function testNeedsRehash() {
-		$hasher = new SimplePasswordHasher();
+		$hasher = new DefaultPasswordHasher();
 		$this->assertTrue($hasher->needsRehash(md5('foo')));
 		$password = $hasher->hash('foo');
 		$this->assertFalse($hasher->needsRehash($password));

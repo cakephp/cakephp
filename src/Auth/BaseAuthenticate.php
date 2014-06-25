@@ -38,7 +38,7 @@ abstract class BaseAuthenticate {
  * - `contain` Extra models to contain and store in session.
  * - `passwordHasher` Password hasher class. Can be a string specifying class name
  *    or an array containing `className` key, any other keys will be passed as
- *    config to the class. Defaults to 'Simple'.
+ *    config to the class. Defaults to 'Default'.
  *
  * @var array
  */
@@ -50,7 +50,7 @@ abstract class BaseAuthenticate {
 		'userModel' => 'Users',
 		'scope' => [],
 		'contain' => null,
-		'passwordHasher' => 'Simple'
+		'passwordHasher' => 'Default'
 	];
 
 /**

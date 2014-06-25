@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Auth;
 
+use Cake\Auth\DefaultPasswordHasher;
 use Cake\Auth\FallbackPasswordHasher;
-use Cake\Auth\SimplePasswordHasher;
 use Cake\Auth\WeakPasswordHasher;
 use Cake\TestSuite\TestCase;
 
@@ -31,12 +31,12 @@ class FallbackPasswordHasherTest extends TestCase {
  * @return void
  */
 	public function testHash() {
-		$hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Simple']]);
+		$hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Default']]);
 		$weak = new WeakPasswordHasher();
 		$this->assertSame($weak->hash('foo'), $hasher->hash('foo'));
 
-		$simple = new SimplePasswordHasher();
-		$hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Simple']]);
+		$simple = new DefaultPasswordHasher();
+		$hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Default']]);
 		$this->assertSame($weak->hash('foo'), $hasher->hash('foo'));
 	}
 
@@ -47,9 +47,9 @@ class FallbackPasswordHasherTest extends TestCase {
  * @return void
  */
 	public function testCheck() {
-		$hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Simple']]);
+		$hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Default']]);
 		$weak = new WeakPasswordHasher();
-		$simple = new SimplePasswordHasher();
+		$simple = new DefaultPasswordHasher();
 
 		$hash = $simple->hash('foo');
 		$otherHash = $weak->hash('foo');
@@ -63,12 +63,12 @@ class FallbackPasswordHasherTest extends TestCase {
  * @return void
  */
 	public function testNeedsRehash() {
-		$hasher = new FallbackPasswordHasher(['hashers' => ['Simple', 'Weak']]);
+		$hasher = new FallbackPasswordHasher(['hashers' => ['Default', 'Weak']]);
 		$weak = new WeakPasswordHasher();
 		$otherHash = $weak->hash('foo');
 		$this->assertTrue($hasher->needsRehash($otherHash));
 
-		$simple = new SimplePasswordHasher();
+		$simple = new DefaultPasswordHasher();
 		$hash = $simple->hash('foo');
 		$this->assertFalse($hasher->needsRehash($hash));
 	}
