@@ -58,7 +58,9 @@ class ConsoleErrorHandler {
 			$exception->getMessage(),
 			$exception->getTraceAsString()
 		));
-		return $this->_stop($exception->getCode() ? $exception->getCode() : 1);
+		$code = $exception->getCode();
+		$code = ($code && is_integer($code)) ? $code : 1;
+		return $this->_stop($code);
 	}
 
 /**
