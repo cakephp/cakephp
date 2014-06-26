@@ -332,7 +332,7 @@ class CakeEmail {
  *
  * @param array|string $config Array of configs, or string to load configs from email.php
  */
-	public function __construct($config = null) {
+	public function __construct($config = 'default') {
 		$this->_appCharset = Configure::read('App.encoding');
 		if ($this->_appCharset !== null) {
 			$this->charset = $this->_appCharset;
@@ -341,7 +341,6 @@ class CakeEmail {
 		if (empty($this->_domain)) {
 			$this->_domain = php_uname('n');
 		}
-
 		if ($config) {
 			$this->config($config);
 		}
