@@ -8,6 +8,12 @@ API_HOST=https://api.github.com
 OWNER='cakephp'
 REMOTE="origin"
 
+ifdef GITHUB_TOKEN
+	AUTH=-H 'Authorization: token $(GITHUB_TOKEN)'
+else
+	AUTH=-u $(GITHUB_USER) -p$(GITHUB_PASS)
+endif
+
 ALL: help
 .PHONY: help install test need-version bump-version tag-version
 
@@ -121,7 +127,7 @@ package: tag-app dist/cakephp-$(VERSION).zip
 
 publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(VERSION).zip
 	@echo "Creating draft release for $(VERSION). prerelease=$(PRERELEASE)"
-	curl -u $(GITHUB_USER) -p$(GITHUB_PASS) -XPOST $(API_HOST)/repos/$(OWNER)/cakephp/releases -d '{ \
+	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/cakephp/releases -d '{ \
 		"tag_name": "$(VERSION)", \
 		"name": "CakePHP $(VERSION) released", \
 		"draft": true, \
@@ -132,7 +138,7 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(VERSION).zip
 		$$d = json_decode($$f, true); \
 		file_put_contents("./id.txt", $$d["id"]);'
 	@echo "Uploading zip file to github."
-	curl -u $(GITHUB_USER) -p$(GITHUB_PASS) -XPOST \
+	curl $(AUTH) -XPOST \
 		$(UPLOAD_HOST)/repos/$(OWNER)/cakephp/releases/`cat ./id.txt`/assets?name=cakephp-$(VERSION).zip \
 		-H 'Content-Type: application/zip' \
 		-d '@dist/cakephp-$(VERSION).zip'
