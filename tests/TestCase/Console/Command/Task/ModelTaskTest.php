@@ -292,6 +292,7 @@ class ModelTaskTest extends TestCase {
 			'belongsTo' => [
 				[
 					'alias' => 'ParentCategoryThreads',
+					'className' => 'CategoryThreads',
 					'foreignKey' => 'parent_id'
 				],
 			]
@@ -324,6 +325,7 @@ class ModelTaskTest extends TestCase {
 			'hasMany' => [
 				[
 					'alias' => 'ChildCategoryThreads',
+					'className' => 'CategoryThreads',
 					'foreignKey' => 'parent_id',
 				],
 			]

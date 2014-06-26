@@ -228,6 +228,7 @@ class ModelTask extends BakeTask {
 			} elseif ($fieldName === 'parent_id') {
 				$associations['belongsTo'][] = [
 					'alias' => 'Parent' . $model->alias(),
+					'className' => $model->alias(),
 					'foreignKey' => $fieldName
 				];
 			}
@@ -269,6 +270,7 @@ class ModelTask extends BakeTask {
 				} elseif ($otherTable == $tableName && $fieldName === 'parent_id') {
 					$assoc = [
 						'alias' => 'Child' . $model->alias(),
+						'className' => $model->alias(),
 						'foreignKey' => $fieldName
 					];
 				}
