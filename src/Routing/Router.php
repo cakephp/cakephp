@@ -125,6 +125,22 @@ class Router {
 	protected static $_pathScopes = [];
 
 /**
+ * A hash of request context data.
+ *
+ * @var array
+ */
+	protected static $_requestContext = [];
+
+/**
+ * A hash of named routes. Indexed
+ * as an optimization so reverse routing does not
+ * have to traverse all the route collections.
+ *
+ * @var array
+ */
+	protected static $_named = [];
+
+/**
  * Named expressions
  *
  * @var array
@@ -337,23 +353,12 @@ class Router {
 	public static function connect($route, $defaults = [], $options = []) {
 		static::$initialized = true;
 
-		$defaults += ['plugin' => null];
-		if (empty($options['action'])) {
-			$defaults += array('action' => 'index');
+		if (empty($options['routeClass'])) {
+			$options['routeClass'] =  static::$_routeClass;
 		}
-		if (empty($options['_ext'])) {
-			$options['_ext'] = static::$_validExtensions;
-		}
-		$routeClass = static::$_routeClass;
-		if (isset($options['routeClass'])) {
-			$routeClass = App::className($options['routeClass'], 'Routing/Route');
-			$routeClass = static::_validateRouteClass($routeClass);
-			unset($options['routeClass']);
-		}
-		if ($routeClass === 'Cake\Routing\Route\RedirectRoute' && isset($defaults['redirect'])) {
-			$defaults = $defaults['redirect'];
-		}
-		static::$_routes->add(new $routeClass($route, $defaults, $options));
+		Router::scope('/', function($routes) use ($route, $defaults, $options) {
+			$routes->connect($route, $defaults, $options);
+		});
 	}
 
 /**
@@ -390,9 +395,6 @@ class Router {
  */
 	public static function redirect($route, $url, $options = []) {
 		$options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
-		if (is_string($url)) {
-			$url = array('redirect' => $url);
-		}
 		return static::connect($route, $url, $options);
 	}
 
@@ -503,16 +505,24 @@ class Router {
  *
  * @param string $url URL to be parsed
  * @return array Parsed elements from URL
+ * @throws \Cake\Error\Exception When a route cannot be handled
  */
 	public static function parse($url) {
 		if (!static::$initialized) {
 			static::_loadRoutes();
 		}
-
 		if (strlen($url) && strpos($url, '/') !== 0) {
 			$url = '/' . $url;
 		}
-		return static::$_routes->parse($url);
+
+		krsort(static::$_pathScopes);
+		foreach (static::$_pathScopes as $path => $collection) {
+			if (strpos($url, $path) === 0) {
+				return $collection->parse($url);
+			}
+		}
+		// TODO improve this with a custom exception.
+		throw new Error\Exception('No routes match the given URL.');
 	}
 
 /**
@@ -565,7 +575,22 @@ class Router {
  */
 	public static function pushRequest(Request $request) {
 		static::$_requests[] = $request;
-		static::$_routes->setContext($request);
+		static::_setContext($request);
+	}
+
+/**
+ * Store the request context for a given request.
+ *
+ * @param \Cake\Network\Request $request The request instance.
+ * @return void
+ */
+	protected static function _setContext($request) {
+		static::$_requestContext = [
+			'_base' => $request->base,
+			'_port' => $request->port(),
+			'_scheme' => $request->scheme(),
+			'_host' => $request->host()
+		];
 	}
 
 /**
@@ -579,7 +604,7 @@ class Router {
 		$removed = array_pop(static::$_requests);
 		$last = end(static::$_requests);
 		if ($last) {
-			static::$_routes->setContext($last);
+			static::_setContext($last);
 			reset(static::$_requests);
 		}
 		return $removed;
@@ -607,8 +632,6 @@ class Router {
 	public static function reload() {
 		if (empty(static::$_initialState)) {
 			static::$_initialState = get_class_vars(get_called_class());
-			static::_setPrefixes();
-			static::$_routes = new RouteCollection();
 			return;
 		}
 		foreach (static::$_initialState as $key => $val) {
@@ -616,19 +639,6 @@ class Router {
 				static::${$key} = $val;
 			}
 		}
-		static::_setPrefixes();
-		static::$_routes = new RouteCollection();
-	}
-
-/**
- * Promote a route (by default, the last one added) to the beginning of the list
- *
- * @param int $which A zero-based array index representing the route to move. For example,
- *    if 3 routes have been added, the last route would be 2.
- * @return bool Returns false if no route exists at the position specified by $which.
- */
-	public static function promote($which = null) {
-		return static::$_routes->promote($which);
 	}
 
 /**
@@ -809,28 +819,18 @@ class Router {
 				'controller' => $params['controller'],
 				'action' => 'index',
 				'_ext' => $params['_ext']
-
 			);
 			$url = static::_applyUrlFilters($url);
-			$output = static::$_routes->match($url);
+			$output = static::_match($url);
 		} elseif (
 			$urlType === 'string' &&
 			!$hasLeadingSlash &&
 			!$plainString
 		) {
 			// named route.
-			$route = static::$_routes->get($url);
-			if (!$route) {
-				throw new Error\Exception(sprintf(
-					'No route matching the name "%s" was found.',
-					$url
-				));
-			}
-			$url = $options +
-				$route->defaults +
-				array('_name' => $url);
+			$url = $options + ['_name' => $url];
 			$url = static::_applyUrlFilters($url);
-			$output = static::$_routes->match($url);
+			$output = static::_match($url);
 		} else {
 			// String urls.
 			if ($plainString) {
@@ -846,6 +846,41 @@ class Router {
 			}
 		}
 		return $output . $frag;
+	}
+
+/**
+ * Find a Route that matches the given URL data.
+ *
+ * @param string|array The URL to match.
+ * @return string The generated URL
+ * @throws \Cake\Error\Exception When a matching URL cannot be found.
+ */
+	protected static function _match($url) {
+		// Named routes support hack.
+		if (isset($url['_name'])) {
+			$route = false;
+			if (isset(static::$_named[$url['_name']])) {
+				$route = static::$_named[$url['_name']];
+			}
+			if ($route) {
+				unset($url['_name']);
+				return $route->match($url + $route->defaults, static::$_requestContext);
+			}
+		}
+
+		// No quick win, iterate and hope for the best.
+		foreach (static::$_pathScopes as $key => $collection) {
+			$match = $collection->match($url, static::$_requestContext);
+			if ($match) {
+				return $match;
+			}
+		}
+
+		// TODO improve with custom exception
+		throw new Error\Exception(sprintf(
+			'Unable to find a matching route for %s',
+			var_export($url, true)
+		));
 	}
 
 /**
@@ -972,7 +1007,6 @@ class Router {
 		if ($merge) {
 			$extensions = array_merge(static::$_validExtensions, $extensions);
 		}
-		static::$_routes->parseExtensions($extensions);
 		return static::$_validExtensions = $extensions;
 	}
 
@@ -1098,7 +1132,7 @@ class Router {
 		} else {
 			static::$_pathScopes[$path]->merge($collection);
 		}
-		return $collection;
+		static::$_named += $collection->named();
 	}
 
 /**
