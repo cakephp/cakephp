@@ -338,19 +338,19 @@ class CakeEmail {
 	public function __construct($config = 'default') {
 		$this->_appCharset = Configure::read('App.encoding');
 		if ($this->_appCharset !== null) {
-		    $this->charset = $this->_appCharset;
+			$this->charset = $this->_appCharset;
 		}
 		$this->_domain = preg_replace('/\:\d+$/', '', env('HTTP_HOST'));
 		if (empty($this->_domain)) {
-		    $this->_domain = php_uname('n');
+			$this->_domain = php_uname('n');
 		}
 		if (!empty($config)) {
-		    $this->config($config);
+			$this->config($config);
 		}
 		if (empty($this->headerCharset)) {
-		    $this->headerCharset = $this->charset;
+			$this->headerCharset = $this->charset;
 		}
-    	}
+	}
 
 /**
  * From
