@@ -298,6 +298,19 @@ class ModelTaskTest extends TestCase {
 			]
 		];
 		$this->assertEquals($expected, $result);
+
+		$this->Task->plugin = 'Blog';
+		$result = $this->Task->findBelongsTo($model, array());
+		$expected = [
+			'belongsTo' => [
+				[
+					'alias' => 'ParentCategoryThreads',
+					'className' => 'Blog.CategoryThreads',
+					'foreignKey' => 'parent_id'
+				],
+			]
+		];
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -327,6 +340,19 @@ class ModelTaskTest extends TestCase {
 					'alias' => 'ChildCategoryThreads',
 					'className' => 'CategoryThreads',
 					'foreignKey' => 'parent_id',
+				],
+			]
+		];
+		$this->assertEquals($expected, $result);
+
+		$this->Task->plugin = 'Blog';
+		$result = $this->Task->findHasMany($model, array());
+		$expected = [
+			'hasMany' => [
+				[
+					'alias' => 'ChildCategoryThreads',
+					'className' => 'Blog.CategoryThreads',
+					'foreignKey' => 'parent_id'
 				],
 			]
 		];
