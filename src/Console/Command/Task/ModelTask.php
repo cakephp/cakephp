@@ -226,8 +226,10 @@ class ModelTask extends BakeTask {
 					'foreignKey' => $fieldName
 				];
 			} elseif ($fieldName === 'parent_id') {
+				$className = ($this->plugin) ? $this->plugin . '.' . $model->alias() : $model->alias();
 				$associations['belongsTo'][] = [
 					'alias' => 'Parent' . $model->alias(),
+					'className' => $className,
 					'foreignKey' => $fieldName
 				];
 			}
@@ -267,8 +269,10 @@ class ModelTask extends BakeTask {
 						'foreignKey' => $fieldName
 					];
 				} elseif ($otherTable == $tableName && $fieldName === 'parent_id') {
+					$className = ($this->plugin) ? $this->plugin . '.' . $model->alias() : $model->alias();
 					$assoc = [
 						'alias' => 'Child' . $model->alias(),
+						'className' => $className,
 						'foreignKey' => $fieldName
 					];
 				}
