@@ -123,8 +123,9 @@ class SessionHelper extends Helper {
 		$this->request->session()->delete('Flash.' . $key);
 
 		if (!empty($attrs)) {
-			$flash = array_merge($flash, $attrs);
+			$flash = $attrs + $flash;
 		}
+		$flash += ['message' => '', 'type' => 'info', 'params' => []];
 
 		$message = $flash['message'];
 		$class = $flash['type'];
