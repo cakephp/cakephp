@@ -1,3 +1,8 @@
+# The following env variables need to be set:
+# - VERSION
+# - GITHUB_USER
+# - GITHUB_TOKEN (optional if you have two factor authentication in github)
+
 # Use the version number to figure out if the release
 # is a pre-release
 PRERELEASE=$(shell echo $(VERSION) | grep -E 'dev|rc|alpha|beta' --quiet && echo 'true' || echo 'false')
