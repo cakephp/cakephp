@@ -1120,8 +1120,14 @@ class Table implements RepositoryInterface, EventListener {
  */
 	protected function _processSave($entity, $options) {
 		$primary = $entity->extract((array)$this->primaryKey());
+
 		if ($primary && $entity->isNew() === null) {
-			$entity->isNew(!$this->exists($primary));
+			$alias = $this->alias();
+			$keys = array_keys($primary);
+			foreach ($keys as &$pk) {
+				$pk = "$alias.$pk";
+			}
+			$entity->isNew(!$this->exists(array_combine($keys, $primary)));
 		}
 
 		if ($entity->isNew() === null) {

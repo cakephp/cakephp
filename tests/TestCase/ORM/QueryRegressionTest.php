@@ -191,7 +191,7 @@ class QueryRegressionTest extends TestCase {
  *
  * Checks that only relevant associations are passed when saving _joinData
  * Tests that _joinData can also save deeper associations
- * 
+ *
  * @dataProvider strategyProvider
  * @param string $strategy
  * @return void
@@ -243,6 +243,27 @@ class QueryRegressionTest extends TestCase {
 		]);
 		$this->assertEquals('mariano', end($entity->special_tags)->author->name);
 		$this->assertEquals('mark', end($entity->highlights)->author->name);
+	}
+
+/**
+ * Tests that no exceptions are generated becuase of ambiguous column names in queries
+ * during a  save operation
+ *
+ * @see https://github.com/cakephp/cakephp/issues/3803
+ * @return void
+ */
+	public function testSaveWithCallbacks() {
+		$articles = TableRegistry::get('Articles');
+		$articles->belongsTo('Authors');
+
+		$articles->eventManager()->attach(function($event, $query) {
+			return $query->contain('Authors');
+		}, 'Model.beforeFind');
+
+		$article = $articles->newEntity();
+		$article->title = 'Foo';
+		$article->body = 'Bar';
+		$this->assertSame($article, $articles->save($article));
 	}
 
 }
