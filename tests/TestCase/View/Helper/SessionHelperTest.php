@@ -64,7 +64,10 @@ class SessionHelperTest extends TestCase {
 					'type' => 'success',
 					'params' => array('class' => 'positive'),
 					'message' => 'Recorded'
-				)
+				),
+				'incomplete' => [
+					'message' => 'A thing happened',
+				]
 			),
 			'Deeply' => array('nested' => array('key' => 'value')),
 		));
@@ -127,6 +130,16 @@ class SessionHelperTest extends TestCase {
 		$expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a test of the emergency broadcasting system</p>\n</div>";
 		$this->assertEquals($expected, $result);
 		$this->assertFalse($this->Session->check('Message.notification'));
+	}
+
+/**
+ * Test rendering a flash message for incomplete data.
+ *
+ * @return void
+ */
+	public function testFlashIncomplete() {
+		$result = $this->Session->flash('incomplete');
+		$expected = '<div id="flash-message" class="message-info">A thing happened</div>';
 	}
 
 /**
