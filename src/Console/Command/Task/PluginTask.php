@@ -229,8 +229,8 @@ class PluginTask extends BakeTask {
 
 		$file = $path . DS . 'composer.json';
 		$config = json_decode(file_get_contents($file), true);
-		$config['autoload']['psr-4'][$plugin . '\\'] = "./Plugin/$plugin/src";
-		$config['autoload']['psr-4'][$plugin . '\\Test\\'] = "./Plugin/$plugin/tests";
+		$config['autoload']['psr-4'][$plugin . '\\'] = "./plugins/$plugin/src";
+		$config['autoload']['psr-4'][$plugin . '\\Test\\'] = "./plugins/$plugin/tests";
 
 		$this->out(__d('cake_console', '<info>Modifying composer autoloader</info>'));
 
