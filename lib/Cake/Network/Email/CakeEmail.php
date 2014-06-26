@@ -344,7 +344,7 @@ class CakeEmail {
 		if (empty($this->_domain)) {
 			$this->_domain = php_uname('n');
 		}
-		if (!empty($config)) {
+		if ($config) {
 			$this->config($config);
 		}
 		if (empty($this->headerCharset)) {
