@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Network\Request;
 use Cake\Routing\RouteCollection;
+use Cake\Routing\ScopedRouteCollection;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 
@@ -115,6 +116,13 @@ class Router {
  * @var string
  */
 	const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
+
+/**
+ * A hash of ScopedRouteCollection objects indexed by path.
+ *
+ * @var array
+ */
+	protected static $_pathScopes = [];
 
 /**
  * Named expressions
@@ -1033,6 +1041,62 @@ class Router {
 		}
 		$request->params['named'] = $named;
 		return $request;
+	}
+
+/**
+ * Create a routing scope.
+ *
+ * Routing scopes allow you to keep your routes DRY and avoid repeating
+ * common path prefixes, and or parameter sets.
+ *
+ * Scoped collections will be indexed by path for faster route parsing. If you
+ * re-open or re-use a scope the connected routes will be merged with the
+ * existing ones.
+ *
+ * ### Example
+ *
+ * {{{
+ * Router::scope('/blog', ['plugin' => 'Blog'], function($routes) {
+ *    $routes->connect('/', ['controller' => 'Articles']);
+ * });
+ * }}}
+ *
+ * The above would result in a `/blog/` route being created, with both the
+ * plugin & controller default parameters set.
+ *
+ * You can use Router::plugin() and Router::prefix() as shortcuts to creating
+ * specific kinds of scopes.
+ *
+ * Routing scopes will inherit the globally set extensions configured with
+ * Router::parseExtensions(). You can also set valid extensions using 
+ * `$routes->extensions()` in your closure.
+ *
+ * @param string $path The path prefix for the scope. This path will be prepended
+ *    to all routes connected in the scoped collection.
+ * @param array $params An array of routing defaults to add to each connected route.
+ *   If you have no parameters, this argument can be a callable.
+ * @param callable $callback The callback to invoke with the scoped collection.
+ * @throws \InvalidArgumentException When an invalid callable is provided.
+ * @return void
+ */
+	public static function scope($path, $params = [], $callback = null) {
+		if ($callback === null) {
+			$callback = $params;
+			$params = [];
+		}
+		if (!is_callable($callback)) {
+			$msg = 'Need a callable function/object to connect routes.';
+			throw new \InvalidArgumentException($msg);
+		}
+
+		$collection = new ScopedRouteCollection($path, $params, static::$_validExtensions);
+		$callback($collection);
+
+		if (empty(static::$_pathScopes[$path])) {
+			static::$_pathScopes[$path] = $collection;
+		} else {
+			static::$_pathScopes[$path]->merge($collection);
+		}
 	}
 
 /**
