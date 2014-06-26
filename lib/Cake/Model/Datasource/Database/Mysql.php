@@ -560,7 +560,11 @@ class Mysql extends DboSource {
 								if (!isset($col['name'])) {
 									$col['name'] = $field;
 								}
-								$colList[] = 'CHANGE ' . $this->name($field) . ' ' . $this->buildColumn($col);
+								$alter = 'CHANGE ' . $this->name($field) . ' ' . $this->buildColumn($col);
+								if (isset($col['after'])) {
+									$alter .= ' AFTER ' . $this->name($col['after']);
+								}
+								$colList[] = $alter;	
 							}
 							break;
 					}
