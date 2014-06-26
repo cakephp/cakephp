@@ -2885,4 +2885,43 @@ class RouterTest extends TestCase {
 		Router::scope('/path', 'derpy');
 	}
 
+/**
+ * Test that prefix() creates a scope.
+ *
+ * @return void
+ */
+	public function testPrefix() {
+		Router::prefix('admin', function($routes) {
+			$this->assertInstanceOf('Cake\Routing\ScopedRouteCollection', $routes);
+			$this->assertEquals('/admin', $routes->path());
+			$this->assertEquals(['prefix' => 'admin'], $routes->params());
+		});
+	}
+
+/**
+ * Test that plugin() creates a scope.
+ *
+ * @return void
+ */
+	public function testPlugin() {
+		Router::plugin('DebugKit', function($routes) {
+			$this->assertInstanceOf('Cake\Routing\ScopedRouteCollection', $routes);
+			$this->assertEquals('/debug_kit', $routes->path());
+			$this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
+		});
+	}
+
+/**
+ * Test that plugin() accepts options
+ *
+ * @return void
+ */
+	public function testPluginOptions() {
+		Router::plugin('DebugKit', ['path' => '/debugger'], function($routes) {
+			$this->assertInstanceOf('Cake\Routing\ScopedRouteCollection', $routes);
+			$this->assertEquals('/debugger', $routes->path());
+			$this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
+		});
+	}
+
 }

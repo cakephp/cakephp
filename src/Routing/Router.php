@@ -1072,12 +1072,13 @@ class Router {
  * `$routes->extensions()` in your closure.
  *
  * @param string $path The path prefix for the scope. This path will be prepended
- *    to all routes connected in the scoped collection.
+ *   to all routes connected in the scoped collection.
  * @param array $params An array of routing defaults to add to each connected route.
  *   If you have no parameters, this argument can be a callable.
  * @param callable $callback The callback to invoke with the scoped collection.
  * @throws \InvalidArgumentException When an invalid callable is provided.
- * @return void
+ * @return \Cake\Routing\ScopedRouteCollection The scoped collection that
+ *   was created/used.
  */
 	public static function scope($path, $params = [], $callback = null) {
 		if ($callback === null) {
@@ -1097,6 +1098,61 @@ class Router {
 		} else {
 			static::$_pathScopes[$path]->merge($collection);
 		}
+		return $collection;
+	}
+
+/**
+ * Create prefixed routes.
+ *
+ * This method creates a scoped route collection that includes
+ * relevant prefix information.
+ *
+ * The path parameter is used to generate the routing parameter name.
+ * For example a path of `admin` would result in `'prefix' => 'admin'` being
+ * applied to all connected routes.
+ *
+ * You can re-open a prefix as many times as necessary, as well as nest prefixes.
+ * Nested prefixes will result in prefix values like `admin/api` which translates
+ * to the `Controller\Admin\Api\` namespace.
+ *
+ * @param string $name The prefix name to use.
+ * @param callable $callback The callback to invoke that builds the prefixed routes.
+ * @return void
+ */
+	public static function prefix($name, $callback) {
+		$name = Inflector::underscore($name);
+		$path = '/' . $name;
+		static::scope($path, ['prefix' => $name], $callback);
+	}
+
+/**
+* Add plugin routes.
+*
+* This method creates a scoped route collection that includes
+* relevant plugin information.
+*
+* The plugin name will be inflected to the underscore version to create
+* the routing path. If you want a custom path name, use the `path` option.
+*
+* Routes connected in the scoped collection will have the correct path segment
+* prepended, and have a matching plugin routing key set.
+*
+* @param string $path The path name to use for the prefix.
+* @param array|callable $options Either the options to use, or a callback.
+* @param callable $callback The callback to invoke that builds the plugin routes.
+*   Only required when $options is defined.
+* @return void
+*/
+	public static function plugin($name, $options = [], $callback = null) {
+		if ($callback === null) {
+			$callback = $options;
+			$options = [];
+		}
+		$params = ['plugin' => $name];
+		if (empty($options['path'])) {
+			$options['path'] = '/' . Inflector::underscore($name);
+		}
+		static::scope($options['path'], $params, $callback);
 	}
 
 /**

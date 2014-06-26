@@ -442,7 +442,7 @@ class ScopedRouteCollection {
 /**
  * Add prefixed routes.
  *
- * This method creates a new scoped route collection that includes
+ * This method creates a scoped route collection that includes
  * relevant prefix information.
  *
  * The path parameter is used to generate the routing parameter name.
