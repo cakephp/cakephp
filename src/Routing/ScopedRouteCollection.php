@@ -189,7 +189,7 @@ class ScopedRouteCollection {
  *
  * {{{
  * Router::plugin('Comments', function ($routes) {
- *   $routes->resource('Comments');
+ *   $routes->resources('Comments');
  * });
  * }}}
  *
@@ -201,7 +201,7 @@ class ScopedRouteCollection {
  *
  * {{{
  * Router::prefix('admin', function ($routes) {
- *   $routes->resource('Articles');
+ *   $routes->resources('Articles');
  * });
  * }}}
  *
@@ -211,8 +211,8 @@ class ScopedRouteCollection {
  * You can create nested resources by passing a callback in:
  *
  * {{{
- * $routes->resource('Articles', function($routes) {
- *   $routes->resource('Comments');
+ * $routes->resources('Articles', function($routes) {
+ *   $routes->resources('Comments');
  * });
  * }}}
  *
@@ -229,7 +229,7 @@ class ScopedRouteCollection {
  *   scopes inherit the existing path and 'id' parameter.
  * @return array Array of mapped resources
  */
-	public function resource($name, $options = [], $callback = null) {
+	public function resources($name, $options = [], $callback = null) {
 		if (is_callable($options) && $callback === null) {
 			$callback = $options;
 			$options = [];

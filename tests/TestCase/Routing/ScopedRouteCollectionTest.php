@@ -319,9 +319,9 @@ class ScopedRouteCollectionTest extends TestCase {
  *
  * @return void
  */
-	public function testResource() {
+	public function testResources() {
 		$routes = new ScopedRouteCollection('/api', ['prefix' => 'api']);
-		$routes->resource('Articles', ['_ext' => 'json']);
+		$routes->resources('Articles', ['_ext' => 'json']);
 
 		$all = $routes->routes();
 		$this->assertCount(6, $all);
@@ -336,13 +336,13 @@ class ScopedRouteCollectionTest extends TestCase {
  *
  * @return void
  */
-	public function testResourceNested() {
+	public function testResourcesNested() {
 		$routes = new ScopedRouteCollection('/api', ['prefix' => 'api']);
-		$routes->resource('Articles', function($routes) {
+		$routes->resources('Articles', function($routes) {
 			$this->assertEquals('/api/articles/', $routes->path());
 			$this->assertEquals(['prefix' => 'api'], $routes->params());
 
-			$routes->resource('Comments');
+			$routes->resources('Comments');
 			$route = $routes->routes()[0];
 			$this->assertEquals('/api/articles/:article_id/comments', $route->template);
 		});
