@@ -59,7 +59,7 @@ class ConsoleErrorHandler {
 			$exception->getTraceAsString()
 		));
 		$code = $exception->getCode();
-		$code = ($code && is_integer($code)) ? $code : 1;
+		$code = ($code && is_int($code)) ? $code : 1;
 		return $this->_stop($code);
 	}
 
