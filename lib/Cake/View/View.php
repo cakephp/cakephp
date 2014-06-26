@@ -1202,22 +1202,23 @@ class View extends Object {
  * @return string
  */
 	protected function _renderElement($file, $data, $options) {
-		if ($options['callbacks']) {
-			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
-		}
-
 		$current = $this->_current;
 		$restore = $this->_currentType;
-
 		$this->_currentType = self::TYPE_ELEMENT;
+
+		if ($options['callbacks']) {
+			$this->getEventManager()->dispatch(new CakeEvent('Element.beforeRender', $this, array($file)));
+		}
+
 		$element = $this->_render($file, array_merge($this->viewVars, $data));
+
+		if ($options['callbacks']) {
+			$this->getEventManager()->dispatch(new CakeEvent('Element.afterRender', $this, array($file, $element)));
+        }
 
 		$this->_currentType = $restore;
 		$this->_current = $current;
 
-		if ($options['callbacks']) {
-			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));
-		}
 		if (isset($options['cache'])) {
 			Cache::write($this->elementCacheSettings['key'], $element, $this->elementCacheSettings['config']);
 		}
