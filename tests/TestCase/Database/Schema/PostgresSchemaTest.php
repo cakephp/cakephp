@@ -646,7 +646,7 @@ SQL;
 			'type' => 'integer',
 		])->addConstraint($name, $data);
 
-		$this->assertEquals($expected, $schema->constraintSql($table, $name));
+		$this->assertTextEquals($expected, $schema->constraintSql($table, $name));
 	}
 
 /**
@@ -692,7 +692,7 @@ SQL;
 		$result = $table->createSql($connection);
 
 		$this->assertCount(3, $result);
-		$this->assertEquals($expected, $result[0]);
+		$this->assertTextEquals($expected, $result[0]);
 		$this->assertEquals(
 			'CREATE INDEX "title_idx" ON "schema_articles" ("title")',
 			$result[1]
@@ -756,7 +756,7 @@ PRIMARY KEY ("article_id", "tag_id")
 SQL;
 		$result = $table->createSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals($expected, $result[0]);
+		$this->assertTextEquals($expected, $result[0]);
 
 		$table = (new Table('composite_key'))
 			->addColumn('id', [
@@ -782,7 +782,7 @@ PRIMARY KEY ("id", "account_id")
 SQL;
 		$result = $table->createSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals($expected, $result[0]);
+		$this->assertTextEquals($expected, $result[0]);
 	}
 
 /**
