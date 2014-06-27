@@ -149,7 +149,14 @@ class DispatcherFilter implements EventListener {
 		$request = $event->data['request'];
 		$pass = true;
 		if (!empty($this->_config['for'])) {
-			$pass = strpos($request->here(false), $this->_config['for']) === 0;
+			$len = strlen('preg:');
+			$for = $this->_config['for'];
+			$url = $request->here(false);
+			if (substr($for, 0, $len) === 'preg:') {
+				$pass = (bool)preg_match(substr($for, $len), $url);
+			} else {
+				$pass = strpos($url, $for) === 0;
+			}
 		}
 		if ($pass && !empty($this->_config['when'])) {
 			$response = $event->data['response'];

@@ -85,6 +85,15 @@ class DispatcherFilterTest extends TestCase {
 		$request = new Request(['url' => '/blog/articles']);
 		$event = new Event('Dispatcher.beforeDispatch', $this, compact('request'));
 		$this->assertFalse($filter->matches($event), 'Does not start with /articles');
+
+		$request = new Request(['url' => '/articles/edit/1']);
+		$event = new Event('Dispatcher.beforeDispatch', $this, compact('request'));
+		$filter = new DispatcherFilter(['for' => 'preg:#^/articles/edit/\d+$#']);
+		$this->assertTrue($filter->matches($event));
+
+		$request = new Request(['url' => '/blog/articles/edit/1']);
+		$event = new Event('Dispatcher.beforeDispatch', $this, compact('request'));
+		$this->assertFalse($filter->matches($event), 'Does not start with /articles');
 	}
 
 /**
