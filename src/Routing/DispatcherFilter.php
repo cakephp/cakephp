@@ -39,6 +39,12 @@ use Cake\Event\EventListener;
  * When the above filter is connected to a dispatcher it will only fire
  * its `beforeDispatch` and `afterDispatch` methods on requests that start with `/blog`.
  *
+ * The for condition can also be a regular expression by using the `preg:` prefix:
+ *
+ * {{{
+ * $filter = new BlogFilter(['for' => 'preg:#^/blog/\d+$#']);
+ * }}}
+ *
  * ### Limiting filters based on conditions
  *
  * In addition to simple path based matching you can use a closure to match on arbitrary request
