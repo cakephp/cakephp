@@ -814,11 +814,11 @@ class View extends Object {
 		$this->viewVars = $data + $this->viewVars;
 	}
 /**
- * Retreived the current view type
+ * Retrieve the current view type
  *
  * @return string
  */
-	public function getCurrentType(){
+	public function getCurrentType() {
 		return $this->_currentType;
 	}
 /**

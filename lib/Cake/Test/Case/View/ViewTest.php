@@ -239,6 +239,7 @@ class TestObjectWithToString {
  */
 class TestObjectWithoutToString {
 }
+
 /**
  * Class TestViewEventListener
  *
@@ -246,26 +247,54 @@ class TestObjectWithoutToString {
  */
 class TestViewEventListener implements CakeEventListener {
 
+/**
+ * type of view before rendering has occurred
+ *
+ * @var string
+ */
 	public $beforeRenderViewType;
 
+/**
+ * type of view after rendering has occurred
+ *
+ * @var string
+ */
 	public $afterRenderViewType;
 
+/**
+ * implementedEvents method
+ *
+ * @return array
+ */
 	public function implementedEvents() {
 		return array(
 				'View.beforeRender' => 'beforeRender',
-				'View.afterRender' => 'afterRender',
-			    );
+				'View.afterRender' => 'afterRender'
+				);
 	}
 
+/**
+ * beforeRender method
+ * 
+ * @param CakeEvent $event the event being sent 
+ * @return void
+ */
 	public function beforeRender($event) {
-		$this->beforeRenderViewType = $event->subject()->getCurrentType(); 
+		$this->beforeRenderViewType = $event->subject()->getCurrentType();
 	}
 
+/**
+ * afterRender method
+ *
+ * @param CakeEvent $event the event being sent 
+ * @return void
+ */
 	public function afterRender($event) {
 		$this->afterRenderViewType = $event->subject()->getCurrentType();
 	}
 
 }
+
 /**
  * ViewTest class
  *
@@ -853,7 +882,7 @@ class ViewTest extends CakeTestCase {
 		$this->assertEquals(View::TYPE_VIEW, $listener->afterRenderViewType);
 
 		$this->assertEquals($View->getCurrentType(), View::TYPE_VIEW);
-		$View->element('test_element', array(), array("callbacks"=>true));
+		$View->element('test_element', array(), array('callbacks' => true));
 		$this->assertEquals($View->getCurrentType(), View::TYPE_VIEW);
 
 		$this->assertEquals(View::TYPE_ELEMENT, $listener->beforeRenderViewType);
