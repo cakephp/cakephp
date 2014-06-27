@@ -22,6 +22,8 @@ App::uses('Controller', 'Controller');
 App::uses('CacheHelper', 'View/Helper');
 App::uses('HtmlHelper', 'View/Helper');
 App::uses('ErrorHandler', 'Error');
+App::uses('CakeEventManager', 'Event');
+App::uses('CakeEventListener', 'Event');
 
 /**
  * ViewPostsController class
@@ -237,7 +239,27 @@ class TestObjectWithToString {
  */
 class TestObjectWithoutToString {
 }
-
+/**
+ * Class TestViewEventListener
+ *
+ * An event listener to test cakePHP events
+ */
+class TestViewEventListener implements CakeEventListener {
+	public $beforeRenderViewType;
+	public $afterRenderViewType;
+	public function implementedEvents() {
+		return array(
+				"View.beforeRender"=>"beforeRender",
+				"View.afterRender" =>"afterRender",
+			    );
+	}
+	public function beforeRender($event) {
+		$this->beforeRenderViewType = $event->subject()->getCurrentType(); 
+	}
+	public function afterRender($event) {
+		$this->afterRenderViewType = $event->subject()->getCurrentType();
+	}
+}
 /**
  * ViewTest class
  *
@@ -806,6 +828,30 @@ class ViewTest extends CakeTestCase {
 
 		Cache::clear(true, 'test_view');
 		Cache::drop('test_view');
+    }
+
+/**
+ * Test element events
+ *
+ * @return void
+ */
+	public function testViewEvent(){
+		$View = new View($this->PostsController);
+		$View->autoLayout = false;
+		$listener = new TestViewEventListener();
+
+		$View->getEventManager()->attach($listener);
+
+		$View->render('index');
+		$this->assertEquals(View::TYPE_VIEW, $listener->beforeRenderViewType);
+		$this->assertEquals(View::TYPE_VIEW, $listener->afterRenderViewType);
+
+		$this->assertEquals($View->getCurrentType(), View::TYPE_VIEW);
+		$View->element('test_element', array(), array("callbacks"=>true));
+		$this->assertEquals($View->getCurrentType(), View::TYPE_VIEW);
+
+		$this->assertEquals(View::TYPE_ELEMENT, $listener->beforeRenderViewType);
+		$this->assertEquals(View::TYPE_ELEMENT, $listener->afterRenderViewType);
 	}
 
 /**
