@@ -201,28 +201,6 @@ class Router {
 	protected static $_urlFilters = [];
 
 /**
- * Default route class to use
- *
- * @var string
- */
-	protected static $_routeClass = 'Cake\Routing\Route\Route';
-
-/**
- * Set the default route class to use or return the current one
- *
- * @param string $routeClass to set as default
- * @return mixed void|string
- * @throws \Cake\Error\Exception
- */
-	public static function defaultRouteClass($routeClass = null) {
-		if ($routeClass === null) {
-			return static::$_routeClass;
-		}
-
-		static::$_routeClass = static::_validateRouteClass($routeClass);
-	}
-
-/**
  * Validates that the passed route class exists and is a subclass of Cake Route
  *
  * @param string $routeClass Route class name
@@ -352,10 +330,6 @@ class Router {
  */
 	public static function connect($route, $defaults = [], $options = []) {
 		static::$initialized = true;
-
-		if (empty($options['routeClass'])) {
-			$options['routeClass'] =  static::$_routeClass;
-		}
 		Router::scope('/', function($routes) use ($route, $defaults, $options) {
 			$routes->connect($route, $defaults, $options);
 		});

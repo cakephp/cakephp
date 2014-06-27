@@ -331,25 +331,6 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * Test that RouterCollection::all() gets the list of all connected routes.
- *
- * @return void
- */
-	public function testRouteCollectionRoutes() {
-		$collection = new RouteCollection();
-		Router::setRouteCollection($collection);
-		Router::mapResources('Posts');
-
-		$routes = $collection->all();
-
-		$this->assertEquals(count($routes), 6);
-		$this->assertInstanceOf('Cake\Routing\Route\Route', $routes[0]);
-		$this->assertEquals($collection->get(0), $routes[0]);
-		$this->assertInstanceOf('Cake\Routing\Route\Route', $routes[5]);
-		$this->assertEquals($collection->get(5), $routes[5]);
-	}
-
-/**
  * Test mapResources with a plugin and prefix.
  *
  * @return void
@@ -2625,10 +2606,15 @@ class RouterTest extends TestCase {
 	public function testUrlFullUrlReturnFromRoute() {
 		$url = 'http://example.com/posts/view/1';
 
-		$routes = $this->getMock('Cake\Routing\RouteCollection');
-		Router::setRouteCollection($routes);
-		$routes->expects($this->any())->method('match')
+		$route = $this->getMock(
+			'Cake\Routing\Route\Route',
+			['match'],
+			['/:controller/:action/*']
+		);
+		$route->expects($this->any())
+			->method('match')
 			->will($this->returnValue($url));
+		Router::connect($route);
 
 		$result = Router::url(array('controller' => 'posts', 'action' => 'view', 1));
 		$this->assertEquals($url, $result);
@@ -2729,69 +2715,6 @@ class RouterTest extends TestCase {
 		$this->assertEquals(Router::resourceMap(), $custom);
 
 		Router::resourceMap($default);
-	}
-
-/**
- * Test setting the default route class
- *
- * @return void
- */
-	public function testDefaultRouteClass() {
-		$routes = $this->getMock('Cake\Routing\RouteCollection');
-		$this->getMock('Cake\Routing\Route\Route', [], array('/test'), 'TestDefaultRouteClass');
-
-		$routes->expects($this->once())
-			->method('add')
-			->with($this->isInstanceOf('\TestDefaultRouteClass'));
-
-		Router::setRouteCollection($routes);
-		Router::defaultRouteClass('\TestDefaultRouteClass');
-
-		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
-	}
-
-/**
- * Test getting the default route class
- *
- * @return void
- */
-	public function testDefaultRouteClassGetter() {
-		$routeClass = '\TestDefaultRouteClass';
-		Router::defaultRouteClass($routeClass);
-
-		$this->assertEquals($routeClass, Router::defaultRouteClass());
-		$this->assertEquals($routeClass, Router::defaultRouteClass(null));
-	}
-
-/**
- * Test that route classes must extend Cake\Routing\Route\Route
- *
- * @expectedException \Cake\Error\Exception
- * @return void
- */
-	public function testDefaultRouteException() {
-		Router::defaultRouteClass('');
-		Router::connect('/:controller', []);
-	}
-
-/**
- * Test that route classes must extend Cake\Routing\Route\Route
- *
- * @expectedException \Cake\Error\Exception
- * @return void
- */
-	public function testSettingInvalidDefaultRouteException() {
-		Router::defaultRouteClass('Object');
-	}
-
-/**
- * Test that class must exist
- *
- * @expectedException \Cake\Error\Exception
- * @return void
- */
-	public function testSettingNonExistentDefaultRouteException() {
-		Router::defaultRouteClass('NonExistentClass');
 	}
 
 /**

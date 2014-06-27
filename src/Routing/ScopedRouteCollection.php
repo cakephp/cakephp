@@ -372,17 +372,21 @@ class ScopedRouteCollection {
  * @param array $defaults Default parameters.
  * @param array $options Additional options parameters.
  * @return \Cake\Routing\Route\Route
+ * @throws \Cake\Error\Exception when route class or route object is invalid.
  */
 	protected function _makeRoute($route, $defaults, $options) {
 		if (is_string($route)) {
 			$routeClass = 'Cake\Routing\Route\Route';
 			if (isset($options['routeClass'])) {
 				$routeClass = App::className($options['routeClass'], 'Routing/Route');
-				unset($options['routeClass']);
+			}
+			if ($routeClass === false) {
+				throw new Error\Exception(sprintf('Cannot find route class %s', $options['routeClass']));
 			}
 			if ($routeClass === 'Cake\Routing\Route\RedirectRoute' && isset($defaults['redirect'])) {
 				$defaults = $defaults['redirect'];
 			}
+			unset($options['routeClass']);
 
 			$route = str_replace('//', '/', $this->_path . $route);
 			if (is_array($defaults)) {
@@ -556,7 +560,7 @@ class ScopedRouteCollection {
 	protected function _getNames($url) {
 		$name = false;
 		if (isset($url['_name'])) {
-			$name = $url['_name'];
+			return [$url['_name']];
 		}
 		$plugin = false;
 		if (isset($url['plugin'])) {
