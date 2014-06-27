@@ -245,20 +245,26 @@ class TestObjectWithoutToString {
  * An event listener to test cakePHP events
  */
 class TestViewEventListener implements CakeEventListener {
+
 	public $beforeRenderViewType;
+
 	public $afterRenderViewType;
+
 	public function implementedEvents() {
 		return array(
-				"View.beforeRender"=>"beforeRender",
-				"View.afterRender" =>"afterRender",
+				'View.beforeRender' => 'beforeRender',
+				'View.afterRender' => 'afterRender',
 			    );
 	}
+
 	public function beforeRender($event) {
 		$this->beforeRenderViewType = $event->subject()->getCurrentType(); 
 	}
+
 	public function afterRender($event) {
 		$this->afterRenderViewType = $event->subject()->getCurrentType();
 	}
+
 }
 /**
  * ViewTest class
@@ -835,7 +841,7 @@ class ViewTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testViewEvent(){
+	public function testViewEvent() {
 		$View = new View($this->PostsController);
 		$View->autoLayout = false;
 		$listener = new TestViewEventListener();
