@@ -37,6 +37,7 @@ install:
   - echo extension=php_pdo_mysql.dll >> php.ini
   - echo extension=php_intl.dll >> php.ini
   - echo extension=php_mbstring.dll >> php.ini
+  - echo extension=php_fileinfo.dll >> php.ini
   - cd C:\projects\cakephp
   - php -r "readfile('https://getcomposer.org/installer');" | php
   - php composer.phar install
