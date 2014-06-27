@@ -577,6 +577,7 @@ class ScopedRouteCollection {
 				'%1$s.%2$s:_action',
 				'%1$s._controller:%3$s',
 				'%1$s._controller:_action',
+				'_plugin.%2$s:%3$s',
 				'_plugin._controller:%3$s',
 				'_plugin._controller:_action',
 				'_controller:_action'

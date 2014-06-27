@@ -871,7 +871,7 @@ class Router {
 		// No quick win, iterate and hope for the best.
 		foreach (static::$_pathScopes as $key => $collection) {
 			$match = $collection->match($url, static::$_requestContext);
-			if ($match) {
+			if ($match !== false) {
 				return $match;
 			}
 		}
@@ -1133,6 +1133,7 @@ class Router {
 			static::$_pathScopes[$path]->merge($collection);
 		}
 		static::$_named += $collection->named();
+		return static::$_pathScopes[$path];
 	}
 
 /**

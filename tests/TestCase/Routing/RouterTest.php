@@ -647,7 +647,6 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::connect('/view/*', array('controller' => 'posts', 'action' => 'view'));
-		Router::promote();
 		$result = Router::url(array('controller' => 'posts', 'action' => 'view', '1'));
 		$expected = '/view/1';
 		$this->assertEquals($expected, $result);
@@ -1979,21 +1978,25 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testRouteParamDefaults() {
-		Configure::write('Routing.prefixes', array('admin'));
-		Router::reload();
 		Router::connect('/cache/*', array('prefix' => false, 'plugin' => true, 'controller' => 0, 'action' => 1));
-
-		$url = Router::url(array('controller' => 0, 'action' => 1, 'test'));
-		$expected = '/';
-		$this->assertEquals($expected, $url);
-
-		$url = Router::url(array('prefix' => 1, 'controller' => 0, 'action' => 1, 'test'));
-		$expected = '/';
-		$this->assertEquals($expected, $url);
 
 		$url = Router::url(array('prefix' => 0, 'plugin' => 1, 'controller' => 0, 'action' => 1, 'test'));
 		$expected = '/cache/test';
 		$this->assertEquals($expected, $url);
+
+		try {
+			Router::url(array('controller' => 0, 'action' => 1, 'test'));
+			$this->fail('No exception raised');
+		} catch (\Exception $e) {
+			$this->assertTrue(true, 'Exception was raised');
+		}
+
+		try {
+			Router::url(array('prefix' => 1, 'controller' => 0, 'action' => 1, 'test'));
+			$this->fail('No exception raised');
+		} catch (\Exception $e) {
+			$this->assertTrue(true, 'Exception was raised');
+		}
 	}
 
 /**
@@ -2096,12 +2099,12 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testParsingWithPatternOnAction() {
-		Router::reload();
 		Router::connect(
 			'/blog/:action/*',
 			array('controller' => 'blog_posts'),
 			array('action' => 'other|actions')
 		);
+
 		$result = Router::parse('/blog/other');
 		$expected = array(
 			'plugin' => null,
@@ -2114,11 +2117,26 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/blog/foobar');
 		$this->assertSame([], $result);
 
-		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'foo'));
-		$this->assertEquals('/', $result);
+	}
+
+/**
+ * Test url() works with patterns on :action
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testUrlPatterOnAction() {
+		Router::connect(
+			'/blog/:action/*',
+			array('controller' => 'blog_posts'),
+			array('action' => 'other|actions')
+		);
 
 		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'actions'));
 		$this->assertEquals('/blog/actions', $result);
+
+		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'foo'));
+		$this->assertEquals('/', $result);
 	}
 
 /**
@@ -2291,8 +2309,15 @@ class RouterTest extends TestCase {
 
 		$result = Router::parse('/badness/test/test_action');
 		$this->assertSame([], $result);
+	}
 
-		Router::reload();
+/**
+ * testRegexRouteMatching method
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testRegexRouteMatchUrl() {
 		Router::connect('/:locale/:controller/:action/*', [], array('locale' => 'dan|eng'));
 
 		$request = new Request();
@@ -2309,12 +2334,12 @@ class RouterTest extends TestCase {
 			))
 		);
 
-		$result = Router::url(array('action' => 'test_another_action'));
-		$expected = '/';
-		$this->assertEquals($expected, $result);
-
 		$result = Router::url(array('action' => 'test_another_action', 'locale' => 'eng'));
 		$expected = '/eng/test/test_another_action';
+		$this->assertEquals($expected, $result);
+
+		$result = Router::url(array('action' => 'test_another_action'));
+		$expected = '/';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -2370,19 +2395,21 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testUsingCustomRouteClass() {
-		$routes = $this->getMock('Cake\Routing\RouteCollection');
-		$this->getMock('Cake\Routing\Route\Route', [], [], 'MockConnectedRoute', false);
-		Router::setRouteCollection($routes);
-
-		$routes->expects($this->once())
-			->method('add')
-			->with($this->isInstanceOf('\MockConnectedRoute'));
-
+		Plugin::load('TestPlugin');
 		Router::connect(
 			'/:slug',
-			array('controller' => 'posts', 'action' => 'view'),
-			array('routeClass' => '\MockConnectedRoute', 'slug' => '[a-z_-]+')
+			array('plugin' => 'TestPlugin', 'action' => 'index'),
+			array('routeClass' => 'PluginShortRoute', 'slug' => '[a-z_-]+')
 		);
+		$result = Router::parse('/the-best');
+		$expected = [
+			'plugin' => 'TestPlugin',
+			'controller' => 'TestPlugin',
+			'action' => 'index',
+			'slug' => 'the-best',
+			'pass' => [],
+		];
+		$this->assertEquals($result, $expected);
 	}
 
 /**
@@ -2702,39 +2729,6 @@ class RouterTest extends TestCase {
 		$this->assertEquals(Router::resourceMap(), $custom);
 
 		Router::resourceMap($default);
-	}
-
-/**
- * test setting redirect routes
- *
- * @return void
- */
-	public function testRouteRedirection() {
-		$routes = new RouteCollection();
-		Router::setRouteCollection($routes);
-
-		Router::redirect('/blog', array('controller' => 'posts'), array('status' => 302));
-		Router::connect('/:controller', array('action' => 'index'));
-
-		$this->assertEquals(2, count($routes));
-
-		$routes->get(0)->response = $this->getMock(
-			'Cake\Network\Response',
-			array('_sendHeader', 'stop')
-		);
-		$this->assertEquals(302, $routes->get(0)->options['status']);
-
-		Router::parse('/blog');
-		$header = $routes->get(0)->response->header();
-		$this->assertEquals(Router::url('/posts', true), $header['Location']);
-		$this->assertEquals(302, $routes->get(0)->response->statusCode());
-
-		$routes->get(0)->response = $this->getMock(
-			'Cake\Network\Response',
-			array('_sendHeader')
-		);
-		Router::parse('/not-a-match');
-		$this->assertSame([], $routes->get(0)->response->header());
 	}
 
 /**
