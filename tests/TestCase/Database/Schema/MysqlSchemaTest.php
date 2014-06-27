@@ -723,7 +723,7 @@ PRIMARY KEY (`id`)
 SQL;
 		$result = $table->createSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals($expected, $result[0]);
+		$this->assertTextEquals($expected, $result[0]);
 	}
 
 /**
@@ -779,7 +779,7 @@ PRIMARY KEY (`article_id`, `tag_id`)
 SQL;
 		$result = $table->createSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals($expected, $result[0]);
+		$this->assertTextEquals($expected, $result[0]);
 
 		$table = (new Table('composite_key'))
 			->addColumn('id', [
@@ -805,7 +805,7 @@ PRIMARY KEY (`id`, `account_id`)
 SQL;
 		$result = $table->createSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals($expected, $result[0]);
+		$this->assertTextEquals($expected, $result[0]);
 	}
 
 /**

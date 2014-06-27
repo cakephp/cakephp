@@ -772,7 +772,7 @@ CONSTRAINT "primary" PRIMARY KEY ("article_id", "tag_id")
 SQL;
 		$result = $table->createSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals($expected, $result[0]);
+		$this->assertTextEquals($expected, $result[0]);
 
 		// Sqlite only supports AUTO_INCREMENT on single column primary
 		// keys. Ensure that schema data follows the limitations of Sqlite.
@@ -800,7 +800,7 @@ CONSTRAINT "primary" PRIMARY KEY ("id", "account_id")
 SQL;
 		$result = $table->createSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals($expected, $result[0]);
+		$this->assertTextEquals($expected, $result[0]);
 	}
 
 /**

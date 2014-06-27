@@ -37,6 +37,7 @@ install:
   - echo extension=php_pdo_mysql.dll >> php.ini
   - echo extension=php_intl.dll >> php.ini
   - echo extension=php_mbstring.dll >> php.ini
+  - echo extension=php_fileinfo.dll >> php.ini
   - cd C:\projects\cakephp
   - php -r "readfile('https://getcomposer.org/installer');" | php
   - php composer.phar install
@@ -44,4 +45,4 @@ test_script:
   - sqlcmd -S ".\SQL2008R2SP2" -U sa -P Password12! -Q "create database cakephp;"
   - sqlcmd -S ".\SQL2012SP1" -U sa -P Password12! -Q "create database cakephp;"
   - cd C:\projects\cakephp
-  - vendor\bin\phpunit.bat tests\TestCase\DatabaseSuite
+  - vendor\bin\phpunit.bat
