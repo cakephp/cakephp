@@ -18,7 +18,6 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Network\Request;
-use Cake\Routing\RouteCollection;
 use Cake\Routing\ScopedRouteCollection;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
@@ -37,13 +36,6 @@ use Cake\Utility\Inflector;
  *
  */
 class Router {
-
-/**
- * RouteCollection object containing all the connected routes.
- *
- * @var \Cake\Routing\RouteCollection
- */
-	protected static $_routes;
 
 /**
  * Have routes been loaded
@@ -485,7 +477,7 @@ class Router {
 		if (!static::$initialized) {
 			static::_loadRoutes();
 		}
-		if (strlen($url) && strpos($url, '/') !== 0) {
+		if (strpos($url, '/') !== 0) {
 			$url = '/' . $url;
 		}
 
@@ -497,16 +489,6 @@ class Router {
 		}
 		// TODO improve this with a custom exception.
 		throw new Error\Exception('No routes match the given URL.');
-	}
-
-/**
- * Set the route collection object Router should use.
- *
- * @param \Cake\Routing\RouteCollection $routes Routes collection.
- * @return void
- */
-	public static function setRouteCollection(RouteCollection $routes) {
-		static::$_routes = $routes;
 	}
 
 /**
