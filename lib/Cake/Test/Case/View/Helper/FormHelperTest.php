@@ -1434,11 +1434,11 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * Test that URL, HTML and identifer show up in their hashs.
+ * Test that URL, HTML and identifier show up in their hashs.
  *
  * @return void
  */
-	public function testSecuredFormUrlHasHtmlAndIdentifer() {
+	public function testSecuredFormUrlHasHtmlAndIdentifier() {
 		$this->Form->request['_Token'] = array('key' => 'testKey');
 
 		$expected = 'ece0693fb1b19ca116133db1832ac29baaf41ce5%3A';
