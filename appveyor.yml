@@ -44,4 +44,4 @@ test_script:
   - sqlcmd -S ".\SQL2008R2SP2" -U sa -P Password12! -Q "create database cakephp;"
   - sqlcmd -S ".\SQL2012SP1" -U sa -P Password12! -Q "create database cakephp;"
   - cd C:\projects\cakephp
-  - vendor\bin\phpunit.bat tests\TestCase\DatabaseSuite
+  - vendor\bin\phpunit.bat
