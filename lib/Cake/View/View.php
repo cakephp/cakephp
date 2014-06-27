@@ -813,7 +813,14 @@ class View extends Object {
 		}
 		$this->viewVars = $data + $this->viewVars;
 	}
-
+/**
+ * Retreived the current view type
+ *
+ * @return string
+ */
+	public function getCurrentType(){
+		return $this->_currentType;
+	}
 /**
  * Magic accessor for helpers. Provides access to attributes that were deprecated.
  *
@@ -1207,14 +1214,14 @@ class View extends Object {
 		$this->_currentType = self::TYPE_ELEMENT;
 
 		if ($options['callbacks']) {
-			$this->getEventManager()->dispatch(new CakeEvent('Element.beforeRender', $this, array($file)));
+			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
 		}
 
 		$element = $this->_render($file, array_merge($this->viewVars, $data));
 
 		if ($options['callbacks']) {
-			$this->getEventManager()->dispatch(new CakeEvent('Element.afterRender', $this, array($file, $element)));
-        }
+			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));
+		}
 
 		$this->_currentType = $restore;
 		$this->_current = $current;
