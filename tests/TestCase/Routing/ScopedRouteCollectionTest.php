@@ -102,6 +102,21 @@ class ScopedRouteCollectionTest extends TestCase {
 	}
 
 /**
+ * Test connecting an instance routes.
+ *
+ * @return void
+ */
+	public function testConnectInstance() {
+		$routes = new ScopedRouteCollection('/l', ['prefix' => 'api']);
+
+		$route = new Route('/:controller');
+		$this->assertNull($routes->connect($route));
+
+		$result = $routes->routes()[0];
+		$this->assertSame($route, $result);
+	}
+
+/**
  * Test connecting basic routes.
  *
  * @return void

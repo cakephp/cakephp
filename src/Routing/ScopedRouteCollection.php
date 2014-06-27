@@ -352,25 +352,7 @@ class ScopedRouteCollection {
 			$options['_ext'] = $this->_extensions;
 		}
 
-		// TODO don't hardcode
-		$routeClass = 'Cake\Routing\Route\Route';
-		if (isset($options['routeClass'])) {
-			$routeClass = App::className($options['routeClass'], 'Routing/Route');
-			$routeClass = $this->_validateRouteClass($routeClass);
-			unset($options['routeClass']);
-		}
-		if ($routeClass === 'Cake\Routing\Route\RedirectRoute' && isset($defaults['redirect'])) {
-			$defaults = $defaults['redirect'];
-		}
-
-		$route = str_replace('//', '/', $this->_path . $route);
-		if (is_array($defaults)) {
-			$defaults += $this->_params;
-		}
-
-		// Store the route and named index if possible.
-		$route = new $routeClass($route, $defaults, $options);
-
+		$route = $this->_makeRoute($route, $defaults, $options);
 		if (isset($options['_name'])) {
 			$this->_named[$options['_name']] = $route;
 		}
@@ -384,20 +366,35 @@ class ScopedRouteCollection {
 	}
 
 /**
- * Validates that the passed route class exists and is a subclass of Cake\Routing\Route\Route
+ * Create a route object, or return the provided object.
  *
- * @param string $routeClass Route class name
- * @return string
- * @throws \Cake\Error\Exception
+ * @param string|\Cake\Routing\Route\Route $route The route template or route object.
+ * @param array $defaults Default parameters.
+ * @param array $options Additional options parameters.
+ * @return \Cake\Routing\Route\Route
  */
-	protected function _validateRouteClass($routeClass) {
-		if (
-			$routeClass !== 'Cake\Routing\Route\Route' &&
-			(!class_exists($routeClass) || !is_subclass_of($routeClass, 'Cake\Routing\Route\Route'))
-		) {
-			throw new Error\Exception('Route class not found, or route class is not a subclass of Cake\Routing\Route\Route');
+	protected function _makeRoute($route, $defaults, $options) {
+		if (is_string($route)) {
+			$routeClass = 'Cake\Routing\Route\Route';
+			if (isset($options['routeClass'])) {
+				$routeClass = App::className($options['routeClass'], 'Routing/Route');
+				unset($options['routeClass']);
+			}
+			if ($routeClass === 'Cake\Routing\Route\RedirectRoute' && isset($defaults['redirect'])) {
+				$defaults = $defaults['redirect'];
+			}
+
+			$route = str_replace('//', '/', $this->_path . $route);
+			if (is_array($defaults)) {
+				$defaults += $this->_params;
+			}
+			$route = new $routeClass($route, $defaults, $options);
 		}
-		return $routeClass;
+
+		if ($route instanceof Route) {
+			return $route;
+		}
+		throw new Error\Exception('Route class not found, or route class is not a subclass of Cake\Routing\Route\Route');
 	}
 
 /**
