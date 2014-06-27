@@ -1085,10 +1085,14 @@ class Router {
  *   If you have no parameters, this argument can be a callable.
  * @param callable $callback The callback to invoke with the scoped collection.
  * @throws \InvalidArgumentException When an invalid callable is provided.
- * @return \Cake\Routing\ScopedRouteCollection The scoped collection that
+ * @return null|\Cake\Routing\ScopedRouteCollection The scoped collection that
  *   was created/used.
  */
 	public static function scope($path, $params = [], $callback = null) {
+		if ($params === [] && $callback === null && isset(static::$_pathScopes[$path])) {
+			return static::$_pathScopes[$path];
+		}
+
 		if ($callback === null) {
 			$callback = $params;
 			$params = [];
@@ -1107,7 +1111,6 @@ class Router {
 			static::$_pathScopes[$path]->merge($collection);
 		}
 		static::$_named += $collection->named();
-		return static::$_pathScopes[$path];
 	}
 
 /**

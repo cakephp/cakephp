@@ -286,11 +286,12 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testMapResourcesWithExtension() {
+		Router::parseExtensions(['json', 'xml'], false);
+
 		$resources = Router::mapResources('Posts', ['_ext' => 'json']);
 		$this->assertEquals(['posts'], $resources);
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
-		Router::parseExtensions(['json', 'xml'], false);
 
 		$expected = array(
 			'plugin' => null,
@@ -317,15 +318,14 @@ class RouterTest extends TestCase {
  */
 	public function testMapResourcesConnectOptions() {
 		Plugin::load('TestPlugin');
-		$collection = new RouteCollection();
-		Router::setRouteCollection($collection);
 		Router::mapResources('Posts', array(
 			'connectOptions' => array(
 				'routeClass' => 'TestPlugin.TestRoute',
 				'foo' => '^(bar)$',
 			),
 		));
-		$route = $collection->get(0);
+		$routes = Router::scope('/');
+		$route = $routes->routes()[0];
 		$this->assertInstanceOf('TestPlugin\Routing\Route\TestRoute', $route);
 		$this->assertEquals('^(bar)$', $route->options['foo']);
 	}
@@ -1632,7 +1632,6 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testSetExtensions() {
-		Router::extensions();
 		Router::parseExtensions('rss', false);
 		$this->assertContains('rss', Router::extensions());
 
@@ -1645,15 +1644,6 @@ class RouterTest extends TestCase {
 		$this->assertFalse(isset($result['_ext']));
 
 		Router::parseExtensions(array('xml'));
-		$result = Router::extensions();
-		$this->assertContains('rss', $result);
-		$this->assertContains('xml', $result);
-
-		$result = Router::parse('/posts.xml');
-		$this->assertEquals('xml', $result['_ext']);
-
-		$result = Router::parseExtensions(array('pdf'), false);
-		$this->assertEquals(array('pdf'), $result);
 	}
 
 /**
