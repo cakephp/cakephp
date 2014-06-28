@@ -135,7 +135,7 @@ class Sqlite extends DboSource {
 /**
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
  *
- * @param mixed $data
+ * @param mixed $data Unused.
  * @return array Array of table names in the database
  */
 	public function listSources($data = null) {
@@ -202,10 +202,10 @@ class Sqlite extends DboSource {
 /**
  * Generates and executes an SQL UPDATE statement for given model, fields, and values.
  *
- * @param Model $model
- * @param array $fields
- * @param array $values
- * @param mixed $conditions
+ * @param Model $model The model instance to update.
+ * @param array $fields The fields to update.
+ * @param array $values The values to set columns to.
+ * @param mixed $conditions array of conditions to use.
  * @return array
  */
 	public function update(Model $model, $fields = array(), $values = null, $conditions = null) {
@@ -448,9 +448,9 @@ class Sqlite extends DboSource {
 /**
  * Removes redundant primary key indexes, as they are handled in the column def of the key.
  *
- * @param array $indexes
- * @param string $table
- * @return string
+ * @param array $indexes The indexes to build.
+ * @param string $table The table name.
+ * @return string The completed index.
  */
 	public function buildIndex($indexes, $table = null) {
 		$join = array();
@@ -526,8 +526,8 @@ class Sqlite extends DboSource {
 /**
  * Overrides DboSource::renderStatement to handle schema generation with SQLite-style indexes
  *
- * @param string $type
- * @param array $data
+ * @param string $type The type of statement being rendered.
+ * @param array $data The data to convert to SQL.
  * @return string
  */
 	public function renderStatement($type, $data) {

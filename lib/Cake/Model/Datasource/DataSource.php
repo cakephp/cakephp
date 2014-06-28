@@ -89,7 +89,7 @@ class DataSource extends Object {
 /**
  * Caches/returns cached results for child instances
  *
- * @param mixed $data
+ * @param mixed $data Unused in this class.
  * @return array Array of sources available in this datasource.
  */
 	public function listSources($data = null) {
@@ -116,7 +116,7 @@ class DataSource extends Object {
 /**
  * Returns a Model description (metadata) or null if none found.
  *
- * @param Model|string $model
+ * @param Model|string $model The model to describe.
  * @return array Array of Metadata for the $model
  */
 	public function describe($model) {
@@ -214,7 +214,7 @@ class DataSource extends Object {
  * @param Model $Model Instance of the model class being updated
  * @param array $fields Array of fields to be updated
  * @param array $values Array of values to be update $fields to.
- * @param mixed $conditions
+ * @param mixed $conditions The array of conditions to use.
  * @return boolean Success
  */
 	public function update(Model $Model, $fields = null, $values = null, $conditions = null) {
@@ -237,7 +237,7 @@ class DataSource extends Object {
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
- * @param mixed $source
+ * @param mixed $source The source name.
  * @return mixed Last ID key generated in previous INSERT
  */
 	public function lastInsertId($source = null) {
@@ -247,7 +247,7 @@ class DataSource extends Object {
 /**
  * Returns the number of rows returned by last operation.
  *
- * @param mixed $source
+ * @param mixed $source The source name.
  * @return integer Number of rows returned by last operation
  */
 	public function lastNumRows($source = null) {
@@ -257,7 +257,7 @@ class DataSource extends Object {
 /**
  * Returns the number of rows affected by last query.
  *
- * @param mixed $source
+ * @param mixed $source The source name.
  * @return integer Number of rows affected by last query.
  */
 	public function lastAffected($source = null) {
@@ -320,7 +320,7 @@ class DataSource extends Object {
  * @param array $data Array of data with values that will be inserted in placeholders.
  * @param string $association Name of association model being replaced.
  * @param Model $Model Model instance.
- * @param array $stack
+ * @param array $stack The context stack.
  * @return mixed String of query data with placeholders replaced, or false on failure.
  */
 	public function insertQueryData($query, $data, $association, Model $Model, $stack) {
