@@ -916,6 +916,17 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
+ * Modify data originally from `php://input`. Useful for altering json/xml data
+ * in middleware or DispatcherFilters before it gets to RequestHandlerComponent
+ *
+ * @param string $input A string to replace original parsed data from input()
+ * @return void
+ */
+	public function setInput($input) {
+		$this->_input = $input;
+	}
+
+/**
  * Allow only certain HTTP request methods. If the request method does not match
  * a 405 error will be shown and the required "Allow" response header will be set.
  *
