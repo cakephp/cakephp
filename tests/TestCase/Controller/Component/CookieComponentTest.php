@@ -432,34 +432,6 @@ class CookieComponentTest extends TestCase {
 	}
 
 /**
- * test reading all values at once.
- *
- * @return void
- */
-	public function testReadingAllValues() {
-		$this->_setCookieData();
-		$data = $this->Cookie->read();
-		$expected = array(
-			'Encrytped_array' => array(
-				'name' => 'CakePHP',
-				'version' => '1.2.0.x',
-				'tag' => 'CakePHP Rocks!'),
-			'Encrypted_multi_cookies' => array(
-				'name' => 'CakePHP',
-				'version' => '1.2.0.x',
-				'tag' => 'CakePHP Rocks!'),
-			'Plain_array' => array(
-				'name' => 'CakePHP',
-				'version' => '1.2.0.x',
-				'tag' => 'CakePHP Rocks!'),
-			'Plain_multi_cookies' => array(
-				'name' => 'CakePHP',
-				'version' => '1.2.0.x',
-				'tag' => 'CakePHP Rocks!'));
-		$this->assertEquals($expected, $data);
-	}
-
-/**
  * testDeleteCookieValue
  *
  * @return void

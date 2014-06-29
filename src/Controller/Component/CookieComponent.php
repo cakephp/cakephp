@@ -87,6 +87,17 @@ class CookieComponent extends Component {
 	protected $_values = [];
 
 /**
+ * A map of keys that have been loaded.
+ *
+ * Since CookieComponent lazily reads cookie data,
+ * we need to track which cookies have been read to account for
+ * read, delete, read patterns.
+ *
+ * @var array
+ */
+	protected $_loaded = [];
+
+/**
  * A reference to the Controller's Cake\Network\Response object
  *
  * @var \Cake\Network\Response
@@ -193,16 +204,14 @@ class CookieComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::write
  */
 	public function write($key, $value = null) {
-		if (empty($this->_values)) {
-			$this->_load();
-		}
-
 		if (!is_array($key)) {
 			$key = array($key => $value);
 		}
 
 		$keys = [];
 		foreach ($key as $name => $value) {
+			$this->_load($name);
+
 			$this->_values = Hash::insert($this->_values, $name, $value);
 			$parts = explode('.', $name);
 			$keys[] = $parts[0];
@@ -219,17 +228,12 @@ class CookieComponent extends Component {
  * This method will also allow you to read cookies that have been written in this
  * request, but not yet sent to the client.
  *
- * @param string $key Key of the value to be obtained. If none specified, obtain map key => values
+ * @param string $key Key of the value to be obtained.
  * @return string or null, value for specified key
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::read
  */
 	public function read($key = null) {
-		if (empty($this->_values)) {
-			$this->_load();
-		}
-		if ($key === null) {
-			return $this->_values;
-		}
+		$this->_load($key);
 		return Hash::get($this->_values, $key);
 	}
 
@@ -239,13 +243,22 @@ class CookieComponent extends Component {
  * Based on the configuration data, cookies will be decrypted. When cookies
  * contain array data, that data will be expanded.
  *
+ * @param string|array $key The key to load.
  * @return void
  */
-	protected function _load() {
-		foreach ($this->_request->cookies as $name => $value) {
-			$config = $this->configKey($name);
-			$this->_values[$name] = $this->_decrypt($value, $config['encryption']);
+	protected function _load($key) {
+		$parts = explode('.', $key);
+		$first = array_shift($parts);
+		if (isset($this->_loaded[$first])) {
+			return;
 		}
+		if (!isset($this->_request->cookies[$first])) {
+			return;
+		}
+		$cookie = $this->_request->cookies[$first];
+		$config = $this->configKey($first);
+		$this->_loaded[$first] = true;
+		$this->_values[$first] = $this->_decrypt($cookie, $config['encryption']);
 	}
 
 /**
@@ -275,9 +288,7 @@ class CookieComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::delete
  */
 	public function delete($key) {
-		if (empty($this->_values)) {
-			$this->_load();
-		}
+		$this->_load($key);
 
 		$this->_values = Hash::remove($this->_values, $key);
 		$parts = explode('.', $key);
