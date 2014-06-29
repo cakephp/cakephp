@@ -2677,6 +2677,18 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * Test that redirect() works.
+ *
+ * @return void
+ */
+	public function testRedirect() {
+		Router::redirect('/mobile', '/', ['status' => 301]);
+		$scope = Router::scope('/');
+		$route = $scope->routes()[0];
+		$this->assertInstanceOf('Cake\Routing\Route\RedirectRoute', $route);
+	}
+
+/**
  * Tests resourceMap as getter and setter.
  *
  * @return void
