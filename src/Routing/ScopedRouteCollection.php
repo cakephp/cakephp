@@ -390,6 +390,19 @@ class ScopedRouteCollection {
 
 			$route = str_replace('//', '/', $this->_path . $route);
 			if (is_array($defaults)) {
+				foreach ($this->_params as $param => $val) {
+					if (isset($defaults[$param]) && $defaults[$param] !== $val) {
+						$msg = 'You cannot define routes that conflict with the scope. ' .
+							'Scope had %s = %s, while route had %s = %s';
+						throw new Error\Exception(sprintf(
+							$msg,
+							$param,
+							$val,
+							$param,
+							$defaults[$param]
+						));
+					}
+				}
 				$defaults += $this->_params;
 			}
 			$route = new $routeClass($route, $defaults, $options);

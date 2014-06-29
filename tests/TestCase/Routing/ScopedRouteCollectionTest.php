@@ -167,6 +167,18 @@ class ScopedRouteCollectionTest extends TestCase {
 	}
 
 /**
+ * Test conflicting parameters raises an exception.
+ *
+ * @expectedException \Cake\Error\Exception
+ * @expectedExceptionMessage You cannot define routes that conflict with the scope.
+ * @return void
+ */
+	public function testConnectConflictingParameters() {
+		$routes = new ScopedRouteCollection('/admin', ['prefix' => 'admin'], []);
+		$routes->connect('/', ['prefix' => 'manager', 'controller' => 'Dashboard', 'action' => 'view']);
+	}
+
+/**
  * Test connecting redirect routes.
  *
  * @return void
