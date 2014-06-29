@@ -481,7 +481,6 @@ class Router {
 			$url = '/' . $url;
 		}
 
-		krsort(static::$_pathScopes);
 		foreach (static::$_pathScopes as $path => $collection) {
 			if (strpos($url, $path) === 0) {
 				return $collection->parse($url);
@@ -1094,6 +1093,7 @@ class Router {
 
 		if (empty(static::$_pathScopes[$path])) {
 			static::$_pathScopes[$path] = $collection;
+			krsort(static::$_pathScopes);
 		} else {
 			static::$_pathScopes[$path]->merge($collection);
 		}
