@@ -189,6 +189,35 @@ class Connection {
 	}
 
 /**
+ * 
+ * Get the full table(s) name with prefix, if any.
+ *
+ * @param mixed $name The name of the table or an array of table names
+ * @param array $config Configuration for connecting to database
+ *
+ * @return string Full table name
+ *
+ */
+	public function fullTableName($name) {
+		if (empty($this->_config["prefix"])) {
+			return $name;
+		}
+
+		$prefix = $this->_config["prefix"];
+		if (is_string($name)) {
+			$name = $prefix . $name;
+		} elseif (is_array($name)) {
+			if (!empty($name)) {
+				foreach ($name as &$tableName) {
+					$tableName = $prefix . $tableName;
+				}
+			}
+		}
+
+		return $name;
+	}
+
+/**
  * Prepares a SQL statement to be executed.
  *
  * @param string|\Cake\Database\Query $sql The SQL to convert into a prepared statement.
