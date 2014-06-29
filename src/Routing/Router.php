@@ -826,6 +826,11 @@ class Router {
 
 		// No quick win, iterate and hope for the best.
 		foreach (static::$_pathScopes as $key => $collection) {
+			$params = $collection->params();
+			// No point in checking the routes if the scope params are wrong.
+			if (array_intersect_key($url, $params) !== $params) {
+				continue;
+			}
 			$match = $collection->match($url, static::$_requestContext);
 			if ($match !== false) {
 				return $match;
