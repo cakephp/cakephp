@@ -194,7 +194,7 @@ class Connection {
  *
  * @param mixed $name The name of the table or an array of table names
  *
- * @return string Full table name
+ * @return mixed Full table name or array of table names
  *
  */
 	public function fullTableName($name) {
