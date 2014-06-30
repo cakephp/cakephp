@@ -431,27 +431,6 @@ class AppTest extends CakeTestCase {
 	}
 
 /**
- * test that pluginPath can find paths for plugins.
- *
- * @return void
- */
-	public function testPluginPath() {
-		App::build(array(
-			'plugins' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
-		));
-		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
-
-		$path = App::pluginPath('TestPlugin');
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS;
-		$this->assertEquals($expected, $path);
-
-		$path = App::pluginPath('TestPluginTwo');
-		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS;
-		$this->assertEquals($expected, $path);
-		App::build();
-	}
-
-/**
  * test that themePath can find paths for themes.
  *
  * @return void
