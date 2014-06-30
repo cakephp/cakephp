@@ -2516,6 +2516,27 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that strings passed to isNull and isNotNull will be treaded as identifiers
+ * when using autoQuoting
+ *
+ * @return void
+ */
+	public function testIsNullAutoQuoting() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$query->select('*')->from('things')->where(function($exp) {
+			return $exp->isNull('field');
+		});
+		$this->assertQuotedQuery('WHERE \(<field>\) IS NULL', $query->sql());
+
+		$query = new Query($this->connection);
+		$query->select('*')->from('things')->where(function($exp) {
+			return $exp->isNotNull('field');
+		});
+		$this->assertQuotedQuery('WHERE \(<field>\) IS NOT NULL', $query->sql());
+	}
+
+/**
  * Assertion for comparing a table's contents with what is in it.
  *
  * @param string $table

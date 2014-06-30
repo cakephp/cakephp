@@ -202,7 +202,8 @@ class QueryExpression implements ExpressionInterface, Countable {
 /**
  * Adds a new condition to the expression object in the form "field IS NULL".
  *
- * @param string|ExpressionInterface $field database field to be tested for null
+ * @param string|\Cake\Database\ExpressionInteface $field database field to be
+ * tested for null
  * @return QueryExpression
  */
 	public function isNull($field) {
@@ -215,7 +216,8 @@ class QueryExpression implements ExpressionInterface, Countable {
 /**
  * Adds a new condition to the expression object in the form "field IS NOT NULL".
  *
- * @param string $field database field to be tested for not null
+ * @param string|\Cake\Database\ExpressionInteface $field database field to be
+ * tested for not null
  * @return QueryExpression
  */
 	public function isNotNull($field) {
