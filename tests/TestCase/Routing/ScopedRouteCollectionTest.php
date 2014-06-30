@@ -237,6 +237,13 @@ class ScopedRouteCollectionTest extends TestCase {
 		$res = $routes->plugin('Contacts', function($r) {
 			$this->assertEquals('/b/contacts', $r->path());
 			$this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
+
+			$r->connect('/:controller');
+			$route = $r->routes()[0];
+			$this->assertEquals(
+				['key' => 'value', 'plugin' => 'Contacts', 'action' => 'index'],
+				$route->defaults
+			);
 		});
 		$this->assertNull($res);
 	}
@@ -331,14 +338,11 @@ class ScopedRouteCollectionTest extends TestCase {
 		$routes = new ScopedRouteCollection('/contacts', ['plugin' => 'Contacts']);
 		$routes->connect('/', ['controller' => 'Contacts']);
 
-		$result = $routes->match(
-			['plugin' => 'Contacts', 'controller' => 'Contacts', 'action' => 'index'],
-			$context
-		);
-		$this->assertFalse($result);
-
 		$result = $routes->match(['controller' => 'Contacts', 'action' => 'index'], $context);
 		$this->assertFalse($result);
+
+		$result = $routes->match(['plugin' => 'Contacts', 'controller' => 'Contacts', 'action' => 'index'], $context);
+		$this->assertEquals('contacts', $result);
 	}
 
 /**

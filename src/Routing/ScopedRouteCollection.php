@@ -343,7 +343,6 @@ class ScopedRouteCollection {
  * @throws \Cake\Error\Exception
  */
 	public function connect($route, array $defaults = [], $options = []) {
-		$defaults += ['plugin' => null];
 		if (empty($options['action'])) {
 			$defaults += array('action' => 'index');
 		}
@@ -403,6 +402,8 @@ class ScopedRouteCollection {
 				}
 			}
 			$defaults += $this->_params;
+			$defaults += ['plugin' => null];
+
 			$route = new $routeClass($route, $defaults, $options);
 		}
 
