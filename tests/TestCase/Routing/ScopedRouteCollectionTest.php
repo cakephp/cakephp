@@ -102,6 +102,21 @@ class ScopedRouteCollectionTest extends TestCase {
 	}
 
 /**
+ * Test connecting an instance routes.
+ *
+ * @return void
+ */
+	public function testConnectInstance() {
+		$routes = new ScopedRouteCollection('/l', ['prefix' => 'api']);
+
+		$route = new Route('/:controller');
+		$this->assertNull($routes->connect($route));
+
+		$result = $routes->routes()[0];
+		$this->assertSame($route, $result);
+	}
+
+/**
  * Test connecting basic routes.
  *
  * @return void
@@ -149,6 +164,18 @@ class ScopedRouteCollectionTest extends TestCase {
 	public function testConnectErrorInvalidRouteClass() {
 		$routes = new ScopedRouteCollection('/l', [], ['json']);
 		$routes->connect('/:controller', [], ['routeClass' => '\StdClass']);
+	}
+
+/**
+ * Test conflicting parameters raises an exception.
+ *
+ * @expectedException \Cake\Error\Exception
+ * @expectedExceptionMessage You cannot define routes that conflict with the scope.
+ * @return void
+ */
+	public function testConnectConflictingParameters() {
+		$routes = new ScopedRouteCollection('/admin', ['prefix' => 'admin'], []);
+		$routes->connect('/', ['prefix' => 'manager', 'controller' => 'Dashboard', 'action' => 'view']);
 	}
 
 /**
@@ -210,6 +237,13 @@ class ScopedRouteCollectionTest extends TestCase {
 		$res = $routes->plugin('Contacts', function($r) {
 			$this->assertEquals('/b/contacts', $r->path());
 			$this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
+
+			$r->connect('/:controller');
+			$route = $r->routes()[0];
+			$this->assertEquals(
+				['key' => 'value', 'plugin' => 'Contacts', 'action' => 'index'],
+				$route->defaults
+			);
 		});
 		$this->assertNull($res);
 	}
@@ -304,14 +338,11 @@ class ScopedRouteCollectionTest extends TestCase {
 		$routes = new ScopedRouteCollection('/contacts', ['plugin' => 'Contacts']);
 		$routes->connect('/', ['controller' => 'Contacts']);
 
-		$result = $routes->match(
-			['plugin' => 'Contacts', 'controller' => 'Contacts', 'action' => 'index'],
-			$context
-		);
-		$this->assertFalse($result);
-
 		$result = $routes->match(['controller' => 'Contacts', 'action' => 'index'], $context);
 		$this->assertFalse($result);
+
+		$result = $routes->match(['plugin' => 'Contacts', 'controller' => 'Contacts', 'action' => 'index'], $context);
+		$this->assertEquals('contacts', $result);
 	}
 
 /**

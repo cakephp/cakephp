@@ -343,7 +343,6 @@ class ScopedRouteCollection {
  * @throws \Cake\Error\Exception
  */
 	public function connect($route, array $defaults = [], $options = []) {
-		$defaults += ['plugin' => null];
 		if (empty($options['action'])) {
 			$defaults += array('action' => 'index');
 		}
@@ -352,25 +351,7 @@ class ScopedRouteCollection {
 			$options['_ext'] = $this->_extensions;
 		}
 
-		// TODO don't hardcode
-		$routeClass = 'Cake\Routing\Route\Route';
-		if (isset($options['routeClass'])) {
-			$routeClass = App::className($options['routeClass'], 'Routing/Route');
-			$routeClass = $this->_validateRouteClass($routeClass);
-			unset($options['routeClass']);
-		}
-		if ($routeClass === 'Cake\Routing\Route\RedirectRoute' && isset($defaults['redirect'])) {
-			$defaults = $defaults['redirect'];
-		}
-
-		$route = str_replace('//', '/', $this->_path . $route);
-		if (is_array($defaults)) {
-			$defaults += $this->_params;
-		}
-
-		// Store the route and named index if possible.
-		$route = new $routeClass($route, $defaults, $options);
-
+		$route = $this->_makeRoute($route, $defaults, $options);
 		if (isset($options['_name'])) {
 			$this->_named[$options['_name']] = $route;
 		}
@@ -384,20 +365,52 @@ class ScopedRouteCollection {
 	}
 
 /**
- * Validates that the passed route class exists and is a subclass of Cake\Routing\Route\Route
+ * Create a route object, or return the provided object.
  *
- * @param string $routeClass Route class name
- * @return string
- * @throws \Cake\Error\Exception
+ * @param string|\Cake\Routing\Route\Route $route The route template or route object.
+ * @param array $defaults Default parameters.
+ * @param array $options Additional options parameters.
+ * @return \Cake\Routing\Route\Route
+ * @throws \Cake\Error\Exception when route class or route object is invalid.
  */
-	protected function _validateRouteClass($routeClass) {
-		if (
-			$routeClass !== 'Cake\Routing\Route\Route' &&
-			(!class_exists($routeClass) || !is_subclass_of($routeClass, 'Cake\Routing\Route\Route'))
-		) {
-			throw new Error\Exception('Route class not found, or route class is not a subclass of Cake\Routing\Route\Route');
+	protected function _makeRoute($route, $defaults, $options) {
+		if (is_string($route)) {
+			$routeClass = 'Cake\Routing\Route\Route';
+			if (isset($options['routeClass'])) {
+				$routeClass = App::className($options['routeClass'], 'Routing/Route');
+			}
+			if ($routeClass === false) {
+				throw new Error\Exception(sprintf('Cannot find route class %s', $options['routeClass']));
+			}
+			unset($options['routeClass']);
+
+			$route = str_replace('//', '/', $this->_path . $route);
+			if (!is_array($defaults)) {
+				debug(\Cake\Utility\Debugger::trace());
+			}
+			foreach ($this->_params as $param => $val) {
+				if (isset($defaults[$param]) && $defaults[$param] !== $val) {
+					$msg = 'You cannot define routes that conflict with the scope. ' .
+						'Scope had %s = %s, while route had %s = %s';
+					throw new Error\Exception(sprintf(
+						$msg,
+						$param,
+						$val,
+						$param,
+						$defaults[$param]
+					));
+				}
+			}
+			$defaults += $this->_params;
+			$defaults += ['plugin' => null];
+
+			$route = new $routeClass($route, $defaults, $options);
 		}
-		return $routeClass;
+
+		if ($route instanceof Route) {
+			return $route;
+		}
+		throw new Error\Exception('Route class not found, or route class is not a subclass of Cake\Routing\Route\Route');
 	}
 
 /**
@@ -442,7 +455,7 @@ class ScopedRouteCollection {
 /**
  * Add prefixed routes.
  *
- * This method creates a new scoped route collection that includes
+ * This method creates a scoped route collection that includes
  * relevant prefix information.
  *
  * The path parameter is used to generate the routing parameter name.
@@ -559,7 +572,7 @@ class ScopedRouteCollection {
 	protected function _getNames($url) {
 		$name = false;
 		if (isset($url['_name'])) {
-			$name = $url['_name'];
+			return [$url['_name']];
 		}
 		$plugin = false;
 		if (isset($url['plugin'])) {
@@ -577,6 +590,7 @@ class ScopedRouteCollection {
 				'%1$s.%2$s:_action',
 				'%1$s._controller:%3$s',
 				'%1$s._controller:_action',
+				'_plugin.%2$s:%3$s',
 				'_plugin._controller:%3$s',
 				'_plugin._controller:_action',
 				'_controller:_action'

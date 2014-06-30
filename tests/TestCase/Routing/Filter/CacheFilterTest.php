@@ -12,7 +12,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Routing;
+namespace Cake\Test\TestCase\Routing\Filter;
 
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
@@ -81,7 +81,6 @@ class CacheFilterTest extends TestCase {
 		Configure::write('Cache.check', true);
 		Configure::write('debug', true);
 
-		Router::reload();
 		Router::connect('/', array('controller' => 'TestCachedPages', 'action' => 'index'));
 		Router::connect('/test_cached_pages/:action/*', ['controller' => 'TestCachedPages']);
 

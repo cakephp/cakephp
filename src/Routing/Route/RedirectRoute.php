@@ -49,6 +49,9 @@ class RedirectRoute extends Route {
  */
 	public function __construct($template, $defaults = [], array $options = []) {
 		parent::__construct($template, $defaults, $options);
+		if (is_array($defaults) && isset($defaults['redirect'])) {
+			$defaults = $defaults['redirect'];
+		}
 		$this->redirect = (array)$defaults;
 	}
 

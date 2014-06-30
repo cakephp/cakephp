@@ -12,7 +12,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Routing;
+namespace Cake\Test\TestCase\Routing\Filter;
 
 use Cake\Event\Event;
 use Cake\Network\Request;
