@@ -117,6 +117,13 @@ class Router {
 	protected static $_pathScopes = [];
 
 /**
+ * A hash of ScopedRouteCollection objects indexed by plugin + prefix
+ *
+ * @var array
+ */
+	protected static $_paramScopes = [];
+
+/**
  * A hash of request context data.
  *
  * @var array
@@ -826,13 +833,20 @@ class Router {
 			}
 		}
 
-		// No quick win, iterate and hope for the best.
-		foreach (static::$_pathScopes as $key => $collection) {
-			$params = $collection->params();
-			// No point in checking the routes if the scope params are wrong.
-			if (array_intersect_key($url, $params) !== $params) {
-				continue;
+		// Check the scope that matches key params.
+		$plugin = isset($url['plugin']) ? $url['plugin'] : '';
+		$prefix = isset($url['prefix']) ? $url['prefix'] : '';
+
+		$collection = null;
+		$attempts = [[$plugin, $prefix], ['', '']];
+		foreach ($attempts as $attempt) {
+			if (isset(static::$_paramScopes[$attempt[0]][$attempt[1]])) {
+				$collection = static::$_paramScopes[$attempt[0]][$attempt[1]];
+				break;
 			}
+		}
+
+		if ($collection) {
 			$match = $collection->match($url, static::$_requestContext);
 			if ($match !== false) {
 				return $match;
@@ -1094,13 +1108,25 @@ class Router {
 		$collection = new ScopedRouteCollection($path, $params, static::$_validExtensions);
 		$callback($collection);
 
+		// Index named routes for fast lookup.
+		static::$_named += $collection->named();
+
+		// Index scopes by path (for parsing)
 		if (empty(static::$_pathScopes[$path])) {
 			static::$_pathScopes[$path] = $collection;
 			krsort(static::$_pathScopes);
 		} else {
 			static::$_pathScopes[$path]->merge($collection);
 		}
-		static::$_named += $collection->named();
+
+		// Index scopes by key params (for reverse routing).
+		$plugin = isset($params['plugin']) ? $params['plugin'] : '';
+		$prefix = isset($params['prefix']) ? $params['prefix'] : '';
+		if (!isset(static::$_paramScopes[$plugin][$prefix])) {
+			static::$_paramScopes[$plugin][$prefix] = $collection;
+		} else {
+			static::$_paramScopes[$plugin][$prefix]->merge($collection);
+		}
 	}
 
 /**
