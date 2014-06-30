@@ -283,7 +283,6 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertSame($this->CakeEmail, $result);
 	}
 
-
 /**
  * Data provider function for testBuildInvalidData
  *
@@ -328,7 +327,6 @@ class CakeEmailTest extends CakeTestCase {
  */
 	public function testEmailPattern() {
 		$regex = '/.+@.+\..+/i';
-		$this->assertNull($this->CakeEmail->emailPattern());
 		$this->assertSame($regex, $this->CakeEmail->emailPattern($regex)->emailPattern());
 	}
 
