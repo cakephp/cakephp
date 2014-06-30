@@ -193,7 +193,6 @@ class Connection {
  * Get the full table(s) name with prefix, if any.
  *
  * @param mixed $name The name of the table or an array of table names
- * @param array $config Configuration for connecting to database
  *
  * @return string Full table name
  *
