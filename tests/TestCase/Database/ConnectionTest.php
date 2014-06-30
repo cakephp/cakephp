@@ -120,6 +120,32 @@ class ConnectionTest extends TestCase {
 	}
 
 /**
+ * 
+ * Tests full table name resolutions
+ *
+ * @return  void
+ *
+ */
+	public function testFullTableName() {
+		$config = ConnectionManager::config('test');
+		$connectionNoPrefix = new Connection($config);
+		$config["prefix"] = "prefix_";
+		$connectionPrefix = new Connection($config);
+		$tableName = "users";
+		$tableNames = ["Posts" => "posts", "Users" => "users"];
+		$expected = ["Posts" => "prefix_posts", "Users" => "prefix_users"];
+
+		$fullTableName = $connectionNoPrefix->fullTableName($tableName);
+		$this->assertEquals($fullTableName, $tableName);
+
+		$fullTableName = $connectionPrefix->fullTableName($tableName);
+		$this->assertEquals($fullTableName, $config["prefix"] . $tableName);
+
+		$fullTableNames = $connectionPrefix->fullTableName($tableNames);
+		$this->assertSame($expected, $fullTableNames);
+	}
+
+/**
  * Tests creation of prepared statements
  *
  * @return void
