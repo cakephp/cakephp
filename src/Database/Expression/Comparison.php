@@ -63,10 +63,6 @@ class Comparison extends QueryExpression {
 		if (is_string($type)) {
 			$this->_type = $type;
 		}
-
-		if (is_string($field) && isset($types[$this->_field])) {
-			$this->_type = current($types);
-		}
 	}
 
 /**
