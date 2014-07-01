@@ -21,6 +21,16 @@ use Cake\Error\Exception;
  */
 class MissingRouteException extends Exception {
 
+/**
+ * {@inheritDoc}
+ */
 	protected $_messageTemplate = 'A route matching "%s" could not be found.';
+
+/**
+ * {@inheritDoc}
+ */
+	public function __construct($message, $code = 404) {
+		parent::__construct($message, $code);
+	}
 
 }
