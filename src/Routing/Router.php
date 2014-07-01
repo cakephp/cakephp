@@ -493,10 +493,14 @@ class Router {
 
 		foreach (static::$_pathScopes as $path => $collection) {
 			if (strpos($url, $path) === 0) {
-				return $collection->parse($url);
+				break;
 			}
 		}
-		throw new MissingRouteException($url);
+		$result = $collection->parse($url);
+		if ($result) {
+			return $result;
+		}
+		throw new MissingRouteException(['url' => $url]);
 	}
 
 /**
@@ -848,7 +852,7 @@ class Router {
 			}
 		}
 
-		throw new MissingRouteException(var_export($url, true));
+		throw new MissingRouteException(['url' => var_export($url, true)]);
 	}
 
 /**
