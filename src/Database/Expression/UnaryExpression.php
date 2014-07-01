@@ -22,7 +22,53 @@ use Cake\Database\ValueBinder;
  *
  * @internal
  */
-class UnaryExpression extends QueryExpression {
+class UnaryExpression implements ExpressionInterface {
+
+/**
+ * Indicates that the operation is in pre-order
+ *
+ */
+	const PREFIX = 0;
+
+/**
+ * Indicates that the operation is in post-order
+ *
+ */
+	const POSTFIX = 1;
+
+/**
+ * The operator this unary expression represents
+ *
+ * @var string
+ */
+	protected $_operator;
+
+/**
+ * Holds the value which the unary expression operates
+ *
+ * @var mixed
+ */
+	protected $_value;
+
+/**
+ * Where to place the operator
+ *
+ * @var int
+ */
+	protected $_mode;
+
+/**
+ * Constructor
+ *
+ * @param string $operator The operator to used for the expression
+ * @param mixed $value the value to use as the operand for the expression
+ * @param int $mode either UnaryExpression::PREFIX or UnaryExpression::POSTFIX
+ */
+	public function __construct($operator, $value, $mode = self::PREFIX) {
+		$this->_operator = $operator;
+		$this->_value = $value;
+		$this->_mode = $mode;
+	}
 
 /**
  * Converts the expression to its string representation
@@ -31,12 +77,25 @@ class UnaryExpression extends QueryExpression {
  * @return string
  */
 	public function sql(ValueBinder $generator) {
-		foreach ($this->_conditions as $condition) {
-			if ($condition instanceof ExpressionInterface) {
-				$condition = $condition->sql($generator);
-			}
-			// We only use the first (and only) condition
-			return $this->_conjunction . ' (' . $condition . ')';
+		$operand = $this->_value;
+		if ($operand instanceof ExpressionInterface) {
+			$operand = $operand->sql($generator);
+		}
+
+		if ($this->_mode === self::POSTFIX) {
+			return '(' . $operand . ') ' . $this->_operator;
+		}
+
+		return $this->_operator . ' (' . $operand . ')';
+	}
+
+/**
+ * {@inheritDoc}
+ *
+ */
+	public function traverse(callable $callable) {
+		if ($this->_value instanceof ExpressionInterface) {
+			$callable($this->_value);
 		}
 	}
 
