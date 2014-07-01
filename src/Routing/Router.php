@@ -757,10 +757,6 @@ class Router {
 				$frag = '#' . $url['#'];
 				unset($url['#']);
 			}
-			if (isset($url['ext'])) {
-				$url['_ext'] = $url['ext'];
-				unset($url['ext']);
-			}
 			if (isset($url['ssl'])) {
 				$url['_scheme'] = ($url['ssl'] == true) ? 'https' : 'http';
 				unset($url['ssl']);
@@ -1079,7 +1075,7 @@ class Router {
  * specific kinds of scopes.
  *
  * Routing scopes will inherit the globally set extensions configured with
- * Router::parseExtensions(). You can also set valid extensions using 
+ * Router::parseExtensions(). You can also set valid extensions using
  * `$routes->extensions()` in your closure.
  *
  * @param string $path The path prefix for the scope. This path will be prepended
