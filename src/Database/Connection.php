@@ -192,9 +192,9 @@ class Connection {
  * 
  * Get the full table(s) name with prefix, if any.
  *
- * @param mixed $names The name of the table or an array of table names
+ * @param string|array $names The names of the tables
  *
- * @return mixed Full table name or array of table names
+ * @return string|array Full tables names
  *
  */
 	public function fullTableName($names) {
