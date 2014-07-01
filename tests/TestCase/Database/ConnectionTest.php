@@ -134,6 +134,7 @@ class ConnectionTest extends TestCase {
 		$tableName = "users";
 		$tableNames = ["Posts" => "posts", "Users" => "users"];
 		$expected = ["Posts" => "prefix_posts", "Users" => "prefix_users"];
+		$subQuery = ["sub" => $this->connection->newQuery()->select('1 + 1')];
 
 		$fullTableName = $connectionNoPrefix->fullTableName($tableName);
 		$this->assertEquals($fullTableName, $tableName);
@@ -143,6 +144,9 @@ class ConnectionTest extends TestCase {
 
 		$fullTableNames = $connectionPrefix->fullTableName($tableNames);
 		$this->assertSame($expected, $fullTableNames);
+
+		$fullTableNameSubQuery = $connectionPrefix->fullTableName($subQuery);
+		$this->assertSame($subQuery, $fullTableNameSubQuery);
 	}
 
 /**
