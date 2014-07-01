@@ -1074,7 +1074,7 @@ class RouterTest extends TestCase {
 /**
  * Test that using invalid names causes exceptions.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Routing\Error\MissingRouteException
  * @return void
  */
 	public function testNamedRouteException() {
@@ -2083,7 +2083,7 @@ class RouterTest extends TestCase {
 /**
  * Test url() works with patterns on :action
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException Cake\Routing\Error\MissingRouteException
  * @return void
  */
 	public function testUrlPatterOnAction() {
@@ -2275,7 +2275,7 @@ class RouterTest extends TestCase {
 /**
  * testRegexRouteMatching method
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException Cake\Routing\Error\MissingRouteException
  * @return void
  */
 	public function testRegexRouteMatchUrl() {

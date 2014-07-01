@@ -16,8 +16,8 @@ namespace Cake\Routing;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Error;
 use Cake\Network\Request;
+use Cake\Routing\Error\MissingRouteException;
 use Cake\Routing\ScopedRouteCollection;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
@@ -481,7 +481,7 @@ class Router {
  *
  * @param string $url URL to be parsed
  * @return array Parsed elements from URL
- * @throws \Cake\Error\Exception When a route cannot be handled
+ * @throws \Cake\Routing\Error\MissingRouteException When a route cannot be handled
  */
 	public static function parse($url) {
 		if (!static::$initialized) {
@@ -496,8 +496,7 @@ class Router {
 				return $collection->parse($url);
 			}
 		}
-		// TODO improve this with a custom exception.
-		throw new Error\Exception('No routes match the given URL.');
+		throw new MissingRouteException($url);
 	}
 
 /**
@@ -849,11 +848,7 @@ class Router {
 			}
 		}
 
-		// TODO improve with custom exception
-		throw new Error\Exception(sprintf(
-			'Unable to find a matching route for %s',
-			var_export($url, true)
-		));
+		throw new MissingRouteException(var_export($url, true));
 	}
 
 /**
