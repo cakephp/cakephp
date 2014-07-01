@@ -198,7 +198,7 @@ class Connection {
  *
  */
 	public function fullTableName($name) {
-		if (empty($this->_config["prefix"])) {
+		if (!isset($this->_config["prefix"]) || $this->_config["prefix"] === "") {
 			return $name;
 		}
 
