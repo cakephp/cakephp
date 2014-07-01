@@ -2485,6 +2485,58 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to pass ExpressionInterface to isNull and isNotNull
+ *
+ * @return void
+ */
+	public function testIsNullWithExpressions() {
+		$query = new Query($this->connection);
+		$subquery = (new Query($this->connection))
+			->select(['id'])
+			->from('authors')
+			->where(['id' => 1]);
+
+		$result = $query
+			->select(['name'])
+			->from(['authors'])
+			->where(function($exp) use ($subquery) {
+				return $exp->isNotNull($subquery);
+			})
+			->execute();
+		$this->assertNotEmpty($result->fetchAll('assoc'));
+
+		$result = (new Query($this->connection))
+			->select(['name'])
+			->from(['authors'])
+			->where(function($exp) use ($subquery) {
+				return $exp->isNull($subquery);
+			})
+			->execute();
+		$this->assertEmpty($result->fetchAll('assoc'));
+	}
+
+/**
+ * Tests that strings passed to isNull and isNotNull will be treated as identifiers
+ * when using autoQuoting
+ *
+ * @return void
+ */
+	public function testIsNullAutoQuoting() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$query->select('*')->from('things')->where(function($exp) {
+			return $exp->isNull('field');
+		});
+		$this->assertQuotedQuery('WHERE \(<field>\) IS NULL', $query->sql());
+
+		$query = new Query($this->connection);
+		$query->select('*')->from('things')->where(function($exp) {
+			return $exp->isNotNull('field');
+		});
+		$this->assertQuotedQuery('WHERE \(<field>\) IS NOT NULL', $query->sql());
+	}
+
+/**
  * Assertion for comparing a table's contents with what is in it.
  *
  * @param string $table

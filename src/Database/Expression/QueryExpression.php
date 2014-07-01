@@ -15,6 +15,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
 use \Countable;
@@ -201,21 +202,29 @@ class QueryExpression implements ExpressionInterface, Countable {
 /**
  * Adds a new condition to the expression object in the form "field IS NULL".
  *
- * @param string $field database field to be tested for null
+ * @param string|\Cake\Database\ExpressionInteface $field database field to be
+ * tested for null
  * @return QueryExpression
  */
 	public function isNull($field) {
-		return $this->add($field . ' IS NULL');
+		if (!($field instanceof ExpressionInterface)) {
+			$field = new IdentifierExpression($field);
+		}
+		return $this->add(new UnaryExpression('IS NULL', $field, UnaryExpression::POSTFIX));
 	}
 
 /**
  * Adds a new condition to the expression object in the form "field IS NOT NULL".
  *
- * @param string $field database field to be tested for not null
+ * @param string|\Cake\Database\ExpressionInteface $field database field to be
+ * tested for not null
  * @return QueryExpression
  */
 	public function isNotNull($field) {
-		return $this->add($field . ' IS NOT NULL');
+		if (!($field instanceof ExpressionInterface)) {
+			$field = new IdentifierExpression($field);
+		}
+		return $this->add(new UnaryExpression('IS NOT NULL', $field, UnaryExpression::POSTFIX));
 	}
 
 /**
@@ -437,7 +446,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 			}
 
 			if (strtolower($k) === 'not') {
-				$this->_conditions[] = new UnaryExpression(new self($c, $typeMap), [], 'NOT');
+				$this->_conditions[] = new UnaryExpression('NOT', new self($c, $typeMap));
 				continue;
 			}
 

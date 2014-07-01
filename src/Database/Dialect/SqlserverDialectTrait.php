@@ -99,7 +99,7 @@ trait SqlserverDialectTrait {
 		$query = clone $original;
 		$order = $query->clause('order') ?: new OrderByExpression('NULL');
 		$query->select([
-				'_cake_page_rownum_' => new UnaryExpression($order, [], 'ROW_NUMBER() OVER')
+				'_cake_page_rownum_' => new UnaryExpression('ROW_NUMBER() OVER', $order)
 			])->limit(null)
 			->offset(null)
 			->order([], true);
