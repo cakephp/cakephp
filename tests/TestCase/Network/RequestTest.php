@@ -2065,7 +2065,7 @@ class RequestTest extends TestCase {
 
 /**
  * Data provider for testing reading values with Request::param()
- * 
+ *
  * @return array
  */
 	public function paramReadingDataProvider() {
@@ -2210,6 +2210,19 @@ class RequestTest extends TestCase {
 
 		$result = $request->here(false);
 		$this->assertEquals('/posts/base_path/1/value?test=value', $result);
+	}
+
+/**
+ * Test the input() method.
+ *
+ * @return void
+ */
+	public function testSetInput() {
+		$request = new Request();
+
+		$request->setInput('I came from setInput');
+		$result = $request->input();
+		$this->assertEquals('I came from setInput', $result);
 	}
 
 /**
