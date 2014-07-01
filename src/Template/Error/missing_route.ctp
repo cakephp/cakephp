@@ -23,6 +23,9 @@ use Cake\Utility\Debugger;
 	<?= $error->getMessage(); ?>
 </p>
 
+<p class="notice">None of the currently connected routes match the given URL or parameters.
+Add a matching route to <?= APP_DIR . DS . 'Config' . DS . 'routes.php' ?></p>
+
 <h3>Connected Routes</h3>
 <?php
 foreach (Router::routes() as $scope):
