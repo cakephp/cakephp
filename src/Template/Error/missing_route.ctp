@@ -42,3 +42,9 @@ foreach (Router::routes() as $scope):
 	endforeach;
 	echo '</table>';
 endforeach;
+?>
+<p class="notice">
+	<strong>Notice: </strong>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_route.ctp'); ?>
+</p>
+<?= $this->element('exception_stack_trace'); ?>
