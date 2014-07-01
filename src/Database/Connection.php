@@ -208,7 +208,9 @@ class Connection {
 		} elseif (is_array($name)) {
 			if (!empty($name)) {
 				foreach ($name as &$tableName) {
-					$tableName = $prefix . $tableName;
+					if (is_string($tableName)) {
+						$tableName = $prefix . $tableName;
+					}
 				}
 			}
 		}
