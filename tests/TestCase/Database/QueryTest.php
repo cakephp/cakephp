@@ -2502,7 +2502,7 @@ class QueryTest extends TestCase {
 			->where(function($exp) use ($subquery) {
 				return $exp->isNotNull($subquery);
 			})
-		->execute();
+			->execute();
 		$this->assertNotEmpty($result->fetchAll('assoc'));
 
 		$result = (new Query($this->connection))
@@ -2516,7 +2516,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that strings passed to isNull and isNotNull will be treaded as identifiers
+ * Tests that strings passed to isNull and isNotNull will be treated as identifiers
  * when using autoQuoting
  *
  * @return void

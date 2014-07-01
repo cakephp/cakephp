@@ -62,7 +62,7 @@ class UnaryExpression implements ExpressionInterface {
  *
  * @param string $operator The operator to used for the expression
  * @param mixed $value the value to use as the operand for the expression
- * @param int $mode either UnaryExpression::PREFIX or  UnaryExpression::POSTFIX
+ * @param int $mode either UnaryExpression::PREFIX or UnaryExpression::POSTFIX
  */
 	public function __construct($operator, $value, $mode = self::PREFIX) {
 		$this->_operator = $operator;
