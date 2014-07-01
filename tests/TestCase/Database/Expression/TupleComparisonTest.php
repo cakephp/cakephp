@@ -70,7 +70,7 @@ class TupleComparisonTest extends TestCase {
 	}
 
 /**
- * Tests generating tuples in the values side containing expressions
+ * Tests generating tuples in the values side containing closure expressions
  *
  * @return void
  */
