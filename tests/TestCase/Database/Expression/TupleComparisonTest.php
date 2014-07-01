@@ -70,6 +70,21 @@ class TupleComparisonTest extends TestCase {
 	}
 
 /**
+ * Tests generating tuples in the values side containing expressions
+ *
+ * @return void
+ */
+	public function testTupleWithClosureExpression() {
+		$field1 = new QueryExpression([function($e){return $e->eq('a', 1);}]);
+		$f = new TupleComparison([$field1, 'field2'], [4, 5], ['integer', 'integer'], '>');
+		$binder = new ValueBinder;
+		$this->assertEquals('(a = :c0, field2) > (:c1, :c2)', $f->sql($binder));
+		$this->assertSame(1, $binder->bindings()[':c0']['value']);
+		$this->assertSame(4, $binder->bindings()[':c1']['value']);
+		$this->assertSame(5, $binder->bindings()[':c2']['value']);
+	}
+
+/**
  * Tests generating tuples using the IN conjunction
  *
  * @return void
