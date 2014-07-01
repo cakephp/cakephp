@@ -1569,6 +1569,25 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * testFragmentIdentifierUrlParsing
+ *
+ * @return void
+ */
+	public function testFragmentIdentifierUrlParsing() {
+		$result = Router::parse('/controller/action#fragment');
+		$expected = array('controller' => 'controller', 'action' => 'action', 'named' => array(), 'pass' => array(), 'plugin' => null, '#' => 'fragment');
+		$this->assertEquals($expected, $result);
+
+		$result = Router::parse('#fragment');
+		$expected = array('named' => array(), 'pass' => array('home'), 'controller' => 'pages', 'action' => 'display', 'plugin' => null, '#' => 'fragment');
+		$this->assertEquals($expected, $result);
+
+		$result = Router::parse('#');
+		$expected = array('named' => array(), 'pass' => array('home'), 'controller' => 'pages', 'action' => 'display', 'plugin' => null);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testNamedArgsUrlParsing method
  *
  * @return void
