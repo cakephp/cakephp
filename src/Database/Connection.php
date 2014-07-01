@@ -192,22 +192,22 @@ class Connection {
  * 
  * Get the full table(s) name with prefix, if any.
  *
- * @param mixed $name The name of the table or an array of table names
+ * @param mixed $names The name of the table or an array of table names
  *
  * @return mixed Full table name or array of table names
  *
  */
-	public function fullTableName($name) {
+	public function fullTableName($names) {
 		if (!isset($this->_config["prefix"]) || $this->_config["prefix"] === "") {
-			return $name;
+			return $names;
 		}
 
 		$prefix = $this->_config["prefix"];
-		if (is_string($name)) {
-			$name = $prefix . $name;
-		} elseif (is_array($name)) {
-			if (!empty($name)) {
-				foreach ($name as &$tableName) {
+		if (is_string($names)) {
+			$names = $prefix . $names;
+		} elseif (is_array($names)) {
+			if (!empty($names)) {
+				foreach ($names as &$tableName) {
 					if (is_string($tableName)) {
 						$tableName = $prefix . $tableName;
 					}
@@ -215,7 +215,7 @@ class Connection {
 			}
 		}
 
-		return $name;
+		return $names;
 	}
 
 /**
