@@ -1179,6 +1179,15 @@ class Router {
 	}
 
 /**
+ * Get the route scopes and their connected routes.
+ *
+ * @return array
+ */
+	public static function routes() {
+		return array_values(static::$_pathScopes);
+	}
+
+/**
  * Loads route configuration
  *
  * @return void
