@@ -607,6 +607,11 @@ class Router {
 			list($url, $queryParameters) = explode('?', $url, 2);
 			parse_str($queryParameters, $queryParameters);
 		}
+		if (strpos($url, '#') !== false) {
+			$position = strpos($url, '#');
+			$frag = substr($url, $position + 1);
+			$url = substr_replace($url, '', $position);
+		}
 
 		extract(self::_parseExtension($url));
 
@@ -629,6 +634,10 @@ class Router {
 
 		if (!empty($queryParameters) && !isset($out['?'])) {
 			$out['?'] = $queryParameters;
+		}
+
+		if (!empty($frag) && !isset($out['#'])) {
+			$out['#'] = $frag;
 		}
 		return $out;
 	}
