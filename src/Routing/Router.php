@@ -680,7 +680,7 @@ class Router {
  * - `_port` - Set the port if you need to create links on non-standard ports.
  * - `_full` - If true output of `Router::fullBaseUrl()` will be prepended to generated URLs.
  * - `#` - Allows you to set URL hash fragments.
- * - `ssl` - Set to true to convert the generated URL to https, or false to force http.
+ * - `_ssl` - Set to true to convert the generated URL to https, or false to force http.
  *
  * @param string|array $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
  *   or an array specifying any of the following: 'controller', 'action', 'plugin'
@@ -757,9 +757,9 @@ class Router {
 				$frag = '#' . $url['#'];
 				unset($url['#']);
 			}
-			if (isset($url['ssl'])) {
-				$url['_scheme'] = ($url['ssl'] == true) ? 'https' : 'http';
-				unset($url['ssl']);
+			if (isset($url['_ssl'])) {
+				$url['_scheme'] = ($url['_ssl'] === true) ? 'https' : 'http';
+				unset($url['_ssl']);
 			}
 
 			// Copy the current action if the controller is the current one.

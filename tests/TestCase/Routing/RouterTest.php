@@ -1045,15 +1045,6 @@ class RouterTest extends TestCase {
 		));
 		$expected = '/articles.json';
 		$this->assertEquals($expected, $result);
-
-		$result = Router::url(array(
-			'plugin' => null,
-			'controller' => 'articles',
-			'action' => 'index',
-			'ext' => 'json'
-		));
-		$expected = '/articles.json';
-		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -1819,12 +1810,12 @@ class RouterTest extends TestCase {
 		);
 
 		$result = Router::url(array(
-			'ssl' => true
+			'_ssl' => true
 		));
 		$this->assertEquals('https://localhost/images/index', $result);
 
 		$result = Router::url(array(
-			'ssl' => false
+			'_ssl' => false
 		));
 		$this->assertEquals('http://localhost/images/index', $result);
 	}
@@ -1853,12 +1844,12 @@ class RouterTest extends TestCase {
 		);
 
 		$result = Router::url(array(
-			'ssl' => false
+			'_ssl' => false
 		));
 		$this->assertEquals('http://localhost/images/index', $result);
 
 		$result = Router::url(array(
-			'ssl' => true
+			'_ssl' => true
 		));
 		$this->assertEquals('https://localhost/images/index', $result);
 	}
@@ -2087,7 +2078,6 @@ class RouterTest extends TestCase {
 
 		$result = Router::parse('/blog/foobar');
 		$this->assertSame([], $result);
-
 	}
 
 /**
@@ -2503,7 +2493,7 @@ class RouterTest extends TestCase {
 			'controller' => 'posts',
 			'action' => 'view',
 			'pass' => array(1),
-			'ext' => 'json',
+			'_ext' => 'json',
 		));
 		$request->query = [];
 		$result = Router::reverse($request);
