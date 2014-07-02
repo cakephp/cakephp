@@ -491,6 +491,8 @@ class EmailComponent extends Object{
 			$msg[] = '';
 
 			$htmlContent = $View->element('email' . DS . 'html' . DS . $this->template, array('content' => $htmlContent), true);
+			$htmlContent = $this->_wrap($htmlContent, $this->lineLength);
+            		$htmlContent = implode("\n", $htmlContent); 
 			$View->layoutPath = 'email' . DS . 'html';
 			$htmlContent = explode("\n", $this->htmlMessage = str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($htmlContent)));
 
@@ -520,6 +522,8 @@ class EmailComponent extends Object{
 		}
 
 		$content = $View->element('email' . DS . $this->sendAs . DS . $this->template, array('content' => $content), true);
+		$content = $this->_wrap($content, $this->lineLength);
+        	$content = implode("\n", $content);
 		$View->layoutPath = 'email' . DS . $this->sendAs;
 		$content = explode("\n", $rendered = str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($content)));
 
