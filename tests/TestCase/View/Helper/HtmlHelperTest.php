@@ -333,7 +333,7 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->image('//google.com/logo.gif');
 		$this->assertTags($result, array('img' => array('src' => '//google.com/logo.gif', 'alt' => '')));
 
-		$result = $this->Html->image(array('controller' => 'test', 'action' => 'view', 1, 'ext' => 'gif'));
+		$result = $this->Html->image(array('controller' => 'test', 'action' => 'view', 1, '_ext' => 'gif'));
 		$this->assertTags($result, array('img' => array('src' => '/test/view/1.gif', 'alt' => '')));
 
 		$result = $this->Html->image('/test/view/1.gif');
@@ -1509,13 +1509,13 @@ class HtmlHelperTest extends TestCase {
 	public function testMeta() {
 		Router::connect('/:controller', array('action' => 'index'));
 
-		$result = $this->Html->meta('this is an rss feed', array('controller' => 'posts', 'ext' => 'rss'));
+		$result = $this->Html->meta('this is an rss feed', array('controller' => 'posts', '_ext' => 'rss'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.rss/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'this is an rss feed')));
 
-		$result = $this->Html->meta('rss', array('controller' => 'posts', 'ext' => 'rss'), array('title' => 'this is an rss feed'));
+		$result = $this->Html->meta('rss', array('controller' => 'posts', '_ext' => 'rss'), array('title' => 'this is an rss feed'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.rss/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'this is an rss feed')));
 
-		$result = $this->Html->meta('atom', array('controller' => 'posts', 'ext' => 'xml'));
+		$result = $this->Html->meta('atom', array('controller' => 'posts', '_ext' => 'xml'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.xml/', 'type' => 'application/atom+xml', 'title' => 'atom')));
 
 		$result = $this->Html->meta('non-existing');
@@ -1527,7 +1527,7 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->meta('non-existing', '/posts.xpp', array('type' => 'atom'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/posts\.xpp/', 'type' => 'application/atom+xml', 'title' => 'non-existing')));
 
-		$result = $this->Html->meta('atom', array('controller' => 'posts', 'ext' => 'xml'), array('link' => '/articles.rss'));
+		$result = $this->Html->meta('atom', array('controller' => 'posts', '_ext' => 'xml'), array('link' => '/articles.rss'));
 		$this->assertTags($result, array('link' => array('href' => 'preg:/.*\/articles\.rss/', 'type' => 'application/atom+xml', 'title' => 'atom')));
 
 		$result = $this->Html->meta('keywords', 'these, are, some, meta, keywords');
