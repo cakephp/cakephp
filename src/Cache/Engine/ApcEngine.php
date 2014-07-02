@@ -16,6 +16,7 @@ namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
 use Cake\Utility\Inflector;
+use APCIterator;
 
 /**
  * APC storage engine for cache
@@ -135,7 +136,7 @@ class ApcEngine extends CacheEngine {
 		if (class_exists('APCIterator', false)) {
 			$iterator = new APCIterator(
 				'user',
-				'/^' . preg_quote($this->settings['prefix'], '/') . '/',
+				'/^' . preg_quote($this->_config['prefix'], '/') . '/',
 				APC_ITER_NONE
 			);
 			apc_delete($iterator);
@@ -143,7 +144,7 @@ class ApcEngine extends CacheEngine {
 		}
 		$cache = apc_cache_info('user');
 		foreach ($cache['cache_list'] as $key) {
-			if (strpos($key['info'], $this->settings['prefix']) === 0) {
+			if (strpos($key['info'], $this->_config['prefix']) === 0) {
 				apc_delete($key['info']);
 			}
 		}

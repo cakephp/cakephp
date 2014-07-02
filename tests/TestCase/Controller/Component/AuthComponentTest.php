@@ -979,6 +979,8 @@ class AuthComponentTest extends TestCase {
  * @return void
  */
 	public function testComponentSettings() {
+		Router::connect('/:controller');
+
 		$request = new Request();
 		$this->Controller = new AuthTestController($request, $this->getMock('Cake\Network\Response'));
 

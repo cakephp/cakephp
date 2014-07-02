@@ -16,8 +16,8 @@ namespace Cake\Routing;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Error;
 use Cake\Network\Request;
+use Cake\Routing\Error\MissingRouteException;
 use Cake\Routing\ScopedRouteCollection;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
@@ -481,7 +481,7 @@ class Router {
  *
  * @param string $url URL to be parsed
  * @return array Parsed elements from URL
- * @throws \Cake\Error\Exception When a route cannot be handled
+ * @throws \Cake\Routing\Error\MissingRouteException When a route cannot be handled
  */
 	public static function parse($url) {
 		if (!static::$initialized) {
@@ -493,11 +493,14 @@ class Router {
 
 		foreach (static::$_pathScopes as $path => $collection) {
 			if (strpos($url, $path) === 0) {
-				return $collection->parse($url);
+				break;
 			}
 		}
-		// TODO improve this with a custom exception.
-		throw new Error\Exception('No routes match the given URL.');
+		$result = $collection->parse($url);
+		if ($result) {
+			return $result;
+		}
+		throw new MissingRouteException(['url' => $url]);
 	}
 
 /**
@@ -849,11 +852,7 @@ class Router {
 			}
 		}
 
-		// TODO improve with custom exception
-		throw new Error\Exception(sprintf(
-			'Unable to find a matching route for %s',
-			var_export($url, true)
-		));
+		throw new MissingRouteException(['url' => var_export($url, true)]);
 	}
 
 /**
@@ -1177,6 +1176,15 @@ class Router {
 			$options['path'] = '/' . Inflector::underscore($name);
 		}
 		static::scope($options['path'], $params, $callback);
+	}
+
+/**
+ * Get the route scopes and their connected routes.
+ *
+ * @return array
+ */
+	public static function routes() {
+		return array_values(static::$_pathScopes);
 	}
 
 /**
