@@ -3490,7 +3490,12 @@ class Model extends Object implements CakeEventListener {
 			$this->tablePrefix = $db->config['prefix'];
 		}
 
-		$this->schemaName = (empty($this->schemaName) ? $db->getSchemaName() : $this->schemaName);
+		$schema = $db->getSchemaName();
+		$defaultProperties = get_class_vars(get_class($this));
+		if (isset($defaultProperties['schemaName'])) {
+			$schema = $defaultProperties['schemaName'];
+		}
+		$this->schemaName = $schema;
 	}
 
 /**
