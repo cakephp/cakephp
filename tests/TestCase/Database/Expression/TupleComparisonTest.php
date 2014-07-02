@@ -75,7 +75,7 @@ class TupleComparisonTest extends TestCase {
  * @return void
  */
 	public function testTupleWithClosureExpression() {
-		$field1 = new QueryExpression([function($e){return $e->eq('a', 1);}]);
+		$field1 = new QueryExpression([function($e) {return $e->eq('a', 1);}]);
 		$f = new TupleComparison([$field1, 'field2'], [4, 5], ['integer', 'integer'], '>');
 		$binder = new ValueBinder;
 		$this->assertEquals('(a = :c0, field2) > (:c1, :c2)', $f->sql($binder));
