@@ -19,6 +19,8 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Event\Event;
+use Cake\Event\EventListener;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -227,6 +229,61 @@ class TestObjectWithToString {
  * An object without the magic method __toString() for testing with view blocks.
  */
 class TestObjectWithoutToString {
+}
+
+/**
+ * Class TestViewEventListener
+ *
+ * An event listener to test cakePHP events
+ */
+class TestViewEventListener implements EventListener {
+
+/**
+ * type of view before rendering has occurred
+ *
+ * @var string
+ */
+	public $beforeRenderViewType;
+
+/**
+ * type of view after rendering has occurred
+ *
+ * @var string
+ */
+	public $afterRenderViewType;
+
+/**
+ * implementedEvents method
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return array(
+			'View.beforeRender' => 'beforeRender',
+			'View.afterRender' => 'afterRender'
+		);
+	}
+
+/**
+ * beforeRender method
+ *
+ * @param \Cake\Event\Event $event the event being sent
+ * @return void
+ */
+	public function beforeRender(Event $event) {
+		$this->beforeRenderViewType = $event->subject()->getCurrentType();
+	}
+
+/**
+ * afterRender method
+ *
+ * @param \Cake\Event\Event $event the event being sent
+ * @return void
+ */
+	public function afterRender(Event $event) {
+		$this->afterRenderViewType = $event->subject()->getCurrentType();
+	}
+
 }
 
 /**
@@ -760,6 +817,30 @@ class ViewTest extends TestCase {
 
 		Cache::clear(true, 'test_view');
 		Cache::drop('test_view');
+	}
+
+/**
+ * Test element events
+ *
+ * @return void
+ */
+	public function testViewEvent() {
+		$View = $this->PostsController->createView();
+		$View->autoLayout = false;
+		$listener = new TestViewEventListener();
+
+		$View->eventManager()->attach($listener);
+
+		$View->render('index');
+		$this->assertEquals(View::TYPE_VIEW, $listener->beforeRenderViewType);
+		$this->assertEquals(View::TYPE_VIEW, $listener->afterRenderViewType);
+
+		$this->assertEquals($View->getCurrentType(), View::TYPE_VIEW);
+		$View->element('test_element', array(), array('callbacks' => true));
+		$this->assertEquals($View->getCurrentType(), View::TYPE_VIEW);
+
+		$this->assertEquals(View::TYPE_ELEMENT, $listener->beforeRenderViewType);
+		$this->assertEquals(View::TYPE_ELEMENT, $listener->afterRenderViewType);
 	}
 
 /**

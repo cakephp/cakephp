@@ -583,7 +583,7 @@ class Response {
 	}
 
 /**
- * Acccessor for the location header.
+ * Accessor for the location header.
  *
  * Get/Set the Location header value.
  *

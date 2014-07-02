@@ -508,6 +508,8 @@ class FolderTest extends TestCase {
 		$this->assertFalse(Folder::isAbsolute('0:\\path\\to\\file'));
 		$this->assertFalse(Folder::isAbsolute('\\path/to/file'));
 		$this->assertFalse(Folder::isAbsolute('\\path\\to\\file'));
+		$this->assertFalse(Folder::isAbsolute('notRegisteredStreamWrapper://example'));
+		$this->assertFalse(Folder::isAbsolute('://example'));
 
 		$this->assertTrue(Folder::isAbsolute('/usr/local'));
 		$this->assertTrue(Folder::isAbsolute('//path/to/file'));
@@ -515,6 +517,7 @@ class FolderTest extends TestCase {
 		$this->assertTrue(Folder::isAbsolute('C:\\path\\to\\file'));
 		$this->assertTrue(Folder::isAbsolute('d:\\path\\to\\file'));
 		$this->assertTrue(Folder::isAbsolute('\\\\vmware-host\\Shared Folders\\file'));
+		$this->assertTrue(Folder::isAbsolute('http://www.example.com'));
 	}
 
 /**

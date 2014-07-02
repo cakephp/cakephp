@@ -1766,7 +1766,7 @@ class Email {
 /**
  * Return the Content-Transfer Encoding value based on the set charset
  *
- * @return void
+ * @return string
  */
 	protected function _getContentTransferEncoding() {
 		$charset = strtoupper($this->charset);

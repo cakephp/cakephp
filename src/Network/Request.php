@@ -683,7 +683,7 @@ class Request implements \ArrayAccess {
  * This modifies the parameters available through `$request->params`.
  *
  * @param array $params Array of parameters to merge in
- * @return \Cake\Network\Request The current object, you can chain this method.
+ * @return $this The current object, you can chain this method.
  */
 	public function addParams(array $params) {
 		$this->params = array_merge($this->params, $params);
@@ -695,7 +695,7 @@ class Request implements \ArrayAccess {
  * Provides an easy way to modify, here, webroot and base.
  *
  * @param array $paths Array of paths to merge in
- * @return \Cake\Network\Request the current object, you can chain this method.
+ * @return $this The current object, you can chain this method.
  */
 	public function addPaths(array $paths) {
 		foreach (array('webroot', 'here', 'base') as $element) {
@@ -958,7 +958,7 @@ class Request implements \ArrayAccess {
  * will be created for you.
  *
  * @param string|null $name Dot separated name of the value to read/write
- * @return mixed Either the value being read, or this so you can chain consecutive writes.
+ * @return mixed|$this Either the value being read, or this so you can chain consecutive writes.
  */
 	public function data($name = null) {
 		$args = func_get_args();
@@ -1099,6 +1099,17 @@ class Request implements \ArrayAccess {
 			$this->_input = $content;
 		}
 		return $this->_input;
+	}
+
+/**
+ * Modify data originally from `php://input`. Useful for altering json/xml data
+ * in middleware or DispatcherFilters before it gets to RequestHandlerComponent
+ *
+ * @param string $input A string to replace original parsed data from input()
+ * @return void
+ */
+	public function setInput($input) {
+		$this->_input = $input;
 	}
 
 /**

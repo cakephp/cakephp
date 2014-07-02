@@ -209,7 +209,7 @@ class ConsoleOptionParser {
  * Get or set the command name for shell/task.
  *
  * @param string $text The text to set, or null if you want to read
- * @return mixed If reading, the value of the command. If setting $this will be returned
+ * @return string|$this If reading, the value of the command. If setting $this will be returned.
  */
 	public function command($text = null) {
 		if ($text !== null) {
@@ -224,7 +224,7 @@ class ConsoleOptionParser {
  *
  * @param string|array $text The text to set, or null if you want to read. If an array the
  *   text will be imploded with "\n"
- * @return mixed If reading, the value of the description. If setting $this will be returned
+ * @return string|$this If reading, the value of the description. If setting $this will be returned.
  */
 	public function description($text = null) {
 		if ($text !== null) {
@@ -242,7 +242,7 @@ class ConsoleOptionParser {
  * the options and arguments listing when help is generated.
  *
  * @param string|array $text Text when setting or null when reading. If an array the text will be imploded with "\n"
- * @return mixed If reading, the value of the epilog. If setting $this will be returned.
+ * @return string|$this If reading, the value of the epilog. If setting $this will be returned.
  */
 	public function epilog($text = null) {
 		if ($text !== null) {
@@ -275,7 +275,7 @@ class ConsoleOptionParser {
  * @param ConsoleInputOption|string $name The long name you want to the value to be parsed out as when options are parsed.
  *   Will also accept an instance of ConsoleInputOption
  * @param array $options An array of parameters that define the behavior of the option
- * @return ConsoleOptionParser this.
+ * @return $this
  */
 	public function addOption($name, $options = []) {
 		if (is_object($name) && $name instanceof ConsoleInputOption) {
@@ -326,7 +326,7 @@ class ConsoleOptionParser {
  *
  * @param ConsoleInputArgument|string $name The name of the argument. Will also accept an instance of ConsoleInputArgument
  * @param array $params Parameters for the argument, see above.
- * @return ConsoleOptionParser this.
+ * @return $this
  */
 	public function addArgument($name, $params = []) {
 		if (is_object($name) && $name instanceof ConsoleInputArgument) {
@@ -356,7 +356,7 @@ class ConsoleOptionParser {
  *
  * @param array $args Array of arguments to add.
  * @see ConsoleOptionParser::addArgument()
- * @return ConsoleOptionParser this
+ * @return $this
  */
 	public function addArguments(array $args) {
 		foreach ($args as $name => $params) {
@@ -371,7 +371,7 @@ class ConsoleOptionParser {
  *
  * @param array $options Array of options to add.
  * @see ConsoleOptionParser::addOption()
- * @return ConsoleOptionParser this
+ * @return $this
  */
 	public function addOptions(array $options) {
 		foreach ($options as $name => $params) {
@@ -393,7 +393,7 @@ class ConsoleOptionParser {
  *
  * @param ConsoleInputSubcommand|string $name Name of the subcommand. Will also accept an instance of ConsoleInputSubcommand
  * @param array $options Array of params, see above.
- * @return ConsoleOptionParser this.
+ * @return $this
  */
 	public function addSubcommand($name, $options = []) {
 		if (is_object($name) && $name instanceof ConsoleInputSubcommand) {
@@ -416,7 +416,7 @@ class ConsoleOptionParser {
  * Add multiple subcommands at once.
  *
  * @param array $commands Array of subcommands.
- * @return ConsoleOptionParser this
+ * @return $this
  */
 	public function addSubcommands(array $commands) {
 		foreach ($commands as $name => $params) {
@@ -605,6 +605,7 @@ class ConsoleOptionParser {
 			$params[$name] = $value;
 			return $params;
 		}
+		return array();
 	}
 
 /**
