@@ -271,7 +271,7 @@ class EntityContext implements ContextInterface {
 			}
 			$entity = $next;
 		}
-		throw \RuntimeException(sprintf(
+		throw new \RuntimeException(sprintf(
 			'Unable to fetch property "%s"',
 			implode(".", $path)
 		));
