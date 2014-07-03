@@ -287,7 +287,7 @@ class Sqlite extends DboSource {
 /**
  * Generate ResultSet
  *
- * @param mixed $results
+ * @param mixed $results The results to modify.
  * @return void
  */
 	public function resultSet($results) {
@@ -297,8 +297,8 @@ class Sqlite extends DboSource {
 		$index = 0;
 		$j = 0;
 
-		//PDO::getColumnMeta is experimental and does not work with sqlite3,
-		//	so try to figure it out based on the querystring
+		// PDO::getColumnMeta is experimental and does not work with sqlite3,
+		// so try to figure it out based on the querystring
 		$querystring = $results->queryString;
 		if (stripos($querystring, 'SELECT') === 0) {
 			$last = strripos($querystring, 'FROM');
