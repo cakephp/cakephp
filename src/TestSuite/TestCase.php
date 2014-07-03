@@ -68,8 +68,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * Overrides SimpleTestCase::skipIf to provide a boolean return value
  *
- * @param bool $shouldSkip
- * @param string $message
+ * @param bool $shouldSkip Whether or not the test should be skipped.
+ * @param string $message The message to display.
  * @return bool
  */
 	public function skipIf($shouldSkip, $message = '') {
@@ -527,9 +527,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * Mock a model, maintain fixtures and table association
  *
- * @param string $model The model to get a mock for.
+ * @param string $alias The model to get a mock for.
  * @param mixed $methods The list of methods to mock
- * @param array $config The config data for the mock's constructor.
+ * @param array $options The config data for the mock's constructor.
  * @throws \Cake\ORM\Error\MissingTableClassException
  * @return Model
  */

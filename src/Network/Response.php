@@ -1142,7 +1142,7 @@ class Response {
  * the Last-Modified etag response header before calling this method. Otherwise
  * a comparison will not be possible.
  *
- * @param Request $request Request object
+ * @param \Cake\Network\Request $request Request object
  * @return bool whether the response was marked as not modified or not.
  */
 	public function checkNotModified(Request $request) {
@@ -1288,7 +1288,7 @@ class Response {
 /**
  * Normalize the origin to regular expressions and put in an array format
  *
- * @param array $domains Domain names.
+ * @param array $domains Domain names to normalize.
  * @param bool $requestIsSSL Whether it's a SSL request.
  * @return array
  */

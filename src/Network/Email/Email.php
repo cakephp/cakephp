@@ -329,11 +329,13 @@ class Email {
 
 /**
  * Regex for email validation
- * If null, filter_var() will be used.
+ *
+ * If null, filter_var() will be used. Use the emailPattern() method
+ * to set a custom pattern.'
  *
  * @var string
  */
-	protected $_emailPattern = null;
+	protected $_emailPattern = '/^((?:[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui';
 
 /**
  * The class name used for email configuration.
@@ -530,7 +532,7 @@ class Email {
  * Charset setter/getter
  *
  * @param string $charset Character set.
- * @return string $this->charset
+ * @return string this->charset
  */
 	public function charset($charset = null) {
 		if ($charset === null) {
@@ -547,7 +549,7 @@ class Email {
  * HeaderCharset setter/getter
  *
  * @param string $charset Character set.
- * @return string $this->charset
+ * @return string this->charset
  */
 	public function headerCharset($charset = null) {
 		if ($charset === null) {
@@ -562,8 +564,8 @@ class Email {
  * @param string $regex for email address validation
  * @return string|$this
  */
-	public function emailPattern($regex = null) {
-		if ($regex === null) {
+	public function emailPattern($regex = false) {
+		if ($regex === false) {
 			return $this->_emailPattern;
 		}
 		$this->_emailPattern = $regex;
@@ -609,13 +611,12 @@ class Email {
  * @throws \Cake\Network\Error\SocketException If email address does not validate
  */
 	protected function _validateEmail($email) {
-		$valid = (($this->_emailPattern !== null &&
-			preg_match($this->_emailPattern, $email)) ||
-			filter_var($email, FILTER_VALIDATE_EMAIL)
-		);
-		if (!$valid) {
-			throw new Error\SocketException(sprintf('Invalid email: "%s"', $email));
+		if ($this->_emailPattern === null && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			return;
+		} elseif (preg_match($this->_emailPattern, $email)) {
+			return;
 		}
+		throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
 	}
 
 /**
