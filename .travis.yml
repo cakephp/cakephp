@@ -17,10 +17,6 @@ services:
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - php: 5.4
-      env:
-        - PHPCS=1
   include:
     - php: 5.4
       env:
@@ -123,9 +119,9 @@ before_script:
       }
     }
     }" > app/Config/database.php
-
 script:
-  - sh -c "if [ '$PHPCS' = '1' ]; then phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; elif [ '$DB' = 'mysql' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else ./lib/Cake/Console/cake test core AllDbRelated --stderr; fi"
+  - sh -c "if [ '$PHPCS' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;"
 
 notifications:
   email: false
