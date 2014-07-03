@@ -626,4 +626,16 @@ class ScopedRouteCollection {
 		$this->_named += $collection->named();
 	}
 
+/**
+ * Connect the `/:controller` and `/:controller/:action/*` fallback routes.
+ *
+ * This is a shortcut method for connecting fallback routes in a given scope.
+ *
+ * @return void
+ */
+	public function fallbacks() {
+		$this->connect('/:controller');
+		$this->connect('/:controller/:action/*');
+	}
+
 }
