@@ -1,7 +1,5 @@
 <?php
 /**
- * File Storage stream for Logging
- *
  * CakePHP(tm) :  Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -68,6 +66,13 @@ class FileLog extends BaseLog {
  * @var string
  */
 	protected $_file = null;
+
+/**
+ * Max file size, used for log file rotation.
+ *
+ * @var int
+ */
+	protected $_size = null;
 
 /**
  * Sets protected properties based on config provided

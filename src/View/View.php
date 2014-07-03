@@ -91,7 +91,6 @@ class View {
 /**
  * Name of the controller that created the View if any.
  *
- * @see Controller::$name
  * @var string
  */
 	public $name = null;

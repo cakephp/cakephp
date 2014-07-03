@@ -611,7 +611,7 @@ class Request implements \ArrayAccess {
  *
  * @param array $types The types to check.
  * @return bool Success.
- * @see Request::is()
+ * @see \Cake\Network\Request::is()
  */
 	public function isAll(array $types) {
 		$result = array_filter(array_map(array($this, 'is'), $types));

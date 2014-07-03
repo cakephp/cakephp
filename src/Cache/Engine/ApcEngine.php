@@ -14,9 +14,9 @@
  */
 namespace Cake\Cache\Engine;
 
+use APCIterator;
 use Cake\Cache\CacheEngine;
 use Cake\Utility\Inflector;
-use APCIterator;
 
 /**
  * APC storage engine for cache
