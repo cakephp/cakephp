@@ -751,7 +751,7 @@ class CakeResponseTest extends CakeTestCase {
 		$response = new CakeResponse;
 		$response->sharable(true, 3600);
 		$headers = $response->header();
-		$this->assertEquals('public, s-maxage=3600', $headers['Cache-Control']);
+		$this->assertEquals('public, max-age=3600', $headers['Cache-Control']);
 
 		$response = new CakeResponse;
 		$response->sharable(false, 3600);
