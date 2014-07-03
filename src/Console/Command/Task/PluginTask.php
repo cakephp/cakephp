@@ -300,6 +300,9 @@ class PluginTask extends BakeTask {
 			'Can create plugins in any of your bootstrapped plugin paths.'
 		))->addArgument('name', [
 			'help' => __d('cake_console', 'CamelCased name of the plugin to create.')
+		])->addOption('composer', [
+			'default' => ROOT . '/composer.phar',
+			'help' => __d('cake_console', 'The path to the composer executable.')
 		])->removeOption('plugin');
 
 		return $parser;
