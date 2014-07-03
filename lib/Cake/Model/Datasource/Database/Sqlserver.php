@@ -115,7 +115,7 @@ class Sqlserver extends DboSource {
 /**
  * Connects to the database using options in the given configuration array.
  *
- * @return boolean True if the database could be connected, else false
+ * @return bool True if the database could be connected, else false
  * @throws MissingConnectionException
  */
 	public function connect() {
@@ -157,7 +157,7 @@ class Sqlserver extends DboSource {
 /**
  * Check that PDO SQL Server is installed/loaded
  *
- * @return boolean
+ * @return bool
  */
 	public function enabled() {
 		return in_array('sqlsrv', PDO::getAvailableDrivers());
@@ -272,7 +272,7 @@ class Sqlserver extends DboSource {
  * @param Model $model The model to get fields for.
  * @param string $alias Alias table name
  * @param array $fields The fields so far.
- * @param boolean $quote Whether or not to quote identfiers.
+ * @param bool $quote Whether or not to quote identfiers.
  * @return array
  */
 	public function fields(Model $model, $alias = null, $fields = array(), $quote = true) {
@@ -389,8 +389,8 @@ class Sqlserver extends DboSource {
 /**
  * Returns a limit statement in the correct format for the particular database.
  *
- * @param integer $limit Limit of results returned
- * @param integer $offset Offset from which to start results
+ * @param int $limit Limit of results returned
+ * @param int $offset Offset from which to start results
  * @return string SQL limit/offset statement
  */
 	public function limit($limit, $offset = null) {
@@ -610,7 +610,7 @@ class Sqlserver extends DboSource {
  *
  * @param Model $model The model to read from
  * @param array $queryData The query data
- * @param integer $recursive How many layers to go.
+ * @param int $recursive How many layers to go.
  * @return array|false Array of resultset rows, or false if no rows matched
  */
 	public function read(Model $model, $queryData = array(), $recursive = null) {
@@ -745,7 +745,7 @@ class Sqlserver extends DboSource {
  * this returns false.
  *
  * @param mixed $source Unused
- * @return integer Number of affected rows
+ * @return int Number of affected rows
  */
 	public function lastAffected($source = null) {
 		$affected = parent::lastAffected();

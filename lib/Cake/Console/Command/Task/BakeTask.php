@@ -41,7 +41,7 @@ class BakeTask extends AppShell {
 /**
  * Flag for interactive mode
  *
- * @var boolean
+ * @var bool
  */
 	public $interactive = false;
 

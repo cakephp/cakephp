@@ -274,7 +274,7 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param Model $Model Model find was run on
  * @param array $results Array of model results.
- * @param boolean $primary Did the find originate on $model.
+ * @param bool $primary Did the find originate on $model.
  * @return array Modified results
  */
 	public function afterFind(Model $Model, $results, $primary = false) {
@@ -329,7 +329,7 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param Model $Model Model invalidFields was called on.
  * @param array $options Options passed from Model::save().
- * @return boolean
+ * @return bool
  * @see Model::save()
  */
 	public function beforeValidate(Model $Model, $options = array()) {
@@ -346,7 +346,7 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param Model $Model Model save was called on.
  * @param array $options Options passed from Model::save().
- * @return boolean true.
+ * @return bool true.
  * @see Model::save()
  */
 	public function beforeSave(Model $Model, $options = array()) {
@@ -415,7 +415,7 @@ class TranslateBehavior extends ModelBehavior {
  * afterSave Callback
  *
  * @param Model $Model Model the callback is called on
- * @param boolean $created Whether or not the save created a record.
+ * @param bool $created Whether or not the save created a record.
  * @param array $options Options passed from Model::save().
  * @return void
  */
@@ -571,9 +571,9 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param Model $Model using this behavior of model
  * @param string|array $fields string with field or array(field1, field2=>AssocName, field3)
- * @param boolean $reset Leave true to have the fields only modified for the next operation.
+ * @param bool $reset Leave true to have the fields only modified for the next operation.
  *   if false the field will be added for all future queries.
- * @return boolean
+ * @return bool
  * @throws CakeException when attempting to bind a translating called name. This is not allowed
  *   as it shadows Model::$name.
  */
@@ -667,7 +667,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param Model $Model using this behavior of model
  * @param string|array $fields string with field, or array(field1, field2=>AssocName, field3), or null for
  *    unbind all original translations
- * @return boolean
+ * @return bool
  */
 	public function unbindTranslation(Model $Model, $fields = null) {
 		if (empty($fields) && empty($this->settings[$Model->alias])) {

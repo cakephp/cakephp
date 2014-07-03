@@ -35,7 +35,7 @@ class JsHelper extends AppHelper {
 /**
  * Whether or not you want scripts to be buffered or output.
  *
- * @var boolean
+ * @var bool
  */
 	public $bufferScripts = true;
 
@@ -157,7 +157,7 @@ class JsHelper extends AppHelper {
  * See JsBaseEngineHelper::value() for more information on this method.
  *
  * @param mixed $val A PHP variable to be converted to JSON
- * @param boolean $quoteString If false, leaves string values unquoted
+ * @param bool $quoteString If false, leaves string values unquoted
  * @param string $key Key name.
  * @return string a JavaScript-safe/JSON representation of $val
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::value
@@ -229,7 +229,7 @@ class JsHelper extends AppHelper {
  * Write a script to the buffered scripts.
  *
  * @param string $script Script string to add to the buffer.
- * @param boolean $top If true the script will be added to the top of the
+ * @param bool $top If true the script will be added to the top of the
  *   buffered scripts array. If false the bottom.
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::buffer
@@ -245,7 +245,7 @@ class JsHelper extends AppHelper {
 /**
  * Get all the buffered scripts
  *
- * @param boolean $clear Whether or not to clear the script caches (default true)
+ * @param bool $clear Whether or not to clear the script caches (default true)
  * @return array Array of scripts added to the request.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/js.html#JsHelper::getBuffer
  */

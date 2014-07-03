@@ -97,7 +97,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
  *
  * @param string $behavior CamelCased name of the behavior to load
  * @param array $config Behavior configuration parameters
- * @return boolean True on success, false on failure
+ * @return bool True on success, false on failure
  * @throws MissingBehaviorException when a behavior could not be found.
  */
 	public function load($behavior, $config = array()) {
@@ -216,7 +216,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
  * @param Model $model The model the method was originally called on.
  * @param string $method The method called.
  * @param array $params Parameters for the called method.
- * @param boolean $strict If methods are not found, trigger an error.
+ * @param bool $strict If methods are not found, trigger an error.
  * @return array All methods for all behaviors attached to this object
  */
 	public function dispatchMethod($model, $method, $params = array(), $strict = false) {
@@ -254,7 +254,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
  * also check mappedMethods.
  *
  * @param string $method The method to find.
- * @param boolean $callback Return the callback for the method.
+ * @param bool $callback Return the callback for the method.
  * @return mixed If $callback is false, a boolean will be returned, if its true, an array
  *   containing callback information will be returned. For mapped methods the array will have 3 elements.
  */

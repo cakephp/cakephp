@@ -79,7 +79,7 @@ class NumberHelper extends AppHelper {
  * Formats a number with a level of precision.
  *
  * @param float $number A floating point number.
- * @param integer $precision The precision of the returned number.
+ * @param int $precision The precision of the returned number.
  * @return float Formatted float.
  * @see CakeNumber::precision()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
@@ -91,7 +91,7 @@ class NumberHelper extends AppHelper {
 /**
  * Returns a formatted-for-humans file size.
  *
- * @param integer $size Size in bytes
+ * @param int $size Size in bytes
  * @return string Human readable size
  * @see CakeNumber::toReadableSize()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toReadableSize
@@ -108,7 +108,7 @@ class NumberHelper extends AppHelper {
  * - `multiply`: Multiply the input value by 100 for decimal percentages.
  *
  * @param float $number A floating point number
- * @param integer $precision The precision of the returned number
+ * @param int $precision The precision of the returned number
  * @param array $options Options
  * @return string Percentage string
  * @see CakeNumber::toPercentage()
@@ -122,7 +122,7 @@ class NumberHelper extends AppHelper {
  * Formats a number into a currency format.
  *
  * @param float $number A floating point number
- * @param integer $options If integer then places, if string then before, if (,.-) then use it
+ * @param int $options If integer then places, if string then before, if (,.-) then use it
  *   or array with places and before keys
  * @return string formatted number
  * @see CakeNumber::format()

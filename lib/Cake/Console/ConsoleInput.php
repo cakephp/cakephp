@@ -37,7 +37,7 @@ class ConsoleInput {
  * 2. Handle we are attached to must be stdin.
  * Allows rich editing with arrow keys and history when inputting a string.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_canReadline;
 
@@ -70,8 +70,8 @@ class ConsoleInput {
 /**
  * Checks if data is available on the stream
  *
- * @param integer $timeout An optional time to wait for data
- * @return boolean True for data available, false otherwise
+ * @param int $timeout An optional time to wait for data
+ * @return bool True for data available, false otherwise
  */
 	public function dataAvailable($timeout = 0) {
 		$readFds = array($this->_input);

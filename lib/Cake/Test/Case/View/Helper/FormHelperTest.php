@@ -36,7 +36,7 @@ class ContactTestController extends Controller {
 /**
  * uses property
  *
- * @var mixed null
+ * @var mixed
  */
 	public $uses = null;
 }
@@ -51,7 +51,7 @@ class Contact extends CakeTestModel {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -142,7 +142,7 @@ class ContactTagsContact extends CakeTestModel {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -207,7 +207,7 @@ class ContactTag extends Model {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -234,7 +234,7 @@ class UserForm extends CakeTestModel {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -274,7 +274,7 @@ class OpenidUrl extends CakeTestModel {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -329,7 +329,7 @@ class ValidateUser extends CakeTestModel {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -381,7 +381,7 @@ class ValidateProfile extends CakeTestModel {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -440,7 +440,7 @@ class ValidateItem extends CakeTestModel {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -489,7 +489,7 @@ class TestMail extends CakeTestModel {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -513,7 +513,7 @@ class FormHelperTest extends CakeTestCase {
 /**
  * Do not load the fixtures by default
  *
- * @var boolean
+ * @var bool
  */
 	public $autoFixtures = false;
 
@@ -9826,7 +9826,6 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- *
  * @expectedException CakeException
  * @return void
  */

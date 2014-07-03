@@ -48,7 +48,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * between each test method. Tables will still be dropped at the
  * end of each test runner execution.
  *
- * @var boolean
+ * @var bool
  */
 	public $dropTables = true;
 
@@ -107,9 +107,9 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 /**
  * Overrides SimpleTestCase::skipIf to provide a boolean return value
  *
- * @param boolean $shouldSkip Whether or not the test should be skipped.
+ * @param bool $shouldSkip Whether or not the test should be skipped.
  * @param string $message The message to display.
- * @return boolean
+ * @return bool
  */
 	public function skipIf($shouldSkip, $message = '') {
 		if ($shouldSkip) {
@@ -219,7 +219,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $expected The expected value.
  * @param string $result The actual value.
  * @param string $message The message to use for failure.
- * @return boolean
+ * @return bool
  */
 	public function assertTextNotEquals($expected, $result, $message = '') {
 		$expected = str_replace(array("\r\n", "\r"), "\n", $expected);
@@ -234,7 +234,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $expected The expected value.
  * @param string $result The actual value.
  * @param string $message message The message to use for failure.
- * @return boolean
+ * @return bool
  */
 	public function assertTextEquals($expected, $result, $message = '') {
 		$expected = str_replace(array("\r\n", "\r"), "\n", $expected);
@@ -249,7 +249,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $prefix The prefix to check for.
  * @param string $string The string to search in.
  * @param string $message The message to use for failure.
- * @return boolean
+ * @return bool
  */
 	public function assertTextStartsWith($prefix, $string, $message = '') {
 		$prefix = str_replace(array("\r\n", "\r"), "\n", $prefix);
@@ -264,7 +264,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $prefix The prefix to not find.
  * @param string $string The string to search.
  * @param string $message The message to use for failure.
- * @return boolean
+ * @return bool
  */
 	public function assertTextStartsNotWith($prefix, $string, $message = '') {
 		$prefix = str_replace(array("\r\n", "\r"), "\n", $prefix);
@@ -279,7 +279,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $suffix The suffix to find.
  * @param string $string The string to search.
  * @param string $message The message to use for failure.
- * @return boolean
+ * @return bool
  */
 	public function assertTextEndsWith($suffix, $string, $message = '') {
 		$suffix = str_replace(array("\r\n", "\r"), "\n", $suffix);
@@ -294,7 +294,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $suffix The suffix to not find.
  * @param string $string The string to search.
  * @param string $message The message to use for failure.
- * @return boolean
+ * @return bool
  */
 	public function assertTextEndsNotWith($suffix, $string, $message = '') {
 		$suffix = str_replace(array("\r\n", "\r"), "\n", $suffix);
@@ -309,8 +309,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $needle The string to search for.
  * @param string $haystack The string to search through.
  * @param string $message The message to display on failure.
- * @param boolean $ignoreCase Whether or not the search should be case-sensitive.
- * @return boolean
+ * @param bool $ignoreCase Whether or not the search should be case-sensitive.
+ * @return bool
  */
 	public function assertTextContains($needle, $haystack, $message = '', $ignoreCase = false) {
 		$needle = str_replace(array("\r\n", "\r"), "\n", $needle);
@@ -325,8 +325,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $needle The string to search for.
  * @param string $haystack The string to search through.
  * @param string $message The message to display on failure.
- * @param boolean $ignoreCase Whether or not the search should be case-sensitive.
- * @return boolean
+ * @param bool $ignoreCase Whether or not the search should be case-sensitive.
+ * @return bool
  */
 	public function assertTextNotContains($needle, $haystack, $message = '', $ignoreCase = false) {
 		$needle = str_replace(array("\r\n", "\r"), "\n", $needle);
@@ -374,7 +374,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $string An HTML/XHTML/XML string
  * @param array $expected An array, see above
  * @param string $fullDebug Whether or not more verbose output should be used.
- * @return boolean
+ * @return bool
  */
 	public function assertTags($string, $expected, $fullDebug = false) {
 		$regex = array();
@@ -541,7 +541,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 /**
  * Compatibility wrapper function for assertEquals
  *
- *
  * @param mixed $result
  * @param mixed $expected
  * @param string $message the text to display if the assertion is not correct
@@ -697,9 +696,9 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 /**
  * Compatibility function for skipping.
  *
- * @param boolean $condition Condition to trigger skipping
+ * @param bool $condition Condition to trigger skipping
  * @param string $message Message for skip
- * @return boolean
+ * @return bool
  */
 	protected function skipUnless($condition, $message = '') {
 		if (!$condition) {

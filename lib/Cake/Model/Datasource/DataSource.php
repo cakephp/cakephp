@@ -29,7 +29,7 @@ class DataSource extends Object {
 /**
  * Are we connected to the DataSource?
  *
- * @var boolean
+ * @var bool
  */
 	public $connected = false;
 
@@ -64,7 +64,7 @@ class DataSource extends Object {
 /**
  * Whether or not this DataSource is in the middle of a transaction
  *
- * @var boolean
+ * @var bool
  */
 	protected $_transactionStarted = false;
 
@@ -72,7 +72,7 @@ class DataSource extends Object {
  * Whether or not source data like available tables and schema descriptions
  * should be cached
  *
- * @var boolean
+ * @var bool
  */
 	public $cacheSources = true;
 
@@ -144,7 +144,7 @@ class DataSource extends Object {
 /**
  * Begin a transaction
  *
- * @return boolean Returns true if a transaction is not in progress
+ * @return bool Returns true if a transaction is not in progress
  */
 	public function begin() {
 		return !$this->_transactionStarted;
@@ -153,7 +153,7 @@ class DataSource extends Object {
 /**
  * Commit a transaction
  *
- * @return boolean Returns true if a transaction is in progress
+ * @return bool Returns true if a transaction is in progress
  */
 	public function commit() {
 		return $this->_transactionStarted;
@@ -162,7 +162,7 @@ class DataSource extends Object {
 /**
  * Rollback a transaction
  *
- * @return boolean Returns true if a transaction is in progress
+ * @return bool Returns true if a transaction is in progress
  */
 	public function rollback() {
 		return $this->_transactionStarted;
@@ -186,7 +186,7 @@ class DataSource extends Object {
  * @param Model $Model The Model to be created.
  * @param array $fields An Array of fields to be saved.
  * @param array $values An Array of values to save.
- * @return boolean success
+ * @return bool success
  */
 	public function create(Model $Model, $fields = null, $values = null) {
 		return false;
@@ -199,7 +199,7 @@ class DataSource extends Object {
  *
  * @param Model $Model The model being read.
  * @param array $queryData An array of query data used to find the data you want
- * @param integer $recursive Number of levels of association
+ * @param int $recursive Number of levels of association
  * @return mixed
  */
 	public function read(Model $Model, $queryData = array(), $recursive = null) {
@@ -215,7 +215,7 @@ class DataSource extends Object {
  * @param array $fields Array of fields to be updated
  * @param array $values Array of values to be update $fields to.
  * @param mixed $conditions The array of conditions to use.
- * @return boolean Success
+ * @return bool Success
  */
 	public function update(Model $Model, $fields = null, $values = null, $conditions = null) {
 		return false;
@@ -228,7 +228,7 @@ class DataSource extends Object {
  *
  * @param Model $Model The model class having record(s) deleted
  * @param mixed $conditions The conditions to use for deleting.
- * @return boolean Success
+ * @return bool Success
  */
 	public function delete(Model $Model, $conditions = null) {
 		return false;
@@ -248,7 +248,7 @@ class DataSource extends Object {
  * Returns the number of rows returned by last operation.
  *
  * @param mixed $source The source name.
- * @return integer Number of rows returned by last operation
+ * @return int Number of rows returned by last operation
  */
 	public function lastNumRows($source = null) {
 		return false;
@@ -258,7 +258,7 @@ class DataSource extends Object {
  * Returns the number of rows affected by last query.
  *
  * @param mixed $source The source name.
- * @return integer Number of rows affected by last query.
+ * @return int Number of rows affected by last query.
  */
 	public function lastAffected($source = null) {
 		return false;
@@ -269,7 +269,7 @@ class DataSource extends Object {
  * are satisfied. Often used from connect() to check for support
  * before establishing a connection.
  *
- * @return boolean Whether or not the Datasources conditions for use are met.
+ * @return bool Whether or not the Datasources conditions for use are met.
  */
 	public function enabled() {
 		return true;
@@ -416,7 +416,7 @@ class DataSource extends Object {
 /**
  * Closes a connection. Override in subclasses
  *
- * @return boolean
+ * @return bool
  */
 	public function close() {
 		return $this->connected = false;

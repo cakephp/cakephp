@@ -58,7 +58,7 @@ class DebugCompTransport extends AbstractTransport {
  * Send mail
  *
  * @params object $email CakeEmail
- * @return boolean
+ * @return bool
  */
 	public function send(CakeEmail $email) {
 		$email->addHeaders(array('Date' => EmailComponentTest::$sentDate));
@@ -94,7 +94,7 @@ class EmailTestController extends Controller {
 /**
  * uses property
  *
- * @var mixed null
+ * @var mixed
  */
 	public $uses = null;
 

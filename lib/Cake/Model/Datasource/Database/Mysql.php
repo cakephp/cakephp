@@ -52,7 +52,7 @@ class Mysql extends DboSource {
 /**
  * Reference to the PDO object connection
  *
- * @var PDO $_connection
+ * @var PDO
  */
 	protected $_connection = null;
 
@@ -73,7 +73,7 @@ class Mysql extends DboSource {
 /**
  * use alias for update and delete. Set to true if version >= 4.1
  *
- * @var boolean
+ * @var bool
  */
 	protected $_useAlias = true;
 
@@ -145,7 +145,7 @@ class Mysql extends DboSource {
  *   combined with `ssl_key`.
  * - `ssl_ca` The certificate authority for SSL connections.
  *
- * @return boolean True if the database could be connected, else false
+ * @return bool True if the database could be connected, else false
  * @throws MissingConnectionException
  */
 	public function connect() {
@@ -203,7 +203,7 @@ class Mysql extends DboSource {
 /**
  * Check whether the MySQL extension is installed/loaded
  *
- * @return boolean
+ * @return bool
  */
 	public function enabled() {
 		return in_array('mysql', PDO::getAvailableDrivers());
@@ -420,7 +420,7 @@ class Mysql extends DboSource {
  *
  * @param Model $model The model to delete from.
  * @param mixed $conditions The conditions to use.
- * @return boolean Success
+ * @return bool Success
  */
 	public function delete(Model $model, $conditions = null) {
 		if (!$this->_useAlias) {
@@ -459,7 +459,7 @@ class Mysql extends DboSource {
  * Sets the database encoding
  *
  * @param string $enc Database encoding
- * @return boolean
+ * @return bool
  */
 	public function setEncoding($enc) {
 		return $this->_execute('SET NAMES ' . $enc) !== false;
@@ -796,7 +796,7 @@ class Mysql extends DboSource {
 /**
  * Check if the server support nested transactions
  *
- * @return boolean
+ * @return bool
  */
 	public function nestedTransactionSupported() {
 		return $this->useNestedTransactions && version_compare($this->getVersion(), '4.1', '>=');

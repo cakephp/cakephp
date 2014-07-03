@@ -116,7 +116,7 @@ class DboSourceTest extends CakeTestCase {
 /**
  * autoFixtures property
  *
- * @var boolean
+ * @var bool
  */
 	public $autoFixtures = false;
 
@@ -542,7 +542,6 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- *
  * @expectedException PDOException
  * @return void
  */

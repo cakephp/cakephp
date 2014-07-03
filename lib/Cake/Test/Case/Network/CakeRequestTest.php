@@ -31,7 +31,7 @@ class TestCakeRequest extends CakeRequest {
  * reConstruct method
  *
  * @param string $url
- * @param boolean $parseEnvironment
+ * @param bool $parseEnvironment
  * @return void
  */
 	public function reConstruct($url = 'some/path', $parseEnvironment = true) {
@@ -1057,7 +1057,7 @@ class CakeRequestTest extends CakeTestCase {
  * Helper function for testing callbacks.
  *
  * @param $request
- * @return boolean
+ * @return bool
  */
 	public function detectCallback($request) {
 		return (bool)$request->return;

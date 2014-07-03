@@ -28,7 +28,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 /**
  * autoFixtures property
  *
- * @var boolean
+ * @var bool
  */
 	public $autoFixtures = false;
 

@@ -274,7 +274,7 @@ class RssHelper extends AppHelper {
 /**
  * Converts a time in any format to an RSS time
  *
- * @param integer|string|DateTime $time UNIX timestamp or valid time string or DateTime object.
+ * @param int|string|DateTime $time UNIX timestamp or valid time string or DateTime object.
  * @return string An RSS-formatted timestamp
  * @see TimeHelper::toRSS
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::time
@@ -289,7 +289,7 @@ class RssHelper extends AppHelper {
  * @param string $name The name of the XML element
  * @param array $attrib The attributes of the XML element
  * @param string|array $content XML element content
- * @param boolean $endTag Whether the end tag of the element should be printed
+ * @param bool $endTag Whether the end tag of the element should be printed
  * @return string XML
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::elem
  */

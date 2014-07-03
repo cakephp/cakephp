@@ -48,7 +48,7 @@ class SessionComponent extends Component {
  * @param string $name The name of the key your are setting in the session.
  * 							This should be in a Controller.key format for better organizing
  * @param string $value The value you want to store in a session.
- * @return boolean Success
+ * @return bool Success
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::write
  */
 	public function write($name, $value = null) {
@@ -75,7 +75,7 @@ class SessionComponent extends Component {
  * In your controller: $this->Session->delete('Controller.sessKey');
  *
  * @param string $name the name of the session key you want to delete
- * @return boolean true is session variable is set and can be deleted, false is variable was not set.
+ * @return bool true is session variable is set and can be deleted, false is variable was not set.
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::delete
  */
 	public function delete($name) {
@@ -88,7 +88,7 @@ class SessionComponent extends Component {
  * In your controller: $this->Session->check('Controller.sessKey');
  *
  * @param string $name the name of the session key you want to check
- * @return boolean true is session variable is set, false if not
+ * @return bool true is session variable is set, false if not
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::check
  */
 	public function check($name) {
@@ -142,7 +142,7 @@ class SessionComponent extends Component {
  *
  * In your controller: $this->Session->valid();
  *
- * @return boolean true is session is valid, false is session is invalid
+ * @return bool true is session is valid, false is session is invalid
  */
 	public function valid() {
 		return CakeSession::valid();
@@ -180,7 +180,7 @@ class SessionComponent extends Component {
 /**
  * Returns a bool, whether or not the session has been started.
  *
- * @return boolean
+ * @return bool
  */
 	public function started() {
 		return CakeSession::started();

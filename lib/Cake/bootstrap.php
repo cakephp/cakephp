@@ -191,9 +191,9 @@ if (!function_exists('mb_stripos')) {
  *
  * @param string $haystack The string from which to get the position of the first occurrence of $needle.
  * @param string $needle The string to find in $haystack.
- * @param integer $offset The position in $haystack to start searching.
+ * @param int $offset The position in $haystack to start searching.
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
- * @return integer|boolean The numeric position of the first occurrence of $needle in the $haystack string, or false
+ * @return int|bool The numeric position of the first occurrence of $needle in the $haystack string, or false
  *    if $needle is not found.
  */
 	function mb_stripos($haystack, $needle, $offset = 0, $encoding = null) {
@@ -209,12 +209,12 @@ if (!function_exists('mb_stristr')) {
  *
  * @param string $haystack The string from which to get the first occurrence of $needle.
  * @param string $needle The string to find in $haystack.
- * @param boolean $part Determines which portion of $haystack this function returns.
+ * @param bool $part Determines which portion of $haystack this function returns.
  *    If set to true, it returns all of $haystack from the beginning to the first occurrence of $needle.
  *    If set to false, it returns all of $haystack from the first occurrence of $needle to the end,
  *    Default value is false.
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
- * @return string|boolean The portion of $haystack, or false if $needle is not found.
+ * @return string|bool The portion of $haystack, or false if $needle is not found.
  */
 	function mb_stristr($haystack, $needle, $part = false, $encoding = null) {
 		return Multibyte::stristr($haystack, $needle, $part);
@@ -229,7 +229,7 @@ if (!function_exists('mb_strlen')) {
  *
  * @param string $string The string being checked for length.
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
- * @return integer The number of characters in string $string having character encoding encoding.
+ * @return int The number of characters in string $string having character encoding encoding.
  *    A multi-byte character is counted as 1.
  */
 	function mb_strlen($string, $encoding = null) {
@@ -245,9 +245,9 @@ if (!function_exists('mb_strpos')) {
  *
  * @param string $haystack The string being checked.
  * @param string $needle The position counted from the beginning of haystack.
- * @param integer $offset The search offset. If it is not specified, 0 is used.
+ * @param int $offset The search offset. If it is not specified, 0 is used.
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
- * @return integer|boolean The numeric position of the first occurrence of $needle in the $haystack string.
+ * @return int|bool The numeric position of the first occurrence of $needle in the $haystack string.
  *    If $needle is not found, it returns false.
  */
 	function mb_strpos($haystack, $needle, $offset = 0, $encoding = null) {
@@ -263,12 +263,12 @@ if (!function_exists('mb_strrchr')) {
  *
  * @param string $haystack The string from which to get the last occurrence of $needle.
  * @param string $needle The string to find in $haystack.
- * @param boolean $part Determines which portion of $haystack this function returns.
+ * @param bool $part Determines which portion of $haystack this function returns.
  *    If set to true, it returns all of $haystack from the beginning to the last occurrence of $needle.
  *    If set to false, it returns all of $haystack from the last occurrence of $needle to the end,
  *    Default value is false.
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
- * @return string|boolean The portion of $haystack. or false if $needle is not found.
+ * @return string|bool The portion of $haystack. or false if $needle is not found.
  */
 	function mb_strrchr($haystack, $needle, $part = false, $encoding = null) {
 		return Multibyte::strrchr($haystack, $needle, $part);
@@ -283,12 +283,12 @@ if (!function_exists('mb_strrichr')) {
  *
  * @param string $haystack The string from which to get the last occurrence of $needle.
  * @param string $needle The string to find in $haystack.
- * @param boolean $part Determines which portion of $haystack this function returns.
+ * @param bool $part Determines which portion of $haystack this function returns.
  *    If set to true, it returns all of $haystack from the beginning to the last occurrence of $needle.
  *    If set to false, it returns all of $haystack from the last occurrence of $needle to the end,
  *    Default value is false.
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
- * @return string|boolean The portion of $haystack. or false if $needle is not found.
+ * @return string|bool The portion of $haystack. or false if $needle is not found.
  */
 	function mb_strrichr($haystack, $needle, $part = false, $encoding = null) {
 		return Multibyte::strrichr($haystack, $needle, $part);
@@ -303,9 +303,9 @@ if (!function_exists('mb_strripos')) {
  *
  * @param string $haystack The string from which to get the position of the last occurrence of $needle.
  * @param string $needle The string to find in $haystack.
- * @param integer $offset The position in $haystack to start searching.
+ * @param int $offset The position in $haystack to start searching.
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
- * @return integer|boolean The numeric position of the last occurrence of $needle in the $haystack string,
+ * @return int|bool The numeric position of the last occurrence of $needle in the $haystack string,
  *    or false if $needle is not found.
  */
 	function mb_strripos($haystack, $needle, $offset = 0, $encoding = null) {
@@ -321,10 +321,10 @@ if (!function_exists('mb_strrpos')) {
  *
  * @param string $haystack The string being checked, for the last occurrence of $needle.
  * @param string $needle The string to find in $haystack.
- * @param integer $offset May be specified to begin searching an arbitrary number of characters into the string.
+ * @param int $offset May be specified to begin searching an arbitrary number of characters into the string.
  *    Negative values will stop searching at an arbitrary point prior to the end of the string.
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
- * @return integer|boolean The numeric position of the last occurrence of $needle in the $haystack string.
+ * @return int|bool The numeric position of the last occurrence of $needle in the $haystack string.
  *    If $needle is not found, it returns false.
  */
 	function mb_strrpos($haystack, $needle, $offset = 0, $encoding = null) {
@@ -340,12 +340,12 @@ if (!function_exists('mb_strstr')) {
  *
  * @param string $haystack The string from which to get the first occurrence of $needle.
  * @param string $needle The string to find in $haystack
- * @param boolean $part Determines which portion of $haystack this function returns.
+ * @param bool $part Determines which portion of $haystack this function returns.
  *    If set to true, it returns all of $haystack from the beginning to the first occurrence of $needle.
  *    If set to false, it returns all of $haystack from the first occurrence of $needle to the end,
  *    Default value is FALSE.
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
- * @return string|boolean The portion of $haystack, or true if $needle is not found.
+ * @return string|bool The portion of $haystack, or true if $needle is not found.
  */
 	function mb_strstr($haystack, $needle, $part = false, $encoding = null) {
 		return Multibyte::strstr($haystack, $needle, $part);
@@ -391,7 +391,7 @@ if (!function_exists('mb_substr_count')) {
  * @param string $haystack The string being checked.
  * @param string $needle The string being found.
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
- * @return integer The number of times the $needle substring occurs in the $haystack string.
+ * @return int The number of times the $needle substring occurs in the $haystack string.
  */
 	function mb_substr_count($haystack, $needle, $encoding = null) {
 		return Multibyte::substrCount($haystack, $needle);
@@ -405,8 +405,8 @@ if (!function_exists('mb_substr')) {
  * Get part of string
  *
  * @param string $string The string being checked.
- * @param integer $start The first position used in $string.
- * @param integer $length The maximum length of the returned string.
+ * @param int $start The first position used in $string.
+ * @param int $length The maximum length of the returned string.
  * @param string $encoding Character encoding name to use. If it is omitted, internal character encoding is used.
  * @return string The portion of $string specified by the $string and $length parameters.
  */
@@ -430,7 +430,7 @@ if (!function_exists('mb_encode_mimeheader')) {
  *    mb_encode_mimeheader() performs line-folding
  *    (a » RFC term, the act of breaking a line longer than a certain length into multiple lines.
  *    The length is currently hard-coded to 74 characters). Falls back to "\r\n" (CRLF) if not given.
- * @param integer $indent [definition unknown and appears to have no affect]
+ * @param int $indent [definition unknown and appears to have no affect]
  * @return string A converted version of the string represented in ASCII.
  */
 	function mb_encode_mimeheader($str, $charset = 'UTF-8', $transferEncoding = 'B', $linefeed = "\r\n", $indent = 1) {

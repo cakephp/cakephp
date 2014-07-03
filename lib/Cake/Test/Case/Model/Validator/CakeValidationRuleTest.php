@@ -28,7 +28,7 @@ class CakeValidationRuleTest extends CakeTestCase {
 /**
  * Auxiliary method to test custom validators
  *
- * @return boolean
+ * @return bool
  */
 	public function myTestRule() {
 		return false;
@@ -37,7 +37,7 @@ class CakeValidationRuleTest extends CakeTestCase {
 /**
  * Auxiliary method to test custom validators
  *
- * @return boolean
+ * @return bool
  */
 	public function myTestRule2() {
 		return true;

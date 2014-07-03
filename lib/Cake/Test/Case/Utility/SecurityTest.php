@@ -25,7 +25,7 @@ class SecurityTest extends CakeTestCase {
 /**
  * sut property
  *
- * @var mixed null
+ * @var mixed
  */
 	public $sut = null;
 

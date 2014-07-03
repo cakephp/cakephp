@@ -35,7 +35,7 @@ class HttpSocket extends CakeSocket {
  * enforce RFC 2616 (HTTP/1.1 specs).
  * will be disabled and additional measures to deal with non-standard responses will be enabled.
  *
- * @var boolean
+ * @var bool
  */
 	public $quirksMode = false;
 
@@ -210,7 +210,7 @@ class HttpSocket extends CakeSocket {
  * Set proxy settings
  *
  * @param string|array $host Proxy host. Can be an array with settings to authentication class
- * @param integer $port Port. Default 3128.
+ * @param int $port Port. Default 3128.
  * @param string $method Proxy method (ie, Basic, Digest). If empty, disable proxy authentication
  * @param string $user Username if your proxy need authentication
  * @param string $pass Password to proxy authentication
@@ -231,7 +231,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Set the resource to receive the request content. This resource must support fwrite.
  *
- * @param resource|boolean $resource Resource or false to disable the resource use
+ * @param resource|bool $resource Resource or false to disable the resource use
  * @return void
  * @throws SocketException
  */
@@ -640,7 +640,7 @@ class HttpSocket extends CakeSocket {
  * Parses and sets the specified URI into current request configuration.
  *
  * @param string|array $uri URI, See HttpSocket::_parseUri()
- * @return boolean If uri has merged in config
+ * @return bool If uri has merged in config
  */
 	protected function _configUri($uri = null) {
 		if (empty($uri)) {
@@ -745,7 +745,7 @@ class HttpSocket extends CakeSocket {
  * such as 'scheme', 'port', 'query'.
  *
  * @param string|array $uri URI to parse
- * @param boolean|array $base If true use default URI config, otherwise indexed array to set 'scheme', 'host', 'port', etc.
+ * @param bool|array $base If true use default URI config, otherwise indexed array to set 'scheme', 'host', 'port', etc.
  * @return array Parsed URI
  */
 	protected function _parseUri($uri = null, $base = array()) {
@@ -984,7 +984,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Gets escape chars according to RFC 2616 (HTTP 1.1 specs).
  *
- * @param boolean $hex true to get them as HEX values, false otherwise
+ * @param bool $hex true to get them as HEX values, false otherwise
  * @param array $chars Characters to escape
  * @return array Escape chars
  */
@@ -1012,8 +1012,8 @@ class HttpSocket extends CakeSocket {
  * Resets the state of this HttpSocket instance to it's initial state (before Object::__construct got executed) or does
  * the same thing partially for the request and the response property only.
  *
- * @param boolean $full If set to false only HttpSocket::response and HttpSocket::request are reset
- * @return boolean True on success
+ * @param bool $full If set to false only HttpSocket::response and HttpSocket::request are reset
+ * @return bool True on success
  */
 	public function reset($full = true) {
 		static $initalState = array();

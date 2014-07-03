@@ -27,14 +27,14 @@ class PhpAcl extends Object implements AclInterface {
 /**
  * Constant for deny
  *
- * @var boolean
+ * @var bool
  */
 	const DENY = false;
 
 /**
  * Constant for allow
  *
- * @var boolean
+ * @var bool
  */
 	const ALLOW = true;
 
@@ -124,7 +124,7 @@ class PhpAcl extends Object implements AclInterface {
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
  * @param string $action Action (defaults to *)
- * @return boolean Success
+ * @return bool Success
  */
 	public function allow($aro, $aco, $action = "*") {
 		return $this->Aco->access($this->Aro->resolve($aro), $aco, $action, 'allow');
@@ -136,7 +136,7 @@ class PhpAcl extends Object implements AclInterface {
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
  * @param string $action Action (defaults to *)
- * @return boolean Success
+ * @return bool Success
  */
 	public function deny($aro, $aco, $action = "*") {
 		return $this->Aco->access($this->Aro->resolve($aro), $aco, $action, 'deny');
@@ -148,7 +148,7 @@ class PhpAcl extends Object implements AclInterface {
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
  * @param string $action Action (defaults to *)
- * @return boolean Success
+ * @return bool Success
  */
 	public function inherit($aro, $aco, $action = "*") {
 		return false;
@@ -161,7 +161,7 @@ class PhpAcl extends Object implements AclInterface {
  * @param string $aro ARO
  * @param string $aco ACO
  * @param string $action Action
- * @return boolean true if access is granted, false otherwise
+ * @return bool true if access is granted, false otherwise
  */
 	public function check($aro, $aco, $action = "*") {
 		$allow = $this->options['policy'];

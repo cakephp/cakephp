@@ -40,7 +40,7 @@ class TestPluginAuthUser extends TestPluginAppModel {
 /**
  * useDbConfig property
  *
- * @var string 'test'
+ * @var string
  */
 	public $useDbConfig = 'test';
 }

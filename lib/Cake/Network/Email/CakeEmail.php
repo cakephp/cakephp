@@ -40,14 +40,14 @@ class CakeEmail {
 /**
  * Line length - no should more - RFC 2822 - 2.1.1
  *
- * @var integer
+ * @var int
  */
 	const LINE_LENGTH_SHOULD = 78;
 
 /**
  * Line length - no must more - RFC 2822 - 2.1.1
  *
- * @var integer
+ * @var int
  */
 	const LINE_LENGTH_MUST = 998;
 
@@ -133,7 +133,7 @@ class CakeEmail {
 /**
  * Message ID
  *
- * @var boolean|string True to generate, False to ignore, String with value
+ * @var bool|string
  */
 	protected $_messageId = true;
 
@@ -517,7 +517,7 @@ class CakeEmail {
  * Charset setter/getter
  *
  * @param string $charset Character set.
- * @return string $this->charset
+ * @return string this->charset
  */
 	public function charset($charset = null) {
 		if ($charset === null) {
@@ -534,7 +534,7 @@ class CakeEmail {
  * HeaderCharset setter/getter
  *
  * @param string $charset Character set.
- * @return string $this->charset
+ * @return string this->charset
  */
 	public function headerCharset($charset = null) {
 		if ($charset === null) {
@@ -819,8 +819,8 @@ class CakeEmail {
 /**
  * Template and layout
  *
- * @param boolean|string $template Template name or null to not use
- * @param boolean|string $layout Layout name or null to not use
+ * @param bool|string $template Template name or null to not use
+ * @param bool|string $layout Layout name or null to not use
  * @return array|$this
  */
 	public function template($template = false, $layout = false) {
@@ -951,8 +951,8 @@ class CakeEmail {
 /**
  * Message-ID
  *
- * @param boolean|string $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
- * @return boolean|string|$this
+ * @param bool|string $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
+ * @return bool|string|$this
  * @throws SocketException
  */
 	public function messageId($message = null) {
@@ -1175,7 +1175,7 @@ class CakeEmail {
  * @param string $subject String of subject or null to use 'subject' from transport config
  * @param string|array $message String with message or array with variables to be used in render
  * @param string|array $transportConfig String to use config from EmailConfig or array with configs
- * @param boolean $send Send the email or just return the instance pre-configured
+ * @param bool $send Send the email or just return the instance pre-configured
  * @return CakeEmail Instance of CakeEmail
  * @throws SocketException
  */
@@ -1335,7 +1335,7 @@ class CakeEmail {
  * Wrap the message to follow the RFC 2822 - 2.1.1
  *
  * @param string $message Message to wrap
- * @param integer $wrapLength The line length
+ * @param int $wrapLength The line length
  * @return array Wrapped message
  */
 	protected function _wrap($message, $wrapLength = CakeEmail::LINE_LENGTH_MUST) {

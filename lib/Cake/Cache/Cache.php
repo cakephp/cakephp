@@ -160,7 +160,7 @@ class Cache {
  * Finds and builds the instance of the required engine class.
  *
  * @param string $name Name of the config array that needs an engine instance built
- * @return boolean
+ * @return bool
  * @throws CacheException
  */
 	protected static function _buildEngine($name) {
@@ -201,7 +201,7 @@ class Cache {
  * the Engine instance is also unset.
  *
  * @param string $name A currently configured cache config you wish to remove.
- * @return boolean success of the removal, returns false when the config does not exist.
+ * @return bool success of the removal, returns false when the config does not exist.
  */
 	public static function drop($name) {
 		if (!isset(self::$_config[$name])) {
@@ -269,7 +269,7 @@ class Cache {
  * Permanently remove all expired and deleted data
  *
  * @param string $config [optional] The config name you wish to have garbage collected. Defaults to 'default'
- * @param integer $expires [optional] An expires timestamp. Defaults to NULL
+ * @param int $expires [optional] An expires timestamp. Defaults to NULL
  * @return void
  */
 	public static function gc($config = 'default', $expires = null) {
@@ -292,7 +292,7 @@ class Cache {
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached - anything except a resource
  * @param string $config Optional string configuration name to write to. Defaults to 'default'
- * @return boolean True if the data was successfully cached, false on failure
+ * @return bool True if the data was successfully cached, false on failure
  */
 	public static function write($key, $value, $config = 'default') {
 		$settings = self::settings($config);
@@ -362,7 +362,7 @@ class Cache {
  * Increment a number under the key and return incremented value.
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to add
+ * @param int $offset How much to add
  * @param string $config Optional string configuration name. Defaults to 'default'
  * @return mixed new value, or false if the data doesn't exist, is not integer,
  *    or if there was an error fetching it.
@@ -390,7 +390,7 @@ class Cache {
  * Decrement a number under the key and return decremented value.
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to subtract
+ * @param int $offset How much to subtract
  * @param string $config Optional string configuration name. Defaults to 'default'
  * @return mixed new value, or false if the data doesn't exist, is not integer,
  *   or if there was an error fetching it
@@ -429,7 +429,7 @@ class Cache {
  *
  * @param string $key Identifier for the data
  * @param string $config name of the configuration to use. Defaults to 'default'
- * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public static function delete($key, $config = 'default') {
 		$settings = self::settings($config);
@@ -453,9 +453,9 @@ class Cache {
 /**
  * Delete all keys from the cache.
  *
- * @param boolean $check if true will check expiration, otherwise delete all
+ * @param bool $check if true will check expiration, otherwise delete all
  * @param string $config name of the configuration to use. Defaults to 'default'
- * @return boolean True if the cache was successfully cleared, false otherwise
+ * @return bool True if the cache was successfully cleared, false otherwise
  */
 	public static function clear($check = false, $config = 'default') {
 		if (!self::isInitialized($config)) {
@@ -471,7 +471,7 @@ class Cache {
  *
  * @param string $group name of the group to be cleared
  * @param string $config name of the configuration to use. Defaults to 'default'
- * @return boolean True if the cache group was successfully cleared, false otherwise
+ * @return bool True if the cache group was successfully cleared, false otherwise
  */
 	public static function clearGroup($group, $config = 'default') {
 		if (!self::isInitialized($config)) {
@@ -486,7 +486,7 @@ class Cache {
  * Check if Cache has initialized a working config for the given name.
  *
  * @param string $config name of the configuration to use. Defaults to 'default'
- * @return boolean Whether or not the config name has been initialized.
+ * @return bool Whether or not the config name has been initialized.
  */
 	public static function isInitialized($config = 'default') {
 		if (Configure::read('Cache.disable')) {

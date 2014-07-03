@@ -86,7 +86,7 @@ abstract class BaseAuthenticate {
  *
  * @param string|array $username The username/identifier, or an array of find conditions.
  * @param string $password The password, only used if $username param is string.
- * @return boolean|array Either false on failure, or an array of user data.
+ * @return bool|array Either false on failure, or an array of user data.
  */
 	protected function _findUser($username, $password = null) {
 		$userModel = $this->settings['userModel'];

@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -28,7 +26,7 @@ class AclNode extends Model {
 /**
  * Explicitly disable in-memory query caching for ACL models
  *
- * @var boolean
+ * @var bool
  */
 	public $cacheQueries = false;
 

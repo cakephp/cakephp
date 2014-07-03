@@ -56,7 +56,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
  * Ugly hack to get around PHPUnit having a hard coded class name for the Runner. :(
  *
  * @param array $argv The command arguments
- * @param boolean $exit The exit mode.
+ * @param bool $exit The exit mode.
  * @return void
  */
 	public function run(array $argv, $exit = true) {

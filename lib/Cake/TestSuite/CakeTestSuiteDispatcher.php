@@ -63,7 +63,7 @@ class CakeTestSuiteDispatcher {
 /**
  * boolean to set auto parsing of params.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_paramsParsed = false;
 
@@ -130,7 +130,7 @@ class CakeTestSuiteDispatcher {
 /**
  * Checks for the existence of the test framework files
  *
- * @return boolean true if found, false otherwise
+ * @return bool true if found, false otherwise
  */
 	public function loadTestFramework() {
 		if (class_exists('PHPUnit_Framework_TestCase')) {
@@ -262,8 +262,8 @@ class CakeTestSuiteDispatcher {
 /**
  * Sets a static timestamp
  *
- * @param boolean $reset to set new static timestamp.
- * @return integer timestamp
+ * @param bool $reset to set new static timestamp.
+ * @return int timestamp
  */
 	public static function time($reset = false) {
 		static $now;

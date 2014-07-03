@@ -28,14 +28,14 @@ class HtmlCoverageReport extends BaseCoverageReport {
 /**
  * Holds the total number of processed rows.
  *
- * @var integer
+ * @var int
  */
 	protected $_total = 0;
 
 /**
  * Holds the total number of covered rows.
  *
- * @var integer
+ * @var int
  */
 	protected $_covered = 0;
 
@@ -144,7 +144,7 @@ HTML;
  * Renders the HTML for a single line in the HTML diff.
  *
  * @param string $line The line content.
- * @param integer $linenumber The line number
+ * @param int $linenumber The line number
  * @param string $class The classname to use.
  * @param array $coveringTests The tests covering the line.
  * @return string
