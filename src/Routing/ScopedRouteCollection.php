@@ -634,8 +634,8 @@ class ScopedRouteCollection {
  * @return void
  */
 	public function fallbacks() {
-		$this->connect('/:controller');
-		$this->connect('/:controller/:action/*');
+		$this->connect('/:controller', ['action' => 'index'], ['routeClass' => 'InflectedRoute']);
+		$this->connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
 	}
 
 }
