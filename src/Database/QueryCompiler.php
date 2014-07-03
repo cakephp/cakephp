@@ -282,13 +282,18 @@ class QueryCompiler {
  *
  * @param array $expressions list of strings and ExpressionInterface objects
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+ * @param bool $wrap Tells whether the outputed string should be wrapped with parenthesis
  * @return array
  */
 	protected function _stringifyExpressions($expressions, $generator, $wrap = true) {
 		$result = [];
 		foreach ($expressions as $k => $expression) {
 			if ($expression instanceof ExpressionInterface) {
-				$expression = '(' . $expression->sql($generator) . ')';
+				if ($wrap) {
+					$expression = '(' . $expression->sql($generator) . ')';
+				} else {
+					$expression = $expression->sql($generator);
+				}
 			}
 			$result[$k] = $expression;
 		}

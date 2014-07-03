@@ -56,16 +56,6 @@ class TableNameExpression implements ExpressionInterface {
     }
 
 /**
- * Sets the alias to the table name in this expression
- *
- * @param string $alias
- * @return void
- */
-    public function setAlias($alias) {
-        $this->_alias = $alias;
-    }
-
-/**
  * Sets the prefix for the table name of this expression
  *
  * @param string $prefix
@@ -73,6 +63,16 @@ class TableNameExpression implements ExpressionInterface {
  */
     public function setPrefix($prefix) {
         $this->_prefix = $prefix;
+    }
+    
+/**
+ * Sets the alias to the table name in this expression
+ *
+ * @param string $alias
+ * @return void
+ */
+    public function setAlias($alias) {
+        $this->_alias = $alias;
     }
 
 /**

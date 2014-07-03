@@ -17,6 +17,7 @@ namespace Cake\Database;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 
@@ -201,7 +202,7 @@ class Connection {
 	public function fullTableName($names) {
 		$prefix = "";
 
-		if (isset($this->_config["prefix"]) || $this->_config["prefix"] !== "") {
+		if (isset($this->_config["prefix"]) && $this->_config["prefix"] !== "") {
 			$prefix = $this->_config["prefix"];
 		}
 
