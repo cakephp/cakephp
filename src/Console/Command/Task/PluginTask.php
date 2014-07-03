@@ -141,6 +141,7 @@ class PluginTask extends BakeTask {
 			$this->createFile($this->path . $plugin . DS . $classBase . DS . 'Controller' . DS . $controllerFileName, $out);
 
 			$hasAutoloader = $this->_modifyAutoloader($plugin, $this->path);
+			$this->_generateRoutes($plugin, $this->path);
 			$this->_modifyBootstrap($plugin, $hasAutoloader);
 			$this->_generatePhpunitXml($plugin, $this->path);
 			$this->_generateTestBootstrap($plugin, $this->path);
@@ -166,13 +167,30 @@ class PluginTask extends BakeTask {
 		if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
 			$autoload = $hasAutoloader ? null : "'autoload' => true, ";
 			$bootstrap->append(sprintf(
-				"\nPlugin::load('%s', [%s'bootstrap' => false, 'routes' => false]);\n",
+				"\nPlugin::load('%s', [%s'bootstrap' => false, 'routes' => true]);\n",
 				$plugin,
 				$autoload
 			));
 			$this->out('');
 			$this->out(sprintf('%s modified', $this->bootstrap));
 		}
+	}
+
+/**
+ * Generate a routes file for the plugin being baked.
+ *
+ * @param string $plugin The plugin to generate routes for.
+ * @param string $path The path to save the routes.php file in.
+ * @return void
+ */
+	protected function _generateRoutes($plugin, $path) {
+		$this->Template->set([
+			'plugin' => $plugin,
+		]);
+		$this->out( __d('cake_console', 'Generating routes.php file...'));
+		$out = $this->Template->generate('config', 'routes');
+		$file = $path . $plugin . DS . 'Config' . DS . 'routes.php';
+		$this->createFile($file, $out);
 	}
 
 /**
