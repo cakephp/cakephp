@@ -1688,6 +1688,7 @@ class Model extends Object implements CakeEventListener {
  *
  * @param array $fieldList List of fields to allow to be saved
  * @return mixed On success Model::$data if its not empty or true, false on failure
+ * @throws Exception
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html
  */
 	public function save($data = null, $validate = true, $fieldList = array()) {
@@ -1702,7 +1703,7 @@ class Model extends Object implements CakeEventListener {
 		} else {
 			$options = $validate + $defaults;
 		}
-		
+
 		if (!$options['atomic']) {
 			return $this->_doSave($data, $options);
 		}

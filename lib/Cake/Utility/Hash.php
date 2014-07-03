@@ -50,12 +50,15 @@ class Hash {
 			$parts = explode('.', $path);
 		} else {
 			if (!is_array($path)) {
-            			 throw new InvalidArgumentException(__d('cake_dev', 'Invalid Parameter %s, should be dot separated path or array.', $path));
- 			}
- 			
- 			$parts = $path;
+				throw new InvalidArgumentException(__d('cake_dev',
+					'Invalid Parameter %s, should be dot separated path or array.',
+					$path
+				));
+			}
+
+			$parts = $path;
 		}
-		
+
 		foreach ($parts as $key) {
 			if (is_array($data) && isset($data[$key])) {
 				$data =& $data[$key];

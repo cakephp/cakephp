@@ -275,8 +275,8 @@ class TestViewEventListener implements CakeEventListener {
 
 /**
  * beforeRender method
- * 
- * @param CakeEvent $event the event being sent 
+ *
+ * @param CakeEvent $event the event being sent
  * @return void
  */
 	public function beforeRender($event) {
@@ -286,7 +286,7 @@ class TestViewEventListener implements CakeEventListener {
 /**
  * afterRender method
  *
- * @param CakeEvent $event the event being sent 
+ * @param CakeEvent $event the event being sent
  * @return void
  */
 	public function afterRender($event) {
@@ -863,7 +863,7 @@ class ViewTest extends CakeTestCase {
 
 		Cache::clear(true, 'test_view');
 		Cache::drop('test_view');
-    }
+	}
 
 /**
  * Test element events

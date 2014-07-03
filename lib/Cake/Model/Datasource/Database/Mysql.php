@@ -564,7 +564,7 @@ class Mysql extends DboSource {
 								if (isset($col['after'])) {
 									$alter .= ' AFTER ' . $this->name($col['after']);
 								}
-								$colList[] = $alter;	
+								$colList[] = $alter;
 							}
 							break;
 					}

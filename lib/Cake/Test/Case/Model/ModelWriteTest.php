@@ -826,7 +826,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel->create();
 		$result = $TestModel->save($data);
 		$this->assertTrue((bool)$result);
-		
+
 		// force transaction to be rolled back in Post model
 		$event->stopPropagation();
 		return false;
