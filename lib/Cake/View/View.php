@@ -80,7 +80,7 @@ class View extends Object {
 /**
  * Name of the controller.
  *
- * @var string Name of controller
+ * @var string
  */
 	public $name = null;
 
@@ -94,14 +94,14 @@ class View extends Object {
 /**
  * An array of names of built-in helpers to include.
  *
- * @var mixed A single name as a string or a list of names as an array.
+ * @var mixed
  */
 	public $helpers = array();
 
 /**
  * Path to View.
  *
- * @var string Path to View
+ * @var string
  */
 	public $viewPath = null;
 
@@ -129,7 +129,7 @@ class View extends Object {
 /**
  * Path to Layout.
  *
- * @var string Path to Layout
+ * @var string
  */
 	public $layoutPath = null;
 
@@ -137,7 +137,7 @@ class View extends Object {
  * Turns on or off CakePHP's conventional mode of applying layout files. On by default.
  * Setting to off means that layouts will not be automatically applied to rendered views.
  *
- * @var boolean
+ * @var bool
  */
 	public $autoLayout = true;
 
@@ -181,7 +181,7 @@ class View extends Object {
 /**
  * True when the view has been rendered.
  *
- * @var boolean
+ * @var bool
  */
 	public $hasRendered = false;
 
@@ -300,7 +300,7 @@ class View extends Object {
 /**
  * Whether the event manager was already configured for this object
  *
- * @var boolean
+ * @var bool
  */
 	protected $_eventManagerConfigured = false;
 
@@ -432,7 +432,7 @@ class View extends Object {
  * @param string $name Name of template file in the /app/View/Elements/ folder,
  *   or `MyPlugin.template` to check the template element from MyPlugin. If the element
  *   is not found in the plugin, the normal view path cascade will be searched.
- * @return boolean Success
+ * @return bool Success
  */
 	public function elementExists($name) {
 		return (bool)$this->_getElementFilename($name);
@@ -551,7 +551,7 @@ class View extends Object {
  *
  * @param string $filename the cache file to include
  * @param string $timeStart the page render start time
- * @return boolean Success of rendering the cached file.
+ * @return bool Success of rendering the cached file.
  */
 	public function renderCache($filename, $timeStart) {
 		$response = $this->response;
@@ -687,7 +687,7 @@ class View extends Object {
  *
  * @param string $name Name of the block
  * @param string $default Default text
- * @return string $default The block content or $default if the block does not exist.
+ * @return string default The block content or $default if the block does not exist.
  * @see ViewBlock::get()
  */
 	public function fetch($name, $default = '') {
@@ -861,7 +861,7 @@ class View extends Object {
  * Magic isset check for deprecated attributes.
  *
  * @param string $name Name of the attribute to check.
- * @return boolean
+ * @return bool
  */
 	public function __isset($name) {
 		if (isset($this->{$name})) {
@@ -1028,7 +1028,7 @@ class View extends Object {
  * It checks if the plugin is loaded, else filename will stay unchanged for filenames containing dot
  *
  * @param string $name The name you want to plugin split.
- * @param boolean $fallback If true uses the plugin set in the current CakeRequest when parsed plugin is not loaded
+ * @param bool $fallback If true uses the plugin set in the current CakeRequest when parsed plugin is not loaded
  * @return array Array with 2 indexes. 0 => plugin name, 1 => filename
  */
 	public function pluginSplit($name, $fallback = true) {
@@ -1113,7 +1113,7 @@ class View extends Object {
  * Return all possible paths to find view files in order
  *
  * @param string $plugin Optional plugin name to scan for view files.
- * @param boolean $cached Set to false to force a refresh of view paths. Default true.
+ * @param bool $cached Set to false to force a refresh of view paths. Default true.
  * @return array paths
  */
 	protected function _paths($plugin = null, $cached = true) {

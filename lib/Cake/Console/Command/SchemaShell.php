@@ -39,7 +39,7 @@ class SchemaShell extends AppShell {
 /**
  * is this a dry run?
  *
- * @var boolean
+ * @var bool
  */
 	protected $_dry = null;
 

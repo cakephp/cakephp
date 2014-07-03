@@ -27,7 +27,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 /**
  * Headers sent
  *
- * @var boolean
+ * @var bool
  */
 	protected $_headerSent = false;
 

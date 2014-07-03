@@ -484,7 +484,7 @@ class ConsoleShell extends AppShell {
  * Tells if the specified model is included in the list of available models
  *
  * @param string $modelToCheck The model to check.
- * @return boolean true if is an available model, false otherwise
+ * @return bool true if is an available model, false otherwise
  */
 	protected function _isValidModel($modelToCheck) {
 		return in_array($modelToCheck, $this->models);
@@ -494,7 +494,7 @@ class ConsoleShell extends AppShell {
  * Reloads the routes configuration from app/Config/routes.php, and compiles
  * all routes found
  *
- * @return boolean True if config reload was a success, otherwise false
+ * @return bool True if config reload was a success, otherwise false
  */
 	protected function _loadRoutes() {
 		Router::reload();

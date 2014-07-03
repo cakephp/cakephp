@@ -161,8 +161,8 @@ class ModelTask extends BakeTask {
  *
  * @param array $options Array of options to use for the selections. indexes must start at 0
  * @param string $prompt Prompt to use for options list.
- * @param integer $default The default option for the given prompt.
- * @return integer Result of user choice.
+ * @param int $default The default option for the given prompt.
+ * @return int Result of user choice.
  */
 	public function inOptions($options, $prompt = null, $default = null) {
 		$valid = false;
@@ -186,7 +186,7 @@ class ModelTask extends BakeTask {
 /**
  * Handles interactive baking
  *
- * @return boolean
+ * @return bool
  */
 	protected function _interactive() {
 		$this->hr();
@@ -342,7 +342,7 @@ class ModelTask extends BakeTask {
  * Handles Generation and user interaction for creating validation.
  *
  * @param Model $model Model to have validations generated for.
- * @return array $validate Array of user selected validations.
+ * @return array validate Array of user selected validations.
  */
 	public function doValidation($model) {
 		if (!$model instanceof Model) {
@@ -812,7 +812,7 @@ class ModelTask extends BakeTask {
  * Assembles and writes a Model file.
  *
  * @param string|object $name Model name or object
- * @param array|boolean $data if array and $name is not an object assume bake data, otherwise boolean.
+ * @param array|bool $data if array and $name is not an object assume bake data, otherwise boolean.
  * @return string
  */
 	public function bake($name, $data = array()) {

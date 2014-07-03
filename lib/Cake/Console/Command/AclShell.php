@@ -220,7 +220,7 @@ class AclShell extends AppShell {
  *
  * @param string $class Class name that is being used.
  * @param array $node Array of node information.
- * @param integer $indent indent level.
+ * @param int $indent indent level.
  * @return void
  */
 	protected function _outputNode($class, $node, $indent) {
@@ -519,7 +519,7 @@ class AclShell extends AppShell {
 /**
  * Checks that given node exists
  *
- * @return boolean Success
+ * @return bool Success
  */
 	public function nodeExists() {
 		if (!isset($this->args[0]) || !isset($this->args[1])) {
@@ -559,7 +559,7 @@ class AclShell extends AppShell {
  *
  * @param string $class Class type you want (Aro/Aco)
  * @param string|array $identifier A mixed identifier for finding the node.
- * @return integer Integer of NodeId. Will trigger an error if nothing is found.
+ * @return int Integer of NodeId. Will trigger an error if nothing is found.
  */
 	protected function _getNodeId($class, $identifier) {
 		$node = $this->Acl->{$class}->node($identifier);

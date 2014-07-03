@@ -48,7 +48,7 @@ class ConsoleInputOption {
 /**
  * Is the option a boolean option. Boolean options do not consume a parameter.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_boolean;
 
@@ -72,7 +72,7 @@ class ConsoleInputOption {
  * @param string|array $name The long name of the option, or an array with all the properties.
  * @param string $short The short alias for this option
  * @param string $help The help text for this option
- * @param boolean $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
+ * @param bool $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
  * @param string $default The default value for this option.
  * @param array $choices Valid choices for this option.
  * @throws ConsoleException
@@ -118,7 +118,7 @@ class ConsoleInputOption {
 /**
  * Generate the help for this this option.
  *
- * @param integer $width The width to make the name of the option.
+ * @param int $width The width to make the name of the option.
  * @return string
  */
 	public function help($width = 0) {
@@ -168,7 +168,7 @@ class ConsoleInputOption {
 /**
  * Check if this option is a boolean option
  *
- * @return boolean
+ * @return bool
  */
 	public function isBoolean() {
 		return (bool)$this->_boolean;
@@ -178,7 +178,7 @@ class ConsoleInputOption {
  * Check that a value is a valid choice for this option.
  *
  * @param string $value The choice to validate.
- * @return boolean
+ * @return bool
  * @throws ConsoleException
  */
 	public function validChoice($value) {

@@ -41,7 +41,7 @@ class ConsoleInputArgument {
 /**
  * Is this option required?
  *
- * @var boolean
+ * @var bool
  */
 	protected $_required;
 
@@ -57,7 +57,7 @@ class ConsoleInputArgument {
  *
  * @param string|array $name The long name of the option, or an array with all the properties.
  * @param string $help The help text for this option
- * @param boolean $required Whether this argument is required. Missing required args will trigger exceptions
+ * @param bool $required Whether this argument is required. Missing required args will trigger exceptions
  * @param array $choices Valid choices for this option.
  */
 	public function __construct($name, $help = '', $required = false, $choices = array()) {
@@ -85,7 +85,7 @@ class ConsoleInputArgument {
 /**
  * Generate the help for this argument.
  *
- * @param integer $width The width to make the name of the option.
+ * @param int $width The width to make the name of the option.
  * @return string
  */
 	public function help($width = 0) {
@@ -123,7 +123,7 @@ class ConsoleInputArgument {
 /**
  * Check if this argument is a required argument
  *
- * @return boolean
+ * @return bool
  */
 	public function isRequired() {
 		return (bool)$this->_required;
@@ -133,7 +133,7 @@ class ConsoleInputArgument {
  * Check that $value is a valid choice for this argument.
  *
  * @param string $value The choice to validate.
- * @return boolean
+ * @return bool
  * @throws ConsoleException
  */
 	public function validChoice($value) {

@@ -282,7 +282,7 @@ class EmailComponent extends Component {
  *  If you are rendering a template this variable will be sent to the templates as `$content`
  * @param string $template Template to use when sending email
  * @param string $layout Layout to use to enclose email body
- * @return boolean Success
+ * @return bool Success
  */
 	public function send($content = null, $template = null, $layout = null) {
 		$lib = new CakeEmail();
@@ -444,7 +444,7 @@ class EmailComponent extends Component {
  * Helps prevent header injection / manipulation on user content.
  *
  * @param string $value Value to strip
- * @param boolean $message Set to true to indicate main message content
+ * @param bool $message Set to true to indicate main message content
  * @return string Stripped value
  */
 	protected function _strip($value, $message = false) {

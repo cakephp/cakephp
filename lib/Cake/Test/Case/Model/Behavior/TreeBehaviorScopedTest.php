@@ -33,7 +33,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 /**
  * Whether backup global state for each test method or not
  *
- * @var boolean
+ * @var bool
  */
 	public $backupGlobals = false;
 

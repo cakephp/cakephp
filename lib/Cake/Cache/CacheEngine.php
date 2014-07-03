@@ -42,7 +42,7 @@ abstract class CacheEngine {
  * Called automatically by the cache frontend
  *
  * @param array $settings Associative array of parameters for the engine
- * @return boolean True if the engine has been successfully initialized, false if not
+ * @return bool True if the engine has been successfully initialized, false if not
  */
 	public function init($settings = array()) {
 		$settings += $this->settings + array(
@@ -67,7 +67,7 @@ abstract class CacheEngine {
  *
  * Permanently remove all expired and deleted data
  *
- * @param integer $expires [optional] An expires timestamp, invalidating all data before.
+ * @param int $expires [optional] An expires timestamp, invalidating all data before.
  * @return void
  */
 	public function gc($expires = null) {
@@ -78,8 +78,8 @@ abstract class CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @param integer $duration How long to cache for.
- * @return boolean True if the data was successfully cached, false on failure
+ * @param int $duration How long to cache for.
+ * @return bool True if the data was successfully cached, false on failure
  */
 	abstract public function write($key, $value, $duration);
 
@@ -95,7 +95,7 @@ abstract class CacheEngine {
  * Increment a number under the key and return incremented value
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to add
+ * @param int $offset How much to add
  * @return New incremented value, false otherwise
  */
 	abstract public function increment($key, $offset = 1);
@@ -104,7 +104,7 @@ abstract class CacheEngine {
  * Decrement a number under the key and return decremented value
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to subtract
+ * @param int $offset How much to subtract
  * @return New incremented value, false otherwise
  */
 	abstract public function decrement($key, $offset = 1);
@@ -113,15 +113,15 @@ abstract class CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	abstract public function delete($key);
 
 /**
  * Delete all keys from the cache
  *
- * @param boolean $check if true will check expiration, otherwise delete all
- * @return boolean True if the cache was successfully cleared, false otherwise
+ * @param bool $check if true will check expiration, otherwise delete all
+ * @return bool True if the cache was successfully cleared, false otherwise
  */
 	abstract public function clear($check);
 
@@ -131,7 +131,7 @@ abstract class CacheEngine {
  * the same result.
  *
  * @param string $group name of the group to be cleared
- * @return boolean
+ * @return bool
  */
 	public function clearGroup($group) {
 		return false;

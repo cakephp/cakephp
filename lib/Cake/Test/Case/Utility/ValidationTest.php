@@ -29,7 +29,7 @@ class CustomValidator {
  * Makes sure that a given $email address is valid and unique
  *
  * @param string $email
- * @return boolean
+ * @return bool
  */
 	public static function customValidate($check) {
 		return (bool)preg_match('/^[0-9]{3}$/', $check);

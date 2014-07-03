@@ -90,7 +90,7 @@ class PluginTask extends AppShell {
  * Bake the plugin, create directories and files
  *
  * @param string $plugin Name of the plugin in CamelCased format
- * @return boolean
+ * @return bool
  */
 	public function bake($plugin) {
 		$pathOptions = App::path('plugins');

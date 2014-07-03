@@ -118,7 +118,7 @@ class ControllerPaginateModel extends CakeTestModel {
 /**
  * paginate method
  *
- * @return boolean
+ * @return bool
  */
 	public function paginate($conditions, $fields, $order, $limit, $page, $recursive, $extra) {
 		$this->extra = $extra;
@@ -901,7 +901,6 @@ class PaginatorComponentTest extends CakeTestCase {
 
 /**
  * Test that a really REALLY large page number gets clamped to the max page size.
- *
  *
  * @expectedException NotFoundException
  * @return void

@@ -88,7 +88,7 @@ class CakeNumber {
 /**
  * If native number_format() should be used. If >= PHP5.4
  *
- * @var boolean
+ * @var bool
  */
 	protected static $_numberFormatSupport = null;
 
@@ -96,7 +96,7 @@ class CakeNumber {
  * Formats a number with a level of precision.
  *
  * @param float $value A floating point number.
- * @param integer $precision The precision of the returned number.
+ * @param int $precision The precision of the returned number.
  * @return float Formatted float.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
  */
@@ -107,7 +107,7 @@ class CakeNumber {
 /**
  * Returns a formatted-for-humans file size.
  *
- * @param integer $size Size in bytes
+ * @param int $size Size in bytes
  * @return string Human readable size
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toReadableSize
  */
@@ -171,7 +171,7 @@ class CakeNumber {
  * - `multiply`: Multiply the input value by 100 for decimal percentages.
  *
  * @param float $value A floating point number
- * @param integer $precision The precision of the returned number
+ * @param int $precision The precision of the returned number
  * @param array $options Options
  * @return string Percentage string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toPercentage
@@ -188,7 +188,7 @@ class CakeNumber {
  * Formats a number into a currency format.
  *
  * @param float $value A floating point number
- * @param integer $options If integer then places, if string then before, if (,.-) then use it
+ * @param int $options If integer then places, if string then before, if (,.-) then use it
  *   or array with places and before keys
  * @return string formatted number
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
@@ -259,7 +259,7 @@ class CakeNumber {
  * Alternative number_format() to accommodate multibyte decimals and thousands < PHP 5.4
  *
  * @param float $value Value to format.
- * @param integer $places Decimal places to use.
+ * @param int $places Decimal places to use.
  * @param string $decimals Decimal position string.
  * @param string $thousands Thousands separator string.
  * @return string

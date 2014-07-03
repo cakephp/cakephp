@@ -67,10 +67,10 @@ class ConsoleErrorHandler {
  * Handle errors in the console environment. Writes errors to stderr,
  * and logs messages if Configure::read('debug') is 0.
  *
- * @param integer $code Error code
+ * @param int $code Error code
  * @param string $description Description of the error.
  * @param string $file The file the error occurred in.
- * @param integer $line The line the error occurred on.
+ * @param int $line The line the error occurred on.
  * @param array $context The backtrace of the error.
  * @return void
  */
@@ -95,7 +95,7 @@ class ConsoleErrorHandler {
 /**
  * Wrapper for exit(), used for testing.
  *
- * @param integer $code The exit code.
+ * @param int $code The exit code.
  * @return void
  */
 	protected function _stop($code = 0) {

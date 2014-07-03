@@ -261,7 +261,6 @@
 	//date_default_timezone_set('UTC');
 
 /**
- *
  * Cache Engine Configuration
  * Default settings provided below
  *

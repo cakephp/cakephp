@@ -67,7 +67,7 @@ class PostgresTestModel extends Model {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -148,7 +148,7 @@ class PostgresClientTestModel extends Model {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -180,7 +180,7 @@ class PostgresTest extends CakeTestCase {
  * Do not automatically load fixtures for each test, they will be loaded manually
  * using CakeTestCase::loadFixtures
  *
- * @var boolean
+ * @var bool
  */
 	public $autoFixtures = false;
 

@@ -26,7 +26,6 @@ App::uses('BaseLog', 'Log/Engine');
 class SyslogLog extends BaseLog {
 
 /**
- *
  * By default messages are formatted as:
  * 	type: message
  *
@@ -60,7 +59,6 @@ class SyslogLog extends BaseLog {
 	);
 
 /**
- *
  * Used to map the string names back to their LOG_* constants
  *
  * @var array
@@ -79,7 +77,7 @@ class SyslogLog extends BaseLog {
 /**
  * Whether the logger connection is open or not
  *
- * @var boolean
+ * @var bool
  */
 	protected $_open = false;
 
@@ -102,7 +100,7 @@ class SyslogLog extends BaseLog {
  *
  * @param string $type The type of log you are making.
  * @param string $message The message you want to log.
- * @return boolean success of write.
+ * @return bool success of write.
  */
 	public function write($type, $message) {
 		if (!$this->_open) {
@@ -130,8 +128,8 @@ class SyslogLog extends BaseLog {
  * will initialize the connection to the system logger
  *
  * @param string $ident the prefix to add to all messages logged
- * @param integer $options the options flags to be used for logged messages
- * @param integer $facility the stream or facility to log to
+ * @param int $options the options flags to be used for logged messages
+ * @param int $facility the stream or facility to log to
  * @return void
  */
 	protected function _open($ident, $options, $facility) {
@@ -142,9 +140,9 @@ class SyslogLog extends BaseLog {
  * Extracts the call to syslog() in order to run unit tests on it. This function
  * will perform the actual write in the system logger
  *
- * @param integer $priority Message priority.
+ * @param int $priority Message priority.
  * @param string $message Message to log.
- * @return boolean
+ * @return bool
  */
 	protected function _write($priority, $message) {
 		return syslog($priority, $message);

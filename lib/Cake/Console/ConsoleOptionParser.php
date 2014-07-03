@@ -136,7 +136,7 @@ class ConsoleOptionParser {
  * Construct an OptionParser so you can define its behavior
  *
  * @param string $command The command name this parser is for. The command name is used for generating help.
- * @param boolean $defaultOptions Whether you want the verbose and quiet options set. Setting
+ * @param bool $defaultOptions Whether you want the verbose and quiet options set. Setting
  *  this to false will prevent the addition of `--verbose` & `--quiet` options.
  */
 	public function __construct($command = null, $defaultOptions = true) {
@@ -165,7 +165,7 @@ class ConsoleOptionParser {
  * Static factory method for creating new OptionParsers so you can chain methods off of them.
  *
  * @param string $command The command name this parser is for. The command name is used for generating help.
- * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
+ * @param bool $defaultOptions Whether you want the verbose and quiet options set.
  * @return ConsoleOptionParser
  */
 	public static function create($command, $defaultOptions = true) {
@@ -506,7 +506,7 @@ class ConsoleOptionParser {
  * @param string $subcommand If present and a valid subcommand that has a linked parser.
  *    That subcommands help will be shown instead.
  * @param string $format Define the output format, can be text or xml
- * @param integer $width The width to format user content to. Defaults to 72
+ * @param int $width The width to format user content to. Defaults to 72
  * @return string Generated help.
  */
 	public function help($subcommand = null, $format = 'text', $width = 72) {
@@ -604,7 +604,7 @@ class ConsoleOptionParser {
  * Check to see if $name has an option (short/long) defined for it.
  *
  * @param string $name The name of the option.
- * @return boolean
+ * @return bool
  */
 	protected function _optionExists($name) {
 		if (substr($name, 0, 2) === '--') {

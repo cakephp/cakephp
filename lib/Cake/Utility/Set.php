@@ -122,7 +122,7 @@ class Set {
  *
  * @param array &$array Array to map
  * @param string $class Class name
- * @param boolean $primary whether to assign first array key as the _name_
+ * @param bool $primary whether to assign first array key as the _name_
  * @return mixed Mapped object
  */
 	protected static function _map(&$array, $class, $primary = false) {
@@ -186,7 +186,7 @@ class Set {
  * Checks to see if all the values in the array are numeric
  *
  * @param array $array The array to check. If null, the value of the current Set object
- * @return boolean true if values are numeric, false otherwise
+ * @return bool true if values are numeric, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::numeric
  */
 	public static function numeric($array = null) {
@@ -457,9 +457,9 @@ class Set {
  *
  * @param string|array $conditions An array of condition strings or an XPath expression
  * @param array $data An array of data to execute the match on
- * @param integer $i Optional: The 'nth'-number of the item being matched.
- * @param integer $length Length.
- * @return boolean
+ * @param int $i Optional: The 'nth'-number of the item being matched.
+ * @param int $length Length.
+ * @return bool
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::matches
  */
 	public static function matches($conditions, $data = array(), $i = null, $length = null) {
@@ -645,7 +645,7 @@ class Set {
  *
  * @param string|array $data Data to check on
  * @param string|array $path A dot-separated string.
- * @return boolean true if path is found, false otherwise
+ * @return bool true if path is found, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::check
  */
 	public static function check($data, $path = null) {
@@ -705,7 +705,7 @@ class Set {
  *
  * @param array $val1 First value
  * @param array $val2 Second value
- * @return boolean true if $val1 contains $val2, false otherwise
+ * @return bool true if $val1 contains $val2, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::contains
  */
 	public static function contains($val1, $val2 = null) {
@@ -730,9 +730,9 @@ class Set {
  * only consider the dimension of the first element in the array.
  *
  * @param array $array Array to count dimensions on
- * @param boolean $all Set to true to count the dimension considering all elements in array
- * @param integer $count Start the dimension count at this number
- * @return integer The number of dimensions in $array
+ * @param bool $all Set to true to count the dimension considering all elements in array
+ * @param int $count Start the dimension count at this number
+ * @return int The number of dimensions in $array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::countDim
  */
 	public static function countDim($array, $all = false, $count = 0) {
@@ -758,9 +758,9 @@ class Set {
  * Normalizes a string or array list.
  *
  * @param mixed $list List to normalize
- * @param boolean $assoc If true, $list will be converted to an associative array
+ * @param bool $assoc If true, $list will be converted to an associative array
  * @param string $sep If $list is a string, it will be split into an array with $sep
- * @param boolean $trim If true, separated strings will be trimmed
+ * @param bool $trim If true, separated strings will be trimmed
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::normalize
  */

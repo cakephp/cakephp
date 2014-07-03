@@ -57,7 +57,7 @@ class TestSource extends DataSource {
 /**
  * listSources
  *
- * @return boolean
+ * @return bool
  */
 	public function listSources() {
 		return null;

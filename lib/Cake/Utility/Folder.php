@@ -58,7 +58,7 @@ class Folder {
  * Sortedness. Whether or not list results
  * should be sorted by name.
  *
- * @var boolean
+ * @var bool
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::$sort
  */
 	public $sort = false;
@@ -66,7 +66,7 @@ class Folder {
 /**
  * Mode to be used on create. Does nothing on windows platforms.
  *
- * @var integer
+ * @var int
  * http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::$mode
  */
 	public $mode = 0755;
@@ -103,8 +103,8 @@ class Folder {
  * Constructor.
  *
  * @param string $path Path to folder
- * @param boolean $create Create folder if not found
- * @param string|boolean $mode Mode (CHMOD) to apply to created folder, false to ignore
+ * @param bool $create Create folder if not found
+ * @param string|bool $mode Mode (CHMOD) to apply to created folder, false to ignore
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder
  */
 	public function __construct($path = false, $create = false, $mode = false) {
@@ -155,10 +155,10 @@ class Folder {
  * Returns an array of the contents of the current directory.
  * The returned array holds two arrays: One of directories and one of files.
  *
- * @param boolean $sort Whether you want the results sorted, set this and the sort property
+ * @param bool $sort Whether you want the results sorted, set this and the sort property
  *   to false to get unsorted results.
- * @param array|boolean $exceptions Either an array or boolean true will not grab dot files
- * @param boolean $fullPath True returns the full path
+ * @param array|bool $exceptions Either an array or boolean true will not grab dot files
+ * @param bool $fullPath True returns the full path
  * @return mixed Contents of current directory as an array, an empty array on failure
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::read
  */
@@ -207,7 +207,7 @@ class Folder {
  * Returns an array of all matching files in current directory.
  *
  * @param string $regexpPattern Preg_match pattern (Defaults to: .*)
- * @param boolean $sort Whether results should be sorted.
+ * @param bool $sort Whether results should be sorted.
  * @return array Files that match given pattern
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::find
  */
@@ -220,7 +220,7 @@ class Folder {
  * Returns an array of all matching files in and below current directory.
  *
  * @param string $pattern Preg_match pattern (Defaults to: .*)
- * @param boolean $sort Whether results should be sorted.
+ * @param bool $sort Whether results should be sorted.
  * @return array Files matching $pattern
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::findRecursive
  */
@@ -238,7 +238,7 @@ class Folder {
  * Private helper function for findRecursive.
  *
  * @param string $pattern Pattern to match against
- * @param boolean $sort Whether results should be sorted.
+ * @param bool $sort Whether results should be sorted.
  * @return array Files matching pattern
  */
 	protected function _findRecursive($pattern, $sort = false) {
@@ -263,7 +263,7 @@ class Folder {
  * Returns true if given $path is a Windows path.
  *
  * @param string $path Path to check
- * @return boolean true if windows path, false otherwise
+ * @return bool true if windows path, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isWindowsPath
  */
 	public static function isWindowsPath($path) {
@@ -274,7 +274,7 @@ class Folder {
  * Returns true if given $path is an absolute path.
  *
  * @param string $path Path to check
- * @return boolean true if path is absolute.
+ * @return bool true if path is absolute.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isAbsolute
  */
 	public static function isAbsolute($path) {
@@ -335,7 +335,7 @@ class Folder {
  * Returns true if the File is in a given CakePath.
  *
  * @param string $path The path to check.
- * @return boolean
+ * @return bool
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::inCakePath
  */
 	public function inCakePath($path = '') {
@@ -349,8 +349,8 @@ class Folder {
  * Returns true if the File is in given path.
  *
  * @param string $path The path to check that the current pwd() resides with in.
- * @param boolean $reverse Reverse the search, check that pwd() resides within $path.
- * @return boolean
+ * @param bool $reverse Reverse the search, check that pwd() resides within $path.
+ * @return bool
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::inPath
  */
 	public function inPath($path = '', $reverse = false) {
@@ -369,10 +369,10 @@ class Folder {
  * Change the mode on a directory structure recursively. This includes changing the mode on files as well.
  *
  * @param string $path The path to chmod
- * @param integer $mode octal value 0755
- * @param boolean $recursive chmod recursively, set to false to only change the current directory.
+ * @param int $mode octal value 0755
+ * @param bool $recursive chmod recursively, set to false to only change the current directory.
  * @param array $exceptions array of files, directories to skip
- * @return boolean Returns TRUE on success, FALSE on failure
+ * @return bool Returns TRUE on success, FALSE on failure
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::chmod
  */
 	public function chmod($path, $mode = false, $recursive = true, $exceptions = array()) {
@@ -425,7 +425,7 @@ class Folder {
  * Returns an array of nested directories and files in each directory
  *
  * @param string $path the directory path to build the tree from
- * @param array|boolean $exceptions Either an array of files/folder to exclude
+ * @param array|bool $exceptions Either an array of files/folder to exclude
  *   or boolean true to not grab dot files/folders
  * @param string $type either 'file' or 'dir'. null returns both files and directories
  * @return mixed array of nested directories and files in each directory
@@ -491,8 +491,8 @@ class Folder {
  * deep path structures like `/foo/bar/baz/shoe/horn`
  *
  * @param string $pathname The directory structure to create
- * @param integer $mode octal value 0755
- * @return boolean Returns TRUE on success, FALSE on failure
+ * @param int $mode octal value 0755
+ * @return bool Returns TRUE on success, FALSE on failure
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::create
  */
 	public function create($pathname, $mode = false) {
@@ -530,7 +530,7 @@ class Folder {
 /**
  * Returns the size in bytes of this Folder and its contents.
  *
- * @return integer size in bytes of current folder
+ * @return int size in bytes of current folder
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::dirsize
  */
 	public function dirsize() {
@@ -567,7 +567,7 @@ class Folder {
  * Recursively Remove directories if the system allows.
  *
  * @param string $path Path of directory to delete
- * @return boolean Success
+ * @return bool Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::delete
  */
 	public function delete($path = null) {
@@ -633,7 +633,7 @@ class Folder {
  * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
  *
  * @param array|string $options Either an array of options (see above) or a string of the destination directory.
- * @return boolean Success
+ * @return bool Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::copy
  */
 	public function copy($options) {
@@ -729,7 +729,7 @@ class Folder {
  * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
  *
  * @param array $options (to, from, chmod, skip, scheme)
- * @return boolean Success
+ * @return bool Success
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::move
  */
 	public function move($options) {
@@ -751,7 +751,7 @@ class Folder {
 /**
  * get messages from latest method
  *
- * @param boolean $reset Reset message stack after reading
+ * @param bool $reset Reset message stack after reading
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::messages
  */
@@ -766,7 +766,7 @@ class Folder {
 /**
  * get error from latest method
  *
- * @param boolean $reset Reset error stack after reading
+ * @param bool $reset Reset error stack after reading
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::errors
  */
@@ -822,7 +822,7 @@ class Folder {
  * Returns true if given $path ends in a slash (i.e. is slash-terminated).
  *
  * @param string $path Path to check
- * @return boolean true if path ends with slash, false otherwise
+ * @return bool true if path ends with slash, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::isSlashTerm
  */
 	public static function isSlashTerm($path) {

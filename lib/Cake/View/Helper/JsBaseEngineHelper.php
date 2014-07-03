@@ -137,7 +137,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * Converts a PHP-native variable of any type to a JSON-equivalent representation
  *
  * @param mixed $val A PHP variable to be converted to JSON
- * @param boolean $quoteString If false, leaves string values unquoted
+ * @param bool $quoteString If false, leaves string values unquoted
  * @param string $key Key name.
  * @return string a JavaScript-safe/JSON representation of $val
  */

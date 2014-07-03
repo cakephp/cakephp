@@ -29,7 +29,7 @@ class FileTest extends CakeTestCase {
 /**
  * File property
  *
- * @var mixed null
+ * @var mixed
  */
 	public $File = null;
 
@@ -543,7 +543,7 @@ class FileTest extends CakeTestCase {
 /**
  * getTmpFile method
  *
- * @param boolean $paintSkip
+ * @param bool $paintSkip
  * @return void
  */
 	protected function _getTmpFile($paintSkip = true) {

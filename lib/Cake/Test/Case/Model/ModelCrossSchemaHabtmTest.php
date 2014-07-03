@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * Tests cross database HABTM. Requires $test and $test2 to both be set in DATABASE_CONFIG
  * NOTE: When testing on MySQL, you must set 'persistent' => false on *both* database connections,
  * or one connection will step on the other.
@@ -42,14 +40,14 @@ class ModelCrossSchemaHabtmTest extends BaseModelTest {
 /**
  * Don't drop tables if they exist
  *
- * @var boolean
+ * @var bool
  */
 	public $dropTables = false;
 
 /**
  * Don't auto load fixtures
  *
- * @var boolean
+ * @var bool
  */
 	public $autoFixtures = false;
 

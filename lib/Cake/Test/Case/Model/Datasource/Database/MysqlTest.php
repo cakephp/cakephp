@@ -33,7 +33,7 @@ class MysqlTest extends CakeTestCase {
 /**
  * autoFixtures property
  *
- * @var boolean
+ * @var bool
  */
 	public $autoFixtures = false;
 
@@ -196,7 +196,6 @@ class MysqlTest extends CakeTestCase {
 /**
  * testTinyintCasting method
  *
- *
  * @return void
  */
 	public function testTinyintCasting() {
@@ -235,7 +234,6 @@ class MysqlTest extends CakeTestCase {
 
 /**
  * testLastAffected method
- *
  *
  * @return void
  */

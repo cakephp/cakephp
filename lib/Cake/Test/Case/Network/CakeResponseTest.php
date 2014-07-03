@@ -1088,9 +1088,9 @@ class CakeResponseTest extends CakeTestCase {
  * @param string|array $domains
  * @param string|array $methods
  * @param string|array $headers
- * @param string|boolean $expectedOrigin
- * @param string|boolean $expectedMethods
- * @param string|boolean $expectedHeaders
+ * @param string|bool $expectedOrigin
+ * @param string|bool $expectedMethods
+ * @param string|bool $expectedHeaders
  * @return void
  */
 	public function testCors($request, $origin, $domains, $methods, $headers, $expectedOrigin, $expectedMethods = false, $expectedHeaders = false) {

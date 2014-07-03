@@ -336,7 +336,7 @@ class TestShell extends Shell {
  *
  * @param string $file The file to map.
  * @param string $category The test file category.
- * @param boolean $throwOnMissingFile Whether or not to throw an exception.
+ * @param bool $throwOnMissingFile Whether or not to throw an exception.
  * @return array array(type, case)
  * @throws Exception
  */

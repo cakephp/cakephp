@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -32,7 +30,7 @@ class ActionsAuthorize extends BaseAuthorize {
  *
  * @param array $user The user to authorize
  * @param CakeRequest $request The request needing authorization.
- * @return boolean
+ * @return bool
  */
 	public function authorize($user, CakeRequest $request) {
 		$Acl = $this->_Collection->load('Acl');

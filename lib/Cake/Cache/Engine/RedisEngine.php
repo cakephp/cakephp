@@ -51,7 +51,7 @@ class RedisEngine extends CacheEngine {
  * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
  *
  * @param array $settings array of setting for the engine
- * @return boolean True if the engine has been successfully initialized, false if not
+ * @return bool True if the engine has been successfully initialized, false if not
  */
 	public function init($settings = array()) {
 		if (!class_exists('Redis')) {
@@ -76,7 +76,7 @@ class RedisEngine extends CacheEngine {
 /**
  * Connects to a Redis server
  *
- * @return boolean True if Redis server was connected
+ * @return bool True if Redis server was connected
  */
 	protected function _connect() {
 		$return = false;
@@ -107,8 +107,8 @@ class RedisEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @param integer $duration How long to cache the data, in seconds
- * @return boolean True if the data was successfully cached, false on failure
+ * @param int $duration How long to cache the data, in seconds
+ * @return bool True if the data was successfully cached, false on failure
  */
 	public function write($key, $value, $duration) {
 		if (!is_int($value)) {
@@ -142,7 +142,7 @@ class RedisEngine extends CacheEngine {
  * Increments the value of an integer cached key
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to increment
+ * @param int $offset How much to increment
  * @return New incremented value, false otherwise
  * @throws CacheException when you try to increment with compress = true
  */
@@ -154,7 +154,7 @@ class RedisEngine extends CacheEngine {
  * Decrements the value of an integer cached key
  *
  * @param string $key Identifier for the data
- * @param integer $offset How much to subtract
+ * @param int $offset How much to subtract
  * @return New decremented value, false otherwise
  * @throws CacheException when you try to decrement with compress = true
  */
@@ -166,7 +166,7 @@ class RedisEngine extends CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
 		return $this->_Redis->delete($key) > 0;
@@ -175,9 +175,9 @@ class RedisEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @param boolean $check Whether or not expiration keys should be checked. If
+ * @param bool $check Whether or not expiration keys should be checked. If
  *   true, no keys will be removed as cache will rely on redis TTL's.
- * @return boolean True if the cache was successfully cleared, false otherwise
+ * @return bool True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
 		if ($check) {
@@ -214,7 +214,7 @@ class RedisEngine extends CacheEngine {
  * old values will remain in storage until they expire.
  *
  * @param string $group The group name to clear.
- * @return boolean success
+ * @return bool success
  */
 	public function clearGroup($group) {
 		return (bool)$this->_Redis->incr($this->settings['prefix'] . $group);
