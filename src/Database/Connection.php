@@ -190,27 +190,25 @@ class Connection {
 
 /**
  * 
- * Get the full table(s) name with prefix, if any.
+ * Wrap the table name in a TableNameExpression with the current config prefix
  *
- * @param string|array $names The names of the tables
+ * @param string|array|\Cake\ORM\Query $names The names of the tables
  *
- * @return string|array Full tables names
+ * @see \Cake\Database\Expression\TableNameExpression
+ * @return string|array|\Cake\ORM\Query Full tables names
  *
  */
 	public function fullTableName($names) {
-		if (!isset($this->_config["prefix"]) || $this->_config["prefix"] === "") {
-			return $names;
+		$prefix = "";
+
+		if (isset($this->_config["prefix"]) || $this->_config["prefix"] !== "") {
+			$prefix = $this->_config["prefix"];
 		}
 
-		$prefix = $this->_config["prefix"];
-		if (is_string($names)) {
-			$names = $prefix . $names;
-		} elseif (is_array($names)) {
+		if (is_array($names)) {
 			if (!empty($names)) {
-				foreach ($names as &$tableName) {
-					if (is_string($tableName)) {
-						$tableName = $prefix . $tableName;
-					}
+				foreach ($names as $alias => &$tableName) {
+					$tableName = new TableNameExpression($tableName, $alias, $prefix);
 				}
 			}
 		}

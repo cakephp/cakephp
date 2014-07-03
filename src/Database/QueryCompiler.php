@@ -172,7 +172,7 @@ class QueryCompiler {
 	protected function _buildFromPart($parts, $query, $generator) {
 		$select = ' FROM %s';
 		$normalized = [];
-		$parts = $this->_stringifyExpressions($parts, $generator);
+		$parts = $this->_stringifyExpressions($parts, $generator, false);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
 				$p = $p . ' AS ' . $k;
@@ -284,7 +284,7 @@ class QueryCompiler {
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return array
  */
-	protected function _stringifyExpressions($expressions, $generator) {
+	protected function _stringifyExpressions($expressions, $generator, $wrap = true) {
 		$result = [];
 		foreach ($expressions as $k => $expression) {
 			if ($expression instanceof ExpressionInterface) {
