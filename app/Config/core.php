@@ -278,7 +278,6 @@
 	//Configure::write('Config.timezone', 'Europe/Paris');
 
 /**
- *
  * Cache Engine Configuration
  * Default settings provided below
  *

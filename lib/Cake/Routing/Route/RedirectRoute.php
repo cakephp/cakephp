@@ -43,7 +43,7 @@ class RedirectRoute extends CakeRoute {
 /**
  * Flag for disabling exit() when this route parses a URL.
  *
- * @var boolean
+ * @var bool
  */
 	public $stop = true;
 
@@ -64,7 +64,7 @@ class RedirectRoute extends CakeRoute {
  * redirection
  *
  * @param string $url The URL to parse
- * @return boolean False on failure
+ * @return bool False on failure
  */
 	public function parse($url) {
 		$params = parent::parse($url);
@@ -113,7 +113,7 @@ class RedirectRoute extends CakeRoute {
  * Stop execution of the current script. Wraps exit() making
  * testing easier.
  *
- * @param integer|string $code See http://php.net/exit for values
+ * @param int|string $code See http://php.net/exit for values
  * @return void
  */
 	protected function _stop($code = 0) {

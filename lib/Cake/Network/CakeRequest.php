@@ -126,7 +126,7 @@ class CakeRequest implements ArrayAccess {
  * Constructor
  *
  * @param string $url Trimmed URL string to use. Should not contain the application base path.
- * @param boolean $parseEnvironment Set to false to not auto parse the environment. ie. GET, POST and FILES.
+ * @param bool $parseEnvironment Set to false to not auto parse the environment. ie. GET, POST and FILES.
  */
 	public function __construct($url = null, $parseEnvironment = true) {
 		$this->_base();
@@ -386,7 +386,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the IP the client is using, or says they are using.
  *
- * @param boolean $safe Use safe = false when you think the user might manipulate their HTTP_CLIENT_IP
+ * @param bool $safe Use safe = false when you think the user might manipulate their HTTP_CLIENT_IP
  *   header. Setting $safe = false will also look at HTTP_X_FORWARDED_FOR
  * @return string The client IP.
  */
@@ -414,7 +414,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Returns the referer that referred this request.
  *
- * @param boolean $local Attempt to return a local address. Local addresses do not contain hostnames.
+ * @param bool $local Attempt to return a local address. Local addresses do not contain hostnames.
  * @return string The referring address for this request.
  */
 	public function referer($local = false) {
@@ -471,7 +471,7 @@ class CakeRequest implements ArrayAccess {
  * on routing parameters.
  *
  * @param string $name The property being accessed.
- * @return boolean Existence
+ * @return bool Existence
  */
 	public function __isset($name) {
 		return isset($this->params[$name]);
@@ -486,7 +486,7 @@ class CakeRequest implements ArrayAccess {
  *
  * @param string|array $type The type of request you want to check. If an array
  *   this method will return true if the request matches any type.
- * @return boolean Whether or not the request is the type you are checking.
+ * @return bool Whether or not the request is the type you are checking.
  */
 	public function is($type) {
 		if (is_array($type)) {
@@ -534,7 +534,7 @@ class CakeRequest implements ArrayAccess {
  * built-in types.
  *
  * @param array $types The types to check.
- * @return boolean Success.
+ * @return bool Success.
  * @see CakeRequest::is()
  */
 	public function isAll(array $types) {
@@ -628,7 +628,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the value of the current requests URL. Will include named parameters and querystring arguments.
  *
- * @param boolean $base Include the base path, set to false to trim the base path off.
+ * @param bool $base Include the base path, set to false to trim the base path off.
  * @return string the current request URL including query string args.
  */
 	public function here($base = true) {
@@ -676,7 +676,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the host that the request was handled on.
  *
- * @param boolean $trustProxy Whether or not to trust the proxy host.
+ * @param bool $trustProxy Whether or not to trust the proxy host.
  * @return string
  */
 	public function host($trustProxy = false) {
@@ -689,7 +689,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the domain name and include $tldLength segments of the tld.
  *
- * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
+ * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
  *   While `example.co.uk` contains 2.
  * @return string Domain name without subdomains.
  */
@@ -702,7 +702,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the subdomains for a host.
  *
- * @param integer $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
+ * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
  *   While `example.co.uk` contains 2.
  * @return array An array of subdomains.
  */
@@ -940,7 +940,7 @@ class CakeRequest implements ArrayAccess {
  * and a 405 error will be returned.
  *
  * @param string|array $methods Allowed HTTP request methods.
- * @return boolean true
+ * @return bool true
  * @throws MethodNotAllowedException
  */
 	public function allowMethod($methods) {
@@ -962,7 +962,7 @@ class CakeRequest implements ArrayAccess {
  * Alias of CakeRequest::allowMethod() for backwards compatibility.
  *
  * @param string|array $methods Allowed HTTP request methods.
- * @return boolean true
+ * @return bool true
  * @throws MethodNotAllowedException
  * @see CakeRequest::allowMethod()
  * @deprecated 2.5 Use CakeRequest::allowMethod() instead.
@@ -1023,7 +1023,7 @@ class CakeRequest implements ArrayAccess {
  * Array access isset() implementation
  *
  * @param string $name thing to check.
- * @return boolean
+ * @return bool
  */
 	public function offsetExists($name) {
 		return isset($this->params[$name]);

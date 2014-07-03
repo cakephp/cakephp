@@ -76,7 +76,7 @@ class Scaffold {
 /**
  * Valid session.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_validSession = null;
 

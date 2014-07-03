@@ -32,7 +32,7 @@ class CakeTestModel extends Model {
  * incorrect order when no order has been defined in the finds.
  * Postgres can return the results in any order it considers appropriate if none is specified
  *
- * @param integer|string|array $id Set this ID for this model on startup, can also be an array of options, see above.
+ * @param int|string|array $id Set this ID for this model on startup, can also be an array of options, see above.
  * @param string $table Name of database table to use.
  * @param string $ds DataSource connection name.
  */
@@ -45,7 +45,7 @@ class CakeTestModel extends Model {
  * Overriding save() to set CakeTestSuiteDispatcher::date() as formatter for created, modified and updated fields
  *
  * @param array $data Data to save
- * @param boolean|array $validate Validate or options.
+ * @param bool|array $validate Validate or options.
  * @param array $fieldList Whitelist of fields
  * @return mixed
  */

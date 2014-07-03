@@ -45,7 +45,7 @@ class DigestAuthentication {
  *
  * @param HttpSocket $http Http socket instance.
  * @param array &$authInfo Authentication info.
- * @return boolean
+ * @return bool
  */
 	protected static function _getServerInformation(HttpSocket $http, &$authInfo) {
 		$originalRequest = $http->request;

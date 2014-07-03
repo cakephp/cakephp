@@ -39,7 +39,7 @@ class DboMock extends DboSource {
 /**
  * Returns true to fake a database connection
  *
- * @return boolean true
+ * @return bool true
  */
 	public function connect() {
 		return true;

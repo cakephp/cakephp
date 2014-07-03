@@ -27,7 +27,7 @@ class CacheDispatcher extends DispatcherFilter {
  * Default priority for all methods in this filter
  * This filter should run before the request gets parsed by router
  *
- * @var integer
+ * @var int
  */
 	public $priority = 9;
 

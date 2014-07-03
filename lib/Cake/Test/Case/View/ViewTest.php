@@ -42,7 +42,7 @@ class ViewPostsController extends Controller {
 /**
  * uses property
  *
- * @var mixed null
+ * @var mixed
  */
 	public $uses = null;
 
@@ -165,7 +165,7 @@ class TestView extends View {
  * paths method
  *
  * @param string $plugin Optional plugin name to scan for view files.
- * @param boolean $cached Set to true to force a refresh of view paths.
+ * @param bool $cached Set to true to force a refresh of view paths.
  * @return array paths
  */
 	public function paths($plugin = null, $cached = true) {

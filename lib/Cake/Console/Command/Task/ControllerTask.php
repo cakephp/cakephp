@@ -285,7 +285,7 @@ class ControllerTask extends BakeTask {
  *
  * @param string $controllerName Controller name
  * @param string $admin Admin route to use
- * @param boolean $wannaUseSession Set to true to use sessions, false otherwise
+ * @param bool $wannaUseSession Set to true to use sessions, false otherwise
  * @return string Baked actions
  */
 	public function bakeActions($controllerName, $admin = null, $wannaUseSession = true) {

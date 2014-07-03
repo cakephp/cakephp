@@ -46,7 +46,7 @@ class TheHtmlTestController extends Controller {
 /**
  * uses property
  *
- * @var mixed null
+ * @var mixed
  */
 	public $uses = null;
 }

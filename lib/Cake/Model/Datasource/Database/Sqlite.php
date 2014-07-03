@@ -102,7 +102,7 @@ class Sqlite extends DboSource {
 /**
  * Connects to the database using config['database'] as a filename.
  *
- * @return boolean
+ * @return bool
  * @throws MissingConnectionException
  */
 	public function connect() {
@@ -126,7 +126,7 @@ class Sqlite extends DboSource {
 /**
  * Check whether the SQLite extension is installed/loaded
  *
- * @return boolean
+ * @return bool
  */
 	public function enabled() {
 		return in_array('sqlite', PDO::getAvailableDrivers());
@@ -227,7 +227,7 @@ class Sqlite extends DboSource {
  * primary key, where applicable.
  *
  * @param string|Model $table A string or model class representing the table to be truncated
- * @return boolean SQL TRUNCATE TABLE statement, false if not applicable.
+ * @return bool SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table) {
 		if (in_array('sqlite_sequence', $this->listSources())) {
@@ -371,8 +371,8 @@ class Sqlite extends DboSource {
 /**
  * Returns a limit statement in the correct format for the particular database.
  *
- * @param integer $limit Limit of results returned
- * @param integer $offset Offset from which to start results
+ * @param int $limit Limit of results returned
+ * @param int $offset Offset from which to start results
  * @return string SQL limit/offset statement
  */
 	public function limit($limit, $offset = null) {
@@ -427,7 +427,7 @@ class Sqlite extends DboSource {
  * Sets the database encoding
  *
  * @param string $enc Database encoding
- * @return boolean
+ * @return bool
  */
 	public function setEncoding($enc) {
 		if (!in_array($enc, array("UTF-8", "UTF-16", "UTF-16le", "UTF-16be"))) {
@@ -549,7 +549,7 @@ class Sqlite extends DboSource {
 /**
  * PDO deals in objects, not resources, so overload accordingly.
  *
- * @return boolean
+ * @return bool
  */
 	public function hasResult() {
 		return is_object($this->_result);
@@ -577,7 +577,7 @@ class Sqlite extends DboSource {
 /**
  * Check if the server support nested transactions
  *
- * @return boolean
+ * @return bool
  */
 	public function nestedTransactionSupported() {
 		return $this->useNestedTransactions && version_compare($this->getVersion(), '3.6.8', '>=');

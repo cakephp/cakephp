@@ -19,7 +19,6 @@
  */
 
 /**
- *
  * Using the Schema command line utility
  *
  * Use it to configure database for i18n

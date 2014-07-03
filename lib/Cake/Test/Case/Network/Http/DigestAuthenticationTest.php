@@ -61,7 +61,7 @@ class DigestAuthenticationTest extends CakeTestCase {
 /**
  * Socket property
  *
- * @var mixed null
+ * @var mixed
  */
 	public $HttpSocket = null;
 

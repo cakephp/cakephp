@@ -36,7 +36,7 @@ class DbAclNodeTestBase extends AclNode {
 /**
  * cacheSources property
  *
- * @var boolean
+ * @var bool
  */
 	public $cacheSources = false;
 }
@@ -102,7 +102,7 @@ class DbPermissionTest extends CakeTestModel {
 /**
  * cacheQueries property
  *
- * @var boolean
+ * @var bool
  */
 	public $cacheQueries = false;
 

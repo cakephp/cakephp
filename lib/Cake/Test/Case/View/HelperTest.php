@@ -31,7 +31,7 @@ class HelperTestPost extends Model {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -71,7 +71,7 @@ class HelperTestComment extends Model {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -105,7 +105,7 @@ class HelperTestTag extends Model {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 
@@ -136,7 +136,7 @@ class HelperTestPostsTag extends Model {
 /**
  * useTable property
  *
- * @var boolean
+ * @var bool
  */
 	public $useTable = false;
 

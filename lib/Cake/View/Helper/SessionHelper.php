@@ -49,7 +49,7 @@ class SessionHelper extends AppHelper {
  * In your view: `$this->Session->check('Controller.sessKey');`
  *
  * @param string $name Session key to check.
- * @return boolean
+ * @return bool
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::check
  */
 	public function check($name) {
@@ -152,7 +152,7 @@ class SessionHelper extends AppHelper {
 /**
  * Used to check is a session is valid in a view
  *
- * @return boolean
+ * @return bool
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::valid
  */
 	public function valid() {

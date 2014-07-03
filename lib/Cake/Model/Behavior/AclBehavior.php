@@ -94,7 +94,7 @@ class AclBehavior extends ModelBehavior {
  * Creates a new ARO/ACO node bound to this record
  *
  * @param Model $model Model using this behavior.
- * @param boolean $created True if this is a new record
+ * @param bool $created True if this is a new record
  * @param array $options Options passed from Model::save().
  * @return void
  */

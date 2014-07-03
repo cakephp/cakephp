@@ -104,7 +104,7 @@ class Postgres extends DboSource {
 /**
  * Connects to the database using options in the given configuration array.
  *
- * @return boolean True if successfully connected.
+ * @return bool True if successfully connected.
  * @throws MissingConnectionException
  */
 	public function connect() {
@@ -149,7 +149,7 @@ class Postgres extends DboSource {
 /**
  * Check if PostgreSQL is enabled/loaded
  *
- * @return boolean
+ * @return bool
  */
 	public function enabled() {
 		return in_array('pgsql', PDO::getAvailableDrivers());
@@ -284,7 +284,7 @@ class Postgres extends DboSource {
  *
  * @param string $source Name of the database table
  * @param string $field Name of the ID database field. Defaults to "id"
- * @return integer
+ * @return int
  */
 	public function lastInsertId($source = null, $field = 'id') {
 		$seq = $this->getSequence($source, $field);
@@ -318,7 +318,7 @@ class Postgres extends DboSource {
  * @param string $table The name of the table to update.
  * @param string $column The column to use when resetting the sequence value,
  *   the sequence name will be fetched using Postgres::getSequence();
- * @return boolean success.
+ * @return bool success.
  */
 	public function resetSequence($table, $column) {
 		$tableName = $this->fullTableName($table, false, false);
@@ -334,9 +334,9 @@ class Postgres extends DboSource {
  * Deletes all the records in a table and drops all associated auto-increment sequences
  *
  * @param string|Model $table A string or model class representing the table to be truncated
- * @param boolean $reset true for resetting the sequence, false to leave it as is.
+ * @param bool $reset true for resetting the sequence, false to leave it as is.
  *    and if 1, sequences are not modified
- * @return boolean SQL TRUNCATE TABLE statement, false if not applicable.
+ * @return bool SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table, $reset = false) {
 		$table = $this->fullTableName($table, false, false);
@@ -377,7 +377,7 @@ class Postgres extends DboSource {
  * @param Model $model The model to get fields for.
  * @param string $alias Alias table name.
  * @param mixed $fields The list of fields to get.
- * @param boolean $quote Whether or not to quote identifiers.
+ * @param bool $quote Whether or not to quote identifiers.
  * @return array
  */
 	public function fields(Model $model, $alias = null, $fields = array(), $quote = true) {
@@ -640,8 +640,8 @@ class Postgres extends DboSource {
 /**
  * Returns a limit statement in the correct format for the particular database.
  *
- * @param integer $limit Limit of results returned
- * @param integer $offset Offset from which to start results
+ * @param int $limit Limit of results returned
+ * @param int $offset Offset from which to start results
  * @return string SQL limit/offset statement
  */
 	public function limit($limit, $offset = null) {
@@ -710,7 +710,7 @@ class Postgres extends DboSource {
  * Gets the length of a database-native column description, or null if no length
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
- * @return integer An integer representing the length of the column
+ * @return int An integer representing the length of the column
  */
 	public function length($real) {
 		$col = str_replace(array(')', 'unsigned'), '', $real);
@@ -786,8 +786,8 @@ class Postgres extends DboSource {
  * Translates between PHP boolean values and PostgreSQL boolean values
  *
  * @param mixed $data Value to be translated
- * @param boolean $quote true to quote a boolean to be used in a query, false to return the boolean value
- * @return boolean Converted boolean value
+ * @param bool $quote true to quote a boolean to be used in a query, false to return the boolean value
+ * @return bool Converted boolean value
  */
 	public function boolean($data, $quote = false) {
 		switch (true) {
@@ -817,7 +817,7 @@ class Postgres extends DboSource {
  * Sets the database encoding
  *
  * @param mixed $enc Database encoding
- * @return boolean True on success, false on failure
+ * @return bool True on success, false on failure
  */
 	public function setEncoding($enc) {
 		return $this->_execute('SET NAMES ' . $this->value($enc)) !== false;
@@ -959,7 +959,7 @@ class Postgres extends DboSource {
 /**
  * Check if the server support nested transactions
  *
- * @return boolean
+ * @return bool
  */
 	public function nestedTransactionSupported() {
 		return $this->useNestedTransactions && version_compare($this->getVersion(), '8.0', '>=');

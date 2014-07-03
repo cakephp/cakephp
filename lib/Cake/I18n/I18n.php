@@ -74,7 +74,7 @@ class I18n {
  * Set to true when I18N::_bindTextDomain() is called for the first time.
  * If a translation file is found it is set to false again
  *
- * @var boolean
+ * @var bool
  */
 	protected $_noLocale = false;
 
@@ -185,7 +185,7 @@ class I18n {
  * @param string $domain Domain The domain of the translation. Domains are often used by plugin translations.
  *    If null, the default domain will be used.
  * @param string $category Category The integer value of the category to use.
- * @param integer $count Count Count is used with $plural to choose the correct plural form.
+ * @param int $count Count Count is used with $plural to choose the correct plural form.
  * @param string $language Language to translate string to.
  *    If null it checks for language in session followed by Config.language configuration variable.
  * @return string translated string.
@@ -309,8 +309,8 @@ class I18n {
  * Attempts to find the plural form of a string.
  *
  * @param string $header Type
- * @param integer $n Number
- * @return integer plural match
+ * @param int $n Number
+ * @return int plural match
  */
 	protected function _pluralGuess($header, $n) {
 		if (!is_string($header) || $header === "nplurals=1;plural=0;" || !isset($header[0])) {

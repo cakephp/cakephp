@@ -53,7 +53,7 @@ class HttpSocketResponse implements ArrayAccess {
 /**
  * Response code
  *
- * @var integer
+ * @var int
  */
 	public $code = 0;
 
@@ -124,7 +124,7 @@ class HttpSocketResponse implements ArrayAccess {
 /**
  * If return is 200 (OK)
  *
- * @return boolean
+ * @return bool
  */
 	public function isOk() {
 		return in_array($this->code, array(200, 201, 202, 203, 204, 205, 206));
@@ -133,7 +133,7 @@ class HttpSocketResponse implements ArrayAccess {
 /**
  * If return is a valid 3xx (Redirection)
  *
- * @return boolean
+ * @return bool
  */
 	public function isRedirect() {
 		return in_array($this->code, array(301, 302, 303, 307)) && $this->getHeader('Location') !== null;
@@ -186,7 +186,7 @@ class HttpSocketResponse implements ArrayAccess {
  * 'body' and 'header' or false on failure.
  *
  * @param string $body A string containing the body to decode.
- * @param string|boolean $encoding Can be false in case no encoding is being used, or a string representing the encoding.
+ * @param string|bool $encoding Can be false in case no encoding is being used, or a string representing the encoding.
  * @return mixed Array of response headers and body or false.
  */
 	protected function _decodeBody($body, $encoding = 'chunked') {
@@ -344,7 +344,7 @@ class HttpSocketResponse implements ArrayAccess {
 /**
  * Gets escape chars according to RFC 2616 (HTTP 1.1 specs).
  *
- * @param boolean $hex True to get them as HEX values, false otherwise.
+ * @param bool $hex True to get them as HEX values, false otherwise.
  * @param array $chars Characters to uescape.
  * @return array Escape chars
  */
@@ -372,7 +372,7 @@ class HttpSocketResponse implements ArrayAccess {
  * ArrayAccess - Offset Exists
  *
  * @param string $offset Offset to check.
- * @return boolean
+ * @return bool
  */
 	public function offsetExists($offset) {
 		return in_array($offset, array('raw', 'status', 'header', 'body', 'cookies'));

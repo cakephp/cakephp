@@ -312,7 +312,7 @@ class CakeResponse {
 /**
  * Status code to send to the client
  *
- * @var integer
+ * @var int
  */
 	protected $_status = 200;
 
@@ -320,7 +320,7 @@ class CakeResponse {
  * Content type to send. This can be an 'extension' that will be transformed using the $_mimetypes array
  * or a complete mime-type
  *
- * @var integer
+ * @var int
  */
 	protected $_contentType = 'text/html';
 
@@ -617,8 +617,8 @@ class CakeResponse {
  * Sets the HTTP status code to be sent
  * if $code is null the current code is returned
  *
- * @param integer $code the HTTP status code
- * @return integer current status code
+ * @param int $code the HTTP status code
+ * @return int current status code
  * @throws CakeException When an unknown status code is reached.
  */
 	public function statusCode($code = null) {
@@ -634,7 +634,7 @@ class CakeResponse {
 /**
  * Queries & sets valid HTTP response codes & messages.
  *
- * @param integer|array $code If $code is an integer, then the corresponding code/message is
+ * @param int|array $code If $code is an integer, then the corresponding code/message is
  *        returned if it exists, null if it does not exist. If $code is an array, then the
  *        keys are used as codes and the values as messages to add to the default HTTP
  *        codes. The codes must be integers greater than 99 and less than 1000. Keep in
@@ -814,11 +814,11 @@ class CakeResponse {
  * This method controls the `public` or `private` directive in the Cache-Control
  * header
  *
- * @param boolean $public If set to true, the Cache-Control header will be set as public
+ * @param bool $public If set to true, the Cache-Control header will be set as public
  *   if set to false, the response will be set to private
  *   if no value is provided, it will return whether the response is sharable or not
- * @param integer $time time in seconds after which the response should no longer be considered fresh
- * @return boolean
+ * @param int $time time in seconds after which the response should no longer be considered fresh
+ * @return bool
  */
 	public function sharable($public = null, $time = null) {
 		if ($public === null) {
@@ -852,8 +852,8 @@ class CakeResponse {
  * a good candidate to be fetched from a shared cache (like in a proxy server).
  * If called with no parameters, this function will return the current max-age value if any
  *
- * @param integer $seconds if null, the method will return the current s-maxage value
- * @return integer
+ * @param int $seconds if null, the method will return the current s-maxage value
+ * @return int
  */
 	public function sharedMaxAge($seconds = null) {
 		if ($seconds !== null) {
@@ -872,8 +872,8 @@ class CakeResponse {
  * a good candidate to be fetched from the local (client) cache.
  * If called with no parameters, this function will return the current max-age value if any
  *
- * @param integer $seconds if null, the method will return the current max-age value
- * @return integer
+ * @param int $seconds if null, the method will return the current max-age value
+ * @return int
  */
 	public function maxAge($seconds = null) {
 		if ($seconds !== null) {
@@ -893,9 +893,9 @@ class CakeResponse {
  * with the origin.
  * If called with no parameters, this function will return whether must-revalidate is present.
  *
- * @param boolean $enable If null returns whether directive is set, if boolean
+ * @param bool $enable If null returns whether directive is set, if boolean
  *   sets or unsets directive.
- * @return boolean
+ * @return bool
  */
 	public function mustRevalidate($enable = null) {
 		if ($enable !== null) {
@@ -1035,7 +1035,7 @@ class CakeResponse {
  * If no parameters are passed, current Etag header is returned.
  *
  * @param string $tag Tag to set.
- * @param boolean $weak whether the response is semantically the same as
+ * @param bool $weak whether the response is semantically the same as
  *   other with the same hash or not
  * @return string
  */
@@ -1072,7 +1072,7 @@ class CakeResponse {
  * Sets the correct output buffering handler to send a compressed response. Responses will
  * be compressed with zlib, if the extension is available.
  *
- * @return boolean false if client does not accept compressed responses or no handler is available, true otherwise
+ * @return bool false if client does not accept compressed responses or no handler is available, true otherwise
  */
 	public function compress() {
 		$compressionEnabled = ini_get("zlib.output_compression") !== '1' &&
@@ -1084,7 +1084,7 @@ class CakeResponse {
 /**
  * Returns whether the resulting output will be compressed by PHP
  *
- * @return boolean
+ * @return bool
  */
 	public function outputCompressed() {
 		return strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
@@ -1119,8 +1119,8 @@ class CakeResponse {
  * Sets the Content-Length header for the response
  * If called with no arguments returns the last Content-Length set
  *
- * @param integer $bytes Number of bytes
- * @return integer|null
+ * @param int $bytes Number of bytes
+ * @return int|null
  */
 	public function length($bytes = null) {
 		if ($bytes !== null) {
@@ -1143,7 +1143,7 @@ class CakeResponse {
  * a comparison will not be possible.
  *
  * @param CakeRequest $request Request object
- * @return boolean whether the response was marked as not modified or not.
+ * @return bool whether the response was marked as not modified or not.
  */
 	public function checkNotModified(CakeRequest $request) {
 		$etags = preg_split('/\s*,\s*/', $request->header('If-None-Match'), null, PREG_SPLIT_NO_EMPTY);
@@ -1289,7 +1289,7 @@ class CakeResponse {
  * Normalize the origin to regular expressions and put in an array format
  *
  * @param array $domains Domains to normalize
- * @param boolean $requestIsSSL Whether it's a SSL request.
+ * @param bool $requestIsSSL Whether it's a SSL request.
  * @return array
  */
 	protected function _normalizeCorsDomains($domains, $requestIsSSL = false) {
@@ -1440,7 +1440,7 @@ class CakeResponse {
  *
  * @param File $file File object
  * @param array $range The range to read out of the file.
- * @return boolean True is whole file is echoed successfully or false if client connection is lost in between
+ * @return bool True is whole file is echoed successfully or false if client connection is lost in between
  */
 	protected function _sendFile($file, $range) {
 		$compress = $this->outputCompressed();
@@ -1481,7 +1481,7 @@ class CakeResponse {
 /**
  * Returns true if connection is still active
  *
- * @return boolean
+ * @return bool
  */
 	protected function _isActive() {
 		return connection_status() === CONNECTION_NORMAL && !connection_aborted();
@@ -1490,7 +1490,7 @@ class CakeResponse {
 /**
  * Clears the contents of the topmost output buffer and discards them
  *
- * @return boolean
+ * @return bool
  */
 	protected function _clearBuffer() {
 		//@codingStandardsIgnoreStart

@@ -28,7 +28,7 @@ abstract class DispatcherFilter implements CakeEventListener {
 /**
  * Default priority for all methods in this filter
  *
- * @var integer
+ * @var int
  */
 	public $priority = 10;
 
@@ -78,7 +78,7 @@ abstract class DispatcherFilter implements CakeEventListener {
  *
  * @param CakeEvent $event container object having the `request`, `response` and `additionalParams`
  *	keys in the data property.
- * @return CakeResponse|boolean
+ * @return CakeResponse|bool
  */
 	public function beforeDispatch(CakeEvent $event) {
 	}

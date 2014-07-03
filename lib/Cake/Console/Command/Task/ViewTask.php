@@ -342,7 +342,7 @@ class ViewTask extends BakeTask {
  *
  * @param string $action Action to bake
  * @param string $content Content to write
- * @return boolean Success
+ * @return bool Success
  */
 	public function bake($action, $content = '') {
 		if ($content === true) {
@@ -455,7 +455,7 @@ class ViewTask extends BakeTask {
  * Returns associations for controllers models.
  *
  * @param Model $model The Model instance.
- * @return array $associations
+ * @return array associations
  */
 	protected function _associations(Model $model) {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
