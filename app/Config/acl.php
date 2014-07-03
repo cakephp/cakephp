@@ -99,7 +99,7 @@
  * }}}
  *
  * Ok, so as jeff inherits from Role/manager he's matched every rule that references User/jeff, Role/manager,
- * Role/editor, Role/accountant and Role/default. However, for jeff, rules for User/jeff are more specific than
+ * Role/editor, and Role/accountant. However, for jeff, rules for User/jeff are more specific than
  * rules for Role/manager, rules for Role/manager are more specific than rules for Role/editor and so on.
  * This is important when allow and deny rules match for a role. E.g. Role/accountant is allowed
  * controllers/invoices/* but at the same time controllers/invoices/delete is denied. But there is a more
