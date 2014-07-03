@@ -141,18 +141,14 @@ class ConsoleErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testNonIntegerExceptionCode() {
-		if (PHP_VERSION_ID < 50300) {
-			$this->markTestSkipped('ReflectionProperty::setAccessible() is available since 5.3');
-		}
+		$exception = new Error\Exception('Non-integer exception code');
 
-		$exception = new Exception('Non-integer exception code');
-
-		$class = new ReflectionClass('Exception');
+		$class = new \ReflectionClass('Exception');
 		$property = $class->getProperty('code');
 		$property->setAccessible(true);
 		$property->setValue($exception, '42S22');
 
-		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
+		$this->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Non-integer exception code'));
 
 		$this->Error->expects($this->once())
