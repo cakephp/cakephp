@@ -617,7 +617,7 @@ class FolderTest extends TestCase {
 		$this->assertSame(array_diff($expected, $result), array());
 
 		$result = $Folder->find('.*', true);
-		$expected = array('cacert.pem', 'config.php', 'routes.php');
+		$expected = array('cacert.pem', 'config.php');
 		$this->assertSame($expected, $result);
 
 		$result = $Folder->find('.*\.php');
@@ -626,7 +626,7 @@ class FolderTest extends TestCase {
 		$this->assertSame(array_diff($expected, $result), array());
 
 		$result = $Folder->find('.*\.php', true);
-		$expected = array('config.php', 'routes.php');
+		$expected = array('config.php');
 		$this->assertSame($expected, $result);
 
 		$result = $Folder->find('.*ig\.php');
