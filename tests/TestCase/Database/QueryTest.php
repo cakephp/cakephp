@@ -632,6 +632,32 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests generating tuples in the values side containing closure expressions
+ *
+ * @return void
+ */
+	public function testTupleWithClosureExpression() {
+		$query = new Query($this->connection);
+		$query->select(['id'])
+			->from('comments')
+			->where([
+				'OR' => [
+					'id' => 1,
+					function($exp) {
+						return $exp->eq('id', 2);
+					}
+				]
+			]);
+
+		$result = $query->sql();
+		$this->assertQuotedQuery(
+			'SELECT <id> FROM <comments> WHERE \(<id> = :c0 OR <id> = :c1\)',
+			$result,
+			true
+		);
+	}
+
+/**
  * Tests that it is possible to pass a closure to andWhere() to build a set of
  * conditions and return the expression to be used
  *
