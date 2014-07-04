@@ -571,4 +571,21 @@ class Route {
 		return $out;
 	}
 
+/**
+ * Get the static path portion for this route.
+ *
+ * @return string
+ */
+	public function staticPath() {
+		$routeKey = strpos($this->template, ':');
+		if ($routeKey !== false) {
+			return substr($this->template, 0, $routeKey);
+		}
+		$star = strpos($this->template, '*');
+		if ($star !== false) {
+			return substr($this->template, 0, $star);
+		}
+		return $this->template;
+	}
+
 }

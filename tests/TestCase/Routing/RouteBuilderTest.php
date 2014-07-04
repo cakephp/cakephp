@@ -16,13 +16,24 @@ namespace Cake\Test\TestCase\Routing;
 
 use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
-use Cake\Routing\ScopedRouteCollection;
+use Cake\Routing\RouteBuilder;
+use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 
 /**
- * ScopedRouteCollection test case
+ * RouteBuilder test case
  */
-class ScopedRouteCollectionTest extends TestCase {
+class RouteBuilderTest extends TestCase {
+
+/**
+ * Setup method
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$this->collection = new RouteCollection();
+	}
 
 /**
  * Test path()
@@ -30,16 +41,16 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testPath() {
-		$routes = new ScopedRouteCollection('/some/path');
+		$routes = new RouteBuilder($this->collection, '/some/path');
 		$this->assertEquals('/some/path', $routes->path());
 
-		$routes = new ScopedRouteCollection('/:book_id');
+		$routes = new RouteBuilder($this->collection, '/:book_id');
 		$this->assertEquals('/', $routes->path());
 
-		$routes = new ScopedRouteCollection('/path/:book_id');
+		$routes = new RouteBuilder($this->collection, '/path/:book_id');
 		$this->assertEquals('/path/', $routes->path());
 
-		$routes = new ScopedRouteCollection('/path/book:book_id');
+		$routes = new RouteBuilder($this->collection, '/path/book:book_id');
 		$this->assertEquals('/path/book', $routes->path());
 	}
 
@@ -49,7 +60,7 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testParams() {
-		$routes = new ScopedRouteCollection('/api', ['prefix' => 'api']);
+		$routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
 		$this->assertEquals(['prefix' => 'api'], $routes->params());
 	}
 
@@ -59,11 +70,11 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testRoutes() {
-		$routes = new ScopedRouteCollection('/l');
+		$routes = new RouteBuilder($this->collection, '/l');
 		$routes->connect('/:controller', ['action' => 'index']);
 		$routes->connect('/:controller/:action/*');
 
-		$all = $routes->routes();
+		$all = $this->collection->routes();
 		$this->assertCount(2, $all);
 		$this->assertInstanceOf('Cake\Routing\Route\Route', $all[0]);
 		$this->assertInstanceOf('Cake\Routing\Route\Route', $all[1]);
@@ -75,30 +86,14 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testNamed() {
-		$routes = new ScopedRouteCollection('/l');
+		$routes = new RouteBuilder($this->collection, '/l');
 		$routes->connect('/:controller', ['action' => 'index'], ['_name' => 'cntrl']);
 		$routes->connect('/:controller/:action/*');
 
-		$all = $routes->named();
+		$all = $this->collection->named();
 		$this->assertCount(1, $all);
 		$this->assertInstanceOf('Cake\Routing\Route\Route', $all['cntrl']);
 		$this->assertEquals('/l/:controller', $all['cntrl']->template);
-	}
-
-/**
- * Test getting named routes.
- *
- * @return void
- */
-	public function testGetNamed() {
-		$routes = new ScopedRouteCollection('/l');
-		$routes->connect('/:controller', ['action' => 'index'], ['_name' => 'cntrl']);
-		$routes->connect('/:controller/:action/*');
-
-		$this->assertFalse($routes->get('nope'));
-		$route = $routes->get('cntrl');
-		$this->assertInstanceOf('Cake\Routing\Route\Route', $route);
-		$this->assertEquals('/l/:controller', $route->template);
 	}
 
 /**
@@ -107,12 +102,12 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testConnectInstance() {
-		$routes = new ScopedRouteCollection('/l', ['prefix' => 'api']);
+		$routes = new RouteBuilder($this->collection, '/l', ['prefix' => 'api']);
 
 		$route = new Route('/:controller');
 		$this->assertNull($routes->connect($route));
 
-		$result = $routes->routes()[0];
+		$result = $this->collection->routes()[0];
 		$this->assertSame($route, $result);
 	}
 
@@ -122,10 +117,10 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testConnectBasic() {
-		$routes = new ScopedRouteCollection('/l', ['prefix' => 'api']);
+		$routes = new RouteBuilder($this->collection, '/l', ['prefix' => 'api']);
 
 		$this->assertNull($routes->connect('/:controller'));
-		$route = $routes->routes()[0];
+		$route = $this->collection->routes()[0];
 
 		$this->assertInstanceOf('Cake\Routing\Route\Route', $route);
 		$this->assertEquals('/l/:controller', $route->template);
@@ -139,17 +134,17 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testConnectExtensions() {
-		$routes = new ScopedRouteCollection('/l', [], ['json']);
+		$routes = new RouteBuilder($this->collection, '/l', [], ['json']);
 		$this->assertEquals(['json'], $routes->extensions());
 
 		$routes->connect('/:controller');
-		$route = $routes->routes()[0];
+		$route = $this->collection->routes()[0];
 
 		$this->assertEquals(['json'], $route->options['_ext']);
 		$routes->extensions(['xml', 'json']);
 
 		$routes->connect('/:controller/:action');
-		$new = $routes->routes()[1];
+		$new = $this->collection->routes()[1];
 		$this->assertEquals(['json'], $route->options['_ext']);
 		$this->assertEquals(['xml', 'json'], $new->options['_ext']);
 	}
@@ -162,7 +157,7 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testConnectErrorInvalidRouteClass() {
-		$routes = new ScopedRouteCollection('/l', [], ['json']);
+		$routes = new RouteBuilder($this->collection, '/l', [], ['json']);
 		$routes->connect('/:controller', [], ['routeClass' => '\StdClass']);
 	}
 
@@ -174,7 +169,7 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testConnectConflictingParameters() {
-		$routes = new ScopedRouteCollection('/admin', ['prefix' => 'admin'], []);
+		$routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'admin'], []);
 		$routes->connect('/', ['prefix' => 'manager', 'controller' => 'Dashboard', 'action' => 'view']);
 	}
 
@@ -184,14 +179,14 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testRedirect() {
-		$routes = new ScopedRouteCollection('/');
+		$routes = new RouteBuilder($this->collection, '/');
 		$routes->redirect('/p/:id', ['controller' => 'posts', 'action' => 'view'], ['status' => 301]);
-		$route = $routes->routes()[0];
+		$route = $this->collection->routes()[0];
 
 		$this->assertInstanceOf('Cake\Routing\Route\RedirectRoute', $route);
 
 		$routes->redirect('/old', '/forums', ['status' => 301]);
-		$route = $routes->routes()[1];
+		$route = $this->collection->routes()[1];
 
 		$this->assertInstanceOf('Cake\Routing\Route\RedirectRoute', $route);
 		$this->assertEquals('/forums', $route->redirect[0]);
@@ -203,10 +198,10 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testPrefix() {
-		$routes = new ScopedRouteCollection('/path', ['key' => 'value']);
+		$routes = new RouteBuilder($this->collection, '/path', ['key' => 'value']);
 		$res = $routes->prefix('admin', function($r) {
-			$this->assertInstanceOf('Cake\Routing\ScopedRouteCollection', $r);
-			$this->assertCount(0, $r->routes());
+			$this->assertInstanceOf('Cake\Routing\RouteBuilder', $r);
+			$this->assertCount(0, $this->collection->routes());
 			$this->assertEquals('/path/admin', $r->path());
 			$this->assertEquals(['prefix' => 'admin', 'key' => 'value'], $r->params());
 		});
@@ -219,7 +214,7 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testNestedPrefix() {
-		$routes = new ScopedRouteCollection('/admin', ['prefix' => 'admin']);
+		$routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'admin']);
 		$res = $routes->prefix('api', function($r) {
 			$this->assertEquals('/admin/api', $r->path());
 			$this->assertEquals(['prefix' => 'admin/api'], $r->params());
@@ -233,13 +228,13 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testNestedPlugin() {
-		$routes = new ScopedRouteCollection('/b', ['key' => 'value']);
+		$routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
 		$res = $routes->plugin('Contacts', function($r) {
 			$this->assertEquals('/b/contacts', $r->path());
 			$this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
 
 			$r->connect('/:controller');
-			$route = $r->routes()[0];
+			$route = $this->collection->routes()[0];
 			$this->assertEquals(
 				['key' => 'value', 'plugin' => 'Contacts', 'action' => 'index'],
 				$route->defaults
@@ -254,95 +249,11 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testNestedPluginPathOption() {
-		$routes = new ScopedRouteCollection('/b', ['key' => 'value']);
+		$routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
 		$routes->plugin('Contacts', ['path' => '/people'], function($r) {
 			$this->assertEquals('/b/people', $r->path());
 			$this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
 		});
-	}
-
-/**
- * Test parsing routes.
- *
- * @return void
- */
-	public function testParse() {
-		$routes = new ScopedRouteCollection('/b', ['key' => 'value']);
-		$routes->connect('/', ['controller' => 'Articles']);
-		$routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
-
-		$result = $routes->parse('/');
-		$this->assertEquals([], $result, 'Should not match, missing /b');
-
-		$result = $routes->parse('/b/');
-		$expected = [
-			'controller' => 'Articles',
-			'action' => 'index',
-			'pass' => [],
-			'plugin' => null,
-			'key' => 'value',
-		];
-		$this->assertEquals($expected, $result);
-
-		$result = $routes->parse('/b/the-thing?one=two');
-		$expected = [
-			'controller' => 'Articles',
-			'action' => 'view',
-			'id' => 'the-thing',
-			'pass' => [],
-			'plugin' => null,
-			'key' => 'value',
-			'?' => ['one' => 'two'],
-		];
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * Test matching routes.
- *
- * @return void
- */
-	public function testMatch() {
-		$context = [
-			'_base' => '/',
-			'_scheme' => 'http',
-			'_host' => 'example.org',
-		];
-		$routes = new ScopedRouteCollection('/b');
-		$routes->connect('/', ['controller' => 'Articles']);
-		$routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
-
-		$result = $routes->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'index'], $context);
-		$this->assertEquals('b', $result);
-
-		$result = $routes->match(
-			['id' => 'thing', 'plugin' => null, 'controller' => 'Articles', 'action' => 'view'],
-			$context);
-		$this->assertEquals('b/thing', $result);
-
-		$result = $routes->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'add'], $context);
-		$this->assertFalse($result, 'No matches');
-	}
-
-/**
- * Test matching plugin routes.
- *
- * @return void
- */
-	public function testMatchPlugin() {
-		$context = [
-			'_base' => '/',
-			'_scheme' => 'http',
-			'_host' => 'example.org',
-		];
-		$routes = new ScopedRouteCollection('/contacts', ['plugin' => 'Contacts']);
-		$routes->connect('/', ['controller' => 'Contacts']);
-
-		$result = $routes->match(['controller' => 'Contacts', 'action' => 'index'], $context);
-		$this->assertFalse($result);
-
-		$result = $routes->match(['plugin' => 'Contacts', 'controller' => 'Contacts', 'action' => 'index'], $context);
-		$this->assertEquals('contacts', $result);
 	}
 
 /**
@@ -351,10 +262,10 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testResources() {
-		$routes = new ScopedRouteCollection('/api', ['prefix' => 'api']);
+		$routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
 		$routes->resources('Articles', ['_ext' => 'json']);
 
-		$all = $routes->routes();
+		$all = $this->collection->routes();
 		$this->assertCount(6, $all);
 
 		$this->assertEquals('/api/articles', $all[0]->template);
@@ -368,13 +279,13 @@ class ScopedRouteCollectionTest extends TestCase {
  * @return void
  */
 	public function testResourcesNested() {
-		$routes = new ScopedRouteCollection('/api', ['prefix' => 'api']);
+		$routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
 		$routes->resources('Articles', function($routes) {
 			$this->assertEquals('/api/articles/', $routes->path());
 			$this->assertEquals(['prefix' => 'api'], $routes->params());
 
 			$routes->resources('Comments');
-			$route = $routes->routes()[0];
+			$route = $this->collection->routes()[6];
 			$this->assertEquals('/api/articles/:article_id/comments', $route->template);
 		});
 	}

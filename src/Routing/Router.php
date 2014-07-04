@@ -17,8 +17,8 @@ namespace Cake\Routing;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Network\Request;
-use Cake\Routing\Error\MissingRouteException;
-use Cake\Routing\ScopedRouteCollection;
+use Cake\Routing\RouteBuilder;
+use Cake\Routing\RouteCollection;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 
@@ -109,19 +109,7 @@ class Router {
  */
 	const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
 
-/**
- * A hash of ScopedRouteCollection objects indexed by path.
- *
- * @var array
- */
-	protected static $_pathScopes = [];
-
-/**
- * A hash of ScopedRouteCollection objects indexed by plugin + prefix
- *
- * @var array
- */
-	protected static $_paramScopes = [];
+	protected static $_collection;
 
 /**
  * A hash of request context data.
@@ -129,15 +117,6 @@ class Router {
  * @var array
  */
 	protected static $_requestContext = [];
-
-/**
- * A hash of named routes. Indexed
- * as an optimization so reverse routing does not
- * have to traverse all the route collections.
- *
- * @var array
- */
-	protected static $_named = [];
 
 /**
  * Named expressions
@@ -168,13 +147,6 @@ class Router {
 	);
 
 /**
- * List of resource-mapped controllers
- *
- * @var array
- */
-	protected static $_resourceMapped = [];
-
-/**
  * Maintains the request object stack for the current request.
  * This will contain more than one request object when requestAction is used.
  *
@@ -198,23 +170,6 @@ class Router {
  * @var array
  */
 	protected static $_urlFilters = [];
-
-/**
- * Validates that the passed route class exists and is a subclass of Cake Route
- *
- * @param string $routeClass Route class name
- * @return string
- * @throws \Cake\Error\Exception
- */
-	protected static function _validateRouteClass($routeClass) {
-		if (
-			$routeClass != 'Cake\Routing\Route\Route' &&
-			(!class_exists($routeClass) || !is_subclass_of($routeClass, 'Cake\Routing\Route\Route'))
-		) {
-			throw new Error\Exception('Route class not found, or route class is not a subclass of Cake\Routing\Route\Route');
-		}
-		return $routeClass;
-	}
 
 /**
  * Sets the Routing prefixes.
@@ -329,7 +284,7 @@ class Router {
  */
 	public static function connect($route, $defaults = [], $options = []) {
 		static::$initialized = true;
-		Router::scope('/', function($routes) use ($route, $defaults, $options) {
+		static::scope('/', function($routes) use ($route, $defaults, $options) {
 			$routes->connect($route, $defaults, $options);
 		});
 	}
@@ -416,7 +371,7 @@ class Router {
  *
  * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
  * @param array $options Options to use when generating REST routes
- * @return array Array of mapped resources
+ * @return void
  */
 	public static function mapResources($controller, $options = []) {
 		$options += array(
@@ -457,11 +412,9 @@ class Router {
 					'id' => $options['id'],
 					'pass' => array('id')
 				), $connectOptions);
-				Router::connect($url, $params, $routeOptions);
+				static::connect($url, $params, $routeOptions);
 			}
-			static::$_resourceMapped[] = $urlName;
 		}
-		return static::$_resourceMapped;
 	}
 
 /**
@@ -490,17 +443,7 @@ class Router {
 		if (strpos($url, '/') !== 0) {
 			$url = '/' . $url;
 		}
-
-		foreach (static::$_pathScopes as $path => $collection) {
-			if (strpos($url, $path) === 0) {
-				break;
-			}
-		}
-		$result = $collection->parse($url);
-		if ($result) {
-			return $result;
-		}
-		throw new MissingRouteException(['url' => $url]);
+		return static::$_collection->parse($url);
 	}
 
 /**
@@ -599,6 +542,7 @@ class Router {
  */
 	public static function reload() {
 		if (empty(static::$_initialState)) {
+			static::$_collection = new RouteCollection();
 			static::$_initialState = get_class_vars(get_called_class());
 			return;
 		}
@@ -607,6 +551,7 @@ class Router {
 				static::${$key} = $val;
 			}
 		}
+		static::$_collection = new RouteCollection();
 	}
 
 /**
@@ -785,7 +730,7 @@ class Router {
 				'_ext' => $params['_ext']
 			);
 			$url = static::_applyUrlFilters($url);
-			$output = static::_match($url);
+			$output = static::$_collection->match($url, static::$_requestContext);
 		} elseif (
 			$urlType === 'string' &&
 			!$hasLeadingSlash &&
@@ -794,7 +739,7 @@ class Router {
 			// named route.
 			$url = $options + ['_name' => $url];
 			$url = static::_applyUrlFilters($url);
-			$output = static::_match($url);
+			$output = static::$_collection->match($url, static::$_requestContext);
 		} else {
 			// String urls.
 			if ($plainString) {
@@ -810,49 +755,6 @@ class Router {
 			}
 		}
 		return $output . $frag;
-	}
-
-/**
- * Find a Route that matches the given URL data.
- *
- * @param string|array The URL to match.
- * @return string The generated URL
- * @throws \Cake\Error\Exception When a matching URL cannot be found.
- */
-	protected static function _match($url) {
-		// Named routes support hack.
-		if (isset($url['_name'])) {
-			$route = false;
-			if (isset(static::$_named[$url['_name']])) {
-				$route = static::$_named[$url['_name']];
-			}
-			if ($route) {
-				unset($url['_name']);
-				return $route->match($url + $route->defaults, static::$_requestContext);
-			}
-		}
-
-		// Check the scope that matches key params.
-		$plugin = isset($url['plugin']) ? $url['plugin'] : '';
-		$prefix = isset($url['prefix']) ? $url['prefix'] : '';
-
-		$collection = null;
-		$attempts = [[$plugin, $prefix], ['', '']];
-		foreach ($attempts as $attempt) {
-			if (isset(static::$_paramScopes[$attempt[0]][$attempt[1]])) {
-				$collection = static::$_paramScopes[$attempt[0]][$attempt[1]];
-				break;
-			}
-		}
-
-		if ($collection) {
-			$match = $collection->match($url, static::$_requestContext);
-			if ($match !== false) {
-				return $match;
-			}
-		}
-
-		throw new MissingRouteException(['url' => var_export($url, true)]);
 	}
 
 /**
@@ -1083,45 +985,12 @@ class Router {
  *   If you have no parameters, this argument can be a callable.
  * @param callable $callback The callback to invoke with the scoped collection.
  * @throws \InvalidArgumentException When an invalid callable is provided.
- * @return null|\Cake\Routing\ScopedRouteCollection The scoped collection that
+ * @return null|\Cake\Routing\RouteBuilder The route builder
  *   was created/used.
  */
 	public static function scope($path, $params = [], $callback = null) {
-		if ($params === [] && $callback === null && isset(static::$_pathScopes[$path])) {
-			return static::$_pathScopes[$path];
-		}
-
-		if ($callback === null) {
-			$callback = $params;
-			$params = [];
-		}
-		if (!is_callable($callback)) {
-			$msg = 'Need a callable function/object to connect routes.';
-			throw new \InvalidArgumentException($msg);
-		}
-
-		$collection = new ScopedRouteCollection($path, $params, static::$_validExtensions);
-		$callback($collection);
-
-		// Index named routes for fast lookup.
-		static::$_named += $collection->named();
-
-		// Index scopes by path (for parsing)
-		if (empty(static::$_pathScopes[$path])) {
-			static::$_pathScopes[$path] = $collection;
-			krsort(static::$_pathScopes);
-		} else {
-			static::$_pathScopes[$path]->merge($collection);
-		}
-
-		// Index scopes by key params (for reverse routing).
-		$plugin = isset($params['plugin']) ? $params['plugin'] : '';
-		$prefix = isset($params['prefix']) ? $params['prefix'] : '';
-		if (!isset(static::$_paramScopes[$plugin][$prefix])) {
-			static::$_paramScopes[$plugin][$prefix] = $collection;
-		} else {
-			static::$_paramScopes[$plugin][$prefix]->merge($collection);
-		}
+		$builder = new RouteBuilder(static::$_collection, '/', [], static::$_validExtensions);
+		$builder->scope($path, $params, $callback);
 	}
 
 /**
@@ -1184,7 +1053,7 @@ class Router {
  * @return array
  */
 	public static function routes() {
-		return array_values(static::$_pathScopes);
+		return static::$_collection->routes();
 	}
 
 /**

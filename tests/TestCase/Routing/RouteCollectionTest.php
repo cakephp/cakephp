@@ -1,0 +1,144 @@
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Test\TestCase\Routing;
+
+use Cake\Routing\Route\Route;
+use Cake\Routing\Router;
+use Cake\Routing\RouteBuilder;
+use Cake\Routing\RouteCollection;
+use Cake\TestSuite\TestCase;
+
+class RouteCollectionTest extends TestCase {
+
+/**
+ * Setup method
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$this->collection = new RouteCollection();
+	}
+
+/**
+ * Test parse() throws an error on unknown routes.
+ *
+ * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedExceptionMessage A route matching "/" could not be found
+ */
+	public function testParseMissingRoute() {
+		$routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
+		$routes->connect('/', ['controller' => 'Articles']);
+		$routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+
+		$result = $this->collection->parse('/');
+		$this->assertEquals([], $result, 'Should not match, missing /b');
+	}
+
+/**
+ * Test parsing routes.
+ *
+ * @return void
+ */
+	public function testParse() {
+		$routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
+		$routes->connect('/', ['controller' => 'Articles']);
+		$routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+
+		$result = $this->collection->parse('/b/');
+		$expected = [
+			'controller' => 'Articles',
+			'action' => 'index',
+			'pass' => [],
+			'plugin' => null,
+			'key' => 'value',
+		];
+		$this->assertEquals($expected, $result);
+
+		$result = $this->collection->parse('/b/the-thing?one=two');
+		$expected = [
+			'controller' => 'Articles',
+			'action' => 'view',
+			'id' => 'the-thing',
+			'pass' => [],
+			'plugin' => null,
+			'key' => 'value',
+			'?' => ['one' => 'two'],
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test match() throws an error on unknown routes.
+ *
+ * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedExceptionMessage A route matching "array (
+ */
+	public function testMatchError() {
+		$context = [
+			'_base' => '/',
+			'_scheme' => 'http',
+			'_host' => 'example.org',
+		];
+		$routes = new RouteBuilder($this->collection, '/b');
+		$routes->connect('/', ['controller' => 'Articles']);
+
+		$result = $this->collection->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'add'], $context);
+		$this->assertFalse($result, 'No matches');
+	}
+
+/**
+ * Test matching routes.
+ *
+ * @return void
+ */
+	public function testMatch() {
+		$context = [
+			'_base' => '/',
+			'_scheme' => 'http',
+			'_host' => 'example.org',
+		];
+		$routes = new RouteBuilder($this->collection, '/b');
+		$routes->connect('/', ['controller' => 'Articles']);
+		$routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+
+		$result = $this->collection->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'index'], $context);
+		$this->assertEquals('b', $result);
+
+		$result = $this->collection->match(
+			['id' => 'thing', 'plugin' => null, 'controller' => 'Articles', 'action' => 'view'],
+			$context);
+		$this->assertEquals('b/thing', $result);
+	}
+
+/**
+ * Test matching plugin routes.
+ *
+ * @return void
+ */
+	public function testMatchPlugin() {
+		$context = [
+			'_base' => '/',
+			'_scheme' => 'http',
+			'_host' => 'example.org',
+		];
+		$routes = new RouteBuilder($this->collection, '/contacts', ['plugin' => 'Contacts']);
+		$routes->connect('/', ['controller' => 'Contacts']);
+
+		$result = $this->collection->match(['plugin' => 'Contacts', 'controller' => 'Contacts', 'action' => 'index'], $context);
+		$this->assertEquals('contacts', $result);
+	}
+
+}
