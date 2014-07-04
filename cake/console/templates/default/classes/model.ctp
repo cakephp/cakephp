@@ -47,7 +47,7 @@ if (!empty($validate)):
 			echo "\t\t\t\t//'message' => 'Your custom message here',\n";
 			echo "\t\t\t\t//'allowEmpty' => false,\n";
 			echo "\t\t\t\t//'required' => false,\n";
-			echo "\t\t\t\t//'last' => false, // Stop validation after this rule\n";
+			echo "\t\t\t\t//'last' => true, // Stop validation after this rule\n";
 			echo "\t\t\t\t//'on' => 'create', // Limit validation to 'create' or 'update' operations\n";
 			echo "\t\t\t),\n";
 		endforeach;
