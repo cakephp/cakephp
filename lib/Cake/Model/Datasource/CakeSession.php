@@ -714,11 +714,10 @@ class CakeSession {
  * @return void
  */
 	public static function renew() {
-		$id = session_id();
-		if (!$id) {
+		if (!session_id()) {
 			return;
 		}
-		if ($id || isset($_COOKIE[session_name()])) {
+		if (isset($_COOKIE[session_name()])) {
 			setcookie(Configure::read('Session.cookie'), '', time() - 42000, self::$path);
 		}
 		session_regenerate_id(true);
