@@ -296,8 +296,6 @@ class HtmlHelper extends Helper {
  * - `escapeTitle` Set to false to disable escaping of title. Takes precedence
  *   over value of `escape`)
  * - `confirm` JavaScript confirmation message.
- * - `default` If set to false the default redirection behavior of link will be
- *   prevented using javascript.
  *
  * @param string $title The content to be wrapped by <a> tags.
  * @param string|array $url Cake-relative URL or array of URL parameters, or
@@ -337,15 +335,8 @@ class HtmlHelper extends Helper {
 		}
 		if ($confirmMessage) {
 			$options['onclick'] = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
-		} elseif (isset($options['default']) && !$options['default']) {
-			if (isset($options['onclick'])) {
-				$options['onclick'] .= ' ';
-			} else {
-				$options['onclick'] = '';
-			}
-			$options['onclick'] .= 'event.returnValue = false; return false;';
-			unset($options['default']);
 		}
+
 		return $this->formatTemplate('link', [
 			'url' => $url,
 			'attrs' => $this->templater()->formatAttributes($options),
