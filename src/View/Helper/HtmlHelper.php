@@ -293,11 +293,15 @@ class HtmlHelper extends Helper {
  * ### Options
  *
  * - `escape` Set to false to disable escaping of title and attributes.
- * - `escapeTitle` Set to false to disable escaping of title. (Takes precedence over value of `escape`)
+ * - `escapeTitle` Set to false to disable escaping of title. Takes precedence
+ *   over value of `escape`)
  * - `confirm` JavaScript confirmation message.
+ * - `default` If set to false the default redirection behavior of link will be
+ *   prevented using javascript.
  *
  * @param string $title The content to be wrapped by <a> tags.
- * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
+ * @param string|array $url Cake-relative URL or array of URL parameters, or
+ *   external URL (starts with http://)
  * @param array $options Array of options and HTML attributes.
  * @return string An `<a />` element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::link
