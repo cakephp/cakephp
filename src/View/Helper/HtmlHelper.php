@@ -299,11 +299,10 @@ class HtmlHelper extends Helper {
  * @param string $title The content to be wrapped by <a> tags.
  * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
  * @param array $options Array of options and HTML attributes.
- * @param string $confirmMessage JavaScript confirmation message.
  * @return string An `<a />` element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::link
  */
-	public function link($title, $url = null, array $options = array(), $confirmMessage = false) {
+	public function link($title, $url = null, array $options = array()) {
 		$escapeTitle = true;
 		if ($url !== null) {
 			$url = $this->url($url);
@@ -327,7 +326,8 @@ class HtmlHelper extends Helper {
 			$title = htmlentities($title, ENT_QUOTES, $escapeTitle);
 		}
 
-		if (!empty($options['confirm'])) {
+		$confirmMessage = null;
+		if (isset($options['confirm'])) {
 			$confirmMessage = $options['confirm'];
 			unset($options['confirm']);
 		}
