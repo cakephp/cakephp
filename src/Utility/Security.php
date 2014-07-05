@@ -47,16 +47,14 @@ class Security {
 	}
 
 /**
- * Create a hash from string using given method or fallback on next available method.
+ * Create a hash from string using given method.
  *
  * #### Using Blowfish
  *
  * - Creating Hashes: *Do not supply a salt*. Cake handles salt creation for
- * you ensuring that each hashed password will have a *unique* salt.
+ *   you ensuring that each hashed password will have a *unique* salt.
  * - Comparing Hashes: Simply pass the originally hashed password as the salt.
- * The salt is prepended to the hash and php handles the parsing automagically.
- * For convenience the `BlowfishPasswordHasher` class is available for use with
- * the AuthComponent.
+ *   The salt is prepended to the hash and php handles the parsing automagically.
  * - Do NOT use a constant salt for blowfish!
  *
  * Creating a blowfish/bcrypt hash:
@@ -66,16 +64,20 @@ class Security {
  * }}}
  *
  * @param string $string String to hash
- * @param string $type Method to use (sha1/sha256/md5/blowfish)
+ * @param string $type Hashing algo to use (i.e. md5, sha1, sha256 etc.).
+ *   Can be any valid algo included in list returned by hash_algos() or 'blowfish'.
  * @param mixed $salt If true, automatically prepends the application's salt
- *     value to $string (Security.salt). If you are using blowfish the salt
- *     must be false or a previously generated salt.
+ *   value to $string (Security.salt). If you are using blowfish the salt
+ *   must be false or a previously generated salt.
  * @return string Hash
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/security.html#Security::hash
  */
 	public static function hash($string, $type = null, $salt = false) {
 		if (empty($type)) {
 			$type = static::$hashType;
+		}
+		if (empty($type)) {
+			$type = 'sha1';
 		}
 		$type = strtolower($type);
 
@@ -89,28 +91,14 @@ class Security {
 			$string = $salt . $string;
 		}
 
-		if (!$type || $type === 'sha1') {
-			if (function_exists('sha1')) {
-				return sha1($string);
-			}
-			$type = 'sha256';
-		}
-
-		if ($type === 'sha256' && function_exists('mhash')) {
-			return bin2hex(mhash(MHASH_SHA256, $string));
-		}
-
-		if (function_exists('hash')) {
-			return hash($type, $string);
-		}
-		return md5($string);
+		return hash($type, $string);
 	}
 
 /**
- * Sets the default hash method for the Security object. This affects all objects using
- * Security::hash().
+ * Sets the default hash method for the Security object. This affects all objects
+ * using Security::hash().
  *
- * @param string $hash Method to use (sha1/sha256/md5/blowfish)
+ * @param string $hash Method to use (sha1/sha256/md5/blowfish etc.)
  * @return void
  * @see Security::hash()
  */

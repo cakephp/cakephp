@@ -109,13 +109,8 @@ class SecurityTest extends TestCase {
 		$this->assertSame(32, strlen(Security::hash($key, null, false)));
 		$this->assertSame(32, strlen(Security::hash($key, null, true)));
 
-		if (!function_exists('hash') && !function_exists('mhash')) {
-			$this->assertSame(32, strlen(Security::hash($key, 'sha256', false)));
-			$this->assertSame(32, strlen(Security::hash($key, 'sha256', true)));
-		} else {
-			$this->assertSame(64, strlen(Security::hash($key, 'sha256', false)));
-			$this->assertSame(64, strlen(Security::hash($key, 'sha256', true)));
-		}
+		$this->assertSame(64, strlen(Security::hash($key, 'sha256', false)));
+		$this->assertSame(64, strlen(Security::hash($key, 'sha256', true)));
 
 		Security::setHash($_hashType);
 	}
