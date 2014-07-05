@@ -206,12 +206,14 @@ class Connection {
 			$prefix = $this->_config["prefix"];
 		}
 
-		if (is_array($names)) {
-			if (!empty($names)) {
-				foreach ($names as $alias => &$tableName) {
-					$tableName = new TableNameExpression($tableName, $alias, $prefix);
+		if (is_array($names) && !empty($names)) {
+			foreach ($names as $alias => &$tableName) {
+				if (is_string($tableName) || $tableName instanceof Query) {
+					$tableName = new TableNameExpression($tableName, $prefix, $alias);
 				}
 			}
+		} else {
+			$tableName = new TableNameExpression($names, $prefix);
 		}
 
 		return $names;
