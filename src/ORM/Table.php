@@ -1136,8 +1136,9 @@ class Table implements RepositoryInterface, EventListener {
 
 		$associated = $options['associated'];
 		$options['associated'] = [];
+		$validate = $options['validate'];
 
-		if ($options['validate'] && !$this->validate($entity, $options)) {
+		if ($validate && !$this->validate($entity, $options)) {
 			return false;
 		}
 
@@ -1153,7 +1154,7 @@ class Table implements RepositoryInterface, EventListener {
 			$this,
 			$entity,
 			$options['associated'],
-			$options->getArrayCopy()
+			['validate' => (bool)$validate] + $options->getArrayCopy()
 		);
 
 		if (!$saved && $options['atomic']) {
