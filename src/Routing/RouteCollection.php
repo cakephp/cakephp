@@ -128,7 +128,6 @@ class RouteCollection {
  * @return string The name of the url
  */
 	protected function _getNames($url) {
-		$name = false;
 		if (isset($url['_name'])) {
 			return [$url['_name']];
 		}
@@ -136,29 +135,26 @@ class RouteCollection {
 		if (isset($url['plugin'])) {
 			$plugin = $url['plugin'];
 		}
+		$controller = $url['controller'];
+		$action = $url['action'];
+
 		$fallbacks = [
-			'%2$s:%3$s',
-			'%2$s:_action',
-			'_controller:%3$s',
-			'_controller:_action'
+			"${controller}:${action}",
+			"${controller}:_action",
+			"_controller:${action}",
+			"_controller:_action"
 		];
 		if ($plugin) {
 			$fallbacks = [
-				'%1$s.%2$s:%3$s',
-				'%1$s.%2$s:_action',
-				'%1$s._controller:%3$s',
-				'%1$s._controller:_action',
-				'_plugin.%2$s:%3$s',
-				'_plugin._controller:%3$s',
-				'_plugin._controller:_action',
-				'_controller:_action'
+				"${plugin}.${controller}:${action}",
+				"${plugin}.${controller}:_action",
+				"${plugin}._controller:${action}",
+				"${plugin}._controller:_action",
+				"_plugin.${controller}:${action}",
+				"_plugin._controller:${action}",
+				"_plugin._controller:_action",
+				"_controller:_action"
 			];
-		}
-		foreach ($fallbacks as $i => $template) {
-			$fallbacks[$i] = strtolower(sprintf($template, $plugin, $url['controller'], $url['action']));
-		}
-		if ($name) {
-			array_unshift($fallbacks, $name);
 		}
 		return $fallbacks;
 	}
@@ -184,28 +180,6 @@ class RouteCollection {
 				return $route->match($url + $route->defaults, $context);
 			}
 		}
-
-		/*
-		// Check the scope that matches key params.
-		$plugin = isset($url['plugin']) ? $url['plugin'] : '';
-		$prefix = isset($url['prefix']) ? $url['prefix'] : '';
-
-		$collection = null;
-		$attempts = [[$plugin, $prefix], ['', '']];
-		foreach ($attempts as $attempt) {
-			if (isset($this->_byParams[$attempt[0]][$attempt[1]])) {
-				$collection = $this->_byParams[$attempt[0]][$attempt[1]];
-				break;
-			}
-		}
-
-		if ($collection) {
-			$match = $collection->match($url, static::$_requestContext);
-			if ($match !== false) {
-				return $match;
-			}
-		}
-		 */
 
 		foreach ($this->_getNames($url) as $name) {
 			if (empty($this->_routeTable[$name])) {
