@@ -2106,7 +2106,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($table->save($entity, ['validate' => 'custom']));
 		$this->assertNotEmpty($entity->author->errors('thing'));
 
-		$this->assertSame($entity, $table->save($entity), 'default was not used');
+		$this->assertFalse($table->save($entity), 'default was not used');
 	}
 
 /**
