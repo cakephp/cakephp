@@ -2084,6 +2084,32 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests using a custom validation object when saving and saving associations
+ *
+ * @return void
+ */
+	public function testSaveWithDifferentValidatorAndAssociations() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'foo',
+			'body' => 'bar',
+			'author' => new \Cake\ORM\Entity([
+				'name' => 'Susan'
+			])
+		]);
+		$table = TableRegistry::get('articles');
+		$table->belongsTo('authors');
+		$validator = (new Validator)->validatePresence('body');
+		$table->validator('custom', $validator);
+
+		$validator2 = (new Validator)->validatePresence('thing');
+		$table->authors->validator('default', $validator2);
+		$this->assertFalse($table->save($entity, ['validate' => 'custom']));
+		$this->assertNotEmpty($entity->author->errors('thing'));
+
+		$this->assertSame($entity, $table->save($entity), 'default was not used');
+	}
+
+/**
  * Test magic findByXX method.
  *
  * @return void
