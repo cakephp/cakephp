@@ -157,7 +157,7 @@ class PluginTask extends BakeTask {
  * Update the app's bootstrap.php file.
  *
  * @param string $plugin Name of plugin
- * @param boolean $hasAutoloader Whether or not there is an autoloader configured for
+ * @param bool $hasAutoloader Whether or not there is an autoloader configured for
  * the plugin
  * @return void
  */
@@ -236,7 +236,7 @@ class PluginTask extends BakeTask {
  *
  * @param string $plugin Name of plugin
  * @param string $path The path to save the phpunit.xml file to.
- * @return boolean True if composer could be modified correctly
+ * @return bool True if composer could be modified correctly
  */
 	protected function _modifyAutoloader($plugin, $path) {
 		$path = dirname($path);
