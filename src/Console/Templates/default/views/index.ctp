@@ -47,7 +47,7 @@ use Cake\Utility\Inflector;
 		echo "\t\t<td class=\"actions\">\n";
 		echo "\t\t\t<?= \$this->Html->link(__('View'), ['action' => 'view', {$pk}]); ?>\n";
 		echo "\t\t\t<?= \$this->Html->link(__('Edit'), ['action' => 'edit', {$pk}]); ?>\n";
-		echo "\t\t\t<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', {$pk}], [], __('Are you sure you want to delete # %s?', {$pk})); ?>\n";
+		echo "\t\t\t<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', {$pk}], ['confirm' => __('Are you sure you want to delete # %s?', {$pk})]); ?>\n";
 		echo "\t\t</td>\n";
 	echo "\t</tr>\n";
 
