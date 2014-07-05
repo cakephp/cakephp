@@ -78,14 +78,6 @@ class RouteCollection {
 		$this->_paths[$path][] = $route;
 
 		/*
-		// Index scopes by path (for parsing)
-		if (empty(static::$_pathScopes[$path])) {
-			static::$_pathScopes[$path] = $collection;
-			krsort(static::$_pathScopes);
-		} else {
-			static::$_pathScopes[$path]->merge($collection);
-		}
-
 		// Index scopes by key params (for reverse routing).
 		$plugin = isset($params['plugin']) ? $params['plugin'] : '';
 		$prefix = isset($params['prefix']) ? $params['prefix'] : '';
@@ -104,27 +96,26 @@ class RouteCollection {
  * @return array An array of request parameters parsed from the url.
  */
 	public function parse($url) {
-		krsort($this->_paths);
-		foreach ($this->_paths as $path => $collection) {
-			if (strpos($url, $path) !== 0) {
+		foreach (array_keys($this->_paths) as $path) {
+			if (strpos($url, $path) === 0) {
+				break;
+			}
+		}
+
+		$queryParameters = null;
+		if (strpos($url, '?') !== false) {
+			list($url, $queryParameters) = explode('?', $url, 2);
+			parse_str($queryParameters, $queryParameters);
+		}
+		foreach ($this->_paths[$path] as $route) {
+			$r = $route->parse($url);
+			if ($r === false) {
 				continue;
 			}
-
-			$queryParameters = null;
-			if (strpos($url, '?') !== false) {
-				list($url, $queryParameters) = explode('?', $url, 2);
-				parse_str($queryParameters, $queryParameters);
+			if ($queryParameters) {
+				$r['?'] = $queryParameters;
 			}
-			foreach ($collection as $route) {
-				$r = $route->parse($url);
-				if ($r === false) {
-					continue;
-				}
-				if ($queryParameters) {
-					$r['?'] = $queryParameters;
-				}
-				return $r;
-			}
+			return $r;
 		}
 		throw new MissingRouteException(['url' => $url]);
 	}
