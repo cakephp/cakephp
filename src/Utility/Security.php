@@ -71,7 +71,6 @@ class Security {
  *     value to $string (Security.salt). If you are using blowfish the salt
  *     must be false or a previously generated salt.
  * @return string Hash
- * @deprecated Using the SimplePasswordHasher class is recommended
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/security.html#Security::hash
  */
 	public static function hash($string, $type = null, $salt = false) {
