@@ -15,7 +15,9 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
+use Cake\Database\Query;
 
 /**
  * Represents a table name from the datasource
@@ -72,6 +74,9 @@ class TableNameExpression implements ExpressionInterface {
  * @return void
  */
     public function setAlias($alias) {
+        if (is_numeric($alias)) {
+            $alias = null;
+        }
         $this->_alias = $alias;
     }
 
@@ -81,10 +86,10 @@ class TableNameExpression implements ExpressionInterface {
  * @param string $name Table name
  * @param string $prefix Prefix to prepend
  */
-    public function __construct($name, $alias, $prefix) {
+    public function __construct($name, $prefix, $alias = null) {
         $this->setName($name);
-        $this->setAlias($alias);
         $this->setPrefix($prefix);
+        $this->setAlias($alias);
     }
 
 /**
@@ -94,10 +99,16 @@ class TableNameExpression implements ExpressionInterface {
  * @return string
  */
     public function sql(ValueBinder $generator) {
+        $sql = "";
+
         if (is_string($this->_name)) {
             $sql = $this->_prefix . $this->_name;
-        } else {
+        } elseif ($this->_name instanceof Query) {
             $sql = '(' . $this->_name . ')';
+        }
+
+        if ($this->_alias !== null) {
+            $sql .= ' AS ' . $this->_alias;
         }
 
         return $sql;
