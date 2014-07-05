@@ -49,10 +49,25 @@ class ControllerTestCaseTest extends TestCase {
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$this->Case = $this->getMockForAbstractClass('Cake\TestSuite\ControllerTestCase');
+		$this->Case->loadRoutes = false;
+
 		DispatcherFactory::add('Routing');
 		DispatcherFactory::add('ControllerFactory');
-		Router::reload();
-		require CAKE . 'Config/routes.php';
+		Router::scope('/', function($routes) {
+			$routes->fallbacks();
+		});
+		Router::prefix('admin', function($routes) {
+			$routes->plugin('TestPlugin', function ($routes) {
+				$routes->fallbacks();
+			});
+			$routes->fallbacks();
+		});
+		Router::plugin('TestPlugin', function($routes) {
+			$routes->fallbacks();
+		});
+		Router::plugin('TestPluginTwo', function($routes) {
+			$routes->fallbacks();
+		});
 		TableRegistry::clear();
 	}
 
@@ -205,9 +220,6 @@ class ControllerTestCaseTest extends TestCase {
  * @return void
  */
 	public function testActionWithPrefix() {
-		Configure::write('Routing.prefixes', ['admin']);
-		Plugin::load('TestPlugin');
-
 		$result = $this->Case->testAction('/admin/posts/index', ['return' => 'view']);
 		$expected = '<h1>Admin Post Index</h1>';
 		$this->assertContains($expected, $result);

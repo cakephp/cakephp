@@ -379,4 +379,18 @@ class ScopedRouteCollectionTest extends TestCase {
 		});
 	}
 
+/**
+ * Test connecting fallback routes.
+ *
+ * @return void
+ */
+	public function testFallbacks() {
+		$routes = new ScopedRouteCollection('/api', ['prefix' => 'api']);
+		$routes->fallbacks();
+
+		$all = $routes->routes();
+		$this->assertEquals('/api/:controller', $all[0]->template);
+		$this->assertEquals('/api/:controller/:action/*', $all[1]->template);
+	}
+
 }

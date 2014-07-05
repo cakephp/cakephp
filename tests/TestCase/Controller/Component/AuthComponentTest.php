@@ -53,13 +53,6 @@ class AuthComponentTest extends TestCase {
 	public $fixtures = ['core.user', 'core.auth_user'];
 
 /**
- * initialized property
- *
- * @var bool
- */
-	public $initialized = false;
-
-/**
  * setUp method
  *
  * @return void
@@ -70,6 +63,10 @@ class AuthComponentTest extends TestCase {
 		Configure::write('Security.salt', 'YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 		Configure::write('App.namespace', 'TestApp');
 
+		Router::scope('/', function($routes) {
+			$routes->fallbacks();
+		});
+
 		$request = new Request();
 		$response = $this->getMock('Cake\Network\Response', array('stop'));
 
@@ -77,10 +74,6 @@ class AuthComponentTest extends TestCase {
 		$this->Controller->constructClasses();
 
 		$this->Auth = new TestAuthComponent($this->Controller->components());
-
-		$this->initialized = true;
-		Router::reload();
-		Router::connect('/:controller/:action/*');
 
 		$Users = TableRegistry::get('AuthUsers');
 		$Users->updateAll(['password' => Security::hash('cake', 'blowfish', false)], []);
@@ -524,12 +517,14 @@ class AuthComponentTest extends TestCase {
 			'AuthUsers' => array('id' => '1', 'username' => 'nate')
 		));
 
-		$this->Auth->request->addParams(Router::parse('Users/login'));
-		$this->Auth->request->url = 'Users/login';
+		$this->Auth->request->addParams(Router::parse('users/login'));
+		$this->Auth->request->url = 'users/login';
 		$this->Auth->request->env('HTTP_REFERER', false);
 
 		$this->Auth->config('loginRedirect', [
-			'controller' => 'pages', 'action' => 'display', 'welcome'
+			'controller' => 'pages',
+			'action' => 'display',
+			'welcome'
 		]);
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->startup($event);
@@ -555,7 +550,7 @@ class AuthComponentTest extends TestCase {
 		]);
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->startup($event);
-		$expected = Router::normalize('/AuthTest/login');
+		$expected = Router::normalize('/auth_test/login');
 		$this->assertEquals($expected, $this->Controller->testUrl);
 
 		$this->Auth->session->delete('Auth');
@@ -642,7 +637,7 @@ class AuthComponentTest extends TestCase {
 
 		// External Direct Login Link
 		$this->Auth->session->delete('Auth');
-		$url = '/AuthTest/login';
+		$url = '/auth_test/login';
 		$this->Auth->request = $this->Controller->request = new Request($url);
 		$this->Auth->request->env('HTTP_REFERER', 'http://webmail.example.com/view/message');
 		$this->Auth->request->addParams(Router::parse($url));
@@ -863,10 +858,9 @@ class AuthComponentTest extends TestCase {
  */
 	public function testAdminRoute() {
 		$event = new Event('Controller.startup', $this->Controller);
-		$pref = Configure::read('Routing.prefixes');
-		Configure::write('Routing.prefixes', array('admin'));
-		Router::reload();
-		require CAKE . 'Config/routes.php';
+		Router::prefix('admin', function($routes) {
+			$routes->fallbacks();
+		});
 
 		$url = '/admin/auth_test/add';
 		$this->Auth->request->addParams(Router::parse($url));
@@ -876,13 +870,13 @@ class AuthComponentTest extends TestCase {
 		Router::setRequestInfo($this->Auth->request);
 
 		$this->Auth->config('loginAction', [
-			'prefix' => 'admin', 'controller' => 'auth_test', 'action' => 'login'
+			'prefix' => 'admin',
+			'controller' => 'auth_test',
+			'action' => 'login'
 		]);
 
 		$this->Auth->startup($event);
 		$this->assertEquals('/admin/auth_test/login', $this->Controller->testUrl);
-
-		Configure::write('Routing.prefixes', $pref);
 	}
 
 /**
@@ -918,9 +912,9 @@ class AuthComponentTest extends TestCase {
  */
 	public function testLoginActionRedirect() {
 		$event = new Event('Controller.startup', $this->Controller);
-		Configure::write('Routing.prefixes', array('admin'));
-		Router::reload();
-		require CAKE . 'Config/routes.php';
+		Router::prefix('admin', function($routes) {
+			$routes->fallbacks();
+		});
 
 		$url = '/admin/auth_test/login';
 		$request = $this->Auth->request;
@@ -1309,6 +1303,6 @@ class AuthComponentTest extends TestCase {
 
 		$this->assertInstanceOf('Cake\Network\Response', $this->Auth->startup($event));
 
-		$this->assertEquals('/Users/login', $this->Controller->testUrl);
+		$this->assertEquals('/users/login', $this->Controller->testUrl);
 	}
 }
