@@ -1,7 +1,5 @@
 <?php
 /**
- * BasicAuthenticateTest file
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -52,7 +50,7 @@ class BasicAuthenticateTest extends TestCase {
 			'realm' => 'localhost'
 		));
 
-		$password = Security::hash('password', 'blowfish', false);
+		$password = password_hash('password', PASSWORD_BCRYPT);
 		$User = TableRegistry::get('Users');
 		$User->updateAll(['password' => $password], []);
 		$this->response = $this->getMock('Cake\Network\Response');

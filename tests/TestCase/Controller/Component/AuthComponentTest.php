@@ -76,7 +76,7 @@ class AuthComponentTest extends TestCase {
 		$this->Auth = new TestAuthComponent($this->Controller->components());
 
 		$Users = TableRegistry::get('AuthUsers');
-		$Users->updateAll(['password' => Security::hash('cake', 'blowfish', false)], []);
+		$Users->updateAll(['password' => password_hash('cake', PASSWORD_BCRYPT)], []);
 	}
 
 /**

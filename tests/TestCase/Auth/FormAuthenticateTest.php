@@ -1,7 +1,5 @@
 <?php
 /**
- * FormAuthenticateTest file
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -234,7 +232,7 @@ class FormAuthenticateTest extends TestCase {
 		$PluginModel = TableRegistry::get('TestPlugin.AuthUsers');
 		$user['id'] = 1;
 		$user['username'] = 'gwoo';
-		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake', 'blowfish', false);
+		$user['password'] = password_hash(Configure::read('Security.salt') . 'cake', PASSWORD_BCRYPT);
 		$PluginModel->save(new Entity($user));
 
 		$this->auth->config('userModel', 'TestPlugin.AuthUsers');
