@@ -24,11 +24,11 @@ use Cake\Error\Exception;
 class Security {
 
 /**
- * Default hash method
+ * Default hash method. Default to 'sha1'.
  *
  * @var string
  */
-	public static $hashType = null;
+	public static $hashType = 'sha1';
 
 /**
  * Default cost
@@ -51,7 +51,7 @@ class Security {
  *
  * #### Using Blowfish
  *
- * - Creating Hashes: *Do not supply a salt*. Cake handles salt creation for
+ * - Creating Hashes: *Do not supply a salt*. CakePHP handles salt creation for
  *   you ensuring that each hashed password will have a *unique* salt.
  * - Comparing Hashes: Simply pass the originally hashed password as the salt.
  *   The salt is prepended to the hash and php handles the parsing automagically.
@@ -64,8 +64,9 @@ class Security {
  * }}}
  *
  * @param string $string String to hash
- * @param string $type Hashing algo to use (i.e. md5, sha1, sha256 etc.).
+ * @param string $type Hashing algo to use (i.e. sha1, sha256, blowfish etc.).
  *   Can be any valid algo included in list returned by hash_algos() or 'blowfish'.
+ *   If no value is passed the type specified by `Security::$hashType` is used.
  * @param mixed $salt If true, automatically prepends the application's salt
  *   value to $string (Security.salt). If you are using blowfish the salt
  *   must be false or a previously generated salt.
@@ -75,9 +76,6 @@ class Security {
 	public static function hash($string, $type = null, $salt = false) {
 		if (empty($type)) {
 			$type = static::$hashType;
-		}
-		if (empty($type)) {
-			$type = 'sha1';
 		}
 		$type = strtolower($type);
 
