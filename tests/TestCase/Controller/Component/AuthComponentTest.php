@@ -858,7 +858,11 @@ class AuthComponentTest extends TestCase {
  */
 	public function testAdminRoute() {
 		$event = new Event('Controller.startup', $this->Controller);
+		Router::reload();
 		Router::prefix('admin', function($routes) {
+			$routes->fallbacks();
+		});
+		Router::scope('/', function($routes) {
 			$routes->fallbacks();
 		});
 
@@ -912,7 +916,11 @@ class AuthComponentTest extends TestCase {
  */
 	public function testLoginActionRedirect() {
 		$event = new Event('Controller.startup', $this->Controller);
+		Router::reload();
 		Router::prefix('admin', function($routes) {
+			$routes->fallbacks();
+		});
+		Router::scope('/', function($routes) {
 			$routes->fallbacks();
 		});
 

@@ -53,14 +53,6 @@ class Router {
 	protected static $_fullBaseUrl;
 
 /**
- * List of action prefixes used in connected routes.
- * Includes admin prefix
- *
- * @var array
- */
-	protected static $_prefixes = [];
-
-/**
  * List of valid extensions to parse from a URL. If null, any extension is allowed.
  *
  * @var array
@@ -415,18 +407,6 @@ class Router {
 				static::connect($url, $params, $routeOptions);
 			}
 		}
-	}
-
-/**
- * Returns the list of prefixes used in connected routes
- *
- * @return array A list of prefixes used in connected routes
- */
-	public static function prefixes() {
-		if (empty(static::$_prefixes)) {
-			return (array)Configure::read('Routing.prefixes');
-		}
-		return static::$_prefixes;
 	}
 
 /**

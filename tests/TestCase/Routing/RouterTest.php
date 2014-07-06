@@ -1492,30 +1492,6 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * Test that Routing.prefixes are used when a Router instance is created
- * or reset
- *
- * @return void
- */
-	public function testRoutingPrefixesSetting() {
-		$restore = Configure::read('Routing');
-
-		Configure::write('Routing.prefixes', array('admin', 'member', 'super_user'));
-		Router::reload();
-		$result = Router::prefixes();
-		$expected = array('admin', 'member', 'super_user');
-		$this->assertEquals($expected, $result);
-
-		Configure::write('Routing.prefixes', array('admin', 'member'));
-		Router::reload();
-		$result = Router::prefixes();
-		$expected = array('admin', 'member');
-		$this->assertEquals($expected, $result);
-
-		Configure::write('Routing', $restore);
-	}
-
-/**
  * testParseExtensions method
  *
  * @return void
@@ -2011,7 +1987,6 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testParsingWithLiteralPrefixes() {
-		Configure::write('Routing.prefixes', []);
 		Router::reload();
 		$adminParams = array('prefix' => 'admin');
 		Router::connect('/admin/:controller', $adminParams);
@@ -2038,10 +2013,6 @@ class RouterTest extends TestCase {
 
 		$result = Router::url(array('prefix' => 'admin', 'controller' => 'posts'));
 		$expected = '/base/admin/posts';
-		$this->assertEquals($expected, $result);
-
-		$result = Router::prefixes();
-		$expected = [];
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
@@ -2080,7 +2051,6 @@ class RouterTest extends TestCase {
 		Router::connect('/company/:controller/:action/*', array('prefix' => 'company'));
 		Router::connect('/:action', array('controller' => 'users'));
 
-		/*
 		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'prefix' => 'company'));
 		$expected = '/company/users/login';
 		$this->assertEquals($expected, $result);
@@ -2088,7 +2058,6 @@ class RouterTest extends TestCase {
 		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'prefix' => 'company'));
 		$expected = '/company/users/login';
 		$this->assertEquals($expected, $result);
-		 */
 
 		$request = new Request();
 		Router::setRequestInfo(

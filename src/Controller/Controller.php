@@ -392,20 +392,11 @@ class Controller implements EventListener {
  * @return bool
  */
 	protected function _isPrivateAction(\ReflectionMethod $method, Request $request) {
-		$privateAction = (
+		return (
 			$method->name[0] === '_' ||
 			!$method->isPublic() ||
 			!in_array($method->name, $this->methods)
 		);
-		$prefixes = Router::prefixes();
-
-		if (!$privateAction && !empty($prefixes)) {
-			if (empty($request->params['prefix']) && strpos($request->params['action'], '_') > 0) {
-				list($prefix) = explode('_', $request->params['action']);
-				$privateAction = in_array($prefix, $prefixes);
-			}
-		}
-		return $privateAction;
 	}
 
 /**

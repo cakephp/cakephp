@@ -41,9 +41,6 @@ class InflectedRoute extends Route {
 		if (!empty($params['plugin'])) {
 			$params['plugin'] = Inflector::camelize($params['plugin']);
 		}
-		if (!empty($params['prefix'])) {
-			$params['prefix'] = Inflector::camelize($params['prefix']);
-		}
 		return $params;
 	}
 
@@ -63,9 +60,6 @@ class InflectedRoute extends Route {
 		}
 		if (!empty($url['plugin'])) {
 			$url['plugin'] = Inflector::underscore($url['plugin']);
-		}
-		if (!empty($url['prefix'])) {
-			$url['prefix'] = Inflector::underscore($url['prefix']);
 		}
 		return parent::match($url, $context);
 	}
