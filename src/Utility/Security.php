@@ -24,18 +24,12 @@ use Cake\Error\Exception;
 class Security {
 
 /**
- * Default hash method
+ * Default hash method. If `$type` param for `Security::hash()` is not specified
+ * this value is used. Defaults to 'sha1'.
  *
  * @var string
  */
-	public static $hashType = null;
-
-/**
- * Default cost
- *
- * @var string
- */
-	public static $hashCost = '10';
+	public static $hashType = 'sha1';
 
 /**
  * Generate authorization hash.
@@ -47,29 +41,14 @@ class Security {
 	}
 
 /**
- * Create a hash from string using given method or fallback on next available method.
- *
- * #### Using Blowfish
- *
- * - Creating Hashes: *Do not supply a salt*. Cake handles salt creation for
- * you ensuring that each hashed password will have a *unique* salt.
- * - Comparing Hashes: Simply pass the originally hashed password as the salt.
- * The salt is prepended to the hash and php handles the parsing automagically.
- * For convenience the `BlowfishPasswordHasher` class is available for use with
- * the AuthComponent.
- * - Do NOT use a constant salt for blowfish!
- *
- * Creating a blowfish/bcrypt hash:
- *
- * {{{
- * 	$hash = Security::hash($password, 'blowfish');
- * }}}
+ * Create a hash from string using given method.
  *
  * @param string $string String to hash
- * @param string $type Method to use (sha1/sha256/md5/blowfish)
+ * @param string $type Hashing algo to use (i.e. sha1, sha256 etc.).
+ *   Can be any valid algo included in list returned by hash_algos().
+ *   If no value is passed the type specified by `Security::$hashType` is used.
  * @param mixed $salt If true, automatically prepends the application's salt
- *     value to $string (Security.salt). If you are using blowfish the salt
- *     must be false or a previously generated salt.
+ *   value to $string (Security.salt).
  * @return string Hash
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/security.html#Security::hash
  */
@@ -79,9 +58,6 @@ class Security {
 		}
 		$type = strtolower($type);
 
-		if ($type === 'blowfish') {
-			return static::_crypt($string, $salt);
-		}
 		if ($salt) {
 			if (!is_string($salt)) {
 				$salt = Configure::read('Security.salt');
@@ -89,50 +65,19 @@ class Security {
 			$string = $salt . $string;
 		}
 
-		if (!$type || $type === 'sha1') {
-			if (function_exists('sha1')) {
-				return sha1($string);
-			}
-			$type = 'sha256';
-		}
-
-		if ($type === 'sha256' && function_exists('mhash')) {
-			return bin2hex(mhash(MHASH_SHA256, $string));
-		}
-
-		if (function_exists('hash')) {
-			return hash($type, $string);
-		}
-		return md5($string);
+		return hash($type, $string);
 	}
 
 /**
- * Sets the default hash method for the Security object. This affects all objects using
- * Security::hash().
+ * Sets the default hash method for the Security object. This affects all objects
+ * using Security::hash().
  *
- * @param string $hash Method to use (sha1/sha256/md5/blowfish)
+ * @param string $hash Method to use (sha1/sha256/md5 etc.)
  * @return void
  * @see Security::hash()
  */
 	public static function setHash($hash) {
 		static::$hashType = $hash;
-	}
-
-/**
- * Sets the cost for they blowfish hash method.
- *
- * @param int $cost Valid values are 4-31
- * @return void
- * @throws \Cake\Error\Exception When cost is invalid.
- */
-	public static function setCost($cost) {
-		if ($cost < 4 || $cost > 31) {
-			throw new Exception(vsprintf(
-				'Invalid value, cost must be between %s and %s',
-				array(4, 31)
-			));
-		}
-		static::$hashCost = $cost;
 	}
 
 /**
@@ -167,51 +112,6 @@ class Security {
 		$iv = substr($text, 0, $ivSize);
 		$text = substr($text, $ivSize + 2);
 		return rtrim(mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
-	}
-
-/**
- * Generates a pseudo random salt suitable for use with php's crypt() function.
- * The salt length should not exceed 27. The salt will be composed of
- * [./0-9A-Za-z]{$length}.
- *
- * @param int $length The length of the returned salt
- * @return string The generated salt
- */
-	protected static function _salt($length = 22) {
-		$salt = str_replace(
-			array('+', '='),
-			'.',
-			base64_encode(sha1(uniqid(Configure::read('Security.salt'), true), true))
-		);
-		return substr($salt, 0, $length);
-	}
-
-/**
- * One way encryption using php's crypt() function. To use blowfish hashing see ``Security::hash()``
- *
- * @param string $password The string to be encrypted.
- * @param mixed $salt false to generate a new salt or an existing salt.
- * @return string The hashed string or an empty string on error.
- * @throws \Cake\Error\Exception on invalid salt values.
- */
-	protected static function _crypt($password, $salt = false) {
-		if ($salt === false) {
-			$salt = static::_salt(22);
-			$salt = vsprintf('$2y$%02d$%s', array(static::$hashCost, $salt));
-		}
-
-		$invalidCipher = (
-			strpos($salt, '$2y$') !== 0 &&
-			strpos($salt, '$2x$') !== 0 &&
-			strpos($salt, '$2a$') !== 0
-		);
-		if ($salt === true || $invalidCipher || strlen($salt) < 29) {
-			throw new Exception(sprintf(
-				'Invalid salt: %s for blowfish Please visit http://www.php.net/crypt and read the appropriate section for building blowfish salts.',
-				$salt
-			));
-		}
-		return crypt($password, $salt);
 	}
 
 /**
