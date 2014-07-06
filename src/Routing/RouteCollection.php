@@ -120,31 +120,76 @@ class RouteCollection {
  */
 	protected function _getNames($url) {
 		$plugin = false;
-		if (isset($url['plugin'])) {
+		if (isset($url['plugin']) && $url['plugin'] !== false) {
 			$plugin = strtolower($url['plugin']);
+		}
+		$prefix = false;
+		if (isset($url['prefix']) && $url['prefix'] !== false) {
+			$prefix = strtolower($url['prefix']);
 		}
 		$controller = strtolower($url['controller']);
 		$action = strtolower($url['action']);
 
-		$fallbacks = [
+		$names = [
 			"${controller}:${action}",
 			"${controller}:_action",
 			"_controller:${action}",
 			"_controller:_action"
 		];
-		if ($plugin) {
-			$fallbacks = [
+
+		// No prefix, no plugin
+		if ($prefix === false && $plugin === false) {
+			return $names;
+		}
+
+		// Only a plugin
+		if ($prefix === false) {
+			return [
 				"${plugin}.${controller}:${action}",
 				"${plugin}.${controller}:_action",
 				"${plugin}._controller:${action}",
 				"${plugin}._controller:_action",
 				"_plugin.${controller}:${action}",
+				"_plugin.${controller}:_action",
 				"_plugin._controller:${action}",
 				"_plugin._controller:_action",
-				"_controller:_action"
 			];
 		}
-		return $fallbacks;
+
+		// Only a prefix
+		if ($plugin === false) {
+			return [
+				"${prefix}:${controller}:${action}",
+				"${prefix}:${controller}:_action",
+				"${prefix}:_controller:${action}",
+				"${prefix}:_controller:_action",
+				"_prefix:${controller}:${action}",
+				"_prefix:${controller}:_action",
+				"_prefix:_controller:${action}",
+				"_prefix:_controller:_action"
+			];
+		}
+
+		// Prefix and plugin has the most options
+		// as there are 4 factors.
+		return [
+			"${prefix}:${plugin}.${controller}:${action}",
+			"${prefix}:${plugin}.${controller}:_action",
+			"${prefix}:${plugin}._controller:${action}",
+			"${prefix}:${plugin}._controller:_action",
+			"${prefix}:_plugin.${controller}:${action}",
+			"${prefix}:_plugin.${controller}:_action",
+			"${prefix}:_plugin._controller:${action}",
+			"${prefix}:_plugin._controller:_action",
+			"_prefix:${plugin}.${controller}:${action}",
+			"_prefix:${plugin}.${controller}:_action",
+			"_prefix:${plugin}._controller:${action}",
+			"_prefix:${plugin}._controller:_action",
+			"_prefix:_plugin.${controller}:${action}",
+			"_prefix:_plugin.${controller}:_action",
+			"_prefix:_plugin._controller:${action}",
+			"_prefix:_plugin._controller:_action",
+		];
 	}
 
 /**

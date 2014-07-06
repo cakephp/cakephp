@@ -803,26 +803,6 @@ class ControllerTest extends TestCase {
 /**
  * test invoking controller methods.
  *
- * @expectedException \Cake\Controller\Error\PrivateActionException
- * @expectedExceptionMessage Private Action TestController::admin_add() is not directly accessible.
- * @return void
- */
-	public function testInvokeActionPrefixProtection() {
-		Configure::write('Routing.prefixes', array('admin'));
-		Router::reload();
-		Router::connect('/admin/:controller/:action/*', array('prefix' => 'admin'));
-
-		$url = new Request('test/admin_add/');
-		$url->addParams(array('controller' => 'test_controller', 'action' => 'admin_add'));
-		$response = $this->getMock('Cake\Network\Response');
-
-		$Controller = new TestController($url, $response);
-		$Controller->invokeAction();
-	}
-
-/**
- * test invoking controller methods.
- *
  * @return void
  */
 	public function testInvokeActionReturnValue() {

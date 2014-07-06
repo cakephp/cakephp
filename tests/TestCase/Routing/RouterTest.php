@@ -2055,10 +2055,6 @@ class RouterTest extends TestCase {
 		$expected = '/company/users/login';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'prefix' => 'company'));
-		$expected = '/company/users/login';
-		$this->assertEquals($expected, $result);
-
 		$request = new Request();
 		Router::setRequestInfo(
 			$request->addParams(array(

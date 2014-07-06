@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Test case for Route
- *
  */
 class RouteTest extends TestCase {
 
@@ -878,6 +877,37 @@ class RouteTest extends TestCase {
 			array('plugin' => 'asset', 'controller' => 'assets', 'action' => 'get')
 		);
 		$this->assertEquals('asset.assets:get', $route->getName());
+	}
+
+/**
+ * Test getName() with prefixes.
+ *
+ * @return void
+ */
+	public function testGetNamePrefix() {
+		$route = new Route(
+			'/admin/:controller/:action',
+			array('prefix' => 'admin')
+		);
+		$this->assertEquals('admin:_controller:_action', $route->getName());
+
+		$route = new Route(
+			'/:prefix/assets/:action',
+			array('controller' => 'assets')
+		);
+		$this->assertEquals('_prefix:assets:_action', $route->getName());
+
+		$route = new Route(
+			'/admin/assets/get',
+			array('prefix' => 'admin', 'plugin' => 'asset', 'controller' => 'assets', 'action' => 'get')
+		);
+		$this->assertEquals('admin:asset.assets:get', $route->getName());
+
+		$route = new Route(
+			'/:prefix/:plugin/:controller/:action/*',
+			[]
+		);
+		$this->assertEquals('_prefix:_plugin._controller:_action', $route->getName());
 	}
 
 /**

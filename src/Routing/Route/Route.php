@@ -227,22 +227,27 @@ class Route {
 			return $this->_name;
 		}
 		$name = '';
-		if (isset($this->defaults['plugin'])) {
-			$name = $this->defaults['plugin'] . '.';
-		}
-		if (strpos($this->template, ':plugin') !== false) {
-			$name = '_plugin.';
-		}
-		foreach (array('controller', 'action') as $key) {
-			if ($key === 'action') {
-				$name .= ':';
-			}
-			$var = ':' . $key;
-			if (strpos($this->template, $var) !== false) {
-				$name .= '_' . $key;
+		$keys = [
+			'prefix' => ':',
+			'plugin' => '.',
+			'controller' => ':',
+			'action' => ''
+		];
+		foreach ($keys as $key => $glue) {
+			$value = null;
+			if (strpos($this->template, ':' . $key) !== false) {
+				$value = '_' . $key;
 			} elseif (isset($this->defaults[$key])) {
-				$name .= $this->defaults[$key];
+				$value = $this->defaults[$key];
 			}
+
+			if ($value === null) {
+				continue;
+			}
+			if (is_bool($value)) {
+				$value = $value ? '1' : '0';
+			}
+			$name .= $value . $glue;
 		}
 		return $this->_name = strtolower($name);
 	}
