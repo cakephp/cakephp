@@ -268,7 +268,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-
 	public function testSchemaInitialize() {
 		$schema = $this->connection->schemaCollection()->describe('users');
 		$table = $this->getMock('Cake\ORM\Table', ['_initializeSchema'], [
