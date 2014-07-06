@@ -26,6 +26,8 @@ use Cake\Utility\Inflector;
  *
  * Provides an interface for adding/removing routes
  * and parsing/generating URLs with the routes it contains.
+ *
+ * @internal
  */
 class RouteCollection {
 
@@ -76,17 +78,6 @@ class RouteCollection {
 			krsort($this->_paths);
 		}
 		$this->_paths[$path][] = $route;
-
-		/*
-		// Index scopes by key params (for reverse routing).
-		$plugin = isset($params['plugin']) ? $params['plugin'] : '';
-		$prefix = isset($params['prefix']) ? $params['prefix'] : '';
-		if (!isset(static::$_paramScopes[$plugin][$prefix])) {
-			static::$_paramScopes[$plugin][$prefix] = $collection;
-		} else {
-			static::$_paramScopes[$plugin][$prefix]->merge($collection);
-		}
-		*/
 	}
 
 /**
@@ -128,15 +119,12 @@ class RouteCollection {
  * @return string The name of the url
  */
 	protected function _getNames($url) {
-		if (isset($url['_name'])) {
-			return [$url['_name']];
-		}
 		$plugin = false;
 		if (isset($url['plugin'])) {
-			$plugin = $url['plugin'];
+			$plugin = strtolower($url['plugin']);
 		}
-		$controller = $url['controller'];
-		$action = $url['action'];
+		$controller = strtolower($url['controller']);
+		$action = strtolower($url['action']);
 
 		$fallbacks = [
 			"${controller}:${action}",
@@ -171,14 +159,17 @@ class RouteCollection {
 	public function match($url, $context) {
 		// Named routes support hack.
 		if (isset($url['_name'])) {
-			$route = false;
-			if (isset($this->_named[$url['_name']])) {
-				$route = $this->_named[$url['_name']];
+			$name = $url['_name'];
+			unset($url['_name']);
+			$out = false;
+			if (isset($this->_named[$name])) {
+				$route = $this->_named[$name];
+				$out = $route->match($url + $route->defaults, $context);
 			}
-			if ($route) {
-				unset($url['_name']);
-				return $route->match($url + $route->defaults, $context);
+			if ($out) {
+				return $out;
 			}
+			throw new MissingRouteException(['url' => $name]);
 		}
 
 		foreach ($this->_getNames($url) as $name) {
@@ -204,6 +195,11 @@ class RouteCollection {
 		return $this->_routes;
 	}
 
+/**
+ * Get the connected named routes.
+ *
+ * @return array
+ */
 	public function named() {
 		return $this->_named;
 	}

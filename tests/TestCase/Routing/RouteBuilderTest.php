@@ -81,22 +81,6 @@ class RouteBuilderTest extends TestCase {
 	}
 
 /**
- * Test getting named routes.
- *
- * @return void
- */
-	public function testNamed() {
-		$routes = new RouteBuilder($this->collection, '/l');
-		$routes->connect('/:controller', ['action' => 'index'], ['_name' => 'cntrl']);
-		$routes->connect('/:controller/:action/*');
-
-		$all = $this->collection->named();
-		$this->assertCount(1, $all);
-		$this->assertInstanceOf('Cake\Routing\Route\Route', $all['cntrl']);
-		$this->assertEquals('/l/:controller', $all['cntrl']->template);
-	}
-
-/**
  * Test connecting an instance routes.
  *
  * @return void

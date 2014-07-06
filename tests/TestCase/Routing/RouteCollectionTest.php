@@ -124,6 +124,43 @@ class RouteCollectionTest extends TestCase {
 	}
 
 /**
+ * Test matching routes with names
+ *
+ * @return void
+ */
+	public function testMatchNamed() {
+		$context = [
+			'_base' => '/',
+			'_scheme' => 'http',
+			'_host' => 'example.org',
+		];
+		$routes = new RouteBuilder($this->collection, '/b');
+		$routes->connect('/', ['controller' => 'Articles']);
+		$routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view'], ['_name' => 'article:view']);
+
+		$result = $this->collection->match(['_name' => 'article:view', 'id' => '2'], $context);
+		$this->assertEquals('/b/2', $result);
+	}
+
+/**
+ * Test matching routes with names and failing
+ *
+ * @expectedException Cake\Routing\Error\MissingRouteException
+ * @return void
+ */
+	public function testMatchNamedError() {
+		$context = [
+			'_base' => '/',
+			'_scheme' => 'http',
+			'_host' => 'example.org',
+		];
+		$routes = new RouteBuilder($this->collection, '/b');
+		$routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view'], ['_name' => 'article:view']);
+
+		$this->collection->match(['_name' => 'derp'], $context);
+	}
+
+/**
  * Test matching plugin routes.
  *
  * @return void
@@ -139,6 +176,36 @@ class RouteCollectionTest extends TestCase {
 
 		$result = $this->collection->match(['plugin' => 'Contacts', 'controller' => 'Contacts', 'action' => 'index'], $context);
 		$this->assertEquals('contacts', $result);
+	}
+
+/**
+ * Test getting named routes.
+ *
+ * @return void
+ */
+	public function testNamed() {
+		$routes = new RouteBuilder($this->collection, '/l');
+		$routes->connect('/:controller', ['action' => 'index'], ['_name' => 'cntrl']);
+		$routes->connect('/:controller/:action/*');
+
+		$all = $this->collection->named();
+		$this->assertCount(1, $all);
+		$this->assertInstanceOf('Cake\Routing\Route\Route', $all['cntrl']);
+		$this->assertEquals('/l/:controller', $all['cntrl']->template);
+	}
+
+/**
+ * Test adding with an error
+ */
+	public function testAdd() {
+	}
+
+/**
+ * Test the routes() method.
+ *
+ * @return void
+ */
+	public function testRoutes() {
 	}
 
 }
