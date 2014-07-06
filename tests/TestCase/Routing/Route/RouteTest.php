@@ -68,6 +68,7 @@ class RouteTest extends TestCase {
 		$this->assertRegExp($result, '/posts/super_delete');
 		$this->assertNotRegExp($result, '/posts');
 		$this->assertNotRegExp($result, '/posts/super_delete/1');
+		$this->assertSame($result, $route->compile());
 
 		$route = new Route('/posts/foo:id', array('controller' => 'posts', 'action' => 'view'));
 		$result = $route->compile();
@@ -932,6 +933,25 @@ class RouteTest extends TestCase {
 		$result = $route->parse('/weblog');
 		$expected = array('section' => 'weblog', 'plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index', 'pass' => array());
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test getting the static path for a route.
+ *
+ * @return void
+ */
+	public function testStaticPath() {
+		$route = new Route('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+		$this->assertEquals('/pages/', $route->staticPath());
+
+		$route = new Route('/pages/:id/*', ['controller' => 'Pages', 'action' => 'display']);
+		$this->assertEquals('/pages/', $route->staticPath());
+
+		$route = new Route('/:controller/:action/*');
+		$this->assertEquals('/', $route->staticPath());
+
+		$route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
+		$this->assertEquals('/books/reviews', $route->staticPath());
 	}
 
 }
