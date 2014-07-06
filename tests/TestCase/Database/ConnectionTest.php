@@ -126,28 +126,28 @@ class ConnectionTest extends TestCase {
  * @return  void
  *
  */
-	public function testFullTableName() {
-		$config = ConnectionManager::config('test');
-		$connectionNoPrefix = new Connection($config);
-		$config["prefix"] = "prefix_";
-		$connectionPrefix = new Connection($config);
-		$tableName = "users";
-		$tableNames = ["Posts" => "posts", "Users" => "users"];
-		$expected = ["Posts" => "prefix_posts", "Users" => "prefix_users"];
-		$subQuery = ["sub" => $this->connection->newQuery()->select('1 + 1')];
+	// public function testFullTableName() {
+	// 	$config = ConnectionManager::config('test');
+	// 	$connectionNoPrefix = new Connection($config);
+	// 	$config["prefix"] = "prefix_";
+	// 	$connectionPrefix = new Connection($config);
+	// 	$tableName = "users";
+	// 	$tableNames = ["Posts" => "posts", "Users" => "users"];
+	// 	$expected = ["Posts" => "prefix_posts", "Users" => "prefix_users"];
+	// 	$subQuery = ["sub" => $this->connection->newQuery()->select('1 + 1')];
 
-		$fullTableName = $connectionNoPrefix->fullTableName($tableName);
-		$this->assertEquals($fullTableName, $tableName);
+	// 	$fullTableName = $connectionNoPrefix->fullTableName($tableName);
+	// 	$this->assertEquals($fullTableName, $tableName);
 
-		$fullTableName = $connectionPrefix->fullTableName($tableName);
-		$this->assertEquals($fullTableName, $config["prefix"] . $tableName);
+	// 	$fullTableName = $connectionPrefix->fullTableName($tableName);
+	// 	$this->assertEquals($fullTableName, $config["prefix"] . $tableName);
 
-		$fullTableNames = $connectionPrefix->fullTableName($tableNames);
-		$this->assertSame($expected, $fullTableNames);
+	// 	$fullTableNames = $connectionPrefix->fullTableName($tableNames);
+	// 	$this->assertSame($expected, $fullTableNames);
 
-		$fullTableNameSubQuery = $connectionPrefix->fullTableName($subQuery);
-		$this->assertSame($subQuery, $fullTableNameSubQuery);
-	}
+	// 	$fullTableNameSubQuery = $connectionPrefix->fullTableName($subQuery);
+	// 	$this->assertSame($subQuery, $fullTableNameSubQuery);
+	// }
 
 /**
  * Tests creation of prepared statements

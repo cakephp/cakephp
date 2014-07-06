@@ -104,7 +104,7 @@ class TableNameExpression implements ExpressionInterface {
         if (is_string($this->_name)) {
             $sql = $this->_prefix . $this->_name;
         } elseif ($this->_name instanceof Query) {
-            $sql = '(' . $this->_name . ')';
+            $sql = '(' . $this->_name->sql($generator) . ')';
         }
 
         if ($this->_alias !== null) {

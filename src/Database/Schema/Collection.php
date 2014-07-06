@@ -110,6 +110,7 @@ class Collection {
 
 		$config = $this->_connection->config();
 		$name = $this->_connection->fullTableName($name);
+		// $name = "ccc_" . $name;
 		list($sql, $params) = $this->_dialect->describeTableSql($name, $config);
 		$statement = $this->_executeSql($sql, $params);
 		if (count($statement) === 0) {
