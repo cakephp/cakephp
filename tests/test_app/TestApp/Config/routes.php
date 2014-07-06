@@ -16,7 +16,6 @@ namespace TestApp\Config;
 
 use Cake\Routing\Router;
 
-
 Router::parseExtensions('json');
 Router::scope('/', function($routes) {
 	$routes->connect('/', ['controller' => 'pages', 'action' => 'display', 'home']);

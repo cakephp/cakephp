@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Test case for Route
  *
- **/
+ */
 class RouteTest extends TestCase {
 
 /**

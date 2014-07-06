@@ -389,7 +389,7 @@ class QueryTest extends TestCase {
  * Tests selecting with conditions and specifying types for those
  *
  * @return void
- **/
+ */
 	public function testSelectWhereTypes() {
 		$query = new Query($this->connection);
 		$result = $query
@@ -478,7 +478,7 @@ class QueryTest extends TestCase {
  * Tests that Query::orWhere() can be used to concatenate conditions with OR
  *
  * @return void
- **/
+ */
 	public function testSelectOrWhere() {
 		$query = new Query($this->connection);
 		$result = $query
@@ -496,7 +496,7 @@ class QueryTest extends TestCase {
  * Tests that Query::andWhere() can be used to concatenate conditions with AND
  *
  * @return void
- **/
+ */
 	public function testSelectAndWhere() {
 		$query = new Query($this->connection);
 		$result = $query
@@ -523,7 +523,7 @@ class QueryTest extends TestCase {
  * correct conditions nesting
  *
  * @return void
- **/
+ */
 	public function testSelectExpressionNesting() {
 		$query = new Query($this->connection);
 		$result = $query
@@ -556,7 +556,7 @@ class QueryTest extends TestCase {
  * Tests that Query::orWhere() can be used without calling where() before
  *
  * @return void
- **/
+ */
 	public function testSelectOrWhereNoPreviousCondition() {
 		$query = new Query($this->connection);
 		$result = $query
@@ -574,7 +574,7 @@ class QueryTest extends TestCase {
  * Tests that Query::andWhere() can be used without calling where() before
  *
  * @return void
- **/
+ */
 	public function testSelectAndWhereNoPreviousCondition() {
 		$query = new Query($this->connection);
 		$result = $query
@@ -972,7 +972,7 @@ class QueryTest extends TestCase {
  * Tests nesting query expressions both using arrays and closures
  *
  * @return void
- **/
+ */
 	public function testSelectExpressionComposition() {
 		$query = new Query($this->connection);
 		$result = $query
@@ -1046,7 +1046,7 @@ class QueryTest extends TestCase {
  * and the not() method
  *
  * @return void
- **/
+ */
 	public function testSelectWhereNot() {
 		$query = new Query($this->connection);
 		$result = $query
@@ -1091,7 +1091,7 @@ class QueryTest extends TestCase {
  * Tests order() method both with simple fields and expressions
  *
  * @return void
- **/
+ */
 	public function testSelectOrderBy() {
 		$query = new Query($this->connection);
 		$result = $query
@@ -1149,7 +1149,7 @@ class QueryTest extends TestCase {
  * and that it sends the correct query to the database
  *
  * @return void
- **/
+ */
 	public function testSelectGroup() {
 		$query = new Query($this->connection);
 		$result = $query
