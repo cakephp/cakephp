@@ -79,6 +79,23 @@ class TableTest extends TestCase {
 	}
 
 /**
+ * Test columnType setter method
+ *
+ * @return void
+ */
+	public function testColumnTypeSet() {
+		$table = new Table('articles');
+		$table->addColumn('title', [
+			'type' => 'string',
+			'length' => 25,
+			'null' => false
+		]);
+		$this->assertEquals('string', $table->columnType('title'));
+		$table->columnType('title', 'json');
+		$this->assertEquals('json', $table->columnType('title'));
+	}
+
+/**
  * Attribute keys should be filtered and have defaults set.
  *
  * @return void
