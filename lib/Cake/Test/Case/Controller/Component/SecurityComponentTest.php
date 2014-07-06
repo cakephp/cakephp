@@ -1214,8 +1214,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$token = $this->Security->Session->read('_Token');
 		$this->assertEquals(2, count($token['csrfTokens']), 'Missing the csrf token.');
 		foreach ($token['csrfTokens'] as $expires) {
-			$diff = $csrfExpires - $expires;
-			$this->assertTrue($diff === 0 || $diff === 1, 'Token expiry does not match');
+			$this->assertWithinMargin($expires, $csrfExpires, 2, 'Token expiry does not match');
 		}
 	}
 
@@ -1264,8 +1263,7 @@ class SecurityComponentTest extends CakeTestCase {
 
 		$this->Security->startup($this->Controller);
 		$tokens = $this->Security->Session->read('_Token.csrfTokens');
-		$diff = strtotime($csrfExpires) - $tokens['token'];
-		$this->assertTrue($diff === 0 || $diff === 1, 'Token expiry was not renewed');
+		$this->assertWithinMargin($tokens['token'], strtotime($csrfExpires), 2, 'Token expiry was not renewed');
 	}
 
 /**
