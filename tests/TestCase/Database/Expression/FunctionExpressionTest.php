@@ -19,7 +19,7 @@ use Cake\Database\ValueBinder;
 /**
  * Tests FunctionExpression class
  *
- **/
+ */
 class FunctionExpressionTest extends \Cake\TestSuite\TestCase {
 
 /**

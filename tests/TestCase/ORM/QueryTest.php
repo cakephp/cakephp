@@ -289,7 +289,7 @@ class QueryTest extends TestCase {
  *
  * @dataProvider strategiesProvider
  * @return void
- **/
+ */
 	public function testHasManyEagerLoadingFieldsAndOrderNoHydration($strategy) {
 		$table = TableRegistry::get('authors');
 		TableRegistry::get('articles');
@@ -515,7 +515,7 @@ class QueryTest extends TestCase {
  *
  * @dataProvider strategiesProvider
  * @return void
- **/
+ */
 	public function testBelongsToManyEagerLoadingNoHydration($strategy) {
 		$table = TableRegistry::get('Articles');
 		TableRegistry::get('Tags');
@@ -656,7 +656,7 @@ class QueryTest extends TestCase {
  * association objects in order to perform eager loading with select strategy
  *
  * @return void
- **/
+ */
 	public function testFilteringByBelongsToManyNoHydration() {
 		$query = new Query($this->connection, $this->table);
 		$table = TableRegistry::get('Articles');

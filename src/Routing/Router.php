@@ -1149,23 +1149,23 @@ class Router {
 	}
 
 /**
-* Add plugin routes.
-*
-* This method creates a scoped route collection that includes
-* relevant plugin information.
-*
-* The plugin name will be inflected to the underscore version to create
-* the routing path. If you want a custom path name, use the `path` option.
-*
-* Routes connected in the scoped collection will have the correct path segment
-* prepended, and have a matching plugin routing key set.
-*
-* @param string $path The path name to use for the prefix.
-* @param array|callable $options Either the options to use, or a callback.
-* @param callable $callback The callback to invoke that builds the plugin routes.
-*   Only required when $options is defined.
-* @return void
-*/
+ * Add plugin routes.
+ *
+ * This method creates a scoped route collection that includes
+ * relevant plugin information.
+ *
+ * The plugin name will be inflected to the underscore version to create
+ * the routing path. If you want a custom path name, use the `path` option.
+ *
+ * Routes connected in the scoped collection will have the correct path segment
+ * prepended, and have a matching plugin routing key set.
+ *
+ * @param string $path The path name to use for the prefix.
+ * @param array|callable $options Either the options to use, or a callback.
+ * @param callable $callback The callback to invoke that builds the plugin routes.
+ *   Only required when $options is defined.
+ * @return void
+ */
 	public static function plugin($name, $options = [], $callback = null) {
 		if ($callback === null) {
 			$callback = $options;

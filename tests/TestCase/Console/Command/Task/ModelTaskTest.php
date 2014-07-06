@@ -716,8 +716,7 @@ class ModelTaskTest extends TestCase {
 		$this->assertContains("->add('email', 'valid', ['rule' => 'email'])", $result);
 		$this->assertContains(
 			"->add('email', 'unique', ['rule' => 'validateUnique', 'provider' => 'table'])",
-			$result)
-		;
+			$result);
 		$this->assertContains("->allowEmpty('id', 'create')", $result);
 		$this->assertContains("->allowEmpty('email')", $result);
 		$this->assertContains("->validatePresence('name', 'create')", $result);

@@ -150,7 +150,7 @@ class CompositeKeyTest extends TestCase {
  *
  * @dataProvider strategiesProvider
  * @return void
- **/
+ */
 	public function testBelongsToManyEager($strategy) {
 		$articles = TableRegistry::get('SiteArticles');
 		$tags = TableRegistry::get('SiteTags');

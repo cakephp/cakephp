@@ -20,7 +20,7 @@ use PDOStatement;
 /**
  * Tests LoggingStatement class
  *
- **/
+ */
 class LoggingStatementTest extends \Cake\TestSuite\TestCase {
 
 /**

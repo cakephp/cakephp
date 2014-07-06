@@ -130,7 +130,7 @@ class EagerLoaderTest extends TestCase {
  * Tests that fully defined belongsTo and hasOne relationships are joined correctly
  *
  * @return void
- **/
+ */
 	public function testContainToJoinsOneLevel() {
 		$contains = [
 			'clients' => [
@@ -295,7 +295,7 @@ class EagerLoaderTest extends TestCase {
  * Test that fields for contained models are aliased and added to the select clause
  *
  * @return void
- **/
+ */
 	public function testContainToFieldsPredefined() {
 		$contains = [
 			'clients' => [
@@ -328,7 +328,7 @@ class EagerLoaderTest extends TestCase {
  * none is specified
  *
  * @return void
- **/
+ */
 	public function testContainToFieldsDefault() {
 		$contains = ['clients' => ['orders']];
 
