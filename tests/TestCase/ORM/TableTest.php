@@ -283,7 +283,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$result = $table->schema();
 		$schema->columnType('username', 'integer');
 		$this->assertEquals($schema, $result);
-		$this->assertEquals($schema, $result, '_initializeSchema should be called once');
+		$this->assertEquals($schema, $table->schema(), '_initializeSchema should be called once');
 	}
 
 /**
