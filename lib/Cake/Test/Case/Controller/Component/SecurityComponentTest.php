@@ -1251,6 +1251,24 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
+ * tests that reusable CSRF-token expiry is renewed
+ */
+	public function testCsrfReusableTokenRenewal() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfUseOnce = false;
+		$csrfExpires = '+10 minutes';
+		$this->Security->csrfExpires = $csrfExpires;
+
+		$this->Security->Session->write('_Token.csrfTokens', array('token' => strtotime('+1 minutes')));
+
+		$this->Security->startup($this->Controller);
+		$tokens = $this->Security->Session->read('_Token.csrfTokens');
+		$diff = strtotime($csrfExpires) - $tokens['token'];
+		$this->assertTrue($diff === 0 || $diff === 1, 'Token expiry was not renewed');
+	}
+
+/**
  * test that expired values in the csrfTokens are cleaned up.
  *
  * @return void

@@ -554,7 +554,9 @@ class SecurityComponent extends Component {
 		}
 		if (!$this->csrfUseOnce) {
 			$csrfTokens = array_keys($token['csrfTokens']);
-			$token['key'] = $csrfTokens[0];
+			$authKey = $csrfTokens[0];
+			$token['key'] = $authKey;
+			$token['csrfTokens'][$authKey] = strtotime($this->csrfExpires);
 		}
 		$this->Session->write('_Token', $token);
 		$request->params['_Token'] = array(
