@@ -164,18 +164,6 @@ class Router {
 	protected static $_urlFilters = [];
 
 /**
- * Sets the Routing prefixes.
- *
- * @return void
- */
-	protected static function _setPrefixes() {
-		$routing = Configure::read('Routing');
-		if (!empty($routing['prefixes'])) {
-			static::$_prefixes = array_merge(static::$_prefixes, (array)$routing['prefixes']);
-		}
-	}
-
-/**
  * Gets the named route patterns for use in app/Config/routes.php
  *
  * @return array Named route elements
