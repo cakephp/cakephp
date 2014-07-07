@@ -118,6 +118,33 @@ TEXT;
 
 }
 
+if (!function_exists('stackTrace')) {
+
+/**
+ * Outputs a stack trace based on the supplied options.
+ *
+ * ### Options
+ *
+ * - `depth` - The number of stack frames to return. Defaults to 999
+ * - `args` - Should arguments for functions be shown?  If true, the arguments for each method call
+ *   will be displayed.
+ * - `start` - The stack frame to start generating a trace from. Defaults to 1
+ *
+ * @param array $options Format for outputting stack trace
+ * @return mixed Formatted stack trace
+ * @see \Cake\Utility\Debugger::trace()
+ */
+	function stackTrace($options = []) {
+		if (!Configure::read('debug')) {
+			return;
+		}
+		$options += ['start' => 0];
+		$options['start']++;
+		echo Debugger::trace($options);
+	}
+
+}
+
 if (!function_exists('sortByKey')) {
 
 /**
