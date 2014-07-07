@@ -238,6 +238,7 @@ class InflectorTest extends TestCase {
 		$this->assertEquals(Inflector::pluralize('curve'), 'curves');
 		$this->assertEquals(Inflector::pluralize('body_curve'), 'body_curves');
 		$this->assertEquals(Inflector::pluralize('metadata'), 'metadata');
+		$this->assertEquals(Inflector::pluralize('stadia'), 'stadia');
 		$this->assertEquals(Inflector::pluralize(''), '');
 	}
 

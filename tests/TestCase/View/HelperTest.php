@@ -304,7 +304,7 @@ class HelperTest extends TestCase {
 		$result = $this->Helper->assetUrl(array(
 				'controller' => 'js',
 				'action' => 'post',
-				'ext' => 'js'
+				'_ext' => 'js'
 			),
 			array('fullBase' => true)
 		);

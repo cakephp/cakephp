@@ -34,45 +34,6 @@ class SecurityTest extends TestCase {
 	}
 
 /**
- * testHashInvalidSalt method
- *
- * @expectedException \Cake\Error\Exception
- * @return void
- */
-	public function testHashInvalidSalt() {
-		Security::hash('someKey', 'blowfish', true);
-	}
-
-/**
- * testHashAnotherInvalidSalt
- *
- * @expectedException \Cake\Error\Exception
- * @return void
- */
-	public function testHashAnotherInvalidSalt() {
-		Security::hash('someKey', 'blowfish', '$1$lksdjoijfaoijs');
-	}
-
-/**
- * testHashYetAnotherInvalidSalt
- *
- * @expectedException \Cake\Error\Exception
- * @return void
- */
-	public function testHashYetAnotherInvalidSalt() {
-		Security::hash('someKey', 'blowfish', '$2a$10$123');
-	}
-
-/**
- * testHashInvalidCost method
- *
- * @expectedException \Cake\Error\Exception
- * @return void
- */
-	public function testHashInvalidCost() {
-		Security::setCost(1000);
-	}
-/**
  * testHash method
  *
  * @return void
@@ -109,57 +70,9 @@ class SecurityTest extends TestCase {
 		$this->assertSame(32, strlen(Security::hash($key, null, false)));
 		$this->assertSame(32, strlen(Security::hash($key, null, true)));
 
-		if (!function_exists('hash') && !function_exists('mhash')) {
-			$this->assertSame(32, strlen(Security::hash($key, 'sha256', false)));
-			$this->assertSame(32, strlen(Security::hash($key, 'sha256', true)));
-		} else {
-			$this->assertSame(64, strlen(Security::hash($key, 'sha256', false)));
-			$this->assertSame(64, strlen(Security::hash($key, 'sha256', true)));
-		}
+		$this->assertSame(64, strlen(Security::hash($key, 'sha256', false)));
+		$this->assertSame(64, strlen(Security::hash($key, 'sha256', true)));
 
-		Security::setHash($_hashType);
-	}
-
-/**
- * Test that hash() works with blowfish.
- *
- * @return void
- */
-	public function testHashBlowfish() {
-		Security::setCost(10);
-		$test = Security::hash('password', 'blowfish');
-
-		$_hashType = Security::$hashType;
-
-		$key = 'someKey';
-		$hashType = 'blowfish';
-		Security::setHash($hashType);
-
-		$this->assertSame($hashType, Security::$hashType);
-		$this->assertSame(60, strlen(Security::hash($key, null, false)));
-
-		$password = $submittedPassword = $key;
-		$storedPassword = Security::hash($password);
-
-		$hashedPassword = Security::hash($submittedPassword, null, $storedPassword);
-		$this->assertSame($storedPassword, $hashedPassword);
-
-		$submittedPassword = 'someOtherKey';
-		$hashedPassword = Security::hash($submittedPassword, null, $storedPassword);
-		$this->assertNotSame($storedPassword, $hashedPassword);
-
-		$expected = sha1('customsaltsomevalue');
-		$result = Security::hash('somevalue', 'sha1', 'customsalt');
-		$this->assertSame($expected, $result);
-
-		$oldSalt = Configure::read('Security.salt');
-		Configure::write('Security.salt', 'customsalt');
-
-		$expected = sha1('customsaltsomevalue');
-		$result = Security::hash('somevalue', 'sha1', true);
-		$this->assertSame($expected, $result);
-
-		Configure::write('Security.salt', $oldSalt);
 		Security::setHash($_hashType);
 	}
 

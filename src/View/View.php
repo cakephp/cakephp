@@ -91,7 +91,6 @@ class View {
 /**
  * Name of the controller that created the View if any.
  *
- * @see Controller::$name
  * @var string
  */
 	public $name = null;
@@ -743,6 +742,15 @@ class View {
 	}
 
 /**
+ * Retrieve the current view type
+ *
+ * @return string
+ */
+	public function getCurrentType() {
+		return $this->_currentType;
+	}
+
+/**
  * Magic accessor for helpers.
  *
  * @param string $name Name of the attribute to get.
@@ -1091,25 +1099,27 @@ class View {
  * @return string
  */
 	protected function _renderElement($file, $data, $options) {
+		$current = $this->_current;
+		$restore = $this->_currentType;
+		$this->_currentType = static::TYPE_ELEMENT;
+
 		if ($options['callbacks']) {
 			$this->eventManager()->dispatch(new Event('View.beforeRender', $this, array($file)));
 		}
 
-		$current = $this->_current;
-		$restore = $this->_currentType;
-
-		$this->_currentType = static::TYPE_ELEMENT;
 		$element = $this->_render($file, array_merge($this->viewVars, $data));
-
-		$this->_currentType = $restore;
-		$this->_current = $current;
 
 		if ($options['callbacks']) {
 			$this->eventManager()->dispatch(new Event('View.afterRender', $this, array($file, $element)));
 		}
+
+		$this->_currentType = $restore;
+		$this->_current = $current;
+
 		if (isset($options['cache'])) {
 			Cache::write($this->elementCacheSettings['key'], $element, $this->elementCacheSettings['config']);
 		}
 		return $element;
 	}
+
 }

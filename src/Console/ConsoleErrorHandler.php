@@ -51,6 +51,23 @@ class ConsoleErrorHandler extends BaseErrorHandler {
 	}
 
 /**
+ * Handle errors in the console environment. Writes errors to stderr,
+ * and logs messages if Configure::read('debug') is false.
+ *
+ * @param \Exception $exception Exception instance.
+ * @return void
+ * @throws Exception When renderer class not found
+ * @see http://php.net/manual/en/function.set-exception-handler.php
+ */
+	public function handleException(\Exception $exception) {
+		$this->_displayException($exception);
+		$this->_logException($exception);
+		$code = $exception->getCode();
+		$code = ($code && is_int($code)) ? $code : 1;
+		$this->_stop($code);
+	}
+
+/**
  * Prints an exception to stderr.
  *
  * @param \Exception $exception The exception to handle

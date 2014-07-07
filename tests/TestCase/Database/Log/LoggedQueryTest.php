@@ -19,7 +19,7 @@ use Cake\Database\Log\LoggedQuery;
 /**
  * Tests LoggedQuery class
  *
- **/
+ */
 class LoggedQueryTest extends \Cake\TestSuite\TestCase {
 
 /**

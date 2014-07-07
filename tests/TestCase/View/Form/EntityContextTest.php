@@ -899,7 +899,7 @@ class EntityContextTest extends TestCase {
 		]);
 		$context->isRequired('title');
 		$articles = TableRegistry::get('Articles');
-		$this->assertSame($row,  $articles->validator()->provider('entity'));
+		$this->assertSame($row, $articles->validator()->provider('entity'));
 
 		$row = new Article([
 			'title' => 'First post',

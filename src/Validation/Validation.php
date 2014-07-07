@@ -415,7 +415,7 @@ class Validation {
  * - true => Any number of decimal places greater than 0, or a float|double. The '.' is required.
  * - 1..N => Exactly that many number of decimal places. The '.' is required.
  *
- * @param float $check The value the test for decimal
+ * @param float $check The value the test for decimal.
  * @param int $places Decimal places.
  * @param string $regex If a custom regular expression is used, this is the only validation that will occur.
  * @return bool Success

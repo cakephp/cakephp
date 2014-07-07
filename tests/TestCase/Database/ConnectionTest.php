@@ -111,7 +111,7 @@ class ConnectionTest extends TestCase {
  *
  * @expectedException \Cake\Database\Error\MissingConnectionException
  * @return void
- **/
+ */
 	public function testWrongCredentials() {
 		$config = ConnectionManager::config('test');
 		$this->skipIf(isset($config['dsn']), 'Datasource has dsn, skipping.');
@@ -153,7 +153,7 @@ class ConnectionTest extends TestCase {
  * Tests creation of prepared statements
  *
  * @return void
- **/
+ */
 	public function testPrepare() {
 		$sql = 'SELECT 1 + 1';
 		$result = $this->connection->prepare($sql);
@@ -171,7 +171,7 @@ class ConnectionTest extends TestCase {
  * Tests executing a simple query using bound values
  *
  * @return void
- **/
+ */
 	public function testExecuteWithArguments() {
 		$sql = 'SELECT 1 + ?';
 		$statement = $this->connection->execute($sql, [1], array('integer'));
@@ -199,7 +199,7 @@ class ConnectionTest extends TestCase {
  * Tests executing a query with params and associated types
  *
  * @return void
- **/
+ */
 	public function testExecuteWithArgumentsAndTypes() {
 		$sql = "SELECT '2012-01-01' = ?";
 		$statement = $this->connection->execute($sql, [new \DateTime('2012-01-01')], ['date']);
@@ -213,7 +213,7 @@ class ConnectionTest extends TestCase {
  *
  * @expectedException \InvalidArgumentException
  * @return void
- **/
+ */
 	public function testExecuteWithMissingType() {
 		$sql = 'SELECT ?';
 		$statement = $this->connection->execute($sql, [new \DateTime('2012-01-01')], ['bar']);
@@ -223,7 +223,7 @@ class ConnectionTest extends TestCase {
  * Tests executing a query with no params also works
  *
  * @return void
- **/
+ */
 	public function testExecuteWithNoParams() {
 		$sql = 'SELECT 1';
 		$statement = $this->connection->execute($sql);
@@ -237,7 +237,7 @@ class ConnectionTest extends TestCase {
  * Tests it is possible to insert data into a table using matching types by key name
  *
  * @return void
- **/
+ */
 	public function testInsertWithMatchingTypes() {
 		$data = ['id' => '3', 'title' => 'a title', 'body' => 'a body'];
 		$result = $this->connection->insert(
@@ -258,7 +258,7 @@ class ConnectionTest extends TestCase {
  * Tests it is possible to insert data into a table using matching types by array position
  *
  * @return void
- **/
+ */
 	public function testInsertWithPositionalTypes() {
 		$data = ['id' => '3', 'title' => 'a title', 'body' => 'a body'];
 		$result = $this->connection->insert(
@@ -279,7 +279,7 @@ class ConnectionTest extends TestCase {
  * Tests an statement class can be reused for multiple executions
  *
  * @return void
- **/
+ */
 	public function testStatementReusing() {
 		$total = $this->connection->execute('SELECT COUNT(*) AS total FROM things');
 		$result = $total->fetch('assoc');
@@ -301,7 +301,7 @@ class ConnectionTest extends TestCase {
  * Tests rows can be updated without specifying any conditions nor types
  *
  * @return void
- **/
+ */
 	public function testUpdateWithoutConditionsNorTypes() {
 		$title = 'changed the title!';
 		$body = 'changed the body!';
@@ -315,7 +315,7 @@ class ConnectionTest extends TestCase {
  * Tests it is possible to use key => value conditions for update
  *
  * @return void
- **/
+ */
 	public function testUpdateWithConditionsNoTypes() {
 		$title = 'changed the title!';
 		$body = 'changed the body!';
@@ -329,7 +329,7 @@ class ConnectionTest extends TestCase {
  * Tests it is possible to use key => value and string conditions for update
  *
  * @return void
- **/
+ */
 	public function testUpdateWithConditionsCombinedNoTypes() {
 		$title = 'changed the title!';
 		$body = 'changed the body!';
@@ -343,7 +343,7 @@ class ConnectionTest extends TestCase {
  * Tests you can bind types to update values
  *
  * @return void
- **/
+ */
 	public function testUpdateWithTypes() {
 		$title = 'changed the title!';
 		$body = new \DateTime('2012-01-01');
@@ -362,7 +362,7 @@ class ConnectionTest extends TestCase {
  * Tests you can bind types to update values
  *
  * @return void
- **/
+ */
 	public function testUpdateWithConditionsAndTypes() {
 		$title = 'changed the title!';
 		$body = new \DateTime('2012-01-01');
@@ -379,7 +379,7 @@ class ConnectionTest extends TestCase {
  * Tests delete from table with no conditions
  *
  * @return void
- **/
+ */
 	public function testDeleteNoConditions() {
 		$this->connection->delete('things');
 		$result = $this->connection->execute('SELECT * FROM things');
@@ -390,7 +390,7 @@ class ConnectionTest extends TestCase {
 /**
  * Tests delete from table with conditions
  * @return void
- **/
+ */
 	public function testDeleteWithConditions() {
 		$this->connection->delete('things', ['id' => '1-rest-is-ommited'], ['id' => 'integer']);
 		$result = $this->connection->execute('SELECT * FROM things');
@@ -412,7 +412,7 @@ class ConnectionTest extends TestCase {
  * Tests that it is possible to use simple database transactions
  *
  * @return void
- **/
+ */
 	public function testSimpleTransactions() {
 		$this->connection->begin();
 		$this->connection->delete('things', ['id' => 1]);
@@ -433,7 +433,7 @@ class ConnectionTest extends TestCase {
  * with early rollback algorithm
  *
  * @return void
- **/
+ */
 	public function testVirtualNestedTrasanction() {
 		//starting 3 virtual transaction
 		$this->connection->begin();
@@ -456,7 +456,7 @@ class ConnectionTest extends TestCase {
  * with early rollback algorithm
  *
  * @return void
- **/
+ */
 	public function testVirtualNestedTrasanction2() {
 		//starting 3 virtual transaction
 		$this->connection->begin();
@@ -477,7 +477,7 @@ class ConnectionTest extends TestCase {
  * with early rollback algorithm
  *
  * @return void
- **/
+ */
 
 	public function testVirtualNestedTrasanction3() {
 		//starting 3 virtual transaction
@@ -500,7 +500,7 @@ class ConnectionTest extends TestCase {
  * Tests that it is possible to real use  nested transactions
  *
  * @return void
- **/
+ */
 	public function testSavePoints() {
 		$this->skipIf(!$this->connection->useSavePoints(true));
 
@@ -528,7 +528,7 @@ class ConnectionTest extends TestCase {
  * Tests that it is possible to real use  nested transactions
  *
  * @return void
- **/
+ */
 
 	public function testSavePoints2() {
 		$this->skipIf(!$this->connection->useSavePoints(true));
@@ -556,7 +556,7 @@ class ConnectionTest extends TestCase {
  * Tests connection can quote values to be safely used in query strings
  *
  * @return void
- **/
+ */
 	public function testQuote() {
 		$this->skipIf(!$this->connection->supportsQuoting());
 		$expected = "'2012-01-01'";

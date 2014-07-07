@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests IdentifierExpression class
  *
- **/
+ */
 class IdentifierExpressionTest extends TestCase {
 
 /**

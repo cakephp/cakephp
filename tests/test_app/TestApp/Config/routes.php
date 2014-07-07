@@ -1,9 +1,5 @@
 <?php
 /**
- * Routes file
- *
- * Routes for test app
- *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -20,11 +16,9 @@ namespace TestApp\Config;
 
 use Cake\Routing\Router;
 
-// Configure::write('Routing.prefixes', array());
-
 Router::parseExtensions('json');
-Router::connect('/some_alias', array('controller' => 'tests_apps', 'action' => 'some_method'));
-
-Router::connect('/', ['controller' => 'pages', 'action' => 'display', 'home']);
-
-require CAKE . 'Config/routes.php';
+Router::scope('/', function($routes) {
+	$routes->connect('/', ['controller' => 'pages', 'action' => 'display', 'home']);
+	$routes->connect('/some_alias', array('controller' => 'tests_apps', 'action' => 'some_method'));
+	$routes->fallbacks();
+});

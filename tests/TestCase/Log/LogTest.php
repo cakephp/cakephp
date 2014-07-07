@@ -103,7 +103,7 @@ class LogTest extends TestCase {
  * explicit tests for drop()
  *
  * @return void
- **/
+ */
 	public function testDrop() {
 		Log::config('file', array(
 			'engine' => 'File',

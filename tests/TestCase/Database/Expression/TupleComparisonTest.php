@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests TupleComparison class
  *
- **/
+ */
 class TupleComparisonTest extends TestCase {
 
 /**

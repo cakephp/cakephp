@@ -19,7 +19,7 @@ use Cake\Database\ValueBinder;
 /**
  * Tests FunctionsBuilder class
  *
- **/
+ */
 class FunctionsBuilderTest extends \Cake\TestSuite\TestCase {
 
 /**
