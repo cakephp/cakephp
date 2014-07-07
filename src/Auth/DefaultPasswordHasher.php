@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         2.4.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Auth;
@@ -25,10 +25,18 @@ class DefaultPasswordHasher extends AbstractPasswordHasher {
 /**
  * Default config for this object.
  *
+ * ### Options
+ *
+ * - `hasType` - Hashing algo to use. Valid values are those supported by `$algo`
+ *   argument of `password_hash()`. Defaults to `PASSWORD_DEFAULT`
+ * - `hashOptions` - Associative array of options. Check the PHP manual for
+ *   supported options for each hash type. Defaults to empty array.
+ *
  * @var array
  */
 	protected $_defaultConfig = [
-		'hashType' => PASSWORD_DEFAULT
+		'hashType' => PASSWORD_DEFAULT,
+		'hashOptions' => []
 	];
 
 /**
@@ -39,7 +47,11 @@ class DefaultPasswordHasher extends AbstractPasswordHasher {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#hashing-passwords
  */
 	public function hash($password) {
-		return password_hash($password, $this->_config['hashType']);
+		return password_hash(
+			$password,
+			$this->_config['hashType'],
+			$this->_config['hashOptions']
+		);
 	}
 
 /**
