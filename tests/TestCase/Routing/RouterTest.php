@@ -1880,9 +1880,9 @@ class RouterTest extends TestCase {
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
-		// $result = Router::parse('/');
-		// $expected = array('pass' => array('home'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
-		// $this->assertEquals($expected, $result);
+		$result = Router::parse('/');
+		$expected = array('pass' => array('home'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
+		$this->assertEquals($expected, $result);
 
 		$result = Router::parse('/pages/home/');
 		$expected = array('pass' => array('home'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');

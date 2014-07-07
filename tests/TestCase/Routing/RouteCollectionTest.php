@@ -179,6 +179,42 @@ class RouteCollectionTest extends TestCase {
 	}
 
 /**
+ * Test that prefixes increase the specificity of a route match.
+ *
+ * Connect the admin route after the non prefixed version, this means
+ * the non-prefix route would have a more specific name (users:index)
+ *
+ * @return void
+ */
+	public function testMatchPrefixSpecificity() {
+		$context = [
+			'_base' => '/',
+			'_scheme' => 'http',
+			'_host' => 'example.org',
+		];
+		$routes = new RouteBuilder($this->collection, '/');
+		$routes->connect('/:action/*', ['controller' => 'Users']);
+		$routes->connect('/admin/:controller', ['prefix' => 'admin', 'action' => 'index']);
+
+		$url = [
+			'plugin' => null,
+			'prefix' => 'admin',
+			'controller' => 'Users',
+			'action' => 'index'
+		];
+		$result = $this->collection->match($url, $context);
+		$this->assertEquals('admin/Users', $result);
+
+		$url = [
+			'plugin' => null,
+			'controller' => 'Users',
+			'action' => 'index'
+		];
+		$result = $this->collection->match($url, $context);
+		$this->assertEquals('index', $result);
+	}
+
+/**
  * Test getting named routes.
  *
  * @return void
