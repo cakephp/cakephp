@@ -48,9 +48,9 @@ class TableNameExpression implements ExpressionInterface {
     protected $_alias;
 
 /**
+ * Holds the Driver instance
  * 
- * @todo Comment
- *
+ * @var \Cake\Database\Driver Instance of the driver currently used in the current Connection
  */
     protected $_driver;
 
@@ -88,9 +88,31 @@ class TableNameExpression implements ExpressionInterface {
     }
 
 /**
- * Constructor
+ * Sets the type of operation this table name will be used in (either from or join)
  *
- * @todo Use a method to set $this->_type
+ * @param string $type
+ * @return void
+ */
+    public function setType($type) {
+        if ($type === "from") {
+            $this->_type = "from";
+        } else {
+            $this->_type = "join";
+        }
+    }
+
+/**
+ * Sets the driver that will be used for the autoQuoting feature
+ *
+ * @param \Cake\Database\Driver $driver Instance of the driver currently used in the current Connection
+ * @return void
+ */
+    public function setDriver($driver) {
+        $this->_driver = $driver;
+    }
+
+/**
+ * Constructor
  * 
  * @param string $name Table name
  * @param string $prefix Prefix to prepend
@@ -99,17 +121,7 @@ class TableNameExpression implements ExpressionInterface {
         $this->setName($name);
         $this->setPrefix($prefix);
         $this->setAlias($alias);
-
-        $this->_type = $type;
-    }
-
-/**
- * 
- * @todo Comment
- *
- */
-    public function setDriver($driver) {
-        $this->_driver = $driver;
+        $this->setType($type);
     }
 
 /**
