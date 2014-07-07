@@ -16,6 +16,7 @@ namespace Cake\Database;
 
 use Cake\Database\Query;
 use Cake\Database\ValueBinder;
+use Cake\Database\Expression\TableNameExpression;
 
 /**
  * Responsible for compiling a Query object into its SQL representation
@@ -173,12 +174,7 @@ class QueryCompiler {
 		$select = ' FROM %s';
 		$normalized = [];
 		$parts = $this->_stringifyExpressions($parts, $generator, false);
-		// foreach ($parts as $k => $p) {
-		// 	if (!is_numeric($k)) {
-		// 		$p = $p . ' AS ' . $k;
-		// 	}
-		// 	$normalized[] = $p;
-		// }
+		
 		return sprintf($select, implode(', ', $parts));
 	}
 
@@ -196,7 +192,9 @@ class QueryCompiler {
 	protected function _buildJoinPart($parts, $query, $generator) {
 		$joins = '';
 		foreach ($parts as $join) {
-			if ($join['table'] instanceof ExpressionInterface) {
+			if ($join['table'] instanceof TableNameExpression) {
+				$join['table'] = $join['table']->sql($generator);
+			} elseif ($join['table'] instanceof ExpressionInterface) {
 				$join['table'] = '(' . $join['table']->sql($generator) . ')';
 			}
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);

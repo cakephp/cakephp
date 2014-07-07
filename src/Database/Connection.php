@@ -18,6 +18,7 @@ use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Expression\TableNameExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 
@@ -199,7 +200,7 @@ class Connection {
  * @return string|array|\Cake\ORM\Query Full tables names
  *
  */
-	public function fullTableName($names) {
+	public function fullTableName($names, $type = "from") {
 		$prefix = "";
 
 		if (isset($this->_config["prefix"]) && $this->_config["prefix"] !== "") {
@@ -208,12 +209,12 @@ class Connection {
 
 		if (is_array($names) && !empty($names)) {
 			foreach ($names as $alias => &$tableName) {
-				if (is_string($tableName) || $tableName instanceof Query) {
-					$tableName = new TableNameExpression($tableName, $prefix, $alias);
+				if (is_string($tableName) || $tableName instanceof Query || $tableName instanceof QueryExpression) {
+					$names[$alias] = new TableNameExpression($tableName, $prefix, $type, $alias);
 				}
 			}
 		} else {
-			$tableName = new TableNameExpression($names, $prefix);
+			$names = new TableNameExpression($names, $prefix, $type);
 		}
 
 		return $names;

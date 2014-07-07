@@ -48,6 +48,13 @@ class TableNameExpression implements ExpressionInterface {
     protected $_alias;
 
 /**
+ * 
+ * @todo Comment
+ *
+ */
+    protected $_driver;
+
+/**
  * Sets the table name this expression represents
  *
  * @param string $name
@@ -83,13 +90,26 @@ class TableNameExpression implements ExpressionInterface {
 /**
  * Constructor
  *
+ * @todo Use a method to set $this->_type
+ * 
  * @param string $name Table name
  * @param string $prefix Prefix to prepend
  */
-    public function __construct($name, $prefix, $alias = null) {
+    public function __construct($name, $prefix, $type, $alias = null) {
         $this->setName($name);
         $this->setPrefix($prefix);
         $this->setAlias($alias);
+
+        $this->_type = $type;
+    }
+
+/**
+ * 
+ * @todo Comment
+ *
+ */
+    public function setDriver($driver) {
+        $this->_driver = $driver;
     }
 
 /**
@@ -100,15 +120,28 @@ class TableNameExpression implements ExpressionInterface {
  */
     public function sql(ValueBinder $generator) {
         $sql = "";
+        $quote = false;
+
+        if (is_object($this->_driver) && method_exists($this->_driver, 'autoQuoting')) {
+            if ($this->_driver->autoQuoting()) {
+                $quote = true;
+            }
+        }
 
         if (is_string($this->_name)) {
             $sql = $this->_prefix . $this->_name;
-        } elseif ($this->_name instanceof Query) {
-            $sql = '(' . $this->_name->sql($generator) . ')';
+        } elseif ($this->_name instanceof ExpressionInterface) {
+            $sql = '(' . $this->_prefix . $this->_name->sql($generator) . ')';
         }
 
-        if ($this->_alias !== null) {
-            $sql .= ' AS ' . $this->_alias;
+        if ($quote) {
+            $sql = $this->_driver->quoteIdentifier($sql);
+        }
+
+        if ($this->_alias !== null && $this->_type === "from") {
+            $alias = $quote ? $this->_driver->quoteIdentifier($this->_alias) : $this->_alias;
+
+            $sql .= ' AS ' . $alias;
         }
 
         return $sql;

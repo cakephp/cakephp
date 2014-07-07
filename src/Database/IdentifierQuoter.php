@@ -14,10 +14,12 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Query;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Expression\TableNameExpression;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object
@@ -94,7 +96,7 @@ class IdentifierQuoter {
  * @return void
  */
 	protected function _quoteParts($query) {
-		foreach (['distinct', 'select', 'from', 'group'] as $part) {
+		foreach (['distinct', 'select', 'group'] as $part) {
 			$contents = $query->clause($part);
 
 			if (!is_array($contents)) {
@@ -105,6 +107,12 @@ class IdentifierQuoter {
 			if ($result) {
 				$query->{$part}($result, true);
 			}
+		}
+
+		$froms = $query->clause('from');
+		if ($froms) {
+			$froms = $this->_quoteFroms($froms);
+			$query->from($froms, true);
 		}
 
 		$joins = $query->clause('join');
@@ -131,6 +139,27 @@ class IdentifierQuoter {
 	}
 
 /**
+ * 
+ * @todo comment
+ *
+ */
+	protected function _quoteFroms($froms) {
+		$result = [];
+
+		if (!empty($froms)) {
+			foreach ($froms as $alias => $value) {
+				if ($value instanceof TableNameExpression) {
+					$value->setDriver($this->_driver);
+				}				
+				
+				$result[$alias] = $value;
+			}
+		}
+
+		return $result;
+	}
+
+/**
  * Quotes both the table and alias for an array of joins as stored in a Query
  * object
  *
@@ -141,6 +170,7 @@ class IdentifierQuoter {
 		$result = [];
 		foreach ($joins as $value) {
 			$alias = null;
+
 			if (!empty($value['alias'])) {
 				$alias = $this->_driver->quoteIdentifier($value['alias']);
 				$value['alias'] = $alias;
@@ -148,6 +178,10 @@ class IdentifierQuoter {
 
 			if (is_string($value['table'])) {
 				$value['table'] = $this->_driver->quoteIdentifier($value['table']);
+			}
+
+			if ($value['table'] instanceof TableNameExpression) {
+				$value['table']->setDriver($this->_driver);
 			}
 
 			$result[$alias] = $value;
