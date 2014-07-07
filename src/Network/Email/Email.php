@@ -1717,7 +1717,6 @@ class Email {
 		} else {
 			$viewClass = App::className($viewClass, 'View', 'View');
 		}
-		$viewClass = 'Cake\View\View';
 
 		$View = new $viewClass(null);
 		$View->viewVars = $this->_viewVars;
