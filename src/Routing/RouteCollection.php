@@ -83,8 +83,9 @@ class RouteCollection {
 /**
  * Takes the URL string and iterates the routes until one is able to parse the route.
  *
- * @param string $url Url to parse.
- * @return array An array of request parameters parsed from the url.
+ * @param string $url URL to parse.
+ * @return array An array of request parameters parsed from the URL.
+ * @throws \Cake\Routing\Error\MissingRouteException When a URL has no matching route.
  */
 	public function parse($url) {
 		foreach (array_keys($this->_paths) as $path) {
@@ -200,9 +201,10 @@ class RouteCollection {
  * @param array $context The request context to use. Contains _base, _port,
  *    _host, and _scheme keys.
  * @return string|false Either a string on match, or false on failure.
+ * @throws \Cake\Routing\Error\MissingRouteException when a route cannot be matched.
  */
 	public function match($url, $context) {
-		// Named routes support hack.
+		// Named routes support optimization.
 		if (isset($url['_name'])) {
 			$name = $url['_name'];
 			unset($url['_name']);
