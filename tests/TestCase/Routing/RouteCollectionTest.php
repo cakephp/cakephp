@@ -195,17 +195,20 @@ class RouteCollectionTest extends TestCase {
 	}
 
 /**
- * Test adding with an error
- */
-	public function testAdd() {
-	}
-
-/**
- * Test the routes() method.
+ * Test the add() and routes() method.
  *
  * @return void
  */
-	public function testRoutes() {
+	public function testAddingRoutes() {
+		$one = new Route('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+		$two = new Route('/', ['controller' => 'Dashboards', 'action' => 'display']);
+		$this->collection->add($one);
+		$this->collection->add($two);
+
+		$routes = $this->collection->routes();
+		$this->assertCount(2, $routes);
+		$this->assertSame($one, $routes[0]);
+		$this->assertSame($two, $routes[1]);
 	}
 
 }
