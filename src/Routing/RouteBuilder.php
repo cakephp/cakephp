@@ -21,10 +21,12 @@ use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 
 /**
- * Contains a collection of routes related to a specific path scope.
- * Path scopes can be read with the `path()` method.
+ * Provides features for building routes inside scopes.
+ *
+ * Gives an easy to use way to build routes and append them
+ * into a route collection.
  */
-class ScopedRouteCollection {
+class RouteBuilder {
 
 /**
  * Regular expression for auto increment IDs
@@ -76,18 +78,11 @@ class ScopedRouteCollection {
 	protected $_params;
 
 /**
- * The routes connected to this collection.
+ * The route collection routes should be added to.
  *
- * @var array
+ * @var Cake\Routing\RouteCollection
  */
-	protected $_routes = [];
-
-/**
- * The hash map of named routes that are in this collection.
- *
- * @var array
- */
-	protected $_named = [];
+	protected $_collection;
 
 /**
  * Constructor
@@ -95,7 +90,8 @@ class ScopedRouteCollection {
  * @param string $path The path prefix the scope is for.
  * @param array $params The scope's routing parameters.
  */
-	public function __construct($path, array $params = [], array $extensions = []) {
+	public function __construct($collection, $path, array $params = [], array $extensions = []) {
+		$this->_collection = $collection;
 		$this->_path = $path;
 		$this->_params = $params;
 		$this->_extensions = $extensions;
@@ -136,39 +132,6 @@ class ScopedRouteCollection {
  */
 	public function params() {
 		return $this->_params;
-	}
-
-/**
- * Get the explicity named routes in the collection.
- *
- * @return array An array of named routes indexed by their name.
- */
-	public function named() {
-		return $this->_named;
-	}
-
-/**
- * Get all the routes in this collection.
- *
- * @return array An array of routes.
- */
-	public function routes() {
-		return $this->_routes;
-	}
-
-/**
- * Get a route by its name.
- *
- * *Note* This method only works on explicitly named routes.
- *
- * @param string $name The name of the route to get.
- * @return false|\Cake\Routing\Route The route.
- */
-	public function get($name) {
-		if (isset($this->_named[$name])) {
-			return $this->_named[$name];
-		}
-		return false;
 	}
 
 /**
@@ -267,7 +230,7 @@ class ScopedRouteCollection {
 		if (is_callable($callback)) {
 			$idName = Inflector::singularize($urlName) . '_id';
 			$path = $this->_path . '/' . $urlName . '/:' . $idName;
-			Router::scope($path, $this->params(), $callback);
+			$this->scope($path, $this->params(), $callback);
 		}
 	}
 
@@ -352,16 +315,7 @@ class ScopedRouteCollection {
 		}
 
 		$route = $this->_makeRoute($route, $defaults, $options);
-		if (isset($options['_name'])) {
-			$this->_named[$options['_name']] = $route;
-		}
-
-		$name = $route->getName();
-		if (!isset($this->_routeTable[$name])) {
-			$this->_routeTable[$name] = [];
-		}
-		$this->_routeTable[$name][] = $route;
-		$this->_routes[] = $route;
+		$this->_collection->add($route, $options);
 	}
 
 /**
@@ -385,9 +339,6 @@ class ScopedRouteCollection {
 			unset($options['routeClass']);
 
 			$route = str_replace('//', '/', $this->_path . $route);
-			if (!is_array($defaults)) {
-				debug(\Cake\Utility\Debugger::trace());
-			}
 			foreach ($this->_params as $param => $val) {
 				if (isset($defaults[$param]) && $defaults[$param] !== $val) {
 					$msg = 'You cannot define routes that conflict with the scope. ' .
@@ -477,7 +428,7 @@ class ScopedRouteCollection {
 			$name = $this->_params['prefix'] . '/' . $name;
 		}
 		$params = ['prefix' => $name] + $this->_params;
-		Router::scope($path, $params, $callback);
+		$this->scope($path, $params, $callback);
 	}
 
 /**
@@ -508,122 +459,21 @@ class ScopedRouteCollection {
 			$options['path'] = '/' . Inflector::underscore($name);
 		}
 		$options['path'] = $this->_path . $options['path'];
-		Router::scope($options['path'], $params, $callback);
+		$this->scope($options['path'], $params, $callback);
 	}
 
-/**
- * Takes the URL string and iterates the routes until one is able to parse the route.
- *
- * @param string $url Url to parse.
- * @return array An array of request parameters parsed from the url.
- */
-	public function parse($url) {
-		$queryParameters = null;
-		if (strpos($url, '?') !== false) {
-			list($url, $queryParameters) = explode('?', $url, 2);
-			parse_str($queryParameters, $queryParameters);
+	public function scope($path, $params, $callback) {
+		if ($callback === null) {
+			$callback = $params;
+			$params = [];
 		}
-		$out = [];
-		for ($i = 0, $len = count($this->_routes); $i < $len; $i++) {
-			$r = $this->_routes[$i]->parse($url);
-			if ($r === false) {
-				continue;
-			}
-			if ($queryParameters) {
-				$r['?'] = $queryParameters;
-				return $r;
-			}
-			return $r;
+		if (!is_callable($callback)) {
+			$msg = 'Need a callable function/object to connect routes.';
+			throw new \InvalidArgumentException($msg);
 		}
-		return $out;
-	}
 
-/**
- * Reverse route or match a $url array with the defined routes.
- * Returns either the string URL generate by the route, or false on failure.
- *
- * @param array $url The url to match.
- * @param array $context The request context to use. Contains _base, _port,
- *    _host, and _scheme keys.
- * @return string|false Either a string on match, or false on failure.
- */
-	public function match($url, $context) {
-		foreach ($this->_getNames($url) as $name) {
-			if (empty($this->_routeTable[$name])) {
-				continue;
-			}
-			foreach ($this->_routeTable[$name] as $route) {
-				$match = $route->match($url, $context);
-				if ($match) {
-					return strlen($match) > 1 ? trim($match, '/') : $match;
-				}
-			}
-		}
-		return false;
-	}
-
-/**
- * Get the set of names from the $url.  Accepts both older style array urls,
- * and newer style urls containing '_name'
- *
- * @param array $url The url to match.
- * @return string The name of the url
- */
-	protected function _getNames($url) {
-		$name = false;
-		if (isset($url['_name'])) {
-			return [$url['_name']];
-		}
-		$plugin = false;
-		if (isset($url['plugin'])) {
-			$plugin = $url['plugin'];
-		}
-		$fallbacks = [
-			'%2$s:%3$s',
-			'%2$s:_action',
-			'_controller:%3$s',
-			'_controller:_action'
-		];
-		if ($plugin) {
-			$fallbacks = [
-				'%1$s.%2$s:%3$s',
-				'%1$s.%2$s:_action',
-				'%1$s._controller:%3$s',
-				'%1$s._controller:_action',
-				'_plugin.%2$s:%3$s',
-				'_plugin._controller:%3$s',
-				'_plugin._controller:_action',
-				'_controller:_action'
-			];
-		}
-		foreach ($fallbacks as $i => $template) {
-			$fallbacks[$i] = strtolower(sprintf($template, $plugin, $url['controller'], $url['action']));
-		}
-		if ($name) {
-			array_unshift($fallbacks, $name);
-		}
-		return $fallbacks;
-	}
-
-/**
- * Merge another ScopedRouteCollection with this one.
- *
- * Combines all the routes, from one collection into the current one.
- * Used internally when scopes are duplicated.
- *
- * @param \Cake\Routing\ScopedRouteCollection $collection
- * @return void
- */
-	public function merge(ScopedRouteCollection $collection) {
-		foreach ($collection->routes() as $route) {
-			$name = $route->getName();
-			if (!isset($this->_routeTable[$name])) {
-				$this->_routeTable[$name] = [];
-			}
-			$this->_routeTable[$name][] = $route;
-			$this->_routes[] = $route;
-		}
-		$this->_named += $collection->named();
+		$builder = new static($this->_collection, $path, $params, $this->_extensions);
+		$callback($builder);
 	}
 
 /**

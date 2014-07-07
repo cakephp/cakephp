@@ -27,25 +27,22 @@ use Cake\Utility\Debugger;
 Add a matching route to <?= APP_DIR . DS . 'Config' . DS . 'routes.php' ?></p>
 
 <h3>Connected Routes</h3>
+<table cellspacing="0" cellpadding="0">
+<tr><th>Template</th><th>Defaults</th><th>Options</th></tr>
 <?php
-foreach (Router::routes() as $scope):
-	printf('<h4>Scope: %s</h4>', $scope->path());
-	echo '<table cellspacing="0" cellpadding="0">';
-	echo '<tr><th>Template</th><th>Defaults</th><th>Options</th></tr>';
-
-	foreach ($scope->routes() as $route):
-		echo '<tr>';
-		printf(
-			'<th width="25%%">%s</th><th>%s</th><th width="20%%">%s</th>',
-			$route->template,
-			Debugger::exportVar($route->defaults),
-			Debugger::exportVar($route->options)
-		);
-		echo '</tr>';
-	endforeach;
-	echo '</table>';
+foreach (Router::routes() as $route):
+	echo '<tr>';
+	printf(
+		'<th width="25%%">%s</th><th>%s</th><th width="20%%">%s</th>',
+		$route->template,
+		Debugger::exportVar($route->defaults),
+		Debugger::exportVar($route->options)
+	);
+	echo '</tr>';
 endforeach;
 ?>
+</table>
+
 <p class="notice">
 	<strong>Notice: </strong>
 	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_route.ctp'); ?>

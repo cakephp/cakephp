@@ -108,7 +108,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testMapResources() {
-		$resources = Router::mapResources('Posts');
+		Router::mapResources('Posts');
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$expected = [
@@ -121,7 +121,6 @@ class RouterTest extends TestCase {
 		];
 		$result = Router::parse('/posts');
 		$this->assertEquals($expected, $result);
-		$this->assertEquals($resources, ['posts']);
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$expected = [
@@ -187,8 +186,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
-		$result = Router::mapResources('Posts', ['id' => '[a-z0-9_]+']);
-		$this->assertEquals(['posts'], $result);
+		Router::mapResources('Posts', ['id' => '[a-z0-9_]+']);
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$expected = [
@@ -223,7 +221,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testPluginMapResources() {
-		$resources = Router::mapResources('TestPlugin.TestPlugin');
+		Router::mapResources('TestPlugin.TestPlugin');
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = Router::parse('/test_plugin/test_plugin');
@@ -236,7 +234,6 @@ class RouterTest extends TestCase {
 			'_ext' => null
 		);
 		$this->assertEquals($expected, $result);
-		$this->assertEquals(array('test_plugin'), $resources);
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = Router::parse('/test_plugin/test_plugin/13');
@@ -258,8 +255,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testMapResourcesWithPrefix() {
-		$resources = Router::mapResources('Posts', array('prefix' => 'api'));
-		$this->assertEquals(array('posts'), $resources);
+		Router::mapResources('Posts', array('prefix' => 'api'));
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = Router::parse('/api/posts');
@@ -284,9 +280,7 @@ class RouterTest extends TestCase {
 	public function testMapResourcesWithExtension() {
 		Router::parseExtensions(['json', 'xml'], false);
 
-		$resources = Router::mapResources('Posts', ['_ext' => 'json']);
-		$this->assertEquals(['posts'], $resources);
-
+		Router::mapResources('Posts', ['_ext' => 'json']);
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 
 		$expected = array(
@@ -320,8 +314,8 @@ class RouterTest extends TestCase {
 				'foo' => '^(bar)$',
 			),
 		));
-		$routes = Router::scope('/');
-		$route = $routes->routes()[0];
+		$routes = Router::routes();
+		$route = $routes[0];
 		$this->assertInstanceOf('TestPlugin\Routing\Route\TestRoute', $route);
 		$this->assertEquals('^(bar)$', $route->options['foo']);
 	}
@@ -332,7 +326,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testPluginMapResourcesWithPrefix() {
-		$resources = Router::mapResources('TestPlugin.TestPlugin', array('prefix' => 'api'));
+		Router::mapResources('TestPlugin.TestPlugin', array('prefix' => 'api'));
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = Router::parse('/api/test_plugin/test_plugin');
@@ -346,7 +340,6 @@ class RouterTest extends TestCase {
 			'_ext' => null
 		);
 		$this->assertEquals($expected, $result);
-		$this->assertEquals(array('test_plugin'), $resources);
 
 		$resources = Router::mapResources('Posts', array('prefix' => 'api'));
 
@@ -1499,30 +1492,6 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * Test that Routing.prefixes are used when a Router instance is created
- * or reset
- *
- * @return void
- */
-	public function testRoutingPrefixesSetting() {
-		$restore = Configure::read('Routing');
-
-		Configure::write('Routing.prefixes', array('admin', 'member', 'super_user'));
-		Router::reload();
-		$result = Router::prefixes();
-		$expected = array('admin', 'member', 'super_user');
-		$this->assertEquals($expected, $result);
-
-		Configure::write('Routing.prefixes', array('admin', 'member'));
-		Router::reload();
-		$result = Router::prefixes();
-		$expected = array('admin', 'member');
-		$this->assertEquals($expected, $result);
-
-		Configure::write('Routing', $restore);
-	}
-
-/**
  * testParseExtensions method
  *
  * @return void
@@ -2018,7 +1987,6 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testParsingWithLiteralPrefixes() {
-		Configure::write('Routing.prefixes', []);
 		Router::reload();
 		$adminParams = array('prefix' => 'admin');
 		Router::connect('/admin/:controller', $adminParams);
@@ -2045,10 +2013,6 @@ class RouterTest extends TestCase {
 
 		$result = Router::url(array('prefix' => 'admin', 'controller' => 'posts'));
 		$expected = '/base/admin/posts';
-		$this->assertEquals($expected, $result);
-
-		$result = Router::prefixes();
-		$expected = [];
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
@@ -2087,15 +2051,9 @@ class RouterTest extends TestCase {
 		Router::connect('/company/:controller/:action/*', array('prefix' => 'company'));
 		Router::connect('/:action', array('controller' => 'users'));
 
-		/*
 		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'prefix' => 'company'));
 		$expected = '/company/users/login';
 		$this->assertEquals($expected, $result);
-
-		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'prefix' => 'company'));
-		$expected = '/company/users/login';
-		$this->assertEquals($expected, $result);
-		 */
 
 		$request = new Request();
 		Router::setRequestInfo(
@@ -2546,8 +2504,8 @@ class RouterTest extends TestCase {
  */
 	public function testRedirect() {
 		Router::redirect('/mobile', '/', ['status' => 301]);
-		$scope = Router::scope('/');
-		$route = $scope->routes()[0];
+		$routes = Router::routes();
+		$route = $routes[0];
 		$this->assertInstanceOf('Cake\Routing\Route\RedirectRoute', $route);
 	}
 
@@ -2627,15 +2585,11 @@ class RouterTest extends TestCase {
  */
 	public function testScope() {
 		Router::scope('/path', ['param' => 'value'], function($routes) {
-			$this->assertInstanceOf('Cake\Routing\ScopedRouteCollection', $routes);
-			$this->assertCount(0, $routes->routes());
+			$this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
 			$this->assertEquals('/path', $routes->path());
 			$this->assertEquals(['param' => 'value'], $routes->params());
 
 			$routes->connect('/articles', ['controller' => 'Articles']);
-		});
-		Router::scope('/path', function($routes) {
-			$this->assertCount(0, $routes->routes());
 		});
 	}
 
@@ -2656,7 +2610,7 @@ class RouterTest extends TestCase {
  */
 	public function testPrefix() {
 		Router::prefix('admin', function($routes) {
-			$this->assertInstanceOf('Cake\Routing\ScopedRouteCollection', $routes);
+			$this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
 			$this->assertEquals('/admin', $routes->path());
 			$this->assertEquals(['prefix' => 'admin'], $routes->params());
 		});
@@ -2669,7 +2623,7 @@ class RouterTest extends TestCase {
  */
 	public function testPlugin() {
 		Router::plugin('DebugKit', function($routes) {
-			$this->assertInstanceOf('Cake\Routing\ScopedRouteCollection', $routes);
+			$this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
 			$this->assertEquals('/debug_kit', $routes->path());
 			$this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
 		});
@@ -2682,7 +2636,7 @@ class RouterTest extends TestCase {
  */
 	public function testPluginOptions() {
 		Router::plugin('DebugKit', ['path' => '/debugger'], function($routes) {
-			$this->assertInstanceOf('Cake\Routing\ScopedRouteCollection', $routes);
+			$this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
 			$this->assertEquals('/debugger', $routes->path());
 			$this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
 		});
