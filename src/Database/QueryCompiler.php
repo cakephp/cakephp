@@ -174,8 +174,14 @@ class QueryCompiler {
 		$select = ' FROM %s';
 		$normalized = [];
 		$parts = $this->_stringifyExpressions($parts, $generator, false);
+		foreach ($parts as $k => $p) {
+			if (!is_numeric($k)) {
+				$p = $p . ' AS ' . $k;
+			}
+			$normalized[] = $p;
+		}
 		
-		return sprintf($select, implode(', ', $parts));
+		return sprintf($select, implode(', ', $normalized));
 	}
 
 /**

@@ -139,9 +139,11 @@ class IdentifierQuoter {
 	}
 
 /**
+ * Quotes both the table and alias for an array of froms as stored in a Query
+ * object
  * 
- * @todo comment
- *
+ * @param array $froms The froms to quote.
+ * @return array
  */
 	protected function _quoteFroms($froms) {
 		$result = [];
@@ -149,8 +151,17 @@ class IdentifierQuoter {
 		if (!empty($froms)) {
 			foreach ($froms as $alias => $value) {
 				if ($value instanceof TableNameExpression) {
-					$value->setDriver($this->_driver);
-				}				
+					$tableName = $value->getName();
+					if (is_string($tableName)) {
+						$quoted = $this->_driver->quoteIdentifier($tableName);
+						$value->setName($quoted);
+						$value->isQuoted();
+					}
+				} else {
+					$value = !is_string($value) ? $value : $this->_driver->quoteIdentifier($value);
+				}
+
+				$alias = is_numeric($alias) ? $alias : $this->_driver->quoteIdentifier($alias);
 				
 				$result[$alias] = $value;
 			}
@@ -176,12 +187,17 @@ class IdentifierQuoter {
 				$value['alias'] = $alias;
 			}
 
-			if (is_string($value['table'])) {
-				$value['table'] = $this->_driver->quoteIdentifier($value['table']);
-			}
-
 			if ($value['table'] instanceof TableNameExpression) {
-				$value['table']->setDriver($this->_driver);
+				$tableName = $value['table']->getName();
+				if (is_string($tableName)) {
+					$quoted = $this->_driver->quoteIdentifier($tableName);
+					$value['table']->setName($quoted);
+					$value['table']->isQuoted();
+				}
+			} else {
+				if (is_string($value['table'])) {
+					$value['table'] = $this->_driver->quoteIdentifier($value['table']);
+				}
 			}
 
 			$result[$alias] = $value;

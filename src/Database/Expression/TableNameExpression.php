@@ -48,20 +48,38 @@ class TableNameExpression implements ExpressionInterface {
     protected $_alias;
 
 /**
- * Holds the Driver instance
- * 
- * @var \Cake\Database\Driver Instance of the driver currently used in the current Connection
+ * Tells whether the current $_name is quoted or not
+ *
+ * @var bool
  */
-    protected $_driver;
+    protected $_quoted = false;
 
 /**
- * Sets the driver that will be used for the autoQuoting feature
+ * Sets the table name this expression represents
  *
- * @param \Cake\Database\Driver $driver Instance of the driver currently used in the current Connection
+ * @param string $name
  * @return void
  */
-    public function setDriver($driver) {
-        $this->_driver = $driver;
+    public function setName($name) {
+        $this->_name = $name;
+    }
+
+/**
+ * Gets the table name this expression represents
+ *
+ * @return string Table name this expression represents
+ */
+    public function getName() {
+        return $this->_name;
+    }
+
+/**
+ * Change the $_quoted property that to tell that the $_name property was quoted
+ *
+ * @return void
+ */
+    public function isQuoted() {
+        $this->_quoted = true;
     }
 
 /**
@@ -73,19 +91,13 @@ class TableNameExpression implements ExpressionInterface {
  * @param string $alias Table name alias
  */
     public function __construct($name, $prefix, $type, $alias = null) {
-        $this->_name = $name;
+        $this->setName($name);
         $this->_prefix = $prefix;
 
         if (is_numeric($alias)) {
             $alias = null;
         }
         $this->_alias = $alias;
-
-        if ($type === "from") {
-            $this->_type = "from";
-        } else {
-            $this->_type = "join";
-        }
     }
 
 /**
@@ -96,28 +108,15 @@ class TableNameExpression implements ExpressionInterface {
  */
     public function sql(ValueBinder $generator) {
         $sql = "";
-        $quote = false;
-
-        if (is_object($this->_driver) && method_exists($this->_driver, 'autoQuoting')) {
-            if ($this->_driver->autoQuoting()) {
-                $quote = true;
-            }
-        }
 
         if (is_string($this->_name)) {
-            $sql = $this->_prefix . $this->_name;
+            if ($this->_quoted) {
+                $sql = $this->_name[0] . $this->_prefix . substr($this->_name, 1);
+            } else {
+                $sql = $this->_prefix . $this->_name;
+            }
         } elseif ($this->_name instanceof ExpressionInterface) {
             $sql = '(' . $this->_prefix . $this->_name->sql($generator) . ')';
-        }
-
-        if ($quote) {
-            $sql = $this->_driver->quoteIdentifier($sql);
-        }
-
-        if ($this->_alias !== null && $this->_type === "from") {
-            $alias = $quote ? $this->_driver->quoteIdentifier($this->_alias) : $this->_alias;
-
-            $sql .= ' AS ' . $alias;
         }
 
         return $sql;
