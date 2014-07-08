@@ -60,7 +60,6 @@ class QueryExpression implements ExpressionInterface, Countable {
  * passed in $conditions.
  * @param string $conjunction the glue that will join all the string conditions at this
  * level of the expression tree. For example "AND", "OR", "XOR"...
- * @param TypeMap $typeMap contains default and call specific type mapping
  * @see QueryExpression::add() for more details on $conditions and $types
  */
 	public function __construct($conditions = [], $types = [], $conjunction = 'AND') {
@@ -373,7 +372,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  *
  * Callback function receives as only argument an instance of a QueryExpression
  *
- * @param callable $callable
+ * @param callable $callable The callable to apply to all sub-expressions.
  * @return void
  */
 	public function traverse(callable $callable) {
@@ -396,7 +395,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * passed by reference, this will enable you to change the key under which the
  * modified part is stored.
  *
- * @param callable $callable
+ * @param callable $callable The callable to apply to each part.
  * @return QueryExpression
  */
 	public function iterateParts(callable $callable) {
@@ -511,7 +510,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * to each value in the first argument.
  *
  * @param string $field database field to be used to bind values
- * @param array $values
+ * @param array $values The values to bind
  * @param string $type the type to be used to bind the values
  * @return array
  */

@@ -25,7 +25,7 @@ trait SelectableAssociationTrait {
  * Returns true if the eager loading process will require a set of parent table's
  * primary keys in order to use them as a filter in the finder query.
  *
- * @param array $options
+ * @param array $options The options containing the strategy to be used.
  * @return bool true if a list of keys will be required
  */
 	public function requiresKeys(array $options = []) {
@@ -145,7 +145,7 @@ trait SelectableAssociationTrait {
  * Generates a string used as a table field that contains the values upon
  * which the filter should be applied
  *
- * @param array $options
+ * @param array $options The options for getting the link field.
  * @return string|array
  */
 	protected abstract function _linkField($options);

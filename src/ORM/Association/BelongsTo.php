@@ -67,7 +67,7 @@ class BelongsTo extends Association {
  * in the source table record.
  * If no arguments are passed, currently configured type is returned.
  *
- * @param string $name
+ * @param string $name The property name, use null to read the current property.
  * @return string
  */
 	public function property($name = null) {

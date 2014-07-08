@@ -122,7 +122,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * Constructor
  *
  * @param \Cake\ORM\Query $query Query from where results come
- * @param \Cake\Database\StatementInterface $statement
+ * @param \Cake\Database\StatementInterface $statement The statement to fetch from
  */
 	public function __construct($query, $statement) {
 		$repository = $query->repository();
@@ -241,6 +241,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * Part of Serializable interface.
  *
  * @param string $serialized Serialized object
+ * @return void
  */
 	public function unserialize($serialized) {
 		$this->_results = unserialize($serialized);
@@ -431,8 +432,8 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * Casts all values from a row brought from a table to the correct
  * PHP type.
  *
- * @param Table $table
- * @param array $values
+ * @param Table $table The table object
+ * @param array $values The values to cast
  * @return array
  */
 	protected function _castValues($table, $values) {

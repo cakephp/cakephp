@@ -40,7 +40,7 @@ class TypeMap {
 /**
  * Creates an instance with the given defaults
  *
- * @param array $defaults
+ * @param array $defaults The defaults to use.
  */
 	public function __construct(array $defaults = []) {
 		$this->defaults($defaults);
@@ -57,7 +57,7 @@ class TypeMap {
  * ## Example
  *
  * {{{
- *	$query->defaults(['created' => 'datetime', 'is_visible' => 'boolean']);
+ * $query->defaults(['created' => 'datetime', 'is_visible' => 'boolean']);
  * }}}
  *
  * @param array $defaults associative array where keys are field names and values
@@ -80,10 +80,10 @@ class TypeMap {
  * ## Example
  *
  * {{{
- *	$query->types(['created' => 'time']);
+ * $query->types(['created' => 'time']);
  * }}}
  *
- * @param array $defaults associative array where keys are field names and values
+ * @param array $types associative array where keys are field names and values
  * are the correspondent type.
  * @return this|array
  */
@@ -100,7 +100,8 @@ class TypeMap {
  * the column type will be looked for inside the default mapping. If neither exist,
  * null will be returned.
  *
- * @var null|string
+ * @param string $column The type for a given column
+ * @return null|string
  */
 	public function type($column) {
 		if (isset($this->_types[$column])) {

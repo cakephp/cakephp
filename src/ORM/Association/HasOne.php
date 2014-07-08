@@ -62,7 +62,7 @@ class HasOne extends Association {
  * in the source table record.
  * If no arguments are passed, currently configured type is returned.
  *
- * @param string $name
+ * @param string $name The name of the property. Pass null to read the current value.
  * @return string
  */
 	public function property($name = null) {

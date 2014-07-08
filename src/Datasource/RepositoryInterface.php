@@ -113,8 +113,8 @@ interface RepositoryInterface {
  * returns the same entity after a successful save or false in case
  * of any error.
  *
- * @param \Cake\Datasource\EntityInterface the entity to be saved
- * @param array|\ArrayAccess $options
+ * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
+ * @param array|\ArrayAccess $options The options to use when saving.
  * @return \Cake\Datasource\EntityInterface|bool
  */
 	public function save(EntityInterface $entity, $options = []);

@@ -59,9 +59,8 @@ class StubControllerFilter extends DispatcherFilter {
 /**
  * Returns the test controller
  *
- * @param \Cake\Network\Request $request Request object
- * @param \Cake\Network\Response $response Response for the controller.
- * @return \Cake\Controller\Controller
+ * @param \Cake\Event\Event $event The event object.
+ * @return void
  */
 	public function beforeDispatch(Event $event) {
 		if (empty($event->data['controller'])) {

@@ -57,6 +57,7 @@ class ResultSetDecorator extends Collection implements Countable, Serializable, 
  * Part of Serializable interface.
  *
  * @param string $serialized Serialized object
+ * @return void
  */
 	public function unserialize($serialized) {
 		parent::__construct(unserialize($serialized));

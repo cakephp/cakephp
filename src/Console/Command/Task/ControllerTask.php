@@ -41,6 +41,7 @@ class ControllerTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
+ * @param string $name The name of the controller to bake.
  * @return void
  */
 	public function main($name = null) {
@@ -233,7 +234,6 @@ class ControllerTask extends BakeTask {
 /**
  * Outputs and gets the list of possible controllers from database
  *
- * @param string $useDbConfig Database configuration name
  * @return array Set of controllers
  */
 	public function listAll() {

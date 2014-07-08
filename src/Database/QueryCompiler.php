@@ -96,9 +96,9 @@ class QueryCompiler {
  * Returns a callable object that can be used to compile a SQL string representation
  * of this query.
  *
- * @param string $sql initial sql string to append to
+ * @param string &$sql initial sql string to append to
  * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder The placeholder and value binder object
+ * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
  * @return \Closure
  */
 	protected function _sqlCompiler(&$sql, $query, $generator) {
@@ -253,7 +253,7 @@ class QueryCompiler {
 /**
  * Builds the SQL fragment for INSERT INTO.
  *
- * @param array $parts
+ * @param array $parts The insert parts.
  * @param \Cake\Database\Query $query The query that is being compiled
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string SQL fragment.
@@ -267,7 +267,7 @@ class QueryCompiler {
 /**
  * Builds the SQL fragment for INSERT INTO.
  *
- * @param array $parts
+ * @param array $parts The values parts.
  * @param \Cake\Database\Query $query The query that is being compiled
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string SQL fragment.
