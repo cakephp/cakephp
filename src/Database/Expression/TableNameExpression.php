@@ -55,53 +55,6 @@ class TableNameExpression implements ExpressionInterface {
     protected $_driver;
 
 /**
- * Sets the table name this expression represents
- *
- * @param string $name
- * @return void
- */
-    public function setName($name) {
-        $this->_name = $name;
-    }
-
-/**
- * Sets the prefix for the table name of this expression
- *
- * @param string $prefix
- * @return void
- */
-    public function setPrefix($prefix) {
-        $this->_prefix = $prefix;
-    }
-    
-/**
- * Sets the alias to the table name in this expression
- *
- * @param string $alias
- * @return void
- */
-    public function setAlias($alias) {
-        if (is_numeric($alias)) {
-            $alias = null;
-        }
-        $this->_alias = $alias;
-    }
-
-/**
- * Sets the type of operation this table name will be used in (either from or join)
- *
- * @param string $type
- * @return void
- */
-    public function setType($type) {
-        if ($type === "from") {
-            $this->_type = "from";
-        } else {
-            $this->_type = "join";
-        }
-    }
-
-/**
  * Sets the driver that will be used for the autoQuoting feature
  *
  * @param \Cake\Database\Driver $driver Instance of the driver currently used in the current Connection
@@ -116,12 +69,23 @@ class TableNameExpression implements ExpressionInterface {
  * 
  * @param string $name Table name
  * @param string $prefix Prefix to prepend
+ * @param string $type Type of request (from or join)
+ * @param string $alias Table name alias
  */
     public function __construct($name, $prefix, $type, $alias = null) {
-        $this->setName($name);
-        $this->setPrefix($prefix);
-        $this->setAlias($alias);
-        $this->setType($type);
+        $this->_name = $name;
+        $this->_prefix = $prefix;
+
+        if (is_numeric($alias)) {
+            $alias = null;
+        }
+        $this->_alias = $alias;
+
+        if ($type === "from") {
+            $this->_type = "from";
+        } else {
+            $this->_type = "join";
+        }
     }
 
 /**
