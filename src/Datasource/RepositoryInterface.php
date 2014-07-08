@@ -146,11 +146,10 @@ interface RepositoryInterface {
  * is saved. Until the entity is saved, it will be a detached record.
  *
  * @param array $data The data to build an entity with.
- * @param array $associations A whitelist of associations
- *   to hydrate. Defaults to all associations
+ * @param array $options A list of options for the object hydration.
  * @return \Cake\Datasource\EntityInterface
  */
-	public function newEntity(array $data = [], $associations = null);
+	public function newEntity(array $data = [], array $options = []);
 
 /**
  * Create a list of entities + associated entities from an array.
@@ -165,11 +164,10 @@ interface RepositoryInterface {
  * The hydrated entities can then be iterated and saved.
  *
  * @param array $data The data to build an entity with.
- * @param array $associations A whitelist of associations
- *   to hydrate. Defaults to all associations
+ * @param array $options A list of options for the objects hydration.
  * @return array An array of hydrated records.
  */
-	public function newEntities(array $data, $associations = null);
+	public function newEntities(array $data, array $associations = []);
 
 /**
  * Merges the passed `$data` into `$entity` respecting the accessible
@@ -185,10 +183,10 @@ interface RepositoryInterface {
  * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
  * data merged in
  * @param array $data key value list of fields to be merged into the entity
- * @param array $associations The list of associations to be merged
+ * @param array $options A list of options for the object hydration.
  * @return \Cake\Datasource\EntityInterface
  */
-	public function patchEntity(EntityInterface $entity, array $data, $associations = null);
+	public function patchEntity(EntityInterface $entity, array $data, array $options = []);
 
 /**
  * Merges each of the elements passed in `$data` into the entities
@@ -205,9 +203,9 @@ interface RepositoryInterface {
  * @param array|\Traversable $entities the entities that will get the
  * data merged in
  * @param array $data list of arrays to be merged into the entities
- * @param array $associations The list of associations to be merged
+ * @param array $options A list of options for the objects hydration.
  * @return array
  */
-	public function patchEntities($entities, array $data, $associations = null);
+	public function patchEntities($entities, array $data, array $options = []);
 
 }

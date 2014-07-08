@@ -59,9 +59,14 @@ class Marshaller {
  * @return array
  */
 	protected function _buildPropertyMap($options) {
+		if (empty($options['associated'])) {
+			return [];
+		}
+
+		$include = $options['associated'];
 		$map = [];
-		$options = $this->_normalizeAssociations($options);
-		foreach ($options as $key => $nested) {
+		$include = $this->_normalizeAssociations($include);
+		foreach ($include as $key => $nested) {
 			if (is_int($key) && is_scalar($nested)) {
 				$key = $nested;
 				$nested = [];
