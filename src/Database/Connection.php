@@ -208,7 +208,7 @@ class Connection {
 		}
 
 		if (is_array($names) && !empty($names)) {
-			foreach ($names as $alias => &$tableName) {
+			foreach ($names as $alias => $tableName) {
 				if (is_string($tableName) || $tableName instanceof Query || $tableName instanceof QueryExpression) {
 					$names[$alias] = new TableNameExpression($tableName, $prefix, $type, $alias);
 				}
