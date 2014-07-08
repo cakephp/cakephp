@@ -66,6 +66,7 @@ trait ExternalAssociationTrait {
 /**
  * Sets the sort order in which target records should be returned.
  * If no arguments are passed the currently configured value is returned
+ *
  * @param mixed $sort A find() compatible order clause
  * @return mixed
  */

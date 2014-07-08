@@ -99,8 +99,8 @@ class Query extends DatabaseQuery {
 /**
  * Constuctor
  *
- * @param \Cake\Database\Connection $connection
- * @param \Cake\ORM\Table $table
+ * @param \Cake\Database\Connection $connection The connection object
+ * @param \Cake\ORM\Table $table The table this query is starting on
  */
 	public function __construct($connection, $table) {
 		parent::__construct($connection);
@@ -119,7 +119,7 @@ class Query extends DatabaseQuery {
  *
  * This method returns the same query object for chaining.
  *
- * @param \Cake\ORM\Table $table
+ * @param \Cake\ORM\Table $table The table to pull types from
  * @return $this
  */
 	public function addDefaultTypes(Table $table) {
@@ -139,7 +139,8 @@ class Query extends DatabaseQuery {
  * and storing containments. If called with no arguments, it will return the
  * currently configured instance.
  *
- * @param \Cake\ORM\EagerLoader $instance
+ * @param \Cake\ORM\EagerLoader $instance The eager loader to use. Pass null
+ *   to get the current eagerloader.
  * @return \Cake\ORM\EagerLoader|$this
  */
 	public function eagerLoader(EagerLoader $instance = null) {
@@ -346,7 +347,7 @@ class Query extends DatabaseQuery {
  * If the field is already aliased, then it will not be changed.
  * If no $alias is passed, the default table for this query will be used.
  *
- * @param string $field
+ * @param string $field The field to alias
  * @param string $alias the alias used to prefix the field
  * @return array
  */
@@ -374,8 +375,8 @@ class Query extends DatabaseQuery {
  * Runs `aliasfield()` for each field in the provided list and returns
  * the result under a single array.
  *
- * @param array $fields
- * @param string $defaultAlias
+ * @param array $fields The fields to alias
+ * @param string $defaultAlias The default alias
  * @return array
  */
 	public function aliasFields($fields, $defaultAlias = null) {
@@ -507,7 +508,7 @@ class Query extends DatabaseQuery {
  * The callback will receive as first argument a clone of this query and not this
  * query itself.
  *
- * @param callable $counter
+ * @param callable $counter The counter value
  * @return $this
  */
 	public function counter($counter) {

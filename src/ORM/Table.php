@@ -311,7 +311,7 @@ class Table implements RepositoryInterface, EventListener {
  * If an array is passed, a new \Cake\Database\Schema\Table will be constructed
  * out of it and used as the schema for this table.
  *
- * @param array|\Cake\Database\Schema\Table new schema to be used for this table
+ * @param array|\Cake\Database\Schema\Table $schema new schema to be used for this table
  * @return \Cake\Database\Schema\Table
  */
 	public function schema($schema = null) {
@@ -475,8 +475,7 @@ class Table implements RepositoryInterface, EventListener {
  * $this->removeBehavior('Tree');
  * }}}
  *
- * @param string $name    The alias that the behavior was added with.
- *
+ * @param string $name The alias that the behavior was added with.
  * @return void
  * @see \Cake\ORM\Behavior
  */
@@ -704,8 +703,8 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Returns the query as passed
  *
- * @param \Cake\ORM\Query $query
- * @param array $options
+ * @param \Cake\ORM\Query $query The query to find with
+ * @param array $options The options to use for the find
  * @return \Cake\ORM\Query
  */
 	public function findAll(Query $query, array $options) {
@@ -765,8 +764,8 @@ class Table implements RepositoryInterface, EventListener {
  * ]
  * }}}
  *
- * @param \Cake\ORM\Query $query
- * @param array $options
+ * @param \Cake\ORM\Query $query The query to find with
+ * @param array $options The options for the find
  * @return \Cake\ORM\Query
  */
 	public function findList(Query $query, array $options) {
@@ -808,8 +807,8 @@ class Table implements RepositoryInterface, EventListener {
  * ]);
  * }}}
  *
- * @param \Cake\ORM\Query $query
- * @param array $options
+ * @param \Cake\ORM\Query $query The query to find with
+ * @param array $options The options to find with
  * @return \Cake\ORM\Query
  */
 	public function findThreaded(Query $query, array $options) {
@@ -953,7 +952,8 @@ class Table implements RepositoryInterface, EventListener {
  * set is specified.
  *
  * @param string $name the name of the validation set to return
- * @param \Cake\Validation\Validator $validator
+ * @param \Cake\Validation\Validator $validator The validator instance to store,
+ *   use null to get a validator.
  * @return \Cake\Validation\Validator
  */
 	public function validator($name = 'default', Validator $validator = null) {
@@ -1114,8 +1114,8 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Performs the actual saving of an entity based on the passed options.
  *
- * @param \Cake\Datasource\EntityInterface the entity to be saved
- * @param array $options
+ * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
+ * @param array $options the options to use for the save operation
  * @return \Cake\Datasource\EntityInterface|bool
  */
 	protected function _processSave($entity, $options) {
@@ -1201,7 +1201,7 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Auxiliary function to handle the insert of an entity's data in the table
  *
- * @param \Cake\Datasource\EntityInterface the subject entity from were $data was extracted
+ * @param \Cake\Datasource\EntityInterface $entity the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
  * @return \Cake\Datasource\EntityInterface|bool
  * @throws \RuntimeException if not all the primary keys where supplied or could
@@ -1275,7 +1275,7 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Auxiliary function to handle the update of an entity's data in the table
  *
- * @param \Cake\Datasource\EntityInterface the subject entity from were $data was extracted
+ * @param \Cake\Datasource\EntityInterface $entity the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
  * @return \Cake\Datasource\EntityInterface|bool
  * @throws \InvalidArgumentException When primary key data is missing.

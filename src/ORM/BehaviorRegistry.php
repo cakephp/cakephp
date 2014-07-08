@@ -55,7 +55,7 @@ class BehaviorRegistry extends ObjectRegistry {
 /**
  * Constructor
  *
- * @param \Cake\ORM\Table $table
+ * @param \Cake\ORM\Table $table The table this registry is attached to
  */
 	public function __construct(Table $table) {
 		$this->_table = $table;
@@ -81,6 +81,7 @@ class BehaviorRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the behavior is missing in.
+ * @return void
  * @throws \Cake\ORM\Error\MissingBehaviorException
  */
 	protected function _throwMissingClassError($class, $plugin) {
@@ -120,7 +121,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * Methods starting with `_` will be ignored, as will methods
  * declared on Cake\ORM\Behavior
  *
- * @param \Cake\ORM\Behavior $instance
+ * @param \Cake\ORM\Behavior $instance The behavior to get methods from.
  * @param string $class The classname that is missing.
  * @param string $alias The alias of the object.
  * @return void
