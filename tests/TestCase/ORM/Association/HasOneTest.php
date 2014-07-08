@@ -107,7 +107,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
 				], $this->profilesTypeMap),
-				'type' => 'INNER',
+				'type' => 'LEFT',
 				'table' => 'profiles'
 			]
 		]);
@@ -138,7 +138,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Profiles.is_active' => false
 				], $this->profilesTypeMap),
-				'type' => 'INNER',
+				'type' => 'LEFT',
 				'table' => 'profiles'
 			]
 		]);
@@ -174,7 +174,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
 				], $this->profilesTypeMap),
-				'type' => 'INNER',
+				'type' => 'LEFT',
 				'table' => 'profiles'
 			]
 		]);
@@ -204,7 +204,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
 				], $this->profilesTypeMap),
-				'type' => 'INNER',
+				'type' => 'LEFT',
 				'table' => 'profiles'
 			]
 		]);
@@ -243,7 +243,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 					'Profiles.is_active' => true,
 					['Users.id' => $field1, 'Users.site_id' => $field2],
 				], $this->profilesTypeMap),
-				'type' => 'INNER',
+				'type' => 'LEFT',
 				'table' => 'profiles'
 			]
 		]);

@@ -162,7 +162,7 @@ class EagerLoaderTest extends TestCase {
 		$query->expects($this->at(1))->method('join')
 			->with(['orders' => [
 				'table' => 'orders',
-				'type' => 'INNER',
+				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['clients.id' => new IdentifierExpression('orders.client_id')]
 				], $this->ordersTypeMap)
@@ -182,7 +182,7 @@ class EagerLoaderTest extends TestCase {
 		$query->expects($this->at(3))->method('join')
 			->with(['stuff' => [
 				'table' => 'things',
-				'type' => 'INNER',
+				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['orders.id' => new IdentifierExpression('stuff.order_id')]
 				], $this->stuffTypeMap)

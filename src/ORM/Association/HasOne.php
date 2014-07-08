@@ -33,13 +33,6 @@ class HasOne extends Association {
 	use SelectableAssociationTrait;
 
 /**
- * The type of join to be used when adding the association to a query
- *
- * @var string
- */
-	protected $_joinType = 'INNER';
-
-/**
  * Sets the name of the field representing the foreign key to the target table.
  * If no parameters are passed current field is returned
  *
