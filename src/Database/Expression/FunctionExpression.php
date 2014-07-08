@@ -67,7 +67,7 @@ class FunctionExpression extends QueryExpression {
  * Sets the name of the SQL function to be invoke in this expression,
  * if no value is passed it will return current name
  *
- * @param string $name
+ * @param string $name The name of the function
  * @return string
  */
 	public function name($name = null) {

@@ -203,7 +203,7 @@ class IdentifierQuoter {
 /**
  * Quotes identifiers in "order by" expression objects
  *
- * @param \Cake\Database\Expression\OrderByExpression $expression
+ * @param \Cake\Database\Expression\OrderByExpression $expression The expression to quote.
  * @return void
  */
 	protected function _quoteOrderBy(OrderByExpression $expression) {

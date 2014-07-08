@@ -27,8 +27,8 @@ class OrderByExpression extends QueryExpression {
 /**
  * Constructor
  *
- * @param array $conditions
- * @param array $types
+ * @param array $conditions The sort columns
+ * @param array $types The types for each column.
  * @param string $conjunction The glue used to join conditions together.
  */
 	public function __construct($conditions = [], $types = [], $conjunction = '') {

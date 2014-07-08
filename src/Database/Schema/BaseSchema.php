@@ -68,7 +68,7 @@ abstract class BaseSchema {
 /**
  * Convert string on clauses to the abstract ones.
  *
- * @param string $clause
+ * @param string $clause The on clause to convert.
  * @return string|null
  */
 	protected function _convertOnClause($clause) {

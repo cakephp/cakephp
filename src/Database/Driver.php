@@ -79,7 +79,7 @@ abstract class Driver {
  * Returns correct connection resource or object that is internally used
  * If first argument is passed,
  *
- * @param null|\PDO instance $connection
+ * @param null|\PDO $connection The connection object
  * @return void
  */
 	public abstract function connection($connection = null);
@@ -94,7 +94,7 @@ abstract class Driver {
 /**
  * Prepares a sql statement to be executed
  *
- * @param string|\Cake\Database\Query $query
+ * @param string|\Cake\Database\Query $query The query to convert into a statement.
  * @return \Cake\Database\StatementInterface
  */
 	public abstract function prepare($query);
@@ -132,7 +132,7 @@ abstract class Driver {
 /**
  * Returns a value in a safe representation to be used in a query string
  *
- * @param mixed $value
+ * @param mixed $value The value to quote.
  * @param string $type Type to be used for determining kind of quoting to perform
  * @return string
  */
@@ -175,7 +175,7 @@ abstract class Driver {
  * Quotes a database identifier (a column name, table name, etc..) to
  * be used safely in queries without the risk of using reserved words
  *
- * @param string $identifier
+ * @param string $identifier The identifier expression to quote.
  * @return string
  */
 	public abstract function quoteIdentifier($identifier);
