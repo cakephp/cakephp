@@ -116,7 +116,7 @@ class TableNameExpression implements ExpressionInterface {
                 $sql = $this->_prefix . $this->_name;
             }
         } elseif ($this->_name instanceof ExpressionInterface) {
-            $sql = '(' . $this->_prefix . $this->_name->sql($generator) . ')';
+            $sql = '(' . $this->_name->sql($generator) . ')';
         }
 
         return $sql;
