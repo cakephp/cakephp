@@ -458,7 +458,7 @@ class ConsoleOptionParser {
  * to parse the $argv
  *
  * @param array $argv Array of args (argv) to parse.
- * @return Array [$params, $args]
+ * @return array [$params, $args]
  * @throws \Cake\Console\Error\ConsoleException When an invalid parameter is encountered.
  */
 	public function parse($argv) {

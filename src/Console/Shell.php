@@ -414,7 +414,7 @@ class Shell {
  * Overload get for lazy building of tasks
  *
  * @param string $name The task to get.
- * @return Shell Object of Task
+ * @return \Cake\Console\Shell Object of Task
  */
 	public function __get($name) {
 		if (empty($this->{$name}) && in_array($name, $this->taskNames)) {

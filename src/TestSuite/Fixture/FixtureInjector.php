@@ -81,7 +81,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
- * @param PHPUnit_Framework_Test $test The test to add errors from.
+ * @param \PHPUnit_Framework_Test $test The test to add errors from.
  * @param Exception $e The exception
  * @param float $time current time
  * @return void
@@ -92,8 +92,8 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
- * @param PHPUnit_Framework_Test $test The test case
- * @param PHPUnit_Framework_AssertionFailedError $e The failed assertion
+ * @param \PHPUnit_Framework_Test $test The test case
+ * @param \PHPUnit_Framework_AssertionFailedError $e The failed assertion
  * @param float $time current time
  * @return void
  */
@@ -103,8 +103,8 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
- * @param PHPUnit_Framework_Test $test The test case
- * @param Exception $e The incomplete test error.
+ * @param \PHPUnit_Framework_Test $test The test case
+ * @param \Exception $e The incomplete test error.
  * @param float $time current time
  * @return void
  */
@@ -114,8 +114,8 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
- * @param PHPUnit_Framework_Test $test The test case
- * @param Exception $e Skipped test exception
+ * @param \PHPUnit_Framework_Test $test The test case
+ * @param \Exception $e Skipped test exception
  * @param float $time current time
  * @return void
  */
@@ -125,7 +125,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Adds fixtures to a test case when it starts.
  *
- * @param PHPUnit_Framework_Test $test The test case
+ * @param \PHPUnit_Framework_Test $test The test case
  * @return void
  */
 	public function startTest(PHPUnit_Framework_Test $test) {
@@ -139,7 +139,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Unloads fixtures from the test case.
  *
- * @param PHPUnit_Framework_Test $test The test case
+ * @param \PHPUnit_Framework_Test $test The test case
  * @param float $time current time
  * @return void
  */
@@ -152,8 +152,8 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
- * @param PHPUnit_Framework_Test $test The test case
- * @param Exception $e The exception to track
+ * @param \PHPUnit_Framework_Test $test The test case
+ * @param \Exception $e The exception to track
  * @param float $time current time
  * @return void
  */
