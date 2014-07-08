@@ -71,6 +71,7 @@ class ModelTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
+ * @param string $name The name of the table to bake.
  * @return void
  */
 	public function main($name = null) {
@@ -155,7 +156,7 @@ class ModelTask extends BakeTask {
 /**
  * Get the array of associations to generate.
  *
- * @param \Cake\ORM\Table $table
+ * @param \Cake\ORM\Table $table The table to get associations for.
  * @return array
  */
 	public function getAssociations(Table $table) {
@@ -193,6 +194,10 @@ class ModelTask extends BakeTask {
  * Composer's class cache prevents us from loading the
  * newly generated class. Applying associations if we have a
  * generic table object means fields will be detected correctly.
+ *
+ * @param \Cake\ORM\Table $model The table to apply associations to.
+ * @param array $associations The associations to append.
+ * @return void
  */
 	public function applyAssociations($model, $associations) {
 		if (get_class($model) !== 'Cake\ORM\Table') {
@@ -432,7 +437,7 @@ class ModelTask extends BakeTask {
  *
  * @param string $fieldName Name of field to be validated.
  * @param array $metaData metadata for field
- * @param string $primaryKey
+ * @param string $primaryKey The primary key field
  * @return array Array of validation for the field.
  */
 	public function fieldValidation($fieldName, array $metaData, $primaryKey) {
@@ -491,7 +496,7 @@ class ModelTask extends BakeTask {
 /**
  * Get behaviors
  *
- * @param \Cake\ORM\Table $model
+ * @param \Cake\ORM\Table $model The model to generate behaviors for.
  * @return array Behaviors
  */
 	public function getBehaviors($model) {
@@ -522,7 +527,7 @@ class ModelTask extends BakeTask {
 /**
  * Get CounterCaches
  *
- * @param \Cake\ORM\Table $model
+ * @param \Cake\ORM\Table $model The table to get counter cache fields for.
  * @return array CounterCache configurations
  */
 	public function getCounterCache($model) {

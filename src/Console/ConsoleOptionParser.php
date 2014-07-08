@@ -458,8 +458,6 @@ class ConsoleOptionParser {
  * to parse the $argv
  *
  * @param array $argv Array of args (argv) to parse.
- * @param string $command The subcommand to use. If this parameter is a subcommand, that has a parser,
- *    That parser will be used to parse $argv instead.
  * @return Array [$params, $args]
  * @throws \Cake\Console\Error\ConsoleException When an invalid parameter is encountered.
  */

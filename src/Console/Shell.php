@@ -172,8 +172,8 @@ class Shell {
 /**
  * Get/Set the io object for this shell.
  *
- * @param \Cake\Console\ConsoleIo $io
- * @return \Cake\Console\ConsoleIo
+ * @param \Cake\Console\ConsoleIo $io The ConsoleIo object to use.
+ * @return \Cake\Console\ConsoleIo The current ConsoleIo object.
  */
 	public function io(ConsoleIo $io = null) {
 		if ($io !== null) {
@@ -382,7 +382,7 @@ class Shell {
 /**
  * Display the help in the correct format
  *
- * @param string $command
+ * @param string $command The command to get help for.
  * @return void
  */
 	protected function _displayHelp($command) {
@@ -413,7 +413,7 @@ class Shell {
 /**
  * Overload get for lazy building of tasks
  *
- * @param string $name
+ * @param string $name The task to get.
  * @return Shell Object of Task
  */
 	public function __get($name) {

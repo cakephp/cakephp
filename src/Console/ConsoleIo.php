@@ -238,7 +238,7 @@ class ConsoleIo {
 /**
  * Change the output mode of the stdout stream
  *
- * @param int $mode
+ * @param int $mode The output mode.
  * @return void
  * @see \Cake\Console\ConsoleOutput::outputAs()
  */
