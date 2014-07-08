@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Test case for Route
- *
  */
 class RouteTest extends TestCase {
 
@@ -69,6 +68,7 @@ class RouteTest extends TestCase {
 		$this->assertRegExp($result, '/posts/super_delete');
 		$this->assertNotRegExp($result, '/posts');
 		$this->assertNotRegExp($result, '/posts/super_delete/1');
+		$this->assertSame($result, $route->compile());
 
 		$route = new Route('/posts/foo:id', array('controller' => 'posts', 'action' => 'view'));
 		$result = $route->compile();
@@ -881,6 +881,37 @@ class RouteTest extends TestCase {
 	}
 
 /**
+ * Test getName() with prefixes.
+ *
+ * @return void
+ */
+	public function testGetNamePrefix() {
+		$route = new Route(
+			'/admin/:controller/:action',
+			array('prefix' => 'admin')
+		);
+		$this->assertEquals('admin:_controller:_action', $route->getName());
+
+		$route = new Route(
+			'/:prefix/assets/:action',
+			array('controller' => 'assets')
+		);
+		$this->assertEquals('_prefix:assets:_action', $route->getName());
+
+		$route = new Route(
+			'/admin/assets/get',
+			array('prefix' => 'admin', 'plugin' => 'asset', 'controller' => 'assets', 'action' => 'get')
+		);
+		$this->assertEquals('admin:asset.assets:get', $route->getName());
+
+		$route = new Route(
+			'/:prefix/:plugin/:controller/:action/*',
+			[]
+		);
+		$this->assertEquals('_prefix:_plugin._controller:_action', $route->getName());
+	}
+
+/**
  * test that utf-8 patterns work for :section
  *
  * @return void
@@ -902,6 +933,25 @@ class RouteTest extends TestCase {
 		$result = $route->parse('/weblog');
 		$expected = array('section' => 'weblog', 'plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index', 'pass' => array());
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test getting the static path for a route.
+ *
+ * @return void
+ */
+	public function testStaticPath() {
+		$route = new Route('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+		$this->assertEquals('/pages/', $route->staticPath());
+
+		$route = new Route('/pages/:id/*', ['controller' => 'Pages', 'action' => 'display']);
+		$this->assertEquals('/pages/', $route->staticPath());
+
+		$route = new Route('/:controller/:action/*');
+		$this->assertEquals('/', $route->staticPath());
+
+		$route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
+		$this->assertEquals('/books/reviews', $route->staticPath());
 	}
 
 }

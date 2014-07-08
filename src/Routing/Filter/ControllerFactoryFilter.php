@@ -17,6 +17,7 @@ namespace Cake\Routing\Filter;
 use Cake\Core\App;
 use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
+use Cake\Utility\Inflector;
 
 /**
  * A dispatcher filter that builds the controller to dispatch
@@ -64,7 +65,7 @@ class ControllerFactoryFilter extends DispatcherFilter {
 			$controller = $request->params['controller'];
 		}
 		if (!empty($request->params['prefix'])) {
-			$namespace .= '/' . $request->params['prefix'];
+			$namespace .= '/' . Inflector::camelize($request->params['prefix']);
 		}
 		$className = false;
 		if ($pluginPath . $controller) {
