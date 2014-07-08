@@ -126,7 +126,7 @@ if (!function_exists('stackTrace')) {
  * ### Options
  *
  * - `depth` - The number of stack frames to return. Defaults to 999
- * - `args` - Should arguments for functions be shown?  If true, the arguments for each method call
+ * - `args` - Should arguments for functions be shown? If true, the arguments for each method call
  *   will be displayed.
  * - `start` - The stack frame to start generating a trace from. Defaults to 1
  *
