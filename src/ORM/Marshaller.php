@@ -37,13 +37,6 @@ class Marshaller {
 	use AssociationsNormalizerTrait;
 
 /**
- * Whether or not this marhshaller is in safe mode.
- *
- * @var bool
- */
-	protected $_safe;
-
-/**
  * The table instance this marshaller is for.
  *
  * @var \Cake\ORM\Table
@@ -54,11 +47,9 @@ class Marshaller {
  * Constructor.
  *
  * @param \Cake\ORM\Table $table
- * @param bool $safe Whether or not this marshaller is in safe mode
  */
-	public function __construct(Table $table, $safe = false) {
+	public function __construct(Table $table) {
 		$this->_table = $table;
-		$this->_safe = $safe;
 	}
 
 /**
