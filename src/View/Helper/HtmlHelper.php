@@ -293,17 +293,18 @@ class HtmlHelper extends Helper {
  * ### Options
  *
  * - `escape` Set to false to disable escaping of title and attributes.
- * - `escapeTitle` Set to false to disable escaping of title. (Takes precedence over value of `escape`)
+ * - `escapeTitle` Set to false to disable escaping of title. Takes precedence
+ *   over value of `escape`)
  * - `confirm` JavaScript confirmation message.
  *
  * @param string $title The content to be wrapped by <a> tags.
- * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
+ * @param string|array $url Cake-relative URL or array of URL parameters, or
+ *   external URL (starts with http://)
  * @param array $options Array of options and HTML attributes.
- * @param string $confirmMessage JavaScript confirmation message.
  * @return string An `<a />` element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::link
  */
-	public function link($title, $url = null, array $options = array(), $confirmMessage = false) {
+	public function link($title, $url = null, array $options = array()) {
 		$escapeTitle = true;
 		if ($url !== null) {
 			$url = $this->url($url);
@@ -327,21 +328,15 @@ class HtmlHelper extends Helper {
 			$title = htmlentities($title, ENT_QUOTES, $escapeTitle);
 		}
 
-		if (!empty($options['confirm'])) {
+		$confirmMessage = null;
+		if (isset($options['confirm'])) {
 			$confirmMessage = $options['confirm'];
 			unset($options['confirm']);
 		}
 		if ($confirmMessage) {
 			$options['onclick'] = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
-		} elseif (isset($options['default']) && !$options['default']) {
-			if (isset($options['onclick'])) {
-				$options['onclick'] .= ' ';
-			} else {
-				$options['onclick'] = '';
-			}
-			$options['onclick'] .= 'event.returnValue = false; return false;';
-			unset($options['default']);
 		}
+
 		return $this->formatTemplate('link', [
 			'url' => $url,
 			'attrs' => $this->templater()->formatAttributes($options),

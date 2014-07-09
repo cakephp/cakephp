@@ -45,7 +45,7 @@ foreach ($fields as $field) {
 	$pk = "\${$singularVar}->{$primaryKey[0]}";
 
 	echo "\t\t<li><?= \$this->Html->link(__('Edit " . $singularHumanName ."'), ['action' => 'edit', {$pk}]); ?> </li>\n";
-	echo "\t\t<li><?= \$this->Form->postLink(__('Delete " . $singularHumanName . "'), ['action' => 'delete', {$pk}], [], __('Are you sure you want to delete # %s?', {$pk})); ?> </li>\n";
+	echo "\t\t<li><?= \$this->Form->postLink(__('Delete " . $singularHumanName . "'), ['action' => 'delete', {$pk}], ['confirm' => __('Are you sure you want to delete # %s?', {$pk})]); ?> </li>\n";
 	echo "\t\t<li><?= \$this->Html->link(__('List " . $pluralHumanName . "'), ['action' => 'index']); ?> </li>\n";
 	echo "\t\t<li><?= \$this->Html->link(__('New " . $singularHumanName . "'), ['action' => 'add']); ?> </li>\n";
 
@@ -123,7 +123,7 @@ echo "\t\t<?php foreach (\${$singularVar}->{$details['property']} as \${$otherSi
 			echo "\t\t\t<td class=\"actions\">\n";
 			echo "\t\t\t\t<?= \$this->Html->link(__('View'), ['controller' => '{$details['controller']}', 'action' => 'view', {$otherPk}]); ?>\n";
 			echo "\t\t\t\t<?= \$this->Html->link(__('Edit'), ['controller' => '{$details['controller']}', 'action' => 'edit', {$otherPk}]); ?>\n";
-			echo "\t\t\t\t<?= \$this->Form->postLink(__('Delete'), ['controller' => '{$details['controller']}', 'action' => 'delete', {$otherPk}], [], __('Are you sure you want to delete # %s?', {$otherPk})); ?>\n";
+			echo "\t\t\t\t<?= \$this->Form->postLink(__('Delete'), ['controller' => '{$details['controller']}', 'action' => 'delete', {$otherPk}], ['confirm' => __('Are you sure you want to delete # %s?', {$otherPk})]); ?>\n";
 			echo "\t\t\t</td>\n";
 		echo "\t\t</tr>\n";
 
