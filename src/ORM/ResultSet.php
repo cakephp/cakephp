@@ -400,6 +400,14 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 
 			if ($assoc['canBeJoined']) {
 				$results[$alias] = $this->_castValues($target, $results[$alias]);
+
+				$hasData = array_filter($results[$alias], function ($v) {
+					return $v !== null;
+				});
+
+				if (!$hasData) {
+					continue;
+				}
 			}
 
 			if ($this->_hydrate && $assoc['canBeJoined']) {
@@ -407,7 +415,6 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 				$entity->clean();
 				$results[$alias] = $entity;
 			}
-
 			$results = $instance->transformRow($results, $alias, $assoc['canBeJoined']);
 		}
 
