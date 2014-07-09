@@ -1979,6 +1979,10 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::inList(2, array('1', '2x', '3')));
 		$this->assertFalse(Validation::inList('One', array('one', 'two')));
 
+		// No hexadecimal for numbers.
+		$this->assertFalse(Validation::inList('0x7B', array('ABC', '123')));
+		$this->assertFalse(Validation::inList('0x7B', array('ABC', 123)));
+
 		// case insensitive
 		$this->assertTrue(Validation::inList('one', array('One', 'Two'), true));
 		$this->assertTrue(Validation::inList('Two', array('one', 'two'), true));

@@ -470,8 +470,8 @@ class SecurityComponent extends Component {
 		$multi = array();
 
 		foreach ($fieldList as $i => $key) {
-			if (preg_match('/(\.\d+)+$/', $key)) {
-				$multi[$i] = preg_replace('/(\.\d+)+$/', '', $key);
+			if (preg_match('/(\.\d+){1,10}$/', $key)) {
+				$multi[$i] = preg_replace('/(\.\d+){1,10}$/', '', $key);
 				unset($fieldList[$i]);
 			}
 		}
@@ -554,7 +554,9 @@ class SecurityComponent extends Component {
 		}
 		if (!$this->csrfUseOnce) {
 			$csrfTokens = array_keys($token['csrfTokens']);
-			$token['key'] = $csrfTokens[0];
+			$authKey = $csrfTokens[0];
+			$token['key'] = $authKey;
+			$token['csrfTokens'][$authKey] = strtotime($this->csrfExpires);
 		}
 		$this->Session->write('_Token', $token);
 		$request->params['_Token'] = array(
