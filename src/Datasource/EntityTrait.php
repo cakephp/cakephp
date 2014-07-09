@@ -16,6 +16,7 @@ namespace Cake\Datasource;
 
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
+use \Traversable;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
@@ -578,10 +579,10 @@ trait EntityTrait {
 
 		if (is_string($field) && $errors === null) {
 			$errors = isset($this->_errors[$field]) ? $this->_errors[$field] : [];
-			if (!$errors) {
-				$errors = $this->_nestedErrors($field);
+			if ($errors) {
+				return $errors;
 			}
-			return $errors;
+			return $this->_nestedErrors($field);
 		}
 
 		if (!is_array($field)) {
@@ -591,7 +592,6 @@ trait EntityTrait {
 		foreach ($field as $f => $error) {
 			$this->_errors[$f] = (array)$error;
 		}
-
 		return $this;
 	}
 
@@ -602,26 +602,57 @@ trait EntityTrait {
  * @return array errors in nested entity if any
  */
 	protected function _nestedErrors($field) {
-		if (!isset($this->_properties[$field])) {
-			return [];
+		$path = explode('.', $field);
+
+		// Only one path element, check for nested entity with error.
+		if (count($path) === 1) {
+			return $this->_readError($this->get($path[0]));
 		}
 
-		$value = $this->_properties[$field];
-		$errors = [];
-		if (is_array($value) || $value instanceof \Traversable) {
-			foreach ($value as $k => $v) {
-				if (!($v instanceof self)) {
-					break;
-				}
-				$errors[$k] = $v->errors();
+		$entity = $this;
+		while (count($path)) {
+			$part = array_shift($path);
+			if ($entity instanceof static) {
+				$val = $entity->get($part);
+			} elseif (is_array($entity)) {
+				$val = isset($entity[$part]) ? $entity[$part] : false;
 			}
-			return $errors;
-		}
 
-		if ($value instanceof self) {
-			return $value->errors();
+			if (
+				is_array($val) ||
+				$val instanceof Traversable ||
+				$val instanceof static
+			) {
+				$entity = $val;
+			} else {
+				$path[] = $part;
+				break;
+			}
 		}
+		if (count($path) <= 1) {
+			return $this->_readError($entity, array_pop($path));
+		}
+		return [];
+	}
 
+/**
+ * Read the error(s) from one or many objects.
+ *
+ * @param array|\Cake\Datasource\EntityTrait $object The object to read errors from.
+ * @param string $path The field name for errors.
+ * @return array
+ */
+	protected function _readError($object, $path = null) {
+		if ($object instanceof static) {
+			return $object->errors($path);
+		}
+		if (is_array($object)) {
+			return array_map(function($val) {
+				if ($val instanceof static) {
+					return $val->errors();
+				}
+			}, $object);
+		}
 		return [];
 	}
 

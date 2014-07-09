@@ -839,11 +839,12 @@ class EntityTest extends TestCase {
 		$entity->errors('wrong', 'Bad stuff');
 		$assoc->errors('nope', 'Terrible things');
 
-		$this->assertEquals('Bad stuff', $entity->errors('wrong'));
-		$this->assertEquals('Terrible things', $entity->errors('many.0.nope'));
-		$this->assertEquals('Terrible things', $entity->errors('one.nope'));
-		$this->assertEquals(['nope' => 'Terrible things'], $entity->errors('one'));
-		$this->assertEquals(['nope' => 'Terrible things'], $entity->errors('many.0'));
+		$this->assertEquals(['Bad stuff'], $entity->errors('wrong'));
+		$this->assertEquals(['Terrible things'], $entity->errors('many.0.nope'));
+		$this->assertEquals(['Terrible things'], $entity->errors('one.nope'));
+		$this->assertEquals(['nope' => ['Terrible things']], $entity->errors('one'));
+		$this->assertEquals([0 => ['nope' => ['Terrible things']]], $entity->errors('many'));
+		$this->assertEquals(['nope' => ['Terrible things']], $entity->errors('many.0'));
 
 		$this->assertEquals([], $entity->errors('many.0.mistake'));
 		$this->assertEquals([], $entity->errors('one.mistake'));
