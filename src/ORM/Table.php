@@ -1597,7 +1597,7 @@ class Table implements RepositoryInterface, EventListener {
  *
  * By default all the associations on this table will be hydrated. You can
  * limit which associations are built, or include deeper associations
- * using the associations parameter:
+ * using the options parameter:
  *
  * {{{
  * $articles = $this->Articles->newEntities(
@@ -1627,7 +1627,7 @@ class Table implements RepositoryInterface, EventListener {
 			$options['associated'] = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
-		return $marshaller->merge($entity, $data, $associations);
+		return $marshaller->merge($entity, $data, $options);
 	}
 
 /**

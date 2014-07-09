@@ -202,7 +202,7 @@ class MarshallerTest extends TestCase {
 			]
 		];
 		$marshall = new Marshaller($this->articles);
-		$result = $marshall->one($data, ['Users']);
+		$result = $marshall->one($data, ['associated' => ['Users']]);
 
 		$this->assertInstanceOf('Cake\ORM\Entity', $result);
 		$this->assertTrue($result->dirty(), 'Should be a dirty entity.');
@@ -231,7 +231,7 @@ class MarshallerTest extends TestCase {
 			]
 		];
 		$marshall = new Marshaller($this->articles);
-		$result = $marshall->one($data, ['Users']);
+		$result = $marshall->one($data, ['associated' => ['Users']]);
 
 		$this->assertEquals($data['title'], $result->title);
 		$this->assertEquals($data['body'], $result->body);
@@ -265,7 +265,7 @@ class MarshallerTest extends TestCase {
 			]
 		];
 		$marshall = new Marshaller($this->articles);
-		$result = $marshall->one($data, ['Comments']);
+		$result = $marshall->one($data, ['associated' => ['Comments']]);
 
 		$this->assertEquals($data['title'], $result->title);
 		$this->assertEquals($data['body'], $result->body);
@@ -298,7 +298,7 @@ class MarshallerTest extends TestCase {
 		];
 		$marshall = new Marshaller($this->articles);
 		$result = $marshall->one($data, [
-			'Tags'
+			'associated' => ['Tags']
 		]);
 
 		$this->assertEquals($data['title'], $result->title);
@@ -352,7 +352,7 @@ class MarshallerTest extends TestCase {
 		$articlesTags->belongsTo('Users');
 
 		$marshall = new Marshaller($this->articles);
-		$result = $marshall->one($data, ['Tags._joinData.Users']);
+		$result = $marshall->one($data, ['associated' => ['Tags._joinData.Users']]);
 		$this->assertInstanceOf(
 			'Cake\ORM\Entity',
 			$result->tags[0]->_joinData->user,
@@ -386,7 +386,7 @@ class MarshallerTest extends TestCase {
 			]
 		];
 		$marshall = new Marshaller($this->comments);
-		$result = $marshall->one($data, ['Articles.Users']);
+		$result = $marshall->one($data, ['associated' => ['Articles.Users']]);
 
 		$this->assertEquals(
 			$data['article']['title'],
@@ -441,7 +441,7 @@ class MarshallerTest extends TestCase {
 			],
 		];
 		$marshall = new Marshaller($this->comments);
-		$result = $marshall->many($data, ['Users']);
+		$result = $marshall->many($data, ['associated' => ['Users']]);
 
 		$this->assertCount(2, $result);
 		$this->assertInstanceOf('Cake\ORM\Entity', $result[0]);
@@ -468,7 +468,7 @@ class MarshallerTest extends TestCase {
 			'tags' => ['_ids' => '']
 		];
 		$marshall = new Marshaller($this->articles);
-		$result = $marshall->one($data, ['Tags']);
+		$result = $marshall->one($data, ['associated' => ['Tags']]);
 		$this->assertCount(0, $result->tags);
 
 		$data = [
@@ -476,7 +476,7 @@ class MarshallerTest extends TestCase {
 			'body' => 'Some content here',
 			'tags' => ['_ids' => false]
 		];
-		$result = $marshall->one($data, ['Tags']);
+		$result = $marshall->one($data, ['associated' => ['Tags']]);
 		$this->assertCount(0, $result->tags);
 
 		$data = [
@@ -484,7 +484,7 @@ class MarshallerTest extends TestCase {
 			'body' => 'Some content here',
 			'tags' => ['_ids' => null]
 		];
-		$result = $marshall->one($data, ['Tags']);
+		$result = $marshall->one($data, ['associated' => ['Tags']]);
 		$this->assertCount(0, $result->tags);
 
 		$data = [
@@ -493,7 +493,7 @@ class MarshallerTest extends TestCase {
 			'tags' => ['_ids' => [1, 2, 3]]
 		];
 		$marshall = new Marshaller($this->articles);
-		$result = $marshall->one($data, ['Tags']);
+		$result = $marshall->one($data, ['associated' => ['Tags']]);
 
 		$this->assertCount(3, $result->tags);
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
@@ -612,7 +612,7 @@ class MarshallerTest extends TestCase {
 			]
 		];
 		$marshall = new Marshaller($this->articles);
-		$marshall->merge($entity, $data, ['Users']);
+		$marshall->merge($entity, $data, ['associated' => ['Users']]);
 		$this->assertEquals('My Content', $entity->body);
 		$this->assertSame($user, $entity->user);
 		$this->assertEquals('mark', $entity->user->username);
@@ -639,7 +639,7 @@ class MarshallerTest extends TestCase {
 			]
 		];
 		$marshall = new Marshaller($this->articles);
-		$marshall->merge($entity, $data, ['Users']);
+		$marshall->merge($entity, $data, ['associated' => ['Users']]);
 		$this->assertEquals('My Content', $entity->body);
 		$this->assertInstanceOf('Cake\ORM\Entity', $entity->user);
 		$this->assertEquals('mark', $entity->user->username);
@@ -680,7 +680,7 @@ class MarshallerTest extends TestCase {
 			]
 		];
 		$marshall = new Marshaller($this->articles);
-		$result = $marshall->merge($entity, $data, ['Users', 'Comments']);
+		$result = $marshall->merge($entity, $data, ['associated' => ['Users', 'Comments']]);
 		$this->assertSame($entity, $result);
 		$this->assertSame($user, $result->user);
 		$this->assertEquals('not so secret', $entity->user->password);
@@ -724,7 +724,7 @@ class MarshallerTest extends TestCase {
 		];
 		$entity->accessible('*', true);
 		$marshall = new Marshaller($this->articles);
-		$result = $marshall->merge($entity, $data, ['Tags']);
+		$result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
 
 		$this->assertCount(3, $result->tags);
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
@@ -754,21 +754,21 @@ class MarshallerTest extends TestCase {
 		];
 		$entity->accessible('*', true);
 		$marshall = new Marshaller($this->articles);
-		$result = $marshall->merge($entity, $data, ['Tags']);
+		$result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
 		$this->assertCount(0, $result->tags);
 
 		$data = [
 			'title' => 'Haz moar tags',
 			'tags' => ['_ids' => false]
 		];
-		$result = $marshall->merge($entity, $data, ['Tags']);
+		$result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
 		$this->assertCount(0, $result->tags);
 
 		$data = [
 			'title' => 'Haz moar tags',
 			'tags' => ['_ids' => null]
 		];
-		$result = $marshall->merge($entity, $data, ['Tags']);
+		$result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
 		$this->assertCount(0, $result->tags);
 	}
 
@@ -864,7 +864,7 @@ class MarshallerTest extends TestCase {
 		$articlesTags = TableRegistry::get('ArticlesTags');
 		$articlesTags->belongsTo('Users');
 
-		$options = ['Tags._joinData.Users'];
+		$options = ['associated' => ['Tags._joinData.Users']];
 		$marshall = new Marshaller($this->articles);
 		$entity = $marshall->one($data, $options);
 		$entity->accessible('*', true);
