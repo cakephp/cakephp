@@ -285,6 +285,12 @@ class ExceptionRenderer {
 			} else {
 				$this->_outputMessage('error500');
 			}
+		} catch (MissingPluginException $e) {
+			$attributes = $e->getAttributes();
+			if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->plugin) {
+				$this->controller->plugin = null;
+			}
+			$this->_outputMessageSafe('error500');
 		} catch (Exception $e) {
 			$this->_outputMessageSafe('error500');
 		}
