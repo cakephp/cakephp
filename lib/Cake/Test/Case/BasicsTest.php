@@ -20,6 +20,7 @@ require_once CAKE . 'basics.php';
 
 App::uses('Folder', 'Utility');
 App::uses('CakeResponse', 'Network');
+App::uses('Debugger', 'Utility');
 
 /**
  * BasicsTest class
@@ -1138,6 +1139,24 @@ EXPECTED;
 			'g' => "te'''st"
 			);
 		$this->assertEquals($expected, stripslashes_deep($nested));
+	}
+
+/**
+ * Tests that the stackTrace() method is a shortcut for Debugger::trace()
+ *
+ * @return void
+ */
+	public function testStackTrace() {
+		ob_start();
+		list(, $expected) = array(stackTrace(), Debugger::trace());
+		$result = ob_get_clean();
+		$this->assertEquals($expected, $result);
+
+		$opts = array('args' => true);
+		ob_start();
+		list(, $expected) = array(stackTrace($opts), Debugger::trace($opts));
+		$result = ob_get_clean();
+		$this->assertEquals($expected, $result);
 	}
 
 /**
