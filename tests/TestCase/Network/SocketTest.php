@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Network;
 
-use Cake\Network\Socket;
 use Cake\Network\Error\SocketException;
+use Cake\Network\Socket;
 use Cake\TestSuite\TestCase;
 
 /**

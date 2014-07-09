@@ -14,18 +14,17 @@
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
+use Cake\Event\Event;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Network\Request;
-use Cake\Event\Event;
 use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 
 /**
  * FlashComponentTest class
- *
  */
 class FlashComponentTest extends TestCase {
 

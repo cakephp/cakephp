@@ -475,6 +475,7 @@ class RouteBuilder {
  * @param callable $callback The callback to invoke that builds the plugin routes
  *   Only required when $params is defined.
  * @return void
+ * @throws \InvalidArgumentException when there is no callable parameter.
  */
 	public function scope($path, $params, $callback) {
 		if ($callback === null) {

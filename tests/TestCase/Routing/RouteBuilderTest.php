@@ -16,8 +16,8 @@ namespace Cake\Test\TestCase\Routing;
 
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
-use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
+use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 
 /**
