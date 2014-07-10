@@ -630,7 +630,7 @@ class TestTaskTest extends TestCase {
  */
 	public function testTestCaseFileName($type, $class, $expected) {
 		$result = $this->Task->testCaseFileName($type, $class);
-		$expected = ROOT . DS . 'Test/' . $expected;
+		$expected = ROOT . DS . 'tests/' . $expected;
 		$this->assertPathEquals($expected, $result);
 	}
 
