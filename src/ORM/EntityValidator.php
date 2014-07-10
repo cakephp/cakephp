@@ -34,7 +34,7 @@ class EntityValidator {
 /**
  * Constructor.
  *
- * @param \Cake\ORM\Table $table
+ * @param \Cake\ORM\Table $table The table this validator is for
  */
 	public function __construct(Table $table) {
 		$this->_table = $table;
@@ -130,8 +130,8 @@ class EntityValidator {
  * If not empty it will construct a default validation object or get one with
  * the name passed in the key
  *
- * @param \Cake\ORM\Entity The entity to validate
- * @param \ArrayObject|array $options
+ * @param \Cake\ORM\Entity $entity The entity to validate
+ * @param \ArrayObject|array $options The option for processing validation
  * @return bool true if the entity is valid, false otherwise
  */
 	protected function _processValidation($entity, $options) {

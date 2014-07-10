@@ -46,7 +46,7 @@ class Marshaller {
 /**
  * Constructor.
  *
- * @param \Cake\ORM\Table $table
+ * @param \Cake\ORM\Table $table The table this marshaller is for.
  */
 	public function __construct(Table $table) {
 		$this->_table = $table;
@@ -125,7 +125,7 @@ class Marshaller {
 /**
  * Create a new sub-marshaller and marshal the associated data.
  *
- * @param \Cake\ORM\Association $assoc
+ * @param \Cake\ORM\Association $assoc The association to marshall
  * @param array $value The data to hydrate
  * @param array $options List of options.
  * @return mixed
@@ -328,8 +328,8 @@ class Marshaller {
 /**
  * Creates a new sub-marshaller and merges the associated data.
  *
- * @param \Cake\Datasource\EntityInterface $original
- * @param \Cake\ORM\Association $assoc
+ * @param \Cake\Datasource\EntityInterface $original The original entity
+ * @param \Cake\ORM\Association $assoc The association to merge
  * @param array $value The data to hydrate
  * @param array $options List of options.
  * @return mixed
@@ -355,8 +355,8 @@ class Marshaller {
  * Creates a new sub-marshaller and merges the associated data for a BelongstoMany
  * association.
  *
- * @param \Cake\Datasource\EntityInterface $original
- * @param \Cake\ORM\Association $assoc
+ * @param \Cake\Datasource\EntityInterface $original The original entity
+ * @param \Cake\ORM\Association $assoc The association to marshall
  * @param array $value The data to hydrate
  * @param array $options List of options.
  * @return mixed

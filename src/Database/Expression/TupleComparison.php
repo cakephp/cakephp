@@ -69,7 +69,7 @@ class TupleComparison extends Comparison {
  * Returns a string with the values as placeholders in a string to be used
  * for the SQL version of this expression
  *
- * @param \Cake\Database\ValueBinder $generator
+ * @param \Cake\Database\ValueBinder $generator The value binder to convert expressions with.
  * @return string
  */
 	protected function _stringifyValues($generator) {
@@ -114,9 +114,9 @@ class TupleComparison extends Comparison {
  * Registers a value in the placeholder generator and returns the generated
  * placeholder
  *
- * @param \Cake\Database\ValueBinder $generator
- * @param mixed $value
- * @param string $type
+ * @param \Cake\Database\ValueBinder $generator The value binder
+ * @param mixed $value The value to bind
+ * @param string $type The type to use
  * @return string generated placeholder
  */
 	protected function _bindValue($generator, $value, $type) {
@@ -131,7 +131,7 @@ class TupleComparison extends Comparison {
  *
  * Callback function receives as its only argument an instance of an ExpressoinInterface
  *
- * @param callable $callable
+ * @param callable $callable The callable to apply to sub-expressions
  * @return void
  */
 	public function traverse(callable $callable) {
@@ -161,8 +161,8 @@ class TupleComparison extends Comparison {
  * Conditionally executes the callback for the passed value if
  * it is an ExpressionInterface
  *
- * @param mixed $value
- * @param callable $callable
+ * @param mixed $value The value to traverse
+ * @param callable $callable The callable to use when traversing
  * @return void
  */
 	protected function _traverseValue($value, $callable) {

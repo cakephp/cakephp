@@ -33,7 +33,7 @@ interface ExpressionInterface {
  * passing as first parameter the instance of the expression currently
  * being iterated.
  *
- * @param callable $visitor
+ * @param callable $visitor The callable to apply to all nodes.
  * @return void
  */
 	public function traverse(callable $visitor);

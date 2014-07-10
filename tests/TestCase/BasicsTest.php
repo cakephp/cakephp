@@ -1081,4 +1081,22 @@ EXPECTED;
 		$result = namespaceSplit('Cake\Test\Something');
 		$this->assertEquals(array('Cake\Test', 'Something'), $result);
 	}
+
+/**
+ * Tests that the stackTrace() method is a shortcut for Debugger::trace()
+ *
+ * @return void
+ */
+	public function testStackTrace() {
+		ob_start();
+		list($r, $expected) = [stackTrace(), \Cake\Utility\Debugger::trace()];
+		$result = ob_get_clean();
+		$this->assertEquals($expected, $result);
+
+		$opts = ['args' => true];
+		ob_start();
+		list($r, $expected) = [stackTrace($opts), \Cake\Utility\Debugger::trace($opts)];
+		$result = ob_get_clean();
+		$this->assertEquals($expected, $result);
+	}
 }

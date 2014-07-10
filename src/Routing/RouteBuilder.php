@@ -87,8 +87,10 @@ class RouteBuilder {
 /**
  * Constructor
  *
+ * @param \Cake\Routing\RouteCollection $collection The route collection to append routes into.
  * @param string $path The path prefix the scope is for.
  * @param array $params The scope's routing parameters.
+ * @param array $extensions The extensions to connect when adding routes.
  */
 	public function __construct($collection, $path, array $params = [], array $extensions = []) {
 		$this->_collection = $collection;
@@ -186,7 +188,7 @@ class RouteBuilder {
  * - 'id' - The regular expression fragment to use when matching IDs. By default, matches
  *    integer values and UUIDs.
  *
- * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
+ * @param string|array $name A controller name or array of controller names (i.e. "Posts" or "ListItems")
  * @param array $options Options to use when generating REST routes
  * @param callable $callback An optional callback to be executed in a nested scope. Nested
  *   scopes inherit the existing path and 'id' parameter.
@@ -229,8 +231,8 @@ class RouteBuilder {
 
 		if (is_callable($callback)) {
 			$idName = Inflector::singularize($urlName) . '_id';
-			$path = $this->_path . '/' . $urlName . '/:' . $idName;
-			$this->scope($path, $this->params(), $callback);
+			$path = '/' . $urlName . '/:' . $idName;
+			$this->scope($path, [], $callback);
 		}
 	}
 
@@ -423,11 +425,11 @@ class RouteBuilder {
  */
 	public function prefix($name, callable $callback) {
 		$name = Inflector::underscore($name);
-		$path = $this->_path . '/' . $name;
+		$path = '/' . $name;
 		if (isset($this->_params['prefix'])) {
 			$name = $this->_params['prefix'] . '/' . $name;
 		}
-		$params = ['prefix' => $name] + $this->_params;
+		$params = ['prefix' => $name];
 		$this->scope($path, $params, $callback);
 	}
 
@@ -443,9 +445,9 @@ class RouteBuilder {
  * Routes connected in the scoped collection will have the correct path segment
  * prepended, and have a matching plugin routing key set.
  *
- * @param string $path The path name to use for the prefix.
- * @param array|callable $options Either the options to use, or a callback.
- * @param callable $callback The callback to invoke that builds the plugin routes.
+ * @param string $name The plugin name to build routes for
+ * @param array|callable $options Either the options to use, or a callback
+ * @param callable $callback The callback to invoke that builds the plugin routes
  *   Only required when $options is defined.
  * @return void
  */
@@ -458,10 +460,23 @@ class RouteBuilder {
 		if (empty($options['path'])) {
 			$options['path'] = '/' . Inflector::underscore($name);
 		}
-		$options['path'] = $this->_path . $options['path'];
 		$this->scope($options['path'], $params, $callback);
 	}
 
+/**
+ * Create a new routing scope.
+ *
+ * Scopes created with this method will inherit the properties of the scope they are
+ * added to. This means that both the current path and parameters will be appended
+ * to the supplied parameters.
+ *
+ * @param string $path The path to create a scope for.
+ * @param array|callable $params Either the parameters to add to routes, or a callback
+ * @param callable $callback The callback to invoke that builds the plugin routes
+ *   Only required when $params is defined.
+ * @return void
+ * @throws \InvalidArgumentException when there is no callable parameter.
+ */
 	public function scope($path, $params, $callback) {
 		if ($callback === null) {
 			$callback = $params;
@@ -472,6 +487,10 @@ class RouteBuilder {
 			throw new \InvalidArgumentException($msg);
 		}
 
+		if ($this->_path !== '/') {
+			$path = $this->_path . $path;
+		}
+		$params = $params + $this->_params;
 		$builder = new static($this->_collection, $path, $params, $this->_extensions);
 		$callback($builder);
 	}

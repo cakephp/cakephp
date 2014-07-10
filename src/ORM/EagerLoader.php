@@ -439,7 +439,7 @@ class EagerLoader {
  *
  * @param array $external the list of external associations to be loaded
  * @param \Cake\ORM\Query $query The query from which the results where generated
- * @param BufferedStatement $statement
+ * @param BufferedStatement $statement The statement to work on
  * @return array
  */
 	protected function _collectKeys($external, $query, $statement) {
@@ -477,8 +477,8 @@ class EagerLoader {
  * Helper function used to iterate an statement and extract the columns
  * defined in $collectKeys
  *
- * @param \Cake\Database\StatementInterface $statement
- * @param array $collectKeys
+ * @param \Cake\Database\StatementInterface $statement The statement to read from.
+ * @param array $collectKeys The keys to collect
  * @return array
  */
 	protected function _groupKeys($statement, $collectKeys) {

@@ -997,10 +997,10 @@ class Router {
  * Routes connected in the scoped collection will have the correct path segment
  * prepended, and have a matching plugin routing key set.
  *
- * @param string $path The path name to use for the prefix.
- * @param array|callable $options Either the options to use, or a callback.
+ * @param string $name The plugin name to build routes for
+ * @param array|callable $options Either the options to use, or a callback
  * @param callable $callback The callback to invoke that builds the plugin routes.
- *   Only required when $options is defined.
+ *   Only required when $options is defined
  * @return void
  */
 	public static function plugin($name, $options = [], $callback = null) {

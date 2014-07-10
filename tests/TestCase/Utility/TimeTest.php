@@ -34,6 +34,7 @@ class TimeTest extends TestCase {
 		parent::setUp();
 		$this->now = Time::getTestNow();
 		$this->locale = Time::$defaultLocale;
+		Time::$defaultLocale = 'en_US';
 	}
 
 /**

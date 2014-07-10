@@ -37,13 +37,13 @@ class IdentifierExpression implements ExpressionInterface {
  * @param string $identifier The identifier this expression represents
  */
 	public function __construct($identifier) {
-		$this->setIdentifier($identifier);
+		$this->_identifier = $identifier;
 	}
 
 /**
  * Sets the identifier this expression represents
  *
- * @param string $identifier
+ * @param string $identifier The identifier
  * @return void
  */
 	public function setIdentifier($identifier) {
@@ -73,7 +73,7 @@ class IdentifierExpression implements ExpressionInterface {
  * This method is a no-op, this is a leaf type of expression,
  * hence there is nothing to traverse
  *
- * @param callable $callable
+ * @param callable $callable The callable to traverse with.
  * @return void
  */
 	public function traverse(callable $callable) {

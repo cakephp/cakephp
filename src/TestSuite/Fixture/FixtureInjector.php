@@ -45,7 +45,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Constructor. Save internally the reference to the passed fixture manager
  *
- * @param \Cake\TestSuite\Fixture\FixtureManager $manager
+ * @param \Cake\TestSuite\Fixture\FixtureManager $manager The fixture manager
  */
 	public function __construct(FixtureManager $manager) {
 		$this->_fixtureManager = $manager;
@@ -56,7 +56,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  * Iterates the tests inside a test suite and creates the required fixtures as
  * they were expressed inside each test case.
  *
- * @param \PHPUnit_Framework_TestSuite $suite
+ * @param \PHPUnit_Framework_TestSuite $suite The test suite
  * @return void
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
@@ -69,7 +69,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  * Destroys the fixtures created by the fixture manager at the end of the test
  * suite run
  *
- * @param \PHPUnit_Framework_TestSuite $suite
+ * @param \PHPUnit_Framework_TestSuite $suite The test suite
  * @return void
  */
 	public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
@@ -81,9 +81,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
- * @param PHPUnit_Framework_Test $test
- * @param Exception $e
- * @param float $time
+ * @param \PHPUnit_Framework_Test $test The test to add errors from.
+ * @param Exception $e The exception
+ * @param float $time current time
  * @return void
  */
 	public function addError(PHPUnit_Framework_Test $test, Exception $e, $time) {
@@ -92,9 +92,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
- * @param PHPUnit_Framework_Test $test
- * @param PHPUnit_Framework_AssertionFailedError $e
- * @param float $time
+ * @param \PHPUnit_Framework_Test $test The test case
+ * @param \PHPUnit_Framework_AssertionFailedError $e The failed assertion
+ * @param float $time current time
  * @return void
  */
 	public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time) {
@@ -103,9 +103,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
- * @param PHPUnit_Framework_Test $test
- * @param Exception $e
- * @param float $time
+ * @param \PHPUnit_Framework_Test $test The test case
+ * @param \Exception $e The incomplete test error.
+ * @param float $time current time
  * @return void
  */
 	public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
@@ -114,18 +114,18 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
- * @param PHPUnit_Framework_Test $test
- * @param Exception $e
- * @param float $time
+ * @param \PHPUnit_Framework_Test $test The test case
+ * @param \Exception $e Skipped test exception
+ * @param float $time current time
  * @return void
  */
 	public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
 	}
 
 /**
- * Not Implemented
+ * Adds fixtures to a test case when it starts.
  *
- * @param PHPUnit_Framework_Test $test
+ * @param \PHPUnit_Framework_Test $test The test case
  * @return void
  */
 	public function startTest(PHPUnit_Framework_Test $test) {
@@ -137,10 +137,10 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 	}
 
 /**
- * Not Implemented
+ * Unloads fixtures from the test case.
  *
- * @param PHPUnit_Framework_Test $test
- * @param float $time
+ * @param \PHPUnit_Framework_Test $test The test case
+ * @param float $time current time
  * @return void
  */
 	public function endTest(PHPUnit_Framework_Test $test, $time) {
@@ -152,9 +152,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
- * @param PHPUnit_Framework_Test $test
- * @param Exception $e
- * @param float $time
+ * @param \PHPUnit_Framework_Test $test The test case
+ * @param \Exception $e The exception to track
+ * @param float $time current time
  * @return void
  */
 	public function addRiskyTest(PHPUnit_Framework_Test $test, Exception $e, $time) {

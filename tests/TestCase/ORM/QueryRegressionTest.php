@@ -126,7 +126,6 @@ class QueryRegressionTest extends TestCase {
 		$this->assertNull($entity->created);
 	}
 
-
 /**
  * Test for https://github.com/cakephp/cakephp/issues/3626
  *

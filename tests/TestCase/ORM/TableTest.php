@@ -264,6 +264,29 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that _initializeSchema can be used to alter the database schema
+ *
+ * @return void
+ */
+	public function testSchemaInitialize() {
+		$schema = $this->connection->schemaCollection()->describe('users');
+		$table = $this->getMock('Cake\ORM\Table', ['_initializeSchema'], [
+			['table' => 'users', 'connection' => $this->connection]
+		]);
+		$table->expects($this->once())
+			->method('_initializeSchema')
+			->with($schema)
+			->will($this->returnCallback(function($schema) {
+				$schema->columnType('username', 'integer');
+				return $schema;
+			}));
+		$result = $table->schema();
+		$schema->columnType('username', 'integer');
+		$this->assertEquals($schema, $result);
+		$this->assertEquals($schema, $table->schema(), '_initializeSchema should be called once');
+	}
+
+/**
  * Tests that all fields for a table are added by default in a find when no
  * other fields are specified
  *

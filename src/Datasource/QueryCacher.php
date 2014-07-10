@@ -31,8 +31,8 @@ class QueryCacher {
 /**
  * Constructor.
  *
- * @param string|\Closure $key
- * @param string|CacheEngine $config
+ * @param string|\Closure $key The key or function to generate a key.
+ * @param string|CacheEngine $config The cache config name or cache engine instance.
  * @throws RuntimeException
  */
 	public function __construct($key, $config) {
@@ -67,7 +67,7 @@ class QueryCacher {
  * Store the result set into the cache.
  *
  * @param object $query The query the cache read is for.
- * @param \Traversable The result set to store.
+ * @param \Traversable $results The result set to store.
  * @return void
  */
 	public function store($query, Traversable $results) {
@@ -79,9 +79,9 @@ class QueryCacher {
 /**
  * Get/generate the cache key.
  *
- * @param object $query
+ * @param object $query The query to generate a key for.
  * @return string
- * @throws RuntimeException
+ * @throws \RuntimeException
  */
 	protected function _resolveKey($query) {
 		if (is_string($this->_key)) {
