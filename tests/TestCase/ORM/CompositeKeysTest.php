@@ -444,7 +444,7 @@ class CompositeKeyTest extends TestCase {
 			'tags' => ['_ids' => [[1, 1], [2, 2], [3, 1]]]
 		];
 		$marshall = new Marshaller($articles);
-		$result = $marshall->one($data, ['SiteTags']);
+		$result = $marshall->one($data, ['associated' => ['SiteTags']]);
 
 		$this->assertCount(3, $result->tags);
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
@@ -457,7 +457,7 @@ class CompositeKeyTest extends TestCase {
 			'tags' => ['_ids' => [1, 2, 3]]
 		];
 		$marshall = new Marshaller($articles);
-		$result = $marshall->one($data, ['SiteTags']);
+		$result = $marshall->one($data, ['associated' => ['SiteTags']]);
 		$this->assertEmpty($result->tags);
 	}
 

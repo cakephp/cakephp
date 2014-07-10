@@ -110,7 +110,7 @@ class Marshaller {
 			$columnType = $schema->columnType($key);
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
-				$nested = $propertyMap[$key]['nested'];
+				$nested = ['associated' => $propertyMap[$key]['nested']];
 				$value = $this->_marshalAssociation($assoc, $value, $nested);
 			} elseif ($columnType) {
 				$converter = Type::build($columnType);
@@ -172,6 +172,7 @@ class Marshaller {
  * @return array An array of built entities.
  */
 	protected function _belongsToMany(Association $assoc, array $data, $options = []) {
+		$associated = isset($options['associated']) ? $options['associated'] : [];
 		$hasIds = array_key_exists('_ids', $data);
 		if ($hasIds && is_array($data['_ids'])) {
 			return $this->_loadBelongsToMany($assoc, $data['_ids']);
@@ -185,8 +186,8 @@ class Marshaller {
 		$jointMarshaller = $joint->marshaller();
 
 		$nested = [];
-		if (isset($options['_joinData']['associated'])) {
-			$nested = (array)$options['_joinData']['associated'];
+		if (isset($associated['_joinData']['associated'])) {
+			$nested = ['associated' => (array)$associated['_joinData']['associated']];
 		}
 
 		foreach ($records as $i => $record) {

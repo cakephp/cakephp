@@ -800,7 +800,7 @@ class MarshallerTest extends TestCase {
 			],
 		];
 
-		$options = ['Tags' => ['associated' => ['_joinData']]];
+		$options = ['associated' => ['Tags' => ['associated' => ['_joinData']]]];
 		$marshall = new Marshaller($this->articles);
 		$entity = $marshall->one($data, $options);
 		$entity->accessible('*', true);
