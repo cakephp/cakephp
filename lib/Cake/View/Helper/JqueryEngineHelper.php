@@ -261,7 +261,13 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 			if (isset($options['success']) && !empty($options['success'])) {
 				$success .= $options['success'];
 			}
-			$success .= $this->jQueryObject . '("' . $options['update'] . '").html(data);';
+			if (is_array($options['update'])) {
+				foreach ($options['update'] as $elem) {
+					$success .= $this->jQueryObject . '("' . $elem . '").html(data);';
+				}
+			} else {
+				$success .= $this->jQueryObject . '("' . $options['update'] . '").html(data);';
+			}
 			if (!$wrapCallbacks) {
 				$success = 'function (data, textStatus) {' . $success . '}';
 			}
