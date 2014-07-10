@@ -256,7 +256,7 @@ class Marshaller {
 
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
-				$nested = $propertyMap[$key]['nested'];
+				$nested = ['associated' => $propertyMap[$key]['nested']];
 				$value = $this->_mergeAssociation($original, $assoc, $value, $nested);
 			} elseif ($columnType) {
 				$converter = Type::build($columnType);
@@ -363,6 +363,7 @@ class Marshaller {
  */
 	protected function _mergeBelongsToMany($original, $assoc, $value, $options) {
 		$hasIds = array_key_exists('_ids', $value);
+		$associated = isset($options['associated']) ? $options['associated'] : [];
 		if ($hasIds && is_array($value['_ids'])) {
 			return $this->_loadBelongsToMany($assoc, $value['_ids']);
 		}
@@ -370,7 +371,7 @@ class Marshaller {
 			return [];
 		}
 
-		if (!in_array('_joinData', $options) && !isset($options['_joinData'])) {
+		if (!in_array('_joinData', $associated) && !isset($associated['_joinData'])) {
 			return $this->mergeMany($original, $value, $options);
 		}
 
@@ -386,8 +387,8 @@ class Marshaller {
 		$marshaller = $joint->marshaller();
 
 		$nested = [];
-		if (isset($options['_joinData']['associated'])) {
-			$nested = (array)$options['_joinData']['associated'];
+		if (isset($associated['_joinData']['associated'])) {
+			$nested = ['associated' => (array)$associated['_joinData']['associated']];
 		}
 
 		$records = $this->mergeMany($original, $value, $options);
