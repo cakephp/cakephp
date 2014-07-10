@@ -610,8 +610,10 @@ trait EntityTrait {
 		}
 
 		$entity = $this;
-		while (count($path)) {
+		$len = count($path);
+		while ($len) {
 			$part = array_shift($path);
+			$len = count($path);
 			if ($entity instanceof static) {
 				$val = $entity->get($part);
 			} elseif (is_array($entity)) {

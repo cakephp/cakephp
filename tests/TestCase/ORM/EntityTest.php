@@ -831,7 +831,7 @@ class EntityTest extends TestCase {
  */
 	public function testErrorPathReading() {
 		$assoc = new Entity;
-		$entity= new Entity([
+		$entity = new Entity([
 			'field' => 'value',
 			'one' => $assoc,
 			'many' => [$assoc]
