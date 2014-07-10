@@ -977,14 +977,25 @@ class View {
 		}
 		list($plugin, $name) = $this->pluginSplit($name);
 		$paths = $this->_paths($plugin);
-		$file = 'Layout' . DS . $subDir . $name;
+
+		$layoutPaths = ['Layout' . DS . $subDir];
+		if (!empty($this->request->params['prefix'])) {
+			array_unshift(
+				$layoutPaths,
+				Inflector::camelize($this->request->params['prefix']) . DS . $layoutPaths[0]
+			);
+		}
 
 		foreach ($paths as $path) {
-			if (file_exists($path . $file . $this->_ext)) {
-				return $path . $file . $this->_ext;
+			foreach ($layoutPaths as $layoutPath) {
+				if (file_exists($path . $layoutPath . $name . $this->_ext)) {
+					return $path . $layoutPath . $name . $this->_ext;
+				}
 			}
 		}
-		throw new Error\MissingLayoutException(array('file' => $file . $this->_ext));
+		throw new Error\MissingLayoutException(array(
+			'file' => $layoutPath[0] . $name . $this->_ext
+		));
 	}
 
 /**
