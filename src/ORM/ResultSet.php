@@ -401,9 +401,13 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			if ($assoc['canBeJoined']) {
 				$results[$alias] = $this->_castValues($target, $results[$alias]);
 
-				$hasData = array_filter($results[$alias], function ($v) {
-					return $v !== null;
-				});
+				$hasData = false;
+				foreach ($results[$alias] as $v) {
+					if ($v !== null) {
+						$hasData = true;
+						break;
+					}
+				}
 
 				if (!$hasData) {
 					continue;
