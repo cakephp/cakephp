@@ -34,7 +34,7 @@ use Cake\Core\Configure;
 </p>
 <?php
 if (!empty($filePresent)):
- 	$connected = ConnectionManager::getDataSource('default');
+ 	$connected = ConnectionManager::get('default');
 ?>
 <p>
 	<span class="notice">

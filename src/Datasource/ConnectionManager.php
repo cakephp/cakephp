@@ -135,29 +135,4 @@ class ConnectionManager {
 		return static::$_registry->load($name, static::$_config[$name]);
 	}
 
-/**
- * Gets a reference to a DataSource object
- *
- * @param string $name The name of the DataSource, as defined in app/Config/datasources.php
- * @return DataSource Instance
- * @throws \Cake\Error\MissingDatasourceConfigException
- * @deprecated Will be removed in 3.0 stable.
- */
-	public static function getDataSource($name) {
-		return static::get($name);
-	}
-
-/**
- * Dynamically creates a DataSource object at runtime, with the given name and settings
- *
- * @param string $name The DataSource name
- * @param array $config The DataSource configuration settings
- * @return DataSource A reference to the DataSource object, or null if creation failed
- * @deprecated Will be removed in 3.0 stable
- */
-	public static function create($name = '', array $config = array()) {
-		static::config($name, $config);
-		return static::get($name);
-	}
-
 }
