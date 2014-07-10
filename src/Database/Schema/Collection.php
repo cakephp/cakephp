@@ -107,8 +107,17 @@ class Collection {
 				return $cached;
 			}
 		}
-		$table = new Table($name);
 		$config = $this->_connection->config();
+		if (strpos($name, '.')) {
+			list($config['schema'], $name) = explode('.', $name);
+		}
+
+		list($sql, $params) = $this->_dialect->describeTableSql($name, $config);
+		$statement = $this->_executeSql($sql, $params);
+		if (count($statement) === 0) {
+			throw new Exception(sprintf('Cannot describe %s. It has 0 columns.', $name));
+		}
+		$table = new Table($name);
 
 		$this->_reflect('Column', $name, $config, $table);
 		if (count($table->columns()) === 0) {

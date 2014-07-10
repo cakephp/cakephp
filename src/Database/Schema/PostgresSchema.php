@@ -163,7 +163,6 @@ class PostgresSchema extends BaseSchema {
 			FROM pg_catalog.pg_class c
 			LEFT JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
 			WHERE c.relname = ?
-				AND pg_catalog.pg_table_is_visible(c.oid)
 				AND n.nspname = ?
 		)
 		AND c.oid = i.indrelid
