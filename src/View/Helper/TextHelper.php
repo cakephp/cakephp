@@ -281,7 +281,7 @@ class TextHelper extends Helper {
  *
  * ### Options:
  *
- * - `ellipsis` Will be used as Ending and appended to the trimmed string (`ending` is deprecated)
+ * - `ellipsis` Will be used as Ending and appended to the trimmed string
  * - `exact` If false, $text will not be cut mid-word
  * - `html` If true, HTML tags would be handled correctly
  *
