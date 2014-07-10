@@ -422,7 +422,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @param array $types list of types associated on fields referenced in $conditions
  * @return void
  */
-	protected function _addConditions(array $conditions, array $types) {
+	protected function _addConditions($conditions, $types) {
 		$operators = ['and', 'or', 'xor'];
 
 		$typeMap = $this->typeMap()->types($types);

@@ -105,7 +105,7 @@ class Dispatcher {
  * @throws \Cake\Error\Exception If data returned by controller action is not an
  *   instance of Response
  */
-	protected function _invoke(Controller $controller) {
+	protected function _invoke($controller) {
 		$controller->constructClasses();
 		$result = $controller->startupProcess();
 		if ($result instanceof Response) {

@@ -227,7 +227,7 @@ abstract class BaseErrorHandler {
  * @param Exception $exception Exception instance.
  * @return bool
  */
-	protected function _logException(\Exception $exception) {
+	protected function _logException($exception) {
 		$config = $this->_options;
 		if (empty($config['log'])) {
 			return false;
@@ -249,7 +249,7 @@ abstract class BaseErrorHandler {
  * @param Exception $exception Exception instance
  * @return string Formatted message
  */
-	protected function _getMessage(\Exception $exception) {
+	protected function _getMessage($exception) {
 		$message = sprintf("[%s] %s",
 			get_class($exception),
 			$exception->getMessage()

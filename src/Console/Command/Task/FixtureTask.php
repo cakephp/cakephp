@@ -246,7 +246,7 @@ class FixtureTask extends BakeTask {
  * @param \Cake\Database\Schema\Table $table Table schema
  * @return string fields definitions
  */
-	protected function _generateSchema(Table $table) {
+	protected function _generateSchema($table) {
 		$cols = $indexes = $constraints = [];
 		foreach ($table->columns() as $field) {
 			$fieldData = $table->column($field);
@@ -314,7 +314,7 @@ class FixtureTask extends BakeTask {
  * @param int $recordCount The number of records to generate.
  * @return array Array of records to use in the fixture.
  */
-	protected function _generateRecords(Table $table, $recordCount = 1) {
+	protected function _generateRecords($table, $recordCount = 1) {
 		$records = [];
 		for ($i = 0; $i < $recordCount; $i++) {
 			$record = [];

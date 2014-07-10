@@ -174,7 +174,7 @@ class Type {
  * @param Driver $driver object from which database preferences and configuration will be extracted
  * @return mixed
  */
-	protected function _basicTypeCast($value, Driver $driver) {
+	protected function _basicTypeCast($value, $driver) {
 		if ($value === null) {
 			return null;
 		}

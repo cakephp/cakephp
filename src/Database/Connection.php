@@ -598,7 +598,7 @@ class Connection {
  * @param \Cake\Database\StatementInterface $statement the instance to be decorated
  * @return \Cake\Database\Log\LoggingStatement
  */
-	protected function _newLogger(StatementInterface $statement) {
+	protected function _newLogger($statement) {
 		$log = new LoggingStatement($statement, $this->driver());
 		$log->logger($this->logger());
 		return $log;

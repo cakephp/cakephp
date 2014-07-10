@@ -17,8 +17,6 @@ namespace Cake\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Error\ForbiddenException;
 use Cake\Event\Event;
-use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Utility\Security;
 use Cake\Utility\String;
 
@@ -115,7 +113,7 @@ class CsrfComponent extends Component {
  * @param \Cake\Network\Response $response The response object.
  * @return void
  */
-	protected function _setCookie(Request $request, Response $response) {
+	protected function _setCookie($request, $response) {
 		$value = Security::hash(String::uuid(), 'sha1', true);
 		$request->params['_csrfToken'] = $value;
 		$response->cookie([
@@ -134,7 +132,7 @@ class CsrfComponent extends Component {
  * @throws \Cake\Error\ForbiddenException when the CSRF token is invalid or missing.
  * @return void
  */
-	protected function _validateToken(Request $request) {
+	protected function _validateToken($request) {
 		$cookie = $request->cookie($this->_config['cookieName']);
 		$post = $request->data($this->_config['field']);
 		$header = $request->header('X-CSRF-Token');

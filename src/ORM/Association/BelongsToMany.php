@@ -419,7 +419,7 @@ class BelongsToMany extends Association {
  * @return \Cake\ORM\Entity|bool The parent entity after all links have been
  * created if no errors happened, false otherwise
  */
-	protected function _saveTarget(Entity $parentEntity, $entities, $options) {
+	protected function _saveTarget($parentEntity, $entities, $options) {
 		$associations = false;
 		if (!empty($options['associated'][$this->_junctionProperty]['associated'])) {
 			$associations = $options['associated'][$this->_junctionProperty]['associated'];
@@ -784,7 +784,7 @@ class BelongsToMany extends Association {
  * @return bool
  * @throws \InvalidArgumentException
  */
-	protected function _checkPersistenceStatus($sourceEntity, array $targetEntities) {
+	protected function _checkPersistenceStatus($sourceEntity, $targetEntities) {
 		if ($sourceEntity->isNew() !== false) {
 			$error = 'Source entity needs to be persisted before proceeding';
 			throw new \InvalidArgumentException($error);

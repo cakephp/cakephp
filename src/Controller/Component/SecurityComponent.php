@@ -204,7 +204,7 @@ class SecurityComponent extends Component {
  * @param Controller $controller Instantiating controller
  * @return bool true if secure connection required
  */
-	protected function _secureRequired(Controller $controller) {
+	protected function _secureRequired($controller) {
 		if (is_array($this->_config['requireSecure']) &&
 			!empty($this->_config['requireSecure'])
 		) {
@@ -227,7 +227,7 @@ class SecurityComponent extends Component {
  * @param Controller $controller Instantiating controller
  * @return bool true if authentication required
  */
-	protected function _authRequired(Controller $controller) {
+	protected function _authRequired($controller) {
 		if (is_array($this->_config['requireAuth']) &&
 			!empty($this->_config['requireAuth']) &&
 			!empty($this->request->data)
@@ -270,7 +270,7 @@ class SecurityComponent extends Component {
  * @param Controller $controller Instantiating controller
  * @return bool true if submitted form is valid
  */
-	protected function _validatePost(Controller $controller) {
+	protected function _validatePost($controller) {
 		if (empty($controller->request->data)) {
 			return true;
 		}
@@ -390,7 +390,7 @@ class SecurityComponent extends Component {
  * @return mixed Controller callback method's response
  * @throws \Cake\Error\BadRequestException When a the blackholeCallback is not callable.
  */
-	protected function _callback(Controller $controller, $method, $params = array()) {
+	protected function _callback($controller, $method, $params = array()) {
 		if (!is_callable(array($controller, $method))) {
 			throw new Error\BadRequestException('The request has been black-holed');
 		}

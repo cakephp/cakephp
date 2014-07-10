@@ -96,7 +96,7 @@ class AssetFilter extends DispatcherFilter {
  * @param string $ext The extension of the file to determine its mime type
  * @return void
  */
-	protected function _deliverAsset(Request $request, Response $response, $assetFile, $ext) {
+	protected function _deliverAsset($request, $response, $assetFile, $ext) {
 		ob_start();
 		$compressionEnabled = Configure::read('Asset.compress') && $response->compress();
 		if ($response->type($ext) === $ext) {

@@ -62,7 +62,7 @@ class OrderByExpression extends QueryExpression {
  * @param array $types list of types associated on fields referenced in $conditions
  * @return void
  */
-	protected function _addConditions(array $orders, array $types) {
+	protected function _addConditions($orders, $types) {
 		$this->_conditions = array_merge($this->_conditions, $orders);
 	}
 

@@ -36,7 +36,7 @@ trait PDODriverTrait {
  * @param array $config configuration to be used for creating connection
  * @return bool true on success
  */
-	protected function _connect(array $config) {
+	protected function _connect($config) {
 		$connection = new PDO(
 			$config['dsn'],
 			$config['login'],

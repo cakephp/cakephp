@@ -429,7 +429,7 @@ class Client {
  * @param array $options Array of options containing the 'auth' key.
  * @return void
  */
-	protected function _addAuthentication(Request $request, $options) {
+	protected function _addAuthentication($request, $options) {
 		$auth = $options['auth'];
 		$adapter = $this->_createAuth($auth, $options);
 		$adapter->authentication($request, $options['auth']);
@@ -445,7 +445,7 @@ class Client {
  * @param array $options Array of options containing the 'proxy' key.
  * @return void
  */
-	protected function _addProxy(Request $request, $options) {
+	protected function _addProxy($request, $options) {
 		$auth = $options['proxy'];
 		$adapter = $this->_createAuth($auth, $options);
 		$adapter->proxyAuthentication($request, $options['proxy']);
