@@ -109,6 +109,10 @@ class Collection {
 		}
 
 		$config = $this->_connection->config();
+		
+		if( strpos($name, '.') )
+			list($config['schema'], $name) = explode('.', $name);
+			
 		list($sql, $params) = $this->_dialect->describeTableSql($name, $config);
 		$statement = $this->_executeSql($sql, $params);
 		if (count($statement) === 0) {
