@@ -2573,6 +2573,13 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$this->View->viewVars['users'] = null;
+		$result = $this->Form->input('Thing.user_id', array(
+			'options' => array('value' => 'good', 'other' => 'bad'),
+			'empty' => 'Some Empty'
+		));
+		$this->assertTags($result, $expected);
+
 		$this->Form->data = array();
 		$result = $this->Form->input('Publisher.id', array(
 				'label' => 'Publisher',
