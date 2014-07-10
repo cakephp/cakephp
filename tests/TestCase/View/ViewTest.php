@@ -95,34 +95,6 @@ class ThemePostsController extends Controller {
 }
 
 /**
- * TestThemeView class
- *
- */
-class TestThemeView extends View {
-
-/**
- * getViewFileName method
- *
- * @param string $name Controller action to find template filename for
- * @return string Template filename
- */
-	public function getViewFileName($name = null) {
-		return $this->_getViewFileName($name);
-	}
-
-/**
- * getLayoutFileName method
- *
- * @param string $name The name of the layout to find.
- * @return string Filename for layout file (.ctp).
- */
-	public function getLayoutFileName($name = null) {
-		return $this->_getLayoutFileName($name);
-	}
-
-}
-
-/**
  * TestView class
  *
  */
@@ -360,7 +332,7 @@ class ViewTest extends TestCase {
 		$request->action = 'display';
 		$request->params['pass'] = array('home');
 
-		$ThemeView = new TestThemeView(null, null, null, $viewOptions);
+		$ThemeView = new TestView(null, null, null, $viewOptions);
 		$ThemeView->theme = 'TestTheme';
 		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages' . DS . 'home.ctp';
 		$result = $ThemeView->getViewFileName('home');
@@ -384,7 +356,7 @@ class ViewTest extends TestCase {
 		$result = $ThemeView->getLayoutFileName();
 		$this->assertPathEquals($expected, $result);
 
-		$ThemeView = new TestThemeView(null, null, null, $viewOptions);
+		$ThemeView = new TestView(null, null, null, $viewOptions);
 
 		$ThemeView->theme = 'Company/TestPluginThree';
 		$expected = Plugin::path('Company/TestPluginThree') . 'src' . DS . 'Template' . DS . 'Layout' . DS . 'default.ctp';
@@ -428,7 +400,7 @@ class ViewTest extends TestCase {
 			'theme' => 'TestTheme'
 		];
 
-		$ThemeView = new TestThemeView(null, null, null, $viewOptions);
+		$ThemeView = new TestView(null, null, null, $viewOptions);
 		$themePath = Plugin::path('TestTheme') . 'src' . DS . 'Template' . DS;
 
 		$expected = $themePath . 'Plugin' . DS . 'TestPlugin' . DS . 'Tests' . DS . 'index.ctp';
@@ -1043,9 +1015,6 @@ class ViewTest extends TestCase {
 		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/>\s*<title>/", $result);
 		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
-
-		$this->assertTrue(isset($View->viewVars['content_for_layout']), 'content_for_layout should be a view var');
-		$this->assertTrue(isset($View->viewVars['scripts_for_layout']), 'scripts_for_layout should be a view var');
 
 		$View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
 		$result = $View->render(false, 'ajax2');
