@@ -375,7 +375,7 @@ class EntityContext implements ContextInterface {
  * Get the table instance from a property path
  *
  * @param array $parts Each one of the parts in a path for a field name
- * @param bool $rootFallback
+ * @param bool $rootFallback Whether or not to fallback to the root entity.
  * @return \Cake\ORM\Table|bool Table instance or false
  */
 	protected function _getTable($parts, $rootFallback = true) {
