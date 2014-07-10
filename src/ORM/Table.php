@@ -355,14 +355,14 @@ class Table implements RepositoryInterface, EventListener {
  *
  * {{{
  * protected function _initializeSchema(\Cake\Database\Schema\Table $table) {
- *	$table->columnType('preferences', 'json');
- *	return $table;
+ *  $table->columnType('preferences', 'json');
+ *  return $table;
  * }
  * }}}
  *
- * @api
  * @param \Cake\Database\Schema\Table $table The table definition fetched from database.
  * @return \Cake\Database\Schema\Table the altered schema
+ * @api
  */
 	protected function _initializeSchema(Schema $table) {
 		return $table;
