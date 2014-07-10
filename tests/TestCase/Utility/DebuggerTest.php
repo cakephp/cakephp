@@ -362,7 +362,6 @@ object(Cake\View\View) {
 		(int) 10 => 'passedArgs',
 		(int) 11 => 'cacheAction'
 	]
-	[protected] _scripts => []
 	[protected] _paths => []
 	[protected] _pathsForPlugin => []
 	[protected] _parents => []
