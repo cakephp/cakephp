@@ -107,7 +107,7 @@ class Model extends Object implements CakeEventListener {
  * The name of the primary key field for this model.
  *
  * @var string
- * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#primaryKey
+ * @link http://book.cakephp.org/2.0/en/models/model-attributes.html#primarykey
  */
 	public $primaryKey = null;
 

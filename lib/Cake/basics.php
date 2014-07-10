@@ -200,7 +200,9 @@ if (!function_exists('h')) {
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#h
  */
 	function h($text, $double = true, $charset = null) {
-		if (is_array($text)) {
+		if (is_string($text)) {
+			//optimize for strings
+		} elseif (is_array($text)) {
 			$texts = array();
 			foreach ($text as $k => $t) {
 				$texts[$k] = h($t, $double, $charset);

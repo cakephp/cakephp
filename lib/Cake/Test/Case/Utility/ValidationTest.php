@@ -1766,7 +1766,6 @@ class ValidationTest extends CakeTestCase {
 
 		$this->assertTrue(Validation::email('abc.efg@cakephp.org', true));
 		$this->assertFalse(Validation::email('abc.efg@caphpkeinvalid.com', true));
-		$this->assertFalse(Validation::email('abc@example.abcd', true));
 	}
 
 /**
