@@ -40,10 +40,10 @@ class FixtureTask extends BakeTask {
  * @return string
  */
 	public function getPath() {
-		$dir = 'Test/Fixture/';
+		$dir = 'tests/Fixture/';
 		$path = ROOT . DS . $dir;
 		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'tests/Fixture/';
+			$path = $this->_pluginPath($this->plugin) . $dir;
 		}
 		return str_replace('/', DS, $path);
 	}
