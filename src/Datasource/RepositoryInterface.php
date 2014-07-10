@@ -167,7 +167,7 @@ interface RepositoryInterface {
  * @param array $options A list of options for the objects hydration.
  * @return array An array of hydrated records.
  */
-	public function newEntities(array $data, array $associations = []);
+	public function newEntities(array $data, array $options = []);
 
 /**
  * Merges the passed `$data` into `$entity` respecting the accessible
