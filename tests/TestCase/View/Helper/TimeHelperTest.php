@@ -1,7 +1,5 @@
 <?php
 /**
- * TimeHelperTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -20,6 +18,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Time;
 use Cake\View\Helper\TimeHelper;
 use Cake\View\View;
 
@@ -40,6 +39,7 @@ class TimeHelperTest extends TestCase {
 		parent::setUp();
 		$this->View = new View();
 		$this->Time = new TimeHelper($this->View);
+		Time::$defaultLocale = 'en_US';
 	}
 
 /**
