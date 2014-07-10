@@ -3352,7 +3352,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$data = ['foo' => 'bar'];
 		$marshaller->expects($this->once())
 			->method('merge')
-			->with($entity, $data, ['users', 'articles'])
+			->with($entity, $data, ['associated' => ['users', 'articles']])
 			->will($this->returnValue($entity));
 		$table->patchEntity($entity, $data);
 	}
@@ -3375,7 +3375,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$data = [['foo' => 'bar']];
 		$marshaller->expects($this->once())
 			->method('mergeMany')
-			->with($entities, $data, ['users', 'articles'])
+			->with($entities, $data, ['associated' => ['users', 'articles']])
 			->will($this->returnValue($entities));
 		$table->patchEntities($entities, $data);
 	}
