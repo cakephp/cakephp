@@ -40,12 +40,11 @@ use Cake\View\ViewVarsTrait;
  * and then inserted into the selected layout. This also means you can pass data from the view to the
  * layout using `$this->set()`
  *
- * Since 2.1, the base View class also includes support for themes by default. Theme views are regular
- * view files that can provide unique HTML and static assets. If theme views are not found for the
- * current view the default app view files will be used. You can set `$this->theme = 'Mytheme'`
- * in your Controller to use the Themes.
- *
- * Example of theme path with `$this->theme = 'SuperHot';` Would be `Plugin/SuperHot/Template/Posts`
+ * View class supports using plugins as themes. You can set
+ * `$this->theme = 'SuperHot'` in your Controller to use plugin `SuperHot` as a
+ * theme. Eg. If current action is Posts::index() then View class will look for
+ * template file `plugins/SuperHot/Template/Posts/index.ctp`. If a theme template
+ * is not found for the current action the default app template file is used.
  *
  * @property      \Cake\View\Helper\CacheHelper $Cache
  * @property      \Cake\View\Helper\FormHelper $Form
@@ -69,21 +68,20 @@ class View {
 /**
  * Helpers collection
  *
- * @var Cake\View\HelperRegistry
+ * @var \Cake\View\HelperRegistry
  */
 	protected $_helpers;
 
 /**
  * ViewBlock instance.
  *
- * @var ViewBlock
+ * @var \Cake\View\ViewBlock
  */
 	public $Blocks;
 
 /**
  * The name of the plugin.
  *
- * @link http://manual.cakephp.org/chapter/plugins
  * @var string
  */
 	public $plugin = null;
@@ -250,13 +248,6 @@ class View {
 		'viewVars', 'autoLayout', 'helpers', 'view', 'layout', 'name', 'theme',
 		'layoutPath', 'viewPath', 'plugin', 'passedArgs', 'cacheAction'
 	);
-
-/**
- * Scripts (and/or other <head /> tags) for the layout.
- *
- * @var array
- */
-	protected $_scripts = array();
 
 /**
  * Holds an array of paths.
@@ -465,21 +456,6 @@ class View {
  * Renders a layout. Returns output from _render(). Returns false on error.
  * Several variables are created for use in layout.
  *
- * - `title_for_layout` - A backwards compatible place holder, you should set this value if you want more control.
- * - `content_for_layout` - contains rendered view file
- * - `scripts_for_layout` - Contains content added with addScript() as well as any content in
- *   the 'meta', 'css', and 'script' blocks. They are appended in that order.
- *
- * Deprecated features:
- *
- * - `$scripts_for_layout` is deprecated and will be removed in CakePHP 3.0.
- *   Use the block features instead. `meta`, `css` and `script` will be populated
- *   by the matching methods on HtmlHelper.
- * - `$title_for_layout` is deprecated and will be removed in CakePHP 3.0.
- *   Use the `title` block instead.
- * - `$content_for_layout` is deprecated and will be removed in CakePHP 3.0.
- *   Use the `content` block instead.
- *
  * @param string $content Content to render in a view, wrapped by the surrounding layout.
  * @param string $layout Layout name
  * @return mixed Rendered output, or false on error
@@ -498,24 +474,11 @@ class View {
 		}
 		$this->eventManager()->dispatch(new Event('View.beforeLayout', $this, array($layoutFileName)));
 
-		$scripts = implode("\n\t", $this->_scripts);
-		$scripts .= $this->Blocks->get('meta') . $this->Blocks->get('css') . $this->Blocks->get('script');
-
-		$this->viewVars = array_merge($this->viewVars, array(
-			'content_for_layout' => $content,
-			'scripts_for_layout' => $scripts,
-		));
-
 		$title = $this->Blocks->get('title');
 		if ($title === '') {
-			if (isset($this->viewVars['title_for_layout'])) {
-				$title = $this->viewVars['title_for_layout'];
-			} else {
-				$title = Inflector::humanize($this->viewPath);
-			}
+			$title = Inflector::humanize($this->viewPath);
+			$this->Blocks->set('title', $title);
 		}
-		$this->viewVars['title_for_layout'] = $title;
-		$this->Blocks->set('title', $title);
 
 		$this->_currentType = static::TYPE_LAYOUT;
 		$this->Blocks->set('content', $this->_render($layoutFileName));
@@ -562,17 +525,6 @@ class View {
  */
 	public function getVars() {
 		return array_keys($this->viewVars);
-	}
-
-/**
- * Returns the contents of the given View variable(s)
- *
- * @param string $var The view var you want the contents of.
- * @return mixed The content of the named var if its set, otherwise null.
- * @deprecated Will be removed in 3.0. Use View::get() instead.
- */
-	public function getVar($var) {
-		return $this->get($var);
 	}
 
 /**
@@ -763,30 +715,6 @@ class View {
 			return $registry->{$name};
 		}
 		return $this->{$name};
-	}
-
-/**
- * Magic accessor for deprecated attributes.
- *
- * @param string $name Name of the attribute to set.
- * @param mixed $value Value of the attribute to set.
- * @return void
- */
-	public function __set($name, $value) {
-		$this->{$name} = $value;
-	}
-
-/**
- * Magic isset check for deprecated attributes.
- *
- * @param string $name Name of the attribute to check.
- * @return bool
- */
-	public function __isset($name) {
-		if (isset($this->{$name})) {
-			return true;
-		}
-		return false;
 	}
 
 /**
