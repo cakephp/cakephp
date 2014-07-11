@@ -413,7 +413,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->RequestHandler->initialize($event);
 		$this->RequestHandler->startup($event);
-		$this->assertEquals('RequestHandlerTest/csv', $this->Controller->viewPath);
+		$this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewPath);
 		$this->assertEquals('csv', $this->Controller->layoutPath);
 	}
 
