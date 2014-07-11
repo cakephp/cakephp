@@ -32,7 +32,7 @@ use Cake\Utility\Inflector;
 				foreach ($associations['BelongsTo'] as $alias => $details) {
 					if ($field === $details['foreignKey']) {
 						$isKey = true;
-						echo "\t\t<td>\n\t\t\t<?= \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['primaryKey'][0]}]); ?>\n\t\t</td>\n";
+						echo "\t\t<td>\n\t\t\t<?= \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['property']}->{$details['primaryKey'][0]}]); ?>\n\t\t</td>\n";
 						break;
 					}
 				}
