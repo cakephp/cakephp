@@ -128,16 +128,13 @@ class ConnectionTest extends TestCase {
  *
  */
 	public function testFullTableName() {
-		/**
-		 * 
-		 * Test with empty array
-		 *
-		 */
 		$config = ConnectionManager::config('test');
 		$connectionNoPrefix = new Connection($config);
 		$config["prefix"] = "prefix_";
 		$connectionPrefix = new Connection($config);
 		$tableName = "users";
+
+		$this->assertEquals($connectionNoPrefix->fullTableName([]), []);
 
 		$fullTableName = $connectionNoPrefix->fullTableName($tableName);
 		$this->assertEquals($fullTableName, new TableNameExpression($tableName, ""));
