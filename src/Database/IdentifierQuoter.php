@@ -155,7 +155,7 @@ class IdentifierQuoter {
 					if (is_string($tableName)) {
 						$quoted = $this->_driver->quoteIdentifier($tableName);
 						$value->setName($quoted);
-						$value->isQuoted();
+						$value->setQuoted();
 					}
 				} else {
 					$value = !is_string($value) ? $value : $this->_driver->quoteIdentifier($value);
@@ -192,7 +192,7 @@ class IdentifierQuoter {
 				if (is_string($tableName)) {
 					$quoted = $this->_driver->quoteIdentifier($tableName);
 					$value['table']->setName($quoted);
-					$value['table']->isQuoted();
+					$value['table']->setQuoted();
 				}
 			} else {
 				if (is_string($value['table'])) {

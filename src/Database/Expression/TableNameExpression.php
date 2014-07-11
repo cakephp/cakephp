@@ -74,15 +74,6 @@ class TableNameExpression implements ExpressionInterface {
     }
 
 /**
- * Change the $_quoted property that to tell that the $_name property was quoted
- *
- * @return void
- */
-    public function isQuoted() {
-        $this->_quoted = true;
-    }
-
-/**
  * Constructor
  * 
  * @param string $name Table name
@@ -98,6 +89,21 @@ class TableNameExpression implements ExpressionInterface {
             $alias = null;
         }
         $this->_alias = $alias;
+    }
+
+/**
+ * Change the $_quoted property that to tell that the $_name property was quoted
+ *
+ * @param bool $quoted Boolean indicating whether the $_name property was quoted or not
+ * 
+ * @return void
+ */
+    public function setQuoted($quoted = true) {
+        if ($quoted === true) {
+            $this->_quoted = true;
+        } else {
+            $this->_quoted = false;
+        }
     }
 
 /**
