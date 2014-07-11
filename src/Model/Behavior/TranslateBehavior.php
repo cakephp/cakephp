@@ -286,7 +286,8 @@ class TranslateBehavior extends Behavior {
 				$name = $field . '_translation';
 				$translation = $row->get($name);
 
-				if (!$translation) {
+				if ($translation === null || $translation === false) {
+					$row->unsetProperty($name);
 					continue;
 				}
 
