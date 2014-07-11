@@ -1032,4 +1032,23 @@ class MarshallerTest extends TestCase {
 		$this->assertFalse($entity->accessible('*'));
 	}
 
+/**
+ * Test that many() also receives a fieldList option
+ *
+ * @return void
+ */
+	public function testManyFieldList() {
+		$data = [
+			['comment' => 'First post', 'user_id' => 2, 'foo' => 'bar'],
+			['comment' => 'Second post', 'user_id' => 2, 'foo' => 'bar'],
+		];
+		$marshall = new Marshaller($this->comments);
+		$result = $marshall->many($data, ['fieldList' => ['comment', 'user_id']]);
+
+		$this->assertCount(2, $result);
+		unset($data[0]['foo'], $data[1]['foo']);
+		$this->assertEquals($data[0], $result[0]->toArray());
+		$this->assertEquals($data[1], $result[1]->toArray());
+	}
+
 }
