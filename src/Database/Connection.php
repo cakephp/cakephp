@@ -194,10 +194,10 @@ class Connection {
  * 
  * Wrap the table name in a TableNameExpression with the current config prefix
  *
- * @param string|array|\Cake\ORM\Query $names The names of the tables
+ * @param string|array|ExpressionInterface $names The names of the tables
  *
  * @see \Cake\Database\Expression\TableNameExpression
- * @return string|array|\Cake\ORM\Query Full tables names
+ * @return string|array|ExpressionInterface Full tables names
  *
  */
 	public function fullTableName($names) {
