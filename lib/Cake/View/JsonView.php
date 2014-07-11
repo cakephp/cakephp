@@ -105,7 +105,12 @@ class JsonView extends View {
 		if (isset($this->viewVars['_serialize'])) {
 			$return = $this->_serialize($this->viewVars['_serialize']);
 		} elseif ($view !== false && $this->_getViewFileName($view)) {
-			$return = parent::render($view, false);
+			/* default layout */
+			if($layout === null && file_exists(APP.DS.'View'.DS.'Layouts'.DS.'json'.DS.'default.ctp')) {
+				$return = parent::render($view, 'default');
+			} else {
+				$return = parent::render($view, false);
+			}
 		}
 
 		if (!empty($this->viewVars['_jsonp'])) {
