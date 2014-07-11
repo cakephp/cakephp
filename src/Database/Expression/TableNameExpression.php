@@ -15,9 +15,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
-use Cake\Database\Query;
 
 /**
  * Represents a table name from the datasource
