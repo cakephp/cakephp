@@ -77,7 +77,7 @@ class ValidationRuleTest extends TestCase {
  * Make sure errors are triggered when validation is missing.
  *
  * @expectedException \InvalidArgumentException
- * @expectedExceptionMessage Unable to call method totallyMissing in default provider
+ * @expectedExceptionMessage Unable to call method "totallyMissing" in "default" provider for field "test"
  * @return void
  */
 	public function testCustomMethodMissingError() {
@@ -86,7 +86,7 @@ class ValidationRuleTest extends TestCase {
 		$providers = ['default' => $this];
 
 		$Rule = new ValidationRule($def);
-		$Rule->process($data, $providers, ['newRecord' => true]);
+		$Rule->process($data, $providers, ['newRecord' => true, 'field' => 'test']);
 	}
 
 /**
