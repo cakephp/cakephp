@@ -37,13 +37,6 @@ class Marshaller {
 	use AssociationsNormalizerTrait;
 
 /**
- * Whether or not this marhshaller is in safe mode.
- *
- * @var bool
- */
-	protected $_safe;
-
-/**
  * The table instance this marshaller is for.
  *
  * @var \Cake\ORM\Table
@@ -54,20 +47,23 @@ class Marshaller {
  * Constructor.
  *
  * @param \Cake\ORM\Table $table The table this marshaller is for.
- * @param bool $safe Whether or not this marshaller is in safe mode
  */
-	public function __construct(Table $table, $safe = false) {
+	public function __construct(Table $table) {
 		$this->_table = $table;
-		$this->_safe = $safe;
 	}
 
 /**
  * Build the map of property => association names.
  *
- * @param array $include The array of included associations.
+ * @param array $options List of options containing the 'associated' key.
  * @return array
  */
-	protected function _buildPropertyMap($include) {
+	protected function _buildPropertyMap($options) {
+		if (empty($options['associated'])) {
+			return [];
+		}
+
+		$include = $options['associated'];
 		$map = [];
 		$include = $this->_normalizeAssociations($include);
 		foreach ($include as $key => $nested) {
@@ -91,12 +87,13 @@ class Marshaller {
  * Hydrate one entity and its associated data.
  *
  * @param array $data The data to hydrate.
- * @param array $include The associations to include.
+ * @param array $options List of options, if the 'associated' key is present
+ * associations listed there will be marshalled as well.
  * @return \Cake\ORM\Entity
  * @see \Cake\ORM\Table::newEntity()
  */
-	public function one(array $data, array $include = []) {
-		$propertyMap = $this->_buildPropertyMap($include);
+	public function one(array $data, array $options = []) {
+		$propertyMap = $this->_buildPropertyMap($options);
 
 		$schema = $this->_table->schema();
 		$tableName = $this->_table->alias();
@@ -113,7 +110,7 @@ class Marshaller {
 			$columnType = $schema->columnType($key);
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
-				$nested = $propertyMap[$key]['nested'];
+				$nested = ['associated' => $propertyMap[$key]['nested']];
 				$value = $this->_marshalAssociation($assoc, $value, $nested);
 			} elseif ($columnType) {
 				$converter = Type::build($columnType);
@@ -130,34 +127,35 @@ class Marshaller {
  *
  * @param \Cake\ORM\Association $assoc The association to marshall
  * @param array $value The data to hydrate
- * @param array $include The associations to include.
+ * @param array $options List of options.
  * @return mixed
  */
-	protected function _marshalAssociation($assoc, $value, $include) {
+	protected function _marshalAssociation($assoc, $value, $options) {
 		$targetTable = $assoc->target();
 		$marshaller = $targetTable->marshaller();
 		$types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
 		if (in_array($assoc->type(), $types)) {
-			return $marshaller->one($value, (array)$include);
+			return $marshaller->one($value, (array)$options);
 		}
 		if ($assoc->type() === Association::MANY_TO_MANY) {
-			return $marshaller->_belongsToMany($assoc, $value, (array)$include);
+			return $marshaller->_belongsToMany($assoc, $value, (array)$options);
 		}
-		return $marshaller->many($value, (array)$include);
+		return $marshaller->many($value, (array)$options);
 	}
 
 /**
  * Hydrate many entities and their associated data.
  *
  * @param array $data The data to hydrate.
- * @param array $include The associations to include.
+ * @param array $options List of options, if the 'associated' key is present
+ * associations listed there will be marshelled as well.
  * @return array An array of hydrated records.
  * @see \Cake\ORM\Table::newEntities()
  */
-	public function many(array $data, array $include = []) {
+	public function many(array $data, array $options = []) {
 		$output = [];
 		foreach ($data as $record) {
-			$output[] = $this->one($record, $include);
+			$output[] = $this->one($record, $options);
 		}
 		return $output;
 	}
@@ -170,10 +168,11 @@ class Marshaller {
  *
  * @param Association $assoc The association to marshal.
  * @param array $data The data to convert into entities.
- * @param array $include The nested associations to convert.
+ * @param array $options List of options.
  * @return array An array of built entities.
  */
-	protected function _belongsToMany(Association $assoc, array $data, $include = []) {
+	protected function _belongsToMany(Association $assoc, array $data, $options = []) {
+		$associated = isset($options['associated']) ? $options['associated'] : [];
 		$hasIds = array_key_exists('_ids', $data);
 		if ($hasIds && is_array($data['_ids'])) {
 			return $this->_loadBelongsToMany($assoc, $data['_ids']);
@@ -182,13 +181,13 @@ class Marshaller {
 			return [];
 		}
 
-		$records = $this->many($data, $include);
+		$records = $this->many($data, $options);
 		$joint = $assoc->junction();
 		$jointMarshaller = $joint->marshaller();
 
 		$nested = [];
-		if (isset($include['_joinData']['associated'])) {
-			$nested = (array)$include['_joinData']['associated'];
+		if (isset($associated['_joinData']['associated'])) {
+			$nested = ['associated' => (array)$associated['_joinData']['associated']];
 		}
 
 		foreach ($records as $i => $record) {
@@ -226,7 +225,7 @@ class Marshaller {
 
 /**
  * Merges `$data` into `$entity` and recursively does the same for each one of
- * the association names passed in `$include`. When merging associations, if an
+ * the association names passed in `$options`. When merging associations, if an
  * entity is not present in the parent entity for a given association, a new one
  * will be created.
  *
@@ -237,11 +236,12 @@ class Marshaller {
  * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
  * data merged in
  * @param array $data key value list of fields to be merged into the entity
- * @param array $include The list of associations to be merged
+ * @param array $options List of options, if the 'associated' key is present
+ * associations listed there will be marshalled as well.
  * @return \Cake\Datasource\EntityInterface
  */
-	public function merge(EntityInterface $entity, array $data, array $include = []) {
-		$propertyMap = $this->_buildPropertyMap($include);
+	public function merge(EntityInterface $entity, array $data, array $options = []) {
+		$propertyMap = $this->_buildPropertyMap($options);
 		$tableName = $this->_table->alias();
 
 		if (isset($data[$tableName])) {
@@ -256,7 +256,7 @@ class Marshaller {
 
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
-				$nested = $propertyMap[$key]['nested'];
+				$nested = ['associated' => $propertyMap[$key]['nested']];
 				$value = $this->_mergeAssociation($original, $assoc, $value, $nested);
 			} elseif ($columnType) {
 				$converter = Type::build($columnType);
@@ -276,7 +276,7 @@ class Marshaller {
 /**
  * Merges each of the elements from `$data` into each of the entities in `$entities
  * and recursively does the same for each one of the association names passed in
- * `$include`. When merging associations, if an entity is not present in the parent
+ * `$options`. When merging associations, if an entity is not present in the parent
  * entity for such association, a new one will be created.
  *
  * Records in `$data` are matched against the entities by using the primary key
@@ -291,10 +291,11 @@ class Marshaller {
  * @param array|\Traversable $entities the entities that will get the
  * data merged in
  * @param array $data list of arrays to be merged into the entities
- * @param array $include The list of associations to be merged
+ * @param array $options List of options, if the 'associated' key is present
+ * associations listed there will be marshalled as well.
  * @return array
  */
-	public function mergeMany($entities, array $data, array $include = []) {
+	public function mergeMany($entities, array $data, array $options = []) {
 		$primary = (array)$this->_table->primaryKey();
 		$indexed = (new Collection($data))->groupBy($primary[0])->toArray();
 		$new = isset($indexed[null]) ? [$indexed[null]] : [];
@@ -312,13 +313,13 @@ class Marshaller {
 				continue;
 			}
 
-			$output[] = $this->merge($entity, $indexed[$key][0], $include);
+			$output[] = $this->merge($entity, $indexed[$key][0], $options);
 			unset($indexed[$key]);
 		}
 
 		foreach (array_merge($indexed, $new) as $record) {
 			foreach ($record as $value) {
-				$output[] = $this->one($value, $include);
+				$output[] = $this->one($value, $options);
 			}
 		}
 		return $output;
@@ -330,24 +331,24 @@ class Marshaller {
  * @param \Cake\Datasource\EntityInterface $original The original entity
  * @param \Cake\ORM\Association $assoc The association to merge
  * @param array $value The data to hydrate
- * @param array $include The associations to include.
+ * @param array $options List of options.
  * @return mixed
  */
-	protected function _mergeAssociation($original, $assoc, $value, $include) {
+	protected function _mergeAssociation($original, $assoc, $value, $options) {
 		if (!$original) {
-			return $this->_marshalAssociation($assoc, $value, $include);
+			return $this->_marshalAssociation($assoc, $value, $options);
 		}
 
 		$targetTable = $assoc->target();
 		$marshaller = $targetTable->marshaller();
 		$types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
 		if (in_array($assoc->type(), $types)) {
-			return $marshaller->merge($original, $value, (array)$include);
+			return $marshaller->merge($original, $value, (array)$options);
 		}
 		if ($assoc->type() === Association::MANY_TO_MANY) {
-			return $marshaller->_mergeBelongsToMany($original, $assoc, $value, (array)$include);
+			return $marshaller->_mergeBelongsToMany($original, $assoc, $value, (array)$options);
 		}
-		return $marshaller->mergeMany($original, $value, (array)$include);
+		return $marshaller->mergeMany($original, $value, (array)$options);
 	}
 
 /**
@@ -357,11 +358,12 @@ class Marshaller {
  * @param \Cake\Datasource\EntityInterface $original The original entity
  * @param \Cake\ORM\Association $assoc The association to marshall
  * @param array $value The data to hydrate
- * @param array $include The associations to include.
+ * @param array $options List of options.
  * @return mixed
  */
-	protected function _mergeBelongsToMany($original, $assoc, $value, $include) {
+	protected function _mergeBelongsToMany($original, $assoc, $value, $options) {
 		$hasIds = array_key_exists('_ids', $value);
+		$associated = isset($options['associated']) ? $options['associated'] : [];
 		if ($hasIds && is_array($value['_ids'])) {
 			return $this->_loadBelongsToMany($assoc, $value['_ids']);
 		}
@@ -369,8 +371,8 @@ class Marshaller {
 			return [];
 		}
 
-		if (!in_array('_joinData', $include) && !isset($include['_joinData'])) {
-			return $this->mergeMany($original, $value, $include);
+		if (!in_array('_joinData', $associated) && !isset($associated['_joinData'])) {
+			return $this->mergeMany($original, $value, $options);
 		}
 
 		$extra = [];
@@ -385,11 +387,11 @@ class Marshaller {
 		$marshaller = $joint->marshaller();
 
 		$nested = [];
-		if (isset($include['_joinData']['associated'])) {
-			$nested = (array)$include['_joinData']['associated'];
+		if (isset($associated['_joinData']['associated'])) {
+			$nested = ['associated' => (array)$associated['_joinData']['associated']];
 		}
 
-		$records = $this->mergeMany($original, $value, $include);
+		$records = $this->mergeMany($original, $value, $options);
 		foreach ($records as $record) {
 			$hash = spl_object_hash($record);
 			$value = $record->get('_joinData');

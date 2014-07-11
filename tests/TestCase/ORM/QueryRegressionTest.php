@@ -225,14 +225,13 @@ class QueryRegressionTest extends TestCase {
 				]
 			]
 		];
-		$entity = $articles->patchEntity($entity, $data, [
-			'Highlights._joinData.Authors', 'Highlights.Authors'
-		]);
-		$articles->save($entity, [
+		$options = [
 			'associated' => [
 				'Highlights._joinData.Authors', 'Highlights.Authors'
 			]
-		]);
+		];
+		$entity = $articles->patchEntity($entity, $data, $options);
+		$articles->save($entity, $options);
 		$entity = $articles->get(2, [
 			'contain' => [
 				'SpecialTags' => ['sort' => ['SpecialTags.id' => 'ASC']],

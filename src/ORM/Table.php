@@ -1576,13 +1576,11 @@ class Table implements RepositoryInterface, EventListener {
  * Override this method if you want a table object to use custom
  * marshalling logic.
  *
- * @param bool $safe Whether or not this marshaller
- *   should be in safe mode.
  * @return \Cake\ORM\Marshaller
  * @see \Cake\ORM\Marshaller
  */
-	public function marshaller($safe = false) {
-		return new Marshaller($this, $safe);
+	public function marshaller() {
+		return new Marshaller($this);
 	}
 
 /**
@@ -1602,22 +1600,22 @@ class Table implements RepositoryInterface, EventListener {
  *
  * By default all the associations on this table will be hydrated. You can
  * limit which associations are built, or include deeper associations
- * using the associations parameter:
+ * using the options parameter:
  *
  * {{{
  * $articles = $this->Articles->newEntity(
  *   $this->request->data(),
- *   ['Tags', 'Comments.Users']
+ *   ['associated' => ['Tags', 'Comments.Users']]
  * );
  * }}}
  *
  */
-	public function newEntity(array $data = [], $associations = null) {
-		if ($associations === null) {
-			$associations = $this->_associations->keys();
+	public function newEntity(array $data = [], array $options = []) {
+		if (!isset($options['associated'])) {
+			$options['associated'] = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
-		return $marshaller->one($data, $associations);
+		return $marshaller->one($data, $options);
 	}
 
 /**
@@ -1625,19 +1623,19 @@ class Table implements RepositoryInterface, EventListener {
  *
  * By default all the associations on this table will be hydrated. You can
  * limit which associations are built, or include deeper associations
- * using the associations parameter:
+ * using the options parameter:
  *
  * {{{
  * $articles = $this->Articles->newEntities(
  *   $this->request->data(),
- *   ['Tags', 'Comments.Users']
+ *   ['associated' => ['Tags', 'Comments.Users']]
  * );
  * }}}
  *
  */
-	public function newEntities(array $data, $associations = null) {
-		if ($associations === null) {
-			$associations = $this->_associations->keys();
+	public function newEntities(array $data, array $options = []) {
+		if (!isset($options['associated'])) {
+			$options['associated'] = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
 		return $marshaller->many($data, $associations);
@@ -1650,12 +1648,12 @@ class Table implements RepositoryInterface, EventListener {
  * `$data` array will appear, those that can be matched by primary key will get
  * the data merged, but those that cannot, will be discarded.
  */
-	public function patchEntity(EntityInterface $entity, array $data, $associations = null) {
-		if ($associations === null) {
-			$associations = $this->_associations->keys();
+	public function patchEntity(EntityInterface $entity, array $data, array $options = []) {
+		if (!isset($options['associated'])) {
+			$options['associated'] = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
-		return $marshaller->merge($entity, $data, $associations);
+		return $marshaller->merge($entity, $data, $options);
 	}
 
 /**
@@ -1669,12 +1667,12 @@ class Table implements RepositoryInterface, EventListener {
  * `$data` array will appear, those that can be matched by primary key will get
  * the data merged, but those that cannot, will be discarded.
  */
-	public function patchEntities($entities, array $data, $associations = null) {
-		if ($associations === null) {
-			$associations = $this->_associations->keys();
+	public function patchEntities($entities, array $data, array $options = []) {
+		if (!isset($options['associated'])) {
+			$options['associated'] = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
-		return $marshaller->mergeMany($entities, $data, $associations);
+		return $marshaller->mergeMany($entities, $data, $options);
 	}
 
 /**
