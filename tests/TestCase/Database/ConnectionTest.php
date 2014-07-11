@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -126,28 +127,38 @@ class ConnectionTest extends TestCase {
  * @return  void
  *
  */
-	// public function testFullTableName() {
-	// 	$config = ConnectionManager::config('test');
-	// 	$connectionNoPrefix = new Connection($config);
-	// 	$config["prefix"] = "prefix_";
-	// 	$connectionPrefix = new Connection($config);
-	// 	$tableName = "users";
-	// 	$tableNames = ["Posts" => "posts", "Users" => "users"];
-	// 	$expected = ["Posts" => "prefix_posts", "Users" => "prefix_users"];
-	// 	$subQuery = ["sub" => $this->connection->newQuery()->select('1 + 1')];
+	public function testFullTableName() {
+		/**
+		 * 
+		 * Test with empty array
+		 *
+		 */
+		$config = ConnectionManager::config('test');
+		$connectionNoPrefix = new Connection($config);
+		$config["prefix"] = "prefix_";
+		$connectionPrefix = new Connection($config);
+		$tableName = "users";
 
-	// 	$fullTableName = $connectionNoPrefix->fullTableName($tableName);
-	// 	$this->assertEquals($fullTableName, $tableName);
+		$fullTableName = $connectionNoPrefix->fullTableName($tableName);
+		$this->assertEquals($fullTableName, new TableNameExpression($tableName, ""));
 
-	// 	$fullTableName = $connectionPrefix->fullTableName($tableName);
-	// 	$this->assertEquals($fullTableName, $config["prefix"] . $tableName);
+		$fullTableName = $connectionPrefix->fullTableName($tableName);
+		$this->assertEquals($fullTableName, new TableNameExpression($tableName, $config["prefix"]));
 
-	// 	$fullTableNames = $connectionPrefix->fullTableName($tableNames);
-	// 	$this->assertSame($expected, $fullTableNames);
+		$tableNames = ["Posts" => "posts", "Users" => "users"];
+		$expected = [
+			"Posts" => new TableNameExpression("posts", $config["prefix"]),
+			"Users" => new TableNameExpression("users", $config["prefix"])
+		];
+		$fullTableNames = $connectionPrefix->fullTableName($tableNames);
+		$this->assertEquals($fullTableNames, $expected);
 
-	// 	$fullTableNameSubQuery = $connectionPrefix->fullTableName($subQuery);
-	// 	$this->assertSame($subQuery, $fullTableNameSubQuery);
-	// }
+		$query = $this->connection->newQuery()->select('1 + 1');
+		$subQuery = ["sub" => $query];
+		$fullTableNameSubQuery = $connectionPrefix->fullTableName($subQuery);
+		$expected = ["sub" => new TableNameExpression($query, $config["prefix"])];
+		$this->assertEquals($fullTableNameSubQuery, $expected);
+	}
 
 /**
  * Tests creation of prepared statements
