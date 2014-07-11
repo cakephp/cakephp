@@ -150,17 +150,7 @@ class IdentifierQuoter {
 
 		if (!empty($froms)) {
 			foreach ($froms as $alias => $value) {
-				if ($value instanceof TableNameExpression) {
-					$tableName = $value->getName();
-					if (is_string($tableName)) {
-						$quoted = $this->_driver->quoteIdentifier($tableName);
-						$value->setName($quoted);
-						$value->setQuoted();
-					}
-				} else {
-					$value = !is_string($value) ? $value : $this->_driver->quoteIdentifier($value);
-				}
-
+				$value = $this->_quoteTableName($value);
 				$alias = is_numeric($alias) ? $alias : $this->_driver->quoteIdentifier($alias);
 				
 				$result[$alias] = $value;
@@ -187,23 +177,36 @@ class IdentifierQuoter {
 				$value['alias'] = $alias;
 			}
 
-			if ($value['table'] instanceof TableNameExpression) {
-				$tableName = $value['table']->getName();
-				if (is_string($tableName)) {
-					$quoted = $this->_driver->quoteIdentifier($tableName);
-					$value['table']->setName($quoted);
-					$value['table']->setQuoted();
-				}
-			} else {
-				if (is_string($value['table'])) {
-					$value['table'] = $this->_driver->quoteIdentifier($value['table']);
-				}
-			}
+			$value['table'] = $this->_quoteTableName($value['table']);
 
 			$result[$alias] = $value;
 		}
 
 		return $result;
+	}
+
+/**
+ * 
+ * Quotes the table name (either from a from or a join) taking into account
+ * if the $name parameter is a TableNameExpression or not
+ *
+ * @param string|TableNameExpression|QueryExpression|\Cake\Database\Query $name Table name to quote
+ *
+ * @return string|TableNameExpression|QueryExpression|\Cake\Database\Query
+ */
+	protected function _quoteTableName($name) {
+		if ($name instanceof TableNameExpression) {
+			$tableName = $name->getName();
+			if (is_string($tableName)) {
+				$quoted = $this->_driver->quoteIdentifier($tableName);
+				$name->setName($quoted);
+				$name->setQuoted();
+			}
+		} else {
+			$name = !is_string($name) ? $name : $this->_driver->quoteIdentifier($name);
+		}
+
+		return $name;
 	}
 
 /**
