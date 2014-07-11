@@ -41,13 +41,6 @@ class TableNameExpression implements ExpressionInterface {
     protected $_prefix;
 
 /**
- * Holds the alias to the table name
- *
- * @var string
- */
-    protected $_alias;
-
-/**
  * Tells whether the current $_name is quoted or not
  *
  * @var bool
@@ -81,14 +74,9 @@ class TableNameExpression implements ExpressionInterface {
  * @param string $type Type of request (from or join)
  * @param string $alias Table name alias
  */
-    public function __construct($name, $prefix, $type, $alias = null) {
+    public function __construct($name, $prefix) {
         $this->setName($name);
         $this->_prefix = $prefix;
-
-        if (is_numeric($alias)) {
-            $alias = null;
-        }
-        $this->_alias = $alias;
     }
 
 /**

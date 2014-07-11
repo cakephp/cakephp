@@ -200,7 +200,7 @@ class Connection {
  * @return string|array|\Cake\ORM\Query Full tables names
  *
  */
-	public function fullTableName($names, $type = "from") {
+	public function fullTableName($names) {
 		$prefix = "";
 
 		if (isset($this->_config["prefix"]) && $this->_config["prefix"] !== "") {
@@ -210,11 +210,11 @@ class Connection {
 		if (is_array($names) && !empty($names)) {
 			foreach ($names as $alias => $tableName) {
 				if (is_string($tableName) || $tableName instanceof Query || $tableName instanceof QueryExpression) {
-					$names[$alias] = new TableNameExpression($tableName, $prefix, $type, $alias);
+					$names[$alias] = new TableNameExpression($tableName, $prefix);
 				}
 			}
 		} else {
-			$names = new TableNameExpression($names, $prefix, $type);
+			$names = new TableNameExpression($names, $prefix);
 		}
 
 		return $names;
