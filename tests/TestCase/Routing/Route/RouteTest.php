@@ -582,6 +582,20 @@ class RouteTest extends TestCase {
 		$result = $route->parse('/admin/posts');
 		$this->assertEquals('posts', $result['controller']);
 		$this->assertEquals('index', $result['action']);
+
+		$route = new Route(
+			'/media/search/*',
+			['controller' => 'Media', 'action' => 'search']
+		);
+		$result = $route->parse('/media/search');
+		$this->assertEquals('Media', $result['controller']);
+		$this->assertEquals('search', $result['action']);
+		$this->assertEquals([], $result['pass']);
+
+		$result = $route->parse('/media/search/tv/shows');
+		$this->assertEquals('Media', $result['controller']);
+		$this->assertEquals('search', $result['action']);
+		$this->assertEquals(['tv', 'shows'], $result['pass']);
 	}
 
 /**
@@ -941,8 +955,11 @@ class RouteTest extends TestCase {
  * @return void
  */
 	public function testStaticPath() {
+		$route = new Route('/*', ['controller' => 'Pages', 'action' => 'display']);
+		$this->assertEquals('/', $route->staticPath());
+
 		$route = new Route('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
-		$this->assertEquals('/pages/', $route->staticPath());
+		$this->assertEquals('/pages', $route->staticPath());
 
 		$route = new Route('/pages/:id/*', ['controller' => 'Pages', 'action' => 'display']);
 		$this->assertEquals('/pages/', $route->staticPath());
