@@ -67,10 +67,8 @@ class TableNameExpression implements ExpressionInterface {
 /**
  * Constructor
  * 
- * @param string $name Table name
+ * @param string|ExpressionInterface $name Table name
  * @param string $prefix Prefix to prepend
- * @param string $type Type of request (from or join)
- * @param string $alias Table name alias
  */
     public function __construct($name, $prefix) {
         $this->setName($name);
