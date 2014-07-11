@@ -712,7 +712,7 @@ CREATE TABLE "articles" (
 SQL;
 		$result = $table->createSql($connection);
 		$this->assertCount(2, $result);
-		$this->assertEquals($expected, $result[0]);
+		$this->assertTextEquals($expected, $result[0]);
 		$this->assertEquals(
 			'CREATE INDEX "title_idx" ON "articles" ("title")',
 			$result[1]
