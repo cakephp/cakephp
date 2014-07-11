@@ -14,10 +14,10 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
-use Cake\Routing\Route\Route;
-use Cake\Routing\Router;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
+use Cake\Routing\Router;
+use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 
 class RouteCollectionTest extends TestCase {
@@ -56,6 +56,7 @@ class RouteCollectionTest extends TestCase {
 		$routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
 		$routes->connect('/', ['controller' => 'Articles']);
 		$routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+		$routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search']);
 
 		$result = $this->collection->parse('/b/');
 		$expected = [
@@ -76,6 +77,26 @@ class RouteCollectionTest extends TestCase {
 			'plugin' => null,
 			'key' => 'value',
 			'?' => ['one' => 'two'],
+		];
+		$this->assertEquals($expected, $result);
+
+		$result = $this->collection->parse('/b/media/search');
+		$expected = [
+			'key' => 'value',
+			'pass' => [],
+			'plugin' => null,
+			'controller' => 'Media',
+			'action' => 'search'
+		];
+		$this->assertEquals($expected, $result);
+
+		$result = $this->collection->parse('/b/media/search/thing');
+		$expected = [
+			'key' => 'value',
+			'pass' => ['thing'],
+			'plugin' => null,
+			'controller' => 'Media',
+			'action' => 'search'
 		];
 		$this->assertEquals($expected, $result);
 	}

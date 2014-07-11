@@ -52,7 +52,7 @@ class Collection {
 /**
  * Constructor.
  *
- * @param \Cake\Database\Connection $connection
+ * @param \Cake\Database\Connection $connection The connection instance.
  */
 	public function __construct(Connection $connection) {
 		$this->_connection = $connection;

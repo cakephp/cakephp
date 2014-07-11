@@ -30,6 +30,20 @@ use Cake\ORM\TableRegistry;
 class BelongsToTest extends \Cake\TestSuite\TestCase {
 
 /**
+ * Fixtures to use.
+ *
+ * @var array
+ */
+	public $fixtures = ['core.article', 'core.comment'];
+
+/**
+ * Don't autoload fixtures as most tests uses mocks.
+ *
+ * @var bool
+ */
+	public $autoFixture = false;
+
+/**
  * Set up
  *
  * @return void

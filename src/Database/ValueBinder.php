@@ -105,7 +105,7 @@ class ValueBinder {
 /**
  * Binds all the stored values in this object to the passed statement.
  *
- * @param \Cake\Database\StatementInterface $statement
+ * @param \Cake\Database\StatementInterface $statement The statement to add parameters to.
  * @return void
  */
 	public function attachTo($statement) {

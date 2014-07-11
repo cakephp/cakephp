@@ -68,7 +68,7 @@ class Comparison extends QueryExpression {
 /**
  * Sets the field name
  *
- * @param string $field
+ * @param string $field The field to compare with.
  * @return void
  */
 	public function field($field) {
@@ -78,7 +78,7 @@ class Comparison extends QueryExpression {
 /**
  * Sets the value
  *
- * @param mixed $value
+ * @param mixed $value The value to compare
  * @return void
  */
 	public function value($value) {
@@ -123,7 +123,7 @@ class Comparison extends QueryExpression {
  * Returns a template and an placeholder for the value after registering it
  * with the placeholder $generator
  *
- * @param ValueBinder $generator
+ * @param \Cake\Database\ValueBinder $generator The value binder to use.
  * @return array First position containing the template and the second a placeholder
  */
 	protected function _stringExpression($generator) {
@@ -141,9 +141,9 @@ class Comparison extends QueryExpression {
 /**
  * Registers a value in the placeholder generator and returns the generated placeholder
  *
- * @param mixed $value
- * @param ValueBinder $generator
- * @param string $type
+ * @param mixed $value The value to bind
+ * @param \Cake\Database\ValueBinder $generator The value binder to use
+ * @param string $type The type of $value
  * @return string generated placeholder
  */
 	protected function _bindValue($value, $generator, $type) {
@@ -157,7 +157,7 @@ class Comparison extends QueryExpression {
  * $generator and separated by `,`
  *
  * @param array|\Traversable $value the value to flatten
- * @param ValueBinder $generator
+ * @param \Cake\Database\ValueBinder $generator The value binder to use
  * @param string|array $type the type to cast values to
  * @return string
  */

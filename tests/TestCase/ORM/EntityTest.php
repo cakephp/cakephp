@@ -825,6 +825,34 @@ class EntityTest extends TestCase {
 	}
 
 /**
+ * Test that errors can be read with a path.
+ *
+ * @return void
+ */
+	public function testErrorPathReading() {
+		$assoc = new Entity;
+		$entity = new Entity([
+			'field' => 'value',
+			'one' => $assoc,
+			'many' => [$assoc]
+		]);
+		$entity->errors('wrong', 'Bad stuff');
+		$assoc->errors('nope', 'Terrible things');
+
+		$this->assertEquals(['Bad stuff'], $entity->errors('wrong'));
+		$this->assertEquals(['Terrible things'], $entity->errors('many.0.nope'));
+		$this->assertEquals(['Terrible things'], $entity->errors('one.nope'));
+		$this->assertEquals(['nope' => ['Terrible things']], $entity->errors('one'));
+		$this->assertEquals([0 => ['nope' => ['Terrible things']]], $entity->errors('many'));
+		$this->assertEquals(['nope' => ['Terrible things']], $entity->errors('many.0'));
+
+		$this->assertEquals([], $entity->errors('many.0.mistake'));
+		$this->assertEquals([], $entity->errors('one.mistake'));
+		$this->assertEquals([], $entity->errors('one.1.mistake'));
+		$this->assertEquals([], $entity->errors('many.1.nope'));
+	}
+
+/**
  * Tests that changing the value of a property will remove errors
  * stored for it
  *

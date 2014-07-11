@@ -148,17 +148,9 @@ class HtmlHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->link('Home', '/home', array('default' => false));
+		$result = $this->Html->link('Home', '/home', array('onclick' => 'someFunction();'));
 		$expected = array(
-			'a' => array('href' => '/home', 'onclick' => 'event.returnValue = false; return false;'),
-			'Home',
-			'/a'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Html->link('Home', '/home', array('default' => false, 'onclick' => 'someFunction();'));
-		$expected = array(
-			'a' => array('href' => '/home', 'onclick' => 'someFunction(); event.returnValue = false; return false;'),
+			'a' => array('href' => '/home', 'onclick' => 'someFunction();'),
 			'Home',
 			'/a'
 		);

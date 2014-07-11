@@ -1416,41 +1416,41 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Creates an HTML link, but access the URL using the method you specify (defaults to POST).
- * Requires javascript to be enabled in browser.
+ * Creates an HTML link, but access the URL using the method you specify
+ * (defaults to POST). Requires javascript to be enabled in browser.
  *
- * This method creates a `<form>` element. So do not use this method inside an existing form.
- * Instead you should add a submit button using FormHelper::submit()
+ * This method creates a `<form>` element. So do not use this method inside an
+ * existing form. Instead you should add a submit button using FormHelper::submit()
  *
  * ### Options:
  *
  * - `data` - Array with key/value to pass in input hidden
- * - `method` - Request method to use. Set to 'delete' to simulate HTTP/1.1 DELETE request. Defaults to 'post'.
- * - `confirm` - Can be used instead of $confirmMessage.
+ * - `method` - Request method to use. Set to 'delete' to simulate
+ *   HTTP/1.1 DELETE request. Defaults to 'post'.
+ * - `confirm` - Confirm message to show.
  * - `block` - Set to true to append form to view block "postLink" or provide
  *   custom block name.
  * - Other options are the same of HtmlHelper::link() method.
  * - The option `onclick` will be replaced.
  *
  * @param string $title The content to be wrapped by <a> tags.
- * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
+ * @param string|array $url Cake-relative URL or array of URL parameters, or
+ *   external URL (starts with http://)
  * @param array $options Array of HTML attributes.
- * @param bool|string $confirmMessage JavaScript confirmation message.
  * @return string An `<a />` element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */
-	public function postLink($title, $url = null, array $options = array(), $confirmMessage = false) {
-		$options += array('block' => null);
+	public function postLink($title, $url = null, array $options = array()) {
+		$options += array('block' => null, 'confirm' => null);
 
 		$requestMethod = 'POST';
 		if (!empty($options['method'])) {
 			$requestMethod = strtoupper($options['method']);
 			unset($options['method']);
 		}
-		if (!empty($options['confirm'])) {
-			$confirmMessage = $options['confirm'];
-			unset($options['confirm']);
-		}
+
+		$confirmMessage = $options['confirm'];
+		unset($options['confirm']);
 
 		$formName = str_replace('.', '', uniqid('post_', true));
 		$formOptions = array(

@@ -14,10 +14,10 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
-use Cake\Routing\Route\Route;
-use Cake\Routing\Router;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
+use Cake\Routing\Router;
+use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -286,6 +286,19 @@ class RouteBuilderTest extends TestCase {
 		$all = $this->collection->routes();
 		$this->assertEquals('/api/:controller', $all[0]->template);
 		$this->assertEquals('/api/:controller/:action/*', $all[1]->template);
+	}
+
+/**
+ * Test adding a scope.
+ *
+ * @return void
+ */
+	public function testScope() {
+		$routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
+		$routes->scope('/v1', ['version' => 1], function($routes) {
+			$this->assertEquals('/api/v1', $routes->path());
+			$this->assertEquals(['prefix' => 'api', 'version' => 1], $routes->params());
+		});
 	}
 
 }

@@ -2573,6 +2573,13 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$this->View->viewVars['users'] = null;
+		$result = $this->Form->input('Thing.user_id', array(
+			'options' => array('value' => 'good', 'other' => 'bad'),
+			'empty' => 'Some Empty'
+		));
+		$this->assertTags($result, $expected);
+
 		$this->Form->data = array();
 		$result = $this->Form->input('Publisher.id', array(
 				'label' => 'Publisher',
@@ -5356,7 +5363,7 @@ class FormHelperTest extends TestCase {
 			'/a'
 		));
 
-		$result = $this->Form->postLink('Delete', '/posts/delete/1', array(), 'Confirm?');
+		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('confirm' => 'Confirm?'));
 		$this->assertTags($result, array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
@@ -5369,7 +5376,11 @@ class FormHelperTest extends TestCase {
 			'/a'
 		));
 
-		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('escape' => false), '\'Confirm\' this "deletion"?');
+		$result = $this->Form->postLink(
+			'Delete',
+			'/posts/delete/1',
+			array('escape' => false, 'confirm' => '\'Confirm\' this "deletion"?')
+		);
 		$this->assertTags($result, array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
@@ -5401,8 +5412,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->postLink(
 			'',
 			array('controller' => 'items', 'action' => 'delete', 10),
-			array('class' => 'btn btn-danger', 'escape' => false),
-			'Confirm thing'
+			array('class' => 'btn btn-danger', 'escape' => false, 'confirm' => 'Confirm thing')
 		);
 		$this->assertTags($result, array(
 			'form' => array(

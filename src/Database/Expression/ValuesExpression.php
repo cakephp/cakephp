@@ -57,7 +57,7 @@ class ValuesExpression implements ExpressionInterface {
  * Constructor
  *
  * @param array $columns The list of columns that are going to be part of the values.
- * @param TypeMap $types A dictionary of column -> type names
+ * @param \Cake\Database\TypeMap $typeMap A dictionary of column -> type names
  */
 	public function __construct(array $columns, $typeMap) {
 		$this->_columns = $columns;
@@ -123,7 +123,7 @@ class ValuesExpression implements ExpressionInterface {
  * to insert records in the table. If no params are passed, then it returns
  * the currently stored query
  *
- * @param \Cake\Database\Query $query
+ * @param \Cake\Database\Query $query The query to set/get
  * @return \Cake\Database\Query
  */
 	public function query(Query $query = null) {

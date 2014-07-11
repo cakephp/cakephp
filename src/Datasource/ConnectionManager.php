@@ -52,12 +52,11 @@ class ConnectionManager {
  *
  * The connection will not be constructed until it is first used.
  *
- * @see \Cake\Core\StaticConfigTrait::config()
- *
  * @param string|array $key The name of the connection config, or an array of multiple configs.
  * @param array $config An array of name => config data for adapter.
  * @return mixed null when adding configuration and an array of configuration data when reading.
  * @throws \Cake\Error\Exception When trying to modify an existing config.
+ * @see \Cake\Core\StaticConfigTrait::config()
  */
 	public static function config($key, $config = null) {
 		if (is_array($config)) {
@@ -134,31 +133,6 @@ class ConnectionManager {
 			return static::$_registry->{$name};
 		}
 		return static::$_registry->load($name, static::$_config[$name]);
-	}
-
-/**
- * Gets a reference to a DataSource object
- *
- * @param string $name The name of the DataSource, as defined in app/Config/datasources.php
- * @return DataSource Instance
- * @throws \Cake\Error\MissingDatasourceConfigException
- * @deprecated Will be removed in 3.0 stable.
- */
-	public static function getDataSource($name) {
-		return static::get($name);
-	}
-
-/**
- * Dynamically creates a DataSource object at runtime, with the given name and settings
- *
- * @param string $name The DataSource name
- * @param array $config The DataSource configuration settings
- * @return DataSource A reference to the DataSource object, or null if creation failed
- * @deprecated Will be removed in 3.0 stable
- */
-	public static function create($name = '', array $config = array()) {
-		static::config($name, $config);
-		return static::get($name);
 	}
 
 }

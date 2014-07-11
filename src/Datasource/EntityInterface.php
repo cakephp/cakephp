@@ -49,7 +49,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
  * Returns whether this entity contains a property named $property
  * regardless of if it is empty.
  *
- * @param string $property
+ * @param string $property The property to check.
  * @return bool
  */
 	public function has($property);
@@ -57,7 +57,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
 /**
  * Removes a property or list of properties from this entity
  *
- * @param string|array $property
+ * @param string|array $property The property to unset.
  * @return \Cake\ORM\
  */
 	public function unsetProperty($property);
@@ -68,7 +68,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
  * If the properties argument is null, the currently hidden properties
  * will be returned. Otherwise the hidden properties will be set.
  *
- * @param null|array Either an array of properties to hide or null to get properties
+ * @param null|array $properties Either an array of properties to hide or null to get properties
  * @return array|\Cake\DataSource\EntityInterface
  */
 	public function hiddenProperties($properties = null);
@@ -79,7 +79,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
  * If the properties argument is null, the currently virtual properties
  * will be returned. Otherwise the virtual properties will be set.
  *
- * @param null|array Either an array of properties to treat as virtual or null to get properties
+ * @param null|array $properties Either an array of properties to treat as virtual or null to get properties
  * @return array|\Cake\DataSource\EntityInterface
  */
 	public function virtualProperties($properties = null);
@@ -118,7 +118,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
  * dirty property in the entity
  *
  * @param string $property the field to set or check status for
- * @param null|bool true means the property was changed, false means
+ * @param null|bool $isDirty true means the property was changed, false means
  * it was not changed and null will make the function return current state
  * for that property
  * @return bool whether the property was changed or not
@@ -157,7 +157,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
  * This function returns true if there were no validation errors or false
  * otherwise.
  *
- * @param \Cake\Validation\Validator $validator
+ * @param \Cake\Validation\Validator $validator The validator to use when validating the entity.
  * @return bool
  */
 	public function validate(Validator $validator);
@@ -171,7 +171,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
  * When used as a setter, this method will return this entity instance for method
  * chaining.
  *
- * @param string|array $field
+ * @param string|array $field The field to get errors for.
  * @param string|array $errors The errors to be set for $field
  * @return array|\Cake\Datasource\EntityInterface
  */
@@ -184,7 +184,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
  * `$entity->accessible('*', true)`  means that any property not specified already
  * will be accessible by default.
  *
- * @param string|array single or list of properties to change its accessibility
+ * @param string|array $property Either a single or list of properties to change its accessibility.
  * @param bool $set true marks the property as accessible, false will
  * mark it as protected.
  * @return \Cake\Datasource\EntityInterface|bool

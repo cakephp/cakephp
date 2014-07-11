@@ -224,6 +224,11 @@ class Table {
  */
 	const ACTION_RESTRICT = 'restrict';
 
+/**
+ * Foreign key restrict default
+ *
+ * @var string
+ */
 	const ACTION_SET_DEFAULT = 'setDefault';
 
 /**
@@ -312,14 +317,19 @@ class Table {
 	}
 
 /**
- * Convenience method for getting the type of a given column.
+ * Sets the type of a column, or returns its current type
+ * if none is passed.
  *
  * @param string $name The column to get the type of.
+ * @param string $type The type to set the column to.
  * @return string|null Either the column type or null.
  */
-	public function columnType($name) {
+	public function columnType($name, $type = null) {
 		if (!isset($this->_columns[$name])) {
 			return null;
+		}
+		if ($type !== null) {
+			$this->_columns[$name]['type'] = $type;
 		}
 		return $this->_columns[$name]['type'];
 	}

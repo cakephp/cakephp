@@ -588,7 +588,8 @@ class Route {
 		}
 		$star = strpos($this->template, '*');
 		if ($star !== false) {
-			return substr($this->template, 0, $star);
+			$path = rtrim(substr($this->template, 0, $star), '/');
+			return $path === '' ? '/' : $path;
 		}
 		return $this->template;
 	}

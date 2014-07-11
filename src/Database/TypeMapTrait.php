@@ -47,7 +47,7 @@ trait TypeMapTrait {
 /**
  * Allows setting default types when chaining query
  *
- * @param array $types
+ * @param array $types The array of types to set.
  * @return this|array
  */
 	public function defaultTypes(array $types = null) {

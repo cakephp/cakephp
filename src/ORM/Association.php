@@ -286,7 +286,7 @@ abstract class Association {
  *
  * If no parameters are passed the current setting is returned.
  *
- * @param bool $dependent
+ * @param bool $dependent Set the dependent mode. Use null to read the current state.
  * @return bool
  */
 	public function dependent($dependent = null) {
@@ -326,7 +326,7 @@ abstract class Association {
  * in the source table record.
  * If no arguments are passed, the currently configured type is returned.
  *
- * @param string $name
+ * @param string $name The name of the association property. Use null to read the current value.
  * @return string
  */
 	public function property($name = null) {
@@ -346,7 +346,7 @@ abstract class Association {
  * rendering any changes to this setting void.
  * If no arguments are passed, the currently configured strategy is returned.
  *
- * @param string $name
+ * @param string $name The strategy type. Use null to read the current value.
  * @return string
  * @throws \InvalidArgumentException When an invalid strategy is provided.
  */
@@ -446,11 +446,11 @@ abstract class Association {
  * Correctly nests a result row associated values into the correct array keys inside the
  * source results.
  *
- * @param array $row
+ * @param array $row The row to transform
  * @param string $nestKey The array key under which the results for this association
- * should be found
+ *   should be found
  * @param bool $joined Whether or not the row is a result of a direct join
- * with this association
+ *   with this association
  * @return array
  */
 	public function transformRow($row, $nestKey, $joined) {
@@ -468,9 +468,9 @@ abstract class Association {
  * with the default empty value according to whether the association was
  * joined or fetched externally.
  *
- * @param array $row
+ * @param array $row The row to set a default on.
  * @param bool $joined Whether or not the row is a result of a direct join
- * with this association
+ *   with this association
  * @return array
  */
 	public function defaultRowValue($row, $joined) {
@@ -487,8 +487,8 @@ abstract class Association {
  * configuration
  *
  * @param string|array $type the type of query to perform, if an array is passed,
- * it will be interpreted as the `$options` parameter
- * @param array $options
+ *   it will be interpreted as the `$options` parameter
+ * @param array $options The options to for the find
  * @see \Cake\ORM\Table::find()
  * @return \Cake\ORM\Query
  */
@@ -693,7 +693,7 @@ abstract class Association {
  * Proxies method calls to the target table.
  *
  * @param string $method name of the method to be invoked
- * @param array $args List of arguments passed to the function
+ * @param array $argument List of arguments passed to the function
  * @return mixed
  * @throws \BadMethodCallException
  */
@@ -735,7 +735,7 @@ abstract class Association {
  * - strategy: The name of strategy to use for finding target table records
  * - nestKey: The array key under which results will be found when transforming the row
  *
- * @param array $options
+ * @param array $options The options for eager loading.
  * @return \Closure
  */
 	public abstract function eagerLoader(array $options);
@@ -767,7 +767,7 @@ abstract class Association {
  * the saving operation to the target table.
  *
  * @param \Cake\ORM\Entity $entity the data to be saved
- * @param array|\ArrayObject $options
+ * @param array|\ArrayObject $options The options for saving associated data.
  * @return bool|Entity false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()

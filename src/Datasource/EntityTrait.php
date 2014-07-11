@@ -16,6 +16,7 @@ namespace Cake\Datasource;
 
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
+use \Traversable;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
@@ -129,9 +130,9 @@ trait EntityTrait {
  * Returns whether this entity contains a property named $property
  * regardless of if it is empty.
  *
- * @see \Cake\ORM\Entity::has()
- * @param string $property
+ * @param string $property The property to check.
  * @return bool
+ * @see \Cake\ORM\Entity::has()
  */
 	public function __isset($property) {
 		return $this->has($property);
@@ -140,7 +141,7 @@ trait EntityTrait {
 /**
  * Removes a property from this entity
  *
- * @param string $property
+ * @param string $property The property to unset
  * @return void
  */
 	public function __unset($property) {
@@ -273,7 +274,7 @@ trait EntityTrait {
  *		$entity->has('last_name'); // false
  * }}}
  *
- * @param string $property
+ * @param string $property The property to check.
  * @return bool
  */
 	public function has($property) {
@@ -289,8 +290,8 @@ trait EntityTrait {
  *
  * ``$entity->unsetProperty(['name', 'last_name']);``
  *
- * @param string|array $property
- * @return \Cake\ORM\
+ * @param string|array $property The property to unset.
+ * @return \Cake\DataSource\EntityInterface
  */
 	public function unsetProperty($property) {
 		$property = (array)$property;
@@ -307,7 +308,7 @@ trait EntityTrait {
  * If the properties argument is null, the currently hidden properties
  * will be returned. Otherwise the hidden properties will be set.
  *
- * @param null|array Either an array of properties to hide or null to get properties
+ * @param null|array $properties Either an array of properties to hide or null to get properties
  * @return array|\Cake\DataSource\EntityInterface
  */
 	public function hiddenProperties($properties = null) {
@@ -324,7 +325,7 @@ trait EntityTrait {
  * If the properties argument is null, the currently virtual properties
  * will be returned. Otherwise the virtual properties will be set.
  *
- * @param null|array Either an array of properties to treat as virtual or null to get properties
+ * @param null|array $properties Either an array of properties to treat as virtual or null to get properties
  * @return array|\Cake\DataSource\EntityInterface
  */
 	public function virtualProperties($properties = null) {
@@ -389,7 +390,7 @@ trait EntityTrait {
 /**
  * Implements isset($entity);
  *
- * @param mixed $offset
+ * @param mixed $offset The offset to check.
  * @return bool Success
  */
 	public function offsetExists($offset) {
@@ -399,7 +400,7 @@ trait EntityTrait {
 /**
  * Implements $entity[$offset];
  *
- * @param mixed $offset
+ * @param mixed $offset The offset to get.
  * @return mixed
  */
 	public function &offsetGet($offset) {
@@ -409,8 +410,8 @@ trait EntityTrait {
 /**
  * Implements $entity[$offset] = $value;
  *
- * @param mixed $offset
- * @param mixed $value
+ * @param mixed $offset The offset to set.
+ * @param mixed $value The value to set.
  * @return void
  */
 	public function offsetSet($offset, $value) {
@@ -420,7 +421,7 @@ trait EntityTrait {
 /**
  * Implements unset($result[$offset);
  *
- * @param mixed $offset
+ * @param mixed $offset The offset to remove.
  * @return void
  */
 	public function offsetUnset($offset) {
@@ -467,7 +468,7 @@ trait EntityTrait {
  * dirty property in the entity
  *
  * @param string $property the field to set or check status for
- * @param null|bool true means the property was changed, false means
+ * @param null|bool $isDirty true means the property was changed, false means
  * it was not changed and null will make the function return current state
  * for that property
  * @return bool whether the property was changed or not
@@ -531,7 +532,7 @@ trait EntityTrait {
  * This function returns true if there were no validation errors or false
  * otherwise.
  *
- * @param \Cake\Validation\Validator $validator
+ * @param \Cake\Validation\Validator $validator The validator to use when validating the entity.
  * @return bool
  */
 	public function validate(Validator $validator) {
@@ -567,7 +568,7 @@ trait EntityTrait {
  * When used as a setter, this method will return this entity instance for method
  * chaining.
  *
- * @param string|array $field
+ * @param string|array $field The field to get errors for, or the array of errors to set.
  * @param string|array $errors The errors to be set for $field
  * @return array|\Cake\Datasource\EntityInterface
  */
@@ -578,10 +579,10 @@ trait EntityTrait {
 
 		if (is_string($field) && $errors === null) {
 			$errors = isset($this->_errors[$field]) ? $this->_errors[$field] : [];
-			if (!$errors) {
-				$errors = $this->_nestedErrors($field);
+			if ($errors) {
+				return $errors;
 			}
-			return $errors;
+			return $this->_nestedErrors($field);
 		}
 
 		if (!is_array($field)) {
@@ -591,7 +592,6 @@ trait EntityTrait {
 		foreach ($field as $f => $error) {
 			$this->_errors[$f] = (array)$error;
 		}
-
 		return $this;
 	}
 
@@ -602,26 +602,59 @@ trait EntityTrait {
  * @return array errors in nested entity if any
  */
 	protected function _nestedErrors($field) {
-		if (!isset($this->_properties[$field])) {
-			return [];
+		$path = explode('.', $field);
+
+		// Only one path element, check for nested entity with error.
+		if (count($path) === 1) {
+			return $this->_readError($this->get($path[0]));
 		}
 
-		$value = $this->_properties[$field];
-		$errors = [];
-		if (is_array($value) || $value instanceof \Traversable) {
-			foreach ($value as $k => $v) {
-				if (!($v instanceof self)) {
-					break;
-				}
-				$errors[$k] = $v->errors();
+		$entity = $this;
+		$len = count($path);
+		while ($len) {
+			$part = array_shift($path);
+			$len = count($path);
+			if ($entity instanceof static) {
+				$val = $entity->get($part);
+			} elseif (is_array($entity)) {
+				$val = isset($entity[$part]) ? $entity[$part] : false;
 			}
-			return $errors;
-		}
 
-		if ($value instanceof self) {
-			return $value->errors();
+			if (
+				is_array($val) ||
+				$val instanceof Traversable ||
+				$val instanceof static
+			) {
+				$entity = $val;
+			} else {
+				$path[] = $part;
+				break;
+			}
 		}
+		if (count($path) <= 1) {
+			return $this->_readError($entity, array_pop($path));
+		}
+		return [];
+	}
 
+/**
+ * Read the error(s) from one or many objects.
+ *
+ * @param array|\Cake\Datasource\EntityTrait $object The object to read errors from.
+ * @param string $path The field name for errors.
+ * @return array
+ */
+	protected function _readError($object, $path = null) {
+		if ($object instanceof static) {
+			return $object->errors($path);
+		}
+		if (is_array($object)) {
+			return array_map(function($val) {
+				if ($val instanceof static) {
+					return $val->errors();
+				}
+			}, $object);
+		}
 		return [];
 	}
 
@@ -653,7 +686,7 @@ trait EntityTrait {
  * $entity->accessible('id'); // Returns whether it can be set or not
  * }}}
  *
- * @param string|array single or list of properties to change its accessibility
+ * @param string|array $property single or list of properties to change its accessibility
  * @param bool $set true marks the property as accessible, false will
  * mark it as protected.
  * @return \Cake\Datasource\EntityInterface|bool

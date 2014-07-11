@@ -178,7 +178,7 @@ trait QueryTrait {
  * Sets the query instance to be the eager loaded query. If no argument is
  * passed, the current configured query `_eagerLoaded` value is returned.
  *
- * @param bool $value
+ * @param bool $value Whether or not to eager load.
  * @return \Cake\ORM\Query
  */
 	public function eagerLoaded($value = null) {
@@ -248,9 +248,9 @@ trait QueryTrait {
  * If the third argument is set to true, it will erase previous map reducers
  * and replace it with the arguments passed.
  *
- * @param callable $mapper
- * @param callable $reducer
- * @param bool $overwrite
+ * @param callable $mapper The mapper callable.
+ * @param callable $reducer The reducing function.
+ * @param bool $overwrite Set to true to overwrite existing map + reduce functions.
  * @return \Cake\Datasource\QueryTrait|array
  * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
  */
@@ -288,20 +288,20 @@ trait QueryTrait {
  * {{{
  * //Return all results from the table indexed by id
  * $query->select(['id', 'name'])->formatResults(function($results, $query) {
- *	return $results->indexBy('id');
+ *   return $results->indexBy('id');
  * });
  *
  * //Add a new column to the ResultSet
  * $query->select(['name', 'birth_date'])->formatResults(function($results, $query) {
- *	return $results->map(function($row) {
- *		$row['age'] = $row['birth_date']->diff(new DateTime)->y;
- *		return $row;
- *	});
+ *   return $results->map(function($row) {
+ *     $row['age'] = $row['birth_date']->diff(new DateTime)->y;
+ *     return $row;
+ *   });
  * });
  * }}}
  *
- * @param callable $formatter
- * @param bool|int $mode
+ * @param callable $formatter The formatting callable.
+ * @param bool|int $mode Whether or not to overwrite, append or prepend the formatter.
  * @return \Cake\Datasource\QueryTrait|array
  */
 	public function formatResults(callable $formatter = null, $mode = 0) {

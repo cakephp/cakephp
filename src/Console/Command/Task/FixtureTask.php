@@ -40,10 +40,10 @@ class FixtureTask extends BakeTask {
  * @return string
  */
 	public function getPath() {
-		$dir = 'Test/Fixture/';
+		$dir = 'tests/Fixture/';
 		$path = ROOT . DS . $dir;
 		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'tests/Fixture/';
+			$path = $this->_pluginPath($this->plugin) . $dir;
 		}
 		return str_replace('/', DS, $path);
 	}
@@ -86,6 +86,7 @@ class FixtureTask extends BakeTask {
  * Execution method always used for tasks
  * Handles dispatching to interactive, named, or all processes.
  *
+ * @param string $name The name of the fixture to bake.
  * @return void
  */
 	public function main($name = null) {
@@ -309,7 +310,7 @@ class FixtureTask extends BakeTask {
 /**
  * Generate String representation of Records
  *
- * @param array $tableInfo Table schema array
+ * @param \Cake\Database\Schema\Table $table Table schema array
  * @param int $recordCount The number of records to generate.
  * @return array Array of records to use in the fixture.
  */

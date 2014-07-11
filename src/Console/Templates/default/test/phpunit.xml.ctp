@@ -4,7 +4,7 @@
 	processIsolation="false"
 	stopOnFailure="false"
 	syntaxCheck="false"
-	bootstrap="./Test/bootstrap.php"
+	bootstrap="./tests/bootstrap.php"
 	>
 	<php>
 		<ini name="memory_limit" value="-1"/>
@@ -14,7 +14,7 @@
 	<!-- Add any additional test suites you want to run here -->
 	<testsuites>
 		<testsuite name="<?= $plugin ?> Test Suite">
-			<directory>./Test/TestCase</directory>
+			<directory>./tests/TestCase</directory>
 		</testsuite>
 	</testsuites>
 

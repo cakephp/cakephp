@@ -96,6 +96,9 @@ class ViewTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
+ * @param string $name The name of the controller to bake views for.
+ * @param string $template The template to bake with.
+ * @param string $action The action to bake with.
  * @return mixed
  */
 	public function main($name = null, $template = null, $action = null) {
@@ -266,7 +269,7 @@ class ViewTask extends BakeTask {
  * Bake a view file for each of the supplied actions
  *
  * @param array $actions Array of actions to make files for.
- * @param array $vars
+ * @param array $vars The context for generating views.
  * @return void
  */
 	public function bakeActions(array $actions, $vars) {
@@ -412,7 +415,7 @@ class ViewTask extends BakeTask {
 /**
  * Returns associations for controllers models.
  *
- * @param Table $model
+ * @param Table $model The model to build associations for.
  * @return array associations
  */
 	protected function _associations(Table $model) {

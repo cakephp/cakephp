@@ -43,6 +43,7 @@ class LoggingStatement extends StatementDecorator {
  *
  * @param array $params list of values to be bound to query
  * @return bool true on success, false otherwise
+ * @throws \Exception Re-throws any exception raised during query execution.
  */
 	public function execute($params = null) {
 		$t = microtime(true);
@@ -65,7 +66,7 @@ class LoggingStatement extends StatementDecorator {
  * Copies the logging data to the passed LoggedQuery and sends it
  * to the logging system.
  *
- * @param \Cake\Database\Log\LoggedQuery $query
+ * @param \Cake\Database\Log\LoggedQuery $query The query to log.
  * @param array $params list of values to be bound to query
  * @param float $startTime the microtime when the query was executed
  * @return void

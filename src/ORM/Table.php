@@ -311,15 +311,17 @@ class Table implements RepositoryInterface, EventListener {
  * If an array is passed, a new \Cake\Database\Schema\Table will be constructed
  * out of it and used as the schema for this table.
  *
- * @param array|\Cake\Database\Schema\Table new schema to be used for this table
+ * @param array|\Cake\Database\Schema\Table $schema new schema to be used for this table
  * @return \Cake\Database\Schema\Table
  */
 	public function schema($schema = null) {
 		if ($schema === null) {
 			if ($this->_schema === null) {
-				$this->_schema = $this->connection()
-					->schemaCollection()
-					->describe($this->table());
+				$this->_schema = $this->_initializeSchema(
+					$this->connection()
+						->schemaCollection()
+						->describe($this->table())
+				);
 			}
 			return $this->_schema;
 		}
@@ -340,6 +342,30 @@ class Table implements RepositoryInterface, EventListener {
 		}
 
 		return $this->_schema = $schema;
+	}
+
+/**
+ * Override this function in order to alter the schema used by this table.
+ * This function is only called after fetching the schema out of the database.
+ * If you wish to provide your own schema to this table without touching the
+ * database, you can override schema() or inject the definitions though that
+ * method.
+ *
+ * ### Example:
+ *
+ * {{{
+ * protected function _initializeSchema(\Cake\Database\Schema\Table $table) {
+ *  $table->columnType('preferences', 'json');
+ *  return $table;
+ * }
+ * }}}
+ *
+ * @param \Cake\Database\Schema\Table $table The table definition fetched from database.
+ * @return \Cake\Database\Schema\Table the altered schema
+ * @api
+ */
+	protected function _initializeSchema(Schema $table) {
+		return $table;
 	}
 
 /**
@@ -475,8 +501,7 @@ class Table implements RepositoryInterface, EventListener {
  * $this->removeBehavior('Tree');
  * }}}
  *
- * @param string $name    The alias that the behavior was added with.
- *
+ * @param string $name The alias that the behavior was added with.
  * @return void
  * @see \Cake\ORM\Behavior
  */
@@ -704,8 +729,8 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Returns the query as passed
  *
- * @param \Cake\ORM\Query $query
- * @param array $options
+ * @param \Cake\ORM\Query $query The query to find with
+ * @param array $options The options to use for the find
  * @return \Cake\ORM\Query
  */
 	public function findAll(Query $query, array $options) {
@@ -765,8 +790,8 @@ class Table implements RepositoryInterface, EventListener {
  * ]
  * }}}
  *
- * @param \Cake\ORM\Query $query
- * @param array $options
+ * @param \Cake\ORM\Query $query The query to find with
+ * @param array $options The options for the find
  * @return \Cake\ORM\Query
  */
 	public function findList(Query $query, array $options) {
@@ -808,8 +833,8 @@ class Table implements RepositoryInterface, EventListener {
  * ]);
  * }}}
  *
- * @param \Cake\ORM\Query $query
- * @param array $options
+ * @param \Cake\ORM\Query $query The query to find with
+ * @param array $options The options to find with
  * @return \Cake\ORM\Query
  */
 	public function findThreaded(Query $query, array $options) {
@@ -953,7 +978,8 @@ class Table implements RepositoryInterface, EventListener {
  * set is specified.
  *
  * @param string $name the name of the validation set to return
- * @param \Cake\Validation\Validator $validator
+ * @param \Cake\Validation\Validator $validator The validator instance to store,
+ *   use null to get a validator.
  * @return \Cake\Validation\Validator
  */
 	public function validator($name = 'default', Validator $validator = null) {
@@ -1114,8 +1140,8 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Performs the actual saving of an entity based on the passed options.
  *
- * @param \Cake\Datasource\EntityInterface the entity to be saved
- * @param array $options
+ * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
+ * @param array $options the options to use for the save operation
  * @return \Cake\Datasource\EntityInterface|bool
  */
 	protected function _processSave($entity, $options) {
@@ -1201,7 +1227,7 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Auxiliary function to handle the insert of an entity's data in the table
  *
- * @param \Cake\Datasource\EntityInterface the subject entity from were $data was extracted
+ * @param \Cake\Datasource\EntityInterface $entity the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
  * @return \Cake\Datasource\EntityInterface|bool
  * @throws \RuntimeException if not all the primary keys where supplied or could
@@ -1275,7 +1301,7 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Auxiliary function to handle the update of an entity's data in the table
  *
- * @param \Cake\Datasource\EntityInterface the subject entity from were $data was extracted
+ * @param \Cake\Datasource\EntityInterface $entity the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
  * @return \Cake\Datasource\EntityInterface|bool
  * @throws \InvalidArgumentException When primary key data is missing.
@@ -1550,13 +1576,11 @@ class Table implements RepositoryInterface, EventListener {
  * Override this method if you want a table object to use custom
  * marshalling logic.
  *
- * @param bool $safe Whether or not this marshaller
- *   should be in safe mode.
  * @return \Cake\ORM\Marshaller
  * @see \Cake\ORM\Marshaller
  */
-	public function marshaller($safe = false) {
-		return new Marshaller($this, $safe);
+	public function marshaller() {
+		return new Marshaller($this);
 	}
 
 /**
@@ -1576,22 +1600,22 @@ class Table implements RepositoryInterface, EventListener {
  *
  * By default all the associations on this table will be hydrated. You can
  * limit which associations are built, or include deeper associations
- * using the associations parameter:
+ * using the options parameter:
  *
  * {{{
  * $articles = $this->Articles->newEntity(
  *   $this->request->data(),
- *   ['Tags', 'Comments.Users']
+ *   ['associated' => ['Tags', 'Comments.Users']]
  * );
  * }}}
  *
  */
-	public function newEntity(array $data = [], $associations = null) {
-		if ($associations === null) {
-			$associations = $this->_associations->keys();
+	public function newEntity(array $data = [], array $options = []) {
+		if (!isset($options['associated'])) {
+			$options['associated'] = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
-		return $marshaller->one($data, $associations);
+		return $marshaller->one($data, $options);
 	}
 
 /**
@@ -1599,19 +1623,19 @@ class Table implements RepositoryInterface, EventListener {
  *
  * By default all the associations on this table will be hydrated. You can
  * limit which associations are built, or include deeper associations
- * using the associations parameter:
+ * using the options parameter:
  *
  * {{{
  * $articles = $this->Articles->newEntities(
  *   $this->request->data(),
- *   ['Tags', 'Comments.Users']
+ *   ['associated' => ['Tags', 'Comments.Users']]
  * );
  * }}}
  *
  */
-	public function newEntities(array $data, $associations = null) {
-		if ($associations === null) {
-			$associations = $this->_associations->keys();
+	public function newEntities(array $data, array $options = []) {
+		if (!isset($options['associated'])) {
+			$options['associated'] = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
 		return $marshaller->many($data, $associations);
@@ -1624,12 +1648,12 @@ class Table implements RepositoryInterface, EventListener {
  * `$data` array will appear, those that can be matched by primary key will get
  * the data merged, but those that cannot, will be discarded.
  */
-	public function patchEntity(EntityInterface $entity, array $data, $associations = null) {
-		if ($associations === null) {
-			$associations = $this->_associations->keys();
+	public function patchEntity(EntityInterface $entity, array $data, array $options = []) {
+		if (!isset($options['associated'])) {
+			$options['associated'] = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
-		return $marshaller->merge($entity, $data, $associations);
+		return $marshaller->merge($entity, $data, $options);
 	}
 
 /**
@@ -1643,12 +1667,12 @@ class Table implements RepositoryInterface, EventListener {
  * `$data` array will appear, those that can be matched by primary key will get
  * the data merged, but those that cannot, will be discarded.
  */
-	public function patchEntities($entities, array $data, $associations = null) {
-		if ($associations === null) {
-			$associations = $this->_associations->keys();
+	public function patchEntities($entities, array $data, array $options = []) {
+		if (!isset($options['associated'])) {
+			$options['associated'] = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
-		return $marshaller->mergeMany($entities, $data, $associations);
+		return $marshaller->mergeMany($entities, $data, $options);
 	}
 
 /**

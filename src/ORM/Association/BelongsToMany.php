@@ -411,7 +411,7 @@ class BelongsToMany extends Association {
  *
  * @param \Cake\ORM\Entity $parentEntity the source entity containing the target
  * entities to be saved.
- * @param array|\Traversable list of entities to persist in target table and to
+ * @param array|\Traversable $entities list of entities to persist in target table and to
  * link to the parent entity
  * @param array $options list of options accepted by Table::save()
  * @throws \InvalidArgumentException if the property representing the association
@@ -777,12 +777,12 @@ class BelongsToMany extends Association {
 /**
  * Throws an exception should any of the passed entities is not persisted.
  *
- * @throws \InvalidArgumentException
  * @param \Cake\ORM\Entity $sourceEntity the row belonging to the `source` side
- * of this association
+ *   of this association
  * @param array $targetEntities list of entities belonging to the `target` side
- * of this association
+ *   of this association
  * @return bool
+ * @throws \InvalidArgumentException
  */
 	protected function _checkPersistenceStatus($sourceEntity, array $targetEntities) {
 		if ($sourceEntity->isNew() !== false) {
@@ -804,10 +804,12 @@ class BelongsToMany extends Association {
  * Returns the list of joint entities that exist between the source entity
  * and each of the passed target entities
  *
- * @param \Cake\ORM\Entity $sourceEntity
- * @param array $targetEntities
+ * @param \Cake\ORM\Entity $sourceEntity The row belonging to the source side
+ *   of this association.
+ * @param array $targetEntities The rows belonging to the target side of this
+ *   association.
  * @throws \InvalidArgumentException if any of the entities is lacking a primary
- * key value
+ *   key value
  * @return array
  */
 	protected function _collectJointEntities($sourceEntity, $targetEntities) {
@@ -859,7 +861,7 @@ class BelongsToMany extends Association {
  * Appends any conditions required to load the relevant set of records in the
  * target table query given a filter key and some filtering values.
  *
- * @param \Cake\ORM\Query target table's query
+ * @param \Cake\ORM\Query $query target table's query
  * @param string $key the fields that should be used for filtering
  * @param mixed $filter the value that should be used to match for $key
  * @return \Cake\ORM\Query
@@ -875,7 +877,7 @@ class BelongsToMany extends Association {
  * Generates a string used as a table field that contains the values upon
  * which the filter should be applied
  *
- * @param array $options
+ * @param array $options the options to use for getting the link field.
  * @return string
  */
 	protected function _linkField($options) {
@@ -914,7 +916,7 @@ class BelongsToMany extends Association {
  * If no arguments are passed the current configured name is returned. A default
  * name based of the associated tables will be generated if none found.
  *
- * @param string $name
+ * @param string $name The name of the junction table.
  * @return string
  */
 	protected function _junctionTableName($name = null) {
