@@ -30,20 +30,6 @@ use Cake\ORM\TableRegistry;
 class HasOneTest extends \Cake\TestSuite\TestCase {
 
 /**
- * Fixtures to use.
- *
- * @var array
- */
-	public $fixtures = ['core.article', 'core.comment'];
-
-/**
- * Don't autoload fixtures as most tests uses mocks.
- *
- * @var bool
- */
-	public $autoFixture = false;
-
-/**
  * Set up
  *
  * @return void
@@ -390,24 +376,6 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$association->attachTo($query, ['queryBuilder' => function($q) {
 			return $q->applyOptions(['something' => 'more']);
 		}]);
-	}
-
-/**
- * Test that eagerLoader leaves empty associations unpopulated.
- *
- * @return void
- */
-	public function testEagerLoaderLeavesEmptyAssocation() {
-		$this->loadFixtures('Article', 'Comment');
-		$articles = TableRegistry::get('Articles');
-		$articles->hasOne('Comments');
-
-		// Clear the comments table so we can trigger an empty hasOne.
-		$comments = TableRegistry::get('Comments');
-		$comments->deleteAll([]);
-
-		$article = $articles->get(1, ['contain' => ['Comments']]);
-		$this->assertNull($article->comment);
 	}
 
 }

@@ -446,22 +446,4 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		}]);
 	}
 
-/**
- * Test that eagerLoader leaves empty associations unpopulated.
- *
- * @return void
- */
-	public function testEagerLoaderLeavesEmptyAssocation() {
-		$this->loadFixtures('Article', 'Comment');
-		$comments = TableRegistry::get('Comments');
-		$comments->belongsTo('Articles');
-
-		// Clear the articles table so we can trigger an empty belongsTo
-		$articles = TableRegistry::get('Articles');
-		$articles->deleteAll([]);
-
-		$comment = $comments->get(1, ['contain' => ['Articles']]);
-		$this->assertNull($comment->article);
-	}
-
 }

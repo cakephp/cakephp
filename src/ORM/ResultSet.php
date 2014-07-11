@@ -410,11 +410,11 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 				}
 
 				if (!$hasData) {
-					continue;
+					$results[$alias] = null;
 				}
 			}
 
-			if ($this->_hydrate && $assoc['canBeJoined']) {
+			if ($this->_hydrate && $results[$alias] !== null && $assoc['canBeJoined']) {
 				$entity = new $assoc['entityClass']($results[$alias], $options);
 				$entity->clean();
 				$results[$alias] = $entity;
