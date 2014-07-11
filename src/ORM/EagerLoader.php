@@ -393,7 +393,7 @@ class EagerLoader {
 	}
 
 /**
- * Decorates the passed statement object in order to inject data form associations
+ * Decorates the passed statement object in order to inject data from associations
  * that cannot be joined directly.
  *
  * @param \Cake\ORM\Query $query The query for which to eager load external

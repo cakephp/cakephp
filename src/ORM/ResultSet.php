@@ -401,14 +401,25 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 
 			if ($assoc['canBeJoined']) {
 				$results[$alias] = $this->_castValues($target, $results[$alias]);
+
+				$hasData = false;
+				foreach ($results[$alias] as $v) {
+					if ($v !== null) {
+						$hasData = true;
+						break;
+					}
+				}
+
+				if (!$hasData) {
+					$results[$alias] = null;
+				}
 			}
 
-			if ($this->_hydrate && $assoc['canBeJoined']) {
+			if ($this->_hydrate && $results[$alias] !== null && $assoc['canBeJoined']) {
 				$entity = new $assoc['entityClass']($results[$alias], $options);
 				$entity->clean();
 				$results[$alias] = $entity;
 			}
-
 			$results = $instance->transformRow($results, $alias, $assoc['canBeJoined']);
 		}
 

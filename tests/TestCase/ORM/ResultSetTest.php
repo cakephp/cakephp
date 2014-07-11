@@ -20,6 +20,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -27,7 +28,7 @@ use Cake\TestSuite\TestCase;
  */
 class ResultSetTest extends TestCase {
 
-	public $fixtures = ['core.article'];
+	public $fixtures = ['core.article', 'core.comment'];
 
 /**
  * setup
@@ -247,6 +248,58 @@ class ResultSetTest extends TestCase {
 			'items' => $results->toArray()
 		];
 		$this->assertSame($expected, $results->__debugInfo());
+	}
+
+/**
+ * Test that eagerLoader leaves empty associations unpopulated.
+ *
+ * @return void
+ */
+	public function testBelongsToEagerLoaderLeavesEmptyAssocation() {
+		$comments = TableRegistry::get('Comments');
+		$comments->belongsTo('Articles');
+
+		// Clear the articles table so we can trigger an empty belongsTo
+		$this->table->deleteAll([]);
+
+		$comment = $comments->find()->where(['Comments.id' => 1])
+			->contain(['Articles'])
+			->hydrate(false)
+			->first();
+		$this->assertEquals(1, $comment['id']);
+		$this->assertNotEmpty($comment['comment']);
+		$this->assertNull($comment['article']);
+
+		$comment = $comments->get(1, ['contain' => ['Articles']]);
+		$this->assertNull($comment->article);
+		$this->assertEquals(1, $comment->id);
+		$this->assertNotEmpty($comment->comment);
+	}
+
+/**
+ * Test that eagerLoader leaves empty associations unpopulated.
+ *
+ * @return void
+ */
+	public function testHasOneEagerLoaderLeavesEmptyAssocation() {
+		$this->table->hasOne('Comments');
+
+		// Clear the comments table so we can trigger an empty hasOne.
+		$comments = TableRegistry::get('Comments');
+		$comments->deleteAll([]);
+
+		$article = $this->table->get(1, ['contain' => ['Comments']]);
+		$this->assertNull($article->comment);
+		$this->assertEquals(1, $article->id);
+		$this->assertNotEmpty($article->title);
+
+		$article = $this->table->find()->where(['Articles.id' => 1])
+			->contain(['Comments'])
+			->hydrate(false)
+			->first();
+		$this->assertNull($article['comment']);
+		$this->assertEquals(1, $article['id']);
+		$this->assertNotEmpty($article['title']);
 	}
 
 }
