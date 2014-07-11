@@ -30,6 +30,20 @@ use Cake\ORM\TableRegistry;
 class BelongsToTest extends \Cake\TestSuite\TestCase {
 
 /**
+ * Fixtures to use.
+ *
+ * @var array
+ */
+	public $fixtures = ['core.article', 'core.comment'];
+
+/**
+ * Don't autoload fixtures as most tests uses mocks.
+ *
+ * @var bool
+ */
+	public $autoFixture = false;
+
+/**
  * Set up
  *
  * @return void
@@ -430,6 +444,24 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$association->attachTo($query, ['queryBuilder' => function($q) {
 			return $q->applyOptions(['something' => 'more']);
 		}]);
+	}
+
+/**
+ * Test that eagerLoader leaves empty associations unpopulated.
+ *
+ * @return void
+ */
+	public function testEagerLoaderLeavesEmptyAssocation() {
+		$this->loadFixtures('Article', 'Comment');
+		$comments = TableRegistry::get('Comments');
+		$comments->belongsTo('Articles');
+
+		// Clear the articles table so we can trigger an empty belongsTo
+		$articles = TableRegistry::get('Articles');
+		$articles->deleteAll([]);
+
+		$comment = $comments->get(1, ['contain' => ['Articles']]);
+		$this->assertNull($comment->article);
 	}
 
 }
