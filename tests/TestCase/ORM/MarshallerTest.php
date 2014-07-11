@@ -981,4 +981,23 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals('2014-02-14', $entity->created->format('Y-m-d'));
 	}
 
+/**
+ * Tests that it is possible to pass a fieldList option to the marshaller
+ *
+ * @return void
+ */
+	public function testOneWithFieldList() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 1
+		];
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, ['fieldList' => ['title', 'author_id']]);
+
+		$this->assertInstanceOf('Cake\ORM\Entity', $result);
+		unset($data['body']);
+		$this->assertEquals($data, $result->toArray());
+	}
+
 }

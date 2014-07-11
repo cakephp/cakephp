@@ -118,7 +118,18 @@ class Marshaller {
 			}
 			$properties[$key] = $value;
 		}
-		$entity->set($properties);
+
+		if (!isset($options['fieldList'])) {
+			$entity->set($properties);
+			return $entity;
+		}
+
+		foreach ((array)$options['fieldList'] as $field) {
+			if (isset($properties[$field])) {
+				$entity->set($field, $properties[$field]);
+			}
+		}
+
 		return $entity;
 	}
 
