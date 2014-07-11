@@ -1000,4 +1000,36 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals($data, $result->toArray());
 	}
 
+/**
+ * Tests that it is possible to pass a fieldList option to the merge method
+ *
+ * @return void
+ */
+	public function testMergeWithFieldList() {
+		$data = [
+			'title' => 'My title',
+			'author_id' => 1
+		];
+		$marshall = new Marshaller($this->articles);
+		$entity = new Entity([
+			'title' => 'Foo',
+			'body' => 'My Content',
+			'author_id' => 2
+		]);
+		$entity->accessible('*', false);
+		$entity->isNew(false);
+		$entity->clean();
+		$result = $marshall->merge($entity, $data, ['fieldList' => ['title', 'body']]);
+
+		$expected = [
+			'title' => 'My title',
+			'body' => 'My Content',
+			'author_id' => 2
+		];
+
+		$this->assertSame($entity, $result);
+		$this->assertEquals($expected, $result->toArray());
+		$this->assertFalse($entity->accessible('*'));
+	}
+
 }
