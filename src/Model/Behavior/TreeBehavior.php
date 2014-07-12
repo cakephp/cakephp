@@ -756,6 +756,11 @@ class TreeBehavior extends Behavior {
 		}
 	}
 
+/**
+ * Returns a single string value representing the primary key of the attached table
+ *
+ * @return string
+ */
 	protected function _getPrimaryKey() {
 		if (!$this->_primaryKey) {
 			$this->_primaryKey = (array)$this->_table->primaryKey();
