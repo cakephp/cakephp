@@ -17,7 +17,6 @@ namespace Cake\Cache\Engine;
 use Cake\Cache\CacheEngine;
 use Cake\Error;
 use Cake\Utility\Inflector;
-use \Memcached;
 
 /**
  * Memcached storage engine for cache. Memcached has some limitations in the amount of
@@ -60,7 +59,7 @@ class MemcachedEngine extends CacheEngine {
  * - `servers` String or array of memcached servers. If an array MemcacheEngine will use
  *    them as a pool.
  * - `options` - Additional options for the memcached client. Should be an array of option => value.
- *    Use the Memcached::OPT_* constants as keys.
+ *    Use the \Memcached::OPT_* constants as keys.
  *
  * @var array
  */
@@ -85,11 +84,7 @@ class MemcachedEngine extends CacheEngine {
  *
  * @var array
  */
-	protected $_serializers = [
-		'igbinary' => Memcached::SERIALIZER_IGBINARY,
-		'json' => Memcached::SERIALIZER_JSON,
-		'php' => Memcached::SERIALIZER_PHP
-	];
+	protected $_serializers = [];
 
 /**
  * Initialize the Cache Engine
@@ -101,7 +96,7 @@ class MemcachedEngine extends CacheEngine {
  * @throws \Cake\Error\Exception when you try use authentication without Memcached compiled with SASL support
  */
 	public function init(array $config = []) {
-		if (!class_exists('Memcached')) {
+		if (!class_exists('\\Memcached')) {
 			return false;
 		}
 
@@ -109,8 +104,13 @@ class MemcachedEngine extends CacheEngine {
 			$config['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
 
-		if (defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK) {
-			$this->_serializers['msgpack'] = Memcached::SERIALIZER_MSGPACK;
+		$this->_serializers = [
+			'igbinary' => \Memcached::SERIALIZER_IGBINARY,
+			'json' => \Memcached::SERIALIZER_JSON,
+			'php' => \Memcached::SERIALIZER_PHP
+		];
+		if (defined('\\Memcached::HAVE_MSGPACK') && \Memcached::HAVE_MSGPACK) {
+			$this->_serializers['msgpack'] = \Memcached::SERIALIZER_MSGPACK;
 		}
 
 		parent::init($config);
@@ -177,16 +177,16 @@ class MemcachedEngine extends CacheEngine {
 			);
 		}
 
-		if ($serializer !== 'php' && !constant('Memcached::HAVE_' . strtoupper($serializer))) {
+		if ($serializer !== 'php' && !constant('\\Memcached::HAVE_' . strtoupper($serializer))) {
 			throw new Error\Exception(
 				sprintf('Memcached extension is not compiled with %s support', $serializer)
 			);
 		}
 
-		$this->_Memcached->setOption(Memcached::OPT_SERIALIZER, $this->_serializers[$serializer]);
+		$this->_Memcached->setOption(\Memcached::OPT_SERIALIZER, $this->_serializers[$serializer]);
 
 		// Check for Amazon ElastiCache instance
-		if (defined('Memcached::OPT_CLIENT_MODE') && defined('Memcached::DYNAMIC_CLIENT_MODE')) {
+		if (defined('\\Memcached::OPT_CLIENT_MODE') && defined('\\Memcached::DYNAMIC_CLIENT_MODE')) {
 			$this->_Memcached->setOption(\Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE);
 		}
 
