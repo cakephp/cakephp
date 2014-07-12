@@ -1231,10 +1231,17 @@ class Table implements RepositoryInterface, EventListener {
  * @param array $data The actual data that needs to be saved
  * @return \Cake\Datasource\EntityInterface|bool
  * @throws \RuntimeException if not all the primary keys where supplied or could
- * be generated when the table has composite primary keys
+ * be generated when the table has composite primary keys. Or when the table has no primary key.
  */
 	protected function _insert($entity, $data) {
 		$primary = (array)$this->primaryKey();
+		if (empty($primary)) {
+			$msg = sprintf(
+				'Cannot insert row in "%s", it has no primary key.',
+				$this->table()
+			);
+			throw new \RuntimeException($msg);
+		}
 		$keys = array_fill(0, count($primary), null);
 		$id = (array)$this->_newId($primary) + $keys;
 		$primary = array_combine($primary, $id);
