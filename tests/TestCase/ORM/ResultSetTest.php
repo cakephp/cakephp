@@ -293,7 +293,7 @@ class ResultSetTest extends TestCase {
 		$this->assertEquals(1, $article->id);
 		$this->assertNotEmpty($article->title);
 
-		$article = $this->table->find()->where(['Articles.id' => 1])
+		$article = $this->table->find()->where(['articles.id' => 1])
 			->contain(['Comments'])
 			->hydrate(false)
 			->first();
