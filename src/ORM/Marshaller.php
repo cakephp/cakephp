@@ -192,8 +192,8 @@ class Marshaller {
 		$jointMarshaller = $joint->marshaller();
 
 		$nested = [];
-		if (isset($associated['_joinData']['associated'])) {
-			$nested = ['associated' => (array)$associated['_joinData']['associated']];
+		if (isset($associated['_joinData'])) {
+			$nested = (array)$associated['_joinData'];
 		}
 
 		foreach ($records as $i => $record) {

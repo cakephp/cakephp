@@ -1115,7 +1115,7 @@ class MarshallerTest extends TestCase {
 	}
 
 /**
- * Tests merging data into an associated entity
+ * Tests merging associated data with a fieldList
  *
  * @return void
  */
@@ -1151,6 +1151,64 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals('secret', $entity->user->password);
 		$this->assertEquals('data', $entity->user->extra);
 		$this->assertTrue($entity->dirty('user'));
+	}
+
+/**
+ * Test marshalling nested associations on the _joinData structure
+ * while having a fieldList
+ *
+ * @return void
+ */
+	public function testJoinDataWhiteList() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 1,
+			'tags' => [
+				[
+					'tag' => 'news',
+					'_joinData' => [
+						'active' => 1,
+						'crazy' => 'data',
+						'user' => ['username' => 'Bill'],
+					]
+				],
+				[
+					'tag' => 'cakephp',
+					'_joinData' => [
+						'active' => 0,
+						'crazy' => 'stuff',
+						'user' => ['username' => 'Mark'],
+					]
+				],
+			],
+		];
+
+		$articlesTags = TableRegistry::get('ArticlesTags');
+		$articlesTags->belongsTo('Users');
+
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, [
+			'associated' => [
+				'Tags._joinData' => ['fieldList' => ['active', 'user']],
+				'Tags._joinData.Users'
+			]
+		]);
+		$this->assertInstanceOf(
+			'Cake\ORM\Entity',
+			$result->tags[0]->_joinData->user,
+			'joinData should contain a user entity.'
+		);
+		$this->assertEquals('Bill', $result->tags[0]->_joinData->user->username);
+		$this->assertInstanceOf(
+			'Cake\ORM\Entity',
+			$result->tags[1]->_joinData->user,
+			'joinData should contain a user entity.'
+		);
+		$this->assertEquals('Mark', $result->tags[1]->_joinData->user->username);
+
+		$this->assertNull($result->tags[0]->_joinData->crazy);
+		$this->assertNull($result->tags[1]->_joinData->crazy);
 	}
 
 }
