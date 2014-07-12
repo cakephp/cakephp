@@ -1114,4 +1114,43 @@ class MarshallerTest extends TestCase {
 		$this->assertNull($result->user->password);
 	}
 
+/**
+ * Tests merging data into an associated entity
+ *
+ * @return void
+ */
+	public function testMergeAssociationWithfieldList() {
+		$user = new Entity([
+			'username' => 'mark',
+			'password' => 'secret'
+		]);
+		$entity = new Entity([
+			'tile' => 'My Title',
+			'user' => $user
+		]);
+		$user->accessible('*', true);
+		$entity->accessible('*', true);
+
+		$data = [
+			'body' => 'My Content',
+			'something' => 'else',
+			'user' => [
+				'password' => 'not a secret',
+				'extra' => 'data'
+			]
+		];
+		$marshall = new Marshaller($this->articles);
+		$marshall->merge($entity, $data, [
+			'fieldList' => ['something'],
+			'associated' => ['Users' => ['fieldList' => ['extra']]]
+		]);
+		$this->assertNull($entity->body);
+		$this->assertEquals('else', $entity->something);
+		$this->assertSame($user, $entity->user);
+		$this->assertEquals('mark', $entity->user->username);
+		$this->assertEquals('secret', $entity->user->password);
+		$this->assertEquals('data', $entity->user->extra);
+		$this->assertTrue($entity->dirty('user'));
+	}
+
 }
