@@ -1081,4 +1081,37 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals($expected, $entities[0]->toArray());
 	}
 
+/**
+ * test marshalling association data while passing a fieldList
+ *
+ * @return void
+ */
+	public function testAssociatoinsFieldList() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 1,
+			'user' => [
+				'username' => 'mark',
+				'password' => 'secret',
+				'foo' => 'bar'
+			]
+		];
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, [
+			'fieldList' => ['title', 'body', 'user'],
+			'associated' => [
+				'Users' => ['fieldList' => ['username', 'foo']]
+			]
+		]);
+
+		$this->assertEquals($data['title'], $result->title);
+		$this->assertEquals($data['body'], $result->body);
+		$this->assertNull($result->author_id);
+
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->user);
+		$this->assertEquals($data['user']['username'], $result->user->username);
+		$this->assertNull($result->user->password);
+	}
+
 }

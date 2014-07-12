@@ -71,13 +71,9 @@ class Marshaller {
 				$key = $nested;
 				$nested = [];
 			}
-			$nested = isset($nested['associated']) ? $nested['associated'] : [];
 			$assoc = $this->_table->association($key);
 			if ($assoc) {
-				$map[$assoc->property()] = [
-					'association' => $assoc,
-					'nested' => $nested
-				];
+				$map[$assoc->property()] = ['association' => $assoc] + $nested + ['associated' => []];
 			}
 		}
 		return $map;
@@ -110,8 +106,7 @@ class Marshaller {
 			$columnType = $schema->columnType($key);
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
-				$nested = ['associated' => $propertyMap[$key]['nested']];
-				$value = $this->_marshalAssociation($assoc, $value, $nested);
+				$value = $this->_marshalAssociation($assoc, $value, $propertyMap[$key]);
 			} elseif ($columnType) {
 				$converter = Type::build($columnType);
 				$value = $converter->marshal($value);
@@ -267,8 +262,7 @@ class Marshaller {
 
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
-				$nested = ['associated' => $propertyMap[$key]['nested']];
-				$value = $this->_mergeAssociation($original, $assoc, $value, $nested);
+				$value = $this->_mergeAssociation($original, $assoc, $value, $propertyMap[$key]);
 			} elseif ($columnType) {
 				$converter = Type::build($columnType);
 				$value = $converter->marshal($value);
