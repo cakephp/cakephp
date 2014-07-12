@@ -85,7 +85,7 @@ class Marshaller {
  * ### Options:
  *
  * * associated: Associations listed here will be marshalled as well.
- * * fiedlList: A whitelist of fields to be assigened to th entity, if not present
+ * * fiedlList: A whitelist of fields to be assigned to the entity. If not present,
  *   the accessible fields list in the entity will be used.
  *
  * @param array $data The data to hydrate.
@@ -160,7 +160,7 @@ class Marshaller {
  * ### Options:
  *
  * * associated: Associations listed here will be marshalled as well.
- * * fiedlList: A whitelist of fields to be assigened to th entity, if not present
+ * * fiedlList: A whitelist of fields to be assigned to the entity. If not present,
  *   the accessible fields list in the entity will be used.
  *
  * @param array $data The data to hydrate.
@@ -252,7 +252,7 @@ class Marshaller {
  * ### Options:
  *
  * * associated: Associations listed here will be marshalled as well.
- * * fiedlList: A whitelist of fields to be assigened to th entity, if not present
+ * * fiedlList: A whitelist of fields to be assigned to the entity. If not present
  *   the accessible fields list in the entity will be used.
  *
  * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
@@ -321,7 +321,7 @@ class Marshaller {
  * ### Options:
  *
  * * associated: Associations listed here will be marshalled as well.
- * * fiedlList: A whitelist of fields to be assigened to th entity, if not present
+ * * fiedlList: A whitelist of fields to be assigned to the entity. If not present,
  *   the accessible fields list in the entity will be used.
  *
  * @param array|\Traversable $entities the entities that will get the
