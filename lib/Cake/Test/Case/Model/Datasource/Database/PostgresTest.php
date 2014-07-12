@@ -162,8 +162,8 @@ class PostgresClientTestModel extends Model {
 			'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
 			'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 			'email' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'created' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
-			'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			'created' => array('type' => 'datetime', 'null' => true, 'default' => null, 'length' => ''),
+			'updated' => array('type' => 'datetime', 'null' => true, 'default' => null, 'length' => null)
 		);
 	}
 
@@ -551,6 +551,7 @@ class PostgresTest extends CakeTestCase {
 			'connection' => 'test',
 			'models' => array('DatatypeTest')
 		));
+
 		$schema->tables = array(
 			'datatype_tests' => $result['tables']['missing']['datatype_tests']
 		);
@@ -1096,6 +1097,51 @@ class PostgresTest extends CakeTestCase {
 		$result = $db->limit(10, 300000000000000000000000000000);
 		$scientificNotation = sprintf('%.1E', 300000000000000000000000000000);
 		$this->assertNotContains($scientificNotation, $result);
+	}
+
+/**
+ * Test describe() behavior for timestamp columns.
+ *
+ * @return void
+ */
+	public function testDescribeTimestamp() {
+		$this->loadFixtures('User');
+		$model = ClassRegistry::init('User');
+		$result = $this->Dbo->describe($model);
+		$expected = array(
+			'id' => array(
+				'type' => 'integer',
+				'null' => false,
+				'default' => null,
+				'length' => 11,
+				'key' => 'primary'
+			),
+			'user' => array(
+				'type' => 'string',
+				'null' => true,
+				'default' => null,
+				'length' => 255
+			),
+			'password' => array(
+				'type' => 'string',
+				'null' => true,
+				'default' => null,
+				'length' => 255
+			),
+			'created' => array(
+				'type' => 'datetime',
+				'null' => true,
+				'default' => null,
+				'length' => null
+			),
+			'updated' => array(
+				'type' => 'datetime',
+				'null' => true,
+				'default' => null,
+				'length' => null
+			)
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 }
