@@ -82,9 +82,14 @@ class Marshaller {
 /**
  * Hydrate one entity and its associated data.
  *
+ * ### Options:
+ *
+ * * associated: Associations listed here will be marshalled as well.
+ * * fiedlList: A whitelist of fields to be assigened to th entity, if not present
+ *   the accessible fields list in the entity will be used.
+ *
  * @param array $data The data to hydrate.
- * @param array $options List of options, if the 'associated' key is present
- * associations listed there will be marshalled as well.
+ * @param array $options List of options
  * @return \Cake\ORM\Entity
  * @see \Cake\ORM\Table::newEntity()
  */
@@ -152,9 +157,14 @@ class Marshaller {
 /**
  * Hydrate many entities and their associated data.
  *
+ * ### Options:
+ *
+ * * associated: Associations listed here will be marshalled as well.
+ * * fiedlList: A whitelist of fields to be assigened to th entity, if not present
+ *   the accessible fields list in the entity will be used.
+ *
  * @param array $data The data to hydrate.
- * @param array $options List of options, if the 'associated' key is present
- * associations listed there will be marshelled as well.
+ * @param array $options List of options
  * @return array An array of hydrated records.
  * @see \Cake\ORM\Table::newEntities()
  */
@@ -239,11 +249,16 @@ class Marshaller {
  * `$data` array will appear, those that can be matched by primary key will get
  * the data merged, but those that cannot, will be discarded.
  *
+ * ### Options:
+ *
+ * * associated: Associations listed here will be marshalled as well.
+ * * fiedlList: A whitelist of fields to be assigened to th entity, if not present
+ *   the accessible fields list in the entity will be used.
+ *
  * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
  * data merged in
  * @param array $data key value list of fields to be merged into the entity
- * @param array $options List of options, if the 'associated' key is present
- * associations listed there will be marshalled as well.
+ * @param array $options List of options.
  * @return \Cake\Datasource\EntityInterface
  */
 	public function merge(EntityInterface $entity, array $data, array $options = []) {
@@ -303,11 +318,16 @@ class Marshaller {
  * `$data` array will appear, those that can be matched by primary key will get
  * the data merged, but those that cannot, will be discarded.
  *
+ * ### Options:
+ *
+ * * associated: Associations listed here will be marshalled as well.
+ * * fiedlList: A whitelist of fields to be assigened to th entity, if not present
+ *   the accessible fields list in the entity will be used.
+ *
  * @param array|\Traversable $entities the entities that will get the
  * data merged in
  * @param array $data list of arrays to be merged into the entities
- * @param array $options List of options, if the 'associated' key is present
- * associations listed there will be marshalled as well.
+ * @param array $options List of options.
  * @return array
  */
 	public function mergeMany($entities, array $data, array $options = []) {
