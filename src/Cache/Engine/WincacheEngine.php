@@ -15,6 +15,7 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use Cake\Utility\Inflector;
 
 /**
  * Wincache storage engine for cache
