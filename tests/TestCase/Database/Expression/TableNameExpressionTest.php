@@ -63,14 +63,34 @@ class TableNameExpressionTest extends TestCase {
         $expression->setName($quoted);
         $expression->setQuoted();
 
-        $this->assertEquals('"prefix_foo"', $expression->sql(new ValueBinder));
+        $this->assertQuotedString('<prefix_foo>', $expression->sql(new ValueBinder));
 
         $name = "bar";
         $expression = new TableNameExpression($name, '');
         $quoted = $connection->quoteIdentifier($expression->getName());
         $expression->setName($quoted);
 
-        $this->assertEquals('"bar"', $expression->sql(new ValueBinder));
+        $this->assertQuotedString('<bar>', $expression->sql(new ValueBinder));
+    }
+
+/**
+ * Assertion for comparing a regex pattern against a table name having its identifiers
+ * quoted. It accepts string quoted with the characters `<` and `>`. If the third
+ * parameter is set to true, it will alter the pattern to both accept quoted and
+ * unquoted queries
+ *
+ * @param string $pattern
+ * @param string $string the result to compare against
+ * @param bool $optional
+ * @return void
+ */
+    public function assertQuotedString($pattern, $string, $optional = false) {
+        if ($optional) {
+            $optional = '?';
+        }
+        $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
+        $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
+        $this->assertRegExp('#' . $pattern . '#', $string);
     }
 
 }
