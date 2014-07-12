@@ -109,7 +109,6 @@ class Collection {
 		}
 
 		$config = $this->_connection->config();
-		
 		$prefix = (isset($config["prefix"]) && $config["prefix"] !== "") ? $config["prefix"] : "";
 		$name = $prefix . $name;
 		list($sql, $params) = $this->_dialect->describeTableSql($name, $config);

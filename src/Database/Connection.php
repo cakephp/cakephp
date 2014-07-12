@@ -14,11 +14,11 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
-use Cake\Database\Expression\TableNameExpression;
-use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 
@@ -191,14 +191,12 @@ class Connection {
 	}
 
 /**
- * 
  * Wrap the table name in a TableNameExpression with the current config prefix
  *
  * @param string|array|ExpressionInterface $names The names of the tables
  *
  * @see \Cake\Database\Expression\TableNameExpression
  * @return string|array|ExpressionInterface Full tables names
- *
  */
 	public function fullTableName($names) {
 		$prefix = "";

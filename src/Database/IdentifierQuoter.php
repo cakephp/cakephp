@@ -14,12 +14,12 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Query;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\TableNameExpression;
+use Cake\Database\Query;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object
@@ -141,7 +141,7 @@ class IdentifierQuoter {
 /**
  * Quotes both the table and alias for an array of froms as stored in a Query
  * object
- * 
+ *
  * @param array $froms The froms to quote.
  * @return array
  */
@@ -152,7 +152,7 @@ class IdentifierQuoter {
 			foreach ($froms as $alias => $value) {
 				$value = $this->_quoteTableName($value);
 				$alias = is_numeric($alias) ? $alias : $this->_driver->quoteIdentifier($alias);
-				
+
 				$result[$alias] = $value;
 			}
 		}
@@ -186,7 +186,6 @@ class IdentifierQuoter {
 	}
 
 /**
- * 
  * Quotes the table name (either from a from or a join) taking into account
  * if the $name parameter is a TableNameExpression or not
  *

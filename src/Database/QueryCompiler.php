@@ -14,9 +14,9 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Query;
 use Cake\Database\ValueBinder;
-use Cake\Database\Expression\TableNameExpression;
 
 /**
  * Responsible for compiling a Query object into its SQL representation
@@ -180,7 +180,7 @@ class QueryCompiler {
 			}
 			$normalized[] = $p;
 		}
-		
+
 		return sprintf($select, implode(', ', $normalized));
 	}
 

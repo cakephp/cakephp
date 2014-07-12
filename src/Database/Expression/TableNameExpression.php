@@ -29,66 +29,66 @@ class TableNameExpression implements ExpressionInterface {
  *
  * @var string
  */
-    protected $_name;
+	protected $_name;
 
 /**
  * Holds the prefix to be prepended to the table name
  *
  * @var string
  */
-    protected $_prefix;
+	protected $_prefix;
 
 /**
  * Tells whether the current $_name is quoted or not
  *
  * @var bool
  */
-    protected $_quoted = false;
+	protected $_quoted = false;
 
 /**
  * Sets the table name this expression represents
  *
- * @param string $name
+ * @param string $name Name of the table
  * @return void
  */
-    public function setName($name) {
-        $this->_name = $name;
-    }
+	public function setName($name) {
+		$this->_name = $name;
+	}
 
 /**
  * Gets the table name this expression represents
  *
  * @return string Table name this expression represents
  */
-    public function getName() {
-        return $this->_name;
-    }
+	public function getName() {
+		return $this->_name;
+	}
 
 /**
  * Constructor
- * 
+ *
  * @param string|ExpressionInterface $name Table name
  * @param string $prefix Prefix to prepend
  */
-    public function __construct($name, $prefix) {
-        $this->setName($name);
-        $this->_prefix = $prefix;
-    }
+	public function __construct($name, $prefix) {
+		$this->setName($name);
+		$this->_prefix = $prefix;
+	}
 
 /**
  * Change the $_quoted property that to tell that the $_name property was quoted
  *
  * @param bool $quoted Boolean indicating whether the $_name property was quoted or not
- * 
+ *
  * @return void
  */
-    public function setQuoted($quoted = true) {
-        if ($quoted === true) {
-            $this->_quoted = true;
-        } else {
-            $this->_quoted = false;
-        }
-    }
+	public function setQuoted($quoted = true) {
+		if ($quoted === true) {
+			$this->_quoted = true;
+		} else {
+			$this->_quoted = false;
+		}
+	}
 
 /**
  * Converts the expression into a SQL string fragment.
@@ -96,29 +96,29 @@ class TableNameExpression implements ExpressionInterface {
  * @param \Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
-    public function sql(ValueBinder $generator) {
-        $sql = "";
+	public function sql(ValueBinder $generator) {
+		$sql = "";
 
-        if (is_string($this->_name)) {
-            if ($this->_quoted) {
-                $sql = $this->_name[0] . $this->_prefix . substr($this->_name, 1);
-            } else {
-                $sql = $this->_prefix . $this->_name;
-            }
-        } elseif ($this->_name instanceof ExpressionInterface) {
-            $sql = '(' . $this->_name->sql($generator) . ')';
-        }
+		if (is_string($this->_name)) {
+			if ($this->_quoted) {
+				$sql = $this->_name[0] . $this->_prefix . substr($this->_name, 1);
+			} else {
+				$sql = $this->_prefix . $this->_name;
+			}
+		} elseif ($this->_name instanceof ExpressionInterface) {
+			$sql = '(' . $this->_name->sql($generator) . ')';
+		}
 
-        return $sql;
-    }
+		return $sql;
+	}
 
 /**
  * No-op. There is nothing to traverse
  *
- * @param callable $visitor
+ * @param callable $callable The callable to traverse with.
  * @return void
  */
-    public function traverse(callable $visitor) {
+	public function traverse(callable $callable) {
+	}
 
-    }
 }

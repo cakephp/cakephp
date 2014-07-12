@@ -32,46 +32,46 @@ class TableNameExpressionTest extends TestCase {
  *
  * @return void
  */
-    public function testGetAndSetName() {
-        $expression = new TableNameExpression('foo', '');
-        $this->assertEquals('foo', $expression->getName());
-        $expression->setName('bar');
-        $this->assertEquals('bar', $expression->getName());
-    }
+	public function testGetAndSetName() {
+		$expression = new TableNameExpression('foo', '');
+		$this->assertEquals('foo', $expression->getName());
+		$expression->setName('bar');
+		$this->assertEquals('bar', $expression->getName());
+	}
 
 /**
  * Tests converting to sql
  *
  * @return void
  */
-    public function testSQL() {
-        $expression = new TableNameExpression('foo', '');
-        $this->assertEquals('foo', $expression->sql(new ValueBinder));
+	public function testSQL() {
+		$expression = new TableNameExpression('foo', '');
+		$this->assertEquals('foo', $expression->sql(new ValueBinder));
 
-        $expression = new TableNameExpression('foo', 'prefix_');
-        $this->assertEquals('prefix_foo', $expression->sql(new ValueBinder));
+		$expression = new TableNameExpression('foo', 'prefix_');
+		$this->assertEquals('prefix_foo', $expression->sql(new ValueBinder));
 
-        $driver = $this->getMock('Cake\Database\Driver\Sqlite', ['enabled']);
-        $driver->expects($this->once())
-            ->method('enabled')
-            ->will($this->returnValue(true));
-        $connection = new Connection(['driver' => $driver]);
+		$driver = $this->getMock('Cake\Database\Driver\Sqlite', ['enabled']);
+		$driver->expects($this->once())
+			->method('enabled')
+			->will($this->returnValue(true));
+		$connection = new Connection(['driver' => $driver]);
 
-        $name = "foo";
-        $expression = new TableNameExpression($name, 'prefix_');
-        $quoted = $connection->quoteIdentifier($expression->getName());
-        $expression->setName($quoted);
-        $expression->setQuoted();
+		$name = "foo";
+		$expression = new TableNameExpression($name, 'prefix_');
+		$quoted = $connection->quoteIdentifier($expression->getName());
+		$expression->setName($quoted);
+		$expression->setQuoted();
 
-        $this->assertQuotedString('<prefix_foo>', $expression->sql(new ValueBinder));
+		$this->assertQuotedString('<prefix_foo>', $expression->sql(new ValueBinder));
 
-        $name = "bar";
-        $expression = new TableNameExpression($name, '');
-        $quoted = $connection->quoteIdentifier($expression->getName());
-        $expression->setName($quoted);
+		$name = "bar";
+		$expression = new TableNameExpression($name, '');
+		$quoted = $connection->quoteIdentifier($expression->getName());
+		$expression->setName($quoted);
 
-        $this->assertQuotedString('<bar>', $expression->sql(new ValueBinder));
-    }
+		$this->assertQuotedString('<bar>', $expression->sql(new ValueBinder));
+	}
 
 /**
  * Assertion for comparing a regex pattern against a table name having its identifiers
@@ -84,13 +84,13 @@ class TableNameExpressionTest extends TestCase {
  * @param bool $optional
  * @return void
  */
-    public function assertQuotedString($pattern, $string, $optional = false) {
-        if ($optional) {
-            $optional = '?';
-        }
-        $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
-        $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
-        $this->assertRegExp('#' . $pattern . '#', $string);
-    }
+	public function assertQuotedString($pattern, $string, $optional = false) {
+		if ($optional) {
+			$optional = '?';
+		}
+		$pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
+		$pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
+		$this->assertRegExp('#' . $pattern . '#', $string);
+	}
 
 }
