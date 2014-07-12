@@ -1051,4 +1051,34 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals($data[1], $result[1]->toArray());
 	}
 
+/**
+ * Test that many() also receives a fieldList option
+ *
+ * @return void
+ */
+	public function testMergeManyFieldList() {
+		$entities = [
+			new OpenEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
+			new OpenEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2])
+		];
+		$entities[0]->clean();
+		$entities[1]->clean();
+
+		$data = [
+			['id' => 2, 'comment' => 'Changed 2', 'user_id' => 10],
+			['id' => 1, 'comment' => 'Changed 1', 'user_id' => 20]
+		];
+		$marshall = new Marshaller($this->comments);
+		$result = $marshall->mergeMany($entities, $data, ['fieldList' => ['id', 'comment']]);
+
+		$this->assertSame($entities[0], $result[0]);
+		$this->assertSame($entities[1], $result[1]);
+
+		$expected = ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2];
+		$this->assertEquals($expected, $entities[1]->toArray());
+
+		$expected = ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 2];
+		$this->assertEquals($expected, $entities[0]->toArray());
+	}
+
 }
