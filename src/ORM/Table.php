@@ -1609,7 +1609,7 @@ class Table implements RepositoryInterface, EventListener {
  * );
  * }}}
  *
- * You can limit field that will be present in the constructed entity by
+ * You can limit fields that will be present in the constructed entity by
  * passing the `fieldList` option, which is also accepted for associations:
  *
  * {{{
@@ -1643,7 +1643,7 @@ class Table implements RepositoryInterface, EventListener {
  * );
  * }}}
  *
- * You can limit field that will be present in the constructed entities by
+ * You can limit fields that will be present in the constructed entities by
  * passing the `fieldList` option, which is also accepted for associations:
  *
  * {{{
@@ -1670,7 +1670,7 @@ class Table implements RepositoryInterface, EventListener {
  * `$data` array will appear, those that can be matched by primary key will get
  * the data merged, but those that cannot, will be discarded.
  *
- * You can limit field that will be present in the merged entity by
+ * You can limit fields that will be present in the merged entity by
  * passing the `fieldList` option, which is also accepted for associations:
  *
  * {{{
@@ -1700,7 +1700,7 @@ class Table implements RepositoryInterface, EventListener {
  * `$data` array will appear, those that can be matched by primary key will get
  * the data merged, but those that cannot, will be discarded.
  *
- * You can limit field that will be present in the merged entities by
+ * You can limit fields that will be present in the merged entities by
  * passing the `fieldList` option, which is also accepted for associations:
  *
  * {{{
