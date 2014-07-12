@@ -2399,7 +2399,7 @@ class DboSource extends DataSource {
 			return $conditions;
 		}
 		$exists = $Model->exists();
-		if (!$exists && $conditions !== null) {
+		if (!$exists && ($conditions !== null || !empty($Model->__safeUpdateMode))) {
 			return false;
 		} elseif (!$exists) {
 			return null;
