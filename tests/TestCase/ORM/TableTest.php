@@ -1365,6 +1365,25 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test that you cannot save rows without a primary key.
+ *
+ * @group save
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Cannot insert row in "users", it has no primary key
+ * @return void
+ */
+	public function testSaveNewErrorOnNoPrimaryKey() {
+		$entity = new \Cake\ORM\Entity();
+		$table = TableRegistry::get('users', [
+			'schema' => [
+				'id' => ['type' => 'integer'],
+				'username' => ['type' => 'string'],
+			]
+		]);
+		$table->save($entity);
+	}
+
+/**
  * Tests that save is wrapped around a transaction
  *
  * @group save
