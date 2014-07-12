@@ -43,7 +43,11 @@ class <?= $name ?>Table extends Table {
 <?php
 $key = array_map(function($el) { return "'$el'"; }, (array)$primaryKey);
 ?>
+<?php if (count($primaryKey) > 1): ?>
 		$this->primaryKey([<?= implode(', ', $key) ?>]);
+<?php else: ?>
+		$this->primaryKey(<?= current($key) ?>);
+<?php endif ?>
 <?php endif ?>
 <?php foreach ($behaviors as $behavior => $behaviorData): ?>
 		$this->addBehavior('<?= $behavior ?>'<?= $behaviorData ? ", [" . implode(', ', $behaviorData) . ']' : '' ?>);

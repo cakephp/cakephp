@@ -738,7 +738,7 @@ class ModelTaskTest extends TestCase {
 		$result = $this->Task->bakeTable($model, $config);
 
 		$this->assertContains('public function initialize(array $config) {', $result);
-		$this->assertContains("this->primaryKey(['id']);\n", $result);
+		$this->assertContains("this->primaryKey('id');\n", $result);
 		$this->assertContains("this->displayField('title');\n", $result);
 		$this->assertContains("this->addBehavior('Timestamp');\n", $result);
 		$this->assertContains("this->table('articles');\n", $result);
