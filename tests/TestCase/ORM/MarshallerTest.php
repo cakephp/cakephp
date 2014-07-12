@@ -1211,4 +1211,67 @@ class MarshallerTest extends TestCase {
 		$this->assertNull($result->tags[1]->_joinData->crazy);
 	}
 
+/**
+ * Test merging the _joinData entity for belongstomany associations
+ * while passing a whitelist
+ *
+ * @return void
+ */
+	public function testMergeJoinDataWithFieldList() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 1,
+			'tags' => [
+				[
+					'id' => 1,
+					'tag' => 'news',
+					'_joinData' => [
+						'active' => 0
+					]
+				],
+				[
+					'id' => 2,
+					'tag' => 'cakephp',
+					'_joinData' => [
+						'active' => 0
+					]
+				],
+			],
+		];
+
+		$options = ['associated' => ['Tags' => ['associated' => ['_joinData']]]];
+		$marshall = new Marshaller($this->articles);
+		$entity = $marshall->one($data, $options);
+		$entity->accessible('*', true);
+
+		$data = [
+			'title' => 'Haz data',
+			'tags' => [
+				['id' => 1, 'tag' => 'Cake', '_joinData' => ['foo' => 'bar', 'crazy' => 'something']],
+				['tag' => 'new tag', '_joinData' => ['active' => 1, 'foo' => 'baz']]
+			]
+		];
+
+		$tag1 = $entity->tags[0];
+		$result = $marshall->merge($entity, $data, [
+			'associated' => ['Tags._joinData' => ['fieldList' => ['foo']]]
+		]);
+		$this->assertEquals($data['title'], $result->title);
+		$this->assertEquals('My content', $result->body);
+		$this->assertSame($tag1, $entity->tags[0]);
+		$this->assertSame($tag1->_joinData, $entity->tags[0]->_joinData);
+		$this->assertSame(
+			['active' => 0, 'foo' => 'bar'],
+			$entity->tags[0]->_joinData->toArray()
+		);
+		$this->assertSame(
+			['foo' => 'baz'],
+			$entity->tags[1]->_joinData->toArray()
+		);
+		$this->assertEquals('new tag', $entity->tags[1]->tag);
+		$this->assertTrue($entity->tags[0]->dirty('_joinData'));
+		$this->assertTrue($entity->tags[1]->dirty('_joinData'));
+	}
+
 }

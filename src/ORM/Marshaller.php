@@ -402,8 +402,8 @@ class Marshaller {
 		$marshaller = $joint->marshaller();
 
 		$nested = [];
-		if (isset($associated['_joinData']['associated'])) {
-			$nested = ['associated' => (array)$associated['_joinData']['associated']];
+		if (isset($associated['_joinData'])) {
+			$nested = (array)$associated['_joinData'];
 		}
 
 		$records = $this->mergeMany($original, $value, $options);
