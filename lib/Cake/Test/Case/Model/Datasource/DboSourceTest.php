@@ -33,6 +33,9 @@ require_once dirname(dirname(__FILE__)) . DS . 'models.php';
  */
 class MockPDO extends PDO {
 
+/**
+ * Constructor.
+ */
 	public function __construct() {
 	}
 
@@ -1416,7 +1419,7 @@ class DboSourceTest extends CakeTestCase {
 /**
  * Test defaultConditions()
  *
- * @return
+ * @return void
  */
 	public function testDefaultConditions() {
 		$this->loadFixtures('Article');

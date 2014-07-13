@@ -6371,6 +6371,11 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals(array(6, 4, 5, 2), $result);
 	}
 
+/**
+ * testToggleBoolFields method
+ *
+ * @return void
+ */
 	public function testToggleBoolFields() {
 		$this->loadFixtures('CounterCacheUser', 'CounterCachePost');
 		$Post = new CounterCachePost();
@@ -7266,7 +7271,7 @@ class ModelWriteTest extends BaseModelTest {
  * Test that Model::save() doesn't generate a query with WHERE 1 = 1 on race condition.
  *
  * @link https://github.com/cakephp/cakephp/issues/3857
- * @return 
+ * @return void
  */
 	public function testSafeUpdateMode() {
 		$this->loadFixtures('User');
@@ -7303,8 +7308,8 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * Emulates race condition
  *
- * @param $event
- * @return 
+ * @param CakeEvent $event containing the Model
+ * @return void
  */
 	public function deleteMe($event) {
 		$Model = $event->subject;
