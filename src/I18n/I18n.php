@@ -14,29 +14,61 @@
  */
 namespace Cake\I18n;
 
-use Cake\Cache\Cache;
-use Cake\Core\App;
-use Cake\Core\Configure;
-use Cake\Core\Plugin;
-use Cake\Network\Request;
-use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
-
+use Aura\Intl\PackageLocator;
+use Aura\Intl\FormatterLocator;
+use Aura\Intl\TranslatorFactory;
+use Aura\Intl\TranslatorLocator;
+use Aura\Intl\Package;
 /**
  * I18n handles translation of Text and time format strings.
  *
  */
 class I18n {
 
-/**
- * Constructor, use I18n::getInstance() to get the i18n translation object.
- *
- * @param \Cake\Network\Request $request Request object
- */
-	public function __construct(Request $request) {
-		$this->_request = $request;
+	protected static $_collection;
 
-		$this->l10n = new L10n($this->_request);
+	protected static $_defaultLocale = 'en_US';
+
+	public static function translators() {
+		if (static::$_collection !== null) {
+			return static::$_collection;
+		}
+
+		$translators = new TranslatorLocator(
+			new PackageLocator,
+			new FormatterLocator([
+				'basic' => function() { return new \Aura\Intl\BasicFormatter; },
+				'intl'  => function() { return new \Aura\Intl\IntlFormatter; },
+			]),
+			new TranslatorFactory,
+			static::$_defaultLocale
+		);
+
+		static::attachDefaults($translators);
+		return static::$_collection = $translators;
+	}
+
+	public static function translator($package = 'default', $locale = null, callable $loader = null) {
+		if ($loader !== null) {
+			$packages = $translators->getPackages();
+			$locale = $locale ?: static::$_defaultLocale;
+			$packages->set($package, $locale, $loader);
+			return;
+		}
+
+		return static::translators()->get($package);
+	}
+
+	public static function attachDefaults(TranslatorLocator $translators) {
+		$packages = $translators->getPackages();
+		$packages->set('default', static::$_defaultLocale, function() {
+			$package = new Package;
+			$package->setMessages([
+				'FOO' => 'The text for "foo."',
+				'BAR' => 'The text for "bar."'
+			]);
+			return $package;
+		});
 	}
 
 /**
@@ -47,14 +79,13 @@ class I18n {
  * @param string $plural Plural string (if any)
  * @param string $domain Domain The domain of the translation. Domains are often used by plugin translations.
  *    If null, the default domain will be used.
- * @param int $category Category The integer value of the category to use.
  * @param int $count Count Count is used with $plural to choose the correct plural form.
  * @param string $language Language to translate string to.
  *    If null it checks for language in session followed by Config.language configuration variable.
  * @return string translated string.
  * @throws \Cake\Error\Exception When '' is provided as a domain.
  */
-	public static function translate($singular, $plural = null, $domain = null, $category = self::LC_MESSAGES, $count = null, $language = null) {
+	public static function translate($singular, $plural = null, $domain = null, $count = null, $language = null) {
 		
 	}
 
