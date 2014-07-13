@@ -41,6 +41,11 @@ class TreeBehavior extends Behavior {
  */
 	protected $_table;
 
+/**
+ * Cached copy of the first column in a table's primary key.
+ *
+ * @var string
+ */
 	protected $_primaryKey;
 
 /**
