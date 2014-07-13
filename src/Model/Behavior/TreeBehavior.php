@@ -41,6 +41,8 @@ class TreeBehavior extends Behavior {
  */
 	protected $_table;
 
+	protected $_primaryKey;
+
 /**
  * Default config
  *
@@ -92,7 +94,7 @@ class TreeBehavior extends Behavior {
 		$isNew = $entity->isNew();
 		$config = $this->config();
 		$parent = $entity->get($config['parent']);
-		$primaryKey = (array)$this->_table->primaryKey();
+		$primaryKey = $this->_getPrimaryKey();
 		$dirty = $entity->dirty($config['parent']);
 
 		if ($isNew && $parent) {
@@ -169,7 +171,7 @@ class TreeBehavior extends Behavior {
 			throw new \RuntimeException(sprintf(
 				'Cannot use node "%s" as parent for entity "%s"',
 				$parent,
-				$entity->get($this->_table->primaryKey())
+				$entity->get($this->_getPrimaryKey())
 			));
 		}
 
@@ -296,7 +298,7 @@ class TreeBehavior extends Behavior {
 
 		if ($direct) {
 			return $this->_scope($this->_table->find())
-				->where([$parent => $node->get($this->_table->primaryKey())])
+				->where([$parent => $node->get($this->_getPrimaryKey())])
 				->count();
 		}
 
@@ -368,7 +370,7 @@ class TreeBehavior extends Behavior {
 			->find('threaded', ['parentField' => $this->config()['parent']])
 			->formatResults(function($results) use ($options) {
 				$options += [
-					'keyPath' => $this->_table->primaryKey(),
+					'keyPath' => $this->_getPrimaryKey(),
 					'valuePath' => $this->_table->displayField(),
 					'spacer' => '_'
 				];
@@ -415,7 +417,7 @@ class TreeBehavior extends Behavior {
 			return $this->_table->save($node);
 		}
 
-		$primary = $this->_table->primaryKey();
+		$primary = $this->_getPrimaryKey();
 		$this->_table->updateAll(
 			[$config['parent'] => $parent],
 			[$config['parent'] => $node->get($primary)]
@@ -599,7 +601,7 @@ class TreeBehavior extends Behavior {
 	protected function _getNode($id) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
-		$primaryKey = $this->_table->primaryKey();
+		$primaryKey = $this->_getPrimaryKey();
 
 		$node = $this->_scope($this->_table->find())
 			->select([$parent, $left, $right])
@@ -746,12 +748,25 @@ class TreeBehavior extends Behavior {
 			return;
 		}
 
-		$fresh = $this->_table->get($entity->get($this->_table->primaryKey()), $fields);
+		$fresh = $this->_table->get($entity->get($this->_getPrimaryKey()), $fields);
 		$entity->set($fresh->extract($fields), ['guard' => false]);
 
 		foreach ($fields as $field) {
 			$entity->dirty($field, false);
 		}
+	}
+
+/**
+ * Returns a single string value representing the primary key of the attached table
+ *
+ * @return string
+ */
+	protected function _getPrimaryKey() {
+		if (!$this->_primaryKey) {
+			$this->_primaryKey = (array)$this->_table->primaryKey();
+			$this->_primaryKey = $this->_primaryKey[0];
+		}
+		return $this->_primaryKey;
 	}
 
 }
