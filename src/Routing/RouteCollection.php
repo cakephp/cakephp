@@ -93,25 +93,25 @@ class RouteCollection {
  */
 	public function parse($url) {
 		foreach (array_keys($this->_paths) as $path) {
-			if (strpos($url, $path) === 0) {
-				break;
-			}
-		}
-
-		$queryParameters = null;
-		if (strpos($url, '?') !== false) {
-			list($url, $queryParameters) = explode('?', $url, 2);
-			parse_str($queryParameters, $queryParameters);
-		}
-		foreach ($this->_paths[$path] as $route) {
-			$r = $route->parse($url);
-			if ($r === false) {
+			if (strpos($url, $path) !== 0) {
 				continue;
 			}
-			if ($queryParameters) {
-				$r['?'] = $queryParameters;
+
+			$queryParameters = null;
+			if (strpos($url, '?') !== false) {
+				list($url, $queryParameters) = explode('?', $url, 2);
+				parse_str($queryParameters, $queryParameters);
 			}
-			return $r;
+			foreach ($this->_paths[$path] as $route) {
+				$r = $route->parse($url);
+				if ($r === false) {
+					continue;
+				}
+				if ($queryParameters) {
+					$r['?'] = $queryParameters;
+				}
+				return $r;
+			}
 		}
 		throw new MissingRouteException(['url' => $url]);
 	}
