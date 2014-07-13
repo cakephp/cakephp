@@ -66,7 +66,9 @@ class FlashComponent extends Component {
  * - `element` The element used to render the flash message
  * - `params` An array of variables to make available when using an element
  *
- * @param string $message Message to be flashed
+ * @param string|\Exception $message Message to be flashed. If an instance
+ *   of \Exception the exception message will be used and code will be set
+ *   in params.
  * @param array $options An array of options
  * @return void
  */
@@ -74,6 +76,7 @@ class FlashComponent extends Component {
 		$opts = array_merge($this->_defaultConfig, $options);
 
 		if ($message instanceof \Exception) {
+			$opts['params'] += ['code' => $message->getCode()];
 			$message = $message->getMessage();
 		}
 
