@@ -47,14 +47,13 @@ class RouteBuilder {
  *
  * @var array
  */
-	protected static $_resourceMap = array(
-		array('action' => 'index', 'method' => 'GET', 'id' => false),
-		array('action' => 'view', 'method' => 'GET', 'id' => true),
-		array('action' => 'add', 'method' => 'POST', 'id' => false),
-		array('action' => 'edit', 'method' => 'PUT', 'id' => true),
-		array('action' => 'delete', 'method' => 'DELETE', 'id' => true),
-		array('action' => 'edit', 'method' => 'POST', 'id' => true)
-	);
+	protected static $_resourceMap = [
+		'index' => ['action' => 'index', 'method' => 'GET', 'id' => false],
+		'create' => ['action' => 'add', 'method' => 'POST', 'id' => false],
+		'view' => ['action' => 'view', 'method' => 'GET', 'id' => true],
+		'update' => ['action' => 'edit', 'method' => ['PUT', 'PATCH'], 'id' => true],
+		'delete' => ['action' => 'delete', 'method' => 'DELETE', 'id' => true],
+	];
 
 /**
  * The extensions that should be set into the routes connected.
@@ -187,6 +186,8 @@ class RouteBuilder {
  *
  * - 'id' - The regular expression fragment to use when matching IDs. By default, matches
  *    integer values and UUIDs.
+ * - 'only' - Only connect the specific list of actions.
+ * - 'actions' - Override the method names used for connecting actions.
  *
  * @param string|array $name A controller name or array of controller names (i.e. "Posts" or "ListItems")
  * @param array $options Options to use when generating REST routes
@@ -201,10 +202,13 @@ class RouteBuilder {
 		}
 		$options += array(
 			'connectOptions' => [],
-			'id' => static::ID . '|' . static::UUID
+			'id' => static::ID . '|' . static::UUID,
+			'only' => ['index', 'update', 'create', 'view', 'delete'],
+			'actions' => [],
 		);
+		$options['only'] = (array)$options['only'];
+
 		$connectOptions = $options['connectOptions'];
-		unset($options['connectOptions']);
 
 		$urlName = Inflector::underscore($name);
 
@@ -213,12 +217,21 @@ class RouteBuilder {
 			$ext = $options['_ext'];
 		}
 
-		foreach (static::$_resourceMap as $params) {
+		foreach (static::$_resourceMap as $method => $params) {
+			if (!in_array($method, $options['only'], true)) {
+				continue;
+			}
+
+			$action = $params['action'];
+			if (isset($options['actions'][$method])) {
+				$action = $options['actions'][$method];
+			}
+
 			$id = $params['id'] ? ':id' : '';
 			$url = '/' . implode('/', array_filter(array($urlName, $id)));
 			$params = array(
 				'controller' => $name,
-				'action' => $params['action'],
+				'action' => $action,
 				'[method]' => $params['method'],
 				'_ext' => $ext
 			);
