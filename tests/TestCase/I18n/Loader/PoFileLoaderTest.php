@@ -1,0 +1,58 @@
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Test\TestCase\I18n\Loader;
+
+use Cake\I18n\Loader\PoFileLoader;
+use Cake\TestSuite\TestCase;
+
+/**
+ * Tests the PoFileLoader
+ *
+ */
+class PoFileLoaderTest extends TestCase {
+
+/**
+ * Tests parsing a file with plurals and message context
+ *
+ * @return void
+ */
+	public function testParse() {
+		$parser = new PoFileLoader;
+		$file = APP . 'Locale' . DS . 'rule_1_po' . DS . 'LC_MESSAGES' . DS . 'default.po';
+		$messages = $parser->parse($file);
+		$this->assertCount(5, $messages);
+		$expected = [
+			'Plural Rule 1' => 'Plural Rule 1 (translated)',
+			'%d = 1' => '%d = 1 (translated)',
+			'%d = 0 or > 1' => '%d = 1 (translated)&&&%d = 0 or > 1 (translated)',
+			'%-5d = 1' => '%-5d = 1 (translated)',
+			'%-5d = 0 or > 1' => '%-5d = 1 (translated)&&&&&&&&&&&&%-5d = 0 or > 1 (translated)'
+		];
+		$this->assertEquals($expected, $messages);
+	}
+
+/**
+ * Tests parsing a file with multiline keys and values
+ *
+ * @return void
+ */
+	public function testParseMultiLine() {
+		$parser = new PoFileLoader;
+		$file = APP . 'Locale' . DS . 'po' . DS . 'LC_MESSAGES' . DS . 'default.po';
+		$messages = $parser->parse($file);
+		$this->assertCount(12, $messages);
+		$this->assertTextEquals("v\nsecond line", $messages["valid\nsecond line"]);
+	}
+}
