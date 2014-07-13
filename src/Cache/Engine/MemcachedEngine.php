@@ -109,7 +109,7 @@ class MemcachedEngine extends CacheEngine {
 			'json' => \Memcached::SERIALIZER_JSON,
 			'php' => \Memcached::SERIALIZER_PHP
 		];
-		if (defined('\\Memcached::HAVE_MSGPACK') && \Memcached::HAVE_MSGPACK) {
+		if (defined('Memcached::HAVE_MSGPACK') && \Memcached::HAVE_MSGPACK) {
 			$this->_serializers['msgpack'] = \Memcached::SERIALIZER_MSGPACK;
 		}
 
@@ -177,7 +177,7 @@ class MemcachedEngine extends CacheEngine {
 			);
 		}
 
-		if ($serializer !== 'php' && !constant('\\Memcached::HAVE_' . strtoupper($serializer))) {
+		if ($serializer !== 'php' && !constant('Memcached::HAVE_' . strtoupper($serializer))) {
 			throw new Error\Exception(
 				sprintf('Memcached extension is not compiled with %s support', $serializer)
 			);
@@ -186,7 +186,7 @@ class MemcachedEngine extends CacheEngine {
 		$this->_Memcached->setOption(\Memcached::OPT_SERIALIZER, $this->_serializers[$serializer]);
 
 		// Check for Amazon ElastiCache instance
-		if (defined('\\Memcached::OPT_CLIENT_MODE') && defined('\\Memcached::DYNAMIC_CLIENT_MODE')) {
+		if (defined('Memcached::OPT_CLIENT_MODE') && defined('Memcached::DYNAMIC_CLIENT_MODE')) {
 			$this->_Memcached->setOption(\Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE);
 		}
 
