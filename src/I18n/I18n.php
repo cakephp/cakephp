@@ -14,11 +14,13 @@
  */
 namespace Cake\I18n;
 
-use Aura\Intl\PackageLocator;
+use Aura\Intl\Exception as LoadException;
 use Aura\Intl\FormatterLocator;
+use Aura\Intl\Package;
+use Aura\Intl\PackageLocator;
 use Aura\Intl\TranslatorFactory;
 use Aura\Intl\TranslatorLocator;
-use Aura\Intl\Package;
+
 /**
  * I18n handles translation of Text and time format strings.
  *
@@ -44,31 +46,27 @@ class I18n {
 			static::$_defaultLocale
 		);
 
-		static::attachDefaults($translators);
 		return static::$_collection = $translators;
 	}
 
 	public static function translator($package = 'default', $locale = null, callable $loader = null) {
 		if ($loader !== null) {
-			$packages = $translators->getPackages();
+			$packages = static::translators()->getPackages();
 			$locale = $locale ?: static::$_defaultLocale;
 			$packages->set($package, $locale, $loader);
 			return;
 		}
 
-		return static::translators()->get($package);
-	}
+		if ($locale) {
+			static::translators()->setLocale($locale);
+		}
 
-	public static function attachDefaults(TranslatorLocator $translators) {
-		$packages = $translators->getPackages();
-		$packages->set('default', static::$_defaultLocale, function() {
-			$package = new Package;
-			$package->setMessages([
-				'FOO' => 'The text for "foo."',
-				'BAR' => 'The text for "bar."'
-			]);
-			return $package;
-		});
+		try {
+			return static::translators()->get($package);
+		} catch (LoadException $e) {
+			static::translator($package, $locale, new MessageLoader($package, $locale));
+			return static::translators()->get($package);
+		}
 	}
 
 /**
@@ -87,26 +85,6 @@ class I18n {
  */
 	public static function translate($singular, $plural = null, $domain = null, $count = null, $language = null) {
 		
-	}
-
-/**
- * Clears the domains internal data array. Useful for testing i18n.
- *
- * @return void
- */
-	public static function clear() {
-		$self = I18n::getInstance();
-		$self->_domains = array();
-	}
-
-/**
- * Get the loaded domains cache.
- *
- * @return array
- */
-	public static function domains() {
-		$self = I18n::getInstance();
-		return $self->_domains;
 	}
 
 }
