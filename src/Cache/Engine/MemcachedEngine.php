@@ -17,6 +17,7 @@ namespace Cake\Cache\Engine;
 use Cake\Cache\CacheEngine;
 use Cake\Error;
 use Cake\Utility\Inflector;
+use \Memcached;
 
 /**
  * Memcached storage engine for cache. Memcached has some limitations in the amount of
@@ -105,12 +106,12 @@ class MemcachedEngine extends CacheEngine {
 		}
 
 		$this->_serializers = [
-			'igbinary' => \Memcached::SERIALIZER_IGBINARY,
-			'json' => \Memcached::SERIALIZER_JSON,
-			'php' => \Memcached::SERIALIZER_PHP
+			'igbinary' => Memcached::SERIALIZER_IGBINARY,
+			'json' => Memcached::SERIALIZER_JSON,
+			'php' => Memcached::SERIALIZER_PHP
 		];
-		if (defined('Memcached::HAVE_MSGPACK') && \Memcached::HAVE_MSGPACK) {
-			$this->_serializers['msgpack'] = \Memcached::SERIALIZER_MSGPACK;
+		if (defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK) {
+			$this->_serializers['msgpack'] = Memcached::SERIALIZER_MSGPACK;
 		}
 
 		parent::init($config);
@@ -127,7 +128,7 @@ class MemcachedEngine extends CacheEngine {
 			return true;
 		}
 
-		$this->_Memcached = new \Memcached($this->_config['persistent'] ? (string)$this->_config['persistent'] : null);
+		$this->_Memcached = new Memcached($this->_config['persistent'] ? (string)$this->_config['persistent'] : null);
 		$this->_setOptions();
 
 		if (count($this->_Memcached->getServerList())) {
@@ -168,7 +169,7 @@ class MemcachedEngine extends CacheEngine {
  * @throws \Cake\Error\Exception when the Memcached extension is not built with the desired serializer engine
  */
 	protected function _setOptions() {
-		$this->_Memcached->setOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
+		$this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
 		$serializer = strtolower($this->_config['serialize']);
 		if (!isset($this->_serializers[$serializer])) {
@@ -183,14 +184,14 @@ class MemcachedEngine extends CacheEngine {
 			);
 		}
 
-		$this->_Memcached->setOption(\Memcached::OPT_SERIALIZER, $this->_serializers[$serializer]);
+		$this->_Memcached->setOption(Memcached::OPT_SERIALIZER, $this->_serializers[$serializer]);
 
 		// Check for Amazon ElastiCache instance
 		if (defined('Memcached::OPT_CLIENT_MODE') && defined('Memcached::DYNAMIC_CLIENT_MODE')) {
-			$this->_Memcached->setOption(\Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE);
+			$this->_Memcached->setOption(Memcached::OPT_CLIENT_MODE, Memcached::DYNAMIC_CLIENT_MODE);
 		}
 
-		$this->_Memcached->setOption(\Memcached::OPT_COMPRESSION, (bool)$this->_config['compress']);
+		$this->_Memcached->setOption(Memcached::OPT_COMPRESSION, (bool)$this->_config['compress']);
 	}
 
 /**
