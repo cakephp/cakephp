@@ -46,7 +46,7 @@ class FlashHelperTest extends TestCase {
 				'flash' => array(
 					'key' => 'flash',
 					'message' => 'This is a calling',
-					'element' => null,
+					'element' => 'Flash/default',
 					'params' => array()
 				),
 				'notification' => array(
@@ -75,7 +75,7 @@ class FlashHelperTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->View, $this->Session);
+		unset($this->View, $this->Flash);
 	}
 
 /**
@@ -85,8 +85,8 @@ class FlashHelperTest extends TestCase {
  */
 	public function testFlash() {
 		$result = $this->Flash->render();
-		$expected = 'This is a calling';
-		$this->assertEquals($expected, $result);
+		$expected = '<div class="message">This is a calling</div>';
+		$this->assertContains($expected, $result);
 
 		$expected = '<div id="classy-message">Recorded</div>';
 		$result = $this->Flash->render('classy');

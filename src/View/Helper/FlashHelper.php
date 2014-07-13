@@ -62,18 +62,12 @@ class FlashHelper extends Helper {
  * @return string
  */
 	public function render($key = 'flash', array $options = []) {
-		$flash = $this->request->session()->read("Flash.$key");
-		$this->request->session()->delete("Flash.$key");
-
-		if (!$flash) {
+		if (!$this->request->session()->check("Flash.$key")) {
 			return '';
 		}
 
-		$flash = $options + $flash;
-
-		if ($flash['element'] === null) {
-			return $flash['message'];
-		}
+		$flash = $options + $this->request->session()->read("Flash.$key");
+		$this->request->session()->delete("Flash.$key");
 
 		return $this->_View->element($flash['element'], $flash);
 	}
