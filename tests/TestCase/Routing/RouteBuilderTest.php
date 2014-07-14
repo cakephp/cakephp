@@ -258,6 +258,45 @@ class RouteBuilderTest extends TestCase {
 	}
 
 /**
+ * Test resource parsing.
+ *
+ * @return void
+ */
+	public function testResourcesParsing() {
+		$routes = new RouteBuilder($this->collection, '/');
+		$routes->resources('Articles');
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = $this->collection->parse('/articles');
+		$this->assertEquals('Articles', $result['controller']);
+		$this->assertEquals('index', $result['action']);
+		$this->assertEquals([], $result['pass']);
+
+		$result = $this->collection->parse('/articles/1');
+		$this->assertEquals('Articles', $result['controller']);
+		$this->assertEquals('view', $result['action']);
+		$this->assertEquals([1], $result['pass']);
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$result = $this->collection->parse('/articles');
+		$this->assertEquals('Articles', $result['controller']);
+		$this->assertEquals('add', $result['action']);
+		$this->assertEquals([], $result['pass']);
+
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$result = $this->collection->parse('/articles/1');
+		$this->assertEquals('Articles', $result['controller']);
+		$this->assertEquals('edit', $result['action']);
+		$this->assertEquals([1], $result['pass']);
+
+		$_SERVER['REQUEST_METHOD'] = 'DELETE';
+		$result = $this->collection->parse('/articles/1');
+		$this->assertEquals('Articles', $result['controller']);
+		$this->assertEquals('delete', $result['action']);
+		$this->assertEquals([1], $result['pass']);
+	}
+
+/**
  * Test the only option of RouteBuilder.
  *
  * @return void

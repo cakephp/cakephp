@@ -48,11 +48,11 @@ class RouteBuilder {
  * @var array
  */
 	protected static $_resourceMap = [
-		'index' => ['action' => 'index', 'method' => 'GET', 'id' => false],
-		'create' => ['action' => 'add', 'method' => 'POST', 'id' => false],
-		'view' => ['action' => 'view', 'method' => 'GET', 'id' => true],
-		'update' => ['action' => 'edit', 'method' => ['PUT', 'PATCH'], 'id' => true],
-		'delete' => ['action' => 'delete', 'method' => 'DELETE', 'id' => true],
+		'index' => ['action' => 'index', 'method' => 'GET', 'path' => ''],
+		'create' => ['action' => 'add', 'method' => 'POST', 'path' => ''],
+		'view' => ['action' => 'view', 'method' => 'GET', 'path' => ':id'],
+		'update' => ['action' => 'edit', 'method' => ['PUT', 'PATCH'], 'path' => ':id'],
+		'delete' => ['action' => 'delete', 'method' => 'DELETE', 'path' => ':id'],
 	];
 
 /**
@@ -207,7 +207,6 @@ class RouteBuilder {
 			'actions' => [],
 		);
 		$options['only'] = (array)$options['only'];
-
 		$connectOptions = $options['connectOptions'];
 
 		$urlName = Inflector::underscore($name);
@@ -227,8 +226,7 @@ class RouteBuilder {
 				$action = $options['actions'][$method];
 			}
 
-			$id = $params['id'] ? ':id' : '';
-			$url = '/' . implode('/', array_filter(array($urlName, $id)));
+			$url = '/' . implode('/', array_filter([$urlName, $params['path']]));
 			$params = array(
 				'controller' => $name,
 				'action' => $action,
