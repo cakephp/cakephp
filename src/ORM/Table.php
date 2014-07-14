@@ -1645,7 +1645,7 @@ class Table implements RepositoryInterface, EventListener {
 			$options['associated'] = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
-		return $marshaller->many($data, $associations);
+		return $marshaller->many($data, $options);
 	}
 
 /**
