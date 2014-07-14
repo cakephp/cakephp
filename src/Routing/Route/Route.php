@@ -438,6 +438,12 @@ class Route {
 			unset($url['_ext']);
 		}
 
+		// Check the method first as it is special.
+		if (!$this->_matchMethod($url)) {
+			return false;
+		}
+		unset($url['[method]'], $defaults['[method]']);
+
 		// Missing defaults is a fail.
 		if (array_diff_key($defaults, $url) !== []) {
 			return false;
@@ -498,6 +504,24 @@ class Route {
 		}
 		$url += $hostOptions;
 		return $this->_writeUrl($url, $pass, $query);
+	}
+
+/**
+ * Check whether or not the URL's HTTP method matches.
+ *
+ * @param array $url The array for the URL being generated.
+ */
+	protected function _matchMethod($url) {
+		if (empty($this->defaults['[method]'])) {
+			return true;
+		}
+		if (empty($url['[method]'])) {
+			return false;
+		}
+		if (!in_array(strtoupper($url['[method]']), (array)$this->defaults['[method]'])) {
+			return false;
+		}
+		return true;
 	}
 
 /**
