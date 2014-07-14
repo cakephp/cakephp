@@ -1616,6 +1616,17 @@ class Table implements RepositoryInterface, EventListener {
  * );
  * }}}
  *
+ * You can limit fields that will be present in the constructed entity by
+ * passing the `fieldList` option, which is also accepted for associations:
+ *
+ * {{{
+ * $articles = $this->Articles->newEntity($this->request->data(), [
+ *	'fieldList' => ['title', 'body'],
+ *	'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
+ *	]
+ * );
+ * }}}
+ *
  */
 	public function newEntity(array $data = [], array $options = []) {
 		if (!isset($options['associated'])) {
@@ -1639,6 +1650,17 @@ class Table implements RepositoryInterface, EventListener {
  * );
  * }}}
  *
+ * You can limit fields that will be present in the constructed entities by
+ * passing the `fieldList` option, which is also accepted for associations:
+ *
+ * {{{
+ * $articles = $this->Articles->newEntities($this->request->data(), [
+ *	'fieldList' => ['title', 'body'],
+ *	'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
+ *	]
+ * );
+ * }}}
+ *
  */
 	public function newEntities(array $data, array $options = []) {
 		if (!isset($options['associated'])) {
@@ -1654,6 +1676,17 @@ class Table implements RepositoryInterface, EventListener {
  * When merging HasMany or BelongsToMany associations, all the entities in the
  * `$data` array will appear, those that can be matched by primary key will get
  * the data merged, but those that cannot, will be discarded.
+ *
+ * You can limit fields that will be present in the merged entity by
+ * passing the `fieldList` option, which is also accepted for associations:
+ *
+ * {{{
+ * $articles = $this->Articles->patchEntity($article, $this->request->data(), [
+ *	'fieldList' => ['title', 'body'],
+ *	'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
+ *	]
+ * );
+ * }}}
  */
 	public function patchEntity(EntityInterface $entity, array $data, array $options = []) {
 		if (!isset($options['associated'])) {
@@ -1673,6 +1706,17 @@ class Table implements RepositoryInterface, EventListener {
  * When merging HasMany or BelongsToMany associations, all the entities in the
  * `$data` array will appear, those that can be matched by primary key will get
  * the data merged, but those that cannot, will be discarded.
+ *
+ * You can limit fields that will be present in the merged entities by
+ * passing the `fieldList` option, which is also accepted for associations:
+ *
+ * {{{
+ * $articles = $this->Articles->patchEntities($articles, $this->request->data(), [
+ *	'fieldList' => ['title', 'body'],
+ *	'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
+ *	]
+ * );
+ * }}}
  */
 	public function patchEntities($entities, array $data, array $options = []) {
 		if (!isset($options['associated'])) {

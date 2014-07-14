@@ -71,13 +71,9 @@ class Marshaller {
 				$key = $nested;
 				$nested = [];
 			}
-			$nested = isset($nested['associated']) ? $nested['associated'] : [];
 			$assoc = $this->_table->association($key);
 			if ($assoc) {
-				$map[$assoc->property()] = [
-					'association' => $assoc,
-					'nested' => $nested
-				];
+				$map[$assoc->property()] = ['association' => $assoc] + $nested + ['associated' => []];
 			}
 		}
 		return $map;
@@ -86,9 +82,14 @@ class Marshaller {
 /**
  * Hydrate one entity and its associated data.
  *
+ * ### Options:
+ *
+ * * associated: Associations listed here will be marshalled as well.
+ * * fiedlList: A whitelist of fields to be assigned to the entity. If not present,
+ *   the accessible fields list in the entity will be used.
+ *
  * @param array $data The data to hydrate.
- * @param array $options List of options, if the 'associated' key is present
- * associations listed there will be marshalled as well.
+ * @param array $options List of options
  * @return \Cake\ORM\Entity
  * @see \Cake\ORM\Table::newEntity()
  */
@@ -110,15 +111,25 @@ class Marshaller {
 			$columnType = $schema->columnType($key);
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
-				$nested = ['associated' => $propertyMap[$key]['nested']];
-				$value = $this->_marshalAssociation($assoc, $value, $nested);
+				$value = $this->_marshalAssociation($assoc, $value, $propertyMap[$key]);
 			} elseif ($columnType) {
 				$converter = Type::build($columnType);
 				$value = $converter->marshal($value);
 			}
 			$properties[$key] = $value;
 		}
-		$entity->set($properties);
+
+		if (!isset($options['fieldList'])) {
+			$entity->set($properties);
+			return $entity;
+		}
+
+		foreach ((array)$options['fieldList'] as $field) {
+			if (isset($properties[$field])) {
+				$entity->set($field, $properties[$field]);
+			}
+		}
+
 		return $entity;
 	}
 
@@ -146,9 +157,14 @@ class Marshaller {
 /**
  * Hydrate many entities and their associated data.
  *
+ * ### Options:
+ *
+ * * associated: Associations listed here will be marshalled as well.
+ * * fiedlList: A whitelist of fields to be assigned to the entity. If not present,
+ *   the accessible fields list in the entity will be used.
+ *
  * @param array $data The data to hydrate.
- * @param array $options List of options, if the 'associated' key is present
- * associations listed there will be marshelled as well.
+ * @param array $options List of options
  * @return array An array of hydrated records.
  * @see \Cake\ORM\Table::newEntities()
  */
@@ -186,8 +202,8 @@ class Marshaller {
 		$jointMarshaller = $joint->marshaller();
 
 		$nested = [];
-		if (isset($associated['_joinData']['associated'])) {
-			$nested = ['associated' => (array)$associated['_joinData']['associated']];
+		if (isset($associated['_joinData'])) {
+			$nested = (array)$associated['_joinData'];
 		}
 
 		foreach ($records as $i => $record) {
@@ -233,11 +249,16 @@ class Marshaller {
  * `$data` array will appear, those that can be matched by primary key will get
  * the data merged, but those that cannot, will be discarded.
  *
+ * ### Options:
+ *
+ * * associated: Associations listed here will be marshalled as well.
+ * * fiedlList: A whitelist of fields to be assigned to the entity. If not present
+ *   the accessible fields list in the entity will be used.
+ *
  * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
  * data merged in
  * @param array $data key value list of fields to be merged into the entity
- * @param array $options List of options, if the 'associated' key is present
- * associations listed there will be marshalled as well.
+ * @param array $options List of options.
  * @return \Cake\Datasource\EntityInterface
  */
 	public function merge(EntityInterface $entity, array $data, array $options = []) {
@@ -256,8 +277,7 @@ class Marshaller {
 
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
-				$nested = ['associated' => $propertyMap[$key]['nested']];
-				$value = $this->_mergeAssociation($original, $assoc, $value, $nested);
+				$value = $this->_mergeAssociation($original, $assoc, $value, $propertyMap[$key]);
 			} elseif ($columnType) {
 				$converter = Type::build($columnType);
 				$value = $converter->marshal($value);
@@ -269,7 +289,17 @@ class Marshaller {
 			$properties[$key] = $value;
 		}
 
-		$entity->set($properties);
+		if (!isset($options['fieldList'])) {
+			$entity->set($properties);
+			return $entity;
+		}
+
+		foreach ((array)$options['fieldList'] as $field) {
+			if (isset($properties[$field])) {
+				$entity->set($field, $properties[$field]);
+			}
+		}
+
 		return $entity;
 	}
 
@@ -288,11 +318,16 @@ class Marshaller {
  * `$data` array will appear, those that can be matched by primary key will get
  * the data merged, but those that cannot, will be discarded.
  *
+ * ### Options:
+ *
+ * * associated: Associations listed here will be marshalled as well.
+ * * fiedlList: A whitelist of fields to be assigned to the entity. If not present,
+ *   the accessible fields list in the entity will be used.
+ *
  * @param array|\Traversable $entities the entities that will get the
  * data merged in
  * @param array $data list of arrays to be merged into the entities
- * @param array $options List of options, if the 'associated' key is present
- * associations listed there will be marshalled as well.
+ * @param array $options List of options.
  * @return array
  */
 	public function mergeMany($entities, array $data, array $options = []) {
@@ -387,8 +422,8 @@ class Marshaller {
 		$marshaller = $joint->marshaller();
 
 		$nested = [];
-		if (isset($associated['_joinData']['associated'])) {
-			$nested = ['associated' => (array)$associated['_joinData']['associated']];
+		if (isset($associated['_joinData'])) {
+			$nested = (array)$associated['_joinData'];
 		}
 
 		$records = $this->mergeMany($original, $value, $options);
