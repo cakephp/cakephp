@@ -1050,6 +1050,56 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
+ * testHead method
+ *
+ * @return void
+ */
+	public function testHead() {
+		$this->RequestSocket->reset();
+		$this->RequestSocket->expects($this->at(0))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'http://www.google.com/'));
+
+		$this->RequestSocket->expects($this->at(1))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'http://www.google.com/?foo=bar'));
+
+		$this->RequestSocket->expects($this->at(2))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'http://www.google.com/?foo=bar'));
+
+		$this->RequestSocket->expects($this->at(3))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'http://www.google.com/?foo=23&foobar=42'));
+
+		$this->RequestSocket->expects($this->at(4))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'http://www.google.com/', 'version' => '1.0'));
+
+		$this->RequestSocket->expects($this->at(5))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'https://secure.example.com/test.php?one=two'));
+
+		$this->RequestSocket->expects($this->at(6))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'https://example.com/oauth/access?clientid=123&redirect_uri=http%3A%2F%2Fexample.com&code=456'));
+
+		$this->RequestSocket->head('http://www.google.com/');
+		$this->RequestSocket->head('http://www.google.com/', array('foo' => 'bar'));
+		$this->RequestSocket->head('http://www.google.com/', 'foo=bar');
+		$this->RequestSocket->head('http://www.google.com/?foo=bar', array('foobar' => '42', 'foo' => '23'));
+		$this->RequestSocket->head('http://www.google.com/', null, array('version' => '1.0'));
+		$this->RequestSocket->head('https://secure.example.com/test.php', array('one' => 'two'));
+		$this->RequestSocket->head('https://example.com/oauth/access', array(
+			'clientid' => '123',
+			'redirect_uri' => 'http://example.com',
+			'code' => 456
+		));
+	}
+
+
+
+/**
  * Test authentication
  *
  * @return void

@@ -464,6 +464,32 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
+ * Issues a HEAD request to the specified URI, query, and request. 
+ * 
+ * By definition HEAD request are identical to GET request except they return no response body. This means that all
+ * information and examples relevant to GET also applys to HEAD.
+ *
+ * @param string|array $uri URI to request. Either a string uri, or a uri array, see HttpSocket::_parseUri()
+ * @param array $query Querystring parameters to append to URI
+ * @param array $request An indexed array with indexes such as 'method' or uri
+ * @return mixed Result of request, either false on failure or the response to the request.
+ */
+	public function head($uri = null, $query = array(), $request = array()) {
+		if (!empty($query)) {
+			$uri = $this->_parseUri($uri, $this->config['request']['uri']);
+			if (isset($uri['query'])) {
+				$uri['query'] = array_merge($uri['query'], $query);
+			} else {
+				$uri['query'] = $query;
+			}
+			$uri = $this->_buildUri($uri);
+		}
+
+		$request = Hash::merge(array('method' => 'HEAD', 'uri' => $uri), $request);
+		return $this->request($request);
+	}
+
+/**
  * Issues a POST request to the specified URI, query, and request.
  *
  * `post()` can be used to post simple data arrays to a URL:
@@ -521,19 +547,6 @@ class HttpSocket extends CakeSocket {
  */
 	public function delete($uri = null, $data = array(), $request = array()) {
 		$request = Hash::merge(array('method' => 'DELETE', 'uri' => $uri, 'body' => $data), $request);
-		return $this->request($request);
-	}
-
-/**
- * Issues a HEAD request to the specified URI, query, and request.
- *
- * @param string|array $uri URI to request (see {@link _parseUri()})
- * @param array $data Array of request body data keys and values.
- * @param array $request An indexed array with indexes such as 'method' or uri
- * @return mixed Result of request
- */
-	public function head($uri = null, $data = array(), $request = array()) {
-		$request = Hash::merge(array('method' => 'HEAD', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
 
