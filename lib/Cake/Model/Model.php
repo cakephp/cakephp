@@ -593,6 +593,14 @@ class Model extends Object implements CakeEventListener {
  */
 	public $__backContainableAssociation = array();
 
+/**
+ * Safe update mode
+ * If true, this prevents Model::save() from generating a query with WHERE 1 = 1 on race condition.
+ *
+ * @var bool
+ */
+	public $__safeUpdateMode = false;
+
 // @codingStandardsIgnoreEnd
 
 /**
@@ -1686,6 +1694,7 @@ class Model extends Object implements CakeEventListener {
  *
  * @param array $fieldList List of fields to allow to be saved
  * @return mixed On success Model::$data if its not empty or true, false on failure
+ * @throws PDOException
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html
  */
 	public function save($data = null, $validate = true, $fieldList = array()) {
@@ -1820,7 +1829,14 @@ class Model extends Object implements CakeEventListener {
 			$cache = $this->_prepareUpdateFields(array_combine($fields, $values));
 
 			if (!empty($this->id)) {
-				$success = (bool)$db->update($this, $fields, $values);
+				$this->__safeUpdateMode = true;
+				try {
+					$success = (bool)$db->update($this, $fields, $values);
+				} catch (Exception $e) {
+					$this->__safeUpdateMode = false;
+					throw $e;
+				}
+				$this->__safeUpdateMode = false;
 			} else {
 				if (empty($this->data[$this->alias][$this->primaryKey]) && $this->_isUUIDField($this->primaryKey)) {
 					if (array_key_exists($this->primaryKey, $this->data[$this->alias])) {

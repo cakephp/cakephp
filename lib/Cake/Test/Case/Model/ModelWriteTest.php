@@ -6371,6 +6371,11 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals(array(6, 4, 5, 2), $result);
 	}
 
+/**
+ * testToggleBoolFields method
+ *
+ * @return void
+ */
 	public function testToggleBoolFields() {
 		$this->loadFixtures('CounterCacheUser', 'CounterCachePost');
 		$Post = new CounterCachePost();
@@ -7260,5 +7265,54 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertTrue($model->clear());
 		$this->assertFalse(isset($model->data['Bid']['name']));
 		$this->assertFalse(isset($model->data['Bid']['message_id']));
+	}
+
+/**
+ * Test that Model::save() doesn't generate a query with WHERE 1 = 1 on race condition.
+ *
+ * @link https://github.com/cakephp/cakephp/issues/3857
+ * @return void
+ */
+	public function testSafeUpdateMode() {
+		$this->loadFixtures('User');
+
+		$User = ClassRegistry::init('User');
+		$this->assertFalse($User->__safeUpdateMode);
+
+		$User->getEventManager()->attach(array($this, 'deleteMe'), 'Model.beforeSave');
+
+		$User->id = 1;
+		$User->set(array('user' => 'nobody'));
+		$User->save();
+
+		$users = $User->find('list', array('fields' => 'User.user'));
+
+		$expected = array(
+			2 => 'nate',
+			3 => 'larry',
+			4 => 'garrett',
+		);
+		$this->assertEquals($expected, $users);
+		$this->assertFalse($User->__safeUpdateMode);
+
+		$User->id = 2;
+		$User->set(array('user' => $User->getDataSource()->expression('PDO_EXCEPTION()')));
+		try {
+			$User->save(null, false);
+			$this->fail('No exception thrown');
+		} catch (PDOException $e) {
+			$this->assertFalse($User->__safeUpdateMode);
+		}
+	}
+
+/**
+ * Emulates race condition
+ *
+ * @param CakeEvent $event containing the Model
+ * @return void
+ */
+	public function deleteMe($event) {
+		$Model = $event->subject;
+		$Model->getDataSource()->delete($Model, array($Model->alias . '.' . $Model->primaryKey => $Model->id));
 	}
 }
