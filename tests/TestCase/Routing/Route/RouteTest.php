@@ -681,6 +681,45 @@ class RouteTest extends TestCase {
 	}
 
 /**
+ * test that http header conditions can work with URL generation
+ *
+ * @return void
+ */
+	public function testMatchWithMultipleHttpMethodConditions() {
+		$route = new Route('/sample', [
+			'controller' => 'posts',
+			'action' => 'index',
+			'[method]' => ['PUT', 'POST']
+		]);
+		$url = [
+			'controller' => 'posts',
+			'action' => 'index',
+		];
+		$this->assertFalse($route->match($url));
+
+		$url = [
+			'controller' => 'posts',
+			'action' => 'index',
+			'[method]' => 'GET',
+		];
+		$this->assertFalse($route->match($url));
+
+		$url = [
+			'controller' => 'posts',
+			'action' => 'index',
+			'[method]' => 'PUT',
+		];
+		$this->assertEquals('/sample', $route->match($url));
+
+		$url = [
+			'controller' => 'posts',
+			'action' => 'index',
+			'[method]' => 'POST',
+		];
+		$this->assertEquals('/sample', $route->match($url));
+	}
+
+/**
  * Test that the [type] condition works.
  *
  * @return void

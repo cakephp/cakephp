@@ -411,8 +411,8 @@ class Route {
 
 		$hostOptions = array_intersect_key($url, $context);
 
-		// Check for properties that will cause and
-		// absoulte url. Copy the other properties over.
+		// Check for properties that will cause an
+		// absolute url. Copy the other properties over.
 		if (
 			isset($hostOptions['_scheme']) ||
 			isset($hostOptions['_port']) ||
@@ -437,6 +437,12 @@ class Route {
 			$hostOptions['_ext'] = $url['_ext'];
 			unset($url['_ext']);
 		}
+
+		// Check the method first as it is special.
+		if (!$this->_matchMethod($url)) {
+			return false;
+		}
+		unset($url['[method]'], $defaults['[method]']);
 
 		// Missing defaults is a fail.
 		if (array_diff_key($defaults, $url) !== []) {
@@ -488,7 +494,7 @@ class Route {
 			return false;
 		}
 
-		//check patterns for routed params
+		// check patterns for routed params
 		if (!empty($this->options)) {
 			foreach ($this->options as $key => $pattern) {
 				if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#', $url[$key])) {
@@ -498,6 +504,25 @@ class Route {
 		}
 		$url += $hostOptions;
 		return $this->_writeUrl($url, $pass, $query);
+	}
+
+/**
+ * Check whether or not the URL's HTTP method matches.
+ *
+ * @param array $url The array for the URL being generated.
+ * @return bool
+ */
+	protected function _matchMethod($url) {
+		if (empty($this->defaults['[method]'])) {
+			return true;
+		}
+		if (empty($url['[method]'])) {
+			return false;
+		}
+		if (!in_array(strtoupper($url['[method]']), (array)$this->defaults['[method]'])) {
+			return false;
+		}
+		return true;
 	}
 
 /**
