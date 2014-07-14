@@ -107,6 +107,18 @@ class FlashHelperTest extends TestCase {
 
 		$expected['child'] = ['tag' => 'p', 'content' => 'This is a test of the emergency broadcasting system'];
 		$this->assertTag($expected, $result);
+
+		$this->assertNull($this->Flash->render('non-existent'));
+	}
+
+/**
+ * testFlashThrowsException
+ *
+ * @expectedException \UnexpectedValueException
+ */
+	public function testFlashThrowsException() {
+		$this->View->request->session()->write('Flash.foo', 'bar');
+		$this->Flash->render('foo');
 	}
 
 /**
