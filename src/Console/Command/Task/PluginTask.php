@@ -188,7 +188,7 @@ class PluginTask extends BakeTask {
 		]);
 		$this->out( __d('cake_console', 'Generating routes.php file...'));
 		$out = $this->Template->generate('config', 'routes');
-		$file = $path . $plugin . DS . 'Config' . DS . 'routes.php';
+		$file = $path . $plugin . DS . 'src' . DS . 'Config' . DS . 'routes.php';
 		$this->createFile($file, $out);
 	}
 
