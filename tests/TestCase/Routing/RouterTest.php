@@ -154,7 +154,7 @@ class RouterTest extends TestCase {
 			'controller' => 'Posts',
 			'action' => 'edit',
 			'id' => '13',
-			'[method]' => 'PUT',
+			'[method]' => ['PUT', 'PATCH'],
 			'_ext' => null
 		];
 		$result = Router::parse('/posts/13');
@@ -166,7 +166,7 @@ class RouterTest extends TestCase {
 			'controller' => 'Posts',
 			'action' => 'edit',
 			'id' => '475acc39-a328-44d3-95fb-015000000000',
-			'[method]' => 'PUT',
+			'[method]' => ['PUT', 'PATCH'],
 			'_ext' => null
 		];
 		$result = Router::parse('/posts/475acc39-a328-44d3-95fb-015000000000');
@@ -208,7 +208,7 @@ class RouterTest extends TestCase {
 			'controller' => 'Posts',
 			'action' => 'edit',
 			'id' => 'name',
-			'[method]' => 'PUT',
+			'[method]' => ['PUT', 'PATCH'],
 			'_ext' => null
 		];
 		$result = Router::parse('/posts/name');
@@ -425,7 +425,7 @@ class RouterTest extends TestCase {
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(['controller' => 'Posts', 'action' => 'edit', '[method]' => 'POST', 'id' => 10]);
+		$result = Router::url(['controller' => 'Posts', 'action' => 'edit', '[method]' => 'PATCH', 'id' => 10]);
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 	}
@@ -2506,37 +2506,6 @@ class RouterTest extends TestCase {
 		$routes = Router::routes();
 		$route = $routes[0];
 		$this->assertInstanceOf('Cake\Routing\Route\RedirectRoute', $route);
-	}
-
-/**
- * Tests resourceMap as getter and setter.
- *
- * @return void
- */
-	public function testResourceMap() {
-		$default = Router::resourceMap();
-		$expected = array(
-			array('action' => 'index', 'method' => 'GET', 'id' => false),
-			array('action' => 'view', 'method' => 'GET', 'id' => true),
-			array('action' => 'add', 'method' => 'POST', 'id' => false),
-			array('action' => 'edit', 'method' => 'PUT', 'id' => true),
-			array('action' => 'delete', 'method' => 'DELETE', 'id' => true),
-			array('action' => 'edit', 'method' => 'POST', 'id' => true)
-		);
-		$this->assertEquals($expected, $default);
-
-		$custom = array(
-			array('action' => 'index', 'method' => 'GET', 'id' => false),
-			array('action' => 'view', 'method' => 'GET', 'id' => true),
-			array('action' => 'add', 'method' => 'POST', 'id' => false),
-			array('action' => 'edit', 'method' => 'PUT', 'id' => true),
-			array('action' => 'delete', 'method' => 'DELETE', 'id' => true),
-			array('action' => 'update', 'method' => 'POST', 'id' => true)
-		);
-		Router::resourceMap($custom);
-		$this->assertEquals(Router::resourceMap(), $custom);
-
-		Router::resourceMap($default);
 	}
 
 /**

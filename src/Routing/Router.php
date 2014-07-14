@@ -125,20 +125,6 @@ class Router {
 	);
 
 /**
- * Default HTTP request method => controller action map.
- *
- * @var array
- */
-	protected static $_resourceMap = array(
-		array('action' => 'index', 'method' => 'GET', 'id' => false),
-		array('action' => 'view', 'method' => 'GET', 'id' => true),
-		array('action' => 'add', 'method' => 'POST', 'id' => false),
-		array('action' => 'edit', 'method' => 'PUT', 'id' => true),
-		array('action' => 'delete', 'method' => 'DELETE', 'id' => true),
-		array('action' => 'edit', 'method' => 'POST', 'id' => true)
-	);
-
-/**
  * Maintains the request object stack for the current request.
  * This will contain more than one request object when requestAction is used.
  *
@@ -174,82 +160,9 @@ class Router {
 	}
 
 /**
- * Resource map getter & setter.
- *
- * Allows you to define the default route configuration for REST routing and
- * Router::mapResources()
- *
- * @param array $resourceMap Resource map
- * @return mixed
- * @see Router::$_resourceMap
- */
-	public static function resourceMap($resourceMap = null) {
-		if ($resourceMap === null) {
-			return static::$_resourceMap;
-		}
-		static::$_resourceMap = $resourceMap;
-	}
-
-/**
  * Connects a new Route in the router.
  *
- * Routes are a way of connecting request URLs to objects in your application.
- * At their core routes are a set or regular expressions that are used to
- * match requests to destinations.
- *
- * Examples:
- *
- * `Router::connect('/:controller/:action/*');`
- *
- * The first parameter will be used as a controller name while the second is
- * used as the action name. The '/*' syntax makes this route greedy in that
- * it will match requests like `/posts/index` as well as requests
- * like `/posts/edit/1/foo/bar`.
- *
- * `Router::connect('/home-page', ['controller' => 'pages', 'action' => 'display', 'home']);`
- *
- * The above shows the use of route parameter defaults. And providing routing
- * parameters for a static route.
- *
- * {{{
- * Router::connect(
- *   '/:lang/:controller/:action/:id',
- *   [],
- *   ['id' => '[0-9]+', 'lang' => '[a-z]{3}']
- * );
- * }}}
- *
- * Shows connecting a route with custom route parameters as well as
- * providing patterns for those parameters. Patterns for routing parameters
- * do not need capturing groups, as one will be added for each route params.
- *
- * $options offers several 'special' keys that have special meaning
- * in the $options array.
- *
- * - `pass` is used to define which of the routed parameters should be shifted
- *   into the pass array. Adding a parameter to pass will remove it from the
- *   regular route array. Ex. `'pass' => array('slug')`.
- * - `routeClass` is used to extend and change how individual routes parse requests
- *   and handle reverse routing, via a custom routing class.
- *   Ex. `'routeClass' => 'SlugRoute'`
- * - `_name` is used to define a specific name for routes. This can be used to optimize
- *   reverse routing lookups. If undefined a name will be generated for each
- *   connected route.
- * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
- *   See {@link Route::parseExtensions()}.
- *
- * You can also add additional conditions for matching routes to the $defaults array.
- * The following conditions can be used:
- *
- * - `[type]` Only match requests for specific content types.
- * - `[method]` Only match requests with specific HTTP verbs.
- * - `[server]` Only match when $_SERVER['SERVER_NAME'] matches the given value.
- *
- * Example of using the `[method]` condition:
- *
- * `Router::connect('/tasks', array('controller' => 'tasks', 'action' => 'index', '[method]' => 'GET'));`
- *
- * The above route will only be matched for GET requests. POST requests will fail to match this route.
+ * Compatibility proxy to \Cake\Routing\RouteBuilder::connect() in the `/` scope.
  *
  * @param string $route A string describing the template of the route
  * @param array $defaults An array describing the default route parameters. These parameters will be used by default
@@ -258,9 +171,10 @@ class Router {
  *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
  *   custom routing class.
- * @see routes
  * @return void
  * @throws \Cake\Error\Exception
+ * @see \Cake\Routing\RouteBuilder::connect()
+ * @see \Cake\Routing\Router::scope()
  */
 	public static function connect($route, $defaults = [], $options = []) {
 		static::$initialized = true;
@@ -272,34 +186,15 @@ class Router {
 /**
  * Connects a new redirection Route in the router.
  *
- * Redirection routes are different from normal routes as they perform an actual
- * header redirection if a match is found. The redirection can occur within your
- * application or redirect to an outside location.
- *
- * Examples:
- *
- * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view'));`
- *
- * Redirects /home/* to /posts/view and passes the parameters to /posts/view. Using an array as the
- * redirect destination allows you to use other routes to define where an URL string should be redirected to.
- *
- * `Router::redirect('/posts/*', 'http://google.com', array('status' => 302));`
- *
- * Redirects /posts/* to http://google.com with a HTTP status of 302
- *
- * ### Options:
- *
- * - `status` Sets the HTTP status (default 301)
- * - `persist` Passes the params to the redirected route, if it can. This is useful with greedy routes,
- *   routes that end in `*` are greedy. As you can remap URLs and not loose any passed args.
+ * Compatibility proxy to \Cake\Routing\RouteBuilder::redirect() in the `/` scope.
  *
  * @param string $route A string describing the template of the route
  * @param array $url An URL to redirect to. Can be a string or a Cake array-based URL
  * @param array $options An array matching the named elements in the route to regular expressions which that
  *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
- * @see routes
  * @return array Array of routes
+ * @see \Cake\Routing\RouteBuilder::redirect()
  */
 	public static function redirect($route, $url, $options = []) {
 		$options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
@@ -311,6 +206,9 @@ class Router {
 
 /**
  * Generate REST resource routes for the given controller(s).
+ *
+ * Compatibility proxy to \Cake\Routing\RouteBuilder::resources(). Additional, compatibility
+ * around prefixes and plugins and prefixes is handled by this method.
  *
  * A quick way to generate a default routes to a set of REST resources (controller(s)).
  *
@@ -354,46 +252,36 @@ class Router {
  * @return void
  */
 	public static function mapResources($controller, $options = []) {
-		$options += array(
-			'connectOptions' => [],
-			'id' => static::ID . '|' . static::UUID
-		);
-
-		$connectOptions = $options['connectOptions'];
-		unset($options['connectOptions']);
-
 		foreach ((array)$controller as $name) {
 			list($plugin, $name) = pluginSplit($name);
-			$urlName = Inflector::underscore($name);
-			$pluginUrl = $plugin ? Inflector::underscore($plugin) : null;
-			$prefix = $ext = null;
 
+			$prefix = $pluginUrl = false;
 			if (!empty($options['prefix'])) {
 				$prefix = $options['prefix'];
 			}
-			if (!empty($options['_ext'])) {
-				$ext = $options['_ext'];
+			if ($plugin) {
+				$pluginUrl = Inflector::underscore($plugin);
 			}
 
-			foreach (static::$_resourceMap as $params) {
-				$id = $params['id'] ? ':id' : '';
-				$url = '/' . implode('/', array_filter(array($prefix, $pluginUrl, $urlName, $id)));
-				$params = array(
-					'plugin' => $plugin,
-					'controller' => $name,
-					'action' => $params['action'],
-					'[method]' => $params['method'],
-					'_ext' => $ext
-				);
-				if ($prefix) {
-					$params['prefix'] = $prefix;
-				}
-				$routeOptions = array_merge(array(
-					'id' => $options['id'],
-					'pass' => array('id')
-				), $connectOptions);
-				static::connect($url, $params, $routeOptions);
+			$callback = function($routes) use ($name, $options) {
+				$routes->resources($name, $options);
+			};
+
+			if ($plugin && $prefix) {
+				$path = '/' . implode('/', [$prefix, $pluginUrl]);
+				$params = ['prefix' => $prefix, 'plugin' => $plugin];
+				return static::scope($path, $params, $callback);
 			}
+
+			if ($prefix) {
+				return static::prefix($prefix, $callback);
+			}
+
+			if ($plugin) {
+				return static::plugin($plugin, $callback);
+			}
+
+			return static::scope('/', $callback);
 		}
 	}
 
