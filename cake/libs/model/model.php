@@ -358,6 +358,15 @@ class Model extends Overloadable {
 	var $__affectedRows = null;
 
 /**
+ * Safe update mode
+ *
+ * If true, this prevents Model::save() from generating a query with WHERE 1 = 1 on race condition.
+ *
+ * @var bool
+ */
+	var $__safeUpdateMode = false;
+
+/**
  * List of valid finder method options, supplied as the first parameter to find().
  *
  * @var array
@@ -1324,7 +1333,9 @@ class Model extends Overloadable {
 			$cache = $this->_prepareUpdateFields(array_combine($fields, $values));
 
 			if (!empty($this->id)) {
+				$this->__safeUpdateMode = true;
 				$success = (bool)$db->update($this, $fields, $values);
+				$this->__safeUpdateMode = false;
 			} else {
 				$fInfo = $this->_schema[$this->primaryKey];
 				$isUUID = ($fInfo['length'] == 36 &&

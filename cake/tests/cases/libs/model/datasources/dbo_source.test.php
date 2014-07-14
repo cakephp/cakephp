@@ -4675,4 +4675,46 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->fields($Article, null, array('title', 'body', 'published'));
 		$this->assertTrue(empty($this->testDb->methodCache['fields']), 'Cache not empty');
 	}
+
+/**
+ * Test defaultConditions()
+ *
+ * @return void
+ */
+	public function testDefaultConditions() {
+		$this->loadFixtures('Article');
+		$Article = ClassRegistry::init('Article');
+		$db = $Article->getDataSource();
+
+		// Creates a default set of conditions from the model if $conditions is null/empty.
+		$Article->id = 1;
+		$result = $db->defaultConditions($Article, null);
+		$this->assertEqual(array('Article.id' => 1), $result);
+
+		// $useAlias == false
+		$Article->id = 1;
+		$result = $db->defaultConditions($Article, null, false);
+		$this->assertEqual(array($db->fullTableName($Article, false) . '.id' => 1), $result);
+
+		// If conditions are supplied then they will be returned.
+		$Article->id = 1;
+		$result = $db->defaultConditions($Article, array('Article.title' => 'First article'));
+		$this->assertEqual(array('Article.title' => 'First article'), $result);
+
+		// If a model doesn't exist and no conditions were provided either null or false will be returned based on what was input.
+		$Article->id = 1000000;
+		$result = $db->defaultConditions($Article, null);
+		$this->assertNull($result);
+
+		$Article->id = 1000000;
+		$result = $db->defaultConditions($Article, false);
+		$this->assertFalse($result);
+
+		// Safe update mode
+		$Article->id = 1000000;
+		$Article->__safeUpdateMode = true;
+		$result = $db->defaultConditions($Article, null);
+		$this->assertFalse($result);
+	}
+
 }
