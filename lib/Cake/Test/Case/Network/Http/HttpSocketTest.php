@@ -1097,8 +1097,6 @@ class HttpSocketTest extends CakeTestCase {
 		));
 	}
 
-
-
 /**
  * Test authentication
  *
