@@ -250,11 +250,105 @@ class RouteBuilderTest extends TestCase {
 		$routes->resources('Articles', ['_ext' => 'json']);
 
 		$all = $this->collection->routes();
-		$this->assertCount(6, $all);
+		$this->assertCount(5, $all);
 
 		$this->assertEquals('/api/articles', $all[0]->template);
 		$this->assertEquals('json', $all[0]->defaults['_ext']);
 		$this->assertEquals('Articles', $all[0]->defaults['controller']);
+	}
+
+/**
+ * Test resource parsing.
+ *
+ * @return void
+ */
+	public function testResourcesParsing() {
+		$routes = new RouteBuilder($this->collection, '/');
+		$routes->resources('Articles');
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = $this->collection->parse('/articles');
+		$this->assertEquals('Articles', $result['controller']);
+		$this->assertEquals('index', $result['action']);
+		$this->assertEquals([], $result['pass']);
+
+		$result = $this->collection->parse('/articles/1');
+		$this->assertEquals('Articles', $result['controller']);
+		$this->assertEquals('view', $result['action']);
+		$this->assertEquals([1], $result['pass']);
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$result = $this->collection->parse('/articles');
+		$this->assertEquals('Articles', $result['controller']);
+		$this->assertEquals('add', $result['action']);
+		$this->assertEquals([], $result['pass']);
+
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$result = $this->collection->parse('/articles/1');
+		$this->assertEquals('Articles', $result['controller']);
+		$this->assertEquals('edit', $result['action']);
+		$this->assertEquals([1], $result['pass']);
+
+		$_SERVER['REQUEST_METHOD'] = 'DELETE';
+		$result = $this->collection->parse('/articles/1');
+		$this->assertEquals('Articles', $result['controller']);
+		$this->assertEquals('delete', $result['action']);
+		$this->assertEquals([1], $result['pass']);
+	}
+
+/**
+ * Test the only option of RouteBuilder.
+ *
+ * @return void
+ */
+	public function testResourcesOnlyString() {
+		$routes = new RouteBuilder($this->collection, '/');
+		$routes->resources('Articles', ['only' => 'index']);
+
+		$result = $this->collection->routes();
+		$this->assertCount(1, $result);
+		$this->assertEquals('/articles', $result[0]->template);
+	}
+
+/**
+ * Test the only option of RouteBuilder.
+ *
+ * @return void
+ */
+	public function testResourcesOnlyArray() {
+		$routes = new RouteBuilder($this->collection, '/');
+		$routes->resources('Articles', ['only' => ['index', 'delete']]);
+
+		$result = $this->collection->routes();
+		$this->assertCount(2, $result);
+		$this->assertEquals('/articles', $result[0]->template);
+		$this->assertEquals('index', $result[0]->defaults['action']);
+		$this->assertEquals('GET', $result[0]->defaults['[method]']);
+
+		$this->assertEquals('/articles/:id', $result[1]->template);
+		$this->assertEquals('delete', $result[1]->defaults['action']);
+		$this->assertEquals('DELETE', $result[1]->defaults['[method]']);
+	}
+
+/**
+ * Test the actions option of RouteBuilder.
+ *
+ * @return void
+ */
+	public function testResourcesActions() {
+		$routes = new RouteBuilder($this->collection, '/');
+		$routes->resources('Articles', [
+			'only' => ['index', 'delete'],
+			'actions' => ['index' => 'showList']
+		]);
+
+		$result = $this->collection->routes();
+		$this->assertCount(2, $result);
+		$this->assertEquals('/articles', $result[0]->template);
+		$this->assertEquals('showList', $result[0]->defaults['action']);
+
+		$this->assertEquals('/articles/:id', $result[1]->template);
+		$this->assertEquals('delete', $result[1]->defaults['action']);
 	}
 
 /**
