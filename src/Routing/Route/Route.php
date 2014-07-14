@@ -510,6 +510,7 @@ class Route {
  * Check whether or not the URL's HTTP method matches.
  *
  * @param array $url The array for the URL being generated.
+ * @return bool
  */
 	protected function _matchMethod($url) {
 		if (empty($this->defaults['[method]'])) {
