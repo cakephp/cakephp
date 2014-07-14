@@ -411,8 +411,8 @@ class Route {
 
 		$hostOptions = array_intersect_key($url, $context);
 
-		// Check for properties that will cause and
-		// absoulte url. Copy the other properties over.
+		// Check for properties that will cause an
+		// absolute url. Copy the other properties over.
 		if (
 			isset($hostOptions['_scheme']) ||
 			isset($hostOptions['_port']) ||
@@ -488,7 +488,7 @@ class Route {
 			return false;
 		}
 
-		//check patterns for routed params
+		// check patterns for routed params
 		if (!empty($this->options)) {
 			foreach ($this->options as $key => $pattern) {
 				if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#', $url[$key])) {
