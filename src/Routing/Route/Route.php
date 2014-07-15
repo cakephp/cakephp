@@ -85,7 +85,6 @@ class Route {
  */
 	protected $_headerMap = [
 		'type' => 'content_type',
-		'method' => 'request_method',
 		'server' => 'server_name'
 	];
 
@@ -116,6 +115,10 @@ class Route {
 		$this->options = $options;
 		if (isset($this->options['_name'])) {
 			$this->_name = $this->options['_name'];
+		}
+		if (isset($this->defaults['[method]'])) {
+			$this->defaults['_method'] = $this->defaults['[method]'];
+			unset($this->defaults['[method]']);
 		}
 		if (isset($this->options['_ext'])) {
 			$this->_extensions = $this->options['_ext'];
@@ -272,6 +275,14 @@ class Route {
 		if (!preg_match($this->_compiledRoute, urldecode($url), $route)) {
 			return false;
 		}
+
+		if (isset($this->defaults['_method'])) {
+			$method = $request->env('REQUEST_METHOD');
+			if (!in_array($method, (array)$this->defaults['_method'], true)) {
+				return false;
+			}
+		}
+
 		foreach ($this->defaults as $key => $val) {
 			$key = (string)$key;
 			if ($key[0] === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
@@ -442,7 +453,7 @@ class Route {
 		if (!$this->_matchMethod($url)) {
 			return false;
 		}
-		unset($url['[method]'], $defaults['[method]']);
+		unset($url['_method'], $url['[method]'], $defaults['_method']);
 
 		// Missing defaults is a fail.
 		if (array_diff_key($defaults, $url) !== []) {
@@ -513,13 +524,16 @@ class Route {
  * @return bool
  */
 	protected function _matchMethod($url) {
-		if (empty($this->defaults['[method]'])) {
+		if (empty($this->defaults['_method'])) {
 			return true;
 		}
-		if (empty($url['[method]'])) {
+		if (isset($url['[method]'])) {
+			$url['_method'] = $url['[method]'];
+		}
+		if (empty($url['_method'])) {
 			return false;
 		}
-		if (!in_array(strtoupper($url['[method]']), (array)$this->defaults['[method]'])) {
+		if (!in_array(strtoupper($url['_method']), (array)$this->defaults['_method'])) {
 			return false;
 		}
 		return true;

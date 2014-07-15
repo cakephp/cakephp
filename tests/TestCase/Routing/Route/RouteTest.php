@@ -643,7 +643,7 @@ class RouteTest extends TestCase {
  */
 	public function testParseWithHttpHeaderConditions() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$route = new Route('/sample', ['controller' => 'posts', 'action' => 'index', '[method]' => 'POST']);
+		$route = new Route('/sample', ['controller' => 'posts', 'action' => 'index', '_method' => 'POST']);
 		$this->assertFalse($route->parse('/sample'));
 
 		$_SERVER['REQUEST_METHOD'] = 'POST';
@@ -651,7 +651,7 @@ class RouteTest extends TestCase {
 			'controller' => 'posts',
 			'action' => 'index',
 			'pass' => [],
-			'[method]' => 'POST',
+			'_method' => 'POST',
 		];
 		$this->assertEquals($expected, $route->parse('/sample'));
 	}
@@ -666,7 +666,7 @@ class RouteTest extends TestCase {
 		$route = new Route('/sample', [
 			'controller' => 'posts',
 			'action' => 'index',
-			'[method]' => ['PUT', 'POST']
+			'_method' => ['PUT', 'POST']
 		]);
 		$this->assertFalse($route->parse('/sample'));
 
@@ -675,7 +675,7 @@ class RouteTest extends TestCase {
 			'controller' => 'posts',
 			'action' => 'index',
 			'pass' => [],
-			'[method]' => ['PUT', 'POST'],
+			'_method' => ['PUT', 'POST'],
 		];
 		$this->assertEquals($expected, $route->parse('/sample'));
 	}
@@ -689,7 +689,7 @@ class RouteTest extends TestCase {
 		$route = new Route('/sample', [
 			'controller' => 'posts',
 			'action' => 'index',
-			'[method]' => ['PUT', 'POST']
+			'_method' => ['PUT', 'POST']
 		]);
 		$url = [
 			'controller' => 'posts',
@@ -700,21 +700,21 @@ class RouteTest extends TestCase {
 		$url = [
 			'controller' => 'posts',
 			'action' => 'index',
-			'[method]' => 'GET',
+			'_method' => 'GET',
 		];
 		$this->assertFalse($route->match($url));
 
 		$url = [
 			'controller' => 'posts',
 			'action' => 'index',
-			'[method]' => 'PUT',
+			'_method' => 'PUT',
 		];
 		$this->assertEquals('/sample', $route->match($url));
 
 		$url = [
 			'controller' => 'posts',
 			'action' => 'index',
-			'[method]' => 'POST',
+			'_method' => 'POST',
 		];
 		$this->assertEquals('/sample', $route->match($url));
 	}
@@ -730,7 +730,7 @@ class RouteTest extends TestCase {
 		$route = new Route('/sample', [
 			'controller' => 'posts',
 			'action' => 'index',
-			'[method]' => 'POST',
+			'_method' => 'POST',
 			'[type]' => 'application/xml'
 		]);
 		$this->assertFalse($route->parse('/sample'), 'No content type set.');
@@ -745,10 +745,37 @@ class RouteTest extends TestCase {
 			'controller' => 'posts',
 			'action' => 'index',
 			'pass' => [],
-			'[method]' => 'POST',
+			'_method' => 'POST',
 			'[type]' => 'application/xml',
 		];
 		$this->assertEquals($expected, $route->parse('/sample'));
+	}
+
+/**
+ * Check [method] compatibility.
+ *
+ * @return void
+ */
+	public function testMethodCompatibility() {
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$route = new Route('/sample', [
+			'controller' => 'Articles',
+			'action' => 'index',
+			'[method]' => 'POST',
+		]);
+		$url = [
+			'controller' => 'Articles',
+			'action' => 'index',
+			'_method' => 'POST',
+		];
+		$this->assertEquals('/sample', $route->match($url));
+
+		$url = [
+			'controller' => 'Articles',
+			'action' => 'index',
+			'[method]' => 'POST',
+		];
+		$this->assertEquals('/sample', $route->match($url));
 	}
 
 /**

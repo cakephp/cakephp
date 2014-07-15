@@ -230,7 +230,7 @@ class RouteBuilder {
 			$params = array(
 				'controller' => $name,
 				'action' => $action,
-				'[method]' => $params['method'],
+				'_method' => $params['method'],
 				'_ext' => $ext
 			);
 			$routeOptions = $connectOptions + [
@@ -294,17 +294,17 @@ class RouteBuilder {
  *   connected route.
  * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
  *   See {@link ScopedRouteCollection::extensions()}.
+ * - `_method` Only match requests with specific HTTP verbs.
  *
  * You can also add additional conditions for matching routes to the $defaults array.
  * The following conditions can be used:
  *
  * - `[type]` Only match requests for specific content types.
- * - `[method]` Only match requests with specific HTTP verbs.
  * - `[server]` Only match when $_SERVER['SERVER_NAME'] matches the given value.
  *
- * Example of using the `[method]` condition:
+ * Example of using the `_method` condition:
  *
- * `$routes->connect('/tasks', array('controller' => 'Tasks', 'action' => 'index', '[method]' => 'GET'));`
+ * `$routes->connect('/tasks', array('controller' => 'Tasks', 'action' => 'index', '_method' => 'GET'));`
  *
  * The above route will only be matched for GET requests. POST requests will fail to match this route.
  *
