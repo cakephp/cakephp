@@ -851,7 +851,7 @@ class View {
 				}
 				$name = trim($name, DS);
 			} elseif ($name[0] === '.') {
-				$name = substr($name, 3);
+				$name = $this->viewPath . DS . $subDir . $name;
 			} elseif (!$plugin || $this->viewPath !== $this->name) {
 				$name = $this->viewPath . DS . $subDir . $name;
 			}

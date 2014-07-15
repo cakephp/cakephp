@@ -492,7 +492,7 @@ class ViewTest extends TestCase {
 		$result = $View->getViewFileName('/Posts/index');
 		$this->assertPathEquals($expected, $result);
 
-		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Posts' . DS . 'index.ctp';
+		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages' . DS . '..' . DS . 'Posts' . DS . 'index.ctp';
 		$result = $View->getViewFileName('../Posts/index');
 		$this->assertPathEquals($expected, $result);
 
@@ -1127,7 +1127,7 @@ class ViewTest extends TestCase {
 		$result = $View->getViewFileName('../Element/test_element');
 		$this->assertRegExp('/Element(\/|\\\)test_element.ctp/', $result);
 
-		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Posts' . DS . 'index.ctp';
+		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Posts' . DS . '..' . DS . 'Posts' . DS . 'index.ctp';
 		$result = $View->getViewFileName('../Posts/index');
 		$this->assertPathEquals($expected, $result);
 	}
