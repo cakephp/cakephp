@@ -104,6 +104,7 @@ class FormHelper extends Helper {
 			'radioWrapper' => '{{input}}{{label}}',
 			'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
 			'submitContainer' => '<div class="submit">{{content}}</div>',
+			'raw' => '{{label}}{{input}}'
 		]
 	];
 
@@ -884,7 +885,8 @@ class FormHelper extends Helper {
 			'error' => null,
 			'required' => null,
 			'options' => null,
-			'templates' => []
+			'templates' => [],
+			'div' => true
 		];
 		$options = $this->_parseOptions($fieldName, $options);
 		$options += ['id' => $this->_domId($fieldName)];
@@ -922,16 +924,18 @@ class FormHelper extends Helper {
 		}
 
 		$label = $this->_getLabel($fieldName, compact('input', 'label', 'error') + $options);
-
-		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
-		$result = $this->formatTemplate($groupTemplate, compact('input', 'label', 'error'));
-		$result = $this->formatTemplate($template, [
-			'content' => $result,
-			'error' => $error,
-			'required' => $options['required'] ? ' required' : '',
-			'type' => $options['type'],
-		]);
-
+		if($options['div']===true){
+			$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
+			$result = $this->formatTemplate($groupTemplate, compact('input', 'label', 'error'));
+			$result = $this->formatTemplate($template, [
+				'content' => $result,
+				'error' => $error,
+				'required' => $options['required'] ? ' required' : '',
+				'type' => $options['type'],
+			]);
+		} else {
+	            $result = $this->formatTemplate('raw', compact('input', 'label'));
+	        }
 		if ($newTemplates) {
 			$this->templates($originalTemplates);
 		}
