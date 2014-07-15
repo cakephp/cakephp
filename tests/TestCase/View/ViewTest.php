@@ -569,6 +569,29 @@ class ViewTest extends TestCase {
 	}
 
 /**
+ * Test getting layout filenames for prefix
+ *
+ * @return void
+ */
+	public function testGetLayoutFileNamePrefix() {
+		$View = new TestView();
+
+		// Prefix specific layout
+		$View->request->params['prefix'] = 'FooPrefix';
+		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
+			'FooPrefix' . DS . 'Layout' . DS . 'default.ctp';
+		$result = $View->getLayoutFileName();
+		$this->assertPathEquals($expected, $result);
+
+		// Fallback to app's layout
+		$View->request->params['prefix'] = 'Admin';
+		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
+			'Layout' . DS . 'default.ctp';
+		$result = $View->getLayoutFileName();
+		$this->assertPathEquals($expected, $result);
+	}
+
+/**
  * Test for missing views
  *
  * @expectedException \Cake\View\Error\MissingViewException
