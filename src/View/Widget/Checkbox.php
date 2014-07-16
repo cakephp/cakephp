@@ -60,7 +60,6 @@ class Checkbox implements WidgetInterface {
 			'name' => '',
 			'value' => 1,
 			'val' => null,
-			'checked' => false,
 			'disabled' => false,
 		];
 		if ($this->_isChecked($data)) {
@@ -87,8 +86,8 @@ class Checkbox implements WidgetInterface {
  * @return bool
  */
 	protected function _isChecked($data) {
-		if (!empty($data['checked'])) {
-			return true;
+		if (array_key_exists('checked', $data)) {
+			return (bool)$data['checked'];
 		}
 		if ((string)$data['val'] === (string)$data['value']) {
 			return true;
