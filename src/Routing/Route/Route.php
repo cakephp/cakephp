@@ -79,16 +79,6 @@ class Route {
 	protected $_name = null;
 
 /**
- * HTTP header shortcut map. Used for evaluating header-based route expressions.
- *
- * @var array
- */
-	protected $_headerMap = [
-		'type' => 'content_type',
-		'server' => 'server_name'
-	];
-
-/**
  * List of connected extensions for this route.
  *
  * @var array
@@ -283,29 +273,6 @@ class Route {
 			}
 		}
 
-		foreach ($this->defaults as $key => $val) {
-			$key = (string)$key;
-			if ($key[0] === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
-				if (isset($this->_headerMap[$header[1]])) {
-					$header = $this->_headerMap[$header[1]];
-				} else {
-					$header = 'http_' . $header[1];
-				}
-				$header = strtoupper($header);
-
-				$val = (array)$val;
-				$h = false;
-
-				foreach ($val as $v) {
-					if ($request->env($header) === $v) {
-						$h = true;
-					}
-				}
-				if (!$h) {
-					return false;
-				}
-			}
-		}
 		array_shift($route);
 		$count = count($this->keys);
 		for ($i = 0; $i <= $count; $i++) {

@@ -720,38 +720,6 @@ class RouteTest extends TestCase {
 	}
 
 /**
- * Test that the [type] condition works.
- *
- * @return void
- */
-	public function testParseWithContentTypeCondition() {
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		unset($_SERVER['CONTENT_TYPE']);
-		$route = new Route('/sample', [
-			'controller' => 'posts',
-			'action' => 'index',
-			'_method' => 'POST',
-			'[type]' => 'application/xml'
-		]);
-		$this->assertFalse($route->parse('/sample'), 'No content type set.');
-
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$_SERVER['CONTENT_TYPE'] = 'application/json';
-		$this->assertFalse($route->parse('/sample'), 'Wrong content type set.');
-
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$_SERVER['CONTENT_TYPE'] = 'application/xml';
-		$expected = [
-			'controller' => 'posts',
-			'action' => 'index',
-			'pass' => [],
-			'_method' => 'POST',
-			'[type]' => 'application/xml',
-		];
-		$this->assertEquals($expected, $route->parse('/sample'));
-	}
-
-/**
  * Check [method] compatibility.
  *
  * @return void
