@@ -614,6 +614,26 @@ class ViewTest extends TestCase {
 	}
 
 /**
+ * Test that getLayoutFileName() protects against malicious directory traversal.
+ *
+ * @expectedException Cake\View\Error\MissingViewException
+ * @return void
+ */
+	public function testGetLayoutFileNameDirectoryTraversal() {
+		$viewOptions = [
+			'plugin' => null,
+			'name' => 'Pages',
+			'viewPath' => 'Pages',
+		];
+		$request = $this->getMock('Cake\Network\Request');
+		$response = $this->getMock('Cake\Network\Response');
+
+		$view = new TestView(null, null, null, $viewOptions);
+		$view->ext('.php');
+		$view->getLayoutFileName('../../../../bootstrap');
+	}
+
+/**
  * Test for missing views
  *
  * @expectedException \Cake\View\Error\MissingViewException

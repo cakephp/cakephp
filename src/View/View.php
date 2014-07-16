@@ -923,7 +923,6 @@ class View {
 			$subDir = $this->layoutPath . DS;
 		}
 		list($plugin, $name) = $this->pluginSplit($name);
-		$paths = $this->_paths($plugin);
 
 		$layoutPaths = ['Layout' . DS . $subDir];
 		if (!empty($this->request->params['prefix'])) {
@@ -933,10 +932,11 @@ class View {
 			);
 		}
 
-		foreach ($paths as $path) {
+		foreach ($this->_paths($plugin) as $path) {
 			foreach ($layoutPaths as $layoutPath) {
-				if (file_exists($path . $layoutPath . $name . $this->_ext)) {
-					return $path . $layoutPath . $name . $this->_ext;
+				$currentPath = $path . $layoutPath;
+				if (file_exists($currentPath . $name . $this->_ext)) {
+					return $this->_checkFilePath($currentPath . $name . $this->_ext, $currentPath);
 				}
 			}
 		}
