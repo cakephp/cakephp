@@ -346,6 +346,7 @@ class SmtpTransportTest extends TestCase {
  */
 	public function testQuit() {
 		$this->socket->expects($this->at(0))->method('write')->with("QUIT\r\n");
+		$this->socket->connected = true;
 		$this->SmtpTransport->disconnect();
 	}
 
@@ -455,5 +456,158 @@ class SmtpTransportTest extends TestCase {
 		);
 		$result = $this->SmtpTransport->getLastResponse();
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testAutoDisconnect method
+ *
+ * @return void
+ */
+	public function testAutoDisconnect() {
+		$this->SmtpTransport->config(array('autoDisconnect' => true));
+		$this->socket->expects($this->at(0))->method('write')->with("QUIT\r\n");
+		$this->socket->connected = true;
+		unset($this->SmtpTransport);
+	}
+
+/**
+ * testKeepAlive method
+ *
+ * @return void
+ */
+	public function testKeepAlive() {
+		$this->SmtpTransport->config(array('keepAlive' => true, 'autoDisconnect' => false));
+
+		$email = $this->getMock('Cake\Network\Email\Email', array('message'));
+		$email->from('noreply@cakephp.org', 'CakePHP Test');
+		$email->to('cake@cakephp.org', 'CakePHP');
+		$email->messageID('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
+		$email->subject('Testing SMTP');
+		$date = date(DATE_RFC2822);
+		$email->setHeaders(array('X-Mailer' => Email::EMAIL_CLIENT, 'Date' => $date));
+		$email->expects($this->exactly(2))
+			->method('message')
+			->will($this->returnValue(array('First Line', 'Second Line', '.Third Line', '')));
+
+		$data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
+		$data .= "To: CakePHP <cake@cakephp.org>\r\n";
+		$data .= "X-Mailer: CakePHP Email\r\n";
+		$data .= "Date: " . $date . "\r\n";
+		$data .= "Message-ID: <4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>\r\n";
+		$data .= "Subject: Testing SMTP\r\n";
+		$data .= "MIME-Version: 1.0\r\n";
+		$data .= "Content-Type: text/plain; charset=UTF-8\r\n";
+		$data .= "Content-Transfer-Encoding: 8bit\r\n";
+		$data .= "\r\n";
+		$data .= "First Line\r\n";
+		$data .= "Second Line\r\n";
+		$data .= "..Third Line\r\n"; // RFC5321 4.5.2.Transparency
+		$data .= "\r\n";
+		$data .= "\r\n\r\n.\r\n";
+
+		$this->socket->expects($this->never())->method('disconnect');
+
+		$this->socket->expects($this->at(0))->method('connect')->will($this->returnValue(true));
+		$this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(2))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
+		$this->socket->expects($this->at(3))->method('write')->with("EHLO localhost\r\n");
+		$this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+		$this->socket->expects($this->at(6))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
+		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(8))->method('read')->will($this->returnValue("250 OK\r\n"));
+		$this->socket->expects($this->at(9))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
+		$this->socket->expects($this->at(10))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(11))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+		$this->socket->expects($this->at(12))->method('write')->with("DATA\r\n");
+		$this->socket->expects($this->at(13))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(14))->method('read')->will($this->returnValue("354 OK\r\n"));
+		$this->socket->expects($this->at(15))->method('write')->with($data);
+		$this->socket->expects($this->at(16))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(17))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+		$this->socket->expects($this->at(18))->method('write')->with("RSET\r\n");
+		$this->socket->expects($this->at(19))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(20))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+		$this->socket->expects($this->at(21))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
+		$this->socket->expects($this->at(22))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(23))->method('read')->will($this->returnValue("250 OK\r\n"));
+		$this->socket->expects($this->at(24))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
+		$this->socket->expects($this->at(25))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(26))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+		$this->socket->expects($this->at(27))->method('write')->with("DATA\r\n");
+		$this->socket->expects($this->at(28))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(29))->method('read')->will($this->returnValue("354 OK\r\n"));
+		$this->socket->expects($this->at(30))->method('write')->with($data);
+		$this->socket->expects($this->at(31))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(32))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+		$this->SmtpTransport->send($email);
+		$this->socket->connected = true;
+		$this->SmtpTransport->send($email);
+	}
+
+/**
+ * testSendDefaults method
+ *
+ * @return void
+ */
+	public function testSendDefaults() {
+		$email = $this->getMock('Cake\Network\Email\Email', array('message'));
+		$email->from('noreply@cakephp.org', 'CakePHP Test');
+		$email->to('cake@cakephp.org', 'CakePHP');
+		$email->messageID('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
+		$email->subject('Testing SMTP');
+		$date = date(DATE_RFC2822);
+		$email->setHeaders(array('X-Mailer' => Email::EMAIL_CLIENT, 'Date' => $date));
+		$email->expects($this->once())
+			->method('message')
+			->will($this->returnValue(array('First Line', 'Second Line', '.Third Line', '')));
+
+		$data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
+		$data .= "To: CakePHP <cake@cakephp.org>\r\n";
+		$data .= "X-Mailer: CakePHP Email\r\n";
+		$data .= "Date: " . $date . "\r\n";
+		$data .= "Message-ID: <4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>\r\n";
+		$data .= "Subject: Testing SMTP\r\n";
+		$data .= "MIME-Version: 1.0\r\n";
+		$data .= "Content-Type: text/plain; charset=UTF-8\r\n";
+		$data .= "Content-Transfer-Encoding: 8bit\r\n";
+		$data .= "\r\n";
+		$data .= "First Line\r\n";
+		$data .= "Second Line\r\n";
+		$data .= "..Third Line\r\n"; // RFC5321 4.5.2.Transparency
+		$data .= "\r\n";
+		$data .= "\r\n\r\n.\r\n";
+
+		$this->socket->expects($this->at(0))->method('connect')->will($this->returnValue(true));
+
+		$this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(2))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
+		$this->socket->expects($this->at(3))->method('write')->with("EHLO localhost\r\n");
+		$this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+		$this->socket->expects($this->at(6))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
+		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(8))->method('read')->will($this->returnValue("250 OK\r\n"));
+		$this->socket->expects($this->at(9))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
+		$this->socket->expects($this->at(10))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(11))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+		$this->socket->expects($this->at(12))->method('write')->with("DATA\r\n");
+		$this->socket->expects($this->at(13))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(14))->method('read')->will($this->returnValue("354 OK\r\n"));
+		$this->socket->expects($this->at(15))->method('write')->with($data);
+		$this->socket->expects($this->at(16))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(17))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+		$this->socket->expects($this->at(18))->method('disconnect');
+
+		$this->SmtpTransport->send($email);
 	}
 }
