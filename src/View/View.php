@@ -872,6 +872,7 @@ class View {
  * @param string $file The path to the template file.
  * @param string $path Base path that $file should be inside of.
  * @return string The file path
+ * @throws \Cake\Error\Exception
  */
 	protected function _checkFilePath($file, $path) {
 		if (strpos($file, '..') === false) {
@@ -879,7 +880,8 @@ class View {
 		}
 		$absolute = realpath($file);
 		if (strpos($absolute, $path) !== 0) {
-			throw new Error\MissingViewException(array('file' => $file));
+			$msg = sprintf('Cannot use "%s" as a template, it is not within any view template path.', $file);
+			throw new Exception($msg);
 		}
 		return $absolute;
 	}

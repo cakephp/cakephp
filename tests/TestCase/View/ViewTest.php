@@ -517,7 +517,7 @@ class ViewTest extends TestCase {
 /**
  * Test that getViewFileName() protects against malicious directory traversal.
  *
- * @expectedException Cake\View\Error\MissingViewException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testGetViewFileNameDirectoryTraversal() {
@@ -616,7 +616,7 @@ class ViewTest extends TestCase {
 /**
  * Test that getLayoutFileName() protects against malicious directory traversal.
  *
- * @expectedException Cake\View\Error\MissingViewException
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testGetLayoutFileNameDirectoryTraversal() {
