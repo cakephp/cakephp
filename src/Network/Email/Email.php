@@ -335,7 +335,7 @@ class Email {
  *
  * @var string
  */
-	protected $_emailPattern = '/^((?:[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui';
+	protected $_emailPattern = '/^((?:[\p{L}0-9\.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui';
 
 /**
  * The class name used for email configuration.
