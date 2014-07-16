@@ -323,11 +323,11 @@ class RouteBuilderTest extends TestCase {
 		$this->assertCount(2, $result);
 		$this->assertEquals('/articles', $result[0]->template);
 		$this->assertEquals('index', $result[0]->defaults['action']);
-		$this->assertEquals('GET', $result[0]->defaults['[method]']);
+		$this->assertEquals('GET', $result[0]->defaults['_method']);
 
 		$this->assertEquals('/articles/:id', $result[1]->template);
 		$this->assertEquals('delete', $result[1]->defaults['action']);
-		$this->assertEquals('DELETE', $result[1]->defaults['[method]']);
+		$this->assertEquals('DELETE', $result[1]->defaults['_method']);
 	}
 
 /**

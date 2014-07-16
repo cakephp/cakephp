@@ -116,7 +116,7 @@ class RouterTest extends TestCase {
 			'plugin' => null,
 			'controller' => 'Posts',
 			'action' => 'index',
-			'[method]' => 'GET',
+			'_method' => 'GET',
 			'_ext' => null
 		];
 		$result = Router::parse('/posts');
@@ -129,7 +129,7 @@ class RouterTest extends TestCase {
 			'controller' => 'Posts',
 			'action' => 'view',
 			'id' => '13',
-			'[method]' => 'GET',
+			'_method' => 'GET',
 			'_ext' => null
 		];
 		$result = Router::parse('/posts/13');
@@ -141,7 +141,7 @@ class RouterTest extends TestCase {
 			'plugin' => null,
 			'controller' => 'Posts',
 			'action' => 'add',
-			'[method]' => 'POST',
+			'_method' => 'POST',
 			'_ext' => null
 		];
 		$result = Router::parse('/posts');
@@ -154,7 +154,7 @@ class RouterTest extends TestCase {
 			'controller' => 'Posts',
 			'action' => 'edit',
 			'id' => '13',
-			'[method]' => ['PUT', 'PATCH'],
+			'_method' => ['PUT', 'PATCH'],
 			'_ext' => null
 		];
 		$result = Router::parse('/posts/13');
@@ -166,7 +166,7 @@ class RouterTest extends TestCase {
 			'controller' => 'Posts',
 			'action' => 'edit',
 			'id' => '475acc39-a328-44d3-95fb-015000000000',
-			'[method]' => ['PUT', 'PATCH'],
+			'_method' => ['PUT', 'PATCH'],
 			'_ext' => null
 		];
 		$result = Router::parse('/posts/475acc39-a328-44d3-95fb-015000000000');
@@ -179,7 +179,7 @@ class RouterTest extends TestCase {
 			'controller' => 'Posts',
 			'action' => 'delete',
 			'id' => '13',
-			'[method]' => 'DELETE',
+			'_method' => 'DELETE',
 			'_ext' => null
 		];
 		$result = Router::parse('/posts/13');
@@ -195,7 +195,7 @@ class RouterTest extends TestCase {
 			'controller' => 'Posts',
 			'action' => 'view',
 			'id' => 'add',
-			'[method]' => 'GET',
+			'_method' => 'GET',
 			'_ext' => null
 		];
 		$result = Router::parse('/posts/add');
@@ -208,7 +208,7 @@ class RouterTest extends TestCase {
 			'controller' => 'Posts',
 			'action' => 'edit',
 			'id' => 'name',
-			'[method]' => ['PUT', 'PATCH'],
+			'_method' => ['PUT', 'PATCH'],
 			'_ext' => null
 		];
 		$result = Router::parse('/posts/name');
@@ -230,7 +230,7 @@ class RouterTest extends TestCase {
 			'plugin' => 'TestPlugin',
 			'controller' => 'TestPlugin',
 			'action' => 'index',
-			'[method]' => 'GET',
+			'_method' => 'GET',
 			'_ext' => null
 		);
 		$this->assertEquals($expected, $result);
@@ -243,7 +243,7 @@ class RouterTest extends TestCase {
 			'controller' => 'TestPlugin',
 			'action' => 'view',
 			'id' => '13',
-			'[method]' => 'GET',
+			'_method' => 'GET',
 			'_ext' => null
 		);
 		$this->assertEquals($expected, $result);
@@ -266,7 +266,7 @@ class RouterTest extends TestCase {
 			'action' => 'index',
 			'pass' => [],
 			'prefix' => 'api',
-			'[method]' => 'GET',
+			'_method' => 'GET',
 			'_ext' => null
 		);
 		$this->assertEquals($expected, $result);
@@ -288,7 +288,7 @@ class RouterTest extends TestCase {
 			'controller' => 'Posts',
 			'action' => 'index',
 			'pass' => [],
-			'[method]' => 'GET',
+			'_method' => 'GET',
 			'_ext' => 'json',
 		);
 
@@ -336,7 +336,7 @@ class RouterTest extends TestCase {
 			'controller' => 'TestPlugin',
 			'prefix' => 'api',
 			'action' => 'index',
-			'[method]' => 'GET',
+			'_method' => 'GET',
 			'_ext' => null
 		);
 		$this->assertEquals($expected, $result);
@@ -350,7 +350,7 @@ class RouterTest extends TestCase {
 			'plugin' => null,
 			'controller' => 'Posts',
 			'action' => 'index',
-			'[method]' => 'GET',
+			'_method' => 'GET',
 			'prefix' => 'api',
 			'_ext' => null
 		);
@@ -363,7 +363,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testMultipleResourceRoute() {
-		Router::connect('/:controller', array('action' => 'index', '[method]' => array('GET', 'POST')));
+		Router::connect('/:controller', array('action' => 'index', '_method' => array('GET', 'POST')));
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = Router::parse('/posts');
@@ -372,7 +372,7 @@ class RouterTest extends TestCase {
 			'plugin' => null,
 			'controller' => 'posts',
 			'action' => 'index',
-			'[method]' => array('GET', 'POST')
+			'_method' => array('GET', 'POST')
 		);
 		$this->assertEquals($expected, $result);
 
@@ -383,7 +383,7 @@ class RouterTest extends TestCase {
 			'plugin' => null,
 			'controller' => 'posts',
 			'action' => 'index',
-			'[method]' => array('GET', 'POST')
+			'_method' => array('GET', 'POST')
 		);
 		$this->assertEquals($expected, $result);
 	}
@@ -399,7 +399,7 @@ class RouterTest extends TestCase {
 		$result = Router::url([
 			'controller' => 'Posts',
 			'action' => 'index',
-			'[method]' => 'GET'
+			'_method' => 'GET'
 		]);
 		$expected = '/posts';
 		$this->assertEquals($expected, $result);
@@ -407,25 +407,25 @@ class RouterTest extends TestCase {
 		$result = Router::url([
 			'controller' => 'Posts',
 			'action' => 'view',
-			'[method]' => 'GET',
+			'_method' => 'GET',
 			'id' => 10
 		]);
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(['controller' => 'Posts', 'action' => 'add', '[method]' => 'POST']);
+		$result = Router::url(['controller' => 'Posts', 'action' => 'add', '_method' => 'POST']);
 		$expected = '/posts';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(['controller' => 'Posts', 'action' => 'edit', '[method]' => 'PUT', 'id' => 10]);
+		$result = Router::url(['controller' => 'Posts', 'action' => 'edit', '_method' => 'PUT', 'id' => 10]);
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(['controller' => 'Posts', 'action' => 'delete', '[method]' => 'DELETE', 'id' => 10]);
+		$result = Router::url(['controller' => 'Posts', 'action' => 'delete', '_method' => 'DELETE', 'id' => 10]);
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 
-		$result = Router::url(['controller' => 'Posts', 'action' => 'edit', '[method]' => 'PATCH', 'id' => 10]);
+		$result = Router::url(['controller' => 'Posts', 'action' => 'edit', '_method' => 'PATCH', 'id' => 10]);
 		$expected = '/posts/10';
 		$this->assertEquals($expected, $result);
 	}
