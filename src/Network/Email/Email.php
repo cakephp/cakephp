@@ -1227,7 +1227,7 @@ class Email {
 		$transport = $this->transport();
 		if (!$transport) {
 			$msg = 'Cannot send email, transport was not defined. Did you call transport() or define ' .
-				 ' a transport in the set profile?';
+				' a transport in the set profile?';
 			throw new Error\SocketException($msg);
 		}
 		$contents = $transport->send($this);
