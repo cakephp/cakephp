@@ -32,10 +32,37 @@ trait ViewVarsTrait {
 	public $viewVars = [];
 
 /**
+ * Get view instance
+ *
+ * @param string $viewClass View class name or null to use $viewClass
+ * @return \Cake\View\View
+ */
+	public function getView($viewClass = null) {
+		if ($viewClass === null && $this->View) {
+			return $this->View;
+		}
+
+		if ($viewClass !== null && $viewClass !== $this->viewClass) {
+			$this->viewClass = $viewClass;
+			unset($this->View);
+		}
+		if ($this->viewClass === null) {
+			$this->viewClass = App::className('App', 'View', 'View');
+			if ($this->viewClass === false) {
+				$this->viewClass = 'Cake\View\View';
+			}
+		}
+		if (empty($this->View)) {
+			$this->View = $this->createView();
+		}
+		return $this->View;
+	}
+
+/**
  * Constructs the view class instance based on object properties.
  *
  * @param string $viewClass Optional namespaced class name of the View class to instantiate.
- * @return View
+ * @return Cake\View\View
  */
 	public function createView($viewClass = null) {
 		if ($viewClass === null) {

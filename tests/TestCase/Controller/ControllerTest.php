@@ -362,9 +362,11 @@ class ControllerTest extends TestCase {
 		$this->assertRegExp('/posts index/', (string)$result);
 
 		$Controller->view = 'index';
+		$Controller->getView()->hasRendered = false;
 		$result = $Controller->render();
 		$this->assertRegExp('/posts index/', (string)$result);
 
+		$Controller->getView()->hasRendered = false;
 		$result = $Controller->render('/Element/test_element');
 		$this->assertRegExp('/this is the test element/', (string)$result);
 		$Controller->view = null;

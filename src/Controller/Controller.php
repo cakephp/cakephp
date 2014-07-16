@@ -179,7 +179,7 @@ class Controller implements EventListener {
  *
  * @var string
  */
-	public $viewClass = 'Cake\View\View';
+	public $viewClass = null;
 
 /**
  * The path to this controllers view templates.
@@ -388,7 +388,7 @@ class Controller implements EventListener {
 			$this->autoRender = false;
 		}
 		if (!empty($request->params['bare'])) {
-			$this->autoLayout = false;
+			$this->getView()->autoLayout = false;
 		}
 	}
 
@@ -587,10 +587,8 @@ class Controller implements EventListener {
 			return $this->response;
 		}
 
-		$this->View = $this->createView();
-
 		$this->autoRender = false;
-		$this->response->body($this->View->render($view, $layout));
+		$this->response->body($this->getView()->render($view, $layout));
 		return $this->response;
 	}
 
