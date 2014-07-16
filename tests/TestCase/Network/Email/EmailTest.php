@@ -1019,6 +1019,7 @@ class EmailTest extends TestCase {
 /**
  * testSendWithoutFrom method
  *
+ * @expectedException Cake\Network\Error\SocketException
  * @return void
  */
 	public function testSendWithoutFrom() {
@@ -1026,13 +1027,13 @@ class EmailTest extends TestCase {
 		$this->CakeEmail->to('cake@cakephp.org');
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->profile(array('empty'));
-		$this->setExpectedException('Cake\Network\Error\SocketException');
 		$this->CakeEmail->send("Forgot to set From");
 	}
 
 /**
  * testSendWithoutTo method
  *
+ * @expectedException Cake\Network\Error\SocketException
  * @return void
  */
 	public function testSendWithoutTo() {
@@ -1040,7 +1041,20 @@ class EmailTest extends TestCase {
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->profile(array('empty'));
-		$this->setExpectedException('Cake\Network\Error\SocketException');
+		$this->CakeEmail->send("Forgot to set To");
+	}
+
+/**
+ * test send without a transport method
+ *
+ * @expectedException Cake\Network\Error\SocketException
+ * @expectedExceptionMessage Cannot send email, transport was not defined.
+ * @return void
+ */
+	public function testSendWithoutTransport() {
+		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->send("Forgot to set To");
 	}
 
