@@ -40,7 +40,7 @@ class FlashComponent extends Component {
  */
 	protected $_defaultConfig = [
 		'key' => 'flash',
-		'element' => null,
+		'element' => 'default',
 		'params' => []
 	];
 
@@ -63,7 +63,7 @@ class FlashComponent extends Component {
  * ### Options:
  *
  * - `key` The key to set under the session's Flash key
- * - `element` The element used to render the flash message
+ * - `element` The element used to render the flash message. Default to 'default'.
  * - `params` An array of variables to make available when using an element
  *
  * @param string|\Exception $message Message to be flashed. If an instance
@@ -80,14 +80,12 @@ class FlashComponent extends Component {
 			$message = $message->getMessage();
 		}
 
-		if ($opts['element'] !== null) {
-			list($plugin, $element) = pluginSplit($opts['element']);
+		list($plugin, $element) = pluginSplit($opts['element']);
 
-			if ($plugin) {
-				$opts['element'] = $plugin . '.Flash/' . $element;
-			} else {
-				$opts['element'] = 'Flash/' . $element;
-			}
+		if ($plugin) {
+			$opts['element'] = $plugin . '.Flash/' . $element;
+		} else {
+			$opts['element'] = 'Flash/' . $element;
 		}
 
 		$this->_session->write('Flash.' . $opts['key'], [

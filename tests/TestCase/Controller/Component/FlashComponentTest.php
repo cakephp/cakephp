@@ -65,7 +65,7 @@ class FlashComponentTest extends TestCase {
 		$expected = [
 			'message' => 'This is a test message',
 			'key' => 'flash',
-			'element' => null,
+			'element' => 'Flash/default',
 			'params' => []
 		];
 		$result = $this->Session->read('Flash.flash');
@@ -95,7 +95,7 @@ class FlashComponentTest extends TestCase {
 		$expected = [
 			'message' => 'This is a test message',
 			'key' => 'foobar',
-			'element' => null,
+			'element' => 'Flash/default',
 			'params' => []
 		];
 		$result = $this->Session->read('Flash.foobar');
@@ -115,7 +115,7 @@ class FlashComponentTest extends TestCase {
 		$expected = [
 			'message' => 'This is a test message',
 			'key' => 'flash',
-			'element' => null,
+			'element' => 'Flash/default',
 			'params' => ['code' => 404]
 		];
 		$result = $this->Session->read('Flash.flash');
