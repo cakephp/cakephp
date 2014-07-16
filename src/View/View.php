@@ -850,19 +850,38 @@ class View {
 					return $name;
 				}
 				$name = trim($name, DS);
-			} elseif ($name[0] === '.') {
-				$name = $this->viewPath . DS . $subDir . $name;
 			} elseif (!$plugin || $this->viewPath !== $this->name) {
 				$name = $this->viewPath . DS . $subDir . $name;
 			}
 		}
-		$paths = $this->_paths($plugin);
-		foreach ($paths as $path) {
+
+		foreach ($this->_paths($plugin) as $path) {
 			if (file_exists($path . $name . $this->_ext)) {
-				return $path . $name . $this->_ext;
+				return $this->_checkFilePath($path . $name . $this->_ext, $path);
 			}
 		}
 		throw new Error\MissingViewException(array('file' => $name . $this->_ext));
+	}
+
+/**
+ * Check that a view file path does not go outside of the defined template paths.
+ *
+ * Only paths that contain `..` will be checked, as they are the ones most likely to
+ * have the ability to resolve to files outside of the template paths.
+ *
+ * @param string $file The path to the template file.
+ * @param string $path Base path that $file should be inside of.
+ * @return string The file path
+ */
+	protected function _checkFilePath($file, $path) {
+		if (strpos($file, '..') === false) {
+			return $file;
+		}
+		$absolute = realpath($file);
+		if (strpos($absolute, $path) !== 0) {
+			throw new Error\MissingViewException(array('file' => $file));
+		}
+		return $absolute;
 	}
 
 /**

@@ -132,12 +132,13 @@ class TestView extends View {
 	}
 
 /**
- * Test only function to return instance scripts.
+ * Setter for extension.
  *
- * @return array Scripts
+ * @param string $ext The extension
+ * @return void
  */
-	public function scripts() {
-		return $this->_scripts;
+	public function ext($ext) {
+		$this->_ext = $ext;
 	}
 
 }
@@ -475,7 +476,8 @@ class ViewTest extends TestCase {
  * @return void
  */
 	public function testGetViewFileNames() {
-		$viewOptions = ['plugin' => null,
+		$viewOptions = [
+			'plugin' => null,
 			'name' => 'Pages',
 			'viewPath' => 'Pages'
 		];
@@ -492,7 +494,7 @@ class ViewTest extends TestCase {
 		$result = $View->getViewFileName('/Posts/index');
 		$this->assertPathEquals($expected, $result);
 
-		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages' . DS . '..' . DS . 'Posts' . DS . 'index.ctp';
+		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Posts' . DS . 'index.ctp';
 		$result = $View->getViewFileName('../Posts/index');
 		$this->assertPathEquals($expected, $result);
 
@@ -510,6 +512,26 @@ class ViewTest extends TestCase {
 			'Template' . DS . 'Tests' . DS . 'index.ctp';
 		$result = $View->getViewFileName('TestPlugin.index');
 		$this->assertPathEquals($expected, $result);
+	}
+
+/**
+ * Test that getViewFileName() protects against malicious directory traversal.
+ *
+ * @expectedException Cake\View\Error\MissingViewException
+ * @return void
+ */
+	public function testGetViewFileNameDirectoryTraversal() {
+		$viewOptions = [
+			'plugin' => null,
+			'name' => 'Pages',
+			'viewPath' => 'Pages',
+		];
+		$request = $this->getMock('Cake\Network\Request');
+		$response = $this->getMock('Cake\Network\Response');
+
+		$view = new TestView(null, null, null, $viewOptions);
+		$view->ext('.php');
+		$view->getViewFileName('../../../../bootstrap');
 	}
 
 /**
@@ -1127,7 +1149,7 @@ class ViewTest extends TestCase {
 		$result = $View->getViewFileName('../Element/test_element');
 		$this->assertRegExp('/Element(\/|\\\)test_element.ctp/', $result);
 
-		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Posts' . DS . '..' . DS . 'Posts' . DS . 'index.ctp';
+		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Posts' . DS . 'index.ctp';
 		$result = $View->getViewFileName('../Posts/index');
 		$this->assertPathEquals($expected, $result);
 	}
