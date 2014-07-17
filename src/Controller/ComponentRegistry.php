@@ -79,7 +79,7 @@ class ComponentRegistry extends ObjectRegistry {
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\MissingComponentException([
-			'class' => $class,
+			'class' => $class . 'Component',
 			'plugin' => $plugin
 		]);
 	}
