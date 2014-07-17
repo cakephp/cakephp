@@ -90,6 +90,7 @@ class SmtpTransport extends AbstractTransport {
 	public function connect() {
 		if (!$this->connected()) {
 			$this->_connect();
+			$this->_auth();
 		}
 	}
 

@@ -82,7 +82,7 @@ class SmtpTransportTest extends TestCase {
 		parent::setUp();
 		$this->socket = $this->getMock(
 			'Cake\Network\Socket',
-			array('read', 'write', 'connect', 'enableCrypto')
+			array('read', 'write', 'connect', 'disconnect', 'enableCrypto')
 		);
 
 		$this->SmtpTransport = new SmtpTestTransport();
@@ -166,7 +166,6 @@ class SmtpTransportTest extends TestCase {
 		$this->socket->expects($this->at(6))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue("504 5.7.4 Unrecognized authentication type\r\n"));
 		$this->SmtpTransport->connect();
-		$this->SmtpTransport->auth();
 	}
 
 /**
@@ -459,14 +458,65 @@ class SmtpTransportTest extends TestCase {
 	}
 
 /**
+ * testExplicitConnectAlreadyConnected method
+ *
+ * @return void
+ */
+	public function testExplicitConnectAlreadyConnected() {
+		$this->socket->expects($this->never())->method('connect');
+		$this->socket->connected = true;
+		$this->SmtpTransport->connect();
+	}
+
+/**
+ * testConnected method
+ *
+ * @return void
+ */
+	public function testConnected() {
+		$this->socket->connected = true;
+		$this->assertTrue($this->SmtpTransport->connected());
+
+		$this->socket->connected = false;
+		$this->assertFalse($this->SmtpTransport->connected());
+	}
+
+/**
  * testAutoDisconnect method
  *
  * @return void
  */
 	public function testAutoDisconnect() {
 		$this->socket->expects($this->at(0))->method('write')->with("QUIT\r\n");
+		$this->socket->expects($this->at(1))->method('disconnect');
 		$this->socket->connected = true;
 		unset($this->SmtpTransport);
+	}
+
+/**
+ * testExplicitDisconnect method
+ *
+ * @return void
+ */
+	public function testExplicitDisconnect() {
+		$this->socket->expects($this->at(0))->method('write')->with("QUIT\r\n");
+		$this->socket->expects($this->at(1))->method('disconnect');
+		$this->socket->connected = true;
+		$this->SmtpTransport->disconnect();
+	}
+
+/**
+ * testExplicitDisconnectNotConnected method
+ *
+ * @return void
+ */
+	public function testExplicitDisconnectNotConnected() {
+		$callback = function($arg)  {
+			$this->assertNotEquals("QUIT\r\n", $arg);
+		};
+		$this->socket->expects($this->any())->method('write')->will($this->returnCallback($callback));
+		$this->socket->expects($this->never())->method('disconnect');
+		$this->SmtpTransport->disconnect();
 	}
 
 /**
@@ -482,6 +532,10 @@ class SmtpTransportTest extends TestCase {
 		$email->to('cake@cakephp.org', 'CakePHP');
 		$email->expects($this->exactly(2))->method('message')->will($this->returnValue(array('First Line')));
 
+		$callback = function($arg)  {
+			$this->assertNotEquals("QUIT\r\n", $arg);
+		};
+		$this->socket->expects($this->any())->method('write')->will($this->returnCallback($callback));
 		$this->socket->expects($this->never())->method('disconnect');
 
 		$this->socket->expects($this->at(0))->method('connect')->will($this->returnValue(true));
@@ -561,7 +615,8 @@ class SmtpTransportTest extends TestCase {
 		$this->socket->expects($this->at(16))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(17))->method('read')->will($this->returnValue("250 OK\r\n"));
 
-		$this->socket->expects($this->at(18))->method('disconnect');
+		$this->socket->expects($this->at(18))->method('write')->with("QUIT\r\n");
+		$this->socket->expects($this->at(19))->method('disconnect');
 
 		$this->SmtpTransport->send($email);
 	}
