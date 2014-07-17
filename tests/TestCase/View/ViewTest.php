@@ -132,12 +132,13 @@ class TestView extends View {
 	}
 
 /**
- * Test only function to return instance scripts.
+ * Setter for extension.
  *
- * @return array Scripts
+ * @param string $ext The extension
+ * @return void
  */
-	public function scripts() {
-		return $this->_scripts;
+	public function ext($ext) {
+		$this->_ext = $ext;
 	}
 
 }
@@ -475,7 +476,8 @@ class ViewTest extends TestCase {
  * @return void
  */
 	public function testGetViewFileNames() {
-		$viewOptions = ['plugin' => null,
+		$viewOptions = [
+			'plugin' => null,
 			'name' => 'Pages',
 			'viewPath' => 'Pages'
 		];
@@ -510,6 +512,26 @@ class ViewTest extends TestCase {
 			'Template' . DS . 'Tests' . DS . 'index.ctp';
 		$result = $View->getViewFileName('TestPlugin.index');
 		$this->assertPathEquals($expected, $result);
+	}
+
+/**
+ * Test that getViewFileName() protects against malicious directory traversal.
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testGetViewFileNameDirectoryTraversal() {
+		$viewOptions = [
+			'plugin' => null,
+			'name' => 'Pages',
+			'viewPath' => 'Pages',
+		];
+		$request = $this->getMock('Cake\Network\Request');
+		$response = $this->getMock('Cake\Network\Response');
+
+		$view = new TestView(null, null, null, $viewOptions);
+		$view->ext('.php');
+		$view->getViewFileName('../../../../bootstrap');
 	}
 
 /**
@@ -589,6 +611,26 @@ class ViewTest extends TestCase {
 			'Layout' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertPathEquals($expected, $result);
+	}
+
+/**
+ * Test that getLayoutFileName() protects against malicious directory traversal.
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testGetLayoutFileNameDirectoryTraversal() {
+		$viewOptions = [
+			'plugin' => null,
+			'name' => 'Pages',
+			'viewPath' => 'Pages',
+		];
+		$request = $this->getMock('Cake\Network\Request');
+		$response = $this->getMock('Cake\Network\Response');
+
+		$view = new TestView(null, null, null, $viewOptions);
+		$view->ext('.php');
+		$view->getLayoutFileName('../../../../bootstrap');
 	}
 
 /**
