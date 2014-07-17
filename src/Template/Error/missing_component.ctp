@@ -24,11 +24,11 @@ $pluginDot = empty($plugin) ? null : $plugin . '.';
 </p>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('Create the class <em>%sComponent</em> below in file: %s', h($class), (empty($plugin) ? APP_DIR : Plugin::path($plugin)) . DS . 'Controller' . DS . 'Component' . DS . h($class) . 'Component.php'); ?>
+	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), (empty($plugin) ? APP_DIR : Plugin::path($plugin)) . DS . 'Controller' . DS . 'Component' . DS . h($class) . '.php'); ?>
 </p>
 <pre>
 &lt;?php
-class <?= h($class).'Component'; ?> extends Component {
+class <?= h($class); ?> extends Component {
 
 }
 </pre>
