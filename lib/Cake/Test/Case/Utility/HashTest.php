@@ -2277,8 +2277,9 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
- * Tests that nest() returns an empty array for invalid input instead of throwing notices.
+ * Tests that nest() throws an InvalidArgumentException when providing an invalid input.
  *
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testNestInvalid() {
@@ -2291,8 +2292,7 @@ class HashTest extends CakeTestCase {
 				)
 			)
 		);
-		$result = Hash::nest($input);
-		$this->assertSame(array(), $result);
+		Hash::nest($input);
 	}
 
 /**
