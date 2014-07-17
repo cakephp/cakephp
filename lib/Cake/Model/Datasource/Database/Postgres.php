@@ -261,6 +261,9 @@ class Postgres extends DboSource {
 						$this->_sequenceMap[$table][$c->name] = $sequenceName;
 					}
 				}
+				if ($fields[$c->name]['type'] === 'timestamp' && $fields[$c->name]['default'] === '') {
+					$fields[$c->name]['default'] = null;
+				}
 				if ($fields[$c->name]['type'] === 'boolean' && !empty($fields[$c->name]['default'])) {
 					$fields[$c->name]['default'] = constant($fields[$c->name]['default']);
 				}

@@ -33,14 +33,14 @@ chance of keeping on top of things.
 * Core test cases should continue to pass. You can run tests locally or enable
   [travis-ci](https://travis-ci.org/) for your fork, so all tests and codesniffs
   will be executed.
-* Your work should apply the CakePHP coding standards.
+* Your work should apply the [CakePHP coding standards](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html).
 
 ## Which branch to base the work
 
 * Bugfix branches will be based on master.
 * New features that are backwards compatible will be based on next minor release
   branch.
-* New features or other non-BC changes will go in the next major release branch.
+* New features or other non backwards compatible changes will go in the next major release branch.
 
 ## Submitting Changes
 
@@ -51,7 +51,7 @@ chance of keeping on top of things.
 ## Test cases and codesniffer
 
 CakePHP tests requires [PHPUnit](http://www.phpunit.de/manual/current/en/installation.html)
-3.5 or higher. To run the test cases locally use the following command:
+3.7, version 4 is not compatible. To run the test cases locally use the following command:
 
     ./lib/Cake/Console/cake test core AllTests --stderr
 
@@ -60,7 +60,7 @@ To run the sniffs for CakePHP coding standards:
     phpcs -p --extensions=php --standard=CakePHP ./lib/Cake
 
 Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
-repository to setup the CakePHP standard. The README contains installation info
+repository to setup the CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.mdown) contains installation info
 for the sniff and phpcs.
 
 # Additional Resources
