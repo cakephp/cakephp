@@ -35,7 +35,6 @@ class SmtpTransport extends AbstractTransport {
 		'password' => null,
 		'client' => null,
 		'tls' => false,
-		'autoDisconnect' => true,
 		'keepAlive' => false
 	];
 
@@ -70,15 +69,13 @@ class SmtpTransport extends AbstractTransport {
 /**
  * Destructor
  *
- * Tries to disconnect in case `autoDisconnect` is enabled.
+ * Tries to disconnect to ensure that the connection is being
+ * terminated properly before the socket gets closed.
  */
 	public function __destruct() {
 		try {
-			if ($this->_config['autoDisconnect']) {
-				$this->disconnect();
-			}
-		}
-		catch (\Exception $e) { // avoid fatal error on script termination
+			$this->disconnect();
+		} catch (\Exception $e) { // avoid fatal error on script termination
 		}
 	}
 
