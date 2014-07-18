@@ -8,6 +8,11 @@
 /build
 /dist
 /tags
+*.mo
+
+# IDE and editor specific files #
+#################################
+.idea
 
 # OS generated files #
 ######################
