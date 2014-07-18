@@ -526,7 +526,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return $this
  */
 	public function leftJoin($table, $conditions = [], $types = []) {
-		return $this->join($this->_makeJoin($table + ['type' => 'LEFT'], $conditions), $types);
+		return $this->join($this->_makeJoin($table, $conditions, 'LEFT'), $types);
 	}
 
 /**
@@ -553,7 +553,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return $this
  */
 	public function rightJoin($table, $conditions = [], $types = []) {
-		return $this->join($this->_makeJoin($table + ['type' => 'RIGHT'], $conditions), $types);
+		return $this->join($this->_makeJoin($table, $conditions, 'RIGHT'), $types);
 	}
 
 /**
@@ -580,7 +580,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return $this
  */
 	public function innerJoin($table, $conditions = [], $types = []) {
-		return $this->join($this->_makeJoin($table + ['type' => 'INNER'], $conditions), $types);
+		return $this->join($this->_makeJoin($table, $conditions, 'INNER'), $types);
 	}
 
 /**
@@ -589,9 +589,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param string|array $table The table to join with
  * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
  * to use for joining.
+ * @param string $type the join type to use
  * @return array
  */
-	protected function _makeJoin($table, $conditions) {
+	protected function _makeJoin($table, $conditions, $type) {
 		$alias = $table;
 
 		if (is_array($table)) {
@@ -600,9 +601,11 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		}
 
 		return [
-			'table' => $table,
-			'alias' => $alias,
-			'conditions' => $conditions
+			$alias => [
+				'table' => $table,
+				'conditions' => $conditions,
+				'type' => $type
+			]
 		];
 	}
 

@@ -280,6 +280,31 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests the leftJoin method
+ *
+ * @return void
+ */
+	public function testSelectLeftJoin() {
+		$query = new Query($this->connection);
+		$time = new \DateTime('2007-03-18 10:45:23');
+		$types = ['created' => 'datetime'];
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->leftJoin(['c' => 'comments'], ['created <' => $time], $types)
+			->execute();
+		$this->assertEquals(array('title' => 'First Article', 'name' => null), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->leftJoin(['c' => 'comments'], ['created >' => $time], $types)
+			->execute();
+		$this->assertEquals(array('title' => 'First Article', 'name' => 'Second Comment for First Article'), $result->fetch('assoc'));
+	}
+
+/**
  * Tests it is possible to filter a query by using simple AND joined conditions
  *
  * @return void
