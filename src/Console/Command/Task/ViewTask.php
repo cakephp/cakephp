@@ -56,11 +56,11 @@ class ViewTask extends BakeTask {
 	public $controllerClass = null;
 
 /**
- * Name of the table views are being baked against.
+ * Name with plugin of the model being used
  *
  * @var string
  */
-	public $tableName = null;
+	public $modelName = null;
 
 /**
  * The template file to use
@@ -119,6 +119,7 @@ class ViewTask extends BakeTask {
 			$controller = $this->params['controller'];
 		}
 		$this->controller($name, $controller);
+		$this->model($name);
 
 		if (isset($template)) {
 			$this->template = $template;
@@ -142,6 +143,21 @@ class ViewTask extends BakeTask {
 	}
 
 /**
+ * Set the model class for the table.
+ *
+ * @param string $table The table/model that is being baked.
+ * @return void
+ */
+	public function model($table) {
+		$tableName = $this->_controllerName($table);
+		$plugin = null;
+		if (!empty($this->params['plugin'])) {
+			$plugin = $this->params['plugin'] . '.';
+		}
+		$this->modelName = $plugin . $tableName;
+	}
+
+/**
  * Set the controller related properties.
  *
  * @param string $table The table/model that is being baked.
@@ -149,9 +165,9 @@ class ViewTask extends BakeTask {
  * @return void
  */
 	public function controller($table, $controller = null) {
-		$this->tableName = $this->_controllerName($table);
+		$tableName = $this->_controllerName($table);
 		if (empty($controller)) {
-			$controller = $this->tableName;
+			$controller = $tableName;
 		}
 		$this->controllerName = $controller;
 
@@ -237,7 +253,7 @@ class ViewTask extends BakeTask {
  * @return array Returns an variables to be made available to a view template
  */
 	protected function _loadController() {
-		$modelObj = TableRegistry::get($this->tableName);
+		$modelObj = TableRegistry::get($this->modelName);
 
 		$primaryKey = (array)$modelObj->primaryKey();
 		$displayField = $modelObj->displayField();
