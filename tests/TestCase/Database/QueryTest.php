@@ -305,6 +305,53 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests the innerJoin method
+ *
+ * @return void
+ */
+	public function testSelectInnerJoin() {
+		$query = new Query($this->connection);
+		$time = new \DateTime('2007-03-18 10:45:23');
+		$types = ['created' => 'datetime'];
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->innerJoin(['c' => 'comments'], ['created <' => $time], $types)
+			->execute();
+		$this->assertCount(0, $result->fetchAll());
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->leftJoin(['c' => 'comments'], ['created >' => $time], $types)
+			->execute();
+		$this->assertEquals(array('title' => 'First Article', 'name' => 'Second Comment for First Article'), $result->fetch('assoc'));
+	}
+
+/**
+ * Tests the rightJoin method
+ *
+ * @return void
+ */
+	public function testSelectRightJoin() {
+		$this->skipIf(
+			$this->connection->driver() instanceof \Cake\Database\Driver\Sqlite,
+			'SQLite does not support RIGHT joins'
+		);
+		$query = new Query($this->connection);
+		$time = new \DateTime('2007-03-18 10:45:23');
+		$types = ['created' => 'datetime'];
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->rightJoin(['c' => 'comments'], ['created <' => $time], $types)
+			->execute();
+		$this->assertCount(0, $result->fetchAll());
+		$this->assertEquals(array('title' => null, 'name' => 'First Comment for First Article'), $result->fetch('assoc'));
+	}
+
+/**
  * Tests it is possible to filter a query by using simple AND joined conditions
  *
  * @return void
