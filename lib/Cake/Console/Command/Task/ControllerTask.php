@@ -188,6 +188,7 @@ class ControllerTask extends BakeTask {
 				if (strtolower($wannaUseSession) === 'y') {
 					array_push($components, 'Session');
 				}
+				array_unique($components);
 			}
 		} else {
 			list($wannaBakeCrud, $wannaBakeAdminCrud) = $this->_askAboutMethods();
