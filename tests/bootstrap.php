@@ -131,6 +131,12 @@ Log::config([
 	]
 ]);
 
+I18n::config([
+	'default' => [
+		'engine' => 'Cake\I18n\Catalog\Gettext'
+	]
+]);
+
 // Initialize the empty language.
 I18n::translate('empty');
 

@@ -226,37 +226,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 ends with any # (translated)', $plurals));
 		$this->assertTrue(in_array('24 ends with any # (translated)', $plurals));
 		$this->assertTrue(in_array('25 ends with any # (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 0 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 ends with any # (from core translated)', $corePlurals));
 	}
 
 /**
@@ -315,37 +284,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 = 0 or > 1 (translated)', $plurals));
 		$this->assertTrue(in_array('24 = 0 or > 1 (translated)', $plurals));
 		$this->assertTrue(in_array('25 = 0 or > 1 (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 1 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 = 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 = 0 or > 1 (from core translated)', $corePlurals));
 	}
 
 /**
@@ -404,37 +342,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 > 1 (translated)', $plurals));
 		$this->assertTrue(in_array('24 > 1 (translated)', $plurals));
 		$this->assertTrue(in_array('25 > 1 (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 2 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 = 0 or 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 = 0 or 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 > 1 (from core translated)', $corePlurals));
 	}
 
 /**
@@ -493,37 +400,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 3 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 = 0 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 ends 1 but not 11 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 ends 1 but not 11 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
 
 /**
@@ -582,37 +458,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 4 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 = 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 = 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
 
 /**
@@ -672,38 +517,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 5 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('0 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 = 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
 
 /**
@@ -762,37 +575,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 6 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 ends in 1, not 11 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 ends in 1, not 11 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
 
 /**
@@ -851,37 +633,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 ends in 2-4, not 12-14 (translated)', $plurals));
 		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 7 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 ends in 1, not 11 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 ends in 1, not 11 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
 
 /**
@@ -940,37 +691,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 8 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 is 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 is 2-4 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 is 2-4 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 is 2-4 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
 
 /**
@@ -1030,39 +750,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 ends in 2-4, not 12-14 (translated)', $plurals));
 		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 9 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 is 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
 
 /**
@@ -1122,38 +809,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 10 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 ends in 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 ends in 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 ends in 03-04 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 ends in 03-04 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
 
 /**
@@ -1212,37 +867,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 11 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 is 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 is 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 is 3-6 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 is 3-6 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 is 3-6 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 is 3-6 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 is 7-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 is 7-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 is 7-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 is 7-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
 
 /**
@@ -1301,37 +925,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 12 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 is 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 is 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
 
 /**
@@ -1390,37 +983,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 13 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 is 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
 
 /**
@@ -1479,37 +1041,6 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 14 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 ends in 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 ends in 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 ends in 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 ends in 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 ends in 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 ends in 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
 	}
 
 /**
@@ -1798,48 +1329,6 @@ class I18nTest extends TestCase {
 	}
 
 /**
- * testTimeDefinition method
- *
- * @return void
- */
-	public function testTimeDefinition() {
-		Configure::write('Config.language', 'po');
-		$result = __c('d_fmt', 5);
-		$expected = '%m/%d/%Y';
-		$this->assertEquals($expected, $result);
-
-		$result = __c('am_pm', 5);
-		$expected = array('AM', 'PM');
-		$this->assertEquals($expected, $result);
-
-		$result = __c('abmon', 5);
-		$expected = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * testTimeDefinitionJapanese method
- *
- * @return void
- */
-	public function testTimeDefinitionJapanese() {
-		Configure::write('Config.language', 'ja_jp');
-		$result = __c('d_fmt', 5);
-
-		$expected = "%Y年%m月%d日";
-
-		$this->assertEquals($expected, $result);
-
-		$result = __c('am_pm', 5);
-		$expected = array("午前", "午後");
-		$this->assertEquals($expected, $result);
-
-		$result = __c('abmon', 5);
-		$expected = array(" 1月", " 2月", " 3月", " 4月", " 5月", " 6月", " 7月", " 8月", " 9月", "10月", "11月", "12月");
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * testTranslateLanguageParam method
  *
  * @return void
@@ -1864,18 +1353,6 @@ class I18nTest extends TestCase {
  */
 	public function testTranslateEmptyDomain() {
 		I18n::translate('Plural Rule 1', null, '');
-	}
-
-/**
- * testLoadLocaleDefinition method
- *
- * @return void
- */
-	public function testLoadLocaleDefinition() {
-		$path = current(App::path('Locale'));
-		$result = I18n::loadLocaleDefinition($path . 'nld' . DS . 'LC_TIME');
-		$expected = array('zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag');
-		$this->assertSame($expected, $result['day']);
 	}
 
 /**
