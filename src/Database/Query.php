@@ -485,6 +485,11 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			if (!is_array($t)) {
 				$t = ['table' => $t, 'conditions' => $this->newExpr()];
 			}
+
+			if (is_callable($t['conditions'])) {
+				$t['conditions'] = $t['conditions']($this->newExpr(), $this);
+			}
+
 			if (!($t['conditions'] instanceof ExpressionInterface)) {
 				$t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
 			}

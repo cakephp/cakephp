@@ -301,7 +301,10 @@ class QueryTest extends TestCase {
 			->from('articles')
 			->leftJoin(['c' => 'comments'], ['created >' => $time], $types)
 			->execute();
-		$this->assertEquals(array('title' => 'First Article', 'name' => 'Second Comment for First Article'), $result->fetch('assoc'));
+		$this->assertEquals(
+			['title' => 'First Article', 'name' => 'Second Comment for First Article'],
+			$result->fetch('assoc')
+		);
 	}
 
 /**
@@ -326,7 +329,10 @@ class QueryTest extends TestCase {
 			->from('articles')
 			->leftJoin(['c' => 'comments'], ['created >' => $time], $types)
 			->execute();
-		$this->assertEquals(array('title' => 'First Article', 'name' => 'Second Comment for First Article'), $result->fetch('assoc'));
+		$this->assertEquals(
+			['title' => 'First Article', 'name' => 'Second Comment for First Article'],
+			$result->fetch('assoc')
+		);
 	}
 
 /**
@@ -347,8 +353,47 @@ class QueryTest extends TestCase {
 			->from('articles')
 			->rightJoin(['c' => 'comments'], ['created <' => $time], $types)
 			->execute();
+		$this->assertCount(6, $result);
+		$this->assertEquals(
+			['title' => null, 'name' => 'First Comment for First Article'],
+			$result->fetch('assoc')
+		);
+	}
+
+/**
+ * Tests that it is possible to pass a callable as conditions for a join
+ *
+ * @return void
+ */
+	public function testSelectJoinWithCallback() {
+		$query = new Query($this->connection);
+		$types = ['created' => 'datetime'];
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->innerJoin(['c' => 'comments'], function($exp, $q) use ($query, $types) {
+				$this->assertSame($q, $query);
+				$exp->add(['created <' => new \DateTime('2007-03-18 10:45:23')], $types);
+				return $exp;
+			})
+			->execute();
 		$this->assertCount(0, $result->fetchAll());
-		$this->assertEquals(array('title' => null, 'name' => 'First Comment for First Article'), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$types = ['created' => 'datetime'];
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->innerJoin('comments', function($exp, $q) use ($query, $types) {
+				$this->assertSame($q, $query);
+				$exp->add(['created >' => new \DateTime('2007-03-18 10:45:23')], $types);
+				return $exp;
+			})
+			->execute();
+		$this->assertEquals(
+			['title' => 'First Article', 'name' => 'Second Comment for First Article'],
+			$result->fetch('assoc')
+		);
 	}
 
 /**
