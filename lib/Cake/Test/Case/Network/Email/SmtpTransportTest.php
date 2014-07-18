@@ -130,6 +130,7 @@ class SmtpTransportTest extends CakeTestCase {
  * testConnectEhloTlsOnNonTlsServer method
  *
  * @expectedException SocketException
+ * @expectedExceptionMessage SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.
  * @return void
  */
 	public function testConnectEhloTlsOnNonTlsServer() {
@@ -150,6 +151,7 @@ class SmtpTransportTest extends CakeTestCase {
  * testConnectEhloNoTlsOnRequiredTlsServer method
  *
  * @expectedException SocketException
+ * @expectedExceptionMessage SMTP authentication method not allowed, check if SMTP server requires TLS.
  * @return void
  */
 	public function testConnectEhloNoTlsOnRequiredTlsServer() {
@@ -189,6 +191,7 @@ class SmtpTransportTest extends CakeTestCase {
  * testConnectFail method
  *
  * @expectedException SocketException
+ * @expectedExceptionMessage SMTP server did not accept the connection.
  * @return void
  */
 	public function testConnectFail() {
@@ -257,6 +260,7 @@ class SmtpTransportTest extends CakeTestCase {
  * testAuthBadSequence method
  *
  * @expectedException SocketException
+ * @expectedExceptionMessage SMTP Error: 503 5.5.1 Already authenticated
  * @return void
  */
 	public function testAuthBadSequence() {
