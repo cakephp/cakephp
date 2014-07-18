@@ -402,10 +402,10 @@ class Request implements \ArrayAccess {
 	protected function _processFiles($post, $files) {
 		if (is_array($files)) {
 			foreach ($files as $key => $data) {
-				if (!is_numeric($key)) {
-					$this->_processFileData($post, '', $data, $key);
-				} else {
+				if (isset($data['tmp_name']) && is_string($data['tmp_name'])) {
 					$post[$key] = $data;
+				} else {
+					$post[$key] = $this->_processFileData([], $data);
 				}
 			}
 		}
@@ -414,31 +414,32 @@ class Request implements \ArrayAccess {
 
 /**
  * Recursively walks the FILES array restructuring the data
- * into something sane and useable.
+ * into something sane and usable.
  *
- * @param array &$post The post data having files inserted into
+ * @param array $data The data being built
+ * @param array $post The post data being traversed
  * @param string $path The dot separated path to insert $data into.
- * @param array $data The data to traverse/insert.
- * @param string $field The terminal field name, which is the top level key in $_FILES.
+ * @param string $field The terminal field in the path. This is one of the
+ *   $_FILES properties e.g. name, tmp_name, size, error
  * @return void
  */
-	protected function _processFileData(&$post, $path, $data, $field) {
-		foreach ($data as $key => $fields) {
-			$newPath = $key;
-			if (!empty($path)) {
-				$newPath = $path . '.' . $key;
+	protected function _processFileData($data, $post, $path = '', $field = '') {
+		foreach ($post as $key => $fields) {
+			$newField = $field;
+			if ($path === '' && $newField === '') {
+				$newField = $key;
+			}
+			if ($field === $newField) {
+				$path .= '.' . $key;
 			}
 			if (is_array($fields)) {
-				$this->_processFileData($post, $newPath, $fields, $field);
+				$data = $this->_processFileData($data, $fields, $path, $newField);
 			} else {
-				if (strpos($newPath, '.') === false) {
-					$newPath = $field . '.' . $key;
-				} else {
-					$newPath .= '.' . $field;
-				}
-				$post = Hash::insert($post, $newPath, $fields);
+				$path = trim($path . '.' . $field, '.');
+				$data = Hash::insert($data, $path, $fields);
 			}
 		}
+		return $data;
 	}
 
 /**
