@@ -140,8 +140,8 @@ class QueryTest extends TestCase {
 		$this->assertEquals(array('foo' => 'Second Article Body', 'text' => 'Second Article Body', 'author_id' => 3), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
-		$exp = $query->newExpr()->add('1 + 1');
-		$comp = $query->newExpr()->add(['author_id +' => 2]);
+		$exp = $query->newExpr('1 + 1');
+		$comp = $query->newExpr(['author_id +' => 2]);
 		$result = $query->select(['text' => 'body', 'two' => $exp, 'three' => $comp])
 			->from('articles')->execute();
 		$this->assertEquals(array('text' => 'First Article Body', 'two' => 2, 'three' => 3), $result->fetch('assoc'));
@@ -220,7 +220,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
-		$conditions = $query->newExpr()->add('author_id = a.id');
+		$conditions = $query->newExpr('author_id = a.id');
 		$result = $query
 			->select(['title', 'name'])
 			->from('articles')
@@ -258,7 +258,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals(array('title' => 'Second Article', 'name' => 'nate'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
-		$conditions = $query->newExpr()->add('author_id = a.id');
+		$conditions = $query->newExpr('author_id = a.id');
 		$result = $query
 			->select(['title', 'name'])
 			->from('articles')
@@ -921,7 +921,7 @@ class QueryTest extends TestCase {
 			->where(function($exp, $q) {
 				return $exp->in(
 					'created',
-					$q->newExpr()->add("'2007-03-18 10:45:23'"),
+					$q->newExpr("'2007-03-18 10:45:23'"),
 					'datetime'
 				);
 			})
@@ -936,7 +936,7 @@ class QueryTest extends TestCase {
 			->where(function($exp, $q) {
 				return $exp->notIn(
 					'created',
-					$q->newExpr()->add("'2007-03-18 10:45:23'"),
+					$q->newExpr("'2007-03-18 10:45:23'"),
 					'datetime'
 				);
 			})
@@ -1124,8 +1124,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
-		$expression = $query->newExpr()
-			->add(['(id + :offset) % 2']);
+		$expression = $query->newExpr(['(id + :offset) % 2']);
 		$result = $query
 			->order([$expression, 'id' => 'desc'], true)
 			->bind(':offset', 1, null)
@@ -1862,8 +1861,7 @@ class QueryTest extends TestCase {
 	public function testUpdateWithExpression() {
 		$query = new Query($this->connection);
 
-		$expr = $query->newExpr();
-		$expr->add('title = author_id');
+		$expr = $query->newExpr('title = author_id');
 
 		$query->update('articles')
 			->set($expr)
@@ -2334,7 +2332,7 @@ class QueryTest extends TestCase {
 		$this->assertQuotedQuery('SELECT <1 \+ 1> AS <foo>$', $sql);
 
 		$query = new Query($this->connection);
-		$sql = $query->select(['foo' => $query->newExpr()->add('1 + 1')])->sql();
+		$sql = $query->select(['foo' => $query->newExpr('1 + 1')])->sql();
 		$this->assertQuotedQuery('SELECT \(1 \+ 1\) AS <foo>$', $sql);
 
 		$query = new Query($this->connection);
@@ -2358,7 +2356,7 @@ class QueryTest extends TestCase {
 		$this->assertQuotedQuery('FROM <something> AS <foo>$', $sql);
 
 		$query = new Query($this->connection);
-		$sql = $query->select('*')->from(['foo' => $query->newExpr()->add('bar')])->sql();
+		$sql = $query->select('*')->from(['foo' => $query->newExpr('bar')])->sql();
 		$this->assertQuotedQuery('FROM \(bar\) AS <foo>$', $sql);
 	}
 
@@ -2390,7 +2388,7 @@ class QueryTest extends TestCase {
 		$this->assertQuotedQuery('JOIN <something> <foo>', $sql);
 
 		$query = new Query($this->connection);
-		$sql = $query->select('*')->join(['foo' => $query->newExpr()->add('bar')])->sql();
+		$sql = $query->select('*')->join(['foo' => $query->newExpr('bar')])->sql();
 		$this->assertQuotedQuery('JOIN \(bar\) <foo>', $sql);
 	}
 
@@ -2406,7 +2404,7 @@ class QueryTest extends TestCase {
 		$this->assertQuotedQuery('GROUP BY <something>', $sql);
 
 		$query = new Query($this->connection);
-		$sql = $query->select('*')->group([$query->newExpr()->add('bar')])->sql();
+		$sql = $query->select('*')->group([$query->newExpr('bar')])->sql();
 		$this->assertQuotedQuery('GROUP BY \(bar\)', $sql);
 
 		$query = new Query($this->connection);
@@ -2453,7 +2451,7 @@ class QueryTest extends TestCase {
 		$this->assertQuotedQuery('INSERT INTO <foo> \(<bar>, <baz>\)', $sql);
 
 		$query = new Query($this->connection);
-		$sql = $query->insert([$query->newExpr()->add('bar')])
+		$sql = $query->insert([$query->newExpr('bar')])
 			->into('foo')
 			->where(['something' => 'value'])
 			->sql();

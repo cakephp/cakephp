@@ -1212,10 +1212,25 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * this function in subclasses to use a more specialized QueryExpression class
  * if required.
  *
+ * You can optionally pass a single raw SQL string or an array or expressions in
+ * any format accepted by \Cake\Database\QueryExpression:
+ *
+ * {{{
+ *
+ * $expression = $query->newExpression(); // Returns an empty expression object
+ * $expression = $query->newExpression('Table.column = Table2.column'); // Return a raw SQL expression
+ * }}}
+ *
  * @return \Cake\Database\QueryExpression
  */
-	public function newExpr() {
-		return new QueryExpression([], $this->typeMap());
+	public function newExpr($rawExpression = null) {
+		$expression = new QueryExpression([], $this->typeMap());
+
+		if ($rawExpression !== null) {
+			$expression->add($rawExpression);
+		}
+
+		return $expression;
 	}
 
 /**
