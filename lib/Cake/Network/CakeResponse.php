@@ -519,14 +519,16 @@ class CakeResponse {
  * @return void
  */
     protected function _sendHeader($name, $value = null) {
-		if (!headers_sent($filename, $linenum)) {
+        if (!headers_sent($filename, $linenum)) {
 			if ($value === null) {
 				header($name);
 			} else {
 				header("{$name}: {$value}");
 			}
-		} else {
-            throw new Exception("Headers already sent in $filename on line $linenum\n");
+        } else {
+            if (Configure::read('debug')) {
+				throw new Exception(__d('cake_dev', 'Headers already sent in $filename on line $linenum'));
+			}
         }
 	}
 
