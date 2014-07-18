@@ -297,7 +297,15 @@ class RequestTest extends TestCase {
 				],
 			]
 		];
-		$request = new Request(compact('files'));
+		$post = [
+			'pictures' => [
+				0 => ['name' => 'A cat']
+			],
+			0 => [
+				'name' => 'A dog'
+			]
+		];
+		$request = new Request(compact('files', 'post'));
 		$expected = [
 			'image_main' => [
 				'file' => [
@@ -310,6 +318,7 @@ class RequestTest extends TestCase {
 			],
 			'pictures' => [
 				0 => [
+					'name' => 'A cat',
 					'file' => [
 						'name' => 'a-file.png',
 						'type' => 'image/png',
@@ -320,6 +329,7 @@ class RequestTest extends TestCase {
 				]
 			],
 			0 => [
+				'name' => 'A dog',
 				'image' => [
 					'name' => 'scratch.text',
 					'type' => 'text/plain',

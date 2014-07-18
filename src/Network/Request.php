@@ -405,7 +405,8 @@ class Request implements \ArrayAccess {
 				if (isset($data['tmp_name']) && is_string($data['tmp_name'])) {
 					$post[$key] = $data;
 				} else {
-					$post[$key] = $this->_processFileData([], $data);
+					$keyData = isset($post[$key]) ? $post[$key] : [];
+					$post[$key] = $this->_processFileData($keyData, $data);
 				}
 			}
 		}
