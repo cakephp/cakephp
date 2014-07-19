@@ -485,7 +485,12 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			if (!is_array($t)) {
 				$t = ['table' => $t, 'conditions' => $this->newExpr()];
 			}
-			if (!($t['conditions']) instanceof ExpressionInterface) {
+
+			if (is_callable($t['conditions'])) {
+				$t['conditions'] = $t['conditions']($this->newExpr(), $this);
+			}
+
+			if (!($t['conditions'] instanceof ExpressionInterface)) {
 				$t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
 			}
 			$alias = is_string($alias) ? $alias : null;
@@ -500,6 +505,113 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 		$this->_dirty();
 		return $this;
+	}
+
+/**
+ * Adds a single LEFT JOIN clause to the query.
+ *
+ * {{{
+ * // LEFT JOIN authors ON posts.author_id' = authors.id
+ * $query->leftJoin('authors', ['posts.author_id' = authors.id']);
+ * }}}
+ *
+ * You can pass an array in the first parameter if you need to alias
+ * the table for the join:
+ *
+ * {{{
+ * // LEFT JOIN authors a ON posts.author_id' = a.id
+ * $query->leftJoin(['a' => 'authors'], ['posts.author_id' = 'a.id']);
+ * }}}
+ *
+ * @param string|array $table The table to join with
+ * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
+ * to use for joining.
+ * @param array $types a list of types associated to the conditions used for converting
+ * values to the corresponding database representation.
+ * @return $this
+ */
+	public function leftJoin($table, $conditions = [], $types = []) {
+		return $this->join($this->_makeJoin($table, $conditions, 'LEFT'), $types);
+	}
+
+/**
+ * Adds a single RIGHT JOIN clause to the query.
+ *
+ * {{{
+ * // RIGHT JOIN authors ON posts.author_id' = authors.id
+ * $query->rightJoin('authors', ['posts.author_id' = authors.id']);
+ * }}}
+ *
+ * You can pass an array in the first parameter if you need to alias
+ * the table for the join:
+ *
+ * {{{
+ * // RIGHT JOIN authors a ON posts.author_id' = a.id
+ * $query->righJoin(['a' => 'authors'], ['posts.author_id' = 'a.id']);
+ * }}}
+ *
+ * @param string|array $table The table to join with
+ * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
+ * to use for joining.
+ * @param array $types a list of types associated to the conditions used for converting
+ * values to the corresponding database representation.
+ * @return $this
+ */
+	public function rightJoin($table, $conditions = [], $types = []) {
+		return $this->join($this->_makeJoin($table, $conditions, 'RIGHT'), $types);
+	}
+
+/**
+ * Adds a single INNER JOIN clause to the query.
+ *
+ * {{{
+ * // INNER JOIN authors ON posts.author_id' = authors.id
+ * $query->innerJoin('authors', ['posts.author_id' = authors.id']);
+ * }}}
+ *
+ * You can pass an array in the first parameter if you need to alias
+ * the table for the join:
+ *
+ * {{{
+ * // INNER JOIN authors a ON posts.author_id' = a.id
+ * $query->innerJoin(['a' => 'authors'], ['posts.author_id' = 'a.id']);
+ * }}}
+ *
+ * @param string|array $table The table to join with
+ * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
+ * to use for joining.
+ * @param array $types a list of types associated to the conditions used for converting
+ * values to the corresponding database representation.
+ * @return $this
+ */
+	public function innerJoin($table, $conditions = [], $types = []) {
+		return $this->join($this->_makeJoin($table, $conditions, 'INNER'), $types);
+	}
+
+/**
+ * Returns an array that can be passed to the join method describing a single join clause
+ *
+ * @param string|array $table The table to join with
+ * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
+ * to use for joining.
+ * @param string $type the join type to use
+ * @return array
+ */
+	protected function _makeJoin($table, $conditions, $type) {
+		$alias = $table;
+
+		if (is_array($table)) {
+			$alias = key($table);
+			$table = current($table);
+		}
+
+		return [
+			$alias => [
+				'table' => $table,
+				'conditions' => $conditions,
+				'type' => $type
+			]
+		];
 	}
 
 /**
@@ -1212,10 +1324,26 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * this function in subclasses to use a more specialized QueryExpression class
  * if required.
  *
+ * You can optionally pass a single raw SQL string or an array or expressions in
+ * any format accepted by \Cake\Database\QueryExpression:
+ *
+ * {{{
+ *
+ * $expression = $query->newExpression(); // Returns an empty expression object
+ * $expression = $query->newExpression('Table.column = Table2.column'); // Return a raw SQL expression
+ * }}}
+ *
+ * @param mixed $rawExpression A string, array or anything you want wrapped in a expression object
  * @return \Cake\Database\QueryExpression
  */
-	public function newExpr() {
-		return new QueryExpression([], $this->typeMap());
+	public function newExpr($rawExpression = null) {
+		$expression = new QueryExpression([], $this->typeMap());
+
+		if ($rawExpression !== null) {
+			$expression->add($rawExpression);
+		}
+
+		return $expression;
 	}
 
 /**
