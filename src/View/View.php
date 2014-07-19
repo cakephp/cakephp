@@ -852,6 +852,8 @@ class View {
 				$name = trim($name, DS);
 			} elseif (!$plugin || $this->viewPath !== $this->name) {
 				$name = $this->viewPath . DS . $subDir . $name;
+			} else {
+				$name = DS . $subDir . $name;
 			}
 		}
 
