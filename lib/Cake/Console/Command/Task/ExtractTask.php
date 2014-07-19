@@ -380,6 +380,13 @@ class ExtractTask extends AppShell {
 			$this->_parse('__dcn', array('domain', 'singular', 'plural', 'count', 'category'));
 
 			$this->_parse('__x', array('context', 'singular'));
+			$this->_parse('__xn', array('context', 'singular', 'plural'));
+			$this->_parse('__dx', array('domain', 'context', 'singular'));
+			$this->_parse('__dxc', array('domain', 'context', 'singular', 'category'));
+			$this->_parse('__dxn', array('domain', 'context', 'singular', 'plural'));
+			$this->_parse('__dxcn', array('domain', 'context', 'singular', 'plural', 'count', 'category'));
+			$this->_parse('__xc', array('context', 'singular', 'category'));
+
 		}
 	}
 
