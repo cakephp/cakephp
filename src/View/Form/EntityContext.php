@@ -262,6 +262,11 @@ class EntityContext implements ContextInterface {
 
 		foreach ($path as $prop) {
 			$next = $this->_getProp($entity, $prop);
+
+			if ($next === null && $prop !== '_ids') {
+				return false;
+			}
+
 			if (
 				!is_array($next) &&
 				!($next instanceof Traversable) &&
