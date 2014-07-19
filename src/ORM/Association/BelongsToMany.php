@@ -420,11 +420,11 @@ class BelongsToMany extends Association {
  * created if no errors happened, false otherwise
  */
 	protected function _saveTarget(Entity $parentEntity, $entities, $options) {
-		$associations = false;
+		$joinAssociations = false;
 		if (!empty($options['associated'][$this->_junctionProperty]['associated'])) {
-			$associations = $options['associated'][$this->_junctionProperty]['associated'];
+			$joinAssociations = $options['associated'][$this->_junctionProperty]['associated'];
 		}
-		$options['associated'] = $associations;
+		unset($options['associated'][$this->_junctionProperty]);
 
 		if (!(is_array($entities) || $entities instanceof \Traversable)) {
 			$name = $this->property();
@@ -457,6 +457,7 @@ class BelongsToMany extends Association {
 			}
 		}
 
+		$options['associated'] = $joinAssociations;
 		$success = $this->_saveLinks($parentEntity, $persisted, $options);
 		if (!$success && !empty($options['atomic'])) {
 			$parentEntity->set($this->property(), $original);

@@ -264,4 +264,61 @@ class QueryRegressionTest extends TestCase {
 		$this->assertSame($article, $articles->save($article));
 	}
 
+/**
+ * Tests that whe saving deep associations for a belongsToMany property,
+ * data is not removed becuase of excesive associations filtering.
+ *
+ * @see https://github.com/cakephp/cakephp/issues/4009
+ * @return void
+ */
+	public function testBelongsToManyDeepSave2() {
+		$articles = TableRegistry::get('Articles');
+		$articles->belongsToMany('Highlights', [
+			'className' => 'TestApp\Model\Table\TagsTable',
+			'foreignKey' => 'article_id',
+			'targetForeignKey' => 'tag_id',
+			'through' => 'SpecialTags',
+		]);
+		$articles->Highlights->hasMany('TopArticles', [
+			'className' => 'TestApp\Model\Table\ArticlesTable',
+			'foreignKey' => 'author_id',
+		]);
+		$entity = $articles->get(2, ['contain' => ['Highlights']]);
+
+		$data = [
+			'highlights' => [
+				[
+					'name' => 'New Special Tag',
+					'_joinData' => [
+						'highlighted' => true,
+						'highlighted_time' => '2014-06-01 10:10:00',
+					],
+					'top_articles' => [
+						['title' => 'First top article'],
+						['title' => 'Second top article'],
+					]
+				]
+			]
+		];
+		$options = [
+			'associated' => [
+				'Highlights._joinData', 'Highlights.TopArticles'
+			]
+		];
+		$entity = $articles->patchEntity($entity, $data, $options);
+		$articles->save($entity, $options);
+		$entity = $articles->get(2, [
+			'contain' => [
+				'Highlights.TopArticles'
+			]
+		]);
+		$highlights = $entity->highlights[0];
+		$this->assertEquals('First top article', $highlights->top_articles[0]->title);
+		$this->assertEquals('Second top article', $highlights->top_articles[1]->title);
+		$this->assertEquals(
+			new Time('2014-06-01 10:10:00'),
+			$highlights->_joinData->highlighted_time
+		);
+	}
+
 }
