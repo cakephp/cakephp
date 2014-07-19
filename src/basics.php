@@ -70,16 +70,19 @@ if (!function_exists('debug')) {
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#debug
  */
 	function debug($var, $showHtml = null, $showFrom = true) {
-		if (Configure::read('debug')) {
-			$file = '';
-			$line = '';
-			$lineInfo = '';
-			if ($showFrom) {
-				$trace = Debugger::trace(array('start' => 1, 'depth' => 2, 'format' => 'array'));
-				$file = str_replace(array(CAKE_CORE_INCLUDE_PATH, ROOT), '', $trace[0]['file']);
-				$line = $trace[0]['line'];
-			}
-			$html = <<<HTML
+		if (!Configure::read('debug')) {
+			return;
+		}
+
+		$file = '';
+		$line = '';
+		$lineInfo = '';
+		if ($showFrom) {
+			$trace = Debugger::trace(array('start' => 1, 'depth' => 2, 'format' => 'array'));
+			$file = str_replace(array(CAKE_CORE_INCLUDE_PATH, ROOT), '', $trace[0]['file']);
+			$line = $trace[0]['line'];
+		}
+		$html = <<<HTML
 <div class="cake-debug-output">
 %s
 <pre class="cake-debug">
@@ -87,33 +90,60 @@ if (!function_exists('debug')) {
 </pre>
 </div>
 HTML;
-			$text = <<<TEXT
+		$text = <<<TEXT
 %s
 ########## DEBUG ##########
 %s
 ###########################
 
 TEXT;
-			$template = $html;
-			if (php_sapi_name() === 'cli' || $showHtml === false) {
-				$template = $text;
-				if ($showFrom) {
-					$lineInfo = sprintf('%s (line %s)', $file, $line);
-				}
+		$template = $html;
+		if (php_sapi_name() === 'cli' || $showHtml === false) {
+			$template = $text;
+			if ($showFrom) {
+				$lineInfo = sprintf('%s (line %s)', $file, $line);
 			}
-			if ($showHtml === null && $template !== $text) {
-				$showHtml = true;
-			}
-			$var = Debugger::exportVar($var, 25);
-			if ($showHtml) {
-				$template = $html;
-				$var = h($var);
-				if ($showFrom) {
-					$lineInfo = sprintf('<span><strong>%s</strong> (line <strong>%s</strong>)</span>', $file, $line);
-				}
-			}
-			printf($template, $lineInfo, $var);
 		}
+		if ($showHtml === null && $template !== $text) {
+			$showHtml = true;
+		}
+		$var = Debugger::exportVar($var, 25);
+		if ($showHtml) {
+			$template = $html;
+			$var = h($var);
+			if ($showFrom) {
+				$lineInfo = sprintf('<span><strong>%s</strong> (line <strong>%s</strong>)</span>', $file, $line);
+			}
+		}
+		printf($template, $lineInfo, $var);
+	}
+
+}
+
+if (!function_exists('stackTrace')) {
+
+/**
+ * Outputs a stack trace based on the supplied options.
+ *
+ * ### Options
+ *
+ * - `depth` - The number of stack frames to return. Defaults to 999
+ * - `args` - Should arguments for functions be shown? If true, the arguments for each method call
+ *   will be displayed.
+ * - `start` - The stack frame to start generating a trace from. Defaults to 1
+ *
+ * @param array $options Format for outputting stack trace
+ * @return mixed Formatted stack trace
+ * @see Debugger::trace()
+ */
+	function stackTrace(array $options = array()) {
+		if (!Configure::read('debug')) {
+			return;
+		}
+
+		$options += array('start' => 0);
+		$options['start']++;
+		echo Debugger::trace($options);
 	}
 
 }
@@ -194,7 +224,9 @@ if (!function_exists('h')) {
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#h
  */
 	function h($text, $double = true, $charset = null) {
-		if (is_array($text)) {
+		if (is_string($text)) {
+			//optimize for strings
+		} elseif (is_array($text)) {
 			$texts = array();
 			foreach ($text as $k => $t) {
 				$texts[$k] = h($t, $double, $charset);
@@ -763,6 +795,28 @@ if (!function_exists('__c')) {
 
 }
 
+if (!function_exists('__x')) {
+
+/**
+ * Returns a translated string if one is found; Otherwise, the submitted message.
+ *
+ * @param string $context Context of the text
+ * @param string $singular Text to translate
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return mixed translated string
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__
+ */
+	function __x($context, $singular, $args = null) {
+		if (!$singular) {
+			return;
+		}
+
+		$translated = I18n::translate($singular, null, null, null, null, null, $context);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 1));
+	}
+
+}
 if (!function_exists('fileExistsInPath')) {
 
 /**

@@ -806,14 +806,13 @@ class Validation {
  * @return bool Success.
  */
 	public static function inList($check, array $list, $caseInsensitive = false) {
-		$strict = !is_numeric($check);
-
 		if ($caseInsensitive) {
 			$list = array_map('mb_strtolower', $list);
 			$check = mb_strtolower($check);
+		} else {
+			$list = array_map('strval', $list);
 		}
-
-		return in_array((string)$check, $list, $strict);
+		return in_array((string)$check, $list, true);
 	}
 
 /**

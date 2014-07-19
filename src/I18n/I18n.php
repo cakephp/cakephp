@@ -200,11 +200,14 @@ class I18n {
  * @param int $category Category The integer value of the category to use.
  * @param int $count Count Count is used with $plural to choose the correct plural form.
  * @param string $language Language to translate string to.
- *    If null it checks for language in session followed by Config.language configuration variable.
+ *    If null it checks for language in Config.language configuration variable.
+ * @param string $context Context The context of the translation, e.g a verb or a noun.
  * @return string translated string.
  * @throws \Cake\Error\Exception When '' is provided as a domain.
  */
-	public static function translate($singular, $plural = null, $domain = null, $category = self::LC_MESSAGES, $count = null, $language = null) {
+	public static function translate($singular, $plural = null, $domain = null, $category = self::LC_MESSAGES,
+		$count = null, $language = null, $context = null
+	) {
 		$_this = I18n::getInstance();
 
 		if (strpos($singular, "\r\n") !== false) {
@@ -219,9 +222,7 @@ class I18n {
 		}
 
 		if (empty($language)) {
-			if (empty($language)) {
-				$language = Configure::read('Config.language');
-			}
+			$language = Configure::read('Config.language');
 		}
 
 		if (($_this->_lang && $_this->_lang !== $language) || !$_this->_lang) {
@@ -265,8 +266,10 @@ class I18n {
 			}
 		}
 
-		if (!empty($_this->_domains[$domain][$_this->_lang][$_this->category][$singular])) {
-			if (($trans = $_this->_domains[$domain][$_this->_lang][$_this->category][$singular]) || ($plurals) && ($trans = $_this->_domains[$domain][$_this->_lang][$_this->category][$plural])) {
+		if (!empty($_this->_domains[$domain][$_this->_lang][$_this->category][$singular][$context])) {
+			if (($trans = $_this->_domains[$domain][$_this->_lang][$_this->category][$singular][$context]) ||
+				($plurals) && ($trans = $_this->_domains[$domain][$_this->_lang][$_this->category][$plural][$context])
+			) {
 				if (is_array($trans)) {
 					if (isset($trans[$plurals])) {
 						$trans = $trans[$plurals];
@@ -480,6 +483,7 @@ class I18n {
 		// Binary files extracted makes non-standard local variables
 		if ($data = file_get_contents($filename)) {
 			$translations = array();
+			$context = null;
 			$header = substr($data, 0, 20);
 			$header = unpack('L1magic/L1version/L1count/L1o_msg/L1o_trn', $header);
 			extract($header);
@@ -498,6 +502,10 @@ class I18n {
 
 					if (strpos($msgstr, "\000")) {
 						$msgstr = explode("\000", $msgstr);
+					}
+
+					if ($msgid != '') {
+						$msgstr = array($context => $msgstr);
 					}
 					$translations[$msgid] = $msgstr;
 
@@ -526,12 +534,15 @@ class I18n {
 		$type = 0;
 		$translations = array();
 		$translationKey = '';
+		$translationContext = null;
 		$plural = 0;
 		$header = '';
 
 		do {
 			$line = trim(fgets($file));
 			if ($line === '' || $line[0] === '#') {
+				$translationContext = null;
+
 				continue;
 			}
 			if (preg_match("/msgid[[:space:]]+\"(.+)\"$/i", $line, $regs)) {
@@ -540,31 +551,33 @@ class I18n {
 			} elseif (preg_match("/msgid[[:space:]]+\"\"$/i", $line, $regs)) {
 				$type = 2;
 				$translationKey = '';
+			} elseif (preg_match("/msgctxt[[:space:]]+\"(.+)\"$/i", $line, $regs)) {
+				$translationContext = $regs[1];
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && ($type == 1 || $type == 2 || $type == 3)) {
 				$type = 3;
 				$translationKey .= stripcslashes($regs[1]);
 			} elseif (preg_match("/msgstr[[:space:]]+\"(.+)\"$/i", $line, $regs) && ($type == 1 || $type == 3) && $translationKey) {
-				$translations[$translationKey] = stripcslashes($regs[1]);
+				$translations[$translationKey][$translationContext] = stripcslashes($regs[1]);
 				$type = 4;
 			} elseif (preg_match("/msgstr[[:space:]]+\"\"$/i", $line, $regs) && ($type == 1 || $type == 3) && $translationKey) {
 				$type = 4;
-				$translations[$translationKey] = '';
+				$translations[$translationKey][$translationContext] = '';
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 4 && $translationKey) {
-				$translations[$translationKey] .= stripcslashes($regs[1]);
+				$translations[$translationKey][$translationContext] .= stripcslashes($regs[1]);
 			} elseif (preg_match("/msgid_plural[[:space:]]+\".*\"$/i", $line, $regs)) {
 				$type = 6;
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 6 && $translationKey) {
 				$type = 6;
 			} elseif (preg_match("/msgstr\[(\d+)\][[:space:]]+\"(.+)\"$/i", $line, $regs) && ($type == 6 || $type == 7) && $translationKey) {
 				$plural = $regs[1];
-				$translations[$translationKey][$plural] = stripcslashes($regs[2]);
+				$translations[$translationKey][$translationContext][$plural] = stripcslashes($regs[2]);
 				$type = 7;
 			} elseif (preg_match("/msgstr\[(\d+)\][[:space:]]+\"\"$/i", $line, $regs) && ($type == 6 || $type == 7) && $translationKey) {
 				$plural = $regs[1];
-				$translations[$translationKey][$plural] = '';
+				$translations[$translationKey][$translationContext][$plural] = '';
 				$type = 7;
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 7 && $translationKey) {
-				$translations[$translationKey][$plural] .= stripcslashes($regs[1]);
+				$translations[$translationKey][$translationContext][$plural] .= stripcslashes($regs[1]);
 			} elseif (preg_match("/msgstr[[:space:]]+\"(.+)\"$/i", $line, $regs) && $type == 2 && !$translationKey) {
 				$header .= stripcslashes($regs[1]);
 				$type = 5;
@@ -574,9 +587,10 @@ class I18n {
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 5) {
 				$header .= stripcslashes($regs[1]);
 			} else {
-				unset($translations[$translationKey]);
+				unset($translations[$translationKey][$translationContext]);
 				$type = 0;
 				$translationKey = '';
+				$translationContext = null;
 				$plural = 0;
 			}
 		} while (!feof($file));

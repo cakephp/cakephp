@@ -24,6 +24,8 @@ use Cake\Controller\Error\MissingControllerException;
 use Cake\Controller\Error\PrivateActionException;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Core\Error\MissingPluginException;
 use Cake\Error;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
@@ -694,6 +696,70 @@ class ExceptionRendererTest extends TestCase {
 		$this->assertEquals('', $ExceptionRenderer->controller->layoutPath);
 		$this->assertEquals('', $ExceptionRenderer->controller->subDir);
 		$this->assertEquals('Error', $ExceptionRenderer->controller->viewPath);
+	}
+
+/**
+ * Test that missing plugin disables Controller::$plugin if the two are the same plugin.
+ *
+ * @return void
+ */
+	public function testMissingPluginRenderSafe() {
+		$exception = new Error\NotFoundException();
+		$ExceptionRenderer = new ExceptionRenderer($exception);
+
+		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
+		$ExceptionRenderer->controller->plugin = 'TestPlugin';
+		$ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
+
+		$exception = new MissingPluginException(array('plugin' => 'TestPlugin'));
+		$ExceptionRenderer->controller->expects($this->once())
+			->method('render')
+			->with('error400')
+			->will($this->throwException($exception));
+
+		$response = $this->getMock('Cake\Network\Response');
+		$response->expects($this->once())
+			->method('body')
+			->with($this->logicalAnd(
+				$this->logicalNot($this->stringContains('test plugin error500')),
+				$this->stringContains('Not Found')
+			));
+
+		$ExceptionRenderer->controller->response = $response;
+		$ExceptionRenderer->render();
+	}
+
+/**
+ * Test that missing plugin doesn't disable Controller::$plugin if the two aren't the same plugin.
+ *
+ * @return void
+ */
+	public function testMissingPluginRenderSafeWithPlugin() {
+		Plugin::load('TestPlugin');
+		$exception = new Error\NotFoundException();
+		$ExceptionRenderer = new ExceptionRenderer($exception);
+
+		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
+		$ExceptionRenderer->controller->plugin = 'TestPlugin';
+		$ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
+
+		$exception = new MissingPluginException(array('plugin' => 'TestPluginTwo'));
+		$ExceptionRenderer->controller->expects($this->once())
+			->method('render')
+			->with('error400')
+			->will($this->throwException($exception));
+
+		$response = $this->getMock('Cake\Network\Response');
+		$response->expects($this->once())
+			->method('body')
+			->with($this->logicalAnd(
+				$this->stringContains('test plugin error500'),
+				$this->stringContains('Not Found')
+			));
+
+		$ExceptionRenderer->controller->response = $response;
+		$ExceptionRenderer->render();
+		Plugin::unload();
 	}
 
 /**

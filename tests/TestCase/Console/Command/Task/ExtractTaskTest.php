@@ -104,6 +104,10 @@ class ExtractTaskTest extends TestCase {
 		$this->assertContains('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
 		$this->assertContains("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
 
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:33\n';
+		$pattern .= 'msgctxt "mail"/';
+		$this->assertRegExp($pattern, $result);
+
 		// extract.ctp - reading the domain.pot
 		$result = file_get_contents($this->path . DS . 'domain.pot');
 
