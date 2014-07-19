@@ -2272,7 +2272,7 @@ class HashTest extends TestCase {
 /**
  * Tests that nest() throws an InvalidArgumentException when providing an invalid input.
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testNestInvalid() {

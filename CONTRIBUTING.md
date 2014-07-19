@@ -51,8 +51,8 @@ chance of keeping on top of things.
 
 ## Test cases and codesniffer
 
-CakePHP tests requires [PHPUnit](http://www.phpunit.de/manual/current/en/installation.html)
-3.7, version 4 is not compatible. To run the test cases locally use the following command:
+CakePHP tests requires [PHPUnit](http://www.phpunit.de/manual/current/en/installation.html).
+To run the test cases locally use the following command:
 
     phpunit --stderr tests/TestCase/
 
