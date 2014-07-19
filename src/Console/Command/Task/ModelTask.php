@@ -631,7 +631,6 @@ class ModelTask extends BakeTask {
 		$filename = $path . 'Table' . DS . $name . 'Table.php';
 		$this->out("\n" . __d('cake_console', 'Baking table class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
-		TableRegistry::clear();
 		return $out;
 	}
 
