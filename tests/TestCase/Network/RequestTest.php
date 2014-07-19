@@ -281,25 +281,31 @@ class RequestTest extends TestCase {
 			],
 			'pictures' => [
 				'name' => [
-					0 => ['file' => 'a-file.png']
+					0 => ['file' => 'a-file.png'],
+					1 => ['file' => 'a-moose.png']
 				],
 				'type' => [
-					0 => ['file' => 'image/png']
+					0 => ['file' => 'image/png'],
+					1 => ['file' => 'image/jpg']
 				],
 				'tmp_name' => [
-					0 => ['file' => '/tmp/file123']
+					0 => ['file' => '/tmp/file123'],
+					1 => ['file' => '/tmp/file234']
 				],
 				'error' => [
-					0 => ['file' => '0']
+					0 => ['file' => '0'],
+					1 => ['file' => '0']
 				],
 				'size' => [
-					0 => ['file' => 17188]
+					0 => ['file' => 17188],
+					1 => ['file' => 2010]
 				],
 			]
 		];
 		$post = [
 			'pictures' => [
-				0 => ['name' => 'A cat']
+				0 => ['name' => 'A cat'],
+				1 => ['name' => 'A moose']
 			],
 			0 => [
 				'name' => 'A dog'
@@ -325,6 +331,16 @@ class RequestTest extends TestCase {
 						'tmp_name' => '/tmp/file123',
 						'error' => '0',
 						'size' => 17188,
+					]
+				],
+				1 => [
+					'name' => 'A moose',
+					'file' => [
+						'name' => 'a-moose.png',
+						'type' => 'image/jpg',
+						'tmp_name' => '/tmp/file234',
+						'error' => '0',
+						'size' => 2010,
 					]
 				]
 			],

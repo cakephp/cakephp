@@ -427,17 +427,18 @@ class Request implements \ArrayAccess {
 	protected function _processFileData($data, $post, $path = '', $field = '') {
 		foreach ($post as $key => $fields) {
 			$newField = $field;
+			$newPath = $path;
 			if ($path === '' && $newField === '') {
 				$newField = $key;
 			}
 			if ($field === $newField) {
-				$path .= '.' . $key;
+				$newPath .= '.' . $key;
 			}
 			if (is_array($fields)) {
-				$data = $this->_processFileData($data, $fields, $path, $newField);
+				$data = $this->_processFileData($data, $fields, $newPath, $newField);
 			} else {
-				$path = trim($path . '.' . $field, '.');
-				$data = Hash::insert($data, $path, $fields);
+				$newPath = trim($newPath . '.' . $field, '.');
+				$data = Hash::insert($data, $newPath, $fields);
 			}
 		}
 		return $data;
