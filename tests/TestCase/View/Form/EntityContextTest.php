@@ -466,6 +466,26 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Tests that trying to get values from missing associations returns null
+ *
+ * @return void
+ */
+	public function testValMissingAssociation() {
+		$row = new Article([
+			'id' => 1
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+
+		$result = $context->val('id');
+		$this->assertEquals($row->id, $result);
+
+		$this->assertNull($context->val('profile.id'));
+	}
+
+/**
  * Test reading values from associated entities.
  *
  * @return void
