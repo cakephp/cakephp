@@ -29,3 +29,5 @@ __('Hot features!'
 
 // Category
 echo __c('You have a new message (category: LC_TIME).', 5);
+
+echo __x('mail', 'letter');

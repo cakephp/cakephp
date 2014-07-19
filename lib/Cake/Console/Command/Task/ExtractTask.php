@@ -251,12 +251,16 @@ class ExtractTask extends AppShell {
 	protected function _addTranslation($category, $domain, $msgid, $details = array()) {
 		if (empty($this->_translations[$category][$domain][$msgid])) {
 			$this->_translations[$category][$domain][$msgid] = array(
-				'msgid_plural' => false
+				'msgid_plural' => false,
+				'msgctxt' => ''
 			);
 		}
 
 		if (isset($details['msgid_plural'])) {
 			$this->_translations[$category][$domain][$msgid]['msgid_plural'] = $details['msgid_plural'];
+		}
+		if (isset($details['msgctxt'])) {
+			$this->_translations[$category][$domain][$msgid]['msgctxt'] = $details['msgctxt'];
 		}
 
 		if (isset($details['file'])) {
@@ -374,6 +378,8 @@ class ExtractTask extends AppShell {
 			$this->_parse('__dc', array('domain', 'singular', 'category'));
 			$this->_parse('__dn', array('domain', 'singular', 'plural'));
 			$this->_parse('__dcn', array('domain', 'singular', 'plural', 'count', 'category'));
+
+			$this->_parse('__x', array('context', 'singular'));
 		}
 	}
 
@@ -426,6 +432,9 @@ class ExtractTask extends AppShell {
 					);
 					if (isset($plural)) {
 						$details['msgid_plural'] = $plural;
+					}
+					if (isset($context)) {
+						$details['msgctxt'] = $context;
 					}
 					$this->_addTranslation($categoryName, $domain, $singular, $details);
 				} else {
@@ -551,6 +560,7 @@ class ExtractTask extends AppShell {
 			foreach ($domains as $domain => $translations) {
 				foreach ($translations as $msgid => $details) {
 					$plural = $details['msgid_plural'];
+					$context = $details['msgctxt'];
 					$files = $details['references'];
 					$occurrences = array();
 					foreach ($files as $file => $lines) {
@@ -560,11 +570,15 @@ class ExtractTask extends AppShell {
 					$occurrences = implode("\n#: ", $occurrences);
 					$header = '#: ' . str_replace(DS, '/', str_replace($paths, '', $occurrences)) . "\n";
 
+					$sentence = '';
+					if ($context) {
+						$sentence .= "msgctxt \"{$context}\"\n";
+					}
 					if ($plural === false) {
-						$sentence = "msgid \"{$msgid}\"\n";
+						$sentence .= "msgid \"{$msgid}\"\n";
 						$sentence .= "msgstr \"\"\n\n";
 					} else {
-						$sentence = "msgid \"{$msgid}\"\n";
+						$sentence .= "msgid \"{$msgid}\"\n";
 						$sentence .= "msgid_plural \"{$plural}\"\n";
 						$sentence .= "msgstr[0] \"\"\n";
 						$sentence .= "msgstr[1] \"\"\n\n";
