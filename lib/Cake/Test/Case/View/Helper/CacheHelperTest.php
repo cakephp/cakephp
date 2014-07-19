@@ -646,4 +646,35 @@ class CacheHelperTest extends CakeTestCase {
 			'@', $contents);
 		unlink($filename);
 	}
+
+	/**
+	 * test serialization with closure callback
+	 *
+	 * @return void
+	 */
+	public function testCacheClosure() {
+		if (PHP_VERSION_ID < 50300) {
+			$this->markTestSkipped('Closures not available before PHP 5.3');
+		}
+
+		$this->Controller->cache_parsing();
+		$this->Controller->request->addParams(array(
+				'controller' => 'cache_test',
+				'action' => 'cache_parsing',
+				'pass' => array(),
+				'named' => array()
+			));
+		$this->Controller->request->here = '/cacheTest/cache_parsing';
+		$this->Controller->cacheAction = 21600;
+
+		$closure = eval('return function() {};'); // Closure causes syntax error in PHP < 5.3
+		$this->Controller->request->addDetector('json', array('callback' => $closure));
+
+		$View = new View($this->Controller);
+		$result = $View->render('index');
+
+		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing.php';
+		$this->assertTrue(file_exists($filename));
+		unlink($filename);
+	}
 }

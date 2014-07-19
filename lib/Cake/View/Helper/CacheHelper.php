@@ -306,14 +306,14 @@ class CacheHelper extends AppHelper {
 		}
 
 		$file .= '
-				$request = unserialize(base64_decode(\'' . base64_encode(serialize($this->request)) . '\'));
+				$request = unserialize(base64_decode(\'' . $this->_serialize($this->request) . '\'));
 				$response->type(\'' . $this->_View->response->type() . '\');
 				$controller = new ' . $this->_View->name . 'Controller($request, $response);
 				$controller->plugin = $this->plugin = \'' . $this->_View->plugin . '\';
-				$controller->helpers = $this->helpers = unserialize(base64_decode(\'' . base64_encode(serialize($this->_View->helpers)) . '\'));
+				$controller->helpers = $this->helpers = unserialize(base64_decode(\'' . $this->_serialize($this->_View->helpers) . '\'));
 				$controller->layout = $this->layout = \'' . $this->_View->layout . '\';
 				$controller->theme = $this->theme = \'' . $this->_View->theme . '\';
-				$controller->viewVars = unserialize(base64_decode(\'' . base64_encode(serialize($this->_View->viewVars)) . '\'));
+				$controller->viewVars = unserialize(base64_decode(\'' . $this->_serialize($this->_View->viewVars) . '\'));
 				Router::setRequestInfo($controller->request);
 				$this->request = $request;';
 
@@ -331,6 +331,53 @@ class CacheHelper extends AppHelper {
 		$content = preg_replace("/(<\\?xml)/", "<?php echo '$1'; ?>", $content);
 		$file .= $content;
 		return cache('views' . DS . $cache, $file, $timestamp);
+	}
+
+/**
+ * Serialize data to be stored in cached views
+ *
+ * @param string $data Data to serialize
+ * @return string Serialized and base 64 encoded data
+ */
+	protected function _serialize($data) {
+		try {
+			$serialized = serialize($data);
+		} catch (Exception $e) {
+			if (version_compare(PHP_VERSION, '5.3.0') < 0) {
+				throw $e;
+			}
+			$serialized = serialize($this->_nullClosures($data));
+		}
+		return base64_encode($serialized);
+	}
+
+/**
+ * Recursively search arrays and objects for closures and replace them with null
+ * This allows objects which contain closures to be serialized.
+ *
+ * @param mixed $data Array or object to be searched
+ * @return mixed Array or cloned object with closures replaced with null
+ */
+	protected function _nullClosures($data) {
+		if (is_array($data)) {
+			foreach ($data as $key => $value) {
+				$data[$key] = $this->_nullClosures($value);
+			}
+			return $data;
+		}
+		if (!is_object($data)) {
+			return $data;
+		}
+		if (is_a($data, 'Closure')) {
+			return null;
+		}
+		$clone = clone $data;
+		$reflection = new ReflectionObject($clone);
+		foreach ($reflection->getProperties() as $property) {
+			$property->setAccessible(true);
+			$property->setValue($clone, $this->_nullClosures($property->getValue($clone)));
+		}
+		return $clone;
 	}
 
 }
