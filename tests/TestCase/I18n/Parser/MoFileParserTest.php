@@ -12,16 +12,16 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\I18n\Loader;
+namespace Cake\Test\TestCase\I18n\Parser;
 
-use Cake\I18n\Loader\MoFileLoader;
+use Cake\I18n\Parser\MoFileParser;
 use Cake\TestSuite\TestCase;
 
 /**
  * Tests the MoFileLoader
  *
  */
-class MoFileLoaderTest extends TestCase {
+class MoFileParserTest extends TestCase {
 
 /**
  * Tests parsing a file with plurals and message context
@@ -29,7 +29,7 @@ class MoFileLoaderTest extends TestCase {
  * @return void
  */
 	public function testParse() {
-		$parser = new MoFileLoader;
+		$parser = new MoFileParser;
 		$file = APP . 'Locale' . DS . 'rule_1_mo' . DS . 'LC_MESSAGES' . DS . 'core.mo';
 		$messages = $parser->parse($file);
 		$this->assertCount(3, $messages);
@@ -47,7 +47,7 @@ class MoFileLoaderTest extends TestCase {
  * @return void
  */
 	public function testParse2() {
-		$parser = new MoFileLoader;
+		$parser = new MoFileParser;
 		$file = APP . 'Locale' . DS . 'rule_9_mo' . DS . 'LC_MESSAGES' . DS . 'core.mo';
 		$messages = $parser->parse($file);
 		$this->assertCount(3, $messages);

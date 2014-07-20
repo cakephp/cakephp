@@ -12,16 +12,16 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\I18n\Loader;
+namespace Cake\Test\TestCase\I18n\Parser;
 
-use Cake\I18n\Loader\PoFileLoader;
+use Cake\I18n\Parser\PoFileParser;
 use Cake\TestSuite\TestCase;
 
 /**
  * Tests the PoFileLoader
  *
  */
-class PoFileLoaderTest extends TestCase {
+class PoFileParserTest extends TestCase {
 
 /**
  * Tests parsing a file with plurals and message context
@@ -29,7 +29,7 @@ class PoFileLoaderTest extends TestCase {
  * @return void
  */
 	public function testParse() {
-		$parser = new PoFileLoader;
+		$parser = new PoFileParser;
 		$file = APP . 'Locale' . DS . 'rule_1_po' . DS . 'LC_MESSAGES' . DS . 'default.po';
 		$messages = $parser->parse($file);
 		$this->assertCount(5, $messages);
@@ -49,7 +49,7 @@ class PoFileLoaderTest extends TestCase {
  * @return void
  */
 	public function testParseMultiLine() {
-		$parser = new PoFileLoader;
+		$parser = new PoFileParser;
 		$file = APP . 'Locale' . DS . 'po' . DS . 'LC_MESSAGES' . DS . 'default.po';
 		$messages = $parser->parse($file);
 		$this->assertCount(12, $messages);
