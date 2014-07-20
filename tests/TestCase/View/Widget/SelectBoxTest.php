@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\View\Widget;
 
+use Cake\Collection\Collection;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\SelectBox;
@@ -99,6 +100,30 @@ class SelectBoxTest extends TestCase {
 		$expected = [
 			'select' => ['name' => 'Birds[name]'],
 			['option' => ['value' => '']], '/option',
+			['option' => ['value' => 'a']], 'Albatross', '/option',
+			['option' => ['value' => 'b']], 'Budgie', '/option',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test simple iterator rendering with empty option
+ *
+ * @return void
+ */
+	public function testRenderSimpleIteratorWithEmpty() {
+		$select = new SelectBox($this->templates);
+		$options = new Collection(['a' => 'Albatross', 'b' => 'Budgie']);
+		$data = [
+			'name' => 'Birds[name]',
+			'options' => $options,
+			'empty' => 'Pick one'
+		];
+		$result = $select->render($data, $this->context);
+		$expected = [
+			'select' => ['name' => 'Birds[name]'],
+			['option' => ['value' => '']], 'Pick one', '/option',
 			['option' => ['value' => 'a']], 'Albatross', '/option',
 			['option' => ['value' => 'b']], 'Budgie', '/option',
 			'/select'

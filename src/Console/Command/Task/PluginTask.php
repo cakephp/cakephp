@@ -97,13 +97,12 @@ class PluginTask extends BakeTask {
 		if (strtolower($looksGood) === 'y') {
 			$Folder = new Folder($this->path . $plugin);
 			$directories = [
-				$classBase . DS . 'Config' . DS . 'Schema',
+				$classBase . DS . 'Config',
 				$classBase . DS . 'Model' . DS . 'Behavior',
 				$classBase . DS . 'Model' . DS . 'Table',
 				$classBase . DS . 'Model' . DS . 'Entity',
 				$classBase . DS . 'Console' . DS . 'Command' . DS . 'Task',
 				$classBase . DS . 'Controller' . DS . 'Component',
-				$classBase . DS . 'Lib',
 				$classBase . DS . 'View' . DS . 'Helper',
 				$classBase . DS . 'Template',
 				'tests' . DS . 'TestCase' . DS . 'Controller' . DS . 'Component',
@@ -189,7 +188,7 @@ class PluginTask extends BakeTask {
 		]);
 		$this->out( __d('cake_console', 'Generating routes.php file...'));
 		$out = $this->Template->generate('config', 'routes');
-		$file = $path . $plugin . DS . 'Config' . DS . 'routes.php';
+		$file = $path . $plugin . DS . 'src' . DS . 'Config' . DS . 'routes.php';
 		$this->createFile($file, $out);
 	}
 

@@ -75,15 +75,15 @@ class I18nTest extends TestCase {
 		$this->assertEquals('Dom 1 Foo', I18n::translate('dom1.foo', false, 'dom1'));
 		$this->assertEquals('Dom 1 Bar', I18n::translate('dom1.bar', false, 'dom1'));
 		$domains = I18n::domains();
-		$this->assertEquals('Dom 1 Foo', $domains['dom1']['cache_test_po']['LC_MESSAGES']['dom1.foo']);
+		$this->assertEquals('Dom 1 Foo', $domains['dom1']['cache_test_po']['LC_MESSAGES']['dom1.foo']['']);
 
 		// reset internally stored entries
 		I18n::clear();
 
 		// now only dom1 should be in cache
 		$cachedDom1 = Cache::read('dom1_' . $lang, '_cake_core_');
-		$this->assertEquals('Dom 1 Foo', $cachedDom1['LC_MESSAGES']['dom1.foo']);
-		$this->assertEquals('Dom 1 Bar', $cachedDom1['LC_MESSAGES']['dom1.bar']);
+		$this->assertEquals('Dom 1 Foo', $cachedDom1['LC_MESSAGES']['dom1.foo']['']);
+		$this->assertEquals('Dom 1 Bar', $cachedDom1['LC_MESSAGES']['dom1.bar']['']);
 		// dom2 not in cache
 		$this->assertFalse(Cache::read('dom2_' . $lang, '_cake_core_'));
 
@@ -92,11 +92,11 @@ class I18nTest extends TestCase {
 
 		// verify dom2 was cached through manual read from cache
 		$cachedDom2 = Cache::read('dom2_' . $lang, '_cake_core_');
-		$this->assertEquals('Dom 2 Foo', $cachedDom2['LC_MESSAGES']['dom2.foo']);
-		$this->assertEquals('Dom 2 Bar', $cachedDom2['LC_MESSAGES']['dom2.bar']);
+		$this->assertEquals('Dom 2 Foo', $cachedDom2['LC_MESSAGES']['dom2.foo']['']);
+		$this->assertEquals('Dom 2 Bar', $cachedDom2['LC_MESSAGES']['dom2.bar']['']);
 
 		// modify cache entry manually to verify that dom1 entries now will be read from cache
-		$cachedDom1['LC_MESSAGES']['dom1.foo'] = 'FOO';
+		$cachedDom1['LC_MESSAGES']['dom1.foo'][''] = 'FOO';
 		Cache::write('dom1_' . $lang, $cachedDom1, '_cake_core_');
 		$this->assertEquals('FOO', I18n::translate('dom1.foo', false, 'dom1'));
 	}
@@ -1513,49 +1513,6 @@ class I18nTest extends TestCase {
 	}
 
 /**
- * testSetLanguageWithSession method
- *
- * @return void
- */
-	public function testSetLanguageWithSession() {
-		$this->markTestIncomplete('This needs to be re-done');
-		Session::start();
-		Session::write('Config.language', 'po');
-
-		$singular = $this->_singular();
-		$this->assertEquals('Po (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('1 is 1 (po translated)', $plurals));
-		$this->assertTrue(in_array('2 is 2-4 (po translated)', $plurals));
-		$this->assertTrue(in_array('3 is 2-4 (po translated)', $plurals));
-		$this->assertTrue(in_array('4 is 2-4 (po translated)', $plurals));
-		$this->assertTrue(in_array('5 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('6 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('7 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('8 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('9 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('10 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('11 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('12 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('13 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('14 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('15 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('16 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('17 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('18 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('19 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('20 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('21 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('22 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('23 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('24 everything else (po translated)', $plurals));
-		$this->assertTrue(in_array('25 everything else (po translated)', $plurals));
-		Session::delete('Config.language');
-	}
-
-/**
  * testNoCoreTranslation method
  *
  * @return void
@@ -1876,6 +1833,23 @@ class I18nTest extends TestCase {
 		$result = I18n::loadLocaleDefinition($path . 'nld' . DS . 'LC_TIME');
 		$expected = array('zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag');
 		$this->assertSame($expected, $result['day']);
+	}
+
+/**
+ * Test basic context support
+ *
+ * @return void
+ */
+	public function testContext() {
+		I18n::clear();
+		Configure::write('Config.language', 'nld');
+
+		$this->assertSame("brief", __x('mail', 'letter'));
+		$this->assertSame("letter", __x('character', 'letter'));
+		$this->assertSame("bal", __x('spherical object', 'ball'));
+		$this->assertSame("danspartij", __x('social gathering', 'ball'));
+		$this->assertSame("balans", __('balance'));
+		$this->assertSame("saldo", __x('money', 'balance'));
 	}
 
 /**

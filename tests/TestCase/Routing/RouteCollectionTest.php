@@ -102,6 +102,28 @@ class RouteCollectionTest extends TestCase {
 	}
 
 /**
+ * Test that parsing checks all the related path scopes.
+ *
+ * @return void
+ */
+	public function testParseFallback() {
+		$routes = new RouteBuilder($this->collection, '/', []);
+
+		$routes->resources('Articles');
+		$routes->connect('/:controller', ['action' => 'index'], [], ['routeClass' => 'InflectedRoute']);
+		$routes->connect('/:controller/:action', [], ['routeClass' => 'InflectedRoute']);
+
+		$result = $this->collection->parse('/articles/add');
+		$expected = [
+			'controller' => 'Articles',
+			'action' => 'add',
+			'plugin' => null,
+			'pass' => []
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test match() throws an error on unknown routes.
  *
  * @expectedException Cake\Routing\Error\MissingRouteException

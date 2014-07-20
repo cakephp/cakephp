@@ -17,6 +17,7 @@ namespace Cake\Error;
 use Cake\Controller\Controller;
 use Cake\Controller\ErrorController;
 use Cake\Core\Configure;
+use Cake\Core\Error\MissingPluginException;
 use Cake\Error;
 use Cake\Event\Event;
 use Cake\Network\Request;
@@ -261,6 +262,12 @@ class ExceptionRenderer {
 			} else {
 				$this->_outputMessage('error500');
 			}
+		} catch (MissingPluginException $e) {
+			$attributes = $e->getAttributes();
+			if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->plugin) {
+				$this->controller->plugin = null;
+			}
+			$this->_outputMessageSafe('error500');
 		} catch (\Exception $e) {
 			$this->_outputMessageSafe('error500');
 		}

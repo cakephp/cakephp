@@ -39,6 +39,7 @@ class TreeBehaviorTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->table = TableRegistry::get('NumberTrees');
+		$this->table->primaryKey(['id']);
 		$this->table->addBehavior('Tree');
 	}
 
@@ -385,8 +386,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testRecover() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
 		$table->updateAll(['lft' => null, 'rght' => null], []);
 		$table->recover();
@@ -437,8 +437,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testAddOrphan() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = new Entity(
 			['name' => 'New Orphan', 'parent_id' => null],
 			['markNew' => true]
@@ -459,8 +458,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testAddMiddle() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = new Entity(
 			['name' => 'laptops', 'parent_id' => 1],
 			['markNew' => true]
@@ -481,8 +479,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testAddLeaf() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = new Entity(
 			['name' => 'laptops', 'parent_id' => 2],
 			['markNew' => true]
@@ -503,8 +500,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testReParentSubTreeRight() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(2);
 		$entity->parent_id = 6;
 		$this->assertSame($entity, $table->save($entity));
@@ -522,8 +518,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testReParentSubTreeLeft() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(6);
 		$entity->parent_id = 2;
 		$this->assertSame($entity, $table->save($entity));
@@ -542,8 +537,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testReParentLeafLeft() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(10);
 		$entity->parent_id = 2;
 		$this->assertSame($entity, $table->save($entity));
@@ -562,8 +556,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testReParentLeafRight() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(5);
 		$entity->parent_id = 6;
 		$this->assertSame($entity, $table->save($entity));
@@ -581,8 +574,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testReParentNoTreeColumns() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(6);
 		$entity->unsetProperty('lft');
 		$entity->unsetProperty('rght');
@@ -603,8 +595,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testRootingSubTree() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(2);
 		$entity->parent_id = null;
 		$this->assertSame($entity, $table->save($entity));
@@ -622,8 +613,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testRootingNoTreeColumns() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(2);
 		$entity->unsetProperty('lft');
 		$entity->unsetProperty('rght');
@@ -645,8 +635,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testReparentCycle() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(2);
 		$entity->parent_id = 5;
 		$table->save($entity);
@@ -658,8 +647,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testDeleteLeaf() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(4);
 		$this->assertTrue($table->delete($entity));
 		$result = $table->find()->order('lft')->hydrate(false)->toArray();
@@ -674,8 +662,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testDeleteSubTree() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(6);
 		$this->assertTrue($table->delete($entity));
 		$result = $table->find()->order('lft')->hydrate(false)->toArray();
@@ -690,8 +677,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testDeleteRoot() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(1);
 		$this->assertTrue($table->delete($entity));
 		$result = $table->find()->order('lft')->hydrate(false)->toArray();
@@ -706,8 +692,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testDeleteRootNoTreeColumns() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(1);
 		$entity->unsetProperty('lft');
 		$entity->unsetProperty('rght');
@@ -724,8 +709,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testRemoveFromLeafFromTree() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(10);
 		$this->assertSame($entity, $table->removeFromTree($entity));
 		$this->assertEquals(21, $entity->lft);
@@ -742,8 +726,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testRemoveMiddleNodeFromTree() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(6);
 		$this->assertSame($entity, $table->removeFromTree($entity));
 		$result = $table->find('threaded')->order('lft')->hydrate(false)->toArray();
@@ -761,8 +744,7 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testRemoveRootFromTree() {
-		$table = TableRegistry::get('NumberTrees');
-		$table->addBehavior('Tree');
+		$table = $this->table;
 		$entity = $table->get(1);
 		$this->assertSame($entity, $table->removeFromTree($entity));
 		$result = $table->find('threaded')->order('lft')->hydrate(false)->toArray();

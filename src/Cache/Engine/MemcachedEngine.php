@@ -60,7 +60,7 @@ class MemcachedEngine extends CacheEngine {
  * - `servers` String or array of memcached servers. If an array MemcacheEngine will use
  *    them as a pool.
  * - `options` - Additional options for the memcached client. Should be an array of option => value.
- *    Use the Memcached::OPT_* constants as keys.
+ *    Use the \Memcached::OPT_* constants as keys.
  *
  * @var array
  */
@@ -85,11 +85,7 @@ class MemcachedEngine extends CacheEngine {
  *
  * @var array
  */
-	protected $_serializers = [
-		'igbinary' => Memcached::SERIALIZER_IGBINARY,
-		'json' => Memcached::SERIALIZER_JSON,
-		'php' => Memcached::SERIALIZER_PHP
-	];
+	protected $_serializers = [];
 
 /**
  * Initialize the Cache Engine
@@ -109,6 +105,11 @@ class MemcachedEngine extends CacheEngine {
 			$config['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
 
+		$this->_serializers = [
+			'igbinary' => Memcached::SERIALIZER_IGBINARY,
+			'json' => Memcached::SERIALIZER_JSON,
+			'php' => Memcached::SERIALIZER_PHP
+		];
 		if (defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK) {
 			$this->_serializers['msgpack'] = Memcached::SERIALIZER_MSGPACK;
 		}
@@ -127,7 +128,7 @@ class MemcachedEngine extends CacheEngine {
 			return true;
 		}
 
-		$this->_Memcached = new \Memcached($this->_config['persistent'] ? (string)$this->_config['persistent'] : null);
+		$this->_Memcached = new Memcached($this->_config['persistent'] ? (string)$this->_config['persistent'] : null);
 		$this->_setOptions();
 
 		if (count($this->_Memcached->getServerList())) {
@@ -168,7 +169,7 @@ class MemcachedEngine extends CacheEngine {
  * @throws \Cake\Error\Exception when the Memcached extension is not built with the desired serializer engine
  */
 	protected function _setOptions() {
-		$this->_Memcached->setOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
+		$this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
 		$serializer = strtolower($this->_config['serialize']);
 		if (!isset($this->_serializers[$serializer])) {
@@ -187,10 +188,10 @@ class MemcachedEngine extends CacheEngine {
 
 		// Check for Amazon ElastiCache instance
 		if (defined('Memcached::OPT_CLIENT_MODE') && defined('Memcached::DYNAMIC_CLIENT_MODE')) {
-			$this->_Memcached->setOption(\Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE);
+			$this->_Memcached->setOption(Memcached::OPT_CLIENT_MODE, Memcached::DYNAMIC_CLIENT_MODE);
 		}
 
-		$this->_Memcached->setOption(\Memcached::OPT_COMPRESSION, (bool)$this->_config['compress']);
+		$this->_Memcached->setOption(Memcached::OPT_COMPRESSION, (bool)$this->_config['compress']);
 	}
 
 /**

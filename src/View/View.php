@@ -850,19 +850,42 @@ class View {
 					return $name;
 				}
 				$name = trim($name, DS);
-			} elseif ($name[0] === '.') {
-				$name = substr($name, 3);
 			} elseif (!$plugin || $this->viewPath !== $this->name) {
 				$name = $this->viewPath . DS . $subDir . $name;
+			} else {
+				$name = DS . $subDir . $name;
 			}
 		}
-		$paths = $this->_paths($plugin);
-		foreach ($paths as $path) {
+
+		foreach ($this->_paths($plugin) as $path) {
 			if (file_exists($path . $name . $this->_ext)) {
-				return $path . $name . $this->_ext;
+				return $this->_checkFilePath($path . $name . $this->_ext, $path);
 			}
 		}
 		throw new Error\MissingViewException(array('file' => $name . $this->_ext));
+	}
+
+/**
+ * Check that a view file path does not go outside of the defined template paths.
+ *
+ * Only paths that contain `..` will be checked, as they are the ones most likely to
+ * have the ability to resolve to files outside of the template paths.
+ *
+ * @param string $file The path to the template file.
+ * @param string $path Base path that $file should be inside of.
+ * @return string The file path
+ * @throws \Cake\Error\Exception
+ */
+	protected function _checkFilePath($file, $path) {
+		if (strpos($file, '..') === false) {
+			return $file;
+		}
+		$absolute = realpath($file);
+		if (strpos($absolute, $path) !== 0) {
+			$msg = sprintf('Cannot use "%s" as a template, it is not within any view template path.', $file);
+			throw new Exception($msg);
+		}
+		return $absolute;
 	}
 
 /**
@@ -904,15 +927,26 @@ class View {
 			$subDir = $this->layoutPath . DS;
 		}
 		list($plugin, $name) = $this->pluginSplit($name);
-		$paths = $this->_paths($plugin);
-		$file = 'Layout' . DS . $subDir . $name;
 
-		foreach ($paths as $path) {
-			if (file_exists($path . $file . $this->_ext)) {
-				return $path . $file . $this->_ext;
+		$layoutPaths = ['Layout' . DS . $subDir];
+		if (!empty($this->request->params['prefix'])) {
+			array_unshift(
+				$layoutPaths,
+				Inflector::camelize($this->request->params['prefix']) . DS . $layoutPaths[0]
+			);
+		}
+
+		foreach ($this->_paths($plugin) as $path) {
+			foreach ($layoutPaths as $layoutPath) {
+				$currentPath = $path . $layoutPath;
+				if (file_exists($currentPath . $name . $this->_ext)) {
+					return $this->_checkFilePath($currentPath . $name . $this->_ext, $currentPath);
+				}
 			}
 		}
-		throw new Error\MissingLayoutException(array('file' => $file . $this->_ext));
+		throw new Error\MissingLayoutException(array(
+			'file' => $layoutPath[0] . $name . $this->_ext
+		));
 	}
 
 /**

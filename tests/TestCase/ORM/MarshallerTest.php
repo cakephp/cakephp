@@ -981,4 +981,297 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals('2014-02-14', $entity->created->format('Y-m-d'));
 	}
 
+/**
+ * Tests that it is possible to pass a fieldList option to the marshaller
+ *
+ * @return void
+ */
+	public function testOneWithFieldList() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 1
+		];
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, ['fieldList' => ['title', 'author_id']]);
+
+		$this->assertInstanceOf('Cake\ORM\Entity', $result);
+		unset($data['body']);
+		$this->assertEquals($data, $result->toArray());
+	}
+
+/**
+ * Tests that it is possible to pass a fieldList option to the merge method
+ *
+ * @return void
+ */
+	public function testMergeWithFieldList() {
+		$data = [
+			'title' => 'My title',
+			'author_id' => 1
+		];
+		$marshall = new Marshaller($this->articles);
+		$entity = new Entity([
+			'title' => 'Foo',
+			'body' => 'My Content',
+			'author_id' => 2
+		]);
+		$entity->accessible('*', false);
+		$entity->isNew(false);
+		$entity->clean();
+		$result = $marshall->merge($entity, $data, ['fieldList' => ['title', 'body']]);
+
+		$expected = [
+			'title' => 'My title',
+			'body' => 'My Content',
+			'author_id' => 2
+		];
+
+		$this->assertSame($entity, $result);
+		$this->assertEquals($expected, $result->toArray());
+		$this->assertFalse($entity->accessible('*'));
+	}
+
+/**
+ * Test that many() also receives a fieldList option
+ *
+ * @return void
+ */
+	public function testManyFieldList() {
+		$data = [
+			['comment' => 'First post', 'user_id' => 2, 'foo' => 'bar'],
+			['comment' => 'Second post', 'user_id' => 2, 'foo' => 'bar'],
+		];
+		$marshall = new Marshaller($this->comments);
+		$result = $marshall->many($data, ['fieldList' => ['comment', 'user_id']]);
+
+		$this->assertCount(2, $result);
+		unset($data[0]['foo'], $data[1]['foo']);
+		$this->assertEquals($data[0], $result[0]->toArray());
+		$this->assertEquals($data[1], $result[1]->toArray());
+	}
+
+/**
+ * Test that many() also receives a fieldList option
+ *
+ * @return void
+ */
+	public function testMergeManyFieldList() {
+		$entities = [
+			new OpenEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
+			new OpenEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2])
+		];
+		$entities[0]->clean();
+		$entities[1]->clean();
+
+		$data = [
+			['id' => 2, 'comment' => 'Changed 2', 'user_id' => 10],
+			['id' => 1, 'comment' => 'Changed 1', 'user_id' => 20]
+		];
+		$marshall = new Marshaller($this->comments);
+		$result = $marshall->mergeMany($entities, $data, ['fieldList' => ['id', 'comment']]);
+
+		$this->assertSame($entities[0], $result[0]);
+		$this->assertSame($entities[1], $result[1]);
+
+		$expected = ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2];
+		$this->assertEquals($expected, $entities[1]->toArray());
+
+		$expected = ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 2];
+		$this->assertEquals($expected, $entities[0]->toArray());
+	}
+
+/**
+ * test marshalling association data while passing a fieldList
+ *
+ * @return void
+ */
+	public function testAssociatoinsFieldList() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 1,
+			'user' => [
+				'username' => 'mark',
+				'password' => 'secret',
+				'foo' => 'bar'
+			]
+		];
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, [
+			'fieldList' => ['title', 'body', 'user'],
+			'associated' => [
+				'Users' => ['fieldList' => ['username', 'foo']]
+			]
+		]);
+
+		$this->assertEquals($data['title'], $result->title);
+		$this->assertEquals($data['body'], $result->body);
+		$this->assertNull($result->author_id);
+
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->user);
+		$this->assertEquals($data['user']['username'], $result->user->username);
+		$this->assertNull($result->user->password);
+	}
+
+/**
+ * Tests merging associated data with a fieldList
+ *
+ * @return void
+ */
+	public function testMergeAssociationWithfieldList() {
+		$user = new Entity([
+			'username' => 'mark',
+			'password' => 'secret'
+		]);
+		$entity = new Entity([
+			'tile' => 'My Title',
+			'user' => $user
+		]);
+		$user->accessible('*', true);
+		$entity->accessible('*', true);
+
+		$data = [
+			'body' => 'My Content',
+			'something' => 'else',
+			'user' => [
+				'password' => 'not a secret',
+				'extra' => 'data'
+			]
+		];
+		$marshall = new Marshaller($this->articles);
+		$marshall->merge($entity, $data, [
+			'fieldList' => ['something'],
+			'associated' => ['Users' => ['fieldList' => ['extra']]]
+		]);
+		$this->assertNull($entity->body);
+		$this->assertEquals('else', $entity->something);
+		$this->assertSame($user, $entity->user);
+		$this->assertEquals('mark', $entity->user->username);
+		$this->assertEquals('secret', $entity->user->password);
+		$this->assertEquals('data', $entity->user->extra);
+		$this->assertTrue($entity->dirty('user'));
+	}
+
+/**
+ * Test marshalling nested associations on the _joinData structure
+ * while having a fieldList
+ *
+ * @return void
+ */
+	public function testJoinDataWhiteList() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 1,
+			'tags' => [
+				[
+					'tag' => 'news',
+					'_joinData' => [
+						'active' => 1,
+						'crazy' => 'data',
+						'user' => ['username' => 'Bill'],
+					]
+				],
+				[
+					'tag' => 'cakephp',
+					'_joinData' => [
+						'active' => 0,
+						'crazy' => 'stuff',
+						'user' => ['username' => 'Mark'],
+					]
+				],
+			],
+		];
+
+		$articlesTags = TableRegistry::get('ArticlesTags');
+		$articlesTags->belongsTo('Users');
+
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, [
+			'associated' => [
+				'Tags._joinData' => ['fieldList' => ['active', 'user']],
+				'Tags._joinData.Users'
+			]
+		]);
+		$this->assertInstanceOf(
+			'Cake\ORM\Entity',
+			$result->tags[0]->_joinData->user,
+			'joinData should contain a user entity.'
+		);
+		$this->assertEquals('Bill', $result->tags[0]->_joinData->user->username);
+		$this->assertInstanceOf(
+			'Cake\ORM\Entity',
+			$result->tags[1]->_joinData->user,
+			'joinData should contain a user entity.'
+		);
+		$this->assertEquals('Mark', $result->tags[1]->_joinData->user->username);
+
+		$this->assertNull($result->tags[0]->_joinData->crazy);
+		$this->assertNull($result->tags[1]->_joinData->crazy);
+	}
+
+/**
+ * Test merging the _joinData entity for belongstomany associations
+ * while passing a whitelist
+ *
+ * @return void
+ */
+	public function testMergeJoinDataWithFieldList() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 1,
+			'tags' => [
+				[
+					'id' => 1,
+					'tag' => 'news',
+					'_joinData' => [
+						'active' => 0
+					]
+				],
+				[
+					'id' => 2,
+					'tag' => 'cakephp',
+					'_joinData' => [
+						'active' => 0
+					]
+				],
+			],
+		];
+
+		$options = ['associated' => ['Tags' => ['associated' => ['_joinData']]]];
+		$marshall = new Marshaller($this->articles);
+		$entity = $marshall->one($data, $options);
+		$entity->accessible('*', true);
+
+		$data = [
+			'title' => 'Haz data',
+			'tags' => [
+				['id' => 1, 'tag' => 'Cake', '_joinData' => ['foo' => 'bar', 'crazy' => 'something']],
+				['tag' => 'new tag', '_joinData' => ['active' => 1, 'foo' => 'baz']]
+			]
+		];
+
+		$tag1 = $entity->tags[0];
+		$result = $marshall->merge($entity, $data, [
+			'associated' => ['Tags._joinData' => ['fieldList' => ['foo']]]
+		]);
+		$this->assertEquals($data['title'], $result->title);
+		$this->assertEquals('My content', $result->body);
+		$this->assertSame($tag1, $entity->tags[0]);
+		$this->assertSame($tag1->_joinData, $entity->tags[0]->_joinData);
+		$this->assertSame(
+			['active' => 0, 'foo' => 'bar'],
+			$entity->tags[0]->_joinData->toArray()
+		);
+		$this->assertSame(
+			['foo' => 'baz'],
+			$entity->tags[1]->_joinData->toArray()
+		);
+		$this->assertEquals('new tag', $entity->tags[1]->tag);
+		$this->assertTrue($entity->tags[0]->dirty('_joinData'));
+		$this->assertTrue($entity->tags[1]->dirty('_joinData'));
+	}
+
 }

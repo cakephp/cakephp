@@ -185,4 +185,44 @@ class CheckboxTest extends TestCase {
 		$this->assertTags($result, $expected);
 	}
 
+/**
+ * Data provider for checkbox values
+ *
+ * @return array
+ */
+	public static function uncheckedProvider() {
+		return [
+			[''],
+			['0'],
+			[0],
+			[false],
+			[null],
+		];
+	}
+
+/**
+ * Test rendering unchecked checkboxes
+ *
+ * @dataProvider uncheckedProvider
+ * @return void
+ */
+	public function testRenderUnCheckedValue($checked) {
+		$checkbox = new Checkbox($this->templates);
+		$data = [
+			'name' => 'Comment[spam]',
+			'value' => 1,
+			'val' => 1,
+			'checked' => $checked,
+		];
+		$result = $checkbox->render($data, $this->context);
+		$expected = [
+			'input' => [
+				'type' => 'checkbox',
+				'name' => 'Comment[spam]',
+				'value' => 1,
+			]
+		];
+		$this->assertTags($result, $expected);
+	}
+
 }

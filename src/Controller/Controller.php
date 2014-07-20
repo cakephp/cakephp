@@ -27,7 +27,6 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
-use Cake\View\View;
 use Cake\View\ViewVarsTrait;
 
 /**

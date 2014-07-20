@@ -140,8 +140,8 @@ class QueryTest extends TestCase {
 		$this->assertEquals(array('foo' => 'Second Article Body', 'text' => 'Second Article Body', 'author_id' => 3), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
-		$exp = $query->newExpr()->add('1 + 1');
-		$comp = $query->newExpr()->add(['author_id +' => 2]);
+		$exp = $query->newExpr('1 + 1');
+		$comp = $query->newExpr(['author_id +' => 2]);
 		$result = $query->select(['text' => 'body', 'two' => $exp, 'three' => $comp])
 			->from('articles')->execute();
 		$this->assertEquals(array('text' => 'First Article Body', 'two' => 2, 'three' => 3), $result->fetch('assoc'));
@@ -220,7 +220,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals(array('title' => 'Second Article', 'name' => 'larry'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
-		$conditions = $query->newExpr()->add('author_id = a.id');
+		$conditions = $query->newExpr('author_id = a.id');
 		$result = $query
 			->select(['title', 'name'])
 			->from('articles')
@@ -258,7 +258,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals(array('title' => 'Second Article', 'name' => 'nate'), $result->fetch('assoc'));
 
 		$query = new Query($this->connection);
-		$conditions = $query->newExpr()->add('author_id = a.id');
+		$conditions = $query->newExpr('author_id = a.id');
 		$result = $query
 			->select(['title', 'name'])
 			->from('articles')
@@ -277,6 +277,123 @@ class QueryTest extends TestCase {
 			->join(['c' => ['table' => 'comments', 'conditions' => ['created' => $time]]], $types)
 			->execute();
 		$this->assertEquals(array('title' => 'First Article', 'name' => 'First Comment for First Article'), $result->fetch('assoc'));
+	}
+
+/**
+ * Tests the leftJoin method
+ *
+ * @return void
+ */
+	public function testSelectLeftJoin() {
+		$query = new Query($this->connection);
+		$time = new \DateTime('2007-03-18 10:45:23');
+		$types = ['created' => 'datetime'];
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->leftJoin(['c' => 'comments'], ['created <' => $time], $types)
+			->execute();
+		$this->assertEquals(array('title' => 'First Article', 'name' => null), $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->leftJoin(['c' => 'comments'], ['created >' => $time], $types)
+			->execute();
+		$this->assertEquals(
+			['title' => 'First Article', 'name' => 'Second Comment for First Article'],
+			$result->fetch('assoc')
+		);
+	}
+
+/**
+ * Tests the innerJoin method
+ *
+ * @return void
+ */
+	public function testSelectInnerJoin() {
+		$query = new Query($this->connection);
+		$time = new \DateTime('2007-03-18 10:45:23');
+		$types = ['created' => 'datetime'];
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->innerJoin(['c' => 'comments'], ['created <' => $time], $types)
+			->execute();
+		$this->assertCount(0, $result->fetchAll());
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->leftJoin(['c' => 'comments'], ['created >' => $time], $types)
+			->execute();
+		$this->assertEquals(
+			['title' => 'First Article', 'name' => 'Second Comment for First Article'],
+			$result->fetch('assoc')
+		);
+	}
+
+/**
+ * Tests the rightJoin method
+ *
+ * @return void
+ */
+	public function testSelectRightJoin() {
+		$this->skipIf(
+			$this->connection->driver() instanceof \Cake\Database\Driver\Sqlite,
+			'SQLite does not support RIGHT joins'
+		);
+		$query = new Query($this->connection);
+		$time = new \DateTime('2007-03-18 10:45:23');
+		$types = ['created' => 'datetime'];
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->rightJoin(['c' => 'comments'], ['created <' => $time], $types)
+			->execute();
+		$this->assertCount(6, $result);
+		$this->assertEquals(
+			['title' => null, 'name' => 'First Comment for First Article'],
+			$result->fetch('assoc')
+		);
+	}
+
+/**
+ * Tests that it is possible to pass a callable as conditions for a join
+ *
+ * @return void
+ */
+	public function testSelectJoinWithCallback() {
+		$query = new Query($this->connection);
+		$types = ['created' => 'datetime'];
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->innerJoin(['c' => 'comments'], function($exp, $q) use ($query, $types) {
+				$this->assertSame($q, $query);
+				$exp->add(['created <' => new \DateTime('2007-03-18 10:45:23')], $types);
+				return $exp;
+			})
+			->execute();
+		$this->assertCount(0, $result->fetchAll());
+
+		$query = new Query($this->connection);
+		$types = ['created' => 'datetime'];
+		$result = $query
+			->select(['title', 'name' => 'c.comment'])
+			->from('articles')
+			->innerJoin('comments', function($exp, $q) use ($query, $types) {
+				$this->assertSame($q, $query);
+				$exp->add(['created >' => new \DateTime('2007-03-18 10:45:23')], $types);
+				return $exp;
+			})
+			->execute();
+		$this->assertEquals(
+			['title' => 'First Article', 'name' => 'Second Comment for First Article'],
+			$result->fetch('assoc')
+		);
 	}
 
 /**
@@ -921,7 +1038,7 @@ class QueryTest extends TestCase {
 			->where(function($exp, $q) {
 				return $exp->in(
 					'created',
-					$q->newExpr()->add("'2007-03-18 10:45:23'"),
+					$q->newExpr("'2007-03-18 10:45:23'"),
 					'datetime'
 				);
 			})
@@ -936,7 +1053,7 @@ class QueryTest extends TestCase {
 			->where(function($exp, $q) {
 				return $exp->notIn(
 					'created',
-					$q->newExpr()->add("'2007-03-18 10:45:23'"),
+					$q->newExpr("'2007-03-18 10:45:23'"),
 					'datetime'
 				);
 			})
@@ -1124,8 +1241,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
-		$expression = $query->newExpr()
-			->add(['(id + :offset) % 2']);
+		$expression = $query->newExpr(['(id + :offset) % 2']);
 		$result = $query
 			->order([$expression, 'id' => 'desc'], true)
 			->bind(':offset', 1, null)
@@ -1863,8 +1979,7 @@ class QueryTest extends TestCase {
 	public function testUpdateWithExpression() {
 		$query = new Query($this->connection);
 
-		$expr = $query->newExpr();
-		$expr->add('title = author_id');
+		$expr = $query->newExpr('title = author_id');
 
 		$query->update('articles')
 			->set($expr)
@@ -2335,7 +2450,7 @@ class QueryTest extends TestCase {
 		$this->assertQuotedQuery('SELECT <1 \+ 1> AS <foo>$', $sql);
 
 		$query = new Query($this->connection);
-		$sql = $query->select(['foo' => $query->newExpr()->add('1 + 1')])->sql();
+		$sql = $query->select(['foo' => $query->newExpr('1 + 1')])->sql();
 		$this->assertQuotedQuery('SELECT \(1 \+ 1\) AS <foo>$', $sql);
 
 		$query = new Query($this->connection);
@@ -2359,7 +2474,7 @@ class QueryTest extends TestCase {
 		$this->assertQuotedQuery('FROM <something> AS <foo>$', $sql);
 
 		$query = new Query($this->connection);
-		$sql = $query->select('*')->from(['foo' => $query->newExpr()->add('bar')])->sql();
+		$sql = $query->select('*')->from(['foo' => $query->newExpr('bar')])->sql();
 		$this->assertQuotedQuery('FROM \(bar\) AS <foo>$', $sql);
 	}
 
@@ -2391,7 +2506,7 @@ class QueryTest extends TestCase {
 		$this->assertQuotedQuery('JOIN <something> <foo>', $sql);
 
 		$query = new Query($this->connection);
-		$sql = $query->select('*')->join(['foo' => $query->newExpr()->add('bar')])->sql();
+		$sql = $query->select('*')->join(['foo' => $query->newExpr('bar')])->sql();
 		$this->assertQuotedQuery('JOIN \(bar\) <foo>', $sql);
 	}
 
@@ -2407,7 +2522,7 @@ class QueryTest extends TestCase {
 		$this->assertQuotedQuery('GROUP BY <something>', $sql);
 
 		$query = new Query($this->connection);
-		$sql = $query->select('*')->group([$query->newExpr()->add('bar')])->sql();
+		$sql = $query->select('*')->group([$query->newExpr('bar')])->sql();
 		$this->assertQuotedQuery('GROUP BY \(bar\)', $sql);
 
 		$query = new Query($this->connection);
@@ -2454,7 +2569,7 @@ class QueryTest extends TestCase {
 		$this->assertQuotedQuery('INSERT INTO <foo> \(<bar>, <baz>\)', $sql);
 
 		$query = new Query($this->connection);
-		$sql = $query->insert([$query->newExpr()->add('bar')])
+		$sql = $query->insert([$query->newExpr('bar')])
 			->into('foo')
 			->where(['something' => 'value'])
 			->sql();

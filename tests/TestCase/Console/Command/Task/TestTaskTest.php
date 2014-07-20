@@ -233,18 +233,6 @@ class TestTaskTest extends TestCase {
 	}
 
 /**
- * creating test subjects should clear the registry so the registry is always fresh
- *
- * @return void
- */
-	public function testRegistryClearWhenBuildingTestObjects() {
-		$articles = TableRegistry::get('Articles');
-		$this->Task->buildTestSubject('Table', 'Posts');
-
-		$this->assertFalse(TableRegistry::exists('Articles'));
-	}
-
-/**
  * Dataprovider for class name generation.
  *
  * @return array
