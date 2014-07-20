@@ -19,6 +19,10 @@ use Cake\Utility\Debugger;
 	<strong>Error: </strong>
 	<?= $message; ?>
 </p>
+<p class="notice">
+	If you are using SQL keywords as table column names, you can enable identifier
+	quoting for your database connection in src/Config/app.php.
+</p>
 <?php if (!empty($error->queryString)) : ?>
 	<p class="notice">
 		<strong>SQL Query: </strong>
