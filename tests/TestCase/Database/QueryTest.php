@@ -382,7 +382,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$types = ['created' => 'datetime'];
 		$result = $query
-			->select(['title', 'name' => 'c.comment'])
+			->select(['title', 'name' => 'comments.comment'])
 			->from('articles')
 			->innerJoin('comments', function($exp, $q) use ($query, $types) {
 				$this->assertSame($q, $query);
