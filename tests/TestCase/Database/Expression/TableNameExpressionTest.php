@@ -70,13 +70,6 @@ class TableNameExpressionTest extends TestCase {
 		$quoted = $connection->quoteIdentifier($expression->getName());
 		$expression->setName($quoted);
 		$this->assertQuotedString('<bar>', $expression->sql(new ValueBinder));
-
-		$subquery = (new Query($connection))
-			->select(['id', 'comment'])
-			->from('comments');
-		$subqueryString = '(' . $subquery->sql(new ValueBinder) . ')';
-		$expressionString = (new TableNameExpression($subquery, 'prefix_'))->sql(new ValueBinder);
-		$this->assertEquals($subqueryString, $expressionString);
 	}
 
 /**

@@ -205,23 +205,24 @@ class Connection {
 			$prefix = $this->_config["prefix"];
 		}
 
-		if (is_array($names)) {
-			if (!empty($names)) {
+		if (is_string($names)) {
+			$names = new TableNameExpression($names, $prefix);
+		} else {
+			if (is_array($names) && !empty($names)) {
 				foreach ($names as $alias => $tableName) {
-					if (is_string($tableName) || $tableName instanceof Query || $tableName instanceof QueryExpression) {
-						$names[$alias] = new TableNameExpression($tableName, $prefix);
+					if (is_string($tableName)) {
+						$tableName = new TableNameExpression($tableName, $prefix);
 					} elseif (
 						is_array($tableName) &&
 						isset($tableName["table"]) &&
-						!($tableName["table"] instanceof TableNameExpression)
+						is_string($tableName["table"])
 					) {
 						$tableName["table"] = new TableNameExpression($tableName["table"], $prefix);
-						$names[$alias] = $tableName;
 					}
+
+					$names[$alias] = $tableName;
 				}
 			}
-		} else {
-			$names = new TableNameExpression($names, $prefix);
 		}
 
 		return $names;

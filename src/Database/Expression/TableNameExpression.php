@@ -67,7 +67,7 @@ class TableNameExpression implements ExpressionInterface {
 /**
  * Constructor
  *
- * @param string|ExpressionInterface $name Table name
+ * @param string $name Table name
  * @param string $prefix Prefix to prepend
  */
 	public function __construct($name, $prefix) {
@@ -105,8 +105,6 @@ class TableNameExpression implements ExpressionInterface {
 			} else {
 				$sql = $this->_prefix . $this->_name;
 			}
-		} elseif ($this->_name instanceof ExpressionInterface) {
-			$sql = '(' . $this->_name->sql($generator) . ')';
 		}
 
 		return $sql;

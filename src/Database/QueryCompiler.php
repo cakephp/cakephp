@@ -173,7 +173,7 @@ class QueryCompiler {
 	protected function _buildFromPart($parts, $query, $generator) {
 		$select = ' FROM %s';
 		$normalized = [];
-		$parts = $this->_stringifyExpressions($parts, $generator, false);
+		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
 				$p = $p . ' AS ' . $k;
@@ -289,15 +289,13 @@ class QueryCompiler {
  * @param bool $wrap Tells whether the outputed string should be wrapped with parenthesis
  * @return array
  */
-	protected function _stringifyExpressions($expressions, $generator, $wrap = true) {
+	protected function _stringifyExpressions($expressions, $generator) {
 		$result = [];
 		foreach ($expressions as $k => $expression) {
-			if ($expression instanceof ExpressionInterface) {
-				if ($wrap) {
-					$expression = '(' . $expression->sql($generator) . ')';
-				} else {
-					$expression = $expression->sql($generator);
-				}
+			if ($expression instanceof TableNameExpression) {
+				$expression = $expression->sql($generator);
+			} elseif ($expression instanceof ExpressionInterface) {
+				$expression = '(' . $expression->sql($generator) . ')';
 			}
 			$result[$k] = $expression;
 		}

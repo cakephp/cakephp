@@ -153,8 +153,7 @@ class ConnectionTest extends TestCase {
 		$query = $this->connection->newQuery()->select('1 + 1');
 		$subQuery = ["sub" => $query];
 		$fullTableNameSubQuery = $connectionPrefix->fullTableName($subQuery);
-		$expected = ["sub" => new TableNameExpression($query, $config["prefix"])];
-		$this->assertEquals($fullTableNameSubQuery, $expected);
+		$this->assertEquals($fullTableNameSubQuery, $subQuery);
 
 		$table = ['a' =>
 			[
