@@ -31,19 +31,10 @@ class MessagesFileLoader {
 
 	protected $_extension;
 
-	protected $_basePath;
-
 	public function __construct($name, $locale, $extension = 'po') {
 		$this->_name = $name;
 		$this->_locale = $locale;
 		$this->_extension = $extension;
-
-		$pluginName = Inflector::camelize($name);
-		$this->_basePath = APP . 'Locale' . DS;
-
-		if (Plugin::loaded($pluginName)) {
-			$this->_basePath = Plugin::path($pluginName) . 'Locale' . DS;
-		}
 	}
 
 	public function __invoke() {
@@ -75,8 +66,15 @@ class MessagesFileLoader {
 			$locale['language']
 		];
 
+		$pluginName = Inflector::camelize($this->_name);
+		$basePath = APP . 'Locale' . DS;
+
+		if (Plugin::loaded($pluginName)) {
+			$basePath = Plugin::path($pluginName) . 'Locale' . DS;
+		}
+
 		foreach ($folders as $folder) {
-			$path = $this->_basePath  . $folder . DS . 'LC_MESSAGES' . DS;
+			$path = $basePath  . $folder . DS . 'LC_MESSAGES' . DS;
 			if (is_dir($path)) {
 				return $path;
 			}
