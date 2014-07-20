@@ -31,13 +31,6 @@ class AppleComponent extends Component {
 	public $components = array('Orange');
 
 /**
- * testName property
- *
- * @var mixed
- */
-	public $testName = null;
-
-/**
  * startup method
  *
  * @param Event $event
@@ -45,6 +38,5 @@ class AppleComponent extends Component {
  * @return void
  */
 	public function startup(Event $event) {
-		$this->testName = $controller->name;
 	}
 }
