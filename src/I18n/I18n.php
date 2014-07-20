@@ -77,22 +77,4 @@ class I18n {
 		return static::translators()->get($package);
 	}
 
-/**
- * Used by the translation functions in basics.php
- * Returns a translated string based on current language and translation files stored in locale folder
- *
- * @param string $singular String to translate
- * @param string $plural Plural string (if any)
- * @param string $domain Domain The domain of the translation. Domains are often used by plugin translations.
- *    If null, the default domain will be used.
- * @param int $count Count Count is used with $plural to choose the correct plural form.
- * @param string $language Language to translate string to.
- *    If null it checks for language in session followed by Config.language configuration variable.
- * @return string translated string.
- * @throws \Cake\Error\Exception When '' is provided as a domain.
- */
-	public static function translate($singular, $plural = null, $domain = null, $count = null, $language = null) {
-		
-	}
-
 }
