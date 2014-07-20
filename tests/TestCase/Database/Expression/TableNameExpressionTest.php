@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Connection;
 use Cake\Database\Expression\TableNameExpression;
+use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -62,15 +63,20 @@ class TableNameExpressionTest extends TestCase {
 		$quoted = $connection->quoteIdentifier($expression->getName());
 		$expression->setName($quoted);
 		$expression->setQuoted();
-
 		$this->assertQuotedString('<prefix_foo>', $expression->sql(new ValueBinder));
 
 		$name = "bar";
 		$expression = new TableNameExpression($name, '');
 		$quoted = $connection->quoteIdentifier($expression->getName());
 		$expression->setName($quoted);
-
 		$this->assertQuotedString('<bar>', $expression->sql(new ValueBinder));
+
+		$subquery = (new Query($connection))
+			->select(['id', 'comment'])
+			->from('comments');
+		$subqueryString = '(' . $subquery->sql(new ValueBinder) . ')';
+		$expressionString = (new TableNameExpression($subquery, 'prefix_'))->sql(new ValueBinder);
+		$this->assertEquals($subqueryString, $expressionString);
 	}
 
 /**
