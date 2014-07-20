@@ -121,7 +121,7 @@ class ConnectionTest extends TestCase {
 	}
 
 /**
- * 
+ *
  * Tests full table name resolutions
  *
  * @return  void
@@ -155,6 +155,24 @@ class ConnectionTest extends TestCase {
 		$fullTableNameSubQuery = $connectionPrefix->fullTableName($subQuery);
 		$expected = ["sub" => new TableNameExpression($query, $config["prefix"])];
 		$this->assertEquals($fullTableNameSubQuery, $expected);
+
+		$table = ['a' =>
+			[
+				'table' => 'articles',
+				'conditions' => [
+					'a.author_id = authors.id'
+				]
+			]
+		];
+		$expected = ['a' =>
+			[
+				'table' => new TableNameExpression('articles', $config["prefix"]),
+				'conditions' => [
+					'a.author_id = authors.id'
+				]
+			]
+		];
+		$this->assertEquals($connectionPrefix->fullTableName($table), $expected);
 	}
 
 /**
