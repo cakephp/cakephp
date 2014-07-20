@@ -169,28 +169,6 @@ class View {
 	public $theme = null;
 
 /**
- * Used to define methods a controller that will be cached. To cache a
- * single action, the value is set to an array containing keys that match
- * action names and values that denote cache expiration times (in seconds).
- *
- * Example:
- *
- * {{{
- * public $cacheAction = array(
- *       'view/23/' => 21600,
- *       'recalled/' => 86400
- *   );
- * }}}
- *
- * $cacheAction can also be set to a strtotime() compatible string. This
- * marks all the actions in the controller for view caching.
- *
- * @var mixed
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html#additional-configuration-options
- */
-	public $cacheAction = false;
-
-/**
  * True when the view has been rendered.
  *
  * @var bool
@@ -246,7 +224,7 @@ class View {
  */
 	protected $_passedVars = array(
 		'viewVars', 'autoLayout', 'helpers', 'view', 'layout', 'name', 'theme',
-		'layoutPath', 'viewPath', 'plugin', 'passedArgs', 'cacheAction'
+		'layoutPath', 'viewPath', 'plugin', 'passedArgs'
 	);
 
 /**
@@ -485,37 +463,6 @@ class View {
 
 		$this->eventManager()->dispatch(new Event('View.afterLayout', $this, array($layoutFileName)));
 		return $this->Blocks->get('content');
-	}
-
-/**
- * Render cached view. Works in concert with CacheHelper and Dispatcher to
- * render cached view files.
- *
- * @param string $filename the cache file to include
- * @param string $timeStart the page render start time
- * @return bool Success of rendering the cached file.
- */
-	public function renderCache($filename, $timeStart) {
-		$response = $this->response;
-		ob_start();
-		include $filename;
-
-		$type = $response->mapType($response->type());
-		if (Configure::read('debug') && $type === 'html') {
-			echo "<!-- Cached Render Time: " . round(microtime(true) - $timeStart, 4) . "s -->";
-		}
-		$out = ob_get_clean();
-
-		if (preg_match('/^<!--cachetime:(\\d+)-->/', $out, $match)) {
-			if (time() >= $match['1']) {
-				//@codingStandardsIgnoreStart
-				@unlink($filename);
-				//@codingStandardsIgnoreEnd
-				unset($out);
-				return false;
-			}
-			return substr($out, strlen($match[0]));
-		}
 	}
 
 /**
