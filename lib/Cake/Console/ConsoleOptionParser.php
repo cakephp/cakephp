@@ -411,10 +411,10 @@ class ConsoleOptionParser {
 	}
 
 /**
- * Remove an subcommand from the option parser.
+ * Remove a subcommand from the option parser.
  *
  * @param string $name The subcommand name to remove.
- * @return ConsoleOptionParser this
+ * @return $this
  */
     public function removeSubcommand($name) {
         unset($this->_subcommands[$name]);
