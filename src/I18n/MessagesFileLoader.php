@@ -15,25 +15,28 @@
 namespace Cake\I18n;
 
 use Aura\Intl\Package;
-use Cake\I18n\Parser\PoFileParser;
+use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 
 /**
- * 
+ *
  *
  */
-class MessageLoader {
+class MessagesFileLoader {
 
 	protected $_name;
 
 	protected $_locale;
 
-	protected $basePath;
+	protected $_extension;
 
-	public function __construct($name, $locale) {
+	protected $_basePath;
+
+	public function __construct($name, $locale, $extension = 'po') {
 		$this->_name = $name;
 		$this->_locale = $locale;
+		$this->_extension = $extension;
 
 		$pluginName = Inflector::camelize($name);
 		$this->_basePath = APP . 'Locale' . DS;
@@ -46,12 +49,20 @@ class MessageLoader {
 	public function __invoke() {
 		$package = new Package;
 		$folder = $this->translationsFolder();
+		$ext = $this->_extension;
 
-		if (!$folder || !is_file($folder . $this->_name . '.po')) {
+		if (!$folder || !is_file($folder . $this->_name . ".$ext")) {
 			return $package;
 		}
 
-		$messages = (new PoFileParser)->parse($folder . $this->_name . '.po');
+		$name = ucfirst($ext);
+		$class = App::classname($name, 'I18n\Parser', 'FileParser');
+
+		if (!$class) {
+			throw new \RuntimeException(sprintf('Could not find class %s'), "{$name}FileParser");
+		}
+
+		$messages = (new $class)->parse($folder . $this->_name . ".$ext");
 		$package->setMessages($messages);
 		return $package;
 	}

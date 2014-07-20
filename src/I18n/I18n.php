@@ -64,7 +64,7 @@ class I18n {
 		try {
 			return static::translators()->get($package);
 		} catch (LoadException $e) {
-			static::translator($package, $locale, new MessageLoader($package, $locale));
+			static::translator($package, $locale, new MessagesFileLoader($package, $locale));
 			return static::translators()->get($package);
 		}
 	}

@@ -50,7 +50,7 @@ class PoFileParserTest extends TestCase {
  */
 	public function testParseMultiLine() {
 		$parser = new PoFileParser;
-		$file = APP . 'Locale' . DS . 'po' . DS . 'LC_MESSAGES' . DS . 'default.po';
+		$file = APP . 'Locale' . DS . 'en' . DS . 'LC_MESSAGES' . DS . 'default.po';
 		$messages = $parser->parse($file);
 		$this->assertCount(12, $messages);
 		$this->assertTextEquals("v\nsecond line", $messages["valid\nsecond line"]);

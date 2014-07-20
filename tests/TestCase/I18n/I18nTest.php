@@ -25,9 +25,16 @@ use Cake\TestSuite\TestCase;
  */
 class I18nTest extends TestCase {
 
+/**
+ * Tests that a default translator is created and messages are parsed
+ * correclty
+ *
+ * @return void
+ */
 	public function testDefaultTranslator() {
 		$translator = I18n::translator();
 		$this->assertInstanceOf('Aura\Intl\Translator', $translator);
+		$this->assertEquals('%d is 1 (po translated)', $translator->translate('%d = 1'));
 	}
 
 }
