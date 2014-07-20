@@ -210,6 +210,13 @@ class Connection {
 				foreach ($names as $alias => $tableName) {
 					if (is_string($tableName) || $tableName instanceof Query || $tableName instanceof QueryExpression) {
 						$names[$alias] = new TableNameExpression($tableName, $prefix);
+					} elseif (
+						is_array($tableName) &&
+						isset($tableName["table"]) &&
+						!($tableName["table"] instanceof TableNameExpression)
+					) {
+						$tableName["table"] = new TableNameExpression($tableName["table"], $prefix);
+						$names[$alias] = $tableName;
 					}
 				}
 			}

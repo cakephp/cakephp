@@ -613,10 +613,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$table = current($table);
 		}
 
-		if ($this->_connection instanceof \Cake\Database\Connection) {
-			$table = $this->_connection->fullTableName($table);
-		}
-
 		return [
 			$alias => [
 				'table' => $table,
