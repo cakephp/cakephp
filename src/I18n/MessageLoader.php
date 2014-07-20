@@ -15,7 +15,7 @@
 namespace Cake\I18n;
 
 use Aura\Intl\Package;
-use Cake\I18n\Loader\PoFileLoader;
+use Cake\I18n\Parser\PoFileParser;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 
@@ -51,7 +51,7 @@ class MessageLoader {
 			return $package;
 		}
 
-		$messages = (new PoFileLoader)->parse($folder . $this->_name . '.po');
+		$messages = (new PoFileParser)->parse($folder . $this->_name . '.po');
 		$package->setMessages($messages);
 		return $package;
 	}

@@ -12,7 +12,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\I18n\Loader;
+namespace Cake\I18n\Parser;
 
 /**
  * Parses file in PO format
@@ -20,7 +20,7 @@ namespace Cake\I18n\Loader;
  * @copyright Copyright (c) 2010, Union of RAD http://union-of-rad.org (http://lithify.me/)
  * @copyright Copyright (c) 2014, Fabien Potencier https://github.com/symfony/Translation/blob/master/LICENSE
  */
-class MoFileLoader {
+class MoFileParser {
 
 /**
  * Magic used for validating the format of a MO file as well as
