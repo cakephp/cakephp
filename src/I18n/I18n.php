@@ -64,9 +64,17 @@ class I18n {
 		try {
 			return static::translators()->get($package);
 		} catch (LoadException $e) {
-			static::translator($package, $locale, new MessagesFileLoader($package, $locale));
-			return static::translators()->get($package);
+			return static::_fallbackTranslator($package, $locale);
 		}
+	}
+
+	protected static function _fallbackTranslator($package, $locale) {
+		$chain = new ChainMessagesLoader([
+			new MessagesFileLoader($package, $locale, 'mo'),
+			new MessagesFileLoader($package, $locale, 'po')
+		]);
+		static::translator($package, $locale, $chain);
+		return static::translators()->get($package);
 	}
 
 /**

@@ -37,4 +37,13 @@ class I18nTest extends TestCase {
 		$this->assertEquals('%d is 1 (po translated)', $translator->translate('%d = 1'));
 	}
 
+/**
+ * Tests that the translator can automatically load messages from a .mo file
+ *
+ * @return void
+ */
+	public function testTranslatorLoadMoFile() {
+		$translator = I18n::translator('default', 'es_ES');
+		$this->assertEquals('Plural Rule 6 (translated)', $translator->translate('Plural Rule 1'));
+	}
 }
