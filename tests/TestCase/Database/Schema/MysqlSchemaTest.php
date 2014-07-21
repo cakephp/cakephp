@@ -700,7 +700,10 @@ SQL;
 				'null' => false,
 				'comment' => 'The title'
 			])
-			->addColumn('body', ['type' => 'text'])
+			->addColumn('body', [
+				'type' => 'text',
+				'comment' => ''
+			])
 			->addColumn('created', 'datetime')
 			->addConstraint('primary', [
 				'type' => 'primary',
