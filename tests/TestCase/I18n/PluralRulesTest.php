@@ -104,7 +104,7 @@ class PluralRulesTest extends TestCase {
 	}
 
 /**
- * PluralRules tests
+ * Tests that the correct plural form is selected for the locale, number combination
  *
  * @dataProvider localesProvider
  * @return void
