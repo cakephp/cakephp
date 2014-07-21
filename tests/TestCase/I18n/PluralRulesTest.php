@@ -75,7 +75,11 @@ class PluralRulesTest extends TestCase {
 			['mt', 11, 2],
 			['mt', 13, 2],
 			['mt', 21, 3],
-			['mt', 102, 1]
+			['mt', 102, 1],
+			['lv', 0, 2],
+			['lv', 1, 0],
+			['lv', 2, 1],
+			['lv', 101, 0],
 		];
 	}
 
