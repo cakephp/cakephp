@@ -323,7 +323,7 @@ class MysqlSchema extends BaseSchema {
 		) {
 			$out .= ' DEFAULT CURRENT_TIMESTAMP';
 		}
-		if (isset($data['comment'])) {
+		if (isset($data['comment']) && $data['comment'] !== '') {
 			$out .= ' COMMENT ' . $this->_driver->schemaValue($data['comment']);
 		}
 		return $out;
