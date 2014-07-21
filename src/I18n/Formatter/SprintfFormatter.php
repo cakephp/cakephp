@@ -18,12 +18,26 @@ use Aura\Intl\FormatterInterface;
 use Cake\I18n\PluralRules;
 
 /**
- *
+ * A formatter that will interpolate variables using sprintf and
+ * select the correct plural form when required
  */
 class SprintfFormatter implements FormatterInterface {
 
+/**
+ * Returns a string with all passed variables interpolated into the original
+ * message. Variables are interpolated using the sprintf format.
+ *
+ * If an array is passed in `$message`, it will trigger the plural selection
+ * routine. Plural forms are selected depending on the locale and the `_count`
+ * key passed in `$vars`.
+ *
+ * @param string $locale The locale in which the message is presented.
+ * @param string|array $message The message to be translated
+ * @return string The formatted message
+ */
 	public function format($locale, $message, array $vars) {
-		if (isset($vars['_count']) && !is_string($message)) {
+		if (!is_string($message)) {
+			$count = isset($vars['_count']) ? $vars['_count'] : 0;
 			$form = PluralRules::calculate($locale, $vars['_count']);
 			$message = $message[$form];
 		}

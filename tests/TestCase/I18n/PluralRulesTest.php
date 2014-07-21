@@ -23,6 +23,12 @@ use Cake\TestSuite\TestCase;
  */
 class PluralRulesTest extends TestCase {
 
+/**
+ * Returns the notable combinations for locales and numbers
+ * with the respective plural form that should be selected
+ *
+ * @return array
+ */
 	public function localesProvider() {
 		return [
 			['jp', 0, 0],

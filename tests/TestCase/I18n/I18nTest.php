@@ -48,7 +48,7 @@ class I18nTest extends TestCase {
 	}
 
 /**
- * Tests that plural rules are correctly used for the english language
+ * Tests that plural rules are correctly used for the English language
  *
  * @return void
  */
