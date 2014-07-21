@@ -20,6 +20,7 @@ use Aura\Intl\Package;
 use Aura\Intl\PackageLocator;
 use Aura\Intl\TranslatorFactory;
 use Aura\Intl\TranslatorLocator;
+use Cake\I18n\Formatter\SprintfFormatter;
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -39,7 +40,9 @@ class I18n {
 		$translators = new TranslatorLocator(
 			new PackageLocator,
 			new FormatterLocator([
-				'basic' => function() { return new \Aura\Intl\BasicFormatter; },
+				'basic' => function() {
+					return new SprintfFormatter;
+				},
 				'intl'  => function() { return new \Aura\Intl\IntlFormatter; },
 			]),
 			new TranslatorFactory,
@@ -57,15 +60,24 @@ class I18n {
 			return;
 		}
 
+		$translators = static::translators();
+
 		if ($locale) {
+			$currentLocale = $translators->getLocale();
 			static::translators()->setLocale($locale);
 		}
 
 		try {
-			return static::translators()->get($package);
+			$translator = $translators->get($package);
 		} catch (LoadException $e) {
-			return static::_fallbackTranslator($package, $locale);
+			$translator = static::_fallbackTranslator($package, $locale);
 		}
+
+		if (isset($currentLocale)) {
+			$translators->setLocale($currentLocale);
+		}
+
+		return $translator;
 	}
 
 	protected static function _fallbackTranslator($package, $locale) {

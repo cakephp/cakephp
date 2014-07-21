@@ -46,4 +46,19 @@ class I18nTest extends TestCase {
 		$translator = I18n::translator('default', 'es_ES');
 		$this->assertEquals('Plural Rule 6 (translated)', $translator->translate('Plural Rule 1'));
 	}
+
+/**
+ * Tests that plural rules are correctly used for the english language
+ *
+ * @return void
+ */
+	public function testPluralSelection() {
+		$translator = I18n::translator(); // en_US
+		$result = $translator->translate('%d = 0 or > 1', ['_count' => 1]);
+		$this->assertEquals('1 is 1 (po translated)', $result);
+
+		$result = $translator->translate('%d = 0 or > 1', ['_count' => 2]);
+		$this->assertEquals('2 is 2-4 (po translated)', $result);
+	}
+
 }

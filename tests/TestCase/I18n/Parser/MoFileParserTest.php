@@ -67,4 +67,3 @@ class MoFileParserTest extends TestCase {
 	}
 
 }
-
