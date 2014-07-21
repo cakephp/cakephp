@@ -15,6 +15,7 @@
 namespace Cake\I18n\Formatter;
 
 use Aura\Intl\FormatterInterface;
+use Cake\I18n\PluralRules;
 
 /**
  *
@@ -23,7 +24,8 @@ class SprintfFormatter implements FormatterInterface {
 
 	public function format($locale, $message, array $vars) {
 		if (isset($vars['_count']) && !is_string($message)) {
-			$message = $message[$vars['_count'] - 1];
+			$form = PluralRules::calculate($locale, $vars['_count']);
+			$message = $message[$form];
 		}
 
 		return vsprintf($message, $vars);

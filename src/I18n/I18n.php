@@ -24,7 +24,6 @@ use Cake\I18n\Formatter\SprintfFormatter;
 
 /**
  * I18n handles translation of Text and time format strings.
- *
  */
 class I18n {
 
