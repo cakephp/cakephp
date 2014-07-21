@@ -80,6 +80,10 @@ class PluralRulesTest extends TestCase {
 			['lv', 1, 0],
 			['lv', 2, 1],
 			['lv', 101, 0],
+			['pl', 0, 2],
+			['pl', 1, 0],
+			['pl', 2, 1],
+			['pl', 101, 2],
 		];
 	}
 
