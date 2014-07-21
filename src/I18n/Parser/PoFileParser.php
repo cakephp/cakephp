@@ -138,7 +138,7 @@ class PoFileParser  {
 				$empties = array_fill(0, $count + 1, '');
 				$plurals += $empties;
 				ksort($plurals);
-				$messages[stripcslashes($item['ids']['plural'])] = stripcslashes(implode('&&&', $plurals));
+				$messages[stripcslashes($item['ids']['plural'])] = array_map('stripcslashes', $plurals);
 			}
 		} elseif (!empty($item['ids']['singular'])) {
 			$messages[stripcslashes($item['ids']['singular'])] = stripcslashes($item['translated']);

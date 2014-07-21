@@ -119,7 +119,7 @@ class MoFileParser {
 			$translated = explode("\000", $translated);
 			$messages[$singularId] = stripcslashes($translated[0]);
 			if ($pluralId !== null) {
-				$messages[$pluralId] = stripcslashes(implode('&&&', $translated));
+				$messages[$pluralId] = array_map('stripcslashes', $translated);
 			}
 		}
 

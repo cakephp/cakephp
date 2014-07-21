@@ -35,7 +35,10 @@ class MoFileParserTest extends TestCase {
 		$this->assertCount(3, $messages);
 		$expected = [
 			'%d = 1 (from core)' => '%d = 1 (from core translated)',
-			'%d = 0 or > 1 (from core)' => '%d = 1 (from core translated)&&&%d = 0 or > 1 (from core translated)',
+			'%d = 0 or > 1 (from core)' => [
+				'%d = 1 (from core translated)',
+				'%d = 0 or > 1 (from core translated)'
+			],
 			'Plural Rule 1 (from core)' => 'Plural Rule 1 (from core translated)'
 		];
 		$this->assertEquals($expected, $messages);
@@ -53,7 +56,11 @@ class MoFileParserTest extends TestCase {
 		$this->assertCount(3, $messages);
 		$expected = [
 			'%d = 1 (from core)' => '%d is 1 (from core translated)',
-			'%d = 0 or > 1 (from core)' => '%d is 1 (from core translated)&&&%d ends in 2-4, not 12-14 (from core translated)&&&%d everything else (from core translated)',
+			'%d = 0 or > 1 (from core)' => [
+				'%d is 1 (from core translated)',
+				'%d ends in 2-4, not 12-14 (from core translated)',
+				'%d everything else (from core translated)'
+			],
 			'Plural Rule 1 (from core)' => 'Plural Rule 9 (from core translated)'
 		];
 		$this->assertEquals($expected, $messages);
