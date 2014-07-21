@@ -1751,6 +1751,7 @@ class Model extends Object implements CakeEventListener {
  *   - `counterCache`: Boolean to control updating of counter caches (if any)
  *
  * @return mixed On success Model::$data if its not empty or true, false on failure
+ * @throws PDOException
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html
  */
 	protected function _doSave($data = null, $options = array()) {
