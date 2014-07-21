@@ -1050,7 +1050,7 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
- * testHead method
+ * Test the head method
  *
  * @return void
  */

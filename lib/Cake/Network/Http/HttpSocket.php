@@ -464,12 +464,12 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * Issues a HEAD request to the specified URI, query, and request. 
- * 
+ * Issues a HEAD request to the specified URI, query, and request.
+ *
  * By definition HEAD request are identical to GET request except they return no response body. This means that all
  * information and examples relevant to GET also applys to HEAD.
  *
- * @param string|array $uri URI to request. Either a string uri, or a uri array, see HttpSocket::_parseUri()
+ * @param string|array $uri URI to request. Either a string URI, or a URI array, see HttpSocket::_parseUri()
  * @param array $query Querystring parameters to append to URI
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request, either false on failure or the response to the request.
