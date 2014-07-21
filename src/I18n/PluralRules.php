@@ -131,6 +131,7 @@ class PluralRules {
  * @param string $locale The locale to get the rule calculated for.
  * @param integer|float $n The number to apply the rules to.
  * @return integer The plural rule number that should be used.
+ * @link http://localization-guide.readthedocs.org/en/latest/l10n/pluralforms.html
  */
 	public static function calculate($locale, $n) {
 		$locale = strtolower($locale);
@@ -152,16 +153,16 @@ class PluralRules {
 				return $n > 1 ? 1 : 0;
 			case 3:
 				return $n % 10 == 1 && $n % 100 != 11 ? 0 :
-					$n %10 >= 2 && $n % 10 <= 4 && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2;
+					(($n % 10 >= 2 && $n % 10 <= 4) && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2);
 			case 4:
 				return $n == 1 ? 0 :
-					$n >= 2 && $n <= 4 ? 1 : 2;
+					($n >= 2 && $n <= 4 ? 1 : 2);
 			case 5:
-				return $n == 1 ? 0 :
-					$n == 2 ? 1 : 2;
+				return $n==1 ? 0 :
+					($n == 2 ? 1 : ($n < 7 ? 2 : ($n < 11 ? 3 : 4)));
 			case 6:
-				return $n % 10 == 1 && $n % 100 != 11 ? 0 :
-					$n % 10 >=2 && ($n % 100 <10 || $n % 100 >= 20) ? 2 : 1;
+				return $n %10 == 1 && $n % 100 != 11 ? 0 :
+					($n % 10 >= 2 && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2);
 			case 7:
 				return $n % 100 == 1 ? 0 :
 					$n % 100 == 2 ? 1 :
