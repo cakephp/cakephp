@@ -434,7 +434,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 				continue;
 			}
 
-			if (is_callable($c)) {
+			if (!is_string($c) && is_callable($c)) {
 				$expr = new QueryExpression([], $typeMap);
 				$c = $c($expr, $this);
 			}
