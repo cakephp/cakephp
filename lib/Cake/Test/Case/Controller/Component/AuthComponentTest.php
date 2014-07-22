@@ -1174,8 +1174,10 @@ class AuthComponentTest extends CakeTestCase {
 
 		Router::setRequestInfo($this->Auth->request);
 
-		$this->Controller->response = $this->getMock('CakeResponse', array('send'));
-		$this->Controller->response->expects($this->once())->method('send');
+		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$this->Controller->response->expects($this->at(0))
+		->method('_sendHeader')
+		->with('HTTP/1.1 403 Forbidden', null);
 		$this->Auth->initialize($this->Controller);
 
 		$result = $this->Auth->startup($this->Controller);
