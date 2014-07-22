@@ -334,7 +334,6 @@ object(Cake\View\View) {
 	autoLayout => true
 	subDir => null
 	theme => null
-	cacheAction => false
 	hasRendered => false
 	uuids => []
 	request => object(Cake\Network\Request) {}
@@ -359,8 +358,7 @@ object(Cake\View\View) {
 		(int) 7 => 'layoutPath',
 		(int) 8 => 'viewPath',
 		(int) 9 => 'plugin',
-		(int) 10 => 'passedArgs',
-		(int) 11 => 'cacheAction'
+		(int) 10 => 'passedArgs'
 	]
 	[protected] _paths => []
 	[protected] _pathsForPlugin => []

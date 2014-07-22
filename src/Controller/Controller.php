@@ -187,7 +187,7 @@ class Controller implements EventListener {
  */
 	protected $_validViewOptions = [
 		'viewVars', 'autoLayout', 'helpers', 'view', 'layout', 'name', 'theme', 'layoutPath',
-		'viewPath', 'plugin', 'passedArgs', 'cacheAction'
+		'viewPath', 'plugin', 'passedArgs'
 	];
 
 /**
