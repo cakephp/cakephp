@@ -245,7 +245,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return $this
  */
 	public function select($fields = [], $overwrite = false) {
-		if (is_callable($fields)) {
+		if (!is_string($fields) && is_callable($fields)) {
 			$fields = $fields($this);
 		}
 
@@ -486,7 +486,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 				$t = ['table' => $t, 'conditions' => $this->newExpr()];
 			}
 
-			if (is_callable($t['conditions'])) {
+			if (!is_string($t['conditions']) && is_callable($t['conditions'])) {
 				$t['conditions'] = $t['conditions']($this->newExpr(), $this);
 			}
 
@@ -1557,7 +1557,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _conjugate($part, $append, $conjunction, $types) {
 		$expression = $this->_parts[$part] ?: $this->newExpr();
 
-		if (is_callable($append)) {
+		if (!is_string($append) && is_callable($append)) {
 			$append = $append($this->newExpr(), $this);
 		}
 

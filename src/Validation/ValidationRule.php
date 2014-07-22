@@ -155,7 +155,7 @@ class ValidationRule {
  * @return bool True if the ValidationRule should be skipped
  */
 	protected function _skip($context) {
-		if (is_callable($this->_on)) {
+		if (!is_string($this->_on) && is_callable($this->_on)) {
 			$function = $this->_on;
 			return !$function($context);
 		}

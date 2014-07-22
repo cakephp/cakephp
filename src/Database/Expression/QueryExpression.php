@@ -293,7 +293,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return \Cake\Database\Expression\QueryExpression
  */
 	public function and_($conditions, $types = []) {
-		if (is_callable($conditions)) {
+		if (!is_string($conditions) && is_callable($conditions)) {
 			return $conditions(new self([], $this->typeMap()->types($types)));
 		}
 		return new self($conditions, $this->typeMap()->types($types));
@@ -309,7 +309,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return \Cake\Database\Expression\QueryExpression
  */
 	public function or_($conditions, $types = []) {
-		if (is_callable($conditions)) {
+		if (!is_string($conditions) && is_callable($conditions)) {
 			return $conditions(new self([], $this->typeMap()->types($types), 'OR'));
 		}
 		return new self($conditions, $this->typeMap()->types($types), 'OR');
