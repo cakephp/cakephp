@@ -23,7 +23,7 @@ use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
-use Cake\ORM\Associations;
+use Cake\ORM\AssociationCollection;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
@@ -140,7 +140,7 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * The associations container for this Table.
  *
- * @var \Cake\ORM\Associations
+ * @var \Cake\ORM\AssociationCollection
  */
 	protected $_associations;
 
@@ -179,7 +179,7 @@ class Table implements RepositoryInterface, EventListener {
  *   passed to it.
  * - eventManager: An instance of an event manager to use for internal events
  * - behaviors: A BehaviorRegistry. Generally not used outside of tests.
- * - associations: An Associations instance.
+ * - associations: An AssociationCollection instance.
  *
  * @param array $config List of options for this table
  */
@@ -211,7 +211,7 @@ class Table implements RepositoryInterface, EventListener {
 		}
 		$this->_eventManager = $eventManager ?: new EventManager();
 		$this->_behaviors = $behaviors ?: new BehaviorRegistry($this);
-		$this->_associations = $associations ?: new Associations();
+		$this->_associations = $associations ?: new AssociationCollection();
 
 		$this->initialize($config);
 		$this->_eventManager->attach($this);
@@ -541,7 +541,7 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Get the associations collection for this table.
  *
- * @return \Cake\ORM\Associations
+ * @return \Cake\ORM\AssociationCollection
  */
 	public function associations() {
 		return $this->_associations;

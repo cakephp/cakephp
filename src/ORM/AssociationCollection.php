@@ -25,7 +25,7 @@ use Cake\ORM\Table;
  * Contains methods for managing associations, and
  * ordering operations around saving and deleting.
  */
-class Associations {
+class AssociationCollection {
 
 	use AssociationsNormalizerTrait;
 
