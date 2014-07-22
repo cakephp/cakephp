@@ -265,6 +265,44 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
+ * Test getAssociations in a plugin
+ *
+ * @return void
+ */
+	public function testGetAssociationsPlugin() {
+		$articles = TableRegistry::get('BakeArticles');
+		$this->Task->plugin = 'TestPlugin';
+
+		$result = $this->Task->getAssociations($articles);
+		$expected = [
+			'belongsTo' => [
+				[
+					'alias' => 'BakeUsers',
+					'className' => 'TestPlugin.BakeUsers',
+					'foreignKey' => 'bake_user_id'
+				],
+			],
+			'hasMany' => [
+				[
+					'alias' => 'BakeComments',
+					'className' => 'TestPlugin.BakeComments',
+					'foreignKey' => 'bake_article_id',
+				],
+			],
+			'belongsToMany' => [
+				[
+					'alias' => 'BakeTags',
+					'className' => 'TestPlugin.BakeTags',
+					'foreignKey' => 'bake_article_id',
+					'joinTable' => 'bake_articles_bake_tags',
+					'targetForeignKey' => 'bake_tag_id',
+				],
+			],
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test that belongsTo generation works.
  *
  * @return void
