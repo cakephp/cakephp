@@ -159,7 +159,7 @@ class CounterCacheBehavior extends Behavior {
 				$config = [];
 			}
 
-			if (is_callable($config)) {
+			if (!is_string($config) && is_callable($config)) {
 				$count = $config($event, $entity, $this->_table);
 			} else {
 				$count = $this->_getCount($config, $countConditions);
