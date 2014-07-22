@@ -35,9 +35,13 @@ abstract class BaseSchema {
 /**
  * Constructor
  *
+ * This constructor will connect the driver so that methods like columnSql() and others
+ * will fail when the driver has not been connected.
+ *
  * @param \Cake\Database\Driver $driver The driver to use.
  */
 	public function __construct(Driver $driver) {
+		$driver->connect();
 		$this->_driver = $driver;
 	}
 

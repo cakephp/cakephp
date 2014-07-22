@@ -846,6 +846,18 @@ SQL;
 	}
 
 /**
+ * Test that constructing a schema dialect connects the driver.
+ *
+ * @return void
+ */
+	public function testConstructConnectsDriver() {
+		$driver = $this->getMock('Cake\Database\Driver');
+		$driver->expects($this->once())
+			->method('connect');
+		$schema = new MysqlSchema($driver);
+	}
+
+/**
  * Get a schema instance with a mocked driver/pdo instances
  *
  * @return MysqlSchema
