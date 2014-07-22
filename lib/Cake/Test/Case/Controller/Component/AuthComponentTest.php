@@ -1156,6 +1156,38 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
+ * testAjaxLoginResponseCode
+ *
+ * @return void
+ */
+	public function testAjaxLoginResponseCode() {
+		App::build(array(
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+		));
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+
+		$url = '/ajax_auth/add';
+		$this->Auth->request->addParams(Router::parse($url));
+		$this->Auth->request->query['url'] = ltrim($url, '/');
+		$this->Auth->request->base = '';
+		$this->Auth->ajaxLogin = 'test_element';
+
+		Router::setRequestInfo($this->Auth->request);
+
+		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$this->Controller->response->expects($this->at(0))
+		->method('_sendHeader')
+		->with('HTTP/1.1 403 Forbidden', null);
+		$this->Auth->initialize($this->Controller);
+
+		$result = $this->Auth->startup($this->Controller);
+
+		$this->assertFalse($result);
+		$this->assertEquals('this is the test element', $this->Controller->response->body());
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+	}
+
+/**
  * testLoginActionRedirect method
  *
  * @return void
