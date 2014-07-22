@@ -13,14 +13,14 @@
  */
 namespace Cake\Test\TestCase\Network\Http;
 
-use Cake\Network\Http\Cookies;
+use Cake\Network\Http\CookieCollection;
 use Cake\Network\Http\Response;
 use Cake\TestSuite\TestCase;
 
 /**
  * HTTP cookies test.
  */
-class CookiesTest extends TestCase {
+class CookieCollectionTest extends TestCase {
 
 /**
  * setup
@@ -29,7 +29,7 @@ class CookiesTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->cookies = new Cookies();
+		$this->cookies = new CookieCollection();
 	}
 
 /**
