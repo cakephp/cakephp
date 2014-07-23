@@ -592,6 +592,22 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that passing an empty array type to any where condition will not
+ * result in an error, but in an empty result set
+ *
+ * @return void
+ */
+	public function testSelectWhereArrayTypeEmpty() {
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['id' => []], ['id' => 'integer[]'])
+			->execute();
+		$this->assertCount(0, $result);
+	}
+
+/**
  * Tests that Query::orWhere() can be used to concatenate conditions with OR
  *
  * @return void

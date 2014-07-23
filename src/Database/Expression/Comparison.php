@@ -166,6 +166,11 @@ class Comparison extends QueryExpression {
 		foreach ($value as $k => $v) {
 			$parts[] = $this->_bindValue($v, $generator, $type);
 		}
+
+		if (empty($parts)) {
+			return 'SELECT NULL';
+		}
+
 		return implode(',', $parts);
 	}
 
