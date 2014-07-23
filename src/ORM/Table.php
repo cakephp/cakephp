@@ -32,6 +32,7 @@ use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Error\MissingEntityException;
 use Cake\ORM\Error\RecordNotFoundException;
 use Cake\ORM\Marshaller;
+use Cake\ORM\Query;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 

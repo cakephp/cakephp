@@ -104,7 +104,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachTo() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->client]);
 		$config = [
 			'foreignKey' => 'company_id',
 			'sourceTable' => $this->client,
@@ -136,7 +136,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToConfigOverride() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->client]);
 		$config = [
 			'foreignKey' => 'company_id',
 			'sourceTable' => $this->client,
@@ -170,7 +170,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToNoFields() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->client]);
 		$config = [
 			'sourceTable' => $this->client,
 			'targetTable' => $this->company,
@@ -199,7 +199,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToWithQueryBuilder() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->client]);
 		$config = [
 			'sourceTable' => $this->client,
 			'targetTable' => $this->company,
@@ -236,7 +236,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToMatching() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->client]);
 		$config = [
 			'foreignKey' => 'company_id',
 			'sourceTable' => $this->client,
@@ -317,7 +317,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  */
 	public function testAttachToMultiPrimaryKey() {
 		$this->company->primaryKey(['id', 'tenant_id']);
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->client]);
 		$config = [
 			'foreignKey' => ['company_id', 'company_tenant_id'],
 			'sourceTable' => $this->client,
@@ -354,7 +354,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  */
 	public function testAttachToMultiPrimaryKeyMistmatch() {
 		$this->company->primaryKey(['id', 'tenant_id']);
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->client]);
 		$config = [
 			'foreignKey' => 'company_id',
 			'sourceTable' => $this->client,
@@ -398,7 +398,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToBeforeFind() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->client]);
 		$config = [
 			'foreignKey' => 'company_id',
 			'sourceTable' => $this->client,
@@ -424,7 +424,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToBeforeFindExtraOptions() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->client]);
 		$config = [
 			'foreignKey' => 'company_id',
 			'sourceTable' => $this->client,

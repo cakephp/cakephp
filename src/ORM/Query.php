@@ -102,7 +102,7 @@ class Query extends DatabaseQuery {
  * @param \Cake\Database\Connection $connection The connection object
  * @param \Cake\ORM\Table $table The table this query is starting on
  */
-	public function __construct($connection, $table) {
+	public function __construct($connection, Table $table) {
 		parent::__construct($connection);
 		$this->repository($table);
 
