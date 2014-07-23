@@ -153,6 +153,10 @@ class ExceptionRenderer {
 			$this->controller->set($this->error->getAttributes());
 		}
 
+		while (ob_get_level() > 0) {
+			ob_end_clean();
+		}
+
 		$this->_outputMessage($template);
 	}
 
