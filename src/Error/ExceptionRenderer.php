@@ -83,6 +83,7 @@ class ExceptionRenderer {
 	public function __construct(\Exception $exception) {
 		$this->error = $exception;
 		$this->controller = $this->_getController();
+
 	}
 
 /**
@@ -152,11 +153,6 @@ class ExceptionRenderer {
 		if ($exception instanceof Error\Exception && $isDebug) {
 			$this->controller->set($this->error->getAttributes());
 		}
-
-		while (ob_get_level() > 0) {
-			ob_end_clean();
-		}
-
 		$this->_outputMessage($template);
 	}
 
