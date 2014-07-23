@@ -17,11 +17,11 @@ use Cake\Utility\Inflector;
 <h2>Missing Cell View</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('The view for <em>%sCell</em> was not found.', h(Inflector::camelize($name))); ?>
+	<?php printf('The view for <em>%sCell</em> was not found.', h(Inflector::camelize($name))); ?>
 </p>
 
 <p>
-	<?php echo __d('cake_dev', 'Confirm you have created the file: "%s"', h($file . $this->_ext)); ?>
+	<?php printf('Confirm you have created the file: "%s"', h($file . $this->_ext)); ?>
 	in one of the following paths:
 </p>
 <ul>
