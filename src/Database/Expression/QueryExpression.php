@@ -488,9 +488,10 @@ class QueryExpression implements ExpressionInterface, Countable {
 
 		$type = $this->typeMap()->type($expression);
 		$multi = false;
+		$operator = strtolower(trim($operator));
 
 		$typeMultiple = strpos($type, '[]') !== false;
-		if (in_array(strtolower(trim($operator)), ['in', 'not in']) || $typeMultiple) {
+		if (in_array($operator, ['in', 'not in']) || $typeMultiple) {
 			$type = $type ?: 'string';
 			$type .= $typeMultiple ? null : '[]';
 			$operator = $operator === '=' ? 'IN' : $operator;
@@ -500,6 +501,14 @@ class QueryExpression implements ExpressionInterface, Countable {
 
 		if ($typeMultiple) {
 			$value = $value instanceof ExpressionInterface ? $value : (array)$value;
+		}
+
+		if ($operator === 'is' && $value === null) {
+			return new UnaryExpression('IS NULL', $expression, UnaryExpression::POSTFIX);
+		}
+
+		if ($operator === 'is' && $value !== null) {
+			$operator = '=';
 		}
 
 		return new Comparison($expression, $value, $type, $operator);

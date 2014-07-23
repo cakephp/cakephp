@@ -2694,6 +2694,29 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that using the IS operator will automatically translate to the best
+ * possible operator depending on the passed value
+ *
+ * @return void
+ */
+	public function testDirectIsNull() {
+		$sql = (new Query($this->connection))
+			->select(['name'])
+			->from(['authors'])
+			->where(['name IS' => null])
+			->sql();
+		$this->assertQuotedQuery('WHERE \(<name>\) IS NULL', $sql, true);
+
+		$results = (new Query($this->connection))
+			->select(['name'])
+			->from(['authors'])
+			->where(['name IS' => 'larry'])
+			->execute();
+		$this->assertCount(1, $results);
+		$this->assertEquals(['name' => 'larry'], $results->fetch('assoc'));
+	}
+
+/**
  * Assertion for comparing a table's contents with what is in it.
  *
  * @param string $table
