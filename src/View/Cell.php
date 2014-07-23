@@ -149,12 +149,13 @@ abstract class Cell {
 		$this->View->layout = false;
 		$className = explode('\\', get_class($this));
 		$className = array_pop($className);
-		$this->View->subDir = 'Cell' . DS . substr($className, 0, strpos($className, 'Cell'));
+		$name = substr($className, 0, strpos($className, 'Cell'));
+		$this->View->subDir = 'Cell' . DS . $name;
 
 		try {
 			return $this->View->render($template);
 		} catch (MissingViewException $e) {
-			throw new MissingCellViewException(['file' => $template]);
+			throw new MissingCellViewException(['file' => $template, 'name' => $name]);
 		}
 	}
 

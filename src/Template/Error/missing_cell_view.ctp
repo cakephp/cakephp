@@ -14,14 +14,14 @@
  */
 use Cake\Utility\Inflector;
 ?>
-<h2>Missing View</h2>
+<h2>Missing Cell View</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)); ?>
+	<?= sprintf('The view for <em>%sCell</em> was not found.', h(Inflector::camelize($name))); ?>
 </p>
 
 <p>
-	<?php echo __d('cake_dev', 'Confirm you have created the file: "%s"', h($file)); ?>
+	<?php echo __d('cake_dev', 'Confirm you have created the file: "%s"', h($file . $this->_ext)); ?>
 	in one of the following paths:
 </p>
 <ul>
@@ -31,7 +31,7 @@ use Cake\Utility\Inflector;
 		if (strpos($path, CORE_PATH) !== false) {
 			continue;
 		}
-		echo sprintf('<li>%s%s</li>', h($path), h($file));
+		echo sprintf('<li>%sCell/%s/%s</li>', h($path), h($name), h($file . $this->_ext));
 	endforeach;
 ?>
 </ul>
