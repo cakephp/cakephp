@@ -21,7 +21,7 @@ use Cake\Network\Http\Response;
  * Provides cookie jar like features for storing cookies between
  * requests, as well as appending cookies to new requests.
  */
-class Cookies {
+class CookieCollection {
 
 /**
  * The cookies stored in this jar.

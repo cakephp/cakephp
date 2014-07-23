@@ -16,7 +16,7 @@ namespace Cake\Network\Http;
 use Cake\Core\App;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error;
-use Cake\Network\Http\Cookies;
+use Cake\Network\Http\CookieCollection;
 use Cake\Network\Http\Request;
 use Cake\Utility\Hash;
 
@@ -50,7 +50,7 @@ use Cake\Utility\Hash;
  *
  * You can use the 'cookieJar' constructor option to provide a custom
  * cookie jar instance you've restored from cache/disk. By default
- * an empty instance of Cake\Network\Http\Cookies will be created.
+ * an empty instance of Cake\Network\Http\CookieCollection will be created.
  *
  * ### Sending request bodies
  *
@@ -112,7 +112,7 @@ class Client {
  * Cookies are indexed by the cookie's domain or
  * request host name.
  *
- * @var \Cake\Network\Http\Cookies
+ * @var \Cake\Network\Http\CookieCollection
  */
 	protected $_cookies;
 
@@ -159,7 +159,7 @@ class Client {
 			$this->_cookies = $this->_config['cookieJar'];
 			$this->config('cookieJar', null);
 		} else {
-			$this->_cookies = new Cookies();
+			$this->_cookies = new CookieCollection();
 		}
 	}
 
@@ -168,7 +168,7 @@ class Client {
  *
  * Returns an array of cookie data arrays.
  *
- * @return \Cake\Network\Http\Cookies
+ * @return \Cake\Network\Http\CookieCollection
  */
 	public function cookies() {
 		return $this->_cookies;

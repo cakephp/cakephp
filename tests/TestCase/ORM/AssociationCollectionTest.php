@@ -14,16 +14,16 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\Associations;
+use Cake\ORM\AssociationCollection;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
 /**
- * Associations test case.
+ * AssociationCollection test case.
  */
-class AssociationsTest extends TestCase {
+class AssociationCollectionTest extends TestCase {
 
 /**
  * setup
@@ -32,7 +32,7 @@ class AssociationsTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->associations = new Associations();
+		$this->associations = new AssociationCollection();
 	}
 
 /**

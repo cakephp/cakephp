@@ -413,7 +413,7 @@ class ClientTest extends TestCase {
 			'Cake\Network\Http\Adapter\Stream',
 			['send']
 		);
-		$cookieJar = $this->getMock('Cake\Network\Http\Cookies');
+		$cookieJar = $this->getMock('Cake\Network\Http\CookieCollection');
 
 		$headers = [
 			'HTTP/1.0 200 Ok',
