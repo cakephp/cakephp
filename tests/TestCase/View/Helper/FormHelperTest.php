@@ -389,6 +389,19 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test that create() and end() restore templates.
+ *
+ * @return void
+ */
+	public function testCreateEndRestoreTemplates() {
+		$this->Form->create($this->article, [
+			'templates' => ['input' => 'custom input element']
+		]);
+		$this->Form->end();
+		$this->assertNotEquals('custom input element', $this->Form->templater()->get('input'));
+	}
+
+/**
  * test the create() method
  *
  * @dataProvider requestTypeProvider
