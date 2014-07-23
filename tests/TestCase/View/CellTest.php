@@ -81,7 +81,7 @@ class CellTest extends TestCase {
 		$capture = function ($errno, $msg) {
 			restore_error_handler();
 			$this->assertEquals(E_USER_WARNING, $errno);
-			$this->assertContains('Could not render cell - View file', $msg);
+			$this->assertContains('Could not render cell - Cell view file', $msg);
 		};
 		set_error_handler($capture);
 
@@ -131,6 +131,17 @@ class CellTest extends TestCase {
 
 		$cell->teaserList();
 		$this->assertContains('<h2>Lorem ipsum</h2>', $cell->render('teaser_list'));
+	}
+
+/**
+ * Tests manual render() invocation with error
+ *
+ * @expectedException \Cake\View\Error\MissingCellViewException
+ * @return void
+ */
+	public function testCellManualRenderError() {
+		$cell = $this->View->cell('Articles');
+		$cell->render('derp');
 	}
 
 /**
