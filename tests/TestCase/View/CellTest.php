@@ -169,6 +169,17 @@ class CellTest extends TestCase {
 	}
 
 /**
+ * Test that plugin cells can render other view templates.
+ *
+ * @return void
+ */
+	public function testPluginCellAlternateTemplateRenderParam() {
+		$cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
+		$result = $cell->render('../../Element/translate');
+		$this->assertContains('This is a translatable string', $result);
+	}
+
+/**
  * Tests that using an unexisting cell throws an exception.
  *
  * @expectedException \Cake\View\Error\MissingCellException

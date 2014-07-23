@@ -134,10 +134,10 @@ abstract class Cell {
  * @return void
  */
 	public function render($template = null) {
-		if ($template !== null) {
+		if ($template !== null && strpos($template, '/') === false) {
 			$template = Inflector::underscore($template);
 		}
-		if (empty($template)) {
+		if ($template === null) {
 			$template = $this->template;
 		}
 
