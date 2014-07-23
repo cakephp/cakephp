@@ -21,6 +21,7 @@ use Aura\Intl\PackageLocator;
 use Aura\Intl\TranslatorFactory;
 use Aura\Intl\TranslatorLocator;
 use Cake\I18n\Formatter\SprintfFormatter;
+use Cake\I18n\Formatter\IcuFormatter;
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -42,7 +43,9 @@ class I18n {
 				'basic' => function() {
 					return new SprintfFormatter;
 				},
-				'intl'  => function() { return new \Aura\Intl\IntlFormatter; },
+				'icu' => function() {
+					return new IcuFormatter;
+				},
 			]),
 			new TranslatorFactory,
 			static::$_defaultLocale
