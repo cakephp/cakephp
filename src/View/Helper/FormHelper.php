@@ -893,7 +893,8 @@ class FormHelper extends Helper {
 
 		if ($newTemplates) {
 			$templater->push();
-			$templater->add($options['templates']);
+			$templateMethod = is_string($options['templates']) ? 'load' : 'add';
+			$templater->{$templateMethod}($options['templates']);
 		}
 		unset($options['templates']);
 

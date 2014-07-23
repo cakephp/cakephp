@@ -2108,6 +2108,28 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test that input() accepts a template file.
+ *
+ * @return void
+ */
+	public function testInputWithTemplateFile() {
+		$result = $this->Form->input('field', array(
+			'templates' => 'htmlhelper_tags'
+		));
+		$expected = array(
+			'label' => array('for' => 'field'),
+			'Field',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'field',
+				'id' => 'field'
+			),
+		);
+		$this->assertTags($result, $expected);
+
+	}
+
+/**
  * Test id prefix
  *
  * @return void
