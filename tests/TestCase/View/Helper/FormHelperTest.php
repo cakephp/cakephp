@@ -2126,7 +2126,6 @@ class FormHelperTest extends TestCase {
 			),
 		);
 		$this->assertTags($result, $expected);
-
 	}
 
 /**

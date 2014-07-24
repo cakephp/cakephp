@@ -75,7 +75,7 @@ class StringTemplate {
 	}
 
 /**
- * Push the current templates onto the template stack.
+ * Push the current templates into the template stack.
  *
  * @return void
  */
