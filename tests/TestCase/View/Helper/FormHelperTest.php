@@ -389,6 +389,19 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test that create() and end() restore templates.
+ *
+ * @return void
+ */
+	public function testCreateEndRestoreTemplates() {
+		$this->Form->create($this->article, [
+			'templates' => ['input' => 'custom input element']
+		]);
+		$this->Form->end();
+		$this->assertNotEquals('custom input element', $this->Form->templater()->get('input'));
+	}
+
+/**
  * test the create() method
  *
  * @dataProvider requestTypeProvider
@@ -2090,6 +2103,27 @@ class FormHelperTest extends TestCase {
 			'login too large',
 			'/div',
 			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that input() accepts a template file.
+ *
+ * @return void
+ */
+	public function testInputWithTemplateFile() {
+		$result = $this->Form->input('field', array(
+			'templates' => 'htmlhelper_tags'
+		));
+		$expected = array(
+			'label' => array('for' => 'field'),
+			'Field',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'field',
+				'id' => 'field'
+			),
 		);
 		$this->assertTags($result, $expected);
 	}

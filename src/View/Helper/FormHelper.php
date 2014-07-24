@@ -260,8 +260,7 @@ class FormHelper extends Helper {
  * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
  * - `templates` The templates you want to use for this form. Any templates will be merged on top of
  *   the already loaded templates. This option can either be a filename in App/Config that contains
- *   the templates you want to load, or an array of templates to use. You can use
- *   resetTemplates() to restore the original templates.
+ *   the templates you want to load, or an array of templates to use.
  * - `context` Additional options for the context class. For example the EntityContext accepts a 'table'
  *   option that allows you to set the specific Table class the form should be based on.
  * - `idPrefix` Prefix for generated ID attributes.
@@ -297,10 +296,10 @@ class FormHelper extends Helper {
 		$this->_idPrefix = $options['idPrefix'];
 		$templater = $this->templater();
 
-		if (!empty($options['templates']) && is_array($options['templates'])) {
-			$templater->add($options['templates']);
-		} elseif (!empty($options['templates']) && is_string($options['templates'])) {
-			$templater->load($options['templates']);
+		if (!empty($options['templates'])) {
+			$templater->push();
+			$method = is_string($options['templates']) ? 'load' : 'add';
+			$templater->{$method}($options['templates']);
 		}
 		unset($options['templates']);
 
@@ -439,7 +438,6 @@ class FormHelper extends Helper {
  */
 	public function end($secureAttributes = []) {
 		$out = '';
-
 		if (
 			$this->requestType !== 'get' &&
 			!empty($this->request['_Token'])
@@ -447,9 +445,10 @@ class FormHelper extends Helper {
 			$out .= $this->secure($this->fields, $secureAttributes);
 			$this->fields = array();
 		}
+		$templater = $this->templater();
+		$out .= $templater->format('formend', []);
 
-		$out .= $this->formatTemplate('formend', []);
-
+		$templater->pop();
 		$this->requestType = null;
 		$this->_context = null;
 		$this->_idPrefix = null;
@@ -889,11 +888,13 @@ class FormHelper extends Helper {
 		$options = $this->_parseOptions($fieldName, $options);
 		$options += ['id' => $this->_domId($fieldName)];
 
-		$originalTemplates = $this->templates();
+		$templater = $this->templater();
 		$newTemplates = $options['templates'];
 
 		if ($newTemplates) {
-			$this->templates($options['templates']);
+			$templater->push();
+			$templateMethod = is_string($options['templates']) ? 'load' : 'add';
+			$templater->{$templateMethod}($options['templates']);
 		}
 		unset($options['templates']);
 
@@ -906,7 +907,7 @@ class FormHelper extends Helper {
 		}
 
 		$template = $options['type'] . 'Container' . $errorSuffix;
-		if (!$this->templates($template)) {
+		if (!$templater->get($template)) {
 			$template = 'inputContainer' . $errorSuffix;
 		}
 
@@ -917,15 +918,17 @@ class FormHelper extends Helper {
 
 		$input = $this->_getInput($fieldName, $options);
 		if ($options['type'] === 'hidden') {
-			$this->templates($originalTemplates);
+			if ($newTemplates) {
+				$templater->pop();
+			}
 			return $input;
 		}
 
 		$label = $this->_getLabel($fieldName, compact('input', 'label', 'error') + $options);
 
 		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
-		$result = $this->formatTemplate($groupTemplate, compact('input', 'label', 'error'));
-		$result = $this->formatTemplate($template, [
+		$result = $templater->format($groupTemplate, compact('input', 'label', 'error'));
+		$result = $templater->format($template, [
 			'content' => $result,
 			'error' => $error,
 			'required' => $options['required'] ? ' required' : '',
@@ -933,7 +936,7 @@ class FormHelper extends Helper {
 		]);
 
 		if ($newTemplates) {
-			$this->templates($originalTemplates);
+			$templater->pop();
 		}
 
 		return $result;

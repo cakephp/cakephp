@@ -209,4 +209,23 @@ class StringTemplateTest extends TestCase {
 		$this->assertEquals([null, null], $this->template->compile('link'));
 	}
 
+/**
+ * test push/pop templates.
+ *
+ * @return void
+ */
+	public function testPushPopTemplates() {
+		$this->template->add(['name' => '{{name}} is my name']);
+		$this->assertNull($this->template->push());
+
+		$this->template->add(['name' => 'my name']);
+		$this->assertEquals('my name', $this->template->get('name'));
+
+		$this->assertNull($this->template->pop());
+		$this->assertEquals('{{name}} is my name', $this->template->get('name'));
+
+		$this->assertNull($this->template->pop());
+		$this->assertNull($this->template->pop());
+	}
+
 }

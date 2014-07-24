@@ -52,6 +52,13 @@ class StringTemplate {
 	];
 
 /**
+ * A stack of template sets that have been stashed temporarily.
+ *
+ * @var array
+ */
+	protected $_configStack = [];
+
+/**
  * Contains the list of compiled templates
  *
  * @var array
@@ -68,14 +75,38 @@ class StringTemplate {
 	}
 
 /**
+ * Push the current templates into the template stack.
+ *
+ * @return void
+ */
+	public function push() {
+		$this->_configStack[] = $this->_config;
+	}
+
+/**
+ * Restore the most recently pushed set of templates.
+ *
+ * Restoring templates will invalidate all compiled templates.
+ *
+ * @return void
+ */
+	public function pop() {
+		if (empty($this->_configStack)) {
+			return;
+		}
+		$this->_config = array_pop($this->_configStack);
+		$this->_compiled = [];
+	}
+
+/**
  * Registers a list of templates by name
  *
  * ### Example:
  *
  * {{{
  * $templater->add([
- *	'link' => '<a href="{{url}}">{{title}}</a>'
- *	'button' => '<button>{{text}}</button>'
+ *   'link' => '<a href="{{url}}">{{title}}</a>'
+ *   'button' => '<button>{{text}}</button>'
  * ]);
  * }}}
  *
