@@ -54,7 +54,7 @@ class StringTemplate {
 /**
  * A stack of template sets that have been stashed temporarily.
  *
- * @var
+ * @var array
  */
 	protected $_configStack = [];
 
