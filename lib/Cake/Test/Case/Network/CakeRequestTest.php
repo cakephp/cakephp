@@ -2145,6 +2145,20 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
+ * Test the here() with space in URL
+ *
+ * @return void
+ */
+	public function testHereWithSpaceInUrl() {
+		Configure::write('App.base', '');
+		$_GET = array('/admin/settings/settings/prefix/Access_Control' => '');
+		$request = new CakeRequest('/admin/settings/settings/prefix/Access%20Control');
+
+		$result = $request->here();
+		$this->assertEquals('/admin/settings/settings/prefix/Access%20Control', $result);
+	}
+
+/**
  * Test the input() method.
  *
  * @return void
