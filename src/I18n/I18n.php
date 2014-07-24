@@ -30,8 +30,6 @@ class I18n {
 
 	protected static $_collection;
 
-	protected static $_defaultLocale;
-
 	protected static $_defaultFormatter = 'basic';
 
 	public static function translators() {
@@ -85,12 +83,8 @@ class I18n {
 	public static function defaultLocale($locale = null) {
 		if (!empty($locale)) {
 			ini_set('intl.default_locale', $locale);
-			static::$_defaultLocale = $locale;
+			static::translators()->setLocale($locale);
 			return;
-		}
-
-		if (static::$_defaultLocale !== null) {
-			return static::$_defaultLocale;
 		}
 
 		$current = ini_get('intl.default_locale');
@@ -100,7 +94,7 @@ class I18n {
 			ini_set('intl.default_locale', $current);
 		}
 
-		return static::$_defaultLocale = $current;
+		return $current;
 	}
 
 	public static function defaultFormatter($name = null) {

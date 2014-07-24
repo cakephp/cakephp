@@ -36,6 +36,7 @@ class I18nTest extends TestCase {
 		parent::tearDown();
 		I18n::clear();
 		I18n::defaultFormatter('basic');
+		I18n::defaultLocale('en_US');
 		Plugin::unload();
 	}
 
@@ -134,7 +135,28 @@ class I18nTest extends TestCase {
 		$this->assertEquals('en_US', I18n::defaultLocale());
 		$this->assertEquals('en_US', ini_get('intl.default_locale'));
 		I18n::defaultLocale('fr_FR');
+		$this->assertEquals('fr_FR', I18n::defaultLocale());
 		$this->assertEquals('fr_FR', ini_get('intl.default_locale'));
+	}
+
+/**
+ * Tests that changing the default locale also changes the way translators
+ * are fetched
+ *
+ * @return void
+ */
+	public function testGetTranslatorByDefaultLocale() {
+		I18n::translator('custom', 'fr_FR', function() {
+			$package = new Package();
+			$package->setMessages([
+				'Cow' => 'Le moo'
+			]);
+			return $package;
+		});
+
+		I18n::defaultLocale('fr_FR');
+		$translator = I18n::translator('custom');
+		$this->assertEquals('Le moo', $translator->translate('Cow'));
 	}
 
 }
