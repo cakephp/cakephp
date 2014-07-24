@@ -72,11 +72,12 @@ trait EntityTrait {
 
 /**
  * Indicates whether or not this entity is yet to be persisted.
- * A null value indicates an unknown persistence status
+ * Entities default to assuming they are new. You can use Table::persisted()
+ * to set the new flag on an entity based on records in the database.
  *
  * @var bool
  */
-	protected $_new = null;
+	protected $_new = true;
 
 /**
  * List of errors per field as stored in this object
@@ -514,8 +515,7 @@ trait EntityTrait {
  * that it already is.
  *
  * @param bool $new true if it is known this instance was persisted
- * @return bool if it is known whether the entity was already persisted
- * null otherwise
+ * @return bool Whether or not the entity has been persisted.
  */
 	public function isNew($new = null) {
 		if ($new === null) {

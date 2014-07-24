@@ -1084,8 +1084,7 @@ class Table implements RepositoryInterface, EventListener {
  *
  * This method will determine whether the passed entity needs to be
  * inserted or updated in the database. It does that by checking the `isNew`
- * method on the entity, if no information can be found there, it will go
- * directly to the database to check the entity's status.
+ * method on the entity.
  *
  * ### Saving on associated tables
  *
@@ -1147,17 +1146,13 @@ class Table implements RepositoryInterface, EventListener {
 	protected function _processSave($entity, $options) {
 		$primary = $entity->extract((array)$this->primaryKey());
 
-		if ($primary && $entity->isNew() === null) {
+		if ($primary && $entity->isNew()) {
 			$alias = $this->alias();
 			$keys = array_keys($primary);
 			foreach ($keys as &$pk) {
 				$pk = "$alias.$pk";
 			}
 			$entity->isNew(!$this->exists(array_combine($keys, $primary)));
-		}
-
-		if ($entity->isNew() === null) {
-			$entity->isNew(true);
 		}
 
 		$associated = $options['associated'];

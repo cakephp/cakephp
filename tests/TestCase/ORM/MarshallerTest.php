@@ -110,7 +110,7 @@ class MarshallerTest extends TestCase {
 		$this->assertInstanceOf('Cake\ORM\Entity', $result);
 		$this->assertEquals($data, $result->toArray());
 		$this->assertTrue($result->dirty(), 'Should be a dirty entity.');
-		$this->assertNull($result->isNew(), 'Should be detached');
+		$this->assertTrue($result->isNew(), 'Should be new');
 		$this->assertEquals('Articles', $result->source());
 	}
 
@@ -206,7 +206,7 @@ class MarshallerTest extends TestCase {
 
 		$this->assertInstanceOf('Cake\ORM\Entity', $result);
 		$this->assertTrue($result->dirty(), 'Should be a dirty entity.');
-		$this->assertNull($result->isNew(), 'Should be detached');
+		$this->assertTrue($result->isNew(), 'Should be new');
 		$this->assertEquals($data['Articles']['title'], $result->title);
 		$this->assertEquals($data['Articles']['user']['username'], $result->user->username);
 	}
@@ -645,7 +645,7 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals('mark', $entity->user->username);
 		$this->assertEquals('not a secret', $entity->user->password);
 		$this->assertTrue($entity->dirty('user'));
-		$this->assertNull($entity->user->isNew());
+		$this->assertTrue($entity->user->isNew());
 	}
 
 /**
