@@ -70,11 +70,11 @@ class MessagesFileLoader {
 		$basePath = APP . 'Locale' . DS;
 
 		if (Plugin::loaded($pluginName)) {
-			$basePath = Plugin::path($pluginName) . 'Locale' . DS;
+			$basePath = Plugin::path($pluginName) . 'src' . DS . 'Locale' . DS;
 		}
 
 		foreach ($folders as $folder) {
-			$path = $basePath  . $folder . DS . 'LC_MESSAGES' . DS;
+			$path = $basePath . $folder . DS . 'LC_MESSAGES' . DS;
 			if (is_dir($path)) {
 				return $path;
 			}

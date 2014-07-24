@@ -16,6 +16,8 @@
  */
 namespace Cake\Test\TestCase\I18n;
 
+use Aura\Intl\Package;
+use Cake\Core\Plugin;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 
@@ -34,6 +36,7 @@ class I18nTest extends TestCase {
 		parent::tearDown();
 		I18n::clear();
 		I18n::defaultFormatter('basic');
+		Plugin::unload();
 	}
 
 /**
@@ -87,6 +90,39 @@ class I18nTest extends TestCase {
 
 		$result = $translator->translate('There are {_count} things', ['_count' => 1]);
 		$this->assertEquals('There is only one', $result);
+	}
+
+/**
+ * Tests that custom translation packages can be created on the fly and used later on
+ *
+ * @return void
+ */
+	public function testCreateCustomTranslationPackage() {
+		I18n::translator('custom', 'fr_FR', function() {
+			$package = new Package();
+			$package->setMessages([
+				'Cow' => 'Le moo'
+			]);
+			return $package;
+		});
+
+		$translator = I18n::translator('custom', 'fr_FR');
+		$this->assertEquals('Le moo', $translator->translate('Cow'));
+	}
+
+/**
+ * Tests that messages can also be loaded from plugins by using the
+ * domain = plugin_name convention
+ *
+ * @return void
+ */
+	public function testPluginMesagesLoad() {
+		Plugin::load('TestPlugin');
+		$translator = I18n::translator('test_plugin');
+		$this->assertEquals(
+			'Plural Rule 1 (from plugin)',
+			$translator->translate('Plural Rule 1')
+		);
 	}
 
 }
