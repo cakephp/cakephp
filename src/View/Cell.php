@@ -134,7 +134,7 @@ abstract class Cell {
  * @param string $template Custom template name to render. If not provided (null), the last
  * value will be used. This value is automatically set by `CellTrait::cell()`.
  * @return void
- * @throws \Cake\Error\MissingCellViewException When a MissingViewException is raised during rendering.
+ * @throws \Cake\View\Error\MissingCellViewException When a MissingViewException is raised during rendering.
  */
 	public function render($template = null) {
 		if ($template !== null && strpos($template, '/') === false) {

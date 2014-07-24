@@ -83,7 +83,6 @@ class ExceptionRenderer {
 	public function __construct(\Exception $exception) {
 		$this->error = $exception;
 		$this->controller = $this->_getController();
-
 	}
 
 /**
