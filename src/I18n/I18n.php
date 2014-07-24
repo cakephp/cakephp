@@ -28,10 +28,28 @@ use Cake\I18n\Formatter\SprintfFormatter;
  */
 class I18n {
 
+/**
+ * The translators collection
+ *
+ * @var \Aura\Int\TranslatorLocator
+ */
 	protected static $_collection;
 
+/**
+ * The name of the default formatter to use for newly created
+ * translators
+ *
+ * @var string
+ */
 	protected static $_defaultFormatter = 'basic';
 
+/**
+ * Returns the translators collection instance. It can be used
+ * for getting specific translators based of their name and locale
+ * or to configure some aspect of future translations that are not yet constructed.
+ *
+ * @return \Aura\Intl\TranslatorLocator The translators collection.
+ */
 	public static function translators() {
 		if (static::$_collection !== null) {
 			return static::$_collection;
@@ -52,11 +70,39 @@ class I18n {
 		);
 	}
 
-	public static function translator($package = 'default', $locale = null, callable $loader = null) {
+/**
+ * Returns an instance of a translator that was configured for the name and passed
+ * locale. If no locale is passed the it takes the value returned by the `defaultLocale()` method.
+ *
+ * This method can be used to configure future translators, this is achieved by passing a callable
+ * as the last argument of this function.
+ *
+ * ### Example:
+ *
+ * {{{
+ *  I18n::translator('default', 'fr_FR', function() {
+ *		$package = new \Aura\Intl\Package();
+ *		$package->setMessages([
+ *			'Cake' => 'Gâteau'
+ *		]);
+ *		return $package;
+ *  });
+ *
+ *	$translator = I18n::translator('default', 'fr_FR');
+ *	echo $translator->translate('Cake');
+ * }}}
+ *
+ * @param string $name The domain of the translation messages.
+ * @param string $locale The locale for the translator.
+ * @param callable $loader A callback function or callable class responsible for
+ * constructing a translations package instance.
+ * @return \Aura\Intl\Translator The configured translator.
+ */
+	public static function translator($name = 'default', $locale = null, callable $loader = null) {
 		if ($loader !== null) {
 			$packages = static::translators()->getPackages();
 			$locale = $locale ?: static::defaultLocale();
-			$packages->set($package, $locale, $loader);
+			$packages->set($name, $locale, $loader);
 			return;
 		}
 
@@ -68,9 +114,9 @@ class I18n {
 		}
 
 		try {
-			$translator = $translators->get($package);
+			$translator = $translators->get($name);
 		} catch (LoadException $e) {
-			$translator = static::_fallbackTranslator($package, $locale);
+			$translator = static::_fallbackTranslator($name, $locale);
 		}
 
 		if (isset($currentLocale)) {
@@ -80,6 +126,16 @@ class I18n {
 		return $translator;
 	}
 
+/**
+ * Sets the default locale to use for future translator instances.
+ * This also affects the `intl.default_locale` php setting.
+ *
+ * When called with no arguments it will return the currently configure
+ * defaultLocale as stored in the `intl.default_locale` php setting.
+ *
+ * @param string $locale The name of the locale to set as default.
+ * @return string|null The name of the default locale.
+ */
 	public static function defaultLocale($locale = null) {
 		if (!empty($locale)) {
 			ini_set('intl.default_locale', $locale);
@@ -97,6 +153,16 @@ class I18n {
 		return $current;
 	}
 
+/**
+ * Sets the name of the default messages formatter to use for future
+ * translator instances. By default the `basic` and `sprintf` formatters
+ * are available.
+ *
+ * If called with no arguments, it will return the currently configured value.
+ *
+ * @param string $name The name of the formatter to use.
+ * @return string The name of the formatter.
+ */
 	public static function defaultFormatter($name = null) {
 		if ($name === null) {
 			return static::$_defaultFormatter;
@@ -105,14 +171,28 @@ class I18n {
 		static::$_defaultFormatter = $name;
 	}
 
+/**
+ * Destroys all translator instances and creates a new empty translations
+ * collection.
+ *
+ * @return void
+ */
 	public static function clear() {
 		static::$_collection = null;
 	}
 
-	protected static function _fallbackTranslator($package, $locale) {
+/**
+ * Returns a new translator instance for the given name and locale
+ * based of conventions.
+ *
+ * @param string $name The translation package name.
+ * @param string $locale The locale to create the translator for.
+ * @return \Aura\Intl\Translator
+ */
+	protected static function _fallbackTranslator($name, $locale) {
 		$chain = new ChainMessagesLoader([
-			new MessagesFileLoader($package, $locale, 'mo'),
-			new MessagesFileLoader($package, $locale, 'po')
+			new MessagesFileLoader($name, $locale, 'mo'),
+			new MessagesFileLoader($name, $locale, 'po')
 		]);
 
 		if (static::$_defaultFormatter !== 'basic') {
@@ -124,8 +204,8 @@ class I18n {
 			};
 		}
 
-		static::translator($package, $locale, $chain);
-		return static::translators()->get($package);
+		static::translator($name, $locale, $chain);
+		return static::translators()->get($name);
 	}
 
 }
