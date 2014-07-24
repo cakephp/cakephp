@@ -34,7 +34,8 @@ class SmtpTransport extends AbstractTransport {
 		'username' => null,
 		'password' => null,
 		'client' => null,
-		'tls' => false
+		'tls' => false,
+		'keepAlive' => false
 	];
 
 /**
@@ -64,6 +65,57 @@ class SmtpTransport extends AbstractTransport {
  * @var array
  */
 	protected $_lastResponse = array();
+
+/**
+ * Destructor
+ *
+ * Tries to disconnect to ensure that the connection is being
+ * terminated properly before the socket gets closed.
+ */
+	public function __destruct() {
+		try {
+			$this->disconnect();
+		} catch (\Exception $e) { // avoid fatal error on script termination
+		}
+	}
+
+/**
+ * Connect to the SMTP server.
+ *
+ * This method tries to connect only in case there is no open
+ * connection available already.
+ *
+ * @return void
+ */
+	public function connect() {
+		if (!$this->connected()) {
+			$this->_connect();
+			$this->_auth();
+		}
+	}
+
+/**
+ * Check whether an open connection to the SMTP server is available.
+ *
+ * @return bool
+ */
+	public function connected() {
+		return $this->_socket !== null && $this->_socket->connected;
+	}
+
+/**
+ * Disconnect from the SMTP server.
+ *
+ * This method tries to disconnect only in case there is an open
+ * connection available.
+ *
+ * @return void
+ */
+	public function disconnect() {
+		if ($this->connected()) {
+			$this->_disconnect();
+		}
+	}
 
 /**
  * Returns the response of the last sent SMTP command.
@@ -104,11 +156,19 @@ class SmtpTransport extends AbstractTransport {
 	public function send(Email $email) {
 		$this->_cakeEmail = $email;
 
-		$this->_connect();
-		$this->_auth();
+		if (!$this->connected()) {
+			$this->_connect();
+			$this->_auth();
+		} else {
+			$this->_smtpSend('RSET');
+		}
+
 		$this->_sendRcpt();
 		$this->_sendData();
-		$this->_disconnect();
+
+		if (!$this->_config['keepAlive']) {
+			$this->_disconnect();
+		}
 
 		return $this->_content;
 	}
