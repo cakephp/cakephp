@@ -30,7 +30,7 @@ class I18n {
 
 	protected static $_collection;
 
-	protected static $_defaultLocale = 'en_US';
+	protected static $_defaultLocale;
 
 	protected static $_defaultFormatter = 'basic';
 
@@ -50,14 +50,14 @@ class I18n {
 				},
 			]),
 			new TranslatorFactory,
-			static::$_defaultLocale
+			static::defaultLocale()
 		);
 	}
 
 	public static function translator($package = 'default', $locale = null, callable $loader = null) {
 		if ($loader !== null) {
 			$packages = static::translators()->getPackages();
-			$locale = $locale ?: static::$_defaultLocale;
+			$locale = $locale ?: static::defaultLocale();
 			$packages->set($package, $locale, $loader);
 			return;
 		}
@@ -80,6 +80,27 @@ class I18n {
 		}
 
 		return $translator;
+	}
+
+	public static function defaultLocale($locale = null) {
+		if (!empty($locale)) {
+			ini_set('intl.default_locale', $locale);
+			static::$_defaultLocale = $locale;
+			return;
+		}
+
+		if (static::$_defaultLocale !== null) {
+			return static::$_defaultLocale;
+		}
+
+		$current = ini_get('intl.default_locale');
+
+		if ($current === '') {
+			$current = 'en_US';
+			ini_set('intl.default_locale', $current);
+		}
+
+		return static::$_defaultLocale = $current;
 	}
 
 	public static function defaultFormatter($name = null) {

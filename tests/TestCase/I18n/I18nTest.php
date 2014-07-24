@@ -125,4 +125,16 @@ class I18nTest extends TestCase {
 		);
 	}
 
+/**
+ * Tests the defaultLocale method
+ *
+ * @return void
+ */
+	public function testDefaultLocale() {
+		$this->assertEquals('en_US', I18n::defaultLocale());
+		$this->assertEquals('en_US', ini_get('intl.default_locale'));
+		I18n::defaultLocale('fr_FR');
+		$this->assertEquals('fr_FR', ini_get('intl.default_locale'));
+	}
+
 }
