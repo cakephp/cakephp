@@ -168,7 +168,7 @@ class Comparison extends QueryExpression {
 		}
 
 		if (empty($parts)) {
-			return 'SELECT NULL';
+			return "SELECT CAST(NULL as $type)";
 		}
 
 		return implode(',', $parts);
