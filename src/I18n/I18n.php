@@ -20,8 +20,8 @@ use Aura\Intl\Package;
 use Aura\Intl\PackageLocator;
 use Aura\Intl\TranslatorFactory;
 use Aura\Intl\TranslatorLocator;
-use Cake\I18n\Formatter\SprintfFormatter;
 use Cake\I18n\Formatter\IcuFormatter;
+use Cake\I18n\Formatter\SprintfFormatter;
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -32,26 +32,26 @@ class I18n {
 
 	protected static $_defaultLocale = 'en_US';
 
+	protected static $_defaultFormatter = 'basic';
+
 	public static function translators() {
 		if (static::$_collection !== null) {
 			return static::$_collection;
 		}
 
-		$translators = new TranslatorLocator(
+		return static::$_collection = new TranslatorLocator(
 			new PackageLocator,
 			new FormatterLocator([
-				'basic' => function() {
+				'sprintf' => function() {
 					return new SprintfFormatter;
 				},
-				'icu' => function() {
+				'basic' => function() {
 					return new IcuFormatter;
 				},
 			]),
 			new TranslatorFactory,
 			static::$_defaultLocale
 		);
-
-		return static::$_collection = $translators;
 	}
 
 	public static function translator($package = 'default', $locale = null, callable $loader = null) {
@@ -82,11 +82,33 @@ class I18n {
 		return $translator;
 	}
 
+	public static function defaultFormatter($name = null) {
+		if ($name === null) {
+			return static::$_defaultFormatter;
+		}
+
+		static::$_defaultFormatter = $name;
+	}
+
+	public static function clear() {
+		static::$_collection = null;
+	}
+
 	protected static function _fallbackTranslator($package, $locale) {
 		$chain = new ChainMessagesLoader([
 			new MessagesFileLoader($package, $locale, 'mo'),
 			new MessagesFileLoader($package, $locale, 'po')
 		]);
+
+		if (static::$_defaultFormatter !== 'basic') {
+			$formatter = static::$_defaultFormatter;
+			$chain = function() use ($formatter, $chain) {
+				$package = $chain();
+				$package->setFormatter($formatter);
+				return $package;
+			};
+		}
+
 		static::translator($package, $locale, $chain);
 		return static::translators()->get($package);
 	}

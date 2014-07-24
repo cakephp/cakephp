@@ -26,6 +26,17 @@ use Cake\TestSuite\TestCase;
 class I18nTest extends TestCase {
 
 /**
+ * Tear down method
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		I18n::clear();
+		I18n::defaultFormatter('basic');
+	}
+
+/**
  * Tests that a default translator is created and messages are parsed
  * correclty
  *
@@ -49,16 +60,33 @@ class I18nTest extends TestCase {
 
 /**
  * Tests that plural rules are correctly used for the English language
+ * using the sprintf formatter
  *
  * @return void
  */
 	public function testPluralSelection() {
+		I18n::defaultFormatter('sprintf');
 		$translator = I18n::translator(); // en_US
 		$result = $translator->translate('%d = 0 or > 1', ['_count' => 1]);
 		$this->assertEquals('1 is 1 (po translated)', $result);
 
 		$result = $translator->translate('%d = 0 or > 1', ['_count' => 2]);
 		$this->assertEquals('2 is 2-4 (po translated)', $result);
+	}
+
+/**
+ * Tests that plural rules are correctly used for the English language
+ * using the basic formatter
+ *
+ * @return void
+ */
+	public function testPluralSelectionBasicFormatter() {
+		$translator = I18n::translator('special');
+		$result = $translator->translate('There are {_count} things', ['_count' => 2]);
+		$this->assertEquals('There are 2 things', $result);
+
+		$result = $translator->translate('There are {_count} things', ['_count' => 1]);
+		$this->assertEquals('There is only one', $result);
 	}
 
 }
