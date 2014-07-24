@@ -20,23 +20,64 @@ use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 
 /**
+ * A generic translations package factory that will load translations files
+ * based on the file extension and the package name.
  *
- *
+ * This class is a callable, so it can be used as a package loader argument.
  */
 class MessagesFileLoader {
 
+/**
+ * The package (domain) name.
+ *
+ * @var string
+ */
 	protected $_name;
 
+/**
+ * The locale to load for the given package.
+ *
+ * @var string
+ */
 	protected $_locale;
 
+/**
+ * The extension name.
+ *
+ * @var string
+ */
 	protected $_extension;
 
+/**
+ * Creates a translation file loader. The file to be loaded corresponds to
+ * the following rules:
+ *
+ * - The locale is a folder under the `Locale` directory, a fallback will be
+ *   used if the folder is not found.
+ * - The $name corresponds to the file name to load
+ * - If there is a loaded plugin with the underscored version of $name, the
+ *   translation file will be loaded from such plugin.
+ *
+ * @param string $name The name (domain) of the translations package.
+ * @param string $locale The locale to load, this will be mapped to a folder
+ * in the system.
+ * @param string $extension The file extension to use. This will also be mapped
+ * to a messages parser class.
+ */
 	public function __construct($name, $locale, $extension = 'po') {
 		$this->_name = $name;
 		$this->_locale = $locale;
 		$this->_extension = $extension;
 	}
 
+/**
+ * Loads the translation file and parses it. Returns an instance of a translations
+ * package containing the messages loaded from the file.
+ *
+ * @return Aura\Intl\Package
+ * @throws \RuntimeException if no file parser class could be found for the specified
+ * file extension.
+ */
 	public function __invoke() {
 		$package = new Package;
 		$folder = $this->translationsFolder();
@@ -58,6 +99,13 @@ class MessagesFileLoader {
 		return $package;
 	}
 
+/**
+ * Returns the folder where the file should be looked for according to the locale
+ * and package name.
+ *
+ * @return string|boolean The folder where the file should be looked for or false
+ * if it does not exists.
+ */
 	public function translationsFolder() {
 		$locale = locale_parse($this->_locale) + ['region' => null];
 
