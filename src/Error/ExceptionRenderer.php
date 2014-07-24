@@ -152,7 +152,6 @@ class ExceptionRenderer {
 		if ($exception instanceof Error\Exception && $isDebug) {
 			$this->controller->set($this->error->getAttributes());
 		}
-
 		$this->_outputMessage($template);
 	}
 

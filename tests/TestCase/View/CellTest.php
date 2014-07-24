@@ -81,7 +81,7 @@ class CellTest extends TestCase {
 		$capture = function ($errno, $msg) {
 			restore_error_handler();
 			$this->assertEquals(E_USER_WARNING, $errno);
-			$this->assertContains('Could not render cell - View file', $msg);
+			$this->assertContains('Could not render cell - Cell view file', $msg);
 		};
 		set_error_handler($capture);
 
@@ -134,6 +134,17 @@ class CellTest extends TestCase {
 	}
 
 /**
+ * Tests manual render() invocation with error
+ *
+ * @expectedException \Cake\View\Error\MissingCellViewException
+ * @return void
+ */
+	public function testCellManualRenderError() {
+		$cell = $this->View->cell('Articles');
+		$cell->render('derp');
+	}
+
+/**
  * Test rendering a cell with a theme.
  *
  * @return void
@@ -166,6 +177,17 @@ class CellTest extends TestCase {
 		$cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
 		$cell->template = '../../Element/translate';
 		$this->assertContains('This is a translatable string', "{$cell}");
+	}
+
+/**
+ * Test that plugin cells can render other view templates.
+ *
+ * @return void
+ */
+	public function testPluginCellAlternateTemplateRenderParam() {
+		$cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
+		$result = $cell->render('../../Element/translate');
+		$this->assertContains('This is a translatable string', $result);
 	}
 
 /**

@@ -20,6 +20,8 @@ use Cake\Model\ModelAwareTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Inflector;
+use Cake\View\Error\MissingCellViewException;
+use Cake\View\Error\MissingViewException;
 use Cake\View\ViewVarsTrait;
 
 /**
@@ -132,12 +134,13 @@ abstract class Cell {
  * @param string $template Custom template name to render. If not provided (null), the last
  * value will be used. This value is automatically set by `CellTrait::cell()`.
  * @return void
+ * @throws \Cake\View\Error\MissingCellViewException When a MissingViewException is raised during rendering.
  */
 	public function render($template = null) {
-		if ($template !== null) {
+		if ($template !== null && strpos($template, '/') === false) {
 			$template = Inflector::underscore($template);
 		}
-		if (empty($template)) {
+		if ($template === null) {
 			$template = $this->template;
 		}
 
@@ -146,9 +149,14 @@ abstract class Cell {
 		$this->View->layout = false;
 		$className = explode('\\', get_class($this));
 		$className = array_pop($className);
-		$this->View->subDir = 'Cell' . DS . substr($className, 0, strpos($className, 'Cell'));
+		$name = substr($className, 0, strpos($className, 'Cell'));
+		$this->View->subDir = 'Cell' . DS . $name;
 
-		return $this->View->render($template);
+		try {
+			return $this->View->render($template);
+		} catch (MissingViewException $e) {
+			throw new MissingCellViewException(['file' => $template, 'name' => $name]);
+		}
 	}
 
 /**

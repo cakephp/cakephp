@@ -9,19 +9,19 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         0.10.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Utility\Inflector;
 ?>
-<h2>Missing View</h2>
+<h2>Missing Cell View</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?php printf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)); ?>
+	<?php printf('The view for <em>%sCell</em> was not found.', h(Inflector::camelize($name))); ?>
 </p>
 
 <p>
-	<?php printf('Confirm you have created the file: "%s"', h($file)); ?>
+	<?php printf('Confirm you have created the file: "%s"', h($file . $this->_ext)); ?>
 	in one of the following paths:
 </p>
 <ul>
@@ -31,14 +31,14 @@ use Cake\Utility\Inflector;
 		if (strpos($path, CORE_PATH) !== false) {
 			continue;
 		}
-		echo sprintf('<li>%s%s</li>', h($path), h($file));
+		echo sprintf('<li>%sCell/%s/%s</li>', h($path), h($name), h($file . $this->_ext));
 	endforeach;
 ?>
 </ul>
 
 <p class="notice">
 	<strong>Notice: </strong>
-	<?php printf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_view.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_view.ctp'); ?>
 </p>
 
 <?= $this->element('exception_stack_trace'); ?>
