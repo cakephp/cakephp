@@ -572,8 +572,8 @@ if (!function_exists('__')) {
 			return;
 		}
 
-		$arguments = func_get_args();
-		return I18n::translator()->translate($singular, array_slice($arguments, 1));
+		$arguments = func_num_args() === 2 ? (array)$args : array_slice(func_get_args(), 1);
+		return I18n::translator()->translate($singular, $arguments);
 	}
 
 }
@@ -596,10 +596,10 @@ if (!function_exists('__n')) {
 			return;
 		}
 
-		$arguments = func_get_args();
+		$arguments = func_num_args() === 4 ? (array)$args : array_slice(func_get_args(), 3);
 		return I18n::translator()->translate(
 			$plural,
-			['_count' => $count] + array_slice($arguments, 1)
+			['_count' => $count] + $arguments
 		);
 	}
 
@@ -620,8 +620,8 @@ if (!function_exists('__d')) {
 		if (!$msg) {
 			return;
 		}
-		$arguments = func_get_args();
-		return I18n::translator($domain)->translate($msg, array_slice($arguments, 2));
+		$arguments = func_num_args() === 3 ? (array)$args : array_slice(func_get_args(), 2);
+		return I18n::translator($domain)->translate($msg, $arguments);
 	}
 
 }
@@ -646,10 +646,10 @@ if (!function_exists('__dn')) {
 			return;
 		}
 
-		$arguments = func_get_args();
+		$arguments = func_num_args() === 5 ? (array)$args : array_slice(func_get_args(), 4);
 		return I18n::translator($domain)->translate(
 			$plural,
-			['_count' => $count] + array_slice($arguments, 4)
+			['_count' => $count] + $arguments
 		);
 	}
 

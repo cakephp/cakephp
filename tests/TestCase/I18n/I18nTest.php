@@ -194,11 +194,12 @@ class I18nTest extends TestCase {
 			$package = new Package();
 			$package->setMessages([
 				'Cow' => 'Le moo',
-				'The {0} is tasty' => 'The {0} is delicious'
+				'The {thing} is tasty' => 'The {thing} is delicious'
 			]);
 			return $package;
 		});
-		$this->assertEquals('The fruit is delicious', __d('custom', 'The {0} is tasty', 'fruit'));
+		$result = __d('custom', 'The {thing} is tasty', ['thing' => 'fruit']);
+		$this->assertEquals('The fruit is delicious', $result);
 	}
 
 /**
