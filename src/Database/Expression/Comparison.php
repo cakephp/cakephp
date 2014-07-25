@@ -131,10 +131,17 @@ class Comparison extends QueryExpression {
 			$template = '%s %s (%s)';
 			$type = str_replace('[]', '', $this->_type);
 			$value = $this->_flattenValue($this->_value, $generator, $type);
+
+			// To avoid SQL erros when comparing a field to a list of empty values,
+			// generate a condition that will always evaluate to false
+			if ($value === '') {
+				return ['1 != 1', ''];
+			}
 		} else {
 			$template = '%s %s %s';
 			$value = $this->_bindValue($this->_value, $generator, $this->_type);
 		}
+
 		return [$template, $value];
 	}
 
@@ -165,10 +172,6 @@ class Comparison extends QueryExpression {
 		$parts = [];
 		foreach ($value as $k => $v) {
 			$parts[] = $this->_bindValue($v, $generator, $type);
-		}
-
-		if (empty($parts)) {
-			return "SELECT CAST(NULL as $type)";
 		}
 
 		return implode(',', $parts);
