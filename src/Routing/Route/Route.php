@@ -79,17 +79,6 @@ class Route {
 	protected $_name = null;
 
 /**
- * HTTP header shortcut map. Used for evaluating header-based route expressions.
- *
- * @var array
- */
-	protected $_headerMap = [
-		'type' => 'content_type',
-		'method' => 'request_method',
-		'server' => 'server_name'
-	];
-
-/**
  * List of connected extensions for this route.
  *
  * @var array
@@ -116,6 +105,10 @@ class Route {
 		$this->options = $options;
 		if (isset($this->options['_name'])) {
 			$this->_name = $this->options['_name'];
+		}
+		if (isset($this->defaults['[method]'])) {
+			$this->defaults['_method'] = $this->defaults['[method]'];
+			unset($this->defaults['[method]']);
 		}
 		if (isset($this->options['_ext'])) {
 			$this->_extensions = $this->options['_ext'];
@@ -272,29 +265,14 @@ class Route {
 		if (!preg_match($this->_compiledRoute, urldecode($url), $route)) {
 			return false;
 		}
-		foreach ($this->defaults as $key => $val) {
-			$key = (string)$key;
-			if ($key[0] === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
-				if (isset($this->_headerMap[$header[1]])) {
-					$header = $this->_headerMap[$header[1]];
-				} else {
-					$header = 'http_' . $header[1];
-				}
-				$header = strtoupper($header);
 
-				$val = (array)$val;
-				$h = false;
-
-				foreach ($val as $v) {
-					if ($request->env($header) === $v) {
-						$h = true;
-					}
-				}
-				if (!$h) {
-					return false;
-				}
+		if (isset($this->defaults['_method'])) {
+			$method = $request->env('REQUEST_METHOD');
+			if (!in_array($method, (array)$this->defaults['_method'], true)) {
+				return false;
 			}
 		}
+
 		array_shift($route);
 		$count = count($this->keys);
 		for ($i = 0; $i <= $count; $i++) {
@@ -411,8 +389,8 @@ class Route {
 
 		$hostOptions = array_intersect_key($url, $context);
 
-		// Check for properties that will cause and
-		// absoulte url. Copy the other properties over.
+		// Check for properties that will cause an
+		// absolute url. Copy the other properties over.
 		if (
 			isset($hostOptions['_scheme']) ||
 			isset($hostOptions['_port']) ||
@@ -437,6 +415,12 @@ class Route {
 			$hostOptions['_ext'] = $url['_ext'];
 			unset($url['_ext']);
 		}
+
+		// Check the method first as it is special.
+		if (!$this->_matchMethod($url)) {
+			return false;
+		}
+		unset($url['_method'], $url['[method]'], $defaults['_method']);
 
 		// Missing defaults is a fail.
 		if (array_diff_key($defaults, $url) !== []) {
@@ -488,7 +472,7 @@ class Route {
 			return false;
 		}
 
-		//check patterns for routed params
+		// check patterns for routed params
 		if (!empty($this->options)) {
 			foreach ($this->options as $key => $pattern) {
 				if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#', $url[$key])) {
@@ -498,6 +482,28 @@ class Route {
 		}
 		$url += $hostOptions;
 		return $this->_writeUrl($url, $pass, $query);
+	}
+
+/**
+ * Check whether or not the URL's HTTP method matches.
+ *
+ * @param array $url The array for the URL being generated.
+ * @return bool
+ */
+	protected function _matchMethod($url) {
+		if (empty($this->defaults['_method'])) {
+			return true;
+		}
+		if (isset($url['[method]'])) {
+			$url['_method'] = $url['[method]'];
+		}
+		if (empty($url['_method'])) {
+			return false;
+		}
+		if (!in_array(strtoupper($url['_method']), (array)$this->defaults['_method'])) {
+			return false;
+		}
+		return true;
 	}
 
 /**

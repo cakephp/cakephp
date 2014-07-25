@@ -402,10 +402,11 @@ class Request implements \ArrayAccess {
 	protected function _processFiles($post, $files) {
 		if (is_array($files)) {
 			foreach ($files as $key => $data) {
-				if (!is_numeric($key)) {
-					$this->_processFileData($post, '', $data, $key);
-				} else {
+				if (isset($data['tmp_name']) && is_string($data['tmp_name'])) {
 					$post[$key] = $data;
+				} else {
+					$keyData = isset($post[$key]) ? $post[$key] : [];
+					$post[$key] = $this->_processFileData($keyData, $data);
 				}
 			}
 		}
@@ -414,31 +415,33 @@ class Request implements \ArrayAccess {
 
 /**
  * Recursively walks the FILES array restructuring the data
- * into something sane and useable.
+ * into something sane and usable.
  *
- * @param array &$post The post data having files inserted into
+ * @param array $data The data being built
+ * @param array $post The post data being traversed
  * @param string $path The dot separated path to insert $data into.
- * @param array $data The data to traverse/insert.
- * @param string $field The terminal field name, which is the top level key in $_FILES.
+ * @param string $field The terminal field in the path. This is one of the
+ *   $_FILES properties e.g. name, tmp_name, size, error
  * @return void
  */
-	protected function _processFileData(&$post, $path, $data, $field) {
-		foreach ($data as $key => $fields) {
-			$newPath = $key;
-			if (!empty($path)) {
-				$newPath = $path . '.' . $key;
+	protected function _processFileData($data, $post, $path = '', $field = '') {
+		foreach ($post as $key => $fields) {
+			$newField = $field;
+			$newPath = $path;
+			if ($path === '' && $newField === '') {
+				$newField = $key;
+			}
+			if ($field === $newField) {
+				$newPath .= '.' . $key;
 			}
 			if (is_array($fields)) {
-				$this->_processFileData($post, $newPath, $fields, $field);
+				$data = $this->_processFileData($data, $fields, $newPath, $newField);
 			} else {
-				if (strpos($newPath, '.') === false) {
-					$newPath = $field . '.' . $key;
-				} else {
-					$newPath .= '.' . $field;
-				}
-				$post = Hash::insert($post, $newPath, $fields);
+				$newPath = trim($newPath . '.' . $field, '.');
+				$data = Hash::insert($data, $newPath, $fields);
 			}
 		}
+		return $data;
 	}
 
 /**
@@ -707,10 +710,10 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Get the value of the current requests URL. Will include named parameters and querystring arguments.
+ * Get the value of the current requests URL. Will include querystring arguments.
  *
  * @param bool $base Include the base path, set to false to trim the base path off.
- * @return string the current request URL including query string args.
+ * @return string The current request URL including query string args.
  */
 	public function here($base = true) {
 		$url = $this->here;

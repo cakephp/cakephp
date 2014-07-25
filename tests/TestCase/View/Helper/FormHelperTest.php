@@ -1804,35 +1804,39 @@ class FormHelperTest extends TestCase {
 		TableRegistry::get('Contacts', [
 			'className' => __NAMESPACE__ . '\ContactsTable'
 		]);
+		$one->set('email', '');
 		$one->errors('email', ['invalid email']);
+
+		$two->set('name', '');
 		$two->errors('name', ['This is wrong']);
 		$this->Form->create([$one, $two], ['context' => ['table' => 'Contacts']]);
 
-		$result = $this->Form->input('Contacts.0.email');
+		$result = $this->Form->input('0.email');
 		$expected = array(
 			'div' => array('class' => 'input email error'),
-			'label' => array('for' => 'contacts-0-email'),
+			'label' => array('for' => '0-email'),
 			'Email',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contacts[0][email]', 'id' => 'contacts-0-email',
-				'class' => 'form-error', 'maxlength' => 255
+				'type' => 'email', 'name' => '0[email]', 'id' => '0-email',
+				'class' => 'form-error', 'maxlength' => 255, 'value' => '',
 			),
 			array('div' => array('class' => 'error-message')),
 			'invalid email',
 			'/div',
 			'/div'
 		);
+		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contacts.1.name');
+		$result = $this->Form->input('1.name');
 		$expected = array(
 			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'contacts-1-name'),
+			'label' => array('for' => '1-name'),
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contacts[1][name]', 'id' => 'contacts-1-name',
-				'class' => 'form-error', 'maxlength' => 255
+				'type' => 'text', 'name' => '1[name]', 'id' => '1-name',
+				'class' => 'form-error', 'maxlength' => 255, 'value' => ''
 			),
 			array('div' => array('class' => 'error-message')),
 			'This is wrong',
@@ -1977,16 +1981,16 @@ class FormHelperTest extends TestCase {
 
 		$entity = new Entity(['phone' => 'Hello & World > weird chars']);
 		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
-		$result = $this->Form->input('Contact.phone');
+		$result = $this->Form->input('phone');
 		$expected = array(
 			'div' => array('class' => 'input tel'),
-			'label' => array('for' => 'contact-phone'),
+			'label' => array('for' => 'phone'),
 			'Phone',
 			'/label',
 			array('input' => array(
-				'type' => 'tel', 'name' => 'Contact[phone]',
+				'type' => 'tel', 'name' => 'phone',
 				'value' => 'Hello &amp; World &gt; weird chars',
-				'id' => 'contact-phone', 'maxlength' => 255
+				'id' => 'phone', 'maxlength' => 255
 			)),
 			'/div'
 		);
@@ -2012,15 +2016,15 @@ class FormHelperTest extends TestCase {
 
 		$entity->errors('field', 'Badness!');
 		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
-		$result = $this->Form->input('Contact.field');
+		$result = $this->Form->input('field');
 		$expected = array(
 			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'contact-field'),
+			'label' => array('for' => 'field'),
 			'Field',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field]',
-				'id' => 'contact-field', 'class' => 'form-error'
+				'type' => 'text', 'name' => 'field',
+				'id' => 'field', 'class' => 'form-error'
 			),
 			array('div' => array('class' => 'error-message')),
 			'Badness!',
@@ -2029,19 +2033,19 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.field', array(
+		$result = $this->Form->input('field', array(
 			'templates' => [
 				'inputContainerError' => '{{content}}{{error}}',
 				'error' => '<span class="error-message">{{content}}</span>'
 			]
 		));
 		$expected = array(
-			'label' => array('for' => 'contact-field'),
+			'label' => array('for' => 'field'),
 			'Field',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field]',
-				'id' => 'contact-field', 'class' => 'form-error'
+				'type' => 'text', 'name' => 'field',
+				'id' => 'field', 'class' => 'form-error'
 			),
 			array('span' => array('class' => 'error-message')),
 			'Badness!',
@@ -2050,7 +2054,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$entity->errors('field', ['minLength']);
-		$result = $this->Form->input('Contact.field', array(
+		$result = $this->Form->input('field', array(
 			'error' => array(
 				'minLength' => 'Le login doit contenir au moins 2 caractères',
 				'maxLength' => 'login too large'
@@ -2058,10 +2062,10 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'contact-field'),
+			'label' => array('for' => 'field'),
 			'Field',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'contact-field', 'class' => 'form-error'),
+			'input' => array('type' => 'text', 'name' => 'field', 'id' => 'field', 'class' => 'form-error'),
 			array('div' => array('class' => 'error-message')),
 			'Le login doit contenir au moins 2 caractères',
 			'/div',
@@ -2070,7 +2074,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$entity->errors('field', ['maxLength']);
-		$result = $this->Form->input('Contact.field', array(
+		$result = $this->Form->input('field', array(
 			'error' => array(
 				'minLength' => 'Le login doit contenir au moins 2 caractères',
 				'maxLength' => 'login too large',
@@ -2078,10 +2082,10 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'contact-field'),
+			'label' => array('for' => 'field'),
 			'Field',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'contact-field', 'class' => 'form-error'),
+			'input' => array('type' => 'text', 'name' => 'field', 'id' => 'field', 'class' => 'form-error'),
 			array('div' => array('class' => 'error-message')),
 			'login too large',
 			'/div',
@@ -2702,13 +2706,13 @@ class FormHelperTest extends TestCase {
 		$entity = new Entity(['balance' => 1]);
 		$this->Form->create($entity, ['context' => ['table' => 'ValidateUsers']]);
 		$this->View->viewVars['balances'] = array(0 => 'nothing', 1 => 'some', 100 => 'a lot');
-		$result = $this->Form->input('ValidateUser.balance');
+		$result = $this->Form->input('balance');
 		$expected = array(
 			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'validateuser-balance'),
+			'label' => array('for' => 'balance'),
 			'Balance',
 			'/label',
-			'select' => array('name' => 'ValidateUser[balance]', 'id' => 'validateuser-balance'),
+			'select' => array('name' => 'balance', 'id' => 'balance'),
 			array('option' => array('value' => '0')),
 			'nothing',
 			'/option',

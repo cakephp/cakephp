@@ -132,12 +132,13 @@ class TestView extends View {
 	}
 
 /**
- * Test only function to return instance scripts.
+ * Setter for extension.
  *
- * @return array Scripts
+ * @param string $ext The extension
+ * @return void
  */
-	public function scripts() {
-		return $this->_scripts;
+	public function ext($ext) {
+		$this->_ext = $ext;
 	}
 
 }
@@ -475,7 +476,8 @@ class ViewTest extends TestCase {
  * @return void
  */
 	public function testGetViewFileNames() {
-		$viewOptions = ['plugin' => null,
+		$viewOptions = [
+			'plugin' => null,
 			'name' => 'Pages',
 			'viewPath' => 'Pages'
 		];
@@ -510,6 +512,26 @@ class ViewTest extends TestCase {
 			'Template' . DS . 'Tests' . DS . 'index.ctp';
 		$result = $View->getViewFileName('TestPlugin.index');
 		$this->assertPathEquals($expected, $result);
+	}
+
+/**
+ * Test that getViewFileName() protects against malicious directory traversal.
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testGetViewFileNameDirectoryTraversal() {
+		$viewOptions = [
+			'plugin' => null,
+			'name' => 'Pages',
+			'viewPath' => 'Pages',
+		];
+		$request = $this->getMock('Cake\Network\Request');
+		$response = $this->getMock('Cake\Network\Response');
+
+		$view = new TestView(null, null, null, $viewOptions);
+		$view->ext('.php');
+		$view->getViewFileName('../../../../bootstrap');
 	}
 
 /**
@@ -566,6 +588,49 @@ class ViewTest extends TestCase {
 			'Template' . DS . 'Layout' . DS . 'default.ctp';
 		$result = $View->getLayoutFileName('default');
 		$this->assertPathEquals($expected, $result);
+	}
+
+/**
+ * Test getting layout filenames for prefix
+ *
+ * @return void
+ */
+	public function testGetLayoutFileNamePrefix() {
+		$View = new TestView();
+
+		// Prefix specific layout
+		$View->request->params['prefix'] = 'FooPrefix';
+		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
+			'FooPrefix' . DS . 'Layout' . DS . 'default.ctp';
+		$result = $View->getLayoutFileName();
+		$this->assertPathEquals($expected, $result);
+
+		// Fallback to app's layout
+		$View->request->params['prefix'] = 'Admin';
+		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
+			'Layout' . DS . 'default.ctp';
+		$result = $View->getLayoutFileName();
+		$this->assertPathEquals($expected, $result);
+	}
+
+/**
+ * Test that getLayoutFileName() protects against malicious directory traversal.
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testGetLayoutFileNameDirectoryTraversal() {
+		$viewOptions = [
+			'plugin' => null,
+			'name' => 'Pages',
+			'viewPath' => 'Pages',
+		];
+		$request = $this->getMock('Cake\Network\Request');
+		$response = $this->getMock('Cake\Network\Response');
+
+		$view = new TestView(null, null, null, $viewOptions);
+		$view->ext('.php');
+		$view->getLayoutFileName('../../../../bootstrap');
 	}
 
 /**
@@ -1023,9 +1088,8 @@ class ViewTest extends TestCase {
 
 		$this->assertNull($View->render(false, 'ajax2'));
 
-		$this->PostsController->helpers = array('Session', 'Cache', 'Html');
+		$this->PostsController->helpers = array('Session', 'Html');
 		$this->PostsController->constructClasses();
-		$this->PostsController->cacheAction = array('index' => 3600);
 		$this->PostsController->request->params['action'] = 'index';
 		Configure::write('Cache.check', true);
 
@@ -1107,72 +1171,6 @@ class ViewTest extends TestCase {
 		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Posts' . DS . 'index.ctp';
 		$result = $View->getViewFileName('../Posts/index');
 		$this->assertPathEquals($expected, $result);
-	}
-
-/**
- * Test renderCache method
- *
- * @return void
- */
-	public function testRenderCache() {
-		$this->skipIf(!is_writable(CACHE . 'views/'), 'CACHE/views dir is not writable, cannot test renderCache.');
-
-		$view = 'test_view';
-		$View = $this->PostsController->createView();
-		$path = CACHE . 'views/view_cache_' . $view;
-
-		$cacheText = '<!--cachetime:' . time() . '-->some cacheText';
-		$f = fopen($path, 'w+');
-		fwrite($f, $cacheText);
-		fclose($f);
-
-		$result = $View->renderCache($path, '+1 second');
-		$this->assertFalse($result);
-		if (file_exists($path)) {
-			unlink($path);
-		}
-
-		$cacheText = '<!--cachetime:' . (time() + 10) . '-->some cacheText';
-		$f = fopen($path, 'w+');
-		fwrite($f, $cacheText);
-		fclose($f);
-		$result = $View->renderCache($path, '+1 second');
-
-		$this->assertRegExp('/^some cacheText/', $result);
-
-		if (file_exists($path)) {
-			unlink($path);
-		}
-	}
-
-/**
- * Test that render() will remove the cake:nocache tags when only the cachehelper is present.
- *
- * @return void
- */
-	public function testRenderStrippingNoCacheTagsOnlyCacheHelper() {
-		Configure::write('Cache.check', false);
-		$View = $this->PostsController->createView();
-		$View->set(array('superman' => 'clark', 'variable' => 'var'));
-		$View->helpers = array('Html', 'Form', 'Cache');
-		$View->layout = 'cache_layout';
-		$result = $View->render('index');
-		$this->assertNotRegExp('/cake:nocache/', $result);
-	}
-
-/**
- * Test that render() will remove the cake:nocache tags when only the Cache.check is true.
- *
- * @return void
- */
-	public function testRenderStrippingNoCacheTagsOnlyCacheCheck() {
-		Configure::write('Cache.check', true);
-		$View = $this->PostsController->createView();
-		$View->set(array('superman' => 'clark', 'variable' => 'var'));
-		$View->helpers = array('Html', 'Form');
-		$View->layout = 'cache_layout';
-		$result = $View->render('index');
-		$this->assertNotRegExp('/cake:nocache/', $result);
 	}
 
 /**

@@ -834,12 +834,12 @@ class Response {
 		if ($public) {
 			$this->_cacheDirectives['public'] = true;
 			unset($this->_cacheDirectives['private']);
-			$this->sharedMaxAge($time);
 		} else {
 			$this->_cacheDirectives['private'] = true;
 			unset($this->_cacheDirectives['public']);
-			$this->maxAge($time);
 		}
+
+		$this->maxAge($time);
 		if (!$time) {
 			$this->_setCacheControl();
 		}

@@ -5,7 +5,6 @@ clone_folder: c:\projects\cakephp
 branches:
   only:
     - 3.0
-    - 3.0-windows-ci
 environment:
   global:
     db_class: 'Cake\Database\Driver\SqlServer'

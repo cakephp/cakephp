@@ -259,235 +259,102 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * Test parsing of FILES array
+ * Test processing files with `file` field names.
  *
  * @return void
  */
-	public function testFilesParsing() {
-		$files = array(
-			'name' => array(
-				'File' => array(
-						array('data' => 'cake_sqlserver_patch.patch'),
-						array('data' => 'controller.diff'),
-						array('data' => ''),
-						array('data' => ''),
-					),
-					'Post' => array('attachment' => 'jquery-1.2.1.js'),
-				),
-			'type' => array(
-				'File' => array(
-					array('data' => ''),
-					array('data' => ''),
-					array('data' => ''),
-					array('data' => ''),
-				),
-				'Post' => array('attachment' => 'application/x-javascript'),
-			),
-			'tmp_name' => array(
-				'File' => array(
-					array('data' => '/private/var/tmp/phpy05Ywj'),
-					array('data' => '/private/var/tmp/php7MBztY'),
-					array('data' => ''),
-					array('data' => ''),
-				),
-				'Post' => array('attachment' => '/private/var/tmp/phpEwlrIo'),
-			),
-			'error' => array(
-				'File' => array(
-					array('data' => 0),
-					array('data' => 0),
-					array('data' => 4),
-					array('data' => 4)
-				),
-				'Post' => array('attachment' => 0)
-			),
-			'size' => array(
-				'File' => array(
-					array('data' => 6271),
-					array('data' => 350),
-					array('data' => 0),
-					array('data' => 0),
-				),
-				'Post' => array('attachment' => 80469)
-			),
-		);
-
-		$request = new Request(compact('files'));
-		$expected = array(
-			'File' => array(
-				array(
-					'data' => array(
-						'name' => 'cake_sqlserver_patch.patch',
-						'type' => '',
-						'tmp_name' => '/private/var/tmp/phpy05Ywj',
-						'error' => 0,
-						'size' => 6271,
-					)
-				),
-				array(
-					'data' => array(
-						'name' => 'controller.diff',
-						'type' => '',
-						'tmp_name' => '/private/var/tmp/php7MBztY',
-						'error' => 0,
-						'size' => 350,
-					)
-				),
-				array(
-					'data' => array(
-						'name' => '',
-						'type' => '',
-						'tmp_name' => '',
-						'error' => 4,
-						'size' => 0,
-					)
-				),
-				array(
-					'data' => array(
-						'name' => '',
-						'type' => '',
-						'tmp_name' => '',
-						'error' => 4,
-						'size' => 0,
-					)
-				),
-			),
-			'Post' => array(
-				'attachment' => array(
-					'name' => 'jquery-1.2.1.js',
-					'type' => 'application/x-javascript',
-					'tmp_name' => '/private/var/tmp/phpEwlrIo',
+	public function testProcessFilesNested() {
+		$files = [
+			'image_main' => [
+				'name' => ['file' => 'born on.txt'],
+				'type' => ['file' => 'text/plain'],
+				'tmp_name' => ['file' => '/private/var/tmp/php'],
+				'error' => ['file' => 0],
+				'size' => ['file' => 17178]
+			],
+			0 => [
+				'name' => ['image' => 'scratch.text'],
+				'type' => ['image' => 'text/plain'],
+				'tmp_name' => ['image' => '/private/var/tmp/phpChIZPb'],
+				'error' => ['image' => 0],
+				'size' => ['image' => 1490]
+			],
+			'pictures' => [
+				'name' => [
+					0 => ['file' => 'a-file.png'],
+					1 => ['file' => 'a-moose.png']
+				],
+				'type' => [
+					0 => ['file' => 'image/png'],
+					1 => ['file' => 'image/jpg']
+				],
+				'tmp_name' => [
+					0 => ['file' => '/tmp/file123'],
+					1 => ['file' => '/tmp/file234']
+				],
+				'error' => [
+					0 => ['file' => '0'],
+					1 => ['file' => '0']
+				],
+				'size' => [
+					0 => ['file' => 17188],
+					1 => ['file' => 2010]
+				],
+			]
+		];
+		$post = [
+			'pictures' => [
+				0 => ['name' => 'A cat'],
+				1 => ['name' => 'A moose']
+			],
+			0 => [
+				'name' => 'A dog'
+			]
+		];
+		$request = new Request(compact('files', 'post'));
+		$expected = [
+			'image_main' => [
+				'file' => [
+					'name' => 'born on.txt',
+					'type' => 'text/plain',
+					'tmp_name' => '/private/var/tmp/php',
 					'error' => 0,
-					'size' => 80469,
-				)
-			)
-		);
-		$this->assertEquals($expected, $request->data);
-
-		$files = array(
-			'name' => array(
-				'Document' => array(
-					1 => array(
-						'birth_cert' => 'born on.txt',
-						'passport' => 'passport.txt',
-						'drivers_license' => 'ugly pic.jpg'
-					),
-					2 => array(
-						'birth_cert' => 'aunt betty.txt',
-						'passport' => 'betty-passport.txt',
-						'drivers_license' => 'betty-photo.jpg'
-					),
-				),
-			),
-			'type' => array(
-				'Document' => array(
-					1 => array(
-						'birth_cert' => 'application/octet-stream',
-						'passport' => 'application/octet-stream',
-						'drivers_license' => 'application/octet-stream',
-					),
-					2 => array(
-						'birth_cert' => 'application/octet-stream',
-						'passport' => 'application/octet-stream',
-						'drivers_license' => 'application/octet-stream',
-					)
-				)
-			),
-			'tmp_name' => array(
-				'Document' => array(
-					1 => array(
-						'birth_cert' => '/private/var/tmp/phpbsUWfH',
-						'passport' => '/private/var/tmp/php7f5zLt',
-						'drivers_license' => '/private/var/tmp/phpMXpZgT',
-					),
-					2 => array(
-						'birth_cert' => '/private/var/tmp/php5kHZt0',
-						'passport' => '/private/var/tmp/phpnYkOuM',
-						'drivers_license' => '/private/var/tmp/php9Rq0P3',
-					)
-				)
-			),
-			'error' => array(
-				'Document' => array(
-					1 => array(
-						'birth_cert' => 0,
-						'passport' => 0,
-						'drivers_license' => 0,
-					),
-					2 => array(
-						'birth_cert' => 0,
-						'passport' => 0,
-						'drivers_license' => 0,
-					)
-				)
-			),
-			'size' => array(
-				'Document' => array(
-					1 => array(
-						'birth_cert' => 123,
-						'passport' => 458,
-						'drivers_license' => 875,
-					),
-					2 => array(
-						'birth_cert' => 876,
-						'passport' => 976,
-						'drivers_license' => 9783,
-					)
-				)
-			)
-		);
-
-		$request = new Request(compact('files'));
-		$expected = array(
-			'Document' => array(
-				1 => array(
-					'birth_cert' => array(
-						'name' => 'born on.txt',
-						'tmp_name' => '/private/var/tmp/phpbsUWfH',
-						'error' => 0,
-						'size' => 123,
-						'type' => 'application/octet-stream',
-					),
-					'passport' => array(
-						'name' => 'passport.txt',
-						'tmp_name' => '/private/var/tmp/php7f5zLt',
-						'error' => 0,
-						'size' => 458,
-						'type' => 'application/octet-stream',
-					),
-					'drivers_license' => array(
-						'name' => 'ugly pic.jpg',
-						'tmp_name' => '/private/var/tmp/phpMXpZgT',
-						'error' => 0,
-						'size' => 875,
-						'type' => 'application/octet-stream',
-					),
-				),
-				2 => array(
-					'birth_cert' => array(
-						'name' => 'aunt betty.txt',
-						'tmp_name' => '/private/var/tmp/php5kHZt0',
-						'error' => 0,
-						'size' => 876,
-						'type' => 'application/octet-stream',
-					),
-					'passport' => array(
-						'name' => 'betty-passport.txt',
-						'tmp_name' => '/private/var/tmp/phpnYkOuM',
-						'error' => 0,
-						'size' => 976,
-						'type' => 'application/octet-stream',
-					),
-					'drivers_license' => array(
-						'name' => 'betty-photo.jpg',
-						'tmp_name' => '/private/var/tmp/php9Rq0P3',
-						'error' => 0,
-						'size' => 9783,
-						'type' => 'application/octet-stream',
-					),
-				),
-			)
-		);
+					'size' => 17178,
+				]
+			],
+			'pictures' => [
+				0 => [
+					'name' => 'A cat',
+					'file' => [
+						'name' => 'a-file.png',
+						'type' => 'image/png',
+						'tmp_name' => '/tmp/file123',
+						'error' => '0',
+						'size' => 17188,
+					]
+				],
+				1 => [
+					'name' => 'A moose',
+					'file' => [
+						'name' => 'a-moose.png',
+						'type' => 'image/jpg',
+						'tmp_name' => '/tmp/file234',
+						'error' => '0',
+						'size' => 2010,
+					]
+				]
+			],
+			0 => [
+				'name' => 'A dog',
+				'image' => [
+					'name' => 'scratch.text',
+					'type' => 'text/plain',
+					'tmp_name' => '/private/var/tmp/phpChIZPb',
+					'error' => 0,
+					'size' => 1490
+				]
+			]
+		];
 		$this->assertEquals($expected, $request->data);
 	}
 

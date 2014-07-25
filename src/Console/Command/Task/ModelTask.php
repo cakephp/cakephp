@@ -224,20 +224,30 @@ class ModelTask extends BakeTask {
 		$primary = (array)$schema->primaryKey();
 		foreach ($schema->columns() as $fieldName) {
 			$offset = strpos($fieldName, '_id');
+			$assoc = false;
 			if (!in_array($fieldName, $primary) && $fieldName !== 'parent_id' && $offset !== false) {
 				$tmpModelName = $this->_modelNameFromKey($fieldName);
-				$associations['belongsTo'][] = [
+				$assoc = [
 					'alias' => $tmpModelName,
 					'foreignKey' => $fieldName
 				];
 			} elseif ($fieldName === 'parent_id') {
 				$className = ($this->plugin) ? $this->plugin . '.' . $model->alias() : $model->alias();
-				$associations['belongsTo'][] = [
+				$assoc = [
 					'alias' => 'Parent' . $model->alias(),
 					'className' => $className,
 					'foreignKey' => $fieldName
 				];
 			}
+
+			if ($assoc === false) {
+				continue;
+			}
+
+			if ($this->plugin && empty($assoc['className'])) {
+				$assoc['className'] = $this->plugin . '.' . $assoc['alias'];
+			}
+			$associations['belongsTo'][] = $assoc;
 		}
 		return $associations;
 	}
@@ -281,6 +291,9 @@ class ModelTask extends BakeTask {
 						'foreignKey' => $fieldName
 					];
 				}
+				if ($assoc && $this->plugin && empty($assoc['className'])) {
+					$assoc['className'] = $this->plugin . '.' . $assoc['alias'];
+				}
 				if ($assoc) {
 					$associations['hasMany'][] = $assoc;
 				}
@@ -314,12 +327,16 @@ class ModelTask extends BakeTask {
 			}
 			if ($assocTable && in_array($assocTable, $tables)) {
 				$habtmName = $this->_modelName($assocTable);
-				$associations['belongsToMany'][] = [
+				$assoc = [
 					'alias' => $habtmName,
 					'foreignKey' => $foreignKey,
 					'targetForeignKey' => $this->_modelKey($habtmName),
 					'joinTable' => $otherTable
 				];
+				if ($assoc && $this->plugin) {
+					$assoc['className'] = $this->plugin . '.' . $assoc['alias'];
+				}
+				$associations['belongsToMany'][] = $assoc;
 			}
 		}
 		return $associations;
@@ -631,7 +648,6 @@ class ModelTask extends BakeTask {
 		$filename = $path . 'Table' . DS . $name . 'Table.php';
 		$this->out("\n" . __d('cake_console', 'Baking table class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
-		TableRegistry::clear();
 		return $out;
 	}
 

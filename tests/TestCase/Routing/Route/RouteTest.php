@@ -643,7 +643,7 @@ class RouteTest extends TestCase {
  */
 	public function testParseWithHttpHeaderConditions() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$route = new Route('/sample', ['controller' => 'posts', 'action' => 'index', '[method]' => 'POST']);
+		$route = new Route('/sample', ['controller' => 'posts', 'action' => 'index', '_method' => 'POST']);
 		$this->assertFalse($route->parse('/sample'));
 
 		$_SERVER['REQUEST_METHOD'] = 'POST';
@@ -651,7 +651,7 @@ class RouteTest extends TestCase {
 			'controller' => 'posts',
 			'action' => 'index',
 			'pass' => [],
-			'[method]' => 'POST',
+			'_method' => 'POST',
 		];
 		$this->assertEquals($expected, $route->parse('/sample'));
 	}
@@ -666,7 +666,7 @@ class RouteTest extends TestCase {
 		$route = new Route('/sample', [
 			'controller' => 'posts',
 			'action' => 'index',
-			'[method]' => ['PUT', 'POST']
+			'_method' => ['PUT', 'POST']
 		]);
 		$this->assertFalse($route->parse('/sample'));
 
@@ -675,41 +675,75 @@ class RouteTest extends TestCase {
 			'controller' => 'posts',
 			'action' => 'index',
 			'pass' => [],
-			'[method]' => ['PUT', 'POST'],
+			'_method' => ['PUT', 'POST'],
 		];
 		$this->assertEquals($expected, $route->parse('/sample'));
 	}
 
 /**
- * Test that the [type] condition works.
+ * test that http header conditions can work with URL generation
  *
  * @return void
  */
-	public function testParseWithContentTypeCondition() {
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		unset($_SERVER['CONTENT_TYPE']);
+	public function testMatchWithMultipleHttpMethodConditions() {
 		$route = new Route('/sample', [
 			'controller' => 'posts',
 			'action' => 'index',
-			'[method]' => 'POST',
-			'[type]' => 'application/xml'
+			'_method' => ['PUT', 'POST']
 		]);
-		$this->assertFalse($route->parse('/sample'), 'No content type set.');
-
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$_SERVER['CONTENT_TYPE'] = 'application/json';
-		$this->assertFalse($route->parse('/sample'), 'Wrong content type set.');
-
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$_SERVER['CONTENT_TYPE'] = 'application/xml';
-		$expected = [
+		$url = [
 			'controller' => 'posts',
 			'action' => 'index',
-			'pass' => [],
-			'[method]' => 'POST',
-			'[type]' => 'application/xml',
 		];
-		$this->assertEquals($expected, $route->parse('/sample'));
+		$this->assertFalse($route->match($url));
+
+		$url = [
+			'controller' => 'posts',
+			'action' => 'index',
+			'_method' => 'GET',
+		];
+		$this->assertFalse($route->match($url));
+
+		$url = [
+			'controller' => 'posts',
+			'action' => 'index',
+			'_method' => 'PUT',
+		];
+		$this->assertEquals('/sample', $route->match($url));
+
+		$url = [
+			'controller' => 'posts',
+			'action' => 'index',
+			'_method' => 'POST',
+		];
+		$this->assertEquals('/sample', $route->match($url));
+	}
+
+/**
+ * Check [method] compatibility.
+ *
+ * @return void
+ */
+	public function testMethodCompatibility() {
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$route = new Route('/sample', [
+			'controller' => 'Articles',
+			'action' => 'index',
+			'[method]' => 'POST',
+		]);
+		$url = [
+			'controller' => 'Articles',
+			'action' => 'index',
+			'_method' => 'POST',
+		];
+		$this->assertEquals('/sample', $route->match($url));
+
+		$url = [
+			'controller' => 'Articles',
+			'action' => 'index',
+			'[method]' => 'POST',
+		];
+		$this->assertEquals('/sample', $route->match($url));
 	}
 
 /**

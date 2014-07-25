@@ -751,7 +751,7 @@ class ResponseTest extends TestCase {
 		$response = new Response;
 		$response->sharable(true, 3600);
 		$headers = $response->header();
-		$this->assertEquals('public, s-maxage=3600', $headers['Cache-Control']);
+		$this->assertEquals('public, max-age=3600', $headers['Cache-Control']);
 
 		$response = new Response;
 		$response->sharable(false, 3600);

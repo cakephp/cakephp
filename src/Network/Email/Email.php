@@ -335,7 +335,7 @@ class Email {
  *
  * @var string
  */
-	protected $_emailPattern = '/^((?:[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui';
+	protected $_emailPattern = '/^((?:[\p{L}0-9\.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui';
 
 /**
  * The class name used for email configuration.
@@ -1224,25 +1224,42 @@ class Email {
 
 		$this->_message = $this->_render($this->_wrap($content));
 
-		$contents = $this->transport()->send($this);
-		if (!empty($this->_profile['log'])) {
-			$config = [
-				'level' => LOG_DEBUG,
-				'scope' => 'email'
-			];
-			if ($this->_profile['log'] !== true) {
-				if (!is_array($this->_profile['log'])) {
-					$this->_profile['log'] = ['level' => $this->_profile['log']];
-				}
-				$config = $this->_profile['log'] + $config;
-			}
-			Log::write(
-				$config['level'],
-				PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message'],
-				$config['scope']
-			);
+		$transport = $this->transport();
+		if (!$transport) {
+			$msg = 'Cannot send email, transport was not defined. Did you call transport() or define ' .
+				' a transport in the set profile?';
+			throw new Error\SocketException($msg);
 		}
+		$contents = $transport->send($this);
+		$this->_logDelivery($contents);
 		return $contents;
+	}
+
+/**
+ * Log the email message delivery.
+ *
+ * @param array $contents The content with 'headers' and 'message' keys.
+ * @return void
+ */
+	protected function _logDelivery($contents) {
+		if (empty($this->_profile['log'])) {
+			return;
+		}
+		$config = [
+			'level' => LOG_DEBUG,
+			'scope' => 'email'
+		];
+		if ($this->_profile['log'] !== true) {
+			if (!is_array($this->_profile['log'])) {
+				$this->_profile['log'] = ['level' => $this->_profile['log']];
+			}
+			$config = $this->_profile['log'] + $config;
+		}
+		Log::write(
+			$config['level'],
+			PHP_EOL . $contents['headers'] . PHP_EOL . $contents['message'],
+			$config['scope']
+		);
 	}
 
 /**

@@ -700,7 +700,10 @@ SQL;
 				'null' => false,
 				'comment' => 'The title'
 			])
-			->addColumn('body', ['type' => 'text'])
+			->addColumn('body', [
+				'type' => 'text',
+				'comment' => ''
+			])
 			->addColumn('created', 'datetime')
 			->addConstraint('primary', [
 				'type' => 'primary',
@@ -840,6 +843,18 @@ SQL;
 		$result = $table->truncateSql($connection);
 		$this->assertCount(1, $result);
 		$this->assertEquals('TRUNCATE TABLE `articles`', $result[0]);
+	}
+
+/**
+ * Test that constructing a schema dialect connects the driver.
+ *
+ * @return void
+ */
+	public function testConstructConnectsDriver() {
+		$driver = $this->getMock('Cake\Database\Driver');
+		$driver->expects($this->once())
+			->method('connect');
+		$schema = new MysqlSchema($driver);
 	}
 
 /**

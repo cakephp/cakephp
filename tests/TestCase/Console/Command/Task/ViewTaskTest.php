@@ -87,7 +87,9 @@ class ViewTaskTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.article', 'core.post', 'core.comment', 'core.articles_tag', 'core.tag');
+	public $fixtures = array(
+		'core.article', 'core.post', 'core.comment',
+		'core.articles_tag', 'core.tag', 'core.test_plugin_comment');
 
 /**
  * setUp method
@@ -160,7 +162,6 @@ class ViewTaskTest extends TestCase {
 	public function testControllerVariations($name) {
 		$this->Task->controller($name);
 		$this->assertEquals('ViewTaskComments', $this->Task->controllerName);
-		$this->assertEquals('ViewTaskComments', $this->Task->tableName);
 	}
 
 /**
@@ -172,7 +173,6 @@ class ViewTaskTest extends TestCase {
 		$this->Task->params['plugin'] = 'TestPlugin';
 		$this->Task->controller('Tests');
 		$this->assertEquals('Tests', $this->Task->controllerName);
-		$this->assertEquals('Tests', $this->Task->tableName);
 		$this->assertEquals(
 			'TestPlugin\Controller\TestsController',
 			$this->Task->controllerClass
@@ -188,7 +188,6 @@ class ViewTaskTest extends TestCase {
 		$this->Task->params['prefix'] = 'Admin';
 		$this->Task->controller('Posts');
 		$this->assertEquals('Posts', $this->Task->controllerName);
-		$this->assertEquals('Posts', $this->Task->tableName);
 		$this->assertEquals(
 			'TestApp\Controller\Admin\PostsController',
 			$this->Task->controllerClass
@@ -197,7 +196,6 @@ class ViewTaskTest extends TestCase {
 		$this->Task->params['plugin'] = 'TestPlugin';
 		$this->Task->controller('Comments');
 		$this->assertEquals('Comments', $this->Task->controllerName);
-		$this->assertEquals('Comments', $this->Task->tableName);
 		$this->assertEquals(
 			'TestPlugin\Controller\Admin\CommentsController',
 			$this->Task->controllerClass
@@ -212,10 +210,36 @@ class ViewTaskTest extends TestCase {
 	public function testControllerWithOverride() {
 		$this->Task->controller('Comments', 'Posts');
 		$this->assertEquals('Posts', $this->Task->controllerName);
-		$this->assertEquals('Comments', $this->Task->tableName);
 		$this->assertEquals(
 			'TestApp\Controller\PostsController',
 			$this->Task->controllerClass
+		);
+	}
+
+/**
+ * Test the model() method.
+ *
+ * @return void
+ */
+	public function testModel() {
+		$this->Task->model('Articles');
+		$this->assertEquals('Articles', $this->Task->modelName);
+
+		$this->Task->model('NotThere');
+		$this->assertEquals('NotTheres', $this->Task->modelName);
+	}
+
+/**
+ * Test model() method with plugins.
+ *
+ * @return void
+ */
+	public function testModelPlugin() {
+		$this->Task->params['plugin'] = 'TestPlugin';
+		$this->Task->model('TestPluginComments');
+		$this->assertEquals(
+			'TestPlugin.TestPluginComments',
+			$this->Task->modelName
 		);
 	}
 
@@ -332,7 +356,7 @@ class ViewTaskTest extends TestCase {
  */
 	public function testBakeView() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->tableName = 'ViewTaskComments';
+		$this->Task->modelName = 'ViewTaskComments';
 		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->at(0))
@@ -352,7 +376,7 @@ class ViewTaskTest extends TestCase {
  */
 	public function testBakeEdit() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->tableName = 'ViewTaskComments';
+		$this->Task->modelName = 'ViewTaskComments';
 		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->at(0))->method('createFile')
@@ -373,7 +397,7 @@ class ViewTaskTest extends TestCase {
  */
 	public function testBakeIndex() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->tableName = 'ViewTaskComments';
+		$this->Task->modelName = 'ViewTaskComments';
 		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->at(0))->method('createFile')
@@ -385,13 +409,35 @@ class ViewTaskTest extends TestCase {
 	}
 
 /**
+ * test Bake with plugins
+ *
+ * @return void
+ */
+	public function testBakeIndexPlugin() {
+		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->modelName = 'TestPlugin.TestPluginComments';
+		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
+		$table = TableRegistry::get('TestPlugin.TestPluginComments');
+		$table->belongsTo('Articles');
+
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with(
+				$this->_normalizePath(APP . 'Template/ViewTaskComments/index.ctp'),
+				$this->stringContains('$viewTaskComment->article->id')
+			);
+
+		$this->Task->bake('index', true);
+	}
+
+/**
  * test that baking a view with no template doesn't make a file.
  *
  * @return void
  */
 	public function testBakeWithNoTemplate() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->tableName = 'ViewTaskComments';
+		$this->Task->modelName = 'ViewTaskComments';
 		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->never())->method('createFile');
@@ -405,7 +451,7 @@ class ViewTaskTest extends TestCase {
  */
 	public function testBakeActions() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->tableName = 'ViewTaskComments';
+		$this->Task->modelName = 'ViewTaskComments';
 		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->at(0))
@@ -435,7 +481,7 @@ class ViewTaskTest extends TestCase {
  */
 	public function testCustomAction() {
 		$this->Task->controllerName = 'ViewTaskComments';
-		$this->Task->tableName = 'ViewTaskComments';
+		$this->Task->modelName = 'ViewTaskComments';
 		$this->Task->controllerClass = __NAMESPACE__ . '\ViewTaskCommentsController';
 
 		$this->Task->expects($this->any())->method('in')

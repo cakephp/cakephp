@@ -47,14 +47,13 @@ class RouteBuilder {
  *
  * @var array
  */
-	protected static $_resourceMap = array(
-		array('action' => 'index', 'method' => 'GET', 'id' => false),
-		array('action' => 'view', 'method' => 'GET', 'id' => true),
-		array('action' => 'add', 'method' => 'POST', 'id' => false),
-		array('action' => 'edit', 'method' => 'PUT', 'id' => true),
-		array('action' => 'delete', 'method' => 'DELETE', 'id' => true),
-		array('action' => 'edit', 'method' => 'POST', 'id' => true)
-	);
+	protected static $_resourceMap = [
+		'index' => ['action' => 'index', 'method' => 'GET', 'path' => ''],
+		'create' => ['action' => 'add', 'method' => 'POST', 'path' => ''],
+		'view' => ['action' => 'view', 'method' => 'GET', 'path' => ':id'],
+		'update' => ['action' => 'edit', 'method' => ['PUT', 'PATCH'], 'path' => ':id'],
+		'delete' => ['action' => 'delete', 'method' => 'DELETE', 'path' => ':id'],
+	];
 
 /**
  * The extensions that should be set into the routes connected.
@@ -187,6 +186,8 @@ class RouteBuilder {
  *
  * - 'id' - The regular expression fragment to use when matching IDs. By default, matches
  *    integer values and UUIDs.
+ * - 'only' - Only connect the specific list of actions.
+ * - 'actions' - Override the method names used for connecting actions.
  *
  * @param string|array $name A controller name or array of controller names (i.e. "Posts" or "ListItems")
  * @param array $options Options to use when generating REST routes
@@ -201,10 +202,12 @@ class RouteBuilder {
 		}
 		$options += array(
 			'connectOptions' => [],
-			'id' => static::ID . '|' . static::UUID
+			'id' => static::ID . '|' . static::UUID,
+			'only' => ['index', 'update', 'create', 'view', 'delete'],
+			'actions' => [],
 		);
+		$options['only'] = (array)$options['only'];
 		$connectOptions = $options['connectOptions'];
-		unset($options['connectOptions']);
 
 		$urlName = Inflector::underscore($name);
 
@@ -213,13 +216,21 @@ class RouteBuilder {
 			$ext = $options['_ext'];
 		}
 
-		foreach (static::$_resourceMap as $params) {
-			$id = $params['id'] ? ':id' : '';
-			$url = '/' . implode('/', array_filter(array($urlName, $id)));
+		foreach (static::$_resourceMap as $method => $params) {
+			if (!in_array($method, $options['only'], true)) {
+				continue;
+			}
+
+			$action = $params['action'];
+			if (isset($options['actions'][$method])) {
+				$action = $options['actions'][$method];
+			}
+
+			$url = '/' . implode('/', array_filter([$urlName, $params['path']]));
 			$params = array(
 				'controller' => $name,
-				'action' => $params['action'],
-				'[method]' => $params['method'],
+				'action' => $action,
+				'_method' => $params['method'],
 				'_ext' => $ext
 			);
 			$routeOptions = $connectOptions + [
@@ -283,17 +294,11 @@ class RouteBuilder {
  *   connected route.
  * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
  *   See {@link ScopedRouteCollection::extensions()}.
+ * - `_method` Only match requests with specific HTTP verbs.
  *
- * You can also add additional conditions for matching routes to the $defaults array.
- * The following conditions can be used:
+ * Example of using the `_method` condition:
  *
- * - `[type]` Only match requests for specific content types.
- * - `[method]` Only match requests with specific HTTP verbs.
- * - `[server]` Only match when $_SERVER['SERVER_NAME'] matches the given value.
- *
- * Example of using the `[method]` condition:
- *
- * `$routes->connect('/tasks', array('controller' => 'Tasks', 'action' => 'index', '[method]' => 'GET'));`
+ * `$routes->connect('/tasks', array('controller' => 'Tasks', 'action' => 'index', '_method' => 'GET'));`
  *
  * The above route will only be matched for GET requests. POST requests will fail to match this route.
  *

@@ -40,10 +40,11 @@ trait ViewVarsTrait {
 	public function createView($viewClass = null) {
 		if ($viewClass === null) {
 			$viewClass = $this->viewClass;
-			if ($this->viewClass !== 'View') {
-				list($plugin, $viewClass) = pluginSplit($viewClass, true);
-				$viewClass = App::className($viewClass, 'View', 'View');
-			}
+		}
+		if ($viewClass === 'View') {
+			$viewClass = App::className($viewClass, 'View');
+		} else {
+			$viewClass = App::className($viewClass, 'View', 'View');
 		}
 		$viewOptions = array_intersect_key(get_object_vars($this), array_flip($this->_validViewOptions));
 		return new $viewClass($this->request, $this->response, $this->eventManager(), $viewOptions);

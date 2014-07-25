@@ -1036,7 +1036,7 @@ EXPECTED;
 	}
 
 /**
- * test pluginSplit
+ * Test splitting plugin names.
  *
  * @return void
  */

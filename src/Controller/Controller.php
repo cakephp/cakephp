@@ -27,7 +27,6 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
-use Cake\View\View;
 use Cake\View\ViewVarsTrait;
 
 /**
@@ -188,7 +187,7 @@ class Controller implements EventListener {
  */
 	protected $_validViewOptions = [
 		'viewVars', 'autoLayout', 'helpers', 'view', 'layout', 'name', 'theme', 'layoutPath',
-		'viewPath', 'plugin', 'passedArgs', 'cacheAction'
+		'viewPath', 'plugin', 'passedArgs'
 	];
 
 /**

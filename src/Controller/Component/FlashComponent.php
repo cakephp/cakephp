@@ -40,7 +40,7 @@ class FlashComponent extends Component {
  */
 	protected $_defaultConfig = [
 		'key' => 'flash',
-		'element' => null,
+		'element' => 'default',
 		'params' => []
 	];
 
@@ -63,10 +63,12 @@ class FlashComponent extends Component {
  * ### Options:
  *
  * - `key` The key to set under the session's Flash key
- * - `element` The element used to render the flash message
+ * - `element` The element used to render the flash message. Default to 'default'.
  * - `params` An array of variables to make available when using an element
  *
- * @param string $message Message to be flashed
+ * @param string|\Exception $message Message to be flashed. If an instance
+ *   of \Exception the exception message will be used and code will be set
+ *   in params.
  * @param array $options An array of options
  * @return void
  */
@@ -74,17 +76,16 @@ class FlashComponent extends Component {
 		$opts = array_merge($this->_defaultConfig, $options);
 
 		if ($message instanceof \Exception) {
+			$opts['params'] += ['code' => $message->getCode()];
 			$message = $message->getMessage();
 		}
 
-		if ($opts['element'] !== null) {
-			list($plugin, $element) = pluginSplit($opts['element']);
+		list($plugin, $element) = pluginSplit($opts['element']);
 
-			if ($plugin) {
-				$opts['element'] = $plugin . '.Flash/' . $element;
-			} else {
-				$opts['element'] = 'Flash/' . $element;
-			}
+		if ($plugin) {
+			$opts['element'] = $plugin . '.Flash/' . $element;
+		} else {
+			$opts['element'] = 'Flash/' . $element;
 		}
 
 		$this->_session->write('Flash.' . $opts['key'], [
