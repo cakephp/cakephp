@@ -1369,7 +1369,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @group save
  * @expectedException \RuntimeException
- * @expectedExceptionMessage Cannot insert row in "users", it has no primary key
+ * @expectedExceptionMessage Cannot insert row in "users" table, it has no primary key
  * @return void
  */
 	public function testSaveNewErrorOnNoPrimaryKey() {

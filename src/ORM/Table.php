@@ -1142,9 +1142,11 @@ class Table implements RepositoryInterface, EventListener {
  * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
  * @param array $options the options to use for the save operation
  * @return \Cake\Datasource\EntityInterface|bool
+ * @throws \RuntimeException When an entity is missing some of the primary keys.
  */
 	protected function _processSave($entity, $options) {
-		$primary = $entity->extract((array)$this->primaryKey());
+		$primaryColumns = (array)$this->primaryKey();
+		$primary = $entity->extract($primaryColumns);
 
 		if ($primary && $entity->isNew()) {
 			$alias = $this->alias();
@@ -1232,7 +1234,7 @@ class Table implements RepositoryInterface, EventListener {
 		$primary = (array)$this->primaryKey();
 		if (empty($primary)) {
 			$msg = sprintf(
-				'Cannot insert row in "%s", it has no primary key.',
+				'Cannot insert row in "%s" table, it has no primary key.',
 				$this->table()
 			);
 			throw new \RuntimeException($msg);
