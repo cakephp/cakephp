@@ -46,7 +46,6 @@ class ChainMessagesLoader {
  *
  * @return \Aura\Intl\Package
  */
-
 	public function __invoke() {
 		foreach ($this->_loaders as $k => $loader) {
 			if (!is_callable($loader)) {
