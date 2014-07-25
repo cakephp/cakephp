@@ -1334,10 +1334,7 @@ class Response {
 		);
 
 		if (strpos($path, '..') !== false) {
-			throw new Error\NotFoundException(__d(
-				'cake_dev',
-				'The requested file contains `..` and will not be read.'
-			));
+			throw new Error\NotFoundException('The requested file contains `..` and will not be read.');
 		}
 
 		if (!is_file($path)) {
