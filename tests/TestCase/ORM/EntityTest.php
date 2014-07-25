@@ -571,9 +571,14 @@ class EntityTest extends TestCase {
 			'title' => 'Foo',
 			'author_id' => 3
 		]);
-		$this->assertNull($entity->isNew());
+		$this->assertTrue($entity->isNew());
+
 		$entity->isNew(true);
 		$this->assertTrue($entity->isNew());
+
+		$entity->isNew('derpy');
+		$this->assertTrue($entity->isNew());
+
 		$entity->isNew(false);
 		$this->assertFalse($entity->isNew());
 	}
@@ -1042,7 +1047,7 @@ class EntityTest extends TestCase {
 		$entity->source('foos');
 		$result = $entity->__debugInfo();
 		$expected = [
-			'new' => null,
+			'new' => true,
 			'accessible' => ['*' => true, 'name' => true],
 			'properties' => ['foo' => 'bar'],
 			'dirty' => ['foo' => true],

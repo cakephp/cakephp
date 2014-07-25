@@ -786,13 +786,13 @@ class BelongsToMany extends Association {
  * @throws \InvalidArgumentException
  */
 	protected function _checkPersistenceStatus($sourceEntity, array $targetEntities) {
-		if ($sourceEntity->isNew() !== false) {
+		if ($sourceEntity->isNew()) {
 			$error = 'Source entity needs to be persisted before proceeding';
 			throw new \InvalidArgumentException($error);
 		}
 
 		foreach ($targetEntities as $entity) {
-			if ($entity->isNew() !== false) {
+			if ($entity->isNew()) {
 				$error = 'Cannot link not persisted entities';
 				throw new \InvalidArgumentException($error);
 			}

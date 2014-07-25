@@ -1369,7 +1369,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @group save
  * @expectedException \RuntimeException
- * @expectedExceptionMessage Cannot insert row in "users", it has no primary key
+ * @expectedExceptionMessage Cannot insert row in "users" table, it has no primary key
  * @return void
  */
 	public function testSaveNewErrorOnNoPrimaryKey() {
@@ -2515,8 +2515,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$this->assertFalse($table->save($entity));
 		$this->assertTrue($entity->isNew());
-		$this->assertNull($entity->articles[0]->isNew());
-		$this->assertNull($entity->articles[1]->isNew());
+		$this->assertTrue($entity->articles[0]->isNew());
+		$this->assertTrue($entity->articles[1]->isNew());
 		$this->assertNull($entity->articles[0]->id);
 		$this->assertNull($entity->articles[1]->id);
 		$this->assertNull($entity->articles[0]->author_id);
@@ -2741,8 +2741,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$this->assertFalse($table->save($entity));
 		$this->assertTrue($entity->isNew());
-		$this->assertNull($entity->tags[0]->isNew());
-		$this->assertNull($entity->tags[1]->isNew());
+		$this->assertTrue($entity->tags[0]->isNew());
+		$this->assertTrue($entity->tags[1]->isNew());
 		$this->assertNull($entity->tags[0]->id);
 		$this->assertNull($entity->tags[1]->id);
 		$this->assertNull($entity->tags[0]->_joinData);
@@ -2817,8 +2817,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$this->assertFalse($table->save($entity));
 		$this->assertTrue($entity->isNew());
-		$this->assertNull($entity->tags[0]->isNew());
-		$this->assertNull($entity->tags[1]->isNew());
+		$this->assertTrue($entity->tags[0]->isNew());
+		$this->assertTrue($entity->tags[1]->isNew());
 		$this->assertNull($entity->tags[0]->id);
 		$this->assertNull($entity->tags[1]->id);
 		$this->assertNull($entity->tags[0]->_joinData);
@@ -3093,7 +3093,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$tags[1]->_joinData = new \Cake\ORM\Entity([
 			'article_id' => 1,
 			'tag_id' => 2
-		]);
+		], $options);
 
 		$table->association('tags')->unlink($article, $tags);
 		$left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
