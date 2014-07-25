@@ -647,7 +647,7 @@ if (!function_exists('__dn')) {
 		}
 
 		$arguments = func_get_args();
-		return I18n::translator()->translate(
+		return I18n::translator($domain)->translate(
 			$plural,
 			['_count' => $count] + array_slice($arguments, 4)
 		);

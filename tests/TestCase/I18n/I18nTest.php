@@ -159,4 +159,67 @@ class I18nTest extends TestCase {
 		$this->assertEquals('Le moo', $translator->translate('Cow'));
 	}
 
+/**
+ * Tests the __() function
+ *
+ * @return void
+ */
+	public function testBasicTranslateFunction() {
+		I18n::defaultFormatter('sprintf');
+		$this->assertEquals('%d is 1 (po translated)', __('%d = 1'));
+		$this->assertEquals('1 is 1 (po translated)', __('%d = 1', 1));
+	}
+
+/**
+ * Tests the __n() function
+ *
+ * @return void
+ */
+	public function testBasicTranslatePluralFunction() {
+		I18n::defaultFormatter('sprintf');
+		$result = __n('singular msg', '%d = 0 or > 1', 1);
+		$this->assertEquals('1 is 1 (po translated)', $result);
+
+		$result = __n('singular msg', '%d = 0 or > 1', 2);
+		$this->assertEquals('2 is 2-4 (po translated)', $result);
+	}
+
+/**
+ * Tests the __d() function
+ *
+ * @return void
+ */
+	public function testBasicDomainFunction() {
+		I18n::translator('custom', 'en_US', function() {
+			$package = new Package();
+			$package->setMessages([
+				'Cow' => 'Le moo',
+				'The {0} is tasty' => 'The {0} is delicious'
+			]);
+			return $package;
+		});
+		$this->assertEquals('The fruit is delicious', __d('custom', 'The {0} is tasty', 'fruit'));
+	}
+
+/**
+ * Tests the __dn() function
+ *
+ * @return void
+ */
+	public function testBasicDomainPluralFunction() {
+		I18n::translator('custom', 'en_US', function() {
+			$package = new Package();
+			$package->setMessages([
+				'Cow' => 'Le Moo',
+				'Cows' => [
+					'Le Moo',
+					'Les Moos'
+				]
+			]);
+			return $package;
+		});
+		$this->assertEquals('Le Moo', __dn('custom', 'Cow', 'Cows', 1));
+		$this->assertEquals('Les Moos', __dn('custom', 'Cow', 'Cows', 2));
+	}
+
 }
