@@ -689,7 +689,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * You can use callable functions to construct complex expressions, functions
  * receive as first argument a new QueryExpression object and this query instance
  * as second argument. Functions must return an expression object, that will be
- * added the list of conditions for the query using th AND operator.
+ * added the list of conditions for the query using the AND operator.
  *
  * {{{
  *	$query
