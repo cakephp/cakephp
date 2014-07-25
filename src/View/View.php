@@ -932,11 +932,9 @@ class View {
 		}
 		$paths = array();
 		$viewPaths = App::path('Template');
-		$corePaths = App::core('Template');
 
 		if (!empty($plugin)) {
-			$count = count($viewPaths);
-			for ($i = 0; $i < $count; $i++) {
+			for ($i = 0, $count = count($viewPaths); $i < $count; $i++) {
 				$paths[] = $viewPaths[$i] . 'Plugin' . DS . $plugin . DS;
 			}
 			$paths = array_merge($paths, App::path('Template', $plugin));
@@ -948,21 +946,17 @@ class View {
 			$themePaths = App::path('Template', $theme);
 
 			if ($plugin) {
-				$count = count($viewPaths);
-				for ($i = 0; $i < $count; $i++) {
-					$themePaths[] = $themePaths[$i] . 'Plugin' . DS . $plugin . DS;
+				for ($i = 0, $count = count($viewPaths); $i < $count; $i++) {
+					array_unshift($themePaths, $themePaths[$i] . 'Plugin' . DS . $plugin . DS);
 				}
 			}
-
 			$paths = array_merge($themePaths, $paths);
 		}
-
-		$paths = array_merge($paths, $corePaths);
+		$paths = array_merge($paths, App::core('Template'));
 
 		if ($plugin !== null) {
 			return $this->_pathsForPlugin[$plugin] = $paths;
 		}
-
 		return $this->_paths = $paths;
 	}
 
