@@ -181,7 +181,7 @@ class I18n {
  * Returns a translated string based on current language and translation files stored in locale folder
  *
  * @param string $singular String to translate
- * @param string $plural Plural string (if any)
+ * @param string|array $pluralOrOptions Plural string (if any) or options
  * @param string $domain Domain The domain of the translation. Domains are often used by plugin translations.
  *    If null, the default domain will be used.
  * @param string $category Category The integer value of the category to use.
@@ -192,9 +192,26 @@ class I18n {
  * @return string translated string.
  * @throws CakeException When '' is provided as a domain.
  */
-	public static function translate($singular, $plural = null, $domain = null, $category = self::LC_MESSAGES,
+	public static function translate($singular, $pluralOrOptions = null, $domain = null, $category = self::LC_MESSAGES,
 		$count = null, $language = null, $context = null
 	) {
+		if (is_array($pluralOrOptions)) {
+			$defaults = array(
+				'plural' => null,
+				'domain' => null,
+				'category' => self::LC_MESSAGES,
+				'count' => null,
+				'language' => null,
+				'context' => null
+			);
+
+			$options = $pluralOrOptions;
+
+			extract(array_merge($defaults, $options));
+		} else {
+			$plural = $pluralOrOptions;
+		}
+
 		$_this = I18n::getInstance();
 
 		if (strpos($singular, "\r\n") !== false) {

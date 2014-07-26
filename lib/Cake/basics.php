@@ -610,7 +610,11 @@ if (!function_exists('__n')) {
 		}
 
 		App::uses('I18n', 'I18n');
-		$translated = I18n::translate($singular, $plural, null, I18n::LC_MESSAGES, $count);
+		$translated = I18n::translate($singular, array(
+			'plural' => $plural,
+			'category' => I18n::LC_MESSAGES,
+			'count' => $count
+		));
 		$arguments = func_get_args();
 		return I18n::insertArgs($translated, array_slice($arguments, 3));
 	}
@@ -633,7 +637,9 @@ if (!function_exists('__d')) {
 			return;
 		}
 		App::uses('I18n', 'I18n');
-		$translated = I18n::translate($msg, null, $domain);
+		$translated = I18n::translate($msg, array(
+			'domain' => $domain
+		));
 		$arguments = func_get_args();
 		return I18n::insertArgs($translated, array_slice($arguments, 2));
 	}
@@ -660,7 +666,12 @@ if (!function_exists('__dn')) {
 			return;
 		}
 		App::uses('I18n', 'I18n');
-		$translated = I18n::translate($singular, $plural, $domain, I18n::LC_MESSAGES, $count);
+		$translated = I18n::translate($singular, array(
+			'plural' => $plural,
+			'domain' => $domain,
+			'category' => I18n::LC_MESSAGES,
+			'count' => $count
+		));
 		$arguments = func_get_args();
 		return I18n::insertArgs($translated, array_slice($arguments, 4));
 	}
@@ -698,7 +709,10 @@ if (!function_exists('__dc')) {
 			return;
 		}
 		App::uses('I18n', 'I18n');
-		$translated = I18n::translate($msg, null, $domain, $category);
+		$translated = I18n::translate($msg, array(
+			'domain' => $domain,
+			'category' => $category
+		));
 		$arguments = func_get_args();
 		return I18n::insertArgs($translated, array_slice($arguments, 3));
 	}
@@ -740,7 +754,12 @@ if (!function_exists('__dcn')) {
 			return;
 		}
 		App::uses('I18n', 'I18n');
-		$translated = I18n::translate($singular, $plural, $domain, $category, $count);
+		$translated = I18n::translate($singular, array(
+			'plural' => $plural,
+			'domain' => $domain,
+			'category' => $category,
+			'count' => $count
+		));
 		$arguments = func_get_args();
 		return I18n::insertArgs($translated, array_slice($arguments, 5));
 	}
@@ -774,7 +793,9 @@ if (!function_exists('__c')) {
 			return;
 		}
 		App::uses('I18n', 'I18n');
-		$translated = I18n::translate($msg, null, null, $category);
+		$translated = I18n::translate($msg, array(
+			'category' => $category
+		));
 		$arguments = func_get_args();
 		return I18n::insertArgs($translated, array_slice($arguments, 2));
 	}
@@ -798,7 +819,9 @@ if (!function_exists('__x')) {
 		}
 
 		App::uses('I18n', 'I18n');
-		$translated = I18n::translate($singular, null, null, null, null, null, $context);
+		$translated = I18n::translate($singular, array(
+			'context' => $context
+		));
 		$arguments = func_get_args();
 		return I18n::insertArgs($translated, array_slice($arguments, 1));
 	}
