@@ -150,7 +150,10 @@ class ErrorHandlerTest extends TestCase {
 
 		$this->_logger->expects($this->once())
 			->method('write')
-			->with('notice', 'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ + 2) . ']');
+			->with(
+				$this->matchesRegularExpression('(notice|debug)'),
+				'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ + 3) . ']'
+			);
 
 		$out .= '';
 	}
@@ -168,11 +171,14 @@ class ErrorHandlerTest extends TestCase {
 
 		$this->_logger->expects($this->once())
 			->method('write')
-			->with('notice', $this->logicalAnd(
-				$this->stringContains('Notice (8): Undefined variable: out in '),
-				$this->stringContains('Trace:'),
-				$this->stringContains(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()')
-			));
+			->with(
+				$this->matchesRegularExpression('(notice|debug)'),
+				$this->logicalAnd(
+					$this->stringContains('Notice (8): Undefined variable: out in '),
+					$this->stringContains('Trace:'),
+					$this->stringContains(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()')
+				)
+			);
 
 		$out .= '';
 	}
