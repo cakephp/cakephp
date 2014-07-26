@@ -92,6 +92,18 @@ class I18n {
  *	echo $translator->translate('Cake');
  * }}}
  *
+ * You can also use the `Cake\I18n\MessagesFileLoader` class to load a specific
+ * file from a folder. For example for loading a `my_translations.po` file from
+ * the `src/Locale/custom` folder, you would do:
+ *
+ * {{{
+ * I18n::translator(
+ *	'default',
+ *	'fr_FR',
+ *	new MessagesFileLoader('my_translations', 'custom', 'po');
+ * );
+ * }}}
+ *
  * @param string $name The domain of the translation messages.
  * @param string $locale The locale for the translator.
  * @param callable $loader A callback function or callable class responsible for
