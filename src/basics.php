@@ -703,9 +703,8 @@ if (!function_exists('__x')) {
 			return;
 		}
 
-		$translated = I18n::translate($singular, null, null, null, null, null, $context);
-		$arguments = func_get_args();
-		return I18n::insertArgs($translated, array_slice($arguments, 1));
+		$arguments = func_num_args() === 2 ? (array)$args : array_slice(func_get_args(), 1);
+		return I18n::translator()->translate($singular, $arguments);
 	}
 
 }
