@@ -53,12 +53,12 @@ class IcuFormatter implements FormatterInterface {
 		}
 
 		$result = $formatter->format($vars);
-        if ($result === false) {
-            throw new Exception\CannotFormat(
-                $formatter->getErrorMessage(),
-                $formatter->getErrorCode()
-            );
-        }
+		if ($result === false) {
+			throw new Exception\CannotFormat(
+				$formatter->getErrorMessage(),
+				$formatter->getErrorCode()
+			);
+		}
 
 		return $result;
 	}
