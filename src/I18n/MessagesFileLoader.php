@@ -18,6 +18,7 @@ use Aura\Intl\Package;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
+use \Locale;
 
 /**
  * A generic translations package factory that will load translations files
@@ -91,7 +92,7 @@ class MessagesFileLoader {
 		$class = App::classname($name, 'I18n\Parser', 'FileParser');
 
 		if (!$class) {
-			throw new \RuntimeException(sprintf('Could not find class %s'), "{$name}FileParser");
+			throw new \RuntimeException(sprintf('Could not find class %s', "{$name}FileParser"));
 		}
 
 		$messages = (new $class)->parse($folder . $this->_name . ".$ext");
@@ -107,7 +108,7 @@ class MessagesFileLoader {
  * if it does not exists.
  */
 	public function translationsFolder() {
-		$locale = locale_parse($this->_locale) + ['region' => null];
+		$locale = Locale::parseLocale($this->_locale) + ['region' => null];
 
 		$folders = [
 			implode('_', [$locale['language'], $locale['region']]),

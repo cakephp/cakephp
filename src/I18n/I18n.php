@@ -72,7 +72,7 @@ class I18n {
 
 /**
  * Returns an instance of a translator that was configured for the name and passed
- * locale. If no locale is passed the it takes the value returned by the `defaultLocale()` method.
+ * locale. If no locale is passed then it takes the value returned by the `defaultLocale()` method.
  *
  * This method can be used to configure future translators, this is achieved by passing a callable
  * as the last argument of this function.
