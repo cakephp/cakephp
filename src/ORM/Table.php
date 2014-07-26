@@ -279,6 +279,7 @@ class Table implements RepositoryInterface, EventListener {
  */
 	public function alias($alias = null) {
 		if ($alias !== null) {
+			$alias = str_replace('.', '_', $alias);
 			$this->_alias = $alias;
 		}
 		if ($this->_alias === null) {
@@ -576,7 +577,7 @@ class Table implements RepositoryInterface, EventListener {
 	public function belongsTo($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new BelongsTo($associated, $options);
-		return $this->_associations->add($association->name(), $association);
+		return $this->_associations->add($association->alias(), $association);
 	}
 
 /**
