@@ -67,7 +67,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExecute() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = TEST_APP . 'TestApp/Template/Pages';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->expects($this->never())->method('err');

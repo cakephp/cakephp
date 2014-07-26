@@ -560,8 +560,6 @@ class TimeTest extends TestCase {
 			[null],
 			[false],
 			[''],
-			['0000-00-00'],
-			['0000-00-00 00:00:00'],
 		];
 	}
 
@@ -573,6 +571,22 @@ class TimeTest extends TestCase {
  */
 	public function testToStringInvalid($value) {
 		$time = new Time($value);
+		$this->assertInternalType('string', (string)$time);
+		$this->assertNotEmpty((string)$time);
+	}
+
+/**
+ * These invalid values are not invalid on windows :(
+ *
+ * @return void
+ */
+	public function testToStringInvalidZeros() {
+		$this->skipIf(DS === '\\', 'All zeros are valid on windows.');
+		$time = new Time('0000-00-00');
+		$this->assertInternalType('string', (string)$time);
+		$this->assertNotEmpty((string)$time);
+
+		$time = new Time('0000-00-00 00:00:00');
 		$this->assertInternalType('string', (string)$time);
 		$this->assertNotEmpty((string)$time);
 	}

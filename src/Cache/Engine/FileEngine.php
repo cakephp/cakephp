@@ -152,6 +152,7 @@ class FileEngine extends CacheEngine {
 		if ($this->_config['lock']) {
 			$this->_File->flock(LOCK_UN);
 		}
+		$this->_File = null;
 
 		return $success;
 	}

@@ -442,7 +442,8 @@ class CacheTest extends TestCase {
 		Cache::enable();
 
 		$this->assertTrue(Cache::write('key_3', 'hello', 'test_cache_disable_1'));
-		$this->assertSame(Cache::read('key_3', 'test_cache_disable_1'), 'hello');
+		$this->assertSame('hello', Cache::read('key_3', 'test_cache_disable_1'));
+		Cache::clear(false, 'test_cache_disable_1');
 
 		Cache::disable();
 		Cache::config('test_cache_disable_2', [
@@ -459,9 +460,11 @@ class CacheTest extends TestCase {
 		$this->assertSame(Cache::read('key_5', 'test_cache_disable_2'), 'hello');
 
 		Cache::disable();
-
 		$this->assertFalse(Cache::write('key_6', 'hello', 'test_cache_disable_2'));
 		$this->assertFalse(Cache::read('key_6', 'test_cache_disable_2'));
+
+		Cache::enable();
+		Cache::clear(false, 'test_cache_disable_2');
 	}
 
 /**
