@@ -89,9 +89,9 @@ class Validation {
 	}
 
 /**
- * Checks that a string length is within s specified range.
+ * Checks that a string length is within specified range.
  * Spaces are included in the character count.
- * Returns true is string matches value min, max, or between min and max,
+ * Returns true if string matches value min, max, or between min and max,
  *
  * @param string $check Value to check for length
  * @param int $min Minimum value in range (inclusive)
@@ -125,7 +125,7 @@ class Validation {
  * Returns true if $check is in the proper credit card format.
  *
  * @param string|array $check credit card number to validate
- * @param string|array $type 'all' may be passed as a sting, defaults to fast which checks format of most major credit cards
+ * @param string|array $type 'all' may be passed as a string, defaults to fast which checks format of most major credit cards
  *    if an array is used only the values of the array are checked.
  *    Example: array('amex', 'bankcard', 'maestro')
  * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
@@ -196,7 +196,7 @@ class Validation {
 /**
  * Used to compare 2 numeric values.
  *
- * @param string|array $check1 if string is passed for a string must also be passed for $check2
+ * @param string|array $check1 if string is passed for, a string must also be passed for $check2
  *    used as an array it must be passed as array('check1' => value, 'operator' => 'value', 'check2' -> value)
  * @param string $operator Can be either a word or operand
  *    is greater >, is less <, greater or equal >=
