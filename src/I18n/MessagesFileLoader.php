@@ -146,7 +146,7 @@ class MessagesFileLoader {
 		}
 
 		foreach ($folders as $folder) {
-			$path = $basePath . $folder . DS . 'LC_MESSAGES' . DS;
+			$path = $basePath . $folder . DS;
 			if (is_dir($path)) {
 				return $path;
 			}
