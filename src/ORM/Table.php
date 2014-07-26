@@ -529,7 +529,7 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * Returns a association objected configured for the specified alias if any
+ * Returns an association object configured for the specified alias if any
  *
  * @param string $name the alias used for the association
  * @return \Cake\ORM\Association
