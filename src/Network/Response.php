@@ -1003,7 +1003,7 @@ class Response {
  * parameters are passed, then an array with the current Vary header
  * value is returned
  *
- * @param string|array $cacheVariances a single Vary string or a array
+ * @param string|array $cacheVariances a single Vary string or an array
  *   containing the list for variances.
  * @return array
  */

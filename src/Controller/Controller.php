@@ -55,7 +55,7 @@ use Cake\View\ViewVarsTrait;
  * CakePHP fires a number of life cycle callbacks during each request. By implementing a method
  * you can receive the related events. The available callbacks are:
  *
- * - `beforeFilter(Event $event)` - Called before the before each action. This is a good place to
+ * - `beforeFilter(Event $event)` - Called before each action. This is a good place to
  *   do general logic that applies to all actions.
  * - `beforeRender(Event $event)` - Called before the view is rendered.
  * - `beforeRedirect(Cake\Event\Event $event $url, Cake\Network\Response $response)` - Called before
