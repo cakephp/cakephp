@@ -191,7 +191,7 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testClear() {
-		$this->_configCache(['duration' => 1]);
+		$this->_configCache(['duration' => 0]);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		Cache::write('serialize_test1', $data, 'file_test');
@@ -201,7 +201,7 @@ class FileEngineTest extends TestCase {
 		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test2'));
 		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test3'));
 
-		sleep(2);
+		sleep(1);
 		$result = Cache::clear(true, 'file_test');
 		$this->assertTrue($result);
 		$this->assertFalse(file_exists(TMP . 'tests/cake_serialize_test1'));
