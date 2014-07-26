@@ -315,12 +315,12 @@ class LogTest extends TestCase {
 		$this->_resetLogConfig();
 		Log::config('shops', array(
 			'engine' => 'File',
-			'types' => array('info', 'notice', 'warning'),
+			'types' => array('info', 'debug', 'warning'),
 			'scopes' => array('transactions', 'orders'),
 			'file' => 'shops',
 		));
 
-		Log::write('info', 'info message', 'transactions');
+		Log::write('debug', 'debug message', 'transactions');
 		$this->assertFileNotExists(LOGS . 'error.log');
 		$this->assertFileExists(LOGS . 'shops.log');
 		$this->assertFileExists(LOGS . 'debug.log');
@@ -400,24 +400,24 @@ class LogTest extends TestCase {
 
 		Log::config('shops', array(
 			'engine' => 'File',
-			'types' => array('info', 'notice', 'warning'),
+			'types' => array('debug', 'notice', 'warning'),
 			'scopes' => array('transactions', 'orders'),
 			'file' => 'shops.log',
 		));
 		Log::config('eggs', array(
 			'engine' => 'File',
-			'types' => array('info', 'notice', 'warning'),
+			'types' => array('debug', 'notice', 'warning'),
 			'scopes' => array('eggs'),
 			'file' => 'eggs.log',
 		));
 
-		Log::write('info', 'transactions message', 'transactions');
+		Log::write('debug', 'transactions message', 'transactions');
 		$this->assertFileNotExists(LOGS . 'eggs.log');
 		$this->assertFileExists(LOGS . 'shops.log');
 
 		$this->_deleteLogs();
 
-		Log::write('info', 'eggs message', 'eggs');
+		Log::write('debug', 'eggs message', 'eggs');
 		$this->assertFileExists(LOGS . 'eggs.log');
 		$this->assertFileNotExists(LOGS . 'shops.log');
 	}

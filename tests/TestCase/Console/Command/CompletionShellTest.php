@@ -113,7 +113,7 @@ class CompletionShellTest extends TestCase {
 		$output = $this->out->output;
 
 		$expected = "TestPlugin.example TestPluginTwo.example TestPluginTwo.welcome bake i18n orm_cache server test sample\n";
-		$this->assertEquals($expected, $output);
+		$this->assertTextEquals($expected, $output);
 	}
 
 /**
@@ -126,7 +126,7 @@ class CompletionShellTest extends TestCase {
 		$output = $this->out->output;
 
 		$expected = "--help -h --verbose -v --quiet -q\n";
-		$this->assertEquals($expected, $output);
+		$this->assertTextEquals($expected, $output);
 	}
 
 /**
@@ -139,7 +139,7 @@ class CompletionShellTest extends TestCase {
 		$output = $this->out->output;
 
 		$expected = "--help -h --verbose -v --quiet -q\n";
-		$this->assertEquals($expected, $output);
+		$this->assertTextEquals($expected, $output);
 	}
 
 /**
@@ -152,7 +152,7 @@ class CompletionShellTest extends TestCase {
 		$output = $this->out->output;
 
 		$expected = "--help -h --verbose -v --quiet -q --connection -c --theme -t\n";
-		$this->assertEquals($expected, $output);
+		$this->assertTextEquals($expected, $output);
 	}
 
 /**
@@ -165,7 +165,7 @@ class CompletionShellTest extends TestCase {
 		$output = $this->out->output;
 
 		$expected = "behavior cell component controller fixture helper model plugin project shell test view widget zerg\n";
-		$this->assertEquals($expected, $output);
+		$this->assertTextEquals($expected, $output);
 	}
 
 /**
@@ -191,7 +191,7 @@ class CompletionShellTest extends TestCase {
 		$output = $this->out->output;
 
 		$expected = "say_hello\n";
-		$this->assertEquals($expected, $output);
+		$this->assertTextEquals($expected, $output);
 	}
 
 /**
@@ -230,7 +230,7 @@ class CompletionShellTest extends TestCase {
 		$output = $this->out->output;
 
 		$expected = "behavior cell component controller fixture helper model plugin project shell test view widget zerg\n";
-		$this->assertEquals($expected, $output);
+		$this->assertTextEquals($expected, $output);
 	}
 
 /**
