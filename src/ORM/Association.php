@@ -266,10 +266,10 @@ abstract class Association {
 
 		if ($table === null) {
 			$config = [];
-			if (!TableRegistry::exists($this->_name)) {
+			if (!TableRegistry::exists($this->_fullName)) {
 				$config = ['className' => $this->_className];
 			}
-			$this->_targetTable = TableRegistry::get($this->_name, $config);
+			$this->_targetTable = TableRegistry::get($this->_fullName, $config);
 		}
 		return $this->_targetTable;
 	}
@@ -359,7 +359,7 @@ abstract class Association {
 			$this->_propertyName = $name;
 		}
 		if ($name === null && !$this->_propertyName) {
-			list($plugin, $name) = pluginSplit($this->_name);
+			$name = $this->_alias;
 			$this->_propertyName = Inflector::underscore($name);
 		}
 		return $this->_propertyName;
