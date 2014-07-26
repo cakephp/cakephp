@@ -278,7 +278,9 @@ class Validation {
 
 /**
  * Date validation, determines if the string passed is a valid date.
- * keys that expect full month, day and year will validate leap years
+ * keys that expect full month, day and year will validate leap years.
+ *
+ * Years are valid from 1800 to 2999.
  *
  * ### Formats:
  *
@@ -304,7 +306,7 @@ class Validation {
 		}
 		$month = '(0[123456789]|10|11|12)';
 		$separator = '([- /.])';
-		$fourDigitYear = '(([1][9][0-9][0-9])|([2][0-9][0-9][0-9]))';
+		$fourDigitYear = '(([1][8-9][0-9][0-9])|([2][0-9][0-9][0-9]))';
 		$twoDigitYear = '([0-9]{2})';
 		$year = '(?:' . $fourDigitYear . '|' . $twoDigitYear . ')';
 
