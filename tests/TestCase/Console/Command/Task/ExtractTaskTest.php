@@ -104,7 +104,7 @@ class ExtractTaskTest extends TestCase {
 		$this->assertContains('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
 		$this->assertContains("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
 
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:33\n';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:31\n';
 		$pattern .= 'msgctxt "mail"/';
 		$this->assertRegExp($pattern, $result);
 
@@ -120,31 +120,6 @@ class ExtractTaskTest extends TestCase {
 		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "You deleted %d message \(domain\)."\nmsgid_plural "You deleted %d messages \(domain\)."/';
 		$this->assertRegExp($pattern, $result);
-	}
-
-/**
- * testExtractCategory method
- *
- * @return void
- */
-	public function testExtractCategory() {
-		$this->Task->interactive = false;
-
-		$this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
-		$this->Task->params['output'] = $this->path . DS;
-		$this->Task->params['extract-core'] = 'no';
-		$this->Task->params['merge'] = 'no';
-		$this->Task->expects($this->never())->method('err');
-		$this->Task->expects($this->any())->method('in')
-			->will($this->returnValue('y'));
-		$this->Task->expects($this->never())->method('_stop');
-
-		$this->Task->main();
-		$this->assertTrue(file_exists($this->path . DS . 'LC_TIME' . DS . 'default.pot'));
-
-		$result = file_get_contents($this->path . DS . 'default.pot');
-
-		$this->assertNotContains('You have a new message (category: LC_TIME).', $result);
 	}
 
 /**
