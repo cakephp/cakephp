@@ -30,15 +30,15 @@ class PoFileParserTest extends TestCase {
  */
 	public function testParse() {
 		$parser = new PoFileParser;
-		$file = APP . 'Locale' . DS . 'rule_1_po' . DS . 'LC_MESSAGES' . DS . 'default.po';
+		$file = APP . 'Locale' . DS . 'rule_1_po' . DS . 'default.po';
 		$messages = $parser->parse($file);
 		$this->assertCount(5, $messages);
 		$expected = [
 			'Plural Rule 1' => 'Plural Rule 1 (translated)',
 			'%d = 1' => '%d = 1 (translated)',
 			'%d = 0 or > 1' => [
-				 0 => '%d = 1 (translated)',
-				 1 => '%d = 0 or > 1 (translated)'
+				0 => '%d = 1 (translated)',
+				1 => '%d = 0 or > 1 (translated)'
 			],
 			'%-5d = 1' => '%-5d = 1 (translated)',
 			'%-5d = 0 or > 1' => [
@@ -59,7 +59,7 @@ class PoFileParserTest extends TestCase {
  */
 	public function testParseMultiLine() {
 		$parser = new PoFileParser;
-		$file = APP . 'Locale' . DS . 'en' . DS . 'LC_MESSAGES' . DS . 'default.po';
+		$file = APP . 'Locale' . DS . 'en' . DS . 'default.po';
 		$messages = $parser->parse($file);
 		$this->assertCount(12, $messages);
 		$this->assertTextEquals("v\nsecond line", $messages["valid\nsecond line"]);
