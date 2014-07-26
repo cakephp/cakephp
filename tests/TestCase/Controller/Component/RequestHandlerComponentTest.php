@@ -605,20 +605,6 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
- * testRequestClientTypes method
- *
- * @return void
- */
-	public function testRequestClientTypes() {
-		$this->RequestHandler->request->env('HTTP_X_PROTOTYPE_VERSION', '1.5');
-		$this->assertEquals('1.5', $this->RequestHandler->getAjaxVersion());
-
-		$this->RequestHandler->request->env('HTTP_X_REQUESTED_WITH', false);
-		$this->RequestHandler->request->env('HTTP_X_PROTOTYPE_VERSION', false);
-		$this->assertFalse($this->RequestHandler->getAjaxVersion());
-	}
-
-/**
  * testRequestContentTypes method
  *
  * @return void
