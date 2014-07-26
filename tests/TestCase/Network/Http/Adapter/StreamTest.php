@@ -13,6 +13,7 @@
  */
 namespace Cake\Test\TestCase\Network\Http\Adapter;
 
+use Cake\Error;
 use Cake\Network\Http\Adapter\Stream;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
@@ -43,7 +44,11 @@ class StreamTest extends TestCase {
 			->header('User-Agent', 'CakePHP TestSuite')
 			->cookie('testing', 'value');
 
-		$responses = $stream->send($request, []);
+		try {
+			$responses = $stream->send($request, []);
+		} catch (Error\Exception $e) {
+			$this->markTestSkipped('Could not connect to localhost, skipping');
+		}
 		$this->assertInstanceOf('Cake\Network\Http\Response', $responses[0]);
 	}
 
