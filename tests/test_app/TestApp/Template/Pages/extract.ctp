@@ -27,7 +27,5 @@ __('Hot features!'
 	. "\n - Active, Friendly Community:"
 		. ' Join us #cakephp on IRC. We\'d love to help you get started');
 
-// Category
-echo __c('You have a new message (category: LC_TIME).', 5);
-
+// Context
 echo __x('mail', 'letter');
