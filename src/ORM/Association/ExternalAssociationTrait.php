@@ -19,7 +19,7 @@ use Cake\Utility\Inflector;
 
 /**
  * Represents a type of association that that needs to be recovered by performing
- * a extra query.
+ * an extra query.
  */
 trait ExternalAssociationTrait {
 

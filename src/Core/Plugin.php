@@ -41,7 +41,7 @@ class Plugin {
 
 /**
  * Loads a plugin and optionally loads bootstrapping,
- * routing files or runs a initialization function.
+ * routing files or runs an initialization function.
  *
  * Plugins only need to be loaded if you want bootstrapping/routes/cli commands to
  * be exposed. If your plugin does not expose any of these features you do not need
