@@ -207,7 +207,8 @@ class I18n {
 			new MessagesFileLoader($name, $locale, 'po')
 		]);
 
-		if (static::$_defaultFormatter !== 'default') {
+		// \Aura\Intl\Package by default uses formatter configured with key "basic".
+		if (static::$_defaultFormatter !== 'basic') {
 			$formatter = static::$_defaultFormatter;
 			$chain = function() use ($formatter, $chain) {
 				$package = $chain();
