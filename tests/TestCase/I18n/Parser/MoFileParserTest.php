@@ -30,7 +30,7 @@ class MoFileParserTest extends TestCase {
  */
 	public function testParse() {
 		$parser = new MoFileParser;
-		$file = APP . 'Locale' . DS . 'rule_1_mo' . DS . 'LC_MESSAGES' . DS . 'core.mo';
+		$file = APP . 'Locale' . DS . 'rule_1_mo' . DS . 'core.mo';
 		$messages = $parser->parse($file);
 		$this->assertCount(3, $messages);
 		$expected = [
@@ -51,7 +51,7 @@ class MoFileParserTest extends TestCase {
  */
 	public function testParse2() {
 		$parser = new MoFileParser;
-		$file = APP . 'Locale' . DS . 'rule_9_mo' . DS . 'LC_MESSAGES' . DS . 'core.mo';
+		$file = APP . 'Locale' . DS . 'rule_9_mo' . DS . 'core.mo';
 		$messages = $parser->parse($file);
 		$this->assertCount(3, $messages);
 		$expected = [
