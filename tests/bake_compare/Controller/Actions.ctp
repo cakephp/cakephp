@@ -14,9 +14,9 @@
 /**
  * View method
  *
- * @throws NotFoundException
  * @param string $id
  * @return void
+ * @throws NotFoundException
  */
 	public function view($id = null) {
 		$bakeArticle = $this->BakeArticles->get($id, [
@@ -48,9 +48,9 @@
 /**
  * Edit method
  *
- * @throws NotFoundException
  * @param string $id
  * @return void
+ * @throws NotFoundException
  */
 	public function edit($id = null) {
 		$bakeArticle = $this->BakeArticles->get($id, [
@@ -73,9 +73,9 @@
 /**
  * Delete method
  *
- * @throws NotFoundException
  * @param string $id
  * @return void
+ * @throws NotFoundException
  */
 	public function delete($id = null) {
 		$bakeArticle = $this->BakeArticles->get($id);

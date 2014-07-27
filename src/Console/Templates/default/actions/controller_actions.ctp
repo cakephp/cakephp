@@ -51,9 +51,9 @@ $allAssociations = array_merge(
 /**
  * View method
  *
- * @throws NotFoundException
  * @param string $id
  * @return void
+ * @throws NotFoundException
  */
 	public function view($id = null) {
 		$<?= $singularName?> = $this-><?= $currentModelName ?>->get($id, [
@@ -94,9 +94,9 @@ $allAssociations = array_merge(
 /**
  * Edit method
  *
- * @throws NotFoundException
  * @param string $id
  * @return void
+ * @throws NotFoundException
  */
 	public function edit($id = null) {
 		$<?= $singularName ?> = $this-><?= $currentModelName ?>->get($id, [
@@ -126,9 +126,9 @@ $allAssociations = array_merge(
 /**
  * Delete method
  *
- * @throws NotFoundException
  * @param string $id
  * @return void
+ * @throws NotFoundException
  */
 	public function delete($id = null) {
 		$<?= $singularName ?> = $this-><?= $currentModelName ?>->get($id);
