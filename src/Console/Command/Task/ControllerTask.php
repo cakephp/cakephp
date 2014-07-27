@@ -70,7 +70,6 @@ class ControllerTask extends BakeTask {
 		foreach ($this->listAll() as $table) {
 			$controller = $this->_controllerName($table);
 			$this->bake($controller);
-			$this->bakeTest($controller);
 			$controllersCreated++;
 		}
 	}
