@@ -207,7 +207,7 @@ class CakeRequest implements ArrayAccess {
 			$query = $_GET;
 		}
 
-		$unsetUrl = '/' . str_replace('.', '_', urldecode($this->url));
+		$unsetUrl = '/' . str_replace(array('.', ' '), '_', urldecode($this->url));
 		unset($query[$unsetUrl]);
 		unset($query[$this->base . $unsetUrl]);
 		if (strpos($this->url, '?') !== false) {

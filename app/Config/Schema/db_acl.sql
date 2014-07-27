@@ -41,11 +41,11 @@ CREATE TABLE aros (
 );
 
 /* this indexes will improve acl perfomance */
-CREATE INDEX idx_acos_lft_rght ON `acos` (`lft`, `rhgt`);
+CREATE INDEX idx_acos_lft_rght ON `acos` (`lft`, `rght`);
 
 CREATE INDEX idx_acos_alias ON `acos` (`alias`);
 
-CREATE INDEX idx_aros_lft_rght ON `aros` (`lft`, `rhgt`);
+CREATE INDEX idx_aros_lft_rght ON `aros` (`lft`, `rght`);
 
 CREATE INDEX idx_aros_alias ON `aros` (`alias`);
 
