@@ -47,4 +47,47 @@ class SprintfFormatterTest extends TestCase {
 		$this->assertEquals('20 > 11', $formatter->format('ar', $messages, ['_count' => 20]));
 	}
 
+	public function testFormatWithContext() {
+		$messages = [
+			'simple' => [
+				'_context' => [
+					'context a' => 'Text "a" %s',
+					'context b' => 'Text "b" %s'
+				]
+			],
+			'complex' => [
+				'_context' => [
+					'context b' => [
+						0 => 'Only one',
+						1 => 'there are %d'
+					]
+				]
+			]
+		];
+
+		$formatter = new SprintfFormatter();
+		$this->assertEquals(
+			'Text "a" is good',
+			$formatter->format('en', $messages['simple'], ['_context' => 'context a', 'is good'])
+		);
+		$this->assertEquals(
+			'Text "b" is good',
+			$formatter->format('en', $messages['simple'], ['_context' => 'context b', 'is good'])
+		);
+		$this->assertEquals(
+			'Text "a" is good',
+			$formatter->format('en', $messages['simple'], ['is good'])
+		);
+
+		$this->assertEquals(
+			'Only one',
+			$formatter->format('en', $messages['complex'], ['_context' => 'context b', '_count' => 1])
+		);
+
+		$this->assertEquals(
+			'there are 2',
+			$formatter->format('en', $messages['complex'], ['_context' => 'context b', '_count' => 2])
+		);
+	}
+
 }
