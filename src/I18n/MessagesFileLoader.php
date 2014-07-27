@@ -103,7 +103,7 @@ class MessagesFileLoader {
  * file extension.
  */
 	public function __invoke() {
-		$package = new Package;
+		$package = new Package('default');
 		$folder = $this->translationsFolder();
 		$ext = $this->_extension;
 
