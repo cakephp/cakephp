@@ -72,7 +72,13 @@ class IcuFormatter implements FormatterInterface {
  * variables is found
  */
 	protected function _formatMessage($locale, $message, $vars) {
-		$formatter = new MessageFormatter($locale, $message);
+		if (!isset($this->_formatters[$locale])) {
+			$this->_formatters[$locale] = new MessageFormatter($locale, $message);
+		} else {
+			$this->_formatters[$locale]->setPattern($message);
+		}
+
+		$formatter = $this->_formatters[$locale];
 
 		if (!$formatter) {
 			throw new Exception\CannotInstantiateFormatter(
