@@ -18,19 +18,13 @@ use Aura\Intl\TranslatorLocator;
 use Cake\Cache\Cache;
 
 /**
- * 
- *
+ * Constructs and stores instances of translators that can be
+ * retrieved by name and locale.
  */
 class TranslatorRegistry extends TranslatorLocator {
 
 /**
- * Appends every loaded translator from the passed $registry into this registry,
- * Any translator that has not yet been fetch from its internal packages will
- * not be put into this registry.
- *
- * @param \Aura\Int\TranslatorLocator $registry The locator from wich to merge
- * the loaded translators.
- * @return void
+ * {@inheritDoc}
  */
 	public function get($name, $locale = null) {
 		if ($locale === null) {

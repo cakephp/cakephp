@@ -267,4 +267,23 @@ class I18nTest extends TestCase {
 		);
 	}
 
+/**
+ * Tests that translators are cached for performance
+ *
+ * @return void
+ */
+	public function testTranslatorCache() {
+		$english = I18n::translator();
+		$spanish = I18n::translator('default', 'es_ES');
+
+		$cached = Cache::read('translations.default.en_US', '_cake_core_');
+		$this->assertEquals($english, $cached);
+
+		$cached = Cache::read('translations.default.es_ES', '_cake_core_');
+		$this->assertEquals($spanish, $cached);
+
+		$this->assertSame($english, I18n::translator());
+		$this->assertSame($spanish, I18n::translator('default', 'es_ES'));
+	}
+
 }
