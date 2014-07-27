@@ -180,7 +180,7 @@ class EntityTest extends TestCase {
  */
 	public function testGetCustomGetters() {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
-		$entity->expects($this->once())->method('_getName')
+		$entity->expects($this->exactly(2))->method('_getName')
 			->with('Jones')
 			->will($this->returnCallback(function($name) {
 				$this->assertSame('Jones', $name);
@@ -188,7 +188,9 @@ class EntityTest extends TestCase {
 			}));
 		$entity->set('name', 'Jones');
 		$this->assertEquals('Dr. Jones', $entity->get('name'));
+		$this->assertEquals('Dr. Jones', $entity->get('name'));
 	}
+
 
 /**
  * Test magic property setting with no custom setter
@@ -244,20 +246,6 @@ class EntityTest extends TestCase {
  */
 	public function testIndirectModification() {
 		$entity = new Entity;
-		$entity->things = ['a', 'b'];
-		$entity->things[] = 'c';
-		$this->assertEquals(['a', 'b', 'c'], $entity->things);
-	}
-
-/**
- * Test indirectly modifying internal properties with a getter
- *
- * @return void
- */
-	public function testIndirectModificationWithGetter() {
-		$entity = $this->getMock('\Cake\ORM\Entity', ['_getThings']);
-		$entity->expects($this->atLeastOnce())->method('_getThings')
-			->will($this->returnArgument(0));
 		$entity->things = ['a', 'b'];
 		$entity->things[] = 'c';
 		$this->assertEquals(['a', 'b', 'c'], $entity->things);
