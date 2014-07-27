@@ -28,6 +28,23 @@ use Cake\TestSuite\TestCase;
 class I18nTest extends TestCase {
 
 /**
+ * Used to restore the internal locale after tests
+ *
+ * @var string
+ */
+	public $locale;
+
+/**
+ * Set Up
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$this->locale = I18n::defaultLocale();
+	}
+
+/**
  * Tear down method
  *
  * @return void
@@ -36,7 +53,7 @@ class I18nTest extends TestCase {
 		parent::tearDown();
 		I18n::clear();
 		I18n::defaultFormatter('basic');
-		I18n::defaultLocale('en_US');
+		I18n::defaultLocale($this->locale);
 		Plugin::unload();
 	}
 
