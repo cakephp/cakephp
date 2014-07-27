@@ -37,12 +37,41 @@ class IcuFormatter implements FormatterInterface {
  * @return string The formatted message
  */
 	public function format($locale, $message, array $vars) {
+		if (is_string($message)) {
+			return $this->_formatMessage($locale, $message, $vars);
+		}
+
+		if (isset($vars['_context']) && isset($message['_context'])) {
+			$message = $message['_context'][$vars['_context']];
+			unset($vars['_context']);
+		}
+
+		// Assume first context when no context key was passed
+		if (isset($message['_context'])) {
+			$message = current($message['_context']);
+		}
+
 		if (!is_string($message)) {
 			$count = isset($vars['_count']) ? $vars['_count'] : 0;
-			$form = PluralRules::calculate($locale, $vars['_count']);
+			$form = PluralRules::calculate($locale, $count);
 			$message = $message[$form];
 		}
 
+		return $this->_formatMessage($locale, $message, $vars);
+	}
+
+/**
+ * Does the actual formatting using the MessageFormatter class
+ *
+ * @param string $locale The locale in which the message is presented.
+ * @param string|array $message The message to be translated
+ * @return string The formatted message
+ * @throws Aura\Intl\Exception\CannotInstantiateFormatter if any error occurred
+ * while parsing the message
+ * @throws Aura\Intl\Exception\CannotFormat If any error related to the passed
+ * variables is found
+ */
+	protected function _formatMessage($locale, $message, $vars) {
 		$formatter = new MessageFormatter($locale, $message);
 
 		if (!$formatter) {

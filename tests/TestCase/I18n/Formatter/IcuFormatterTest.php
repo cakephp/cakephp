@@ -99,4 +99,52 @@ class IcuFormatterTest extends TestCase {
 		$formatter->format('en_US', '{crazy format', ['some', 'vars']);
 	}
 
+/**
+ * Tests that strings stored inside context namespaces can also be formatted
+ *
+ * @return void
+ */
+	public function testFormatWithContext() {
+		$messages = [
+			'simple' => [
+				'_context' => [
+					'context a' => 'Text "a" {thing}',
+					'context b' => 'Text "b" {thing}'
+				]
+			],
+			'complex' => [
+				'_context' => [
+					'context b' => [
+						0 => 'Only one',
+						1 => 'there are {_count}'
+					]
+				]
+			]
+		];
+
+		$formatter = new IcuFormatter();
+		$this->assertEquals(
+			'Text "a" is good',
+			$formatter->format('en', $messages['simple'], ['_context' => 'context a', 'thing' => 'is good'])
+		);
+		$this->assertEquals(
+			'Text "b" is good',
+			$formatter->format('en', $messages['simple'], ['_context' => 'context b', 'thing' => 'is good'])
+		);
+		$this->assertEquals(
+			'Text "a" is good',
+			$formatter->format('en', $messages['simple'], ['thing' => 'is good'])
+		);
+
+		$this->assertEquals(
+			'Only one',
+			$formatter->format('en', $messages['complex'], ['_context' => 'context b', '_count' => 1])
+		);
+
+		$this->assertEquals(
+			'there are 2',
+			$formatter->format('en', $messages['complex'], ['_context' => 'context b', '_count' => 2])
+		);
+	}
+
 }

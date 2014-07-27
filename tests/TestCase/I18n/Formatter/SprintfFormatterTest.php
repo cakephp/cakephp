@@ -47,6 +47,11 @@ class SprintfFormatterTest extends TestCase {
 		$this->assertEquals('20 > 11', $formatter->format('ar', $messages, ['_count' => 20]));
 	}
 
+/**
+ * Tests that strings stored inside context namespaces can also be formatted
+ *
+ * @return void
+ */
 	public function testFormatWithContext() {
 		$messages = [
 			'simple' => [
