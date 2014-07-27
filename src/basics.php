@@ -703,8 +703,8 @@ if (!function_exists('__x')) {
 			return;
 		}
 
-		$arguments = func_num_args() === 2 ? (array)$args : array_slice(func_get_args(), 1);
-		return I18n::translator()->translate($singular, $arguments);
+		$arguments = func_num_args() === 3 ? (array)$args : array_slice(func_get_args(), 2);
+		return I18n::translator()->translate($singular, ['_context' => $context] + $arguments);
 	}
 
 }

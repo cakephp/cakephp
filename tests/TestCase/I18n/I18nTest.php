@@ -240,4 +240,29 @@ class I18nTest extends TestCase {
 		$this->assertEquals('Les Moos', __dn('custom', 'Cow', 'Cows', 2));
 	}
 
+/**
+ * Tests the __x() function
+ *
+ * @return void
+ */
+	public function testBasicContextFunction() {
+		I18n::translator('default', 'en_US', function() {
+			$package = new Package();
+			$package->setMessages([
+				'letter' => [
+					'_context' => [
+						'character' => 'The letter {letter}',
+						'communication' => 'She wrote a letter to {name}'
+					]
+				]
+			]);
+			return $package;
+		});
+		$this->assertEquals('The letter A', __x('character', 'letter', ['letter' => 'A']));
+		$this->assertEquals(
+			'She wrote a letter to Thomas',
+			__x('communication', 'letter', ['name' => 'Thomas'])
+		);
+	}
+
 }
