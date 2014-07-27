@@ -267,18 +267,4 @@ class I18nTest extends TestCase {
 		);
 	}
 
-	public function testTranslatorsSerialize() {
-		$default = I18n::translator();
-		$this->assertEquals('%d is 1 (po translated)', $default->translate('%d = 1'));
-
-		$translators = I18n::translators();
-		$serialized = serialize($translators);
-		$restored = unserialize($serialized);
-
-		$this->assertEquals(
-			$restored->get('default', 'en_US')->translate('%d = 1'),
-			$default->translate('%d = 1')
-		);
-	}
-
 }

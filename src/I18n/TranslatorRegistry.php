@@ -14,38 +14,14 @@
  */
 namespace Cake\I18n;
 
-use Aura\Intl\FormatterLocator;
 use Aura\Intl\TranslatorLocator;
-use Aura\Intl\PackageLocatorInterface;
 use Cake\Cache\Cache;
-use Serializable;
 
 /**
  * 
- */
-class TranslatorRegistry extends TranslatorLocator implements Serializable {
-
-	public function serialize() {
-		return serialize($this->registry);
-	}
-
-	public function unserialize($data) {
-		$this->registry = unserialize($data);
-	}
-
-/**
- * Appends every loaded translator from the passed $registry into this registry,
- * Any translator that has not yet been fetch from its internal packages will
- * not be put into this registry.
  *
- * @param \Aura\Int\TranslatorLocator $registry The locator from wich to merge
- * the loaded translators.
- * @return void
  */
-	public function merge(TranslatorLocator $registry) {
-		$registry = $this->registry ?: [];
-		$this->registry = array_merge_recursive($registry->registry, $registry);
-	}
+class TranslatorRegistry extends TranslatorLocator {
 
 /**
  * Appends every loaded translator from the passed $registry into this registry,
@@ -70,6 +46,5 @@ class TranslatorRegistry extends TranslatorLocator implements Serializable {
 
 		return $this->registry[$name][$locale];
 	}
-
 
 }
