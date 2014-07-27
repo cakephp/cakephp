@@ -265,16 +265,7 @@ class I18nTest extends TestCase {
 		);
 	}
 
-	public function testTranslatorsCache() {
-		I18n::translator('custom', 'en_US', function() {
-			$package = new Package();
-			$package->setMessages([
-				'Cow' => 'Le moo',
-				'Foo' => 'Bar'
-			]);
-			return $package;
-		});
-
+	public function testTranslatorsSerialize() {
 		$default = I18n::translator();
 		$this->assertEquals('%d is 1 (po translated)', $default->translate('%d = 1'));
 
