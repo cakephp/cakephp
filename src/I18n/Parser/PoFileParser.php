@@ -89,10 +89,11 @@ class PoFileParser  {
 			} elseif (substr($line, 0, 7) === 'msgid "') {
 				// We start a new msg so save previous
 				$this->_addMessage($messages, $item);
-				$item = $defaults;
 				$item['ids']['singular'] = substr($line, 7, -1);
 			} elseif (substr($line, 0, 8) === 'msgstr "') {
 				$item['translated'] = substr($line, 8, -1);
+			} elseif (substr($line, 0, 9) === 'msgctxt "') {
+				$item['context'] = substr($line, 9, -1);
 			} elseif ($line[0] === '"') {
 				$continues = isset($item['translated']) ? 'translated' : 'ids';
 
@@ -108,7 +109,6 @@ class PoFileParser  {
 				$size = strpos($line, ']');
 				$item['translated'][(int)substr($line, 7, 1)] = substr($line, $size + 3, -1);
 			}
-
 		}
 		// save last item
 		$this->_addMessage($messages, $item);
@@ -125,23 +125,46 @@ class PoFileParser  {
  * @return void
  */
 	protected function _addMessage(array &$messages, array $item) {
-		if (is_array($item['translated'])) {
-			$messages[stripcslashes($item['ids']['singular'])] = stripcslashes($item['translated'][0]);
-			if (isset($item['ids']['plural'])) {
-				$plurals = $item['translated'];
-				// PO are by definition indexed so sort by index.
-				ksort($plurals);
-				// Make sure every index is filled.
-				end($plurals);
-				$count = key($plurals);
-				// Fill missing spots with '-'.
-				$empties = array_fill(0, $count + 1, '');
-				$plurals += $empties;
-				ksort($plurals);
-				$messages[stripcslashes($item['ids']['plural'])] = array_map('stripcslashes', $plurals);
+		if (empty($item['ids']['singular']) && empty($item['ids']['plural'])) {
+			return;
+		}
+
+		$singular = stripcslashes($item['ids']['singular']);
+		$context = isset($item['context']) ? $item['context'] : null;
+		$translation = $item['translated'];
+
+		if (is_array($translation)) {
+			$translation = stripcslashes($translation[0]);
+		}
+
+		if ($context) {
+			$messages[$singular]['_context'][$context] = $translation;
+		} else {
+			$messages[$singular] = $translation;
+		}
+
+		if (isset($item['ids']['plural'])) {
+			$plurals = $item['translated'];
+			// PO are by definition indexed so sort by index.
+			ksort($plurals);
+
+			// Make sure every index is filled.
+			end($plurals);
+			$count = key($plurals);
+
+			// Fill missing spots with an empty string.
+			$empties = array_fill(0, $count + 1, '');
+			$plurals += $empties;
+			ksort($plurals);
+
+			$plurals = array_map('stripcslashes', $plurals);
+			$key = stripcslashes($item['ids']['plural']);
+
+			if ($context) {
+				$messages[$key]['_context'][$context] = $plurals;
+			} else {
+				$messages[$key] = $plurals;
 			}
-		} elseif (!empty($item['ids']['singular'])) {
-			$messages[stripcslashes($item['ids']['singular'])] = stripcslashes($item['translated']);
 		}
 	}
 

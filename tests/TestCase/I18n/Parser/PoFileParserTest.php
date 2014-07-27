@@ -35,10 +35,19 @@ class PoFileParserTest extends TestCase {
 		$this->assertCount(5, $messages);
 		$expected = [
 			'Plural Rule 1' => 'Plural Rule 1 (translated)',
-			'%d = 1' => '%d = 1 (translated)',
+			'%d = 1' => [
+				'_context' => [
+					'This is the context' => 'First Context trasnlation',
+					'Another Context' => '%d = 1 (translated)'
+				]
+			],
 			'%d = 0 or > 1' => [
-				0 => '%d = 1 (translated)',
-				1 => '%d = 0 or > 1 (translated)'
+				'_context' => [
+					'Another Context' => [
+						0 => '%d = 1 (translated)',
+						1 => '%d = 0 or > 1 (translated)'
+					]
+				]
 			],
 			'%-5d = 1' => '%-5d = 1 (translated)',
 			'%-5d = 0 or > 1' => [
