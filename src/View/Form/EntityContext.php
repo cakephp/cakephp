@@ -260,18 +260,23 @@ class EntityContext implements ContextInterface {
 			$path = array_slice($path, 1);
 		}
 
-		foreach ($path as $prop) {
+		$len = count($path);
+		$last = $len - 1;
+		for ($i = 0; $i < $len; $i++) {
+			$prop = $path[$i];
 			$next = $this->_getProp($entity, $prop);
 
 			if ($next === null && $prop !== '_ids') {
 				return false;
 			}
 
-			if (
-				!is_array($next) &&
-				!($next instanceof Traversable) &&
-				!($next instanceof Entity)
-			) {
+			$isLast = ($i === $last && isset($next));
+			$isTraversable = (
+				is_array($next) ||
+				$next instanceof Traversable ||
+				$next instanceof Entity
+			);
+			if ($isLast || !$isTraversable) {
 				return $entity;
 			}
 			$entity = $next;
