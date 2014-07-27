@@ -275,7 +275,7 @@ class Request implements \ArrayAccess {
  * @return void
  */
 	protected function _processGet($query) {
-		$unsetUrl = '/' . str_replace('.', '_', urldecode($this->url));
+		$unsetUrl = '/' . str_replace(array('.', ' '), '_', urldecode($this->url));
 		unset($query[$unsetUrl]);
 		unset($query[$this->base . $unsetUrl]);
 		if (strpos($this->url, '?') !== false) {

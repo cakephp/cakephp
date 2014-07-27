@@ -241,20 +241,23 @@ class SmtpTransport extends AbstractTransport {
  * @throws \Cake\Network\Error\SocketException
  */
 	protected function _auth() {
-		$config = $this->_config;
-		if (isset($config['username']) && isset($config['password'])) {
-			$authRequired = $this->_smtpSend('AUTH LOGIN', '334|503');
-			if ($authRequired == '334') {
-				if (!$this->_smtpSend(base64_encode($config['username']), '334')) {
+		if (isset($this->_config['username']) && isset($this->_config['password'])) {
+			$replyCode = $this->_smtpSend('AUTH LOGIN', '334|500|502|504');
+			if ($replyCode == '334') {
+				try {
+					$this->_smtpSend(base64_encode($this->_config['username']), '334');
+				} catch (Error\SocketException $e) {
 					throw new Error\SocketException('SMTP server did not accept the username.');
 				}
-				if (!$this->_smtpSend(base64_encode($config['password']), '235')) {
+				try {
+					$this->_smtpSend(base64_encode($this->_config['password']), '235');
+				} catch (Error\SocketException $e) {
 					throw new Error\SocketException('SMTP server did not accept the password.');
 				}
-			} elseif ($authRequired == '504') {
-				throw new Error\SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS');
-			} elseif ($authRequired != '503') {
-				throw new Error\SocketException('SMTP does not require authentication.');
+			} elseif ($replyCode == '504') {
+				throw new Error\SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS.');
+			} else {
+				throw new Error\SocketException('AUTH command not recognized or not implemented, SMTP server may not require authentication.');
 			}
 		}
 	}

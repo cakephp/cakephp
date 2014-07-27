@@ -10,6 +10,7 @@
 
 # IDE and editor specific files #
 #################################
+/nbproject
 .idea
 
 # OS generated files #

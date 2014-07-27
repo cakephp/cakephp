@@ -198,7 +198,7 @@ class EmailTest extends TestCase {
 		$list = array(
 			'root@localhost' => 'root',
 			'bjørn@hammeröath.com' => 'Bjorn',
-			'cake@cakephp.org' => 'Cake PHP',
+			'cake.php@cakephp.org' => 'Cake PHP',
 			'cake-php@googlegroups.com' => 'Cake Groups',
 			'root@cakephp.org'
 		);
@@ -206,7 +206,7 @@ class EmailTest extends TestCase {
 		$expected = array(
 			'root@localhost' => 'root',
 			'bjørn@hammeröath.com' => 'Bjorn',
-			'cake@cakephp.org' => 'Cake PHP',
+			'cake.php@cakephp.org' => 'Cake PHP',
 			'cake-php@googlegroups.com' => 'Cake Groups',
 			'root@cakephp.org' => 'root@cakephp.org'
 		);
@@ -218,7 +218,7 @@ class EmailTest extends TestCase {
 		$expected = array(
 			'root@localhost' => 'root',
 			'bjørn@hammeröath.com' => 'Bjorn',
-			'cake@cakephp.org' => 'Cake PHP',
+			'cake.php@cakephp.org' => 'Cake PHP',
 			'cake-php@googlegroups.com' => 'Cake Groups',
 			'root@cakephp.org' => 'root@cakephp.org',
 			'jrbasso@cakephp.org' => 'jrbasso@cakephp.org',
