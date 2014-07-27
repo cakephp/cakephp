@@ -53,7 +53,7 @@ class I18nTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		I18n::clear();
-		I18n::defaultFormatter('basic');
+		I18n::defaultFormatter('default');
 		I18n::defaultLocale($this->locale);
 		Plugin::unload();
 		Cache::clear(false, '_cake_core_');
@@ -119,7 +119,7 @@ class I18nTest extends TestCase {
  */
 	public function testCreateCustomTranslationPackage() {
 		I18n::translator('custom', 'fr_FR', function() {
-			$package = new Package();
+			$package = new Package('default');
 			$package->setMessages([
 				'Cow' => 'Le moo'
 			]);
@@ -166,7 +166,7 @@ class I18nTest extends TestCase {
  */
 	public function testGetTranslatorByDefaultLocale() {
 		I18n::translator('custom', 'fr_FR', function() {
-			$package = new Package();
+			$package = new Package('default');
 			$package->setMessages([
 				'Cow' => 'Le moo'
 			]);
@@ -210,7 +210,7 @@ class I18nTest extends TestCase {
  */
 	public function testBasicDomainFunction() {
 		I18n::translator('custom', 'en_US', function() {
-			$package = new Package();
+			$package = new Package('default');
 			$package->setMessages([
 				'Cow' => 'Le moo',
 				'The {thing} is tasty' => 'The {thing} is delicious'
@@ -228,7 +228,7 @@ class I18nTest extends TestCase {
  */
 	public function testBasicDomainPluralFunction() {
 		I18n::translator('custom', 'en_US', function() {
-			$package = new Package();
+			$package = new Package('default');
 			$package->setMessages([
 				'Cow' => 'Le Moo',
 				'Cows' => [
@@ -249,7 +249,7 @@ class I18nTest extends TestCase {
  */
 	public function testBasicContextFunction() {
 		I18n::translator('default', 'en_US', function() {
-			$package = new Package();
+			$package = new Package('default');
 			$package->setMessages([
 				'letter' => [
 					'_context' => [

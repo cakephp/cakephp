@@ -41,7 +41,7 @@ class I18n {
  *
  * @var string
  */
-	protected static $_defaultFormatter = 'basic';
+	protected static $_defaultFormatter = 'default';
 
 /**
  * Returns the translators collection instance. It can be used
@@ -61,7 +61,7 @@ class I18n {
 				'sprintf' => function() {
 					return new SprintfFormatter;
 				},
-				'basic' => function() {
+				'default' => function() {
 					return new IcuFormatter;
 				},
 			]),
@@ -167,7 +167,7 @@ class I18n {
 
 /**
  * Sets the name of the default messages formatter to use for future
- * translator instances. By default the `basic` and `sprintf` formatters
+ * translator instances. By default the `default` and `sprintf` formatters
  * are available.
  *
  * If called with no arguments, it will return the currently configured value.
@@ -207,6 +207,7 @@ class I18n {
 			new MessagesFileLoader($name, $locale, 'po')
 		]);
 
+		// \Aura\Intl\Package by default uses formatter configured with key "basic".
 		if (static::$_defaultFormatter !== 'basic') {
 			$formatter = static::$_defaultFormatter;
 			$chain = function() use ($formatter, $chain) {
