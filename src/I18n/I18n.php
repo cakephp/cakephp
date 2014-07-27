@@ -55,7 +55,7 @@ class I18n {
 			return static::$_collection;
 		}
 
-		return static::$_collection = new TranslatorLocator(
+		return static::$_collection = new TranslatorRegistry(
 			new PackageLocator,
 			new FormatterLocator([
 				'sprintf' => function() {

@@ -265,4 +265,26 @@ class I18nTest extends TestCase {
 		);
 	}
 
+	public function testTranslatorsCache() {
+		I18n::translator('custom', 'en_US', function() {
+			$package = new Package();
+			$package->setMessages([
+				'Cow' => 'Le moo',
+				'Foo' => 'Bar'
+			]);
+			return $package;
+		});
+
+		$default = I18n::translator();
+		$this->assertEquals('%d is 1 (po translated)', $default->translate('%d = 1'));
+
+		$translators = I18n::translators();
+		$serialized = serialize($translators);
+		$restored = unserialize($serialized);
+
+		$this->assertEquals(
+			$restored->get('default', 'en_US')->translate('%d = 1'),
+			$default->translate('%d = 1')
+		);
+	}
 }
