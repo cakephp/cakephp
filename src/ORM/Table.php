@@ -1199,7 +1199,7 @@ class Table implements RepositoryInterface, EventListener {
 				$this,
 				$entity,
 				$options['associated'],
-				$options->getArrayCopy()
+				['validate' => (bool)$validate] + $options->getArrayCopy()
 			);
 			if ($success || !$options['atomic']) {
 				$entity->clean();

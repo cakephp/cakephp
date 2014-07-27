@@ -2136,10 +2136,16 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'body' => 'bar',
 			'author' => new \Cake\ORM\Entity([
 				'name' => 'Susan'
-			])
+			]),
+			'articles_tags' => [
+				new \Cake\ORM\Entity([
+					'tag_id' => 100
+				])
+			]
 		]);
 		$table = TableRegistry::get('articles');
 		$table->belongsTo('authors');
+		$table->hasMany('ArticlesTags');
 		$validator = (new Validator)->validatePresence('body');
 		$table->validator('custom', $validator);
 
@@ -2147,6 +2153,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->authors->validator('default', $validator2);
 		$this->assertFalse($table->save($entity, ['validate' => 'custom']), 'default was not used');
 		$this->assertNotEmpty($entity->author->errors('thing'));
+
+		$validator3 = (new Validator)->validatePresence('thing');
+		$table->ArticlesTags->validator('default', $validator2);
+		unset($entity->author);
+		$this->assertFalse($table->save($entity, ['validate' => 'custom']), 'default was not used');
+		$this->assertNotEmpty($entity->articles_tags[0]->errors('thing'));
 	}
 
 /**
