@@ -2154,7 +2154,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($table->save($entity, ['validate' => 'custom']), 'default was not used');
 		$this->assertNotEmpty($entity->author->errors('thing'));
 
-		$validator3 = (new Validator)->validatePresence('thing');
 		$table->ArticlesTags->validator('default', $validator2);
 		unset($entity->author);
 		$this->assertFalse($table->save($entity, ['validate' => 'custom']), 'default was not used');

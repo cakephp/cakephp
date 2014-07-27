@@ -191,7 +191,6 @@ class EntityTest extends TestCase {
 		$this->assertEquals('Dr. Jones', $entity->get('name'));
 	}
 
-
 /**
  * Test magic property setting with no custom setter
  *
