@@ -1737,7 +1737,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that formatters cna be applied to deep associaitons that are fetched using
+ * Tests that formatters cna be applied to deep associations that are fetched using
  * additional queries
  *
  * @return void
@@ -1772,7 +1772,7 @@ class QueryTest extends TestCase {
 
 /**
  * Tests that it is possible to attach more association when using a query
- * builder for other associaitons
+ * builder for other associations
  *
  * @return void
  */

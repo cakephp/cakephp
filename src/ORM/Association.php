@@ -719,7 +719,7 @@ abstract class Association {
  * By default the subquery strategy is used, which requires a query on the source
  * When using the select strategy, the list of primary keys will be used.
  *
- * Returns a closure that should be run for each record returned in an specific
+ * Returns a closure that should be run for each record returned in a specific
  * Query. This callable will be responsible for injecting the fields that are
  * related to each specific passed row.
  *
@@ -763,7 +763,7 @@ abstract class Association {
 	public abstract function isOwningSide(Table $side);
 
 /**
- * Extract the target's associaiton data our from the passed entity and proxies
+ * Extract the target's association data our from the passed entity and proxies
  * the saving operation to the target table.
  *
  * @param \Cake\ORM\Entity $entity the data to be saved

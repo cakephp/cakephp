@@ -128,7 +128,7 @@ class Connection {
 	}
 
 /**
- * Sets the driver instance. If an string is passed it will be treated
+ * Sets the driver instance. If a string is passed it will be treated
  * as a class name and will be instantiated.
  *
  * If no params are passed it will return the current driver instance.

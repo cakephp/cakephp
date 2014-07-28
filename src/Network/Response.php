@@ -950,7 +950,7 @@ class Response {
 	}
 
 /**
- * Sets the Last-Modified header for the response by taking an modification time
+ * Sets the Last-Modified header for the response by taking a modification time
  * If called with no parameters it will return the current Last-Modified value
  *
  * ## Examples:
