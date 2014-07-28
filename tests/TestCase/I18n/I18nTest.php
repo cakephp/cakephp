@@ -146,6 +146,21 @@ class I18nTest extends TestCase {
 	}
 
 /**
+ * Tests that messages messages from a plugin can be automatically
+ * overridden by messages in app
+ *
+ * @return void
+ */
+	public function testPluginOverride() {
+		Plugin::load('TestTheme');
+		$translator = I18n::translator('test_theme');
+		$this->assertEquals(
+			'translated',
+			$translator->translate('A Message')
+		);
+	}
+
+/**
  * Tests the defaultLocale method
  *
  * @return void

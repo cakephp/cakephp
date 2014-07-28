@@ -104,10 +104,19 @@ class MessagesFileLoader {
  */
 	public function __invoke() {
 		$package = new Package('default');
-		$folder = $this->translationsFolder();
+		$folders = $this->translationsFolders();
 		$ext = $this->_extension;
+		$file = false;
 
-		if (!$folder || !is_file($folder . $this->_name . ".$ext")) {
+		foreach ($folders as $folder) {
+			$path = $folder . $this->_name . ".$ext";
+			if (is_file($path)) {
+				$file = $path;
+				break;
+			}
+		}
+
+		if (!$file) {
 			return $package;
 		}
 
@@ -118,19 +127,18 @@ class MessagesFileLoader {
 			throw new \RuntimeException(sprintf('Could not find class %s', "{$name}FileParser"));
 		}
 
-		$messages = (new $class)->parse($folder . $this->_name . ".$ext");
+		$messages = (new $class)->parse($file);
 		$package->setMessages($messages);
 		return $package;
 	}
 
 /**
- * Returns the folder where the file should be looked for according to the locale
+ * Returns the folders where the file should be looked for according to the locale
  * and package name.
  *
- * @return string|boolean The folder where the file should be looked for or false
- * if it does not exists.
+ * @return array The list of folders where the translation file should be looked for
  */
-	public function translationsFolder() {
+	public function translationsFolders() {
 		$locale = Locale::parseLocale($this->_locale) + ['region' => null];
 
 		$folders = [
@@ -140,19 +148,20 @@ class MessagesFileLoader {
 
 		$pluginName = Inflector::camelize($this->_name);
 		$basePath = APP . 'Locale' . DS;
+		$searchPath = [];
+
+		foreach ($folders as $folder) {
+			$searchPath[] = $basePath . $folder . DS;
+		}
 
 		if (Plugin::loaded($pluginName)) {
 			$basePath = Plugin::path($pluginName) . 'src' . DS . 'Locale' . DS;
-		}
-
-		foreach ($folders as $folder) {
-			$path = $basePath . $folder . DS;
-			if (is_dir($path)) {
-				return $path;
+			foreach ($folders as $folder) {
+				$searchPath[] = $basePath . $folder . DS;
 			}
 		}
 
-		return false;
+		return $searchPath;
 	}
 
 }
