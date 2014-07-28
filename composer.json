@@ -24,7 +24,7 @@
 		"ext-mbstring": "*",
 		"nesbot/Carbon": "1.8.*",
 		"ircmaxell/password-compat": "1.0.*",
-		"aura/intl": "1.0.*"
+		"aura/intl": "dev-develop"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "*"
