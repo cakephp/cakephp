@@ -49,10 +49,10 @@ class ChainMessagesLoader {
 	public function __invoke() {
 		foreach ($this->_loaders as $k => $loader) {
 			if (!is_callable($loader)) {
-				throw new \RuntimeException(
-					sprintf('Loader "%s" in the chain is not a valid callable'),
+				throw new \RuntimeException(sprintf(
+					'Loader "%s" in the chain is not a valid callable',
 					$k
-				);
+				));
 			}
 
 			$package = $loader();
@@ -62,10 +62,10 @@ class ChainMessagesLoader {
 			}
 
 			if (!($package instanceof Package)) {
-				throw new \RuntimeException(
-					sprintf('Loader "%s" in the chain did not return a valid Package object'),
+				throw new \RuntimeException(sprintf(
+					'Loader "%s" in the chain did not return a valid Package object',
 					$k
-				);
+				));
 			}
 
 			if (count($package->getMessages())) {
