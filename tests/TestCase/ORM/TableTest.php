@@ -3348,7 +3348,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testValidateManyDefaultAssociaion() {
+	public function testValidateManyDefaultAssociation() {
 		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
 		$table->belongsTo('users');
 		$table->hasMany('articles');
