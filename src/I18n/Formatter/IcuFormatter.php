@@ -72,23 +72,22 @@ class IcuFormatter implements FormatterInterface {
  * variables is found
  */
 	protected function _formatMessage($locale, $message, $vars) {
-		if (!isset($this->_formatters[$locale])) {
-			$this->_formatters[$locale] = new MessageFormatter($locale, $message);
-		} else {
-			$this->_formatters[$locale]->setPattern($message);
-		}
+		// Using procedural style as it showed twice as fast as
+		// its counterpart in PHP 5.5
+		$result = MessageFormatter::formatMessage($locale, $message, $vars);
 
-		$formatter = $this->_formatters[$locale];
-
-		if (!$formatter) {
-			throw new Exception\CannotInstantiateFormatter(
-				intl_get_error_message(),
-				intl_get_error_code()
-			);
-		}
-
-		$result = $formatter->format($vars);
 		if ($result === false) {
+			// The user might be interested in what went wrong, so replay the
+			// previous action using the object oriented style to figure out
+			$formatter = new MessageFormatter($locale, $message);
+			if (!$formatter) {
+				throw new Exception\CannotInstantiateFormatter(
+					intl_get_error_message(),
+					intl_get_error_code()
+				);
+			}
+
+			$formatter->format($vars);
 			throw new Exception\CannotFormat(
 				$formatter->getErrorMessage(),
 				$formatter->getErrorCode()

@@ -33,8 +33,8 @@ class IcuFormatterTest extends TestCase {
 		$this->assertEquals('Hello José', $formatter->format('en_US', 'Hello {0}', ['José']));
 		$result = $formatter->format(
 			'1 Orange',
-			'{count, number} {fruit}',
-			['count' => 1.0, 'fruit' => 'Orange']
+			'{0, number} {1}',
+			[1.0, 'Orange']
 		);
 		$this->assertEquals('1 Orange', $result);
 	}
@@ -66,23 +66,23 @@ class IcuFormatterTest extends TestCase {
 	public function testNativePluralSelection() {
 		$formatter = new IcuFormatter();
 		$locale = 'en_US';
-		$string = '{fruits,plural,'
+		$string = '{0,plural,'
 			. '=0{No fruits.}'
 			. '=1{We have one fruit}'
-			. 'other{We have {count} fruits}'
+			. 'other{We have {1} fruits}'
 			. '}';
 
-		$params = ['fruits' => 0];
+		$params = [0];
 		$expect = 'No fruits.';
 		$actual = $formatter->format($locale, $string, $params);
 		$this->assertSame($expect, $actual);
 
-		$params = ['fruits' => 1];
+		$params = [1];
 		$expect = 'We have one fruit';
 		$actual = $formatter->format($locale, $string, $params);
 		$this->assertSame($expect, $actual);
 
-		$params = ['fruits' => 10, 'count' => 10];
+		$params = [10, 10];
 		$expect = 'We have 10 fruits';
 		$actual = $formatter->format($locale, $string, $params);
 		$this->assertSame($expect, $actual);
@@ -108,15 +108,15 @@ class IcuFormatterTest extends TestCase {
 		$messages = [
 			'simple' => [
 				'_context' => [
-					'context a' => 'Text "a" {thing}',
-					'context b' => 'Text "b" {thing}'
+					'context a' => 'Text "a" {0}',
+					'context b' => 'Text "b" {0}'
 				]
 			],
 			'complex' => [
 				'_context' => [
 					'context b' => [
 						0 => 'Only one',
-						1 => 'there are {_count}'
+						1 => 'there are {0}'
 					]
 				]
 			]
@@ -125,15 +125,15 @@ class IcuFormatterTest extends TestCase {
 		$formatter = new IcuFormatter();
 		$this->assertEquals(
 			'Text "a" is good',
-			$formatter->format('en', $messages['simple'], ['_context' => 'context a', 'thing' => 'is good'])
+			$formatter->format('en', $messages['simple'], ['_context' => 'context a', 'is good'])
 		);
 		$this->assertEquals(
 			'Text "b" is good',
-			$formatter->format('en', $messages['simple'], ['_context' => 'context b', 'thing' => 'is good'])
+			$formatter->format('en', $messages['simple'], ['_context' => 'context b', 'is good'])
 		);
 		$this->assertEquals(
 			'Text "a" is good',
-			$formatter->format('en', $messages['simple'], ['thing' => 'is good'])
+			$formatter->format('en', $messages['simple'], ['is good'])
 		);
 
 		$this->assertEquals(
@@ -143,7 +143,7 @@ class IcuFormatterTest extends TestCase {
 
 		$this->assertEquals(
 			'there are 2',
-			$formatter->format('en', $messages['complex'], ['_context' => 'context b', '_count' => 2])
+			$formatter->format('en', $messages['complex'], ['_context' => 'context b', '_count' => 2, 2])
 		);
 	}
 
