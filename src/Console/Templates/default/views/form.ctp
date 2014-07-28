@@ -17,7 +17,7 @@ use Cake\Utility\Inflector;
 <div class="<?= $pluralVar; ?> form">
 <?= "<?= \$this->Form->create(\${$singularVar}); ?>\n"; ?>
 	<fieldset>
-		<legend><?php printf("<?= __('%s %s'); ?>", Inflector::humanize($action), $singularHumanName); ?></legend>
+		<legend><?= sprintf("<?= __('%s %s'); ?>", Inflector::humanize($action), $singularHumanName) ?></legend>
 <?php
 		echo "\t<?php\n";
 		foreach ($fields as $field) {
