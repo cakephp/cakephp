@@ -257,7 +257,8 @@ trait EntityTrait {
 		}
 
 		if ($this->_methodExists($method)) {
-			$value = $this->{$method}($value);
+			$result = $this->{$method}($value);
+			return $result;
 		}
 		return $value;
 	}
