@@ -105,10 +105,10 @@ class I18nTest extends TestCase {
  */
 	public function testPluralSelectionBasicFormatter() {
 		$translator = I18n::translator('special');
-		$result = $translator->translate('There are {_count} things', ['_count' => 2]);
-		$this->assertEquals('There are 2 things', $result);
+		$result = $translator->translate('There are {0} things', ['_count' => 2, 'plenty']);
+		$this->assertEquals('There are plenty things', $result);
 
-		$result = $translator->translate('There are {_count} things', ['_count' => 1]);
+		$result = $translator->translate('There are {0} things', ['_count' => 1]);
 		$this->assertEquals('There is only one', $result);
 	}
 
@@ -213,11 +213,11 @@ class I18nTest extends TestCase {
 			$package = new Package('default');
 			$package->setMessages([
 				'Cow' => 'Le moo',
-				'The {thing} is tasty' => 'The {thing} is delicious'
+				'The {0} is tasty' => 'The {0} is delicious'
 			]);
 			return $package;
 		});
-		$result = __d('custom', 'The {thing} is tasty', ['thing' => 'fruit']);
+		$result = __d('custom', 'The {0} is tasty', ['fruit']);
 		$this->assertEquals('The fruit is delicious', $result);
 	}
 
@@ -253,17 +253,17 @@ class I18nTest extends TestCase {
 			$package->setMessages([
 				'letter' => [
 					'_context' => [
-						'character' => 'The letter {letter}',
-						'communication' => 'She wrote a letter to {name}'
+						'character' => 'The letter {0}',
+						'communication' => 'She wrote a letter to {0}'
 					]
 				]
 			]);
 			return $package;
 		});
-		$this->assertEquals('The letter A', __x('character', 'letter', ['letter' => 'A']));
+		$this->assertEquals('The letter A', __x('character', 'letter', ['A']));
 		$this->assertEquals(
 			'She wrote a letter to Thomas',
-			__x('communication', 'letter', ['name' => 'Thomas'])
+			__x('communication', 'letter', ['Thomas'])
 		);
 	}
 

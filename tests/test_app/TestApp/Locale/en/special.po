@@ -8,6 +8,6 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 
 msgid "There is only one"
-msgid_plural "There are {_count} things"
+msgid_plural "There are {0} things"
 msgstr[0] "There is only one"
-msgstr[1] "There are {_count} things"
+msgstr[1] "There are {0} things"
