@@ -517,20 +517,19 @@ class CakeResponse {
  * @param string $name the header name
  * @param string $value the header value
  * @return void
- * @throws CakeException When an header already been sent
+ * @throws CakeException When headers have already been sent
  */
-    protected function _sendHeader($name, $value = null) {
-        if (!headers_sent($filename, $linenum)) {
-			if ($value === null) {
-				header($name);
-			} else {
-				header("{$name}: {$value}");
-			}
-        } else {
-            if (Configure::read('debug')) {
-				throw new CakeException(__d('cake_dev', 'Headers already sent in $filename on line $linenum'));
-			}
-        }
+	protected function _sendHeader($name, $value = null) {
+		if (headers_sent($filename, $linenum)) {
+			throw new CakeException(
+				__d('cake_dev', 'Headers already sent in %d on line %s', $linenum, $filename)
+			);
+		}
+		if ($value === null) {
+			header($name);
+		} else {
+			header("{$name}: {$value}");
+		}
 	}
 
 /**
