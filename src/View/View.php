@@ -892,7 +892,7 @@ class View {
 			}
 		}
 		throw new Error\MissingLayoutException(array(
-			'file' => $layoutPath[0] . $name . $this->_ext
+			'file' => $layoutPaths[0] . $name . $this->_ext
 		));
 	}
 
