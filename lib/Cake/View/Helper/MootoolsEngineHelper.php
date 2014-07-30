@@ -225,7 +225,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 	}
 
 /**
- * Create an new Request.
+ * Create a new Request.
  *
  * Requires `Request`. If you wish to use 'update' key you must have ```Request.HTML```
  * if you wish to do Json requests you will need ```JSON``` and ```Request.JSON```.

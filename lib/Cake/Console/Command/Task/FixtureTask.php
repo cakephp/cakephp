@@ -381,7 +381,7 @@ class FixtureTask extends BakeTask {
 	}
 
 /**
- * Convert a $records array into a a string.
+ * Convert a $records array into a string.
  *
  * @param array $records Array of records to be converted to string
  * @return string A string value of the $records array.

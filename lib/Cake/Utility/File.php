@@ -197,7 +197,7 @@ class File {
 	}
 
 /**
- * Prepares a ASCII string for writing. Converts line endings to the
+ * Prepares an ASCII string for writing. Converts line endings to the
  * correct terminator for the current platform. If Windows, "\r\n" will be used,
  * all other platforms will use "\n"
  *

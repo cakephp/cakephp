@@ -329,7 +329,7 @@ class FormHelper extends AppHelper {
  *   If an array is passed and $options argument is empty, the array will be used as options.
  *   If `false` no model is used.
  * @param array $options An array of html attributes and options.
- * @return string An formatted opening FORM tag.
+ * @return string A formatted opening FORM tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-create
  */
 	public function create($model = null, $options = array()) {
@@ -1483,7 +1483,7 @@ class FormHelper extends AppHelper {
  * - `hiddenField` - boolean to indicate if you want the results of radio() to include
  *    a hidden input with a value of ''. This is useful for creating radio sets that non-continuous
  * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons.
- * - `empty` - Set to `true` to create a input with the value '' as the first option. When `true`
+ * - `empty` - Set to `true` to create an input with the value '' as the first option. When `true`
  *   the radio label will be 'empty'. Set this option to a string to control the label value.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
@@ -2257,7 +2257,7 @@ class FormHelper extends AppHelper {
  * ### Attributes:
  *
  * - `monthNames` - If false, 2 digit numbers will be used instead of text.
- *   If a array, the given array will be used.
+ *   If an array, the given array will be used.
  * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `value` The selected value of the input.
@@ -2455,7 +2455,7 @@ class FormHelper extends AppHelper {
  * ### Attributes:
  *
  * - `monthNames` If false, 2 digit numbers will be used instead of text.
- *   If a array, the given array will be used.
+ *   If an array, the given array will be used.
  * - `minYear` The lowest year to use in the year select
  * - `maxYear` The maximum year to use in the year select
  * - `interval` The interval for the minutes select. Defaults to 1
@@ -2933,7 +2933,7 @@ class FormHelper extends AppHelper {
  *   Disabling the field using the `disabled` option, will also omit the field from being
  *   part of the hashed key.
  *
- * This method will convert a numerically indexed 'disabled' into a associative
+ * This method will convert a numerically indexed 'disabled' into an associative
  * value. FormHelper's internals expect associative options.
  *
  * @param string $field Name of the field to initialize options for.

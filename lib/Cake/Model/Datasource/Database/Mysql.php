@@ -696,7 +696,7 @@ class Mysql extends DboSource {
 	}
 
 /**
- * Returns an detailed array of sources (tables) in the database.
+ * Returns a detailed array of sources (tables) in the database.
  *
  * @param string $name Table name to get parameters
  * @return array Array of table names in the database

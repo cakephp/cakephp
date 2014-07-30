@@ -1206,7 +1206,7 @@ class Router {
 /**
  * Instructs the router to parse out file extensions from the URL.
  *
- * For example, http://example.com/posts.rss would yield an file extension of "rss".
+ * For example, http://example.com/posts.rss would yield a file extension of "rss".
  * The file extension itself is made available in the controller as
  * `$this->params['ext']`, and is used by the RequestHandler component to
  * automatically switch to alternate layouts and templates, and load helpers

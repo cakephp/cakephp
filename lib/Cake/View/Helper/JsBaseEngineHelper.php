@@ -476,7 +476,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
 	abstract public function serializeForm($options = array());
 
 /**
- * Parse an options assoc array into an JavaScript object literal.
+ * Parse an options assoc array into a JavaScript object literal.
  * Similar to object() but treats any non-integer value as a string,
  * does not include `{ }`
  *

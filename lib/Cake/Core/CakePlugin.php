@@ -33,7 +33,7 @@ class CakePlugin {
 	protected static $_plugins = array();
 
 /**
- * Loads a plugin and optionally loads bootstrapping, routing files or loads a initialization function
+ * Loads a plugin and optionally loads bootstrapping, routing files or loads an initialization function
  *
  * Examples:
  *
