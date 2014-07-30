@@ -84,7 +84,7 @@ class InsertIteratorTest extends TestCase {
 	}
 
 /**
- * Tests that teh iterator will insert values as long as there still exist
+ * Tests that the iterator will insert values as long as there still exist
  * some in the values array
  *
  * @return void
@@ -105,7 +105,7 @@ class InsertIteratorTest extends TestCase {
 	}
 
 /**
- * Tests that teh iterator will insert values as long as there still exist
+ * Tests that the iterator will insert values as long as there still exist
  * some in the values array
  *
  * @return void
