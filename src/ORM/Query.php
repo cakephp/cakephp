@@ -229,6 +229,7 @@ class Query extends DatabaseQuery {
  *		]
  *	]);
  * }}}
+ *
  * If called with no arguments, this function will return an array with
  * with the list of previously configured associations to be contained in the
  * result.
