@@ -120,7 +120,7 @@ class Comparison extends QueryExpression {
 	}
 
 /**
- * Returns a template and an placeholder for the value after registering it
+ * Returns a template and a placeholder for the value after registering it
  * with the placeholder $generator
  *
  * @param \Cake\Database\ValueBinder $generator The value binder to use.

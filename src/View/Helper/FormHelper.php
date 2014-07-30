@@ -2198,7 +2198,7 @@ class FormHelper extends Helper {
  *
  * @param string $type The type of context. This key
  *   can be used to overwrite existing providers.
- * @param callable $check A callable that returns a object
+ * @param callable $check A callable that returns an object
  *   when the form context is the correct type.
  * @return void
  */

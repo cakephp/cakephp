@@ -499,7 +499,7 @@ class Table {
 	}
 
 /**
- * Read information about an constraint based on name.
+ * Read information about a constraint based on name.
  *
  * @param string $name The name of the constraint.
  * @return array|null Array of constraint data, or null

@@ -296,7 +296,7 @@ class EagerLoader {
  * @param Table $parent owning side of the association
  * @param string $alias name of the association to be loaded
  * @param array $options list of extra options to use for this association
- * @param array $paths An array with to values, the first one is a list of dot
+ * @param array $paths An array with two values, the first one is a list of dot
  * separated strings representing associations that lead to this `$alias` in the
  * chain of associations to be loaded. The second value is the path to follow in
  * entities' properties to fetch a record of the corresponding association.
@@ -348,7 +348,7 @@ class EagerLoader {
  *
  * @param string $alias the name of the association to evaluate
  * @param array $config The association config
- * @param string $root An string representing the root association that started
+ * @param string $root A string representing the root association that started
  * the direct chain this alias is in
  * @return array The modified association config
  * @throws \RuntimeException if a duplicate association in the same chain is detected

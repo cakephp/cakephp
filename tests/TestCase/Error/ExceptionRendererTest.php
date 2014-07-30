@@ -761,7 +761,7 @@ class ExceptionRendererTest extends TestCase {
 	}
 
 /**
- * Test that exceptions can be rendered when an request hasn't been registered
+ * Test that exceptions can be rendered when a request hasn't been registered
  * with Router
  *
  * @return void
