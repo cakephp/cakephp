@@ -24,6 +24,16 @@ use Cake\Cache\Cache;
 class TranslatorRegistry extends TranslatorLocator {
 
 /**
+ * A list of loader functions indexed by domain name. Loaders are
+ * callables that are invoked as a default for building translation
+ * packages where none can be found for the combination of translator
+ * name and locale.
+ *
+ * @var array
+ */
+	protected $_loader;
+
+/**
  * {@inheritDoc}
  */
 	public function get($name, $locale = null) {
@@ -34,11 +44,30 @@ class TranslatorRegistry extends TranslatorLocator {
 		if (!isset($this->registry[$name][$locale])) {
 			$key = "translations.$name.$locale";
 			return Cache::remember($key, function() use ($name, $locale) {
-				return parent::get($name, $locale);
+				try {
+					return parent::get($name, $locale);
+				} catch (\Aura\Intl\Exception $e) {
+					if (!isset($this->_loaders[$name])) {
+						throw $e;
+					}
+					return $this->_getFromLoader($name, $locale);
+				}
+				
 			}, '_cake_core_');
 		}
 
 		return $this->registry[$name][$locale];
+	}
+
+	public function registerLoader($name, callable $loader) {
+		$this->_loaders[$name] = $loader;
+	}
+
+	protected function _getFromLoader($name, $locale) {
+		$this->packages->set($name, $locale, function() use ($name, $locale) {
+			return $this->_loaders[$name]($name, $locale);
+		});
+		return parent::get($name, $locale);
 	}
 
 }
