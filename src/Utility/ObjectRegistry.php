@@ -40,7 +40,7 @@ abstract class ObjectRegistry {
 	protected $_loaded = [];
 
 /**
- * Loads/constructs a object instance.
+ * Loads/constructs an object instance.
  *
  * Will return the instance in the registry if it already exists.
  * If a subclass provides event support, you can use `$config['enabled'] = false`

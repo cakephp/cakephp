@@ -69,7 +69,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 	}
 
 /**
- * Assign a value to an positional or named variable in prepared query. If using
+ * Assign a value to a positional or named variable in prepared query. If using
  * positional variables you need to start with index one, if using named params then
  * just use the name in any order.
  *

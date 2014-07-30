@@ -74,7 +74,7 @@ trait PostgresDialectTrait {
 	}
 
 /**
- * Returns an dictionary of expressions to be transformed when compiling a Query
+ * Returns a dictionary of expressions to be transformed when compiling a Query
  * to SQL. Array keys are method names to be called in this class
  *
  * @return array
