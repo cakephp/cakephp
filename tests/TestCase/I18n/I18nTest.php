@@ -308,7 +308,7 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testloaderFactory() {
-		I18n::factory('custom', function($name, $locale) {
+		I18n::config('custom', function($name, $locale) {
 			$this->assertEquals('custom', $name);
 			$package = new Package('default');
 

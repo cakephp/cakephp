@@ -139,14 +139,49 @@ class I18n {
 	}
 
 /**
+ * Registers a callable object that can be used for creating new translator
+ * instances for the same translations domain. Loaders will be invoked whenever
+ * a translator object is requested for a domain that has not been configured or
+ * loaded already.
  *
+ * Registering loaders is useful when you need to lazily use translations in multiple
+ * different locales for the same domain, and don't want to use the built-in
+ * translation service based of `gettext` files.
+ *
+ * Loader objects will receive two arguments: The domain name that needs to be
+ * built, and the locale that is requested. These objects can assemble the messages
+ * from any source, but must return an `Aura\Intl\Package` object.
+ *
+ * ### Example:
+ *
+ * {{{
+ *  use Cake\I18n\MessagesFileLoader;
+ *	I18n::config('my_domain', function($name, $locale) {
+ *		// Load src/Locale/$locale/filename.po
+ *		$fileLoader = new MessagesFileLoader('filename', $locale, 'po');
+ *		return $fileLoader();
+ *	});
+ * }}}
+ *
+ * You can also assemble the package object yourself:
+ *
+ * {{{
+ *  use Aura\Intl\Package;
+ *	I18n::config('my_domain', function($name, $locale) {
+ *		$package = new Package('default');
+ *		$messages = (...); // Fetch messages for locale from external service.
+ *		$package->setMessages($message);
+ *		$package->setFallback('default);
+ *		return $package;
+ *	});
+ * }}}
  *
  * @param string $locale The name of translator to create a loader for
  * @param callable $looader A callable object that should return a Package
  * instance to be used for assembling a new translator.
  * @return void
  */
-	public static function factory($name, callable $loader) {
+	public static function config($name, callable $loader) {
 		static::translators()->registerLoader($name, $loader);
 	}
 
