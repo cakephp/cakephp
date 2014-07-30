@@ -31,4 +31,8 @@ function _scaffoldError() {<br />
 
 </pre>
 
-<?php echo $this->element('exception_stack_trace'); ?>
+<?php
+if (isset($error) && $error instanceof Exception) {
+	echo $this->element('exception_stack_trace'); 
+}
+?>
