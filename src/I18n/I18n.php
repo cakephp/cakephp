@@ -139,6 +139,18 @@ class I18n {
 	}
 
 /**
+ *
+ *
+ * @param string $locale The name of translator to create a loader for
+ * @param callable $looader A callable object that should return a Package
+ * instance to be used for assembling a new translator.
+ * @return void
+ */
+	public static function factory($name, callable $loader) {
+		static::translators()->registerLoader($name, $loader);
+	}
+
+/**
  * Sets the default locale to use for future translator instances.
  * This also affects the `intl.default_locale` php setting.
  *

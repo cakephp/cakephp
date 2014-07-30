@@ -301,4 +301,50 @@ class I18nTest extends TestCase {
 		$this->assertSame($spanish, I18n::translator('default', 'es_ES'));
 	}
 
+/**
+ * Tests that it is possible to register a generic translators factory for a domain
+ * instad of having to create them manually
+ *
+ * @return void
+ */
+	public function testloaderFactory() {
+		I18n::factory('custom', function($name, $locale) {
+			$this->assertEquals('custom', $name);
+			$package = new Package('default');
+
+			if ($locale == 'fr_FR') {
+				$package->setMessages([
+				'Cow' => 'Le Moo',
+				'Cows' => [
+					'Le Moo',
+					'Les Moos'
+					]
+				]);
+			}
+			
+			if ($locale === 'es_ES') {
+				$package->setMessages([
+				'Cow' => 'El Moo',
+				'Cows' => [
+					'El Moo',
+					'Los Moos'
+					]
+				]);
+			}
+
+			return $package;
+		});
+
+		$translator = I18n::translator('custom', 'fr_FR');
+		$this->assertEquals('Le Moo', $translator->translate('Cow'));
+		$this->assertEquals('Les Moos', $translator->translate('Cows', ['_count' => 2]));
+
+		$translator = I18n::translator('custom', 'es_ES');
+		$this->assertEquals('El Moo', $translator->translate('Cow'));
+		$this->assertEquals('Los Moos', $translator->translate('Cows', ['_count' => 2]));
+
+		$translator = I18n::translator();
+		$this->assertEquals('%d is 1 (po translated)', $translator->translate('%d = 1'));
+	}
+
 }
