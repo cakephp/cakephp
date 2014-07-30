@@ -176,8 +176,8 @@ class I18n {
  *	});
  * }}}
  *
- * @param string $locale The name of translator to create a loader for
- * @param callable $looader A callable object that should return a Package
+ * @param string $locale The name of the translator to create a loader for
+ * @param callable $loader A callable object that should return a Package
  * instance to be used for assembling a new translator.
  * @return void
  */

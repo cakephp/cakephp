@@ -34,7 +34,12 @@ class TranslatorRegistry extends TranslatorLocator {
 	protected $_loader;
 
 /**
- * {@inheritDoc}
+ * Gets a translator from the registry by package for a locale.
+ *
+ * @param string $name The translator package to retrieve.
+ * @param string $locale The locale to use; if empty, uses the default
+ * locale.
+ * @return \Aura\Intl\TranslatorInterface A translator object.
  */
 	public function get($name, $locale = null) {
 		if ($locale === null) {
@@ -59,10 +64,29 @@ class TranslatorRegistry extends TranslatorLocator {
 		return $this->registry[$name][$locale];
 	}
 
+/**
+ * Registers a loader function for a package name that will be used as a fallback
+ * in case no package with that name can be found.
+ *
+ * Loader callbacks will get as first argument the package name and the locale as
+ * the second argument.
+ *
+ * @param string $name The name of the translator package to register a loader for
+ * @param callable $loader A callable object that should return a Package
+ * @return \Aura\Intl\TranslatorInterface A translator object.
+ */
 	public function registerLoader($name, callable $loader) {
 		$this->_loaders[$name] = $loader;
 	}
 
+/**
+ * Registers a new package by passing the register loaded function for the
+ * package name.
+ *
+ * @param string $name The name of the translator package
+ * @param string $locale The locale that should be built the package for
+ * @return \Aura\Intl\TranslatorInterface A translator object.
+ */
 	protected function _getFromLoader($name, $locale) {
 		$this->packages->set($name, $locale, function() use ($name, $locale) {
 			return $this->_loaders[$name]($name, $locale);
