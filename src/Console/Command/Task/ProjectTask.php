@@ -50,13 +50,13 @@ class ProjectTask extends BakeTask {
 		}
 
 		while (!$project) {
-			$prompt = __d('cake_console', 'What is the path to the project you want to bake?');
+			$prompt = 'What is the path to the project you want to bake?';
 			$project = $this->in($prompt, null, $suggestedPath);
 		}
 
 		$namespace = basename($project);
 		if (!preg_match('/^\w[\w\d_]+$/', $namespace)) {
-			$this->err(__d('cake_console', 'Project Name/Namespace needs to start with a letter and can only contain letters, digits and underscore'));
+			$this->err('Project Name/Namespace needs to start with a letter and can only contain letters, digits and underscore');
 			$this->args = [];
 			return $this->main();
 		}
@@ -67,7 +67,7 @@ class ProjectTask extends BakeTask {
 
 		$response = false;
 		while (!$response && is_dir($project) === true && file_exists($project . 'Config' . 'boostrap.php')) {
-			$prompt = __d('cake_console', '<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
+			$prompt = sprintf('<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
 			$response = $this->in($prompt, ['y', 'n'], 'n');
 			if (strtolower($response) === 'n') {
 				$response = $project = false;
@@ -75,12 +75,12 @@ class ProjectTask extends BakeTask {
 		}
 
 		if ($project === false) {
-			$this->out(__d('cake_console', 'Aborting project creation.'));
+			$this->out('Aborting project creation.');
 			return;
 		}
 
 		if ($this->bake($project)) {
-			$this->out(__d('cake_console', '<success>Project baked successfully!</success>'));
+			$this->out('<success>Project baked successfully!</success>');
 			return $project;
 		}
 	}
@@ -134,10 +134,10 @@ class ProjectTask extends BakeTask {
 	public function bake($path) {
 		$composer = $this->findComposer();
 		if (!$composer) {
-			$this->error(__d('cake_console', 'Cannot bake project. Could not find composer. Add composer to your PATH, or use the -composer option.'));
+			$this->error('Cannot bake project. Could not find composer. Add composer to your PATH, or use the -composer option.');
 			return false;
 		}
-		$this->out(__d('cake_console', '<info>Downloading a new cakephp app from packagist.org</info>'));
+		$this->out('<info>Downloading a new cakephp app from packagist.org</info>');
 
 		$command = 'php ' . escapeshellarg($composer) . ' create-project -s dev cakephp/app ' . escapeshellarg($path);
 
@@ -145,7 +145,7 @@ class ProjectTask extends BakeTask {
 			$this->callProcess($command);
 		} catch (\RuntimeException $e) {
 			$error = $e->getMessage();
-			$this->error(__d('cake_console', 'Installation from packagist.org failed with: %s', $error));
+			$this->error('Installation from packagist.org failed with: %s', $error);
 			return false;
 		}
 
@@ -160,18 +160,18 @@ class ProjectTask extends BakeTask {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		return $parser->description(
-				__d('cake_console', 'Generate a new CakePHP project skeleton.')
+				'Generate a new CakePHP project skeleton.'
 			)->addArgument('name', [
-				'help' => __d('cake_console', 'Application directory to make, if it starts with "/" the path is absolute.')
+				'help' => 'Application directory to make, if it starts with "/" the path is absolute.'
 			])->addOption('empty', [
 				'boolean' => true,
-				'help' => __d('cake_console', 'Create empty files in each of the directories. Good if you are using git')
+				'help' => 'Create empty files in each of the directories. Good if you are using git'
 			])->addOption('theme', [
 				'short' => 't',
-				'help' => __d('cake_console', 'Theme to use when baking code.')
+				'help' => 'Theme to use when baking code.'
 			])->addOption('composer', [
 				'default' => ROOT . '/composer.phar',
-				'help' => __d('cake_console', 'The path to the composer executable.')
+				'help' => 'The path to the composer executable.'
 			])->removeOption('plugin');
 	}
 

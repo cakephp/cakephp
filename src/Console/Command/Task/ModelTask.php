@@ -79,7 +79,7 @@ class ModelTask extends BakeTask {
 		$name = $this->_getName($name);
 
 		if (empty($name)) {
-			$this->out(__d('cake_console', 'Choose a model to bake from the following:'));
+			$this->out('Choose a model to bake from the following:');
 			foreach ($this->listAll() as $table) {
 				$this->out('- ' . $this->_modelName($table));
 			}
@@ -130,7 +130,7 @@ class ModelTask extends BakeTask {
 				continue;
 			}
 			$modelClass = $this->_modelName($table);
-			$this->out(__d('cake_console', 'Baking %s', $modelClass));
+			$this->out('Baking %s', $modelClass);
 			$this->bake($modelClass);
 		}
 	}
@@ -163,7 +163,7 @@ class ModelTask extends BakeTask {
 		if (!empty($this->params['no-associations'])) {
 			return [];
 		}
-		$this->out(__d('cake_console', 'One moment while associations are detected.'));
+		$this->out('One moment while associations are detected.');
 
 		$this->listAll();
 
@@ -175,10 +175,9 @@ class ModelTask extends BakeTask {
 
 		$primary = $table->primaryKey();
 		if (is_array($primary) && count($primary) > 1) {
-			$this->err(__d(
-				'cake_console',
+			$this->err(
 				'<warning>Bake cannot generate associations for composite primary keys at this time</warning>.'
-			));
+			);
 			return $associations;
 		}
 
@@ -603,7 +602,7 @@ class ModelTask extends BakeTask {
 
 		$path = $this->getPath();
 		$filename = $path . 'Entity' . DS . $name . '.php';
-		$this->out("\n" . __d('cake_console', 'Baking entity class for %s...', $name), 1, Shell::QUIET);
+		$this->out("\n" . sprintf('Baking entity class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
 		return $out;
 	}
@@ -646,7 +645,7 @@ class ModelTask extends BakeTask {
 
 		$path = $this->getPath();
 		$filename = $path . 'Table' . DS . $name . 'Table.php';
-		$this->out("\n" . __d('cake_console', 'Baking table class for %s...', $name), 1, Shell::QUIET);
+		$this->out("\n" . sprintf('Baking table class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
 		return $out;
 	}
@@ -681,16 +680,15 @@ class ModelTask extends BakeTask {
 		$tables = [];
 		$db = ConnectionManager::get($this->connection);
 		if (!method_exists($db, 'schemaCollection')) {
-			$this->err(__d(
-				'cake_console',
+			$this->err(
 				'Connections need to implement schemaCollection() to be used with bake.'
-			));
+			);
 			return $this->_stop();
 		}
 		$schema = $db->schemaCollection();
 		$tables = $schema->listTables();
 		if (empty($tables)) {
-			$this->err(__d('cake_console', 'Your database does not have any tables.'));
+			$this->err('Your database does not have any tables.');
 			return $this->_stop();
 		}
 		sort($tables);
@@ -721,48 +719,47 @@ class ModelTask extends BakeTask {
 		$parser = parent::getOptionParser();
 
 		$parser->description(
-			__d('cake_console', 'Bake table and entity classes.')
+			'Bake table and entity classes.'
 		)->addArgument('name', [
-			'help' => __d('cake_console', 'Name of the model to bake. Can use Plugin.name to bake plugin models.')
+			'help' => 'Name of the model to bake. Can use Plugin.name to bake plugin models.'
 		])->addSubcommand('all', [
-			'help' => __d('cake_console', 'Bake all model files with associations and validation.')
+			'help' => 'Bake all model files with associations and validation.'
 		])->addOption('table', [
-			'help' => __d('cake_console', 'The table name to use if you have non-conventional table names.')
+			'help' => 'The table name to use if you have non-conventional table names.'
 		])->addOption('no-entity', [
 			'boolean' => true,
-			'help' => __d('cake_console', 'Disable generating an entity class.')
+			'help' => 'Disable generating an entity class.'
 		])->addOption('no-table', [
 			'boolean' => true,
-			'help' => __d('cake_console', 'Disable generating a table class.')
+			'help' => 'Disable generating a table class.'
 		])->addOption('no-validation', [
 			'boolean' => true,
-			'help' => __d('cake_console', 'Disable generating validation rules.')
+			'help' => 'Disable generating validation rules.'
 		])->addOption('no-associations', [
 			'boolean' => true,
-			'help' => __d('cake_console', 'Disable generating associations.')
+			'help' => 'Disable generating associations.'
 		])->addOption('no-fields', [
 			'boolean' => true,
-			'help' => __d('cake_console', 'Disable generating accessible fields in the entity.')
+			'help' => 'Disable generating accessible fields in the entity.'
 		])->addOption('fields', [
-			'help' => __d('cake_console', 'A comma separated list of fields to make accessible.')
+			'help' => 'A comma separated list of fields to make accessible.'
 		])->addOption('no-hidden', [
 			'boolean' => true,
-			'help' => __d('cake_console', 'Disable generating hidden fields in the entity.')
+			'help' => 'Disable generating hidden fields in the entity.'
 		])->addOption('hidden', [
-			'help' => __d('cake_console', 'A comma separated list of fields to hide.')
+			'help' => 'A comma separated list of fields to hide.'
 		])->addOption('primary-key', [
-			'help' => __d('cake_console', 'The primary key if you would like to manually set one. Can be a comma separated list if you are using a composite primary key.')
+			'help' => 'The primary key if you would like to manually set one. Can be a comma separated list if you are using a composite primary key.'
 		])->addOption('display-field', [
-			'help' => __d('cake_console', 'The displayField if you would like to choose one.')
+			'help' => 'The displayField if you would like to choose one.'
 		])->addOption('no-test', [
 			'boolean' => true,
-			'help' => __d('cake_console', 'Do not generate a test case skeleton.')
+			'help' => 'Do not generate a test case skeleton.'
 		])->addOption('no-fixture', [
 			'boolean' => true,
-			'help' => __d('cake_console', 'Do not generate a test fixture skeleton.')
+			'help' => 'Do not generate a test fixture skeleton.'
 		])->epilog(
-			__d('cake_console', 'Omitting all arguments and options will list ' .
-				'the table names you can generate models for')
+			'Omitting all arguments and options will list the table names you can generate models for'
 		);
 
 		return $parser;

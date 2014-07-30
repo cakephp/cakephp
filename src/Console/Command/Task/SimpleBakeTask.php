@@ -122,17 +122,16 @@ abstract class SimpleBakeTask extends BakeTask {
 		$parser = parent::getOptionParser();
 		$name = $this->name();
 		$parser->description(
-			__d('cake_console', 'Bake a %s class file.', $name)
+			sprintf('Bake a %s class file.', $name)
 		)->addArgument('name', [
-			'help' => __d(
-				'cake_console',
+			'help' => sprintf(
 				'Name of the %s to bake. Can use Plugin.name to bake %s files into plugins.',
 				$name,
 				$name
 			)
 		])->addOption('no-test', [
 			'boolean' => true,
-			'help' => __d('cake_console', 'Do not generate a test skeleton.')
+			'help' => 'Do not generate a test skeleton.'
 		]);
 
 		return $parser;

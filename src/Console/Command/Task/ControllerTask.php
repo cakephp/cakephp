@@ -49,7 +49,7 @@ class ControllerTask extends BakeTask {
 		$name = $this->_getName($name);
 
 		if (empty($name)) {
-			$this->out(__d('cake_console', 'Possible controllers based on your current database:'));
+			$this->out('Possible controllers based on your current database:');
 			foreach ($this->listAll() as $table) {
 				$this->out('- ' . $this->_controllerName($table));
 			}
@@ -113,7 +113,7 @@ class ControllerTask extends BakeTask {
  * @return string Baked controller
  */
 	public function bake($controllerName) {
-		$this->out("\n" . __d('cake_console', 'Baking controller class for %s...', $controllerName), 1, Shell::QUIET);
+		$this->out("\n" . sprintf('Baking controller class for %s...', $controllerName), 1, Shell::QUIET);
 
 		$actions = $this->bakeActions($controllerName);
 		$helpers = $this->getHelpers();
@@ -249,23 +249,23 @@ class ControllerTask extends BakeTask {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		$parser->description(
-			__d('cake_console', 'Bake a controller skeleton.')
+			'Bake a controller skeleton.'
 		)->addArgument('name', [
-			'help' => __d('cake_console', 'Name of the controller to bake. Can use Plugin.name to bake controllers into plugins.')
+			'help' => 'Name of the controller to bake. Can use Plugin.name to bake controllers into plugins.'
 		])->addOption('components', [
-			'help' => __d('cake_console', 'The comma separated list of components to use.')
+			'help' => 'The comma separated list of components to use.'
 		])->addOption('helpers', [
-			'help' => __d('cake_console', 'The comma separated list of helpers to use.')
+			'help' => 'The comma separated list of helpers to use.'
 		])->addOption('prefix', [
-			'help' => __d('cake_console', 'The namespace/routing prefix to use.')
+			'help' => 'The namespace/routing prefix to use.'
 		])->addOption('no-test', [
 			'boolean' => true,
-			'help' => __d('cake_console', 'Do not generate a test skeleton.')
+			'help' => 'Do not generate a test skeleton.'
 		])->addOption('no-actions', [
 			'boolean' => true,
-			'help' => __d('cake_console', 'Do not generate basic CRUD action methods.')
+			'help' => 'Do not generate basic CRUD action methods.'
 		])->addSubcommand('all', [
-			'help' => __d('cake_console', 'Bake all controllers with CRUD methods.')
+			'help' => 'Bake all controllers with CRUD methods.'
 		]);
 
 		return $parser;

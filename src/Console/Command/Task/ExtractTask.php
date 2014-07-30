@@ -113,25 +113,24 @@ class ExtractTask extends Shell {
 		$defaultPath = APP;
 		while (true) {
 			$currentPaths = count($this->_paths) > 0 ? $this->_paths : ['None'];
-			$message = __d(
-				'cake_console',
+			$message = sprintf(
 				"Current paths: %s\nWhat is the path you would like to extract?\n[Q]uit [D]one",
 				implode(', ', $currentPaths)
 			);
 			$response = $this->in($message, null, $defaultPath);
 			if (strtoupper($response) === 'Q') {
-				$this->err(__d('cake_console', 'Extract Aborted'));
+				$this->err('Extract Aborted');
 				return $this->_stop();
 			} elseif (strtoupper($response) === 'D' && count($this->_paths)) {
 				$this->out();
 				return;
 			} elseif (strtoupper($response) === 'D') {
-				$this->err(__d('cake_console', '<warning>No directories selected.</warning> Please choose a directory.'));
+				$this->err('<warning>No directories selected.</warning> Please choose a directory.');
 			} elseif (is_dir($response)) {
 				$this->_paths[] = $response;
 				$defaultPath = 'D';
 			} else {
-				$this->err(__d('cake_console', 'The directory path you supplied was not found. Please try again.'));
+				$this->err('The directory path you supplied was not found. Please try again.');
 			}
 			$this->out();
 		}
@@ -165,7 +164,7 @@ class ExtractTask extends Shell {
 		if (isset($this->params['extract-core'])) {
 			$this->_extractCore = !(strtolower($this->params['extract-core']) === 'no');
 		} else {
-			$response = $this->in(__d('cake_console', 'Would you like to extract the messages from the CakePHP core?'), ['y', 'n'], 'n');
+			$response = $this->in('Would you like to extract the messages from the CakePHP core?', ['y', 'n'], 'n');
 			$this->_extractCore = strtolower($response) === 'y';
 		}
 
@@ -190,17 +189,17 @@ class ExtractTask extends Shell {
 		} elseif (isset($this->params['plugin'])) {
 			$this->_output = $this->_paths[0] . DS . 'Locale';
 		} else {
-			$message = __d('cake_console', "What is the path you would like to output?\n[Q]uit", $this->_paths[0] . DS . 'Locale');
+			$message = "What is the path you would like to output?\n[Q]uit";
 			while (true) {
 				$response = $this->in($message, null, rtrim($this->_paths[0], DS) . DS . 'Locale');
 				if (strtoupper($response) === 'Q') {
-					$this->err(__d('cake_console', 'Extract Aborted'));
+					$this->err('Extract Aborted');
 					return $this->_stop();
 				} elseif ($this->_isPathUsable($response)) {
 					$this->_output = $response . DS;
 					break;
 				} else {
-					$this->err(__d('cake_console', 'The directory path you supplied was not found. Please try again.'));
+					$this->err('The directory path you supplied was not found. Please try again.');
 				}
 				$this->out();
 			}
@@ -210,7 +209,7 @@ class ExtractTask extends Shell {
 			$this->_merge = !(strtolower($this->params['merge']) === 'no');
 		} else {
 			$this->out();
-			$response = $this->in(__d('cake_console', 'Would you like to merge all domain strings into the default.pot file?'), ['y', 'n'], 'n');
+			$response = $this->in('Would you like to merge all domain strings into the default.pot file?', ['y', 'n'], 'n');
 			$this->_merge = strtolower($response) === 'y';
 		}
 
@@ -220,7 +219,7 @@ class ExtractTask extends Shell {
 
 		$this->_output = rtrim($this->_output, DS) . DS;
 		if (!$this->_isPathUsable($this->_output)) {
-			$this->err(__d('cake_console', 'The output directory %s was not found or writable.', $this->_output));
+			$this->err(sprintf('The output directory %s was not found or writable.', $this->_output));
 			return $this->_stop();
 		}
 
@@ -269,13 +268,13 @@ class ExtractTask extends Shell {
 	protected function _extract() {
 		$this->out();
 		$this->out();
-		$this->out(__d('cake_console', 'Extracting...'));
+		$this->out('Extracting...');
 		$this->hr();
-		$this->out(__d('cake_console', 'Paths:'));
+		$this->out('Paths:');
 		foreach ($this->_paths as $path) {
 			$this->out('   ' . $path);
 		}
-		$this->out(__d('cake_console', 'Output Directory: ') . $this->_output);
+		$this->out('Output Directory: ' . $this->_output);
 		$this->hr();
 		$this->_extractTokens();
 		$this->_buildFiles();
@@ -283,7 +282,7 @@ class ExtractTask extends Shell {
 		$this->_paths = $this->_files = $this->_storage = [];
 		$this->_translations = $this->_tokens = [];
 		$this->out();
-		$this->out(__d('cake_console', 'Done.'));
+		$this->out('Done.');
 	}
 
 /**
@@ -294,41 +293,41 @@ class ExtractTask extends Shell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		$parser->description(
-			__d('cake_console', 'CakePHP Language String Extraction:')
+			'CakePHP Language String Extraction:'
 		)->addOption('app', [
-			'help' => __d('cake_console', 'Directory where your application is located.')
+			'help' => 'Directory where your application is located.'
 		])->addOption('paths', [
-			'help' => __d('cake_console', 'Comma separated list of paths.')
+			'help' => 'Comma separated list of paths.'
 		])->addOption('merge', [
-			'help' => __d('cake_console', 'Merge all domain strings into the default.po file.'),
+			'help' => 'Merge all domain strings into the default.po file.',
 			'choices' => ['yes', 'no']
 		])->addOption('output', [
-			'help' => __d('cake_console', 'Full path to output directory.')
+			'help' => 'Full path to output directory.'
 		])->addOption('files', [
-			'help' => __d('cake_console', 'Comma separated list of files.')
+			'help' => 'Comma separated list of files.'
 		])->addOption('exclude-plugins', [
 			'boolean' => true,
 			'default' => true,
-			'help' => __d('cake_console', 'Ignores all files in plugins if this command is run inside from the same app directory.')
+			'help' => 'Ignores all files in plugins if this command is run inside from the same app directory.'
 		])->addOption('plugin', [
-			'help' => __d('cake_console', 'Extracts tokens only from the plugin specified and puts the result in the plugin\'s Locale directory.')
+			'help' => 'Extracts tokens only from the plugin specified and puts the result in the plugin\'s Locale directory.'
 		])->addOption('ignore-model-validation', [
 			'boolean' => true,
 			'default' => false,
-			'help' => __d('cake_console', 'Ignores validation messages in the $validate property.' .
+			'help' => 'Ignores validation messages in the $validate property.' .
 				' If this flag is not set and the command is run from the same app directory,' .
-				' all messages in model validation rules will be extracted as tokens.')
+				' all messages in model validation rules will be extracted as tokens.'
 		])->addOption('validation-domain', [
-			'help' => __d('cake_console', 'If set to a value, the localization domain to be used for model validation messages.')
+			'help' => 'If set to a value, the localization domain to be used for model validation messages.'
 		])->addOption('exclude', [
-			'help' => __d('cake_console', 'Comma separated list of directories to exclude.' .
-				' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors')
+			'help' => 'Comma separated list of directories to exclude.' .
+				' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors'
 		])->addOption('overwrite', [
 			'boolean' => true,
 			'default' => false,
-			'help' => __d('cake_console', 'Always overwrite existing .pot files.')
+			'help' => 'Always overwrite existing .pot files.'
 		])->addOption('extract-core', [
-			'help' => __d('cake_console', 'Extract messages from the CakePHP core libs.'),
+			'help' => 'Extract messages from the CakePHP core libs.',
 			'choices' => ['yes', 'no']
 		]);
 
@@ -343,7 +342,7 @@ class ExtractTask extends Shell {
 	protected function _extractTokens() {
 		foreach ($this->_files as $file) {
 			$this->_file = $file;
-			$this->out(__d('cake_console', 'Processing %s...', $file));
+			$this->out('Processing %s...', $file);
 
 			$code = file_get_contents($file);
 			$allTokens = token_get_all($code);
@@ -505,14 +504,14 @@ class ExtractTask extends Shell {
 			while ($overwriteAll === false && $File->exists() && strtoupper($response) !== 'Y') {
 				$this->out();
 				$response = $this->in(
-					__d('cake_console', 'Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename),
+					sprintf('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename),
 					['y', 'n', 'a'],
 					'y'
 				);
 				if (strtoupper($response) === 'N') {
 					$response = '';
 					while (!$response) {
-						$response = $this->in(__d('cake_console', "What would you like to name this file?"), null, 'new_' . $filename);
+						$response = $this->in("What would you like to name this file?", null, 'new_' . $filename);
 						$File = new File($this->_output . $response);
 						$filename = $response;
 					}
@@ -608,7 +607,7 @@ class ExtractTask extends Shell {
  * @return void
  */
 	protected function _markerError($file, $line, $marker, $count) {
-		$this->err(__d('cake_console', "Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
+		$this->err(sprintf("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
 		$count += 2;
 		$tokenCount = count($this->_tokens);
 		$parenthesis = 1;

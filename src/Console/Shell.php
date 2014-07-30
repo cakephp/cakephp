@@ -215,10 +215,10 @@ class Shell {
  */
 	protected function _welcome() {
 		$this->out();
-		$this->out(__d('cake_console', '<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
+		$this->out('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version());
 		$this->hr();
-		$this->out(__d('cake_console', 'App : %s', APP_DIR));
-		$this->out(__d('cake_console', 'Path: %s', APP));
+		$this->out(sprintf('App : %s', APP_DIR));
+		$this->out(sprintf('Path: %s', APP));
 		$this->hr();
 	}
 
@@ -533,7 +533,7 @@ class Shell {
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::error
  */
 	public function error($title, $message = null) {
-		$this->_io->err(__d('cake_console', '<error>Error:</error> %s', $title));
+		$this->_io->err(sprintf('<error>Error:</error> %s', $title));
 
 		if (!empty($message)) {
 			$this->_io->err($message);
@@ -571,29 +571,29 @@ class Shell {
 		$this->_io->out();
 
 		if (is_file($path) && empty($this->params['force'])) {
-			$this->_io->out(__d('cake_console', '<warning>File `%s` exists</warning>', $path));
-			$key = $this->_io->askChoice(__d('cake_console', 'Do you want to overwrite?'), ['y', 'n', 'q'], 'n');
+			$this->_io->out(sprintf('<warning>File `%s` exists</warning>', $path));
+			$key = $this->_io->askChoice('Do you want to overwrite?', ['y', 'n', 'q'], 'n');
 
 			if (strtolower($key) === 'q') {
-				$this->_io->out(__d('cake_console', '<error>Quitting</error>.'), 2);
+				$this->_io->out('<error>Quitting</error>.', 2);
 				return $this->_stop();
 			} elseif (strtolower($key) !== 'y') {
-				$this->_io->out(__d('cake_console', 'Skip `%s`', $path), 2);
+				$this->_io->out(sprintf('Skip `%s`', $path), 2);
 				return false;
 			}
 		} else {
-			$this->out(__d('cake_console', 'Creating file %s', $path));
+			$this->out(sprintf('Creating file %s', $path));
 		}
 
 		$File = new File($path, true);
 		if ($File->exists() && $File->writable()) {
 			$data = $File->prepare($contents);
 			$File->write($data);
-			$this->_io->out(__d('cake_console', '<success>Wrote</success> `%s`', $path));
+			$this->_io->out(sprintf('<success>Wrote</success> `%s`', $path));
 			return true;
 		}
 
-		$this->_io->err(__d('cake_console', '<error>Could not write to `%s`</error>.', $path), 2);
+		$this->_io->err(sprintf('<error>Could not write to `%s`</error>.', $path), 2);
 		return false;
 	}
 

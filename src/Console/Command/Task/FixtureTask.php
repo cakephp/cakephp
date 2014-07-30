@@ -57,25 +57,25 @@ class FixtureTask extends BakeTask {
 		$parser = parent::getOptionParser();
 
 		$parser = $parser->description(
-			__d('cake_console', 'Generate fixtures for use with the test suite. You can use `bake fixture all` to bake all fixtures.')
+			'Generate fixtures for use with the test suite. You can use `bake fixture all` to bake all fixtures.'
 		)->addArgument('name', [
-			'help' => __d('cake_console', 'Name of the fixture to bake. Can use Plugin.name to bake plugin fixtures.')
+			'help' => 'Name of the fixture to bake. Can use Plugin.name to bake plugin fixtures.'
 		])->addOption('table', [
-			'help' => __d('cake_console', 'The table name if it does not follow conventions.'),
+			'help' => 'The table name if it does not follow conventions.',
 		])->addOption('count', [
-			'help' => __d('cake_console', 'When using generated data, the number of records to include in the fixture(s).'),
+			'help' => 'When using generated data, the number of records to include in the fixture(s).',
 			'short' => 'n',
 			'default' => 10
 		])->addOption('schema', [
-			'help' => __d('cake_console', 'Create a fixture that imports schema, instead of dumping a schema snapshot into the fixture.'),
+			'help' => 'Create a fixture that imports schema, instead of dumping a schema snapshot into the fixture.',
 			'short' => 's',
 			'boolean' => true
 		])->addOption('records', [
-			'help' => __d('cake_console', 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10.'),
+			'help' => 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10.',
 			'short' => 'r',
 			'boolean' => true
 		])->addOption('conditions', [
-			'help' => __d('cake_console', 'The SQL snippet to use when importing records.'),
+			'help' => 'The SQL snippet to use when importing records.',
 			'default' => '1=1',
 		]);
 
@@ -94,7 +94,7 @@ class FixtureTask extends BakeTask {
 		$name = $this->_getName($name);
 
 		if (empty($name)) {
-			$this->out(__d('cake_console', 'Choose a fixture to bake from the following:'));
+			$this->out('Choose a fixture to bake from the following:');
 			foreach ($this->Model->listAll() as $table) {
 				$this->out('- ' . $this->_modelName($table));
 			}
@@ -235,7 +235,7 @@ class FixtureTask extends BakeTask {
 		$this->Template->set($vars);
 		$content = $this->Template->generate('classes', 'fixture');
 
-		$this->out("\n" . __d('cake_console', 'Baking test fixture for %s...', $model), 1, Shell::QUIET);
+		$this->out("\n" . sprintf('Baking test fixture for %s...', $model), 1, Shell::QUIET);
 		$this->createFile($path . $filename, $content);
 		return $content;
 	}

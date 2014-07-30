@@ -72,20 +72,20 @@ class BakeShell extends Shell {
 	public function main() {
 		$connections = ConnectionManager::configured();
 		if (empty($connections)) {
-			$this->out(__d('cake_console', 'Your database configuration was not found.'));
-			$this->out(__d('cake_console', 'Add your database connection information to App/Config/app.php.'));
+			$this->out('Your database configuration was not found.');
+			$this->out('Add your database connection information to App/Config/app.php.');
 			return false;
 		}
-		$this->out(__d('cake_console', 'The following commands can be used to generate skeleton code for your application.'));
+		$this->out('The following commands can be used to generate skeleton code for your application.');
 		$this->out('');
-		$this->out(__d('cake_console', '<info>Available bake commands:</info>'));
+		$this->out('<info>Available bake commands:</info>');
 		$this->out('');
 		foreach ($this->tasks as $task) {
 			list($p, $name) = pluginSplit($task);
 			$this->out('- ' . Inflector::underscore($name));
 		}
 		$this->out('');
-		$this->out(__d('cake_console', 'By using <info>Console/cake bake [name]</info> you can invoke a specific bake task.'));
+		$this->out('By using <info>Console/cake bake [name]</info> you can invoke a specific bake task.');
 	}
 
 /**
@@ -201,11 +201,11 @@ class BakeShell extends Shell {
 
 		if (empty($name)) {
 			$this->Model->connection = $this->connection;
-			$this->out(__d('cake_console', 'Possible model names based on your database:'));
+			$this->out('Possible model names based on your database:');
 			foreach ($this->Model->listAll() as $table) {
 				$this->out('- ' . $table);
 			}
-			$this->out(__d('cake_console', 'Run <info>cake bake all [name]</info> to generate skeleton files.'));
+			$this->out('Run <info>cake bake all [name]</info> to generate skeleton files.');
 			return false;
 		}
 
@@ -220,7 +220,7 @@ class BakeShell extends Shell {
 
 		$this->View->main($name);
 
-		$this->out(__d('cake_console', '<success>Bake All complete.</success>'), 1, Shell::QUIET);
+		$this->out('<success>Bake All complete.</success>', 1, Shell::QUIET);
 		return true;
 	}
 
@@ -233,18 +233,18 @@ class BakeShell extends Shell {
 		$parser = parent::getOptionParser();
 
 		$parser->description(
-			__d('cake_console', 'The Bake script generates controllers, views and models for your application.' .
+			'The Bake script generates controllers, views and models for your application.' .
 			' If run with no command line arguments, Bake guides the user through the class creation process.' .
 			' You can customize the generation process by telling Bake where different parts of your application are using command line arguments.'
-		))->addSubcommand('all', [
-			'help' => __d('cake_console', 'Bake a complete MVC skeleton. Optional: <name> of a model.'),
+		)->addSubcommand('all', [
+			'help' => 'Bake a complete MVC skeleton. Optional: <name> of a model.',
 		])->addOption('connection', [
-			'help' => __d('cake_console', 'Database connection to use in conjunction with `bake all`.'),
+			'help' => 'Database connection to use in conjunction with `bake all`.',
 			'short' => 'c',
 			'default' => 'default'
 		])->addOption('theme', [
 			'short' => 't',
-			'help' => __d('cake_console', 'Theme to use when baking code.')
+			'help' => 'Theme to use when baking code.'
 		]);
 
 		foreach ($this->_taskMap as $task => $config) {

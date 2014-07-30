@@ -109,11 +109,11 @@ class ServerShell extends Shell {
  */
 	protected function _welcome() {
 		$this->out();
-		$this->out(__d('cake_console', '<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
+		$this->out('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version());
 		$this->hr();
-		$this->out(__d('cake_console', 'App : %s', APP_DIR));
-		$this->out(__d('cake_console', 'Path: %s', APP));
-		$this->out(__d('cake_console', 'DocumentRoot: %s', $this->_documentRoot));
+		$this->out('App : %s', APP_DIR);
+		$this->out('Path: %s', APP);
+		$this->out('DocumentRoot: %s', $this->_documentRoot);
 		$this->hr();
 	}
 
@@ -131,8 +131,8 @@ class ServerShell extends Shell {
 		);
 
 		$port = ($this->_port == static::DEFAULT_PORT) ? '' : ':' . $this->_port;
-		$this->out(__d('cake_console', 'built-in server is running in http://%s%s/', $this->_host, $port));
-		$this->out(__d('cake_console', 'You can exit with <info>CTRL-C</info>'));
+		$this->out(sprintf('built-in server is running in http://%s%s/', $this->_host, $port));
+		$this->out(sprintf('You can exit with <info>CTRL-C</info>'));
 		system($command);
 	}
 
@@ -145,17 +145,17 @@ class ServerShell extends Shell {
 		$parser = parent::getOptionParser();
 
 		$parser->description([
-			__d('cake_console', 'PHP Built-in Server for CakePHP'),
-			__d('cake_console', '<warning>[WARN] Don\'t use this at the production environment</warning>'),
+			'PHP Built-in Server for CakePHP',
+			'<warning>[WARN] Don\'t use this at the production environment</warning>',
 		])->addOption('host', [
 			'short' => 'H',
-			'help' => __d('cake_console', 'ServerHost')
+			'help' => 'ServerHost'
 		])->addOption('port', [
 			'short' => 'p',
-			'help' => __d('cake_console', 'ListenPort')
+			'help' => 'ListenPort'
 		])->addOption('document_root', [
 			'short' => 'd',
-			'help' => __d('cake_console', 'DocumentRoot')
+			'help' => 'DocumentRoot'
 		]);
 
 		return $parser;
