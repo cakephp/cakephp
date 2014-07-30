@@ -1328,7 +1328,7 @@ class QueryTest extends TestCase {
 
 /**
  * Tests that it is possible to select distinct rows, even filtering by one column
- * this is testing that there is an specific implementation for DISTINCT ON
+ * this is testing that there is a specific implementation for DISTINCT ON
  *
  * @return void
  */

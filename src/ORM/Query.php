@@ -24,7 +24,7 @@ use Cake\ORM\Table;
 /**
  * Extends the base Query class to provide new methods related to association
  * loading, automatic fields selection, automatic type casting and to wrap results
- * into an specific iterator that will be responsible for hydrating results if
+ * into a specific iterator that will be responsible for hydrating results if
  * required.
  *
  */

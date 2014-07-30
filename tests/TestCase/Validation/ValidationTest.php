@@ -1742,7 +1742,7 @@ class ValidationTest extends TestCase {
 		$this->assertTrue(Validation::email('!def!xyz%abc@example.com'));
 		$this->assertTrue(Validation::email('_somename@example.com'));
 
-		/// Unicode
+		// Unicode
 		$this->assertTrue(Validation::email('some@eräume.foo'));
 		$this->assertTrue(Validation::email('äu@öe.eräume.foo'));
 		$this->assertTrue(Validation::email('Nyrée.surname@example.com'));
