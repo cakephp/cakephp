@@ -15,6 +15,7 @@
 namespace Cake\Utility;
 
 use Cake\Error\Exception;
+use NumberFormatter;
 
 /**
  * Number helper library.
@@ -98,7 +99,9 @@ class Number {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
  */
 	public static function precision($value, $precision = 3) {
-		return sprintf("%01.{$precision}f", $value);
+		$formatter = new NumberFormatter(ini_get('intl.default_locale'), NumberFormatter::DECIMAL);
+		$formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $precision);
+		return $formatter->format($value);
 	}
 
 /**
@@ -119,7 +122,7 @@ class Number {
 			case round($size / 1024 / 1024 / 1024, 2) < 1024:
 				return __d('cake', '{0,number,#,###.##} GB', $size / 1024 / 1024 / 1024);
 			default:
-				return __d('cake', '{0,number} TB', $size / 1024 / 1024 / 1024 / 1024);
+				return __d('cake', '{0,number,#,###.##} TB', $size / 1024 / 1024 / 1024 / 1024);
 		}
 	}
 
