@@ -49,7 +49,8 @@ class DateType extends \Cake\Database\Type\DateTimeType {
 	public function toPHP($value, Driver $driver) {
 		$date = parent::toPHP($value, $driver);
 		if ($date instanceof \DateTime) {
-			return $date->setTime(0, 0, 0);
+			$date->setTime(0, 0, 0);
 		}
+		return $date;
 	}
 }
