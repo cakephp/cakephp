@@ -197,12 +197,12 @@ class Number {
 	}
 
 /**
- * Formats a number into a currency format.
+ * Formats a number into the correct locale format
  *
  * Options:
  *
  * - `places` - Minimim number or decimals to use, e.g 0
- * - `precision` - Maximum Number of decimal places to use, e.g.. 2
+ * - `precision` - Maximum Number of decimal places to use, e.g. 2
  * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
  * - `before` - The string to place before whole numbers, e.g. '['
  * - `after` - The string to place after decimal numbers, e.g. ']'
@@ -247,16 +247,16 @@ class Number {
 	}
 
 /**
- * Formats a number into a currency format to show deltas (signed differences in value).
+ * Formats a number into the correct locale format to show deltas (signed differences in value).
  *
  * ### Options
  *
- * - `places` - Number of decimal places to use. ie. 2
- * - `fractionExponent` - Fraction exponent of this specific currency. Defaults to 2.
- * - `before` - The string to place before whole numbers. ie. '['
- * - `after` - The string to place after decimal numbers. ie. ']'
- * - `thousands` - Thousands separator ie. ','
- * - `decimals` - Decimal separator symbol ie. '.'
+ * - `places` - Minimim number or decimals to use, e.g 0
+ * - `precision` - Maximum Number of decimal places to use, e.g. 2
+ * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
+ * - `before` - The string to place before whole numbers, e.g. '['
+ * - `after` - The string to place after decimal numbers, e.g. ']'
+ * - `escape` - Set to false to prevent escaping
  *
  * @param float $value A floating point number
  * @param array $options Options list.
@@ -264,8 +264,8 @@ class Number {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::formatDelta
  */
 	public static function formatDelta($value, array $options = array()) {
-		$places = isset($options['places']) ? $options['places'] : 0;
-		$value = number_format($value, $places, '.', '');
+		$options += ['places' => 0];
+		$value = number_format($value, $options['places'], '.', '');
 		$sign = $value > 0 ? '+' : '';
 		$options['before'] = isset($options['before']) ? $options['before'] . $sign : $sign;
 		return static::format($value, $options);
