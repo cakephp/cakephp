@@ -111,15 +111,15 @@ class Number {
 	public static function toReadableSize($size) {
 		switch (true) {
 			case $size < 1024:
-				return __dn('cake', '%d Byte', '%d Bytes', $size, $size);
+				return __dn('cake', '{0,number,integer} Byte', '{0,number,integer} Bytes', $size, $size);
 			case round($size / 1024) < 1024:
-				return __d('cake', '%s KB', static::precision($size / 1024, 0));
+				return __d('cake', '{0,number,#,###.##} KB', $size / 1024);
 			case round($size / 1024 / 1024, 2) < 1024:
-				return __d('cake', '%s MB', static::precision($size / 1024 / 1024, 2));
+				return __d('cake', '{0,number,#,###.##} MB', $size / 1024 / 1024);
 			case round($size / 1024 / 1024 / 1024, 2) < 1024:
-				return __d('cake', '%s GB', static::precision($size / 1024 / 1024 / 1024, 2));
+				return __d('cake', '{0,number,#,###.##} GB', $size / 1024 / 1024 / 1024);
 			default:
-				return __d('cake', '%s TB', static::precision($size / 1024 / 1024 / 1024 / 1024, 2));
+				return __d('cake', '{0,number} TB', $size / 1024 / 1024 / 1024 / 1024);
 		}
 	}
 

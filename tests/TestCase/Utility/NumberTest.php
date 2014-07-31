@@ -615,11 +615,15 @@ class NumberTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->toReadableSize(1023);
-		$expected = '1023 Bytes';
+		$expected = '1,023 Bytes';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->toReadableSize(1024);
 		$expected = '1 KB';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024 + 123);
+		$expected = '1.12 KB';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->toReadableSize(1024 * 512);
@@ -627,35 +631,35 @@ class NumberTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->toReadableSize(1024 * 1024 - 1);
-		$expected = '1.00 MB';
+		$expected = '1 MB';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->toReadableSize(1024 * 1024 * 512);
-		$expected = '512.00 MB';
+		$result = $this->Number->toReadableSize(512.05 * 1024 * 1024);
+		$expected = '512.05 MB';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 - 1);
-		$expected = '1.00 GB';
+		$expected = '1 GB';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 512);
-		$expected = '512.00 GB';
+		$expected = '512 GB';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 - 1);
-		$expected = '1.00 TB';
+		$expected = '1 TB';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 512);
-		$expected = '512.00 TB';
+		$expected = '512 TB';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 1024 - 1);
-		$expected = '1024.00 TB';
+		$expected = '1,024 TB';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 1024 * 1024);
-		$expected = (1024 * 1024) . '.00 TB';
+		$expected = '1,048,576 TB';
 		$this->assertEquals($expected, $result);
 	}
 
