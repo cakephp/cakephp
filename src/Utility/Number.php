@@ -201,11 +201,11 @@ class Number {
  *
  * Options:
  *
- * - `places` - Number of decimal places to use. ie. 2
- * - `before` - The string to place before whole numbers. ie. '['
- * - `after` - The string to place after decimal numbers. ie. ']'
- * - `thousands` - Thousands separator ie. ','
- * - `decimals` - Decimal separator symbol ie. '.'
+ * - `places` - Minimim number or decimals to use, e.g 0
+ * - `precision` - Maximum Number of decimal places to use, e.g.. 2
+ * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
+ * - `before` - The string to place before whole numbers, e.g. '['
+ * - `after` - The string to place after decimal numbers, e.g. ']'
  * - `escape` - Set to false to prevent escaping
  *
  * @param float $value A floating point number.
@@ -214,16 +214,35 @@ class Number {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
  */
 	public static function format($value, array $options = []) {
-		$defaults = array('before' => '', 'after' => '', 'places' => 2,
-			'thousands' => ',', 'decimals' => '.', 'escape' => true);
-		$options += $defaults;
-		extract($options);
+		$locale = isset($options['locale']) ? $options['locale'] : ini_get('intl.default_locale');
 
-		$out = $before . number_format($value, $places, $decimals, $thousands) . $after;
+		if (!$locale) {
+			$locale = 'en_US';
+		}
 
-		if ($escape) {
+		if (!isset(static::$_formatters[$locale])) {
+			static::$_formatters[$locale] = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+		}
+
+		$formatter = static::$_formatters[$locale];
+		$map = [
+			'places' => NumberFormatter::MIN_FRACTION_DIGITS,
+			'precision' => NumberFormatter::MAX_FRACTION_DIGITS
+		];
+
+		foreach ($map as $opt => $setting) {
+			if (isset($options[$opt])) {
+				$formatter->setAttribute($setting, $options[$opt]);
+			}
+		}
+
+		$options += ['before' => '', 'after' => '', 'escape' => true];
+		$out = $options['before'] . $formatter->format($value) . $options['after'];
+
+		if (!empty($options['escape'])) {
 			return h($out);
 		}
+
 		return $out;
 	}
 
