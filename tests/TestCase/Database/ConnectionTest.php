@@ -655,6 +655,19 @@ class ConnectionTest extends TestCase {
 	}
 
 /**
+ * test logQueries method
+ *
+ * @return void
+ */
+	public function testLogQueries() {
+		$this->connection->logQueries(true);
+		$this->assertTrue($this->connection->logQueries());
+
+		$this->connection->logQueries(false);
+		$this->assertFalse($this->connection->logQueries());
+	}
+
+/**
  * Tests that log() function logs to the configured query logger
  *
  * @return void

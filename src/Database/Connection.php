@@ -542,10 +542,14 @@ class Connection {
 /**
  * Enables or disables query logging for this connection.
  *
- * @param bool $enable whether to turn logging on or disable it
- * @return void
+ * @param bool $enable whether to turn logging on or disable it.
+ *   Use null to read current value.
+ * @return bool
  */
-	public function logQueries($enable) {
+	public function logQueries($enable = null) {
+		if ($enable === null) {
+			return $this->_logQueries;
+		}
 		$this->_logQueries = $enable;
 	}
 
