@@ -303,7 +303,7 @@ class I18nTest extends TestCase {
 
 /**
  * Tests that it is possible to register a generic translators factory for a domain
- * instad of having to create them manually
+ * instead of having to create them manually
  *
  * @return void
  */
