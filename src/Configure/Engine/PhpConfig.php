@@ -15,7 +15,7 @@
 namespace Cake\Configure\Engine;
 
 use Cake\Configure\ConfigEngineInterface;
-use Cake\Core\App;
+use Cake\Core\Plugin;
 use Cake\Error;
 
 /**
@@ -37,7 +37,7 @@ class PhpConfig implements ConfigEngineInterface {
 /**
  * Constructor for PHP Config file reading.
  *
- * @param string $path The path to read config files from. Defaults to APP . 'Config/'
+ * @param string $path The path to read config files from. Defaults to CONFIG.
  */
 	public function __construct($path = null) {
 		if (!$path) {
@@ -50,7 +50,7 @@ class PhpConfig implements ConfigEngineInterface {
  * Read a config file and return its contents.
  *
  * Files with `.` in the name will be treated as values in plugins. Instead of
- * reading from the initialized path, plugin keys will be located using App::path().
+ * reading from the initialized path, plugin keys will be located using Plugin::path().
  *
  * @param string $key The identifier to read from. If the key has a . it will be treated
  *  as a plugin prefix.
@@ -106,7 +106,7 @@ class PhpConfig implements ConfigEngineInterface {
 		$key .= '.php';
 
 		if ($plugin) {
-			$file = App::path('Config', $plugin)[0] . $key;
+			$file = Plugin::configPath($plugin) . $key;
 		} else {
 			$file = $this->_path . $key;
 		}

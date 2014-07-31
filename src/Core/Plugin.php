@@ -149,6 +149,9 @@ class Plugin {
 		}
 
 		$config['classPath'] = $config['path'] . $config['classBase'] . DS;
+		if (!isset($config['configPath'])) {
+			$config['configPath'] = $config['path'] . 'config' . DS;
+		}
 
 		static::$_plugins[$plugin] = $config;
 
@@ -236,6 +239,20 @@ class Plugin {
 	}
 
 /**
+ * Returns the filesystem path for plugin's folder containing config files.
+ *
+ * @param string $plugin name of the plugin in CamelCase format.
+ * @return string Path to the plugin folder container config files.
+ * @throws \Cake\Core\Error\MissingPluginException If plugin has not been loaded.
+ */
+	public static function configPath($plugin) {
+		if (empty(static::$_plugins[$plugin])) {
+			throw new Error\MissingPluginException(['plugin' => $plugin]);
+		}
+		return static::$_plugins[$plugin]['configPath'];
+	}
+
+/**
  * Return the namespace for a plugin
  *
  * If a plugin is unknown, the plugin name will be used as the namespace.
@@ -266,7 +283,7 @@ class Plugin {
 		$path = static::path($plugin);
 		if ($config['bootstrap'] === true) {
 			return static::_includeFile(
-				$config['classPath'] . 'Config' . DS . 'bootstrap.php',
+				$config['configPath'] . 'bootstrap.php',
 				$config['ignoreMissing']
 			);
 		}
@@ -291,7 +308,7 @@ class Plugin {
 			return false;
 		}
 		return (bool)static::_includeFile(
-			$config['classPath'] . 'Config' . DS . 'routes.php',
+			$config['configPath'] . 'routes.php',
 			$config['ignoreMissing']
 		);
 	}
