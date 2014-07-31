@@ -77,6 +77,13 @@ class Number {
 	);
 
 /**
+ * A list of number formatters indexed by locale
+ *
+ * @var array
+ */
+	protected static $_formatters = [];
+
+/**
  * Default currency used by Number::currency()
  *
  * @var string
@@ -99,8 +106,13 @@ class Number {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
  */
 	public static function precision($value, $precision = 3) {
-		$formatter = new NumberFormatter(ini_get('intl.default_locale'), NumberFormatter::DECIMAL);
+		$locale = ini_get('intl.default_locale') ?: 'en_US';
+		if (!isset(static::$_formatters[$locale])) {
+			static::$_formatters[$locale] = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+		}
+		$formatter = static::$_formatters[$locale];
 		$formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $precision);
+		$formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $precision);
 		return $formatter->format($value);
 	}
 

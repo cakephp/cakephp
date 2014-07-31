@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Utility;
 
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Number;
+use Cake\I18n\I18n;
 
 /**
  * NumberTest class
@@ -33,7 +34,7 @@ class NumberTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->Number = new Number();
-		$this->locale = ini_get('intl.default_locale');
+		$this->locale = I18n::defaultLocale();
 	}
 
 /**
@@ -44,7 +45,7 @@ class NumberTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Number);
-		ini_set('intl.default_locale', $this->locale);
+		I18n::defaultLocale($this->locale);
 	}
 
 /**
@@ -671,7 +672,7 @@ class NumberTest extends TestCase {
  * @return void
  */
 	public function testReadableSizeLocalized() {
-		ini_set('intl.default_locale', 'fr_FR');
+		I18n::defaultLocale('fr_FR');
 		$result = $this->Number->toReadableSize(1321205);
 		$this->assertEquals('1,26 MB', $result);
 
@@ -685,7 +686,7 @@ class NumberTest extends TestCase {
  * @return void
  */
 	public function testPrecisionLocalized() {
-		ini_set('intl.default_locale', 'fr_FR');
+		I18n::defaultLocale('fr_FR');
 		$result = $this->Number->precision(1.234);
 		$this->assertEquals('1,234', $result);
 	}
