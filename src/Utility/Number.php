@@ -253,36 +253,6 @@ class Number {
 	}
 
 /**
- * Alternative number_format() to accommodate multibyte decimals and thousands < PHP 5.4
- *
- * @param float $value Value to format.
- * @param int $places Decimal places to use.
- * @param string $decimals Decimal position string.
- * @param string $thousands Thousands separator string.
- * @return string
- */
-	protected static function _numberFormat($value, $places = 0, $decimals = '.', $thousands = ',') {
-		if (!isset(self::$_numberFormatSupport)) {
-			self::$_numberFormatSupport = version_compare(PHP_VERSION, '5.4.0', '>=');
-		}
-		if (self::$_numberFormatSupport) {
-			return number_format($value, $places, $decimals, $thousands);
-		}
-		$value = number_format($value, $places, '.', '');
-		$after = '';
-		$foundDecimal = strpos($value, '.');
-		if ($foundDecimal !== false) {
-			$after = substr($value, $foundDecimal);
-			$value = substr($value, 0, $foundDecimal);
-		}
-		while (($foundThousand = preg_replace('/(\d+)(\d\d\d)/', '\1 \2', $value)) !== $value) {
-			$value = $foundThousand;
-		}
-		$value .= $after;
-		return strtr($value, array(' ' => $thousands, '.' => $decimals));
-	}
-
-/**
  * Formats a number into a currency format.
  *
  * ### Options
