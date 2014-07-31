@@ -234,7 +234,7 @@ abstract class ObjectCollection {
 	}
 
 /**
- * Disables callbacks on a object or array of objects. Public object methods are still
+ * Disables callbacks on an object or array of objects. Public object methods are still
  * callable as normal.
  *
  * @param string|array $name CamelCased name of the objects(s) to disable (string or array)

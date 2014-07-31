@@ -325,7 +325,7 @@ class Xml {
 	}
 
 /**
- * Returns this XML structure as a array.
+ * Returns this XML structure as an array.
  *
  * @param SimpleXMLElement|DOMDocument|DOMNode $obj SimpleXMLElement, DOMDocument or DOMNode instance
  * @return array Array representation of the XML structure.
