@@ -36,6 +36,13 @@ class SprintfFormatter implements FormatterInterface {
  * @return string The formatted message
  */
 	public function format($locale, $message, array $vars) {
+		$isString = is_string($message);
+		if ($isString && isset($vars['_singular'])) {
+			$message = [$vars['_singular'], $message];
+			unset($vars['_singular']);
+			$isString = false;
+		}
+
 		if (is_string($message)) {
 			return vsprintf($message, $vars);
 		}
@@ -52,6 +59,7 @@ class SprintfFormatter implements FormatterInterface {
 
 		if (!is_string($message)) {
 			$count = isset($vars['_count']) ? $vars['_count'] : 0;
+			unset($vars['_singular']);
 			$form = PluralRules::calculate($locale, $count);
 			$message = $message[$form];
 		}

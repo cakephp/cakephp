@@ -37,7 +37,14 @@ class IcuFormatter implements FormatterInterface {
  * @return string The formatted message
  */
 	public function format($locale, $message, array $vars) {
-		if (is_string($message)) {
+		$isString = is_string($message);
+		if ($isString && isset($vars['_singular'])) {
+			$message = [$vars['_singular'], $message];
+			unset($vars['_singular']);
+			$isString = false;
+		}
+
+		if ($isString) {
 			return $this->_formatMessage($locale, $message, $vars);
 		}
 
@@ -53,7 +60,7 @@ class IcuFormatter implements FormatterInterface {
 
 		if (!is_string($message)) {
 			$count = isset($vars['_count']) ? $vars['_count'] : 0;
-			unset($vars['_count']);
+			unset($vars['_count'], $vars['_singular']);
 			$form = PluralRules::calculate($locale, $count);
 			$message = $message[$form];
 		}

@@ -147,4 +147,19 @@ class IcuFormatterTest extends TestCase {
 		);
 	}
 
+/**
+ * Tests that it is possible to provide a singular fallback when passing a string message.
+ * This is useful for getting quick feedback on the code during development instead of
+ * having to provide all plural forms even for the default language
+ *
+ * @return void
+ */
+	public function testSingularFallback() {
+		$formatter = new IcuFormatter();
+		$singular = 'one thing';
+		$plural = 'many things';
+		$this->assertEquals($singular, $formatter->format('en_US', $plural, ['_count' => 1, '_singular' => $singular]));
+		$this->assertEquals($plural, $formatter->format('en_US', $plural, ['_count' => 2, '_singular' => $singular]));
+	}
+
 }

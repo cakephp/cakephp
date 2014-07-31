@@ -631,7 +631,7 @@ if (!function_exists('__n')) {
 		$arguments = func_num_args() === 4 ? (array)$args : array_slice(func_get_args(), 3);
 		return I18n::translator()->translate(
 			$plural,
-			['_count' => $count] + $arguments
+			['_count' => $count, '_singular' => $singular] + $arguments
 		);
 	}
 
@@ -681,7 +681,7 @@ if (!function_exists('__dn')) {
 		$arguments = func_num_args() === 5 ? (array)$args : array_slice(func_get_args(), 4);
 		return I18n::translator($domain)->translate(
 			$plural,
-			['_count' => $count] + $arguments
+			['_count' => $count, '_singular' => $singular] + $arguments
 		);
 	}
 
