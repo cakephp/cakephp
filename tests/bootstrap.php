@@ -61,7 +61,7 @@ $loader->addNamespace('TestPlugin\Test', TEST_APP . 'Plugin' . DS . 'TestPlugin'
 $loader->addNamespace('TestPluginTwo', TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'src');
 $loader->addNamespace('PluginJs', TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'src');
 
-require_once CAKE . 'bootstrap.php';
+require_once CORE_PATH . 'config/bootstrap.php';
 
 date_default_timezone_set('UTC');
 mb_internal_encoding('UTF-8');
