@@ -41,6 +41,7 @@ define('LOG_ERROR', LOG_ERR);
 define('APP', TEST_APP . 'TestApp' . DS);
 define('WWW_ROOT', TEST_APP . WEBROOT_DIR . DS);
 define('TESTS', TEST_APP . 'tests' . DS);
+define('CONFIG', TEST_APP . 'config' . DS);
 
 //@codingStandardsIgnoreStart
 @mkdir(LOGS);

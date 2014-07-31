@@ -78,7 +78,7 @@ class IniConfig implements ConfigEngineInterface {
  */
 	public function __construct($path = null, $section = null) {
 		if (!$path) {
-			$path = APP . 'Config/';
+			$path = CONFIG;
 		}
 		$this->_path = $path;
 		$this->_section = $section;
