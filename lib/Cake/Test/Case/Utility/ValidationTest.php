@@ -57,11 +57,11 @@ class TestNlValidation {
 	}
 
 /**
- * ssn function for testing ssn pass through
+ * personId function for testing identification pass through
  *
  * @return void
  */
-	public static function ssn($check) {
+	public static function personId($check) {
 		return true;
 	}
 
@@ -2269,14 +2269,14 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
- * test that phone and postal pass to other classes.
+ * test that phone, postal and personId pass to other classes.
  *
  * @return void
  */
-	public function testPhonePostalSsnPass() {
+	public function testPhonePostalPhonePersonIdPass() {
 		$this->assertTrue(Validation::postal('text', null, 'testNl'));
 		$this->assertTrue(Validation::phone('text', null, 'testDe'));
-		$this->assertTrue(Validation::ssn('text', null, 'testNl'));
+		$this->assertTrue(Validation::personId('text', null, 'testNl'));
 	}
 
 /**
@@ -2309,24 +2309,24 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
- * testSsn method
+ * testPersonId method
  *
  * @return void
  */
-	public function testSsn() {
-		$this->assertFalse(Validation::ssn('111-333', null, 'dk'));
-		$this->assertFalse(Validation::ssn('111111-333', null, 'dk'));
-		$this->assertTrue(Validation::ssn('111111-3334', null, 'dk'));
+	public function testPersonId() {
+		$this->assertFalse(Validation::personId('111-333', null, 'dk'));
+		$this->assertFalse(Validation::personId('111111-333', null, 'dk'));
+		$this->assertTrue(Validation::personId('111111-3334', null, 'dk'));
 
-		$this->assertFalse(Validation::ssn('1118333', null, 'nl'));
-		$this->assertFalse(Validation::ssn('1234567890', null, 'nl'));
-		$this->assertFalse(Validation::ssn('12345A789', null, 'nl'));
-		$this->assertTrue(Validation::ssn('123456789', null, 'nl'));
+		$this->assertFalse(Validation::personId('1118333', null, 'nl'));
+		$this->assertFalse(Validation::personId('1234567890', null, 'nl'));
+		$this->assertFalse(Validation::personId('12345A789', null, 'nl'));
+		$this->assertTrue(Validation::personId('123456789', null, 'nl'));
 
-		$this->assertFalse(Validation::ssn('11-33-4333', null, 'us'));
-		$this->assertFalse(Validation::ssn('113-3-4333', null, 'us'));
-		$this->assertFalse(Validation::ssn('111-33-333', null, 'us'));
-		$this->assertTrue(Validation::ssn('111-33-4333', null, 'us'));
+		$this->assertFalse(Validation::personId('11-33-4333', null, 'us'));
+		$this->assertFalse(Validation::personId('113-3-4333', null, 'us'));
+		$this->assertFalse(Validation::personId('111-33-333', null, 'us'));
+		$this->assertTrue(Validation::personId('111-33-4333', null, 'us'));
 	}
 
 /**
