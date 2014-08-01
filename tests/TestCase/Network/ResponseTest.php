@@ -1326,7 +1326,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(TEST_APP . 'TestApp/Config/no_section.ini');
+		$response->file(CONFIG . 'no_section.ini');
 
 		ob_start();
 		$result = $response->send();
@@ -1390,7 +1390,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(TEST_APP . 'TestApp/Config/no_section.ini');
+		$response->file(CONFIG . 'no_section.ini');
 
 		ob_start();
 		$result = $response->send();
@@ -1454,7 +1454,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(TEST_APP . 'TestApp/Config/no_section.ini', array(
+		$response->file(CONFIG . 'no_section.ini', array(
 			'name' => 'config.ini'
 		));
 
@@ -1495,7 +1495,7 @@ class ResponseTest extends TestCase {
 		$response->expects($this->never())
 			->method('download');
 
-		$response->file(TEST_APP . 'TestApp/Config/no_section.ini', array(
+		$response->file(CONFIG . 'no_section.ini', array(
 			'download' => false
 		));
 
