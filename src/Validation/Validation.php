@@ -738,14 +738,15 @@ class Validation {
 	}
 
 /**
- * Checks that a value is a valid Social Security Number.
+ * Checks that a value is a valid identification number.
+ * In the case of US this would be the Social Security Number (SSN).
  *
  * @param string|array $check Value to check
  * @param string $regex Regular expression to use
  * @param string $country Country
  * @return bool Success
  */
-	public static function ssn($check, $regex = null, $country = null) {
+	public static function personId($check, $regex = null, $country = null) {
 		if (is_array($check)) {
 			extract(static::_defaults($check));
 		}
@@ -764,7 +765,7 @@ class Validation {
 			}
 		}
 		if (empty($regex)) {
-			return static::_pass('ssn', $check, $country);
+			return static::_pass('personId', $check, $country);
 		}
 		return static::_check($check, $regex);
 	}
