@@ -48,7 +48,7 @@ class Plugin {
  * to load them.
  *
  * This method does not configure any autoloaders. That must be done separately either
- * through composer, or your own code during App/Config/bootstrap.php.
+ * through composer, or your own code during config/bootstrap.php.
  *
  * ## Examples:
  *
@@ -95,8 +95,8 @@ class Plugin {
  *
  * ## Configuration options
  *
- * - `bootstrap` - array - Whether or not you want the $plugin/Config/bootstrap.php file loaded.
- * - `routes` - boolean - Whether or not you want to load the $plugin/Config/routes.php file.
+ * - `bootstrap` - array - Whether or not you want the $plugin/config/bootstrap.php file loaded.
+ * - `routes` - boolean - Whether or not you want to load the $plugin/config/routes.php file.
  * - `namespace` - string - A custom namespace for the plugin. It will default to the plugin name.
  * - `ignoreMissing` - boolean - Set to true to ignore missing bootstrap/routes files.
  * - `path` - string - The path the plugin can be found on. If empty the default plugin path (App.pluginPaths) will be used.

@@ -25,7 +25,7 @@ use Cake\Datasource\Error\MissingDatasourceConfigException;
  * a registry for the connections defined in an application.
  *
  * Provides an interface for loading and enumerating connections defined in
- * App/Config/app.php
+ * config/app.php
  */
 class ConnectionManager {
 

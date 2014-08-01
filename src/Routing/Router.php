@@ -150,7 +150,7 @@ class Router {
 	protected static $_urlFilters = [];
 
 /**
- * Gets the named route patterns for use in app/Config/routes.php
+ * Gets the named route patterns for use in config/routes.php
  *
  * @return array Named route elements
  * @see Router::$_namedExpressions

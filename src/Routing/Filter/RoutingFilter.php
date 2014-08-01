@@ -38,7 +38,7 @@ class RoutingFilter extends DispatcherFilter {
 
 /**
  * Applies Routing and additionalParameters to the request to be dispatched.
- * If Routes have not been loaded they will be loaded, and app/Config/routes.php will be run.
+ * If Routes have not been loaded they will be loaded, and config/routes.php will be run.
  *
  * @param \Cake\Event\Event $event containing the request, response and additional params
  * @return void

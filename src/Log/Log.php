@@ -247,7 +247,7 @@ class Log {
  * @param array $config An array of name => config data for adapter.
  * @return mixed null when adding configuration and an array of configuration data when reading.
  * @throws \Cake\Error\Exception When trying to modify an existing config.
- * @see App/Config/logging.php
+ * @see config/logging.php
  */
 	public static function config($key, $config = null) {
 		$return = static::_config($key, $config);
