@@ -130,7 +130,7 @@ class StringTemplate {
  * @return void
  */
 	public function load($file) {
-		$loader = new PhpConfig(APP . 'Config/');
+		$loader = new PhpConfig();
 		$templates = $loader->read($file);
 		$this->add($templates);
 	}
