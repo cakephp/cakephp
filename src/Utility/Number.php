@@ -276,10 +276,6 @@ class Number {
  *
  * ### Options
  *
- * - `wholeSymbol` - The currency symbol to use for whole numbers,
- *   greater than 1, or less than -1.
- * - `wholePosition` - The position the whole symbol should be placed
- *   valid options are 'before' & 'after'.
  * - `fractionSymbol` - The currency symbol to use for fractional numbers.
  * - `fractionPosition` - The position the fraction symbol should be placed
  *   valid options are 'before' & 'after'.
