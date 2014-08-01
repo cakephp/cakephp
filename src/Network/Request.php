@@ -156,6 +156,7 @@ class Request implements \ArrayAccess {
  */
 	public static function createFromGlobals() {
 		list($base, $webroot) = static::_base();
+		$sessionConfig = (array)Configure::read('Session') + array('defaults' => 'php');
 		$config = array(
 			'query' => $_GET,
 			'post' => $_POST,
@@ -164,7 +165,7 @@ class Request implements \ArrayAccess {
 			'environment' => $_SERVER + $_ENV,
 			'base' => $base,
 			'webroot' => $webroot,
-			'session' => Session::create(Configure::read('Session'))
+			'session' => Session::create($sessionConfig)
 		);
 		$config['url'] = static::_url($config);
 		return new static($config);
