@@ -615,7 +615,9 @@ class Router {
 
 			if (($r = $route->parse($url)) !== false) {
 				self::$_currentRoute[] =& $route;
-				$out = $r;
+				$out = array_map(function($value) {
+					return is_string($value) ? strtolower($value) : $value;
+				}, $r);
 				break;
 			}
 		}
