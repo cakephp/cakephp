@@ -84,18 +84,18 @@ class Number {
 	protected static $_formatters = [];
 
 /**
+ * A list of currency formatters indexed by locale
+ *
+ * @var array
+ */
+	protected static $_currencyFormatters = [];
+
+/**
  * Default currency used by Number::currency()
  *
  * @var string
  */
 	protected static $_defaultCurrency = 'USD';
-
-/**
- * If native number_format() should be used. If >= PHP5.4
- *
- * @var bool
- */
-	protected static $_numberFormatSupport = null;
 
 /**
  * Formats a number with a level of precision.
@@ -309,16 +309,39 @@ class Number {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
 	public static function currency($value, $currency = null, array $options = array()) {
-		$default = static::$_currencyDefaults;
+		$value = (float)$value;
+
+		if (isset($options['zero']) && !$value) {
+			return $options['zero'];
+		}
+
+		$locale = isset($options['locale']) ? $options['locale'] : ini_get('intl.default_locale');
+
+		if (!$locale) {
+			$locale = 'en_US';
+		}
+
+		if (!isset(static::$_currencyFormatters[$locale])) {
+			static::$_currencyFormatters[$locale] = new NumberFormatter(
+				$locale,
+				NumberFormatter::CURRENCY
+			);
+		}
+
 		if ($currency === null) {
 			$currency = static::defaultCurrency();
 		}
 
-		if (isset(static::$_currencies[$currency])) {
-			$default = static::$_currencies[$currency];
-		} elseif (is_string($currency)) {
-			$options['before'] = $currency;
+		$formatter = static::$_currencyFormatters[$locale];
+
+		if (!empty($options['pattern'])) {
+			$formatter->setPattern($options['pattern']);
 		}
+
+		return $formatter->formatCurrency($value, $currency);
+
+		$default = static::$_currencyDefaults;
+		
 
 		$options += $default;
 
@@ -332,7 +355,7 @@ class Number {
 		$result = $options['before'] = $options['after'] = null;
 
 		$symbolKey = 'whole';
-		$value = (float)$value;
+		;
 		if (!$value) {
 			if ($options['zero'] !== 0) {
 				return $options['zero'];

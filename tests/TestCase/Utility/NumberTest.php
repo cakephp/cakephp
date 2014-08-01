@@ -145,30 +145,46 @@ class NumberTest extends TestCase {
 		$expected = '$100,100,100.00';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->currency($value, '#');
-		$expected = '#100,100,100.00';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, false);
-		$expected = '100,100,100.00';
-		$this->assertEquals($expected, $result);
-
 		$result = $this->Number->currency($value, 'USD');
 		$expected = '$100,100,100.00';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->currency($value, 'EUR');
-		$expected = '€100.100.100,00';
+		$expected = '€100,100,100.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency($value, 'EUR', ['locale' => 'de_DE']);
+		$expected = '100.100.100,00 €';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency($value, 'USD', ['locale' => 'de_DE']);
+		$expected = '100.100.100,00 $';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency($value, 'USD', ['locale' => 'en_US']);
+		$expected = '$100,100,100.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency($value, 'USD', ['locale' => 'en_CA']);
+		$expected = 'US$100,100,100.00';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->currency($value, 'GBP');
 		$expected = '£100,100,100.00';
 		$this->assertEquals($expected, $result);
 
-		$options = array('thousands' => ' ', 'wholeSymbol' => 'EUR ', 'wholePosition' => 'before',
-			'decimals' => ',', 'zero' => 'Gratuit');
-		$result = $this->Number->currency($value, '', $options);
-		$expected = 'EUR 100 100 100,00';
+		$result = $this->Number->currency($value, 'GBP', ['locale' => 'da_DK']);
+		$expected = '100.100.100,00 £';
+		$this->assertEquals($expected, $result);
+
+		$options = ['locale' => 'fr_FR', 'pattern' => 'EUR #,###.00'];
+		$result = $this->Number->currency($value, 'EUR', $options);
+		$expected = 'EUR 100 100 100,00';
+		$this->assertEquals($expected, $result);
+
+		$options = ['locale' => 'fr_FR', 'pattern' => '#,###.00 EUR'];
+		$result = $this->Number->currency($value, 'EUR', $options);
+		$expected = '100 100 100,00 EUR';
 		$this->assertEquals($expected, $result);
 
 		$options = array('after' => 'øre', 'before' => 'Kr.', 'decimals' => ',', 'thousands' => '.');
