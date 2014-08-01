@@ -497,7 +497,7 @@ class HtmlHelper extends AppHelper {
  *
  * Add the script file to a custom block:
  *
- * `$this->Html->script('styles.js', null, array('block' => 'bodyScript'));`
+ * `$this->Html->script('styles.js', array('block' => 'bodyScript'));`
  *
  * ### Options
  *
