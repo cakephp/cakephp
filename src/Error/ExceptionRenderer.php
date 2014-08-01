@@ -41,7 +41,7 @@ use Cake\View\Error\MissingViewException;
  * #### Using a subclass of ExceptionRenderer
  *
  * Using a subclass of ExceptionRenderer gives you full control over how Exceptions are rendered, you
- * can configure your class in your config/error.php.
+ * can configure your class in your config/app.php.
  */
 class ExceptionRenderer {
 

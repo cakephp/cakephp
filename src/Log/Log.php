@@ -25,7 +25,7 @@ use Cake\Log\Engine\BaseLog;
  *
  * ### Configuring Log adapters
  *
- * You can configure log adapters in your applications `Config/logging.php` file.
+ * You can configure log adapters in your applications `config/app.php` file.
  * A sample configuration would look like:
  *
  * {{{
@@ -247,7 +247,6 @@ class Log {
  * @param array $config An array of name => config data for adapter.
  * @return mixed null when adding configuration and an array of configuration data when reading.
  * @throws \Cake\Error\Exception When trying to modify an existing config.
- * @see config/logging.php
  */
 	public static function config($key, $config = null) {
 		$return = static::_config($key, $config);
