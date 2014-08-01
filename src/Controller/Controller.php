@@ -95,7 +95,7 @@ class Controller implements EventListener {
  * An array containing the names of helpers this controller uses. The array elements should
  * not contain the "Helper" part of the class name.
  *
- * Example: `public $helpers = array('Html', 'Js', 'Time', 'Ajax');`
+ * Example: `public $helpers = ['Form', 'Html', 'Time'];`
  *
  * @var mixed
  * @link http://book.cakephp.org/2.0/en/controllers.html#components-helpers-and-uses
