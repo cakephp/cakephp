@@ -362,7 +362,13 @@ class PaginatorComponentTest extends TestCase {
 			'paramType' => 'named',
 		);
 		$result = $this->Paginator->mergeOptions('Post', $settings);
-		$expected = array('page' => 1, 'limit' => 200, 'maxLimit' => 200, 'paramType' => 'named', 'whitelist' => ['limit', 'sort', 'page', 'direction'],);
+		$expected = array(
+			'page' => 1,
+			'limit' => 200,
+			'maxLimit' => 200,
+			'paramType' => 'named',
+			'whitelist' => ['limit', 'sort', 'page', 'direction']
+		);
 		$this->assertEquals($expected, $result);
 
 		$settings = array(
@@ -370,7 +376,13 @@ class PaginatorComponentTest extends TestCase {
 			'paramType' => 'named',
 		);
 		$result = $this->Paginator->mergeOptions('Post', $settings);
-		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 10, 'paramType' => 'named', 'whitelist' => ['limit', 'sort', 'page', 'direction'],);
+		$expected = array(
+			'page' => 1,
+			'limit' => 20,
+			'maxLimit' => 10,
+			'paramType' => 'named',
+			'whitelist' => ['limit', 'sort', 'page', 'direction']
+		);
 		$this->assertEquals($expected, $result);
 	}
 

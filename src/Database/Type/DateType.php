@@ -38,7 +38,7 @@ class DateType extends \Cake\Database\Type\DateTimeType {
 		}
 		return $date;
 	}
-	
+
 /**
  * Convert strings into Date instances.
  *
