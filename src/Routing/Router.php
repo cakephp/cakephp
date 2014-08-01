@@ -919,7 +919,7 @@ class Router {
  */
 	protected static function _loadRoutes() {
 		static::$initialized = true;
-		include APP . 'Config/routes.php';
+		include CONFIG . 'routes.php';
 	}
 
 }
