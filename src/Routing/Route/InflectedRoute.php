@@ -24,6 +24,16 @@ use Cake\Utility\Inflector;
 class InflectedRoute extends Route {
 
 /**
+ * Flag for tracking whether or not the defaults have been inflected.
+ *
+ * Default values need to be inflected so that they match the inflections that match()
+ * will create.
+ *
+ * @var bool
+ */
+	protected $_inflectedDefaults = false;
+
+/**
  * Parses a string URL into an array. If it mathes, it will convert the prefix, controller and
  * plugin keys to their camelized form
  *
@@ -55,13 +65,28 @@ class InflectedRoute extends Route {
  * @return mixed either false or a string URL.
  */
 	public function match(array $url, array $context = array()) {
+		$url = $this->_underscore($url);
+		if (!$this->_inflectedDefaults) {
+			$this->_inflectedDefaults = true;
+			$this->defaults = $this->_underscore($this->defaults);
+		}
+		return parent::match($url, $context);
+	}
+
+/**
+ * Helper method for underscoring keys in a URL array.
+ *
+ * @param array $url An array of URL keys.
+ * @return array
+ */
+	protected function _underscore($url) {
 		if (!empty($url['controller'])) {
 			$url['controller'] = Inflector::underscore($url['controller']);
 		}
 		if (!empty($url['plugin'])) {
 			$url['plugin'] = Inflector::underscore($url['plugin']);
 		}
-		return parent::match($url, $context);
+		return $url;
 	}
 
 }
