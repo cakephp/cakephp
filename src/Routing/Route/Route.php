@@ -90,8 +90,6 @@ class Route {
  *
  * ### Options
  *
- * - `_name` - By using $options['_name'] a specific name can be
- *   given to a route. Otherwise a route name will be generated.
  * - `_ext` - Defines the extensions used for this route.
  * - `pass` - Copies the listed parameters into params['pass'].
  *
@@ -103,9 +101,6 @@ class Route {
 		$this->template = $template;
 		$this->defaults = (array)$defaults;
 		$this->options = $options;
-		if (isset($this->options['_name'])) {
-			$this->_name = $this->options['_name'];
-		}
 		if (isset($this->defaults['[method]'])) {
 			$this->defaults['_method'] = $this->defaults['[method]'];
 			unset($this->defaults['[method]']);

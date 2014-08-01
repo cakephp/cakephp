@@ -888,7 +888,7 @@ class RouteTest extends TestCase {
  */
 	public function testGetName() {
 		$route = new Route('/foo/bar', array(), array('_name' => 'testing'));
-		$this->assertEquals('testing', $route->getName());
+		$this->assertEquals('', $route->getName());
 
 		$route = new Route('/:controller/:action');
 		$this->assertEquals('_controller:_action', $route->getName());
