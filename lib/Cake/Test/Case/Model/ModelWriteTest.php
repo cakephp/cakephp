@@ -4124,23 +4124,36 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveAllManyRowsTransactionNoRollback() {
 		$this->loadFixtures('Post');
 
-		$db = $this->getMock('DboSource', array('begin', 'connect', 'rollback', 'describe'));
-
-		$db->expects($this->once())
-			->method('describe')
-			->will($this->returnValue(array()));
-		$db->expects($this->once())->method('rollback');
-
 		$Post = new TestPost();
-		$Post->setDataSourceObject($db);
-
 		$Post->validate = array(
 			'title' => array('rule' => array('notEmpty'))
 		);
 
+		// If validation error occurs, rollback() should be called.
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
+		$db->expects($this->never())->method('commit');
+		$db->expects($this->once())->method('rollback');
+
+		$Post->setDataSourceObject($db);
+
 		$data = array(
 			array('author_id' => 1, 'title' => 'New Fourth Post'),
 			array('author_id' => 1, 'title' => '')
+		);
+		$Post->saveAll($data, array('atomic' => true, 'validate' => true));
+
+		// Otherwise, commit() should be called.
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
+		$db->expects($this->once())->method('commit');
+		$db->expects($this->never())->method('rollback');
+
+		$Post->setDataSourceObject($db);
+
+		$data = array(
+			array('author_id' => 1, 'title' => 'New Fourth Post'),
+			array('author_id' => 1, 'title' => 'New Fifth Post')
 		);
 		$Post->saveAll($data, array('atomic' => true, 'validate' => true));
 	}
@@ -4151,27 +4164,21 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAllAssociatedTransactionNoRollback() {
-		$testDb = ConnectionManager::getDataSource('test');
-
-		$db = $this->getMock('DboSource', array('connect', 'rollback', 'describe', 'create', 'update', 'begin'));
-		$db->columns = $testDb->columns;
-
-		$db->expects($this->once())->method('rollback');
-		$db->expects($this->any())->method('describe')
-			->will($this->returnValue(array(
-				'id' => array('type' => 'integer', 'length' => 11),
-				'title' => array('type' => 'string'),
-				'body' => array('type' => 'text'),
-				'published' => array('type' => 'string')
-			)));
+		$this->loadFixtures('Post', 'Author');
 
 		$Post = new TestPost();
-		$Post->setDataSourceObject($db);
-		$Post->Author->setDataSourceObject($db);
-
 		$Post->Author->validate = array(
 			'user' => array('rule' => array('notEmpty'))
 		);
+
+		// If validation error occurs, rollback() should be called.
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
+		$db->expects($this->never())->method('commit');
+		$db->expects($this->once())->method('rollback');
+
+		$Post->setDataSourceObject($db);
+		$Post->Author->setDataSourceObject($db);
 
 		$data = array(
 			'Post' => array(
@@ -4181,6 +4188,28 @@ class ModelWriteTest extends BaseModelTest {
 			),
 			'Author' => array(
 				'user' => '',
+				'password' => "sekret"
+			)
+		);
+		$Post->saveAll($data, array('validate' => true));
+
+		// Otherwise, commit() should be called.
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
+		$db->expects($this->once())->method('commit');
+		$db->expects($this->never())->method('rollback');
+
+		$Post->setDataSourceObject($db);
+		$Post->Author->setDataSourceObject($db);
+
+		$data = array(
+			'Post' => array(
+				'title' => 'New post',
+				'body' => 'Content',
+				'published' => 'Y'
+			),
+			'Author' => array(
+				'user' => 'New user',
 				'password' => "sekret"
 			)
 		);
@@ -5557,23 +5586,36 @@ class ModelWriteTest extends BaseModelTest {
 	public function testSaveManyTransactionNoRollback() {
 		$this->loadFixtures('Post');
 
-		$db = $this->getMock('DboSource', array('begin', 'connect', 'rollback', 'describe'));
-
-		$db->expects($this->once())
-			->method('describe')
-			->will($this->returnValue(array()));
-		$db->expects($this->once())->method('rollback');
-
 		$Post = new TestPost();
-		$Post->setDataSourceObject($db);
-
 		$Post->validate = array(
 			'title' => array('rule' => array('notEmpty'))
 		);
 
+		// If validation error occurs, rollback() should be called.
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
+		$db->expects($this->never())->method('commit');
+		$db->expects($this->once())->method('rollback');
+
+		$Post->setDataSourceObject($db);
+
 		$data = array(
 			array('author_id' => 1, 'title' => 'New Fourth Post'),
 			array('author_id' => 1, 'title' => '')
+		);
+		$Post->saveMany($data, array('validate' => true));
+
+		// Otherwise, commit() should be called.
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
+		$db->expects($this->once())->method('commit');
+		$db->expects($this->never())->method('rollback');
+
+		$Post->setDataSourceObject($db);
+
+		$data = array(
+			array('author_id' => 1, 'title' => 'New Fourth Post'),
+			array('author_id' => 1, 'title' => 'New Fifth Post')
 		);
 		$Post->saveMany($data, array('validate' => true));
 	}
@@ -5584,27 +5626,21 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAssociatedTransactionNoRollback() {
-		$testDb = ConnectionManager::getDataSource('test');
-
-		$db = $this->getMock('DboSource', array('connect', 'rollback', 'describe', 'create', 'begin'));
-		$db->columns = $testDb->columns;
-
-		$db->expects($this->once())->method('rollback');
-		$db->expects($this->any())->method('describe')
-			->will($this->returnValue(array(
-				'id' => array('type' => 'integer', 'length' => 11),
-				'title' => array('type' => 'string'),
-				'body' => array('type' => 'text'),
-				'published' => array('type' => 'string')
-			)));
+		$this->loadFixtures('Post', 'Author');
 
 		$Post = new TestPost();
-		$Post->setDataSourceObject($db);
-		$Post->Author->setDataSourceObject($db);
-
 		$Post->Author->validate = array(
 			'user' => array('rule' => array('notEmpty'))
 		);
+
+		// If validation error occurs, rollback() should be called.
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
+		$db->expects($this->never())->method('commit');
+		$db->expects($this->once())->method('rollback');
+
+		$Post->setDataSourceObject($db);
+		$Post->Author->setDataSourceObject($db);
 
 		$data = array(
 			'Post' => array(
@@ -5614,6 +5650,28 @@ class ModelWriteTest extends BaseModelTest {
 			),
 			'Author' => array(
 				'user' => '',
+				'password' => "sekret"
+			)
+		);
+		$Post->saveAssociated($data, array('validate' => true, 'atomic' => true));
+
+		// Otherwise, commit() should be called.
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
+		$db->expects($this->once())->method('commit');
+		$db->expects($this->never())->method('rollback');
+
+		$Post->setDataSourceObject($db);
+		$Post->Author->setDataSourceObject($db);
+
+		$data = array(
+			'Post' => array(
+				'title' => 'New post',
+				'body' => 'Content',
+				'published' => 'Y'
+			),
+			'Author' => array(
+				'user' => 'New user',
 				'password' => "sekret"
 			)
 		);
@@ -7314,5 +7372,39 @@ class ModelWriteTest extends BaseModelTest {
 	public function deleteMe($event) {
 		$Model = $event->subject;
 		$Model->getDataSource()->delete($Model, array($Model->alias . '.' . $Model->primaryKey => $Model->id));
+	}
+
+/**
+ * Creates a convenient mock DboSource
+ *
+ * We cannot call several methods via mock DboSource, such as DboSource::value()
+ * because mock DboSource has no $_connection.
+ * This method helps us to avoid this problem.
+ *
+ * @param array $methods Configurable method names.
+ * @return DboSource
+ */
+	protected function _getMockDboSource($methods = array()) {
+		$testDb = ConnectionManager::getDataSource('test');
+
+		$passthrough = array_diff(array('value', 'begin', 'rollback', 'commit', 'describe', 'lastInsertId', 'execute'), $methods);
+
+		$methods = array_merge($methods, $passthrough);
+		if (!in_array('connect', $methods)) {
+			$methods[] = 'connect'; // This will be called by DboSource::__construct().
+		}
+
+		$db = $this->getMock('DboSource', $methods);
+		$db->columns = $testDb->columns;
+		$db->startQuote = $testDb->startQuote;
+		$db->endQuote = $testDb->endQuote;
+
+		foreach ($passthrough as $method) {
+			$db->expects($this->any())
+				->method($method)
+				->will($this->returnCallback(array($testDb, $method)));
+		}
+
+		return $db;
 	}
 }
