@@ -27,45 +27,6 @@ use NumberFormatter;
 class Number {
 
 /**
- * Currencies supported by the helper. You can add additional currency formats
- * with Cake\Utility\Number::addFormat
- *
- * @var array
- */
-	protected static $_currencies = array(
-		'AUD' => array(
-			'wholeSymbol' => '$', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true,
-			'fractionExponent' => 2
-		),
-		'CAD' => array(
-			'wholeSymbol' => '$', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true,
-			'fractionExponent' => 2
-		),
-		'USD' => array(
-			'wholeSymbol' => '$', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true,
-			'fractionExponent' => 2
-		),
-		'EUR' => array(
-			'wholeSymbol' => '€', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => '.', 'decimals' => ',', 'negative' => '()', 'escape' => true,
-			'fractionExponent' => 0
-		),
-		'GBP' => array(
-			'wholeSymbol' => '£', 'wholePosition' => 'before', 'fractionSymbol' => 'p', 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true,
-			'fractionExponent' => 2
-		),
-		'JPY' => array(
-			'wholeSymbol' => '¥', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true,
-			'fractionExponent' => 0
-		),
-	);
-
-/**
  * A list of number formatters indexed by locale
  *
  * @var array
@@ -195,7 +156,6 @@ class Number {
  * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
  * - `before` - The string to place before whole numbers, e.g. '['
  * - `after` - The string to place after decimal numbers, e.g. ']'
- * - `escape` - Set to false to prevent escaping
  *
  * @param float $value A floating point number.
  * @param array $options An array with options.
@@ -225,12 +185,8 @@ class Number {
 			}
 		}
 
-		$options += ['before' => '', 'after' => '', 'escape' => true];
+		$options += ['before' => '', 'after' => ''];
 		$out = $options['before'] . $formatter->format($value) . $options['after'];
-
-		if (!empty($options['escape'])) {
-			return h($out);
-		}
 
 		return $out;
 	}
@@ -333,29 +289,6 @@ class Number {
 		$before = isset($options['before']) ? $options['before'] : null;
 		$after = isset($options['after']) ? $options['after'] : null;
 		return $before . $formatter->formatCurrency($value, $currency) . $after;
-	}
-
-/**
- * Add a currency format to the Number helper. Makes reusing
- * currency formats easier.
- *
- * {{{ $number->addFormat('NOK', array('before' => 'Kr. ')); }}}
- *
- * You can now use `NOK` as a shortform when formatting currency amounts.
- *
- * {{{ $number->currency($value, 'NOK'); }}}
- *
- * Added formats are merged with the defaults defined in Cake\Utility\Number::$_currencyDefaults
- * See Cake\Utility\Number::currency() for more information on the various options and their function.
- *
- * @param string $formatName The format name to be used in the future.
- * @param array $options The array of options for this format.
- * @return void
- * @see NumberHelper::currency()
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::addFormat
- */
-	public static function addFormat($formatName, array $options) {
-		static::$_currencies[$formatName] = $options + static::$_currencyDefaults;
 	}
 
 /**
