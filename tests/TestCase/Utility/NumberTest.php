@@ -192,46 +192,25 @@ class NumberTest extends TestCase {
 		$expected = '(€1 235,03)';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->currency(0.5, 'USD');
+		$result = $this->Number->currency(0.5, 'USD', ['locale' => 'en_US', 'fractionSymbol' => 'c']);
 		$expected = '50c';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->currency(0.5, null, array('after' => 'øre'));
-		$expected = '50øre';
-		$this->assertEquals($expected, $result);
-
-		$options = array('wholeSymbol' => '$', 'wholePosition' => 'after', 'fractionSymbol' => ' cents');
-		$result = $this->Number->currency(0.2, null, $options);
+		$options = ['fractionSymbol' => ' cents'];
+		$result = $this->Number->currency(0.2, 'USD', $options);
 		$expected = '20 cents';
 		$this->assertEquals($expected, $result);
 
-		$options = array('wholeSymbol' => '$', 'wholePosition' => 'after', 'fractionSymbol' => 'cents ',
-			'fractionPosition' => 'before');
+		$options = ['fractionSymbol' => 'cents ', 'fractionPosition' => 'before'];
 		$result = $this->Number->currency(0.2, null, $options);
 		$expected = 'cents 20';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->currency(311, 'USD', array('wholePosition' => 'after'));
-		$expected = '311.00$';
-		$this->assertEquals($expected, $result);
-
 		$result = $this->Number->currency(0.2, 'EUR');
-		$expected = '€0,20';
+		$expected = '€0.20';
 		$this->assertEquals($expected, $result);
 
-		$options = array('wholeSymbol' => ' dollars', 'wholePosition' => 'after', 'fractionSymbol' => ' cents',
-			'fractionPosition' => 'after');
-		$result = $this->Number->currency(12, null, $options);
-		$expected = '12.00 dollars';
-		$this->assertEquals($expected, $result);
-
-		$options = array('wholeSymbol' => ' dollars', 'wholePosition' => 'after', 'fractionSymbol' => ' cents',
-			'fractionPosition' => 'after');
-		$result = $this->Number->currency(0.12, null, $options);
-		$expected = '12 cents';
-		$this->assertEquals($expected, $result);
-
-		$options = array('fractionSymbol' => false, 'fractionPosition' => 'before', 'wholeSymbol' => '$');
+		$options = ['fractionSymbol' => false, 'fractionPosition' => 'before'];
 		$result = $this->Number->currency(0.5, null, $options);
 		$expected = '$0.50';
 		$this->assertEquals($expected, $result);
@@ -248,16 +227,12 @@ class NumberTest extends TestCase {
 		$expected = '£0.00';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->currency('-2.23300', 'JPY');
-		$expected = '(¥2.23)';
-		$this->assertEquals($expected, $result);
-
 		$result = $this->Number->currency('22.389', 'CAD');
-		$expected = '$22.39';
+		$expected = 'CA$22.39';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->currency('4.111', 'AUD');
-		$expected = '$4.11';
+		$expected = 'A$4.11';
 		$this->assertEquals($expected, $result);
 	}
 

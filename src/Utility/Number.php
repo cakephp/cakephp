@@ -66,17 +66,6 @@ class Number {
 	);
 
 /**
- * Default options for currency formats
- *
- * @var array
- */
-	protected static $_currencyDefaults = array(
-		'wholeSymbol' => '', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
-		'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true,
-		'fractionExponent' => 2
-	);
-
-/**
  * A list of number formatters indexed by locale
  *
  * @var array
@@ -306,6 +295,7 @@ class Number {
  */
 	public static function currency($value, $currency = null, array $options = array()) {
 		$value = (float)$value;
+		$currency = $currency ?: static::defaultCurrency();
 
 		if (isset($options['zero']) && !$value) {
 			return $options['zero'];
@@ -324,61 +314,21 @@ class Number {
 			);
 		}
 
-		if ($currency === null) {
-			$currency = static::defaultCurrency();
-		}
-
 		$formatter = static::$_currencyFormatters[$locale];
-
 		if (!empty($options['pattern'])) {
 			$formatter->setPattern($options['pattern']);
 		}
 
-		return $formatter->formatCurrency($value, $currency);
-
-		$default = static::$_currencyDefaults;
-		
-
-		$options += $default;
-
-		if (isset($options['before']) && $options['before'] !== '') {
-			$options['wholeSymbol'] = $options['before'];
-		}
-		if (isset($options['after']) && !$options['after'] !== '') {
-			$options['fractionSymbol'] = $options['after'];
+		if (!empty($options['fractionSymbol']) && $value > 0 && $value < 1) {
+			$places = isset($options['places']) ? $options['places'] : 2;
+			$value = $value * pow(10, $places);
+			$pos = isset($options['fractionPosition']) ? $options['fractionPosition'] : 'after';
+			return static::format($value, ['places' => 0, $pos => $options['fractionSymbol']]);
 		}
 
-		$result = $options['before'] = $options['after'] = null;
-
-		$symbolKey = 'whole';
-		;
-		if (!$value) {
-			if ($options['zero'] !== 0) {
-				return $options['zero'];
-			}
-		} elseif ($value < 1 && $value > -1) {
-			if ($options['fractionSymbol'] !== false) {
-				$multiply = pow(10, $options['fractionExponent']);
-				$value = $value * $multiply;
-				$options['places'] = null;
-				$symbolKey = 'fraction';
-			}
-		}
-
-		$position = $options[$symbolKey . 'Position'] !== 'after' ? 'before' : 'after';
-		$options[$position] = $options[$symbolKey . 'Symbol'];
-
-		$abs = abs($value);
-		$result = static::format($abs, $options);
-
-		if ($value < 0) {
-			if ($options['negative'] === '()') {
-				$result = '(' . $result . ')';
-			} else {
-				$result = $options['negative'] . $result;
-			}
-		}
-		return $result;
+		$before = isset($options['before']) ? $options['before'] : null;
+		$after = isset($options['after']) ? $options['after'] : null;
+		return $before . $formatter->formatCurrency($value, $currency) . $after;
 	}
 
 /**
