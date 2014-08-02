@@ -954,7 +954,7 @@ class CakeResponse {
 	}
 
 /**
- * Sets the Last-Modified header for the response by taking an modification time
+ * Sets the Last-Modified header for the response by taking a modification time
  * If called with no parameters it will return the current Last-Modified value
  *
  * ## Examples:
@@ -1007,7 +1007,7 @@ class CakeResponse {
  * parameters are passed, then an array with the current Vary header
  * value is returned
  *
- * @param string|array $cacheVariances a single Vary string or a array
+ * @param string|array $cacheVariances a single Vary string or an array
  *   containing the list for variances.
  * @return array
  */

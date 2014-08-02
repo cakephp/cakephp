@@ -910,7 +910,7 @@ class Set {
 	}
 
 /**
- * Expand/unflattens an string to an array
+ * Expand/unflattens a string to an array
  *
  * For example, unflattens an array that was collapsed with `Set::flatten()`
  * into a multi-dimensional array. So, `array('0.Foo.Bar' => 'Far')` becomes

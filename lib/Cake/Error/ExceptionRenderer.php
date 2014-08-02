@@ -35,7 +35,7 @@ App::uses('Controller', 'Controller');
  *
  * You can implement application specific exception handling in one of a few ways:
  *
- * - Create a AppController::appError();
+ * - Create an AppController::appError();
  * - Create a subclass of ExceptionRenderer and configure it to be the `Exception.renderer`
  *
  * #### Using AppController::appError();

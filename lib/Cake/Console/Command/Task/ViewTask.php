@@ -248,7 +248,7 @@ class ViewTask extends BakeTask {
  *	'singularHumanName', 'pluralHumanName', 'fields', 'foreignKeys',
  *	'belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'
  *
- * @return array Returns an variables to be made available to a view template
+ * @return array Returns a variables to be made available to a view template
  */
 	protected function _loadController() {
 		if (!$this->controllerName) {

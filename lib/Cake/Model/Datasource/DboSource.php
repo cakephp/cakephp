@@ -3246,7 +3246,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Generate a alter syntax from CakeSchema::compare()
+ * Generate an alter syntax from CakeSchema::compare()
  *
  * @param mixed $compare The comparison data.
  * @param string $table The table name.

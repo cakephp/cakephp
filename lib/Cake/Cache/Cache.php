@@ -197,7 +197,7 @@ class Cache {
 
 /**
  * Drops a cache engine. Deletes the cache configuration information
- * If the deleted configuration is the last configuration using an certain engine,
+ * If the deleted configuration is the last configuration using a certain engine,
  * the Engine instance is also unset.
  *
  * @param string $name A currently configured cache config you wish to remove.

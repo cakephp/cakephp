@@ -47,7 +47,7 @@ class ConsoleErrorHandler {
 	}
 
 /**
- * Handle a exception in the console environment. Prints a message to stderr.
+ * Handle an exception in the console environment. Prints a message to stderr.
  *
  * @param Exception $exception The exception to handle
  * @return void
