@@ -260,98 +260,6 @@ class BasicsTest extends TestCase {
 	}
 
 /**
- * test cache()
- *
- * @return void
- */
-	public function testCache() {
-		Cache::disable();
-		$result = cache('basics_test', 'simple cache write');
-		$this->assertNull($result);
-
-		$result = cache('basics_test');
-		$this->assertNull($result);
-
-		Cache::enable();
-		$result = cache('basics_test', 'simple cache write');
-		$this->assertTrue((bool)$result);
-		$this->assertTrue(file_exists(CACHE . 'basics_test'));
-
-		$result = cache('basics_test');
-		$this->assertEquals('simple cache write', $result);
-		if (file_exists(CACHE . 'basics_test')) {
-			unlink(CACHE . 'basics_test');
-		}
-
-		cache('basics_test', 'expired', '+1 second');
-		sleep(2);
-		$result = cache('basics_test', null, '+1 second');
-		$this->assertNull($result);
-	}
-
-/**
- * test clearCache()
- *
- * @return void
- */
-	public function testClearCache() {
-		$cacheOff = Configure::read('Cache.disable');
-		$this->skipIf($cacheOff, 'Cache is disabled, skipping clearCache() tests.');
-
-		cache('views/basics_test.cache', 'simple cache write');
-		$this->assertTrue(file_exists(CACHE . 'views/basics_test.cache'));
-
-		cache('views/basics_test_2.cache', 'simple cache write 2');
-		$this->assertTrue(file_exists(CACHE . 'views/basics_test_2.cache'));
-
-		cache('views/basics_test_3.cache', 'simple cache write 3');
-		$this->assertTrue(file_exists(CACHE . 'views/basics_test_3.cache'));
-
-		$result = clearCache(array('basics_test', 'basics_test_2'), 'views', '.cache');
-		$this->assertTrue($result);
-		$this->assertFalse(file_exists(CACHE . 'views/basics_test.cache'));
-		$this->assertFalse(file_exists(CACHE . 'views/basics_test.cache'));
-		$this->assertTrue(file_exists(CACHE . 'views/basics_test_3.cache'));
-
-		$result = clearCache(null, 'views', '.cache');
-		$this->assertTrue($result);
-		$this->assertFalse(file_exists(CACHE . 'views/basics_test_3.cache'));
-
-		// Different path from views and with prefix
-		cache('models/basics_test.cache', 'simple cache write');
-		$this->assertTrue(file_exists(CACHE . 'models/basics_test.cache'));
-
-		cache('models/basics_test_2.cache', 'simple cache write 2');
-		$this->assertTrue(file_exists(CACHE . 'models/basics_test_2.cache'));
-
-		cache('models/basics_test_3.cache', 'simple cache write 3');
-		$this->assertTrue(file_exists(CACHE . 'models/basics_test_3.cache'));
-
-		$result = clearCache('basics', 'models', '.cache');
-		$this->assertTrue($result);
-		$this->assertFalse(file_exists(CACHE . 'models/basics_test.cache'));
-		$this->assertFalse(file_exists(CACHE . 'models/basics_test_2.cache'));
-		$this->assertFalse(file_exists(CACHE . 'models/basics_test_3.cache'));
-
-		// checking if empty files were not removed
-		$emptyExists = file_exists(CACHE . 'views/empty');
-		if (!$emptyExists) {
-			cache('views/empty', '');
-		}
-		cache('views/basics_test.php', 'simple cache write');
-		$this->assertTrue(file_exists(CACHE . 'views/basics_test.php'));
-		$this->assertTrue(file_exists(CACHE . 'views/empty'));
-
-		$result = clearCache();
-		$this->assertTrue($result);
-		$this->assertTrue(file_exists(CACHE . 'views/empty'));
-		$this->assertFalse(file_exists(CACHE . 'views/basics_test.php'));
-		if (!$emptyExists) {
-			unlink(CACHE . 'views/empty');
-		}
-	}
-
-/**
  * test __()
  *
  * @return void
@@ -813,21 +721,6 @@ class BasicsTest extends TestCase {
 		$Folder->delete();
 
 		ini_set('include_path', $_includePath);
-	}
-
-/**
- * test convertSlash()
- *
- * @return void
- */
-	public function testConvertSlash() {
-		$result = convertSlash('\path\to\location\\');
-		$expected = '\path\to\location\\';
-		$this->assertEquals($expected, $result);
-
-		$result = convertSlash('/path/to/location/');
-		$expected = 'path_to_location';
-		$this->assertEquals($expected, $result);
 	}
 
 /**
