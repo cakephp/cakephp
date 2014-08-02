@@ -265,33 +265,21 @@ class Number {
  *
  * ### Options
  *
+ * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
  * - `fractionSymbol` - The currency symbol to use for fractional numbers.
  * - `fractionPosition` - The position the fraction symbol should be placed
- *   valid options are 'before' & 'after'.
- * - `before` - The currency symbol to place before whole numbers
- *   ie. '$'. `before` is an alias for `wholeSymbol`.
- * - `after` - The currency symbol to place after decimal numbers
- *   ie. 'c'. Set to boolean false to use no decimal symbol.
- *   eg. 0.35 => $0.35. `after` is an alias for `fractionSymbol`
- * - `zero` - The text to use for zero values, can be a
- *   string or a number. ie. 0, 'Free!'
- * - `places` - Number of decimal places to use. ie. 2
- * - `fractionExponent` - Fraction exponent of this specific currency. Defaults to 2.
- * - `thousands` - Thousands separator ie. ','
- * - `decimals` - Decimal separator symbol ie. '.'
- * - `negative` - Symbol for negative numbers. If equal to '()',
- *   the number will be wrapped with ( and )
- * - `escape` - Should the output be escaped for html special characters.
- *   The default value for this option is controlled by the currency settings.
- *   By default all currencies contain utf-8 symbols and don't need this changed. If you require
- *   non HTML encoded symbols you will need to update the settings with the correct bytes.
+ *    valid options are 'before' & 'after'.
+ * - `before` - Text to display before the rendered number
+ * - `after` - Text to display after the rendered number
+ * - `zero` - The text to use for zero values, can be a string or a number. e.g. 0, 'Free!'
+ * - `places` - Number of decimal places to use. e.g. 2
+ * - `precision` - Maximum Number of decimal places to use, e.g. 2
+ * - `pattern` - An ICU number patter to use for formatting the number. e.g #,###.00
  *
  * @param float $value Value to format.
- * @param string $currency Shortcut to default options. Valid values are
- *   'USD', 'EUR', 'GBP', otherwise set at least 'before' and 'after' options.
+ * @param string $currency International currency name such as 'USD', 'EUR', 'YEN', 'CAD'
  * @param array $options Options list.
  * @return string Number formatted as a currency.
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
  */
 	public static function currency($value, $currency = null, array $options = array()) {
 		$value = (float)$value;
