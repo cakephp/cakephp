@@ -315,15 +315,23 @@ class Number {
 		}
 
 		$formatter = static::$_currencyFormatters[$locale];
+
+		if (isset($options['places'])) {
+			$formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $options['places']);
+		}
+
+		if (isset($options['precision'])) {
+			$formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $options['precision']);
+		}
+
 		if (!empty($options['pattern'])) {
 			$formatter->setPattern($options['pattern']);
 		}
 
 		if (!empty($options['fractionSymbol']) && $value > 0 && $value < 1) {
-			$places = isset($options['places']) ? $options['places'] : 2;
-			$value = $value * pow(10, $places);
+			$value = $value * 100;
 			$pos = isset($options['fractionPosition']) ? $options['fractionPosition'] : 'after';
-			return static::format($value, ['places' => 0, $pos => $options['fractionSymbol']]);
+			return static::format($value, ['precision' => 0, $pos => $options['fractionSymbol']]);
 		}
 
 		$before = isset($options['before']) ? $options['before'] : null;
