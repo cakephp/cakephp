@@ -259,7 +259,7 @@ class FormHelper extends Helper {
  *    you should leave 'action' undefined.
  * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
  * - `templates` The templates you want to use for this form. Any templates will be merged on top of
- *   the already loaded templates. This option can either be a filename in App/Config that contains
+ *   the already loaded templates. This option can either be a filename in /config that contains
  *   the templates you want to load, or an array of templates to use.
  * - `context` Additional options for the context class. For example the EntityContext accepts a 'table'
  *   option that allows you to set the specific Table class the form should be based on.

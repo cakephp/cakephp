@@ -85,7 +85,7 @@ class PluginTaskTest extends TestCase {
 		$this->assertTrue(is_dir($path), 'No plugin dir');
 
 		$directories = array(
-			'src/Config',
+			'config',
 			'src/Model/Behavior',
 			'src/Model/Table',
 			'src/Model/Entity',
@@ -143,7 +143,7 @@ class PluginTaskTest extends TestCase {
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with($file, $this->stringContains('class AppController extends BaseController {'));
 
-		$file = $path . DS . 'src' . DS . 'Config' . DS . 'routes.php';
+		$file = $path . DS . 'config' . DS . 'routes.php';
 		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, $this->stringContains("Router::plugin('BakeTestPlugin', function(\$routes)"));
 

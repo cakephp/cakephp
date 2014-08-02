@@ -41,6 +41,7 @@ define('LOG_ERROR', LOG_ERR);
 define('APP', TEST_APP . 'TestApp' . DS);
 define('WWW_ROOT', TEST_APP . WEBROOT_DIR . DS);
 define('TESTS', TEST_APP . 'tests' . DS);
+define('CONFIG', TEST_APP . 'config' . DS);
 
 //@codingStandardsIgnoreStart
 @mkdir(LOGS);
@@ -61,7 +62,7 @@ $loader->addNamespace('TestPlugin\Test', TEST_APP . 'Plugin' . DS . 'TestPlugin'
 $loader->addNamespace('TestPluginTwo', TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'src');
 $loader->addNamespace('PluginJs', TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'src');
 
-require_once CAKE . 'bootstrap.php';
+require_once CORE_PATH . 'config/bootstrap.php';
 
 date_default_timezone_set('UTC');
 mb_internal_encoding('UTF-8');

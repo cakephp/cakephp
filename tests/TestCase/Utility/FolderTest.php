@@ -222,7 +222,7 @@ class FolderTest extends TestCase {
 		$result = $Folder->delete($mv);
 		$this->assertTrue($result);
 
-		$new = APP . 'Config/acl.ini';
+		$new = CONFIG . 'acl.ini';
 		$result = $Folder->create($new);
 		$this->assertFalse($result);
 
@@ -404,22 +404,22 @@ class FolderTest extends TestCase {
 		$Folder = new Folder();
 		$expected = array(
 			array(
-				CAKE . 'Config',
+				CORE_PATH . 'config',
 			),
 			array(
-				CAKE . 'Config' . DS . 'config.php',
+				CORE_PATH . 'config' . DS . 'config.php',
 			)
 		);
 
-		$result = $Folder->tree(CAKE . 'Config', false);
+		$result = $Folder->tree(CORE_PATH . 'config', false);
 		$this->assertSame(array(), array_diff($expected[0], $result[0]));
 		$this->assertSame(array(), array_diff($result[0], $expected[0]));
 
-		$result = $Folder->tree(CAKE . 'Config', false, 'dir');
+		$result = $Folder->tree(CORE_PATH . 'config', false, 'dir');
 		$this->assertSame(array(), array_diff($expected[0], $result));
 		$this->assertSame(array(), array_diff($expected[0], $result));
 
-		$result = $Folder->tree(CAKE . 'Config', false, 'files');
+		$result = $Folder->tree(CORE_PATH . 'config', false, 'files');
 		$this->assertSame(array(), array_diff($expected[1], $result));
 		$this->assertSame(array(), array_diff($expected[1], $result));
 	}
@@ -597,8 +597,8 @@ class FolderTest extends TestCase {
 		$result = $Folder->inCakePath($path);
 		$this->assertFalse($result);
 
-		$path = DS . 'src' . DS . 'Config';
-		$Folder->cd(ROOT . DS . 'src' . DS . 'Config');
+		$path = DS . 'config';
+		$Folder->cd(ROOT . DS . 'config');
 		$result = $Folder->inCakePath($path);
 		$this->assertTrue($result);
 	}
@@ -610,23 +610,23 @@ class FolderTest extends TestCase {
  */
 	public function testFind() {
 		$Folder = new Folder();
-		$Folder->cd(CAKE . 'Config');
+		$Folder->cd(CORE_PATH . 'config');
 		$result = $Folder->find();
 		$expected = array('config.php');
 		$this->assertSame(array_diff($expected, $result), array());
 		$this->assertSame(array_diff($expected, $result), array());
 
 		$result = $Folder->find('.*', true);
-		$expected = array('cacert.pem', 'config.php');
+		$expected = array('bootstrap.php', 'cacert.pem', 'config.php');
 		$this->assertSame($expected, $result);
 
 		$result = $Folder->find('.*\.php');
-		$expected = array('config.php');
+		$expected = array('bootstrap.php', 'config.php');
 		$this->assertSame(array_diff($expected, $result), array());
 		$this->assertSame(array_diff($expected, $result), array());
 
 		$result = $Folder->find('.*\.php', true);
-		$expected = array('config.php');
+		$expected = array('bootstrap.php', 'config.php');
 		$this->assertSame($expected, $result);
 
 		$result = $Folder->find('.*ig\.php');
@@ -657,17 +657,17 @@ class FolderTest extends TestCase {
  * @return void
  */
 	public function testFindRecursive() {
-		$Folder = new Folder(CAKE);
+		$Folder = new Folder(CORE_PATH);
 		$result = $Folder->findRecursive('(config|paths)\.php');
 		$expected = array(
-			CAKE . 'Config' . DS . 'config.php'
+			CORE_PATH . 'config' . DS . 'config.php'
 		);
 		$this->assertSame(array(), array_diff($expected, $result));
 		$this->assertSame(array(), array_diff($expected, $result));
 
 		$result = $Folder->findRecursive('(config|woot)\.php', true);
 		$expected = array(
-			CAKE . 'Config' . DS . 'config.php'
+			CORE_PATH . 'config' . DS . 'config.php'
 		);
 		$this->assertSame($expected, $result);
 

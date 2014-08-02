@@ -21,7 +21,7 @@ use Cake\Utility\Debugger;
 </p>
 <p class="notice">
 	If you are using SQL keywords as table column names, you can enable identifier
-	quoting for your database connection in src/Config/app.php.
+	quoting for your database connection in config/app.php.
 </p>
 <?php if (!empty($error->queryString)) : ?>
 	<p class="notice">

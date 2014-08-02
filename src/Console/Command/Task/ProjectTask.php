@@ -66,7 +66,7 @@ class ProjectTask extends BakeTask {
 		}
 
 		$response = false;
-		while (!$response && is_dir($project) === true && file_exists($project . 'Config' . 'boostrap.php')) {
+		while (!$response && is_dir($project) === true && file_exists($project . '..' . DS . 'config' . DS . 'boostrap.php')) {
 			$prompt = __d('cake_console', '<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
 			$response = $this->in($prompt, ['y', 'n'], 'n');
 			if (strtolower($response) === 'n') {

@@ -36,12 +36,12 @@ use Cake\View\Error\MissingViewException;
  * ### Implementing application specific exception rendering
  *
  * You can implement application specific exception handling by creating a subclass of
- * ExceptionRenderer and configure it to be the `exceptionRenderer` in App/Config/error.php
+ * ExceptionRenderer and configure it to be the `exceptionRenderer` in config/error.php
  *
  * #### Using a subclass of ExceptionRenderer
  *
  * Using a subclass of ExceptionRenderer gives you full control over how Exceptions are rendered, you
- * can configure your class in your App/Config/error.php.
+ * can configure your class in your config/app.php.
  */
 class ExceptionRenderer {
 

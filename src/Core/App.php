@@ -23,7 +23,7 @@ use Cake\Utility\Inflector;
  *
  * ### Adding paths
  *
- * Additional paths for Templates and Plugins are configured with Configure now. See App/Config/app.php for an
+ * Additional paths for Templates and Plugins are configured with Configure now. See config/app.php for an
  * example. The `App.paths.plugins` and `App.paths.templates` variables are used to configure paths for plugins
  * and templates respectively. All class based resources should be mapped using your application's autoloader.
  *
