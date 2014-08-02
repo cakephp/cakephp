@@ -231,10 +231,6 @@ class NumberTest extends TestCase {
 		$result = $this->Number->currency('22.389', 'CAD');
 		$expected = 'CA$22.39';
 		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency('4.111', 'AUD');
-		$expected = 'A$4.11';
-		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -312,8 +308,8 @@ class NumberTest extends TestCase {
 	public function testCurrencyCentsNegative() {
 		$value = '-0.99';
 
-		$result = $this->Number->currency($value, 'EUR');
-		$expected = '-€0.99';
+		$result = $this->Number->currency($value, 'EUR', ['locale' => 'de_DE']);
+		$expected = '-0,99 €';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Number->currency($value, 'USD', ['fractionSymbol' => 'c']);
