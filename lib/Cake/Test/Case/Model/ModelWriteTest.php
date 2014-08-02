@@ -4143,6 +4143,25 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$Post->saveAll($data, array('atomic' => true, 'validate' => true));
 
+		// If exception thrown, rollback() should be called too.
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
+		$db->expects($this->never())->method('commit');
+		$db->expects($this->once())->method('rollback');
+
+		$Post->setDataSourceObject($db);
+
+		$data = array(
+			array('author_id' => 1, 'title' => 'New Fourth Post'),
+			array('author_id' => 1, 'title' => 'New Fifth Post', 'body' => $db->expression('PDO_EXCEPTION()'))
+		);
+
+		try {
+			$Post->saveAll($data, array('atomic' => true, 'validate' => true));
+			$this->fail('No exception thrown');
+		} catch (PDOException $e) {
+		}
+
 		// Otherwise, commit() should be called.
 		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
 		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
@@ -4192,6 +4211,33 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		);
 		$Post->saveAll($data, array('validate' => true));
+
+		// If exception thrown, rollback() should be called too.
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
+		$db->expects($this->never())->method('commit');
+		$db->expects($this->once())->method('rollback');
+
+		$Post->setDataSourceObject($db);
+		$Post->Author->setDataSourceObject($db);
+
+		$data = array(
+			'Post' => array(
+				'title' => 'New post',
+				'body' => $db->expression('PDO_EXCEPTION()'),
+				'published' => 'Y'
+			),
+			'Author' => array(
+				'user' => 'New user',
+				'password' => "sekret"
+			)
+		);
+
+		try {
+			$Post->saveAll($data, array('validate' => true));
+			$this->fail('No exception thrown');
+		} catch (PDOException $e) {
+		}
 
 		// Otherwise, commit() should be called.
 		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
@@ -5605,6 +5651,25 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$Post->saveMany($data, array('validate' => true));
 
+		// If exception thrown, rollback() should be called too.
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
+		$db->expects($this->never())->method('commit');
+		$db->expects($this->once())->method('rollback');
+
+		$Post->setDataSourceObject($db);
+
+		$data = array(
+			array('author_id' => 1, 'title' => 'New Fourth Post'),
+			array('author_id' => 1, 'title' => 'New Fifth Post', 'body' => $db->expression('PDO_EXCEPTION()'))
+		);
+
+		try {
+			$Post->saveMany($data, array('validate' => true));
+			$this->fail('No exception thrown');
+		} catch (PDOException $e) {
+		}
+
 		// Otherwise, commit() should be called.
 		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
 		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
@@ -5654,6 +5719,33 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		);
 		$Post->saveAssociated($data, array('validate' => true, 'atomic' => true));
+
+		// If exception thrown, commit() should be called.
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->once())->method('begin')->will($this->returnValue(true));
+		$db->expects($this->never())->method('commit');
+		$db->expects($this->once())->method('rollback');
+
+		$Post->setDataSourceObject($db);
+		$Post->Author->setDataSourceObject($db);
+
+		$data = array(
+			'Post' => array(
+				'title' => 'New post',
+				'body' => $db->expression('PDO_EXCEPTION()'),
+				'published' => 'Y'
+			),
+			'Author' => array(
+				'user' => 'New user',
+				'password' => "sekret"
+			)
+		);
+
+		try {
+			$Post->saveAssociated($data, array('validate' => true, 'atomic' => true));
+			$this->fail('No exception thrown');
+		} catch (PDOException $e) {
+		}
 
 		// Otherwise, commit() should be called.
 		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
