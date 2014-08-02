@@ -372,7 +372,7 @@ class Number {
 		}
 
 		if ($currency === false) {
-			self::$_defaultCurrency = null;
+			return self::$_defaultCurrency = null;
 		}
 
 		if (empty(self::$_defaultCurrency)) {

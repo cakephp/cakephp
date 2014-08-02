@@ -295,29 +295,13 @@ class NumberTest extends TestCase {
 	public function testDefaultCurrency() {
 		$result = $this->Number->defaultCurrency();
 		$this->assertEquals('USD', $result);
-		$this->Number->addFormat('NOK', array('before' => 'Kr. '));
 
-		$this->Number->defaultCurrency('NOK');
-		$result = $this->Number->defaultCurrency();
-		$this->assertEquals('NOK', $result);
+		$this->Number->defaultCurrency(false);
+		I18n::defaultLocale('es_ES');
+		$this->assertEquals('EUR', $this->Number->defaultCurrency());
 
-		$result = $this->Number->currency(1000);
-		$expected = 'Kr. 1,000.00';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency(2000);
-		$expected = 'Kr. 2,000.00';
-		$this->assertEquals($expected, $result);
-		$this->Number->defaultCurrency('EUR');
-		$result = $this->Number->currency(1000);
-		$expected = '€1.000,00';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency(2000);
-		$expected = '€2.000,00';
-		$this->assertEquals($expected, $result);
-
-		$this->Number->defaultCurrency('USD');
+		$this->Number->defaultCurrency('JPY');
+		$this->assertEquals('JPY', $this->Number->defaultCurrency());
 	}
 
 /**
@@ -362,40 +346,12 @@ class NumberTest extends TestCase {
 	public function testCurrencyOptions() {
 		$value = '1234567.89';
 
-		$result = $this->Number->currency($value, null, array('before' => 'GBP'));
-		$expected = 'GBP1,234,567.89';
+		$result = $this->Number->currency($value, null, array('before' => 'Total: '));
+		$expected = 'Total: $1,234,567.89';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->currency($value, 'GBP', array('places' => 0));
-		$expected = '£1,234,568';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency('1234567.8912345', null, array('before' => 'GBP', 'places' => 3));
-		$expected = 'GBP1,234,567.891';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency('650.120001', null, array('before' => 'GBP', 'places' => 4));
-		$expected = 'GBP650.1200';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'GBP', array('before' => '&#163; ', 'escape' => true));
-		$expected = '&amp;#163; 1,234,567.89';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency('0.35', 'USD', array('after' => false));
-		$expected = '$0.35';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency('0.35', 'GBP', array('before' => '&#163;', 'after' => false, 'escape' => false));
-		$expected = '&#163;0.35';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency('0.35', 'GBP');
-		$expected = '35p';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency('0.35', 'EUR');
-		$expected = '€0,35';
+		$result = $this->Number->currency($value, null, array('after' => ' in Total'));
+		$expected = '$1,234,567.89 in Total';
 		$this->assertEquals($expected, $result);
 	}
 
