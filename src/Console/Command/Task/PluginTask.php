@@ -47,7 +47,7 @@ class PluginTask extends BakeTask {
  */
 	public function initialize() {
 		$this->path = current(App::path('Plugin'));
-		$this->bootstrap = ROOT . 'config' . DS . 'bootstrap.php';
+		$this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
 	}
 
 /**
