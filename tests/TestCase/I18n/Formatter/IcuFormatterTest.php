@@ -72,12 +72,12 @@ class IcuFormatterTest extends TestCase {
 			. 'other{We have {1} fruits}'
 			. '}';
 
-		$params = [0];
+		$params = [0, 0];
 		$expect = 'No fruits.';
 		$actual = $formatter->format($locale, $string, $params);
 		$this->assertSame($expect, $actual);
 
-		$params = [1];
+		$params = [1, 0];
 		$expect = 'We have one fruit';
 		$actual = $formatter->format($locale, $string, $params);
 		$this->assertSame($expect, $actual);
