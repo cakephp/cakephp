@@ -66,11 +66,8 @@ class ControllerTask extends BakeTask {
  * @return void
  */
 	public function all() {
-		$controllersCreated = 0;
 		foreach ($this->listAll() as $table) {
-			$controller = $this->_controllerName($table);
-			$this->bake($controller);
-			$controllersCreated++;
+			$this->main($table);
 		}
 	}
 
