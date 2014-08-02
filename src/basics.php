@@ -28,33 +28,6 @@ use Cake\Utility\Debugger;
 	define('MONTH', 2592000);
 	define('YEAR', 31536000);
 
-if (!function_exists('config')) {
-
-/**
- * Loads configuration files. Receives a set of configuration files
- * to load.
- * Example:
- *
- * `config('config1', 'config2');`
- *
- * @return bool Success
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#config
- */
-	function config() {
-		$args = func_get_args();
-		$count = count($args);
-		$included = 0;
-		foreach ($args as $arg) {
-			if (file_exists(CONFIG . $arg . '.php')) {
-				include_once CONFIG . $arg . '.php';
-				$included++;
-			}
-		}
-		return $included === $count;
-	}
-
-}
-
 if (!function_exists('debug')) {
 
 /**
@@ -142,33 +115,6 @@ if (!function_exists('stackTrace')) {
 		}
 
 		$options += array('start' => 0);
-		$options['start']++;
-		echo Debugger::trace($options);
-	}
-
-}
-
-if (!function_exists('stackTrace')) {
-
-/**
- * Outputs a stack trace based on the supplied options.
- *
- * ### Options
- *
- * - `depth` - The number of stack frames to return. Defaults to 999
- * - `args` - Should arguments for functions be shown? If true, the arguments for each method call
- *   will be displayed.
- * - `start` - The stack frame to start generating a trace from. Defaults to 1
- *
- * @param array $options Format for outputting stack trace
- * @return mixed Formatted stack trace
- * @see \Cake\Utility\Debugger::trace()
- */
-	function stackTrace($options = []) {
-		if (!Configure::read('debug')) {
-			return;
-		}
-		$options += ['start' => 0];
 		$options['start']++;
 		echo Debugger::trace($options);
 	}
@@ -453,142 +399,6 @@ if (!function_exists('env')) {
 
 }
 
-if (!function_exists('cache')) {
-
-/**
- * Reads/writes temporary data to cache files or session.
- *
- * @param string $path File path within /tmp to save the file.
- * @param mixed $data The data to save to the temporary file.
- * @param mixed $expires A valid strtotime string when the data expires.
- * @param string $target The target of the cached data; either 'cache' or 'public'.
- * @return mixed The contents of the temporary file.
- * @deprecated Will be removed in 3.0. Please use Cache::write() instead.
- */
-	function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
-		if (!Cache::enabled()) {
-			return null;
-		}
-		$now = time();
-
-		if (!is_numeric($expires)) {
-			$expires = strtotime($expires, $now);
-		}
-
-		switch (strtolower($target)) {
-			case 'cache':
-				$filename = CACHE . $path;
-				break;
-			case 'public':
-				$filename = WWW_ROOT . $path;
-				break;
-			case 'tmp':
-				$filename = TMP . $path;
-				break;
-		}
-		$timediff = $expires - $now;
-		$filetime = false;
-
-		if (file_exists($filename)) {
-			//@codingStandardsIgnoreStart
-			$filetime = @filemtime($filename);
-			//@codingStandardsIgnoreEnd
-		}
-
-		if ($data === null) {
-			if (file_exists($filename) && $filetime !== false) {
-				if ($filetime + $timediff < $now) {
-					//@codingStandardsIgnoreStart
-					@unlink($filename);
-					//@codingStandardsIgnoreEnd
-				} else {
-					//@codingStandardsIgnoreStart
-					$data = @file_get_contents($filename);
-					//@codingStandardsIgnoreEnd
-				}
-			}
-		} elseif (is_writable(dirname($filename))) {
-			//@codingStandardsIgnoreStart
-			@file_put_contents($filename, $data, LOCK_EX);
-			//@codingStandardsIgnoreEnd
-		}
-		return $data;
-	}
-
-}
-
-if (!function_exists('clearCache')) {
-
-/**
- * Used to delete files in the cache directories, or clear contents of cache directories
- *
- * @param string|array $params As String name to be searched for deletion, if name is a directory all files in
- *   directory will be deleted. If array, names to be searched for deletion. If clearCache() without params,
- *   all files in app/tmp/cache/views will be deleted
- * @param string $type Directory in tmp/cache defaults to view directory
- * @param string $ext The file extension you are deleting
- * @return true if files found and deleted false otherwise
- */
-	function clearCache($params = null, $type = 'views', $ext = '.php') {
-		if (is_string($params) || $params === null) {
-			$params = preg_replace('/\/\//', '/', $params);
-			$cache = CACHE . $type . DS . $params;
-
-			if (is_file($cache . $ext)) {
-				//@codingStandardsIgnoreStart
-				@unlink($cache . $ext);
-				//@codingStandardsIgnoreEnd
-				return true;
-			} elseif (is_dir($cache)) {
-				$files = glob($cache . '*');
-
-				if ($files === false) {
-					return false;
-				}
-
-				foreach ($files as $file) {
-					if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
-						//@codingStandardsIgnoreStart
-						@unlink($file);
-						//@codingStandardsIgnoreEnd
-					}
-				}
-				return true;
-			}
-			$cache = array(
-				CACHE . $type . DS . '*' . $params . $ext,
-				CACHE . $type . DS . '*' . $params . '_*' . $ext
-			);
-			$files = array();
-			while ($search = array_shift($cache)) {
-				$results = glob($search);
-				if ($results !== false) {
-					$files = array_merge($files, $results);
-				}
-			}
-			if (empty($files)) {
-				return false;
-			}
-			foreach ($files as $file) {
-				if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
-					//@codingStandardsIgnoreStart
-					@unlink($file);
-					//@codingStandardsIgnoreEnd
-				}
-			}
-			return true;
-
-		} elseif (is_array($params)) {
-			foreach ($params as $file) {
-				clearCache($file, $type, $ext);
-			}
-			return true;
-		}
-		return false;
-	}
-
-}
-
 if (!function_exists('__')) {
 
 /**
@@ -817,6 +627,7 @@ if (!function_exists('__x')) {
 	}
 
 }
+
 if (!function_exists('fileExistsInPath')) {
 
 /**
@@ -838,24 +649,6 @@ if (!function_exists('fileExistsInPath')) {
 			}
 		}
 		return false;
-	}
-
-}
-
-if (!function_exists('convertSlash')) {
-
-/**
- * Convert forward slashes to underscores and removes first and last underscores in a string
- *
- * @param string $string String to convert
- * @return string with underscore remove from start and end of string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#convertSlash
- */
-	function convertSlash($string) {
-		$string = trim($string, '/');
-		$string = preg_replace('/\/\//', '/', $string);
-		$string = str_replace('/', '_', $string);
-		return $string;
 	}
 
 }
