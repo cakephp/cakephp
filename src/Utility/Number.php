@@ -229,6 +229,8 @@ class Number {
  * - `places` - Number of decimal places to use. e.g. 2
  * - `precision` - Maximum Number of decimal places to use, e.g. 2
  * - `pattern` - An ICU number patter to use for formatting the number. e.g #,###.00
+ * - `useIntlCode` - Whether or not to replace the currency symbol with the international
+ *   currency code.
  *
  * @param float $value Value to format.
  * @param string $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
@@ -259,7 +261,7 @@ class Number {
 		$formatter = static::$_currencyFormatters[$locale];
 		$hasPlaces = isset($options['places']);
 		$hasPrecision = isset($options['precision']);
-		$hasPattern = !empty($options['pattern']);
+		$hasPattern = !empty($options['pattern']) || !empty($options['useIntlCode']);
 
 		if ($hasPlaces || $hasPrecision || $hasPattern) {
 			$formatter = clone $formatter;
@@ -273,8 +275,13 @@ class Number {
 			$formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $options['precision']);
 		}
 
-		if ($hasPattern) {
+		if (!empty($options['pattern'])) {
 			$formatter->setPattern($options['pattern']);
+		}
+
+		if (!empty($options['useIntlCode'])) {
+			$pattern = trim(str_replace('¤', '¤¤ ', $formatter->getPattern()));
+			$formatter->setPattern($pattern);
 		}
 
 		$abs = abs($value);

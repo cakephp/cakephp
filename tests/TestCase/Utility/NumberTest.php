@@ -356,6 +356,27 @@ class NumberTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to use the international currency code instead of the whole
+ * when using the currency method
+ *
+ * @return void
+ */
+	public function testCurrencyInltCode() {
+		$value = '123';
+		$result = $this->Number->currency($value, 'USD', ['useIntlCode' => true]);
+		$expected = 'USD 123.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency($value, 'EUR', ['useIntlCode' => true]);
+		$expected = 'EUR 123.00';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency($value, 'EUR', ['useIntlCode' => true, 'locale' => 'fr_FR']);
+		$expected = '123,00 EUR';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testToReadableSize method
  *
  * @return void
