@@ -176,6 +176,28 @@ class NumberHelper extends Helper {
 	}
 
 /**
+ * Formats a number into the correct locale format to show deltas (signed differences in value).
+ *
+ * ### Options
+ *
+ * - `places` - Minimim number or decimals to use, e.g 0
+ * - `precision` - Maximum Number of decimal places to use, e.g. 2
+ * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
+ * - `before` - The string to place before whole numbers, e.g. '['
+ * - `after` - The string to place after decimal numbers, e.g. ']'
+ * - `escape` - Set to false to prevent escaping
+ *
+ * @param float $value A floating point number
+ * @param array $options Options list.
+ * @return string formatted delta
+ */
+	public static function formatDelta($value, array $options = array()) {
+		$formatted = $this->_engine->formatDelta($value, $options);
+		$options += ['escape' => true];
+		return $options['escape'] ? h($formatted): $formatted;
+	}
+
+/**
  * Getter/setter for default currency
  *
  * @param string|boolean $currency Default currency string to be used by currency()

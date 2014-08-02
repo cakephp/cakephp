@@ -201,7 +201,6 @@ class Number {
  * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
  * - `before` - The string to place before whole numbers, e.g. '['
  * - `after` - The string to place after decimal numbers, e.g. ']'
- * - `escape` - Set to false to prevent escaping
  *
  * @param float $value A floating point number
  * @param array $options Options list.
