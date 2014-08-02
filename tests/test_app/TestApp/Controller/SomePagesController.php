@@ -46,7 +46,8 @@ class SomePagesController extends Controller {
  * @return \Cake\Network\Response
  */
 	public function responseGenerator() {
-		return new Response(array('body' => 'new response'));
+		$this->response->body('new response');
+		return $this->response;
 	}
 
 	protected function _fail() {

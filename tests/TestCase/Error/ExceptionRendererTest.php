@@ -251,7 +251,7 @@ class ExceptionRendererTest extends TestCase {
 	public function testExceptionMessageCoercion() {
 		Configure::write('debug', false);
 		$exception = new MissingActionException('Secret info not to be leaked');
-		$ExceptionRenderer = new ExceptionRenderer($exception);
+		$ExceptionRenderer = $this->_mockResponse(new ExceptionRenderer($exception));
 
 		$this->assertInstanceOf('Cake\Controller\ErrorController', $ExceptionRenderer->controller);
 		$this->assertEquals($exception, $ExceptionRenderer->error);
@@ -273,7 +273,7 @@ class ExceptionRendererTest extends TestCase {
 	public function testCakeErrorHelpersNotLost() {
 		Configure::write('App.namespace', 'TestApp');
 		$exception = new SocketException('socket exception');
-		$renderer = new \TestApp\Error\TestAppsExceptionRenderer($exception);
+		$renderer = $this->_mockResponse(new \TestApp\Error\TestAppsExceptionRenderer($exception));
 
 		ob_start();
 		$renderer->render();

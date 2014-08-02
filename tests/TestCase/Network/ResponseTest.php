@@ -748,12 +748,12 @@ class ResponseTest extends TestCase {
 		$response->sharable(true);
 		$this->assertTrue($response->sharable());
 
-		$response = new Response;
+		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		$response->sharable(true, 3600);
 		$headers = $response->header();
 		$this->assertEquals('public, max-age=3600', $headers['Cache-Control']);
 
-		$response = new Response;
+		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		$response->sharable(false, 3600);
 		$headers = $response->header();
 		$this->assertEquals('private, max-age=3600', $headers['Cache-Control']);

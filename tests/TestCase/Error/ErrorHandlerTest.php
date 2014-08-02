@@ -22,10 +22,33 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Error\ErrorHandler;
+use Cake\Error\ExceptionRenderer;
 use Cake\Log\Log;
 use Cake\Network\Request;
+use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+
+/**
+ * Test exception renderer
+ */
+class TestExceptionRenderer extends ExceptionRenderer {
+
+/**
+ * Constructor for mocking Response::_sendHeader()
+ *
+ * @param \Exception $exception
+ */
+	public function __construct(\Exception $exception) {
+		parent::__construct($exception);
+		$testCase = new ErrorHandlerTest();
+		$this->controller->response = $testCase->getMock(
+			'Cake\Network\Response',
+			['_sendHeader']
+		);
+	}
+
+}
 
 /**
  * ErrorHandlerTest class
@@ -190,7 +213,9 @@ class ErrorHandlerTest extends TestCase {
  */
 	public function testHandleException() {
 		$error = new Error\NotFoundException('Kaboom!');
-		$errorHandler = new ErrorHandler();
+		$errorHandler = new ErrorHandler([
+			'exceptionRenderer' => 'Cake\Test\TestCase\Error\TestExceptionRenderer'
+		]);
 
 		ob_start();
 		$errorHandler->handleException($error);
@@ -204,7 +229,10 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testHandleExceptionLog() {
-		$errorHandler = new ErrorHandler(['log' => true]);
+		$errorHandler = new ErrorHandler([
+			'log' => true,
+			'exceptionRenderer' => 'Cake\Test\TestCase\Error\TestExceptionRenderer'
+		]);
 
 		$error = new Error\NotFoundException('Kaboom!');
 
@@ -239,7 +267,8 @@ class ErrorHandlerTest extends TestCase {
 
 		$errorHandler = new ErrorHandler([
 			'log' => true,
-			'skipLog' => ['Cake\Error\NotFoundException']
+			'skipLog' => ['Cake\Error\NotFoundException'],
+			'exceptionRenderer' => 'Cake\Test\TestCase\Error\TestExceptionRenderer'
 		]);
 
 		ob_start();
@@ -281,7 +310,9 @@ class ErrorHandlerTest extends TestCase {
  */
 	public function testHandleFatalErrorPage() {
 		$line = __LINE__;
-		$errorHandler = new ErrorHandler();
+		$errorHandler = new ErrorHandler([
+			'exceptionRenderer' => 'Cake\Test\TestCase\Error\TestExceptionRenderer'
+		]);
 		Configure::write('debug', true);
 		ob_start();
 		ob_start();
@@ -310,7 +341,7 @@ class ErrorHandlerTest extends TestCase {
 		$this->_logger->expects($this->at(0))
 			->method('write')
 			->with('error', $this->logicalAnd(
-				$this->stringContains(__FILE__ . ', line ' . (__LINE__ + 10)),
+				$this->stringContains(__FILE__ . ', line ' . (__LINE__ + 13)),
 				$this->stringContains('Fatal Error (1)'),
 				$this->stringContains('Something wrong')
 			));
@@ -318,7 +349,10 @@ class ErrorHandlerTest extends TestCase {
 			->method('write')
 			->with('error', $this->stringContains('[Cake\Error\FatalErrorException] Something wrong'));
 
-		$errorHandler = new ErrorHandler(['log' => true]);
+		$errorHandler = new ErrorHandler([
+			'log' => true,
+			'exceptionRenderer' => 'Cake\Test\TestCase\Error\TestExceptionRenderer'
+		]);
 		ob_start();
 		$errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, __LINE__);
 		ob_clean();

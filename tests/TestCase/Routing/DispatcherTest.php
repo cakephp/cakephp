@@ -455,7 +455,7 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testAfterDispatchReplaceResponse() {
-		$response = $this->getMock('Cake\Network\Response', ['send']);
+		$response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'send']);
 		$response->expects($this->once())
 			->method('send');
 
@@ -471,7 +471,7 @@ class DispatcherTest extends TestCase {
 			'url' => '/posts',
 			'params' => [
 				'plugin' => null,
-				'controller' => 'posts',
+				'controller' => 'Posts',
 				'action' => 'index',
 				'pass' => [],
 			],
