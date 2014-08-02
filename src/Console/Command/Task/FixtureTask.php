@@ -80,6 +80,8 @@ class FixtureTask extends BakeTask {
 		])->addOption('conditions', [
 			'help' => __d('cake_console', 'The SQL snippet to use when importing records.'),
 			'default' => '1=1',
+		])->addSubcommand('all', [
+			'help' => __d('cake_console', 'Bake all model files with associations and validation.')
 		]);
 
 		return $parser;
