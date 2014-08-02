@@ -46,6 +46,7 @@ class NumberTest extends TestCase {
 		parent::tearDown();
 		unset($this->Number);
 		I18n::defaultLocale($this->locale);
+		Number::defaultCurrency(false);
 	}
 
 /**
@@ -261,24 +262,11 @@ class NumberTest extends TestCase {
 	}
 
 /**
- * Test that the default fraction handling does not cause issues.
- *
- * @return void
- */
-	public function testCurrencyFractionSymbol() {
-		$result = $this->Number->currency(0.2, '', array(
-			'places' => 2,
-			'decimal' => '.'
-		));
-		$this->assertEquals('0.2', $result);
-	}
-
-/**
  * Test adding currency format options to the number helper
  *
  * @return void
  */
-	public function testCurrencyAddFormat() {
+	public function _testCurrencyAddFormat() {
 		$this->Number->addFormat('NOK', array('before' => 'Kr. '));
 		$result = $this->Number->currency(1000, 'NOK');
 		$expected = 'Kr. 1,000.00';
@@ -333,93 +321,6 @@ class NumberTest extends TestCase {
 	}
 
 /**
- * testCurrencyPositive method
- *
- * @return void
- */
-	public function testCurrencyPositive() {
-		$value = '100100100';
-
-		$result = $this->Number->currency($value);
-		$expected = '$100,100,100.00';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'USD', array('before' => '#'));
-		$expected = '#100,100,100.00';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, false);
-		$expected = '100,100,100.00';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'USD');
-		$expected = '$100,100,100.00';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'EUR');
-		$expected = '€100.100.100,00';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'GBP');
-		$expected = '£100,100,100.00';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * testCurrencyNegative method
- *
- * @return void
- */
-	public function testCurrencyNegative() {
-		$value = '-100100100';
-
-		$result = $this->Number->currency($value);
-		$expected = '($100,100,100.00)';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'EUR');
-		$expected = '(€100.100.100,00)';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'GBP');
-		$expected = '(£100,100,100.00)';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'USD', array('negative' => '-'));
-		$expected = '-$100,100,100.00';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'EUR', array('negative' => '-'));
-		$expected = '-€100.100.100,00';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'GBP', array('negative' => '-'));
-		$expected = '-£100,100,100.00';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * testCurrencyCentsPositive method
- *
- * @return void
- */
-	public function testCurrencyCentsPositive() {
-		$value = '0.99';
-
-		$result = $this->Number->currency($value, 'USD');
-		$expected = '99c';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'EUR');
-		$expected = '€0,99';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'GBP');
-		$expected = '99p';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * testCurrencyCentsNegative method
  *
  * @return void
@@ -427,28 +328,12 @@ class NumberTest extends TestCase {
 	public function testCurrencyCentsNegative() {
 		$value = '-0.99';
 
-		$result = $this->Number->currency($value, 'USD');
-		$expected = '(99c)';
-		$this->assertEquals($expected, $result);
-
 		$result = $this->Number->currency($value, 'EUR');
-		$expected = '(€0,99)';
+		$expected = '-€0.99';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->currency($value, 'GBP');
-		$expected = '(99p)';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'USD', array('negative' => '-'));
+		$result = $this->Number->currency($value, 'USD', ['fractionSymbol' => 'c']);
 		$expected = '-99c';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'EUR', array('negative' => '-'));
-		$expected = '-€0,99';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'GBP', array('negative' => '-'));
-		$expected = '-99p';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -464,16 +349,8 @@ class NumberTest extends TestCase {
 		$expected = '$0.00';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->currency($value, 'EUR');
-		$expected = '€0,00';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'GBP');
-		$expected = '£0.00';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency($value, 'GBP', array('zero' => 'FREE!'));
-		$expected = 'FREE!';
+		$result = $this->Number->currency($value, 'EUR', ['locale' => 'fr_FR']);
+		$expected = '0,00 €';
 		$this->assertEquals($expected, $result);
 	}
 

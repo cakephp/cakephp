@@ -84,7 +84,7 @@ class Number {
  *
  * @var string
  */
-	protected static $_defaultCurrency = 'USD';
+	protected static $_defaultCurrency;
 
 /**
  * Formats a number with a level of precision.
@@ -277,7 +277,7 @@ class Number {
  * - `pattern` - An ICU number patter to use for formatting the number. e.g #,###.00
  *
  * @param float $value Value to format.
- * @param string $currency International currency name such as 'USD', 'EUR', 'YEN', 'CAD'
+ * @param string $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
  * @param array $options Options list.
  * @return string Number formatted as a currency.
  */
@@ -303,20 +303,28 @@ class Number {
 		}
 
 		$formatter = static::$_currencyFormatters[$locale];
+		$hasPlaces = isset($options['places']);
+		$hasPrecision = isset($options['precision']);
+		$hasPattern = !empty($options['pattern']);
 
-		if (isset($options['places'])) {
+		if ($hasPlaces || $hasPrecision || $hasPattern) {
+			$formatter = clone $formatter;
+		}
+
+		if ($hasPlaces) {
 			$formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $options['places']);
 		}
 
-		if (isset($options['precision'])) {
+		if ($hasPrecision) {
 			$formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $options['precision']);
 		}
 
-		if (!empty($options['pattern'])) {
+		if ($hasPattern) {
 			$formatter->setPattern($options['pattern']);
 		}
 
-		if (!empty($options['fractionSymbol']) && $value > 0 && $value < 1) {
+		$abs = abs($value);
+		if (!empty($options['fractionSymbol']) && $abs > 0 && $abs < 1) {
 			$value = $value * 100;
 			$pos = isset($options['fractionPosition']) ? $options['fractionPosition'] : 'after';
 			return static::format($value, ['precision' => 0, $pos => $options['fractionSymbol']]);
@@ -353,14 +361,26 @@ class Number {
 /**
  * Getter/setter for default currency
  *
- * @param string $currency Default currency string used by currency() if $currency argument is not provided
+ * @param string|boolean $currency Default currency string to be used by currency()
+ * if $currency argument is not provided. If boolean false is passed, it will clear the
+ * currently stored value
  * @return string Currency
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::defaultCurrency
  */
 	public static function defaultCurrency($currency = null) {
-		if ($currency) {
-			self::$_defaultCurrency = $currency;
+		if (!empty($currency)) {
+			return self::$_defaultCurrency = $currency;
 		}
+
+		if ($currency === false) {
+			self::$_defaultCurrency = null;
+		}
+
+		if (empty(self::$_defaultCurrency)) {
+			$locale = ini_get('intl.default_locale') ?: 'en_US';
+			$formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
+			self::$_defaultCurrency = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);
+		}
+
 		return self::$_defaultCurrency;
 	}
 
