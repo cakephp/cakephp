@@ -245,21 +245,6 @@ class BasicsTest extends TestCase {
 	}
 
 /**
- * Test am()
- *
- * @return void
- */
-	public function testAm() {
-		$result = am(array('one', 'two'), 2, 3, 4);
-		$expected = array('one', 'two', 2, 3, 4);
-		$this->assertEquals($expected, $result);
-
-		$result = am(array('one' => array(2, 3), 'two' => array('foo')), array('one' => array(4, 5)));
-		$expected = array('one' => array(4, 5), 'two' => array('foo'));
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * test __()
  *
  * @return void
@@ -675,52 +660,6 @@ class BasicsTest extends TestCase {
 		$result = __dcn('core', '%d item for id %s', '%d items for id %s', 2, 6, array(2, '1234'));
 		$expected = '2 items for id 1234';
 		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test fileExistsInPath()
- *
- * @return void
- */
-	public function testFileExistsInPath() {
-		if (!function_exists('ini_set')) {
-			$this->markTestSkipped('%s ini_set function not available');
-		}
-
-		$_includePath = ini_get('include_path');
-
-		$path = TMP . 'basics_test';
-		$folder1 = $path . DS . 'folder1';
-		$folder2 = $path . DS . 'folder2';
-		$file1 = $path . DS . 'file1.php';
-		$file2 = $folder1 . DS . 'file2.php';
-		$file3 = $folder1 . DS . 'file3.php';
-		$file4 = $folder2 . DS . 'file4.php';
-
-		new Folder($path, true);
-		new Folder($folder1, true);
-		new Folder($folder2, true);
-		touch($file1);
-		touch($file2);
-		touch($file3);
-		touch($file4);
-
-		ini_set('include_path', $path . PATH_SEPARATOR . $folder1);
-
-		$this->assertEquals(fileExistsInPath('file1.php'), $file1);
-		$this->assertEquals(fileExistsInPath('file2.php'), $file2);
-		$this->assertEquals(fileExistsInPath('folder1' . DS . 'file2.php'), $file2);
-		$this->assertEquals(fileExistsInPath($file2), $file2);
-		$this->assertEquals(fileExistsInPath('file3.php'), $file3);
-		$this->assertEquals(fileExistsInPath($file4), $file4);
-
-		$this->assertFalse(fileExistsInPath('file1'));
-		$this->assertFalse(fileExistsInPath('file4.php'));
-
-		$Folder = new Folder($path);
-		$Folder->delete();
-
-		ini_set('include_path', $_includePath);
 	}
 
 /**

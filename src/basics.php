@@ -121,41 +121,6 @@ if (!function_exists('stackTrace')) {
 
 }
 
-if (!function_exists('sortByKey')) {
-
-/**
- * Sorts given $array by key $sortBy.
- *
- * @param array &$array Array to sort
- * @param string $sortBy Sort by this key
- * @param string $order Sort order asc/desc (ascending or descending).
- * @param int $type Type of sorting to perform
- * @return mixed Sorted array
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#sortByKey
- */
-	function sortByKey(&$array, $sortBy, $order = 'asc', $type = SORT_NUMERIC) {
-		if (!is_array($array)) {
-			return null;
-		}
-
-		foreach ($array as $key => $val) {
-			$sa[$key] = $val[$sortBy];
-		}
-
-		if ($order === 'asc') {
-			asort($sa, $type);
-		} else {
-			arsort($sa, $type);
-		}
-
-		foreach ($sa as $key => $val) {
-			$out[] = $array[$key];
-		}
-		return $out;
-	}
-
-}
-
 if (!function_exists('h')) {
 
 /**
@@ -269,28 +234,6 @@ if (!function_exists('pr')) {
 			$template = php_sapi_name() !== 'cli' ? '<pre>%s</pre>' : "\n%s\n";
 			printf($template, print_r($var, true));
 		}
-	}
-
-}
-
-if (!function_exists('am')) {
-
-/**
- * Merge a group of arrays, accepts an unlimited amount of parameters
- *
- * @return array All array parameters merged into one
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#am
- */
-	function am() {
-		$r = array();
-		$args = func_get_args();
-		foreach ($args as $a) {
-			if (!is_array($a)) {
-				$a = array($a);
-			}
-			$r = array_merge($r, $a);
-		}
-		return $r;
 	}
 
 }
@@ -624,31 +567,6 @@ if (!function_exists('__x')) {
 		$translated = I18n::translate($singular, null, null, null, null, null, $context);
 		$arguments = func_get_args();
 		return I18n::insertArgs($translated, array_slice($arguments, 1));
-	}
-
-}
-
-if (!function_exists('fileExistsInPath')) {
-
-/**
- * Searches include path for files.
- *
- * @param string $file File to look for
- * @return bool|string Full path to file if exists, otherwise false
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#fileExistsInPath
- */
-	function fileExistsInPath($file) {
-		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
-		foreach ($paths as $path) {
-			$fullPath = $path . DS . $file;
-
-			if (file_exists($fullPath)) {
-				return $fullPath;
-			} elseif (file_exists($file)) {
-				return $file;
-			}
-		}
-		return false;
 	}
 
 }
