@@ -517,14 +517,18 @@ class Response {
  * @param string $name the header name
  * @param string $value the header value
  * @return void
+ * @throws \Cake\Error\Exception When headers have already been sent
  */
 	protected function _sendHeader($name, $value = null) {
-		if (!headers_sent()) {
-			if ($value === null) {
-				header($name);
-			} else {
-				header("{$name}: {$value}");
-			}
+		if (headers_sent($filename, $linenum)) {
+			throw new Error\Exception(
+				sprintf('Headers already sent in %d on line %s', $linenum, $filename)
+			);
+		}
+		if ($value === null) {
+			header($name);
+		} else {
+			header("{$name}: {$value}");
 		}
 	}
 
