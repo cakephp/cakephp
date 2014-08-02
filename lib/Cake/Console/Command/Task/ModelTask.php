@@ -385,7 +385,12 @@ class ModelTask extends BakeTask {
 		}
 		sort($options);
 		$default = 1;
-		foreach ($options as $option) {
+		foreach ($options as $key => $option) {
+			// Deprecated validation method ssn() should be skipped.
+			if ($option === 'ssn') {
+				unset($options[$key]);
+				continue;
+			}
 			if ($option{0} !== '_') {
 				$choices[$default] = $option;
 				$default++;

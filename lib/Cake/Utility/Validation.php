@@ -748,35 +748,70 @@ class Validation {
 	}
 
 /**
- * Checks that a value is a valid Social Security Number.
+ * Checks that a value is a valid identification number.
+ * In the case of US this would be the Social Security Number (SSN).
  *
  * @param string|array $check Value to check
  * @param string $regex Regular expression to use
  * @param string $country Country
  * @return bool Success
  */
+	public static function personId($check, $regex = null, $country = null) {
+		if (is_array($check)) {
+			extract(self::_defaults($check));
+		}
+
+		$regex = self::_personIdRegex($regex, $country);
+		if (empty($regex)) {
+			return self::_pass('personId', $check, $country);
+		}
+		return self::_check($check, $regex);
+	}
+
+/**
+ * Checks that a value is a valid Social Security Number.
+ *
+ * @param string|array $check Value to check
+ * @param string $regex Regular expression to use
+ * @param string $country Country
+ * @return bool Success
+ * @deprecated As of 2.6. Please use personId() instead.
+ */
 	public static function ssn($check, $regex = null, $country = null) {
 		if (is_array($check)) {
 			extract(self::_defaults($check));
 		}
 
-		if ($regex === null) {
-			switch ($country) {
-				case 'dk':
-					$regex = '/\\A\\b[0-9]{6}-[0-9]{4}\\b\\z/i';
-					break;
-				case 'nl':
-					$regex = '/\\A\\b[0-9]{9}\\b\\z/i';
-					break;
-				case 'us':
-					$regex = '/\\A\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b\\z/i';
-					break;
-			}
-		}
+		$regex = self::_personIdRegex($regex, $country);
 		if (empty($regex)) {
 			return self::_pass('ssn', $check, $country);
 		}
 		return self::_check($check, $regex);
+	}
+
+/**
+ * Chose regex based on country.
+ *
+ * @param string|null $regex Regular expression to use
+ * @param string $country Country
+ * @return string Regex
+ */
+	protected static function _personIdRegex($regex, $country) {
+		if ($regex !== null) {
+			return $regex;
+		}
+		switch ($country) {
+			case 'dk':
+				$regex = '/\\A\\b[0-9]{6}-[0-9]{4}\\b\\z/i';
+				break;
+			case 'nl':
+				$regex = '/\\A\\b[0-9]{9}\\b\\z/i';
+				break;
+			case 'us':
+				$regex = '/\\A\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b\\z/i';
+				break;
+		}
+		return $regex;
 	}
 
 /**
