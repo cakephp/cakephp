@@ -206,7 +206,6 @@ class Number {
  * @param float $value A floating point number
  * @param array $options Options list.
  * @return string formatted delta
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::formatDelta
  */
 	public static function formatDelta($value, array $options = array()) {
 		$options += ['places' => 0];
