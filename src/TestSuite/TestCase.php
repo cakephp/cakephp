@@ -16,6 +16,7 @@ namespace Cake\TestSuite;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
@@ -543,10 +544,14 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 			$options['className'] = $className;
 		}
 
-		list($plugin, $baseClass) = pluginSplit($alias);
-		$options += ['alias' => $baseClass] + TableRegistry::config($alias);
+		$connectionName = $options['className']::defaultConnectionName();
+		$connection = ConnectionManager::get($connectionName);
 
-		$mock = $this->getMock($options['className'], $methods, array($options));
+		list($plugin, $baseClass) = pluginSplit($alias);
+		$options += ['alias' => $baseClass, 'connection' => $connection];
+		$options += TableRegistry::config($alias);
+
+		$mock = $this->getMock($options['className'], $methods, [$options]);
 		TableRegistry::set($alias, $mock);
 		return $mock;
 	}
