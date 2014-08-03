@@ -55,7 +55,7 @@ use Cake\Utility\Inflector;
 	?>
 	</table>
 	<p><?= "<?= \$this->Paginator->counter(); ?>"; ?></p>
-	<div class="paging">
+	<ul class="pagination">
 	<?php
 		echo "<?php\n";
 		echo "\t\techo \$this->Paginator->prev('< ' . __('previous'));\n";
@@ -63,7 +63,7 @@ use Cake\Utility\Inflector;
 		echo "\t\techo \$this->Paginator->next(__('next') . ' >');\n";
 		echo "\t?>\n";
 	?>
-	</div>
+	</ul>
 </div>
 <div class="actions">
 	<h3><?= "<?= __('Actions'); ?>"; ?></h3>
