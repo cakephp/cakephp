@@ -44,7 +44,7 @@ class FlashHelper extends Helper {
  * custom elements allows you to fully customize how flash messages are generated.
  *
  * {{{
- * echo $this->Flash->render('flash', [element' => 'my_custom_element']);
+ * echo $this->Flash->render('flash', ['element' => 'my_custom_element']);
  * }}}
  *
  * If you want to use an element from a plugin for rendering your flash message

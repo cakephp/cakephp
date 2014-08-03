@@ -21,7 +21,7 @@ use Cake\Utility\Inflector;
 </p>
 
 <p>
-	<?= sprintf('Confirm you have created the file: %s', h($file)); ?>
+	<?= sprintf('Confirm you have created the file: "%s"', h($file)) ?>
 	in one of the following paths:
 </p>
 <ul>
@@ -38,7 +38,7 @@ use Cake\Utility\Inflector;
 
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_view.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_view.ctp') ?>
 </p>
 
 <?= $this->element('exception_stack_trace'); ?>

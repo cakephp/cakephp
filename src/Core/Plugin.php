@@ -41,14 +41,14 @@ class Plugin {
 
 /**
  * Loads a plugin and optionally loads bootstrapping,
- * routing files or runs a initialization function.
+ * routing files or runs an initialization function.
  *
  * Plugins only need to be loaded if you want bootstrapping/routes/cli commands to
  * be exposed. If your plugin does not expose any of these features you do not need
  * to load them.
  *
  * This method does not configure any autoloaders. That must be done separately either
- * through composer, or your own code during App/Config/bootstrap.php.
+ * through composer, or your own code during config/bootstrap.php.
  *
  * ## Examples:
  *
@@ -95,8 +95,8 @@ class Plugin {
  *
  * ## Configuration options
  *
- * - `bootstrap` - array - Whether or not you want the $plugin/Config/bootstrap.php file loaded.
- * - `routes` - boolean - Whether or not you want to load the $plugin/Config/routes.php file.
+ * - `bootstrap` - array - Whether or not you want the $plugin/config/bootstrap.php file loaded.
+ * - `routes` - boolean - Whether or not you want to load the $plugin/config/routes.php file.
  * - `namespace` - string - A custom namespace for the plugin. It will default to the plugin name.
  * - `ignoreMissing` - boolean - Set to true to ignore missing bootstrap/routes files.
  * - `path` - string - The path the plugin can be found on. If empty the default plugin path (App.pluginPaths) will be used.
@@ -149,6 +149,9 @@ class Plugin {
 		}
 
 		$config['classPath'] = $config['path'] . $config['classBase'] . DS;
+		if (!isset($config['configPath'])) {
+			$config['configPath'] = $config['path'] . 'config' . DS;
+		}
 
 		static::$_plugins[$plugin] = $config;
 
@@ -236,6 +239,20 @@ class Plugin {
 	}
 
 /**
+ * Returns the filesystem path for plugin's folder containing config files.
+ *
+ * @param string $plugin name of the plugin in CamelCase format.
+ * @return string Path to the plugin folder container config files.
+ * @throws \Cake\Core\Error\MissingPluginException If plugin has not been loaded.
+ */
+	public static function configPath($plugin) {
+		if (empty(static::$_plugins[$plugin])) {
+			throw new Error\MissingPluginException(['plugin' => $plugin]);
+		}
+		return static::$_plugins[$plugin]['configPath'];
+	}
+
+/**
  * Return the namespace for a plugin
  *
  * If a plugin is unknown, the plugin name will be used as the namespace.
@@ -266,7 +283,7 @@ class Plugin {
 		$path = static::path($plugin);
 		if ($config['bootstrap'] === true) {
 			return static::_includeFile(
-				$config['classPath'] . 'Config' . DS . 'bootstrap.php',
+				$config['configPath'] . 'bootstrap.php',
 				$config['ignoreMissing']
 			);
 		}
@@ -291,7 +308,7 @@ class Plugin {
 			return false;
 		}
 		return (bool)static::_includeFile(
-			$config['classPath'] . 'Config' . DS . 'routes.php',
+			$config['configPath'] . 'routes.php',
 			$config['ignoreMissing']
 		);
 	}

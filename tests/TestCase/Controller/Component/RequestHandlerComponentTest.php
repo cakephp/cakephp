@@ -66,7 +66,7 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	protected function _init() {
 		$request = new Request('controller_posts/index');
-		$response = $this->getMock('Cake\Network\Response', array('stop'));
+		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', 'stop'));
 		$this->Controller = new RequestHandlerTestController($request, $response);
 		$this->Controller->constructClasses();
 		$this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
@@ -605,20 +605,6 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
- * testRequestClientTypes method
- *
- * @return void
- */
-	public function testRequestClientTypes() {
-		$this->RequestHandler->request->env('HTTP_X_PROTOTYPE_VERSION', '1.5');
-		$this->assertEquals('1.5', $this->RequestHandler->getAjaxVersion());
-
-		$this->RequestHandler->request->env('HTTP_X_REQUESTED_WITH', false);
-		$this->RequestHandler->request->env('HTTP_X_PROTOTYPE_VERSION', false);
-		$this->assertFalse($this->RequestHandler->getAjaxVersion());
-	}
-
-/**
  * testRequestContentTypes method
  *
  * @return void
@@ -636,6 +622,9 @@ class RequestHandlerComponentTest extends TestCase {
 
 		$result = $this->RequestHandler->requestedWith(array('rss', 'atom'));
 		$this->assertFalse($result);
+
+		$this->RequestHandler->request->env('REQUEST_METHOD', 'DELETE');
+		$this->assertEquals('json', $this->RequestHandler->requestedWith());
 
 		$this->RequestHandler->request->env('REQUEST_METHOD', 'POST');
 		$this->RequestHandler->request->env('CONTENT_TYPE', '');

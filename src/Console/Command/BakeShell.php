@@ -73,7 +73,7 @@ class BakeShell extends Shell {
 		$connections = ConnectionManager::configured();
 		if (empty($connections)) {
 			$this->out('Your database configuration was not found.');
-			$this->out('Add your database connection information to App/Config/app.php.');
+			$this->out('Add your database connection information to config/app.php.');
 			return false;
 		}
 		$this->out('The following commands can be used to generate skeleton code for your application.');

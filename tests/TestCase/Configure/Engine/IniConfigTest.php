@@ -52,7 +52,7 @@ class IniConfigTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->path = TEST_APP . 'TestApp/Config' . DS;
+		$this->path = CONFIG;
 	}
 
 /**

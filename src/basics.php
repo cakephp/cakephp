@@ -28,33 +28,6 @@ use Cake\Utility\Debugger;
 	define('MONTH', 2592000);
 	define('YEAR', 31536000);
 
-if (!function_exists('config')) {
-
-/**
- * Loads configuration files. Receives a set of configuration files
- * to load.
- * Example:
- *
- * `config('config1', 'config2');`
- *
- * @return bool Success
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#config
- */
-	function config() {
-		$args = func_get_args();
-		$count = count($args);
-		$included = 0;
-		foreach ($args as $arg) {
-			if (file_exists(APP . 'Config/' . $arg . '.php')) {
-				include_once APP . 'Config/' . $arg . '.php';
-				$included++;
-			}
-		}
-		return $included === $count;
-	}
-
-}
-
 if (!function_exists('debug')) {
 
 /**
@@ -144,68 +117,6 @@ if (!function_exists('stackTrace')) {
 		$options += array('start' => 0);
 		$options['start']++;
 		echo Debugger::trace($options);
-	}
-
-}
-
-if (!function_exists('stackTrace')) {
-
-/**
- * Outputs a stack trace based on the supplied options.
- *
- * ### Options
- *
- * - `depth` - The number of stack frames to return. Defaults to 999
- * - `args` - Should arguments for functions be shown? If true, the arguments for each method call
- *   will be displayed.
- * - `start` - The stack frame to start generating a trace from. Defaults to 1
- *
- * @param array $options Format for outputting stack trace
- * @return mixed Formatted stack trace
- * @see \Cake\Utility\Debugger::trace()
- */
-	function stackTrace($options = []) {
-		if (!Configure::read('debug')) {
-			return;
-		}
-		$options += ['start' => 0];
-		$options['start']++;
-		echo Debugger::trace($options);
-	}
-
-}
-
-if (!function_exists('sortByKey')) {
-
-/**
- * Sorts given $array by key $sortBy.
- *
- * @param array &$array Array to sort
- * @param string $sortBy Sort by this key
- * @param string $order Sort order asc/desc (ascending or descending).
- * @param int $type Type of sorting to perform
- * @return mixed Sorted array
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#sortByKey
- */
-	function sortByKey(&$array, $sortBy, $order = 'asc', $type = SORT_NUMERIC) {
-		if (!is_array($array)) {
-			return null;
-		}
-
-		foreach ($array as $key => $val) {
-			$sa[$key] = $val[$sortBy];
-		}
-
-		if ($order === 'asc') {
-			asort($sa, $type);
-		} else {
-			arsort($sa, $type);
-		}
-
-		foreach ($sa as $key => $val) {
-			$out[] = $array[$key];
-		}
-		return $out;
 	}
 
 }
@@ -327,28 +238,6 @@ if (!function_exists('pr')) {
 
 }
 
-if (!function_exists('am')) {
-
-/**
- * Merge a group of arrays, accepts an unlimited amount of parameters
- *
- * @return array All array parameters merged into one
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#am
- */
-	function am() {
-		$r = array();
-		$args = func_get_args();
-		foreach ($args as $a) {
-			if (!is_array($a)) {
-				$a = array($a);
-			}
-			$r = array_merge($r, $a);
-		}
-		return $r;
-	}
-
-}
-
 if (!function_exists('env')) {
 
 /**
@@ -449,142 +338,6 @@ if (!function_exists('env')) {
 				return '.' . implode('.', $parts);
 		}
 		return null;
-	}
-
-}
-
-if (!function_exists('cache')) {
-
-/**
- * Reads/writes temporary data to cache files or session.
- *
- * @param string $path File path within /tmp to save the file.
- * @param mixed $data The data to save to the temporary file.
- * @param mixed $expires A valid strtotime string when the data expires.
- * @param string $target The target of the cached data; either 'cache' or 'public'.
- * @return mixed The contents of the temporary file.
- * @deprecated Will be removed in 3.0. Please use Cache::write() instead.
- */
-	function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
-		if (!Cache::enabled()) {
-			return null;
-		}
-		$now = time();
-
-		if (!is_numeric($expires)) {
-			$expires = strtotime($expires, $now);
-		}
-
-		switch (strtolower($target)) {
-			case 'cache':
-				$filename = CACHE . $path;
-				break;
-			case 'public':
-				$filename = WWW_ROOT . $path;
-				break;
-			case 'tmp':
-				$filename = TMP . $path;
-				break;
-		}
-		$timediff = $expires - $now;
-		$filetime = false;
-
-		if (file_exists($filename)) {
-			//@codingStandardsIgnoreStart
-			$filetime = @filemtime($filename);
-			//@codingStandardsIgnoreEnd
-		}
-
-		if ($data === null) {
-			if (file_exists($filename) && $filetime !== false) {
-				if ($filetime + $timediff < $now) {
-					//@codingStandardsIgnoreStart
-					@unlink($filename);
-					//@codingStandardsIgnoreEnd
-				} else {
-					//@codingStandardsIgnoreStart
-					$data = @file_get_contents($filename);
-					//@codingStandardsIgnoreEnd
-				}
-			}
-		} elseif (is_writable(dirname($filename))) {
-			//@codingStandardsIgnoreStart
-			@file_put_contents($filename, $data, LOCK_EX);
-			//@codingStandardsIgnoreEnd
-		}
-		return $data;
-	}
-
-}
-
-if (!function_exists('clearCache')) {
-
-/**
- * Used to delete files in the cache directories, or clear contents of cache directories
- *
- * @param string|array $params As String name to be searched for deletion, if name is a directory all files in
- *   directory will be deleted. If array, names to be searched for deletion. If clearCache() without params,
- *   all files in app/tmp/cache/views will be deleted
- * @param string $type Directory in tmp/cache defaults to view directory
- * @param string $ext The file extension you are deleting
- * @return true if files found and deleted false otherwise
- */
-	function clearCache($params = null, $type = 'views', $ext = '.php') {
-		if (is_string($params) || $params === null) {
-			$params = preg_replace('/\/\//', '/', $params);
-			$cache = CACHE . $type . DS . $params;
-
-			if (is_file($cache . $ext)) {
-				//@codingStandardsIgnoreStart
-				@unlink($cache . $ext);
-				//@codingStandardsIgnoreEnd
-				return true;
-			} elseif (is_dir($cache)) {
-				$files = glob($cache . '*');
-
-				if ($files === false) {
-					return false;
-				}
-
-				foreach ($files as $file) {
-					if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
-						//@codingStandardsIgnoreStart
-						@unlink($file);
-						//@codingStandardsIgnoreEnd
-					}
-				}
-				return true;
-			}
-			$cache = array(
-				CACHE . $type . DS . '*' . $params . $ext,
-				CACHE . $type . DS . '*' . $params . '_*' . $ext
-			);
-			$files = array();
-			while ($search = array_shift($cache)) {
-				$results = glob($search);
-				if ($results !== false) {
-					$files = array_merge($files, $results);
-				}
-			}
-			if (empty($files)) {
-				return false;
-			}
-			foreach ($files as $file) {
-				if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
-					//@codingStandardsIgnoreStart
-					@unlink($file);
-					//@codingStandardsIgnoreEnd
-				}
-			}
-			return true;
-
-		} elseif (is_array($params)) {
-			foreach ($params as $file) {
-				clearCache($file, $type, $ext);
-			}
-			return true;
-		}
-		return false;
 	}
 
 }
@@ -705,48 +458,6 @@ if (!function_exists('__x')) {
 
 		$arguments = func_num_args() === 3 ? (array)$args : array_slice(func_get_args(), 2);
 		return I18n::translator()->translate($singular, ['_context' => $context] + $arguments);
-	}
-
-}
-if (!function_exists('fileExistsInPath')) {
-
-/**
- * Searches include path for files.
- *
- * @param string $file File to look for
- * @return bool|string Full path to file if exists, otherwise false
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#fileExistsInPath
- */
-	function fileExistsInPath($file) {
-		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
-		foreach ($paths as $path) {
-			$fullPath = $path . DS . $file;
-
-			if (file_exists($fullPath)) {
-				return $fullPath;
-			} elseif (file_exists($file)) {
-				return $file;
-			}
-		}
-		return false;
-	}
-
-}
-
-if (!function_exists('convertSlash')) {
-
-/**
- * Convert forward slashes to underscores and removes first and last underscores in a string
- *
- * @param string $string String to convert
- * @return string with underscore remove from start and end of string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#convertSlash
- */
-	function convertSlash($string) {
-		$string = trim($string, '/');
-		$string = preg_replace('/\/\//', '/', $string);
-		$string = str_replace('/', '_', $string);
-		return $string;
 	}
 
 }

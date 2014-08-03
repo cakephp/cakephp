@@ -529,7 +529,7 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * Returns a association objected configured for the specified alias if any
+ * Returns an association object configured for the specified alias if any
  *
  * @param string $name the alias used for the association
  * @return \Cake\ORM\Association
@@ -1084,8 +1084,7 @@ class Table implements RepositoryInterface, EventListener {
  *
  * This method will determine whether the passed entity needs to be
  * inserted or updated in the database. It does that by checking the `isNew`
- * method on the entity, if no information can be found there, it will go
- * directly to the database to check the entity's status.
+ * method on the entity.
  *
  * ### Saving on associated tables
  *
@@ -1143,21 +1142,19 @@ class Table implements RepositoryInterface, EventListener {
  * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
  * @param array $options the options to use for the save operation
  * @return \Cake\Datasource\EntityInterface|bool
+ * @throws \RuntimeException When an entity is missing some of the primary keys.
  */
 	protected function _processSave($entity, $options) {
-		$primary = $entity->extract((array)$this->primaryKey());
+		$primaryColumns = (array)$this->primaryKey();
+		$primary = $entity->extract($primaryColumns);
 
-		if ($primary && $entity->isNew() === null) {
+		if ($primary && $entity->isNew()) {
 			$alias = $this->alias();
 			$keys = array_keys($primary);
 			foreach ($keys as &$pk) {
 				$pk = "$alias.$pk";
 			}
 			$entity->isNew(!$this->exists(array_combine($keys, $primary)));
-		}
-
-		if ($entity->isNew() === null) {
-			$entity->isNew(true);
 		}
 
 		$associated = $options['associated'];
@@ -1202,7 +1199,7 @@ class Table implements RepositoryInterface, EventListener {
 				$this,
 				$entity,
 				$options['associated'],
-				$options->getArrayCopy()
+				['validate' => (bool)$validate] + $options->getArrayCopy()
 			);
 			if ($success || !$options['atomic']) {
 				$entity->clean();
@@ -1237,7 +1234,7 @@ class Table implements RepositoryInterface, EventListener {
 		$primary = (array)$this->primaryKey();
 		if (empty($primary)) {
 			$msg = sprintf(
-				'Cannot insert row in "%s", it has no primary key.',
+				'Cannot insert row in "%s" table, it has no primary key.',
 				$this->table()
 			);
 			throw new \RuntimeException($msg);

@@ -324,7 +324,7 @@ class Configure {
  */
 	public static function version() {
 		if (!isset(static::$_values['Cake']['version'])) {
-			require CAKE . 'Config/config.php';
+			require CORE_PATH . 'config/config.php';
 			static::write($config);
 		}
 		return static::$_values['Cake']['version'];

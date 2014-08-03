@@ -19,6 +19,8 @@ else
 	AUTH=-u $(GITHUB_USER) -p$(GITHUB_PASS)
 endif
 
+DASH_VERSION=$(shell echo $(VERSION) | sed -e s/\\./-/g)
+
 ALL: help
 .PHONY: help install test need-version bump-version tag-version
 
@@ -107,7 +109,7 @@ tag-app: guard-VERSION build/app
 	cd build/app && git push $(REMOTE)
 	cd build/app && git push $(REMOTE) --tags
 
-dist/cakephp-$(VERSION).zip: build/app build/cakephp composer.phar
+dist/cakephp-$(DASH_VERSION).zip: build/app build/cakephp composer.phar
 	mkdir -p dist
 	@echo "Installing app dependencies with composer"
 	# Install deps with composer
@@ -120,17 +122,17 @@ dist/cakephp-$(VERSION).zip: build/app build/cakephp composer.phar
 	# Including .git will make zip balls huge, and the zipball is
 	# intended for quick start non-git, non-cli users
 	@echo "Building zipball for $(VERSION)"
-	cd build/app && find . -not -path '*.git*' | zip ../../dist/cakephp-$(VERSION).zip -@
+	cd build/app && find . -not -path '*.git*' | zip ../../dist/cakephp-$(DASH_VERSION).zip -@
 
 # Easier to type alias for zip balls
-package: tag-app dist/cakephp-$(VERSION).zip
+package: tag-app dist/cakephp-$(DASH_VERSION).zip
 
 
 
 # Tasks to publish zipballs to github.
 .PHONY: publish release
 
-publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(VERSION).zip
+publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
 	@echo "Creating draft release for $(VERSION). prerelease=$(PRERELEASE)"
 	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/cakephp/releases -d '{ \
 		"tag_name": "$(VERSION)", \
@@ -144,9 +146,9 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(VERSION).zip
 		file_put_contents("./id.txt", $$d["id"]);'
 	@echo "Uploading zip file to github."
 	curl $(AUTH) -XPOST \
-		$(UPLOAD_HOST)/repos/$(OWNER)/cakephp/releases/`cat ./id.txt`/assets?name=cakephp-$(VERSION).zip \
+		$(UPLOAD_HOST)/repos/$(OWNER)/cakephp/releases/`cat ./id.txt`/assets?name=cakephp-$(DASH_VERSION).zip \
 		-H 'Content-Type: application/zip' \
-		-d '@dist/cakephp-$(VERSION).zip'
+		-d '@dist/cakephp-$(DASH_VERSION).zip'
 	# Cleanup files.
 	rm release.json
 	rm id.txt

@@ -592,6 +592,22 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that passing an empty array type to any where condition will not
+ * result in an error, but in an empty result set
+ *
+ * @return void
+ */
+	public function testSelectWhereArrayTypeEmpty() {
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['id' => []], ['id' => 'integer[]'])
+			->execute();
+		$this->assertCount(0, $result);
+	}
+
+/**
  * Tests that Query::orWhere() can be used to concatenate conditions with OR
  *
  * @return void
@@ -1312,7 +1328,7 @@ class QueryTest extends TestCase {
 
 /**
  * Tests that it is possible to select distinct rows, even filtering by one column
- * this is testing that there is an specific implementation for DISTINCT ON
+ * this is testing that there is a specific implementation for DISTINCT ON
  *
  * @return void
  */
@@ -2675,6 +2691,29 @@ class QueryTest extends TestCase {
 			return $exp->isNotNull('field');
 		});
 		$this->assertQuotedQuery('WHERE \(<field>\) IS NOT NULL', $query->sql());
+	}
+
+/**
+ * Tests that using the IS operator will automatically translate to the best
+ * possible operator depending on the passed value
+ *
+ * @return void
+ */
+	public function testDirectIsNull() {
+		$sql = (new Query($this->connection))
+			->select(['name'])
+			->from(['authors'])
+			->where(['name IS' => null])
+			->sql();
+		$this->assertQuotedQuery('WHERE \(<name>\) IS NULL', $sql, true);
+
+		$results = (new Query($this->connection))
+			->select(['name'])
+			->from(['authors'])
+			->where(['name IS' => 'larry'])
+			->execute();
+		$this->assertCount(1, $results);
+		$this->assertEquals(['name' => 'larry'], $results->fetch('assoc'));
 	}
 
 /**

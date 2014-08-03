@@ -150,7 +150,7 @@ class Router {
 	protected static $_urlFilters = [];
 
 /**
- * Gets the named route patterns for use in app/Config/routes.php
+ * Gets the named route patterns for use in config/routes.php
  *
  * @return array Named route elements
  * @see Router::$_namedExpressions
@@ -713,7 +713,7 @@ class Router {
 
 /**
  * Set/add valid extensions. Instructs the router to parse out file extensions
- * from the URL. For example, http://example.com/posts.rss would yield an file
+ * from the URL. For example, http://example.com/posts.rss would yield a file
  * extension of "rss". The file extension itself is made available in the
  * controller as `$this->params['_ext']`, and is used by the RequestHandler
  * component to automatically switch to alternate layouts and templates, and
@@ -919,7 +919,7 @@ class Router {
  */
 	protected static function _loadRoutes() {
 		static::$initialized = true;
-		include APP . 'Config/routes.php';
+		include CONFIG . 'routes.php';
 	}
 
 }

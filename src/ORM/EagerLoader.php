@@ -296,9 +296,9 @@ class EagerLoader {
  * @param Table $parent owning side of the association
  * @param string $alias name of the association to be loaded
  * @param array $options list of extra options to use for this association
- * @param array $paths An array with to values, the first one is a list of dot
+ * @param array $paths An array with two values, the first one is a list of dot
  * separated strings representing associations that lead to this `$alias` in the
- * chain of associaitons to be loaded. The second value is the path to follow in
+ * chain of associations to be loaded. The second value is the path to follow in
  * entities' properties to fetch a record of the corresponding association.
  * @return array normalized associations
  * @throws \InvalidArgumentException When containments refer to associations that do not exist.
@@ -348,7 +348,7 @@ class EagerLoader {
  *
  * @param string $alias the name of the association to evaluate
  * @param array $config The association config
- * @param string $root An string representing the root association that started
+ * @param string $root A string representing the root association that started
  * the direct chain this alias is in
  * @return array The modified association config
  * @throws \RuntimeException if a duplicate association in the same chain is detected
@@ -474,7 +474,7 @@ class EagerLoader {
 	}
 
 /**
- * Helper function used to iterate an statement and extract the columns
+ * Helper function used to iterate a statement and extract the columns
  * defined in $collectKeys
  *
  * @param \Cake\Database\StatementInterface $statement The statement to read from.

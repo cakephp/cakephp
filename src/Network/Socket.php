@@ -109,10 +109,6 @@ class Socket {
  */
 	public function __construct(array $config = array()) {
 		$this->config($config);
-
-		if (!is_numeric($this->_config['protocol'])) {
-			$this->_config['protocol'] = getprotobyname($this->_config['protocol']);
-		}
 	}
 
 /**
@@ -127,8 +123,8 @@ class Socket {
 		}
 
 		$scheme = null;
-		if (isset($this->_config['request']['uri']) && $this->_config['request']['uri']['scheme'] === 'https') {
-			$scheme = 'ssl://';
+		if (!empty($this->_config['protocol']) && strpos($this->_config['host'], '://') === false) {
+			$scheme = $this->_config['protocol'] . '://';
 		}
 
 		if (!empty($this->_config['context'])) {
@@ -381,3 +377,4 @@ class Socket {
 	}
 
 }
+

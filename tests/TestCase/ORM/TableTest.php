@@ -1369,7 +1369,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @group save
  * @expectedException \RuntimeException
- * @expectedExceptionMessage Cannot insert row in "users", it has no primary key
+ * @expectedExceptionMessage Cannot insert row in "users" table, it has no primary key
  * @return void
  */
 	public function testSaveNewErrorOnNoPrimaryKey() {
@@ -2136,10 +2136,16 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'body' => 'bar',
 			'author' => new \Cake\ORM\Entity([
 				'name' => 'Susan'
-			])
+			]),
+			'articles_tags' => [
+				new \Cake\ORM\Entity([
+					'tag_id' => 100
+				])
+			]
 		]);
 		$table = TableRegistry::get('articles');
 		$table->belongsTo('authors');
+		$table->hasMany('ArticlesTags');
 		$validator = (new Validator)->validatePresence('body');
 		$table->validator('custom', $validator);
 
@@ -2147,6 +2153,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->authors->validator('default', $validator2);
 		$this->assertFalse($table->save($entity, ['validate' => 'custom']), 'default was not used');
 		$this->assertNotEmpty($entity->author->errors('thing'));
+
+		$table->ArticlesTags->validator('default', $validator2);
+		unset($entity->author);
+		$this->assertFalse($table->save($entity, ['validate' => 'custom']), 'default was not used');
+		$this->assertNotEmpty($entity->articles_tags[0]->errors('thing'));
 	}
 
 /**
@@ -2515,8 +2526,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$this->assertFalse($table->save($entity));
 		$this->assertTrue($entity->isNew());
-		$this->assertNull($entity->articles[0]->isNew());
-		$this->assertNull($entity->articles[1]->isNew());
+		$this->assertTrue($entity->articles[0]->isNew());
+		$this->assertTrue($entity->articles[1]->isNew());
 		$this->assertNull($entity->articles[0]->id);
 		$this->assertNull($entity->articles[1]->id);
 		$this->assertNull($entity->articles[0]->author_id);
@@ -2741,8 +2752,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$this->assertFalse($table->save($entity));
 		$this->assertTrue($entity->isNew());
-		$this->assertNull($entity->tags[0]->isNew());
-		$this->assertNull($entity->tags[1]->isNew());
+		$this->assertTrue($entity->tags[0]->isNew());
+		$this->assertTrue($entity->tags[1]->isNew());
 		$this->assertNull($entity->tags[0]->id);
 		$this->assertNull($entity->tags[1]->id);
 		$this->assertNull($entity->tags[0]->_joinData);
@@ -2817,8 +2828,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$this->assertFalse($table->save($entity));
 		$this->assertTrue($entity->isNew());
-		$this->assertNull($entity->tags[0]->isNew());
-		$this->assertNull($entity->tags[1]->isNew());
+		$this->assertTrue($entity->tags[0]->isNew());
+		$this->assertTrue($entity->tags[1]->isNew());
 		$this->assertNull($entity->tags[0]->id);
 		$this->assertNull($entity->tags[1]->id);
 		$this->assertNull($entity->tags[0]->_joinData);
@@ -3093,7 +3104,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$tags[1]->_joinData = new \Cake\ORM\Entity([
 			'article_id' => 1,
 			'tag_id' => 2
-		]);
+		], $options);
 
 		$table->association('tags')->unlink($article, $tags);
 		$left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
@@ -3337,7 +3348,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testValidateManyDefaultAssociaion() {
+	public function testValidateManyDefaultAssociation() {
 		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
 		$table->belongsTo('users');
 		$table->hasMany('articles');

@@ -689,7 +689,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * You can use callable functions to construct complex expressions, functions
  * receive as first argument a new QueryExpression object and this query instance
  * as second argument. Functions must return an expression object, that will be
- * added the list of conditions for the query using th AND operator.
+ * added the list of conditions for the query using the AND operator.
  *
  * {{{
  *	$query
@@ -1333,7 +1333,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * $expression = $query->newExpression('Table.column = Table2.column'); // Return a raw SQL expression
  * }}}
  *
- * @param mixed $rawExpression A string, array or anything you want wrapped in a expression object
+ * @param mixed $rawExpression A string, array or anything you want wrapped in an expression object
  * @return \Cake\Database\QueryExpression
  */
 	public function newExpr($rawExpression = null) {

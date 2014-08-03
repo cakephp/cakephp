@@ -517,14 +517,18 @@ class Response {
  * @param string $name the header name
  * @param string $value the header value
  * @return void
+ * @throws \Cake\Error\Exception When headers have already been sent
  */
 	protected function _sendHeader($name, $value = null) {
-		if (!headers_sent()) {
-			if ($value === null) {
-				header($name);
-			} else {
-				header("{$name}: {$value}");
-			}
+		if (headers_sent($filename, $linenum)) {
+			throw new Error\Exception(
+				sprintf('Headers already sent in %d on line %s', $linenum, $filename)
+			);
+		}
+		if ($value === null) {
+			header($name);
+		} else {
+			header("{$name}: {$value}");
 		}
 	}
 
@@ -950,7 +954,7 @@ class Response {
 	}
 
 /**
- * Sets the Last-Modified header for the response by taking an modification time
+ * Sets the Last-Modified header for the response by taking a modification time
  * If called with no parameters it will return the current Last-Modified value
  *
  * ## Examples:
@@ -1003,7 +1007,7 @@ class Response {
  * parameters are passed, then an array with the current Vary header
  * value is returned
  *
- * @param string|array $cacheVariances a single Vary string or a array
+ * @param string|array $cacheVariances a single Vary string or an array
  *   containing the list for variances.
  * @return array
  */
@@ -1334,9 +1338,7 @@ class Response {
 		);
 
 		if (strpos($path, '..') !== false) {
-			throw new Error\NotFoundException(
-				'The requested file contains `..` and will not be read.'
-			);
+			throw new Error\NotFoundException('The requested file contains `..` and will not be read.');
 		}
 
 		if (!is_file($path)) {

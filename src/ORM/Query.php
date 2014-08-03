@@ -24,7 +24,7 @@ use Cake\ORM\Table;
 /**
  * Extends the base Query class to provide new methods related to association
  * loading, automatic fields selection, automatic type casting and to wrap results
- * into an specific iterator that will be responsible for hydrating results if
+ * into a specific iterator that will be responsible for hydrating results if
  * required.
  *
  */
@@ -228,6 +228,7 @@ class Query extends DatabaseQuery {
  *			}
  *		]
  *	]);
+ * }}}
  *
  * If called with no arguments, this function will return an array with
  * with the list of previously configured associations to be contained in the
@@ -261,7 +262,7 @@ class Query extends DatabaseQuery {
  * Adds filtering conditions to this query to only bring rows that have a relation
  * to another from an associated table, based on conditions in the associated table.
  *
- * This function will add entries in the ``contain`` graph.
+ * This function will add entries in the `contain` graph.
  *
  * ### Example:
  *
@@ -283,8 +284,8 @@ class Query extends DatabaseQuery {
  *	);
  * }}}
  *
- * As this function will create ``INNER JOIN``, you might want to consider
- * calling ``distinct`` on this query as you might get duplicate rows if
+ * As this function will create `INNER JOIN`, you might want to consider
+ * calling `distinct` on this query as you might get duplicate rows if
  * your conditions don't filter them already. This might be the case, for example,
  * of the same user commenting more than once in the same article.
  *
@@ -299,7 +300,7 @@ class Query extends DatabaseQuery {
  * }}}
  *
  * Please note that the query passed to the closure will only accept calling
- * ``select``, ``where``, ``andWhere`` and ``orWhere`` on it. If you wish to
+ * `select`, `where`, `andWhere` and `orWhere` on it. If you wish to
  * add more complex clauses you can do it directly in the main query.
  *
  * @param string $assoc The association to filter by
@@ -394,7 +395,18 @@ class Query extends DatabaseQuery {
 
 /**
  * Populates or adds parts to current query clauses using an array.
- * This is handy for passing all query clauses at once.
+ * This is handy for passing all query clauses at once. The option array accepts:
+ *
+ * - fields: Maps to the select method
+ * - conditions: Maps to the where method
+ * - limit: Maps to the limit method
+ * - order: Maps to the order method
+ * - offset: Maps to the offset method
+ * - group: Maps to the group method
+ * - having: Maps to the having method
+ * - contain: Maps to the contain options for eager loading
+ * - join: Maps to the join method
+ * - page: Maps to the page method
  *
  * ## Example:
  *
@@ -417,19 +429,7 @@ class Query extends DatabaseQuery {
  *  ->limit(10)
  * }}}
  *
- * @param array $options list of query clauses to apply new parts to. Accepts:
- *
- * - fields: Maps to the select method
- * - conditions: Maps to the where method
- * - limit: Maps to the limit method
- * - order: Maps to the order method
- * - offset: Maps to the offset method
- * - group: Maps to the group method
- * - having: Maps to the having method
- * - contain: Maps to the contain options for eager loading
- * - join: Maps to the join method
- * - page: Maps to the page method
- *
+ * @param array $options list of query clauses to apply new parts to.
  * @return $this
  */
 	public function applyOptions(array $options) {

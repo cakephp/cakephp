@@ -128,7 +128,7 @@ class Connection {
 	}
 
 /**
- * Sets the driver instance. If an string is passed it will be treated
+ * Sets the driver instance. If a string is passed it will be treated
  * as a class name and will be instantiated.
  *
  * If no params are passed it will return the current driver instance.
@@ -542,10 +542,14 @@ class Connection {
 /**
  * Enables or disables query logging for this connection.
  *
- * @param bool $enable whether to turn logging on or disable it
- * @return void
+ * @param bool $enable whether to turn logging on or disable it.
+ *   Use null to read current value.
+ * @return bool
  */
-	public function logQueries($enable) {
+	public function logQueries($enable = null) {
+		if ($enable === null) {
+			return $this->_logQueries;
+		}
 		$this->_logQueries = $enable;
 	}
 

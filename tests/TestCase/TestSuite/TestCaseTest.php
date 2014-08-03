@@ -30,27 +30,6 @@ use Cake\Test\Fixture\FixturizedTestCase;
 class TestCaseTest extends TestCase {
 
 /**
- * setUp
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		$this->Reporter = $this->getMock('Cake\TestSuite\Reporter\HtmlReporter');
-	}
-
-/**
- * tearDown
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		unset($this->Result);
-		unset($this->Reporter);
-	}
-
-/**
  * testAssertTags
  *
  * @return void
@@ -332,17 +311,14 @@ class TestCaseTest extends TestCase {
 		$this->assertNull($Posts->table());
 
 		$Posts = $this->getMockForModel('Posts', array('save'));
-
-		$this->assertNull($Posts->save($entity));
-
 		$Posts->expects($this->at(0))
 			->method('save')
-			->will($this->returnValue(true));
-		$Posts->expects($this->at(1))
-			->method('save')
-			->will($this->returnValue(false));
-		$this->assertTrue($Posts->save($entity));
-		$this->assertFalse($Posts->save($entity));
+			->will($this->returnValue('mocked'));
+		$this->assertEquals('mocked', $Posts->save($entity));
+
+		$Posts = $this->getMockForModel('Posts', ['doSomething']);
+		$this->assertInstanceOf('Cake\Database\Connection', $Posts->connection());
+		$this->assertEquals('test', $Posts->connection()->configName());
 	}
 
 /**

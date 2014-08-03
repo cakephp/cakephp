@@ -356,17 +356,6 @@ class RequestHandlerComponent extends Component {
 	}
 
 /**
- * Gets Prototype version if call is Ajax, otherwise empty string.
- * The Prototype library sets a special "Prototype version" HTTP header.
- *
- * @return string|bool When Ajax the prototype version of component making the call otherwise false
- */
-	public function getAjaxVersion() {
-		$httpX = $this->request->env('HTTP_X_PROTOTYPE_VERSION');
-		return ($httpX === null) ? false : $httpX;
-	}
-
-/**
  * Determines which content types the client accepts. Acceptance is based on
  * the file extension parsed by the Router (if present), and by the HTTP_ACCEPT
  * header. Unlike Cake\Network\Request::accepts() this method deals entirely with mapped content types.
@@ -418,7 +407,10 @@ class RequestHandlerComponent extends Component {
  *   in the request content type will be returned.
  */
 	public function requestedWith($type = null) {
-		if (!$this->request->is('post') && !$this->request->is('put')) {
+		if (!$this->request->is('post') &&
+			!$this->request->is('put') &&
+			!$this->request->is('delete')
+		) {
 			return null;
 		}
 		if (is_array($type)) {

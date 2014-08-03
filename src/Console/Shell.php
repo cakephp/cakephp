@@ -478,7 +478,7 @@ class Shell {
  * present in most shells. Using Shell::QUIET for a message means it will always display.
  * While using Shell::VERBOSE means it will only display when verbose output is toggled.
  *
- * @param string|array $message A string or a an array of strings to output
+ * @param string|array $message A string or an array of strings to output
  * @param int $newlines Number of newlines to append
  * @param int $level The message's output level, see above.
  * @return int|bool Returns the number of bytes returned from writing to stdout.
@@ -492,7 +492,7 @@ class Shell {
  * Outputs a single or multiple error messages to stderr. If no parameters
  * are passed outputs just a newline.
  *
- * @param string|array $message A string or a an array of strings to output
+ * @param string|array $message A string or an array of strings to output
  * @param int $newlines Number of newlines to append
  * @return void
  */

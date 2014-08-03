@@ -34,7 +34,8 @@ class SmtpTransport extends AbstractTransport {
 		'username' => null,
 		'password' => null,
 		'client' => null,
-		'tls' => false
+		'tls' => false,
+		'keepAlive' => false
 	];
 
 /**
@@ -64,6 +65,57 @@ class SmtpTransport extends AbstractTransport {
  * @var array
  */
 	protected $_lastResponse = array();
+
+/**
+ * Destructor
+ *
+ * Tries to disconnect to ensure that the connection is being
+ * terminated properly before the socket gets closed.
+ */
+	public function __destruct() {
+		try {
+			$this->disconnect();
+		} catch (\Exception $e) { // avoid fatal error on script termination
+		}
+	}
+
+/**
+ * Connect to the SMTP server.
+ *
+ * This method tries to connect only in case there is no open
+ * connection available already.
+ *
+ * @return void
+ */
+	public function connect() {
+		if (!$this->connected()) {
+			$this->_connect();
+			$this->_auth();
+		}
+	}
+
+/**
+ * Check whether an open connection to the SMTP server is available.
+ *
+ * @return bool
+ */
+	public function connected() {
+		return $this->_socket !== null && $this->_socket->connected;
+	}
+
+/**
+ * Disconnect from the SMTP server.
+ *
+ * This method tries to disconnect only in case there is an open
+ * connection available.
+ *
+ * @return void
+ */
+	public function disconnect() {
+		if ($this->connected()) {
+			$this->_disconnect();
+		}
+	}
 
 /**
  * Returns the response of the last sent SMTP command.
@@ -104,11 +156,19 @@ class SmtpTransport extends AbstractTransport {
 	public function send(Email $email) {
 		$this->_cakeEmail = $email;
 
-		$this->_connect();
-		$this->_auth();
+		if (!$this->connected()) {
+			$this->_connect();
+			$this->_auth();
+		} else {
+			$this->_smtpSend('RSET');
+		}
+
 		$this->_sendRcpt();
 		$this->_sendData();
-		$this->_disconnect();
+
+		if (!$this->_config['keepAlive']) {
+			$this->_disconnect();
+		}
 
 		return $this->_content;
 	}
@@ -181,20 +241,23 @@ class SmtpTransport extends AbstractTransport {
  * @throws \Cake\Network\Error\SocketException
  */
 	protected function _auth() {
-		$config = $this->_config;
-		if (isset($config['username']) && isset($config['password'])) {
-			$authRequired = $this->_smtpSend('AUTH LOGIN', '334|503');
-			if ($authRequired == '334') {
-				if (!$this->_smtpSend(base64_encode($config['username']), '334')) {
+		if (isset($this->_config['username']) && isset($this->_config['password'])) {
+			$replyCode = $this->_smtpSend('AUTH LOGIN', '334|500|502|504');
+			if ($replyCode == '334') {
+				try {
+					$this->_smtpSend(base64_encode($this->_config['username']), '334');
+				} catch (Error\SocketException $e) {
 					throw new Error\SocketException('SMTP server did not accept the username.');
 				}
-				if (!$this->_smtpSend(base64_encode($config['password']), '235')) {
+				try {
+					$this->_smtpSend(base64_encode($this->_config['password']), '235');
+				} catch (Error\SocketException $e) {
 					throw new Error\SocketException('SMTP server did not accept the password.');
 				}
-			} elseif ($authRequired == '504') {
-				throw new Error\SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS');
-			} elseif ($authRequired != '503') {
-				throw new Error\SocketException('SMTP does not require authentication.');
+			} elseif ($replyCode == '504') {
+				throw new Error\SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS.');
+			} else {
+				throw new Error\SocketException('AUTH command not recognized or not implemented, SMTP server may not require authentication.');
 			}
 		}
 	}

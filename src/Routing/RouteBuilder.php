@@ -189,7 +189,7 @@ class RouteBuilder {
  * - 'only' - Only connect the specific list of actions.
  * - 'actions' - Override the method names used for connecting actions.
  *
- * @param string|array $name A controller name or array of controller names (i.e. "Posts" or "ListItems")
+ * @param string $name A controller name to connect resource routes for.
  * @param array $options Options to use when generating REST routes
  * @param callable $callback An optional callback to be executed in a nested scope. Nested
  *   scopes inherit the existing path and 'id' parameter.

@@ -55,7 +55,7 @@ class SocketTest extends TestCase {
 		$this->assertSame($config, array(
 			'persistent'	=> false,
 			'host'			=> 'localhost',
-			'protocol'		=> getprotobyname('tcp'),
+			'protocol'		=> 'tcp',
 			'port'			=> 80,
 			'timeout'		=> 30
 		));
@@ -70,7 +70,7 @@ class SocketTest extends TestCase {
 
 		$config['host'] = 'www.cakephp.org';
 		$config['port'] = 23;
-		$config['protocol'] = 17;
+		$config['protocol'] = 'udp';
 
 		$this->assertSame($this->Socket->config(), $config);
 	}

@@ -261,7 +261,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadWithMerge() {
-		Configure::config('test', new PhpConfig(TEST_APP . 'TestApp/Config/'));
+		Configure::config('test', new PhpConfig(CONFIG));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -284,7 +284,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadNoMerge() {
-		Configure::config('test', new PhpConfig(TEST_APP . 'TestApp/Config/'));
+		Configure::config('test', new PhpConfig(CONFIG));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -305,7 +305,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadWithExistingData() {
-		Configure::config('test', new PhpConfig(TEST_APP . 'TestApp/Config/'));
+		Configure::config('test', new PhpConfig(CONFIG));
 		Configure::write('my_key', 'value');
 
 		Configure::load('var_test', 'test');
@@ -319,7 +319,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadMergeWithExistingData() {
-		Configure::config('test', new PhpConfig(TEST_APP . 'TestApp/Config/'));
+		Configure::config('test', new PhpConfig());
 		Configure::write('my_key', 'value');
 		Configure::write('Read', 'old');
 		Configure::write('Deep.old', 'old');

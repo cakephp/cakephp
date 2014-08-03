@@ -89,57 +89,15 @@ class FixtureTaskTest extends TestCase {
 	}
 
 /**
- * test importOptions with overwriting command line options.
- *
- * @return void
- */
-	public function testImportOptionsWithCommandLineOptions() {
-		$this->Task->params = ['schema' => true, 'records' => true];
-
-		$result = $this->Task->importOptions('Article');
-		$expected = ['fromTable' => true, 'schema' => 'Article', 'records' => true];
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test importOptions with schema.
- *
- * @return void
- */
-	public function testImportOptionsWithSchema() {
-		$this->Task->params = ['schema' => true];
-
-		$result = $this->Task->importOptions('Articles');
-		$expected = ['schema' => 'Articles'];
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test importOptions with records.
- *
- * @return void
- */
-	public function testImportOptionsWithRecords() {
-		$this->Task->params = array('records' => true);
-
-		$result = $this->Task->importOptions('Article');
-		$expected = array('fromTable' => true, 'records' => true);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * test generating a fixture with database conditions.
  *
  * @return void
  */
 	public function testImportRecordsFromDatabaseWithConditionsPoo() {
 		$this->Task->connection = 'test';
+		$this->Task->params = ['schema' => true, 'records' => true];
 
-		$result = $this->Task->bake('Articles', false, array(
-			'fromTable' => true,
-			'schema' => 'Articles',
-			'records' => false
-		));
+		$result = $this->Task->bake('Articles');
 
 		$this->assertContains('namespace App\Test\Fixture;', $result);
 		$this->assertContains('use Cake\TestSuite\Fixture\TestFixture;', $result);
@@ -158,7 +116,8 @@ class FixtureTaskTest extends TestCase {
  */
 	public function testImportOptionsAlternateConnection() {
 		$this->Task->connection = 'test';
-		$result = $this->Task->bake('Article', false, array('schema' => 'Article'));
+		$this->Task->params = ['schema' => true];
+		$result = $this->Task->bake('Article');
 		$this->assertContains("'connection' => 'test'", $result);
 	}
 
@@ -168,20 +127,12 @@ class FixtureTaskTest extends TestCase {
  * @return void
  */
 	public function testImportRecordsNoEscaping() {
-		$db = ConnectionManager::get('test');
-		if ($db instanceof Sqlserver) {
-			$this->markTestSkipped('This test does not run on SQLServer');
-		}
-
 		$articles = TableRegistry::get('Articles');
 		$articles->updateAll(['body' => "Body \"value\""], []);
 
 		$this->Task->connection = 'test';
-		$result = $this->Task->bake('Article', false, array(
-			'fromTable' => true,
-			'schema' => 'Article',
-			'records' => false
-		));
+		$this->Task->params = ['schema' => 'true', 'records' => true];
+		$result = $this->Task->bake('Article');
 		$this->assertContains("'body' => 'Body \"value\"'", $result, 'Data has bad escaping');
 	}
 
@@ -321,29 +272,53 @@ class FixtureTaskTest extends TestCase {
 	public function testBake() {
 		$this->Task->connection = 'test';
 
-		$result = $this->Task->bake('Article');
-		$this->assertContains('class ArticleFixture extends TestFixture', $result);
-		$this->assertContains('public $fields', $result);
-		$this->assertContains('public $records', $result);
-		$this->assertNotContains('public $import', $result);
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with($this->anything(), $this->logicalAnd(
+				$this->stringContains('class ArticleFixture extends TestFixture'),
+				$this->stringContains('public $fields'),
+				$this->stringContains('public $records'),
+				$this->logicalNot($this->stringContains('public $import'))
+			));
+		$result = $this->Task->main('Article');
+	}
 
-		$result = $this->Task->bake('Article', 'comments');
-		$this->assertContains('class ArticleFixture extends TestFixture', $result);
-		$this->assertContains('public $table = \'comments\';', $result);
-		$this->assertContains('public $fields = [', $result);
+/**
+ * test main() with importing records
+ *
+ * @return void
+ */
+	public function testMainImportRecords() {
+		$this->Task->connection = 'test';
+		$this->Task->params = ['import-records' => true];
 
-		$result = $this->Task->bake('Article', 'comments', array('records' => true));
-		$this->assertContains("public \$import = ['records' => true, 'connection' => 'test'];", $result);
-		$this->assertNotContains('public $records', $result);
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with($this->anything(), $this->logicalAnd(
+				$this->stringContains("public \$import = ['records' => true, 'connection' => 'test'];"),
+				$this->logicalNot($this->stringContains('public $records'))
+			));
 
-		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article'));
-		$this->assertContains("public \$import = ['model' => 'Article', 'connection' => 'test'];", $result);
-		$this->assertNotContains('public $fields', $result);
+		$this->Task->main('Article');
+	}
 
-		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article', 'records' => true));
-		$this->assertContains("public \$import = ['model' => 'Article', 'records' => true, 'connection' => 'test'];", $result);
-		$this->assertNotContains('public $fields', $result);
-		$this->assertNotContains('public $records', $result);
+/**
+ * test main() with importing schema.
+ *
+ * @return void
+ */
+	public function testMainImportSchema() {
+		$this->Task->connection = 'test';
+		$this->Task->params = ['schema' => true, 'import-records' => true];
+
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->with($this->anything(), $this->logicalAnd(
+				$this->stringContains("public \$import = ['model' => 'Article', 'records' => true, 'connection' => 'test'];"),
+				$this->logicalNot($this->stringContains('public $fields')),
+				$this->logicalNot($this->stringContains('public $records'))
+			));
+		$this->Task->bake('Article', 'comments');
 	}
 
 /**

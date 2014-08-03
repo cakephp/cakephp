@@ -1,7 +1,5 @@
 <?php
 /**
- * ExceptionRendererTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -253,7 +251,7 @@ class ExceptionRendererTest extends TestCase {
 	public function testExceptionMessageCoercion() {
 		Configure::write('debug', false);
 		$exception = new MissingActionException('Secret info not to be leaked');
-		$ExceptionRenderer = new ExceptionRenderer($exception);
+		$ExceptionRenderer = $this->_mockResponse(new ExceptionRenderer($exception));
 
 		$this->assertInstanceOf('Cake\Controller\ErrorController', $ExceptionRenderer->controller);
 		$this->assertEquals($exception, $ExceptionRenderer->error);
@@ -275,7 +273,7 @@ class ExceptionRendererTest extends TestCase {
 	public function testCakeErrorHelpersNotLost() {
 		Configure::write('App.namespace', 'TestApp');
 		$exception = new SocketException('socket exception');
-		$renderer = new \TestApp\Error\TestAppsExceptionRenderer($exception);
+		$renderer = $this->_mockResponse(new \TestApp\Error\TestAppsExceptionRenderer($exception));
 
 		ob_start();
 		$renderer->render();
@@ -763,7 +761,7 @@ class ExceptionRendererTest extends TestCase {
 	}
 
 /**
- * Test that exceptions can be rendered when an request hasn't been registered
+ * Test that exceptions can be rendered when a request hasn't been registered
  * with Router
  *
  * @return void

@@ -982,6 +982,22 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * Test URL generation inside a prefixed plugin.
+ *
+ * @return void
+ */
+	public function testUrlGenerationPrefixedPlugin() {
+		Router::prefix('admin', function($routes) {
+			$routes->plugin('MyPlugin', function($routes) {
+				$routes->fallbacks();
+			});
+		});
+		$result = Router::url(['prefix' => 'admin', 'plugin' => 'MyPlugin', 'controller' => 'Forms', 'action' => 'edit', 2]);
+		$expected = '/admin/my_plugin/forms/edit/2';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testUrlGenerationWithExtensions method
  *
  * @return void

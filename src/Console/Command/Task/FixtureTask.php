@@ -71,12 +71,17 @@ class FixtureTask extends BakeTask {
 			'short' => 's',
 			'boolean' => true
 		])->addOption('records', [
-			'help' => 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10.',
+			'help' => 'Generate a fixture with records from the non-test database. Used with --count and --conditions to limit which records are added to the fixture.',
 			'short' => 'r',
+			'boolean' => true
+		])->addOption('import-records', [
+			'help' => __d('cake_console', 'Set to true to import records from the live table when the generated fixture is used.'),
 			'boolean' => true
 		])->addOption('conditions', [
 			'help' => 'The SQL snippet to use when importing records.',
 			'default' => '1=1',
+		])->addSubcommand('all', [
+			'help' => __d('cake_console', 'Bake all fixture files for tables in the chosen connection.')
 		]);
 
 		return $parser;
@@ -118,31 +123,8 @@ class FixtureTask extends BakeTask {
 		$tables = $this->Model->listAll($this->connection, false);
 
 		foreach ($tables as $table) {
-			$model = $this->_modelName($table);
-			$importOptions = [];
-			if (!empty($this->params['schema'])) {
-				$importOptions['schema'] = $model;
-			}
-			$this->bake($model, false, $importOptions);
+			$this->main($table);
 		}
-	}
-/**
- * Interacts with the User to setup an array of import options. For a fixture.
- *
- * @param string $modelName Name of model you are dealing with.
- * @return array Array of import options.
- */
-	public function importOptions($modelName) {
-		$options = [];
-
-		if (!empty($this->params['schema'])) {
-			$options['schema'] = $modelName;
-		}
-		if (!empty($this->params['records'])) {
-			$options['records'] = true;
-			$options['fromTable'] = true;
-		}
-		return $options;
 	}
 
 /**
@@ -150,13 +132,11 @@ class FixtureTask extends BakeTask {
  *
  * @param string $model Name of model to bake.
  * @param string $useTable Name of table to use.
- * @param array $importOptions Options for public $import
  * @return string Baked fixture content
  * @throws \RuntimeException
  */
-	public function bake($model, $useTable = false, array $importOptions = []) {
+	public function bake($model, $useTable = false) {
 		$table = $schema = $records = $import = $modelImport = null;
-		$importBits = [];
 
 		if (!$useTable) {
 			$useTable = Inflector::tableize($model);
@@ -164,20 +144,19 @@ class FixtureTask extends BakeTask {
 			$table = $useTable;
 		}
 
-		if (!empty($importOptions)) {
-			if (isset($importOptions['schema'])) {
-				$modelImport = true;
-				$importBits[] = "'model' => '{$importOptions['schema']}'";
-			}
-			if (isset($importOptions['records'])) {
-				$importBits[] = "'records' => true";
-			}
-			if ($this->connection !== 'default') {
-				$importBits[] .= "'connection' => '{$this->connection}'";
-			}
-			if (!empty($importBits)) {
-				$import = sprintf("[%s]", implode(', ', $importBits));
-			}
+		$importBits = [];
+		if (!empty($this->params['schema'])) {
+			$modelImport = true;
+			$importBits[] = "'model' => '{$model}'";
+		}
+		if (!empty($this->params['import-records'])) {
+			$importBits[] = "'records' => true";
+		}
+		if (!empty($importBits) && $this->connection !== 'default') {
+			$importBits[] = "'connection' => '{$this->connection}'";
+		}
+		if (!empty($importBits)) {
+			$import = sprintf("[%s]", implode(', ', $importBits));
 		}
 
 		$connection = ConnectionManager::get($this->connection);
@@ -193,14 +172,14 @@ class FixtureTask extends BakeTask {
 			$schema = $this->_generateSchema($data);
 		}
 
-		if (empty($importOptions['records']) && !isset($importOptions['fromTable'])) {
+		if (empty($this->params['records']) && empty($this->params['import-records'])) {
 			$recordCount = 1;
 			if (isset($this->params['count'])) {
 				$recordCount = $this->params['count'];
 			}
 			$records = $this->_makeRecordString($this->_generateRecords($data, $recordCount));
 		}
-		if (!empty($this->params['records']) || isset($importOptions['fromTable'])) {
+		if (!empty($this->params['records']) && empty($this->params['import-records'])) {
 			$records = $this->_makeRecordString($this->_getRecordsFromTable($model, $useTable));
 		}
 		return $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import'));
@@ -371,7 +350,7 @@ class FixtureTask extends BakeTask {
 	}
 
 /**
- * Convert a $records array into a a string.
+ * Convert a $records array into a string.
  *
  * @param array $records Array of records to be converted to string
  * @return string A string value of the $records array.

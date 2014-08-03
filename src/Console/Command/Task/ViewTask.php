@@ -250,7 +250,7 @@ class ViewTask extends BakeTask {
  * - 'keyFields'
  * - 'schema'
  *
- * @return array Returns an variables to be made available to a view template
+ * @return array Returns variables to be made available to a view template
  */
 	protected function _loadController() {
 		$modelObj = TableRegistry::get($this->modelName);

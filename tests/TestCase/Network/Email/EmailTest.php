@@ -198,7 +198,7 @@ class EmailTest extends TestCase {
 		$list = array(
 			'root@localhost' => 'root',
 			'bjørn@hammeröath.com' => 'Bjorn',
-			'cake@cakephp.org' => 'Cake PHP',
+			'cake.php@cakephp.org' => 'Cake PHP',
 			'cake-php@googlegroups.com' => 'Cake Groups',
 			'root@cakephp.org'
 		);
@@ -206,7 +206,7 @@ class EmailTest extends TestCase {
 		$expected = array(
 			'root@localhost' => 'root',
 			'bjørn@hammeröath.com' => 'Bjorn',
-			'cake@cakephp.org' => 'Cake PHP',
+			'cake.php@cakephp.org' => 'Cake PHP',
 			'cake-php@googlegroups.com' => 'Cake Groups',
 			'root@cakephp.org' => 'root@cakephp.org'
 		);
@@ -218,7 +218,7 @@ class EmailTest extends TestCase {
 		$expected = array(
 			'root@localhost' => 'root',
 			'bjørn@hammeröath.com' => 'Bjorn',
-			'cake@cakephp.org' => 'Cake PHP',
+			'cake.php@cakephp.org' => 'Cake PHP',
 			'cake-php@googlegroups.com' => 'Cake Groups',
 			'root@cakephp.org' => 'root@cakephp.org',
 			'jrbasso@cakephp.org' => 'jrbasso@cakephp.org',
@@ -728,16 +728,16 @@ class EmailTest extends TestCase {
 		$this->CakeEmail->attachments(array(
 			array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain')
 		));
-		$this->CakeEmail->addAttachments(CAKE . 'bootstrap.php');
-		$this->CakeEmail->addAttachments(array(CAKE . 'bootstrap.php'));
+		$this->CakeEmail->addAttachments(CORE_PATH . 'config' . DS . 'bootstrap.php');
+		$this->CakeEmail->addAttachments(array(CORE_PATH . 'config' . DS . 'bootstrap.php'));
 		$this->CakeEmail->addAttachments(array(
-			'other.txt' => CAKE . 'bootstrap.php',
+			'other.txt' => CORE_PATH . 'config' . DS . 'bootstrap.php',
 			'license' => CORE_PATH . 'LICENSE.txt'
 		));
 		$expected = array(
 			'basics.php' => array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'),
-			'bootstrap.php' => array('file' => CAKE . 'bootstrap.php', 'mimetype' => 'application/octet-stream'),
-			'other.txt' => array('file' => CAKE . 'bootstrap.php', 'mimetype' => 'application/octet-stream'),
+			'bootstrap.php' => array('file' => CORE_PATH . 'config' . DS . 'bootstrap.php', 'mimetype' => 'application/octet-stream'),
+			'other.txt' => array('file' => CORE_PATH . 'config' . DS . 'bootstrap.php', 'mimetype' => 'application/octet-stream'),
 			'license' => array('file' => CORE_PATH . 'LICENSE.txt', 'mimetype' => 'application/octet-stream')
 		);
 		$this->assertSame($this->CakeEmail->attachments(), $expected);

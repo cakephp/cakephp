@@ -405,6 +405,30 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test reading array values from an entity.
+ *
+ * @return void
+ */
+	public function testValGetArrayValue() {
+		$row = new Article([
+			'title' => 'Test entity',
+			'types' => [1, 2, 3],
+			'author' => new Entity([
+				'roles' => ['admin', 'publisher']
+			])
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+		$result = $context->val('types');
+		$this->assertEquals($row->types, $result);
+
+		$result = $context->val('author.roles');
+		$this->assertEquals($row->author->roles, $result);
+	}
+
+/**
  * Test that val() reads from the request.
  *
  * @return void

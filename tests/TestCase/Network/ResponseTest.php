@@ -748,12 +748,12 @@ class ResponseTest extends TestCase {
 		$response->sharable(true);
 		$this->assertTrue($response->sharable());
 
-		$response = new Response;
+		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		$response->sharable(true, 3600);
 		$headers = $response->header();
 		$this->assertEquals('public, max-age=3600', $headers['Cache-Control']);
 
-		$response = new Response;
+		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		$response->sharable(false, 3600);
 		$headers = $response->header();
 		$this->assertEquals('private, max-age=3600', $headers['Cache-Control']);
@@ -1326,7 +1326,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(TEST_APP . 'TestApp/Config/no_section.ini');
+		$response->file(CONFIG . 'no_section.ini');
 
 		ob_start();
 		$result = $response->send();
@@ -1390,7 +1390,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(TEST_APP . 'TestApp/Config/no_section.ini');
+		$response->file(CONFIG . 'no_section.ini');
 
 		ob_start();
 		$result = $response->send();
@@ -1454,7 +1454,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(TEST_APP . 'TestApp/Config/no_section.ini', array(
+		$response->file(CONFIG . 'no_section.ini', array(
 			'name' => 'config.ini'
 		));
 
@@ -1495,7 +1495,7 @@ class ResponseTest extends TestCase {
 		$response->expects($this->never())
 			->method('download');
 
-		$response->file(TEST_APP . 'TestApp/Config/no_section.ini', array(
+		$response->file(CONFIG . 'no_section.ini', array(
 			'download' => false
 		));
 

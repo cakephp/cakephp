@@ -260,7 +260,7 @@ trait CollectionTrait {
  * ];
  * $extracted = (new Collection($items))->extract('comment.user.name');
  *
- * //Result will look like this when converted to array
+ * // Result will look like this when converted to array
  * ['Mark', 'Renan']
  * }}}
  *
@@ -279,14 +279,14 @@ trait CollectionTrait {
  * ###Examples:
  *
  * {{{
- * //For a collection of employees
+ * // For a collection of employees
  * $max = $collection->max('age');
  * $max = $collection->max('user.salary');
  * $max = $collection->max(function($e) {
  *	return $e->get('user')->get('salary');
  * });
  *
- * //Display employee name
+ * // Display employee name
  * echo $max->name;
  * }}}
  *
@@ -308,14 +308,14 @@ trait CollectionTrait {
  * ###Examples:
  *
  * {{{
- * //For a collection of employees
+ * // For a collection of employees
  * $min = $collection->min('age');
  * $min = $collection->min('user.salary');
  * $min = $collection->min(function($e) {
  *	return $e->get('user')->get('salary');
  * });
  *
- * //Display employee name
+ * // Display employee name
  * echo $min->name;
  * }}}
  *
@@ -348,10 +348,10 @@ trait CollectionTrait {
  *	return $user->age;
  * });
  *
- * //alternatively
+ * // alternatively
  * $items = $collection->sortBy('age');
  *
- * //or use a property path
+ * // or use a property path
  * $items = $collection->sortBy('department.name');
  *
  * // output all user name order by their age in descending order
@@ -390,12 +390,12 @@ trait CollectionTrait {
  *
  * $group = (new Collection($items))->groupBy('parent_id');
  *
- * //Or
+ * // Or
  * $group = (new Collection($items))->groupBy(function($e) {
  *	return $e['parent_id'];
  * });
  *
- * //Result will look like this when converted to array
+ * // Result will look like this when converted to array
  * [
  *	10 => [
  *		['id' => 1, 'name' => 'foo', 'parent_id' => 10],
@@ -440,12 +440,12 @@ trait CollectionTrait {
  *
  * $indexed = (new Collection($items))->indexBy('id');
  *
- * //Or
+ * // Or
  * $indexed = (new Collection($items))->indexBy(function($e) {
  *	return $e['id'];
  * });
  *
- * //Result will look like this when converted to array
+ * // Result will look like this when converted to array
  * [
  *	1 => ['id' => 1, 'name' => 'foo'],
  *	3 => ['id' => 3, 'name' => 'baz'],
@@ -486,12 +486,12 @@ trait CollectionTrait {
  *
  * $group = (new Collection($items))->countBy('parent_id');
  *
- * //Or
+ * // Or
  * $group = (new Collection($items))->countBy(function($e) {
  *	return $e['parent_id'];
  * });
  *
- * //Result will look like this when converted to array
+ * // Result will look like this when converted to array
  * [
  *	10 => 2,
  *	11 => 1
@@ -567,7 +567,7 @@ trait CollectionTrait {
  *
  * $extracted = (new Collection($items))->match(['user.name' => 'Renan']);
  *
- * //Result will look like this when converted to array
+ * // Result will look like this when converted to array
  * [
  *	['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]
  * ]
@@ -652,7 +652,7 @@ trait CollectionTrait {
  *
  * $combined = (new Collection($items))->combine('id', 'name');
  *
- * //Result will look like this when converted to array
+ * // Result will look like this when converted to array
  * [
  *	1 => 'foo',
  *	2 => 'bar',
@@ -661,7 +661,7 @@ trait CollectionTrait {
  *
  * $combined = (new Collection($items))->combine('id', 'name', 'parent');
  *
- * //Result will look like this when converted to array
+ * // Result will look like this when converted to array
  * [
  *	'a' => [1 => 'foo', 3 => 'baz'],
  *	'b' => [2 => 'bar']
@@ -781,7 +781,7 @@ trait CollectionTrait {
  * $ages = [25, 28];
  * $inserted = (new Collection($items))->insert('comment.user.age', $ages);
  *
- * //Result will look like this when converted to array
+ * // Result will look like this when converted to array
  * [
  *	['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark', 'age' => 25]],
  *	['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan', 'age' => 28]]

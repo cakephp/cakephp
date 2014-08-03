@@ -33,14 +33,14 @@ use Cake\Utility\Debugger;
  * You can implement application specific exception handling in one of a few ways. Each approach
  * gives you different amounts of control over the exception handling process.
  *
- * - Modify App/Config/error.php and setup custom exception handling.
+ * - Modify config/error.php and setup custom exception handling.
  * - Use the `exceptionRenderer` option to inject an Exception renderer. This will
  *   let you keep the existing handling logic but override the rendering logic.
  *
  * #### Create your own Exception handler
  *
  * This gives you full control over the exception handling process. The class you choose should be
- * loaded in your app/Config/error.php and registered as the default exception handler.
+ * loaded in your config/error.php and registered as the default exception handler.
  *
  * #### Using a custom renderer with `exceptionRenderer`
  *
@@ -54,7 +54,7 @@ use Cake\Utility\Debugger;
  * #### Logging exceptions
  *
  * Using the built-in exception handling, you can log all the exceptions
- * that are dealt with by ErrorHandler by setting `log` option to true in your App/Config/error.php.
+ * that are dealt with by ErrorHandler by setting `log` option to true in your config/error.php.
  * Enabling this will log every exception to Log and the configured loggers.
  *
  * ### PHP errors
@@ -62,7 +62,7 @@ use Cake\Utility\Debugger;
  * Error handler also provides the built in features for handling php errors (trigger_error).
  * While in debug mode, errors will be output to the screen using debugger. While in production mode,
  * errors will be logged to Log.  You can control which errors are logged by setting
- * `errorLevel` option in App/Config/error.php.
+ * `errorLevel` option in config/error.php.
  *
  * #### Logging errors
  *

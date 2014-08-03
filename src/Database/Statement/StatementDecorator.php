@@ -69,7 +69,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 	}
 
 /**
- * Assign a value to an positional or named variable in prepared query. If using
+ * Assign a value to a positional or named variable in prepared query. If using
  * positional variables you need to start with index one, if using named params then
  * just use the name in any order.
  *
@@ -81,7 +81,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
  * $statement->bindValue(1, 'a title');
  * $statement->bindValue('active', true, 'boolean');
  * $statement->bindValue(5, new \DateTime(), 'date');
- * }}
+ * }}}
  *
  * @param string|int $column name or param position to be bound
  * @param mixed $value The value to bind to variable in query

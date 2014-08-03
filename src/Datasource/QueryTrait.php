@@ -286,12 +286,12 @@ trait QueryTrait {
  * ### Example:
  *
  * {{{
- * //Return all results from the table indexed by id
+ * // Return all results from the table indexed by id
  * $query->select(['id', 'name'])->formatResults(function($results, $query) {
  *   return $results->indexBy('id');
  * });
  *
- * //Add a new column to the ResultSet
+ * // Add a new column to the ResultSet
  * $query->select(['name', 'birth_date'])->formatResults(function($results, $query) {
  *   return $results->map(function($row) {
  *     $row['age'] = $row['birth_date']->diff(new DateTime)->y;

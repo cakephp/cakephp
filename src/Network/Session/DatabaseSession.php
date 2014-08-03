@@ -128,7 +128,10 @@ class DatabaseSession implements SessionHandlerInterface {
  * @return bool True for successful delete, false otherwise.
  */
 	public function destroy($id) {
-		return $this->_table->delete(new Entity([$this->_table->primaryKey() => $id]));
+		return $this->_table->delete(new Entity(
+			[$this->_table->primaryKey() => $id],
+			['markNew' => false]
+		));
 	}
 
 /**

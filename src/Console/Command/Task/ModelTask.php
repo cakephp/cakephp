@@ -129,9 +129,7 @@ class ModelTask extends BakeTask {
 			if (in_array($table, $this->skipTables)) {
 				continue;
 			}
-			$modelClass = $this->_modelName($table);
-			$this->out('Baking %s', $modelClass);
-			$this->bake($modelClass);
+			$this->main($table);
 		}
 	}
 

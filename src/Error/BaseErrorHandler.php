@@ -92,7 +92,7 @@ abstract class BaseErrorHandler {
 /**
  * Set as the default error handler by CakePHP.
  *
- * Use App/Config/error.php to customize or replace this error handler.
+ * Use config/error.php to customize or replace this error handler.
  * This function will use Debugger to display errors when debug > 0. And
  * will log errors to Log, when debug == 0.
  *

@@ -56,7 +56,7 @@ use Cake\Error;
  *
  * See Cache engine documentation for expected configuration keys.
  *
- * @see app/Config/core.php for configuration settings
+ * @see config/app.php for configuration settings
  * @param string $name Name of the configuration
  * @param array $config Optional associative array of settings passed to the engine
  * @return array [engine, settings] on success, false on failure
@@ -493,7 +493,7 @@ class Cache {
  * @param string $config The cache configuration to use for this operation.
  *   Defaults to default.
  * @return mixed If the key is found: the cached data, false if the data
- *   missing/expired, or an error.  If the key is not found: boolean of the
+ *   missing/expired, or an error. If the key is not found: boolean of the
  *   success of the write
  */
 	public static function remember($key, $callable, $config = 'default') {
