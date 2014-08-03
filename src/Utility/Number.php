@@ -56,13 +56,7 @@ class Number {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
  */
 	public static function precision($value, $precision = 3) {
-		$locale = ini_get('intl.default_locale') ?: 'en_US';
-		if (!isset(static::$_formatters[$locale])) {
-			static::$_formatters[$locale] = new NumberFormatter($locale, NumberFormatter::DECIMAL);
-		}
-		$formatter = static::$_formatters[$locale];
-		$formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $precision);
-		$formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $precision);
+		$formatter = static::formatter(['precision' => $precision, 'places' => $precision]);
 		return $formatter->format($value);
 	}
 
@@ -153,6 +147,7 @@ class Number {
  *
  * - `places` - Minimim number or decimals to use, e.g 0
  * - `precision` - Maximum Number of decimal places to use, e.g. 2
+ * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,###.00
  * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
  * - `before` - The string to place before whole numbers, e.g. '['
  * - `after` - The string to place after decimal numbers, e.g. ']'
@@ -160,35 +155,11 @@ class Number {
  * @param float $value A floating point number.
  * @param array $options An array with options.
  * @return string Formatted number
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
  */
 	public static function format($value, array $options = []) {
-		$locale = isset($options['locale']) ? $options['locale'] : ini_get('intl.default_locale');
-
-		if (!$locale) {
-			$locale = 'en_US';
-		}
-
-		if (!isset(static::$_formatters[$locale])) {
-			static::$_formatters[$locale] = new NumberFormatter($locale, NumberFormatter::DECIMAL);
-		}
-
-		$formatter = static::$_formatters[$locale];
-		$map = [
-			'places' => NumberFormatter::MIN_FRACTION_DIGITS,
-			'precision' => NumberFormatter::MAX_FRACTION_DIGITS
-		];
-
-		foreach ($map as $opt => $setting) {
-			if (isset($options[$opt])) {
-				$formatter->setAttribute($setting, $options[$opt]);
-			}
-		}
-
+		$formatter = static::formatter($options);
 		$options += ['before' => '', 'after' => ''];
-		$out = $options['before'] . $formatter->format($value) . $options['after'];
-
-		return $out;
+		return $options['before'] . $formatter->format($value) . $options['after'];
 	}
 
 /**
@@ -245,49 +216,7 @@ class Number {
 			return $options['zero'];
 		}
 
-		$locale = isset($options['locale']) ? $options['locale'] : ini_get('intl.default_locale');
-
-		if (!$locale) {
-			$locale = 'en_US';
-		}
-
-		if (!isset(static::$_currencyFormatters[$locale])) {
-			static::$_currencyFormatters[$locale] = new NumberFormatter(
-				$locale,
-				NumberFormatter::CURRENCY
-			);
-		}
-
-		$formatter = static::$_currencyFormatters[$locale];
-		$hasPlaces = isset($options['places']);
-		$hasPrecision = isset($options['precision']);
-		$hasPattern = !empty($options['pattern']) || !empty($options['useIntlCode']);
-
-		if ($hasPlaces || $hasPrecision || $hasPattern) {
-			$formatter = clone $formatter;
-		}
-
-		if ($hasPlaces) {
-			$formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $options['places']);
-		}
-
-		if ($hasPrecision) {
-			$formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $options['precision']);
-		}
-
-		if (!empty($options['pattern'])) {
-			$formatter->setPattern($options['pattern']);
-		}
-
-		if (!empty($options['useIntlCode'])) {
-			// One of the odd things about ICU is that the currency marker in patterns
-			// is denoted with ¤, whereas the international code is marked with ¤¤,
-			// in order to use the code we need to simply duplicate the character wherever
-			// it appears in the pattern.
-			$pattern = trim(str_replace('¤', '¤¤ ', $formatter->getPattern()));
-			$formatter->setPattern($pattern);
-		}
-
+		$formatter = static::formatter(['type' => 'currency'] + $options);
 		$abs = abs($value);
 		if (!empty($options['fractionSymbol']) && $abs > 0 && $abs < 1) {
 			$value = $value * 100;
@@ -324,6 +253,78 @@ class Number {
 		}
 
 		return self::$_defaultCurrency;
+	}
+
+/**
+ * Returns a formatter object that can be reused for similar formatting task
+ * under the same locale and options. This is often a speedier alternative to
+ * using other methods in this class as on;y one formatter object needs to be
+ * constructed.
+ *
+ * The options array accepts the following keys:
+ *
+ * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
+ * - `type` - The formatter type to construct, set it to `curency` if you need to format
+ *    numbers representing money.
+ * - `places` - Number of decimal places to use. e.g. 2
+ * - `precision` - Maximum Number of decimal places to use, e.g. 2
+ * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,###.00
+ * - `useIntlCode` - Whether or not to replace the currency symbol with the international
+ *   currency code.
+ *
+ *
+ * @param string|boolean $currency Default currency string to be used by currency()
+ * if $currency argument is not provided. If boolean false is passed, it will clear the
+ * currently stored value
+ * @return string Currency
+ */
+	public static function formatter($options = []) {
+		$locale = isset($options['locale']) ? $options['locale'] : ini_get('intl.default_locale');
+
+		if (!$locale) {
+			$locale = 'en_US';
+		}
+
+		$type = NumberFormatter::DECIMAL;
+		if (!empty($options['type']) && $options['type'] === 'currency') {
+			$type = NumberFormatter::CURRENCY;
+		}
+
+		if (!isset(static::$_formatters[$locale][$type])) {
+			static::$_formatters[$locale][$type] = new NumberFormatter($locale, $type);
+		}
+
+		$formatter = static::$_formatters[$locale][$type];
+		$hasPlaces = isset($options['places']);
+		$hasPrecision = isset($options['precision']);
+		$hasPattern = !empty($options['pattern']) || !empty($options['useIntlCode']);
+
+		if ($hasPlaces || $hasPrecision || $hasPattern) {
+			$formatter = clone $formatter;
+		}
+
+		if ($hasPlaces) {
+			$formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $options['places']);
+		}
+
+		if ($hasPrecision) {
+			$formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $options['precision']);
+		}
+
+		if (!empty($options['pattern'])) {
+			$formatter->setPattern($options['pattern']);
+		}
+
+		if (!empty($options['useIntlCode'])) {
+			// One of the odd things about ICU is that the currency marker in patterns
+			// is denoted with ¤, whereas the international code is marked with ¤¤,
+			// in order to use the code we need to simply duplicate the character wherever
+			// it appears in the pattern.
+			$pattern = trim(str_replace('¤', '¤¤ ', $formatter->getPattern()));
+			$formatter->setPattern($pattern);
+		}
+
+		return $formatter;
 	}
 
 }
