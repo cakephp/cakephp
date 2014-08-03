@@ -36,6 +36,8 @@ class TestAuthor extends Author {
 
 	protected $_dataSourceObject;
 
+	public $dataForAfterSave;
+
 /**
  * Helper method to set a datasource object
  *
@@ -73,6 +75,8 @@ class TestPost extends Post {
 	);
 
 	protected $_dataSourceObject;
+
+	public $dataForAfterSave;
 
 /**
  * Helper method to set a datasource object
@@ -7498,5 +7502,170 @@ class ModelWriteTest extends BaseModelTest {
 		}
 
 		return $db;
+	}
+
+/**
+ * Test that transactions behave correctly on nested saveMany calls.
+ *
+ * @return void
+ */
+	public function testTransactionOnNestedSaveMany() {
+		$this->loadFixtures('Post');
+		$Post = new TestPost();
+		$Post->getEventManager()->attach(array($this, 'nestedSaveMany'), 'Model.afterSave');
+
+		// begin -> [ begin -> commit ] -> commit
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->exactly(2))->method('begin')->will($this->returnValue(true));
+		$db->expects($this->exactly(2))->method('commit');
+		$db->expects($this->never())->method('rollback');
+		$Post->setDataSourceObject($db);
+
+		$data = array(
+			array('author_id' => 1, 'title' => 'Outer Post'),
+		);
+		$Post->dataForAfterSave = array(
+			array('author_id' => 1, 'title' => 'Inner Post'),
+		);
+		$this->assertTrue($Post->saveMany($data));
+
+		// begin -> [  begin(false) ] -> commit
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->at(0))->method('begin')->will($this->returnValue(true));
+		$db->expects($this->at(1))->method('begin')->will($this->returnValue(false));
+		$db->expects($this->once())->method('commit');
+		$db->expects($this->never())->method('rollback');
+		$Post->setDataSourceObject($db);
+
+		$data = array(
+			array('author_id' => 1, 'title' => 'Outer Post'),
+		);
+		$Post->dataForAfterSave = array(
+			array('author_id' => 1, 'title' => 'Inner Post'),
+		);
+		$this->assertTrue($Post->saveMany($data));
+
+		// begin -> [ begin -> rollback ] -> rollback
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->exactly(2))->method('begin')->will($this->returnValue(true));
+		$db->expects($this->never())->method('commit');
+		$db->expects($this->exactly(2))->method('rollback');
+		$Post->setDataSourceObject($db);
+		$data = array(
+			array('author_id' => 1, 'title' => 'Outer Post'),
+		);
+		$Post->dataForAfterSave = array(
+			array('author_id' => 1, 'title' => 'Inner Post', 'body' => $db->expression('PDO_EXCEPTION()')),
+		);
+
+		try {
+			$Post->saveMany($data);
+			$this->fail('No exception thrown');
+		} catch(Exception $e) {
+		}
+	}
+
+/**
+ * Test that transaction behaves correctly on nested saveAssociated calls.
+ *
+ * @return void
+ */
+	public function testTransactionOnNestedSaveAssociated() {
+		$this->loadFixtures('Author', 'Post');
+
+		$Author = new TestAuthor();
+		$Author->getEventManager()->attach(array($this, 'nestedSaveAssociated'), 'Model.afterSave');
+
+		// begin -> [ begin -> commit ] -> commit
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->exactly(2))->method('begin')->will($this->returnValue(true));
+		$db->expects($this->exactly(2))->method('commit');
+		$db->expects($this->never())->method('rollback');
+		$Author->setDataSourceObject($db);
+		$Author->Post->setDataSourceObject($db);
+
+		$data = array(
+			'Author' => array('user' => 'outer'),
+			'Post' => array(
+				array('title' => 'Outer Post'),
+			)
+		);
+		$Author->dataForAfterSave = array(
+			'Author' => array('user' => 'inner'),
+			'Post' => array(
+				array('title' => 'Inner Post'),
+			)
+		);
+		$this->assertTrue($Author->saveAssociated($data));
+
+		// begin -> [  begin(false) ] -> commit
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->at(0))->method('begin')->will($this->returnValue(true));
+		$db->expects($this->at(1))->method('begin')->will($this->returnValue(false));
+		$db->expects($this->once())->method('commit');
+		$db->expects($this->never())->method('rollback');
+		$Author->setDataSourceObject($db);
+		$Author->Post->setDataSourceObject($db);
+		$data = array(
+			'Author' => array('user' => 'outer'),
+			'Post' => array(
+				array('title' => 'Outer Post'),
+			)
+		);
+		$Author->dataForAfterSave = array(
+			'Author' => array('user' => 'inner'),
+			'Post' => array(
+				array('title' => 'Inner Post'),
+			)
+		);
+		$this->assertTrue($Author->saveAssociated($data));
+
+		// begin -> [ begin -> rollback ] -> rollback
+		$db = $this->_getMockDboSource(array('begin', 'commit', 'rollback'));
+		$db->expects($this->exactly(2))->method('begin')->will($this->returnValue(true));
+		$db->expects($this->never())->method('commit');
+		$db->expects($this->exactly(2))->method('rollback');
+		$Author->setDataSourceObject($db);
+		$Author->Post->setDataSourceObject($db);
+		$data = array(
+			'Author' => array('user' => 'outer'),
+			'Post' => array(
+				array('title' => 'Outer Post'),
+			)
+		);
+		$Author->dataForAfterSave = array(
+			'Author' => array('user' => 'inner', 'password' => $db->expression('PDO_EXCEPTION()')),
+			'Post' => array(
+				array('title' => 'Inner Post'),
+			)
+		);
+
+		try {
+			$Author->saveAssociated($data);
+			$this->fail('No exception thrown');
+		} catch(Exception $e) {
+		}
+	}
+
+/**
+ * A callback for testing nested saveMany.
+ *
+ * @param CakeEvent $event containing the Model
+ * @return void
+ */
+	public function nestedSaveMany($event) {
+		$Model = $event->subject;
+		$Model->saveMany($Model->dataForAfterSave, array('callbacks' => false));
+	}
+
+/**
+ * A callback for testing nested saveAssociated.
+ *
+ * @param CakeEvent $event containing the Model
+ * @return void
+ */
+	public function nestedSaveAssociated($event) {
+		$Model = $event->subject;
+		$Model->saveAssociated($Model->dataForAfterSave, array('callbacks' => false));
 	}
 }

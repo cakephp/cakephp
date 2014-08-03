@@ -2243,11 +2243,10 @@ class Model extends Object implements CakeEventListener {
 			$options['validate'] = false;
 		}
 
+		$transactionBegun = false;
 		if ($options['atomic']) {
 			$db = $this->getDataSource();
 			$transactionBegun = $db->begin();
-		} else {
-			$transactionBegun = false;
 		}
 
 		try {
@@ -2378,11 +2377,10 @@ class Model extends Object implements CakeEventListener {
 			$options['validate'] = false;
 		}
 
+		$transactionBegun = false;
 		if ($options['atomic']) {
 			$db = $this->getDataSource();
 			$transactionBegun = $db->begin();
-		} else {
-			$transactionBegun = false;
 		}
 
 		try {
