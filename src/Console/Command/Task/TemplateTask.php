@@ -55,15 +55,15 @@ class TemplateTask extends Shell {
  * @return array Array of bake themes that are installed.
  */
 	protected function _findThemes() {
-		$paths = App::path('Console');
+		$paths = App::path('Template');
 
 		$plugins = App::objects('Plugin');
 		foreach ($plugins as $plugin) {
-			$paths[] = $this->_pluginPath($plugin) . 'src/Console/';
+			$paths[] = $this->_pluginPath($plugin) . 'src' . DS . 'Template' . DS;
 		}
 
-		$core = current(App::core('Console'));
-		$Folder = new Folder($core . 'Templates/default');
+		$core = current(App::core('Template'));
+		$Folder = new Folder($core . 'Bake' . DS . 'default');
 
 		$contents = $Folder->read();
 		$themeFolders = $contents[0];
@@ -78,15 +78,15 @@ class TemplateTask extends Shell {
 
 		$themes = [];
 		foreach ($paths as $path) {
-			$Folder = new Folder($path . 'Templates', false);
+			$Folder = new Folder($path . 'Bake', false);
 			$contents = $Folder->read();
 			$subDirs = $contents[0];
 			foreach ($subDirs as $dir) {
-				$Folder = new Folder($path . 'Templates/' . $dir);
+				$Folder = new Folder($path . 'Bake' . DS . $dir);
 				$contents = $Folder->read();
 				$subDirs = $contents[0];
 				if (array_intersect($contents[0], $themeFolders)) {
-					$templateDir = $path . 'Templates/' . $dir . DS;
+					$templateDir = $path . 'Bake' . DS . $dir . DS;
 					$themes[$dir] = $templateDir;
 
 					$this->_io->verbose(sprintf("- %s -> %s", $dir, $templateDir));

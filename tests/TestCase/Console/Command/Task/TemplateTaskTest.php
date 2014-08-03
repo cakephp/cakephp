@@ -54,9 +54,9 @@ class TemplateTaskTest extends TestCase {
  * @return void
  */
 	public function testFindingInstalledThemesForBake() {
-		$consoleLibs = CAKE . 'Console' . DS;
+		$consoleLibs = CAKE . 'Template' . DS;
 		$this->Task->initialize();
-		$this->assertPathEquals($this->Task->templatePaths['default'], $consoleLibs . 'Templates/default/');
+		$this->assertPathEquals($this->Task->templatePaths['default'], $consoleLibs . 'Bake/default/');
 	}
 
 /**
@@ -67,7 +67,7 @@ class TemplateTaskTest extends TestCase {
  * @return void
  */
 	public function testGetThemePathInvalid() {
-		$defaultTheme = CAKE . 'Console/Templates/default/';
+		$defaultTheme = CAKE . 'Template/Bake/default/';
 		$this->Task->templatePaths = ['default' => $defaultTheme];
 		$this->Task->params['theme'] = 'nope';
 		$this->Task->getThemePath();
@@ -80,7 +80,7 @@ class TemplateTaskTest extends TestCase {
  * @return void
  */
 	public function testGetThemePath() {
-		$defaultTheme = CAKE . 'Console/Templates/default/';
+		$defaultTheme = CAKE . 'Template/Bake/default/';
 		$this->Task->templatePaths = ['default' => $defaultTheme];
 
 		$result = $this->Task->getThemePath();
