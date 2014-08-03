@@ -12,8 +12,6 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace TestApp\Config;
-
 use Cake\Routing\Router;
 
 Router::parseExtensions('json');
