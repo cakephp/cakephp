@@ -93,7 +93,7 @@ class IcuFormatterTest extends TestCase {
  * 
  * @expectedException Aura\Intl\Exception\CannotInstantiateFormatter
  * @return void
- */ 
+ */
 	public function testBadMessageFormat() {
 		$formatter = new IcuFormatter();
 		$formatter->format('en_US', '{crazy format', ['some', 'vars']);
