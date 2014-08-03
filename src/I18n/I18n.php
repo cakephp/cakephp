@@ -22,6 +22,7 @@ use Aura\Intl\TranslatorFactory;
 use Aura\Intl\TranslatorLocator;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
+use Locale;
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -197,16 +198,15 @@ class I18n {
  */
 	public static function defaultLocale($locale = null) {
 		if (!empty($locale)) {
-			ini_set('intl.default_locale', $locale);
+			Locale::setDefault($locale);
 			static::translators()->setLocale($locale);
 			return;
 		}
 
-		$current = ini_get('intl.default_locale');
-
+		$current = Locale::getDefault();
 		if ($current === '') {
 			$current = 'en_US';
-			ini_set('intl.default_locale', $current);
+			Locale::setDefault($current);
 		}
 
 		return $current;
