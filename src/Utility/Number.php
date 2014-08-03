@@ -27,18 +27,11 @@ use NumberFormatter;
 class Number {
 
 /**
- * A list of number formatters indexed by locale
+ * A list of number formatters indexed by locale and type
  *
  * @var array
  */
 	protected static $_formatters = [];
-
-/**
- * A list of currency formatters indexed by locale
- *
- * @var array
- */
-	protected static $_currencyFormatters = [];
 
 /**
  * Default currency used by Number::currency()
