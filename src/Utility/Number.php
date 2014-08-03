@@ -280,6 +280,10 @@ class Number {
 		}
 
 		if (!empty($options['useIntlCode'])) {
+			// One of the odd things about ICU is that the currency marker in patterns
+			// is denoted with ¤, whereas the international code is marked with ¤¤,
+			// in order to use the code we need to simply duplicate the character wherever
+			// it appears in the pattern.
 			$pattern = trim(str_replace('¤', '¤¤ ', $formatter->getPattern()));
 			$formatter->setPattern($pattern);
 		}
