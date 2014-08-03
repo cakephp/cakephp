@@ -191,45 +191,45 @@ table td.actions a {
 }
 
 /** Paging **/
-.paging {
+.pagination {
 	background:#fff;
 	color: #ccc;
 	margin-top: 1em;
 	clear:both;
 }
-.paging .current,
-.paging .disabled,
-.paging a {
+.pagination .current,
+.pagination .disabled,
+.pagination a {
 	text-decoration: none;
 	padding: 5px 8px;
 	display: inline-block
 }
-.paging > span {
+.pagination > span {
 	display: inline-block;
 	border: 1px solid #ccc;
 	border-left: 0;
 }
-.paging > span:hover {
+.pagination > span:hover {
 	background: #efefef;
 }
-.paging .prev {
+.pagination .prev {
 	border-left: 1px solid #ccc;
 	-moz-border-radius: 4px 0 0 4px;
 	-webkit-border-radius: 4px 0 0 4px;
 	border-radius: 4px 0 0 4px;
 }
-.paging .next {
+.pagination .next {
 	-moz-border-radius: 0 4px 4px 0;
 	-webkit-border-radius: 0 4px 4px 0;
 	border-radius: 0 4px 4px 0;
 }
-.paging .disabled {
+.pagination .disabled {
 	color: #ddd;
 }
-.paging .disabled:hover {
+.pagination .disabled:hover {
 	background: transparent;
 }
-.paging .current {
+.pagination .current {
 	background: #efefef;
 	color: #c73e14;
 }
