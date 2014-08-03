@@ -170,6 +170,15 @@ class NumberTest extends TestCase {
 		$expected = 'US$100,100,100.00';
 		$this->assertEquals($expected, $result);
 
+		$result = $this->Number->currency($value, 'INR', ['locale' => 'en_IN']);
+		$expected = '₹ 10,01,00,100.00';
+		$this->assertEquals($expected, $result);
+
+		$options = ['locale' => 'en_IN', 'pattern' => "Rs'.' #,##,###"];
+		$result = $this->Number->currency($value, 'INR', $options);
+		$expected = 'Rs. 10,01,00,100';
+		$this->assertEquals($expected, $result);
+
 		$result = $this->Number->currency($value, 'GBP');
 		$expected = '£100,100,100.00';
 		$this->assertEquals($expected, $result);
