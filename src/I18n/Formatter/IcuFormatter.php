@@ -98,10 +98,7 @@ class IcuFormatter implements FormatterInterface {
 			}
 
 			$formatter->format($vars);
-			throw new Exception\CannotFormat(
-				$formatter->getErrorMessage(),
-				$formatter->getErrorCode()
-			);
+			throw new Exception\CannotFormat($formatter->getErrorMessage(), $formatter->getErrorCode());
 		}
 
 		return $result;
