@@ -125,7 +125,7 @@ class ViewTaskTest extends TestCase {
 		$this->Task->Model = $this->getMock('Cake\Console\Command\Task\ModelTask', [], [$io]);
 
 		$this->Task->Template->params['theme'] = 'default';
-		$this->Task->Template->templatePaths = ['default' => CAKE . 'Console/Templates/default/'];
+		$this->Task->Template->templatePaths = ['default' => CAKE . 'Template/Bake/default/'];
 	}
 
 /**
@@ -707,7 +707,7 @@ class ViewTaskTest extends TestCase {
 		$this->assertEquals('form', $result);
 
 		$this->Task->Template->templatePaths = array(
-			'test' => CORE_TESTS . '/test_app/TestApp/Console/Templates/test/'
+			'test' => CORE_TESTS . '/test_app/TestApp/Template/Bake/test/'
 		);
 		$this->Task->Template->params['theme'] = 'test';
 
