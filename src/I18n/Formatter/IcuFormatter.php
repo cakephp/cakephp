@@ -91,10 +91,7 @@ class IcuFormatter implements FormatterInterface {
 			// previous action using the object oriented style to figure out
 			$formatter = new MessageFormatter($locale, $message);
 			if (!$formatter) {
-				throw new Exception\CannotInstantiateFormatter(
-					intl_get_error_message(),
-					intl_get_error_code()
-				);
+				throw new Exception\CannotInstantiateFormatter(intl_get_error_message(), intl_get_error_code());
 			}
 
 			$formatter->format($vars);
