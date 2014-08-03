@@ -21,7 +21,7 @@ use Cake\Utility\Inflector;
 </p>
 
 <p>
-	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', h($file)); ?>
+	<?= sprintf('Confirm you have created the file: %s', h($file)); ?>
 	in one of the following paths:
 </p>
 <ul>
