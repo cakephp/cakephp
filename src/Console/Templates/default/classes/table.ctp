@@ -75,29 +75,56 @@ $key = array_map(function($el) { return "'$el'"; }, (array)$primaryKey);
  */
 	public function validationDefault(Validator $validator) {
 		$validator
-<?php $countValidation = count($validation) - 1; ?>
-<?php $i = 0; ?>
-<?php foreach ($validation as $field => $rules): ?>
-<?php foreach ($rules as $ruleName => $rule): ?>
-<?php if ($rule['rule'] && !isset($rule['provider'])): ?>
-			->add('<?= $field ?>', '<?= $ruleName ?>', ['rule' => '<?= $rule['rule'] ?>'])
-<?php elseif ($rule['rule'] && isset($rule['provider'])): ?>
-			->add('<?= $field ?>', '<?= $ruleName ?>', ['rule' => '<?= $rule['rule'] ?>', 'provider' => '<?= $rule['provider'] ?>'])
-<?php endif; ?>
-<?php if (isset($rule['allowEmpty'])) : ?>
-<?php if (is_string($rule['allowEmpty'])): ?>
-			->allowEmpty('<?= $field ?>', '<?= $rule['allowEmpty'] ?>')<?= $i === $countValidation ? ";\n" : "\n" ?>
-<?php elseif ($rule['allowEmpty']): ?>
-			->allowEmpty('<?= $field ?>')<?= $i === $countValidation ? ";\n" : "\n" ?>
-<?php else: ?>
-			->validatePresence('<?= $field ?>', 'create')
-			->notEmpty('<?= $field ?>')<?= $i === $countValidation ? ";\n" : "\n" ?>
-<?php endif ?>
-<?php endif ?>
-<?php endforeach ?>
-<?php $i++; ?>
-<?php endforeach ?>
-<?php echo "\n"; ?>
+<?php $validationMethods = []; ?>
+<?php
+foreach ($validation as $field => $rules):
+	foreach ($rules as $ruleName => $rule):
+		if ($rule['rule'] && !isset($rule['provider'])):
+			$validationMethods[] = sprintf(
+				"->add('%s', '%s', ['rule' => '%s'])",
+				$field,
+				$ruleName,
+				$rule['rule']
+			);
+		elseif ($rule['rule'] && isset($rule['provider'])):
+			$validationMethods[] = sprintf(
+				"->add('%s', '%s', ['rule' => '%s', 'provider' => '%s'])",
+				$field,
+				$ruleName,
+				$rule['rule'],
+				$rule['provider']
+			);
+		endif;
+
+		if (isset($rule['allowEmpty'])):
+			if (is_string($rule['allowEmpty'])):
+				$validationMethods[] = sprintf(
+					"->allowEmpty('%s', '%s')",
+					$field,
+					$rule['allowEmpty']
+				);
+			elseif ($rule['allowEmpty']):
+				$validationMethods[] = sprintf(
+					"->allowEmpty('%s')",
+					$field
+				);
+			else:
+				$validationMethods[] = sprintf(
+					"->validatePresence('%s', 'create')",
+					$field
+				);
+				$validationMethods[] = sprintf(
+					"->notEmpty('%s')",
+					$field
+				);
+			endif;
+		endif;
+	endforeach;
+endforeach;
+?>
+<?= "\t\t\t" . implode("\n\t\t\t", $validationMethods) . ";" ?>
+
+
 		return $validator;
 	}
 <?php endif ?>
