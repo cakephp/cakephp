@@ -265,11 +265,8 @@ class Number {
  * - `useIntlCode` - Whether or not to replace the currency symbol with the international
  *   currency code.
  *
- *
- * @param string|boolean $currency Default currency string to be used by currency()
- * if $currency argument is not provided. If boolean false is passed, it will clear the
- * currently stored value
- * @return string Currency
+ * @param array $options An array with options.
+ * @return \NumberFormatter The configured formatter instance
  */
 	public static function formatter($options = []) {
 		$locale = isset($options['locale']) ? $options['locale'] : ini_get('intl.default_locale');
