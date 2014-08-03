@@ -25,11 +25,21 @@ use Locale;
  */
 class LocaleSelectorFilterTest extends TestCase {
 
+/**
+ * Resets the default locale
+ *
+ * @return void
+ */
 	public function tearDown() {
 		parent::tearDown();
 		Locale::setDefault('');
 	}
 
+/**
+ * Tests selecting a language from a http header
+ *
+ * @return void
+ */
 	public function testSimpleSelection() {
 		$filter = new LocaleSelectorFilter();
 		$request = new Request([
@@ -49,6 +59,33 @@ class LocaleSelectorFilterTest extends TestCase {
 		]);
 		$filter->beforeDispatch(new Event('name', null, ['request' => $request]));
 		$this->assertEquals('da', Locale::getDefault());
+	}
+
+/**
+ * Tests selecting a language from a http header and filtering by a whitelist
+ *
+ * @return void
+ */
+	public function testWithWhitelist() {
+		$filter = new LocaleSelectorFilter([
+			'locales' => ['en_CA', 'en_IN', 'es_VE']
+		]);
+		$request = new Request([
+			'environment' => [
+				'HTTP_ACCEPT_LANGUAGE' => 'en-GB;q=0.8,es-VE;q=0.9,da-DK;q=0.4'
+			]
+		]);
+		$filter->beforeDispatch(new Event('name', null, ['request' => $request]));
+		$this->assertEquals('es_VE', Locale::getDefault());
+		Locale::setDefault('');
+
+		$request = new Request([
+			'environment' => [
+				'HTTP_ACCEPT_LANGUAGE' => 'en-GB;q=0.8,es-ES;q=0.9,da-DK;q=0.4'
+			]
+		]);
+		$filter->beforeDispatch(new Event('name', null, ['request' => $request]));
+		$this->assertEquals('en_US', Locale::getDefault());
 	}
 
 }
