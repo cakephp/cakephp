@@ -21,7 +21,7 @@ namespace Cake\I18n\Parser;
  * @copyright Copyright (c) 2012, Clemens Tolboom
  * @copyright Copyright (c) 2014, Fabien Potencier https://github.com/symfony/Translation/blob/master/LICENSE
  */
-class PoFileParser  {
+class PoFileParser {
 
 /**
  * Parses portable object (PO) format.
@@ -64,7 +64,7 @@ class PoFileParser  {
  *
  * Items with an empty id are ignored.
  *
- * @param string $resource
+ * @param string $resource The file name to parse
  *
  * @return array
  */
@@ -120,8 +120,8 @@ class PoFileParser  {
 /**
  * Saves a translation item to the messages.
  *
- * @param array $messages
- * @param array $item
+ * @param array &$messages The messages array being collected from the file
+ * @param array $item The current item being inspected
  * @return void
  */
 	protected function _addMessage(array &$messages, array $item) {

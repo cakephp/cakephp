@@ -49,10 +49,10 @@ class MoFileParser {
  * Parses machine object (MO) format, independent of the machine's endian it
  * was created on. Both 32bit and 64bit systems are supported.
  *
- * @param resource $resource
+ * @param resource $resource The file to be parsed.
  *
- * @return array
- * @throws RuntimeException If stream content has an invalid format.
+ * @return array List of messages extrated from the file
+ * @throws \RuntimeException If stream content has an invalid format.
  */
 	public function parse($resource) {
 		$stream = fopen($resource, 'r');
@@ -107,7 +107,6 @@ class MoFileParser {
 			fseek($stream, $offsetTranslated + $i * 8);
 			$length = $this->_readLong($stream, $isBigEndian);
 			$offset = $this->_readLong($stream, $isBigEndian);
-		
 			fseek($stream, $offset);
 			$translated = fread($stream, $length);
 
@@ -130,8 +129,8 @@ class MoFileParser {
 /**
  * Reads an unsigned long from stream respecting endianess.
  *
- * @param resource $stream
- * @param boolean $isBigEndian
+ * @param resource $stream The File being read.
+ * @param boolean $isBigEndian Whether or not the current platfomr is Big Endian
  * @return int
  */
 	protected function _readLong($stream, $isBigEndian) {

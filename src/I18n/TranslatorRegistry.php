@@ -40,6 +40,8 @@ class TranslatorRegistry extends TranslatorLocator {
  * @param string $locale The locale to use; if empty, uses the default
  * locale.
  * @return \Aura\Intl\TranslatorInterface A translator object.
+ * @throws \Aura\Intl\Exception If no translattor with that name could be found
+ * for the given locale.
  */
 	public function get($name, $locale = null) {
 		if ($locale === null) {
@@ -57,7 +59,6 @@ class TranslatorRegistry extends TranslatorLocator {
 					}
 					return $this->_getFromLoader($name, $locale);
 				}
-				
 			}, '_cake_core_');
 		}
 

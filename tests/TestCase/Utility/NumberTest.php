@@ -16,9 +16,9 @@
  */
 namespace Cake\Test\TestCase\Utility;
 
+use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Number;
-use Cake\I18n\I18n;
 
 /**
  * NumberTest class
@@ -254,32 +254,6 @@ class NumberTest extends TestCase {
 
 		$result = $this->Number->currency('1.23', 'EUR', ['locale' => 'de_DE', 'precision' => 1]);
 		$expected = '1,2 €';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * Test adding currency format options to the number helper
- *
- * @return void
- */
-	public function _testCurrencyAddFormat() {
-		$this->Number->addFormat('NOK', array('before' => 'Kr. '));
-		$result = $this->Number->currency(1000, 'NOK');
-		$expected = 'Kr. 1,000.00';
-		$this->assertEquals($expected, $result);
-
-		$this->Number->addFormat('Other', array('before' => '$$ ', 'after' => 'c!'));
-		$result = $this->Number->currency(0.22, 'Other');
-		$expected = '22c!';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->currency(-10, 'Other');
-		$expected = '($$ 10.00)';
-		$this->assertEquals($expected, $result);
-
-		$this->Number->addFormat('Other2', array('before' => '$ ', 'after' => false));
-		$result = $this->Number->currency(0.22, 'Other2');
-		$expected = '$ 0.22';
 		$this->assertEquals($expected, $result);
 	}
 

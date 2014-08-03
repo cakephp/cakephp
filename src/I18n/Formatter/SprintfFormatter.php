@@ -33,6 +33,7 @@ class SprintfFormatter implements FormatterInterface {
  *
  * @param string $locale The locale in which the message is presented.
  * @param string|array $message The message to be translated
+ * @param array $vars The list of values to interpolate in the message
  * @return string The formatted message
  */
 	public function format($locale, $message, array $vars) {

@@ -321,7 +321,7 @@ class I18nTest extends TestCase {
 					]
 				]);
 			}
-			
+
 			if ($locale === 'es_ES') {
 				$package->setMessages([
 				'Cow' => 'El Moo',

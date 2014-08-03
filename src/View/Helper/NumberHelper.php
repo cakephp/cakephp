@@ -136,7 +136,7 @@ class NumberHelper extends Helper {
  * - `after` - The string to place after decimal numbers, e.g. ']'
  * - `escape` - Whether or not to escape html in resulting string
  *
- * @param float $value A floating point number.
+ * @param float $number A floating point number.
  * @param array $options An array with options.
  * @return string Formatted number
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format
@@ -166,7 +166,7 @@ class NumberHelper extends Helper {
  *   currency code.
  * - `escape` - Whether or not to escape html in resulting string
  *
- * @param float $value Value to format.
+ * @param float $number Value to format.
  * @param string $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
  * @param array $options Options list.
  * @return string Number formatted as a currency.
@@ -193,7 +193,7 @@ class NumberHelper extends Helper {
  * @param array $options Options list.
  * @return string formatted delta
  */
-	public static function formatDelta($value, array $options = array()) {
+	public function formatDelta($value, array $options = array()) {
 		$formatted = $this->_engine->formatDelta($value, $options);
 		$options += ['escape' => true];
 		return $options['escape'] ? h($formatted): $formatted;
