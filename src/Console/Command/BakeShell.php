@@ -242,9 +242,9 @@ class BakeShell extends Shell {
 			'help' => __d('cake_console', 'Database connection to use in conjunction with `bake all`.'),
 			'short' => 'c',
 			'default' => 'default'
-		])->addOption('theme', [
+		])->addOption('template', [
 			'short' => 't',
-			'help' => __d('cake_console', 'Theme to use when baking code.')
+			'help' => __d('cake_console', 'Template to use when baking code.')
 		]);
 
 		foreach ($this->_taskMap as $task => $config) {

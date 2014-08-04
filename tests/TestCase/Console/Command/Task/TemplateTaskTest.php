@@ -49,52 +49,52 @@ class TemplateTaskTest extends TestCase {
 	}
 
 /**
- * test finding themes installed in
+ * test finding templates installed in
  *
  * @return void
  */
-	public function testFindingInstalledThemesForBake() {
+	public function testFindingInstalledTemplatesForBake() {
 		$consoleLibs = CAKE . 'Template' . DS;
 		$this->Task->initialize();
 		$this->assertPathEquals($this->Task->templatePaths['default'], $consoleLibs . 'Bake/default/');
 	}
 
 /**
- * test using an invalid theme name.
+ * test using an invalid template name.
  *
  * @expectedException \RuntimeException
- * @expectedExceptionMessage Unable to locate "nope" bake theme
+ * @expectedExceptionMessage Unable to locate "nope" bake template
  * @return void
  */
-	public function testGetThemePathInvalid() {
-		$defaultTheme = CAKE . 'Template/Bake/default/';
-		$this->Task->templatePaths = ['default' => $defaultTheme];
-		$this->Task->params['theme'] = 'nope';
-		$this->Task->getThemePath();
+	public function testGetTemplatePathInvalid() {
+		$defaultTemplate = CAKE . 'Template/Bake/default/';
+		$this->Task->templatePaths = ['default' => $defaultTemplate];
+		$this->Task->params['template'] = 'nope';
+		$this->Task->getTemplatePath();
 	}
 
 /**
- * test getting the correct theme name. Ensure that with only one theme, or a theme param
- * that the user is not bugged. If there are more, find and return the correct theme name
+ * test getting the correct template name. Ensure that with only one template, or a template param
+ * that the user is not bugged. If there are more, find and return the correct template name
  *
  * @return void
  */
-	public function testGetThemePath() {
-		$defaultTheme = CAKE . 'Template/Bake/default/';
-		$this->Task->templatePaths = ['default' => $defaultTheme];
+	public function testGetTemplatePath() {
+		$defaultTemplate = CAKE . 'Template/Bake/default/';
+		$this->Task->templatePaths = ['default' => $defaultTemplate];
 
-		$result = $this->Task->getThemePath();
-		$this->assertEquals($defaultTheme, $result);
+		$result = $this->Task->getTemplatePath();
+		$this->assertEquals($defaultTemplate, $result);
 
-		$this->Task->templatePaths = ['other' => '/some/path', 'default' => $defaultTheme];
-		$this->Task->params['theme'] = 'other';
-		$result = $this->Task->getThemePath();
+		$this->Task->templatePaths = ['other' => '/some/path', 'default' => $defaultTemplate];
+		$this->Task->params['template'] = 'other';
+		$result = $this->Task->getTemplatePath();
 		$this->assertEquals('/some/path', $result);
 
 		$this->Task->params = array();
-		$result = $this->Task->getThemePath();
-		$this->assertEquals($defaultTheme, $result);
-		$this->assertEquals('default', $this->Task->params['theme']);
+		$result = $this->Task->getTemplatePath();
+		$this->assertEquals($defaultTemplate, $result);
+		$this->assertEquals('default', $this->Task->params['template']);
 	}
 
 /**
@@ -112,14 +112,14 @@ class TemplateTaskTest extends TestCase {
 	}
 
 /**
- * test generate with a missing template in the chosen theme.
+ * test generate with a missing template in the chosen template.
  * ensure fallback to default works.
  *
  * @return void
  */
 	public function testGenerateWithTemplateFallbacks() {
 		$this->Task->initialize();
-		$this->Task->params['theme'] = 'test';
+		$this->Task->params['template'] = 'test';
 		$this->Task->set(array(
 			'name' => 'Article',
 			'model' => 'Article',
