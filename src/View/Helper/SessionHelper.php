@@ -111,6 +111,7 @@ class SessionHelper extends Helper {
  * @param array $attrs Additional attributes to use for the creation of this flash message.
  *    Supports the 'params', and 'element' keys that are used in the helper.
  * @return string
+ * @deprecated 3.0 Use FlashHelper::render() instead.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::flash
  */
 	public function flash($key = 'flash', $attrs = []) {

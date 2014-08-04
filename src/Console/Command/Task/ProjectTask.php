@@ -166,9 +166,9 @@ class ProjectTask extends BakeTask {
 			])->addOption('empty', [
 				'boolean' => true,
 				'help' => 'Create empty files in each of the directories. Good if you are using git'
-			])->addOption('theme', [
+			])->addOption('template', [
 				'short' => 't',
-				'help' => 'Theme to use when baking code.'
+				'help' => 'Template to use when baking code.'
 			])->addOption('composer', [
 				'default' => ROOT . '/composer.phar',
 				'help' => 'The path to the composer executable.'
