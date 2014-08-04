@@ -215,6 +215,24 @@ class ControllerTestCaseTest extends TestCase {
 	}
 
 /**
+ * Tests testAction with call to request::method()
+ *
+ * @return void
+ */
+	public function testTestActionWithRequestMethod() {
+		$Controller = $this->Case->generate('TestsApps');
+		$this->Case->testAction('/tests_apps/index', [
+			'method' => 'get'
+		]);
+		$this->assertSame('GET', $this->Case->controller->request->method());
+
+		$this->Case->testAction('/tests_apps/set_action', [
+			'method' => 'post'
+		]);
+		$this->assertSame('POST', $this->Case->controller->request->method());
+	}
+
+/**
  * Test testAction() with prefix routes.
  *
  * @return void
