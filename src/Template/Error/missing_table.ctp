@@ -23,5 +23,5 @@
 	<strong>Notice: </strong>
 	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_table.ctp'); ?>
 </p>
-
+<?= $this->element('auto_table_warning'); ?>
 <?= $this->element('exception_stack_trace'); ?>

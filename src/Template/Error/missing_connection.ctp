@@ -34,6 +34,6 @@
 	<strong>Notice: </strong>
 	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)); ?>
 </p>
-
+<?= $this->element('auto_table_warning'); ?>
 <?php
 echo $this->element('exception_stack_trace');

@@ -33,6 +33,7 @@ use Cake\Utility\Debugger;
 		<strong>SQL Query Params: </strong>
 		<?= Debugger::dump($error->params); ?>
 <?php endif; ?>
+<?= $this->element('auto_table_warning'); ?>
 <p class="notice">
 	<strong>Notice: </strong>
 	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'pdo_error.ctp'); ?>

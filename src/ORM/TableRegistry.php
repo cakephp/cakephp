@@ -226,7 +226,7 @@ class TableRegistry {
  * @return array
  */
 	public static function genericInstances() {
-		return $_fallbacked;
+		return static::$_fallbacked;
 	}
 
 }
