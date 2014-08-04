@@ -398,7 +398,7 @@ class ExtractTask extends AppShell {
 			}
 
 			list($type, $string, $line) = $countToken;
-			if (($type == T_STRING) && ($string == $functionName) && ($firstParenthesis === '(')) {
+			if (($type == T_STRING) && ($string === $functionName) && ($firstParenthesis === '(')) {
 				$position = $count;
 				$depth = 0;
 
