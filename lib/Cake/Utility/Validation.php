@@ -115,7 +115,7 @@ class Validation {
  * @param integer $max Maximum value in range (inclusive)
  * @return boolean Success
  * @see Validator::lengthBetween()
- * @deprecated Deprecated since 2.6, use Validator::lengthBetween() instead.
+ * @deprecated Deprecated 2.6. Use Validator::lengthBetween() instead.
  */
 	public static function between($check, $min, $max) {
 		return self::lengthBetween($check, $min, $max);
@@ -754,7 +754,7 @@ class Validation {
  * @param string $regex Regular expression to use
  * @param string $country Country
  * @return bool Success
- * @deprecated Deprecated since 2.6, will be removed in 3.0.
+ * @deprecated Deprecated 2.6. Will be removed in 3.0.
  */
 	public static function ssn($check, $regex = null, $country = null) {
 		if (is_array($check)) {
