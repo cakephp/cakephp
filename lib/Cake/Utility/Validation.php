@@ -754,6 +754,7 @@ class Validation {
  * @param string $regex Regular expression to use
  * @param string $country Country
  * @return bool Success
+ * @deprecated Deprecated since 2.6, will be removed in 3.0.
  */
 	public static function ssn($check, $regex = null, $country = null) {
 		if (is_array($check)) {
