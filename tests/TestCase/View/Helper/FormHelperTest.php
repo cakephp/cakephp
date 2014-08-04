@@ -6171,4 +6171,18 @@ class FormHelperTest extends TestCase {
 		$this->assertNotEquals('<input>', $this->Form->templater()->get('input'));
 	}
 
+/**
+ * Test the context method.
+ *
+ * @return void
+ */
+	public function testContext() {
+		$result = $this->Form->context();
+		$this->assertInstanceOf('Cake\View\Form\ContextInterface', $result);
+
+		$mock = $this->getMock('Cake\View\Form\ContextInterface');
+		$this->assertSame($mock, $this->Form->context($mock));
+		$this->assertSame($mock, $this->Form->context());
+	}
+
 }

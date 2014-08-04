@@ -2211,9 +2211,13 @@ class FormHelper extends Helper {
  *
  * If there is no active form null will be returned.
  *
+ * @param \Cake\View\Form\ContextInterface|null Either the new context when setting, or null to get.
  * @return null|\Cake\View\Form\ContextInterface The context for the form.
  */
-	public function context() {
+	public function context($context = null) {
+		if ($context instanceof ContextInterface) {
+			$this->_context = $context;
+		}
 		return $this->_getContext();
 	}
 
