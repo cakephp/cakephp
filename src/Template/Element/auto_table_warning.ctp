@@ -39,3 +39,4 @@ instead of any other specific subclass.
 	<li><strong><?= $alias ?></strong></li>
 <?php endforeach; ?>
 </ul>
+<br/>
