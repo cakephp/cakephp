@@ -254,9 +254,13 @@ abstract class ControllerTestCase extends TestCase {
 
 		$request = $this->getMock(
 			'Cake\Network\Request',
-			array('_readInput'),
+			array('_readInput', 'method'),
 			array($requestData)
 		);
+
+		$request->expects($this->any())
+			->method('method')
+			->will($this->returnValue($method));
 
 		if (is_string($options['data'])) {
 			$request->expects($this->any())
