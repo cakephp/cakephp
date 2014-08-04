@@ -364,7 +364,7 @@ class TimeHelper extends AppHelper {
 	}
 
 /**
- * Formats date for RSS feeds
+ * Formats a date into a phrase expressing the relative time.
  *
  * ## Addition options
  *
