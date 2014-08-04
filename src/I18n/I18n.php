@@ -255,15 +255,13 @@ class I18n {
 		]);
 
 		// \Aura\Intl\Package by default uses formatter configured with key "basic".
-		if (static::$_defaultFormatter !== 'basic') {
-			$formatter = static::$_defaultFormatter;
-			$chain = function() use ($formatter, $chain) {
-				$package = $chain();
-				$package->setFormatter($formatter);
-				return $package;
-			};
-		}
-
+		// and we want to make sure the cake domain always uses the default formatter
+		$formatter = $name === 'cake' ? 'default' : static::$_defaultFormatter;
+		$chain = function() use ($formatter, $chain) {
+			$package = $chain();
+			$package->setFormatter($formatter);
+			return $package;
+		};
 		static::translator($name, $locale, $chain);
 		return static::translators()->get($name);
 	}
