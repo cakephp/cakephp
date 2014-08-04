@@ -340,7 +340,7 @@ class NumberTest extends TestCase {
  *
  * @return void
  */
-	public function testCurrencyInltCode() {
+	public function testCurrencyIntlCode() {
 		$value = '123';
 		$result = $this->Number->currency($value, 'USD', ['useIntlCode' => true]);
 		$expected = 'USD 123.00';

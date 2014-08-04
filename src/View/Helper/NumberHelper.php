@@ -144,7 +144,7 @@ class NumberHelper extends Helper {
 	public function format($number, array $options = []) {
 		$formatted = $this->_engine->format($number, $options);
 		$options += ['escape' => true];
-		return $options['escape'] ? h($formatted): $formatted;
+		return $options['escape'] ? h($formatted) : $formatted;
 	}
 
 /**
@@ -174,7 +174,7 @@ class NumberHelper extends Helper {
 	public function currency($number, $currency = null, array $options = array()) {
 		$formatted = $this->_engine->currency($number, $currency, $options);
 		$options += ['escape' => true];
-		return $options['escape'] ? h($formatted): $formatted;
+		return $options['escape'] ? h($formatted) : $formatted;
 	}
 
 /**
@@ -196,7 +196,7 @@ class NumberHelper extends Helper {
 	public function formatDelta($value, array $options = array()) {
 		$formatted = $this->_engine->formatDelta($value, $options);
 		$options += ['escape' => true];
-		return $options['escape'] ? h($formatted): $formatted;
+		return $options['escape'] ? h($formatted) : $formatted;
 	}
 
 /**
