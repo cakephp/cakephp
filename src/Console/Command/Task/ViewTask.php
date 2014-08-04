@@ -380,19 +380,19 @@ class ViewTask extends BakeTask {
 		if (!empty($this->template) && $action != $this->template) {
 			return $this->template;
 		}
-		$themePath = $this->Template->getThemePath();
+		$templatePath = $this->Template->getTemplatePath();
 
 		if (!empty($this->params['prefix'])) {
 			$prefixed = Inflector::underscore($this->params['prefix']) . '_' . $action;
-			if (file_exists($themePath . 'views/' . $prefixed . '.ctp')) {
+			if (file_exists($templatePath . 'views/' . $prefixed . '.ctp')) {
 				return $prefixed;
 			}
 			$generic = preg_replace('/(.*)(_add|_edit)$/', '\1_form', $prefixed);
-			if (file_exists($themePath . 'views/' . $generic . '.ctp')) {
+			if (file_exists($templatePath . 'views/' . $generic . '.ctp')) {
 				return $generic;
 			}
 		}
-		if (file_exists($themePath . 'views/' . $action . '.ctp')) {
+		if (file_exists($templatePath . 'views/' . $action . '.ctp')) {
 			return $action;
 		}
 		if (in_array($action, ['add', 'edit'])) {
