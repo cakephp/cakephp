@@ -68,6 +68,14 @@ class TableRegistry {
 	protected static $_instances = [];
 
 /**
+ * Contains a list of Table objects that were created out of the
+ * built-in Table class. The list is indexed by table alias
+ *
+ * @var array
+ */
+	protected static $_fallbacked = [];
+
+/**
  * Stores a list of options to be used when instantiating an object
  * with a matching alias.
  *
@@ -163,7 +171,14 @@ class TableRegistry {
 			$connectionName = $options['className']::defaultConnectionName();
 			$options['connection'] = ConnectionManager::get($connectionName);
 		}
-		return static::$_instances[$alias] = new $options['className']($options);
+
+		static::$_instances[$alias] = new $options['className']($options);
+
+		if ($options['className'] === 'Cake\ORM\Table') {
+			static::$_fallbacked[$alias] = static::$_instances[$alias];
+		}
+
+		return static::$_instances[$alias];
 	}
 
 /**
@@ -199,6 +214,19 @@ class TableRegistry {
 	public static function clear() {
 		static::$_instances = [];
 		static::$_config = [];
+		static::$_fallbacked = [];
+	}
+
+/**
+ * Returns the list of tables that were created by this registry that could
+ * not be instantiated from a specific subclass. This method is useful for
+ * debugging common mistakes when setting up associations or created new table
+ * classes.
+ *
+ * @return array
+ */
+	public static function genericInstances() {
+		return $_fallbacked;
 	}
 
 }
