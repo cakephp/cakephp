@@ -117,6 +117,7 @@ class SessionComponent extends Component {
  * @param array $params Parameters to be sent to layout as view variables
  * @param string $key Message key, default is 'flash'
  * @return void
+ * @deprecated 3.0 Use FlashComponent::set() instead.
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#creating-notification-messages
  */
 	public function setFlash($message, $element = null, array $params = array(), $key = 'flash') {
