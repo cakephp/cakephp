@@ -94,7 +94,7 @@ class ViewTaskTest extends TestCase {
 /**
  * setUp method
  *
- * Ensure that the default theme is used
+ * Ensure that the default template is used
  *
  * @return void
  */
@@ -124,8 +124,8 @@ class ViewTaskTest extends TestCase {
 		$this->Task->Template = new TemplateTask($io);
 		$this->Task->Model = $this->getMock('Cake\Console\Command\Task\ModelTask', [], [$io]);
 
-		$this->Task->Template->params['theme'] = 'default';
-		$this->Task->Template->templatePaths = ['default' => CAKE . 'Console/Templates/default/'];
+		$this->Task->Template->params['template'] = 'default';
+		$this->Task->Template->templatePaths = ['default' => CAKE . 'Template/Bake/default/'];
 	}
 
 /**
@@ -707,9 +707,9 @@ class ViewTaskTest extends TestCase {
 		$this->assertEquals('form', $result);
 
 		$this->Task->Template->templatePaths = array(
-			'test' => CORE_TESTS . '/test_app/TestApp/Console/Templates/test/'
+			'test' => CORE_TESTS . '/test_app/TestApp/Template/Bake/test/'
 		);
-		$this->Task->Template->params['theme'] = 'test';
+		$this->Task->Template->params['template'] = 'test';
 
 		$result = $this->Task->getTemplate('edit');
 		$this->assertEquals('admin_edit', $result);

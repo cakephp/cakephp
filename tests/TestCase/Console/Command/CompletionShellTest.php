@@ -151,7 +151,7 @@ class CompletionShellTest extends TestCase {
 		$this->Shell->runCommand(['options', 'bake']);
 		$output = $this->out->output;
 
-		$expected = "--help -h --verbose -v --quiet -q --connection -c --theme -t\n";
+		$expected = "--help -h --verbose -v --quiet -q --connection -c --template -t\n";
 		$this->assertTextEquals($expected, $output);
 	}
 

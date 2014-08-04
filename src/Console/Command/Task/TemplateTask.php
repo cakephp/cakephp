@@ -31,7 +31,7 @@ class TemplateTask extends Shell {
 
 /**
  * Paths to look for templates on.
- * Contains a list of $theme => $path
+ * Contains a list of $template => $path
  *
  * @var array
  */
@@ -43,30 +43,30 @@ class TemplateTask extends Shell {
  * @return void
  */
 	public function initialize() {
-		$this->templatePaths = $this->_findThemes();
+		$this->templatePaths = $this->_findTemplates();
 	}
 
 /**
- * Find the paths to all the installed shell themes in the app.
+ * Find the paths to all the installed shell templates in the app.
  *
- * Bake themes are directories not named `skel` inside a `Console/Templates` path.
+ * Bake templates are directories under `Template/Bake` path.
  * They are listed in this order: app -> plugin -> default
  *
- * @return array Array of bake themes that are installed.
+ * @return array Array of bake templates that are installed.
  */
-	protected function _findThemes() {
-		$paths = App::path('Console');
+	protected function _findTemplates() {
+		$paths = App::path('Template');
 
 		$plugins = App::objects('Plugin');
 		foreach ($plugins as $plugin) {
-			$paths[] = $this->_pluginPath($plugin) . 'src/Console/';
+			$paths[] = $this->_pluginPath($plugin) . 'src' . DS . 'Template' . DS;
 		}
 
-		$core = current(App::core('Console'));
-		$Folder = new Folder($core . 'Templates/default');
+		$core = current(App::core('Template'));
+		$Folder = new Folder($core . 'Bake' . DS . 'default');
 
 		$contents = $Folder->read();
-		$themeFolders = $contents[0];
+		$templateFolders = $contents[0];
 
 		$paths[] = $core;
 
@@ -74,26 +74,26 @@ class TemplateTask extends Shell {
 			$paths[$i] = rtrim($path, DS) . DS;
 		}
 
-		$this->_io->verbose('Found the following bake themes:');
+		$this->_io->verbose('Found the following bake templates:');
 
-		$themes = [];
+		$templates = [];
 		foreach ($paths as $path) {
-			$Folder = new Folder($path . 'Templates', false);
+			$Folder = new Folder($path . 'Bake', false);
 			$contents = $Folder->read();
 			$subDirs = $contents[0];
 			foreach ($subDirs as $dir) {
-				$Folder = new Folder($path . 'Templates/' . $dir);
+				$Folder = new Folder($path . 'Bake' . DS . $dir);
 				$contents = $Folder->read();
 				$subDirs = $contents[0];
-				if (array_intersect($contents[0], $themeFolders)) {
-					$templateDir = $path . 'Templates/' . $dir . DS;
-					$themes[$dir] = $templateDir;
+				if (array_intersect($contents[0], $templateFolders)) {
+					$templateDir = $path . 'Bake' . DS . $dir . DS;
+					$templates[$dir] = $templateDir;
 
 					$this->_io->verbose(sprintf("- %s -> %s", $dir, $templateDir));
 				}
 			}
 		}
-		return $themes;
+		return $templates;
 	}
 
 /**
@@ -111,8 +111,8 @@ class TemplateTask extends Shell {
 		if (empty($this->templatePaths)) {
 			$this->initialize();
 		}
-		$themePath = $this->getThemePath();
-		$templateFile = $this->_findTemplate($themePath, $directory, $filename);
+		$templatePath = $this->getTemplatePath();
+		$templateFile = $this->_findTemplate($templatePath, $directory, $filename);
 		if ($templateFile) {
 			extract($this->viewVars);
 			ob_start();
@@ -125,29 +125,29 @@ class TemplateTask extends Shell {
 	}
 
 /**
- * Find the theme name for the current operation.
- * If there is only one theme in $templatePaths it will be used.
- * If there is a -theme param in the cli args, it will be used.
- * If there is more than one installed theme user interaction will happen
+ * Find the template name for the current operation.
+ * If there is only one template in $templatePaths it will be used.
+ * If there is a -template param in the cli args, it will be used.
+ * If there is more than one installed template user interaction will happen
  *
- * @return string returns the path to the selected theme.
- * @throws \RuntimeException When the chosen theme cannot be found.
+ * @return string returns the path to the selected template.
+ * @throws \RuntimeException When the chosen template cannot be found.
  */
-	public function getThemePath() {
-		if (empty($this->params['theme'])) {
-			$this->params['theme'] = 'default';
+	public function getTemplatePath() {
+		if (empty($this->params['template'])) {
+			$this->params['template'] = 'default';
 		}
-		if (!isset($this->templatePaths[$this->params['theme']])) {
-			$msg = sprintf('Unable to locate "%s" bake theme templates.', $this->params['theme']);
+		if (!isset($this->templatePaths[$this->params['template']])) {
+			$msg = sprintf('Unable to locate "%s" bake template', $this->params['template']);
 			throw new \RuntimeException($msg);
 		}
-		$this->_io->verbose(sprintf('Using "%s" bake theme', $this->params['theme']));
-		return $this->templatePaths[$this->params['theme']];
+		$this->_io->verbose(sprintf('Using "%s" bake template', $this->params['template']));
+		return $this->templatePaths[$this->params['template']];
 	}
 
 /**
  * Find a template inside a directory inside a path.
- * Will scan all other theme dirs if the template is not found in the first directory.
+ * Will scan all other template dirs if the template is not found in the first directory.
  *
  * @param string $path The initial path to look for the file on. If it is not found fallbacks will be used.
  * @param string $directory Subdirectory to look for ie. 'views', 'objects'
@@ -155,9 +155,9 @@ class TemplateTask extends Shell {
  * @return string filename will exit program if template is not found.
  */
 	protected function _findTemplate($path, $directory, $filename) {
-		$themeFile = $path . $directory . DS . $filename . '.ctp';
-		if (file_exists($themeFile)) {
-			return $themeFile;
+		$templateFile = $path . $directory . DS . $filename . '.ctp';
+		if (file_exists($templateFile)) {
+			return $templateFile;
 		}
 		foreach ($this->templatePaths as $path) {
 			$templatePath = $path . $directory . DS . $filename . '.ctp';

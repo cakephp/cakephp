@@ -180,7 +180,7 @@ class FolderTest extends TestCase {
  * @return void
  */
 	public function testOperations() {
-		$path = CAKE . 'Console/Templates';
+		$path = CAKE . 'Template/Bake';
 		$Folder = new Folder($path);
 
 		$result = is_dir($Folder->pwd());
