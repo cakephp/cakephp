@@ -350,7 +350,7 @@ class NumberTest extends TestCase {
 		$expected = 'EUR 123.00';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Number->currency($value, 'EUR', ['useIntlCode' => true, 'locale' => 'fr_FR']);
+		$result = $this->Number->currency($value, 'EUR', ['useIntlCode' => true, 'locale' => 'da_DK']);
 		$expected = '123,00 EUR';
 		$this->assertEquals($expected, $result);
 	}
