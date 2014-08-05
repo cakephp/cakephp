@@ -59,7 +59,7 @@ trait StringTemplateTrait {
 /**
  * templater
  *
- * @return void
+ * @return \Cake\View\StringTemplate
  */
 	public function templater() {
 		if (empty($this->_templater)) {
