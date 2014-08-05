@@ -284,4 +284,17 @@ class TableRegistryTest extends TestCase {
 		$this->assertSame($mock, TableRegistry::get('Articles'));
 	}
 
+/**
+ * Tests genericInstances
+ *
+ * @return void
+ */
+	public function testGenericInstances() {
+		$foos = TableRegistry::get('Foos');
+		$bars = TableRegistry::get('Bars');
+		TableRegistry::get('Articles');
+		$expected = ['Foos' => $foos, 'Bars' => $bars];
+		$this->assertEquals($expected, TableRegistry::genericInstances());
+	}
+
 }
