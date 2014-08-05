@@ -57,16 +57,6 @@ class TestNlValidation {
 		return true;
 	}
 
-/**
- * personId function for testing identification pass through.
- *
- * @param string $check
- * @return void
- */
-	public static function personId($check) {
-		return true;
-	}
-
 }
 
 /**
@@ -2286,14 +2276,13 @@ class ValidationTest extends TestCase {
 	}
 
 /**
- * test that phone, postal and personId pass to other classes.
+ * Test that phone and postal pass to other classes.
  *
  * @return void
  */
-	public function testPhonePostalPhonePersonIdPass() {
+	public function testPostalPhonePass() {
 		$this->assertTrue(Validation::postal('text', null, __NAMESPACE__ . '\TestNlValidation'));
 		$this->assertTrue(Validation::phone('text', null, __NAMESPACE__ . '\TestDeValidation'));
-		$this->assertTrue(Validation::personId('text', null, __NAMESPACE__ . '\TestNlValidation'));
 	}
 
 /**
@@ -2323,27 +2312,6 @@ class ValidationTest extends TestCase {
  */
 	public function testPassThroughMethod() {
 		$this->assertTrue(Validation::postal('text', null, __NAMESPACE__ . '\TestNlValidation'));
-	}
-
-/**
- * testPersonId method
- *
- * @return void
- */
-	public function testPersonId() {
-		$this->assertFalse(Validation::personId('111-333', null, 'dk'));
-		$this->assertFalse(Validation::personId('111111-333', null, 'dk'));
-		$this->assertTrue(Validation::personId('111111-3334', null, 'dk'));
-
-		$this->assertFalse(Validation::personId('1118333', null, 'nl'));
-		$this->assertFalse(Validation::personId('1234567890', null, 'nl'));
-		$this->assertFalse(Validation::personId('12345A789', null, 'nl'));
-		$this->assertTrue(Validation::personId('123456789', null, 'nl'));
-
-		$this->assertFalse(Validation::personId('11-33-4333', null, 'us'));
-		$this->assertFalse(Validation::personId('113-3-4333', null, 'us'));
-		$this->assertFalse(Validation::personId('111-33-333', null, 'us'));
-		$this->assertTrue(Validation::personId('111-33-4333', null, 'us'));
 	}
 
 /**

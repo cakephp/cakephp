@@ -740,39 +740,6 @@ class Validation {
 	}
 
 /**
- * Checks that a value is a valid identification number.
- * In the case of US this would be the Social Security Number (SSN).
- *
- * @param string|array $check Value to check
- * @param string $regex Regular expression to use
- * @param string $country Country
- * @return bool Success
- */
-	public static function personId($check, $regex = null, $country = null) {
-		if (is_array($check)) {
-			extract(static::_defaults($check));
-		}
-
-		if ($regex === null) {
-			switch ($country) {
-				case 'dk':
-					$regex = '/\\A\\b[0-9]{6}-[0-9]{4}\\b\\z/i';
-					break;
-				case 'nl':
-					$regex = '/\\A\\b[0-9]{9}\\b\\z/i';
-					break;
-				case 'us':
-					$regex = '/\\A\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b\\z/i';
-					break;
-			}
-		}
-		if (empty($regex)) {
-			return static::_pass('personId', $check, $country);
-		}
-		return static::_check($check, $regex);
-	}
-
-/**
  * Checks that a value is a valid URL according to http://www.w3.org/Addressing/URL/url-spec.txt
  *
  * The regex checks for the following component parts:
