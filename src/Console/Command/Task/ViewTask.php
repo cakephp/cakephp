@@ -105,7 +105,7 @@ class ViewTask extends BakeTask {
 		parent::main();
 
 		if (empty($name)) {
-			$this->out(__d('cake_console', 'Possible tables to bake views for based on your current database:'));
+			$this->out('Possible tables to bake views for based on your current database:');
 			$this->Model->connection = $this->connection;
 			foreach ($this->Model->listAll() as $table) {
 				$this->out('- ' . $this->_controllerName($table));
@@ -303,25 +303,25 @@ class ViewTask extends BakeTask {
 	public function customAction() {
 		$action = '';
 		while (!$action) {
-			$action = $this->in(__d('cake_console', 'Action Name? (use lowercase_underscored function name)'));
+			$action = $this->in('Action Name? (use lowercase_underscored function name)');
 			if (!$action) {
-				$this->out(__d('cake_console', 'The action name you supplied was empty. Please try again.'));
+				$this->out('The action name you supplied was empty. Please try again.');
 			}
 		}
 		$this->out();
 		$this->hr();
-		$this->out(__d('cake_console', 'The following view will be created:'));
+		$this->out('The following view will be created:');
 		$this->hr();
-		$this->out(__d('cake_console', 'Controller Name: %s', $this->controllerName));
-		$this->out(__d('cake_console', 'Action Name:     %s', $action));
-		$this->out(__d('cake_console', 'Path:            %s', $this->getPath() . $this->controllerName . DS . Inflector::underscore($action) . ".ctp"));
+		$this->out(sprintf('Controller Name: %s', $this->controllerName));
+		$this->out(sprintf('Action Name:     %s', $action));
+		$this->out(sprintf('Path:            %s', $this->getPath() . $this->controllerName . DS . Inflector::underscore($action) . ".ctp"));
 		$this->hr();
-		$looksGood = $this->in(__d('cake_console', 'Look okay?'), ['y', 'n'], 'y');
+		$looksGood = $this->in('Look okay?', ['y', 'n'], 'y');
 		if (strtolower($looksGood) === 'y') {
 			$this->bake($action, ' ');
 			return $this->_stop();
 		}
-		$this->out(__d('cake_console', 'Bake Aborted.'));
+		$this->out('Bake Aborted.');
 	}
 
 /**
@@ -338,7 +338,7 @@ class ViewTask extends BakeTask {
 		if (empty($content)) {
 			return false;
 		}
-		$this->out("\n" . __d('cake_console', 'Baking `%s` view file...', $action), 1, Shell::QUIET);
+		$this->out("\n" . sprintf('Baking `%s` view file...', $action), 1, Shell::QUIET);
 		$path = $this->getPath();
 		$filename = $path . Inflector::underscore($action) . '.ctp';
 		$this->createFile($filename, $content);
@@ -410,19 +410,19 @@ class ViewTask extends BakeTask {
 		$parser = parent::getOptionParser();
 
 		$parser->description(
-			__d('cake_console', 'Bake views for a controller, using built-in or custom templates. ')
+			'Bake views for a controller, using built-in or custom templates. '
 		)->addArgument('controller', [
-			'help' => __d('cake_console', 'Name of the controller views to bake. Can be Plugin.name as a shortcut for plugin baking.')
+			'help' => 'Name of the controller views to bake. Can be Plugin.name as a shortcut for plugin baking.'
 		])->addArgument('action', [
-			'help' => __d('cake_console', "Will bake a single action's file. core templates are (index, add, edit, view)")
+			'help' => "Will bake a single action's file. core templates are (index, add, edit, view)"
 		])->addArgument('alias', [
-			'help' => __d('cake_console', 'Will bake the template in <action> but create the filename after <alias>.')
+			'help' => 'Will bake the template in <action> but create the filename after <alias>.'
 		])->addOption('controller', [
-			'help' => __d('cake_console', 'The controller name if you have a controller that does not follow conventions.')
+			'help' => 'The controller name if you have a controller that does not follow conventions.'
 		])->addOption('prefix', [
-			'help' => __d('cake_console', 'The routing prefix to generate views for.'),
+			'help' => 'The routing prefix to generate views for.',
 		])->addSubcommand('all', [
-			'help' => __d('cake_console', 'Bake all CRUD action views for all controllers. Requires models and controllers to exist.')
+			'help' => 'Bake all CRUD action views for all controllers. Requires models and controllers to exist.'
 		]);
 
 		return $parser;

@@ -121,7 +121,7 @@ class BakeTask extends Shell {
 			$pipes
 		);
 		if (!is_resource($process)) {
-			$this->error(__d('cake_console', 'Could not start subprocess.'));
+			$this->error('Could not start subprocess.');
 			return false;
 		}
 		$output = $error = '';
@@ -168,19 +168,19 @@ class BakeTask extends Shell {
 		$parser = parent::getOptionParser();
 		$parser->addOption('plugin', [
 			'short' => 'p',
-			'help' => __d('cake_console', 'Plugin to bake into.')
+			'help' => 'Plugin to bake into.'
 		])->addOption('force', [
 			'short' => 'f',
 			'boolean' => true,
-			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
+			'help' => 'Force overwriting existing files without prompting.'
 		])->addOption('connection', [
 			'short' => 'c',
 			'default' => 'default',
-			'help' => __d('cake_console', 'The datasource connection to get data from.')
+			'help' => 'The datasource connection to get data from.'
 		])->addOption('template', [
 			'short' => 't',
 			'default' => 'default',
-			'help' => __d('cake_console', 'Template to use when baking code.')
+			'help' => 'Template to use when baking code.'
 		]);
 		return $parser;
 	}

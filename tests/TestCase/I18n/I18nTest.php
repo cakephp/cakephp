@@ -16,13 +16,10 @@
  */
 namespace Cake\Test\TestCase\I18n;
 
+use Aura\Intl\Package;
 use Cake\Cache\Cache;
-use Cake\Core\App;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Error;
 use Cake\I18n\I18n;
-use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -32,1932 +29,322 @@ use Cake\TestSuite\TestCase;
 class I18nTest extends TestCase {
 
 /**
- * setUp method
+ * Used to restore the internal locale after tests
+ *
+ * @var string
+ */
+	public $locale;
+
+/**
+ * Set Up
  *
  * @return void
  */
 	public function setUp() {
 		parent::setUp();
-
-		Plugin::load(array('TestPlugin'));
+		$this->locale = I18n::defaultLocale();
 	}
 
 /**
- * tearDown method
+ * Tear down method
  *
  * @return void
  */
 	public function tearDown() {
 		parent::tearDown();
-
+		I18n::clear();
+		I18n::defaultFormatter('default');
+		I18n::defaultLocale($this->locale);
 		Plugin::unload();
-	}
-
-/**
- * testTranslationCaching method
- *
- * @return void
- */
-	public function testTranslationCaching() {
-		$this->skipIf(
-			!Cache::engine('_cake_core_'),
-			'Missing _cake_core_ cache config, cannot test caching.'
-		);
-		Configure::write('Config.language', 'cache_test_po');
-
-		// reset internally stored entries
-		I18n::clear();
-
 		Cache::clear(false, '_cake_core_');
-		$lang = Configure::read('Config.language');
-
-		// make some calls to translate using different domains
-		$this->assertEquals('Dom 1 Foo', I18n::translate('dom1.foo', false, 'dom1'));
-		$this->assertEquals('Dom 1 Bar', I18n::translate('dom1.bar', false, 'dom1'));
-		$domains = I18n::domains();
-		$this->assertEquals('Dom 1 Foo', $domains['dom1']['cache_test_po']['LC_MESSAGES']['dom1.foo']['']);
-
-		// reset internally stored entries
-		I18n::clear();
-
-		// now only dom1 should be in cache
-		$cachedDom1 = Cache::read('dom1_' . $lang, '_cake_core_');
-		$this->assertEquals('Dom 1 Foo', $cachedDom1['LC_MESSAGES']['dom1.foo']['']);
-		$this->assertEquals('Dom 1 Bar', $cachedDom1['LC_MESSAGES']['dom1.bar']['']);
-		// dom2 not in cache
-		$this->assertFalse(Cache::read('dom2_' . $lang, '_cake_core_'));
-
-		// translate a item of dom2 (adds dom2 to cache)
-		$this->assertEquals('Dom 2 Foo', I18n::translate('dom2.foo', false, 'dom2'));
-
-		// verify dom2 was cached through manual read from cache
-		$cachedDom2 = Cache::read('dom2_' . $lang, '_cake_core_');
-		$this->assertEquals('Dom 2 Foo', $cachedDom2['LC_MESSAGES']['dom2.foo']['']);
-		$this->assertEquals('Dom 2 Bar', $cachedDom2['LC_MESSAGES']['dom2.bar']['']);
-
-		// modify cache entry manually to verify that dom1 entries now will be read from cache
-		$cachedDom1['LC_MESSAGES']['dom1.foo'][''] = 'FOO';
-		Cache::write('dom1_' . $lang, $cachedDom1, '_cake_core_');
-		$this->assertEquals('FOO', I18n::translate('dom1.foo', false, 'dom1'));
-	}
-
-/**
- * testDefaultStrings method
- *
- * @return void
- */
-	public function testDefaultStrings() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 1', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('1 = 1', $plurals));
-		$this->assertTrue(in_array('2 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('3 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('4 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('5 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('6 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('7 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('8 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('9 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('10 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('11 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('12 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('13 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('14 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('15 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('16 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('17 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('18 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('19 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('20 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('21 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('22 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('23 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('24 = 0 or > 1', $plurals));
-		$this->assertTrue(in_array('25 = 0 or > 1', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 1 (from core)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('1 = 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('2 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('3 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('4 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('5 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('6 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('7 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('8 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('9 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('10 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('11 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('12 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('13 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('14 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('15 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('16 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('17 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('18 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('19 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('20 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('21 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('22 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('23 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('24 = 0 or > 1 (from core)', $corePlurals));
-		$this->assertTrue(in_array('25 = 0 or > 1 (from core)', $corePlurals));
-	}
-
-/**
- * testPoRulesZero method
- *
- * @return void
- */
-	public function testPoRulesZero() {
-		Configure::write('Config.language', 'rule_0_po');
-		$this->assertRulesZero();
-	}
-
-/**
- * testMoRulesZero method
- *
- * @return void
- */
-	public function testMoRulesZero() {
-		Configure::write('Config.language', 'rule_0_mo');
-		$this->assertRulesZero();
-	}
-
-/**
- * Assertions for rules zero.
- *
- * @return void
- */
-	public function assertRulesZero() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 0 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('1 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('2 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('3 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('4 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('5 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('6 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('7 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('8 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('9 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('10 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('11 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('12 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('13 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('14 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('15 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('16 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('17 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('18 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('19 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('20 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('21 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('22 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('23 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('24 ends with any # (translated)', $plurals));
-		$this->assertTrue(in_array('25 ends with any # (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 0 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 ends with any # (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 ends with any # (from core translated)', $corePlurals));
-	}
-
-/**
- * testPoRulesOne method
- *
- * @return void
- */
-	public function testPoRulesOne() {
-		Configure::write('Config.language', 'rule_1_po');
-		$this->assertRulesOne();
-	}
-
-/**
- * testMoRulesOne method
- *
- * @return void
- */
-	public function testMoRulesOne() {
-		Configure::write('Config.language', 'rule_1_mo');
-		$this->assertRulesOne();
-	}
-
-/**
- * Assertions for plural rule one
- *
- * @return void
- */
-	public function assertRulesOne() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 1 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('1 = 1 (translated)', $plurals));
-		$this->assertTrue(in_array('2 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('3 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('4 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('5 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('6 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('7 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('8 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('9 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('10 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('11 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('12 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('13 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('14 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('15 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('16 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('17 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('18 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('19 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('20 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('21 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('22 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('23 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('24 = 0 or > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('25 = 0 or > 1 (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 1 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 = 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 = 0 or > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 = 0 or > 1 (from core translated)', $corePlurals));
-	}
-
-/**
- * testMoRulesTwo method
- *
- * @return void
- */
-	public function testMoRulesTwo() {
-		Configure::write('Config.language', 'rule_2_mo');
-		$this->assertRulesTwo();
-	}
-
-/**
- * testPoRulesTwo method
- *
- * @return void
- */
-	public function testPoRulesTwo() {
-		Configure::write('Config.language', 'rule_2_po');
-		$this->assertRulesTwo();
-	}
-
-/**
- * Assertions for rules Two
- *
- * @return void
- */
-	public function assertRulesTwo() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 2 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 = 0 or 1 (translated)', $plurals));
-		$this->assertTrue(in_array('1 = 0 or 1 (translated)', $plurals));
-		$this->assertTrue(in_array('2 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('3 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('4 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('5 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('6 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('7 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('8 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('9 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('10 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('11 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('12 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('13 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('14 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('15 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('16 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('17 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('18 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('19 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('20 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('21 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('22 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('23 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('24 > 1 (translated)', $plurals));
-		$this->assertTrue(in_array('25 > 1 (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 2 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 = 0 or 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 = 0 or 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 > 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 > 1 (from core translated)', $corePlurals));
-	}
-
-/**
- * testPoRulesThree method
- *
- * @return void
- */
-	public function testPoRulesThree() {
-		Configure::write('Config.language', 'rule_3_po');
-		$this->assertRulesThree();
-	}
-
-/**
- * testMoRulesThree method
- *
- * @return void
- */
-	public function testMoRulesThree() {
-		Configure::write('Config.language', 'rule_3_mo');
-		$this->assertRulesThree();
-	}
-
-/**
- * Assert rules for plural three.
- *
- * @return void
- */
-	public function assertRulesThree() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 3 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 = 0 (translated)', $plurals));
-		$this->assertTrue(in_array('1 ends 1 but not 11 (translated)', $plurals));
-		$this->assertTrue(in_array('2 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('3 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('4 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('5 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('6 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('7 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('8 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('9 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('10 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('11 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('12 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('13 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('14 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('15 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('16 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('17 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('18 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('19 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('20 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('21 ends 1 but not 11 (translated)', $plurals));
-		$this->assertTrue(in_array('22 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 3 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 = 0 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 ends 1 but not 11 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 ends 1 but not 11 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
-	}
-
-/**
- * testPoRulesFour method
- *
- * @return void
- */
-	public function testPoRulesFour() {
-		Configure::write('Config.language', 'rule_4_po');
-		$this->assertRulesFour();
-	}
-
-/**
- * testMoRulesFour method
- *
- * @return void
- */
-	public function testMoRulesFour() {
-		Configure::write('Config.language', 'rule_4_mo');
-		$this->assertRulesFour();
-	}
-
-/**
- * Run the assertions for Rule 4 plurals.
- *
- * @return void
- */
-	public function assertRulesFour() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 4 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('1 = 1 (translated)', $plurals));
-		$this->assertTrue(in_array('2 = 2 (translated)', $plurals));
-		$this->assertTrue(in_array('3 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('4 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('5 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('6 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('7 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('8 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('9 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('10 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('11 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('12 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('13 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('14 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('15 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('16 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('17 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('18 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('19 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('20 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('21 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('22 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 4 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 = 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 = 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
-	}
-
-/**
- * testPoRulesFive method
- *
- * @return void
- */
-	public function testPoRulesFive() {
-		Configure::write('Config.language', 'rule_5_po');
-		$this->assertRulesFive();
-	}
-
-/**
- * testMoRulesFive method
- *
- * @return void
- */
-	public function testMoRulesFive() {
-		Configure::write('Config.language', 'rule_5_mo');
-		$this->assertRulesFive();
-	}
-
-/**
- * Run the assertions for rule 5 plurals
- *
- * @return void
- */
-	public function assertRulesFive() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 5 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('0 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('1 = 1 (translated)', $plurals));
-		$this->assertTrue(in_array('2 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('3 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('4 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('5 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('6 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('7 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('8 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('9 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('10 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('11 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('12 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('13 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('14 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('15 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('16 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('17 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('18 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('19 = 0 or ends in 01-19 (translated)', $plurals));
-		$this->assertTrue(in_array('20 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('21 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('22 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 5 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('0 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 = 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 = 0 or ends in 01-19 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
-	}
-
-/**
- * testPoRulesSix method
- *
- * @return void
- */
-	public function testPoRulesSix() {
-		Configure::write('Config.language', 'rule_6_po');
-		$this->assertRulesSix();
-	}
-
-/**
- * testMoRulesSix method
- *
- * @return void
- */
-	public function testMoRulesSix() {
-		Configure::write('Config.language', 'rule_6_mo');
-		$this->assertRulesSix();
-	}
-
-/**
- * Assertions for the sixth plural rules.
- *
- * @return void
- */
-	public function assertRulesSix() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 6 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 ends in 0 or ends in 10-20 (translated)', $plurals));
-		$this->assertTrue(in_array('1 ends in 1, not 11 (translated)', $plurals));
-		$this->assertTrue(in_array('2 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('3 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('4 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('5 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('6 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('7 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('8 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('9 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('10 ends in 0 or ends in 10-20 (translated)', $plurals));
-		$this->assertTrue(in_array('11 ends in 0 or ends in 10-20 (translated)', $plurals));
-		$this->assertTrue(in_array('12 ends in 0 or ends in 10-20 (translated)', $plurals));
-		$this->assertTrue(in_array('13 ends in 0 or ends in 10-20 (translated)', $plurals));
-		$this->assertTrue(in_array('14 ends in 0 or ends in 10-20 (translated)', $plurals));
-		$this->assertTrue(in_array('15 ends in 0 or ends in 10-20 (translated)', $plurals));
-		$this->assertTrue(in_array('16 ends in 0 or ends in 10-20 (translated)', $plurals));
-		$this->assertTrue(in_array('17 ends in 0 or ends in 10-20 (translated)', $plurals));
-		$this->assertTrue(in_array('18 ends in 0 or ends in 10-20 (translated)', $plurals));
-		$this->assertTrue(in_array('19 ends in 0 or ends in 10-20 (translated)', $plurals));
-		$this->assertTrue(in_array('20 ends in 0 or ends in 10-20 (translated)', $plurals));
-		$this->assertTrue(in_array('21 ends in 1, not 11 (translated)', $plurals));
-		$this->assertTrue(in_array('22 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 6 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 ends in 1, not 11 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 ends in 0 or ends in 10-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 ends in 1, not 11 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
-	}
-
-/**
- * testPoRulesSeven method
- *
- * @return void
- */
-	public function testPoRulesSeven() {
-		Configure::write('Config.language', 'rule_7_po');
-		$this->assertRulesSeven();
-	}
-
-/**
- * testMoRulesSeven method
- *
- * @return void
- */
-	public function testMoRulesSeven() {
-		Configure::write('Config.language', 'rule_7_mo');
-		$this->assertRulesSeven();
-	}
-
-/**
- * Run assertions for seventh plural rules
- *
- * @return void
- */
-	public function assertRulesSeven() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 7 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('1 ends in 1, not 11 (translated)', $plurals));
-		$this->assertTrue(in_array('2 ends in 2-4, not 12-14 (translated)', $plurals));
-		$this->assertTrue(in_array('3 ends in 2-4, not 12-14 (translated)', $plurals));
-		$this->assertTrue(in_array('4 ends in 2-4, not 12-14 (translated)', $plurals));
-		$this->assertTrue(in_array('5 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('6 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('7 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('8 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('9 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('10 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('11 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('12 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('13 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('14 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('15 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('16 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('17 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('18 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('19 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('20 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('21 ends in 1, not 11 (translated)', $plurals));
-		$this->assertTrue(in_array('22 ends in 2-4, not 12-14 (translated)', $plurals));
-		$this->assertTrue(in_array('23 ends in 2-4, not 12-14 (translated)', $plurals));
-		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (translated)', $plurals));
-		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 7 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 ends in 1, not 11 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 ends in 1, not 11 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
-	}
-
-/**
- * testPoRulesEight method
- *
- * @return void
- */
-	public function testPoRulesEight() {
-		Configure::write('Config.language', 'rule_8_po');
-		$this->assertRulesEight();
-	}
-
-/**
- * testMoRulesEight method
- *
- * @return void
- */
-	public function testMoRulesEight() {
-		Configure::write('Config.language', 'rule_8_mo');
-		$this->assertRulesEight();
-	}
-
-/**
- * Run assertions for the eighth plural rule.
- *
- * @return void
- */
-	public function assertRulesEight() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 8 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
-		$this->assertTrue(in_array('2 is 2-4 (translated)', $plurals));
-		$this->assertTrue(in_array('3 is 2-4 (translated)', $plurals));
-		$this->assertTrue(in_array('4 is 2-4 (translated)', $plurals));
-		$this->assertTrue(in_array('5 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('6 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('7 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('8 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('9 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('10 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('11 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('12 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('13 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('14 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('15 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('16 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('17 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('18 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('19 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('20 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('21 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('22 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 8 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 is 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 is 2-4 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 is 2-4 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 is 2-4 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
-	}
-
-/**
- * testPoRulesNine method
- *
- * @return void
- */
-	public function testPoRulesNine() {
-		Configure::write('Config.language', 'rule_9_po');
-		$this->assertRulesNine();
-	}
-
-/**
- * testMoRulesNine method
- *
- * @return void
- */
-	public function testMoRulesNine() {
-		Configure::write('Config.language', 'rule_9_mo');
-		$this->assertRulesNine();
-	}
-
-/**
- * Assert plural rules nine
- *
- * @return void
- */
-	public function assertRulesNine() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 9 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
-		$this->assertTrue(in_array('2 ends in 2-4, not 12-14 (translated)', $plurals));
-		$this->assertTrue(in_array('3 ends in 2-4, not 12-14 (translated)', $plurals));
-		$this->assertTrue(in_array('4 ends in 2-4, not 12-14 (translated)', $plurals));
-		$this->assertTrue(in_array('5 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('6 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('7 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('8 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('9 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('10 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('11 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('12 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('13 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('14 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('15 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('16 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('17 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('18 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('19 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('20 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('21 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('22 ends in 2-4, not 12-14 (translated)', $plurals));
-		$this->assertTrue(in_array('23 ends in 2-4, not 12-14 (translated)', $plurals));
-		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (translated)', $plurals));
-		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 9 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 is 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 ends in 2-4, not 12-14 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
-	}
-
-/**
- * testPoRulesTen method
- *
- * @return void
- */
-	public function testPoRulesTen() {
-		Configure::write('Config.language', 'rule_10_po');
-		$this->assertRulesTen();
-	}
-
-/**
- * testMoRulesTen method
- *
- * @return void
- */
-	public function testMoRulesTen() {
-		Configure::write('Config.language', 'rule_10_mo');
-		$this->assertRulesTen();
-	}
-
-/**
- * Assertions for plural rules 10
- *
- * @return void
- */
-	public function assertRulesTen() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 10 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('1 ends in 1 (translated)', $plurals));
-		$this->assertTrue(in_array('2 ends in 2 (translated)', $plurals));
-		$this->assertTrue(in_array('3 ends in 03-04 (translated)', $plurals));
-		$this->assertTrue(in_array('4 ends in 03-04 (translated)', $plurals));
-		$this->assertTrue(in_array('5 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('6 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('7 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('8 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('9 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('10 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('11 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('12 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('13 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('14 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('15 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('16 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('17 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('18 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('19 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('20 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('21 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('22 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 10 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 ends in 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 ends in 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 ends in 03-04 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 ends in 03-04 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
-	}
-
-/**
- * testPoRulesEleven method
- *
- * @return void
- */
-	public function testPoRulesEleven() {
-		Configure::write('Config.language', 'rule_11_po');
-		$this->assertRulesEleven();
-	}
-
-/**
- * testMoRulesEleven method
- *
- * @return void
- */
-	public function testMoRulesEleven() {
-		Configure::write('Config.language', 'rule_11_mo');
-		$this->assertRulesEleven();
-	}
-
-/**
- * Assertions for plural rules eleven
- *
- * @return void
- */
-	public function assertRulesEleven() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 11 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
-		$this->assertTrue(in_array('2 is 2 (translated)', $plurals));
-		$this->assertTrue(in_array('3 is 3-6 (translated)', $plurals));
-		$this->assertTrue(in_array('4 is 3-6 (translated)', $plurals));
-		$this->assertTrue(in_array('5 is 3-6 (translated)', $plurals));
-		$this->assertTrue(in_array('6 is 3-6 (translated)', $plurals));
-		$this->assertTrue(in_array('7 is 7-10 (translated)', $plurals));
-		$this->assertTrue(in_array('8 is 7-10 (translated)', $plurals));
-		$this->assertTrue(in_array('9 is 7-10 (translated)', $plurals));
-		$this->assertTrue(in_array('10 is 7-10 (translated)', $plurals));
-		$this->assertTrue(in_array('11 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('12 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('13 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('14 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('15 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('16 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('17 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('18 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('19 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('20 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('21 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('22 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 11 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 is 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 is 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 is 3-6 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 is 3-6 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 is 3-6 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 is 3-6 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 is 7-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 is 7-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 is 7-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 is 7-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
-	}
-
-/**
- * testPoRulesTwelve method
- *
- * @return void
- */
-	public function testPoRulesTwelve() {
-		Configure::write('Config.language', 'rule_12_po');
-		$this->assertRulesTwelve();
-	}
-
-/**
- * testMoRulesTwelve method
- *
- * @return void
- */
-	public function testMoRulesTwelve() {
-		Configure::write('Config.language', 'rule_12_mo');
-		$this->assertRulesTwelve();
-	}
-
-/**
- * Assertions for plural rules twelve
- *
- * @return void
- */
-	public function assertRulesTwelve() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 12 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 is 0 or 3-10 (translated)', $plurals));
-		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
-		$this->assertTrue(in_array('2 is 2 (translated)', $plurals));
-		$this->assertTrue(in_array('3 is 0 or 3-10 (translated)', $plurals));
-		$this->assertTrue(in_array('4 is 0 or 3-10 (translated)', $plurals));
-		$this->assertTrue(in_array('5 is 0 or 3-10 (translated)', $plurals));
-		$this->assertTrue(in_array('6 is 0 or 3-10 (translated)', $plurals));
-		$this->assertTrue(in_array('7 is 0 or 3-10 (translated)', $plurals));
-		$this->assertTrue(in_array('8 is 0 or 3-10 (translated)', $plurals));
-		$this->assertTrue(in_array('9 is 0 or 3-10 (translated)', $plurals));
-		$this->assertTrue(in_array('10 is 0 or 3-10 (translated)', $plurals));
-		$this->assertTrue(in_array('11 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('12 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('13 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('14 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('15 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('16 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('17 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('18 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('19 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('20 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('21 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('22 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 12 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 is 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 is 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 is 0 or 3-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
-	}
-
-/**
- * testMoRulesThirteen method
- *
- * @return void
- */
-	public function testmoRulesThirteen() {
-		Configure::write('Config.language', 'rule_13_mo');
-		$this->assertRulesThirteen();
-	}
-
-/**
- * testPoRulesThirteen method
- *
- * @return void
- */
-	public function testPoRulesThirteen() {
-		Configure::write('Config.language', 'rule_13_po');
-		$this->assertRulesThirteen();
-	}
-
-/**
- * Assertions for plural rules thirteen
- *
- * @return void
- */
-	public function assertRulesThirteen() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 13 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 is 0 or ends in 01-10 (translated)', $plurals));
-		$this->assertTrue(in_array('1 is 1 (translated)', $plurals));
-		$this->assertTrue(in_array('2 is 0 or ends in 01-10 (translated)', $plurals));
-		$this->assertTrue(in_array('3 is 0 or ends in 01-10 (translated)', $plurals));
-		$this->assertTrue(in_array('4 is 0 or ends in 01-10 (translated)', $plurals));
-		$this->assertTrue(in_array('5 is 0 or ends in 01-10 (translated)', $plurals));
-		$this->assertTrue(in_array('6 is 0 or ends in 01-10 (translated)', $plurals));
-		$this->assertTrue(in_array('7 is 0 or ends in 01-10 (translated)', $plurals));
-		$this->assertTrue(in_array('8 is 0 or ends in 01-10 (translated)', $plurals));
-		$this->assertTrue(in_array('9 is 0 or ends in 01-10 (translated)', $plurals));
-		$this->assertTrue(in_array('10 is 0 or ends in 01-10 (translated)', $plurals));
-		$this->assertTrue(in_array('11 ends in 11-20 (translated)', $plurals));
-		$this->assertTrue(in_array('12 ends in 11-20 (translated)', $plurals));
-		$this->assertTrue(in_array('13 ends in 11-20 (translated)', $plurals));
-		$this->assertTrue(in_array('14 ends in 11-20 (translated)', $plurals));
-		$this->assertTrue(in_array('15 ends in 11-20 (translated)', $plurals));
-		$this->assertTrue(in_array('16 ends in 11-20 (translated)', $plurals));
-		$this->assertTrue(in_array('17 ends in 11-20 (translated)', $plurals));
-		$this->assertTrue(in_array('18 ends in 11-20 (translated)', $plurals));
-		$this->assertTrue(in_array('19 ends in 11-20 (translated)', $plurals));
-		$this->assertTrue(in_array('20 ends in 11-20 (translated)', $plurals));
-		$this->assertTrue(in_array('21 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('22 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 13 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 is 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 is 0 or ends in 01-10 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 ends in 11-20 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
-	}
-
-/**
- * testMoRulesFourteen method
- *
- * @return void
- */
-	public function testMoRulesFourteen() {
-		Configure::write('Config.language', 'rule_14_mo');
-		$this->assertRulesFourteen();
 	}
 
 /**
- * testPoRulesFourteen method
+ * Tests that a default translator is created and messages are parsed
+ * correclty
  *
  * @return void
  */
-	public function testPoRulesFourteen() {
-		Configure::write('Config.language', 'rule_14_po');
-		$this->assertRulesFourteen();
+	public function testDefaultTranslator() {
+		$translator = I18n::translator();
+		$this->assertInstanceOf('Aura\Intl\Translator', $translator);
+		$this->assertEquals('%d is 1 (po translated)', $translator->translate('%d = 1'));
 	}
 
 /**
- * Assertions for plural rules fourteen
+ * Tests that the translator can automatically load messages from a .mo file
  *
  * @return void
  */
-	public function assertRulesFourteen() {
-		$singular = $this->_singular();
-		$this->assertEquals('Plural Rule 14 (translated)', $singular);
-
-		$plurals = $this->_plural();
-		$this->assertTrue(in_array('0 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('1 ends in 1 (translated)', $plurals));
-		$this->assertTrue(in_array('2 ends in 2 (translated)', $plurals));
-		$this->assertTrue(in_array('3 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('4 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('5 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('6 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('7 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('8 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('9 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('10 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('11 ends in 1 (translated)', $plurals));
-		$this->assertTrue(in_array('12 ends in 2 (translated)', $plurals));
-		$this->assertTrue(in_array('13 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('14 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('15 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('16 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('17 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('18 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('19 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('20 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('21 ends in 1 (translated)', $plurals));
-		$this->assertTrue(in_array('22 ends in 2 (translated)', $plurals));
-		$this->assertTrue(in_array('23 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('24 everything else (translated)', $plurals));
-		$this->assertTrue(in_array('25 everything else (translated)', $plurals));
-
-		$coreSingular = $this->_singularFromCore();
-		$this->assertEquals('Plural Rule 14 (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertTrue(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('1 ends in 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('2 ends in 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('3 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('4 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('11 ends in 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('12 ends in 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('21 ends in 1 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('22 ends in 2 (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertTrue(in_array('25 everything else (from core translated)', $corePlurals));
+	public function testTranslatorLoadMoFile() {
+		$translator = I18n::translator('default', 'es_ES');
+		$this->assertEquals('Plural Rule 6 (translated)', $translator->translate('Plural Rule 1'));
 	}
 
 /**
- * testNoCoreTranslation method
+ * Tests that plural rules are correctly used for the English language
+ * using the sprintf formatter
  *
  * @return void
  */
-	public function testNoCoreTranslation() {
-		Configure::write('Config.language', 'po');
-		$singular = $this->_singular();
-		$this->assertEquals('Po (translated)', $singular);
+	public function testPluralSelection() {
+		I18n::defaultFormatter('sprintf');
+		$translator = I18n::translator(); // en_US
+		$result = $translator->translate('%d = 0 or > 1', ['_count' => 1]);
+		$this->assertEquals('1 is 1 (po translated)', $result);
 
-		$coreSingular = $this->_singularFromCore();
-		$this->assertNotEquals('Po (from core translated)', $coreSingular);
-
-		$corePlurals = $this->_pluralFromCore();
-		$this->assertFalse(in_array('0 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('1 is 1 (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('2 is 2-4 (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('3 is 2-4 (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('4 is 2-4 (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('5 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('6 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('7 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('8 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('9 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('10 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('11 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('12 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('13 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('14 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('15 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('16 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('17 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('18 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('19 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('20 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('21 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('22 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('23 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('24 everything else (from core translated)', $corePlurals));
-		$this->assertFalse(in_array('25 everything else (from core translated)', $corePlurals));
+		$result = $translator->translate('%d = 0 or > 1', ['_count' => 2]);
+		$this->assertEquals('2 is 2-4 (po translated)', $result);
 	}
 
 /**
- * testPluginTranslation method
+ * Tests that plural rules are correctly used for the English language
+ * using the basic formatter
  *
  * @return void
  */
-	public function testPluginTranslation() {
-		Configure::write('Config.language', 'po');
-		$singular = $this->_domainSingular();
-		$this->assertEquals('Plural Rule 1 (from plugin)', $singular);
+	public function testPluralSelectionBasicFormatter() {
+		$translator = I18n::translator('special');
+		$result = $translator->translate('There are {0} things', ['_count' => 2, 'plenty']);
+		$this->assertEquals('There are plenty things', $result);
 
-		$plurals = $this->_domainPlural();
-		$this->assertTrue(in_array('0 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('1 = 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('2 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('3 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('4 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('5 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('6 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('7 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('8 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('9 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('10 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('11 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('12 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('13 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('14 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('15 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('16 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('17 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('18 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('19 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('20 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('21 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('22 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('23 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('24 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('25 = 0 or > 1 (from plugin)', $plurals));
+		$result = $translator->translate('There are {0} things', ['_count' => 1]);
+		$this->assertEquals('There is only one', $result);
 	}
 
 /**
- * testPoMultipleLineTranslation method
+ * Tests that custom translation packages can be created on the fly and used later on
  *
  * @return void
  */
-	public function testPoMultipleLineTranslation() {
-		Configure::write('Config.language', 'po');
-
-		$string = "This is a multiline translation\n";
-		$string .= "broken up over multiple lines.\n";
-		$string .= "This is the third line.\n";
-		$string .= "This is the forth line.";
-		$result = __($string);
+	public function testCreateCustomTranslationPackage() {
+		I18n::translator('custom', 'fr_FR', function() {
+			$package = new Package('default');
+			$package->setMessages([
+				'Cow' => 'Le moo'
+			]);
+			return $package;
+		});
 
-		$expected = "This is a multiline translation\n";
-		$expected .= "broken up over multiple lines.\n";
-		$expected .= "This is the third line.\n";
-		$expected .= "This is the forth line. (translated)";
-		$this->assertEquals($expected, $result);
-
-		// Windows Newline is \r\n
-		$string = "This is a multiline translation\r\n";
-		$string .= "broken up over multiple lines.\r\n";
-		$string .= "This is the third line.\r\n";
-		$string .= "This is the forth line.";
-		$result = __($string);
-		$this->assertEquals($expected, $result);
-
-		$singular = "valid\nsecond line";
-		$plural = "valids\nsecond line";
-
-		$result = __n($singular, $plural, 1);
-		$expected = "v\nsecond line";
-		$this->assertEquals($expected, $result);
-
-		$result = __n($singular, $plural, 2);
-		$expected = "vs\nsecond line";
-		$this->assertEquals($expected, $result);
-
-		$string = "This is a multiline translation\n";
-		$string .= "broken up over multiple lines.\n";
-		$string .= "This is the third line.\n";
-		$string .= "This is the forth line.";
-
-		$singular = "%d = 1\n" . $string;
-		$plural = "%d = 0 or > 1\n" . $string;
-
-		$result = __n($singular, $plural, 1);
-		$expected = "%d is 1\n" . $string;
-		$this->assertEquals($expected, $result);
-
-		$result = __n($singular, $plural, 2);
-		$expected = "%d is 2-4\n" . $string;
-		$this->assertEquals($expected, $result);
-
-		// Windows Newline is \r\n
-		$string = "This is a multiline translation\r\n";
-		$string .= "broken up over multiple lines.\r\n";
-		$string .= "This is the third line.\r\n";
-		$string .= "This is the forth line.";
-
-		$singular = "%d = 1\r\n" . $string;
-		$plural = "%d = 0 or > 1\r\n" . $string;
-
-		$result = __n($singular, $plural, 1);
-		$expected = "%d is 1\n" . str_replace("\r\n", "\n", $string);
-		$this->assertEquals($expected, $result);
-
-		$result = __n($singular, $plural, 2);
-		$expected = "%d is 2-4\n" . str_replace("\r\n", "\n", $string);
-		$this->assertEquals($expected, $result);
+		$translator = I18n::translator('custom', 'fr_FR');
+		$this->assertEquals('Le moo', $translator->translate('Cow'));
 	}
 
 /**
- * testPoNoTranslationNeeded method
+ * Tests that messages can also be loaded from plugins by using the
+ * domain = plugin_name convention
  *
  * @return void
  */
-	public function testPoNoTranslationNeeded() {
-		Configure::write('Config.language', 'po');
-		$result = __('No Translation needed');
-		$this->assertEquals('No Translation needed', $result);
+	public function testPluginMesagesLoad() {
+		Plugin::load('TestPlugin');
+		$translator = I18n::translator('test_plugin');
+		$this->assertEquals(
+			'Plural Rule 1 (from plugin)',
+			$translator->translate('Plural Rule 1')
+		);
 	}
 
 /**
- * testPoQuotedString method
+ * Tests that messages messages from a plugin can be automatically
+ * overridden by messages in app
  *
  * @return void
  */
-	public function testPoQuotedString() {
-		Configure::write('Config.language', 'po');
-		$expected = 'this is a "quoted string" (translated)';
-		$this->assertEquals($expected, __('this is a "quoted string"'));
+	public function testPluginOverride() {
+		Plugin::load('TestTheme');
+		$translator = I18n::translator('test_theme');
+		$this->assertEquals(
+			'translated',
+			$translator->translate('A Message')
+		);
 	}
 
 /**
- * testFloatValue method
+ * Tests the defaultLocale method
  *
  * @return void
  */
-	public function testFloatValue() {
-		Configure::write('Config.language', 'rule_9_po');
-
-		$result = __n('%d = 1', '%d = 0 or > 1', (float)1);
-		$expected = '%d is 1 (translated)';
-		$this->assertEquals($expected, $result);
-
-		$result = __n('%d = 1', '%d = 0 or > 1', (float)2);
-		$expected = "%d ends in 2-4, not 12-14 (translated)";
-		$this->assertEquals($expected, $result);
-
-		$result = __n('%d = 1', '%d = 0 or > 1', (float)5);
-		$expected = "%d everything else (translated)";
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * testCategory method
- *
- * @return void
- */
-	public function testCategory() {
-		Configure::write('Config.language', 'po');
-		// Test with default (I18n constant) category.
-		$category = $this->_category();
-		$this->assertEquals('Monetary Po (translated)', $category);
-		// Test with category number represenation.
-		$category = $this->_category(3);
-		$this->assertEquals('Monetary Po (translated)', $category);
+	public function testDefaultLocale() {
+		$this->assertEquals('en_US', I18n::defaultLocale());
+		$this->assertEquals('en_US', ini_get('intl.default_locale'));
+		I18n::defaultLocale('fr_FR');
+		$this->assertEquals('fr_FR', I18n::defaultLocale());
+		$this->assertEquals('fr_FR', ini_get('intl.default_locale'));
 	}
 
 /**
- * testPluginCategory method
+ * Tests that changing the default locale also changes the way translators
+ * are fetched
  *
  * @return void
  */
-	public function testPluginCategory() {
-		Configure::write('Config.language', 'po');
+	public function testGetTranslatorByDefaultLocale() {
+		I18n::translator('custom', 'fr_FR', function() {
+			$package = new Package('default');
+			$package->setMessages([
+				'Cow' => 'Le moo'
+			]);
+			return $package;
+		});
 
-		$singular = $this->_domainCategorySingular();
-		$this->assertEquals('Monetary Plural Rule 1 (from plugin)', $singular);
-
-		$plurals = $this->_domainCategoryPlural();
-		$this->assertTrue(in_array('Monetary 0 = 0 or > 1 (from plugin)', $plurals));
-		$this->assertTrue(in_array('Monetary 1 = 1 (from plugin)', $plurals));
+		I18n::defaultLocale('fr_FR');
+		$translator = I18n::translator('custom');
+		$this->assertEquals('Le moo', $translator->translate('Cow'));
 	}
 
 /**
- * testCategoryThenSingular method
+ * Tests the __() function
  *
  * @return void
  */
-	public function testCategoryThenSingular() {
-		Configure::write('Config.language', 'po');
-		$category = $this->_category();
-		$this->assertEquals('Monetary Po (translated)', $category);
-
-		$singular = $this->_singular();
-		$this->assertEquals('Po (translated)', $singular);
+	public function testBasicTranslateFunction() {
+		I18n::defaultFormatter('sprintf');
+		$this->assertEquals('%d is 1 (po translated)', __('%d = 1'));
+		$this->assertEquals('1 is 1 (po translated)', __('%d = 1', 1));
 	}
 
 /**
- * testTimeDefinition method
+ * Tests the __n() function
  *
  * @return void
  */
-	public function testTimeDefinition() {
-		Configure::write('Config.language', 'po');
-		$result = __c('d_fmt', 5);
-		$expected = '%m/%d/%Y';
-		$this->assertEquals($expected, $result);
+	public function testBasicTranslatePluralFunction() {
+		I18n::defaultFormatter('sprintf');
+		$result = __n('singular msg', '%d = 0 or > 1', 1);
+		$this->assertEquals('1 is 1 (po translated)', $result);
 
-		$result = __c('am_pm', 5);
-		$expected = array('AM', 'PM');
-		$this->assertEquals($expected, $result);
-
-		$result = __c('abmon', 5);
-		$expected = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-		$this->assertEquals($expected, $result);
+		$result = __n('singular msg', '%d = 0 or > 1', 2);
+		$this->assertEquals('2 is 2-4 (po translated)', $result);
 	}
 
 /**
- * testTimeDefinitionJapanese method
+ * Tests the __d() function
  *
  * @return void
  */
-	public function testTimeDefinitionJapanese() {
-		Configure::write('Config.language', 'ja_jp');
-		$result = __c('d_fmt', 5);
-
-		$expected = "%Y年%m月%d日";
-
-		$this->assertEquals($expected, $result);
-
-		$result = __c('am_pm', 5);
-		$expected = array("午前", "午後");
-		$this->assertEquals($expected, $result);
-
-		$result = __c('abmon', 5);
-		$expected = array(" 1月", " 2月", " 3月", " 4月", " 5月", " 6月", " 7月", " 8月", " 9月", "10月", "11月", "12月");
-		$this->assertEquals($expected, $result);
+	public function testBasicDomainFunction() {
+		I18n::translator('custom', 'en_US', function() {
+			$package = new Package('default');
+			$package->setMessages([
+				'Cow' => 'Le moo',
+				'The {0} is tasty' => 'The {0} is delicious'
+			]);
+			return $package;
+		});
+		$result = __d('custom', 'The {0} is tasty', ['fruit']);
+		$this->assertEquals('The fruit is delicious', $result);
 	}
 
 /**
- * testTranslateLanguageParam method
+ * Tests the __dn() function
  *
  * @return void
  */
-	public function testTranslateLanguageParam() {
-		Configure::write('Config.language', 'rule_0_po');
-
-		$result = I18n::translate('Plural Rule 1', null, null, I18n::LC_MESSAGES);
-		$expected = 'Plural Rule 0 (translated)';
-		$this->assertEquals($expected, $result);
-
-		$result = I18n::translate('Plural Rule 1', null, null, I18n::LC_MESSAGES, null, 'rule_1_po');
-		$expected = 'Plural Rule 1 (translated)';
-		$this->assertEquals($expected, $result);
+	public function testBasicDomainPluralFunction() {
+		I18n::translator('custom', 'en_US', function() {
+			$package = new Package('default');
+			$package->setMessages([
+				'Cow' => 'Le Moo',
+				'Cows' => [
+					'Le Moo',
+					'Les Moos'
+				]
+			]);
+			return $package;
+		});
+		$this->assertEquals('Le Moo', __dn('custom', 'Cow', 'Cows', 1));
+		$this->assertEquals('Les Moos', __dn('custom', 'Cow', 'Cows', 2));
 	}
 
 /**
- * Test that the '' domain causes exceptions.
+ * Tests the __x() function
  *
- * @expectedException \Cake\Error\Exception
  * @return void
  */
-	public function testTranslateEmptyDomain() {
-		I18n::translate('Plural Rule 1', null, '');
+	public function testBasicContextFunction() {
+		I18n::translator('default', 'en_US', function() {
+			$package = new Package('default');
+			$package->setMessages([
+				'letter' => [
+					'_context' => [
+						'character' => 'The letter {0}',
+						'communication' => 'She wrote a letter to {0}'
+					]
+				]
+			]);
+			return $package;
+		});
+		$this->assertEquals('The letter A', __x('character', 'letter', ['A']));
+		$this->assertEquals(
+			'She wrote a letter to Thomas',
+			__x('communication', 'letter', ['Thomas'])
+		);
 	}
 
 /**
- * testLoadLocaleDefinition method
+ * Tests that translators are cached for performance
  *
  * @return void
  */
-	public function testLoadLocaleDefinition() {
-		$path = current(App::path('Locale'));
-		$result = I18n::loadLocaleDefinition($path . 'nld' . DS . 'LC_TIME');
-		$expected = array('zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag');
-		$this->assertSame($expected, $result['day']);
-	}
+	public function testTranslatorCache() {
+		$english = I18n::translator();
+		$spanish = I18n::translator('default', 'es_ES');
 
-/**
- * Test basic context support
- *
- * @return void
- */
-	public function testContext() {
-		I18n::clear();
-		Configure::write('Config.language', 'nld');
+		$cached = Cache::read('translations.default.en_US', '_cake_core_');
+		$this->assertEquals($english, $cached);
 
-		$this->assertSame("brief", __x('mail', 'letter'));
-		$this->assertSame("letter", __x('character', 'letter'));
-		$this->assertSame("bal", __x('spherical object', 'ball'));
-		$this->assertSame("danspartij", __x('social gathering', 'ball'));
-		$this->assertSame("balans", __('balance'));
-		$this->assertSame("saldo", __x('money', 'balance'));
-	}
+		$cached = Cache::read('translations.default.es_ES', '_cake_core_');
+		$this->assertEquals($spanish, $cached);
 
-/**
- * Singular method
- *
- * @param string $domain
- * @param int $category
- * @return void
- */
-	protected function _domainCategorySingular($domain = 'test_plugin', $category = 3) {
-		$singular = __dc($domain, 'Plural Rule 1', $category);
-		return $singular;
+		$this->assertSame($english, I18n::translator());
+		$this->assertSame($spanish, I18n::translator('default', 'es_ES'));
 	}
 
 /**
- * Plural method
+ * Tests that it is possible to register a generic translators factory for a domain
+ * instead of having to create them manually
  *
- * @param string $domain
- * @param int $category
  * @return void
  */
-	protected function _domainCategoryPlural($domain = 'test_plugin', $category = 3) {
-		$plurals = array();
-		for ($number = 0; $number <= 25; $number++) {
-			$plurals[] = sprintf(__dcn($domain, '%d = 1', '%d = 0 or > 1', (float)$number, $category), (float)$number);
-		}
-		return $plurals;
-	}
+	public function testloaderFactory() {
+		I18n::config('custom', function($name, $locale) {
+			$this->assertEquals('custom', $name);
+			$package = new Package('default');
 
-/**
- * Singular method
- *
- * @param string $domain
- * @return void
- */
-	protected function _domainSingular($domain = 'test_plugin') {
-		$singular = __d($domain, 'Plural Rule 1');
-		return $singular;
-	}
+			if ($locale == 'fr_FR') {
+				$package->setMessages([
+				'Cow' => 'Le Moo',
+				'Cows' => [
+					'Le Moo',
+					'Les Moos'
+					]
+				]);
+			}
 
-/**
- * Plural method
- *
- * @param string $domain
- * @return void
- */
-	protected function _domainPlural($domain = 'test_plugin') {
-		$plurals = array();
-		for ($number = 0; $number <= 25; $number++) {
-			$plurals[] = sprintf(__dn($domain, '%d = 1', '%d = 0 or > 1', (float)$number), (float)$number);
-		}
-		return $plurals;
-	}
+			if ($locale === 'es_ES') {
+				$package->setMessages([
+				'Cow' => 'El Moo',
+				'Cows' => [
+					'El Moo',
+					'Los Moos'
+					]
+				]);
+			}
 
-/**
- * category method
- *
- * @param int $category
- * @return void
- */
-	protected function _category($category = I18n::LC_MONETARY) {
-		$singular = __c('Plural Rule 1', $category);
-		return $singular;
-	}
+			return $package;
+		});
 
-/**
- * Singular method
- *
- * @return void
- */
-	protected function _singular() {
-		$singular = __('Plural Rule 1');
-		return $singular;
-	}
+		$translator = I18n::translator('custom', 'fr_FR');
+		$this->assertEquals('Le Moo', $translator->translate('Cow'));
+		$this->assertEquals('Les Moos', $translator->translate('Cows', ['_count' => 2]));
 
-/**
- * Plural method
- *
- * @return void
- */
-	protected function _plural() {
-		$plurals = array();
-		for ($number = 0; $number <= 25; $number++) {
-			$plurals[] = sprintf(__n('%d = 1', '%d = 0 or > 1', (float)$number), (float)$number);
-		}
-		return $plurals;
-	}
+		$translator = I18n::translator('custom', 'es_ES');
+		$this->assertEquals('El Moo', $translator->translate('Cow'));
+		$this->assertEquals('Los Moos', $translator->translate('Cows', ['_count' => 2]));
 
-/**
- * singularFromCore method
- *
- * @return void
- */
-	protected function _singularFromCore() {
-		$singular = __('Plural Rule 1 (from core)');
-		return $singular;
+		$translator = I18n::translator();
+		$this->assertEquals('%d is 1 (po translated)', $translator->translate('%d = 1'));
 	}
 
-/**
- * pluralFromCore method
- *
- * @return void
- */
-	protected function _pluralFromCore() {
-		$plurals = array();
-		for ($number = 0; $number <= 25; $number++) {
-			$plurals[] = sprintf(__n('%d = 1 (from core)', '%d = 0 or > 1 (from core)', (float)$number), (float)$number);
-		}
-		return $plurals;
-	}
 }

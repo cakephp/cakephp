@@ -108,7 +108,7 @@ class TestTask extends BakeTask {
  */
 	public function outputTypeChoices() {
 		$this->out(
-			__d('cake_console', 'You must provide a class type to bake a test for. The valid types are:'),
+			'You must provide a class type to bake a test for. The valid types are:',
 			2
 		);
 		$i = 0;
@@ -133,7 +133,7 @@ class TestTask extends BakeTask {
 		}
 
 		$this->out(
-			__d('cake_console', 'You must provide a class to bake a test for. Some possible options are:'),
+			'You must provide a class to bake a test for. Some possible options are:',
 			2
 		);
 		$options = $this->_getClassOptions($type);
@@ -180,7 +180,7 @@ class TestTask extends BakeTask {
 			$fixtures = array_map('trim', explode(',', $this->params['fixtures']));
 			$this->_fixtures = array_filter($fixtures);
 		} elseif ($this->typeCanDetectFixtures($type) && class_exists($fullClassName)) {
-			$this->out(__d('cake_console', 'Bake is detecting possible fixtures...'));
+			$this->out('Bake is detecting possible fixtures...');
 			$testSubject = $this->buildTestSubject($type, $fullClassName);
 			$this->generateFixtureList($testSubject);
 		}
@@ -197,7 +197,7 @@ class TestTask extends BakeTask {
 		list($namespace, $className) = namespaceSplit($fullClassName);
 		list($baseNamespace, $subNamespace) = explode('\\', $namespace, 2);
 
-		$this->out("\n" . __d('cake_console', 'Baking test case for %s ...', $fullClassName), 1, Shell::QUIET);
+		$this->out("\n" . sprintf('Baking test case for %s ...', $fullClassName), 1, Shell::QUIET);
 
 		$this->Template->set('fixtures', $this->_fixtures);
 		$this->Template->set('plugin', $this->plugin);
@@ -497,9 +497,9 @@ class TestTask extends BakeTask {
 		$parser = parent::getOptionParser();
 
 		$parser->description(
-			__d('cake_console', 'Bake test case skeletons for classes.')
+			'Bake test case skeletons for classes.'
 		)->addArgument('type', [
-			'help' => __d('cake_console', 'Type of class to bake, can be any of the following: controller, model, helper, component or behavior.'),
+			'help' => 'Type of class to bake, can be any of the following: controller, model, helper, component or behavior.',
 			'choices' => [
 				'Controller', 'controller',
 				'Table', 'table',
@@ -509,9 +509,9 @@ class TestTask extends BakeTask {
 				'Behavior', 'behavior'
 			]
 		])->addArgument('name', [
-			'help' => __d('cake_console', 'An existing class to bake tests for.')
+			'help' => 'An existing class to bake tests for.'
 		])->addOption('fixtures', [
-			'help' => __d('cake_console', 'A comma separated list of fixture names you want to include.')
+			'help' => 'A comma separated list of fixture names you want to include.'
 		]);
 
 		return $parser;

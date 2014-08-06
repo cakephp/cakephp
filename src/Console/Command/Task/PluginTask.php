@@ -65,12 +65,12 @@ class PluginTask extends BakeTask {
 		$plugin = $this->_camelize($name);
 		$pluginPath = $this->_pluginPath($plugin);
 		if (is_dir($pluginPath)) {
-			$this->out(__d('cake_console', 'Plugin: %s already exists, no action taken', $plugin));
-			$this->out(__d('cake_console', 'Path: %s', $pluginPath));
+			$this->out(sprintf('Plugin: %s already exists, no action taken', $plugin));
+			$this->out(sprintf('Path: %s', $pluginPath));
 			return false;
 		}
 		if (!$this->bake($plugin)) {
-			$this->error(__d('cake_console', "An error occurred trying to bake: %s in %s", $plugin, $this->path . $plugin));
+			$this->error(sprintf("An error occurred trying to bake: %s in %s", $plugin, $this->path . $plugin));
 		}
 	}
 
@@ -86,13 +86,13 @@ class PluginTask extends BakeTask {
 			$this->findPath($pathOptions);
 		}
 		$this->hr();
-		$this->out(__d('cake_console', "<info>Plugin Name:</info> %s", $plugin));
-		$this->out(__d('cake_console', "<info>Plugin Directory:</info> %s", $this->path . $plugin));
+		$this->out(sprintf("<info>Plugin Name:</info> %s", $plugin));
+		$this->out(sprintf("<info>Plugin Directory:</info> %s", $this->path . $plugin));
 		$this->hr();
 
 		$classBase = 'src';
 
-		$looksGood = $this->in(__d('cake_console', 'Look okay?'), ['y', 'n', 'q'], 'y');
+		$looksGood = $this->in('Look okay?', ['y', 'n', 'q'], 'y');
 
 		if (strtolower($looksGood) === 'y') {
 			$Folder = new Folder($this->path . $plugin);
@@ -146,7 +146,7 @@ class PluginTask extends BakeTask {
 			$this->_generateTestBootstrap($plugin, $this->path);
 
 			$this->hr();
-			$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $plugin, $this->path . $plugin), 2);
+			$this->out(sprintf('<success>Created:</success> %s in %s', $plugin, $this->path . $plugin), 2);
 		}
 
 		return true;
@@ -186,7 +186,7 @@ class PluginTask extends BakeTask {
 		$this->Template->set([
 			'plugin' => $plugin,
 		]);
-		$this->out( __d('cake_console', 'Generating routes.php file...'));
+		$this->out('Generating routes.php file...');
 		$out = $this->Template->generate('config', 'routes');
 		$file = $path . $plugin . DS . 'config' . DS . 'routes.php';
 		$this->createFile($file, $out);
@@ -204,7 +204,7 @@ class PluginTask extends BakeTask {
 			'plugin' => $plugin,
 			'path' => $path
 		]);
-		$this->out( __d('cake_console', 'Generating phpunit.xml file...'));
+		$this->out('Generating phpunit.xml file...');
 		$out = $this->Template->generate('test', 'phpunit.xml');
 		$file = $path . $plugin . DS . 'phpunit.xml';
 		$this->createFile($file, $out);
@@ -223,7 +223,7 @@ class PluginTask extends BakeTask {
 			'path' => $path,
 			'root' => ROOT
 		]);
-		$this->out( __d('cake_console', 'Generating tests/bootstrap.php file...'));
+		$this->out('Generating tests/bootstrap.php file...');
 		$out = $this->Template->generate('test', 'bootstrap');
 		$file = $path . $plugin . DS . 'tests' . DS . 'bootstrap.php';
 		$this->createFile($file, $out);
@@ -249,7 +249,7 @@ class PluginTask extends BakeTask {
 		$config['autoload']['psr-4'][$plugin . '\\'] = "./plugins/$plugin/src";
 		$config['autoload']['psr-4'][$plugin . '\\Test\\'] = "./plugins/$plugin/tests";
 
-		$this->out(__d('cake_console', '<info>Modifying composer autoloader</info>'));
+		$this->out('<info>Modifying composer autoloader</info>');
 
 		file_put_contents(
 			$file,
@@ -259,7 +259,7 @@ class PluginTask extends BakeTask {
 		$composer = $this->Project->findComposer();
 
 		if (!$composer) {
-			$this->error(__d('cake_console', 'Could not locate composer, Add composer to your PATH, or use the -composer option.'));
+			$this->error('Could not locate composer, Add composer to your PATH, or use the -composer option.');
 			return false;
 		}
 
@@ -269,7 +269,7 @@ class PluginTask extends BakeTask {
 			$this->callProcess($command);
 		} catch (\RuntimeException $e) {
 			$error = $e->getMessage();
-			$this->error(__d('cake_console', 'Could not run `composer dump-autoload`: %s', $error));
+			$this->error(sprintf('Could not run `composer dump-autoload`: %s', $error));
 			return false;
 		}
 
@@ -296,7 +296,7 @@ class PluginTask extends BakeTask {
 			foreach ($pathOptions as $i => $option) {
 				$this->out($i + 1 . '. ' . $option);
 			}
-			$prompt = __d('cake_console', 'Choose a plugin path from the paths above.');
+			$prompt = 'Choose a plugin path from the paths above.';
 			$choice = $this->in($prompt, null, 1);
 			if (intval($choice) > 0 && intval($choice) <= $max) {
 				$valid = true;
@@ -312,14 +312,14 @@ class PluginTask extends BakeTask {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		$parser->description(__d('cake_console',
+		$parser->description(
 			'Create the directory structure, AppController class and testing setup for a new plugin. ' .
 			'Can create plugins in any of your bootstrapped plugin paths.'
-		))->addArgument('name', [
-			'help' => __d('cake_console', 'CamelCased name of the plugin to create.')
+		)->addArgument('name', [
+			'help' => 'CamelCased name of the plugin to create.'
 		])->addOption('composer', [
 			'default' => ROOT . '/composer.phar',
-			'help' => __d('cake_console', 'The path to the composer executable.')
+			'help' => 'The path to the composer executable.'
 		])->removeOption('plugin');
 
 		return $parser;

@@ -165,7 +165,7 @@ class TemplateTask extends Shell {
 				return $templatePath;
 			}
 		}
-		$this->err(__d('cake_console', 'Could not find template for %s', $filename));
+		$this->err('Could not find template for %s', $filename);
 		return false;
 	}
 

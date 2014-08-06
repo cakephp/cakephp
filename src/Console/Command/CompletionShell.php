@@ -102,38 +102,38 @@ class CompletionShell extends Shell {
 		$parser = parent::getOptionParser();
 
 		$parser->description(
-			__d('cake_console', 'Used by shells like bash to autocomplete command name, options and arguments')
+			'Used by shells like bash to autocomplete command name, options and arguments'
 		)->addSubcommand('commands', [
-			'help' => __d('cake_console', 'Output a list of available commands'),
+			'help' => 'Output a list of available commands',
 			'parser' => [
-				'description' => __d('cake_console', 'List all availables'),
+				'description' => 'List all availables',
 			]
 		])->addSubcommand('subcommands', [
-			'help' => __d('cake_console', 'Output a list of available subcommands'),
+			'help' => 'Output a list of available subcommands',
 			'parser' => [
-				'description' => __d('cake_console', 'List subcommands for a command'),
+				'description' => 'List subcommands for a command',
 				'arguments' => [
 					'command' => [
-						'help' => __d('cake_console', 'The command name'),
+						'help' => 'The command name',
 						'required' => false,
 					]
 				]
 			]
 		])->addSubcommand('options', [
-			'help' => __d('cake_console', 'Output a list of available options'),
+			'help' => 'Output a list of available options',
 			'parser' => [
-				'description' => __d('cake_console', 'List options'),
+				'description' => 'List options',
 				'arguments' => [
 					'command' => [
-						'help' => __d('cake_console', 'The command name'),
+						'help' => 'The command name',
 						'required' => false,
 					]
 				]
 			]
 		])->addSubcommand('fuzzy', [
-			'help' => __d('cake_console', 'Guess autocomplete')
+			'help' => 'Guess autocomplete'
 		])->epilog([
-			__d('cake_console', 'This command is not intended to be called manually'),
+			'This command is not intended to be called manually',
 		]);
 
 		return $parser;

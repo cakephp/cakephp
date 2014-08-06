@@ -357,25 +357,25 @@ class Time extends Carbon implements JsonSerializable {
 
 		$relativeDate = '';
 		if ($fNum >= 1 && $years > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d year', '%d years', $years, $years);
+			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} year', '{0} years', $years, $years);
 		}
 		if ($fNum >= 2 && $months > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d month', '%d months', $months, $months);
+			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} month', '{0} months', $months, $months);
 		}
 		if ($fNum >= 3 && $weeks > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d week', '%d weeks', $weeks, $weeks);
+			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} week', '{0} weeks', $weeks, $weeks);
 		}
 		if ($fNum >= 4 && $days > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d day', '%d days', $days, $days);
+			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} day', '{0} days', $days, $days);
 		}
 		if ($fNum >= 5 && $hours > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d hour', '%d hours', $hours, $hours);
+			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} hour', '{0} hours', $hours, $hours);
 		}
 		if ($fNum >= 6 && $minutes > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d minute', '%d minutes', $minutes, $minutes);
+			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} minute', '{0} minutes', $minutes, $minutes);
 		}
 		if ($fNum >= 7 && $seconds > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d second', '%d seconds', $seconds, $seconds);
+			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '{0} second', '{0} seconds', $seconds, $seconds);
 		}
 
 		// When time has passed

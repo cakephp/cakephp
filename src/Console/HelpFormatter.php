@@ -64,12 +64,12 @@ class HelpFormatter {
 			$out[] = String::wrap($description, $width);
 			$out[] = '';
 		}
-		$out[] = __d('cake_console', '<info>Usage:</info>');
+		$out[] = '<info>Usage:</info>';
 		$out[] = $this->_generateUsage();
 		$out[] = '';
 		$subcommands = $parser->subcommands();
 		if (!empty($subcommands)) {
-			$out[] = __d('cake_console', '<info>Subcommands:</info>');
+			$out[] = '<info>Subcommands:</info>';
 			$out[] = '';
 			$max = $this->_getMaxLength($subcommands) + 2;
 			foreach ($subcommands as $command) {
@@ -80,14 +80,14 @@ class HelpFormatter {
 				]);
 			}
 			$out[] = '';
-			$out[] = __d('cake_console', 'To see help on a subcommand use <info>`cake %s [subcommand] --help`</info>', $parser->command());
+			$out[] = sprintf('To see help on a subcommand use <info>`cake %s [subcommand] --help`</info>', $parser->command());
 			$out[] = '';
 		}
 
 		$options = $parser->options();
 		if (!empty($options)) {
 			$max = $this->_getMaxLength($options) + 8;
-			$out[] = __d('cake_console', '<info>Options:</info>');
+			$out[] = '<info>Options:</info>';
 			$out[] = '';
 			foreach ($options as $option) {
 				$out[] = String::wrap($option->help($max), [
@@ -102,7 +102,7 @@ class HelpFormatter {
 		$arguments = $parser->arguments();
 		if (!empty($arguments)) {
 			$max = $this->_getMaxLength($arguments) + 2;
-			$out[] = __d('cake_console', '<info>Arguments:</info>');
+			$out[] = '<info>Arguments:</info>';
 			$out[] = '';
 			foreach ($arguments as $argument) {
 				$out[] = String::wrap($argument->help($max), [

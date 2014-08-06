@@ -77,7 +77,7 @@ class ViewBlock {
  */
 	public function start($name) {
 		if (in_array($name, $this->_active)) {
-			throw new Error\Exception(__("A view block with the name '%s' is already/still open.", $name));
+			throw new Error\Exception(sprintf("A view block with the name '%s' is already/still open.", $name));
 		}
 		$this->_active[] = $name;
 		ob_start();

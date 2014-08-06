@@ -357,9 +357,8 @@ if (!function_exists('__')) {
 			return;
 		}
 
-		$translated = I18n::translate($singular);
-		$arguments = func_get_args();
-		return I18n::insertArgs($translated, array_slice($arguments, 1));
+		$arguments = func_num_args() === 2 ? (array)$args : array_slice(func_get_args(), 1);
+		return I18n::translator()->translate($singular, $arguments);
 	}
 
 }
@@ -382,9 +381,11 @@ if (!function_exists('__n')) {
 			return;
 		}
 
-		$translated = I18n::translate($singular, $plural, null, I18n::LC_MESSAGES, $count);
-		$arguments = func_get_args();
-		return I18n::insertArgs($translated, array_slice($arguments, 3));
+		$arguments = func_num_args() === 4 ? (array)$args : array_slice(func_get_args(), 3);
+		return I18n::translator()->translate(
+			$plural,
+			['_count' => $count, '_singular' => $singular] + $arguments
+		);
 	}
 
 }
@@ -404,9 +405,8 @@ if (!function_exists('__d')) {
 		if (!$msg) {
 			return;
 		}
-		$translated = I18n::translate($msg, null, $domain);
-		$arguments = func_get_args();
-		return I18n::insertArgs($translated, array_slice($arguments, 2));
+		$arguments = func_num_args() === 3 ? (array)$args : array_slice(func_get_args(), 2);
+		return I18n::translator($domain)->translate($msg, $arguments);
 	}
 
 }
@@ -430,120 +430,12 @@ if (!function_exists('__dn')) {
 		if (!$singular) {
 			return;
 		}
-		$translated = I18n::translate($singular, $plural, $domain, I18n::LC_MESSAGES, $count);
-		$arguments = func_get_args();
-		return I18n::insertArgs($translated, array_slice($arguments, 4));
-	}
 
-}
-
-if (!function_exists('__dc')) {
-
-/**
- * Allows you to override the current domain for a single message lookup.
- * It also allows you to specify a category.
- *
- * The category argument allows a specific category of the locale settings to be used for fetching a message.
- * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
- *
- * Note that the category must be specified with a class constant of I18n, instead of the constant name. The values are:
- *
- * - LC_ALL       I18n::LC_ALL
- * - LC_COLLATE   I18n::LC_COLLATE
- * - LC_CTYPE     I18n::LC_CTYPE
- * - LC_MONETARY  I18n::LC_MONETARY
- * - LC_NUMERIC   I18n::LC_NUMERIC
- * - LC_TIME      I18n::LC_TIME
- * - LC_MESSAGES  I18n::LC_MESSAGES
- *
- * @param string $domain Domain
- * @param string $msg Message to translate
- * @param int $category Category
- * @param mixed $args Array with arguments or multiple arguments in function
- * @return string translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dc
- */
-	function __dc($domain, $msg, $category, $args = null) {
-		if (!$msg) {
-			return;
-		}
-		$translated = I18n::translate($msg, null, $domain, $category);
-		$arguments = func_get_args();
-		return I18n::insertArgs($translated, array_slice($arguments, 3));
-	}
-
-}
-
-if (!function_exists('__dcn')) {
-
-/**
- * Allows you to override the current domain for a single plural message lookup.
- * It also allows you to specify a category.
- * Returns correct plural form of message identified by $singular and $plural for count $count
- * from domain $domain.
- *
- * The category argument allows a specific category of the locale settings to be used for fetching a message.
- * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
- *
- * Note that the category must be specified with a class constant of I18n, instead of the constant name. The values are:
- *
- * - LC_ALL       I18n::LC_ALL
- * - LC_COLLATE   I18n::LC_COLLATE
- * - LC_CTYPE     I18n::LC_CTYPE
- * - LC_MONETARY  I18n::LC_MONETARY
- * - LC_NUMERIC   I18n::LC_NUMERIC
- * - LC_TIME      I18n::LC_TIME
- * - LC_MESSAGES  I18n::LC_MESSAGES
- *
- * @param string $domain Domain
- * @param string $singular Singular string to translate
- * @param string $plural Plural
- * @param int $count Count
- * @param int $category Category
- * @param mixed $args Array with arguments or multiple arguments in function
- * @return string plural form of translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dcn
- */
-	function __dcn($domain, $singular, $plural, $count, $category, $args = null) {
-		if (!$singular) {
-			return;
-		}
-		$translated = I18n::translate($singular, $plural, $domain, $category, $count);
-		$arguments = func_get_args();
-		return I18n::insertArgs($translated, array_slice($arguments, 5));
-	}
-
-}
-
-if (!function_exists('__c')) {
-
-/**
- * The category argument allows a specific category of the locale settings to be used for fetching a message.
- * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
- *
- * Note that the category must be specified with a class constant of I18n, instead of the constant name. The values are:
- *
- * - LC_ALL       I18n::LC_ALL
- * - LC_COLLATE   I18n::LC_COLLATE
- * - LC_CTYPE     I18n::LC_CTYPE
- * - LC_MONETARY  I18n::LC_MONETARY
- * - LC_NUMERIC   I18n::LC_NUMERIC
- * - LC_TIME      I18n::LC_TIME
- * - LC_MESSAGES  I18n::LC_MESSAGES
- *
- * @param string $msg String to translate
- * @param int $category Category
- * @param mixed $args Array with arguments or multiple arguments in function
- * @return string translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__c
- */
-	function __c($msg, $category, $args = null) {
-		if (!$msg) {
-			return;
-		}
-		$translated = I18n::translate($msg, null, null, $category);
-		$arguments = func_get_args();
-		return I18n::insertArgs($translated, array_slice($arguments, 2));
+		$arguments = func_num_args() === 5 ? (array)$args : array_slice(func_get_args(), 4);
+		return I18n::translator($domain)->translate(
+			$plural,
+			['_count' => $count, '_singular' => $singular] + $arguments
+		);
 	}
 
 }
@@ -564,9 +456,8 @@ if (!function_exists('__x')) {
 			return;
 		}
 
-		$translated = I18n::translate($singular, null, null, null, null, null, $context);
-		$arguments = func_get_args();
-		return I18n::insertArgs($translated, array_slice($arguments, 1));
+		$arguments = func_num_args() === 3 ? (array)$args : array_slice(func_get_args(), 2);
+		return I18n::translator()->translate($singular, ['_context' => $context] + $arguments);
 	}
 
 }

@@ -17,7 +17,7 @@ use Cake\Utility\Inflector;
 <h2>Missing View</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)) ?>
+	<?= sprintf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)); ?>
 </p>
 
 <p>

@@ -74,9 +74,9 @@ class ConsoleErrorHandler extends BaseErrorHandler {
  * @return void
  */
 	protected function _displayException($exception) {
-		$errorName = __d('cake_console', 'Exception:');
+		$errorName = 'Exception:';
 		if ($exception instanceof FatalErrorException) {
-			$errorName = __d('cake_console', 'Fatal Error:');
+			$errorName = 'Fatal Error:';
 		}
 		$message = sprintf(
 			"<error>%s</error> %s in [%s, line %s]",
@@ -98,12 +98,12 @@ class ConsoleErrorHandler extends BaseErrorHandler {
  * @return void
  */
 	protected function _displayError($error, $debug) {
-		$message = __d('cake_console', '%s in [%s, line %s]',
+		$message = sprintf('%s in [%s, line %s]',
 			$error['description'],
 			$error['file'],
 			$error['line']
 		);
-		$message = __d('cake_console', "<error>%s Error:</error> %s\n",
+		$message = sprintf("<error>%s Error:</error> %s\n",
 			$error['error'],
 			$message
 		);

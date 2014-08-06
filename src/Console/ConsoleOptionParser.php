@@ -135,18 +135,18 @@ class ConsoleOptionParser {
 
 		$this->addOption('help', [
 			'short' => 'h',
-			'help' => __d('cake_console', 'Display this help.'),
+			'help' => 'Display this help.',
 			'boolean' => true
 		]);
 
 		if ($defaultOptions) {
 			$this->addOption('verbose', [
 				'short' => 'v',
-				'help' => __d('cake_console', 'Enable verbose output.'),
+				'help' => 'Enable verbose output.',
 				'boolean' => true
 			])->addOption('quiet', [
 				'short' => 'q',
-				'help' => __d('cake_console', 'Enable quiet output.'),
+				'help' => 'Enable quiet output.',
 				'boolean' => true
 			]);
 		}
@@ -496,7 +496,7 @@ class ConsoleOptionParser {
 		foreach ($this->_args as $i => $arg) {
 			if ($arg->isRequired() && !isset($args[$i]) && empty($params['help'])) {
 				throw new Error\ConsoleException(
-					__d('cake_console', 'Missing required arguments. %s is required.', $arg->name())
+					sprintf('Missing required arguments. %s is required.', $arg->name())
 				);
 			}
 		}
@@ -580,7 +580,7 @@ class ConsoleOptionParser {
 			}
 		}
 		if (!isset($this->_shortOptions[$key])) {
-			throw new Error\ConsoleException(__d('cake_console', 'Unknown short option `%s`', $key));
+			throw new Error\ConsoleException(sprintf('Unknown short option `%s`', $key));
 		}
 		$name = $this->_shortOptions[$key];
 		return $this->_parseOption($name, $params);
@@ -596,7 +596,7 @@ class ConsoleOptionParser {
  */
 	protected function _parseOption($name, $params) {
 		if (!isset($this->_options[$name])) {
-			throw new Error\ConsoleException(__d('cake_console', 'Unknown option `%s`', $name));
+			throw new Error\ConsoleException(sprintf('Unknown option `%s`', $name));
 		}
 		$option = $this->_options[$name];
 		$isBoolean = $option->isBoolean();
@@ -649,7 +649,7 @@ class ConsoleOptionParser {
 		}
 		$next = count($args);
 		if (!isset($this->_args[$next])) {
-			throw new Error\ConsoleException(__d('cake_console', 'Too many arguments.'));
+			throw new Error\ConsoleException('Too many arguments.');
 		}
 
 		if ($this->_args[$next]->validChoice($argument)) {

@@ -132,7 +132,4 @@ Log::config([
 	]
 ]);
 
-// Initialize the empty language.
-I18n::translate('empty');
-
 Carbon\Carbon::setTestNow(Carbon\Carbon::now());

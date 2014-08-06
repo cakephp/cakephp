@@ -37,13 +37,13 @@ class I18nShell extends Shell {
  * @return void
  */
 	public function main() {
-		$this->out(__d('cake_console', '<info>I18n Shell</info>'));
+		$this->out('<info>I18n Shell</info>');
 		$this->hr();
-		$this->out(__d('cake_console', '[E]xtract POT file from sources'));
-		$this->out(__d('cake_console', '[H]elp'));
-		$this->out(__d('cake_console', '[Q]uit'));
+		$this->out('[E]xtract POT file from sources');
+		$this->out('[H]elp');
+		$this->out('[Q]uit');
 
-		$choice = strtolower($this->in(__d('cake_console', 'What would you like to do?'), ['E', 'H', 'Q']));
+		$choice = strtolower($this->in('What would you like to do?', ['E', 'H', 'Q']));
 		switch ($choice) {
 			case 'e':
 				$this->Extract->execute();
@@ -54,7 +54,7 @@ class I18nShell extends Shell {
 			case 'q':
 				return $this->_stop();
 			default:
-				$this->out(__d('cake_console', 'You have made an invalid selection. Please choose a command to execute by entering E, I, H, or Q.'));
+				$this->out('You have made an invalid selection. Please choose a command to execute by entering E, I, H, or Q.');
 		}
 		$this->hr();
 		$this->main();
@@ -69,9 +69,9 @@ class I18nShell extends Shell {
 		$parser = parent::getOptionParser();
 
 		$parser->description(
-			__d('cake_console', 'I18n Shell generates .pot files(s) with translations.')
+			'I18n Shell generates .pot files(s) with translations.'
 		)->addSubcommand('extract', [
-			'help' => __d('cake_console', 'Extract the po translations from your application'),
+			'help' => 'Extract the po translations from your application',
 			'parser' => $this->Extract->getOptionParser()
 		]);
 
