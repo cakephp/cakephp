@@ -681,61 +681,6 @@ pre {
 	display: block;
 	background-color: rgba(255, 255, 0, 0.5);
 }
-.code-coverage-results div.code-line {
-	padding-left:5px;
-	display:block;
-	margin-left:10px;
-}
-.code-coverage-results div.uncovered span.content {
-	background:#ecc;
-}
-.code-coverage-results div.covered span.content {
-	background:#cec;
-}
-.code-coverage-results div.ignored span.content {
-	color:#aaa;
-}
-.code-coverage-results span.line-num {
-	color:#666;
-	display:block;
-	float:left;
-	width:20px;
-	text-align:right;
-	margin-right:5px;
-}
-.code-coverage-results span.line-num strong {
-	color:#666;
-}
-.code-coverage-results div.start {
-	border:1px solid #aaa;
-	border-width:1px 1px 0px 1px;
-	margin-top:30px;
-	padding-top:5px;
-}
-.code-coverage-results div.end {
-	border:1px solid #aaa;
-	border-width:0px 1px 1px 1px;
-	margin-bottom:30px;
-	padding-bottom:5px;
-}
-.code-coverage-results div.realstart {
-	margin-top:0px;
-}
-.code-coverage-results p.note {
-	color:#bbb;
-	padding:5px;
-	margin:5px 0 10px;
-	font-size:10px;
-}
-.code-coverage-results span.result-bad {
-	color: #a00;
-}
-.code-coverage-results span.result-ok {
-	color: #fa0;
-}
-.code-coverage-results span.result-good {
-	color: #0a0;
-}
 
 /** Elements **/
 #url-rewriting-warning {
