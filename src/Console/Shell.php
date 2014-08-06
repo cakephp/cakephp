@@ -215,7 +215,7 @@ class Shell {
  */
 	protected function _welcome() {
 		$this->out();
-		$this->out('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version());
+		$this->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
 		$this->hr();
 		$this->out(sprintf('App : %s', APP_DIR));
 		$this->out(sprintf('Path: %s', APP));
