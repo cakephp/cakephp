@@ -577,9 +577,9 @@ class Time extends Carbon implements JsonSerializable {
  * Get list of timezone identifiers
  *
  * @param int|string $filter A regex to filter identifer
- * 	Or one of DateTimeZone class constants
+ *   Or one of DateTimeZone class constants
  * @param string $country A two-letter ISO 3166-1 compatible country code.
- * 	This option is only used when $filter is set to DateTimeZone::PER_COUNTRY
+ *   This option is only used when $filter is set to DateTimeZone::PER_COUNTRY
  * @param bool $group If true (default value) groups the identifiers list by primary region
  * @return array List of timezone identifiers
  * @since 2.2
