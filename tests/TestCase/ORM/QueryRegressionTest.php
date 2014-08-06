@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Core\Plugin;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -34,6 +35,7 @@ class QueryRegressionTest extends TestCase {
 	public $fixtures = [
 		'core.user',
 		'core.article',
+		'core.comment',
 		'core.tag',
 		'core.articles_tag',
 		'core.author',
@@ -318,6 +320,33 @@ class QueryRegressionTest extends TestCase {
 		$this->assertEquals(
 			new Time('2014-06-01 10:10:00'),
 			$highlights->_joinData->highlighted_time
+		);
+	}
+
+/**
+ * An integration test that spot checks that associations use the
+ * correct alias names to generate queries.
+ *
+ * @return void
+ */
+	public function testPluginAssociationQueryGeneration() {
+		Plugin::load('TestPlugin');
+		$articles = TableRegistry::get('Articles');
+		$articles->hasMany('TestPlugin.Comments');
+		$articles->belongsTo('TestPlugin.Authors');
+
+		$result = $articles->find()
+			->where(['Articles.id' => 2])
+			->contain(['Comments', 'Authors'])
+			->first();
+
+		$this->assertNotEmpty(
+			$result->comments[0]->id,
+			'No SQL error and comment exists.'
+		);
+		$this->assertNotEmpty(
+			$result->author->id,
+			'No SQL error and author exists.'
 		);
 	}
 

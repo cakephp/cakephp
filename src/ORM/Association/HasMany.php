@@ -122,7 +122,7 @@ class HasMany extends Association {
  */
 	protected function _linkField($options) {
 		$links = [];
-		$name = $this->name();
+		$name = $this->alias();
 
 		foreach ((array)$options['foreignKey'] as $key) {
 			$links[] = sprintf('%s.%s', $name, $key);
