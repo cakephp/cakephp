@@ -3033,6 +3033,27 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test that label() can accept an input with the correct template vars.
+ *
+ * @return void
+ */
+	public function testLabelContainInput() {
+		$this->Form->templates([
+			'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
+		]);
+		$result = $this->Form->label('Person.accept_terms', 'Accept', [
+			'input' => '<input type="checkbox" name="accept_tos" >'
+		]);
+		$expected = [
+			'label' => ['for' => 'person-accept-terms'],
+			'input' => ['type' => 'checkbox', 'name' => 'accept_tos'],
+			'Accept',
+			'/label',
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * testTextbox method
  *
  * test textbox element generation

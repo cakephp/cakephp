@@ -699,6 +699,8 @@ class FormHelper extends Helper {
  * <label for="post-publish">Publish <input type="text" name="published"></label>
  * }}}
  *
+ * If you want to nest inputs in the labels, you will need to modify the default templates.
+ *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param string $text Text that will appear in the label field. If
  *   $text is left undefined the text will be inflected from the
