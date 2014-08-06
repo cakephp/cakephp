@@ -17,8 +17,8 @@ namespace Cake\I18n;
 use Aura\Intl\Package;
 
 /**
- * Wraps multiple messages loaders calling them one after another until
- * one of them returns an non-empty package
+ * Wraps multiple message loaders calling them one after another until
+ * one of them returns a non-empty package.
  *
  */
 class ChainMessagesLoader {
@@ -41,7 +41,7 @@ class ChainMessagesLoader {
 	}
 
 /**
- * Executes this object for returning the translations package as configured in
+ * Executes this object returning the translations package as configured in
  * the chain.
  *
  * @return \Aura\Intl\Package
@@ -57,7 +57,6 @@ class ChainMessagesLoader {
 			}
 
 			$package = $loader();
-
 			if (!$package) {
 				continue;
 			}
@@ -73,7 +72,6 @@ class ChainMessagesLoader {
 				return $package;
 			}
 		}
-
 		return new Package;
 	}
 
