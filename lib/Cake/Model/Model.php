@@ -2215,6 +2215,7 @@ class Model extends Object implements CakeEventListener {
  * @return mixed If atomic: True on success, or false on failure.
  *    Otherwise: array similar to the $data array passed, but values are set to true/false
  *    depending on whether each record saved successfully.
+ * @throws PDOException
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-savemany-array-data-null-array-options-array
  */
 	public function saveMany($data = null, $options = array()) {
@@ -2242,50 +2243,60 @@ class Model extends Object implements CakeEventListener {
 			$options['validate'] = false;
 		}
 
+		$transactionBegun = false;
 		if ($options['atomic']) {
 			$db = $this->getDataSource();
 			$transactionBegun = $db->begin();
 		}
 
-		$return = array();
-		foreach ($data as $key => $record) {
-			$validates = $this->create(null) !== null;
-			$saved = false;
-			if ($validates) {
-				if ($options['deep']) {
-					$saved = $this->saveAssociated($record, array_merge($options, array('atomic' => false)));
-				} else {
-					$saved = $this->save($record, $options);
+		try {
+			$return = array();
+			foreach ($data as $key => $record) {
+				$validates = $this->create(null) !== null;
+				$saved = false;
+				if ($validates) {
+					if ($options['deep']) {
+						$saved = $this->saveAssociated($record, array_merge($options, array('atomic' => false)));
+					} else {
+						$saved = $this->save($record, $options);
+					}
+				}
+
+				$validates = ($validates && ($saved === true || (is_array($saved) && !in_array(false, $saved, true))));
+				if (!$validates) {
+					$validationErrors[$key] = $this->validationErrors;
+				}
+
+				if (!$options['atomic']) {
+					$return[$key] = $validates;
+				} elseif (!$validates) {
+					break;
 				}
 			}
 
-			$validates = ($validates && ($saved === true || (is_array($saved) && !in_array(false, $saved, true))));
-			if (!$validates) {
-				$validationErrors[$key] = $this->validationErrors;
-			}
+			$this->validationErrors = $validationErrors;
 
 			if (!$options['atomic']) {
-				$return[$key] = $validates;
-			} elseif (!$validates) {
-				break;
+				return $return;
 			}
-		}
 
-		$this->validationErrors = $validationErrors;
+			if ($validates) {
+				if ($transactionBegun) {
+					return $db->commit() !== false;
+				}
+				return true;
+			}
 
-		if (!$options['atomic']) {
-			return $return;
-		}
-
-		if ($validates) {
 			if ($transactionBegun) {
-				return $db->commit() !== false;
+				$db->rollback();
 			}
-			return true;
+			return false;
+		} catch (Exception $e) {
+			if ($transactionBegun) {
+				$db->rollback();
+			}
+			throw $e;
 		}
-
-		$db->rollback();
-		return false;
 	}
 
 /**
@@ -2337,6 +2348,7 @@ class Model extends Object implements CakeEventListener {
  * @return mixed If atomic: True on success, or false on failure.
  *    Otherwise: array similar to the $data array passed, but values are set to true/false
  *    depending on whether each record saved successfully.
+ * @throws PDOException
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-saveassociated-array-data-null-array-options-array
  */
 	public function saveAssociated($data = null, $options = array()) {
@@ -2365,136 +2377,146 @@ class Model extends Object implements CakeEventListener {
 			$options['validate'] = false;
 		}
 
+		$transactionBegun = false;
 		if ($options['atomic']) {
 			$db = $this->getDataSource();
 			$transactionBegun = $db->begin();
 		}
 
-		$associations = $this->getAssociated();
-		$return = array();
-		$validates = true;
-		foreach ($data as $association => $values) {
-			$isEmpty = empty($values) || (isset($values[$association]) && empty($values[$association]));
-			if ($isEmpty || !isset($associations[$association]) || $associations[$association] !== 'belongsTo') {
-				continue;
-			}
-
-			$Model = $this->{$association};
-
-			$validates = $Model->create(null) !== null;
-			$saved = false;
-			if ($validates) {
-				if ($options['deep']) {
-					$saved = $Model->saveAssociated($values, array('atomic' => false) + $options);
-				} else {
-					$saved = $Model->save($values, array('atomic' => false) + $options);
+		try {
+			$associations = $this->getAssociated();
+			$return = array();
+			$validates = true;
+			foreach ($data as $association => $values) {
+				$isEmpty = empty($values) || (isset($values[$association]) && empty($values[$association]));
+				if ($isEmpty || !isset($associations[$association]) || $associations[$association] !== 'belongsTo') {
+					continue;
 				}
-				$validates = ($saved === true || (is_array($saved) && !in_array(false, $saved, true)));
-			}
 
-			if ($validates) {
-				$key = $this->belongsTo[$association]['foreignKey'];
-				if (isset($data[$this->alias])) {
-					$data[$this->alias][$key] = $Model->id;
-				} else {
-					$data = array_merge(array($key => $Model->id), $data, array($key => $Model->id));
-				}
-				$options = $this->_addToWhiteList($key, $options);
-			} else {
-				$validationErrors[$association] = $Model->validationErrors;
-			}
+				$Model = $this->{$association};
 
-			$return[$association] = $validates;
-		}
-
-		if ($validates && !($this->create(null) !== null && $this->save($data, $options))) {
-			$validationErrors[$this->alias] = $this->validationErrors;
-			$validates = false;
-		}
-		$return[$this->alias] = $validates;
-
-		foreach ($data as $association => $values) {
-			if (!$validates) {
-				break;
-			}
-
-			$isEmpty = empty($values) || (isset($values[$association]) && empty($values[$association]));
-			if ($isEmpty || !isset($associations[$association])) {
-				continue;
-			}
-
-			$Model = $this->{$association};
-
-			$type = $associations[$association];
-			$key = $this->{$type}[$association]['foreignKey'];
-			switch ($type) {
-				case 'hasOne':
-					if (isset($values[$association])) {
-						$values[$association][$key] = $this->id;
+				$validates = $Model->create(null) !== null;
+				$saved = false;
+				if ($validates) {
+					if ($options['deep']) {
+						$saved = $Model->saveAssociated($values, array('atomic' => false) + $options);
 					} else {
-						$values = array_merge(array($key => $this->id), $values, array($key => $this->id));
+						$saved = $Model->save($values, array('atomic' => false) + $options);
 					}
+					$validates = ($saved === true || (is_array($saved) && !in_array(false, $saved, true)));
+				}
 
-					$validates = $Model->create(null) !== null;
-					$saved = false;
+				if ($validates) {
+					$key = $this->belongsTo[$association]['foreignKey'];
+					if (isset($data[$this->alias])) {
+						$data[$this->alias][$key] = $Model->id;
+					} else {
+						$data = array_merge(array($key => $Model->id), $data, array($key => $Model->id));
+					}
+					$options = $this->_addToWhiteList($key, $options);
+				} else {
+					$validationErrors[$association] = $Model->validationErrors;
+				}
 
-					if ($validates) {
+				$return[$association] = $validates;
+			}
+
+			if ($validates && !($this->create(null) !== null && $this->save($data, $options))) {
+				$validationErrors[$this->alias] = $this->validationErrors;
+				$validates = false;
+			}
+			$return[$this->alias] = $validates;
+
+			foreach ($data as $association => $values) {
+				if (!$validates) {
+					break;
+				}
+
+				$isEmpty = empty($values) || (isset($values[$association]) && empty($values[$association]));
+				if ($isEmpty || !isset($associations[$association])) {
+					continue;
+				}
+
+				$Model = $this->{$association};
+
+				$type = $associations[$association];
+				$key = $this->{$type}[$association]['foreignKey'];
+				switch ($type) {
+					case 'hasOne':
+						if (isset($values[$association])) {
+							$values[$association][$key] = $this->id;
+						} else {
+							$values = array_merge(array($key => $this->id), $values, array($key => $this->id));
+						}
+
+						$validates = $Model->create(null) !== null;
+						$saved = false;
+
+						if ($validates) {
+							$options = $Model->_addToWhiteList($key, $options);
+							if ($options['deep']) {
+								$saved = $Model->saveAssociated($values, array('atomic' => false) + $options);
+							} else {
+								$saved = $Model->save($values, $options);
+							}
+						}
+
+						$validates = ($validates && ($saved === true || (is_array($saved) && !in_array(false, $saved, true))));
+						if (!$validates) {
+							$validationErrors[$association] = $Model->validationErrors;
+						}
+
+						$return[$association] = $validates;
+						break;
+					case 'hasMany':
+						foreach ($values as $i => $value) {
+							if (isset($values[$i][$association])) {
+								$values[$i][$association][$key] = $this->id;
+							} else {
+								$values[$i] = array_merge(array($key => $this->id), $value, array($key => $this->id));
+							}
+						}
+
 						$options = $Model->_addToWhiteList($key, $options);
-						if ($options['deep']) {
-							$saved = $Model->saveAssociated($values, array('atomic' => false) + $options);
-						} else {
-							$saved = $Model->save($values, $options);
+						$_return = $Model->saveMany($values, array('atomic' => false) + $options);
+						if (in_array(false, $_return, true)) {
+							$validationErrors[$association] = $Model->validationErrors;
+							$validates = false;
 						}
-					}
 
-					$validates = ($validates && ($saved === true || (is_array($saved) && !in_array(false, $saved, true))));
-					if (!$validates) {
-						$validationErrors[$association] = $Model->validationErrors;
-					}
-
-					$return[$association] = $validates;
-					break;
-				case 'hasMany':
-					foreach ($values as $i => $value) {
-						if (isset($values[$i][$association])) {
-							$values[$i][$association][$key] = $this->id;
-						} else {
-							$values[$i] = array_merge(array($key => $this->id), $value, array($key => $this->id));
-						}
-					}
-
-					$options = $Model->_addToWhiteList($key, $options);
-					$_return = $Model->saveMany($values, array('atomic' => false) + $options);
-					if (in_array(false, $_return, true)) {
-						$validationErrors[$association] = $Model->validationErrors;
-						$validates = false;
-					}
-
-					$return[$association] = $_return;
-					break;
+						$return[$association] = $_return;
+						break;
+				}
 			}
-		}
-		$this->validationErrors = $validationErrors;
+			$this->validationErrors = $validationErrors;
 
-		if (isset($validationErrors[$this->alias])) {
-			$this->validationErrors = $validationErrors[$this->alias];
-			unset($validationErrors[$this->alias]);
-			$this->validationErrors = array_merge($this->validationErrors, $validationErrors);
-		}
+			if (isset($validationErrors[$this->alias])) {
+				$this->validationErrors = $validationErrors[$this->alias];
+				unset($validationErrors[$this->alias]);
+				$this->validationErrors = array_merge($this->validationErrors, $validationErrors);
+			}
 
-		if (!$options['atomic']) {
-			return $return;
-		}
-		if ($validates) {
+			if (!$options['atomic']) {
+				return $return;
+			}
+			if ($validates) {
+				if ($transactionBegun) {
+					return $db->commit() !== false;
+				}
+
+				return true;
+			}
+
 			if ($transactionBegun) {
-				return $db->commit() !== false;
+				$db->rollback();
 			}
-
-			return true;
+			return false;
+		} catch (Exception $e) {
+			if ($transactionBegun) {
+				$db->rollback();
+			}
+			throw $e;
 		}
-
-		$db->rollback();
-		return false;
 	}
 
 /**
