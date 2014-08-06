@@ -284,7 +284,7 @@ class CookieComponent extends Component {
 			return null;
 		}
 
-		if (!empty($names[1])) {
+		if (!empty($names[1]) && is_array($this->_values[$this->name][$key])) {
 			return Hash::get($this->_values[$this->name][$key], $names[1]);
 		}
 		return $this->_values[$this->name][$key];
