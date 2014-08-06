@@ -319,7 +319,7 @@ class TimeHelper extends Helper {
  * This method takes into account the default date format for the current language if an LC_TIME file is used.
  *
  * @param int|string|\DateTime $date UNIX timestamp, strtotime() valid string or DateTime object
- * @param string $format strftime format string.
+ * @param string $format Intl compatible format string.
  * @param bool|string $invalid Default value to display on invalid dates
  * @param string|\DateTimeZone $timezone User's timezone string or DateTimeZone object
  * @return string Formatted and translated date string
