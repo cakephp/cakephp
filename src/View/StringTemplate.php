@@ -47,8 +47,6 @@ class StringTemplate {
  * @var array
  */
 	protected $_defaultConfig = [
-		'attribute' => '{{name}}="{{value}}"',
-		'compactAttribute' => '{{name}}="{{value}}"',
 	];
 
 /**
@@ -251,26 +249,17 @@ class StringTemplate {
 			$value = implode(' ', $value);
 		}
 		if (is_numeric($key)) {
-			return $this->format('compactAttribute', [
-				'name' => $value,
-				'value' => $value
-			]);
+			return "$value=\"$value\"";
 		}
 		$truthy = [1, '1', true, 'true', $key];
 		$isMinimized = in_array($key, $this->_compactAttributes);
 		if ($isMinimized && in_array($value, $truthy, true)) {
-			return $this->format('compactAttribute', [
-				'name' => $key,
-				'value' => $key
-			]);
+			return "$key=\"$key\"";
 		}
 		if ($isMinimized) {
 			return '';
 		}
-		return $this->format('attribute', [
-			'name' => $key,
-			'value' => $escape ? h($value) : $value
-		]);
+		return $key . '="' . ($escape ? h($value) : $value) . '"';
 	}
 
 }

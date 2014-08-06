@@ -65,12 +65,10 @@ class StringTemplateTraitTest extends TestCase {
 
 		$this->assertEquals(
 			[
-				'attribute' => '{{name}}="{{value}}"',
-				'compactAttribute' => '{{name}}="{{value}}"',
 				'text' => '<p>{{text}}</p>'
 			],
 			$this->Template->templates(),
-			'newly added template should be inlcuded in template list'
+			'newly added template should be included in template list'
 		);
 	}
 
@@ -87,8 +85,6 @@ class StringTemplateTraitTest extends TestCase {
 
 		$this->assertEquals(
 			[
-				'attribute' => '{{name}}="{{value}}"',
-				'compactAttribute' => '{{name}}="{{value}}"',
 				'text' => '<p>{{text}}</p>'
 			],
 			$this->Template->templates(),
