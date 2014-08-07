@@ -33,7 +33,6 @@ class TranslatorRegistry extends TranslatorLocator {
  */
 	protected $_loaders;
 
-
 /**
  * The name of the default formatter to use for newly created
  * translators from the fallback loader
