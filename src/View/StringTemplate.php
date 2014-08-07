@@ -36,9 +36,26 @@ class StringTemplate {
  * @var array
  */
 	protected $_compactAttributes = array(
-		'compact', 'checked', 'declare', 'readonly', 'disabled', 'selected',
-		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize',
-		'autoplay', 'controls', 'loop', 'muted', 'required', 'novalidate', 'formnovalidate'
+		'compact' => true,
+		'checked' => true,
+		'declare' => true,
+		'readonly' => true,
+		'disabled' => true,
+		'selected' => true,
+		'defer' => true,
+		'ismap' => true,
+		'nohref' => true,
+		'noshade' => true,
+		'nowrap' => true,
+		'multiple' => true,
+		'noresize' => true,
+		'autoplay' => true,
+		'controls' => true,
+		'loop' => true,
+		'muted' => true,
+		'required' => true,
+		'novalidate' => true,
+		'formnovalidate' => true,
 	);
 
 /**
@@ -253,7 +270,7 @@ class StringTemplate {
 			return "$value=\"$value\"";
 		}
 		$truthy = [1, '1', true, 'true', $key];
-		$isMinimized = in_array($key, $this->_compactAttributes);
+		$isMinimized = isset($this->_compactAttributes[$key]);
 		if ($isMinimized && in_array($value, $truthy, true)) {
 			return "$key=\"$key\"";
 		}
