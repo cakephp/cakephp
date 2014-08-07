@@ -19,6 +19,5 @@ namespace <?= $plugin ?>\Config;
 use Cake\Routing\Router;
 
 Router::plugin('<?= $plugin ?>', function($routes) {
-	$routes->connect('/:controller', ['action' => 'index']);
-	$routes->connect('/:controller/:action/*');
+	$routes->fallbacks();
 });
