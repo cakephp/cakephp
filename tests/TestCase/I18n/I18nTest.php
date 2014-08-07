@@ -299,6 +299,7 @@ class I18nTest extends TestCase {
 
 		$this->assertSame($english, I18n::translator());
 		$this->assertSame($spanish, I18n::translator('default', 'es_ES'));
+		$this->assertSame($english, I18n::translator());
 	}
 
 /**
@@ -345,6 +346,61 @@ class I18nTest extends TestCase {
 
 		$translator = I18n::translator();
 		$this->assertEquals('%d is 1 (po translated)', $translator->translate('%d = 1'));
+	}
+
+/**
+ * Tests that missing translations will get fallbacked to the default translator
+ *
+ * @return void
+ */
+	public function testFallbackTranslator() {
+		I18n::translator('default', 'fr_FR', function() {
+			$package = new Package('default');
+			$package->setMessages([
+				'Dog' => 'Le bark'
+			]);
+			return $package;
+		});
+
+		I18n::translator('custom', 'fr_FR', function() {
+			$package = new Package('default');
+			$package->setMessages([
+				'Cow' => 'Le moo'
+			]);
+			return $package;
+		});
+
+		$translator = I18n::translator('custom', 'fr_FR');
+		$this->assertEquals('Le moo', $translator->translate('Cow'));
+		$this->assertEquals('Le bark', $translator->translate('Dog'));
+	}
+
+/**
+ * Tests that it is possible to register a generic translators factory for a domain
+ * instead of having to create them manually
+ *
+ * @return void
+ */
+	public function testFallbackTranslatorWithFactory() {
+		I18n::translator('default', 'fr_FR', function() {
+			$package = new Package('default');
+			$package->setMessages([
+				'Dog' => 'Le bark'
+			]);
+			return $package;
+		});
+		I18n::config('custom', function($name, $locale) {
+			$this->assertEquals('custom', $name);
+			$package = new Package('default');
+			$package->setMessages([
+				'Cow' => 'Le moo',
+			]);
+			return $package;
+		});
+
+		$translator = I18n::translator('custom', 'fr_FR');
+		$this->assertEquals('Le moo', $translator->translate('Cow'));
+		$this->assertEquals('Le bark', $translator->translate('Dog'));
 	}
 
 }

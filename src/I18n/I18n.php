@@ -37,14 +37,6 @@ class I18n {
 	protected static $_collection;
 
 /**
- * The name of the default formatter to use for newly created
- * translators
- *
- * @var string
- */
-	protected static $_defaultFormatter = 'default';
-
-/**
  * Returns the translators collection instance. It can be used
  * for getting specific translators based of their name and locale
  * or to configure some aspect of future translations that are not yet constructed.
@@ -115,6 +107,17 @@ class I18n {
 		if ($loader !== null) {
 			$packages = static::translators()->getPackages();
 			$locale = $locale ?: static::defaultLocale();
+
+			if ($name !== 'default') {
+				$loader = function() use ($loader) {
+					$package = $loader();
+					if (!$package->getFallback()) {
+						$package->setFallback('default');
+					}
+					return $package;
+				};
+			}
+
 			$packages->set($name, $locale, $loader);
 			return;
 		}
@@ -126,11 +129,7 @@ class I18n {
 			static::translators()->setLocale($locale);
 		}
 
-		try {
-			$translator = $translators->get($name);
-		} catch (LoadException $e) {
-			$translator = static::_fallbackTranslator($name, $locale);
-		}
+		$translator = $translators->get($name);
 
 		if (isset($currentLocale)) {
 			$translators->setLocale($currentLocale);
@@ -223,11 +222,7 @@ class I18n {
  * @return string The name of the formatter.
  */
 	public static function defaultFormatter($name = null) {
-		if ($name === null) {
-			return static::$_defaultFormatter;
-		}
-
-		static::$_defaultFormatter = $name;
+		return static::translators()->defaultFormatter($name);
 	}
 
 /**
@@ -238,32 +233,6 @@ class I18n {
  */
 	public static function clear() {
 		static::$_collection = null;
-	}
-
-/**
- * Returns a new translator instance for the given name and locale
- * based of conventions.
- *
- * @param string $name The translation package name.
- * @param string $locale The locale to create the translator for.
- * @return \Aura\Intl\Translator
- */
-	protected static function _fallbackTranslator($name, $locale) {
-		$chain = new ChainMessagesLoader([
-			new MessagesFileLoader($name, $locale, 'mo'),
-			new MessagesFileLoader($name, $locale, 'po')
-		]);
-
-		// \Aura\Intl\Package by default uses formatter configured with key "basic".
-		// and we want to make sure the cake domain always uses the default formatter
-		$formatter = $name === 'cake' ? 'default' : static::$_defaultFormatter;
-		$chain = function() use ($formatter, $chain) {
-			$package = $chain();
-			$package->setFormatter($formatter);
-			return $package;
-		};
-		static::translator($name, $locale, $chain);
-		return static::translators()->get($name);
 	}
 
 }
