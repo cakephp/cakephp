@@ -33,7 +33,7 @@ if (!empty($plugin)) {
 if (empty($plugin)) {
 	$path = APP_DIR . DS . 'Controller' . DS . $prefixPath . h($class) . 'Controller.php' ;
 } else {
-	$path = Plugin::path($plugin) . 'Controller' . DS . $prefixPath . h($class) . 'Controller.php';
+	$path = Plugin::classPath($plugin) . 'Controller' . DS . $prefixPath . h($class) . 'Controller.php';
 }
 
 ?>
