@@ -70,6 +70,7 @@ App::uses('LogEngineCollection', 'Log');
  * on scopes
  *
  * @package       Cake.Log
+ * @link http://book.cakephp.org/2.0/en/core-libraries/logging.html#logging
  */
 class CakeLog {
 
@@ -183,6 +184,7 @@ class CakeLog {
  * @param array $config Array of configuration information for the logger
  * @return bool success of configuration.
  * @throws CakeLogException
+ * @link http://book.cakephp.org/2.0/en/core-libraries/logging.html#creating-and-configuring-log-streams
  */
 	public static function config($key, $config) {
 		if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $key)) {
@@ -398,6 +400,7 @@ class CakeLog {
  * @param string|array $scope The scope(s) a log message is being created in.
  *    See CakeLog::config() for more information on logging scopes.
  * @return bool Success
+ * @link http://book.cakephp.org/2.0/en/core-libraries/logging.html#writing-to-logs
  */
 	public static function write($type, $message, $scope = array()) {
 		if (empty(self::$_Collection)) {
