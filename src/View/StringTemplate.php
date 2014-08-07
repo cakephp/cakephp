@@ -14,6 +14,7 @@
  */
 namespace Cake\View;
 
+use Cake\Cache\Cache;
 use Cake\Configure\Engine\PhpConfig;
 use Cake\Core\InstanceConfigTrait;
 
@@ -64,12 +65,57 @@ class StringTemplate {
 	protected $_compiled = [];
 
 /**
+ * The persistent cache key for templates.
+ *
+ * @var string
+ */
+	protected $_cacheKey;
+
+/**
  * Constructor.
  *
  * @param array $config A set of templates to add.
+ * @param string $cacheKey The cache key to load templates from
  */
-	public function __construct(array $config = []) {
-		$this->config($config);
+	public function __construct(array $config = [], $key = null) {
+		if ($key) {
+			$this->_cacheKey = $key;
+			$this->loadCache();
+		}
+		$this->add($config);
+	}
+
+/**
+ * Loads templates and compiled results from the persistent cache.
+ *
+ * @return void
+ */
+	public function loadCache() {
+		if (!$this->_cacheKey) {
+			return;
+		}
+		$results = Cache::read($this->_cacheKey, '_cake_core_');
+		if (!$results) {
+			return;
+		}
+		$this->_templates = $results['templates'];
+		$this->_compiled = $results['compiled'];
+	}
+
+/**
+ * Save templates to the persistent cache.
+ *
+ * @return void
+ */
+	public function writeCache() {
+		if (empty($this->_cacheKey)) {
+			return;
+		}
+		$data = [
+			'templates' => $this->_config,
+			'compiled' => $this->_compiled
+		];
+		Cache::write($this->_cacheKey, '_cake_core_');
 	}
 
 /**
@@ -78,13 +124,14 @@ class StringTemplate {
  * @return void
  */
 	public function push() {
-		$this->_configStack[] = $this->_config;
+		$this->_configStack[] = [
+			$this->_config,
+			$this->_compiled
+		];
 	}
 
 /**
  * Restore the most recently pushed set of templates.
- *
- * Restoring templates will invalidate all compiled templates.
  *
  * @return void
  */
@@ -92,8 +139,7 @@ class StringTemplate {
 		if (empty($this->_configStack)) {
 			return;
 		}
-		$this->_config = array_pop($this->_configStack);
-		$this->_compiled = [];
+		list($this->_config, $this->_compiled) = array_pop($this->_configStack);
 	}
 
 /**
@@ -113,8 +159,31 @@ class StringTemplate {
  */
 	public function add(array $templates) {
 		$this->config($templates);
-		$this->_compiled = array_diff_key($this->_compiled, $templates);
+		$this->_compileTemplates(array_keys($templates));
 		return $this;
+	}
+
+/**
+ * Compile templates into a more efficient printf() compatible format.
+ *
+ * @param array $templates The template names to compile. If empty all templates will be compiled.
+ */
+	protected function _compileTemplates(array $templates = []) {
+		if (empty($templates)) {
+			$templates = array_keys($this->_config);
+		}
+		foreach ($templates as $name) {
+			$template = $this->get($name);
+			if ($template === null) {
+				$this->_compiled[$name] = [null, null];
+			}
+
+			preg_match_all('#\{\{(\w+)\}\}#', $template, $matches);
+			$this->_compiled[$name] = [
+				str_replace($matches[0], '%s', $template),
+				$matches[1]
+			];
+		}
 	}
 
 /**
@@ -145,31 +214,6 @@ class StringTemplate {
 	}
 
 /**
- * Returns an array containing the compiled template to be used with
- * the sprintf function and a list of placeholder names that were found
- * in the template in the order that they should be replaced.
- *
- * @param string $name The compiled template info
- * @return array
- */
-	public function compile($name) {
-		if (isset($this->_compiled[$name])) {
-			return $this->_compiled[$name];
-		}
-
-		$template = $this->get($name);
-		if ($template === null) {
-			return $this->_compiled[$name] = [null, null];
-		}
-
-		preg_match_all('#\{\{(\w+)\}\}#', $template, $matches);
-		return $this->_compiled[$name] = [
-			str_replace($matches[0], '%s', $template),
-			$matches[1]
-		];
-	}
-
-/**
  * Format a template string with $data
  *
  * @param string $name The template name.
@@ -177,7 +221,10 @@ class StringTemplate {
  * @return string
  */
 	public function format($name, array $data) {
-		list($template, $placeholders) = $this->compile($name);
+		if (!isset($this->_compiled[$name])) {
+			return '';
+		}
+		list($template, $placeholders) = $this->_compiled[$name];
 		if ($template === null) {
 			return '';
 		}

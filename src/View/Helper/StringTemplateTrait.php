@@ -64,7 +64,7 @@ trait StringTemplateTrait {
 	public function templater() {
 		if (empty($this->_templater)) {
 			$class = $this->config('templateClass') ?: 'Cake\View\StringTemplate';
-			$this->_templater = new $class;
+			$this->_templater = new $class([], str_replace('\\', '_', __CLASS__));
 
 			$templates = $this->config('templates');
 			if ($templates) {
@@ -74,6 +74,7 @@ trait StringTemplateTrait {
 				} else {
 					$this->_templater->add($templates);
 				}
+				$this->_templater->writeCache();
 			}
 		}
 
