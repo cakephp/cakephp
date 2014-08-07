@@ -14,7 +14,6 @@
  */
 namespace Cake\View;
 
-use Cake\Cache\Cache;
 use Cake\Configure\Engine\PhpConfig;
 use Cake\Core\InstanceConfigTrait;
 
@@ -65,57 +64,12 @@ class StringTemplate {
 	protected $_compiled = [];
 
 /**
- * The persistent cache key for templates.
- *
- * @var string
- */
-	protected $_cacheKey;
-
-/**
  * Constructor.
  *
  * @param array $config A set of templates to add.
- * @param string $cacheKey The cache key to load templates from
  */
-	public function __construct(array $config = [], $key = null) {
-		if ($key) {
-			$this->_cacheKey = $key;
-			$this->loadCache();
-		}
+	public function __construct(array $config = []) {
 		$this->add($config);
-	}
-
-/**
- * Loads templates and compiled results from the persistent cache.
- *
- * @return void
- */
-	public function loadCache() {
-		if (!$this->_cacheKey) {
-			return;
-		}
-		$results = Cache::read($this->_cacheKey, '_cake_core_');
-		if (!$results) {
-			return;
-		}
-		$this->_templates = $results['templates'];
-		$this->_compiled = $results['compiled'];
-	}
-
-/**
- * Save templates to the persistent cache.
- *
- * @return void
- */
-	public function writeCache() {
-		if (empty($this->_cacheKey)) {
-			return;
-		}
-		$data = [
-			'templates' => $this->_config,
-			'compiled' => $this->_compiled
-		];
-		Cache::write($this->_cacheKey, '_cake_core_');
 	}
 
 /**
