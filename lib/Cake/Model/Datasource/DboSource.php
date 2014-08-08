@@ -1865,7 +1865,7 @@ class DboSource extends DataSource {
 			'type' => null,
 			'alias' => null,
 			'table' => 'join_table',
-			'conditions' => array()
+			'conditions' => '',
 		), $join);
 
 		if (!empty($data['alias'])) {
@@ -1919,7 +1919,7 @@ class DboSource extends DataSource {
  * @return string
  */
 	public function renderJoinStatement($data) {
-		if (strtoupper($data['type']) === 'CROSS') {
+		if (strtoupper($data['type']) === 'CROSS' || empty($data['conditions'])) {
 			return "{$data['type']} JOIN {$data['table']} {$data['alias']}";
 		}
 		return trim("{$data['type']} JOIN {$data['table']} {$data['alias']} ON ({$data['conditions']})");
