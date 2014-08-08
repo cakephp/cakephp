@@ -155,7 +155,18 @@ trait SqlserverDialectTrait {
 				$expression->name('')->type(' +');
 				break;
 			case 'DATEDIFF':
-				$expression->add(['day' => 'literal'], [], true);
+				$hasDay = false;
+				$visitor = function($value) use (&$hasDay){
+					if ($value === 'day') {
+						$hasDay = true;
+					}
+					return $value;
+				};
+				$expression->iterateParts($visitor);
+
+				if (!$hasDay) {
+					$expression->add(['day' => 'literal'], [], true);
+				}
 				break;
 			case 'CURRENT_DATE':
 				$time = new FunctionExpression('GETUTCDATE');
