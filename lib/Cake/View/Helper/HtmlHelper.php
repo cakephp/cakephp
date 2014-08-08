@@ -322,6 +322,7 @@ class HtmlHelper extends AppHelper {
  * - `escape` Set to false to disable escaping of title and attributes.
  * - `escapeTitle` Set to false to disable escaping of title. (Takes precedence over value of `escape`)
  * - `confirm` JavaScript confirmation message.
+ * - `fullBase` If true the full base URL will be prepended to the generated URL
  *
  * @param string $title The content to be wrapped by <a> tags.
  * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
@@ -333,10 +334,23 @@ class HtmlHelper extends AppHelper {
  */
 	public function link($title, $url = null, $options = array(), $confirmMessage = false) {
 		$escapeTitle = true;
+
+		$fullBase = false;
+		if (isset($options['fullBase'])) {
+			$fullBase = $options['fullBase'];
+			unset($options['fullBase']);
+
+			if ($url !== null && is_array($url)) {
+				unset($url['full_base']);
+			} else if ($url === null && is_array($title)) {
+				unset($title['full_base']);
+			}
+		}
+
 		if ($url !== null) {
-			$url = $this->url($url);
+			$url = $this->url($url, $fullBase);
 		} else {
-			$url = $this->url($title);
+			$url = $this->url($title, $fullBase);
 			$title = htmlspecialchars_decode($url, ENT_QUOTES);
 			$title = h(urldecode($title));
 			$escapeTitle = false;

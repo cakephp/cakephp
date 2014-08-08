@@ -212,6 +212,26 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected = array('a' => array('href' => Router::fullBaseUrl() . '/posts'), 'Posts', '/a');
 		$this->assertTags($result, $expected);
 
+		$result = $this->Html->link('Posts', array('controller' => 'posts', 'action' => 'index'), array('fullBase' => true));
+		$expected = array('a' => array('href' => Router::fullBaseUrl() . '/posts'), 'Posts', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('/posts', null, array('fullBase' => true));
+		$expected = array('a' => array('href' => Router::fullBaseUrl() . '/posts'), Router::fullBaseUrl() . '/posts', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('Posts', array('controller' => 'posts', 'action' => 'index', 'full_base' => true), array('fullBase' => false));
+		$expected = array('a' => array('href' => '/posts'), 'Posts', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link(array('controller' => 'posts', 'action' => 'index', 'full_base' => true), null, array('fullBase' => false));
+		$expected = '<a href="/posts">/posts</a>';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Html->link('Both strings', 'http://www.example.org', array('fullBase' => true));
+		$expected = array('a' => array('href' => 'http://www.example.org'), 'Both strings', '/a');
+		$this->assertTags($result, $expected);
+
 		$result = $this->Html->link('Home', '/home', array('confirm' => 'Are you sure you want to do this?'));
 		$expected = array(
 			'a' => array('href' => '/home', 'onclick' => 'if (confirm(&quot;Are you sure you want to do this?&quot;)) { return true; } return false;'),
