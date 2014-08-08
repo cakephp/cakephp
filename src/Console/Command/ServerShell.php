@@ -109,11 +109,11 @@ class ServerShell extends Shell {
  */
 	protected function _welcome() {
 		$this->out();
-		$this->out('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version());
+		$this->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
 		$this->hr();
-		$this->out('App : %s', APP_DIR);
-		$this->out('Path: %s', APP);
-		$this->out('DocumentRoot: %s', $this->_documentRoot);
+		$this->out(sprintf('App : %s', APP_DIR));
+		$this->out(sprintf('Path: %s', APP));
+		$this->out(sprintf('DocumentRoot: %s', $this->_documentRoot));
 		$this->hr();
 	}
 
@@ -130,7 +130,7 @@ class ServerShell extends Shell {
 			escapeshellarg($this->_documentRoot . '/index.php')
 		);
 
-		$port = ($this->_port == static::DEFAULT_PORT) ? '' : ':' . $this->_port;
+		$port = ':' . $this->_port;
 		$this->out(sprintf('built-in server is running in http://%s%s/', $this->_host, $port));
 		$this->out(sprintf('You can exit with <info>CTRL-C</info>'));
 		system($command);
