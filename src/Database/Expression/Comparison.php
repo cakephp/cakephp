@@ -120,6 +120,17 @@ class Comparison extends QueryExpression {
 	}
 
 /**
+ * {@inheritDoc}
+ *
+ */
+	public function traverse(callable $callable) {
+		if ($this->_value instanceof ExpressionInterface) {
+			$callable($this->_value);
+			$this->_value->traverse($callable);
+		}
+	}
+
+/**
  * Returns a template and a placeholder for the value after registering it
  * with the placeholder $generator
  *
