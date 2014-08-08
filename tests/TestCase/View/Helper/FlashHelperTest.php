@@ -94,20 +94,13 @@ class FlashHelperTest extends TestCase {
 
 		$result = $this->Flash->render('notification');
 		$expected = [
-			'tag' => 'div',
-			'id' => 'notificationLayout',
-			'child' => []
+			'div' => ['id' => 'notificationLayout'],
+			'<h1', 'Alert!', '/h1',
+			'<h3', 'Notice!', '/h3',
+			'<p', 'This is a test of the emergency broadcasting system', '/p',
+			'/div'
 		];
-
-		$expected['child'] = ['tag' => 'h1', 'content' => 'Alert!'];
-		$this->assertTag($expected, $result);
-
-		$expected['child'] = ['tag' => 'h3', 'content' => 'Notice!'];
-		$this->assertTag($expected, $result);
-
-		$expected['child'] = ['tag' => 'p', 'content' => 'This is a test of the emergency broadcasting system'];
-		$this->assertTag($expected, $result);
-
+		$this->assertTags($result, $expected);
 		$this->assertNull($this->Flash->render('non-existent'));
 	}
 
@@ -133,19 +126,13 @@ class FlashHelperTest extends TestCase {
 		));
 
 		$expected = [
-			'tag' => 'div',
-			'id' => 'notificationLayout',
-			'child' => []
+			'div' => ['id' => 'notificationLayout'],
+			'<h1', 'Alert!', '/h1',
+			'<h3', 'Notice!', '/h3',
+			'<p', 'This is a test of the emergency broadcasting system', '/p',
+			'/div'
 		];
-
-		$expected['child'] = ['tag' => 'h1', 'content' => 'Alert!'];
-		$this->assertTag($expected, $result);
-
-		$expected['child'] = ['tag' => 'h3', 'content' => 'Notice!'];
-		$this->assertTag($expected, $result);
-
-		$expected['child'] = ['tag' => 'p', 'content' => 'This is a test of the emergency broadcasting system'];
-		$this->assertTag($expected, $result);
+		$this->assertTags($result, $expected);
 	}
 
 /**
