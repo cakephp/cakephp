@@ -2,15 +2,14 @@
 /**
  * Application level View Helper
  *
- * This file is application-wide helper file. You can put all
- * application-wide helper-related methods here.
+ * Ce fichier est le fichier d'aide à l'application .Vous pouvez mettre toutes les methodes d'aide à lapplication ici .
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
+ * Pour tous les droits e la license d'information , veuillez lire LICENSE.txt
+ *La redistributions des fichiers doit conserver avis copyright.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
@@ -24,8 +23,7 @@ App::uses('Helper', 'View');
 /**
  * Application helper
  *
- * Add your application-wide methods in the class below, your helpers
- * will inherit them.
+ * Ajouter vos methodes  d'aide à l'application dans la classe ci dessous  .
  *
  * @package       app.View.Helper
  */
