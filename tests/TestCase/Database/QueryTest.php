@@ -2297,7 +2297,7 @@ class QueryTest extends TestCase {
 			->select(['d' => $query->func()->now('time')])
 			->execute();
 
-		$this->assertWithinMargin(
+		$this->assertWithinRange(
 			date('U'),
 			(new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
 			1
@@ -2307,7 +2307,7 @@ class QueryTest extends TestCase {
 		$result = $query
 			->select(['d' => $query->func()->now()])
 			->execute();
-		$this->assertWithinMargin(
+		$this->assertWithinRange(
 			date('U'),
 			(new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
 			1
