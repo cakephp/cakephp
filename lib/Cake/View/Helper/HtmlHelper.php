@@ -342,7 +342,7 @@ class HtmlHelper extends AppHelper {
 
 			if ($url !== null && is_array($url)) {
 				unset($url['full_base']);
-			} else if ($url === null && is_array($title)) {
+			} elseif ($url === null && is_array($title)) {
 				unset($title['full_base']);
 			}
 		}
