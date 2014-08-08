@@ -1,57 +1,48 @@
-# How to contribute
+# C
+omment contribuer 
+CakePHP aimes vos contribution. Il y a plusieurs facons de nous aider:
+* Creéz un [issue](https://github.com/cakephp/cakephp/issues) sur GitHub, si vous trouvez sujet ouvert concernant des  bugs .Ecrivez des corrections pour les problèmes de bug deja ouvertset de préfencere avec des cas test inclus. 
+* Contribuez à la documentation [documentation](https://github.com/cakephp/docs)Il y a certaines directives que nous demandons au contributeurs de suivre afin d'avoir une chance de garer le controle des choses
 
-CakePHP loves to welcome your contributions. There are several ways to help out:
-* Create an [issue](https://github.com/cakephp/cakephp/issues) on GitHub, if you have found a bug
-* Write test cases for open bug issues
-* Write patches for open bug/feature issues, preferably with test cases included
-* Contribute to the [documentation](https://github.com/cakephp/docs)
-
-There are a few guidelines that we need contributors to follow so that we have a
-chance of keeping on top of things.
+.
 
 ## Getting Started
 
-* Make sure you have a [GitHub account](https://github.com/signup/free).
-* Submit an [issue](https://github.com/cakephp/cakephp/issues), assuming one does not already exist.
-  * Clearly describe the issue including steps to reproduce when it is a bug.
-  * Make sure you fill in the earliest version that you know has the issue.
-* Fork the repository on GitHub.
+* Assurez vous d'avoir [GitHub account](https://github.com/signup/free).
+* Soummettez une [issue](https://github.com/cakephp/cakephp/issues), en assumant qu'aucune n'existe pour le moment..
+  * Décrivé clairement le problème en incluant les etapes a fairequand il s'agit d'un bug.
+  * Assurez-vous de remplir la version la plus recente ou vous avez détecter le problème.
+* Fork le referentiel sur GitHub.
 
-## Making Changes
+## Faire des changement
 
-* Create a topic branch from where you want to base your work.
-  * This is usually the master branch.
-  * Only target release branches if you are certain your fix must be on that
-    branch.
-  * To quickly create a topic branch based on master; `git branch
-    master/my_contribution master` then checkout the new branch with `git
-    checkout master/my_contribution`. Better avoid working directly on the
-    `master` branch, to avoid conflicts if you pull in updates from origin.
+* Créez un sujet de l'endroit ou vous voulez baser votre travail  * C'est generalement la branche maitre.
+  *Choisissez uniquement les branches si bous etes certain que votre correction est sur cette branche .
+  * Pour creer rapidement un sujet branche basé sur maitre ; `git branch
+    master/my_contribution master`ensuite récupérer la nouvelle branche.`git
+    checkout master/my_contribution`. Evitez de travailler directement la  `master` branche, afin d'eviter les conflits si vous poussez des mis a jour des le debut .
 * Make commits of logical units.
-* Check for unnecessary whitespace with `git diff --check` before committing.
-* Use descriptive commit messages and reference the #issue number.
-* Core test cases should continue to pass. You can run tests locally or enable
-  [travis-ci](https://travis-ci.org/) for your fork, so all tests and codesniffs
-  will be executed.
-* Your work should apply the [CakePHP coding standards](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html).
+* Verifier s'il existe des espaces inutiles avec `git diff --check` avant d'engager.
+* Utiliser des messages commit et réferencer le numero de série.
+*Les cas de test de base devraient continuer à passer . Vous pouvez tester en local ou permettre à la fourche [travis-ci](https://travis-ci.org/) ,alors tout les tests et codesniffs seront exécuté.
+* Votre travail doit s'appliquer à  [CakePHP coding standards](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html).
 
 ## Which branch to base the work
 
 * Bugfix branches will be based on master.
-* New features that are backwards compatible will be based on next minor release
+* Les nouvelels fonctionnalités qui seront r"tro-compatibles seront basés sur la prochaine version de la branche.New features that are backwards compatible will be based on next minor release
   branch.
-* New features or other non backwards compatible changes will go in the next major release branch.
+* 
 
-## Submitting Changes
+## Faire des changement
 
-* Push your changes to a topic branch in your fork of the repository.
-* Submit a pull request to the repository in the cakephp organization, with the
-  correct target branch.
+*Imposer vos modifications à un sujet dans votre referentiel .
+* Soumettez une demande de tirage au referentiel dans l'organisation de cakephp, avec la branche visé.
 
 ## Test cases and codesniffer
 
 CakePHP tests requires [PHPUnit](http://www.phpunit.de/manual/current/en/installation.html)
-3.7, version 4 is not compatible. To run the test cases locally use the following command:
+3.7, version 4 is not compatible. Pour lancer les cas test lcoalement utilisez la commande suivante:
 
     ./lib/Cake/Console/cake test core AllTests --stderr
 
@@ -60,7 +51,7 @@ To run the sniffs for CakePHP coding standards:
     phpcs -p --extensions=php --standard=CakePHP ./lib/Cake
 
 Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
-repository to setup the CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.mdown) contains installation info
+referentiel pour installer  CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.mdown) contains installation info
 for the sniff and phpcs.
 
 # Additional Resources
