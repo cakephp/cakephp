@@ -522,7 +522,7 @@ class CakeResponse {
 	protected function _sendHeader($name, $value = null) {
 		if (headers_sent($filename, $linenum)) {
 			throw new CakeException(
-				__d('cake_dev', 'Headers already sent in %d on line %s', $linenum, $filename)
+				__d('cake_dev', 'Headers already sent in %s on line %s', $filename, $linenum)
 			);
 		}
 		if ($value === null) {
