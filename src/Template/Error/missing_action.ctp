@@ -28,7 +28,7 @@ if (!empty($prefix)) {
 if (empty($plugin)) {
 	$path = APP_DIR . DS . 'Controller' . DS . $prefix . DS . h($controller) . '.php' ;
 } else {
-	$path = Plugin::classPath($plugin) . 'Controller' . DS . $prefix . DS . h($class) . '.php';
+	$path = Plugin::classPath($plugin) . 'Controller' . DS . $prefix . DS . h($controller) . '.php';
 }
 ?>
 <h2><?= sprintf('Missing Method in %s', h($controller)); ?></h2> <p class="error">
