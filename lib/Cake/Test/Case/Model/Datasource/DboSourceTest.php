@@ -1201,6 +1201,11 @@ class DboSourceTest extends CakeTestCase {
 				'type' => 'LEFT',
 				'alias' => 'PostsTag',
 				'table' => 'posts_tags',
+			), 'LEFT JOIN cakephp.posts_tags AS PostsTag'),
+			array(array(
+				'type' => 'LEFT',
+				'alias' => 'PostsTag',
+				'table' => 'posts_tags',
 				'conditions' => array('PostsTag.post_id = Post.id')
 			), 'LEFT JOIN cakephp.posts_tags AS PostsTag ON (PostsTag.post_id = Post.id)'),
 			array(array(
@@ -1455,5 +1460,52 @@ class DboSourceTest extends CakeTestCase {
 		$Article->__safeUpdateMode = true;
 		$result = $db->defaultConditions($Article, null);
 		$this->assertFalse($result);
+	}
+
+/**
+ * Test that count how many times is afterFind called
+ *
+ * @return void
+ */
+	public function testCountAfterFindCalls() {
+		$this->loadFixtures('Article', 'User', 'Comment', 'Attachment', 'Tag', 'ArticlesTag');
+
+		// Use alias to make testing "primary = true" easy
+		$Primary = $this->getMock('Comment', array('afterFind'), array(array('alias' => 'Primary')), '', true);
+		$Primary->expects($this->any())->method('afterFind')->will($this->returnArgument(0));
+
+		$Article = $this->getMock('Article', array('afterFind'), array(), '', true);
+		$User = $this->getMock('User', array('afterFind'), array(), '', true);
+		$Comment = $this->getMock('Comment', array('afterFind'), array(), '', true);
+		$Tag = $this->getMock('Tag', array('afterFind'), array(), '', true);
+		$Attachment = $this->getMock('Attachment', array('afterFind'), array(), '', true);
+
+		$Primary->Article = $Article;
+		$Primary->Article->User = $User;
+		$Primary->Article->Tag = $Tag;
+		$Primary->Article->Comment = $Comment;
+		$Primary->Attachment = $Attachment;
+		$Primary->Attachment->Comment = $Comment;
+		$Primary->User = $User;
+
+		// primary = true
+		$Primary->expects($this->once())
+			->method('afterFind')->with($this->anything(), $this->isTrue())->will($this->returnArgument(0));
+
+		// primary = false
+		$Article->expects($this->once()) // Primary belongs to 1 Article
+			->method('afterFind')->with($this->anything(), $this->isFalse())->will($this->returnArgument(0));
+		$User->expects($this->exactly(2)) // Article belongs to 1 User and Primary belongs to 1 User
+			->method('afterFind')->with($this->anything(), $this->isFalse())->will($this->returnArgument(0));
+		$Tag->expects($this->exactly(2)) // Article has 2 Tags
+			->method('afterFind')->with($this->anything(), $this->isFalse())->will($this->returnArgument(0));
+		$Comment->expects($this->exactly(3)) // Article has 2 Comments and Attachment belongs to 1 Comment
+			->method('afterFind')->with($this->anything(), $this->isFalse())->will($this->returnArgument(0));
+		$Attachment->expects($this->once()) // Primary has 1 Attachment
+			->method('afterFind')->with($this->anything(), $this->isFalse())->will($this->returnArgument(0));
+
+		$result = $Primary->find('first', array('conditions' => array('Primary.id' => 5), 'recursive' => 2));
+		$this->assertCount(2, $result['Article']['Tag']);
+		$this->assertCount(2, $result['Article']['Comment']);
 	}
 }

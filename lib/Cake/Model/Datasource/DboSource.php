@@ -1316,6 +1316,7 @@ class DboSource extends DataSource {
 		foreach ($resultSet as &$row) {
 			if ($type === 'hasOne' || $type === 'belongsTo' || $type === 'hasMany') {
 				$assocResultSet = array();
+				$prefetched = false;
 
 				if (
 					($type === 'hasOne' || $type === 'belongsTo') &&
@@ -1326,6 +1327,7 @@ class DboSource extends DataSource {
 					if (!empty($joinedData)) {
 						$assocResultSet[0] = array($LinkModel->alias => $row[$LinkModel->alias]);
 					}
+					$prefetched = true;
 				} else {
 					$query = $this->insertQueryData($queryTemplate, $row, $association, $Model, $stack);
 					if ($query !== false) {
@@ -1376,7 +1378,7 @@ class DboSource extends DataSource {
 					$this->_mergeAssociation($row, $assocResultSet, $association, $type, $selfJoin);
 				}
 
-				if ($type !== 'hasAndBelongsToMany' && isset($row[$association])) {
+				if ($type !== 'hasAndBelongsToMany' && isset($row[$association]) && !$prefetched) {
 					$row[$association] = $LinkModel->afterFind($row[$association], false);
 				}
 
@@ -1863,7 +1865,7 @@ class DboSource extends DataSource {
 			'type' => null,
 			'alias' => null,
 			'table' => 'join_table',
-			'conditions' => array()
+			'conditions' => '',
 		), $join);
 
 		if (!empty($data['alias'])) {
@@ -1917,7 +1919,7 @@ class DboSource extends DataSource {
  * @return string
  */
 	public function renderJoinStatement($data) {
-		if (strtoupper($data['type']) === 'CROSS') {
+		if (strtoupper($data['type']) === 'CROSS' || empty($data['conditions'])) {
 			return "{$data['type']} JOIN {$data['table']} {$data['alias']}";
 		}
 		return trim("{$data['type']} JOIN {$data['table']} {$data['alias']} ON ({$data['conditions']})");
