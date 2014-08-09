@@ -80,7 +80,7 @@ class MultiCheckboxTest extends TestCase {
 			'/label',
 			'/div',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -125,7 +125,7 @@ class MultiCheckboxTest extends TestCase {
 			'/label',
 			'/div',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -156,7 +156,7 @@ class MultiCheckboxTest extends TestCase {
 			'/label',
 			'/div',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -202,15 +202,15 @@ class MultiCheckboxTest extends TestCase {
 			'/label',
 			'/div',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['val'] = 1;
 		$result = $input->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['val'] = '1';
 		$result = $input->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -256,14 +256,14 @@ class MultiCheckboxTest extends TestCase {
 			'/label',
 			'/div',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['disabled'] = 'a string';
 		$result = $input->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['disabled'] = ['1', '1x'];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data = [
 			'name' => 'Tags[id]',
@@ -299,7 +299,7 @@ class MultiCheckboxTest extends TestCase {
 			'/label',
 			'/div',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 }

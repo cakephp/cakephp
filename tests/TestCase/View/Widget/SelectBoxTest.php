@@ -58,7 +58,7 @@ class SelectBoxTest extends TestCase {
 			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -80,7 +80,7 @@ class SelectBoxTest extends TestCase {
 			['option' => ['value' => 'b']], 'Budgie', '/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -104,7 +104,7 @@ class SelectBoxTest extends TestCase {
 			['option' => ['value' => 'b']], 'Budgie', '/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -128,7 +128,7 @@ class SelectBoxTest extends TestCase {
 			['option' => ['value' => 'b']], 'Budgie', '/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -157,7 +157,7 @@ class SelectBoxTest extends TestCase {
 			'/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -187,7 +187,7 @@ class SelectBoxTest extends TestCase {
 			['option' => ['value' => '2x']], 'two x', '/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['val'] = 2;
 		$result = $select->render($data, $this->context);
@@ -199,7 +199,7 @@ class SelectBoxTest extends TestCase {
 			['option' => ['value' => '2x']], 'two x', '/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -226,7 +226,7 @@ class SelectBoxTest extends TestCase {
 			['option' => ['value' => 'b']], 'Budgie', '/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -261,7 +261,7 @@ class SelectBoxTest extends TestCase {
 			['option' => ['value' => '2x']], 'two x', '/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -307,7 +307,7 @@ class SelectBoxTest extends TestCase {
 			'/optgroup',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -337,7 +337,7 @@ class SelectBoxTest extends TestCase {
 			'/optgroup',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['escape'] = false;
 		$result = $select->render($data, $this->context);
@@ -352,7 +352,7 @@ class SelectBoxTest extends TestCase {
 			'/optgroup',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -390,7 +390,7 @@ class SelectBoxTest extends TestCase {
 			'/optgroup',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -434,7 +434,7 @@ class SelectBoxTest extends TestCase {
 			'/optgroup',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -475,7 +475,7 @@ class SelectBoxTest extends TestCase {
 			'/optgroup',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -501,7 +501,7 @@ class SelectBoxTest extends TestCase {
 			['option' => ['value' => 'b']], 'Budgie', '/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$select = new SelectBox($this->templates);
 		$data = [
@@ -518,7 +518,7 @@ class SelectBoxTest extends TestCase {
 			['option' => ['value' => '2']], 'Two', '/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -554,7 +554,7 @@ class SelectBoxTest extends TestCase {
 			'/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -578,7 +578,7 @@ class SelectBoxTest extends TestCase {
 			['option' => ['value' => 'b']], 'Budgie', '/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['empty'] = 'empty';
 		$result = $select->render($data, $this->context);
@@ -589,7 +589,7 @@ class SelectBoxTest extends TestCase {
 			['option' => ['value' => 'b']], 'Budgie', '/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['empty'] = 'empty';
 		$data['val'] = '';
@@ -601,11 +601,11 @@ class SelectBoxTest extends TestCase {
 			['option' => ['value' => 'b']], 'Budgie', '/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['val'] = false;
 		$result = $select->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -639,7 +639,7 @@ class SelectBoxTest extends TestCase {
 			'/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data = [
 			'escape' => false,
@@ -658,7 +658,7 @@ class SelectBoxTest extends TestCase {
 			'/option',
 			'/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 }

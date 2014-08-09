@@ -49,7 +49,7 @@ class TextareaTest extends TestCase {
 			'textarea' => ['name' => 'comment'],
 			'/textarea',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -66,7 +66,7 @@ class TextareaTest extends TestCase {
 			'some &lt;html&gt;',
 			'/textarea',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['escape'] = false;
 		$result = $input->render($data, $this->context);
@@ -75,7 +75,7 @@ class TextareaTest extends TestCase {
 			'some <html>',
 			'/textarea',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 }

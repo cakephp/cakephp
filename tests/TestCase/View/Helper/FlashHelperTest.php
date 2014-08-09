@@ -100,7 +100,7 @@ class FlashHelperTest extends TestCase {
 			'<p', 'This is a test of the emergency broadcasting system', '/p',
 			'/div'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 		$this->assertNull($this->Flash->render('non-existent'));
 	}
 
@@ -132,7 +132,7 @@ class FlashHelperTest extends TestCase {
 			'<p', 'This is a test of the emergency broadcasting system', '/p',
 			'/div'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**

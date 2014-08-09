@@ -54,7 +54,7 @@ class TestCaseTest extends TestCase {
 			'My link',
 			'/a'
 		);
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 
 		$input = "<a href='/test.html' class='active'>My link</a>";
 		$pattern = array(
@@ -62,7 +62,7 @@ class TestCaseTest extends TestCase {
 			'My link',
 			'/a'
 		);
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 
 		$input = "<a href='/test.html' class='active'>My link</a>";
 		$pattern = array(
@@ -70,7 +70,7 @@ class TestCaseTest extends TestCase {
 			'My link',
 			'/a'
 		);
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 
 		$input = "<span><strong>Text</strong></span>";
 		$pattern = array(
@@ -80,7 +80,7 @@ class TestCaseTest extends TestCase {
 			'/strong',
 			'/span'
 		);
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 
 		$input = "<span class='active'><strong>Text</strong></span>";
 		$pattern = array(
@@ -90,7 +90,7 @@ class TestCaseTest extends TestCase {
 			'/strong',
 			'/span'
 		);
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 	}
 
 /**
@@ -117,7 +117,7 @@ class TestCaseTest extends TestCase {
 			' attr1="val1" attr3="val3" attr5="val5" attr7="val7" />' .
 			'My div' .
 			'</div>';
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 	}
 
 /**

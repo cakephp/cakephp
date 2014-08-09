@@ -266,6 +266,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 	}
 
 /**
+ * Asserts HTML tags.
+ *
  * Takes an array $expected and generates a regex from it to match the provided $string.
  * Samples for $expected:
  *
@@ -302,12 +304,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * Important: This function is very forgiving about whitespace and also accepts any
  * permutation of attribute order. It will also allow whitespace between specified tags.
  *
- * @param string $string An HTML/XHTML/XML string
  * @param array $expected An array, see above
+ * @param string $string An HTML/XHTML/XML string
  * @param string $fullDebug Whether or not more verbose output should be used.
  * @return void
  */
-	public function assertTags($string, $expected, $fullDebug = false) {
+	public function assertHtml($expected, $string, $fullDebug = false) {
 		$regex = array();
 		$normalized = array();
 		foreach ((array)$expected as $key => $val) {
@@ -481,15 +483,15 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 // @codingStandardsIgnoreStart
 
 /**
- * Compatibility function to test if value is between an acceptable range
+ * Compatibility function to test if a value is between an acceptable range.
  *
- * @param mixed $result
- * @param mixed $expected
- * @param mixed $margin the rage of acceptation
+ * @param float $expected
+ * @param float $result
+ * @param float $margin the rage of acceptation
  * @param string $message the text to display if the assertion is not correct
  * @return void
  */
-	protected static function assertWithinMargin($result, $expected, $margin, $message = '') {
+	protected static function assertWithinRange($expected, $result, $margin, $message = '') {
 		$upper = $result + $margin;
 		$lower = $result - $margin;
 		static::assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);

@@ -239,7 +239,7 @@ class DateTimeTest extends TestCase {
 			['option' => ['value' => '2015']], '2015', '/option',
 			'/select',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->DateTime->render([
 			'name' => 'date',
@@ -262,7 +262,7 @@ class DateTimeTest extends TestCase {
 			['option' => ['value' => '2013']], '2013', '/option',
 			'/select',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -296,7 +296,7 @@ class DateTimeTest extends TestCase {
 			['option' => ['value' => '2010', 'selected' => 'selected']], '2010', '/option',
 			'/select',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$now = new \DateTime('2013-01-01 12:00:00');
 		$result = $this->DateTime->render([
@@ -320,7 +320,7 @@ class DateTimeTest extends TestCase {
 			['option' => ['value' => '2010']], '2010', '/option',
 			'/select',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -355,7 +355,7 @@ class DateTimeTest extends TestCase {
 			['option' => ['value' => '12']], '12', '/option',
 			'/select',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -391,7 +391,7 @@ class DateTimeTest extends TestCase {
 			['option' => ['value' => '12']], 'December', '/option',
 			'/select',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -419,7 +419,7 @@ class DateTimeTest extends TestCase {
 			['option' => ['value' => '02']], 'Feb', '/option',
 			'/select',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -476,7 +476,7 @@ class DateTimeTest extends TestCase {
 			['option' => ['value' => '31']], '31', '/option',
 			'/select',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -943,7 +943,7 @@ class DateTimeTest extends TestCase {
 			['option' => ['value' => 'pm', 'selected' => 'selected']], 'pm', '/option',
 			'/select',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$now = new \DateTime('2010-09-09 09:00:25');
 		$result = $this->DateTime->render([
@@ -963,7 +963,7 @@ class DateTimeTest extends TestCase {
 			['option' => ['value' => 'pm']], 'pm', '/option',
 			'/select',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 }

@@ -62,7 +62,7 @@ class RssHelperTest extends TestCase {
 				'version' => '2.0'
 			)
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Rss->document(null, 'content');
 		$expected = array(
@@ -71,7 +71,7 @@ class RssHelperTest extends TestCase {
 			),
 			'content'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Rss->document(array('contrived' => 'parameter'), 'content');
 		$expected = array(
@@ -81,7 +81,7 @@ class RssHelperTest extends TestCase {
 			),
 			'content'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -110,7 +110,7 @@ class RssHelperTest extends TestCase {
 			'content',
 			'/channel'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -159,7 +159,7 @@ class RssHelperTest extends TestCase {
 			'content-here',
 			'/channel',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 	public function testChannelElementAttributes() {
@@ -201,7 +201,7 @@ class RssHelperTest extends TestCase {
 			'content-here',
 			'/channel',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -237,7 +237,7 @@ class RssHelperTest extends TestCase {
 				'<description', 'description3', '/description',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$items = array(
 			array('title' => 'title1', 'guid' => 'http://www.example.com/guid1', 'link' => 'http://www.example.com/link1', 'description' => 'description1'),
@@ -266,7 +266,7 @@ class RssHelperTest extends TestCase {
 				'<description', 'description3', '/description',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Rss->items(array());
 		$expected = '';
@@ -301,7 +301,7 @@ class RssHelperTest extends TestCase {
 			'/guid',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$item = array(
 			'title' => 'My Title',
@@ -335,7 +335,7 @@ class RssHelperTest extends TestCase {
 			'/guid',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$item = array(
 			'title' => 'My Title & more'
@@ -346,7 +346,7 @@ class RssHelperTest extends TestCase {
 			'<title', 'My Title &amp; more', '/title',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$item = array(
 			'title' => 'Foo bar',
@@ -384,7 +384,7 @@ class RssHelperTest extends TestCase {
 			'/guid',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$item = array(
 			'title' => 'My title',
@@ -412,7 +412,7 @@ class RssHelperTest extends TestCase {
 			'/guid',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$item = array(
 			'title' => 'My title',
@@ -443,7 +443,7 @@ class RssHelperTest extends TestCase {
 			'/guid',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -467,7 +467,7 @@ class RssHelperTest extends TestCase {
 			'/title',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$item = array(
 			'category' => array(
@@ -484,7 +484,7 @@ class RssHelperTest extends TestCase {
 			'/category',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$item = array(
 			'category' => array(
@@ -510,7 +510,7 @@ class RssHelperTest extends TestCase {
 			'/category',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$item = array(
 			'title' => array(
@@ -566,7 +566,7 @@ class RssHelperTest extends TestCase {
 			'/category',
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -654,7 +654,7 @@ class RssHelperTest extends TestCase {
 		if ($type === null) {
 			unset($expected['enclosure']['type']);
 		}
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$File->delete();
 
@@ -689,7 +689,7 @@ class RssHelperTest extends TestCase {
 			),
 			'/item'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 	public function testElementNamespaceWithoutPrefix() {
@@ -711,7 +711,7 @@ class RssHelperTest extends TestCase {
 			'/creator',
 			'/item'
 		);
-		$this->assertTags($result, $expected, true);
+		$this->assertHtml($expected, $result, true);
 	}
 
 	public function testElementNamespaceWithPrefix() {
@@ -748,6 +748,6 @@ class RssHelperTest extends TestCase {
 			'/dc:description',
 			'/item'
 		);
-		$this->assertTags($result, $expected, true);
+		$this->assertHtml($expected, $result, true);
 	}
 }

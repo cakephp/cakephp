@@ -75,14 +75,14 @@ class RadioTest extends TestCase {
 			'Black',
 			'/label',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data = [
 			'name' => 'Crayons[color]',
 			'options' => new Collection(['r' => 'Red', 'b' => 'Black'])
 		];
 		$result = $radio->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -122,7 +122,7 @@ class RadioTest extends TestCase {
 			'Black',
 			'/label',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -158,7 +158,7 @@ class RadioTest extends TestCase {
 			'Second',
 			'/label',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -185,15 +185,15 @@ class RadioTest extends TestCase {
 			'No',
 			'/label',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['val'] = 0;
 		$result = $radio->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['val'] = false;
 		$result = $radio->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$expected = array(
 			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1')),
@@ -207,11 +207,11 @@ class RadioTest extends TestCase {
 		);
 		$data['val'] = null;
 		$result = $radio->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['val'] = '';
 		$result = $radio->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$expected = array(
 			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1', 'checked' => 'checked')),
@@ -225,15 +225,15 @@ class RadioTest extends TestCase {
 		);
 		$data['val'] = '1';
 		$result = $radio->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['val'] = 1;
 		$result = $radio->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['val'] = true;
 		$result = $radio->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -263,7 +263,7 @@ class RadioTest extends TestCase {
 			'option B',
 			'/label',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -300,7 +300,7 @@ class RadioTest extends TestCase {
 			'Red',
 			'/label',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['empty'] = 'Choose one';
 		$result = $radio->render($data, $this->context);
@@ -324,7 +324,7 @@ class RadioTest extends TestCase {
 			'Red',
 			'/label',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -355,7 +355,7 @@ class RadioTest extends TestCase {
 			'Red',
 			'/label',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -406,7 +406,7 @@ class RadioTest extends TestCase {
 			'two',
 			'/label',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -449,11 +449,11 @@ class RadioTest extends TestCase {
 			'one x',
 			'/label',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['disabled'] = 'a string';
 		$result = $radio->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['disabled'] = ['1'];
 		$result = $radio->render($data, $this->context);
@@ -478,7 +478,7 @@ class RadioTest extends TestCase {
 			'one x',
 			'/label',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -513,7 +513,7 @@ class RadioTest extends TestCase {
 				'value' => '1x',
 			]],
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data = [
 			'name' => 'Versions[ver]',
@@ -547,7 +547,7 @@ class RadioTest extends TestCase {
 			'one x',
 			'/label',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**

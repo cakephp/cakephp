@@ -48,7 +48,7 @@ class FileTest extends TestCase {
 		$expected = [
 			'input' => ['type' => 'file', 'name' => 'image'],
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -63,7 +63,7 @@ class FileTest extends TestCase {
 		$expected = [
 			'input' => ['type' => 'file', 'required' => 'required', 'name' => 'image'],
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 }
