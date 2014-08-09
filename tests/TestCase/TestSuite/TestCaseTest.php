@@ -20,7 +20,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Test\Fixture\AssertTagsTestCase;
+use Cake\Test\Fixture\AssertHtmlTestCase;
 use Cake\Test\Fixture\FixturizedTestCase;
 
 /**
@@ -30,12 +30,12 @@ use Cake\Test\Fixture\FixturizedTestCase;
 class TestCaseTest extends TestCase {
 
 /**
- * testAssertTags
+ * testAssertHtml
  *
  * @return void
  */
-	public function testAssertTagsBasic() {
-		$test = new AssertTagsTestCase('testAssertTagsQuotes');
+	public function testAssertHtmlBasic() {
+		$test = new AssertHtmlTestCase('testAssertHtmlQuotes');
 		$result = $test->run();
 		$this->assertEquals(0, $result->errorCount());
 		$this->assertTrue($result->wasSuccessful());
@@ -43,11 +43,11 @@ class TestCaseTest extends TestCase {
 	}
 
 /**
- * test assertTags works with single and double quotes
+ * test assertHtml works with single and double quotes
  *
  * @return void
  */
-	public function testAssertTagsQuoting() {
+	public function testAssertHtmlQuoting() {
 		$input = '<a href="/test.html" class="active">My link</a>';
 		$pattern = array(
 			'a' => array('href' => '/test.html', 'class' => 'active'),
@@ -94,11 +94,11 @@ class TestCaseTest extends TestCase {
 	}
 
 /**
- * Test that assertTags runs quickly.
+ * Test that assertHtml runs quickly.
  *
  * @return void
  */
-	public function testAssertTagsRuntimeComplexity() {
+	public function testAssertHtmlRuntimeComplexity() {
 		$pattern = array(
 			'div' => array(
 				'attr1' => 'val1',
@@ -121,12 +121,12 @@ class TestCaseTest extends TestCase {
 	}
 
 /**
- * testNumericValuesInExpectationForAssertTags
+ * testNumericValuesInExpectationForAssertHtml
  *
  * @return void
  */
-	public function testNumericValuesInExpectationForAssertTags() {
-		$test = new AssertTagsTestCase('testNumericValuesInExpectationForAssertTags');
+	public function testNumericValuesInExpectationForAssertHtml() {
+		$test = new AssertHtmlTestCase('testNumericValuesInExpectationForAssertHtml');
 		$result = $test->run();
 		$this->assertEquals(0, $result->errorCount());
 		$this->assertTrue($result->wasSuccessful());
@@ -134,18 +134,18 @@ class TestCaseTest extends TestCase {
 	}
 
 /**
- * testBadAssertTags
+ * testBadAssertHtml
  *
  * @return void
  */
-	public function testBadAssertTags() {
-		$test = new AssertTagsTestCase('testBadAssertTags');
+	public function testBadAssertHtml() {
+		$test = new AssertHtmlTestCase('testBadAssertHtml');
 		$result = $test->run();
 		$this->assertEquals(0, $result->errorCount());
 		$this->assertFalse($result->wasSuccessful());
 		$this->assertEquals(1, $result->failureCount());
 
-		$test = new AssertTagsTestCase('testBadAssertTags2');
+		$test = new AssertHtmlTestCase('testBadAssertHtml2');
 		$result = $test->run();
 		$this->assertEquals(0, $result->errorCount());
 		$this->assertFalse($result->wasSuccessful());
