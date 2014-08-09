@@ -44,7 +44,7 @@ class WidgetRegistry {
  */
 	protected $_widgets = [
 		'button' => ['Cake\View\Widget\Button'],
-		'checkbox' => ['Cake\View\Widget\Checkbox'],
+		'checkbox' => ['Cake\View\Widget\Checkbox', 'label'],
 		'file' => ['Cake\View\Widget\File'],
 		'label' => ['Cake\View\Widget\Label'],
 		'multicheckbox' => ['Cake\View\Widget\MultiCheckbox', 'label'],
