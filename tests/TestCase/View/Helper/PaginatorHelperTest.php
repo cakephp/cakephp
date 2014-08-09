@@ -1254,6 +1254,45 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
+ * Test that numbers() lets you overwrite templates.
+ *
+ * The templates file has no li elements.
+ *
+ * @return void
+ */
+	public function testNumbersTemplates() {
+		$this->Paginator->request->params['paging'] = [
+			'Client' => [
+				'page' => 8,
+				'current' => 3,
+				'count' => 30,
+				'prevPage' => false,
+				'nextPage' => 2,
+				'pageCount' => 15,
+			]
+		];
+		$result = $this->Paginator->numbers(['templates' => 'htmlhelper_tags']);
+		$expected = [
+			['a' => ['href' => '/index?page=4']], '4', '/a',
+			['a' => ['href' => '/index?page=5']], '5', '/a',
+			['a' => ['href' => '/index?page=6']], '6', '/a',
+			['a' => ['href' => '/index?page=7']], '7', '/a',
+			'span' => ['class' => 'active'], '8', '/span',
+			['a' => ['href' => '/index?page=9']], '9', '/a',
+			['a' => ['href' => '/index?page=10']], '10', '/a',
+			['a' => ['href' => '/index?page=11']], '11', '/a',
+			['a' => ['href' => '/index?page=12']], '12', '/a',
+		];
+		$this->assertTags($result, $expected);
+
+		$this->assertContains(
+			'<li',
+			$this->Paginator->templater()->get('current'),
+			'Templates were not restored.'
+		);
+	}
+
+/**
  * Test modulus option for numbers()
  *
  * @return void
