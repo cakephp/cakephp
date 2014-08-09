@@ -2216,7 +2216,7 @@ class RouterTest extends TestCase {
 			'slug' => 'the-best',
 			'pass' => [],
 		];
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
