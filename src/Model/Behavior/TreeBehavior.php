@@ -646,9 +646,7 @@ class TreeBehavior extends Behavior {
 
 		$query = $this->_scope($this->_table->query())
 			->select($pk)
-			->where(function($exp) use ($parentId, $parent) {
-				return $parentId === null ? $exp->isNull($parent) : $exp->eq($parent, $parentId);
-			})
+			->where([$parent .' IS' => $parentId])
 			->order($pk)
 			->hydrate(false)
 			->bufferResults(false);
