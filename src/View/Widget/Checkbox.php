@@ -100,7 +100,7 @@ class Checkbox implements WidgetInterface {
 			$input,
 			$context,
 			$escape
-		);
+		) ?: $input;
 	}
 
 /**

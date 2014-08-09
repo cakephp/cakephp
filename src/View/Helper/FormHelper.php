@@ -917,7 +917,7 @@ class FormHelper extends Helper {
 		}
 
 		$label = $options['label'];
-		if (!in_array($options['type'], ['radio', 'checbox'], true)) {
+		if (!in_array($options['type'], ['radio', 'checkbox'], true)) {
 			unset($options['label']);
 		}
 
@@ -1215,7 +1215,11 @@ class FormHelper extends Helper {
 		$options = $this->_initInputField($fieldName, $options);
 		$options['value'] = $value;
 
-		if (!isset($options['label']) || $options['label'] === null) {
+		if (!array_key_exists('label', $options)) {
+			$options['label'] = false;
+		}
+
+		if ($options['label'] === null) {
 			$options['label']['text'] = $this->_labelText($fieldName);
 		}
 

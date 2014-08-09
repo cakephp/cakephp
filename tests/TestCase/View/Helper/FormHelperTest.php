@@ -3630,11 +3630,11 @@ class FormHelperTest extends TestCase {
 				'type' => 'hidden', 'name' => 'User[get_spam]',
 				'value' => '1'
 			)),
+			'label' => array('for' => 'user-get-spam'),
 			array('input' => array(
 				'type' => 'checkbox', 'name' => 'User[get_spam]',
 				'value' => '0', 'id' => 'user-get-spam'
 			)),
-			'label' => array('for' => 'user-get-spam'),
 			'Get Spam',
 			'/label',
 			'/div'
