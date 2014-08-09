@@ -579,6 +579,9 @@ class PaginatorHelper extends Helper {
  *    links to generate.
  * - `last` Whether you want last links generated, set to an integer to define the number of 'last'
  *    links to generate.
+ * - `templates` An array of templates, or template file name containing the templates you'd like to
+ *    use when generating the numbers. The helper's original templates will be restored once
+ *    numbers() is done.
  *
  * The generated number links will include the 'ellipsis' template when the `first` and `last` options
  * and the number of pages exceed the modulus. For example if you have 25 pages, and use the first/last
