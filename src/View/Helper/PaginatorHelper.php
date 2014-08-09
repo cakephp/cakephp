@@ -596,13 +596,19 @@ class PaginatorHelper extends Helper {
 		$options += $defaults;
 
 		$params = (array)$this->params($options['model']) + array('page' => 1);
-
 		if ($params['pageCount'] <= 1) {
 			return false;
 		}
 
+		$templater = $this->templater();
+		if (isset($options['templates'])) {
+			$templater->push();
+			$method = is_string($options['templates']) ? 'load' : 'add';
+			$templater->{$method}($options['templates']);
+		}
+
 		$out = '';
-		$ellipsis = $this->templater()->format('ellipsis', []);
+		$ellipsis = $templater->format('ellipsis', []);
 
 		if ($options['modulus'] && $params['pageCount'] > $options['modulus']) {
 			$half = intval($options['modulus'] / 2);
@@ -632,10 +638,10 @@ class PaginatorHelper extends Helper {
 					'text' => $i,
 					'url' => $this->generateUrl(['page' => $i], $options['model']),
 				];
-				$out .= $this->templater()->format('number', $vars);
+				$out .= $templater->format('number', $vars);
 			}
 
-			$out .= $this->templater()->format('current', [
+			$out .= $templater->format('current', [
 				'text' => $params['page'],
 				'url' => $this->generateUrl(['page' => $params['page']], $options['model']),
 			]);
@@ -646,7 +652,7 @@ class PaginatorHelper extends Helper {
 					'text' => $i,
 					'url' => $this->generateUrl(['page' => $i], $options['model']),
 				];
-				$out .= $this->templater()->format('number', $vars);
+				$out .= $templater->format('number', $vars);
 			}
 
 			if ($end != $params['page']) {
@@ -654,7 +660,7 @@ class PaginatorHelper extends Helper {
 					'text' => $i,
 					'url' => $this->generateUrl(['page' => $end], $options['model']),
 				];
-				$out .= $this->templater()->format('number', $vars);
+				$out .= $templater->format('number', $vars);
 			}
 
 			$out .= $options['after'];
@@ -672,7 +678,7 @@ class PaginatorHelper extends Helper {
 
 			for ($i = 1; $i <= $params['pageCount']; $i++) {
 				if ($i == $params['page']) {
-					$out .= $this->templater()->format('current', [
+					$out .= $templater->format('current', [
 						'text' => $params['page'],
 						'url' => $this->generateUrl(['page' => $params['page']], $options['model']),
 					]);
@@ -681,11 +687,14 @@ class PaginatorHelper extends Helper {
 						'text' => $i,
 						'url' => $this->generateUrl(['page' => $i], $options['model']),
 					];
-					$out .= $this->templater()->format('number', $vars);
+					$out .= $templater->format('number', $vars);
 				}
 			}
 
 			$out .= $options['after'];
+		}
+		if (isset($options['templates'])) {
+			$templater->pop();
 		}
 
 		return $out;
