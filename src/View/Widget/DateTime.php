@@ -151,7 +151,7 @@ class DateTime implements WidgetInterface {
 				continue;
 			}
 			if (!is_array($data[$select])) {
-				throw \RuntimeException(sprintf(
+				throw new \RuntimeException(sprintf(
 					'Options for "%s" must be an array|false|null',
 					$select
 				));
