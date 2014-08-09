@@ -268,6 +268,19 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * Asserts HTML tags.
  *
+ * @param array $expected An array, see above
+ * @param string $string An HTML/XHTML/XML string
+ * @param string $fullDebug Whether or not more verbose output should be used.
+ * @return void
+ * @deprecated 3.0. Use assertHtml() instead.
+ */
+	public function assertTags($string, $expected, $fullDebug = false) {
+		static::assertHtml($expected, $string, $fullDebug);
+	}
+
+/**
+ * Asserts HTML tags.
+ *
  * Takes an array $expected and generates a regex from it to match the provided $string.
  * Samples for $expected:
  *
@@ -481,6 +494,20 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 	}
 
 // @codingStandardsIgnoreStart
+
+/**
+ * Compatibility function to test if a value is between an acceptable range.
+ *
+ * @param float $result
+ * @param float $expected
+ * @param float $margin the rage of acceptation
+ * @param string $message the text to display if the assertion is not correct
+ * @return void
+ * @deprecated 3.0. Use assertWithinRange() instead.
+ */
+	protected static function assertWithinMargin($result, $expected, $margin, $message = '') {
+		static::assertWithinRange($expected, $result, $margin, $message);
+	}
 
 /**
  * Compatibility function to test if a value is between an acceptable range.
