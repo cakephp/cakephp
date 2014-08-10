@@ -1062,14 +1062,29 @@ class RouterTest extends TestCase {
 		$url = Router::url('test', array('name' => 'mark', 'page' => 1, 'sort' => 'title', 'dir' => 'desc'));
 		$this->assertEquals('/users/mark?page=1&sort=title&dir=desc', $url);
 
+		$url = Router::url([
+			'_name' => 'test', 'name' => 'mark',
+			'page' => 1, 'sort' => 'title', 'dir' => 'desc'
+		]);
+		$this->assertEquals('/users/mark?page=1&sort=title&dir=desc', $url);
+
 		$url = Router::url('users-index');
 		$this->assertEquals('/users', $url);
 
 		$url = Router::url('Articles::view');
 		$this->assertEquals('/view/', $url);
 
+		$url = Router::url(['_name' => 'Articles::view']);
+		$this->assertEquals('/view/', $url);
+
 		$url = Router::url('Articles::view', ['1']);
 		$this->assertEquals('/view/1', $url);
+
+		$url = Router::url(['_name' => 'Articles::view', '1']);
+		$this->assertEquals('/view/1', $url);
+
+		$url = Router::url(['_name' => 'Articles::view', '_full' => true, '1']);
+		$this->assertEquals('http://localhost/view/1', $url);
 	}
 
 /**

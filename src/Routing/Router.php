@@ -546,6 +546,15 @@ class Router {
 				$output = static::fullBaseUrl() . $base . $output;
 			}
 			return $output;
+		} elseif ($urlType === 'array' && isset($url['_name'])) {
+			if (isset($url['_full']) && $url['_full'] === true) {
+				$full = true;
+				unset($url['_full']);
+			}
+
+			$url += $options;
+			$url = static::_applyUrlFilters($url);
+			$output = static::$_collection->match($url, static::$_requestContext);
 		} elseif ($urlType === 'array') {
 			if (isset($url['_full']) && $url['_full'] === true) {
 				$full = true;
