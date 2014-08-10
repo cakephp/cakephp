@@ -47,7 +47,7 @@ class WidgetRegistry {
 		'checkbox' => ['Cake\View\Widget\Checkbox', 'label'],
 		'file' => ['Cake\View\Widget\File'],
 		'label' => ['Cake\View\Widget\Label'],
-		'multicheckbox' => ['Cake\View\Widget\MultiCheckbox', 'label'],
+		'multicheckbox' => ['Cake\View\Widget\MultiCheckbox', 'checkbox'],
 		'radio' => ['Cake\View\Widget\Radio', 'label'],
 		'select' => ['Cake\View\Widget\SelectBox'],
 		'textarea' => ['Cake\View\Widget\Textarea'],

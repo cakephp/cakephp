@@ -78,7 +78,7 @@ class FormHelper extends Helper {
 		'templates' => [
 			'button' => '<button{{attrs}}>{{text}}</button>',
 			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
-			'checkboxWrapper' => '<div class="checkbox">{{input}}{{label}}</div>',
+			'checkboxWrapper' => '<div class="checkbox">{{input}}</div>',
 			'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}',
 			'error' => '<div class="error-message">{{content}}</div>',
 			'errorList' => '<ul>{{content}}</ul>',
