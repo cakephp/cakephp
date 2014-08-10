@@ -2162,6 +2162,7 @@ class FormHelperTest extends TestCase {
 		$expected = [
 			'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
 			'label' => ['for' => 'prefix-model-field-0'],
+			['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'prefix-model-field-0']],
 			'option A',
 			'/label'
 		];
@@ -2171,6 +2172,7 @@ class FormHelperTest extends TestCase {
 		$expected = [
 			'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
 			'label' => ['for' => 'prefix-model-field-0'],
+			['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'prefix-model-field-0']],
 			'option A',
 			'/label'
 		];
@@ -2186,11 +2188,11 @@ class FormHelperTest extends TestCase {
 				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''
 			],
 			['div' => ['class' => 'checkbox']],
+			['label' => ['for' => 'prefix-model-multi-field-0']],
 			['input' => [
 				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
 				'value' => '0', 'id' => 'prefix-model-multi-field-0'
 			]],
-			['label' => ['for' => 'prefix-model-multi-field-0']],
 			'first',
 			'/label',
 			'/div',
