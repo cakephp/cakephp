@@ -62,7 +62,7 @@ class TranslatorRegistry extends TranslatorLocator {
 
 		if (!isset($this->registry[$name][$locale])) {
 			$key = "translations.$name.$locale";
-			return Cache::remember($key, function() use ($name, $locale) {
+			$translator = Cache::remember($key, function() use ($name, $locale) {
 				try {
 					return parent::get($name, $locale);
 				} catch (\Aura\Intl\Exception $e) {
@@ -74,6 +74,8 @@ class TranslatorRegistry extends TranslatorLocator {
 
 				return $this->_getFromLoader($name, $locale);
 			}, '_cake_core_');
+
+			return $this->registry[$name][$locale] = $translator;
 		}
 
 		return $this->registry[$name][$locale];
