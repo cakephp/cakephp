@@ -1,7 +1,5 @@
 <?php
 /**
- * I18nTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -137,11 +135,21 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testPluginMesagesLoad() {
-		Plugin::load('TestPlugin');
+		Plugin::load([
+			'TestPlugin',
+			'TestPluginThree' => ['namespace' => 'Company\TestPluginThree']
+		]);
+
 		$translator = I18n::translator('test_plugin');
 		$this->assertEquals(
 			'Plural Rule 1 (from plugin)',
 			$translator->translate('Plural Rule 1')
+		);
+
+		$translator = I18n::translator('test_plugin_three');
+		$this->assertEquals(
+			'String 1 (from plugin three)',
+			$translator->translate('String 1')
 		);
 	}
 
