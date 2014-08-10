@@ -248,10 +248,10 @@ class ControllerTask extends BakeTask {
 		);
 
 		foreach ($properties as $var => $title) {
-			if (count($$var)) {
+			if (count(${$var})) {
 				$output = '';
-				$length = count($$var);
-				foreach ($$var as $i => $propElement) {
+				$length = count(${$var});
+				foreach (${$var} as $i => $propElement) {
 					if ($i != $length - 1) {
 						$output .= ucfirst($propElement) . ', ';
 					} else {
