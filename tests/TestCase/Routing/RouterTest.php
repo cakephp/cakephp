@@ -1085,6 +1085,9 @@ class RouterTest extends TestCase {
 
 		$url = Router::url(['_name' => 'Articles::view', '_full' => true, '1']);
 		$this->assertEquals('http://localhost/view/1', $url);
+
+		$url = Router::url(['_name' => 'Articles::view', '1', '#' => 'frag']);
+		$this->assertEquals('/view/1#frag', $url);
 	}
 
 /**

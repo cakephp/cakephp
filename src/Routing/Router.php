@@ -546,15 +546,6 @@ class Router {
 				$output = static::fullBaseUrl() . $base . $output;
 			}
 			return $output;
-		} elseif ($urlType === 'array' && isset($url['_name'])) {
-			if (isset($url['_full']) && $url['_full'] === true) {
-				$full = true;
-				unset($url['_full']);
-			}
-
-			$url += $options;
-			$url = static::_applyUrlFilters($url);
-			$output = static::$_collection->match($url, static::$_requestContext);
 		} elseif ($urlType === 'array') {
 			if (isset($url['_full']) && $url['_full'] === true) {
 				$full = true;
@@ -575,25 +566,28 @@ class Router {
 				unset($url['_ssl']);
 			}
 
-			// Copy the current action if the controller is the current one.
-			if (
-				empty($url['action']) &&
-				(empty($url['controller']) || $params['controller'] === $url['controller'])
-			) {
-				$url['action'] = $params['action'];
+			if (!isset($url['_name'])) {
+				// Copy the current action if the controller is the current one.
+				if (
+					empty($url['action']) &&
+					(empty($url['controller']) || $params['controller'] === $url['controller'])
+				) {
+					$url['action'] = $params['action'];
+				}
+
+				// Keep the current prefix around if none set.
+				if (isset($params['prefix']) && !isset($url['prefix'])) {
+					$url['prefix'] = $params['prefix'];
+				}
+
+				$url += array(
+					'plugin' => $params['plugin'],
+					'controller' => $params['controller'],
+					'action' => 'index',
+					'_ext' => $params['_ext']
+				);
 			}
 
-			// Keep the current prefix around if none set.
-			if (isset($params['prefix']) && !isset($url['prefix'])) {
-				$url['prefix'] = $params['prefix'];
-			}
-
-			$url += array(
-				'plugin' => $params['plugin'],
-				'controller' => $params['controller'],
-				'action' => 'index',
-				'_ext' => $params['_ext']
-			);
 			$url = static::_applyUrlFilters($url);
 			$output = static::$_collection->match($url, static::$_requestContext);
 		} elseif (
