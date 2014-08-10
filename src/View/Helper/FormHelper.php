@@ -726,6 +726,12 @@ class FormHelper extends Helper {
 		return $this->widget('label', $attrs);
 	}
 
+/**
+ * Auto generates a label name for a given field
+ *
+ * @param string $fieldName The field name
+ * @return string The generated label text
+ */
 	protected function _labelText($fieldName) {
 		$text = $fieldName;
 		if (substr($text, -5) === '._ids') {
