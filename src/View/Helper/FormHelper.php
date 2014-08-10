@@ -78,8 +78,7 @@ class FormHelper extends Helper {
 		'templates' => [
 			'button' => '<button{{attrs}}>{{text}}</button>',
 			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
-			'checkboxFormGroup' => '{{input}}{{label}}',
-			'checkboxWrapper' => '<div class="checkbox">{{input}}{{label}}</div>',
+			'checkboxWrapper' => '<div class="checkbox">{{input}}</div>',
 			'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}',
 			'error' => '<div class="error-message">{{content}}</div>',
 			'errorList' => '<ul>{{content}}</ul>',
@@ -94,14 +93,14 @@ class FormHelper extends Helper {
 			'inputsubmit' => '<input type="{{type}}"{{attrs}}>',
 			'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
 			'inputContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
-			'label' => '<label{{attrs}}>{{text}}</label>',
+			'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
 			'legend' => '<legend>{{text}}</legend>',
 			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
 			'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
 			'selectMultiple' => '<select name="{{name}}[]" multiple="multiple"{{attrs}}>{{content}}</select>',
 			'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
-			'radioWrapper' => '{{input}}{{label}}',
+			'radioWrapper' => '{{label}}',
 			'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
 			'submitContainer' => '<div class="submit">{{content}}</div>',
 		]
@@ -711,18 +710,7 @@ class FormHelper extends Helper {
  */
 	public function label($fieldName, $text = null, array $options = []) {
 		if ($text === null) {
-			$text = $fieldName;
-			if (substr($text, -5) === '._ids') {
-				$text = substr($text, 0, -5);
-			}
-			if (strpos($text, '.') !== false) {
-				$fieldElements = explode('.', $text);
-				$text = array_pop($fieldElements);
-			}
-			if (substr($text, -3) === '_id') {
-				$text = substr($text, 0, -3);
-			}
-			$text = __(Inflector::humanize(Inflector::underscore($text)));
+			$text = $this->_labelText($fieldName);
 		}
 
 		if (isset($options['for'])) {
@@ -736,6 +724,27 @@ class FormHelper extends Helper {
 			'text' => $text,
 		];
 		return $this->widget('label', $attrs);
+	}
+
+/**
+ * Auto generates a label name for a given field
+ *
+ * @param string $fieldName The field name
+ * @return string The generated label text
+ */
+	protected function _labelText($fieldName) {
+		$text = $fieldName;
+		if (substr($text, -5) === '._ids') {
+			$text = substr($text, 0, -5);
+		}
+		if (strpos($text, '.') !== false) {
+			$fieldElements = explode('.', $text);
+			$text = array_pop($fieldElements);
+		}
+		if (substr($text, -3) === '_id') {
+			$text = substr($text, 0, -3);
+		}
+		return __(Inflector::humanize(Inflector::underscore($text)));
 	}
 
 /**
@@ -914,7 +923,7 @@ class FormHelper extends Helper {
 		}
 
 		$label = $options['label'];
-		if ($options['type'] !== 'radio') {
+		if (!in_array($options['type'], ['radio', 'checkbox'], true)) {
 			unset($options['label']);
 		}
 
@@ -928,8 +937,7 @@ class FormHelper extends Helper {
 
 		$label = $this->_getLabel($fieldName, compact('input', 'label', 'error') + $options);
 
-		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
-		$result = $templater->format($groupTemplate, compact('input', 'label', 'error'));
+		$result = $templater->format('formGroup', compact('input', 'label', 'error'));
 		$result = $templater->format($template, [
 			'content' => $result,
 			'error' => $error,
@@ -1125,7 +1133,7 @@ class FormHelper extends Helper {
  * @return bool|string false or Generated label element
  */
 	protected function _getLabel($fieldName, $options) {
-		if (in_array($options['type'], ['radio', 'hidden'])) {
+		if (in_array($options['type'], ['checkbox', 'radio', 'hidden'])) {
 			return false;
 		}
 
@@ -1180,8 +1188,7 @@ class FormHelper extends Helper {
 		}
 
 		$labelAttributes = [
-			'for' => isset($options['id']) ? $options['id'] : null,
-			'input' => isset($options['input']) ? $options['input'] : null
+			'for' => isset($options['id']) ? $options['id'] : null
 		] + $labelAttributes;
 		return $this->label($fieldName, $labelText, $labelAttributes);
 	}
@@ -1213,6 +1220,14 @@ class FormHelper extends Helper {
 		unset($options['value']);
 		$options = $this->_initInputField($fieldName, $options);
 		$options['value'] = $value;
+
+		if (!array_key_exists('label', $options)) {
+			$options['label'] = false;
+		}
+
+		if ($options['label'] === null) {
+			$options['label']['text'] = $this->_labelText($fieldName);
+		}
 
 		$output = '';
 		if ($options['hiddenField']) {

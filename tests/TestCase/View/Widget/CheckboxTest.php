@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\View\Widget;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\Checkbox;
+use Cake\View\Widget\Label;
 
 /**
  * Checkbox test case
@@ -32,6 +33,8 @@ class CheckboxTest extends TestCase {
 		parent::setUp();
 		$templates = [
 			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
+			'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
+			'checkboxWrapper' => '{{input}}',
 		];
 		$this->templates = new StringTemplate($templates);
 		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
@@ -43,7 +46,8 @@ class CheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$checkbox = new Checkbox($this->templates);
+		$label = new Label($this->templates);
+		$checkbox = new Checkbox($this->templates, $label);
 		$data = [
 			'name' => 'Comment[spam]',
 		];

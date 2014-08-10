@@ -30,12 +30,20 @@ class Checkbox implements WidgetInterface {
 	protected $_templates;
 
 /**
+ * Label instance.
+ *
+ * @var \Cake\View\Widget\Label
+ */
+	protected $_label;
+
+/**
  * Constructor
  *
  * @param \Cake\View\StringTemplate $templates Templates list.
  */
-	public function __construct($templates) {
+	public function __construct($templates, $label) {
 		$this->_templates = $templates;
+		$this->_label = $label;
 	}
 
 /**
@@ -46,6 +54,8 @@ class Checkbox implements WidgetInterface {
  * - `name` - The name of the input.
  * - `value` - The value attribute. Defaults to '1'.
  * - `val` - The current value. If it matches `value` the checkbox will be checked.
+ * - `label` - Either false to disable label generation, or
+ *   an array of attributes for the label template.
  *   You can also use the 'checked' attribute to make the checkbox checked.
  * - `disabled` - Whether or not the checkbox should be disabled.
  *
@@ -61,22 +71,59 @@ class Checkbox implements WidgetInterface {
 			'value' => 1,
 			'val' => null,
 			'disabled' => false,
+			'label' => null,
+			'escape' => true
 		];
+
+		$escape = $data['escape'];
+		$label = $data['label'];
+
 		if ($this->_isChecked($data)) {
 			$data['checked'] = true;
 		}
-		unset($data['val']);
+		unset($data['val'], $data['escape'], $data['label']);
 
 		$attrs = $this->_templates->formatAttributes(
 			$data,
 			['name', 'value']
 		);
 
-		return $this->_templates->format('checkbox', [
+		$input = $this->_templates->format('checkbox', [
 			'name' => $data['name'],
 			'value' => $data['value'],
 			'attrs' => $attrs
 		]);
+
+		return $this->_renderLabel(
+			$data,
+			$label,
+			$input,
+			$context,
+			$escape
+		) ?: $input;
+	}
+
+/**
+ * Renders a label element for the given checkbox.
+ *
+ * @param array $attrs The input properties.
+ * @param false|string|array $label The properties for a label.
+ * @param string $input The input widget.
+ * @param \Cake\View\Form\ContextInterface $context The form context.
+ * @param bool $escape Whether or not to HTML escape the label.
+ * @return string Generated label.
+ */
+	protected function _renderLabel($attrs, $label, $input, $context, $escape) {
+		if ($label === false) {
+			return false;
+		}
+		$labelAttrs = is_array($label) ? $label : ['text' => $label];
+		$labelAttrs += [
+			'for' => isset($attrs['id']) ? $attrs['id'] : null,
+			'escape' => $escape,
+			'input' => $input,
+		];
+		return $this->_label->render($labelAttrs, $context);
 	}
 
 /**

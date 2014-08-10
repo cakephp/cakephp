@@ -34,11 +34,11 @@ class MultiCheckbox implements WidgetInterface {
 	protected $_templates;
 
 /**
- * Label widget instance.
+ * Checkbox widget instance.
  *
- * @var \Cake\View\Widget\Label
+ * @var \Cake\View\Widget\Checkbox
  */
-	protected $_label;
+	protected $_checkbox;
 
 /**
  * Render multi-checkbox widget.
@@ -52,11 +52,11 @@ class MultiCheckbox implements WidgetInterface {
  *   variables.
  *
  * @param \Cake\View\StringTemplate $templates Templates list.
- * @param \Cake\View\Widget\Label $label Label widget instance.
+ * @param \Cake\View\Widget\Checkbox $checkbox Checkbox widget instance.
  */
-	public function __construct($templates, $label) {
+	public function __construct($templates, $checkbox) {
 		$this->_templates = $templates;
-		$this->_label = $label;
+		$this->_checkbox = $checkbox;
 	}
 
 /**
@@ -147,28 +147,26 @@ class MultiCheckbox implements WidgetInterface {
  * @return string
  */
 	protected function _renderInput($checkbox, $context) {
-		$input = $this->_templates->format('checkbox', [
-			'name' => $checkbox['name'] . '[]',
-			'value' => $checkbox['escape'] ? h($checkbox['value']) : $checkbox['value'],
-			'attrs' => $this->_templates->formatAttributes(
-				$checkbox,
-				['name', 'value', 'text']
-			)
-		]);
-
 		$labelAttrs = [
 			'for' => $checkbox['id'],
 			'escape' => $checkbox['escape'],
-			'text' => $checkbox['text'],
-			'input' => $input,
+			'text' => $checkbox['text']
 		];
+
 		if (!empty($checkbox['checked']) && empty($labelAttrs['class'])) {
 			$labelAttrs['class'] = 'selected';
 		}
-		$label = $this->_label->render($labelAttrs, $context);
+
+		$attrs = $checkbox;
+		unset($attrs['name'], $attrs['value'], $attrs['text']);
+
+		$input = $this->_checkbox->render([
+			'name' => $checkbox['name'] . '[]',
+			'value' => $checkbox['escape'] ? h($checkbox['value']) : $checkbox['value'],
+			'label' => $labelAttrs,
+		] + $attrs, $context);
 
 		return $this->_templates->format('checkboxWrapper', [
-			'label' => $label,
 			'input' => $input
 		]);
 	}
