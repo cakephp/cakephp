@@ -4,24 +4,24 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\TestCase;
 
 /**
- * This class helps in indirectly testing the functionalities of CakeTestCase::assertTags
+ * This class helps in indirectly testing the functionalities of CakeTestCase::assertHtml
  *
  */
-class AssertTagsTestCase extends TestCase {
+class AssertHtmlTestCase extends TestCase {
 
 /**
- * test that assertTags knows how to handle correct quoting.
+ * test that assertHtml knows how to handle correct quoting.
  *
  * @return void
  */
-	public function testAssertTagsQuotes() {
+	public function testAssertHtmlQuotes() {
 		$input = '<a href="/test.html" class="active">My link</a>';
 		$pattern = array(
 			'a' => array('href' => '/test.html', 'class' => 'active'),
 			'My link',
 			'/a'
 		);
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 
 		$input = "<a href='/test.html' class='active'>My link</a>";
 		$pattern = array(
@@ -29,7 +29,7 @@ class AssertTagsTestCase extends TestCase {
 			'My link',
 			'/a'
 		);
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 
 		$input = "<a href='/test.html' class='active'>My link</a>";
 		$pattern = array(
@@ -37,15 +37,15 @@ class AssertTagsTestCase extends TestCase {
 			'My link',
 			'/a'
 		);
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 	}
 
 /**
- * testNumericValuesInExpectationForAssertTags
+ * testNumericValuesInExpectationForAssertHtml
  *
  * @return void
  */
-	public function testNumericValuesInExpectationForAssertTags() {
+	public function testNumericValuesInExpectationForAssertHtml() {
 		$value = 220985;
 
 		$input = '<p><strong>' . $value . '</strong></p>';
@@ -56,7 +56,7 @@ class AssertTagsTestCase extends TestCase {
 				'/strong',
 			'/p'
 		);
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 
 		$input = '<p><strong>' . $value . '</strong></p><p><strong>' . $value . '</strong></p>';
 		$pattern = array(
@@ -71,7 +71,7 @@ class AssertTagsTestCase extends TestCase {
 				'/strong',
 			'/p',
 		);
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 
 		$input = '<p><strong>' . $value . '</strong></p><p id="' . $value . '"><strong>' . $value . '</strong></p>';
 		$pattern = array(
@@ -86,37 +86,37 @@ class AssertTagsTestCase extends TestCase {
 				'/strong',
 			'/p',
 		);
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 	}
 
 /**
- * testBadAssertTags
+ * testBadAssertHtml
  *
  * @return void
  */
-	public function testBadAssertTags() {
+	public function testBadAssertHtml() {
 		$input = '<a href="/test.html" class="active">My link</a>';
 		$pattern = array(
 			'a' => array('hRef' => '/test.html', 'clAss' => 'active'),
 			'My link2',
 			'/a'
 		);
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 	}
 
 /**
- * testBadAssertTags
+ * testBadAssertHtml
  *
  * @return void
  */
-	public function testBadAssertTags2() {
+	public function testBadAssertHtml2() {
 		$input = '<a href="/test.html" class="active">My link</a>';
 		$pattern = array(
 			'<a' => array('href' => '/test.html', 'class' => 'active'),
 			'My link',
 			'/a'
 		);
-		$this->assertTags($input, $pattern);
+		$this->assertHtml($pattern, $input);
 	}
 
 }

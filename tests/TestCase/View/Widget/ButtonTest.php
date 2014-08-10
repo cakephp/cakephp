@@ -44,7 +44,7 @@ class ButtonTest extends TestCase {
 			'button' => ['type' => 'submit', 'name' => 'my_input'],
 			'/button'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -65,7 +65,7 @@ class ButtonTest extends TestCase {
 			'Some button',
 			'/button'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -84,7 +84,7 @@ class ButtonTest extends TestCase {
 			'Some <value>',
 			'/button'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['escape'] = true;
 		$result = $button->render($data, $this->context);
@@ -93,7 +93,7 @@ class ButtonTest extends TestCase {
 			'Some &lt;value&gt;',
 			'/button'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -120,7 +120,7 @@ class ButtonTest extends TestCase {
 			'Go',
 			'/button'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 }

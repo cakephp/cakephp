@@ -62,7 +62,7 @@ class TimeHelperTest extends TestCase {
 			'on ' . date('j/n/y', $timestamp),
 			'/span'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $Time->timeAgoInWords($timestamp, array(
 			'end' => '1 years',
@@ -80,7 +80,7 @@ class TimeHelperTest extends TestCase {
 			'on ' . date('j/n/y', $timestamp),
 			'/span'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$timestamp = strtotime('+2 weeks');
 		$result = $Time->timeAgoInWords(
@@ -95,7 +95,7 @@ class TimeHelperTest extends TestCase {
 			'2 weeks',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**

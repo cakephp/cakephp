@@ -330,7 +330,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -345,7 +345,7 @@ class FormHelperTest extends TestCase {
 			'method' => 'get', 'action' => '/articles/add',
 			'accept-charset' => $encoding
 		));
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -367,7 +367,7 @@ class FormHelperTest extends TestCase {
 				'accept-charset' => 'utf-8'
 			]
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -385,7 +385,7 @@ class FormHelperTest extends TestCase {
 			'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
 			'/div'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -419,7 +419,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => $override),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -445,7 +445,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -469,7 +469,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->article['defaults'] = ['id' => 1];
 		$this->Form->request->here = '/articles/edit/1';
@@ -485,7 +485,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request['action'] = 'add';
 		$result = $this->Form->create($this->article, ['url' => ['action' => 'publish']]);
@@ -499,7 +499,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->create($this->article, array('url' => '/articles/publish'));
 		$expected = array(
@@ -508,7 +508,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request['controller'] = 'pages';
 		$result = $this->Form->create($this->article, array('action' => 'signup'));
@@ -521,7 +521,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -545,7 +545,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -567,7 +567,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -595,7 +595,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->create($this->article, array(
 			'type' => 'post',
@@ -605,7 +605,7 @@ class FormHelperTest extends TestCase {
 				'?' => array('param1' => 'value1', 'param2' => 'value2')
 			)
 		));
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -629,7 +629,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -658,7 +658,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -669,26 +669,30 @@ class FormHelperTest extends TestCase {
 	public function testGetFormCreate() {
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create($this->article, array('type' => 'get'));
-		$this->assertTags($result, array('form' => array(
+		$expected = array('form' => array(
 			'method' => 'get', 'action' => '/articles/add',
 			'accept-charset' => $encoding
-		)));
+		));
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->text('title');
-		$this->assertTags($result, array('input' => array(
+		$expected = array('input' => array(
 			'name' => 'title', 'type' => 'text', 'required' => 'required'
-		)));
+		));
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->password('password');
-		$this->assertTags($result, array('input' => array(
+		$expected = array('input' => array(
 			'name' => 'password', 'type' => 'password'
-		)));
+		));
+		$this->assertHtml($expected, $result);
 		$this->assertNotRegExp('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
 
 		$result = $this->Form->text('user_form');
-		$this->assertTags($result, array('input' => array(
+		$expected = array('input' => array(
 			'name' => 'user_form', 'type' => 'text'
-		)));
+		));
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -707,13 +711,13 @@ class FormHelperTest extends TestCase {
 			'method' => 'get', 'action' => '/contact_test/add',
 			'accept-charset' => $encoding
 		));
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->text('reason');
 		$expected = array(
 			'input' => array('type' => 'text', 'name' => 'reason')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -738,11 +742,11 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->create($this->article, ['url' => '/articles/publish', 'id' => 'MyForm']);
 		$expected['form']['id'] = 'MyForm';
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -833,7 +837,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -866,7 +870,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('foo', array('step' => 0.5));
 		$expected = array(
@@ -882,7 +886,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -907,7 +911,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -939,7 +943,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -974,7 +978,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -997,7 +1001,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'submit', 'name' => 'save', 'value' => 'Save'),
 			'/div',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->submit('Cancel', array('name' => 'cancel'));
 		$expected = array(
@@ -1005,7 +1009,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'submit', 'name' => 'cancel', 'value' => 'Cancel'),
 			'/div',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->end();
 		$expected = array(
@@ -1022,7 +1026,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -1070,7 +1074,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'image', 'src' => 'img/save.png'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 		$this->assertEquals(array('x', 'y'), $this->Form->unlockField());
 	}
 
@@ -1089,7 +1093,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'image', 'name' => 'test', 'src' => 'img/save.png'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 		$this->assertEquals(array('test', 'test_x', 'test_y'), $this->Form->unlockField());
 	}
 
@@ -1138,7 +1142,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -1202,7 +1206,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -1253,7 +1257,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -1299,7 +1303,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('ratio');
 		$expected = array(
@@ -1310,7 +1314,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('name', 'type' => 'number', 'step' => '0.000001', 'id'),
 			'/div',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('population');
 		$expected = array(
@@ -1321,7 +1325,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('name', 'type' => 'number', 'step' => '1', 'id'),
 			'/div',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('published', array('type' => 'text'));
 		$expected = array(
@@ -1336,7 +1340,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('other', array('type' => 'text'));
 		$expected = array(
@@ -1351,7 +1355,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->hidden('stuff');
 		$expected = array(
@@ -1359,7 +1363,7 @@ class FormHelperTest extends TestCase {
 				'type' => 'hidden',
 				'name' => 'stuff',
 		));
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->hidden('hidden', array('value' => '0'));
 		$expected = array('input' => array(
@@ -1367,7 +1371,7 @@ class FormHelperTest extends TestCase {
 			'name' => 'hidden',
 			'value' => '0'
 		));
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('something', array('type' => 'checkbox'));
 		$expected = array(
@@ -1388,7 +1392,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->fields;
 		$expected = array(
@@ -1414,7 +1418,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -1692,7 +1696,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			'/div'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('Article.title', [
 			'templates' => [
@@ -1711,7 +1715,7 @@ class FormHelperTest extends TestCase {
 			],
 			'/div'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -1740,7 +1744,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			'/div'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -1769,7 +1773,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			'/div'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -1839,7 +1843,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('1.name');
 		$expected = array(
@@ -1856,7 +1860,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -1880,7 +1884,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('name', 'type' => 'number', 'id', 'step'),
 			'/div',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('ValidateUser.cost_decimal');
 		$expected = array(
@@ -1891,7 +1895,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('name', 'type' => 'number', 'step' => '0.001', 'id'),
 			'/div',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -1916,7 +1920,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('Contact.email', array(
 			'templates' => ['inputContainer' => '<div>{{content}}</div>']
@@ -1932,7 +1936,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('Contact.email', array('type' => 'text'));
 		$expected = array(
@@ -1946,7 +1950,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('Contact.5.email', array('type' => 'text'));
 		$expected = array(
@@ -1960,7 +1964,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('Contact.password');
 		$expected = array(
@@ -1974,7 +1978,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('Contact.email', array(
 			'type' => 'file', 'class' => 'textbox'
@@ -1990,7 +1994,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$entity = new Entity(['phone' => 'Hello & World > weird chars']);
 		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
@@ -2007,7 +2011,7 @@ class FormHelperTest extends TestCase {
 			)),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Model']['0']['OtherModel']['field'] = 'My value';
 		$this->Form->create();
@@ -2023,7 +2027,7 @@ class FormHelperTest extends TestCase {
 			),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data = [];
 
@@ -2044,7 +2048,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('field', array(
 			'templates' => [
@@ -2064,7 +2068,7 @@ class FormHelperTest extends TestCase {
 			'Badness!',
 			'/span'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$entity->errors('field', ['minLength']);
 		$result = $this->Form->input('field', array(
@@ -2084,7 +2088,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$entity->errors('field', ['maxLength']);
 		$result = $this->Form->input('field', array(
@@ -2104,7 +2108,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2125,7 +2129,7 @@ class FormHelperTest extends TestCase {
 				'id' => 'field'
 			),
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2145,7 +2149,7 @@ class FormHelperTest extends TestCase {
 			'input' => ['type' => 'text', 'name' => 'field', 'id' => 'prefix-field'],
 			'/div'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('field', ['id' => 'custom-id']);
 		$expected = [
@@ -2156,7 +2160,7 @@ class FormHelperTest extends TestCase {
 			'input' => ['type' => 'text', 'name' => 'field', 'id' => 'custom-id'],
 			'/div'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->radio('Model.field', ['option A']);
 		$expected = [
@@ -2171,7 +2175,7 @@ class FormHelperTest extends TestCase {
 			'option A',
 			'/label'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->radio('Model.field', ['option A', 'option']);
 		$expected = [
@@ -2186,7 +2190,7 @@ class FormHelperTest extends TestCase {
 			'option A',
 			'/label'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->select(
 			'Model.multi_field',
@@ -2207,7 +2211,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'/div',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->end();
 		$result = $this->Form->input('field');
@@ -2219,7 +2223,7 @@ class FormHelperTest extends TestCase {
 			'input' => ['type' => 'text', 'name' => 'field', 'id' => 'field'],
 			'/div'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2239,7 +2243,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'text', 'name' => '0', 'id' => '0'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2255,7 +2259,7 @@ class FormHelperTest extends TestCase {
 			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'user-active', 'checked' => 'checked')),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => 1));
 		$expected = array(
@@ -2264,7 +2268,7 @@ class FormHelperTest extends TestCase {
 			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'user-active', 'checked' => 'checked')),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => '1'));
 		$expected = array(
@@ -2273,7 +2277,7 @@ class FormHelperTest extends TestCase {
 			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'user-active', 'checked' => 'checked')),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('User.disabled', array(
 			'label' => 'Disabled',
@@ -2295,7 +2299,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2313,13 +2317,13 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'input' => array('name', 'type' => 'hidden', 'id')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('ValidateUser.custom', ['type' => 'hidden']);
 		$expected = array(
 			'input' => array('name', 'type' => 'hidden', 'id')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2358,7 +2362,7 @@ class FormHelperTest extends TestCase {
 			'This is it!',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2400,7 +2404,7 @@ class FormHelperTest extends TestCase {
 			'This is it!',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2442,7 +2446,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		// make sure 50 does only disable 50, and not 50f5c0cf
 		$options = array('50' => 'Fifty', '50f5c0cf' => 'Stringy');
@@ -2469,7 +2473,7 @@ class FormHelperTest extends TestCase {
 			'/div'
 		);
 		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => $disabled, 'options' => $options));
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2482,7 +2486,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'input' => array('name' => '0[Node][title]', 'type' => 'text')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2511,7 +2515,7 @@ class FormHelperTest extends TestCase {
 			'/select',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('email', array(
 			'options' => array('First', 'Second'), 'empty' => true)
@@ -2533,14 +2537,14 @@ class FormHelperTest extends TestCase {
 			'/select',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('email', [
 			'type' => 'select',
 			'options' => new \ArrayObject(['First', 'Second']),
 			'empty' => true
 		]);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$this->Form->request->data = array('Model' => array('user_id' => 'value'));
@@ -2563,7 +2567,7 @@ class FormHelperTest extends TestCase {
 			'/select',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$this->Form->request->data = array('Thing' => array('user_id' => null));
@@ -2586,7 +2590,7 @@ class FormHelperTest extends TestCase {
 			'/select',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$this->Form->request->data = array('Thing' => array('user_id' => 'value'));
@@ -2609,7 +2613,7 @@ class FormHelperTest extends TestCase {
 			'/select',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->data = array();
 		$result = $this->Form->input('Publisher.id', array(
@@ -2638,7 +2642,7 @@ class FormHelperTest extends TestCase {
 				'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2653,7 +2657,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'title', 'id' => 'title'),
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->article['schema']['_constraints']['primary']['columns'] = ['title', 'body'];
 		$this->Form->create($this->article);
@@ -2661,13 +2665,13 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'title', 'id' => 'title'),
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('body');
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'body', 'id' => 'body'),
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2684,7 +2688,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('name' => 'Model[user_id]', 'type' => 'text', 'id' => 'model-user-id'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		//Check that magic types still work for plural/singular vars
 		$this->View->viewVars['types'] = array('value' => 'good', 'other' => 'bad');
@@ -2698,7 +2702,7 @@ class FormHelperTest extends TestCase {
 			'/select',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2725,7 +2729,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'model-user'), 'User', '/label',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2759,7 +2763,7 @@ class FormHelperTest extends TestCase {
 			'/select',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2790,7 +2794,7 @@ class FormHelperTest extends TestCase {
 			'/legend',
 			'*/fieldset',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->allInputs([], array('fieldset' => true, 'legend' => 'Field of Dreams'));
 		$this->assertContains('<legend>Field of Dreams</legend>', $result);
@@ -2816,7 +2820,7 @@ class FormHelperTest extends TestCase {
 			'/legend',
 			'*/fieldset',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2841,7 +2845,7 @@ class FormHelperTest extends TestCase {
 			'*/div',
 			'/fieldset',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->allInputs([
 			'published' => ['type' => 'boolean']
@@ -2860,7 +2864,7 @@ class FormHelperTest extends TestCase {
 			'*/div',
 			'/fieldset',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->create($this->article);
 		$result = $this->Form->allInputs([], ['legend' => 'Hello']);
@@ -2880,7 +2884,7 @@ class FormHelperTest extends TestCase {
 			'*/div',
 			'/fieldset'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->create(false);
 		$expected = array(
@@ -2897,7 +2901,7 @@ class FormHelperTest extends TestCase {
 			array('foo' => array('type' => 'text')),
 			array('legend' => false)
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -2923,7 +2927,7 @@ class FormHelperTest extends TestCase {
 			'*/div',
 			'/fieldset',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->create($this->article);
 		$result = $this->Form->allInputs([
@@ -2943,7 +2947,7 @@ class FormHelperTest extends TestCase {
 			'*/div',
 			'/fieldset',
 		);
-		$this->assertTags($result, $expected, 'A falsey value (array) should not remove the input');
+		$this->assertHtml($expected, $result, 'A falsey value (array) should not remove the input');
 	}
 
 /**
@@ -2980,7 +2984,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'/div',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->select(
 			'Model.multi_field',
@@ -2996,7 +3000,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'/div',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3008,28 +3012,36 @@ class FormHelperTest extends TestCase {
  */
 	public function testLabel() {
 		$result = $this->Form->label('Person.name');
-		$this->assertTags($result, array('label' => array('for' => 'person-name'), 'Name', '/label'));
+		$expected = array('label' => array('for' => 'person-name'), 'Name', '/label');
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->label('Person.name');
-		$this->assertTags($result, array('label' => array('for' => 'person-name'), 'Name', '/label'));
+		$expected = array('label' => array('for' => 'person-name'), 'Name', '/label');
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->label('Person.first_name');
-		$this->assertTags($result, array('label' => array('for' => 'person-first-name'), 'First Name', '/label'));
+		$expected = array('label' => array('for' => 'person-first-name'), 'First Name', '/label');
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->label('Person.first_name', 'Your first name');
-		$this->assertTags($result, array('label' => array('for' => 'person-first-name'), 'Your first name', '/label'));
+		$expected = array('label' => array('for' => 'person-first-name'), 'Your first name', '/label');
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->label('Person.first_name', 'Your first name', array('class' => 'my-class'));
-		$this->assertTags($result, array('label' => array('for' => 'person-first-name', 'class' => 'my-class'), 'Your first name', '/label'));
+		$expected = array('label' => array('for' => 'person-first-name', 'class' => 'my-class'), 'Your first name', '/label');
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->label('Person.first_name', 'Your first name', array('class' => 'my-class', 'id' => 'LabelID'));
-		$this->assertTags($result, array('label' => array('for' => 'person-first-name', 'class' => 'my-class', 'id' => 'LabelID'), 'Your first name', '/label'));
+		$expected = array('label' => array('for' => 'person-first-name', 'class' => 'my-class', 'id' => 'LabelID'), 'Your first name', '/label');
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->label('Person.first_name', '');
-		$this->assertTags($result, array('label' => array('for' => 'person-first-name'), '/label'));
+		$expected = array('label' => array('for' => 'person-first-name'), '/label');
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->label('Person.2.name', '');
-		$this->assertTags($result, array('label' => array('for' => 'person-2-name'), '/label'));
+		$expected = array('label' => array('for' => 'person-2-name'), '/label');
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3050,7 +3062,7 @@ class FormHelperTest extends TestCase {
 			'Accept',
 			'/label',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3062,13 +3074,16 @@ class FormHelperTest extends TestCase {
  */
 	public function testTextbox() {
 		$result = $this->Form->text('Model.field');
-		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[field]')));
+		$expected = array('input' => array('type' => 'text', 'name' => 'Model[field]'));
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->text('Model.field', array('type' => 'password'));
-		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'Model[field]')));
+		$expected = array('input' => array('type' => 'password', 'name' => 'Model[field]'));
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->text('Model.field', array('id' => 'theID'));
-		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[field]', 'id' => 'theID')));
+		$expected = array('input' => array('type' => 'text', 'name' => 'Model[field]', 'id' => 'theID'));
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3091,7 +3106,7 @@ class FormHelperTest extends TestCase {
 				'value' => 'test &lt;strong&gt;HTML&lt;/strong&gt; values',
 			]
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Contact']['text'] = 'test';
 		$result = $this->Form->text('Contact.text', ['id' => 'theID']);
@@ -3104,7 +3119,7 @@ class FormHelperTest extends TestCase {
 				'class' => 'form-error'
 			]
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3118,12 +3133,12 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = 'test';
 		$result = $this->Form->text('Model.field', array('default' => 'default value'));
 		$expected = ['input' => ['type' => 'text', 'name' => 'Model[field]', 'value' => 'test']];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		unset($this->Form->request->data['Model']['field']);
 		$result = $this->Form->text('Model.field', array('default' => 'default value'));
 		$expected = ['input' => ['type' => 'text', 'name' => 'Model[field]', 'value' => 'default value']];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3145,7 +3160,7 @@ class FormHelperTest extends TestCase {
 			'email',
 			'/div',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->error('Article.field', "<strong>Badness!</strong>");
 		$expected = [
@@ -3153,7 +3168,7 @@ class FormHelperTest extends TestCase {
 			'&lt;strong&gt;Badness!&lt;/strong&gt;',
 			'/div',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->error('Article.field', "<strong>Badness!</strong>", ['escape' => false]);
 		$expected = [
@@ -3161,7 +3176,7 @@ class FormHelperTest extends TestCase {
 			'<strong', 'Badness!', '/strong',
 			'/div',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3183,7 +3198,7 @@ class FormHelperTest extends TestCase {
 			'No good!',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3210,7 +3225,7 @@ class FormHelperTest extends TestCase {
 				'/ul',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3229,11 +3244,13 @@ class FormHelperTest extends TestCase {
 		$this->Form->create($this->article);
 
 		$result = $this->Form->password('Contact.field');
-		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'Contact[field]')));
+		$expected = array('input' => array('type' => 'password', 'name' => 'Contact[field]'));
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Contact']['passwd'] = 'test';
 		$result = $this->Form->password('Contact.passwd', array('id' => 'theID'));
-		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'Contact[passwd]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error')));
+		$expected = array('input' => array('type' => 'password', 'name' => 'Contact[passwd]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error'));
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3252,10 +3269,10 @@ class FormHelperTest extends TestCase {
 			'option A',
 			'/label'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->radio('Model.field', new Collection(['option A']));
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->radio('Model.field', array('option A', 'option B'));
 		$expected = array(
@@ -3269,7 +3286,7 @@ class FormHelperTest extends TestCase {
 			'option B',
 			'/label',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->radio(
 			'Employee.gender',
@@ -3287,7 +3304,7 @@ class FormHelperTest extends TestCase {
 			'Female',
 			'/label',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('name' => 'Model[custom]'));
 		$expected = array(
@@ -3301,7 +3318,7 @@ class FormHelperTest extends TestCase {
 			'option B',
 			'/label',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3341,7 +3358,7 @@ class FormHelperTest extends TestCase {
 				'option B',
 			'/label',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3357,7 +3374,7 @@ class FormHelperTest extends TestCase {
 			'option A',
 			'/label'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3373,7 +3390,7 @@ class FormHelperTest extends TestCase {
 			'select' => array('name' => 'Model[field]'),
 			'/select'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data = array('Model' => array('field' => 'value'));
 		$result = $this->Form->select('Model.field', array('value' => 'good', 'other' => 'bad'));
@@ -3387,10 +3404,10 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'/select'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->select('Model.field', new Collection(['value' => 'good', 'other' => 'bad']));
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data = array();
 		$result = $this->Form->select('Model.field', array('value' => 'good', 'other' => 'bad'));
@@ -3404,7 +3421,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'/select'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$options = array(
 			array('value' => 'first', 'text' => 'First'),
@@ -3425,7 +3442,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'/select'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data = array('Model' => array('contact_id' => 228));
 		$result = $this->Form->select(
@@ -3442,7 +3459,7 @@ class FormHelperTest extends TestCase {
 			array('option' => array('value' => '228-2')), '228-2 value', '/option',
 			'/select'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Model']['field'] = 0;
 		$result = $this->Form->select('Model.field', array('0' => 'No', '1' => 'Yes'));
@@ -3452,7 +3469,7 @@ class FormHelperTest extends TestCase {
 			array('option' => array('value' => '1')), 'Yes', '/option',
 			'/select'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3475,7 +3492,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'/select'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->select(
 			'Model.field',
@@ -3492,7 +3509,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'/select'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3514,7 +3531,7 @@ class FormHelperTest extends TestCase {
 			array('option' => array('value' => '0')), 'option A', '/option',
 			'/select'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->select('user_id', array('option A'), array('disabled' => true));
 		$expected = array(
@@ -3525,7 +3542,7 @@ class FormHelperTest extends TestCase {
 			array('option' => array('value' => '0')), 'option A', '/option',
 			'/select'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3563,7 +3580,7 @@ class FormHelperTest extends TestCase {
 			'/optgroup',
 			'/select'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3603,14 +3620,14 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'/select'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->select(
 			'Model.multi_field',
 			$options,
 			['multiple' => 'multiple', 'form' => 'my-form']
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3639,7 +3656,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3683,7 +3700,7 @@ class FormHelperTest extends TestCase {
 			'/select',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		// make sure only 50 is selected, and not 50f5c0cf
 		$options = array(
@@ -3720,7 +3737,7 @@ class FormHelperTest extends TestCase {
 			'/select',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3767,7 +3784,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->select(
 			'Model.multi_field',
@@ -3806,7 +3823,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->select(
 			'Model.multi_field',
@@ -3845,7 +3862,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3882,7 +3899,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -3984,7 +4001,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('Model.multi_field', array(
 			'options' => array('a' => 'first', 'b' => 'second', 'c' => 'third'),
@@ -4016,7 +4033,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -4055,7 +4072,7 @@ class FormHelperTest extends TestCase {
 				array('label' => array('for' => 'fish-1')), '2', '/label',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->multiCheckbox(
 			'category',
@@ -4065,7 +4082,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->multiCheckbox('category', ['1', '2'], [
 			'name' => 'fish',
 		]);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -4081,7 +4098,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0'),
 			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1'))
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->checkbox('Model.field', array(
 			'id' => 'theID',
@@ -4096,7 +4113,7 @@ class FormHelperTest extends TestCase {
 				'form' => 'my-form',
 			))
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -4109,19 +4126,23 @@ class FormHelperTest extends TestCase {
 	public function testCheckboxDefaultValue() {
 		$this->Form->request->data['Model']['field'] = false;
 		$result = $this->Form->checkbox('Model.field', array('default' => true, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1')));
+		$expected = array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1'));
+		$this->assertHtml($expected, $result);
 
 		unset($this->Form->request->data['Model']['field']);
 		$result = $this->Form->checkbox('Model.field', array('default' => true, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'checked' => 'checked')));
+		$expected = array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'checked' => 'checked'));
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Model']['field'] = true;
 		$result = $this->Form->checkbox('Model.field', array('default' => false, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'checked' => 'checked')));
+		$expected = array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'checked' => 'checked'));
+		$this->assertHtml($expected, $result);
 
 		unset($this->Form->request->data['Model']['field']);
 		$result = $this->Form->checkbox('Model.field', array('default' => false, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1')));
+		$expected = array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1'));
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -4148,7 +4169,7 @@ class FormHelperTest extends TestCase {
 				'class' => 'form-error'
 			))
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['published'] = '';
 		$result = $this->Form->checkbox('published');
@@ -4156,7 +4177,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'published', 'value' => '0'),
 			array('input' => array('type' => 'checkbox', 'name' => 'published', 'value' => '1', 'class' => 'form-error'))
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -4170,7 +4191,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'hidden', 'name' => 'myField', 'value' => '0'),
 			array('input' => array('type' => 'checkbox', 'name' => 'myField', 'value' => '1'))
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -4190,7 +4211,7 @@ class FormHelperTest extends TestCase {
 				'value' => '1'
 			),
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->checkbox('UserForm.something', array(
 			'value' => 'Y',
@@ -4206,7 +4227,7 @@ class FormHelperTest extends TestCase {
 				'value' => 'Y'
 			)),
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -4326,7 +4347,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'*/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -4424,7 +4445,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'*/select'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 		$this->assertNotRegExp('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 	}
 
@@ -4481,7 +4502,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'*/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -4634,7 +4655,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'*/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->month('Model.field', ['empty' => true, 'value' => '']);
 		$expected = array(
@@ -4649,7 +4670,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'*/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->month('Model.field', ['value' => '', 'monthNames' => false]);
 		$expected = array(
@@ -4664,7 +4685,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'*/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$monthNames = [
 			'01' => 'Jan', '02' => 'Feb', '03' => 'Mar', '04' => 'Apr', '05' => 'May', '06' => 'Jun',
@@ -4683,7 +4704,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'*/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Project']['release'] = '2050-02-10';
 		$result = $this->Form->month('Project.release');
@@ -4700,7 +4721,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'*/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -4725,7 +4746,7 @@ class FormHelperTest extends TestCase {
 			$daysRegex,
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Model']['field'] = '2006-10-10 23:12:32';
 		$result = $this->Form->day('Model.field');
@@ -4746,7 +4767,7 @@ class FormHelperTest extends TestCase {
 			$daysRegex,
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Model']['field'] = '';
 		$result = $this->Form->day('Model.field', array('value' => '10'));
@@ -4767,7 +4788,7 @@ class FormHelperTest extends TestCase {
 			$daysRegex,
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Project']['release'] = '2050-10-10';
 		$result = $this->Form->day('Project.release');
@@ -4789,7 +4810,7 @@ class FormHelperTest extends TestCase {
 			$daysRegex,
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -4817,7 +4838,7 @@ class FormHelperTest extends TestCase {
 			$minutesRegex,
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->minute('Model.field');
@@ -4841,7 +4862,7 @@ class FormHelperTest extends TestCase {
 			$minutesRegex,
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Model']['field'] = '';
 		$result = $this->Form->minute('Model.field', array('interval' => 5));
@@ -4861,7 +4882,7 @@ class FormHelperTest extends TestCase {
 			$minutesRegex,
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:10:32';
 		$result = $this->Form->minute('Model.field', array('interval' => 5));
@@ -4881,7 +4902,7 @@ class FormHelperTest extends TestCase {
 			$minutesRegex,
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -4904,7 +4925,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'*/select'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -4929,7 +4950,7 @@ class FormHelperTest extends TestCase {
 			$hoursRegex,
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->hour('Model.field', ['format' => 12]);
@@ -4949,7 +4970,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Model']['field'] = '';
 		$result = $this->Form->hour('Model.field', array('format' => 24, 'value' => '23'));
@@ -4976,7 +4997,7 @@ class FormHelperTest extends TestCase {
 			$hoursRegex,
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		unset($this->Form->request->data['Model']['field']);
 		$result = $this->Form->hour('Model.field', array('format' => 24, 'value' => 'now'));
@@ -5002,7 +5023,7 @@ class FormHelperTest extends TestCase {
 			$hoursRegex,
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5024,7 +5045,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->year('Model.field', [
 			'value' => '',
@@ -5044,7 +5065,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', [
@@ -5062,7 +5083,7 @@ class FormHelperTest extends TestCase {
 			'/option',
 			'/select',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5152,14 +5173,14 @@ class FormHelperTest extends TestCase {
 			'some test data',
 			'/textarea',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->textarea('user.bio');
 		$expected = array(
 			'textarea' => array('name' => 'user[bio]'),
 			'/textarea',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data = array('field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars');
 		$result = $this->Form->textarea('field');
@@ -5168,7 +5189,7 @@ class FormHelperTest extends TestCase {
 			htmlentities('some <strong>test</strong> data with <a href="#">HTML</a> chars'),
 			'/textarea',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data = [
 			'Model' => ['field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars']
@@ -5179,14 +5200,14 @@ class FormHelperTest extends TestCase {
 			'some <strong>test</strong> data with <a href="#">HTML</a> chars',
 			'/textarea',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->textarea('0.OtherModel.field');
 		$expected = array(
 			'textarea' => array('name' => '0[OtherModel][field]'),
 			'/textarea'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5207,7 +5228,7 @@ class FormHelperTest extends TestCase {
 			'GREAT®',
 			'/textarea',
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5222,15 +5243,15 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['field'] = 'test';
 		$this->Form->create($this->article);
 		$result = $this->Form->hidden('field', array('id' => 'theID'));
-		$this->assertTags($result, array(
-			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'field', 'id' => 'theID', 'value' => 'test'))
-		);
+		$expected = array(
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'field', 'id' => 'theID', 'value' => 'test'));
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->hidden('field', ['value' => 'my value']);
 		$expected = [
 			'input' => ['type' => 'hidden', 'class' => 'form-error', 'name' => 'field', 'value' => 'my value']
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5242,18 +5263,18 @@ class FormHelperTest extends TestCase {
 		$expected = ['input' => ['type' => 'file', 'name' => 'Model[upload]']];
 
 		$result = $this->Form->file('Model.upload');
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Model']['upload'] = [
 			'name' => '', 'type' => '', 'tmp_name' => '',
 			'error' => 4, 'size' => 0
 		];
 		$result = $this->Form->file('Model.upload');
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data['Model']['upload'] = 'no data should be set in value';
 		$result = $this->Form->file('Model.upload');
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5267,7 +5288,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'input' => array('type' => 'file', 'name' => 'ValidateProfile[city]')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5277,19 +5298,24 @@ class FormHelperTest extends TestCase {
  */
 	public function testButton() {
 		$result = $this->Form->button('Hi');
-		$this->assertTags($result, array('button' => array('type' => 'submit'), 'Hi', '/button'));
+		$expected = array('button' => array('type' => 'submit'), 'Hi', '/button');
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->button('Clear Form >', array('type' => 'reset'));
-		$this->assertTags($result, array('button' => array('type' => 'reset'), 'Clear Form >', '/button'));
+		$expected = array('button' => array('type' => 'reset'), 'Clear Form >', '/button');
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->button('Clear Form >', array('type' => 'reset', 'id' => 'clearForm'));
-		$this->assertTags($result, array('button' => array('type' => 'reset', 'id' => 'clearForm'), 'Clear Form >', '/button'));
+		$expected = array('button' => array('type' => 'reset', 'id' => 'clearForm'), 'Clear Form >', '/button');
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->button('<Clear Form>', array('type' => 'reset', 'escape' => true));
-		$this->assertTags($result, array('button' => array('type' => 'reset'), '&lt;Clear Form&gt;', '/button'));
+		$expected = array('button' => array('type' => 'reset'), '&lt;Clear Form&gt;', '/button');
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->button('No type', array('type' => false));
-		$this->assertTags($result, array('button' => array(), 'No type', '/button'));
+		$expected = array('button' => array(), 'No type', '/button');
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->button('Upload Text', array(
 			'onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'",
@@ -5319,7 +5345,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testPostButton() {
 		$result = $this->Form->postButton('Hi', '/controller/action');
-		$this->assertTags($result, array(
+		$expected = array(
 			'form' => array('method' => 'post', 'action' => '/controller/action', 'accept-charset' => 'utf-8'),
 			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
@@ -5328,7 +5354,8 @@ class FormHelperTest extends TestCase {
 			'Hi',
 			'/button',
 			'/form'
-		));
+		);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->postButton('Send', '/', array('data' => array('extra' => 'value')));
 		$this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value"') !== false);
@@ -5380,7 +5407,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 			'/form',
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5390,7 +5417,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testPostLink() {
 		$result = $this->Form->postLink('Delete', '/posts/delete/1');
-		$this->assertTags($result, array(
+		$expected = array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
 				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
@@ -5400,10 +5427,11 @@ class FormHelperTest extends TestCase {
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
 			'Delete',
 			'/a'
-		));
+		);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('method' => 'delete'));
-		$this->assertTags($result, array(
+		$expected = array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
 				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
@@ -5413,10 +5441,11 @@ class FormHelperTest extends TestCase {
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
 			'Delete',
 			'/a'
-		));
+		);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('confirm' => 'Confirm?'));
-		$this->assertTags($result, array(
+		$expected = array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
 				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
@@ -5426,14 +5455,15 @@ class FormHelperTest extends TestCase {
 			'a' => array('href' => '#', 'onclick' => 'preg:/if \(confirm\(&quot;Confirm\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'),
 			'Delete',
 			'/a'
-		));
+		);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->postLink(
 			'Delete',
 			'/posts/delete/1',
 			array('escape' => false, 'confirm' => '\'Confirm\' this "deletion"?')
 		);
-		$this->assertTags($result, array(
+		$expected = array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
 				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
@@ -5443,13 +5473,14 @@ class FormHelperTest extends TestCase {
 			'a' => array('href' => '#', 'onclick' => 'preg:/if \(confirm\(&quot;&#039;Confirm&#039; this \\\\&quot;deletion\\\\&quot;\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'),
 			'Delete',
 			'/a'
-		));
+		);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->postLink('Delete', '/posts/delete', array('data' => array('id' => 1)));
 		$this->assertContains('<input type="hidden" name="id" value="1"', $result);
 
 		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('target' => '_blank'));
-		$this->assertTags($result, array(
+		$expected = array(
 			'form' => array(
 				'method' => 'post', 'target' => '_blank', 'action' => '/posts/delete/1',
 				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
@@ -5459,14 +5490,15 @@ class FormHelperTest extends TestCase {
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
 			'Delete',
 			'/a'
-		));
+		);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->postLink(
 			'',
 			array('controller' => 'items', 'action' => 'delete', 10),
 			array('class' => 'btn btn-danger', 'escape' => false, 'confirm' => 'Confirm thing')
 		);
-		$this->assertTags($result, array(
+		$expected = array(
 			'form' => array(
 				'method' => 'post', 'action' => '/items/delete/10',
 				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
@@ -5475,7 +5507,8 @@ class FormHelperTest extends TestCase {
 			'/form',
 			'a' => array('class' => 'btn btn-danger', 'href' => '#', 'onclick' => 'preg:/if \(confirm\(\&quot\;Confirm thing\&quot\;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'),
 			'/a'
-		));
+		);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5509,7 +5542,7 @@ class FormHelperTest extends TestCase {
 			'Delete',
 			'/a'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5544,7 +5577,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->end();
 
 		$result = $this->Form->postLink('Delete', '/posts/delete/1');
-		$this->assertTags($result, array(
+		$expected = array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
 				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
@@ -5559,7 +5592,8 @@ class FormHelperTest extends TestCase {
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
 			'Delete',
 			'/a'
-		));
+		);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5569,33 +5603,36 @@ class FormHelperTest extends TestCase {
  */
 	public function testPostLinkFormBuffer() {
 		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('block' => true));
-		$this->assertTags($result, array(
+		$expected = array(
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
 			'Delete',
 			'/a'
-		));
+		);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->View->fetch('postLink');
-		$this->assertTags($result, array(
+		$expected = array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
 				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form'
-		));
+		);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->postLink('Delete', '/posts/delete/2',
 			array('block' => true, 'method' => 'DELETE')
 		);
-		$this->assertTags($result, array(
+		$expected = array(
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
 			'Delete',
 			'/a'
-		));
+		);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->View->fetch('postLink');
-		$this->assertTags($result, array(
+		$expected = array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
 				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
@@ -5610,24 +5647,27 @@ class FormHelperTest extends TestCase {
 			),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'DELETE')),
 			'/form'
-		));
+		);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('block' => 'foobar'));
-		$this->assertTags($result, array(
+		$expected = array(
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
 			'Delete',
 			'/a'
-		));
+		);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->View->fetch('foobar');
-		$this->assertTags($result, array(
+		$expected = array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
 				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form'
-		));
+		);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5642,7 +5682,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'submit', 'value' => ''),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->submit('Test Submit');
 		$expected = array(
@@ -5650,7 +5690,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'submit', 'value' => 'Test Submit'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->submit('Next >');
 		$expected = array(
@@ -5658,7 +5698,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'submit', 'value' => 'Next &gt;'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->submit('Next >', array('escape' => false));
 		$expected = array(
@@ -5666,7 +5706,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'submit', 'value' => 'Next >'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->submit('Reset!', array('type' => 'reset'));
 		$expected = array(
@@ -5674,7 +5714,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'reset', 'value' => 'Reset!'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5689,7 +5729,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'image', 'src' => 'http://example.com/cake.power.gif'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->submit('/relative/cake.power.gif');
 		$expected = array(
@@ -5697,7 +5737,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'image', 'src' => 'relative/cake.power.gif'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->submit('cake.power.gif');
 		$expected = array(
@@ -5705,7 +5745,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'image', 'src' => 'img/cake.power.gif'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->submit('Not.an.image');
 		$expected = array(
@@ -5713,7 +5753,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'submit', 'value' => 'Not.an.image'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5745,7 +5785,7 @@ class FormHelperTest extends TestCase {
 			'input' => array('type' => 'image', 'src' => 'preg:/img\/cake\.power\.gif\?\d*/'),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5783,7 +5823,7 @@ class FormHelperTest extends TestCase {
 				'id' => 'non-existing-nor-validated'
 			)
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('non_existing_nor_validated', array(
 			'val' => 'my value'
@@ -5797,7 +5837,7 @@ class FormHelperTest extends TestCase {
 				'value' => 'my value', 'id' => 'non-existing-nor-validated'
 			)
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$this->Form->request->data = array('non_existing_nor_validated' => 'CakePHP magic');
 		$result = $this->Form->input('non_existing_nor_validated');
@@ -5810,7 +5850,7 @@ class FormHelperTest extends TestCase {
 				'value' => 'CakePHP magic', 'id' => 'non-existing-nor-validated'
 			)
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5835,7 +5875,7 @@ class FormHelperTest extends TestCase {
 				'id' => 'contacts-name', 'maxlength' => '255'
 			)
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('name', array(
 			'label' => array('class' => 'mandatory')
@@ -5849,7 +5889,7 @@ class FormHelperTest extends TestCase {
 				'id' => 'name', 'maxlength' => '255'
 			)
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('name', array(
 			'div' => false,
@@ -5864,7 +5904,7 @@ class FormHelperTest extends TestCase {
 				'id' => 'name', 'maxlength' => '255'
 			)
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('Contact.name', array(
 			'div' => false, 'id' => 'my_id', 'label' => array('for' => 'my_id')
@@ -5878,13 +5918,14 @@ class FormHelperTest extends TestCase {
 				'id' => 'my_id', 'maxlength' => '255'
 			)
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('1.id');
-		$this->assertTags($result, array('input' => array(
+		$expected = array('input' => array(
 			'type' => 'hidden', 'name' => '1[id]',
 			'id' => '1-id'
-		)));
+		));
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input("1.name");
 		$expected = array(
@@ -5896,7 +5937,7 @@ class FormHelperTest extends TestCase {
 				'id' => '1-name', 'maxlength' => '255'
 			)
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -5935,7 +5976,7 @@ class FormHelperTest extends TestCase {
 				'/textarea',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('0.comments.0.comment');
 		$expected = array(
@@ -5952,7 +5993,7 @@ class FormHelperTest extends TestCase {
 				'/textarea',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$comment->errors('comment', ['Not valid']);
 		$result = $this->Form->input('0.comments.0.comment');
@@ -5974,7 +6015,7 @@ class FormHelperTest extends TestCase {
 				'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		TableRegistry::get('Comments')
 			->validator('default')
@@ -5994,7 +6035,7 @@ class FormHelperTest extends TestCase {
 				'/textarea',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -6007,25 +6048,25 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'input' => array('type' => 'email', 'name' => 'User[email]')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->search('User.query');
 		$expected = array(
 			'input' => array('type' => 'search', 'name' => 'User[query]')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->search('User.query', array('value' => 'test'));
 		$expected = array(
 			'input' => array('type' => 'search', 'name' => 'User[query]', 'value' => 'test')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->search('User.query', array('type' => 'text', 'value' => 'test'));
 		$expected = array(
 			'input' => array('type' => 'text', 'name' => 'User[query]', 'value' => 'test')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -6044,7 +6085,7 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'input' => array('type' => 'url', 'name' => 'website', 'id' => 'website', 'value' => 'http://domain.tld')
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -6083,7 +6124,7 @@ class FormHelperTest extends TestCase {
 			),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('title', ['required' => false]);
 		$this->assertNotContains('required', $result);
@@ -6101,7 +6142,7 @@ class FormHelperTest extends TestCase {
 			),
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('body', ['required' => true]);
 		$this->assertContains('required', $result);
@@ -6126,7 +6167,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -6159,7 +6200,7 @@ class FormHelperTest extends TestCase {
 			'/label',
 			'/div'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Form->input('accept', [
 			'type' => 'radio',

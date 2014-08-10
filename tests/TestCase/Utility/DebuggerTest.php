@@ -150,7 +150,7 @@ class DebuggerTest extends TestCase {
 		Debugger::output('js');
 		$buzz .= '';
 		$result = explode('</a>', ob_get_clean());
-		$this->assertTags($result[0], array(
+		$expected = array(
 			'pre' => array('class' => 'cake-error'),
 			'a' => array(
 				'href' => "javascript:void(0);",
@@ -159,7 +159,8 @@ class DebuggerTest extends TestCase {
 					" \? '' \: 'none'\);/"
 			),
 			'b' => array(), 'Notice', '/b', ' (8)',
-		));
+		);
+		$this->assertHtml($expected, $result[0]);
 
 		$this->assertRegExp('/Undefined variable:\s+buzz/', $result[1]);
 		$this->assertRegExp('/<a[^>]+>Code/', $result[1]);
@@ -195,7 +196,7 @@ class DebuggerTest extends TestCase {
 		$foo .= '';
 		$result = ob_get_clean();
 
-		$data = array(
+		$expected = array(
 			'error' => array(),
 			'code' => array(), '8', '/code',
 			'file' => array(), 'preg:/[^<]+/', '/file',
@@ -203,7 +204,7 @@ class DebuggerTest extends TestCase {
 			'preg:/Undefined variable:\s+foo/',
 			'/error'
 		);
-		$this->assertTags($result, $data, true);
+		$this->assertHtml($expected, $result, true);
 	}
 
 /**
@@ -254,7 +255,7 @@ class DebuggerTest extends TestCase {
 		$foo .= '';
 		$result = ob_get_clean();
 
-		$data = array(
+		$expected = array(
 			'<error',
 			'<code', '8', '/code',
 			'<file', 'preg:/[^<]+/', '/file',
@@ -262,7 +263,7 @@ class DebuggerTest extends TestCase {
 			'preg:/Undefined variable:\s+foo/',
 			'/error'
 		);
-		$this->assertTags($result, $data, true);
+		$this->assertHtml($expected, $result, true);
 	}
 
 /**

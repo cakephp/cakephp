@@ -389,7 +389,7 @@ class CookieComponentTest extends TestCase {
 		$result = $this->Controller->response->cookie('Testing');
 
 		$time = new Time('now');
-		$this->assertWithinMargin($result['expire'], $time->format('U') + 10, 1);
+		$this->assertWithinRange($time->format('U') + 10, $result['expire'], 1);
 		unset($result['expire']);
 		$this->assertEquals($expected, $result);
 	}

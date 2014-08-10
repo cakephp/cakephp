@@ -43,7 +43,7 @@ class BasicTest extends TestCase {
 		$expected = [
 			'input' => ['type' => 'text', 'name' => 'my_input']
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -61,7 +61,7 @@ class BasicTest extends TestCase {
 		$expected = [
 			'input' => ['type' => 'email', 'name' => 'my_input']
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -84,7 +84,7 @@ class BasicTest extends TestCase {
 				'value' => 'Some &lt;value&gt;'
 			]
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -109,7 +109,7 @@ class BasicTest extends TestCase {
 				'required' => 'required',
 			]
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 }

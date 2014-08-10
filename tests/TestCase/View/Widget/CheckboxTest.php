@@ -55,7 +55,7 @@ class CheckboxTest extends TestCase {
 				'value' => 1,
 			]
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data = [
 			'name' => 'Comment[spam]',
@@ -69,7 +69,7 @@ class CheckboxTest extends TestCase {
 				'value' => 99,
 			]
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -92,7 +92,7 @@ class CheckboxTest extends TestCase {
 				'disabled' => 'disabled',
 			]
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -116,7 +116,7 @@ class CheckboxTest extends TestCase {
 				'checked' => 'checked',
 			]
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data = [
 			'name' => 'Comment[spam]',
@@ -124,11 +124,11 @@ class CheckboxTest extends TestCase {
 			'val' => 1,
 		];
 		$result = $checkbox->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data['val'] = '1';
 		$result = $checkbox->render($data, $this->context);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$data = [
 			'name' => 'Comment[spam]',
@@ -143,7 +143,7 @@ class CheckboxTest extends TestCase {
 				'value' => 1,
 			]
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -182,7 +182,7 @@ class CheckboxTest extends TestCase {
 				'checked' => 'checked',
 			]
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -222,7 +222,7 @@ class CheckboxTest extends TestCase {
 				'value' => 1,
 			]
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 }

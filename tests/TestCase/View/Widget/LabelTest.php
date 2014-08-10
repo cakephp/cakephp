@@ -53,7 +53,7 @@ class LabelTest extends TestCase {
 			'My text',
 			'/label'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -74,7 +74,7 @@ class LabelTest extends TestCase {
 			'My > text',
 			'/label'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -96,7 +96,7 @@ class LabelTest extends TestCase {
 			'My &gt; text',
 			'/label'
 		];
-		$this->assertTags($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 }

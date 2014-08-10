@@ -100,7 +100,7 @@ class DatabaseSessionTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$expected = time() + ini_get('session.gc_maxlifetime');
-		$this->assertWithinMargin($expires, $expected, 1);
+		$this->assertWithinRange($expected, $expires, 1);
 	}
 
 /**

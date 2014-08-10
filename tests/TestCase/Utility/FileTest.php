@@ -365,7 +365,7 @@ class FileTest extends TestCase {
 		$someFile = new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastAccess());
 		$this->assertTrue($someFile->open());
-		$this->assertWithinMargin($someFile->lastAccess(), time(), 2);
+		$this->assertWithinRange(time(), $someFile->lastAccess(), 2);
 		$someFile->close();
 		$someFile->delete();
 	}
@@ -379,10 +379,10 @@ class FileTest extends TestCase {
 		$someFile = new File(TMP . 'some_file.txt', false);
 		$this->assertFalse($someFile->lastChange());
 		$this->assertTrue($someFile->open('r+'));
-		$this->assertWithinMargin($someFile->lastChange(), time(), 2);
+		$this->assertWithinRange(time(), $someFile->lastChange(), 2);
 
 		$someFile->write('something');
-		$this->assertWithinMargin($someFile->lastChange(), time(), 2);
+		$this->assertWithinRange(time(), $someFile->lastChange(), 2);
 
 		$someFile->close();
 		$someFile->delete();
