@@ -3236,8 +3236,8 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->radio('Model.field', array('option A'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => ''),
-			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0')),
 			'label' => array('for' => 'model-field-0'),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0')),
 			'option A',
 			'/label'
 		);
@@ -3249,12 +3249,12 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->radio('Model.field', array('option A', 'option B'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => ''),
-			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0')),
 			array('label' => array('for' => 'model-field-0')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0')),
 			'option A',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1')),
 			array('label' => array('for' => 'model-field-1')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1')),
 			'option B',
 			'/label',
 		);
@@ -3267,12 +3267,12 @@ class FormHelperTest extends TestCase {
 		);
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Employee[gender]', 'value' => '', 'form' => 'my-form'),
-			array('input' => array('type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'male', 'id' => 'employee-gender-male', 'form' => 'my-form')),
 			array('label' => array('for' => 'employee-gender-male')),
+			array('input' => array('type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'male', 'id' => 'employee-gender-male', 'form' => 'my-form')),
 			'Male',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'female', 'id' => 'employee-gender-female', 'form' => 'my-form')),
 			array('label' => array('for' => 'employee-gender-female')),
+			array('input' => array('type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'female', 'id' => 'employee-gender-female', 'form' => 'my-form')),
 			'Female',
 			'/label',
 		);
@@ -3281,55 +3281,15 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('name' => 'Model[custom]'));
 		$expected = array(
 			array('input' => array('type' => 'hidden', 'name' => 'Model[custom]', 'value' => '')),
-			array('input' => array('type' => 'radio', 'name' => 'Model[custom]', 'value' => '0', 'id' => 'model-custom-0')),
 			array('label' => array('for' => 'model-custom-0')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[custom]', 'value' => '0', 'id' => 'model-custom-0')),
 			'option A',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'Model[custom]', 'value' => '1', 'id' => 'model-custom-1')),
 			array('label' => array('for' => 'model-custom-1')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[custom]', 'value' => '1', 'id' => 'model-custom-1')),
 			'option B',
 			'/label',
 		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test generating radio input inside label ala twitter bootstrap
- *
- * @return void
- */
-	public function testRadioInputInsideLabel() {
-		$this->Form->templates([
-			'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
-			'radioWrapper' => '{{label}}'
-		]);
-
-		$result = $this->Form->radio('Model.field', ['option A', 'option B']);
-		$expected = [
-			['input' => [
-				'type' => 'hidden',
-				'name' => 'Model[field]',
-				'value' => ''
-			]],
-			['label' => ['for' => 'model-field-0']],
-				['input' => [
-					'type' => 'radio',
-					'name' => 'Model[field]',
-					'value' => '0',
-					'id' => 'model-field-0'
-				]],
-				'option A',
-			'/label',
-			['label' => ['for' => 'model-field-1']],
-				['input' => [
-					'type' => 'radio',
-					'name' => 'Model[field]',
-					'value' => '1',
-					'id' => 'model-field-1'
-				]],
-				'option B',
-			'/label',
-		];
 		$this->assertTags($result, $expected);
 	}
 
@@ -3341,8 +3301,8 @@ class FormHelperTest extends TestCase {
 	public function testRadioHiddenInputDisabling() {
 		$result = $this->Form->radio('Model.1.field', array('option A'), array('hiddenField' => false));
 		$expected = array(
-			'input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '0', 'id' => 'model-1-field-0'),
 			'label' => array('for' => 'model-1-field-0'),
+			'input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '0', 'id' => 'model-1-field-0'),
 			'option A',
 			'/label'
 		);
@@ -6096,28 +6056,6 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('body', ['required' => true]);
 		$this->assertContains('required', $result);
-	}
-
-/**
- * Tests that it is possible to nest inputs inside labels
- *
- * @return void
- */
-	public function testNestInputInLabel() {
-		$this->Form->templates([
-			'label' => '<label{{attrs}}>{{text}}{{input}}</label>',
-			'formGroup' => '{{label}}'
-		]);
-		$result = $this->Form->input('foo');
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'foo'),
-				'Foo',
-				'input' => array('type' => 'text', 'name' => 'foo', 'id' => 'foo'),
-			'/label',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
 	}
 
 /**

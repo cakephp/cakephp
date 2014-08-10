@@ -100,7 +100,7 @@ class FormHelper extends Helper {
 			'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
 			'selectMultiple' => '<select name="{{name}}[]" multiple="multiple"{{attrs}}>{{content}}</select>',
 			'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
-			'radioWrapper' => '{{input}}{{label}}',
+			'radioWrapper' => '{{label}}',
 			'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
 			'submitContainer' => '<div class="submit">{{content}}</div>',
 		]
@@ -1182,7 +1182,7 @@ class FormHelper extends Helper {
 		}
 
 		$labelAttributes = [
-			'for' => isset($options['id']) ? $options['id'] : null,
+			'for' => isset($options['id']) ? $options['id'] : null
 		] + $labelAttributes;
 		return $this->label($fieldName, $labelText, $labelAttributes);
 	}
