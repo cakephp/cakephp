@@ -468,10 +468,12 @@ class Router {
  *
  * - `Router::url('/posts/edit/1');` Returns the string with the base dir prepended.
  *   This usage does not use reverser routing.
- * - `Router::url(array('controller' => 'posts', 'action' => 'edit'));` Returns a URL
+ * - `Router::url(['controller' => 'posts', 'action' => 'edit']);` Returns a URL
  *   generated through reverse routing.
- * - `Router::url('custom-name', array(...));` Returns a URL generated through reverse
- *   routing.  This form allows you to leverage named routes.
+ * - `Router::url(['_name' => 'custom-name', ...]);` Returns a URL generated
+ *   through reverse routing. This form allows you to leverage named routes.
+ * - `Router::url('custom-name', [...]);` Returns a URL generated through reverse
+ *   routing. This form allows you to leverage named routes.
  *
  * There are a few 'special' parameters that can change the final URL string that is generated
  *
@@ -485,12 +487,14 @@ class Router {
  * - `_full` - If true output of `Router::fullBaseUrl()` will be prepended to generated URLs.
  * - `#` - Allows you to set URL hash fragments.
  * - `_ssl` - Set to true to convert the generated URL to https, or false to force http.
+ * - `_name` - Name of route.
  *
- * @param string|array $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
- *   or an array specifying any of the following: 'controller', 'action', 'plugin'
- *   additionally, you can provide routed elements or query string parameters.
+ * @param string|array $url An array specifying any of the following:
+ *   'controller', 'action', 'plugin' additionally, you can provide routed
+ *   elements or query string parameters. If string it can be name of a route or
+ *   any valid url string.
  * @param bool|array $options If (bool) true, the full base URL will be prepended to the result.
- *   If an array accepts the following keys.  If used with a named route you can provide
+ *   If an array accepts the following keys. If used with a named route you can provide
  *   a list of query string parameters.
  * @return string Full translated URL with base path.
  * @throws \Cake\Error\Exception When the route name is not found
