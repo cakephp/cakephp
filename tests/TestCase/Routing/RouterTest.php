@@ -1050,6 +1050,12 @@ class RouterTest extends TestCase {
 			array('controller' => 'users', 'action' => 'view'),
 			array('_name' => 'test')
 		);
+		Router::connect(
+			'/view/*',
+			['action' => 'view'],
+			['_name' => 'Articles::view']
+		);
+
 		$url = Router::url('test', array('name' => 'mark'));
 		$this->assertEquals('/users/mark', $url);
 
@@ -1058,6 +1064,12 @@ class RouterTest extends TestCase {
 
 		$url = Router::url('users-index');
 		$this->assertEquals('/users', $url);
+
+		$url = Router::url('Articles::view');
+		$this->assertEquals('/view/', $url);
+
+		$url = Router::url('Articles::view', ['1']);
+		$this->assertEquals('/view/1', $url);
 	}
 
 /**
