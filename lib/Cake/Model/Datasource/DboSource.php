@@ -1206,6 +1206,30 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Passes association results through afterFind filters of the corresponding model.
+ *
+ * Similar to DboSource::_filterResults(), but this filters only specified models.
+ * The primary model can not be specified, because this call DboSource::_filterResults() internally.
+ *
+ * @param array &$resultSet Reference of resultset to be filtered.
+ * @param Model $Model Instance of model to operate against.
+ * @param array $toBeFiltered List of classes to be filtered.
+ * @return array Array of results that have been filtered through $Model->afterFind.
+ */
+	protected function _filterResultsInclusive(&$resultSet, Model $Model, $toBeFiltered = array()) {
+		$exclude = array();
+
+		if (is_array($resultSet)) {
+			$current = reset($resultSet);
+			if (is_array($current)) {
+				$exclude = array_diff(array_keys($current), $toBeFiltered);
+			}
+		}
+
+		return $this->_filterResults($resultSet, $Model, $exclude);
+	}
+
+/**
  * Queries associations.
  *
  * Used to fetch results on recursive models.
@@ -1276,7 +1300,7 @@ class DboSource extends DataSource {
 
 			// Filter
 			if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
-				$this->_filterResults($assocResultSet, $Model);
+				$this->_filterResultsInclusive($assocResultSet, $Model, array($association));
 			}
 
 			// Merge
@@ -1305,7 +1329,7 @@ class DboSource extends DataSource {
 
 			// Filter
 			if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
-				$this->_filterResults($assocResultSet, $Model);
+				$this->_filterResultsInclusive($assocResultSet, $Model, array($association, $with));
 			}
 		}
 
