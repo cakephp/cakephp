@@ -604,6 +604,25 @@ class Model extends Object implements CakeEventListener {
 // @codingStandardsIgnoreEnd
 
 /**
+ * If true, afterFind will be passed consistent formatted $results in case of $primary is false.
+ * The format will be such as the following.
+ *
+ * {{{
+ * $results = array(
+ * 	0 => array(
+ * 		'ModelName' => array(
+ * 			'field1' => 'value1',
+ * 			'field2' => 'value2'
+ * 		)
+ * 	)
+ * );
+ * }}}
+ *
+ * @var bool
+ */
+	public $useConsistentAfterFind = true;
+
+/**
  * The ID of the model record that was last inserted.
  *
  * @var int

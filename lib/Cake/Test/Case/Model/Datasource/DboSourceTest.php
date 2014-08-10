@@ -1537,4 +1537,67 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertCount(4, $result['Article'][0]['Comment']);
 		$this->assertCount(0, $result['Article'][1]['Comment']);
 	}
+
+/**
+ * Test format of $results in afterFind
+ *
+ * @return void
+ */
+	public function testUseConsistentAfterFind() {
+		$this->loadFixtures('Author', 'Post');
+
+		$expected = array(
+			'Author' => array(
+				'id' => '1',
+				'user' => 'mariano',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'created' => '2007-03-17 01:16:23',
+				'updated' => '2007-03-17 01:18:31',
+				'test' => 'working',
+			),
+			'Post' => array(
+				array(
+					'id' => '1',
+					'author_id' => '1',
+					'title' => 'First Post',
+					'body' => 'First Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31',
+				),
+				array(
+					'id' => '3',
+					'author_id' => '1',
+					'title' => 'Third Post',
+					'body' => 'Third Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31',
+				),
+			),
+		);
+
+		$Author = new Author();
+		$Post = $this->getMock('Post', array('afterFind'), array(), '', true);
+		$Post->expects($this->at(0))->method('afterFind')->with(array(array('Post' => $expected['Post'][0])), $this->isFalse())->will($this->returnArgument(0));
+		$Post->expects($this->at(1))->method('afterFind')->with(array(array('Post' => $expected['Post'][1])), $this->isFalse())->will($this->returnArgument(0));
+
+		$Author->bindModel(array('hasMany' => array('Post' => array('limit' => 2, 'order' => 'Post.id'))));
+		$Author->Post = $Post;
+
+		$result = $Author->find('first', array('conditions' => array('Author.id' => 1), 'recursive' => 1));
+		$this->assertEquals($expected, $result);
+
+		// Backward compatiblity
+		$Author = new Author();
+		$Post = $this->getMock('Post', array('afterFind'), array(), '', true);
+		$Post->expects($this->once())->method('afterFind')->with($expected['Post'], $this->isFalse())->will($this->returnArgument(0));
+		$Post->useConsistentAfterFind = false;
+
+		$Author->bindModel(array('hasMany' => array('Post' => array('limit' => 2, 'order' => 'Post.id'))));
+		$Author->Post = $Post;
+
+		$result = $Author->find('first', array('conditions' => array('Author.id' => 1), 'recursive' => 1));
+		$this->assertEquals($expected, $result);
+	}
 }

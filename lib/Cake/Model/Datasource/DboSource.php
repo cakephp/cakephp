@@ -1399,10 +1399,15 @@ class DboSource extends DataSource {
 						$this->_mergeAssociation($row, $merge, $association, $type);
 					}
 				} else {
+					if (!$prefetched && $LinkModel->useConsistentAfterFind) {
+						if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
+							$this->_filterResultsInclusive($assocResultSet, $Model, array($association));
+						}
+					}
 					$this->_mergeAssociation($row, $assocResultSet, $association, $type, $selfJoin);
 				}
 
-				if ($type !== 'hasAndBelongsToMany' && isset($row[$association]) && !$prefetched) {
+				if ($type !== 'hasAndBelongsToMany' && isset($row[$association]) && !$prefetched && !$LinkModel->useConsistentAfterFind) {
 					$row[$association] = $LinkModel->afterFind($row[$association], false);
 				}
 
