@@ -100,6 +100,13 @@ class Time extends Carbon implements JsonSerializable {
 	public static $wordEnd = '+1 month';
 
 /**
+ * In-memory cache of date formatters
+ *
+ * @var array
+ */
+	protected static $_formatters = [];
+
+/**
  * {@inheritDoc}
  */
 	public function __construct($time = null, $tz = null) {
@@ -554,16 +561,20 @@ class Time extends Carbon implements JsonSerializable {
 		}
 
 		$timezone = $date->getTimezone()->getName();
-		$formatter = datefmt_create(
-			$locale,
-			$dateFormat,
-			$timeFormat,
-			$timezone === '+00:00' ? 'UTC' : $timezone,
-			$calendar,
-			$pattern
-		);
+		$key = "{$locale}.{$dateFormat}.{$timeFormat}.{$timezone}.{$calendar}.{$pattern}";
 
-		return $formatter->format($date);
+		if (!isset(static::$_formatters[$key])) {
+			static::$_formatters[$key] = datefmt_create(
+				$locale,
+				$dateFormat,
+				$timeFormat,
+				$timezone === '+00:00' ? 'UTC' : $timezone,
+				$calendar,
+				$pattern
+			);
+		}
+
+		return static::$_formatters[$key]->format($date);
 	}
 
 /**
