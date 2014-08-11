@@ -1,11 +1,16 @@
 <?php
 /**
- * Project: hesa-mbit.
- * User: walther
- * Date: 2014/08/08
- * Time: 9:37 AM
+ * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The Open Group Test Suite License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2013, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @since         3.0.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\QueryExpression;
