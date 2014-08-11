@@ -269,9 +269,8 @@ class QueryExpression implements ExpressionInterface, Countable {
 /**
  * Adds a new case expression to the expression object
  *
- * @param array|ExpressionInterface        $conditions   The conditions to test.
- *                                                       Must be a QueryExpression, or an array of QueryExpressions.
- * @param string|array|ExpressionInterface $trueValues   Value of each condition if that condition is true
+ * @param array|ExpressionInterface $conditions The conditions to test. Must be a QueryExpression, or an array of QueryExpressions.
+ * @param string|array|ExpressionInterface $trueValues Value of each condition if that condition is true
  * @param string|array|ExpressionInterface $defaultValue Default value if none of the conditiosn are true
  *
  * @return QueryExpression
