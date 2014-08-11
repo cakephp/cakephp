@@ -25,72 +25,130 @@ use Cake\Database\ValueBinder;
  */
 class CaseExpression implements ExpressionInterface {
 
-	protected $_expression;
+/**
+ * A list of strings or other expression objects that represent the conditions of
+ * the case statement. For example one key of the array might look like "sum > :value"
+ *
+ * @var array
+ */
+	protected $_conditions = [];
 
-	protected $_isTrue;
+/**
+ * Values that are associated with the conditions in the $_conditions array.
+ * Each value represents the 'true' value for the condition with the corresponding key
+ *
+ * @var array
+ */
+	protected $_trueValues = [];
 
-	protected $_isFalse;
+/**
+ * The value to be used if none of the conditions match
+ *
+ * @var array|QueryExpression|string
+ */
+	protected $_defaultValue;
 
 /**
  * Constructs the case expression
  *
- * @param QueryExpression $expression The expression to test
- * @param mixed           $isTrue Value if the expression is true
- * @param mixed           $isFalse Value if the expression is false
+ * @param array|QueryExpression $conditions The conditions to test.
+ *                                          Must be a QueryExpression, or an array of QueryExpressions.
+ * @param string|array|QueryExpression $trueValues Value of each condition if that condition is true
+ * @param string|array|QueryExpression $defaultValue Default value if none of the conditiosn are true
  */
-	public function __construct(QueryExpression $expression, $isTrue = 1, $isFalse = 0) {
-		$this->_expression = $expression;
-		$this->_isTrue = $this->_getValue($isTrue);
-		$this->_isFalse = $this->_getValue($isFalse);
-	}
-
-/**
- * Gets/sets the isTrue part
- *
- * @param mixed $value Value to set
- *
- * @return array|mixed
- */
-	public function isTrue($value = null) {
-		return $this->_part('isTrue', $value);
-	}
-
-/**
- * Gets/sets the isFalse part
- *
- * @param mixed $value Value to set
- *
- * @return array|mixed
- * @codeCoverageIgnore
- */
-	public function isFalse($value = null) {
-		return $this->_part('isFalse', $value);
-	}
-
-/**
- * Gets/sets the passed part
- *
- * @param string $part The part to get or set
- * @param mixed $value Value to set
- *
- * @return array|mixed
- */
-	protected function _part($part, $value) {
-		if ($value !== null) {
-			$this->{'_' . $part} = $this->_getValue($value);
+	public function __construct($conditions = [], $trueValues = [], $defaultValue = 0) {
+		if (!empty($conditions)) {
+			$this->add($conditions, $trueValues);
 		}
 
-		return $this->{'_' . $part};
+		$this->_defaultValue = $this->_parseValue($defaultValue);
+	}
+
+/**
+ * Adds one or more conditions and their respective true values to the case object.
+ * Conditions must be a one dimensional array or a QueryExpression.
+ * The trueValues must be a similar structure, but may contain a string value.
+ *
+ * @param array|QueryExpression $conditions Must be a QueryExpression, or an array of QueryExpressions.
+ * @param string|array|QueryExpression $trueValues Values of each condition if that condition is true
+ *
+ * @return $this
+ */
+	public function add($conditions = [], $trueValues = []) {
+		if (!is_array($conditions)) {
+			$conditions = [$conditions];
+		}
+		if (!is_array($trueValues)) {
+			$trueValues = [$trueValues];
+		}
+
+		$this->_addExpressions($conditions, $trueValues);
+
+		return $this;
+	}
+
+/**
+ * Iterates over the passed in conditions and ensures that there is a matching true value for each.
+ * If no matching true value, then it is defaulted to '1'.
+ *
+ * @param array|QueryExpression $conditions Must be a QueryExpression, or an array of QueryExpressions.
+ * @param string|array|QueryExpression $trueValues Values of each condition if that condition is true
+ *
+ * @return void
+ */
+	protected function _addExpressions($conditions, $trueValues) {
+		foreach ($conditions as $k => $c) {
+			$numericKey = is_numeric($k);
+
+			if ($numericKey && empty($c)) {
+				continue;
+			}
+
+			if (!$c instanceof QueryExpression) {
+				continue;
+			}
+
+			$trueValue = isset($trueValues[$k]) ? $trueValues[$k] : 1;
+
+			if ($trueValue === 'literal') {
+				$trueValue = $k;
+			} elseif (is_string($trueValue)) {
+				$trueValue = [
+					'value' => $trueValue,
+					'type' => null
+				];
+			} elseif (empty($trueValue)) {
+				$trueValue = 1;
+			}
+
+			$this->_conditions[] = $c;
+			$this->_trueValues[] = $trueValue;
+		}
+	}
+
+/**
+ * Gets/sets the default value part
+ *
+ * @param array|string|QueryExpression $value Value to set
+ *
+ * @return array|string|QueryExpression
+ */
+	public function defaultValue($value = null) {
+		if ($value !== null) {
+			$this->_defaultValue = $this->_parseValue($value);
+		}
+
+		return $this->_defaultValue;
 	}
 
 /**
  * Parses the value into a understandable format
  *
- * @param mixed $value The value to parse
+ * @param array|string|QueryExpression $value The value to parse
  *
- * @return array|mixed
+ * @return array|string|QueryExpression
  */
-	protected function _getValue($value) {
+	protected function _parseValue($value) {
 		if (is_string($value)) {
 			$value = [
 				'value' => $value,
@@ -104,15 +162,14 @@ class CaseExpression implements ExpressionInterface {
 	}
 
 /**
- * Compiles the true or false part into sql
+ * Compiles the relevant parts into sql
  *
- * @param mixed       $part The part to compile
+ * @param array|string|QueryExpression $part The part to compile
  * @param ValueBinder $generator Sql generator
  *
  * @return string
  */
 	protected function _compile($part, ValueBinder $generator) {
-		$part = $this->{'_' . $part};
 		if ($part instanceof ExpressionInterface) {
 			$part = $part->sql($generator);
 		} elseif (is_array($part)) {
@@ -133,12 +190,13 @@ class CaseExpression implements ExpressionInterface {
  */
 	public function sql(ValueBinder $generator) {
 		$parts = [];
-		$parts[] = 'CASE WHEN';
-		$parts[] = $this->_expression->sql($generator);
-		$parts[] = 'THEN';
-		$parts[] = $this->_compile('isTrue', $generator);
+		$parts[] = 'CASE';
+		foreach ($this->_conditions as $k => $part) {
+			$trueValue = $this->_trueValues[$k];
+			$parts[] = 'WHEN ' . $this->_compile($part, $generator) . ' THEN ' . $this->_compile($trueValue, $generator);
+		}
 		$parts[] = 'ELSE';
-		$parts[] = $this->_compile('isFalse', $generator);
+		$parts[] = $this->_compile($this->_defaultValue, $generator);
 		$parts[] = 'END';
 
 		return implode(' ', $parts);
@@ -149,11 +207,17 @@ class CaseExpression implements ExpressionInterface {
  *
  */
 	public function traverse(callable $visitor) {
-		foreach (['_expression', '_isTrue', '_isFalse'] as $c) {
-			if ($this->{$c} instanceof ExpressionInterface) {
-				$visitor($this->{$c});
-				$this->{$c}->traverse($visitor);
+		foreach (['_conditions', '_trueValues'] as $part) {
+			foreach ($this->{$part} as $c) {
+				if ($c instanceof ExpressionInterface) {
+					$visitor($c);
+					$c->traverse($visitor);
+				}
 			}
+		}
+		if ($this->_defaultValue instanceof ExpressionInterface) {
+			$visitor($this->_defaultValue);
+			$this->_defaultValue->traverse($visitor);
 		}
 	}
 
