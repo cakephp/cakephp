@@ -9,8 +9,6 @@ php:
 
 env:
   - DB=mysql
-  - DB=pgsql
-  - DB=sqlite
 
 services:
   - memcached
@@ -19,8 +17,13 @@ matrix:
   fast_finish: true
   include:
     - php: 5.4
-      env:
-        - PHPCS=1
+      env: DB=pgsql
+
+    - php: 5.4
+      env: DB=sqlite
+
+    - php: 5.4
+      env: PHPCS=1
 
 
 before_script:
