@@ -33,13 +33,13 @@ class CaseExpressionTest extends TestCase {
 		$expr->eq('test', 'true');
 		$caseExpression = new CaseExpression($expr, 'foobar');
 
-		$expected = 'CASE WHEN test = :c0 THEN :c1 ELSE 0 END';
+		$expected = 'CASE WHEN test = :c0 THEN :c1 ELSE :c2 END';
 		$this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
 
 		$expr2 = new QueryExpression();
 		$expr2->eq('test2', 'false');
 		$caseExpression->add($expr2);
-		$expected = 'CASE WHEN test = :c0 THEN :c1 WHEN test2 = :c2 THEN 1 ELSE 0 END';
+		$expected = 'CASE WHEN test = :c0 THEN :c1 WHEN test2 = :c2 THEN :c3 ELSE :c4 END';
 		$this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
 	}
 

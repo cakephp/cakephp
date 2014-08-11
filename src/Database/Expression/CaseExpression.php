@@ -112,7 +112,7 @@ class CaseExpression implements ExpressionInterface {
 
 			if ($trueValue === 'literal') {
 				$trueValue = $k;
-			} elseif (is_string($trueValue)) {
+			} elseif (is_string($trueValue) || is_numeric($trueValue)) {
 				$trueValue = [
 					'value' => $trueValue,
 					'type' => null
@@ -149,7 +149,7 @@ class CaseExpression implements ExpressionInterface {
  * @return array|string|ExpressionInterface
  */
 	protected function _parseValue($value) {
-		if (is_string($value)) {
+		if (is_string($value) || is_numeric($value)) {
 			$value = [
 				'value' => $value,
 				'type' => null
