@@ -131,6 +131,7 @@ trait SqlDialectTrait {
 		}
 		return $query;
 	}
+
 /**
  *
  * Apply translation steps to delete queries.
@@ -162,7 +163,7 @@ trait SqlDialectTrait {
 		}
 		$conditions = $query->clause('where');
 		if ($conditions) {
-			$conditions->iterateParts(function($condition, $key) {
+			$conditions->traverse(function($condition) {
 				if (!($condition instanceof Comparison)) {
 					return $condition;
 				}
