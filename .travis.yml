@@ -16,13 +16,13 @@ services:
 matrix:
   fast_finish: true
   include:
-    - php: 5.5
+    - php: 5.4
       env: DB=pgsql
 
-    - php: 5.5
+    - php: 5.4
       env: DB=sqlite
 
-    - php: 5.5
+    - php: 5.4
       env: PHPCS=1
 
 
