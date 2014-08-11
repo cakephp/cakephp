@@ -266,8 +266,18 @@ class QueryExpression implements ExpressionInterface, Countable {
 		return $this->add(new Comparison($field, $values, $type, 'IN'));
 	}
 
-	public function addCase(QueryExpression $expression, $isTrue = 1, $isFalse = 0) {
-		return $this->add(new CaseExpression($expression, $isTrue, $isFalse));
+/**
+ * Adds a new case expression to the expression object
+ *
+ * @param array|ExpressionInterface        $conditions   The conditions to test.
+ *                                                       Must be a QueryExpression, or an array of QueryExpressions.
+ * @param string|array|ExpressionInterface $trueValues   Value of each condition if that condition is true
+ * @param string|array|ExpressionInterface $defaultValue Default value if none of the conditiosn are true
+ *
+ * @return QueryExpression
+ */
+	public function addCase($conditions, $trueValues = [], $defaultValue = '0') {
+		return $this->add(new CaseExpression($conditions, $trueValues, $defaultValue));
 	}
 
 /**
