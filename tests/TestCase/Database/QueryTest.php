@@ -1894,10 +1894,10 @@ class QueryTest extends TestCase {
 
 		$query->delete()
 			->from(['a ' => 'authors'])
-			->where(['a.id <' => 99]);
+			->where(['a.id !=' => 99]);
 
 		$result = $query->sql();
-		$this->assertQuotedQuery('DELETE <a> FROM <authors> AS <a>', $result, true);
+		$this->assertQuotedQuery('DELETE FROM <authors> WHERE <id> != :c0', $result, true);
 
 		$result = $query->execute();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
