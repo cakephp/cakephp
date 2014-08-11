@@ -59,7 +59,7 @@ class TimeHelperTest extends TestCase {
 				'title' => $timestamp,
 				'class' => 'time-ago-in-words'
 			),
-			'on ' . date('j/n/y', $timestamp),
+			'on ' . date('n/j/y', $timestamp),
 			'/span'
 		);
 		$this->assertHtml($expected, $result);
@@ -77,7 +77,7 @@ class TimeHelperTest extends TestCase {
 				'class' => 'time-ago-in-words',
 				'rel' => 'test'
 			),
-			'on ' . date('j/n/y', $timestamp),
+			'on ' . date('n/j/y', $timestamp),
 			'/span'
 		);
 		$this->assertHtml($expected, $result);
