@@ -68,7 +68,7 @@ class SchemaShell extends AppShell {
 		}
 		if ($name && empty($this->params['file'])) {
 			$this->params['file'] = Inflector::underscore($name);
-		} else {
+		} elseif(empty($this->params['file'])) {
 			$this->params['file'] = 'schema.php';
 		}
 		if (strpos($this->params['file'], '.php') === false) {
