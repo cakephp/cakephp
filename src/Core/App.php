@@ -80,7 +80,7 @@ class App {
 
 		list($plugin, $name) = pluginSplit($class);
 		if ($plugin) {
-			$base = Plugin::getNamespace($plugin);
+			$base = $plugin;
 		} else {
 			$base = Configure::read('App.namespace');
 		}
