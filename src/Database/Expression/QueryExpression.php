@@ -266,6 +266,10 @@ class QueryExpression implements ExpressionInterface, Countable {
 		return $this->add(new Comparison($field, $values, $type, 'IN'));
 	}
 
+	public function addCase(QueryExpression $expression, $isTrue = 1, $isFalse = 0) {
+		return $this->add(new CaseExpression($expression, $isTrue, $isFalse));
+	}
+
 /**
  * Adds a new condition to the expression object in the form
  * "field NOT IN (value1, value2)".
