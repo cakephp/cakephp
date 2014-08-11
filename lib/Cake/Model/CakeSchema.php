@@ -163,11 +163,10 @@ class CakeSchema extends Object {
 
 		$class = $name . 'Schema';
 
-		if (!class_exists($class)) {
-			if (file_exists($path . DS . $file) && is_file($path . DS . $file)) {
-				require_once $path . DS . $file;
-			} elseif (file_exists($path . DS . 'schema.php') && is_file($path . DS . 'schema.php')) {
-				require_once $path . DS . 'schema.php';
+		if (!class_exists($class) && !$this->_requireFile($path, $file)) {
+			$class = Inflector::camelize(Inflector::slug(Configure::read('App.dir'))) . 'Schema';
+			if (!class_exists($class)) {
+				$this->_requireFile($path, $file);
 			}
 		}
 
@@ -714,6 +713,24 @@ class CakeSchema extends Object {
  */
 	protected function _noPrefixTable($prefix, $table) {
 		return preg_replace('/^' . preg_quote($prefix) . '/', '', $table);
+	}
+
+/**
+ * Attempts to require the schema file specified
+ *
+ * @param string $path filesystem path to the file
+ * @param string $file filesystem basename of the file
+ * @return bool true when a file was successfully included, false on failure
+ */
+	protected function _requireFile($path, $file) {
+		if (file_exists($path . DS . $file) && is_file($path . DS . $file)) {
+			require_once $path . DS . $file;
+			return true;
+		} elseif (file_exists($path . DS . 'schema.php') && is_file($path . DS . 'schema.php')) {
+			require_once $path . DS . 'schema.php';
+			return true;
+		}
+		return false;
 	}
 
 }
