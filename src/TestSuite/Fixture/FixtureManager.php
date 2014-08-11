@@ -222,7 +222,7 @@ class FixtureManager {
  * @return void
  * @throws \Cake\Error\Exception When fixture records cannot be inserted.
  */
-	public function load(TestCase $test) {
+	public function load($test) {
 		if (empty($test->fixtures)) {
 			return;
 		}
@@ -266,7 +266,7 @@ class FixtureManager {
  * @param \Cake\TestSuite\TestCase $test the test to inspect for fixture unloading
  * @return void
  */
-	public function unload(TestCase $test) {
+	public function unload($test) {
 		$fixtures = !empty($test->fixtures) ? $test->fixtures : [];
 		foreach (array_reverse($fixtures) as $f) {
 			if (isset($this->_loaded[$f])) {
