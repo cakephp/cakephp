@@ -123,21 +123,16 @@ class Plugin {
 			'autoload' => false,
 			'bootstrap' => false,
 			'routes' => false,
-			'namespace' => $plugin,
 			'classBase' => 'src',
 			'ignoreMissing' => false
 		];
+
 		if (empty($config['path'])) {
 			$paths = App::path('Plugin');
 			foreach ($paths as $path) {
-				$namespacePath = str_replace('\\', DS, $config['namespace']);
 				$pluginPath = str_replace('\\', DS, $plugin);
 				if (is_dir($path . $pluginPath)) {
 					$config += ['path' => $path . $pluginPath . DS];
-					break;
-				}
-				if ($plugin !== $config['namespace'] && is_dir($path . $namespacePath)) {
-					$config += ['path' => $path . $namespacePath . DS];
 					break;
 				}
 			}
@@ -164,11 +159,11 @@ class Plugin {
 				static::$_loader->register();
 			}
 			static::$_loader->addNamespace(
-				$config['namespace'],
+				$plugin,
 				$config['path'] . $config['classBase'] . DS
 			);
 			static::$_loader->addNamespace(
-				$config['namespace'] . '\Test',
+				$plugin . '\Test',
 				$config['path'] . 'tests' . DS
 			);
 		}
@@ -249,22 +244,6 @@ class Plugin {
 			throw new Error\MissingPluginException(['plugin' => $plugin]);
 		}
 		return static::$_plugins[$plugin]['configPath'];
-	}
-
-/**
- * Return the namespace for a plugin
- *
- * If a plugin is unknown, the plugin name will be used as the namespace.
- * This lets you access vendor libraries or unloaded plugins using `Plugin.Class`.
- *
- * @param string $plugin name of the plugin in CamelCase format
- * @return string namespace to the plugin
- */
-	public static function getNamespace($plugin) {
-		if (empty(static::$_plugins[$plugin])) {
-			return $plugin;
-		}
-		return static::$_plugins[$plugin]['namespace'];
 	}
 
 /**

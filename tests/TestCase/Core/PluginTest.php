@@ -45,24 +45,6 @@ class PluginTest extends TestCase {
 	}
 
 /**
- * Test the plugin namespace
- *
- * @return void
- */
-	public function testGetNamespace() {
-		Plugin::load('TestPlugin');
-		$this->assertEquals('TestPlugin', Plugin::getNamespace('TestPlugin'));
-
-		$this->assertEquals('TestPluginTwo', Plugin::getNamespace('TestPluginTwo'));
-
-		Plugin::load('Company\TestPluginThree');
-		$this->assertEquals('Company\TestPluginThree', Plugin::getNamespace('Company\TestPluginThree'));
-
-		Plugin::load('CustomPlugin', array('namespace' => 'Company\TestPluginThree'));
-		$this->assertEquals('Company\TestPluginThree', Plugin::getNamespace('CustomPlugin'));
-	}
-
-/**
  * Tests loading a single plugin
  *
  * @return void
@@ -123,11 +105,6 @@ class PluginTest extends TestCase {
 
 		Plugin::load('Company\TestPluginThree', array('bootstrap' => true));
 		$this->assertTrue(Plugin::loaded('Company\TestPluginThree'));
-		$this->assertEquals('loaded plugin three bootstrap', Configure::read('PluginTest.test_plugin_three.bootstrap'));
-
-		Configure::delete('PluginTest.test_plugin_three.bootstrap');
-		Plugin::load('NewName', array('namespace' => 'Company\TestPluginThree', 'bootstrap' => true));
-		$this->assertTrue(Plugin::loaded('NewName'));
 		$this->assertEquals('loaded plugin three bootstrap', Configure::read('PluginTest.test_plugin_three.bootstrap'));
 	}
 
@@ -291,9 +268,9 @@ class PluginTest extends TestCase {
  * @return void
  */
 	public function testLoadAllWithPluginAlreadyLoaded() {
-		Plugin::load('PluginJs', ['namespace' => 'Company\TestPluginJs']);
-		Plugin::loadAll();
-		$this->assertEquals('Company\TestPluginJs', Plugin::getNamespace('PluginJs'));
+		Plugin::load('Company\TestPluginThree', ['bootstrap' => false]);
+		Plugin::loadAll(['bootstrap' => true, 'ignoreMissing' => true]);
+		$this->assertEmpty(Configure::read('PluginTest.test_plugin_three.bootstrap'));
 	}
 
 /**
