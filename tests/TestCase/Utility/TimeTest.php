@@ -103,7 +103,7 @@ class TimeTest extends TestCase {
 			array('+1 week', '1 week'),
 			array('+1 week 1 day', '1 week, 1 day'),
 			array('+2 weeks 2 day', '2 weeks, 2 days'),
-			array('2007-9-24', 'on 24/9/07'),
+			array('2007-9-24', 'on 9/24/07'),
 			array('now', 'just now'),
 		);
 	}
@@ -198,7 +198,7 @@ class TimeTest extends TestCase {
 			'accuracy' => array('year' => 'year'),
 			'end' => '+2 months'
 		));
-		$expected = 'exactly on ' . date('j/n/y', strtotime('+4 months +2 weeks +3 days'));
+		$expected = 'exactly on ' . date('n/j/y', strtotime('+4 months +2 weeks +3 days'));
 		$this->assertEquals($expected, $result);
 	}
 
@@ -314,7 +314,7 @@ class TimeTest extends TestCase {
 
 		$time = new Time('-3 years -12 months');
 		$result = $time->timeAgoInWords();
-		$expected = 'on ' . $time->format('j/n/y');
+		$expected = 'on ' . $time->format('n/j/y');
 		$this->assertEquals($expected, $result);
 
 		$time = new Time('-1 month -1 week -6 days');
@@ -327,7 +327,7 @@ class TimeTest extends TestCase {
 		$result = $time->timeAgoInWords(
 			array('accuracy' => array('year' => 'year'))
 		);
-		$expected = 'on ' . $time->format('j/n/y');
+		$expected = 'on ' . $time->format('n/j/y');
 		$this->assertEquals($expected, $result);
 
 		$time = new Time('-13 months -5 days');

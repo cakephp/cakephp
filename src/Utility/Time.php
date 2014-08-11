@@ -72,7 +72,7 @@ class Time extends Carbon implements JsonSerializable {
  * @var string
  * @see \Cake\Utility\Time::timeAgoInWords()
  */
-	public static $wordFormat = 'd/M/YY';
+	public static $wordFormat = [IntlDateFormatter::SHORT, -1];
 
 /**
  * The format to use when formatting a time using `Time::timeAgoInWords()`
