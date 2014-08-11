@@ -1713,9 +1713,9 @@ class RouterTest extends TestCase {
  */
 	public function testGenerationWithSslOption() {
 		Router::connect('/:controller/:action/*');
-		$_SERVER['HTTP_HOST'] = 'localhost';
 
 		$request = new Request();
+		$request->env('HTTP_HOST', 'localhost');
 		Router::pushRequest(
 			$request->addParams(array(
 				'plugin' => null, 'controller' => 'images', 'action' => 'index'
@@ -1744,10 +1744,10 @@ class RouterTest extends TestCase {
  */
 	public function testGenerateWithSslInSsl() {
 		Router::connect('/:controller/:action/*');
-		$_SERVER['HTTP_HOST'] = 'localhost';
-		$_SERVER['HTTPS'] = 'on';
 
 		$request = new Request();
+		$request->env('HTTP_HOST', 'localhost');
+		$request->env('HTTPS', 'on');
 		Router::pushRequest(
 			$request->addParams(array(
 				'plugin' => null,
