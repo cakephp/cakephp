@@ -32,6 +32,7 @@ class QueryCompiler {
  * @var array
  */
 	protected $_templates = [
+		'delete' => 'DELETE',
 		'update' => 'UPDATE %s',
 		'where' => ' WHERE %s',
 		'group' => ' GROUP BY %s ',
@@ -156,30 +157,6 @@ class QueryCompiler {
 		}
 
 		return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
-	}
-
-/**
- * Helper function used to build the string representation of a DELETE clause.
- *
- * If the table is aliased, a `DELETE x` fragment will be returned
- *
- * @param array $parts list of tables to be transformed to string
- * @param \Cake\Database\Query $query The query that is being compiled
- * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
- * @return string
- */
-	protected function _buildDeletePart($parts, $query, $generator) {
-		$delete = 'DELETE';
-		$aliases = [];
-		foreach ($query->clause('from') as $k => $v) {
-			if (is_string($k)) {
-				$aliases[] = $k;
-			}
-		}
-		if (!empty($aliases)) {
-			$delete = trim($delete . ' ' . implode(',', $aliases));
-		}
-		return $delete;
 	}
 
 /**
