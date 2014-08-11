@@ -66,7 +66,7 @@ class SchemaShell extends AppShell {
 			list($this->params['plugin'], $splitName) = pluginSplit($name);
 			$name = $this->params['name'] = $splitName;
 		}
-		if ($name && empty($this->params['file']) {
+		if ($name && empty($this->params['file'])) {
 			$this->params['file'] = Inflector::underscore($name);
 		} else {
 			$this->params['file'] = 'schema.php';
