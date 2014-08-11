@@ -113,6 +113,20 @@ class RouteBuilderTest extends TestCase {
 	}
 
 /**
+ * Test that compiling a route results in an trailing / optional pattern.
+ *
+ * @return void
+ */
+	public function testConnectTrimTrailingSlash() {
+		$routes = new RouteBuilder($this->collection, '/articles', ['controller' => 'Articles']);
+		$routes->connect('/', ['action' => 'index']);
+
+		$expected = ['plugin' => null, 'controller' => 'Articles', 'action' => 'index', 'pass' => []];
+		$this->assertEquals($expected, $this->collection->parse('/articles'));
+		$this->assertEquals($expected, $this->collection->parse('/articles/'));
+	}
+
+/**
  * Test extensions being connected to routes.
  *
  * @return void

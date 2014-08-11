@@ -690,8 +690,9 @@ class Query extends DatabaseQuery {
  * @return $this
  */
 	public function delete($table = null) {
-		$table = $this->repository()->table();
-		return parent::delete($table);
+		$repo = $this->repository();
+		$this->from([$repo->alias() => $repo->table()]);
+		return parent::delete();
 	}
 
 /**
