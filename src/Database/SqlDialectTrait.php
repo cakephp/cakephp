@@ -133,7 +133,6 @@ trait SqlDialectTrait {
 	}
 
 /**
- *
  * Apply translation steps to delete queries.
  *
  * Chops out aliases on delete query conditions as most database dialects do not
