@@ -30,6 +30,13 @@ class PaginatorHelper extends Helper {
 	use StringTemplateTrait;
 
 /**
+ * List of helpers used by this helper
+ *
+ * @var array
+ */
+	public $helpers = ['Url'];
+
+/**
  * Defualt config for this class
  *
  * Options: Holds the default options for pagination links
@@ -426,7 +433,7 @@ class PaginatorHelper extends Helper {
 		) {
 			$url['sort'] = $url['direction'] = null;
 		}
-		return $this->url($url, $full);
+		return $this->Url->url($url, $full);
 	}
 
 /**

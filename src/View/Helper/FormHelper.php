@@ -51,7 +51,7 @@ class FormHelper extends Helper {
  *
  * @var array
  */
-	public $helpers = array('Html');
+	public $helpers = ['Url', 'Html'];
 
 /**
  * The various pickers that make up a datetime picker.
@@ -304,7 +304,7 @@ class FormHelper extends Helper {
 		unset($options['templates']);
 
 		$url = $this->_formUrl($context, $options);
-		$action = $this->url($url);
+		$action = $this->Url->url($url);
 		unset($options['url'], $options['action'], $options['idPrefix']);
 
 		$this->_lastAction($url);
@@ -1459,7 +1459,7 @@ class FormHelper extends Helper {
 
 		$formName = str_replace('.', '', uniqid('post_', true));
 		$formOptions = array(
-			'action' => $this->url($url),
+			'action' => $this->Url->url($url),
 			'name' => $formName,
 			'style' => 'display:none;',
 			'method' => 'post',
@@ -1563,11 +1563,11 @@ class FormHelper extends Helper {
 			$options['src'] = $caption;
 		} elseif ($isImage) {
 			if ($caption{0} !== '/') {
-				$url = $this->webroot(Configure::read('App.imageBaseUrl') . $caption);
+				$url = $this->Url->webroot(Configure::read('App.imageBaseUrl') . $caption);
 			} else {
-				$url = $this->webroot(trim($caption, '/'));
+				$url = $this->Url->webroot(trim($caption, '/'));
 			}
-			$url = $this->assetTimestamp($url);
+			$url = $this->Url->assetTimestamp($url);
 			$options['src'] = $url;
 		} else {
 			$options['value'] = $caption;
