@@ -502,22 +502,6 @@ class Router {
 			static::_loadRoutes();
 		}
 
-		$urlType = gettype($url);
-		$plainString = false;
-
-		if ($urlType === 'string') {
-			$plainString = (
-				strpos($url, 'javascript:') === 0 ||
-				strpos($url, 'mailto:') === 0 ||
-				strpos($url, 'tel:') === 0 ||
-				strpos($url, 'sms:') === 0 ||
-				strpos($url, '#') === 0 ||
-				strpos($url, '?') === 0 ||
-				strpos($url, '//') === 0 ||
-				strpos($url, '://') !== false
-			);
-		}
-
 		$params = array(
 			'plugin' => null,
 			'controller' => null,
@@ -542,7 +526,7 @@ class Router {
 				$output = static::fullBaseUrl() . $base . $output;
 			}
 			return $output;
-		} elseif ($urlType === 'array') {
+		} elseif (is_array($url)) {
 			if (isset($url['_full']) && $url['_full'] === true) {
 				$full = true;
 				unset($url['_full']);
@@ -587,7 +571,17 @@ class Router {
 			$url = static::_applyUrlFilters($url);
 			$output = static::$_collection->match($url, static::$_requestContext);
 		} else {
-			// String urls.
+			$plainString = (
+				strpos($url, 'javascript:') === 0 ||
+				strpos($url, 'mailto:') === 0 ||
+				strpos($url, 'tel:') === 0 ||
+				strpos($url, 'sms:') === 0 ||
+				strpos($url, '#') === 0 ||
+				strpos($url, '?') === 0 ||
+				strpos($url, '//') === 0 ||
+				strpos($url, '://') !== false
+			);
+
 			if ($plainString) {
 				return $url;
 			}
