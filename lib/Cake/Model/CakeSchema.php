@@ -86,7 +86,7 @@ class CakeSchema extends Object {
 		}
 
 		if (strtolower($this->name) === 'cake') {
-			$this->name = Inflector::camelize(Inflector::slug(Configure::read('App.dir')));
+			$this->name = 'App';
 		}
 
 		if (empty($options['path'])) {
