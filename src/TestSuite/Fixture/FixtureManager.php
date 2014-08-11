@@ -151,7 +151,7 @@ class FixtureManager {
 				} else {
 					list($plugin, $name) = explode('.', $name);
 				}
-				$baseNamespace = Inflector::camelize($plugin);
+				$baseNamespace = Inflector::camelize(str_replace('\\', '\ ', $plugin));
 			} else {
 				$name = $fixture;
 			}
