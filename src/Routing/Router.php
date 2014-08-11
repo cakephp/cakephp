@@ -472,8 +472,6 @@ class Router {
  *   generated through reverse routing.
  * - `Router::url(['_name' => 'custom-name', ...]);` Returns a URL generated
  *   through reverse routing. This form allows you to leverage named routes.
- * - `Router::url('custom-name', [...]);` Returns a URL generated through reverse
- *   routing. This form allows you to leverage named routes.
  *
  * There are a few 'special' parameters that can change the final URL string that is generated
  *
@@ -487,29 +485,25 @@ class Router {
  * - `_full` - If true output of `Router::fullBaseUrl()` will be prepended to generated URLs.
  * - `#` - Allows you to set URL hash fragments.
  * - `_ssl` - Set to true to convert the generated URL to https, or false to force http.
- * - `_name` - Name of route.
+ * - `_name` - Name of route. If you have setup named routes you can use this key
+ *   to specify it.
  *
  * @param string|array $url An array specifying any of the following:
  *   'controller', 'action', 'plugin' additionally, you can provide routed
- *   elements or query string parameters. If string it can be name of a route or
- *   any valid url string.
- * @param bool|array $options If (bool) true, the full base URL will be prepended to the result.
- *   If an array accepts the following keys. If used with a named route you can provide
- *   a list of query string parameters.
+ *   elements or query string parameters. If string it can be name any valid url
+ *   string.
+ * @param bool $full If true, the full base URL will be prepended to the result.
+ *   Default is false.
  * @return string Full translated URL with base path.
  * @throws \Cake\Error\Exception When the route name is not found
  */
-	public static function url($url = null, $options = []) {
+	public static function url($url = null, $full = false) {
 		if (!static::$initialized) {
 			static::_loadRoutes();
 		}
 
-		$full = false;
-		if (is_bool($options)) {
-			list($full, $options) = array($options, []);
-		}
 		$urlType = gettype($url);
-		$hasLeadingSlash = $plainString = false;
+		$plainString = false;
 
 		if ($urlType === 'string') {
 			$plainString = (
@@ -522,8 +516,6 @@ class Router {
 				strpos($url, '//') === 0 ||
 				strpos($url, '://') !== false
 			);
-
-			$hasLeadingSlash = isset($url[0]) ? $url[0] === '/' : false;
 		}
 
 		$params = array(
@@ -592,15 +584,6 @@ class Router {
 				);
 			}
 
-			$url = static::_applyUrlFilters($url);
-			$output = static::$_collection->match($url, static::$_requestContext);
-		} elseif (
-			$urlType === 'string' &&
-			!$hasLeadingSlash &&
-			!$plainString
-		) {
-			// named route.
-			$url = $options + ['_name' => $url];
 			$url = static::_applyUrlFilters($url);
 			$output = static::$_collection->match($url, static::$_requestContext);
 		} else {

@@ -1056,11 +1056,8 @@ class RouterTest extends TestCase {
 			['_name' => 'Articles::view']
 		);
 
-		$url = Router::url('test', array('name' => 'mark'));
+		$url = Router::url(['_name' => 'test', 'name' => 'mark']);
 		$this->assertEquals('/users/mark', $url);
-
-		$url = Router::url('test', array('name' => 'mark', 'page' => 1, 'sort' => 'title', 'dir' => 'desc'));
-		$this->assertEquals('/users/mark?page=1&sort=title&dir=desc', $url);
 
 		$url = Router::url([
 			'_name' => 'test', 'name' => 'mark',
@@ -1068,17 +1065,8 @@ class RouterTest extends TestCase {
 		]);
 		$this->assertEquals('/users/mark?page=1&sort=title&dir=desc', $url);
 
-		$url = Router::url('users-index');
-		$this->assertEquals('/users', $url);
-
-		$url = Router::url('Articles::view');
-		$this->assertEquals('/view/', $url);
-
 		$url = Router::url(['_name' => 'Articles::view']);
 		$this->assertEquals('/view/', $url);
-
-		$url = Router::url('Articles::view', ['1']);
-		$this->assertEquals('/view/1', $url);
 
 		$url = Router::url(['_name' => 'Articles::view', '1']);
 		$this->assertEquals('/view/1', $url);
@@ -1102,7 +1090,7 @@ class RouterTest extends TestCase {
 			array('controller' => 'users', 'action' => 'view'),
 			array('_name' => 'test')
 		);
-		$url = Router::url('junk', array('name' => 'mark'));
+		$url = Router::url(['_name' => 'junk', 'name' => 'mark']);
 	}
 
 /**
