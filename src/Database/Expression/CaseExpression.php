@@ -56,7 +56,7 @@ class CaseExpression implements ExpressionInterface {
  * @param string|array|ExpressionInterface $trueValues Value of each condition if that condition is true
  * @param string|array|ExpressionInterface $defaultValue Default value if none of the conditiosn are true
  */
-	public function __construct($conditions = [], $trueValues = [], $defaultValue = '0') {
+	public function __construct($conditions = [], $trueValues = [], $defaultValue = 0) {
 		if (!empty($conditions)) {
 			$this->add($conditions, $trueValues);
 		}
@@ -108,7 +108,7 @@ class CaseExpression implements ExpressionInterface {
 				continue;
 			}
 
-			$trueValue = isset($trueValues[$k]) ? $trueValues[$k] : 1;
+			$trueValue = !empty($trueValues[$k]) ? $trueValues[$k] : 1;
 
 			if ($trueValue === 'literal') {
 				$trueValue = $k;
@@ -117,8 +117,6 @@ class CaseExpression implements ExpressionInterface {
 					'value' => $trueValue,
 					'type' => null
 				];
-			} elseif (empty($trueValue)) {
-				$trueValue = 1;
 			}
 
 			$this->_conditions[] = $c;

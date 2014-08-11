@@ -276,7 +276,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  *
  * @return QueryExpression
  */
-	public function addCase($conditions, $trueValues = [], $defaultValue = '0') {
+	public function addCase($conditions, $trueValues = [], $defaultValue = 0) {
 		return $this->add(new CaseExpression($conditions, $trueValues, $defaultValue));
 	}
 
