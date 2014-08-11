@@ -575,6 +575,25 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test deleting many records with conditions using the alias
+ *
+ * @return void
+ */
+	public function testDeleteAllAliasedConditions() {
+		$table = new Table([
+			'table' => 'users',
+			'alias' => 'Managers',
+			'connection' => $this->connection,
+		]);
+		$result = $table->deleteAll(['Managers.id <' => 4]);
+		$this->assertTrue($result);
+
+		$result = $table->find('all')->toArray();
+		$this->assertCount(1, $result, 'Only one record should remain');
+		$this->assertEquals(4, $result[0]['id']);
+	}
+
+/**
  * Test that exceptions from the Query bubble up.
  *
  * @expectedException \Cake\Database\Exception

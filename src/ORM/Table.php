@@ -1012,8 +1012,8 @@ class Table implements RepositoryInterface, EventListener {
  * {@inheritDoc}
  */
 	public function deleteAll($conditions) {
-		$query = $this->query();
-		$query->delete()
+		$query = $this->query()
+			->delete()
 			->where($conditions);
 		$statement = $query->execute();
 		$success = $statement->rowCount() > 0;

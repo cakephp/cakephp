@@ -1276,7 +1276,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Can be combined with from(), where() and other methods to
  * create delete queries with specific conditions.
  *
- * @param string $table The table to use when deleting. This
+ * @param string $table The table to use when deleting.
  * @return $this
  */
 	public function delete($table = null) {

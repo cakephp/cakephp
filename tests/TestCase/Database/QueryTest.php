@@ -1885,6 +1885,26 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Test delete with from and alias.
+ *
+ * @return void
+ */
+	public function testDeleteWithAliasedFrom() {
+		$query = new Query($this->connection);
+
+		$query->delete()
+			->from(['a ' => 'authors'])
+			->where(['a.id <' => 99]);
+
+		$result = $query->sql();
+		$this->assertQuotedQuery('DELETE <a> FROM <authors> AS <a>', $result, true);
+
+		$result = $query->execute();
+		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+		$this->assertCount(self::AUTHOR_COUNT, $result);
+	}
+
+/**
  * Test a basic delete with no from() call.
  *
  * @return void
