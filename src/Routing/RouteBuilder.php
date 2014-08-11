@@ -346,6 +346,8 @@ class RouteBuilder {
 			unset($options['routeClass']);
 
 			$route = str_replace('//', '/', $this->_path . $route);
+			$route = $route === '/' ? $route : rtrim($route, '/');
+
 			foreach ($this->_params as $param => $val) {
 				if (isset($defaults[$param]) && $defaults[$param] !== $val) {
 					$msg = 'You cannot define routes that conflict with the scope. ' .
