@@ -580,7 +580,6 @@ class MemcachedEngineTest extends TestCase {
  * @return void
  */
 	public function testDeleteMany() {
-		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		$this->_configCache();
 		$data = array(
 			'App.falseTest' => false,
@@ -754,7 +753,6 @@ class MemcachedEngineTest extends TestCase {
  * @return void
  */
 	public function testClear() {
-		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		Cache::config('memcached2', array(
 			'engine' => 'Memcached',
 			'prefix' => 'cake2_',

@@ -252,6 +252,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoSocketExceptionNoSsl() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
 		$configNoSslOrTls = array('host' => 'localhost', 'port' => 80, 'timeout' => 0.1);
 
@@ -268,6 +269,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoSocketExceptionNoTls() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		$configNoSslOrTls = array('host' => 'localhost', 'port' => 80, 'timeout' => 0.1);
 
 		// testing exception on no ssl socket server for ssl and tls methods
@@ -282,6 +284,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	protected function _connectSocketToSslTls() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
 		$configSslTls = array('host' => 'smtp.gmail.com', 'port' => 465, 'timeout' => 5);
 		$this->Socket = new Socket($configSslTls);
@@ -299,6 +302,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoBadMode() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		// testing wrong encryption mode
 		$this->_connectSocketToSslTls();
 		$this->Socket->enableCrypto('doesntExistMode', 'server');
@@ -311,6 +315,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCrypto() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		$this->skipIf(!function_exists('stream_socket_enable_crypto'), 'Broken on HHVM');
 		// testing on ssl server
 		$this->_connectSocketToSslTls();
@@ -330,6 +335,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoExceptionEnableTwice() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		$this->skipIf(!function_exists('stream_socket_enable_crypto'), 'Broken on HHVM');
 		// testing on tls server
 		$this->_connectSocketToSslTls();
@@ -344,7 +350,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoExceptionDisableTwice() {
-		$this->skipIf(!function_exists('stream_socket_enable_crypto'), 'Broken on HHVM');
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		// testing on tls server
 		$this->_connectSocketToSslTls();
 		$this->Socket->enableCrypto('tls', 'client', false);
@@ -356,7 +362,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoEnableStatus() {
-		$this->skipIf(!function_exists('stream_socket_enable_crypto'), 'Broken on HHVM');
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		// testing on tls server
 		$this->_connectSocketToSslTls();
 		$this->assertFalse($this->Socket->encrypted);
@@ -370,6 +376,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testGetContext() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
 		$config = array(
 			'host' => 'smtp.gmail.com',
