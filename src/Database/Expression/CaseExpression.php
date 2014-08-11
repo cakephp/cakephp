@@ -44,19 +44,19 @@ class CaseExpression implements ExpressionInterface {
 /**
  * The value to be used if none of the conditions match
  *
- * @var array|QueryExpression|string
+ * @var array|ExpressionInterface|string
  */
 	protected $_defaultValue;
 
 /**
  * Constructs the case expression
  *
- * @param array|QueryExpression $conditions The conditions to test.
+ * @param array|ExpressionInterface $conditions The conditions to test.
  *                                          Must be a QueryExpression, or an array of QueryExpressions.
- * @param string|array|QueryExpression $trueValues Value of each condition if that condition is true
- * @param string|array|QueryExpression $defaultValue Default value if none of the conditiosn are true
+ * @param string|array|ExpressionInterface $trueValues Value of each condition if that condition is true
+ * @param string|array|ExpressionInterface $defaultValue Default value if none of the conditiosn are true
  */
-	public function __construct($conditions = [], $trueValues = [], $defaultValue = 0) {
+	public function __construct($conditions = [], $trueValues = [], $defaultValue = '0') {
 		if (!empty($conditions)) {
 			$this->add($conditions, $trueValues);
 		}
@@ -69,8 +69,8 @@ class CaseExpression implements ExpressionInterface {
  * Conditions must be a one dimensional array or a QueryExpression.
  * The trueValues must be a similar structure, but may contain a string value.
  *
- * @param array|QueryExpression $conditions Must be a QueryExpression, or an array of QueryExpressions.
- * @param string|array|QueryExpression $trueValues Values of each condition if that condition is true
+ * @param array|ExpressionInterface $conditions Must be a QueryExpression, or an array of QueryExpressions.
+ * @param string|array|ExpressionInterface $trueValues Values of each condition if that condition is true
  *
  * @return $this
  */
@@ -91,8 +91,8 @@ class CaseExpression implements ExpressionInterface {
  * Iterates over the passed in conditions and ensures that there is a matching true value for each.
  * If no matching true value, then it is defaulted to '1'.
  *
- * @param array|QueryExpression $conditions Must be a QueryExpression, or an array of QueryExpressions.
- * @param string|array|QueryExpression $trueValues Values of each condition if that condition is true
+ * @param array|ExpressionInterface $conditions Must be a QueryExpression, or an array of QueryExpressions.
+ * @param string|array|ExpressionInterface $trueValues Values of each condition if that condition is true
  *
  * @return void
  */
@@ -129,9 +129,9 @@ class CaseExpression implements ExpressionInterface {
 /**
  * Gets/sets the default value part
  *
- * @param array|string|QueryExpression $value Value to set
+ * @param array|string|ExpressionInterface $value Value to set
  *
- * @return array|string|QueryExpression
+ * @return array|string|ExpressionInterface
  */
 	public function defaultValue($value = null) {
 		if ($value !== null) {
@@ -144,9 +144,9 @@ class CaseExpression implements ExpressionInterface {
 /**
  * Parses the value into a understandable format
  *
- * @param array|string|QueryExpression $value The value to parse
+ * @param array|string|ExpressionInterface $value The value to parse
  *
- * @return array|string|QueryExpression
+ * @return array|string|ExpressionInterface
  */
 	protected function _parseValue($value) {
 		if (is_string($value)) {
@@ -164,7 +164,7 @@ class CaseExpression implements ExpressionInterface {
 /**
  * Compiles the relevant parts into sql
  *
- * @param array|string|QueryExpression $part The part to compile
+ * @param array|string|ExpressionInterface $part The part to compile
  * @param ValueBinder $generator Sql generator
  *
  * @return string
