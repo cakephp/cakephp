@@ -433,7 +433,7 @@ class PaginatorHelper extends Helper {
 		) {
 			$url['sort'] = $url['direction'] = null;
 		}
-		return $this->Url->url($url, $full);
+		return $this->Url->build($url, $full);
 	}
 
 /**

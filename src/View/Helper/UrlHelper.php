@@ -26,9 +26,7 @@ use Cake\View\Helper;
 class UrlHelper extends Helper {
 
 /**
- * Finds URL for specified action.
- *
- * Returns a URL pointing at the provided parameters.
+ * Returns a URL based on provided provided parameters.
  *
  * @param string|array $url Either a relative string url like `/products/view/23` or
  *    an array of URL parameters. Using an array for URLs will allow you to leverage
@@ -37,7 +35,7 @@ class UrlHelper extends Helper {
  * @return string Full translated URL with base path.
  * @link http://book.cakephp.org/2.0/en/views/helpers.html
  */
-	public function url($url = null, $full = false) {
+	public function build($url = null, $full = false) {
 		return h(Router::url($url, $full));
 	}
 
@@ -55,7 +53,7 @@ class UrlHelper extends Helper {
  */
 	public function assetUrl($path, array $options = array()) {
 		if (is_array($path)) {
-			return $this->url($path, !empty($options['fullBase']));
+			return $this->build($path, !empty($options['fullBase']));
 		}
 		if (strpos($path, '://') !== false) {
 			return $path;

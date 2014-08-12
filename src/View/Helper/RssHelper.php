@@ -127,7 +127,7 @@ class RssHelper extends Helper {
 		if (!isset($elements['description'])) {
 			$elements['description'] = '';
 		}
-		$elements['link'] = $this->Url->url($elements['link'], true);
+		$elements['link'] = $this->Url->build($elements['link'], true);
 
 		$elems = '';
 		foreach ($elements as $elem => $data) {
@@ -228,14 +228,14 @@ class RssHelper extends Helper {
 						unset($attrib['url']);
 						$val = $val['url'];
 					}
-					$val = $this->Url->url($val, true);
+					$val = $this->Url->build($val, true);
 					break;
 				case 'source':
 					if (is_array($val) && isset($val['url'])) {
-						$attrib['url'] = $this->Url->url($val['url'], true);
+						$attrib['url'] = $this->Url->build($val['url'], true);
 						$val = $val['title'];
 					} elseif (is_array($val)) {
-						$attrib['url'] = $this->Url->url($val[0], true);
+						$attrib['url'] = $this->Url->build($val[0], true);
 						$val = $val[1];
 					}
 					break;
@@ -248,7 +248,7 @@ class RssHelper extends Helper {
 							$val['type'] = mime_content_type(WWW_ROOT . $val['url']);
 						}
 					}
-					$val['url'] = $this->Url->url($val['url'], true);
+					$val['url'] = $this->Url->build($val['url'], true);
 					$attrib = $val;
 					$val = null;
 					break;

@@ -104,7 +104,7 @@ class RssHelperTest extends TestCase {
 			'Title',
 			'/title',
 			'<link',
-			$this->Rss->Url->url('/', true),
+			$this->Rss->Url->build('/', true),
 			'/link',
 			'<description',
 			'content',
@@ -551,7 +551,7 @@ class RssHelperTest extends TestCase {
 			'<description',
 			'<![CDATA[descriptive words]]',
 			'/description',
-			'enclosure' => array('url' => $this->Rss->Url->url('/test.flv', true)),
+			'enclosure' => array('url' => $this->Rss->Url->build('/test.flv', true)),
 			'<pubDate',
 			date('r', strtotime('2008-05-31 12:00:00')),
 			'/pubDate',
@@ -633,7 +633,7 @@ class RssHelperTest extends TestCase {
 			'<![CDATA[descriptive words]]',
 			'/description',
 			'enclosure' => array(
-				'url' => $this->Rss->Url->url('/tests/cakephp.file.test.tmp', true),
+				'url' => $this->Rss->Url->build('/tests/cakephp.file.test.tmp', true),
 				'length' => filesize($tmpFile),
 				'type' => $type
 			),

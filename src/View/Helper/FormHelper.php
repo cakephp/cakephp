@@ -304,7 +304,7 @@ class FormHelper extends Helper {
 		unset($options['templates']);
 
 		$url = $this->_formUrl($context, $options);
-		$action = $this->Url->url($url);
+		$action = $this->Url->build($url);
 		unset($options['url'], $options['action'], $options['idPrefix']);
 
 		$this->_lastAction($url);
@@ -1459,7 +1459,7 @@ class FormHelper extends Helper {
 
 		$formName = str_replace('.', '', uniqid('post_', true));
 		$formOptions = array(
-			'action' => $this->Url->url($url),
+			'action' => $this->Url->build($url),
 			'name' => $formName,
 			'style' => 'display:none;',
 			'method' => 'post',

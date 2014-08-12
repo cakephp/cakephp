@@ -314,9 +314,9 @@ class HtmlHelper extends Helper {
 	public function link($title, $url = null, array $options = array()) {
 		$escapeTitle = true;
 		if ($url !== null) {
-			$url = $this->Url->url($url);
+			$url = $this->Url->build($url);
 		} else {
-			$url = $this->Url->url($title);
+			$url = $this->Url->build($title);
 			$title = htmlspecialchars_decode($url, ENT_QUOTES);
 			$title = h(urldecode($title));
 			$escapeTitle = false;
@@ -780,7 +780,7 @@ class HtmlHelper extends Helper {
 
 		if ($url) {
 			return $this->formatTemplate('link', [
-				'url' => $this->Url->url($url),
+				'url' => $this->Url->build($url),
 				'attrs' => null,
 				'content' => $image
 			]);
