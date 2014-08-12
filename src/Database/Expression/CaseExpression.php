@@ -113,10 +113,7 @@ class CaseExpression implements ExpressionInterface {
 			if ($trueValue === 'literal') {
 				$trueValue = $k;
 			} elseif (is_string($trueValue) || is_numeric($trueValue)) {
-				$trueValue = [
-					'value' => $trueValue,
-					'type' => null
-				];
+				$trueValue = $this->_parseValue($trueValue);
 			}
 
 			$this->_conditions[] = $c;
@@ -150,13 +147,30 @@ class CaseExpression implements ExpressionInterface {
 		if (is_string($value) || is_numeric($value)) {
 			$value = [
 				'value' => $value,
-				'type' => null
+				'type' => is_string($value) ? null : $this->_getType($value)
 			];
 		} elseif (is_array($value) && !isset($value['value'])) {
 			$value = array_keys($value);
 			$value = end($value);
 		}
 		return $value;
+	}
+
+/**
+ * Gets the correct type for the value
+ *
+ * @param mixed $value The value to test
+ *
+ * @return null|string
+ */
+	protected function _getType($value) {
+		if (is_integer($value)) {
+			return 'integer';
+		} elseif (is_float($value)) {
+			return 'float';
+		}
+
+		return null;
 	}
 
 /**

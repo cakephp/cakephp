@@ -2722,8 +2722,6 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testSqlCaseStatement() {
-		$convert = $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver;
-
 		$query = new Query($this->connection);
 		$publishedCase = $query
 			->newExpr()
@@ -2737,20 +2735,6 @@ class QueryTest extends TestCase {
 					->newExpr()
 					->add(['published' => 'N'])
 			);
-
-		//SQLServer requires the case statements to be converted to int
-		if ($convert) {
-			$publishedCase = $query->func()
-				->convert([
-					'INT' => 'literal',
-					$publishedCase
-				]);
-			$notPublishedCase = $query->func()
-				->convert([
-					'INT' => 'literal',
-					$notPublishedCase
-				]);
-		}
 
 		$results = $query
 			->select([
