@@ -25,7 +25,7 @@ foreach ($fields as $field) {
 			if ($field === $details['foreignKey']) {
 				$isKey = true;
 				echo "\t\t<dt><?= __('" . Inflector::humanize(Inflector::underscore($details['property'])) . "'); ?></dt>\n";
-				echo "\t\t<dd>\n\t\t\t<?= \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['property']}->{$details['primaryKey'][0]}]); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
+				echo "\t\t<dd>\n\t\t\t<?= \${$singularVar}->has('{$details['property']}') ? \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['property']}->{$details['primaryKey'][0]}]) : ''; ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 				break;
 			}
 		}
