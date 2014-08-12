@@ -718,9 +718,9 @@ class CakeSchema extends Object {
 /**
  * Attempts to require the schema file specified
  *
- * @param string $path filesystem path to the file
- * @param string $file filesystem basename of the file
- * @return bool true when a file was successfully included, false on failure
+ * @param string $path Filesystem path to the file
+ * @param string $file Filesystem basename of the file
+ * @return bool True when a file was successfully included, false on failure
  */
 	protected function _requireFile($path, $file) {
 		if (file_exists($path . DS . $file) && is_file($path . DS . $file)) {
