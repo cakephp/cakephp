@@ -61,7 +61,7 @@ abstract class SimpleBakeTask extends BakeTask {
 	public function templateData() {
 		$namespace = Configure::read('App.namespace');
 		if ($this->plugin) {
-			$namespace = Plugin::getNamespace($this->plugin);
+			$namespace = $this->plugin;
 		}
 		return ['namespace' => $namespace];
 	}

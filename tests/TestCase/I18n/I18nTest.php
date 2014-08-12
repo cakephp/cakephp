@@ -137,7 +137,7 @@ class I18nTest extends TestCase {
 	public function testPluginMesagesLoad() {
 		Plugin::load([
 			'TestPlugin',
-			'TestPluginThree' => ['namespace' => 'Company\TestPluginThree']
+			'Company\TestPluginThree'
 		]);
 
 		$translator = I18n::translator('test_plugin');
@@ -146,7 +146,7 @@ class I18nTest extends TestCase {
 			$translator->translate('Plural Rule 1')
 		);
 
-		$translator = I18n::translator('test_plugin_three');
+		$translator = I18n::translator('company\test_plugin_three');
 		$this->assertEquals(
 			'String 1 (from plugin three)',
 			$translator->translate('String 1')

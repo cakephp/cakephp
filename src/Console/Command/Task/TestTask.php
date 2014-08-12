@@ -262,7 +262,7 @@ class TestTask extends BakeTask {
 	public function getRealClassName($type, $class) {
 		$namespace = Configure::read('App.namespace');
 		if ($this->plugin) {
-			$namespace = Plugin::getNamespace($this->plugin);
+			$namespace = $this->plugin;
 		}
 		$suffix = $this->classSuffixes[strtolower($type)];
 		$subSpace = $this->mapType($type);
@@ -481,7 +481,7 @@ class TestTask extends BakeTask {
 		$path = $this->getPath();
 		$namespace = Configure::read('App.namespace');
 		if ($this->plugin) {
-			$namespace = Plugin::getNamespace($this->plugin);
+			$namespace = $this->plugin;
 		}
 		$classTail = substr($className, strlen($namespace) + 1);
 		$path = $path . $classTail . 'Test.php';

@@ -108,7 +108,7 @@ class BakeShell extends Shell {
 			$tasks = $this->_findTasks(
 				$tasks,
 				Plugin::classPath($plugin),
-				Plugin::getNamespace($plugin),
+				$plugin,
 				$plugin
 			);
 		}
