@@ -1152,9 +1152,6 @@ class Table implements RepositoryInterface, EventListener {
 			$alias = $this->alias();
 			$conditions = [];
 			foreach ($primary as $k => $v) {
-				if ($v === '') {
-					$entity->unsetProperty($k);
-				}
 				$conditions["$alias.$k"] = $v;
 			}
 			$entity->isNew(!$this->exists($conditions));

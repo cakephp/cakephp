@@ -106,12 +106,16 @@ class Marshaller {
 			$data = $data[$tableName];
 		}
 
+		$primaryKey = $schema->primaryKey();
 		$properties = [];
 		foreach ($data as $key => $value) {
 			$columnType = $schema->columnType($key);
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
 				$value = $this->_marshalAssociation($assoc, $value, $propertyMap[$key]);
+			} elseif ($value === '' && in_array($key, $primaryKey, true)) {
+				// Skip marshalling '' for pk fields.
+				continue;
 			} elseif ($columnType) {
 				$converter = Type::build($columnType);
 				$value = $converter->marshal($value);
