@@ -191,7 +191,6 @@ class Session {
  */
 	public function __construct(array $config = []) {
 		if (isset($config['timeout'])) {
-			$config['ini']['session.cookie_lifetime'] = 60 * $config['timeout'];
 			$config['ini']['session.gc_maxlifetime'] = 60 * $config['timeout'];
 		}
 
