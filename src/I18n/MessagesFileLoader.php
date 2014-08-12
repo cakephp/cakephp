@@ -146,7 +146,7 @@ class MessagesFileLoader {
 			$locale['language']
 		];
 
-		// If space is not added after backlash, the character after it remains lowercase
+		// If space is not added after backslash, the character after it remains lowercased
 		$pluginName = Inflector::camelize(str_replace('\\', '\ ', $this->_name));
 		$basePath = APP . 'Locale' . DS;
 		$searchPath = [];
