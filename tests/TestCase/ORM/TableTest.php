@@ -1213,6 +1213,26 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test that saving a new entity with an empty id populates
+ * the entity's id field.
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveNewEntityEmptyIdField() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => '',
+			'username' => 'superuser',
+			'password' => 'root',
+			'created' => new Time('2013-10-10 00:00'),
+			'updated' => new Time('2013-10-10 00:00')
+		]);
+		$table = TableRegistry::get('users');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals($entity->id, self::$nextUserId);
+	}
+
+/**
  * Tests that saving an entity will filter out properties that
  * are not present in the table schema when saving
  *
