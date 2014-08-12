@@ -22,7 +22,7 @@ if (!empty($plugin) && Plugin::loaded($plugin)) {
 	$filePath = Plugin::classPath($plugin);
 }
 if (!empty($plugin) && !Plugin::loaded($plugin)) {
-	$filePath = APP_DIR . DS . 'Plugin' . DS . h($plugin) . DS;
+	$filePath = 'plugins' . DS . h($plugin) . DS . 'src' . DS;
 }
 ?>
 <h2>Missing Helper</h2>
@@ -31,7 +31,7 @@ if (!empty($plugin) && !Plugin::loaded($plugin)) {
 	<?= sprintf('<em>%s</em> could not be found.', h($pluginDot . $class)); ?>
 	<?php
 		if (!empty($plugin) && !Plugin::loaded($plugin)):
-			echo sprintf('Make sure your plugin %s is in the %s directory and was loaded.', h($plugin), APP_DIR . DS . 'Plugin');
+			echo sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded.', h($plugin), 'plugins');
 		endif;
 	?>
 </p>
