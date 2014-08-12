@@ -15,6 +15,15 @@
 use Cake\Core\Plugin;
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
+if (empty($plugin)) {
+	$filePath = APP_DIR . DS;
+}
+if (!empty($plugin) && Plugin::loaded($plugin)) {
+	$filePath = Plugin::classPath($plugin);
+}
+if (!empty($plugin) && !Plugin::loaded($plugin)) {
+	$filePath = 'plugins' . DS . h($plugin) . DS . 'src' . DS;
+}
 ?>
 <h2>Missing Component</h2>
 <p class="error">
@@ -23,7 +32,7 @@ $pluginDot = empty($plugin) ? null : $plugin . '.';
 </p>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), (empty($plugin) ? APP_DIR : Plugin::classPath($plugin)) . DS . 'Controller' . DS . 'Component' . DS . h($class) . '.php'); ?>
+	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'Controller' . DS . 'Component' . DS . h($class) . '.php'); ?>
 </p>
 <pre>
 &lt;?php
