@@ -1150,11 +1150,11 @@ class Table implements RepositoryInterface, EventListener {
 
 		if ($primary && $entity->isNew()) {
 			$alias = $this->alias();
-			$keys = array_keys($primary);
-			foreach ($keys as &$pk) {
-				$pk = "$alias.$pk";
+			$conditions = [];
+			foreach ($primary as $k => $v) {
+				$conditions["$alias.$k"] = $v;
 			}
-			$entity->isNew(!$this->exists(array_combine($keys, $primary)));
+			$entity->isNew(!$this->exists($conditions));
 		}
 
 		$associated = $options['associated'];

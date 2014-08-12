@@ -115,6 +115,27 @@ class MarshallerTest extends TestCase {
 	}
 
 /**
+ * Test that marshalling an entity with '' for pk values results
+ * in no pk value being set.
+ *
+ * @return void
+ */
+	public function testOneEmptyStringPrimaryKey() {
+		$data = [
+			'id' => '',
+			'username' => 'superuser',
+			'password' => 'root',
+			'created' => new Time('2013-10-10 00:00'),
+			'updated' => new Time('2013-10-10 00:00')
+		];
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, []);
+
+		$this->assertFalse($result->dirty('id'));
+		$this->assertNull($result->id);
+	}
+
+/**
  * Test marshalling datetime/date field.
  *
  * @return void
