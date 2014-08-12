@@ -14,6 +14,8 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\Comparison;
+
 /**
  * Sql dialect trait
  */
@@ -133,10 +135,46 @@ trait SqlDialectTrait {
 /**
  * Apply translation steps to delete queries.
  *
+ * Chops out aliases on delete query conditions as most database dialects do not
+ * support aliases in delete queries. This also removes aliases
+ * in table names as they frequently don't work either.
+ *
+ * We are intentionally not supporting deletes with joins as they have even poorer support.
+ *
  * @param Query $query The query to translate
  * @return Query The modified query
  */
 	protected function _deleteQueryTranslator($query) {
+		$hadAlias = false;
+		$tables = [];
+		foreach ($query->clause('from') as $alias => $table) {
+			if (is_string($alias)) {
+				$hadAlias = true;
+			}
+			$tables[] = $table;
+		}
+		if ($hadAlias) {
+			$query->from($tables, true);
+		}
+
+		if (!$hadAlias) {
+			return $query;
+		}
+		$conditions = $query->clause('where');
+		if ($conditions) {
+			$conditions->traverse(function($condition) {
+				if (!($condition instanceof Comparison)) {
+					return $condition;
+				}
+				$field = $condition->getField();
+				if (strpos($field, '.') !== false) {
+					list(, $field) = explode('.', $field);
+					$condition->field($field);
+				}
+				return $condition;
+			});
+		}
+
 		return $query;
 	}
 
