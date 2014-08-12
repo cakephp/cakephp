@@ -439,7 +439,7 @@ class SessionTest extends TestCase {
 		];
 
 		new Session($config);
-		$this->assertEquals(400 * 60, ini_get('session.cookie_lifetime'));
+		$this->assertEquals(0, ini_get('session.cookie_lifetime'));
 		$this->assertEquals(400 * 60, ini_get('session.gc_maxlifetime'));
 	}
 
