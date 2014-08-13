@@ -13,17 +13,34 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Core\Plugin;
+use Cake\Core\Configure;
+
+$pluginPath = Configure::read('App.paths.plugins.0');
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
+if (empty($plugin)) {
+	$filePath = APP_DIR . DS;
+}
+if (!empty($plugin) && Plugin::loaded($plugin)) {
+	$filePath = Plugin::classPath($plugin);
+}
+if (!empty($plugin) && !Plugin::loaded($plugin)) {
+	$filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
+}
 ?>
 <h2>Missing Component</h2>
 <p class="error">
 	<strong>Error: </strong>
 	<?= sprintf('<em>%s</em> could not be found.', h($pluginDot . $class)); ?>
+	<?php
+		if (!empty($plugin) && !Plugin::loaded($plugin)):
+			echo sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded.', h($plugin), $pluginPath);
+		endif;
+	?>
 </p>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), (empty($plugin) ? APP_DIR : Plugin::classPath($plugin)) . DS . 'Controller' . DS . 'Component' . DS . h($class) . '.php'); ?>
+	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'Controller' . DS . 'Component' . DS . h($class) . '.php'); ?>
 </p>
 <pre>
 &lt;?php

@@ -13,6 +13,9 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Core\Configure;
+
+$pluginPath = Configure::read('App.paths.plugins.0');
 ?>
 <h2>Missing Plugin</h2>
 <p class="error">
@@ -21,7 +24,7 @@
 </p>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('Make sure your plugin %s is in the %s directory and was loaded', APP_DIR . DS . 'Plugin', h($plugin)); ?>
+	<?= sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded', h($plugin), $pluginPath) ?>
 </p>
 <pre>
 &lt;?php
@@ -30,7 +33,7 @@ Plugin::load('<?= h($plugin)?>');
 </pre>
 <p class="notice">
 	<strong>Loading all plugins: </strong>
-	<?= sprintf('If you wish to load all plugins at once, use the following line in your %s file', APP_DIR . DS . 'Config' . DS . 'bootstrap.php'); ?>
+	<?= sprintf('If you wish to load all plugins at once, use the following line in your %s file', 'config' . DS . 'bootstrap.php'); ?>
 </p>
 <pre>
 Plugin::loadAll();
