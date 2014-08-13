@@ -513,4 +513,17 @@ EXPECTED;
 		$result = ob_get_clean();
 		$this->assertEquals($expected, $result);
 	}
+
+/**
+ * Tests that the collection() method is a shortcut for new Collection
+ *
+ * @return void
+ */
+	public function testCollection() {
+		$items = [1, 2, 3];
+		$collection = collection($items);
+		$this->assertInstanceOf('Cake\Collection\Collection', $collection);
+		$this->assertSame($items, $collection->toArray());
+	}
+
 }
