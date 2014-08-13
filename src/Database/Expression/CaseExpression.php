@@ -125,6 +125,8 @@ class CaseExpression implements ExpressionInterface {
 				$value = $k;
 				array_push($this->_values, $value);
 				continue;
+			} elseif ($value instanceof ExpressionInterface) {
+				array_push($this->_values, $value);
 			}
 
 			$type = isset($types[$k]) ? $types[$k] : null;
