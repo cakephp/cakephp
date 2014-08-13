@@ -83,8 +83,8 @@ class PluginTest extends TestCase {
  * @return void
  */
 	public function testLoadSingleWithAutoload() {
-		$this->assertFalse(class_exists('Company\TestPluginThree\Utility\Hello'));
-		Plugin::load('Company\TestPluginThree', [
+		$this->assertFalse(class_exists('Company/TestPluginThree\Utility\Hello'));
+		Plugin::load('Company/TestPluginThree', [
 			'autoload' => true,
 		]);
 		$this->assertTrue(
@@ -103,8 +103,8 @@ class PluginTest extends TestCase {
 		$this->assertTrue(Plugin::loaded('TestPlugin'));
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
 
-		Plugin::load('Company\TestPluginThree', array('bootstrap' => true));
-		$this->assertTrue(Plugin::loaded('Company\TestPluginThree'));
+		Plugin::load('Company/TestPluginThree', array('bootstrap' => true));
+		$this->assertTrue(Plugin::loaded('Company/TestPluginThree'));
 		$this->assertEquals('loaded plugin three bootstrap', Configure::read('PluginTest.test_plugin_three.bootstrap'));
 	}
 
@@ -203,7 +203,7 @@ class PluginTest extends TestCase {
  * @return void
  */
 	public function testPath() {
-		Plugin::load(array('TestPlugin', 'TestPluginTwo', 'Company\TestPluginThree'));
+		Plugin::load(array('TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree'));
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
 		$this->assertPathEquals(Plugin::path('TestPlugin'), $expected);
 
@@ -211,7 +211,7 @@ class PluginTest extends TestCase {
 		$this->assertPathEquals(Plugin::path('TestPluginTwo'), $expected);
 
 		$expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS;
-		$this->assertPathEquals(Plugin::path('Company\TestPluginThree'), $expected);
+		$this->assertPathEquals(Plugin::path('Company/TestPluginThree'), $expected);
 	}
 
 /**
@@ -230,7 +230,7 @@ class PluginTest extends TestCase {
  * @return void
  */
 	public function testClassPath() {
-		Plugin::load(array('TestPlugin', 'TestPluginTwo', 'Company\TestPluginThree'));
+		Plugin::load(array('TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree'));
 		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS;
 		$this->assertPathEquals(Plugin::classPath('TestPlugin'), $expected);
 
@@ -238,7 +238,7 @@ class PluginTest extends TestCase {
 		$this->assertPathEquals(Plugin::classPath('TestPluginTwo'), $expected);
 
 		$expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS;
-		$this->assertPathEquals(Plugin::classPath('Company\TestPluginThree'), $expected);
+		$this->assertPathEquals(Plugin::classPath('Company/TestPluginThree'), $expected);
 	}
 
 /**
@@ -268,7 +268,7 @@ class PluginTest extends TestCase {
  * @return void
  */
 	public function testLoadAllWithPluginAlreadyLoaded() {
-		Plugin::load('Company\TestPluginThree', ['bootstrap' => false]);
+		Plugin::load('Company/TestPluginThree', ['bootstrap' => false]);
 		Plugin::loadAll(['bootstrap' => true, 'ignoreMissing' => true]);
 		$this->assertEmpty(Configure::read('PluginTest.test_plugin_three.bootstrap'));
 	}

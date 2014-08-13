@@ -66,12 +66,9 @@ class Plugin {
  *
  * Will load routes.php file but not bootstrap.php
  *
- * `Plugin::load('DebugKit', ['namespace' => 'Cake\DebugKit'])`
+ * `Plugin::load('FOC/Authenticate')`
  *
- * Will load files on APP/Plugin/Cake/DebugKit/...
- *
- * Bootstrap initialization functions can be expressed as a PHP callback type,
- * including closures. Callbacks will receive two parameters (plugin name, plugin configuration)
+ * Will load plugin from `plugins/FOC/Authenticate`.
  *
  * It is also possible to load multiple plugins at once. Examples:
  *
@@ -130,7 +127,7 @@ class Plugin {
 		if (empty($config['path'])) {
 			$paths = App::path('Plugin');
 			foreach ($paths as $path) {
-				$pluginPath = str_replace('\\', DS, $plugin);
+				$pluginPath = str_replace('/', DS, $plugin);
 				if (is_dir($path . $pluginPath)) {
 					$config += ['path' => $path . $pluginPath . DS];
 					break;
@@ -159,11 +156,11 @@ class Plugin {
 				static::$_loader->register();
 			}
 			static::$_loader->addNamespace(
-				$plugin,
+				str_replace('/', '\\', $plugin),
 				$config['path'] . $config['classBase'] . DS
 			);
 			static::$_loader->addNamespace(
-				$plugin . '\Test',
+				str_replace('/', '\\', $plugin) . '\Test',
 				$config['path'] . 'tests' . DS
 			);
 		}
