@@ -108,8 +108,13 @@ class MessagesFileLoader {
 		$ext = $this->_extension;
 		$file = false;
 
+		$fileName = $this->_name;
+		$pos = strpos($fileName, '/');
+		if ($pos !== false) {
+			$fileName = substr($fileName, $pos + 1);
+		}
 		foreach ($folders as $folder) {
-			$path = $folder . str_replace('/', '_', $this->_name) . ".$ext";
+			$path = $folder . $fileName . ".$ext";
 			if (is_file($path)) {
 				$file = $path;
 				break;
