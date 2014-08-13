@@ -2737,6 +2737,85 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that case statements work correctly for various use-cases.
+ *
+ * @return void
+ */
+	public function testSqlCaseStatement() {
+		$query = new Query($this->connection);
+		$publishedCase = $query
+			->newExpr()
+			->addCase($query
+				->newExpr()
+				->add(['published' => 'Y']), 1, 'integer'
+			);
+		$notPublishedCase = $query
+			->newExpr()
+			->addCase($query
+					->newExpr()
+					->add(['published' => 'N']), 1, 'integer'
+			);
+
+		//Postgres requires the case statement to be cast to a integer
+		if ($this->connection->driver() instanceof \Cake\Database\Driver\Postgres) {
+			$publishedCase = $query->func()->cast([$publishedCase, 'integer' => 'literal'])->type(' AS ');
+			$notPublishedCase = $query->func()->cast([$notPublishedCase, 'integer' => 'literal'])->type(' AS ');
+		}
+
+		$results = $query
+			->select([
+				'published' => $query->func()->sum($publishedCase),
+				'not_published' => $query->func()->sum($notPublishedCase)
+			])
+			->from(['comments'])
+			->execute()
+			->fetchAll('assoc');
+
+		$this->assertEquals(5, $results[0]['published']);
+		$this->assertEquals(1, $results[0]['not_published']);
+
+		$query = new Query($this->connection);
+		$query
+			->insert(['article_id', 'user_id', 'comment', 'published'])
+			->into('comments')
+			->values([
+				'article_id' => 2,
+				'user_id' => 1,
+				'comment' => 'In limbo',
+				'published' => 'L'
+			])
+			->execute();
+
+		$query = new Query($this->connection);
+		$conditions = [
+			$query
+				->newExpr()
+				->add(['published' => 'Y']),
+			$query
+				->newExpr()
+				->add(['published' => 'N'])
+		];
+		$values = [
+			'Published',
+			'Not published',
+			'None'
+		];
+		$results = $query
+			->select([
+				'id',
+				'comment',
+				'status' => $query->newExpr()->addCase($conditions, $values)
+			])
+			->from(['comments'])
+			->execute()
+			->fetchAll('assoc');
+
+		$this->assertEquals('Published', $results[2]['status']);
+		$this->assertEquals('Not published', $results[3]['status']);
+		$this->assertEquals('None', $results[6]['status']);
+	}
+
+/**
  * Assertion for comparing a table's contents with what is in it.
  *
  * @param string $table

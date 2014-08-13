@@ -267,6 +267,22 @@ class QueryExpression implements ExpressionInterface, Countable {
 	}
 
 /**
+ * Adds a new case expression to the expression object
+ *
+ * @param array|ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
+ * instance,or an array of ExpressionInterface instances.
+ * @param array|ExpressionInterface $values associative array of values to be associated with the conditions
+ * passed in $conditions. If there are more $values than $conditions, the last $value is used as the `ELSE` value
+ * @param array $types associative array of types to be associated with the values
+ * passed in $values
+ *
+ * @return QueryExpression
+ */
+	public function addCase($conditions, $values = [], $types = []) {
+		return $this->add(new CaseExpression($conditions, $values, $types));
+	}
+
+/**
  * Adds a new condition to the expression object in the form
  * "field NOT IN (value1, value2)".
  *
