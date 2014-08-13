@@ -857,7 +857,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that expression objects chan be used as the field in a comparison
+ * Tests that expression objects can be used as the field in a comparison
  * and the values will be bound correctly to the query
  *
  * @return void
@@ -869,10 +869,9 @@ class QueryTest extends TestCase {
 			->from('comments')
 			->where(function($exp) {
 				$field = clone $exp;
-				$field->add(['created' => new \DateTime('2021-12-30 15:00')], ['created' => 'datetime']);
+				$field->add('SELECT min(id) FROM comments');
 				return $exp
-					->eq('id', 1)
-					->eq($field, true, 'boolean');
+					->eq($field, 100, 'integer');
 			})
 			->execute();
 		$this->assertCount(0, $result);
