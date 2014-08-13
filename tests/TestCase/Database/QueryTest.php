@@ -857,7 +857,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that expression objects chan be used as the field in a comparison
+ * Tests that expression objects can be used as the field in a comparison
  * and the values will be bound correctly to the query
  *
  * @return void
