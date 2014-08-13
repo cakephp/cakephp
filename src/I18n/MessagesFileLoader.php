@@ -108,8 +108,13 @@ class MessagesFileLoader {
 		$ext = $this->_extension;
 		$file = false;
 
+		$fileName = $this->_name;
+		$pos = strpos($fileName, '/');
+		if ($pos !== false) {
+			$fileName = substr($fileName, $pos + 1);
+		}
 		foreach ($folders as $folder) {
-			$path = $folder . $this->_name . ".$ext";
+			$path = $folder . $fileName . ".$ext";
 			if (is_file($path)) {
 				$file = $path;
 				break;
@@ -146,8 +151,8 @@ class MessagesFileLoader {
 			$locale['language']
 		];
 
-		// If space is not added after backslash, the character after it remains lowercased
-		$pluginName = Inflector::camelize(str_replace('\\', '\ ', $this->_name));
+		// If space is not added after slash, the character after it remains lowercased
+		$pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
 		$basePath = APP . 'Locale' . DS;
 		$searchPath = [];
 
