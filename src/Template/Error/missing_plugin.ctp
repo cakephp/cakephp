@@ -13,6 +13,9 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Core\Configure;
+
+$pluginPath = Configure::read('App.paths.plugins.0');
 ?>
 <h2>Missing Plugin</h2>
 <p class="error">
@@ -21,7 +24,7 @@
 </p>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded', h($plugin), 'plugins'); ?>
+	<?= sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded', h($plugin), $pluginPath) ?>
 </p>
 <pre>
 &lt;?php

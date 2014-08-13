@@ -17,7 +17,7 @@
 <h2>Missing Datasource Configuration</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('The datasource configuration <em>%s</em> was not found in datasources.php.', h($config)); ?>
+	<?= sprintf('The datasource configuration <em>%s</em> was not found in %s.', h($name), 'config' . DS . 'app.php'); ?>
 </p>
 <p class="notice">
 	<strong>Notice: </strong>

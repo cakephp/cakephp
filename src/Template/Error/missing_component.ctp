@@ -13,6 +13,9 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Core\Plugin;
+use Cake\Core\Configure;
+
+$pluginPath = Configure::read('App.paths.plugins.0');
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 if (empty($plugin)) {
@@ -22,13 +25,18 @@ if (!empty($plugin) && Plugin::loaded($plugin)) {
 	$filePath = Plugin::classPath($plugin);
 }
 if (!empty($plugin) && !Plugin::loaded($plugin)) {
-	$filePath = 'plugins' . DS . h($plugin) . DS . 'src' . DS;
+	$filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
 }
 ?>
 <h2>Missing Component</h2>
 <p class="error">
 	<strong>Error: </strong>
 	<?= sprintf('<em>%s</em> could not be found.', h($pluginDot . $class)); ?>
+	<?php
+		if (!empty($plugin) && !Plugin::loaded($plugin)):
+			echo sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded.', h($plugin), $pluginPath);
+		endif;
+	?>
 </p>
 <p class="error">
 	<strong>Error: </strong>

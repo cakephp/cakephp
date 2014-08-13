@@ -24,7 +24,7 @@ use Cake\Utility\Debugger;
 </p>
 
 <p class="notice">None of the currently connected routes match the given URL or parameters.
-Add a matching route to <?= APP_DIR . DS . 'Config' . DS . 'routes.php' ?></p>
+Add a matching route to <?= 'config' . DS . 'routes.php' ?></p>
 
 <h3>Connected Routes</h3>
 <table cellspacing="0" cellpadding="0">
