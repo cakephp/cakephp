@@ -35,33 +35,39 @@ class CaseExpression implements ExpressionInterface {
 
 /**
  * Values that are associated with the conditions in the $_conditions array.
- * Each value represents the 'true' value for the condition with the corresponding key
+ * Each value represents the 'true' value for the condition with the corresponding key.
  *
  * @var array
  */
-	protected $_trueValues = [];
+	protected $_values = [];
 
 /**
- * The value to be used if none of the conditions match
+ * The `ELSE` value for the case statement. If null then no `ELSE` will be included.
  *
- * @var array|ExpressionInterface|string
+ * @var string|ExpressionInterface|array|null
  */
-	protected $_defaultValue;
+	protected $_elseValue = null;
 
 /**
  * Constructs the case expression
  *
- * @param array|ExpressionInterface $conditions The conditions to test.
- *                                          Must be a QueryExpression, or an array of QueryExpressions.
- * @param string|array|ExpressionInterface $trueValues Value of each condition if that condition is true
- * @param string|array|ExpressionInterface $defaultValue Default value if none of the conditiosn are true
+ * @param array|ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
+ * instance,or an array of ExpressionInterface instances.
+ * @param array|ExpressionInterface $values associative array of values to be associated with the conditions
+ * passed in $conditions. If there are more $values than $conditions, the last $value is used as the `ELSE` value
+ * @param array $types associative array of types to be associated with the values
+ * passed in $values
  */
-	public function __construct($conditions = [], $trueValues = [], $defaultValue = 0) {
+	public function __construct($conditions = [], $values = [], $types = []) {
 		if (!empty($conditions)) {
-			$this->add($conditions, $trueValues);
+			$this->add($conditions, $values, $types);
 		}
 
-		$this->_defaultValue = $this->_parseValue($defaultValue);
+		if (is_array($conditions) && is_array($values) && count($values) > count($conditions)) {
+			end($values);
+			$key = key($values);
+			$this->elseValue($values[$key], isset($types[$key]) ? $types[$key] : null);
+		}
 	}
 
 /**
@@ -69,20 +75,24 @@ class CaseExpression implements ExpressionInterface {
  * Conditions must be a one dimensional array or a QueryExpression.
  * The trueValues must be a similar structure, but may contain a string value.
  *
- * @param array|ExpressionInterface $conditions Must be a QueryExpression, or an array of QueryExpressions.
- * @param string|array|ExpressionInterface $trueValues Values of each condition if that condition is true
+ * @param array|ExpressionInterface $conditions Must be a ExpressionInterface instance, or an array of ExpressionInterface instances.
+ * @param array|ExpressionInterface $values associtative array of values of each condition
+ * @param array $types associative array of types to be associated with the values
  *
  * @return $this
  */
-	public function add($conditions = [], $trueValues = []) {
+	public function add($conditions = [], $values = [], $types = []) {
 		if (!is_array($conditions)) {
 			$conditions = [$conditions];
 		}
-		if (!is_array($trueValues)) {
-			$trueValues = [$trueValues];
+		if (!is_array($values)) {
+			$values = [$values];
+		}
+		if (!is_array($types)) {
+			$types = [$types];
 		}
 
-		$this->_addExpressions($conditions, $trueValues);
+		$this->_addExpressions($conditions, $values, $types);
 
 		return $this;
 	}
@@ -96,7 +106,7 @@ class CaseExpression implements ExpressionInterface {
  *
  * @return void
  */
-	protected function _addExpressions($conditions, $trueValues) {
+	protected function _addExpressions($conditions, $values, $types) {
 		foreach ($conditions as $k => $c) {
 			$numericKey = is_numeric($k);
 
@@ -104,73 +114,41 @@ class CaseExpression implements ExpressionInterface {
 				continue;
 			}
 
-			if (!$c instanceof QueryExpression) {
+			if (!$c instanceof ExpressionInterface) {
+				continue;
+			}
+			array_push($this->_conditions, $c);
+
+			$value = !empty($values[$k]) ? $values[$k] : 1;
+
+			if ($value === 'literal') {
+				$value = $k;
+				array_push($this->_values, $value);
 				continue;
 			}
 
-			$trueValue = !empty($trueValues[$k]) ? $trueValues[$k] : 1;
-
-			if ($trueValue === 'literal') {
-				$trueValue = $k;
-			} elseif (is_string($trueValue) || is_numeric($trueValue)) {
-				$trueValue = $this->_parseValue($trueValue);
-			}
-
-			$this->_conditions[] = $c;
-			$this->_trueValues[] = $trueValue;
+			$type = isset($types[$k]) ? $types[$k] : null;
+			array_push($this->_values, ['value' => $value, 'type' => $type]);
 		}
 	}
 
 /**
- * Gets/sets the default value part
+ * Sets the default value
  *
- * @param array|string|ExpressionInterface $value Value to set
+ * @param $value Value to set
+ * @param $type Type of value
  *
- * @return array|string|ExpressionInterface
+ * @return void
  */
-	public function defaultValue($value = null) {
-		if ($value !== null) {
-			$this->_defaultValue = $this->_parseValue($value);
+	public function elseValue($value = null, $type = null) {
+		if (is_array($value)) {
+			end($value);
+			$value = key($value);
+		} elseif ($value !== null && !$value instanceof ExpressionInterface) {
+			$value = ['value' => $value, 'type' => $type];
 		}
 
-		return $this->_defaultValue;
-	}
-
-/**
- * Parses the value into a understandable format
- *
- * @param array|string|ExpressionInterface $value The value to parse
- *
- * @return array|string|ExpressionInterface
- */
-	protected function _parseValue($value) {
-		if (is_string($value) || is_numeric($value)) {
-			$value = [
-				'value' => $value,
-				'type' => is_string($value) ? null : $this->_getType($value)
-			];
-		} elseif (is_array($value) && !isset($value['value'])) {
-			$value = array_keys($value);
-			$value = end($value);
-		}
-		return $value;
-	}
-
-/**
- * Gets the correct type for the value
- *
- * @param mixed $value The value to test
- *
- * @return null|string
- */
-	protected function _getType($value) {
-		if (is_integer($value)) {
-			return 'integer';
-		} elseif (is_float($value)) {
-			return 'float';
-		}
-
-		return null;
+		$this->_elseValue = $value;
 	}
 
 /**
@@ -204,11 +182,13 @@ class CaseExpression implements ExpressionInterface {
 		$parts = [];
 		$parts[] = 'CASE';
 		foreach ($this->_conditions as $k => $part) {
-			$trueValue = $this->_trueValues[$k];
-			$parts[] = 'WHEN ' . $this->_compile($part, $generator) . ' THEN ' . $this->_compile($trueValue, $generator);
+			$value = $this->_values[$k];
+			$parts[] = 'WHEN ' . $this->_compile($part, $generator) . ' THEN ' . $this->_compile($value, $generator);
 		}
-		$parts[] = 'ELSE';
-		$parts[] = $this->_compile($this->_defaultValue, $generator);
+		if ($this->_elseValue !== null) {
+			$parts[] = 'ELSE';
+			$parts[] = $this->_compile($this->_elseValue, $generator);
+		}
 		$parts[] = 'END';
 
 		return implode(' ', $parts);
@@ -219,7 +199,7 @@ class CaseExpression implements ExpressionInterface {
  *
  */
 	public function traverse(callable $visitor) {
-		foreach (['_conditions', '_trueValues'] as $part) {
+		foreach (['_conditions', '_values'] as $part) {
 			foreach ($this->{$part} as $c) {
 				if ($c instanceof ExpressionInterface) {
 					$visitor($c);
@@ -227,9 +207,9 @@ class CaseExpression implements ExpressionInterface {
 				}
 			}
 		}
-		if ($this->_defaultValue instanceof ExpressionInterface) {
-			$visitor($this->_defaultValue);
-			$this->_defaultValue->traverse($visitor);
+		if ($this->_elseValue instanceof ExpressionInterface) {
+			$visitor($this->_elseValue);
+			$this->_elseValue->traverse($visitor);
 		}
 	}
 

@@ -2727,13 +2727,13 @@ class QueryTest extends TestCase {
 			->newExpr()
 			->addCase($query
 				->newExpr()
-				->add(['published' => 'Y'])
+				->add(['published' => 'Y']), 1, 'integer'
 			);
 		$notPublishedCase = $query
 			->newExpr()
 			->addCase($query
 					->newExpr()
-					->add(['published' => 'N'])
+					->add(['published' => 'N']), 1, 'integer'
 			);
 
 		$results = $query
@@ -2769,15 +2769,16 @@ class QueryTest extends TestCase {
 				->newExpr()
 				->add(['published' => 'N'])
 		];
-		$trueValues = [
+		$values = [
 			'Published',
-			'Not published'
+			'Not published',
+			'None'
 		];
 		$results = $query
 			->select([
 				'id',
 				'comment',
-				'status' => $query->newExpr()->addCase($conditions, $trueValues, 'None')
+				'status' => $query->newExpr()->addCase($conditions, $values)
 			])
 			->from(['comments'])
 			->execute()
