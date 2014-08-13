@@ -468,10 +468,10 @@ class Router {
  *
  * - `Router::url('/posts/edit/1');` Returns the string with the base dir prepended.
  *   This usage does not use reverser routing.
- * - `Router::url(array('controller' => 'posts', 'action' => 'edit'));` Returns a URL
+ * - `Router::url(['controller' => 'posts', 'action' => 'edit']);` Returns a URL
  *   generated through reverse routing.
- * - `Router::url('custom-name', array(...));` Returns a URL generated through reverse
- *   routing.  This form allows you to leverage named routes.
+ * - `Router::url(['_name' => 'custom-name', ...]);` Returns a URL generated
+ *   through reverse routing. This form allows you to leverage named routes.
  *
  * There are a few 'special' parameters that can change the final URL string that is generated
  *
@@ -485,41 +485,21 @@ class Router {
  * - `_full` - If true output of `Router::fullBaseUrl()` will be prepended to generated URLs.
  * - `#` - Allows you to set URL hash fragments.
  * - `_ssl` - Set to true to convert the generated URL to https, or false to force http.
+ * - `_name` - Name of route. If you have setup named routes you can use this key
+ *   to specify it.
  *
- * @param string|array $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
- *   or an array specifying any of the following: 'controller', 'action', 'plugin'
- *   additionally, you can provide routed elements or query string parameters.
- * @param bool|array $options If (bool) true, the full base URL will be prepended to the result.
- *   If an array accepts the following keys.  If used with a named route you can provide
- *   a list of query string parameters.
+ * @param string|array $url An array specifying any of the following:
+ *   'controller', 'action', 'plugin' additionally, you can provide routed
+ *   elements or query string parameters. If string it can be name any valid url
+ *   string.
+ * @param bool $full If true, the full base URL will be prepended to the result.
+ *   Default is false.
  * @return string Full translated URL with base path.
  * @throws \Cake\Error\Exception When the route name is not found
  */
-	public static function url($url = null, $options = []) {
+	public static function url($url = null, $full = false) {
 		if (!static::$initialized) {
 			static::_loadRoutes();
-		}
-
-		$full = false;
-		if (is_bool($options)) {
-			list($full, $options) = array($options, []);
-		}
-		$urlType = gettype($url);
-		$hasLeadingSlash = $plainString = false;
-
-		if ($urlType === 'string') {
-			$plainString = (
-				strpos($url, 'javascript:') === 0 ||
-				strpos($url, 'mailto:') === 0 ||
-				strpos($url, 'tel:') === 0 ||
-				strpos($url, 'sms:') === 0 ||
-				strpos($url, '#') === 0 ||
-				strpos($url, '?') === 0 ||
-				strpos($url, '//') === 0 ||
-				strpos($url, '://') !== false
-			);
-
-			$hasLeadingSlash = isset($url[0]) ? $url[0] === '/' : false;
 		}
 
 		$params = array(
@@ -546,7 +526,7 @@ class Router {
 				$output = static::fullBaseUrl() . $base . $output;
 			}
 			return $output;
-		} elseif ($urlType === 'array') {
+		} elseif (is_array($url)) {
 			if (isset($url['_full']) && $url['_full'] === true) {
 				$full = true;
 				unset($url['_full']);
@@ -566,38 +546,42 @@ class Router {
 				unset($url['_ssl']);
 			}
 
-			// Copy the current action if the controller is the current one.
-			if (
-				empty($url['action']) &&
-				(empty($url['controller']) || $params['controller'] === $url['controller'])
-			) {
-				$url['action'] = $params['action'];
+			if (!isset($url['_name'])) {
+				// Copy the current action if the controller is the current one.
+				if (
+					empty($url['action']) &&
+					(empty($url['controller']) || $params['controller'] === $url['controller'])
+				) {
+					$url['action'] = $params['action'];
+				}
+
+				// Keep the current prefix around if none set.
+				if (isset($params['prefix']) && !isset($url['prefix'])) {
+					$url['prefix'] = $params['prefix'];
+				}
+
+				$url += array(
+					'plugin' => $params['plugin'],
+					'controller' => $params['controller'],
+					'action' => 'index',
+					'_ext' => $params['_ext']
+				);
 			}
 
-			// Keep the current prefix around if none set.
-			if (isset($params['prefix']) && !isset($url['prefix'])) {
-				$url['prefix'] = $params['prefix'];
-			}
-
-			$url += array(
-				'plugin' => $params['plugin'],
-				'controller' => $params['controller'],
-				'action' => 'index',
-				'_ext' => $params['_ext']
-			);
-			$url = static::_applyUrlFilters($url);
-			$output = static::$_collection->match($url, static::$_requestContext);
-		} elseif (
-			$urlType === 'string' &&
-			!$hasLeadingSlash &&
-			!$plainString
-		) {
-			// named route.
-			$url = $options + ['_name' => $url];
 			$url = static::_applyUrlFilters($url);
 			$output = static::$_collection->match($url, static::$_requestContext);
 		} else {
-			// String urls.
+			$plainString = (
+				strpos($url, 'javascript:') === 0 ||
+				strpos($url, 'mailto:') === 0 ||
+				strpos($url, 'tel:') === 0 ||
+				strpos($url, 'sms:') === 0 ||
+				strpos($url, '#') === 0 ||
+				strpos($url, '?') === 0 ||
+				strpos($url, '//') === 0 ||
+				strpos($url, '://') !== false
+			);
+
 			if ($plainString) {
 				return $url;
 			}

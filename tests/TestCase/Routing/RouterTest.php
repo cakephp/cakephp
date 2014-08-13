@@ -1050,14 +1050,32 @@ class RouterTest extends TestCase {
 			array('controller' => 'users', 'action' => 'view'),
 			array('_name' => 'test')
 		);
-		$url = Router::url('test', array('name' => 'mark'));
+		Router::connect(
+			'/view/*',
+			['action' => 'view'],
+			['_name' => 'Articles::view']
+		);
+
+		$url = Router::url(['_name' => 'test', 'name' => 'mark']);
 		$this->assertEquals('/users/mark', $url);
 
-		$url = Router::url('test', array('name' => 'mark', 'page' => 1, 'sort' => 'title', 'dir' => 'desc'));
+		$url = Router::url([
+			'_name' => 'test', 'name' => 'mark',
+			'page' => 1, 'sort' => 'title', 'dir' => 'desc'
+		]);
 		$this->assertEquals('/users/mark?page=1&sort=title&dir=desc', $url);
 
-		$url = Router::url('users-index');
-		$this->assertEquals('/users', $url);
+		$url = Router::url(['_name' => 'Articles::view']);
+		$this->assertEquals('/view/', $url);
+
+		$url = Router::url(['_name' => 'Articles::view', '1']);
+		$this->assertEquals('/view/1', $url);
+
+		$url = Router::url(['_name' => 'Articles::view', '_full' => true, '1']);
+		$this->assertEquals('http://localhost/view/1', $url);
+
+		$url = Router::url(['_name' => 'Articles::view', '1', '#' => 'frag']);
+		$this->assertEquals('/view/1#frag', $url);
 	}
 
 /**
@@ -1072,7 +1090,7 @@ class RouterTest extends TestCase {
 			array('controller' => 'users', 'action' => 'view'),
 			array('_name' => 'test')
 		);
-		$url = Router::url('junk', array('name' => 'mark'));
+		$url = Router::url(['_name' => 'junk', 'name' => 'mark']);
 	}
 
 /**
@@ -1695,9 +1713,9 @@ class RouterTest extends TestCase {
  */
 	public function testGenerationWithSslOption() {
 		Router::connect('/:controller/:action/*');
-		$_SERVER['HTTP_HOST'] = 'localhost';
 
 		$request = new Request();
+		$request->env('HTTP_HOST', 'localhost');
 		Router::pushRequest(
 			$request->addParams(array(
 				'plugin' => null, 'controller' => 'images', 'action' => 'index'
@@ -1726,10 +1744,10 @@ class RouterTest extends TestCase {
  */
 	public function testGenerateWithSslInSsl() {
 		Router::connect('/:controller/:action/*');
-		$_SERVER['HTTP_HOST'] = 'localhost';
-		$_SERVER['HTTPS'] = 'on';
 
 		$request = new Request();
+		$request->env('HTTP_HOST', 'localhost');
+		$request->env('HTTPS', 'on');
 		Router::pushRequest(
 			$request->addParams(array(
 				'plugin' => null,
