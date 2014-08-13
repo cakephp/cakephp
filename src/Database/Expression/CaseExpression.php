@@ -101,8 +101,9 @@ class CaseExpression implements ExpressionInterface {
  * Iterates over the passed in conditions and ensures that there is a matching true value for each.
  * If no matching true value, then it is defaulted to '1'.
  *
- * @param array|ExpressionInterface $conditions Must be a QueryExpression, or an array of QueryExpressions.
- * @param string|array|ExpressionInterface $trueValues Values of each condition if that condition is true
+ * @param array|ExpressionInterface $conditions Must be a ExpressionInterface instance, or an array of ExpressionInterface instances.
+ * @param array|ExpressionInterface $values associtative array of values of each condition
+ * @param array $types associative array of types to be associated with the values
  *
  * @return void
  */
@@ -138,8 +139,8 @@ class CaseExpression implements ExpressionInterface {
 /**
  * Sets the default value
  *
- * @param $value Value to set
- * @param $type Type of value
+ * @param string|ExpressionInterface|array $value Value to set
+ * @param string $type Type of value
  *
  * @return void
  */
