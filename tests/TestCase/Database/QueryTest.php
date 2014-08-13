@@ -2736,6 +2736,12 @@ class QueryTest extends TestCase {
 					->add(['published' => 'N']), 1, 'integer'
 			);
 
+		//Postgres requires the case statement to be cast to a integer
+		if ($this->connection->driver() instanceof \Cake\Database\Driver\Postgres) {
+			$publishedCase = $query->func()->cast([$publishedCase, 'integer' => 'literal'])->type(' AS ');
+			$notPublishedCase = $query->func()->cast([$notPublishedCase, 'integer' => 'literal'])->type(' AS ');
+		}
+
 		$results = $query
 			->select([
 				'published' => $query->func()->sum($publishedCase),
