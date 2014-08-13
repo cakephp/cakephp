@@ -39,7 +39,7 @@ install:
   - echo extension=php_fileinfo.dll >> php.ini
   - cd C:\projects\cakephp
   - php -r "readfile('https://getcomposer.org/installer');" | php
-  - php composer.phar install
+  - php composer.phar install --prefer-dist --no-interaction --dev
 test_script:
   - sqlcmd -S ".\SQL2008R2SP2" -U sa -P Password12! -Q "create database cakephp;"
   - sqlcmd -S ".\SQL2012SP1" -U sa -P Password12! -Q "create database cakephp;"
