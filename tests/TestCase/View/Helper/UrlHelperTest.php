@@ -23,10 +23,10 @@ use Cake\View\Helper\UrlHelper;
 use Cake\View\View;
 
 /**
- * HelperTest class
+ * UrlHelperTest class
  *
  */
-class HelperTest extends TestCase {
+class UrlHelperTest extends TestCase {
 
 /**
  * setUp method
