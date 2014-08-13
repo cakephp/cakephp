@@ -112,20 +112,15 @@ class Comparison extends QueryExpression {
 	public function sql(ValueBinder $generator) {
 		$field = $this->_field;
 
+		if ($field instanceof ExpressionInterface) {
+			$field = $field->sql($generator);
+		}
+
 		if ($this->_value instanceof ExpressionInterface) {
 			$template = '%s %s (%s)';
 			$value = $this->_value->sql($generator);
 		} else {
 			list($template, $value) = $this->_stringExpression($generator);
-		}
-
-		if ($field instanceof ExpressionInterface) {
-			$field = $field->sql($generator);
-
-			// SQL Server complains if you use an expression in the left hand side
-			// of a comparison. So, trying our best.
-			list($field, $value) = [$value, $field];
-			$template = str_replace('%s %s', '%s (%s)', $template);
 		}
 
 		return sprintf($template, $field, $this->_conjunction, $value);
