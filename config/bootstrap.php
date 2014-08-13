@@ -21,3 +21,4 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 
 App::init();
+die(',.');
