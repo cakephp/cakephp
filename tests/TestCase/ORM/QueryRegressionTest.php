@@ -178,6 +178,30 @@ class QueryRegressionTest extends TestCase {
 	}
 
 /**
+ * Test for https://github.com/cakephp/cakephp/issues/4253
+ *
+ * Makes sure that the belongsToMany association is not overwritten with conflicting information
+ * by any of the sides when the junction() function is invoked
+ *
+ * @return void
+ */
+	public function testReciprocalBelongsToMany2() {
+		$articles = TableRegistry::get('Articles');
+		$tags = TableRegistry::get('Tags');
+
+		$articles->belongsToMany('Tags');
+		$tags->belongsToMany('Articles');
+
+		$result = $articles->find()->contain(['Tags'])->first();
+		$sub = $articles->Tags->find()->select(['id'])->matching('Articles', function($q) use ($result) {
+			return $q->where(['Articles.id' => 1]);
+		});
+
+		$query = $articles->Tags->find()->where(['id NOT IN' => $sub]);
+		$this->assertEquals(1, $query->count());
+	}
+
+/**
  * Returns an array with the saving strategies for a belongsTo association
  *
  * @return array
