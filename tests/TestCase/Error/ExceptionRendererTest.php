@@ -24,6 +24,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Error\MissingPluginException;
 use Cake\Core\Plugin;
+use Cake\Datasource\Error\MissingDatasourceConfigException;
 use Cake\Error;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
@@ -561,6 +562,14 @@ class ExceptionRendererTest extends TestCase {
 					'/<h2>Missing Component<\/h2>/',
 					'/Create the class <em>SideboxComponent<\/em> below in file:/',
 					'/(\/|\\\)SideboxComponent.php/'
+				),
+				500
+			),
+			array(
+				new MissingDatasourceConfigException(array('name' => 'MyDatasourceConfig')),
+				array(
+					'/<h2>Missing Datasource Configuration<\/h2>/',
+					'/<em>MyDatasourceConfig<\/em> was not found/'
 				),
 				500
 			),
