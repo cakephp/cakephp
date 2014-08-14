@@ -147,4 +147,14 @@ trait ConventionsTrait {
 		return current(App::path('Plugin')) . $pluginName . DS;
 	}
 
+/**
+ * Return plugin's namespace
+ *
+ * @param string $pluginName Plugin name
+ * @return string Plugin's namespace
+ */
+	protected function _pluginNamespace($pluginName) {
+		return str_replace('/', '\\', $pluginName);
+	}
+
 }

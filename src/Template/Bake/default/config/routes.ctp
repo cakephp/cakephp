@@ -14,8 +14,6 @@
  */
 echo "<?php\n";
 ?>
-namespace <?= $plugin ?>\Config;
-
 use Cake\Routing\Router;
 
 Router::plugin('<?= $plugin ?>', function($routes) {
