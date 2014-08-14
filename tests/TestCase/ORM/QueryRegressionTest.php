@@ -181,7 +181,7 @@ class QueryRegressionTest extends TestCase {
  * Test for https://github.com/cakephp/cakephp/issues/4253
  *
  * Makes sure that the belongsToMany association is not overwritten with conflicting information
- * by any of the sides when the junction() funciton is invoked
+ * by any of the sides when the junction() function is invoked
  *
  * @return void
  */
