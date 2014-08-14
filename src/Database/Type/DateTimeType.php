@@ -95,7 +95,7 @@ class DateTimeType extends \Cake\Database\Type {
 		$class = static::$dateTimeClass;
 		try {
 			if ($value === '' || $value === null || $value === false || $value === true) {
-				return $value;
+				return null;
 			} elseif (is_numeric($value)) {
 				$date = new $class('@' . $value);
 			} elseif (is_string($value)) {

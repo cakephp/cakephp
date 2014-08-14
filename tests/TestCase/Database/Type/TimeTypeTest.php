@@ -90,9 +90,9 @@ class TimeTypeTest extends TestCase {
 		return [
 			// invalid types.
 			[null, null],
-			[false, false],
-			[true, true],
-			['', ''],
+			[false, null],
+			[true, null],
+			['', null],
 			['derpy', 'derpy'],
 			['16-nope!', '16-nope!'],
 
@@ -153,7 +153,11 @@ class TimeTypeTest extends TestCase {
  */
 	public function testMarshal($value, $expected) {
 		$result = $this->type->marshal($value);
-		$this->assertEquals($expected, $result);
+		if (is_object($expected)) {
+			$this->assertEquals($expected, $result);
+		} else {
+			$this->assertSame($expected, $result);
+		}
 	}
 
 }
