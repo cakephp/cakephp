@@ -142,12 +142,13 @@ class FormHelperTest extends TestCase {
 		$this->View = new View();
 
 		$this->Form = new FormHelper($this->View);
-		$this->Form->request = new Request('articles/add');
-		$this->Form->request->here = '/articles/add';
-		$this->Form->request['controller'] = 'articles';
-		$this->Form->request['action'] = 'add';
-		$this->Form->request->webroot = '';
-		$this->Form->request->base = '';
+		$request = new Request('articles/add');
+		$request->here = '/articles/add';
+		$request['controller'] = 'articles';
+		$request['action'] = 'add';
+		$request->webroot = '';
+		$request->base = '';
+		$this->Form->Url->request = $this->Form->request = $request;
 
 		$this->dateRegex = array(
 			'daysRegex' => 'preg:/(?:<option value="0?([\d]+)">\\1<\/option>[\r\n]*)*/',

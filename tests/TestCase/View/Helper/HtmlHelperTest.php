@@ -68,6 +68,7 @@ class HtmlHelperTest extends TestCase {
 		$this->Html = new HtmlHelper($this->View);
 		$this->Html->request = new Request();
 		$this->Html->request->webroot = '';
+		$this->Html->Url->request = $this->Html->request;
 
 		Configure::write('App.namespace', 'TestApp');
 		Plugin::load(['TestTheme']);
@@ -390,12 +391,12 @@ class HtmlHelperTest extends TestCase {
  */
 	public function testImageWithFullBase() {
 		$result = $this->Html->image('test.gif', array('fullBase' => true));
-		$here = $this->Html->url('/', true);
+		$here = $this->Html->Url->build('/', true);
 		$expected = array('img' => array('src' => $here . 'img/test.gif', 'alt' => ''));
 		$this->assertHtml($expected, $result);
 
 		$result = $this->Html->image('sub/test.gif', array('fullBase' => true));
-		$here = $this->Html->url('/', true);
+		$here = $this->Html->Url->build('/', true);
 		$expected = array('img' => array('src' => $here . 'img/sub/test.gif', 'alt' => ''));
 		$this->assertHtml($expected, $result);
 
@@ -405,7 +406,7 @@ class HtmlHelperTest extends TestCase {
 		Router::pushRequest($request);
 
 		$result = $this->Html->image('sub/test.gif', array('fullBase' => true));
-		$here = $this->Html->url('/', true);
+		$here = $this->Html->Url->build('/', true);
 		$expected = array('img' => array('src' => $here . 'img/sub/test.gif', 'alt' => ''));
 		$this->assertHtml($expected, $result);
 	}
@@ -452,8 +453,8 @@ class HtmlHelperTest extends TestCase {
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', true);
 
-		$this->Html->request->webroot = '/';
-		$this->Html->theme = 'TestTheme';
+		$this->Html->Url->request->webroot = '/';
+		$this->Html->Url->theme = 'TestTheme';
 		$result = $this->Html->image('__cake_test_image.gif');
 		$expected = array(
 			'img' => array(
@@ -462,7 +463,7 @@ class HtmlHelperTest extends TestCase {
 		));
 		$this->assertHtml($expected, $result);
 
-		$this->Html->request->webroot = '/testing/';
+		$this->Html->Url->request->webroot = '/testing/';
 		$result = $this->Html->image('__cake_test_image.gif');
 		$expected = array(
 			'img' => array(
@@ -481,7 +482,7 @@ class HtmlHelperTest extends TestCase {
 		$webRoot = Configure::read('App.www_root');
 		Configure::write('App.www_root', TEST_APP . 'webroot/');
 
-		$this->Html->theme = 'TestTheme';
+		$this->Html->Url->theme = 'TestTheme';
 		$result = $this->Html->css('webroot_test');
 		$expected = array(
 			'link' => array('rel' => 'stylesheet', 'href' => 'preg:/.*test_theme\/css\/webroot_test\.css/')
@@ -618,7 +619,7 @@ class HtmlHelperTest extends TestCase {
  */
 	public function testCssWithFullBase() {
 		Configure::write('Asset.filter.css', false);
-		$here = $this->Html->url('/', true);
+		$here = $this->Html->Url->build('/', true);
 
 		$result = $this->Html->css('screen', array('fullBase' => true));
 		$expected = array(
@@ -993,7 +994,7 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testScriptWithFullBase() {
-		$here = $this->Html->url('/', true);
+		$here = $this->Html->Url->build('/', true);
 
 		$result = $this->Html->script('foo', array('fullBase' => true));
 		$expected = array(
@@ -1022,8 +1023,8 @@ class HtmlHelperTest extends TestCase {
 		$testfile = WWW_ROOT . '/test_theme/js/__test_js.js';
 		new File($testfile, true);
 
-		$this->Html->request->webroot = '/';
-		$this->Html->theme = 'TestTheme';
+		$this->Html->Url->request->webroot = '/';
+		$this->Html->Url->theme = 'TestTheme';
 		$result = $this->Html->script('__test_js.js');
 		$expected = array(
 			'script' => array('src' => '/test_theme/js/__test_js.js')
