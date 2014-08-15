@@ -66,13 +66,10 @@ class SchemaShell extends AppShell {
 			list($this->params['plugin'], $splitName) = pluginSplit($name);
 			$name = $this->params['name'] = $splitName;
 		}
-
-		$defaultFile = 'schema.php';
-		if (empty($this->params['file'])) {
-			$this->params['file'] = $defaultFile;
-		}
-		if ($name && $this->params['file'] === $defaultFile) {
+		if ($name && empty($this->params['file'])) {
 			$this->params['file'] = Inflector::underscore($name);
+		} elseif (empty($this->params['file'])) {
+			$this->params['file'] = 'schema.php';
 		}
 		if (strpos($this->params['file'], '.php') === false) {
 			$this->params['file'] .= '.php';
@@ -483,7 +480,6 @@ class SchemaShell extends AppShell {
 		);
 		$file = array(
 			'help' => __d('cake_console', 'File name to read and write.'),
-			'default' => 'schema.php'
 		);
 		$name = array(
 			'help' => __d('cake_console',
