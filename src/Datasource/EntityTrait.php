@@ -270,10 +270,10 @@ trait EntityTrait {
  * ### Example:
  *
  * {{{
- *		$entity = new Entity(['id' => 1, 'name' => null]);
- *		$entity->has('id'); // true
- *		$entity->has('name'); // false
- *		$entity->has('last_name'); // false
+ * $entity = new Entity(['id' => 1, 'name' => null]);
+ * $entity->has('id'); // true
+ * $entity->has('name'); // false
+ * $entity->has('last_name'); // false
  * }}}
  *
  * @param string $property The property to check.
@@ -288,9 +288,10 @@ trait EntityTrait {
  *
  * ### Examples:
  *
- * ``$entity->unsetProperty('name');``
- *
- * ``$entity->unsetProperty(['name', 'last_name']);``
+ * {{{
+ * $entity->unsetProperty('name');
+ * $entity->unsetProperty(['name', 'last_name']);
+ * }}}
  *
  * @param string|array $property The property to unset.
  * @return \Cake\DataSource\EntityInterface
