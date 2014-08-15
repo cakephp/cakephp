@@ -1213,6 +1213,30 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test that saving a new empty entity does not call exists.
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveNewEntityNoExists() {
+		$table = $this->getMock(
+			'Cake\ORM\Table',
+			['exists'],
+			[[
+				'connection' => $this->connection,
+				'alias' => 'Users',
+				'table' => 'users',
+			]]
+		);
+		$entity = $table->newEntity(['username' => 'mark']);
+		$this->assertTrue($entity->isNew());
+
+		$table->expects($this->never())
+			->method('exists');
+		$this->assertSame($entity, $table->save($entity));
+	}
+
+/**
  * Tests that saving an entity will filter out properties that
  * are not present in the table schema when saving
  *
