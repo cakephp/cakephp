@@ -262,6 +262,11 @@ class EntityTest extends TestCase {
 		$this->assertFalse($entity->has('foo'));
 		$this->assertFalse($entity->has('last_name'));
 
+		$this->assertTrue($entity->has(['id']));
+		$this->assertTrue($entity->has(['id', 'name']));
+		$this->assertFalse($entity->has(['id', 'foo']));
+		$this->assertFalse($entity->has(['id', 'nope']));
+
 		$entity = $this->getMock('\Cake\ORM\Entity', ['_getThings']);
 		$entity->expects($this->once())->method('_getThings')
 			->will($this->returnValue(0));

@@ -276,11 +276,19 @@ trait EntityTrait {
  * $entity->has('last_name'); // false
  * }}}
  *
- * @param string $property The property to check.
+ * When checking multiple properties. All properties must not be null 
+ * in order for true to be returned.
+ *
+ * @param string|array $property The property or properties to check.
  * @return bool
  */
 	public function has($property) {
-		return $this->get($property) !== null;
+		foreach ((array)$property as $prop) {
+			if ($this->get($prop) === null) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 /**
