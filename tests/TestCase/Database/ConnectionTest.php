@@ -65,7 +65,7 @@ class ConnectionTest extends TestCase {
  * Tests creating a connection using no driver throws an exception
  *
  * @expectedException \Cake\Database\Error\MissingDriverException
- * @expectedExceptionMessage Database driver "" could not be found.
+ * @expectedExceptionMessage Database driver  could not be found.
  * @return void
  */
 	public function testNoDriver() {
@@ -76,7 +76,7 @@ class ConnectionTest extends TestCase {
  * Tests creating a connection using an invalid driver throws an exception
  *
  * @expectedException \Cake\Database\Error\MissingDriverException
- * @expectedExceptionMessage Database driver "" could not be found.
+ * @expectedExceptionMessage Database driver  could not be found.
  * @return void
  */
 	public function testEmptyDriver() {
@@ -87,7 +87,7 @@ class ConnectionTest extends TestCase {
  * Tests creating a connection using an invalid driver throws an exception
  *
  * @expectedException \Cake\Database\Error\MissingDriverException
- * @expectedExceptionMessage Database driver "\Foo\InvalidDriver" could not be found.
+ * @expectedExceptionMessage Database driver \Foo\InvalidDriver could not be found.
  * @return void
  */
 	public function testMissingDriver() {
