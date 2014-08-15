@@ -161,7 +161,7 @@ class MessagesFileLoader {
 		}
 
 		if (Plugin::loaded($pluginName)) {
-			$basePath = Plugin::path($pluginName) . 'src' . DS . 'Locale' . DS;
+			$basePath = Plugin::classPath($pluginName) . 'Locale' . DS;
 			foreach ($folders as $folder) {
 				$searchPath[] = $basePath . $folder . DS;
 			}
