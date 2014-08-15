@@ -1,9 +1,10 @@
 # CakePHP framework
 
-[![CakePHP](http://cakephp.org/img/cake-logo.png)](http://www.cakephp.org)
 [![Bake Status](https://secure.travis-ci.org/cakephp/cakephp.png?branch=3.0)](http://travis-ci.org/cakephp/cakephp)
 [![Latest Stable Version](https://poser.pugx.org/cakephp/cakephp/v/stable.svg)](https://packagist.org/packages/cakephp/cakephp)
 [![License](https://poser.pugx.org/cakephp/cakephp/license.svg)](https://packagist.org/packages/cakephp/cakephp)
+
+[![CakePHP](http://cakephp.org/img/cake-logo.png)](http://www.cakephp.org)
 
 CakePHP is a rapid development framework for PHP which uses commonly known
 design patterns like Active Record, Association Data Mapping, Front Controller
