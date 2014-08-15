@@ -2171,7 +2171,7 @@ class EmailTest extends TestCase {
 		$result['html'] = false;
 		$length = count($message);
 		for ($i = 0; $i < $length; ++$i) {
-			if ($message[$i] == $boundary) {
+			if ($message[$i] === $boundary) {
 				$flag = false;
 				$type = '';
 				while (!preg_match('/^$/', $message[$i])) {

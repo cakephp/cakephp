@@ -601,6 +601,7 @@ class Response {
 			return isset($headers['Location']) ? $headers['Location'] : null;
 		}
 		$this->header('Location', $url);
+		return null;
 	}
 
 /**

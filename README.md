@@ -1,6 +1,9 @@
 # CakePHP framework
 
 [![CakePHP](http://cakephp.org/img/cake-logo.png)](http://www.cakephp.org)
+[![Bake Status](https://secure.travis-ci.org/cakephp/cakephp.png?branch=3.0)](http://travis-ci.org/cakephp/cakephp)
+[![Latest Stable Version](https://poser.pugx.org/cakephp/cakephp/v/stable.svg)](https://packagist.org/packages/cakephp/cakephp)
+[![License](https://poser.pugx.org/cakephp/cakephp/license.svg)](https://packagist.org/packages/cakephp/cakephp)
 
 CakePHP is a rapid development framework for PHP which uses commonly known
 design patterns like Active Record, Association Data Mapping, Front Controller
@@ -37,8 +40,8 @@ tests for cakephp by doing the following:
 
 See CONTRIBUTING.md for more information.
 
-Some Handy Links
-----------------
+
+## Some Handy Links
 
 [CakePHP](http://www.cakephp.org) - The rapid development PHP framework
 
@@ -58,8 +61,8 @@ Some Handy Links
 
 [Cake Software Foundation](http://cakefoundation.org) - Promoting development related to CakePHP
 
-Get Support!
-------------
+
+## Get Support!
 
 [#cakephp](http://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake
 
@@ -69,6 +72,8 @@ Get Support!
 
 [Roadmaps](https://github.com/cakephp/cakephp/wiki#roadmaps) - Want to contribute? Get involved!
 
-[![Bake Status](https://secure.travis-ci.org/cakephp/cakephp.png?branch=3.0)](http://travis-ci.org/cakephp/cakephp)
+## Contributing
 
-![Cake Power](https://raw.github.com/cakephp/cakephp/master/lib/Cake/Console/Templates/skel/webroot/img/cake.power.gif)
+[CONTRIBUTING.md](CONTRIBUTING.md) - Quick pointers for contributing to the CakePHP project
+
+[CookBook "Contributing" Section (2.x)](http://book.cakephp.org/2.0/en/contributing.html) [(3.0)](http://book.cakephp.org/3.0/en/contributing.html) - Version-specific details about contributing to the project
