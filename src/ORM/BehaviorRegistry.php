@@ -86,7 +86,7 @@ class BehaviorRegistry extends ObjectRegistry {
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\MissingBehaviorException([
-			'class' => $class,
+			'class' => $class . 'Behavior',
 			'plugin' => $plugin
 		]);
 	}
