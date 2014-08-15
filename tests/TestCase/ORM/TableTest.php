@@ -1372,7 +1372,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testAfterSaveNotCalled() {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
-			['query', 'exists'],
+			['query'],
 			[['table' => 'users', 'connection' => $this->connection]]
 		);
 		$query = $this->getMock(
@@ -1387,8 +1387,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'updated' => new Time('2013-10-10 00:00')
 		]);
 
-		$table->expects($this->once())->method('exists')
-			->will($this->returnValue(false));
 		$table->expects($this->once())->method('query')
 			->will($this->returnValue($query));
 
@@ -1416,7 +1414,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testSaveNewErrorOnNoPrimaryKey() {
-		$entity = new \Cake\ORM\Entity();
+		$entity = new \Cake\ORM\Entity(['username' => 'superuser']);
 		$table = TableRegistry::get('users', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
@@ -1472,7 +1470,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$connection->driver(ConnectionManager::get('test')->driver());
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
-			['query', 'connection', 'exists'],
+			['query', 'connection'],
 			[['table' => 'users']]
 		);
 		$query = $this->getMock(
@@ -1480,10 +1478,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			['execute', 'addDefaultTypes'],
 			[null, $table]
 		);
-
-		$table->expects($this->once())->method('exists')
-			->will($this->returnValue(false));
-
 		$table->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
 
@@ -1526,9 +1520,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			['execute', 'addDefaultTypes'],
 			[null, $table]
 		);
-
-		$table->expects($this->once())->method('exists')
-			->will($this->returnValue(false));
 
 		$table->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));

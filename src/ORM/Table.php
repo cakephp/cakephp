@@ -1148,7 +1148,7 @@ class Table implements RepositoryInterface, EventListener {
 		$primaryColumns = (array)$this->primaryKey();
 		$primary = $entity->extract($primaryColumns);
 
-		if (array_filter($primary) !== [] && $entity->isNew()) {
+		if ($primaryColumns && $entity->isNew() && array_filter($primary, 'strlen') === $primary) {
 			$alias = $this->alias();
 			$conditions = [];
 			foreach ($primary as $k => $v) {
