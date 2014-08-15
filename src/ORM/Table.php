@@ -1146,12 +1146,11 @@ class Table implements RepositoryInterface, EventListener {
  */
 	protected function _processSave($entity, $options) {
 		$primaryColumns = (array)$this->primaryKey();
-		$primary = $entity->extract($primaryColumns);
 
-		if ($primaryColumns && $entity->isNew() && array_filter($primary, 'strlen') === $primary) {
+		if ($primaryColumns && $entity->isNew() && $entity->has($primaryColumns)) {
 			$alias = $this->alias();
 			$conditions = [];
-			foreach ($primary as $k => $v) {
+			foreach ($entity->extract($primaryColumns) as $k => $v) {
 				$conditions["$alias.$k"] = $v;
 			}
 			$entity->isNew(!$this->exists($conditions));
@@ -1311,15 +1310,15 @@ class Table implements RepositoryInterface, EventListener {
  * @throws \InvalidArgumentException When primary key data is missing.
  */
 	protected function _update($entity, $data) {
-		$primaryKey = $entity->extract((array)$this->primaryKey());
-		$data = array_diff_key($data, $primaryKey);
+		$primaryColumns = (array)$this->primaryKey();
+		$primaryKey = $entity->extract($primaryColumns);
 
+		$data = array_diff_key($data, $primaryKey);
 		if (empty($data)) {
 			return $entity;
 		}
 
-		$filtered = array_filter($primaryKey, 'strlen');
-		if (count($filtered) < count($primaryKey)) {
+		if (!$entity->has($primaryColumns)) {
 			$message = 'All primary key value(s) are needed for updating';
 			throw new \InvalidArgumentException($message);
 		}
@@ -1401,17 +1400,16 @@ class Table implements RepositoryInterface, EventListener {
 		if ($entity->isNew()) {
 			return false;
 		}
-		$primaryKey = (array)$this->primaryKey();
-		$conditions = (array)$entity->extract($primaryKey);
 
-		if (!array_filter($conditions, 'strlen')) {
-			$msg = 'Deleting requires a primary key value';
+		$primaryKey = (array)$this->primaryKey();
+		if (!$entity->has($primaryKey)) {
+			$msg = 'Deleting requires all primary key values.';
 			throw new \InvalidArgumentException($msg);
 		}
-
 		$this->_associations->cascadeDelete($entity, $options->getArrayCopy());
 
 		$query = $this->query();
+		$conditions = (array)$entity->extract($primaryKey);
 		$statement = $query->delete()
 			->where($conditions)
 			->execute();
