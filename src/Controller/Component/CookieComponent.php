@@ -44,7 +44,7 @@ class CookieComponent extends Component {
  * - `path` - The path on the server in which the cookie will be available on.
  *   If path is set to '/foo/', the cookie will only be available within the
  *   /foo/ directory and all sub-directories such as /foo/bar/ of domain.
- *   The default value is the entire domain.
+ *   The default value is base path of app.
  * - `domain` - The domain that the cookie is available. To make the cookie
  *   available on all subdomains of example.com set domain to '.example.com'.
  * - `secure` - Indicates that the cookie should only be transmitted over a
@@ -58,7 +58,7 @@ class CookieComponent extends Component {
  * @var array
  */
 	protected $_defaultConfig = [
-		'path' => '/',
+		'path' => null,
 		'domain' => '',
 		'secure' => false,
 		'key' => null,
@@ -136,6 +136,10 @@ class CookieComponent extends Component {
 			$this->_request = $controller->request;
 		} else {
 			$this->_request = Request::createFromGlobals();
+		}
+
+		if (empty($this->_config['path'])) {
+			$this->config('path', $this->_request->base ?: '/');
 		}
 
 		if ($controller && isset($controller->response)) {
