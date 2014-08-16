@@ -111,7 +111,7 @@ class SessionTest extends TestCase {
 		$_SESSION = null;
 
 		$config = array(
-			'cookie_path' => '/base',
+			'cookiePath' => '/base',
 			'cookie' => 'test',
 			'checkAgent' => false,
 			'timeout' => 86400,
