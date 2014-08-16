@@ -871,11 +871,9 @@ class QueryTest extends TestCase {
 				$field = clone $exp;
 				$field->add('SELECT min(id) FROM comments');
 				return $exp
-					->gt($field, 100, 'integer');
-			});
-
-		debug($result->sql());
-		$rsult = $result->execute();
+					->eq($field, 100, 'integer');
+			})
+			->execute();
 		$this->assertCount(0, $result);
 	}
 
