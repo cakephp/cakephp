@@ -218,7 +218,6 @@ class ControllerTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		App::objects('Plugin', null, false);
 		Configure::write('App.namespace', 'TestApp');
 		Router::reload();
 	}

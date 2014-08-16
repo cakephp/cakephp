@@ -16,8 +16,3 @@
 define('TIME_START', microtime(true));
 
 require CAKE . 'basics.php';
-
-use Cake\Core\App;
-use Cake\Core\Configure;
-
-App::init();

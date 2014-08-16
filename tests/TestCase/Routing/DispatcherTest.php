@@ -217,8 +217,6 @@ class DispatcherTest extends TestCase {
 		Configure::write('App.webroot', 'webroot');
 		Configure::write('App.namespace', 'TestApp');
 
-		App::objects('Plugin', null, false);
-
 		$this->dispatcher = new TestDispatcher();
 		$this->dispatcher->addFilter(new ControllerFactoryFilter());
 	}

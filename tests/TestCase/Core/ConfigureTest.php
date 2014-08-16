@@ -35,7 +35,6 @@ class ConfigureTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Cache::disable();
-		App::objects('Plugin', null, true);
 	}
 
 /**

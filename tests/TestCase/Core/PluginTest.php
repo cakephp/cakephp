@@ -25,16 +25,6 @@ use Cake\TestSuite\TestCase;
 class PluginTest extends TestCase {
 
 /**
- * Sets the plugins folder for this test
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		App::objects('Plugin', null, false);
-	}
-
-/**
  * Reverts the changes done to the environment while testing
  *
  * @return void

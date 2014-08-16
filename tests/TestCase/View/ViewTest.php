@@ -294,8 +294,6 @@ class ViewTest extends TestCase {
 		$this->ThemePostsController->index();
 		$this->ThemeView = $this->ThemePostsController->createView();
 
-		App::objects('Plugin', null, false);
-
 		Plugin::load(['TestPlugin', 'PluginJs', 'TestTheme', 'Company/TestPluginThree']);
 		Configure::write('debug', true);
 	}
