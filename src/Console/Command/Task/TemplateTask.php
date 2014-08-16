@@ -16,6 +16,7 @@ namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Core\Plugin;
 use Cake\Utility\ConventionsTrait;
 use Cake\Utility\Folder;
 use Cake\View\ViewVarsTrait;
@@ -57,9 +58,9 @@ class TemplateTask extends Shell {
 	protected function _findTemplates() {
 		$paths = App::path('Template');
 
-		$plugins = App::objects('Plugin');
+		$plugins = Plugin::loaded();
 		foreach ($plugins as $plugin) {
-			$paths[] = $this->_pluginPath($plugin) . 'src' . DS . 'Template' . DS;
+			$paths[] = Plugin::classPath($plugin) . DS . 'Template' . DS;
 		}
 
 		$core = current(App::core('Template'));
