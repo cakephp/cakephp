@@ -159,7 +159,7 @@ class Request implements \ArrayAccess {
 		$sessionConfig = Hash::merge(
 			[
 				'defaults' => 'php',
-				'ini' => ['session.cookie_path' => $base ?: '/']
+				'cookie_path' => $base ?: '/'
 			],
 			(array)Configure::read('Session')
 		);
@@ -231,7 +231,7 @@ class Request implements \ArrayAccess {
 
 		if (empty($config['session'])) {
 			$config['session'] = new Session([
-				'ini' => ['session.cookie_path' => $config['base'] ?: '/']
+				'cookie_path' => $config['base'] ?: '/'
 			]);
 		}
 
