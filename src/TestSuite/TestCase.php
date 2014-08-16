@@ -498,14 +498,14 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * Compatibility function to test if a value is between an acceptable range.
  *
- * @param float $result
  * @param float $expected
+ * @param float $result
  * @param float $margin the rage of acceptation
  * @param string $message the text to display if the assertion is not correct
  * @return void
  * @deprecated 3.0. Use assertWithinRange() instead.
  */
-	protected static function assertWithinMargin($result, $expected, $margin, $message = '') {
+	protected static function assertWithinMargin($expected, $result, $margin, $message = '') {
 		static::assertWithinRange($expected, $result, $margin, $message);
 	}
 
