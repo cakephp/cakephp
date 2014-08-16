@@ -19,6 +19,7 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
+use Cake\Utility\Folder;
 use \ReflectionClass;
 use \ReflectionMethod;
 
@@ -41,16 +42,18 @@ class CommandTask extends Shell {
 		$shellList = array_fill_keys($plugins, null) + ['CORE' => null, 'app' => null];
 
 		$corePath = App::core('Console/Command');
-		$shells = App::objects('file', $corePath[0]);
+		$shells = $this->_scanDir($corePath[0]);
 		$shells = array_diff($shells, $skipFiles, $hiddenCommands);
 		$this->_appendShells('CORE', $shells, $shellList);
 
-		$appShells = App::objects('Console/Command', null, false);
+		$appPath = App::path('Console/Command');
+		$appShells = $this->_scanDir($appPath[0]);
 		$appShells = array_diff($appShells, $shells, $skipFiles);
 		$this->_appendShells('app', $appShells, $shellList);
 
 		foreach ($plugins as $plugin) {
-			$pluginShells = App::objects($plugin . '.Console/Command');
+			$pluginPath = Plugin::classPath($plugin) . 'Console' . DS . 'Command';
+			$pluginShells = $this->_scanDir($pluginPath);
 			$this->_appendShells($plugin, $pluginShells, $shellList);
 		}
 
@@ -69,6 +72,29 @@ class CommandTask extends Shell {
 		foreach ($shells as $shell) {
 			$shellList[$type][] = Inflector::underscore(str_replace('Shell', '', $shell));
 		}
+	}
+
+/**
+ * Scan a directory for .php files and return the class names that
+ * should be within them.
+ *
+ * @param string $dir The directory to read.
+ * @return array The list of shell classnames based on conventions.
+ */
+	protected function _scanDir($dir) {
+		$dir = new Folder($dir);
+		$contents = $dir->read(true, true);
+		if (empty($contents[1])) {
+			return [];
+		}
+		$shells = [];
+		foreach ($contents[1] as $file) {
+			if (substr($file, -4) !== '.php') {
+				continue;
+			}
+			$shells[] = substr($file, 0, -4);
+		}
+		return $shells;
 	}
 
 /**
