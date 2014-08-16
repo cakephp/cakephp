@@ -182,7 +182,7 @@ class Session {
  *
  * - timeout: The time in minutes the session should be valid for.
  * - cookie_path: The url path for which session cookie is set. Maps to the
- *   `session.cookie_path` php.ini config.
+ *   `session.cookie_path` php.ini config. Defaults to base path of app.
  * - ini: A list of php.ini directives to change before the session start.
  * - handler: An array containing at least the `class` key. To be used as the session
  *   engine for persisting data. The rest of the keys in the array will be passed as
