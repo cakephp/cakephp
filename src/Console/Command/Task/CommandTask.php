@@ -44,17 +44,17 @@ class CommandTask extends Shell {
 		$corePath = App::core('Console/Command');
 		$shells = $this->_scanDir($corePath[0]);
 		$shells = array_diff($shells, $skipFiles, $hiddenCommands);
-		$this->_appendShells('CORE', $shells, $shellList);
+		$shellList = $this->_appendShells('CORE', $shells, $shellList);
 
 		$appPath = App::path('Console/Command');
 		$appShells = $this->_scanDir($appPath[0]);
 		$appShells = array_diff($appShells, $shells, $skipFiles);
-		$this->_appendShells('app', $appShells, $shellList);
+		$shellList = $this->_appendShells('app', $appShells, $shellList);
 
 		foreach ($plugins as $plugin) {
 			$pluginPath = Plugin::classPath($plugin) . 'Console' . DS . 'Command';
 			$pluginShells = $this->_scanDir($pluginPath);
-			$this->_appendShells($plugin, $pluginShells, $shellList);
+			$shellList = $this->_appendShells($plugin, $pluginShells, $shellList);
 		}
 
 		return array_filter($shellList);
@@ -65,13 +65,14 @@ class CommandTask extends Shell {
  *
  * @param string $type The type of object.
  * @param array $shells The shell name.
- * @param array &$shellList List of shells.
- * @return void
+ * @param array $shellList List of shells.
+ * @return array The updated $shellList
  */
-	protected function _appendShells($type, $shells, &$shellList) {
+	protected function _appendShells($type, $shells, $shellList) {
 		foreach ($shells as $shell) {
 			$shellList[$type][] = Inflector::underscore(str_replace('Shell', '', $shell));
 		}
+		return $shellList;
 	}
 
 /**
