@@ -44,7 +44,9 @@ class CookieComponent extends Component {
  * - `path` - The path on the server in which the cookie will be available on.
  *   If path is set to '/foo/', the cookie will only be available within the
  *   /foo/ directory and all sub-directories such as /foo/bar/ of domain.
- *   The default value is base path of app.
+ *   The default value is base path of app. For e.g. if your app is running
+ *   under a subfolder "cakeapp" of document root the path would be "/cakeapp"
+ *   else it would be "/".
  * - `domain` - The domain that the cookie is available. To make the cookie
  *   available on all subdomains of example.com set domain to '.example.com'.
  * - `secure` - Indicates that the cookie should only be transmitted over a
