@@ -14,7 +14,6 @@
  */
 namespace Cake\Core;
 
-use Cake\Cache\Cache;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 
@@ -40,29 +39,9 @@ use Cake\Utility\Inflector;
  * Plugins can be located with App as well. Using Plugin::path('DebugKit') for example, will
  * give you the full path to the DebugKit plugin.
  *
- * ### Inspecting known objects
- *
- * You can find out which objects App knows about using App::objects('Controller') for example to find
- * which application controllers App knows about. This method will not find objects in sub-namespaces
- * by default.
- *
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html
  */
 class App {
-
-/**
- * Holds and key => value array of object types.
- *
- * @var array
- */
-	protected static $_objects = [];
-
-/**
- * Indicates whether the object cache should be stored again because of an addition to it
- *
- * @var bool
- */
-	protected static $_objectCacheChange = false;
 
 /**
  * Return the class name namespaced. This method checks if the class is defined on the
@@ -160,120 +139,6 @@ class App {
  */
 	public static function core($type) {
 		return [CAKE . str_replace('/', DS, $type) . DS];
-	}
-
-/**
- * Returns an array of objects of the given type.
- *
- * Example usage:
- *
- * `App::objects('Plugin');` returns `['DebugKit', 'Blog', 'User'];`
- *
- * `App::objects('Controller');` returns `['PagesController', 'BlogController'];`
- *
- * You can also search only within a plugin's objects by using the plugin dot
- * syntax.
- *
- * `App::objects('MyPlugin.Model');` returns `['MyPluginPost', 'MyPluginComment'];`
- *
- * When scanning directories, files and directories beginning with `.` will be excluded as these
- * are commonly used by version control systems.
- *
- * @param string $type Type of object, i.e. 'Model', 'Controller', 'View/Helper', 'file', 'class' or 'Plugin'
- * @param string|array $path Optional Scan only the path given. If null, paths for the chosen type will be used.
- * @param bool $cache Set to false to rescan objects of the chosen type. Defaults to true.
- * @return mixed Either false on incorrect / miss. Or an array of found objects.
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::objects
- */
-	public static function objects($type, $path = null, $cache = true) {
-		if (empty(static::$_objects) && $cache === true) {
-			static::$_objects = (array)Cache::read('object_map', '_cake_core_');
-		}
-
-		$extension = '/\.php$/';
-		$includeDirectories = false;
-		$name = $type;
-
-		if ($type === 'Plugin') {
-			$extension = '/.*/';
-			$includeDirectories = true;
-		}
-
-		list($plugin, $type) = pluginSplit($type);
-
-		if ($type === 'file' && !$path) {
-			return false;
-		} elseif ($type === 'file') {
-			$extension = '/\.php$/';
-			$name = $type . str_replace(DS, '', $path);
-		}
-
-		$cacheLocation = empty($plugin) ? 'app' : $plugin;
-
-		if ($cache !== true || !isset(static::$_objects[$cacheLocation][$name])) {
-			$objects = [];
-
-			if (empty($path)) {
-				$path = static::path($type, $plugin);
-			}
-			foreach ((array)$path as $dir) {
-				if ($dir != APP && is_dir($dir)) {
-					$files = new \RegexIterator(new \DirectoryIterator($dir), $extension);
-					foreach ($files as $file) {
-						$fileName = basename($file);
-						if (!$file->isDot() && $fileName[0] !== '.') {
-							$isDir = $file->isDir();
-							if ($isDir && $includeDirectories) {
-								$objects[] = $fileName;
-							} elseif (!$includeDirectories && !$isDir) {
-								$objects[] = substr($fileName, 0, -4);
-							}
-						}
-					}
-				}
-			}
-
-			if ($type !== 'file') {
-				foreach ($objects as $key => $value) {
-					$objects[$key] = Inflector::camelize($value);
-				}
-			}
-
-			sort($objects);
-			if ($plugin) {
-				return $objects;
-			}
-
-			static::$_objects[$cacheLocation][$name] = $objects;
-			if ($cache) {
-				static::$_objectCacheChange = true;
-			}
-		}
-
-		return static::$_objects[$cacheLocation][$name];
-	}
-
-/**
- * Initializes the App, registers a shutdown function.
- *
- * @return void
- */
-	public static function init() {
-		register_shutdown_function([get_called_class(), 'shutdown']);
-	}
-
-/**
- * Object destructor.
- *
- * Writes cache file if changes have been made to the $_map. Also, check if a fatal
- * error happened and call the handler.
- *
- * @return void
- */
-	public static function shutdown() {
-		if (static::$_objectCacheChange) {
-			Cache::write('object_map', static::$_objects, '_cake_core_');
-		}
 	}
 
 }

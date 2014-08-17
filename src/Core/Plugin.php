@@ -15,6 +15,7 @@
 namespace Cake\Core;
 
 use Cake\Core\ClassLoader;
+use \DirectoryIterator;
 
 /**
  * Plugin is used to load and locate plugins.
@@ -188,7 +189,19 @@ class Plugin {
  * @return void
  */
 	public static function loadAll(array $options = []) {
-		$plugins = App::objects('Plugin');
+		$plugins = [];
+		foreach (App::path('Plugin') as $path) {
+			if (!is_dir($path)) {
+				continue;
+			}
+			$dir = new DirectoryIterator($path);
+			foreach ($dir as $path) {
+				if ($path->isDir() && !$path->isDot()) {
+					$plugins[] = $path->getBaseName();
+				}
+			}
+		}
+
 		foreach ($plugins as $p) {
 			$opts = isset($options[$p]) ? $options[$p] : null;
 			if ($opts === null && isset($options[0])) {
