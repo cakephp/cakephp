@@ -200,10 +200,9 @@ class Session {
 			$config['ini']['session.name'] = $config['cookie'];
 		}
 
-		if (isset($config['cookiePath']) &&
-			!isset($config['ini']['session.cookie_path'])
-		) {
-			$config['ini']['session.cookie_path'] = $config['cookiePath'];
+		if (!isset($config['ini']['session.cookie_path'])) {
+			$cookiePath = empty($config['cookiePath']) ? '/' : $config['cookiePath'];
+			$config['ini']['session.cookie_path'] = $cookiePath;
 		}
 
 		if (!empty($config['ini']) && is_array($config['ini'])) {

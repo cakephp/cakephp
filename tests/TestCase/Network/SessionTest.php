@@ -111,7 +111,6 @@ class SessionTest extends TestCase {
 		$_SESSION = null;
 
 		$config = array(
-			'cookiePath' => '/base',
 			'cookie' => 'test',
 			'checkAgent' => false,
 			'timeout' => 86400,
@@ -125,7 +124,21 @@ class SessionTest extends TestCase {
 		$this->assertEquals('', ini_get('session.use_trans_sid'), 'Ini value is incorrect');
 		$this->assertEquals('example.com', ini_get('session.referer_check'), 'Ini value is incorrect');
 		$this->assertEquals('test', ini_get('session.name'), 'Ini value is incorrect');
-		$this->assertEquals('/base', ini_get('session.cookie_path'), 'Ini value is incorrect');
+	}
+
+/**
+ * test session cookie path setting
+ *
+ * @return void
+ */
+	public function testCookiePath() {
+		ini_set('session.cookie_path', '/foo');
+
+		$session = new Session();
+		$this->assertEquals('/', ini_get('session.cookie_path'));
+
+		$session = new Session(['cookiePath' => '/base']);
+		$this->assertEquals('/base', ini_get('session.cookie_path'));
 	}
 
 /**
