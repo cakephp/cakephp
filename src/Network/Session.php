@@ -180,8 +180,10 @@ class Session {
  *
  * ### Configuration:
  *
- * - timeout: The time in minutes the session should be valid for
- * - ini: A list of ini directives to change before the session start.
+ * - timeout: The time in minutes the session should be valid for.
+ * - cookiePath: The url path for which session cookie is set. Maps to the
+ *   `session.cookie_path` php.ini config. Defaults to base path of app.
+ * - ini: A list of php.ini directives to change before the session start.
  * - handler: An array containing at least the `class` key. To be used as the session
  *   engine for persisting data. The rest of the keys in the array will be passed as
  *   the configuration array for the engine. You can set the `class` key to an already
@@ -196,6 +198,12 @@ class Session {
 
 		if (!empty($config['cookie'])) {
 			$config['ini']['session.name'] = $config['cookie'];
+		}
+
+		if (isset($config['cookiePath']) &&
+			!isset($config['ini']['session.cookie_path'])
+		) {
+			$config['ini']['session.cookie_path'] = $config['cookiePath'];
 		}
 
 		if (!empty($config['ini']) && is_array($config['ini'])) {

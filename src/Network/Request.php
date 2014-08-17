@@ -156,7 +156,11 @@ class Request implements \ArrayAccess {
  */
 	public static function createFromGlobals() {
 		list($base, $webroot) = static::_base();
-		$sessionConfig = (array)Configure::read('Session') + ['defaults' => 'php'];
+		$sessionConfig = (array)Configure::read('Session') + [
+			'defaults' => 'php',
+			'cookiePath' => $base ?: '/'
+		];
+
 		$config = array(
 			'query' => $_GET,
 			'post' => $_POST,
@@ -209,10 +213,6 @@ class Request implements \ArrayAccess {
 			'input' => null,
 		);
 
-		if (empty($config['session'])) {
-			$config['session'] = new Session();
-		}
-
 		$this->_setConfig($config);
 	}
 
@@ -225,6 +225,12 @@ class Request implements \ArrayAccess {
 	protected function _setConfig($config) {
 		if (!empty($config['url']) && $config['url'][0] === '/') {
 			$config['url'] = substr($config['url'], 1);
+		}
+
+		if (empty($config['session'])) {
+			$config['session'] = new Session([
+				'cookiePath' => $config['base'] ?: '/'
+			]);
 		}
 
 		$this->url = $config['url'];
