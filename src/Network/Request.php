@@ -158,7 +158,7 @@ class Request implements \ArrayAccess {
 		list($base, $webroot) = static::_base();
 		$sessionConfig = (array)Configure::read('Session') + [
 			'defaults' => 'php',
-			'cookiePath' => $base ?: '/'
+			'cookiePath' => $base
 		];
 
 		$config = array(
@@ -229,7 +229,7 @@ class Request implements \ArrayAccess {
 
 		if (empty($config['session'])) {
 			$config['session'] = new Session([
-				'cookiePath' => $config['base'] ?: '/'
+				'cookiePath' => $config['base']
 			]);
 		}
 
