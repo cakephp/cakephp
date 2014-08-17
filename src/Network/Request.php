@@ -156,13 +156,11 @@ class Request implements \ArrayAccess {
  */
 	public static function createFromGlobals() {
 		list($base, $webroot) = static::_base();
-		$sessionConfig = Hash::merge(
-			[
-				'defaults' => 'php',
-				'cookiePath' => $base ?: '/'
-			],
-			(array)Configure::read('Session')
-		);
+		$sessionConfig = (array)Configure::read('Session') + [
+			'defaults' => 'php',
+			'cookiePath' => $base ?: '/'
+		];
+
 		$config = array(
 			'query' => $_GET,
 			'post' => $_POST,
