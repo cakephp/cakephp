@@ -151,7 +151,7 @@ class SqliteSchemaTest extends TestCase {
 		$table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
 		$table->expects($this->at(0))->method('addColumn')->with('field', $expected);
 
-		$dialect->convertFieldDescription($table, $field);
+		$dialect->convertColumnDescription($table, $field);
 	}
 
 /**
@@ -180,8 +180,8 @@ class SqliteSchemaTest extends TestCase {
 		];
 
 		$table = new \Cake\Database\Schema\Table('table');
-		$dialect->convertFieldDescription($table, $field1);
-		$dialect->convertFieldDescription($table, $field2);
+		$dialect->convertColumnDescription($table, $field1);
+		$dialect->convertColumnDescription($table, $field2);
 		$this->assertEquals(['field1', 'field2'], $table->primaryKey());
 	}
 

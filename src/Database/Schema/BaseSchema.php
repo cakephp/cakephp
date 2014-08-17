@@ -115,7 +115,7 @@ abstract class BaseSchema {
  * @param array $config The connection configuration.
  * @return array An array of (sql, params) to execute.
  */
-	abstract public function describeTableSql($name, $config);
+	abstract public function describeColumnSql($name, $config);
 
 /**
  * Generate the SQL to describe the indexes in a table.
@@ -150,10 +150,10 @@ abstract class BaseSchema {
  * Convert field description results into abstract schema fields.
  *
  * @param \Cake\Database\Schema\Table $table The table object to append fields to.
- * @param array $row The row data from `describeTableSql`.
+ * @param array $row The row data from `describeColumnSql`.
  * @return void
  */
-	abstract public function convertFieldDescription(Table $table, $row);
+	abstract public function convertColumnDescription(Table $table, $row);
 
 /**
  * Convert an index description results into abstract schema indexes or constraints.
@@ -174,6 +174,16 @@ abstract class BaseSchema {
  * @return void
  */
 	abstract public function convertForeignKeyDescription(Table $table, $row);
+
+/**
+ * Convert options data into table options.
+ *
+ * @param \Cake\Database\Schema\Table $table Table instance.
+ * @param array $row The row of data.
+ * @return void
+ */
+	public function convertOptionsDescription(Table $table, $row) {
+	}
 
 /**
  * Generate the SQL to create a table.
@@ -220,15 +230,5 @@ abstract class BaseSchema {
  * @return array SQL statements to truncate a table.
  */
 	abstract public function truncateTableSql(Table $table);
-
-/**
- * Convert options data into table options.
- *
- * @param \Cake\Database\Schema\Table $table Table instance.
- * @param array $row The row of data.
- * @return void
- */
-	public function convertOptions(Table $table, $row) {
-	}
 
 }

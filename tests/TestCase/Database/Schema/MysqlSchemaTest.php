@@ -174,7 +174,7 @@ class MysqlSchemaTest extends TestCase {
 		$table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
 		$table->expects($this->at(0))->method('addColumn')->with('field', $expected);
 
-		$dialect->convertFieldDescription($table, $field);
+		$dialect->convertColumnDescription($table, $field);
 	}
 
 /**
@@ -378,6 +378,7 @@ SQL;
 		$schema = new SchemaCollection($connection);
 		$result = $schema->describe('schema_articles');
 		$this->assertArrayHasKey('engine', $result->options());
+		$this->assertArrayHasKey('collation', $result->options());
 	}
 
 /**

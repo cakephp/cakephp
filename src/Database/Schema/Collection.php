@@ -107,47 +107,50 @@ class Collection {
 				return $cached;
 			}
 		}
-
+		$table = new Table($name);
 		$config = $this->_connection->config();
-		list($sql, $params) = $this->_dialect->describeTableSql($name, $config);
-		$statement = $this->_executeSql($sql, $params);
-		if (count($statement) === 0) {
+
+		$this->_reflect('Column', $name, $config, $table);
+		if (count($table->columns()) === 0) {
 			throw new Exception(sprintf('Cannot describe %s. It has 0 columns.', $name));
 		}
-
-		$table = new Table($name);
-		foreach ($statement->fetchAll('assoc') as $row) {
-			$this->_dialect->convertFieldDescription($table, $row);
-		}
-		$statement->closeCursor();
-
-		list($sql, $params) = $this->_dialect->describeIndexSql($name, $config);
-		$statement = $this->_executeSql($sql, $params);
-		foreach ($statement->fetchAll('assoc') as $row) {
-			$this->_dialect->convertIndexDescription($table, $row);
-		}
-		$statement->closeCursor();
-
-		list($sql, $params) = $this->_dialect->describeForeignKeySql($name, $config);
-		$statement = $this->_executeSql($sql, $params);
-		foreach ($statement->fetchAll('assoc') as $row) {
-			$this->_dialect->convertForeignKeyDescription($table, $row);
-		}
-		$statement->closeCursor();
-
-		list($sql, $params) = $this->_dialect->describeOptionsSql($name, $config);
-		if ($sql) {
-			$statement = $this->_executeSql($sql, $params);
-			foreach ($statement->fetchAll('assoc') as $row) {
-				$this->_dialect->convertOptions($table, $row);
-			}
-			$statement->closeCursor();
-		}
+		$this->_reflect('Index', $name, $config, $table);
+		$this->_reflect('ForeignKey', $name, $config, $table);
+		$this->_reflect('Options', $name, $config, $table);
 
 		if (!empty($cacheConfig)) {
 			Cache::write($cacheKey, $table, $cacheConfig);
 		}
 		return $table;
+	}
+
+/**
+ * Helper method for running each step of the reflection process.
+ *
+ * @param string $stage The stage name.
+ * @param string $name The talble name.
+ * @param array $config The config data.
+ * @param \Cake\Database\Schema\Table $table The table instance
+ * @return void
+ * @throws \Cake\Database\Exception on query failure.
+ */
+	protected function _reflect($stage, $name, $config, $table) {
+		$describeMethod = "describe{$stage}Sql";
+		$convertMethod = "convert{$stage}Description";
+
+		list($sql, $params) = $this->_dialect->{$describeMethod}($name, $config);
+		if (empty($sql)) {
+			return;
+		}
+		try {
+			$statement = $this->_connection->execute($sql, $params);
+		} catch (\PDOException $e) {
+			throw new Exception($e->getMessage(), 500, $e);
+		}
+		foreach ($statement->fetchAll('assoc') as $row) {
+			$this->_dialect->{$convertMethod}($table, $row);
+		}
+		$statement->closeCursor();
 	}
 
 /**
@@ -176,22 +179,6 @@ class Collection {
 			$enable = '_cake_model_';
 		}
 		return $this->_cache = $enable;
-	}
-
-/**
- * Helper method to run queries and convert Exceptions to the correct types.
- *
- * @param string $sql The sql to run.
- * @param array $params Parameters for the statement.
- * @return \Cake\Database\StatementInterface Prepared statement
- * @throws \Cake\Database\Exception on query failure.
- */
-	protected function _executeSql($sql, $params) {
-		try {
-			return $this->_connection->execute($sql, $params);
-		} catch (\PDOException $e) {
-			throw new Exception($e->getMessage(), 500, $e);
-		}
 	}
 
 }

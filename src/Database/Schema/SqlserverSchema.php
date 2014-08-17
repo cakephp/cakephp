@@ -40,7 +40,7 @@ class SqlserverSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function describeTableSql($name, $config) {
+	public function describeColumnSql($name, $config) {
 		$sql =
 		"SELECT DISTINCT TABLE_SCHEMA AS [schema], COLUMN_NAME AS [name], DATA_TYPE AS [type],
 			IS_NULLABLE AS [null], COLUMN_DEFAULT AS [default],
@@ -135,7 +135,7 @@ class SqlserverSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function convertFieldDescription(Table $table, $row) {
+	public function convertColumnDescription(Table $table, $row) {
 		$field = $this->_convertColumn(
 			$row['type'],
 			$row['char_length'],

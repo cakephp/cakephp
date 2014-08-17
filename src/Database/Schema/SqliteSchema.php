@@ -100,7 +100,7 @@ class SqliteSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function describeTableSql($name, $config) {
+	public function describeColumnSql($name, $config) {
 		$sql = sprintf(
 			'PRAGMA table_info(%s)',
 			$this->_driver->quoteIdentifier($name)
@@ -111,7 +111,7 @@ class SqliteSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function convertFieldDescription(Table $table, $row) {
+	public function convertColumnDescription(Table $table, $row) {
 		$field = $this->_convertColumn($row['type']);
 		$field += [
 			'null' => !$row['notnull'],
