@@ -367,6 +367,20 @@ SQL;
 	}
 
 /**
+ * Test describing a table creates options
+ *
+ * @return void
+ */
+	public function testDescribeTableOptions() {
+		$connection = ConnectionManager::get('test');
+		$this->_createTables($connection);
+
+		$schema = new SchemaCollection($connection);
+		$result = $schema->describe('schema_articles');
+		$this->assertArrayHasKey('engine', $result->options());
+	}
+
+/**
  * Column provider for creating column sql
  *
  * @return array

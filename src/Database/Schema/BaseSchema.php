@@ -136,6 +136,17 @@ abstract class BaseSchema {
 	abstract public function describeForeignKeySql($table, $config);
 
 /**
+ * Generate the SQL to describe table options
+ *
+ * @param string $name Table name.
+ * @param array $config The connection configuration.
+ * @return array SQL statements to get options for a table.
+ */
+	public function describeOptionsSql($name, $config) {
+		return ['', ''];
+	}
+
+/**
  * Convert field description results into abstract schema fields.
  *
  * @param \Cake\Database\Schema\Table $table The table object to append fields to.
@@ -209,5 +220,15 @@ abstract class BaseSchema {
  * @return array SQL statements to truncate a table.
  */
 	abstract public function truncateTableSql(Table $table);
+
+/**
+ * Convert options data into table options.
+ *
+ * @param \Cake\Database\Schema\Table $table Table instance.
+ * @param array $row The row of data.
+ * @return void
+ */
+	public function convertOptions(Table $table, $row) {
+	}
 
 }

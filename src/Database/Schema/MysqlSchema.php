@@ -39,8 +39,24 @@ class MysqlSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function describeIndexSql($table, $config) {
-		return ['SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($table), []];
+	public function describeIndexSql($name, $config) {
+		return ['SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($name), []];
+	}
+
+/**
+ * {@inheritDoc}
+ */
+	public function describeOptionsSql($name, $config) {
+		return ['SHOW TABLE STATUS WHERE Name = ?', [$name]];
+	}
+
+/**
+ * {@inheritDoc}
+ */
+	public function convertOptions(Table $table, $row) {
+		$table->options([
+			'engine' => $row['Engine']
+		]);
 	}
 
 /**

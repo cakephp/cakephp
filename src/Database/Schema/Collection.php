@@ -135,6 +135,15 @@ class Collection {
 		}
 		$statement->closeCursor();
 
+		list($sql, $params) = $this->_dialect->describeOptionsSql($name, $config);
+		if ($sql) {
+			$statement = $this->_executeSql($sql, $params);
+			foreach ($statement->fetchAll('assoc') as $row) {
+				$this->_dialect->convertOptions($table, $row);
+			}
+			$statement->closeCursor();
+		}
+
 		if (!empty($cacheConfig)) {
 			Cache::write($cacheKey, $table, $cacheConfig);
 		}
