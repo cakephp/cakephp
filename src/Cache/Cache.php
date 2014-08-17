@@ -15,6 +15,7 @@
 namespace Cake\Cache;
 
 use Cake\Core\StaticConfigTrait;
+use Cake\Cache\Engine\NullEngine;
 use Cake\Error;
 
 /**
@@ -128,11 +129,11 @@ class Cache {
  * triggered.
  *
  * @param string $config The configuration name you want an engine for.
- * @return \Cake\Cache\CacheEngine
+ * @return \Cake\Cache\CacheEngine When caching is diabled a null engine will be returned.
  */
 	public static function engine($config) {
 		if (!static::$_enabled) {
-			return false;
+			return new NullEngine();
 		}
 
 		if (isset(static::$_registry->{$config})) {
@@ -154,10 +155,6 @@ class Cache {
  */
 	public static function gc($config = 'default', $expires = null) {
 		$engine = static::engine($config);
-		if (!$engine) {
-			return;
-		}
-
 		$engine->gc($expires);
 	}
 
@@ -181,7 +178,7 @@ class Cache {
  */
 	public static function write($key, $value, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine || is_resource($value)) {
+		if (is_resource($value)) {
 			return false;
 		}
 
@@ -220,10 +217,6 @@ class Cache {
  */
 	public static function writeMany($data, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine) {
-			return false;
-		}
-
 		$return = $engine->writeMany($data);
 		foreach ($return as $key => $success) {
 			if ($success === false && !empty($data[$key])) {
@@ -257,10 +250,6 @@ class Cache {
  */
 	public static function read($key, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine) {
-			return false;
-		}
-
 		return $engine->read($key);
 	}
 
@@ -284,10 +273,6 @@ class Cache {
  */
 	public static function readMany($keys, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine) {
-			return false;
-		}
-
 		return $engine->readMany($keys);
 	}
 
@@ -302,7 +287,7 @@ class Cache {
  */
 	public static function increment($key, $offset = 1, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine || !is_int($offset) || $offset < 0) {
+		if (!is_int($offset) || $offset < 0) {
 			return false;
 		}
 
@@ -320,7 +305,7 @@ class Cache {
  */
 	public static function decrement($key, $offset = 1, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine || !is_int($offset) || $offset < 0) {
+		if (!is_int($offset) || $offset < 0) {
 			return false;
 		}
 
@@ -346,10 +331,6 @@ class Cache {
  */
 	public static function delete($key, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine) {
-			return false;
-		}
-
 		return $engine->delete($key);
 	}
 
@@ -373,10 +354,6 @@ class Cache {
  */
 	public static function deleteMany($keys, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine) {
-			return false;
-		}
-
 		return $engine->deleteMany($keys);
 	}
 
@@ -389,10 +366,6 @@ class Cache {
  */
 	public static function clear($check = false, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine) {
-			return false;
-		}
-
 		return $engine->clear($check);
 	}
 
@@ -405,10 +378,6 @@ class Cache {
  */
 	public static function clearGroup($group, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine) {
-			return false;
-		}
-
 		return $engine->clearGroup($group);
 	}
 
