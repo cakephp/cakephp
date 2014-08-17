@@ -88,7 +88,7 @@ class Comparison extends QueryExpression {
 /**
  * Returns the field name
  *
- * @return string
+ * @return string|Cake\Database\ExpressionInterface
  */
 	public function getField() {
 		return $this->_field;
@@ -110,13 +110,20 @@ class Comparison extends QueryExpression {
  * @return string
  */
 	public function sql(ValueBinder $generator) {
+		$field = $this->_field;
+
+		if ($field instanceof ExpressionInterface) {
+			$field = $field->sql($generator);
+		}
+
 		if ($this->_value instanceof ExpressionInterface) {
 			$template = '%s %s (%s)';
 			$value = $this->_value->sql($generator);
 		} else {
 			list($template, $value) = $this->_stringExpression($generator);
 		}
-		return sprintf($template, $this->_field, $this->_conjunction, $value);
+
+		return sprintf($template, $field, $this->_conjunction, $value);
 	}
 
 /**
@@ -124,6 +131,11 @@ class Comparison extends QueryExpression {
  *
  */
 	public function traverse(callable $callable) {
+		if ($this->_field instanceof ExpressionInterface) {
+			$callable($this->_field);
+			$this->_field->traverse($callable);
+		}
+
 		if ($this->_value instanceof ExpressionInterface) {
 			$callable($this->_value);
 			$this->_value->traverse($callable);
@@ -138,8 +150,14 @@ class Comparison extends QueryExpression {
  * @return array First position containing the template and the second a placeholder
  */
 	protected function _stringExpression($generator) {
+		$template = '%s ';
+
+		if ($this->_field instanceof ExpressionInterface) {
+			$template = '(%s) ';
+		}
+
 		if (strpos($this->_type, '[]') !== false) {
-			$template = '%s %s (%s)';
+			$template .= '%s (%s)';
 			$type = str_replace('[]', '', $this->_type);
 			$value = $this->_flattenValue($this->_value, $generator, $type);
 
@@ -149,7 +167,7 @@ class Comparison extends QueryExpression {
 				return ['1 != 1', ''];
 			}
 		} else {
-			$template = '%s %s %s';
+			$template .= '%s %s';
 			$value = $this->_bindValue($this->_value, $generator, $this->_type);
 		}
 
@@ -165,7 +183,7 @@ class Comparison extends QueryExpression {
  * @return string generated placeholder
  */
 	protected function _bindValue($value, $generator, $type) {
-		$placeholder = $generator->placeholder($this->_field);
+		$placeholder = $generator->placeholder('c');
 		$generator->bind($placeholder, $value, $type);
 		return $placeholder;
 	}

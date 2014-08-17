@@ -190,13 +190,12 @@ class IdentifierQuoter {
 			}
 			$expression->field($quoted);
 		} elseif ($field instanceof ExpressionInterface) {
-			$expression->field($this->quoteExpression($field));
+			$this->quoteExpression($field);
 		}
 
 		$value = $expression->getValue();
 		if ($value instanceof ExpressionInterface) {
 			$this->quoteExpression($value);
-			$expression->value($value);
 		}
 	}
 

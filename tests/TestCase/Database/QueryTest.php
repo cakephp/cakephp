@@ -857,6 +857,27 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that expression objects can be used as the field in a comparison
+ * and the values will be bound correctly to the query
+ *
+ * @return void
+ */
+	public function testSelectWhereUsingExpressionInField() {
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function($exp) {
+				$field = clone $exp;
+				$field->add('SELECT min(id) FROM comments');
+				return $exp
+					->eq($field, 100, 'integer');
+			})
+			->execute();
+		$this->assertCount(0, $result);
+	}
+
+/**
  * Tests using where conditions with operator methods
  *
  * @return void
