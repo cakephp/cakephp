@@ -746,11 +746,11 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	}
 
 /**
- * Exceutes the query and converts the result set into JSON.
+ * Executes the query and converts the result set into JSON.
  *
  * Part of JsonSerializable interface.
  *
- * @return \Cake\ORM\ResultSet the data to convert to json
+ * @return \Cake\ORM\ResultSet the data to convert to JSON
  */
 	public function jsonSerialize() {
 		return $this->all();

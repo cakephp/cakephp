@@ -1975,7 +1975,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that queries can be serialized to json to get the results
+ * Tests that queries can be serialized to JSON to get the results
  *
  * @return void
  */
