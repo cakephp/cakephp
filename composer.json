@@ -18,14 +18,21 @@
 		"source": "https://github.com/cakephp/cakephp"
 	},
 	"require": {
-		"php": ">=5.2.8",
-		"ext-mcrypt": "*"
+		"php": ">=5.4.19",
+		"ext-intl": "*",
+		"ext-mcrypt": "*",
+		"ext-mbstring": "*",
+		"nesbot/Carbon": "1.8.*",
+		"ircmaxell/password-compat": "1.0.*",
+		"aura/intl": "1.1.*"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "3.7.*",
-		"cakephp/debug_kit" : "2.2.*"
+		"phpunit/phpunit": "*"
 	},
-	"bin": [
-		"lib/Cake/Console/cake"
-	]
+	"autoload": {
+		"psr-4": {
+			"Cake\\": "src",
+			"Cake\\Test\\": "tests"
+		}
+	}
 }

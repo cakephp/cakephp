@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit
+	colors="true"
+	processIsolation="false"
+	stopOnFailure="false"
+	syntaxCheck="false"
+	bootstrap="./tests/bootstrap.php"
+	>
+	<php>
+		<ini name="memory_limit" value="-1"/>
+		<ini name="apc.enable_cli" value="1"/>
+	</php>
+
+	<testsuites>
+		<testsuite name="CakePHP Test Suite">
+			<directory>./tests/TestCase/</directory>
+			<!-- Excludes are required in order to let DatabaseSuite decorate the tests -->
+			<exclude>./tests/TestCase/Model/</exclude>
+			<exclude>./tests/TestCase/Database/</exclude>
+			<exclude>./tests/TestCase/ORM/</exclude>
+		</testsuite>
+		<testsuite name="Database Test Suite">
+			<file>./tests/TestCase/DatabaseSuite.php</file>
+		</testsuite>
+	</testsuites>
+	<listeners>
+		<listener class="\Cake\TestSuite\Fixture\FixtureInjector" file="./src/TestSuite/Fixture/FixtureInjector.php">
+			<arguments>
+				<object class="\Cake\TestSuite\Fixture\FixtureManager" />
+			</arguments>
+		</listener>
+	</listeners>
+	<php>
+		<!-- SQLite
+		<env name="db_class" value="Cake\Database\Driver\Sqlite"/>
+		<env name="db_dsn" value="sqlite::memory:"/>
+		-->
+		<!-- Postgres
+		<env name="db_class" value="Cake\Database\Driver\Postgres"/>
+		<env name="db_database" value="cake_test"/>
+		<env name="db_login" value=""/>
+		<env name="db_password" value=""/>
+		-->
+		<!-- Mysql
+		<env name="db_class" value="Cake\Database\Driver\Mysql"/>
+		<env name="db_dsn" value="mysql:host=localhost;dbname=cake_test"/>
+		<env name="db_database" value=""/>
+		<env name="db_login" value=""/>
+		<env name="db_password" value=""/>
+		-->
+		<!-- SQL Server
+		<env name="db_class" value="Cake\Database\Driver\Sqlserver"/>
+		<env name="db_dsn" value="sqlsrv:Server=localhost;Database=cake_test;MultipleActiveResultSets=false"/>
+		<env name="db_login" value=""/>
+		<env name="db_password" value=""/>
+		-->
+	</php>
+</phpunit>

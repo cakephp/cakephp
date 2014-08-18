@@ -1,1 +1,0 @@
-<?php echo gettype($form); ?>

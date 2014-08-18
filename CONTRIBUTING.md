@@ -1,6 +1,7 @@
 # How to contribute
 
 CakePHP loves to welcome your contributions. There are several ways to help out:
+
 * Create an [issue](https://github.com/cakephp/cakephp/issues) on GitHub, if you have found a bug
 * Write test cases for open bug issues
 * Write patches for open bug/feature issues, preferably with test cases included
@@ -50,14 +51,21 @@ chance of keeping on top of things.
 
 ## Test cases and codesniffer
 
-CakePHP tests requires [PHPUnit](http://www.phpunit.de/manual/current/en/installation.html)
-3.7, version 4 is not compatible. To run the test cases locally use the following command:
+CakePHP tests requires [PHPUnit](http://www.phpunit.de/manual/current/en/installation.html).
+To run the test cases locally use the following command:
 
-    ./lib/Cake/Console/cake test core AllTests --stderr
+    phpunit --stderr tests/TestCase/
+
+You can copy file `phpunit.xml.dist` to `phpunit.xml` and modify the database
+driver settings as required to run tests for particular database.
+
+You can also register on [Travis CI](https://travis-ci.org/) and from your
+[profile](https://travis-ci.org/profile) page enable the service hook for your
+cakephp fork on github for automated test builds.
 
 To run the sniffs for CakePHP coding standards:
 
-    phpcs -p --extensions=php --standard=CakePHP ./lib/Cake
+    phpcs -p --extensions=php --standard=CakePHP ./src
 
 Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
 repository to setup the CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.mdown) contains installation info
@@ -65,7 +73,7 @@ for the sniff and phpcs.
 
 # Additional Resources
 
-* [CakePHP coding standards](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html)
+* [CakePHP coding standards](http://book.cakephp.org/3.0/en/contributing/cakephp-coding-conventions.html)
 * [Existing issues](https://github.com/cakephp/cakephp/issues)
 * [Development Roadmaps](https://github.com/cakephp/cakephp/wiki#roadmaps)
 * [General GitHub documentation](https://help.github.com/)
