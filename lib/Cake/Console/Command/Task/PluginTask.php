@@ -121,7 +121,6 @@ class PluginTask extends AppShell {
 				'Test' . DS . 'Case' . DS . 'Model' . DS . 'Datasource',
 				'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper',
 				'Test' . DS . 'Fixture',
-				'Vendor',
 				'View' . DS . 'Elements',
 				'View' . DS . 'Helper',
 				'View' . DS . 'Layout',
