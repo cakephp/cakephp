@@ -31,7 +31,11 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Cake\\": "src",
+			"Cake\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
 			"Cake\\Test\\": "tests"
 		}
 	}
