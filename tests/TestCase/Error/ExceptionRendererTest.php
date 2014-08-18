@@ -25,6 +25,7 @@ use Cake\Core\Configure;
 use Cake\Core\Error\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Datasource\Error\MissingDatasourceConfigException;
+use Cake\Datasource\Error\MissingDatasourceException;
 use Cake\Error;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
@@ -570,6 +571,14 @@ class ExceptionRendererTest extends TestCase {
 				array(
 					'/<h2>Missing Datasource Configuration<\/h2>/',
 					'/<em>MyDatasourceConfig<\/em> was not found/'
+				),
+				500
+			),
+			array(
+				new MissingDatasourceException(array('class' => 'MyDatasource', 'plugin' => 'MyPlugin')),
+				array(
+					'/<h2>Missing Datasource<\/h2>/',
+					'/<em>MyPlugin.MyDatasource<\/em> could not be found./'
 				),
 				500
 			),
