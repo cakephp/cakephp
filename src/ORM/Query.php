@@ -20,6 +20,7 @@ use Cake\Datasource\QueryTrait;
 use Cake\ORM\EagerLoader;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
+use JsonSerializable;
 
 /**
  * Extends the base Query class to provide new methods related to association
@@ -28,7 +29,7 @@ use Cake\ORM\Table;
  * required.
  *
  */
-class Query extends DatabaseQuery {
+class Query extends DatabaseQuery implements JsonSerializable {
 
 	use QueryTrait {
 		cache as private _cache;
@@ -742,6 +743,17 @@ class Query extends DatabaseQuery {
 			'extraOptions' => $this->_options,
 			'repository' => $this->_repository
 		];
+	}
+
+/**
+ * Exceutes the query and converts the result set into JSON.
+ *
+ * Part of JsonSerializable interface.
+ *
+ * @return \Cake\ORM\ResultSet the data to convert to json
+ */
+	public function jsonSerialize() {
+		return $this->all();
 	}
 
 }
