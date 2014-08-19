@@ -1973,4 +1973,18 @@ class QueryTest extends TestCase {
 
 		$this->assertNull($article['articles_tag']);
 	}
+
+/**
+ * Tests that queries can be serialized to JSON to get the results
+ *
+ * @return void
+ */
+	public function testJsonSerialize() {
+		$table = TableRegistry::get('Articles');
+		$this->assertEquals(
+			json_encode($table->find()),
+			json_encode($table->find()->toArray())
+		);
+	}
+
 }
