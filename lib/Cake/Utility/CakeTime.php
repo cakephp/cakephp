@@ -1053,6 +1053,9 @@ class CakeTime {
 		if ($date === false && $default !== false) {
 			return $default;
 		}
+		if ($date === false) {
+			return '';
+		}
 		if (empty($format)) {
 			$format = '%x';
 		}
