@@ -114,6 +114,14 @@ class BelongsToMany extends Association {
 	protected $_through;
 
 /**
+ * Additional data to insert into the join table represented as
+ * $column=>$value
+ *
+ * @var array
+ */
+	protected $_insertData;
+
+/**
  * Sets the name of the field representing the foreign key to the target table.
  * If no parameters are passed current field is returned
  *
@@ -507,6 +515,13 @@ class BelongsToMany extends Association {
 				$sourceEntity->extract($sourcePrimaryKey)
 			), ['guard' => false]);
 			$joint->set(array_combine($assocForeignKey, $e->extract($targetPrimaryKey)), ['guard' => false]);
+
+			if (!empty($this->_insertData) && is_array($this->_insertData)) {
+				foreach ($this->_insertData as $col => $value) {
+					$joint->set($col,$value, ['guard'=>false]);
+				}
+			}
+
 			$saved = $junction->save($joint, $options);
 
 			if (!$saved && !empty($options['atomic'])) {
@@ -958,6 +973,9 @@ class BelongsToMany extends Association {
 		}
 		if (!empty($opts['saveStrategy'])) {
 			$this->saveStrategy($opts['saveStrategy']);
+		}
+		if (!empty($opts['insertData'])) {
+			$this->_insertData = $opts['insertData'];
 		}
 	}
 
