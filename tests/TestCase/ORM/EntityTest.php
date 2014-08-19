@@ -288,6 +288,18 @@ class EntityTest extends TestCase {
 	}
 
 /**
+ * Unsetting a property should not mark it as dirty.
+ *
+ * @return void
+ */
+	public function testUnsetMakesClean() {
+		$entity = new Entity(['id' => 1, 'name' => 'bar']);
+		$this->assertTrue($entity->dirty('name'));
+		$entity->unsetProperty('name');
+		$this->assertFalse($entity->dirty('name'), 'Removed properties are not dirty.');
+	}
+
+/**
  * Tests unsetProperty whith multiple properties
  *
  * @return void

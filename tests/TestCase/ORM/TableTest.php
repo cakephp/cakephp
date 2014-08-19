@@ -2493,7 +2493,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertTrue($entity->article->isNew());
 		$this->assertNull($entity->article->id);
 		$this->assertNull($entity->article->get('author_id'));
-		$this->assertTrue($entity->article->dirty('author_id'));
+		$this->assertFalse($entity->article->dirty('author_id'));
 		$this->assertNotEmpty($entity->article->errors('title'));
 	}
 
@@ -2637,7 +2637,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertTrue($entity->article->isNew());
 		$this->assertNull($entity->article->id);
 		$this->assertNull($entity->article->get('author_id'));
-		$this->assertTrue($entity->article->dirty('author_id'));
+		$this->assertFalse($entity->article->dirty('author_id'));
 		$this->assertNotEmpty($entity->article->errors('title'));
 	}
 
