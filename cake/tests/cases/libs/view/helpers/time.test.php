@@ -414,7 +414,7 @@ class TimeHelperTest extends CakeTestCase {
 				$yourTime = new DateTime('now', $yourTimezone);
 				$userOffset = $yourTimezone->getOffset($yourTime) / HOUR;
 				$this->assertEqual($yourTime->format('r'), $this->Time->toRss(time(), $userOffset));	
-			}	
+			}
 		}
 	}
 
@@ -433,6 +433,19 @@ class TimeHelperTest extends CakeTestCase {
 
 		$result = $this->Time->format('Y-m-d', null, 'never');
 		$this->assertEqual($result, 'never');
+	}
+
+/**
+ * test format() with empty values.
+ *
+ * @return void
+ */
+	function testFormatEmpty() {
+		$result = $this->Time->format('Y-m-d', '');
+		$this->assertIdentical('', $result);
+
+		$result = $this->Time->format('Y-m-d', false);
+		$this->assertIdentical('', $result);
 	}
 
 /**

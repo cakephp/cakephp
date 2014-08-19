@@ -730,6 +730,9 @@ class TimeHelper extends AppHelper {
 		if ($time === false && $invalid !== false) {
 			return $invalid;
 		}
+		if ($time === false) {
+			return '';
+		}
 		return date($format, $time);
 	}
 
