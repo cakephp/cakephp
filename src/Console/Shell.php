@@ -429,6 +429,19 @@ class Shell {
 	}
 
 /**
+ * Safely access the values in $this->params.
+ *
+ * @param string $name The name of the parameter to get.
+ * @return string|bool|null Value. Will return null if it doesn't exist.
+ */
+	public function param($name) {
+		if (!isset($this->params[$name])) {
+			return null;
+		}
+		return $this->params[$name];
+	}
+
+/**
  * Prompts the user for input, and returns it.
  *
  * @param string $prompt Prompt text.

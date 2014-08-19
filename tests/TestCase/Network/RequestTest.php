@@ -1927,7 +1927,7 @@ class RequestTest extends TestCase {
 			'truthy' => 1,
 			'zero' => '0',
 		));
-		$this->assertEquals($expected, $request->param($toRead));
+		$this->assertSame($expected, $request->param($toRead));
 	}
 
 /**
