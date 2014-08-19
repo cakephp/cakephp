@@ -128,7 +128,7 @@ class Collection {
  * Helper method for running each step of the reflection process.
  *
  * @param string $stage The stage name.
- * @param string $name The talble name.
+ * @param string $name The table name.
  * @param array $config The config data.
  * @param \Cake\Database\Schema\Table $table The table instance
  * @return void
