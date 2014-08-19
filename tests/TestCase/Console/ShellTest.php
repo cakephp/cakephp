@@ -813,7 +813,7 @@ TEXT;
 		return array(
 			array(
 				'key',
-				'index',
+				'value',
 			),
 			array(
 				'help',
