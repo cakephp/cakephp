@@ -148,6 +148,18 @@ class RouteBuilderTest extends TestCase {
 	}
 
 /**
+ * test that extensions() accepts a string.
+ *
+ * @return void
+ */
+	public function testExtensionsString() {
+		$routes = new RouteBuilder($this->collection, '/l');
+		$routes->extensions('json');
+
+		$this->assertEquals(['json'], $routes->extensions());
+	}
+
+/**
  * Test error on invalid route class
  *
  * @expectedException \Cake\Error\Exception

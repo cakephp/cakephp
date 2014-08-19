@@ -110,7 +110,7 @@ class RouteBuilder {
 		if ($extensions === null) {
 			return $this->_extensions;
 		}
-		$this->_extensions = $extensions;
+		$this->_extensions = (array)$extensions;
 	}
 
 /**
