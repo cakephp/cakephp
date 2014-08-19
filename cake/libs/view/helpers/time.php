@@ -727,8 +727,11 @@ class TimeHelper extends AppHelper {
 			$format = $date;
 			return $this->i18nFormat($_time, $format, $invalid, $userOffset);
 		}
-		if ($time === false && $invalid == false) {
+		if ($time === false && $invalid !== false) {
 			return $invalid;
+		}
+		if ($time === false) {
+			return '';
 		}
 		return date($format, $time);
 	}
