@@ -272,6 +272,20 @@ class Model extends Object implements CakeEventListener {
 	public $cacheQueries = false;
 
 /**
+ * List of created date fields.
+ *
+ * @var array
+ */
+	public $createdDateFields = array('created');
+
+/**
+ * List of updated date fields.
+ *
+ * @var array
+ */
+	public $updatedDateFields = array('modified', 'updated');
+
+/**
  * Detailed list of belongsTo associations.
  *
  * ### Basic usage
@@ -1704,6 +1718,7 @@ class Model extends Object implements CakeEventListener {
 		);
 		$_whitelist = $this->whitelist;
 		$fields = array();
+		$dateFields = array_merge($this->createdDateFields, $this->updatedDateFields);
 
 		if (!is_array($validate)) {
 			$options = compact('validate', 'fieldList') + $defaults;
@@ -1723,12 +1738,12 @@ class Model extends Object implements CakeEventListener {
 
 		$this->set($data);
 
-		if (empty($this->data) && !$this->hasField(array('created', 'updated', 'modified'))) {
+		if (empty($this->data) && !$this->hasField($dateFields)) {
 			$this->whitelist = $_whitelist;
 			return false;
 		}
 
-		foreach (array('created', 'updated', 'modified') as $field) {
+		foreach ($dateFields as $field) {
 			$keyPresentAndEmpty = (
 				isset($this->data[$this->alias]) &&
 				array_key_exists($field, $this->data[$this->alias]) &&
@@ -1741,10 +1756,9 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		$exists = $this->exists();
-		$dateFields = array('modified', 'updated');
 
-		if (!$exists) {
-			$dateFields[] = 'created';
+		if ($exists) {
+			$dateFields = $this->updatedDateFields;
 		}
 
 		if (isset($this->data[$this->alias])) {
