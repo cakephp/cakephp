@@ -254,7 +254,7 @@ SQL;
 		$table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
 		$table->expects($this->at(0))->method('addColumn')->with('field', $expected);
 
-		$dialect->convertFieldDescription($table, $field);
+		$dialect->convertColumnDescription($table, $field);
 	}
 
 /**

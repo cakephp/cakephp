@@ -34,7 +34,7 @@ class PostgresSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function describeTableSql($name, $config) {
+	public function describeColumnSql($name, $config) {
 		$sql =
 		'SELECT DISTINCT table_schema AS schema, column_name AS name, data_type AS type,
 			is_nullable AS null, column_default AS default,
@@ -124,7 +124,7 @@ class PostgresSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function convertFieldDescription(Table $table, $row) {
+	public function convertColumnDescription(Table $table, $row) {
 		$field = $this->_convertColumn($row['type']);
 
 		if ($field['type'] === 'boolean') {

@@ -174,7 +174,7 @@ class MysqlSchemaTest extends TestCase {
 		$table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
 		$table->expects($this->at(0))->method('addColumn')->with('field', $expected);
 
-		$dialect->convertFieldDescription($table, $field);
+		$dialect->convertColumnDescription($table, $field);
 	}
 
 /**
@@ -364,6 +364,21 @@ SQL;
 			'length' => []
 		];
 		$this->assertEquals($expected, $result->index('author_idx'));
+	}
+
+/**
+ * Test describing a table creates options
+ *
+ * @return void
+ */
+	public function testDescribeTableOptions() {
+		$connection = ConnectionManager::get('test');
+		$this->_createTables($connection);
+
+		$schema = new SchemaCollection($connection);
+		$result = $schema->describe('schema_articles');
+		$this->assertArrayHasKey('engine', $result->options());
+		$this->assertArrayHasKey('collation', $result->options());
 	}
 
 /**

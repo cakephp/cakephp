@@ -115,7 +115,7 @@ abstract class BaseSchema {
  * @param array $config The connection configuration.
  * @return array An array of (sql, params) to execute.
  */
-	abstract public function describeTableSql($name, $config);
+	abstract public function describeColumnSql($name, $config);
 
 /**
  * Generate the SQL to describe the indexes in a table.
@@ -136,13 +136,24 @@ abstract class BaseSchema {
 	abstract public function describeForeignKeySql($table, $config);
 
 /**
+ * Generate the SQL to describe table options
+ *
+ * @param string $name Table name.
+ * @param array $config The connection configuration.
+ * @return array SQL statements to get options for a table.
+ */
+	public function describeOptionsSql($name, $config) {
+		return ['', ''];
+	}
+
+/**
  * Convert field description results into abstract schema fields.
  *
  * @param \Cake\Database\Schema\Table $table The table object to append fields to.
- * @param array $row The row data from `describeTableSql`.
+ * @param array $row The row data from `describeColumnSql`.
  * @return void
  */
-	abstract public function convertFieldDescription(Table $table, $row);
+	abstract public function convertColumnDescription(Table $table, $row);
 
 /**
  * Convert an index description results into abstract schema indexes or constraints.
@@ -163,6 +174,16 @@ abstract class BaseSchema {
  * @return void
  */
 	abstract public function convertForeignKeyDescription(Table $table, $row);
+
+/**
+ * Convert options data into table options.
+ *
+ * @param \Cake\Database\Schema\Table $table Table instance.
+ * @param array $row The row of data.
+ * @return void
+ */
+	public function convertOptionsDescription(Table $table, $row) {
+	}
 
 /**
  * Generate the SQL to create a table.

@@ -32,15 +32,32 @@ class MysqlSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function describeTableSql($name, $config) {
+	public function describeColumnSql($name, $config) {
 		return ['SHOW FULL COLUMNS FROM ' . $this->_driver->quoteIdentifier($name), []];
 	}
 
 /**
  * {@inheritDoc}
  */
-	public function describeIndexSql($table, $config) {
-		return ['SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($table), []];
+	public function describeIndexSql($name, $config) {
+		return ['SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($name), []];
+	}
+
+/**
+ * {@inheritDoc}
+ */
+	public function describeOptionsSql($name, $config) {
+		return ['SHOW TABLE STATUS WHERE Name = ?', [$name]];
+	}
+
+/**
+ * {@inheritDoc}
+ */
+	public function convertOptionsDescription(Table $table, $row) {
+		$table->options([
+			'engine' => $row['Engine'],
+			'collation' => $row['Collation'],
+		]);
 	}
 
 /**
@@ -120,7 +137,7 @@ class MysqlSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function convertFieldDescription(Table $table, $row) {
+	public function convertColumnDescription(Table $table, $row) {
 		$field = $this->_convertColumn($row['Type']);
 		$field += [
 			'null' => $row['Null'] === 'YES' ? true : false,
