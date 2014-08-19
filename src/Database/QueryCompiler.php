@@ -14,6 +14,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 
@@ -179,6 +180,7 @@ class QueryCompiler {
 			}
 			$normalized[] = $p;
 		}
+
 		return sprintf($select, implode(', ', $normalized));
 	}
 
@@ -196,7 +198,9 @@ class QueryCompiler {
 	protected function _buildJoinPart($parts, $query, $generator) {
 		$joins = '';
 		foreach ($parts as $join) {
-			if ($join['table'] instanceof ExpressionInterface) {
+			if ($join['table'] instanceof TableNameExpression) {
+				$join['table'] = $join['table']->sql($generator);
+			} elseif ($join['table'] instanceof ExpressionInterface) {
 				$join['table'] = '(' . $join['table']->sql($generator) . ')';
 			}
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
@@ -282,12 +286,15 @@ class QueryCompiler {
  *
  * @param array $expressions list of strings and ExpressionInterface objects
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+ * @param bool $wrap Tells whether the outputed string should be wrapped with parenthesis
  * @return array
  */
 	protected function _stringifyExpressions($expressions, $generator) {
 		$result = [];
 		foreach ($expressions as $k => $expression) {
-			if ($expression instanceof ExpressionInterface) {
+			if ($expression instanceof TableNameExpression) {
+				$expression = $expression->sql($generator);
+			} elseif ($expression instanceof ExpressionInterface) {
 				$expression = '(' . $expression->sql($generator) . ')';
 			}
 			$result[$k] = $expression;

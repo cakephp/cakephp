@@ -1690,6 +1690,7 @@ class QueryTest extends TestCase {
 			->select(['id', 'comment'])
 			->from('comments')
 			->where(['created >' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime']);
+
 		$result = $query
 			->select(['say' => 'comment'])
 			->from(['b' => $subquery])

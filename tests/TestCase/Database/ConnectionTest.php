@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -117,6 +118,60 @@ class ConnectionTest extends TestCase {
 		$this->skipIf(isset($config['dsn']), 'Datasource has dsn, skipping.');
 		$connection = new Connection(['database' => '_probably_not_there_'] + ConnectionManager::config('test'));
 		$connection->connect();
+	}
+
+/**
+ *
+ * Tests full table name resolutions
+ *
+ * @return  void
+ *
+ */
+	public function testFullTableName() {
+		$config = ConnectionManager::config('test');
+		$connectionNoPrefix = new Connection($config);
+		$config["prefix"] = "prefix_";
+		$connectionPrefix = new Connection($config);
+		$tableName = "users";
+
+		$this->assertEquals($connectionNoPrefix->fullTableName([]), []);
+
+		$fullTableName = $connectionNoPrefix->fullTableName($tableName);
+		$this->assertEquals($fullTableName, new TableNameExpression($tableName, ""));
+
+		$fullTableName = $connectionPrefix->fullTableName($tableName);
+		$this->assertEquals($fullTableName, new TableNameExpression($tableName, $config["prefix"]));
+
+		$tableNames = ["Posts" => "posts", "Users" => "users"];
+		$expected = [
+			"Posts" => new TableNameExpression("posts", $config["prefix"]),
+			"Users" => new TableNameExpression("users", $config["prefix"])
+		];
+		$fullTableNames = $connectionPrefix->fullTableName($tableNames);
+		$this->assertEquals($fullTableNames, $expected);
+
+		$query = $this->connection->newQuery()->select('1 + 1');
+		$subQuery = ["sub" => $query];
+		$fullTableNameSubQuery = $connectionPrefix->fullTableName($subQuery);
+		$this->assertEquals($fullTableNameSubQuery, $subQuery);
+
+		$table = ['a' =>
+			[
+				'table' => 'articles',
+				'conditions' => [
+					'a.author_id = authors.id'
+				]
+			]
+		];
+		$expected = ['a' =>
+			[
+				'table' => new TableNameExpression('articles', $config["prefix"]),
+				'conditions' => [
+					'a.author_id = authors.id'
+				]
+			]
+		];
+		$this->assertEquals($connectionPrefix->fullTableName($table), $expected);
 	}
 
 /**
