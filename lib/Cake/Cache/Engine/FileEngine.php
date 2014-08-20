@@ -275,7 +275,11 @@ class FileEngine extends CacheEngine {
 			if (!file_exists($filePath) || is_dir($filePath)) {
 				continue;
 			}
-			$file = new SplFileObject($path . $entry, 'r');
+			try {
+				$file = new SplFileObject($path . $entry, 'r');
+			} catch (RuntimeException $e) {
+				continue;
+			}
 
 			if ($threshold) {
 				$mtime = $file->getMTime();
