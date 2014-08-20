@@ -172,6 +172,8 @@ class ModelTask extends BakeTask {
 		];
 
 		$primary = $table->primaryKey();
+		$associations = $this->findBelongsTo($table, $associations);
+
 		if (is_array($primary) && count($primary) > 1) {
 			$this->err(
 				'<warning>Bake cannot generate associations for composite primary keys at this time</warning>.'
@@ -179,7 +181,6 @@ class ModelTask extends BakeTask {
 			return $associations;
 		}
 
-		$associations = $this->findBelongsTo($table, $associations);
 		$associations = $this->findHasMany($table, $associations);
 		$associations = $this->findBelongsToMany($table, $associations);
 		return $associations;
@@ -222,7 +223,7 @@ class ModelTask extends BakeTask {
 		foreach ($schema->columns() as $fieldName) {
 			$offset = strpos($fieldName, '_id');
 			$assoc = false;
-			if (!in_array($fieldName, $primary) && $fieldName !== 'parent_id' && $offset !== false) {
+			if ($fieldName !== 'parent_id' && $offset !== false) {
 				$tmpModelName = $this->_modelNameFromKey($fieldName);
 				$assoc = [
 					'alias' => $tmpModelName,
