@@ -70,6 +70,19 @@ class CacheTest extends TestCase {
 	}
 
 /**
+ * Check that a null instance is returned from engine() when caching is disabled.
+ *
+ * @return void
+ */
+	public function testNullEngineWhenCacheDisable() {
+		$this->_configCache();
+		Cache::disable();
+
+		$result = Cache::engine('tests');
+		$this->assertInstanceOf('Cake\Cache\Engine\NullEngine', $result);
+	}
+
+/**
  * test configuring CacheEngines in App/libs
  *
  * @return void
@@ -436,7 +449,7 @@ class CacheTest extends TestCase {
 
 		Cache::disable();
 
-		$this->assertFalse(Cache::write('key_2', 'hello', 'test_cache_disable_1'));
+		$this->assertNull(Cache::write('key_2', 'hello', 'test_cache_disable_1'));
 		$this->assertFalse(Cache::read('key_2', 'test_cache_disable_1'));
 
 		Cache::enable();
@@ -451,7 +464,7 @@ class CacheTest extends TestCase {
 			'path' => TMP . 'tests'
 		]);
 
-		$this->assertFalse(Cache::write('key_4', 'hello', 'test_cache_disable_2'));
+		$this->assertNull(Cache::write('key_4', 'hello', 'test_cache_disable_2'));
 		$this->assertFalse(Cache::read('key_4', 'test_cache_disable_2'));
 
 		Cache::enable();
@@ -460,7 +473,7 @@ class CacheTest extends TestCase {
 		$this->assertSame(Cache::read('key_5', 'test_cache_disable_2'), 'hello');
 
 		Cache::disable();
-		$this->assertFalse(Cache::write('key_6', 'hello', 'test_cache_disable_2'));
+		$this->assertNull(Cache::write('key_6', 'hello', 'test_cache_disable_2'));
 		$this->assertFalse(Cache::read('key_6', 'test_cache_disable_2'));
 
 		Cache::enable();
