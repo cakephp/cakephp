@@ -103,7 +103,7 @@ class RouteBuilder {
  *
  * Setting extensions does not modify existing routes.
  *
- * @param null|array $extensions Either the extensions to use or null.
+ * @param null|string|array $extensions Either the extensions to use or null.
  * @return array|void
  */
 	public function extensions($extensions = null) {
