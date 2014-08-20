@@ -271,13 +271,10 @@ class FileEngine extends CacheEngine {
 			if (substr($entry, 0, $prefixLength) !== $this->settings['prefix']) {
 				continue;
 			}
-			$filePath = $path . $entry;
-			if (!file_exists($filePath) || is_dir($filePath)) {
-				continue;
-			}
+
 			try {
 				$file = new SplFileObject($path . $entry, 'r');
-			} catch (RuntimeException $e) {
+			} catch (Exception $e) {
 				continue;
 			}
 
