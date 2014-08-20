@@ -1835,7 +1835,6 @@ class QueryTest extends TestCase {
 			});
 
 		$expected = [
-			'sql' => $query->sql(),
 			'params' => $query->valueBinder()->bindings(),
 			'defaultTypes' => [
 				'authors.id' => 'integer',

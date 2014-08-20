@@ -2658,10 +2658,7 @@ class QueryTest extends TestCase {
 			->where(['id' => '1']);
 
 		$expected = [
-			'sql' => $query->sql(),
-			'params' => [
-				':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0']
-			],
+			'params' => [],
 			'defaultTypes' => ['id' => 'integer'],
 			'decorators' => 0,
 			'executed' => false
@@ -2671,7 +2668,6 @@ class QueryTest extends TestCase {
 
 		$query->execute();
 		$expected = [
-			'sql' => $query->sql(),
 			'params' => [
 				':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0']
 			],
@@ -2680,6 +2676,7 @@ class QueryTest extends TestCase {
 			'executed' => true
 		];
 		$result = $query->__debugInfo();
+		$this->assertEquals($result, $expected);
 	}
 
 /**
