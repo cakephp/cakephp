@@ -102,7 +102,7 @@ $allAssociations = array_merge(
 		$<?= $singularName ?> = $this-><?= $currentModelName ?>->get($id, [
 			'contain' => [<?= $stringifyList($belongsToMany) ?>]
 		]);
-		if ($this->request->is(['post', 'put'])) {
+		if ($this->request->is(['patch', 'post', 'put'])) {
 			$<?= $singularName ?> = $this-><?= $currentModelName ?>->patchEntity($<?= $singularName ?>, $this->request->data);
 			if ($this-><?= $currentModelName; ?>->save($<?= $singularName ?>)) {
 				$this->Flash->success('The <?= strtolower($singularHumanName); ?> has been saved.');
