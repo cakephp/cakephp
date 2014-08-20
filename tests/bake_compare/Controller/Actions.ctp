@@ -56,7 +56,7 @@
 		$bakeArticle = $this->BakeArticles->get($id, [
 			'contain' => ['BakeTags']
 		]);
-		if ($this->request->is(['post', 'put'])) {
+		if ($this->request->is(['patch', 'post', 'put'])) {
 			$bakeArticle = $this->BakeArticles->patchEntity($bakeArticle, $this->request->data);
 			if ($this->BakeArticles->save($bakeArticle)) {
 				$this->Flash->success('The bake article has been saved.');
