@@ -527,7 +527,10 @@ class Session {
 			$params['path'], $params['domain'],
 			$params['secure'], $params['httponly']
 		);
-		session_regenerate_id(true);
+
+		if (session_id()) {
+			session_regenerate_id(true);
+		}
 	}
 
 /**
