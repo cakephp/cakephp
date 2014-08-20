@@ -125,7 +125,35 @@ class Response extends Message {
  */
 	public function __construct($headers = [], $body = '') {
 		$this->_parseHeaders($headers);
+		if ($this->header('Content-Encoding') === 'gzip') {
+			$body = $this->_decodeGzipBody($body);
+		}
 		$this->_body = $body;
+	}
+
+/**
+ * Uncompress a gzip response.
+ *
+ * Looks for gzip signatures, and if gzinflate() exists,
+ * the body will be decompressed.
+ *
+ * @param string $body Gzip encoded body.
+ * @return string
+ * @throws \RuntimeException When attempting to decode gzip content without gzinflate.
+ */
+	protected function _decodeGzipBody($body) {
+		if (!function_exists('gzinflate')) {
+			throw \RuntimeException('Cannot decompress gzip response body without gzipinflate()');
+		}
+		$offset = 0;
+		// Look for gzip 'signature'
+		if (substr($body, 0, 2) === "\x1f\x8b") {
+			$offset = 2;
+		}
+		// Check the format byte
+		if (substr($body, $offset, 1) === "\x08") {
+			return gzinflate(substr($body, $offset + 8));
+		}
 	}
 
 /**

@@ -278,4 +278,21 @@ XML;
 		$this->assertEquals('ISO-8859-1', $response->encoding());
 	}
 
+/**
+ * Test that gzip responses are automatically decompressed.
+ *
+ * @return void
+ */
+	public function testAutoDecodeGzipBody() {
+		$headers = [
+			'HTTP/1.0 200 OK',
+			'Content-Encoding: gzip',
+			'Content-Length: 32',
+			'Content-Type: text/html; charset=UTF-8'
+		];
+		$body = base64_decode('H4sIAAAAAAAAA/NIzcnJVyjPL8pJUQQAlRmFGwwAAAA=');
+		$response = new Response($headers, $body);
+		$this->assertEquals('Hello world!', $response->body);
+	}
+
 }
