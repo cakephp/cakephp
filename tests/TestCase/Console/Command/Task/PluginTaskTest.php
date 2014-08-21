@@ -19,6 +19,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\File;
 use Cake\Utility\Folder;
 
 /**
@@ -36,7 +37,7 @@ class PluginTaskTest extends TestCase {
 		$this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Console\Command\Task\PluginTask',
-			array('in', 'err', 'createFile', '_stop', 'clear'),
+			array('in', 'err', 'createFile', '_stop', 'clear', 'callProcess'),
 			array($this->io)
 		);
 		$this->Task->Template = new TemplateTask($this->io);
@@ -159,6 +160,56 @@ class PluginTaskTest extends TestCase {
 
 		$Folder = new Folder($this->Task->path . 'BakeTestPlugin');
 		$Folder->delete();
+	}
+
+/**
+ * Test that baking a plugin for a project that contains a composer.json, the later
+ * will be updated
+ *
+ * @return void
+ */
+	public function testExecuteUpdateComposer() {
+		$this->Task->expects($this->at(0))->method('in')
+			->will($this->returnValue('y'));
+
+		$this->Task->Project = $this->getMock('ComposerProject', ['findComposer']);
+		$this->Task->Project->expects($this->at(0))
+			->method('findComposer')
+			->will($this->returnValue('composer.phar'));
+
+		$path = dirname($this->Task->path);
+		$file = $path . DS . 'composer.json';
+		file_put_contents($file, '{}');
+
+		$config = [
+			'autoload' => [
+				'psr-4' => [
+					'BakeTestPlugin\\' => './plugins/BakeTestPlugin/src',
+				],
+			],
+			'autoload-dev' => [
+				'psr-4' => [
+					'BakeTestPlugin\\Test\\' => './plugins/BakeTestPlugin/tests',
+				],
+			],
+		];
+		$config = json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+		$this->Task->expects($this->at(2))
+			->method('createFile')
+			->with($file, $config);
+
+		$this->Task->expects($this->at(3))
+			->method('callProcess')
+			->with("cd '$path'; php 'composer.phar' dump-autoload");
+
+		$this->Task->main('BakeTestPlugin');
+
+		$Folder = new Folder($this->Task->path . 'BakeTestPlugin');
+		$Folder->delete();
+
+		$File = new File($file);
+		$File->delete();
 	}
 
 /**
