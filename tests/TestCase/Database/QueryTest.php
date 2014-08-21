@@ -2680,6 +2680,7 @@ class QueryTest extends TestCase {
 			'executed' => true
 		];
 		$result = $query->__debugInfo();
+		$this->assertEquals($expected, $result);
 	}
 
 /**

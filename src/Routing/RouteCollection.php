@@ -53,6 +53,13 @@ class RouteCollection {
 	protected $_named = [];
 
 /**
+ * Routes indexed by path prefix.
+ *
+ * @var array
+ */
+	protected $_paths = [];
+
+/**
  * Add a route to the collection.
  *
  * @param \Cake\Routing\Route\Route $route The route object to add.

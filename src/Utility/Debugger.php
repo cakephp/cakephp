@@ -577,9 +577,13 @@ class Debugger {
 		$end = "\n" . str_repeat("\t", $indent - 1);
 
 		if ($depth > 0 && method_exists($var, '__debugInfo')) {
-			return $out . "\n" .
-				substr(static::_array($var->__debugInfo(), $depth - 1, $indent), 1, -1) .
-				$end . '}';
+			try {
+				return $out . "\n" .
+					substr(static::_array($var->__debugInfo(), $depth - 1, $indent), 1, -1) .
+					$end . '}';
+			} catch (\Exception $e) {
+				return $out . "\n(unable to export object)\n }";
+			}
 		}
 
 		if ($depth > 0) {
