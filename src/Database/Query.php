@@ -1605,6 +1605,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  */
 	public function __debugInfo() {
 		return [
+			'sql' => $this->sql(),
 			'params' => $this->valueBinder()->bindings(),
 			'defaultTypes' => $this->defaultTypes(),
 			'decorators' => count($this->_resultDecorators),
