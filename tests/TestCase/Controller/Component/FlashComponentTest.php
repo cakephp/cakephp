@@ -36,8 +36,8 @@ class FlashComponentTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('App.namespace', 'TestApp');
-		$controller = new Controller(new Request(['session' => new Session()]));
-		$this->ComponentRegistry = new ComponentRegistry($controller);
+		$this->Controller = new Controller(new Request(['session' => new Session()]));
+		$this->ComponentRegistry = new ComponentRegistry($this->Controller);
 		$this->Flash = new FlashComponent($this->ComponentRegistry);
 		$this->Session = new Session();
 	}
@@ -117,6 +117,26 @@ class FlashComponentTest extends TestCase {
 			'key' => 'flash',
 			'element' => 'Flash/default',
 			'params' => ['code' => 404]
+		];
+		$result = $this->Session->read('Flash.flash');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testSetWithComponentConfiguration method
+ *
+ * @return void
+ */
+	public function testSetWithComponentConfiguration() {
+		$this->assertNull($this->Session->read('Flash.flash'));
+
+		$this->Controller->addComponent('Flash', ['element' => 'test']);
+		$this->Controller->Flash->set('This is a test message');
+		$expected = [
+			'message' => 'This is a test message',
+			'key' => 'flash',
+			'element' => 'Flash/test',
+			'params' => []
 		];
 		$result = $this->Session->read('Flash.flash');
 		$this->assertEquals($expected, $result);
