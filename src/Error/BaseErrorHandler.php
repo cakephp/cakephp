@@ -218,6 +218,7 @@ abstract class BaseErrorHandler {
 			));
 			$message .= "\nTrace:\n" . $trace . "\n";
 		}
+		$message .= "\n\n";
 		return Log::write($level, $message);
 	}
 
@@ -266,7 +267,7 @@ abstract class BaseErrorHandler {
 				$message .= "\nRequest URL: " . $request->here();
 			}
 		}
-		$message .= "\nStack Trace:\n" . $exception->getTraceAsString();
+		$message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
 		return $message;
 	}
 
