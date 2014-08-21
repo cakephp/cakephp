@@ -326,8 +326,11 @@ class HttpSocket extends CakeSocket {
 		} elseif (isset($this->request['auth'], $this->request['auth']['method'], $this->request['auth']['user'], $this->request['auth']['pass'])) {
 			$this->configAuth($this->request['auth']['method'], $this->request['auth']['user'], $this->request['auth']['pass']);
 		}
-		$this->_setAuth();
-		$this->request['auth'] = $this->_auth;
+		$authHeader = Hash::get($this->request, 'header.Authorization');
+		if (empty($authHeader)) {
+			$this->_setAuth();
+			$this->request['auth'] = $this->_auth;
+		}
 
 		if (is_array($this->request['body'])) {
 			$this->request['body'] = http_build_query($this->request['body'], '', '&');

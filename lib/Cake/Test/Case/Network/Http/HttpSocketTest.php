@@ -1074,6 +1074,16 @@ class HttpSocketTest extends CakeTestCase {
 		));
 		$this->assertEquals($this->Socket->request['auth'], array('Basic' => array('user' => 'joel', 'pass' => 'hunter2')));
 		$this->assertTrue(strpos($this->Socket->request['header'], 'Authorization: Basic am9lbDpodW50ZXIy') !== false);
+
+		$this->Socket->configAuth('Basic', 'mark', 'password');
+		$this->Socket->request(array(
+			'method' => 'GET',
+			'uri' => 'http://example.com/test',
+			'header' => array(
+				'Authorization' => 'OtherAuth Hi.There'
+			)
+		));
+		$this->assertPattern('/Authorization: OtherAuth Hi\.There/m', $this->Socket->request['header']);
 	}
 
 /**
@@ -1089,6 +1099,15 @@ class HttpSocketTest extends CakeTestCase {
 
 		$this->Socket->get('/test2');
 		$this->assertTrue(strpos($this->Socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
+
+		$this->Socket->request(array(
+			'method' => 'GET',
+			'uri' => 'http://example.com/test',
+			'header' => array(
+				'Authorization' => 'OtherAuth Hi.There'
+			)
+		));
+		$this->assertPattern('/Authorization: OtherAuth Hi\.There/m', $this->Socket->request['header']);
 
 		$this->Socket->get('/test3');
 		$this->assertTrue(strpos($this->Socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
