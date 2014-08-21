@@ -66,10 +66,6 @@ class Mysql extends \Cake\Database\Driver {
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		];
 
-		if ($config['init']) {
-			$config['flags'] += [PDO::MYSQL_ATTR_INIT_COMMAND => implode(';', (array)$config['init'])];
-		}
-
 		if (!empty($config['ssl_key']) && !empty($config['ssl_cert'])) {
 			$config['flags'][PDO::MYSQL_ATTR_SSL_KEY] = $config['ssl_key'];
 			$config['flags'][PDO::MYSQL_ATTR_SSL_CERT] = $config['ssl_cert'];
@@ -86,7 +82,14 @@ class Mysql extends \Cake\Database\Driver {
 			}
 		}
 
-		return $this->_connect($config);
+		$this->_connect($config);
+
+		if (!empty($config['init'])) {
+			foreach ((array)$config['init'] as $command) {
+				$this->connection()->exec($command);
+			}
+		}
+		return true;
 	}
 
 /**

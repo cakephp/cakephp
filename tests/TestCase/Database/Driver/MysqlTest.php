@@ -88,7 +88,7 @@ class MysqlTest extends TestCase {
 		];
 		$driver = $this->getMock(
 			'Cake\Database\Driver\Mysql',
-			['_connect'],
+			['_connect', 'connection'],
 			[$config]
 		);
 		$expected = $config;
@@ -98,11 +98,19 @@ class MysqlTest extends TestCase {
 			PDO::ATTR_PERSISTENT => false,
 			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-			PDO::MYSQL_ATTR_INIT_COMMAND => "Execute this;this too;SET time_zone = 'Antartica'"
 		];
+
+		$connection = $this->getMock('StdClass', ['exec']);
+		$connection->expects($this->at(0))->method('exec')->with('Execute this');
+		$connection->expects($this->at(1))->method('exec')->with('this too');
+		$connection->expects($this->at(2))->method('exec')->with("SET time_zone = 'Antartica'");
+		$connection->expects($this->exactly(3))->method('exec');
+
 		$driver->expects($this->once())->method('_connect')
 			->with($expected);
-		$driver->connect();
+		$driver->expects($this->any())->method('connection')
+			->will($this->returnValue($connection));
+		$driver->connect($config);
 	}
 
 }
