@@ -175,7 +175,7 @@ class ErrorHandlerTest extends TestCase {
 			->method('write')
 			->with(
 				$this->matchesRegularExpression('(notice|debug)'),
-				'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ + 3) . ']'
+				'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ + 3) . ']' . "\n\n"
 			);
 
 		$out .= '';
