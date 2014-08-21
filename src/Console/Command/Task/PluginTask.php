@@ -239,22 +239,20 @@ class PluginTask extends BakeTask {
  */
 	protected function _modifyAutoloader($plugin, $path) {
 		$path = dirname($path);
+		$file = $path . DS . 'composer.json';
 
-		if (!file_exists($path . DS . 'composer.json')) {
+		if (!file_exists($file)) {
 			return false;
 		}
 
-		$file = $path . DS . 'composer.json';
 		$config = json_decode(file_get_contents($file), true);
 		$config['autoload']['psr-4'][$plugin . '\\'] = "./plugins/$plugin/src";
-		$config['autoload']['psr-4'][$plugin . '\\Test\\'] = "./plugins/$plugin/tests";
+		$config['autoload-dev']['psr-4'][$plugin . '\\Test\\'] = "./plugins/$plugin/tests";
 
 		$this->out('<info>Modifying composer autoloader</info>');
 
-		file_put_contents(
-			$file,
-			json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
-		);
+		$out = json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+		$this->createFile($file, $out);
 
 		$composer = $this->Project->findComposer();
 
@@ -265,7 +263,7 @@ class PluginTask extends BakeTask {
 
 		try {
 			$command = 'cd ' . escapeshellarg($path) . '; ';
-			$command .= 'php ' . escapeshellarg($composer) . ' dump-autoload ';
+			$command .= 'php ' . escapeshellarg($composer) . ' dump-autoload';
 			$this->callProcess($command);
 		} catch (\RuntimeException $e) {
 			$error = $e->getMessage();
