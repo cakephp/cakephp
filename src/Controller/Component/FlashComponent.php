@@ -73,7 +73,7 @@ class FlashComponent extends Component {
  * @return void
  */
 	public function set($message, array $options = []) {
-		$opts = array_merge($this->_defaultConfig, $options);
+		$opts = array_merge($this->config(), $options);
 
 		if ($message instanceof \Exception) {
 			$opts['params'] += ['code' => $message->getCode()];
