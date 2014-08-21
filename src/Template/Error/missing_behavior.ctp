@@ -44,7 +44,7 @@ if (!empty($plugin) && !Plugin::loaded($plugin)) {
 </p>
 <pre>
 &lt;?php
-class <?= h($class); ?> extends ModelBehavior {
+class <?= h($class); ?> extends Behavior {
 
 }
 </pre>
