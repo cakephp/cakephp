@@ -550,6 +550,34 @@ class MarshallerTest extends TestCase {
 	}
 
 /**
+ * Provides empty values.
+ *
+ * @return array
+ */
+	public function emptyProvider() {
+		return [
+			[0],
+			['0'],
+		];
+	}
+
+/**
+ * Test merging empty values into an entity.
+ *
+ * @dataProvider emptyProvider
+ * @return void
+ */
+	public function testMergeFalseyValues($value) {
+		$marshall = new Marshaller($this->articles);
+		$entity = new Entity();
+		$entity->accessible('*', true);
+
+		$entity = $marshall->merge($entity, ['author_id' => $value]);
+		$this->assertTrue($entity->dirty('author_id'), 'Field should be dirty');
+		$this->assertSame(0, $entity->get('author_id'), 'Value should be zero');
+	}
+
+/**
  * Tests that merge respects the entity accessible methods
  *
  * @return void
