@@ -19,6 +19,7 @@ use Cake\Controller\Error\MissingControllerException;
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Event\Event;
+use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\DispatcherFilter;
@@ -117,6 +118,7 @@ class InterceptContentHelper extends Helper {
 /**
  * ControllerTestCase class
  *
+ * @deprecated
  */
 abstract class ControllerTestCase extends TestCase {
 
@@ -186,6 +188,13 @@ abstract class ControllerTestCase extends TestCase {
 	protected $_dirtyController = false;
 
 /**
+ * The default session object to use
+ *
+ * @var \Cake\Network\Session
+ */
+	protected $_session;
+
+/**
  * Used to enable calling ControllerTestCase::testAction() without the testing
  * framework thinking that it's a test case
  *
@@ -226,6 +235,7 @@ abstract class ControllerTestCase extends TestCase {
  */
 	protected function _testAction($url = '', $options = array()) {
 		$this->vars = $this->result = $this->view = $this->contents = $this->headers = null;
+		$this->_session = $this->_session ?: new Session();
 
 		$options += array(
 			'query' => array(),
@@ -246,7 +256,7 @@ abstract class ControllerTestCase extends TestCase {
 			'url' => $url,
 			'cookies' => $options['cookies'],
 			'query' => $options['query'],
-			'session' => new Session()
+			'session' => $this->_session
 		);
 		if (is_array($options['data'])) {
 			$requestData['post'] = $options['data'];
@@ -361,7 +371,13 @@ abstract class ControllerTestCase extends TestCase {
 		list(, $controllerName) = namespaceSplit($className);
 		$name = substr($controllerName, 0, -10);
 
-		$request = $request ?: $this->getMock('Cake\Network\Request');
+		$this->_session = $this->_session ?: new Session();
+		$request = $request ?: $this->getMock(
+			'Cake\Network\Request',
+			['_readInput', 'method'],
+			[['session' => $this->_session]]
+		);
+
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', 'stop'));
 		$controller = $this->getMock(
 			$className,
