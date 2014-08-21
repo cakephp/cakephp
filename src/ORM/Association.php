@@ -80,12 +80,26 @@ abstract class Association {
 	const MANY_TO_ONE = 'manyToOne';
 
 /**
- * Name given to the association, it usually represents the alias
- * assigned to the target associated table
+ * Name given to the queries. It contains plugin_alias aliase for queries.
  *
  * @var string
  */
 	protected $_name;
+
+/**
+ * The alias given to the association, it usually represents the alias
+ * assigned to the target associated table.
+ *
+ * @var string
+ */
+	protected $_alias;
+
+/**
+ * Full name of association with plugin name. Its store alias for Table Registry.
+ *
+ * @var string
+ */
+	protected $_fullName;
 
 /**
  * The class name of the target table object
@@ -187,7 +201,9 @@ abstract class Association {
 			}
 		}
 
-		$this->_name = $name;
+		$this->_fullName = $name;
+		list($plugin, $this->_alias) = pluginSplit($name);
+		$this->_name = str_replace('.', '_', $name);
 		$this->_options($options);
 
 		if (!empty($options['strategy'])) {
@@ -196,7 +212,7 @@ abstract class Association {
 	}
 
 /**
- * Sets the name for this association. If no argument is passed then the current
+ * Sets the name for query association. If no argument is passed then the current
  * configured name will be returned
  *
  * @param string $name Name to be assigned
@@ -207,6 +223,15 @@ abstract class Association {
 			$this->_name = $name;
 		}
 		return $this->_name;
+	}
+
+/**
+ * Returns alias of association.
+ *
+ * @return string
+ */
+	public function alias() {
+		return $this->_alias;
 	}
 
 /**
@@ -241,10 +266,10 @@ abstract class Association {
 
 		if ($table === null) {
 			$config = [];
-			if (!TableRegistry::exists($this->_name)) {
+			if (!TableRegistry::exists($this->_fullName)) {
 				$config = ['className' => $this->_className];
 			}
-			$this->_targetTable = TableRegistry::get($this->_name, $config);
+			$this->_targetTable = TableRegistry::get($this->_fullName, $config);
 		}
 		return $this->_targetTable;
 	}
@@ -334,7 +359,7 @@ abstract class Association {
 			$this->_propertyName = $name;
 		}
 		if ($name === null && !$this->_propertyName) {
-			list($plugin, $name) = pluginSplit($this->_name);
+			$name = $this->_alias;
 			$this->_propertyName = Inflector::underscore($name);
 		}
 		return $this->_propertyName;

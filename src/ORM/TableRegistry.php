@@ -145,7 +145,7 @@ class TableRegistry {
  * @throws RuntimeException When you try to configure an alias that already exists.
  */
 	public static function get($name, array $options = []) {
-		list($plugin, $alias) = pluginSplit($name);
+		$alias = $name;
 		$exists = isset(static::$_instances[$alias]);
 		if ($exists && !empty($options)) {
 			throw new RuntimeException(sprintf(
@@ -191,7 +191,6 @@ class TableRegistry {
  * @return bool
  */
 	public static function exists($alias) {
-		list($plugin, $alias) = pluginSplit($alias);
 		return isset(static::$_instances[$alias]);
 	}
 
