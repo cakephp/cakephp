@@ -57,7 +57,7 @@ class Mysql extends \Cake\Database\Driver {
 		}
 
 		if (!empty($config['timezone'])) {
-			$config['init'][] = sprintf("SET time_zone = '%s'", $config['timezone']);
+			$config['init'][] = sprintf("LOCAL time_zone = '%s'", $config['timezone']);
 		}
 
 		$config['flags'] += [
@@ -67,7 +67,7 @@ class Mysql extends \Cake\Database\Driver {
 		];
 
 		if ($config['init']) {
-			$config['flags'] += [PDO::MYSQL_ATTR_INIT_COMMAND => implode(';', (array)$config['init'])];
+			$config['flags'] += [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET ' . implode(', ', (array)$config['init'])];
 		}
 
 		if (!empty($config['ssl_key']) && !empty($config['ssl_cert'])) {
