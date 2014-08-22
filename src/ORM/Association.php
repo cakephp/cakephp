@@ -210,6 +210,20 @@ abstract class Association {
 	}
 
 /**
+ * Sets whether or not cascaded deletes should also fire callbacks. If no
+ * arguments are passed, the current configured value is returned
+ *
+ * @param bool $cascadeCallbacks cascade callbacks switch value
+ * @return bool
+ */
+	public function cascadeCallbacks($cascadeCallbacks = null) {
+		if ($cascadeCallbacks !== null) {
+			$this->_cascadeCallbacks = $cascadeCallbacks;
+		}
+		return $this->_cascadeCallbacks;
+	}
+
+/**
  * Sets the table instance for the source side of the association. If no arguments
  * are passed, the current configured table instance is returned
  *
