@@ -293,4 +293,22 @@ class RouteCollectionTest extends TestCase {
 		$this->assertSame($two, $routes[1]);
 	}
 
+/**
+ * Test basic get/set of extensions.
+ *
+ * @return void
+ */
+	public function testExtensions() {
+		$this->assertEquals([], $this->collection->extensions());
+
+		$this->collection->extensions('json');
+		$this->assertEquals(['json'], $this->collection->extensions());
+
+		$this->collection->extensions(['rss', 'xml']);
+		$this->assertEquals(['rss', 'xml'], $this->collection->extensions());
+
+		$this->collection->addExtensions(['json']);
+		$this->assertEquals(['rss', 'xml', 'json'], $this->collection->extensions());
+	}
+
 }

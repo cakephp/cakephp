@@ -53,13 +53,6 @@ class Router {
 	protected static $_fullBaseUrl;
 
 /**
- * List of valid extensions to parse from a URL. If null, any extension is allowed.
- *
- * @var array
- */
-	protected static $_validExtensions = [];
-
-/**
  * Regular expression for action names
  *
  * @var string
@@ -714,14 +707,15 @@ class Router {
  * @return array
  */
 	public static function parseExtensions($extensions = null, $merge = true) {
+		$collection = static::$_collection;
 		if ($extensions === null) {
-			return static::$_validExtensions;
+			return $collection->extensions();
 		}
 		$extensions = (array)$extensions;
 		if ($merge) {
-			$extensions = array_merge(static::$_validExtensions, $extensions);
+			$extensions = array_merge($collection->extensions(), $extensions);
 		}
-		return static::$_validExtensions = $extensions;
+		return $collection->extensions($extensions);
 	}
 
 /**
@@ -735,8 +729,7 @@ class Router {
 		if (!static::$initialized) {
 			static::_loadRoutes();
 		}
-
-		return static::$_validExtensions;
+		return static::$_collection->extensions();
 	}
 
 /**
@@ -829,7 +822,7 @@ class Router {
  *   was created/used.
  */
 	public static function scope($path, $params = [], $callback = null) {
-		$builder = new RouteBuilder(static::$_collection, '/', [], static::$_validExtensions);
+		$builder = new RouteBuilder(static::$_collection, '/', [], static::$_collection->extensions());
 		$builder->scope($path, $params, $callback);
 	}
 

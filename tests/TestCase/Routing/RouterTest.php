@@ -1557,6 +1557,26 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * Test that route builders propagate extensions to the top.
+ *
+ * @return void
+ */
+	public function testExtensionsWithScopedRoutes() {
+		Router::scope('/', function($routes) {
+			$routes->extensions('rss');
+			$routes->connect('/', ['controller' => 'Pages', 'action' => 'index']);
+
+			$routes->scope('/api', function($routes) {
+				$routes->extensions('xml');
+				$routes->connect('/docs', ['controller' => 'ApiDocs', 'action' => 'index']);
+			});
+		});
+
+		// json is added by routes in test_app/config/routes.php
+		$this->assertEquals(['rss', 'xml', 'json'], Router::extensions());
+	}
+
+/**
  * testExtensionParsing method
  *
  * @return void
