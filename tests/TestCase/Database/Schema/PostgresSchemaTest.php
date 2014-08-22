@@ -241,6 +241,21 @@ SQL;
 	}
 
 /**
+ * Test that describe accepts tablenames containing `schema.table`.
+ *
+ * @return void
+ */
+	public function testDescribeWithSchemaName() {
+		$connection = ConnectionManager::get('test');
+		$this->_createTables($connection);
+
+		$schema = new SchemaCollection($connection);
+		$result = $schema->describe('public.schema_articles');
+		$this->assertEquals(['id'], $result->primaryKey());
+		$this->assertEquals('schema_articles', $result->name());
+	}
+
+/**
  * Test describing a table with Postgres
  *
  * @return void
