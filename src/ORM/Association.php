@@ -163,6 +163,13 @@ abstract class Association {
 	protected $_strategy = self::STRATEGY_JOIN;
 
 /**
+ * The default finder name to use for fetching rows from the target table
+ *
+ * @var string
+ */
+	protected $_finder = 'all';
+
+/**
  * Constructor. Subclasses can override _options function to get the original
  * list of passed options if expecting any other special key
  *
@@ -171,15 +178,16 @@ abstract class Association {
  */
 	public function __construct($name, array $options = []) {
 		$defaults = [
+			'cascadeCallbacks',
 			'className',
-			'foreignKey',
 			'conditions',
 			'dependent',
-			'cascadeCallbacks',
-			'sourceTable',
-			'targetTable',
+			'finder',
+			'foreignKey',
 			'joinType',
-			'propertyName'
+			'propertyName',
+			'sourceTable',
+			'targetTable'
 		];
 		foreach ($defaults as $property) {
 			if (isset($options[$property])) {
@@ -361,6 +369,21 @@ abstract class Association {
 			$this->_strategy = $name;
 		}
 		return $this->_strategy;
+	}
+
+/**
+ * Sets the default finder to use for fetching rows from the target table.
+ * If no parameters are passed, it will reeturn the currently configured
+ * finder name.
+ *
+ * @param string $finder the finder name to use
+ * @return string
+ */
+	public function finder($finder = null) {
+		if ($finder !== null) {
+			$this->_finder = $finder;
+		}
+		return $this->_finder;
 	}
 
 /**
