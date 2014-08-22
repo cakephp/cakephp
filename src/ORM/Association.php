@@ -210,7 +210,8 @@ abstract class Association {
 	}
 
 /**
- * Sets whether or not cascaded deletes should also fire callbacks.
+ * Sets whether or not cascaded deletes should also fire callbacks. If no
+ * arguments are passed, the current configured value is returned
  *
  * @param bool $cascadeCallbacks cascade callbacks switch value
  * @return bool
