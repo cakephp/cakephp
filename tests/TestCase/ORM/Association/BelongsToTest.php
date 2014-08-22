@@ -131,40 +131,6 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that default config defined in the association can be overridden
- *
- * @return void
- */
-	public function testAttachToConfigOverride() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
-		$config = [
-			'foreignKey' => 'company_id',
-			'sourceTable' => $this->client,
-			'conditions' => ['Companies.is_active' => true]
-		];
-		$association = new BelongsTo('Companies', $config);
-		$query->expects($this->once())->method('join')->with([
-			'Companies' => [
-				'conditions' => new QueryExpression([
-					'Companies.is_active' => false
-				], $this->companiesTypeMap),
-				'type' => 'LEFT',
-				'table' => 'companies',
-			]
-		]);
-		$query->expects($this->once())->method('select')->with([
-			'Companies__company_name' => 'Companies.company_name'
-		]);
-
-		$override = [
-			'conditions' => ['Companies.is_active' => false],
-			'foreignKey' => false,
-			'fields' => ['company_name']
-		];
-		$association->attachTo($query, $override);
-	}
-
-/**
  * Tests that it is possible to avoid fields inclusion for the associated table
  *
  * @return void
@@ -190,43 +156,6 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		]);
 		$query->expects($this->never())->method('select');
 		$association->attachTo($query, ['includeFields' => false]);
-	}
-
-/**
- * Tests that by passing a query builder function it is possible to add fields and
- * conditions to an association
- *
- * @return void
- */
-	public function testAttachToWithQueryBuilder() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
-		$config = [
-			'sourceTable' => $this->client,
-			'targetTable' => $this->company,
-			'conditions' => ['Companies.is_active' => true]
-		];
-		$association = new BelongsTo('Companies', $config);
-		$field = new IdentifierExpression('Clients.company_id');
-		$query->expects($this->once())->method('join')->with([
-			'Companies' => [
-				'conditions' => new QueryExpression([
-					'a' => 1,
-					'Companies.is_active' => true,
-					['Companies.id' => $field]
-				], $this->companiesTypeMap),
-				'type' => 'LEFT',
-				'table' => 'companies',
-			]
-		]);
-		$query->expects($this->once())->method('select')
-			->with([
-				'Companies__a' => 'Companies.a',
-				'Companies__b' => 'Companies.b'
-			]);
-		$builder = function($q) {
-			return $q->select(['a', 'b'])->where(['a' => 1]);
-		};
-		$association->attachTo($query, ['queryBuilder' => $builder]);
 	}
 
 /**
