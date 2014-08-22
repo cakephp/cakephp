@@ -92,6 +92,17 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that cascadeCallbacks() returns the correct configured value
+ *
+ * @return void
+ */
+	public function testCascadeCallbacks() {
+		$this->assertSame(false, $this->association->cascadeCallbacks());
+		$this->association->cascadeCallbacks(true);
+		$this->assertSame(true, $this->association->cascadeCallbacks());
+	}
+
+/**
  * Tests that name() returns the correct configured value
  *
  * @return void
