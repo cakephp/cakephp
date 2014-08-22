@@ -386,7 +386,7 @@ class ViewTaskTest extends TestCase {
 			);
 		$result = $this->Task->bake('edit', true);
 
-		$this->assertContains("Form->input('id')", $result);
+		$this->assertNotContains("Form->input('id')", $result);
 		$this->assertContains("Form->input('article_id', ['options' => \$articles])", $result);
 	}
 
