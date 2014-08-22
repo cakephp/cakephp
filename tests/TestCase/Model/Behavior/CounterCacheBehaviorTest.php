@@ -166,7 +166,7 @@ class CounterCacheBehaviorTest extends TestCase {
 		$this->post->addBehavior('CounterCache', [
 			'Users' => [
 				'posts_published' => [
-					'findType' => 'published'
+					'finder' => 'published'
 				]
 			]
 		]);

@@ -54,7 +54,7 @@ use Cake\ORM\Table;
  * [
  *     'Users' => [
  *         'posts_published' => [
- *             'findType' => 'published' // Will be using findPublished()
+ *             'finder' => 'published' // Will be using findPublished()
  *         ]
  *     ]
  * ]
@@ -177,17 +177,17 @@ class CounterCacheBehavior extends Behavior {
  * @return int The number of relations matching the given config and conditions
  */
 	protected function _getCount(array $config, array $conditions) {
-		$findType = 'all';
-		if (!empty($config['findType'])) {
-			$findType = $config['findType'];
-			unset($config['findType']);
+		$finder = 'all';
+		if (!empty($config['finder'])) {
+			$finder = $config['finder'];
+			unset($config['finder']);
 		}
 
 		if (!isset($config['conditions'])) {
 			$config['conditions'] = [];
 		}
 		$config['conditions'] = array_merge($conditions, $config['conditions']);
-		$query = $this->_table->find($findType, $config);
+		$query = $this->_table->find($finder, $config);
 
 		return $query->count();
 	}
