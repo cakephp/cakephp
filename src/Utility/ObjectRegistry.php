@@ -14,6 +14,9 @@
  */
 namespace Cake\Utility;
 
+use Cake\Core\Configure;
+use ReflectionClass;
+
 /**
  * Acts as a registry/factory for objects.
  *
@@ -76,6 +79,18 @@ abstract class ObjectRegistry {
 			list($plugin, $objectName) = pluginSplit($objectName);
 			$this->_throwMissingClassError($objectName, $plugin);
 		}
+
+		$shortName = (new ReflectionClass($this))->getShortName();
+		$registryType = str_replace('Registry', '', $shortName);
+		$allowedRegistries = array('Component', 'Behavior', 'Helper');
+
+		if (in_array($registryType, $allowedRegistries)) {
+			$shortName = (new ReflectionClass($className))->getShortName();
+			$registryName = str_replace($registryType, '', $shortName);
+			$appConfig = (array)Configure::read($registryType . '.' . $registryName);
+			$config += $appConfig;
+		}
+
 		$instance = $this->_create($className, $name, $config);
 		$this->_loaded[$name] = $instance;
 		return $instance;
