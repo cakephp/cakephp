@@ -287,7 +287,7 @@ class RouteCollection {
 /**
  * Get/set the extensions that the route collection could handle.
  *
- * @param null|array $extensions Either the list of extensions to set, or null to get.
+ * @param null|string|array $extensions Either the list of extensions to set, or null to get.
  * @return array The valid extensions.
  */
 	public function extensions($extensions = null) {
