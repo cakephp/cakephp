@@ -272,7 +272,7 @@ class FormHelper extends Helper {
  * @return string An formatted opening FORM tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-create
  */
-	public function create($model = null, $options = []) {
+	public function create($model = null, array $options = []) {
 		$append = '';
 
 		if (empty($options['context'])) {

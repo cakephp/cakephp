@@ -314,7 +314,7 @@ class TextHelper extends Helper {
  * @see String::tail()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::tail
  */
-	public function tail($text, $length = 100, $options = array()) {
+	public function tail($text, $length = 100, array $options = array()) {
 		return $this->_engine->tail($text, $length, $options);
 	}
 
