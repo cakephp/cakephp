@@ -515,7 +515,8 @@ abstract class Association {
  * @see \Cake\ORM\Table::find()
  * @return \Cake\ORM\Query
  */
-	public function find($type = 'all', array $options = []) {
+	public function find($type = null, array $options = []) {
+		$type = $type ?: $this->finder();
 		return $this->target()
 			->find($type, $options)
 			->where($this->conditions());

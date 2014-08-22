@@ -24,6 +24,14 @@ use Cake\ORM\TableRegistry;
  */
 class TestTable extends Table {
 
+	public function initialize(array $config = []) {
+		$this->schema(['id' => ['type' => 'integer']]);
+	}
+
+	public function findPublished($query) {
+		return $query->applyOptions(['this' => 'worked']);
+	}
+
 }
 
 /**
@@ -195,6 +203,41 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
 	public function testInvalidStrategy() {
 		$this->association->strategy('anotherThing');
 		$this->assertEquals('subquery', $this->association->strategy());
+	}
+
+	public function testFinderMethod() {
+		$this->assertEquals('all', $this->association->finder());
+		$this->assertEquals('published', $this->association->finder('published'));
+		$this->assertEquals('published', $this->association->finder());
+	}
+
+	public function testFinderInConstructor() {
+		$config = [
+			'className' => '\Cake\Test\TestCase\ORM\TestTable',
+			'foreignKey' => 'a_key',
+			'conditions' => ['field' => 'value'],
+			'dependent' => true,
+			'sourceTable' => $this->source,
+			'joinType' => 'INNER',
+			'finder' => 'published'
+		];
+		$assoc = $this->getMock(
+			'\Cake\ORM\Association',
+			[
+				'_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+				'saveAssociated', 'eagerLoader', 'type'
+			],
+			['Foo', $config]
+		);
+		$this->assertEquals('published', $assoc->finder());
+	}
+
+	public function testCustomFinderIsUsed() {
+		$this->association->finder('published');
+		$this->assertEquals(
+			['this' => 'worked'],
+			$this->association->find()->getOptions()
+		);
 	}
 
 }
