@@ -74,6 +74,22 @@ class ValidationRuleTest extends TestCase {
 	}
 
 /**
+ * Test using a custom validation method with no provider declared.
+ *
+ * @return void
+ */
+	public function testCustomMethodNoProvider() {
+		$data = 'some data';
+		$context = ['field' => 'custom', 'newRecord' => true];
+		$providers = ['default' => ''];
+
+		$rule = new ValidationRule([
+			'rule' => [$this, 'myTestRule']
+		]);
+		$this->assertFalse($rule->process($data, $providers, $context));
+	}
+
+/**
  * Make sure errors are triggered when validation is missing.
  *
  * @expectedException \InvalidArgumentException

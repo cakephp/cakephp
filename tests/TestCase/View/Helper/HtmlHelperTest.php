@@ -757,7 +757,6 @@ class HtmlHelperTest extends TestCase {
  */
 	public function testScriptTimestamping() {
 		$this->skipIf(!is_writable(WWW_ROOT . 'js'), 'webroot/js is not Writable, timestamp testing has been skipped.');
-
 		Configure::write('debug', true);
 		Configure::write('Asset.timestamp', true);
 

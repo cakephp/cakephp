@@ -2361,7 +2361,7 @@ class ValidationTest extends TestCase {
  * @return void
  */
 	public function testMimeType() {
-		$image = CORE_PATH . 'Cake/Test/TestApp/webroot/img/cake.power.gif';
+		$image = CORE_TESTS . 'test_app/webroot/img/cake.power.gif';
 		$File = new File($image, false);
 
 		$this->skipIf(!$File->mime(), 'Cannot determine mimeType');

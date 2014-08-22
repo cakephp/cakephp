@@ -415,17 +415,16 @@ EXPECTED;
  * @return void
  */
 	public function testPr() {
-		$this->skipIf(php_sapi_name() === 'cli', 'Skipping web test in cli mode');
 		ob_start();
 		pr('this is a test');
 		$result = ob_get_clean();
-		$expected = "<pre>this is a test</pre>";
+		$expected = "\nthis is a test\n";
 		$this->assertEquals($expected, $result);
 
 		ob_start();
 		pr(array('this' => 'is', 'a' => 'test'));
 		$result = ob_get_clean();
-		$expected = "<pre>Array\n(\n    [this] => is\n    [a] => test\n)\n</pre>";
+		$expected = "\nArray\n(\n    [this] => is\n    [a] => test\n)\n\n";
 		$this->assertEquals($expected, $result);
 	}
 

@@ -180,7 +180,7 @@ class ValidationRule {
 			if (!isset($value) || empty($value)) {
 				continue;
 			}
-			if ($key === 'rule' && is_array($value)) {
+			if ($key === 'rule' && is_array($value) && !is_callable($value)) {
 				$this->_pass = array_slice($value, 1);
 				$value = array_shift($value);
 			}
