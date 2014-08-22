@@ -147,8 +147,9 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
 	@echo "Uploading zip file to github."
 	curl $(AUTH) -XPOST \
 		$(UPLOAD_HOST)/repos/$(OWNER)/cakephp/releases/`cat ./id.txt`/assets?name=cakephp-$(DASH_VERSION).zip \
+		-H "Accept: application/vnd.github.manifold-preview" \
 		-H 'Content-Type: application/zip' \
-		-d '@dist/cakephp-$(DASH_VERSION).zip'
+		--data-binary '@dist/cakephp-$(DASH_VERSION).zip'
 	# Cleanup files.
 	rm release.json
 	rm id.txt
