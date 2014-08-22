@@ -957,7 +957,7 @@ class QueryTest extends TestCase {
  */
 	public function testResultsAreWrappedInMapReduce() {
 		$params = [$this->connection, $this->table];
-		$query = $this->getMock('\Cake\ORM\Query', ['execute'], $params);
+		$query = $this->getMock('\Cake\ORM\Query', [], $params);
 
 		$statement = $this->getMock(
 			'\Database\StatementInterface',
@@ -1455,7 +1455,8 @@ class QueryTest extends TestCase {
 			[$this->connection, $this->table]
 		);
 		$query->select();
-		$resultSet = $this->getMock('\Cake\ORM\ResultSet', [], [$query, null]);
+		$stmt = $this->getMock('\Cake\Database\StatementInterface');
+		$resultSet = $this->getMock('\Cake\ORM\ResultSet', [], [$query, $stmt]);
 		$query->expects($this->once())
 			->method('all')
 			->will($this->returnValue($resultSet));
@@ -1504,7 +1505,8 @@ class QueryTest extends TestCase {
 			'\Cake\ORM\Query', ['execute'],
 			[$this->connection, $this->table]
 		);
-		$resultSet = $this->getMock('\Cake\ORM\ResultSet', [], [$query, null]);
+		$stmt = $this->getMock('\Cake\Database\StatementInterface');
+		$resultSet = $this->getMock('\Cake\ORM\ResultSet', [], [$query, $stmt]);
 
 		$query->expects($this->never())
 			->method('execute');

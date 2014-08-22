@@ -92,7 +92,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachTo() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->user]);
 		$config = [
 			'foreignKey' => 'user_id',
 			'sourceTable' => $this->user,
@@ -125,7 +125,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToConfigOverride() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->user]);
 		$config = [
 			'foreignKey' => 'user_id',
 			'sourceTable' => $this->user,
@@ -160,7 +160,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToNoFields() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->user]);
 		$config = [
 			'sourceTable' => $this->user,
 			'targetTable' => $this->profile,
@@ -189,7 +189,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToWithQueryBuilder() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->user]);
 		$config = [
 			'sourceTable' => $this->user,
 			'targetTable' => $this->profile,
@@ -226,7 +226,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToMultiPrimaryKey() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->user]);
 		$config = [
 			'sourceTable' => $this->user,
 			'targetTable' => $this->profile,
@@ -260,7 +260,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToMultiPrimaryKeyMistmatch() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->user]);
 		$config = [
 			'sourceTable' => $this->user,
 			'targetTable' => $this->profile,
@@ -330,7 +330,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToBeforeFind() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->user]);
 		$config = [
 			'foreignKey' => 'user_id',
 			'sourceTable' => $this->user,
@@ -356,7 +356,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToBeforeFindExtraOptions() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->user]);
 		$config = [
 			'foreignKey' => 'user_id',
 			'sourceTable' => $this->user,

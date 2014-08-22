@@ -226,7 +226,7 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testAttachTo() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->article]);
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
@@ -273,7 +273,7 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testAttachToNoFields() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->article]);
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
@@ -314,7 +314,7 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testAttachToWithQueryBuilder() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->article]);
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
@@ -367,7 +367,7 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testAttachToMultiPrimaryKey() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->article]);
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
@@ -419,7 +419,7 @@ class BelongsToManyTest extends TestCase {
 		];
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
-		$query = $this->getMock('Cake\ORM\Query', ['all', 'matching'], [null, null]);
+		$query = $this->getMock('Cake\ORM\Query', ['all', 'matching'], [null, $this->article]);
 
 		$this->tag->expects($this->once())
 			->method('find')
@@ -437,7 +437,7 @@ class BelongsToManyTest extends TestCase {
 		$query->expects($this->once())->method('matching')
 			->will($this->returnCallback(function($alias, $callable) use ($query, $keys) {
 				$this->assertEquals('ArticlesTags', $alias);
-				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, $this->article]);
 
 				$q->expects($this->once())->method('andWhere')
 					->with(['ArticlesTags.article_id IN' => $keys])
@@ -480,7 +480,7 @@ class BelongsToManyTest extends TestCase {
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
 		$methods = ['all', 'matching', 'where', 'order'];
-		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
+		$query = $this->getMock('Cake\ORM\Query', $methods, [null, $this->article]);
 		$this->tag->expects($this->once())
 			->method('find')
 			->with('all')
@@ -496,7 +496,7 @@ class BelongsToManyTest extends TestCase {
 		$query->expects($this->once())->method('matching')
 			->will($this->returnCallback(function($alias, $callable) use ($query, $keys) {
 				$this->assertEquals('ArticlesTags', $alias);
-				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, $this->article]);
 
 				$q->expects($this->once())->method('andWhere')
 					->with(['ArticlesTags.article_id IN' => $keys])
@@ -537,7 +537,7 @@ class BelongsToManyTest extends TestCase {
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
 		$methods = ['all', 'matching', 'where', 'order', 'select'];
-		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
+		$query = $this->getMock('Cake\ORM\Query', $methods, [null, $this->article]);
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
@@ -550,7 +550,7 @@ class BelongsToManyTest extends TestCase {
 		$query->expects($this->once())->method('matching')
 			->will($this->returnCallback(function($alias, $callable) use ($query, $keys) {
 				$this->assertEquals('ArticlesTags', $alias);
-				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, $this->article]);
 
 				$q->expects($this->once())->method('andWhere')
 					->with(['ArticlesTags.article_id IN' => $keys])
@@ -607,7 +607,7 @@ class BelongsToManyTest extends TestCase {
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
 		$methods = ['all', 'contain', 'where', 'order', 'select'];
-		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
+		$query = $this->getMock('Cake\ORM\Query', $methods, [null, $this->article]);
 		$this->tag->expects($this->once())
 			->method('find')
 			->with('all')
@@ -680,7 +680,7 @@ class BelongsToManyTest extends TestCase {
 		$query->expects($this->once())->method('matching')
 			->will($this->returnCallback(function($alias, $callable) use ($query, $expected) {
 				$this->assertEquals('ArticlesTags', $alias);
-				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, $this->article]);
 
 				$q->expects($this->once())->method('andWhere')
 					->with(['ArticlesTags.article_id IN' => $expected])
@@ -725,7 +725,7 @@ class BelongsToManyTest extends TestCase {
 		$query = $this->getMock(
 			'Cake\ORM\Query',
 			['all', 'matching', 'andWhere', 'limit'],
-			[null, null]
+			[null, $this->article]
 		);
 
 		$this->tag->expects($this->once())
@@ -744,7 +744,7 @@ class BelongsToManyTest extends TestCase {
 		$query->expects($this->once())->method('matching')
 			->will($this->returnCallback(function($alias, $callable) use ($query, $keys) {
 				$this->assertEquals('ArticlesTags', $alias);
-				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, $this->article]);
 
 				$q->expects($this->once())->method('andWhere')
 					->with(['ArticlesTags.article_id IN' => $keys])
@@ -795,7 +795,7 @@ class BelongsToManyTest extends TestCase {
 		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
-		$query = $this->getMock('Cake\ORM\Query', ['all', 'matching'], [null, null]);
+		$query = $this->getMock('Cake\ORM\Query', ['all', 'matching'], [null, $this->article]);
 
 		$this->tag->expects($this->once())
 			->method('find')
@@ -832,7 +832,7 @@ class BelongsToManyTest extends TestCase {
 		$query->expects($this->once())->method('matching')
 			->will($this->returnCallback(function($alias, $callable) use ($query, $tuple) {
 				$this->assertEquals('ArticlesTags', $alias);
-				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, $this->article]);
 
 				$q->expects($this->once())->method('andWhere')
 					->with($tuple)
@@ -924,7 +924,7 @@ class BelongsToManyTest extends TestCase {
 			$articleTagTwo
 		]);
 
-		$query = $this->getMock('\Cake\ORM\Query', [], [], '', false);
+		$query = $this->getMock('\Cake\ORM\Query', [], [null, $this->article], '', false);
 		$query->expects($this->at(0))
 			->method('where')
 			->with(['click_count' => 3])
@@ -1599,7 +1599,7 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testAttachToBeforeFind() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->article]);
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
@@ -1636,7 +1636,7 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testAttachToBeforeFindExtraOptions() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, $this->article]);
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,

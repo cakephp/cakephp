@@ -425,7 +425,7 @@ class Client {
  * Uses the authentication type to choose the correct strategy
  * and use its methods to add headers.
  *
- * @param Request $request The request to modify.
+ * @param \Cake\Network\Http\Request $request The request to modify.
  * @param array $options Array of options containing the 'auth' key.
  * @return void
  */
@@ -441,7 +441,7 @@ class Client {
  * Uses the authentication type to choose the correct strategy
  * and use its methods to add headers.
  *
- * @param Request $request The request to modify.
+ * @param \Cake\Network\Http\Request $request The request to modify.
  * @param array $options Array of options containing the 'proxy' key.
  * @return void
  */
