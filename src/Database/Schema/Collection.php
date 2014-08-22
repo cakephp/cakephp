@@ -107,8 +107,11 @@ class Collection {
 				return $cached;
 			}
 		}
-		$table = new Table($name);
 		$config = $this->_connection->config();
+		if (strpos($name, '.')) {
+			list($config['schema'], $name) = explode('.', $name);
+		}
+		$table = new Table($name);
 
 		$this->_reflect('Column', $name, $config, $table);
 		if (count($table->columns()) === 0) {
