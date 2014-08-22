@@ -521,6 +521,7 @@ class Session {
 			return;
 		}
 
+		$this->start();
 		$params = session_get_cookie_params();
 		setcookie(
 			session_name(), '', time() - 42000,
