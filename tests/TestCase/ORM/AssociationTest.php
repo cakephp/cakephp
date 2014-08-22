@@ -205,12 +205,22 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('subquery', $this->association->strategy());
 	}
 
+/**
+ * Tests test finder() method as getter and setter
+ *
+ * @return void
+ */
 	public function testFinderMethod() {
 		$this->assertEquals('all', $this->association->finder());
 		$this->assertEquals('published', $this->association->finder('published'));
 		$this->assertEquals('published', $this->association->finder());
 	}
 
+/**
+ * Tests that `finder` is a valid option for the association constructor
+ *
+ * @return void
+ */
 	public function testFinderInConstructor() {
 		$config = [
 			'className' => '\Cake\Test\TestCase\ORM\TestTable',
@@ -232,6 +242,12 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('published', $assoc->finder());
 	}
 
+/**
+ * Tests that the defined custom finder is used when calling find
+ * in the association
+ *
+ * @return void
+ */
 	public function testCustomFinderIsUsed() {
 		$this->association->finder('published');
 		$this->assertEquals(
