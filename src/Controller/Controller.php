@@ -62,7 +62,6 @@ use Cake\View\ViewVarsTrait;
  *   a redirect is done.
  * - `afterFilter(Event $event)` - Called after each action is complete and after the view is rendered.
  *
- * @property      \Cake\Controller\Component\AclComponent $Acl
  * @property      \Cake\Controller\Component\AuthComponent $Auth
  * @property      \Cake\Controller\Component\CookieComponent $Cookie
  * @property      \Cake\Controller\Component\CsrfComponent $Csrf
