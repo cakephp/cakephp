@@ -21,7 +21,7 @@ use Cake\Utility\Inflector;
 <?php
 		echo "\t<?php\n";
 		foreach ($fields as $field) {
-			if (strpos($action, 'add') !== false && in_array($field, $primaryKey)) {
+			if (in_array($field, $primaryKey)) {
 				continue;
 			}
 			if (isset($keyFields[$field])) {
