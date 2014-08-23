@@ -26,6 +26,16 @@ class ArticlesTable extends Table {
 	}
 
 /**
+ * Find published
+ *
+ * @param Cake\ORM\Query $query The query
+ * @return Cake\ORM\Query
+ */
+	public function findPublished($query) {
+		return $query->where(['published' => 'Y']);
+	}
+
+/**
  * Example public method
  *
  * @return void

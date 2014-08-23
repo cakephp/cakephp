@@ -163,6 +163,13 @@ abstract class Association {
 	protected $_strategy = self::STRATEGY_JOIN;
 
 /**
+ * The default finder name to use for fetching rows from the target table
+ *
+ * @var string
+ */
+	protected $_finder = 'all';
+
+/**
  * Constructor. Subclasses can override _options function to get the original
  * list of passed options if expecting any other special key
  *
@@ -171,15 +178,16 @@ abstract class Association {
  */
 	public function __construct($name, array $options = []) {
 		$defaults = [
+			'cascadeCallbacks',
 			'className',
-			'foreignKey',
 			'conditions',
 			'dependent',
-			'cascadeCallbacks',
-			'sourceTable',
-			'targetTable',
+			'finder',
+			'foreignKey',
 			'joinType',
-			'propertyName'
+			'propertyName',
+			'sourceTable',
+			'targetTable'
 		];
 		foreach ($defaults as $property) {
 			if (isset($options[$property])) {
@@ -378,6 +386,21 @@ abstract class Association {
 	}
 
 /**
+ * Sets the default finder to use for fetching rows from the target table.
+ * If no parameters are passed, it will reeturn the currently configured
+ * finder name.
+ *
+ * @param string $finder the finder name to use
+ * @return string
+ */
+	public function finder($finder = null) {
+		if ($finder !== null) {
+			$this->_finder = $finder;
+		}
+		return $this->_finder;
+	}
+
+/**
  * Override this function to initialize any concrete association class, it will
  * get passed the original list of options used in the constructor
  *
@@ -424,7 +447,6 @@ abstract class Association {
 			'type' => empty($options['matching']) ? $this->joinType() : 'INNER',
 			'table' => $target->table()
 		];
-		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
 
 		if (!empty($options['foreignKey'])) {
 			$joinCondition = $this->_joinCondition($options);
@@ -433,7 +455,7 @@ abstract class Association {
 			}
 		}
 
-		$dummy = $target->query()->eagerLoaded(true);
+		$dummy = $this->find()->eagerLoaded(true);
 		if (!empty($options['queryBuilder'])) {
 			$dummy = $options['queryBuilder']($dummy);
 			if (!($dummy instanceof Query)) {
@@ -506,7 +528,8 @@ abstract class Association {
  * @see \Cake\ORM\Table::find()
  * @return \Cake\ORM\Query
  */
-	public function find($type = 'all', array $options = []) {
+	public function find($type = null, array $options = []) {
+		$type = $type ?: $this->finder();
 		return $this->target()
 			->find($type, $options)
 			->where($this->conditions());

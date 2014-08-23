@@ -120,41 +120,6 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that default config defined in the association can be overridden
- *
- * @return void
- */
-	public function testAttachToConfigOverride() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
-		$config = [
-			'foreignKey' => 'user_id',
-			'sourceTable' => $this->user,
-			'targetTable' => $this->profile,
-			'conditions' => ['Profiles.is_active' => true]
-		];
-		$association = new HasOne('Profiles', $config);
-		$query->expects($this->once())->method('join')->with([
-			'Profiles' => [
-				'conditions' => new QueryExpression([
-					'Profiles.is_active' => false
-				], $this->profilesTypeMap),
-				'type' => 'LEFT',
-				'table' => 'profiles'
-			]
-		]);
-		$query->expects($this->once())->method('select')->with([
-			'Profiles__first_name' => 'Profiles.first_name'
-		]);
-
-		$override = [
-			'conditions' => ['Profiles.is_active' => false],
-			'foreignKey' => false,
-			'fields' => ['first_name']
-		];
-		$association->attachTo($query, $override);
-	}
-
-/**
  * Tests that it is possible to avoid fields inclusion for the associated table
  *
  * @return void
@@ -180,43 +145,6 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		]);
 		$query->expects($this->never())->method('select');
 		$association->attachTo($query, ['includeFields' => false]);
-	}
-
-/**
- * Tests that by supplying a query builder function, it is possible to add fields
- * and conditions to an association
- *
- * @return void
- */
-	public function testAttachToWithQueryBuilder() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
-		$config = [
-			'sourceTable' => $this->user,
-			'targetTable' => $this->profile,
-			'conditions' => ['Profiles.is_active' => true]
-		];
-		$association = new HasOne('Profiles', $config);
-		$field = new IdentifierExpression('Profiles.user_id');
-		$query->expects($this->once())->method('join')->with([
-			'Profiles' => [
-				'conditions' => new QueryExpression([
-					'a' => 1,
-					'Profiles.is_active' => true,
-					['Users.id' => $field],
-				], $this->profilesTypeMap),
-				'type' => 'LEFT',
-				'table' => 'profiles'
-			]
-		]);
-		$query->expects($this->once())->method('select')
-			->with([
-				'Profiles__a' => 'Profiles.a',
-				'Profiles__b' => 'Profiles.b'
-			]);
-		$builder = function($q) {
-			return $q->select(['a', 'b'])->where(['a' => 1]);
-		};
-		$association->attachTo($query, ['queryBuilder' => $builder]);
 	}
 
 /**
