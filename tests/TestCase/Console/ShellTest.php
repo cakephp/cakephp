@@ -788,7 +788,6 @@ TEXT;
 		$this->assertEquals($expected, $this->Shell->TestApple->name);
 	}
 
-
 /**
  * Test reading params
  *

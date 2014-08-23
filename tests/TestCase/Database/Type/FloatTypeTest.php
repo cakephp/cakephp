@@ -85,7 +85,6 @@ class FloatTypeTest extends TestCase {
 		$this->assertSame(2.51, $result);
 	}
 
-
 /**
  * Test that the PDO binding type is correct.
  *

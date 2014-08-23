@@ -469,7 +469,6 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($row, $result);
 	}
 
-
 /**
  * Test cascading deletes.
  *

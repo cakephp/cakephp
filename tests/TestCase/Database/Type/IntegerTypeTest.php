@@ -85,7 +85,6 @@ class IntegerTypeTest extends TestCase {
 		$this->assertSame(0, $result);
 	}
 
-
 /**
  * Test that the PDO binding type is correct.
  *
