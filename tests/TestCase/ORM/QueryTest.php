@@ -1771,6 +1771,25 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that custom finders are applied to associations when using the proxies
+ *
+ * @return void
+ */
+	public function testCustomFinderInBelongsTo() {
+		$table = TableRegistry::get('ArticlesTags');
+		$table->belongsTo('Articles', [
+			'className' => 'TestApp\Model\Table\ArticlesTable',
+			'finder' => 'published'
+		]);
+		$result = $table->find()->contain('Articles');
+		$this->assertCount(4, $result->extract('article')->filter()->toArray());
+		$table->Articles->updateAll(['published' => 'N'], ['1 = 1']);
+
+		$result = $table->find()->contain('Articles');
+		$this->assertCount(0, $result->extract('article')->filter()->toArray());
+	}
+
+/**
  * Tests that it is possible to attach more association when using a query
  * builder for other associations
  *
