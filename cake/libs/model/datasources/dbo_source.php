@@ -54,7 +54,7 @@ class DboSource extends DataSource {
 
 /**
  * Caches result from query parsing operations.  Cached results for both DboSource::name() and
- * DboSource::conditions() will be stored here.  Method caching uses `crc32()` which is
+ * DboSource::conditions() will be stored here.  Method caching uses `md5()` which is
  * fast but can collisions more easily than other hashing algorithms.  If you have problems
  * with collisions, set DboSource::$cacheMethods to false.
  *
@@ -538,7 +538,7 @@ class DboSource extends DataSource {
 			}
 			return $data;
 		}
-		$cacheKey = crc32($this->startQuote.$data.$this->endQuote);
+		$cacheKey = md5($this->startQuote.$data.$this->endQuote);
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}
@@ -1972,7 +1972,7 @@ class DboSource extends DataSource {
 			$fields,
 			$quote
 		);
-		$cacheKey = crc32(serialize($cacheKey));
+		$cacheKey = md5(serialize($cacheKey));
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}
@@ -2098,7 +2098,7 @@ class DboSource extends DataSource {
 		} else {
 			$cacheKey = array($conditions, $quoteValues, $where);
 		}
-		$cacheKey = crc32(serialize($cacheKey));
+		$cacheKey = md5(serialize($cacheKey));
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}
