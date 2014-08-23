@@ -107,7 +107,7 @@ class PaginatorComponent extends Component {
  * {{{
  * $settings = [
  *   'Articles' => [
- *     'findType' => 'custom',
+ *     'finder' => 'custom',
  *     'sortWhitelist' => ['title', 'author_id', 'comment_count'],
  *   ]
  * ];
@@ -115,12 +115,12 @@ class PaginatorComponent extends Component {
  *
  * ### Paginating with custom finders
  *
- * You can paginate with any find type defined on your table using the `findType` option.
+ * You can paginate with any find type defined on your table using the `finder` option.
  *
  * {{{
  *  $settings = array(
  *    'Articles' => array(
- *      'findType' => 'popular'
+ *      'finder' => 'popular'
  *    )
  *  );
  *  $results = $paginator->paginate($table, $settings);
@@ -156,8 +156,12 @@ class PaginatorComponent extends Component {
 		$options += ['page' => 1];
 		$options['page'] = intval($options['page']) < 1 ? 1 : (int)$options['page'];
 
-		$type = !empty($options['findType']) ? $options['findType'] : 'all';
-		unset($options['findType'], $options['maxLimit']);
+		if (!isset($options['finder']) && isset($options['findType'])) {
+			trigger_error('You should use finder instead of findType', E_USER_DEPRECATED);
+			$options['finder'] = $options['findType'];
+		}
+		$type = !empty($options['finder']) ? $options['finder'] : 'all';
+		unset($options['finder'], $options['maxLimit']);
 
 		if (empty($query)) {
 			$query = $object->find($type);
@@ -186,7 +190,7 @@ class PaginatorComponent extends Component {
 		}
 
 		$paging = array(
-			'findType' => $type,
+			'finder' => $type,
 			'page' => $page,
 			'current' => $numResults,
 			'count' => $count,
