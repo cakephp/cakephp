@@ -31,12 +31,12 @@ use Cake\TestSuite\TestCase;
 <?php endif; ?>
 
 /**
- * <?= $fullClassName; ?> Test Case
+ * <?= $fullClassName ?> Test Case
  */
 <?php if ($isController): ?>
-class <?= $className; ?>Test extends ControllerTestCase {
+class <?= $className ?>Test extends ControllerTestCase {
 <?php else: ?>
-class <?= $className; ?>Test extends TestCase {
+class <?= $className ?>Test extends TestCase {
 <?php endif; ?>
 
 <?php if (!empty($fixtures)): ?>
@@ -58,9 +58,9 @@ class <?= $className; ?>Test extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-<?= $preConstruct ? "\t\t" . $preConstruct : ''; ?>
-		$this-><?= $subject . ' = ' . $construction; ?>
-<?= $postConstruct ? "\t\t" . $postConstruct : ''; ?>
+<?= $preConstruct ? "\t\t" . $preConstruct : '' ?>
+		$this-><?= $subject . ' = ' . $construction ?>
+<?= $postConstruct ? "\t\t" . $postConstruct : '' ?>
 	}
 
 /**
@@ -69,7 +69,7 @@ class <?= $className; ?>Test extends TestCase {
  * @return void
  */
 	public function tearDown() {
-		unset($this-><?= $subject; ?>);
+		unset($this-><?= $subject ?>);
 
 		parent::tearDown();
 	}
@@ -77,12 +77,12 @@ class <?= $className; ?>Test extends TestCase {
 <?php endif; ?>
 <?php foreach ($methods as $method): ?>
 /**
- * test<?= Inflector::camelize($method); ?> method
+ * test<?= Inflector::camelize($method) ?> method
  *
  * @return void
  */
-	public function test<?= Inflector::camelize($method); ?>() {
-		$this->markTestIncomplete('test<?= Inflector::camelize($method); ?> not implemented.');
+	public function test<?= Inflector::camelize($method) ?>() {
+		$this->markTestIncomplete('test<?= Inflector::camelize($method) ?> not implemented.');
 	}
 
 <?php endforeach; ?>

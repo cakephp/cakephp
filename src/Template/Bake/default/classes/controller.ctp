@@ -24,7 +24,7 @@ namespace <?= $namespace ?>\Controller<?= $prefix ?>;
 use <?= $namespace ?>\Controller\AppController;
 
 /**
- * <?= $name; ?> Controller
+ * <?= $name ?> Controller
  *
 <?php
 $defaultModel = $name;
@@ -36,7 +36,7 @@ if (!empty($components)) {
 }
 ?>
  */
-class <?= $name; ?>Controller extends AppController {
+class <?= $name ?>Controller extends AppController {
 
 <?php
 

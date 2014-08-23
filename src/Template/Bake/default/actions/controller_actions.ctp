@@ -59,7 +59,7 @@ $allAssociations = array_merge(
 		$<?= $singularName?> = $this-><?= $currentModelName ?>->get($id, [
 			'contain' => [<?= $stringifyList($allAssociations) ?>]
 		]);
-		$this->set('<?= $singularName; ?>', $<?= $singularName; ?>);
+		$this->set('<?= $singularName ?>', $<?= $singularName ?>);
 	}
 
 <?php $compact = ["'" . $singularName . "'"]; ?>
@@ -72,10 +72,10 @@ $allAssociations = array_merge(
 		$<?= $singularName ?> = $this-><?= $currentModelName ?>->newEntity($this->request->data);
 		if ($this->request->is('post')) {
 			if ($this-><?= $currentModelName; ?>->save($<?= $singularName ?>)) {
-				$this->Flash->success('The <?= strtolower($singularHumanName); ?> has been saved.');
+				$this->Flash->success('The <?= strtolower($singularHumanName) ?> has been saved.');
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Flash->error('The <?= strtolower($singularHumanName); ?> could not be saved. Please, try again.');
+				$this->Flash->error('The <?= strtolower($singularHumanName) ?> could not be saved. Please, try again.');
 			}
 		}
 <?php
@@ -105,10 +105,10 @@ $allAssociations = array_merge(
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$<?= $singularName ?> = $this-><?= $currentModelName ?>->patchEntity($<?= $singularName ?>, $this->request->data);
 			if ($this-><?= $currentModelName; ?>->save($<?= $singularName ?>)) {
-				$this->Flash->success('The <?= strtolower($singularHumanName); ?> has been saved.');
+				$this->Flash->success('The <?= strtolower($singularHumanName) ?> has been saved.');
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Flash->error('The <?= strtolower($singularHumanName); ?> could not be saved. Please, try again.');
+				$this->Flash->error('The <?= strtolower($singularHumanName) ?> could not be saved. Please, try again.');
 			}
 		}
 <?php
@@ -134,9 +134,9 @@ $allAssociations = array_merge(
 		$<?= $singularName ?> = $this-><?= $currentModelName ?>->get($id);
 		$this->request->allowMethod('post', 'delete');
 		if ($this-><?= $currentModelName; ?>->delete($<?= $singularName ?>)) {
-			$this->Flash->success('The <?= strtolower($singularHumanName); ?> has been deleted.');
+			$this->Flash->success('The <?= strtolower($singularHumanName) ?> has been deleted.');
 		} else {
-			$this->Flash->error('The <?= strtolower($singularHumanName); ?> could not be deleted. Please, try again.');
+			$this->Flash->error('The <?= strtolower($singularHumanName) ?> could not be deleted. Please, try again.');
 		}
 		return $this->redirect(['action' => 'index']);
 	}
