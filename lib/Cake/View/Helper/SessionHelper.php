@@ -120,6 +120,7 @@ class SessionHelper extends AppHelper {
 
 		if (CakeSession::check('Message.' . $key)) {
 			$flash = CakeSession::read('Message.' . $key);
+			CakeSession::delete('Message.' . $key);
 			$message = $flash['message'];
 			unset($flash['message']);
 
@@ -144,7 +145,6 @@ class SessionHelper extends AppHelper {
 				$tmpVars['message'] = $message;
 				$out = $this->_View->element($flash['element'], $tmpVars, $options);
 			}
-			CakeSession::delete('Message.' . $key);
 		}
 		return $out;
 	}
