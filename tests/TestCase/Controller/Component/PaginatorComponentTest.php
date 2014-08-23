@@ -149,7 +149,7 @@ class PaginatorComponentTest extends TestCase {
 	public function testPaginateCustomFinder() {
 		$settings = array(
 			'PaginatorPosts' => array(
-				'findType' => 'popular',
+				'finder' => 'popular',
 				'fields' => array('id', 'title'),
 				'maxLimit' => 10,
 			)
@@ -163,7 +163,7 @@ class PaginatorComponentTest extends TestCase {
 			->will($this->returnValue($query));
 
 		$this->Paginator->paginate($table, $settings);
-		$this->assertEquals('popular', $this->request->params['paging']['PaginatorPosts']['findType']);
+		$this->assertEquals('popular', $this->request->params['paging']['PaginatorPosts']['finder']);
 	}
 
 /**
@@ -267,14 +267,14 @@ class PaginatorComponentTest extends TestCase {
 			'page' => 1,
 			'limit' => 20,
 			'maxLimit' => 100,
-			'findType' => 'myCustomFind'
+			'finder' => 'myCustomFind'
 		];
 		$result = $this->Paginator->mergeOptions('Post', $settings);
 		$expected = array(
 			'page' => 10,
 			'limit' => 10,
 			'maxLimit' => 100,
-			'findType' => 'myCustomFind',
+			'finder' => 'myCustomFind',
 			'whitelist' => ['limit', 'sort', 'page', 'direction'],
 		);
 		$this->assertEquals($expected, $result);
@@ -683,7 +683,7 @@ class PaginatorComponentTest extends TestCase {
 		$this->assertEquals(4, $result['current']);
 		$this->assertEquals(4, $result['count']);
 
-		$settings = array('findType' => 'published');
+		$settings = array('finder' => 'published');
 		$result = $this->Paginator->paginate($table, $settings);
 		$this->assertCount(3, $result, '3 rows should come back');
 		$this->assertEquals(array(1, 2, 3), $idExtractor($result));
@@ -692,7 +692,7 @@ class PaginatorComponentTest extends TestCase {
 		$this->assertEquals(3, $result['current']);
 		$this->assertEquals(3, $result['count']);
 
-		$settings = array('findType' => 'published', 'limit' => 2);
+		$settings = array('finder' => 'published', 'limit' => 2);
 		$result = $this->Paginator->paginate($table, $settings);
 		$this->assertCount(2, $result, '2 rows should come back');
 		$this->assertEquals(array(1, 2), $idExtractor($result));
@@ -708,6 +708,18 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
+ * test paginate() and custom find with deprecated option.
+ *
+ * @expectedException PHPUnit_Framework_Error_Deprecated
+ * @return void
+ */
+	public function testPaginateCustomFindOldOption() {
+		$this->loadFixtures('Post');
+		$table = TableRegistry::get('PaginatorPosts');
+		$this->Paginator->paginate($table, ['findType' => 'published']);
+	}
+
+/**
  * test paginate() and custom find with fields array, to make sure the correct count is returned.
  *
  * @return void
@@ -719,7 +731,7 @@ class PaginatorComponentTest extends TestCase {
 		$table->save(new \Cake\ORM\Entity($data));
 
 		$settings = [
-			'findType' => 'list',
+			'finder' => 'list',
 			'conditions' => array('PaginatorPosts.published' => 'Y'),
 			'limit' => 2
 		];
@@ -748,7 +760,7 @@ class PaginatorComponentTest extends TestCase {
  */
 	public function testPaginateCustomFindCount() {
 		$settings = array(
-			'findType' => 'published',
+			'finder' => 'published',
 			'limit' => 2
 		);
 		$table = $this->_getMockPosts(['find']);
