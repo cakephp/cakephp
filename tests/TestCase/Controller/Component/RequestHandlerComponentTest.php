@@ -140,6 +140,7 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testInitializeContentTypeWithjQueryAccept() {
 		$_SERVER['HTTP_ACCEPT'] = 'application/json, application/javascript, */*; q=0.01';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$event = new Event('Controller.initialize', $this->Controller);
 		$this->assertNull($this->RequestHandler->ext);
 		Router::parseExtensions('json', false);

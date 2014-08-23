@@ -155,11 +155,11 @@ class RequestHandlerComponent extends Component {
 		if (isset($this->request->params['_ext'])) {
 			$this->ext = $this->request->params['_ext'];
 		}
-		if (empty($this->ext) && $this->request->is('ajax')) {
-			$this->ext = 'ajax';
-		}
 		if (empty($this->ext) || in_array($this->ext, array('html', 'htm'))) {
 			$this->_setExtension();
+		}
+		if (empty($this->ext) && $this->request->is('ajax')) {
+			$this->ext = 'ajax';
 		}
 
 		$classMap = $this->_config['viewClassMap'];
