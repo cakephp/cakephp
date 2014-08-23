@@ -646,7 +646,7 @@ class TreeBehavior extends Behavior {
 
 		$query = $this->_scope($this->_table->query())
 			->select($pk)
-			->where([$parent .' IS' => $parentId])
+			->where([$parent . ' IS' => $parentId])
 			->order($pk)
 			->hydrate(false)
 			->bufferResults(false);
