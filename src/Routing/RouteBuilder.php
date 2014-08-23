@@ -484,7 +484,7 @@ class RouteBuilder {
  * @return void
  * @throws \InvalidArgumentException when there is no callable parameter.
  */
-	public function scope($path, $params, $callback) {
+	public function scope($path, $params, $callback = null) {
 		if ($callback === null) {
 			$callback = $params;
 			$params = [];

@@ -70,7 +70,11 @@ class RequestHandlerComponentTest extends TestCase {
 		$this->Controller = new RequestHandlerTestController($request, $response);
 		$this->Controller->constructClasses();
 		$this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
-		$this->_extensions = Router::extensions();
+
+		Router::scope('/', function($routes) {
+			$routes->extensions('json');
+			$routes->fallbacks();
+		});
 	}
 
 /**
@@ -83,10 +87,6 @@ class RequestHandlerComponentTest extends TestCase {
 		DispatcherFactory::clear();
 		$this->_init();
 		unset($this->RequestHandler, $this->Controller);
-		if (!headers_sent()) {
-			header('Content-type: text/html'); //reset content type.
-		}
-		call_user_func_array('Cake\Routing\Router::parseExtensions', [$this->_extensions, false]);
 	}
 
 /**

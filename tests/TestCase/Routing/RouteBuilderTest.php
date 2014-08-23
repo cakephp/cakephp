@@ -419,6 +419,12 @@ class RouteBuilderTest extends TestCase {
 			$this->assertEquals('/api/v1', $routes->path());
 			$this->assertEquals(['prefix' => 'api', 'version' => 1], $routes->params());
 		});
+
+		$routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
+		$routes->scope('/v1', function($routes) {
+			$this->assertEquals('/api/v1', $routes->path());
+			$this->assertEquals(['prefix' => 'api'], $routes->params());
+		});
 	}
 
 }
