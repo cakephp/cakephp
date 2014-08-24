@@ -596,11 +596,16 @@ abstract class Association {
 	protected function _appendFields($query, $surrogate, $options) {
 		$options['fields'] = $surrogate->clause('select') ?: $options['fields'];
 		$target = $this->_targetTable;
-		if (empty($options['fields'])) {
+		$autoFields = $surrogate->autoFields();
+		if (empty($options['fields']) && !$autoFields) {
 			$f = isset($options['fields']) ? $options['fields'] : null;
 			if ($options['includeFields'] && ($f === null || $f !== false)) {
 				$options['fields'] = $target->schema()->columns();
 			}
+		}
+
+		if ($autoFields === true) {
+			$options['fields'] = array_merge((array)$options['fields'], $target->schema()->columns());
 		}
 
 		if (!empty($options['fields'])) {

@@ -27,7 +27,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests Query class
- *
  */
 class QueryTest extends TestCase {
 
@@ -2004,6 +2003,74 @@ class QueryTest extends TestCase {
 			json_encode($table->find()),
 			json_encode($table->find()->toArray())
 		);
+	}
+
+/**
+ * Test that addFields() works in the basic case.
+ *
+ * @return void
+ */
+	public function testAutoFields() {
+		$table = TableRegistry::get('Articles');
+		$result = $table->find('all')
+			->select(['myField' => 'id + 20'])
+			->autoFields(true)
+			->hydrate(false)
+			->first();
+
+		$this->assertArrayHasKey('myField', $result);
+		$this->assertArrayHasKey('id', $result);
+		$this->assertArrayHasKey('title', $result);
+	}
+
+/**
+ * Test autoFields with auto fields.
+ *
+ * @return void
+ */
+	public function testAutoFieldsWithAssociations() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors');
+
+		$result = $table->find()
+			->select(['myField' => '(SELECT RAND())'])
+			->autoFields(true)
+			->hydrate(false)
+			->contain('Authors')
+			->first();
+
+		$this->assertArrayHasKey('myField', $result);
+		$this->assertArrayHasKey('title', $result);
+		$this->assertArrayHasKey('author', $result);
+		$this->assertNotNull($result['author']);
+		$this->assertArrayHasKey('name', $result['author']);
+	}
+
+/**
+ * Test autoFields in contain query builder
+ *
+ * @return void
+ */
+	public function testAutoFieldsWithContainQueryBuilder() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors');
+
+		$result = $table->find()
+			->select(['myField' => '(SELECT RAND())'])
+			->autoFields(true)
+			->hydrate(false)
+			->contain(['Authors' => function($q) {
+				return $q->select(['compute' => '2 + 20'])
+					->autoFields(true);
+			}])
+			->first();
+
+		$this->assertArrayHasKey('myField', $result);
+		$this->assertArrayHasKey('title', $result);
+		$this->assertArrayHasKey('author', $result);
+		$this->assertNotNull($result['author']);
+		$this->assertArrayHasKey('name', $result['author']);
+		$this->assertArrayHasKey('compute', $result);
 	}
 
 }
