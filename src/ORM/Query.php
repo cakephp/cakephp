@@ -611,6 +611,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 				$this->from([$this->_repository->alias() => $this->_repository->table()]);
 			}
 			$this->_addDefaultFields();
+			$this->_addAdditionalSelectFields();
 			$this->eagerLoader()->attachAssociations($this, $this->_repository, !$this->_hasFields);
 		}
 	}
@@ -633,6 +634,15 @@ class Query extends DatabaseQuery implements JsonSerializable {
 
 		$aliased = $this->aliasFields($select, $this->repository()->alias());
 		$this->select($aliased, true);
+	}
+
+/**
+ * Inspects if there are any additional set fields for selecting and adds all
+ * the fields to default or custom fields for the table.
+ */
+	protected function _addAdditionalSelectFields() {
+		$addSelect = $this -> clause('addSelect');
+		$this->select($addSelect);		
 	}
 
 /**
