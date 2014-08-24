@@ -131,7 +131,7 @@ class Behavior implements EventListener {
 /**
  * verifyConfig
  *
- * Check that implemented* keys contain values pointing at callable
+ * Check that implemented* keys contain values pointing at callable.
  *
  * @return void
  * @throws \Cake\Error\Exception if config are invalid
