@@ -47,6 +47,11 @@ class CacheTest extends TestCase {
 		Cache::drop('tests');
 	}
 
+/**
+ * Configure cache settings for test
+ *
+ * @return void
+ */
 	protected function _configCache() {
 		Cache::config('tests', [
 			'engine' => 'File',
