@@ -174,7 +174,7 @@ class PluginTest extends TestCase {
 				'routes' => true,
 				'ignoreMissing' => true
 		)));
-		Plugin::routes();
+		$this->assertTrue(Plugin::routes());
 	}
 
 /**
