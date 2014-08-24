@@ -380,6 +380,14 @@ class BasicsTest extends CakeTestCase {
 		$expected = 'Some string with multiple arguments';
 		$this->assertEquals($expected, $result);
 
+		$result = __('Some string with %s and a null argument', null);
+		$expected = 'Some string with %s and a null argument';
+		$this->assertEquals($expected, $result);
+
+		$result = __('Some string with multiple %s%s, first beeing null', null, 'arguments');
+		$expected = 'Some string with multiple arguments, first beeing null';
+		$this->assertEquals($expected, $result);
+
 		$result = __('Some string with %s %s', array('multiple', 'arguments'));
 		$expected = 'Some string with multiple arguments';
 		$this->assertEquals($expected, $result);

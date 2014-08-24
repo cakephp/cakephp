@@ -554,7 +554,7 @@ if (!function_exists('__')) {
 
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($singular);
-		if ($args === null) {
+		if ($args === null && func_num_args() < 3) {
 			return $translated;
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 1);
@@ -586,7 +586,7 @@ if (!function_exists('__n')) {
 
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($singular, $plural, null, I18n::LC_MESSAGES, $count);
-		if ($args === null) {
+		if ($args === null && func_num_args() < 5) {
 			return $translated;
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 3);
@@ -615,7 +615,7 @@ if (!function_exists('__d')) {
 		}
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($msg, null, $domain);
-		if ($args === null) {
+		if ($args === null && func_num_args() < 4) {
 			return $translated;
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 2);
@@ -648,7 +648,7 @@ if (!function_exists('__dn')) {
 		}
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($singular, $plural, $domain, I18n::LC_MESSAGES, $count);
-		if ($args === null) {
+		if ($args === null && func_num_args() < 6) {
 			return $translated;
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 4);
@@ -692,7 +692,7 @@ if (!function_exists('__dc')) {
 		}
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($msg, null, $domain, $category);
-		if ($args === null) {
+		if ($args === null && func_num_args() < 5) {
 			return $translated;
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 3);
@@ -740,7 +740,7 @@ if (!function_exists('__dcn')) {
 		}
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($singular, $plural, $domain, $category, $count);
-		if ($args === null) {
+		if ($args === null && func_num_args() < 7) {
 			return $translated;
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 5);
@@ -780,7 +780,7 @@ if (!function_exists('__c')) {
 		}
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($msg, null, null, $category);
-		if ($args === null) {
+		if ($args === null && func_num_args() < 4) {
 			return $translated;
 		} elseif (!is_array($args)) {
 			$args = array_slice(func_get_args(), 2);
