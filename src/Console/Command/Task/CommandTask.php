@@ -138,7 +138,7 @@ class CommandTask extends Shell {
 		$return = array_keys($taskMap);
 		$return = array_map('Cake\Utility\Inflector::underscore', $return);
 
-		$shellMethodNames = ['main', 'help'];
+		$shellMethodNames = ['main', 'help', 'getOptionParser'];
 
 		$baseClasses = ['Object', 'Shell', 'AppShell'];
 
