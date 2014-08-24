@@ -54,9 +54,8 @@ class DboSource extends DataSource {
 
 /**
  * Caches result from query parsing operations.  Cached results for both DboSource::name() and
- * DboSource::conditions() will be stored here.  Method caching uses `md5()` which is
- * fast but can collisions more easily than other hashing algorithms.  If you have problems
- * with collisions, set DboSource::$cacheMethods to false.
+ * DboSource::conditions() will be stored here.  Method caching uses `md5()`. If you have
+ * problems with collisions, set DboSource::$cacheMethods to false.
  *
  * @var array
  * @access public
