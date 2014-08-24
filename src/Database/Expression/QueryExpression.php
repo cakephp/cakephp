@@ -18,7 +18,7 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
-use \Countable;
+use Countable;
 
 /**
  * Represents a SQL Query expression. Internally it stores a tree of
