@@ -23,7 +23,7 @@ use Cake\Core\Configure;
 class String {
 
 /**
- * Generate a random UUID
+ * Generate a random UUID version 4
  *
  * @see http://www.ietf.org/rfc/rfc4122.txt
  * @return string RFC 4122 UUID
