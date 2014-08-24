@@ -2013,7 +2013,7 @@ class QueryTest extends TestCase {
 	public function testAutoFields() {
 		$table = TableRegistry::get('Articles');
 		$result = $table->find('all')
-			->select(['myField' => 'id + 20'])
+			->select(['myField' => '(SELECT 20)'])
 			->autoFields(true)
 			->hydrate(false)
 			->first();
