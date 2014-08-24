@@ -47,6 +47,11 @@ class CacheTest extends TestCase {
 		Cache::drop('tests');
 	}
 
+/**
+ * Configure cache settings for test
+ *
+ * @return void
+ */
 	protected function _configCache() {
 		Cache::config('tests', [
 			'engine' => 'File',
@@ -60,13 +65,13 @@ class CacheTest extends TestCase {
  *
  * @return void
  */
-	public function testNonFatalErrorsWithCachedisable() {
+	public function testNonFatalErrorsWithCacheDisable() {
 		Cache::disable();
 		$this->_configCache();
 
-		Cache::write('no_save', 'Noooo!', 'tests');
-		Cache::read('no_save', 'tests');
-		Cache::delete('no_save', 'tests');
+		$this->assertNull(Cache::write('no_save', 'Noooo!', 'tests'));
+		$this->assertFalse(Cache::read('no_save', 'tests'));
+		$this->assertNull(Cache::delete('no_save', 'tests'));
 	}
 
 /**
