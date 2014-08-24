@@ -656,7 +656,7 @@ trait CollectionTrait {
  * [
  *	1 => 'foo',
  *	2 => 'bar',
- *	3 => 'baz,
+ *	3 => 'baz',
  * ];
  *
  * $combined = (new Collection($items))->combine('id', 'name', 'parent');

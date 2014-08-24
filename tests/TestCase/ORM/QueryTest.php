@@ -2060,7 +2060,7 @@ class QueryTest extends TestCase {
 			->autoFields(true)
 			->hydrate(false)
 			->contain(['Authors' => function($q) {
-				return $q->select(['compute' => '2 + 20'])
+				return $q->select(['compute' => '(SELECT 2 + 20)'])
 					->autoFields(true);
 			}])
 			->first();
