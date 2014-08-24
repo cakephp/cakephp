@@ -14,11 +14,11 @@
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\Exception;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
-use Cake\Error;
 
 /**
  * An expression object to contain values being inserted.
@@ -70,14 +70,14 @@ class ValuesExpression implements ExpressionInterface {
  * @param array|Query $data Array of data to append into the insert, or
  *   a query for doing INSERT INTO .. SELECT style commands
  * @return void
- * @throws \Cake\Error\Exception When mixing array + Query data types.
+ * @throws \Cake\Database\Exception When mixing array + Query data types.
  */
 	public function add($data) {
 		if (
 			(count($this->_values) && $data instanceof Query) ||
 			($this->_query && is_array($data))
 		) {
-			throw new Error\Exception(
+			throw new Exception(
 				'You cannot mix subqueries and array data in inserts.'
 			);
 		}

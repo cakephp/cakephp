@@ -17,10 +17,10 @@ namespace Cake\ORM;
 use Cake\Collection\CollectionTrait;
 use Cake\Database\Exception;
 use Cake\Database\Type;
-use \Countable;
-use \Iterator;
-use \JsonSerializable;
-use \Serializable;
+use Countable;
+use Iterator;
+use JsonSerializable;
+use Serializable;
 
 /**
  * Represents the results obtained after executing a query for a specific table

@@ -14,8 +14,8 @@
  */
 namespace Cake\Database\Statement;
 
-use \PDO;
-use \PDOStatement as Statement;
+use PDO;
+use PDOStatement as Statement;
 
 /**
  * Decorator for \PDOStatement class mainly used for converting human readable

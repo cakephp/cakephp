@@ -16,7 +16,7 @@ namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
 use Cake\Error;
-use \PDO;
+use PDO;
 
 /**
  * Float type converter.
