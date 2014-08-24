@@ -1,0 +1,12 @@
+{
+    "name": "cakephp/event",
+    "description": "CakePHP event dispatcher library that helps implementing the observer pattern",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CakePHP Community",
+            "homepage": "http://cakephp.org"
+        }
+    ],
+    "minimum-stability": "beta"
+}
