@@ -179,7 +179,7 @@ class Controller implements EventListener {
 	public $View;
 
 /**
- * These properties are settable directly on Controller and passed to the View as options.
+ * These properties are will be passed from the controller properties to the View as options.
  *
  * @var array
  * @see \Cake\View\View
