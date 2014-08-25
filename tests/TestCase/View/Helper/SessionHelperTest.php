@@ -139,7 +139,8 @@ class SessionHelperTest extends TestCase {
  */
 	public function testFlashIncomplete() {
 		$result = $this->Session->flash('incomplete');
-		$expected = '<div id="flash-message" class="message-info">A thing happened</div>';
+		$expected = '<div id="incomplete-message" class="message-info">A thing happened</div>';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
