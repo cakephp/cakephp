@@ -393,7 +393,7 @@ class RouteTest extends TestCase {
  *
  * @return void
  */
-	public function testGreedyRouteFailurePassedArg() {
+	public function testMatchGreedyRouteFailurePassedArg() {
 		$route = new Route('/:controller/:action', array('plugin' => null));
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', '0'));
 		$this->assertFalse($result);
@@ -445,6 +445,86 @@ class RouteTest extends TestCase {
 
 		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 5, 'something'));
 		$this->assertFalse($result);
+	}
+
+/**
+ * Test that the pass option lets you use positional arguments for the
+ * route elements that were named.
+ *
+ * @return void
+ */
+	public function testMatchWithPassOption() {
+		$route = new Route(
+			'/blog/:id-:slug',
+			['controller' => 'Blog', 'action' => 'view'],
+			['pass' => ['id', 'slug']]
+		);
+		$result = $route->match([
+			'controller' => 'Blog',
+			'action' => 'view',
+			'id' => 1,
+			'slug' => 'second'
+		]);
+		$this->assertEquals('/blog/1-second', $result);
+
+		$result = $route->match([
+			'controller' => 'Blog',
+			'action' => 'view',
+			1,
+			'second'
+		]);
+		$this->assertEquals('/blog/1-second', $result);
+
+		$result = $route->match([
+			'controller' => 'Blog',
+			'action' => 'view',
+			1,
+			'second',
+			'query' => 'string'
+		]);
+		$this->assertEquals('/blog/1-second?query=string', $result);
+
+		$result = $route->match([
+			'controller' => 'Blog',
+			'action' => 'view',
+			1 => 2,
+			2 => 'second'
+		]);
+		$this->assertFalse($result, 'Positional args must match exactly.');
+	}
+
+/**
+ * Test that match() with pass and greedy routes.
+ *
+ * @return void
+ */
+	public function testMatchWithPassOptionGreedy() {
+		$route = new Route(
+			'/blog/:id-:slug/*',
+			['controller' => 'Blog', 'action' => 'view'],
+			['pass' => ['id', 'slug']]
+		);
+		$result = $route->match([
+			'controller' => 'Blog',
+			'action' => 'view',
+			'id' => 1,
+			'slug' => 'second',
+			'third',
+			'fourth',
+			'query' => 'string'
+		]);
+		$this->assertEquals('/blog/1-second/third/fourth?query=string', $result);
+
+		$result = $route->match([
+			'controller' => 'Blog',
+			'action' => 'view',
+			1,
+			'second',
+			'third',
+			'fourth',
+			'query' => 'string'
+		]);
+		$this->assertEquals('/blog/1-second/third/fourth?query=string', $result);
 	}
 
 /**
