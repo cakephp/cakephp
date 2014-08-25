@@ -8,5 +8,10 @@
             "homepage": "http://cakephp.org"
         }
     ],
+	"autoload": {
+		"psr-4": {
+			"Cake\\Collection\\": "."
+		}
+	},
     "minimum-stability": "beta"
 }
