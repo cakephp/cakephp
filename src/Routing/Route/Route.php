@@ -430,6 +430,17 @@ class Route {
 			return false;
 		}
 
+		// If this route uses pass option, and the passed elements are
+		// not set, rekey elements.
+		if (isset($this->options['pass'])) {
+			foreach ($this->options['pass'] as $i => $name) {
+				if (isset($url[$i]) && !isset($url[$name])) {
+					$url[$name] = $url[$i];
+					unset($url[$i]);
+				}
+			}
+		}
+
 		// check that all the key names are in the url
 		$keyNames = array_flip($this->keys);
 		if (array_intersect_key($keyNames, $url) !== $keyNames) {
