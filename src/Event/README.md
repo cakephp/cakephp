@@ -8,7 +8,8 @@ state and the event itself for the rest of the callbacks.
 
 ## Usage
 
-Collections can be created using an array or Traversable object.  A simple use of a Collection would be:
+Listeners need to be registered into a manager and events can then be triggered so that listeners can be informed
+of the action.
 
 ```php
 use Cake\Event\Event;
