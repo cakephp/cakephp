@@ -1,6 +1,6 @@
 {
-    "name": "cakephp/collection",
-    "description": "Work easily with arrays and iterators by having a battery of utility traversal methods",
+    "name": "cakephp/event",
+    "description": "CakePHP event dispatcher library that helps implementing the observer pattern",
     "license": "MIT",
     "authors": [
         {
@@ -10,7 +10,7 @@
     ],
 	"autoload": {
 		"psr-4": {
-			"Cake\\Collection\\": "."
+			"Cake\\Event\\": "."
 		}
 	},
     "minimum-stability": "beta"

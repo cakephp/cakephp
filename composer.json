@@ -40,6 +40,7 @@
 		}
 	},
 	"replace": {
-		"cakephp/collection": "self.version"
+		"cakephp/collection": "self.version",
+		"cakephp/event": "self.version"
 	}
 }
