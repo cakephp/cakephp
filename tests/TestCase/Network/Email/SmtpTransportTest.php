@@ -312,18 +312,6 @@ class SmtpTransportTest extends TestCase {
 	}
 
 /**
- * testAuthNoAuth method
- *
- * @return void
- */
-	public function testAuthNoAuth() {
-		$this->socket->expects($this->any())->method('write')->with($this->logicalNot($this->stringContains('AUTH LOGIN')));
-
-		$this->SmtpTransport->config(array('username' => null, 'password' => null));
-		$this->SmtpTransport->auth();
-	}
-
-/**
  * testRcpt method
  *
  * @return void
