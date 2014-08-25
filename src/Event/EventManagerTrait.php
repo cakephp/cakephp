@@ -15,8 +15,7 @@
 namespace Cake\Event;
 
 /**
- *
- * Provides the _eventManager property for usage in classes that require it.
+ * Provides the event manager interface features for usage in classes that require it.
  *
  */
 trait EventManagerTrait {
