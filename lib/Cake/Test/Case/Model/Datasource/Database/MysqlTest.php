@@ -899,7 +899,7 @@ CREATE TABLE $name (
 	PRIMARY KEY(id)
 );
 SQL;
-		$this->Dbo->execute($sql); 
+		$this->Dbo->execute($sql);
 		$model = new Model(array(
 			'table' => 'timestamp_default_values',
 			'ds' => 'test',
