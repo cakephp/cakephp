@@ -21,6 +21,7 @@ use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
 use Cake\View\Cell;
 use Cake\View\CellTrait;
+use TestApp\View\CustomJsonView;
 
 /**
  * CellTest class.
@@ -37,7 +38,6 @@ class CellTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('App.namespace', 'TestApp');
-		Configure::write('debug', 2);
 		Plugin::load(['TestPlugin', 'TestTheme']);
 		$request = $this->getMock('Cake\Network\Request');
 		$response = $this->getMock('Cake\Network\Response');
@@ -210,6 +210,41 @@ class CellTest extends TestCase {
  */
 	public function testCellMissingMethod() {
 		$this->View->cell('Articles::nope');
+	}
+
+/**
+ * Test that cell options are passed on.
+ *
+ * @return void
+ */
+	public function testCellOptions() {
+		$cell = $this->View->cell('Articles', [], ['limit' => 10, 'nope' => 'nope']);
+		$this->assertEquals(10, $cell->limit);
+		$this->assertFalse(property_exists('nope', $cell), 'Not a valid option');
+	}
+
+/**
+ * Test that cells get the helper configuration from the view that created them.
+ *
+ * @return void
+ */
+	public function testCellInheritsHelperConfig() {
+		$this->View->helpers = ['Url', 'Form', 'Banana'];
+		$cell = $this->View->cell('Articles');
+		$this->assertSame($this->View->helpers, $cell->helpers);
+	}
+
+/**
+ * Test that cells the view class name of a custom view passed on.
+ *
+ * @return void
+ */
+	public function testCellInheritsCustomViewClass() {
+		$request = $this->getMock('Cake\Network\Request');
+		$response = $this->getMock('Cake\Network\Response');
+		$view = new CustomJsonView($request, $response);
+		$cell = $view->cell('Articles');
+		$this->assertSame('TestApp\View\CustomJsonView', $cell->viewClass);
 	}
 
 }

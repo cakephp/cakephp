@@ -88,6 +88,15 @@ abstract class Cell {
 	public $theme;
 
 /**
+ * The helpers this cell uses.
+ *
+ * This property is copied automatically when using the CellTrait
+ *
+ * @var array
+ */
+	public $helpers = [];
+
+/**
  * These properties can be set directly on Cell and passed to the View as options.
  *
  * @var array
