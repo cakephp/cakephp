@@ -58,6 +58,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		'insert' => [],
 		'values' => [],
 		'select' => [],
+		'addSelect' => [],
 		'distinct' => false,
 		'modifier' => [],
 		'from' => [],
@@ -261,6 +262,47 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 		$this->_dirty();
 		$this->_type = 'select';
+		return $this;
+	}
+
+/**
+ * Adds new fields to be returned by a SELECT statement when this query is
+ * executed. Fields can be passed as an array of strings, array of expression
+ * objects, a single expression or a single string.
+ *
+ *
+ * If an array is passed, keys will be used to alias fields using the value as the
+ * real field to be aliased. It is possible to alias strings, Expression objects or
+ * even other Query objects.
+ *
+ * Difference from 'select' method is that select method replace default fields. That
+ * means associations are not loaded. This method allows additional fields to be added
+ * whether custom fields were selected by 'select' method or default fields should
+ * be selected.
+ *
+ * By default this function will append any passed argument to the list of fields
+ * to be selected, unless the second argument is set to true.
+ * 
+ * @param array|ExpressionInterface|string $fields fields to be added to the list
+ * @param bool $overwrite whether to reset fields with passed list or not
+ * @return $this
+ */
+	public function addSelect($fields = [], $overwrite = false)
+	{
+		if (!is_string($fields) && is_callable($fields)) {
+			$fields = $fields($this);
+		}
+
+		if (!is_array($fields)) {
+			$fields = [$fields];
+		}
+
+		if ($overwrite) {
+			$this->_parts['addSelect'] = $fields;
+		} else {
+			$this->_parts['addSelect'] = array_merge($this->_parts['addSelect'], $fields);
+		}
+
 		return $this;
 	}
 
