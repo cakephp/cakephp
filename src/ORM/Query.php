@@ -67,6 +67,14 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	protected $_hasFields;
 
 /**
+ * Tracks whether or not the original query should include
+ * fields from the top level table.
+ *
+ * @var bool
+ */
+	protected $_autoFields;
+
+/**
  * Boolean for tracking whether or not buffered results
  * are enabled.
  *
@@ -625,7 +633,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 		$select = $this->clause('select');
 		$this->_hasFields = true;
 
-		if (!count($select)) {
+		if (!count($select) || $this->_autoFields === true) {
 			$this->_hasFields = false;
 			$this->select($this->repository()->schema()->columns());
 			$select = $this->clause('select');
@@ -754,6 +762,23 @@ class Query extends DatabaseQuery implements JsonSerializable {
  */
 	public function jsonSerialize() {
 		return $this->all();
+	}
+
+/**
+ * Get/Set whether or not the ORM should automatically append fields.
+ *
+ * By default calling select() will disable auto-fields. You can re-enable
+ * auto-fields with this method.
+ *
+ * @param bool $value The value to set or null to read the current value.
+ * @return bool|$this Either the current value or the query object.
+ */
+	public function autoFields($value = null) {
+		if ($value === null) {
+			return $this->_autoFields;
+		}
+		$this->_autoFields = (bool)$value;
+		return $this;
 	}
 
 }
