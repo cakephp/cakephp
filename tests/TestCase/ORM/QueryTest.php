@@ -2072,5 +2072,32 @@ class QueryTest extends TestCase {
 		$this->assertArrayHasKey('name', $result['author']);
 		$this->assertArrayHasKey('compute', $result);
 	}
+	
+/**
+ * Test count with autoFields
+ *
+ * @return void
+ */
+	public function testAutoFieldsCount() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors');
+
+		$resultNormal = $table->find()
+			->select(['myField' => '(SELECT RAND())'])
+			->hydrate(false)
+			->contain('Authors')
+			->count();
+
+		$resultAutoFields = $table->find()
+			->select(['myField' => '(SELECT RAND())'])
+			->autoFields(true)
+			->hydrate(false)
+			->contain('Authors')
+			->count();
+
+		$this->assertNotNull($resultNormal);
+		$this->assertNotNull($resultAutoFields);
+		$this->assertEquals($resultNormal, $resultAutoFields);
+	}
 
 }
