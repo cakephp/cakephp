@@ -164,7 +164,7 @@ class PaginatorComponent extends Component {
 		unset($options['finder'], $options['maxLimit']);
 
 		if (empty($query)) {
-			$query = $object->find($type);
+			$query = $object->find($type, isset($options['finderOptions']) ? $options['finderOptions'] : []);
 		}
 
 		$query->applyOptions($options);
