@@ -68,7 +68,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 
 /**
  * Tracks whether or not the original query should include
- * fields from the top level model.
+ * fields from the top level table.
  *
  * @var bool
  */
