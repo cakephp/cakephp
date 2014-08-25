@@ -469,6 +469,7 @@ class ControllerTestCaseTest extends TestCase {
 
 /**
  * Test that multiple calls to redirect in the same test method don't cause issues.
+ * - Asserting true, to avoid test to be shown as "Risky".
  *
  * @return void
  */
@@ -478,6 +479,8 @@ class ControllerTestCaseTest extends TestCase {
 		$options = array('method' => 'get');
 		$this->Case->testAction('/tests_apps/redirect_to', $options);
 		$this->Case->testAction('/tests_apps/redirect_to', $options);
+
+		$this->assertTrue(true);
 	}
 
 /**

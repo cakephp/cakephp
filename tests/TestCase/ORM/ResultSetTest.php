@@ -65,6 +65,7 @@ class ResultSetTest extends TestCase {
 		foreach ($results as $result) {
 			$second[] = $result;
 		}
+		$this->assertEquals($first, $second);
 	}
 
 /**
