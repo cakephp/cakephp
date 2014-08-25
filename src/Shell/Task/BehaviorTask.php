@@ -12,24 +12,41 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Shell\Task;
 
-echo "<?php\n";
-?>
-namespace <?= $namespace ?>\Shell;
-
-use Cake\Console\Shell;
+use Cake\Shell\Task\SimpleBakeTask;
 
 /**
- * <?= $name ?> shell command.
+ * Behavior code generator.
  */
-class <?= $name ?>Shell extends Shell {
+class BehaviorTask extends SimpleBakeTask {
 
 /**
- * main() method.
+ * Task name used in path generation.
  *
- * @return bool|int Success or error code.
+ * @var string
  */
-	public function main() {
+	public $pathFragment = 'Model/Behavior/';
+
+/**
+ * {@inheritDoc}
+ */
+	public function name() {
+		return 'behavior';
+	}
+
+/**
+ * {@inheritDoc}
+ */
+	public function fileName($name) {
+		return $name . 'Behavior.php';
+	}
+
+/**
+ * {@inheritDoc}
+ */
+	public function template() {
+		return 'behavior';
 	}
 
 }

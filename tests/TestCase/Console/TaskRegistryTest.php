@@ -53,8 +53,8 @@ class TaskRegistryTest extends TestCase {
  */
 	public function testLoad() {
 		$result = $this->Tasks->load('Project');
-		$this->assertInstanceOf('Cake\Console\Command\Task\ProjectTask', $result);
-		$this->assertInstanceOf('Cake\Console\Command\Task\ProjectTask', $this->Tasks->Project);
+		$this->assertInstanceOf('Cake\Shell\Task\ProjectTask', $result);
+		$this->assertInstanceOf('Cake\Shell\Task\ProjectTask', $this->Tasks->Project);
 
 		$result = $this->Tasks->loaded();
 		$this->assertEquals(['Project'], $result, 'loaded() results are wrong.');
@@ -82,8 +82,8 @@ class TaskRegistryTest extends TestCase {
 		$this->Tasks = new TaskRegistry($shell, $dispatcher);
 
 		$result = $this->Tasks->load('TestPlugin.OtherTask');
-		$this->assertInstanceOf('TestPlugin\Console\Command\Task\OtherTaskTask', $result, 'Task class is wrong.');
-		$this->assertInstanceOf('TestPlugin\Console\Command\Task\OtherTaskTask', $this->Tasks->OtherTask, 'Class is wrong');
+		$this->assertInstanceOf('TestPlugin\Shell\Task\OtherTaskTask', $result, 'Task class is wrong.');
+		$this->assertInstanceOf('TestPlugin\Shell\Task\OtherTaskTask', $this->Tasks->OtherTask, 'Class is wrong');
 		Plugin::unload();
 	}
 
@@ -96,15 +96,15 @@ class TaskRegistryTest extends TestCase {
 		Plugin::load('TestPlugin');
 
 		$result = $this->Tasks->load('ProjectAliased', array('className' => 'Project'));
-		$this->assertInstanceOf('Cake\Console\Command\Task\ProjectTask', $result);
-		$this->assertInstanceOf('Cake\Console\Command\Task\ProjectTask', $this->Tasks->ProjectAliased);
+		$this->assertInstanceOf('Cake\Shell\Task\ProjectTask', $result);
+		$this->assertInstanceOf('Cake\Shell\Task\ProjectTask', $this->Tasks->ProjectAliased);
 
 		$result = $this->Tasks->loaded();
 		$this->assertEquals(array('ProjectAliased'), $result, 'loaded() results are wrong.');
 
 		$result = $this->Tasks->load('SomeTask', array('className' => 'TestPlugin.OtherTask'));
-		$this->assertInstanceOf('TestPlugin\Console\Command\Task\OtherTaskTask', $result);
-		$this->assertInstanceOf('TestPlugin\Console\Command\Task\OtherTaskTask', $this->Tasks->SomeTask);
+		$this->assertInstanceOf('TestPlugin\Shell\Task\OtherTaskTask', $result);
+		$this->assertInstanceOf('TestPlugin\Shell\Task\OtherTaskTask', $this->Tasks->SomeTask);
 
 		$result = $this->Tasks->loaded();
 		$this->assertEquals(array('ProjectAliased', 'SomeTask'), $result, 'loaded() results are wrong.');

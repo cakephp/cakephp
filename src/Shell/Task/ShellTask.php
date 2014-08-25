@@ -12,24 +12,41 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Shell\Task;
 
-echo "<?php\n";
-?>
-namespace <?= $namespace ?>\Shell;
-
-use Cake\Console\Shell;
+use Cake\Shell\Task\SimpleBakeTask;
 
 /**
- * <?= $name ?> shell command.
+ * Shell code generator.
  */
-class <?= $name ?>Shell extends Shell {
+class ShellTask extends SimpleBakeTask {
 
 /**
- * main() method.
+ * Task name used in path generation.
  *
- * @return bool|int Success or error code.
+ * @var string
  */
-	public function main() {
+	public $pathFragment = 'Shell/';
+
+/**
+ * {@inheritDoc}
+ */
+	public function name() {
+		return 'shell';
+	}
+
+/**
+ * {@inheritDoc}
+ */
+	public function fileName($name) {
+		return $name . 'Shell.php';
+	}
+
+/**
+ * {@inheritDoc}
+ */
+	public function template() {
+		return 'shell';
 	}
 
 }

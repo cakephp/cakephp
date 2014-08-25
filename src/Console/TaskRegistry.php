@@ -48,7 +48,7 @@ class TaskRegistry extends ObjectRegistry {
  * @return string|false Either the correct classname or false.
  */
 	protected function _resolveClassName($class) {
-		return App::className($class, 'Console/Command/Task', 'Task');
+		return App::className($class, 'Shell/Task', 'Task');
 	}
 
 /**

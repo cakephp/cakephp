@@ -114,8 +114,8 @@ class AppTest extends TestCase {
 			['App', 'Core', '', false, 'Cake\Core\App'],
 			['Auth', 'Controller/Component', 'Component', false, 'Cake\Controller\Component\AuthComponent'],
 			['File', 'Cache/Engine', 'Engine', false, 'Cake\Cache\Engine\FileEngine'],
-			['Command', 'Console/Command/Task', 'Task', false, 'Cake\Console\Command\Task\CommandTask'],
-			['Upgrade/Locations', 'Console/Command/Task', 'Task', false, 'Cake\Console\Command\Task\Upgrade\LocationsTask'],
+			['Command', 'Shell/Task', 'Task', false, 'Cake\Shell\Task\CommandTask'],
+			['Upgrade/Locations', 'Shell/Task', 'Task', false, 'Cake\Shell\Task\Upgrade\LocationsTask'],
 			['Pages', 'Controller', 'Controller', true, 'TestApp\Controller\PagesController'],
 		];
 	}
