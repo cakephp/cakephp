@@ -12,24 +12,13 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace TestApp\Shell\Task;
 
-echo "<?php\n";
-?>
-namespace <?= $namespace ?>\Shell;
-
-use Cake\Console\Shell;
+use Cake\Shell\Task\BakeTask;
 
 /**
- * <?= $name ?> shell command.
+ * Test stub for BakeShell.
  */
-class <?= $name ?>Shell extends Shell {
-
-/**
- * main() method.
- *
- * @return bool|int Success or error code.
- */
-	public function main() {
-	}
+class ZergTask extends BakeTask {
 
 }

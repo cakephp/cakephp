@@ -107,8 +107,8 @@ class TestAppleTask extends Shell {
 class TestBananaTask extends Shell {
 }
 
-class_alias(__NAMESPACE__ . '\TestAppleTask', 'Cake\Console\Command\Task\TestAppleTask');
-class_alias(__NAMESPACE__ . '\TestBananaTask', 'Cake\Console\Command\Task\TestBananaTask');
+class_alias(__NAMESPACE__ . '\TestAppleTask', 'Cake\Shell\Task\TestAppleTask');
+class_alias(__NAMESPACE__ . '\TestBananaTask', 'Cake\Shell\Task\TestBananaTask');
 
 /**
  * ShellTest class
@@ -331,19 +331,19 @@ class ShellTest extends TestCase {
 
 		$this->Shell->tasks = array('TestApple');
 		$this->assertTrue($this->Shell->loadTasks());
-		$this->assertInstanceOf('Cake\Console\Command\Task\TestAppleTask', $this->Shell->TestApple);
+		$this->assertInstanceOf('Cake\Shell\Task\TestAppleTask', $this->Shell->TestApple);
 
 		$this->Shell->tasks = 'TestBanana';
 		$this->assertTrue($this->Shell->loadTasks());
-		$this->assertInstanceOf('Cake\Console\Command\Task\TestAppleTask', $this->Shell->TestApple);
-		$this->assertInstanceOf('Cake\Console\Command\Task\TestBananaTask', $this->Shell->TestBanana);
+		$this->assertInstanceOf('Cake\Shell\Task\TestAppleTask', $this->Shell->TestApple);
+		$this->assertInstanceOf('Cake\Shell\Task\TestBananaTask', $this->Shell->TestBanana);
 
 		unset($this->Shell->ShellTestApple, $this->Shell->TestBanana);
 
 		$this->Shell->tasks = array('TestApple', 'TestBanana');
 		$this->assertTrue($this->Shell->loadTasks());
-		$this->assertInstanceOf('Cake\Console\Command\Task\TestAppleTask', $this->Shell->TestApple);
-		$this->assertInstanceOf('Cake\Console\Command\Task\TestBananaTask', $this->Shell->TestBanana);
+		$this->assertInstanceOf('Cake\Shell\Task\TestAppleTask', $this->Shell->TestApple);
+		$this->assertInstanceOf('Cake\Shell\Task\TestBananaTask', $this->Shell->TestBanana);
 	}
 
 /**

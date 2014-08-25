@@ -75,18 +75,18 @@ class ShellDispatcherTest extends TestCase {
  */
 	public function testFindShell() {
 		$result = $this->dispatcher->findShell('sample');
-		$this->assertInstanceOf('TestApp\Console\Command\SampleShell', $result);
+		$this->assertInstanceOf('TestApp\Shell\SampleShell', $result);
 
 		$result = $this->dispatcher->findShell('test_plugin.example');
-		$this->assertInstanceOf('TestPlugin\Console\Command\ExampleShell', $result);
+		$this->assertInstanceOf('TestPlugin\Shell\ExampleShell', $result);
 		$this->assertEquals('TestPlugin', $result->plugin);
 		$this->assertEquals('Example', $result->name);
 
 		$result = $this->dispatcher->findShell('TestPlugin.example');
-		$this->assertInstanceOf('TestPlugin\Console\Command\ExampleShell', $result);
+		$this->assertInstanceOf('TestPlugin\Shell\ExampleShell', $result);
 
 		$result = $this->dispatcher->findShell('TestPlugin.Example');
-		$this->assertInstanceOf('TestPlugin\Console\Command\ExampleShell', $result);
+		$this->assertInstanceOf('TestPlugin\Shell\ExampleShell', $result);
 	}
 
 /**
@@ -98,7 +98,7 @@ class ShellDispatcherTest extends TestCase {
 		ShellDispatcher::alias('short', 'test_plugin.example');
 
 		$result = $this->dispatcher->findShell('short');
-		$this->assertInstanceOf('TestPlugin\Console\Command\ExampleShell', $result);
+		$this->assertInstanceOf('TestPlugin\Shell\ExampleShell', $result);
 		$this->assertEquals('TestPlugin', $result->plugin);
 		$this->assertEquals('Example', $result->name);
 	}
@@ -114,7 +114,7 @@ class ShellDispatcherTest extends TestCase {
 		ShellDispatcher::alias('sample', 'test_plugin.example');
 
 		$result = $this->dispatcher->findShell('sample');
-		$this->assertInstanceOf('TestApp\Console\Command\SampleShell', $result);
+		$this->assertInstanceOf('TestApp\Shell\SampleShell', $result);
 		$this->assertEmpty($result->plugin);
 		$this->assertEquals('Sample', $result->name);
 	}
