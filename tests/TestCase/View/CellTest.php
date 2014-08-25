@@ -212,4 +212,15 @@ class CellTest extends TestCase {
 		$this->View->cell('Articles::nope');
 	}
 
+/**
+ * Test that cell options are passed on.
+ *
+ * @return void
+ */
+	public function testCellOptions() {
+		$cell = $this->View->cell('Articles', [], ['limit' => 10, 'nope' => 'nope']);
+		$this->assertEquals(10, $cell->limit);
+		$this->assertFalse(property_exists('nope', $cell), 'Not a valid option');
+	}
+
 }

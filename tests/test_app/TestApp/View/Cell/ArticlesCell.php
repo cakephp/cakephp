@@ -20,6 +20,13 @@ namespace TestApp\View\Cell;
 class ArticlesCell extends \Cake\View\Cell {
 
 /**
+ * valid cell options.
+ *
+ * @var array
+ */
+	protected $_validCellOptions = ['limit', 'page'];
+
+/**
  * Default cell action.
  *
  * @return void
