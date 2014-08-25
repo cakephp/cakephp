@@ -200,7 +200,7 @@ class TestTaskTest extends TestCase {
  */
 	public function testMethodIntrospection() {
 		$result = $this->Task->getTestableMethods('TestApp\Model\Table\ArticlesTable');
-		$expected = ['findpublished', 'dosomething', 'dosomethingelse'];
+		$expected = ['findpublished', 'dosomething', 'dosomethingelse', 'findcustomtags'];
 		$this->assertEquals($expected, array_map('strtolower', $result));
 	}
 

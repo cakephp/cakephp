@@ -207,7 +207,10 @@ class ControllerTest extends TestCase {
  */
 	public $fixtures = array(
 		'core.post',
-		'core.comment'
+		'core.comment',
+		'core.article',
+		'core.articles_tag',
+		'core.tag'
 	);
 
 /**
@@ -871,4 +874,33 @@ class ControllerTest extends TestCase {
 		$this->assertTrue(isset($registry->Paginator));
 	}
 
+/**
+ * Testing that when you paginate, your options persist over to your custom finder.
+ * Using fixture data, this tests by uses matching() in both places.
+ * If the Table gets the 'tags' array successfully, it will do a matching().
+ *
+ * @return void
+ */
+	public function testPaginateSendsFinderOptions() {
+		$request = new Request('/');
+		$request->params['pass'] = array();
+		$response = $this->getMock('Cake\Network\Response');
+		$testTags = [2, 3];
+		$Controller = new Controller($request, $response);
+		$Controller->loadModel('Articles');
+		$Controller->paginate = [
+			'Articles' => [
+				'finder' => 'customTags',
+				'tags' => $testTags,
+				'maxLimit' => 1000
+			]
+		];
+
+		$result = $Controller->paginate('Articles')->count();
+		$expected = $Controller->Articles->find('all')->matching('Tags', function($q) use ($testTags) {
+			return $q->where(['Tags.id IN' => $testTags]);
+		})->count();
+
+		$this->assertEquals($expected, $result);
+	}
 }

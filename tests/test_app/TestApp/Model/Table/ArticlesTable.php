@@ -11,6 +11,7 @@
  */
 namespace TestApp\Model\Table;
 
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
@@ -49,6 +50,22 @@ class ArticlesTable extends Table {
  * @return void
  */
 	public function doSomethingElse() {
+	}
+
+/**
+ * Custom finder, used with fixture data to ensure Paginator is sending options
+ *
+ * @param Cake\ORM\Query $query
+ * @param array $options
+ * @return Cake\ORM\Query
+ */
+	public function findCustomTags(Query $query, array $options = []) {
+		if (isset($options['tags']) && is_array($options['tags'])) {
+			return $query->matching('Tags', function($q) use ($options) {
+				return $q->where(['Tags.id IN' => $options['tags']]);
+			});
+		}
+		return $query;
 	}
 
 /**
