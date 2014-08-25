@@ -16,6 +16,7 @@ namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Utility\Inflector;
+use Cake\View\View;
 
 /**
  * Provides cell() method for usage in Controller and View classes.
@@ -75,9 +76,17 @@ trait CellTrait {
 		$cellInstance->template = Inflector::underscore($action);
 		$cellInstance->plugin = !empty($plugin) ? $plugin : null;
 		$cellInstance->theme = !empty($this->theme) ? $this->theme : null;
-		$length = count($data);
+		if (!empty($this->helpers)) {
+			$cellInstance->helpers = $this->helpers;
+		}
+		if (isset($this->viewClass)) {
+			$cellInstance->viewClass = $this->viewClass;
+		}
+		if ($this instanceof View) {
+			$cellInstance->viewClass = get_class($this);
+		}
 
-		if ($length) {
+		if (!empty($data)) {
 			$data = array_values($data);
 		}
 
