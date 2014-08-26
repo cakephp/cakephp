@@ -135,7 +135,9 @@ class ErrorHandler extends BaseErrorHandler {
 				throw new \Exception("$renderer is an invalid class.");
 			}
 			$error = new $renderer($exception);
-			$error->render();
+			$response = $error->render();
+			$this->_clearOutput();
+			$this->_sendResponse($response);
 		} catch (\Exception $e) {
 			// Disable trace for internal errors.
 			$this->_options['trace'] = false;
@@ -146,6 +148,33 @@ class ErrorHandler extends BaseErrorHandler {
 			);
 			trigger_error($message, E_USER_ERROR);
 		}
+	}
+
+/**
+ * Clear output buffers so error pages display properly.
+ *
+ * Easily stubbed in testing.
+ *
+ * @return void
+ */
+	protected function _clearOutput() {
+		while (ob_get_level()) {
+			ob_end_clean();
+		}
+	}
+
+/**
+ * Method that can be easily stubbed in testing.
+ *
+ * @param string|Cake\Network\Response $response Either the message or response object.
+ * @return void
+ */
+	protected function _sendResponse($response) {
+		if (is_string($response)) {
+			echo $response;
+			return;
+		}
+		echo $response->send();
 	}
 
 }
