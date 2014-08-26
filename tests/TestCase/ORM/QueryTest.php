@@ -2033,7 +2033,7 @@ class QueryTest extends TestCase {
 		$table->belongsTo('Authors');
 
 		$result = $table->find()
-			->select(['myField' => '(SELECT RAND())'])
+			->select(['myField' => '(SELECT 2 + 2)'])
 			->autoFields(true)
 			->hydrate(false)
 			->contain('Authors')
@@ -2056,7 +2056,7 @@ class QueryTest extends TestCase {
 		$table->belongsTo('Authors');
 
 		$result = $table->find()
-			->select(['myField' => '(SELECT RAND())'])
+			->select(['myField' => '(SELECT 2 + 2)'])
 			->autoFields(true)
 			->hydrate(false)
 			->contain(['Authors' => function($q) {
