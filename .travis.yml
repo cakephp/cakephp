@@ -48,7 +48,3 @@ script:
 
 notifications:
   email: false
-
-branches:
-  only:
-    - 3.0-paginator_finder_options
