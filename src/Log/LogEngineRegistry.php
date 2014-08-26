@@ -17,7 +17,7 @@ namespace Cake\Log;
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Log\LogInterface;
-use Cake\Utility\ObjectRegistry;
+use Cake\Core\ObjectRegistry;
 
 /**
  * Registry of loaded log engines
@@ -27,7 +27,7 @@ class LogEngineRegistry extends ObjectRegistry {
 /**
  * Resolve a logger classname.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class Partial classname to resolve.
  * @return string|false Either the correct classname or false.
@@ -43,7 +43,7 @@ class LogEngineRegistry extends ObjectRegistry {
 /**
  * Throws an exception when a logger is missing.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the logger is missing in.
@@ -57,7 +57,7 @@ class LogEngineRegistry extends ObjectRegistry {
 /**
  * Create the logger instance.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string|LogInterface $class The classname or object to make.
  * @param string $alias The alias of the object.
