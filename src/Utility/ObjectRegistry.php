@@ -72,7 +72,7 @@ abstract class ObjectRegistry {
 			$objectName = $config['className'];
 		}
 		$className = $this->_resolveClassName($objectName);
-		if (!$className) {
+		if (!$className || (is_string($className) && !class_exists($className))) {
 			list($plugin, $objectName) = pluginSplit($objectName);
 			$this->_throwMissingClassError($objectName, $plugin);
 		}

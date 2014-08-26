@@ -75,7 +75,7 @@ class ConnectionManagerTest extends TestCase {
  */
 	public function testConfigInvalidOptions() {
 		ConnectionManager::config('test_variant', [
-			'className' => 'HerpDerp'
+			'className' => 'Herp\Derp'
 		]);
 		ConnectionManager::get('test_variant');
 	}
