@@ -107,9 +107,9 @@ trait EntityTrait {
 	protected $_repositoryAlias;
 
 /**
- * Magic getter to access properties that has be set in this entity
+ * Magic getter to access properties that have been set in this entity
  *
- * @param string $property name of the property to access
+ * @param string $property Name of the property to access
  * @return mixed
  */
 	public function &__get($property) {
@@ -119,7 +119,7 @@ trait EntityTrait {
 /**
  * Magic setter to add or edit a property in this entity
  *
- * @param string $property the name of the property to set
+ * @param string $property The name of the property to set
  * @param mixed $value The value to set to the property
  * @return void
  */
