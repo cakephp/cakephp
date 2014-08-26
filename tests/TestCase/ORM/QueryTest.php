@@ -2072,7 +2072,7 @@ class QueryTest extends TestCase {
 		$this->assertArrayHasKey('name', $result['author']);
 		$this->assertArrayHasKey('compute', $result);
 	}
-	
+
 /**
  * Test that autofields works with count()
  *
