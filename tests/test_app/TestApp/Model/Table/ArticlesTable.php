@@ -61,7 +61,7 @@ class ArticlesTable extends Table {
  */
 	public function findCustomTags(Query $query, array $options = []) {
 		if (isset($options['tags']) && is_array($options['tags'])) {
-			return $query->matching('Tags', function($q) use ($options) {
+			return $query->contain(['Tags'])->matching('Tags', function($q) use ($options) {
 				return $q->where(['Tags.id IN' => $options['tags']]);
 			});
 		}
