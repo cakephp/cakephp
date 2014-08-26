@@ -184,15 +184,11 @@ abstract class BaseErrorHandler {
 		];
 		$this->_logError(LOG_ERR, $data);
 
-		if (ob_get_level()) {
-			ob_end_clean();
-		}
-
 		if (Configure::read('debug')) {
 			$this->handleException(new FatalErrorException($description, 500, $file, $line));
-		} else {
-			$this->handleException(new InternalErrorException());
+			return true;
 		}
+		$this->handleException(new InternalErrorException());
 		return true;
 	}
 

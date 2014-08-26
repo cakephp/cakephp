@@ -118,7 +118,7 @@ class ExceptionRenderer {
 /**
  * Renders the response for the exception.
  *
- * @return void
+ * @return Cake\Network\Response The response to be sent.
  */
 	public function render() {
 		$exception = $this->error;
@@ -130,8 +130,7 @@ class ExceptionRenderer {
 		if (($isDebug || $exception instanceof Error\HttpException) &&
 			method_exists($this, $method)
 		) {
-			call_user_func_array(array($this, $method), array($exception));
-			return;
+			return $this->_customMethod($method, $exception);
 		}
 
 		$message = $this->_message($exception, $code);
@@ -152,9 +151,24 @@ class ExceptionRenderer {
 		if ($exception instanceof Error\Exception && $isDebug) {
 			$this->controller->set($this->error->getAttributes());
 		}
-		$this->_outputMessage($template);
+		return $this->_outputMessage($template);
 	}
 
+/**
+ * Render a custom error method/template.
+ *
+ * @param string $method The method name to invoke.
+ * @param \Exception $exception The exception to render.
+ * @return \Cake\Network\Response The response to send.
+ */
+	protected function _customMethod($method, $exception) {
+		$result = call_user_func([$this, $method], $exception);
+		if (is_string($result)) {
+			$this->controller->response->body($result);
+			$result = $this->controller->response;
+		}
+		return $result;
+	}
 /**
  * Get method name
  *
@@ -246,29 +260,28 @@ class ExceptionRenderer {
  * Generate the response using the controller object.
  *
  * @param string $template The template to render.
- * @return void
+ * @return Cake\Network\Response A response object that can be sent.
  */
 	protected function _outputMessage($template) {
 		try {
 			$this->controller->render($template);
 			$event = new Event('Controller.shutdown', $this->controller);
 			$this->controller->afterFilter($event);
-			$this->controller->response->send();
+			return $this->controller->response;
 		} catch (MissingViewException $e) {
 			$attributes = $e->getAttributes();
 			if (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false) {
-				$this->_outputMessageSafe('error500');
-			} else {
-				$this->_outputMessage('error500');
+				return $this->_outputMessageSafe('error500');
 			}
+			return $this->_outputMessage('error500');
 		} catch (MissingPluginException $e) {
 			$attributes = $e->getAttributes();
 			if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->plugin) {
 				$this->controller->plugin = null;
 			}
-			$this->_outputMessageSafe('error500');
+			return $this->_outputMessageSafe('error500');
 		} catch (\Exception $e) {
-			$this->_outputMessageSafe('error500');
+			return $this->_outputMessageSafe('error500');
 		}
 	}
 
@@ -289,7 +302,7 @@ class ExceptionRenderer {
 		$view = $this->controller->createView();
 		$this->controller->response->body($view->render($template, 'error'));
 		$this->controller->response->type('html');
-		$this->controller->response->send();
+		return $this->controller->response;
 	}
 
 }
