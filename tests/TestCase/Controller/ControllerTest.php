@@ -888,6 +888,8 @@ class ControllerTest extends TestCase {
 		$testTags = [2, 3];
 		$Controller = new Controller($request, $response);
 		$Controller->loadModel('Articles');
+		$Controller->constructClasses();
+
 		$Controller->paginate = [
 			'Articles' => [
 				'finder' => 'customTags',
@@ -897,10 +899,10 @@ class ControllerTest extends TestCase {
 		];
 
 		$result = $Controller->paginate('Articles')->count();
-		$expected = $Controller->Articles->find('all')->matching('Tags', function($q) use ($testTags) {
+		$expected = $Controller->Articles->find('all')->contain(['Tags'])->matching('Tags', function($q) use ($testTags) {
 			return $q->where(['Tags.id IN' => $testTags]);
 		})->count();
-
+		
 		$this->assertEquals($expected, $result);
 	}
 }
