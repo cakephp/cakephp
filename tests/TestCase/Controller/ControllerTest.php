@@ -888,8 +888,9 @@ class ControllerTest extends TestCase {
 		$testTags = [2, 3];
 		$Controller = new Controller($request, $response);
 		$Controller->loadModel('Articles');
-		$Controller->constructClasses();
-
+		$this->assertInstanceOf('Cake\ORM\Table', $Controller->Articles);
+		$this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $Controller->Articles->Tags);
+		
 		$Controller->paginate = [
 			'Articles' => [
 				'finder' => 'customTags',
