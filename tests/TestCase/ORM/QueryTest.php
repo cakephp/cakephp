@@ -2074,30 +2074,19 @@ class QueryTest extends TestCase {
 	}
 	
 /**
- * Test count with autoFields
+ * Test that autofields works with count()
  *
  * @return void
  */
 	public function testAutoFieldsCount() {
 		$table = TableRegistry::get('Articles');
-		$table->belongsTo('Authors');
 
-		$resultNormal = $table->find()
-			->select(['myField' => '(SELECT RAND())'])
-			->hydrate(false)
-			->contain('Authors')
-			->count();
-
-		$resultAutoFields = $table->find()
-			->select(['myField' => '(SELECT RAND())'])
+		$result = $table->find()
+			->select(['myField' => '(SELECT (2 + 2))'])
 			->autoFields(true)
-			->hydrate(false)
-			->contain('Authors')
 			->count();
 
-		$this->assertNotNull($resultNormal);
-		$this->assertNotNull($resultAutoFields);
-		$this->assertEquals($resultNormal, $resultAutoFields);
+		$this->assertEquals(3, $result);
 	}
 
 }
