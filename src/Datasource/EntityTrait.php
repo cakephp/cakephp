@@ -276,7 +276,7 @@ trait EntityTrait {
  * $entity->has('last_name'); // false
  * }}}
  *
- * When checking multiple properties. All properties must not be null 
+ * When checking multiple properties. All properties must not be null
  * in order for true to be returned.
  *
  * @param string|array $property The property or properties to check.
@@ -457,6 +457,10 @@ trait EntityTrait {
  * Returns an array with the requested properties
  * stored in this entity, indexed by property name
  *
+ * This function will only use dynamic getters for properties that have not been
+ * set before directly. That is, it will always return the original value as stored
+ * or modified by a dynamic setter.
+ *
  * @param array $properties list of properties to be returned
  * @param bool $onlyDirty Return the requested property only if it is dirty
  * @return array
@@ -465,7 +469,9 @@ trait EntityTrait {
 		$result = [];
 		foreach ($properties as $property) {
 			if (!$onlyDirty || $this->dirty($property)) {
-				$result[$property] = $this->get($property);
+				$result[$property] = isset($this->_properties[$property]) ?
+					$this->_properties[$property] :
+					$this->get($property);
 			}
 		}
 		return $result;

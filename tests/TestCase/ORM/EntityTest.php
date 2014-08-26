@@ -476,6 +476,33 @@ class EntityTest extends TestCase {
 	}
 
 /**
+ * Tests that when a value is already set, the extract() function will not use
+ * getters for building the resulting array
+ *
+ * @return void
+ */
+	public function testExtractNoGetters() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['_getName', '_getLastName']);
+		$entity->name = 'Mark';
+		$entity->expects($this->any())
+			->method('_getName')
+			->will($this->returnValue('Jose'));
+
+		$entity->expects($this->any())
+			->method('_getLastName')
+			->will($this->returnValue('Smith'));
+
+		$this->assertEquals('Jose', $entity->name);
+		$this->assertEquals(['name' => 'Mark'], $entity->extract(['name']));
+
+		$expected = [
+			'name' => 'Mark',
+			'last_name' => 'Smith'
+		];
+		$this->assertEquals($expected, $entity->extract(['name', 'last_name']));
+	}
+
+/**
  * Tests dirty() method on a newly created object
  *
  * @return void
