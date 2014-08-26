@@ -366,6 +366,12 @@ class CakeSessionTest extends CakeTestCase {
  */
 	public function testDelete() {
 		$this->assertTrue(TestCakeSession::write('Delete.me', 'Clearing out'));
+
+		session_write_close();
+		$this->assertTrue(TestCakeSession::delete('Delete.me'));
+		$this->assertFalse(TestCakeSession::check('Delete.me'));
+
+		$this->assertTrue(TestCakeSession::write('Delete.me', 'Clearing out'));
 		$this->assertTrue(TestCakeSession::delete('Delete.me'));
 		$this->assertFalse(TestCakeSession::check('Delete.me'));
 		$this->assertTrue(TestCakeSession::check('Delete'));
