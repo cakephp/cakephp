@@ -1508,4 +1508,118 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertCount(2, $result['Article']['Tag']);
 		$this->assertCount(2, $result['Article']['Comment']);
 	}
+
+/**
+ * Test that afterFind is called correctly for 'joins'
+ *
+ * @return void
+ */
+	public function testJoinsAfterFind() {
+		$this->loadFixtures('Article', 'User');
+
+		$User = new User();
+		$User->bindModel(array('hasOne' => array('Article')));
+
+		$Article = $this->getMock('Article', array('afterFind'), array(), '', true);
+		$Article->expects($this->once())
+			->method('afterFind')
+			->with(
+				array(
+					0 => array(
+						'Article' => array(
+							'id' => '1',
+							'user_id' => '1',
+							'title' => 'First Article',
+							'body' => 'First Article Body',
+							'published' => 'Y',
+							'created' => '2007-03-18 10:39:23',
+							'updated' => '2007-03-18 10:41:31'
+						)
+					)
+				),
+				$this->isFalse()
+			)
+			->will($this->returnArgument(0));
+
+		$User->Article = $Article;
+		$User->find('first', array(
+			'fields' => array(
+				'Article.id',
+				'Article.user_id',
+				'Article.title',
+				'Article.body',
+				'Article.published',
+				'Article.created',
+				'Article.updated'
+			),
+			'conditions' => array('User.id' => 1),
+			'recursive' => -1,
+			'joins' => array(
+				array(
+					'table' => 'articles',
+					'alias' => 'Article',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'Article.user_id = User.id'
+					),
+				)
+			),
+			'order' => array('Article.id')
+		));
+	}
+
+/**
+ * Test that afterFind is called correctly for 'hasOne' association.
+ *
+ * @return void
+ */
+	public function testHasOneAfterFind() {
+		$this->loadFixtures('Article', 'User', 'Comment');
+
+		$User = new User();
+		$User->bindModel(array('hasOne' => array('Article')));
+
+		$Article = $this->getMock('Article', array('afterFind'), array(), '', true);
+		$Article->unbindModel(array(
+			'belongsTo' => array('User'),
+			'hasMany' => array('Comment'),
+			'hasAndBelongsToMany' => array('Tag')
+		));
+		$Article->bindModel(array(
+			'hasOne' => array('Comment'),
+		));
+		$Article->expects($this->once())
+			->method('afterFind')
+			->with(
+				$this->equalTo(
+					array(
+						0 => array(
+							'Article' => array(
+								'id' => '1',
+								'user_id' => '1',
+								'title' => 'First Article',
+								'body' => 'First Article Body',
+								'published' => 'Y',
+								'created' => '2007-03-18 10:39:23',
+								'updated' => '2007-03-18 10:41:31',
+								'Comment' => array(
+									'id' => '1',
+									'article_id' => '1',
+									'user_id' => '2',
+									'comment' => 'First Comment for First Article',
+									'published' => 'Y',
+									'created' => '2007-03-18 10:45:23',
+									'updated' => '2007-03-18 10:47:31',
+								)
+							)
+						)
+					)
+				),
+				$this->isFalse()
+			)
+			->will($this->returnArgument(0));
+
+		$User->Article = $Article;
+		$User->find('first', array('conditions' => array('User.id' => 1), 'recursive' => 2));
+	}
 }

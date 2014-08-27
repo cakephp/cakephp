@@ -1113,11 +1113,6 @@ class DboSource extends DataSource {
 
 		$filtered = array();
 
-		// Filter hasOne and belongsTo associations
-		if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
-			$filtered = $this->_filterResults($resultSet, $Model);
-		}
-
 		// Deep associations
 		if ($Model->recursive > -1) {
 			$joined = array();
@@ -1148,10 +1143,10 @@ class DboSource extends DataSource {
 					}
 				}
 			}
+		}
 
-			if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
-				$this->_filterResults($resultSet, $Model, $filtered);
-			}
+		if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
+			$this->_filterResults($resultSet, $Model, $filtered);
 		}
 
 		if ($recursive !== null) {
