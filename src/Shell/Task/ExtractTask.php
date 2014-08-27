@@ -155,7 +155,7 @@ class ExtractTask extends Shell {
 			if (!Plugin::loaded($plugin)) {
 				Plugin::load($plugin);
 			}
-			$this->_paths = [Plugin::path($plugin)];
+			$this->_paths = [Plugin::classPath($plugin)];
 			$this->params['plugin'] = $plugin;
 		} else {
 			$this->_getPaths();
@@ -187,7 +187,7 @@ class ExtractTask extends Shell {
 		if (isset($this->params['output'])) {
 			$this->_output = $this->params['output'];
 		} elseif (isset($this->params['plugin'])) {
-			$this->_output = rtrim($this->_paths[0], DS) . DS . 'src' . DS . 'Locale';
+			$this->_output = $this->_paths[0] . DS . 'Locale';
 		} else {
 			$message = "What is the path you would like to output?\n[Q]uit";
 			while (true) {
