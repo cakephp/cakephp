@@ -1143,10 +1143,10 @@ class DboSource extends DataSource {
 					}
 				}
 			}
+		}
 
-			if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
-				$this->_filterResults($resultSet, $Model, $filtered);
-			}
+		if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
+			$this->_filterResults($resultSet, $Model, $filtered);
 		}
 
 		if ($recursive !== null) {

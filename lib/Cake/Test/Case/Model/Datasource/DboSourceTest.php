@@ -1510,6 +1510,57 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * Test that afterFind is called correctly for 'joins'
+ *
+ * @return void
+ */
+	public function testJoinsAfterFind() {
+		$this->loadFixtures('Article', 'User');
+
+		$User = new User();
+		$User->bindModel(array('hasOne' => array('Article')));
+
+		$Article = $this->getMock('Article', array('afterFind'), array(), '', true);
+		$Article->expects($this->once())
+			->method('afterFind')
+			->with(
+				array(
+					0 => array(
+						'Article' => array(
+							'id' => '1',
+							'user_id' => '1',
+							'title' => 'First Article',
+							'body' => 'First Article Body',
+							'published' => 'Y',
+							'created' => '2007-03-18 10:39:23',
+							'updated' => '2007-03-18 10:41:31'
+						)
+					)
+				),
+				$this->isFalse()
+			)
+			->will($this->returnArgument(0));
+
+		$User->Article = $Article;
+		$User->find('first', array(
+			'fields' => '*',
+			'conditions' => array('User.id' => 1),
+			'recursive' => -1,
+			'joins' => array(
+				array(
+					'table' => 'articles',
+					'alias' => 'Article',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'Article.user_id = User.id'
+					),
+				)
+			),
+			'order' => array('Article.id')
+		));
+	}
+
+/**
  * Test that afterFind is called correctly for 'hasOne' association.
  *
  * @return void
