@@ -780,7 +780,7 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Generate a set of inputs for `$fields`
+ * Generate a set of inputs for `$fields` wrapped in a fieldset element.
  *
  * You can customize individual inputs through `$fields`.
  * {{{
