@@ -58,8 +58,7 @@ class EagerLoader {
 		'sort' => 1,
 		'matching' => 1,
 		'queryBuilder' => 1,
-		'finder' => 1,
-		'finderOptions' => 1
+		'finder' => 1
 	];
 
 /**
@@ -321,9 +320,6 @@ class EagerLoader {
 
 		$table = $instance->target();
 
-		if (isset($options['finder'])) {
-			$instance->finder($options['finder']);
-		}
 		$extra = array_diff_key($options, $defaults);
 		$config = [
 			'associations' => [],
