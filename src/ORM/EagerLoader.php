@@ -195,12 +195,6 @@ class EagerLoader {
 
 			if (isset($this->_containOptions[$table])) {
 				$pointer[$table] = $options;
-				if ($table === 'finder') {
-					$finder = $associations['finder'];
-					$pointer += ['queryBuilder' => function($q) use ($finder) {
-						return $q->find($finder);
-					}];
-				}
 				continue;
 			}
 
@@ -326,6 +320,9 @@ class EagerLoader {
 
 		$table = $instance->target();
 
+		if (isset($options['finder'])) {
+			$instance->finder($options['finder']);
+		}
 		$extra = array_diff_key($options, $defaults);
 		$config = [
 			'associations' => [],
