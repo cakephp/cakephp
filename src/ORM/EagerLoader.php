@@ -57,7 +57,8 @@ class EagerLoader {
 		'fields' => 1,
 		'sort' => 1,
 		'matching' => 1,
-		'queryBuilder' => 1
+		'queryBuilder' => 1,
+		'finder' => 1
 	];
 
 /**
@@ -92,6 +93,7 @@ class EagerLoader {
  * - queryBuilder: Equivalent to passing a callable instead of an options array
  * - matching: Whether to inform the association class that it should filter the
  *  main query by the results fetched by that class.
+ *  - finder: Specify which finder to use for the association.
  *
  * @param array|string $associations list of table aliases to be queried.
  * When this method is called multiple times it will merge previous list with
@@ -193,6 +195,12 @@ class EagerLoader {
 
 			if (isset($this->_containOptions[$table])) {
 				$pointer[$table] = $options;
+				if ($table === 'finder') {
+					$finder = $associations['finder'];
+					$pointer += ['queryBuilder' => function($q) use ($finder) {
+						return $q->find($finder);
+					}];
+				}
 				continue;
 			}
 
