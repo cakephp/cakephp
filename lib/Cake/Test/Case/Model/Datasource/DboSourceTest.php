@@ -1543,7 +1543,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$User->Article = $Article;
 		$User->find('first', array(
-			'fields' => '*',
+			'fields' => array('User.*', 'Article.*'),
 			'conditions' => array('User.id' => 1),
 			'recursive' => -1,
 			'joins' => array(
