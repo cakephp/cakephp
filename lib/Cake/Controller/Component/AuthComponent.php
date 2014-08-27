@@ -577,8 +577,12 @@ class AuthComponent extends Component {
 		if (empty($this->_authorizeObjects)) {
 			$this->constructAuthorize();
 		}
+		$mappedActions = array();
 		foreach ($this->_authorizeObjects as $auth) {
-			$auth->mapActions($map);
+			$mappedActions = Hash::merge($mappedActions, $auth->mapActions($map));
+		}
+		if (empty($map)) {
+			return $mappedActions;
 		}
 	}
 
