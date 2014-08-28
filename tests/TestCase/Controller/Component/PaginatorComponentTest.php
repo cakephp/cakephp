@@ -143,6 +143,7 @@ class PaginatorComponentTest extends TestCase {
 
 /**
  * Test to make sure options get sent to custom finder methods via paginate
+ *
  * @return void
  */
 	public function testPaginateCustomFinderOptions() {
