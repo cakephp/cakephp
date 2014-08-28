@@ -24,6 +24,17 @@ use Cake\TestSuite\TestCase;
 class WeakPasswordHasherTest extends TestCase {
 
 /**
+ * setUp method
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+
+		Configure::write('Security.salt', 'YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
+	}
+
+/**
  * Tests that any password not produced by WeakPasswordHasher needs
  * to be rehashed
  *
