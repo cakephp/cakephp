@@ -174,7 +174,7 @@ class ErrorHandler extends BaseErrorHandler {
 			echo $response;
 			return;
 		}
-		echo $response->send();
+		$response->send();
 	}
 
 }
