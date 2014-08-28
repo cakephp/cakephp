@@ -20,6 +20,7 @@ use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Plugin;
+use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
@@ -68,6 +69,24 @@ class ComponentRegistryTest extends TestCase {
 
 		$result = $this->Components->load('Cookie');
 		$this->assertSame($result, $this->Components->Cookie);
+	}
+
+/**
+ * testLoadWithConfiguration method
+ *
+ * @return void
+ */
+	public function testLoadWithConfiguration() {
+		Configure::write('Component.Flash', ['element' => 'test']);
+
+		$result = $this->Components->load('Flash');
+		$this->assertInstanceOf('Cake\Controller\Component\FlashComponent', $result);
+		$this->assertSame('test', $this->Components->Flash->config('element'));
+
+		$this->Components->unload('Flash');
+		$result = $this->Components->load('Flash', ['element' => 'overwrite']);
+		$this->assertInstanceOf('Cake\Controller\Component\FlashComponent', $result);
+		$this->assertSame('overwrite', $this->Components->Flash->config('element'));
 	}
 
 /**
