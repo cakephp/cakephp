@@ -34,6 +34,7 @@ class TestBehavior extends Behavior {
  * Test Stub.
  */
 class Test2Behavior extends Behavior {
+
 	protected $_defaultConfig = [
 		'implementedFinders' => [
 			'foo' => 'findFoo',
