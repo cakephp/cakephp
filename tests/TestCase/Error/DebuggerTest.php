@@ -12,13 +12,13 @@
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Utility;
+namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Debugger;
 use Cake\View\View;
 
 /**
@@ -623,12 +623,12 @@ TEXT;
  */
 	public function testTraceExclude() {
 		$result = Debugger::trace();
-		$this->assertRegExp('/^Cake\\\Test\\\TestCase\\\Utility\\\DebuggerTest::testTraceExclude/', $result);
+		$this->assertRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
 
 		$result = Debugger::trace(array(
-			'exclude' => array('Cake\Test\TestCase\Utility\DebuggerTest::testTraceExclude')
+			'exclude' => array('Cake\Test\TestCase\Error\DebuggerTest::testTraceExclude')
 		));
-		$this->assertNotRegExp('/^Cake\\\Test\\\TestCase\\\Utility\\\DebuggerTest::testTraceExclude/', $result);
+		$this->assertNotRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
 	}
 
 /**
@@ -640,10 +640,10 @@ TEXT;
 		$object = new DebuggableThing();
 		$result = Debugger::exportVar($object, 2);
 		$expected = <<<eos
-object(Cake\Test\TestCase\Utility\DebuggableThing) {
+object(Cake\Test\TestCase\Error\DebuggableThing) {
 
 	'foo' => 'bar',
-	'inner' => object(Cake\Test\TestCase\Utility\DebuggableThing) {}
+	'inner' => object(Cake\Test\TestCase\Error\DebuggableThing) {}
 
 }
 eos;

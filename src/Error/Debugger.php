@@ -12,11 +12,13 @@
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Utility;
+namespace Cake\Error;
 
 use Cake\Core\Configure;
 use Cake\Error\Exception;
 use Cake\Log\Log;
+use Cake\Utility\Hash;
+use Cake\Utility\String;
 
 /**
  * Provide custom logging and error handling.
