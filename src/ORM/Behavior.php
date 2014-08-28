@@ -125,7 +125,47 @@ class Behavior implements EventListener {
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
+		$config = $this->_resolveMethodAliases(
+			'implementedFinders',
+			$this->_defaultConfig,
+			$config
+		);
+		$config = $this->_resolveMethodAliases(
+			'implementedMethods',
+			$this->_defaultConfig,
+			$config
+		);
 		$this->config($config);
+	}
+
+/**
+ * Removes aliased methods that would otherwise be duplicated by userland configuration.
+ *
+ * @param string $key The key to filter.
+ * @param array $defaults The default method mappings.
+ * @param array $config The customized method mappings.
+ * @return array A de-duped list of config data.
+ */
+	protected function _resolveMethodAliases($key, $defaults, $config) {
+		if (!isset($defaults[$key], $config[$key])) {
+			return $config;
+		}
+		if (isset($config[$key]) && $config[$key] === []) {
+			$this->config($key, [], false);
+			unset($config[$key]);
+			return $config;
+		}
+
+		$indexed = array_flip($defaults[$key]);
+		$indexedCustom = array_flip($config[$key]);
+		foreach ($indexed as $method => $alias) {
+			if (!isset($indexedCustom[$method])) {
+				$indexedCustom[$method] = $alias;
+			}
+		}
+		$this->config($key, array_flip($indexedCustom), false);
+		unset($config[$key]);
+		return $config;
 	}
 
 /**
@@ -212,12 +252,12 @@ class Behavior implements EventListener {
  * @return array
  */
 	public function implementedFinders() {
-		if (isset($this->_config['implementedFinders'])) {
-			return $this->_config['implementedFinders'];
+		$methods = $this->config('implementedFinders');
+		if (isset($methods)) {
+			return $methods;
 		}
 
-		$reflectionMethods = $this->_reflectionCache();
-		return $reflectionMethods['finders'];
+		return $this->_reflectionCache()['finders'];
 	}
 
 /**
@@ -242,12 +282,12 @@ class Behavior implements EventListener {
  * @return array
  */
 	public function implementedMethods() {
-		if (isset($this->_config['implementedMethods'])) {
-			return $this->_config['implementedMethods'];
+		$methods = $this->config('implementedMethods');
+		if (isset($methods)) {
+			return $methods;
 		}
 
-		$reflectionMethods = $this->_reflectionCache();
-		return $reflectionMethods['methods'];
+		return $this->_reflectionCache()['methods'];
 	}
 
 /**

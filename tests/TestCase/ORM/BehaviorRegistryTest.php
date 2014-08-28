@@ -129,6 +129,51 @@ class BehaviorRegistryTest extends TestCase {
 	}
 
 /**
+ * Test load() duplicate method aliasing
+ *
+ * @return void
+ */
+	public function testLoadDuplicateMethodAliasing() {
+		$this->Behaviors->load('Tree');
+		$this->Behaviors->load('Duplicate', [
+			'implementedFinders' => [
+				'renamed' => 'findChildren',
+			],
+			'implementedMethods' => [
+				'renamed' => 'slugify',
+			]
+		]);
+		$this->assertTrue($this->Behaviors->hasMethod('renamed'));
+	}
+
+/**
+ * Test load() duplicate finder error
+ *
+ * @expectedException \Cake\Error\Exception
+ * @expectedExceptionMessage TestApp\Model\Behavior\DuplicateBehavior contains duplicate finder "children"
+ * @return void
+ */
+	public function testLoadDuplicateFinderError() {
+		$this->Behaviors->load('Tree');
+		$this->Behaviors->load('Duplicate');
+	}
+
+/**
+ * Test load() duplicate finder aliasing
+ *
+ * @return void
+ */
+	public function testLoadDuplicateFinderAliasing() {
+		$this->Behaviors->load('Tree');
+		$this->Behaviors->load('Duplicate', [
+			'implementedFinders' => [
+				'renamed' => 'findChildren',
+			]
+		]);
+		$this->assertTrue($this->Behaviors->hasFinder('renamed'));
+	}
+
+/**
  * test hasMethod()
  *
  * @return void
