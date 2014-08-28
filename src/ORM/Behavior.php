@@ -212,12 +212,12 @@ class Behavior implements EventListener {
  * @return array
  */
 	public function implementedFinders() {
-		if (isset($this->_config['implementedFinders'])) {
-			return $this->_config['implementedFinders'];
+		$methods = $this->config('implementedFinders');
+		if (isset($methods)) {
+			return $methods;
 		}
 
-		$reflectionMethods = $this->_reflectionCache();
-		return $reflectionMethods['finders'];
+		return $this->_reflectionCache()['finders'];
 	}
 
 /**
@@ -242,12 +242,12 @@ class Behavior implements EventListener {
  * @return array
  */
 	public function implementedMethods() {
-		if (isset($this->_config['implementedMethods'])) {
-			return $this->_config['implementedMethods'];
+		$methods = $this->config('implementedMethods');
+		if (isset($methods)) {
+			return $methods;
 		}
 
-		$reflectionMethods = $this->_reflectionCache();
-		return $reflectionMethods['methods'];
+		return $this->_reflectionCache()['methods'];
 	}
 
 /**
