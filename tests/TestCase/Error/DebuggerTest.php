@@ -117,7 +117,7 @@ class DebuggerTest extends TestCase {
  * @return void
  */
 	public function testOutput() {
-		set_error_handler('Cake\Utility\Debugger::showError');
+		set_error_handler('Cake\Error\Debugger::showError');
 		$this->_restoreError = true;
 
 		$result = Debugger::output(false);
@@ -174,7 +174,7 @@ class DebuggerTest extends TestCase {
  * @return void
  */
 	public function testChangeOutputFormats() {
-		set_error_handler('Cake\Utility\Debugger::showError');
+		set_error_handler('Cake\Error\Debugger::showError');
 		$this->_restoreError = true;
 
 		Debugger::output('js', array(
@@ -233,7 +233,7 @@ class DebuggerTest extends TestCase {
  * @return void
  */
 	public function testAddFormat() {
-		set_error_handler('Cake\Utility\Debugger::showError');
+		set_error_handler('Cake\Error\Debugger::showError');
 		$this->_restoreError = true;
 
 		Debugger::addFormat('js', array(
@@ -272,7 +272,7 @@ class DebuggerTest extends TestCase {
  * @return void
  */
 	public function testAddFormatCallback() {
-		set_error_handler('Cake\Utility\Debugger::showError');
+		set_error_handler('Cake\Error\Debugger::showError');
 		$this->_restoreError = true;
 
 		Debugger::addFormat('callback', array('callback' => array($this, 'customFormat')));
@@ -559,7 +559,7 @@ TEXT;
  */
 	public function testGetInstance() {
 		$result = Debugger::getInstance();
-		$this->assertInstanceOf('Cake\Utility\Debugger', $result);
+		$this->assertInstanceOf('Cake\Error\Debugger', $result);
 
 		$result = Debugger::getInstance(__NAMESPACE__ . '\DebuggerTestCaseDebugger');
 		$this->assertInstanceOf(__NAMESPACE__ . '\DebuggerTestCaseDebugger', $result);
@@ -567,8 +567,8 @@ TEXT;
 		$result = Debugger::getInstance();
 		$this->assertInstanceOf(__NAMESPACE__ . '\DebuggerTestCaseDebugger', $result);
 
-		$result = Debugger::getInstance('Cake\Utility\Debugger');
-		$this->assertInstanceOf('Cake\Utility\Debugger', $result);
+		$result = Debugger::getInstance('Cake\Error\Debugger');
+		$this->assertInstanceOf('Cake\Error\Debugger', $result);
 	}
 
 /**

@@ -17,7 +17,7 @@
 namespace Cake\Error;
 
 use Cake\Core\App;
-use Cake\Utility\Debugger;
+use Cake\Error\Debugger;
 
 /**
  * Error Handler provides basic error and exception handling for your application. It captures and
