@@ -14,44 +14,66 @@
  */
 namespace Cake\Auth;
 
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
-use Cake\Error;
+use Cake\Error\Exception;
 use Cake\Network\Request;
 
 /**
- * An authorization adapter for AuthComponent. Provides the ability to authorize using a controller callback.
- * Your controller's isAuthorized() method should return a boolean to indicate whether or not the user is authorized.
+ * An authorization adapter for AuthComponent. Provides the ability to authorize
+ * using a controller callback. Your controller's isAuthorized() method should
+ * return a boolean to indicate whether or not the user is authorized.
  *
  * {{{
  *	public function isAuthorized($user) {
- *		if (!empty($this->request->params['admin'])) {
+ *		if ($this->request->param('admin')) {
  *			return $user['role'] === 'admin';
  *		}
  *		return !empty($user);
  *	}
  * }}}
  *
- * the above is simple implementation that would only authorize users of the 'admin' role to access
- * admin routing.
+ * The above is simple implementation that would only authorize users of the
+ * 'admin' role to access admin routing.
  *
  * @see AuthComponent::$authenticate
  */
 class ControllerAuthorize extends BaseAuthorize {
 
 /**
- * Get/set the controller this authorize object will be working with. Also checks that isAuthorized is implemented.
+ * Controller for the request.
+ *
+ * @var \Cake\Controller\Controller
+ */
+	protected $_Controller = null;
+
+/**
+ * {@inheritDoc}
+ */
+	public function __construct(ComponentRegistry $registry, array $config = array()) {
+		parent::__construct($registry, $config);
+		$this->controller($registry->getController());
+	}
+
+/**
+ * Get/set the controller this authorize object will be working with. Also
+ * checks that isAuthorized is implemented.
  *
  * @param Controller $controller null to get, a controller to set.
- * @return mixed
- * @throws \Cake\Error\Exception
+ * @return \Cake\Controller\Controller
+ * @throws \Cake\Error\Exception If controller does not have method `isAuthorized()`.
  */
 	public function controller(Controller $controller = null) {
 		if ($controller) {
 			if (!method_exists($controller, 'isAuthorized')) {
-				throw new Error\Exception(sprintf('%s does not implement an isAuthorized() method.', get_class($controller)));
+				throw new Exception(sprintf(
+					'%s does not implement an isAuthorized() method.',
+					get_class($controller)
+				));
 			}
+			$this->_Controller = $controller;
 		}
-		return parent::controller($controller);
+		return $this->_Controller;
 	}
 
 /**

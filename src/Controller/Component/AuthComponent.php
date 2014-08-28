@@ -561,27 +561,6 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Maps action names to CRUD operations.
- *
- * Used for controller-based authentication. Make sure
- * to configure the authorize property before calling this method. As it delegates $map to all the
- * attached authorize objects.
- *
- * @param array $map Actions to map
- * @return void
- * @see BaseAuthorize::mapActions()
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#mapping-actions-when-using-crudauthorize
- */
-	public function mapActions(array $map = array()) {
-		if (empty($this->_authorizeObjects)) {
-			$this->constructAuthorize();
-		}
-		foreach ($this->_authorizeObjects as $auth) {
-			$auth->mapActions($map);
-		}
-	}
-
-/**
  * Set provided user info to session as logged in user.
  *
  * The user record is written to the session key specified in AuthComponent::$sessionKey.
