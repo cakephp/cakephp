@@ -20,6 +20,7 @@ use Cake\ORM\Behavior;
  * Test class for trigging duplicate method errors.
  */
 class DuplicateBehavior extends Behavior {
+
 	protected $_defaultConfig = [
 		'implementedFinders' => [
 			'children' => 'findChildren',
