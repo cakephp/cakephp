@@ -1201,6 +1201,10 @@ class Model extends Object implements CakeEventListener {
 				continue;
 			}
 
+			if (!isset($this->data[$modelName])) {
+				$this->data[$modelName] = array();
+			}
+
 			foreach ($fieldSet as $fieldName => $fieldValue) {
 				unset($this->validationErrors[$fieldName]);
 
