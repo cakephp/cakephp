@@ -474,6 +474,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  */
 	public function count() {
 		$query = clone $this;
+		$query->autoFields(false);
 		$query->limit(null);
 		$query->order([], true);
 		$query->offset(null);

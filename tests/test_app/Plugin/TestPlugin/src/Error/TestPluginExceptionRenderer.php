@@ -30,9 +30,9 @@ class TestPluginExceptionRenderer extends ExceptionRenderer {
 /**
  * Renders the response for the exception.
  *
- * @return void
+ * @return string
  */
 	public function render() {
-		echo 'Rendered by test plugin';
+		return 'Rendered by test plugin';
 	}
 }

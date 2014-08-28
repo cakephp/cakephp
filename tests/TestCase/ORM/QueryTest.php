@@ -2073,4 +2073,20 @@ class QueryTest extends TestCase {
 		$this->assertArrayHasKey('compute', $result);
 	}
 
+/**
+ * Test that autofields works with count()
+ *
+ * @return void
+ */
+	public function testAutoFieldsCount() {
+		$table = TableRegistry::get('Articles');
+
+		$result = $table->find()
+			->select(['myField' => '(SELECT (2 + 2))'])
+			->autoFields(true)
+			->count();
+
+		$this->assertEquals(3, $result);
+	}
+
 }
