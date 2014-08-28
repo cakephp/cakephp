@@ -48,7 +48,6 @@ class EagerLoaderTest extends TestCase {
 			'id' => ['type' => 'integer'],
 			'name' => ['type' => 'string'],
 			'phone' => ['type' => 'string'],
-			'company_id' => ['type' => 'int'],
 			'_constraints' => [
 				'primary' => ['type' => 'primary', 'columns' => ['id']]
 			]
@@ -421,19 +420,19 @@ class EagerLoaderTest extends TestCase {
 	}
 
 /**
- * Tests that Cake\ORM\Query::contain associations pass along custom finders to the EagerLoader
+ * Tests that Cake\ORM\Query::contain associations can pass along custom finders to the EagerLoader
  * @return void
  */
 	public function testContainCanSpecifyFinder() {
-		$contains = ['Comments' => ['finder' => 'customFinder']];
+		$tableName = 'Clients';
+		$expected = 'customFinder';
+		$contains = [$tableName => ['finder' => $expected]];
 		$loader = new EagerLoader();
-		$loader->contain($contains);		
-		#pr($loader->contain());
-	#	#die();
-		#$this->assertTrue(
-		#	isset($loader->contain()['Comments']['queryBuilder']) && is_object($loader->contain()['Comments']['queryBuilder']),
-		#	"Cake\ORM\Eagerloader must respect custom finders sent to Cake\ORM\Query::contain."
-		#);
+		$loader->contain($contains);
+
+		$result = $loader->attachableAssociations($this->table)[$tableName]['instance']->finder();
+
+		$this->assertEquals($expected, $result, "The finder passed through in Query::contain should be respected by the EagerLoader");
 	}
 
 /**
