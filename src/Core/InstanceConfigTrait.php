@@ -14,7 +14,7 @@
  */
 namespace Cake\Core;
 
-use Cake\Error\Exception;
+use Cake\Core\Error\Exception;
 use Cake\Utility\Hash;
 
 /**
@@ -69,7 +69,7 @@ trait InstanceConfigTrait {
  * @param mixed|null $value The value to set.
  * @param bool $merge Whether to merge or overwrite existing config, defaults to true.
  * @return mixed Config value being read, or the object itself on write operations.
- * @throws \Cake\Error\Exception When trying to set a key that is invalid.
+ * @throws \Cake\Core\Error\Exception When trying to set a key that is invalid.
  */
 	public function config($key = null, $value = null, $merge = true) {
 		if (!$this->_configInitialized) {
@@ -122,7 +122,7 @@ trait InstanceConfigTrait {
  * @param mixed $value Value to write.
  * @param bool $merge Whether to merge or overwrite value.
  * @return void
- * @throws Cake\Error\Exception if attempting to clobber existing config
+ * @throws Cake\Core\Error\Exception if attempting to clobber existing config
  */
 	protected function _configWrite($key, $value, $merge = false) {
 		if (is_string($key) && $value === null) {
@@ -174,7 +174,7 @@ trait InstanceConfigTrait {
  *
  * @param string $key Key to delete.
  * @return void
- * @throws Cake\Error\Exception if attempting to clobber existing config
+ * @throws Cake\Core\Error\Exception if attempting to clobber existing config
  */
 	protected function _configDelete($key) {
 		if (strpos($key, '.') === false) {

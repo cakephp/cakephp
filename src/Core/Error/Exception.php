@@ -11,7 +11,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error;
+namespace Cake\Core\Error;
 
 /**
  * Base class that all CakePHP Exceptions extend.
@@ -51,12 +51,12 @@ class Exception extends \RuntimeException {
  *   that are made available in the view, and sprintf()'d into Exception::$_messageTemplate
  * @param int $code The code of the error, is also the HTTP status code for the error.
  */
-	public function __construct($message, $code = 500) {
+	public function __construct($message, $code = 500, $previous = null) {
 		if (is_array($message)) {
 			$this->_attributes = $message;
 			$message = vsprintf($this->_messageTemplate, $message);
 		}
-		parent::__construct($message, $code);
+		parent::__construct($message, $code, $previous);
 	}
 
 /**

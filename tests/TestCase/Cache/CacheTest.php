@@ -115,7 +115,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Error\Exception
  * @return void
  */
 	public function testWriteNonExistingConfig() {
@@ -125,7 +125,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Error\Exception
  * @return void
  */
 	public function testIncrementNonExistingConfig() {
@@ -135,7 +135,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Error\Exception
  * @return void
  */
 	public function testDecrementNonExistingConfig() {
@@ -181,7 +181,7 @@ class CacheTest extends TestCase {
 /**
  * testConfigInvalidEngine method
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Error\Exception
  * @return void
  */
 	public function testConfigInvalidEngine() {
@@ -193,7 +193,7 @@ class CacheTest extends TestCase {
 /**
  * test that trying to configure classes that don't extend CacheEngine fail.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Error\Exception
  * @return void
  */
 	public function testConfigInvalidObject() {
@@ -207,7 +207,7 @@ class CacheTest extends TestCase {
 /**
  * Ensure you cannot reconfigure a cache adapter.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Error\Exception
  * @return void
  */
 	public function testConfigErrorOnReconfigure() {
@@ -285,7 +285,7 @@ class CacheTest extends TestCase {
 
 /**
  * testGroupConfigsThrowsException method
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Error\Exception
  */
 	public function testGroupConfigsThrowsException() {
 		Cache::groupConfigs('bogus');

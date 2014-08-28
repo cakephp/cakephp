@@ -15,7 +15,7 @@
 namespace Cake\Validation;
 
 use Cake\Core\App;
-use Cake\Error\Exception;
+use Cake\Core\Error\Exception;
 use Cake\Utility\File;
 use Cake\Utility\Number;
 
@@ -909,7 +909,7 @@ class Validation {
  * @param string|array $check Value to check.
  * @param array|string $mimeTypes Array of mime types or regex pattern to check.
  * @return bool Success
- * @throws \Cake\Error\Exception when mime type can not be determined.
+ * @throws \Cake\Core\Error\Exception when mime type can not be determined.
  */
 	public static function mimeType($check, $mimeTypes = array()) {
 		if (is_array($check) && isset($check['tmp_name'])) {

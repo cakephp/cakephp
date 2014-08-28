@@ -13,7 +13,7 @@
  */
 namespace Cake\Console\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Error\Exception;
 
 /**
  * Exception class for Console libraries.  This exception will be thrown from Console library

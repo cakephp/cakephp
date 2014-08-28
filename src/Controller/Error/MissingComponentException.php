@@ -13,7 +13,7 @@
  */
 namespace Cake\Controller\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Error\Exception;
 
 /**
  * Used when a component cannot be found.

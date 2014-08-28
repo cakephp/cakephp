@@ -13,7 +13,7 @@
  */
 namespace Cake\Routing\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Error\Exception;
 
 /**
  * Exception raised when a Dispatcher filter could not be found

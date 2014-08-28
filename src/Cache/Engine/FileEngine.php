@@ -320,7 +320,7 @@ class FileEngine extends CacheEngine {
  * @param string $key The key to decrement
  * @param int $offset The number to offset
  * @return void
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Error\Exception
  */
 	public function decrement($key, $offset = 1) {
 		throw new Error\Exception('Files cannot be atomically decremented.');
@@ -332,7 +332,7 @@ class FileEngine extends CacheEngine {
  * @param string $key The key to decrement
  * @param int $offset The number to offset
  * @return void
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Error\Exception
  */
 	public function increment($key, $offset = 1) {
 		throw new Error\Exception('Files cannot be atomically incremented.');

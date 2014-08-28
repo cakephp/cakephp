@@ -1461,7 +1461,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param string $method The method name that was fired.
  * @param array $args List of arguments passed to the function.
  * @return mixed
- * @throws \Cake\Error\Exception when there are missing arguments, or when
+ * @throws \Cake\Core\Error\Exception when there are missing arguments, or when
  *  and & or are combined.
  */
 	protected function _dynamicFinder($method, $args) {
@@ -1482,7 +1482,7 @@ class Table implements RepositoryInterface, EventListener {
 		$makeConditions = function($fields, $args) {
 			$conditions = [];
 			if (count($args) < count($fields)) {
-				throw new \Cake\Error\Exception(sprintf(
+				throw new \Cake\Core\Error\Exception(sprintf(
 					'Not enough arguments to magic finder. Got %s required %s',
 					count($args),
 					count($fields)
@@ -1495,7 +1495,7 @@ class Table implements RepositoryInterface, EventListener {
 		};
 
 		if ($hasOr !== false && $hasAnd !== false) {
-			throw new \Cake\Error\Exception(
+			throw new \Cake\Core\Error\Exception(
 				'Cannot mix "and" & "or" in a magic finder. Use find() instead.'
 			);
 		}

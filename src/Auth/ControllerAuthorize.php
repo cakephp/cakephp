@@ -43,7 +43,7 @@ class ControllerAuthorize extends BaseAuthorize {
  *
  * @param Controller $controller null to get, a controller to set.
  * @return mixed
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Error\Exception
  */
 	public function controller(Controller $controller = null) {
 		if ($controller) {

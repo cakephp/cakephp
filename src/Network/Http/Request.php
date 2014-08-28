@@ -60,7 +60,7 @@ class Request extends Message {
  *
  * @param string|null $method The method for the request.
  * @return mixed Either this or the current method.
- * @throws \Cake\Error\Exception On invalid methods.
+ * @throws \Cake\Core\Error\Exception On invalid methods.
  */
 	public function method($method = null) {
 		if ($method === null) {

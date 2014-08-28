@@ -310,7 +310,7 @@ class RouteBuilder {
  *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
  *   custom routing class.
  * @return void
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Error\Exception
  */
 	public function connect($route, array $defaults = [], $options = []) {
 		if (empty($options['action'])) {
@@ -332,7 +332,7 @@ class RouteBuilder {
  * @param array $defaults Default parameters.
  * @param array $options Additional options parameters.
  * @return \Cake\Routing\Route\Route
- * @throws \Cake\Error\Exception when route class or route object is invalid.
+ * @throws \Cake\Core\Error\Exception when route class or route object is invalid.
  */
 	protected function _makeRoute($route, $defaults, $options) {
 		if (is_string($route)) {

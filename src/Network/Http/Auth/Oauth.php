@@ -34,7 +34,7 @@ class Oauth {
  * @param \Cake\Network\Request $request The request object.
  * @param array $credentials Authentication credentials.
  * @return void
- * @throws \Cake\Error\Exception On invalid signature types.
+ * @throws \Cake\Core\Error\Exception On invalid signature types.
  */
 	public function authentication(Request $request, array $credentials) {
 		$hasKeys = isset(
@@ -161,7 +161,7 @@ class Oauth {
  *
  * @param string $url URL
  * @return string Normalized URL
- * @throws \Cake\Error\Exception On invalid URLs
+ * @throws \Cake\Core\Error\Exception On invalid URLs
  */
 	protected function _normalizedUrl($url) {
 		$parts = parse_url($url);

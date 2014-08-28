@@ -13,7 +13,7 @@
  */
 namespace Cake\Datasource\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Error\Exception;
 
 /**
  * Exception class to be thrown when a datasource configuration is not found

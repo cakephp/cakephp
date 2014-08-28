@@ -13,7 +13,7 @@
  */
 namespace Cake\View\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Error\Exception;
 
 /**
  * Used when an element file cannot be found.

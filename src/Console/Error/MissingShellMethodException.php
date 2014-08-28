@@ -13,7 +13,7 @@
  */
 namespace Cake\Console\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Error\Exception;
 
 /**
  * Used when a shell method cannot be found.

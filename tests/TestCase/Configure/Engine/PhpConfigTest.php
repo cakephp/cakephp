@@ -73,7 +73,7 @@ class PhpConfigTest extends TestCase {
 /**
  * Test an exception is thrown by reading files that exist without .php extension.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Error\Exception
  * @return void
  */
 	public function testReadWithExistentFileWithoutExtension() {
@@ -84,7 +84,7 @@ class PhpConfigTest extends TestCase {
 /**
  * Test an exception is thrown by reading files that don't exist.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Error\Exception
  * @return void
  */
 	public function testReadWithNonExistentFile() {
@@ -95,7 +95,7 @@ class PhpConfigTest extends TestCase {
 /**
  * Test reading an empty file.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Error\Exception
  * @return void
  */
 	public function testReadEmptyFile() {
@@ -106,7 +106,7 @@ class PhpConfigTest extends TestCase {
 /**
  * Test reading keys with ../ doesn't work.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Error\Exception
  * @return void
  */
 	public function testReadWithDots() {

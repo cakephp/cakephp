@@ -15,7 +15,7 @@
 namespace Cake\ORM;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Error\Exception;
+use Cake\Core\Error\Exception;
 use Cake\Event\EventListener;
 
 /**
@@ -174,7 +174,7 @@ class Behavior implements EventListener {
  * Check that implemented* keys contain values pointing at callable.
  *
  * @return void
- * @throws \Cake\Error\Exception if config are invalid
+ * @throws \Cake\Core\Error\Exception if config are invalid
  */
 	public function verifyConfig() {
 		$keys = ['implementedFinders', 'implementedMethods'];

@@ -52,7 +52,7 @@ class ConsoleLog extends BaseLog {
  * - `outputAs` integer or ConsoleOutput::[RAW|PLAIN|COLOR]
  *
  * @param array $config Options for the FileLog, see above.
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Error\Exception
  */
 	public function __construct(array $config = array()) {
 		if (DS === '\\' && !(bool)env('ANSICON')) {

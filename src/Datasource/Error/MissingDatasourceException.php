@@ -13,7 +13,7 @@
  */
 namespace Cake\Datasource\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Error\Exception;
 
 /**
  * Used when a datasource cannot be found.

@@ -231,7 +231,7 @@ class Stream {
  *
  * @param \Cake\Network\Request $request The request object.
  * @return array Array of populated Response objects
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Error\Exception
  */
 	protected function _send(Request $request) {
 		$url = $request->url();
@@ -258,7 +258,7 @@ class Stream {
  *
  * @param string $url The url to connect to.
  * @return void
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Error\Exception
  */
 	protected function _open($url) {
 		set_error_handler([$this, '_connectionErrorHandler']);

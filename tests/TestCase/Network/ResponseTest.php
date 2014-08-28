@@ -113,7 +113,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the statusCode method
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Error\Exception
  * @return void
  */
 	public function testStatusCode() {
@@ -398,7 +398,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the httpCodes method
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Error\Exception
  * @return void
  */
 	public function testHttpCodes() {

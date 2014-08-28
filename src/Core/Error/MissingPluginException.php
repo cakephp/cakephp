@@ -13,7 +13,7 @@
  */
 namespace Cake\Core\Error;
 
-use Cake\Error\Exception;
+use Exception;
 
 /**
  * Exception raised when a plugin could not be found

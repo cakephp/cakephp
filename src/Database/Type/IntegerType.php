@@ -45,7 +45,7 @@ class IntegerType extends \Cake\Database\Type {
  * @param null|string|resource $value The value to convert.
  * @param Driver $driver The driver instance to convert with.
  * @return resource
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Error\Exception
  */
 	public function toPHP($value, Driver $driver) {
 		if ($value === null) {

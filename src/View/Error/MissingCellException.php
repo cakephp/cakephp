@@ -14,7 +14,7 @@
  */
 namespace Cake\View\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Error\Exception;
 
 /**
  * Used when a cell class file cannot be found.

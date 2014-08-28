@@ -13,7 +13,7 @@
  */
 namespace Cake\View\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Error\Exception;
 
 /**
  * Used when a layout file cannot be found.

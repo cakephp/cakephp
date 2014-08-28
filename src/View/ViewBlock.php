@@ -72,7 +72,7 @@ class ViewBlock {
  * using View::get();
  *
  * @param string $name The name of the block to capture for.
- * @throws \Cake\Error\Exception When starting a block twice
+ * @throws \Cake\Core\Error\Exception When starting a block twice
  * @return void
  */
 	public function start($name) {

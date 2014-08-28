@@ -14,7 +14,7 @@
  */
 namespace Cake\ORM\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Error\Exception;
 
 /**
  * Exception raised when a Table could not be found.
