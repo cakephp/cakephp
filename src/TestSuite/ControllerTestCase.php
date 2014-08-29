@@ -201,13 +201,13 @@ abstract class ControllerTestCase extends TestCase {
  * @param string $name The name of the function
  * @param array $arguments Array of arguments
  * @return the return of _testAction
- * @throws \Cake\Error\BadMethodCallException when you call methods that don't exist.
+ * @throws \BadMethodCallException when you call methods that don't exist.
  */
 	public function __call($name, $arguments) {
 		if ($name === 'testAction') {
 			return call_user_func_array(array($this, '_testAction'), $arguments);
 		}
-		throw new Error\BadMethodCallException("Method '{$name}' does not exist.");
+		throw new \BadMethodCallException("Method '{$name}' does not exist.");
 	}
 
 /**

@@ -15,8 +15,8 @@
 namespace Cake\Core;
 
 use Cake\Cache\Cache;
-use Cake\Configure\ConfigEngineInterface;
-use Cake\Configure\Engine\PhpConfig;
+use Cake\Core\Configure\ConfigEngineInterface;
+use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\Error\Exception;
 use Cake\Utility\Hash;
 

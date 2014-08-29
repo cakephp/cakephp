@@ -34,7 +34,7 @@ chance of keeping on top of things.
 * Core test cases should continue to pass. You can run tests locally or enable
   [travis-ci](https://travis-ci.org/) for your fork, so all tests and codesniffs
   will be executed.
-* Your work should apply the [CakePHP coding standards](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html).
+* Your work should apply the [CakePHP coding standards](http://book.cakephp.org/3.0/en/contributing/cakephp-coding-conventions.html).
 
 ## Which branch to base the work
 

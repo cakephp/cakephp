@@ -16,7 +16,7 @@ namespace Cake\View;
 
 use Cake\Core\App;
 use Cake\Event\EventManagerTrait;
-use Cake\Utility\ObjectRegistry;
+use Cake\Core\ObjectRegistry;
 use Cake\View\View;
 
 /**
@@ -94,7 +94,7 @@ class HelperRegistry extends ObjectRegistry {
 /**
  * Resolve a helper classname.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class Partial classname to resolve.
  * @return string|false Either the correct classname or false.
@@ -106,7 +106,7 @@ class HelperRegistry extends ObjectRegistry {
 /**
  * Throws an exception when a helper is missing.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the helper is missing in.
@@ -123,7 +123,7 @@ class HelperRegistry extends ObjectRegistry {
 /**
  * Create the helper instance.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  * Enabled helpers will be registered with the event manager.
  *
  * @param string $class The class to create.

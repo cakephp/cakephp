@@ -12,10 +12,10 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Configure\Engine;
+namespace Cake\Test\TestCase\Core\Configure\Engine;
 
-use Cake\Configure\Engine\IniConfig;
 use Cake\Core\App;
+use Cake\Core\Configure\Engine\IniConfig;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 

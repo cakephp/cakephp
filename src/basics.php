@@ -13,10 +13,10 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Cache\Cache;
-use Cake\Core\Configure;
-use Cake\I18n\I18n;
-use Cake\Utility\Debugger;
 use Cake\Collection\Collection;
+use Cake\Core\Configure;
+use Cake\Error\Debugger;
+use Cake\I18n\I18n;
 
 /**
  * Basic defines for timing functions.

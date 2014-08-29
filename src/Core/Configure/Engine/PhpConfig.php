@@ -12,9 +12,9 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Configure\Engine;
+namespace Cake\Core\Configure\Engine;
 
-use Cake\Configure\ConfigEngineInterface;
+use Cake\Core\Configure\ConfigEngineInterface;
 use Cake\Core\Plugin;
 use Cake\Error;
 

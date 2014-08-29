@@ -23,7 +23,7 @@ use Cake\Validation\ValidationSet;
  *
  * Implements ArrayAccess to easily modify rules in the set
  *
- * @link http://book.cakephp.org/2.0/en/data-validation.html
+ * @link http://book.cakephp.org/3.0/en/core-libraries/validation.html
  */
 class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 
@@ -248,7 +248,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *		));
  * }}}
  *
- * @param string $field The name of the field from wich the rule will be removed
+ * @param string $field The name of the field from which the rule will be removed
  * @param array|string $name The alias for a single rule or multiple rules array
  * @param array|\Cake\Validation\ValidationRule $rule the rule to add
  * @return Validator this instance

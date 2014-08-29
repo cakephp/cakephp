@@ -16,7 +16,7 @@ namespace Cake\Cache;
 
 use Cake\Core\App;
 use Cake\Core\Error\Exception;
-use Cake\Utility\ObjectRegistry;
+use Cake\Core\ObjectRegistry;
 
 /**
  * An object registry for cache engines.
@@ -28,7 +28,7 @@ class CacheRegistry extends ObjectRegistry {
 /**
  * Resolve a cache engine classname.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class Partial classname to resolve.
  * @return string|false Either the correct classname or false.
@@ -43,7 +43,7 @@ class CacheRegistry extends ObjectRegistry {
 /**
  * Throws an exception when a cache engine is missing.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the cache is missing in.
@@ -57,7 +57,7 @@ class CacheRegistry extends ObjectRegistry {
 /**
  * Create the cache engine instance.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string|CacheEngine $class The classname or object to make.
  * @param string $alias The alias of the object.

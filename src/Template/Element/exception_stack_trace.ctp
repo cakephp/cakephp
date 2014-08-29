@@ -14,7 +14,7 @@
  * @since         1.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Utility\Debugger;
+use Cake\Error\Debugger;
 ?>
 <h3>Stack Trace</h3>
 <ul class="cake-stack-trace">
