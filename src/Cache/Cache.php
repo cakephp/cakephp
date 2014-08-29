@@ -14,9 +14,9 @@
  */
 namespace Cake\Cache;
 
-use Cake\Core\StaticConfigTrait;
 use Cake\Cache\Engine\NullEngine;
-use Cake\Error;
+use Cake\Core\Error\Exception;
+use Cake\Core\StaticConfigTrait;
 
 /**
  * Cache provides a consistent interface to Caching in your application. It allows you
@@ -100,14 +100,14 @@ class Cache {
  *
  * @param string $name Name of the config array that needs an engine instance built
  * @return void
- * @throws \Cake\Error\Exception When a cache engine cannot be created.
+ * @throws \Cake\Core\Error\Exception When a cache engine cannot be created.
  */
 	protected static function _buildEngine($name) {
 		if (empty(static::$_registry)) {
 			static::$_registry = new CacheRegistry();
 		}
 		if (empty(static::$_config[$name]['className'])) {
-			throw new Error\Exception(sprintf('The "%s" cache configuration does not exist.', $name));
+			throw new Exception(sprintf('The "%s" cache configuration does not exist.', $name));
 		}
 
 		$config = static::$_config[$name];
@@ -213,14 +213,14 @@ class Cache {
  * @param array $data An array of data to be stored in the cache
  * @param string $config Optional string configuration name to write to. Defaults to 'default'
  * @return array of bools for each key provided, indicating true for success or false for fail
- * @throws \Cake\Core\Error\Exception
+ * @throws Cake\Core\Error\Exception
  */
 	public static function writeMany($data, $config = 'default') {
 		$engine = static::engine($config);
 		$return = $engine->writeMany($data);
 		foreach ($return as $key => $success) {
 			if ($success === false && !empty($data[$key])) {
-				throw new Error\Exception(sprintf(
+				throw new Exception(sprintf(
 					'%s cache was unable to write \'%s\' to %s cache',
 					$config,
 					$key,
@@ -405,7 +405,7 @@ class Cache {
 			return [$group => self::$_groups[$group]];
 		}
 
-		throw new Error\Exception(sprintf('Invalid cache group %s', $group));
+		throw new Exception(sprintf('Invalid cache group %s', $group));
 	}
 
 /**

@@ -567,7 +567,7 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
-				new Error\Exception('base class'),
+				new \Cake\Core\Error\Exception('base class'),
 				array('/Internal Error/'),
 				500
 			)
