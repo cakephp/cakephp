@@ -19,7 +19,7 @@ use Cake\Error\Exception;
 use Cake\Event\EventManagerTrait;
 use Cake\ORM\Behavior;
 use Cake\ORM\Table;
-use Cake\Utility\ObjectRegistry;
+use Cake\Core\ObjectRegistry;
 
 /**
  * BehaviorRegistry is used as a registry for loaded behaviors and handles loading
@@ -65,7 +65,7 @@ class BehaviorRegistry extends ObjectRegistry {
 /**
  * Resolve a behavior classname.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class Partial classname to resolve.
  * @return string|false Either the correct classname or false.
@@ -77,7 +77,7 @@ class BehaviorRegistry extends ObjectRegistry {
 /**
  * Throws an exception when a behavior is missing.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the behavior is missing in.
@@ -94,7 +94,7 @@ class BehaviorRegistry extends ObjectRegistry {
 /**
  * Create the behavior instance.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  * Enabled behaviors will be registered with the event manager.
  *
  * @param string $class The classname that is missing.

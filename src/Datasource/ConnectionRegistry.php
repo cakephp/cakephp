@@ -16,7 +16,7 @@ namespace Cake\Datasource;
 
 use Cake\Core\App;
 use Cake\Datasource\Error\MissingDatasourceException;
-use Cake\Utility\ObjectRegistry;
+use Cake\Core\ObjectRegistry;
 
 /**
  * A registry object for connection instances.
@@ -28,7 +28,7 @@ class ConnectionRegistry extends ObjectRegistry {
 /**
  * Resolve a driver classname.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class Partial classname to resolve.
  * @return string|false Either the correct classname or false.
@@ -43,7 +43,7 @@ class ConnectionRegistry extends ObjectRegistry {
 /**
  * Throws an exception when a driver is missing
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the driver is missing in.
@@ -60,7 +60,7 @@ class ConnectionRegistry extends ObjectRegistry {
 /**
  * Create the connection object with the correct settings.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string|object $class The classname or object to make.
  * @param string $alias The alias of the object.
