@@ -15,7 +15,7 @@
 namespace Cake\View\Helper;
 
 use Cake\Core\App;
-use Cake\Error;
+use Cake\Core\Error\Exception;
 use Cake\View\Helper;
 use Cake\View\View;
 
@@ -81,7 +81,7 @@ class TextHelper extends Helper {
 		if ($engineClass) {
 			$this->_engine = new $engineClass($config);
 		} else {
-			throw new Error\Exception(sprintf('Class for %s could not be found', $config['engine']));
+			throw new Exception(sprintf('Class for %s could not be found', $config['engine']));
 		}
 	}
 

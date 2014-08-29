@@ -14,10 +14,10 @@
  */
 namespace Cake\TestSuite\Fixture;
 
+use Cake\Core\Error\Exception;
 use Cake\Database\Connection;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
-use Cake\Error;
 use Cake\Log\Log;
 use Cake\Utility\Inflector;
 
@@ -99,7 +99,7 @@ class TestFixture {
 					$connection,
 					$this->name
 				);
-				throw new Error\Exception($message);
+				throw new Exception($message);
 			}
 		}
 		$this->init();
@@ -187,7 +187,7 @@ class TestFixture {
 		);
 
 		if (empty($import['table'])) {
-			throw new Error\Exception('Cannot import from undefined table.');
+			throw new Exception('Cannot import from undefined table.');
 		} else {
 			$this->table = $import['table'];
 		}

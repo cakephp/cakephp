@@ -15,7 +15,7 @@
 namespace Cake\Routing;
 
 use Cake\Core\App;
-use Cake\Error;
+use Cake\Core\Error\Exception;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
@@ -341,7 +341,7 @@ class RouteBuilder {
 				$routeClass = App::className($options['routeClass'], 'Routing/Route');
 			}
 			if ($routeClass === false) {
-				throw new Error\Exception(sprintf('Cannot find route class %s', $options['routeClass']));
+				throw new Exception(sprintf('Cannot find route class %s', $options['routeClass']));
 			}
 			unset($options['routeClass']);
 
@@ -352,7 +352,7 @@ class RouteBuilder {
 				if (isset($defaults[$param]) && $defaults[$param] !== $val) {
 					$msg = 'You cannot define routes that conflict with the scope. ' .
 						'Scope had %s = %s, while route had %s = %s';
-					throw new Error\Exception(sprintf(
+					throw new Exception(sprintf(
 						$msg,
 						$param,
 						$val,
@@ -370,7 +370,7 @@ class RouteBuilder {
 		if ($route instanceof Route) {
 			return $route;
 		}
-		throw new Error\Exception('Route class not found, or route class is not a subclass of Cake\Routing\Route\Route');
+		throw new Exception('Route class not found, or route class is not a subclass of Cake\Routing\Route\Route');
 	}
 
 /**

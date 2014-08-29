@@ -15,7 +15,7 @@
 namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
-use Cake\Error;
+use Cake\Core\Error\Exception;
 use Cake\ORM\Entity;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -1298,7 +1298,7 @@ class FormHelper extends Helper {
 	public function __call($method, $params) {
 		$options = [];
 		if (empty($params)) {
-			throw new Error\Exception(sprintf('Missing field name for FormHelper::%s', $method));
+			throw new Exception(sprintf('Missing field name for FormHelper::%s', $method));
 		}
 		if (isset($params[1])) {
 			$options = $params[1];

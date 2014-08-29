@@ -14,8 +14,8 @@
 namespace Cake\Network\Http;
 
 use Cake\Core\App;
+use Cake\Core\Error\Exception;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Error;
 use Cake\Network\Http\CookieCollection;
 use Cake\Network\Http\Request;
 use Cake\Utility\Hash;
@@ -411,7 +411,7 @@ class Client {
 			'xml' => 'application/xml',
 		];
 		if (!isset($typeMap[$type])) {
-			throw new Error\Exception('Unknown type alias.');
+			throw new Exception('Unknown type alias.');
 		}
 		return [
 			'Accept' => $typeMap[$type],
@@ -469,7 +469,7 @@ class Client {
 		$name = ucfirst($auth['type']);
 		$class = App::className($name, 'Network/Http/Auth');
 		if (!$class) {
-			throw new Error\Exception(
+			throw new Exception(
 				sprintf('Invalid authentication type %s', $name)
 			);
 		}

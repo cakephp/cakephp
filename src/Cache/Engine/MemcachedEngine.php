@@ -15,7 +15,7 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
-use Cake\Error;
+use Cake\Core\Error\Exception;
 use Cake\Utility\Inflector;
 use \Memcached;
 
@@ -152,7 +152,7 @@ class MemcachedEngine extends CacheEngine {
 
 		if ($this->_config['login'] !== null && $this->_config['password'] !== null) {
 			if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
-				throw new Error\Exception(
+				throw new Exception(
 					'Memcached extension is not build with SASL support'
 				);
 			}
@@ -173,13 +173,13 @@ class MemcachedEngine extends CacheEngine {
 
 		$serializer = strtolower($this->_config['serialize']);
 		if (!isset($this->_serializers[$serializer])) {
-			throw new Error\Exception(
+			throw new Exception(
 				sprintf('%s is not a valid serializer engine for Memcached', $serializer)
 			);
 		}
 
 		if ($serializer !== 'php' && !constant('Memcached::HAVE_' . strtoupper($serializer))) {
-			throw new Error\Exception(
+			throw new Exception(
 				sprintf('Memcached extension is not compiled with %s support', $serializer)
 			);
 		}

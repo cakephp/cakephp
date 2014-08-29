@@ -15,6 +15,7 @@
 namespace Cake\Network;
 
 use Cake\Core\Configure;
+use Cake\Core\Error\Exception;
 use Cake\Error;
 use Cake\Utility\File;
 
@@ -521,7 +522,7 @@ class Response {
  */
 	protected function _sendHeader($name, $value = null) {
 		if (headers_sent($filename, $linenum)) {
-			throw new Error\Exception(
+			throw new Exception(
 				sprintf('Headers already sent in %d on line %s', $linenum, $filename)
 			);
 		}
@@ -631,7 +632,7 @@ class Response {
 			return $this->_status;
 		}
 		if (!isset($this->_statusCodes[$code])) {
-			throw new Error\Exception('Unknown status code');
+			throw new Exception('Unknown status code');
 		}
 		return $this->_status = $code;
 	}
@@ -675,7 +676,7 @@ class Response {
 			$codes = array_keys($code);
 			$min = min($codes);
 			if (!is_int($min) || $min < 100 || max($codes) > 999) {
-				throw new Error\Exception('Invalid status code');
+				throw new Exception('Invalid status code');
 			}
 			$this->_statusCodes = $code + $this->_statusCodes;
 			return true;

@@ -14,8 +14,8 @@
  */
 namespace Cake\Database\Type;
 
+use Cake\Core\Error\Exception;
 use Cake\Database\Driver;
-use Cake\Error;
 use PDO;
 
 /**
@@ -57,7 +57,7 @@ class BinaryType extends \Cake\Database\Type {
 		if (is_resource($value)) {
 			return $value;
 		}
-		throw new Error\Exception(sprintf('Unable to convert %s into binary.', gettype($value)));
+		throw new Exception(sprintf('Unable to convert %s into binary.', gettype($value)));
 	}
 
 /**

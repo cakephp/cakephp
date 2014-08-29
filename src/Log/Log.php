@@ -14,7 +14,7 @@
 namespace Cake\Log;
 
 use Cake\Core\StaticConfigTrait;
-use Cake\Error;
+use Cake\Core\Error\Exception;
 use Cake\Log\Engine\BaseLog;
 
 /**
@@ -325,7 +325,7 @@ class Log {
 		}
 
 		if (!in_array($level, static::$_levels)) {
-			throw new Error\Exception(sprintf('Invalid log level "%s"', $level));
+			throw new Exception(sprintf('Invalid log level "%s"', $level));
 		}
 
 		$logged = false;

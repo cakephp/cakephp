@@ -16,8 +16,8 @@ namespace Cake\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
+use Cake\Core\Error\Exception;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Error;
 use Cake\Network\Request;
 use Cake\Utility\Inflector;
 
@@ -99,7 +99,7 @@ abstract class BaseAuthorize {
 	public function controller(Controller $controller = null) {
 		if ($controller) {
 			if (!$controller instanceof Controller) {
-				throw new Error\Exception('$controller needs to be an instance of Controller');
+				throw new Exception('$controller needs to be an instance of Controller');
 			}
 			$this->_Controller = $controller;
 			return true;

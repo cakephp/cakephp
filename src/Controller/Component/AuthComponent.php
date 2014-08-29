@@ -19,6 +19,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Error\Exception;
 use Cake\Error;
 use Cake\Error\Debugger;
 use Cake\Event\Event;
@@ -499,10 +500,10 @@ class AuthComponent extends Component {
 		foreach ($authorize as $class => $config) {
 			$className = App::className($class, 'Auth', 'Authorize');
 			if (!class_exists($className)) {
-				throw new Error\Exception(sprintf('Authorization adapter "%s" was not found.', $class));
+				throw new Exception(sprintf('Authorization adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authorize')) {
-				throw new Error\Exception('Authorization objects must implement an authorize() method.');
+				throw new Exception('Authorization objects must implement an authorize() method.');
 			}
 			$config = (array)$config + $global;
 			$this->_authorizeObjects[] = new $className($this->_registry, $config);
@@ -761,10 +762,10 @@ class AuthComponent extends Component {
 			}
 			$className = App::className($class, 'Auth', 'Authenticate');
 			if (!class_exists($className)) {
-				throw new Error\Exception(sprintf('Authentication adapter "%s" was not found.', $class));
+				throw new Exception(sprintf('Authentication adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authenticate')) {
-				throw new Error\Exception('Authentication objects must implement an authenticate() method.');
+				throw new Exception('Authentication objects must implement an authenticate() method.');
 			}
 			$config = array_merge($global, (array)$config);
 			$this->_authenticateObjects[] = new $className($this->_registry, $config);

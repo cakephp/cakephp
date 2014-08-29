@@ -13,7 +13,7 @@
  */
 namespace Cake\Network\Http;
 
-use Cake\Error;
+use Cake\Core\Error\Exception;
 use Cake\Network\Http\Message;
 
 /**
@@ -68,7 +68,7 @@ class Request extends Message {
 		}
 		$name = get_called_class() . '::METHOD_' . strtoupper($method);
 		if (!defined($name)) {
-			throw new Error\Exception('Invalid method type');
+			throw new Exception('Invalid method type');
 		}
 		$this->_method = $method;
 		return $this;

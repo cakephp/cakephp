@@ -15,9 +15,9 @@
 namespace Cake\Log;
 
 use Cake\Core\App;
-use Cake\Error;
-use Cake\Log\LogInterface;
+use Cake\Core\Error\Exception;
 use Cake\Core\ObjectRegistry;
+use Cake\Log\LogInterface;
 
 /**
  * Registry of loaded log engines
@@ -51,7 +51,7 @@ class LogEngineRegistry extends ObjectRegistry {
  * @throws \Cake\Core\Error\Exception
  */
 	protected function _throwMissingClassError($class, $plugin) {
-		throw new Error\Exception(sprintf('Could not load class %s', $class));
+		throw new Exception(sprintf('Could not load class %s', $class));
 	}
 
 /**
@@ -79,7 +79,7 @@ class LogEngineRegistry extends ObjectRegistry {
 			return $instance;
 		}
 
-		throw new Error\Exception(
+		throw new Exception(
 			'Loggers must implement Cake\Log\LogInterface.'
 		);
 	}

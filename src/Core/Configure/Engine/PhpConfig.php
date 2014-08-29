@@ -15,8 +15,8 @@
 namespace Cake\Core\Configure\Engine;
 
 use Cake\Core\Configure\ConfigEngineInterface;
+use Cake\Core\Error\Exception;
 use Cake\Core\Plugin;
-use Cake\Error;
 
 /**
  * PHP engine allows Configure to load configuration values from
@@ -60,17 +60,17 @@ class PhpConfig implements ConfigEngineInterface {
  */
 	public function read($key) {
 		if (strpos($key, '..') !== false) {
-			throw new Error\Exception('Cannot load configuration files with ../ in them.');
+			throw new Exception('Cannot load configuration files with ../ in them.');
 		}
 
 		$file = $this->_getFilePath($key);
 		if (!is_file($file)) {
-			throw new Error\Exception(sprintf('Could not load configuration file: %s', $file));
+			throw new Exception(sprintf('Could not load configuration file: %s', $file));
 		}
 
 		include $file;
 		if (!isset($config)) {
-			throw new Error\Exception(sprintf('No variable $config found in %s', $file));
+			throw new Exception(sprintf('No variable $config found in %s', $file));
 		}
 		return $config;
 	}

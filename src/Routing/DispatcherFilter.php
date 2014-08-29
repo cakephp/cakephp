@@ -14,8 +14,8 @@
  */
 namespace Cake\Routing;
 
+use Cake\Core\Error\Exception;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Error;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 
@@ -102,7 +102,7 @@ class DispatcherFilter implements EventListener {
 		}
 		$this->config($config);
 		if (isset($config['when']) && !is_callable($config['when'])) {
-			throw new Error\Exception('"when" conditions must be a callable.');
+			throw new Exception('"when" conditions must be a callable.');
 		}
 	}
 

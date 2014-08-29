@@ -13,6 +13,8 @@
  */
 namespace Cake\Error;
 
+use Cake\Core\Error\Exception;
+
 /**
  * Represents a fatal error
  *

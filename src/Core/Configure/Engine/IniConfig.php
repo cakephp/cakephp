@@ -16,7 +16,7 @@ namespace Cake\Core\Configure\Engine;
 
 use Cake\Core\Configure\ConfigEngineInterface;
 use Cake\Core\Plugin;
-use Cake\Error;
+use Cake\Core\Error\Exception;
 use Cake\Utility\Hash;
 
 /**
@@ -97,12 +97,12 @@ class IniConfig implements ConfigEngineInterface {
  */
 	public function read($key) {
 		if (strpos($key, '..') !== false) {
-			throw new Error\Exception('Cannot load configuration files with ../ in them.');
+			throw new Exception('Cannot load configuration files with ../ in them.');
 		}
 
 		$file = $this->_getFilePath($key);
 		if (!is_file($file)) {
-			throw new Error\Exception(sprintf('Could not load configuration file: %s', $file));
+			throw new Exception(sprintf('Could not load configuration file: %s', $file));
 		}
 
 		$contents = parse_ini_file($file, true);

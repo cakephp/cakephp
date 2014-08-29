@@ -15,6 +15,7 @@
 namespace Cake\Network;
 
 use Cake\Core\Configure;
+use Cake\Core\Error\Exception;
 use Cake\Error;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
@@ -531,7 +532,7 @@ class Request implements \ArrayAccess {
 			$type = strtolower(substr($name, 2));
 			return $this->is($type);
 		}
-		throw new Error\Exception(sprintf('Method %s does not exist', $name));
+		throw new Exception(sprintf('Method %s does not exist', $name));
 	}
 
 /**

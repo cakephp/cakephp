@@ -17,8 +17,8 @@ namespace Cake\Shell\Task;
 use Cake\Console\Shell;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Core\Error\Exception;
 use Cake\Core\Plugin;
-use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\Association;
@@ -282,7 +282,7 @@ class TestTask extends BakeTask {
 	public function mapType($type) {
 		$type = ucfirst($type);
 		if (empty($this->classTypes[$type])) {
-			throw new Error\Exception('Invalid object type.');
+			throw new Exception('Invalid object type.');
 		}
 		return $this->classTypes[$type];
 	}
