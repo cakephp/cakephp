@@ -14,7 +14,7 @@
  */
 
 use Cake\Routing\Router;
-use Cake\Utility\Debugger;
+use Cake\Error\Debugger;
 
 ?>
 <h2>Missing Route</h2>
