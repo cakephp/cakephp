@@ -85,7 +85,7 @@ class PhpConfig implements ConfigEngineInterface {
  * @return int Bytes saved.
  */
 	public function dump($key, $data) {
-		$contents = '<?php' . "\n" . '$config = ' . var_export($data, true) . ';';
+		$contents = '<?php' . "\n" . '$config = ' . $this->var_export($data) . ';';
 
 		$filename = $this->_getFilePath($key);
 		return file_put_contents($filename, $contents);
@@ -113,5 +113,26 @@ class PhpConfig implements ConfigEngineInterface {
 
 		return $file;
 	}
+
+    protected function var_export($var, $indent="") {
+        switch (gettype($var)) {
+            case "string":
+                //return "'" . addcslashes($var, "\\\$\"\r\n\t\v\f") . "'";
+                return "'" . str_replace("'", '\'',$var) . "'";
+            case "array":
+                $indexed = array_keys($var) === range(0, count($var) - 1);
+                $r = [];
+                foreach ($var as $key => $value) {
+                    $r[] = "$indent    "
+                        . ($indexed ? "" : $this->var_export($key) . " => ")
+                        . $this->var_export($value, "$indent    ");
+                }
+                return "[\n" . implode(",\n", $r) . "\n" . $indent . "]";
+            case "boolean":
+                return $var ? "true" : "false";
+            default:
+                return var_export($var, TRUE);
+        }
+    }
 
 }
