@@ -15,9 +15,9 @@
 namespace Cake\Error;
 
 use Cake\Core\Configure;
+use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\Routing\Router;
-use Cake\Utility\Debugger;
 
 /**
  * Base error handler that provides logic common to the CLI + web
