@@ -14,7 +14,7 @@
  */
 namespace Cake\View;
 
-use Cake\Configure\Engine\PhpConfig;
+use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\InstanceConfigTrait;
 
 /**
