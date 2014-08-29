@@ -1439,25 +1439,9 @@ class Table implements RepositoryInterface, EventListener {
  * @throws \BadMethodCallException
  */
 	public function callFinder($type, Query $query, array $options = []) {
-		
+
 		if (is_array($type)) {
-			$_options = [];
-			$_type = $type;
-			if (is_array($_type) && count($_type)) {
-				$v = array_values($_type)[0];
-				$k = array_keys($_type)[0];
-				if (is_array($v)) {
-					$_type = $k;
-					$_options = $v;
-				} elseif (is_string($v) && !$k) {
-					$_type = $v;
-				} elseif (is_string($v)) {
-					$_type = $k;
-					$_options = [$v];
-				}
-			}
-			$type = $_type;
-			$options = $options !== [] ? $options : $_options;
+			list($type, $options) = $this->_inferFinderTypeAndOptions($type, $options);
 		}
 
 		$query->applyOptions($options);
@@ -1951,6 +1935,36 @@ class Table implements RepositoryInterface, EventListener {
 			'behaviors' => $this->_behaviors->loaded(),
 			'defaultConnection' => $this->defaultConnectionName(),
 			'connectionName' => $conn ? $conn->configName() : null
+		];
+	}
+
+/**
+ * Helper method to infer the requested finder and its options.
+ *
+ * Returns the options passed to find->($type, $options) if that's a not empty array,
+ * otherwise returns the inferred options from the finder $type.
+ *
+ * @return array
+ */
+	protected function _inferFinderTypeAndOptions(array $type, array $options = []) {
+		$_options = [];
+		$_type = $type;
+		if (count($_type)) {
+			$v = array_values($_type)[0];
+			$k = array_keys($_type)[0];
+			if (is_array($v)) {
+				$_type = $k;
+				$_options = $v;
+			} elseif (is_string($v) && !$k) {
+				$_type = $v;
+			} elseif (is_string($v)) {
+				$_type = $k;
+				$_options = [$v];
+			}
+		}
+		return [
+			$_type,
+			$options !== [] ? $options : $_options
 		];
 	}
 
