@@ -17,5 +17,7 @@ define('TIME_START', microtime(true));
 
 // Compatibility aliases. These will be removed for the first RC release.
 class_alias('Cake\Error\Debugger', 'Cake\Utility\Debugger');
+class_alias('Cake\Core\Configure\Engine\PhpConfig', 'Cake\Configure\Engine\PhpConfig');
+class_alias('Cake\Core\Configure\Engine\IniConfig', 'Cake\Configure\Engine\IniConfig');
 
 require CAKE . 'basics.php';
