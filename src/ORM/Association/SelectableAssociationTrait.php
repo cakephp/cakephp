@@ -115,28 +115,6 @@ trait SelectableAssociationTrait {
 			$options['queryBuilder']($fetchQuery);
 		}
 
-		if (!empty($options['finder'])) {
-			$finder = 'all';
-			$finderOptions = [];
-			$_finder = $options['finder'];
-			if (is_array($_finder) && count($_finder)) {
-				$v = array_values($_finder)[0];
-				$k = array_keys($_finder)[0];
-				if (is_array($v)) {
-					$finder = $k;
-					$finderOptions = $v;
-				} elseif (is_string($v) && !$k) {
-					$finder = $v;
-				} elseif (is_string($v)) {
-					$finder = $k;
-					$finderOptions = [$v];
-				}
-			} elseif (is_string($_finder)) {
-				$finder = $_finder;
-			}
-			$fetchQuery->find($finder, $finderOptions);
-		}
-		
 		return $fetchQuery;
 	}
 

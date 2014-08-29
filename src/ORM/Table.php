@@ -1439,6 +1439,27 @@ class Table implements RepositoryInterface, EventListener {
  * @throws \BadMethodCallException
  */
 	public function callFinder($type, Query $query, array $options = []) {
+		
+		if (is_array($type)) {
+			$_options = [];
+			$_type = $type;
+			if (is_array($_type) && count($_type)) {
+				$v = array_values($_type)[0];
+				$k = array_keys($_type)[0];
+				if (is_array($v)) {
+					$_type = $k;
+					$_options = $v;
+				} elseif (is_string($v) && !$k) {
+					$_type = $v;
+				} elseif (is_string($v)) {
+					$_type = $k;
+					$_options = [$v];
+				}
+			}
+			$type = $_type;
+			$options = $options !== [] ? $options : $_options;
+		}
+
 		$query->applyOptions($options);
 		$options = $query->getOptions();
 		$finder = 'find' . ucfirst($type);
