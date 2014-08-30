@@ -543,7 +543,7 @@ class ViewTest extends TestCase {
 /**
  * Test that getViewFileName() protects against malicious directory traversal.
  *
- * @expectedException Cake\Core\Exception\Exception
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testGetViewFileNameDirectoryTraversal() {
@@ -642,7 +642,7 @@ class ViewTest extends TestCase {
 /**
  * Test that getLayoutFileName() protects against malicious directory traversal.
  *
- * @expectedException Cake\Core\Exception\Exception
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testGetLayoutFileNameDirectoryTraversal() {
@@ -1479,7 +1479,7 @@ class ViewTest extends TestCase {
  * Test that an exception gets thrown when you leave a block open at the end
  * of a view.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException \LogicException
  * @return void
  */
 	public function testExceptionOnOpenBlock() {
