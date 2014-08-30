@@ -34,7 +34,7 @@ use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Request;
 use Cake\ORM\Error\MissingBehaviorException;
-use Cake\Routing\Error\MissingControllerException;
+use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingHelperException;

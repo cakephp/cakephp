@@ -17,7 +17,6 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Error;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -232,7 +231,7 @@ class DispatcherTest extends TestCase {
 /**
  * testMissingController method
  *
- * @expectedException \Cake\Routing\Error\MissingControllerException
+ * @expectedException \Cake\Routing\Exception\MissingControllerException
  * @expectedExceptionMessage Controller class SomeController could not be found.
  * @return void
  */
@@ -251,7 +250,7 @@ class DispatcherTest extends TestCase {
 /**
  * testMissingControllerInterface method
  *
- * @expectedException \Cake\Routing\Error\MissingControllerException
+ * @expectedException \Cake\Routing\Exception\MissingControllerException
  * @expectedExceptionMessage Controller class DispatcherTestInterface could not be found.
  * @return void
  */
@@ -271,7 +270,7 @@ class DispatcherTest extends TestCase {
 /**
  * testMissingControllerInterface method
  *
- * @expectedException \Cake\Routing\Error\MissingControllerException
+ * @expectedException \Cake\Routing\Exception\MissingControllerException
  * @expectedExceptionMessage Controller class Abstract could not be found.
  * @return void
  */

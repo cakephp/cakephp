@@ -283,7 +283,7 @@ class Router {
  *
  * @param string $url URL to be parsed
  * @return array Parsed elements from URL
- * @throws \Cake\Routing\Error\MissingRouteException When a route cannot be handled
+ * @throws \Cake\Routing\Exception\MissingRouteException When a route cannot be handled
  */
 	public static function parse($url) {
 		if (!static::$initialized) {

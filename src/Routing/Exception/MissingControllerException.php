@@ -11,20 +11,21 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Routing\Error;
+namespace Cake\Routing\Exception;
 
 use Cake\Core\Exception\Exception;
 
 /**
- * Exception raised when a URL cannot be reverse routed
- * or when a URL cannot be parsed.
+ * Missing Controller exception - used when a controller
+ * cannot be found.
+ *
  */
-class MissingRouteException extends Exception {
+class MissingControllerException extends Exception {
 
 /**
  * {@inheritDoc}
  */
-	protected $_messageTemplate = 'A route matching "%s" could not be found.';
+	protected $_messageTemplate = 'Controller class %s could not be found.';
 
 /**
  * {@inheritDoc}

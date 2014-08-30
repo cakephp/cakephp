@@ -63,7 +63,7 @@ class DispatcherFilterTest extends TestCase {
 /**
  * Test constructor error invalid when
  *
- * @expectedException Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @expectedExceptionMessage "when" conditions must be a callable.
  * @return void
  */

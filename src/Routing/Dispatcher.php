@@ -20,13 +20,13 @@ use Cake\Event\EventListener;
 use Cake\Event\EventManagerTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Routing\Error\MissingControllerException;
+use Cake\Routing\Exception\MissingControllerException;
 use LogicException;
 
 /**
  * Dispatcher converts Requests into controller actions. It uses the dispatched Request
  * to locate and load the correct controller. If found, the requested action is called on
- * the controller.
+ * the controller
  *
  */
 class Dispatcher {
@@ -55,7 +55,7 @@ class Dispatcher {
  * @param \Cake\Network\Request $request Request object to dispatch.
  * @param \Cake\Network\Response $response Response object to put the results of the dispatch into.
  * @return string|void if `$request['return']` is set then it returns response body, null otherwise
- * @throws \Cake\Routing\Error\MissingControllerException When the controller is missing.
+ * @throws \Cake\Routing\Exception\MissingControllerException When the controller is missing.
  */
 	public function dispatch(Request $request, Response $response) {
 		$beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));

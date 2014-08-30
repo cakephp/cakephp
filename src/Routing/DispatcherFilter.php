@@ -14,10 +14,10 @@
  */
 namespace Cake\Routing;
 
-use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
+use InvalidArgumentException;
 
 /**
  * This abstract class represents a filter to be applied to a dispatcher cycle. It acts as as
@@ -94,7 +94,7 @@ class DispatcherFilter implements EventListener {
  * Constructor.
  *
  * @param array $config Settings for the filter.
- * @throws \Cake\Core\Exception\Exception When 'when' conditions are not callable.
+ * @throws \InvalidArgumentException When 'when' conditions are not callable.
  */
 	public function __construct($config = []) {
 		if (!isset($config['priority'])) {
@@ -102,7 +102,7 @@ class DispatcherFilter implements EventListener {
 		}
 		$this->config($config);
 		if (isset($config['when']) && !is_callable($config['when'])) {
-			throw new Exception('"when" conditions must be a callable.');
+			throw new InvalidArgumentException('"when" conditions must be a callable.');
 		}
 	}
 
