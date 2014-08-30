@@ -131,7 +131,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testConnectEhloTlsOnNonTlsServer method
  *
- * @expectedException \Cake\Network\Error\SocketException
+ * @expectedException Cake\Network\Exception\SocketException
  * @expectedExceptionMessage SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.
  * @return void
  */
@@ -152,7 +152,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testConnectEhloNoTlsOnRequiredTlsServer method
  *
- * @expectedException \Cake\Network\Error\SocketException
+ * @expectedException Cake\Network\Exception\SocketException
  * @expectedExceptionMessage SMTP authentication method not allowed, check if SMTP server requires TLS.
  * @return void
  */
@@ -191,7 +191,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testConnectFail method
  *
- * @expectedException \Cake\Network\Error\SocketException
+ * @expectedException Cake\Network\Exception\SocketException
  * @expectedExceptionMessage SMTP server did not accept the connection.
  * @return void
  */
@@ -230,7 +230,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testAuthNotRecognized method
  *
- * @expectedException Cake\Network\Error\SocketException
+ * @expectedException \Cake\Network\Exception\SocketException
  * @expectedExceptionMessage AUTH command not recognized or not implemented, SMTP server may not require authentication.
  * @return void
  */
@@ -245,7 +245,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testAuthNotImplemented method
  *
- * @expectedException Cake\Network\Error\SocketException
+ * @expectedException \Cake\Network\Exception\SocketException
  * @expectedExceptionMessage AUTH command not recognized or not implemented, SMTP server may not require authentication.
  * @return void
  */
@@ -260,7 +260,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testAuthBadSequence method
  *
- * @expectedException Cake\Network\Error\SocketException
+ * @expectedException \Cake\Network\Exception\SocketException
  * @expectedExceptionMessage SMTP Error: 503 5.5.1 Already authenticated
  * @return void
  */
@@ -275,7 +275,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testAuthBadUsername method
  *
- * @expectedException Cake\Network\Error\SocketException
+ * @expectedException \Cake\Network\Exception\SocketException
  * @expectedExceptionMessage SMTP server did not accept the username.
  * @return void
  */
@@ -293,7 +293,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testAuthBadPassword method
  *
- * @expectedException Cake\Network\Error\SocketException
+ * @expectedException \Cake\Network\Exception\SocketException
  * @expectedExceptionMessage SMTP server did not accept the password.
  * @return void
  */

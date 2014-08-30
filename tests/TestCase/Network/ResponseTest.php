@@ -1158,7 +1158,7 @@ class ResponseTest extends TestCase {
 /**
  * testFileNotFound
  *
- * @expectedException InvalidArgumentException
+ * @expectedException Cake\Network\Exception\NotFoundException
  * @return void
  */
 	public function testFileNotFound() {
@@ -1169,7 +1169,7 @@ class ResponseTest extends TestCase {
 /**
  * test file with ..
  *
- * @expectedException InvalidArgumentException
+ * @expectedException Cake\Network\Exception\NotFoundException
  * @return void
  */
 	public function testFileWithPathTraversal() {
