@@ -195,7 +195,7 @@ class LogTest extends TestCase {
 /**
  * Ensure you cannot reconfigure a log adapter.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException BadMethodCallException
  * @return void
  */
 	public function testConfigErrorOnReconfigure() {

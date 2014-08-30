@@ -193,7 +193,7 @@ class CacheTest extends TestCase {
 /**
  * test that trying to configure classes that don't extend CacheEngine fail.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException BadMethodCallException
  * @return void
  */
 	public function testConfigInvalidObject() {
@@ -207,7 +207,7 @@ class CacheTest extends TestCase {
 /**
  * Ensure you cannot reconfigure a cache adapter.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException BadMethodCallException
  * @return void
  */
 	public function testConfigErrorOnReconfigure() {

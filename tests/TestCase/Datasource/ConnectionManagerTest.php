@@ -83,7 +83,7 @@ class ConnectionManagerTest extends TestCase {
 /**
  * Test for errors on duplicate config.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException BadMethodCallException
  * @expectedExceptionMessage Cannot reconfigure existing key "test_variant"
  * @return void
  */
