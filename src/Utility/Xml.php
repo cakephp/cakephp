@@ -15,8 +15,8 @@
 namespace Cake\Utility;
 
 use Cake\Core\Configure;
-use Cake\Network\Error\SocketException;
-use Cake\Utility\Error\XmlException;
+use Cake\Network\Exception\SocketException;
+use Cake\Utility\Exception\XmlException;
 use Cake\Network\Http\Client;
 use \DOMDocument;
 
@@ -81,7 +81,7 @@ class Xml {
  * @param string|array $input XML string, a path to a file, a URL or an array
  * @param string|array $options The options to use
  * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
- * @throws \Cake\Utility\Error\XmlException
+ * @throws \Cake\Utility\Exception\XmlException
  */
 	public static function build($input, array $options = []) {
 		$defaults = array(
@@ -119,7 +119,7 @@ class Xml {
  * @param string $input The input to load.
  * @param array $options The options to use. See Xml::build()
  * @return \SimpleXmlElement|\DOMDocument
- * @throws \Cake\Utility\Error\XmlException
+ * @throws \Cake\Utility\Exception\XmlException
  */
 	protected static function _loadXml($input, $options) {
 		$hasDisable = function_exists('libxml_disable_entity_loader');
@@ -183,7 +183,7 @@ class Xml {
  * @param array|\Cake\Collection\Collection $input Array with data or a collection instance.
  * @param string|array $options The options to use
  * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
- * @throws \Cake\Utility\Error\XmlException
+ * @throws \Cake\Utility\Exception\XmlException
  */
 	public static function fromArray($input, $options = array()) {
 		if (method_exists($input, 'toArray')) {
@@ -230,7 +230,7 @@ class Xml {
  * @param array &$data Array of data to append to the $node.
  * @param string $format Either 'attribute' or 'tags'. This determines where nested keys go.
  * @return void
- * @throws \Cake\Utility\Error\XmlException
+ * @throws \Cake\Utility\Exception\XmlException
  */
 	protected static function _fromArray($dom, $node, &$data, $format) {
 		if (empty($data) || !is_array($data)) {
@@ -335,7 +335,7 @@ class Xml {
  *
  * @param \SimpleXMLElement|\DOMDocument|\DOMNode $obj SimpleXMLElement, DOMDocument or DOMNode instance
  * @return array Array representation of the XML structure.
- * @throws \Cake\Utility\Error\XmlException
+ * @throws \Cake\Utility\Exception\XmlException
  */
 	public static function toArray($obj) {
 		if ($obj instanceof \DOMNode) {
