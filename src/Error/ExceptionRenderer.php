@@ -19,7 +19,6 @@ use Cake\Controller\ErrorController;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
-use Cake\Error;
 use Cake\Event\Event;
 use Cake\Network\Exception\HttpException;
 use Cake\Network\Request;
@@ -196,7 +195,7 @@ class ExceptionRenderer {
 		$message = $this->error->getMessage();
 
 		if (!Configure::read('debug') &&
-			!($exception instanceof Error\HttpException)
+			!($exception instanceof HttpException)
 		) {
 			if ($code < 500) {
 				$message = __d('cake', 'Not Found');
@@ -217,7 +216,7 @@ class ExceptionRenderer {
  * @return string Template name
  */
 	protected function _template(\Exception $exception, $method, $code) {
-		$isHttpException = $exception instanceof Error\HttpException;
+		$isHttpException = $exception instanceof HttpException;
 
 		if (!Configure::read('debug') && !$isHttpException) {
 			$template = 'error500';

@@ -47,7 +47,7 @@ class PagesControllerTest extends TestCase {
 /**
  * Test that missing view renders 404 page in production
  *
- * @expectedException \Cake\Error\NotFoundException
+ * @expectedException \Cake\Network\Exception\NotFoundException
  * @expectedExceptionCode 404
  * @return void
  */
