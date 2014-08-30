@@ -188,7 +188,7 @@ class Shell {
  * allows configuration of tasks prior to shell execution
  *
  * @return void
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::initialize
+ * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Cake\Console\ConsoleOptionParser::initialize
  */
 	public function initialize() {
 		$this->loadTasks();
@@ -202,7 +202,7 @@ class Shell {
  * or otherwise modify the pre-command flow.
  *
  * @return void
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::startup
+ * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Cake\Console\ConsoleOptionParser::startup
  */
 	public function startup() {
 		$this->_welcome();
@@ -241,7 +241,7 @@ class Shell {
  *
  * @param string $task The task name to check.
  * @return bool Success
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::hasTask
+ * @link http://book.cakephp.org/3.0/en/console-and-shells.html#shell-tasks
  */
 	public function hasTask($task) {
 		return isset($this->_taskMap[Inflector::camelize($task)]);
@@ -252,7 +252,7 @@ class Shell {
  *
  * @param string $name The method name to check.
  * @return bool
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::hasMethod
+ * @link http://book.cakephp.org/3.0/en/console-and-shells.html#shell-tasks
  */
 	public function hasMethod($name) {
 		try {
@@ -288,7 +288,7 @@ class Shell {
  * `return $this->dispatchShell('schema', 'create', 'i18n', '--dry');`
  *
  * @return mixed The return of the other shell.
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::dispatchShell
+ * @link http://book.cakephp.org/3.0/en/console-and-shells.html#invoking-other-shells-from-your-shell
  */
 	public function dispatchShell() {
 		$args = func_get_args();
@@ -321,7 +321,7 @@ class Shell {
  * @param bool $autoMethod Set to true to allow any public method to be called even if it
  *   was not defined as a subcommand. This is used by ShellDispatcher to make building simple shells easy.
  * @return void
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::runCommand
+ * @link http://book.cakephp.org/3.0/en/console-and-shells.html#the-cakephp-console
  */
 	public function runCommand($argv, $autoMethod = false) {
 		$command = isset($argv[0]) ? $argv[0] : null;
@@ -402,7 +402,7 @@ class Shell {
  * By overriding this method you can configure the ConsoleOptionParser before returning it.
  *
  * @return ConsoleOptionParser
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::getOptionParser
+ * @link http://book.cakephp.org/3.0/en/console-and-shells.html#configuring-options-and-generating-help
  */
 	public function getOptionParser() {
 		$name = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
@@ -543,7 +543,7 @@ class Shell {
  * @param string $title Title of the error
  * @param string $message An optional error message
  * @return void
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::error
+ * @link http://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
  */
 	public function error($title, $message = null) {
 		$this->_io->err(sprintf('<error>Error:</error> %s', $title));
@@ -558,7 +558,7 @@ class Shell {
  * Clear the console
  *
  * @return void
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::clear
+ * @link http://book.cakephp.org/3.0/en/console-and-shells.html#console-output
  */
 	public function clear() {
 		if (empty($this->params['noclear'])) {
@@ -576,7 +576,7 @@ class Shell {
  * @param string $path Where to put the file.
  * @param string $contents Content to put in the file.
  * @return bool Success
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::createFile
+ * @link http://book.cakephp.org/3.0/en/console-and-shells.html#creating-files
  */
 	public function createFile($path, $contents) {
 		$path = str_replace(DS . DS, DS, $path);
