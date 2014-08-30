@@ -16,7 +16,7 @@ namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
 use Cake\Core\Configure;
-use Cake\Error;
+use Cake\Core\Exception\Exception;
 use Cake\Utility\Inflector;
 
 /**
@@ -320,10 +320,10 @@ class FileEngine extends CacheEngine {
  * @param string $key The key to decrement
  * @param int $offset The number to offset
  * @return void
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	public function decrement($key, $offset = 1) {
-		throw new Error\Exception('Files cannot be atomically decremented.');
+		throw new Exception('Files cannot be atomically decremented.');
 	}
 
 /**
@@ -332,10 +332,10 @@ class FileEngine extends CacheEngine {
  * @param string $key The key to decrement
  * @param int $offset The number to offset
  * @return void
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	public function increment($key, $offset = 1) {
-		throw new Error\Exception('Files cannot be atomically incremented.');
+		throw new Exception('Files cannot be atomically incremented.');
 	}
 
 /**

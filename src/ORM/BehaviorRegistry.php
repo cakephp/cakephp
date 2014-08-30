@@ -15,7 +15,7 @@
 namespace Cake\ORM;
 
 use Cake\Core\App;
-use Cake\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Event\EventManagerTrait;
 use Cake\ORM\Behavior;
 use Cake\ORM\Table;
@@ -125,7 +125,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @param string $class The classname that is missing.
  * @param string $alias The alias of the object.
  * @return void
- * @throws \Cake\Error\Exception when duplicate methods are connected.
+ * @throws \Cake\Core\Exception\Exception when duplicate methods are connected.
  */
 	protected function _getMethods(Behavior $instance, $class, $alias) {
 		$finders = array_change_key_case($instance->implementedFinders());
@@ -196,7 +196,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @param string $method The method to invoke.
  * @param array $args The arguments you want to invoke the method with.
  * @return mixed The return value depends on the underlying behavior method.
- * @throws \Cake\Error\Exception When the method is unknown.
+ * @throws \Cake\Core\Exception\Exception When the method is unknown.
  */
 	public function call($method, array $args = []) {
 		$method = strtolower($method);
@@ -214,7 +214,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @param string $type The finder type to invoke.
  * @param array $args The arguments you want to invoke the method with.
  * @return mixed The return value depends on the underlying behavior method.
- * @throws \Cake\Error\Exception When the method is unknown.
+ * @throws \Cake\Core\Exception\Exception When the method is unknown.
  */
 	public function callFinder($type, array $args = []) {
 		$type = strtolower($type);

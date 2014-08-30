@@ -15,7 +15,7 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
-use Cake\Error;
+use Cake\Core\Exception\Exception;
 use Cake\Utility\Inflector;
 use \Memcached;
 
@@ -94,7 +94,7 @@ class MemcachedEngine extends CacheEngine {
  *
  * @param array $config array of setting for the engine
  * @return bool True if the engine has been successfully initialized, false if not
- * @throws \Cake\Error\Exception when you try use authentication without Memcached compiled with SASL support
+ * @throws \Cake\Core\Exception\Exception when you try use authentication without Memcached compiled with SASL support
  */
 	public function init(array $config = []) {
 		if (!class_exists('Memcached')) {
@@ -152,7 +152,7 @@ class MemcachedEngine extends CacheEngine {
 
 		if ($this->_config['login'] !== null && $this->_config['password'] !== null) {
 			if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
-				throw new Error\Exception(
+				throw new Exception(
 					'Memcached extension is not build with SASL support'
 				);
 			}
@@ -166,20 +166,20 @@ class MemcachedEngine extends CacheEngine {
  * Settings the memcached instance
  *
  * @return void
- * @throws \Cake\Error\Exception when the Memcached extension is not built with the desired serializer engine
+ * @throws \Cake\Core\Exception\Exception when the Memcached extension is not built with the desired serializer engine
  */
 	protected function _setOptions() {
 		$this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
 		$serializer = strtolower($this->_config['serialize']);
 		if (!isset($this->_serializers[$serializer])) {
-			throw new Error\Exception(
+			throw new Exception(
 				sprintf('%s is not a valid serializer engine for Memcached', $serializer)
 			);
 		}
 
 		if ($serializer !== 'php' && !constant('Memcached::HAVE_' . strtoupper($serializer))) {
-			throw new Error\Exception(
+			throw new Exception(
 				sprintf('Memcached extension is not compiled with %s support', $serializer)
 			);
 		}
@@ -303,7 +303,7 @@ class MemcachedEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param int $offset How much to increment
  * @return bool|int New incremented value, false otherwise
- * @throws \Cake\Error\Exception when you try to increment with compress = true
+ * @throws \Cake\Core\Exception\Exception when you try to increment with compress = true
  */
 	public function increment($key, $offset = 1) {
 		$key = $this->_key($key);
@@ -317,7 +317,7 @@ class MemcachedEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param int $offset How much to subtract
  * @return bool|int New decremented value, false otherwise
- * @throws \Cake\Error\Exception when you try to decrement with compress = true
+ * @throws \Cake\Core\Exception\Exception when you try to decrement with compress = true
  */
 	public function decrement($key, $offset = 1) {
 		$key = $this->_key($key);

@@ -13,7 +13,7 @@
  */
 namespace Cake\Routing\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Exception\Exception;
 
 /**
  * Exception raised when a URL cannot be reverse routed

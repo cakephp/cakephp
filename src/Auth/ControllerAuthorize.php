@@ -16,7 +16,7 @@ namespace Cake\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
-use Cake\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Network\Request;
 
 /**

@@ -13,11 +13,13 @@
  */
 namespace Cake\Error;
 
+use Cake\Core\Exception\Exception;
+
 /**
  * Parent class for all of the HTTP related exceptions in CakePHP.
  * All HTTP status/error related exceptions should extend this class so
  * catch blocks can be specifically typed.
  *
  */
-class HttpException extends Exception {
+abstract class HttpException extends Exception {
 }

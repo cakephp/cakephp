@@ -14,7 +14,7 @@
  */
 namespace Cake\View;
 
-use Cake\Error;
+use Cake\Core\Exception\Exception;
 
 /**
  * ViewBlock implements the concept of Blocks or Slots in the View layer.
@@ -72,12 +72,12 @@ class ViewBlock {
  * using View::get();
  *
  * @param string $name The name of the block to capture for.
- * @throws \Cake\Error\Exception When starting a block twice
+ * @throws \Cake\Core\Exception\Exception When starting a block twice
  * @return void
  */
 	public function start($name) {
 		if (in_array($name, $this->_active)) {
-			throw new Error\Exception(sprintf("A view block with the name '%s' is already/still open.", $name));
+			throw new Exception(sprintf("A view block with the name '%s' is already/still open.", $name));
 		}
 		$this->_active[] = $name;
 		ob_start();

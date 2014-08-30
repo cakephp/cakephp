@@ -14,9 +14,9 @@
  */
 namespace Cake\Database\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Exception\Exception;
 
-class MissingDriverException extends \Cake\Error\Exception {
+class MissingDriverException extends \Cake\Core\Exception\Exception {
 
 /**
  * {@inheritDoc}

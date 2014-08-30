@@ -55,7 +55,7 @@ class BinaryTypeTest extends TestCase {
 /**
  * Test exceptions on invalid data.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @expectedExceptionMessage Unable to convert array into binary.
  */
 	public function testToPHPFailure() {

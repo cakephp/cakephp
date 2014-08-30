@@ -14,7 +14,7 @@
  */
 namespace Cake\Controller;
 
-use Cake\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManagerTrait;
@@ -350,7 +350,7 @@ class Controller implements EventListener {
  * exists and isn't private.
  *
  * @return mixed The resulting response.
- * @throws \Cake\Error\Exception When request is not set.
+ * @throws \Cake\Core\Exception\Exception When request is not set.
  * @throws \Cake\Controller\Error\PrivateActionException When actions are not public or prefixed by _
  * @throws \Cake\Controller\Error\MissingActionException When actions are not defined.
  */

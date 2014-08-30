@@ -18,6 +18,7 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
+use Cake\Core\Exception\Exception;
 use Cake\Error;
 use Cake\Error\Debugger;
 use Cake\Event\Event;
@@ -478,7 +479,7 @@ class AuthComponent extends Component {
  * Loads the authorization objects configured.
  *
  * @return mixed Either null when authorize is empty, or the loaded authorization objects.
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	public function constructAuthorize() {
 		if (empty($this->_config['authorize'])) {
@@ -494,10 +495,10 @@ class AuthComponent extends Component {
 		foreach ($authorize as $class => $config) {
 			$className = App::className($class, 'Auth', 'Authorize');
 			if (!class_exists($className)) {
-				throw new Error\Exception(sprintf('Authorization adapter "%s" was not found.', $class));
+				throw new Exception(sprintf('Authorization adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authorize')) {
-				throw new Error\Exception('Authorization objects must implement an authorize() method.');
+				throw new Exception('Authorization objects must implement an authorize() method.');
 			}
 			$config = (array)$config + $global;
 			$this->_authorizeObjects[] = new $className($this->_registry, $config);
@@ -715,7 +716,7 @@ class AuthComponent extends Component {
  * Loads the configured authentication objects.
  *
  * @return mixed either null on empty authenticate value, or an array of loaded objects.
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	public function constructAuthenticate() {
 		if (empty($this->_config['authenticate'])) {
@@ -735,10 +736,10 @@ class AuthComponent extends Component {
 			}
 			$className = App::className($class, 'Auth', 'Authenticate');
 			if (!class_exists($className)) {
-				throw new Error\Exception(sprintf('Authentication adapter "%s" was not found.', $class));
+				throw new Exception(sprintf('Authentication adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authenticate')) {
-				throw new Error\Exception('Authentication objects must implement an authenticate() method.');
+				throw new Exception('Authentication objects must implement an authenticate() method.');
 			}
 			$config = array_merge($global, (array)$config);
 			$this->_authenticateObjects[] = new $className($this->_registry, $config);

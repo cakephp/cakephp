@@ -457,7 +457,7 @@ class ConfigureTest extends TestCase {
 	}
 
 /**
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testDumpNoAdapter() {

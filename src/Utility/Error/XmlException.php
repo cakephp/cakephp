@@ -13,7 +13,7 @@
  */
 namespace Cake\Utility\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Exception\Exception;
 
 /**
  * Exception class for Xml.  This exception will be thrown from Xml when it

@@ -14,7 +14,7 @@
  */
 namespace Cake\Model;
 
-use Cake\Error\Exception;
+use Cake\Core\Exception\Exception;
 
 /**
  * Provides functionality for loading table classes
@@ -72,7 +72,7 @@ trait ModelAwareTrait {
  *   delegates to Cake\ORM\TableRegistry.
  * @return bool True when single repository found and instance created.
  * @throws \Cake\Model\Error\MissingModelException If the model class cannot be found.
- * @throws \Cake\Error\Exception When using a type that has not been registered.
+ * @throws \Cake\Core\Exception\Exception When using a type that has not been registered.
  */
 	public function loadModel($modelClass = null, $type = 'Table') {
 		if ($modelClass === null) {

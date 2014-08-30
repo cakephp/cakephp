@@ -18,7 +18,7 @@ use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
@@ -406,7 +406,7 @@ class View {
  * @param string $view Name of view file to use
  * @param string $layout Layout to use.
  * @return string|null Rendered content or null if content already rendered and returned earlier.
- * @throws \Cake\Error\Exception If there is an error in the view.
+ * @throws \Cake\Core\Exception\Exception If there is an error in the view.
  */
 	public function render($view = null, $layout = null) {
 		if ($this->hasRendered) {
@@ -437,7 +437,7 @@ class View {
  * @param string $content Content to render in a view, wrapped by the surrounding layout.
  * @param string $layout Layout name
  * @return mixed Rendered output, or false on error
- * @throws \Cake\Error\Exception if there is an error in the view.
+ * @throws \Cake\Core\Exception\Exception if there is an error in the view.
  */
 	public function renderLayout($content, $layout = null) {
 		$layoutFileName = $this->_getLayoutFileName($layout);
@@ -685,7 +685,7 @@ class View {
  * @param string $viewFile Filename of the view
  * @param array $data Data to include in rendered view. If empty the current View::$viewVars will be used.
  * @return string Rendered output
- * @throws \Cake\Error\Exception when a block is left open.
+ * @throws \Cake\Core\Exception\Exception when a block is left open.
  */
 	protected function _render($viewFile, $data = array()) {
 		if (empty($data)) {
@@ -821,7 +821,7 @@ class View {
  * @param string $file The path to the template file.
  * @param string $path Base path that $file should be inside of.
  * @return string The file path
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	protected function _checkFilePath($file, $path) {
 		if (strpos($file, '..') === false) {

@@ -17,7 +17,7 @@ namespace Cake\Error;
 use Cake\Controller\Controller;
 use Cake\Controller\ErrorController;
 use Cake\Core\Configure;
-use Cake\Core\Error\MissingPluginException;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Error;
 use Cake\Event\Event;
 use Cake\Network\Request;
@@ -53,7 +53,7 @@ class ExceptionRenderer {
 	public $controller = null;
 
 /**
- * Template to render for Cake\Error\Exception
+ * Template to render for Cake\Core\Exception\Exception
  *
  * @var string
  */
@@ -75,7 +75,7 @@ class ExceptionRenderer {
 
 /**
  * Creates the controller to perform rendering on the error response.
- * If the error is a Cake\Error\Exception it will be converted to either a 400 or a 500
+ * If the error is a Cake\Core\Exception\Exception it will be converted to either a 400 or a 500
  * code error depending on the code used to construct the error.
  *
  * @param \Exception $exception Exception

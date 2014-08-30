@@ -165,7 +165,7 @@ class Router {
  *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
  *   custom routing class.
  * @return void
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  * @see \Cake\Routing\RouteBuilder::connect()
  * @see \Cake\Routing\Router::scope()
  */
@@ -488,7 +488,7 @@ class Router {
  * @param bool $full If true, the full base URL will be prepended to the result.
  *   Default is false.
  * @return string Full translated URL with base path.
- * @throws \Cake\Error\Exception When the route name is not found
+ * @throws \Cake\Core\Exception\Exception When the route name is not found
  */
 	public static function url($url = null, $full = false) {
 		if (!static::$initialized) {
