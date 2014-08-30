@@ -77,6 +77,7 @@ class TableRegistry {
 
 /**
  * Contains a list of options that were passed to get() method.
+ *
  * @var array
  */
 	protected static $_options = [];
