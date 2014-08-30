@@ -156,7 +156,7 @@ class TableRegistry {
 		$exists = isset(static::$_instances[$alias]);
 
 		if ($exists && !empty($options)) {
-			if (static::$_options[$alias] != $options) {
+			if (static::$_options[$alias] !== $options) {
 				throw new RuntimeException(sprintf(
 					'You cannot configure "%s", it already exists in the registry.',
 					$alias
