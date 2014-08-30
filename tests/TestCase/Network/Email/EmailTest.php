@@ -132,7 +132,7 @@ class EmailTest extends TestCase {
 		$this->assertSame($this->CakeEmail->from(), $expected);
 		$this->assertSame($this->CakeEmail, $result);
 
-		$this->setExpectedException('Cake\Network\Error\SocketException');
+		$this->setExpectedException('InvalidArgumentException');
 		$result = $this->CakeEmail->from(array('cake@cakephp.org' => 'CakePHP', 'fail@cakephp.org' => 'From can only be one address'));
 	}
 
@@ -249,7 +249,7 @@ class EmailTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidEmails
- * @expectedException \Cake\Network\Error\SocketException
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testInvalidEmail($value) {
@@ -260,7 +260,7 @@ class EmailTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidEmails
- * @expectedException \Cake\Network\Error\SocketException
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testInvalidEmailAdd($value) {
@@ -454,7 +454,7 @@ class EmailTest extends TestCase {
  * testMessageIdInvalid method
  *
  * @return void
- * @expectedException \Cake\Network\Error\SocketException
+ * @expectedException InvalidArgumentException
  */
 	public function testMessageIdInvalid() {
 		$this->CakeEmail->messageId('my-email@localhost');
@@ -617,43 +617,6 @@ class EmailTest extends TestCase {
 	}
 
 /**
- * Data provider function for testInvalidHeaders
- *
- * @return array
- */
-	public static function invalidHeaders() {
-		return array(
-			array(10),
-			array(''),
-			array('string'),
-			array(false),
-			array(null)
-		);
-	}
-
-/**
- * testInvalidHeaders
- *
- * @dataProvider invalidHeaders
- * @expectedException \Cake\Network\Error\SocketException
- * @return void
- */
-	public function testInvalidHeaders($value) {
-		$this->CakeEmail->setHeaders($value);
-	}
-
-/**
- * testInvalidAddHeaders
- *
- * @dataProvider invalidHeaders
- * @expectedException \Cake\Network\Error\SocketException
- * @return void
- */
-	public function testInvalidAddHeaders($value) {
-		$this->CakeEmail->addHeaders($value);
-	}
-
-/**
  * testTemplate method
  *
  * @return void
@@ -742,7 +705,7 @@ class EmailTest extends TestCase {
 		);
 		$this->assertSame($this->CakeEmail->attachments(), $expected);
 
-		$this->setExpectedException('Cake\Network\Error\SocketException');
+		$this->setExpectedException('InvalidArgumentException');
 		$this->CakeEmail->attachments(array(array('nofile' => CAKE . 'basics.php', 'mimetype' => 'text/plain')));
 	}
 
@@ -766,7 +729,7 @@ class EmailTest extends TestCase {
 /**
  * Test that using unknown transports fails.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  */
 	public function testTransportInvalid() {
 		$this->CakeEmail->transport('Invalid');
@@ -775,7 +738,7 @@ class EmailTest extends TestCase {
 /**
  * Test that using classes with no send method fails.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException LogicException
  */
 	public function testTransportInstanceInvalid() {
 		$this->CakeEmail->transport(new \StdClass());
@@ -824,7 +787,7 @@ class EmailTest extends TestCase {
 /**
  * Test that exceptions are raised when duplicate transports are configured.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException BadMethodCallException
  */
 	public function testConfigTransportErrorOnDuplicate() {
 		Email::dropTransport('debug');
@@ -880,7 +843,7 @@ class EmailTest extends TestCase {
 /**
  * Test that exceptions are raised on duplicate config set.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException BadMethodCallException
  * @return void
  */
 	public function testConfigErrorOnDuplicate() {
@@ -911,7 +874,7 @@ class EmailTest extends TestCase {
 /**
  * Test that using an invalid profile fails.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @expectedExceptionMessage Unknown email configuration "derp".
  */
 	public function testProfileInvalid() {
@@ -1019,7 +982,7 @@ class EmailTest extends TestCase {
 /**
  * testSendWithoutFrom method
  *
- * @expectedException Cake\Network\Error\SocketException
+ * @expectedException BadMethodCallException
  * @return void
  */
 	public function testSendWithoutFrom() {
@@ -1033,7 +996,7 @@ class EmailTest extends TestCase {
 /**
  * testSendWithoutTo method
  *
- * @expectedException Cake\Network\Error\SocketException
+ * @expectedException BadMethodCallException
  * @return void
  */
 	public function testSendWithoutTo() {
@@ -1047,7 +1010,7 @@ class EmailTest extends TestCase {
 /**
  * test send without a transport method
  *
- * @expectedException Cake\Network\Error\SocketException
+ * @expectedException BadMethodCallException
  * @expectedExceptionMessage Cannot send email, transport was not defined.
  * @return void
  */
@@ -2053,7 +2016,7 @@ class EmailTest extends TestCase {
 		$result = $this->CakeEmail->emailFormat();
 		$this->assertEquals('html', $result);
 
-		$this->setExpectedException('Cake\Network\Error\SocketException');
+		$this->setExpectedException('InvalidArgumentException');
 		$result = $this->CakeEmail->emailFormat('invalid');
 	}
 
