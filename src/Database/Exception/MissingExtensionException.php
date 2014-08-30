@@ -12,15 +12,16 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database\Error;
+namespace Cake\Database\Exception;
 
 use Cake\Core\Exception\Exception;
 
-class MissingDriverException extends \Cake\Core\Exception\Exception {
+class MissingExtensionException extends \Cake\Core\Exception\Exception {
 
 /**
  * {@inheritDoc}
  */
-	protected $_messageTemplate = 'Database driver %s could not be found.';
+	protected $_messageTemplate = 'Database driver %s cannot be used due to a missing PHP extension or unmet dependency';
 
 }
+
