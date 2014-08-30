@@ -61,7 +61,7 @@ class HelperRegistry extends ObjectRegistry {
 
 		try {
 			$this->load($helper);
-		} catch (Error\MissingHelperException $exception) {
+		} catch (Exception\MissingHelperException $exception) {
 			if ($this->_View->plugin) {
 				$this->load($this->_View->plugin . '.' . $helper);
 				return true;
