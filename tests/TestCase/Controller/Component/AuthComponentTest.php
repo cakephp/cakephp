@@ -19,8 +19,9 @@ use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Error;
 use Cake\Event\Event;
+use Cake\Network\Exception\ForbiddenException;
+use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Network\Session;
@@ -789,7 +790,7 @@ class AuthComponentTest extends TestCase {
 /**
  * Throw ForbiddenException if config `unauthorizedRedirect` is set to false
  *
- * @expectedException \Cake\Error\ForbiddenException
+ * @expectedException \Cake\Network\Exception\ForbiddenException
  * @return void
  */
 	public function testForbiddenException() {
@@ -1261,7 +1262,7 @@ class AuthComponentTest extends TestCase {
 /**
  * testStatelessAuthNoRedirect method
  *
- * @expectedException \Cake\Error\UnauthorizedException
+ * @expectedException \Cake\Network\Exception\UnauthorizedException
  * @expectedExceptionCode 401
  * @return void
  */

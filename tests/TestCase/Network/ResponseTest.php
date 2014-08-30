@@ -113,7 +113,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the statusCode method
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testStatusCode() {
@@ -398,7 +398,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the httpCodes method
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testHttpCodes() {
@@ -1158,7 +1158,7 @@ class ResponseTest extends TestCase {
 /**
  * testFileNotFound
  *
- * @expectedException \Cake\Error\NotFoundException
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testFileNotFound() {
@@ -1169,7 +1169,7 @@ class ResponseTest extends TestCase {
 /**
  * test file with ..
  *
- * @expectedException Cake\Error\NotFoundException
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testFileWithPathTraversal() {

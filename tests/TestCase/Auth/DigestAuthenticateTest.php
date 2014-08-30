@@ -17,7 +17,7 @@
 namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\DigestAuthenticate;
-use Cake\Error;
+use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
@@ -93,7 +93,7 @@ class DigestAuthenticateTest extends TestCase {
 /**
  * test the authenticate method
  *
- * @expectedException \Cake\Error\UnauthorizedException
+ * @expectedException \Cake\Network\Exception\UnauthorizedException
  * @expectedExceptionCode 401
  * @return void
  */
@@ -131,7 +131,7 @@ DIGEST;
 
 		try {
 			$this->auth->unauthenticated($request, $this->response);
-		} catch (Error\UnauthorizedException $e) {
+		} catch (UnauthorizedException $e) {
 		}
 
 		$this->assertNotEmpty($e);
@@ -178,7 +178,7 @@ DIGEST;
 /**
  * test scope failure.
  *
- * @expectedException \Cake\Error\UnauthorizedException
+ * @expectedException \Cake\Network\Exception\UnauthorizedException
  * @expectedExceptionCode 401
  * @return void
  */
