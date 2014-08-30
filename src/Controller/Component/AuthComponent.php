@@ -18,7 +18,6 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
-use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Error;
 use Cake\Error\Debugger;
@@ -250,10 +249,6 @@ class AuthComponent extends Component {
 		$this->response = $controller->response;
 		$this->_methods = $controller->methods;
 		$this->session = $controller->request->session();
-
-		if (Configure::read('debug')) {
-			Debugger::checkSecurityKeys();
-		}
 	}
 
 /**
@@ -559,27 +554,6 @@ class AuthComponent extends Component {
 			}
 		}
 		$this->allowedActions = array_values($this->allowedActions);
-	}
-
-/**
- * Maps action names to CRUD operations.
- *
- * Used for controller-based authentication. Make sure
- * to configure the authorize property before calling this method. As it delegates $map to all the
- * attached authorize objects.
- *
- * @param array $map Actions to map
- * @return void
- * @see BaseAuthorize::mapActions()
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#mapping-actions-when-using-crudauthorize
- */
-	public function mapActions(array $map = array()) {
-		if (empty($this->_authorizeObjects)) {
-			$this->constructAuthorize();
-		}
-		foreach ($this->_authorizeObjects as $auth) {
-			$auth->mapActions($map);
-		}
 	}
 
 /**
