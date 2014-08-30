@@ -14,6 +14,7 @@
  */
 namespace Cake\Console;
 
+use Cake\Console\Exception\ConsoleException;
 use Cake\Utility\Inflector;
 
 /**
@@ -470,7 +471,7 @@ class ConsoleOptionParser {
  *
  * @param array $argv Array of args (argv) to parse.
  * @return array [$params, $args]
- * @throws \Cake\Console\Error\ConsoleException When an invalid parameter is encountered.
+ * @throws \Cake\Console\Exception\ConsoleException When an invalid parameter is encountered.
  */
 	public function parse($argv) {
 		$command = isset($argv[0]) ? $argv[0] : null;
@@ -495,7 +496,7 @@ class ConsoleOptionParser {
 		}
 		foreach ($this->_args as $i => $arg) {
 			if ($arg->isRequired() && !isset($args[$i]) && empty($params['help'])) {
-				throw new Error\ConsoleException(
+				throw new ConsoleException(
 					sprintf('Missing required arguments. %s is required.', $arg->name())
 				);
 			}
@@ -568,7 +569,7 @@ class ConsoleOptionParser {
  * @param string $option The option to parse.
  * @param array $params The params to append the parsed value into
  * @return array Params with $option added in.
- * @throws \Cake\Console\Error\ConsoleException When unknown short options are encountered.
+ * @throws \Cake\Console\Exception\ConsoleException When unknown short options are encountered.
  */
 	protected function _parseShortOption($option, $params) {
 		$key = substr($option, 1);
@@ -580,7 +581,7 @@ class ConsoleOptionParser {
 			}
 		}
 		if (!isset($this->_shortOptions[$key])) {
-			throw new Error\ConsoleException(sprintf('Unknown short option `%s`', $key));
+			throw new ConsoleException(sprintf('Unknown short option `%s`', $key));
 		}
 		$name = $this->_shortOptions[$key];
 		return $this->_parseOption($name, $params);
@@ -592,11 +593,11 @@ class ConsoleOptionParser {
  * @param string $name The name to parse.
  * @param array $params The params to append the parsed value into
  * @return array Params with $option added in.
- * @throws \Cake\Console\Error\ConsoleException
+ * @throws \Cake\Console\Exception\ConsoleException
  */
 	protected function _parseOption($name, $params) {
 		if (!isset($this->_options[$name])) {
-			throw new Error\ConsoleException(sprintf('Unknown option `%s`', $name));
+			throw new ConsoleException(sprintf('Unknown option `%s`', $name));
 		}
 		$option = $this->_options[$name];
 		$isBoolean = $option->isBoolean();
@@ -640,7 +641,7 @@ class ConsoleOptionParser {
  * @param string $argument The argument to append
  * @param array $args The array of parsed args to append to.
  * @return array Args
- * @throws \Cake\Console\Error\ConsoleException
+ * @throws \Cake\Console\Exception\ConsoleException
  */
 	protected function _parseArg($argument, $args) {
 		if (empty($this->_args)) {
@@ -649,7 +650,7 @@ class ConsoleOptionParser {
 		}
 		$next = count($args);
 		if (!isset($this->_args[$next])) {
-			throw new Error\ConsoleException('Too many arguments.');
+			throw new ConsoleException('Too many arguments.');
 		}
 
 		if ($this->_args[$next]->validChoice($argument)) {

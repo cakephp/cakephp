@@ -14,6 +14,7 @@
  */
 namespace Cake\Console;
 
+use Cake\Console\Exception\MissingShellException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
@@ -143,7 +144,7 @@ class ShellDispatcher {
  * Dispatch a request.
  *
  * @return bool
- * @throws \Cake\Console\Error\MissingShellMethodException
+ * @throws \Cake\Console\Exception\MissingShellMethodException
  */
 	protected function _dispatch() {
 		$shell = $this->shiftArgs();
@@ -170,7 +171,7 @@ class ShellDispatcher {
  *
  * @param string $shell Optionally the name of a plugin
  * @return \Cake\Console\Shell A shell instance.
- * @throws \Cake\Console\Error\MissingShellException when errors are encountered.
+ * @throws \Cake\Console\Exception\MissingShellException when errors are encountered.
  */
 	public function findShell($shell) {
 		$className = $this->_shellExists($shell);
@@ -184,7 +185,7 @@ class ShellDispatcher {
 			$instance->plugin = Inflector::camelize(trim($plugin, '.'));
 			return $instance;
 		}
-		throw new Error\MissingShellException([
+		throw new MissingShellException([
 			'class' => $shell,
 		]);
 	}

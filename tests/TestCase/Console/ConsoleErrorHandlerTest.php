@@ -76,6 +76,7 @@ class ConsoleErrorHandlerTest extends TestCase {
 			->with($this->stringContains($content));
 
 		$this->Error->handleError(E_USER_ERROR, 'This is a fatal error', '/some/file', 275);
+		ob_end_clean();
 	}
 
 /**

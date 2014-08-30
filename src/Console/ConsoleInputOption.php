@@ -14,6 +14,8 @@
  */
 namespace Cake\Console;
 
+use Cake\Console\Exception\ConsoleException;
+
 /**
  * An object to represent a single option used in the command line.
  * ConsoleOptionParser creates these when you use addOption()
@@ -73,7 +75,7 @@ class ConsoleInputOption {
  * @param bool $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
  * @param string $default The default value for this option.
  * @param array $choices Valid choices for this option.
- * @throws \Cake\Console\Error\ConsoleException
+ * @throws \Cake\Console\Exception\ConsoleException
  */
 	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = []) {
 		if (is_array($name) && isset($name['name'])) {
@@ -89,7 +91,7 @@ class ConsoleInputOption {
 			$this->_choices = $choices;
 		}
 		if (strlen($this->_short) > 1) {
-			throw new Error\ConsoleException(
+			throw new ConsoleException(
 				sprintf('Short option "%s" is invalid, short options must be one letter.', $this->_short)
 			);
 		}
@@ -177,14 +179,14 @@ class ConsoleInputOption {
  *
  * @param string $value The choice to validate.
  * @return bool
- * @throws \Cake\Console\Error\ConsoleException
+ * @throws \Cake\Console\Exception\ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {
 			return true;
 		}
 		if (!in_array($value, $this->_choices)) {
-			throw new Error\ConsoleException(
+			throw new ConsoleException(
 				sprintf('"%s" is not a valid value for --%s. Please use one of "%s"',
 				$value, $this->_name, implode(', ', $this->_choices)
 			));
