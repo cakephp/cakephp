@@ -151,6 +151,18 @@ class TableRegistryTest extends TestCase {
 	}
 
 /**
+ * Test get() can be called several times with the same option without
+ * throwing an exception.
+ *
+ * @return void
+ */
+	public function testGetWithSameOption() {
+		$result = TableRegistry::get('Users', ['className' => 'Cake\Test\TestCase\ORM\MyUsersTable']);
+		$result2 = TableRegistry::get('Users', ['className' => 'Cake\Test\TestCase\ORM\MyUsersTable']);
+		$this->assertEquals($result, $result2);
+	}
+
+/**
  * Tests that tables can be instantiated based on conventions
  * and using plugin notation
  *
