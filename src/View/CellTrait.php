@@ -52,7 +52,7 @@ trait CellTrait {
  *    `cell('TagCloud::smallList', ['a1' => 'v1', 'a2' => 'v2'])` maps to `View\Cell\TagCloud::smallList(v1, v2)`
  * @param array $options Options for Cell's constructor
  * @return \Cake\View\Cell The cell instance
- * @throws \Cake\View\Error\MissingCellException If Cell class was not found.
+ * @throws \Cake\View\Exception\MissingCellException If Cell class was not found.
  * @throws \BadMethodCallException If Cell class does not specified cell action.
  */
 	public function cell($cell, array $data = [], array $options = []) {
@@ -68,7 +68,7 @@ trait CellTrait {
 		$className = App::className($pluginAndCell, 'View/Cell', 'Cell');
 
 		if (!$className) {
-			throw new Error\MissingCellException(array('className' => $pluginAndCell . 'Cell'));
+			throw new Exception\MissingCellException(array('className' => $pluginAndCell . 'Cell'));
 		}
 
 		$cell = $this->_createCell($className, $action, $plugin, $options);

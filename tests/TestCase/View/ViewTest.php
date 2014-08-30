@@ -662,7 +662,7 @@ class ViewTest extends TestCase {
 /**
  * Test for missing views
  *
- * @expectedException \Cake\View\Error\MissingViewException
+ * @expectedException \Cake\View\Exception\MissingViewException
  * @return void
  */
 	public function testMissingView() {
@@ -680,7 +680,7 @@ class ViewTest extends TestCase {
 /**
  * Test for missing layouts
  *
- * @expectedException \Cake\View\Error\MissingLayoutException
+ * @expectedException \Cake\View\Exception\MissingLayoutException
  * @return void
  */
 	public function testMissingLayout() {
@@ -762,7 +762,7 @@ class ViewTest extends TestCase {
 /**
  * Test elementInexistent method
  *
- * @expectedException Cake\View\Error\MissingElementException
+ * @expectedException Cake\View\Exception\MissingElementException
  * @return void
  */
 	public function testElementInexistent() {
@@ -772,7 +772,7 @@ class ViewTest extends TestCase {
 /**
  * Test elementInexistent3 method
  *
- * @expectedException Cake\View\Error\MissingElementException
+ * @expectedException Cake\View\Exception\MissingElementException
  * @return void
  */
 	public function testElementInexistent3() {

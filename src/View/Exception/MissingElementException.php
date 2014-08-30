@@ -11,16 +11,20 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Error;
+namespace Cake\View\Exception;
 
 use Cake\Core\Exception\Exception;
 
 /**
- * Used when a layout file cannot be found.
- *
+ * Used when an element file cannot be found.
  */
-class MissingLayoutException extends Exception {
+class MissingElementException extends Exception {
 
-	protected $_messageTemplate = 'Layout file "%s" is missing.';
+/**
+ * Message template
+ *
+ * @var string
+ */
+	protected $_messageTemplate = 'Element file "%s" is missing.';
 
 }
