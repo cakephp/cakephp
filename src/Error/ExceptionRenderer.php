@@ -17,14 +17,17 @@ namespace Cake\Error;
 use Cake\Controller\Controller;
 use Cake\Controller\ErrorController;
 use Cake\Core\Configure;
+use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Error;
 use Cake\Event\Event;
+use Cake\Network\Exception\HttpException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Error\MissingViewException;
+use Exception;
 
 /**
  * Exception Renderer.
@@ -80,7 +83,7 @@ class ExceptionRenderer {
  *
  * @param \Exception $exception Exception
  */
-	public function __construct(\Exception $exception) {
+	public function __construct(Exception $exception) {
 		$this->error = $exception;
 		$this->controller = $this->_getController();
 	}
@@ -102,7 +105,7 @@ class ExceptionRenderer {
 		try {
 			$controller = new ErrorController($request, $response);
 			$controller->startupProcess();
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			if (!empty($controller) && isset($controller->RequestHandler)) {
 				$event = new Event('Controller.startup', $controller);
 				$controller->RequestHandler->startup($event);
@@ -127,7 +130,7 @@ class ExceptionRenderer {
 		$template = $this->_template($exception, $method, $code);
 
 		$isDebug = Configure::read('debug');
-		if (($isDebug || $exception instanceof Error\HttpException) &&
+		if (($isDebug || $exception instanceof HttpException) &&
 			method_exists($this, $method)
 		) {
 			return $this->_customMethod($method, $exception);
@@ -148,7 +151,7 @@ class ExceptionRenderer {
 			'_serialize' => array('message', 'url', 'code')
 		));
 
-		if ($exception instanceof Error\Exception && $isDebug) {
+		if ($exception instanceof CakeException && $isDebug) {
 			$this->controller->set($this->error->getAttributes());
 		}
 		return $this->_outputMessage($template);

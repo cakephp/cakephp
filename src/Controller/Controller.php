@@ -28,6 +28,7 @@ use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\View\ViewVarsTrait;
+use LogicException;
 
 /**
  * Application controller class for organization of business logic.
@@ -350,7 +351,7 @@ class Controller implements EventListener {
  * exists and isn't private.
  *
  * @return mixed The resulting response.
- * @throws \Cake\Core\Exception\Exception When request is not set.
+ * @throws \LogicException When request is not set.
  * @throws \Cake\Controller\Error\PrivateActionException When actions are not public or prefixed by _
  * @throws \Cake\Controller\Error\MissingActionException When actions are not defined.
  */
@@ -358,7 +359,7 @@ class Controller implements EventListener {
 		try {
 			$request = $this->request;
 			if (!isset($request)) {
-				throw new Exception('No Request object configured. Cannot invoke action');
+				throw new LogicException('No Request object configured. Cannot invoke action');
 			}
 			$method = new \ReflectionMethod($this, $request->params['action']);
 			if ($this->_isPrivateAction($method, $request)) {

@@ -11,23 +11,23 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error;
+namespace Cake\Network\Exception;
 
 /**
- * Represents an HTTP 500 error.
+ * Represents an HTTP 404 error.
  *
  */
-class InternalErrorException extends HttpException {
+class NotFoundException extends HttpException {
 
 /**
  * Constructor
  *
- * @param string $message If no message is given 'Internal Server Error' will be the message
- * @param int $code Status code, defaults to 500
+ * @param string $message If no message is given 'Not Found' will be the message
+ * @param int $code Status code, defaults to 404
  */
-	public function __construct($message = null, $code = 500) {
+	public function __construct($message = null, $code = 404) {
 		if (empty($message)) {
-			$message = 'Internal Server Error';
+			$message = 'Not Found';
 		}
 		parent::__construct($message, $code);
 	}

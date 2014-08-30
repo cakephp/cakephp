@@ -11,23 +11,23 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error;
+namespace Cake\Network\Exception;
 
 /**
- * Represents an HTTP 404 error.
+ * Represents an HTTP 403 error.
  *
  */
-class NotFoundException extends HttpException {
+class ForbiddenException extends HttpException {
 
 /**
  * Constructor
  *
- * @param string $message If no message is given 'Not Found' will be the message
- * @param int $code Status code, defaults to 404
+ * @param string $message If no message is given 'Forbidden' will be the message
+ * @param int $code Status code, defaults to 403
  */
-	public function __construct($message = null, $code = 404) {
+	public function __construct($message = null, $code = 403) {
 		if (empty($message)) {
-			$message = 'Not Found';
+			$message = 'Forbidden';
 		}
 		parent::__construct($message, $code);
 	}

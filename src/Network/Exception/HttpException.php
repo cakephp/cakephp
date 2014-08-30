@@ -11,14 +11,15 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Network\Error;
+namespace Cake\Network\Exception;
 
 use Cake\Core\Exception\Exception;
 
 /**
- * Exception class for Socket. This exception will be thrown from Socket, Email, HttpSocket
- * SmtpTransport, MailTransport and HttpResponse when it encounters an error.
+ * Parent class for all of the HTTP related exceptions in CakePHP.
+ * All HTTP status/error related exceptions should extend this class so
+ * catch blocks can be specifically typed.
  *
  */
-class SocketException extends Exception {
+abstract class HttpException extends Exception {
 }

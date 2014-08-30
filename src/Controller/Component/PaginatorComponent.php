@@ -15,7 +15,7 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Error;
+use Cake\Network\Exception\NotFoundException;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 
@@ -140,7 +140,7 @@ class PaginatorComponent extends Component {
  * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Query $object The table or query to paginate.
  * @param array $settings The settings/configuration used for pagination.
  * @return array Query results
- * @throws \Cake\Error\NotFoundException
+ * @throws \Cake\Network\Exception\NotFoundException
  */
 	public function paginate($object, array $settings = []) {
 		if ($object instanceof Query) {
@@ -214,7 +214,7 @@ class PaginatorComponent extends Component {
 		);
 
 		if ($requestedPage > $page) {
-			throw new Error\NotFoundException();
+			throw new NotFoundException();
 		}
 
 		return $results;

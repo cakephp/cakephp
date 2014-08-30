@@ -17,8 +17,8 @@ namespace Cake\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Error;
 use Cake\Event\Event;
+use Cake\Network\Exception\BadRequestException;
 use Cake\Network\Request;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -175,11 +175,11 @@ class SecurityComponent extends Component {
  * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
  * @see SecurityComponent::$blackHoleCallback
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#handling-blackhole-callbacks
- * @throws \Cake\Error\BadRequestException
+ * @throws \Cake\Network\Exception\BadRequestException
  */
 	public function blackHole(Controller $controller, $error = '') {
 		if (!$this->_config['blackHoleCallback']) {
-			throw new Error\BadRequestException('The request has been black-holed');
+			throw new BadRequestException('The request has been black-holed');
 		}
 		return $this->_callback($controller, $this->_config['blackHoleCallback'], array($error));
 	}
@@ -388,11 +388,11 @@ class SecurityComponent extends Component {
  * @param string $method Method to execute
  * @param array $params Parameters to send to method
  * @return mixed Controller callback method's response
- * @throws \Cake\Error\BadRequestException When a the blackholeCallback is not callable.
+ * @throws \Cake\Network\Exception\BadRequestException When a the blackholeCallback is not callable.
  */
 	protected function _callback(Controller $controller, $method, $params = array()) {
 		if (!is_callable(array($controller, $method))) {
-			throw new Error\BadRequestException('The request has been black-holed');
+			throw new BadRequestException('The request has been black-holed');
 		}
 		return call_user_func_array(array(&$controller, $method), empty($params) ? null : $params);
 	}

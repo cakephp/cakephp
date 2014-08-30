@@ -19,7 +19,7 @@
 namespace TestApp\Controller;
 
 use Cake\Core\Configure;
-use Cake\Error;
+use Cake\Network\Exception\NotFoundException;
 use Cake\Utility\Inflector;
 use Cake\View\Error\MissingViewException;
 
@@ -51,7 +51,7 @@ class PagesController extends AppController {
  *
  * @param mixed What page to display
  * @return void
- * @throws Cake\Error\NotFoundException When the view file could not be found
+ * @throws Cake\Network\Exception\NotFoundException When the view file could not be found
  *	or Cake\View\Error\MissingViewException in debug mode.
  */
 	public function display() {
@@ -84,7 +84,7 @@ class PagesController extends AppController {
 			if (Configure::read('debug')) {
 				throw $e;
 			}
-			throw new Error\NotFoundException();
+			throw new NotFoundException();
 		}
 	}
 

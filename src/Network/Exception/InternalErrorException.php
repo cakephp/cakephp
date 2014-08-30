@@ -11,23 +11,24 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error;
+
+namespace Cake\Network\Exception;
 
 /**
- * Represents an HTTP 401 error.
+ * Represents an HTTP 500 error.
  *
  */
-class UnauthorizedException extends HttpException {
+class InternalErrorException extends HttpException {
 
 /**
  * Constructor
  *
- * @param string $message If no message is given 'Unauthorized' will be the message
- * @param int $code Status code, defaults to 401
+ * @param string $message If no message is given 'Internal Server Error' will be the message
+ * @param int $code Status code, defaults to 500
  */
-	public function __construct($message = null, $code = 401) {
+	public function __construct($message = null, $code = 500) {
 		if (empty($message)) {
-			$message = 'Unauthorized';
+			$message = 'Internal Server Error';
 		}
 		parent::__construct($message, $code);
 	}

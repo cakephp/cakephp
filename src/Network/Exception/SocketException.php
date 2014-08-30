@@ -11,24 +11,14 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error;
+namespace Cake\Network\Exception;
+
+use RuntimeException;
 
 /**
- * Not Implemented Exception - used when an API method is not implemented
+ * Exception class for Socket. This exception will be thrown from Socket, Email, HttpSocket
+ * SmtpTransport, MailTransport and HttpResponse when it encounters an error.
  *
  */
-class NotImplementedException extends Exception {
-
-/**
- * {@inheritDoc}
- */
-	protected $_messageTemplate = '%s is not implemented.';
-
-/**
- * {@inheritDoc}
- */
-	public function __construct($message, $code = 501) {
-		parent::__construct($message, $code);
-	}
-
+class SocketException extends RuntimeException {
 }

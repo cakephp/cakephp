@@ -15,6 +15,7 @@
 namespace Cake\Network;
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\Network\Exception\SocketException;
 use Cake\Validation\Validation;
 
 /**
@@ -115,7 +116,7 @@ class Socket {
  * Connect the socket to the given host and port.
  *
  * @return bool Success
- * @throws \Cake\Network\Error\SocketException
+ * @throws \Cake\Network\Exception\SocketException
  */
 	public function connect() {
 		if ($this->connection) {
@@ -151,12 +152,12 @@ class Socket {
 
 		if (!empty($errNum) || !empty($errStr)) {
 			$this->setLastError($errNum, $errStr);
-			throw new Error\SocketException($errStr, $errNum);
+			throw new SocketException($errStr, $errNum);
 		}
 
 		if (!$this->connection && $this->_connectionErrors) {
 			$message = implode("\n", $this->_connectionErrors);
-			throw new Error\SocketException($message, E_WARNING);
+			throw new SocketException($message, E_WARNING);
 		}
 
 		$this->connected = is_resource($this->connection);

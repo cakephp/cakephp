@@ -11,15 +11,25 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error;
-
-use Cake\Core\Exception\Exception;
+namespace Cake\Network\Exception;
 
 /**
- * Parent class for all of the HTTP related exceptions in CakePHP.
- * All HTTP status/error related exceptions should extend this class so
- * catch blocks can be specifically typed.
+ * Represents an HTTP 401 error.
  *
  */
-abstract class HttpException extends Exception {
+class UnauthorizedException extends HttpException {
+
+/**
+ * Constructor
+ *
+ * @param string $message If no message is given 'Unauthorized' will be the message
+ * @param int $code Status code, defaults to 401
+ */
+	public function __construct($message = null, $code = 401) {
+		if (empty($message)) {
+			$message = 'Unauthorized';
+		}
+		parent::__construct($message, $code);
+	}
+
 }

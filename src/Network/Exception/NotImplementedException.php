@@ -11,24 +11,23 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Error;
+namespace Cake\Network\Exception;
 
 /**
- * Represents an HTTP 405 error.
+ * Not Implemented Exception - used when an API method is not implemented
  *
  */
-class MethodNotAllowedException extends HttpException {
+class NotImplementedException extends Exception {
 
 /**
- * Constructor
- *
- * @param string $message If no message is given 'Method Not Allowed' will be the message
- * @param int $code Status code, defaults to 405
+ * {@inheritDoc}
  */
-	public function __construct($message = null, $code = 405) {
-		if (empty($message)) {
-			$message = 'Method Not Allowed';
-		}
+	protected $_messageTemplate = '%s is not implemented.';
+
+/**
+ * {@inheritDoc}
+ */
+	public function __construct($message, $code = 501) {
 		parent::__construct($message, $code);
 	}
 
