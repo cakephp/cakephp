@@ -15,6 +15,8 @@
 namespace Cake\Auth;
 
 use Cake\Auth\AbstractPasswordHasher;
+use Cake\Core\Configure;
+use Cake\Utility\Debugger;
 use Cake\Utility\Security;
 
 /**
@@ -33,6 +35,16 @@ class WeakPasswordHasher extends AbstractPasswordHasher {
 	protected $_defaultConfig = [
 		'hashType' => null
 	];
+
+/**
+ * {@inheritDoc}
+ */
+	public function __construct(array $config = []) {
+		if (Configure::read('debug')) {
+			Debugger::checkSecurityKeys();
+		}
+		parent::config($config);
+	}
 
 /**
  * Generates password hash.

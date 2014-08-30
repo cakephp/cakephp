@@ -12,7 +12,7 @@
  * @since         0.10.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Utility\Debugger;
+use Cake\Error\Debugger;
 ?>
 <h2>Database Error</h2>
 <p class="error">

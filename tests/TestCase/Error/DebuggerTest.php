@@ -12,13 +12,13 @@
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Utility;
+namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Debugger;
 use Cake\View\View;
 
 /**
@@ -117,7 +117,7 @@ class DebuggerTest extends TestCase {
  * @return void
  */
 	public function testOutput() {
-		set_error_handler('Cake\Utility\Debugger::showError');
+		set_error_handler('Cake\Error\Debugger::showError');
 		$this->_restoreError = true;
 
 		$result = Debugger::output(false);
@@ -174,7 +174,7 @@ class DebuggerTest extends TestCase {
  * @return void
  */
 	public function testChangeOutputFormats() {
-		set_error_handler('Cake\Utility\Debugger::showError');
+		set_error_handler('Cake\Error\Debugger::showError');
 		$this->_restoreError = true;
 
 		Debugger::output('js', array(
@@ -220,7 +220,7 @@ class DebuggerTest extends TestCase {
 /**
  * Test that choosing a non-existent format causes an exception
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testOutputAsException() {
@@ -233,7 +233,7 @@ class DebuggerTest extends TestCase {
  * @return void
  */
 	public function testAddFormat() {
-		set_error_handler('Cake\Utility\Debugger::showError');
+		set_error_handler('Cake\Error\Debugger::showError');
 		$this->_restoreError = true;
 
 		Debugger::addFormat('js', array(
@@ -272,7 +272,7 @@ class DebuggerTest extends TestCase {
  * @return void
  */
 	public function testAddFormatCallback() {
-		set_error_handler('Cake\Utility\Debugger::showError');
+		set_error_handler('Cake\Error\Debugger::showError');
 		$this->_restoreError = true;
 
 		Debugger::addFormat('callback', array('callback' => array($this, 'customFormat')));
@@ -559,7 +559,7 @@ TEXT;
  */
 	public function testGetInstance() {
 		$result = Debugger::getInstance();
-		$this->assertInstanceOf('Cake\Utility\Debugger', $result);
+		$this->assertInstanceOf('Cake\Error\Debugger', $result);
 
 		$result = Debugger::getInstance(__NAMESPACE__ . '\DebuggerTestCaseDebugger');
 		$this->assertInstanceOf(__NAMESPACE__ . '\DebuggerTestCaseDebugger', $result);
@@ -567,8 +567,8 @@ TEXT;
 		$result = Debugger::getInstance();
 		$this->assertInstanceOf(__NAMESPACE__ . '\DebuggerTestCaseDebugger', $result);
 
-		$result = Debugger::getInstance('Cake\Utility\Debugger');
-		$this->assertInstanceOf('Cake\Utility\Debugger', $result);
+		$result = Debugger::getInstance('Cake\Error\Debugger');
+		$this->assertInstanceOf('Cake\Error\Debugger', $result);
 	}
 
 /**
@@ -623,12 +623,12 @@ TEXT;
  */
 	public function testTraceExclude() {
 		$result = Debugger::trace();
-		$this->assertRegExp('/^Cake\\\Test\\\TestCase\\\Utility\\\DebuggerTest::testTraceExclude/', $result);
+		$this->assertRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
 
 		$result = Debugger::trace(array(
-			'exclude' => array('Cake\Test\TestCase\Utility\DebuggerTest::testTraceExclude')
+			'exclude' => array('Cake\Test\TestCase\Error\DebuggerTest::testTraceExclude')
 		));
-		$this->assertNotRegExp('/^Cake\\\Test\\\TestCase\\\Utility\\\DebuggerTest::testTraceExclude/', $result);
+		$this->assertNotRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
 	}
 
 /**
@@ -640,10 +640,10 @@ TEXT;
 		$object = new DebuggableThing();
 		$result = Debugger::exportVar($object, 2);
 		$expected = <<<eos
-object(Cake\Test\TestCase\Utility\DebuggableThing) {
+object(Cake\Test\TestCase\Error\DebuggableThing) {
 
 	'foo' => 'bar',
-	'inner' => object(Cake\Test\TestCase\Utility\DebuggableThing) {}
+	'inner' => object(Cake\Test\TestCase\Error\DebuggableThing) {}
 
 }
 eos;

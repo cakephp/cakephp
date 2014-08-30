@@ -13,7 +13,7 @@
  */
 namespace Cake\Controller\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Exception\Exception;
 
 /**
  * Missing Action exception - used when a controller action

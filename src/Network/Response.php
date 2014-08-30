@@ -15,6 +15,7 @@
 namespace Cake\Network;
 
 use Cake\Core\Configure;
+use Cake\Core\Exception\Exception;
 use Cake\Error;
 use Cake\Utility\File;
 
@@ -517,11 +518,11 @@ class Response {
  * @param string $name the header name
  * @param string $value the header value
  * @return void
- * @throws \Cake\Error\Exception When headers have already been sent
+ * @throws \Cake\Core\Exception\Exception When headers have already been sent
  */
 	protected function _sendHeader($name, $value = null) {
 		if (headers_sent($filename, $linenum)) {
-			throw new Error\Exception(
+			throw new Exception(
 				sprintf('Headers already sent in %d on line %s', $linenum, $filename)
 			);
 		}
@@ -624,14 +625,14 @@ class Response {
  *
  * @param int $code the HTTP status code
  * @return int current status code
- * @throws \Cake\Error\Exception When an unknown status code is reached.
+ * @throws \Cake\Core\Exception\Exception When an unknown status code is reached.
  */
 	public function statusCode($code = null) {
 		if ($code === null) {
 			return $this->_status;
 		}
 		if (!isset($this->_statusCodes[$code])) {
-			throw new Error\Exception('Unknown status code');
+			throw new Exception('Unknown status code');
 		}
 		return $this->_status = $code;
 	}
@@ -665,7 +666,7 @@ class Response {
  *
  * @return mixed associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
- * @throws \Cake\Error\Exception If an attempt is made to add an invalid status code
+ * @throws \Cake\Core\Exception\Exception If an attempt is made to add an invalid status code
  */
 	public function httpCodes($code = null) {
 		if (empty($code)) {
@@ -675,7 +676,7 @@ class Response {
 			$codes = array_keys($code);
 			$min = min($codes);
 			if (!is_int($min) || $min < 100 || max($codes) > 999) {
-				throw new Error\Exception('Invalid status code');
+				throw new Exception('Invalid status code');
 			}
 			$this->_statusCodes = $code + $this->_statusCodes;
 			return true;

@@ -207,7 +207,7 @@ class AuthComponentTest extends TestCase {
 /**
  * testIsAuthorizedMissingFile function
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testIsAuthorizedMissingFile() {
@@ -298,7 +298,7 @@ class AuthComponentTest extends TestCase {
 /**
  * testLoadAuthenticateNoFile function
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testLoadAuthenticateNoFile() {
@@ -1042,26 +1042,6 @@ class AuthComponentTest extends TestCase {
 			->method('logout');
 
 		$this->Auth->logout();
-	}
-
-/**
- * test mapActions loading and delegating to authorize objects.
- *
- * @return void
- */
-	public function testMapActionsDelegation() {
-		$MapActionMockAuthorize = $this->getMock(
-			'Cake\Controller\Component\Auth\BaseAuthorize',
-			array('authorize', 'mapActions'), array(), '', false
-		);
-
-		$this->Auth->authorize = array('MapActionMock');
-		$this->Auth->setAuthorizeObject(0, $MapActionMockAuthorize);
-		$MapActionMockAuthorize->expects($this->once())
-			->method('mapActions')
-			->with(array('create' => array('my_action')));
-
-		$this->Auth->mapActions(array('create' => array('my_action')));
 	}
 
 /**

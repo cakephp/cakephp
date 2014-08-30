@@ -13,7 +13,7 @@
  */
 namespace Cake\ORM\Error;
 
-use Cake\Error\Exception;
+use Cake\Core\Exception\Exception;
 
 /**
  * Used when a behavior cannot be found.

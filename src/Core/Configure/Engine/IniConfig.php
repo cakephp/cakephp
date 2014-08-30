@@ -12,11 +12,11 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Configure\Engine;
+namespace Cake\Core\Configure\Engine;
 
-use Cake\Configure\ConfigEngineInterface;
+use Cake\Core\Configure\ConfigEngineInterface;
 use Cake\Core\Plugin;
-use Cake\Error;
+use Cake\Core\Exception\Exception;
 use Cake\Utility\Hash;
 
 /**
@@ -92,17 +92,17 @@ class IniConfig implements ConfigEngineInterface {
  * @param string $key The identifier to read from. If the key has a . it will be treated
  *  as a plugin prefix. The chosen file must be on the engine's path.
  * @return array Parsed configuration values.
- * @throws \Cake\Error\Exception when files don't exist.
+ * @throws \Cake\Core\Exception\Exception when files don't exist.
  *  Or when files contain '..' as this could lead to abusive reads.
  */
 	public function read($key) {
 		if (strpos($key, '..') !== false) {
-			throw new Error\Exception('Cannot load configuration files with ../ in them.');
+			throw new Exception('Cannot load configuration files with ../ in them.');
 		}
 
 		$file = $this->_getFilePath($key);
 		if (!is_file($file)) {
-			throw new Error\Exception(sprintf('Could not load configuration file: %s', $file));
+			throw new Exception(sprintf('Could not load configuration file: %s', $file));
 		}
 
 		$contents = parse_ini_file($file, true);

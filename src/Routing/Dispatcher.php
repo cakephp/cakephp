@@ -16,7 +16,7 @@ namespace Cake\Routing;
 
 use Cake\Controller\Controller;
 use Cake\Controller\Error\MissingControllerException;
-use Cake\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManagerTrait;
@@ -102,7 +102,7 @@ class Dispatcher {
  *
  * @param Controller $controller Controller to invoke
  * @return \Cake\Network\Response The resulting response object
- * @throws \Cake\Error\Exception If data returned by controller action is not an
+ * @throws \Cake\Core\Exception\Exception If data returned by controller action is not an
  *   instance of Response
  */
 	protected function _invoke(Controller $controller) {

@@ -16,7 +16,7 @@ namespace Cake\Console;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Utility\Inflector;
 
 /**
@@ -100,7 +100,7 @@ class ShellDispatcher {
  * Defines current working environment.
  *
  * @return void
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	protected function _initEnvironment() {
 		if (!$this->_bootstrap()) {

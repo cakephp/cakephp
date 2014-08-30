@@ -22,7 +22,7 @@ use Cake\Controller\Error\MissingControllerException;
 use Cake\Controller\Error\PrivateActionException;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Error\MissingPluginException;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Datasource\Error\MissingDatasourceConfigException;
 use Cake\Datasource\Error\MissingDatasourceException;
@@ -567,7 +567,7 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
-				new Error\Exception('base class'),
+				new \Cake\Core\Exception\Exception('base class'),
 				array('/Internal Error/'),
 				500
 			)

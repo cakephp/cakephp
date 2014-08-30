@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleErrorHandler;
 use Cake\Controller\Error\MissingActionException;
+use Cake\Core\Exception\Exception;
 use Cake\Error;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -141,7 +142,7 @@ class ConsoleErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testNonIntegerExceptionCode() {
-		$exception = new Error\Exception('Non-integer exception code');
+		$exception = new Exception('Non-integer exception code');
 
 		$class = new \ReflectionClass('Exception');
 		$property = $class->getProperty('code');

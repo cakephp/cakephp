@@ -13,7 +13,7 @@
  */
 namespace Cake\Network\Http\Adapter;
 
-use Cake\Error;
+use Cake\Core\Exception\Exception;
 use Cake\Network\Http\FormData;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
@@ -231,7 +231,7 @@ class Stream {
  *
  * @param \Cake\Network\Request $request The request object.
  * @return array Array of populated Response objects
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	protected function _send(Request $request) {
 		$url = $request->url();
@@ -244,7 +244,7 @@ class Stream {
 		fclose($this->_stream);
 
 		if ($meta['timed_out']) {
-			throw new Error\Exception('Connection timed out ' . $url);
+			throw new Exception('Connection timed out ' . $url);
 		}
 		$headers = $meta['wrapper_data'];
 		if (isset($meta['wrapper_type']) && $meta['wrapper_type'] === 'curl') {
@@ -258,7 +258,7 @@ class Stream {
  *
  * @param string $url The url to connect to.
  * @return void
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	protected function _open($url) {
 		set_error_handler([$this, '_connectionErrorHandler']);
@@ -266,7 +266,7 @@ class Stream {
 		restore_error_handler();
 
 		if (!$this->_stream || !empty($this->_connectionErrors)) {
-			throw new Error\Exception(implode("\n", $this->_connectionErrors));
+			throw new Exception(implode("\n", $this->_connectionErrors));
 		}
 	}
 

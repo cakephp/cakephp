@@ -12,10 +12,10 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Configure\Engine;
+namespace Cake\Test\TestCase\Core\Configure\Engine;
 
-use Cake\Configure\Engine\IniConfig;
 use Cake\Core\App;
+use Cake\Core\Configure\Engine\IniConfig;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
@@ -166,7 +166,7 @@ class IniConfigTest extends TestCase {
 /**
  * Test an exception is thrown by reading files that exist without .ini extension.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testReadWithExistentFileWithoutExtension() {
@@ -177,7 +177,7 @@ class IniConfigTest extends TestCase {
 /**
  * Test an exception is thrown by reading files that don't exist.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testReadWithNonExistentFile() {
@@ -199,7 +199,7 @@ class IniConfigTest extends TestCase {
 /**
  * Test reading keys with ../ doesn't work.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testReadWithDots() {

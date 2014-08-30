@@ -69,7 +69,7 @@ class LogTest extends TestCase {
 /**
  * test all the errors from failed logger imports
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testImportingLoggerFailure() {
@@ -91,7 +91,7 @@ class LogTest extends TestCase {
 /**
  * test that loggers have to implement the correct interface.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testNotImplementingInterface() {
@@ -122,7 +122,7 @@ class LogTest extends TestCase {
 /**
  * test config() with valid key name
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testInvalidLevel() {
@@ -166,7 +166,7 @@ class LogTest extends TestCase {
  * Test that config() throws an exception when adding an
  * adapter with the wrong type.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testConfigInjectErrorOnWrongType() {
@@ -195,7 +195,7 @@ class LogTest extends TestCase {
 /**
  * Ensure you cannot reconfigure a log adapter.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testConfigErrorOnReconfigure() {
