@@ -15,8 +15,8 @@
 namespace Cake\Datasource;
 
 use Cake\Core\App;
-use Cake\Datasource\Error\MissingDatasourceException;
 use Cake\Core\ObjectRegistry;
+use Cake\Datasource\Exception\MissingDatasourceException;
 
 /**
  * A registry object for connection instances.
@@ -48,7 +48,7 @@ class ConnectionRegistry extends ObjectRegistry {
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the driver is missing in.
  * @return void
- * @throws \Cake\Datasource\Error\MissingDatasourceException
+ * @throws \Cake\Datasource\Exception\MissingDatasourceException
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new MissingDatasourceException([

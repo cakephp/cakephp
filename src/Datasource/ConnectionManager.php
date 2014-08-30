@@ -16,7 +16,7 @@ namespace Cake\Datasource;
 
 use Cake\Core\StaticConfigTrait;
 use Cake\Datasource\ConnectionRegistry;
-use Cake\Datasource\Error\MissingDatasourceConfigException;
+use Cake\Datasource\Exception\MissingDatasourceConfigException;
 
 /**
  * Manages and loads instances of Connection
@@ -81,7 +81,7 @@ class ConnectionManager {
  * @param string $from The connection to add an alias to.
  * @param string $to The alias to create. $from should return when loaded with get().
  * @return void
- * @throws \Cake\Datasource\Error\MissingDatasourceConfigException When aliasing a
+ * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException When aliasing a
  * connection that does not exist.
  */
 	public static function alias($from, $to) {
@@ -116,7 +116,7 @@ class ConnectionManager {
  * @param string $name The connection name.
  * @param bool $useAliases Set to false to not use aliased connections.
  * @return \Cake\Database\Connection A connection object.
- * @throws \Cake\Datasource\Error\MissingDatasourceConfigException When config
+ * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException When config
  * data is missing.
  */
 	public static function get($name, $useAliases = true) {
@@ -124,7 +124,7 @@ class ConnectionManager {
 			$name = static::$_aliasMap[$name];
 		}
 		if (empty(static::$_config[$name])) {
-			throw new Error\MissingDatasourceConfigException(['name' => $name]);
+			throw new MissingDatasourceConfigException(['name' => $name]);
 		}
 		if (empty(static::$_registry)) {
 			static::$_registry = new ConnectionRegistry();

@@ -71,7 +71,7 @@ class ConnectionManagerTest extends TestCase {
 /**
  * Test invalid classes cause exceptions
  *
- * @expectedException \Cake\Datasource\Error\MissingDatasourceException
+ * @expectedException \Cake\Datasource\Exception\MissingDatasourceException
  */
 	public function testConfigInvalidOptions() {
 		ConnectionManager::config('test_variant', [
@@ -206,7 +206,7 @@ class ConnectionManagerTest extends TestCase {
 /**
  * Test alias() raises an error when aliasing an undefined connection.
  *
- * @expectedException \Cake\Datasource\Error\MissingDatasourceConfigException
+ * @expectedException \Cake\Datasource\Exception\MissingDatasourceConfigException
  * @return void
  */
 	public function testAliasError() {

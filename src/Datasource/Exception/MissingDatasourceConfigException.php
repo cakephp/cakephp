@@ -11,7 +11,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Datasource\Error;
+namespace Cake\Datasource\Exception;
 
 use Cake\Core\Exception\Exception;
 
