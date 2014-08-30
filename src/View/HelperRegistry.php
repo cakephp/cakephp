@@ -15,8 +15,8 @@
 namespace Cake\View;
 
 use Cake\Core\App;
-use Cake\Event\EventManagerTrait;
 use Cake\Core\ObjectRegistry;
+use Cake\Event\EventManagerTrait;
 use Cake\View\View;
 
 /**
@@ -51,7 +51,7 @@ class HelperRegistry extends ObjectRegistry {
  *
  * @param string $helper The helper name to be loaded
  * @return bool whether the helper could be loaded or not
- * @throws \Cake\View\Error\MissingHelperException When a helper could not be found.
+ * @throws \Cake\View\Exception\MissingHelperException When a helper could not be found.
  *    App helpers are searched, and then plugin helpers.
  */
 	public function __isset($helper) {
@@ -111,10 +111,10 @@ class HelperRegistry extends ObjectRegistry {
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the helper is missing in.
  * @return void
- * @throws \Cake\View\Error\MissingHelperException
+ * @throws \Cake\View\Exception\MissingHelperException
  */
 	protected function _throwMissingClassError($class, $plugin) {
-		throw new Error\MissingHelperException([
+		throw new Exception\MissingHelperException([
 			'class' => $class . 'Helper',
 			'plugin' => $plugin
 		]);

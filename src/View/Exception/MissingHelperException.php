@@ -11,16 +11,16 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Error;
+namespace Cake\View\Exception;
 
 use Cake\Core\Exception\Exception;
 
 /**
- * Used when a view file cannot be found.
+ * Used when a helper cannot be found.
  *
  */
-class MissingViewException extends Exception {
+class MissingHelperException extends Exception {
 
-	protected $_messageTemplate = 'View file "%s" is missing.';
+	protected $_messageTemplate = 'Helper class %s could not be found.';
 
 }

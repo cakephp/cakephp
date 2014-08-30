@@ -11,15 +11,16 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Error;
+namespace Cake\View\Exception;
 
 use Cake\Core\Exception\Exception;
 
 /**
- * Used when a view file for a cell cannot be found.
+ * Used when a layout file cannot be found.
+ *
  */
-class MissingCellViewException extends Exception {
+class MissingLayoutException extends Exception {
 
-	protected $_messageTemplate = 'Cell view file "%s" is missing.';
+	protected $_messageTemplate = 'Layout file "%s" is missing.';
 
 }

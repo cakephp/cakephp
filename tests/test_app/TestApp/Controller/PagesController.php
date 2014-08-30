@@ -21,7 +21,7 @@ namespace TestApp\Controller;
 use Cake\Core\Configure;
 use Cake\Network\Exception\NotFoundException;
 use Cake\Utility\Inflector;
-use Cake\View\Error\MissingViewException;
+use Cake\View\Exception\MissingViewException;
 
 /**
  * Static content controller
@@ -52,7 +52,7 @@ class PagesController extends AppController {
  * @param mixed What page to display
  * @return void
  * @throws Cake\Network\Exception\NotFoundException When the view file could not be found
- *	or Cake\View\Error\MissingViewException in debug mode.
+ *	or Cake\View\Exception\MissingViewException in debug mode.
  */
 	public function display() {
 		$path = func_get_args();
