@@ -14,9 +14,10 @@
  */
 namespace Cake\Controller;
 
+use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
-use Cake\Event\EventManagerTrait;
 use Cake\Core\ObjectRegistry;
+use Cake\Event\EventManagerTrait;
 
 /**
  * ComponentRegistry is a registry for loaded components
@@ -75,10 +76,10 @@ class ComponentRegistry extends ObjectRegistry {
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the component is missing in.
  * @return void
- * @throws \Cake\Controller\Error\MissingComponentException
+ * @throws \Cake\Controller\Exception\MissingComponentException
  */
 	protected function _throwMissingClassError($class, $plugin) {
-		throw new Error\MissingComponentException([
+		throw new MissingComponentException([
 			'class' => $class . 'Component',
 			'plugin' => $plugin
 		]);

@@ -261,7 +261,7 @@ class ControllerTestCaseTest extends TestCase {
 /**
  * Tests not using loaded routes during tests
  *
- * @expectedException \Cake\Controller\Error\MissingActionException
+ * @expectedException \Cake\Controller\Exception\MissingActionException
  * @return void
  */
 	public function testSkipRoutes() {

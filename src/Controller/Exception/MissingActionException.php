@@ -11,21 +11,21 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Controller\Error;
+namespace Cake\Controller\Exception;
 
 use Cake\Core\Exception\Exception;
 
 /**
- * Missing Controller exception - used when a controller
+ * Missing Action exception - used when a controller action
  * cannot be found.
  *
  */
-class MissingControllerException extends Exception {
+class MissingActionException extends Exception {
 
 /**
  * {@inheritDoc}
  */
-	protected $_messageTemplate = 'Controller class %s could not be found.';
+	protected $_messageTemplate = 'Action %s::%s() could not be found.';
 
 /**
  * {@inheritDoc}

@@ -15,13 +15,13 @@
 namespace Cake\Routing;
 
 use Cake\Controller\Controller;
-use Cake\Controller\Error\MissingControllerException;
-use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManagerTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Routing\Error\MissingControllerException;
+use LogicException;
 
 /**
  * Dispatcher converts Requests into controller actions. It uses the dispatched Request
@@ -55,7 +55,7 @@ class Dispatcher {
  * @param \Cake\Network\Request $request Request object to dispatch.
  * @param \Cake\Network\Response $response Response object to put the results of the dispatch into.
  * @return string|void if `$request['return']` is set then it returns response body, null otherwise
- * @throws \Cake\Controller\Error\MissingControllerException When the controller is missing.
+ * @throws \Cake\Routing\Error\MissingControllerException When the controller is missing.
  */
 	public function dispatch(Request $request, Response $response) {
 		$beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
@@ -102,7 +102,7 @@ class Dispatcher {
  *
  * @param Controller $controller Controller to invoke
  * @return \Cake\Network\Response The resulting response object
- * @throws \Cake\Core\Exception\Exception If data returned by controller action is not an
+ * @throws \LogicException If data returned by controller action is not an
  *   instance of Response
  */
 	protected function _invoke(Controller $controller) {
@@ -114,7 +114,7 @@ class Dispatcher {
 
 		$response = $controller->invokeAction();
 		if ($response !== null && !($response instanceof Response)) {
-			throw new Exception('Controller action can only return an instance of Response');
+			throw new LogicException('Controller action can only return an instance of Response');
 		}
 
 		if (!$response && $controller->autoRender) {

@@ -14,7 +14,8 @@
  */
 namespace Cake\Controller;
 
-use Cake\Core\Exception\Exception;
+use Cake\Controller\Exception\MissingActionException;
+use Cake\Controller\Exception\PrivateActionException;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManagerTrait;
@@ -352,8 +353,8 @@ class Controller implements EventListener {
  *
  * @return mixed The resulting response.
  * @throws \LogicException When request is not set.
- * @throws \Cake\Controller\Error\PrivateActionException When actions are not public or prefixed by _
- * @throws \Cake\Controller\Error\MissingActionException When actions are not defined.
+ * @throws \Cake\Controller\Exception\PrivateActionException When actions are not public or prefixed by _
+ * @throws \Cake\Controller\Exception\MissingActionException When actions are not defined.
  */
 	public function invokeAction() {
 		try {
@@ -363,7 +364,7 @@ class Controller implements EventListener {
 			}
 			$method = new \ReflectionMethod($this, $request->params['action']);
 			if ($this->_isPrivateAction($method, $request)) {
-				throw new Error\PrivateActionException(array(
+				throw new PrivateActionException(array(
 					'controller' => $this->name . "Controller",
 					'action' => $request->params['action'],
 					'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
@@ -373,7 +374,7 @@ class Controller implements EventListener {
 			return $method->invokeArgs($this, $request->params['pass']);
 
 		} catch (\ReflectionException $e) {
-			throw new Error\MissingActionException(array(
+			throw new MissingActionException(array(
 				'controller' => $this->name . "Controller",
 				'action' => $request->params['action'],
 				'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',

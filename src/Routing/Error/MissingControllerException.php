@@ -11,16 +11,27 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Controller\Error;
+namespace Cake\Routing\Error;
 
 use Cake\Core\Exception\Exception;
 
 /**
- * Used when a component cannot be found.
+ * Missing Controller exception - used when a controller
+ * cannot be found.
  *
  */
-class MissingComponentException extends Exception {
+class MissingControllerException extends Exception {
 
-	protected $_messageTemplate = 'Component class %s could not be found.';
+/**
+ * {@inheritDoc}
+ */
+	protected $_messageTemplate = 'Controller class %s could not be found.';
+
+/**
+ * {@inheritDoc}
+ */
+	public function __construct($message, $code = 404) {
+		parent::__construct($message, $code);
+	}
 
 }
