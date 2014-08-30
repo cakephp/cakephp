@@ -2276,7 +2276,7 @@ class RouterTest extends TestCase {
 /**
  * test that route classes must extend \Cake\Routing\Route\Route
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testCustomRouteException() {
