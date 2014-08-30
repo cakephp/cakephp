@@ -15,7 +15,7 @@
 namespace Cake\Network;
 
 use Cake\Core\Configure;
-use Cake\Error;
+use Cake\Network\Exception\NotFoundException;
 use Cake\Utility\File;
 use InvalidArgumentException;
 use RuntimeException;
@@ -1332,7 +1332,7 @@ class Response {
  *   to a file, `APP` will be prepended to the path.
  * @param array $options Options See above.
  * @return void
- * @throws \Cake\Error\NotFoundException
+ * @throws \Cake\Network\Exception\NotFoundException
  */
 	public function file($path, array $options = array()) {
 		$options += array(
@@ -1341,7 +1341,7 @@ class Response {
 		);
 
 		if (strpos($path, '..') !== false) {
-			throw new Error\NotFoundException('The requested file contains `..` and will not be read.');
+			throw new NotFoundException('The requested file contains `..` and will not be read.');
 		}
 
 		if (!is_file($path)) {
@@ -1351,9 +1351,9 @@ class Response {
 		$file = new File($path);
 		if (!$file->exists() || !$file->readable()) {
 			if (Configure::read('debug')) {
-				throw new Error\NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
+				throw new NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
 			}
-			throw new Error\NotFoundException(__d('cake', 'The requested file was not found'));
+			throw new NotFoundException(__d('cake', 'The requested file was not found'));
 		}
 
 		$extension = strtolower($file->ext());

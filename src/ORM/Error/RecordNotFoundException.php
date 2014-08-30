@@ -14,7 +14,7 @@
  */
 namespace Cake\ORM\Error;
 
-use Cake\Error\NotFoundException;
+use Cake\Network\Exception\NotFoundException;
 
 /**
  * Exception raised when a particular record was not found
