@@ -560,7 +560,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param string $alias The model to get a mock for.
  * @param mixed $methods The list of methods to mock
  * @param array $options The config data for the mock's constructor.
- * @throws \Cake\ORM\Error\MissingTableClassException
+ * @throws \Cake\ORM\Exception\MissingTableClassException
  * @return Model
  */
 	public function getMockForModel($alias, array $methods = array(), array $options = array()) {
@@ -568,7 +568,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 			$class = Inflector::camelize($alias);
 			$className = App::className($class, 'Model/Table', 'Table');
 			if (!$className) {
-				throw new \Cake\ORM\Error\MissingTableClassException(array($alias));
+				throw new \Cake\ORM\Exception\MissingTableClassException(array($alias));
 			}
 			$options['className'] = $className;
 		}

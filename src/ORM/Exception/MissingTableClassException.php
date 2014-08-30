@@ -1,26 +1,27 @@
 <?php
 /**
+ * MissingTableClassException class
+ *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html
+ * @copyright     Copyright 2005-2013, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\ORM\Error;
+namespace Cake\ORM\Exception;
 
 use Cake\Core\Exception\Exception;
 
 /**
- * Used when a behavior cannot be found.
+ * Exception raised when a Table could not be found.
  *
  */
-class MissingBehaviorException extends Exception {
+class MissingTableClassException extends Exception {
 
-	protected $_messageTemplate = 'Behavior class %s could not be found.';
+	protected $_messageTemplate = 'Table class %s could not be found.';
 
 }

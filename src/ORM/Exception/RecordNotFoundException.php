@@ -12,7 +12,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\ORM\Error;
+namespace Cake\ORM\Exception;
 
 use RuntimeException;
 
