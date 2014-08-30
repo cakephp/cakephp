@@ -19,5 +19,15 @@ define('TIME_START', microtime(true));
 class_alias('Cake\Error\Debugger', 'Cake\Utility\Debugger');
 class_alias('Cake\Core\Configure\Engine\PhpConfig', 'Cake\Configure\Engine\PhpConfig');
 class_alias('Cake\Core\Configure\Engine\IniConfig', 'Cake\Configure\Engine\IniConfig');
+class_alias('Cake\Error\BadRequestException', 'Cake\Network\Exception\BadRequestException');
+class_alias('Cake\Error\ForbiddenException', 'Cake\Network\Exception\ForbiddenException');
+class_alias('Cake\Error\HttpException', 'Cake\Network\Exception\HttpException');
+class_alias('Cake\Error\InternalErrorException', 'Cake\Network\Exception\InternalErrorException');
+class_alias('Cake\Error\MethodNotAllowedException', 'Cake\Network\Exception\MethodNotAllowedException');
+class_alias('Cake\Error\NotFoundException', 'Cake\Network\Exception\NotFoundException');
+class_alias('Cake\Error\NotImplementedException', 'Cake\Network\Exception\NotImplementedException');
+class_alias('Cake\Error\SocketException', 'Cake\Network\Exception\SocketException');
+class_alias('Cake\Error\UnauthorizedException', 'Cake\Network\Exception\UnauthorizedException');
+class_alias('Cake\Error\Exception', 'Cake\Core\Exception\Exception');
 
 require CAKE . 'basics.php';
