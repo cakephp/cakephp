@@ -55,7 +55,8 @@ class DebuggerTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('debug', true);
-		Configure::write('log', false);
+		Log::drop('stderr');
+		Log::drop('stdout');
 	}
 
 /**
@@ -65,7 +66,6 @@ class DebuggerTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Configure::write('log', true);
 		if ($this->_restoreError) {
 			restore_error_handler();
 		}
