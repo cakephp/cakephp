@@ -21,13 +21,10 @@ class_alias('Cake\Core\Configure\Engine\PhpConfig', 'Cake\Configure\Engine\PhpCo
 class_alias('Cake\Core\Configure\Engine\IniConfig', 'Cake\Configure\Engine\IniConfig');
 class_alias('Cake\Network\Exception\BadRequestException', 'Cake\Error\BadRequestException');
 class_alias('Cake\Network\Exception\ForbiddenException', 'Cake\Error\ForbiddenException');
-class_alias('Cake\Network\Exception\HttpException', 'Cake\Error\HttpException');
-class_alias('Cake\Network\Exception\InternalErrorException', 'Cake\Error\InternalErrorException');
 class_alias('Cake\Network\Exception\MethodNotAllowedException', 'Cake\Error\MethodNotAllowedException');
 class_alias('Cake\Network\Exception\NotFoundException', 'Cake\Error\NotFoundException');
 class_alias('Cake\Network\Exception\NotImplementedException', 'Cake\Error\NotImplementedException');
 class_alias('Cake\Network\Exception\SocketException', 'Cake\Error\SocketException');
 class_alias('Cake\Network\Exception\UnauthorizedException', 'Cake\Error\UnauthorizedException');
-class_alias('Cake\Core\Exception\Exception', 'Cake\Error\Exception');
 
 require CAKE . 'basics.php';
