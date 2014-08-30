@@ -18,7 +18,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;
@@ -220,7 +220,7 @@ class FixtureManager {
  *
  * @param \Cake\TestSuite\TestCase $test the test to inspect for fixture loading
  * @return void
- * @throws \Cake\Core\Error\Exception When fixture records cannot be inserted.
+ * @throws \Cake\Core\Exception\Exception When fixture records cannot be inserted.
  */
 	public function load($test) {
 		if (empty($test->fixtures)) {

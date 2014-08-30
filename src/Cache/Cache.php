@@ -15,7 +15,7 @@
 namespace Cake\Cache;
 
 use Cake\Cache\Engine\NullEngine;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Core\StaticConfigTrait;
 
 /**
@@ -61,7 +61,7 @@ use Cake\Core\StaticConfigTrait;
  * @param string $name Name of the configuration
  * @param array $config Optional associative array of settings passed to the engine
  * @return array [engine, settings] on success, false on failure
- * @throws \Cake\Core\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 class Cache {
 
@@ -100,7 +100,7 @@ class Cache {
  *
  * @param string $name Name of the config array that needs an engine instance built
  * @return void
- * @throws \Cake\Core\Error\Exception When a cache engine cannot be created.
+ * @throws \Cake\Core\Exception\Exception When a cache engine cannot be created.
  */
 	protected static function _buildEngine($name) {
 		if (empty(static::$_registry)) {
@@ -213,7 +213,7 @@ class Cache {
  * @param array $data An array of data to be stored in the cache
  * @param string $config Optional string configuration name to write to. Defaults to 'default'
  * @return array of bools for each key provided, indicating true for success or false for fail
- * @throws Cake\Core\Error\Exception
+ * @throws Cake\Core\Exception\Exception
  */
 	public static function writeMany($data, $config = 'default') {
 		$engine = static::engine($config);
@@ -394,7 +394,7 @@ class Cache {
  *
  * @param string $group group name or null to retrieve all group mappings
  * @return array map of group and all configuration that has the same group
- * @throws \Cake\Core\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	public static function groupConfigs($group = null) {
 		if ($group === null) {

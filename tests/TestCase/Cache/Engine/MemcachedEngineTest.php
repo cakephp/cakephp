@@ -177,7 +177,7 @@ class MemcachedEngineTest extends TestCase {
 		);
 
 		$this->setExpectedException(
-			'Cake\Core\Error\Exception', 'invalid_serializer is not a valid serializer engine for Memcached'
+			'Cake\Core\Exception\Exception', 'invalid_serializer is not a valid serializer engine for Memcached'
 		);
 		$Memcached->init($config);
 	}
@@ -289,7 +289,7 @@ class MemcachedEngineTest extends TestCase {
 		);
 
 		$this->setExpectedException(
-			'Cake\Core\Error\Exception', 'Memcached extension is not compiled with json support'
+			'Cake\Core\Exception\Exception', 'Memcached extension is not compiled with json support'
 		);
 		$Memcached->init($config);
 	}
@@ -314,7 +314,7 @@ class MemcachedEngineTest extends TestCase {
 		);
 
 		$this->setExpectedException(
-			'Cake\Core\Error\Exception', 'msgpack is not a valid serializer engine for Memcached'
+			'Cake\Core\Exception\Exception', 'msgpack is not a valid serializer engine for Memcached'
 		);
 		$Memcached->init($config);
 	}
@@ -339,7 +339,7 @@ class MemcachedEngineTest extends TestCase {
 		);
 
 		$this->setExpectedException(
-			'Cake\Core\Error\Exception', 'Memcached extension is not compiled with igbinary support'
+			'Cake\Core\Exception\Exception', 'Memcached extension is not compiled with igbinary support'
 		);
 		$Memcached->init($config);
 	}
@@ -366,7 +366,7 @@ class MemcachedEngineTest extends TestCase {
 		);
 
 		$this->setExpectedException(
-			'Cake\Core\Error\Exception', 'Memcached extension is not build with SASL support'
+			'Cake\Core\Exception\Exception', 'Memcached extension is not build with SASL support'
 		);
 		$Memcached->init($config);
 	}

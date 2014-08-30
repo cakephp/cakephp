@@ -15,7 +15,7 @@
 namespace Cake\Log\Engine;
 
 use Cake\Console\ConsoleOutput;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 
 /**
  * Console logging. Writes logs to console output.
@@ -52,7 +52,7 @@ class ConsoleLog extends BaseLog {
  * - `outputAs` integer or ConsoleOutput::[RAW|PLAIN|COLOR]
  *
  * @param array $config Options for the FileLog, see above.
- * @throws \Cake\Core\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	public function __construct(array $config = array()) {
 		if (DS === '\\' && !(bool)env('ANSICON')) {

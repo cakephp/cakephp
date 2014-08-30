@@ -766,7 +766,7 @@ class EmailTest extends TestCase {
 /**
  * Test that using unknown transports fails.
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  */
 	public function testTransportInvalid() {
 		$this->CakeEmail->transport('Invalid');
@@ -775,7 +775,7 @@ class EmailTest extends TestCase {
 /**
  * Test that using classes with no send method fails.
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  */
 	public function testTransportInstanceInvalid() {
 		$this->CakeEmail->transport(new \StdClass());
@@ -824,7 +824,7 @@ class EmailTest extends TestCase {
 /**
  * Test that exceptions are raised when duplicate transports are configured.
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  */
 	public function testConfigTransportErrorOnDuplicate() {
 		Email::dropTransport('debug');
@@ -880,7 +880,7 @@ class EmailTest extends TestCase {
 /**
  * Test that exceptions are raised on duplicate config set.
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testConfigErrorOnDuplicate() {
@@ -911,7 +911,7 @@ class EmailTest extends TestCase {
 /**
  * Test that using an invalid profile fails.
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @expectedExceptionMessage Unknown email configuration "derp".
  */
 	public function testProfileInvalid() {

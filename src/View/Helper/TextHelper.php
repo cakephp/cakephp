@@ -15,7 +15,7 @@
 namespace Cake\View\Helper;
 
 use Cake\Core\App;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\View\Helper;
 use Cake\View\View;
 
@@ -71,7 +71,7 @@ class TextHelper extends Helper {
  *
  * @param View $View the view object the helper is attached to.
  * @param array $config Settings array Settings array
- * @throws \Cake\Core\Error\Exception when the engine class could not be found.
+ * @throws \Cake\Core\Exception\Exception when the engine class could not be found.
  */
 	public function __construct(View $View, array $config = array()) {
 		parent::__construct($View, $config);

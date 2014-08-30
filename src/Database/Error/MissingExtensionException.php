@@ -14,9 +14,9 @@
  */
 namespace Cake\Database\Error;
 
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 
-class MissingExtensionException extends \Cake\Core\Error\Exception {
+class MissingExtensionException extends \Cake\Core\Exception\Exception {
 
 /**
  * {@inheritDoc}

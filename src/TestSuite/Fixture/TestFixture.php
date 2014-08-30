@@ -14,7 +14,7 @@
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Database\Connection;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
@@ -87,7 +87,7 @@ class TestFixture {
 /**
  * Instantiate the fixture.
  *
- * @throws \Cake\Core\Error\Exception on invalid datasource usage.
+ * @throws \Cake\Core\Exception\Exception on invalid datasource usage.
  */
 	public function __construct() {
 		$connection = 'test';
@@ -175,7 +175,7 @@ class TestFixture {
  * Build fixture schema from a table in another datasource.
  *
  * @return void
- * @throws \Cake\Core\Error\Exception when trying to import from an empty table.
+ * @throws \Cake\Core\Exception\Exception when trying to import from an empty table.
  */
 	protected function _schemaFromImport() {
 		if (!is_array($this->import)) {

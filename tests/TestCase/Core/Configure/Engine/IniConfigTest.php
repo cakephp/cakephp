@@ -166,7 +166,7 @@ class IniConfigTest extends TestCase {
 /**
  * Test an exception is thrown by reading files that exist without .ini extension.
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testReadWithExistentFileWithoutExtension() {
@@ -177,7 +177,7 @@ class IniConfigTest extends TestCase {
 /**
  * Test an exception is thrown by reading files that don't exist.
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testReadWithNonExistentFile() {
@@ -199,7 +199,7 @@ class IniConfigTest extends TestCase {
 /**
  * Test reading keys with ../ doesn't work.
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testReadWithDots() {

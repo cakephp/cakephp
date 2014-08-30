@@ -15,7 +15,7 @@
 namespace Cake\Network;
 
 use Cake\Core\Configure;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Error;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
@@ -525,7 +525,7 @@ class Request implements \ArrayAccess {
  * @param string $name The method called
  * @param array $params Array of parameters for the method call
  * @return mixed
- * @throws \Cake\Core\Error\Exception when an invalid method is called.
+ * @throws \Cake\Core\Exception\Exception when an invalid method is called.
  */
 	public function __call($name, $params) {
 		if (strpos($name, 'is') === 0) {

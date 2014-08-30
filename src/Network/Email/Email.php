@@ -17,7 +17,7 @@ namespace Cake\Network\Email;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\StaticConfigTrait;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Log\Log;
 use Cake\Network\Error;
 use Cake\Network\Http\FormData\Part;
@@ -961,7 +961,7 @@ class Email {
  *
  * @param string $name The transport configuration name to build.
  * @return \Cake\Network\Email\AbstractTransport
- * @throws \Cake\Core\Error\Exception When transport configuration is missing or invalid.
+ * @throws \Cake\Core\Exception\Exception When transport configuration is missing or invalid.
  */
 	protected function _constructTransport($name) {
 		if (!isset(static::$_transportConfig[$name]['className'])) {
@@ -1154,7 +1154,7 @@ class Email {
  * @param array|AbstractTransport $config Either an array of configuration
  *   data, or a transport instance.
  * @return mixed Either null when setting or an array of data when reading.
- * @throws \Cake\Core\Error\Exception When modifying an existing configuration.
+ * @throws \Cake\Core\Exception\Exception When modifying an existing configuration.
  */
 	public static function configTransport($key, $config = null) {
 		if ($config === null && is_string($key)) {
@@ -1301,7 +1301,7 @@ class Email {
  *
  * @param string|array $config Configuration options.
  * @return void
- * @throws \Cake\Core\Error\Exception When using a configuration that doesn't exist.
+ * @throws \Cake\Core\Exception\Exception When using a configuration that doesn't exist.
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {

@@ -17,7 +17,7 @@ namespace Cake\Shell\Task;
 use Cake\Console\Shell;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -277,7 +277,7 @@ class TestTask extends BakeTask {
  *
  * @param string $type The type of thing having a test generated.
  * @return string
- * @throws \Cake\Core\Error\Exception When invalid object types are requested.
+ * @throws \Cake\Core\Exception\Exception When invalid object types are requested.
  */
 	public function mapType($type) {
 		$type = ucfirst($type);

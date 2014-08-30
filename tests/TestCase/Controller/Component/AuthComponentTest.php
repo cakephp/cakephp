@@ -207,7 +207,7 @@ class AuthComponentTest extends TestCase {
 /**
  * testIsAuthorizedMissingFile function
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testIsAuthorizedMissingFile() {
@@ -298,7 +298,7 @@ class AuthComponentTest extends TestCase {
 /**
  * testLoadAuthenticateNoFile function
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testLoadAuthenticateNoFile() {

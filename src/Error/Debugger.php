@@ -15,7 +15,7 @@
 namespace Cake\Error;
 
 use Cake\Core\Configure;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Cake\Utility\String;
@@ -625,7 +625,7 @@ class Debugger {
  * @param string $format The format you want errors to be output as.
  *   Leave null to get the current format.
  * @return mixed Returns null when setting. Returns the current format when getting.
- * @throws \Cake\Core\Error\Exception when choosing a format that doesn't exist.
+ * @throws \Cake\Core\Exception\Exception when choosing a format that doesn't exist.
  */
 	public static function outputAs($format = null) {
 		$self = Debugger::getInstance();

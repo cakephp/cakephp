@@ -13,7 +13,7 @@
  */
 namespace Cake\Console\Error;
 
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 
 /**
  * Used when a Task cannot be found.

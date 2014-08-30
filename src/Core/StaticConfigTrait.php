@@ -14,7 +14,7 @@
  */
 namespace Cake\Core;
 
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 
 /**
  * A trait that provides a set of static methods to manage configuration
@@ -65,7 +65,7 @@ trait StaticConfigTrait {
  * @param string|array $key The name of the configuration, or an array of multiple configs.
  * @param array $config An array of name => configuration data for adapter.
  * @return mixed null when adding configuration and an array of configuration data when reading.
- * @throws \Cake\Core\Error\Exception When trying to modify an existing config.
+ * @throws \Cake\Core\Exception\Exception When trying to modify an existing config.
  */
 	public static function config($key, $config = null) {
 		// Read config.

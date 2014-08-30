@@ -16,7 +16,7 @@ namespace Cake\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Request;
 use Cake\Utility\Inflector;
@@ -94,7 +94,7 @@ abstract class BaseAuthorize {
  *
  * @param Controller $controller null to get, a controller to set.
  * @return mixed
- * @throws \Cake\Core\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	public function controller(Controller $controller = null) {
 		if ($controller) {

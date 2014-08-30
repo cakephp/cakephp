@@ -14,7 +14,7 @@
 namespace Cake\Log;
 
 use Cake\Core\StaticConfigTrait;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Log\Engine\BaseLog;
 
 /**
@@ -246,7 +246,7 @@ class Log {
  * @param string|array $key The name of the logger config, or an array of multiple configs.
  * @param array $config An array of name => config data for adapter.
  * @return mixed null when adding configuration and an array of configuration data when reading.
- * @throws \Cake\Core\Error\Exception When trying to modify an existing config.
+ * @throws \Cake\Core\Exception\Exception When trying to modify an existing config.
  */
 	public static function config($key, $config = null) {
 		$return = static::_config($key, $config);
@@ -316,7 +316,7 @@ class Log {
  * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return bool Success
- * @throws \Cake\Core\Error\Exception If invalid level is passed.
+ * @throws \Cake\Core\Exception\Exception If invalid level is passed.
  */
 	public static function write($level, $message, $scope = array()) {
 		static::_init();

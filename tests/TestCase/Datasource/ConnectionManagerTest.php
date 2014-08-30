@@ -83,7 +83,7 @@ class ConnectionManagerTest extends TestCase {
 /**
  * Test for errors on duplicate config.
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @expectedExceptionMessage Cannot reconfigure existing key "test_variant"
  * @return void
  */
@@ -99,7 +99,7 @@ class ConnectionManagerTest extends TestCase {
 /**
  * Test get() failing on missing config.
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @expectedExceptionMessage The datasource configuration "test_variant" was not found.
  * @return void
  */
@@ -125,7 +125,7 @@ class ConnectionManagerTest extends TestCase {
 /**
  * Test loading connections without aliases
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @expectedExceptionMessage The datasource configuration "other_name" was not found.
  * @return void
  */

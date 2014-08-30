@@ -13,7 +13,7 @@
  */
 namespace Cake\Network\Http;
 
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Network\Http\Message;
 
 /**
@@ -60,7 +60,7 @@ class Request extends Message {
  *
  * @param string|null $method The method for the request.
  * @return mixed Either this or the current method.
- * @throws \Cake\Core\Error\Exception On invalid methods.
+ * @throws \Cake\Core\Exception\Exception On invalid methods.
  */
 	public function method($method = null) {
 		if ($method === null) {

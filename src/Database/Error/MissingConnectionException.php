@@ -14,7 +14,7 @@
  */
 namespace Cake\Database\Error;
 
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 
 class MissingConnectionException extends Exception {
 

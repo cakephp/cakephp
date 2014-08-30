@@ -13,7 +13,7 @@
  */
 namespace Cake\Network\Error;
 
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 
 /**
  * Exception class for Socket. This exception will be thrown from Socket, Email, HttpSocket

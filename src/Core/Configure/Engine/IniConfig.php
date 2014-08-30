@@ -16,7 +16,7 @@ namespace Cake\Core\Configure\Engine;
 
 use Cake\Core\Configure\ConfigEngineInterface;
 use Cake\Core\Plugin;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Utility\Hash;
 
 /**
@@ -92,7 +92,7 @@ class IniConfig implements ConfigEngineInterface {
  * @param string $key The identifier to read from. If the key has a . it will be treated
  *  as a plugin prefix. The chosen file must be on the engine's path.
  * @return array Parsed configuration values.
- * @throws \Cake\Core\Error\Exception when files don't exist.
+ * @throws \Cake\Core\Exception\Exception when files don't exist.
  *  Or when files contain '..' as this could lead to abusive reads.
  */
 	public function read($key) {

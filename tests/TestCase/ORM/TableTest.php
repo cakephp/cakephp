@@ -2212,7 +2212,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test magic findByXX errors on missing arguments.
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 0 required 1
  * @return void
  */
@@ -2225,7 +2225,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test magic findByXX errors on missing arguments.
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 1 required 2
  * @return void
  */
@@ -2238,7 +2238,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test magic findByXX errors when there is a mix of or & and.
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @expectedExceptionMessage Cannot mix "and" & "or" in a magic finder. Use find() instead.
  * @return void
  */

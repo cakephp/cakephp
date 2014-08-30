@@ -11,7 +11,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Core\Error;
+namespace Cake\Core\Exception;
 
 /**
  * Base class that all CakePHP Exceptions extend.

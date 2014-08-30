@@ -13,7 +13,7 @@
  */
 namespace Cake\View\Error;
 
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 
 /**
  * Used when a view file for a cell cannot be found.

@@ -15,7 +15,7 @@
 namespace Cake\Network;
 
 use Cake\Core\Configure;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Error;
 use Cake\Utility\File;
 
@@ -518,7 +518,7 @@ class Response {
  * @param string $name the header name
  * @param string $value the header value
  * @return void
- * @throws \Cake\Core\Error\Exception When headers have already been sent
+ * @throws \Cake\Core\Exception\Exception When headers have already been sent
  */
 	protected function _sendHeader($name, $value = null) {
 		if (headers_sent($filename, $linenum)) {
@@ -625,7 +625,7 @@ class Response {
  *
  * @param int $code the HTTP status code
  * @return int current status code
- * @throws \Cake\Core\Error\Exception When an unknown status code is reached.
+ * @throws \Cake\Core\Exception\Exception When an unknown status code is reached.
  */
 	public function statusCode($code = null) {
 		if ($code === null) {
@@ -666,7 +666,7 @@ class Response {
  *
  * @return mixed associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
- * @throws \Cake\Core\Error\Exception If an attempt is made to add an invalid status code
+ * @throws \Cake\Core\Exception\Exception If an attempt is made to add an invalid status code
  */
 	public function httpCodes($code = null) {
 		if (empty($code)) {

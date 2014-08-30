@@ -14,7 +14,7 @@
  */
 namespace Cake\Database\Type;
 
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Database\Driver;
 use PDO;
 
@@ -45,7 +45,7 @@ class BinaryType extends \Cake\Database\Type {
  * @param null|string|resource $value The value to convert.
  * @param Driver $driver The driver instance to convert with.
  * @return resource
- * @throws \Cake\Core\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	public function toPHP($value, Driver $driver) {
 		if ($value === null) {

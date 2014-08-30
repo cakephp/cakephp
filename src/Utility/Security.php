@@ -15,7 +15,7 @@
 namespace Cake\Utility;
 
 use Cake\Core\Configure;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 
 /**
  * Security Library contains utility methods related to security
@@ -86,7 +86,7 @@ class Security {
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use as the encryption key for encrypted data.
  * @param string $operation Operation to perform, encrypt or decrypt
- * @throws \Cake\Core\Error\Exception When there are errors.
+ * @throws \Cake\Core\Exception\Exception When there are errors.
  * @return string Encrypted/Decrypted string
  */
 	public static function rijndael($text, $key, $operation) {
@@ -125,7 +125,7 @@ class Security {
  * @param string $key The 256 bit/32 byte key to use as a cipher key.
  * @param string $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
  * @return string Encrypted data.
- * @throws \Cake\Core\Error\Exception On invalid data or key.
+ * @throws \Cake\Core\Exception\Exception On invalid data or key.
  */
 	public static function encrypt($plain, $key, $hmacSalt = null) {
 		self::_checkKey($key, 'encrypt()');
@@ -153,7 +153,7 @@ class Security {
  * @param string $key Key to check.
  * @param string $method The method the key is being checked for.
  * @return void
- * @throws \Cake\Core\Error\Exception When key length is not 256 bit/32 bytes
+ * @throws \Cake\Core\Exception\Exception When key length is not 256 bit/32 bytes
  */
 	protected static function _checkKey($key, $method) {
 		if (strlen($key) < 32) {
@@ -168,7 +168,7 @@ class Security {
  * @param string $key The 256 bit/32 byte key to use as a cipher key.
  * @param string $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
  * @return string Decrypted data. Any trailing null bytes will be removed.
- * @throws \Cake\Core\Error\Exception On invalid data or key.
+ * @throws \Cake\Core\Exception\Exception On invalid data or key.
  */
 	public static function decrypt($cipher, $key, $hmacSalt = null) {
 		self::_checkKey($key, 'decrypt()');

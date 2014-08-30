@@ -220,7 +220,7 @@ class DebuggerTest extends TestCase {
 /**
  * Test that choosing a non-existent format causes an exception
  *
- * @expectedException \Cake\Core\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testOutputAsException() {

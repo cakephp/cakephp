@@ -14,7 +14,7 @@
 namespace Cake\Network\Http;
 
 use Cake\Core\App;
-use Cake\Core\Error\Exception;
+use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Http\CookieCollection;
 use Cake\Network\Http\Request;
@@ -397,7 +397,7 @@ class Client {
  *
  * @param string $type short type alias or full mimetype.
  * @return array Headers to set on the request.
- * @throws \Cake\Core\Error\Exception When an unknown type alias is used.
+ * @throws \Cake\Core\Exception\Exception When an unknown type alias is used.
  */
 	protected function _typeHeaders($type) {
 		if (strpos($type, '/') !== false) {
@@ -460,7 +460,7 @@ class Client {
  * @param array $auth The authentication options to use.
  * @param array $options The overall request options to use.
  * @return mixed Authentication strategy instance.
- * @throws \Cake\Core\Error\Exception when an invalid stratgey is chosen.
+ * @throws \Cake\Core\Exception\Exception when an invalid stratgey is chosen.
  */
 	protected function _createAuth($auth, $options) {
 		if (empty($auth['type'])) {
