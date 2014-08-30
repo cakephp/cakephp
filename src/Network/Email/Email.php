@@ -17,10 +17,8 @@ namespace Cake\Network\Email;
 use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
 use Cake\Core\StaticConfigTrait;
 use Cake\Log\Log;
-use Cake\Network\Error;
 use Cake\Network\Http\FormData\Part;
 use Cake\Utility\File;
 use Cake\Utility\Hash;
@@ -956,11 +954,11 @@ class Email {
  *
  * @param string $name The transport configuration name to build.
  * @return \Cake\Network\Email\AbstractTransport
- * @throws \Cake\Core\Exception\Exception When transport configuration is missing or invalid.
+ * @throws \InvalidArgumentException When transport configuration is missing or invalid.
  */
 	protected function _constructTransport($name) {
 		if (!isset(static::$_transportConfig[$name]['className'])) {
-			throw new Exception(sprintf('Transport config "%s" is missing.', $name));
+			throw new InvalidArgumentException(sprintf('Transport config "%s" is missing.', $name));
 		}
 
 		$config = static::$_transportConfig[$name];
@@ -971,9 +969,9 @@ class Email {
 
 		$className = App::className($config['className'], 'Network/Email', 'Transport');
 		if (!$className) {
-			throw new Exception(sprintf('Transport class "%s" not found.', $name));
+			throw new InvalidArgumentException(sprintf('Transport class "%s" not found.', $name));
 		} elseif (!method_exists($className, 'send')) {
-			throw new Exception(sprintf('The "%s" does not have a send() method.', $className));
+			throw new InvalidArgumentException(sprintf('The "%s" does not have a send() method.', $className));
 		}
 
 		unset($config['className']);
@@ -1149,7 +1147,7 @@ class Email {
  * @param array|AbstractTransport $config Either an array of configuration
  *   data, or a transport instance.
  * @return mixed Either null when setting or an array of data when reading.
- * @throws \Cake\Core\Exception\Exception When modifying an existing configuration.
+ * @throws \BadMethodCallException When modifying an existing configuration.
  */
 	public static function configTransport($key, $config = null) {
 		if ($config === null && is_string($key)) {
@@ -1162,7 +1160,7 @@ class Email {
 			return;
 		}
 		if (isset(static::$_transportConfig[$key])) {
-			throw new Exception(sprintf('Cannot modify an existing config "%s"', $key));
+			throw new BadMethodCallException(sprintf('Cannot modify an existing config "%s"', $key));
 		}
 		if (is_object($config)) {
 			$config = ['className' => $config];
@@ -1296,14 +1294,14 @@ class Email {
  *
  * @param string|array $config Configuration options.
  * @return void
- * @throws \Cake\Core\Exception\Exception When using a configuration that doesn't exist.
+ * @throws \InvalidArgumentException When using a configuration that doesn't exist.
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
 			$name = $config;
 			$config = static::config($name);
 			if (empty($config)) {
-				throw new Exception(sprintf('Unknown email configuration "%s".', $name));
+				throw new InvalidArgumentException(sprintf('Unknown email configuration "%s".', $name));
 			}
 			unset($name);
 		}
