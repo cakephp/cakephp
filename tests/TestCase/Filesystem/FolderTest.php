@@ -14,11 +14,11 @@
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Utility;
+namespace Cake\Test\TestCase\Filesystem;
 
+use Cake\Filesystem\File;
+use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\File;
-use Cake\Utility\Folder;
 
 /**
  * FolderTest class
