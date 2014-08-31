@@ -13,7 +13,7 @@
  */
 namespace Cake\Test\TestCase\Network\Http\Adapter;
 
-use Cake\Error;
+use Cake\Network\Exception\SocketException;
 use Cake\Network\Http\Adapter\Stream;
 use Cake\Network\Http\Request;
 use Cake\Network\Http\Response;
@@ -46,7 +46,7 @@ class StreamTest extends TestCase {
 
 		try {
 			$responses = $stream->send($request, []);
-		} catch (Error\Exception $e) {
+		} catch (SocketException $e) {
 			$this->markTestSkipped('Could not connect to localhost, skipping');
 		}
 		$this->assertInstanceOf('Cake\Network\Http\Response', $responses[0]);
