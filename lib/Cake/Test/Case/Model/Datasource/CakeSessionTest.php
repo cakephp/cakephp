@@ -360,17 +360,11 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 /**
- * testDel method
+ * testDelete method
  *
  * @return void
  */
 	public function testDelete() {
-		$this->assertTrue(TestCakeSession::write('Delete.me', 'Clearing out'));
-
-		session_write_close();
-		$this->assertTrue(TestCakeSession::delete('Delete.me'));
-		$this->assertFalse(TestCakeSession::check('Delete.me'));
-
 		$this->assertTrue(TestCakeSession::write('Delete.me', 'Clearing out'));
 		$this->assertTrue(TestCakeSession::delete('Delete.me'));
 		$this->assertFalse(TestCakeSession::check('Delete.me'));
@@ -380,6 +374,18 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertTrue(TestCakeSession::delete('Clearing'));
 		$this->assertFalse(TestCakeSession::check('Clearing.sale'));
 		$this->assertFalse(TestCakeSession::check('Clearing'));
+
+		$this->assertTrue(TestCakeSession::write('Delete.me', 'Clearing out'));
+	}
+
+/**
+ * testDeleteCli method
+ *
+ * @return void
+ */
+	public function testDeleteCli() {
+		$this->assertTrue(TestCakeSession::delete('Delete.me'));
+		$this->assertFalse(TestCakeSession::check('Delete.me'));
 	}
 
 /**
