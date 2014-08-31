@@ -15,11 +15,11 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Plugin;
+use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Time;
 
 /**
  * Contains regression test for the Query builder

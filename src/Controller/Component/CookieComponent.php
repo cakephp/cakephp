@@ -17,11 +17,11 @@ namespace Cake\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
+use Cake\I18n\Time;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
-use Cake\Utility\Time;
 
 /**
  * Cookie Component.

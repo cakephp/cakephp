@@ -12,7 +12,7 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Utility;
+namespace Cake\I18n;
 
 use Carbon\Carbon;
 use IntlDateFormatter;
@@ -26,7 +26,7 @@ use JsonSerializable;
 class Time extends Carbon implements JsonSerializable {
 
 /**
- * The format to use when formatting a time using `Cake\Utility\Time::i18nFormat()`
+ * The format to use when formatting a time using `Cake\I18n\Time::i18nFormat()`
  * and `__toString`
  *
  * The format should be either the formatting constants from IntlDateFormatter as
@@ -38,12 +38,12 @@ class Time extends Carbon implements JsonSerializable {
  * will be used to format the time part.
  *
  * @var mixed
- * @see \Cake\Utility\Time::i18nFormat()
+ * @see \Cake\I18n\Time::i18nFormat()
  */
 	protected static $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
 
 /**
- * The format to use when formatting a time using `Cake\Utility\Time::nice()`
+ * The format to use when formatting a time using `Cake\I18n\Time::nice()`
  *
  * The format should be eiter the formatting constants from IntlDateFormatter as
  * described in (http://www.php.net/manual/en/class.intldateformatter.php) or a pattern
@@ -54,7 +54,7 @@ class Time extends Carbon implements JsonSerializable {
  * will be used to format the time part.
  *
  * @var mixed
- * @see \Cake\Utility\Time::nice()
+ * @see \Cake\I18n\Time::nice()
  */
 	public static $niceFormat = [IntlDateFormatter::MEDIUM, IntlDateFormatter::SHORT];
 
@@ -66,11 +66,11 @@ class Time extends Carbon implements JsonSerializable {
 	public static $defaultLocale;
 
 /**
- * The format to use when formatting a time using `Cake\Utility\Time::timeAgoInWords()`
- * and the difference is more than `Cake\Utility\Time::$wordEnd`
+ * The format to use when formatting a time using `Cake\I18n\Time::timeAgoInWords()`
+ * and the difference is more than `Cake\I18n\Time::$wordEnd`
  *
  * @var string
- * @see \Cake\Utility\Time::timeAgoInWords()
+ * @see \Cake\I18n\Time::timeAgoInWords()
  */
 	public static $wordFormat = [IntlDateFormatter::SHORT, -1];
 
@@ -79,7 +79,7 @@ class Time extends Carbon implements JsonSerializable {
  * and the difference is less than `Time::$wordEnd`
  *
  * @var array
- * @see \Cake\Utility\Time::timeAgoInWords()
+ * @see \Cake\I18n\Time::timeAgoInWords()
  */
 	public static $wordAccuracy = array(
 		'year' => "day",
@@ -95,7 +95,7 @@ class Time extends Carbon implements JsonSerializable {
  * The end of relative time telling
  *
  * @var string
- * @see \Cake\Utility\Time::timeAgoInWords()
+ * @see \Cake\I18n\Time::timeAgoInWords()
  */
 	public static $wordEnd = '+1 month';
 

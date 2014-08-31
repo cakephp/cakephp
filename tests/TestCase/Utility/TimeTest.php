@@ -16,8 +16,8 @@
  */
 namespace Cake\Test\TestCase\Utility;
 
+use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Time;
 
 /**
  * TimeTest class
