@@ -40,46 +40,6 @@ class CustomValidator {
 }
 
 /**
- * TestNlValidation class
- *
- * Used to test pass through of Validation
- *
- */
-class TestNlValidation {
-
-/**
- * postal function, for testing postal pass through.
- *
- * @param string $check
- * @return void
- */
-	public static function postal($check) {
-		return true;
-	}
-
-}
-
-/**
- * TestDeValidation class
- *
- * Used to test pass through of Validation
- *
- */
-class TestDeValidation {
-
-/**
- * phone function, for testing phone pass through.
- *
- * @param string $check
- * @return void
- */
-	public static function phone($check) {
-		return true;
-	}
-
-}
-
-/**
  * Test Case for Validation Class
  *
  */
@@ -2273,45 +2233,6 @@ class ValidationTest extends TestCase {
 		$this->assertFalse(Validation::postal('13089-333'));
 		$this->assertFalse(Validation::postal('13A89-4333'));
 		$this->assertTrue(Validation::postal('13089-3333'));
-	}
-
-/**
- * Test that phone and postal pass to other classes.
- *
- * @return void
- */
-	public function testPostalPhonePass() {
-		$this->assertTrue(Validation::postal('text', null, __NAMESPACE__ . '\TestNlValidation'));
-		$this->assertTrue(Validation::phone('text', null, __NAMESPACE__ . '\TestDeValidation'));
-	}
-
-/**
- * test pass through failure on postal
- *
- * @expectedException PHPUnit_Framework_Error
- * @return void
- */
-	public function testPassThroughMethodFailure() {
-		Validation::phone('text', null, __NAMESPACE__ . '\TestNlValidation');
-	}
-
-/**
- * test the pass through calling of an alternate locale with postal()
- *
- * @expectedException PHPUnit_Framework_Error
- * @return void
- */
-	public function testPassThroughClassFailure() {
-		Validation::postal('text', null, 'AUTOFAIL');
-	}
-
-/**
- * test pass through method
- *
- * @return void
- */
-	public function testPassThroughMethod() {
-		$this->assertTrue(Validation::postal('text', null, __NAMESPACE__ . '\TestNlValidation'));
 	}
 
 /**

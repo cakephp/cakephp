@@ -14,10 +14,8 @@
  */
 namespace Cake\Validation;
 
-use Cake\Core\App;
-use Cake\Core\Exception\Exception;
-use Cake\Utility\File;
 use Cake\Utility\Number;
+use RuntimeException;
 
 /**
  * Validation Class. Used for validation of model data
@@ -670,9 +668,7 @@ class Validation {
 				break;
 			}
 		}
-		if (empty($regex)) {
-			return static::_pass('phone', $check, $country);
-		}
+
 		return static::_check($check, $regex);
 	}
 
@@ -711,9 +707,7 @@ class Validation {
 					break;
 			}
 		}
-		if (empty($regex)) {
-			return static::_pass('postal', $check, $country);
-		}
+
 		return static::_check($check, $regex);
 	}
 
@@ -807,30 +801,6 @@ class Validation {
 	public static function uuid($check) {
 		$regex = '/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[0-5][a-fA-F0-9]{3}-[089aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$/';
 		return self::_check($check, $regex);
-	}
-
-/**
- * Attempts to pass unhandled Validation locales to a class starting with $classPrefix
- * and ending with Validation. For example $classPrefix = 'nl', the class would be
- * `NlValidation`.
- *
- * @param string $method The method to call on the other class.
- * @param mixed $check The value to check or an array of parameters for the method to be called.
- * @param string $classPrefix The prefix for the class to do the validation.
- * @return mixed Return of Passed method, false on failure
- */
-	protected static function _pass($method, $check, $classPrefix) {
-		$className = App::className($classPrefix, 'Validation', 'Validation');
-		if (!$className) {
-			trigger_error('Could not find class for validation, unable to complete validation.', E_USER_WARNING);
-			return false;
-		}
-		if (!method_exists($className, $method)) {
-			trigger_error(sprintf('Method %s does not exist on %s unable to complete validation.', $method, $className), E_USER_WARNING);
-			return false;
-		}
-		$check = (array)$check;
-		return call_user_func_array(array($className, $method), $check);
 	}
 
 /**
