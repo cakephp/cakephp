@@ -13,7 +13,6 @@
  */
 namespace Cake\Test\TestCase\Utility;
 
-use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\String;
 
@@ -25,11 +24,13 @@ class StringTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
+		$this->encoding = mb_internal_encoding();
 		$this->Text = new String();
 	}
 
 	public function tearDown() {
 		parent::tearDown();
+		mb_internal_encoding($this->encoding);
 		unset($this->Text);
 	}
 
@@ -508,7 +509,7 @@ podeís adquirirla.</span></p>
  * @return void
  */
 	public function testTruncateLegacy() {
-		Configure::write('App.encoding', 'ISO-8859-1');
+		mb_internal_encoding('ISO-8859-1');
 		$text = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
 		$result = $this->Text->truncate($text, 31, array(
 			'html' => true,
