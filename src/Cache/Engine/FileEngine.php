@@ -16,8 +16,8 @@ namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
 use Cake\Utility\Inflector;
+use Exception;
 
 /**
  * File Storage engine for cache. Filestorage is the slowest cache storage
@@ -147,7 +147,9 @@ class FileEngine extends CacheEngine {
 		}
 
 		$this->_File->rewind();
-		$success = $this->_File->ftruncate(0) && $this->_File->fwrite($contents) && $this->_File->fflush();
+		$success = $this->_File->ftruncate(0) &&
+			$this->_File->fwrite($contents) &&
+			$this->_File->fflush();
 
 		if ($this->_config['lock']) {
 			$this->_File->flock(LOCK_UN);
@@ -161,7 +163,8 @@ class FileEngine extends CacheEngine {
  * Read a key from the cache
  *
  * @param string $key Identifier for the data
- * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+ * @return mixed The cached data, or false if the data doesn't exist, has
+ *   expired, or if there was an error fetching it
  */
 	public function read($key) {
 		$key = $this->_key($key);
@@ -178,7 +181,9 @@ class FileEngine extends CacheEngine {
 		$time = time();
 		$cachetime = intval($this->_File->current());
 
-		if ($cachetime !== false && ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)) {
+		if ($cachetime !== false &&
+			($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)
+		) {
 			if ($this->_config['lock']) {
 				$this->_File->flock(LOCK_UN);
 			}
@@ -211,7 +216,8 @@ class FileEngine extends CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ * @return bool True if the value was successfully deleted, false if it didn't
+ *   exist or couldn't be removed
  */
 	public function delete($key) {
 		$key = $this->_key($key);
@@ -249,7 +255,10 @@ class FileEngine extends CacheEngine {
 		$this->_clearDirectory($this->_config['path'], $now, $threshold);
 
 		$directory = new \RecursiveDirectoryIterator($this->_config['path']);
-		$contents = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::SELF_FIRST);
+		$contents = new \RecursiveIteratorIterator(
+			$directory,
+			\RecursiveIteratorIterator::SELF_FIRST
+		);
 		$cleared = [];
 		foreach ($contents as $path) {
 			if ($path->isFile()) {
@@ -288,7 +297,7 @@ class FileEngine extends CacheEngine {
 
 			try {
 				$file = new \SplFileObject($path . $entry, 'r');
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				continue;
 			}
 
@@ -321,7 +330,7 @@ class FileEngine extends CacheEngine {
  * @param string $key The key to decrement
  * @param int $offset The number to offset
  * @return void
- * @throws \Cake\Core\Exception\Exception
+ * @throws \Exception
  */
 	public function decrement($key, $offset = 1) {
 		throw new Exception('Files cannot be atomically decremented.');
@@ -333,7 +342,7 @@ class FileEngine extends CacheEngine {
  * @param string $key The key to decrement
  * @param int $offset The number to offset
  * @return void
- * @throws \Cake\Core\Exception\Exception
+ * @throws \Exception
  */
 	public function increment($key, $offset = 1) {
 		throw new Exception('Files cannot be atomically incremented.');
@@ -366,13 +375,15 @@ class FileEngine extends CacheEngine {
 			$exists = file_exists($path->getPathname());
 			try {
 				$this->_File = $path->openFile('c+');
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				trigger_error($e->getMessage(), E_USER_WARNING);
 				return false;
 			}
 			unset($path);
 
-			if (!$exists && !chmod($this->_File->getPathname(), (int)$this->_config['mask'])) {
+			if (!$exists &&
+				!chmod($this->_File->getPathname(), (int)$this->_config['mask'])
+			) {
 				trigger_error(sprintf(
 					'Could not apply permission mask "%s" on cache file "%s"',
 					$this->_File->getPathname(), $this->_config['mask']
@@ -397,7 +408,9 @@ class FileEngine extends CacheEngine {
 		}
 		if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
 			$this->_init = false;
-			trigger_error(sprintf('%s is not writable', $this->_config['path']), E_USER_WARNING);
+			trigger_error(sprintf(
+				'%s is not writable', $this->_config['path']
+			), E_USER_WARNING);
 			return false;
 		}
 		return true;
@@ -414,7 +427,11 @@ class FileEngine extends CacheEngine {
 			return false;
 		}
 
-		$key = Inflector::underscore(str_replace([DS, '/', '.', '<', '>', '?', ':', '|', '*', '"'], '_', strval($key)));
+		$key = Inflector::underscore(str_replace(
+			[DS, '/', '.', '<', '>', '?', ':', '|', '*', '"'],
+			'_',
+			strval($key)
+		));
 		return $key;
 	}
 
@@ -427,7 +444,10 @@ class FileEngine extends CacheEngine {
 	public function clearGroup($group) {
 		$this->_File = null;
 		$directoryIterator = new \RecursiveDirectoryIterator($this->_config['path']);
-		$contents = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::CHILD_FIRST);
+		$contents = new \RecursiveIteratorIterator(
+			$directoryIterator,
+			\RecursiveIteratorIterator::CHILD_FIRST
+		);
 		foreach ($contents as $object) {
 			$containsGroup = strpos($object->getPathName(), DS . $group . DS) !== false;
 			$hasPrefix = true;
