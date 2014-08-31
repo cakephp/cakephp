@@ -17,8 +17,8 @@
 namespace Cake\Test\TestCase\Validation;
 
 use Cake\Core\Configure;
+use Cake\Filesystem\File;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\File;
 use Cake\Validation\Validation;
 
 /**

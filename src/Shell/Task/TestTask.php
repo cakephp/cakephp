@@ -19,12 +19,12 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
+use Cake\Filesystem\Folder;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Folder;
 use Cake\Utility\Inflector;
 
 /**

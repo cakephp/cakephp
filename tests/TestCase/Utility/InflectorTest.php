@@ -434,11 +434,8 @@ class InflectorTest extends TestCase {
 		$this->assertEquals(Inflector::pluralize('custom'), 'customizables');
 		$this->assertEquals(Inflector::pluralize('uninflectable'), 'uninflectable');
 
-		Inflector::reset();
-		Inflector::rules('plural', array(
-			'rules' => array('/^(alert)$/i' => '\1ables'),
-			'irregular' => array('amaze' => 'amazable', 'phone' => 'phonezes')
-		));
+		Inflector::rules('plural', array('/^(alert)$/i' => '\1ables'));
+		Inflector::rules('irregular', array('amaze' => 'amazable', 'phone' => 'phonezes'));
 		Inflector::rules('uninflected', array('noflect', 'abtuse'));
 		$this->assertEquals(Inflector::pluralize('noflect'), 'noflect');
 		$this->assertEquals(Inflector::pluralize('abtuse'), 'abtuse');
@@ -459,14 +456,12 @@ class InflectorTest extends TestCase {
 		$this->assertEquals(Inflector::singularize('epler'), 'eple');
 		$this->assertEquals(Inflector::singularize('jenter'), 'jente');
 
-		Inflector::rules('singular', array(
-			'rules' => array('/^(bil)er$/i' => '\1', '/^(inflec|contribu)tors$/i' => '\1ta'),
-			'irregular' => array('spins' => 'spinor')
-		));
+		Inflector::rules('singular', array('/^(bil)er$/i' => '\1', '/^(inflec|contribu)tors$/i' => '\1ta'));
+		Inflector::rules('irregular', array('spinor' => 'spins'));
 
+		$this->assertEquals(Inflector::singularize('spins'), 'spinor');
 		$this->assertEquals(Inflector::singularize('inflectors'), 'inflecta');
 		$this->assertEquals(Inflector::singularize('contributors'), 'contributa');
-		$this->assertEquals(Inflector::singularize('spins'), 'spinor');
 		$this->assertEquals(Inflector::singularize('singulars'), 'singulars');
 	}
 
@@ -495,15 +490,11 @@ class InflectorTest extends TestCase {
 		$this->assertEquals(Inflector::tableize('Banana'), 'bananas');
 		$this->assertEquals(Inflector::pluralize('Banana'), 'Bananas');
 
-		Inflector::rules('singular', array(
-			'rules' => array('/(.*)nas$/i' => '\1zzz')
-		));
+		Inflector::rules('singular', array('/(.*)nas$/i' => '\1zzz'));
 		$this->assertEquals('Banazzz', Inflector::singularize('Bananas'), 'Was inflected with old rules.');
 
-		Inflector::rules('plural', array(
-			'rules' => array('/(.*)na$/i' => '\1zzz'),
-			'irregular' => array('corpus' => 'corpora')
-		));
+		Inflector::rules('plural', array('/(.*)na$/i' => '\1zzz'));
+		Inflector::rules('irregular', array('corpus' => 'corpora'));
 		$this->assertEquals(Inflector::pluralize('Banana'), 'Banazzz', 'Was inflected with old rules.');
 		$this->assertEquals(Inflector::pluralize('corpus'), 'corpora', 'Was inflected with old irregular form.');
 	}
@@ -517,16 +508,10 @@ class InflectorTest extends TestCase {
 		$uninflected = array('atlas', 'lapis', 'onibus', 'pires', 'virus', '.*x');
 		$pluralIrregular = array('as' => 'ases');
 
-		Inflector::rules('singular', array(
-			'rules' => array('/^(.*)(a|e|o|u)is$/i' => '\1\2l')
-		), true);
-
-		Inflector::rules('plural', array(
-			'rules' => array('/^(.*)(a|e|o|u)l$/i' => '\1\2is'),
-			'irregular' => $pluralIrregular
-		), true);
-
+		Inflector::rules('singular', array('/^(.*)(a|e|o|u)is$/i' => '\1\2l'), true);
+		Inflector::rules('plural', array('/^(.*)(a|e|o|u)l$/i' => '\1\2is'), true);
 		Inflector::rules('uninflected', $uninflected, true);
+		Inflector::rules('irregular', $pluralIrregular, true);
 
 		$this->assertEquals(Inflector::pluralize('Alcool'), 'Alcoois');
 		$this->assertEquals(Inflector::pluralize('Atlas'), 'Atlas');

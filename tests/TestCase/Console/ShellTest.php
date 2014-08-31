@@ -19,9 +19,9 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Filesystem\Folder;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Folder;
 use Cake\Utility\Hash;
 
 /**

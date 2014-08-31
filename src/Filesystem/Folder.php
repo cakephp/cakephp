@@ -12,7 +12,7 @@
  * @since         0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Utility;
+namespace Cake\Filesystem;
 
 /**
  * Folder structure browser, lists folders and files.

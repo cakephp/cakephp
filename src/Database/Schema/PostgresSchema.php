@@ -135,14 +135,39 @@ class PostgresSchema extends BaseSchema {
 				$row['default'] = 0;
 			}
 		}
-
 		$field += [
+			'default' => $this->_defaultValue($row['default']),
 			'null' => $row['null'] === 'YES' ? true : false,
-			'default' => $row['default'],
 			'comment' => $row['comment']
 		];
 		$field['length'] = $row['char_length'] ?: $field['length'];
 		$table->addColumn($row['name'], $field);
+	}
+
+/**
+ * Manipulate the default value.
+ *
+ * Postgres includes sequence data and casting information in default values.
+ * We need to remove those.
+ *
+ * @param string $default The default value.
+ * @return string
+ */
+	protected function _defaultValue($default) {
+		if (is_numeric($default) || $default === null) {
+			return $default;
+		}
+		// Sequences
+		if (strpos($default, 'nextval') === 0) {
+			return null;
+		}
+
+		// Remove quotes and postgres casts
+		return preg_replace(
+			"/^'(.*)'(?:::.*)$/",
+			"$1",
+			$default
+		);
 	}
 
 /**
@@ -201,7 +226,8 @@ class PostgresSchema extends BaseSchema {
 			$columnDef = $table->column($columns[0]);
 			if (
 				count($columns) === 1 &&
-				in_array($columnDef['type'], ['integer', 'biginteger'])
+				in_array($columnDef['type'], ['integer', 'biginteger']) &&
+				$type === Table::CONSTRAINT_PRIMARY
 			) {
 				$columnDef['autoIncrement'] = true;
 				$table->addColumn($columns[0], $columnDef);

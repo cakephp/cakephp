@@ -29,119 +29,119 @@ class Inflector {
  *
  * @var array
  */
-	protected static $_plural = array(
-		'rules' => array(
-			'/(s)tatus$/i' => '\1tatuses',
-			'/(quiz)$/i' => '\1zes',
-			'/^(ox)$/i' => '\1\2en',
-			'/([m|l])ouse$/i' => '\1ice',
-			'/(matr|vert|ind)(ix|ex)$/i' => '\1ices',
-			'/(x|ch|ss|sh)$/i' => '\1es',
-			'/([^aeiouy]|qu)y$/i' => '\1ies',
-			'/(hive)$/i' => '\1s',
-			'/(?:([^f])fe|([lre])f)$/i' => '\1\2ves',
-			'/sis$/i' => 'ses',
-			'/([ti])um$/i' => '\1a',
-			'/(p)erson$/i' => '\1eople',
-			'/(m)an$/i' => '\1en',
-			'/(c)hild$/i' => '\1hildren',
-			'/(buffal|tomat)o$/i' => '\1\2oes',
-			'/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)us$/i' => '\1i',
-			'/us$/i' => 'uses',
-			'/(alias)$/i' => '\1es',
-			'/(ax|cris|test)is$/i' => '\1es',
-			'/s$/' => 's',
-			'/^$/' => '',
-			'/$/' => 's',
-		),
-		'irregular' => array(
-			'atlas' => 'atlases',
-			'beef' => 'beefs',
-			'brief' => 'briefs',
-			'brother' => 'brothers',
-			'cafe' => 'cafes',
-			'child' => 'children',
-			'cookie' => 'cookies',
-			'corpus' => 'corpuses',
-			'cow' => 'cows',
-			'ganglion' => 'ganglions',
-			'genie' => 'genies',
-			'genus' => 'genera',
-			'graffito' => 'graffiti',
-			'hoof' => 'hoofs',
-			'loaf' => 'loaves',
-			'man' => 'men',
-			'money' => 'monies',
-			'mongoose' => 'mongooses',
-			'move' => 'moves',
-			'mythos' => 'mythoi',
-			'niche' => 'niches',
-			'numen' => 'numina',
-			'occiput' => 'occiputs',
-			'octopus' => 'octopuses',
-			'opus' => 'opuses',
-			'ox' => 'oxen',
-			'penis' => 'penises',
-			'person' => 'people',
-			'sex' => 'sexes',
-			'soliloquy' => 'soliloquies',
-			'testis' => 'testes',
-			'trilby' => 'trilbys',
-			'turf' => 'turfs',
-			'potato' => 'potatoes',
-			'hero' => 'heroes',
-			'tooth' => 'teeth',
-			'goose' => 'geese',
-			'foot' => 'feet'
-		)
-	);
+	protected static $_plural = [
+		'/(s)tatus$/i' => '\1tatuses',
+		'/(quiz)$/i' => '\1zes',
+		'/^(ox)$/i' => '\1\2en',
+		'/([m|l])ouse$/i' => '\1ice',
+		'/(matr|vert|ind)(ix|ex)$/i' => '\1ices',
+		'/(x|ch|ss|sh)$/i' => '\1es',
+		'/([^aeiouy]|qu)y$/i' => '\1ies',
+		'/(hive)$/i' => '\1s',
+		'/(?:([^f])fe|([lre])f)$/i' => '\1\2ves',
+		'/sis$/i' => 'ses',
+		'/([ti])um$/i' => '\1a',
+		'/(p)erson$/i' => '\1eople',
+		'/(m)an$/i' => '\1en',
+		'/(c)hild$/i' => '\1hildren',
+		'/(buffal|tomat)o$/i' => '\1\2oes',
+		'/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)us$/i' => '\1i',
+		'/us$/i' => 'uses',
+		'/(alias)$/i' => '\1es',
+		'/(ax|cris|test)is$/i' => '\1es',
+		'/s$/' => 's',
+		'/^$/' => '',
+		'/$/' => 's',
+	];
 
 /**
  * Singular inflector rules
  *
  * @var array
  */
-	protected static $_singular = array(
-		'rules' => array(
-			'/(s)tatuses$/i' => '\1\2tatus',
-			'/^(.*)(menu)s$/i' => '\1\2',
-			'/(quiz)zes$/i' => '\\1',
-			'/(matr)ices$/i' => '\1ix',
-			'/(vert|ind)ices$/i' => '\1ex',
-			'/^(ox)en/i' => '\1',
-			'/(alias)(es)*$/i' => '\1',
-			'/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|viri?)i$/i' => '\1us',
-			'/([ftw]ax)es/i' => '\1',
-			'/(cris|ax|test)es$/i' => '\1is',
-			'/(shoe)s$/i' => '\1',
-			'/(o)es$/i' => '\1',
-			'/ouses$/' => 'ouse',
-			'/([^a])uses$/' => '\1us',
-			'/([m|l])ice$/i' => '\1ouse',
-			'/(x|ch|ss|sh)es$/i' => '\1',
-			'/(m)ovies$/i' => '\1\2ovie',
-			'/(s)eries$/i' => '\1\2eries',
-			'/([^aeiouy]|qu)ies$/i' => '\1y',
-			'/(tive)s$/i' => '\1',
-			'/(hive)s$/i' => '\1',
-			'/(drive)s$/i' => '\1',
-			'/([le])ves$/i' => '\1f',
-			'/([^rfoa])ves$/i' => '\1fe',
-			'/(^analy)ses$/i' => '\1sis',
-			'/(analy|diagno|^ba|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i' => '\1\2sis',
-			'/([ti])a$/i' => '\1um',
-			'/(p)eople$/i' => '\1\2erson',
-			'/(m)en$/i' => '\1an',
-			'/(c)hildren$/i' => '\1\2hild',
-			'/(n)ews$/i' => '\1\2ews',
-			'/eaus$/' => 'eau',
-			'/^(.*us)$/' => '\\1',
-			'/s$/i' => ''
-		),
-		'irregular' => array(
-			'foes' => 'foe',
-		)
-	);
+	protected static $_singular = [
+		'/(s)tatuses$/i' => '\1\2tatus',
+		'/^(.*)(menu)s$/i' => '\1\2',
+		'/(quiz)zes$/i' => '\\1',
+		'/(matr)ices$/i' => '\1ix',
+		'/(vert|ind)ices$/i' => '\1ex',
+		'/^(ox)en/i' => '\1',
+		'/(alias)(es)*$/i' => '\1',
+		'/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|viri?)i$/i' => '\1us',
+		'/([ftw]ax)es/i' => '\1',
+		'/(cris|ax|test)es$/i' => '\1is',
+		'/(shoe)s$/i' => '\1',
+		'/(o)es$/i' => '\1',
+		'/ouses$/' => 'ouse',
+		'/([^a])uses$/' => '\1us',
+		'/([m|l])ice$/i' => '\1ouse',
+		'/(x|ch|ss|sh)es$/i' => '\1',
+		'/(m)ovies$/i' => '\1\2ovie',
+		'/(s)eries$/i' => '\1\2eries',
+		'/([^aeiouy]|qu)ies$/i' => '\1y',
+		'/(tive)s$/i' => '\1',
+		'/(hive)s$/i' => '\1',
+		'/(drive)s$/i' => '\1',
+		'/([le])ves$/i' => '\1f',
+		'/([^rfoa])ves$/i' => '\1fe',
+		'/(^analy)ses$/i' => '\1sis',
+		'/(analy|diagno|^ba|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i' => '\1\2sis',
+		'/([ti])a$/i' => '\1um',
+		'/(p)eople$/i' => '\1\2erson',
+		'/(m)en$/i' => '\1an',
+		'/(c)hildren$/i' => '\1\2hild',
+		'/(n)ews$/i' => '\1\2ews',
+		'/eaus$/' => 'eau',
+		'/^(.*us)$/' => '\\1',
+		'/s$/i' => ''
+	];
+
+/**
+ * Irregular rules
+ *
+ * @var array
+ */
+	protected static $_irregular = [
+		'atlas' => 'atlases',
+		'beef' => 'beefs',
+		'brief' => 'briefs',
+		'brother' => 'brothers',
+		'cafe' => 'cafes',
+		'child' => 'children',
+		'cookie' => 'cookies',
+		'corpus' => 'corpuses',
+		'cow' => 'cows',
+		'ganglion' => 'ganglions',
+		'genie' => 'genies',
+		'genus' => 'genera',
+		'graffito' => 'graffiti',
+		'hoof' => 'hoofs',
+		'loaf' => 'loaves',
+		'man' => 'men',
+		'money' => 'monies',
+		'mongoose' => 'mongooses',
+		'move' => 'moves',
+		'mythos' => 'mythoi',
+		'niche' => 'niches',
+		'numen' => 'numina',
+		'occiput' => 'occiputs',
+		'octopus' => 'octopuses',
+		'opus' => 'opuses',
+		'ox' => 'oxen',
+		'penis' => 'penises',
+		'person' => 'people',
+		'sex' => 'sexes',
+		'soliloquy' => 'soliloquies',
+		'testis' => 'testes',
+		'trilby' => 'trilbys',
+		'turf' => 'turfs',
+		'potato' => 'potatoes',
+		'hero' => 'heroes',
+		'tooth' => 'teeth',
+		'goose' => 'geese',
+		'foot' => 'feet',
+		'foe' => 'foes'
+	];
 
 /**
  * Words that should not be inflected
@@ -452,18 +452,16 @@ class Inflector {
 	}
 
 /**
- * Adds custom inflection $rules, of either 'plural', 'singular' or 'transliteration' $type.
+ * Adds custom inflection $rules, of either 'plural', 'singular',
+ * 'uninflected', 'irregular' or 'transliteration' $type.
  *
  * ### Usage:
  *
  * {{{
- * Inflector::rules('plural', array('/^(inflect)or$/i' => '\1ables'));
- * Inflector::rules('plural', array(
- *     'rules' => array('/^(inflect)ors$/i' => '\1ables'),
- *     'irregular' => array('red' => 'redlings')
- * ));
- * Inflector::rules('uninflected', array('dontinflectme'));
- * Inflector::rules('transliteration', array('/å/' => 'aa'));
+ * Inflector::rules('plural', ['/^(inflect)or$/i' => '\1ables']);
+ * Inflector::rules('irregular' => ['red' => 'redlings']);
+ * Inflector::rules('uninflected', ['dontinflectme']);
+ * Inflector::rules('transliteration', ['/å/' => 'aa']);
  * }}}
  *
  * @param string $type The type of inflection, either 'plural', 'singular',
@@ -476,48 +474,18 @@ class Inflector {
 	public static function rules($type, $rules, $reset = false) {
 		$var = '_' . $type;
 
-		switch ($type) {
-			case 'transliteration':
-				if ($reset) {
-					static::$_transliteration = $rules;
-				} else {
-					static::$_transliteration = $rules + static::$_transliteration;
-				}
-				break;
-
-			case 'uninflected':
-				if ($reset) {
-					static::$_uninflected = $rules;
-				} else {
-					static::$_uninflected = array_merge(
-						$rules,
-						static::$_transliteration
-					);
-				}
-				break;
-
-			default:
-				foreach ($rules as $rule => $pattern) {
-					if (!is_array($pattern)) {
-						continue;
-					}
-					if ($reset) {
-						static::${$var}[$rule] = $pattern;
-					} else {
-						static::${$var}[$rule] = $pattern + static::${$var}[$rule];
-					}
-					unset($rules[$rule], static::${$var}['cache' . ucfirst($rule)]);
-					if (isset(static::${$var}['merged'][$rule])) {
-						unset(static::${$var}['merged'][$rule]);
-					}
-					if ($type === 'plural') {
-						static::$_cache['pluralize'] = static::$_cache['tableize'] = array();
-					} elseif ($type === 'singular') {
-						static::$_cache['singularize'] = array();
-					}
-				}
-				static::${$var}['rules'] = $rules + static::${$var}['rules'];
+		if ($reset) {
+			static::${$var} = $rules;
+		} elseif ($type === 'uninflected') {
+			static::$_uninflected = array_merge(
+				$rules,
+				static::$_uninflected
+			);
+		} else {
+			static::${$var} = $rules + static::${$var};
 		}
+
+		static::$_cache = [];
 	}
 
 /**
@@ -532,16 +500,13 @@ class Inflector {
 			return static::$_cache['pluralize'][$word];
 		}
 
-		if (!isset(static::$_plural['merged']['irregular'])) {
-			static::$_plural['merged']['irregular'] = static::$_plural['irregular'];
+		if (!isset(static::$_cache['irregular']['pluralize'])) {
+			static::$_cache['irregular']['pluralize'] = '(?:' . implode('|', array_keys(static::$_irregular)) . ')';
 		}
 
-		if (!isset(static::$_plural['cacheIrregular'])) {
-			static::$_plural['cacheIrregular'] = '(?:' . implode('|', array_keys(static::$_plural['merged']['irregular'])) . ')';
-		}
-
-		if (preg_match('/(.*)\\b(' . static::$_plural['cacheIrregular'] . ')$/i', $word, $regs)) {
-			static::$_cache['pluralize'][$word] = $regs[1] . substr($word, 0, 1) . substr(static::$_plural['merged']['irregular'][strtolower($regs[2])], 1);
+		if (preg_match('/(.*)\\b(' . static::$_cache['irregular']['pluralize'] . ')$/i', $word, $regs)) {
+			static::$_cache['pluralize'][$word] = $regs[1] . substr($word, 0, 1) .
+				substr(static::$_irregular[strtolower($regs[2])], 1);
 			return static::$_cache['pluralize'][$word];
 		}
 
@@ -554,7 +519,7 @@ class Inflector {
 			return $word;
 		}
 
-		foreach (static::$_plural['rules'] as $rule => $replacement) {
+		foreach (static::$_plural as $rule => $replacement) {
 			if (preg_match($rule, $word)) {
 				static::$_cache['pluralize'][$word] = preg_replace($rule, $replacement, $word);
 				return static::$_cache['pluralize'][$word];
@@ -574,19 +539,13 @@ class Inflector {
 			return static::$_cache['singularize'][$word];
 		}
 
-		if (!isset(static::$_singular['merged']['irregular'])) {
-			static::$_singular['merged']['irregular'] = array_merge(
-				static::$_singular['irregular'],
-				array_flip(static::$_plural['irregular'])
-			);
+		if (!isset(static::$_cache['irregular']['singular'])) {
+			static::$_cache['irregular']['singular'] = '(?:' . implode('|', static::$_irregular) . ')';
 		}
 
-		if (!isset(static::$_singular['cacheIrregular'])) {
-			static::$_singular['cacheIrregular'] = '(?:' . implode('|', array_keys(static::$_singular['merged']['irregular'])) . ')';
-		}
-
-		if (preg_match('/(.*)\\b(' . static::$_singular['cacheIrregular'] . ')$/i', $word, $regs)) {
-			static::$_cache['singularize'][$word] = $regs[1] . substr($word, 0, 1) . substr(static::$_singular['merged']['irregular'][strtolower($regs[2])], 1);
+		if (preg_match('/(.*)\\b(' . static::$_cache['irregular']['singular'] . ')$/i', $word, $regs)) {
+			static::$_cache['singularize'][$word] = $regs[1] . substr($word, 0, 1) .
+				substr(array_search(strtolower($regs[2]), static::$_irregular), 1);
 			return static::$_cache['singularize'][$word];
 		}
 
@@ -599,7 +558,7 @@ class Inflector {
 			return $word;
 		}
 
-		foreach (static::$_singular['rules'] as $rule => $replacement) {
+		foreach (static::$_singular as $rule => $replacement) {
 			if (preg_match($rule, $word)) {
 				static::$_cache['singularize'][$word] = preg_replace($rule, $replacement, $word);
 				return static::$_cache['singularize'][$word];
@@ -720,7 +679,11 @@ class Inflector {
 			sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
 		);
 
-		$string = str_replace(array_keys(static::$_transliteration), array_values(static::$_transliteration), $string);
+		$string = str_replace(
+			array_keys(static::$_transliteration),
+			array_values(static::$_transliteration),
+			$string
+		);
 		return preg_replace(array_keys($map), array_values($map), $string);
 	}
 
