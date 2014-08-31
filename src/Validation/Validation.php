@@ -901,7 +901,7 @@ class Validation {
 		if (!$finfo) {
 			throw new RuntimeException('Can not determine the mimetype.');
 		}
-	
+
 		list($mime) = explode(';', $finfo);
 
 		if (is_string($mimeTypes)) {
