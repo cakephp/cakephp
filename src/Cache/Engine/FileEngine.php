@@ -17,7 +17,7 @@ namespace Cake\Cache\Engine;
 use Cake\Cache\CacheEngine;
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
-use Exception;
+use LogicException;
 
 /**
  * File Storage engine for cache. Filestorage is the slowest cache storage
@@ -330,10 +330,10 @@ class FileEngine extends CacheEngine {
  * @param string $key The key to decrement
  * @param int $offset The number to offset
  * @return void
- * @throws \Exception
+ * @throws \LogicException
  */
 	public function decrement($key, $offset = 1) {
-		throw new Exception('Files cannot be atomically decremented.');
+		throw new LogicException('Files cannot be atomically decremented.');
 	}
 
 /**
@@ -342,10 +342,10 @@ class FileEngine extends CacheEngine {
  * @param string $key The key to decrement
  * @param int $offset The number to offset
  * @return void
- * @throws \Exception
+ * @throws \LogicException
  */
 	public function increment($key, $offset = 1) {
-		throw new Exception('Files cannot be atomically incremented.');
+		throw new LogicException('Files cannot be atomically incremented.');
 	}
 
 /**
