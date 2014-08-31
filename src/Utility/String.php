@@ -14,8 +14,6 @@
  */
 namespace Cake\Utility;
 
-use Cake\Core\Configure;
-
 /**
  * String handling methods.
  *
@@ -471,7 +469,7 @@ class String {
 		$default = array(
 			'ellipsis' => '...', 'exact' => true, 'html' => false
 		);
-		if (!empty($options['html']) && Configure::read('App.encoding') === 'UTF-8') {
+		if (!empty($options['html']) && strtolower(mb_internal_encoding()) === 'utf-8') {
 			$default['ellipsis'] = "\xe2\x80\xa6";
 		}
 		$options += $default;
