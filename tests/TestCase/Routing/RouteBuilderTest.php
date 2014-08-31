@@ -81,6 +81,31 @@ class RouteBuilderTest extends TestCase {
 	}
 
 /**
+ * Test setting default route class
+ *
+ * @return void
+ */
+	public function testRouteClass() {
+		$routes = new RouteBuilder($this->collection, '/l');
+		$routes->routeClass('InflectedRoute');
+		$routes->connect('/:controller', ['action' => 'index']);
+		$routes->connect('/:controller/:action/*');
+
+		$all = $this->collection->routes();
+		$this->assertInstanceOf('Cake\Routing\Route\InflectedRoute', $all[0]);
+		$this->assertInstanceOf('Cake\Routing\Route\InflectedRoute', $all[1]);
+
+		$this->collection = new RouteCollection();
+		Router::defaultRouteClass('TestApp\Routing\Route\DashedRoute');
+		$routes = new RouteBuilder($this->collection, '/l');
+		$this->assertEquals('TestApp\Routing\Route\DashedRoute', $routes->routeClass());
+
+		$routes->connect('/:controller', ['action' => 'index']);
+		$all = $this->collection->routes();
+		$this->assertInstanceOf('TestApp\Routing\Route\DashedRoute', $all[0]);
+	}
+
+/**
  * Test connecting an instance routes.
  *
  * @return void
@@ -406,6 +431,21 @@ class RouteBuilderTest extends TestCase {
 		$all = $this->collection->routes();
 		$this->assertEquals('/api/:controller', $all[0]->template);
 		$this->assertEquals('/api/:controller/:action/*', $all[1]->template);
+		$this->assertInstanceOf('Cake\Routing\Route\InflectedRoute', $all[0]);
+	}
+
+/**
+ * Test connecting fallback routes after setting default route class.
+ *
+ * @return void
+ */
+	public function testDefaultRouteClassFallbacks() {
+		$routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
+		$routes->routeClass('TestApp\Routing\Route\DashedRoute');
+		$routes->fallbacks();
+
+		$all = $this->collection->routes();
+		$this->assertInstanceOf('TestApp\Routing\Route\DashedRoute', $all[0]);
 	}
 
 /**

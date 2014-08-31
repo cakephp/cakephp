@@ -57,6 +57,13 @@ class RouteBuilder {
 	];
 
 /**
+ * Route class to use if none is provided in connect() options.
+ *
+ * @var string
+ */
+	protected $_routeClass;
+
+/**
  * The extensions that should be set into the routes connected.
  *
  * @var array
@@ -97,6 +104,20 @@ class RouteBuilder {
 		$this->_path = $path;
 		$this->_params = $params;
 		$this->_extensions = $extensions;
+		$this->_routeClass = Router::defaultRouteClass();
+	}
+
+/**
+ * Get or set default route class.
+ *
+ * @param string|null $routeClass Class name.
+ * @return string|void
+ */
+	public function routeClass($routeClass = null) {
+		if ($routeClass == null) {
+			return $this->_routeClass;
+		}
+		$this->_routeClass = $routeClass;
 	}
 
 /**
@@ -339,9 +360,10 @@ class RouteBuilder {
  */
 	protected function _makeRoute($route, $defaults, $options) {
 		if (is_string($route)) {
-			$routeClass = Router::defaultRouteClass();
+			$routeClass = $this->_routeClass;
 			if (isset($options['routeClass'])) {
 				$routeClass = $options['routeClass'];
+				unset($options['routeClass']);
 			}
 			$class = App::className($routeClass, 'Routing/Route');
 			if ($class === false) {
@@ -350,7 +372,6 @@ class RouteBuilder {
 					$routeClass
 				));
 			}
-			unset($options['routeClass']);
 
 			$route = str_replace('//', '/', $this->_path . $route);
 			$route = $route === '/' ? $route : rtrim($route, '/');
@@ -519,7 +540,7 @@ class RouteBuilder {
  * @return void
  */
 	public function fallbacks() {
-		$routeClass = Router::defaultRouteClass();
+		$routeClass = $this->_routeClass;
 		if ($routeClass === 'Cake\Routing\Route\Route') {
 			$routeClass = 'InflectedRoute';
 		}
