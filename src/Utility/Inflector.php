@@ -54,19 +54,6 @@ class Inflector {
 			'/^$/' => '',
 			'/$/' => 's',
 		),
-		'uninflected' => array(
-			'.*[nrlm]ese',
-			'.*data',
-			'.*deer',
-			'.*fish',
-			'.*measles',
-			'.*ois',
-			'.*pox',
-			'.*sheep',
-			'people',
-			'feedback',
-			'stadia'
-		),
 		'irregular' => array(
 			'atlas' => 'atlases',
 			'beef' => 'beefs',
@@ -151,10 +138,6 @@ class Inflector {
 			'/^(.*us)$/' => '\\1',
 			'/s$/i' => ''
 		),
-		'uninflected' => array(
-			'.*data',
-			'.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', '.*ss', 'feedback'
-		),
 		'irregular' => array(
 			'foes' => 'foe',
 		)
@@ -166,18 +149,11 @@ class Inflector {
  * @var array
  */
 	protected static $_uninflected = array(
-		'Amoyese', 'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus',
-		'carp', 'chassis', 'clippers', 'cod', 'coitus', 'Congoese', 'contretemps', 'corps',
-		'debris', 'diabetes', 'djinn', 'eland', 'elk', 'equipment', 'Faroese', 'flounder',
-		'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
-		'headquarters', 'herpes', 'hijinks', 'Hottentotese', 'information', 'innings',
-		'jackanapes', 'Kiplingese', 'Kongoese', 'Lucchese', 'mackerel', 'Maltese', '.*?media',
-		'mews', 'moose', 'mumps', 'Nankingese', 'news', 'nexus', 'Niasese',
-		'Pekingese', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese',
-		'proceedings', 'rabies', 'research', 'rice', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors',
-		'sea[- ]bass', 'series', 'Shavese', 'shears', 'siemens', 'species', 'swine', 'testes',
-		'trousers', 'trout', 'tuna', 'Vermontese', 'Wenchowese', 'whiting', 'wildebeest',
-		'Yengeese'
+		'.*[nrlm]ese', '.*data', '.*deer', '.*fish', '.*measles', '.*ois',
+		'.*pox', '.*sheep', '.*ss', 'people', 'feedback', 'stadia', '.*?media',
+		'chassis', 'clippers', 'debris', 'diabetes', 'equipment', 'gallows',
+		'graffiti', 'headquarters', 'information', 'innings', 'news', 'nexus',
+		'proceedings', 'research', 'sea[- ]bass', 'series', 'species', 'weather'
 	);
 
 /**
@@ -484,13 +460,14 @@ class Inflector {
  * Inflector::rules('plural', array('/^(inflect)or$/i' => '\1ables'));
  * Inflector::rules('plural', array(
  *     'rules' => array('/^(inflect)ors$/i' => '\1ables'),
- *     'uninflected' => array('dontinflectme'),
  *     'irregular' => array('red' => 'redlings')
  * ));
+ * Inflector::rules('uninflected', array('dontinflectme'));
  * Inflector::rules('transliteration', array('/å/' => 'aa'));
  * }}}
  *
- * @param string $type The type of inflection, either 'plural', 'singular' or 'transliteration'
+ * @param string $type The type of inflection, either 'plural', 'singular',
+ *   'uninflected' or 'transliteration'.
  * @param array $rules Array of rules to be added.
  * @param bool $reset If true, will unset default inflections for all
  *        new rules that are being defined in $rules.
@@ -508,6 +485,17 @@ class Inflector {
 				}
 				break;
 
+			case 'uninflected':
+				if ($reset) {
+					static::$_uninflected = $rules;
+				} else {
+					static::$_uninflected = array_merge(
+						$rules,
+						static::$_transliteration
+					);
+				}
+				break;
+
 			default:
 				foreach ($rules as $rule => $pattern) {
 					if (!is_array($pattern)) {
@@ -516,11 +504,7 @@ class Inflector {
 					if ($reset) {
 						static::${$var}[$rule] = $pattern;
 					} else {
-						if ($rule === 'uninflected') {
-							static::${$var}[$rule] = array_merge($pattern, static::${$var}[$rule]);
-						} else {
-							static::${$var}[$rule] = $pattern + static::${$var}[$rule];
-						}
+						static::${$var}[$rule] = $pattern + static::${$var}[$rule];
 					}
 					unset($rules[$rule], static::${$var}['cache' . ucfirst($rule)]);
 					if (isset(static::${$var}['merged'][$rule])) {
@@ -552,12 +536,7 @@ class Inflector {
 			static::$_plural['merged']['irregular'] = static::$_plural['irregular'];
 		}
 
-		if (!isset(static::$_plural['merged']['uninflected'])) {
-			static::$_plural['merged']['uninflected'] = array_merge(static::$_plural['uninflected'], static::$_uninflected);
-		}
-
-		if (!isset(static::$_plural['cacheUninflected']) || !isset(static::$_plural['cacheIrregular'])) {
-			static::$_plural['cacheUninflected'] = '(?:' . implode('|', static::$_plural['merged']['uninflected']) . ')';
+		if (!isset(static::$_plural['cacheIrregular'])) {
 			static::$_plural['cacheIrregular'] = '(?:' . implode('|', array_keys(static::$_plural['merged']['irregular'])) . ')';
 		}
 
@@ -566,7 +545,11 @@ class Inflector {
 			return static::$_cache['pluralize'][$word];
 		}
 
-		if (preg_match('/^(' . static::$_plural['cacheUninflected'] . ')$/i', $word, $regs)) {
+		if (!isset(static::$_cache['uninflected'])) {
+			static::$_cache['uninflected'] = '(?:' . implode('|', static::$_uninflected) . ')';
+		}
+
+		if (preg_match('/^(' . static::$_cache['uninflected'] . ')$/i', $word, $regs)) {
 			static::$_cache['pluralize'][$word] = $word;
 			return $word;
 		}
@@ -591,13 +574,6 @@ class Inflector {
 			return static::$_cache['singularize'][$word];
 		}
 
-		if (!isset(static::$_singular['merged']['uninflected'])) {
-			static::$_singular['merged']['uninflected'] = array_merge(
-				static::$_singular['uninflected'],
-				static::$_uninflected
-			);
-		}
-
 		if (!isset(static::$_singular['merged']['irregular'])) {
 			static::$_singular['merged']['irregular'] = array_merge(
 				static::$_singular['irregular'],
@@ -605,8 +581,7 @@ class Inflector {
 			);
 		}
 
-		if (!isset(static::$_singular['cacheUninflected']) || !isset(static::$_singular['cacheIrregular'])) {
-			static::$_singular['cacheUninflected'] = '(?:' . implode('|', static::$_singular['merged']['uninflected']) . ')';
+		if (!isset(static::$_singular['cacheIrregular'])) {
 			static::$_singular['cacheIrregular'] = '(?:' . implode('|', array_keys(static::$_singular['merged']['irregular'])) . ')';
 		}
 
@@ -615,8 +590,12 @@ class Inflector {
 			return static::$_cache['singularize'][$word];
 		}
 
-		if (preg_match('/^(' . static::$_singular['cacheUninflected'] . ')$/i', $word, $regs)) {
-			static::$_cache['singularize'][$word] = $word;
+		if (!isset(static::$_cache['uninflected'])) {
+			static::$_cache['uninflected'] = '(?:' . implode('|', static::$_uninflected) . ')';
+		}
+
+		if (preg_match('/^(' . static::$_cache['uninflected'] . ')$/i', $word, $regs)) {
+			static::$_cache['pluralize'][$word] = $word;
 			return $word;
 		}
 
