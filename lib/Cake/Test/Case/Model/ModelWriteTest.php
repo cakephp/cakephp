@@ -1977,6 +1977,47 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * test that saving HABTM with an empty array will clear existing HABTM if
+ * unique is true
+ *
+ * @return void
+ */
+	public function testSaveHabtmEmptyData() {
+		$this->loadFixtures('Node', 'Dependency');
+		$Node = new Node();
+
+		$data = array(
+			'Node' => array('name' => 'New First')
+		);
+		$Node->id = 1;
+		$Node->save($data);
+
+		$node = $Node->find('first', array(
+			'conditions' => array('Node.id' => 1),
+			'contain' => array('ParentNode')
+		));
+
+		$result = Hash::extract($node, 'ParentNode.{n}.id');
+		$expected = array(2);
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			'ParentNode' => array()
+		);
+		$Node->id = 1;
+		$Node->save($data);
+
+		$node = $Node->find('first', array(
+			'conditions' => array('Node.id' => 1),
+			'contain' => array('ParentNode')
+		));
+
+		$result = Hash::extract($node, 'ParentNode.{n}.id');
+		$expected = array();
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testSaveHabtmNoPrimaryData method
  *
  * @return void

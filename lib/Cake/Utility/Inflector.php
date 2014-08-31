@@ -32,7 +32,7 @@ class Inflector {
  */
 	protected static $_plural = array(
 		'rules' => array(
-			'/(s)tatus$/i' => '\1\2tatuses',
+			'/(s)tatus$/i' => '\1tatuses',
 			'/(quiz)$/i' => '\1zes',
 			'/^(ox)$/i' => '\1\2en',
 			'/([m|l])ouse$/i' => '\1ice',
@@ -57,6 +57,7 @@ class Inflector {
 		),
 		'uninflected' => array(
 			'.*[nrlm]ese',
+			'.*data',
 			'.*deer',
 			'.*fish',
 			'.*measles',
@@ -152,6 +153,7 @@ class Inflector {
 			'/s$/i' => ''
 		),
 		'uninflected' => array(
+			'.*data',
 			'.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', '.*ss', 'feedback'
 		),
 		'irregular' => array(
@@ -171,7 +173,7 @@ class Inflector {
 		'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
 		'headquarters', 'herpes', 'hijinks', 'Hottentotese', 'information', 'innings',
 		'jackanapes', 'Kiplingese', 'Kongoese', 'Lucchese', 'mackerel', 'Maltese', '.*?media',
-		'metadata', 'mews', 'moose', 'mumps', 'Nankingese', 'news', 'nexus', 'Niasese',
+		'mews', 'moose', 'mumps', 'Nankingese', 'news', 'nexus', 'Niasese',
 		'Pekingese', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese',
 		'proceedings', 'rabies', 'research', 'rice', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors',
 		'sea[- ]bass', 'series', 'Shavese', 'shears', 'siemens', 'species', 'swine', 'testes',

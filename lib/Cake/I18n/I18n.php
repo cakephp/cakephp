@@ -667,7 +667,8 @@ class I18n {
  * @return string Translated string with arguments
  */
 	public static function insertArgs($translated, array $args) {
-		if (empty($args)) {
+		$len = count($args);
+		if ($len === 0 || ($len === 1 && $args[0] === null)) {
 			return $translated;
 		}
 

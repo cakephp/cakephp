@@ -381,6 +381,14 @@ class BasicsTest extends CakeTestCase {
 		$expected = 'Some string with multiple arguments';
 		$this->assertEquals($expected, $result);
 
+		$result = __('Some string with %s and a null argument', null);
+		$expected = 'Some string with %s and a null argument';
+		$this->assertEquals($expected, $result);
+
+		$result = __('Some string with multiple %s%s, first being null', null, 'arguments');
+		$expected = 'Some string with multiple arguments, first being null';
+		$this->assertEquals($expected, $result);
+
 		$result = __('Some string with %s %s', array('multiple', 'arguments'));
 		$expected = 'Some string with multiple arguments';
 		$this->assertEquals($expected, $result);
@@ -947,7 +955,7 @@ EXPECTED;
 		if (php_sapi_name() === 'cli') {
 			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
 		} else {
-			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
+			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 20);
 		}
 		$this->assertEquals($expected, $result);
 
