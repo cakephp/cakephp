@@ -184,12 +184,7 @@ abstract class BaseErrorHandler {
 			'error' => 'Fatal Error',
 		];
 		$this->_logError(LOG_ERR, $data);
-
-		if (Configure::read('debug')) {
-			$this->handleException(new FatalErrorException($description, 500, $file, $line));
-			return true;
-		}
-		$this->handleException(new InternalErrorException());
+		$this->handleException(new FatalErrorException($description, 500, $file, $line));
 		return true;
 	}
 
