@@ -15,10 +15,11 @@
 namespace Cake\Error;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Cake\Utility\String;
+use Exception;
+use InvalidArgumentException;
 
 /**
  * Provide custom logging and error handling.
@@ -583,7 +584,7 @@ class Debugger {
 				return $out . "\n" .
 					substr(static::_array($var->__debugInfo(), $depth - 1, $indent), 1, -1) .
 					$end . '}';
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				return $out . "\n(unable to export object)\n }";
 			}
 		}
@@ -625,15 +626,16 @@ class Debugger {
  * @param string $format The format you want errors to be output as.
  *   Leave null to get the current format.
  * @return mixed Returns null when setting. Returns the current format when getting.
- * @throws \Cake\Core\Exception\Exception when choosing a format that doesn't exist.
+ * @throws \InvalidArgumentException when choosing a format that doesn't exist.
  */
 	public static function outputAs($format = null) {
 		$self = Debugger::getInstance();
 		if ($format === null) {
 			return $self->_outputFormat;
 		}
+
 		if ($format !== false && !isset($self->_templates[$format])) {
-			throw new Exception('Invalid Debugger output format.');
+			throw new InvalidArgumentException('Invalid Debugger output format.');
 		}
 		$self->_outputFormat = $format;
 	}

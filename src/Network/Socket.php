@@ -15,6 +15,7 @@
 namespace Cake\Network;
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\Network\Exception\SocketException;
 use Cake\Validation\Validation;
 
 /**
@@ -115,7 +116,7 @@ class Socket {
  * Connect the socket to the given host and port.
  *
  * @return bool Success
- * @throws \Cake\Network\Error\SocketException
+ * @throws \Cake\Network\Exception\SocketException
  */
 	public function connect() {
 		if ($this->connection) {
@@ -151,12 +152,12 @@ class Socket {
 
 		if (!empty($errNum) || !empty($errStr)) {
 			$this->setLastError($errNum, $errStr);
-			throw new Error\SocketException($errStr, $errNum);
+			throw new SocketException($errStr, $errNum);
 		}
 
 		if (!$this->connection && $this->_connectionErrors) {
 			$message = implode("\n", $this->_connectionErrors);
-			throw new Error\SocketException($message, E_WARNING);
+			throw new SocketException($message, E_WARNING);
 		}
 
 		$this->connected = is_resource($this->connection);
@@ -353,7 +354,7 @@ class Socket {
  * @param bool $enable enable or disable encryption. Default is true (enable)
  * @return bool True on success
  * @throws \InvalidArgumentException When an invalid encryption scheme is chosen.
- * @throws \Cake\Network\Error\SocketException When attempting to enable SSL/TLS fails
+ * @throws \Cake\Network\Exception\SocketException When attempting to enable SSL/TLS fails
  * @see stream_socket_enable_crypto
  */
 	public function enableCrypto($type, $clientOrServer = 'client', $enable = true) {
@@ -365,7 +366,7 @@ class Socket {
 			$enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $this->_encryptMethods[$type . '_' . $clientOrServer]);
 		} catch (\Exception $e) {
 			$this->setLastError(null, $e->getMessage());
-			throw new Error\SocketException($e->getMessage());
+			throw new SocketException($e->getMessage());
 		}
 		if ($enableCryptoResult === true) {
 			$this->encrypted = $enable;
@@ -373,7 +374,7 @@ class Socket {
 		}
 		$errorMessage = 'Unable to perform enableCrypto operation on the current socket';
 		$this->setLastError(null, $errorMessage);
-		throw new Error\SocketException($errorMessage);
+		throw new SocketException($errorMessage);
 	}
 
 }

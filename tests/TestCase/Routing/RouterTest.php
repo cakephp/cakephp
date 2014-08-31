@@ -1081,7 +1081,7 @@ class RouterTest extends TestCase {
 /**
  * Test that using invalid names causes exceptions.
  *
- * @expectedException \Cake\Routing\Error\MissingRouteException
+ * @expectedException \Cake\Routing\Exception\MissingRouteException
  * @return void
  */
 	public function testNamedRouteException() {
@@ -1493,7 +1493,7 @@ class RouterTest extends TestCase {
 /**
  * Test exceptions when parsing fails.
  *
- * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedException Cake\Routing\Exception\MissingRouteException
  */
 	public function testParseError() {
 		Router::connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
@@ -1993,7 +1993,7 @@ class RouterTest extends TestCase {
 /**
  * test that patterns work for :action
  *
- * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedException Cake\Routing\Exception\MissingRouteException
  * @return void
  */
 	public function testParsingWithPatternOnAction() {
@@ -2018,7 +2018,7 @@ class RouterTest extends TestCase {
 /**
  * Test url() works with patterns on :action
  *
- * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedException Cake\Routing\Exception\MissingRouteException
  * @return void
  */
 	public function testUrlPatternOnAction() {
@@ -2194,7 +2194,7 @@ class RouterTest extends TestCase {
 /**
  * testRegexRouteMatching error
  *
- * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedException Cake\Routing\Exception\MissingRouteException
  * @return void
  */
 	public function testRegexRouteMatchingError() {
@@ -2205,7 +2205,7 @@ class RouterTest extends TestCase {
 /**
  * testRegexRouteMatching method
  *
- * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedException Cake\Routing\Exception\MissingRouteException
  * @return void
  */
 	public function testRegexRouteMatchUrl() {
@@ -2276,7 +2276,7 @@ class RouterTest extends TestCase {
 /**
  * test that route classes must extend \Cake\Routing\Route\Route
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testCustomRouteException() {

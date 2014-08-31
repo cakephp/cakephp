@@ -15,8 +15,9 @@
 namespace Cake\Cache;
 
 use Cake\Core\App;
-use Cake\Core\Exception\Exception;
 use Cake\Core\ObjectRegistry;
+use RuntimeException;
+use BadMethodCallException;
 
 /**
  * An object registry for cache engines.
@@ -48,10 +49,10 @@ class CacheRegistry extends ObjectRegistry {
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the cache is missing in.
  * @return void
- * @throws \Cake\Core\Exception\Exception
+ * @throws \BadMethodCallException
  */
 	protected function _throwMissingClassError($class, $plugin) {
-		throw new Exception(sprintf('Cache engine %s is not available.', $class));
+		throw new BadMethodCallException(sprintf('Cache engine %s is not available.', $class));
 	}
 
 /**
@@ -63,8 +64,7 @@ class CacheRegistry extends ObjectRegistry {
  * @param string $alias The alias of the object.
  * @param array $config An array of settings to use for the cache engine.
  * @return CacheEngine The constructed CacheEngine class.
- * @throws \Cake\Core\Exception\Exception when an object doesn't implement
- *    the correct interface.
+ * @throws \RuntimeException when an object doesn't implement the correct interface.
  */
 	protected function _create($class, $alias, $config) {
 		if (is_object($class)) {
@@ -77,13 +77,13 @@ class CacheRegistry extends ObjectRegistry {
 		}
 
 		if (!($instance instanceof CacheEngine)) {
-			throw new Exception(
+			throw new RuntimeException(
 				'Cache engines must use Cake\Cache\CacheEngine as a base class.'
 			);
 		}
 
 		if (!$instance->init($config)) {
-			throw new Exception(
+			throw new RuntimeException(
 				sprintf('Cache engine %s is not properly configured.', get_class($instance))
 			);
 		}

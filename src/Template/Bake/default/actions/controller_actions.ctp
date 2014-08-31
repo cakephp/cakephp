@@ -53,7 +53,7 @@ $allAssociations = array_merge(
  *
  * @param string $id
  * @return void
- * @throws NotFoundException
+ * @throws \Cake\Network\Exception\NotFoundException
  */
 	public function view($id = null) {
 		$<?= $singularName?> = $this-><?= $currentModelName ?>->get($id, [
@@ -96,7 +96,7 @@ $allAssociations = array_merge(
  *
  * @param string $id
  * @return void
- * @throws NotFoundException
+ * @throws \Cake\Network\Exception\NotFoundException
  */
 	public function edit($id = null) {
 		$<?= $singularName ?> = $this-><?= $currentModelName ?>->get($id, [
@@ -128,7 +128,7 @@ $allAssociations = array_merge(
  *
  * @param string $id
  * @return void
- * @throws NotFoundException
+ * @throws \Cake\Network\Exception\NotFoundException
  */
 	public function delete($id = null) {
 		$<?= $singularName ?> = $this-><?= $currentModelName ?>->get($id);

@@ -18,6 +18,7 @@ use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\Routing\Router;
+use Cake\Network\Exception\InternalErrorException;
 
 /**
  * Base error handler that provides logic common to the CLI + web

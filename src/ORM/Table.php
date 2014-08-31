@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
@@ -29,8 +30,8 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
-use Cake\ORM\Error\MissingEntityException;
-use Cake\ORM\Error\RecordNotFoundException;
+use Cake\ORM\Exception\MissingEntityException;
+use Cake\ORM\Exception\RecordNotFoundException;
 use Cake\ORM\Marshaller;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
@@ -431,7 +432,7 @@ class Table implements RepositoryInterface, EventListener {
  * a new one
  *
  * @param string $name the name of the class to use
- * @throws \Cake\ORM\Error\MissingEntityException when the entity class cannot be found
+ * @throws \Cake\ORM\Exception\MissingEntityException when the entity class cannot be found
  * @return string
  */
 	public function entityClass($name = null) {
@@ -889,7 +890,7 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * {@inheritDoc}
  *
- * @throws \Cake\ORM\Error\RecordNotFoundException if no record can be found given
+ * @throws \Cake\ORM\Exception\RecordNotFoundException if no record can be found given
  * a primary key value.
  * @throws \InvalidArgumentException When $primaryKey has an incorrect number of elements.
  */
@@ -1461,7 +1462,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param string $method The method name that was fired.
  * @param array $args List of arguments passed to the function.
  * @return mixed
- * @throws \Cake\Core\Exception\Exception when there are missing arguments, or when
+ * @throws \BadMethodCallException when there are missing arguments, or when
  *  and & or are combined.
  */
 	protected function _dynamicFinder($method, $args) {
@@ -1482,7 +1483,7 @@ class Table implements RepositoryInterface, EventListener {
 		$makeConditions = function($fields, $args) {
 			$conditions = [];
 			if (count($args) < count($fields)) {
-				throw new \Cake\Core\Exception\Exception(sprintf(
+				throw new BadMethodCallException(sprintf(
 					'Not enough arguments to magic finder. Got %s required %s',
 					count($args),
 					count($fields)
@@ -1495,7 +1496,7 @@ class Table implements RepositoryInterface, EventListener {
 		};
 
 		if ($hasOr !== false && $hasAnd !== false) {
-			throw new \Cake\Core\Exception\Exception(
+			throw new BadMethodCallException(
 				'Cannot mix "and" & "or" in a magic finder. Use find() instead.'
 			);
 		}

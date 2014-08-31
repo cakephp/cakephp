@@ -18,6 +18,7 @@ namespace Cake\Error;
 
 use Cake\Core\App;
 use Cake\Error\Debugger;
+use Exception;
 
 /**
  * Error Handler provides basic error and exception handling for your application. It captures and
@@ -132,13 +133,13 @@ class ErrorHandler extends BaseErrorHandler {
 		$renderer = App::className($this->_options['exceptionRenderer'], 'Error');
 		try {
 			if (!$renderer) {
-				throw new \Exception("$renderer is an invalid class.");
+				throw new Exception("$renderer is an invalid class.");
 			}
 			$error = new $renderer($exception);
 			$response = $error->render();
 			$this->_clearOutput();
 			$this->_sendResponse($response);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			// Disable trace for internal errors.
 			$this->_options['trace'] = false;
 			$message = sprintf("[%s] %s\n%s", // Keeping same message format

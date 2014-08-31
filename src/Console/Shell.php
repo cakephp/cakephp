@@ -15,6 +15,7 @@
 namespace Cake\Console;
 
 use Cake\Console\ConsoleIo;
+use Cake\Console\Exception\ConsoleException;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Log\LogTrait;
@@ -328,7 +329,7 @@ class Shell {
 		$this->OptionParser = $this->getOptionParser();
 		try {
 			list($this->params, $this->args) = $this->OptionParser->parse($argv);
-		} catch (Error\ConsoleException $e) {
+		} catch (ConsoleException $e) {
 			$this->err('<error>Error: ' . $e->getMessage() . '</error>');
 			$this->out($this->OptionParser->help($command));
 			return false;

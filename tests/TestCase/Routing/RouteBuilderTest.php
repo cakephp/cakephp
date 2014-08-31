@@ -162,7 +162,7 @@ class RouteBuilderTest extends TestCase {
 /**
  * Test error on invalid route class
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException \InvalidArgumentException
  * @expectedExceptionMessage Route class not found, or route class is not a subclass of
  * @return void
  */
@@ -174,7 +174,7 @@ class RouteBuilderTest extends TestCase {
 /**
  * Test conflicting parameters raises an exception.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException \BadMethodCallException
  * @expectedExceptionMessage You cannot define routes that conflict with the scope.
  * @return void
  */

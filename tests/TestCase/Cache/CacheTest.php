@@ -45,6 +45,7 @@ class CacheTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Cache::drop('tests');
+		Cache::drop('test_trigger');
 	}
 
 /**
@@ -115,7 +116,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testWriteNonExistingConfig() {
@@ -125,7 +126,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testIncrementNonExistingConfig() {
@@ -135,7 +136,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testDecrementNonExistingConfig() {
@@ -181,7 +182,7 @@ class CacheTest extends TestCase {
 /**
  * testConfigInvalidEngine method
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException BadMethodCallException
  * @return void
  */
 	public function testConfigInvalidEngine() {
@@ -193,7 +194,7 @@ class CacheTest extends TestCase {
 /**
  * test that trying to configure classes that don't extend CacheEngine fail.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException BadMethodCallException
  * @return void
  */
 	public function testConfigInvalidObject() {
@@ -207,7 +208,7 @@ class CacheTest extends TestCase {
 /**
  * Ensure you cannot reconfigure a cache adapter.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException BadMethodCallException
  * @return void
  */
 	public function testConfigErrorOnReconfigure() {
@@ -285,7 +286,7 @@ class CacheTest extends TestCase {
 
 /**
  * testGroupConfigsThrowsException method
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  */
 	public function testGroupConfigsThrowsException() {
 		Cache::groupConfigs('bogus');
@@ -416,6 +417,7 @@ class CacheTest extends TestCase {
 /**
  * Test that failed writes cause errors to be triggered.
  *
+ * @expectedException PHPUnit_Framework_Error
  * @return void
  */
 	public function testWriteTriggerError() {
@@ -425,13 +427,7 @@ class CacheTest extends TestCase {
 			'prefix' => ''
 		]);
 
-		try {
-			Cache::write('fail', 'value', 'test_trigger');
-			$this->fail('No exception thrown');
-		} catch (\PHPUnit_Framework_Error $e) {
-			$this->assertTrue(true);
-		}
-		Cache::drop('test_trigger');
+		Cache::write('fail', 'value', 'test_trigger');
 	}
 
 /**

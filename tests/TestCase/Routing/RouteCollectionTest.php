@@ -35,7 +35,7 @@ class RouteCollectionTest extends TestCase {
 /**
  * Test parse() throws an error on unknown routes.
  *
- * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedException Cake\Routing\Exception\MissingRouteException
  * @expectedExceptionMessage A route matching "/" could not be found
  */
 	public function testParseMissingRoute() {
@@ -126,7 +126,7 @@ class RouteCollectionTest extends TestCase {
 /**
  * Test match() throws an error on unknown routes.
  *
- * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedException Cake\Routing\Exception\MissingRouteException
  * @expectedExceptionMessage A route matching "array (
  */
 	public function testMatchError() {
@@ -191,7 +191,7 @@ class RouteCollectionTest extends TestCase {
 /**
  * Test matching routes with names and failing
  *
- * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedException Cake\Routing\Exception\MissingRouteException
  * @return void
  */
 	public function testMatchNamedError() {

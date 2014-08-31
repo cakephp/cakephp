@@ -14,12 +14,14 @@
  */
 namespace Cake\ORM;
 
+use BadMethodCallException;
 use Cake\Core\App;
-use Cake\Core\Exception\Exception;
+use Cake\Core\ObjectRegistry;
 use Cake\Event\EventManagerTrait;
 use Cake\ORM\Behavior;
+use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Table;
-use Cake\Core\ObjectRegistry;
+use LogicException;
 
 /**
  * BehaviorRegistry is used as a registry for loaded behaviors and handles loading
@@ -82,10 +84,10 @@ class BehaviorRegistry extends ObjectRegistry {
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the behavior is missing in.
  * @return void
- * @throws \Cake\ORM\Error\MissingBehaviorException
+ * @throws \Cake\ORM\Exception\MissingBehaviorException
  */
 	protected function _throwMissingClassError($class, $plugin) {
-		throw new Error\MissingBehaviorException([
+		throw new MissingBehaviorException([
 			'class' => $class . 'Behavior',
 			'plugin' => $plugin
 		]);
@@ -125,7 +127,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @param string $class The classname that is missing.
  * @param string $alias The alias of the object.
  * @return void
- * @throws \Cake\Core\Exception\Exception when duplicate methods are connected.
+ * @throws \LogicException when duplicate methods are connected.
  */
 	protected function _getMethods(Behavior $instance, $class, $alias) {
 		$finders = array_change_key_case($instance->implementedFinders());
@@ -140,7 +142,7 @@ class BehaviorRegistry extends ObjectRegistry {
 					$finder,
 					$duplicate[0]
 				);
-				throw new Exception($error);
+				throw new LogicException($error);
 			}
 			$finders[$finder] = [$alias, $methodName];
 		}
@@ -154,7 +156,7 @@ class BehaviorRegistry extends ObjectRegistry {
 					$method,
 					$duplicate[0]
 				);
-				throw new Exception($error);
+				throw new LogicException($error);
 			}
 			$methods[$method] = [$alias, $methodName];
 		}
@@ -196,7 +198,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @param string $method The method to invoke.
  * @param array $args The arguments you want to invoke the method with.
  * @return mixed The return value depends on the underlying behavior method.
- * @throws \Cake\Core\Exception\Exception When the method is unknown.
+ * @throws \BadMethodCallException When the method is unknown.
  */
 	public function call($method, array $args = []) {
 		$method = strtolower($method);
@@ -205,7 +207,9 @@ class BehaviorRegistry extends ObjectRegistry {
 			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
-		throw new Exception(sprintf('Cannot call "%s" it does not belong to any attached behavior.', $method));
+		throw new BadMethodCallException(
+			sprintf('Cannot call "%s" it does not belong to any attached behavior.', $method)
+		);
 	}
 
 /**
@@ -214,7 +218,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @param string $type The finder type to invoke.
  * @param array $args The arguments you want to invoke the method with.
  * @return mixed The return value depends on the underlying behavior method.
- * @throws \Cake\Core\Exception\Exception When the method is unknown.
+ * @throws \BadMethodCallException When the method is unknown.
  */
 	public function callFinder($type, array $args = []) {
 		$type = strtolower($type);
@@ -224,7 +228,9 @@ class BehaviorRegistry extends ObjectRegistry {
 			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
-		throw new Exception(sprintf('Cannot call finder "%s" it does not belong to any attached behavior.', $type));
+		throw new BadMethodCallException(
+			sprintf('Cannot call finder "%s" it does not belong to any attached behavior.', $type)
+		);
 	}
 
 }

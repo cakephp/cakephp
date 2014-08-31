@@ -15,8 +15,8 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Error\ForbiddenException;
 use Cake\Event\Event;
+use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Security;
@@ -131,7 +131,7 @@ class CsrfComponent extends Component {
  * Validate the request data against the cookie token.
  *
  * @param \Cake\Network\Request $request The request to validate against.
- * @throws \Cake\Error\ForbiddenException when the CSRF token is invalid or missing.
+ * @throws \Cake\Network\Exception\ForbiddenException when the CSRF token is invalid or missing.
  * @return void
  */
 	protected function _validateToken(Request $request) {

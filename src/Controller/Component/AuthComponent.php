@@ -19,9 +19,9 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
-use Cake\Error;
 use Cake\Error\Debugger;
 use Cake\Event\Event;
+use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
@@ -391,11 +391,11 @@ class AuthComponent extends Component {
  *
  * @param \Cake\Controller\Controller $controller A reference to the controller object
  * @return \Cake\Network\Response
- * @throws \Cake\Error\ForbiddenException
+ * @throws \Cake\Network\Exception\ForbiddenException
  */
 	protected function _unauthorized(Controller $controller) {
 		if ($this->_config['unauthorizedRedirect'] === false) {
-			throw new Error\ForbiddenException($this->_config['authError']);
+			throw new ForbiddenException($this->_config['authError']);
 		}
 
 		$this->flash($this->_config['authError']);

@@ -911,7 +911,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * Tests that using a simple string for entityClass will throw an exception
  * when the class does not exist in the namespace
  *
- * @expectedException \Cake\ORM\Error\MissingEntityException
+ * @expectedException \Cake\ORM\Exception\MissingEntityException
  * @expectedExceptionMessage Entity class FooUser could not be found.
  * @return void
  */
@@ -1101,7 +1101,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Ensure exceptions are raised on missing behaviors.
  *
- * @expectedException \Cake\ORM\Error\MissingBehaviorException
+ * @expectedException \Cake\ORM\Exception\MissingBehaviorException
  */
 	public function testAddBehaviorMissing() {
 		$table = TableRegistry::get('article');
@@ -2212,7 +2212,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test magic findByXX errors on missing arguments.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException BadMethodCallException
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 0 required 1
  * @return void
  */
@@ -2225,7 +2225,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test magic findByXX errors on missing arguments.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException BadMethodCallException
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 1 required 2
  * @return void
  */
@@ -2238,7 +2238,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test magic findByXX errors when there is a mix of or & and.
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException BadMethodCallException
  * @expectedExceptionMessage Cannot mix "and" & "or" in a magic finder. Use find() instead.
  * @return void
  */
@@ -3290,7 +3290,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Tests that get() will throw an exception if the record was not found
  *
- * @expectedException \Cake\ORM\Error\RecordNotFoundException
+ * @expectedException \Cake\ORM\Exception\RecordNotFoundException
  * @expectedExceptionMessage Record "10" not found in table "articles"
  * @return void
  */

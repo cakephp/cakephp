@@ -15,10 +15,11 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleErrorHandler;
-use Cake\Controller\Error\MissingActionException;
+use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Exception\Exception;
-use Cake\Error;
 use Cake\Log\Log;
+use Cake\Network\Exception\InternalErrorException;
+use Cake\Network\Exception\NotFoundException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -75,6 +76,7 @@ class ConsoleErrorHandlerTest extends TestCase {
 			->with($this->stringContains($content));
 
 		$this->Error->handleError(E_USER_ERROR, 'This is a fatal error', '/some/file', 275);
+		ob_end_clean();
 	}
 
 /**
@@ -114,7 +116,7 @@ class ConsoleErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testError404Exception() {
-		$exception = new Error\NotFoundException('dont use me in cli.');
+		$exception = new NotFoundException('dont use me in cli.');
 
 		$this->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
@@ -128,7 +130,7 @@ class ConsoleErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testError500Exception() {
-		$exception = new Error\InternalErrorException('dont use me in cli.');
+		$exception = new InternalErrorException('dont use me in cli.');
 
 		$this->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));

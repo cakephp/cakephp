@@ -17,6 +17,7 @@ namespace Cake\Model\Behavior;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
+use Cake\ORM\Exception\RecordNotFoundException;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 
@@ -525,7 +526,7 @@ class TreeBehavior extends Behavior {
  *
  * @param \Cake\ORM\Entity $node The node to move
  * @param int|bool $number How many places to move the node or true to move to last position
- * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
+ * @throws \Cake\ORM\Exception\RecordNotFoundException When node was not found
  * @return \Cake\ORM\Entity|bool the entity after being moved or false on failure
  */
 	public function moveDown(Entity $node, $number = 1) {
@@ -540,7 +541,7 @@ class TreeBehavior extends Behavior {
  *
  * @param \Cake\ORM\Entity $node The node to move
  * @param int|bool $number How many places to move the node, or true to move to last position
- * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
+ * @throws \Cake\ORM\Exception\RecordNotFoundException When node was not found
  * @return \Cake\ORM\Entity|bool $node The node after being moved or false on failure
  */
 	protected function _moveDown($node, $number) {
@@ -601,7 +602,7 @@ class TreeBehavior extends Behavior {
  *
  * @param mixed $id Record id.
  * @return \Cake\ORM\Entity
- * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
+ * @throws \Cake\ORM\Exception\RecordNotFoundException When node was not found
  */
 	protected function _getNode($id) {
 		$config = $this->config();
@@ -614,7 +615,7 @@ class TreeBehavior extends Behavior {
 			->first();
 
 		if (!$node) {
-			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
+			throw new RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
 		}
 
 		return $node;

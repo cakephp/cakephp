@@ -14,7 +14,7 @@
  */
 namespace Cake\Core;
 
-use Cake\Core\Exception\Exception;
+use BadMethodCallException;
 
 /**
  * A trait that provides a set of static methods to manage configuration
@@ -65,7 +65,7 @@ trait StaticConfigTrait {
  * @param string|array $key The name of the configuration, or an array of multiple configs.
  * @param array $config An array of name => configuration data for adapter.
  * @return mixed null when adding configuration and an array of configuration data when reading.
- * @throws \Cake\Core\Exception\Exception When trying to modify an existing config.
+ * @throws \BadMethodCallException When trying to modify an existing config.
  */
 	public static function config($key, $config = null) {
 		// Read config.
@@ -79,7 +79,7 @@ trait StaticConfigTrait {
 			return;
 		}
 		if (isset(static::$_config[$key])) {
-			throw new Exception(sprintf('Cannot reconfigure existing key "%s"', $key));
+			throw new BadMethodCallException(sprintf('Cannot reconfigure existing key "%s"', $key));
 		}
 		if (is_object($config)) {
 			$config = ['className' => $config];

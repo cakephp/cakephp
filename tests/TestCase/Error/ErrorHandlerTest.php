@@ -22,6 +22,8 @@ use Cake\Error;
 use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRenderer;
 use Cake\Log\Log;
+use Cake\Network\Exception\ForbiddenException;
+use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
@@ -220,7 +222,7 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testHandleException() {
-		$error = new Error\NotFoundException('Kaboom!');
+		$error = new NotFoundException('Kaboom!');
 		$errorHandler = new TestErrorHandler();
 
 		$errorHandler->handleException($error);
@@ -237,12 +239,12 @@ class ErrorHandlerTest extends TestCase {
 			'log' => true,
 		]);
 
-		$error = new Error\NotFoundException('Kaboom!');
+		$error = new NotFoundException('Kaboom!');
 
 		$this->_logger->expects($this->once())
 			->method('write')
 			->with('error', $this->logicalAnd(
-				$this->stringContains('[Cake\Error\NotFoundException] Kaboom!'),
+				$this->stringContains('[Cake\NEtwork\Exception\NotFoundException] Kaboom!'),
 				$this->stringContains('ErrorHandlerTest->testHandleExceptionLog')
 			));
 
@@ -256,19 +258,19 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testHandleExceptionLogSkipping() {
-		$notFound = new Error\NotFoundException('Kaboom!');
-		$forbidden = new Error\ForbiddenException('Fooled you!');
+		$notFound = new NotFoundException('Kaboom!');
+		$forbidden = new ForbiddenException('Fooled you!');
 
 		$this->_logger->expects($this->once())
 			->method('write')
 			->with(
 				'error',
-				$this->stringContains('[Cake\Error\ForbiddenException] Fooled you!')
+				$this->stringContains('[Cake\Network\Exception\ForbiddenException] Fooled you!')
 			);
 
 		$errorHandler = new TestErrorHandler([
 			'log' => true,
-			'skipLog' => ['Cake\Error\NotFoundException'],
+			'skipLog' => ['Cake\Network\Exception\NotFoundException'],
 		]);
 
 		$errorHandler->handleException($notFound);
@@ -289,7 +291,7 @@ class ErrorHandlerTest extends TestCase {
 			'exceptionRenderer' => 'TestPlugin.TestPluginExceptionRenderer',
 		]);
 
-		$error = new Error\NotFoundException('Kaboom!');
+		$error = new NotFoundException('Kaboom!');
 		$errorHandler->handleException($error);
 
 		$result = $errorHandler->response;
