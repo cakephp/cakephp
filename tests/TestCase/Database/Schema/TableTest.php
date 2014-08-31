@@ -150,8 +150,32 @@ class TableTest extends TestCase {
 	}
 
 /**
- * Test adding an constraint.
+ * Test reading default values.
  *
+ * @return void
+ */
+	public function testDefaultValues() {
+		$table = new Table('articles');
+		$table->addColumn('id', [
+			'type' => 'integer',
+			'default' => 0
+		])->addColumn('title', [
+			'type' => 'string',
+			'default' => 'A title'
+		])->addColumn('body', [
+			'type' => 'text',
+		]);
+		$result = $table->defaultValues();
+		$expected = [
+			'id' => 0,
+			'title' => 'A title'
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test adding an constraint.
+ *>
  * @return void
  */
 	public function testAddConstraint() {
