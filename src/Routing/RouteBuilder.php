@@ -16,8 +16,8 @@ namespace Cake\Routing;
 
 use BadMethodCallException;
 use Cake\Core\App;
-use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
+use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 
@@ -339,12 +339,16 @@ class RouteBuilder {
  */
 	protected function _makeRoute($route, $defaults, $options) {
 		if (is_string($route)) {
-			$routeClass = 'Cake\Routing\Route\Route';
+			$routeClass = Router::defaultRouteClass();
 			if (isset($options['routeClass'])) {
-				$routeClass = App::className($options['routeClass'], 'Routing/Route');
+				$routeClass = $options['routeClass'];
 			}
-			if ($routeClass === false) {
-				throw new InvalidArgumentException(sprintf('Cannot find route class %s', $options['routeClass']));
+			$class = App::className($routeClass, 'Routing/Route');
+			if ($class === false) {
+				throw new InvalidArgumentException(sprintf(
+					'Cannot find route class %s',
+					$routeClass
+				));
 			}
 			unset($options['routeClass']);
 
@@ -367,7 +371,7 @@ class RouteBuilder {
 			$defaults += $this->_params;
 			$defaults += ['plugin' => null];
 
-			$route = new $routeClass($route, $defaults, $options);
+			$route = new $class($route, $defaults, $options);
 		}
 
 		if ($route instanceof Route) {
@@ -515,8 +519,12 @@ class RouteBuilder {
  * @return void
  */
 	public function fallbacks() {
-		$this->connect('/:controller', ['action' => 'index'], ['routeClass' => 'InflectedRoute']);
-		$this->connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
+		$routeClass = Router::defaultRouteClass();
+		if ($routeClass === 'Cake\Routing\Route\Route') {
+			$routeClass = 'InflectedRoute';
+		}
+		$this->connect('/:controller', ['action' => 'index'], compact('routeClass'));
+		$this->connect('/:controller/:action/*', [], compact('routeClass'));
 	}
 
 }

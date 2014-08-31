@@ -45,6 +45,13 @@ class Router {
 	public static $initialized = false;
 
 /**
+ * Default route class.
+ *
+ * @var bool
+ */
+	protected static $_defaultRouteClass = 'Cake\Routing\Route\Route';
+
+/**
  * Contains the base string that will be applied to all generated URLs
  * For example `https://example.com`
  *
@@ -141,6 +148,19 @@ class Router {
  * @var array
  */
 	protected static $_urlFilters = [];
+
+/**
+ * Get or set default route class.
+ *
+ * @param string|null $routeClass Class name.
+ * @return string|void
+ */
+	public static function defaultRouteClass($routeClass = null) {
+		if ($routeClass == null) {
+			return static::$_defaultRouteClass;
+		}
+		static::$_defaultRouteClass = $routeClass;
+	}
 
 /**
  * Gets the named route patterns for use in config/routes.php
