@@ -2378,7 +2378,7 @@ class ValidationTest extends TestCase {
 /**
  * testMimeTypeFalse method
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException \RuntimeException
  * @return void
  */
 	public function testMimeTypeFalse() {

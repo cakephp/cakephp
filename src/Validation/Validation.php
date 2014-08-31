@@ -909,19 +909,30 @@ class Validation {
  * @param string|array $check Value to check.
  * @param array|string $mimeTypes Array of mime types or regex pattern to check.
  * @return bool Success
- * @throws \Cake\Core\Exception\Exception when mime type can not be determined.
+ * @throws \RuntimeException when mime type can not be determined.
+ * @throws \LogicException when ext/fileinfo is missing
  */
 	public static function mimeType($check, $mimeTypes = array()) {
 		if (is_array($check) && isset($check['tmp_name'])) {
 			$check = $check['tmp_name'];
 		}
 
-		$File = new File($check);
-		$mime = $File->mime();
-
-		if ($mime === false) {
-			throw new Exception('Can not determine the mimetype.');
+		if (!function_exists('finfo_open')) {
+			throw new LogicException('ext/fileinfo is required for validating file mime types');
 		}
+
+		if (!is_file($check)) {
+			throw new RuntimeException('Cannot validate mimetype for a missing file');
+		}
+
+		$finfo = finfo_open(FILEINFO_MIME);
+		$finfo = finfo_file($finfo, $check);
+
+		if (!$finfo) {
+			throw new RuntimeException('Can not determine the mimetype.');
+		}
+	
+		list($mime) = explode(';', $finfo);
 
 		if (is_string($mimeTypes)) {
 			return self::_check($mime, $mimeTypes);
