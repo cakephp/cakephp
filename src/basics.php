@@ -156,7 +156,7 @@ if (!function_exists('h')) {
 
 		static $defaultCharset = false;
 		if ($defaultCharset === false) {
-			$defaultCharset = Configure::read('App.encoding');
+			$defaultCharset = mb_internal_encoding();
 			if ($defaultCharset === null) {
 				$defaultCharset = 'UTF-8';
 			}
