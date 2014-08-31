@@ -76,6 +76,13 @@ class TableRegistry {
 	protected static $_fallbacked = [];
 
 /**
+ * Contains a list of options that were passed to get() method.
+ *
+ * @var array
+ */
+	protected static $_options = [];
+
+/**
  * Stores a list of options to be used when instantiating an object
  * with a matching alias.
  *
@@ -147,15 +154,19 @@ class TableRegistry {
 	public static function get($name, array $options = []) {
 		list($plugin, $alias) = pluginSplit($name);
 		$exists = isset(static::$_instances[$alias]);
+
 		if ($exists && !empty($options)) {
-			throw new RuntimeException(sprintf(
-				'You cannot configure "%s", it already exists in the registry.',
-				$alias
-			));
+			if (static::$_options[$alias] !== $options) {
+				throw new RuntimeException(sprintf(
+					'You cannot configure "%s", it already exists in the registry.',
+					$alias
+				));
+			}
 		}
 		if ($exists) {
 			return static::$_instances[$alias];
 		}
+		static::$_options[$alias] = $options;
 		$options = ['alias' => $alias] + $options;
 
 		if (empty($options['className'])) {
