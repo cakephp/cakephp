@@ -97,9 +97,9 @@ class CakeRequest implements ArrayAccess {
  */
 	protected $_detectors = array(
 		'get' => array('env' => 'REQUEST_METHOD', 'value' => 'GET'),
-		'post' => array('env' => 'REQUEST_METHOD', 'value' => 'POST'),
-		'put' => array('env' => 'REQUEST_METHOD', 'value' => 'PUT'),
-		'delete' => array('env' => 'REQUEST_METHOD', 'value' => 'DELETE'),
+		'post' => array('env' => 'REQUEST_METHOD', 'value' => 'POST', 'cacheable' => false),
+		'put' => array('env' => 'REQUEST_METHOD', 'value' => 'PUT', 'cacheable' => false),
+		'delete' => array('env' => 'REQUEST_METHOD', 'value' => 'DELETE', 'cacheable' => false),
 		'head' => array('env' => 'REQUEST_METHOD', 'value' => 'HEAD'),
 		'options' => array('env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'),
 		'ssl' => array('env' => 'HTTPS', 'value' => 1),
@@ -1021,6 +1021,29 @@ class CakeRequest implements ArrayAccess {
  */
 	public function offsetUnset($name) {
 		unset($this->params[$name]);
+	}
+
+/**
+ * Get / set the cacheable nature of a detector
+ *
+ * @param string $name the name of the detector to check
+ * @param boolean $value [optional] pass true or false to set the value
+ *
+ * @return boolean
+ */
+	public function cacheable($name, $value = null) {
+		$name = strtolower($name);
+		if (empty($this->_detectors[$name])) {
+			return true;
+		}
+		if ($value !== null) {
+			$this->_detectors[$name]['cacheable'] = $value;
+		}
+		if (!array_key_exists('cacheable', $this->_detectors[$name])) {
+			$this->_detectors[$name]['cacheable'] = true;
+		}
+
+		return $this->_detectors[$name]['cacheable'];
 	}
 
 }

@@ -2308,4 +2308,87 @@ XML;
 		}
 	}
 
+/**
+ * Test request types can or cant be cached
+ *
+ * @dataProvider cacheableDataProvider
+ *
+ * @return void
+ */
+	public function testCacheable($data, $expected) {
+		$_SERVER['REQUEST_METHOD'] = $data;
+		$request = new CakeRequest('/posts/edit/1');
+
+		$result = $request->cacheable($data);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * data provider for testing the cacheable value of a detector
+ */
+	public function cacheableDataProvider() {
+		return array(
+			'get' => array(
+				'GET',
+				true,
+			),
+			'post' => array(
+				'POST',
+				false,
+			),
+			'post-lower' => array(
+				'post',
+				false,
+			),
+			'made-up' => array(
+				'made-up',
+				true,
+			),
+		);
+	}
+
+/**
+ * Check setting the cacheable property of a detector
+ *
+ * @return void
+ */
+	public function testCacheableWrite() {
+		$_SERVER['REQUEST_METHOD'] = 'get';
+		$request = new CakeRequest('/posts/edit/1');
+
+		$this->assertTrue($request->cacheable($_SERVER['REQUEST_METHOD']));
+		$request->cacheable($_SERVER['REQUEST_METHOD'], false);
+		$this->assertFalse($request->cacheable($_SERVER['REQUEST_METHOD']));
+
+		$_SERVER['REQUEST_METHOD'] = 'post';
+		$request = new CakeRequest('/posts/edit/1');
+
+		$this->assertFalse($request->cacheable($_SERVER['REQUEST_METHOD']));
+		$request->cacheable($_SERVER['REQUEST_METHOD'], true);
+		$this->assertTrue($request->cacheable($_SERVER['REQUEST_METHOD']));
+	}
+
+/**
+ * test custom detecctor are cacheable
+ *
+ * @return void
+ */
+	public function testCacheableCustomDetectors() {
+		$request = new CakeRequest('/posts/edit/1');
+		$_SERVER['REQUEST_METHOD'] = 'custom-default';
+		$request->addDetector('custom-default', array('env' => 'REQUEST_METHOD', 'value' => 'POST'));
+		$this->assertTrue($request->cacheable($_SERVER['REQUEST_METHOD']));
+
+		$request = new CakeRequest('/posts/edit/1');
+		$_SERVER['REQUEST_METHOD'] = 'custom-false';
+		$request->addDetector('custom-false', array('env' => 'REQUEST_METHOD', 'value' => 'POST', 'cacheable' => false));
+		$this->assertFalse($request->cacheable($_SERVER['REQUEST_METHOD']));
+
+		$request = new CakeRequest('/posts/edit/1');
+		$_SERVER['REQUEST_METHOD'] = 'custom-true';
+		$request->addDetector('custom-true', array('env' => 'REQUEST_METHOD', 'value' => 'POST', 'cacheable' => true));
+		$this->assertTrue($request->cacheable($_SERVER['REQUEST_METHOD']));
+
+	}
+
 }
