@@ -335,6 +335,21 @@ class Table {
 	}
 
 /**
+ * Get a hash of columns and their default values.
+ *
+ * @return array
+ */
+	public function defaultValues() {
+		$defaults = [];
+		foreach ($this->_columns as $name => $data) {
+			if (isset($data['default'])) {
+				$defaults[$name] = $data['default'];
+			}
+		}
+		return $defaults;
+	}
+
+/**
  * Add an index.
  *
  * Used to add indexes, and full text indexes in platforms that support
