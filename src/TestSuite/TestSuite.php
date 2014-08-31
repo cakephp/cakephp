@@ -16,7 +16,7 @@
  */
 namespace Cake\TestSuite;
 
-use Cake\Utility\Folder;
+use Cake\Filesystem\Folder;
 
 /**
  * A class to contain test cases and run them with shared fixtures

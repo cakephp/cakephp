@@ -16,9 +16,9 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
+use Cake\Filesystem\File;
+use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\File;
-use Cake\Utility\Folder;
 use Cake\View\Helper\RssHelper;
 use Cake\View\Helper\TimeHelper;
 use Cake\View\View;
