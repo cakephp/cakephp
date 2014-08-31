@@ -16,7 +16,7 @@ namespace Cake\Validation;
 
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
-use Cake\Utility\File;
+use Cake\Filesystem\File;
 use Cake\Utility\Number;
 
 /**

@@ -16,7 +16,7 @@ namespace Cake\Network;
 
 use Cake\Core\Configure;
 use Cake\Network\Exception\NotFoundException;
-use Cake\Utility\File;
+use Cake\Filesystem\File;
 use InvalidArgumentException;
 use RuntimeException;
 

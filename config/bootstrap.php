@@ -27,6 +27,8 @@ class_alias('Cake\Network\Exception\NotFoundException', 'Cake\Error\NotFoundExce
 class_alias('Cake\Network\Exception\NotImplementedException', 'Cake\Error\NotImplementedException');
 class_alias('Cake\Network\Exception\SocketException', 'Cake\Error\SocketException');
 class_alias('Cake\Network\Exception\UnauthorizedException', 'Cake\Error\UnauthorizedException');
+class_alias('Cake\Filesystem\File', 'Cake\Utility\File');
+class_alias('Cake\Filesystem\Folder', 'Cake\Utility\Folder');
 class_alias('Cake\I18n\Time', 'Cake\Utiliy\Time');
 
 require CAKE . 'basics.php';

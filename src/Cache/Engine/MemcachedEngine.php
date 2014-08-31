@@ -15,9 +15,9 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
-use Cake\Core\Exception\Exception;
 use Cake\Utility\Inflector;
-use \Memcached;
+use InvalidArgumentException;
+use Memcached;
 
 /**
  * Memcached storage engine for cache. Memcached has some limitations in the amount of
@@ -94,7 +94,8 @@ class MemcachedEngine extends CacheEngine {
  *
  * @param array $config array of setting for the engine
  * @return bool True if the engine has been successfully initialized, false if not
- * @throws \Cake\Core\Exception\Exception when you try use authentication without Memcached compiled with SASL support
+ * @throws InvalidArgumentException When you try use authentication without
+ *   Memcached compiled with SASL support
  */
 	public function init(array $config = []) {
 		if (!class_exists('Memcached')) {
@@ -128,7 +129,8 @@ class MemcachedEngine extends CacheEngine {
 			return true;
 		}
 
-		$this->_Memcached = new Memcached($this->_config['persistent'] ? (string)$this->_config['persistent'] : null);
+		$this->_Memcached = new Memcached($this->_config['persistent'] ?
+			(string)$this->_config['persistent'] : null);
 		$this->_setOptions();
 
 		if (count($this->_Memcached->getServerList())) {
@@ -152,11 +154,14 @@ class MemcachedEngine extends CacheEngine {
 
 		if ($this->_config['login'] !== null && $this->_config['password'] !== null) {
 			if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
-				throw new Exception(
+				throw new InvalidArgumentException(
 					'Memcached extension is not build with SASL support'
 				);
 			}
-			$this->_Memcached->setSaslAuthData($this->_config['login'], $this->_config['password']);
+			$this->_Memcached->setSaslAuthData(
+				$this->_config['login'],
+				$this->_config['password']
+			);
 		}
 
 		return true;
@@ -166,32 +171,46 @@ class MemcachedEngine extends CacheEngine {
  * Settings the memcached instance
  *
  * @return void
- * @throws \Cake\Core\Exception\Exception when the Memcached extension is not built with the desired serializer engine
+ * @throws InvalidArgumentException When the Memcached extension is not built
+ *   with the desired serializer engine.
  */
 	protected function _setOptions() {
 		$this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
 		$serializer = strtolower($this->_config['serialize']);
 		if (!isset($this->_serializers[$serializer])) {
-			throw new Exception(
+			throw new InvalidArgumentException(
 				sprintf('%s is not a valid serializer engine for Memcached', $serializer)
 			);
 		}
 
-		if ($serializer !== 'php' && !constant('Memcached::HAVE_' . strtoupper($serializer))) {
-			throw new Exception(
+		if ($serializer !== 'php' &&
+			!constant('Memcached::HAVE_' . strtoupper($serializer))
+		) {
+			throw new InvalidArgumentException(
 				sprintf('Memcached extension is not compiled with %s support', $serializer)
 			);
 		}
 
-		$this->_Memcached->setOption(Memcached::OPT_SERIALIZER, $this->_serializers[$serializer]);
+		$this->_Memcached->setOption(
+			Memcached::OPT_SERIALIZER,
+			$this->_serializers[$serializer]
+		);
 
 		// Check for Amazon ElastiCache instance
-		if (defined('Memcached::OPT_CLIENT_MODE') && defined('Memcached::DYNAMIC_CLIENT_MODE')) {
-			$this->_Memcached->setOption(Memcached::OPT_CLIENT_MODE, Memcached::DYNAMIC_CLIENT_MODE);
+		if (defined('Memcached::OPT_CLIENT_MODE') &&
+			defined('Memcached::DYNAMIC_CLIENT_MODE')
+		) {
+			$this->_Memcached->setOption(
+				Memcached::OPT_CLIENT_MODE,
+				Memcached::DYNAMIC_CLIENT_MODE
+			);
 		}
 
-		$this->_Memcached->setOption(Memcached::OPT_COMPRESSION, (bool)$this->_config['compress']);
+		$this->_Memcached->setOption(
+			Memcached::OPT_COMPRESSION,
+			(bool)$this->_config['compress']
+		);
 	}
 
 /**
@@ -224,8 +243,9 @@ class MemcachedEngine extends CacheEngine {
 
 /**
  * Write data for key into cache. When using memcached as your cache engine
- * remember that the Memcached pecl extension does not support cache expiry times greater
- * than 30 days in the future. Any duration greater than 30 days will be treated as never expiring.
+ * remember that the Memcached pecl extension does not support cache expiry
+ * times greater than 30 days in the future. Any duration greater than 30 days
+ * will be treated as never expiring.
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
@@ -247,7 +267,8 @@ class MemcachedEngine extends CacheEngine {
  * Write many cache entries to the cache at once
  *
  * @param array $data An array of data to be stored in the cache
- * @return array of bools for each key provided, true if the data was successfully cached, false on failure
+ * @return array of bools for each key provided, true if the data was
+ *   successfully cached, false on failure
  */
 	public function writeMany($data) {
 		$cacheData = array();
@@ -268,7 +289,8 @@ class MemcachedEngine extends CacheEngine {
  * Read a key from the cache
  *
  * @param string $key Identifier for the data
- * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+ * @return mixed The cached data, or false if the data doesn't exist, has
+ * expired, or if there was an error fetching it.
  */
 	public function read($key) {
 		$key = $this->_key($key);
@@ -280,8 +302,8 @@ class MemcachedEngine extends CacheEngine {
  * Read many keys from the cache at once
  *
  * @param array $keys An array of identifiers for the data
- * @return An array containing, for each of the given $keys, the cached data or false if cached data could not be
- * retreived
+ * @return An array containing, for each of the given $keys, the cached data or
+ *   false if cached data could not be retreived.
  */
 	public function readMany($keys) {
 		$cacheKeys = array();
@@ -292,7 +314,8 @@ class MemcachedEngine extends CacheEngine {
 		$values = $this->_Memcached->getMulti($cacheKeys);
 		$return = array();
 		foreach ($keys as &$key) {
-			$return[$key] = array_key_exists($this->_key($key), $values) ? $values[$this->_key($key)] : false;
+			$return[$key] = array_key_exists($this->_key($key), $values) ?
+				$values[$this->_key($key)] : false;
 		}
 		return $return;
 	}
@@ -303,7 +326,6 @@ class MemcachedEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param int $offset How much to increment
  * @return bool|int New incremented value, false otherwise
- * @throws \Cake\Core\Exception\Exception when you try to increment with compress = true
  */
 	public function increment($key, $offset = 1) {
 		$key = $this->_key($key);
@@ -317,7 +339,6 @@ class MemcachedEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param int $offset How much to subtract
  * @return bool|int New decremented value, false otherwise
- * @throws \Cake\Core\Exception\Exception when you try to decrement with compress = true
  */
 	public function decrement($key, $offset = 1) {
 		$key = $this->_key($key);
@@ -329,7 +350,8 @@ class MemcachedEngine extends CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ * @return bool True if the value was successfully deleted, false if it didn't
+ *   exist or couldn't be removed.
  */
 	public function delete($key) {
 		$key = $this->_key($key);
@@ -341,8 +363,8 @@ class MemcachedEngine extends CacheEngine {
  * Delete many keys from the cache at once
  *
  * @param array $keys An array of identifiers for the data
- * @return array of boolean values that are true if the key was successfully deleted, false if it didn't exist or
- * couldn't be removed
+ * @return array of boolean values that are true if the key was successfully
+ *   deleted, false if it didn't exist or couldn't be removed.
  */
 	public function deleteMany($keys) {
 		$cacheKeys = array();

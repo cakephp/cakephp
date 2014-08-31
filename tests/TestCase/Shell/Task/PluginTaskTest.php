@@ -14,13 +14,13 @@
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
-use Cake\Shell\Task\TemplateTask;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Filesystem\File;
+use Cake\Filesystem\Folder;
+use Cake\Shell\Task\TemplateTask;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\File;
-use Cake\Utility\Folder;
 
 /**
  * PluginTaskPlugin class
@@ -115,7 +115,6 @@ class PluginTaskTest extends TestCase {
  */
 	public function testExecuteWithNoArgs() {
 		$path = $this->Task->path . 'TestPlugin';
-		$file = $path . DS . 'Controller' . DS . 'TestPluginAppController.php';
 
 		$this->Task->expects($this->at(0))
 			->method('err')
