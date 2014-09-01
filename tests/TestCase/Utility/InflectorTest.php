@@ -376,6 +376,24 @@ class InflectorTest extends TestCase {
 	}
 
 /**
+ * testInflectorHyphenate method
+ *
+ * @return void
+ */
+	public function testInflectorHyphenate() {
+		$this->assertSame('test-thing', Inflector::hyphenate('TestThing'));
+		$this->assertSame('test-thing', Inflector::hyphenate('testThing'));
+		$this->assertSame('test-thing-extra', Inflector::hyphenate('TestThingExtra'));
+		$this->assertSame('test-thing-extra', Inflector::hyphenate('testThingExtra'));
+		$this->assertSame('test-this-thing', Inflector::hyphenate('test_this_thing'));
+
+		// Test stupid values
+		$this->assertSame('', Inflector::hyphenate(''));
+		$this->assertSame('0', Inflector::hyphenate(0));
+		$this->assertSame('', Inflector::hyphenate(false));
+	}
+
+/**
  * testVariableNaming method
  *
  * @return void

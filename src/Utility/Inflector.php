@@ -599,6 +599,23 @@ class Inflector {
 	}
 
 /**
+ * Returns the given underscored_word or CamelCasedWord as an hyphenated-word.
+ *
+ * @param string $word The word to hyphenate.
+ * @return string Hyphenated version of the word.
+ */
+	public static function hyphenate($word) {
+		$result = static::_cache(__FUNCTION__, $word);
+		if ($result !== false) {
+			return $result;
+		}
+
+		$result = str_replace('_', '-', static::underscore($word));
+		static::_cache(__FUNCTION__, $word, $result);
+		return $result;
+	}
+
+/**
  * Returns the given underscored_word_group as a Human Readable Word Group.
  * (Underscores are replaced by spaces and capitalized following words.)
  *
