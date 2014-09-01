@@ -500,10 +500,34 @@ class AuthComponent extends Component {
 			if (!method_exists($className, 'authorize')) {
 				throw new Exception('Authorization objects must implement an authorize() method.');
 			}
+			if (!empty($config['alias'])) {
+				$alias = $config['alias'];
+				unset($config['alias']);
+			} else {
+				$alias = $className;
+			}
 			$config = (array)$config + $global;
-			$this->_authorizeObjects[] = new $className($this->_registry, $config);
+			$this->_authorizeObjects[$alias] = new $className($this->_registry, $config);
 		}
 		return $this->_authorizeObjects;
+	}
+
+/**
+ * Getter for authorize objects. Will either return an array of all authorize objects, or a particular authorize object.
+ *
+ * @param string|null $alias Alias for the authorize object
+ * @return \Cake\Auth\BaseAuthorize|array|null
+ */
+	public function getAuthorize($alias = null) {
+		if (empty($this->_authorizeObjects)) {
+			$this->constructAuthorize();
+		}
+
+		if ($alias !== null && isset($this->_authorizeObjects[$alias])) {
+			return $this->_authorizeObjects[$alias];
+		}
+
+		return $alias === null ? $this->_authorizeObjects : null;
 	}
 
 /**
@@ -741,10 +765,35 @@ class AuthComponent extends Component {
 			if (!method_exists($className, 'authenticate')) {
 				throw new Exception('Authentication objects must implement an authenticate() method.');
 			}
+			if (!empty($config['alias'])) {
+				$alias = $config['alias'];
+				unset($config['alias']);
+			} else {
+				$alias = $className;
+			}
 			$config = array_merge($global, (array)$config);
-			$this->_authenticateObjects[] = new $className($this->_registry, $config);
+			$this->_authenticateObjects[$alias] = new $className($this->_registry, $config);
 		}
 		return $this->_authenticateObjects;
+	}
+
+/**
+ * Getter for authenticate objects. Will either return an array of all authenticate objects, or a particular authenticate object.
+ *
+ * @param string|null $alias Alias for the authenticate object
+ *
+ * @return \Cake\Auth\BaseAuthenticate|array|null
+ */
+	public function getAuthenticate($alias = null) {
+		if (empty($this->_authenticateObjects)) {
+			$this->constructAuthenticate();
+		}
+
+		if ($alias !== null && isset($this->_authenticateObjects[$alias])) {
+			return $this->_authenticateObjects[$alias];
+		}
+
+		return $alias === null ? $this->_authenticateObjects : null;
 	}
 
 /**
