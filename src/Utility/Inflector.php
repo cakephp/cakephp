@@ -640,7 +640,7 @@ class Inflector {
  */
 	public static function tableize($className) {
 		if (!($result = static::_cache(__FUNCTION__, $className))) {
-			$result = static::pluralize(Inflector::underscore($className));
+			$result = static::pluralize(static::underscore($className));
 			static::_cache(__FUNCTION__, $className, $result);
 		}
 		return $result;
