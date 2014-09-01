@@ -492,19 +492,19 @@ class AuthComponent extends Component {
 			$global = $authorize[AuthComponent::ALL];
 			unset($authorize[AuthComponent::ALL]);
 		}
-		foreach ($authorize as $class => $config) {
+		foreach ($authorize as $alias => $config) {
+			if (!empty($config['className'])) {
+				$class = $config['className'];
+				unset($config['className']);
+			} else {
+				$class = $alias;
+			}			
 			$className = App::className($class, 'Auth', 'Authorize');
 			if (!class_exists($className)) {
 				throw new Exception(sprintf('Authorization adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authorize')) {
 				throw new Exception('Authorization objects must implement an authorize() method.');
-			}
-			if (!empty($config['alias'])) {
-				$alias = $config['alias'];
-				unset($config['alias']);
-			} else {
-				$alias = $className;
 			}
 			$config = (array)$config + $global;
 			$this->_authorizeObjects[$alias] = new $className($this->_registry, $config);
@@ -749,10 +749,12 @@ class AuthComponent extends Component {
 			$global = $authenticate[AuthComponent::ALL];
 			unset($authenticate[AuthComponent::ALL]);
 		}
-		foreach ($authenticate as $class => $config) {
+		foreach ($authenticate as $alias => $config) {
 			if (!empty($config['className'])) {
 				$class = $config['className'];
 				unset($config['className']);
+			} else {
+				$class = $alias;
 			}
 			$className = App::className($class, 'Auth', 'Authenticate');
 			if (!class_exists($className)) {
@@ -760,12 +762,6 @@ class AuthComponent extends Component {
 			}
 			if (!method_exists($className, 'authenticate')) {
 				throw new Exception('Authentication objects must implement an authenticate() method.');
-			}
-			if (!empty($config['alias'])) {
-				$alias = $config['alias'];
-				unset($config['alias']);
-			} else {
-				$alias = $className;
 			}
 			$config = array_merge($global, (array)$config);
 			$this->_authenticateObjects[$alias] = new $className($this->_registry, $config);
