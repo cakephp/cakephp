@@ -418,7 +418,7 @@ class Inflector {
  * @param string $type Inflection type
  * @param string $key Original value
  * @param string $value Inflected value
- * @return string Inflected value, from cache
+ * @return string|null Inflected value on cache hit or null on cache miss.
  */
 	protected static function _cache($type, $key, $value = false) {
 		$key = '_' . $key;
@@ -428,7 +428,7 @@ class Inflector {
 			return $value;
 		}
 		if (!isset(static::$_cache[$type][$key])) {
-			return false;
+			return null;
 		}
 		return static::$_cache[$type][$key];
 	}
@@ -606,7 +606,7 @@ class Inflector {
  */
 	public static function hyphenate($word) {
 		$result = static::_cache(__FUNCTION__, $word);
-		if ($result !== false) {
+		if ($result !== null) {
 			return $result;
 		}
 
