@@ -335,7 +335,7 @@ class AuthComponent extends Component {
 		if (empty($this->_authenticateObjects)) {
 			$this->constructAuthenticate();
 		}
-		$auth = $this->_authenticateObjects[count($this->_authenticateObjects) - 1];
+		$auth = end($this->_authenticateObjects);
 		$result = $auth->unauthenticated($this->request, $this->response);
 		if ($result !== null) {
 			return $result;
@@ -492,7 +492,13 @@ class AuthComponent extends Component {
 			$global = $authorize[AuthComponent::ALL];
 			unset($authorize[AuthComponent::ALL]);
 		}
-		foreach ($authorize as $class => $config) {
+		foreach ($authorize as $alias => $config) {
+			if (!empty($config['className'])) {
+				$class = $config['className'];
+				unset($config['className']);
+			} else {
+				$class = $alias;
+			}
 			$className = App::className($class, 'Auth', 'Authorize');
 			if (!class_exists($className)) {
 				throw new Exception(sprintf('Authorization adapter "%s" was not found.', $class));
@@ -501,9 +507,23 @@ class AuthComponent extends Component {
 				throw new Exception('Authorization objects must implement an authorize() method.');
 			}
 			$config = (array)$config + $global;
-			$this->_authorizeObjects[] = new $className($this->_registry, $config);
+			$this->_authorizeObjects[$alias] = new $className($this->_registry, $config);
 		}
 		return $this->_authorizeObjects;
+	}
+
+/**
+ * Getter for authorize objects. Will return a particular authorize object.
+ *
+ * @param string $alias Alias for the authorize object
+ * @return \Cake\Auth\BaseAuthorize|null
+ */
+	public function getAuthorize($alias) {
+		if (empty($this->_authorizeObjects)) {
+			$this->constructAuthorize();
+		}
+
+		return isset($this->_authorizeObjects[$alias]) ? $this->_authorizeObjects[$alias] : null;
 	}
 
 /**
@@ -729,10 +749,12 @@ class AuthComponent extends Component {
 			$global = $authenticate[AuthComponent::ALL];
 			unset($authenticate[AuthComponent::ALL]);
 		}
-		foreach ($authenticate as $class => $config) {
+		foreach ($authenticate as $alias => $config) {
 			if (!empty($config['className'])) {
 				$class = $config['className'];
 				unset($config['className']);
+			} else {
+				$class = $alias;
 			}
 			$className = App::className($class, 'Auth', 'Authenticate');
 			if (!class_exists($className)) {
@@ -742,9 +764,24 @@ class AuthComponent extends Component {
 				throw new Exception('Authentication objects must implement an authenticate() method.');
 			}
 			$config = array_merge($global, (array)$config);
-			$this->_authenticateObjects[] = new $className($this->_registry, $config);
+			$this->_authenticateObjects[$alias] = new $className($this->_registry, $config);
 		}
 		return $this->_authenticateObjects;
+	}
+
+/**
+ * Getter for authenticate objects. Will return a particular authenticate object.
+ *
+ * @param string $alias Alias for the authenticate object
+ *
+ * @return \Cake\Auth\BaseAuthenticate|null
+ */
+	public function getAuthenticate($alias) {
+		if (empty($this->_authenticateObjects)) {
+			$this->constructAuthenticate();
+		}
+
+		return isset($this->_authenticateObjects[$alias]) ? $this->_authenticateObjects[$alias] : null;
 	}
 
 /**
