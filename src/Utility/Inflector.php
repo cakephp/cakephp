@@ -577,7 +577,7 @@ class Inflector {
  */
 	public static function camelize($lowerCaseAndUnderscoredWord) {
 		if (!($result = static::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
-			$result = str_replace(' ', '', Inflector::humanize($lowerCaseAndUnderscoredWord));
+			$result = str_replace(' ', '', static::humanize($lowerCaseAndUnderscoredWord));
 			static::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord, $result);
 		}
 		return $result;
@@ -640,7 +640,7 @@ class Inflector {
  */
 	public static function tableize($className) {
 		if (!($result = static::_cache(__FUNCTION__, $className))) {
-			$result = Inflector::pluralize(Inflector::underscore($className));
+			$result = static::pluralize(Inflector::underscore($className));
 			static::_cache(__FUNCTION__, $className, $result);
 		}
 		return $result;
@@ -655,7 +655,7 @@ class Inflector {
  */
 	public static function classify($tableName) {
 		if (!($result = static::_cache(__FUNCTION__, $tableName))) {
-			$result = Inflector::camelize(Inflector::singularize($tableName));
+			$result = static::camelize(static::singularize($tableName));
 			static::_cache(__FUNCTION__, $tableName, $result);
 		}
 		return $result;
@@ -670,7 +670,7 @@ class Inflector {
  */
 	public static function variable($string) {
 		if (!($result = static::_cache(__FUNCTION__, $string))) {
-			$camelized = Inflector::camelize(Inflector::underscore($string));
+			$camelized = static::camelize(static::underscore($string));
 			$replace = strtolower(substr($camelized, 0, 1));
 			$result = preg_replace('/\\w/', $replace, $camelized, 1);
 			static::_cache(__FUNCTION__, $string, $result);
