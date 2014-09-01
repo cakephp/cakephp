@@ -317,7 +317,7 @@ class AuthComponentTest extends TestCase {
 			AuthComponent::ALL => array('actionPath' => 'controllers/'),
 			'Controller',
 		]);
-		$objects = $this->Controller->Auth->constructAuthorize();
+		$objects = array_values($this->Controller->Auth->constructAuthorize());
 		$result = $objects[0];
 		$this->assertEquals('controllers/', $result->config('actionPath'));
 	}
@@ -346,7 +346,7 @@ class AuthComponentTest extends TestCase {
 			AuthComponent::ALL => array('userModel' => 'AuthUsers'),
 			'Form'
 		]);
-		$objects = $this->Controller->Auth->constructAuthenticate();
+		$objects = array_values($this->Controller->Auth->constructAuthenticate());
 		$result = $objects[0];
 		$this->assertEquals('AuthUsers', $result->config('userModel'));
 	}
@@ -365,11 +365,11 @@ class AuthComponentTest extends TestCase {
 		$objects = $this->Controller->Auth->constructAuthenticate();
 		$this->assertEquals(2, count($objects));
 
-		$this->assertInstanceOf('Cake\Auth\FormAuthenticate', $objects[0]);
-		$this->assertInstanceOf('Cake\Auth\FormAuthenticate', $objects[1]);
+		$this->assertInstanceOf('Cake\Auth\FormAuthenticate', $objects['FormSimple']);
+		$this->assertInstanceOf('Cake\Auth\FormAuthenticate', $objects['FormBlowfish']);
 
-		$this->assertInstanceOf('Cake\Auth\DefaultPasswordHasher', $objects[0]->passwordHasher());
-		$this->assertInstanceOf('Cake\Auth\FallbackPasswordHasher', $objects[1]->passwordHasher());
+		$this->assertInstanceOf('Cake\Auth\DefaultPasswordHasher', $objects['FormSimple']->passwordHasher());
+		$this->assertInstanceOf('Cake\Auth\FallbackPasswordHasher', $objects['FormBlowfish']->passwordHasher());
 	}
 
 /**
