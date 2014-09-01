@@ -50,9 +50,8 @@ class RouterTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Plugin::unload();
-		Router::fullBaseUrl('');
-		Configure::write('App.fullBaseUrl', 'http://localhost');
 		Router::reload();
+		Router::defaultRouteClass('Cake\Routing\Route\Route');
 	}
 
 /**
@@ -2662,6 +2661,37 @@ class RouterTest extends TestCase {
 			$this->assertEquals('/debugger', $routes->path());
 			$this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
 		});
+	}
+
+/**
+ * Test setting default route class.
+ *
+ * @return void
+ */
+	public function testDefaultRouteClass() {
+		Router::connect('/:controller', ['action' => 'index']);
+		$result = Router::url(['controller' => 'FooBar', 'action' => 'index']);
+		$this->assertEquals('/FooBar', $result);
+
+		// This is needed because tests/boostrap.php sets App.namespace to 'App'
+		Configure::write('App.namespace', 'TestApp');
+
+		Router::defaultRouteClass('DashedRoute');
+		Router::connect('/cake/:controller', ['action' => 'cake']);
+		$result = Router::url(['controller' => 'FooBar', 'action' => 'cake']);
+		$this->assertEquals('/cake/foo-bar', $result);
+
+		$result = Router::url(['controller' => 'FooBar', 'action' => 'index']);
+		$this->assertEquals('/FooBar', $result);
+
+		Router::reload();
+		Router::defaultRouteClass('DashedRoute');
+		Router::scope('/', function($routes) {
+			$routes->fallbacks();
+		});
+
+		$result = Router::url(['controller' => 'FooBar', 'action' => 'index']);
+		$this->assertEquals('/foo-bar', $result);
 	}
 
 /**
