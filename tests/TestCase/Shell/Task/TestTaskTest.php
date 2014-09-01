@@ -27,6 +27,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\PostsController;
 use TestApp\Model\Table\ArticlesTable;
+use TestApp\Model\Table\CategoryThreadsTable;
 
 /**
  * TestTaskTest class
@@ -39,8 +40,13 @@ class TestTaskTest extends TestCase {
  *
  * @var string
  */
-	public $fixtures = ['core.article', 'core.author',
-		'core.comment', 'core.articles_tag', 'core.tag'];
+	public $fixtures = [
+		'core.article',
+		'core.author',
+		'core.comment',
+		'core.articles_tag',
+		'core.tag',
+	];
 
 /**
  * setUp method
@@ -217,6 +223,20 @@ class TestTaskTest extends TestCase {
 			'app.author',
 			'app.tag',
 			'app.articles_tag'
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test that the generation of fixtures works correctly.
+ *
+ * @return void
+ */
+	public function testFixtureArrayGenerationIgnoreSelfAssociation() {
+		$subject = new CategoryThreadsTable();
+		$result = $this->Task->generateFixtureList($subject);
+		$expected = [
+			'app.category_thread',
 		];
 		$this->assertEquals($expected, $result);
 	}
