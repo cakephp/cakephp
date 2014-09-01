@@ -599,19 +599,19 @@ class Inflector {
 	}
 
 /**
- * Returns the given underscored_word or CamelCasedWord as an hyphenated-word.
+ * Returns the given CamelCasedWordGroup as an hyphenated-word-group.
  *
- * @param string $word The word to hyphenate.
- * @return string Hyphenated version of the word.
+ * @param string $wordGroup The string to hyphenate.
+ * @return string Hyphenated version of the word group
  */
-	public static function hyphenate($word) {
-		$result = static::_cache(__FUNCTION__, $word);
+	public static function hyphenate($wordGroup) {
+		$result = static::_cache(__FUNCTION__, $wordGroup);
 		if ($result !== null) {
 			return $result;
 		}
 
-		$result = str_replace('_', '-', static::underscore($word));
-		static::_cache(__FUNCTION__, $word, $result);
+		$result = str_replace('_', '-', static::underscore($wordGroup));
+		static::_cache(__FUNCTION__, $wordGroup, $result);
 		return $result;
 	}
 
