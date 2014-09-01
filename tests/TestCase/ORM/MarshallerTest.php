@@ -14,12 +14,12 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Time;
 
 /**
  * Test entity for mass assignment.

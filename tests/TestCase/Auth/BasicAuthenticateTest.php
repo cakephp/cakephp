@@ -15,13 +15,13 @@
 namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\BasicAuthenticate;
+use Cake\I18n\Time;
 use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
-use Cake\Utility\Time;
 
 /**
  * Test case for BasicAuthentication

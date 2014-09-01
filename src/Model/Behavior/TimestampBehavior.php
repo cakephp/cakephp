@@ -15,10 +15,10 @@
 namespace Cake\Model\Behavior;
 
 use Cake\Event\Event;
+use Cake\I18n\Time;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
-use Cake\Utility\Time;
 
 class TimestampBehavior extends Behavior {
 
@@ -130,7 +130,7 @@ class TimestampBehavior extends Behavior {
  *
  * @param \DateTime $ts Timestamp
  * @param bool $refreshTimestamp If true timestamp is refreshed.
- * @return \Cake\Utility\Time
+ * @return \Cake\I18n\Time
  */
 	public function timestamp(\DateTime $ts = null, $refreshTimestamp = false) {
 		if ($ts) {

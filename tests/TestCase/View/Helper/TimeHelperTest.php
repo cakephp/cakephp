@@ -17,8 +17,8 @@ namespace Cake\Test\TestCase\View\Helper;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Time;
 use Cake\View\Helper\TimeHelper;
 use Cake\View\View;
 

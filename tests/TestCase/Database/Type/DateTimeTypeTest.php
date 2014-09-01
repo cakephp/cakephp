@@ -16,8 +16,8 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type;
 use Cake\Database\Type\DateTimeType;
+use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Time;
 
 /**
  * Test for the DateTime type.
@@ -44,7 +44,7 @@ class DateTimeTypeTest extends TestCase {
 		$this->assertNull($this->type->toPHP(null, $this->driver));
 
 		$result = $this->type->toPHP('2001-01-04 12:13:14', $this->driver);
-		$this->assertInstanceOf('Cake\Utility\Time', $result);
+		$this->assertInstanceOf('Cake\I18n\Time', $result);
 		$this->assertEquals('2001', $result->format('Y'));
 		$this->assertEquals('01', $result->format('m'));
 		$this->assertEquals('04', $result->format('d'));
@@ -64,7 +64,7 @@ class DateTimeTypeTest extends TestCase {
 	public function testToPHPIncludingMilliseconds() {
 		$in = '2014-03-24 20:44:36.315113';
 		$result = $this->type->toPHP($in, $this->driver);
-		$this->assertInstanceOf('Cake\Utility\Time', $result);
+		$this->assertInstanceOf('Cake\I18n\Time', $result);
 	}
 
 /**
