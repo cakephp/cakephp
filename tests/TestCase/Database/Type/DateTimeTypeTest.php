@@ -16,8 +16,8 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type;
 use Cake\Database\Type\DateTimeType;
-use Cake\TestSuite\TestCase;
 use Cake\I18n\Time;
+use Cake\TestSuite\TestCase;
 
 /**
  * Test for the DateTime type.
