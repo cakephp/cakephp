@@ -513,21 +513,17 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Getter for authorize objects. Will either return an array of all authorize objects, or a particular authorize object.
+ * Getter for authorize objects. Will return a particular authorize object.
  *
- * @param string|null $alias Alias for the authorize object
- * @return \Cake\Auth\BaseAuthorize|array|null
+ * @param string $alias Alias for the authorize object
+ * @return \Cake\Auth\BaseAuthorize|null
  */
-	public function getAuthorize($alias = null) {
+	public function getAuthorize($alias) {
 		if (empty($this->_authorizeObjects)) {
 			$this->constructAuthorize();
 		}
 
-		if ($alias !== null && isset($this->_authorizeObjects[$alias])) {
-			return $this->_authorizeObjects[$alias];
-		}
-
-		return $alias === null ? $this->_authorizeObjects : null;
+		return isset($this->_authorizeObjects[$alias]) ? $this->_authorizeObjects[$alias] : null;
 	}
 
 /**
@@ -778,22 +774,18 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Getter for authenticate objects. Will either return an array of all authenticate objects, or a particular authenticate object.
+ * Getter for authenticate objects. Will return a particular authenticate object.
  *
- * @param string|null $alias Alias for the authenticate object
+ * @param string $alias Alias for the authenticate object
  *
- * @return \Cake\Auth\BaseAuthenticate|array|null
+ * @return \Cake\Auth\BaseAuthenticate|null
  */
-	public function getAuthenticate($alias = null) {
+	public function getAuthenticate($alias) {
 		if (empty($this->_authenticateObjects)) {
 			$this->constructAuthenticate();
 		}
 
-		if ($alias !== null && isset($this->_authenticateObjects[$alias])) {
-			return $this->_authenticateObjects[$alias];
-		}
-
-		return $alias === null ? $this->_authenticateObjects : null;
+		return isset($this->_authenticateObjects[$alias]) ? $this->_authenticateObjects[$alias] : null;
 	}
 
 /**
