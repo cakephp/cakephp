@@ -498,7 +498,7 @@ class AuthComponent extends Component {
 				unset($config['className']);
 			} else {
 				$class = $alias;
-			}			
+			}
 			$className = App::className($class, 'Auth', 'Authorize');
 			if (!class_exists($className)) {
 				throw new Exception(sprintf('Authorization adapter "%s" was not found.', $class));
