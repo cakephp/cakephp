@@ -155,7 +155,7 @@ class ExtractTask extends Shell {
 			if (!Plugin::loaded($plugin)) {
 				Plugin::load($plugin);
 			}
-			$this->_paths = [Plugin::path($plugin)];
+			$this->_paths = [Plugin::classPath($plugin)];
 			$this->params['plugin'] = $plugin;
 		} else {
 			$this->_getPaths();
