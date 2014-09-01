@@ -388,6 +388,7 @@ class InflectorTest extends TestCase {
 		$this->assertSame('test-this-thing', Inflector::hyphenate('test_this_thing'));
 
 		// Test stupid values
+		$this->assertSame('', Inflector::hyphenate(null));
 		$this->assertSame('', Inflector::hyphenate(''));
 		$this->assertSame('0', Inflector::hyphenate(0));
 		$this->assertSame('', Inflector::hyphenate(false));
@@ -438,6 +439,8 @@ class InflectorTest extends TestCase {
 		$this->assertEquals(Inflector::humanize('posts'), 'Posts');
 		$this->assertEquals(Inflector::humanize('posts_tags'), 'Posts Tags');
 		$this->assertEquals(Inflector::humanize('file_systems'), 'File Systems');
+		$this->assertSame('', Inflector::humanize(null));
+		$this->assertSame('', Inflector::humanize(false));
 	}
 
 /**
