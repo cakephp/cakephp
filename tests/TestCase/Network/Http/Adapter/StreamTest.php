@@ -46,7 +46,7 @@ class StreamTest extends TestCase {
 
 		try {
 			$responses = $stream->send($request, []);
-		} catch (SocketException $e) {
+		} catch (\Cake\Core\Exception\Exception $e) {
 			$this->markTestSkipped('Could not connect to localhost, skipping');
 		}
 		$this->assertInstanceOf('Cake\Network\Http\Response', $responses[0]);
