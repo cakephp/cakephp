@@ -23,7 +23,7 @@ use Cake\Utility\Number;
  *
  * @link http://book.cakephp.org/3.0/en/
  */
-class I18nNumber extends Number {
+class LocaleNumber extends Number {
 
 /**
  * Returns a formatted-for-humans file size.
