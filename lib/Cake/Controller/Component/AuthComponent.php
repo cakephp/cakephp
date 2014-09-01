@@ -572,6 +572,7 @@ class AuthComponent extends Component {
  * @return void
  * @see BaseAuthorize::mapActions()
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#mapping-actions-when-using-crudauthorize
+ * @deprecated 3.0.0 Map actions using `actionMap` config key on authorize objects instead
  */
 	public function mapActions($map = array()) {
 		if (empty($this->_authorizeObjects)) {
