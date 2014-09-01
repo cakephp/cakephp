@@ -17,15 +17,14 @@
 namespace Cake\Test\TestCase\I18n;
 
 use Cake\I18n\I18n;
-use Cake\I18n\LocaleNumber;
+use Cake\I18n\LocalizedNumber;
 use Cake\TestSuite\TestCase;
-
 
 /**
  * NumberTest class
  *
  */
-class LocaleNumberTest extends TestCase {
+class LocalizedNumberTest extends TestCase {
 
 /**
  * setUp method
@@ -34,7 +33,7 @@ class LocaleNumberTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Number = new LocaleNumber();
+		$this->Number = new LocalizedNumber();
 		$this->locale = I18n::defaultLocale();
 	}
 

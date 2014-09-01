@@ -35,13 +35,13 @@ class NumberHelper extends Helper {
  * @var mixed
  */
 	protected $_defaultConfig = [
-		'engine' => 'Cake\I18n\LocaleNumber'
+		'engine' => 'Cake\I18n\LocalizedNumber'
 	];
 
 /**
- * Cake\I18n\LocaleNumber instance
+ * Cake\I18n\LocalizedNumber instance
  *
- * @var \Cake\I18n\LocaleNumber
+ * @var \Cake\I18n\LocalizedNumber
  */
 	protected $_engine = null;
 
