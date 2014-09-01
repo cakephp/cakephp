@@ -54,28 +54,6 @@ class Number {
 	}
 
 /**
- * Returns a formatted-for-humans file size.
- *
- * @param int $size Size in bytes
- * @return string Human readable size
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toReadableSize
- */
-	public static function toReadableSize($size) {
-		switch (true) {
-			case $size < 1024:
-				return __dn('cake', '{0,number,integer} Byte', '{0,number,integer} Bytes', $size, $size);
-			case round($size / 1024) < 1024:
-				return __d('cake', '{0,number,#,###.##} KB', $size / 1024);
-			case round($size / 1024 / 1024, 2) < 1024:
-				return __d('cake', '{0,number,#,###.##} MB', $size / 1024 / 1024);
-			case round($size / 1024 / 1024 / 1024, 2) < 1024:
-				return __d('cake', '{0,number,#,###.##} GB', $size / 1024 / 1024 / 1024);
-			default:
-				return __d('cake', '{0,number,#,###.##} TB', $size / 1024 / 1024 / 1024 / 1024);
-		}
-	}
-
-/**
  * Converts filesize from human readable string to bytes
  *
  * @param string $size Size in human readable string like '5MB', '5M', '500B', '50kb' etc.
@@ -251,7 +229,7 @@ class Number {
 /**
  * Returns a formatter object that can be reused for similar formatting task
  * under the same locale and options. This is often a speedier alternative to
- * using other methods in this class as on;y one formatter object needs to be
+ * using other methods in this class as only one formatter object needs to be
  * constructed.
  *
  * The options array accepts the following keys:
