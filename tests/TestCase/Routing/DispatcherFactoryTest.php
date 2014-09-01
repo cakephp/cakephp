@@ -56,7 +56,7 @@ class DispatcherFactoryTest extends TestCase {
 /**
  * Test add filter missing
  *
- * @expectedException Cake\Routing\Error\MissingDispatcherFilterException
+ * @expectedException Cake\Routing\Exception\MissingDispatcherFilterException
  * @return void
  */
 	public function testAddFilterMissing() {

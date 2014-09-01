@@ -15,9 +15,9 @@
 namespace Cake\Test\TestCase\Core;
 
 use Cake\Cache\Cache;
-use Cake\Configure\Engine\PhpConfig;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
@@ -457,7 +457,7 @@ class ConfigureTest extends TestCase {
 	}
 
 /**
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testDumpNoAdapter() {

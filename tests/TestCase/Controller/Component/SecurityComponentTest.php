@@ -166,7 +166,7 @@ class SecurityComponentTest extends TestCase {
  * Test that requests are still blackholed when controller has incorrect
  * visibility keyword in the blackhole callback
  *
- * @expectedException \Cake\Error\BadRequestException
+ * @expectedException \Cake\Network\Exception\BadRequestException
  * @return void
  */
 	public function testBlackholeWithBrokenCallback() {

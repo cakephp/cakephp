@@ -103,7 +103,7 @@ class SecurityTest extends TestCase {
 /**
  * testRijndaelInvalidOperation method
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testRijndaelInvalidOperation() {
@@ -115,7 +115,7 @@ class SecurityTest extends TestCase {
 /**
  * testRijndaelInvalidKey method
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testRijndaelInvalidKey() {
@@ -186,7 +186,7 @@ class SecurityTest extends TestCase {
 /**
  * Test that short keys cause errors
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @expectedExceptionMessage Invalid key for encrypt(), key must be at least 256 bits (32 bytes) long.
  * @return void
  */
@@ -223,7 +223,7 @@ class SecurityTest extends TestCase {
 /**
  * Test that short keys cause errors
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @expectedExceptionMessage Invalid key for decrypt(), key must be at least 256 bits (32 bytes) long.
  * @return void
  */
@@ -236,7 +236,7 @@ class SecurityTest extends TestCase {
 /**
  * Test that empty data cause errors
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @expectedExceptionMessage The data to decrypt cannot be empty.
  * @return void
  */

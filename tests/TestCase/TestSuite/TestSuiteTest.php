@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
+use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Folder;
 
 /**
  * TestSuiteTest

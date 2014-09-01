@@ -109,7 +109,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test load() on undefined class
  *
- * @expectedException \Cake\ORM\Error\MissingBehaviorException
+ * @expectedException \Cake\ORM\Exception\MissingBehaviorException
  * @return void
  */
 	public function testLoadMissingClass() {
@@ -119,13 +119,58 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test load() duplicate method error
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException LogicException
  * @expectedExceptionMessage TestApp\Model\Behavior\DuplicateBehavior contains duplicate method "slugify"
  * @return void
  */
 	public function testLoadDuplicateMethodError() {
 		$this->Behaviors->load('Sluggable');
 		$this->Behaviors->load('Duplicate');
+	}
+
+/**
+ * Test load() duplicate method aliasing
+ *
+ * @return void
+ */
+	public function testLoadDuplicateMethodAliasing() {
+		$this->Behaviors->load('Tree');
+		$this->Behaviors->load('Duplicate', [
+			'implementedFinders' => [
+				'renamed' => 'findChildren',
+			],
+			'implementedMethods' => [
+				'renamed' => 'slugify',
+			]
+		]);
+		$this->assertTrue($this->Behaviors->hasMethod('renamed'));
+	}
+
+/**
+ * Test load() duplicate finder error
+ *
+ * @expectedException LogicException
+ * @expectedExceptionMessage TestApp\Model\Behavior\DuplicateBehavior contains duplicate finder "children"
+ * @return void
+ */
+	public function testLoadDuplicateFinderError() {
+		$this->Behaviors->load('Tree');
+		$this->Behaviors->load('Duplicate');
+	}
+
+/**
+ * Test load() duplicate finder aliasing
+ *
+ * @return void
+ */
+	public function testLoadDuplicateFinderAliasing() {
+		$this->Behaviors->load('Tree');
+		$this->Behaviors->load('Duplicate', [
+			'implementedFinders' => [
+				'renamed' => 'findChildren',
+			]
+		]);
+		$this->assertTrue($this->Behaviors->hasFinder('renamed'));
 	}
 
 /**
@@ -198,7 +243,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test errors on unknown methods.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException BadMethodCallException
  * @expectedExceptionMessage Cannot call "nope"
  */
 	public function testCallError() {
@@ -235,7 +280,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test errors on unknown methods.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException BadMethodCallException
  * @expectedExceptionMessage Cannot call finder "nope"
  */
 	public function testCallFinderError() {
@@ -246,7 +291,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test errors on unloaded behavior methods.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException BadMethodCallException
  * @expectedExceptionMessage Cannot call "slugify" it does not belong to any attached behavior.
  */
 	public function testUnloadBehaviorThenCall() {
@@ -259,7 +304,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test errors on unloaded behavior finders.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException BadMethodCallException
  * @expectedExceptionMessage Cannot call finder "noslug" it does not belong to any attached behavior.
  */
 	public function testUnloadBehaviorThenCallFinder() {

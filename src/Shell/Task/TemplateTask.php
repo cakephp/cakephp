@@ -16,9 +16,9 @@ namespace Cake\Shell\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Core\ConventionsTrait;
 use Cake\Core\Plugin;
-use Cake\Utility\ConventionsTrait;
-use Cake\Utility\Folder;
+use Cake\Filesystem\Folder;
 use Cake\View\ViewVarsTrait;
 
 /**

@@ -89,7 +89,7 @@ class ModelAwareTraitTest extends TestCase {
  * test MissingModelException being thrown
  *
  * @return void
- * @expectedException Cake\Model\Error\MissingModelException
+ * @expectedException Cake\Model\Exception\MissingModelException
  * @expectedExceptionMessage Model class "Magic" of type "Test" could not be found.
  */
 	public function testMissingModelException() {

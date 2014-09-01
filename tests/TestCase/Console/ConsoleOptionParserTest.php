@@ -174,7 +174,7 @@ class ConsoleOptionParserTest extends TestCase {
  * Test that adding an option using a two letter short value causes an exception.
  * As they will not parse correctly.
  *
- * @expectedException \Cake\Console\Error\ConsoleException
+ * @expectedException \Cake\Console\Exception\ConsoleException
  * @return void
  */
 	public function testAddOptionShortOneLetter() {
@@ -272,7 +272,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test parsing options that do not exist.
  *
- * @expectedException \Cake\Console\Error\ConsoleException
+ * @expectedException \Cake\Console\Exception\ConsoleException
  * @return void
  */
 	public function testOptionThatDoesNotExist() {
@@ -285,7 +285,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test parsing short options that do not exist.
  *
- * @expectedException \Cake\Console\Error\ConsoleException
+ * @expectedException \Cake\Console\Exception\ConsoleException
  * @return void
  */
 	public function testShortOptionThatDoesNotExist() {
@@ -298,7 +298,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test that options with choices enforce them.
  *
- * @expectedException \Cake\Console\Error\ConsoleException
+ * @expectedException \Cake\Console\Exception\ConsoleException
  * @return void
  */
 	public function testOptionWithChoices() {
@@ -387,7 +387,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test parsing arguments.
  *
- * @expectedException \Cake\Console\Error\ConsoleException
+ * @expectedException \Cake\Console\Exception\ConsoleException
  * @return void
  */
 	public function testParseArgumentTooMany() {
@@ -418,7 +418,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test that when there are not enough arguments an exception is raised
  *
- * @expectedException \Cake\Console\Error\ConsoleException
+ * @expectedException \Cake\Console\Exception\ConsoleException
  * @return void
  */
 	public function testPositionalArgNotEnough() {
@@ -432,7 +432,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test that arguments with choices enforce them.
  *
- * @expectedException \Cake\Console\Error\ConsoleException
+ * @expectedException \Cake\Console\Exception\ConsoleException
  * @return void
  */
 	public function testPositionalArgWithChoices() {

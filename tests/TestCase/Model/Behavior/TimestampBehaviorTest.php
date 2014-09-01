@@ -15,11 +15,11 @@
 namespace Cake\Test\TestCase\Model\Behavior;
 
 use Cake\Event\Event;
+use Cake\I18n\Time;
 use Cake\Model\Behavior\TimestampBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Time;
 
 /**
  * Behavior test case
@@ -93,7 +93,7 @@ class TimestampBehaviorTest extends TestCase {
 
 		$return = $this->Behavior->handleEvent($event, $entity);
 		$this->assertTrue($return, 'Handle Event is expected to always return true');
-		$this->assertInstanceOf('Cake\Utility\Time', $entity->created);
+		$this->assertInstanceOf('Cake\I18n\Time', $entity->created);
 		$this->assertSame($ts->format('c'), $entity->created->format('c'), 'Created timestamp is not the same');
 	}
 
@@ -154,7 +154,7 @@ class TimestampBehaviorTest extends TestCase {
 
 		$return = $this->Behavior->handleEvent($event, $entity);
 		$this->assertTrue($return, 'Handle Event is expected to always return true');
-		$this->assertInstanceOf('Cake\Utility\Time', $entity->modified);
+		$this->assertInstanceOf('Cake\I18n\Time', $entity->modified);
 		$this->assertSame($ts->format('c'), $entity->modified->format('c'), 'Modified timestamp is not the same');
 	}
 
@@ -177,7 +177,7 @@ class TimestampBehaviorTest extends TestCase {
 
 		$return = $this->Behavior->handleEvent($event, $entity);
 		$this->assertTrue($return, 'Handle Event is expected to always return true');
-		$this->assertInstanceOf('Cake\Utility\Time', $entity->modified);
+		$this->assertInstanceOf('Cake\I18n\Time', $entity->modified);
 		$this->assertSame($ts->format('c'), $entity->modified->format('c'), 'Modified timestamp is expected to be updated');
 	}
 

@@ -19,7 +19,7 @@ use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
-use Cake\Error;
+use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Request;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -139,6 +139,28 @@ class PaginatorComponentTest extends TestCase {
 				'whitelist' => ['limit', 'sort', 'page', 'direction'],
 			]);
 		$this->Paginator->paginate($table, $settings);
+	}
+
+/**
+ * Test to make sure options get sent to custom finder methods via paginate
+ *
+ * @return void
+ */
+	public function testPaginateCustomFinderOptions() {
+		$this->loadFixtures('Post');
+		$settings = [
+			'PaginatorPosts' => [
+				'finder' => 'author',
+				'author_id' => 1
+			]
+		];
+		$table = TableRegistry::get('PaginatorPosts');
+
+		$expected = $table->find('author', ['conditions' => ['PaginatorPosts.author_id' => $settings['PaginatorPosts']['author_id']]])
+			->count();
+		$result = $this->Paginator->paginate($table, $settings)->count();
+
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -450,7 +472,7 @@ class PaginatorComponentTest extends TestCase {
 		try {
 			$this->Paginator->paginate($table);
 			$this->fail('No exception raised');
-		} catch (\Cake\Error\NotFoundException $e) {
+		} catch (NotFoundException $e) {
 			$this->assertEquals(
 				1,
 				$this->request->params['paging']['PaginatorPosts']['page'],
@@ -462,7 +484,7 @@ class PaginatorComponentTest extends TestCase {
 /**
  * Test that a really REALLY large page number gets clamped to the max page size.
  *
- * @expectedException \Cake\Error\NotFoundException
+ * @expectedException \Cake\Network\Exception\NotFoundException
  * @return void
  */
 	public function testOutOfVeryBigPageNumberGetsClamped() {

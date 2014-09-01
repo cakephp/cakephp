@@ -17,14 +17,16 @@ namespace Cake\Error;
 use Cake\Controller\Controller;
 use Cake\Controller\ErrorController;
 use Cake\Core\Configure;
-use Cake\Core\Error\MissingPluginException;
-use Cake\Error;
+use Cake\Core\Exception\Exception as CakeException;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Event\Event;
+use Cake\Network\Exception\HttpException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
-use Cake\View\Error\MissingViewException;
+use Cake\View\Exception\MissingViewException;
+use Exception;
 
 /**
  * Exception Renderer.
@@ -53,7 +55,7 @@ class ExceptionRenderer {
 	public $controller = null;
 
 /**
- * Template to render for Cake\Error\Exception
+ * Template to render for Cake\Core\Exception\Exception
  *
  * @var string
  */
@@ -75,12 +77,12 @@ class ExceptionRenderer {
 
 /**
  * Creates the controller to perform rendering on the error response.
- * If the error is a Cake\Error\Exception it will be converted to either a 400 or a 500
+ * If the error is a Cake\Core\Exception\Exception it will be converted to either a 400 or a 500
  * code error depending on the code used to construct the error.
  *
  * @param \Exception $exception Exception
  */
-	public function __construct(\Exception $exception) {
+	public function __construct(Exception $exception) {
 		$this->error = $exception;
 		$this->controller = $this->_getController();
 	}
@@ -102,7 +104,7 @@ class ExceptionRenderer {
 		try {
 			$controller = new ErrorController($request, $response);
 			$controller->startupProcess();
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			if (!empty($controller) && isset($controller->RequestHandler)) {
 				$event = new Event('Controller.startup', $controller);
 				$controller->RequestHandler->startup($event);
@@ -127,7 +129,7 @@ class ExceptionRenderer {
 		$template = $this->_template($exception, $method, $code);
 
 		$isDebug = Configure::read('debug');
-		if (($isDebug || $exception instanceof Error\HttpException) &&
+		if (($isDebug || $exception instanceof HttpException) &&
 			method_exists($this, $method)
 		) {
 			return $this->_customMethod($method, $exception);
@@ -148,7 +150,7 @@ class ExceptionRenderer {
 			'_serialize' => array('message', 'url', 'code')
 		));
 
-		if ($exception instanceof Error\Exception && $isDebug) {
+		if ($exception instanceof CakeException && $isDebug) {
 			$this->controller->set($this->error->getAttributes());
 		}
 		return $this->_outputMessage($template);
@@ -193,7 +195,7 @@ class ExceptionRenderer {
 		$message = $this->error->getMessage();
 
 		if (!Configure::read('debug') &&
-			!($exception instanceof Error\HttpException)
+			!($exception instanceof HttpException)
 		) {
 			if ($code < 500) {
 				$message = __d('cake', 'Not Found');
@@ -214,7 +216,7 @@ class ExceptionRenderer {
  * @return string Template name
  */
 	protected function _template(\Exception $exception, $method, $code) {
-		$isHttpException = $exception instanceof Error\HttpException;
+		$isHttpException = $exception instanceof HttpException;
 
 		if (!Configure::read('debug') && !$isHttpException) {
 			$template = 'error500';

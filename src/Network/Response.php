@@ -15,8 +15,10 @@
 namespace Cake\Network;
 
 use Cake\Core\Configure;
-use Cake\Error;
-use Cake\Utility\File;
+use Cake\Network\Exception\NotFoundException;
+use Cake\Filesystem\File;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Cake Response is responsible for managing the response text, status and headers of a HTTP response.
@@ -517,11 +519,11 @@ class Response {
  * @param string $name the header name
  * @param string $value the header value
  * @return void
- * @throws \Cake\Error\Exception When headers have already been sent
+ * @throws \RuntimeException When headers have already been sent
  */
 	protected function _sendHeader($name, $value = null) {
 		if (headers_sent($filename, $linenum)) {
-			throw new Error\Exception(
+			throw new RuntimeException(
 				sprintf('Headers already sent in %d on line %s', $linenum, $filename)
 			);
 		}
@@ -624,14 +626,14 @@ class Response {
  *
  * @param int $code the HTTP status code
  * @return int current status code
- * @throws \Cake\Error\Exception When an unknown status code is reached.
+ * @throws \InvalidArgumentException When an unknown status code is reached.
  */
 	public function statusCode($code = null) {
 		if ($code === null) {
 			return $this->_status;
 		}
 		if (!isset($this->_statusCodes[$code])) {
-			throw new Error\Exception('Unknown status code');
+			throw new InvalidArgumentException('Unknown status code');
 		}
 		return $this->_status = $code;
 	}
@@ -665,7 +667,7 @@ class Response {
  *
  * @return mixed associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
- * @throws \Cake\Error\Exception If an attempt is made to add an invalid status code
+ * @throws \InvalidArgumentException If an attempt is made to add an invalid status code
  */
 	public function httpCodes($code = null) {
 		if (empty($code)) {
@@ -675,7 +677,7 @@ class Response {
 			$codes = array_keys($code);
 			$min = min($codes);
 			if (!is_int($min) || $min < 100 || max($codes) > 999) {
-				throw new Error\Exception('Invalid status code');
+				throw new InvalidArgumentException('Invalid status code');
 			}
 			$this->_statusCodes = $code + $this->_statusCodes;
 			return true;
@@ -1330,7 +1332,7 @@ class Response {
  *   to a file, `APP` will be prepended to the path.
  * @param array $options Options See above.
  * @return void
- * @throws \Cake\Error\NotFoundException
+ * @throws \Cake\Network\Exception\NotFoundException
  */
 	public function file($path, array $options = array()) {
 		$options += array(
@@ -1339,7 +1341,7 @@ class Response {
 		);
 
 		if (strpos($path, '..') !== false) {
-			throw new Error\NotFoundException('The requested file contains `..` and will not be read.');
+			throw new NotFoundException('The requested file contains `..` and will not be read.');
 		}
 
 		if (!is_file($path)) {
@@ -1349,9 +1351,9 @@ class Response {
 		$file = new File($path);
 		if (!$file->exists() || !$file->readable()) {
 			if (Configure::read('debug')) {
-				throw new Error\NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
+				throw new NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
 			}
-			throw new Error\NotFoundException(__d('cake', 'The requested file was not found'));
+			throw new NotFoundException(__d('cake', 'The requested file was not found'));
 		}
 
 		$extension = strtolower($file->ext());

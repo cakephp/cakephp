@@ -17,8 +17,8 @@ namespace Cake\Shell\Task;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
-use Cake\Utility\File;
-use Cake\Utility\Folder;
+use Cake\Filesystem\File;
+use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
 
 /**

@@ -18,7 +18,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
-use Cake\Error;
+use Cake\Core\Exception\Exception;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;
@@ -220,7 +220,7 @@ class FixtureManager {
  *
  * @param \Cake\TestSuite\TestCase $test the test to inspect for fixture loading
  * @return void
- * @throws \Cake\Error\Exception When fixture records cannot be inserted.
+ * @throws \Cake\Core\Exception\Exception When fixture records cannot be inserted.
  */
 	public function load($test) {
 		if (empty($test->fixtures)) {
@@ -256,7 +256,7 @@ class FixtureManager {
 			}
 		} catch (\PDOException $e) {
 			$msg = sprintf('Unable to insert fixtures for "%s" test case. %s', get_class($test), $e->getMessage());
-			throw new Error\Exception($msg);
+			throw new Exception($msg);
 		}
 	}
 

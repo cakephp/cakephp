@@ -53,7 +53,7 @@ class QueryLoggerTest extends \Cake\TestSuite\TestCase {
 		$logger = $this->getMock('\Cake\Database\Log\QueryLogger', ['_log']);
 		$query = new LoggedQuery;
 		$query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3';
-		$query->params = ['p1' => 'string', 'p2' => 3, 'p3' => null];
+		$query->params = ['p1' => 'string', 'p3' => null, 'p2' => 3];
 
 		$logger->expects($this->once())->method('_log')->with($query);
 		$logger->log($query);

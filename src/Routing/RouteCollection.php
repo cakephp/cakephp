@@ -16,7 +16,7 @@ namespace Cake\Routing;
 
 use Cake\Core\App;
 use Cake\Error;
-use Cake\Routing\Error\MissingRouteException;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
@@ -108,7 +108,7 @@ class RouteCollection {
  *
  * @param string $url URL to parse.
  * @return array An array of request parameters parsed from the URL.
- * @throws \Cake\Routing\Error\MissingRouteException When a URL has no matching route.
+ * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
  */
 	public function parse($url) {
 		foreach (array_keys($this->_paths) as $path) {
@@ -224,7 +224,7 @@ class RouteCollection {
  * @param array $context The request context to use. Contains _base, _port,
  *    _host, and _scheme keys.
  * @return string|false Either a string on match, or false on failure.
- * @throws \Cake\Routing\Error\MissingRouteException when a route cannot be matched.
+ * @throws \Cake\Routing\Exception\MissingRouteException when a route cannot be matched.
  */
 	public function match($url, $context) {
 		// Named routes support optimization.

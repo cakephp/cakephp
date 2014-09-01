@@ -51,7 +51,7 @@ class ShellDispatcherTest extends TestCase {
 /**
  * Test error on missing shell
  *
- * @expectedException Cake\Console\Error\MissingShellException
+ * @expectedException Cake\Console\Exception\MissingShellException
  * @return void
  */
 	public function testFindShellMissing() {
@@ -61,7 +61,7 @@ class ShellDispatcherTest extends TestCase {
 /**
  * Test error on missing plugin shell
  *
- * @expectedException Cake\Console\Error\MissingShellException
+ * @expectedException Cake\Console\Exception\MissingShellException
  * @return void
  */
 	public function testFindShellMissingPlugin() {

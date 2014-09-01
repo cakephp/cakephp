@@ -17,8 +17,8 @@
 namespace Cake\Test\TestCase\Validation;
 
 use Cake\Core\Configure;
+use Cake\Filesystem\File;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\File;
 use Cake\Validation\Validation;
 
 /**
@@ -2378,7 +2378,7 @@ class ValidationTest extends TestCase {
 /**
  * testMimeTypeFalse method
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testMimeTypeFalse() {

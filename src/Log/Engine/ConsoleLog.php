@@ -15,7 +15,8 @@
 namespace Cake\Log\Engine;
 
 use Cake\Console\ConsoleOutput;
-use Cake\Error;
+use Cake\Core\Exception\Exception;
+use InvalidArgumentException;
 
 /**
  * Console logging. Writes logs to console output.
@@ -52,7 +53,7 @@ class ConsoleLog extends BaseLog {
  * - `outputAs` integer or ConsoleOutput::[RAW|PLAIN|COLOR]
  *
  * @param array $config Options for the FileLog, see above.
- * @throws \Cake\Error\Exception
+ * @throws \InvalidArgumentException
  */
 	public function __construct(array $config = array()) {
 		if (DS === '\\' && !(bool)env('ANSICON')) {
@@ -69,7 +70,7 @@ class ConsoleLog extends BaseLog {
 		} elseif (is_string($config['stream'])) {
 			$this->_output = new ConsoleOutput($config['stream']);
 		} else {
-			throw new Error\Exception('`stream` not a ConsoleOutput nor string');
+			throw new InvalidArgumentException('`stream` not a ConsoleOutput nor string');
 		}
 		$this->_output->outputAs($config['outputAs']);
 	}

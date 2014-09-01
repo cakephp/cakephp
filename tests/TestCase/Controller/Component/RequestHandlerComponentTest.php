@@ -841,7 +841,7 @@ class RequestHandlerComponentTest extends TestCase {
 /**
  * testAddInputTypeException method
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testAddInputTypeException() {

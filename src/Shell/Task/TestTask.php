@@ -17,14 +17,14 @@ namespace Cake\Shell\Task;
 use Cake\Console\Shell;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
-use Cake\Error;
+use Cake\Filesystem\Folder;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Folder;
 use Cake\Utility\Inflector;
 
 /**
@@ -277,12 +277,12 @@ class TestTask extends BakeTask {
  *
  * @param string $type The type of thing having a test generated.
  * @return string
- * @throws \Cake\Error\Exception When invalid object types are requested.
+ * @throws \Cake\Core\Exception\Exception When invalid object types are requested.
  */
 	public function mapType($type) {
 		$type = ucfirst($type);
 		if (empty($this->classTypes[$type])) {
-			throw new Error\Exception('Invalid object type.');
+			throw new Exception('Invalid object type.');
 		}
 		return $this->classTypes[$type];
 	}

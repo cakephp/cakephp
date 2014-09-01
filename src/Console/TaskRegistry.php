@@ -14,8 +14,9 @@
  */
 namespace Cake\Console;
 
+use Cake\Console\Exception\MissingTaskException;
 use Cake\Core\App;
-use Cake\Utility\ObjectRegistry;
+use Cake\Core\ObjectRegistry;
 
 /**
  * Registry for Tasks. Provides features
@@ -42,7 +43,7 @@ class TaskRegistry extends ObjectRegistry {
 /**
  * Resolve a task classname.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class Partial classname to resolve.
  * @return string|false Either the correct classname or false.
@@ -54,15 +55,15 @@ class TaskRegistry extends ObjectRegistry {
 /**
  * Throws an exception when a task is missing.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the task is missing in.
  * @return void
- * @throws \Cake\Console\Error\MissingTaskException
+ * @throws \Cake\Console\Exception\MissingTaskException
  */
 	protected function _throwMissingClassError($class, $plugin) {
-		throw new Error\MissingTaskException([
+		throw new MissingTaskException([
 			'class' => $class,
 			'plugin' => $plugin
 		]);
@@ -71,7 +72,7 @@ class TaskRegistry extends ObjectRegistry {
 /**
  * Create the task instance.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class The classname to create.
  * @param string $alias The alias of the task.

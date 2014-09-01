@@ -18,7 +18,6 @@ use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Error\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
@@ -30,6 +29,8 @@ use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\CellTrait;
 use Cake\View\ViewVarsTrait;
+use InvalidArgumentException;
+use LogicException;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
@@ -344,7 +345,7 @@ class View {
  *   Defaults to false.
  * - `ignoreMissing` - Used to allow missing elements. Set to true to not throw exceptions.
  * @return string Rendered Element
- * @throws \Cake\View\Error\MissingElementException When an element is missing and `ignoreMissing`
+ * @throws \Cake\View\Exception\MissingElementException When an element is missing and `ignoreMissing`
  *   is false.
  */
 	public function element($name, array $data = array(), array $options = array()) {
@@ -370,7 +371,7 @@ class View {
 			list ($plugin, $name) = pluginSplit($name, true);
 			$name = str_replace('/', DS, $name);
 			$file = $plugin . 'Element' . DS . $name . $this->_ext;
-			throw new Error\MissingElementException($file);
+			throw new Exception\MissingElementException($file);
 		}
 	}
 
@@ -406,7 +407,7 @@ class View {
  * @param string $view Name of view file to use
  * @param string $layout Layout to use.
  * @return string|null Rendered content or null if content already rendered and returned earlier.
- * @throws \Cake\Error\Exception If there is an error in the view.
+ * @throws \Cake\Core\Exception\Exception If there is an error in the view.
  */
 	public function render($view = null, $layout = null) {
 		if ($this->hasRendered) {
@@ -437,7 +438,7 @@ class View {
  * @param string $content Content to render in a view, wrapped by the surrounding layout.
  * @param string $layout Layout name
  * @return mixed Rendered output, or false on error
- * @throws \Cake\Error\Exception if there is an error in the view.
+ * @throws \Cake\Core\Exception\Exception if there is an error in the view.
  */
 	public function renderLayout($content, $layout = null) {
 		$layoutFileName = $this->_getLayoutFileName($layout);
@@ -683,9 +684,10 @@ class View {
  * array of data. Handles parent/extended views.
  *
  * @param string $viewFile Filename of the view
- * @param array $data Data to include in rendered view. If empty the current View::$viewVars will be used.
+ * @param array $data Data to include in rendered view. If empty the current
+ *   View::$viewVars will be used.
  * @return string Rendered output
- * @throws \Cake\Error\Exception when a block is left open.
+ * @throws \LogicException When a block is left open.
  */
 	protected function _render($viewFile, $data = array()) {
 		if (empty($data)) {
@@ -717,7 +719,7 @@ class View {
 		$remainingBlocks = count($this->Blocks->unclosed());
 
 		if ($initialBlocks !== $remainingBlocks) {
-			throw new Exception(sprintf(
+			throw new LogicException(sprintf(
 				'The "%s" block was left open. Blocks are not allowed to cross files.',
 				$this->Blocks->active()
 			));
@@ -774,7 +776,7 @@ class View {
  *
  * @param string $name Controller action to find template filename for
  * @return string Template filename
- * @throws \Cake\View\Error\MissingViewException when a view file could not be found.
+ * @throws \Cake\View\Exception\MissingViewException when a view file could not be found.
  */
 	protected function _getViewFileName($name = null) {
 		$subDir = null;
@@ -809,7 +811,7 @@ class View {
 				return $this->_checkFilePath($path . $name . $this->_ext, $path);
 			}
 		}
-		throw new Error\MissingViewException(array('file' => $name . $this->_ext));
+		throw new Exception\MissingViewException(array('file' => $name . $this->_ext));
 	}
 
 /**
@@ -821,7 +823,7 @@ class View {
  * @param string $file The path to the template file.
  * @param string $path Base path that $file should be inside of.
  * @return string The file path
- * @throws \Cake\Error\Exception
+ * @throws \InvalidArgumentException
  */
 	protected function _checkFilePath($file, $path) {
 		if (strpos($file, '..') === false) {
@@ -829,8 +831,10 @@ class View {
 		}
 		$absolute = realpath($file);
 		if (strpos($absolute, $path) !== 0) {
-			$msg = sprintf('Cannot use "%s" as a template, it is not within any view template path.', $file);
-			throw new Exception($msg);
+			throw new InvalidArgumentException(sprintf(
+				'Cannot use "%s" as a template, it is not within any view template path.',
+				$file
+			));
 		}
 		return $absolute;
 	}
@@ -862,7 +866,7 @@ class View {
  *
  * @param string $name The name of the layout to find.
  * @return string Filename for layout file (.ctp).
- * @throws \Cake\View\Error\MissingLayoutException when a layout cannot be located
+ * @throws \Cake\View\Exception\MissingLayoutException when a layout cannot be located
  */
 	protected function _getLayoutFileName($name = null) {
 		if ($name === null) {
@@ -891,7 +895,7 @@ class View {
 				}
 			}
 		}
-		throw new Error\MissingLayoutException(array(
+		throw new Exception\MissingLayoutException(array(
 			'file' => $layoutPaths[0] . $name . $this->_ext
 		));
 	}

@@ -16,27 +16,30 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
-use Cake\Controller\Error\MissingActionException;
-use Cake\Controller\Error\MissingComponentException;
-use Cake\Controller\Error\MissingControllerException;
-use Cake\Controller\Error\PrivateActionException;
+use Cake\Controller\Exception\MissingActionException;
+use Cake\Controller\Exception\MissingComponentException;
+use Cake\Controller\Exception\PrivateActionException;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Error\MissingPluginException;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
-use Cake\Datasource\Error\MissingDatasourceConfigException;
-use Cake\Datasource\Error\MissingDatasourceException;
+use Cake\Datasource\Exception\MissingDatasourceConfigException;
+use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
-use Cake\Network\Error\SocketException;
+use Cake\Network\Exception\InternalErrorException;
+use Cake\Network\Exception\MethodNotAllowedException;
+use Cake\Network\Exception\NotFoundException;
+use Cake\Network\Exception\SocketException;
 use Cake\Network\Request;
-use Cake\ORM\Error\MissingBehaviorException;
+use Cake\ORM\Exception\MissingBehaviorException;
+use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Cake\View\Error\MissingHelperException;
-use Cake\View\Error\MissingLayoutException;
-use Cake\View\Error\MissingViewException;
+use Cake\View\Exception\MissingHelperException;
+use Cake\View\Exception\MissingLayoutException;
+use Cake\View\Exception\MissingViewException;
 
 /**
  * BlueberryComponent class
@@ -125,7 +128,7 @@ class MyCustomExceptionRenderer extends ExceptionRenderer {
  * Exception class for testing app error handlers and custom errors.
  *
  */
-class MissingWidgetThingException extends Error\NotFoundException {
+class MissingWidgetThingException extends NotFoundException {
 }
 
 /**
@@ -238,7 +241,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testConstruction() {
-		$exception = new Error\NotFoundException('Page not found');
+		$exception = new NotFoundException('Page not found');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$this->assertInstanceOf('Cake\Controller\ErrorController', $ExceptionRenderer->controller);
@@ -362,7 +365,7 @@ class ExceptionRendererTest extends TestCase {
 		$request = new Request('posts/view/1000');
 		Router::setRequestInfo($request);
 
-		$exception = new Error\NotFoundException('Custom message');
+		$exception = new NotFoundException('Custom message');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 		$ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', array('statusCode', '_sendHeader'));
 		$ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(404);
@@ -381,7 +384,7 @@ class ExceptionRendererTest extends TestCase {
 	public function testerror400OnlyChangingCakeException() {
 		Configure::write('debug', false);
 
-		$exception = new Error\NotFoundException('Custom message');
+		$exception = new NotFoundException('Custom message');
 		$ExceptionRenderer = $this->_mockResponse(new ExceptionRenderer($exception));
 
 		$result = $ExceptionRenderer->render();
@@ -405,7 +408,7 @@ class ExceptionRendererTest extends TestCase {
 		$request = new Request('pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>');
 		Router::setRequestInfo($request);
 
-		$exception = new Error\NotFoundException('Custom message');
+		$exception = new NotFoundException('Custom message');
 		$ExceptionRenderer = $this->_mockResponse(new ExceptionRenderer($exception));
 
 		$result = $ExceptionRenderer->render()->body();
@@ -420,7 +423,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testError500Message() {
-		$exception = new Error\InternalErrorException('An Internal Error Has Occurred');
+		$exception = new InternalErrorException('An Internal Error Has Occurred');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 		$ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', array('statusCode', '_sendHeader'));
 		$ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(500);
@@ -435,7 +438,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testExceptionResponseHeader() {
-		$exception = new Error\MethodNotAllowedException('Only allowing POST and DELETE');
+		$exception = new MethodNotAllowedException('Only allowing POST and DELETE');
 		$exception->responseHeader(array('Allow: POST, DELETE'));
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
@@ -567,7 +570,7 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
-				new Error\Exception('base class'),
+				new \Cake\Core\Exception\Exception('base class'),
 				array('/Internal Error/'),
 				500
 			)
@@ -628,7 +631,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testRenderExceptionInBeforeRender() {
-		$exception = new Error\NotFoundException('Not there, sorry');
+		$exception = new NotFoundException('Not there, sorry');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('beforeRender'));
@@ -652,7 +655,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testMissingSubdirRenderSafe() {
-		$exception = new Error\NotFoundException();
+		$exception = new NotFoundException();
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
@@ -688,7 +691,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testMissingPluginRenderSafe() {
-		$exception = new Error\NotFoundException();
+		$exception = new NotFoundException();
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
@@ -720,7 +723,7 @@ class ExceptionRendererTest extends TestCase {
  */
 	public function testMissingPluginRenderSafeWithPlugin() {
 		Plugin::load('TestPlugin');
-		$exception = new Error\NotFoundException();
+		$exception = new NotFoundException();
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));

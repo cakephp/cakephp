@@ -14,6 +14,8 @@
  */
 namespace Cake\Console;
 
+use Cake\Console\Exception\ConsoleException;
+
 /**
  * An object to represent a single argument used in the command line.
  * ConsoleOptionParser creates these when you use addArgument()
@@ -132,14 +134,14 @@ class ConsoleInputArgument {
  *
  * @param string $value The choice to validate.
  * @return bool
- * @throws \Cake\Console\Error\ConsoleException
+ * @throws \Cake\Console\Exception\ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {
 			return true;
 		}
 		if (!in_array($value, $this->_choices)) {
-			throw new Error\ConsoleException(
+			throw new ConsoleException(
 				sprintf('"%s" is not a valid value for %s. Please use one of "%s"',
 				$value, $this->_name, implode(', ', $this->_choices)
 			));

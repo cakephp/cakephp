@@ -543,7 +543,7 @@ class ViewTest extends TestCase {
 /**
  * Test that getViewFileName() protects against malicious directory traversal.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testGetViewFileNameDirectoryTraversal() {
@@ -642,7 +642,7 @@ class ViewTest extends TestCase {
 /**
  * Test that getLayoutFileName() protects against malicious directory traversal.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testGetLayoutFileNameDirectoryTraversal() {
@@ -662,7 +662,7 @@ class ViewTest extends TestCase {
 /**
  * Test for missing views
  *
- * @expectedException \Cake\View\Error\MissingViewException
+ * @expectedException \Cake\View\Exception\MissingViewException
  * @return void
  */
 	public function testMissingView() {
@@ -680,7 +680,7 @@ class ViewTest extends TestCase {
 /**
  * Test for missing layouts
  *
- * @expectedException \Cake\View\Error\MissingLayoutException
+ * @expectedException \Cake\View\Exception\MissingLayoutException
  * @return void
  */
 	public function testMissingLayout() {
@@ -762,7 +762,7 @@ class ViewTest extends TestCase {
 /**
  * Test elementInexistent method
  *
- * @expectedException Cake\View\Error\MissingElementException
+ * @expectedException Cake\View\Exception\MissingElementException
  * @return void
  */
 	public function testElementInexistent() {
@@ -772,7 +772,7 @@ class ViewTest extends TestCase {
 /**
  * Test elementInexistent3 method
  *
- * @expectedException Cake\View\Error\MissingElementException
+ * @expectedException Cake\View\Exception\MissingElementException
  * @return void
  */
 	public function testElementInexistent3() {
@@ -1467,7 +1467,7 @@ class ViewTest extends TestCase {
 /**
  * Test that starting the same block twice throws an exception
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testStartBlocksTwice() {
@@ -1479,7 +1479,7 @@ class ViewTest extends TestCase {
  * Test that an exception gets thrown when you leave a block open at the end
  * of a view.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \LogicException
  * @return void
  */
 	public function testExceptionOnOpenBlock() {

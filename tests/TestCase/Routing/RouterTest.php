@@ -50,9 +50,8 @@ class RouterTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Plugin::unload();
-		Router::fullBaseUrl('');
-		Configure::write('App.fullBaseUrl', 'http://localhost');
 		Router::reload();
+		Router::defaultRouteClass('Cake\Routing\Route\Route');
 	}
 
 /**
@@ -1081,7 +1080,7 @@ class RouterTest extends TestCase {
 /**
  * Test that using invalid names causes exceptions.
  *
- * @expectedException \Cake\Routing\Error\MissingRouteException
+ * @expectedException \Cake\Routing\Exception\MissingRouteException
  * @return void
  */
 	public function testNamedRouteException() {
@@ -1493,7 +1492,7 @@ class RouterTest extends TestCase {
 /**
  * Test exceptions when parsing fails.
  *
- * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedException Cake\Routing\Exception\MissingRouteException
  */
 	public function testParseError() {
 		Router::connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
@@ -1993,7 +1992,7 @@ class RouterTest extends TestCase {
 /**
  * test that patterns work for :action
  *
- * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedException Cake\Routing\Exception\MissingRouteException
  * @return void
  */
 	public function testParsingWithPatternOnAction() {
@@ -2018,7 +2017,7 @@ class RouterTest extends TestCase {
 /**
  * Test url() works with patterns on :action
  *
- * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedException Cake\Routing\Exception\MissingRouteException
  * @return void
  */
 	public function testUrlPatternOnAction() {
@@ -2194,7 +2193,7 @@ class RouterTest extends TestCase {
 /**
  * testRegexRouteMatching error
  *
- * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedException Cake\Routing\Exception\MissingRouteException
  * @return void
  */
 	public function testRegexRouteMatchingError() {
@@ -2205,7 +2204,7 @@ class RouterTest extends TestCase {
 /**
  * testRegexRouteMatching method
  *
- * @expectedException Cake\Routing\Error\MissingRouteException
+ * @expectedException Cake\Routing\Exception\MissingRouteException
  * @return void
  */
 	public function testRegexRouteMatchUrl() {
@@ -2276,7 +2275,7 @@ class RouterTest extends TestCase {
 /**
  * test that route classes must extend \Cake\Routing\Route\Route
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testCustomRouteException() {
@@ -2662,6 +2661,37 @@ class RouterTest extends TestCase {
 			$this->assertEquals('/debugger', $routes->path());
 			$this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
 		});
+	}
+
+/**
+ * Test setting default route class.
+ *
+ * @return void
+ */
+	public function testDefaultRouteClass() {
+		Router::connect('/:controller', ['action' => 'index']);
+		$result = Router::url(['controller' => 'FooBar', 'action' => 'index']);
+		$this->assertEquals('/FooBar', $result);
+
+		// This is needed because tests/boostrap.php sets App.namespace to 'App'
+		Configure::write('App.namespace', 'TestApp');
+
+		Router::defaultRouteClass('DashedRoute');
+		Router::connect('/cake/:controller', ['action' => 'cake']);
+		$result = Router::url(['controller' => 'FooBar', 'action' => 'cake']);
+		$this->assertEquals('/cake/foo-bar', $result);
+
+		$result = Router::url(['controller' => 'FooBar', 'action' => 'index']);
+		$this->assertEquals('/FooBar', $result);
+
+		Router::reload();
+		Router::defaultRouteClass('DashedRoute');
+		Router::scope('/', function($routes) {
+			$routes->fallbacks();
+		});
+
+		$result = Router::url(['controller' => 'FooBar', 'action' => 'index']);
+		$this->assertEquals('/foo-bar', $result);
 	}
 
 /**

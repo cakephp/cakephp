@@ -14,11 +14,11 @@
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
-use Cake\Shell\Task\ProjectTask;
 use Cake\Core\Configure;
+use Cake\Filesystem\File;
+use Cake\Filesystem\Folder;
+use Cake\Shell\Task\ProjectTask;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\File;
-use Cake\Utility\Folder;
 
 /**
  * ProjectTask Test class

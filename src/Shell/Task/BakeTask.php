@@ -17,7 +17,7 @@ namespace Cake\Shell\Task;
 use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
-use Cake\Utility\ConventionsTrait;
+use Cake\Core\ConventionsTrait;
 
 /**
  * Base class for Bake Tasks.

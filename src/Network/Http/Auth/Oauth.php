@@ -13,7 +13,7 @@
  */
 namespace Cake\Network\Http\Auth;
 
-use Cake\Error;
+use Cake\Core\Exception\Exception;
 use Cake\Network\Http\Request;
 
 /**
@@ -34,7 +34,7 @@ class Oauth {
  * @param \Cake\Network\Request $request The request object.
  * @param array $credentials Authentication credentials.
  * @return void
- * @throws \Cake\Error\Exception On invalid signature types.
+ * @throws \Cake\Core\Exception\Exception On invalid signature types.
  */
 	public function authentication(Request $request, array $credentials) {
 		$hasKeys = isset(
@@ -60,7 +60,7 @@ class Oauth {
 				break;
 
 			default:
-				throw new Error\Exception(sprintf('Unknown Oauth signature method %s', $credentials['method']));
+				throw new Exception(sprintf('Unknown Oauth signature method %s', $credentials['method']));
 
 		}
 		$request->header('Authorization', $value);
@@ -161,12 +161,12 @@ class Oauth {
  *
  * @param string $url URL
  * @return string Normalized URL
- * @throws \Cake\Error\Exception On invalid URLs
+ * @throws \Cake\Core\Exception\Exception On invalid URLs
  */
 	protected function _normalizedUrl($url) {
 		$parts = parse_url($url);
 		if (!$parts) {
-			throw new Error\Exception('Unable to parse URL');
+			throw new Exception('Unable to parse URL');
 		}
 		$scheme = strtolower($parts['scheme'] ?: 'http');
 		$defaultPorts = [

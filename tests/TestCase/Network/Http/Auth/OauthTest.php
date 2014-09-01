@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 class OauthTest extends TestCase {
 
 /**
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  */
 	public function testExceptionUnknownSigningMethod() {
 		$auth = new Oauth();

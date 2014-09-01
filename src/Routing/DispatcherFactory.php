@@ -16,7 +16,7 @@ namespace Cake\Routing;
 
 use Cake\Core\App;
 use Cake\Routing\Dispatcher;
-use Cake\Routing\Error\MissingDispatcherFilterException;
+use Cake\Routing\Exception\MissingDispatcherFilterException;
 
 /**
  * A factory for creating dispatchers with all the desired middleware
@@ -58,7 +58,7 @@ class DispatcherFactory {
  * @param string $name The name of the filter to build.
  * @param array $options Constructor arguments/options for the filter.
  * @return \Cake\Routing\DispatcherFilter
- * @throws \Cake\Routing\Error\MissingDispatcherFilterException When filters cannot be found.
+ * @throws \Cake\Routing\Exception\MissingDispatcherFilterException When filters cannot be found.
  */
 	protected static function _createFilter($name, $options) {
 		$className = App::className($name, 'Routing/Filter', 'Filter');
