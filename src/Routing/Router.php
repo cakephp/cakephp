@@ -842,7 +842,10 @@ class Router {
  *   was created/used.
  */
 	public static function scope($path, $params = [], $callback = null) {
-		$builder = new RouteBuilder(static::$_collection, '/', [], static::$_collection->extensions());
+		$builder = new RouteBuilder(static::$_collection, '/', [], [
+			'routeClass' => static::defaultRouteClass(),
+			'extensions' => static::$_collection->extensions()
+		]);
 		$builder->scope($path, $params, $callback);
 	}
 

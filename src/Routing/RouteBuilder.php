@@ -57,18 +57,18 @@ class RouteBuilder {
 	];
 
 /**
- * Route class to use if none is provided in connect() options.
+ * Default route class to use if none is provided in connect() options.
  *
  * @var string
  */
-	protected $_routeClass;
+	protected $_routeClass = 'Cake\Routing\Route\Route';
 
 /**
  * The extensions that should be set into the routes connected.
  *
  * @var array
  */
-	protected $_extensions;
+	protected $_extensions = [];
 
 /**
  * The path prefix scope that this collection uses.
@@ -97,14 +97,21 @@ class RouteBuilder {
  * @param \Cake\Routing\RouteCollection $collection The route collection to append routes into.
  * @param string $path The path prefix the scope is for.
  * @param array $params The scope's routing parameters.
- * @param array $extensions The extensions to connect when adding routes.
+ * @param array $options Options list. Valid keys are:
+ *
+ *   - `routeClass` - The default route class to use when adding routes.
+ *   - `extensions` - The extensions to connect when adding routes.
  */
-	public function __construct($collection, $path, array $params = [], array $extensions = []) {
+	public function __construct($collection, $path, array $params = [], array $options = []) {
 		$this->_collection = $collection;
 		$this->_path = $path;
 		$this->_params = $params;
-		$this->_extensions = $extensions;
-		$this->_routeClass = Router::defaultRouteClass();
+		if (isset($options['routeClass'])) {
+			$this->_routeClass = $options['routeClass'];
+		}
+		if (isset($options['extensions'])) {
+			$this->_extensions = $options['extensions'];
+		}
 	}
 
 /**
@@ -344,6 +351,10 @@ class RouteBuilder {
 			$options['_ext'] = $this->_extensions;
 		}
 
+		if (empty($options['routeClass'])) {
+			$options['routeClass'] = $this->_routeClass;
+		}
+
 		$route = $this->_makeRoute($route, $defaults, $options);
 		$this->_collection->add($route, $options);
 	}
@@ -360,16 +371,11 @@ class RouteBuilder {
  */
 	protected function _makeRoute($route, $defaults, $options) {
 		if (is_string($route)) {
-			$routeClass = $this->_routeClass;
-			if (isset($options['routeClass'])) {
-				$routeClass = $options['routeClass'];
-				unset($options['routeClass']);
-			}
-			$class = App::className($routeClass, 'Routing/Route');
-			if ($class === false) {
+			$routeClass = App::className($options['routeClass'], 'Routing/Route');
+			if ($routeClass === false) {
 				throw new InvalidArgumentException(sprintf(
 					'Cannot find route class %s',
-					$routeClass
+					$options['routeClass']
 				));
 			}
 
@@ -392,7 +398,7 @@ class RouteBuilder {
 			$defaults += $this->_params;
 			$defaults += ['plugin' => null];
 
-			$route = new $class($route, $defaults, $options);
+			$route = new $routeClass($route, $defaults, $options);
 		}
 
 		if ($route instanceof Route) {
@@ -528,7 +534,10 @@ class RouteBuilder {
 			$path = $this->_path . $path;
 		}
 		$params = $params + $this->_params;
-		$builder = new static($this->_collection, $path, $params, $this->_extensions);
+		$builder = new static($this->_collection, $path, $params, [
+			'routeClass' => $this->_routeClass,
+			'extensions' => $this->_extensions
+		]);
 		$callback($builder);
 	}
 

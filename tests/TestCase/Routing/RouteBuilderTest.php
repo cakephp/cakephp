@@ -86,8 +86,9 @@ class RouteBuilderTest extends TestCase {
  * @return void
  */
 	public function testRouteClass() {
-		$routes = new RouteBuilder($this->collection, '/l');
-		$routes->routeClass('InflectedRoute');
+		$routes = new RouteBuilder($this->collection, '/l', [],
+			['routeClass' => 'InflectedRoute']
+		);
 		$routes->connect('/:controller', ['action' => 'index']);
 		$routes->connect('/:controller/:action/*');
 
@@ -96,9 +97,8 @@ class RouteBuilderTest extends TestCase {
 		$this->assertInstanceOf('Cake\Routing\Route\InflectedRoute', $all[1]);
 
 		$this->collection = new RouteCollection();
-		Router::defaultRouteClass('TestApp\Routing\Route\DashedRoute');
 		$routes = new RouteBuilder($this->collection, '/l');
-		$this->assertEquals('TestApp\Routing\Route\DashedRoute', $routes->routeClass());
+		$routes->routeClass('TestApp\Routing\Route\DashedRoute');
 
 		$routes->connect('/:controller', ['action' => 'index']);
 		$all = $this->collection->routes();
@@ -157,7 +157,9 @@ class RouteBuilderTest extends TestCase {
  * @return void
  */
 	public function testConnectExtensions() {
-		$routes = new RouteBuilder($this->collection, '/l', [], ['json']);
+		$routes = new RouteBuilder($this->collection, '/l', [],
+			['extensions' => ['json']]
+		);
 		$this->assertEquals(['json'], $routes->extensions());
 
 		$routes->connect('/:controller');
@@ -192,7 +194,9 @@ class RouteBuilderTest extends TestCase {
  * @return void
  */
 	public function testConnectErrorInvalidRouteClass() {
-		$routes = new RouteBuilder($this->collection, '/l', [], ['json']);
+		$routes = new RouteBuilder($this->collection, '/l', [],
+			['extensions' => ['json']]
+		);
 		$routes->connect('/:controller', [], ['routeClass' => '\StdClass']);
 	}
 
@@ -204,7 +208,7 @@ class RouteBuilderTest extends TestCase {
  * @return void
  */
 	public function testConnectConflictingParameters() {
-		$routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'admin'], []);
+		$routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'admin']);
 		$routes->connect('/', ['prefix' => 'manager', 'controller' => 'Dashboard', 'action' => 'view']);
 	}
 
