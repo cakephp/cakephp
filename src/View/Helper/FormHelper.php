@@ -908,11 +908,6 @@ class FormHelper extends Helper {
 			unset($options['error']);
 		}
 
-		$template = $options['type'] . 'Container' . $errorSuffix;
-		if (!$templater->get($template)) {
-			$template = 'inputContainer' . $errorSuffix;
-		}
-
 		$label = $options['label'];
 		if ($options['type'] !== 'radio') {
 			unset($options['label']);
@@ -927,14 +922,12 @@ class FormHelper extends Helper {
 		}
 
 		$label = $this->_getLabel($fieldName, compact('input', 'label', 'error') + $options);
-
-		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
-		$result = $templater->format($groupTemplate, compact('input', 'label', 'error'));
-		$result = $templater->format($template, [
+		$result = $this->_groupTemplate(compact('input', 'label', 'error', 'options'));
+		$result = $this->_inputContainerTemplate([
 			'content' => $result,
 			'error' => $error,
-			'required' => $options['required'] ? ' required' : '',
-			'type' => $options['type'],
+			'errorSuffix' => $errorSuffix,
+			'options' => $options
 		]);
 
 		if ($newTemplates) {
@@ -942,6 +935,41 @@ class FormHelper extends Helper {
 		}
 
 		return $result;
+	}
+
+/**
+ * Generates an group template element
+ *
+ * @param array $options The options for group template
+ * @return string The generated group template
+ */
+	protected function _groupTemplate($options) {
+		$groupTemplate = $options['options']['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
+		return $this->templater()->format($groupTemplate, [
+			'input' => $options['input'],
+			'label' => $options['label'],
+			'error' => $options['error']
+		]);
+	}
+
+/**
+ * Generates an input container template
+ *
+ * @param array $options The options for input container template
+ * @return string The generated input container template
+ */
+	protected function _inputContainerTemplate($options) {
+		$inputContainerTemplate = $options['options']['type'] . 'Container' . $options['errorSuffix'];
+		if (!$this->templater()->get($inputContainerTemplate)) {
+			$inputContainerTemplate = 'inputContainer' . $options['errorSuffix'];
+		}
+		
+		return $this->templater()->format($inputContainerTemplate, [
+			'content' => $options['content'],
+			'error' => $options['error'],
+			'required' => $options['options']['required'] ? ' required' : '',
+			'type' => $options['options']['type']
+		]);
 	}
 
 /**
