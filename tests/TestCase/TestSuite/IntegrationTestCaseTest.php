@@ -54,6 +54,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 		$this->session(['User' => ['id' => 1, 'username' => 'mark']]);
 		$request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
 
+		$this->assertEquals('abc123', $request->header('X-CSRF-Token'));
 		$this->assertEquals('tasks/add', $request->url);
 		$this->assertEquals(['split_token' => 'def345'], $request->cookies);
 		$this->assertEquals(['id' => '1', 'username' => 'mark'], $request->session()->read('User'));
@@ -70,6 +71,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 		$this->get('/request_action/test_request_action');
 		$this->assertNotEmpty($this->_response);
 		$this->assertInstanceOf('Cake\Network\Response', $this->_response);
+		$this->assertEquals('This is a test', $this->_response->body());
 	}
 
 }

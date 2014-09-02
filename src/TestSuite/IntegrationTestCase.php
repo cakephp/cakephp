@@ -226,7 +226,11 @@ class IntegrationTestCase extends TestCase {
 			'session' => $session,
 		];
 		if (isset($this->_request['headers'])) {
-			$props['environment'] = $this->_request['headers'];
+			$env = [];
+			foreach ($this->_request['headers'] as $k => $v) {
+				$env['HTTP_' . str_replace('-', '_', strtoupper($k))] = $v;
+			}
+			$props['environment'] = $env;
 			unset($this->_request['headers']);
 		}
 		$props += $this->_request;
