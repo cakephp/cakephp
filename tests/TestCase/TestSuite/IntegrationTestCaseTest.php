@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Configure;
+use Cake\Network\Response;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestCase;
@@ -72,6 +73,36 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 		$this->assertNotEmpty($this->_response);
 		$this->assertInstanceOf('Cake\Network\Response', $this->_response);
 		$this->assertEquals('This is a test', $this->_response->body());
+	}
+
+/**
+ * Test the responseOk status assertion
+ *
+ * @return void
+ */
+	public function testAssertResponseStatusCodes() {
+		$this->_response = new Response();
+
+		$this->_response->statusCode(200);
+		$this->assertResponseOk();
+
+		$this->_response->statusCode(201);
+		$this->assertResponseOk();
+
+		$this->_response->statusCode(204);
+		$this->assertResponseOk();
+
+		$this->_response->statusCode(400);
+		$this->assertResponseError();
+
+		$this->_response->statusCode(417);
+		$this->assertResponseError();
+
+		$this->_response->statusCode(500);
+		$this->assertResponseFailure();
+
+		$this->_response->statusCode(505);
+		$this->assertResponseFailure();
 	}
 
 }

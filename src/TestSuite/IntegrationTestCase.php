@@ -237,4 +237,48 @@ class IntegrationTestCase extends TestCase {
 		return new Request($props);
 	}
 
+/**
+ * Assert that the response status code is in the 2xx range.
+ *
+ * @return void
+ */
+	public function assertResponseOk() {
+		$this->_assertStatus(200, 204, 'Status code is not between 200 and 204');
+	}
+
+/**
+ * Assert that the response status code is in the 4xx range.
+ *
+ * @return void
+ */
+	public function assertResponseError() {
+		$this->_assertStatus(400, 417, 'Status code is not between 400 and 417');
+	}
+
+/**
+ * Assert that the response status code is in the 5xx range.
+ *
+ * @return void
+ */
+	public function assertResponseFailure() {
+		$this->_assertStatus(500, 505, 'Status code is not between 500 and 505');
+	}
+
+/**
+ * Helper method for status assertions.
+ *
+ * @param int $min Min status code.
+ * @param int $max Max status code.
+ * @param string $message The error message.
+ * @return void
+ */
+	protected function _assertStatus($min, $max, $message) {
+		if (!$this->_response) {
+			$this->fail('No response set, cannot assert status code.');
+		}
+		$status = $this->_response->statusCode();
+		$this->assertGreaterThanOrEqual($min, $status, $message);
+		$this->assertLessThanOrEqual($max, $status, $message);
+	}
+
 }
