@@ -428,7 +428,7 @@ class Inflector {
 			return $value;
 		}
 		if (!isset(static::$_cache[$type][$key])) {
-			return null;
+			return false;
 		}
 		return static::$_cache[$type][$key];
 	}
@@ -606,7 +606,7 @@ class Inflector {
  */
 	public static function dasherize($wordGroup) {
 		$result = static::_cache(__FUNCTION__, $wordGroup);
-		if ($result !== null) {
+		if ($result !== false) {
 			return $result;
 		}
 
