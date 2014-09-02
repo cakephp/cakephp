@@ -335,9 +335,16 @@ class TestTask extends BakeTask {
 		$this->_addFixture($subject->alias());
 		foreach ($subject->associations()->keys() as $alias) {
 			$assoc = $subject->association($alias);
-			$name = $assoc->target()->alias();
+			$target = $assoc->target();
+			$name = $target->alias();
+			$subjectClass = get_class($subject);
+
+			if ($subjectClass !== 'Cake\ORM\Table' && $subjectClass === get_class($target)) {
+				continue;
+			}
+
 			if (!isset($this->_fixtures[$name])) {
-				$this->_processModel($assoc->target());
+				$this->_processModel($target);
 			}
 			if ($assoc->type() === Association::MANY_TO_MANY) {
 				$junction = $assoc->junction();
