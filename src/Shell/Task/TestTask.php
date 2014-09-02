@@ -337,8 +337,9 @@ class TestTask extends BakeTask {
 			$assoc = $subject->association($alias);
 			$target = $assoc->target();
 			$name = $target->alias();
+			$subjectClass = get_class($subject);
 
-			if (get_class($subject) === get_class($target)) {
+			if ($subjectClass !== 'Cake\ORM\Table' && $subjectClass === get_class($target)) {
 				continue;
 			}
 
