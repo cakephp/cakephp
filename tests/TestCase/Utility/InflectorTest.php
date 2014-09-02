@@ -1,9 +1,5 @@
 <?php
 /**
- * InflectorTest
- *
- * InflectorTest is used to test cases on the Inflector class
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -376,22 +372,22 @@ class InflectorTest extends TestCase {
 	}
 
 /**
- * testInflectorHyphenate method
+ * testDasherized method
  *
  * @return void
  */
-	public function testInflectorHyphenate() {
-		$this->assertSame('test-thing', Inflector::hyphenate('TestThing'));
-		$this->assertSame('test-thing', Inflector::hyphenate('testThing'));
-		$this->assertSame('test-thing-extra', Inflector::hyphenate('TestThingExtra'));
-		$this->assertSame('test-thing-extra', Inflector::hyphenate('testThingExtra'));
-		$this->assertSame('test-this-thing', Inflector::hyphenate('test_this_thing'));
+	public function testDasherized() {
+		$this->assertSame('test-thing', Inflector::dasherize('TestThing'));
+		$this->assertSame('test-thing', Inflector::dasherize('testThing'));
+		$this->assertSame('test-thing-extra', Inflector::dasherize('TestThingExtra'));
+		$this->assertSame('test-thing-extra', Inflector::dasherize('testThingExtra'));
+		$this->assertSame('test-this-thing', Inflector::dasherize('test_this_thing'));
 
 		// Test stupid values
-		$this->assertSame('', Inflector::hyphenate(null));
-		$this->assertSame('', Inflector::hyphenate(''));
-		$this->assertSame('0', Inflector::hyphenate(0));
-		$this->assertSame('', Inflector::hyphenate(false));
+		$this->assertSame('', Inflector::dasherize(null));
+		$this->assertSame('', Inflector::dasherize(''));
+		$this->assertSame('0', Inflector::dasherize(0));
+		$this->assertSame('', Inflector::dasherize(false));
 	}
 
 /**

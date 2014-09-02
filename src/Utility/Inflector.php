@@ -599,12 +599,12 @@ class Inflector {
 	}
 
 /**
- * Returns the given CamelCasedWordGroup as an hyphenated-word-group.
+ * Returns the given CamelCasedWordGroup as an dashed-word-group.
  *
- * @param string $wordGroup The string to hyphenate.
- * @return string Hyphenated version of the word group
+ * @param string $wordGroup The string to dasherize.
+ * @return string Dashed version of the word group
  */
-	public static function hyphenate($wordGroup) {
+	public static function dasherize($wordGroup) {
 		$result = static::_cache(__FUNCTION__, $wordGroup);
 		if ($result !== null) {
 			return $result;
