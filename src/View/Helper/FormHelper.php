@@ -963,7 +963,7 @@ class FormHelper extends Helper {
 		if (!$this->templater()->get($inputContainerTemplate)) {
 			$inputContainerTemplate = 'inputContainer' . $options['errorSuffix'];
 		}
-		
+
 		return $this->templater()->format($inputContainerTemplate, [
 			'content' => $options['content'],
 			'error' => $options['error'],
