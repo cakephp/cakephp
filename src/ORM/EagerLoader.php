@@ -372,7 +372,7 @@ class EagerLoader {
  *
  * This function modifies the $config variable
  *
- * @param array $config The association config
+ * @param array &$config The association config
  * @param string $alias the name of the association to evaluate
  * @return void
  * @throws \RuntimeException if a duplicate association in the same chain is detected
