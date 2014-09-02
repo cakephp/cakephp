@@ -14,6 +14,10 @@
  */
 namespace Cake\TestSuite;
 
+use Cake\Core\Configure;
+use Cake\Network\Request;
+use Cake\Network\Session;
+use Cake\Routing\DispatcherFactory;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -178,6 +182,37 @@ class IntegrationTestCase extends TestCase {
  * @return void
  */
 	protected function _sendRequest($url, $method, $data = null) {
+		$request = $this->_buildRequest($url, $method, $data);
+	}
+
+/**
+ * Create a request object with the configured options and parameters.
+ *
+ * @param string $url The url
+ * @param string $method The HTTP method
+ * @param array|null $data The request data.
+ * @return \Cake\Network\Request The built request.
+ */
+	protected function _buildRequest($url, $method, $data) {
+		$sessionConfig = (array)Configure::read('Session') + [
+			'defaults' => 'php',
+		];
+		$session = Session::create($sessionConfig);
+		$session->write($this->_session);
+
+		$props = [
+			'url' => $url,
+			'post' => $data,
+			'cookies' => $this->_cookie,
+			'session' => $session,
+		];
+		if (isset($this->_request['headers'])) {
+			$props['environment'] = $this->_request['headers'];
+			unset($this->_request['headers']);
+		}
+		$props += $this->_request;
+
+		return new Request($props);
 	}
 
 }
