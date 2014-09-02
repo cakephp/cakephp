@@ -446,7 +446,7 @@ abstract class Association {
 			'fields' => [],
 			'type' => empty($options['matching']) ? $this->joinType() : 'INNER',
 			'table' => $target->table(),
-			'finder' => 'all'
+			'finder' => null
 		];
 
 		if (!empty($options['foreignKey'])) {
@@ -455,7 +455,6 @@ abstract class Association {
 				$options['conditions'][] = $joinCondition;
 			}
 		}
-
 		$dummy = $this->find($options['finder'])->eagerLoaded(true);
 		if (!empty($options['queryBuilder'])) {
 			$dummy = $options['queryBuilder']($dummy);
