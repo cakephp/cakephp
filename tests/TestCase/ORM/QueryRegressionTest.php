@@ -401,8 +401,8 @@ class QueryRegressionTest extends TestCase {
 			->first();
 
 		$this->assertEquals($resultA, $resultB);
-		$this->assertNotEmpty($resultA->user);
-		$this->assertNotEmpty($resultA->articles_tag->user);
+		$this->assertNotEmpty($resultA->author);
+		$this->assertNotEmpty($resultA->articles_tag->author);
 	}
 
 }
