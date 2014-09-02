@@ -949,7 +949,7 @@ class CakeRequest implements ArrayAccess {
  * @return bool true
  * @throws MethodNotAllowedException
  * @see CakeRequest::allowMethod()
- * @deprecated 2.5 Use CakeRequest::allowMethod() instead.
+ * @deprecated 3.0.0 Since 2.5, use CakeRequest::allowMethod() instead.
  */
 	public function onlyAllow($methods) {
 		if (!is_array($methods)) {

@@ -590,7 +590,7 @@ class View extends Object {
  *
  * @param string $var The view var you want the contents of.
  * @return mixed The content of the named var if its set, otherwise null.
- * @deprecated Will be removed in 3.0. Use View::get() instead.
+ * @deprecated 3.0.0 Will be removed in 3.0. Use View::get() instead.
  */
 	public function getVar($var) {
 		return $this->get($var);
@@ -756,7 +756,7 @@ class View extends Object {
  *   update/replace a script element.
  * @param string $content The content of the script being added, optional.
  * @return void
- * @deprecated Will be removed in 3.0. Superseded by blocks functionality.
+ * @deprecated 3.0.0 Will be removed in 3.0. Superseded by blocks functionality.
  * @see View::start()
  */
 	public function addScript($name, $content = null) {

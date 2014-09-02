@@ -201,7 +201,7 @@ class Debugger {
  * @param int $line Line that triggered the error
  * @param array $context Context
  * @return bool true if error was handled
- * @deprecated Will be removed in 3.0. This function is superseded by Debugger::outputError().
+ * @deprecated 3.0.0 Will be removed in 3.0. This function is superseded by Debugger::outputError().
  */
 	public static function showError($code, $description, $file = null, $line = null, $context = null) {
 		$self = Debugger::getInstance();
@@ -696,7 +696,7 @@ class Debugger {
  *    straight HTML output, or 'txt' for unformatted text.
  * @param array $strings Template strings to be used for the output format.
  * @return string
- * @deprecated Use Debugger::outputAs() and Debugger::addFormat(). Will be removed
+ * @deprecated 3.0.0 Use Debugger::outputAs() and Debugger::addFormat(). Will be removed
  *   in 3.0
  */
 	public static function output($format = null, $strings = array()) {
