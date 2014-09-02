@@ -1,9 +1,5 @@
 <?php
 /**
- * InflectorTest
- *
- * InflectorTest is used to test cases on the Inflector class
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -376,6 +372,25 @@ class InflectorTest extends TestCase {
 	}
 
 /**
+ * testDasherized method
+ *
+ * @return void
+ */
+	public function testDasherized() {
+		$this->assertSame('test-thing', Inflector::dasherize('TestThing'));
+		$this->assertSame('test-thing', Inflector::dasherize('testThing'));
+		$this->assertSame('test-thing-extra', Inflector::dasherize('TestThingExtra'));
+		$this->assertSame('test-thing-extra', Inflector::dasherize('testThingExtra'));
+		$this->assertSame('test-this-thing', Inflector::dasherize('test_this_thing'));
+
+		// Test stupid values
+		$this->assertSame('', Inflector::dasherize(null));
+		$this->assertSame('', Inflector::dasherize(''));
+		$this->assertSame('0', Inflector::dasherize(0));
+		$this->assertSame('', Inflector::dasherize(false));
+	}
+
+/**
  * testVariableNaming method
  *
  * @return void
@@ -420,6 +435,8 @@ class InflectorTest extends TestCase {
 		$this->assertEquals(Inflector::humanize('posts'), 'Posts');
 		$this->assertEquals(Inflector::humanize('posts_tags'), 'Posts Tags');
 		$this->assertEquals(Inflector::humanize('file_systems'), 'File Systems');
+		$this->assertSame('', Inflector::humanize(null));
+		$this->assertSame('', Inflector::humanize(false));
 	}
 
 /**

@@ -418,7 +418,7 @@ class Inflector {
  * @param string $type Inflection type
  * @param string $key Original value
  * @param string $value Inflected value
- * @return string Inflected value, from cache
+ * @return string|null Inflected value on cache hit or null on cache miss.
  */
 	protected static function _cache($type, $key, $value = false) {
 		$key = '_' . $key;
@@ -577,7 +577,7 @@ class Inflector {
  */
 	public static function camelize($lowerCaseAndUnderscoredWord) {
 		if (!($result = static::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
-			$result = str_replace(' ', '', Inflector::humanize($lowerCaseAndUnderscoredWord));
+			$result = str_replace(' ', '', static::humanize($lowerCaseAndUnderscoredWord));
 			static::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord, $result);
 		}
 		return $result;
@@ -595,6 +595,23 @@ class Inflector {
 			$result = strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedWord));
 			static::_cache(__FUNCTION__, $camelCasedWord, $result);
 		}
+		return $result;
+	}
+
+/**
+ * Returns the given CamelCasedWordGroup as an dashed-word-group.
+ *
+ * @param string $wordGroup The string to dasherize.
+ * @return string Dashed version of the word group
+ */
+	public static function dasherize($wordGroup) {
+		$result = static::_cache(__FUNCTION__, $wordGroup);
+		if ($result !== false) {
+			return $result;
+		}
+
+		$result = str_replace('_', '-', static::underscore($wordGroup));
+		static::_cache(__FUNCTION__, $wordGroup, $result);
 		return $result;
 	}
 
@@ -623,7 +640,7 @@ class Inflector {
  */
 	public static function tableize($className) {
 		if (!($result = static::_cache(__FUNCTION__, $className))) {
-			$result = Inflector::pluralize(Inflector::underscore($className));
+			$result = static::pluralize(static::underscore($className));
 			static::_cache(__FUNCTION__, $className, $result);
 		}
 		return $result;
@@ -638,7 +655,7 @@ class Inflector {
  */
 	public static function classify($tableName) {
 		if (!($result = static::_cache(__FUNCTION__, $tableName))) {
-			$result = Inflector::camelize(Inflector::singularize($tableName));
+			$result = static::camelize(static::singularize($tableName));
 			static::_cache(__FUNCTION__, $tableName, $result);
 		}
 		return $result;
@@ -653,7 +670,7 @@ class Inflector {
  */
 	public static function variable($string) {
 		if (!($result = static::_cache(__FUNCTION__, $string))) {
-			$camelized = Inflector::camelize(Inflector::underscore($string));
+			$camelized = static::camelize(static::underscore($string));
 			$replace = strtolower(substr($camelized, 0, 1));
 			$result = preg_replace('/\\w/', $replace, $camelized, 1);
 			static::_cache(__FUNCTION__, $string, $result);
