@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
+use Cake\Core\Configure;
+use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestCase;
 
@@ -22,9 +24,19 @@ use Cake\TestSuite\IntegrationTestCase;
  */
 class IntegrationTestCaseTest extends IntegrationTestCase {
 
+/**
+ * Setup method
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
-		Router::connect('/:controller/:action/*');
+		Configure::write('App.namespace', 'TestApp');
+
+		Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
+		DispatcherFactory::clear();
+		DispatcherFactory::add('Routing');
+		DispatcherFactory::add('ControllerFactory');
 	}
 
 /**
@@ -45,6 +57,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 		$this->assertEquals('tasks/add', $request->url);
 		$this->assertEquals(['split_token' => 'def345'], $request->cookies);
 		$this->assertEquals(['id' => '1', 'username' => 'mark'], $request->session()->read('User'));
+	}
+
+/**
+ * Test sending get requests.
+ *
+ * @return void
+ */
+	public function testSendingGet() {
+		$this->assertNull($this->_response);
+
+		$this->get('/request_action/test_request_action');
+		$this->assertNotEmpty($this->_response);
+		$this->assertInstanceOf('Cake\Network\Response', $this->_response);
 	}
 
 }

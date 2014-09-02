@@ -19,6 +19,7 @@ use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Stub\Response;
 
 /**
  * A test case class intended to make integration tests of
@@ -32,7 +33,20 @@ use Cake\TestSuite\TestCase;
  */
 class IntegrationTestCase extends TestCase {
 
+/**
+ * The data used to build the next request.
+ *
+ * @var array
+ */
 	protected $_request = [];
+
+/**
+ * The response for the most recent request.
+ *
+ * @var \Cake\Network\Response
+ */
+	protected $_response;
+
 	protected $_session = [];
 	protected $_cookie = [];
 
@@ -46,6 +60,7 @@ class IntegrationTestCase extends TestCase {
 		$this->_request = [];
 		$this->_session = [];
 		$this->_cookie = [];
+		$this->_response = null;
 	}
 
 /**
@@ -183,6 +198,10 @@ class IntegrationTestCase extends TestCase {
  */
 	protected function _sendRequest($url, $method, $data = null) {
 		$request = $this->_buildRequest($url, $method, $data);
+		$response = new Response();
+		$dispatcher = DispatcherFactory::create();
+		$dispatcher->dispatch($request, $response);
+		$this->_response = $response;
 	}
 
 /**
@@ -211,7 +230,6 @@ class IntegrationTestCase extends TestCase {
 			unset($this->_request['headers']);
 		}
 		$props += $this->_request;
-
 		return new Request($props);
 	}
 
