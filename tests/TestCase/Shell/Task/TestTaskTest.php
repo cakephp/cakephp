@@ -233,6 +233,7 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testFixtureArrayGenerationIgnoreSelfAssociation() {
+		TableRegistry::clear();
 		$subject = new CategoryThreadsTable();
 		$result = $this->Task->generateFixtureList($subject);
 		$expected = [
