@@ -105,4 +105,17 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 		$this->assertResponseFailure();
 	}
 
+/**
+ * Test the location header assertion.
+ *
+ * @return void
+ */
+	public function testAssertRedirect() {
+		$this->_response = new Response();
+		$this->_response->header('Location', 'http://localhost/tasks/index');
+
+		$this->assertRedirect('/tasks/index');
+		$this->assertRedirect(['controller' => 'Tasks', 'action' => 'index']);
+	}
+
 }

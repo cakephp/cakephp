@@ -18,6 +18,7 @@ use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\Stub\Response;
 
@@ -279,6 +280,24 @@ class IntegrationTestCase extends TestCase {
 		$status = $this->_response->statusCode();
 		$this->assertGreaterThanOrEqual($min, $status, $message);
 		$this->assertLessThanOrEqual($max, $status, $message);
+	}
+
+/**
+ * Assert that the Location header is correct.
+ *
+ * @param string|array $url The url you expected the client to go to. This
+ *   cane either be a string URL or an array compatible with Router::url()
+ * @return void
+ */
+	public function assertRedirect($url, $message = '') {
+		if (!$this->_response) {
+			$this->fail('Not response set, cannot assert location header. ' . $message);
+		}
+		$result = $this->_response->header();
+		if (empty($result['Location'])) {
+			$this->fail('No location header set. ' . $message);
+		}
+		$this->assertEquals(Router::url($url, ['_full' => true]), $result['Location']);
 	}
 
 }
