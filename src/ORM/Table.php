@@ -1440,8 +1440,6 @@ class Table implements RepositoryInterface, EventListener {
  * @throws \BadMethodCallException
  */
 	public function callFinder($type, Query $query, array $options = []) {
-	#	var_dump($type);
-	#	die('.');
 		if (is_array($type)) {
 			list($type, $options) = $this->_inferFinderTypeAndOptions($type, $options);
 		}
@@ -1948,24 +1946,23 @@ class Table implements RepositoryInterface, EventListener {
  * @return array
  */
 	protected function _inferFinderTypeAndOptions(array $type) {
-		$_options = [];
-		$_type = $type;
-		if (count($_type)) {
-			$v = array_values($_type)[0];
-			$k = array_keys($_type)[0];
+		$options = [];
+		if (count($type)) {
+			$v = array_values($type)[0];
+			$k = array_keys($type)[0];
 			if (is_array($v)) {
-				$_type = $k;
-				$_options = $v;
+				$type = $k;
+				$options = $v;
 			} elseif (is_string($v) && !$k) {
-				$_type = $v;
+				$type = $v;
 			} elseif (is_string($v)) {
-				$_type = $k;
-				$_options = [$v];
+				$type = $k;
+				$options = [$v];
 			}
 		}
 		return [
-			$_type,
-			$_options
+			$type,
+			$options
 		];
 	}
 
