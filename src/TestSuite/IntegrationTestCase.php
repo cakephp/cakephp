@@ -212,8 +212,33 @@ class IntegrationTestCase extends TestCase {
 		$request = $this->_buildRequest($url, $method, $data);
 		$response = new Response();
 		$dispatcher = DispatcherFactory::create();
-		$dispatcher->dispatch($request, $response);
-		$this->_response = $response;
+		try {
+			$dispatcher->dispatch($request, $response);
+			$this->_response = $response;
+		} catch (\PHPUnit_Exception $e) {
+			throw $e;
+		} catch (\Exception $e) {
+			$this->_handleError($e);
+		}
+	}
+
+/**
+ * Attempt to render an error response for a given exception.
+ *
+ * This method will attempt to use the configured exception renderer.
+ * If that class does not exist, the built-in renderer will be used.
+ *
+ * @param \Exception $exception Exception to handle.
+ * @return void
+ * @throws \Exception
+ */
+	protected function _handleError($exception) {
+		$class = Configure::read('Error.exceptionRenderer');
+		if (empty($class) || !class_exists($class)) {
+			$class = 'Cake\Error\ExceptionRenderer';
+		}
+		$instance = new $class($exception);
+		$this->_response = $instance->render();
 	}
 
 /**

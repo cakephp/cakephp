@@ -66,13 +66,22 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
  *
  * @return void
  */
-	public function testSendingGet() {
+	public function testGet() {
 		$this->assertNull($this->_response);
 
 		$this->get('/request_action/test_request_action');
 		$this->assertNotEmpty($this->_response);
 		$this->assertInstanceOf('Cake\Network\Response', $this->_response);
 		$this->assertEquals('This is a test', $this->_response->body());
+	}
+
+/**
+ *
+ */
+	public function testPostAndErrorHandling() {
+		$this->post('/request_action/error_method');
+		$this->assertResponseContains('Not there or here');
+		$this->assertResponseContains('<!DOCTYPE html>');
 	}
 
 /**
