@@ -128,7 +128,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 	}
 
 /**
- * Test the header assertino
+ * Test the header assertion.
  *
  * @return void
  */
@@ -140,7 +140,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 	}
 
 /**
- * Test the content type assertino
+ * Test the content type assertion.
  *
  * @return void
  */
