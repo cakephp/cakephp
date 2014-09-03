@@ -162,6 +162,7 @@ trait SelectableAssociationTrait {
 	protected function _buildSubquery($query) {
 		$filterQuery = clone $query;
 		$filterQuery->limit(null);
+		$filterQuery->offset(null);
 		$filterQuery->order([], true);
 		$filterQuery->contain([], true);
 		$joins = $filterQuery->join();

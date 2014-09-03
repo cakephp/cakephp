@@ -39,7 +39,8 @@ class QueryRegressionTest extends TestCase {
 		'core.tag',
 		'core.articles_tag',
 		'core.author',
-		'core.special_tag'
+		'core.special_tag',
+		'core.translate',
 	];
 
 /**
@@ -372,6 +373,55 @@ class QueryRegressionTest extends TestCase {
 			$result->author->id,
 			'No SQL error and author exists.'
 		);
+	}
+
+/**
+ * Tests that loading associations having the same alias in the
+ * joinable associations chain is not sensitive to the order in which
+ * the associations are selected.
+ *
+ * @see https://github.com/cakephp/cakephp/issues/4454
+ * @return void
+ */
+	public function testAssociationChainOrder() {
+		$articles = TableRegistry::get('Articles');
+		$articles->belongsTo('Authors');
+		$articles->hasOne('ArticlesTags');
+
+		$articlesTags = TableRegistry::get('ArticlesTags');
+		$articlesTags->belongsTo('Authors', [
+			'foreignKey' => 'tag_id'
+		]);
+
+		$resultA = $articles->find()
+			->contain(['ArticlesTags.Authors', 'Authors'])
+			->first();
+
+		$resultB = $articles->find()
+			->contain(['Authors', 'ArticlesTags.Authors'])
+			->first();
+
+		$this->assertEquals($resultA, $resultB);
+		$this->assertNotEmpty($resultA->author);
+		$this->assertNotEmpty($resultA->articles_tag->author);
+	}
+
+/**
+ * Test that offset/limit are elided from subquery loads.
+ *
+ * @return void
+ */
+	public function testAssociationSubQueryNoOffset() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->locale('eng');
+		$query = $table->find('translations')->limit(10)->offset(1);
+		$result = $query->toArray();
+		$this->assertCount(2, $result);
+
+		$query = $table->find('translations')->having(['Articles.id >' => 1]);
+		$result = $query->toArray();
+		$this->assertCount(2, $result);
 	}
 
 }
