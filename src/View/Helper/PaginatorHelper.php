@@ -34,7 +34,7 @@ class PaginatorHelper extends Helper {
  *
  * @var array
  */
-	public $helpers = ['Url'];
+	public $helpers = ['Url', 'Number'];
 
 /**
  * Defualt config for this class
@@ -556,13 +556,16 @@ class PaginatorHelper extends Helper {
 				$template = 'counterCustom';
 				$this->templater()->add([$template => $options['format']]);
 		}
-		$map = [
+		$map = array_map([$this->Number, 'format'], [
 			'page' => $paging['page'],
 			'pages' => $paging['pageCount'],
 			'current' => $paging['current'],
 			'count' => $paging['count'],
 			'start' => $start,
-			'end' => $end,
+			'end' => $end
+		]);
+
+		$map += [
 			'model' => strtolower(Inflector::humanize(Inflector::tableize($options['model'])))
 		];
 		return $this->templater()->format($template, $map);

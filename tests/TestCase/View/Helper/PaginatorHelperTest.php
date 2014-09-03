@@ -1870,6 +1870,36 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
+ * Tests that numbers are formatted according to the locale when using counter()
+ *
+ * @return void
+ */
+	public function testCounterBigNumbers() {
+		$this->Paginator->request->params['paging'] = [
+			'Client' => [
+				'page' => 1523,
+				'current' => 1230,
+				'count' => 234567,
+				'perPage' => 3000,
+				'prevPage' => false,
+				'nextPage' => true,
+				'pageCount' => 1000,
+				'limit' => 5000,
+				'sort' => 'Client.name',
+				'order' => 'DESC',
+			]
+		];
+
+		$input = 'Page {{page}} of {{pages}}, showing {{current}} records out of {{count}} total, ';
+		$input .= 'starting on record {{start}}, ending on {{end}}';
+
+		$expected = 'Page 1,523 of 1,000, showing 1,230 records out of 234,567 total, ';
+		$expected .= 'starting on record 4,566,001, ending on 234,567';
+		$result = $this->Paginator->counter($input);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testHasPage method
  *
  * @return void
