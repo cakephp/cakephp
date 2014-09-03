@@ -48,7 +48,10 @@ class ConsoleLog extends BaseLog {
  */
 	public function __construct($config = array()) {
 		parent::__construct($config);
-		if (DS === '\\' && !(bool)env('ANSICON')) {
+		if (
+			(DS === '\\' && !(bool)env('ANSICON')) ||
+			(function_exists('posix_isatty') && !posix_isatty($this->_output))
+		) {
 			$outputAs = ConsoleOutput::PLAIN;
 		} else {
 			$outputAs = ConsoleOutput::COLOR;
