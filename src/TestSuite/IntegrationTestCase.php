@@ -313,6 +313,44 @@ class IntegrationTestCase extends TestCase {
 	}
 
 /**
+ * Assert response headers
+ *
+ * @param string $header The header to check
+ * @param string $content The content to check for.
+ * @param string $message The failure message that will be appended to the generated message.
+ * @return void
+ */
+	public function assertHeader($header, $content, $message = '') {
+		if (!$this->_response) {
+			$this->fail('No response set, cannot assert headers. ' . $message);
+		}
+		$headers = $this->_response->header();
+		if (!isset($headers[$header])) {
+			$this->fail("The '$header' header is not set. " . $message);
+		}
+		$this->assertEquals($headers[$header], $content, $message);
+	}
+
+/**
+ * Assert content type
+ *
+ * @param string $type The content-type to check for.
+ * @param string $message The failure message that will be appended to the generated message.
+ * @return void
+ */
+	public function assertContentType($type, $message = '') {
+		if (!$this->_response) {
+			$this->fail('No response set, cannot assert content-type. ' . $message);
+		}
+		$alias = $this->_response->getMimeType($type);
+		if ($alias !== false) {
+			$type = $alias;
+		}
+		$result = $this->_response->type();
+		$this->assertEquals($type, $result, $message);
+	}
+
+/**
  * Assert content exists in the response body.
  *
  * @param string $content The content to check for.

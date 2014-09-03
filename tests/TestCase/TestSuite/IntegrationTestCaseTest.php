@@ -119,6 +119,31 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 	}
 
 /**
+ * Test the header assertino
+ *
+ * @return void
+ */
+	public function testAssertHeader() {
+		$this->_response = new Response();
+		$this->_response->header('Etag', 'abc123');
+
+		$this->assertHeader('Etag', 'abc123');
+	}
+
+/**
+ * Test the content type assertino
+ *
+ * @return void
+ */
+	public function testAssertContentType() {
+		$this->_response = new Response();
+		$this->_response->type('json');
+
+		$this->assertContentType('json');
+		$this->assertContentType('application/json');
+	}
+
+/**
  * Test the content assertion.
  *
  * @return void
