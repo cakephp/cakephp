@@ -244,7 +244,7 @@ class ErrorHandlerTest extends TestCase {
 		$this->_logger->expects($this->once())
 			->method('write')
 			->with('error', $this->logicalAnd(
-				$this->stringContains('[Cake\NEtwork\Exception\NotFoundException] Kaboom!'),
+				$this->stringContains('[Cake\Network\Exception\NotFoundException] Kaboom!'),
 				$this->stringContains('ErrorHandlerTest->testHandleExceptionLog')
 			));
 
