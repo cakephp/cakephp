@@ -48,7 +48,18 @@ class IntegrationTestCase extends TestCase {
  */
 	protected $_response;
 
+/**
+ * Session data to use in the next request.
+ *
+ * @var array
+ */
 	protected $_session = [];
+
+/**
+ * Cookie data to use in the next request.
+ *
+ * @var array
+ */
 	protected $_cookie = [];
 
 /**
@@ -65,7 +76,7 @@ class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Configure the data for tne *next* request.
+ * Configure the data for the *next* request.
  *
  * This data is cleared in the tearDown() method.
  *
@@ -286,12 +297,12 @@ class IntegrationTestCase extends TestCase {
  * Assert that the Location header is correct.
  *
  * @param string|array $url The url you expected the client to go to. This
- *   cane either be a string URL or an array compatible with Router::url()
+ *   can either be a string URL or an array compatible with Router::url()
  * @return void
  */
 	public function assertRedirect($url, $message = '') {
 		if (!$this->_response) {
-			$this->fail('Not response set, cannot assert location header. ' . $message);
+			$this->fail('No response set, cannot assert location header. ' . $message);
 		}
 		$result = $this->_response->header();
 		if (empty($result['Location'])) {
