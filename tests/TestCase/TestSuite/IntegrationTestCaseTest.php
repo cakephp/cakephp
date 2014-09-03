@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         2.0.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\TestSuite;
@@ -116,6 +116,18 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 
 		$this->assertRedirect('/tasks/index');
 		$this->assertRedirect(['controller' => 'Tasks', 'action' => 'index']);
+	}
+
+/**
+ * Test the content assertion.
+ *
+ * @return void
+ */
+	public function testAssertResponseContains() {
+		$this->_response = new Response();
+		$this->_response->body('Some content');
+
+		$this->assertResponseContains('content');
 	}
 
 }

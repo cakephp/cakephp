@@ -298,6 +298,7 @@ class IntegrationTestCase extends TestCase {
  *
  * @param string|array $url The url you expected the client to go to. This
  *   can either be a string URL or an array compatible with Router::url()
+ * @param string $message The failure message that will be appended to the generated message.
  * @return void
  */
 	public function assertRedirect($url, $message = '') {
@@ -308,7 +309,21 @@ class IntegrationTestCase extends TestCase {
 		if (empty($result['Location'])) {
 			$this->fail('No location header set. ' . $message);
 		}
-		$this->assertEquals(Router::url($url, ['_full' => true]), $result['Location']);
+		$this->assertEquals(Router::url($url, ['_full' => true]), $result['Location'], $message);
+	}
+
+/**
+ * Assert content exists in the response body.
+ *
+ * @param string $content The content to check for.
+ * @param string $message The failure message that will be appended to the generated message.
+ * @return void
+ */
+	public function assertResponseContains($content, $message = '') {
+		if (!$this->_response) {
+			$this->fail('No response set, cannot assert content. ' . $message);
+		}
+		$this->assertContains($content, $this->_response->body(), $message);
 	}
 
 }
