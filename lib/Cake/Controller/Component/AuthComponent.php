@@ -692,7 +692,7 @@ class AuthComponent extends Component {
  *
  * @param string|array $url Optional URL to write as the login redirect URL.
  * @return string Redirect URL
- * @deprecated 2.3 Use AuthComponent::redirectUrl() instead
+ * @deprecated 3.0.0 Since 2.3.0, use AuthComponent::redirectUrl() instead
  */
 	public function redirect($url = null) {
 		return $this->redirectUrl($url);
@@ -804,7 +804,7 @@ class AuthComponent extends Component {
  *
  * @param string $password Password to hash
  * @return string Hashed password
- * @deprecated Since 2.4. Use Security::hash() directly or a password hasher object.
+ * @deprecated 3.0.0 Since 2.4. Use Security::hash() directly or a password hasher object.
  */
 	public static function password($password) {
 		return Security::hash($password, null, true);
@@ -814,7 +814,7 @@ class AuthComponent extends Component {
  * Check whether or not the current user has data in the session, and is considered logged in.
  *
  * @return bool true if the user is logged in, false otherwise
- * @deprecated Since 2.5. Use AuthComponent::user() directly.
+ * @deprecated 3.0.0 Since 2.5. Use AuthComponent::user() directly.
  */
 	public function loggedIn() {
 		return (bool)$this->user();

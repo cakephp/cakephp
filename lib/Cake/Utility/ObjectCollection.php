@@ -268,7 +268,7 @@ abstract class ObjectCollection {
  *   returns an array of currently-attached objects
  * @return mixed If $name is specified, returns the boolean status of the corresponding object.
  *    Otherwise, returns an array of all attached objects.
- * @deprecated Will be removed in 3.0. Use loaded instead.
+ * @deprecated 3.0.0 Will be removed in 3.0. Use loaded instead.
  */
 	public function attached($name = null) {
 		return $this->loaded($name);

@@ -23,7 +23,7 @@ App::uses('Hash', 'Utility');
  * Class used for manipulation of arrays.
  *
  * @package       Cake.Utility
- * @deprecated Will be removed in 3.0. Use Hash instead.
+ * @deprecated 3.0.0 Will be removed in 3.0. Use Hash instead.
  */
 class Set {
 
