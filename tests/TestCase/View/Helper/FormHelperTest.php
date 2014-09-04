@@ -547,6 +547,23 @@ class FormHelperTest extends TestCase {
 			'/div'
 		);
 		$this->assertHtml($expected, $result);
+
+		Router::connect(
+			'/new-article',
+			['controller' => 'articles', 'action' => 'myaction'],
+			['_name' => 'my-route']
+		);
+		$result = $this->Form->create(false, ['url' => ['_name' => 'my-route']]);
+		$expected = array(
+			'form' => array(
+				'method' => 'post', 'action' => '/new-article',
+				'accept-charset' => $encoding,
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -6092,7 +6109,7 @@ class FormHelperTest extends TestCase {
 /**
  * Test errors when field name is missing.
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testHtml5InputException() {

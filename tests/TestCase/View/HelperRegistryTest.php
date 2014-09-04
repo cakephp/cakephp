@@ -95,7 +95,7 @@ class HelperRegistryTest extends TestCase {
 /**
  * test lazy loading of helpers
  *
- * @expectedException \Cake\View\Error\MissingHelperException
+ * @expectedException \Cake\View\Exception\MissingHelperException
  * @return void
  */
 	public function testLazyLoadException() {
@@ -161,7 +161,7 @@ class HelperRegistryTest extends TestCase {
 /**
  * test missinghelper exception
  *
- * @expectedException \Cake\View\Error\MissingHelperException
+ * @expectedException \Cake\View\Exception\MissingHelperException
  * @return void
  */
 	public function testLoadMissingHelper() {

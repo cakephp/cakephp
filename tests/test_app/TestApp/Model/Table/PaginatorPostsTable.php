@@ -52,4 +52,18 @@ class PaginatorPostsTable extends Table {
 		return $query;
 	}
 
+/**
+ * Custom finder, used with fixture data to ensure Paginator is sending options
+ *
+ * @param Cake\ORM\Query $query
+ * @param array $options
+ * @return Cake\ORM\Query
+ */
+	public function findAuthor(Query $query, array $options = []) {
+		if (isset($options['author_id'])) {
+			$query->where(['PaginatorPosts.author_id' => $options['author_id']]);
+		}
+		return $query;
+	}
+
 }

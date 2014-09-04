@@ -18,13 +18,13 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
-use Cake\Core\Configure;
-use Cake\Error;
+use Cake\Core\Exception\Exception;
+use Cake\Error\Debugger;
 use Cake\Event\Event;
+use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
-use Cake\Utility\Debugger;
 use Cake\Utility\Hash;
 
 /**
@@ -249,10 +249,6 @@ class AuthComponent extends Component {
 		$this->response = $controller->response;
 		$this->_methods = $controller->methods;
 		$this->session = $controller->request->session();
-
-		if (Configure::read('debug')) {
-			Debugger::checkSecurityKeys();
-		}
 	}
 
 /**
@@ -339,7 +335,7 @@ class AuthComponent extends Component {
 		if (empty($this->_authenticateObjects)) {
 			$this->constructAuthenticate();
 		}
-		$auth = $this->_authenticateObjects[count($this->_authenticateObjects) - 1];
+		$auth = end($this->_authenticateObjects);
 		$result = $auth->unauthenticated($this->request, $this->response);
 		if ($result !== null) {
 			return $result;
@@ -395,11 +391,11 @@ class AuthComponent extends Component {
  *
  * @param \Cake\Controller\Controller $controller A reference to the controller object
  * @return \Cake\Network\Response
- * @throws \Cake\Error\ForbiddenException
+ * @throws \Cake\Network\Exception\ForbiddenException
  */
 	protected function _unauthorized(Controller $controller) {
 		if ($this->_config['unauthorizedRedirect'] === false) {
-			throw new Error\ForbiddenException($this->_config['authError']);
+			throw new ForbiddenException($this->_config['authError']);
 		}
 
 		$this->flash($this->_config['authError']);
@@ -483,7 +479,7 @@ class AuthComponent extends Component {
  * Loads the authorization objects configured.
  *
  * @return mixed Either null when authorize is empty, or the loaded authorization objects.
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	public function constructAuthorize() {
 		if (empty($this->_config['authorize'])) {
@@ -496,18 +492,38 @@ class AuthComponent extends Component {
 			$global = $authorize[AuthComponent::ALL];
 			unset($authorize[AuthComponent::ALL]);
 		}
-		foreach ($authorize as $class => $config) {
+		foreach ($authorize as $alias => $config) {
+			if (!empty($config['className'])) {
+				$class = $config['className'];
+				unset($config['className']);
+			} else {
+				$class = $alias;
+			}
 			$className = App::className($class, 'Auth', 'Authorize');
 			if (!class_exists($className)) {
-				throw new Error\Exception(sprintf('Authorization adapter "%s" was not found.', $class));
+				throw new Exception(sprintf('Authorization adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authorize')) {
-				throw new Error\Exception('Authorization objects must implement an authorize() method.');
+				throw new Exception('Authorization objects must implement an authorize() method.');
 			}
 			$config = (array)$config + $global;
-			$this->_authorizeObjects[] = new $className($this->_registry, $config);
+			$this->_authorizeObjects[$alias] = new $className($this->_registry, $config);
 		}
 		return $this->_authorizeObjects;
+	}
+
+/**
+ * Getter for authorize objects. Will return a particular authorize object.
+ *
+ * @param string $alias Alias for the authorize object
+ * @return \Cake\Auth\BaseAuthorize|null
+ */
+	public function getAuthorize($alias) {
+		if (empty($this->_authorizeObjects)) {
+			$this->constructAuthorize();
+		}
+
+		return isset($this->_authorizeObjects[$alias]) ? $this->_authorizeObjects[$alias] : null;
 	}
 
 /**
@@ -558,27 +574,6 @@ class AuthComponent extends Component {
 			}
 		}
 		$this->allowedActions = array_values($this->allowedActions);
-	}
-
-/**
- * Maps action names to CRUD operations.
- *
- * Used for controller-based authentication. Make sure
- * to configure the authorize property before calling this method. As it delegates $map to all the
- * attached authorize objects.
- *
- * @param array $map Actions to map
- * @return void
- * @see BaseAuthorize::mapActions()
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#mapping-actions-when-using-crudauthorize
- */
-	public function mapActions(array $map = array()) {
-		if (empty($this->_authorizeObjects)) {
-			$this->constructAuthorize();
-		}
-		foreach ($this->_authorizeObjects as $auth) {
-			$auth->mapActions($map);
-		}
 	}
 
 /**
@@ -741,7 +736,7 @@ class AuthComponent extends Component {
  * Loads the configured authentication objects.
  *
  * @return mixed either null on empty authenticate value, or an array of loaded objects.
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  */
 	public function constructAuthenticate() {
 		if (empty($this->_config['authenticate'])) {
@@ -754,22 +749,39 @@ class AuthComponent extends Component {
 			$global = $authenticate[AuthComponent::ALL];
 			unset($authenticate[AuthComponent::ALL]);
 		}
-		foreach ($authenticate as $class => $config) {
+		foreach ($authenticate as $alias => $config) {
 			if (!empty($config['className'])) {
 				$class = $config['className'];
 				unset($config['className']);
+			} else {
+				$class = $alias;
 			}
 			$className = App::className($class, 'Auth', 'Authenticate');
 			if (!class_exists($className)) {
-				throw new Error\Exception(sprintf('Authentication adapter "%s" was not found.', $class));
+				throw new Exception(sprintf('Authentication adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authenticate')) {
-				throw new Error\Exception('Authentication objects must implement an authenticate() method.');
+				throw new Exception('Authentication objects must implement an authenticate() method.');
 			}
 			$config = array_merge($global, (array)$config);
-			$this->_authenticateObjects[] = new $className($this->_registry, $config);
+			$this->_authenticateObjects[$alias] = new $className($this->_registry, $config);
 		}
 		return $this->_authenticateObjects;
+	}
+
+/**
+ * Getter for authenticate objects. Will return a particular authenticate object.
+ *
+ * @param string $alias Alias for the authenticate object
+ *
+ * @return \Cake\Auth\BaseAuthenticate|null
+ */
+	public function getAuthenticate($alias) {
+		if (empty($this->_authenticateObjects)) {
+			$this->constructAuthenticate();
+		}
+
+		return isset($this->_authenticateObjects[$alias]) ? $this->_authenticateObjects[$alias] : null;
 	}
 
 /**

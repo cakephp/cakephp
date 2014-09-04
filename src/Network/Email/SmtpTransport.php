@@ -16,6 +16,7 @@ namespace Cake\Network\Email;
 
 use Cake\Network\Error;
 use Cake\Network\Socket;
+use Cake\Network\Exception\SocketException;
 
 /**
  * Send mail using SMTP protocol
@@ -151,7 +152,7 @@ class SmtpTransport extends AbstractTransport {
  *
  * @param \Cake\Network\Email\Email $email Cake Email
  * @return array
- * @throws \Cake\Network\Error\SocketException
+ * @throws \Cake\Network\Exception\SocketException
  */
 	public function send(Email $email) {
 		$this->_cakeEmail = $email;
@@ -196,12 +197,12 @@ class SmtpTransport extends AbstractTransport {
  * Connect to SMTP Server
  *
  * @return void
- * @throws \Cake\Network\Error\SocketException
+ * @throws \Cake\Network\Exception\SocketException
  */
 	protected function _connect() {
 		$this->_generateSocket();
 		if (!$this->_socket->connect()) {
-			throw new Error\SocketException('Unable to connect to SMTP server.');
+			throw new SocketException('Unable to connect to SMTP server.');
 		}
 		$this->_smtpSend(null, '220');
 
@@ -222,14 +223,14 @@ class SmtpTransport extends AbstractTransport {
 				$this->_socket->enableCrypto('tls');
 				$this->_smtpSend("EHLO {$host}", '250');
 			}
-		} catch (Error\SocketException $e) {
+		} catch (SocketException $e) {
 			if ($config['tls']) {
-				throw new Error\SocketException('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.');
+				throw new SocketException('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.');
 			}
 			try {
 				$this->_smtpSend("HELO {$host}", '250');
-			} catch (Error\SocketException $e2) {
-				throw new Error\SocketException('SMTP server did not accept the connection.');
+			} catch (SocketException $e2) {
+				throw new SocketException('SMTP server did not accept the connection.');
 			}
 		}
 	}
@@ -238,7 +239,7 @@ class SmtpTransport extends AbstractTransport {
  * Send authentication
  *
  * @return void
- * @throws \Cake\Network\Error\SocketException
+ * @throws \Cake\Network\Exception\SocketException
  */
 	protected function _auth() {
 		if (isset($this->_config['username']) && isset($this->_config['password'])) {
@@ -246,18 +247,18 @@ class SmtpTransport extends AbstractTransport {
 			if ($replyCode == '334') {
 				try {
 					$this->_smtpSend(base64_encode($this->_config['username']), '334');
-				} catch (Error\SocketException $e) {
-					throw new Error\SocketException('SMTP server did not accept the username.');
+				} catch (SocketException $e) {
+					throw new SocketException('SMTP server did not accept the username.');
 				}
 				try {
 					$this->_smtpSend(base64_encode($this->_config['password']), '235');
-				} catch (Error\SocketException $e) {
-					throw new Error\SocketException('SMTP server did not accept the password.');
+				} catch (SocketException $e) {
+					throw new SocketException('SMTP server did not accept the password.');
 				}
 			} elseif ($replyCode == '504') {
-				throw new Error\SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS.');
+				throw new SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS.');
 			} else {
-				throw new Error\SocketException('AUTH command not recognized or not implemented, SMTP server may not require authentication.');
+				throw new SocketException('AUTH command not recognized or not implemented, SMTP server may not require authentication.');
 			}
 		}
 	}
@@ -338,7 +339,7 @@ class SmtpTransport extends AbstractTransport {
  * Send emails
  *
  * @return void
- * @throws \Cake\Network\Error\SocketException
+ * @throws \Cake\Network\Exception\SocketException
  */
 	protected function _sendRcpt() {
 		$from = $this->_prepareFromAddress();
@@ -354,7 +355,7 @@ class SmtpTransport extends AbstractTransport {
  * Send Data
  *
  * @return void
- * @throws \Cake\Network\Error\SocketException
+ * @throws \Cake\Network\Exception\SocketException
  */
 	protected function _sendData() {
 		$this->_smtpSend('DATA', '354');
@@ -370,7 +371,7 @@ class SmtpTransport extends AbstractTransport {
  * Disconnect
  *
  * @return void
- * @throws \Cake\Network\Error\SocketException
+ * @throws \Cake\Network\Exception\SocketException
  */
 	protected function _disconnect() {
 		$this->_smtpSend('QUIT', false);
@@ -381,7 +382,7 @@ class SmtpTransport extends AbstractTransport {
  * Helper method to generate socket
  *
  * @return void
- * @throws \Cake\Network\Error\SocketException
+ * @throws \Cake\Network\Exception\SocketException
  */
 	protected function _generateSocket() {
 		$this->_socket = new Socket($this->_config);
@@ -393,7 +394,7 @@ class SmtpTransport extends AbstractTransport {
  * @param string $data data to be sent to SMTP server
  * @param string|bool $checkCode code to check for in server response, false to skip
  * @return void
- * @throws \Cake\Network\Error\SocketException
+ * @throws \Cake\Network\Exception\SocketException
  */
 	protected function _smtpSend($data, $checkCode = '250') {
 		$this->_lastResponse = array();
@@ -411,7 +412,7 @@ class SmtpTransport extends AbstractTransport {
 				$response .= $this->_socket->read();
 			}
 			if (substr($response, -2) !== "\r\n") {
-				throw new Error\SocketException('SMTP timeout.');
+				throw new SocketException('SMTP timeout.');
 			}
 			$responseLines = explode("\r\n", rtrim($response, "\r\n"));
 			$response = end($responseLines);
@@ -424,7 +425,7 @@ class SmtpTransport extends AbstractTransport {
 				}
 				return $code[1];
 			}
-			throw new Error\SocketException(sprintf('SMTP Error: %s', $response));
+			throw new SocketException(sprintf('SMTP Error: %s', $response));
 		}
 	}
 

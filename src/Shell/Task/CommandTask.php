@@ -18,10 +18,10 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
+use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
-use Cake\Utility\Folder;
-use \ReflectionClass;
-use \ReflectionMethod;
+use ReflectionClass;
+use ReflectionMethod;
 
 /**
  * Base class for Shell Command reflection.

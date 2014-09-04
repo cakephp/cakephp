@@ -15,9 +15,9 @@
 namespace Cake\Core;
 
 use Cake\Cache\Cache;
-use Cake\Configure\ConfigEngineInterface;
-use Cake\Configure\Engine\PhpConfig;
-use Cake\Error\Exception;
+use Cake\Core\Configure\ConfigEngineInterface;
+use Cake\Core\Configure\Engine\PhpConfig;
+use Cake\Core\Exception\Exception;
 use Cake\Utility\Hash;
 
 /**
@@ -281,7 +281,7 @@ class Configure {
  * @param array $keys The name of the top-level keys you want to dump.
  *   This allows you save only some data stored in Configure.
  * @return bool success
- * @throws \Cake\Error\Exception if the adapter does not implement a `dump` method.
+ * @throws \Cake\Core\Exception\Exception if the adapter does not implement a `dump` method.
  */
 	public static function dump($key, $config = 'default', $keys = []) {
 		$engine = static::_getEngine($config);

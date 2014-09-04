@@ -117,7 +117,7 @@ class ControllerTask extends BakeTask {
 
 		$prefix = '';
 		if (isset($this->params['prefix'])) {
-			$prefix = '\\' . $this->params['prefix'];
+			$prefix = '\\' . $this->_camelize($this->params['prefix']);
 		}
 
 		$namespace = Configure::read('App.namespace');
@@ -194,7 +194,7 @@ class ControllerTask extends BakeTask {
 		$this->Test->plugin = $this->plugin;
 		$this->Test->connection = $this->connection;
 		if (!empty($this->params['prefix'])) {
-			$className = $this->params['prefix'] . '\\' . $className;
+			$className = $this->_camelize($this->params['prefix']) . '\\' . $className;
 		}
 		return $this->Test->bake('Controller', $className);
 	}

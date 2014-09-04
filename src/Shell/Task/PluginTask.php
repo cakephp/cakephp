@@ -14,11 +14,11 @@
  */
 namespace Cake\Shell\Task;
 
-use Cake\Shell\Task\BakeTask;
 use Cake\Console\Shell;
 use Cake\Core\App;
-use Cake\Utility\File;
-use Cake\Utility\Folder;
+use Cake\Filesystem\File;
+use Cake\Filesystem\Folder;
+use Cake\Shell\Task\BakeTask;
 
 /**
  * The Plugin Task handles creating an empty plugin, ready to be used

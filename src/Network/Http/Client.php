@@ -14,8 +14,8 @@
 namespace Cake\Network\Http;
 
 use Cake\Core\App;
+use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Error;
 use Cake\Network\Http\CookieCollection;
 use Cake\Network\Http\Request;
 use Cake\Utility\Hash;
@@ -397,7 +397,7 @@ class Client {
  *
  * @param string $type short type alias or full mimetype.
  * @return array Headers to set on the request.
- * @throws \Cake\Error\Exception When an unknown type alias is used.
+ * @throws \Cake\Core\Exception\Exception When an unknown type alias is used.
  */
 	protected function _typeHeaders($type) {
 		if (strpos($type, '/') !== false) {
@@ -411,7 +411,7 @@ class Client {
 			'xml' => 'application/xml',
 		];
 		if (!isset($typeMap[$type])) {
-			throw new Error\Exception('Unknown type alias.');
+			throw new Exception('Unknown type alias.');
 		}
 		return [
 			'Accept' => $typeMap[$type],
@@ -460,7 +460,7 @@ class Client {
  * @param array $auth The authentication options to use.
  * @param array $options The overall request options to use.
  * @return mixed Authentication strategy instance.
- * @throws \Cake\Error\Exception when an invalid stratgey is chosen.
+ * @throws \Cake\Core\Exception\Exception when an invalid stratgey is chosen.
  */
 	protected function _createAuth($auth, $options) {
 		if (empty($auth['type'])) {
@@ -469,7 +469,7 @@ class Client {
 		$name = ucfirst($auth['type']);
 		$class = App::className($name, 'Network/Http/Auth');
 		if (!$class) {
-			throw new Error\Exception(
+			throw new Exception(
 				sprintf('Invalid authentication type %s', $name)
 			);
 		}

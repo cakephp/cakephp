@@ -18,7 +18,7 @@ use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Error\XmlException;
+use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Xml;
 
 /**
@@ -168,7 +168,7 @@ class XmlTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidDataProvider
- * @expectedException \Cake\Error\Exception
+ * @expectedException RuntimeException
  * @return void
  */
 	public function testBuildInvalidData($value) {
@@ -178,12 +178,12 @@ class XmlTest extends TestCase {
 /**
  * Test that building SimpleXmlElement with invalid XML causes the right exception.
  *
- * @expectedException \Cake\Utility\Error\XmlException
+ * @expectedException \Cake\Utility\Exception\XmlException
  * @return void
  */
 	public function testBuildInvalidDataSimpleXml() {
 		$input = '<derp';
-		$xml = Xml::build($input, array('return' => 'simplexml'));
+		Xml::build($input, array('return' => 'simplexml'));
 	}
 
 /**
@@ -536,15 +536,11 @@ XML;
  * testFromArrayFail method
  *
  * @dataProvider invalidArrayDataProvider
+ * @expectedException Exception
  * @return void
  */
 	public function testFromArrayFail($value) {
-		try {
-			Xml::fromArray($value);
-			$this->fail('No exception.');
-		} catch (\Exception $e) {
-			$this->assertTrue(true, 'Caught exception.');
-		}
+		Xml::fromArray($value);
 	}
 
 /**
@@ -1106,7 +1102,7 @@ XML;
  * testToArrayFail method
  *
  * @dataProvider invalidToArrayDataProvider
- * @expectedException \Cake\Utility\Error\XmlException
+ * @expectedException \Cake\Utility\Exception\XmlException
  * @return void
  */
 	public function testToArrayFail($value) {
@@ -1143,12 +1139,6 @@ XML;
   <xxe>&payload;</xxe>
 </request>
 XML;
-		try {
-			$result = Xml::build($xml);
-			$this->assertEquals('', (string)$result->xxe);
-		} catch (Exception $e) {
-			$this->assertTrue(true, 'A warning was raised meaning external entities were not loaded');
-		}
+		$result = Xml::build($xml);
 	}
-
 }

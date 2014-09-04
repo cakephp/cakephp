@@ -19,8 +19,9 @@ use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Error;
 use Cake\Event\Event;
+use Cake\Network\Exception\ForbiddenException;
+use Cake\Network\Exception\UnauthorizedException;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Network\Session;
@@ -207,7 +208,7 @@ class AuthComponentTest extends TestCase {
 /**
  * testIsAuthorizedMissingFile function
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testIsAuthorizedMissingFile() {
@@ -298,7 +299,7 @@ class AuthComponentTest extends TestCase {
 /**
  * testLoadAuthenticateNoFile function
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testLoadAuthenticateNoFile() {
@@ -316,7 +317,7 @@ class AuthComponentTest extends TestCase {
 			AuthComponent::ALL => array('actionPath' => 'controllers/'),
 			'Controller',
 		]);
-		$objects = $this->Controller->Auth->constructAuthorize();
+		$objects = array_values($this->Controller->Auth->constructAuthorize());
 		$result = $objects[0];
 		$this->assertEquals('controllers/', $result->config('actionPath'));
 	}
@@ -345,7 +346,7 @@ class AuthComponentTest extends TestCase {
 			AuthComponent::ALL => array('userModel' => 'AuthUsers'),
 			'Form'
 		]);
-		$objects = $this->Controller->Auth->constructAuthenticate();
+		$objects = array_values($this->Controller->Auth->constructAuthenticate());
 		$result = $objects[0];
 		$this->assertEquals('AuthUsers', $result->config('userModel'));
 	}
@@ -364,11 +365,11 @@ class AuthComponentTest extends TestCase {
 		$objects = $this->Controller->Auth->constructAuthenticate();
 		$this->assertEquals(2, count($objects));
 
-		$this->assertInstanceOf('Cake\Auth\FormAuthenticate', $objects[0]);
-		$this->assertInstanceOf('Cake\Auth\FormAuthenticate', $objects[1]);
+		$this->assertInstanceOf('Cake\Auth\FormAuthenticate', $objects['FormSimple']);
+		$this->assertInstanceOf('Cake\Auth\FormAuthenticate', $objects['FormBlowfish']);
 
-		$this->assertInstanceOf('Cake\Auth\DefaultPasswordHasher', $objects[0]->passwordHasher());
-		$this->assertInstanceOf('Cake\Auth\FallbackPasswordHasher', $objects[1]->passwordHasher());
+		$this->assertInstanceOf('Cake\Auth\DefaultPasswordHasher', $objects['FormSimple']->passwordHasher());
+		$this->assertInstanceOf('Cake\Auth\FallbackPasswordHasher', $objects['FormBlowfish']->passwordHasher());
 	}
 
 /**
@@ -789,7 +790,7 @@ class AuthComponentTest extends TestCase {
 /**
  * Throw ForbiddenException if config `unauthorizedRedirect` is set to false
  *
- * @expectedException \Cake\Error\ForbiddenException
+ * @expectedException \Cake\Network\Exception\ForbiddenException
  * @return void
  */
 	public function testForbiddenException() {
@@ -1045,26 +1046,6 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
- * test mapActions loading and delegating to authorize objects.
- *
- * @return void
- */
-	public function testMapActionsDelegation() {
-		$MapActionMockAuthorize = $this->getMock(
-			'Cake\Controller\Component\Auth\BaseAuthorize',
-			array('authorize', 'mapActions'), array(), '', false
-		);
-
-		$this->Auth->authorize = array('MapActionMock');
-		$this->Auth->setAuthorizeObject(0, $MapActionMockAuthorize);
-		$MapActionMockAuthorize->expects($this->once())
-			->method('mapActions')
-			->with(array('create' => array('my_action')));
-
-		$this->Auth->mapActions(array('create' => array('my_action')));
-	}
-
-/**
  * test setting user info to session.
  *
  * @return void
@@ -1281,7 +1262,7 @@ class AuthComponentTest extends TestCase {
 /**
  * testStatelessAuthNoRedirect method
  *
- * @expectedException \Cake\Error\UnauthorizedException
+ * @expectedException \Cake\Network\Exception\UnauthorizedException
  * @expectedExceptionCode 401
  * @return void
  */

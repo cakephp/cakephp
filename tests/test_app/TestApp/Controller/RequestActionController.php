@@ -13,6 +13,8 @@
  */
 namespace TestApp\Controller;
 
+use Cake\Network\Exception\NotFoundException;
+
 /**
  * RequestActionController class
  *
@@ -131,6 +133,16 @@ class RequestActionController extends AppController {
 	public function session_test() {
 		$this->response->body($this->request->session()->read('foo'));
 		return $this->response;
+	}
+
+/**
+ * Tests exception handling
+ *
+ * @throws \Cake\Network\Exception\NotFoundException
+ * @return void
+ */
+	public function error_method() {
+		throw new NotFoundException('Not there or here.');
 	}
 
 }

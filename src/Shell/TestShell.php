@@ -62,8 +62,8 @@ class TestShell extends Shell {
 		$this->err('');
 		$this->err('TestShell has been removed and replaced with <info>phpunit</info>.');
 		$this->err('');
-		$this->err('To run your application tests run <info>phpunit --stderr</info>');
-		$this->err('To run plugin tests, cd into the plugin directory and run <info>phpunit --stderr</info>');
+		$this->err('To run your application tests run <info>phpunit</info>');
+		$this->err('To run plugin tests, cd into the plugin directory and run <info>phpunit</info>');
 	}
 
 }

@@ -15,7 +15,7 @@
 namespace Cake\View\Helper;
 
 use Cake\Core\App;
-use Cake\Error;
+use Cake\Core\Exception\Exception;
 use Cake\View\Helper;
 use Cake\View\View;
 
@@ -25,7 +25,7 @@ use Cake\View\View;
  * Methods to make numbers more readable.
  *
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html
- * @see \Cake\Utility\Number
+ * @see \Cake\I18n\Number
  */
 class NumberHelper extends Helper {
 
@@ -35,13 +35,13 @@ class NumberHelper extends Helper {
  * @var mixed
  */
 	protected $_defaultConfig = [
-		'engine' => 'Cake\Utility\Number'
+		'engine' => 'Cake\I18n\Number'
 	];
 
 /**
- * Cake\Utility\Number instance
+ * Cake\I18n\LocalizedNumber instance
  *
- * @var \Cake\Utility\Number
+ * @var \Cake\I18n\Number
  */
 	protected $_engine = null;
 
@@ -50,12 +50,12 @@ class NumberHelper extends Helper {
  *
  * ### Settings:
  *
- * - `engine` Class name to use to replace Cake\Utility\Number functionality
+ * - `engine` Class name to use to replace Cake\I18n\Number functionality
  *            The class needs to be placed in the `Utility` directory.
  *
  * @param View $View The View this helper is being attached to.
  * @param array $config Configuration settings for the helper
- * @throws \Cake\Error\Exception When the engine class could not be found.
+ * @throws \Cake\Core\Exception\Exception When the engine class could not be found.
  */
 	public function __construct(View $View, array $config = array()) {
 		parent::__construct($View, $config);
@@ -66,12 +66,12 @@ class NumberHelper extends Helper {
 		if ($engineClass) {
 			$this->_engine = new $engineClass($config);
 		} else {
-			throw new Error\Exception(sprintf('Class for %s could not be found', $config['engine']));
+			throw new Exception(sprintf('Class for %s could not be found', $config['engine']));
 		}
 	}
 
 /**
- * Call methods from Cake\Utility\Number utility class
+ * Call methods from Cake\I18n\Number utility class
  *
  * @param string $method Method to invoke
  * @param array $params Array of params for the method.
@@ -87,7 +87,7 @@ class NumberHelper extends Helper {
  * @param float $number A floating point number.
  * @param int $precision The precision of the returned number.
  * @return float Formatted float.
- * @see \Cake\Utility\Number::precision()
+ * @see \Cake\I18n\Number::precision()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::precision
  */
 	public function precision($number, $precision = 3) {
@@ -99,7 +99,7 @@ class NumberHelper extends Helper {
  *
  * @param int $size Size in bytes
  * @return string Human readable size
- * @see \Cake\Utility\Number::toReadableSize()
+ * @see \Cake\I18n\Number::toReadableSize()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toReadableSize
  */
 	public function toReadableSize($size) {
@@ -117,7 +117,7 @@ class NumberHelper extends Helper {
  * @param int $precision The precision of the returned number
  * @param array $options Options
  * @return string Percentage string
- * @see \Cake\Utility\Number::toPercentage()
+ * @see \Cake\I18n\Number::toPercentage()
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::toPercentage
  */
 	public function toPercentage($number, $precision = 2, array $options = array()) {

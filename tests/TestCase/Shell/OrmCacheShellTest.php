@@ -115,7 +115,7 @@ class OrmCacheShellTest extends TestCase {
 /**
  * Test build() with a non-existing connection name.
  *
- * @expectedException Cake\Datasource\Error\MissingDatasourceConfigException
+ * @expectedException Cake\Datasource\Exception\MissingDatasourceConfigException
  * @return void
  */
 	public function testBuildInvalidConnection() {
@@ -126,7 +126,7 @@ class OrmCacheShellTest extends TestCase {
 /**
  * Test clear() with an invalid connection name.
  *
- * @expectedException Cake\Datasource\Error\MissingDatasourceConfigException
+ * @expectedException Cake\Datasource\Exception\MissingDatasourceConfigException
  * @return void
  */
 	public function testClearInvalidConnection() {

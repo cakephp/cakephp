@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Test View Task Comment Model
- *
  */
 class ViewTaskCommentsTable extends Table {
 
@@ -40,7 +39,6 @@ class ViewTaskCommentsTable extends Table {
 
 /**
  * Test View Task Article Model
- *
  */
 class ViewTaskArticlesTable extends Table {
 
@@ -52,7 +50,6 @@ class ViewTaskArticlesTable extends Table {
 
 /**
  * Test View Task Comments Controller
- *
  */
 class ViewTaskCommentsController extends Controller {
 
@@ -76,7 +73,6 @@ class ViewTaskCommentsController extends Controller {
 
 }
 
-
 /**
  * ViewTaskTest class
  */
@@ -89,7 +85,11 @@ class ViewTaskTest extends TestCase {
  */
 	public $fixtures = array(
 		'core.article', 'core.post', 'core.comment',
-		'core.articles_tag', 'core.tag', 'core.test_plugin_comment');
+		'core.articles_tag',
+		'core.tag',
+		'core.test_plugin_comment',
+		'core.category_thread',
+	);
 
 /**
  * setUp method
@@ -425,6 +425,26 @@ class ViewTaskTest extends TestCase {
 			->with(
 				$this->_normalizePath(APP . 'Template/ViewTaskComments/index.ctp'),
 				$this->stringContains('$viewTaskComment->article->id')
+			);
+
+		$this->Task->bake('index', true);
+	}
+
+/**
+ * Ensure that models associated with themselves do not have action
+ * links generated.
+ *
+ * @return void
+ */
+	public function testBakeSelfAssociations() {
+		$this->Task->controllerName = 'CategoryThreads';
+		$this->Task->modelName = 'TestApp\Model\Table\CategoryThreadsTable';
+
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->with(
+				$this->_normalizePath(APP . 'Template/CategoryThreads/index.ctp'),
+				$this->logicalNot($this->stringContains('ParentCategoryThread'))
 			);
 
 		$this->Task->bake('index', true);

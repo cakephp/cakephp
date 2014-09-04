@@ -45,6 +45,13 @@ class Router {
 	public static $initialized = false;
 
 /**
+ * Default route class.
+ *
+ * @var bool
+ */
+	protected static $_defaultRouteClass = 'Cake\Routing\Route\Route';
+
+/**
  * Contains the base string that will be applied to all generated URLs
  * For example `https://example.com`
  *
@@ -143,6 +150,19 @@ class Router {
 	protected static $_urlFilters = [];
 
 /**
+ * Get or set default route class.
+ *
+ * @param string|null $routeClass Class name.
+ * @return string|void
+ */
+	public static function defaultRouteClass($routeClass = null) {
+		if ($routeClass == null) {
+			return static::$_defaultRouteClass;
+		}
+		static::$_defaultRouteClass = $routeClass;
+	}
+
+/**
  * Gets the named route patterns for use in config/routes.php
  *
  * @return array Named route elements
@@ -165,7 +185,7 @@ class Router {
  *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
  *   custom routing class.
  * @return void
- * @throws \Cake\Error\Exception
+ * @throws \Cake\Core\Exception\Exception
  * @see \Cake\Routing\RouteBuilder::connect()
  * @see \Cake\Routing\Router::scope()
  */
@@ -283,7 +303,7 @@ class Router {
  *
  * @param string $url URL to be parsed
  * @return array Parsed elements from URL
- * @throws \Cake\Routing\Error\MissingRouteException When a route cannot be handled
+ * @throws \Cake\Routing\Exception\MissingRouteException When a route cannot be handled
  */
 	public static function parse($url) {
 		if (!static::$initialized) {
@@ -488,7 +508,7 @@ class Router {
  * @param bool $full If true, the full base URL will be prepended to the result.
  *   Default is false.
  * @return string Full translated URL with base path.
- * @throws \Cake\Error\Exception When the route name is not found
+ * @throws \Cake\Core\Exception\Exception When the route name is not found
  */
 	public static function url($url = null, $full = false) {
 		if (!static::$initialized) {
@@ -822,7 +842,10 @@ class Router {
  *   was created/used.
  */
 	public static function scope($path, $params = [], $callback = null) {
-		$builder = new RouteBuilder(static::$_collection, '/', [], static::$_collection->extensions());
+		$builder = new RouteBuilder(static::$_collection, '/', [], [
+			'routeClass' => static::defaultRouteClass(),
+			'extensions' => static::$_collection->extensions()
+		]);
 		$builder->scope($path, $params, $callback);
 	}
 

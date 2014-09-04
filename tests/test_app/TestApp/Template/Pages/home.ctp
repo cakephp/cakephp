@@ -4,7 +4,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error;
-use Cake\Utility\Debugger;
+use Cake\Error\Debugger;
 use Cake\Validation\Validation;
 
 if (!Configure::read('debug')):
@@ -19,8 +19,8 @@ endif;
 <?php if (file_exists(WWW_ROOT . 'css' . DS . 'cake.generic.css')): ?>
 <p id="url-rewriting-warning" style="background-color:#e32; color:#fff;">
 	URL rewriting is not properly configured on your server.
-	1) <a target="_blank" href="http://book.cakephp.org/2.0/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
-	2) <a target="_blank" href="http://book.cakephp.org/2.0/en/development/configuration.html#cakephp-core-configuration" style="color:#fff;">I don't / can't use URL rewriting</a>
+	1) <a target="_blank" href="http://book.cakephp.org/3.0/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
+	2) <a target="_blank" href="http://book.cakephp.org/3.0/en/development/configuration.html#core-configuration-baseurl" style="color:#fff;">I don't / can't use URL rewriting</a>
 </p>
 <?php endif; ?>
 
@@ -103,8 +103,8 @@ You can also add some CSS styles for your pages at: APP/webroot/css.;
 <p>
 	<?php
 		echo $this->Html->link(
-			'<strong>New</strong> CakePHP 2.0 Docs',
-			'http://book.cakephp.org/2.0/en/',
+			'<strong>New</strong> CakePHP 3.0 Docs',
+			'http://book.cakephp.org/3.0/en/',
 			array('target' => '_blank', 'escape' => false)
 		);
 	?>
@@ -113,7 +113,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.;
 	<?php
 		echo $this->Html->link(
 			'The 15 min Blog Tutorial',
-			'http://book.cakephp.org/2.0/en/tutorials-and-examples/blog/blog.html',
+			'http://book.cakephp.org/3.0/en/getting-started.html#blog-tutorial',
 			array('target' => '_blank', 'escape' => false)
 		);
 	?>

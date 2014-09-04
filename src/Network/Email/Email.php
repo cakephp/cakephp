@@ -14,17 +14,18 @@
  */
 namespace Cake\Network\Email;
 
+use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\StaticConfigTrait;
-use Cake\Error\Exception;
+use Cake\Filesystem\File;
 use Cake\Log\Log;
-use Cake\Network\Error;
 use Cake\Network\Http\FormData\Part;
-use Cake\Utility\File;
 use Cake\Utility\Hash;
 use Cake\Utility\String;
 use Cake\View\View;
+use InvalidArgumentException;
+use LogicException;
 
 /**
  * CakePHP email class.
@@ -374,7 +375,7 @@ class Email {
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
  * @return array|$this
- * @throws \Cake\Network\Error\SocketException
+ * @throws \InvalidArgumentException
  */
 	public function from($email = null, $name = null) {
 		if ($email === null) {
@@ -390,7 +391,7 @@ class Email {
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
  * @return array|$this
- * @throws \Cake\Network\Error\SocketException
+ * @throws \InvalidArgumentException
  */
 	public function sender($email = null, $name = null) {
 		if ($email === null) {
@@ -406,7 +407,7 @@ class Email {
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
  * @return array|$this
- * @throws \Cake\Network\Error\SocketException
+ * @throws \InvalidArgumentException
  */
 	public function replyTo($email = null, $name = null) {
 		if ($email === null) {
@@ -422,7 +423,7 @@ class Email {
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
  * @return array|$this
- * @throws \Cake\Network\Error\SocketException
+ * @throws \InvalidArgumentException
  */
 	public function readReceipt($email = null, $name = null) {
 		if ($email === null) {
@@ -438,7 +439,7 @@ class Email {
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
  * @return array|$this
- * @throws \Cake\Network\Error\SocketException
+ * @throws \InvalidArgumentException
  */
 	public function returnPath($email = null, $name = null) {
 		if ($email === null) {
@@ -580,7 +581,7 @@ class Email {
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
  * @return $this
- * @throws \Cake\Network\Error\SocketException
+ * @throws \InvalidArgumentException
  */
 	protected function _setEmail($varName, $email, $name) {
 		if (!is_array($email)) {
@@ -608,7 +609,7 @@ class Email {
  *
  * @param string $email Email address to validate
  * @return void
- * @throws \Cake\Network\Error\SocketException If email address does not validate
+ * @throws \InvalidArgumentException If email address does not validate
  */
 	protected function _validateEmail($email) {
 		if ($this->_emailPattern === null && filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -616,7 +617,7 @@ class Email {
 		} elseif (preg_match($this->_emailPattern, $email)) {
 			return;
 		}
-		throw new Error\SocketException(sprintf('Invalid email: "%s"', $email));
+		throw new InvalidArgumentException(sprintf('Invalid email: "%s"', $email));
 	}
 
 /**
@@ -628,14 +629,14 @@ class Email {
  * @param string $name Name
  * @param string $throwMessage Exception message
  * @return $this
- * @throws \Cake\Network\Error\SocketException
+ * @throws \InvalidArgumentException
  */
 	protected function _setEmailSingle($varName, $email, $name, $throwMessage) {
 		$current = $this->{$varName};
 		$this->_setEmail($varName, $email, $name);
 		if (count($this->{$varName}) !== 1) {
 			$this->{$varName} = $current;
-			throw new Error\SocketException($throwMessage);
+			throw new InvalidArgumentException($throwMessage);
 		}
 		return $this;
 	}
@@ -648,7 +649,7 @@ class Email {
  *   Array with email as key, name as value or email as value (without name)
  * @param string $name Name
  * @return $this
- * @throws \Cake\Network\Error\SocketException
+ * @throws \InvalidArgumentException
  */
 	protected function _addEmail($varName, $email, $name) {
 		if (!is_array($email)) {
@@ -690,12 +691,8 @@ class Email {
  *
  * @param array $headers Associative array containing headers to be set.
  * @return $this
- * @throws \Cake\Network\Error\SocketException
  */
-	public function setHeaders($headers) {
-		if (!is_array($headers)) {
-			throw new Error\SocketException('$headers should be an array.');
-		}
+	public function setHeaders(array $headers) {
 		$this->_headers = $headers;
 		return $this;
 	}
@@ -705,12 +702,8 @@ class Email {
  *
  * @param array $headers Headers to set.
  * @return $this
- * @throws \Cake\Network\Error\SocketException
  */
-	public function addHeaders($headers) {
-		if (!is_array($headers)) {
-			throw new Error\SocketException('$headers should be an array.');
-		}
+	public function addHeaders(array $headers) {
 		$this->_headers = array_merge($this->_headers, $headers);
 		return $this;
 	}
@@ -914,14 +907,14 @@ class Email {
  *
  * @param string $format Formatting string.
  * @return string|$this
- * @throws \Cake\Network\Error\SocketException
+ * @throws \InvalidArgumentException
  */
 	public function emailFormat($format = null) {
 		if ($format === null) {
 			return $this->_emailFormat;
 		}
 		if (!in_array($format, $this->_emailFormatAvailable)) {
-			throw new Error\SocketException('Format not available.');
+			throw new InvalidArgumentException('Format not available.');
 		}
 		$this->_emailFormat = $format;
 		return $this;
@@ -936,7 +929,7 @@ class Email {
  * @param string|AbstractTransport $name Either the name of a configured
  *   transport, or a transport instance.
  * @return \Cake\Network\Email\AbstractTransport|$this
- * @throws \Cake\Network\Error\SocketException When the chosen transport lacks a send method.
+ * @throws \LogicException When the chosen transport lacks a send method.
  */
 	public function transport($name = null) {
 		if ($name === null) {
@@ -949,7 +942,7 @@ class Email {
 			$transport = $name;
 		}
 		if (!method_exists($transport, 'send')) {
-			throw new Error\SocketException(sprintf('The "%s" do not have send method.', get_class($transport)));
+			throw new LogicException(sprintf('The "%s" do not have send method.', get_class($transport)));
 		}
 
 		$this->_transport = $transport;
@@ -961,11 +954,11 @@ class Email {
  *
  * @param string $name The transport configuration name to build.
  * @return \Cake\Network\Email\AbstractTransport
- * @throws \Cake\Error\Exception When transport configuration is missing or invalid.
+ * @throws \InvalidArgumentException When transport configuration is missing or invalid.
  */
 	protected function _constructTransport($name) {
 		if (!isset(static::$_transportConfig[$name]['className'])) {
-			throw new Exception(sprintf('Transport config "%s" is missing.', $name));
+			throw new InvalidArgumentException(sprintf('Transport config "%s" is missing.', $name));
 		}
 
 		$config = static::$_transportConfig[$name];
@@ -976,9 +969,9 @@ class Email {
 
 		$className = App::className($config['className'], 'Network/Email', 'Transport');
 		if (!$className) {
-			throw new Exception(sprintf('Transport class "%s" not found.', $name));
+			throw new InvalidArgumentException(sprintf('Transport class "%s" not found.', $name));
 		} elseif (!method_exists($className, 'send')) {
-			throw new Exception(sprintf('The "%s" does not have a send() method.', $className));
+			throw new InvalidArgumentException(sprintf('The "%s" does not have a send() method.', $className));
 		}
 
 		unset($config['className']);
@@ -990,7 +983,7 @@ class Email {
  *
  * @param bool|string $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID
  * @return bool|string|$this
- * @throws \Cake\Network\Error\SocketException
+ * @throws \InvalidArgumentException
  */
 	public function messageId($message = null) {
 		if ($message === null) {
@@ -1000,7 +993,7 @@ class Email {
 			$this->_messageId = $message;
 		} else {
 			if (!preg_match('/^\<.+@.+\>$/', $message)) {
-				throw new Error\SocketException('Invalid format to Message-ID. The text should be something like "<uuid@server.com>"');
+				throw new InvalidArgumentException('Invalid format to Message-ID. The text should be something like "<uuid@server.com>"');
 			}
 			$this->_messageId = $message;
 		}
@@ -1066,7 +1059,7 @@ class Email {
  *
  * @param string|array $attachments String with the filename or array with filenames
  * @return array|$this Either the array of attachments when getting or $this when setting.
- * @throws \Cake\Network\Error\SocketException
+ * @throws \InvalidArgumentException
  */
 	public function attachments($attachments = null) {
 		if ($attachments === null) {
@@ -1079,17 +1072,17 @@ class Email {
 			}
 			if (!isset($fileInfo['file'])) {
 				if (!isset($fileInfo['data'])) {
-					throw new Error\SocketException('No file or data specified.');
+					throw new InvalidArgumentException('No file or data specified.');
 				}
 				if (is_int($name)) {
-					throw new Error\SocketException('No filename specified.');
+					throw new InvalidArgumentException('No filename specified.');
 				}
 				$fileInfo['data'] = chunk_split(base64_encode($fileInfo['data']), 76, "\r\n");
 			} else {
 				$fileName = $fileInfo['file'];
 				$fileInfo['file'] = realpath($fileInfo['file']);
 				if ($fileInfo['file'] === false || !file_exists($fileInfo['file'])) {
-					throw new Error\SocketException(sprintf('File not found: "%s"', $fileName));
+					throw new InvalidArgumentException(sprintf('File not found: "%s"', $fileName));
 				}
 				if (is_int($name)) {
 					$name = basename($fileInfo['file']);
@@ -1109,7 +1102,7 @@ class Email {
  *
  * @param string|array $attachments String with the filename or array with filenames
  * @return $this
- * @throws \Cake\Network\Error\SocketException
+ * @throws \InvalidArgumentException
  * @see \Cake\Network\Email\Email::attachments()
  */
 	public function addAttachments($attachments) {
@@ -1154,7 +1147,7 @@ class Email {
  * @param array|AbstractTransport $config Either an array of configuration
  *   data, or a transport instance.
  * @return mixed Either null when setting or an array of data when reading.
- * @throws \Cake\Error\Exception When modifying an existing configuration.
+ * @throws \BadMethodCallException When modifying an existing configuration.
  */
 	public static function configTransport($key, $config = null) {
 		if ($config === null && is_string($key)) {
@@ -1167,7 +1160,7 @@ class Email {
 			return;
 		}
 		if (isset(static::$_transportConfig[$key])) {
-			throw new Exception(sprintf('Cannot modify an existing config "%s"', $key));
+			throw new BadMethodCallException(sprintf('Cannot modify an existing config "%s"', $key));
 		}
 		if (is_object($config)) {
 			$config = ['className' => $config];
@@ -1208,14 +1201,14 @@ class Email {
  *
  * @param string|array $content String with message or array with messages
  * @return array
- * @throws \Cake\Network\Error\SocketException
+ * @throws \BadMethodCallException
  */
 	public function send($content = null) {
 		if (empty($this->_from)) {
-			throw new Error\SocketException('From is not specified.');
+			throw new BadMethodCallException('From is not specified.');
 		}
 		if (empty($this->_to) && empty($this->_cc) && empty($this->_bcc)) {
-			throw new Error\SocketException('You need specify one destination on to, cc or bcc.');
+			throw new BadMethodCallException('You need specify one destination on to, cc or bcc.');
 		}
 
 		if (is_array($content)) {
@@ -1228,7 +1221,7 @@ class Email {
 		if (!$transport) {
 			$msg = 'Cannot send email, transport was not defined. Did you call transport() or define ' .
 				' a transport in the set profile?';
-			throw new Error\SocketException($msg);
+			throw new BadMethodCallException($msg);
 		}
 		$contents = $transport->send($this);
 		$this->_logDelivery($contents);
@@ -1271,7 +1264,7 @@ class Email {
  * @param string|array $transportConfig String to use config from EmailConfig or array with configs
  * @param bool $send Send the email or just return the instance pre-configured
  * @return \Cake\Network\Email\Email Instance of Cake\Network\Email\Email
- * @throws \Cake\Network\Error\SocketException
+ * @throws \InvalidArgumentException
  */
 	public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'fast', $send = true) {
 		$class = __CLASS__;
@@ -1301,14 +1294,14 @@ class Email {
  *
  * @param string|array $config Configuration options.
  * @return void
- * @throws \Cake\Error\Exception When using a configuration that doesn't exist.
+ * @throws \InvalidArgumentException When using a configuration that doesn't exist.
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
 			$name = $config;
 			$config = static::config($name);
 			if (empty($config)) {
-				throw new Exception(sprintf('Unknown email configuration "%s".', $name));
+				throw new InvalidArgumentException(sprintf('Unknown email configuration "%s".', $name));
 			}
 			unset($name);
 		}

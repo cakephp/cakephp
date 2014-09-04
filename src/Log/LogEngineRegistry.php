@@ -15,9 +15,9 @@
 namespace Cake\Log;
 
 use Cake\Core\App;
-use Cake\Error;
+use Cake\Core\ObjectRegistry;
 use Cake\Log\LogInterface;
-use Cake\Utility\ObjectRegistry;
+use \RuntimeException;
 
 /**
  * Registry of loaded log engines
@@ -27,7 +27,7 @@ class LogEngineRegistry extends ObjectRegistry {
 /**
  * Resolve a logger classname.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class Partial classname to resolve.
  * @return string|false Either the correct classname or false.
@@ -43,28 +43,27 @@ class LogEngineRegistry extends ObjectRegistry {
 /**
  * Throws an exception when a logger is missing.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the logger is missing in.
  * @return void
- * @throws \Cake\Error\Exception
+ * @throws \RuntimeException
  */
 	protected function _throwMissingClassError($class, $plugin) {
-		throw new Error\Exception(sprintf('Could not load class %s', $class));
+		throw new RuntimeException(sprintf('Could not load class %s', $class));
 	}
 
 /**
  * Create the logger instance.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string|LogInterface $class The classname or object to make.
  * @param string $alias The alias of the object.
  * @param array $settings An array of settings to use for the logger.
  * @return \Cake\Log\LogInterface The constructed logger class.
- * @throws \Cake\Error\Exception when an object doesn't implement
- *    the correct interface.
+ * @throws \RuntimeException when an object doesn't implement the correct interface.
  */
 	protected function _create($class, $alias, $settings) {
 		if (is_object($class)) {
@@ -79,7 +78,7 @@ class LogEngineRegistry extends ObjectRegistry {
 			return $instance;
 		}
 
-		throw new Error\Exception(
+		throw new RuntimeException(
 			'Loggers must implement Cake\Log\LogInterface.'
 		);
 	}

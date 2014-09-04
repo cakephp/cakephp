@@ -15,7 +15,7 @@
 namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
-use Cake\Error;
+use Cake\Core\Exception\Exception;
 use Cake\ORM\Entity;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -364,32 +364,34 @@ class FormHelper extends Helper {
 		if ($options['action'] === null && $options['url'] === null) {
 			return $this->request->here(false);
 		}
-		if (empty($options['url']) || is_array($options['url'])) {
-			if (isset($options['action']) && empty($options['url']['action'])) {
-				$options['url']['action'] = $options['action'];
-			}
 
-			$plugin = $this->plugin ? Inflector::underscore($this->plugin) : null;
-			$actionDefaults = [
-				'plugin' => $plugin,
-				'controller' => Inflector::underscore($this->request->params['controller']),
-				'action' => $this->request->params['action'],
-			];
-
-			$action = (array)$options['url'] + $actionDefaults;
-
-			$pk = $context->primaryKey();
-			if (count($pk)) {
-				$id = $context->val($pk[0]);
-			}
-			if (empty($action[0]) && isset($id)) {
-				$action[0] = $id;
-			}
-			return $action;
-		}
-		if (is_string($options['url'])) {
+		if (is_string($options['url']) ||
+			(is_array($options['url']) && isset($options['url']['_name']))
+		) {
 			return $options['url'];
 		}
+
+		if (isset($options['action']) && empty($options['url']['action'])) {
+			$options['url']['action'] = $options['action'];
+		}
+
+		$plugin = $this->plugin ? Inflector::underscore($this->plugin) : null;
+		$actionDefaults = [
+			'plugin' => $plugin,
+			'controller' => Inflector::underscore($this->request->params['controller']),
+			'action' => $this->request->params['action'],
+		];
+
+		$action = (array)$options['url'] + $actionDefaults;
+
+		$pk = $context->primaryKey();
+		if (count($pk)) {
+			$id = $context->val($pk[0]);
+		}
+		if (empty($action[0]) && isset($id)) {
+			$action[0] = $id;
+		}
+		return $action;
 	}
 
 /**
@@ -780,7 +782,7 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Generate a set of inputs for `$fields`
+ * Generate a set of inputs for `$fields` wrapped in a fieldset element.
  *
  * You can customize individual inputs through `$fields`.
  * {{{
@@ -908,11 +910,6 @@ class FormHelper extends Helper {
 			unset($options['error']);
 		}
 
-		$template = $options['type'] . 'Container' . $errorSuffix;
-		if (!$templater->get($template)) {
-			$template = 'inputContainer' . $errorSuffix;
-		}
-
 		$label = $options['label'];
 		if ($options['type'] !== 'radio') {
 			unset($options['label']);
@@ -927,14 +924,12 @@ class FormHelper extends Helper {
 		}
 
 		$label = $this->_getLabel($fieldName, compact('input', 'label', 'error') + $options);
-
-		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
-		$result = $templater->format($groupTemplate, compact('input', 'label', 'error'));
-		$result = $templater->format($template, [
+		$result = $this->_groupTemplate(compact('input', 'label', 'error', 'options'));
+		$result = $this->_inputContainerTemplate([
 			'content' => $result,
 			'error' => $error,
-			'required' => $options['required'] ? ' required' : '',
-			'type' => $options['type'],
+			'errorSuffix' => $errorSuffix,
+			'options' => $options
 		]);
 
 		if ($newTemplates) {
@@ -942,6 +937,41 @@ class FormHelper extends Helper {
 		}
 
 		return $result;
+	}
+
+/**
+ * Generates an group template element
+ *
+ * @param array $options The options for group template
+ * @return string The generated group template
+ */
+	protected function _groupTemplate($options) {
+		$groupTemplate = $options['options']['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
+		return $this->templater()->format($groupTemplate, [
+			'input' => $options['input'],
+			'label' => $options['label'],
+			'error' => $options['error']
+		]);
+	}
+
+/**
+ * Generates an input container template
+ *
+ * @param array $options The options for input container template
+ * @return string The generated input container template
+ */
+	protected function _inputContainerTemplate($options) {
+		$inputContainerTemplate = $options['options']['type'] . 'Container' . $options['errorSuffix'];
+		if (!$this->templater()->get($inputContainerTemplate)) {
+			$inputContainerTemplate = 'inputContainer' . $options['errorSuffix'];
+		}
+
+		return $this->templater()->format($inputContainerTemplate, [
+			'content' => $options['content'],
+			'error' => $options['error'],
+			'required' => $options['options']['required'] ? ' required' : '',
+			'type' => $options['options']['type']
+		]);
 	}
 
 /**
@@ -1293,12 +1323,12 @@ class FormHelper extends Helper {
  * @param string $method Method name / input type to make.
  * @param array $params Parameters for the method call
  * @return string Formatted input method.
- * @throws \Cake\Error\Exception When there are no params for the method call.
+ * @throws \Cake\Core\Exception\Exception When there are no params for the method call.
  */
 	public function __call($method, $params) {
 		$options = [];
 		if (empty($params)) {
-			throw new Error\Exception(sprintf('Missing field name for FormHelper::%s', $method));
+			throw new Exception(sprintf('Missing field name for FormHelper::%s', $method));
 		}
 		if (isset($params[1])) {
 			$options = $params[1];

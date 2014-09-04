@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Network;
 
-use Cake\Network\Error\SocketException;
+use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Cake\TestSuite\TestCase;
 
@@ -95,7 +95,7 @@ class SocketTest extends TestCase {
 			$this->Socket = new Socket($config);
 			$this->Socket->connect();
 			$this->assertTrue($this->Socket->connected);
-		} catch (\Cake\Network\Error\SocketException $e) {
+		} catch (SocketException $e) {
 			$this->markTestSkipped('Cannot test network, skipping.');
 		}
 	}
@@ -116,7 +116,7 @@ class SocketTest extends TestCase {
  * testInvalidConnection method
  *
  * @dataProvider invalidConnections
- * @expectedException \Cake\Network\Error\SocketException
+ * @expectedException Cake\Network\Exception\SocketException
  * @return void
  */
 	public function testInvalidConnection($data) {
@@ -144,7 +144,7 @@ class SocketTest extends TestCase {
 			$this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
 			$this->assertEquals(null, $this->Socket->lastError());
 			$this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
-		} catch (\Cake\Network\Error\SocketException $e) {
+		} catch (SocketException $e) {
 			$this->markTestSkipped('Cannot test network, skipping.');
 		}
 	}
@@ -158,7 +158,7 @@ class SocketTest extends TestCase {
 		try {
 			$request = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
 			$this->assertTrue((bool)$this->Socket->write($request));
-		} catch (\Cake\Network\Error\SocketException $e) {
+		} catch (SocketException $e) {
 			$this->markTestSkipped('Cannot test network, skipping.');
 		}
 	}
@@ -179,7 +179,7 @@ class SocketTest extends TestCase {
 			$this->assertTrue($this->Socket->connect());
 			$this->assertEquals(null, $this->Socket->read(26));
 			$this->assertEquals('2: ' . 'Connection timed out', $this->Socket->lastError());
-		} catch (\Cake\Network\Error\SocketException $e) {
+		} catch (SocketException $e) {
 			$this->markTestSkipped('Cannot test network, skipping.');
 		}
 	}
@@ -199,7 +199,7 @@ class SocketTest extends TestCase {
 			$this->Socket = new Socket($config);
 			$this->assertFalse($this->Socket->read(1024 * 1024));
 			$this->assertEquals('2: ' . 'Connection timed out', $this->Socket->lastError());
-		} catch (\Cake\Network\Error\SocketException $e) {
+		} catch (SocketException $e) {
 			$this->markTestSkipped('Cannot test network, skipping.');
 		}
 	}
@@ -248,7 +248,7 @@ class SocketTest extends TestCase {
 /**
  * testEncrypt
  *
- * @expectedException \Cake\Network\Error\SocketException
+ * @expectedException Cake\Network\Exception\SocketException
  * @return void
  */
 	public function testEnableCryptoSocketExceptionNoSsl() {
@@ -264,7 +264,7 @@ class SocketTest extends TestCase {
 /**
  * testEnableCryptoSocketExceptionNoTls
  *
- * @expectedException \Cake\Network\Error\SocketException
+ * @expectedException Cake\Network\Exception\SocketException
  * @return void
  */
 	public function testEnableCryptoSocketExceptionNoTls() {
@@ -287,7 +287,7 @@ class SocketTest extends TestCase {
 		$this->Socket = new Socket($configSslTls);
 		try {
 			$this->Socket->connect();
-		} catch (\Cake\Network\Error\SocketException $e) {
+		} catch (SocketException $e) {
 			$this->markTestSkipped('Cannot test network, skipping.');
 		}
 	}
@@ -326,7 +326,7 @@ class SocketTest extends TestCase {
 /**
  * testEnableCryptoExceptionEnableTwice
  *
- * @expectedException \Cake\Network\Error\SocketException
+ * @expectedException Cake\Network\Exception\SocketException
  * @return void
  */
 	public function testEnableCryptoExceptionEnableTwice() {
@@ -340,7 +340,7 @@ class SocketTest extends TestCase {
 /**
  * testEnableCryptoExceptionDisableTwice
  *
- * @expectedException \Cake\Network\Error\SocketException
+ * @expectedException Cake\Network\Exception\SocketException
  * @return void
  */
 	public function testEnableCryptoExceptionDisableTwice() {

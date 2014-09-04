@@ -14,8 +14,9 @@
  */
 namespace Cake\Network;
 
+use BadMethodCallException;
 use Cake\Core\Configure;
-use Cake\Error;
+use Cake\Network\Exception\MethodNotAllowedException;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
 
@@ -125,7 +126,7 @@ class Request implements \ArrayAccess {
 		'delete' => array('env' => 'REQUEST_METHOD', 'value' => 'DELETE'),
 		'head' => array('env' => 'REQUEST_METHOD', 'value' => 'HEAD'),
 		'options' => array('env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'),
-		'ssl' => array('env' => 'HTTPS', 'value' => 1),
+		'ssl' => array('env' => 'HTTPS', 'options' => [1, 'on']),
 		'ajax' => array('env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'),
 		'flash' => array('env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'),
 		'requested' => array('param' => 'requested', 'value' => 1)
@@ -524,14 +525,14 @@ class Request implements \ArrayAccess {
  * @param string $name The method called
  * @param array $params Array of parameters for the method call
  * @return mixed
- * @throws \Cake\Error\Exception when an invalid method is called.
+ * @throws \BadMethodCallException when an invalid method is called.
  */
 	public function __call($name, $params) {
 		if (strpos($name, 'is') === 0) {
 			$type = strtolower(substr($name, 2));
 			return $this->is($type);
 		}
-		throw new Error\Exception(sprintf('Method %s does not exist', $name));
+		throw new BadMethodCallException(sprintf('Method %s does not exist', $name));
 	}
 
 /**
@@ -1081,7 +1082,7 @@ class Request implements \ArrayAccess {
  *
  * @param string|array $methods Allowed HTTP request methods.
  * @return bool true
- * @throws \Cake\Error\MethodNotAllowedException
+ * @throws \Cake\Network\Exception\MethodNotAllowedException
  */
 	public function allowMethod($methods) {
 		$methods = (array)$methods;
@@ -1091,7 +1092,7 @@ class Request implements \ArrayAccess {
 			}
 		}
 		$allowed = strtoupper(implode(', ', $methods));
-		$e = new Error\MethodNotAllowedException();
+		$e = new MethodNotAllowedException();
 		$e->responseHeader('Allow', $allowed);
 		throw $e;
 	}

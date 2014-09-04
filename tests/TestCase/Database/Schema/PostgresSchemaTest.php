@@ -51,9 +51,9 @@ class PostgresSchemaTest extends TestCase {
 		$table = <<<SQL
 CREATE TABLE schema_authors (
 id SERIAL,
-name VARCHAR(50),
+name VARCHAR(50) DEFAULT 'bob',
 bio DATE,
-position INT,
+position INT DEFAULT 1,
 created TIMESTAMP,
 PRIMARY KEY (id),
 CONSTRAINT "unique_position" UNIQUE ("position")
@@ -334,6 +334,70 @@ SQL;
 		$this->assertEquals(['id'], $result->primaryKey());
 		foreach ($expected as $field => $definition) {
 			$this->assertEquals($definition, $result->column($field));
+		}
+	}
+
+/**
+ * Test describing a table containing defaults with Postgres
+ *
+ * @return void
+ */
+	public function testDescribeTableWithDefaults() {
+		$connection = ConnectionManager::get('test');
+		$this->_createTables($connection);
+
+		$schema = new SchemaCollection($connection);
+		$result = $schema->describe('schema_authors');
+		$expected = [
+			'id' => [
+				'type' => 'integer',
+				'null' => false,
+				'default' => null,
+				'length' => 10,
+				'precision' => null,
+				'unsigned' => null,
+				'comment' => null,
+				'autoIncrement' => true,
+			],
+			'name' => [
+				'type' => 'string',
+				'null' => true,
+				'default' => 'bob',
+				'length' => 50,
+				'precision' => null,
+				'comment' => null,
+				'fixed' => null,
+			],
+			'bio' => [
+				'type' => 'date',
+				'null' => true,
+				'default' => null,
+				'length' => null,
+				'precision' => null,
+				'comment' => null,
+			],
+			'position' => [
+				'type' => 'integer',
+				'null' => true,
+				'default' => '1',
+				'length' => 10,
+				'precision' => null,
+				'comment' => null,
+				'unsigned' => null,
+				'autoIncrement' => null,
+			],
+			'created' => [
+				'type' => 'timestamp',
+				'null' => true,
+				'default' => null,
+				'length' => null,
+				'precision' => null,
+				'comment' => null,
+			],
+		];
+		$this->assertEquals(['id'], $result->primaryKey());
+		foreach ($expected as $field => $definition) {
+			$this->assertEquals($definition, $result->column($field), "Mismatch in $field column");
 		}
 	}
 

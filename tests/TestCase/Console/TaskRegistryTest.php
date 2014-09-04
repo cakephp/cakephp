@@ -63,7 +63,7 @@ class TaskRegistryTest extends TestCase {
 /**
  * test missingtask exception
  *
- * @expectedException \Cake\Console\Error\MissingTaskException
+ * @expectedException \Cake\Console\Exception\MissingTaskException
  * @return void
  */
 	public function testLoadMissingTask() {

@@ -15,11 +15,11 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Plugin;
+use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Time;
 
 /**
  * Contains regression test for the Query builder
@@ -39,7 +39,8 @@ class QueryRegressionTest extends TestCase {
 		'core.tag',
 		'core.articles_tag',
 		'core.author',
-		'core.special_tag'
+		'core.special_tag',
+		'core.translate',
 	];
 
 /**
@@ -374,4 +375,68 @@ class QueryRegressionTest extends TestCase {
 		);
 	}
 
+/**
+ * Tests that loading associations having the same alias in the
+ * joinable associations chain is not sensitive to the order in which
+ * the associations are selected.
+ *
+ * @see https://github.com/cakephp/cakephp/issues/4454
+ * @return void
+ */
+	public function testAssociationChainOrder() {
+		$articles = TableRegistry::get('Articles');
+		$articles->belongsTo('Authors');
+		$articles->hasOne('ArticlesTags');
+
+		$articlesTags = TableRegistry::get('ArticlesTags');
+		$articlesTags->belongsTo('Authors', [
+			'foreignKey' => 'tag_id'
+		]);
+
+		$resultA = $articles->find()
+			->contain(['ArticlesTags.Authors', 'Authors'])
+			->first();
+
+		$resultB = $articles->find()
+			->contain(['Authors', 'ArticlesTags.Authors'])
+			->first();
+
+		$this->assertEquals($resultA, $resultB);
+		$this->assertNotEmpty($resultA->author);
+		$this->assertNotEmpty($resultA->articles_tag->author);
+	}
+
+/**
+ * Test that offset/limit are elided from subquery loads.
+ *
+ * @return void
+ */
+	public function testAssociationSubQueryNoOffset() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->locale('eng');
+		$query = $table->find('translations')->limit(10)->offset(1);
+		$result = $query->toArray();
+		$this->assertCount(2, $result);
+	}
+
+/**
+ * Tests that using the subquery strategy in a deep assotiatin returns the right results
+ *
+ * @see https://github.com/cakephp/cakephp/issues/4484
+ * @return void
+ */
+	public function testDeepBelongsToManySubqueryStrategy() {
+		$table = TableRegistry::get('Authors');
+		$table->hasMany('Articles');
+		$table->Articles->belongsToMany('Tags', [
+			'strategy' => 'subquery'
+		]);
+		$table->Articles->Tags->junction();
+		$result = $table->find()->contain(['Articles.Tags'])->toArray();
+		$this->assertEquals(
+			['tag1', 'tag3'],
+			collection($result[2]->articles[0]->tags)->extract('name')->toArray()
+		);
+	}
 }

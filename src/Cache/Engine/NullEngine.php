@@ -27,6 +27,7 @@ class NullEngine extends CacheEngine {
  * {@inheritDoc}
  */
 	public function init(array $config = []) {
+		return true;
 	}
 
 /**

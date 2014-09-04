@@ -64,7 +64,7 @@ class ConnectionTest extends TestCase {
 /**
  * Tests creating a connection using no driver throws an exception
  *
- * @expectedException \Cake\Database\Error\MissingDriverException
+ * @expectedException \Cake\Database\Exception\MissingDriverException
  * @expectedExceptionMessage Database driver  could not be found.
  * @return void
  */
@@ -75,7 +75,7 @@ class ConnectionTest extends TestCase {
 /**
  * Tests creating a connection using an invalid driver throws an exception
  *
- * @expectedException \Cake\Database\Error\MissingDriverException
+ * @expectedException \Cake\Database\Exception\MissingDriverException
  * @expectedExceptionMessage Database driver  could not be found.
  * @return void
  */
@@ -86,7 +86,7 @@ class ConnectionTest extends TestCase {
 /**
  * Tests creating a connection using an invalid driver throws an exception
  *
- * @expectedException \Cake\Database\Error\MissingDriverException
+ * @expectedException \Cake\Database\Exception\MissingDriverException
  * @expectedExceptionMessage Database driver \Foo\InvalidDriver could not be found.
  * @return void
  */
@@ -97,7 +97,7 @@ class ConnectionTest extends TestCase {
 /**
  * Tests trying to use a disabled driver throws an exception
  *
- * @expectedException \Cake\Database\Error\MissingExtensionException
+ * @expectedException \Cake\Database\Exception\MissingExtensionException
  * @expectedExceptionMessage Database driver DriverMock cannot be used due to a missing PHP extension or unmet dependency
  * @return void
  */
@@ -109,7 +109,7 @@ class ConnectionTest extends TestCase {
 /**
  * Tests that connecting with invalid credentials or database name throws an exception
  *
- * @expectedException \Cake\Database\Error\MissingConnectionException
+ * @expectedException \Cake\Database\Exception\MissingConnectionException
  * @return void
  */
 	public function testWrongCredentials() {

@@ -13,7 +13,7 @@
  */
 namespace Cake\Network\Http;
 
-use Cake\Error;
+use Cake\Core\Exception\Exception;
 use Cake\Network\Http\Message;
 
 /**
@@ -60,7 +60,7 @@ class Request extends Message {
  *
  * @param string|null $method The method for the request.
  * @return mixed Either this or the current method.
- * @throws \Cake\Error\Exception On invalid methods.
+ * @throws \Cake\Core\Exception\Exception On invalid methods.
  */
 	public function method($method = null) {
 		if ($method === null) {
@@ -68,7 +68,7 @@ class Request extends Message {
 		}
 		$name = get_called_class() . '::METHOD_' . strtoupper($method);
 		if (!defined($name)) {
-			throw new Error\Exception('Invalid method type');
+			throw new Exception('Invalid method type');
 		}
 		$this->_method = $method;
 		return $this;

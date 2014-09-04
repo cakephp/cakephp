@@ -35,6 +35,15 @@ class TestBehavior extends Behavior {
  */
 class Test2Behavior extends Behavior {
 
+	protected $_defaultConfig = [
+		'implementedFinders' => [
+			'foo' => 'findFoo',
+		],
+		'implementedMethods' => [
+			'doSomething' => 'doSomething',
+		]
+	];
+
 /**
  * Test for event bindings.
  */
@@ -239,7 +248,7 @@ class BehaviorTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table');
 		$behavior = new Test2Behavior($table);
 		$expected = [
-			'foo' => 'findFoo'
+			'foo' => 'findFoo',
 		];
 		$this->assertEquals($expected, $behavior->implementedFinders());
 	}
@@ -272,8 +281,7 @@ class BehaviorTest extends TestCase {
 		$behavior = new Test2Behavior($table, [
 			'implementedFinders' => []
 		]);
-		$expected = [];
-		$this->assertEquals($expected, $behavior->implementedFinders());
+		$this->assertEquals([], $behavior->implementedFinders());
 	}
 
 /**
@@ -311,7 +319,7 @@ class BehaviorTest extends TestCase {
 /**
  * testVerifyImplementedFindersInvalid
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @expectedExceptionMessage The method findNotDefined is not callable on class Cake\Test\TestCase\ORM\Test2Behavior
  *
  * @return void
@@ -348,7 +356,7 @@ class BehaviorTest extends TestCase {
 /**
  * testVerifyImplementedMethodsInvalid
  *
- * @expectedException \Cake\Error\Exception
+ * @expectedException \Cake\Core\Exception\Exception
  * @expectedExceptionMessage The method iDoNotExist is not callable on class Cake\Test\TestCase\ORM\Test2Behavior
  *
  * @return void

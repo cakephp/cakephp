@@ -166,7 +166,7 @@ class SecurityComponentTest extends TestCase {
  * Test that requests are still blackholed when controller has incorrect
  * visibility keyword in the blackhole callback
  *
- * @expectedException \Cake\Error\BadRequestException
+ * @expectedException \Cake\Network\Exception\BadRequestException
  * @return void
  */
 	public function testBlackholeWithBrokenCallback() {
@@ -236,8 +236,8 @@ class SecurityComponentTest extends TestCase {
 	public function testRequireSecureFail() {
 		$_SERVER['HTTPS'] = 'off';
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->request['action'] = 'posted';
+		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->requireSecure(array('posted'));
 		$this->Controller->Security->startup($event);
 		$this->assertTrue($this->Controller->failed);
@@ -249,11 +249,41 @@ class SecurityComponentTest extends TestCase {
  * @return void
  */
 	public function testRequireSecureSucceed() {
+		$_SERVER['HTTPS'] = 'on';
 		$_SERVER['REQUEST_METHOD'] = 'Secure';
 		$this->Controller->request['action'] = 'posted';
-		$_SERVER['HTTPS'] = 'on';
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->requireSecure('posted');
+		$this->Controller->Security->startup($event);
+		$this->assertFalse($this->Controller->failed);
+	}
+
+/**
+ * testRequireSecureEmptyFail method
+ *
+ * @return void
+ */
+	public function testRequireSecureEmptyFail() {
+		$_SERVER['HTTPS'] = 'off';
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$this->Controller->request['action'] = 'posted';
+		$event = new Event('Controller.startup', $this->Controller);
+		$this->Controller->Security->requireSecure();
+		$this->Controller->Security->startup($event);
+		$this->assertTrue($this->Controller->failed);
+	}
+
+/**
+ * testRequireSecureEmptySucceed method
+ *
+ * @return void
+ */
+	public function testRequireSecureEmptySucceed() {
+		$_SERVER['HTTPS'] = 'on';
+		$_SERVER['REQUEST_METHOD'] = 'Secure';
+		$this->Controller->request['action'] = 'posted';
+		$event = new Event('Controller.startup', $this->Controller);
+		$this->Controller->Security->requireSecure();
 		$this->Controller->Security->startup($event);
 		$this->assertFalse($this->Controller->failed);
 	}

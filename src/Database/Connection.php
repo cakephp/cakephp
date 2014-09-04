@@ -14,6 +14,9 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Exception\MissingConnectionException;
+use Cake\Database\Exception\MissingDriverException;
+use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
@@ -135,8 +138,8 @@ class Connection {
  *
  * @param string|\Cake\Database\Driver $driver The driver instance to use.
  * @param array|null $config Either config for a new driver or null.
- * @throws \Cake\Database\Error\MissingDriverException When a driver class is missing.
- * @throws \Cake\Database\Error\MissingExtensionException When a driver's PHP extension is missing.
+ * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
+ * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
  * @return \Cake\Database\Driver
  */
 	public function driver($driver = null, $config = null) {
@@ -145,12 +148,12 @@ class Connection {
 		}
 		if (is_string($driver)) {
 			if (!class_exists($driver)) {
-				throw new Error\MissingDriverException(['driver' => $driver]);
+				throw new MissingDriverException(['driver' => $driver]);
 			}
 			$driver = new $driver($config);
 		}
 		if (!$driver->enabled()) {
-			throw new Error\MissingExtensionException(['driver' => get_class($driver)]);
+			throw new MissingExtensionException(['driver' => get_class($driver)]);
 		}
 		return $this->_driver = $driver;
 	}
@@ -158,7 +161,7 @@ class Connection {
 /**
  * Connects to the configured database.
  *
- * @throws \Cake\Database\Error\MissingConnectionException if credentials are invalid
+ * @throws \Cake\Database\Exception\MissingConnectionException if credentials are invalid
  * @return bool true on success or false if already connected.
  */
 	public function connect() {
@@ -166,7 +169,7 @@ class Connection {
 			$this->_driver->connect();
 			return true;
 		} catch(\Exception $e) {
-			throw new Error\MissingConnectionException(['reason' => $e->getMessage()]);
+			throw new MissingConnectionException(['reason' => $e->getMessage()]);
 		}
 	}
 

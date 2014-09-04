@@ -15,7 +15,8 @@
 namespace Cake\Utility;
 
 use Cake\Core\Configure;
-use Cake\Network\Error\SocketException;
+use Cake\Network\Exception\SocketException;
+use Cake\Utility\Exception\XmlException;
 use Cake\Network\Http\Client;
 use \DOMDocument;
 
@@ -80,7 +81,7 @@ class Xml {
  * @param string|array $input XML string, a path to a file, a URL or an array
  * @param string|array $options The options to use
  * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
- * @throws \Cake\Utility\Error\XmlException
+ * @throws \Cake\Utility\Exception\XmlException
  */
 	public static function build($input, array $options = []) {
 		$defaults = array(
@@ -100,16 +101,16 @@ class Xml {
 				$socket = new Client(['redirect' => 10]);
 				$response = $socket->get($input);
 				if (!$response->isOk()) {
-					throw new Error\XmlException('XML cannot be read.');
+					throw new XmlException('XML cannot be read.');
 				}
 				return static::_loadXml($response->body, $options);
 			} catch (SocketException $e) {
-				throw new Error\XmlException('XML cannot be read.');
+				throw new XmlException('XML cannot be read.');
 			}
 		} elseif (!is_string($input)) {
-			throw new Error\XmlException('Invalid input.');
+			throw new XmlException('Invalid input.');
 		}
-		throw new Error\XmlException('XML cannot be read.');
+		throw new XmlException('XML cannot be read.');
 	}
 
 /**
@@ -118,7 +119,7 @@ class Xml {
  * @param string $input The input to load.
  * @param array $options The options to use. See Xml::build()
  * @return \SimpleXmlElement|\DOMDocument
- * @throws \Cake\Utility\Error\XmlException
+ * @throws \Cake\Utility\Exception\XmlException
  */
 	protected static function _loadXml($input, $options) {
 		$hasDisable = function_exists('libxml_disable_entity_loader');
@@ -141,7 +142,7 @@ class Xml {
 		}
 		libxml_use_internal_errors($internalErrors);
 		if ($xml === null) {
-			throw new Error\XmlException('Xml cannot be read.');
+			throw new XmlException('Xml cannot be read.');
 		}
 		return $xml;
 	}
@@ -182,18 +183,18 @@ class Xml {
  * @param array|\Cake\Collection\Collection $input Array with data or a collection instance.
  * @param string|array $options The options to use
  * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
- * @throws \Cake\Utility\Error\XmlException
+ * @throws \Cake\Utility\Exception\XmlException
  */
 	public static function fromArray($input, $options = array()) {
 		if (method_exists($input, 'toArray')) {
 			$input = $input->toArray();
 		}
 		if (!is_array($input) || count($input) !== 1) {
-			throw new Error\XmlException('Invalid input.');
+			throw new XmlException('Invalid input.');
 		}
 		$key = key($input);
 		if (is_int($key)) {
-			throw new Error\XmlException('The key of input must be alphanumeric');
+			throw new XmlException('The key of input must be alphanumeric');
 		}
 
 		if (!is_array($options)) {
@@ -229,7 +230,7 @@ class Xml {
  * @param array &$data Array of data to append to the $node.
  * @param string $format Either 'attribute' or 'tags'. This determines where nested keys go.
  * @return void
- * @throws \Cake\Utility\Error\XmlException
+ * @throws \Cake\Utility\Exception\XmlException
  */
 	protected static function _fromArray($dom, $node, &$data, $format) {
 		if (empty($data) || !is_array($data)) {
@@ -274,7 +275,7 @@ class Xml {
 					}
 				} else {
 					if ($key[0] === '@') {
-						throw new Error\XmlException('Invalid array');
+						throw new XmlException('Invalid array');
 					}
 					if (is_numeric(implode('', array_keys($value)))) { // List
 						foreach ($value as $item) {
@@ -287,7 +288,7 @@ class Xml {
 					}
 				}
 			} else {
-				throw new Error\XmlException('Invalid array');
+				throw new XmlException('Invalid array');
 			}
 		}
 	}
@@ -334,14 +335,14 @@ class Xml {
  *
  * @param \SimpleXMLElement|\DOMDocument|\DOMNode $obj SimpleXMLElement, DOMDocument or DOMNode instance
  * @return array Array representation of the XML structure.
- * @throws \Cake\Utility\Error\XmlException
+ * @throws \Cake\Utility\Exception\XmlException
  */
 	public static function toArray($obj) {
 		if ($obj instanceof \DOMNode) {
 			$obj = simplexml_import_dom($obj);
 		}
 		if (!($obj instanceof \SimpleXMLElement)) {
-			throw new Error\XmlException('The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.');
+			throw new XmlException('The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.');
 		}
 		$result = array();
 		$namespaces = array_merge(array('' => ''), $obj->getNamespaces(true));

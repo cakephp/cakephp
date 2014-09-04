@@ -18,11 +18,11 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\Controller;
 use Cake\Event\Event;
+use Cake\I18n\Time;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
-use Cake\Utility\Time;
 
 /**
  * CookieComponentTest class

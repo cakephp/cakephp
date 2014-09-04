@@ -15,8 +15,8 @@
 namespace Cake\View;
 
 use Cake\Core\App;
+use Cake\Core\ObjectRegistry;
 use Cake\Event\EventManagerTrait;
-use Cake\Utility\ObjectRegistry;
 use Cake\View\View;
 
 /**
@@ -51,7 +51,7 @@ class HelperRegistry extends ObjectRegistry {
  *
  * @param string $helper The helper name to be loaded
  * @return bool whether the helper could be loaded or not
- * @throws \Cake\View\Error\MissingHelperException When a helper could not be found.
+ * @throws \Cake\View\Exception\MissingHelperException When a helper could not be found.
  *    App helpers are searched, and then plugin helpers.
  */
 	public function __isset($helper) {
@@ -61,7 +61,7 @@ class HelperRegistry extends ObjectRegistry {
 
 		try {
 			$this->load($helper);
-		} catch (Error\MissingHelperException $exception) {
+		} catch (Exception\MissingHelperException $exception) {
 			if ($this->_View->plugin) {
 				$this->load($this->_View->plugin . '.' . $helper);
 				return true;
@@ -94,7 +94,7 @@ class HelperRegistry extends ObjectRegistry {
 /**
  * Resolve a helper classname.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class Partial classname to resolve.
  * @return string|false Either the correct classname or false.
@@ -106,15 +106,15 @@ class HelperRegistry extends ObjectRegistry {
 /**
  * Throws an exception when a helper is missing.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the helper is missing in.
  * @return void
- * @throws \Cake\View\Error\MissingHelperException
+ * @throws \Cake\View\Exception\MissingHelperException
  */
 	protected function _throwMissingClassError($class, $plugin) {
-		throw new Error\MissingHelperException([
+		throw new Exception\MissingHelperException([
 			'class' => $class . 'Helper',
 			'plugin' => $plugin
 		]);
@@ -123,7 +123,7 @@ class HelperRegistry extends ObjectRegistry {
 /**
  * Create the helper instance.
  *
- * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Part of the template method for Cake\Core\ObjectRegistry::load()
  * Enabled helpers will be registered with the event manager.
  *
  * @param string $class The class to create.

@@ -444,6 +444,11 @@ class ViewTask extends BakeTask {
 				$assocName = $assoc->name();
 				$alias = $target->alias();
 
+				$modelClass = get_class($model);
+				if ($modelClass !== 'Cake\ORM\Table' && get_class($target) === $modelClass) {
+					continue;
+				}
+
 				$associations[$type][$assocName] = [
 					'property' => $assoc->property(),
 					'variable' => Inflector::variable($assocName),

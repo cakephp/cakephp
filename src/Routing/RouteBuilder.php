@@ -14,11 +14,12 @@
  */
 namespace Cake\Routing;
 
+use BadMethodCallException;
 use Cake\Core\App;
-use Cake\Error;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
+use InvalidArgumentException;
 
 /**
  * Provides features for building routes inside scopes.
@@ -56,11 +57,18 @@ class RouteBuilder {
 	];
 
 /**
+ * Default route class to use if none is provided in connect() options.
+ *
+ * @var string
+ */
+	protected $_routeClass = 'Cake\Routing\Route\Route';
+
+/**
  * The extensions that should be set into the routes connected.
  *
  * @var array
  */
-	protected $_extensions;
+	protected $_extensions = [];
 
 /**
  * The path prefix scope that this collection uses.
@@ -89,13 +97,34 @@ class RouteBuilder {
  * @param \Cake\Routing\RouteCollection $collection The route collection to append routes into.
  * @param string $path The path prefix the scope is for.
  * @param array $params The scope's routing parameters.
- * @param array $extensions The extensions to connect when adding routes.
+ * @param array $options Options list. Valid keys are:
+ *
+ *   - `routeClass` - The default route class to use when adding routes.
+ *   - `extensions` - The extensions to connect when adding routes.
  */
-	public function __construct($collection, $path, array $params = [], array $extensions = []) {
+	public function __construct($collection, $path, array $params = [], array $options = []) {
 		$this->_collection = $collection;
 		$this->_path = $path;
 		$this->_params = $params;
-		$this->_extensions = $extensions;
+		if (isset($options['routeClass'])) {
+			$this->_routeClass = $options['routeClass'];
+		}
+		if (isset($options['extensions'])) {
+			$this->_extensions = $options['extensions'];
+		}
+	}
+
+/**
+ * Get or set default route class.
+ *
+ * @param string|null $routeClass Class name.
+ * @return string|void
+ */
+	public function routeClass($routeClass = null) {
+		if ($routeClass == null) {
+			return $this->_routeClass;
+		}
+		$this->_routeClass = $routeClass;
 	}
 
 /**
@@ -310,7 +339,8 @@ class RouteBuilder {
  *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
  *   custom routing class.
  * @return void
- * @throws \Cake\Error\Exception
+ * @throws \InvalidArgumentException
+ * @throws \BadMethodCallException
  */
 	public function connect($route, array $defaults = [], $options = []) {
 		if (empty($options['action'])) {
@@ -319,6 +349,10 @@ class RouteBuilder {
 
 		if (empty($options['_ext'])) {
 			$options['_ext'] = $this->_extensions;
+		}
+
+		if (empty($options['routeClass'])) {
+			$options['routeClass'] = $this->_routeClass;
 		}
 
 		$route = $this->_makeRoute($route, $defaults, $options);
@@ -332,18 +366,18 @@ class RouteBuilder {
  * @param array $defaults Default parameters.
  * @param array $options Additional options parameters.
  * @return \Cake\Routing\Route\Route
- * @throws \Cake\Error\Exception when route class or route object is invalid.
+ * @throws \InvalidArgumentException when route class or route object is invalid.
+ * @throws \BadMethodCallException when the route to make conflicts with the current scope
  */
 	protected function _makeRoute($route, $defaults, $options) {
 		if (is_string($route)) {
-			$routeClass = 'Cake\Routing\Route\Route';
-			if (isset($options['routeClass'])) {
-				$routeClass = App::className($options['routeClass'], 'Routing/Route');
-			}
+			$routeClass = App::className($options['routeClass'], 'Routing/Route');
 			if ($routeClass === false) {
-				throw new Error\Exception(sprintf('Cannot find route class %s', $options['routeClass']));
+				throw new InvalidArgumentException(sprintf(
+					'Cannot find route class %s',
+					$options['routeClass']
+				));
 			}
-			unset($options['routeClass']);
 
 			$route = str_replace('//', '/', $this->_path . $route);
 			$route = $route === '/' ? $route : rtrim($route, '/');
@@ -352,7 +386,7 @@ class RouteBuilder {
 				if (isset($defaults[$param]) && $defaults[$param] !== $val) {
 					$msg = 'You cannot define routes that conflict with the scope. ' .
 						'Scope had %s = %s, while route had %s = %s';
-					throw new Error\Exception(sprintf(
+					throw new BadMethodCallException(sprintf(
 						$msg,
 						$param,
 						$val,
@@ -370,7 +404,9 @@ class RouteBuilder {
 		if ($route instanceof Route) {
 			return $route;
 		}
-		throw new Error\Exception('Route class not found, or route class is not a subclass of Cake\Routing\Route\Route');
+		throw new InvalidArgumentException(
+			'Route class not found, or route class is not a subclass of Cake\Routing\Route\Route'
+		);
 	}
 
 /**
@@ -498,7 +534,10 @@ class RouteBuilder {
 			$path = $this->_path . $path;
 		}
 		$params = $params + $this->_params;
-		$builder = new static($this->_collection, $path, $params, $this->_extensions);
+		$builder = new static($this->_collection, $path, $params, [
+			'routeClass' => $this->_routeClass,
+			'extensions' => $this->_extensions
+		]);
 		$callback($builder);
 	}
 
@@ -510,8 +549,12 @@ class RouteBuilder {
  * @return void
  */
 	public function fallbacks() {
-		$this->connect('/:controller', ['action' => 'index'], ['routeClass' => 'InflectedRoute']);
-		$this->connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
+		$routeClass = $this->_routeClass;
+		if ($routeClass === 'Cake\Routing\Route\Route') {
+			$routeClass = 'InflectedRoute';
+		}
+		$this->connect('/:controller', ['action' => 'index'], compact('routeClass'));
+		$this->connect('/:controller/:action/*', [], compact('routeClass'));
 	}
 
 }

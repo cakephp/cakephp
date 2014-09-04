@@ -13,7 +13,6 @@
  */
 namespace Cake\Test\TestCase\Utility;
 
-use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\String;
 
@@ -25,11 +24,13 @@ class StringTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
+		$this->encoding = mb_internal_encoding();
 		$this->Text = new String();
 	}
 
 	public function tearDown() {
 		parent::tearDown();
+		mb_internal_encoding($this->encoding);
 		unset($this->Text);
 	}
 
@@ -508,7 +509,7 @@ podeís adquirirla.</span></p>
  * @return void
  */
 	public function testTruncateLegacy() {
-		Configure::write('App.encoding', 'ISO-8859-1');
+		mb_internal_encoding('ISO-8859-1');
 		$text = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
 		$result = $this->Text->truncate($text, 31, array(
 			'html' => true,
@@ -1410,6 +1411,54 @@ podeís adquirirla.</span></p>
 		$result = String::ascii($input);
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testparseFileSize
+ *
+ * @dataProvider filesizes
+ * @return void
+ */
+	public function testparseFileSize($params, $expected) {
+		$result = String::parseFileSize($params['size'], $params['default']);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testFromReadableSize
+ *
+ * @expectedException \Cake\Core\Exception\Exception
+ * @return void
+ */
+	public function testparseFileSizeException() {
+		String::parseFileSize('bogus', false);
+	}
+
+/**
+ * filesizes dataprovider
+ *
+ * @return array
+ */
+	public function filesizes() {
+		return array(
+			array(array('size' => '512B', 'default' => false), 512),
+			array(array('size' => '1KB', 'default' => false), 1024),
+			array(array('size' => '1.5KB', 'default' => false), 1536),
+			array(array('size' => '1MB', 'default' => false), 1048576),
+			array(array('size' => '1mb', 'default' => false), 1048576),
+			array(array('size' => '1.5MB', 'default' => false), 1572864),
+			array(array('size' => '1GB', 'default' => false), 1073741824),
+			array(array('size' => '1.5GB', 'default' => false), 1610612736),
+			array(array('size' => '1K', 'default' => false), 1024),
+			array(array('size' => '1.5K', 'default' => false), 1536),
+			array(array('size' => '1M', 'default' => false), 1048576),
+			array(array('size' => '1m', 'default' => false), 1048576),
+			array(array('size' => '1.5M', 'default' => false), 1572864),
+			array(array('size' => '1G', 'default' => false), 1073741824),
+			array(array('size' => '1.5G', 'default' => false), 1610612736),
+			array(array('size' => '512', 'default' => 'Unknown type'), 512),
+			array(array('size' => '2VB', 'default' => 'Unknown type'), 'Unknown type')
+		);
 	}
 
 }

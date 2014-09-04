@@ -136,7 +136,7 @@ class CellTest extends TestCase {
 /**
  * Tests manual render() invocation with error
  *
- * @expectedException \Cake\View\Error\MissingCellViewException
+ * @expectedException \Cake\View\Exception\MissingCellViewException
  * @return void
  */
 	public function testCellManualRenderError() {
@@ -193,7 +193,7 @@ class CellTest extends TestCase {
 /**
  * Tests that using an unexisting cell throws an exception.
  *
- * @expectedException \Cake\View\Error\MissingCellException
+ * @expectedException \Cake\View\Exception\MissingCellException
  * @return void
  */
 	public function testUnexistingCell() {
