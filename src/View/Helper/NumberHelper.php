@@ -35,7 +35,7 @@ class NumberHelper extends Helper {
  * @var mixed
  */
 	protected $_defaultConfig = [
-		'engine' => 'Cake\I18n\LocalizedNumber'
+		'engine' => 'Cake\I18n\Number'
 	];
 
 /**
