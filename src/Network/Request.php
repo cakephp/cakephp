@@ -126,7 +126,7 @@ class Request implements \ArrayAccess {
 		'delete' => array('env' => 'REQUEST_METHOD', 'value' => 'DELETE'),
 		'head' => array('env' => 'REQUEST_METHOD', 'value' => 'HEAD'),
 		'options' => array('env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'),
-		'ssl' => array('env' => 'HTTPS', 'value' => 1),
+		'ssl' => array('env' => 'HTTPS', 'options' => [1, 'on']),
 		'ajax' => array('env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'),
 		'flash' => array('env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'),
 		'requested' => array('param' => 'requested', 'value' => 1)
