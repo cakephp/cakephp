@@ -62,7 +62,8 @@ trait SelectableAssociationTrait {
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
 			'strategy' => $this->strategy(),
-			'nestKey' => $this->_name
+			'nestKey' => $this->_name,
+			'finder' => []
 		];
 	}
 
@@ -86,7 +87,7 @@ trait SelectableAssociationTrait {
 		}
 
 		$fetchQuery = $this
-			->find($this->finder())
+			->find(isset($options['finder']) ? $options['finder'] : 'all')
 			->where($options['conditions'])
 			->eagerLoaded(true)
 			->hydrate($options['query']->hydrate());

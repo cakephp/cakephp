@@ -421,22 +421,6 @@ class EagerLoaderTest extends TestCase {
 	}
 
 /**
- * Tests that Cake\ORM\Query::contain associations pass along custom finders to the EagerLoader
- * @return void
- */
-	public function testContainCanSpecifyFinder() {
-		$contains = ['Comments' => ['finder' => 'customFinder']];
-		$loader = new EagerLoader();
-		$loader->contain($contains);		
-		#pr($loader->contain());
-	#	#die();
-		#$this->assertTrue(
-		#	isset($loader->contain()['Comments']['queryBuilder']) && is_object($loader->contain()['Comments']['queryBuilder']),
-		#	"Cake\ORM\Eagerloader must respect custom finders sent to Cake\ORM\Query::contain."
-		#);
-	}
-
-/**
  * Helper function sued to quoted both keys and values in an array in case
  * the test suite is running with auto quoting enabled
  *
