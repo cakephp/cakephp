@@ -30,5 +30,6 @@ class_alias('Cake\Network\Exception\UnauthorizedException', 'Cake\Error\Unauthor
 class_alias('Cake\Filesystem\File', 'Cake\Utility\File');
 class_alias('Cake\Filesystem\Folder', 'Cake\Utility\Folder');
 class_alias('Cake\I18n\Time', 'Cake\Utility\Time');
+class_alias('Cake\I18n\Number', 'Cake\Utility\Number');
 
 require CAKE . 'basics.php';
