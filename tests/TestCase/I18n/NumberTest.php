@@ -414,6 +414,87 @@ class NumberTest extends TestCase {
 	}
 
 /**
+ * testToReadableSize method
+ *
+ * @return void
+ */
+	public function testToReadableSize() {
+		$result = $this->Number->toReadableSize(0);
+		$expected = '0 Bytes';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(1);
+		$expected = '1 Byte';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(45);
+		$expected = '45 Bytes';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(1023);
+		$expected = '1,023 Bytes';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024);
+		$expected = '1 KB';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024 + 123);
+		$expected = '1.12 KB';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024 * 512);
+		$expected = '512 KB';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024 * 1024 - 1);
+		$expected = '1 MB';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(512.05 * 1024 * 1024);
+		$expected = '512.05 MB';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 - 1);
+		$expected = '1 GB';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 512);
+		$expected = '512 GB';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 - 1);
+		$expected = '1 TB';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 512);
+		$expected = '512 TB';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 1024 - 1);
+		$expected = '1,024 TB';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 1024 * 1024);
+		$expected = '1,048,576 TB';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test toReadableSize() with locales
+ *
+ * @return void
+ */
+	public function testReadableSizeLocalized() {
+		I18n::defaultLocale('fr_FR');
+		$result = $this->Number->toReadableSize(1321205);
+		$this->assertEquals('1,26 MB', $result);
+
+		$result = $this->Number->toReadableSize(512.05 * 1024 * 1024 * 1024);
+		$this->assertEquals('512,05 GB', $result);
+	}
+
+/**
  * testFromReadableSize
  *
  * @dataProvider filesizes
