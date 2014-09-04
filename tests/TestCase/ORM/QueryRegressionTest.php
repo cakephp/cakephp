@@ -418,10 +418,25 @@ class QueryRegressionTest extends TestCase {
 		$query = $table->find('translations')->limit(10)->offset(1);
 		$result = $query->toArray();
 		$this->assertCount(2, $result);
-
-		$query = $table->find('translations')->having(['Articles.id >' => 1]);
-		$result = $query->toArray();
-		$this->assertCount(2, $result);
 	}
 
+/**
+ * Tests that using the subquery strategy in a deep assotiatin returns the right results
+ *
+ * @see https://github.com/cakephp/cakephp/issues/4484
+ * @return void
+ */
+	public function testDeepBelongsToManySubqueryStrategy() {
+		$table = TableRegistry::get('Authors');
+		$table->hasMany('Articles');
+		$table->Articles->belongsToMany('Tags', [
+			'strategy' => 'subquery'
+		]);
+		$table->Articles->Tags->junction();
+		$result = $table->find()->contain(['Articles.Tags'])->toArray();
+		$this->assertEquals(
+			['tag1', 'tag3'],
+			collection($result[2]->articles[0]->tags)->extract('name')->toArray()
+		);
+	}
 }

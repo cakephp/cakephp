@@ -147,7 +147,7 @@ class SecurityComponent extends Component {
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireSecure
  */
-	public function requireSecure($actions) {
+	public function requireSecure($actions = null) {
 		$this->_requireMethod('Secure', (array)$actions);
 	}
 

@@ -109,19 +109,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 			Configure::clear();
 			Configure::write($this->_configure);
 		}
-		if (isset($_GET['debug']) && $_GET['debug']) {
-			ob_flush();
-		}
-	}
-
-/**
- * See Cake\TestSuite\TestSuiteDispatcher::date()
- *
- * @param string $format format to be used.
- * @return string
- */
-	public static function date($format = 'Y-m-d H:i:s') {
-		return TestSuiteDispatcher::date($format);
 	}
 
 /**
