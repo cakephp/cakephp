@@ -141,11 +141,13 @@ trait PostgresDialectTrait {
  * {@inheritDoc}
  */
 	public function disableForeignKeySQL() {
+		return 'SET CONSTRAINTS ALL DEFERRED';
 	}
 
 /**
  * {@inheritDoc}
  */
 	public function enableForeignKeySQL() {
+		return 'SET CONSTRAINTS ALL IMMEDIATE';
 	}
 }
