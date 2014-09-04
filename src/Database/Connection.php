@@ -470,6 +470,24 @@ class Connection {
 	}
 
 /**
+ * Run driver specific SQL to disable foreign key checks.
+ *
+ * @return void
+ */
+	public function disableForeignKeys() {
+		$this->execute($this->_driver->disableForeignKeySql());
+	}
+
+/**
+ * Run driver specific SQL to enable foreign key checks.
+ *
+ * @return void
+ */
+	public function enableForeignKeys() {
+		$this->execute($this->_driver->enableForeignKeySql());
+	}
+
+/**
  * Executes a callable function inside a transaction, if any exception occurs
  * while executing the passed callable, the transaction will be rolled back
  * If the result of the callable function is ``false``, the transaction will

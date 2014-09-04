@@ -62,4 +62,16 @@ trait MysqlDialectTrait {
 		return $this->_schemaDialect;
 	}
 
+/**
+ * {@inheritDoc}
+ */
+	public function disableForeignKeySQL() {
+	}
+
+/**
+ * {@inheritDoc}
+ */
+	public function enableForeignKeySQL() {
+	}
+
 }

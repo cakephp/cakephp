@@ -145,6 +145,20 @@ abstract class Driver {
 	public abstract function rollbackSavePointSQL($name);
 
 /**
+ * Get the SQL for disabling foreign keys
+ *
+ * @return string
+ */
+	public abstract function disableForeignKeySQL();
+
+/**
+ * Get the SQL for enabling foreign keys
+ *
+ * @return string
+ */
+	public abstract function enableForeignKeySQL();
+
+/**
  * Returns whether this driver supports save points for nested transactions
  *
  * @return bool true if save points are supported, false otherwise

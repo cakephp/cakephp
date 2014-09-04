@@ -233,4 +233,16 @@ trait SqlserverDialectTrait {
 		return new SqlserverCompiler();
 	}
 
+/**
+ * {@inheritDoc}
+ */
+	public function disableForeignKeySQL() {
+	}
+
+/**
+ * {@inheritDoc}
+ */
+	public function enableForeignKeySQL() {
+	}
+
 }
