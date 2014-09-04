@@ -132,7 +132,7 @@ class ServerShell extends Shell {
 
 		$port = ':' . $this->_port;
 		$this->out(sprintf('built-in server is running in http://%s%s/', $this->_host, $port));
-		$this->out(sprintf('You can exit with <info>CTRL-C</info>'));
+		$this->out(sprintf('You can exit with <info>`CTRL-C`</info>'));
 		system($command);
 	}
 

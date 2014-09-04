@@ -59,7 +59,7 @@ class PluginTask extends BakeTask {
 	public function main($name = null) {
 		if (empty($name)) {
 			$this->err('<error>You must provide a plugin name in CamelCase format.</error>');
-			$this->err('To make an "Example" plugin, run <info>Console/cake bake plugin Example</info>.');
+			$this->err('To make an "Example" plugin, run <info>`cake bake plugin Example`</info>.');
 			return false;
 		}
 		$plugin = $this->_camelize($name);
