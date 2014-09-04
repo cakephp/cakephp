@@ -14,7 +14,7 @@
  */
 namespace Cake\Validation;
 
-use Cake\Utility\Number;
+use Cake\I18n\Number;
 use RuntimeException;
 
 /**
