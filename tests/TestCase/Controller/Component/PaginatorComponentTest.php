@@ -142,6 +142,27 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
+ * Test to make sure options get sent to custom finder methods via paginate
+ *
+ * @return void
+ */
+	public function testPaginateCustomFinderOptions() {
+		$this->loadFixtures('Post');
+		$settings = [
+			'PaginatorPosts' => [
+				'finder' => ['author' => ['author_id' => 1]]
+			]
+		];
+		$table = TableRegistry::get('PaginatorPosts');
+
+		$expected = $table->find('author', ['conditions' => ['PaginatorPosts.author_id' => $settings['PaginatorPosts']['finder']['author']['author_id']]])
+			->count();
+		$result = $this->Paginator->paginate($table, $settings)->count();
+
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test that special paginate types are called and that the type param doesn't leak out into defaults or options.
  *
  * @return void
