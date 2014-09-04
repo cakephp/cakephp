@@ -14,11 +14,11 @@
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Utility;
+namespace Cake\Test\TestCase\I18n;
 
 use Cake\I18n\I18n;
+use Cake\I18n\Number;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Number;
 
 /**
  * NumberTest class
@@ -356,6 +356,64 @@ class NumberTest extends TestCase {
 	}
 
 /**
+ * test precision() with locales
+ *
+ * @return void
+ */
+	public function testPrecisionLocalized() {
+		I18n::defaultLocale('fr_FR');
+		$result = $this->Number->precision(1.234);
+		$this->assertEquals('1,234', $result);
+	}
+
+/**
+ * testToPercentage method
+ *
+ * @return void
+ */
+	public function testToPercentage() {
+		$result = $this->Number->toPercentage(45, 0);
+		$expected = '45%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(45, 2);
+		$expected = '45.00%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(0, 0);
+		$expected = '0%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(0, 4);
+		$expected = '0.0000%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(45, 0, array('multiply' => false));
+		$expected = '45%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(45, 2, array('multiply' => false));
+		$expected = '45.00%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(0, 0, array('multiply' => false));
+		$expected = '0%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(0, 4, array('multiply' => false));
+		$expected = '0.0000%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(0.456, 0, array('multiply' => true));
+		$expected = '46%';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->toPercentage(0.456, 2, array('multiply' => true));
+		$expected = '45.60%';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testToReadableSize method
  *
  * @return void
@@ -434,112 +492,6 @@ class NumberTest extends TestCase {
 
 		$result = $this->Number->toReadableSize(512.05 * 1024 * 1024 * 1024);
 		$this->assertEquals('512,05 GB', $result);
-	}
-
-/**
- * test precision() with locales
- *
- * @return void
- */
-	public function testPrecisionLocalized() {
-		I18n::defaultLocale('fr_FR');
-		$result = $this->Number->precision(1.234);
-		$this->assertEquals('1,234', $result);
-	}
-
-/**
- * testToPercentage method
- *
- * @return void
- */
-	public function testToPercentage() {
-		$result = $this->Number->toPercentage(45, 0);
-		$expected = '45%';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->toPercentage(45, 2);
-		$expected = '45.00%';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->toPercentage(0, 0);
-		$expected = '0%';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->toPercentage(0, 4);
-		$expected = '0.0000%';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->toPercentage(45, 0, array('multiply' => false));
-		$expected = '45%';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->toPercentage(45, 2, array('multiply' => false));
-		$expected = '45.00%';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->toPercentage(0, 0, array('multiply' => false));
-		$expected = '0%';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->toPercentage(0, 4, array('multiply' => false));
-		$expected = '0.0000%';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->toPercentage(0.456, 0, array('multiply' => true));
-		$expected = '46%';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Number->toPercentage(0.456, 2, array('multiply' => true));
-		$expected = '45.60%';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * testFromReadableSize
- *
- * @dataProvider filesizes
- * @return void
- */
-	public function testFromReadableSize($params, $expected) {
-		$result = $this->Number->fromReadableSize($params['size'], $params['default']);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * testFromReadableSize
- *
- * @expectedException \Cake\Core\Exception\Exception
- * @return void
- */
-	public function testFromReadableSizeException() {
-		$this->Number->fromReadableSize('bogus', false);
-	}
-
-/**
- * filesizes dataprovider
- *
- * @return array
- */
-	public function filesizes() {
-		return array(
-			array(array('size' => '512B', 'default' => false), 512),
-			array(array('size' => '1KB', 'default' => false), 1024),
-			array(array('size' => '1.5KB', 'default' => false), 1536),
-			array(array('size' => '1MB', 'default' => false), 1048576),
-			array(array('size' => '1mb', 'default' => false), 1048576),
-			array(array('size' => '1.5MB', 'default' => false), 1572864),
-			array(array('size' => '1GB', 'default' => false), 1073741824),
-			array(array('size' => '1.5GB', 'default' => false), 1610612736),
-			array(array('size' => '1K', 'default' => false), 1024),
-			array(array('size' => '1.5K', 'default' => false), 1536),
-			array(array('size' => '1M', 'default' => false), 1048576),
-			array(array('size' => '1m', 'default' => false), 1048576),
-			array(array('size' => '1.5M', 'default' => false), 1572864),
-			array(array('size' => '1G', 'default' => false), 1073741824),
-			array(array('size' => '1.5G', 'default' => false), 1610612736),
-			array(array('size' => '512', 'default' => 'Unknown type'), 512),
-			array(array('size' => '2VB', 'default' => 'Unknown type'), 'Unknown type')
-		);
 	}
 
 }
