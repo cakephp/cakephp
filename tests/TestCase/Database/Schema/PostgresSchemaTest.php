@@ -680,31 +680,31 @@ SQL;
 				'author_id_idx',
 				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
 				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-				'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT'
+				'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT DEFERABLE INITIALLY IMMEDIATE'
 			],
 			[
 				'author_id_idx',
 				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
 				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-				'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT'
+				'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT DEFERABLE INITIALLY IMMEDIATE'
 			],
 			[
 				'author_id_idx',
 				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'restrict'],
 				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-				'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT'
+				'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT DEFERABLE INITIALLY IMMEDIATE'
 			],
 			[
 				'author_id_idx',
 				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
 				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-				'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT'
+				'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT DEFERABLE INITIALLY IMMEDIATE'
 			],
 			[
 				'author_id_idx',
 				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
 				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-				'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT'
+				'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERABLE INITIALLY IMMEDIATE'
 			],
 		];
 	}

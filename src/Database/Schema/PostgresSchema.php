@@ -428,7 +428,7 @@ class PostgresSchema extends BaseSchema {
 		);
 		if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
 			return $prefix . sprintf(
-				' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
+				' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s DEFERABLE INITIALLY IMMEDIATE',
 				implode(', ', $columns),
 				$this->_driver->quoteIdentifier($data['references'][0]),
 				$this->_driver->quoteIdentifier($data['references'][1]),
