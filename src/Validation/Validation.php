@@ -14,7 +14,7 @@
  */
 namespace Cake\Validation;
 
-use Cake\I18n\Number;
+use Cake\Utility\String;
 use RuntimeException;
 
 /**
@@ -928,7 +928,7 @@ class Validation {
 		}
 
 		if (is_string($size)) {
-			$size = Number::fromReadableSize($size);
+			$size = String::parseFileSize($size);
 		}
 		$filesize = filesize($check);
 
