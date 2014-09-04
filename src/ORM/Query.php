@@ -468,18 +468,37 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	}
 
 /**
+ * Clear many the clauses that will make cloned queries behave incorrectly.
+ *
+ * The following clauses/features will be cleared:
+ *
+ * - autoFields
+ * - limit
+ * - offset
+ * - map/reduce functions
+ * - result formatters
+ * - order
+ * - containments
+ */
+	public function clear() {
+		$this->autoFields(false);
+		$this->limit(null);
+		$this->order([], true);
+		$this->offset(null);
+		$this->mapReduce(null, null, true);
+		$this->formatResults(null, true);
+		$this->contain([], true);
+	}
+
+/**
  * Returns the COUNT(*) for the query.
  *
  * @return int
  */
 	public function count() {
 		$query = clone $this;
-		$query->autoFields(false);
-		$query->limit(null);
-		$query->order([], true);
-		$query->offset(null);
-		$query->mapReduce(null, null, true);
-		$query->formatResults(null, true);
+		$query->clear();
+
 		$counter = $this->_counter;
 
 		if ($counter) {
