@@ -418,10 +418,6 @@ class QueryRegressionTest extends TestCase {
 		$query = $table->find('translations')->limit(10)->offset(1);
 		$result = $query->toArray();
 		$this->assertCount(2, $result);
-
-		$query = $table->find('translations')->having(['Articles.id >' => 1]);
-		$result = $query->toArray();
-		$this->assertCount(2, $result);
 	}
 
 }
