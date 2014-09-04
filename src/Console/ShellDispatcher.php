@@ -23,8 +23,7 @@ use Cake\Utility\Inflector;
 /**
  * Shell dispatcher handles dispatching cli commands.
  *
- * Consult https://github.com/cakephp/app/tree/master/App/Console/cake.php
- * for how this class is used in practice.
+ * Consult /bin/cake.php for how this class is used in practice.
  */
 class ShellDispatcher {
 
