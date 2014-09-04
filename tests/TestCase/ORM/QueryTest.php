@@ -2089,4 +2089,26 @@ class QueryTest extends TestCase {
 		$this->assertEquals(3, $result);
 	}
 
+/**
+ * test that cleanCopy makes a cleaned up clone.
+ *
+ * @return void
+ */
+	public function testCleanCopy() {
+		$table = TableRegistry::get('Articles');
+		$table->hasMany('Comments');
+
+		$query = $table->find();
+		$query->offset(10)
+			->limit(1)
+			->order(['Articles.id' => 'DESC'])
+			->contain(['Comments']);
+		$copy = $query->cleanCopy();
+
+		$this->assertNotSame($copy, $query);
+		$this->assertNull($copy->clause('offset'));
+		$this->assertNull($copy->clause('limit'));
+		$this->assertNull($copy->clause('order'));
+	}
+
 }

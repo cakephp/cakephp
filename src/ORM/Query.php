@@ -468,11 +468,23 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	}
 
 /**
- * Returns the COUNT(*) for the query.
+ * Creates a copy of this current query and resets some state.
  *
- * @return int
+ * The following state will be cleared:
+ *
+ * - autoFields
+ * - limit
+ * - offset
+ * - map/reduce functions
+ * - result formatters
+ * - order
+ * - containments
+ *
+ * This method creates query clones that are useful when working with subqueries.
+ *
+ * @return \Cake\ORM\Query
  */
-	public function count() {
+	public function cleanCopy() {
 		$query = clone $this;
 		$query->autoFields(false);
 		$query->limit(null);
@@ -480,6 +492,17 @@ class Query extends DatabaseQuery implements JsonSerializable {
 		$query->offset(null);
 		$query->mapReduce(null, null, true);
 		$query->formatResults(null, true);
+		$query->contain([], true);
+		return $query;
+	}
+
+/**
+ * Returns the COUNT(*) for the query.
+ *
+ * @return int
+ */
+	public function count() {
+		$query = $this->cleanCopy();
 		$counter = $this->_counter;
 
 		if ($counter) {
