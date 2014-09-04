@@ -12,7 +12,7 @@
  * @since         0.10.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Utility;
+namespace Cake\I18n;
 
 use Cake\Core\Exception\Exception;
 use NumberFormatter;

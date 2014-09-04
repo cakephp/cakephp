@@ -14,7 +14,7 @@
  */
 namespace Cake\I18n;
 
-use Cake\Utility\Number;
+use Cake\I18n\Number;
 
 /**
  * Number helper library.

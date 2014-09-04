@@ -14,11 +14,11 @@
  * @since         1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Utility;
+namespace Cake\Test\TestCase\I18n;
 
 use Cake\I18n\I18n;
+use Cake\I18n\Number;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Number;
 
 /**
  * NumberTest class
