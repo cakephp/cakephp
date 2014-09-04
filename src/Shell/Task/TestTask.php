@@ -116,7 +116,7 @@ class TestTask extends BakeTask {
 			$this->out(++$i . '. ' . $option);
 		}
 		$this->out('');
-		$this->out('Re-run your command as Console/cake bake <type> <classname>');
+		$this->out('Re-run your command as `cake bake <type> <classname>`');
 	}
 
 /**
@@ -142,7 +142,7 @@ class TestTask extends BakeTask {
 			$this->out(++$i . '. ' . $option);
 		}
 		$this->out('');
-		$this->out('Re-run your command as Console/cake bake ' . $type . ' <classname>');
+		$this->out('Re-run your command as `cake bake ' . $type . ' <classname>`');
 	}
 
 /**
