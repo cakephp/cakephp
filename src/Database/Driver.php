@@ -121,6 +121,30 @@ abstract class Driver {
 	public abstract function rollbackTransaction();
 
 /**
+ * Get the SQL for releasing a save point.
+ *
+ * @param string $name The table name
+ * @return string
+ */
+	public abstract function releaseSavePointSQL($name);
+
+/**
+ * Get the SQL for creating a save point.
+ *
+ * @param string $name The table name
+ * @return string
+ */
+	public abstract function savePointSQL($name);
+
+/**
+ * Get the SQL for rollingback a save point.
+ *
+ * @param string $name The table name
+ * @return string
+ */
+	public abstract function rollbackSavePointSQL($name);
+
+/**
  * Returns whether this driver supports save points for nested transactions
  *
  * @return bool true if save points are supported, false otherwise
@@ -128,6 +152,7 @@ abstract class Driver {
 	public function supportsSavePoints() {
 		return true;
 	}
+
 
 /**
  * Returns a value in a safe representation to be used in a query string
