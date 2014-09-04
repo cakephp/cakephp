@@ -468,9 +468,9 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	}
 
 /**
- * Clear many the clauses that will make cloned queries behave incorrectly.
+ * Creates a copy of this current query and resets some state.
  *
- * The following clauses/features will be cleared:
+ * The following state will be cleared:
  *
  * - autoFields
  * - limit
@@ -479,15 +479,21 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * - result formatters
  * - order
  * - containments
+ *
+ * This method creates query clones that are useful when working with subqueries.
+ *
+ * @return \Cake\ORM\Query
  */
-	public function clear() {
-		$this->autoFields(false);
-		$this->limit(null);
-		$this->order([], true);
-		$this->offset(null);
-		$this->mapReduce(null, null, true);
-		$this->formatResults(null, true);
-		$this->contain([], true);
+	public function cleanCopy() {
+		$query = clone $this;
+		$query->autoFields(false);
+		$query->limit(null);
+		$query->order([], true);
+		$query->offset(null);
+		$query->mapReduce(null, null, true);
+		$query->formatResults(null, true);
+		$query->contain([], true);
+		return $query;
 	}
 
 /**
@@ -496,9 +502,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * @return int
  */
 	public function count() {
-		$query = clone $this;
-		$query->clear();
-
+		$query = $this->cleanCopy();
 		$counter = $this->_counter;
 
 		if ($counter) {

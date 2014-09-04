@@ -159,8 +159,7 @@ trait SelectableAssociationTrait {
  * @return \Cake\ORM\Query
  */
 	protected function _buildSubquery($query) {
-		$filterQuery = clone $query;
-		$filterQuery->clear();
+		$filterQuery = $query->cleanCopy();
 
 		$joins = $filterQuery->join();
 		foreach ($joins as $i => $join) {
