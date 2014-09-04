@@ -300,14 +300,14 @@ class Controller implements EventListener {
 	}
 
 /**
- * Provides backwards compatibility to avoid problems with empty and isset to alias properties.
+ * Magic accessor for model autoloading.
  *
  * @param string $name Property name
  * @return bool
  */
 	public function __get($name) {
-		if (strpos($this->modelClass, $name) !== false) {
-			list($plugin, $class) = pluginSplit($this->modelClass, true);
+		list($plugin, $class) = pluginSplit($this->modelClass, true);
+		if ($class === $name) {
 			$this->loadModel($plugin . $class);
 			return $this->{$class};
 		}
