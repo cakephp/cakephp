@@ -33,8 +33,3 @@ class_alias('Cake\I18n\Time', 'Cake\Utility\Time');
 class_alias('Cake\I18n\Number', 'Cake\Utility\Number');
 
 require CAKE . 'basics.php';
-
-use Cake\Core\App;
-use Cake\Core\Configure;
-
-App::init();
