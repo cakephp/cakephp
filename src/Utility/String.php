@@ -14,6 +14,8 @@
  */
 namespace Cake\Utility;
 
+use Cake\Core\Exception\Exception;
+
 /**
  * String handling methods.
  *
@@ -713,5 +715,43 @@ class String {
 		}
 		return $ascii;
 	}
+
+/**
+ * Converts filesize from human readable string to bytes
+ *
+ * @param string $size Size in human readable string like '5MB', '5M', '500B', '50kb' etc.
+ * @param mixed $default Value to be returned when invalid size was used, for example 'Unknown type'
+ * @return mixed Number of bytes as integer on success, `$default` on failure if not false
+ * @throws \Cake\Core\Exception\Exception On invalid Unit type.
+ * @link http://book.cakephp.org/3.0/en/core-libraries/helpers/text.html
+ */
+	public static function parseFileSize($size, $default = false) {
+		if (ctype_digit($size)) {
+			return (int)$size;
+		}
+		$size = strtoupper($size);
+
+		$l = -2;
+		$i = array_search(substr($size, -2), array('KB', 'MB', 'GB', 'TB', 'PB'));
+		if ($i === false) {
+			$l = -1;
+			$i = array_search(substr($size, -1), array('K', 'M', 'G', 'T', 'P'));
+		}
+		if ($i !== false) {
+			$size = substr($size, 0, $l);
+			return $size * pow(1024, $i + 1);
+		}
+
+		if (substr($size, -1) === 'B' && ctype_digit(substr($size, 0, -1))) {
+			$size = substr($size, 0, -1);
+			return (int)$size;
+		}
+
+		if ($default !== false) {
+			return $default;
+		}
+		throw new Exception('No unit type.');
+	}
+
 
 }
