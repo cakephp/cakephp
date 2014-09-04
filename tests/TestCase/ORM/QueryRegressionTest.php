@@ -39,7 +39,8 @@ class QueryRegressionTest extends TestCase {
 		'core.tag',
 		'core.articles_tag',
 		'core.author',
-		'core.special_tag'
+		'core.special_tag',
+		'core.translate',
 	];
 
 /**
@@ -403,6 +404,20 @@ class QueryRegressionTest extends TestCase {
 		$this->assertEquals($resultA, $resultB);
 		$this->assertNotEmpty($resultA->author);
 		$this->assertNotEmpty($resultA->articles_tag->author);
+	}
+
+/**
+ * Test that offset/limit are elided from subquery loads.
+ *
+ * @return void
+ */
+	public function testAssociationSubQueryNoOffset() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->locale('eng');
+		$query = $table->find('translations')->limit(10)->offset(1);
+		$result = $query->toArray();
+		$this->assertCount(2, $result);
 	}
 
 }

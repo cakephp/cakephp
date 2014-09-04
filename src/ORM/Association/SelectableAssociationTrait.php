@@ -162,6 +162,7 @@ trait SelectableAssociationTrait {
 		$filterQuery = clone $query;
 		$filterQuery->autoFields(false);
 		$filterQuery->limit(null);
+		$filterQuery->offset(null);
 		$filterQuery->order([], true);
 		$filterQuery->contain([], true);
 		$joins = $filterQuery->join();
