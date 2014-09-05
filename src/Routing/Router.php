@@ -729,14 +729,7 @@ class Router {
  */
 	public static function parseExtensions($extensions = null, $merge = true) {
 		$collection = static::$_collection;
-		if ($extensions === null) {
-			return $collection->extensions();
-		}
-		$extensions = (array)$extensions;
-		if ($merge) {
-			$extensions = array_merge($collection->extensions(), $extensions);
-		}
-		return $collection->extensions($extensions, false);
+		return $collection->extensions($extensions, $merge);
 	}
 
 /**
