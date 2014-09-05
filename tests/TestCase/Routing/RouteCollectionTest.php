@@ -301,13 +301,13 @@ class RouteCollectionTest extends TestCase {
 	public function testExtensions() {
 		$this->assertEquals([], $this->collection->extensions());
 
-		$this->collection->extensions('json');
+		$this->collection->extensions('json', false);
 		$this->assertEquals(['json'], $this->collection->extensions());
 
-		$this->collection->extensions(['rss', 'xml']);
+		$this->collection->extensions(['rss', 'xml'], false);
 		$this->assertEquals(['rss', 'xml'], $this->collection->extensions());
 
-		$this->collection->addExtensions(['json']);
+		$this->collection->extensions(['json']);
 		$this->assertEquals(['rss', 'xml', 'json'], $this->collection->extensions());
 	}
 
