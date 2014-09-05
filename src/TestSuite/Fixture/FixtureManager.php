@@ -184,24 +184,15 @@ class FixtureManager {
  *
  * @param \Cake\TestSuite\Fixture\TestFixture $fixture the fixture object to create
  * @param Connection $db the datasource instance to use
+ * @param array $sources The existing tables in the datasource.
  * @param bool $drop whether drop the fixture if it is already created or not
  * @return void
  */
-	protected function _setupTable(TestFixture $fixture, Connection $db = null, $drop = true) {
-		if (!$db) {
-			if (!empty($fixture->connection)) {
-				$db = ConnectionManager::get($fixture->connection, false);
-			}
-			if (!$db) {
-				$db = ConnectionManager::get('test', false);
-			}
-		}
+	protected function _setupTable(TestFixture $fixture, Connection $db, array $sources, $drop = true) {
 		if (!empty($fixture->created) && in_array($db->configName(), $fixture->created)) {
 			return;
 		}
 
-		$schemaCollection = $db->schemaCollection();
-		$sources = (array)$schemaCollection->listTables();
 		$table = $fixture->table;
 		$exists = in_array($table, $sources);
 
@@ -243,9 +234,10 @@ class FixtureManager {
 			foreach ($dbs as $db => $fixtures) {
 				$db = ConnectionManager::get($fixture->connection, false);
 				$db->transactional(function($db) use ($fixtures, $test) {
+					$tables = $db->schemaCollection()->listTables();
 					foreach ($fixtures as $fixture) {
 						if (!in_array($db->configName(), (array)$fixture->created)) {
-							$this->_setupTable($fixture, $db, $test->dropTables);
+							$this->_setupTable($fixture, $db, $tables, $test->dropTables);
 						}
 						if (!$test->dropTables) {
 							$fixture->truncate($db);
