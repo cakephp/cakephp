@@ -778,22 +778,6 @@ class ControllerTest extends TestCase {
 	}
 
 /**
- * test invoking hidden methods.
- *
- * @expectedException \Cake\Controller\Exception\PrivateActionException
- * @expectedExceptionMessage Private Action TestController::_hidden() is not directly accessible.
- * @return void
- */
-	public function testInvokeActionHidden() {
-		$url = new Request('test/_hidden/');
-		$url->addParams(array('controller' => 'test_controller', 'action' => '_hidden'));
-		$response = $this->getMock('Cake\Network\Response');
-
-		$Controller = new TestController($url, $response);
-		$Controller->invokeAction();
-	}
-
-/**
  * test invoking controller methods.
  *
  * @expectedException \Cake\Controller\Exception\PrivateActionException

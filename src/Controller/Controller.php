@@ -384,16 +384,13 @@ class Controller implements EventListener {
 	}
 
 /**
- * Check if the request's action is marked as private, with an underscore,
- * or if the request is attempting to directly accessing a prefixed action.
+ * Check if the request's action is a public method.
  *
  * @param \ReflectionMethod $method The method to be invoked.
- * @param \Cake\Network\Request $request The request to check.
  * @return bool
  */
-	protected function _isPrivateAction(\ReflectionMethod $method, Request $request) {
+	protected function _isPrivateAction(\ReflectionMethod $method) {
 		return (
-			$method->name[0] === '_' ||
 			!$method->isPublic() ||
 			!in_array($method->name, $this->methods)
 		);
