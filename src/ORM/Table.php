@@ -75,19 +75,33 @@ use Cake\Validation\Validator;
  * Table objects provide a few callbacks/events you can hook into to augment/replace
  * find operations. Each event uses the standard event subsystem in CakePHP
  *
- * - `beforeFind($event, $query, $options, $eagerLoaded)` - Fired before each find operation.
- *   By stopping the event and supplying a return value you can bypass the find operation
- *   entirely. Any changes done to the $query instance will be retained for the rest of the find.
- * - `beforeValidate($event, $entity, $options, $validator)` - Fired before an entity is validated.
- *   By stopping this event, you can abort the validate + save operations.
- * - `afterValidate($event, $entity, $options, $validator)` - Fired after an entity is validated.
- * - `beforeSave($event, $entity, $options)` - Fired before each entity is saved. Stopping this
- *   event will abort the save operation. When the event is stopped the result of the event will
- *   be returned.
- * - `afterSave($event, $entity, $options)` - Fired after an entity is saved.
- * - `beforeDelete($event, $entity, $options)` - Fired before an entity is deleted.
- *   By stopping this event you will abort the delete operation.
- * - `afterDelete($event, $entity, $options)` - Fired after an entity has been deleted.
+ * - `beforeFind(Event $event, Query $query, ArrayObject $options, boolean $primary)`
+ *   Fired before each find operation. By stopping the event and supplying a
+ *   return value you can bypass the find operation entirely. Any changes done
+ *   to the $query instance will be retained for the rest of the find. The
+ *   $primary parameter indicates whether or not this is the root query,
+ *   or an associated query.
+ *
+ * - `beforeValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
+ *   Fired before an entity is validated. By stopping this event, you can abort
+ *   the validate + save operations.
+ *
+ * - `afterValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
+ *   Fired after an entity is validated.
+ *
+ * - `beforeSave(Event $event, Entity $entity, ArrayObject $options)`
+ *   Fired before each entity is saved. Stopping this event will abort the save
+ *   operation. When the event is stopped the result of the event will be returned.
+ *
+ * - `afterSave(Event $event, Entity $entity, ArrayObject $options)`
+ *   Fired after an entity is saved.
+ *
+ * - `beforeDelete(Event $event, Entity $entity, ArrayObject $options)`
+ *   Fired before an entity is deleted. By stopping this event you will abort
+ *   the delete operation.
+ *
+ * - `afterDelete(Event $event, Entity $entity, ArrayObject $options)`
+ *   Fired after an entity has been deleted.
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  */
