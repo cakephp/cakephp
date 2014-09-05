@@ -343,10 +343,7 @@ class PaginatorHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sort
  */
 	public function sort($key, $title = null, array $options = []) {
-		$options = array_merge(
-			['url' => array(), 'model' => null, 'escape' => true],
-			$options
-		);
+		$options += ['url' => array(), 'model' => null, 'escape' => true];
 		$url = $options['url'];
 		unset($options['url']);
 
@@ -519,6 +516,7 @@ class PaginatorHelper extends Helper {
  *    custom content you would like.
  *
  * @param string|array $options Options for the counter string. See #options for list of keys.
+ *   If string it will be used as format.
  * @return string Counter string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::counter
  */
@@ -527,12 +525,10 @@ class PaginatorHelper extends Helper {
 			$options = array('format' => $options);
 		}
 
-		$options = array_merge(
-			[
-				'model' => $this->defaultModel(),
-				'format' => 'pages',
-			],
-		$options);
+		$options += [
+			'model' => $this->defaultModel(),
+			'format' => 'pages',
+		];
 
 		$paging = $this->params($options['model']);
 		if (!$paging['pageCount']) {
@@ -737,10 +733,7 @@ class PaginatorHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::first
  */
 	public function first($first = '<< first', array $options = []) {
-		$options = array_merge(
-			['model' => $this->defaultModel(), 'escape' => true],
-			$options
-		);
+		$options += ['model' => $this->defaultModel(), 'escape' => true];
 
 		$params = $this->params($options['model']);
 
@@ -789,11 +782,7 @@ class PaginatorHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::last
  */
 	public function last($last = 'last >>', array $options = array()) {
-		$options = array_merge(
-			['model' => $this->defaultModel(), 'escape' => true],
-			$options
-		);
-
+		$options += ['model' => $this->defaultModel(), 'escape' => true];
 		$params = $this->params($options['model']);
 
 		if ($params['pageCount'] <= 1) {

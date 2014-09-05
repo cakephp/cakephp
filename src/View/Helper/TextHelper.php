@@ -220,7 +220,7 @@ class TextHelper extends Helper {
  */
 	public function autoLink($text, array $options = array()) {
 		$text = $this->autoLinkUrls($text, $options);
-		return $this->autoLinkEmails($text, array_merge($options, array('escape' => false)));
+		return $this->autoLinkEmails($text, array('escape' => false) + $options);
 	}
 
 /**
