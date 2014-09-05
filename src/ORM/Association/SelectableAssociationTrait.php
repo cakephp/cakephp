@@ -86,7 +86,7 @@ trait SelectableAssociationTrait {
 		}
 
 		$fetchQuery = $this
-			->find('all')
+			->find(isset($options['finder']) ? $options['finder'] : 'all')
 			->where($options['conditions'])
 			->eagerLoaded(true)
 			->hydrate($options['query']->hydrate());
