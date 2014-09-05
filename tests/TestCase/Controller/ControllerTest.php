@@ -241,8 +241,18 @@ class ControllerTest extends TestCase {
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response');
 		$Controller = new Controller($request, $response);
+		$Controller->modelClass = 'SiteArticles';
+
+		$this->assertFalse($Controller->Articles);
+		$this->assertInstanceOf(
+			'Cake\ORM\Table',
+			$Controller->SiteArticles
+		);
+		unset($Controller->SiteArticles);
+
 		$Controller->modelClass = 'Articles';
 
+		$this->assertFalse($Controller->SiteArticles);
 		$this->assertInstanceOf(
 			'TestApp\Model\Table\ArticlesTable',
 			$Controller->Articles
