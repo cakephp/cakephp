@@ -63,7 +63,7 @@ class RequestHandlerComponent extends Component {
  * Contains the file extension parsed out by the Router
  *
  * @var string
- * @see Router::parseExtensions()
+ * @see Router::extensions()
  */
 	public $ext = null;
 
@@ -149,7 +149,7 @@ class RequestHandlerComponent extends Component {
  *
  * @param Event $event The initialize event that was fired.
  * @return void
- * @see Router::parseExtensions()
+ * @see Router::extensions()
  */
 	public function initialize(Event $event) {
 		if (isset($this->request->params['_ext'])) {
@@ -207,7 +207,7 @@ class RequestHandlerComponent extends Component {
  * The startup method of the RequestHandler enables several automatic behaviors
  * related to the detection of certain properties of the HTTP request, including:
  *
- * - If Router::parseExtensions() is enabled, the layout and template type are
+ * - If Router::extensions() is enabled, the layout and template type are
  *   switched based on the parsed extension or Accept-Type header. For example, if `controller/action.xml`
  *   is requested, the view path becomes `app/View/Controller/xml/action.ctp`. Also if
  *   `controller/action` is requested with `Accept-Type: application/xml` in the headers

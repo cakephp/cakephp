@@ -277,7 +277,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testMapResourcesWithExtension() {
-		Router::parseExtensions(['json', 'xml'], false);
+		Router::extensions(['json', 'xml'], false);
 
 		Router::mapResources('Posts', ['_ext' => 'json']);
 		$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -811,7 +811,7 @@ class RouterTest extends TestCase {
 		Router::connect('/reset/*', array('admin' => true, 'controller' => 'users', 'action' => 'reset'));
 		Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));
 		Router::connect('/admin/:controller/:action/*', array('prefix' => 'admin'));
-		Router::parseExtensions('rss', false);
+		Router::extensions('rss', false);
 
 		$request = new Request();
 		$request->addParams(array(
@@ -1525,13 +1525,13 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * testParseExtensions method
+ * testExtensions method
  *
  * @return void
  */
-	public function testParseExtensions() {
+	public function testExtensions() {
 		Router::extensions();
-		Router::parseExtensions('rss', false);
+		Router::extensions('rss', false);
 		$this->assertContains('rss', Router::extensions());
 	}
 
@@ -1541,7 +1541,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testSetExtensions() {
-		Router::parseExtensions('rss', false);
+		Router::extensions('rss', false);
 		$this->assertContains('rss', Router::extensions());
 
 		$this->_connectDefaultRoutes();
@@ -1552,7 +1552,7 @@ class RouterTest extends TestCase {
 		$result = Router::parse('/posts.xml');
 		$this->assertFalse(isset($result['_ext']));
 
-		Router::parseExtensions(array('xml'));
+		Router::extensions(array('xml'));
 	}
 
 /**
@@ -1581,7 +1581,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testExtensionParsing() {
-		Router::parseExtensions('rss', false);
+		Router::extensions('rss', false);
 		$this->_connectDefaultRoutes();
 
 		$result = Router::parse('/posts.rss');
@@ -1609,7 +1609,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
-		Router::parseExtensions(['rss', 'xml'], false);
+		Router::extensions(['rss', 'xml'], false);
 		$this->_connectDefaultRoutes();
 
 		$result = Router::parse('/posts.xml');
@@ -1651,7 +1651,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
-		Router::parseExtensions('rss', false);
+		Router::extensions('rss', false);
 		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', '_ext' => 'rss'));
 		$result = Router::parse('/controller/action');
 		$expected = array(
@@ -1980,7 +1980,7 @@ class RouterTest extends TestCase {
 	public function testParsingWithTrailingPeriodAndParseExtensions() {
 		Router::reload();
 		Router::connect('/:controller/:action/*');
-		Router::parseExtensions('json', false);
+		Router::extensions('json', false);
 
 		$result = Router::parse('/posts/view/something.');
 		$this->assertEquals('something.', $result['pass'][0], 'Period was chopped off %s');
@@ -2369,7 +2369,7 @@ class RouterTest extends TestCase {
  */
 	public function testReverseWithExtension() {
 		Router::connect('/:controller/:action/*');
-		Router::parseExtensions('json', false);
+		Router::extensions('json', false);
 
 		$request = new Request('/posts/view/1.json');
 		$request->addParams(array(

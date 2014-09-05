@@ -709,7 +709,7 @@ class Router {
 	}
 
 /**
- * Set/add valid extensions. Instructs the router to parse out file extensions
+ * Get/set/add valid extensions. Instructs the router to parse out file extensions
  * from the URL. For example, http://example.com/posts.rss would yield a file
  * extension of "rss". The file extension itself is made available in the
  * controller as `$this->params['_ext']`, and is used by the RequestHandler
@@ -725,25 +725,13 @@ class Router {
  *   If null it will return the currently set extensions.
  * @param bool $merge Default true will merge extensions. Set to false to override
  *   current extensions.
- * @return array
- */
-	public static function parseExtensions($extensions = null, $merge = true) {
-		$collection = static::$_collection;
-		return $collection->extensions($extensions, $merge);
-	}
-
-/**
- * Get the list of extensions that can be parsed by Router.
- *
- * To add / update extensions use `Router::parseExtensions()`
- *
  * @return array Array of extensions Router is configured to parse.
  */
-	public static function extensions() {
+	public static function extensions($extensions = null, $merge = true) {
 		if (!static::$initialized) {
 			static::_loadRoutes();
 		}
-		return static::$_collection->extensions();
+		return static::$_collection->extensions($extensions, $merge);
 	}
 
 /**
@@ -823,7 +811,7 @@ class Router {
  * specific kinds of scopes.
  *
  * Routing scopes will inherit the globally set extensions configured with
- * Router::parseExtensions(). You can also set valid extensions using
+ * Router::extensions(). You can also set valid extensions using
  * `$routes->extensions()` in your closure.
  *
  * @param string $path The path prefix for the scope. This path will be prepended
