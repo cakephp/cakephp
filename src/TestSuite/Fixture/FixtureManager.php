@@ -278,7 +278,7 @@ class FixtureManager {
 			$db = ConnectionManager::get($connection, false);
 			$db->transactional(function($db) use ($fixtures, $connection) {
 				$db->disableForeignKeys();
-				foreach ($fixtures as $f) {
+				foreach ($fixtures as $fixture) {
 					if (!empty($fixture->created) && in_array($connection, $fixture->created)) {
 						$fixture->truncate($db);
 					}
@@ -322,14 +322,18 @@ class FixtureManager {
  * @return void
  */
 	public function shutDown() {
-		foreach ($this->_loaded as $fixture) {
-			if (!empty($fixture->created)) {
-				foreach ($fixture->created as $ds) {
-					$db = ConnectionManager::get($ds);
-					$fixture->drop($db);
+		$dbs = $this->_fixtureConnections(array_keys($this->_loaded));
+		foreach ($dbs as $connection => $fixtures) {
+			$db = ConnectionManager::get($connection, false);
+			$db->transactional(function($db) use ($fixtures, $connection) {
+				$db->disableForeignKeys();
+				foreach ($fixtures as $fixture) {
+					if (!empty($fixture->created) && in_array($connection, $fixture->created)) {
+						$fixture->drop($db);
+					}
 				}
-				$fixture->created = [];
-			}
+				$db->enableForeignKeys();
+			});
 		}
 	}
 
