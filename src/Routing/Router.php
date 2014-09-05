@@ -721,9 +721,10 @@ class Router {
  * An array of valid extension can be passed to this method. If called without
  * any parameters it will return current list of set extensions.
  *
- * @param array|string $extensions List of extensions to be added as valid extension
+ * @param array|string|null $extensions List of extensions to be added as valid extension.
+ *   If null it will return the currently set extensions.
  * @param bool $merge Default true will merge extensions. Set to false to override
- *   current extensions
+ *   current extensions.
  * @return array
  */
 	public static function parseExtensions($extensions = null, $merge = true) {
