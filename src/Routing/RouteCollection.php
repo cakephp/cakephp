@@ -74,7 +74,7 @@ class RouteCollection {
  *   `_name` option, which enables named routes.
  * @return void
  */
-	public function add(Route $route, $options = []) {
+	public function add(Route $route, array $options = []) {
 		$this->_routes[] = $route;
 
 		// Explicit names
@@ -292,7 +292,7 @@ class RouteCollection {
  */
 	public function extensions($extensions = null) {
 		if ($extensions === null) {
-			return array_unique($this->_extensions);
+			return $this->_extensions;
 		}
 		$this->_extensions = (array)$extensions;
 	}
