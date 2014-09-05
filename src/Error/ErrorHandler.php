@@ -101,7 +101,7 @@ class ErrorHandler extends BaseErrorHandler {
 			'trace' => false,
 			'exceptionRenderer' => 'Cake\Error\ExceptionRenderer',
 		];
-		$this->_options = array_merge($defaults, $options);
+		$this->_options = $options + $defaults;
 	}
 
 /**
