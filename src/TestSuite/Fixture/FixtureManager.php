@@ -235,6 +235,7 @@ class FixtureManager {
 				$db = ConnectionManager::get($fixture->connection, false);
 				$db->transactional(function($db) use ($fixtures, $test) {
 					$tables = $db->schemaCollection()->listTables();
+					$db->disableForeignKeys();
 					foreach ($fixtures as $fixture) {
 						if (!in_array($db->configName(), (array)$fixture->created)) {
 							$this->_setupTable($fixture, $db, $tables, $test->dropTables);
@@ -244,6 +245,7 @@ class FixtureManager {
 						}
 						$fixture->insert($db);
 					}
+					$db->enableForeignKeys();
 				});
 			}
 		} catch (\PDOException $e) {
