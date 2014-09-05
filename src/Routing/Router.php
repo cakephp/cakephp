@@ -756,7 +756,7 @@ class Router {
  * @param array $options The array of options.
  * @return \Cake\Network\Request The modified request
  */
-	public static function parseNamedParams(Request $request, $options = []) {
+	public static function parseNamedParams(Request $request, array $options = []) {
 		$options += array('separator' => ':');
 		if (empty($request->params['pass'])) {
 			$request->params['named'] = [];
@@ -829,7 +829,7 @@ class Router {
  * @return null|\Cake\Routing\RouteBuilder The route builder
  *   was created/used.
  */
-	public static function scope($path, $params = [], $callback = null) {
+	public static function scope($path, array $params = [], $callback = null) {
 		$builder = new RouteBuilder(static::$_collection, '/', [], [
 			'routeClass' => static::defaultRouteClass(),
 			'extensions' => static::$_collection->extensions()

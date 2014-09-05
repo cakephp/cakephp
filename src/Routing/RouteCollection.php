@@ -74,7 +74,7 @@ class RouteCollection {
  *   `_name` option, which enables named routes.
  * @return void
  */
-	public function add(Route $route, $options = []) {
+	public function add(Route $route, array $options = []) {
 		$this->_routes[] = $route;
 
 		// Explicit names
