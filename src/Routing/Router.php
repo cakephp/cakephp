@@ -822,14 +822,14 @@ class Router {
  *
  * @param string $path The path prefix for the scope. This path will be prepended
  *   to all routes connected in the scoped collection.
- * @param array $params An array of routing defaults to add to each connected route.
+ * @param array|callable $params An array of routing defaults to add to each connected route.
  *   If you have no parameters, this argument can be a callable.
  * @param callable $callback The callback to invoke with the scoped collection.
  * @throws \InvalidArgumentException When an invalid callable is provided.
  * @return null|\Cake\Routing\RouteBuilder The route builder
  *   was created/used.
  */
-	public static function scope($path, array $params = [], $callback = null) {
+	public static function scope($path, $params = [], $callback = null) {
 		$builder = new RouteBuilder(static::$_collection, '/', [], [
 			'routeClass' => static::defaultRouteClass(),
 			'extensions' => static::$_collection->extensions()
