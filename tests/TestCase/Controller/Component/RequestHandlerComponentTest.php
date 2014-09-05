@@ -213,7 +213,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$this->assertEquals('xml', $this->RequestHandler->ext);
 
 		$this->RequestHandler->ext = null;
-		Router::parseExtensions(array('json', 'xml'), false);
+		Router::parseExtensions(['json', 'xml'], false);
 
 		$this->RequestHandler->initialize($event);
 		$this->assertEquals('json', $this->RequestHandler->ext);

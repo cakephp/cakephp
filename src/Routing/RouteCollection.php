@@ -285,11 +285,11 @@ class RouteCollection {
 		if ($extensions === null) {
 			return $this->_extensions;
 		}
-		if (!$merge) {
-			$this->_extensions = (array)$extensions;
-			return;
+		$extensions = (array)$extensions;
+		if ($merge) {
+			$extensions = array_merge($this->_extensions, $extensions);
 		}
-		$this->_extensions = array_unique(array_merge($this->_extensions, (array)$extensions));
+		$this->_extensions = array_unique($extensions);
 	}
 
 }

@@ -735,7 +735,7 @@ class Router {
 		if ($merge) {
 			$extensions = array_merge($collection->extensions(), $extensions);
 		}
-		return $collection->extensions($extensions);
+		return $collection->extensions($extensions, false);
 	}
 
 /**
