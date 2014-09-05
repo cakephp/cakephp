@@ -219,7 +219,7 @@ class RouteBuilder {
  * - 'actions' - Override the method names used for connecting actions.
  *
  * @param string $name A controller name to connect resource routes for.
- * @param array|callable $options Options to use when generating REST routes
+ * @param array|callable $options Options to use when generating REST routes, or a callback.
  * @param callable $callback An optional callback to be executed in a nested scope. Nested
  *   scopes inherit the existing path and 'id' parameter.
  * @return array Array of mapped resources
@@ -514,8 +514,8 @@ class RouteBuilder {
  * to the supplied parameters.
  *
  * @param string $path The path to create a scope for.
- * @param array|callable $params Either the parameters to add to routes, or a callback
- * @param callable $callback The callback to invoke that builds the plugin routes
+ * @param array|callable $params Either the parameters to add to routes, or a callback.
+ * @param callable $callback The callback to invoke that builds the plugin routes.
  *   Only required when $params is defined.
  * @return void
  * @throws \InvalidArgumentException when there is no callable parameter.
