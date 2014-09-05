@@ -277,11 +277,13 @@ class FixtureManager {
 		foreach ($dbs as $connection => $fixtures) {
 			$db = ConnectionManager::get($connection, false);
 			$db->transactional(function($db) use ($fixtures, $connection) {
+				$db->disableForeignKeys();
 				foreach ($fixtures as $f) {
 					if (!empty($fixture->created) && in_array($connection, $fixture->created)) {
 						$fixture->truncate($db);
 					}
 				}
+				$db->enableForeignKeys();
 			});
 		}
 	}
