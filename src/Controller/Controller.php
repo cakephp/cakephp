@@ -234,7 +234,7 @@ class Controller implements EventListener {
  * @param \Cake\Network\Response $response Response object for this controller.
  * @param string $name Override the name useful in testing when using mocks.
  */
-	public function __construct($request = null, $response = null, $name = null) {
+	public function __construct(Request $request = null, Response $response = null, $name = null) {
 		if ($this->name === null && $name === null) {
 			list(, $name) = namespaceSplit(get_class($this));
 			$name = substr($name, 0, -10);
