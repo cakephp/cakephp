@@ -53,6 +53,13 @@ use Cake\Event\EventListener;
  *   $primary parameter indicates whether or not this is the root query,
  *   or an associated query.
  *
+ * - `beforeValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
+ *   Fired before an entity is validated. By stopping this event, you can abort
+ *   the validate + save operations.
+ *
+ * - `afterValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
+ *   Fired after an entity is validated.
+ *
  * - `beforeSave(Event $event, Entity $entity, ArrayObject $options)`
  *   Fired before each entity is saved. Stopping this event will abort the save
  *   operation. When the event is stopped the result of the event will be returned.
@@ -211,6 +218,8 @@ class Behavior implements EventListener {
 			'Model.afterSave' => 'afterSave',
 			'Model.beforeDelete' => 'beforeDelete',
 			'Model.afterDelete' => 'afterDelete',
+			'Model.beforeValidate' => 'beforeValidate',
+			'Model.afterValidate' => 'afterValidate',
 		];
 		$config = $this->config();
 		$priority = isset($config['priority']) ? $config['priority'] : null;
