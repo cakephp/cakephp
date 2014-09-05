@@ -223,16 +223,10 @@ class FixtureManager {
 			return;
 		}
 
-		$dbs = [];
-		foreach ($fixtures as $f) {
-			if (!empty($this->_loaded[$f])) {
-				$fixture = $this->_loaded[$f];
-				$dbs[$fixture->connection][$f] = $fixture;
-			}
-		}
+		$dbs = $this->_fixtureConnections($fixtures);
 		try {
-			foreach ($dbs as $db => $fixtures) {
-				$db = ConnectionManager::get($fixture->connection, false);
+			foreach ($dbs as $connection => $fixtures) {
+				$db = ConnectionManager::get($connection, false);
 				$db->transactional(function($db) use ($fixtures, $test) {
 					$tables = $db->schemaCollection()->listTables();
 					$db->disableForeignKeys();
@@ -255,6 +249,23 @@ class FixtureManager {
 	}
 
 /**
+ * Get the unique list of connections that a set of fixtures contains.
+ *
+ * @param array $fixtures The array of fixtures a list of connections is needed from.
+ * @return array An array of connection names.
+ */
+	protected function _fixtureConnections ($fixtures) {
+		$dbs = [];
+		foreach ($fixtures as $f) {
+			if (!empty($this->_loaded[$f])) {
+				$fixture = $this->_loaded[$f];
+				$dbs[$fixture->connection][$f] = $fixture;
+			}
+		}
+		return $dbs;
+	}
+
+/**
  * Truncates the fixtures tables
  *
  * @param \Cake\TestSuite\TestCase $test the test to inspect for fixture unloading
@@ -262,16 +273,16 @@ class FixtureManager {
  */
 	public function unload($test) {
 		$fixtures = !empty($test->fixtures) ? $test->fixtures : [];
-		foreach (array_reverse($fixtures) as $f) {
-			if (isset($this->_loaded[$f])) {
-				$fixture = $this->_loaded[$f];
-				if (!empty($fixture->created)) {
-					foreach ($fixture->created as $ds) {
-						$db = ConnectionManager::get($ds);
+		$dbs = $this->_fixtureConnections($fixtures);
+		foreach ($dbs as $connection => $fixtures) {
+			$db = ConnectionManager::get($connection, false);
+			$db->transactional(function($db) use ($fixtures, $connection) {
+				foreach ($fixtures as $f) {
+					if (!empty($fixture->created) && in_array($connection, $fixture->created)) {
 						$fixture->truncate($db);
 					}
 				}
-			}
+			});
 		}
 	}
 
