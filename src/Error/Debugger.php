@@ -300,11 +300,11 @@ class Debugger {
 		);
 
 		for ($i = $options['start']; $i < $count && $i < $options['depth']; $i++) {
-			$trace = array_merge(array('file' => '[internal]', 'line' => '??'), $backtrace[$i]);
+			$trace = $backtrace[$i] + array('file' => '[internal]', 'line' => '??');
 			$signature = $reference = '[main]';
 
 			if (isset($backtrace[$i + 1])) {
-				$next = array_merge($_trace, $backtrace[$i + 1]);
+				$next = $backtrace[$i + 1] + $_trace;
 				$signature = $reference = $next['function'];
 
 				if (!empty($next['class'])) {
@@ -689,7 +689,7 @@ class Debugger {
 				);
 				unset($strings['links']);
 			}
-			$self->_templates[$format] = array_merge($self->_templates[$format], $strings);
+			$self->_templates[$format] = $strings + $self->_templates[$format];
 		} else {
 			$self->_templates[$format] = $strings;
 		}
@@ -779,7 +779,7 @@ class Debugger {
 
 		$data['trace'] = $trace;
 		$data['id'] = 'cakeErr' . uniqid();
-		$tpl = array_merge($this->_templates['base'], $this->_templates[$this->_outputFormat]);
+		$tpl = $this->_templates[$this->_outputFormat] + $this->_templates['base'];
 
 		if (isset($tpl['links'])) {
 			foreach ($tpl['links'] as $key => $val) {
