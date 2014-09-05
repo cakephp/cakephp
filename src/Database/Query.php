@@ -374,6 +374,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$tables = [$tables];
 		}
 
+		if ($this->_connection instanceof \Cake\Database\Connection) {
+			$tables = $this->_connection->fullTableName($tables);
+		}
+
 		if ($overwrite) {
 			$this->_parts['from'] = $tables;
 		} else {
@@ -477,6 +481,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 		if (is_string($tables) || isset($tables['table'])) {
 			$tables = [$tables];
+		}
+
+		if ($this->_connection instanceof \Cake\Database\Connection) {
+			$tables = $this->_connection->fullTableName($tables);
 		}
 
 		$joins = [];

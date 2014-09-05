@@ -17,6 +17,7 @@ namespace Cake\Database;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
@@ -189,6 +190,44 @@ class Connection {
  */
 	public function isConnected() {
 		return $this->_driver->isConnected();
+	}
+
+/**
+ * Wrap the table name in a TableNameExpression with the current config prefix
+ *
+ * @param string|array|ExpressionInterface $names The names of the tables
+ *
+ * @see \Cake\Database\Expression\TableNameExpression
+ * @return string|array|ExpressionInterface Full tables names
+ */
+	public function fullTableName($names) {
+		$prefix = "";
+
+		if (isset($this->_config["prefix"]) && $this->_config["prefix"] !== "") {
+			$prefix = $this->_config["prefix"];
+		}
+
+		if (is_string($names)) {
+			$names = new TableNameExpression($names, $prefix);
+		} else {
+			if (is_array($names) && !empty($names)) {
+				foreach ($names as $alias => $tableName) {
+					if (is_string($tableName)) {
+						$tableName = new TableNameExpression($tableName, $prefix);
+					} elseif (
+						is_array($tableName) &&
+						isset($tableName["table"]) &&
+						is_string($tableName["table"])
+					) {
+						$tableName["table"] = new TableNameExpression($tableName["table"], $prefix);
+					}
+
+					$names[$alias] = $tableName;
+				}
+			}
+		}
+
+		return $names;
 	}
 
 /**
