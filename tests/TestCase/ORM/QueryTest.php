@@ -1719,7 +1719,9 @@ class QueryTest extends TestCase {
 				});
 		};
 		$query = $table->find()
-			->contain(['Articles' => $builder, 'Articles.Authors' => $builder]);
+			->contain(['Articles' => $builder, 'Articles.Authors' => $builder])
+			->order(['Articles.id' => 'ASC']);
+
 		$query->formatResults(function($results) {
 			return $results->map(function($row) {
 				return sprintf(
@@ -1799,9 +1801,11 @@ class QueryTest extends TestCase {
 		$table->belongsTo('Articles');
 		$table->association('Articles')->target()->belongsTo('Authors');
 
-		$query = $table->find()->contain(['Articles' => function($q) {
-			return $q->contain('Authors');
-		}]);
+		$query = $table->find()
+			->order(['Articles.id' => 'ASC'])
+			->contain(['Articles' => function($q) {
+				return $q->contain('Authors');
+			}]);
 		$results = $query->extract('article.author.name')->toArray();
 		$expected = ['mariano', 'mariano', 'larry', 'larry'];
 		$this->assertEquals($expected, $results);
