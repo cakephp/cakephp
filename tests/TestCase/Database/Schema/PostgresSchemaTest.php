@@ -900,7 +900,7 @@ SQL;
 			]);
 		$result = $table->truncateSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('TRUNCATE "schema_articles" RESTART IDENTITY', $result[0]);
+		$this->assertEquals('TRUNCATE "schema_articles" RESTART IDENTITY CASCADE', $result[0]);
 	}
 
 /**
