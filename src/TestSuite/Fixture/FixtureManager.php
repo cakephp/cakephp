@@ -254,7 +254,7 @@ class FixtureManager {
  * @param array $fixtures The array of fixtures a list of connections is needed from.
  * @return array An array of connection names.
  */
-	protected function _fixtureConnections ($fixtures) {
+	protected function _fixtureConnections($fixtures) {
 		$dbs = [];
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
