@@ -2111,4 +2111,37 @@ class QueryTest extends TestCase {
 		$this->assertNull($copy->clause('order'));
 	}
 
+/**
+ * Test that finder options sent through via contain are sent to custom finder.
+ *
+ * @return void
+ */
+	public function testContainFinderCanSpecifyOptions() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo(
+			'Authors',
+			['className' => 'TestApp\Model\Table\AuthorsTable']
+		);
+		$authorId = 1;
+
+		$resultWithoutAuthor = $table->find('all')
+			->where(['Articles.author_id' => $authorId])
+			->contain([
+				'Authors' => [
+					'finder' => ['byAuthor' => ['author_id' => 2]]
+				]
+			]);
+
+		$resultWithAuthor = $table->find('all')
+			->where(['Articles.author_id' => $authorId])
+			->contain([
+				'Authors' => [
+					'finder' => ['byAuthor' => ['author_id' => $authorId]]
+				]
+			]);
+
+		$this->assertEmpty($resultWithoutAuthor->first()['author']);
+		$this->assertEquals($authorId, $resultWithAuthor->first()['author']['id']);
+	}
+
 }

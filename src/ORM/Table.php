@@ -1454,6 +1454,9 @@ class Table implements RepositoryInterface, EventListener {
  * @throws \BadMethodCallException
  */
 	public function callFinder($type, Query $query, array $options = []) {
+		if (is_array($type)) {
+			list($type, $options) = $this->_inferFinderTypeAndOptions($type, $options);
+		}
 		$query->applyOptions($options);
 		$options = $query->getOptions();
 		$finder = 'find' . $type;
@@ -1945,6 +1948,43 @@ class Table implements RepositoryInterface, EventListener {
 			'behaviors' => $this->_behaviors->loaded(),
 			'defaultConnection' => $this->defaultConnectionName(),
 			'connectionName' => $conn ? $conn->configName() : null
+		];
+	}
+
+/**
+ * Helper method to infer the requested finder and its options.
+ *
+ * Returns the inferred options from the finder $type. 
+ *
+ * ### Examples:
+ *
+ * The following will call the finder 'translations' with the value of the finder as its options:
+ * $query->contain(['Comments' => ['finder' => ['translations']]]);
+ * $query->contain(['Comments' => ['finder' => ['translations' => []]]]);
+ * $query->contain(['Comments' => ['finder' => ['translations' => ['locales' => ['en_US']]]]]);
+ * $query->contain(['Comments' => ['finder' => ['translations' => 'customOption']]]);
+ *
+ * @param array $type Finder type as an array.
+ * @return array
+ */
+	protected function _inferFinderTypeAndOptions(array $type) {
+		$options = [];
+		if (count($type)) {
+			$v = array_values($type)[0];
+			$k = array_keys($type)[0];
+			if (is_array($v)) {
+				$type = $k;
+				$options = $v;
+			} elseif (is_string($v) && !$k) {
+				$type = $v;
+			} elseif (is_string($v)) {
+				$type = $k;
+				$options = [$v];
+			}
+		}
+		return [
+			$type,
+			$options
 		];
 	}
 
