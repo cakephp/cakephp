@@ -2695,7 +2695,7 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * Connect some fallback routes for testing router behavior.
+ * Connect some fallback routes for testing Router behavior.
  *
  * @return void
  */

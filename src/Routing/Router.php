@@ -728,9 +728,6 @@ class Router {
  * @return array Array of extensions Router is configured to parse.
  */
 	public static function extensions($extensions = null, $merge = true) {
-		if (!static::$initialized) {
-			static::_loadRoutes();
-		}
 		return static::$_collection->extensions($extensions, $merge);
 	}
 
