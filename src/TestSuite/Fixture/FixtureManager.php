@@ -332,7 +332,6 @@ class FixtureManager {
 						$fixture->drop($db);
 					}
 				}
-				$db->enableForeignKeys();
 			});
 		}
 	}
