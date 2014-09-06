@@ -1945,7 +1945,6 @@ class Table implements RepositoryInterface, EventListener {
  * ### Examples:
  *
  * The following will call the finder 'translations' with the value of the finder as its options:
- * $query->contain(['Comments' => ['finder' => 'translations']]);
  * $query->contain(['Comments' => ['finder' => ['translations']]]);
  * $query->contain(['Comments' => ['finder' => ['translations' => []]]]);
  * $query->contain(['Comments' => ['finder' => ['translations' => ['locales' => ['en_US']]]]]);
