@@ -46,24 +46,33 @@ use Cake\Event\EventListener;
  * CakePHP provides a number of lifecycle events your behaviors can
  * listen to:
  *
- * - `beforeFind(Event $event, Query $query)`
- *   Fired before a query is converted into SQL.
+ * - `beforeFind(Event $event, Query $query, ArrayObject $options, boolean $primary)`
+ *   Fired before each find operation. By stopping the event and supplying a
+ *   return value you can bypass the find operation entirely. Any changes done
+ *   to the $query instance will be retained for the rest of the find. The
+ *   $primary parameter indicates whether or not this is the root query,
+ *   or an associated query.
  *
- * - `beforeDelete(Event $event, Entity $entity)`
- *   Fired before an entity is deleted.
+ * - `beforeValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
+ *   Fired before an entity is validated. By stopping this event, you can abort
+ *   the validate + save operations.
  *
- * - `afterDelete(Event $event, Entity $entity)`
- *   Fired after an entity has been deleted. The entity parameter
- *   will contain the entity state from before it was deleted.
+ * - `afterValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
+ *   Fired after an entity is validated.
  *
- * - `beforeSave(Event $event, Entity $entity)`
- *   Fired before an entity is saved. In the case where
- *   multiple entities are being saved, one event will be fired
- *   for each entity.
+ * - `beforeSave(Event $event, Entity $entity, ArrayObject $options)`
+ *   Fired before each entity is saved. Stopping this event will abort the save
+ *   operation. When the event is stopped the result of the event will be returned.
  *
- * - `afterSave(Event $event, Entity $entity)`
- *   Fired after an entity is saved. The saved entity will be provided
- *   as a parameter.
+ * - `afterSave(Event $event, Entity $entity, ArrayObject $options)`
+ *   Fired after an entity is saved.
+ *
+ * - `beforeDelete(Event $event, Entity $entity, ArrayObject $options)`
+ *   Fired before an entity is deleted. By stopping this event you will abort
+ *   the delete operation.
+ *
+ * - `afterDelete(Event $event, Entity $entity, ArrayObject $options)`
+ *   Fired after an entity has been deleted.
  *
  * In addition to the core events, behaviors can respond to any
  * event fired from your Table classes including custom application
@@ -209,6 +218,8 @@ class Behavior implements EventListener {
 			'Model.afterSave' => 'afterSave',
 			'Model.beforeDelete' => 'beforeDelete',
 			'Model.afterDelete' => 'afterDelete',
+			'Model.beforeValidate' => 'beforeValidate',
+			'Model.afterValidate' => 'afterValidate',
 		];
 		$config = $this->config();
 		$priority = isset($config['priority']) ? $config['priority'] : null;
