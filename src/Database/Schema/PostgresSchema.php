@@ -428,7 +428,7 @@ class PostgresSchema extends BaseSchema {
 		);
 		if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
 			return $prefix . sprintf(
-				' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s DEFERABLE INITIALLY IMMEDIATE',
+				' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s DEFERRABLE INITIALLY IMMEDIATE',
 				implode(', ', $columns),
 				$this->_driver->quoteIdentifier($data['references'][0]),
 				$this->_driver->quoteIdentifier($data['references'][1]),
@@ -471,7 +471,7 @@ class PostgresSchema extends BaseSchema {
 	public function truncateTableSql(Table $table) {
 		$name = $this->_driver->quoteIdentifier($table->name());
 		return [
-			sprintf('TRUNCATE %s RESTART IDENTITY', $name)
+			sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name)
 		];
 	}
 
