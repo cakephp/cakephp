@@ -1456,7 +1456,7 @@ class Table implements RepositoryInterface, EventListener {
 	public function callFinder($type, Query $query, array $options = []) {
 		$query->applyOptions($options);
 		$options = $query->getOptions();
-		$finder = 'find' . ucfirst($type);
+		$finder = 'find' . $type;
 		if (method_exists($this, $finder)) {
 			return $this->{$finder}($query, $options);
 		}
