@@ -756,6 +756,27 @@ class TreeBehaviorTest extends TestCase {
 	}
 
 /**
+ * Tests that using associations having tree fields in the schema
+ * does not generate SQL errors
+ *
+ * @return void
+ */
+	public function testFindPathWithAssociation() {
+		$table = $this->table;
+		$other = TableRegistry::get('FriendlyTrees', [
+			'table' => $table->table()
+		]);
+		$table->hasOne('FriendlyTrees', [
+			'foreignKey' => 'id'
+		]);
+		$result = $table
+			->find('children', ['for' => 1])
+			->contain('FriendlyTrees')
+			->toArray();
+		$this->assertCount(9, $result);
+	}
+
+/**
  * Custom assertion use to verify tha a tree is returned in the expected order
  * and that it is still valid
  *
