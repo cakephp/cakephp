@@ -160,6 +160,7 @@ trait SelectableAssociationTrait {
  */
 	protected function _buildSubquery($query) {
 		$filterQuery = $query->cleanCopy();
+		$filterQuery->contain([], true);
 
 		$joins = $filterQuery->join();
 		foreach ($joins as $i => $join) {
