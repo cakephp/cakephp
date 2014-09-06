@@ -85,8 +85,10 @@ trait SelectableAssociationTrait {
 			$filter = $this->_buildSubquery($options['query']);
 		}
 
+		$finder = isset($options['finder']) ? $options['finder'] : $this->finder();
+		list($finder, $opts) = $this->_extractFinder($finder);
 		$fetchQuery = $this
-			->find(isset($options['finder']) ? $options['finder'] : 'all')
+			->find($finder, $opts)
 			->where($options['conditions'])
 			->eagerLoaded(true)
 			->hydrate($options['query']->hydrate());

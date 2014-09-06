@@ -155,7 +155,12 @@ class PaginatorComponentTest extends TestCase {
 		];
 		$table = TableRegistry::get('PaginatorPosts');
 
-		$expected = $table->find('author', ['conditions' => ['PaginatorPosts.author_id' => $settings['PaginatorPosts']['finder']['author']['author_id']]])
+		$expected = $table
+			->find('author', [
+				'conditions' => [
+					'PaginatorPosts.author_id' => 1
+				]
+			])
 			->count();
 		$result = $this->Paginator->paginate($table, $settings)->count();
 
