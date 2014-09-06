@@ -282,10 +282,9 @@ class Session {
 
 		foreach ($options as $setting => $value) {
 			if (ini_set($setting, $value) === false) {
-				throw new \RuntimeException(sprintf(
-					sprintf('Unable to configure the session, setting %s failed.'),
-					$setting
-				));
+				throw new \RuntimeException(
+					sprintf('Unable to configure the session, setting %s failed.', $setting)
+				);
 			}
 		}
 	}
