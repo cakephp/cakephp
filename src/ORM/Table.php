@@ -1940,8 +1940,18 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Helper method to infer the requested finder and its options.
  *
- * Returns the inferred options from the finder $type.
+ * Returns the inferred options from the finder $type. 
  *
+ * ### Examples:
+ *
+ * The following will call the finder 'translations' with the value of the finder as its options:
+ * $query->contain(['Comments' => ['finder' => 'translations']]);
+ * $query->contain(['Comments' => ['finder' => ['translations']]]);
+ * $query->contain(['Comments' => ['finder' => ['translations' => []]]]);
+ * $query->contain(['Comments' => ['finder' => ['translations' => ['locales' => ['en_US']]]]]);
+ * $query->contain(['Comments' => ['finder' => ['translations' => 'customOption']]]);
+ *
+ * @param array $type Finder type as an array.
  * @return array
  */
 	protected function _inferFinderTypeAndOptions(array $type) {
