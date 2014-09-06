@@ -16,6 +16,8 @@ namespace Cake\Database\Schema;
 
 use Cake\Database\Connection;
 use Cake\Database\Exception;
+use Cake\Database\Expression\TableNameExpression;
+use Cake\Database\ValueBinder;
 
 /**
  * Represents a single table in a database schema.
@@ -238,7 +240,7 @@ class Table {
  * @param array $columns The list of columns for the schema.
  */
 	public function __construct($table, array $columns = array()) {
-		$this->_table = $table;
+		$this->_table = new TableNameExpression($table, "");
 		foreach ($columns as $field => $definition) {
 			$this->addColumn($field, $definition);
 		}
@@ -250,6 +252,10 @@ class Table {
  * @return string
  */
 	public function name() {
+		if ($this->_table instanceof TableNameExpression) {
+			return $this->_table->sql(new ValueBinder);
+		}
+
 		return $this->_table;
 	}
 
@@ -568,6 +574,7 @@ class Table {
  *    required indexes.
  */
 	public function createSql(Connection $connection) {
+		$this->_table = $connection->fullTableName($this->_table);
 		$dialect = $connection->driver()->schemaDialect();
 		$columns = $constraints = $indexes = [];
 		foreach (array_keys($this->_columns) as $name) {
@@ -592,6 +599,7 @@ class Table {
  * @return array SQL to drop a table.
  */
 	public function dropSql(Connection $connection) {
+		$this->_table = $connection->fullTableName($this->_table);
 		$dialect = $connection->driver()->schemaDialect();
 		return $dialect->dropTableSql($this);
 	}
@@ -603,6 +611,7 @@ class Table {
  * @return array SQL to drop a table.
  */
 	public function truncateSql(Connection $connection) {
+		$this->_table = $connection->fullTableName($this->_table);
 		$dialect = $connection->driver()->schemaDialect();
 		return $dialect->truncateTableSql($this);
 	}

@@ -35,6 +35,7 @@ class PostgresSchema extends BaseSchema {
  * {@inheritDoc}
  */
 	public function describeColumnSql($name, $config) {
+		$name = $this->getFullTableName($name, $config);
 		$sql =
 		'SELECT DISTINCT table_schema AS schema, column_name AS name, data_type AS type,
 			is_nullable AS null, column_default AS default,
@@ -174,6 +175,7 @@ class PostgresSchema extends BaseSchema {
  * {@inheritDoc}
  */
 	public function describeIndexSql($table, $config) {
+		$table = $this->getFullTableName($table, $config);
 		$sql = 'SELECT
 			c2.relname,
 			i.indisprimary,
@@ -258,6 +260,7 @@ class PostgresSchema extends BaseSchema {
  * {@inheritDoc}
  */
 	public function describeForeignKeySql($table, $config) {
+		$table = $this->getFullTableName($table, $config);
 		$sql = "SELECT
 			r.conname AS name,
 			r.confupdtype AS update_type,

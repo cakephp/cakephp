@@ -101,9 +101,10 @@ class SqliteSchema extends BaseSchema {
  * {@inheritDoc}
  */
 	public function describeColumnSql($name, $config) {
+		$name = $this->getFullTableName($name, $config);
 		$sql = sprintf(
 			'PRAGMA table_info(%s)',
-			$this->_driver->quoteIdentifier($name)
+			$name
 		);
 		return [$sql, []];
 	}
@@ -136,9 +137,10 @@ class SqliteSchema extends BaseSchema {
  * {@inheritDoc}
  */
 	public function describeIndexSql($table, $config) {
+		$table = $this->getFullTableName($table, $config);
 		$sql = sprintf(
 			'PRAGMA index_list(%s)',
-			$this->_driver->quoteIdentifier($table)
+			$table
 		);
 		return [$sql, []];
 	}
@@ -181,6 +183,7 @@ class SqliteSchema extends BaseSchema {
  * {@inheritDoc}
  */
 	public function describeForeignKeySql($table, $config) {
+		$table = $this->getFullTableName($table, $config);
 		$sql = sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($table));
 		return [$sql, []];
 	}

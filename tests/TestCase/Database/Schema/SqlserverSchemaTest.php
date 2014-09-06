@@ -637,6 +637,12 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
+		$testConnection = ConnectionManager::get('test');
+		$prefix = $this->getConnectionPrefix($testConnection);
+		$expression = new TableNameExpression('schema_articles', $prefix);
+		$connection->expects($this->any())->method('fullTableName')
+			->will($this->returnValue($expression));
+
 		$table = (new Table('schema_articles'))->addColumn('id', [
 				'type' => 'integer',
 				'null' => false
@@ -686,6 +692,12 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
+		$testConnection = ConnectionManager::get('test');
+		$prefix = $this->getConnectionPrefix($testConnection);
+		$expression = new TableNameExpression('schema_articles', $prefix);
+		$connection->expects($this->any())->method('fullTableName')
+			->will($this->returnValue($expression));
+
 		$table = new Table('schema_articles');
 		$result = $table->dropSql($connection);
 		$this->assertCount(1, $result);
@@ -703,6 +715,12 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
+		$testConnection = ConnectionManager::get('test');
+		$prefix = $this->getConnectionPrefix($testConnection);
+		$expression = new TableNameExpression('schema_articles', $prefix);
+		$connection->expects($this->any())->method('fullTableName')
+			->will($this->returnValue($expression));
+
 		$table = new Table('schema_articles');
 		$table->addColumn('id', 'integer')
 			->addConstraint('primary', [
@@ -712,6 +730,20 @@ SQL;
 		$result = $table->truncateSql($connection);
 		$this->assertCount(1, $result);
 		$this->assertEquals('TRUNCATE TABLE [schema_articles]', $result[0]);
+	}
+
+/**
+ * Gets the connection prefix of an instance of \Cake\Database\Connection
+ *
+ * @param \Cake\Database\Connection $connection Instance of Connection
+ *
+ * @return string Connection prefix
+ */
+	protected function getConnectionPrefix(\Cake\Database\Connection $connection) {
+		$config = $connection->config();
+		$prefix = isset($config["prefix"]) && is_string($config["prefix"]) ? $config["prefix"] : "";
+
+		return $prefix;
 	}
 
 /**

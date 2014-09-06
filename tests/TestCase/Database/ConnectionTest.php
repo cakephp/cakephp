@@ -130,28 +130,33 @@ class ConnectionTest extends TestCase {
 	public function testFullTableName() {
 		$config = ConnectionManager::config('test');
 		$connectionNoPrefix = new Connection($config);
-		$config["prefix"] = "prefix_";
+		$config['prefix'] = 'prefix_';
 		$connectionPrefix = new Connection($config);
-		$tableName = "users";
+		$tableName = 'users';
 
 		$this->assertEquals($connectionNoPrefix->fullTableName([]), []);
 
 		$fullTableName = $connectionNoPrefix->fullTableName($tableName);
-		$this->assertEquals($fullTableName, new TableNameExpression($tableName, ""));
+		$this->assertEquals($fullTableName, new TableNameExpression($tableName, ''));
 
 		$fullTableName = $connectionPrefix->fullTableName($tableName);
-		$this->assertEquals($fullTableName, new TableNameExpression($tableName, $config["prefix"]));
+		$this->assertEquals($fullTableName, new TableNameExpression($tableName, $config['prefix']));
 
-		$tableNames = ["Posts" => "posts", "Users" => "users"];
+		$tableNames = ['Posts' => 'posts', 'Users' => 'users'];
 		$expected = [
-			"Posts" => new TableNameExpression("posts", $config["prefix"]),
-			"Users" => new TableNameExpression("users", $config["prefix"])
+			'Posts' => new TableNameExpression('posts', $config['prefix']),
+			'Users' => new TableNameExpression('users', $config['prefix'])
 		];
 		$fullTableNames = $connectionPrefix->fullTableName($tableNames);
 		$this->assertEquals($fullTableNames, $expected);
 
+		$expression = new TableNameExpression('users', '');
+		$expectedExpression = new TableNameExpression('users', 'prefix_');
+		$fullTableNameFromExpression = $connectionPrefix->fullTableName($expression);
+		$this->assertEquals($fullTableNameFromExpression, $expectedExpression);
+
 		$query = $this->connection->newQuery()->select('1 + 1');
-		$subQuery = ["sub" => $query];
+		$subQuery = ['sub' => $query];
 		$fullTableNameSubQuery = $connectionPrefix->fullTableName($subQuery);
 		$this->assertEquals($fullTableNameSubQuery, $subQuery);
 
@@ -165,7 +170,7 @@ class ConnectionTest extends TestCase {
 		];
 		$expected = ['a' =>
 			[
-				'table' => new TableNameExpression('articles', $config["prefix"]),
+				'table' => new TableNameExpression('articles', $config['prefix']),
 				'conditions' => [
 					'a.author_id = authors.id'
 				]

@@ -65,6 +65,26 @@ class TableNameExpression implements ExpressionInterface {
 	}
 
 /**
+ * Sets the table name prefix for this expression
+ *
+ * @param string $prefix Prefix of the table
+ * @return void
+ */
+	public function setPrefix($prefix) {
+		$this->_prefix = $prefix;
+	}
+
+/**
+ * Gets the table name prefix for this expression
+ *
+ * @param string $prefix Prefix of the table
+ * @return void
+ */
+	public function getPrefix() {
+		return $this->_prefix;
+	}
+
+/**
  * Constructor
  *
  * @param string $name Table name
@@ -72,7 +92,7 @@ class TableNameExpression implements ExpressionInterface {
  */
 	public function __construct($name, $prefix) {
 		$this->setName($name);
-		$this->_prefix = $prefix;
+		$this->setPrefix($prefix);
 	}
 
 /**

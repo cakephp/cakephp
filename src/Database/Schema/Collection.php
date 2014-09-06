@@ -109,8 +109,6 @@ class Collection {
 		}
 		$config = $this->_connection->config();
 
-		$prefix = (isset($config["prefix"]) && $config["prefix"] !== "") ? $config["prefix"] : "";
-		$name = $prefix . $name;
 		if (strpos($name, '.')) {
 			list($config['schema'], $name) = explode('.', $name);
 		}

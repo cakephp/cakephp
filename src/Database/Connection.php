@@ -195,35 +195,35 @@ class Connection {
 /**
  * Wrap the table name in a TableNameExpression with the current config prefix
  *
- * @param string|array|ExpressionInterface $names The names of the tables
+ * @param string|array|TableNameExpression $names The names of the tables
  *
  * @see \Cake\Database\Expression\TableNameExpression
- * @return string|array|ExpressionInterface Full tables names
+ * @return array|TableNameExpression Full tables names
  */
 	public function fullTableName($names) {
-		$prefix = "";
+		$prefix = '';
 
-		if (isset($this->_config["prefix"]) && $this->_config["prefix"] !== "") {
-			$prefix = $this->_config["prefix"];
+		if (isset($this->_config['prefix']) && $this->_config['prefix'] !== '') {
+			$prefix = $this->_config['prefix'];
 		}
 
 		if (is_string($names)) {
 			$names = new TableNameExpression($names, $prefix);
-		} else {
-			if (is_array($names) && !empty($names)) {
-				foreach ($names as $alias => $tableName) {
-					if (is_string($tableName)) {
-						$tableName = new TableNameExpression($tableName, $prefix);
-					} elseif (
-						is_array($tableName) &&
-						isset($tableName["table"]) &&
-						is_string($tableName["table"])
-					) {
-						$tableName["table"] = new TableNameExpression($tableName["table"], $prefix);
-					}
-
-					$names[$alias] = $tableName;
+		} elseif ($names instanceof TableNameExpression) {
+			$names->setPrefix($prefix);
+		} elseif (is_array($names) && !empty($names)) {
+			foreach ($names as $alias => $tableName) {
+				if (is_string($tableName)) {
+					$tableName = new TableNameExpression($tableName, $prefix);
+				} elseif (
+					is_array($tableName) &&
+					isset($tableName['table']) &&
+					is_string($tableName['table'])
+				) {
+					$tableName['table'] = new TableNameExpression($tableName['table'], $prefix);
 				}
+
+				$names[$alias] = $tableName;
 			}
 		}
 

@@ -41,6 +41,18 @@ class TableNameExpressionTest extends TestCase {
 	}
 
 /**
+ * Tests getting and setting the name
+ *
+ * @return void
+ */
+	public function testGetAndSetPrefix() {
+		$expression = new TableNameExpression('foo', '');
+		$this->assertEquals('', $expression->getPrefix());
+		$expression->setPrefix('prefix_');
+		$this->assertEquals('prefix_', $expression->getPrefix());
+	}
+
+/**
  * Tests converting to sql
  *
  * @return void
