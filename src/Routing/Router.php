@@ -712,13 +712,13 @@ class Router {
  * Get/Set valid extensions. Instructs the router to parse out file extensions
  * from the URL. For example, http://example.com/posts.rss would yield a file
  * extension of "rss". The file extension itself is made available in the
- * controller as `$this->params['_ext']`, and is used by the RequestHandler
+ * controller as `$this->request->params['_ext']`, and is used by the RequestHandler
  * component to automatically switch to alternate layouts and templates, and
  * load helpers corresponding to the given content, i.e. RssHelper. Switching
  * layouts and helpers requires that the chosen extension has a defined mime type
  * in `Cake\Network\Response`.
  *
- * A string or an array of valid extension can be passed to this method.
+ * A string or an array of valid extensions can be passed to this method.
  * If called without any parameters it will return current list of set extensions.
  *
  * @param array|string $extensions List of extensions to be added.
