@@ -15,7 +15,7 @@
 namespace Cake\Utility;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use InvalidArgumentException;
 
 /**
  * Security Library contains utility methods related to security
@@ -86,18 +86,18 @@ class Security {
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use as the encryption key for encrypted data.
  * @param string $operation Operation to perform, encrypt or decrypt
- * @throws \Cake\Core\Exception\Exception When there are errors.
+ * @throws \InvalidArgumentException When there are errors.
  * @return string Encrypted/Decrypted string
  */
 	public static function rijndael($text, $key, $operation) {
 		if (empty($key)) {
-			throw new Exception('You cannot use an empty key for Security::rijndael()');
+			throw new InvalidArgumentException('You cannot use an empty key for Security::rijndael()');
 		}
 		if (empty($operation) || !in_array($operation, array('encrypt', 'decrypt'))) {
-			throw new Exception('You must specify the operation for Security::rijndael(), either encrypt or decrypt');
+			throw new InvalidArgumentException('You must specify the operation for Security::rijndael(), either encrypt or decrypt');
 		}
 		if (strlen($key) < 32) {
-			throw new Exception('You must use a key larger than 32 bytes for Security::rijndael()');
+			throw new InvalidArgumentException('You must use a key larger than 32 bytes for Security::rijndael()');
 		}
 		$algorithm = MCRYPT_RIJNDAEL_256;
 		$mode = MCRYPT_MODE_CBC;
@@ -125,7 +125,7 @@ class Security {
  * @param string $key The 256 bit/32 byte key to use as a cipher key.
  * @param string $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
  * @return string Encrypted data.
- * @throws \Cake\Core\Exception\Exception On invalid data or key.
+ * @throws \InvalidArgumentException On invalid data or key.
  */
 	public static function encrypt($plain, $key, $hmacSalt = null) {
 		self::_checkKey($key, 'encrypt()');
@@ -153,11 +153,13 @@ class Security {
  * @param string $key Key to check.
  * @param string $method The method the key is being checked for.
  * @return void
- * @throws \Cake\Core\Exception\Exception When key length is not 256 bit/32 bytes
+ * @throws \InvalidArgumentException When key length is not 256 bit/32 bytes
  */
 	protected static function _checkKey($key, $method) {
 		if (strlen($key) < 32) {
-			throw new Exception(sprintf('Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method));
+			throw new InvalidArgumentException(
+				sprintf('Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method)
+			);
 		}
 	}
 
@@ -173,7 +175,7 @@ class Security {
 	public static function decrypt($cipher, $key, $hmacSalt = null) {
 		self::_checkKey($key, 'decrypt()');
 		if (empty($cipher)) {
-			throw new Exception('The data to decrypt cannot be empty.');
+			throw new InvalidArgumentException('The data to decrypt cannot be empty.');
 		}
 		if ($hmacSalt === null) {
 			$hmacSalt = Configure::read('Security.salt');
