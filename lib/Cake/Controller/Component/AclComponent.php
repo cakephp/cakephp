@@ -156,7 +156,7 @@ class AclComponent extends Component {
  * @param array|string|Model $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
  * @return bool Success
- * @deprecated Will be removed in 3.0.
+ * @deprecated 3.0.0 Will be removed in 3.0.
  */
 	public function grant($aro, $aco, $action = "*") {
 		trigger_error(__d('cake_dev', '%s is deprecated, use %s instead', 'AclComponent::grant()', 'allow()'), E_USER_WARNING);
@@ -170,7 +170,7 @@ class AclComponent extends Component {
  * @param array|string|Model $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
  * @return bool Success
- * @deprecated Will be removed in 3.0.
+ * @deprecated 3.0.0 Will be removed in 3.0.
  */
 	public function revoke($aro, $aco, $action = "*") {
 		trigger_error(__d('cake_dev', '%s is deprecated, use %s instead', 'AclComponent::revoke()', 'deny()'), E_USER_WARNING);

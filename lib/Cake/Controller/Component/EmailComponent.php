@@ -29,7 +29,7 @@ App::uses('CakeEmail', 'Network/Email');
  * @package       Cake.Controller.Component
  * @link          http://book.cakephp.org/2.0/en/core-libraries/components/email.html
  * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/email.html
- * @deprecated    Will be removed in 3.0. Use Network/CakeEmail instead
+ * @deprecated    3.0.0 Will be removed in 3.0. Use Network/CakeEmail instead
  */
 class EmailComponent extends Component {
 

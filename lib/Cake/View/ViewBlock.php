@@ -164,7 +164,7 @@ class ViewBlock {
  * @param string $name Name of the block
  * @param string $value The content for the block.
  * @return void
- * @deprecated As of 2.3 use ViewBlock::concat() instead.
+ * @deprecated 3.0.0 As of 2.3 use ViewBlock::concat() instead.
  */
 	public function append($name, $value = null) {
 		$this->concat($name, $value);

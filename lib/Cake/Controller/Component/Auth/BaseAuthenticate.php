@@ -166,7 +166,7 @@ abstract class BaseAuthenticate {
  *
  * @param string $password The plain text password.
  * @return string The hashed form of the password.
- * @deprecated Since 2.4. Use a PasswordHasher class instead.
+ * @deprecated 3.0.0 Since 2.4. Use a PasswordHasher class instead.
  */
 	protected function _password($password) {
 		return Security::hash($password, null, true);

@@ -267,7 +267,7 @@ class CakeSession {
  * @return bool Success
  */
 	public static function delete($name) {
-		if (self::start() && self::check($name)) {
+		if (self::check($name)) {
 			self::_overwrite($_SESSION, Hash::remove($_SESSION, $name));
 			return !self::check($name);
 		}

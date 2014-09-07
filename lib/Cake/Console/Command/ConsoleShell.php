@@ -19,7 +19,7 @@ App::uses('AppShell', 'Console/Command');
  * Provides a very basic 'interactive' console for CakePHP apps.
  *
  * @package       Cake.Console.Command
- * @deprecated Deprecated since version 2.4, will be removed in 3.0
+ * @deprecated 3.0.0 Deprecated since version 2.4, will be removed in 3.0
  */
 class ConsoleShell extends AppShell {
 

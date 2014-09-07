@@ -28,7 +28,7 @@ if (class_exists('HttpResponse')) {
  * HTTP Response from HttpSocket.
  *
  * @package       Cake.Network.Http
- * @deprecated This class is deprecated as it has naming conflicts with pecl/http
+ * @deprecated 3.0.0 This class is deprecated as it has naming conflicts with pecl/http
  */
 class HttpResponse extends HttpSocketResponse {
 
