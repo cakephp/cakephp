@@ -722,7 +722,7 @@ class Router {
 			'Router::parseExtensions() is deprecated should use Router::extensions() instead.',
 			E_USER_DEPRECATED
 		);
-		return static::extensions($extensions, compact('merge'));
+		return static::extensions($extensions, $merge);
 	}
 
 /**
@@ -739,12 +739,11 @@ class Router {
  * If called without any parameters it will return current list of set extensions.
  *
  * @param array|string $extensions List of extensions to be added.
- * @param array $options Valid options:
- *   - `merge` - Default true will merge extensions. Set to false to override
- *     current extensions
+ * @param bool $merge Whether to merge with or override existing extensions.
+ *   Defaults to `true`.
  * @return array Array of extensions Router is configured to parse.
  */
-	public static function extensions($extensions = null, array $options = []) {
+	public static function extensions($extensions = null, $merge = true) {
 		$collection = static::$_collection;
 		if ($extensions === null) {
 			if (!static::$initialized) {
@@ -753,8 +752,7 @@ class Router {
 			return $collection->extensions();
 		}
 
-		$options += ['merge' => true];
-		return $collection->extensions($extensions, $options);
+		return $collection->extensions($extensions, $merge);
 	}
 
 /**

@@ -279,19 +279,17 @@ class RouteCollection {
  *
  * @param null|string|array $extensions Either the list of extensions to set,
  *   or null to get.
- * @param array $options Valid options:
- *   - `merge` - Default true will merge extensions. Set to false to override
- *     current extensions
+ * @param bool $merge Whether to merge with or override existing extensions.
+ *   Defaults to `true`.
  * @return array The valid extensions.
  */
-	public function extensions($extensions = null, array $options = []) {
+	public function extensions($extensions = null, $merge = true) {
 		if ($extensions === null) {
 			return $this->_extensions;
 		}
 
-		$options += ['merge' => true];
 		$extensions = (array)$extensions;
-		if ($options['merge']) {
+		if ($merge) {
 			$extensions = array_unique(array_merge(
 				$this->_extensions,
 				$extensions

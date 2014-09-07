@@ -307,7 +307,7 @@ class RouteCollectionTest extends TestCase {
 		$this->collection->extensions(['rss', 'xml']);
 		$this->assertEquals(['json', 'rss', 'xml'], $this->collection->extensions());
 
-		$this->collection->extensions(['csv'], ['merge' => false]);
+		$this->collection->extensions(['csv'], false);
 		$this->assertEquals(['csv'], $this->collection->extensions());
 	}
 
