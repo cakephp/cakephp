@@ -111,38 +111,38 @@ abstract class BaseSchema {
 /**
  * Generate the SQL to describe a table.
  *
- * @param string $name The table name to get information on.
+ * @param string $tableName The table name to get information on.
  * @param array $config The connection configuration.
  * @return array An array of (sql, params) to execute.
  */
-	abstract public function describeColumnSql($name, $config);
+	abstract public function describeColumnSql($tableName, $config);
 
 /**
  * Generate the SQL to describe the indexes in a table.
  *
- * @param string $table The table name to get information on.
+ * @param string $tableName The table name to get information on.
  * @param array $config The connection configuration.
  * @return array An array of (sql, params) to execute.
  */
-	abstract public function describeIndexSql($table, $config);
+	abstract public function describeIndexSql($tableName, $config);
 
 /**
  * Generate the SQL to describe the foreign keys in a table.
  *
- * @param string $table The table name to get information on.
+ * @param string $tableName The table name to get information on.
  * @param array $config The connection configuration.
  * @return array An array of (sql, params) to execute.
  */
-	abstract public function describeForeignKeySql($table, $config);
+	abstract public function describeForeignKeySql($tableName, $config);
 
 /**
  * Generate the SQL to describe table options
  *
- * @param string $name Table name.
+ * @param string $tableName Table name.
  * @param array $config The connection configuration.
  * @return array SQL statements to get options for a table.
  */
-	public function describeOptionsSql($name, $config) {
+	public function describeOptionsSql($tableName, $config) {
 		return ['', ''];
 	}
 
