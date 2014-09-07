@@ -1109,9 +1109,9 @@ class ModelTaskTest extends TestCase {
 		$this->Task->connection = 'test';
 		$this->Task->skipTables = ['articles_tags', 'bake_tags', 'counter_cache_posts'];
 
-		$this->Task->Fixture->expects($this->exactly(7))
+		$this->Task->Fixture->expects($this->exactly(8))
 			->method('bake');
-		$this->Task->Test->expects($this->exactly(7))
+		$this->Task->Test->expects($this->exactly(8))
 			->method('bake');
 
 		$filename = $this->_normalizePath(APP . 'Model/Entity/BakeArticle.php');
