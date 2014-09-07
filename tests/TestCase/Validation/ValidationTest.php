@@ -2421,4 +2421,30 @@ class ValidationTest extends TestCase {
 		$this->assertFalse(Validation::uploadedFile($file, $options), 'Too big');
 	}
 
+/**
+ * Test uploaded file validation.
+ *
+ * @return void
+ */
+	public function testUploadedFileNoFile() {
+		$file = [
+			'name' => '',
+			'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
+			'error' => UPLOAD_ERR_NO_FILE,
+			'type' => '',
+			'size' => 0
+		];
+		$options = [
+			'optional' => true,
+			'minSize' => 500,
+			'types' => ['image/gif', 'image/png']
+		];
+		$this->assertTrue(Validation::uploadedFile($file, $options), 'No file should be ok.');
+
+		$options = [
+			'optional' => false
+		];
+		$this->assertFalse(Validation::uploadedFile($file, $options), 'File is required.');
+	}
+
 }

@@ -967,6 +967,7 @@ class Validation {
  * - `minSize` - The minimum file size. Defaults to not checking.
  * - `maxSize` - The maximum file size. Defaults to not checking.
  * - `optional` - Whether or not this file is optional. Defaults to false.
+ *   If true a missing file will pass the validator regardless of other constraints.
  *
  * @param array $file The uploaded file data from PHP.
  * @param array $options An array of options for the validation.
@@ -988,6 +989,9 @@ class Validation {
 		}
 		if (!static::uploadError($file, $options['optional'])) {
 			return false;
+		}
+		if ($options['optional'] && (int)$file['error'] === UPLOAD_ERR_NO_FILE) {
+			return true;
 		}
 		if (isset($options['minSize']) && !static::fileSize($file, '>=', $options['minSize'])) {
 			return false;
