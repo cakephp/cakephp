@@ -65,7 +65,7 @@ class Hash {
 
 		foreach ($parts as $key) {
 			if (is_array($data) && isset($data[$key])) {
-				$data =& $data[$key];
+				$data = $data[$key];
 			} else {
 				return $default;
 			}
