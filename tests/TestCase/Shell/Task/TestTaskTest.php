@@ -44,8 +44,8 @@ class TestTaskTest extends TestCase {
 		'core.article',
 		'core.author',
 		'core.comment',
-		'core.articles_tag',
 		'core.tag',
+		'core.articles_tag',
 	];
 
 /**

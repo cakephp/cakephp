@@ -428,7 +428,7 @@ class PostgresSchema extends BaseSchema {
 		);
 		if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
 			return $prefix . sprintf(
-				' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
+				' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s DEFERRABLE INITIALLY IMMEDIATE',
 				implode(', ', $columns),
 				$this->_driver->quoteIdentifier($data['references'][0]),
 				$this->_driver->quoteIdentifier($data['references'][1]),
@@ -471,8 +471,22 @@ class PostgresSchema extends BaseSchema {
 	public function truncateTableSql(Table $table) {
 		$name = $this->_driver->quoteIdentifier($table->name());
 		return [
-			sprintf('TRUNCATE %s RESTART IDENTITY', $name)
+			sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name)
 		];
+	}
+
+/**
+ * Generate the SQL to drop a table.
+ *
+ * @param \Cake\Database\Schema\Table $table Table instance
+ * @return array SQL statements to drop a table.
+ */
+	public function dropTableSql(Table $table) {
+		$sql = sprintf(
+			'DROP TABLE %s CASCADE',
+			$this->_driver->quoteIdentifier($table->name())
+		);
+		return [$sql];
 	}
 
 }
