@@ -14,7 +14,6 @@
  */
 namespace Cake\Utility;
 
-use Cake\Core\Configure;
 use InvalidArgumentException;
 
 /**
@@ -30,6 +29,13 @@ class Security {
  * @var string
  */
 	public static $hashType = 'sha1';
+
+/**
+ * The HMAC salt to use for encryption and decryption routines
+ *
+ * @var string
+ */
+	protected static $_salt;
 
 /**
  * Generate authorization hash.
@@ -60,7 +66,7 @@ class Security {
 
 		if ($salt) {
 			if (!is_string($salt)) {
-				$salt = Configure::read('Security.salt');
+				$salt = static::$_salt;
 			}
 			$string = $salt . $string;
 		}
@@ -131,7 +137,7 @@ class Security {
 		self::_checkKey($key, 'encrypt()');
 
 		if ($hmacSalt === null) {
-			$hmacSalt = Configure::read('Security.salt');
+			$hmacSalt = static::$_salt;
 		}
 
 		// Generate the encryption and hmac key.
@@ -178,7 +184,7 @@ class Security {
 			throw new InvalidArgumentException('The data to decrypt cannot be empty.');
 		}
 		if ($hmacSalt === null) {
-			$hmacSalt = Configure::read('Security.salt');
+			$hmacSalt = static::$_salt;
 		}
 
 		// Generate the encryption and hmac key.
@@ -202,6 +208,20 @@ class Security {
 		$cipher = substr($cipher, $ivSize);
 		$plain = mcrypt_decrypt($algorithm, $key, $cipher, $mode, $iv);
 		return rtrim($plain, "\0");
+	}
+
+/**
+ * Gets or sets the HMAC salt to be used for encryption/decryption
+ * routines.
+ *
+ * @param string $salt The salt to use for encryption routines
+ * @return string The currently configured salt
+ */
+	public static function salt($salt = null) {
+		if ($salt === null) {
+			return static::$_salt;
+		}
+		return static::$_salt = (string)$salt;
 	}
 
 }

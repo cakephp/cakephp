@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Utility;
 
-use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 
@@ -244,6 +243,16 @@ class SecurityTest extends TestCase {
 		$txt = '';
 		$key = 'This is a key that is long enough to be ok.';
 		Security::decrypt($txt, $key);
+	}
+
+/**
+ * Tests that the salt can be set and retrieved
+ *
+ * @return void
+ */
+	public function testSalt() {
+		Security::salt('foobarbaz');
+		$this->assertEquals('foobarbaz', Security::salt());
 	}
 
 }
