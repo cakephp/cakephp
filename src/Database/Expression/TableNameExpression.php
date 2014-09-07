@@ -77,7 +77,6 @@ class TableNameExpression implements ExpressionInterface {
 /**
  * Gets the table name prefix for this expression
  *
- * @param string $prefix Prefix of the table
  * @return void
  */
 	public function getPrefix() {
