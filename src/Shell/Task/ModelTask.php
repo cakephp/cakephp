@@ -603,9 +603,11 @@ class ModelTask extends BakeTask {
 		$filename = $path . 'Entity' . DS . $name . '.php';
 		$this->out("\n" . sprintf('Baking entity class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
-		$emptyFile = new File($path . 'Entity' . DS . 'empty');
-		if ($emptyFile->exists()) {
-			$emptyFile->delete();
+		$emptyFile = $path . 'Entity' . DS . 'empty';
+		$File = new File($emptyFile);
+		if ($File->exists()) {
+			$File->delete();
+			$this->out(sprintf('<success>Deleted</success> `%s`', $emptyFile), 1, Shell::QUIET);
 		}
 		return $out;
 	}
@@ -650,9 +652,11 @@ class ModelTask extends BakeTask {
 		$filename = $path . 'Table' . DS . $name . 'Table.php';
 		$this->out("\n" . sprintf('Baking table class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
-		$emptyFile = new File($path . 'Table' . DS . 'empty');
-		if ($emptyFile->exists()) {
-			$emptyFile->delete();
+		$emptyFile = $path . 'Table' . DS . 'empty';
+		$File = new File($emptyFile);
+		if ($File->exists()) {
+			$File->delete();
+			$this->out(sprintf('<success>Deleted</success> `%s`', $emptyFile), 1, Shell::QUIET);
 		}
 		return $out;
 	}
