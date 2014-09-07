@@ -34,7 +34,7 @@ class PostgresSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function describeColumnSql($name, $config) {
+	public function describeColumnSql($tableName, $config) {
 		$sql =
 		'SELECT DISTINCT table_schema AS schema, column_name AS name, data_type AS type,
 			is_nullable AS null, column_default AS default,
@@ -50,7 +50,7 @@ class PostgresSchema extends BaseSchema {
 		ORDER BY ordinal_position';
 
 		$schema = empty($config['schema']) ? 'public' : $config['schema'];
-		return [$sql, [$name, $schema, $config['database']]];
+		return [$sql, [$tableName, $schema, $config['database']]];
 	}
 
 /**
@@ -173,7 +173,7 @@ class PostgresSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function describeIndexSql($table, $config) {
+	public function describeIndexSql($tableName, $config) {
 		$sql = 'SELECT
 			c2.relname,
 			i.indisprimary,
@@ -198,7 +198,7 @@ class PostgresSchema extends BaseSchema {
 		if (!empty($config['schema'])) {
 			$schema = $config['schema'];
 		}
-		return [$sql, [$table, $schema]];
+		return [$sql, [$tableName, $schema]];
 	}
 
 /**
@@ -257,7 +257,7 @@ class PostgresSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function describeForeignKeySql($table, $config) {
+	public function describeForeignKeySql($tableName, $config) {
 		$sql = "SELECT
 			r.conname AS name,
 			r.confupdtype AS update_type,
@@ -275,7 +275,7 @@ class PostgresSchema extends BaseSchema {
 			AND r.contype = 'f'";
 
 		$schema = empty($config['schema']) ? 'public' : $config['schema'];
-		return [$sql, [$table, $schema]];
+		return [$sql, [$tableName, $schema]];
 	}
 
 /**
