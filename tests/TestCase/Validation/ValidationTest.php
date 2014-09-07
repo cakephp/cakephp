@@ -2322,6 +2322,12 @@ class ValidationTest extends TestCase {
 		$this->assertFalse(Validation::uploadError(2));
 		$this->assertFalse(Validation::uploadError(array('error' => 2)));
 		$this->assertFalse(Validation::uploadError(array('error' => '2')));
+
+		$this->assertFalse(Validation::uploadError(UPLOAD_ERR_NO_FILE));
+		$this->assertFalse(Validation::uploadError(UPLOAD_ERR_FORM_SIZE, true));
+		$this->assertFalse(Validation::uploadError(UPLOAD_ERR_INI_SIZE, true));
+		$this->assertFalse(Validation::uploadError(UPLOAD_ERR_NO_TMP_DIR, true));
+		$this->assertTrue(Validation::uploadError(UPLOAD_ERR_NO_FILE, true));
 	}
 
 /**

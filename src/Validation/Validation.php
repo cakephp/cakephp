@@ -939,14 +939,17 @@ class Validation {
  * Checking for upload errors
  *
  * @param string|array $check Value to check.
+ * @param bool $allowNoFile Set to true to allow UPLOAD_ERR_NO_FILE as a pass.
  * @return bool
  * @see http://www.php.net/manual/en/features.file-upload.errors.php
  */
-	public static function uploadError($check) {
+	public static function uploadError($check, $allowNoFile = false) {
 		if (is_array($check) && isset($check['error'])) {
 			$check = $check['error'];
 		}
-
+		if ($allowNoFile) {
+			return in_array((int)$check, [UPLOAD_ERR_OK, UPLOAD_ERR_NO_FILE], true);
+		}
 		return (int)$check === UPLOAD_ERR_OK;
 	}
 
@@ -963,13 +966,19 @@ class Validation {
  *   the file type will be checked with ext/finfo.
  * - `minSize` - The minimum file size. Defaults to not checking.
  * - `maxSize` - The maximum file size. Defaults to not checking.
+ * - `optional` - Whether or not this file is optional. Defaults to false.
  *
  * @param array $file The uploaded file data from PHP.
  * @param array $options An array of options for the validation.
  * @return bool
  */
 	public static function uploadedFile($file, $options = []) {
-		$options += ['minSize' => null, 'maxSize' => null, 'types' => null];
+		$options += [
+			'minSize' => null,
+			'maxSize' => null,
+			'types' => null,
+			'optional' => false,
+		];
 		if (!is_array($file)) {
 			return false;
 		}
@@ -977,7 +986,7 @@ class Validation {
 		if (array_keys($file) != $keys) {
 			return false;
 		}
-		if (!static::uploadError($file)) {
+		if (!static::uploadError($file, $options['optional'])) {
 			return false;
 		}
 		if (isset($options['minSize']) && !static::fileSize($file, '>=', $options['minSize'])) {
