@@ -817,7 +817,7 @@ class Router {
  * specific kinds of scopes.
  *
  * Routing scopes will inherit the globally set extensions configured with
- * Router::parseExtensions(). You can also set valid extensions using
+ * Router::extensions(). You can also set valid extensions using
  * `$routes->extensions()` in your closure.
  *
  * @param string $path The path prefix for the scope. This path will be prepended
