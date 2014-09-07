@@ -99,7 +99,7 @@ class RouteCollection {
 
 		$extensions = $route->extensions();
 		if ($extensions) {
-			$this->addExtensions($extensions);
+			$this->extensions($extensions);
 		}
 	}
 
@@ -275,26 +275,30 @@ class RouteCollection {
 	}
 
 /**
- * Add one or more extensions.
- *
- * @param array $extensions The extensions to add.
- * @return void
- */
-	public function addExtensions(array $extensions) {
-		$this->_extensions = array_unique(array_merge($this->_extensions, $extensions));
-	}
-
-/**
  * Get/set the extensions that the route collection could handle.
  *
- * @param null|string|array $extensions Either the list of extensions to set, or null to get.
+ * @param null|string|array $extensions Either the list of extensions to set,
+ *   or null to get.
+ * @param array $options Valid options:
+ *   - `merge` - Default true will merge extensions. Set to false to override
+ *     current extensions
  * @return array The valid extensions.
  */
-	public function extensions($extensions = null) {
+	public function extensions($extensions = null, array $options = []) {
 		if ($extensions === null) {
-			return array_unique($this->_extensions);
+			return $this->_extensions;
 		}
-		$this->_extensions = (array)$extensions;
+
+		$options += ['merge' => true];
+		$extensions = (array)$extensions;
+		if ($options['merge']) {
+			$extensions = array_unique(array_merge(
+				$this->_extensions,
+				$extensions
+			));
+		}
+
+		return $this->_extensions = $extensions;
 	}
 
 }
