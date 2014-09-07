@@ -143,7 +143,7 @@ class ExceptionRenderer {
 		}
 		$this->controller->response->statusCode($code);
 		$this->controller->set(array(
-			'message' => h($message),
+			'message' => $message,
 			'url' => h($url),
 			'error' => $exception,
 			'code' => $code,
