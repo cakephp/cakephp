@@ -234,10 +234,17 @@ class FixtureManager {
 					if (!$test->dropTables) {
 						$fixture->truncate($db);
 					}
-					$fixture->insert($db);
 				}
 			};
 			$this->_runOperation($fixtures, $createTables);
+
+			// Use a separate transaction because of postgres.
+			$insert = function($db, $fixtures) {
+				foreach ($fixtures as $fixture) {
+					$fixture->insert($db);
+				}
+			};
+			$this->_runOperation($fixtures, $insert);
 		} catch (\PDOException $e) {
 			$msg = sprintf('Unable to insert fixtures for "%s" test case. %s', get_class($test), $e->getMessage());
 			throw new Exception($msg);
@@ -287,7 +294,9 @@ class FixtureManager {
  * @return void
  */
 	public function unload($test) {
-		$fixtures = !empty($test->fixtures) ? $test->fixtures : [];
+		if (empty($test->fixtures)) {
+			return;
+		}
 		$truncate = function($db, $fixtures) {
 			$connection = $db->configName();
 			foreach ($fixtures as $fixture) {
@@ -296,7 +305,7 @@ class FixtureManager {
 				}
 			}
 		};
-		$this->_runOperation($fixtures, $truncate);
+		$this->_runOperation($test->fixtures, $truncate);
 	}
 
 /**

@@ -475,4 +475,18 @@ class PostgresSchema extends BaseSchema {
 		];
 	}
 
+/**
+ * Generate the SQL to drop a table.
+ *
+ * @param \Cake\Database\Schema\Table $table Table instance
+ * @return array SQL statements to drop a table.
+ */
+	public function dropTableSql(Table $table) {
+		$sql = sprintf(
+			'DROP TABLE %s CASCADE',
+			$this->_driver->quoteIdentifier($table->name())
+		);
+		return [$sql];
+	}
+
 }

@@ -878,7 +878,7 @@ SQL;
 		$table = new Table('schema_articles');
 		$result = $table->dropSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('DROP TABLE "schema_articles"', $result[0]);
+		$this->assertEquals('DROP TABLE "schema_articles" CASCADE', $result[0]);
 	}
 
 /**
