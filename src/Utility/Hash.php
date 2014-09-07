@@ -44,13 +44,7 @@ class Hash {
 			return $default;
 		}
 
-		$isString = is_string($path);
-
-		if ($isString && strpos($path, '.') === false) {
-			return isset($data[$path]) ? $data[$path] : $default;
-		}
-
-		if ($isString || is_numeric($path)) {
+		if (is_string($path) || is_numeric($path)) {
 			$parts = explode('.', $path);
 		} else {
 			if (!is_array($path)) {
