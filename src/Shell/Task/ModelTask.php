@@ -17,6 +17,7 @@ namespace Cake\Shell\Task;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Filesystem\File;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -602,6 +603,10 @@ class ModelTask extends BakeTask {
 		$filename = $path . 'Entity' . DS . $name . '.php';
 		$this->out("\n" . sprintf('Baking entity class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
+		$emptyFile = new File($path . 'Entity' . DS . 'empty');
+		if ($emptyFile->exists()) {
+			$emptyFile->delete();
+		}
 		return $out;
 	}
 
@@ -645,6 +650,10 @@ class ModelTask extends BakeTask {
 		$filename = $path . 'Table' . DS . $name . 'Table.php';
 		$this->out("\n" . sprintf('Baking table class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
+		$emptyFile = new File($path . 'Table' . DS . 'empty');
+		if ($emptyFile->exists()) {
+			$emptyFile->delete();
+		}
 		return $out;
 	}
 

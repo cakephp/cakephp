@@ -16,6 +16,8 @@ namespace Cake\Shell\Task;
 
 use Cake\Shell\Task\BakeTask;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Filesystem\File;
 use Cake\Utility\Inflector;
 
 /**
@@ -95,6 +97,10 @@ abstract class SimpleBakeTask extends BakeTask {
 
 		$filename = $this->getPath() . $this->fileName($name);
 		$this->createFile($filename, $contents);
+		$emptyFile = new File($this->getPath() . DS . 'empty');
+		if ($emptyFile->exists()) {
+			$emptyFile->delete();
+		}
 		return $contents;
 	}
 
