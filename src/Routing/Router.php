@@ -709,7 +709,7 @@ class Router {
 	}
 
 /**
- * Set/add valid extensions. Instructs the router to parse out file extensions
+ * Get/Set valid extensions. Instructs the router to parse out file extensions
  * from the URL. For example, http://example.com/posts.rss would yield a file
  * extension of "rss". The file extension itself is made available in the
  * controller as `$this->params['_ext']`, and is used by the RequestHandler
@@ -718,38 +718,26 @@ class Router {
  * layouts and helpers requires that the chosen extension has a defined mime type
  * in `Cake\Network\Response`.
  *
- * An array of valid extension can be passed to this method. If called without
- * any parameters it will return current list of set extensions.
+ * A string or an array of valid extension can be passed to this method.
+ * If called without any parameters it will return current list of set extensions.
  *
- * @param array|string $extensions List of extensions to be added as valid extension
- * @param bool $merge Default true will merge extensions. Set to false to override
- *   current extensions
- * @return array
- */
-	public static function parseExtensions($extensions = null, $merge = true) {
-		$collection = static::$_collection;
-		if ($extensions === null) {
-			return $collection->extensions();
-		}
-		$extensions = (array)$extensions;
-		if ($merge) {
-			$extensions = array_merge($collection->extensions(), $extensions);
-		}
-		return $collection->extensions($extensions);
-	}
-
-/**
- * Get the list of extensions that can be parsed by Router.
- *
- * To add / update extensions use `Router::parseExtensions()`
- *
+ * @param array|string $extensions List of extensions to be added.
+ * @param array $options Valid options:
+ *   - `merge` - Default true will merge extensions. Set to false to override
+ *     current extensions
  * @return array Array of extensions Router is configured to parse.
  */
-	public static function extensions() {
-		if (!static::$initialized) {
-			static::_loadRoutes();
+	public static function extensions($extensions = null, array $options = []) {
+		$collection = static::$_collection;
+		if ($extensions === null) {
+			if (!static::$initialized) {
+				static::_loadRoutes();
+			}
+			return $collection->extensions();
 		}
-		return static::$_collection->extensions();
+
+		$options += ['merge' => true];
+		return $collection->extensions($extensions, $options);
 	}
 
 /**
