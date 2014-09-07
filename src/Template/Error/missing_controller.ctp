@@ -52,7 +52,7 @@ namespace <?= h($namespace); ?>\Controller<?= h($prefixNs); ?>;
 
 use <?= h($namespace); ?>\Controller\AppController;
 
-class <?= h($class) . 'Controller extends ' . h($plugin); ?>AppController {
+class <?= h($class) . 'Controller extends'; ?> AppController {
 
 }
 </pre>

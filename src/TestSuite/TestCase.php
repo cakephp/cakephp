@@ -489,8 +489,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param float $expected
  * @param float $margin the rage of acceptation
  * @param string $message the text to display if the assertion is not correct
+ * @deprecated 3.0.0 This is a compatiblity wrapper for 1.x. It will be removed in 3.0
  * @return void
- * @deprecated 3.0. Use assertWithinRange() instead.
  */
 	protected static function assertWithinMargin($result, $expected, $margin, $message = '') {
 		static::assertWithinRange($expected, $result, $margin, $message);

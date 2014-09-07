@@ -709,47 +709,50 @@ class Router {
 	}
 
 /**
- * Set/add valid extensions. Instructs the router to parse out file extensions
+ * Deprecated method for backwards compatibility.
+ *
+ * @param string|array $extensions List of extensions to be added.
+ * @param bool $merge Whether to merge with or override existing extensions.
+ *   Defaults to `true`.
+ * @return array Extensions list.
+ * @deprecated 3.0.0 Use Router::extensions() instead.
+ */
+	public static function parseExtensions($extensions = null, $merge = true) {
+		trigger_error(
+			'Router::parseExtensions() is deprecated should use Router::extensions() instead.',
+			E_USER_DEPRECATED
+		);
+		return static::extensions($extensions, $merge);
+	}
+
+/**
+ * Get/Set valid extensions. Instructs the router to parse out file extensions
  * from the URL. For example, http://example.com/posts.rss would yield a file
  * extension of "rss". The file extension itself is made available in the
- * controller as `$this->params['_ext']`, and is used by the RequestHandler
+ * controller as `$this->request->params['_ext']`, and is used by the RequestHandler
  * component to automatically switch to alternate layouts and templates, and
  * load helpers corresponding to the given content, i.e. RssHelper. Switching
  * layouts and helpers requires that the chosen extension has a defined mime type
  * in `Cake\Network\Response`.
  *
- * An array of valid extension can be passed to this method. If called without
- * any parameters it will return current list of set extensions.
+ * A string or an array of valid extensions can be passed to this method.
+ * If called without any parameters it will return current list of set extensions.
  *
- * @param array|string $extensions List of extensions to be added as valid extension
- * @param bool $merge Default true will merge extensions. Set to false to override
- *   current extensions
- * @return array
- */
-	public static function parseExtensions($extensions = null, $merge = true) {
-		$collection = static::$_collection;
-		if ($extensions === null) {
-			return $collection->extensions();
-		}
-		$extensions = (array)$extensions;
-		if ($merge) {
-			$extensions = array_merge($collection->extensions(), $extensions);
-		}
-		return $collection->extensions($extensions);
-	}
-
-/**
- * Get the list of extensions that can be parsed by Router.
- *
- * To add / update extensions use `Router::parseExtensions()`
- *
+ * @param array|string $extensions List of extensions to be added.
+ * @param bool $merge Whether to merge with or override existing extensions.
+ *   Defaults to `true`.
  * @return array Array of extensions Router is configured to parse.
  */
-	public static function extensions() {
-		if (!static::$initialized) {
-			static::_loadRoutes();
+	public static function extensions($extensions = null, $merge = true) {
+		$collection = static::$_collection;
+		if ($extensions === null) {
+			if (!static::$initialized) {
+				static::_loadRoutes();
+			}
+			return $collection->extensions();
 		}
-		return static::$_collection->extensions();
+
+		return $collection->extensions($extensions, $merge);
 	}
 
 /**
@@ -768,7 +771,7 @@ class Router {
  * @param array $options The array of options.
  * @return \Cake\Network\Request The modified request
  */
-	public static function parseNamedParams(Request $request, $options = []) {
+	public static function parseNamedParams(Request $request, array $options = []) {
 		$options += array('separator' => ':');
 		if (empty($request->params['pass'])) {
 			$request->params['named'] = [];
@@ -829,12 +832,12 @@ class Router {
  * specific kinds of scopes.
  *
  * Routing scopes will inherit the globally set extensions configured with
- * Router::parseExtensions(). You can also set valid extensions using
+ * Router::extensions(). You can also set valid extensions using
  * `$routes->extensions()` in your closure.
  *
  * @param string $path The path prefix for the scope. This path will be prepended
  *   to all routes connected in the scoped collection.
- * @param array $params An array of routing defaults to add to each connected route.
+ * @param array|callable $params An array of routing defaults to add to each connected route.
  *   If you have no parameters, this argument can be a callable.
  * @param callable $callback The callback to invoke with the scoped collection.
  * @throws \InvalidArgumentException When an invalid callable is provided.

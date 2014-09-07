@@ -1098,22 +1098,33 @@ class AuthComponentTest extends TestCase {
 			[],
 			[$this->Controller->components()]
 		);
+		$this->Controller->methods = ['foo'];
+		$this->Controller->request->params['action'] = 'foo';
+		$this->Auth->startup(new Event('Controller.startup', $this->Controller));
+
 		$this->Auth->Flash->expects($this->at(0))
 			->method('set')
-			->with('Auth failure', array('key' => 'auth-key', 'element' => 'custom'));
+			->with(
+				'Auth failure',
+				[
+					'key' => 'auth-key',
+					'element' => 'default',
+					'params' => ['class' => 'error']
+				]
+			);
 
 		$this->Auth->Flash->expects($this->at(1))
 			->method('set')
-			->with('Auth failure', array('element' => 'error', 'key' => 'auth-key'));
+			->with('Auth failure', ['key' => 'auth-key', 'element' => 'custom']);
 
 		$this->Auth->config('flash', [
-			'params' => array('element' => 'custom'),
 			'key' => 'auth-key'
 		]);
 		$this->Auth->flash('Auth failure');
 
 		$this->Auth->config('flash', [
-			'key' => 'auth-key'
+			'key' => 'auth-key',
+			'element' => 'custom'
 		], false);
 		$this->Auth->flash('Auth failure');
 	}

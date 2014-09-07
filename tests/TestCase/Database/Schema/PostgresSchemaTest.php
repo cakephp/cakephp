@@ -681,31 +681,31 @@ SQL;
 				'author_id_idx',
 				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
 				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-				'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT'
+				'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE'
 			],
 			[
 				'author_id_idx',
 				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
 				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-				'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT'
+				'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE'
 			],
 			[
 				'author_id_idx',
 				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'restrict'],
 				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-				'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT'
+				'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE'
 			],
 			[
 				'author_id_idx',
 				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
 				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-				'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT'
+				'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE'
 			],
 			[
 				'author_id_idx',
 				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
 				'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-				'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT'
+				'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE'
 			],
 		];
 	}
@@ -898,7 +898,7 @@ SQL;
 		$table = new Table('schema_articles');
 		$result = $table->dropSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('DROP TABLE "schema_articles"', $result[0]);
+		$this->assertEquals('DROP TABLE "schema_articles" CASCADE', $result[0]);
 	}
 
 /**
@@ -926,7 +926,7 @@ SQL;
 			]);
 		$result = $table->truncateSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('TRUNCATE "schema_articles" RESTART IDENTITY', $result[0]);
+		$this->assertEquals('TRUNCATE "schema_articles" RESTART IDENTITY CASCADE', $result[0]);
 	}
 
 /**

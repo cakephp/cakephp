@@ -233,4 +233,18 @@ trait SqlserverDialectTrait {
 		return new SqlserverCompiler();
 	}
 
+/**
+ * {@inheritDoc}
+ */
+	public function disableForeignKeySQL() {
+		return 'EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all"';
+	}
+
+/**
+ * {@inheritDoc}
+ */
+	public function enableForeignKeySQL() {
+		return 'EXEC sp_msforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all"';
+	}
+
 }

@@ -159,8 +159,11 @@ class ConsoleOutput {
 	public function __construct($stream = 'php://stdout') {
 		$this->_output = fopen($stream, 'w');
 
-		if (DS === '\\' && !(bool)env('ANSICON')) {
-			$this->_outputAs = static::PLAIN;
+		if (
+			(DS === '\\' && !(bool)env('ANSICON')) ||
+			(function_exists('posix_isatty') && !posix_isatty($this->_output))
+		) {
+			$this->_outputAs = self::PLAIN;
 		}
 	}
 
