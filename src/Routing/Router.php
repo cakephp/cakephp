@@ -709,6 +709,23 @@ class Router {
 	}
 
 /**
+ * Deprecated method for backwards compatibility.
+ *
+ * @param string|array $extensions List of extensions to be added.
+ * @param bool $merge Whether to merge with or override existing extensions.
+ *   Defaults to `true`.
+ * @return array Extensions list.
+ * @deprecated 3.0.0 Use Router::extensions() instead.
+ */
+	public static function parseExtensions($extensions = null, $merge = true) {
+		trigger_error(
+			'Router::parseExtensions() is deprecated should use Router::extensions() instead.',
+			E_USER_DEPRECATED
+		);
+		return static::extensions($extensions, compact('merge'));
+	}
+
+/**
  * Get/Set valid extensions. Instructs the router to parse out file extensions
  * from the URL. For example, http://example.com/posts.rss would yield a file
  * extension of "rss". The file extension itself is made available in the
