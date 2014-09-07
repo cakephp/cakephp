@@ -2342,4 +2342,77 @@ class ValidationTest extends TestCase {
 		$this->assertFalse(Validation::fileSize(array('tmp_name' => $image), '>', '1KB'));
 	}
 
+/**
+ * Test uploaded file validation.
+ *
+ * @return void
+ */
+	public function testUploadedFileErrorCode() {
+		$this->assertFalse(Validation::uploadedFile('derp'));
+		$invalid = [
+			'name' => 'testing'
+		];
+		$this->assertFalse(Validation::uploadedFile($invalid));
+
+		$file = [
+			'name' => 'cake.power.gif',
+			'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
+			'error' => UPLOAD_ERR_OK,
+			'type' => 'image/gif',
+			'size' => 201
+		];
+		$this->assertTrue(Validation::uploadedFile($file));
+
+		$file['error'] = UPLOAD_ERR_NO_FILE;
+		$this->assertFalse(Validation::uploadedFile($file), 'Error upload should fail.');
+	}
+
+/**
+ * Test uploaded file validation.
+ *
+ * @return void
+ */
+	public function testUploadedFileMimeType() {
+		$file = [
+			'name' => 'cake.power.gif',
+			'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
+			'error' => UPLOAD_ERR_OK,
+			'type' => 'text/plain',
+			'size' => 201
+		];
+		$options = [
+			'types' => ['text/plain']
+		];
+		$this->assertFalse(Validation::uploadedFile($file, $options), 'Incorrect mimetype.');
+
+		$options = [
+			'types' => ['image/gif', 'image/png']
+		];
+		$this->assertTrue(Validation::uploadedFile($file, $options));
+	}
+
+/**
+ * Test uploaded file validation.
+ *
+ * @return void
+ */
+	public function testUploadedFileSize() {
+		$file = [
+			'name' => 'cake.power.gif',
+			'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
+			'error' => UPLOAD_ERR_OK,
+			'type' => 'text/plain',
+			'size' => 201
+		];
+		$options = [
+			'minSize' => 500
+		];
+		$this->assertFalse(Validation::uploadedFile($file, $options), 'Too small');
+
+		$options = [
+			'maxSize' => 100
+		];
+		$this->assertFalse(Validation::uploadedFile($file, $options), 'Too big');
+	}
+
 }

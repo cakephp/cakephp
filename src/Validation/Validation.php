@@ -951,6 +951,48 @@ class Validation {
 	}
 
 /**
+ * Validate an uploaded file.
+ *
+ * Helps join `uploadError`, `fileSize` and `mimeType` into
+ * one higher level validation method.
+ *
+ * ### Options
+ *
+ * - `types` - A list of valid mime types. If empty all types
+ *   will be accepted. The `type` will not be looked at, instead
+ *   the file type will be checked with ext/finfo.
+ * - `minSize` - The minimum file size. Defaults to not checking.
+ * - `maxSize` - The maximum file size. Defaults to not checking.
+ *
+ * @param array $file The uploaded file data from PHP.
+ * @param array $options An array of options for the validation.
+ * @return bool
+ */
+	public static function uploadedFile($file, $options = []) {
+		$options += ['minSize' => null, 'maxSize' => null, 'types' => null];
+		if (!is_array($file)) {
+			return false;
+		}
+		$keys = ['name', 'tmp_name', 'error', 'type', 'size'];
+		if (array_keys($file) != $keys) {
+			return false;
+		}
+		if (!static::uploadError($file)) {
+			return false;
+		}
+		if (isset($options['minSize']) && !static::fileSize($file, '>=', $options['minSize'])) {
+			return false;
+		}
+		if (isset($options['maxSize']) && !static::fileSize($file, '<=', $options['maxSize'])) {
+			return false;
+		}
+		if (isset($options['types']) && !static::mimeType($file, $options['types'])) {
+			return false;
+		}
+		return true;
+	}
+
+/**
  * Lazily populate the IP address patterns used for validations
  *
  * @return void
