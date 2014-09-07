@@ -753,5 +753,4 @@ class String {
 		throw new InvalidArgumentException('No unit type.');
 	}
 
-
 }
