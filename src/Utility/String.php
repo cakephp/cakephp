@@ -14,7 +14,7 @@
  */
 namespace Cake\Utility;
 
-use Cake\Core\Exception\Exception;
+use InvalidArgumentException;
 
 /**
  * String handling methods.
@@ -722,7 +722,7 @@ class String {
  * @param string $size Size in human readable string like '5MB', '5M', '500B', '50kb' etc.
  * @param mixed $default Value to be returned when invalid size was used, for example 'Unknown type'
  * @return mixed Number of bytes as integer on success, `$default` on failure if not false
- * @throws \Cake\Core\Exception\Exception On invalid Unit type.
+ * @throws \InvalidArgumentException On invalid Unit type.
  * @link http://book.cakephp.org/3.0/en/core-libraries/helpers/text.html
  */
 	public static function parseFileSize($size, $default = false) {
@@ -750,7 +750,7 @@ class String {
 		if ($default !== false) {
 			return $default;
 		}
-		throw new Exception('No unit type.');
+		throw new InvalidArgumentException('No unit type.');
 	}
 
 
