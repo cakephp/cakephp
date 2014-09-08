@@ -523,18 +523,6 @@ class Debugger {
  * @return string Exported array.
  */
 	protected static function _array(array $var, $depth, $indent) {
-		$secrets = array(
-			'password' => '*****',
-			'login' => '*****',
-			'host' => '*****',
-			'database' => '*****',
-			'port' => '*****',
-			'prefix' => '*****',
-			'schema' => '*****'
-		);
-		$replace = array_intersect_key($secrets, $var);
-		$var = $replace + $var;
-
 		$out = "[";
 		$break = $end = null;
 		if (!empty($var)) {
