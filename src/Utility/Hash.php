@@ -44,13 +44,7 @@ class Hash {
 			return $default;
 		}
 
-		$isString = is_string($path);
-
-		if ($isString && strpos($path, '.') === false) {
-			return isset($data[$path]) ? $data[$path] : $default;
-		}
-
-		if ($isString || is_numeric($path)) {
+		if (is_string($path) || is_numeric($path)) {
 			$parts = explode('.', $path);
 		} else {
 			if (!is_array($path)) {
@@ -63,12 +57,21 @@ class Hash {
 			$parts = $path;
 		}
 
-		foreach ($parts as $key) {
-			if (is_array($data) && isset($data[$key])) {
-				$data =& $data[$key];
-			} else {
-				return $default;
-			}
+		switch (count($parts)) {
+			case 1:
+				return isset($data[$parts[0]]) ? $data[$parts[0]] : $default;
+			case 2:
+				return isset($data[$parts[0]][$parts[1]]) ? $data[$parts[0]][$parts[1]] : $default;
+			case 3:
+				return isset($data[$parts[0]][$parts[1]][$parts[2]]) ? $data[$parts[0]][$parts[1]][$parts[2]] : $default;
+			default:
+				foreach ($parts as $key) {
+					if (is_array($data) && isset($data[$key])) {
+						$data = $data[$key];
+					} else {
+						return $default;
+					}
+				}
 		}
 
 		return $data;
@@ -114,6 +117,9 @@ class Hash {
 		}
 
 		if (strpos($path, '[') === false) {
+			if (function_exists('array_column') && preg_match('|^\{n\}\.(\w+)$|', $path, $matches)) {
+				return array_column($data, $matches[1]);
+			}
 			$tokens = explode('.', $path);
 		} else {
 			$tokens = String::tokenize($path, '.', '[', ']');
