@@ -710,8 +710,9 @@ SQL;
 				'columns' => ['id']
 			]);
 		$result = $table->truncateSql($connection);
-		$this->assertCount(1, $result);
+		$this->assertCount(2, $result);
 		$this->assertEquals('TRUNCATE TABLE [schema_articles]', $result[0]);
+		$this->assertEquals('DBCC CHECKIDENT([schema_articles], RESEED, 0)', $result[1]);
 	}
 
 /**
