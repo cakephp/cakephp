@@ -14,7 +14,6 @@
  */
 namespace Cake\Utility;
 
-use Cake\Core\Configure;
 use Cake\Utility\Exception\XmlException;
 use \DOMDocument;
 
@@ -197,7 +196,7 @@ class Xml {
 		$defaults = array(
 			'format' => 'tags',
 			'version' => '1.0',
-			'encoding' => Configure::read('App.encoding'),
+			'encoding' => mb_internal_encoding(),
 			'return' => 'simplexml',
 			'pretty' => false
 		);
