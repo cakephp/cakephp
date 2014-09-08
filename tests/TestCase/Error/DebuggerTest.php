@@ -572,41 +572,6 @@ TEXT;
 	}
 
 /**
- * testNoDbCredentials
- *
- * If a connection error occurs, the config variable is passed through exportVar
- * *** our database login credentials such that they are never visible
- *
- * @return void
- */
-	public function testNoDbCredentials() {
-		$config = array(
-			'datasource' => 'mysql',
-			'persistent' => false,
-			'host' => 'void.cakephp.org',
-			'login' => 'cakephp-user',
-			'password' => 'cakephp-password',
-			'database' => 'cakephp-database',
-			'prefix' => ''
-		);
-
-		$output = Debugger::exportVar($config);
-
-		$expectedArray = array(
-			'datasource' => 'mysql',
-			'persistent' => false,
-			'host' => '*****',
-			'login' => '*****',
-			'password' => '*****',
-			'database' => '*****',
-			'prefix' => ''
-		);
-		$expected = Debugger::exportVar($expectedArray);
-
-		$this->assertEquals($expected, $output);
-	}
-
-/**
  * Test that exportVar() doesn't loop through recursive structures.
  *
  * @return void
