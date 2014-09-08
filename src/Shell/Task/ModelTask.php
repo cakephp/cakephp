@@ -221,25 +221,24 @@ class ModelTask extends BakeTask {
 		$schema = $model->schema();
 		$primary = (array)$schema->primaryKey();
 		foreach ($schema->columns() as $fieldName) {
-			$offset = strpos($fieldName, '_id');
+			if (!preg_match('/^.*_id$/', $fieldName)) {
+				continue;
+			}
+
 			$assoc = false;
-			if ($fieldName !== 'parent_id' && $offset !== false) {
-				$tmpModelName = $this->_modelNameFromKey($fieldName);
-				$assoc = [
-					'alias' => $tmpModelName,
-					'foreignKey' => $fieldName
-				];
-			} elseif ($fieldName === 'parent_id') {
+			if ($fieldName === 'parent_id') {
 				$className = ($this->plugin) ? $this->plugin . '.' . $model->alias() : $model->alias();
 				$assoc = [
 					'alias' => 'Parent' . $model->alias(),
 					'className' => $className,
 					'foreignKey' => $fieldName
 				];
-			}
-
-			if ($assoc === false) {
-				continue;
+			} else {
+				$tmpModelName = $this->_modelNameFromKey($fieldName);
+				$assoc = [
+					'alias' => $tmpModelName,
+					'foreignKey' => $fieldName
+				];
 			}
 
 			if ($this->plugin && empty($assoc['className'])) {
