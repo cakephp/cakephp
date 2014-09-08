@@ -377,6 +377,21 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
+ * Test that belongsTo generation ignores _id mid-column
+ *
+ * @return void
+ */
+	public function testBelongsToGenerationIdMidColumn() {
+		$model = TableRegistry::get('Articles');
+		$model->schema([
+			'id' => ['type' => 'integer'],
+			'thing_id_field' => ['type' => 'integer'],
+		]);
+		$result = $this->Task->findBelongsTo($model, []);
+		$this->assertEquals([], $result);
+	}
+
+/**
  * test that hasOne and/or hasMany relations are generated properly.
  *
  * @return void
