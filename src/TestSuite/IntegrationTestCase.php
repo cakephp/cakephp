@@ -438,4 +438,32 @@ class IntegrationTestCase extends TestCase {
 		$this->assertContains($content, $this->_response->body(), $message);
 	}
 
+/**
+ * Assert that the search string was in the template name.
+ *
+ * @param string $file The content to check for.
+ * @param string $message The failure message that will be appended to the generated message.
+ * @return void
+ */
+	public function assertTemplate($content, $message = '') {
+		if (!$this->_viewName) {
+			$this->fail('No view name stored. ' . $message);
+		}
+		$this->assertContains($content, $this->_viewName, $message);
+	}
+
+/**
+ * Assert that the search string was in the layout name.
+ *
+ * @param string $file The content to check for.
+ * @param string $message The failure message that will be appended to the generated message.
+ * @return void
+ */
+	public function assertLayout($content, $message = '') {
+		if (!$this->_layoutName) {
+			$this->fail('No layout name stored. ' . $message);
+		}
+		$this->assertContains($content, $this->_layoutName, $message);
+	}
+
 }

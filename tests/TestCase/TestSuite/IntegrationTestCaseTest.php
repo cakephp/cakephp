@@ -85,10 +85,15 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 		$this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
 		$this->assertContains('Template' . DS . 'Posts' . DS . 'index.ctp', $this->_viewName);
 		$this->assertContains('Template' . DS . 'Layout' . DS . 'default.ctp', $this->_layoutName);
+
+		$this->assertTemplate('index');
+		$this->assertLayout('default');
 	}
 
 /**
+ * Test error handling and error page rendering.
  *
+ * @return void
  */
 	public function testPostAndErrorHandling() {
 		$this->post('/request_action/error_method');
