@@ -37,7 +37,8 @@
 	"autoload-dev": {
 		"psr-4": {
 			"Cake\\Test\\": "tests"
-		}
+		},
+		"files": ["src/Core/functions.php"]
 	},
 	"replace": {
 		"cakephp/collection": "self.version",
