@@ -76,6 +76,18 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 	}
 
 /**
+ * Test sending requests stores references to controller/view/layout.
+ *
+ * @return void
+ */
+	public function testRequestSetsProperties() {
+		$this->post('/posts/index');
+		$this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
+		$this->assertContains('Template' . DS . 'Posts' . DS . 'index.ctp', $this->_viewName);
+		$this->assertContains('Template' . DS . 'Layout' . DS . 'default.ctp', $this->_layoutName);
+	}
+
+/**
  *
  */
 	public function testPostAndErrorHandling() {

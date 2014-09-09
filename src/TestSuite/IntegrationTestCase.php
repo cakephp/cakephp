@@ -63,6 +63,27 @@ class IntegrationTestCase extends TestCase {
 	protected $_cookie = [];
 
 /**
+ * The controller used in the last request.
+ *
+ * @var \Cake\Controller\Controller
+ */
+	protected $_controller;
+
+/**
+ * The last rendered view
+ *
+ * @var string
+ */
+	protected $_viewName;
+
+/**
+ * The last rendered layout
+ *
+ * @var string
+ */
+	protected $_layoutName;
+
+/**
  * Clear the state used for requests.
  *
  * @return void
@@ -73,6 +94,9 @@ class IntegrationTestCase extends TestCase {
 		$this->_session = [];
 		$this->_cookie = [];
 		$this->_response = null;
+		$this->_controller = null;
+		$this->_viewName = null;
+		$this->_layoutName = null;
 	}
 
 /**
@@ -212,6 +236,11 @@ class IntegrationTestCase extends TestCase {
 		$request = $this->_buildRequest($url, $method, $data);
 		$response = new Response();
 		$dispatcher = DispatcherFactory::create();
+		$dispatcher->eventManager()->attach(
+			[$this, 'controllerSpy'],
+			'Dispatcher.beforeDispatch',
+			['priority' => 999]
+		);
 		try {
 			$dispatcher->dispatch($request, $response);
 			$this->_response = $response;
@@ -220,6 +249,26 @@ class IntegrationTestCase extends TestCase {
 		} catch (\Exception $e) {
 			$this->_handleError($e);
 		}
+	}
+
+/**
+ * Add additional event spies to the controller/view event manager.
+ *
+ * @param \Cake\Event\Event $event A dispatcher event.
+ * @return void
+ */
+	public function controllerSpy($event) {
+		if (empty($event->data['controller'])) {
+			return;
+		}
+		$this->_controller = $event->data['controller'];
+		$events = $this->_controller->eventManager();
+		$events->attach(function($event, $viewFile) {
+			$this->_viewName = $viewFile;
+		}, 'View.beforeRender');
+		$events->attach(function($event, $viewFile) {
+			$this->_layoutName = $viewFile;
+		}, 'View.beforeLayout');
 	}
 
 /**

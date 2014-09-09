@@ -29,7 +29,6 @@ class PostsController extends AppController {
  */
 	public $components = array(
 		'RequestHandler',
-		'Auth'
 	);
 
 /**
@@ -38,5 +37,6 @@ class PostsController extends AppController {
  * @return void
  */
 	public function index() {
+		$this->set('test', 'value');
 	}
 }
