@@ -270,7 +270,7 @@ class CakeTimeTest extends CakeTestCase {
 	public function testTimeAgoInWordsWithFormat() {
 		$result = $this->Time->timeAgoInWords('2007-9-25', 'Y-m-d');
 		$this->assertEquals('on 2007-09-25', $result);
-		
+
 		$result = $this->Time->timeAgoInWords('2007-9-25', '%x');
 		$this->assertEquals('on '. strftime('%x', strtotime('2007-9-25')), $result);
 
