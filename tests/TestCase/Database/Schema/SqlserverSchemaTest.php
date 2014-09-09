@@ -269,9 +269,8 @@ SQL;
 		$schema = new SchemaCollection($connection);
 		$result = $schema->listTables();
 		$this->assertInternalType('array', $result);
-		$this->assertCount(2, $result);
-		$this->assertEquals('schema_articles', $result[0]);
-		$this->assertEquals('schema_authors', $result[1]);
+		$this->assertContains('schema_articles', $result);
+		$this->assertContains('schema_authors', $result);
 	}
 
 /**
@@ -711,7 +710,7 @@ SQL;
 			]);
 		$result = $table->truncateSql($connection);
 		$this->assertCount(2, $result);
-		$this->assertEquals('TRUNCATE TABLE [schema_articles]', $result[0]);
+		$this->assertEquals('DELETE FROM [schema_articles]', $result[0]);
 		$this->assertEquals('DBCC CHECKIDENT([schema_articles], RESEED, 0)', $result[1]);
 	}
 

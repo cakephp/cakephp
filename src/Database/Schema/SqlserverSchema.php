@@ -430,17 +430,18 @@ class SqlserverSchema extends BaseSchema {
 	public function truncateTableSql(Table $table) {
 		$name = $this->_driver->quoteIdentifier($table->name());
 		$queries = [
-			sprintf('DELETE FROM TABLE %s', $name)
+			sprintf('DELETE FROM %s', $name)
 		];
+
+		// Restart identity sequences
 		$pk = $table->primaryKey();
-		foreach ($pk as $column) {
-			$column = $table->column($column);
-			if (!empty($column['autoIncrement'])) {
+		if (count($pk) === 1) {
+			$column = $table->column($pk[0]);
+			if (in_array($column['type'], ['integer', 'biginteger'])) {
 				$queries[] = sprintf(
 					'DBCC CHECKIDENT(%s, RESEED, 0)',
-					$this->_driver->quoteIdentifier($column)
+					$name
 				);
-				break;
 			}
 		}
 		return $queries;
