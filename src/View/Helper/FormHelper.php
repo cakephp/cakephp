@@ -497,7 +497,7 @@ class FormHelper extends Helper {
 			$this->_lastAction,
 			serialize($fields),
 			$unlocked,
-			Configure::read('Security.salt')
+			Security::salt()
 		);
 		$fields = Security::hash(implode('', $hashParts), 'sha1');
 

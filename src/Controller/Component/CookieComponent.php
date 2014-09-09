@@ -130,7 +130,7 @@ class CookieComponent extends Component {
 		parent::__construct($collection, $config);
 
 		if (!$this->_config['key']) {
-			$this->config('key', Configure::read('Security.salt'));
+			$this->config('key', Security::salt());
 		}
 
 		$controller = $collection->getController();

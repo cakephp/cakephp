@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Auth;
 use Cake\Auth\WeakPasswordHasher;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 
 /**
  * Test case for WeakPasswordHasher
@@ -32,7 +33,7 @@ class WeakPasswordHasherTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		Configure::write('Security.salt', 'YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
+		Security::salt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 	}
 
 /**

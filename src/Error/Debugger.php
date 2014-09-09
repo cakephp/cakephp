@@ -17,6 +17,7 @@ namespace Cake\Error;
 use Cake\Core\Configure;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
+use Cake\Utility\Security;
 use Cake\Utility\String;
 use Exception;
 use InvalidArgumentException;
@@ -838,7 +839,7 @@ class Debugger {
  * @return void
  */
 	public static function checkSecurityKeys() {
-		if (Configure::read('Security.salt') === '__SALT__') {
+		if (Security::salt() === '__SALT__') {
 			trigger_error(sprintf('Please change the value of %s in %s to a salt value specific to your application.', '\'Security.salt\'', 'ROOT/config/app.php'), E_USER_NOTICE);
 		}
 	}
