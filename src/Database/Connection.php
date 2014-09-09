@@ -629,4 +629,34 @@ class Connection {
 		return $log;
 	}
 
+/**
+ * Returns an array that can be used to describe the internal state of this
+ * object.
+ *
+ * @return array
+ */
+	public function __debugInfo() {
+		$secrets = [
+			'password' => '*****',
+			'login' => '*****',
+			'host' => '*****',
+			'database' => '*****',
+			'port' => '*****',
+			'prefix' => '*****',
+			'schema' => '*****'
+		];
+		$replace = array_intersect_key($secrets, $this->_config);
+		$config = $replace + $this->_config;
+
+		return [
+			'config' => $config,
+			'driver' => $this->_driver,
+			'transactionLevel' => $this->_transactionLevel,
+			'transactionStarted' => $this->_transactionStarted,
+			'useSavePoints' => $this->_useSavePoints,
+			'logQueries' => $this->_logQueries,
+			'logger' => $this->_logger
+		];
+	}
+
 }
