@@ -263,7 +263,7 @@ class CakeTimeTest extends CakeTestCase {
 	}
 
 /**
- * Test the format option of timeAgoInWords()
+ * Test the format option of timeAgoInWords() with date() and strftime compatible strings
  *
  * @return void
  */
@@ -271,8 +271,8 @@ class CakeTimeTest extends CakeTestCase {
 		$result = $this->Time->timeAgoInWords('2007-9-25', 'Y-m-d');
 		$this->assertEquals('on 2007-09-25', $result);
 
-		$result = $this->Time->timeAgoInWords('2007-9-25', 'Y-m-d');
-		$this->assertEquals('on 2007-09-25', $result);
+		$result = $this->Time->timeAgoInWords('2007-9-25', '%x');
+		$this->assertEquals('on '. strftime('%x', strtotime('2007-9-25')), $result);
 
 		$result = $this->Time->timeAgoInWords(
 			strtotime('+2 weeks +2 days'),
@@ -281,10 +281,22 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertRegExp('/^2 weeks, [1|2] day(s)?$/', $result);
 
 		$result = $this->Time->timeAgoInWords(
+			strtotime('+2 weeks +2 days'),
+			'%x'
+		);
+		$this->assertRegExp('/^2 weeks, [1|2] day(s)?$/', $result);
+
+		$result = $this->Time->timeAgoInWords(
 			strtotime('+2 months +2 days'),
 			array('end' => '1 month', 'format' => 'Y-m-d')
 		);
 		$this->assertEquals('on ' . date('Y-m-d', strtotime('+2 months +2 days')), $result);
+
+		$result = $this->Time->timeAgoInWords(
+			strtotime('+2 months +2 days'),
+			array('end' => '1 month', 'format' => '%x')
+		);
+		$this->assertEquals('on ' . strftime('%x', strtotime('+2 months +2 days')), $result);
 	}
 
 /**
