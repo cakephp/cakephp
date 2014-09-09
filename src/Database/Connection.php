@@ -649,13 +649,13 @@ class Connection {
 		$config = $replace + $this->_config;
 
 		return [
-			'_config' => $config,
-			'_driver' => $this->_driver,
-			'_transactionLevel' => $this->_transactionLevel,
-			'_transactionStarted' => $this->_transactionStarted,
-			'_useSavePoints' => $this->_useSavePoints,
-			'_logQueries' => $this->_logQueries,
-			'_logger' => $this->_logger
+			'config' => $config,
+			'driver' => $this->_driver,
+			'transactionLevel' => $this->_transactionLevel,
+			'transactionStarted' => $this->_transactionStarted,
+			'useSavePoints' => $this->_useSavePoints,
+			'logQueries' => $this->_logQueries,
+			'logger' => $this->_logger
 		];
 	}
 
