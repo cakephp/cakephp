@@ -796,7 +796,11 @@ class CakeTime {
 		}
 
 		if ($diff > abs($now - self::fromString($end))) {
-			return sprintf($absoluteString, date($format, $inSeconds));
+			return sprintf($absoluteString,
+					(strpos($format, '%') === false) ?
+						date($format, $inSeconds) :
+						self::_strftime($format, $inSeconds)
+			);
 		}
 
 		// If more than a week, then take into account the length of months
