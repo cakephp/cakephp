@@ -230,8 +230,7 @@ class FixtureManager {
 				foreach ($fixtures as $fixture) {
 					if (!in_array($db->configName(), (array)$fixture->created)) {
 						$this->_setupTable($fixture, $db, $tables, $test->dropTables);
-					}
-					if (!$test->dropTables) {
+					} else {
 						$fixture->truncate($db);
 					}
 				}
@@ -325,7 +324,8 @@ class FixtureManager {
 			}
 
 			if (!in_array($db->configName(), (array)$fixture->created)) {
-				$this->_setupTable($fixture, $db, $dropTables);
+				$sources = $db->schemaCollection()->listTables();
+				$this->_setupTable($fixture, $db, $sources, $dropTables);
 			}
 			if (!$dropTables) {
 				$fixture->truncate($db);

@@ -35,7 +35,9 @@ class ArticlesTagFixture extends TestFixture {
 			'tag_idx' => [
 				'type' => 'foreign',
 				'columns' => ['tag_id'],
-				'references' => ['tags', 'id']
+				'references' => ['tags', 'id'],
+				'update' => 'cascade',
+				'delete' => 'cascade',
 			]
 		]
 	);
