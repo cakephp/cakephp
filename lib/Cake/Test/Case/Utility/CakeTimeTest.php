@@ -279,7 +279,7 @@ class CakeTimeTest extends CakeTestCase {
 			'Y-m-d'
 		);
 		$this->assertRegExp('/^2 weeks, [1|2] day(s)?$/', $result);
-		
+
 		$result = $this->Time->timeAgoInWords(
 			strtotime('+2 weeks +2 days'),
 			'%x'
