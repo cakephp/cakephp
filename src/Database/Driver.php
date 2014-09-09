@@ -323,24 +323,8 @@ abstract class Driver {
  * @return array
  */
 	public function __debugInfo() {
-		$secrets = [
-			'password' => '*****',
-			'login' => '*****',
-			'host' => '*****',
-			'database' => '*****',
-			'port' => '*****',
-			'prefix' => '*****',
-			'schema' => '*****'
-		];
-		$replace = array_intersect_key($secrets, $this->_config);
-
 		return [
-			'_baseConfig' => $replace + $this->_baseConfig,
-			'_config' => $replace + $this->_config,
-			'_autoQuoting' => $this->_autoQuoting,
-			'_startQuote' => $this->_startQuote,
-			'_endQuote' => $this->_endQuote,
-			'_schemaDialect' => get_class($this->_schemaDialect)
+			'connected' => $this->isConnected()
 		];
 	}
 
