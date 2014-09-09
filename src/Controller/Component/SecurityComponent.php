@@ -345,7 +345,7 @@ class SecurityComponent extends Component {
 			$controller->request->here(),
 			serialize($fieldList),
 			$unlocked,
-			Configure::read('Security.salt')
+			Security::salt()
 		);
 		$check = Security::hash(implode('', $hashParts), 'sha1');
 		return ($token === $check);
