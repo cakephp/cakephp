@@ -368,11 +368,11 @@ class Folder {
 /**
  * Change the mode on a directory structure recursively. This includes changing the mode on files as well.
  *
- * @param string $path The path to chmod
- * @param int $mode octal value 0755
- * @param bool $recursive chmod recursively, set to false to only change the current directory.
- * @param array $exceptions array of files, directories to skip
- * @return bool Returns TRUE on success, FALSE on failure
+ * @param string $path The path to chmod.
+ * @param int $mode Octal value, e.g. 0755.
+ * @param bool $recursive Chmod recursively, set to false to only change the current directory.
+ * @param array $exceptions Array of files, directories to skip.
+ * @return bool Success.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::chmod
  */
 	public function chmod($path, $mode = false, $recursive = true, $exceptions = array()) {
@@ -382,7 +382,7 @@ class Folder {
 
 		if ($recursive === false && is_dir($path)) {
 			//@codingStandardsIgnoreStart
-			if (@chmod($path, intval((string)$mode, 8))) {
+			if (@chmod($path, intval($mode, 8))) {
 				//@codingStandardsIgnoreEnd
 				$this->_messages[] = __d('cake_dev', '%s changed to %s', $path, $mode);
 				return true;
@@ -405,7 +405,7 @@ class Folder {
 					}
 
 					//@codingStandardsIgnoreStart
-					if (@chmod($fullpath, intval((string)$mode, 8))) {
+					if (@chmod($fullpath, intval($mode, 8))) {
 						//@codingStandardsIgnoreEnd
 						$this->_messages[] = __d('cake_dev', '%s changed to %s', $fullpath, $mode);
 					} else {
@@ -628,12 +628,12 @@ class Folder {
  *
  * - `to` The directory to copy to.
  * - `from` The directory to copy from, this will cause a cd() to occur, changing the results of pwd().
- * - `mode` The mode to copy the files/directories with.
+ * - `mode` The mode to copy the files/directories with, e.g. 0775.
  * - `skip` Files/directories to skip.
  * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
  *
  * @param array|string $options Either an array of options (see above) or a string of the destination directory.
- * @return bool Success
+ * @return bool Success.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::copy
  */
 	public function copy($options) {
@@ -681,7 +681,7 @@ class Folder {
 					$from = Folder::addPathElement($fromDir, $item);
 					if (is_file($from) && (!is_file($to) || $options['scheme'] != Folder::SKIP)) {
 						if (copy($from, $to)) {
-							chmod($to, intval((string)$mode, 8));
+							chmod($to, intval($mode, 8));
 							touch($to, filemtime($from));
 							$this->_messages[] = __d('cake_dev', '%s copied to %s', $from, $to);
 						} else {
