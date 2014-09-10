@@ -46,7 +46,7 @@ class I18nShell extends Shell {
 		$choice = strtolower($this->in('What would you like to do?', ['E', 'H', 'Q']));
 		switch ($choice) {
 			case 'e':
-				$this->Extract->execute();
+				$this->Extract->main();
 				break;
 			case 'h':
 				$this->out($this->OptionParser->help());

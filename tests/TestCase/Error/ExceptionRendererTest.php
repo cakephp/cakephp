@@ -423,13 +423,14 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testError500Message() {
-		$exception = new InternalErrorException('An Internal Error Has Occurred');
+		$exception = new InternalErrorException('An Internal Error Has Occurred.');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 		$ExceptionRenderer->controller->response = $this->getMock('Cake\Network\Response', array('statusCode', '_sendHeader'));
 		$ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(500);
 
 		$result = $ExceptionRenderer->render();
 		$this->assertContains('<h2>An Internal Error Has Occurred</h2>', $result->body());
+		$this->assertContains('An Internal Error Has Occurred.</p>', $result->body());
 	}
 
 /**

@@ -585,8 +585,7 @@ abstract class Association {
 	protected function _dispatchBeforeFind($query) {
 		$table = $this->target();
 		$options = $query->getOptions();
-		$event = new Event('Model.beforeFind', $table, [$query, $options, false]);
-		$table->eventManager()->dispatch($event);
+		$table->dispatchEvent('Model.beforeFind', [$query, $options, false]);
 	}
 
 /**

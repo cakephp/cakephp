@@ -316,4 +316,16 @@ abstract class Driver {
 		$this->_connection = null;
 	}
 
+/**
+ * Returns an array that can be used to describe the internal state of this
+ * object.
+ *
+ * @return array
+ */
+	public function __debugInfo() {
+		return [
+			'connected' => $this->isConnected()
+		];
+	}
+
 }

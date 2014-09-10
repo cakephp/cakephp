@@ -61,7 +61,7 @@ class AuthComponentTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		Configure::write('Security.salt', 'YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
+		Security::salt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 		Configure::write('App.namespace', 'TestApp');
 
 		Router::scope('/', function($routes) {

@@ -416,9 +416,9 @@ class View {
 
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
 			$this->_currentType = static::TYPE_VIEW;
-			$this->eventManager()->dispatch(new Event('View.beforeRender', $this, array($viewFileName)));
+			$this->dispatchEvent('View.beforeRender', [$viewFileName]);
 			$this->Blocks->set('content', $this->_render($viewFileName));
-			$this->eventManager()->dispatch(new Event('View.afterRender', $this, array($viewFileName)));
+			$this->dispatchEvent('View.afterRender', [$viewFileName]);
 		}
 
 		if ($layout === null) {
@@ -451,7 +451,7 @@ class View {
 		} else {
 			$this->Blocks->set('content', $content);
 		}
-		$this->eventManager()->dispatch(new Event('View.beforeLayout', $this, array($layoutFileName)));
+		$this->dispatchEvent('View.beforeLayout', [$layoutFileName]);
 
 		$title = $this->Blocks->get('title');
 		if ($title === '') {
@@ -462,7 +462,7 @@ class View {
 		$this->_currentType = static::TYPE_LAYOUT;
 		$this->Blocks->set('content', $this->_render($layoutFileName));
 
-		$this->eventManager()->dispatch(new Event('View.afterLayout', $this, array($layoutFileName)));
+		$this->dispatchEvent('View.afterLayout', [$layoutFileName]);
 		return $this->Blocks->get('content');
 	}
 
@@ -696,14 +696,11 @@ class View {
 		$this->_current = $viewFile;
 		$initialBlocks = count($this->Blocks->unclosed());
 
-		$eventManager = $this->eventManager();
-		$beforeEvent = new Event('View.beforeRenderFile', $this, array($viewFile));
+		$this->dispatchEvent('View.beforeRenderFile', [$viewFile]);
 
-		$eventManager->dispatch($beforeEvent);
 		$content = $this->_evaluate($viewFile, $data);
 
-		$afterEvent = new Event('View.afterRenderFile', $this, array($viewFile, $content));
-		$eventManager->dispatch($afterEvent);
+		$afterEvent = $this->dispatchEvent('View.afterRenderFile', [$viewFile, $content]);
 		if (isset($afterEvent->result)) {
 			$content = $afterEvent->result;
 		}
@@ -1007,13 +1004,13 @@ class View {
 		$this->_currentType = static::TYPE_ELEMENT;
 
 		if ($options['callbacks']) {
-			$this->eventManager()->dispatch(new Event('View.beforeRender', $this, array($file)));
+			$this->dispatchEvent('View.beforeRender', [$file]);
 		}
 
 		$element = $this->_render($file, array_merge($this->viewVars, $data));
 
 		if ($options['callbacks']) {
-			$this->eventManager()->dispatch(new Event('View.afterRender', $this, array($file, $element)));
+			$this->dispatchEvent('View.afterRender', [$file, $element]);
 		}
 
 		$this->_currentType = $restore;

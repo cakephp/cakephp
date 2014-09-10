@@ -169,6 +169,60 @@ class ShellDispatcherTest extends TestCase {
 	}
 
 /**
+ * Verify you can dispatch a plugin's main shell with the plugin name alone
+ *
+ * @return void
+ */
+	public function testDispatchShortPluginAlias() {
+		$dispatcher = $this->getMock(
+			'Cake\Console\ShellDispatcher',
+			['_shellExists', '_createShell']
+		);
+		$Shell = $this->getMock('Cake\Console\Shell');
+
+		$dispatcher->expects($this->at(1))
+			->method('_shellExists')
+			->with('TestPlugin.TestPlugin')
+			->will($this->returnValue('TestPlugin\Console\Command\TestPluginShell'));
+
+		$dispatcher->expects($this->at(2))
+			->method('_createShell')
+			->with('TestPlugin\Console\Command\TestPluginShell', 'TestPlugin.TestPlugin')
+			->will($this->returnValue($Shell));
+
+		$dispatcher->args = array('test_plugin');
+		$result = $dispatcher->dispatch();
+		$this->assertEquals(1, $result);
+	}
+
+/**
+ * Ensure short plugin shell usage is case/camelized insensitive
+ *
+ * @return void
+ */
+	public function testDispatchShortPluginAliasCamelized() {
+		$dispatcher = $this->getMock(
+			'Cake\Console\ShellDispatcher',
+			['_shellExists', '_createShell']
+		);
+		$Shell = $this->getMock('Cake\Console\Shell');
+
+		$dispatcher->expects($this->at(1))
+			->method('_shellExists')
+			->with('TestPlugin.TestPlugin')
+			->will($this->returnValue('TestPlugin\Console\Command\TestPluginShell'));
+
+		$dispatcher->expects($this->at(2))
+			->method('_createShell')
+			->with('TestPlugin\Console\Command\TestPluginShell', 'TestPlugin.TestPlugin')
+			->will($this->returnValue($Shell));
+
+		$dispatcher->args = ['TestPlugin'];
+		$result = $dispatcher->dispatch();
+		$this->assertEquals(1, $result);
+	}
+
+/**
  * Verify shifting of arguments
  *
  * @return void

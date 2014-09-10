@@ -20,6 +20,7 @@ use Cake\Routing\DispatcherFactory;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 
 /**
  */
@@ -40,7 +41,7 @@ class RequestActionTraitTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('App.namespace', 'TestApp');
-		Configure::write('Security.salt', 'not-the-default');
+		Security::salt('not-the-default');
 		DispatcherFactory::add('Routing');
 		DispatcherFactory::add('ControllerFactory');
 		$this->object = $this->getObjectForTrait('Cake\Routing\RequestActionTrait');
