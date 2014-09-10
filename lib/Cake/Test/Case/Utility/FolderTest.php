@@ -974,6 +974,28 @@ class FolderTest extends CakeTestCase {
 	}
 
 /**
+ * Test that SKIP mode skips files too.
+ *
+ * @return void
+ */
+	public function testCopyWithSkipFileSkipped() {
+		$path = TMP . 'folder_test';
+		$folderOne = $path . DS . 'folder1';
+		$folderTwo = $path . DS . 'folder2';
+
+		new Folder($path, true);
+		new Folder($folderOne, true);
+		new Folder($folderTwo, true);
+		file_put_contents($folderOne . DS . 'fileA.txt', 'Folder One File');
+		file_put_contents($folderTwo . DS . 'fileA.txt', 'Folder Two File');
+
+		$Folder = new Folder($folderOne);
+		$result = $Folder->copy(array('to' => $folderTwo, 'scheme' => Folder::SKIP));
+		$this->assertTrue($result);
+		$this->assertEquals('Folder Two File', file_get_contents($folderTwo . DS . 'fileA.txt'));
+	}
+
+/**
  * testCopyWithOverwrite
  *
  * Verify that subdirectories existing in both destination and source directory

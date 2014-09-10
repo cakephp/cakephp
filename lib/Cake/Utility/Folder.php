@@ -645,7 +645,13 @@ class Folder {
 			$to = $options;
 			$options = array();
 		}
-		$options += array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array(), 'scheme' => Folder::MERGE);
+		$options += array(
+			'to' => $to,
+			'from' => $this->path,
+			'mode' => $this->mode,
+			'skip' => array(),
+			'scheme' => Folder::MERGE
+		);
 
 		$fromDir = $options['from'];
 		$toDir = $options['to'];
@@ -673,7 +679,7 @@ class Folder {
 				$to = Folder::addPathElement($toDir, $item);
 				if (($options['scheme'] != Folder::SKIP || !is_dir($to)) && !in_array($item, $exceptions)) {
 					$from = Folder::addPathElement($fromDir, $item);
-					if (is_file($from)) {
+					if (is_file($from) && (!is_file($to) || $options['scheme'] != Folder::SKIP)) {
 						if (copy($from, $to)) {
 							chmod($to, intval($mode, 8));
 							touch($to, filemtime($from));
