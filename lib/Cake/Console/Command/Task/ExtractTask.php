@@ -417,7 +417,7 @@ class ExtractTask extends AppShell {
 				if ($mapCount === count($strings)) {
 					extract(array_combine($map, $strings));
 					$category = isset($category) ? $category : 6;
-					$category = intval($category);
+					$category = (int)$category;
 					$categoryName = $categories[$category];
 					$domain = isset($domain) ? $domain : 'default';
 					$details = array(

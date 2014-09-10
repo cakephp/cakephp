@@ -493,7 +493,7 @@ class Mysql extends DboSource {
 					if ($idx->Index_type === 'FULLTEXT') {
 						$index[$idx->Key_name]['type'] = strtolower($idx->Index_type);
 					} else {
-						$index[$idx->Key_name]['unique'] = intval($idx->Non_unique == 0);
+						$index[$idx->Key_name]['unique'] = (int)($idx->Non_unique == 0);
 					}
 				} else {
 					if (!empty($index[$idx->Key_name]['column']) && !is_array($index[$idx->Key_name]['column'])) {

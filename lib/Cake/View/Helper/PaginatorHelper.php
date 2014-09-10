@@ -740,7 +740,7 @@ class PaginatorHelper extends AppHelper {
 		$out = '';
 
 		if ($modulus && $params['pageCount'] > $modulus) {
-			$half = intval($modulus / 2);
+			$half = (int)($modulus / 2);
 			$end = $params['page'] + $half;
 
 			if ($end > $params['pageCount']) {

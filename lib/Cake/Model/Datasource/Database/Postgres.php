@@ -219,10 +219,10 @@ class Postgres extends DboSource {
 					} elseif ($c->type === 'uuid') {
 						$length = 36;
 					} else {
-						$length = intval($c->oct_length);
+						$length = (int)$c->oct_length;
 					}
 				} elseif (!empty($c->char_length)) {
-					$length = intval($c->char_length);
+					$length = (int)$c->char_length;
 				} else {
 					$length = $this->length($c->type);
 				}
@@ -726,7 +726,7 @@ class Postgres extends DboSource {
 			return 36;
 		}
 		if ($limit) {
-			return intval($limit);
+			return (int)$limit;
 		}
 		return null;
 	}

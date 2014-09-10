@@ -321,7 +321,7 @@ class CakeTime {
 		}
 
 		if (is_int($dateString) || is_numeric($dateString)) {
-			$date = intval($dateString);
+			$date = (int)$dateString;
 		} elseif (
 			$dateString instanceof DateTime &&
 			$dateString->getTimezone()->getName() != date_default_timezone_get()
@@ -994,12 +994,12 @@ class CakeTime {
 			$time = self::fromString($dateString);
 		}
 		return gmmktime(
-			intval(date('G', $time)),
-			intval(date('i', $time)),
-			intval(date('s', $time)),
-			intval(date('n', $time)),
-			intval(date('j', $time)),
-			intval(date('Y', $time))
+			(int)date('G', $time),
+			(int)date('i', $time),
+			(int)date('s', $time),
+			(int)date('n', $time),
+			(int)date('j', $time),
+			(int)date('Y', $time)
 		);
 	}
 

@@ -2528,7 +2528,7 @@ class ModelWriteTest extends BaseModelTest {
 				'user' => 'some user',
 				'password' => 'some password'
 		)));
-		$this->assertTrue(is_int($TestModel->id) || (intval($TestModel->id) === 5));
+		$this->assertTrue(is_int($TestModel->id) || ((int)$TestModel->id === 5));
 		$id = $TestModel->id;
 
 		$TestModel->save(array(

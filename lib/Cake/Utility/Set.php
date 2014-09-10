@@ -560,7 +560,7 @@ class Set {
 		}
 
 		foreach ($path as $i => $key) {
-			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
+			if (is_numeric($key) && (int)$key > 0 || $key === '0') {
 				if (isset($data[$key])) {
 					$data = $data[$key];
 				} else {
@@ -657,8 +657,8 @@ class Set {
 		}
 
 		foreach ($path as $i => $key) {
-			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
-				$key = intval($key);
+			if (is_numeric($key) && (int)$key > 0 || $key === '0') {
+				$key = (int)$key;
 			}
 			if ($i === count($path) - 1) {
 				return (is_array($data) && array_key_exists($key, $data));

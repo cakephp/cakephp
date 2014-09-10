@@ -2893,7 +2893,7 @@ class FormHelper extends AppHelper {
 				}
 				break;
 			case 'year':
-				$current = intval(date('Y'));
+				$current = (int)date('Y');
 
 				$min = !isset($options['min']) ? $current - 20 : (int)$options['min'];
 				$max = !isset($options['max']) ? $current + 20 : (int)$options['max'];

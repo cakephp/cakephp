@@ -165,7 +165,7 @@ class FileEngine extends CacheEngine {
 
 		$this->_File->rewind();
 		$time = time();
-		$cachetime = intval($this->_File->current());
+		$cachetime = (int)$this->_File->current();
 
 		if ($cachetime !== false && ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime)) {
 			if ($this->settings['lock']) {
