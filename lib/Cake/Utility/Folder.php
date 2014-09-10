@@ -368,11 +368,11 @@ class Folder {
 /**
  * Change the mode on a directory structure recursively. This includes changing the mode on files as well.
  *
- * @param string $path The path to chmod
- * @param int $mode octal value 0755
- * @param bool $recursive chmod recursively, set to false to only change the current directory.
- * @param array $exceptions array of files, directories to skip
- * @return bool Returns TRUE on success, FALSE on failure
+ * @param string $path The path to chmod.
+ * @param int $mode Octal value, e.g. 0755.
+ * @param bool $recursive Chmod recursively, set to false to only change the current directory.
+ * @param array $exceptions Array of files, directories to skip.
+ * @return bool Success.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::chmod
  */
 	public function chmod($path, $mode = false, $recursive = true, $exceptions = array()) {
@@ -628,12 +628,12 @@ class Folder {
  *
  * - `to` The directory to copy to.
  * - `from` The directory to copy from, this will cause a cd() to occur, changing the results of pwd().
- * - `mode` The mode to copy the files/directories with.
+ * - `mode` The mode to copy the files/directories with as integer, e.g. 0775.
  * - `skip` Files/directories to skip.
  * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
  *
  * @param array|string $options Either an array of options (see above) or a string of the destination directory.
- * @return bool Success
+ * @return bool Success.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::copy
  */
 	public function copy($options) {
