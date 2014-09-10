@@ -537,9 +537,9 @@ class Sqlserver extends DboSource {
 				if (version_compare($this->getVersion(), '11', '<') && preg_match('/FETCH\sFIRST\s+([0-9]+)/i', $limit, $offset)) {
 					preg_match('/OFFSET\s*(\d+)\s*.*?(\d+)\s*ROWS/', $limit, $limitOffset);
 
-					$limit = 'TOP ' . intval($limitOffset[2]);
-					$page = intval($limitOffset[1] / $limitOffset[2]);
-					$offset = intval($limitOffset[2] * $page);
+					$limit = 'TOP ' . (int)$limitOffset[2];
+					$page = (int)($limitOffset[1] / $limitOffset[2]);
+					$offset = (int)($limitOffset[2] * $page);
 
 					$rowCounter = self::ROW_COUNTER;
 					$sql = "SELECT {$limit} * FROM (

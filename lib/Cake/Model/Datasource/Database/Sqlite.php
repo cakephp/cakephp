@@ -509,7 +509,7 @@ class Sqlite extends DboSource {
 							$key['name'] = 'PRIMARY';
 						}
 						$index[$key['name']]['column'] = $keyCol[0]['name'];
-						$index[$key['name']]['unique'] = intval($key['unique'] == 1);
+						$index[$key['name']]['unique'] = (int)$key['unique'] === 1;
 					} else {
 						if (!is_array($index[$key['name']]['column'])) {
 							$col[] = $index[$key['name']]['column'];

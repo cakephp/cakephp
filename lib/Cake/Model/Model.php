@@ -2094,7 +2094,7 @@ class Model extends Object implements CakeEventListener {
 
 				if (isset($keys['old'][$foreignKey]) && $keys['old'][$foreignKey] != $keys[$foreignKey]) {
 					$conditions[$fkQuoted] = $keys['old'][$foreignKey];
-					$count = intval($this->find('count', compact('conditions', 'recursive')));
+					$count = (int)$this->find('count', compact('conditions', 'recursive'));
 
 					$Model->updateAll(
 						array($field => $count),
@@ -2108,7 +2108,7 @@ class Model extends Object implements CakeEventListener {
 					$conditions = array_merge($conditions, (array)$conditions);
 				}
 
-				$count = intval($this->find('count', compact('conditions', 'recursive')));
+				$count = (int)$this->find('count', compact('conditions', 'recursive'));
 
 				$Model->updateAll(
 					array($field => $count),
@@ -2979,7 +2979,7 @@ class Model extends Object implements CakeEventListener {
 			$query = $this->{'_find' . ucfirst($type)}('before', $query);
 		}
 
-		if (!is_numeric($query['page']) || intval($query['page']) < 1) {
+		if (!is_numeric($query['page']) || (int)$query['page'] < 1) {
 			$query['page'] = 1;
 		}
 
@@ -3092,7 +3092,7 @@ class Model extends Object implements CakeEventListener {
 					return count($results);
 				}
 
-				return intval($results[0][$key]['count']);
+				return (int)$results[0][$key]['count'];
 			}
 		}
 

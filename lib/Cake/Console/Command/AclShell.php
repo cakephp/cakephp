@@ -579,8 +579,8 @@ class AclShell extends AppShell {
  * @return array aro, aco, action
  */
 	protected function _getParams() {
-		$aro = is_numeric($this->args[0]) ? intval($this->args[0]) : $this->args[0];
-		$aco = is_numeric($this->args[1]) ? intval($this->args[1]) : $this->args[1];
+		$aro = is_numeric($this->args[0]) ? (int)$this->args[0] : $this->args[0];
+		$aco = is_numeric($this->args[1]) ? (int)$this->args[1] : $this->args[1];
 		$aroName = $aro;
 		$acoName = $aco;
 

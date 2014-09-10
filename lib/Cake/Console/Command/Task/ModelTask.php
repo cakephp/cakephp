@@ -728,7 +728,7 @@ class ModelTask extends BakeTask {
 		while (strtolower($wannaDoMoreAssoc) === 'y') {
 			$assocs = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 			$this->out(__d('cake_console', 'What is the association type?'));
-			$assocType = intval($this->inOptions($assocs, __d('cake_console', 'Enter a number')));
+			$assocType = (int)$this->inOptions($assocs, __d('cake_console', 'Enter a number'));
 
 			$this->out(__d('cake_console', "For the following options be very careful to match your setup exactly.\n" .
 				"Any spelling mistakes will cause errors."));
