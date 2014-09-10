@@ -191,45 +191,6 @@ if (!function_exists('env')) {
 				return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
 			case 'CGI_MODE':
 				return (PHP_SAPI === 'cgi');
-			case 'HTTP_BASE':
-				$host = env('HTTP_HOST');
-				$parts = explode('.', $host);
-				$count = count($parts);
-
-				if ($count === 1) {
-					return '.' . $host;
-				} elseif ($count === 2) {
-					return '.' . $host;
-				} elseif ($count === 3) {
-					$gTLD = array(
-						'aero',
-						'asia',
-						'biz',
-						'cat',
-						'com',
-						'coop',
-						'edu',
-						'gov',
-						'info',
-						'int',
-						'jobs',
-						'mil',
-						'mobi',
-						'museum',
-						'name',
-						'net',
-						'org',
-						'pro',
-						'tel',
-						'travel',
-						'xxx'
-					);
-					if (in_array($parts[1], $gTLD)) {
-						return '.' . $host;
-					}
-				}
-				array_shift($parts);
-				return '.' . implode('.', $parts);
 		}
 		return null;
 	}
