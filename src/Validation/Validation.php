@@ -983,7 +983,8 @@ class Validation {
 		if (!is_array($file)) {
 			return false;
 		}
-		$keys = ['name', 'tmp_name', 'error', 'type', 'size'];
+		$keys = ['error', 'name', 'size', 'tmp_name', 'type'];
+		ksort($file);
 		if (array_keys($file) != $keys) {
 			return false;
 		}
