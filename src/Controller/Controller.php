@@ -468,11 +468,11 @@ class Controller implements EventListener {
  * @return void|\Cake\Network\Response
  */
 	public function startupProcess() {
-		$event = $this->eventManager()->dispatch(new Event('Controller.initialize', $this));
+		$event = $this->dispatchEvent('Controller.initialize');
 		if ($event->result instanceof Response) {
 			return $event->result;
 		}
-		$event = $this->eventManager()->dispatch(new Event('Controller.startup', $this));
+		$event = $this->dispatchEvent('Controller.startup');
 		if ($event->result instanceof Response) {
 			return $event->result;
 		}
@@ -488,7 +488,7 @@ class Controller implements EventListener {
  * @return void|\Cake\Network\Response
  */
 	public function shutdownProcess() {
-		$event = $this->eventManager()->dispatch(new Event('Controller.shutdown', $this));
+		$event = $this->dispatchEvent('Controller.shutdown');
 		if ($event->result instanceof Response) {
 			return $event->result;
 		}
@@ -512,8 +512,7 @@ class Controller implements EventListener {
 			$response->statusCode($status);
 		}
 
-		$event = new Event('Controller.beforeRedirect', $this, [$url, $response]);
-		$event = $this->eventManager()->dispatch($event);
+		$event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $response]);
 		if ($event->result instanceof Response) {
 			return $event->result;
 		}
@@ -559,8 +558,7 @@ class Controller implements EventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::render
  */
 	public function render($view = null, $layout = null) {
-		$event = new Event('Controller.beforeRender', $this);
-		$event = $this->eventManager()->dispatch($event);
+		$event = $this->dispatchEvent('Controller.beforeRender');
 		if ($event->result instanceof Response) {
 			$this->autoRender = false;
 			return $event->result;
