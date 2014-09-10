@@ -794,6 +794,13 @@ class EntityContextTest extends TestCase {
 			'user' => new Entity(['username' => 'Mark']),
 		]);
 		$row->errors('title', []);
+		$row->errors(['uploadedFile' => [
+			'name' => null,
+			'tmp_name' => null,
+			'error' => null,
+			'type' => null,
+			'size' => null
+		]]);
 		$row->errors('body', 'Gotta have one');
 		$row->errors('user_id', ['Required field']);
 		$context = new EntityContext($this->request, [
@@ -802,6 +809,7 @@ class EntityContextTest extends TestCase {
 		]);
 
 		$this->assertFalse($context->hasError('title'));
+		$this->assertFalse($context->hasError('uploadedFile'));
 		$this->assertFalse($context->hasError('nope'));
 		$this->assertTrue($context->hasError('body'));
 		$this->assertTrue($context->hasError('user_id'));

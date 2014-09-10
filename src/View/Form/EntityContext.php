@@ -456,7 +456,16 @@ class EntityContext implements ContextInterface {
  * @return bool Returns true if the errors for the field are not empty.
  */
 	public function hasError($field) {
-		return $this->error($field) !== [];
+		$errors = $this->error($field);
+		if ($errors !== []) {
+			foreach ($errors as $key => $value) {
+				if (!is_null($value)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		return false;
 	}
 
 /**
