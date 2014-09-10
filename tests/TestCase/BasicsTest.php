@@ -71,40 +71,6 @@ class BasicsTest extends TestCase {
 
 		$server = $_SERVER;
 		$env = $_ENV;
-
-		$_SERVER['HTTP_HOST'] = 'localhost';
-		$this->assertEquals(env('HTTP_BASE'), '.localhost');
-
-		$_SERVER['HTTP_HOST'] = 'com.ar';
-		$this->assertEquals(env('HTTP_BASE'), '.com.ar');
-
-		$_SERVER['HTTP_HOST'] = 'example.ar';
-		$this->assertEquals(env('HTTP_BASE'), '.example.ar');
-
-		$_SERVER['HTTP_HOST'] = 'example.com';
-		$this->assertEquals(env('HTTP_BASE'), '.example.com');
-
-		$_SERVER['HTTP_HOST'] = 'www.example.com';
-		$this->assertEquals(env('HTTP_BASE'), '.example.com');
-
-		$_SERVER['HTTP_HOST'] = 'subdomain.example.com';
-		$this->assertEquals(env('HTTP_BASE'), '.example.com');
-
-		$_SERVER['HTTP_HOST'] = 'example.com.ar';
-		$this->assertEquals(env('HTTP_BASE'), '.example.com.ar');
-
-		$_SERVER['HTTP_HOST'] = 'www.example.com.ar';
-		$this->assertEquals(env('HTTP_BASE'), '.example.com.ar');
-
-		$_SERVER['HTTP_HOST'] = 'subdomain.example.com.ar';
-		$this->assertEquals(env('HTTP_BASE'), '.example.com.ar');
-
-		$_SERVER['HTTP_HOST'] = 'double.subdomain.example.com';
-		$this->assertEquals(env('HTTP_BASE'), '.subdomain.example.com');
-
-		$_SERVER['HTTP_HOST'] = 'double.subdomain.example.com.ar';
-		$this->assertEquals(env('HTTP_BASE'), '.subdomain.example.com.ar');
-
 		$_SERVER = $_ENV = array();
 
 		$_SERVER['SCRIPT_NAME'] = '/a/test/test.php';
