@@ -1620,7 +1620,7 @@ class Table implements RepositoryInterface, EventListener {
  * using the options parameter:
  *
  * {{{
- * $articles = $this->Articles->newEntity(
+ * $article = $this->Articles->newEntity(
  *   $this->request->data(),
  *   ['associated' => ['Tags', 'Comments.Users']]
  * );
@@ -1630,13 +1630,23 @@ class Table implements RepositoryInterface, EventListener {
  * passing the `fieldList` option, which is also accepted for associations:
  *
  * {{{
- * $articles = $this->Articles->newEntity($this->request->data(), [
- *	'fieldList' => ['title', 'body'],
- *	'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
- *	]
+ * $article = $this->Articles->newEntity($this->request->data(), [
+ *  'fieldList' => ['title', 'body'],
+ *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
+ * ]
  * );
  * }}}
  *
+ * The `fieldList` option lets remove or restrict input data from ending up in
+ * the entity. If you'd like to relax the entity's default accessible fields,
+ * you can use the `accessibleFields` option:
+ *
+ * {{{
+ * $article = $this->Articles->newEntity(
+ *   $this->request->data(),
+ *   ['accessibleFields' => ['protected_field' => true]]
+ * );
+ * }}}
  */
 	public function newEntity(array $data = [], array $options = []) {
 		if (!isset($options['associated'])) {
