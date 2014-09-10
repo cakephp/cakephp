@@ -645,7 +645,13 @@ class Folder {
 			$to = $options;
 			$options = array();
 		}
-		$options += array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array(), 'scheme' => Folder::MERGE);
+		$options += array(
+			'to' => $to,
+			'from' => $this->path,
+			'mode' => $this->mode,
+			'skip' => array(),
+			'scheme' => Folder::MERGE
+		);
 
 		$fromDir = $options['from'];
 		$toDir = $options['to'];
