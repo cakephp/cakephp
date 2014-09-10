@@ -55,6 +55,8 @@ class ShellDispatcher {
 		set_time_limit(0);
 		$this->args = (array)$args;
 
+		$this->addShortPluginAliases();
+
 		if ($bootstrap) {
 			$this->_initEnvironment();
 		}
@@ -171,10 +173,6 @@ class ShellDispatcher {
 		if (in_array($shell, ['help', '--help', '-h'])) {
 			$this->help();
 			return true;
-		}
-
-		if (!self::$_aliases) {
-			$this->addShortPluginAliases();
 		}
 
 		$Shell = $this->findShell($shell);
