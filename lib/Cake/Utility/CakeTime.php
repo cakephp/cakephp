@@ -321,7 +321,7 @@ class CakeTime {
 		}
 
 		if (is_int($dateString) || is_numeric($dateString)) {
-			$date = intval($dateString);
+			$date = (int)$dateString;
 		} elseif (
 			$dateString instanceof DateTime &&
 			$dateString->getTimezone()->getName() != date_default_timezone_get()

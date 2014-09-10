@@ -179,7 +179,7 @@ class PaginatorComponent extends Component {
 			$extra['type'] = $type;
 		}
 
-		if (intval($page) < 1) {
+		if ((int)$page < 1) {
 			$page = 1;
 		}
 		$page = $options['page'] = (int)$page;

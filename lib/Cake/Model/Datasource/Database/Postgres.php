@@ -726,7 +726,7 @@ class Postgres extends DboSource {
 			return 36;
 		}
 		if ($limit) {
-			return intval($limit);
+			return (int)$limit;
 		}
 		return null;
 	}
