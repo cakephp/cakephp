@@ -28,6 +28,7 @@ class PostsController extends AppController {
  * @var array
  */
 	public $components = array(
+		'Flash',
 		'RequestHandler',
 	);
 
@@ -37,6 +38,11 @@ class PostsController extends AppController {
  * @return void
  */
 	public function index() {
+		$this->Flash->error('An error message');
+		$this->response->cookie([
+			'name' => 'remember_me',
+			'value' => 1
+		]);
 		$this->set('test', 'value');
 	}
 }

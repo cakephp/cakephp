@@ -84,6 +84,13 @@ class IntegrationTestCase extends TestCase {
 	protected $_layoutName;
 
 /**
+ * The session instance from the last request
+ *
+ * @var \Cake\Network\Session
+ */
+	protected $_requestSession;
+
+/**
  * Clear the state used for requests.
  *
  * @return void
@@ -97,6 +104,7 @@ class IntegrationTestCase extends TestCase {
 		$this->_controller = null;
 		$this->_viewName = null;
 		$this->_layoutName = null;
+		$this->_requestSession = null;
 	}
 
 /**
@@ -243,6 +251,7 @@ class IntegrationTestCase extends TestCase {
 		);
 		try {
 			$dispatcher->dispatch($request, $response);
+			$this->_requestSession = $request->session();
 			$this->_response = $response;
 		} catch (\PHPUnit_Exception $e) {
 			throw $e;
@@ -464,6 +473,77 @@ class IntegrationTestCase extends TestCase {
 			$this->fail('No layout name stored. ' . $message);
 		}
 		$this->assertContains($content, $this->_layoutName, $message);
+	}
+
+/**
+ * Fetch a view variable by name.
+ *
+ * If the view variable does not exist null will be returned.
+ *
+ * @param string $name The view variable to get.
+ * @return mixed The view variable if set.
+ */
+	public function viewVariable($name) {
+		if (empty($this->_controller->viewVars)) {
+			$this->fail('There are no view variables, perhaps you need to run a request?');
+		}
+		if (isset($this->_controller->viewVars[$name])) {
+			return $this->_controller->viewVars[$name];
+		}
+		return null;
+	}
+
+/**
+ * Assert that a flash message was set.
+ *
+ * @param string $type The flash type to check.
+ * @param string $content The flash message content to check.
+ * @param string $key The flash namespace the message is in.
+ * @param string $message The failure message that will be appended to the generated message.
+ */
+	public function assertFlash($type, $content, $key = 'flash', $message = '') {
+		if (empty($this->_requestSession)) {
+			$this->fail('There is no stored session data. Perhaps you need to run a request?');
+		}
+		$key = "Flash.{$key}";
+		if (!$this->_requestSession->check($key)) {
+			$this->fail("The {$key} key is not set in the session. " . $message);
+		}
+		$val = $this->_requestSession->read($key);
+		if (strpos($val['element'], $type) === false) {
+			$this->fail("The {$key} does not have a matching element/type of {$type}. " . $message);
+		}
+		$this->assertEquals($content, $val['message'], 'Flash message differs. ' . $message);
+	}
+
+/**
+ * Assert session contents
+ *
+ * @param string $expected The expected contents.
+ * @param string $path The session data path. Uses Hash::get() compatible notation
+ * @param string $message The failure message that will be appended to the generated message.
+ */
+	public function assertSession($expected, $path, $message = '') {
+		if (empty($this->_requestSession)) {
+			$this->fail('There is no stored session data. Perhaps you need to run a request?');
+		}
+		$result = $this->_requestSession->read($path);
+		$this->assertEquals($expected, $result, 'Session content differs. ' . $message);
+	}
+
+/**
+ * Assert cookie values
+ *
+ * @param string $expected The expected contents.
+ * @param string $name The cookie name.
+ * @param string $message The failure message that will be appended to the generated message.
+ */
+	public function assertCookie($expected, $name, $message = '') {
+		if (empty($this->_response)) {
+			$this->fail('Not response set, cannot assert cookies.');
+		}
+		$result = $this->_response->cookie($name);
+		$this->assertEquals($expected, $result['value'], 'Cookie data differs. ' . $message);
 	}
 
 }

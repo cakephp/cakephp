@@ -88,6 +88,20 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 
 		$this->assertTemplate('index');
 		$this->assertLayout('default');
+		$this->assertEquals('value', $this->viewVariable('test'));
+	}
+
+/**
+ * Test flash and cookie assertions
+ *
+ * @return void
+ */
+	public function testFlashSessionAndCookieAsserts() {
+		$this->post('/posts/index');
+
+		$this->assertFlash('error', 'An error message');
+		$this->assertSession('An error message', 'Flash.flash.message');
+		$this->assertCookie(1, 'remember_me');
 	}
 
 /**
