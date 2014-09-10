@@ -382,7 +382,7 @@ class Folder {
 
 		if ($recursive === false && is_dir($path)) {
 			//@codingStandardsIgnoreStart
-			if (@chmod($path, intval($mode, 8))) {
+			if (@chmod($path, intval((string)$mode, 8))) {
 				//@codingStandardsIgnoreEnd
 				$this->_messages[] = __d('cake_dev', '%s changed to %s', $path, $mode);
 				return true;
@@ -405,7 +405,7 @@ class Folder {
 					}
 
 					//@codingStandardsIgnoreStart
-					if (@chmod($fullpath, intval($mode, 8))) {
+					if (@chmod($fullpath, intval((string)$mode, 8))) {
 						//@codingStandardsIgnoreEnd
 						$this->_messages[] = __d('cake_dev', '%s changed to %s', $fullpath, $mode);
 					} else {
@@ -681,7 +681,7 @@ class Folder {
 					$from = Folder::addPathElement($fromDir, $item);
 					if (is_file($from) && (!is_file($to) || $options['scheme'] != Folder::SKIP)) {
 						if (copy($from, $to)) {
-							chmod($to, intval($mode, 8));
+							chmod($to, intval((string)$mode, 8));
 							touch($to, filemtime($from));
 							$this->_messages[] = __d('cake_dev', '%s copied to %s', $from, $to);
 						} else {
