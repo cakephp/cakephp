@@ -450,7 +450,7 @@ class IntegrationTestCase extends TestCase {
 /**
  * Assert that the search string was in the template name.
  *
- * @param string $file The content to check for.
+ * @param string $content The content to check for.
  * @param string $message The failure message that will be appended to the generated message.
  * @return void
  */
@@ -464,7 +464,7 @@ class IntegrationTestCase extends TestCase {
 /**
  * Assert that the search string was in the layout name.
  *
- * @param string $file The content to check for.
+ * @param string $content The content to check for.
  * @param string $message The failure message that will be appended to the generated message.
  * @return void
  */
@@ -500,6 +500,7 @@ class IntegrationTestCase extends TestCase {
  * @param string $content The flash message content to check.
  * @param string $key The flash namespace the message is in.
  * @param string $message The failure message that will be appended to the generated message.
+ * @return void
  */
 	public function assertFlash($type, $content, $key = 'flash', $message = '') {
 		if (empty($this->_requestSession)) {
@@ -522,6 +523,7 @@ class IntegrationTestCase extends TestCase {
  * @param string $expected The expected contents.
  * @param string $path The session data path. Uses Hash::get() compatible notation
  * @param string $message The failure message that will be appended to the generated message.
+ * @return void
  */
 	public function assertSession($expected, $path, $message = '') {
 		if (empty($this->_requestSession)) {
@@ -537,6 +539,7 @@ class IntegrationTestCase extends TestCase {
  * @param string $expected The expected contents.
  * @param string $name The cookie name.
  * @param string $message The failure message that will be appended to the generated message.
+ * @return void
  */
 	public function assertCookie($expected, $name, $message = '') {
 		if (empty($this->_response)) {
