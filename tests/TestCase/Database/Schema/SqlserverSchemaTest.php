@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
+use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchema;
 use Cake\Database\Schema\Table;
