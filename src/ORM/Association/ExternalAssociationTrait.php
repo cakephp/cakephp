@@ -15,7 +15,6 @@
 namespace Cake\ORM\Association;
 
 use Cake\ORM\Association\SelectableAssociationTrait;
-use Cake\Utility\Inflector;
 
 /**
  * Represents a type of association that that needs to be recovered by performing
@@ -55,8 +54,7 @@ trait ExternalAssociationTrait {
 	public function foreignKey($key = null) {
 		if ($key === null) {
 			if ($this->_foreignKey === null) {
-				$key = Inflector::singularize($this->source()->alias());
-				$this->_foreignKey = Inflector::underscore($key) . '_id';
+				$this->_foreignKey = $this->_modelKey($this->source()->alias());
 			}
 			return $this->_foreignKey;
 		}

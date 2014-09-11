@@ -41,8 +41,7 @@ class BelongsTo extends Association {
 	public function foreignKey($key = null) {
 		if ($key === null) {
 			if ($this->_foreignKey === null) {
-				$key = Inflector::singularize($this->target()->alias());
-				$this->_foreignKey = Inflector::underscore($key) . '_id';
+				$this->_foreignKey = $this->_modelKey($this->target()->alias());
 			}
 			return $this->_foreignKey;
 		}
