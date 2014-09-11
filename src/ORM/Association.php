@@ -740,7 +740,7 @@ abstract class Association {
 /**
  * Helper method used to generate a default foreign key for the source or target table.
  *
- * @param \Cake\ORM\Table Table instance
+ * @param \Cake\ORM\Table $table Table instance
  * @return array|string
  */
 	protected function _getForeignKey(Table $table) {
@@ -753,7 +753,7 @@ abstract class Association {
 		$base = Inflector::underscore($alias);
 
 		$foreignKey = [];
-		foreach ((array) $primaryKey as $key) {
+		foreach ((array)$primaryKey as $key) {
 			$foreignKey[] = $base . '_' . $key;
 		}
 
