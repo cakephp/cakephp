@@ -873,7 +873,21 @@ class BelongsToMany extends Association {
  */
 	protected function _buildQuery($options) {
 		$name = $this->_junctionAssociationName();
-		return $this->_buildBaseQuery($options)->matching($name);
+		$query = $this->_buildBaseQuery($options);
+		$joins = $query->join() ?: [];
+		$keys = $this->_linkField($options);
+
+		$matching = [
+			$name => [
+				'table' => $this->junction()->table(),
+				'conditions' => $keys,
+				'type' => 'INNER'
+			]
+		];
+
+		$joins = $matching + $joins;
+		$query->join($joins, [], true)->matching($name);
+		return $query;
 	}
 
 /**
