@@ -180,26 +180,6 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that using hasOne with a table having a multi column primary
- * key will work if the foreign key is passed
- *
- * @expectedException \RuntimeException
- * @expectedExceptionMessage Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"
- * @return void
- */
-	public function testAttachToMultiPrimaryKeyMistmatch() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
-		$config = [
-			'sourceTable' => $this->user,
-			'targetTable' => $this->profile,
-			'conditions' => ['Profiles.is_active' => true],
-		];
-		$this->user->primaryKey(['id', 'site_id']);
-		$association = new HasOne('Profiles', $config);
-		$association->attachTo($query, ['includeFields' => false]);
-	}
-
-/**
  * Test that saveAssociated() ignores non entity values.
  *
  * @return void
