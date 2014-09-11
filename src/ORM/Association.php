@@ -738,6 +738,29 @@ abstract class Association {
 	}
 
 /**
+ * Helper method used to generate a default foreign key for the source or target table.
+ *
+ * @param \Cake\ORM\Table Table instance
+ * @return array|string
+ */
+	protected function _getForeignKey(Table $table) {
+		$primaryKey = $table->primaryKey();
+		$alias = Inflector::singularize($table->alias());
+		$base = Inflector::underscore($alias);
+
+		$foreignKey = [];
+		foreach ((array) $primaryKey as $key) {
+			$foreignKey[] = $base . '_' . $key;
+		}
+
+		if (count($foreignKey) === 1) {
+			return $foreignKey[0];
+		} else {
+			return $foreignKey;
+		}
+	}
+
+/**
  * Proxies property retrieval to the target table. This is handy for getting this
  * association's associations
  *
