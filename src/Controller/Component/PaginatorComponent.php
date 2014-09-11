@@ -154,7 +154,7 @@ class PaginatorComponent extends Component {
 		$options = $this->checkLimit($options);
 
 		$options += ['page' => 1];
-		$options['page'] = intval($options['page']) < 1 ? 1 : (int)$options['page'];
+		$options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
 		list($finder, $options) = $this->_extractFinder($options);
 
 		if (empty($query)) {
@@ -171,7 +171,7 @@ class PaginatorComponent extends Component {
 
 		$page = $options['page'];
 		$limit = $options['limit'];
-		$pageCount = intval(ceil($count / $limit));
+		$pageCount = (int)ceil($count / $limit);
 		$requestedPage = $page;
 		$page = max(min($page, $pageCount), 1);
 		$request = $this->_registry->getController()->request;

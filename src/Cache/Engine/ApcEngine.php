@@ -77,7 +77,7 @@ class ApcEngine extends CacheEngine {
 		$key = $this->_key($key);
 
 		$time = time();
-		$cachetime = intval(apc_fetch($key . '_expires'));
+		$cachetime = (int)apc_fetch($key . '_expires');
 		if ($cachetime !== 0 && ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)) {
 			return false;
 		}
