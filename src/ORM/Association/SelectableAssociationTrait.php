@@ -125,7 +125,7 @@ trait SelectableAssociationTrait {
 
 	public function _addFilteringJoin($query, $key, $subquery) {
 		$filter = [];
-		$aliasedTable = uniqid();
+		$aliasedTable = uniqid('c');
 
 		foreach ($subquery->clause('select') as $aliasedField => $field) {
 			$filter[] = new IdentifierExpression("$aliasedTable.$aliasedField");
