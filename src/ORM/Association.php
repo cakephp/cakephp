@@ -744,7 +744,11 @@ abstract class Association {
  * @return array|string
  */
 	protected function _getForeignKey(Table $table) {
-		$primaryKey = $table->primaryKey();
+		if ($table->connection()) {
+			$primaryKey = $table->primaryKey();
+		} else {
+			$primaryKey = 'id';
+		}
 		$alias = Inflector::singularize($table->alias());
 		$base = Inflector::underscore($alias);
 
@@ -754,10 +758,10 @@ abstract class Association {
 		}
 
 		if (count($foreignKey) === 1) {
-			return $foreignKey[0];
-		} else {
-			return $foreignKey;
+			$foreignKey = $foreignKey[0];
 		}
+		
+		return $foreignKey;
 	}
 
 /**
