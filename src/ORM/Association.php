@@ -760,7 +760,7 @@ abstract class Association {
 		if (count($foreignKey) === 1) {
 			$foreignKey = $foreignKey[0];
 		}
-		
+
 		return $foreignKey;
 	}
 
