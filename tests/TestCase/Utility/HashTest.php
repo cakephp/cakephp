@@ -1370,6 +1370,13 @@ class HashTest extends TestCase {
 			'pages' => array('name' => array()),
 		);
 		$this->assertEquals($expected, $result);
+
+		$a = array(
+			'foo' => array('bar' => 'baz')
+		);
+		$result = Hash::insert($a, 'some.0123.path', array('foo' => array('bar' => 'baz')));
+		$expected = array('foo' => array('bar' => 'baz'));
+		$this->assertEquals($expected, Hash::get($result, 'some.0123.path'));
 	}
 
 /**

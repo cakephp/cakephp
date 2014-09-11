@@ -316,7 +316,7 @@ class Hash {
 		$count = count($path);
 		$last = $count - 1;
 		foreach ($path as $i => $key) {
-			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
+			if ((is_numeric($key) && intval($key) > 0 || $key === '0') && strpos($key, '0') !== 0) {
 				$key = intval($key);
 			}
 			if ($op === 'insert') {
