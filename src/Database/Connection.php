@@ -196,9 +196,9 @@ class Connection {
  * Wrap the table name in a TableNameExpression with the current config prefix
  *
  * @param string|array|TableNameExpression $names The names of the tables
+ * @return array|TableNameExpression Full tables names
  *
  * @see \Cake\Database\Expression\TableNameExpression
- * @return array|TableNameExpression Full tables names
  */
 	public function fullTableName($names) {
 		$prefix = '';

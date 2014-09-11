@@ -54,7 +54,12 @@ abstract class BaseSchema {
  * @return string The prefix for the current connection
  */
 	public function getConnectionPrefix($config) {
-		return (isset($config['prefix']) && is_string($config['prefix'])) ? $config['prefix'] : '';
+		$prefix = '';
+		if (isset($config['prefix']) && is_string($config['prefix'])) {
+			$prefix = $config['prefix'];
+		}
+
+		return $prefix;
 	}
 
 /**

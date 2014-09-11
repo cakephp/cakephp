@@ -197,11 +197,7 @@ class QueryCompiler {
 	protected function _buildJoinPart($parts, $query, $generator) {
 		$joins = '';
 		foreach ($parts as $join) {
-			if ($join['table'] instanceof TableNameExpression) {
-				$join['table'] = $join['table']->sql($generator);
-			} elseif ($join['table'] instanceof ExpressionInterface) {
-				$join['table'] = '(' . $join['table']->sql($generator) . ')';
-			}
+			$join['table'] = $this->_stringifyExpression($join['table'], $generator);
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
 			if (isset($join['conditions']) && count($join['conditions'])) {
 				$joins .= sprintf(' ON %s', $join['conditions']->sql($generator));
@@ -290,14 +286,26 @@ class QueryCompiler {
 	protected function _stringifyExpressions($expressions, $generator) {
 		$result = [];
 		foreach ($expressions as $k => $expression) {
-			if ($expression instanceof TableNameExpression) {
-				$expression = $expression->sql($generator);
-			} elseif ($expression instanceof ExpressionInterface) {
-				$expression = '(' . $expression->sql($generator) . ')';
-			}
-			$result[$k] = $expression;
+			$result[$k] = $this->_stringifyExpression($expression, $generator);
 		}
 		return $result;
+	}
+
+/**
+ * Converts $expression into its string representation.
+ *
+ * @param string|ExpressionInterface $expression Expression to convert into a string
+ * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in the expression
+ * @return string
+ */
+	protected function _stringifyExpression($expression, $generator) {
+		if ($expression instanceof TableNameExpression) {
+			$expression = $expression->sql($generator);
+		} elseif ($expression instanceof ExpressionInterface) {
+			$expression = '(' . $expression->sql($generator) . ')';
+		}
+
+		return $expression;
 	}
 
 }

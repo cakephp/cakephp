@@ -184,8 +184,7 @@ class IdentifierQuoter {
 	}
 
 /**
- * Quotes the table name (either from a from or a join) taking into account
- * if the $name parameter is a TableNameExpression or not
+ * Quotes the table name from a from or a join
  *
  * @param string|TableNameExpression|QueryExpression|\Cake\Database\Query $name Table name to quote
  *
