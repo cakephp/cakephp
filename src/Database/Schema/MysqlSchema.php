@@ -49,7 +49,7 @@ class MysqlSchema extends BaseSchema {
  * {@inheritDoc}
  */
 	public function describeOptionsSql($tableName, $config) {
-		$tableName = $this->getFullTableName($tableName, $config);
+		$tableName = $this->getFullTableName($tableName, $config, false);
 		return ['SHOW TABLE STATUS WHERE Name = ?', [$tableName]];
 	}
 
