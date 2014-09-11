@@ -660,11 +660,12 @@ trait EntityTrait {
 			return $object->errors($path);
 		}
 		if (is_array($object)) {
-			return array_map(function($val) {
+			$array = array_map(function($val) {
 				if ($val instanceof static) {
 					return $val->errors();
 				}
 			}, $object);
+			return array_filter($array);
 		}
 		return [];
 	}
