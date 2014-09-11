@@ -498,10 +498,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'sort' => ['foo' => 'asc']
 		];
 		$table = new Table(['table' => 'authors', 'connection' => $this->connection]);
-		$belongsToMany = $table->belongsToMany('tag', $options);
+		$belongsToMany = $table->belongsToMany('tags', $options);
 		$this->assertInstanceOf('\Cake\ORM\Association\BelongsToMany', $belongsToMany);
-		$this->assertSame($belongsToMany, $table->association('tag'));
-		$this->assertEquals('tag', $belongsToMany->name());
+		$this->assertSame($belongsToMany, $table->association('tags'));
+		$this->assertEquals('tags', $belongsToMany->name());
 		$this->assertEquals('thing_id', $belongsToMany->foreignKey());
 		$this->assertEquals(['b' => 'c'], $belongsToMany->conditions());
 		$this->assertEquals(['foo' => 'asc'], $belongsToMany->sort());
@@ -1857,7 +1857,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testDeleteBelongsToMany() {
 		$table = TableRegistry::get('articles');
-		$table->belongsToMany('tag', [
+		$table->belongsToMany('tags', [
 			'foreignKey' => 'article_id',
 			'joinTable' => 'articles_tags'
 		]);
