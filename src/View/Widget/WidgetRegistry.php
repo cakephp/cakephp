@@ -73,7 +73,7 @@ class WidgetRegistry {
 	public function __construct(StringTemplate $templates, View $view, $widgets = []) {
 		$this->_templates = $templates;
 		if (!empty($widgets)) {
-			if (is_string($widgets)){
+			if (is_string($widgets)) {
 				$loader = new PhpConfig();
 				$widgets = $loader->read($widgets);
 			}
