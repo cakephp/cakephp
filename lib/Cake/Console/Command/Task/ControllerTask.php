@@ -452,14 +452,14 @@ class ControllerTask extends BakeTask {
 				return $this->_stop();
 			}
 
-			if (!$enteredController || intval($enteredController) > count($controllers)) {
+			if (!$enteredController || (int)$enteredController > count($controllers)) {
 				$this->err(__d('cake_console', "The Controller name you supplied was empty,\nor the number you selected was not an option. Please try again."));
 				$enteredController = '';
 			}
 		}
 
-		if (intval($enteredController) > 0 && intval($enteredController) <= count($controllers)) {
-			$controllerName = $controllers[intval($enteredController) - 1];
+		if ((int)$enteredController > 0 && (int)$enteredController <= count($controllers)) {
+			$controllerName = $controllers[(int)$enteredController - 1];
 		} else {
 			$controllerName = Inflector::camelize($enteredController);
 		}

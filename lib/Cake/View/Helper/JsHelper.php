@@ -292,7 +292,7 @@ class JsHelper extends AppHelper {
  */
 	public function link($title, $url = null, $options = array()) {
 		if (!isset($options['id'])) {
-			$options['id'] = 'link-' . intval(mt_rand());
+			$options['id'] = 'link-' . (int)mt_rand();
 		}
 		list($options, $htmlOptions) = $this->_getHtmlOptions($options);
 		$out = $this->Html->link($title, $url, $htmlOptions);
@@ -368,7 +368,7 @@ class JsHelper extends AppHelper {
  */
 	public function submit($caption = null, $options = array()) {
 		if (!isset($options['id'])) {
-			$options['id'] = 'submit-' . intval(mt_rand());
+			$options['id'] = 'submit-' . (int)mt_rand();
 		}
 		$formOptions = array('div');
 		list($options, $htmlOptions) = $this->_getHtmlOptions($options, $formOptions);

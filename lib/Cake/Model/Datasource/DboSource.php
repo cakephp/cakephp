@@ -3077,7 +3077,7 @@ class DboSource extends DataSource {
 				list($col, $limit) = explode('(', $col);
 			}
 			if ($limit !== null) {
-				return intval($limit);
+				return (int)$limit;
 			}
 			return null;
 		}
@@ -3118,7 +3118,7 @@ class DboSource extends DataSource {
 				}
 			}
 		}
-		return intval($length);
+		return (int)$length;
 	}
 
 /**
@@ -3485,10 +3485,10 @@ class DboSource extends DataSource {
 			if (is_bool($value)) {
 				return 'boolean';
 			}
-			if (is_float($value) && floatval($value) === $value) {
+			if (is_float($value) && (float)$value === $value) {
 				return 'float';
 			}
-			if (is_int($value) && intval($value) === $value) {
+			if (is_int($value) && (int)$value === $value) {
 				return 'integer';
 			}
 			if (is_string($value) && strlen($value) > 255) {
