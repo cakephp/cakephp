@@ -68,7 +68,7 @@ class WidgetRegistry {
  *
  * @param \Cake\View\StringTemplate $templates Templates instance to use.
  * @param \Cake\View\View $view The view instance to set as a widget.
- * @param mixed $widgets See add() method for more information.
+ * @param string|array $widgets See add() method for more information.
  */
 	public function __construct(StringTemplate $templates, View $view, $widgets = []) {
 		$this->_templates = $templates;
