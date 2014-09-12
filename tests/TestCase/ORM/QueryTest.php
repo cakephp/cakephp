@@ -244,7 +244,7 @@ class QueryTest extends TestCase {
 
 		$results = $query->repository($table)
 			->select()
-			->contain(['articles' => ['conditions' => ['id' => 2]]])
+			->contain(['articles' => ['conditions' => ['articles.id' => 2]]])
 			->hydrate(false)
 			->toArray();
 		$expected[0]['articles'] = [];
@@ -299,7 +299,7 @@ class QueryTest extends TestCase {
 			->contain([
 				'articles' => [
 					'fields' => ['title', 'author_id'],
-					'sort' => ['id' => 'DESC']
+					'sort' => ['articles.id' => 'DESC']
 				]
 			])
 			->hydrate(false)
@@ -576,7 +576,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals($expected, $results);
 
 		$results = $query->select()
-			->contain(['Tags' => ['conditions' => ['id' => 3]]])
+			->contain(['Tags' => ['conditions' => ['Tags.id' => 3]]])
 			->hydrate(false)
 			->toArray();
 		$expected = [
