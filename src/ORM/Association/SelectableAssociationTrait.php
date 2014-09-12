@@ -180,6 +180,7 @@ trait SelectableAssociationTrait {
  * @param \Cake\ORM\Query $query Target table's query
  * @param array $keys the fields that should be used for filtering
  * @param mixed $filter the value that should be used to match for $key
+ * @param string $operator The operator for comparing the tuples
  * @return \Cake\Database\Expression\TupleComparison
  */
 	protected function _createTupleCondition($query, $keys, $filter, $operator) {
