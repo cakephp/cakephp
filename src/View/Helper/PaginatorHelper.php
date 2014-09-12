@@ -620,7 +620,7 @@ class PaginatorHelper extends Helper {
 		$ellipsis = $templater->format('ellipsis', []);
 
 		if ($options['modulus'] && $params['pageCount'] > $options['modulus']) {
-			$half = (int)$options['modulus'] / 2;
+			$half = (int)($options['modulus'] / 2);
 			$end = $params['page'] + $half;
 
 			if ($end > $params['pageCount']) {
