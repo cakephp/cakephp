@@ -17,6 +17,7 @@ namespace Cake\View\Widget;
 use Cake\Core\App;
 use Cake\View\StringTemplate;
 use Cake\View\View;
+use Cake\View\Widget\WidgetInterface;
 use Cake\Core\Configure\Engine\PhpConfig;
 use \ReflectionClass;
 
