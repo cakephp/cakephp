@@ -494,30 +494,6 @@ class IntegrationTestCase extends TestCase {
 	}
 
 /**
- * Assert that a flash message was set.
- *
- * @param string $type The flash type to check.
- * @param string $content The flash message content to check.
- * @param string $key The flash namespace the message is in.
- * @param string $message The failure message that will be appended to the generated message.
- * @return void
- */
-	public function assertFlash($type, $content, $key = 'flash', $message = '') {
-		if (empty($this->_requestSession)) {
-			$this->fail('There is no stored session data. Perhaps you need to run a request?');
-		}
-		$key = "Flash.{$key}";
-		if (!$this->_requestSession->check($key)) {
-			$this->fail("The {$key} key is not set in the session. " . $message);
-		}
-		$val = $this->_requestSession->read($key);
-		if (strpos($val['element'], $type) === false) {
-			$this->fail("The {$key} does not have a matching element/type of {$type}. " . $message);
-		}
-		$this->assertEquals($content, $val['message'], 'Flash message differs. ' . $message);
-	}
-
-/**
  * Assert session contents
  *
  * @param string $expected The expected contents.
