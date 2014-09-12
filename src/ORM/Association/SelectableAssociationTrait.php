@@ -123,6 +123,16 @@ trait SelectableAssociationTrait {
 		return $fetchQuery;
 	}
 
+/**
+ * Appends any conditions required to load the relevant set of records in the
+ * target table query given a filter key and some filtering values when the
+ * filtering needs to be done using a subquery.
+ *
+ * @param \Cake\ORM\Query $query Target table's query
+ * @param string $key the fields that should be used for filtering
+ * @param \Cake\ORM\Query $subquery The Subquery to use for filtering
+ * @return \Cake\ORM\Query
+ */
 	public function _addFilteringJoin($query, $key, $subquery) {
 		$filter = $fields = [];
 		$aliasedTable = $subquery->repository()->alias();
@@ -150,7 +160,7 @@ trait SelectableAssociationTrait {
  * target table query given a filter key and some filtering values.
  *
  * @param \Cake\ORM\Query $query Target table's query
- * @param string $key the fields that should be used for filtering
+ * @param string|array $key the fields that should be used for filtering
  * @param mixed $filter the value that should be used to match for $key
  * @return \Cake\ORM\Query
  */
@@ -163,6 +173,15 @@ trait SelectableAssociationTrait {
 		return $query->andWhere($conditions);
 	}
 
+/**
+ * Returns a TupleComparison object that can be used for mathching all the fields
+ * from $keys with the tuple values in $filter using the provided operator.
+ *
+ * @param \Cake\ORM\Query $query Target table's query
+ * @param array $keys the fields that should be used for filtering
+ * @param mixed $filter the value that should be used to match for $key
+ * @return \Cake\Database\Expression\TupleComparison
+ */
 	protected function _createTupleCondition($query, $keys, $filter, $operator) {
 		$types = [];
 		$defaults = $query->defaultTypes();
