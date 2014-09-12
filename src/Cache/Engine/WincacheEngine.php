@@ -80,7 +80,7 @@ class WincacheEngine extends CacheEngine {
 		$key = $this->_key($key);
 
 		$time = time();
-		$cachetime = intval(wincache_ucache_get($key . '_expires'));
+		$cachetime = (int)wincache_ucache_get($key . '_expires');
 		if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
 			return false;
 		}

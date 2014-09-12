@@ -296,7 +296,7 @@ class PluginTask extends BakeTask {
 			}
 			$prompt = 'Choose a plugin path from the paths above.';
 			$choice = $this->in($prompt, null, 1);
-			if (intval($choice) > 0 && intval($choice) <= $max) {
+			if ((int)$choice > 0 && (int)$choice <= $max) {
 				$valid = true;
 			}
 		}
