@@ -105,7 +105,7 @@ class QueryRegressionTest extends TestCase {
 
 		$results = $table->find()
 			->contain(['Authors.Stuff', 'Things.Stuff'])
-			->order(['Articles.id'])
+			->order(['Articles.id' => 'ASC'])
 			->toArray();
 
 		$this->assertEquals(1, $results[0]->articles_tag->foo->id);
