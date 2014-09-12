@@ -124,12 +124,13 @@ trait SelectableAssociationTrait {
 	}
 
 	public function _addFilteringJoin($query, $key, $subquery) {
-		$filter = [];
-		$aliasedTable = uniqid('c');
+		$filter = $fields = [];
+		$aliasedTable = $subquery->repository()->alias();
 
 		foreach ($subquery->clause('select') as $aliasedField => $field) {
-			$filter[] = new IdentifierExpression("$aliasedTable.$aliasedField");
+			$filter[] = new IdentifierExpression($field);
 		}
+		$subquery->select($filter, true);
 
 		if (is_array($key)) {
 			$conditions = $this->_createTupleCondition($query, $key, $filter, '=');
