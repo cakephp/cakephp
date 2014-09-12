@@ -73,8 +73,8 @@ class WincacheEngine extends CacheEngine {
  * Read a key from the cache
  *
  * @param string $key Identifier for the data
- * @return mixed The cached data, or false if the data doesn't exist, has expired, or if
- *     there was an error fetching it
+ * @return mixed The cached data, or false if the data doesn't exist,
+ *   has expired, or if there was an error fetching it
  */
 	public function read($key) {
 		$key = $this->_key($key);

@@ -200,7 +200,7 @@ class DebuggerTest extends TestCase {
 			'error' => array(),
 			'code' => array(), '8', '/code',
 			'file' => array(), 'preg:/[^<]+/', '/file',
-			'line' => array(), '' . (int)__LINE__ - 7, '/line',
+			'line' => array(), '' . ((int)__LINE__ - 7), '/line',
 			'preg:/Undefined variable:\s+foo/',
 			'/error'
 		);
@@ -259,7 +259,7 @@ class DebuggerTest extends TestCase {
 			'<error',
 			'<code', '8', '/code',
 			'<file', 'preg:/[^<]+/', '/file',
-			'<line', '' . (int)__LINE__ - 7, '/line',
+			'<line', '' . ((int)__LINE__ - 7), '/line',
 			'preg:/Undefined variable:\s+foo/',
 			'/error'
 		);
