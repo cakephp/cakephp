@@ -100,11 +100,12 @@ class QueryRegressionTest extends TestCase {
 		]);
 		$table->Things->target()->belongsTo('Stuff', [
 			'foreignKey' => 'tag_id',
-			'propertyName' => 'foo']
-		);
+			'propertyName' => 'foo'
+		]);
 
 		$results = $table->find()
 			->contain(['Authors.Stuff', 'Things.Stuff'])
+			->order(['Articles.id'])
 			->toArray();
 
 		$this->assertEquals(1, $results[0]->articles_tag->foo->id);
