@@ -74,12 +74,28 @@ class WidgetRegistry {
 		$this->_templates = $templates;
 		if (!empty($widgets)) {
 			if (is_string($widgets)) {
-				$loader = new PhpConfig();
-				$widgets = $loader->read($widgets);
+				$this->load($widgets);
+			} else {
+				$this->add($widgets);
 			}
-			$this->add($widgets);
 		}
 		$this->add(['_view' => $view]);
+	}
+
+/**
+ * Load a config file containing widgets.
+ *
+ * Widget files should define a `$config` variable containing
+ * all the widgets to load. Loaded widgets will be merged with existing
+ * widgets.
+ *
+ * @param string $file The file to load
+ * @return void
+ */
+	public function load($file) {
+		$loader = new PhpConfig();
+		$widgets = $loader->read($file);
+		$this->add($widgets);
 	}
 
 /**
