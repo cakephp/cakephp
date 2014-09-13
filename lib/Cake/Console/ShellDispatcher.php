@@ -42,7 +42,7 @@ class ShellDispatcher {
  * @var bool
  */
 	public $gui = false;
-	
+
 /**
  * Constructor
  *
