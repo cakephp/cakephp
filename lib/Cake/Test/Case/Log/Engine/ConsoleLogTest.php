@@ -139,7 +139,10 @@ class ConsoleLogTest extends CakeTestCase {
 		TestCakeLog::config('test_console_log', array(
 			'engine' => 'TestConsole',
 			));
-		if (DS === '\\' && !(bool)env('ANSICON')) {
+		if (
+			(DS === '\\' && !(bool)env('ANSICON')) ||
+			(function_exists('posix_isatty') && !posix_isatty(null))
+		) {
 			$expected = ConsoleOutput::PLAIN;
 		} else {
 			$expected = ConsoleOutput::COLOR;
