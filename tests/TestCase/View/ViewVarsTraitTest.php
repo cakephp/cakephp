@@ -72,4 +72,68 @@ class ViewVarsTraitTest extends TestCase {
 		$this->assertEquals($expected, $this->subject->viewVars);
 	}
 
+/**
+ * test viewOptions() with 1 string param, merge true
+ *
+ * @return void
+ */
+	public function testAddOneViewOption() {
+		$option = 'newOption';
+		$this->subject->viewOptions($option);
+
+		$this->assertContains($option, $this->subject->_validViewOptions);
+	}
+
+/**
+ * test viewOptions() with 2 strings in array, merge true.
+ *
+ * @return void
+ */
+	public function testAddTwoViewOption() {
+		$this->subject->_validViewOptions = ['oldOption'];
+		$option = ['newOption', 'anotherOption'];
+		$result = $this->subject->viewOptions($option);
+		$expects = ['oldOption', 'newOption', 'anotherOption'];
+
+		$this->assertContainsOnly('string', $result);
+		$this->assertEquals($expects, $result);
+	}
+
+/**
+ * test empty params reads _validViewOptions.
+ *
+ * @return void
+ */
+	public function testReadingViewOptions() {
+		$expected = $this->subject->_validViewOptions = ['one', 'two', 'three'];
+		$result = $this->subject->viewOptions();
+
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test setting $merge `false` overrides currect options.
+ *
+ * @return void
+ */
+	public function testMergeFalseViewOptions() {
+		$this->subject->_validViewOptions = ['one', 'two', 'three'];
+		$expected = ['four', 'five', 'six'];
+		$result = $this->subject->viewOptions($expected, false);
+
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test _validViewOptions is undefined and $opts is null, an empty array is returned.
+ *
+ * @return void
+ */
+	public function testUndefinedValidViewOptions() {
+		$result = $this->subject->viewOptions();
+
+		$this->assertTrue(is_array($result));
+		$this->assertTrue(empty($resulit));
+	}
+
 }
