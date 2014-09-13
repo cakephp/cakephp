@@ -230,11 +230,12 @@ class Controller implements EventListener {
  * conventions CakePHP uses you can define properties in your class declaration.
  *
  * @param \Cake\Network\Request $request Request object for this controller. Can be null for testing,
- *  but expect that features that use the request parameters will not work.
+ *   but expect that features that use the request parameters will not work.
  * @param \Cake\Network\Response $response Response object for this controller.
  * @param string $name Override the name useful in testing when using mocks.
+ * @param \Cake\Event\EventManager $eventManager The event manager. Defaults to a new instance.
  */
-	public function __construct(Request $request = null, Response $response = null, $name = null) {
+	public function __construct(Request $request = null, Response $response = null, $name = null, $eventManager = null) {
 		if ($this->name === null && $name === null) {
 			list(, $name) = namespaceSplit(get_class($this));
 			$name = substr($name, 0, -10);
@@ -261,10 +262,27 @@ class Controller implements EventListener {
 		if ($response instanceof Response) {
 			$this->response = $response;
 		}
+		if ($eventManager) {
+			$this->eventManager($eventManager);
+		}
 
 		$this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
 		$modelClass = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
 		$this->_setModelClass($modelClass);
+
+		$this->constructClasses();
+		$this->initialize();
+	}
+
+/**
+ * Initialization hook method.
+ *
+ * Implement this method to avoid having to overwrite
+ * the constructor and call parent.
+ *
+ * @return void
+ */
+	public function initialize() {
 	}
 
 /**

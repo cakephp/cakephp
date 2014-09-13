@@ -625,15 +625,15 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testStartupProcess() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('eventManager'));
-
 		$eventManager = $this->getMock('Cake\Event\EventManager');
+		$controller = new Controller(null, null, null, $eventManager);
+
 		$eventManager->expects($this->at(0))->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'Controller.initialize'),
-					$this->attributeEqualTo('_subject', $Controller)
+					$this->attributeEqualTo('_subject', $controller)
 				)
 			)
 			->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
@@ -643,15 +643,12 @@ class ControllerTest extends TestCase {
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'Controller.startup'),
-					$this->attributeEqualTo('_subject', $Controller)
+					$this->attributeEqualTo('_subject', $controller)
 				)
 			)
 			->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
 
-		$Controller->expects($this->exactly(2))->method('eventManager')
-			->will($this->returnValue($eventManager));
-
-		$Controller->startupProcess();
+		$controller->startupProcess();
 	}
 
 /**
@@ -660,23 +657,20 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testShutdownProcess() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('eventManager'));
-
 		$eventManager = $this->getMock('Cake\Event\EventManager');
+		$controller = new Controller(null, null, null, $eventManager);
+
 		$eventManager->expects($this->once())->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'Controller.shutdown'),
-					$this->attributeEqualTo('_subject', $Controller)
+					$this->attributeEqualTo('_subject', $controller)
 				)
 			)
 			->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
 
-		$Controller->expects($this->once())->method('eventManager')
-			->will($this->returnValue($eventManager));
-
-		$Controller->shutdownProcess();
+		$controller->shutdownProcess();
 	}
 
 /**

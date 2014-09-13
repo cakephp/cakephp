@@ -104,7 +104,6 @@ class Dispatcher {
  *   instance of Response
  */
 	protected function _invoke(Controller $controller) {
-		$controller->constructClasses();
 		$result = $controller->startupProcess();
 		if ($result instanceof Response) {
 			return $result;
