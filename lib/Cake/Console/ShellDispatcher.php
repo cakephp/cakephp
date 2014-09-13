@@ -9,16 +9,16 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @copyright	 Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link		  http://cakephp.org CakePHP(tm) Project
+ * @since		 CakePHP(tm) v 2.0
+ * @license	   http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
  * Shell dispatcher handles dispatching cli commands.
  *
- * @package       Cake.Console
+ * @package	   Cake.Console
  */
 class ShellDispatcher {
 
@@ -41,8 +41,8 @@ class ShellDispatcher {
  *
  * @var bool
  */
-    public $gui = false;
-    
+	public $gui = false;
+	
 /**
  * Constructor
  *
@@ -53,16 +53,16 @@ class ShellDispatcher {
  * @param bool $bootstrap Should the environment be bootstrapped.
  * @param bool $gui Whether the method is called from the command line or a controller.
  */
-    public function __construct($args = array(), $bootstrap = true, $gui = false) {
-        set_time_limit(0);
-        $this->gui = $gui;
-        $this->parseParams($args);
+	public function __construct($args = array(), $bootstrap = true, $gui = false) {
+		set_time_limit(0);
+		$this->gui = $gui;
+		$this->parseParams($args);
 
-        if ($bootstrap) {
-            $this->_initConstants();
-            $this->_initEnvironment();
-        }
-    }
+		if ($bootstrap) {
+			$this->_initConstants();
+			$this->_initEnvironment();
+		}
+	}
 
 /**
  * Run the dispatcher.
@@ -71,10 +71,10 @@ class ShellDispatcher {
  * @param bool $gui Whether the method is called from the command line or a controller.
  * @return mixed
  */
-    public static function run($argv, $gui = false) {
-        $dispatcher = new ShellDispatcher($argv, true, $gui);
-        return $dispatcher->_stop($dispatcher->dispatch() === false ? 1 : 0);
-    }
+	public static function run($argv, $gui = false) {
+		$dispatcher = new ShellDispatcher($argv, true, $gui);
+		return $dispatcher->_stop($dispatcher->dispatch() === false ? 1 : 0);
+	}
 
 /**
  * Defines core configuration.
@@ -108,7 +108,7 @@ class ShellDispatcher {
  */
 	protected function _initEnvironment() {
 		// Prevent _bootstrap() from running if run from controller.
-        if (!$this->gui && !$this->_bootstrap()) {
+		if (!$this->gui && !$this->_bootstrap()) {
 			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'lib' . DS . 'Cake exists in ' . CAKE_CORE_INCLUDE_PATH;
 			throw new CakeException($message);
 		}
@@ -374,13 +374,13 @@ class ShellDispatcher {
  * @param int|string $status see http://php.net/exit for values
  * @return mixed
  */
-    protected function _stop($status = 0) {
-        // Good exit code for command line = 0
-        // Good return value for code = true
-        if ($this->gui) {
-            return !$status;
-        }
-        exit($status);
-    }
+	protected function _stop($status = 0) {
+		// Good exit code for command line = 0
+		// Good return value for code = true
+		if ($this->gui) {
+			return !$status;
+		}
+		exit($status);
+	}
 
 }
