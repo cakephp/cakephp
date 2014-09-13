@@ -442,9 +442,8 @@ class Response {
 			return;
 		}
 
-		$this->_setCookies();
-
 		$codeMessage = $this->_statusCodes[$this->_status];
+		$this->_setCookies();
 		$this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
 		$this->_setContentType();
 

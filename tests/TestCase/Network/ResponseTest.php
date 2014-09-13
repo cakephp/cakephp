@@ -31,7 +31,7 @@ class ResponseTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		ob_start();
+		include_once __DIR__ . DS . 'mocks.php';
 	}
 
 /**
@@ -41,7 +41,6 @@ class ResponseTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		ob_end_clean();
 	}
 
 /**
