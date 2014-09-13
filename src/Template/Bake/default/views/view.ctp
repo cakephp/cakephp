@@ -14,8 +14,32 @@
  */
 use Cake\Utility\Inflector;
 ?>
-<div class="<?= $pluralVar ?> view">
-	<h2><?= "<?= __('{$singularHumanName}') ?>"; ?></h2>
+<div class="actions columns large-2 medium-3">
+	<h3><?= "<?= __('Actions'); ?>"; ?></h3>
+	<ul class="side-nav">
+<?php
+	$pk = "\${$singularVar}->{$primaryKey[0]}";
+
+	echo "\t\t<li><?= \$this->Html->link(__('Edit " . $singularHumanName ."'), ['action' => 'edit', {$pk}]) ?> </li>\n";
+	echo "\t\t<li><?= \$this->Form->postLink(__('Delete " . $singularHumanName . "'), ['action' => 'delete', {$pk}], ['confirm' => __('Are you sure you want to delete # %s?', {$pk})]) ?> </li>\n";
+	echo "\t\t<li><?= \$this->Html->link(__('List " . $pluralHumanName . "'), ['action' => 'index']) ?> </li>\n";
+	echo "\t\t<li><?= \$this->Html->link(__('New " . $singularHumanName . "'), ['action' => 'add']) ?> </li>\n";
+
+	$done = [];
+	foreach ($associations as $type => $data) {
+		foreach ($data as $alias => $details) {
+			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
+				echo "\t\t<li><?= \$this->Html->link(__('List " . Inflector::humanize($details['controller']) . "'), ['controller' => '{$details['controller']}', 'action' => 'index']) ?> </li>\n";
+				echo "\t\t<li><?= \$this->Html->link(__('New " . Inflector::humanize(Inflector::singularize(Inflector::underscore($alias))) . "'), ['controller' => '{$details['controller']}', 'action' => 'add']) ?> </li>\n";
+				$done[] = $details['controller'];
+			}
+		}
+	}
+?>
+	</ul>
+</div>
+<div class="<?= $pluralVar ?> view large-10 medium-9 columns">
+	<h2><?= "<?= h(\${$singularVar}->{$displayField}) ?>"; ?></h2>
 	<dl>
 <?php
 foreach ($fields as $field) {
@@ -37,30 +61,6 @@ foreach ($fields as $field) {
 }
 ?>
 	</dl>
-</div>
-<div class="actions">
-	<h3><?= "<?= __('Actions'); ?>"; ?></h3>
-	<ul>
-<?php
-	$pk = "\${$singularVar}->{$primaryKey[0]}";
-
-	echo "\t\t<li><?= \$this->Html->link(__('Edit " . $singularHumanName ."'), ['action' => 'edit', {$pk}]) ?> </li>\n";
-	echo "\t\t<li><?= \$this->Form->postLink(__('Delete " . $singularHumanName . "'), ['action' => 'delete', {$pk}], ['confirm' => __('Are you sure you want to delete # %s?', {$pk})]) ?> </li>\n";
-	echo "\t\t<li><?= \$this->Html->link(__('List " . $pluralHumanName . "'), ['action' => 'index']) ?> </li>\n";
-	echo "\t\t<li><?= \$this->Html->link(__('New " . $singularHumanName . "'), ['action' => 'add']) ?> </li>\n";
-
-	$done = [];
-	foreach ($associations as $type => $data) {
-		foreach ($data as $alias => $details) {
-			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-				echo "\t\t<li><?= \$this->Html->link(__('List " . Inflector::humanize($details['controller']) . "'), ['controller' => '{$details['controller']}', 'action' => 'index']) ?> </li>\n";
-				echo "\t\t<li><?= \$this->Html->link(__('New " . Inflector::humanize(Inflector::singularize(Inflector::underscore($alias))) . "'), ['controller' => '{$details['controller']}', 'action' => 'add']) ?> </li>\n";
-				$done[] = $details['controller'];
-			}
-		}
-	}
-?>
-	</ul>
 </div>
 <?php
 if (!empty($associations['HasOne'])) :
