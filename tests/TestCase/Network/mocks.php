@@ -17,9 +17,9 @@ namespace Cake\Network {
 
 /**
  * Mocks the headers_sent() function when invoked from the Cake\Network
- * namespace so that it always return false
+ * namespace so that it always returns false
  *
- * @return boolean
+ * @return bool
  */
 	function headers_sent() {
 		return false;
