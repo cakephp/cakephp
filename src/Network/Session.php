@@ -293,8 +293,7 @@ class Session {
  * Starts the Session.
  *
  * @return bool True if session was started
- * @throws \RuntimeException if the session was already started or headers were already
- * sent
+ * @throws \RuntimeException if the session was already started
  */
 	public function start() {
 		if ($this->_started) {
