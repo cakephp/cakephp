@@ -25,7 +25,7 @@ namespace <?= $baseNamespace; ?>\Test\TestCase\<?= $subNamespace ?>;
 use <?= $dependency; ?>;
 <?php endforeach; ?>
 <?php if ($isController): ?>
-use Cake\TestSuite\ControllerTestCase;
+use Cake\TestSuite\IntegrationTestCase;
 <?php else: ?>
 use Cake\TestSuite\TestCase;
 <?php endif; ?>
@@ -34,7 +34,7 @@ use Cake\TestSuite\TestCase;
  * <?= $fullClassName ?> Test Case
  */
 <?php if ($isController): ?>
-class <?= $className ?>Test extends ControllerTestCase {
+class <?= $className ?>Test extends IntegrationTestCase {
 <?php else: ?>
 class <?= $className ?>Test extends TestCase {
 <?php endif; ?>
