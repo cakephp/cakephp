@@ -311,9 +311,7 @@ class Session {
 		}
 
 		if (ini_get('session.use_cookies') && headers_sent($file, $line)) {
-			throw new \RuntimeException(
-				sprintf('Cannot start session, headers already sent in "%s" at line %d', $file, $line)
-			);
+			return;
 		}
 
 		if (!session_start()) {
