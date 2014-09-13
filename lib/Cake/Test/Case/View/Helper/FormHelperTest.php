@@ -7465,7 +7465,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * Test textareas waxlength read from schema.
+ * Test textareas maxlength reading from schema.
  *
  * @return void
  */
