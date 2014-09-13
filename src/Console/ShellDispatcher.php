@@ -19,8 +19,8 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
-use Cake\Utility\Inflector;
 use Cake\Shell\Task\CommandTask;
+use Cake\Utility\Inflector;
 
 /**
  * Shell dispatcher handles dispatching cli commands.
