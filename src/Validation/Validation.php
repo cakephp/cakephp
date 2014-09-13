@@ -939,15 +939,71 @@ class Validation {
  * Checking for upload errors
  *
  * @param string|array $check Value to check.
+ * @param bool $allowNoFile Set to true to allow UPLOAD_ERR_NO_FILE as a pass.
  * @return bool
  * @see http://www.php.net/manual/en/features.file-upload.errors.php
  */
-	public static function uploadError($check) {
+	public static function uploadError($check, $allowNoFile = false) {
 		if (is_array($check) && isset($check['error'])) {
 			$check = $check['error'];
 		}
-
+		if ($allowNoFile) {
+			return in_array((int)$check, [UPLOAD_ERR_OK, UPLOAD_ERR_NO_FILE], true);
+		}
 		return (int)$check === UPLOAD_ERR_OK;
+	}
+
+/**
+ * Validate an uploaded file.
+ *
+ * Helps join `uploadError`, `fileSize` and `mimeType` into
+ * one higher level validation method.
+ *
+ * ### Options
+ *
+ * - `types` - A list of valid mime types. If empty all types
+ *   will be accepted. The `type` will not be looked at, instead
+ *   the file type will be checked with ext/finfo.
+ * - `minSize` - The minimum file size. Defaults to not checking.
+ * - `maxSize` - The maximum file size. Defaults to not checking.
+ * - `optional` - Whether or not this file is optional. Defaults to false.
+ *   If true a missing file will pass the validator regardless of other constraints.
+ *
+ * @param array $file The uploaded file data from PHP.
+ * @param array $options An array of options for the validation.
+ * @return bool
+ */
+	public static function uploadedFile($file, $options = []) {
+		$options += [
+			'minSize' => null,
+			'maxSize' => null,
+			'types' => null,
+			'optional' => false,
+		];
+		if (!is_array($file)) {
+			return false;
+		}
+		$keys = ['error', 'name', 'size', 'tmp_name', 'type'];
+		ksort($file);
+		if (array_keys($file) != $keys) {
+			return false;
+		}
+		if (!static::uploadError($file, $options['optional'])) {
+			return false;
+		}
+		if ($options['optional'] && (int)$file['error'] === UPLOAD_ERR_NO_FILE) {
+			return true;
+		}
+		if (isset($options['minSize']) && !static::fileSize($file, '>=', $options['minSize'])) {
+			return false;
+		}
+		if (isset($options['maxSize']) && !static::fileSize($file, '<=', $options['maxSize'])) {
+			return false;
+		}
+		if (isset($options['types']) && !static::mimeType($file, $options['types'])) {
+			return false;
+		}
+		return true;
 	}
 
 /**

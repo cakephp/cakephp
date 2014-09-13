@@ -45,7 +45,7 @@ class UuidType extends \Cake\Database\Type {
  * @return mixed
  */
 	public function toDatabase($value, Driver $driver) {
-		if ($value === null) {
+		if ($value === null || $value === '') {
 			return null;
 		}
 		return strval($value);

@@ -85,7 +85,7 @@ class BakeShell extends Shell {
 			$this->out('- ' . Inflector::underscore($name));
 		}
 		$this->out('');
-		$this->out('By using <info>Console/cake bake [name]</info> you can invoke a specific bake task.');
+		$this->out('By using <info>`cake bake [name]`</info> you can invoke a specific bake task.');
 	}
 
 /**
@@ -205,7 +205,7 @@ class BakeShell extends Shell {
 			foreach ($this->Model->listAll() as $table) {
 				$this->out('- ' . $table);
 			}
-			$this->out('Run <info>cake bake all [name]</info> to generate skeleton files.');
+			$this->out('Run <info>`cake bake all [name]`</info> to generate skeleton files.');
 			return false;
 		}
 

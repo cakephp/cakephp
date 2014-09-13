@@ -87,6 +87,7 @@ class Marshaller {
  * * associated: Associations listed here will be marshalled as well.
  * * fiedlList: A whitelist of fields to be assigned to the entity. If not present,
  *   the accessible fields list in the entity will be used.
+ * * accessibleFields: A list of fields to allow or deny in entity accessible fields.
  *
  * @param array $data The data to hydrate.
  * @param array $options List of options
@@ -104,6 +105,12 @@ class Marshaller {
 
 		if (isset($data[$tableName])) {
 			$data = $data[$tableName];
+		}
+
+		if (isset($options['accessibleFields'])) {
+			foreach ((array)$options['accessibleFields'] as $key => $value) {
+				$entity->accessible($key, $value);
+			}
 		}
 
 		$primaryKey = $schema->primaryKey();

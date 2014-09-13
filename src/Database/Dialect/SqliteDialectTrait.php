@@ -159,4 +159,18 @@ trait SqliteDialectTrait {
 		return $this->_schemaDialect;
 	}
 
+/**
+ * {@inheritDoc}
+ */
+	public function disableForeignKeySQL() {
+		return 'PRAGMA foreign_keys = OFF';
+	}
+
+/**
+ * {@inheritDoc}
+ */
+	public function enableForeignKeySQL() {
+		return 'PRAGMA foreign_keys = ON';
+	}
+
 }

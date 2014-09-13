@@ -40,7 +40,7 @@ class SqlserverSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function describeColumnSql($name, $config) {
+	public function describeColumnSql($tableName, $config) {
 		$sql =
 		"SELECT DISTINCT TABLE_SCHEMA AS [schema], COLUMN_NAME AS [name], DATA_TYPE AS [type],
 			IS_NULLABLE AS [null], COLUMN_DEFAULT AS [default],
@@ -53,7 +53,7 @@ class SqlserverSchema extends BaseSchema {
 		ORDER BY ordinal_position";
 
 		$schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
-		return [$sql, [$name, $schema]];
+		return [$sql, [$tableName, $schema]];
 	}
 
 /**
@@ -160,7 +160,7 @@ class SqlserverSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function describeIndexSql($table, $config) {
+	public function describeIndexSql($tableName, $config) {
 		$sql = "
 			SELECT
 				I.[name] AS [index_name],
@@ -178,7 +178,7 @@ class SqlserverSchema extends BaseSchema {
 		";
 
 		$schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
-		return [$sql, [$table, $schema]];
+		return [$sql, [$tableName, $schema]];
 	}
 
 /**
@@ -221,7 +221,7 @@ class SqlserverSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function describeForeignKeySql($table, $config) {
+	public function describeForeignKeySql($tableName, $config) {
 		$sql = "
 			SELECT FK.[name] AS [foreign_key_name], FK.[delete_referential_action_desc] AS [delete_type],
 				FK.[update_referential_action_desc] AS [update_type], C.name AS [column], RT.name AS [reference_table],
@@ -237,7 +237,7 @@ class SqlserverSchema extends BaseSchema {
 		";
 
 		$schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
-		return [$sql, [$table, $schema]];
+		return [$sql, [$tableName, $schema]];
 	}
 
 /**
@@ -429,9 +429,22 @@ class SqlserverSchema extends BaseSchema {
  */
 	public function truncateTableSql(Table $table) {
 		$name = $this->_driver->quoteIdentifier($table->name());
-		return [
-			sprintf('TRUNCATE TABLE %s', $name)
+		$queries = [
+			sprintf('DELETE FROM %s', $name)
 		];
+
+		// Restart identity sequences
+		$pk = $table->primaryKey();
+		if (count($pk) === 1) {
+			$column = $table->column($pk[0]);
+			if (in_array($column['type'], ['integer', 'biginteger'])) {
+				$queries[] = sprintf(
+					'DBCC CHECKIDENT(%s, RESEED, 0)',
+					$name
+				);
+			}
+		}
+		return $queries;
 	}
 
 }

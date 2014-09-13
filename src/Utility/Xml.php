@@ -14,10 +14,7 @@
  */
 namespace Cake\Utility;
 
-use Cake\Core\Configure;
-use Cake\Network\Exception\SocketException;
 use Cake\Utility\Exception\XmlException;
-use Cake\Network\Http\Client;
 use \DOMDocument;
 
 /**
@@ -92,24 +89,20 @@ class Xml {
 
 		if (is_array($input) || is_object($input)) {
 			return static::fromArray($input, $options);
-		} elseif (strpos($input, '<') !== false) {
+		}
+
+		if (strpos($input, '<') !== false) {
 			return static::_loadXml($input, $options);
-		} elseif (file_exists($input)) {
+		}
+
+		if (file_exists($input)) {
 			return static::_loadXml(file_get_contents($input), $options);
-		} elseif (strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0) {
-			try {
-				$socket = new Client(['redirect' => 10]);
-				$response = $socket->get($input);
-				if (!$response->isOk()) {
-					throw new XmlException('XML cannot be read.');
-				}
-				return static::_loadXml($response->body, $options);
-			} catch (SocketException $e) {
-				throw new XmlException('XML cannot be read.');
-			}
-		} elseif (!is_string($input)) {
+		}
+
+		if (!is_string($input)) {
 			throw new XmlException('Invalid input.');
 		}
+
 		throw new XmlException('XML cannot be read.');
 	}
 
@@ -203,7 +196,7 @@ class Xml {
 		$defaults = array(
 			'format' => 'tags',
 			'version' => '1.0',
-			'encoding' => Configure::read('App.encoding'),
+			'encoding' => mb_internal_encoding(),
 			'return' => 'simplexml',
 			'pretty' => false
 		);

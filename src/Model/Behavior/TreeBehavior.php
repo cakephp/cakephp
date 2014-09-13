@@ -189,7 +189,7 @@ class TreeBehavior extends Behavior {
 		$max = $left - 1;
 
 		if ($left < $targetLeft) {
-			//Moving to the right
+			// Moving to the right
 			$targetLeft = $parentRight - $diff;
 			$targetRight = $parentRight - 1;
 			$min = $right + 1;
@@ -198,7 +198,7 @@ class TreeBehavior extends Behavior {
 		}
 
 		if ($right - $left > 1) {
-			//Correcting internal subtree
+			// Correcting internal subtree
 			$internalLeft = $left + 1;
 			$internalRight = $right - 1;
 			$this->_sync($targetLeft - $left, '+', "BETWEEN {$internalLeft} AND {$internalRight}", true);
@@ -210,7 +210,7 @@ class TreeBehavior extends Behavior {
 			$this->_unmarkInternalTree();
 		}
 
-		//Allocating new position
+		// Allocating new position
 		$entity->set($config['left'], $targetLeft);
 		$entity->set($config['right'], $targetRight);
 	}
@@ -280,13 +280,20 @@ class TreeBehavior extends Behavior {
 		}
 
 		$config = $this->config();
-		list($left, $right) = [$config['left'], $config['right']];
+		$alias = $this->_table->alias();
+		list($left, $right) = array_map(
+			function($field) use ($alias) {
+				return "$alias.$field";
+			},
+			[$config['left'], $config['right']]
+		);
+
 		$node = $this->_table->get($options['for'], ['fields' => [$left, $right]]);
 
 		return $this->_scope($query)
 			->where([
-				"$left <=" => $node->get($left),
-				"$right >=" => $node->get($right)
+				"$left <=" => $node->get($config['left']),
+				"$right >=" => $node->get($config['right'])
 			]);
 	}
 
@@ -300,7 +307,13 @@ class TreeBehavior extends Behavior {
  */
 	public function childCount(Entity $node, $direct = false) {
 		$config = $this->config();
-		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
+		$alias = $this->_table->alias();
+		list($parent, $left, $right) = array_map(
+			function($field) use ($alias) {
+				return "$alias.$field";
+			},
+			[$config['parent'], $config['left'], $config['right']]
+		);
 
 		if ($direct) {
 			return $this->_scope($this->_table->find())
@@ -309,7 +322,7 @@ class TreeBehavior extends Behavior {
 		}
 
 		$this->_ensureFields($node);
-		return ($node->{$right} - $node->{$left} - 1) / 2;
+		return ($node->get($config['right']) - $node->get($config['left']) - 1) / 2;
 	}
 
 /**
@@ -330,8 +343,15 @@ class TreeBehavior extends Behavior {
  */
 	public function findChildren(Query $query, array $options) {
 		$config = $this->config();
+		$alias = $this->_table->alias();
 		$options += ['for' => null, 'direct' => false];
-		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
+		list($parent, $left, $right) = array_map(
+			function($field) use ($alias) {
+				return "$alias.$field";
+			},
+			[$config['parent'], $config['left'], $config['right']]
+		);
+
 		list($for, $direct) = [$options['for'], $options['direct']];
 
 		if (empty($for)) {
@@ -349,8 +369,8 @@ class TreeBehavior extends Behavior {
 		$node = $this->_getNode($for);
 		return $this->_scope($query)
 			->where([
-				"{$right} <" => $node->{$right},
-				"{$left} >" => $node->{$left}
+				"{$right} <" => $node->get($config['right']),
+				"{$left} >" => $node->get($config['left'])
 			]);
 	}
 

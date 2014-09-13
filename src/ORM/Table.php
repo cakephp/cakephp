@@ -75,19 +75,33 @@ use Cake\Validation\Validator;
  * Table objects provide a few callbacks/events you can hook into to augment/replace
  * find operations. Each event uses the standard event subsystem in CakePHP
  *
- * - `beforeFind($event, $query, $options, $eagerLoaded)` - Fired before each find operation.
- *   By stopping the event and supplying a return value you can bypass the find operation
- *   entirely. Any changes done to the $query instance will be retained for the rest of the find.
- * - `beforeValidate($event, $entity, $options, $validator)` - Fired before an entity is validated.
- *   By stopping this event, you can abort the validate + save operations.
- * - `afterValidate($event, $entity, $options, $validator)` - Fired after an entity is validated.
- * - `beforeSave($event, $entity, $options)` - Fired before each entity is saved. Stopping this
- *   event will abort the save operation. When the event is stopped the result of the event will
- *   be returned.
- * - `afterSave($event, $entity, $options)` - Fired after an entity is saved.
- * - `beforeDelete($event, $entity, $options)` - Fired before an entity is deleted.
- *   By stopping this event you will abort the delete operation.
- * - `afterDelete($event, $entity, $options)` - Fired after an entity has been deleted.
+ * - `beforeFind(Event $event, Query $query, ArrayObject $options, boolean $primary)`
+ *   Fired before each find operation. By stopping the event and supplying a
+ *   return value you can bypass the find operation entirely. Any changes done
+ *   to the $query instance will be retained for the rest of the find. The
+ *   $primary parameter indicates whether or not this is the root query,
+ *   or an associated query.
+ *
+ * - `beforeValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
+ *   Fired before an entity is validated. By stopping this event, you can abort
+ *   the validate + save operations.
+ *
+ * - `afterValidate(Event $event, Entity $entity, ArrayObject $options, Validator $validator)`
+ *   Fired after an entity is validated.
+ *
+ * - `beforeSave(Event $event, Entity $entity, ArrayObject $options)`
+ *   Fired before each entity is saved. Stopping this event will abort the save
+ *   operation. When the event is stopped the result of the event will be returned.
+ *
+ * - `afterSave(Event $event, Entity $entity, ArrayObject $options)`
+ *   Fired after an entity is saved.
+ *
+ * - `beforeDelete(Event $event, Entity $entity, ArrayObject $options)`
+ *   Fired before an entity is deleted. By stopping this event you will abort
+ *   the delete operation.
+ *
+ * - `afterDelete(Event $event, Entity $entity, ArrayObject $options)`
+ *   Fired after an entity has been deleted.
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  */
@@ -1166,8 +1180,7 @@ class Table implements RepositoryInterface, EventListener {
 		}
 
 		$options['associated'] = $this->_associations->normalizeKeys($associated);
-		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
-		$this->eventManager()->dispatch($event);
+		$event = $this->dispatchEvent('Model.beforeSave', compact('entity', 'options'));
 
 		if ($event->isStopped()) {
 			return $event->result;
@@ -1203,8 +1216,7 @@ class Table implements RepositoryInterface, EventListener {
 			);
 			if ($success || !$options['atomic']) {
 				$entity->clean();
-				$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
-				$this->eventManager()->dispatch($event);
+				$this->dispatchEvent('Model.afterSave', compact('entity', 'options'));
 				$entity->isNew(false);
 				$entity->source($this->alias());
 				$success = true;
@@ -1388,12 +1400,10 @@ class Table implements RepositoryInterface, EventListener {
  * @return bool success
  */
 	protected function _processDelete($entity, $options) {
-		$eventManager = $this->eventManager();
-		$event = new Event('Model.beforeDelete', $this, [
+		$event = $this->dispatchEvent('Model.beforeDelete', [
 			'entity' => $entity,
 			'options' => $options
 		]);
-		$eventManager->dispatch($event);
 		if ($event->isStopped()) {
 			return $event->result;
 		}
@@ -1420,11 +1430,10 @@ class Table implements RepositoryInterface, EventListener {
 			return $success;
 		}
 
-		$event = new Event('Model.afterDelete', $this, [
+		$this->dispatchEvent('Model.afterDelete', [
 			'entity' => $entity,
 			'options' => $options
 		]);
-		$eventManager->dispatch($event);
 
 		return $success;
 	}
@@ -1442,7 +1451,7 @@ class Table implements RepositoryInterface, EventListener {
 	public function callFinder($type, Query $query, array $options = []) {
 		$query->applyOptions($options);
 		$options = $query->getOptions();
-		$finder = 'find' . ucfirst($type);
+		$finder = 'find' . $type;
 		if (method_exists($this, $finder)) {
 			return $this->{$finder}($query, $options);
 		}
@@ -1606,7 +1615,7 @@ class Table implements RepositoryInterface, EventListener {
  * using the options parameter:
  *
  * {{{
- * $articles = $this->Articles->newEntity(
+ * $article = $this->Articles->newEntity(
  *   $this->request->data(),
  *   ['associated' => ['Tags', 'Comments.Users']]
  * );
@@ -1616,13 +1625,23 @@ class Table implements RepositoryInterface, EventListener {
  * passing the `fieldList` option, which is also accepted for associations:
  *
  * {{{
- * $articles = $this->Articles->newEntity($this->request->data(), [
- *	'fieldList' => ['title', 'body'],
- *	'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
- *	]
+ * $article = $this->Articles->newEntity($this->request->data(), [
+ *  'fieldList' => ['title', 'body'],
+ *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
+ * ]
  * );
  * }}}
  *
+ * The `fieldList` option lets remove or restrict input data from ending up in
+ * the entity. If you'd like to relax the entity's default accessible fields,
+ * you can use the `accessibleFields` option:
+ *
+ * {{{
+ * $article = $this->Articles->newEntity(
+ *   $this->request->data(),
+ *   ['accessibleFields' => ['protected_field' => true]]
+ * );
+ * }}}
  */
 	public function newEntity(array $data = [], array $options = []) {
 		if (!isset($options['associated'])) {

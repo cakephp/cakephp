@@ -1,6 +1,6 @@
 {
-	"name": "cakephp/validation",
-	"description": "CakePHP Validation library",
+	"name": "cakephp/core",
+	"description": "CakePHP Framework Core classes",
 	"license": "MIT",
 	"authors": [
 		{
@@ -8,13 +8,14 @@
 		"homepage": "http://cakephp.org"
 	}
 	],
-	"autoload": {
-		"psr-4": {
-			"Cake\\Validation\\": "."
-		}
-	},
 	"require": {
 		"cakephp/utility": "dev-master"
+	},
+	"autoload": {
+		"psr-4": {
+			"Cake\\Core\\": "."
+		},
+		"files": ["functions.php"]
 	},
 	"minimum-stability": "dev"
 }

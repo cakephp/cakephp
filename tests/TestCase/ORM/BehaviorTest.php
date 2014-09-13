@@ -28,6 +28,18 @@ class TestBehavior extends Behavior {
 	public function beforeFind() {
 	}
 
+/**
+ * Test for event bindings.
+ */
+	public function beforeValidate() {
+	}
+
+/**
+ * Test for event bindings.
+ */
+	public function afterValidate() {
+	}
+
 }
 
 /**
@@ -171,7 +183,9 @@ class BehaviorTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table');
 		$behavior = new TestBehavior($table);
 		$expected = [
-			'Model.beforeFind' => 'beforeFind'
+			'Model.beforeFind' => 'beforeFind',
+			'Model.beforeValidate' => 'beforeValidate',
+			'Model.afterValidate' => 'afterValidate',
 		];
 		$this->assertEquals($expected, $behavior->implementedEvents());
 	}
@@ -188,7 +202,15 @@ class BehaviorTest extends TestCase {
 			'Model.beforeFind' => [
 				'priority' => 10,
 				'callable' => 'beforeFind'
-			]
+			],
+			'Model.beforeValidate' => [
+				'priority' => 10,
+				'callable' => 'beforeValidate'
+			],
+			'Model.afterValidate' => [
+				'priority' => 10,
+				'callable' => 'afterValidate'
+			],
 		];
 		$this->assertEquals($expected, $behavior->implementedEvents());
 	}

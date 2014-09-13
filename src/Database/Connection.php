@@ -470,6 +470,24 @@ class Connection {
 	}
 
 /**
+ * Run driver specific SQL to disable foreign key checks.
+ *
+ * @return void
+ */
+	public function disableForeignKeys() {
+		$this->execute($this->_driver->disableForeignKeySql());
+	}
+
+/**
+ * Run driver specific SQL to enable foreign key checks.
+ *
+ * @return void
+ */
+	public function enableForeignKeys() {
+		$this->execute($this->_driver->enableForeignKeySql());
+	}
+
+/**
  * Executes a callable function inside a transaction, if any exception occurs
  * while executing the passed callable, the transaction will be rolled back
  * If the result of the callable function is ``false``, the transaction will
@@ -609,6 +627,36 @@ class Connection {
 		$log = new LoggingStatement($statement, $this->driver());
 		$log->logger($this->logger());
 		return $log;
+	}
+
+/**
+ * Returns an array that can be used to describe the internal state of this
+ * object.
+ *
+ * @return array
+ */
+	public function __debugInfo() {
+		$secrets = [
+			'password' => '*****',
+			'login' => '*****',
+			'host' => '*****',
+			'database' => '*****',
+			'port' => '*****',
+			'prefix' => '*****',
+			'schema' => '*****'
+		];
+		$replace = array_intersect_key($secrets, $this->_config);
+		$config = $replace + $this->_config;
+
+		return [
+			'config' => $config,
+			'driver' => $this->_driver,
+			'transactionLevel' => $this->_transactionLevel,
+			'transactionStarted' => $this->_transactionStarted,
+			'useSavePoints' => $this->_useSavePoints,
+			'logQueries' => $this->_logQueries,
+			'logger' => $this->_logger
+		];
 	}
 
 }

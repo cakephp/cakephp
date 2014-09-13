@@ -1427,7 +1427,7 @@ podeís adquirirla.</span></p>
 /**
  * testFromReadableSize
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testparseFileSizeException() {

@@ -18,13 +18,13 @@ use Cake\Console\Exception\MissingShellException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
+use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 
 /**
  * Shell dispatcher handles dispatching cli commands.
  *
- * Consult https://github.com/cakephp/app/tree/master/App/Console/cake.php
- * for how this class is used in practice.
+ * Consult /bin/cake.php for how this class is used in practice.
  */
 class ShellDispatcher {
 
@@ -55,6 +55,8 @@ class ShellDispatcher {
 		set_time_limit(0);
 		$this->args = (array)$args;
 
+		$this->addShortPluginAliases();
+
 		if ($bootstrap) {
 			$this->_initEnvironment();
 		}
@@ -69,12 +71,27 @@ class ShellDispatcher {
  *
  * If you re-use an alias the last alias set will be the one available.
  *
+ * ### Usage
+ *
+ * Aliasing a shell named ClassName:
+ *
+ * `$this->alias('alias', 'ClassName');`
+ *
+ * Getting the original name for a given alias:
+ *
+ * `$this->alias('alias');`
+ *
  * @param string $short The new short name for the shell.
- * @param string $original The original full name for the shell.
- * @return void
+ * @param string|null $original The original full name for the shell.
+ * @return string|false The aliased class name, or false if the alias does not exist
  */
-	public static function alias($short, $original) {
-		static::$_aliases[$short] = $original;
+	public static function alias($short, $original = null) {
+		$short = Inflector::camelize($short);
+		if ($original) {
+			static::$_aliases[$short] = $original;
+		}
+
+		return isset(static::$_aliases[$short]) ?  static::$_aliases[$short] : false;
 	}
 
 /**
@@ -165,9 +182,26 @@ class ShellDispatcher {
 	}
 
 /**
+ * For all loaded plugins, add a short alias
+ *
+ * This permits a plugin which implements a shell of the same name to be accessed
+ * Using the plugin name alone
+ *
+ * @return void
+ */
+	public function addShortPluginAliases() {
+		$plugins = Plugin::loaded();
+
+		foreach ($plugins as $plugin) {
+			self::alias($plugin, "$plugin.$plugin");
+		}
+	}
+
+/**
  * Get shell to use, either plugin shell or application shell
  *
- * All paths in the loaded shell paths are searched.
+ * All paths in the loaded shell paths are searched, handles alias
+ * dereferencing
  *
  * @param string $shell Optionally the name of a plugin
  * @return \Cake\Console\Shell A shell instance.
@@ -175,19 +209,34 @@ class ShellDispatcher {
  */
 	public function findShell($shell) {
 		$className = $this->_shellExists($shell);
-		if (!$className && isset(static::$_aliases[$shell])) {
-			$shell = static::$_aliases[$shell];
+		if (!$className) {
+			$shell = $this->_handleAlias($shell);
 			$className = $this->_shellExists($shell);
 		}
-		if ($className) {
-			list($plugin) = pluginSplit($shell);
-			$instance = new $className();
-			$instance->plugin = Inflector::camelize(trim($plugin, '.'));
-			return $instance;
+
+		if (!$className) {
+			throw new MissingShellException([
+				'class' => $shell,
+			]);
 		}
-		throw new MissingShellException([
-			'class' => $shell,
-		]);
+
+		return $this->_createShell($className, $shell);
+	}
+
+/**
+ * If the input matches an alias, return the aliased shell name
+ *
+ * @param string $shell Optionally the name of a plugin or alias
+ * @return string Shell name with plugin prefix
+ */
+	protected function _handleAlias($shell) {
+		$aliased = static::alias($shell);
+		if ($aliased) {
+			$shell = $aliased;
+		}
+
+		$class = array_map('Cake\Utility\Inflector::camelize', explode('.', $shell));
+		return implode('.', $class);
 	}
 
 /**
@@ -197,13 +246,25 @@ class ShellDispatcher {
  * @return string|bool Either the classname or false.
  */
 	protected function _shellExists($shell) {
-		$class = array_map('Cake\Utility\Inflector::camelize', explode('.', $shell));
-		$class = implode('.', $class);
-		$class = App::className($class, 'Shell', 'Shell');
+		$class = App::className($shell, 'Shell', 'Shell');
 		if (class_exists($class)) {
 			return $class;
 		}
 		return false;
+	}
+
+/**
+ * Create the given shell name, and set the plugin property
+ *
+ * @param string $className The class name to instanciate
+ * @param string $shortName The plugin-prefixed shell name
+ * @return \Cake\Console\Shell A shell instance.
+ */
+	protected function _createShell($className, $shortName) {
+		list($plugin) = pluginSplit($shortName);
+		$instance = new $className();
+		$instance->plugin = trim($plugin, '.');
+		return $instance;
 	}
 
 /**

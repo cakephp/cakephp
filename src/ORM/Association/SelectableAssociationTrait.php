@@ -15,6 +15,7 @@
 namespace Cake\ORM\Association;
 
 use Cake\Database\Expression\TupleComparison;
+use Cake\Database\Expression\IdentifierExpression;
 
 /**
  * Represents a type of association that that can be fetched using another query
@@ -80,17 +81,22 @@ trait SelectableAssociationTrait {
 		$alias = $target->alias();
 		$key = $this->_linkField($options);
 		$filter = $options['keys'];
+		$useSubquery = $options['strategy'] === $this::STRATEGY_SUBQUERY;
 
-		if ($options['strategy'] === $this::STRATEGY_SUBQUERY) {
-			$filter = $this->_buildSubquery($options['query']);
-		}
-
+		$finder = isset($options['finder']) ? $options['finder'] : $this->finder();
+		list($finder, $opts) = $this->_extractFinder($finder);
 		$fetchQuery = $this
-			->find('all')
+			->find($finder, $opts)
 			->where($options['conditions'])
 			->eagerLoaded(true)
 			->hydrate($options['query']->hydrate());
-		$fetchQuery = $this->_addFilteringCondition($fetchQuery, $key, $filter);
+
+		if ($useSubquery) {
+			$filter = $this->_buildSubquery($options['query']);
+			$fetchQuery = $this->_addFilteringJoin($fetchQuery, $key, $filter);
+		} else {
+			$fetchQuery = $this->_addFilteringCondition($fetchQuery, $key, $filter);
+		}
 
 		if (!empty($options['fields'])) {
 			$fields = $fetchQuery->aliasFields($options['fields'], $alias);
@@ -119,26 +125,73 @@ trait SelectableAssociationTrait {
 
 /**
  * Appends any conditions required to load the relevant set of records in the
- * target table query given a filter key and some filtering values.
+ * target table query given a filter key and some filtering values when the
+ * filtering needs to be done using a subquery.
  *
  * @param \Cake\ORM\Query $query Target table's query
  * @param string $key the fields that should be used for filtering
+ * @param \Cake\ORM\Query $subquery The Subquery to use for filtering
+ * @return \Cake\ORM\Query
+ */
+	public function _addFilteringJoin($query, $key, $subquery) {
+		$filter = $fields = [];
+		$aliasedTable = $subquery->repository()->alias();
+
+		foreach ($subquery->clause('select') as $aliasedField => $field) {
+			$filter[] = new IdentifierExpression($field);
+		}
+		$subquery->select($filter, true);
+
+		if (is_array($key)) {
+			$conditions = $this->_createTupleCondition($query, $key, $filter, '=');
+		} else {
+			$filter = current($filter);
+		}
+
+		$conditions = isset($conditions) ? $conditions : $query->newExpr([$key => $filter]);
+		return $query->innerJoin(
+			[$aliasedTable => $subquery],
+			$conditions
+		);
+	}
+
+/**
+ * Appends any conditions required to load the relevant set of records in the
+ * target table query given a filter key and some filtering values.
+ *
+ * @param \Cake\ORM\Query $query Target table's query
+ * @param string|array $key the fields that should be used for filtering
  * @param mixed $filter the value that should be used to match for $key
  * @return \Cake\ORM\Query
  */
 	protected function _addFilteringCondition($query, $key, $filter) {
 		if (is_array($key)) {
-			$types = [];
-			$defaults = $query->defaultTypes();
-			foreach ($key as $k) {
-				if (isset($defaults[$k])) {
-					$types[] = $defaults[$k];
-				}
-			}
-			return $query->andWhere(new TupleComparison($key, $filter, $types, 'IN'));
+			$conditions = $this->_createTupleCondition($query, $key, $filter, 'IN');
 		}
 
-		return $query->andWhere([$key . ' IN' => $filter]);
+		$conditions = isset($conditions) ? $conditions : [$key . ' IN' => $filter];
+		return $query->andWhere($conditions);
+	}
+
+/**
+ * Returns a TupleComparison object that can be used for mathching all the fields
+ * from $keys with the tuple values in $filter using the provided operator.
+ *
+ * @param \Cake\ORM\Query $query Target table's query
+ * @param array $keys the fields that should be used for filtering
+ * @param mixed $filter the value that should be used to match for $key
+ * @param string $operator The operator for comparing the tuples
+ * @return \Cake\Database\Expression\TupleComparison
+ */
+	protected function _createTupleCondition($query, $keys, $filter, $operator) {
+		$types = [];
+		$defaults = $query->defaultTypes();
+		foreach ($keys as $k) {
+			if (isset($defaults[$k])) {
+				$types[] = $defaults[$k];
+			}
+		}
+		return new TupleComparison($keys, $filter, $types, $operator);
 	}
 
 /**
@@ -159,7 +212,17 @@ trait SelectableAssociationTrait {
  * @return \Cake\ORM\Query
  */
 	protected function _buildSubquery($query) {
-		$filterQuery = $query->cleanCopy();
+		$filterQuery = clone $query;
+		$filterQuery->autoFields(false);
+		$filterQuery->mapReduce(null, null, true);
+		$filterQuery->formatResults(null, true);
+		$filterQuery->contain([], true);
+
+		if (!$filterQuery->clause('limit')) {
+			$filterQuery->limit(null);
+			$filterQuery->order([], true);
+			$filterQuery->offset(null);
+		}
 
 		$joins = $filterQuery->join();
 		foreach ($joins as $i => $join) {

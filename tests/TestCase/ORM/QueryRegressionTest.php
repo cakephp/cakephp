@@ -100,11 +100,12 @@ class QueryRegressionTest extends TestCase {
 		]);
 		$table->Things->target()->belongsTo('Stuff', [
 			'foreignKey' => 'tag_id',
-			'propertyName' => 'foo']
-		);
+			'propertyName' => 'foo'
+		]);
 
 		$results = $table->find()
 			->contain(['Authors.Stuff', 'Things.Stuff'])
+			->order(['Articles.id' => 'ASC'])
 			->toArray();
 
 		$this->assertEquals(1, $results[0]->articles_tag->foo->id);
@@ -439,4 +440,24 @@ class QueryRegressionTest extends TestCase {
 			collection($result[2]->articles[0]->tags)->extract('name')->toArray()
 		);
 	}
+
+/**
+ * Tests that getting the count of a query having containments return
+ * the correct results
+ *
+ * @see https://github.com/cakephp/cakephp/issues/4511
+ * @return void
+ */
+	public function testCountWithContain() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors', ['joinType' => 'inner']);
+		$count = $table
+			->find()
+			->contain(['Authors' => function($q) {
+				return $q->where(['Authors.id' => 1]);
+			}])
+			->count();
+		$this->assertEquals(2, $count);
+	}
+
 }

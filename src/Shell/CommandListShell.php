@@ -51,7 +51,7 @@ class CommandListShell extends Shell {
 	public function main() {
 		if (empty($this->params['xml'])) {
 			$this->out("<info>Current Paths:</info>", 2);
-			$this->out("* app: " . APP_DIR);
+			$this->out("* app:  " . APP_DIR);
 			$this->out("* root: " . rtrim(ROOT, DS));
 			$this->out("* core: " . rtrim(CORE_PATH, DS));
 			$this->out("");
@@ -84,9 +84,9 @@ class CommandListShell extends Shell {
 			$this->out();
 		}
 
-		$this->out("To run an app or core command, type <info>cake shell_name [args]</info>");
-		$this->out("To run a plugin command, type <info>cake Plugin.shell_name [args]</info>");
-		$this->out("To get help on a specific command, type <info>cake shell_name --help</info>", 2);
+		$this->out("To run an app or core command, type <info>`cake shell_name [args]`</info>");
+		$this->out("To run a plugin command, type <info>`cake Plugin.shell_name [args]`</info>");
+		$this->out("To get help on a specific command, type <info>`cake shell_name --help`</info>", 2);
 	}
 
 /**

@@ -32,22 +32,22 @@ class MysqlSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function describeColumnSql($name, $config) {
-		return ['SHOW FULL COLUMNS FROM ' . $this->_driver->quoteIdentifier($name), []];
+	public function describeColumnSql($tableName, $config) {
+		return ['SHOW FULL COLUMNS FROM ' . $this->_driver->quoteIdentifier($tableName), []];
 	}
 
 /**
  * {@inheritDoc}
  */
-	public function describeIndexSql($name, $config) {
-		return ['SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($name), []];
+	public function describeIndexSql($tableName, $config) {
+		return ['SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($tableName), []];
 	}
 
 /**
  * {@inheritDoc}
  */
-	public function describeOptionsSql($name, $config) {
-		return ['SHOW TABLE STATUS WHERE Name = ?', [$name]];
+	public function describeOptionsSql($tableName, $config) {
+		return ['SHOW TABLE STATUS WHERE Name = ?', [$tableName]];
 	}
 
 /**
@@ -209,13 +209,13 @@ class MysqlSchema extends BaseSchema {
 /**
  * {@inheritDoc}
  */
-	public function describeForeignKeySql($table, $config) {
+	public function describeForeignKeySql($tableName, $config) {
 		$sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
 			INNER JOIN information_schema.referential_constraints AS rc
 			ON (kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME)
 			WHERE kcu.TABLE_SCHEMA = ? AND kcu.TABLE_NAME = ?';
 
-		return [$sql, [$config['database'], $table]];
+		return [$sql, [$config['database'], $tableName]];
 	}
 
 /**

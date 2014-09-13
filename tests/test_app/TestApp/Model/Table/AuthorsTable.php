@@ -12,6 +12,7 @@
 namespace TestApp\Model\Table;
 
 use Cake\ORM\Table;
+use Cake\ORM\Query;
 
 /**
  * Author table class
@@ -21,6 +22,13 @@ class AuthorsTable extends Table {
 
 	public function initialize(array $config) {
 		$this->hasMany('articles');
+	}
+
+	public function findByAuthor(Query $query, array $options = []) {
+		if (isset($options['author_id'])) {
+			$query->where(['Articles.id' => $options['author_id']]);
+		}
+		return $query;
 	}
 
 }

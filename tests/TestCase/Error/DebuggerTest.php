@@ -200,7 +200,7 @@ class DebuggerTest extends TestCase {
 			'error' => array(),
 			'code' => array(), '8', '/code',
 			'file' => array(), 'preg:/[^<]+/', '/file',
-			'line' => array(), '' . (intval(__LINE__) - 7), '/line',
+			'line' => array(), '' . ((int)__LINE__ - 7), '/line',
 			'preg:/Undefined variable:\s+foo/',
 			'/error'
 		);
@@ -259,7 +259,7 @@ class DebuggerTest extends TestCase {
 			'<error',
 			'<code', '8', '/code',
 			'<file', 'preg:/[^<]+/', '/file',
-			'<line', '' . (intval(__LINE__) - 7), '/line',
+			'<line', '' . ((int)__LINE__ - 7), '/line',
 			'preg:/Undefined variable:\s+foo/',
 			'/error'
 		);
@@ -368,6 +368,7 @@ object(Cake\View\View) {
 	[protected] _currentType => ''
 	[protected] _stack => []
 	[protected] _eventManager => object(Cake\Event\EventManager) {}
+	[protected] _eventClass => '\Cake\Event\Event'
 }
 TEXT;
 
@@ -569,41 +570,6 @@ TEXT;
 
 		$result = Debugger::getInstance('Cake\Error\Debugger');
 		$this->assertInstanceOf('Cake\Error\Debugger', $result);
-	}
-
-/**
- * testNoDbCredentials
- *
- * If a connection error occurs, the config variable is passed through exportVar
- * *** our database login credentials such that they are never visible
- *
- * @return void
- */
-	public function testNoDbCredentials() {
-		$config = array(
-			'datasource' => 'mysql',
-			'persistent' => false,
-			'host' => 'void.cakephp.org',
-			'login' => 'cakephp-user',
-			'password' => 'cakephp-password',
-			'database' => 'cakephp-database',
-			'prefix' => ''
-		);
-
-		$output = Debugger::exportVar($config);
-
-		$expectedArray = array(
-			'datasource' => 'mysql',
-			'persistent' => false,
-			'host' => '*****',
-			'login' => '*****',
-			'password' => '*****',
-			'database' => '*****',
-			'prefix' => ''
-		);
-		$expected = Debugger::exportVar($expectedArray);
-
-		$this->assertEquals($expected, $output);
 	}
 
 /**

@@ -174,7 +174,7 @@ class FormHelperTest extends TestCase {
 			]
 		];
 
-		Configure::write('Security.salt', 'foo!');
+		Security::salt('foo!');
 		Router::connect('/:controller', array('action' => 'index'));
 		Router::connect('/:controller/:action/*');
 	}
@@ -547,6 +547,23 @@ class FormHelperTest extends TestCase {
 			'/div'
 		);
 		$this->assertHtml($expected, $result);
+
+		Router::connect(
+			'/new-article',
+			['controller' => 'articles', 'action' => 'myaction'],
+			['_name' => 'my-route']
+		);
+		$result = $this->Form->create(false, ['url' => ['_name' => 'my-route']]);
+		$expected = array(
+			'form' => array(
+				'method' => 'post', 'action' => '/new-article',
+				'accept-charset' => $encoding,
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -820,7 +837,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->params['_Token'] = 'testKey';
 		$result = $this->Form->secure($fields);
 
-		$hash = Security::hash(serialize($fields) . Configure::read('Security.salt'));
+		$hash = Security::hash(serialize($fields) . Security::salt());
 		$hash .= ':' . 'Model.valid';
 		$hash = urlencode($hash);
 
@@ -5522,7 +5539,7 @@ class FormHelperTest extends TestCase {
 			'/posts/delete/1' .
 			serialize(array()) .
 			'' .
-			Configure::read('Security.salt')
+			Security::salt()
 		);
 		$hash .= '%3A';
 		$this->Form->request->params['_Token']['key'] = 'test';

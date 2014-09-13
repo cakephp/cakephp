@@ -146,7 +146,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->Security->config('blackHoleCallback', 'fail');
 		$this->Security = $this->Controller->Security;
 		$this->Security->session = $session;
-		Configure::write('Security.salt', 'foo!');
+		Security::salt('foo!');
 	}
 
 /**
@@ -659,7 +659,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->Security->startup($event);
 		$unlocked = 'Model.username';
 		$fields = array('Model.hidden', 'Model.password');
-		$fields = urlencode(Security::hash('/articles/index' . serialize($fields) . $unlocked . Configure::read('Security.salt')));
+		$fields = urlencode(Security::hash('/articles/index' . serialize($fields) . $unlocked . Security::salt()));
 
 		$this->Controller->request->data = array(
 			'Model' => array(
@@ -683,7 +683,7 @@ class SecurityComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->Security->startup($event);
 		$fields = array('Model.hidden', 'Model.password', 'Model.username');
-		$fields = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$fields = urlencode(Security::hash(serialize($fields) . Security::salt()));
 
 		$this->Controller->request->data = array(
 			'Model' => array(
@@ -708,7 +708,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->Security->startup($event);
 		$unlocked = 'Model.username';
 		$fields = array('Model.hidden', 'Model.password');
-		$fields = urlencode(Security::hash(serialize($fields) . $unlocked . Configure::read('Security.salt')));
+		$fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
 
 		// Tamper the values.
 		$unlocked = 'Model.username|Model.password';
@@ -829,7 +829,7 @@ class SecurityComponentTest extends TestCase {
 		$this->Controller->Security->startup($event);
 		$unlocked = '';
 		$hashFields = array('TaxonomyData');
-		$fields = urlencode(Security::hash('/articles/index' . serialize($hashFields) . $unlocked . Configure::read('Security.salt')));
+		$fields = urlencode(Security::hash('/articles/index' . serialize($hashFields) . $unlocked . Security::salt()));
 
 		$this->Controller->request->data = array(
 			'TaxonomyData' => array(

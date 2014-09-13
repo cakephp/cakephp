@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Utility;
 
-use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 
@@ -103,7 +102,7 @@ class SecurityTest extends TestCase {
 /**
  * testRijndaelInvalidOperation method
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testRijndaelInvalidOperation() {
@@ -115,7 +114,7 @@ class SecurityTest extends TestCase {
 /**
  * testRijndaelInvalidKey method
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @return void
  */
 	public function testRijndaelInvalidKey() {
@@ -186,7 +185,7 @@ class SecurityTest extends TestCase {
 /**
  * Test that short keys cause errors
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @expectedExceptionMessage Invalid key for encrypt(), key must be at least 256 bits (32 bytes) long.
  * @return void
  */
@@ -223,7 +222,7 @@ class SecurityTest extends TestCase {
 /**
  * Test that short keys cause errors
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @expectedExceptionMessage Invalid key for decrypt(), key must be at least 256 bits (32 bytes) long.
  * @return void
  */
@@ -236,7 +235,7 @@ class SecurityTest extends TestCase {
 /**
  * Test that empty data cause errors
  *
- * @expectedException \Cake\Core\Exception\Exception
+ * @expectedException InvalidArgumentException
  * @expectedExceptionMessage The data to decrypt cannot be empty.
  * @return void
  */
@@ -244,6 +243,16 @@ class SecurityTest extends TestCase {
 		$txt = '';
 		$key = 'This is a key that is long enough to be ok.';
 		Security::decrypt($txt, $key);
+	}
+
+/**
+ * Tests that the salt can be set and retrieved
+ *
+ * @return void
+ */
+	public function testSalt() {
+		Security::salt('foobarbaz');
+		$this->assertEquals('foobarbaz', Security::salt());
 	}
 
 }

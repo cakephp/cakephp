@@ -492,7 +492,6 @@ class Query extends DatabaseQuery implements JsonSerializable {
 		$query->offset(null);
 		$query->mapReduce(null, null, true);
 		$query->formatResults(null, true);
-		$query->contain([], true);
 		return $query;
 	}
 

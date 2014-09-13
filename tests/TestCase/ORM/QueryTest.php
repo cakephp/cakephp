@@ -244,7 +244,7 @@ class QueryTest extends TestCase {
 
 		$results = $query->repository($table)
 			->select()
-			->contain(['articles' => ['conditions' => ['id' => 2]]])
+			->contain(['articles' => ['conditions' => ['articles.id' => 2]]])
 			->hydrate(false)
 			->toArray();
 		$expected[0]['articles'] = [];
@@ -299,7 +299,7 @@ class QueryTest extends TestCase {
 			->contain([
 				'articles' => [
 					'fields' => ['title', 'author_id'],
-					'sort' => ['id' => 'DESC']
+					'sort' => ['articles.id' => 'DESC']
 				]
 			])
 			->hydrate(false)
@@ -576,7 +576,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals($expected, $results);
 
 		$results = $query->select()
-			->contain(['Tags' => ['conditions' => ['id' => 3]]])
+			->contain(['Tags' => ['conditions' => ['Tags.id' => 3]]])
 			->hydrate(false)
 			->toArray();
 		$expected = [
@@ -1719,7 +1719,9 @@ class QueryTest extends TestCase {
 				});
 		};
 		$query = $table->find()
-			->contain(['Articles' => $builder, 'Articles.Authors' => $builder]);
+			->contain(['Articles' => $builder, 'Articles.Authors' => $builder])
+			->order(['Articles.id' => 'ASC']);
+
 		$query->formatResults(function($results) {
 			return $results->map(function($row) {
 				return sprintf(
@@ -1799,9 +1801,11 @@ class QueryTest extends TestCase {
 		$table->belongsTo('Articles');
 		$table->association('Articles')->target()->belongsTo('Authors');
 
-		$query = $table->find()->contain(['Articles' => function($q) {
-			return $q->contain('Authors');
-		}]);
+		$query = $table->find()
+			->order(['Articles.id' => 'ASC'])
+			->contain(['Articles' => function($q) {
+				return $q->contain('Authors');
+			}]);
 		$results = $query->extract('article.author.name')->toArray();
 		$expected = ['mariano', 'mariano', 'larry', 'larry'];
 		$this->assertEquals($expected, $results);
@@ -2109,6 +2113,39 @@ class QueryTest extends TestCase {
 		$this->assertNull($copy->clause('offset'));
 		$this->assertNull($copy->clause('limit'));
 		$this->assertNull($copy->clause('order'));
+	}
+
+/**
+ * Test that finder options sent through via contain are sent to custom finder.
+ *
+ * @return void
+ */
+	public function testContainFinderCanSpecifyOptions() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo(
+			'Authors',
+			['className' => 'TestApp\Model\Table\AuthorsTable']
+		);
+		$authorId = 1;
+
+		$resultWithoutAuthor = $table->find('all')
+			->where(['Articles.author_id' => $authorId])
+			->contain([
+				'Authors' => [
+					'finder' => ['byAuthor' => ['author_id' => 2]]
+				]
+			]);
+
+		$resultWithAuthor = $table->find('all')
+			->where(['Articles.author_id' => $authorId])
+			->contain([
+				'Authors' => [
+					'finder' => ['byAuthor' => ['author_id' => $authorId]]
+				]
+			]);
+
+		$this->assertEmpty($resultWithoutAuthor->first()['author']);
+		$this->assertEquals($authorId, $resultWithAuthor->first()['author']['id']);
 	}
 
 }

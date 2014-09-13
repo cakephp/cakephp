@@ -184,24 +184,15 @@ class FixtureManager {
  *
  * @param \Cake\TestSuite\Fixture\TestFixture $fixture the fixture object to create
  * @param Connection $db the datasource instance to use
+ * @param array $sources The existing tables in the datasource.
  * @param bool $drop whether drop the fixture if it is already created or not
  * @return void
  */
-	protected function _setupTable(TestFixture $fixture, Connection $db = null, $drop = true) {
-		if (!$db) {
-			if (!empty($fixture->connection)) {
-				$db = ConnectionManager::get($fixture->connection, false);
-			}
-			if (!$db) {
-				$db = ConnectionManager::get('test', false);
-			}
-		}
+	protected function _setupTable(TestFixture $fixture, Connection $db, array $sources, $drop = true) {
 		if (!empty($fixture->created) && in_array($db->configName(), $fixture->created)) {
 			return;
 		}
 
-		$schemaCollection = $db->schemaCollection();
-		$sources = (array)$schemaCollection->listTables();
 		$table = $fixture->table;
 		$exists = in_array($table, $sources);
 
@@ -232,6 +223,59 @@ class FixtureManager {
 			return;
 		}
 
+		$dbs = $this->_fixtureConnections($fixtures);
+		try {
+			$createTables = function($db, $fixtures) use ($test) {
+				$tables = $db->schemaCollection()->listTables();
+				foreach ($fixtures as $fixture) {
+					if (!in_array($db->configName(), (array)$fixture->created)) {
+						$this->_setupTable($fixture, $db, $tables, $test->dropTables);
+					} else {
+						$fixture->truncate($db);
+					}
+				}
+			};
+			$this->_runOperation($fixtures, $createTables);
+
+			// Use a separate transaction because of postgres.
+			$insert = function($db, $fixtures) {
+				foreach ($fixtures as $fixture) {
+					$fixture->insert($db);
+				}
+			};
+			$this->_runOperation($fixtures, $insert);
+		} catch (\PDOException $e) {
+			$msg = sprintf('Unable to insert fixtures for "%s" test case. %s', get_class($test), $e->getMessage());
+			throw new Exception($msg);
+		}
+	}
+
+/**
+ * Run a function on each connection and collection of fixtures.
+ *
+ * @param array $fixtures A list of fixtures to operate on.
+ * @param callable $operation The operation to run on each connection + fixture set.
+ * @return void
+ */
+	protected function _runOperation($fixtures, $operation) {
+		$dbs = $this->_fixtureConnections($fixtures);
+		foreach ($dbs as $connection => $fixtures) {
+			$db = ConnectionManager::get($connection, false);
+			$db->transactional(function($db) use ($fixtures, $operation) {
+				$db->disableForeignKeys();
+				$operation($db, $fixtures);
+				$db->enableForeignKeys();
+			});
+		}
+	}
+
+/**
+ * Get the unique list of connections that a set of fixtures contains.
+ *
+ * @param array $fixtures The array of fixtures a list of connections is needed from.
+ * @return array An array of connection names.
+ */
+	protected function _fixtureConnections($fixtures) {
 		$dbs = [];
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
@@ -239,25 +283,7 @@ class FixtureManager {
 				$dbs[$fixture->connection][$f] = $fixture;
 			}
 		}
-		try {
-			foreach ($dbs as $db => $fixtures) {
-				$db = ConnectionManager::get($fixture->connection, false);
-				$db->transactional(function($db) use ($fixtures, $test) {
-					foreach ($fixtures as $fixture) {
-						if (!in_array($db->configName(), (array)$fixture->created)) {
-							$this->_setupTable($fixture, $db, $test->dropTables);
-						}
-						if (!$test->dropTables) {
-							$fixture->truncate($db);
-						}
-						$fixture->insert($db);
-					}
-				});
-			}
-		} catch (\PDOException $e) {
-			$msg = sprintf('Unable to insert fixtures for "%s" test case. %s', get_class($test), $e->getMessage());
-			throw new Exception($msg);
-		}
+		return $dbs;
 	}
 
 /**
@@ -267,18 +293,18 @@ class FixtureManager {
  * @return void
  */
 	public function unload($test) {
-		$fixtures = !empty($test->fixtures) ? $test->fixtures : [];
-		foreach (array_reverse($fixtures) as $f) {
-			if (isset($this->_loaded[$f])) {
-				$fixture = $this->_loaded[$f];
-				if (!empty($fixture->created)) {
-					foreach ($fixture->created as $ds) {
-						$db = ConnectionManager::get($ds);
-						$fixture->truncate($db);
-					}
+		if (empty($test->fixtures)) {
+			return;
+		}
+		$truncate = function($db, $fixtures) {
+			$connection = $db->configName();
+			foreach ($fixtures as $fixture) {
+				if (!empty($fixture->created) && in_array($connection, $fixture->created)) {
+					$fixture->truncate($db);
 				}
 			}
-		}
+		};
+		$this->_runOperation($test->fixtures, $truncate);
 	}
 
 /**
@@ -298,7 +324,8 @@ class FixtureManager {
 			}
 
 			if (!in_array($db->configName(), (array)$fixture->created)) {
-				$this->_setupTable($fixture, $db, $dropTables);
+				$sources = $db->schemaCollection()->listTables();
+				$this->_setupTable($fixture, $db, $sources, $dropTables);
 			}
 			if (!$dropTables) {
 				$fixture->truncate($db);
@@ -315,15 +342,15 @@ class FixtureManager {
  * @return void
  */
 	public function shutDown() {
-		foreach ($this->_loaded as $fixture) {
-			if (!empty($fixture->created)) {
-				foreach ($fixture->created as $ds) {
-					$db = ConnectionManager::get($ds);
+		$shutdown = function($db, $fixtures) {
+			$connection = $db->configName();
+			foreach ($fixtures as $fixture) {
+				if (!empty($fixture->created) && in_array($connection, $fixture->created)) {
 					$fixture->drop($db);
 				}
-				$fixture->created = [];
 			}
-		}
+		};
+		$this->_runOperation(array_keys($this->_loaded), $shutdown);
 	}
 
 }

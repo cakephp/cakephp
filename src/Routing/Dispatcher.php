@@ -58,8 +58,7 @@ class Dispatcher {
  * @throws \Cake\Routing\Exception\MissingControllerException When the controller is missing.
  */
 	public function dispatch(Request $request, Response $response) {
-		$beforeEvent = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
-		$this->eventManager()->dispatch($beforeEvent);
+		$beforeEvent = $this->dispatchEvent('Dispatcher.beforeDispatch', compact('request', 'response'));
 
 		$request = $beforeEvent->data['request'];
 		if ($beforeEvent->result instanceof Response) {
@@ -89,8 +88,7 @@ class Dispatcher {
 			return $response->body();
 		}
 
-		$afterEvent = new Event('Dispatcher.afterDispatch', $this, compact('request', 'response'));
-		$this->eventManager()->dispatch($afterEvent);
+		$afterEvent = $this->dispatchEvent('Dispatcher.afterDispatch', compact('request', 'response'));
 		$afterEvent->data['response']->send();
 	}
 

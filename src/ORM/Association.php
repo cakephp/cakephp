@@ -445,7 +445,8 @@ abstract class Association {
 			'conditions' => [],
 			'fields' => [],
 			'type' => empty($options['matching']) ? $this->joinType() : 'INNER',
-			'table' => $target->table()
+			'table' => $target->table(),
+			'finder' => $this->finder()
 		];
 
 		if (!empty($options['foreignKey'])) {
@@ -455,7 +456,10 @@ abstract class Association {
 			}
 		}
 
-		$dummy = $this->find()->eagerLoaded(true);
+		list($finder, $opts) = $this->_extractFinder($options['finder']);
+		$dummy = $this
+			->find($finder, $opts)
+			->eagerLoaded(true);
 		if (!empty($options['queryBuilder'])) {
 			$dummy = $options['queryBuilder']($dummy);
 			if (!($dummy instanceof Query)) {
@@ -530,8 +534,9 @@ abstract class Association {
  */
 	public function find($type = null, array $options = []) {
 		$type = $type ?: $this->finder();
+		list($type, $opts) = $this->_extractFinder($type, $options);
 		return $this->target()
-			->find($type, $options)
+			->find($type, $options + $opts)
 			->where($this->conditions());
 	}
 
@@ -580,8 +585,7 @@ abstract class Association {
 	protected function _dispatchBeforeFind($query) {
 		$table = $this->target();
 		$options = $query->getOptions();
-		$event = new Event('Model.beforeFind', $table, [$query, $options, false]);
-		$table->eventManager()->dispatch($event);
+		$table->dispatchEvent('Model.beforeFind', [$query, $options, false]);
 	}
 
 /**
@@ -705,6 +709,32 @@ abstract class Association {
 		}
 
 		return $conditions;
+	}
+
+/**
+ * Helper method to infer the requested finder and its options.
+ *
+ * Returns the inferred options from the finder $type. 
+ *
+ * ### Examples:
+ *
+ * The following will call the finder 'translations' with the value of the finder as its options:
+ * $query->contain(['Comments' => ['finder' => ['translations']]]);
+ * $query->contain(['Comments' => ['finder' => ['translations' => []]]]);
+ * $query->contain(['Comments' => ['finder' => ['translations' => ['locales' => ['en_US']]]]]);
+ *
+ * @param string|array $finderData The finder name or an array having the name as key
+ * and options as value.
+ * @return array
+ */
+	protected function _extractFinder($finderData) {
+		$finderData = (array)$finderData;
+
+		if (is_numeric(key($finderData))) {
+			return [current($finderData), []];
+		}
+
+		return [key($finderData), current($finderData)];
 	}
 
 /**

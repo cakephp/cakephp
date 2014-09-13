@@ -73,26 +73,26 @@ class FlashComponent extends Component {
  * @return void
  */
 	public function set($message, array $options = []) {
-		$opts = array_merge($this->config(), $options);
+		$options += $this->config();
 
 		if ($message instanceof \Exception) {
-			$opts['params'] += ['code' => $message->getCode()];
+			$options['params'] += ['code' => $message->getCode()];
 			$message = $message->getMessage();
 		}
 
-		list($plugin, $element) = pluginSplit($opts['element']);
+		list($plugin, $element) = pluginSplit($options['element']);
 
 		if ($plugin) {
-			$opts['element'] = $plugin . '.Flash/' . $element;
+			$options['element'] = $plugin . '.Flash/' . $element;
 		} else {
-			$opts['element'] = 'Flash/' . $element;
+			$options['element'] = 'Flash/' . $element;
 		}
 
-		$this->_session->write('Flash.' . $opts['key'], [
+		$this->_session->write('Flash.' . $options['key'], [
 			'message' => $message,
-			'key' => $opts['key'],
-			'element' => $opts['element'],
-			'params' => $opts['params']
+			'key' => $options['key'],
+			'element' => $options['element'],
+			'params' => $options['params']
 		]);
 	}
 

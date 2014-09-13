@@ -36,7 +36,7 @@ class IntegerType extends \Cake\Database\Type {
 		if ($value === null || $value === '') {
 			return null;
 		}
-		return intval($value);
+		return (int)$value;
 	}
 
 /**
@@ -51,7 +51,7 @@ class IntegerType extends \Cake\Database\Type {
 		if ($value === null) {
 			return null;
 		}
-		return intval($value);
+		return (int)$value;
 	}
 
 /**
@@ -75,7 +75,7 @@ class IntegerType extends \Cake\Database\Type {
 		if ($value === null || $value === '') {
 			return null;
 		}
-		return intval($value);
+		return (int)$value;
 	}
 
 }

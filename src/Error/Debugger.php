@@ -17,6 +17,7 @@ namespace Cake\Error;
 use Cake\Core\Configure;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
+use Cake\Utility\Security;
 use Cake\Utility\String;
 use Exception;
 use InvalidArgumentException;
@@ -200,7 +201,7 @@ class Debugger {
  * @param int $line Line that triggered the error
  * @param array $context Context
  * @return bool true if error was handled
- * @deprecated Will be removed in 3.0. This function is superseded by Debugger::outputError().
+ * @deprecated 3.0.0 Will be removed in 3.0. This function is superseded by Debugger::outputError().
  */
 	public static function showError($code, $description, $file = null, $line = null, $context = null) {
 		$self = Debugger::getInstance();
@@ -300,11 +301,11 @@ class Debugger {
 		);
 
 		for ($i = $options['start']; $i < $count && $i < $options['depth']; $i++) {
-			$trace = array_merge(array('file' => '[internal]', 'line' => '??'), $backtrace[$i]);
+			$trace = $backtrace[$i] + array('file' => '[internal]', 'line' => '??');
 			$signature = $reference = '[main]';
 
 			if (isset($backtrace[$i + 1])) {
-				$next = array_merge($_trace, $backtrace[$i + 1]);
+				$next = $backtrace[$i + 1] + $_trace;
 				$signature = $reference = $next['function'];
 
 				if (!empty($next['class'])) {
@@ -523,18 +524,6 @@ class Debugger {
  * @return string Exported array.
  */
 	protected static function _array(array $var, $depth, $indent) {
-		$secrets = array(
-			'password' => '*****',
-			'login' => '*****',
-			'host' => '*****',
-			'database' => '*****',
-			'port' => '*****',
-			'prefix' => '*****',
-			'schema' => '*****'
-		);
-		$replace = array_intersect_key($secrets, $var);
-		$var = $replace + $var;
-
 		$out = "[";
 		$break = $end = null;
 		if (!empty($var)) {
@@ -689,7 +678,7 @@ class Debugger {
 				);
 				unset($strings['links']);
 			}
-			$self->_templates[$format] = array_merge($self->_templates[$format], $strings);
+			$self->_templates[$format] = $strings + $self->_templates[$format];
 		} else {
 			$self->_templates[$format] = $strings;
 		}
@@ -704,7 +693,7 @@ class Debugger {
  *    straight HTML output, or 'txt' for unformatted text.
  * @param array $strings Template strings to be used for the output format.
  * @return string
- * @deprecated Use Debugger::outputAs() and Debugger::addFormat(). Will be removed
+ * @deprecated 3.0.0 Use Debugger::outputAs() and Debugger::addFormat(). Will be removed
  *   in 3.0
  */
 	public static function output($format = null, $strings = array()) {
@@ -779,7 +768,7 @@ class Debugger {
 
 		$data['trace'] = $trace;
 		$data['id'] = 'cakeErr' . uniqid();
-		$tpl = array_merge($this->_templates['base'], $this->_templates[$this->_outputFormat]);
+		$tpl = $this->_templates[$this->_outputFormat] + $this->_templates['base'];
 
 		if (isset($tpl['links'])) {
 			foreach ($tpl['links'] as $key => $val) {
@@ -850,7 +839,7 @@ class Debugger {
  * @return void
  */
 	public static function checkSecurityKeys() {
-		if (Configure::read('Security.salt') === '__SALT__') {
+		if (Security::salt() === '__SALT__') {
 			trigger_error(sprintf('Please change the value of %s in %s to a salt value specific to your application.', '\'Security.salt\'', 'ROOT/config/app.php'), E_USER_NOTICE);
 		}
 	}

@@ -76,7 +76,37 @@ class IntegrationTestCaseTest extends IntegrationTestCase {
 	}
 
 /**
+ * Test sending requests stores references to controller/view/layout.
  *
+ * @return void
+ */
+	public function testRequestSetsProperties() {
+		$this->post('/posts/index');
+		$this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
+		$this->assertContains('Template' . DS . 'Posts' . DS . 'index.ctp', $this->_viewName);
+		$this->assertContains('Template' . DS . 'Layout' . DS . 'default.ctp', $this->_layoutName);
+
+		$this->assertTemplate('index');
+		$this->assertLayout('default');
+		$this->assertEquals('value', $this->viewVariable('test'));
+	}
+
+/**
+ * Test flash and cookie assertions
+ *
+ * @return void
+ */
+	public function testFlashSessionAndCookieAsserts() {
+		$this->post('/posts/index');
+
+		$this->assertSession('An error message', 'Flash.flash.message');
+		$this->assertCookie(1, 'remember_me');
+	}
+
+/**
+ * Test error handling and error page rendering.
+ *
+ * @return void
  */
 	public function testPostAndErrorHandling() {
 		$this->post('/request_action/error_method');

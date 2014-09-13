@@ -364,32 +364,34 @@ class FormHelper extends Helper {
 		if ($options['action'] === null && $options['url'] === null) {
 			return $this->request->here(false);
 		}
-		if (empty($options['url']) || is_array($options['url'])) {
-			if (isset($options['action']) && empty($options['url']['action'])) {
-				$options['url']['action'] = $options['action'];
-			}
 
-			$plugin = $this->plugin ? Inflector::underscore($this->plugin) : null;
-			$actionDefaults = [
-				'plugin' => $plugin,
-				'controller' => Inflector::underscore($this->request->params['controller']),
-				'action' => $this->request->params['action'],
-			];
-
-			$action = (array)$options['url'] + $actionDefaults;
-
-			$pk = $context->primaryKey();
-			if (count($pk)) {
-				$id = $context->val($pk[0]);
-			}
-			if (empty($action[0]) && isset($id)) {
-				$action[0] = $id;
-			}
-			return $action;
-		}
-		if (is_string($options['url'])) {
+		if (is_string($options['url']) ||
+			(is_array($options['url']) && isset($options['url']['_name']))
+		) {
 			return $options['url'];
 		}
+
+		if (isset($options['action']) && empty($options['url']['action'])) {
+			$options['url']['action'] = $options['action'];
+		}
+
+		$plugin = $this->plugin ? Inflector::underscore($this->plugin) : null;
+		$actionDefaults = [
+			'plugin' => $plugin,
+			'controller' => Inflector::underscore($this->request->params['controller']),
+			'action' => $this->request->params['action'],
+		];
+
+		$action = (array)$options['url'] + $actionDefaults;
+
+		$pk = $context->primaryKey();
+		if (count($pk)) {
+			$id = $context->val($pk[0]);
+		}
+		if (empty($action[0]) && isset($id)) {
+			$action[0] = $id;
+		}
+		return $action;
 	}
 
 /**
@@ -495,7 +497,7 @@ class FormHelper extends Helper {
 			$this->_lastAction,
 			serialize($fields),
 			$unlocked,
-			Configure::read('Security.salt')
+			Security::salt()
 		);
 		$fields = Security::hash(implode('', $hashParts), 'sha1');
 

@@ -282,10 +282,9 @@ class Session {
 
 		foreach ($options as $setting => $value) {
 			if (ini_set($setting, $value) === false) {
-				throw new \RuntimeException(sprintf(
-					sprintf('Unable to configure the session, setting %s failed.'),
-					$setting
-				));
+				throw new \RuntimeException(
+					sprintf('Unable to configure the session, setting %s failed.', $setting)
+				);
 			}
 		}
 	}
@@ -294,8 +293,7 @@ class Session {
  * Starts the Session.
  *
  * @return bool True if session was started
- * @throws \RuntimeException if the session was already started or headers were already
- * sent
+ * @throws \RuntimeException if the session was already started
  */
 	public function start() {
 		if ($this->_started) {
@@ -312,9 +310,7 @@ class Session {
 		}
 
 		if (ini_get('session.use_cookies') && headers_sent($file, $line)) {
-			throw new \RuntimeException(
-				sprintf('Cannot start session, headers already sent in "%s" at line %d', $file, $line)
-			);
+			return;
 		}
 
 		if (!session_start()) {

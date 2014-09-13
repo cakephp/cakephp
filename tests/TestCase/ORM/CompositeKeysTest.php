@@ -136,7 +136,7 @@ class CompositeKeyTest extends TestCase {
 
 		$results = $query->repository($table)
 			->select()
-			->contain(['SiteArticles' => ['conditions' => ['id' => 2]]])
+			->contain(['SiteArticles' => ['conditions' => ['SiteArticles.id' => 2]]])
 			->hydrate(false)
 			->toArray();
 		$expected[0]['articles'] = [];

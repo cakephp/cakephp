@@ -57,4 +57,19 @@ class EventManagerTraitTest extends TestCase {
 
 		$this->assertSame($eventManager, $this->subject->eventManager());
 	}
+
+/**
+ * testDispatchEvent
+ *
+ * @return void
+ */
+	public function testDispatchEvent() {
+
+		$event = $this->subject->dispatchEvent('some.event', ['foo' => 'bar']);
+
+		$this->assertInstanceOf('\Cake\Event\Event', $event);
+		$this->assertSame($this->subject, $event->subject);
+		$this->assertEquals('some.event', $event->name);
+		$this->assertEquals(['foo' => 'bar'], $event->data);
+	}
 }

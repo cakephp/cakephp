@@ -234,7 +234,7 @@ class Controller implements EventListener {
  * @param \Cake\Network\Response $response Response object for this controller.
  * @param string $name Override the name useful in testing when using mocks.
  */
-	public function __construct($request = null, $response = null, $name = null) {
+	public function __construct(Request $request = null, Response $response = null, $name = null) {
 		if ($this->name === null && $name === null) {
 			list(, $name) = namespaceSplit(get_class($this));
 			$name = substr($name, 0, -10);
@@ -300,14 +300,14 @@ class Controller implements EventListener {
 	}
 
 /**
- * Provides backwards compatibility to avoid problems with empty and isset to alias properties.
+ * Magic accessor for model autoloading.
  *
  * @param string $name Property name
  * @return bool
  */
 	public function __get($name) {
-		if (strpos($this->modelClass, $name) !== false) {
-			list($plugin, $class) = pluginSplit($this->modelClass, true);
+		list($plugin, $class) = pluginSplit($this->modelClass, true);
+		if ($class === $name) {
 			$this->loadModel($plugin . $class);
 			return $this->{$class};
 		}
@@ -384,16 +384,13 @@ class Controller implements EventListener {
 	}
 
 /**
- * Check if the request's action is marked as private, with an underscore,
- * or if the request is attempting to directly accessing a prefixed action.
+ * Check if the request's action is a public method.
  *
  * @param \ReflectionMethod $method The method to be invoked.
- * @param \Cake\Network\Request $request The request to check.
  * @return bool
  */
-	protected function _isPrivateAction(\ReflectionMethod $method, Request $request) {
+	protected function _isPrivateAction(\ReflectionMethod $method) {
 		return (
-			$method->name[0] === '_' ||
 			!$method->isPublic() ||
 			!in_array($method->name, $this->methods)
 		);
@@ -471,11 +468,11 @@ class Controller implements EventListener {
  * @return void|\Cake\Network\Response
  */
 	public function startupProcess() {
-		$event = $this->eventManager()->dispatch(new Event('Controller.initialize', $this));
+		$event = $this->dispatchEvent('Controller.initialize');
 		if ($event->result instanceof Response) {
 			return $event->result;
 		}
-		$event = $this->eventManager()->dispatch(new Event('Controller.startup', $this));
+		$event = $this->dispatchEvent('Controller.startup');
 		if ($event->result instanceof Response) {
 			return $event->result;
 		}
@@ -491,7 +488,7 @@ class Controller implements EventListener {
  * @return void|\Cake\Network\Response
  */
 	public function shutdownProcess() {
-		$event = $this->eventManager()->dispatch(new Event('Controller.shutdown', $this));
+		$event = $this->dispatchEvent('Controller.shutdown');
 		if ($event->result instanceof Response) {
 			return $event->result;
 		}
@@ -515,8 +512,7 @@ class Controller implements EventListener {
 			$response->statusCode($status);
 		}
 
-		$event = new Event('Controller.beforeRedirect', $this, [$url, $response]);
-		$event = $this->eventManager()->dispatch($event);
+		$event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $response]);
 		if ($event->result instanceof Response) {
 			return $event->result;
 		}
@@ -562,8 +558,7 @@ class Controller implements EventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::render
  */
 	public function render($view = null, $layout = null) {
-		$event = new Event('Controller.beforeRender', $this);
-		$event = $this->eventManager()->dispatch($event);
+		$event = $this->dispatchEvent('Controller.beforeRender');
 		if ($event->result instanceof Response) {
 			$this->autoRender = false;
 			return $event->result;

@@ -31,7 +31,7 @@ class BelongsToMany extends Association {
 
 	use ExternalAssociationTrait {
 		_options as _externalOptions;
-		_addFilteringCondition as _addExternalConditions;
+		_buildQuery as _buildBaseQuery;
 	}
 
 /**
@@ -863,19 +863,31 @@ class BelongsToMany extends Association {
 	}
 
 /**
- * Appends any conditions required to load the relevant set of records in the
- * target table query given a filter key and some filtering values.
+ * Auxiliary function to construct a new Query object to return all the records
+ * in the target table that are associated to those specified in $options from
+ * the source table
  *
- * @param \Cake\ORM\Query $query target table's query
- * @param string $key the fields that should be used for filtering
- * @param mixed $filter the value that should be used to match for $key
+ * @param array $options options accepted by eagerLoader()
  * @return \Cake\ORM\Query
+ * @throws \InvalidArgumentException When a key is required for associations but not selected.
  */
-	protected function _addFilteringCondition($query, $key, $filter) {
+	protected function _buildQuery($options) {
 		$name = $this->_junctionAssociationName();
-		return $query->matching($name, function($q) use ($key, $filter) {
-			return $this->_addExternalConditions($q, $key, $filter);
-		});
+		$query = $this->_buildBaseQuery($options);
+		$joins = $query->join() ?: [];
+		$keys = $this->_linkField($options);
+
+		$matching = [
+			$name => [
+				'table' => $this->junction()->table(),
+				'conditions' => $keys,
+				'type' => 'INNER'
+			]
+		];
+
+		$joins = $matching + $joins;
+		$query->join($joins, [], true)->matching($name);
+		return $query;
 	}
 
 /**

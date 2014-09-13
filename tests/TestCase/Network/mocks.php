@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP : Rapid Development Framework (http://cakephp.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,15 +8,21 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
- * @since         2.0.0
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Routing\Router;
 
-Router::extensions('json');
-Router::scope('/', function($routes) {
-	$routes->connect('/', ['controller' => 'pages', 'action' => 'display', 'home']);
-	$routes->connect('/some_alias', array('controller' => 'tests_apps', 'action' => 'some_method'));
-	$routes->fallbacks();
-});
+namespace Cake\Network {
+
+/**
+ * Mocks the headers_sent() function when invoked from the Cake\Network
+ * namespace so that it always returns false
+ *
+ * @return bool
+ */
+	function headers_sent() {
+		return false;
+	}
+
+}

@@ -154,17 +154,11 @@ class PaginatorComponent extends Component {
 		$options = $this->checkLimit($options);
 
 		$options += ['page' => 1];
-		$options['page'] = intval($options['page']) < 1 ? 1 : (int)$options['page'];
-
-		if (!isset($options['finder']) && isset($options['findType'])) {
-			trigger_error('You should use finder instead of findType', E_USER_DEPRECATED);
-			$options['finder'] = $options['findType'];
-		}
-		$type = !empty($options['finder']) ? $options['finder'] : 'all';
-		unset($options['finder'], $options['maxLimit']);
+		$options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
+		list($finder, $options) = $this->_extractFinder($options);
 
 		if (empty($query)) {
-			$query = $object->find($type, $options);
+			$query = $object->find($finder, $options);
 		}
 
 		$query->applyOptions($options);
@@ -177,7 +171,7 @@ class PaginatorComponent extends Component {
 
 		$page = $options['page'];
 		$limit = $options['limit'];
-		$pageCount = intval(ceil($count / $limit));
+		$pageCount = (int)ceil($count / $limit);
 		$requestedPage = $page;
 		$page = max(min($page, $pageCount), 1);
 		$request = $this->_registry->getController()->request;
@@ -190,7 +184,7 @@ class PaginatorComponent extends Component {
 		}
 
 		$paging = array(
-			'finder' => $type,
+			'finder' => $finder,
 			'page' => $page,
 			'current' => $numResults,
 			'count' => $count,
@@ -218,6 +212,30 @@ class PaginatorComponent extends Component {
 		}
 
 		return $results;
+	}
+
+/**
+ * Extracts the finder name and options out of the provided pagination options
+ *
+ * @param array $options the pagination options
+ * @return array An array containing in the first position the finder name and
+ * in the second the options to be passed to it
+ */
+	protected function _extractFinder($options) {
+		if (!isset($options['finder']) && isset($options['findType'])) {
+			trigger_error('You should use finder instead of findType', E_USER_DEPRECATED);
+			$options['finder'] = $options['findType'];
+		}
+
+		$type = !empty($options['finder']) ? $options['finder'] : 'all';
+		unset($options['finder'], $options['maxLimit']);
+
+		if (is_array($type)) {
+			$options = $options + (array)current($type);
+			$type = key($type);
+		}
+
+		return [$type, $options];
 	}
 
 /**
