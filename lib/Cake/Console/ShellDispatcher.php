@@ -9,10 +9,10 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright	 Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link		  http://cakephp.org CakePHP(tm) Project
- * @since		 CakePHP(tm) v 2.0
- * @license	   http://www.opensource.org/licenses/mit-license.php MIT License
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         CakePHP(tm) v 2.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -49,9 +49,9 @@ class ShellDispatcher {
  * The execution of the script is stopped after dispatching the request with
  * a status code of either 0 or 1 according to the result of the dispatch.
  *
- * @param array $args the argv from PHP
+ * @param array $args The argv from PHP.
  * @param bool $bootstrap Should the environment be bootstrapped.
- * @param bool $gui Whether the method is called from the command line or a controller.
+ * @param bool $gui Whether the instance is created from the command line or a controller.
  */
 	public function __construct($args = array(), $bootstrap = true, $gui = false) {
 		set_time_limit(0);
@@ -191,7 +191,7 @@ class ShellDispatcher {
 	}
 
 /**
- * Dispatches a CLI request
+ * Dispatches a CLI request.
  *
  * @return bool
  * @throws MissingShellMethodException
@@ -239,12 +239,12 @@ class ShellDispatcher {
 	}
 
 /**
- * Get shell to use, either plugin shell or application shell
+ * Get shell to use, either plugin shell or application shell.
  *
  * All paths in the loaded shell paths are searched.
  *
- * @param string $shell Optionally the name of a plugin
- * @return mixed An object
+ * @param string $shell Optionally the name of a plugin.
+ * @return mixed An object.
  * @throws MissingShellException when errors are encountered.
  */
 	protected function _getShell($shell) {
@@ -268,9 +268,9 @@ class ShellDispatcher {
 	}
 
 /**
- * Parses command line options and extracts the directory paths from $params
+ * Parses command line options and extracts the directory paths from $params.
  *
- * @param array $args Parameters to parse
+ * @param array $args Parameters to parse.
  * @return void
  */
 	public function parseParams($args) {
@@ -328,7 +328,7 @@ class ShellDispatcher {
 	}
 
 /**
- * Parses out the paths from from the argv
+ * Parses out the paths from from the argv.
  *
  * @param array $args The argv to parse.
  * @return void
@@ -350,16 +350,16 @@ class ShellDispatcher {
 	}
 
 /**
- * Removes first argument and shifts other arguments up
+ * Removes first argument and shifts other arguments up.
  *
- * @return mixed Null if there are no arguments otherwise the shifted argument
+ * @return mixed Null if there are no arguments otherwise the shifted argument.
  */
 	public function shiftArgs() {
 		return array_shift($this->args);
 	}
 
 /**
- * Shows console help. Performs an internal dispatch to the CommandList Shell
+ * Shows console help. Performs an internal dispatch to the CommandList Shell.
  *
  * @return void
  */
@@ -370,13 +370,13 @@ class ShellDispatcher {
 
 /**
  * Stop execution of the current script, or return status.
+ * Good exit code for command line = 0
+ * Good return value for code = True
  *
- * @param int|string $status see http://php.net/exit for values
+ * @param int|string $status see http://php.net/exit for values.
  * @return mixed
  */
 	protected function _stop($status = 0) {
-		// Good exit code for command line = 0
-		// Good return value for code = true
 		if ($this->gui) {
 			return !$status;
 		}
