@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
+use Cake\Shell\Task\CommandTask;
 
 /**
  * Shell dispatcher handles dispatching cli commands.
@@ -185,15 +186,33 @@ class ShellDispatcher {
  * For all loaded plugins, add a short alias
  *
  * This permits a plugin which implements a shell of the same name to be accessed
- * Using the plugin name alone
+ * Using the shell name alone
  *
  * @return void
  */
 	public function addShortPluginAliases() {
 		$plugins = Plugin::loaded();
 
+		$task = new CommandTask();
+		$list = $task->getShellList();
+		$fixed = array_flip($list['app']) + array_flip($list['CORE']);
+		$aliases = [];
+
 		foreach ($plugins as $plugin) {
-			self::alias($plugin, "$plugin.$plugin");
+			if (!isset($list[$plugin])) {
+				continue;
+			}
+
+			foreach ($list[$plugin] as $shell) {
+				$aliases += [$shell => $plugin];
+			}
+		}
+
+		foreach ($aliases as $shell => $plugin) {
+			if (isset($fixed[$shell])) {
+				continue;
+			}
+			static::alias($shell, "$plugin.$shell");
 		}
 	}
 
