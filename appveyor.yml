@@ -13,12 +13,9 @@ environment:
     db_password: 'Password12!'
     PHP: "C:/PHP"
   matrix:
-      - db: 2008
-        db_dsn: 'sqlsrv:Server=.\SQL2008R2SP2;Database=cakephp;MultipleActiveResultSets=false'
       - db: 2012
         db_dsn: 'sqlsrv:Server=.\SQL2012SP1;Database=cakephp;MultipleActiveResultSets=false'
 services:
-  - mssql2008r2sp2
   - mssql2012sp1
 init:
   - SET PATH=C:\php\;%PATH%
@@ -41,7 +38,6 @@ install:
   - php -r "readfile('https://getcomposer.org/installer');" | php
   - php composer.phar install --prefer-dist --no-interaction --dev
 test_script:
-  - sqlcmd -S ".\SQL2008R2SP2" -U sa -P Password12! -Q "create database cakephp;"
   - sqlcmd -S ".\SQL2012SP1" -U sa -P Password12! -Q "create database cakephp;"
   - cd C:\projects\cakephp
   - vendor\bin\phpunit.bat
