@@ -213,7 +213,7 @@ class ShellDispatcher {
 					Log::write(
 						'debug',
 						"command '$shell' in plugin '$plugin' was not aliased, conflicts with '$other'",
-						['console']
+						['shell-dispatcher']
 					);
 				}
 				$aliases += [$shell => $plugin];
@@ -224,7 +224,8 @@ class ShellDispatcher {
 			if (isset($fixed[$shell])) {
 				Log::write(
 					'debug',
-					"command '$shell' in plugin '$plugin' was not aliased, conflicts with another shell"
+					"command '$shell' in plugin '$plugin' was not aliased, conflicts with another shell",
+					['shell-dispatcher']
 				);
 				continue;
 			}
