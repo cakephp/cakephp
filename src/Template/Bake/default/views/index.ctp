@@ -64,7 +64,11 @@ $fields = collection($fields)
 				}
 			}
 			if ($isKey !== true) {
-				echo "\t\t\t<td><?= h(\${$singularVar}->{$field}) ?>&nbsp;</td>\n";
+				if (!in_array($schema->columnType($field), ['integer', 'biginteger', 'decimal', 'float'])) {
+					echo "\t\t\t<td><?= h(\${$singularVar}->{$field}) ?></td>\n";
+				} else {
+					echo "\t\t\t<td><?= \$this->Number->format(\${$singularVar}->{$field}) ?></td>\n";
+				}
 			}
 		}
 
