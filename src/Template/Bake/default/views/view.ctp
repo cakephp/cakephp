@@ -26,7 +26,7 @@ $groupedFields = collection($fields)
 		return in_array($type, ['text', 'boolean']) ? $type : 'string';
 	})->toArray();
 
-	$groupedFields += ['number' => [], 'string' => [], 'boolean' => [], 'date' => []];
+	$groupedFields += ['number' => [], 'string' => [], 'boolean' => [], 'date' => [], 'text' => []];
 ?>
 <div class="actions columns large-2 medium-3">
 	<h3><?= "<?= __('Actions'); ?>"; ?></h3>
@@ -55,31 +55,37 @@ $groupedFields = collection($fields)
 <div class="<?= $pluralVar ?> view large-10 medium-9 columns">
 	<h2><?= "<?= h(\${$singularVar}->{$displayField}) ?>"; ?></h2>
 	<div class="row">
-		<div class="large-6 columns strings">
+		<div class="large-5 columns strings">
 <?php foreach ($groupedFields['string'] as $field) : ?>
 			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
 			<p><?= "<?= h(\${$singularVar}->{$field}) ?>" ?></p>
 <?php endforeach; ?>
 		</div>
-		<div class="large-2 columns numbers">
+		<div class="large-2 larege-offset-1 columns numbers end">
 <?php foreach ($groupedFields['number'] as $field) : ?>
 			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
 			<p><?= "<?= \$this->Number->format(\${$singularVar}->{$field}) ?>" ?></p>
 <?php endforeach; ?>
 		</div>
-		<div class="large-2 columns dates">
+		<div class="large-2 columns dates end">
 <?php foreach ($groupedFields['date'] as $field) : ?>
 			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
-			<p><?= "<?= h(\${$singularVar}->{$field}->niceShort()) ?>" ?></p>
+			<p><?= "<?= h(\${$singularVar}->{$field}) ?>" ?></p>
 <?php endforeach; ?>
 		</div>
-		<div class="large-2 columns booleans">
+		<div class="large-2 columns booleans end">
 <?php foreach ($groupedFields['boolean'] as $field) : ?>
 			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
 			<p><?= "<?= \${$singularVar}->{$field} ? __('Yes') : __('No'); ?>" ?></p>
 <?php endforeach; ?>
 		</div>
 	</div>
+<?php foreach ($groupedFields['text'] as $field) : ?>
+	<div class="row">
+		<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
+		<?= "<?= \$this->Text->autoParagraph(h(\${$singularVar}->{$field})); ?>" ?>
+	</div>
+<?php endforeach; ?>
 	<dl>
 <?php
 foreach ($fields as $field) {
