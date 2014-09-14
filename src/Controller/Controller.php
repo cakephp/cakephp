@@ -36,33 +36,40 @@ use LogicException;
  * Provides basic functionality, such as rendering views inside layouts,
  * automatic model availability, redirection, callbacks, and more.
  *
- * Controllers should provide a number of 'action' methods. These are public methods on the controller
- * that are not prefixed with a '_' and not part of Controller. Each action serves as an endpoint for
- * performing a specific action on a resource or collection of resources. For example adding or editing a new
+ * Controllers should provide a number of 'action' methods. These are public
+ * methods on a controller that are not inherited from `Controller`.
+ * Each action serves as an endpoint for performing a specific action on a
+ * resource or collection of resources. For example adding or editing a new
  * object, or listing a set of objects.
  *
- * You can access request parameters, using `$this->request`. The request object contains all the POST, GET and FILES
- * that were part of the request.
+ * You can access request parameters, using `$this->request`. The request object
+ * contains all the POST, GET and FILES that were part of the request.
  *
- * After performing the required actions, controllers are responsible for creating a response. This usually
- * takes the form of a generated View, or possibly a redirection to another controller action. In either case
- * `$this->response` allows you to manipulate all aspects of the response.
+ * After performing the required action, controllers are responsible for
+ * creating a response. This usually takes the form of a generated `View`, or
+ * possibly a redirection to another URL. In either case `$this->response`
+ * allows you to manipulate all aspects of the response.
  *
- * Controllers are created by Dispatcher based on request parameters and routing. By default controllers and actions
- * use conventional names. For example `/posts/index` maps to `PostsController::index()`. You can re-map URLs
- * using Router::connect().
+ * Controllers are created by `Dispatcher` based on request parameters and
+ * routing. By default controllers and actions use conventional names.
+ * For example `/posts/index` maps to `PostsController::index()`. You can re-map
+ * URLs using Router::connect() or RouterBuilder::connect().
  *
  * ### Life cycle callbacks
  *
- * CakePHP fires a number of life cycle callbacks during each request. By implementing a method
- * you can receive the related events. The available callbacks are:
+ * CakePHP fires a number of life cycle callbacks during each request.
+ * By implementing a method you can receive the related events. The available
+ * callbacks are:
  *
- * - `beforeFilter(Event $event)` - Called before each action. This is a good place to
- *   do general logic that applies to all actions.
- * - `beforeRender(Event $event)` - Called before the view is rendered.
- * - `beforeRedirect(Cake\Event\Event $event $url, Cake\Network\Response $response)` - Called before
- *   a redirect is done.
- * - `afterFilter(Event $event)` - Called after each action is complete and after the view is rendered.
+ * - `beforeFilter(Event $event)`
+ *   Called before each action. This is a good place to do general logic that
+ *   applies to all actions.
+ * - `beforeRender(Event $event)`
+ *   Called before the view is rendered.
+ * - `beforeRedirect(Cake\Event\Event $event $url, Cake\Network\Response $response)`
+ *    Called before a redirect is done.
+ * - `afterFilter(Event $event)`
+ *   Called after each action is complete and after the view is rendered.
  *
  * @property      \Cake\Controller\Component\AuthComponent $Auth
  * @property      \Cake\Controller\Component\CookieComponent $Cookie
@@ -71,7 +78,7 @@ use LogicException;
  * @property      \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property      \Cake\Controller\Component\SecurityComponent $Security
  * @property      \Cake\Controller\Component\SessionComponent $Session
- * @link          http://book.cakephp.org/2.0/en/controllers.html
+ * @link          http://book.cakephp.org/3.0/en/controllers.html
  */
 class Controller implements EventListener {
 
