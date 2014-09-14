@@ -2743,10 +2743,11 @@ class DboSource extends DataSource {
 		$operatorMatch .= ')\\x20?)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)/is';
 		$bound = (strpos($key, '?') !== false || (is_array($value) && strpos($key, ':') !== false));
 
+		$key = trim($key);
 		if (strpos($key, ' ') === false) {
 			$operator = '=';
 		} else {
-			list($key, $operator) = explode(' ', trim($key), 2);
+			list($key, $operator) = explode(' ', $key, 2);
 
 			if (!preg_match($operatorMatch, trim($operator)) && strpos($operator, ' ') !== false) {
 				$key = $key . ' ' . $operator;
