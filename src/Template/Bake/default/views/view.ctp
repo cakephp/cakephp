@@ -116,9 +116,11 @@ $groupedFields += ['number' => [], 'string' => [], 'boolean' => [], 'date' => []
 	</div>
 <?php if ($groupedFields['text']) : ?>
 <?php foreach ($groupedFields['text'] as $field) : ?>
-	<div class="row">
-		<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
-		<?= "<?= \$this->Text->autoParagraph(h(\${$singularVar}->{$field})); ?>" ?>
+	<div class="row texts">
+		<div class="columns large-9">
+			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
+			<?= "<?= \$this->Text->autoParagraph(h(\${$singularVar}->{$field})); ?>" ?>
+		</div>
 	</div>
 <?php endforeach; ?>
 <?php endif; ?>
@@ -129,8 +131,9 @@ foreach ($relations as $alias => $details):
 	$otherSingularVar = Inflector::variable($alias);
 	$otherPluralHumanName = Inflector::humanize($details['controller']);
 	?>
-<div class="related">
-	<h3 class="subheader"><?= "<?= __('Related " . $otherPluralHumanName . "') ?>"; ?></h3>
+<div class="related row">
+	<div class="column large-12">
+	<h4 class="subheader"><?= "<?= __('Related " . $otherPluralHumanName . "') ?>"; ?></h4>
 	<?= "<?php if (!empty(\${$singularVar}->{$details['property']})): ?>\n"; ?>
 	<table cellpadding="0" cellspacing="0">
 		<tr>
@@ -161,10 +164,6 @@ echo "\t\t<?php endforeach; ?>\n";
 ?>
 	</table>
 <?= "\t<?php endif; ?>\n"; ?>
-	<div class="actions">
-		<ul>
-			<li><?= "<?= \$this->Html->link(__('New " . Inflector::humanize(Inflector::singularize(Inflector::underscore($alias))) . "'), ['controller' => '{$details['controller']}', 'action' => 'add']) ?>"; ?> </li>
-		</ul>
 	</div>
 </div>
 <?php endforeach; ?>
