@@ -71,4 +71,29 @@ trait ViewVarsTrait {
 		$this->viewVars = $data + $this->viewVars;
 	}
 
+/**
+ * Get/Set valid view options in the object's _validViewOptions property. The proptery is
+ * created as an empty array if it is not set. If called without any parameters it will
+ * return the current list of valid view options. See `createView()`.
+ *
+ * @param string|array $options string or array of string to be appended to _validViewOptions.
+ * @param bool $merge Whether to merge with or override existing valid View options.
+ *   Defaults to `true`.
+ * @return array The updated view options as an array.
+ */
+	public function viewOptions($options = null, $merge = true) {
+		if (!isset($this->_validViewOptions)) {
+			$this->_validViewOptions = [];
+		}
+
+		if ($options == null) {
+			return $this->_validViewOptions;
+		}
+
+		if (!$merge) {
+			return $this->_validViewOptions = (array)$options;
+		}
+
+		return $this->_validViewOptions = array_merge($this->_validViewOptions, (array)$options);
+	}
 }
