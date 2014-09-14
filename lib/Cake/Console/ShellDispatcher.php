@@ -18,7 +18,7 @@
 /**
  * Shell dispatcher handles dispatching cli commands.
  *
- * @package	   Cake.Console
+ * @package       Cake.Console
  */
 class ShellDispatcher {
 
