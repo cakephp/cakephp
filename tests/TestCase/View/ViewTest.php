@@ -906,14 +906,18 @@ class ViewTest extends TestCase {
 	}
 
 /**
- * Test __get allowing access to helpers.
+ * Test loading helper using addHelper().
  *
  * @return void
  */
-	public function testMagicGetAndAddHelper() {
+	public function testAddHelper() {
 		$View = new View();
-		$View->addHelper('Html');
+
+		$View->addHelper('Html', ['foo' => 'bar']);
 		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
+
+		$config = $View->Html->config();
+		$this->assertEquals('bar', $config['foo']);
 	}
 
 /**
@@ -924,11 +928,17 @@ class ViewTest extends TestCase {
 	public function testLoadHelpers() {
 		$View = new View();
 
-		$View->helpers = array('Html', 'Form');
+		$View->helpers = ['Html' => ['foo' => 'bar'], 'Form' => ['foo' => 'baz']];
 		$View->loadHelpers();
 
 		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
 		$this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
+
+		$config = $View->Html->config();
+		$this->assertEquals('bar', $config['foo']);
+
+		$config = $View->Form->config();
+		$this->assertEquals('baz', $config['foo']);
 	}
 
 /**
