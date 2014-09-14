@@ -320,14 +320,15 @@ class IntegrationTestCase extends TestCase {
 			'cookies' => $this->_cookie,
 			'session' => $session,
 		];
+		$env[];
 		if (isset($this->_request['headers'])) {
-			$env = [];
 			foreach ($this->_request['headers'] as $k => $v) {
 				$env['HTTP_' . str_replace('-', '_', strtoupper($k))] = $v;
 			}
-			$props['environment'] = $env;
 			unset($this->_request['headers']);
 		}
+		$env['REQUEST_METHOD'] = $method;
+		$props['environment'] = $env;
 		$props += $this->_request;
 		return new Request($props);
 	}
