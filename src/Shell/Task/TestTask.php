@@ -363,7 +363,6 @@ class TestTask extends BakeTask {
  * @return void
  */
 	protected function _processController($subject) {
-		$subject->constructClasses();
 		$models = [$subject->modelClass];
 		foreach ($models as $model) {
 			list(, $model) = pluginSplit($model);

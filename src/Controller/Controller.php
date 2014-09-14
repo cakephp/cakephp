@@ -303,7 +303,7 @@ class Controller implements EventListener {
  * This method will also set the component to a property.
  * For example:
  *
- * `$this->addComponent('DebugKit.Toolbar');`
+ * `$this->addComponent('Acl.Acl');`
  *
  * Will result in a `Toolbar` property being set.
  *

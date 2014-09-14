@@ -31,7 +31,6 @@ class ErrorController extends Controller {
  */
 	public function __construct($request = null, $response = null) {
 		parent::__construct($request, $response);
-		$this->constructClasses();
 		if (count(Router::extensions()) &&
 			!isset($this->RequestHandler)
 		) {

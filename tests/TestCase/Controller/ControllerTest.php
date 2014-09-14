@@ -333,9 +333,8 @@ class ControllerTest extends TestCase {
 		Plugin::load('TestPlugin');
 
 		$Controller = new TestPluginController(new Request(), new Response());
-		$Controller->components[] = 'TestPlugin.Other';
+		$Controller->addComponent('TestPlugin.Other');
 
-		$Controller->constructClasses();
 		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $Controller->Other);
 	}
 
@@ -507,9 +506,7 @@ class ControllerTest extends TestCase {
  */
 	public function testMergeVars() {
 		$request = new Request();
-
 		$TestController = new TestController($request);
-		$TestController->constructClasses();
 
 		$expected = [
 			'Html' => null,
@@ -524,29 +521,11 @@ class ControllerTest extends TestCase {
 		$this->assertEquals($expected, $TestController->components);
 
 		$TestController = new AnotherTestController($request);
-		$TestController->constructClasses();
-
 		$this->assertEquals(
 			'Posts',
 			$TestController->modelClass,
 			'modelClass should not be overwritten when defined.'
 		);
-	}
-
-/**
- * test that options from child classes replace those in the parent classes.
- *
- * @return void
- */
-	public function testChildComponentOptionsSupercedeParents() {
-		$request = new Request('controller_posts/index');
-
-		$TestController = new TestController($request);
-
-		$expected = array('foo');
-		$TestController->components = array('Cookie' => $expected);
-		$TestController->constructClasses();
-		$this->assertEquals($expected, $TestController->components['Cookie']);
 	}
 
 /**
@@ -685,7 +664,6 @@ class ControllerTest extends TestCase {
 
 		$Controller = new Controller($request, $response);
 		$Controller->request->query['url'] = [];
-		$Controller->constructClasses();
 		$this->assertEquals([], $Controller->paginate);
 
 		$this->assertNotContains('Paginator', $Controller->helpers);
@@ -716,7 +694,6 @@ class ControllerTest extends TestCase {
 
 		$Controller = new Controller($request, $response);
 		$Controller->request->query['url'] = [];
-		$Controller->constructClasses();
 		$Controller->modelClass = 'Posts';
 		$results = $Controller->paginate();
 

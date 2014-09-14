@@ -1115,7 +1115,6 @@ class ViewTest extends TestCase {
 		$this->assertNull($View->render(false, 'ajax2'));
 
 		$this->PostsController->helpers = array('Session', 'Html');
-		$this->PostsController->constructClasses();
 		$this->PostsController->request->params['action'] = 'index';
 		Configure::write('Cache.check', true);
 

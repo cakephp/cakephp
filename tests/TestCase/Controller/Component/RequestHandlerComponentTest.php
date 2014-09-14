@@ -68,7 +68,6 @@ class RequestHandlerComponentTest extends TestCase {
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', 'stop'));
 		$this->Controller = new RequestHandlerTestController($request, $response);
-		$this->Controller->constructClasses();
 		$this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
 
 		Router::scope('/', function($routes) {

@@ -389,7 +389,6 @@ class TestTaskTest extends TestCase {
 
 		$this->assertNotContains('function setUp()', $result);
 		$this->assertNotContains("\$this->Posts = new PostsController()", $result);
-		$this->assertNotContains("\$this->Posts->constructClasses()", $result);
 
 		$this->assertNotContains('function tearDown()', $result);
 		$this->assertNotContains('unset($this->Posts)', $result);
@@ -417,7 +416,6 @@ class TestTaskTest extends TestCase {
 
 		$this->assertNotContains('function setUp()', $result);
 		$this->assertNotContains("\$this->Posts = new PostsController()", $result);
-		$this->assertNotContains("\$this->Posts->constructClasses()", $result);
 
 		$this->assertNotContains('function tearDown()', $result);
 		$this->assertNotContains('unset($this->Posts)', $result);
