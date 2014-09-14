@@ -823,7 +823,6 @@ class ViewTest extends TestCase {
 	public function testElementCacheHelperNoCache() {
 		$Controller = new ViewPostsController();
 		$View = $Controller->createView();
-		$View->loadHelpers();
 		$result = $View->element('test_element', array('ram' => 'val', 'test' => array('foo', 'bar')));
 		$this->assertEquals('this is the test element', $result);
 	}
