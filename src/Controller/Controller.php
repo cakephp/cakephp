@@ -459,8 +459,7 @@ class Controller implements EventListener {
 		$registry = $this->components();
 		$components = $registry->normalizeArray($this->components);
 		foreach ($components as $properties) {
-			list(, $class) = pluginSplit($properties['class']);
-			$this->{$class} = $registry->load($properties['class'], $properties['config']);
+			$this->addComponent($properties['class'], $properties['config']);
 		}
 	}
 
