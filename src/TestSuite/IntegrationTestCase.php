@@ -320,7 +320,7 @@ class IntegrationTestCase extends TestCase {
 			'cookies' => $this->_cookie,
 			'session' => $session,
 		];
-		$env[];
+		$env = [];
 		if (isset($this->_request['headers'])) {
 			foreach ($this->_request['headers'] as $k => $v) {
 				$env['HTTP_' . str_replace('-', '_', strtoupper($k))] = $v;
