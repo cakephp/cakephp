@@ -754,6 +754,7 @@ class View {
 		}
 		return $this->_helpers;
 	}
+
 /**
  * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
  *
