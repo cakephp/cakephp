@@ -191,8 +191,11 @@ class ShellTest extends TestCase {
 		$this->assertEquals('Articles', $Shell->modelClass);
 
 		Plugin::load('TestPlugin');
-		$this->Shell->loadModel('TestPlugin.TestPluginComments');
-		$this->assertTrue(isset($this->Shell->TestPluginComments));
+		$result = $this->Shell->loadModel('TestPlugin.TestPluginComments');
+		$this->assertInstanceOf(
+			'TestPlugin\Model\Table\TestPluginCommentsTable',
+			$result
+		);
 		$this->assertInstanceOf(
 			'TestPlugin\Model\Table\TestPluginCommentsTable',
 			$this->Shell->TestPluginComments

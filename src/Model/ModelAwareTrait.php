@@ -71,7 +71,7 @@ trait ModelAwareTrait {
  * @param string $modelClass Name of model class to load. Defaults to $this->modelClass
  * @param string $type The type of repository to load. Defaults to 'Table' which
  *   delegates to Cake\ORM\TableRegistry.
- * @return bool True when single repository found and instance created.
+ * @return object The model instance created.
  * @throws \Cake\Model\Exception\MissingModelException If the model class cannot be found.
  * @throws \InvalidArgumentException When using a type that has not been registered.
  */
@@ -81,7 +81,7 @@ trait ModelAwareTrait {
 		}
 
 		if (isset($this->{$modelClass})) {
-			return true;
+			return $this->{$modelClass};
 		}
 
 		list($plugin, $modelClass) = pluginSplit($modelClass, true);
@@ -97,7 +97,7 @@ trait ModelAwareTrait {
 		if (!$this->{$modelClass}) {
 			throw new MissingModelException([$modelClass, $type]);
 		}
-		return true;
+		return $this->{$modelClass};
 	}
 
 /**

@@ -272,7 +272,10 @@ class ControllerTest extends TestCase {
 		$this->assertFalse(isset($Controller->Articles));
 
 		$result = $Controller->loadModel('Articles');
-		$this->assertTrue($result);
+		$this->assertInstanceOf(
+			'TestApp\Model\Table\ArticlesTable',
+			$result
+		);
 		$this->assertInstanceOf(
 			'TestApp\Model\Table\ArticlesTable',
 			$Controller->Articles
@@ -293,7 +296,10 @@ class ControllerTest extends TestCase {
 		$this->assertFalse(isset($Controller->TestPluginComments));
 
 		$result = $Controller->loadModel('TestPlugin.TestPluginComments');
-		$this->assertTrue($result);
+		$this->assertInstanceOf(
+			'TestPlugin\Model\Table\TestPluginCommentsTable',
+			$result
+		);
 		$this->assertInstanceOf(
 			'TestPlugin\Model\Table\TestPluginCommentsTable',
 			$Controller->TestPluginComments
