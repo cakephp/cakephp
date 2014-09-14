@@ -13,6 +13,20 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Utility\Inflector;
+
+$groupedFields = collection($fields)
+	->groupBy(function($field) use ($schema) {
+		$type = $schema->columnType($field);
+		if (in_array($type, ['integer', 'float', 'decimal', 'biginteger'])) {
+			return 'number';
+		}
+		if (in_array($type, ['date', 'time', 'datetime', 'timestamp'])) {
+			return 'date';
+		}
+		return in_array($type, ['text', 'boolean']) ? $type : 'string';
+	})->toArray();
+
+	$groupedFields += ['number' => [], 'string' => [], 'boolean' => [], 'date' => []];
 ?>
 <div class="actions columns large-2 medium-3">
 	<h3><?= "<?= __('Actions'); ?>"; ?></h3>
@@ -40,6 +54,32 @@ use Cake\Utility\Inflector;
 </div>
 <div class="<?= $pluralVar ?> view large-10 medium-9 columns">
 	<h2><?= "<?= h(\${$singularVar}->{$displayField}) ?>"; ?></h2>
+	<div class="row">
+		<div class="large-6 columns strings">
+<?php foreach ($groupedFields['string'] as $field) : ?>
+			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
+			<p><?= "<?= h(\${$singularVar}->{$field}) ?>" ?></p>
+<?php endforeach; ?>
+		</div>
+		<div class="large-2 columns numbers">
+<?php foreach ($groupedFields['number'] as $field) : ?>
+			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
+			<p><?= "<?= \$this->Number->format(\${$singularVar}->{$field}) ?>" ?></p>
+<?php endforeach; ?>
+		</div>
+		<div class="large-2 columns dates">
+<?php foreach ($groupedFields['date'] as $field) : ?>
+			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
+			<p><?= "<?= h(\${$singularVar}->{$field}->niceShort()) ?>" ?></p>
+<?php endforeach; ?>
+		</div>
+		<div class="large-2 columns booleans">
+<?php foreach ($groupedFields['boolean'] as $field) : ?>
+			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
+			<p><?= "<?= \${$singularVar}->{$field} ? __('Yes') : __('No'); ?>" ?></p>
+<?php endforeach; ?>
+		</div>
+	</div>
 	<dl>
 <?php
 foreach ($fields as $field) {
@@ -66,7 +106,7 @@ foreach ($fields as $field) {
 if (!empty($associations['HasOne'])) :
 	foreach ($associations['HasOne'] as $alias => $details): ?>
 	<div class="related">
-		<h3><?= "<?= __('Related " . Inflector::humanize($details['controller']) . "') ?>"; ?></h3>
+		<h3 class="subheader"><?= "<?= __('Related " . Inflector::humanize($details['controller']) . "') ?>"; ?></h3>
 	<?= "<?php if (!empty(\${$singularVar}['{$alias}'])): ?>\n"; ?>
 		<dl>
 	<?php
@@ -100,7 +140,7 @@ foreach ($relations as $alias => $details):
 	$otherPluralHumanName = Inflector::humanize($details['controller']);
 	?>
 <div class="related">
-	<h3><?= "<?= __('Related " . $otherPluralHumanName . "') ?>"; ?></h3>
+	<h3 class="subheader"><?= "<?= __('Related " . $otherPluralHumanName . "') ?>"; ?></h3>
 	<?= "<?php if (!empty(\${$singularVar}->{$details['property']})): ?>\n"; ?>
 	<table cellpadding="0" cellspacing="0">
 		<tr>
