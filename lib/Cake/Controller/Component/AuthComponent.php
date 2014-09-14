@@ -604,7 +604,7 @@ class AuthComponent extends Component {
 			$this->Session->renew();
 			$this->Session->write(self::$sessionKey, $user);
 		}
-		return $this->loggedIn();
+		return (bool)$this->user();
 	}
 
 /**
