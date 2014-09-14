@@ -37,16 +37,25 @@ class ShellDispatcher {
 	public $args = array();
 
 /**
+ * Enables running ShellDispatcher from controller.
+ *
+ * @var bool
+ */
+	public $gui = false;
+
+/**
  * Constructor
  *
  * The execution of the script is stopped after dispatching the request with
  * a status code of either 0 or 1 according to the result of the dispatch.
  *
- * @param array $args the argv from PHP
+ * @param array $args The argv from PHP.
  * @param bool $bootstrap Should the environment be bootstrapped.
+ * @param bool $gui Whether the instance is created from the command line or a controller.
  */
-	public function __construct($args = array(), $bootstrap = true) {
+	public function __construct($args = array(), $bootstrap = true, $gui = false) {
 		set_time_limit(0);
+		$this->gui = $gui;
 		$this->parseParams($args);
 
 		if ($bootstrap) {
@@ -56,13 +65,14 @@ class ShellDispatcher {
 	}
 
 /**
- * Run the dispatcher
+ * Run the dispatcher.
  *
- * @param array $argv The argv from PHP
- * @return void
+ * @param array $argv The argv from PHP.
+ * @param bool $gui Whether the method is called from the command line or a controller.
+ * @return mixed
  */
-	public static function run($argv) {
-		$dispatcher = new ShellDispatcher($argv);
+	public static function run($argv, $gui = false) {
+		$dispatcher = new ShellDispatcher($argv, true, $gui);
 		return $dispatcher->_stop($dispatcher->dispatch() === false ? 1 : 0);
 	}
 
@@ -97,7 +107,8 @@ class ShellDispatcher {
  * @throws CakeException
  */
 	protected function _initEnvironment() {
-		if (!$this->_bootstrap()) {
+		// Prevent _bootstrap() from running if run from controller.
+		if (!$this->gui && !$this->_bootstrap()) {
 			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'lib' . DS . 'Cake exists in ' . CAKE_CORE_INCLUDE_PATH;
 			throw new CakeException($message);
 		}
@@ -180,7 +191,7 @@ class ShellDispatcher {
 	}
 
 /**
- * Dispatches a CLI request
+ * Dispatches a CLI request.
  *
  * @return bool
  * @throws MissingShellMethodException
@@ -228,12 +239,12 @@ class ShellDispatcher {
 	}
 
 /**
- * Get shell to use, either plugin shell or application shell
+ * Get shell to use, either plugin shell or application shell.
  *
  * All paths in the loaded shell paths are searched.
  *
- * @param string $shell Optionally the name of a plugin
- * @return mixed An object
+ * @param string $shell Optionally the name of a plugin.
+ * @return mixed An object.
  * @throws MissingShellException when errors are encountered.
  */
 	protected function _getShell($shell) {
@@ -257,9 +268,9 @@ class ShellDispatcher {
 	}
 
 /**
- * Parses command line options and extracts the directory paths from $params
+ * Parses command line options and extracts the directory paths from $params.
  *
- * @param array $args Parameters to parse
+ * @param array $args Parameters to parse.
  * @return void
  */
 	public function parseParams($args) {
@@ -317,7 +328,7 @@ class ShellDispatcher {
 	}
 
 /**
- * Parses out the paths from from the argv
+ * Parses out the paths from from the argv.
  *
  * @param array $args The argv to parse.
  * @return void
@@ -339,16 +350,16 @@ class ShellDispatcher {
 	}
 
 /**
- * Removes first argument and shifts other arguments up
+ * Removes first argument and shifts other arguments up.
  *
- * @return mixed Null if there are no arguments otherwise the shifted argument
+ * @return mixed Null if there are no arguments otherwise the shifted argument.
  */
 	public function shiftArgs() {
 		return array_shift($this->args);
 	}
 
 /**
- * Shows console help. Performs an internal dispatch to the CommandList Shell
+ * Shows console help. Performs an internal dispatch to the CommandList Shell.
  *
  * @return void
  */
@@ -358,12 +369,17 @@ class ShellDispatcher {
 	}
 
 /**
- * Stop execution of the current script
+ * Stop execution of the current script, or return status.
+ * Good exit code for command line = 0
+ * Good return value for code = True
  *
- * @param int|string $status see http://php.net/exit for values
- * @return void
+ * @param int|string $status see http://php.net/exit for values.
+ * @return mixed
  */
 	protected function _stop($status = 0) {
+		if ($this->gui) {
+			return !$status;
+		}
 		exit($status);
 	}
 
