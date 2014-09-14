@@ -18,7 +18,7 @@
 		"source": "https://github.com/cakephp/cakephp"
 	},
 	"require": {
-		"php": ">=5.4.19",
+		"php": ">=5.4.16",
 		"ext-intl": "*",
 		"ext-mcrypt": "*",
 		"ext-mbstring": "*",
