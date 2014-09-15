@@ -97,7 +97,7 @@ class Dispatcher implements CakeEventListener {
 
 		foreach ($filters as $index => $filter) {
 			$settings = array();
-			if (is_array($filter) && !is_int($index)) {
+			if (is_array($filter) && !is_int($index) && class_exists($index)) {
 				$settings = $filter;
 				$filter = $index;
 			}

@@ -1328,6 +1328,16 @@ class DispatcherTest extends CakeTestCase {
 		$dispatcher->dispatch($request, $response);
 		$this->assertEquals('Dispatcher.afterDispatch', $request->params['eventName']);
 
+		$dispatcher = new TestDispatcher();
+		Configure::write('Dispatcher.filters', array(
+			'filterTest' => array('callable' => array($dispatcher, 'filterTest'), 'on' => 'before')
+		));
+
+		$request = new CakeRequest('/');
+		$response = $this->getMock('CakeResponse', array('send'));
+		$dispatcher->dispatch($request, $response);
+		$this->assertEquals('Dispatcher.beforeDispatch', $request->params['eventName']);
+
 		// Test that it is possible to skip the route connection process
 		$dispatcher = new TestDispatcher();
 		Configure::write('Dispatcher.filters', array(
