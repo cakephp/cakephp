@@ -819,7 +819,7 @@ class AuthComponentTest extends TestCase {
  */
 	public function testNoRedirectOnLoginAction() {
 		$event = new Event('Controller.startup', $this->Controller);
-		$controller = $this->getMock('Cake\Controller\Controller');
+		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
 		$controller->methods = array('login');
 
 		$url = '/AuthTest/login';

@@ -97,7 +97,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$config = array(
 			'viewClassMap' => array('json' => 'MyPlugin.MyJson')
 		);
-		$controller = $this->getMock('Cake\Controller\Controller');
+		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
 		$collection = new ComponentRegistry($controller);
 		$requestHandler = new RequestHandlerComponent($collection, $config);
 		$this->assertEquals(array('json' => 'MyPlugin.MyJson'), $requestHandler->config('viewClassMap'));

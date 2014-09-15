@@ -454,6 +454,10 @@ class Controller implements EventListener {
  * @return void
  */
 	public function constructClasses() {
+		trigger_error(
+			'Controller::constructClasses() is deprecated and will be removed in the first RC release',
+			E_USER_DEPRECATED
+		);
 	}
 
 /**
