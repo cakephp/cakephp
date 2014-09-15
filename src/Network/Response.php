@@ -416,22 +416,41 @@ class Response {
 			$this->statusCode(302);
 		}
 
-		$codeMessage = $this->_statusCodes[$this->_status];
-		$this->_setCookies();
-		$this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
 		$this->_setContent();
 		$this->_setContentLength();
-		$this->_setContentType();
-		foreach ($this->_headers as $header => $values) {
-			foreach ((array)$values as $value) {
-				$this->_sendHeader($header, $value);
-			}
-		}
+		$this->sendHeaders();
+
 		if ($this->_file) {
 			$this->_sendFile($this->_file, $this->_fileRange);
 			$this->_file = $this->_fileRange = null;
 		} else {
 			$this->_sendContent($this->_body);
+		}
+
+		if (function_exists('fastcgi_finish_request')) {
+			fastcgi_finish_request();
+		}
+	}
+
+/**
+ * Sends the HTTP headers and cookies.
+ *
+ * @return void
+ */
+	public function sendHeaders() {
+		if (headers_sent()) {
+			return;
+		}
+
+		$codeMessage = $this->_statusCodes[$this->_status];
+		$this->_setCookies();
+		$this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
+		$this->_setContentType();
+
+		foreach ($this->_headers as $header => $values) {
+			foreach ((array)$values as $value) {
+				$this->_sendHeader($header, $value);
+			}
 		}
 	}
 
@@ -519,14 +538,8 @@ class Response {
  * @param string $name the header name
  * @param string $value the header value
  * @return void
- * @throws \RuntimeException When headers have already been sent
  */
 	protected function _sendHeader($name, $value = null) {
-		if (headers_sent($filename, $linenum)) {
-			throw new RuntimeException(
-				sprintf('Headers already sent in %d on line %s', $linenum, $filename)
-			);
-		}
 		if ($value === null) {
 			header($name);
 		} else {

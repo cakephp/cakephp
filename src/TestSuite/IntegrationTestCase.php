@@ -63,6 +63,34 @@ class IntegrationTestCase extends TestCase {
 	protected $_cookie = [];
 
 /**
+ * The controller used in the last request.
+ *
+ * @var \Cake\Controller\Controller
+ */
+	protected $_controller;
+
+/**
+ * The last rendered view
+ *
+ * @var string
+ */
+	protected $_viewName;
+
+/**
+ * The last rendered layout
+ *
+ * @var string
+ */
+	protected $_layoutName;
+
+/**
+ * The session instance from the last request
+ *
+ * @var \Cake\Network\Session
+ */
+	protected $_requestSession;
+
+/**
  * Clear the state used for requests.
  *
  * @return void
@@ -73,6 +101,10 @@ class IntegrationTestCase extends TestCase {
 		$this->_session = [];
 		$this->_cookie = [];
 		$this->_response = null;
+		$this->_controller = null;
+		$this->_viewName = null;
+		$this->_layoutName = null;
+		$this->_requestSession = null;
 	}
 
 /**
@@ -212,14 +244,40 @@ class IntegrationTestCase extends TestCase {
 		$request = $this->_buildRequest($url, $method, $data);
 		$response = new Response();
 		$dispatcher = DispatcherFactory::create();
+		$dispatcher->eventManager()->attach(
+			[$this, 'controllerSpy'],
+			'Dispatcher.beforeDispatch',
+			['priority' => 999]
+		);
 		try {
 			$dispatcher->dispatch($request, $response);
+			$this->_requestSession = $request->session();
 			$this->_response = $response;
 		} catch (\PHPUnit_Exception $e) {
 			throw $e;
 		} catch (\Exception $e) {
 			$this->_handleError($e);
 		}
+	}
+
+/**
+ * Add additional event spies to the controller/view event manager.
+ *
+ * @param \Cake\Event\Event $event A dispatcher event.
+ * @return void
+ */
+	public function controllerSpy($event) {
+		if (empty($event->data['controller'])) {
+			return;
+		}
+		$this->_controller = $event->data['controller'];
+		$events = $this->_controller->eventManager();
+		$events->attach(function($event, $viewFile) {
+			$this->_viewName = $viewFile;
+		}, 'View.beforeRender');
+		$events->attach(function($event, $viewFile) {
+			$this->_layoutName = $viewFile;
+		}, 'View.beforeLayout');
 	}
 
 /**
@@ -262,14 +320,15 @@ class IntegrationTestCase extends TestCase {
 			'cookies' => $this->_cookie,
 			'session' => $session,
 		];
+		$env = [];
 		if (isset($this->_request['headers'])) {
-			$env = [];
 			foreach ($this->_request['headers'] as $k => $v) {
 				$env['HTTP_' . str_replace('-', '_', strtoupper($k))] = $v;
 			}
-			$props['environment'] = $env;
 			unset($this->_request['headers']);
 		}
+		$env['REQUEST_METHOD'] = $method;
+		$props['environment'] = $env;
 		$props += $this->_request;
 		return new Request($props);
 	}
@@ -387,6 +446,84 @@ class IntegrationTestCase extends TestCase {
 			$this->fail('No response set, cannot assert content. ' . $message);
 		}
 		$this->assertContains($content, $this->_response->body(), $message);
+	}
+
+/**
+ * Assert that the search string was in the template name.
+ *
+ * @param string $content The content to check for.
+ * @param string $message The failure message that will be appended to the generated message.
+ * @return void
+ */
+	public function assertTemplate($content, $message = '') {
+		if (!$this->_viewName) {
+			$this->fail('No view name stored. ' . $message);
+		}
+		$this->assertContains($content, $this->_viewName, $message);
+	}
+
+/**
+ * Assert that the search string was in the layout name.
+ *
+ * @param string $content The content to check for.
+ * @param string $message The failure message that will be appended to the generated message.
+ * @return void
+ */
+	public function assertLayout($content, $message = '') {
+		if (!$this->_layoutName) {
+			$this->fail('No layout name stored. ' . $message);
+		}
+		$this->assertContains($content, $this->_layoutName, $message);
+	}
+
+/**
+ * Fetch a view variable by name.
+ *
+ * If the view variable does not exist null will be returned.
+ *
+ * @param string $name The view variable to get.
+ * @return mixed The view variable if set.
+ */
+	public function viewVariable($name) {
+		if (empty($this->_controller->viewVars)) {
+			$this->fail('There are no view variables, perhaps you need to run a request?');
+		}
+		if (isset($this->_controller->viewVars[$name])) {
+			return $this->_controller->viewVars[$name];
+		}
+		return null;
+	}
+
+/**
+ * Assert session contents
+ *
+ * @param string $expected The expected contents.
+ * @param string $path The session data path. Uses Hash::get() compatible notation
+ * @param string $message The failure message that will be appended to the generated message.
+ * @return void
+ */
+	public function assertSession($expected, $path, $message = '') {
+		if (empty($this->_requestSession)) {
+			$this->fail('There is no stored session data. Perhaps you need to run a request?');
+		}
+		$result = $this->_requestSession->read($path);
+		$this->assertEquals($expected, $result, 'Session content differs. ' . $message);
+	}
+
+/**
+ * Assert cookie values
+ *
+ * @param string $expected The expected contents.
+ * @param string $name The cookie name.
+ * @param string $message The failure message that will be appended to the generated message.
+ * @return void
+ */
+	public function assertCookie($expected, $name, $message = '') {
+		if (empty($this->_response)) {
+			$this->fail('Not response set, cannot assert cookies.');
+		}
+		$result = $this->_response->cookie($name);
+		$this->assertEquals($expected, $result['value'], 'Cookie data differs. ' . $message);
 	}
 
 }

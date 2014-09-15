@@ -12,37 +12,17 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace TestApp\Controller;
 
-use TestApp\Controller\AppController;
-
-/**
- * PostsController class
- *
- */
-class PostsController extends AppController {
+namespace Cake\Network {
 
 /**
- * Components array
+ * Mocks the headers_sent() function when invoked from the Cake\Network
+ * namespace so that it always returns false
  *
- * @var array
+ * @return bool
  */
-	public $components = array(
-		'Flash',
-		'RequestHandler',
-	);
-
-/**
- * Index method.
- *
- * @return void
- */
-	public function index() {
-		$this->Flash->error('An error message');
-		$this->response->cookie([
-			'name' => 'remember_me',
-			'value' => 1
-		]);
-		$this->set('test', 'value');
+	function headers_sent() {
+		return false;
 	}
+
 }

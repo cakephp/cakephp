@@ -674,8 +674,7 @@ class View {
 		$registry = $this->helpers();
 		$helpers = $registry->normalizeArray($this->helpers);
 		foreach ($helpers as $properties) {
-			list(, $class) = pluginSplit($properties['class']);
-			$this->{$class} = $registry->load($properties['class'], $properties['config']);
+			$this->addHelper($properties['class'], $properties['config']);
 		}
 	}
 
@@ -754,6 +753,7 @@ class View {
 		}
 		return $this->_helpers;
 	}
+
 /**
  * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
  *
@@ -763,7 +763,8 @@ class View {
  * @see HelperRegistry::load()
  */
 	public function addHelper($helperName, array $config = []) {
-		return $this->helpers()->load($helperName, $config);
+		list(, $class) = pluginSplit($helperName);
+		return $this->{$class} = $this->helpers()->load($helperName, $config);
 	}
 
 /**
