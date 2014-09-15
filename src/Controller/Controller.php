@@ -270,8 +270,11 @@ class Controller implements EventListener {
 		$modelClass = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
 		$this->_setModelClass($modelClass);
 
-		$this->constructClasses();
 		$this->initialize();
+
+		$this->_mergeControllerVars();
+		$this->_loadComponents();
+		$this->eventManager()->attach($this);
 	}
 
 /**
@@ -443,19 +446,14 @@ class Controller implements EventListener {
 	}
 
 /**
- * Loads Model and Component classes.
+ * No-op for backwards compatibility.
  *
- * Using the $components properties, classes are loaded
- * and components have their callbacks attached to the EventManager.
- * It is also at this time that Controller callbacks are bound.
+ * The code that used to live here is now in Controller::__construct().
  *
+ * @deprecated 3.0.0 Will be removed in 3.0.0.
  * @return void
- * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::constructClasses
  */
 	public function constructClasses() {
-		$this->_mergeControllerVars();
-		$this->_loadComponents();
-		$this->eventManager()->attach($this);
 	}
 
 /**

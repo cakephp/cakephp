@@ -529,22 +529,6 @@ class ControllerTest extends TestCase {
 	}
 
 /**
- * Ensure that _mergeControllerVars is not being greedy and merging with
- * ControllerTestAppController when you make an instance of Controller
- *
- * @return void
- */
-	public function testMergeVarsNotGreedy() {
-		$request = new Request('controller_posts/index');
-
-		$Controller = new Controller($request);
-		$Controller->components = [];
-		$Controller->constructClasses();
-
-		$this->assertFalse(isset($Controller->Session));
-	}
-
-/**
  * testReferer method
  *
  * @return void
