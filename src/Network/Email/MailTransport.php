@@ -16,7 +16,7 @@
  */
 namespace Cake\Network\Email;
 
-use Cake\Network\Error;
+use Cake\Network\Exception\SocketException;
 
 /**
  * Send mail using mail() function
@@ -69,7 +69,7 @@ class MailTransport extends AbstractTransport {
 		if (!@mail($to, $subject, $message, $headers, $params)) {
 			$error = error_get_last();
 			$msg = 'Could not send email: ' . (isset($error['message']) ? $error['message'] : 'unknown');
-			throw new Error\SocketException($msg);
+			throw new SocketException($msg);
 		}
 		//@codingStandardsIgnoreEnd
 	}
