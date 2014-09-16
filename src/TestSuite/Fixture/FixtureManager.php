@@ -203,6 +203,7 @@ class FixtureManager {
 			$fixture->create($db);
 		} else {
 			$fixture->created[] = $db->configName();
+			$fixture->truncate($db);
 		}
 	}
 
