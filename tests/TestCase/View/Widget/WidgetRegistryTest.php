@@ -18,6 +18,7 @@ use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 use Cake\View\View;
 use Cake\View\Widget\WidgetRegistry;
+use Cake\Core\Plugin;
 
 /**
  * WidgetRegistry test case
@@ -47,6 +48,27 @@ class WidgetRegistryTestCase extends TestCase {
 		$inputs = new WidgetRegistry($this->templates, $this->view, $widgets);
 		$result = $inputs->get('text');
 		$this->assertInstanceOf('Cake\View\Widget\Basic', $result);
+	}
+
+/**
+ * Test loading widgets files in the app.
+ *
+ * @return void
+ */
+	public function testLoadInConstructor() {
+		$inputs = new WidgetRegistry($this->templates, $this->view, 'test_widgets');
+		$this->assertInstanceOf('Cake\View\Widget\Label', $inputs->get('text'));
+	}
+
+/**
+ * Test loading templates files from a plugin
+ *
+ * @return void
+ */
+	public function testLoadPluginInConstuctor() {
+		Plugin::load('TestPlugin');
+		$inputs = new WidgetRegistry($this->templates, $this->view, 'TestPlugin.test_widgets');
+		$this->assertInstanceOf('Cake\View\Widget\Label', $inputs->get('text'));
 	}
 
 /**
