@@ -597,7 +597,8 @@ class CakeEmail {
 	protected function _validateEmail($email) {
 		if ($this->_emailPattern === null && filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			return;
-		} elseif (preg_match($this->_emailPattern, $email)) {
+		}
+		if (preg_match($this->_emailPattern, $email)) {
 			return;
 		}
 		throw new SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));

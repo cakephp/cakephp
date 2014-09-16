@@ -267,6 +267,7 @@ class CakeEmailTest extends CakeTestCase {
 
 		$this->CakeEmail->addTo('jrbasso@cakephp.org');
 		$this->CakeEmail->addTo('mark_story@cakephp.org', 'Mark Story');
+		$this->CakeEmail->addTo('foobar@ætdcadsl.dk');
 		$result = $this->CakeEmail->addTo(array('phpnut@cakephp.org' => 'PhpNut', 'jose_zap@cakephp.org'));
 		$expected = array(
 			'root@localhost' => 'root',
@@ -276,6 +277,7 @@ class CakeEmailTest extends CakeTestCase {
 			'root@cakephp.org' => 'root@cakephp.org',
 			'jrbasso@cakephp.org' => 'jrbasso@cakephp.org',
 			'mark_story@cakephp.org' => 'Mark Story',
+			'foobar@ætdcadsl.dk' => 'foobar@ætdcadsl.dk',
 			'phpnut@cakephp.org' => 'PhpNut',
 			'jose_zap@cakephp.org' => 'jose_zap@cakephp.org'
 		);
