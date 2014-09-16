@@ -416,11 +416,10 @@ abstract class ControllerTestCase extends TestCase {
 			$config = isset($controller->components[$component]) ? $controller->components[$component] : array();
 			$component = $this->getMock($componentClass, $methods, array($registry, $config));
 			$registry->set($name, $component);
+			$controller->{$name} = $component;
 		}
 
-		$controller->constructClasses();
 		$this->_dirtyController = false;
-
 		$this->controller = $controller;
 		return $this->controller;
 	}
