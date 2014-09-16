@@ -173,6 +173,24 @@ class Controller implements EventListener {
 	public $viewClass = 'Cake\View\View';
 
 /**
+ * The path to this controllers view templates.
+ * Example `Articles`
+ *
+ * Set automatically using conventions in Controller::__construct().
+ *
+ * @var string
+ */
+	public $viewPath;
+
+/**
+ * The name of the view file to render. The name specified
+ * is the filename in /app/Template/<SubFolder> without the .ctp extension.
+ *
+ * @var string
+ */
+	public $view = null;
+
+/**
  * Instance of the View created during rendering. Won't be set until after
  * Controller::render() is called.
  *
@@ -212,16 +230,6 @@ class Controller implements EventListener {
  * @var array
  */
 	public $methods = array();
-
-/**
- * The path to this controllers view templates.
- * Example `Articles`
- *
- * Set automatically using conventions in Controller::__construct().
- *
- * @var string
- */
-	public $viewPath;
 
 /**
  * Constructor.
