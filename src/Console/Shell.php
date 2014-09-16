@@ -321,7 +321,7 @@ class Shell {
  * @param array $argv Array of arguments to run the shell with. This array should be missing the shell name.
  * @param bool $autoMethod Set to true to allow any public method to be called even if it
  *   was not defined as a subcommand. This is used by ShellDispatcher to make building simple shells easy.
- * @return void
+ * @return mixed
  * @link http://book.cakephp.org/3.0/en/console-and-shells.html#the-cakephp-console
  */
 	public function runCommand($argv, $autoMethod = false) {
@@ -384,7 +384,7 @@ class Shell {
  * Display the help in the correct format
  *
  * @param string $command The command to get help for.
- * @return void
+ * @return int|bool
  */
 	protected function _displayHelp($command) {
 		$format = 'text';
@@ -591,7 +591,8 @@ class Shell {
 			if (strtolower($key) === 'q') {
 				$this->_io->out('<error>Quitting</error>.', 2);
 				return $this->_stop();
-			} elseif (strtolower($key) !== 'y') {
+			}
+			if (strtolower($key) !== 'y') {
 				$this->_io->out(sprintf('Skip `%s`', $path), 2);
 				return false;
 			}
