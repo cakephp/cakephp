@@ -15,11 +15,8 @@
 namespace Cake\Auth;
 
 use Cake\Controller\ComponentRegistry;
-use Cake\Controller\Controller;
-use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Request;
-use Cake\Utility\Inflector;
 
 /**
  * Abstract base authorization adapter for AuthComponent.

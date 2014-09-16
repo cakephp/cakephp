@@ -14,8 +14,6 @@
  */
 namespace Cake\ORM;
 
-use Cake\Event\Event;
-
 /**
  * Contains logic for validating entities and their associations
  *

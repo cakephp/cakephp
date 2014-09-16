@@ -16,9 +16,7 @@ namespace Cake\View;
 
 use Cake\Cache\Cache;
 use Cake\Core\App;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
 use Cake\Log\LogTrait;

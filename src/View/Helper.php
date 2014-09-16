@@ -14,12 +14,8 @@
  */
 namespace Cake\View;
 
-use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Core\Plugin;
 use Cake\Event\EventListener;
-use Cake\Routing\Router;
-use Cake\Utility\Inflector;
 
 /**
  * Abstract base class for all other Helpers in CakePHP.

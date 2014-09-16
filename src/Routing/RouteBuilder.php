@@ -16,7 +16,6 @@ namespace Cake\Routing;
 
 use BadMethodCallException;
 use Cake\Core\App;
-use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;

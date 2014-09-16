@@ -19,7 +19,6 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
-use Cake\Error\Debugger;
 use Cake\Event\Event;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Request;

@@ -20,7 +20,6 @@ use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
-use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
