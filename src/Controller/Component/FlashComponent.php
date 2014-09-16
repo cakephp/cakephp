@@ -16,7 +16,7 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Cake\Error\InternalErrorException;
+use Cake\Network\Exception\InternalErrorException;
 use Cake\Utility\Inflector;
 
 /**
@@ -106,7 +106,7 @@ class FlashComponent extends Component {
  * @param string $name Element name to use.
  * @param array $args Parameters to pass when calling `FlashComponent::set()`.
  * @return void
- * @throws \Cake\Error\InternalErrorException If missing the flash message.
+ * @throws \Cake\Network\Exception\InternalErrorException If missing the flash message.
  */
 	public function __call($name, $args) {
 		$options = ['element' => Inflector::underscore($name)];
