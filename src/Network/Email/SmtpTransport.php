@@ -14,7 +14,6 @@
  */
 namespace Cake\Network\Email;
 
-use Cake\Network\Error;
 use Cake\Network\Socket;
 use Cake\Network\Exception\SocketException;
 
