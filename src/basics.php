@@ -52,7 +52,11 @@ if (!function_exists('debug')) {
 		$lineInfo = '';
 		if ($showFrom) {
 			$trace = Debugger::trace(array('start' => 1, 'depth' => 2, 'format' => 'array'));
-			$file = str_replace(array(CAKE_CORE_INCLUDE_PATH, ROOT), '', $trace[0]['file']);
+			$search = array(ROOT);
+			if (defined('CAKE_CORE_INCLUDE_PATH')) {
+				array_unshift($search, CAKE_CORE_INCLUDE_PATH);
+			}
+			$file = str_replace($search, '', $trace[0]['file']);
 			$line = $trace[0]['line'];
 		}
 		$html = <<<HTML
