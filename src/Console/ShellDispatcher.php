@@ -14,11 +14,14 @@
  */
 namespace Cake\Console;
 
+use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\MissingShellException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
+use Cake\Log\Log;
+use Cake\Shell\Task\CommandTask;
 use Cake\Utility\Inflector;
 
 /**
@@ -185,15 +188,48 @@ class ShellDispatcher {
  * For all loaded plugins, add a short alias
  *
  * This permits a plugin which implements a shell of the same name to be accessed
- * Using the plugin name alone
+ * Using the shell name alone
  *
  * @return void
  */
 	public function addShortPluginAliases() {
 		$plugins = Plugin::loaded();
 
+		$io = new ConsoleIo();
+		$task = new CommandTask($io);
+		$io->setLoggers(false);
+		$list = $task->getShellList();
+		$fixed = array_flip($list['app']) + array_flip($list['CORE']);
+		$aliases = [];
+
 		foreach ($plugins as $plugin) {
-			self::alias($plugin, "$plugin.$plugin");
+			if (!isset($list[$plugin])) {
+				continue;
+			}
+
+			foreach ($list[$plugin] as $shell) {
+				if (isset($aliases[$shell])) {
+					$other = $aliased[$shell];
+					Log::write(
+						'debug',
+						"command '$shell' in plugin '$plugin' was not aliased, conflicts with '$other'",
+						['shell-dispatcher']
+					);
+				}
+				$aliases += [$shell => $plugin];
+			}
+		}
+
+		foreach ($aliases as $shell => $plugin) {
+			if (isset($fixed[$shell])) {
+				Log::write(
+					'debug',
+					"command '$shell' in plugin '$plugin' was not aliased, conflicts with another shell",
+					['shell-dispatcher']
+				);
+				continue;
+			}
+			static::alias($shell, "$plugin.$shell");
 		}
 	}
 
