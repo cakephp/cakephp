@@ -32,7 +32,7 @@ use Cake\TestSuite\Stub\Response;
  * more of your code easily and avoid some of the maintenance pitfalls
  * that mock objects create.
  */
-class IntegrationTestCase extends TestCase {
+abstract class IntegrationTestCase extends TestCase {
 
 /**
  * The data used to build the next request.
