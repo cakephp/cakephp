@@ -14,12 +14,8 @@
  */
 namespace Cake\Routing;
 
-use Cake\Core\App;
-use Cake\Error;
 use Cake\Routing\Exception\MissingRouteException;
-use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
-use Cake\Utility\Inflector;
 
 /**
  * Contains a collection of routes.

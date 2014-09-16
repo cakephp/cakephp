@@ -15,7 +15,6 @@
 namespace Cake\Routing;
 
 use Cake\Controller\Controller;
-use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManagerTrait;
 use Cake\Network\Request;

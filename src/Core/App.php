@@ -15,7 +15,6 @@
 namespace Cake\Core;
 
 use Cake\Core\Plugin;
-use Cake\Utility\Inflector;
 
 /**
  * App is responsible for resource location, and path management.

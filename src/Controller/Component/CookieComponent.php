@@ -16,7 +16,6 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Cake\Core\Configure;
 use Cake\I18n\Time;
 use Cake\Network\Request;
 use Cake\Network\Response;
