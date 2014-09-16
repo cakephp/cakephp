@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
@@ -29,6 +30,8 @@ use Cake\Utility\Inflector;
  *
  */
 abstract class Association {
+
+	use ConventionsTrait;
 
 /**
  * Strategy name to use joins for fetching associated records
