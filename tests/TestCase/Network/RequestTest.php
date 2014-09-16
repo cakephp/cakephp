@@ -2229,7 +2229,7 @@ XML;
 			$this->assertEquals(array('Allow' => 'POST, DELETE'), $e->responseHeader());
 		}
 
-		$this->setExpectedException('Cake\Error\MethodNotAllowedException');
+		$this->setExpectedException('Cake\Network\Exception\MethodNotAllowedException');
 		$request->allowMethod('POST');
 	}
 

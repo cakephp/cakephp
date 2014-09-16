@@ -471,7 +471,7 @@ class TreeBehavior extends Behavior {
  *
  * @param \Cake\ORM\Entity $node The node to move
  * @param int|bool $number How many places to move the node, or true to move to first position
- * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
+ * @throws \Cake\ORM\Exception\RecordNotFoundException When node was not found
  * @return \Cake\ORM\Entity|bool $node The node after being moved or false on failure
  */
 	public function moveUp(Entity $node, $number = 1) {
@@ -486,7 +486,7 @@ class TreeBehavior extends Behavior {
  *
  * @param \Cake\ORM\Entity $node The node to move
  * @param int|bool $number How many places to move the node, or true to move to first position
- * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
+ * @throws \Cake\ORM\Exception\RecordNotFoundException When node was not found
  * @return \Cake\ORM\Entity|bool $node The node after being moved or false on failure
  */
 	protected function _moveUp($node, $number) {
