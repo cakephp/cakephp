@@ -15,7 +15,6 @@
 namespace Cake\Database\Driver;
 
 use Cake\Database\Dialect\SqliteDialectTrait;
-use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
 use PDO;

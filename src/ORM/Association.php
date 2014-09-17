@@ -17,7 +17,6 @@ namespace Cake\ORM;
 use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\ResultSetDecorator;
-use Cake\Event\Event;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
@@ -717,7 +716,7 @@ abstract class Association {
 /**
  * Helper method to infer the requested finder and its options.
  *
- * Returns the inferred options from the finder $type. 
+ * Returns the inferred options from the finder $type.
  *
  * ### Examples:
  *
