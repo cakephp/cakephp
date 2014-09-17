@@ -934,4 +934,22 @@ class CollectionTest extends TestCase {
 		$this->assertEquals(range(1, 5), $collection->extract('id')->toArray(false));
 	}
 
+/**
+ * Tests the sumOf method
+ *
+ * @return void
+ */
+	public function testSumOf() {
+		$items = [
+			['invoice' => ['total' => 100]],
+			['invoice' => ['total' => 200]]
+		];
+		$this->assertEquals(300, (new Collection($items))->sumOf('invoice.total'));
+
+		$sum = (new Collection($items))->sumOf(function($v) {
+			return $v['invoice']['total'] * 2;
+		});
+		$this->assertEquals(600, $sum);
+	}
+
 }

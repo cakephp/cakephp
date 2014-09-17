@@ -516,6 +516,37 @@ trait CollectionTrait {
 	}
 
 /**
+ * Returns the total sum of all the values extracted with $matcher
+ * or of this collection.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $items = [
+ *	['invoice' => ['total' => 100],
+ *	['invoice' => ['total' => 200]
+ * ];
+ *
+ * $total = (new Collection($items))->sumOf('invoice.total');
+ *
+ * // Total: 300
+ * }}}
+ *
+ * @param string|callable $matcher The property name to sum or a function
+ * that will return the value of the property to sum.
+ * @return float|int
+ */
+	public function sumOf($matcher) {
+		$callback = $this->_propertyExtractor($matcher);
+		$sum = 0;
+		foreach ($this as $k => $v) {
+			$sum += $callback($v, $k);
+		}
+
+		return $sum;
+	}
+
+/**
  * Returns a new collection with the elements placed in a random order,
  * this function does not preserve the original keys in the collection.
  *
