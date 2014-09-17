@@ -18,7 +18,6 @@ use Cake\Core\Configure;
 use Cake\Network\Exception\NotFoundException;
 use Cake\Filesystem\File;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Cake Response is responsible for managing the response text, status and headers of a HTTP response.

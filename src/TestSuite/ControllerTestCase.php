@@ -353,7 +353,7 @@ abstract class ControllerTestCase extends TestCase {
  * @throws \Cake\Controller\Error\MissingControllerException When controllers could not be created.
  * @throws \Cake\Controller\Error\MissingComponentException When components could not be created.
  */
-	public function generate($controller, array $mocks = array(), $request = null) {
+	public function generate($controller, array $mocks = array(), Request $request = null) {
 		$className = App::className($controller, 'Controller', 'Controller');
 		if (!$className) {
 			list($plugin, $controller) = pluginSplit($controller);

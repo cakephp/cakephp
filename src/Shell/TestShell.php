@@ -18,12 +18,7 @@
  */
 namespace Cake\Shell;
 
-use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
-use Cake\TestSuite\TestLoader;
-use Cake\TestSuite\TestSuiteCommand;
-use Cake\TestSuite\TestSuiteDispatcher;
-use Cake\Utility\Inflector;
 
 /**
  * Stub that tells people how to run tests with PHPUnit.
