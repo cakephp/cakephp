@@ -78,12 +78,19 @@ class AssetFilter extends DispatcherFilter {
  */
 	protected function _getAssetFile($url) {
 		$parts = explode('/', $url);
-		$plugin = Inflector::camelize($parts[0]);
-		if ($plugin && Plugin::loaded($plugin)) {
-			unset($parts[0]);
-			$fileFragment = implode(DS, $parts);
-			$pluginWebroot = Plugin::path($plugin) . 'webroot' . DS;
-			return $pluginWebroot . $fileFragment;
+		$pluginPart = [];
+		for ($i = 0; $i < 2; $i++) {
+			if (!isset($parts[$i])) {
+				break;
+			}
+			$pluginPart[] = Inflector::camelize($parts[$i]);
+			$plugin = implode('/', $pluginPart);
+			if ($plugin && Plugin::loaded($plugin)) {
+				$parts = array_slice($parts, $i + 1);
+				$fileFragment = implode(DS, $parts);
+				$pluginWebroot = Plugin::path($plugin) . 'webroot' . DS;
+				return $pluginWebroot . $fileFragment;
+			}
 		}
 	}
 
