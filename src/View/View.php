@@ -672,7 +672,7 @@ class View {
 		$registry = $this->helpers();
 		$helpers = $registry->normalizeArray($this->helpers);
 		foreach ($helpers as $properties) {
-			$this->addHelper($properties['class'], $properties['config']);
+			$this->loadHelper($properties['class'], $properties['config']);
 		}
 	}
 
@@ -753,6 +753,22 @@ class View {
 	}
 
 /**
+ * Alias for loadHelper() for backwards compatibility.
+ *
+ * @param string $helperName Name of the helper to load.
+ * @param array $config Settings for the helper
+ * @return Helper a constructed helper object.
+ * @deprecated 3.0.0 Use loadHelper() instead.
+ */
+	public function addHelper($helperName, array $config = []) {
+		trigger_error(
+			'addHelper() is deprecated, use loadHelper() instead.',
+			E_USER_DEPRECATED
+		);
+		return $this->loadHelper($helperName, $config);
+	}
+
+/**
  * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
  *
  * @param string $helperName Name of the helper to load.
@@ -760,7 +776,7 @@ class View {
  * @return Helper a constructed helper object.
  * @see HelperRegistry::load()
  */
-	public function addHelper($helperName, array $config = []) {
+	public function loadHelper($helperName, array $config = []) {
 		list(, $class) = pluginSplit($helperName);
 		return $this->{$class} = $this->helpers()->load($helperName, $config);
 	}
