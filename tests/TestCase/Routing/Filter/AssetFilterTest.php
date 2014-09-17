@@ -203,6 +203,10 @@ class AssetFilterTest extends TestCase {
 				'test_plugin/css/theme_one.htc',
 				'Plugin/TestPlugin/webroot/css/theme_one.htc'
 			),
+			array(
+				'company/test_plugin_three/css/company.css',
+				'Plugin/Company/TestPluginThree/webroot/css/company.css'
+			),
 		);
 	}
 
@@ -210,11 +214,10 @@ class AssetFilterTest extends TestCase {
  * Test assets
  *
  * @dataProvider assetProvider
- * @outputBuffering enabled
  * @return void
  */
 	public function testAsset($url, $file) {
-		Plugin::load(array('TestPlugin', 'PluginJs'));
+		Plugin::load(array('Company/TestPluginThree', 'TestPlugin', 'PluginJs'));
 
 		$filter = new AssetFilter();
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
@@ -222,7 +225,8 @@ class AssetFilterTest extends TestCase {
 		$event = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
 
 		$filter->beforeDispatch($event);
-		$result = ob_get_clean();
+		$result = ob_get_contents();
+		ob_end_clean();
 
 		$path = TEST_APP . str_replace('/', DS, $file);
 		$file = file_get_contents($path);
