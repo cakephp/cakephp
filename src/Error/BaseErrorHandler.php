@@ -17,7 +17,6 @@ namespace Cake\Error;
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Cake\Log\Log;
-use Cake\Network\Exception\InternalErrorException;
 use Cake\Routing\Router;
 
 /**

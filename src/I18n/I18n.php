@@ -16,10 +16,8 @@ namespace Cake\I18n;
 
 use Aura\Intl\Exception as LoadException;
 use Aura\Intl\FormatterLocator;
-use Aura\Intl\Package;
 use Aura\Intl\PackageLocator;
 use Aura\Intl\TranslatorFactory;
-use Aura\Intl\TranslatorLocator;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
 use Locale;

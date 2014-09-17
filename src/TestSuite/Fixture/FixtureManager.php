@@ -15,7 +15,6 @@
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use Cake\Core\Exception\Exception;
@@ -53,7 +52,7 @@ class FixtureManager {
 /**
  * Inspects the test to look for unloaded fixtures and loads them
  *
- * @param \Cake\TestSuite\TestCase $test the test case to inspect
+ * @param \Cake\TestSuite\TestCase $test The test case to inspect.
  * @return void
  */
 	public function fixturize($test) {
@@ -123,7 +122,7 @@ class FixtureManager {
 /**
  * Looks for fixture files and instantiates the classes accordingly
  *
- * @param \Cake\TestSuite\Testcase $test The test suite to load fixtures for.
+ * @param \Cake\TestSuite\TestCase $test The test suite to load fixtures for.
  * @return void
  * @throws \UnexpectedValueException when a referenced fixture does not exist.
  */
@@ -210,7 +209,7 @@ class FixtureManager {
 /**
  * Creates the fixtures tables and inserts data on them.
  *
- * @param \Cake\TestSuite\TestCase $test the test to inspect for fixture loading
+ * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture loading.
  * @return void
  * @throws \Cake\Core\Exception\Exception When fixture records cannot be inserted.
  */
@@ -290,7 +289,7 @@ class FixtureManager {
 /**
  * Truncates the fixtures tables
  *
- * @param \Cake\TestSuite\TestCase $test the test to inspect for fixture unloading
+ * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture unloading.
  * @return void
  */
 	public function unload($test) {

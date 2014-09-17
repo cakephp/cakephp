@@ -14,7 +14,6 @@
  */
 namespace Cake\Routing;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Routing\RouteBuilder;

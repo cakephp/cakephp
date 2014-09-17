@@ -18,7 +18,6 @@ use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\QueryCacher;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetDecorator;
-use Cake\Event\Event;
 
 /**
  * Contains the characteristics for an object that is attached to a repository and
