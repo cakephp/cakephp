@@ -1078,7 +1078,7 @@ class FormHelper extends Helper {
 			Inflector::pluralize(preg_replace('/_id$/', '', $fieldName))
 		);
 		$varOptions = $this->_View->get($varName);
-		if (!is_array($varOptions)) {
+		if (!is_array($varOptions) && !($varOptions instanceof Traversable)) {
 			return $options;
 		}
 		if ($options['type'] !== 'radio') {
