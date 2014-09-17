@@ -30,6 +30,9 @@ $associationFields = collection($fields)
 	}, []);
 
 $groupedFields = collection($fields)
+	->filter(function($field) use ($schema) {
+		return $schema->columnType($field) !== 'binary';
+	})
 	->groupBy(function($field) use ($schema, $associationFields) {
 		$type = $schema->columnType($field);
 		if (isset($associationFields[$field])) {
@@ -53,7 +56,7 @@ $groupedFields += ['number' => [], 'string' => [], 'boolean' => [], 'date' => []
 <?php
 	$pk = "\${$singularVar}->{$primaryKey[0]}";
 
-	echo "\t\t<li><?= \$this->Html->link(__('Edit " . $singularHumanName ."'), ['action' => 'edit', {$pk}]) ?> </li>\n";
+	echo "\t\t<li><?= \$this->Html->link(__('Edit " . $singularHumanName . "'), ['action' => 'edit', {$pk}]) ?> </li>\n";
 	echo "\t\t<li><?= \$this->Form->postLink(__('Delete " . $singularHumanName . "'), ['action' => 'delete', {$pk}], ['confirm' => __('Are you sure you want to delete # %s?', {$pk})]) ?> </li>\n";
 	echo "\t\t<li><?= \$this->Html->link(__('List " . $pluralHumanName . "'), ['action' => 'index']) ?> </li>\n";
 	echo "\t\t<li><?= \$this->Html->link(__('New " . $singularHumanName . "'), ['action' => 'add']) ?> </li>\n";

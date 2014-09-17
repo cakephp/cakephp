@@ -14,6 +14,10 @@
  */
 use Cake\Utility\Inflector;
 
+$fields = collection($fields)
+	->filter(function($field) use ($schema) {
+		return $schema->columnType($field) !== 'binary';
+	});
 ?>
 <div class="actions columns large-2 medium-3">
 	<h3><?= "<?= __('Actions') ?>" ?></h3>

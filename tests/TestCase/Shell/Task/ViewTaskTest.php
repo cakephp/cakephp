@@ -289,7 +289,7 @@ class ViewTaskTest extends TestCase {
 	public function testGetContent() {
 		$vars = array(
 			'modelClass' => 'TestViewModel',
-			'schema' => [],
+			'schema' => TableRegistry::get('ViewTaskComments')->schema(),
 			'primaryKey' => ['id'],
 			'displayField' => 'name',
 			'singularVar' => 'testViewModel',
@@ -320,7 +320,7 @@ class ViewTaskTest extends TestCase {
 	public function testGetContentWithRoutingPrefix() {
 		$vars = array(
 			'modelClass' => 'TestViewModel',
-			'schema' => [],
+			'schema' => TableRegistry::get('ViewTaskComments')->schema(),
 			'primaryKey' => ['id'],
 			'displayField' => 'name',
 			'singularVar' => 'testViewModel',
