@@ -2195,6 +2195,44 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that save validates all entities before persisting.
+ *
+ * @return void
+ */
+	public function testSaveValidateAllAssociations() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'foo',
+			'author' => new \Cake\ORM\Entity([
+				'name' => 'Susan'
+			]),
+			'comments' => [
+				new \Cake\ORM\Entity([
+					'comment' => 'the worst!'
+				])
+			]
+		]);
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors');
+		$table->hasMany('Comments');
+
+		$validator = (new Validator)->validatePresence('body');
+		$table->validator('default', $validator);
+
+		$authorValidate = (new Validator)->validatePresence('bio');
+		$table->Authors->validator('default', $authorValidate);
+
+		$commentValidate = (new Validator)->validatePresence('author');
+		$table->Comments->validator('default', $commentValidate);
+
+		$result = $table->save($entity);
+		$this->assertFalse($result, 'Should have failed');
+
+		$this->assertNotEmpty($entity->errors('body'), 'Missing article errors');
+		$this->assertNotEmpty($entity->author->errors('bio'), 'Missing author errors');
+		$this->assertNotEmpty($entity->comments[0]->errors('author'), 'Missing comment errors');
+	}
+
+/**
  * Test magic findByXX method.
  *
  * @return void
