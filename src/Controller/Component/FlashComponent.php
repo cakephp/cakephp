@@ -47,12 +47,12 @@ class FlashComponent extends Component {
 /**
  * Constructor
  *
- * @param ComponentRegistry $collection A ComponentRegistry for this component
+ * @param ComponentRegistry $registry A ComponentRegistry for this component
  * @param array $config Array of config.
  */
-	public function __construct(ComponentRegistry $collection, array $config = []) {
-		parent::__construct($collection, $config);
-		$this->_session = $collection->getController()->request->session();
+	public function __construct(ComponentRegistry $registry, array $config = []) {
+		parent::__construct($registry, $config);
+		$this->_session = $registry->getController()->request->session();
 	}
 
 /**

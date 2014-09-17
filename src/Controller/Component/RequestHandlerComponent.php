@@ -114,14 +114,14 @@ class RequestHandlerComponent extends Component {
 /**
  * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
  *
- * @param ComponentRegistry $collection ComponentRegistry object.
+ * @param ComponentRegistry $registry ComponentRegistry object.
  * @param array $config Array of config.
  */
-	public function __construct(ComponentRegistry $collection, array $config = array()) {
-		parent::__construct($collection, $config);
+	public function __construct(ComponentRegistry $registry, array $config = array()) {
+		parent::__construct($registry, $config);
 		$this->addInputType('xml', array(array($this, 'convertXml')));
 
-		$Controller = $collection->getController();
+		$Controller = $registry->getController();
 		$this->request = $Controller->request;
 		$this->response = $Controller->response;
 	}
