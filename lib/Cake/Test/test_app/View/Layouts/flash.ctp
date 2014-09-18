@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><?php echo $page_title?></title>
+<title><?php echo $pageTitle?></title>
 <?php echo $this->Html->charset(); ?>
 
 <?php if (!Configure::read('debug')) { ?>

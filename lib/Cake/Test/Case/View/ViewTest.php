@@ -1020,7 +1020,7 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->set('url', 'flash');
 		$this->PostsController->set('message', 'yo what up');
 		$this->PostsController->set('pause', 3);
-		$this->PostsController->set('page_title', 'yo what up');
+		$this->PostsController->set('pageTitle', 'yo what up');
 
 		$View = new TestView($this->PostsController);
 		$result = $View->render(false, 'flash');

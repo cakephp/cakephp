@@ -1004,7 +1004,7 @@ class Controller extends Object implements CakeEventListener {
 		$this->set('url', Router::url($url));
 		$this->set('message', $message);
 		$this->set('pause', $pause);
-		$this->set('page_title', $message);
+		$this->set('pageTitle', $message);
 		$this->render(false, $layout);
 	}
 
