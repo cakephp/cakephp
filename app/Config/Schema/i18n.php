@@ -33,7 +33,7 @@ class I18nSchema extends CakeSchema {
  * Before callback.
  *
  * @param array $event Schema object properties
- * @return boolean Should process continue
+ * @return bool Should process continue
  */
 	public function before($event = array()) {
 		return true;
