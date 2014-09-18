@@ -80,6 +80,7 @@ class EntityValidator {
  */
 	public function one(Entity $entity, $options = []) {
 		$valid = true;
+		$types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
 		$propertyMap = $this->_buildPropertyMap($options);
 
 		foreach ($propertyMap as $key => $assoc) {
@@ -89,10 +90,14 @@ class EntityValidator {
 			if (!$value) {
 				continue;
 			}
+			$isOne = in_array($association->type(), $types);
+			if ($isOne && !($value instanceof Entity)) {
+				$valid = false;
+				continue;
+			}
 
 			$validator = $association->target()->entityValidator();
-			$types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
-			if (in_array($association->type(), $types)) {
+			if ($isOne) {
 				$valid = $validator->one($value, $assoc['options']) && $valid;
 			} else {
 				$valid = $validator->many($value, $assoc['options']) && $valid;
@@ -102,7 +107,6 @@ class EntityValidator {
 		if (!isset($options['validate'])) {
 			$options['validate'] = true;
 		}
-
 		return $this->_processValidation($entity, $options) && $valid;
 	}
 

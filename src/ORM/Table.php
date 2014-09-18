@@ -1170,15 +1170,12 @@ class Table implements RepositoryInterface, EventListener {
 			$entity->isNew(!$this->exists($conditions));
 		}
 
-		$associated = $options['associated'];
-		$options['associated'] = [];
+		$options['associated'] = $this->_associations->normalizeKeys($options['associated']);
 		$validate = $options['validate'];
 
 		if ($validate && !$this->validate($entity, $options)) {
 			return false;
 		}
-
-		$options['associated'] = $this->_associations->normalizeKeys($associated);
 		$event = $this->dispatchEvent('Model.beforeSave', compact('entity', 'options'));
 
 		if ($event->isStopped()) {
@@ -1189,7 +1186,7 @@ class Table implements RepositoryInterface, EventListener {
 			$this,
 			$entity,
 			$options['associated'],
-			['validate' => (bool)$validate] + $options->getArrayCopy()
+			['validate' => false] + $options->getArrayCopy()
 		);
 
 		if (!$saved && $options['atomic']) {
