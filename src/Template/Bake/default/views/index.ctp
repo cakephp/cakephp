@@ -13,61 +13,16 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Utility\Inflector;
+
+$fields = collection($fields)
+	->filter(function($field) use ($schema) {
+		return !in_array($schema->columnType($field), ['binary', 'text']);
+	})
+	->take(7);
 ?>
-<div class="<?= $pluralVar ?> index">
-	<h2><?= "<?= __('{$pluralHumanName}') ?>"; ?></h2>
-	<table cellpadding="0" cellspacing="0">
-	<tr>
-	<?php foreach ($fields as $field): ?>
-	<th><?= "<?= \$this->Paginator->sort('{$field}') ?>"; ?></th>
-	<?php endforeach; ?>
-	<th class="actions"><?= "<?= __('Actions') ?>"; ?></th>
-	</tr>
-	<?php
-	echo "<?php foreach (\${$pluralVar} as \${$singularVar}): ?>\n";
-	echo "\t<tr>\n";
-		foreach ($fields as $field) {
-			$isKey = false;
-			if (!empty($associations['BelongsTo'])) {
-				foreach ($associations['BelongsTo'] as $alias => $details) {
-					if ($field === $details['foreignKey']) {
-						$isKey = true;
-						echo "\t\t<td>\n\t\t\t<?= \${$singularVar}->has('{$details['property']}') ? \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['property']}->{$details['primaryKey'][0]}]) : '' ?>\n\t\t</td>\n";
-						break;
-					}
-				}
-			}
-			if ($isKey !== true) {
-				echo "\t\t<td><?= h(\${$singularVar}->{$field}) ?>&nbsp;</td>\n";
-			}
-		}
-
-		$pk = "\${$singularVar}->{$primaryKey[0]}";
-
-		echo "\t\t<td class=\"actions\">\n";
-		echo "\t\t\t<?= \$this->Html->link(__('View'), ['action' => 'view', {$pk}]) ?>\n";
-		echo "\t\t\t<?= \$this->Html->link(__('Edit'), ['action' => 'edit', {$pk}]) ?>\n";
-		echo "\t\t\t<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', {$pk}], ['confirm' => __('Are you sure you want to delete # {0}?', {$pk})]) ?>\n";
-		echo "\t\t</td>\n";
-	echo "\t</tr>\n";
-
-	echo "\t<?php endforeach; ?>\n";
-	?>
-	</table>
-	<p><?= "<?= \$this->Paginator->counter() ?>"; ?></p>
-	<ul class="pagination">
-	<?php
-		echo "<?php\n";
-		echo "\t\techo \$this->Paginator->prev('< ' . __('previous'));\n";
-		echo "\t\techo \$this->Paginator->numbers();\n";
-		echo "\t\techo \$this->Paginator->next(__('next') . ' >');\n";
-		echo "\t?>\n";
-	?>
-	</ul>
-</div>
-<div class="actions">
+<div class="actions columns large-2 medium-3">
 	<h3><?= "<?= __('Actions') ?>"; ?></h3>
-	<ul>
+	<ul class="side-nav">
 		<li><?= "<?= \$this->Html->link(__('New " . $singularHumanName . "'), ['action' => 'add']) ?>"; ?></li>
 <?php
 	$done = [];
@@ -82,4 +37,64 @@ use Cake\Utility\Inflector;
 	}
 ?>
 	</ul>
+</div>
+<div class="<?= $pluralVar ?> index large-10 medium-9 columns">
+	<table cellpadding="0" cellspacing="0">
+	<thead>
+	<tr>
+	<?php foreach ($fields as $field): ?>
+		<th><?= "<?= \$this->Paginator->sort('{$field}') ?>"; ?></th>
+	<?php endforeach; ?>
+		<th class="actions"><?= "<?= __('Actions') ?>"; ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<?php
+	echo "<?php foreach (\${$pluralVar} as \${$singularVar}): ?>\n";
+	echo "\t\t<tr>\n";
+		foreach ($fields as $field) {
+			$isKey = false;
+			if (!empty($associations['BelongsTo'])) {
+				foreach ($associations['BelongsTo'] as $alias => $details) {
+					if ($field === $details['foreignKey']) {
+						$isKey = true;
+						echo "\t\t\t<td>\n\t\t\t\t<?= \${$singularVar}->has('{$details['property']}') ? \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['property']}->{$details['primaryKey'][0]}]) : '' ?>\n\t\t\t</td>\n";
+						break;
+					}
+				}
+			}
+			if ($isKey !== true) {
+				if (!in_array($schema->columnType($field), ['integer', 'biginteger', 'decimal', 'float'])) {
+					echo "\t\t\t<td><?= h(\${$singularVar}->{$field}) ?></td>\n";
+				} else {
+					echo "\t\t\t<td><?= \$this->Number->format(\${$singularVar}->{$field}) ?></td>\n";
+				}
+			}
+		}
+
+		$pk = "\${$singularVar}->{$primaryKey[0]}";
+
+		echo "\t\t\t<td class=\"actions\">\n";
+		echo "\t\t\t\t<?= \$this->Html->link(__('View'), ['action' => 'view', {$pk}]) ?>\n";
+		echo "\t\t\t\t<?= \$this->Html->link(__('Edit'), ['action' => 'edit', {$pk}]) ?>\n";
+		echo "\t\t\t\t<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', {$pk}], ['confirm' => __('Are you sure you want to delete # {0}?', {$pk})]) ?>\n";
+		echo "\t\t\t</td>\n";
+	echo "\t\t</tr>\n";
+
+	echo "\t<?php endforeach; ?>\n";
+	?>
+	</thead>
+	</table>
+	<div class="paginator">
+		<ul class="pagination">
+		<?php
+			echo "<?php\n";
+			echo "\t\t\techo \$this->Paginator->prev('< ' . __('previous'));\n";
+			echo "\t\t\techo \$this->Paginator->numbers();\n";
+			echo "\t\t\techo \$this->Paginator->next(__('next') . ' >');\n";
+			echo "\t\t?>\n";
+		?>
+		</ul>
+		<p><?= "<?= \$this->Paginator->counter() ?>"; ?></p>
+	</div>
 </div>

@@ -13,38 +13,50 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Utility\Inflector;
-?>
-<div class="<?= $pluralVar ?> view">
-	<h2><?= "<?= __('{$singularHumanName}') ?>"; ?></h2>
-	<dl>
-<?php
-foreach ($fields as $field) {
-	$isKey = false;
-	if (!empty($associations['BelongsTo'])) {
-		foreach ($associations['BelongsTo'] as $alias => $details) {
+
+$associations += ['BelongsTo' => [], 'HasOne' => [], 'HasMany' => [], 'BelongsToMany' => []];
+$immediateAssociations = $associations['BelongsTo'] + $associations['HasOne'];
+$associationFields = collection($fields)
+	->map(function($field) use ($immediateAssociations) {
+		foreach ($immediateAssociations as $alias => $details) {
 			if ($field === $details['foreignKey']) {
-				$isKey = true;
-				echo "\t\t<dt><?= __('" . Inflector::humanize(Inflector::underscore($details['property'])) . "') ?></dt>\n";
-				echo "\t\t<dd>\n\t\t\t<?= \${$singularVar}->has('{$details['property']}') ? \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['property']}->{$details['primaryKey'][0]}]) : '' ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
-				break;
+				return [$field => $details];
 			}
 		}
-	}
-	if ($isKey !== true) {
-		echo "\t\t<dt><?= __('" . Inflector::humanize($field) . "') ?></dt>\n";
-		echo "\t\t<dd>\n\t\t\t<?= h(\${$singularVar}->{$field}) ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
-	}
-}
+	})
+	->filter()
+	->reduce(function($fields, $value) {
+		return $fields + $value;
+	}, []);
+
+$groupedFields = collection($fields)
+	->filter(function($field) use ($schema) {
+		return $schema->columnType($field) !== 'binary';
+	})
+	->groupBy(function($field) use ($schema, $associationFields) {
+		$type = $schema->columnType($field);
+		if (isset($associationFields[$field])) {
+			return 'string';
+		}
+		if (in_array($type, ['integer', 'float', 'decimal', 'biginteger'])) {
+			return 'number';
+		}
+		if (in_array($type, ['date', 'time', 'datetime', 'timestamp'])) {
+			return 'date';
+		}
+		return in_array($type, ['text', 'boolean']) ? $type : 'string';
+	})
+	->toArray();
+
+$groupedFields += ['number' => [], 'string' => [], 'boolean' => [], 'date' => [], 'text' => []];
 ?>
-	</dl>
-</div>
-<div class="actions">
+<div class="actions columns large-2 medium-3">
 	<h3><?= "<?= __('Actions'); ?>"; ?></h3>
-	<ul>
+	<ul class="side-nav">
 <?php
 	$pk = "\${$singularVar}->{$primaryKey[0]}";
 
-	echo "\t\t<li><?= \$this->Html->link(__('Edit " . $singularHumanName ."'), ['action' => 'edit', {$pk}]) ?> </li>\n";
+	echo "\t\t<li><?= \$this->Html->link(__('Edit " . $singularHumanName . "'), ['action' => 'edit', {$pk}]) ?> </li>\n";
 	echo "\t\t<li><?= \$this->Form->postLink(__('Delete " . $singularHumanName . "'), ['action' => 'delete', {$pk}], ['confirm' => __('Are you sure you want to delete # %s?', {$pk})]) ?> </li>\n";
 	echo "\t\t<li><?= \$this->Html->link(__('List " . $pluralHumanName . "'), ['action' => 'index']) ?> </li>\n";
 	echo "\t\t<li><?= \$this->Html->link(__('New " . $singularHumanName . "'), ['action' => 'add']) ?> </li>\n";
@@ -62,45 +74,70 @@ foreach ($fields as $field) {
 ?>
 	</ul>
 </div>
-<?php
-if (!empty($associations['HasOne'])) :
-	foreach ($associations['HasOne'] as $alias => $details): ?>
-	<div class="related">
-		<h3><?= "<?= __('Related " . Inflector::humanize($details['controller']) . "') ?>"; ?></h3>
-	<?= "<?php if (!empty(\${$singularVar}['{$alias}'])): ?>\n"; ?>
-		<dl>
-	<?php
-			foreach ($details['fields'] as $field) {
-				echo "\t\t<dt><?= __('" . Inflector::humanize($field) . "') ?></dt>\n";
-				echo "\t\t<dd>\n\t<?= h(\${$singularVar}->{$details['property']}->{$field}) ?>\n&nbsp;</dd>\n";
-			}
-	?>
-		</dl>
-	<?= "<?php endif; ?>\n"; ?>
-		<div class="actions">
-			<ul>
-				<li><?= "<?= \$this->Html->link(__('Edit " . Inflector::humanize(Inflector::underscore($alias)) . "'), ['controller' => '{$details['controller']}', 'action' => 'edit', \${$singularVar}->{$details['property']}->{$details['primaryKey'][0]}]) ?></li>\n"; ?>
-			</ul>
+<div class="<?= $pluralVar ?> view large-10 medium-9 columns">
+	<h2><?= "<?= h(\${$singularVar}->{$displayField}) ?>"; ?></h2>
+	<div class="row">
+<?php if ($groupedFields['string']) : ?>
+		<div class="large-5 columns strings">
+<?php foreach ($groupedFields['string'] as $field) : ?>
+<?php if (isset($associationFields[$field])) :
+			$details = $associationFields[$field];
+?>
+			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($details['property']) . "') ?>" ?></h6>
+			<p><?= "<?= \${$singularVar}->has('{$details['property']}') ? \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['property']}->{$details['primaryKey'][0]}]) : '' ?>" ?></p>
+<?php else : ?>
+			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
+			<p><?= "<?= h(\${$singularVar}->{$field}) ?>" ?></p>
+<?php endif; ?>
+<?php endforeach; ?>
+		</div>
+<?php endif; ?>
+<?php if ($groupedFields['number']) : ?>
+		<div class="large-2 larege-offset-1 columns numbers end">
+<?php foreach ($groupedFields['number'] as $field) : ?>
+			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
+			<p><?= "<?= \$this->Number->format(\${$singularVar}->{$field}) ?>" ?></p>
+<?php endforeach; ?>
+		</div>
+<?php endif; ?>
+<?php if ($groupedFields['date']) : ?>
+		<div class="large-2 columns dates end">
+<?php foreach ($groupedFields['date'] as $field) : ?>
+			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
+			<p><?= "<?= h(\${$singularVar}->{$field}) ?>" ?></p>
+<?php endforeach; ?>
+		</div>
+<?php endif; ?>
+<?php if ($groupedFields['boolean']) : ?>
+		<div class="large-2 columns booleans end">
+<?php foreach ($groupedFields['boolean'] as $field) : ?>
+			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
+			<p><?= "<?= \${$singularVar}->{$field} ? __('Yes') : __('No'); ?>" ?></p>
+<?php endforeach; ?>
+		</div>
+<?php endif; ?>
+	</div>
+<?php if ($groupedFields['text']) : ?>
+<?php foreach ($groupedFields['text'] as $field) : ?>
+	<div class="row texts">
+		<div class="columns large-9">
+			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
+			<?= "<?= \$this->Text->autoParagraph(h(\${$singularVar}->{$field})); ?>"; ?>
+
 		</div>
 	</div>
-	<?php
-	endforeach;
-endif;
-
-if (empty($associations['HasMany'])) {
-	$associations['HasMany'] = [];
-}
-if (empty($associations['BelongsToMany'])) {
-	$associations['BelongsToMany'] = [];
-}
-
-$relations = array_merge($associations['HasMany'], $associations['BelongsToMany']);
+<?php endforeach; ?>
+<?php endif; ?>
+</div>
+<?php
+$relations = $associations['HasMany'] + $associations['BelongsToMany'];
 foreach ($relations as $alias => $details):
 	$otherSingularVar = Inflector::variable($alias);
 	$otherPluralHumanName = Inflector::humanize($details['controller']);
 	?>
-<div class="related">
-	<h3><?= "<?= __('Related " . $otherPluralHumanName . "') ?>"; ?></h3>
+<div class="related row">
+	<div class="column large-12">
+	<h4 class="subheader"><?= "<?= __('Related " . $otherPluralHumanName . "') ?>"; ?></h4>
 	<?= "<?php if (!empty(\${$singularVar}->{$details['property']})): ?>\n"; ?>
 	<table cellpadding="0" cellspacing="0">
 		<tr>
@@ -131,10 +168,6 @@ echo "\t\t<?php endforeach; ?>\n";
 ?>
 	</table>
 <?= "\t<?php endif; ?>\n"; ?>
-	<div class="actions">
-		<ul>
-			<li><?= "<?= \$this->Html->link(__('New " . Inflector::humanize(Inflector::singularize(Inflector::underscore($alias))) . "'), ['controller' => '{$details['controller']}', 'action' => 'add']) ?>"; ?> </li>
-		</ul>
 	</div>
 </div>
 <?php endforeach; ?>
