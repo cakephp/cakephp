@@ -1,2 +1,2 @@
-<?php echo $scripts_for_layout; ?>
+<?php echo $this->fetch('script'); ?>
 <script type="text/javascript"><?php echo $this->fetch('content'); ?></script>

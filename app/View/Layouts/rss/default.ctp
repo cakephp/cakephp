@@ -3,7 +3,7 @@ if (!isset($channel)):
 	$channel = array();
 endif;
 if (!isset($channel['title'])):
-	$channel['title'] = $title_for_layout;
+	$channel['title'] = $this->fetch('title');
 endif;
 
 echo $this->Rss->document(
@@ -11,4 +11,3 @@ echo $this->Rss->document(
 		array(), $channel, $this->fetch('content')
 	)
 );
-?>
