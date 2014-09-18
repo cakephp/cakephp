@@ -14,7 +14,6 @@
  */
 namespace Cake\I18n;
 
-use Aura\Intl\Exception as LoadException;
 use Aura\Intl\FormatterLocator;
 use Aura\Intl\PackageLocator;
 use Aura\Intl\TranslatorFactory;

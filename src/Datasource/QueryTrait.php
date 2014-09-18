@@ -17,7 +17,6 @@ namespace Cake\Datasource;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\QueryCacher;
 use Cake\Datasource\RepositoryInterface;
-use Cake\Datasource\ResultSetDecorator;
 
 /**
  * Contains the characteristics for an object that is attached to a repository and

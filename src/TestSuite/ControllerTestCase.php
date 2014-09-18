@@ -17,7 +17,6 @@ namespace Cake\TestSuite;
 use Cake\Controller\Error\MissingComponentException;
 use Cake\Controller\Error\MissingControllerException;
 use Cake\Core\App;
-use Cake\Error;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Session;
