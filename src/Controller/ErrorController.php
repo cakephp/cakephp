@@ -34,7 +34,7 @@ class ErrorController extends Controller {
 		if (count(Router::extensions()) &&
 			!isset($this->RequestHandler)
 		) {
-			$this->addComponent('RequestHandler');
+			$this->loadComponent('RequestHandler');
 		}
 		$eventManager = $this->eventManager();
 		if (isset($this->Auth)) {

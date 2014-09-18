@@ -339,7 +339,7 @@ class ControllerTest extends TestCase {
 		Plugin::load('TestPlugin');
 
 		$Controller = new TestPluginController(new Request(), new Response());
-		$Controller->addComponent('TestPlugin.Other');
+		$Controller->loadComponent('TestPlugin.Other');
 
 		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $Controller->Other);
 	}
@@ -818,7 +818,7 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$controller = new TestController($request, $response);
-		$result = $controller->addComponent('Paginator');
+		$result = $controller->loadComponent('Paginator');
 		$this->assertInstanceOf('Cake\Controller\Component\PaginatorComponent', $result);
 		$this->assertSame($result, $controller->Paginator);
 

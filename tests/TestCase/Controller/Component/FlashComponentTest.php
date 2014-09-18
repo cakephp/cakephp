@@ -130,7 +130,7 @@ class FlashComponentTest extends TestCase {
 	public function testSetWithComponentConfiguration() {
 		$this->assertNull($this->Session->read('Flash.flash'));
 
-		$this->Controller->addComponent('Flash', ['element' => 'test']);
+		$this->Controller->loadComponent('Flash', ['element' => 'test']);
 		$this->Controller->Flash->set('This is a test message');
 		$expected = [
 			'message' => 'This is a test message',

@@ -906,14 +906,14 @@ class ViewTest extends TestCase {
 	}
 
 /**
- * Test loading helper using addHelper().
+ * Test loading helper using loadHelper().
  *
  * @return void
  */
-	public function testAddHelper() {
+	public function testLoadHelper() {
 		$View = new View();
 
-		$View->addHelper('Html', ['foo' => 'bar']);
+		$View->loadHelper('Html', ['foo' => 'bar']);
 		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
 
 		$config = $View->Html->config();

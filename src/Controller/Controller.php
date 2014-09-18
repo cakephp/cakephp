@@ -316,12 +316,28 @@ class Controller implements EventListener {
 	}
 
 /**
+ * Alias for loadComponent() for backwards compatibility.
+ *
+ * @param string $name The name of the component to load.
+ * @param array $config The config for the component.
+ * @return \Cake\Controller\Component
+ * @deprecated 3.0.0 Use loadComponent() instead.
+ */
+	public function addComponent($name, array $config = []) {
+		trigger_error(
+			'addComponent() is deprecated, use loadComponent() instead.',
+			E_USER_DEPRECATED
+		);
+		return $this->loadComponent($name, $config);
+	}
+
+/**
  * Add a component to the controller's registry.
  *
  * This method will also set the component to a property.
  * For example:
  *
- * `$this->addComponent('Acl.Acl');`
+ * `$this->loadComponent('Acl.Acl');`
  *
  * Will result in a `Toolbar` property being set.
  *
@@ -329,7 +345,7 @@ class Controller implements EventListener {
  * @param array $config The config for the component.
  * @return \Cake\Controller\Component
  */
-	public function addComponent($name, array $config = []) {
+	public function loadComponent($name, array $config = []) {
 		list(, $prop) = pluginSplit($name);
 		$this->{$prop} = $this->components()->load($name, $config);
 		return $this->{$prop};
@@ -487,7 +503,7 @@ class Controller implements EventListener {
 		$registry = $this->components();
 		$components = $registry->normalizeArray($this->components);
 		foreach ($components as $properties) {
-			$this->addComponent($properties['class'], $properties['config']);
+			$this->loadComponent($properties['class'], $properties['config']);
 		}
 	}
 
@@ -659,7 +675,7 @@ class Controller implements EventListener {
 			}
 		}
 
-		$this->addComponent('Paginator');
+		$this->loadComponent('Paginator');
 		if (
 			!in_array('Paginator', $this->helpers) &&
 			!array_key_exists('Paginator', $this->helpers)
