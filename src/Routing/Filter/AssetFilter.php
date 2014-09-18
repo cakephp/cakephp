@@ -104,7 +104,6 @@ class AssetFilter extends DispatcherFilter {
  * @return void
  */
 	protected function _deliverAsset(Request $request, Response $response, $assetFile, $ext) {
-		ob_start();
 		$compressionEnabled = $response->compress();
 		if ($response->type($ext) === $ext) {
 			$contentType = 'application/octet-stream';
@@ -118,8 +117,7 @@ class AssetFilter extends DispatcherFilter {
 			$response->header('Content-Length', filesize($assetFile));
 		}
 		$response->cache(filemtime($assetFile));
-		$response->send();
-		ob_clean();
+		$response->sendHeaders();
 		readfile($assetFile);
 		if ($compressionEnabled) {
 			ob_end_flush();
