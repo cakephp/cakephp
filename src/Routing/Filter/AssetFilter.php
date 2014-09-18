@@ -105,7 +105,7 @@ class AssetFilter extends DispatcherFilter {
  */
 	protected function _deliverAsset(Request $request, Response $response, $assetFile, $ext) {
 		ob_start();
-		$compressionEnabled = Configure::read('Asset.compress') && $response->compress();
+		$compressionEnabled = $response->compress();
 		if ($response->type($ext) === $ext) {
 			$contentType = 'application/octet-stream';
 			$agent = $request->env('HTTP_USER_AGENT');
