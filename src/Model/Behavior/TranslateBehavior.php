@@ -64,7 +64,7 @@ class TranslateBehavior extends Behavior {
 		'implementedMethods' => ['locale' => 'locale'],
 		'fields' => [],
 		'translationTable' => 'i18n',
-		'type' => 'LEFT'
+		'filterEmpty' => false
 	];
 
 /**
@@ -77,7 +77,7 @@ class TranslateBehavior extends Behavior {
 		parent::__construct($table, $config);
 		$this->_table = $table;
 		$config = $this->_config;
-		$this->setupFieldAssociations($config['fields'], $config['translationTable'], $config['type']);
+		$this->setupFieldAssociations($config['fields'], $config['translationTable'], $config['filterEmpty']);
 	}
 
 /**
@@ -91,7 +91,7 @@ class TranslateBehavior extends Behavior {
  * @param string $table the table name to use for storing each field translation
  * @return void
  */
-	public function setupFieldAssociations($fields, $table, $type) {
+	public function setupFieldAssociations($fields, $table, $filterEmpty) {
 		$alias = $this->_table->alias();
 		foreach ($fields as $field) {
 			$name = $this->_table->alias() . '_' . $field . '_translation';
@@ -101,7 +101,7 @@ class TranslateBehavior extends Behavior {
 			$this->_table->hasOne($name, [
 				'targetTable' => $target,
 				'foreignKey' => 'foreign_key',
-				'joinType' => $type,
+				'joinType' => $filterEmpty ? 'INNER' : 'LEFT',
 				'conditions' => [
 					$name . '.model' => $alias,
 					$name . '.field' => $field,
