@@ -41,7 +41,7 @@ class TranslateBehaviorTest extends TestCase {
 
 	public function tearDown() {
 		parent::tearDown();
-		I18n::locale(I18n::environmentLocale());
+		I18n::locale(I18n::defaultLocale());
 		TableRegistry::clear();
 	}
 

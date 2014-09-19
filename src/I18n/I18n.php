@@ -41,7 +41,7 @@ class I18n {
  *
  * @var string
  */
-	protected static $_environmentLocale;
+	protected static $_defaultLocale;
 
 /**
  * Returns the translators collection instance. It can be used
@@ -203,7 +203,7 @@ class I18n {
  * @return string|null The name of the default locale.
  */
 	public static function locale($locale = null) {
-		static::environmentLocale();
+		static::defaultLocale();
 
 		if (!empty($locale)) {
 			Locale::setDefault($locale);
@@ -227,11 +227,11 @@ class I18n {
  *
  * @return string
  */
-	public static function environmentLocale() {
-		if (static::$_environmentLocale === null) {
-			static::$_environmentLocale = Locale::getDefault() ?: 'en_US';
+	public static function defaultLocale() {
+		if (static::$_defaultLocale === null) {
+			static::$_defaultLocale = Locale::getDefault() ?: 'en_US';
 		}
-		return static::$_environmentLocale;
+		return static::$_defaultLocale;
 	}
 
 /**

@@ -75,7 +75,7 @@ class TranslateBehavior extends Behavior {
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
-		$config += ['defaultLocale' => I18n::environmentLocale()];
+		$config += ['defaultLocale' => I18n::defaultLocale()];
 		parent::__construct($table, $config);
 
 		$this->_table = $table;
