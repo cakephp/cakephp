@@ -16,11 +16,13 @@
  */
 namespace Cake\Log;
 
+use Psr\Log\LoggerInterface;
+
 /**
- * LogStreamInterface is the interface that should be implemented
+ * LogInterface is the interface that should be implemented
  * by all classes that are going to be used as Log streams.
  */
-interface LogInterface {
+interface LogInterface extends LoggerInterface {
 
 /**
  * Write method to handle writes being made to the Logger
@@ -28,7 +30,7 @@ interface LogInterface {
  * @param string $level The severity level of the message being written.
  *    See Cake\Log\Log::$_levels for list of possible levels.
  * @param string $message Message content to log
- * @param string|array $scope The scope(s) a log message is being created in.
+ * @param array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return void
  */

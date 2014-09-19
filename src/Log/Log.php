@@ -36,7 +36,7 @@ use InvalidArgumentException;
  * classname to use loggers in the `App\Log\Engine` & `Cake\Log\Engine` namespaces.
  * You can also use plugin short hand to use logging classes provided by plugins.
  *
- * Log adapters are required to implement `Cake\Log\LogInterface`, and there is a
+ * Log adapters are required to implement `Psr\Log\LoggerInterface`, and there is a
  * built-in base class (`Cake\Log\Engine\BaseLog`) that can be used for custom loggers.
  *
  * Outside of the `className` key, all other configuration values will be passed to the
@@ -308,7 +308,7 @@ class Log {
  *
  * If no configured logger can handle a log message (because of level or scope restrictions)
  * then the logged message will be ignored and silently dropped. You can check if this has happened
- * by inspecting the return of write().  If false the message was not handled.
+ * by inspecting the return of write(). If false the message was not handled.
  *
  * @param int|string $level The severity level of the message being written.
  *    The value must be an integer or string matching a known level.
@@ -329,26 +329,26 @@ class Log {
 		}
 
 		$logged = false;
+		$scope = (array)$scope;
+
 		foreach (static::$_registry->loaded() as $streamName) {
 			$logger = static::$_registry->{$streamName};
 			$levels = $scopes = null;
+
 			if ($logger instanceof BaseLog) {
 				$levels = $logger->levels();
 				$scopes = $logger->scopes();
 			}
-			$correctLevel = (
-				empty($levels) ||
-				in_array($level, $levels)
-			);
-			$inScope = (
-				empty($scopes) ||
-				count(array_intersect((array)$scope, $scopes)) > 0
-			);
+
+			$correctLevel = empty($levels) || in_array($level, $levels);
+			$inScope = empty($scopes) || array_intersect($scope, $scopes);
+
 			if ($correctLevel && $inScope) {
-				$logger->write($level, $message, $scope);
+				$logger->log($level, $message, $scope);
 				$logged = true;
 			}
 		}
+
 		return $logged;
 	}
 

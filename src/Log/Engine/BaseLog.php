@@ -15,13 +15,13 @@
 namespace Cake\Log\Engine;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Log\LogInterface;
+use Psr\Log\AbstractLogger;
 
 /**
  * Base log engine class.
  *
  */
-abstract class BaseLog implements LogInterface {
+abstract class BaseLog extends AbstractLogger {
 
 	use InstanceConfigTrait;
 
