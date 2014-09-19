@@ -2195,6 +2195,44 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that save validates all entities before persisting.
+ *
+ * @return void
+ */
+	public function testSaveValidateAllAssociations() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'foo',
+			'author' => new \Cake\ORM\Entity([
+				'name' => 'Susan'
+			]),
+			'comments' => [
+				new \Cake\ORM\Entity([
+					'comment' => 'the worst!'
+				])
+			]
+		]);
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors');
+		$table->hasMany('Comments');
+
+		$validator = (new Validator)->validatePresence('body');
+		$table->validator('default', $validator);
+
+		$authorValidate = (new Validator)->validatePresence('bio');
+		$table->Authors->validator('default', $authorValidate);
+
+		$commentValidate = (new Validator)->validatePresence('author');
+		$table->Comments->validator('default', $commentValidate);
+
+		$result = $table->save($entity);
+		$this->assertFalse($result, 'Should have failed');
+
+		$this->assertNotEmpty($entity->errors('body'), 'Missing article errors');
+		$this->assertNotEmpty($entity->author->errors('bio'), 'Missing author errors');
+		$this->assertNotEmpty($entity->comments[0]->errors('author'), 'Missing comment errors');
+	}
+
+/**
  * Test magic findByXX method.
  *
  * @return void
@@ -2461,8 +2499,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = TableRegistry::get('authors');
 		$table->hasOne('articles');
 
-		$this->assertSame($entity, $table->save($entity));
-		$this->assertFalse($entity->isNew());
+		$this->assertFalse($table->save($entity));
+		$this->assertTrue($entity->isNew());
 		$this->assertInternalType('array', $entity->article);
 	}
 
@@ -2599,14 +2637,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->validator()
 			->add('title', 'num', ['rule' => 'numeric']);
 
-		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
-		$this->assertFalse($entity->isNew());
+		$result = $table->save($entity, ['atomic' => false]);
+		$this->assertFalse($result, 'Validation failed, no save.');
+		$this->assertTrue($entity->isNew());
 		$this->assertTrue($entity->articles[0]->isNew());
-		$this->assertFalse($entity->articles[1]->isNew());
-		$this->assertEquals(4, $entity->articles[1]->id);
+		$this->assertTrue($entity->articles[1]->isNew());
+		$this->assertNull($entity->articles[1]->id);
 		$this->assertNull($entity->articles[0]->id);
-		$this->assertEquals(5, $entity->articles[0]->author_id);
-		$this->assertEquals(5, $entity->articles[1]->author_id);
+		$this->assertNull($entity->articles[0]->author_id);
+		$this->assertNull($entity->articles[1]->author_id);
 	}
 
 /**
@@ -2632,8 +2671,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->validator()
 			->add('title', 'num', ['rule' => 'numeric']);
 
-		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
-		$this->assertFalse($entity->isNew());
+		$result = $table->save($entity, ['atomic' => false]);
+		$this->assertFalse($result, 'Validation failed, no save.');
+		$this->assertTrue($entity->isNew());
 		$this->assertTrue($entity->article->isNew());
 		$this->assertNull($entity->article->id);
 		$this->assertNull($entity->article->get('author_id'));
@@ -2664,8 +2704,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->validator()
 			->add('name', 'num', ['rule' => 'numeric']);
 
-		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
-		$this->assertFalse($entity->isNew());
+		$result = $table->save($entity, ['atomic' => false]);
+		$this->assertFalse($result, 'Validation failed, no save');
+		$this->assertTrue($entity->isNew());
 		$this->assertTrue($entity->author->isNew());
 		$this->assertNull($entity->get('author_id'));
 		$this->assertNotEmpty($entity->author->errors('name'));
@@ -2764,7 +2805,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testSaveBelongsToWithValidationErrorAtomic() {
+	public function testSaveBelongsToManyWithValidationErrorAtomic() {
 		$entity = new \Cake\ORM\Entity([
 			'title' => 'A Title',
 			'body' => 'A body'
@@ -2803,7 +2844,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testSaveBelongsToWithValidationErrorNonAtomic() {
+	public function testSaveBelongsToManyWithValidationErrorNonAtomic() {
 		$entity = new \Cake\ORM\Entity([
 			'title' => 'A Title',
 			'body' => 'A body'
@@ -2823,15 +2864,16 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->validator()
 			->add('name', 'num', ['rule' => 'numeric']);
 
-		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
-		$this->assertFalse($entity->isNew());
+		$result = $table->save($entity, ['atomic' => false]);
+
+		$this->assertFalse($result, 'HABTM validation failed, save aborted');
+		$this->assertTrue($entity->isNew());
 		$this->assertTrue($entity->tags[0]->isNew());
-		$this->assertFalse($entity->tags[1]->isNew());
+		$this->assertTrue($entity->tags[1]->isNew());
 		$this->assertNull($entity->tags[0]->id);
-		$this->assertEquals(4, $entity->tags[1]->id);
+		$this->assertNull($entity->tags[1]->id);
 		$this->assertNull($entity->tags[0]->_joinData);
-		$this->assertEquals(4, $entity->tags[1]->_joinData->article_id);
-		$this->assertEquals(4, $entity->tags[1]->_joinData->tag_id);
+		$this->assertNull($entity->tags[1]->_joinData);
 	}
 
 /**
@@ -2840,7 +2882,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testSaveBelongsToWithValidationErrorInJointEntity() {
+	public function testSaveBelongsToManyWithValidationErrorInJointEntity() {
 		$entity = new \Cake\ORM\Entity([
 			'title' => 'A Title',
 			'body' => 'A body'
@@ -2877,7 +2919,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testSaveBelongsToWithValidationErrorInJointEntityNonAtomic() {
+	public function testSaveBelongsToManyWithValidationErrorInJointEntityNonAtomic() {
 		$entity = new \Cake\ORM\Entity([
 			'title' => 'A Title',
 			'body' => 'A body'
@@ -3030,7 +3072,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($entity, $articles->save($entity, [
 			'associated' => [
 				'authors' => [
-					'validate' => 'special'
+					'validate' => true
 				],
 				'authors.supervisors' => [
 					'atomic' => false,
