@@ -41,7 +41,7 @@ class TranslateBehaviorTest extends TestCase {
 
 	public function tearDown() {
 		parent::tearDown();
-		I18n::defaultLocale(I18n::environmentLocale());
+		I18n::locale(I18n::environmentLocale());
 		TableRegistry::clear();
 	}
 
@@ -88,7 +88,7 @@ class TranslateBehaviorTest extends TestCase {
  * @return void
  */
 	public function testFindSingleLocaleAssociatedEnv() {
-		I18n::defaultLocale('eng');
+		I18n::locale('eng');
 
 		$table = TableRegistry::get('Articles');
 		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
@@ -135,7 +135,7 @@ class TranslateBehaviorTest extends TestCase {
 		];
 		$this->assertSame($expected, $results);
 
-		I18n::defaultLocale('spa');
+		I18n::locale('spa');
 
 		$results = $table->find()
 			->select(['id', 'title', 'body'])

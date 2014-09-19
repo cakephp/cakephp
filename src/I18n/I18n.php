@@ -66,13 +66,13 @@ class I18n {
 				},
 			]),
 			new TranslatorFactory,
-			static::defaultLocale()
+			static::locale()
 		);
 	}
 
 /**
  * Returns an instance of a translator that was configured for the name and passed
- * locale. If no locale is passed then it takes the value returned by the `defaultLocale()` method.
+ * locale. If no locale is passed then it takes the value returned by the `locale()` method.
  *
  * This method can be used to configure future translators, this is achieved by passing a callable
  * as the last argument of this function.
@@ -113,7 +113,7 @@ class I18n {
 	public static function translator($name = 'default', $locale = null, callable $loader = null) {
 		if ($loader !== null) {
 			$packages = static::translators()->getPackages();
-			$locale = $locale ?: static::defaultLocale();
+			$locale = $locale ?: static::locale();
 
 			if ($name !== 'default') {
 				$loader = function() use ($loader) {
@@ -197,12 +197,12 @@ class I18n {
  * This also affects the `intl.default_locale` PHP setting.
  *
  * When called with no arguments it will return the currently configure
- * defaultLocale as stored in the `intl.default_locale` PHP setting.
+ * locale as stored in the `intl.default_locale` PHP setting.
  *
  * @param string $locale The name of the locale to set as default.
  * @return string|null The name of the default locale.
  */
-	public static function defaultLocale($locale = null) {
+	public static function locale($locale = null) {
 		static::environmentLocale();
 
 		if (!empty($locale)) {

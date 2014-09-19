@@ -234,7 +234,7 @@ class TranslateBehavior extends Behavior {
  */
 	public function locale($locale = null) {
 		if ($locale === null) {
-			return $this->_locale ?: I18n::defaultLocale();
+			return $this->_locale ?: I18n::locale();
 		}
 		return $this->_locale = (string)$locale;
 	}
