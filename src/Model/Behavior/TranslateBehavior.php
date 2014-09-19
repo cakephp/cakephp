@@ -53,6 +53,12 @@ class TranslateBehavior extends Behavior {
 	protected $_locale;
 
 /**
+ * If true, resets the i18n associations in _rowMapper
+ * @var bool
+ */
+	protected $_resetAssociations = false;
+
+/**
  * Default config
  *
  * These are merged with user-provided configuration when the behavior is used.
@@ -260,6 +266,7 @@ class TranslateBehavior extends Behavior {
  */
 	public function findTranslations(Query $query, array $options) {
 		if (isset($options['filterEmpty']) && $options['filterEmpty'] !== $this->_config['filterEmpty']) {
+			$this->_resetAssociations = true;
 			$this->setupFieldAssociations($this->_config['fields'], $this->_config['translationTable'], $options['filterEmpty']);
 		}
 		$locales = isset($options['locales']) ? $options['locales'] : [];
@@ -283,6 +290,10 @@ class TranslateBehavior extends Behavior {
  * @return \Cake\Collection\Collection
  */
 	protected function _rowMapper($results, $locale) {
+		if ($this->_resetAssociations) {
+			$this->_resetAssociations = false;
+			$this->setupFieldAssociations($this->_config['fields'], $this->_config['translationTable'], $this->_config['filterEmpty']);
+		}
 		return $results->map(function($row) use ($locale) {
 			$options = ['setter' => false, 'guard' => false];
 
