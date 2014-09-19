@@ -82,11 +82,10 @@ class ConsoleLog extends BaseLog {
  *
  * @param string $level The severity level of log you are making.
  * @param string $message The message you want to log.
- * @param string|array $scope The scope(s) a log message is being created in.
- *    See Cake\Log\Log::config() for more information on logging scopes.
+ * @param array $context Additional information about the logged message
  * @return bool success of write.
  */
-	public function write($level, $message, $scope = []) {
+	public function log($level, $message, array $context = []) {
 		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message . "\n";
 		return $this->_output->write(sprintf('<%s>%s</%s>', $level, $output, $level), false);
 	}

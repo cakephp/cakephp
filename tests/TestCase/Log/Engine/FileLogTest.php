@@ -34,19 +34,19 @@ class FileLogTest extends TestCase {
 		$this->_deleteLogs(LOGS);
 
 		$log = new FileLog();
-		$log->write('warning', 'Test warning');
+		$log->log('warning', 'Test warning');
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 
 		$result = file_get_contents(LOGS . 'error.log');
 		$this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning/', $result);
 
-		$log->write('debug', 'Test warning');
+		$log->log('debug', 'Test warning');
 		$this->assertTrue(file_exists(LOGS . 'debug.log'));
 
 		$result = file_get_contents(LOGS . 'debug.log');
 		$this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Debug: Test warning/', $result);
 
-		$log->write('random', 'Test warning');
+		$log->log('random', 'Test warning');
 		$this->assertTrue(file_exists(LOGS . 'random.log'));
 
 		$result = file_get_contents(LOGS . 'random.log');
@@ -54,7 +54,7 @@ class FileLogTest extends TestCase {
 	}
 
 /**
- * test using the path setting to write logs in other places.
+ * test using the path setting to log logs in other places.
  *
  * @return void
  */
@@ -63,7 +63,7 @@ class FileLogTest extends TestCase {
 		$this->_deleteLogs($path);
 
 		$log = new FileLog(compact('path'));
-		$log->write('warning', 'Test warning');
+		$log->log('warning', 'Test warning');
 		$this->assertTrue(file_exists($path . 'error.log'));
 	}
 
@@ -82,7 +82,7 @@ class FileLogTest extends TestCase {
 			'size' => 35,
 			'rotate' => 2
 		));
-		$log->write('warning', 'Test warning one');
+		$log->log('warning', 'Test warning one');
 		$this->assertTrue(file_exists($path . 'error.log'));
 
 		$result = file_get_contents($path . 'error.log');
@@ -90,7 +90,7 @@ class FileLogTest extends TestCase {
 		$this->assertEquals(0, count(glob($path . 'error.log.*')));
 
 		clearstatcache();
-		$log->write('warning', 'Test warning second');
+		$log->log('warning', 'Test warning second');
 
 		$files = glob($path . 'error.log.*');
 		$this->assertEquals(1, count($files));
@@ -101,7 +101,7 @@ class FileLogTest extends TestCase {
 
 		sleep(1);
 		clearstatcache();
-		$log->write('warning', 'Test warning third');
+		$log->log('warning', 'Test warning third');
 
 		$result = file_get_contents($path . 'error.log');
 		$this->assertRegExp('/Warning: Test warning third/', $result);
@@ -119,7 +119,7 @@ class FileLogTest extends TestCase {
 
 		sleep(1);
 		clearstatcache();
-		$log->write('warning', 'Test warning fourth');
+		$log->log('warning', 'Test warning fourth');
 
 		// rotate count reached so file count should not increase
 		$files = glob($path . 'error.log.*');
@@ -141,7 +141,7 @@ class FileLogTest extends TestCase {
 			'rotate' => 0
 		));
 		file_put_contents($path . 'debug.log.0000000000', "The oldest log file with over 35 bytes.\n");
-		$log->write('debug', 'Test debug');
+		$log->log('debug', 'Test debug');
 		$this->assertTrue(file_exists($path . 'debug.log'));
 
 		$result = file_get_contents($path . 'debug.log');
@@ -159,21 +159,21 @@ class FileLogTest extends TestCase {
 		$this->_deleteLogs($path);
 
 		$log = new FileLog(array('path' => $path, 'mask' => 0666));
-		$log->write('warning', 'Test warning one');
+		$log->log('warning', 'Test warning one');
 		$result = substr(sprintf('%o', fileperms($path . 'error.log')), -4);
 		$expected = '0666';
 		$this->assertEquals($expected, $result);
 		unlink($path . 'error.log');
 
 		$log = new FileLog(array('path' => $path, 'mask' => 0644));
-		$log->write('warning', 'Test warning two');
+		$log->log('warning', 'Test warning two');
 		$result = substr(sprintf('%o', fileperms($path . 'error.log')), -4);
 		$expected = '0644';
 		$this->assertEquals($expected, $result);
 		unlink($path . 'error.log');
 
 		$log = new FileLog(array('path' => $path, 'mask' => 0640));
-		$log->write('warning', 'Test warning three');
+		$log->log('warning', 'Test warning three');
 		$result = substr(sprintf('%o', fileperms($path . 'error.log')), -4);
 		$expected = '0640';
 		$this->assertEquals($expected, $result);

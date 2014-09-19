@@ -440,7 +440,7 @@ class LogTest extends TestCase {
 		$this->assertNull($engine->passedScope);
 
 		Log::write('debug', 'test message', 'foo');
-		$this->assertEquals('foo', $engine->passedScope);
+		$this->assertEquals(['foo'], $engine->passedScope);
 
 		Log::write('debug', 'test message', ['foo', 'bar']);
 		$this->assertEquals(['foo', 'bar'], $engine->passedScope);
