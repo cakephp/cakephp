@@ -83,7 +83,7 @@ $fields = collection($fields)
 
 	echo "\t<?php endforeach; ?>\n";
 	?>
-	</thead>
+	</tbody>
 	</table>
 	<div class="paginator">
 		<ul class="pagination">
