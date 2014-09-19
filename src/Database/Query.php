@@ -1246,6 +1246,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return $this
  */
 	public function update($table) {
+		if ($this->_connection instanceof \Cake\Database\Connection) {
+			$table = $this->_connection->fullTableName($table);
+		}
+
 		$this->_dirty();
 		$this->_type = 'update';
 		$this->_parts['update'][0] = $table;
