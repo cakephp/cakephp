@@ -259,6 +259,9 @@ class TranslateBehavior extends Behavior {
  * @return \Cake\ORM\Query
  */
 	public function findTranslations(Query $query, array $options) {
+		if (isset($options['filterEmpty']) && $options['filterEmpty'] !== $this->_config['filterEmpty']) {
+			$this->setupFieldAssociations($this->_config['fields'], $this->_config['translationTable'], $options['filterEmpty']);
+		}
 		$locales = isset($options['locales']) ? $options['locales'] : [];
 		$table = $this->_config['translationTable'];
 		return $query
