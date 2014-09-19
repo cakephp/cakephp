@@ -75,7 +75,7 @@ class ModelAwareTraitTest extends TestCase {
 		$stub = new Stub();
 		$stub->setProps('Articles');
 
-		$stub->modelFactory('Test', function($name) {
+		$stub->modelFactory('Test', function ($name) {
 			$mock = new \StdClass();
 			$mock->name = $name;
 			return $mock;
@@ -97,7 +97,7 @@ class ModelAwareTraitTest extends TestCase {
 	public function testMissingModelException() {
 		$stub = new Stub();
 
-		$stub->modelFactory('Test', function($name) {
+		$stub->modelFactory('Test', function ($name) {
 			return false;
 		});
 

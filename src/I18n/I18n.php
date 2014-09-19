@@ -48,10 +48,10 @@ class I18n {
 		return static::$_collection = new TranslatorRegistry(
 			new PackageLocator,
 			new FormatterLocator([
-				'sprintf' => function() {
+				'sprintf' => function () {
 					return new SprintfFormatter;
 				},
-				'default' => function() {
+				'default' => function () {
 					return new IcuFormatter;
 				},
 			]),
@@ -70,7 +70,7 @@ class I18n {
  * ### Example:
  *
  * {{{
- *  I18n::translator('default', 'fr_FR', function() {
+ *  I18n::translator('default', 'fr_FR', function () {
  *		$package = new \Aura\Intl\Package();
  *		$package->setMessages([
  *			'Cake' => 'Gâteau'
@@ -106,7 +106,7 @@ class I18n {
 			$locale = $locale ?: static::defaultLocale();
 
 			if ($name !== 'default') {
-				$loader = function() use ($loader) {
+				$loader = function () use ($loader) {
 					$package = $loader();
 					if (!$package->getFallback()) {
 						$package->setFallback('default');
@@ -153,7 +153,7 @@ class I18n {
  *
  * {{{
  *  use Cake\I18n\MessagesFileLoader;
- *	I18n::config('my_domain', function($name, $locale) {
+ *	I18n::config('my_domain', function ($name, $locale) {
  *		// Load src/Locale/$locale/filename.po
  *		$fileLoader = new MessagesFileLoader('filename', $locale, 'po');
  *		return $fileLoader();
@@ -164,7 +164,7 @@ class I18n {
  *
  * {{{
  *  use Aura\Intl\Package;
- *	I18n::config('my_domain', function($name, $locale) {
+ *	I18n::config('my_domain', function ($name, $locale) {
  *		$package = new Package('default');
  *		$messages = (...); // Fetch messages for locale from external service.
  *		$package->setMessages($message);

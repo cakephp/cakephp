@@ -76,7 +76,7 @@ trait TupleComparisonTranslatorTrait {
 		}
 
 		foreach ($value as $tuple) {
-			$surrogate->orWhere(function($exp) use ($fields, $tuple) {
+			$surrogate->orWhere(function ($exp) use ($fields, $tuple) {
 				foreach ($tuple as $i => $value) {
 					$exp->add([$fields[$i] => $value]);
 				}

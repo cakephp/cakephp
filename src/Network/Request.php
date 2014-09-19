@@ -638,7 +638,7 @@ class Request implements \ArrayAccess {
  * Callback detectors allow you to provide a callable to handle the check.
  * The callback will receive the request object as its only parameter.
  *
- * e.g `addDetector('custom', function($request) { //Return a boolean });`
+ * e.g `addDetector('custom', function ($request) { //Return a boolean });`
  * e.g `addDetector('custom', array('SomeClass', 'somemethod'));`
  *
  * ### Environment value comparison

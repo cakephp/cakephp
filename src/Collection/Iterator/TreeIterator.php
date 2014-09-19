@@ -72,7 +72,7 @@ class TreeIterator extends RecursiveIteratorIterator {
  * {{{
  *	$printer = (new Collection($treeStructure))
  *		->listNested()
- *		->printer(function($item, $key, $iterator) {
+ *		->printer(function ($item, $key, $iterator) {
  *			return $item->name;
  *		});
  * }}}
@@ -88,7 +88,7 @@ class TreeIterator extends RecursiveIteratorIterator {
 	public function printer($valuePath, $keyPath = null, $spacer = '__') {
 		if (!$keyPath) {
 			$counter = 0;
-			$keyPath = function() use (&$counter) {
+			$keyPath = function () use (&$counter) {
 				return $counter++;
 			};
 		}

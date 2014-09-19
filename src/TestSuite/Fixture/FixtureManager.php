@@ -224,7 +224,7 @@ class FixtureManager {
 
 		$dbs = $this->_fixtureConnections($fixtures);
 		try {
-			$createTables = function($db, $fixtures) use ($test) {
+			$createTables = function ($db, $fixtures) use ($test) {
 				$tables = $db->schemaCollection()->listTables();
 				foreach ($fixtures as $fixture) {
 					if (!in_array($db->configName(), (array)$fixture->created)) {
@@ -237,7 +237,7 @@ class FixtureManager {
 			$this->_runOperation($fixtures, $createTables);
 
 			// Use a separate transaction because of postgres.
-			$insert = function($db, $fixtures) {
+			$insert = function ($db, $fixtures) {
 				foreach ($fixtures as $fixture) {
 					$fixture->insert($db);
 				}
@@ -260,7 +260,7 @@ class FixtureManager {
 		$dbs = $this->_fixtureConnections($fixtures);
 		foreach ($dbs as $connection => $fixtures) {
 			$db = ConnectionManager::get($connection, false);
-			$db->transactional(function($db) use ($fixtures, $operation) {
+			$db->transactional(function ($db) use ($fixtures, $operation) {
 				$db->disableForeignKeys();
 				$operation($db, $fixtures);
 				$db->enableForeignKeys();
@@ -295,7 +295,7 @@ class FixtureManager {
 		if (empty($test->fixtures)) {
 			return;
 		}
-		$truncate = function($db, $fixtures) {
+		$truncate = function ($db, $fixtures) {
 			$connection = $db->configName();
 			foreach ($fixtures as $fixture) {
 				if (!empty($fixture->created) && in_array($connection, $fixture->created)) {
@@ -341,7 +341,7 @@ class FixtureManager {
  * @return void
  */
 	public function shutDown() {
-		$shutdown = function($db, $fixtures) {
+		$shutdown = function ($db, $fixtures) {
 			$connection = $db->configName();
 			foreach ($fixtures as $fixture) {
 				if (!empty($fixture->created) && in_array($connection, $fixture->created)) {

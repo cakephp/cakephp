@@ -114,7 +114,7 @@ class DispatcherFilterTest extends TestCase {
 		$filter = new DispatcherFilter(['when' => $matcher]);
 		$this->assertTrue($filter->matches($event));
 
-		$matcher = function() {
+		$matcher = function () {
 			return false;
 		};
 		$filter = new DispatcherFilter(['when' => $matcher]);
@@ -140,7 +140,7 @@ class DispatcherFilterTest extends TestCase {
 		$filter = new DispatcherFilter(['for' => '/articles', 'when' => $matcher]);
 		$this->assertTrue($filter->matches($event));
 
-		$matcher = function() {
+		$matcher = function () {
 			return false;
 		};
 		$filter = new DispatcherFilter(['for' => '/admin', 'when' => $matcher]);
@@ -206,7 +206,7 @@ class DispatcherFilterTest extends TestCase {
 		$response = new Response();
 
 		$event = new Event('Dispatcher.beforeDispatch', $this, compact('response', 'request'));
-		$matcher = function() {
+		$matcher = function () {
 			return false;
 		};
 

@@ -501,7 +501,7 @@ class CacheTest extends TestCase {
 	public function testRemember() {
 		$this->_configCache();
 		$counter = 0;
-		$cacher = function () use ($counter){
+		$cacher = function () use ($counter) {
 			return 'This is some data ' . $counter;
 		};
 

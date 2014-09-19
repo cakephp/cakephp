@@ -116,7 +116,7 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testCreateCustomTranslationPackage() {
-		I18n::translator('custom', 'fr_FR', function() {
+		I18n::translator('custom', 'fr_FR', function () {
 			$package = new Package('default');
 			$package->setMessages([
 				'Cow' => 'Le moo'
@@ -188,7 +188,7 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testGetTranslatorByDefaultLocale() {
-		I18n::translator('custom', 'fr_FR', function() {
+		I18n::translator('custom', 'fr_FR', function () {
 			$package = new Package('default');
 			$package->setMessages([
 				'Cow' => 'Le moo'
@@ -232,7 +232,7 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testBasicDomainFunction() {
-		I18n::translator('custom', 'en_US', function() {
+		I18n::translator('custom', 'en_US', function () {
 			$package = new Package('default');
 			$package->setMessages([
 				'Cow' => 'Le moo',
@@ -250,7 +250,7 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testBasicDomainPluralFunction() {
-		I18n::translator('custom', 'en_US', function() {
+		I18n::translator('custom', 'en_US', function () {
 			$package = new Package('default');
 			$package->setMessages([
 				'Cow' => 'Le Moo',
@@ -271,7 +271,7 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testBasicContextFunction() {
-		I18n::translator('default', 'en_US', function() {
+		I18n::translator('default', 'en_US', function () {
 			$package = new Package('default');
 			$package->setMessages([
 				'letter' => [
@@ -317,7 +317,7 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testloaderFactory() {
-		I18n::config('custom', function($name, $locale) {
+		I18n::config('custom', function ($name, $locale) {
 			$this->assertEquals('custom', $name);
 			$package = new Package('default');
 
@@ -362,7 +362,7 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testFallbackTranslator() {
-		I18n::translator('default', 'fr_FR', function() {
+		I18n::translator('default', 'fr_FR', function () {
 			$package = new Package('default');
 			$package->setMessages([
 				'Dog' => 'Le bark'
@@ -370,7 +370,7 @@ class I18nTest extends TestCase {
 			return $package;
 		});
 
-		I18n::translator('custom', 'fr_FR', function() {
+		I18n::translator('custom', 'fr_FR', function () {
 			$package = new Package('default');
 			$package->setMessages([
 				'Cow' => 'Le moo'
@@ -390,14 +390,14 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testFallbackTranslatorWithFactory() {
-		I18n::translator('default', 'fr_FR', function() {
+		I18n::translator('default', 'fr_FR', function () {
 			$package = new Package('default');
 			$package->setMessages([
 				'Dog' => 'Le bark'
 			]);
 			return $package;
 		});
-		I18n::config('custom', function($name, $locale) {
+		I18n::config('custom', function ($name, $locale) {
 			$this->assertEquals('custom', $name);
 			$package = new Package('default');
 			$package->setMessages([

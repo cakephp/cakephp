@@ -586,7 +586,7 @@ class SmtpTransportTest extends TestCase {
  * @return void
  */
 	public function testExplicitDisconnectNotConnected() {
-		$callback = function($arg) {
+		$callback = function ($arg) {
 			$this->assertNotEquals("QUIT\r\n", $arg);
 		};
 		$this->socket->expects($this->any())->method('write')->will($this->returnCallback($callback));
@@ -607,7 +607,7 @@ class SmtpTransportTest extends TestCase {
 		$email->to('cake@cakephp.org', 'CakePHP');
 		$email->expects($this->exactly(2))->method('message')->will($this->returnValue(array('First Line')));
 
-		$callback = function($arg) {
+		$callback = function ($arg) {
 			$this->assertNotEquals("QUIT\r\n", $arg);
 		};
 		$this->socket->expects($this->any())->method('write')->will($this->returnCallback($callback));

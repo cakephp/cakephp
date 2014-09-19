@@ -280,7 +280,7 @@ trait SelectableAssociationTrait {
 		}
 
 		$sourceKey = $sourceKeys[0];
-		return function($row) use ($resultMap, $sourceKey, $nestKey) {
+		return function ($row) use ($resultMap, $sourceKey, $nestKey) {
 			if (isset($resultMap[$row[$sourceKey]])) {
 				$row[$nestKey] = $resultMap[$row[$sourceKey]];
 			}
@@ -299,7 +299,7 @@ trait SelectableAssociationTrait {
  * @return \Closure
  */
 	protected function _multiKeysInjector($resultMap, $sourceKeys, $nestKey) {
-		return function($row) use ($resultMap, $sourceKeys, $nestKey) {
+		return function ($row) use ($resultMap, $sourceKeys, $nestKey) {
 			$values = [];
 			foreach ($sourceKeys as $key) {
 				$values[] = $row[$key];

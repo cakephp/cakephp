@@ -53,19 +53,19 @@ class ControllerTestCaseTest extends TestCase {
 
 		DispatcherFactory::add('Routing');
 		DispatcherFactory::add('ControllerFactory');
-		Router::scope('/', function($routes) {
+		Router::scope('/', function ($routes) {
 			$routes->fallbacks();
 		});
-		Router::prefix('admin', function($routes) {
+		Router::prefix('admin', function ($routes) {
 			$routes->plugin('TestPlugin', function ($routes) {
 				$routes->fallbacks();
 			});
 			$routes->fallbacks();
 		});
-		Router::plugin('TestPlugin', function($routes) {
+		Router::plugin('TestPlugin', function ($routes) {
 			$routes->fallbacks();
 		});
-		Router::plugin('TestPluginTwo', function($routes) {
+		Router::plugin('TestPluginTwo', function ($routes) {
 			$routes->fallbacks();
 		});
 		TableRegistry::clear();

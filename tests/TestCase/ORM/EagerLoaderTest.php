@@ -265,7 +265,7 @@ class EagerLoaderTest extends TestCase {
  * @return void
  */
 	public function testContainClosure() {
-		$builder = function($query) {
+		$builder = function ($query) {
 		};
 		$loader = new EagerLoader;
 		$loader->contain([
@@ -428,7 +428,7 @@ class EagerLoaderTest extends TestCase {
  */
 	protected function _quoteArray($elements) {
 		if ($this->connection->driver()->autoQuoting()) {
-			$quoter = function($e) {
+			$quoter = function ($e) {
 				return $this->connection->driver()->quoteIdentifier($e);
 			};
 			return array_combine(

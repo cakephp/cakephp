@@ -330,7 +330,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * argument:
  *
  * {{{
- * $validator->allowEmpty('email', function($context) {
+ * $validator->allowEmpty('email', function ($context) {
  *	return !$context['newRecord'] || $context['data']['role'] === 'admin';
  * });
  * }}}
@@ -370,7 +370,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * argument:
  *
  * {{{
- * $validator->notEmpty('email', function($context) {
+ * $validator->notEmpty('email', function ($context) {
  *	return $context['newRecord'] && $context['data']['role'] !== 'admin';
  * });
  * }}}
@@ -390,7 +390,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 		if ($when === 'create' || $when === 'update') {
 			$when = $when === 'create' ? 'update' : 'create';
 		} elseif (is_callable($when)) {
-			$when = function($context) use ($when) {
+			$when = function ($context) use ($when) {
 				return !$when($context);
 			};
 		}

@@ -131,7 +131,7 @@ class PaginatorComponent extends Component {
  * You can also pass an already created instance of a query to this method:
  *
  * {{{
- * $query = $this->Articles->find('popular')->matching('Tags', function($q) {
+ * $query = $this->Articles->find('popular')->matching('Tags', function ($q) {
  *   return $q->where(['name' => 'CakePHP'])
  * });
  * $results = $paginator->paginate($query);

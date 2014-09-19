@@ -370,7 +370,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				$options,
 				false
 			);
-		$association->attachTo($query, ['queryBuilder' => function($q) {
+		$association->attachTo($query, ['queryBuilder' => function ($q) {
 			return $q->applyOptions(['something' => 'more']);
 		}]);
 	}

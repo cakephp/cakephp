@@ -557,7 +557,7 @@ class BelongsToMany extends Association {
 		$sourceEntity->set($property, $links);
 
 		return $this->junction()->connection()->transactional(
-			function() use ($sourceEntity, $targetEntities, $options) {
+			function () use ($sourceEntity, $targetEntities, $options) {
 				return $this->_saveLinks($sourceEntity, $targetEntities, $options);
 			}
 		);
@@ -596,7 +596,7 @@ class BelongsToMany extends Association {
 		$property = $this->property();
 
 		$this->junction()->connection()->transactional(
-			function() use ($sourceEntity, $targetEntities) {
+			function () use ($sourceEntity, $targetEntities) {
 				$links = $this->_collectJointEntities($sourceEntity, $targetEntities);
 				foreach ($links as $entity) {
 					$this->_junctionTable->delete($entity);
@@ -683,7 +683,7 @@ class BelongsToMany extends Association {
 		}
 
 		return $this->junction()->connection()->transactional(
-			function() use ($sourceEntity, $targetEntities, $primaryValue, $options) {
+			function () use ($sourceEntity, $targetEntities, $primaryValue, $options) {
 				$foreignKey = (array)$this->foreignKey();
 				$hasMany = $this->source()->association($this->_junctionTable->alias());
 				$existing = $hasMany->find('all')

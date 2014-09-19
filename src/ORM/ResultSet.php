@@ -304,7 +304,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		}
 
 		$map = [];
-		$visitor = function($level) use (&$visitor, &$map) {
+		$visitor = function ($level) use (&$visitor, &$map) {
 			foreach ($level as $assoc => $meta) {
 				$map[$meta['aliasPath']] = [
 					'alias' => $assoc,

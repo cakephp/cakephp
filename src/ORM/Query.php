@@ -201,11 +201,11 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * ### Example:
  *
  * {{{
- *	$query->contain(['Tags' => function($q) {
+ *	$query->contain(['Tags' => function ($q) {
  *		return $q->where(['Tags.is_popular' => true]);
  *	}]);
  *
- *	$query->contain(['Products.Manufactures' => function($q) {
+ *	$query->contain(['Products.Manufactures' => function ($q) {
  *		return $q->select(['name'])->where(['Manufactures.active' => true]);
  *	}]);
  * }}}
@@ -232,7 +232,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  *	$query->contain([
  *		'Likes' => [
  *			'foreignKey' => false,
- *			'queryBuilder' => function($q) {
+ *			'queryBuilder' => function ($q) {
  *				return $q->where(...); // Add full filtering conditions
  *			}
  *		]
@@ -277,7 +277,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  *
  * {{{
  *  // Bring only articles that were tagged with 'cake'
- *	$query->matching('Tags', function($q) {
+ *	$query->matching('Tags', function ($q) {
  *		return $q->where(['name' => 'cake']);
  *	);
  * }}}
@@ -288,7 +288,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  *
  * {{{
  *  // Bring only articles that were commented by 'markstory'
- *	$query->matching('Comments.Users', function($q) {
+ *	$query->matching('Comments.Users', function ($q) {
  *		return $q->where(['username' => 'markstory']);
  *	);
  * }}}
@@ -303,7 +303,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * {{{
  *  // Bring unique articles that were commented by 'markstory'
  *	$query->distinct(['Articles.id'])
- *	->matching('Comments.Users', function($q) {
+ *	->matching('Comments.Users', function ($q) {
  *		return $q->where(['username' => 'markstory']);
  *	);
  * }}}

@@ -103,7 +103,7 @@ trait PostgresDialectTrait {
 				$expression
 					->name('')
 					->type('-')
-					->iterateParts(function($p) {
+					->iterateParts(function ($p) {
 						return new FunctionExpression('DATE', [$p['value']], [$p['type']]);
 					});
 				break;

@@ -56,7 +56,7 @@ class QueryLogger {
  * @return string
  */
 	protected function _interpolate($query) {
-		$params = array_map(function($p) {
+		$params = array_map(function ($p) {
 			if ($p === null) {
 				return 'NULL';
 			}

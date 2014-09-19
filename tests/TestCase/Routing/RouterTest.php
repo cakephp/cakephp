@@ -986,8 +986,8 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testUrlGenerationPrefixedPlugin() {
-		Router::prefix('admin', function($routes) {
-			$routes->plugin('MyPlugin', function($routes) {
+		Router::prefix('admin', function ($routes) {
+			$routes->plugin('MyPlugin', function ($routes) {
 				$routes->fallbacks();
 			});
 		});
@@ -1550,11 +1550,11 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testExtensionsWithScopedRoutes() {
-		Router::scope('/', function($routes) {
+		Router::scope('/', function ($routes) {
 			$routes->extensions('rss');
 			$routes->connect('/', ['controller' => 'Pages', 'action' => 'index']);
 
-			$routes->scope('/api', function($routes) {
+			$routes->scope('/api', function ($routes) {
 				$routes->extensions('xml');
 				$routes->connect('/docs', ['controller' => 'ApiDocs', 'action' => 'index']);
 			});
@@ -2593,7 +2593,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testScope() {
-		Router::scope('/path', ['param' => 'value'], function($routes) {
+		Router::scope('/path', ['param' => 'value'], function ($routes) {
 			$this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
 			$this->assertEquals('/path', $routes->path());
 			$this->assertEquals(['param' => 'value'], $routes->params());
@@ -2618,7 +2618,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testPrefix() {
-		Router::prefix('admin', function($routes) {
+		Router::prefix('admin', function ($routes) {
 			$this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
 			$this->assertEquals('/admin', $routes->path());
 			$this->assertEquals(['prefix' => 'admin'], $routes->params());
@@ -2631,7 +2631,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testPlugin() {
-		Router::plugin('DebugKit', function($routes) {
+		Router::plugin('DebugKit', function ($routes) {
 			$this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
 			$this->assertEquals('/debug_kit', $routes->path());
 			$this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
@@ -2644,7 +2644,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testPluginOptions() {
-		Router::plugin('DebugKit', ['path' => '/debugger'], function($routes) {
+		Router::plugin('DebugKit', ['path' => '/debugger'], function ($routes) {
 			$this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
 			$this->assertEquals('/debugger', $routes->path());
 			$this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
@@ -2674,7 +2674,7 @@ class RouterTest extends TestCase {
 
 		Router::reload();
 		Router::defaultRouteClass('DashedRoute');
-		Router::scope('/', function($routes) {
+		Router::scope('/', function ($routes) {
 			$routes->fallbacks();
 		});
 
@@ -2688,7 +2688,7 @@ class RouterTest extends TestCase {
  * @return void
  */
 	protected function _connectDefaultRoutes() {
-		Router::scope('/', function($routes) {
+		Router::scope('/', function ($routes) {
 			$routes->fallbacks();
 		});
 	}

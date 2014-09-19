@@ -268,7 +268,7 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(['lft' => 1, 'rght' => 2], $node->extract(['lft', 'rght']));
 		$nodes = $table->find()
 			->select(['id'])
-			->where(function($exp) {
+			->where(function ($exp) {
 				return $exp->isNull('parent_id');
 			})
 			->where(['menu' => 'main-menu'])
@@ -292,7 +292,7 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(['lft' => 1, 'rght' => 2], $node->extract(['lft', 'rght']));
 		$nodes = $table->find()
 			->select(['id'])
-			->where(function($exp) {
+			->where(function ($exp) {
 				return $exp->isNull('parent_id');
 			})
 			->where(['menu' => 'main-menu'])
@@ -347,7 +347,7 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(['lft' => 7, 'rght' => 16], $node->extract(['lft', 'rght']));
 		$nodes = $table->find()
 			->select(['id'])
-			->where(function($exp) {
+			->where(function ($exp) {
 				return $exp->isNull('parent_id');
 			})
 			->where(['menu' => 'main-menu'])
@@ -371,7 +371,7 @@ class TreeBehaviorTest extends TestCase {
 		$this->assertEquals(['lft' => 7, 'rght' => 16], $node->extract(['lft', 'rght']));
 		$nodes = $table->find()
 			->select(['id'])
-			->where(function($exp) {
+			->where(function ($exp) {
 				return $exp->isNull('parent_id');
 			})
 			->where(['menu' => 'main-menu'])
@@ -788,7 +788,7 @@ class TreeBehaviorTest extends TestCase {
 		$result = $table->find()->order('lft')->hydrate(false);
 		$this->assertEquals($expected, $result->extract('id')->toArray());
 		$numbers = [];
-		$result->each(function($v) use (&$numbers) {
+		$result->each(function ($v) use (&$numbers) {
 			$numbers[] = $v['lft'];
 			$numbers[] = $v['rght'];
 		});

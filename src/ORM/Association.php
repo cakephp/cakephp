@@ -639,7 +639,7 @@ abstract class Association {
 		}
 
 		$property = $options['propertyPath'];
-		$query->formatResults(function($results) use ($formatters, $property) {
+		$query->formatResults(function ($results) use ($formatters, $property) {
 			$extracted = $results->extract($property)->compile();
 			foreach ($formatters as $callable) {
 				$extracted = new ResultSetDecorator($callable($extracted));
