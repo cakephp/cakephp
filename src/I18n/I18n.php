@@ -194,10 +194,10 @@ class I18n {
 
 /**
  * Sets the default locale to use for future translator instances.
- * This also affects the `intl.default_locale` php setting.
+ * This also affects the `intl.default_locale` PHP setting.
  *
  * When called with no arguments it will return the currently configure
- * defaultLocale as stored in the `intl.default_locale` php setting.
+ * defaultLocale as stored in the `intl.default_locale` PHP setting.
  *
  * @param string $locale The name of the locale to set as default.
  * @return string|null The name of the default locale.
@@ -222,7 +222,7 @@ class I18n {
 
 /**
  * This returns the default locale before any modifications, i.e.
- * the value as stored in the `intl.default_locale` php setting before
+ * the value as stored in the `intl.default_locale` PHP setting before
  * any manipulation by this class.
  *
  * @return string
