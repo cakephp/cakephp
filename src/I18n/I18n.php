@@ -229,7 +229,7 @@ class I18n {
  */
 	public static function environmentLocale() {
 		if (static::$_environmentLocale === null) {
-			static::$_environmentLocale = Locale::getDefault();
+			static::$_environmentLocale = Locale::getDefault() ?: 'en_US';
 		}
 		return static::$_environmentLocale;
 	}
