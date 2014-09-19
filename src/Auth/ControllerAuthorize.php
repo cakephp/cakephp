@@ -61,7 +61,7 @@ class ControllerAuthorize extends BaseAuthorize {
  *
  * @param Controller $controller null to get, a controller to set.
  * @return \Cake\Controller\Controller
- * @throws \Cake\Error\Exception If controller does not have method `isAuthorized()`.
+ * @throws \Cake\Core\Exception\Exception If controller does not have method `isAuthorized()`.
  */
 	public function controller(Controller $controller = null) {
 		if ($controller) {

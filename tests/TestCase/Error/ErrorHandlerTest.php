@@ -58,6 +58,7 @@ class TestErrorHandler extends ErrorHandler {
 	protected function _sendResponse($response) {
 		$this->response = $response;
 	}
+
 }
 
 /**
