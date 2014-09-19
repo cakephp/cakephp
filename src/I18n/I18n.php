@@ -37,6 +37,13 @@ class I18n {
 	protected static $_collection;
 
 /**
+ * The environment default locale
+ *
+ * @var string
+ */
+	protected static $_environmentLocale;
+
+/**
  * Returns the translators collection instance. It can be used
  * for getting specific translators based of their name and locale
  * or to configure some aspect of future translations that are not yet constructed.
@@ -196,6 +203,8 @@ class I18n {
  * @return string|null The name of the default locale.
  */
 	public static function defaultLocale($locale = null) {
+		static::environmentLocale();
+
 		if (!empty($locale)) {
 			Locale::setDefault($locale);
 			static::translators()->setLocale($locale);
@@ -209,6 +218,20 @@ class I18n {
 		}
 
 		return $current;
+	}
+
+/**
+ * This returns the default locale before any modifications, i.e.
+ * the value as stored in the `intl.default_locale` php setting before
+ * any manipulation by this class.
+ *
+ * @return string
+ */
+	public static function environmentLocale() {
+		if (static::$_environmentLocale === null) {
+			static::$_environmentLocale = Locale::getDefault();
+		}
+		return static::$_environmentLocale;
 	}
 
 /**
