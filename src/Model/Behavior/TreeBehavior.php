@@ -282,7 +282,7 @@ class TreeBehavior extends Behavior {
 		$config = $this->config();
 		$alias = $this->_table->alias();
 		list($left, $right) = array_map(
-			function($field) use ($alias) {
+			function ($field) use ($alias) {
 				return "$alias.$field";
 			},
 			[$config['left'], $config['right']]
@@ -309,7 +309,7 @@ class TreeBehavior extends Behavior {
 		$config = $this->config();
 		$alias = $this->_table->alias();
 		list($parent, $left, $right) = array_map(
-			function($field) use ($alias) {
+			function ($field) use ($alias) {
 				return "$alias.$field";
 			},
 			[$config['parent'], $config['left'], $config['right']]
@@ -346,7 +346,7 @@ class TreeBehavior extends Behavior {
 		$alias = $this->_table->alias();
 		$options += ['for' => null, 'direct' => false];
 		list($parent, $left, $right) = array_map(
-			function($field) use ($alias) {
+			function ($field) use ($alias) {
 				return "$alias.$field";
 			},
 			[$config['parent'], $config['left'], $config['right']]
@@ -394,7 +394,7 @@ class TreeBehavior extends Behavior {
 	public function findTreeList(Query $query, array $options) {
 		return $this->_scope($query)
 			->find('threaded', ['parentField' => $this->config()['parent']])
-			->formatResults(function($results) use ($options) {
+			->formatResults(function ($results) use ($options) {
 				$options += [
 					'keyPath' => $this->_getPrimaryKey(),
 					'valuePath' => $this->_table->displayField(),
@@ -418,7 +418,7 @@ class TreeBehavior extends Behavior {
  * false on error
  */
 	public function removeFromTree(Entity $node) {
-		return $this->_table->connection()->transactional(function() use ($node) {
+		return $this->_table->connection()->transactional(function () use ($node) {
 			$this->_ensureFields($node);
 			return $this->_removeFromTree($node);
 		});
@@ -475,7 +475,7 @@ class TreeBehavior extends Behavior {
  * @return \Cake\ORM\Entity|bool $node The node after being moved or false on failure
  */
 	public function moveUp(Entity $node, $number = 1) {
-		return $this->_table->connection()->transactional(function() use ($node, $number) {
+		return $this->_table->connection()->transactional(function () use ($node, $number) {
 			$this->_ensureFields($node);
 			return $this->_moveUp($node, $number);
 		});
@@ -550,7 +550,7 @@ class TreeBehavior extends Behavior {
  * @return \Cake\ORM\Entity|bool the entity after being moved or false on failure
  */
 	public function moveDown(Entity $node, $number = 1) {
-		return $this->_table->connection()->transactional(function() use ($node, $number) {
+		return $this->_table->connection()->transactional(function () use ($node, $number) {
 			$this->_ensureFields($node);
 			return $this->_moveDown($node, $number);
 		});
@@ -648,7 +648,7 @@ class TreeBehavior extends Behavior {
  * @return void
  */
 	public function recover() {
-		$this->_table->connection()->transactional(function() {
+		$this->_table->connection()->transactional(function () {
 			$this->_recoverTree();
 		});
 	}

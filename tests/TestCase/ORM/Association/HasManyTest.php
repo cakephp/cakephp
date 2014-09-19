@@ -347,7 +347,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->with(['a' => 1])
 			->will($this->returnSelf());
 
-		$queryBuilder = function($query) {
+		$queryBuilder = function ($query) {
 			return $query->select(['a', 'b'])->join('foo')->where(['a' => 1]);
 		};
 

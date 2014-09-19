@@ -819,7 +819,7 @@ class Table implements RepositoryInterface, EventListener {
 			['idField', 'valueField', 'groupField']
 		);
 
-		return $query->formatResults(function($results) use ($options) {
+		return $query->formatResults(function ($results) use ($options) {
 			return $results->combine(
 				$options['idField'],
 				$options['valueField'],
@@ -858,7 +858,7 @@ class Table implements RepositoryInterface, EventListener {
 		];
 		$options = $this->_setFieldMatchers($options, ['idField', 'parentField']);
 
-		return $query->formatResults(function($results) use ($options) {
+		return $query->formatResults(function ($results) use ($options) {
 			return $results->nest($options['idField'], $options['parentField']);
 		});
 	}
@@ -888,7 +888,7 @@ class Table implements RepositoryInterface, EventListener {
 			}
 
 			$fields = $options[$field];
-			$options[$field] = function($row) use ($fields) {
+			$options[$field] = function ($row) use ($fields) {
 				$matches = [];
 				foreach ($fields as $field) {
 					$matches[] = $row[$field];
@@ -1140,7 +1140,7 @@ class Table implements RepositoryInterface, EventListener {
 
 		if ($options['atomic']) {
 			$connection = $this->connection();
-			$success = $connection->transactional(function() use ($entity, $options) {
+			$success = $connection->transactional(function () use ($entity, $options) {
 				return $this->_processSave($entity, $options);
 			});
 		} else {
@@ -1376,7 +1376,7 @@ class Table implements RepositoryInterface, EventListener {
 	public function delete(EntityInterface $entity, $options = []) {
 		$options = new \ArrayObject($options + ['atomic' => true]);
 
-		$process = function() use ($entity, $options) {
+		$process = function () use ($entity, $options) {
 			return $this->_processDelete($entity, $options);
 		};
 
@@ -1488,7 +1488,7 @@ class Table implements RepositoryInterface, EventListener {
 		$hasOr = strpos($fields, '_or_');
 		$hasAnd = strpos($fields, '_and_');
 
-		$makeConditions = function($fields, $args) {
+		$makeConditions = function ($fields, $args) {
 			$conditions = [];
 			if (count($args) < count($fields)) {
 				throw new BadMethodCallException(sprintf(

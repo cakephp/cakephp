@@ -52,10 +52,10 @@ class DatabaseSuite extends TestSuite {
  */
 	public function run(PHPUnit_Framework_TestResult $result = null, $filter = false, array $groups = [], array $excludeGroups = [], $processIsolation = false) {
 		$permutations = [
-			'Identifier Quoting' => function() {
+			'Identifier Quoting' => function () {
 				ConnectionManager::get('test')->driver()->autoQuoting(true);
 			},
-			'No identifier quoting' => function() {
+			'No identifier quoting' => function () {
 				ConnectionManager::get('test')->driver()->autoQuoting(false);
 			}
 		];

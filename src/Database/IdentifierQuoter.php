@@ -206,7 +206,7 @@ class IdentifierQuoter {
  * @return void
  */
 	protected function _quoteOrderBy(OrderByExpression $expression) {
-		$expression->iterateParts(function($part, &$field) {
+		$expression->iterateParts(function ($part, &$field) {
 			if (is_string($field)) {
 				$field = $this->_driver->quoteIdentifier($field);
 			}

@@ -82,7 +82,7 @@ trait SqliteDialectTrait {
 				$expression
 					->name('ROUND')
 					->type('-')
-					->iterateParts(function($p) {
+					->iterateParts(function ($p) {
 						return new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]);
 					});
 				break;
@@ -122,7 +122,7 @@ trait SqliteDialectTrait {
 			if ($fillLength > 0) {
 				$val = array_merge($val, array_fill(0, $fillLength, null));
 			}
-			$val = array_map(function($val) {
+			$val = array_map(function ($val) {
 				return $val instanceof ExpressionInterface ? $val : '?';
 			}, $val);
 

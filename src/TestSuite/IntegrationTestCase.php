@@ -272,10 +272,10 @@ abstract class IntegrationTestCase extends TestCase {
 		}
 		$this->_controller = $event->data['controller'];
 		$events = $this->_controller->eventManager();
-		$events->attach(function($event, $viewFile) {
+		$events->attach(function ($event, $viewFile) {
 			$this->_viewName = $viewFile;
 		}, 'View.beforeRender');
-		$events->attach(function($event, $viewFile) {
+		$events->attach(function ($event, $viewFile) {
 			$this->_layoutName = $viewFile;
 		}, 'View.beforeLayout');
 	}

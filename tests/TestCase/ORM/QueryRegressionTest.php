@@ -195,7 +195,7 @@ class QueryRegressionTest extends TestCase {
 		$tags->belongsToMany('Articles');
 
 		$result = $articles->find()->contain(['Tags'])->first();
-		$sub = $articles->Tags->find()->select(['id'])->matching('Articles', function($q) use ($result) {
+		$sub = $articles->Tags->find()->select(['id'])->matching('Articles', function ($q) use ($result) {
 			return $q->where(['Articles.id' => 1]);
 		});
 
@@ -282,7 +282,7 @@ class QueryRegressionTest extends TestCase {
 		$articles = TableRegistry::get('Articles');
 		$articles->belongsTo('Authors');
 
-		$articles->eventManager()->attach(function($event, $query) {
+		$articles->eventManager()->attach(function ($event, $query) {
 			return $query->contain('Authors');
 		}, 'Model.beforeFind');
 
@@ -453,7 +453,7 @@ class QueryRegressionTest extends TestCase {
 		$table->belongsTo('Authors', ['joinType' => 'inner']);
 		$count = $table
 			->find()
-			->contain(['Authors' => function($q) {
+			->contain(['Authors' => function ($q) {
 				return $q->where(['Authors.id' => 1]);
 			}])
 			->count();

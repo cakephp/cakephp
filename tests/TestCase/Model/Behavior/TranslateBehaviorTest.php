@@ -50,12 +50,12 @@ class TranslateBehaviorTest extends TestCase {
  * @return Collection
  */
 	protected function _extractTranslations($data) {
-		return (new Collection($data))->map(function($row) {
+		return (new Collection($data))->map(function ($row) {
 			$translations = $row->get('_translations');
 			if (!$translations) {
 				return [];
 			}
-			return array_map(function($t) {
+			return array_map(function ($t) {
 				return $t->toArray();
 			}, $translations);
 		});
@@ -305,7 +305,7 @@ class TranslateBehaviorTest extends TestCase {
 		$table->locale('eng');
 		$comments->locale('eng');
 
-		$results = $table->find()->contain(['Comments' => function($q) {
+		$results = $table->find()->contain(['Comments' => function ($q) {
 			return $q->select(['id', 'comment', 'article_id']);
 		}]);
 
@@ -332,7 +332,7 @@ class TranslateBehaviorTest extends TestCase {
 		$comments->addBehavior('Translate', ['fields' => ['comment']]);
 
 		$results = $table->find('translations')->contain([
-			'Comments' => function($q) {
+			'Comments' => function ($q) {
 				return $q->find('translations')->select(['id', 'comment', 'article_id']);
 			}
 		]);
@@ -374,7 +374,7 @@ class TranslateBehaviorTest extends TestCase {
 		$table->locale('cze');
 		$comments->locale('eng');
 		$results = $table->find('translations')->contain([
-			'Comments' => function($q) {
+			'Comments' => function ($q) {
 				return $q->find('translations')->select(['id', 'comment', 'article_id']);
 			}
 		]);
@@ -428,7 +428,7 @@ class TranslateBehaviorTest extends TestCase {
 		$results = $table->find()
 			->select(['title', 'body'])
 			->order(['title' => 'asc'])
-			->contain(['Authors' => function($q) {
+			->contain(['Authors' => function ($q) {
 				return $q->select(['id', 'name']);
 			}]);
 
@@ -452,7 +452,7 @@ class TranslateBehaviorTest extends TestCase {
 				'_locale' => 'eng'
 			]
 		];
-		$results = array_map(function($r) {
+		$results = array_map(function ($r) {
 			return $r->toArray();
 		}, $results->toArray());
 		$this->assertEquals($expected, $results);

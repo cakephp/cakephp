@@ -2213,7 +2213,7 @@ class FormHelper extends Helper {
 			return [$name];
 		}
 		$parts = explode('[', $name);
-		$parts = array_map(function($el) {
+		$parts = array_map(function ($el) {
 			return trim($el, ']');
 		}, $parts);
 		return $parts;

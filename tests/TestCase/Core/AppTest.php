@@ -51,7 +51,7 @@ class AppTest extends TestCase {
 	public function testClassname($class, $type, $suffix = '', $existsInBase = false, $expected = false) {
 		Configure::write('App.namespace', 'TestApp');
 		$i = 0;
-		TestApp::$existsInBaseCallback = function($name, $namespace) use ($existsInBase, $class, $expected, &$i) {
+		TestApp::$existsInBaseCallback = function ($name, $namespace) use ($existsInBase, $class, $expected, &$i) {
 			if ($i++ === 0) {
 				return $existsInBase;
 			}

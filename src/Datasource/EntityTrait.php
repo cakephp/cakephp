@@ -660,7 +660,7 @@ trait EntityTrait {
 			return $object->errors($path);
 		}
 		if (is_array($object)) {
-			$array = array_map(function($val) {
+			$array = array_map(function ($val) {
 				if ($val instanceof static) {
 					return $val->errors();
 				}
@@ -713,7 +713,7 @@ trait EntityTrait {
 		}
 
 		if ($property === '*') {
-			$this->_accessible = array_map(function($p) use ($set) {
+			$this->_accessible = array_map(function ($p) use ($set) {
 				return (bool)$set;
 			}, $this->_accessible);
 			$this->_accessible['*'] = (bool)$set;

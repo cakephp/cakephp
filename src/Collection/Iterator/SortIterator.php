@@ -25,7 +25,7 @@ use SplHeap;
  *
  * {{{
  * $items = [$user1, $user2, $user3];
- * $sorted = new SortIterator($items, function($user) {
+ * $sorted = new SortIterator($items, function ($user) {
  *	return $user->age;
  * });
  *

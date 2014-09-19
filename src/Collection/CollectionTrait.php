@@ -42,7 +42,7 @@ trait CollectionTrait {
  * ###Example:
  *
  * {{{
- * $collection = (new Collection($items))->each(function($value, $key) {
+ * $collection = (new Collection($items))->each(function ($value, $key) {
  *	echo "Element $key: $value";
  * });
  * }}}
@@ -73,7 +73,7 @@ trait CollectionTrait {
  * be present in the resulting collection:
  *
  * {{{
- * $collection = (new Collection([1, 2, 3]))->filter(function($value, $key) {
+ * $collection = (new Collection([1, 2, 3]))->filter(function ($value, $key) {
  *  return $value % 2 === 0;
  * });
  * }}}
@@ -106,7 +106,7 @@ trait CollectionTrait {
  * be present in the resulting collection:
  *
  * {{{
- * $collection = (new Collection([1, 2, 3]))->reject(function($value, $key) {
+ * $collection = (new Collection([1, 2, 3]))->reject(function ($value, $key) {
  *	return $value % 2 === 0;
  * });
  * }}}
@@ -132,7 +132,7 @@ trait CollectionTrait {
  * ###Example:
  *
  * {{{
- * $overTwentyOne = (new Collection([24, 45, 60, 15]))->every(function($value, $key) {
+ * $overTwentyOne = (new Collection([24, 45, 60, 15]))->every(function ($value, $key) {
  *	return $value > 21;
  * });
  * }}}
@@ -161,7 +161,7 @@ trait CollectionTrait {
  * ###Example:
  *
  * {{{
- * $hasYoungPeople = (new Collection([24, 45, 15]))->every(function($value, $key) {
+ * $hasYoungPeople = (new Collection([24, 45, 15]))->every(function ($value, $key) {
  *	return $value < 21;
  * });
  * }}}
@@ -208,7 +208,7 @@ trait CollectionTrait {
  * Getting a collection of booleans where true indicates if a person is female:
  *
  * {{{
- * $collection = (new Collection($people))->map(function($person, $key) {
+ * $collection = (new Collection($people))->map(function ($person, $key) {
  *	return $person->gender === 'female';
  * });
  * }}}
@@ -282,7 +282,7 @@ trait CollectionTrait {
  * // For a collection of employees
  * $max = $collection->max('age');
  * $max = $collection->max('user.salary');
- * $max = $collection->max(function($e) {
+ * $max = $collection->max(function ($e) {
  *	return $e->get('user')->get('salary');
  * });
  *
@@ -311,7 +311,7 @@ trait CollectionTrait {
  * // For a collection of employees
  * $min = $collection->min('age');
  * $min = $collection->min('user.salary');
- * $min = $collection->min(function($e) {
+ * $min = $collection->min(function ($e) {
  *	return $e->get('user')->get('salary');
  * });
  *
@@ -344,7 +344,7 @@ trait CollectionTrait {
  * ###Example:
  *
  * {{{
- * $items = $collection->sortBy(function($user) {
+ * $items = $collection->sortBy(function ($user) {
  *	return $user->age;
  * });
  *
@@ -391,7 +391,7 @@ trait CollectionTrait {
  * $group = (new Collection($items))->groupBy('parent_id');
  *
  * // Or
- * $group = (new Collection($items))->groupBy(function($e) {
+ * $group = (new Collection($items))->groupBy(function ($e) {
  *	return $e['parent_id'];
  * });
  *
@@ -441,7 +441,7 @@ trait CollectionTrait {
  * $indexed = (new Collection($items))->indexBy('id');
  *
  * // Or
- * $indexed = (new Collection($items))->indexBy(function($e) {
+ * $indexed = (new Collection($items))->indexBy(function ($e) {
  *	return $e['id'];
  * });
  *
@@ -487,7 +487,7 @@ trait CollectionTrait {
  * $group = (new Collection($items))->countBy('parent_id');
  *
  * // Or
- * $group = (new Collection($items))->countBy(function($e) {
+ * $group = (new Collection($items))->countBy(function ($e) {
  *	return $e['parent_id'];
  * });
  *
@@ -505,7 +505,7 @@ trait CollectionTrait {
 	public function countBy($callback) {
 		$callback = $this->_propertyExtractor($callback);
 
-		$mapper = function($value, $key, $mr) use ($callback) {
+		$mapper = function ($value, $key, $mr) use ($callback) {
 			$mr->emitIntermediate($value, $callback($value));
 		};
 
@@ -613,12 +613,12 @@ trait CollectionTrait {
 		$matchers = [];
 		foreach ($conditions as $property => $value) {
 			$extractor = $this->_propertyExtractor($property);
-			$matchers[] = function($v) use ($extractor, $value) {
+			$matchers[] = function ($v) use ($extractor, $value) {
 				return $extractor($v) == $value;
 			};
 		}
 
-		$filter = function($value) use ($matchers) {
+		$filter = function ($value) use ($matchers) {
 			$valid = true;
 			foreach ($matchers as $match) {
 				$valid = $valid && $match($value);
@@ -714,7 +714,7 @@ trait CollectionTrait {
 			'groupPath' => $groupPath ? $this->_propertyExtractor($groupPath) : null
 		];
 
-		$mapper = function($value, $key, $mapReduce) use ($options) {
+		$mapper = function ($value, $key, $mapReduce) use ($options) {
 			$rowKey = $options['keyPath'];
 			$rowVal = $options['valuePath'];
 
@@ -730,7 +730,7 @@ trait CollectionTrait {
 			);
 		};
 
-		$reducer = function($values, $key, $mapReduce) {
+		$reducer = function ($values, $key, $mapReduce) {
 			$result = [];
 			foreach ($values as $value) {
 				$result += $value;
@@ -757,7 +757,7 @@ trait CollectionTrait {
 		$parentPath = $this->_propertyExtractor($parentPath);
 		$isObject = !is_array((new Collection($this))->first());
 
-		$mapper = function($row, $key, $mapReduce) use (&$parents, $idPath, $parentPath) {
+		$mapper = function ($row, $key, $mapReduce) use (&$parents, $idPath, $parentPath) {
 			$row['children'] = [];
 			$id = $idPath($row, $key);
 			$parentId = $parentPath($row, $key);
@@ -765,7 +765,7 @@ trait CollectionTrait {
 			$mapReduce->emitIntermediate($id, $parentId);
 		};
 
-		$reducer = function($values, $key, $mapReduce) use (&$parents, $isObject) {
+		$reducer = function ($values, $key, $mapReduce) use (&$parents, $isObject) {
 			if (empty($key) || !isset($parents[$key])) {
 				foreach ($values as $id) {
 					$parents[$id] = $isObject ? $parents[$id] : new ArrayObject($parents[$id]);
@@ -781,7 +781,7 @@ trait CollectionTrait {
 
 		$collection = new MapReduce($this, $mapper, $reducer);
 		if (!$isObject) {
-			$collection = (new Collection($collection))->map(function($value) {
+			$collection = (new Collection($collection))->map(function ($value) {
 				return (array)$value;
 			});
 		}

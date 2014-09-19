@@ -355,7 +355,7 @@ class EntityContext implements ContextInterface {
  * @return \Cake\Validation\Validator
  */
 	protected function _getValidator($parts) {
-		$keyParts = array_filter(array_slice($parts, 0, -1), function($part) {
+		$keyParts = array_filter(array_slice($parts, 0, -1), function ($part) {
 			return !is_numeric($part);
 		});
 		$key = implode('.', $keyParts);
@@ -393,7 +393,7 @@ class EntityContext implements ContextInterface {
 			return $this->_tables[$this->_rootName];
 		}
 
-		$normalized = array_slice(array_filter($parts, function($part) {
+		$normalized = array_slice(array_filter($parts, function ($part) {
 			return !is_numeric($part);
 		}), 0, -1);
 

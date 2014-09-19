@@ -238,7 +238,7 @@ class RouteBuilderTest extends TestCase {
  */
 	public function testPrefix() {
 		$routes = new RouteBuilder($this->collection, '/path', ['key' => 'value']);
-		$res = $routes->prefix('admin', function($r) {
+		$res = $routes->prefix('admin', function ($r) {
 			$this->assertInstanceOf('Cake\Routing\RouteBuilder', $r);
 			$this->assertCount(0, $this->collection->routes());
 			$this->assertEquals('/path/admin', $r->path());
@@ -254,7 +254,7 @@ class RouteBuilderTest extends TestCase {
  */
 	public function testNestedPrefix() {
 		$routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'admin']);
-		$res = $routes->prefix('api', function($r) {
+		$res = $routes->prefix('api', function ($r) {
 			$this->assertEquals('/admin/api', $r->path());
 			$this->assertEquals(['prefix' => 'admin/api'], $r->params());
 		});
@@ -268,7 +268,7 @@ class RouteBuilderTest extends TestCase {
  */
 	public function testNestedPlugin() {
 		$routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
-		$res = $routes->plugin('Contacts', function($r) {
+		$res = $routes->plugin('Contacts', function ($r) {
 			$this->assertEquals('/b/contacts', $r->path());
 			$this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
 
@@ -289,7 +289,7 @@ class RouteBuilderTest extends TestCase {
  */
 	public function testNestedPluginPathOption() {
 		$routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
-		$routes->plugin('Contacts', ['path' => '/people'], function($r) {
+		$routes->plugin('Contacts', ['path' => '/people'], function ($r) {
 			$this->assertEquals('/b/people', $r->path());
 			$this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
 		});
@@ -413,7 +413,7 @@ class RouteBuilderTest extends TestCase {
  */
 	public function testResourcesNested() {
 		$routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
-		$routes->resources('Articles', function($routes) {
+		$routes->resources('Articles', function ($routes) {
 			$this->assertEquals('/api/articles/', $routes->path());
 			$this->assertEquals(['prefix' => 'api'], $routes->params());
 
@@ -459,13 +459,13 @@ class RouteBuilderTest extends TestCase {
  */
 	public function testScope() {
 		$routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
-		$routes->scope('/v1', ['version' => 1], function($routes) {
+		$routes->scope('/v1', ['version' => 1], function ($routes) {
 			$this->assertEquals('/api/v1', $routes->path());
 			$this->assertEquals(['prefix' => 'api', 'version' => 1], $routes->params());
 		});
 
 		$routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
-		$routes->scope('/v1', function($routes) {
+		$routes->scope('/v1', function ($routes) {
 			$this->assertEquals('/api/v1', $routes->path());
 			$this->assertEquals(['prefix' => 'api'], $routes->params());
 		});

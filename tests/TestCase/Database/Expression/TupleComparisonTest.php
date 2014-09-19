@@ -101,7 +101,7 @@ class TupleComparisonTest extends TestCase {
 		$binder = new ValueBinder;
 		$expressions = [];
 
-		$collector = function($e) use (&$expressions) {
+		$collector = function ($e) use (&$expressions) {
 			$expressions[] = $e;
 		};
 

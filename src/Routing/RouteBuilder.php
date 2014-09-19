@@ -203,7 +203,7 @@ class RouteBuilder {
  * You can create nested resources by passing a callback in:
  *
  * {{{
- * $routes->resources('Articles', function($routes) {
+ * $routes->resources('Articles', function ($routes) {
  *   $routes->resources('Comments');
  * });
  * }}}

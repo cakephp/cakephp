@@ -58,7 +58,7 @@ class QueryCacherTest extends TestCase {
 		$this->_mockRead('my_key', 'A winner');
 		$query = $this->getMock('stdClass');
 
-		$cacher = new QueryCacher(function($q) use ($query) {
+		$cacher = new QueryCacher(function ($q) use ($query) {
 			$this->assertSame($query, $q);
 			return 'my_key';
 		}, 'queryCache');
@@ -78,7 +78,7 @@ class QueryCacherTest extends TestCase {
 		$this->_mockRead('my_key', 'A winner');
 		$query = $this->getMock('stdClass');
 
-		$cacher = new QueryCacher(function($q) {
+		$cacher = new QueryCacher(function ($q) {
 			return false;
 		}, 'queryCache');
 

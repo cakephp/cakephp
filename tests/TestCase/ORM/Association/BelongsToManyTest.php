@@ -370,7 +370,7 @@ class BelongsToManyTest extends TestCase {
 
 		$joint->expects($this->at(0))
 			->method('save')
-			->will($this->returnCallback(function($e, $opts) use ($entity) {
+			->will($this->returnCallback(function ($e, $opts) use ($entity) {
 				$expected = ['article_id' => 1, 'tag_id' => 2];
 				$this->assertEquals($expected, $e->toArray());
 				$this->assertEquals(['foo' => 'bar'], $opts);
@@ -380,7 +380,7 @@ class BelongsToManyTest extends TestCase {
 
 		$joint->expects($this->at(1))
 			->method('save')
-			->will($this->returnCallback(function($e, $opts) use ($entity) {
+			->will($this->returnCallback(function ($e, $opts) use ($entity) {
 				$expected = ['article_id' => 1, 'tag_id' => 3];
 				$this->assertEquals($expected, $e->toArray());
 				$this->assertEquals(['foo' => 'bar'], $opts);
@@ -748,7 +748,7 @@ class BelongsToManyTest extends TestCase {
 		$assoc->expects($this->once())
 			->method('_saveTarget')
 			->with($entity, [1 => $tags[1], 2 => $tags[2]], $options + ['associated' => false])
-			->will($this->returnCallback(function($entity, $inserts) use ($tags) {
+			->will($this->returnCallback(function ($entity, $inserts) use ($tags) {
 				$this->assertSame([1 => $tags[1], 2 => $tags[2]], $inserts);
 				$entity->tags = $inserts;
 				return true;

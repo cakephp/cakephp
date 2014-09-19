@@ -228,7 +228,7 @@ class CollectionTest extends TestCase {
 	public function testMap() {
 		$items = ['a' => 1, 'b' => 2, 'c' => 3];
 		$collection = new Collection($items);
-		$map = $collection->map(function($v, $k, $it) use ($collection) {
+		$map = $collection->map(function ($v, $k, $it) use ($collection) {
 			$this->assertSame($collection, $it);
 			return $v * $v;
 		});
@@ -309,7 +309,7 @@ class CollectionTest extends TestCase {
 		$collection = new Collection($items);
 		$this->assertEquals(['a' => ['b' => ['c' => 10]]], $collection->max('a.b.c'));
 
-		$callback = function($e) {
+		$callback = function ($e) {
 			return $e['a']['b']['c'] * - 1;
 		};
 		$this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max($callback));
@@ -355,7 +355,7 @@ class CollectionTest extends TestCase {
 		$this->assertEquals($expected, iterator_to_array($grouped));
 		$this->assertInstanceOf('\Cake\Collection\Collection', $grouped);
 
-		$grouped = $collection->groupBy(function($element) {
+		$grouped = $collection->groupBy(function ($element) {
 			return $element['parent_id'];
 		});
 		$this->assertEquals($expected, iterator_to_array($grouped));
@@ -407,7 +407,7 @@ class CollectionTest extends TestCase {
 		$this->assertEquals($expected, iterator_to_array($grouped));
 		$this->assertInstanceOf('\Cake\Collection\Collection', $grouped);
 
-		$grouped = $collection->indexBy(function($element) {
+		$grouped = $collection->indexBy(function ($element) {
 			return $element['id'];
 		});
 		$this->assertEquals($expected, iterator_to_array($grouped));
@@ -453,7 +453,7 @@ class CollectionTest extends TestCase {
 		$this->assertEquals($expected, iterator_to_array($grouped));
 		$this->assertInstanceOf('\Cake\Collection\Collection', $grouped);
 
-		$grouped = $collection->countBy(function($element) {
+		$grouped = $collection->countBy(function ($element) {
 			return $element['parent_id'];
 		});
 		$this->assertEquals($expected, iterator_to_array($grouped));
@@ -674,13 +674,13 @@ class CollectionTest extends TestCase {
 			'2-3' => ['baz-2-3' => '2-3-baz']
 		];
 		$collection = (new Collection($items))->combine(
-			function($value, $key) {
+			function ($value, $key) {
 				return $value['name'] . '-' . $key;
 			},
-			function($value, $key) {
+			function ($value, $key) {
 				return $key . '-' . $value['name'];
 			},
-			function($value, $key) {
+			function ($value, $key) {
 				return $key . '-' . $value['id'];
 			}
 		);
@@ -928,7 +928,7 @@ class CollectionTest extends TestCase {
 			['id' => 1, 'stuff' => [['id' => 2, 'stuff' => [['id' => 3]]]]],
 			['id' => 4, 'stuff' => [['id' => 5]]]
 		];
-		$collection = (new Collection($items))->listNested('desc', function($item) {
+		$collection = (new Collection($items))->listNested('desc', function ($item) {
 			return isset($item['stuff']) ? $item['stuff'] : [];
 		});
 		$this->assertEquals(range(1, 5), $collection->extract('id')->toArray(false));
@@ -946,7 +946,7 @@ class CollectionTest extends TestCase {
 		];
 		$this->assertEquals(300, (new Collection($items))->sumOf('invoice.total'));
 
-		$sum = (new Collection($items))->sumOf(function($v) {
+		$sum = (new Collection($items))->sumOf(function ($v) {
 			return $v['invoice']['total'] * 2;
 		});
 		$this->assertEquals(600, $sum);

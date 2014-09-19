@@ -70,7 +70,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$this->Controller = new RequestHandlerTestController($request, $response);
 		$this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
 
-		Router::scope('/', function($routes) {
+		Router::scope('/', function ($routes) {
 			$routes->extensions('json');
 			$routes->fallbacks();
 		});

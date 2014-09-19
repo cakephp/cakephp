@@ -64,7 +64,7 @@ class AuthComponentTest extends TestCase {
 		Security::salt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 		Configure::write('App.namespace', 'TestApp');
 
-		Router::scope('/', function($routes) {
+		Router::scope('/', function ($routes) {
 			$routes->fallbacks();
 		});
 
@@ -858,10 +858,10 @@ class AuthComponentTest extends TestCase {
 	public function testAdminRoute() {
 		$event = new Event('Controller.startup', $this->Controller);
 		Router::reload();
-		Router::prefix('admin', function($routes) {
+		Router::prefix('admin', function ($routes) {
 			$routes->fallbacks();
 		});
-		Router::scope('/', function($routes) {
+		Router::scope('/', function ($routes) {
 			$routes->fallbacks();
 		});
 
@@ -916,10 +916,10 @@ class AuthComponentTest extends TestCase {
 	public function testLoginActionRedirect() {
 		$event = new Event('Controller.startup', $this->Controller);
 		Router::reload();
-		Router::prefix('admin', function($routes) {
+		Router::prefix('admin', function ($routes) {
 			$routes->fallbacks();
 		});
-		Router::scope('/', function($routes) {
+		Router::scope('/', function ($routes) {
 			$routes->fallbacks();
 		});
 

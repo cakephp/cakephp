@@ -156,7 +156,7 @@ trait SqlserverDialectTrait {
 				break;
 			case 'DATEDIFF':
 				$hasDay = false;
-				$visitor = function($value) use (&$hasDay){
+				$visitor = function ($value) use (&$hasDay) {
 					if ($value === 'day') {
 						$hasDay = true;
 					}

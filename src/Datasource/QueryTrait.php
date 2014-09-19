@@ -144,7 +144,7 @@ trait QueryTrait {
  * $query->cache('my_key', 'db_results');
  *
  * // Function to generate key.
- * $query->cache(function($q) {
+ * $query->cache(function ($q) {
  *   $key = serialize($q->clause('select'));
  *   $key .= serialize($q->clause('where'));
  *   return md5($key);
@@ -284,13 +284,13 @@ trait QueryTrait {
  *
  * {{{
  * // Return all results from the table indexed by id
- * $query->select(['id', 'name'])->formatResults(function($results, $query) {
+ * $query->select(['id', 'name'])->formatResults(function ($results, $query) {
  *   return $results->indexBy('id');
  * });
  *
  * // Add a new column to the ResultSet
- * $query->select(['name', 'birth_date'])->formatResults(function($results, $query) {
- *   return $results->map(function($row) {
+ * $query->select(['name', 'birth_date'])->formatResults(function ($results, $query) {
+ *   return $results->map(function ($row) {
  *     $row['age'] = $row['birth_date']->diff(new DateTime)->y;
  *     return $row;
  *   });

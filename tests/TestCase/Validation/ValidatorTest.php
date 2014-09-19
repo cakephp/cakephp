@@ -253,7 +253,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 	public function testAllowEmptyCallback() {
 		$validator = new Validator;
 		$allow = true;
-		$validator->allowEmpty('title', function($context) use (&$allow) {
+		$validator->allowEmpty('title', function ($context) use (&$allow) {
 			$this->assertEquals([], $context['data']);
 			$this->assertEquals([], $context['providers']);
 			$this->assertTrue($context['newRecord']);
@@ -273,7 +273,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 	public function testNotEmptyCallback() {
 		$validator = new Validator;
 		$prevent = true;
-		$validator->notEmpty('title', 'error message', function($context) use (&$prevent) {
+		$validator->notEmpty('title', 'error message', function ($context) use (&$prevent) {
 			$this->assertEquals([], $context['data']);
 			$this->assertEquals([], $context['providers']);
 			$this->assertFalse($context['newRecord']);
@@ -434,7 +434,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 
 		$thing = $this->getMock('\stdClass', ['isCool']);
 		$thing->expects($this->once())->method('isCool')
-			->will($this->returnCallback(function($data, $context) use ($thing) {
+			->will($this->returnCallback(function ($data, $context) use ($thing) {
 				$this->assertEquals('bar', $data);
 				$expected = [
 					'default' => new \Cake\Validation\RulesProvider,
@@ -476,7 +476,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		]);
 		$thing = $this->getMock('\stdClass', ['isCool']);
 		$thing->expects($this->once())->method('isCool')
-			->will($this->returnCallback(function($data, $a, $b, $context) use ($thing) {
+			->will($this->returnCallback(function ($data, $a, $b, $context) use ($thing) {
 				$this->assertEquals('bar', $data);
 				$this->assertEquals('and', $a);
 				$this->assertEquals('awesome', $b);
@@ -512,7 +512,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 	public function testUsingClosureAsRule() {
 		$validator = new Validator;
 		$validator->add('name', 'myRule', [
-			'rule' => function($data, $provider) {
+			'rule' => function ($data, $provider) {
 				$this->assertEquals('foo', $data);
 				return 'You fail';
 			}

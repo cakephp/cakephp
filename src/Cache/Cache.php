@@ -454,7 +454,7 @@ class Cache {
  * Using a Closure to provide data, assume `$this` is a Table object:
  *
  * {{{
- * $results = Cache::remember('all_articles', function() {
+ * $results = Cache::remember('all_articles', function () {
  *      return $this->find('all');
  * });
  * }}}

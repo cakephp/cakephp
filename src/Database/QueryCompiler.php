@@ -102,7 +102,7 @@ class QueryCompiler {
  * @return \Closure
  */
 	protected function _sqlCompiler(&$sql, $query, $generator) {
-		return function($parts, $name) use (&$sql, $query, $generator) {
+		return function ($parts, $name) use (&$sql, $query, $generator) {
 			if (!count($parts)) {
 				return;
 			}
@@ -242,7 +242,7 @@ class QueryCompiler {
  * @return string
  */
 	protected function _buildUnionPart($parts, $query, $generator) {
-		$parts = array_map(function($p) use ($generator) {
+		$parts = array_map(function ($p) use ($generator) {
 			$p['query'] = $p['query']->sql($generator);
 			$p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
 			return $p['all'] ? 'ALL ' . $p['query'] : $p['query'];

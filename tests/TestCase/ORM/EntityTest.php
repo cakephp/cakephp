@@ -68,7 +68,7 @@ class EntityTest extends TestCase {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['_setName']);
 		$entity->expects($this->once())->method('_setName')
 			->with('Jones')
-			->will($this->returnCallback(function($name) {
+			->will($this->returnCallback(function ($name) {
 				$this->assertEquals('Jones', $name);
 				return 'Dr. ' . $name;
 			}));
@@ -86,13 +86,13 @@ class EntityTest extends TestCase {
 		$entity->accessible('*', true);
 		$entity->expects($this->once())->method('_setName')
 			->with('Jones')
-			->will($this->returnCallback(function($name) {
+			->will($this->returnCallback(function ($name) {
 				$this->assertEquals('Jones', $name);
 				return 'Dr. ' . $name;
 			}));
 		$entity->expects($this->once())->method('_setStuff')
 			->with(['a', 'b'])
-			->will($this->returnCallback(function($stuff) {
+			->will($this->returnCallback(function ($stuff) {
 				$this->assertEquals(['a', 'b'], $stuff);
 				return ['c', 'd'];
 			}));
@@ -182,7 +182,7 @@ class EntityTest extends TestCase {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
 		$entity->expects($this->exactly(2))->method('_getName')
 			->with('Jones')
-			->will($this->returnCallback(function($name) {
+			->will($this->returnCallback(function ($name) {
 				$this->assertSame('Jones', $name);
 				return 'Dr. ' . $name;
 			}));
@@ -213,7 +213,7 @@ class EntityTest extends TestCase {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['_setName']);
 		$entity->expects($this->once())->method('_setName')
 			->with('Jones')
-			->will($this->returnCallback(function($name) {
+			->will($this->returnCallback(function ($name) {
 				$this->assertEquals('Jones', $name);
 				return 'Dr. ' . $name;
 			}));
@@ -230,7 +230,7 @@ class EntityTest extends TestCase {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['_getName']);
 		$entity->expects($this->once())->method('_getName')
 			->with('Jones')
-			->will($this->returnCallback(function($name) {
+			->will($this->returnCallback(function ($name) {
 				$this->assertSame('Jones', $name);
 				return 'Dr. ' . $name;
 			}));

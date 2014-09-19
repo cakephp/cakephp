@@ -144,7 +144,7 @@ class ValidationRuleTest extends TestCase {
 
 		$Rule = new ValidationRule([
 			'rule' => 'myTestRule',
-			'on' => function($context) use ($providers) {
+			'on' => function ($context) use ($providers) {
 				$expected = compact('providers') + ['newRecord' => true, 'data' => []];
 				$this->assertEquals($expected, $context);
 				return true;
@@ -154,7 +154,7 @@ class ValidationRuleTest extends TestCase {
 
 		$Rule = new ValidationRule([
 			'rule' => 'myTestRule',
-			'on' => function($context) use ($providers) {
+			'on' => function ($context) use ($providers) {
 				$expected = compact('providers') + ['newRecord' => true, 'data' => []];
 				$this->assertEquals($expected, $context);
 				return false;
