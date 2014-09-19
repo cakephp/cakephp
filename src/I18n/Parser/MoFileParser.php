@@ -130,7 +130,7 @@ class MoFileParser {
  * Reads an unsigned long from stream respecting endianess.
  *
  * @param resource $stream The File being read.
- * @param boolean $isBigEndian Whether or not the current platfomr is Big Endian
+ * @param bool $isBigEndian Whether or not the current platfomr is Big Endian
  * @return int
  */
 	protected function _readLong($stream, $isBigEndian) {

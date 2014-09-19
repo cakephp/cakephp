@@ -202,7 +202,7 @@ class NumberHelper extends Helper {
 /**
  * Getter/setter for default currency
  *
- * @param string|boolean $currency Default currency string to be used by currency()
+ * @param string|bool $currency Default currency string to be used by currency()
  * if $currency argument is not provided. If boolean false is passed, it will clear the
  * currently stored value
  * @return string Currency

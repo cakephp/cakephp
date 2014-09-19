@@ -64,7 +64,6 @@ class EventManagerTraitTest extends TestCase {
  * @return void
  */
 	public function testDispatchEvent() {
-
 		$event = $this->subject->dispatchEvent('some.event', ['foo' => 'bar']);
 
 		$this->assertInstanceOf('\Cake\Event\Event', $event);

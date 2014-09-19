@@ -167,7 +167,6 @@ abstract class Driver {
 		return true;
 	}
 
-
 /**
  * Returns a value in a safe representation to be used in a query string
  *

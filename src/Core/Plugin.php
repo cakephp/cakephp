@@ -251,7 +251,7 @@ class Plugin {
  */
 	public static function configPath($plugin) {
 		if (empty(static::$_plugins[$plugin])) {
-			throw new Error\MissingPluginException(['plugin' => $plugin]);
+			throw new Exception\MissingPluginException(['plugin' => $plugin]);
 		}
 		return static::$_plugins[$plugin]['configPath'];
 	}

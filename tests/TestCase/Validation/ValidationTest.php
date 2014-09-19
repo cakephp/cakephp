@@ -2464,5 +2464,4 @@ class ValidationTest extends TestCase {
 		$this->assertTrue(Validation::uploadedFile($file, $options), 'Wrong order');
 	}
 
-
 }
