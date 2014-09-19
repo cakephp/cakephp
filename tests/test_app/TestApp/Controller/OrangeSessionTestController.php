@@ -38,9 +38,10 @@ class OrangeSessionTestController extends Controller {
 /**
  * session_id method
  *
- * @return void
+ * @return \Cake\Network\Session
  */
 	public function session_id() {
 		$this->response->body($this->Session->id());
+		return $this->response;
 	}
 }

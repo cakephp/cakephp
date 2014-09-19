@@ -384,12 +384,6 @@ class Controller implements EventListener {
 		if (isset($request->params['pass'])) {
 			$this->passedArgs = $request->params['pass'];
 		}
-		if (!empty($request->params['return']) && $request->params['return'] == 1) {
-			$this->autoRender = false;
-		}
-		if (!empty($request->params['bare'])) {
-			$this->getView()->autoLayout = false;
-		}
 	}
 
 /**
@@ -577,6 +571,10 @@ class Controller implements EventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::render
  */
 	public function render($view = null, $layout = null) {
+		if (!empty($this->request->params['bare'])) {
+			$this->getView()->autoLayout = false;
+		}
+
 		$event = $this->dispatchEvent('Controller.beforeRender');
 		if ($event->result instanceof Response) {
 			$this->autoRender = false;
