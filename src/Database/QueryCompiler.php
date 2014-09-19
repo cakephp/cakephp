@@ -258,7 +258,7 @@ class QueryCompiler {
  * @return string SQL fragment.
  */
 	protected function _buildInsertPart($parts, $query, $generator) {
-		$table = $parts[0];
+		$table = $this->_stringifyExpression($parts[0], $generator);
 		$columns = $this->_stringifyExpressions($parts[1], $generator);
 		return sprintf('INSERT INTO %s (%s)', $table, implode(', ', $columns));
 	}

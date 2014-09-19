@@ -184,7 +184,7 @@ class IdentifierQuoter {
 	}
 
 /**
- * Quotes the table name from a from or a join
+ * Quotes the table name
  *
  * @param string|TableNameExpression|QueryExpression|\Cake\Database\Query $name Table name to quote
  *
@@ -213,7 +213,9 @@ class IdentifierQuoter {
  */
 	protected function _quoteInsert($query) {
 		list($table, $columns) = $query->clause('insert');
-		$table = $this->_driver->quoteIdentifier($table);
+
+		$table = $this->_quoteTableName($table);
+
 		foreach ($columns as &$column) {
 			if (is_string($column)) {
 				$column = $this->_driver->quoteIdentifier($column);

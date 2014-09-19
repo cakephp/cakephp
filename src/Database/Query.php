@@ -1193,6 +1193,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return $this
  */
 	public function into($table) {
+		if ($this->_connection instanceof \Cake\Database\Connection) {
+			$table = $this->_connection->fullTableName($table);
+		}
+
 		$this->_dirty();
 		$this->_type = 'insert';
 		$this->_parts['insert'][0] = $table;
