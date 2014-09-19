@@ -18,6 +18,7 @@ use Cake\Core\App;
 use Cake\View\StringTemplate;
 use Cake\View\View;
 use Cake\View\Widget\WidgetInterface;
+use Cake\Core\Configure\Engine\PhpConfig;
 use \ReflectionClass;
 
 /**
@@ -67,14 +68,34 @@ class WidgetRegistry {
  *
  * @param \Cake\View\StringTemplate $templates Templates instance to use.
  * @param \Cake\View\View $view The view instance to set as a widget.
- * @param array $widgets See add() method for more information.
+ * @param string|array $widgets See add() method for more information.
  */
-	public function __construct(StringTemplate $templates, View $view, array $widgets = []) {
+	public function __construct(StringTemplate $templates, View $view, $widgets = []) {
 		$this->_templates = $templates;
 		if (!empty($widgets)) {
-			$this->add($widgets);
+			if (is_string($widgets)) {
+				$this->load($widgets);
+			} else {
+				$this->add($widgets);
+			}
 		}
 		$this->add(['_view' => $view]);
+	}
+
+/**
+ * Load a config file containing widgets.
+ *
+ * Widget files should define a `$config` variable containing
+ * all the widgets to load. Loaded widgets will be merged with existing
+ * widgets.
+ *
+ * @param string $file The file to load
+ * @return void
+ */
+	public function load($file) {
+		$loader = new PhpConfig();
+		$widgets = $loader->read($file);
+		$this->add($widgets);
 	}
 
 /**

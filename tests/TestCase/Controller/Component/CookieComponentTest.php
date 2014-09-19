@@ -41,8 +41,7 @@ class CookieComponentTest extends TestCase {
 			array('redirect'),
 			array(new Request(), new Response())
 		);
-		$controller->components = array('Cookie');
-		$controller->constructClasses();
+		$controller->loadComponent('Cookie');
 		$this->Controller = $controller;
 		$this->Cookie = $controller->Cookie;
 		$this->request = $controller->request;

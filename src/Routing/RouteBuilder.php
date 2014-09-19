@@ -16,7 +16,6 @@ namespace Cake\Routing;
 
 use BadMethodCallException;
 use Cake\Core\App;
-use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
@@ -204,7 +203,7 @@ class RouteBuilder {
  * You can create nested resources by passing a callback in:
  *
  * {{{
- * $routes->resources('Articles', function($routes) {
+ * $routes->resources('Articles', function ($routes) {
  *   $routes->resources('Comments');
  * });
  * }}}

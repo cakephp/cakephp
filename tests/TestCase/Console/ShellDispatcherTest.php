@@ -169,7 +169,7 @@ class ShellDispatcherTest extends TestCase {
 	}
 
 /**
- * Verify you can dispatch a plugin's main shell with the plugin name alone
+ * Verify you can dispatch a plugin's main shell with the shell name alone
  *
  * @return void
  */
@@ -182,15 +182,15 @@ class ShellDispatcherTest extends TestCase {
 
 		$dispatcher->expects($this->at(1))
 			->method('_shellExists')
-			->with('TestPlugin.TestPlugin')
+			->with('TestPlugin.Example')
 			->will($this->returnValue('TestPlugin\Console\Command\TestPluginShell'));
 
 		$dispatcher->expects($this->at(2))
 			->method('_createShell')
-			->with('TestPlugin\Console\Command\TestPluginShell', 'TestPlugin.TestPlugin')
+			->with('TestPlugin\Console\Command\TestPluginShell', 'TestPlugin.Example')
 			->will($this->returnValue($Shell));
 
-		$dispatcher->args = array('test_plugin');
+		$dispatcher->args = array('example');
 		$result = $dispatcher->dispatch();
 		$this->assertEquals(1, $result);
 	}
@@ -209,15 +209,42 @@ class ShellDispatcherTest extends TestCase {
 
 		$dispatcher->expects($this->at(1))
 			->method('_shellExists')
-			->with('TestPlugin.TestPlugin')
+			->with('TestPlugin.Example')
 			->will($this->returnValue('TestPlugin\Console\Command\TestPluginShell'));
 
 		$dispatcher->expects($this->at(2))
 			->method('_createShell')
-			->with('TestPlugin\Console\Command\TestPluginShell', 'TestPlugin.TestPlugin')
+			->with('TestPlugin\Console\Command\TestPluginShell', 'TestPlugin.Example')
 			->will($this->returnValue($Shell));
 
-		$dispatcher->args = ['TestPlugin'];
+		$dispatcher->args = ['Example'];
+		$result = $dispatcher->dispatch();
+		$this->assertEquals(1, $result);
+	}
+
+/**
+ * Verify that in case of conflict, app shells take precedence in alias list
+ *
+ * @return void
+ */
+	public function testDispatchShortPluginAliasConflict() {
+		$dispatcher = $this->getMock(
+			'Cake\Console\ShellDispatcher',
+			['_shellExists', '_createShell']
+		);
+		$Shell = $this->getMock('Cake\Console\Shell');
+
+		$dispatcher->expects($this->at(1))
+			->method('_shellExists')
+			->with('Sample')
+			->will($this->returnValue('App\Shell\SampleShell'));
+
+		$dispatcher->expects($this->at(2))
+			->method('_createShell')
+			->with('App\Shell\SampleShell', 'Sample')
+			->will($this->returnValue($Shell));
+
+		$dispatcher->args = array('sample');
 		$result = $dispatcher->dispatch();
 		$this->assertEquals(1, $result);
 	}

@@ -20,7 +20,6 @@ use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
-use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
@@ -820,7 +819,7 @@ class Table implements RepositoryInterface, EventListener {
 			['idField', 'valueField', 'groupField']
 		);
 
-		return $query->formatResults(function($results) use ($options) {
+		return $query->formatResults(function ($results) use ($options) {
 			return $results->combine(
 				$options['idField'],
 				$options['valueField'],
@@ -859,7 +858,7 @@ class Table implements RepositoryInterface, EventListener {
 		];
 		$options = $this->_setFieldMatchers($options, ['idField', 'parentField']);
 
-		return $query->formatResults(function($results) use ($options) {
+		return $query->formatResults(function ($results) use ($options) {
 			return $results->nest($options['idField'], $options['parentField']);
 		});
 	}
@@ -889,7 +888,7 @@ class Table implements RepositoryInterface, EventListener {
 			}
 
 			$fields = $options[$field];
-			$options[$field] = function($row) use ($fields) {
+			$options[$field] = function ($row) use ($fields) {
 				$matches = [];
 				foreach ($fields as $field) {
 					$matches[] = $row[$field];
@@ -1141,7 +1140,7 @@ class Table implements RepositoryInterface, EventListener {
 
 		if ($options['atomic']) {
 			$connection = $this->connection();
-			$success = $connection->transactional(function() use ($entity, $options) {
+			$success = $connection->transactional(function () use ($entity, $options) {
 				return $this->_processSave($entity, $options);
 			});
 		} else {
@@ -1171,15 +1170,12 @@ class Table implements RepositoryInterface, EventListener {
 			$entity->isNew(!$this->exists($conditions));
 		}
 
-		$associated = $options['associated'];
-		$options['associated'] = [];
+		$options['associated'] = $this->_associations->normalizeKeys($options['associated']);
 		$validate = $options['validate'];
 
 		if ($validate && !$this->validate($entity, $options)) {
 			return false;
 		}
-
-		$options['associated'] = $this->_associations->normalizeKeys($associated);
 		$event = $this->dispatchEvent('Model.beforeSave', compact('entity', 'options'));
 
 		if ($event->isStopped()) {
@@ -1190,7 +1186,7 @@ class Table implements RepositoryInterface, EventListener {
 			$this,
 			$entity,
 			$options['associated'],
-			['validate' => (bool)$validate] + $options->getArrayCopy()
+			['validate' => false] + $options->getArrayCopy()
 		);
 
 		if (!$saved && $options['atomic']) {
@@ -1377,7 +1373,7 @@ class Table implements RepositoryInterface, EventListener {
 	public function delete(EntityInterface $entity, $options = []) {
 		$options = new \ArrayObject($options + ['atomic' => true]);
 
-		$process = function() use ($entity, $options) {
+		$process = function () use ($entity, $options) {
 			return $this->_processDelete($entity, $options);
 		};
 
@@ -1489,7 +1485,7 @@ class Table implements RepositoryInterface, EventListener {
 		$hasOr = strpos($fields, '_or_');
 		$hasAnd = strpos($fields, '_and_');
 
-		$makeConditions = function($fields, $args) {
+		$makeConditions = function ($fields, $args) {
 			$conditions = [];
 			if (count($args) < count($fields)) {
 				throw new BadMethodCallException(sprintf(

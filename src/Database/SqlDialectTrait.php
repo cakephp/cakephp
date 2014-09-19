@@ -74,7 +74,7 @@ trait SqlDialectTrait {
  * @return callable
  */
 	public function queryTranslator($type) {
-		return function($query) use ($type) {
+		return function ($query) use ($type) {
 			if ($this->autoQuoting()) {
 				$query = (new IdentifierQuoter($this))->quote($query);
 			}
@@ -85,7 +85,7 @@ trait SqlDialectTrait {
 				return $query;
 			}
 
-			$query->traverseExpressions(function($expression) use ($translators, $query) {
+			$query->traverseExpressions(function ($expression) use ($translators, $query) {
 				foreach ($translators as $class => $method) {
 					if ($expression instanceof $class) {
 						$this->{$method}($expression, $query);
@@ -162,7 +162,7 @@ trait SqlDialectTrait {
 		}
 		$conditions = $query->clause('where');
 		if ($conditions) {
-			$conditions->traverse(function($condition) {
+			$conditions->traverse(function ($condition) {
 				if (!($condition instanceof Comparison)) {
 					return $condition;
 				}

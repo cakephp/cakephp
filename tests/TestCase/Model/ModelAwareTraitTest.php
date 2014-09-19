@@ -57,10 +57,12 @@ class ModelAwareTraitTest extends TestCase {
 		$stub->setProps('Articles');
 		$stub->modelFactory('Table', ['\Cake\ORM\TableRegistry', 'get']);
 
-		$this->assertTrue($stub->loadModel());
+		$result = $stub->loadModel();
+		$this->assertInstanceOf('Cake\ORM\Table', $result);
 		$this->assertInstanceOf('Cake\ORM\Table', $stub->Articles);
 
-		$this->assertTrue($stub->loadModel('Comments'));
+		$result = $stub->loadModel('Comments');
+		$this->assertInstanceOf('Cake\ORM\Table', $result);
 		$this->assertInstanceOf('Cake\ORM\Table', $stub->Comments);
 	}
 
@@ -73,14 +75,14 @@ class ModelAwareTraitTest extends TestCase {
 		$stub = new Stub();
 		$stub->setProps('Articles');
 
-		$stub->modelFactory('Test', function($name) {
+		$stub->modelFactory('Test', function ($name) {
 			$mock = new \StdClass();
 			$mock->name = $name;
 			return $mock;
 		});
 
 		$result = $stub->loadModel('Magic', 'Test');
-		$this->assertTrue($result);
+		$this->assertInstanceOf('\StdClass', $result);
 		$this->assertInstanceOf('\StdClass', $stub->Magic);
 		$this->assertEquals('Magic', $stub->Magic->name);
 	}
@@ -95,7 +97,7 @@ class ModelAwareTraitTest extends TestCase {
 	public function testMissingModelException() {
 		$stub = new Stub();
 
-		$stub->modelFactory('Test', function($name) {
+		$stub->modelFactory('Test', function ($name) {
 			return false;
 		});
 

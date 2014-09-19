@@ -14,12 +14,10 @@
  */
 namespace Cake\Routing;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
-use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 
 /**
@@ -191,7 +189,7 @@ class Router {
  */
 	public static function connect($route, $defaults = [], $options = []) {
 		static::$initialized = true;
-		static::scope('/', function($routes) use ($route, $defaults, $options) {
+		static::scope('/', function ($routes) use ($route, $defaults, $options) {
 			$routes->connect($route, $defaults, $options);
 		});
 	}
@@ -276,7 +274,7 @@ class Router {
 				$pluginUrl = Inflector::underscore($plugin);
 			}
 
-			$callback = function($routes) use ($name, $options) {
+			$callback = function ($routes) use ($name, $options) {
 				$routes->resources($name, $options);
 			};
 
@@ -820,7 +818,7 @@ class Router {
  * ### Example
  *
  * {{{
- * Router::scope('/blog', ['plugin' => 'Blog'], function($routes) {
+ * Router::scope('/blog', ['plugin' => 'Blog'], function ($routes) {
  *    $routes->connect('/', ['controller' => 'Articles']);
  * });
  * }}}

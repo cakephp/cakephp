@@ -15,7 +15,6 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Error;
 use PDO;
 
 /**
@@ -36,7 +35,7 @@ class IntegerType extends \Cake\Database\Type {
 		if ($value === null || $value === '') {
 			return null;
 		}
-		return intval($value);
+		return (int)$value;
 	}
 
 /**
@@ -51,7 +50,7 @@ class IntegerType extends \Cake\Database\Type {
 		if ($value === null) {
 			return null;
 		}
-		return intval($value);
+		return (int)$value;
 	}
 
 /**
@@ -75,7 +74,7 @@ class IntegerType extends \Cake\Database\Type {
 		if ($value === null || $value === '') {
 			return null;
 		}
-		return intval($value);
+		return (int)$value;
 	}
 
 }

@@ -272,7 +272,10 @@ class ControllerTest extends TestCase {
 		$this->assertFalse(isset($Controller->Articles));
 
 		$result = $Controller->loadModel('Articles');
-		$this->assertTrue($result);
+		$this->assertInstanceOf(
+			'TestApp\Model\Table\ArticlesTable',
+			$result
+		);
 		$this->assertInstanceOf(
 			'TestApp\Model\Table\ArticlesTable',
 			$Controller->Articles
@@ -293,7 +296,10 @@ class ControllerTest extends TestCase {
 		$this->assertFalse(isset($Controller->TestPluginComments));
 
 		$result = $Controller->loadModel('TestPlugin.TestPluginComments');
-		$this->assertTrue($result);
+		$this->assertInstanceOf(
+			'TestPlugin\Model\Table\TestPluginCommentsTable',
+			$result
+		);
 		$this->assertInstanceOf(
 			'TestPlugin\Model\Table\TestPluginCommentsTable',
 			$Controller->TestPluginComments
@@ -333,9 +339,8 @@ class ControllerTest extends TestCase {
 		Plugin::load('TestPlugin');
 
 		$Controller = new TestPluginController(new Request(), new Response());
-		$Controller->components[] = 'TestPlugin.Other';
+		$Controller->loadComponent('TestPlugin.Other');
 
-		$Controller->constructClasses();
 		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $Controller->Other);
 	}
 
@@ -507,9 +512,7 @@ class ControllerTest extends TestCase {
  */
 	public function testMergeVars() {
 		$request = new Request();
-
 		$TestController = new TestController($request);
-		$TestController->constructClasses();
 
 		$expected = [
 			'Html' => null,
@@ -524,45 +527,11 @@ class ControllerTest extends TestCase {
 		$this->assertEquals($expected, $TestController->components);
 
 		$TestController = new AnotherTestController($request);
-		$TestController->constructClasses();
-
 		$this->assertEquals(
 			'Posts',
 			$TestController->modelClass,
 			'modelClass should not be overwritten when defined.'
 		);
-	}
-
-/**
- * test that options from child classes replace those in the parent classes.
- *
- * @return void
- */
-	public function testChildComponentOptionsSupercedeParents() {
-		$request = new Request('controller_posts/index');
-
-		$TestController = new TestController($request);
-
-		$expected = array('foo');
-		$TestController->components = array('Cookie' => $expected);
-		$TestController->constructClasses();
-		$this->assertEquals($expected, $TestController->components['Cookie']);
-	}
-
-/**
- * Ensure that _mergeControllerVars is not being greedy and merging with
- * ControllerTestAppController when you make an instance of Controller
- *
- * @return void
- */
-	public function testMergeVarsNotGreedy() {
-		$request = new Request('controller_posts/index');
-
-		$Controller = new Controller($request);
-		$Controller->components = [];
-		$Controller->constructClasses();
-
-		$this->assertFalse(isset($Controller->Session));
 	}
 
 /**
@@ -625,15 +594,15 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testStartupProcess() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('eventManager'));
-
 		$eventManager = $this->getMock('Cake\Event\EventManager');
+		$controller = new Controller(null, null, null, $eventManager);
+
 		$eventManager->expects($this->at(0))->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'Controller.initialize'),
-					$this->attributeEqualTo('_subject', $Controller)
+					$this->attributeEqualTo('_subject', $controller)
 				)
 			)
 			->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
@@ -643,15 +612,12 @@ class ControllerTest extends TestCase {
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'Controller.startup'),
-					$this->attributeEqualTo('_subject', $Controller)
+					$this->attributeEqualTo('_subject', $controller)
 				)
 			)
 			->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
 
-		$Controller->expects($this->exactly(2))->method('eventManager')
-			->will($this->returnValue($eventManager));
-
-		$Controller->startupProcess();
+		$controller->startupProcess();
 	}
 
 /**
@@ -660,23 +626,20 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testShutdownProcess() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('eventManager'));
-
 		$eventManager = $this->getMock('Cake\Event\EventManager');
+		$controller = new Controller(null, null, null, $eventManager);
+
 		$eventManager->expects($this->once())->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('Cake\Event\Event'),
 					$this->attributeEqualTo('_name', 'Controller.shutdown'),
-					$this->attributeEqualTo('_subject', $Controller)
+					$this->attributeEqualTo('_subject', $controller)
 				)
 			)
 			->will($this->returnValue($this->getMock('Cake\Event\Event', null, [], '', false)));
 
-		$Controller->expects($this->once())->method('eventManager')
-			->will($this->returnValue($eventManager));
-
-		$Controller->shutdownProcess();
+		$controller->shutdownProcess();
 	}
 
 /**
@@ -691,7 +654,6 @@ class ControllerTest extends TestCase {
 
 		$Controller = new Controller($request, $response);
 		$Controller->request->query['url'] = [];
-		$Controller->constructClasses();
 		$this->assertEquals([], $Controller->paginate);
 
 		$this->assertNotContains('Paginator', $Controller->helpers);
@@ -722,7 +684,6 @@ class ControllerTest extends TestCase {
 
 		$Controller = new Controller($request, $response);
 		$Controller->request->query['url'] = [];
-		$Controller->constructClasses();
 		$Controller->modelClass = 'Posts';
 		$results = $Controller->paginate();
 
@@ -857,7 +818,7 @@ class ControllerTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response');
 
 		$controller = new TestController($request, $response);
-		$result = $controller->addComponent('Paginator');
+		$result = $controller->loadComponent('Paginator');
 		$this->assertInstanceOf('Cake\Controller\Component\PaginatorComponent', $result);
 		$this->assertSame($result, $controller->Paginator);
 

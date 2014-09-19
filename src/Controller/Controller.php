@@ -36,33 +36,40 @@ use LogicException;
  * Provides basic functionality, such as rendering views inside layouts,
  * automatic model availability, redirection, callbacks, and more.
  *
- * Controllers should provide a number of 'action' methods. These are public methods on the controller
- * that are not prefixed with a '_' and not part of Controller. Each action serves as an endpoint for
- * performing a specific action on a resource or collection of resources. For example adding or editing a new
+ * Controllers should provide a number of 'action' methods. These are public
+ * methods on a controller that are not inherited from `Controller`.
+ * Each action serves as an endpoint for performing a specific action on a
+ * resource or collection of resources. For example adding or editing a new
  * object, or listing a set of objects.
  *
- * You can access request parameters, using `$this->request`. The request object contains all the POST, GET and FILES
- * that were part of the request.
+ * You can access request parameters, using `$this->request`. The request object
+ * contains all the POST, GET and FILES that were part of the request.
  *
- * After performing the required actions, controllers are responsible for creating a response. This usually
- * takes the form of a generated View, or possibly a redirection to another controller action. In either case
- * `$this->response` allows you to manipulate all aspects of the response.
+ * After performing the required action, controllers are responsible for
+ * creating a response. This usually takes the form of a generated `View`, or
+ * possibly a redirection to another URL. In either case `$this->response`
+ * allows you to manipulate all aspects of the response.
  *
- * Controllers are created by Dispatcher based on request parameters and routing. By default controllers and actions
- * use conventional names. For example `/posts/index` maps to `PostsController::index()`. You can re-map URLs
- * using Router::connect().
+ * Controllers are created by `Dispatcher` based on request parameters and
+ * routing. By default controllers and actions use conventional names.
+ * For example `/posts/index` maps to `PostsController::index()`. You can re-map
+ * URLs using Router::connect() or RouterBuilder::connect().
  *
  * ### Life cycle callbacks
  *
- * CakePHP fires a number of life cycle callbacks during each request. By implementing a method
- * you can receive the related events. The available callbacks are:
+ * CakePHP fires a number of life cycle callbacks during each request.
+ * By implementing a method you can receive the related events. The available
+ * callbacks are:
  *
- * - `beforeFilter(Event $event)` - Called before each action. This is a good place to
- *   do general logic that applies to all actions.
- * - `beforeRender(Event $event)` - Called before the view is rendered.
- * - `beforeRedirect(Cake\Event\Event $event $url, Cake\Network\Response $response)` - Called before
- *   a redirect is done.
- * - `afterFilter(Event $event)` - Called after each action is complete and after the view is rendered.
+ * - `beforeFilter(Event $event)`
+ *   Called before each action. This is a good place to do general logic that
+ *   applies to all actions.
+ * - `beforeRender(Event $event)`
+ *   Called before the view is rendered.
+ * - `beforeRedirect(Cake\Event\Event $event $url, Cake\Network\Response $response)`
+ *    Called before a redirect is done.
+ * - `afterFilter(Event $event)`
+ *   Called after each action is complete and after the view is rendered.
  *
  * @property      \Cake\Controller\Component\AuthComponent $Auth
  * @property      \Cake\Controller\Component\CookieComponent $Cookie
@@ -71,7 +78,7 @@ use LogicException;
  * @property      \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property      \Cake\Controller\Component\SecurityComponent $Security
  * @property      \Cake\Controller\Component\SessionComponent $Session
- * @link          http://book.cakephp.org/2.0/en/controllers.html
+ * @link          http://book.cakephp.org/3.0/en/controllers.html
  */
 class Controller implements EventListener {
 
@@ -173,6 +180,24 @@ class Controller implements EventListener {
 	public $viewClass = 'Cake\View\View';
 
 /**
+ * The path to this controllers view templates.
+ * Example `Articles`
+ *
+ * Set automatically using conventions in Controller::__construct().
+ *
+ * @var string
+ */
+	public $viewPath;
+
+/**
+ * The name of the view file to render. The name specified
+ * is the filename in /app/Template/<SubFolder> without the .ctp extension.
+ *
+ * @var string
+ */
+	public $view = null;
+
+/**
  * Instance of the View created during rendering. Won't be set until after
  * Controller::render() is called.
  *
@@ -214,27 +239,18 @@ class Controller implements EventListener {
 	public $methods = array();
 
 /**
- * The path to this controllers view templates.
- * Example `Articles`
- *
- * Set automatically using conventions in Controller::__construct().
- *
- * @var string
- */
-	public $viewPath;
-
-/**
  * Constructor.
  *
  * Sets a number of properties based on conventions if they are empty. To override the
  * conventions CakePHP uses you can define properties in your class declaration.
  *
  * @param \Cake\Network\Request $request Request object for this controller. Can be null for testing,
- *  but expect that features that use the request parameters will not work.
+ *   but expect that features that use the request parameters will not work.
  * @param \Cake\Network\Response $response Response object for this controller.
  * @param string $name Override the name useful in testing when using mocks.
+ * @param \Cake\Event\EventManager $eventManager The event manager. Defaults to a new instance.
  */
-	public function __construct(Request $request = null, Response $response = null, $name = null) {
+	public function __construct(Request $request = null, Response $response = null, $name = null, $eventManager = null) {
 		if ($this->name === null && $name === null) {
 			list(, $name) = namespaceSplit(get_class($this));
 			$name = substr($name, 0, -10);
@@ -261,10 +277,30 @@ class Controller implements EventListener {
 		if ($response instanceof Response) {
 			$this->response = $response;
 		}
+		if ($eventManager) {
+			$this->eventManager($eventManager);
+		}
 
 		$this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
 		$modelClass = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
 		$this->_setModelClass($modelClass);
+
+		$this->initialize();
+
+		$this->_mergeControllerVars();
+		$this->_loadComponents();
+		$this->eventManager()->attach($this);
+	}
+
+/**
+ * Initialization hook method.
+ *
+ * Implement this method to avoid having to overwrite
+ * the constructor and call parent.
+ *
+ * @return void
+ */
+	public function initialize() {
 	}
 
 /**
@@ -280,12 +316,28 @@ class Controller implements EventListener {
 	}
 
 /**
+ * Alias for loadComponent() for backwards compatibility.
+ *
+ * @param string $name The name of the component to load.
+ * @param array $config The config for the component.
+ * @return \Cake\Controller\Component
+ * @deprecated 3.0.0 Use loadComponent() instead.
+ */
+	public function addComponent($name, array $config = []) {
+		trigger_error(
+			'addComponent() is deprecated, use loadComponent() instead.',
+			E_USER_DEPRECATED
+		);
+		return $this->loadComponent($name, $config);
+	}
+
+/**
  * Add a component to the controller's registry.
  *
  * This method will also set the component to a property.
  * For example:
  *
- * `$this->addComponent('DebugKit.Toolbar');`
+ * `$this->loadComponent('Acl.Acl');`
  *
  * Will result in a `Toolbar` property being set.
  *
@@ -293,7 +345,7 @@ class Controller implements EventListener {
  * @param array $config The config for the component.
  * @return \Cake\Controller\Component
  */
-	public function addComponent($name, array $config = []) {
+	public function loadComponent($name, array $config = []) {
 		list(, $prop) = pluginSplit($name);
 		$this->{$prop} = $this->components()->load($name, $config);
 		return $this->{$prop};
@@ -425,19 +477,18 @@ class Controller implements EventListener {
 	}
 
 /**
- * Loads Model and Component classes.
+ * No-op for backwards compatibility.
  *
- * Using the $components properties, classes are loaded
- * and components have their callbacks attached to the EventManager.
- * It is also at this time that Controller callbacks are bound.
+ * The code that used to live here is now in Controller::__construct().
  *
+ * @deprecated 3.0.0 Will be removed in 3.0.0.
  * @return void
- * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::constructClasses
  */
 	public function constructClasses() {
-		$this->_mergeControllerVars();
-		$this->_loadComponents();
-		$this->eventManager()->attach($this);
+		trigger_error(
+			'Controller::constructClasses() is deprecated and will be removed in the first RC release',
+			E_USER_DEPRECATED
+		);
 	}
 
 /**
@@ -452,8 +503,7 @@ class Controller implements EventListener {
 		$registry = $this->components();
 		$components = $registry->normalizeArray($this->components);
 		foreach ($components as $properties) {
-			list(, $class) = pluginSplit($properties['class']);
-			$this->{$class} = $registry->load($properties['class'], $properties['config']);
+			$this->loadComponent($properties['class'], $properties['config']);
 		}
 	}
 
@@ -625,7 +675,7 @@ class Controller implements EventListener {
 			}
 		}
 
-		$this->addComponent('Paginator');
+		$this->loadComponent('Paginator');
 		if (
 			!in_array('Paginator', $this->helpers) &&
 			!array_key_exists('Paginator', $this->helpers)

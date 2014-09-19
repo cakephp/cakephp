@@ -68,10 +68,9 @@ class RequestHandlerComponentTest extends TestCase {
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response', array('_sendHeader', 'stop'));
 		$this->Controller = new RequestHandlerTestController($request, $response);
-		$this->Controller->constructClasses();
 		$this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
 
-		Router::scope('/', function($routes) {
+		Router::scope('/', function ($routes) {
 			$routes->extensions('json');
 			$routes->fallbacks();
 		});
@@ -98,7 +97,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$config = array(
 			'viewClassMap' => array('json' => 'MyPlugin.MyJson')
 		);
-		$controller = $this->getMock('Cake\Controller\Controller');
+		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
 		$collection = new ComponentRegistry($controller);
 		$requestHandler = new RequestHandlerComponent($collection, $config);
 		$this->assertEquals(array('json' => 'MyPlugin.MyJson'), $requestHandler->config('viewClassMap'));

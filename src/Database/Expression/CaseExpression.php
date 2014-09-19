@@ -15,7 +15,6 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 
 /**

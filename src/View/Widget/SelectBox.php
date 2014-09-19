@@ -164,7 +164,7 @@ class SelectBox implements WidgetInterface {
 
 		if (!empty($data['empty'])) {
 			$value = $data['empty'] === true ? '' : $data['empty'];
-			$options = ['' => $value] + $options;
+			$options = ['' => $value] + (array)$options;
 		}
 		if (empty($options)) {
 			return [];

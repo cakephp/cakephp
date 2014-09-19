@@ -661,4 +661,41 @@ class SelectBoxTest extends TestCase {
 		$this->assertHtml($expected, $result);
 	}
 
+/**
+ * test render with null options
+ *
+ * @return void
+ */
+	public function testRenderNullOptions() {
+		$select = new SelectBox($this->templates);
+		$data = [
+			'id' => 'BirdName',
+			'name' => 'Birds[name]',
+			'options' => null
+		];
+		$result = $select->render($data, $this->context);
+		$expected = [
+			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
+			'/select'
+		];
+		$this->assertHtml($expected, $result);
+
+		$data['empty'] = true;
+		$result = $select->render($data, $this->context);
+		$expected = [
+			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
+			['option' => ['value' => '']], '/option',
+			'/select'
+		];
+		$this->assertHtml($expected, $result);
+
+		$data['empty'] = 'empty';
+		$result = $select->render($data, $this->context);
+		$expected = [
+			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
+			['option' => ['value' => '']], 'empty', '/option',
+			'/select'
+		];
+		$this->assertHtml($expected, $result);
+	}
 }

@@ -141,7 +141,6 @@ class SecurityComponentTest extends TestCase {
 			->will($this->returnValue('/articles/index'));
 
 		$this->Controller = new SecurityTestController($request);
-		$this->Controller->constructClasses();
 		$this->Controller->Security = $this->Controller->TestSecurity;
 		$this->Controller->Security->config('blackHoleCallback', 'fail');
 		$this->Security = $this->Controller->Security;

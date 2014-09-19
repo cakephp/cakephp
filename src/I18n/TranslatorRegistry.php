@@ -62,7 +62,7 @@ class TranslatorRegistry extends TranslatorLocator {
 
 		if (!isset($this->registry[$name][$locale])) {
 			$key = "translations.$name.$locale";
-			$translator = Cache::remember($key, function() use ($name, $locale) {
+			$translator = Cache::remember($key, function () use ($name, $locale) {
 				try {
 					return parent::get($name, $locale);
 				} catch (\Aura\Intl\Exception $e) {
@@ -129,7 +129,7 @@ class TranslatorRegistry extends TranslatorLocator {
 		// \Aura\Intl\Package by default uses formatter configured with key "basic".
 		// and we want to make sure the cake domain always uses the default formatter
 		$formatter = $name === 'cake' ? 'default' : $this->_defaultFormatter;
-		$chain = function() use ($formatter, $chain) {
+		$chain = function () use ($formatter, $chain) {
 			$package = $chain();
 			$package->setFormatter($formatter);
 			return $package;
@@ -144,7 +144,7 @@ class TranslatorRegistry extends TranslatorLocator {
  * @return callable
  */
 	protected function _partialLoader() {
-		return function($name, $locale) {
+		return function ($name, $locale) {
 			return $this->_fallbackLoader($name, $locale);
 		};
 	}
@@ -162,13 +162,13 @@ class TranslatorRegistry extends TranslatorLocator {
 		$package = $loader;
 
 		if (!is_callable($loader)) {
-			$loader = function() use ($package) {
+			$loader = function () use ($package) {
 				return $package;
 			};
 		}
 
 		if ($name !== 'default') {
-			$loader = function() use ($loader) {
+			$loader = function () use ($loader) {
 				$package = $loader();
 				if (!$package->getFallback()) {
 					$package->setFallback('default');

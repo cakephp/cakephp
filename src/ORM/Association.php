@@ -14,9 +14,9 @@
  */
 namespace Cake\ORM;
 
+use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\ResultSetDecorator;
-use Cake\Event\Event;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
@@ -29,6 +29,8 @@ use Cake\Utility\Inflector;
  *
  */
 abstract class Association {
+
+	use ConventionsTrait;
 
 /**
  * Strategy name to use joins for fetching associated records
@@ -637,7 +639,7 @@ abstract class Association {
 		}
 
 		$property = $options['propertyPath'];
-		$query->formatResults(function($results) use ($formatters, $property) {
+		$query->formatResults(function ($results) use ($formatters, $property) {
 			$extracted = $results->extract($property)->compile();
 			foreach ($formatters as $callable) {
 				$extracted = new ResultSetDecorator($callable($extracted));
@@ -714,7 +716,7 @@ abstract class Association {
 /**
  * Helper method to infer the requested finder and its options.
  *
- * Returns the inferred options from the finder $type. 
+ * Returns the inferred options from the finder $type.
  *
  * ### Examples:
  *

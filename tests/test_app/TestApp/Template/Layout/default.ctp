@@ -1,5 +1,5 @@
 <?php
-$this->addHelper('Html');
+$this->loadHelper('Html');
 
 $cakeDescription = 'CakePHP: the rapid development php framework';
 ?>

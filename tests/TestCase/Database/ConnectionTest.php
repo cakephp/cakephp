@@ -818,7 +818,7 @@ class ConnectionTest extends TestCase {
 		);
 		$connection->expects($this->at(0))->method('begin');
 		$connection->expects($this->at(1))->method('commit');
-		$result = $connection->transactional(function($conn) use ($connection) {
+		$result = $connection->transactional(function ($conn) use ($connection) {
 			$this->assertSame($connection, $conn);
 			return 'thing';
 		});
@@ -841,7 +841,7 @@ class ConnectionTest extends TestCase {
 		$connection->expects($this->at(0))->method('begin');
 		$connection->expects($this->at(1))->method('rollback');
 		$connection->expects($this->never())->method('commit');
-		$result = $connection->transactional(function($conn) use ($connection) {
+		$result = $connection->transactional(function ($conn) use ($connection) {
 			$this->assertSame($connection, $conn);
 			return false;
 		});
@@ -866,7 +866,7 @@ class ConnectionTest extends TestCase {
 		$connection->expects($this->at(0))->method('begin');
 		$connection->expects($this->at(1))->method('rollback');
 		$connection->expects($this->never())->method('commit');
-		$connection->transactional(function($conn) use ($connection) {
+		$connection->transactional(function ($conn) use ($connection) {
 			$this->assertSame($connection, $conn);
 			throw new \InvalidArgumentException;
 		});

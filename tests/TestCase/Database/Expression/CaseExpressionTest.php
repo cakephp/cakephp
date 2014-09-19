@@ -53,7 +53,7 @@ class CaseExpressionTest extends TestCase {
  */
 	public function testTraverse() {
 		$count = 0;
-		$visitor = function() use (&$count) {
+		$visitor = function () use (&$count) {
 			$count++;
 		};
 

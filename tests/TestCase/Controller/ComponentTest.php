@@ -112,9 +112,7 @@ class ComponentTest extends TestCase {
  */
 	public function testSomethingReferencingCookieComponent() {
 		$Controller = new ComponentTestController();
-		$Controller->components = array('SomethingWithCookie');
-		$Controller->uses = false;
-		$Controller->constructClasses();
+		$Controller->loadComponent('SomethingWithCookie');
 		$Controller->startupProcess();
 
 		$this->assertInstanceOf('TestApp\Controller\Component\SomethingWithCookieComponent', $Controller->SomethingWithCookie);

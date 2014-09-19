@@ -134,7 +134,7 @@ class TranslateBehavior extends Behavior {
 			return;
 		}
 
-		$conditions = function($q) use ($locale) {
+		$conditions = function ($q) use ($locale) {
 			return $q
 				->select(['id', 'content'])
 				->where([$q->repository()->alias() . '.locale' => $locale]);
@@ -148,7 +148,7 @@ class TranslateBehavior extends Behavior {
 		}
 
 		$query->contain($contain);
-		$query->formatResults(function($results) use ($locale) {
+		$query->formatResults(function ($results) use ($locale) {
 			return $this->_rowMapper($results, $locale);
 		}, $query::PREPEND);
 	}
@@ -261,7 +261,7 @@ class TranslateBehavior extends Behavior {
 		$locales = isset($options['locales']) ? $options['locales'] : [];
 		$table = $this->_config['translationTable'];
 		return $query
-			->contain([$table => function($q) use ($locales, $table) {
+			->contain([$table => function ($q) use ($locales, $table) {
 				if ($locales) {
 					$q->where(["$table.locale IN" => $locales]);
 				}
@@ -279,7 +279,7 @@ class TranslateBehavior extends Behavior {
  * @return \Cake\Collection\Collection
  */
 	protected function _rowMapper($results, $locale) {
-		return $results->map(function($row) use ($locale) {
+		return $results->map(function ($row) use ($locale) {
 			$options = ['setter' => false, 'guard' => false];
 
 			foreach ($this->_config['fields'] as $field) {
@@ -313,7 +313,7 @@ class TranslateBehavior extends Behavior {
  * @return \Cake\Collection\Collection
  */
 	public function groupTranslations($results) {
-		return $results->map(function($row) {
+		return $results->map(function ($row) {
 			$translations = (array)$row->get('_i18n');
 			$grouped = new Collection($translations);
 

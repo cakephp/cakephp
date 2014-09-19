@@ -23,7 +23,6 @@ use Cake\Log\Log;
 use Cake\Network\Http\FormData\Part;
 use Cake\Utility\Hash;
 use Cake\Utility\String;
-use Cake\View\View;
 use InvalidArgumentException;
 use LogicException;
 

@@ -17,11 +17,11 @@ namespace Cake\Test\TestCase\Network\Email;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Filesystem\File;
 use Cake\Log\Log;
 use Cake\Network\Email\DebugTransport;
 use Cake\Network\Email\Email;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\File;
 use Cake\View\Exception\MissingViewException;
 
 /**

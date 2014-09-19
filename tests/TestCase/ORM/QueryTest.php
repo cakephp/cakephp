@@ -244,7 +244,7 @@ class QueryTest extends TestCase {
 
 		$results = $query->repository($table)
 			->select()
-			->contain(['articles' => ['conditions' => ['id' => 2]]])
+			->contain(['articles' => ['conditions' => ['articles.id' => 2]]])
 			->hydrate(false)
 			->toArray();
 		$expected[0]['articles'] = [];
@@ -299,7 +299,7 @@ class QueryTest extends TestCase {
 			->contain([
 				'articles' => [
 					'fields' => ['title', 'author_id'],
-					'sort' => ['id' => 'DESC']
+					'sort' => ['articles.id' => 'DESC']
 				]
 			])
 			->hydrate(false)
@@ -576,7 +576,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals($expected, $results);
 
 		$results = $query->select()
-			->contain(['Tags' => ['conditions' => ['id' => 3]]])
+			->contain(['Tags' => ['conditions' => ['Tags.id' => 3]]])
 			->hydrate(false)
 			->toArray();
 		$expected = [
@@ -629,7 +629,7 @@ class QueryTest extends TestCase {
 		$results = $query->repository($table)
 			->select()
 			->hydrate(false)
-			->matching('articles', function($q) {
+			->matching('articles', function ($q) {
 				return $q->where(['articles.id' => 2]);
 			})
 			->toArray();
@@ -666,7 +666,7 @@ class QueryTest extends TestCase {
 		$table->belongsToMany('Tags');
 
 		$results = $query->repository($table)->select()
-			->matching('Tags', function($q) {
+			->matching('Tags', function ($q) {
 				return $q->where(['Tags.id' => 3]);
 			})
 			->hydrate(false)
@@ -689,7 +689,7 @@ class QueryTest extends TestCase {
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
-			->matching('Tags', function($q) {
+			->matching('Tags', function ($q) {
 				return $q->where(['Tags.name' => 'tag2']);
 			})
 			->hydrate(false)
@@ -726,7 +726,7 @@ class QueryTest extends TestCase {
 		$results = $query->repository($table)
 			->select()
 			->hydrate(false)
-			->matching('articles.tags', function($q) {
+			->matching('articles.tags', function ($q) {
 				return $q->where(['tags.id' => 2]);
 			})
 			->toArray();
@@ -868,9 +868,9 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testMapReduceOnlyMapper() {
-		$mapper1 = function() {
+		$mapper1 = function () {
 		};
-		$mapper2 = function() {
+		$mapper2 = function () {
 		};
 		$query = new Query($this->connection, $this->table);
 		$this->assertSame($query, $query->mapReduce($mapper1));
@@ -896,13 +896,13 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testMapReduceBothMethods() {
-		$mapper1 = function() {
+		$mapper1 = function () {
 		};
-		$mapper2 = function() {
+		$mapper2 = function () {
 		};
-		$reducer1 = function() {
+		$reducer1 = function () {
 		};
-		$reducer2 = function() {
+		$reducer2 = function () {
 		};
 		$query = new Query($this->connection, $this->table);
 		$this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
@@ -927,13 +927,13 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testOverwriteMapReduce() {
-		$mapper1 = function() {
+		$mapper1 = function () {
 		};
-		$mapper2 = function() {
+		$mapper2 = function () {
 		};
-		$reducer1 = function() {
+		$reducer1 = function () {
 		};
-		$reducer2 = function() {
+		$reducer2 = function () {
 		};
 		$query = new Query($this->connection, $this->table);
 		$this->assertEquals($query, $query->mapReduce($mapper1, $reducer1));
@@ -970,14 +970,14 @@ class QueryTest extends TestCase {
 			->method('execute')
 			->will($this->returnValue($statement));
 
-		$query->mapReduce(function($v, $k, $mr) {
+		$query->mapReduce(function ($v, $k, $mr) {
 			$mr->emit($v['a']);
 		});
 		$query->mapReduce(
-			function($v, $k, $mr) {
+			function ($v, $k, $mr) {
 				$mr->emitIntermediate($v, $k);
 			},
-			function($v, $k, $mr) {
+			function ($v, $k, $mr) {
 				$mr->emit($v[0] + 1);
 			}
 		);
@@ -1037,10 +1037,10 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFirstMapReduce() {
-		$map = function($row, $key, $mapReduce) {
+		$map = function ($row, $key, $mapReduce) {
 			$mapReduce->emitIntermediate($row['id'], 'id');
 		};
-		$reduce = function($values, $key, $mapReduce) {
+		$reduce = function ($values, $key, $mapReduce) {
 			$mapReduce->emit(array_sum($values));
 		};
 
@@ -1349,7 +1349,7 @@ class QueryTest extends TestCase {
 			->select(['author_id', 's' => $query->func()->sum('id')])
 			->where(['id >' => 2])
 			->group(['author_id'])
-			->counter(function($q) use ($query) {
+			->counter(function ($q) use ($query) {
 				$this->assertNotSame($q, $query);
 				return $q->select([], true)->group([], true)->count();
 			});
@@ -1417,7 +1417,7 @@ class QueryTest extends TestCase {
  * @return array
  */
 	public function collectionMethodsProvider() {
-		$identity = function($a) {
+		$identity = function ($a) {
 			return $a;
 		};
 		return [
@@ -1557,7 +1557,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection, $table);
 		$query
 			->select()
-			->contain(['articles' => function($q) {
+			->contain(['articles' => function ($q) {
 				return $q->where(['articles.id' => 1]);
 			}]);
 
@@ -1576,9 +1576,9 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFormatResults() {
-		$callback1 = function() {
+		$callback1 = function () {
 		};
-		$callback2 = function() {
+		$callback2 = function () {
 		};
 		$table = TableRegistry::get('authors');
 		$query = new Query($this->connection, $table);
@@ -1604,7 +1604,7 @@ class QueryTest extends TestCase {
 	public function testQueryWithFormatter() {
 		$table = TableRegistry::get('authors');
 		$query = new Query($this->connection, $table);
-		$query->select()->formatResults(function($results, $q) use ($query) {
+		$query->select()->formatResults(function ($results, $q) use ($query) {
 			$this->assertSame($query, $q);
 			$this->assertInstanceOf('\Cake\ORM\ResultSet', $results);
 			return $results->indexBy('id');
@@ -1620,13 +1620,13 @@ class QueryTest extends TestCase {
 	public function testQueryWithStackedFormatters() {
 		$table = TableRegistry::get('authors');
 		$query = new Query($this->connection, $table);
-		$query->select()->formatResults(function($results, $q) use ($query) {
+		$query->select()->formatResults(function ($results, $q) use ($query) {
 			$this->assertSame($query, $q);
 			$this->assertInstanceOf('\Cake\ORM\ResultSet', $results);
 			return $results->indexBy('id');
 		});
 
-		$query->formatResults(function($results) {
+		$query->formatResults(function ($results) {
 			return $results->extract('name');
 		});
 
@@ -1669,23 +1669,23 @@ class QueryTest extends TestCase {
 		$table->belongsTo('authors');
 
 		$query = $table->find()
-			->contain(['authors' => function($q) {
+			->contain(['authors' => function ($q) {
 				return $q
-					->formatResults(function($authors) {
-						return $authors->map(function($author) {
+					->formatResults(function ($authors) {
+						return $authors->map(function ($author) {
 							$author->idCopy = $author->id;
 							return $author;
 						});
 					})
-					->formatResults(function($authors) {
-						return $authors->map(function($author) {
+					->formatResults(function ($authors) {
+						return $authors->map(function ($author) {
 							$author->idCopy = $author->idCopy + 2;
 							return $author;
 						});
 					});
 			}]);
 
-		$query->formatResults(function($results) {
+		$query->formatResults(function ($results) {
 			return $results->combine('id', 'author.idCopy');
 		});
 		$results = $query->toArray();
@@ -1703,16 +1703,16 @@ class QueryTest extends TestCase {
 		$table->belongsTo('Articles');
 		$table->association('Articles')->target()->belongsTo('Authors');
 
-		$builder = function($q) {
+		$builder = function ($q) {
 			return $q
-				->formatResults(function($results) {
-					return $results->map(function($result) {
+				->formatResults(function ($results) {
+					return $results->map(function ($result) {
 						$result->idCopy = $result->id;
 						return $result;
 					});
 				})
-				->formatResults(function($results) {
-					return $results->map(function($result) {
+				->formatResults(function ($results) {
+					return $results->map(function ($result) {
 						$result->idCopy = $result->idCopy + 2;
 						return $result;
 					});
@@ -1722,8 +1722,8 @@ class QueryTest extends TestCase {
 			->contain(['Articles' => $builder, 'Articles.Authors' => $builder])
 			->order(['Articles.id' => 'ASC']);
 
-		$query->formatResults(function($results) {
-			return $results->map(function($row) {
+		$query->formatResults(function ($results) {
+			return $results->map(function ($row) {
 				return sprintf(
 					'%s - %s - %s',
 					$row->tag_id,
@@ -1750,16 +1750,16 @@ class QueryTest extends TestCase {
 		$articles->hasMany('articlesTags');
 		$articles->association('articlesTags')->target()->belongsTo('tags');
 
-		$query = $table->find()->contain(['articles.articlesTags.tags' => function($q) {
-			return $q->formatResults(function($results) {
-				return $results->map(function($tag) {
+		$query = $table->find()->contain(['articles.articlesTags.tags' => function ($q) {
+			return $q->formatResults(function ($results) {
+				return $results->map(function ($tag) {
 					$tag->name .= ' - visited';
 					return $tag;
 				});
 			});
 		}]);
 
-		$query->mapReduce(function($row, $key, $mr) {
+		$query->mapReduce(function ($row, $key, $mr) {
 			foreach ((array)$row->articles as $article) {
 				foreach ((array)$article->articles_tags as $articleTag) {
 					$mr->emit($articleTag->tag->name);
@@ -1803,7 +1803,7 @@ class QueryTest extends TestCase {
 
 		$query = $table->find()
 			->order(['Articles.id' => 'ASC'])
-			->contain(['Articles' => function($q) {
+			->contain(['Articles' => function ($q) {
 				return $q->contain('Authors');
 			}]);
 		$results = $query->extract('article.author.name')->toArray();
@@ -1824,8 +1824,8 @@ class QueryTest extends TestCase {
 		$articles->hasMany('articlesTags');
 		$articles->association('articlesTags')->target()->belongsTo('tags');
 
-		$query = $table->find()->matching('articles.articlesTags', function($q) {
-			return $q->matching('tags', function($q) {
+		$query = $table->find()->matching('articles.articlesTags', function ($q) {
+			return $q->matching('tags', function ($q) {
 				return $q->where(['tags.name' => 'tag3']);
 			});
 		});
@@ -1849,10 +1849,10 @@ class QueryTest extends TestCase {
 			->hydrate(false)
 			->matching('articles')
 			->applyOptions(['foo' => 'bar'])
-			->formatResults(function($results) {
+			->formatResults(function ($results) {
 				return $results;
 			})
-			->mapReduce(function($item, $key, $mr) {
+			->mapReduce(function ($item, $key, $mr) {
 				$mr->emit($item);
 			});
 
@@ -1892,18 +1892,18 @@ class QueryTest extends TestCase {
 	public function testEagerLoaded() {
 		$table = TableRegistry::get('authors');
 		$table->hasMany('articles');
-		$query = $table->find()->contain(['articles' => function($q) {
+		$query = $table->find()->contain(['articles' => function ($q) {
 			$this->assertTrue($q->eagerLoaded());
 			return $q;
 		}]);
 		$this->assertFalse($query->eagerLoaded());
 
-		$table->eventManager()->attach(function($e, $q, $o, $primary) {
+		$table->eventManager()->attach(function ($e, $q, $o, $primary) {
 			$this->assertTrue($primary);
 		}, 'Model.beforeFind');
 
 		TableRegistry::get('articles')
-			->eventManager()->attach(function($e, $q, $o, $primary) {
+			->eventManager()->attach(function ($e, $q, $o, $primary) {
 				$this->assertFalse($primary);
 			}, 'Model.beforeFind');
 		$query->all();
@@ -2063,7 +2063,7 @@ class QueryTest extends TestCase {
 			->select(['myField' => '(SELECT 2 + 2)'])
 			->autoFields(true)
 			->hydrate(false)
-			->contain(['Authors' => function($q) {
+			->contain(['Authors' => function ($q) {
 				return $q->select(['compute' => '(SELECT 2 + 20)'])
 					->autoFields(true);
 			}])

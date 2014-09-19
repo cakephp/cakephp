@@ -114,4 +114,23 @@ class TableUuidTest extends TestCase {
 		$this->assertCount(0, $query->execute(), 'No rows left');
 	}
 
+/**
+ * Tests that sql server does not error when an empty uuid is bound
+ *
+ * @return void
+ */
+	public function testEmptyUuid() {
+		$this->skipIf(
+			!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+			'Empty UUIDs only affect SQLServer uniqueidentifier field types'
+		);
+		$id = '';
+		$table = TableRegistry::get('uuiditems');
+		$entity = $table->find('all')
+			->where(['id' => $id])
+			->first();
+
+		$this->assertNull($entity);
+	}
+
 }

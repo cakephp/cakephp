@@ -131,7 +131,7 @@ class PaginatorComponent extends Component {
  * You can also pass an already created instance of a query to this method:
  *
  * {{{
- * $query = $this->Articles->find('popular')->matching('Tags', function($q) {
+ * $query = $this->Articles->find('popular')->matching('Tags', function ($q) {
  *   return $q->where(['name' => 'CakePHP'])
  * });
  * $results = $paginator->paginate($query);
@@ -154,7 +154,7 @@ class PaginatorComponent extends Component {
 		$options = $this->checkLimit($options);
 
 		$options += ['page' => 1];
-		$options['page'] = intval($options['page']) < 1 ? 1 : (int)$options['page'];
+		$options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
 		list($finder, $options) = $this->_extractFinder($options);
 
 		if (empty($query)) {
@@ -171,7 +171,7 @@ class PaginatorComponent extends Component {
 
 		$page = $options['page'];
 		$limit = $options['limit'];
-		$pageCount = intval(ceil($count / $limit));
+		$pageCount = (int)ceil($count / $limit);
 		$requestedPage = $page;
 		$page = max(min($page, $pageCount), 1);
 		$request = $this->_registry->getController()->request;

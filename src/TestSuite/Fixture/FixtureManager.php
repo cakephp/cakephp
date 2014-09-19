@@ -15,12 +15,10 @@
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use Cake\Core\Exception\Exception;
 use Cake\TestSuite\Fixture\TestFixture;
-use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;
 
 /**
@@ -53,7 +51,7 @@ class FixtureManager {
 /**
  * Inspects the test to look for unloaded fixtures and loads them
  *
- * @param \Cake\TestSuite\TestCase $test the test case to inspect
+ * @param \Cake\TestSuite\TestCase $test The test case to inspect.
  * @return void
  */
 	public function fixturize($test) {
@@ -123,7 +121,7 @@ class FixtureManager {
 /**
  * Looks for fixture files and instantiates the classes accordingly
  *
- * @param \Cake\TestSuite\Testcase $test The test suite to load fixtures for.
+ * @param \Cake\TestSuite\TestCase $test The test suite to load fixtures for.
  * @return void
  * @throws \UnexpectedValueException when a referenced fixture does not exist.
  */
@@ -203,13 +201,14 @@ class FixtureManager {
 			$fixture->create($db);
 		} else {
 			$fixture->created[] = $db->configName();
+			$fixture->truncate($db);
 		}
 	}
 
 /**
  * Creates the fixtures tables and inserts data on them.
  *
- * @param \Cake\TestSuite\TestCase $test the test to inspect for fixture loading
+ * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture loading.
  * @return void
  * @throws \Cake\Core\Exception\Exception When fixture records cannot be inserted.
  */
@@ -225,7 +224,7 @@ class FixtureManager {
 
 		$dbs = $this->_fixtureConnections($fixtures);
 		try {
-			$createTables = function($db, $fixtures) use ($test) {
+			$createTables = function ($db, $fixtures) use ($test) {
 				$tables = $db->schemaCollection()->listTables();
 				foreach ($fixtures as $fixture) {
 					if (!in_array($db->configName(), (array)$fixture->created)) {
@@ -238,7 +237,7 @@ class FixtureManager {
 			$this->_runOperation($fixtures, $createTables);
 
 			// Use a separate transaction because of postgres.
-			$insert = function($db, $fixtures) {
+			$insert = function ($db, $fixtures) {
 				foreach ($fixtures as $fixture) {
 					$fixture->insert($db);
 				}
@@ -261,7 +260,7 @@ class FixtureManager {
 		$dbs = $this->_fixtureConnections($fixtures);
 		foreach ($dbs as $connection => $fixtures) {
 			$db = ConnectionManager::get($connection, false);
-			$db->transactional(function($db) use ($fixtures, $operation) {
+			$db->transactional(function ($db) use ($fixtures, $operation) {
 				$db->disableForeignKeys();
 				$operation($db, $fixtures);
 				$db->enableForeignKeys();
@@ -289,14 +288,14 @@ class FixtureManager {
 /**
  * Truncates the fixtures tables
  *
- * @param \Cake\TestSuite\TestCase $test the test to inspect for fixture unloading
+ * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture unloading.
  * @return void
  */
 	public function unload($test) {
 		if (empty($test->fixtures)) {
 			return;
 		}
-		$truncate = function($db, $fixtures) {
+		$truncate = function ($db, $fixtures) {
 			$connection = $db->configName();
 			foreach ($fixtures as $fixture) {
 				if (!empty($fixture->created) && in_array($connection, $fixture->created)) {
@@ -342,7 +341,7 @@ class FixtureManager {
  * @return void
  */
 	public function shutDown() {
-		$shutdown = function($db, $fixtures) {
+		$shutdown = function ($db, $fixtures) {
 			$connection = $db->configName();
 			foreach ($fixtures as $fixture) {
 				if (!empty($fixture->created) && in_array($connection, $fixture->created)) {

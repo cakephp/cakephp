@@ -538,7 +538,7 @@ class Connection {
  * ### Example:
  *
  * {{{
- * $connection->transactional(function($connection) {
+ * $connection->transactional(function ($connection) {
  *   $connection->newQuery()->delete('users')->execute();
  * });
  * }}}

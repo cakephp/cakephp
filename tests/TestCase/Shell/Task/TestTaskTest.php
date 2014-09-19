@@ -385,11 +385,10 @@ class TestTaskTest extends TestCase {
 		$result = $this->Task->bake('Controller', 'PostsController');
 
 		$this->assertContains("use TestApp\Controller\PostsController", $result);
-		$this->assertContains('class PostsControllerTest extends ControllerTestCase', $result);
+		$this->assertContains('class PostsControllerTest extends IntegrationTestCase', $result);
 
 		$this->assertNotContains('function setUp()', $result);
 		$this->assertNotContains("\$this->Posts = new PostsController()", $result);
-		$this->assertNotContains("\$this->Posts->constructClasses()", $result);
 
 		$this->assertNotContains('function tearDown()', $result);
 		$this->assertNotContains('unset($this->Posts)', $result);
@@ -413,11 +412,10 @@ class TestTaskTest extends TestCase {
 		$result = $this->Task->bake('controller', 'Admin\Posts');
 
 		$this->assertContains("use TestApp\Controller\Admin\PostsController", $result);
-		$this->assertContains('class PostsControllerTest extends ControllerTestCase', $result);
+		$this->assertContains('class PostsControllerTest extends IntegrationTestCase', $result);
 
 		$this->assertNotContains('function setUp()', $result);
 		$this->assertNotContains("\$this->Posts = new PostsController()", $result);
-		$this->assertNotContains("\$this->Posts->constructClasses()", $result);
 
 		$this->assertNotContains('function tearDown()', $result);
 		$this->assertNotContains('unset($this->Posts)', $result);

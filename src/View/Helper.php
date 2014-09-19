@@ -14,12 +14,8 @@
  */
 namespace Cake\View;
 
-use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Core\Plugin;
 use Cake\Event\EventListener;
-use Cake\Routing\Router;
-use Cake\Utility\Inflector;
 
 /**
  * Abstract base class for all other Helpers in CakePHP.
@@ -149,7 +145,7 @@ class Helper implements EventListener {
 	public function __get($name) {
 		if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
 			$config = ['enabled' => false] + (array)$this->_helperMap[$name]['config'];
-			$this->{$name} = $this->_View->addHelper($this->_helperMap[$name]['class'], $config);
+			$this->{$name} = $this->_View->loadHelper($this->_helperMap[$name]['class'], $config);
 		}
 		if (isset($this->{$name})) {
 			return $this->{$name};

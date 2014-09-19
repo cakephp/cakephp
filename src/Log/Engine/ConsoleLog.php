@@ -15,7 +15,6 @@
 namespace Cake\Log\Engine;
 
 use Cake\Console\ConsoleOutput;
-use Cake\Core\Exception\Exception;
 use InvalidArgumentException;
 
 /**

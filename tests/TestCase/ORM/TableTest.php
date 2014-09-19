@@ -276,7 +276,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->expects($this->once())
 			->method('_initializeSchema')
 			->with($schema)
-			->will($this->returnCallback(function($schema) {
+			->will($this->returnCallback(function ($schema) {
 				$schema->columnType('username', 'integer');
 				return $schema;
 			}));
@@ -1273,7 +1273,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new Time('2013-10-10 00:00'),
 			'updated' => new Time('2013-10-10 00:00')
 		]);
-		$listener = function($e, $entity, $options) use ($data) {
+		$listener = function ($e, $entity, $options) use ($data) {
 			$this->assertSame($data, $entity);
 			$entity->set('password', 'foo');
 		};
@@ -1298,10 +1298,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new Time('2013-10-10 00:00'),
 			'updated' => new Time('2013-10-10 00:00')
 		]);
-		$listener1 = function($e, $entity, $options) {
+		$listener1 = function ($e, $entity, $options) {
 			$options['crazy'] = true;
 		};
-		$listener2 = function($e, $entity, $options) {
+		$listener2 = function ($e, $entity, $options) {
 			$this->assertTrue($options['crazy']);
 		};
 		$table->eventManager()->attach($listener1, 'Model.beforeSave');
@@ -1327,7 +1327,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new Time('2013-10-10 00:00'),
 			'updated' => new Time('2013-10-10 00:00')
 		]);
-		$listener = function($e, $entity) {
+		$listener = function ($e, $entity) {
 			$e->stopPropagation();
 			return $entity;
 		};
@@ -1353,7 +1353,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		]);
 
 		$called = false;
-		$listener = function($e, $entity, $options) use ($data, &$called) {
+		$listener = function ($e, $entity, $options) use ($data, &$called) {
 			$this->assertSame($data, $entity);
 			$called = true;
 		};
@@ -1397,7 +1397,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue(0));
 
 		$called = false;
-		$listener = function($e, $entity, $options) use ($data, &$called) {
+		$listener = function ($e, $entity, $options) use ($data, &$called) {
 			$called = true;
 		};
 		$table->eventManager()->attach($listener, 'Model.afterSave');
@@ -1650,7 +1650,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		]);
 		$table = TableRegistry::get('users');
 		$called = false;
-		$listener = function($event, $entity) use (&$called) {
+		$listener = function ($event, $entity) use (&$called) {
 			$this->assertFalse($entity->isNew());
 			$called = true;
 		};
@@ -1921,7 +1921,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$mock = $this->getMock('Cake\Event\EventManager');
 		$mock->expects($this->once())
 			->method('dispatch')
-			->will($this->returnCallback(function($event) {
+			->will($this->returnCallback(function ($event) {
 				$event->stopPropagation();
 			}));
 
@@ -1943,7 +1943,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$mock = $this->getMock('Cake\Event\EventManager');
 		$mock->expects($this->once())
 			->method('dispatch')
-			->will($this->returnCallback(function($event) {
+			->will($this->returnCallback(function ($event) {
 				$event->stopPropagation();
 				$event->result = 'got stopped';
 			}));
@@ -2105,7 +2105,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'username' => 'superuser'
 		]);
 		$table = TableRegistry::get('users');
-		$table->eventManager()->attach(function($ev, $en, $opt, $val) use ($entity) {
+		$table->eventManager()->attach(function ($ev, $en, $opt, $val) use ($entity) {
 			$this->assertSame($entity, $en);
 			$this->assertTrue($opt['crazy']);
 			$this->assertSame($ev->subject()->validator('default'), $val);
@@ -2125,7 +2125,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'username' => 'superuser'
 		]);
 		$table = TableRegistry::get('users');
-		$table->eventManager()->attach(function($ev, $en) {
+		$table->eventManager()->attach(function ($ev, $en) {
 			$en->errors('username', 'Not good');
 			return false;
 		}, 'Model.beforeValidate');
@@ -2145,7 +2145,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		]);
 		$table = TableRegistry::get('users');
 		$table->validator()->validatePresence('password');
-		$table->eventManager()->attach(function($ev, $en, $opt, $val) use ($entity) {
+		$table->eventManager()->attach(function ($ev, $en, $opt, $val) use ($entity) {
 			$this->assertSame($entity, $en);
 			$this->assertTrue($opt['crazy']);
 			$this->assertSame($ev->subject()->validator('default'), $val);
@@ -2192,6 +2192,44 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		unset($entity->author);
 		$this->assertFalse($table->save($entity, ['validate' => 'custom']), 'default was not used');
 		$this->assertNotEmpty($entity->articles_tags[0]->errors('thing'));
+	}
+
+/**
+ * Tests that save validates all entities before persisting.
+ *
+ * @return void
+ */
+	public function testSaveValidateAllAssociations() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'foo',
+			'author' => new \Cake\ORM\Entity([
+				'name' => 'Susan'
+			]),
+			'comments' => [
+				new \Cake\ORM\Entity([
+					'comment' => 'the worst!'
+				])
+			]
+		]);
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors');
+		$table->hasMany('Comments');
+
+		$validator = (new Validator)->validatePresence('body');
+		$table->validator('default', $validator);
+
+		$authorValidate = (new Validator)->validatePresence('bio');
+		$table->Authors->validator('default', $authorValidate);
+
+		$commentValidate = (new Validator)->validatePresence('author');
+		$table->Comments->validator('default', $commentValidate);
+
+		$result = $table->save($entity);
+		$this->assertFalse($result, 'Should have failed');
+
+		$this->assertNotEmpty($entity->errors('body'), 'Missing article errors');
+		$this->assertNotEmpty($entity->author->errors('bio'), 'Missing author errors');
+		$this->assertNotEmpty($entity->comments[0]->errors('author'), 'Missing comment errors');
 	}
 
 /**
@@ -2461,8 +2499,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = TableRegistry::get('authors');
 		$table->hasOne('articles');
 
-		$this->assertSame($entity, $table->save($entity));
-		$this->assertFalse($entity->isNew());
+		$this->assertFalse($table->save($entity));
+		$this->assertTrue($entity->isNew());
 		$this->assertInternalType('array', $entity->article);
 	}
 
@@ -2599,14 +2637,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->validator()
 			->add('title', 'num', ['rule' => 'numeric']);
 
-		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
-		$this->assertFalse($entity->isNew());
+		$result = $table->save($entity, ['atomic' => false]);
+		$this->assertFalse($result, 'Validation failed, no save.');
+		$this->assertTrue($entity->isNew());
 		$this->assertTrue($entity->articles[0]->isNew());
-		$this->assertFalse($entity->articles[1]->isNew());
-		$this->assertEquals(4, $entity->articles[1]->id);
+		$this->assertTrue($entity->articles[1]->isNew());
+		$this->assertNull($entity->articles[1]->id);
 		$this->assertNull($entity->articles[0]->id);
-		$this->assertEquals(5, $entity->articles[0]->author_id);
-		$this->assertEquals(5, $entity->articles[1]->author_id);
+		$this->assertNull($entity->articles[0]->author_id);
+		$this->assertNull($entity->articles[1]->author_id);
 	}
 
 /**
@@ -2632,8 +2671,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->validator()
 			->add('title', 'num', ['rule' => 'numeric']);
 
-		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
-		$this->assertFalse($entity->isNew());
+		$result = $table->save($entity, ['atomic' => false]);
+		$this->assertFalse($result, 'Validation failed, no save.');
+		$this->assertTrue($entity->isNew());
 		$this->assertTrue($entity->article->isNew());
 		$this->assertNull($entity->article->id);
 		$this->assertNull($entity->article->get('author_id'));
@@ -2664,8 +2704,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->validator()
 			->add('name', 'num', ['rule' => 'numeric']);
 
-		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
-		$this->assertFalse($entity->isNew());
+		$result = $table->save($entity, ['atomic' => false]);
+		$this->assertFalse($result, 'Validation failed, no save');
+		$this->assertTrue($entity->isNew());
 		$this->assertTrue($entity->author->isNew());
 		$this->assertNull($entity->get('author_id'));
 		$this->assertNotEmpty($entity->author->errors('name'));
@@ -2764,7 +2805,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testSaveBelongsToWithValidationErrorAtomic() {
+	public function testSaveBelongsToManyWithValidationErrorAtomic() {
 		$entity = new \Cake\ORM\Entity([
 			'title' => 'A Title',
 			'body' => 'A body'
@@ -2803,7 +2844,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testSaveBelongsToWithValidationErrorNonAtomic() {
+	public function testSaveBelongsToManyWithValidationErrorNonAtomic() {
 		$entity = new \Cake\ORM\Entity([
 			'title' => 'A Title',
 			'body' => 'A body'
@@ -2823,15 +2864,16 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->validator()
 			->add('name', 'num', ['rule' => 'numeric']);
 
-		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
-		$this->assertFalse($entity->isNew());
+		$result = $table->save($entity, ['atomic' => false]);
+
+		$this->assertFalse($result, 'HABTM validation failed, save aborted');
+		$this->assertTrue($entity->isNew());
 		$this->assertTrue($entity->tags[0]->isNew());
-		$this->assertFalse($entity->tags[1]->isNew());
+		$this->assertTrue($entity->tags[1]->isNew());
 		$this->assertNull($entity->tags[0]->id);
-		$this->assertEquals(4, $entity->tags[1]->id);
+		$this->assertNull($entity->tags[1]->id);
 		$this->assertNull($entity->tags[0]->_joinData);
-		$this->assertEquals(4, $entity->tags[1]->_joinData->article_id);
-		$this->assertEquals(4, $entity->tags[1]->_joinData->tag_id);
+		$this->assertNull($entity->tags[1]->_joinData);
 	}
 
 /**
@@ -2840,7 +2882,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testSaveBelongsToWithValidationErrorInJointEntity() {
+	public function testSaveBelongsToManyWithValidationErrorInJointEntity() {
 		$entity = new \Cake\ORM\Entity([
 			'title' => 'A Title',
 			'body' => 'A body'
@@ -2877,7 +2919,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testSaveBelongsToWithValidationErrorInJointEntityNonAtomic() {
+	public function testSaveBelongsToManyWithValidationErrorInJointEntityNonAtomic() {
 		$entity = new \Cake\ORM\Entity([
 			'title' => 'A Title',
 			'body' => 'A body'
@@ -3030,7 +3072,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($entity, $articles->save($entity, [
 			'associated' => [
 				'authors' => [
-					'validate' => 'special'
+					'validate' => true
 				],
 				'authors.supervisors' => [
 					'atomic' => false,

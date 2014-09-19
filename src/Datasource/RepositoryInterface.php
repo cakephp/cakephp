@@ -52,7 +52,7 @@ interface RepositoryInterface {
  *
  * @param mixed $primaryKey primary key value to find
  * @param array|\ArrayAccess $options options accepted by `Table::find()`
- * @throws \Cake\ORM\Error\RecordNotFoundException if the record with such id
+ * @throws \Cake\ORM\Exception\RecordNotFoundException if the record with such id
  * could not be found
  * @return \Cake\Datasource\EntityInterface
  * @see RepositoryInterface::find()

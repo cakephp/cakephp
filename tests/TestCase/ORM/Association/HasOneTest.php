@@ -301,7 +301,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 				$opts,
 				false
 			);
-		$association->attachTo($query, ['queryBuilder' => function($q) {
+		$association->attachTo($query, ['queryBuilder' => function ($q) {
 			return $q->applyOptions(['something' => 'more']);
 		}]);
 	}

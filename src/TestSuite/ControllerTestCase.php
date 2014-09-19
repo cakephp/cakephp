@@ -17,7 +17,6 @@ namespace Cake\TestSuite;
 use Cake\Controller\Error\MissingComponentException;
 use Cake\Controller\Error\MissingControllerException;
 use Cake\Core\App;
-use Cake\Error;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Session;
@@ -353,7 +352,7 @@ abstract class ControllerTestCase extends TestCase {
  * @throws \Cake\Controller\Error\MissingControllerException When controllers could not be created.
  * @throws \Cake\Controller\Error\MissingComponentException When components could not be created.
  */
-	public function generate($controller, array $mocks = array(), $request = null) {
+	public function generate($controller, array $mocks = array(), Request $request = null) {
 		$className = App::className($controller, 'Controller', 'Controller');
 		if (!$className) {
 			list($plugin, $controller) = pluginSplit($controller);
@@ -416,11 +415,10 @@ abstract class ControllerTestCase extends TestCase {
 			$config = isset($controller->components[$component]) ? $controller->components[$component] : array();
 			$component = $this->getMock($componentClass, $methods, array($registry, $config));
 			$registry->set($name, $component);
+			$controller->{$name} = $component;
 		}
 
-		$controller->constructClasses();
 		$this->_dirtyController = false;
-
 		$this->controller = $controller;
 		return $this->controller;
 	}

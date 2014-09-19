@@ -35,13 +35,13 @@ class MapReduceTest extends TestCase {
 			'document_2' => 'History is not only amazing but boring',
 			'document_3' => 'One thing that is not boring is dogs'
 		];
-		$mapper = function($row, $document, $mr) {
+		$mapper = function ($row, $document, $mr) {
 			$words = array_map('strtolower', explode(' ', $row));
 			foreach ($words as $word) {
 				$mr->emitIntermediate($document, $word);
 			}
 		};
-		$reducer = function($documents, $word, $mr) {
+		$reducer = function ($documents, $word, $mr) {
 			$mr->emit(array_unique($documents), $word);
 		};
 		$results = new MapReduce(new ArrayIterator($data), $mapper, $reducer);

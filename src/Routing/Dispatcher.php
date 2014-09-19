@@ -15,7 +15,6 @@
 namespace Cake\Routing;
 
 use Cake\Controller\Controller;
-use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManagerTrait;
 use Cake\Network\Request;
@@ -104,7 +103,6 @@ class Dispatcher {
  *   instance of Response
  */
 	protected function _invoke(Controller $controller) {
-		$controller->constructClasses();
 		$result = $controller->startupProcess();
 		if ($result instanceof Response) {
 			return $result;

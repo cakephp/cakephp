@@ -16,9 +16,7 @@ namespace Cake\View;
 
 use Cake\Cache\Cache;
 use Cake\Core\App;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
 use Cake\Log\LogTrait;
@@ -674,8 +672,7 @@ class View {
 		$registry = $this->helpers();
 		$helpers = $registry->normalizeArray($this->helpers);
 		foreach ($helpers as $properties) {
-			list(, $class) = pluginSplit($properties['class']);
-			$this->{$class} = $registry->load($properties['class'], $properties['config']);
+			$this->loadHelper($properties['class'], $properties['config']);
 		}
 	}
 
@@ -754,6 +751,23 @@ class View {
 		}
 		return $this->_helpers;
 	}
+
+/**
+ * Alias for loadHelper() for backwards compatibility.
+ *
+ * @param string $helperName Name of the helper to load.
+ * @param array $config Settings for the helper
+ * @return Helper a constructed helper object.
+ * @deprecated 3.0.0 Use loadHelper() instead.
+ */
+	public function addHelper($helperName, array $config = []) {
+		trigger_error(
+			'addHelper() is deprecated, use loadHelper() instead.',
+			E_USER_DEPRECATED
+		);
+		return $this->loadHelper($helperName, $config);
+	}
+
 /**
  * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
  *
@@ -762,8 +776,9 @@ class View {
  * @return Helper a constructed helper object.
  * @see HelperRegistry::load()
  */
-	public function addHelper($helperName, array $config = []) {
-		return $this->helpers()->load($helperName, $config);
+	public function loadHelper($helperName, array $config = []) {
+		list(, $class) = pluginSplit($helperName);
+		return $this->{$class} = $this->helpers()->load($helperName, $config);
 	}
 
 /**

@@ -129,8 +129,8 @@ class PluralRules {
  * to the countable provided in $n.
  *
  * @param string $locale The locale to get the rule calculated for.
- * @param integer|float $n The number to apply the rules to.
- * @return integer The plural rule number that should be used.
+ * @param int|float $n The number to apply the rules to.
+ * @return int The plural rule number that should be used.
  * @link http://localization-guide.readthedocs.org/en/latest/l10n/pluralforms.html
  */
 	public static function calculate($locale, $n) {

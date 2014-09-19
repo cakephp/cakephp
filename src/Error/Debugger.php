@@ -14,7 +14,6 @@
  */
 namespace Cake\Error;
 
-use Cake\Core\Configure;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;

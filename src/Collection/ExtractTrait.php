@@ -32,7 +32,7 @@ trait ExtractTrait {
 	protected function _propertyExtractor($callback) {
 		if (is_string($callback)) {
 			$path = explode('.', $callback);
-			$callback = function($element) use ($path) {
+			$callback = function ($element) use ($path) {
 				return $this->_extract($element, $path);
 			};
 		}

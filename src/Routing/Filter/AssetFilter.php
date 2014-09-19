@@ -78,12 +78,19 @@ class AssetFilter extends DispatcherFilter {
  */
 	protected function _getAssetFile($url) {
 		$parts = explode('/', $url);
-		$plugin = Inflector::camelize($parts[0]);
-		if ($plugin && Plugin::loaded($plugin)) {
-			unset($parts[0]);
-			$fileFragment = implode(DS, $parts);
-			$pluginWebroot = Plugin::path($plugin) . 'webroot' . DS;
-			return $pluginWebroot . $fileFragment;
+		$pluginPart = [];
+		for ($i = 0; $i < 2; $i++) {
+			if (!isset($parts[$i])) {
+				break;
+			}
+			$pluginPart[] = Inflector::camelize($parts[$i]);
+			$plugin = implode('/', $pluginPart);
+			if ($plugin && Plugin::loaded($plugin)) {
+				$parts = array_slice($parts, $i + 1);
+				$fileFragment = implode(DS, $parts);
+				$pluginWebroot = Plugin::path($plugin) . 'webroot' . DS;
+				return $pluginWebroot . $fileFragment;
+			}
 		}
 	}
 
@@ -97,8 +104,7 @@ class AssetFilter extends DispatcherFilter {
  * @return void
  */
 	protected function _deliverAsset(Request $request, Response $response, $assetFile, $ext) {
-		ob_start();
-		$compressionEnabled = Configure::read('Asset.compress') && $response->compress();
+		$compressionEnabled = $response->compress();
 		if ($response->type($ext) === $ext) {
 			$contentType = 'application/octet-stream';
 			$agent = $request->env('HTTP_USER_AGENT');
@@ -111,8 +117,7 @@ class AssetFilter extends DispatcherFilter {
 			$response->header('Content-Length', filesize($assetFile));
 		}
 		$response->cache(filemtime($assetFile));
-		$response->send();
-		ob_clean();
+		$response->sendHeaders();
 		readfile($assetFile);
 		if ($compressionEnabled) {
 			ob_end_flush();

@@ -106,7 +106,7 @@ class Route {
 			unset($this->defaults['[method]']);
 		}
 		if (isset($this->options['_ext'])) {
-			$this->_extensions = $this->options['_ext'];
+			$this->_extensions = (array)$this->options['_ext'];
 		}
 	}
 

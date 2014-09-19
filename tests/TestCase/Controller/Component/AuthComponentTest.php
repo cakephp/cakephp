@@ -64,7 +64,7 @@ class AuthComponentTest extends TestCase {
 		Security::salt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 		Configure::write('App.namespace', 'TestApp');
 
-		Router::scope('/', function($routes) {
+		Router::scope('/', function ($routes) {
 			$routes->fallbacks();
 		});
 
@@ -72,8 +72,6 @@ class AuthComponentTest extends TestCase {
 		$response = $this->getMock('Cake\Network\Response', array('stop'));
 
 		$this->Controller = new AuthTestController($request, $response);
-		$this->Controller->constructClasses();
-
 		$this->Auth = new TestAuthComponent($this->Controller->components());
 
 		$Users = TableRegistry::get('AuthUsers');
@@ -821,7 +819,7 @@ class AuthComponentTest extends TestCase {
  */
 	public function testNoRedirectOnLoginAction() {
 		$event = new Event('Controller.startup', $this->Controller);
-		$controller = $this->getMock('Cake\Controller\Controller');
+		$controller = $this->getMock('Cake\Controller\Controller', ['redirect']);
 		$controller->methods = array('login');
 
 		$url = '/AuthTest/login';
@@ -860,10 +858,10 @@ class AuthComponentTest extends TestCase {
 	public function testAdminRoute() {
 		$event = new Event('Controller.startup', $this->Controller);
 		Router::reload();
-		Router::prefix('admin', function($routes) {
+		Router::prefix('admin', function ($routes) {
 			$routes->fallbacks();
 		});
-		Router::scope('/', function($routes) {
+		Router::scope('/', function ($routes) {
 			$routes->fallbacks();
 		});
 
@@ -918,10 +916,10 @@ class AuthComponentTest extends TestCase {
 	public function testLoginActionRedirect() {
 		$event = new Event('Controller.startup', $this->Controller);
 		Router::reload();
-		Router::prefix('admin', function($routes) {
+		Router::prefix('admin', function ($routes) {
 			$routes->fallbacks();
 		});
-		Router::scope('/', function($routes) {
+		Router::scope('/', function ($routes) {
 			$routes->fallbacks();
 		});
 
@@ -982,19 +980,10 @@ class AuthComponentTest extends TestCase {
  * @return void
  */
 	public function testComponentSettings() {
-		Router::connect('/:controller');
-
-		$request = new Request();
-		$this->Controller = new AuthTestController($request, $this->getMock('Cake\Network\Response'));
-
-		$this->Controller->components = array(
-			'Auth' => array(
-				'loginAction' => array('controller' => 'people', 'action' => 'login'),
-				'logoutRedirect' => array('controller' => 'people', 'action' => 'login'),
-			),
-			'Session'
-		);
-		$this->Controller->constructClasses();
+		$this->Auth->config([
+			'loginAction' => array('controller' => 'people', 'action' => 'login'),
+			'logoutRedirect' => array('controller' => 'people', 'action' => 'login'),
+		]);
 
 		$expected = array(
 			'loginAction' => array('controller' => 'people', 'action' => 'login'),
@@ -1002,11 +991,11 @@ class AuthComponentTest extends TestCase {
 		);
 		$this->assertEquals(
 			$expected['loginAction'],
-			$this->Controller->Auth->config('loginAction')
+			$this->Auth->config('loginAction')
 		);
 		$this->assertEquals(
 			$expected['logoutRedirect'],
-			$this->Controller->Auth->config('logoutRedirect')
+			$this->Auth->config('logoutRedirect')
 		);
 	}
 

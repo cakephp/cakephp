@@ -31,7 +31,7 @@ class SortIteratorTest extends TestCase {
  */
 	public function testSortNumbersIdentity() {
 		$items = new ArrayObject([3, 5, 1, 2, 4]);
-		$identity = function($a) {
+		$identity = function ($a) {
 			return $a;
 		};
 		$sorted = new SortIterator($items, $identity);
@@ -50,7 +50,7 @@ class SortIteratorTest extends TestCase {
  */
 	public function testSortNumbersCustom() {
 		$items = new ArrayObject([3, 5, 1, 2, 4]);
-		$callback = function($a) {
+		$callback = function ($a) {
 			return $a * -1;
 		};
 		$sorted = new SortIterator($items, $callback);
@@ -74,7 +74,7 @@ class SortIteratorTest extends TestCase {
 			['foo' => 2, 'bar' => 'a'],
 			['foo' => 13, 'bar' => 'a'],
 		]);
-		$callback = function($a) {
+		$callback = function ($a) {
 			return $a['foo'];
 		};
 		$sorted = new SortIterator($items, $callback, SORT_DESC, SORT_NUMERIC);
@@ -108,7 +108,7 @@ class SortIteratorTest extends TestCase {
 			['foo' => 'foo_2', 'bar' => 'a'],
 			['foo' => 'foo_13', 'bar' => 'a'],
 		]);
-		$callback = function($a) {
+		$callback = function ($a) {
 			return $a['foo'];
 		};
 		$sorted = new SortIterator($items, $callback, SORT_DESC, SORT_NATURAL);
@@ -192,7 +192,7 @@ class SortIteratorTest extends TestCase {
  */
 	public function testTop() {
 		$items = new ArrayObject([3, 5, 1, 2, 4]);
-		$identity = function($a) {
+		$identity = function ($a) {
 			return $a;
 		};
 		$sorted = new SortIterator($items, $identity);

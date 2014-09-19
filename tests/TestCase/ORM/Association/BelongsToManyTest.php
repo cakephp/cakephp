@@ -220,104 +220,6 @@ class BelongsToManyTest extends TestCase {
 	}
 
 /**
- * Test the eager loader method with no extra options
- *
- * @return void
- */
-	public function testEagerLoaderMultipleKeys() {
-		$config = [
-			'sourceTable' => $this->article,
-			'targetTable' => $this->tag,
-			'foreignKey' => ['article_id', 'site_id'],
-			'targetForeignKey' => ['tag_id', 'site_id']
-		];
-		$this->article->primaryKey(['id', 'site_id']);
-		$this->tag->primaryKey(['id', 'site_id']);
-
-		$table = TableRegistry::get('ArticlesTags');
-		$table->schema([
-			'article_id' => ['type' => 'integer'],
-			'tag_id' => ['type' => 'integer'],
-			'site_id' => ['type' => 'integer'],
-		]);
-		$association = new BelongsToMany('Tags', $config);
-		$keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
-		$query = $this->getMock('Cake\ORM\Query', ['all', 'matching'], [null, null]);
-
-		$this->tag->expects($this->once())
-			->method('find')
-			->with('all')
-			->will($this->returnValue($query));
-
-		$results = [
-			[
-				'id' => 1,
-				'name' => 'foo',
-				'site_id' => 1,
-				'articles_tags' => [
-					'article_id' => 1,
-					'site_id' => 1
-				]
-			],
-			[
-				'id' => 2,
-				'name' => 'bar',
-				'site_id' => 2,
-				'articles_tags' => [
-					'article_id' => 2,
-					'site_id' => 2
-				]
-			]
-		];
-		$query->expects($this->once())
-			->method('all')
-			->will($this->returnValue($results));
-
-		$tuple = new TupleComparison(
-			['ArticlesTags.article_id', 'ArticlesTags.site_id'], $keys, [], 'IN'
-		);
-		$query->expects($this->once())->method('matching')
-			->will($this->returnCallback(function($alias, $callable) use ($query, $tuple) {
-				$this->assertEquals('ArticlesTags', $alias);
-				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
-
-				$q->expects($this->once())->method('andWhere')
-					->with($tuple)
-					->will($this->returnSelf());
-
-				$this->assertSame($q, $callable($q));
-				return $query;
-			}));
-
-		$query->hydrate(false);
-
-		$callable = $association->eagerLoader(compact('keys', 'query'));
-		$row = ['Articles__id' => 1, 'title' => 'article 1', 'Articles__site_id' => 1];
-		$result = $callable($row);
-		$row['Tags'] = [
-			[
-				'id' => 1,
-				'name' => 'foo',
-				'site_id' => 1,
-				'_joinData' => ['article_id' => 1, 'site_id' => 1]
-			]
-		];
-		$this->assertEquals($row, $result);
-
-		$row = ['Articles__id' => 2, 'title' => 'article 2', 'Articles__site_id' => 2];
-		$result = $callable($row);
-		$row['Tags'] = [
-			[
-				'id' => 2,
-				'name' => 'bar',
-				'site_id' => 2,
-				'_joinData' => ['article_id' => 2, 'site_id' => 2]
-			]
-		];
-		$this->assertEquals($row, $result);
-	}
-
-/**
  * Test cascading deletes.
  *
  * @return void
@@ -468,7 +370,7 @@ class BelongsToManyTest extends TestCase {
 
 		$joint->expects($this->at(0))
 			->method('save')
-			->will($this->returnCallback(function($e, $opts) use ($entity) {
+			->will($this->returnCallback(function ($e, $opts) use ($entity) {
 				$expected = ['article_id' => 1, 'tag_id' => 2];
 				$this->assertEquals($expected, $e->toArray());
 				$this->assertEquals(['foo' => 'bar'], $opts);
@@ -478,7 +380,7 @@ class BelongsToManyTest extends TestCase {
 
 		$joint->expects($this->at(1))
 			->method('save')
-			->will($this->returnCallback(function($e, $opts) use ($entity) {
+			->will($this->returnCallback(function ($e, $opts) use ($entity) {
 				$expected = ['article_id' => 1, 'tag_id' => 3];
 				$this->assertEquals($expected, $e->toArray());
 				$this->assertEquals(['foo' => 'bar'], $opts);
@@ -846,7 +748,7 @@ class BelongsToManyTest extends TestCase {
 		$assoc->expects($this->once())
 			->method('_saveTarget')
 			->with($entity, [1 => $tags[1], 2 => $tags[2]], $options + ['associated' => false])
-			->will($this->returnCallback(function($entity, $inserts) use ($tags) {
+			->will($this->returnCallback(function ($entity, $inserts) use ($tags) {
 				$this->assertSame([1 => $tags[1], 2 => $tags[2]], $inserts);
 				$entity->tags = $inserts;
 				return true;

@@ -15,6 +15,7 @@
 namespace Cake\Validation;
 
 use Cake\Utility\String;
+use LogicException;
 use RuntimeException;
 
 /**

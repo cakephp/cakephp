@@ -233,7 +233,6 @@ class MarshallerTest extends TestCase {
 		$this->assertTrue($result->not_in_schema);
 	}
 
-
 /**
  * test one() with a wrapping model name.
  *

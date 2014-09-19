@@ -304,72 +304,6 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests eager loading using subquery
- *
- * @return void
- */
-	public function testEagerLoaderSubquery() {
-		$config = [
-			'sourceTable' => $this->author,
-			'targetTable' => $this->article,
-		];
-		$association = new HasMany('Articles', $config);
-		$parent = (new Query(null, $this->author))
-			->join(['foo' => ['table' => 'foo', 'type' => 'inner', 'conditions' => []]])
-			->join(['bar' => ['table' => 'bar', 'type' => 'left', 'conditions' => []]]);
-
-		$query = $this->getMock(
-			'Cake\ORM\Query',
-			['all', 'where', 'andWhere', 'order', 'select', 'contain'],
-			[null, null]
-		);
-
-		$this->article->expects($this->once())->method('find')->with('all')
-			->will($this->returnValue($query));
-		$results = [
-			['id' => 1, 'title' => 'article 1', 'author_id' => 2],
-			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
-		];
-		$query->expects($this->once())->method('all')
-			->will($this->returnValue($results));
-
-		$query->expects($this->at(0))->method('where')
-			->with([])
-			->will($this->returnSelf());
-		$query->expects($this->at(1))->method('where')
-			->with([])
-			->will($this->returnSelf());
-
-		$expected = clone $parent;
-		$joins = $expected->join();
-		unset($joins['bar']);
-		$expected
-			->contain([], true)
-			->select(['Authors__id' => 'Authors.id'], true)
-			->join($joins, [], true);
-		$query->expects($this->once())->method('andWhere')
-			->with(['Articles.author_id IN' => $expected])
-			->will($this->returnSelf());
-
-		$callable = $association->eagerLoader([
-			'query' => $parent, 'strategy' => HasMany::STRATEGY_SUBQUERY, 'keys' => []
-		]);
-		$row = ['Authors__id' => 1, 'username' => 'author 1'];
-		$result = $callable($row);
-		$row['Articles'] = [
-			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
-		];
-		$this->assertEquals($row, $result);
-
-		$row = ['Authors__id' => 2, 'username' => 'author 2'];
-		$result = $callable($row);
-		$row['Articles'] = [
-			['id' => 1, 'title' => 'article 1', 'author_id' => 2]
-		];
-		$this->assertEquals($row, $result);
-	}
-
-/**
  * Tests that eager loader accepts a queryBuilder option
  *
  * @return void
@@ -413,7 +347,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->with(['a' => 1])
 			->will($this->returnSelf());
 
-		$queryBuilder = function($query) {
+		$queryBuilder = function ($query) {
 			return $query->select(['a', 'b'])->join('foo')->where(['a' => 1]);
 		};
 

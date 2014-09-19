@@ -16,7 +16,6 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Cake\Core\Configure;
 use Cake\I18n\Time;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -123,17 +122,17 @@ class CookieComponent extends Component {
 /**
  * Constructor
  *
- * @param ComponentRegistry $collection A ComponentRegistry for this component
+ * @param ComponentRegistry $registry A ComponentRegistry for this component
  * @param array $config Array of config.
  */
-	public function __construct(ComponentRegistry $collection, array $config = array()) {
-		parent::__construct($collection, $config);
+	public function __construct(ComponentRegistry $registry, array $config = array()) {
+		parent::__construct($registry, $config);
 
 		if (!$this->_config['key']) {
 			$this->config('key', Security::salt());
 		}
 
-		$controller = $collection->getController();
+		$controller = $registry->getController();
 		if ($controller && isset($controller->request)) {
 			$this->_request = $controller->request;
 		} else {
