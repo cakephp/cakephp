@@ -42,20 +42,27 @@ trait ViewVarsTrait {
 			return $this->View;
 		}
 
-		if ($viewClass !== null && $viewClass !== $this->viewClass) {
-			$this->viewClass = $viewClass;
-			unset($this->View);
+		if ($viewClass === null) {
+			$viewClass = $this->viewClass;
 		}
-		if ($this->viewClass === null) {
-			$this->viewClass = App::className('App', 'View', 'View');
-			if ($this->viewClass === false) {
-				$this->viewClass = 'Cake\View\View';
+		if ($viewClass === null) {
+			$viewClass = App::className('App', 'View', 'View');
+			if ($viewClass === false) {
+				$viewClass = 'Cake\View\View';
 			}
 		}
-		if (empty($this->View)) {
-			$this->View = $this->createView();
+		if ($viewClass === 'View') {
+			$viewClass = 'Cake\View\View';
 		}
-		return $this->View;
+
+		$this->viewClass = $viewClass;
+		$className = App::className($this->viewClass, 'View', 'View');
+
+		if ($this->View && is_a($this->View, $className)) {
+			return $this->View;
+		}
+
+		return $this->View = $this->createView();
 	}
 
 /**
