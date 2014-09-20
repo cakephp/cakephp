@@ -130,7 +130,7 @@ class Behavior implements EventListener {
  * Does not retain a reference to the Table object. If you need this
  * you should override the constructor.
  *
- * @param Table $table The table this behavior is attached to.
+ * @param \Cake\ORM\Table $table The table this behavior is attached to.
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {

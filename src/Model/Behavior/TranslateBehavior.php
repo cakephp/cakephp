@@ -71,7 +71,7 @@ class TranslateBehavior extends Behavior {
 /**
  * Constructor
  *
- * @param Table $table The table this behavior is attached to.
+ * @param \Cake\ORM\Table $table The table this behavior is attached to.
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
@@ -131,7 +131,7 @@ class TranslateBehavior extends Behavior {
  * @param \Cake\ORM\Query $query Query
  * @return void
  */
-	public function beforeFind(Event $event, $query) {
+	public function beforeFind(Event $event, Query $query) {
 		$locale = $this->locale();
 
 		if ($locale === $this->config('defaultLocale')) {
