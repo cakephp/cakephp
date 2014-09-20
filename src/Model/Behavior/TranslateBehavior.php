@@ -71,7 +71,7 @@ class TranslateBehavior extends Behavior {
 /**
  * Constructor
  *
- * @param Table $table The table this behavior is attached to.
+ * @param \Cake\ORM\Table $table The table this behavior is attached to.
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
