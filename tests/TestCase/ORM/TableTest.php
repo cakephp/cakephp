@@ -3530,4 +3530,37 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Test the findOrNew method.
+ *
+ * @return void
+ */
+	public function testFindOrNew() {
+		$articles = TableRegistry::get('Articles');
+		$article = $articles->findOrNew(['title' => 'Not there'], ['body' => 'New body']);
+
+		$this->assertTrue($article->isNew());
+		$this->assertNull($article->id);
+		$this->assertEquals('Not there', $article->title);
+		$this->assertEquals('New body', $article->body);
+
+		$article = $articles->findOrNew(['title' => 'First Article'], ['body' => 'New body']);
+
+		$this->assertFalse($article->isNew());
+		$this->assertNotNull($article->id);
+		$this->assertEquals('First Article', $article->title);
+		$this->assertEquals('New body', $article->body);
+
+		$article = $articles->findOrNew(
+			['author_id' => 2, 'title' => 'First Article'],
+			['published' => 'N', 'body' => 'New body']
+		);
+		$this->assertTrue($article->isNew());
+		$this->assertNull($article->id);
+		$this->assertEquals('First Article', $article->title);
+		$this->assertEquals('New body', $article->body);
+		$this->assertEquals('N', $article->published);
+		$this->assertEquals(2, $article->author_id);
+	}
+
 }
