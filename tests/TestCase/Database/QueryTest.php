@@ -1621,9 +1621,15 @@ class QueryTest extends TestCase {
 		$result = $query->select('id')->from('comments')
 			->limit(1)
 			->page(2)
+			->order(['id' => 'asc'])
 			->execute();
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$query->select('id')->from('comments')->page(3, 10);
+		$this->assertEquals(10, $query->clause('limit'));
+		$this->assertEquals(20, $query->clause('offset'));
 
 		$query = new Query($this->connection);
 		$query->select('id')->from('comments')->page(1);
