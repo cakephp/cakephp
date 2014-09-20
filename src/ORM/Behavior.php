@@ -125,7 +125,7 @@ class Behavior implements EventListener {
 /**
  * Constructor
  *
- * Merge config with the default and store in the config property
+ * Merges config with the default and store in the config property
  *
  * Does not retain a reference to the Table object. If you need this
  * you should override the constructor.
@@ -180,7 +180,7 @@ class Behavior implements EventListener {
 /**
  * verifyConfig
  *
- * Check that implemented* keys contain values pointing at callable.
+ * Checks that implemented keys contain values pointing at callable.
  *
  * @return void
  * @throws \Cake\Core\Exception\Exception if config are invalid
@@ -201,7 +201,7 @@ class Behavior implements EventListener {
 	}
 
 /**
- * Get the Model callbacks this behavior is interested in.
+ * Gets the Model callbacks this behavior is interested in.
  *
  * By defining one of the callback methods a behavior is assumed
  * to be interested in the related event.
@@ -244,7 +244,7 @@ class Behavior implements EventListener {
 /**
  * implementedFinders
  *
- * provides and alias->methodname map of which finders a behavior implements. Example:
+ * Provides an alias->methodname map of which finders a behavior implements. Example:
  *
  * {{{
  *  [
@@ -274,7 +274,7 @@ class Behavior implements EventListener {
 /**
  * implementedMethods
  *
- * provides an alias->methodname map of which methods a behavior implements. Example:
+ * Provides an alias->methodname map of which methods a behavior implements. Example:
  *
  * {{{
  *  [
@@ -302,9 +302,9 @@ class Behavior implements EventListener {
 	}
 
 /**
- * Get the methods implemented by this behavior
+ * Gets the methods implemented by this behavior
  *
- * Use the implementedEvents() method to exclude callback methods.
+ * Uses the implementedEvents() method to exclude callback methods.
  * Methods starting with `_` will be ignored, as will methods
  * declared on Cake\ORM\Behavior
  *
