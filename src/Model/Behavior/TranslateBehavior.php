@@ -131,7 +131,7 @@ class TranslateBehavior extends Behavior {
  * @param \Cake\ORM\Query $query Query
  * @return void
  */
-	public function beforeFind(Event $event, $query) {
+	public function beforeFind(Event $event, Query $query) {
 		$locale = $this->locale();
 
 		if ($locale === $this->config('defaultLocale')) {
