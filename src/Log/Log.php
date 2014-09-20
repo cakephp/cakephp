@@ -312,7 +312,7 @@ class Log {
  *
  * @param int|string $level The severity level of the message being written.
  *    The value must be an integer or string matching a known level.
- * @param string $message Message content to log
+ * @param mixed $message Message content to log
  * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return bool Success

@@ -86,6 +86,7 @@ class ConsoleLog extends BaseLog {
  * @return bool success of write.
  */
 	public function log($level, $message, array $context = []) {
+		$message = $this->_format($message, $context);
 		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message . "\n";
 		return $this->_output->write(sprintf('<%s>%s</%s>', $level, $output, $level), false);
 	}
