@@ -82,7 +82,7 @@ class ErrorHandlerTest extends TestCase {
 		Router::setRequestInfo($request);
 		Configure::write('debug', true);
 
-		$this->_logger = $this->getMock('Cake\Log\LogInterface');
+		$this->_logger = $this->getMock('Psr\Log\LoggerInterface');
 
 		Log::reset();
 		Log::config('error_test', [
@@ -183,7 +183,7 @@ class ErrorHandlerTest extends TestCase {
 		$this->_restoreError = true;
 
 		$this->_logger->expects($this->once())
-			->method('write')
+			->method('log')
 			->with(
 				$this->matchesRegularExpression('(notice|debug)'),
 				'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ + 3) . ']' . "\n\n"
@@ -204,7 +204,7 @@ class ErrorHandlerTest extends TestCase {
 		$this->_restoreError = true;
 
 		$this->_logger->expects($this->once())
-			->method('write')
+			->method('log')
 			->with(
 				$this->matchesRegularExpression('(notice|debug)'),
 				$this->logicalAnd(
@@ -243,7 +243,7 @@ class ErrorHandlerTest extends TestCase {
 		$error = new NotFoundException('Kaboom!');
 
 		$this->_logger->expects($this->once())
-			->method('write')
+			->method('log')
 			->with('error', $this->logicalAnd(
 				$this->stringContains('[Cake\Network\Exception\NotFoundException] Kaboom!'),
 				$this->stringContains('ErrorHandlerTest->testHandleExceptionLog')
@@ -263,7 +263,7 @@ class ErrorHandlerTest extends TestCase {
 		$forbidden = new ForbiddenException('Fooled you!');
 
 		$this->_logger->expects($this->once())
-			->method('write')
+			->method('log')
 			->with(
 				'error',
 				$this->stringContains('[Cake\Network\Exception\ForbiddenException] Fooled you!')
@@ -332,14 +332,14 @@ class ErrorHandlerTest extends TestCase {
  */
 	public function testHandleFatalErrorLog() {
 		$this->_logger->expects($this->at(0))
-			->method('write')
+			->method('log')
 			->with('error', $this->logicalAnd(
 				$this->stringContains(__FILE__ . ', line ' . (__LINE__ + 9)),
 				$this->stringContains('Fatal Error (1)'),
 				$this->stringContains('Something wrong')
 			));
 		$this->_logger->expects($this->at(1))
-			->method('write')
+			->method('log')
 			->with('error', $this->stringContains('[Cake\Error\FatalErrorException] Something wrong'));
 
 		$errorHandler = new TestErrorHandler(['log' => true]);
