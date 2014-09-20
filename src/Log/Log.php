@@ -298,7 +298,7 @@ class Log {
  * When writing a log message you can define one or many scopes for the message.
  * This allows you to handle messages differently based on application section/feature.
  *
- * `Log::write('warning', 'Payment failed', 'payment');`
+ * `Log::write('warning', 'Payment failed', ['scope' => 'payment']);`
  *
  * When configuring loggers you can configure the scopes a particular logger will handle.
  * When using scopes, you must ensure that the level of the message, and the scope of the message
@@ -313,12 +313,15 @@ class Log {
  * @param int|string $level The severity level of the message being written.
  *    The value must be an integer or string matching a known level.
  * @param mixed $message Message content to log
- * @param string|array $scope The scope(s) a log message is being created in.
- *    See Cake\Log\Log::config() for more information on logging scopes.
+ * @param string|array $context Additioanl data to be used for logging the message.
+ *  The special `scope` key can be passed to be used for further filtering of the
+ *  log engines to be used. If a string or a numerically index array is passed, it
+ *  will be treated as the `scope` key.
+ *  See Cake\Log\Log::config() for more information on logging scopes.
  * @return bool Success
  * @throws \InvalidArgumentException If invalid level is passed.
  */
-	public static function write($level, $message, $scope = array()) {
+	public static function write($level, $message, $context = []) {
 		static::_init();
 		if (is_int($level) && isset(static::$_levels[$level])) {
 			$level = static::$_levels[$level];
@@ -329,7 +332,11 @@ class Log {
 		}
 
 		$logged = false;
-		$scope = (array)$scope;
+		$context = (array)$context;
+		if (isset($context[0])) {
+			$context = ['scope' => $context];
+		}
+		$context += ['scope' => []];
 
 		foreach (static::$_registry->loaded() as $streamName) {
 			$logger = static::$_registry->{$streamName};
@@ -341,10 +348,10 @@ class Log {
 			}
 
 			$correctLevel = empty($levels) || in_array($level, $levels);
-			$inScope = empty($scopes) || array_intersect($scope, $scopes);
+			$inScope = empty($scopes) || array_intersect($context['scope'], $scopes);
 
 			if ($correctLevel && $inScope) {
-				$logger->log($level, $message, $scope);
+				$logger->log($level, $message, $context);
 				$logged = true;
 			}
 		}
