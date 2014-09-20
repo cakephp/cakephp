@@ -17,6 +17,7 @@ namespace Cake\Model\Behavior;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Event\Event;
+use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -63,7 +64,8 @@ class TranslateBehavior extends Behavior {
 		'implementedFinders' => ['translations' => 'findTranslations'],
 		'implementedMethods' => ['locale' => 'locale'],
 		'fields' => [],
-		'translationTable' => 'i18n'
+		'translationTable' => 'i18n',
+		'defaultLocale' => ''
 	];
 
 /**
@@ -73,7 +75,9 @@ class TranslateBehavior extends Behavior {
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
+		$config += ['defaultLocale' => I18n::defaultLocale()];
 		parent::__construct($table, $config);
+
 		$this->_table = $table;
 		$config = $this->_config;
 		$this->setupFieldAssociations($config['fields'], $config['translationTable']);
@@ -130,7 +134,7 @@ class TranslateBehavior extends Behavior {
 	public function beforeFind(Event $event, $query) {
 		$locale = $this->locale();
 
-		if (empty($locale)) {
+		if ($locale === $this->config('defaultLocale')) {
 			return;
 		}
 
@@ -170,7 +174,7 @@ class TranslateBehavior extends Behavior {
 
 		$this->_bundleTranslatedFields($entity);
 
-		if (!$locale) {
+		if ($locale === $this->config('defaultLocale')) {
 			return;
 		}
 
@@ -230,7 +234,7 @@ class TranslateBehavior extends Behavior {
  */
 	public function locale($locale = null) {
 		if ($locale === null) {
-			return $this->_locale;
+			return $this->_locale ?: I18n::locale();
 		}
 		return $this->_locale = (string)$locale;
 	}
@@ -281,26 +285,31 @@ class TranslateBehavior extends Behavior {
 	protected function _rowMapper($results, $locale) {
 		return $results->map(function ($row) use ($locale) {
 			$options = ['setter' => false, 'guard' => false];
+			$hydrated = !is_array($row);
 
 			foreach ($this->_config['fields'] as $field) {
+
 				$name = $field . '_translation';
-				$translation = $row->get($name);
+				$translation = isset($row[$name]) ? $row[$name] : null;
 
 				if ($translation === null || $translation === false) {
-					$row->unsetProperty($name);
+					unset($row[$name]);
 					continue;
 				}
 
-				$content = $translation->get('content');
+				$content = isset($translation['content']) ? $translation['content'] : null;
 				if ($content !== null) {
-					$row->set($field, $content, $options);
+					$row[$field] = $content;
 				}
 
 				unset($row[$name]);
 			}
 
-			$row->set('_locale', $locale, $options);
-			$row->clean();
+			$row['_locale'] = $locale;
+			if ($hydrated) {
+				$row->clean();
+			}
+
 			return $row;
 		});
 	}

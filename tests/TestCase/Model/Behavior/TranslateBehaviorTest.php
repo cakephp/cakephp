@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Model\Behavior;
 
 use Cake\Collection\Collection;
 use Cake\Event\Event;
+use Cake\I18n\I18n;
 use Cake\Model\Behavior\TranslateBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
@@ -40,6 +41,7 @@ class TranslateBehaviorTest extends TestCase {
 
 	public function tearDown() {
 		parent::tearDown();
+		I18n::locale(I18n::defaultLocale());
 		TableRegistry::clear();
 	}
 
@@ -77,6 +79,103 @@ class TranslateBehaviorTest extends TestCase {
 			3 => ['Title #3' => 'Content #3'],
 		];
 		$this->assertSame($expected, $results);
+	}
+
+/**
+ * Tests that fields from a translated model use the I18n class locale
+ * and that it propogates to associated models
+ *
+ * @return void
+ */
+	public function testFindSingleLocaleAssociatedEnv() {
+		I18n::locale('eng');
+
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+
+		$table->hasMany('Comments');
+		$table->Comments->addBehavior('Translate', ['fields' => ['comment']]);
+
+		$results = $table->find()
+			->select(['id', 'title', 'body'])
+			->contain(['Comments' => ['fields' => ['article_id', 'comment']]])
+			->hydrate(false)
+			->toArray();
+
+		$expected = [
+			[
+				'id' => 1,
+				'title' => 'Title #1',
+				'body' => 'Content #1',
+				'comments' => [
+					['article_id' => 1, 'comment' => 'Comment #1', '_locale' => 'eng'],
+					['article_id' => 1, 'comment' => 'Comment #2', '_locale' => 'eng'],
+					['article_id' => 1, 'comment' => 'Comment #3', '_locale' => 'eng'],
+					['article_id' => 1, 'comment' => 'Comment #4', '_locale' => 'eng']
+				],
+				'_locale' => 'eng'
+			],
+			[
+				'id' => 2,
+				'title' => 'Title #2',
+				'body' => 'Content #2',
+				'comments' => [
+					['article_id' => 2, 'comment' => 'First Comment for Second Article', '_locale' => 'eng'],
+					['article_id' => 2, 'comment' => 'Second Comment for Second Article', '_locale' => 'eng']
+				],
+				'_locale' => 'eng'
+			],
+			[
+				'id' => 3,
+				'title' => 'Title #3',
+				'body' => 'Content #3',
+				'comments' => [],
+				'_locale' => 'eng'
+			]
+		];
+		$this->assertSame($expected, $results);
+
+		I18n::locale('spa');
+
+		$results = $table->find()
+			->select(['id', 'title', 'body'])
+			->contain(['Comments' => ['fields' => ['article_id', 'comment']]])
+			->hydrate(false)
+			->toArray();
+
+		$expected = [
+			[
+				'id' => 1,
+				'title' => 'First Article',
+				'body' => 'First Article Body',
+				'comments' => [
+					['article_id' => 1, 'comment' => 'First Comment for First Article', '_locale' => 'spa'],
+					['article_id' => 1, 'comment' => 'Second Comment for First Article', '_locale' => 'spa'],
+					['article_id' => 1, 'comment' => 'Third Comment for First Article', '_locale' => 'spa'],
+					['article_id' => 1, 'comment' => 'Comentario #4', '_locale' => 'spa']
+				],
+				'_locale' => 'spa'
+			],
+			[
+				'id' => 2,
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'comments' => [
+					['article_id' => 2, 'comment' => 'First Comment for Second Article', '_locale' => 'spa'],
+					['article_id' => 2, 'comment' => 'Second Comment for Second Article', '_locale' => 'spa']
+				],
+				'_locale' => 'spa'
+			],
+			[
+				'id' => 3,
+				'title' => 'Third Article',
+				'body' => 'Third Article Body',
+				'comments' => [],
+				'_locale' => 'spa'
+			]
+		];
+		$this->assertSame($expected, $results);
+
 	}
 
 /**

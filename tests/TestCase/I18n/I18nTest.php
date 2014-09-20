@@ -40,7 +40,7 @@ class I18nTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->locale = I18n::defaultLocale();
+		$this->locale = I18n::locale();
 	}
 
 /**
@@ -52,7 +52,7 @@ class I18nTest extends TestCase {
 		parent::tearDown();
 		I18n::clear();
 		I18n::defaultFormatter('default');
-		I18n::defaultLocale($this->locale);
+		I18n::locale($this->locale);
 		Plugin::unload();
 		Cache::clear(false, '_cake_core_');
 	}
@@ -169,15 +169,15 @@ class I18nTest extends TestCase {
 	}
 
 /**
- * Tests the defaultLocale method
+ * Tests the locale method
  *
  * @return void
  */
 	public function testDefaultLocale() {
-		$this->assertEquals('en_US', I18n::defaultLocale());
+		$this->assertEquals('en_US', I18n::locale());
 		$this->assertEquals('en_US', ini_get('intl.default_locale'));
-		I18n::defaultLocale('fr_FR');
-		$this->assertEquals('fr_FR', I18n::defaultLocale());
+		I18n::locale('fr_FR');
+		$this->assertEquals('fr_FR', I18n::locale());
 		$this->assertEquals('fr_FR', ini_get('intl.default_locale'));
 	}
 
@@ -196,7 +196,7 @@ class I18nTest extends TestCase {
 			return $package;
 		});
 
-		I18n::defaultLocale('fr_FR');
+		I18n::locale('fr_FR');
 		$translator = I18n::translator('custom');
 		$this->assertEquals('Le moo', $translator->translate('Cow'));
 	}
