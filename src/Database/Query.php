@@ -1016,9 +1016,14 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Pages should start at 1.
  *
  * @param int $num The page number you want.
+ * @param int $limit The number of rows you want in the page. If null
+ *  the current limit clause will be used.
  * @return $this
  */
-	public function page($num) {
+	public function page($num, $limit = null) {
+		if ($limit !== null) {
+			$this->limit($limit);
+		}
 		$limit = $this->clause('limit');
 		if ($limit === null) {
 			$limit = 25;
