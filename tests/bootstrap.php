@@ -22,7 +22,6 @@ require_once 'vendor/autoload.php';
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(__DIR__));
 define('APP_DIR', 'TestApp');
-define('WEBROOT_DIR', 'webroot');
 
 define('TMP', sys_get_temp_dir() . DS);
 define('LOGS', TMP . 'logs' . DS);
@@ -39,7 +38,7 @@ define('LOG_ERROR', LOG_ERR);
 
 // Point app constants to the test app.
 define('APP', TEST_APP . 'TestApp' . DS);
-define('WWW_ROOT', TEST_APP . WEBROOT_DIR . DS);
+define('WWW_ROOT', TEST_APP . 'webroot' . DS);
 define('TESTS', TEST_APP . 'tests' . DS);
 define('CONFIG', TEST_APP . 'config' . DS);
 
@@ -74,7 +73,7 @@ Configure::write('App', [
 	'base' => false,
 	'baseUrl' => false,
 	'dir' => APP_DIR,
-	'webroot' => WEBROOT_DIR,
+	'webroot' => 'webroot',
 	'www_root' => WWW_ROOT,
 	'fullBaseUrl' => 'http://localhost',
 	'imageBaseUrl' => 'img/',

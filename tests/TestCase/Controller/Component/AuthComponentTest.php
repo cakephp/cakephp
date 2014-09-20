@@ -598,7 +598,7 @@ class AuthComponentTest extends TestCase {
 
 		Configure::write('App', array(
 			'dir' => APP_DIR,
-			'webroot' => WEBROOT_DIR,
+			'webroot' => 'webroot',
 			'base' => false,
 			'baseUrl' => '/cake/index.php'
 		));
@@ -1198,7 +1198,7 @@ class AuthComponentTest extends TestCase {
 
 		Configure::write('App', array(
 			'dir' => APP_DIR,
-			'webroot' => WEBROOT_DIR,
+			'webroot' => 'webroot',
 			'base' => false,
 			'baseUrl' => '/cake/index.php'
 		));
