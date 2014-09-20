@@ -91,11 +91,11 @@ abstract class BaseLog extends AbstractLogger {
 
 		$object = is_object($data);
 
-		if ($object && method_exists('__toString', $data)) {
+		if ($object && method_exists($data, '__toString')) {
 			return (string)$data;
 		}
 
-		if ($object && $object instanceof JsonSerializable) {
+		if ($object && $data instanceof JsonSerializable) {
 			return json_encode($data);
 		}
 
