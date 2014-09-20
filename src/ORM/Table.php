@@ -935,7 +935,7 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
- * Finds an existing record or creates a new record.
+ * Finds an existing record or creates a new one.
  *
  * Using the attributes defined in $search a find() will be done to locate
  * an existing record. If that record exists it will be returned. If it does
@@ -945,7 +945,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param array $search The criteria to find existing records by.
  * @param array $additional The array of additional attributes to patch into
  *   the new or existing entity.
- * @return Cake\Datasource\EntityInterface An entity.
+ * @return \Cake\Datasource\EntityInterface An entity.
  */
 	public function findOrNew($search, $additional = []) {
 		$query = $this->find()->where($search);
