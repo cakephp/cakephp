@@ -80,7 +80,7 @@ class BufferedIterator extends Collection {
 /**
  * Returns the current key in the iterator
  *
- * @return array|object
+ * @return mixed
  */
 	public function key() {
 		return $this->_key;
@@ -89,7 +89,7 @@ class BufferedIterator extends Collection {
 /**
  * Returns the current record in the iterator
  *
- * @return array|object
+ * @return mixed
  */
 	public function current() {
 		return $this->_current;
