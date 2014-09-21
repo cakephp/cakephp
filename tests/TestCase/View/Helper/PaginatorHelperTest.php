@@ -739,7 +739,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$this->Paginator->request->params['pass'] = array(2);
 		$this->Paginator->request->query = array('page' => 1, 'foo' => 'bar', 'x' => 'y');
-		$this->Paginator->__construct($this->View);
+		$this->Paginator->setUpUrl();
 
 		$result = $this->Paginator->sort('title');
 		$expected = array(

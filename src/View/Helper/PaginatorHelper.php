@@ -85,6 +85,15 @@ class PaginatorHelper extends Helper {
 	public function __construct(View $View, array $config = array()) {
 		parent::__construct($View, $config);
 
+		$this->setUpUrl();
+	}
+
+/**
+ * Merges passed args with URL options.
+ *
+ * @return void
+ */
+	public function setUpUrl() {
 		$this->config(
 			'options.url',
 			array_merge($this->request->params['pass'], $this->request->query)
