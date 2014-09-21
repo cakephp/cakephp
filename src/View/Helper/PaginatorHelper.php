@@ -77,13 +77,14 @@ class PaginatorHelper extends Helper {
 	];
 
 /**
- * Before render callback. Overridden to merge passed args with URL options.
+ * Constructor. Overridden to merge passed args with URL options.
  *
- * @param \Cake\Event\Event $event The event instance.
- * @param string $viewFile The view file being rendered.
- * @return void
+ * @param \Cake\View\View $View The View this helper is being attached to.
+ * @param array $config Configuration settings for the helper.
  */
-	public function beforeRender(Event $event, $viewFile) {
+	public function __construct(View $View, array $config = array()) {
+		parent::__construct($View, $config);
+
 		$this->config(
 			'options.url',
 			array_merge($this->request->params['pass'], $this->request->query)
