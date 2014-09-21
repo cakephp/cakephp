@@ -149,6 +149,9 @@ class ValuesExpression implements ExpressionInterface {
 		foreach ($this->_values as $row) {
 			$row = array_merge($defaults, $row);
 			foreach ($row as $column => $value) {
+				if ($value instanceof ExpressionInterface) {
+					$value = $value->sql($generator);
+				}
 				$type = $this->typeMap()->type($column);
 				$generator->bind($i++, $value, $type);
 			}

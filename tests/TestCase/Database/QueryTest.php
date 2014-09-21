@@ -2295,6 +2295,27 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Test that insert can use expression objects as values.
+ *
+ * @return void
+ */
+	public function testInsertExpressionValues() {
+		$query = new Query($this->connection);
+		$query->insert(['title'])
+			->into('articles')
+			->values(['title' => $query->newExpr("SELECT 'jose'")]);
+
+		$result = $query->sql();
+		$this->assertQuotedQuery(
+			"INSERT INTO <articles> \(<title>\) VALUES (?)",
+			$result,
+			true
+		);
+		$result = $query->execute();
+		$this->assertCount(1, $result);
+	}
+
+/**
  * Tests that functions are correctly transformed and their parameters are bound
  *
  * @group FunctionExpression
