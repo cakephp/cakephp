@@ -816,7 +816,7 @@ class PaginatorHelper extends Helper {
  * @return array
  */
 	public function implementedEvents() {
-		return ['View.beforeRender' => 'beforeRender'];
+		return [];
 	}
 
 }
