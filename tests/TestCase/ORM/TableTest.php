@@ -3537,26 +3537,26 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testFindOrNew() {
 		$articles = TableRegistry::get('Articles');
-		$article = $articles->findOrNew(['title' => 'Not there'], ['body' => 'New body']);
+		$article = $articles->findOrCreate(['title' => 'Not there'], ['body' => 'New body']);
 
-		$this->assertTrue($article->isNew());
-		$this->assertNull($article->id);
+		$this->assertFalse($article->isNew());
+		$this->assertNotNull($article->id);
 		$this->assertEquals('Not there', $article->title);
 		$this->assertEquals('New body', $article->body);
 
-		$article = $articles->findOrNew(['title' => 'First Article'], ['body' => 'New body']);
+		$article = $articles->findOrCreate(['title' => 'First Article'], ['body' => 'New body']);
 
 		$this->assertFalse($article->isNew());
 		$this->assertNotNull($article->id);
 		$this->assertEquals('First Article', $article->title);
-		$this->assertEquals('New body', $article->body);
+		$this->assertNotEquals('New body', $article->body);
 
-		$article = $articles->findOrNew(
+		$article = $articles->findOrCreate(
 			['author_id' => 2, 'title' => 'First Article'],
 			['published' => 'N', 'body' => 'New body']
 		);
-		$this->assertTrue($article->isNew());
-		$this->assertNull($article->id);
+		$this->assertFalse($article->isNew());
+		$this->assertNotNull($article->id);
 		$this->assertEquals('First Article', $article->title);
 		$this->assertEquals('New body', $article->body);
 		$this->assertEquals('N', $article->published);

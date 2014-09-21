@@ -939,21 +939,22 @@ class Table implements RepositoryInterface, EventListener {
  *
  * Using the attributes defined in $search a find() will be done to locate
  * an existing record. If that record exists it will be returned. If it does
- * not exist, a new entity will be created. In both cases, the $additional properties
- * will be patched into the entity.
+ * not exist, a new entity will be created with the $search properties, and
+ * the $defaults. When a new entity is created, it will be saved.
  *
  * @param array $search The criteria to find existing records by.
- * @param array $additional The array of additional attributes to patch into
- *   the new or existing entity.
+ * @param array $defaults The array of defaults to patch into
+ *   the new entity if it is created.
  * @return \Cake\Datasource\EntityInterface An entity.
  */
-	public function findOrNew($search, $additional = []) {
+	public function findOrCreate($search, $defaults = []) {
 		$query = $this->find()->where($search);
 		$row = $query->first();
 		if ($row) {
-			return $this->patchEntity($row, $additional);
+			return $row;
 		}
-		return $this->newEntity($search + $additional);
+		$entity = $this->newEntity($search + $defaults);
+		return $this->save($entity);
 	}
 
 /**
