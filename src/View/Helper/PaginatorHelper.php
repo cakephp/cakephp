@@ -17,6 +17,7 @@ namespace Cake\View\Helper;
 use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * Pagination Helper class for easy generation of pagination links.
