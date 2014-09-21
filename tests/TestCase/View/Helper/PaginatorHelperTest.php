@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
-use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -739,7 +738,8 @@ class PaginatorHelperTest extends TestCase {
 
 		$this->Paginator->request->params['pass'] = array(2);
 		$this->Paginator->request->query = array('page' => 1, 'foo' => 'bar', 'x' => 'y');
-		$this->Paginator->setUpUrl();
+		$this->View->request = $this->Paginator->request;
+		$this->Paginator = new PaginatorHelper($this->View);
 
 		$result = $this->Paginator->sort('title');
 		$expected = array(
