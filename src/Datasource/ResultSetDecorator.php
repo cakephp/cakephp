@@ -18,9 +18,6 @@ use Cake\Collection\Collection;
 use Countable;
 use JsonSerializable;
 use Serializable;
-use IteratorIterator;
-use Cake\ORM\ResultSet;
-use Cake\Collection\Iterator\BufferedIterator;
 
 /**
  * Generic ResultSet decorator. This will make any traversable object appear to
