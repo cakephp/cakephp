@@ -187,6 +187,8 @@ class HelperRegistryTest extends TestCase {
  * @return void
  */
 	public function testReset() {
+		$this->skipIf(true, 'Currently no helper with any event');
+
 		$instance = $this->Helpers->load('Paginator');
 		$this->assertSame(
 			$instance,
@@ -207,6 +209,8 @@ class HelperRegistryTest extends TestCase {
  * @return void
  */
 	public function testUnload() {
+		$this->skipIf(true, 'Currently no helper with any event');
+
 		$instance = $this->Helpers->load('Paginator');
 		$this->assertSame(
 			$instance,
