@@ -17,6 +17,7 @@ namespace Cake\Collection;
 use AppendIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
+use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
 use Cake\Collection\Iterator\InsertIterator;
@@ -879,14 +880,10 @@ trait CollectionTrait {
  * You can think of this method as a way to create save points for complex
  * calculations in a collection.
  *
- * @param bool $preserveKeys whether to use the keys returned by this
- * collection as the array keys. Keep in mind that it is valid for iterators
- * to return the same key for different elements, setting this value to false
- * can help getting all items if keys are not important in the result.
  * @return \Cake\Collection\Collection
  */
-	public function compile($preserveKeys = true) {
-		return new Collection($this->toArray($preserveKeys));
+	public function compile() {
+		return new BufferedIterator($this);
 	}
 
 /**

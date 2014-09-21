@@ -40,17 +40,23 @@ class BufferedIterator extends Collection {
 /**
  * Last record fetched from the inner iterator
  *
- * @var array
+ * @var mixed
  */
 	protected $_current;
 
 /**
  * Last key obtained from the inner iterator
  *
- * @var array
+ * @var mixed
  */
 	protected $_key;
 
+/**
+ * Whether or not the internal iterator's rewind method was already
+ * called
+ *
+ * @var boolean
+ */
 	protected $_started = false;
 
 /**
@@ -64,14 +70,17 @@ class BufferedIterator extends Collection {
 		parent::__construct($items);
 	}
 
+/**
+ * Returns the current key in the iterator
+ *
+ * @return array|object
+ */
 	public function key() {
 		return $this->_key;
 	}
 
 /**
- * Returns the current record in the result iterator
- *
- * Part of Iterator interface.
+ * Returns the current record in the iterator
  *
  * @return array|object
  */
@@ -81,7 +90,6 @@ class BufferedIterator extends Collection {
 
 /**
  * Rewinds the collection
- *
  *
  * @return void
  */
@@ -96,8 +104,9 @@ class BufferedIterator extends Collection {
 	}
 
 /**
+ * Returns whether or not the iterator has more elements
  *
- * @return mixed
+ * @return boolean
  */
 	public function valid() {
 		if ($this->_buffer->offsetExists($this->_index)) {
@@ -113,7 +122,7 @@ class BufferedIterator extends Collection {
 			$this->_current = parent::current();
 			$this->_key = parent::key();
 			$this->_buffer->add($this->_index, [
-				'key' => $this->_index,
+				'key' => $this->_key,
 				'value' => $this->_current
 			]);
 		}
@@ -121,6 +130,11 @@ class BufferedIterator extends Collection {
 		return $valid;
 	}
 
+/**
+ * Advances the iterator pointer to the next element
+ *
+ * @return void
+ */
 	public function next() {
 		$this->_index++;
 		parent::next();
