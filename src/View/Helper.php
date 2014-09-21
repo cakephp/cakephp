@@ -103,14 +103,14 @@ class Helper implements EventListener {
 /**
  * The View instance this helper is attached to
  *
- * @var View
+ * @var \Cake\View\View
  */
 	protected $_View;
 
 /**
  * Default Constructor
  *
- * @param View $View The View this helper is being attached to.
+ * @param \Cake\View\View $View The View this helper is being attached to.
  * @param array $config Configuration settings for the helper.
  */
 	public function __construct(View $View, array $config = array()) {
