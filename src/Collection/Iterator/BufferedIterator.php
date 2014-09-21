@@ -60,6 +60,13 @@ class BufferedIterator extends Collection {
 	protected $_started = false;
 
 /**
+ * Whether or not the internal iterator's has reached its end
+ *
+ * @var boolean
+ */
+	protected $_finished = false;
+
+/**
  * Maintains an in-memory cache of the results yielded by the internal
  * iterator.
  *
@@ -127,6 +134,7 @@ class BufferedIterator extends Collection {
 			]);
 		}
 
+		$this->_finished = !$valid;
 		return $valid;
 	}
 
@@ -137,7 +145,10 @@ class BufferedIterator extends Collection {
  */
 	public function next() {
 		$this->_index++;
-		parent::next();
+
+		if (!$this->_finished) {
+			parent::next();
+		}
 	}
 
 }
