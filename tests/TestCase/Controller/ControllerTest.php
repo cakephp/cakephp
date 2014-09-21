@@ -661,7 +661,6 @@ class ControllerTest extends TestCase {
 
 		$results = $Controller->paginate('Posts');
 		$this->assertInstanceOf('Cake\ORM\ResultSet', $results);
-		$this->assertContains('Paginator', $Controller->helpers, 'Paginator should be added.');
 
 		$results = $Controller->paginate(TableRegistry::get('Posts'));
 		$this->assertInstanceOf('Cake\ORM\ResultSet', $results);
