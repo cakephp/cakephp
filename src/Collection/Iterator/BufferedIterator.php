@@ -158,10 +158,6 @@ class BufferedIterator extends Collection implements Countable {
  * @return int
  */
 	public function count() {
-		if ($this->getInnerIterator() instanceof Countable) {
-			return $this->getInnerIterator()->count();
-		}
-
 		if (!$this->_started) {
 			$this->rewind();
 		}
