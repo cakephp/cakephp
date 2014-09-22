@@ -251,6 +251,7 @@ class TextHelper extends AppHelper {
 				$text .= '<p>' . nl2br(trim($txt, "\n")) . "</p>\n";
 			}
 			$text = preg_replace('|<p>\s*</p>|', '', $text);
+			$text = trim($text);
 		}
 		return $text;
 	}
