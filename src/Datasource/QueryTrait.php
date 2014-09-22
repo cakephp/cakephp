@@ -413,10 +413,6 @@ trait QueryTrait {
 			$result = new $decorator($result);
 		}
 
-		if ($this->bufferResults()) {
-			$result = new $decorator($result->buffered());
-		}
-
 		return $result;
 	}
 

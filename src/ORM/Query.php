@@ -34,6 +34,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	use QueryTrait {
 		cache as private _cache;
 		all as private _all;
+		_decorateResults as private _applyDecorators;
 		__call as private _call;
 	}
 
@@ -802,6 +803,23 @@ class Query extends DatabaseQuery implements JsonSerializable {
 		}
 		$this->_autoFields = (bool)$value;
 		return $this;
+	}
+
+/**
+ * Decorates the results iterator with MapReduce routines and formatters
+ *
+ * @param \Traversable $result Original results
+ * @return \Cake\Datasource\ResultSetDecorator
+ */
+	protected function _decorateResults($result) {
+		$result = $this->_applyDecorators($result);
+
+		if ($this->bufferResults()) {
+			$class = $this->_decoratorClass();
+			$result = new $class($result->buffered());
+		}
+
+		return $result;
 	}
 
 }
