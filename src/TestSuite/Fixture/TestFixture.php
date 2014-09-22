@@ -119,7 +119,7 @@ class TestFixture {
 			if (isset($matches[1])) {
 				$table = $matches[1];
 			}
-			$this->table = Inflector::tableize(Inflector::pluralize($table));
+			$this->table = Inflector::tableize($table);
 		}
 
 		if (empty($this->import) && !empty($this->fields)) {
