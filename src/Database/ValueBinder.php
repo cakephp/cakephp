@@ -63,14 +63,11 @@ class ValueBinder {
  * @return string to be used as a placeholder in a query expression
  */
 	public function placeholder($token) {
-		$param = $token;
 		$number = $this->_bindingsCount++;
-
-		if ($param[0] !== ':' || $param !== '?') {
-			$param = sprintf(':c%s', $number);
+		if ($token[0] !== ':' || $token !== '?') {
+			$token = sprintf(':c%s', $number);
 		}
-
-		return $param;
+		return $token;
 	}
 
 /**

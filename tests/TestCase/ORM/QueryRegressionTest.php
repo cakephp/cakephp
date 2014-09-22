@@ -293,6 +293,19 @@ class QueryRegressionTest extends TestCase {
 	}
 
 /**
+ * Test that save() works with entities containing expressions
+ * as properties.
+ *
+ * @return void
+ */
+	public function testSaveWithExpressionProperty() {
+		$articles = TableRegistry::get('Articles');
+		$article = $articles->newEntity();
+		$article->title = new \Cake\Database\Expression\QueryExpression("SELECT 'jose'");
+		$this->assertSame($article, $articles->save($article));
+	}
+
+/**
  * Tests that whe saving deep associations for a belongsToMany property,
  * data is not removed becuase of excesive associations filtering.
  *

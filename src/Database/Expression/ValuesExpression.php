@@ -146,22 +146,28 @@ class ValuesExpression implements ExpressionInterface {
 
 		$i = 0;
 		$defaults = array_fill_keys($this->_columns, null);
+		$placeholders = [];
+
 		foreach ($this->_values as $row) {
 			$row = array_merge($defaults, $row);
+			$rowPlaceholders = [];
 			foreach ($row as $column => $value) {
+				if ($value instanceof ExpressionInterface) {
+					$rowPlaceholders[] = '(' . $value->sql($generator) . ')';
+					continue;
+				}
 				$type = $this->typeMap()->type($column);
-				$generator->bind($i++, $value, $type);
+				$placeholder = $generator->placeholder($i);
+				$rowPlaceholders[] = $placeholder;
+				$generator->bind($placeholder, $value, $type);
 			}
+			$placeholders[] = implode(', ', $rowPlaceholders);
 		}
 
 		if ($this->query()) {
 			return ' ' . $this->query()->sql($generator);
 		}
 
-		$placeholders = [];
-		$numColumns = count($this->_columns);
-		$rowPlaceholders = implode(', ', array_fill(0, $numColumns, '?'));
-		$placeholders = array_fill(0, count($this->_values), $rowPlaceholders);
 		return sprintf(' VALUES (%s)', implode('), (', $placeholders));
 	}
 
@@ -182,6 +188,14 @@ class ValuesExpression implements ExpressionInterface {
 		foreach ($this->_values as $v) {
 			if ($v instanceof ExpressionInterface) {
 				$v->traverse($visitor);
+			}
+			if (!is_array($v)) {
+				continue;
+			}
+			foreach ($v as $column => $field) {
+				if ($field instanceof ExpressionInterface) {
+					$field->traverse($visitor);
+				}
 			}
 		}
 	}

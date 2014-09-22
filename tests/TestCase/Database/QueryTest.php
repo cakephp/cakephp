@@ -2130,7 +2130,7 @@ class QueryTest extends TestCase {
 		$result = $query->sql();
 		$this->assertQuotedQuery(
 			'INSERT INTO <articles> \(<title>, <body>\) ' .
-			'VALUES \(\?, \?\)',
+			'VALUES \(:c0, :c1\)',
 			$result,
 			true
 		);
@@ -2166,7 +2166,7 @@ class QueryTest extends TestCase {
 		$result = $query->sql();
 		$this->assertQuotedQuery(
 			'INSERT INTO <articles> \(<title>, <body>\) ' .
-			'VALUES \(\?, \?\)',
+			'VALUES \(:c0, :c1\)',
 			$result,
 			true
 		);
@@ -2292,6 +2292,33 @@ class QueryTest extends TestCase {
 			->into('articles')
 			->values(new Query($this->connection))
 			->values(['name' => 'mark']);
+	}
+
+/**
+ * Test that insert can use expression objects as values.
+ *
+ * @return void
+ */
+	public function testInsertExpressionValues() {
+		$query = new Query($this->connection);
+		$query->insert(['title'])
+			->into('articles')
+			->values(['title' => $query->newExpr("SELECT 'jose'")]);
+
+		$result = $query->execute();
+		$this->assertCount(1, $result);
+
+		$subquery = new Query($this->connection);
+		$subquery->select(['name'])
+			->from('authors')
+			->where(['id' => 1]);
+
+		$query = new Query($this->connection);
+		$query->insert(['title'])
+			->into('articles')
+			->values(['title' => $subquery]);
+		$result = $query->execute();
+		$this->assertCount(1, $result);
 	}
 
 /**
