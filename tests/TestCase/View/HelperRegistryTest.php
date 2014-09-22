@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\View;
 
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
@@ -187,12 +188,12 @@ class HelperRegistryTest extends TestCase {
  * @return void
  */
 	public function testReset() {
-		$this->skipIf(true, 'Currently no helper with any event');
+		Configure::write('App.namespace', 'TestApp');
 
-		$instance = $this->Helpers->load('Paginator');
+		$instance = $this->Helpers->load('EventListenerTest');
 		$this->assertSame(
 			$instance,
-			$this->Helpers->Paginator,
+			$this->Helpers->EventListenerTest,
 			'Instance in registry should be the same as previously loaded'
 		);
 		$this->assertCount(1, $this->Events->listeners('View.beforeRender'));
@@ -200,7 +201,7 @@ class HelperRegistryTest extends TestCase {
 		$this->assertNull($this->Helpers->reset(), 'No return expected');
 		$this->assertCount(0, $this->Events->listeners('View.beforeRender'));
 
-		$this->assertNotSame($instance, $this->Helpers->load('Paginator'));
+		$this->assertNotSame($instance, $this->Helpers->load('EventListenerTest'));
 	}
 
 /**
@@ -209,17 +210,18 @@ class HelperRegistryTest extends TestCase {
  * @return void
  */
 	public function testUnload() {
-		$this->skipIf(true, 'Currently no helper with any event');
+		Configure::write('App.namespace', 'TestApp');
 
-		$instance = $this->Helpers->load('Paginator');
+		$instance = $this->Helpers->load('EventListenerTest');
 		$this->assertSame(
 			$instance,
-			$this->Helpers->Paginator,
+			$this->Helpers->EventListenerTest,
 			'Instance in registry should be the same as previously loaded'
 		);
 		$this->assertCount(1, $this->Events->listeners('View.beforeRender'));
 
-		$this->assertNull($this->Helpers->unload('Paginator'), 'No return expected');
+		$this->assertNull($this->Helpers->unload('EventListenerTest'), 'No return expected');
 		$this->assertCount(0, $this->Events->listeners('View.beforeRender'));
 	}
+
 }
