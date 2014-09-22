@@ -14,9 +14,11 @@
  */
 namespace Cake\Test\TestCase\Collection;
 
+use ArrayIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\TestSuite\TestCase;
+use NoRewindIterator;
 
 /**
  * CollectionTest
@@ -643,6 +645,19 @@ class CollectionTest extends TestCase {
 		$compiled = $collection->map($callable)->compile();
 		$this->assertEquals(['a' => 4, 'b' => 5, 'c' => 6], $compiled->toArray());
 		$this->assertEquals(['a' => 4, 'b' => 5, 'c' => 6], $compiled->toArray());
+	}
+
+/**
+ * Tests converting a non rewindable iterator into a rewindable one using
+ * the buffered method.
+ *
+ * @return void
+ */
+	public function testBuffered() {
+		$items = new NoRewindIterator(new ArrayIterator(['a' => 4, 'b' => 5, 'c' => 6]));
+		$buffered = (new Collection($items))->buffered();
+		$this->assertEquals(['a' => 4, 'b' => 5, 'c' => 6], $buffered->toArray());
+		$this->assertEquals(['a' => 4, 'b' => 5, 'c' => 6], $buffered->toArray());
 	}
 
 /**
