@@ -958,7 +958,7 @@ class Table implements RepositoryInterface, EventListener {
 		if ($callback) {
 			$callback($entity);
 		}
-		return $this->save($entity);
+		return $this->save($entity) ?: $entity;
 	}
 
 /**
