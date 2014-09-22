@@ -1537,7 +1537,7 @@ class QueryTest extends TestCase {
 			->method('write')
 			->with(
 				'my_key',
-				$this->isInstanceOf('Cake\ORM\ResultSet')
+				$this->isInstanceOf('Cake\Datasource\ResultSetDecorator')
 			);
 
 		$query->cache('my_key', $cacher)

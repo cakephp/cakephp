@@ -414,7 +414,7 @@ trait QueryTrait {
 		}
 
 		if ($this->bufferResults()) {
-			$result = $result->buffered();
+			$result = new $decorator($result->buffered());
 		}
 
 		return $result;
