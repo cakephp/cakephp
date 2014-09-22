@@ -128,7 +128,7 @@ class BufferedIterator extends Collection {
 		if ($valid) {
 			$this->_current = parent::current();
 			$this->_key = parent::key();
-			$this->_buffer->add($this->_index, [
+			$this->_buffer->push([
 				'key' => $this->_key,
 				'value' => $this->_current
 			]);
