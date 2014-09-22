@@ -26,8 +26,8 @@ class TestAppLog extends BaseLog {
 
 	public $passedScope = null;
 
-	public function write($level, $message, $scope = []) {
-		$this->passedScope = $scope;
+	public function log($level, $message, array $context = []) {
+		$this->passedScope = $context;
 	}
 
 }

@@ -16,8 +16,8 @@ namespace Cake\Log;
 
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
-use Cake\Log\LogInterface;
-use \RuntimeException;
+use Psr\Log\LoggerInterface;
+use RuntimeException;
 
 /**
  * Registry of loaded log engines
@@ -74,12 +74,12 @@ class LogEngineRegistry extends ObjectRegistry {
 			$instance = new $class($settings);
 		}
 
-		if ($instance instanceof LogInterface) {
+		if ($instance instanceof LoggerInterface) {
 			return $instance;
 		}
 
 		throw new RuntimeException(
-			'Loggers must implement Cake\Log\LogInterface.'
+			'Loggers must implement Psr\Log\LoggerInterface.'
 		);
 	}
 

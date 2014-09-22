@@ -1277,12 +1277,12 @@ class EmailTest extends TestCase {
  * @return void
  */
 	public function testSendWithLog() {
-		$log = $this->getMock('Cake\Log\Engine\BaseLog', ['write'], [['scopes' => 'email']]);
+		$log = $this->getMock('Cake\Log\Engine\BaseLog', ['log'], [['scopes' => 'email']]);
 
 		$message = 'Logging This';
 
 		$log->expects($this->once())
-			->method('write')
+			->method('log')
 			->with(
 				'debug',
 				$this->logicalAnd(
@@ -1310,9 +1310,9 @@ class EmailTest extends TestCase {
 	public function testSendWithLogAndScope() {
 		$message = 'Logging This';
 
-		$log = $this->getMock('Cake\Log\Engine\BaseLog', ['write'], ['scopes' => ['email']]);
+		$log = $this->getMock('Cake\Log\Engine\BaseLog', ['log'], ['scopes' => ['email']]);
 		$log->expects($this->once())
-			->method('write')
+			->method('log')
 			->with(
 				'debug',
 				$this->logicalAnd(
