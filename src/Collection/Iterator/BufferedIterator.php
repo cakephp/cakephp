@@ -18,8 +18,8 @@ use Cake\Collection\Collection;
 use SplDoublyLinkedList;
 
 /**
- * Creates an iterator from another iterator that will keep in memory the results
- * from the inner iterator so they don't have to be calculated again.
+ * Creates an iterator from another iterator that will keep the results of the inner
+ * iterator in memory, so that results don't have to be re-calculated.
  */
 class BufferedIterator extends Collection {
 
@@ -60,7 +60,7 @@ class BufferedIterator extends Collection {
 	protected $_started = false;
 
 /**
- * Whether or not the internal iterator's has reached its end
+ * Whether or not the internal iterator has reached its end.
  *
  * @var boolean
  */
