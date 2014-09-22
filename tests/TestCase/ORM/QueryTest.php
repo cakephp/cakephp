@@ -966,6 +966,10 @@ class QueryTest extends TestCase {
 			->method('fetch')
 			->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2], false));
 
+		$statement->expects($this->once())
+			->method('rowCount')
+			->will($this->returnValue(2));
+
 		$query->expects($this->once())
 			->method('execute')
 			->will($this->returnValue($statement));

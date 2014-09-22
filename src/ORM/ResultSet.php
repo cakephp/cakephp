@@ -21,6 +21,7 @@ use Countable;
 use Iterator;
 use JsonSerializable;
 use Serializable;
+use SplFixedArray;
 
 /**
  * Represents the results obtained after executing a query for a specific table
@@ -133,9 +134,10 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		$this->_hydrate = $this->_query->hydrate();
 		$this->_entityClass = $repository->entityClass();
 		$this->_useBuffering = $query->bufferResults();
+		$this->count();
 
-		if ($statement) {
-			$this->count();
+		if ($this->_useBuffering) {
+			$this->_results = new SplFixedArray($this->_count);
 		}
 	}
 
@@ -475,7 +477,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  */
 	protected function _bufferResult($result) {
 		if ($this->_useBuffering) {
-			$this->_results[] = $result;
+			$this->_results[$this->_index] = $result;
 		}
 	}
 

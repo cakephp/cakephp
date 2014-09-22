@@ -37,6 +37,10 @@ class ResultSetDecorator extends Collection implements Countable, Serializable, 
  * @return int
  */
 	public function count() {
+		if ($this->getInnerIterator() instanceof Countable) {
+			return $this->getInnerIterator()->count();
+		}
+
 		return count($this->toArray());
 	}
 
