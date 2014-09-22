@@ -17,6 +17,7 @@ namespace Cake\Collection;
 use AppendIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
+use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
 use Cake\Collection\Iterator\InsertIterator;
@@ -887,6 +888,19 @@ trait CollectionTrait {
  */
 	public function compile($preserveKeys = true) {
 		return new Collection($this->toArray($preserveKeys));
+	}
+
+/**
+ * Returns a new collection where the operations performed by this collection.
+ * No matter how many times the new collection is iterated, those operations will
+ * only be performed once.
+ *
+ * This can also be used to make any non-rewindable iterator rewindable.
+ *
+ * @return \Cake\Collection\Iterator\BufferedIterator
+ */
+	public function buffered() {
+		return new BufferedIterator($this);
 	}
 
 /**
