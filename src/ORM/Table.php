@@ -943,17 +943,21 @@ class Table implements RepositoryInterface, EventListener {
  * the $defaults. When a new entity is created, it will be saved.
  *
  * @param array $search The criteria to find existing records by.
- * @param array $defaults The array of defaults to patch into
- *   the new entity if it is created.
+ * @param callable $callback A callback that will be invoked for newly
+ *   created entities. This callback will be called *before* the entity
+ *   is persisted.
  * @return \Cake\Datasource\EntityInterface An entity.
  */
-	public function findOrCreate($search, $defaults = []) {
+	public function findOrCreate($search, callable $callback = null) {
 		$query = $this->find()->where($search);
 		$row = $query->first();
 		if ($row) {
 			return $row;
 		}
-		$entity = $this->newEntity($search + $defaults);
+		$entity = $this->newEntity($search);
+		if ($callback) {
+			$callback($entity);
+		}
 		return $this->save($entity);
 	}
 

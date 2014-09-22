@@ -3531,29 +3531,34 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Test the findOrNew method.
+ * Test the findOrCreate method.
  *
  * @return void
  */
-	public function testFindOrNew() {
+	public function testFindOrCreate() {
 		$articles = TableRegistry::get('Articles');
-		$article = $articles->findOrCreate(['title' => 'Not there'], ['body' => 'New body']);
+		$article = $articles->findOrCreate(['title' => 'Not there'], function ($article) {
+			$article->body = 'New body';
+		});
 
 		$this->assertFalse($article->isNew());
 		$this->assertNotNull($article->id);
 		$this->assertEquals('Not there', $article->title);
 		$this->assertEquals('New body', $article->body);
 
-		$article = $articles->findOrCreate(['title' => 'First Article'], ['body' => 'New body']);
+		$article = $articles->findOrCreate(['title' => 'First Article'], function ($article) {
+			$this->fail('Should not be called for existing entities.');
+		});
 
 		$this->assertFalse($article->isNew());
 		$this->assertNotNull($article->id);
 		$this->assertEquals('First Article', $article->title);
-		$this->assertNotEquals('New body', $article->body);
 
 		$article = $articles->findOrCreate(
 			['author_id' => 2, 'title' => 'First Article'],
-			['published' => 'N', 'body' => 'New body']
+			function ($article) {
+				$article->set(['published' => 'N', 'body' => 'New body']);
+			}
 		);
 		$this->assertFalse($article->isNew());
 		$this->assertNotNull($article->id);
