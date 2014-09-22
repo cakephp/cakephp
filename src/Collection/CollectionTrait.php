@@ -892,7 +892,7 @@ trait CollectionTrait {
 
 /**
  * Returns a new collection where the operations performed by this collection.
- * Not matter how many times the new collection is iterated, those operations will
+ * No matter how many times the new collection is iterated, those operations will
  * only be performed once.
  *
  * This can also be used to make any non-rewindable iterator rewindable.
