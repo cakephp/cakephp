@@ -954,7 +954,8 @@ class Table implements RepositoryInterface, EventListener {
 		if ($row) {
 			return $row;
 		}
-		$entity = $this->newEntity($search);
+		$entity = $this->newEntity();
+		$entity->set($search, ['guard' => false]);
 		if ($callback) {
 			$callback($entity);
 		}
