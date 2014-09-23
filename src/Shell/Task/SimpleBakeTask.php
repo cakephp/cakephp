@@ -18,7 +18,6 @@ use Cake\Console\Shell;
 use Cake\Shell\Task\BakeTask;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\File;
 use Cake\Utility\Inflector;
 
 /**
@@ -99,11 +98,7 @@ abstract class SimpleBakeTask extends BakeTask {
 		$filename = $this->getPath() . $this->fileName($name);
 		$this->createFile($filename, $contents);
 		$emptyFile = $this->getPath() . 'empty';
-		$File = new File($emptyFile);
-		if ($File->exists()) {
-			$File->delete();
-			$this->out(sprintf('<success>Deleted</success> `%s`', $emptyFile), 1, Shell::QUIET);
-		}
+		$this->_deleteEmptyFile($emptyFile);
 		return $contents;
 	}
 
