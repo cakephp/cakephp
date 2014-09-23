@@ -3530,4 +3530,46 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Test the findOrCreate method.
+ *
+ * @return void
+ */
+	public function testFindOrCreate() {
+		$articles = TableRegistry::get('Articles');
+
+		$article = $articles->findOrCreate(['title' => 'Not there'], function ($article) {
+			$article->body = 'New body';
+		});
+		$this->assertFalse($article->isNew());
+		$this->assertNotNull($article->id);
+		$this->assertEquals('Not there', $article->title);
+		$this->assertEquals('New body', $article->body);
+
+		$article = $articles->findOrCreate(['title' => 'Not there']);
+		$this->assertFalse($article->isNew());
+		$this->assertNotNull($article->id);
+		$this->assertEquals('Not there', $article->title);
+
+		$article = $articles->findOrCreate(['title' => 'First Article'], function ($article) {
+			$this->fail('Should not be called for existing entities.');
+		});
+		$this->assertFalse($article->isNew());
+		$this->assertNotNull($article->id);
+		$this->assertEquals('First Article', $article->title);
+
+		$article = $articles->findOrCreate(
+			['author_id' => 2, 'title' => 'First Article'],
+			function ($article) {
+				$article->set(['published' => 'N', 'body' => 'New body']);
+			}
+		);
+		$this->assertFalse($article->isNew());
+		$this->assertNotNull($article->id);
+		$this->assertEquals('First Article', $article->title);
+		$this->assertEquals('New body', $article->body);
+		$this->assertEquals('N', $article->published);
+		$this->assertEquals(2, $article->author_id);
+	}
+
 }

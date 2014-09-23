@@ -935,6 +935,34 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
+ * Finds an existing record or creates a new one.
+ *
+ * Using the attributes defined in $search a find() will be done to locate
+ * an existing record. If that record exists it will be returned. If it does
+ * not exist, a new entity will be created with the $search properties, and
+ * the $defaults. When a new entity is created, it will be saved.
+ *
+ * @param array $search The criteria to find existing records by.
+ * @param callable $callback A callback that will be invoked for newly
+ *   created entities. This callback will be called *before* the entity
+ *   is persisted.
+ * @return \Cake\Datasource\EntityInterface An entity.
+ */
+	public function findOrCreate($search, callable $callback = null) {
+		$query = $this->find()->where($search);
+		$row = $query->first();
+		if ($row) {
+			return $row;
+		}
+		$entity = $this->newEntity();
+		$entity->set($search, ['guard' => false]);
+		if ($callback) {
+			$callback($entity);
+		}
+		return $this->save($entity) ?: $entity;
+	}
+
+/**
  * {@inheritDoc}
  */
 	public function query() {
