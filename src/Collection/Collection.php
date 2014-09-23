@@ -15,6 +15,7 @@
 namespace Cake\Collection;
 
 use ArrayIterator;
+use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
 use InvalidArgumentException;
 use IteratorIterator;
@@ -24,7 +25,7 @@ use JsonSerializable;
  * A collection is an immutable list of elements with a handful of functions to
  * iterate, group, transform and extract information from it.
  */
-class Collection extends IteratorIterator implements JsonSerializable {
+class Collection extends IteratorIterator implements CollectionInterface {
 
 	use CollectionTrait;
 
@@ -45,15 +46,6 @@ class Collection extends IteratorIterator implements JsonSerializable {
 		}
 
 		parent::__construct($items);
-	}
-
-/**
- * Returns the iterator with this collection's elements
- *
- * @return \Traversable
- */
-	public function getIterator() {
-		return $this->_iterator;
 	}
 
 }
