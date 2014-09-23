@@ -194,7 +194,7 @@ class FixtureTask extends BakeTask {
  */
 	public function generateFixtureFile($model, array $otherVars) {
 		$defaults = [
-			'name' => Inflector::singularize($model),
+			'name' => $model,
 			'table' => null,
 			'schema' => null,
 			'records' => null,
