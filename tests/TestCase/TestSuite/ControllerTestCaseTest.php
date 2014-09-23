@@ -36,7 +36,7 @@ class ControllerTestCaseTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.post', 'core.author', 'core.test_plugin_comment');
+	public $fixtures = array('core.posts', 'core.authors', 'core.test_plugin_comments');
 
 /**
  * reset environment.

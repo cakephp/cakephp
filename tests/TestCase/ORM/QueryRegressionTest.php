@@ -33,14 +33,14 @@ class QueryRegressionTest extends TestCase {
  * @var array
  */
 	public $fixtures = [
-		'core.user',
-		'core.article',
-		'core.comment',
-		'core.tag',
-		'core.articles_tag',
-		'core.author',
-		'core.special_tag',
-		'core.translate',
+		'core.users',
+		'core.articles',
+		'core.comments',
+		'core.tags',
+		'core.articles_tags',
+		'core.authors',
+		'core.special_tags',
+		'core.translates',
 	];
 
 /**

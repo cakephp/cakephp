@@ -35,8 +35,8 @@ class QueryTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.article', 'core.author', 'core.tag',
-		'core.articles_tag', 'core.post'];
+	public $fixtures = ['core.articles', 'core.authors', 'core.tags',
+		'core.articles_tags', 'core.posts'];
 
 /**
  * setUp method

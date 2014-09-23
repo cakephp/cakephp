@@ -35,10 +35,10 @@ class ModelTaskTest extends TestCase {
  * @var array
  */
 	public $fixtures = array(
-		'core.bake_article', 'core.bake_comment', 'core.bake_articles_bake_tag',
-		'core.bake_tag', 'core.user', 'core.category_thread', 'core.number_tree',
-		'core.counter_cache_user', 'core.counter_cache_post',
-		'core.tag', 'core.articles_tag'
+		'core.bake_articles', 'core.bake_comments', 'core.bake_articles_bake_tags',
+		'core.bake_tags', 'core.users', 'core.category_threads', 'core.number_trees',
+		'core.counter_cache_users', 'core.counter_cache_posts',
+		'core.tags', 'core.articles_tags'
 	);
 
 /**

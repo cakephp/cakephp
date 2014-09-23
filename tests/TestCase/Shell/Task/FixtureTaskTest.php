@@ -32,7 +32,7 @@ class FixtureTaskTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.article', 'core.comment', 'core.datatype', 'core.binary_test', 'core.user');
+	public $fixtures = array('core.articles', 'core.comments', 'core.datatypes', 'core.binary_tests', 'core.users');
 
 /**
  * setUp method

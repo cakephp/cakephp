@@ -84,11 +84,11 @@ class ViewTaskTest extends TestCase {
  * @var array
  */
 	public $fixtures = array(
-		'core.article', 'core.post', 'core.comment',
-		'core.articles_tag',
-		'core.tag',
-		'core.test_plugin_comment',
-		'core.category_thread',
+		'core.articles', 'core.posts', 'core.comments',
+		'core.articles_tags',
+		'core.tags',
+		'core.test_plugin_comments',
+		'core.category_threads',
 	);
 
 /**

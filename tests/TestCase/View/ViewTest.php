@@ -270,7 +270,7 @@ class ViewTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.user', 'core.post');
+	public $fixtures = array('core.users', 'core.posts');
 
 /**
  * setUp method

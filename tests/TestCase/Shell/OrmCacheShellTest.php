@@ -29,7 +29,7 @@ class OrmCacheShellTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.article', 'core.tag'];
+	public $fixtures = ['core.articles', 'core.tags'];
 
 /**
  * setup method

@@ -28,7 +28,7 @@ use Cake\TestSuite\TestCase;
  */
 class ResultSetTest extends TestCase {
 
-	public $fixtures = ['core.article', 'core.comment'];
+	public $fixtures = ['core.articles', 'core.comments'];
 
 /**
  * setup

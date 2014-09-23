@@ -48,7 +48,7 @@ class ControllerTaskTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.bake_article', 'core.bake_articles_bake_tag', 'core.bake_comment', 'core.bake_tag'];
+	public $fixtures = ['core.bake_articles', 'core.bake_articles_bake_tags', 'core.bake_comments', 'core.bake_tags'];
 
 /**
  * setUp method

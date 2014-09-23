@@ -26,7 +26,7 @@ use Cake\TestSuite\TestCase;
  */
 class QueryTest extends TestCase {
 
-	public $fixtures = ['core.article', 'core.author', 'core.comment'];
+	public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
 
 	const ARTICLE_COUNT = 3;
 	const AUTHOR_COUNT = 4;
