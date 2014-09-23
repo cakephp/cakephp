@@ -69,10 +69,10 @@ class PaginatorHelper extends Helper {
 			'current' => '<li class="active"><a href="">{{text}}</a></li>',
 			'ellipsis' => '<li class="ellipsis">...</li>',
 			'sort' => '<a href="{{url}}" title="{{text}}">{{text}}</a>',
-			'sortAsc' => '<a class="asc" href="{{url}} title="{{text}}">{{text}}</a>',
-			'sortDesc' => '<a class="desc" href="{{url}} title="{{text}}">{{text}}</a>',
-			'sortAscLocked' => '<a class="asc locked" href="{{url}} title="{{text}}">{{text}}</a>',
-			'sortDescLocked' => '<a class="desc locked" href="{{url}} title="{{text}}">{{text}}</a>',
+			'sortAsc' => '<a class="asc" href="{{url}}" title="{{text}}">{{text}}</a>',
+			'sortDesc' => '<a class="desc" href="{{url}}" title="{{text}}">{{text}}</a>',
+			'sortAscLocked' => '<a class="asc locked" href="{{url}}" title="{{text}}">{{text}}</a>',
+			'sortDescLocked' => '<a class="desc locked" href="{{url}}" title="{{text}}">{{text}}</a>',
 		]
 	];
 
