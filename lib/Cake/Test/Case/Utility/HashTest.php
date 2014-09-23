@@ -1488,6 +1488,18 @@ class HashTest extends CakeTestCase {
 			)
 		);
 		$this->assertEquals($expected, $result);
+
+		$array = array(
+			0 => 'foo',
+			1 => array(
+				0 => 'baz'
+			)
+		);
+		$expected = $array;
+		$result = Hash::remove($array, '{n}.part');
+		$this->assertEquals($expected, $result);
+		$result = Hash::remove($array, '{n}.{n}.part');
+		$this->assertEquals($expected, $result);
 	}
 
 /**
