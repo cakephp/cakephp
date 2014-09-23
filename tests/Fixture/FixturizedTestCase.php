@@ -13,7 +13,7 @@ class FixturizedTestCase extends TestCase {
  * Fixtures to use in this thes
  * @var array
  */
-	public $fixtures = array('core.category');
+	public $fixtures = array('core.categories');
 
 /**
  * test that the shared fixture is correctly set
@@ -30,7 +30,7 @@ class FixturizedTestCase extends TestCase {
  * @return void
  */
 	public function testFixtureLoadOnDemand() {
-		$this->loadFixtures('Category');
+		$this->loadFixtures('Categories');
 	}
 
 /**

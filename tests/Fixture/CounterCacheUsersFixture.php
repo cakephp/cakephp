@@ -17,40 +17,21 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class TranslateTableFixture
+ * Short description for class.
  *
  */
-class TranslateTablesFixture extends TestFixture {
+class CounterCacheUsersFixture extends TestFixture {
 
-/**
- * table property
- *
- * @var string
- */
-	public $table = 'another_i18n';
-
-/**
- * fields property
- *
- * @var array
- */
 	public $fields = array(
 		'id' => ['type' => 'integer'],
-		'locale' => ['type' => 'string', 'length' => 6, 'null' => false],
-		'model' => ['type' => 'string', 'null' => false],
-		'foreign_key' => ['type' => 'integer', 'null' => false],
-		'field' => ['type' => 'string', 'null' => false],
-		'content' => ['type' => 'text'],
+		'name' => ['type' => 'string', 'length' => 255, 'null' => false],
+		'post_count' => ['type' => 'integer', 'null' => true],
+		'posts_published' => ['type' => 'integer', 'null' => true],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
-/**
- * records property
- *
- * @var array
- */
 	public $records = array(
-		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Another Title #1'),
-		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Another Content #1')
+		array('name' => 'Alexander', 'post_count' => 2, 'posts_published' => 1),
+		array('name' => 'Steven', 'post_count' => 1, 'posts_published' => 1),
 	);
 }

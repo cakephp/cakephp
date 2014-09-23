@@ -17,17 +17,10 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class TranslateTableFixture
+ * Class UuidportfolioFixture
  *
  */
-class TranslateTablesFixture extends TestFixture {
-
-/**
- * table property
- *
- * @var string
- */
-	public $table = 'another_i18n';
+class UuidportfoliosFixture extends TestFixture {
 
 /**
  * fields property
@@ -35,12 +28,8 @@ class TranslateTablesFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => ['type' => 'integer'],
-		'locale' => ['type' => 'string', 'length' => 6, 'null' => false],
-		'model' => ['type' => 'string', 'null' => false],
-		'foreign_key' => ['type' => 'integer', 'null' => false],
-		'field' => ['type' => 'string', 'null' => false],
-		'content' => ['type' => 'text'],
+		'id' => ['type' => 'uuid'],
+		'name' => ['type' => 'string', 'null' => false],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
@@ -50,7 +39,7 @@ class TranslateTablesFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Another Title #1'),
-		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Another Content #1')
+		array('id' => '4806e091-6940-4d2b-b227-303740cf8569', 'name' => 'Portfolio 1'),
+		array('id' => '480af662-eb8c-47d3-886b-230540cf8569', 'name' => 'Portfolio 2'),
 	);
 }

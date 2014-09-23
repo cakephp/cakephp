@@ -17,17 +17,10 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class TranslateTableFixture
+ * Short description for class.
  *
  */
-class TranslateTablesFixture extends TestFixture {
-
-/**
- * table property
- *
- * @var string
- */
-	public $table = 'another_i18n';
+class ArticlesTagsFixture extends TestFixture {
 
 /**
  * fields property
@@ -35,13 +28,18 @@ class TranslateTablesFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => ['type' => 'integer'],
-		'locale' => ['type' => 'string', 'length' => 6, 'null' => false],
-		'model' => ['type' => 'string', 'null' => false],
-		'foreign_key' => ['type' => 'integer', 'null' => false],
-		'field' => ['type' => 'string', 'null' => false],
-		'content' => ['type' => 'text'],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+		'article_id' => ['type' => 'integer', 'null' => false],
+		'tag_id' => ['type' => 'integer', 'null' => false],
+		'_constraints' => [
+			'unique_tag' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']],
+			'tag_idx' => [
+				'type' => 'foreign',
+				'columns' => ['tag_id'],
+				'references' => ['tags', 'id'],
+				'update' => 'cascade',
+				'delete' => 'cascade',
+			]
+		]
 	);
 
 /**
@@ -50,7 +48,9 @@ class TranslateTablesFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Another Title #1'),
-		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Another Content #1')
+		array('article_id' => 1, 'tag_id' => 1),
+		array('article_id' => 1, 'tag_id' => 2),
+		array('article_id' => 2, 'tag_id' => 1),
+		array('article_id' => 2, 'tag_id' => 3)
 	);
 }

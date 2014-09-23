@@ -17,17 +17,10 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class TranslateTableFixture
+ * Class UuidTagFixture
  *
  */
-class TranslateTablesFixture extends TestFixture {
-
-/**
- * table property
- *
- * @var string
- */
-	public $table = 'another_i18n';
+class UuidTagsFixture extends TestFixture {
 
 /**
  * fields property
@@ -35,12 +28,9 @@ class TranslateTablesFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => ['type' => 'integer'],
-		'locale' => ['type' => 'string', 'length' => 6, 'null' => false],
-		'model' => ['type' => 'string', 'null' => false],
-		'foreign_key' => ['type' => 'integer', 'null' => false],
-		'field' => ['type' => 'string', 'null' => false],
-		'content' => ['type' => 'text'],
+		'id' => ['type' => 'uuid'],
+		'name' => ['type' => 'string', 'length' => 255],
+		'created' => ['type' => 'datetime'],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
@@ -50,7 +40,6 @@ class TranslateTablesFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Another Title #1'),
-		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Another Content #1')
+		array('id' => '481fc6d0-b920-43e0-e50f-6d1740cf8569', 'name' => 'MyTag', 'created' => '2009-12-09 12:30:00')
 	);
 }

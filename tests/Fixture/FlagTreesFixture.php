@@ -17,17 +17,12 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class TranslateTableFixture
+ * Flag Tree Test Fixture
+ *
+ * Like Number Tree, but uses a flag for testing scope parameters
  *
  */
-class TranslateTablesFixture extends TestFixture {
-
-/**
- * table property
- *
- * @var string
- */
-	public $table = 'another_i18n';
+class FlagTreesFixture extends TestFixture {
 
 /**
  * fields property
@@ -36,21 +31,11 @@ class TranslateTablesFixture extends TestFixture {
  */
 	public $fields = array(
 		'id' => ['type' => 'integer'],
-		'locale' => ['type' => 'string', 'length' => 6, 'null' => false],
-		'model' => ['type' => 'string', 'null' => false],
-		'foreign_key' => ['type' => 'integer', 'null' => false],
-		'field' => ['type' => 'string', 'null' => false],
-		'content' => ['type' => 'text'],
+		'name' => ['type' => 'string', 'null' => false],
+		'parent_id' => 'integer',
+		'lft' => ['type' => 'integer', 'null' => false],
+		'rght' => ['type' => 'integer', 'null' => false],
+		'flag' => ['type' => 'integer', 'null' => false, 'length' => 1, 'default' => 0],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-	);
-
-/**
- * records property
- *
- * @var array
- */
-	public $records = array(
-		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Another Title #1'),
-		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Another Content #1')
 	);
 }

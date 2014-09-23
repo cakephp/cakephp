@@ -17,40 +17,22 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class TranslateTableFixture
+ * Counter Cache Test Fixtures
  *
  */
-class TranslateTablesFixture extends TestFixture {
+class CounterCachePostsFixture extends TestFixture {
 
-/**
- * table property
- *
- * @var string
- */
-	public $table = 'another_i18n';
-
-/**
- * fields property
- *
- * @var array
- */
 	public $fields = array(
 		'id' => ['type' => 'integer'],
-		'locale' => ['type' => 'string', 'length' => 6, 'null' => false],
-		'model' => ['type' => 'string', 'null' => false],
-		'foreign_key' => ['type' => 'integer', 'null' => false],
-		'field' => ['type' => 'string', 'null' => false],
-		'content' => ['type' => 'text'],
+		'title' => ['type' => 'string', 'length' => 255],
+		'user_id' => ['type' => 'integer', 'null' => true],
+		'published' => ['type' => 'boolean', 'null' => false, 'default' => false],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
-/**
- * records property
- *
- * @var array
- */
 	public $records = array(
-		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'title', 'content' => 'Another Title #1'),
-		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Another Content #1')
+		array('title' => 'Rock and Roll', 'user_id' => 1, 'published' => 0),
+		array('title' => 'Music', 'user_id' => 1, 'published' => 1),
+		array('title' => 'Food', 'user_id' => 2, 'published' => 1),
 	);
 }
