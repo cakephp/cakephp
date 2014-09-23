@@ -743,4 +743,20 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals('Titre', $translations['fre']->get('title'));
 	}
 
+/**
+ * Tests that iterating a resultset twice when using the translations finder
+ * will not cause any errors nor information loss
+ *
+ * @return void
+ */
+	public function testUseCountInFindTranslations() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$articles = $results = $table->find('translations');
+		$all = $articles->all();
+		$this->assertCount(3, $all);
+		$article = $all->first();
+		$this->assertNotEmpty($article->get('_translations'));
+	}
+
 }
