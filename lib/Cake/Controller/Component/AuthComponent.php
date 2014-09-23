@@ -163,7 +163,7 @@ class AuthComponent extends Component {
  *
  * @var string
  */
-	public static $sessionKey = 'Auth.User';
+	public $sessionKey = 'Auth.User';
 
 /**
  * The current user, used for stateless authentication when
