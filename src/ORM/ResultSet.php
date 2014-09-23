@@ -17,10 +17,8 @@ namespace Cake\ORM;
 use Cake\Collection\CollectionTrait;
 use Cake\Database\Exception;
 use Cake\Database\Type;
-use Countable;
-use Iterator;
+use Cake\Datasource\ResultSetInterface;
 use JsonSerializable;
-use Serializable;
 use SplFixedArray;
 
 /**
@@ -30,7 +28,7 @@ use SplFixedArray;
  * queries required for eager loading external associations.
  *
  */
-class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
+class ResultSet implements ResultSetInterface {
 
 	use CollectionTrait;
 

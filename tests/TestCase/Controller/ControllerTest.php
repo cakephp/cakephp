@@ -660,10 +660,10 @@ class ControllerTest extends TestCase {
 		$this->assertArrayNotHasKey('Paginator', $Controller->helpers);
 
 		$results = $Controller->paginate('Posts');
-		$this->assertInstanceOf('Cake\Datasource\ResultSetDecorator', $results);
+		$this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
 
 		$results = $Controller->paginate(TableRegistry::get('Posts'));
-		$this->assertInstanceOf('Cake\Datasource\ResultSetDecorator', $results);
+		$this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
 
 		$this->assertSame($Controller->request->params['paging']['Posts']['page'], 1);
 		$this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 1);
@@ -686,7 +686,7 @@ class ControllerTest extends TestCase {
 		$Controller->modelClass = 'Posts';
 		$results = $Controller->paginate();
 
-		$this->assertInstanceOf('Cake\Datasource\ResultSetDecorator', $results);
+		$this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
 	}
 
 /**

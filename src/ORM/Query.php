@@ -782,7 +782,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  *
  * Part of JsonSerializable interface.
  *
- * @return \Cake\ORM\ResultSet The data to convert to JSON.
+ * @return \Cake\Datasource\ResultSetInterface The data to convert to JSON.
  */
 	public function jsonSerialize() {
 		return $this->all();
@@ -809,7 +809,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * Decorates the results iterator with MapReduce routines and formatters
  *
  * @param \Traversable $result Original results
- * @return \Cake\Datasource\ResultSetDecorator
+ * @return \Cake\Datasource\ResultSetInterface
  */
 	protected function _decorateResults($result) {
 		$result = $this->_applyDecorators($result);
