@@ -168,7 +168,7 @@ class Connection {
 		try {
 			$this->_driver->connect();
 			return true;
-		} catch(\Exception $e) {
+		} catch (\Exception $e) {
 			throw new MissingConnectionException(['reason' => $e->getMessage()]);
 		}
 	}
