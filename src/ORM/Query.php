@@ -814,7 +814,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	protected function _decorateResults($result) {
 		$result = $this->_applyDecorators($result);
 
-		if ($this->bufferResults()) {
+		if (!($result instanceof ResultSet) && $this->bufferResults()) {
 			$class = $this->_decoratorClass();
 			$result = new $class($result->buffered());
 		}
