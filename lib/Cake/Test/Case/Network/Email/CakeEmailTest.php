@@ -1757,12 +1757,12 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->to('cake@cakephp.org');
 		$this->CakeEmail->theme('TestTheme');
 		$this->CakeEmail->emailPattern('/.+@.+\..+/i');
-		$this->assertSame($this->CakeEmail->to(), array('cake@cakephp.org' => 'cake@cakephp.org'));
+		$this->assertSame(array('cake@cakephp.org' => 'cake@cakephp.org'), $this->CakeEmail->to());
 
 		$this->CakeEmail->reset();
-		$this->assertSame($this->CakeEmail->to(), array());
-		$this->assertSame(null, $this->CakeEmail->theme());
-		$this->assertSame(null, $this->CakeEmail->emailPattern());
+		$this->assertSame(array(), $this->CakeEmail->to());
+		$this->assertNull($this->CakeEmail->theme());
+		$this->assertSame(CakeEmail::EMAIL_PATTERN, $this->CakeEmail->emailPattern());
 	}
 
 /**
@@ -1774,8 +1774,8 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->charset = 'ISO-2022-JP';
 		$this->CakeEmail->reset();
 
-		$this->assertSame($this->CakeEmail->charset, 'utf-8', $this->CakeEmail->charset);
-		$this->assertSame($this->CakeEmail->headerCharset, null, $this->CakeEmail->headerCharset);
+		$this->assertSame('utf-8', $this->CakeEmail->charset, $this->CakeEmail->charset);
+		$this->assertNull($this->CakeEmail->headerCharset, $this->CakeEmail->headerCharset);
 	}
 
 /**
