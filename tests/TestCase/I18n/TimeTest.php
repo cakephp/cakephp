@@ -582,6 +582,7 @@ class TimeTest extends TestCase {
  */
 	public function testToStringInvalidZeros() {
 		$this->skipIf(DS === '\\', 'All zeros are valid on windows.');
+		$this->skipIf(PHP_INT_SIZE === 4, 'IntlDateFormatter throws exceptions on 32-bit systems');
 		$time = new Time('0000-00-00');
 		$this->assertInternalType('string', (string)$time);
 		$this->assertNotEmpty((string)$time);
