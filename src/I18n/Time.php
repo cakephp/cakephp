@@ -191,7 +191,7 @@ class Time extends Carbon implements JsonSerializable {
 /**
  * Returns a UNIX timestamp.
  *
- * @return string Unix timestamp
+ * @return string UNIX timestamp
  */
 	public function toUnixString() {
 		return $this->format('U');
