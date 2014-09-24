@@ -14,8 +14,10 @@
  */
 namespace Cake\Shell\Task;
 
+use Cake\Console\Shell;
 use Cake\Shell\Task\BakeTask;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 
 /**
@@ -95,6 +97,8 @@ abstract class SimpleBakeTask extends BakeTask {
 
 		$filename = $this->getPath() . $this->fileName($name);
 		$this->createFile($filename, $contents);
+		$emptyFile = $this->getPath() . 'empty';
+		$this->_deleteEmptyFile($emptyFile);
 		return $contents;
 	}
 

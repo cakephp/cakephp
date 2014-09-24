@@ -18,6 +18,7 @@ use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Core\ConventionsTrait;
+use Cake\Filesystem\File;
 
 /**
  * Base class for Bake Tasks.
@@ -155,6 +156,20 @@ class BakeTask extends Shell {
 			$this->plugin = $this->params['plugin'] = $plugin;
 		}
 		return $name;
+	}
+
+/**
+ * Delete empty file in a given path
+ *
+ * @param string $path Path to folder which contains 'empty' file.
+ * @return void
+ */
+	protected function _deleteEmptyFile($path) {
+		$File = new File($path);
+		if ($File->exists()) {
+			$File->delete();
+			$this->out(sprintf('<success>Deleted</success> `%s`', $path), 1, Shell::QUIET);
+		}
 	}
 
 /**
