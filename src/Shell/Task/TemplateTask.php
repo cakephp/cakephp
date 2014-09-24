@@ -60,7 +60,7 @@ class TemplateTask extends Shell {
 
 		$plugins = Plugin::loaded();
 		foreach ($plugins as $plugin) {
-			$paths[] = Plugin::classPath($plugin) . DS . 'Template' . DS;
+			$paths[] = Plugin::classPath($plugin) . 'Template' . DS;
 		}
 
 		$core = current(App::core('Template'));
