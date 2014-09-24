@@ -16,6 +16,7 @@ namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
+use Cake\Collection\Collection;
 use Cake\ORM\Entity;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -216,11 +217,16 @@ class FormHelper extends Helper {
 		});
 
 		$this->addContextProvider('orm', function ($request, $data) {
-			if (
-				$data['entity'] instanceof Entity ||
-				$data['entity'] instanceof Traversable ||
-				(is_array($data['entity']) && !isset($data['entity']['schema']))
-			) {
+			if (is_array($data['entity']) || $data['entity'] instanceof Traversable) {
+				$pass = (new Collection($data['entity']))->first() !== null;
+				if ($pass) {
+					return new EntityContext($request, $data);
+				}
+			}
+			if ($data['entity'] instanceof Entity) {
+				return new EntityContext($request, $data);
+			}
+			if (is_array($data['entity']) && empty($data['entity']['schema'])) {
 				return new EntityContext($request, $data);
 			}
 		});

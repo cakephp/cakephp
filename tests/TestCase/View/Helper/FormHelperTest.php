@@ -272,6 +272,9 @@ class FormHelperTest extends TestCase {
 	public function contextSelectionProvider() {
 		$entity = new Article();
 		$collection = $this->getMock('Cake\Collection\Collection', ['extract'], [[$entity]]);
+		$emptyCollection = new Collection([]);
+		$emptyArray = [];
+		$arrayObject = new \ArrayObject([]);
 		$data = [
 			'schema' => [
 				'title' => ['type' => 'string']
@@ -281,7 +284,9 @@ class FormHelperTest extends TestCase {
 		return [
 			'entity' => [$entity, 'Cake\View\Form\EntityContext'],
 			'collection' => [$collection, 'Cake\View\Form\EntityContext'],
+			'empty_collection' => [$emptyCollection, 'Cake\View\Form\NullContext'],
 			'array' => [$data, 'Cake\View\Form\ArrayContext'],
+			'array_object' => [$arrayObject, 'Cake\View\Form\NullContext'],
 			'none' => [null, 'Cake\View\Form\NullContext'],
 			'false' => [false, 'Cake\View\Form\NullContext'],
 		];
