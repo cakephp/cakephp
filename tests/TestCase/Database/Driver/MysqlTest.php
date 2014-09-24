@@ -28,11 +28,12 @@ use \PDO;
 class MysqlTest extends TestCase {
 
 /**
- * Helper method for skipping tests that need a real connection.
+ * setup
  *
  * @return void
  */
-	protected function _needsConnection() {
+	public function setup() {
+		parent::setUp();
 		$config = Configure::read('Datasource.test');
 		$this->skipIf(strpos($config['datasource'], 'Mysql') === false, 'Not using Mysql for test config');
 	}
