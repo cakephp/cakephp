@@ -360,6 +360,7 @@ class MemcachedEngineTest extends TestCase {
 			'password' => 'password'
 		);
 
+		$Memcached->setMemcached(new Memcached());
 		$this->skipIf(
 			method_exists($Memcached->getMemcached(), 'setSaslAuthData'),
 			'Memcached extension is installed with SASL support'
