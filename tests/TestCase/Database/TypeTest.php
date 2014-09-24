@@ -206,7 +206,7 @@ class TypeTest extends \Cake\TestSuite\TestCase {
  */
 	public function testBigintegerToPHP() {
 		$this->skipIf(
-			isset($_SERVER['PROCESSOR_ARCHITECTURE']) && $_SERVER['PROCESSOR_ARCHITECTURE'] === 'x86',
+			PHP_INT_SIZE === 4,
 			'This test requires a php version compiled for 64 bits'
 		);
 		$type = Type::build('biginteger');
