@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
  */
 class ConnectionTest extends TestCase {
 
-	public $fixtures = ['core.thing'];
+	public $fixtures = ['core.things'];
 
 	public function setUp() {
 		$this->connection = ConnectionManager::get('test');

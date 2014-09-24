@@ -41,7 +41,7 @@ class EntityContextTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.article', 'core.comment'];
+	public $fixtures = ['core.articles', 'core.comments'];
 
 /**
  * setup method.

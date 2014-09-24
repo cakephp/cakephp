@@ -38,8 +38,8 @@ class UsersTable extends Table {
 class TableTest extends \Cake\TestSuite\TestCase {
 
 	public $fixtures = [
-		'core.user', 'core.category', 'core.article', 'core.author',
-		'core.tag', 'core.articles_tag'
+		'core.users', 'core.categories', 'core.articles', 'core.authors',
+		'core.tags', 'core.articles_tags'
 	];
 
 /**

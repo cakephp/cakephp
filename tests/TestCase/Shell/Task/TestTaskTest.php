@@ -41,11 +41,11 @@ class TestTaskTest extends TestCase {
  * @var string
  */
 	public $fixtures = [
-		'core.article',
-		'core.author',
-		'core.comment',
-		'core.tag',
-		'core.articles_tag',
+		'core.articles',
+		'core.authors',
+		'core.comments',
+		'core.tags',
+		'core.articles_tags',
 	];
 
 /**
@@ -219,10 +219,10 @@ class TestTaskTest extends TestCase {
 		$subject = new ArticlesTable();
 		$result = $this->Task->generateFixtureList($subject);
 		$expected = [
-			'app.article',
-			'app.author',
-			'app.tag',
-			'app.articles_tag'
+			'app.articles',
+			'app.authors',
+			'app.tags',
+			'app.articles_tags'
 		];
 		$this->assertEquals($expected, $result);
 	}
@@ -237,7 +237,7 @@ class TestTaskTest extends TestCase {
 		$subject = new CategoryThreadsTable();
 		$result = $this->Task->generateFixtureList($subject);
 		$expected = [
-			'app.category_thread',
+			'app.category_threads',
 		];
 		$this->assertEquals($expected, $result);
 	}
@@ -251,7 +251,7 @@ class TestTaskTest extends TestCase {
 		$subject = new PostsController(new Request(), new Response());
 		$result = $this->Task->generateFixtureList($subject);
 		$expected = [
-			'app.post',
+			'app.posts',
 		];
 		$this->assertEquals($expected, $result);
 	}
@@ -316,13 +316,13 @@ class TestTaskTest extends TestCase {
 			->method('createFile')
 			->will($this->returnValue(true));
 
-		$this->Task->params['fixtures'] = 'app.post, app.comments , app.user ,';
+		$this->Task->params['fixtures'] = 'app.posts, app.comments , app.users ,';
 		$result = $this->Task->bake('Table', 'Articles');
 
 		$this->assertContains('public $fixtures = [', $result);
-		$this->assertContains('app.post', $result);
+		$this->assertContains('app.posts', $result);
 		$this->assertContains('app.comments', $result);
-		$this->assertContains('app.user', $result);
+		$this->assertContains('app.users', $result);
 		$this->assertNotContains("''", $result);
 	}
 
@@ -393,7 +393,7 @@ class TestTaskTest extends TestCase {
 		$this->assertNotContains('function tearDown()', $result);
 		$this->assertNotContains('unset($this->Posts)', $result);
 
-		$this->assertContains("'app.post'", $result);
+		$this->assertContains("'app.posts'", $result);
 	}
 
 /**

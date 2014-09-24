@@ -28,7 +28,7 @@ use Cake\TestSuite\TestCase;
 class CollectionTest extends TestCase {
 
 	public $fixtures = [
-		'core.user'
+		'core.users'
 	];
 
 /**

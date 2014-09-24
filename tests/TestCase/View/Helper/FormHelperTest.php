@@ -118,7 +118,7 @@ class FormHelperTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.article', 'core.comment');
+	public $fixtures = array('core.articles', 'core.comments');
 
 /**
  * Do not load the fixtures by default
@@ -294,7 +294,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateContextSelectionBuiltIn($data, $class) {
-		$this->loadFixtures('Article');
+		$this->loadFixtures('Articles');
 		$this->Form->create($data);
 		$this->assertInstanceOf($class, $this->Form->context());
 	}
@@ -3683,7 +3683,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHabtmSelectBox() {
-		$this->loadFixtures('Article');
+		$this->loadFixtures('Articles');
 		$options = array(
 			1 => 'blue',
 			2 => 'red',
@@ -5973,7 +5973,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testMultiRecordForm() {
-		$this->loadFixtures('Article', 'Comment');
+		$this->loadFixtures('Articles', 'Comments');
 		$articles = TableRegistry::get('Articles');
 		$articles->hasMany('Comments');
 

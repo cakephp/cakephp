@@ -46,7 +46,7 @@ class PaginatorComponentTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.post');
+	public $fixtures = array('core.posts');
 
 /**
  * Don't load data for fixtures for all tests
@@ -147,7 +147,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateCustomFinderOptions() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Posts');
 		$settings = [
 			'PaginatorPosts' => [
 				'finder' => ['author' => ['author_id' => 1]]
@@ -469,7 +469,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testOutOfRangePageNumberGetsClamped() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Posts');
 		$this->request->query['page'] = 3000;
 
 		$table = TableRegistry::get('PaginatorPosts');
@@ -492,7 +492,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testOutOfVeryBigPageNumberGetsClamped() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Posts');
 		$this->request->query = [
 			'page' => '3000000000000000000000000',
 		];
@@ -660,7 +660,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateMaxLimit() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Posts');
 		$table = TableRegistry::get('PaginatorPosts');
 
 		$settings = [
@@ -687,7 +687,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateCustomFind() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Posts');
 		$idExtractor = function ($result) {
 			$ids = [];
 			foreach ($result as $record) {
@@ -740,7 +740,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateCustomFindOldOption() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Posts');
 		$table = TableRegistry::get('PaginatorPosts');
 		$this->Paginator->paginate($table, ['findType' => 'published']);
 	}
@@ -751,7 +751,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateCustomFindFieldsArray() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Posts');
 		$table = TableRegistry::get('PaginatorPosts');
 		$data = array('author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
 		$table->save(new \Cake\ORM\Entity($data));

@@ -35,7 +35,7 @@ class DigestAuthenticateTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.user', 'core.auth_user');
+	public $fixtures = array('core.users', 'core.auth_users');
 
 /**
  * setup

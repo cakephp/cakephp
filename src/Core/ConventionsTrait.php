@@ -40,7 +40,7 @@ trait ConventionsTrait {
  * @return string Singular model key
  */
 	protected function _fixtureName($name) {
-		return Inflector::underscore(Inflector::singularize($name));
+		return Inflector::underscore($name);
 	}
 
 /**

@@ -49,7 +49,7 @@ class ProtectedArticle extends Entity {
  */
 class MarshallerTest extends TestCase {
 
-	public $fixtures = ['core.tag', 'core.articles_tag', 'core.article', 'core.user', 'core.comment'];
+	public $fixtures = ['core.tags', 'core.articles_tags', 'core.articles', 'core.users', 'core.comments'];
 
 /**
  * setup

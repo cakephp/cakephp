@@ -34,7 +34,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.article', 'core.comment'];
+	public $fixtures = ['core.articles', 'core.comments'];
 
 /**
  * Don't autoload fixtures as most tests uses mocks.
