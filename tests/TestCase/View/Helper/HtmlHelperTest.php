@@ -448,7 +448,7 @@ class HtmlHelperTest extends TestCase {
 		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
 
 		$testfile = WWW_ROOT . 'test_theme/img/__cake_test_image.gif';
-		new File($testfile, true);
+		$File = new File($testfile, true);
 
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', true);
@@ -471,6 +471,7 @@ class HtmlHelperTest extends TestCase {
 				'alt' => ''
 		));
 		$this->assertHtml($expected, $result);
+		$File->delete();
 	}
 
 /**
@@ -1020,7 +1021,7 @@ class HtmlHelperTest extends TestCase {
 		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
 
 		$testfile = WWW_ROOT . '/test_theme/js/__test_js.js';
-		new File($testfile, true);
+		$File = new File($testfile, true);
 
 		$this->Html->Url->request->webroot = '/';
 		$this->Html->Url->theme = 'TestTheme';
@@ -1029,6 +1030,7 @@ class HtmlHelperTest extends TestCase {
 			'script' => array('src' => '/test_theme/js/__test_js.js')
 		);
 		$this->assertHtml($expected, $result);
+		$File->delete();
 	}
 
 /**
