@@ -12,7 +12,6 @@
  * @since         0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Cake\I18n\I18n;

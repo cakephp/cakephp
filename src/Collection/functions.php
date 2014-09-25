@@ -12,6 +12,7 @@
  * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Collection\Collection;
 
 if (!function_exists('collection')) {
 
