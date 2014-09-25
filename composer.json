@@ -34,7 +34,10 @@
 		"psr-4": {
 			"Cake\\": "src"
 		},
-		"files": ["src/Core/functions.php"]
+		"files": [
+			"src/Core/functions.php",
+			"src/Collection/functions.php"
+		]
 	},
 	"autoload-dev": {
 		"psr-4": {

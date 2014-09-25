@@ -12,7 +12,6 @@
  * @since         0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Cake\I18n\I18n;
@@ -241,20 +240,6 @@ if (!function_exists('__x')) {
 
 		$arguments = func_num_args() === 3 ? (array)$args : array_slice(func_get_args(), 2);
 		return I18n::translator()->translate($singular, ['_context' => $context] + $arguments);
-	}
-
-}
-
-if (!function_exists('collection')) {
-
-/**
- * Returns a new Cake\Collection\Collection object wrapping the passed argument
- *
- * @param \Traversable|array $items The items from which the collection will be built
- * @return \Cake\Collection\Collection
- */
-	function collection($items) {
-		return new Collection($items);
 	}
 
 }
