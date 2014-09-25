@@ -121,8 +121,7 @@ class TemplateTaskTest extends TestCase {
 		$this->Task->initialize();
 		$this->Task->params['template'] = 'test';
 		$this->Task->set(array(
-			'name' => 'Article',
-			'model' => 'Article',
+			'name' => 'Articles',
 			'table' => 'articles',
 			'import' => false,
 			'records' => false,
@@ -130,6 +129,6 @@ class TemplateTaskTest extends TestCase {
 			'namespace' => ''
 		));
 		$result = $this->Task->generate('classes', 'fixture');
-		$this->assertRegExp('/ArticleFixture extends .*TestFixture/', $result);
+		$this->assertRegExp('/ArticlesFixture extends .*TestFixture/', $result);
 	}
 }

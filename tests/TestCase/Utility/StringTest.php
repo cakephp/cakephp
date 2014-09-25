@@ -1425,7 +1425,7 @@ podeís adquirirla.</span></p>
 	}
 
 /**
- * testFromReadableSize
+ * testparseFileSizeException
  *
  * @expectedException InvalidArgumentException
  * @return void
