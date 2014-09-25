@@ -29,7 +29,7 @@ Additionally, this package provides a few traits and classes you can use in your
 
 ## Connections
 
-This library also contains a couple utility classes meant to create and manage connection objects. Connections
+This library also contains a couple of utility classes meant to create and manage connection objects. Connections
 are typically used in repositories for interfacing with the actual data source system.
 
 The `ConnectionManager` class acts as a registry to access database connections your application has. It provides
