@@ -22,7 +22,7 @@ use Psr\Log\LoggerInterface;
  * LogInterface is the interface that should be implemented
  * by all classes that are going to be used as Log streams.
  *
- * @deprecated
+ * @deprecated 3.0.0-beta1 Will be removed in 3.0.0 stable.
  */
 interface LogInterface extends LoggerInterface {
 
