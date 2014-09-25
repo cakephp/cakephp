@@ -240,7 +240,7 @@ abstract class IntegrationTestCase extends TestCase {
  * @param array|null $data The request data.
  * @return void
  */
-	protected function _sendRequest($url, $method, $data = null) {
+	protected function _sendRequest($url, $method, $data = []) {
 		$request = $this->_buildRequest($url, $method, $data);
 		$response = new Response();
 		$dispatcher = DispatcherFactory::create();
