@@ -636,6 +636,7 @@ class Inflector {
  *
  * @param string $className Name of class to get database table name for
  * @return string Name of the database table for given class
+ * @deprecated 3.0.0 Use Inflector::underscore() instead.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::tableize
  */
 	public static function tableize($className) {
