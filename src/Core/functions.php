@@ -154,7 +154,6 @@ if (!function_exists('pj')) {
 
 }
 
-}
 if (!function_exists('env')) {
 
 /**
