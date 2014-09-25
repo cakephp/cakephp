@@ -119,7 +119,6 @@ if (!function_exists('pr')) {
  *
  * @param mixed $var Variable to print out
  * @return void
- * @see debug()
  * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pr
  * @see debug()
  */
@@ -139,16 +138,16 @@ if (!function_exists('pj')) {
  *
  * @param mixed $var Variable to print out
  * @return mixed void|string
- * @see debug()
  * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
  * @see debug()
  */
 	
 	function pj($var) {
-		if (php_sapi_name() === 'cli')
+		if (php_sapi_name() === 'cli') {
 			return json_encode($var, JSON_PRETTY_PRINT);
-		else if (Configure::read('debug')) {
-			printf(json_encode($var, JSON_PRETTY_PRINT));
+		}
+		if (Configure::read('debug')) {
+			echo json_encode($var, JSON_PRETTY_PRINT);
 		}
 	}
 
