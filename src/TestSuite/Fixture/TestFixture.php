@@ -139,6 +139,10 @@ class TestFixture {
 	protected function _schemaFromFields() {
 		$this->_schema = new Table($this->table);
 		foreach ($this->fields as $field => $data) {
+			if (isset($data['null']) && $data['null'] === false && array_key_exists('default', $data) && $data['default'] === null) {
+				$msg = 'You must set a non-null default value for `\'null\' => false`.';
+				trigger_error($msg, E_USER_NOTICE);
+			}
 			if ($field === '_constraints' || $field === '_indexes' || $field === '_options') {
 				continue;
 			}
