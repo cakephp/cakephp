@@ -1,12 +1,12 @@
 # CakePHP Datasource Library
 
 This library contains interfaces for implementing Repositories and Entities using any data source,
-a class for managing connections to any datasource and traits to help you implement quickly the
+a class for managing connections to datasources and traits to help you quickly implement the
 interfaces provided by this package.
 
 ## Repositories
 
-A repository is a class capable of interfacing with a data source by using operations such as
+A repository is a class capable of interfacing with a data source using operations such as
 `find`, `save` and  `delete` by using intermediate query objects for expressing commands to
 the data store and returning Entities as the single result unit of such system.
 
@@ -29,34 +29,38 @@ Additionally, this package provides a few traits and classes you can use in your
 
 ## Connections
 
-This library also contains a couple of utility classes meant to create and manage connection objects. Connections
-are typically used in repositories for interfacing with the actual data source system.
+This library contains a couple of utility classes meant to create and manage
+connection objects. Connections are typically used in repositories for
+interfacing with the actual data source system.
 
-The `ConnectionManager` class acts as a registry to access database connections your application has. It provides
-a place that other objects can get references to existing connections. Creating connections with the `ConnectionManager`
-is easy:
+The `ConnectionManager` class acts as a registry to access database connections
+your application has. It provides a place that other objects can get references
+to existing connections. Creating connections with the `ConnectionManager` is
+easy:
 
 ```php
 use Cake\Datasource\ConnectionManager;
 
 ConnectionManager::config('master', [
     'className' => 'MyApp\Connections\CustomConnection',
-	'param1' => 'value',
-	'param2' => 'another value'
+    'param1' => 'value',
+    'param2' => 'another value'
 ]);
 
 ConnectionManager::config('slave', [
     'className' => 'MyApp\Connections\CustomConnection',
-	'param1' => 'different value',
-	'param2' => 'another value'
+    'param1' => 'different value',
+    'param2' => 'another value'
 ]);
 ```
 
-When requested, the `ConnectionManager` will instantiate `MyApp\Connections\CustomConnection` by passing
-`param1` and `param2` inside an array as the first argument of the constructor.
+When requested, the `ConnectionManager` will instantiate
+`MyApp\Connections\CustomConnection` by passing `param1` and `param2` inside an
+array as the first argument of the constructor.
 
-Once configured connections can be fetched using `ConnectionManager::get()`. This method will
-construct and load a connection if it has not been built before, or return the existing known connection:
+Once configured connections can be fetched using `ConnectionManager::get()`.
+This method will construct and load a connection if it has not been built
+before, or return the existing known connection:
 
 ```php
 use Cake\Datasource\ConnectionManager;
@@ -73,5 +77,3 @@ $conn = ConnectionManager::config('other', $connectionInstance);
 ## Documentation
 
 Please make sure you check the [official API documentation](http://api.cakephp.org/3.0/namespace-Cake.Datasource.html)
-
-
