@@ -15,7 +15,6 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
-use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use Memcached;
 
@@ -100,10 +99,6 @@ class MemcachedEngine extends CacheEngine {
 	public function init(array $config = []) {
 		if (!class_exists('Memcached')) {
 			return false;
-		}
-
-		if (!isset($config['prefix'])) {
-			$config['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
 
 		$this->_serializers = [
