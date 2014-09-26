@@ -278,8 +278,7 @@ class Time extends Carbon implements JsonSerializable {
 		}
 
 		if ($diff > abs($now - (new static($end))->format('U'))) {
-			$absoluteTime = new static($inSeconds);
-			return sprintf($absoluteString, $absoluteTime->i18nFormat($format));
+			return sprintf($absoluteString, $this->i18nFormat($format));
 		}
 
 		// If more than a week, then take into account the length of months
