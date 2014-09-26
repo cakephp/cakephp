@@ -138,7 +138,7 @@ class PluginTask extends BakeTask {
 			$out .= "class AppController extends BaseController {\n\n";
 			$out .= "}\n";
 			$this->createFile($this->path . $plugin . DS . $classBase . DS . 'Controller' . DS . $controllerFileName, $out);
-			$emptyFile = $this->path  . 'empty';
+			$emptyFile = $this->path . 'empty';
 			$this->_deleteEmptyFile($emptyFile);
 
 			$hasAutoloader = $this->_modifyAutoloader($plugin, $this->path);
