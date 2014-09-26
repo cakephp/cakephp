@@ -97,7 +97,7 @@ class EagerLoader {
  * @param array|string $associations list of table aliases to be queried.
  * When this method is called multiple times it will merge previous list with
  * the new one.
- * @return array|void
+ * @return array Containments.
  */
 	public function contain($associations = []) {
 		if (empty($associations)) {
