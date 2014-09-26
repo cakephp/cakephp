@@ -14,8 +14,6 @@
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
-use Cake\Shell\Task\TemplateTask;
-use Cake\Shell\Task\TestTask;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -24,6 +22,8 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\Shell\Task\TemplateTask;
+use Cake\Shell\Task\TestTask;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\PostsController;
 use TestApp\Model\Table\ArticlesTable;

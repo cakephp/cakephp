@@ -34,6 +34,7 @@ class StringObject {
 	public function __toString() {
 		return 'Hey!';
 	}
+	
 }
 
 /**

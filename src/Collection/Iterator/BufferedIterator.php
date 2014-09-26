@@ -56,14 +56,14 @@ class BufferedIterator extends Collection implements Countable {
  * Whether or not the internal iterator's rewind method was already
  * called
  *
- * @var boolean
+ * @var bool
  */
 	protected $_started = false;
 
 /**
  * Whether or not the internal iterator has reached its end.
  *
- * @var boolean
+ * @var bool
  */
 	protected $_finished = false;
 
@@ -114,7 +114,7 @@ class BufferedIterator extends Collection implements Countable {
 /**
  * Returns whether or not the iterator has more elements
  *
- * @return boolean
+ * @return bool
  */
 	public function valid() {
 		if ($this->_buffer->offsetExists($this->_index)) {

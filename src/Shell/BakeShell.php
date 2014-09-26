@@ -17,10 +17,10 @@ namespace Cake\Shell;
 use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use Cake\Core\ConventionsTrait;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Model\Model;
-use Cake\Core\ConventionsTrait;
 use Cake\Utility\Inflector;
 
 /**

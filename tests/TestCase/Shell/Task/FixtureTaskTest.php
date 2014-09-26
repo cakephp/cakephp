@@ -14,11 +14,11 @@
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
-use Cake\Shell\Task\FixtureTask;
-use Cake\Shell\Task\TemplateTask;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
+use Cake\Shell\Task\FixtureTask;
+use Cake\Shell\Task\TemplateTask;
 use Cake\TestSuite\TestCase;
 
 /**

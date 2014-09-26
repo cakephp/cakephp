@@ -14,8 +14,8 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\TupleComparison;
 
 /**
  * Represents a type of association that that can be fetched using another query

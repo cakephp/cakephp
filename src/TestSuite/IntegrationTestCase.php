@@ -19,8 +19,8 @@ use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
-use Cake\TestSuite\TestCase;
 use Cake\TestSuite\Stub\Response;
+use Cake\TestSuite\TestCase;
 
 /**
  * A test case class intended to make integration tests of
