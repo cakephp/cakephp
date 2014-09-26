@@ -124,9 +124,6 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testGetTable() {
-		$result = $this->Task->getTable('BakeArticle');
-		$this->assertEquals('bake_articles', $result);
-
 		$result = $this->Task->getTable('BakeArticles');
 		$this->assertEquals('bake_articles', $result);
 
@@ -1008,7 +1005,7 @@ class ModelTaskTest extends TestCase {
  */
 	public static function nameVariations() {
 		return array(
-			array('BakeArticles'), array('BakeArticle'), array('bake_article'), array('bake_articles')
+			array('BakeArticles'), array('bake_articles')
 		);
 	}
 

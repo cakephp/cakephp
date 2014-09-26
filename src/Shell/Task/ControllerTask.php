@@ -51,12 +51,12 @@ class ControllerTask extends BakeTask {
 		if (empty($name)) {
 			$this->out('Possible controllers based on your current database:');
 			foreach ($this->listAll() as $table) {
-				$this->out('- ' . $this->_controllerName($table));
+				$this->out('- ' . $this->_camelize($table));
 			}
 			return true;
 		}
 
-		$controller = $this->_controllerName($name);
+		$controller = $this->_camelize($name);
 		$this->bake($controller);
 	}
 

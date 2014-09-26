@@ -108,7 +108,7 @@ class ViewTask extends BakeTask {
 			$this->out('Possible tables to bake views for based on your current database:');
 			$this->Model->connection = $this->connection;
 			foreach ($this->Model->listAll() as $table) {
-				$this->out('- ' . $this->_controllerName($table));
+				$this->out('- ' . $this->_camelize($table));
 			}
 			return true;
 		}
@@ -149,7 +149,7 @@ class ViewTask extends BakeTask {
  * @return void
  */
 	public function model($table) {
-		$tableName = $this->_controllerName($table);
+		$tableName = $this->_camelize($table);
 		$plugin = null;
 		if (!empty($this->params['plugin'])) {
 			$plugin = $this->params['plugin'] . '.';
@@ -165,7 +165,7 @@ class ViewTask extends BakeTask {
  * @return void
  */
 	public function controller($table, $controller = null) {
-		$tableName = $this->_controllerName($table);
+		$tableName = $this->_camelize($table);
 		if (empty($controller)) {
 			$controller = $tableName;
 		}

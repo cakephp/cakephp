@@ -213,7 +213,7 @@ class BakeShell extends Shell {
 			$this->{$task}->connection = $this->connection;
 		}
 
-		$name = $this->_modelName($name);
+		$name = $this->_camelize($name);
 
 		$this->Model->bake($name);
 		$this->Controller->bake($name);
