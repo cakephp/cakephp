@@ -209,6 +209,8 @@ class TestTask extends BakeTask {
 		$out = $this->Template->generate('classes', 'test');
 
 		$filename = $this->testCaseFileName($type, $fullClassName);
+		$emptyFile = $this->getPath() . $this->getSubspacePath($type) . DS . 'empty';
+		$this->_deleteEmptyFile($emptyFile);
 		if ($this->createFile($filename, $out)) {
 			return $out;
 		}
@@ -270,6 +272,22 @@ class TestTask extends BakeTask {
 			$class .= $suffix;
 		}
 		return $namespace . '\\' . $subSpace . '\\' . $class;
+	}
+
+/**
+ * Gets the subspace path for a test.
+ *
+ * @param string $type The Type of object you are generating tests for eg. controller.
+ * @return string Path of the subspace.
+ */
+	public function getSubspacePath($type) {
+		$namespace = Configure::read('App.namespace');
+		if ($this->plugin) {
+			$namespace = $this->plugin;
+		}
+		$suffix = $this->classSuffixes[strtolower($type)];
+		$subspace = $this->mapType($type);
+		return str_replace('\\', DS, $subspace);
 	}
 
 /**
