@@ -2152,4 +2152,26 @@ class QueryTest extends TestCase {
 		$this->assertEquals($authorId, $resultWithAuthor->first()['author']['id']);
 	}
 
+/**
+ * Tests that it is possible to pass a custom join type for an association when
+ * using contain
+ *
+ * @return void
+ */
+	public function testContainWithCustomJoinType() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors');
+
+		$articles = $table->find()
+			->contain([
+				'Authors' => [
+					'joinType' => 'inner',
+					'conditions' => ['Authors.id' => 3]
+				]
+			])
+			->toArray();
+		$this->assertCount(1, $articles);
+		$this->assertEquals(3, $articles[0]->author->id);
+	}
+
 }
