@@ -208,7 +208,7 @@ class TestTask extends BakeTask {
 		));
 		$out = $this->Template->generate('classes', 'test');
 
-		$filename = $this->testCaseFileName($type, $fullClassName);
+		$filename = $this->testCaseFileName($fullClassName);
 		$emptyFile = $this->getPath() . $this->getSubspacePath($type) . DS . 'empty';
 		$this->_deleteEmptyFile($emptyFile);
 		if ($this->createFile($filename, $out)) {
@@ -497,11 +497,10 @@ class TestTask extends BakeTask {
  * Make the filename for the test case. resolve the suffixes for controllers
  * and get the plugin path if needed.
  *
- * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $className The fully qualified classname of the class the test is being generated for.
  * @return string filename the test should be created on.
  */
-	public function testCaseFileName($type, $className) {
+	public function testCaseFileName($className) {
 		$path = $this->getPath();
 		$namespace = Configure::read('App.namespace');
 		if ($this->plugin) {
