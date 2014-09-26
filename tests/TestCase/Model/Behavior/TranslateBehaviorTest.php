@@ -18,9 +18,18 @@ use Cake\Collection\Collection;
 use Cake\Event\Event;
 use Cake\I18n\I18n;
 use Cake\Model\Behavior\TranslateBehavior;
+use Cake\Model\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+
+/**
+ * Stub entity class
+ */
+class Article extends Entity {
+
+	use TranslateTrait;
+}
 
 /**
  * Translate behavior test case
@@ -756,6 +765,33 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertCount(3, $all);
 		$article = $all->first();
 		$this->assertNotEmpty($article->get('_translations'));
+	}
+
+/**
+ * Tests that multiple translations saved when having a default locale
+ * are correclty saved
+ *
+ * @return void
+ */
+	public function testSavingWithNonDefaultLocale() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->entityClass(__NAMESPACE__ . '\Article');
+		I18n::locale('fra');
+		$translations = [
+			'fra' => ['title' => 'Un article'],
+			'spa' => ['title' => 'Un artículo']
+		];
+
+		$article = $table->get(1);
+		foreach ($translations as $lang => $data) {
+			$article->translation($lang)->set($data, ['guard' => false]);
+		}
+
+		$table->save($article);
+		$article = $table->find('translations')->where(['Articles.id' => 1])->first();
+		$this->assertEquals('Un article', $article->translation('fra')->title);
+		$this->assertEquals('Un artículo', $article->translation('spa')->title);
 	}
 
 }

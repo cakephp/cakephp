@@ -173,6 +173,7 @@ class TranslateBehavior extends Behavior {
 		$options['associated'] = $newOptions + $options['associated'];
 
 		$this->_bundleTranslatedFields($entity);
+		$bundled = $entity->get('_i18n') ?: [];
 
 		if ($locale === $this->config('defaultLocale')) {
 			return;
@@ -204,7 +205,7 @@ class TranslateBehavior extends Behavior {
 			]);
 		}
 
-		$entity->set('_i18n', array_values($modified + $new));
+		$entity->set('_i18n', array_merge($bundled, array_values($modified + $new)));
 		$entity->set('_locale', $locale, ['setter' => false]);
 		$entity->dirty('_locale', false);
 
