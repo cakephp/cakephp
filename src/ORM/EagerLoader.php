@@ -58,7 +58,8 @@ class EagerLoader {
 		'sort' => 1,
 		'matching' => 1,
 		'queryBuilder' => 1,
-		'finder' => 1
+		'finder' => 1,
+		'joinType' => 1
 	];
 
 /**
@@ -93,6 +94,7 @@ class EagerLoader {
  * - queryBuilder: Equivalent to passing a callable instead of an options array
  * - matching: Whether to inform the association class that it should filter the
  *  main query by the results fetched by that class.
+ * - joinType: For joinable associations, the SQL join type to use.
  *
  * @param array|string $associations list of table aliases to be queried.
  * When this method is called multiple times it will merge previous list with
