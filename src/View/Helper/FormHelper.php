@@ -14,9 +14,9 @@
  */
 namespace Cake\View\Helper;
 
+use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
-use Cake\Collection\Collection;
 use Cake\ORM\Entity;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;

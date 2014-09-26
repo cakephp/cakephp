@@ -15,8 +15,8 @@
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Cache\Cache;
-use Cake\Shell\OrmCacheShell;
 use Cake\Datasource\ConnectionManager;
+use Cake\Shell\OrmCacheShell;
 use Cake\TestSuite\TestCase;
 
 /**

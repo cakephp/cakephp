@@ -64,7 +64,10 @@ class ConsoleLogTest extends TestCase {
  * test default value of stream 'outputAs'
  */
 	public function testDefaultOutputAs() {
-		if (DS === '\\' && !(bool)env('ANSICON')) {
+		if (
+			(DS === '\\' && !(bool)env('ANSICON')) ||
+			(function_exists('posix_isatty') && !posix_isatty(null))
+		) {
 			$expected = ConsoleOutput::PLAIN;
 		} else {
 			$expected = ConsoleOutput::COLOR;

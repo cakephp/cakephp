@@ -14,10 +14,10 @@
  */
 namespace Cake\Cache;
 
+use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
 use RuntimeException;
-use BadMethodCallException;
 
 /**
  * An object registry for cache engines.

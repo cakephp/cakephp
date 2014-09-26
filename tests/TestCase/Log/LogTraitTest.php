@@ -42,7 +42,7 @@ class LogTraitTest extends TestCase {
 
 		$mock->expects($this->at(1))
 			->method('log')
-			->with('debug',array(1, 2));
+			->with('debug', array(1, 2));
 
 		Log::config('trait_test', ['engine' => $mock]);
 		$subject = $this->getObjectForTrait('Cake\Log\LogTrait');

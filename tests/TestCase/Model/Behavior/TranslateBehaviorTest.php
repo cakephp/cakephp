@@ -175,7 +175,6 @@ class TranslateBehaviorTest extends TestCase {
 			]
 		];
 		$this->assertSame($expected, $results);
-
 	}
 
 /**

@@ -61,7 +61,7 @@ class BufferedIteratorTest extends TestCase {
 		$buffered = $iterator->toArray();
 		$this->assertSame((array)$items, $buffered);
 
-		$iterator =  new BufferedIterator(new NoRewindIterator($items->getIterator()));
+		$iterator = new BufferedIterator(new NoRewindIterator($items->getIterator()));
 		$this->assertCount(3, $iterator);
 		$buffered = $iterator->toArray();
 		$this->assertSame((array)$items, $buffered);

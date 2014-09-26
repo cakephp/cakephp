@@ -14,8 +14,8 @@
  */
 namespace Cake\Datasource;
 
-use Cake\Datasource\ResultSetInterface;
 use Cake\Collection\Collection;
+use Cake\Datasource\ResultSetInterface;
 
 /**
  * Generic ResultSet decorator. This will make any traversable object appear to
