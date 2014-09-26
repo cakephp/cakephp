@@ -125,7 +125,7 @@ if (!function_exists('pr')) {
 	function pr($var) {
 		if (Configure::read('debug')) {
 			$template = php_sapi_name() !== 'cli' ? '<pre>%s</pre>' : "\n%s\n";
-			printf($template, print_r($var, true));
+			return sprintf($template, print_r($var, true));
 		}
 	}
 
@@ -147,7 +147,7 @@ if (!function_exists('pj')) {
 			return json_encode($var, JSON_PRETTY_PRINT);
 		}
 		if (Configure::read('debug')) {
-			echo json_encode($var, JSON_PRETTY_PRINT);
+			return json_encode($var, JSON_PRETTY_PRINT);
 		}
 	}
 
