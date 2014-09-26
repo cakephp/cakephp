@@ -365,7 +365,7 @@ class Hash {
 				if (empty($data[$k])) {
 					unset($data[$k]);
 				}
-			} elseif ($match) {
+			} elseif ($match && empty($nextPath)) {
 				unset($data[$k]);
 			}
 		}

@@ -1100,6 +1100,26 @@ class PostgresTest extends CakeTestCase {
 	}
 
 /**
+ * Test that postgres describes UUID columns correctly.
+ *
+ * @return void
+ */
+	public function testDescribeUuid() {
+		$db = $this->Dbo;
+		$db->execute('CREATE TABLE test_uuid_describe (id UUID PRIMARY KEY, name VARCHAR(255))');
+		$data = $db->describe('test_uuid_describe');
+
+		$expected = array(
+			'type' => 'string',
+			'null' => false,
+			'default' => null,
+			'length' => 36,
+		);
+		$this->assertSame($expected, $data['id']);
+		$db->execute('DROP TABLE test_uuid_describe');
+	}
+
+/**
  * Test describe() behavior for timestamp columns.
  *
  * @return void

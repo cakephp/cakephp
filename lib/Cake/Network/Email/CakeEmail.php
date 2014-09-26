@@ -66,6 +66,13 @@ class CakeEmail {
 	const MESSAGE_TEXT = 'text';
 
 /**
+ * Holds the regex pattern for email validation
+ *
+ * @var string
+ */
+	const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui';
+
+/**
  * Recipient of the email
  *
  * @var array
@@ -320,7 +327,7 @@ class CakeEmail {
  *
  * @var string
  */
-	protected $_emailPattern = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui';
+	protected $_emailPattern = self::EMAIL_PATTERN;
 
 /**
  * The class name used for email configuration.
@@ -1291,7 +1298,7 @@ class CakeEmail {
 		$this->headerCharset = null;
 		$this->_attachments = array();
 		$this->_config = array();
-		$this->_emailPattern = null;
+		$this->_emailPattern = self::EMAIL_PATTERN;
 		return $this;
 	}
 
