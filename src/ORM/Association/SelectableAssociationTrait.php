@@ -224,20 +224,12 @@ trait SelectableAssociationTrait {
 			$filterQuery->offset(null);
 		}
 
-		$joins = $filterQuery->join();
-		foreach ($joins as $i => $join) {
-			if (strtolower($join['type']) !== 'inner') {
-				unset($joins[$i]);
-			}
-		}
-
 		$keys = (array)$query->repository()->primaryKey();
 
 		if ($this->type() === $this::MANY_TO_ONE) {
 			$keys = (array)$this->foreignKey();
 		}
 
-		$filterQuery->join($joins, [], true);
 		$fields = $query->aliasFields($keys);
 		return $filterQuery->select($fields, true);
 	}
