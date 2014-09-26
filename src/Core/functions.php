@@ -143,10 +143,7 @@ if (!function_exists('pj')) {
  */
 	
 	function pj($var) {
-		if (php_sapi_name() === 'cli') {
-			return json_encode($var, JSON_PRETTY_PRINT);
-		}
-		if (Configure::read('debug')) {
+		if (Configure::read('debug') || php_sapi_name() === 'cli') {
 			return json_encode($var, JSON_PRETTY_PRINT);
 		}
 	}
