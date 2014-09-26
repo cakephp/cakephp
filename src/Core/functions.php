@@ -119,32 +119,34 @@ if (!function_exists('pr')) {
  *
  * @param mixed $var Variable to print out
  * @return string|void
- * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pr
  * @see debug()
+ * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pr
  */
 	function pr($var) {
-		if (Configure::read('debug')) {
-			$template = php_sapi_name() !== 'cli' ? '<pre>%s</pre>' : "\n%s\n";
-			return sprintf($template, print_r($var, true));
+		if (Configure::read('debug') || php_sapi_name() == 'cli') {
+			$template = php_sapi_name() == 'cli' ? "\n%s\n\n" : '<pre>%s</pre>';
+			return printf($template, trim(print_r($var, true)));
 		}
 	}
 
 }
 
+
 if (!function_exists('pj')) {
 
 /**
- * json pretty print convenience function
+ * json pretty print convenience function. Similar to pr().
  *
  * @param mixed $var Variable to print out
- * @return string|void
+ * @return mixed string|void
+ * @see pr()
  * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
- * @see debug()
  */
 	
 	function pj($var) {
-		if (Configure::read('debug') || php_sapi_name() === 'cli') {
-			return json_encode($var, JSON_PRETTY_PRINT);
+		if (Configure::read('debug') || php_sapi_name() == 'cli') {
+			$template = php_sapi_name() == 'cli' ? "\n%s\n\n" : '%s';
+			return printf($template, trim(json_encode($var, JSON_PRETTY_PRINT)));
 		}
 	}
 
