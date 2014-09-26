@@ -226,7 +226,7 @@ class ViewTaskTest extends TestCase {
 		$this->assertEquals('Articles', $this->Task->modelName);
 
 		$this->Task->model('NotThere');
-		$this->assertEquals('NotTheres', $this->Task->modelName);
+		$this->assertEquals('NotThere', $this->Task->modelName);
 	}
 
 /**
@@ -629,7 +629,7 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public static function nameVariations() {
-		return [['ViewTaskComments'], ['ViewTaskComment'], ['view_task_comment']];
+		return [['ViewTaskComments'], ['view_task_comments']];
 	}
 
 /**

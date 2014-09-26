@@ -150,7 +150,7 @@ class FixtureTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename, $this->stringContains("public \$table = 'comments';"));
 
-		$this->Task->main('article');
+		$this->Task->main('articles');
 	}
 
 /**
@@ -168,7 +168,7 @@ class FixtureTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename, $this->stringContains('class ArticlesFixture'));
 
-		$this->Task->main('TestPlugin.Article');
+		$this->Task->main('TestPlugin.Articles');
 	}
 
 /**
@@ -280,7 +280,7 @@ class FixtureTaskTest extends TestCase {
 				$this->stringContains('public $records'),
 				$this->logicalNot($this->stringContains('public $import'))
 			));
-		$result = $this->Task->main('Article');
+		$result = $this->Task->main('Articles');
 	}
 
 /**

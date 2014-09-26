@@ -325,7 +325,7 @@ class ControllerTaskTest extends TestCase {
  */
 	public static function nameVariations() {
 		return array(
-			array('BakeArticles'), array('BakeArticle'), array('bake_article'), array('bake_articles')
+			array('BakeArticles'), array('bake_articles')
 		);
 	}
 

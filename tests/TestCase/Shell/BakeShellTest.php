@@ -91,7 +91,7 @@ class BakeShellTest extends TestCase {
 
 		$this->Shell->connection = '';
 		$this->Shell->params = [];
-		$this->Shell->all('Comment');
+		$this->Shell->all('Comments');
 	}
 
 /**
