@@ -34,6 +34,7 @@ class StringObject {
 	public function __toString() {
 		return 'Hey!';
 	}
+
 }
 
 /**
@@ -50,6 +51,7 @@ class JsonObject implements JsonSerializable {
 	public function jsonSerialize() {
 		return ['hello' => 'world'];
 	}
+
 }
 
 /**
