@@ -67,6 +67,7 @@ class ControllerTask extends BakeTask {
  */
 	public function all() {
 		foreach ($this->listAll() as $table) {
+			TableRegistry::clear();
 			$this->main($table);
 		}
 	}

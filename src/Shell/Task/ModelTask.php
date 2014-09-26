@@ -129,6 +129,7 @@ class ModelTask extends BakeTask {
 			if (in_array($table, $this->skipTables)) {
 				continue;
 			}
+			TableRegistry::clear();
 			$this->main($table);
 		}
 	}
