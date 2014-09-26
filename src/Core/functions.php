@@ -138,7 +138,7 @@ if (!function_exists('pj')) {
  * json pretty print convenience function. Similar to pr().
  *
  * @param mixed $var Variable to print out
- * @return mixed string|void
+ * @return string|void
  * @see pr()
  * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
  */
