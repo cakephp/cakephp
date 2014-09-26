@@ -66,7 +66,7 @@ use LogicException;
  *   applies to all actions.
  * - `beforeRender(Event $event)`
  *   Called before the view is rendered.
- * - `beforeRedirect(Cake\Event\Event $event $url, Cake\Network\Response $response)`
+ * - `beforeRedirect(Event $event, $url, Response $response)`
  *    Called before a redirect is done.
  * - `afterFilter(Event $event)`
  *   Called after each action is complete and after the view is rendered.
