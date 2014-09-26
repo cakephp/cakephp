@@ -5255,6 +5255,42 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test textareas waxlength read from schema.
+ *
+ * @return void
+ */
+	public function testTextAreaMaxLength() {
+		$this->Form->create([
+			'schema' => [
+				'stuff' => ['type' => 'string', 'length' => 10],
+			]
+		]);
+		$result = $this->Form->input('other', array('type' => 'textarea'));
+		$expected = array(
+			'div' => array('class' => 'input textarea'),
+				'label' => array('for' => 'other'),
+					'Other',
+				'/label',
+				'textarea' => array('name' => 'other', 'id' => 'other'),
+				'/textarea',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('stuff', array('type' => 'textarea'));
+		$expected = array(
+			'div' => array('class' => 'input textarea'),
+				'label' => array('for' => 'stuff'),
+					'Stuff',
+				'/label',
+				'textarea' => array('name' => 'stuff', 'maxlength' => 10, 'id' => 'stuff'),
+				'/textarea',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * testHiddenField method
  *
  * @return void
@@ -5993,7 +6029,6 @@ class FormHelperTest extends TestCase {
 				'/label',
 				'textarea' => array(
 					'name',
-					'type',
 					'id' => '0-comments-1-comment',
 				),
 				'/textarea',
@@ -6009,7 +6044,6 @@ class FormHelperTest extends TestCase {
 				'/label',
 				'textarea' => array(
 					'name',
-					'type',
 					'id' => '0-comments-0-comment'
 				),
 				'Value',
@@ -6027,7 +6061,6 @@ class FormHelperTest extends TestCase {
 				'/label',
 				'textarea' => array(
 					'name',
-					'type',
 					'class' => 'form-error',
 					'id' => '0-comments-0-comment'
 				),
@@ -6051,7 +6084,6 @@ class FormHelperTest extends TestCase {
 				'/label',
 				'textarea' => array(
 					'name',
-					'type',
 					'required' => 'required',
 					'id' => '0-comments-1-comment'
 				),

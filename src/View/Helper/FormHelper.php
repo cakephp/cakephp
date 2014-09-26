@@ -1141,9 +1141,9 @@ class FormHelper extends Helper {
 			&& !empty($fieldDef['length'])
 			&& $options['type'] !== 'select';
 
-		$allowedTypes = ['text', 'email', 'tel', 'url', 'search'];
+		$allowedTypes = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
 		if ($autoLength && in_array($options['type'], $allowedTypes)) {
-			$options['maxlength'] = $fieldDef['length'];
+			$options['maxlength'] = min($fieldDef['length'], 100000);
 		}
 
 		if (in_array($options['type'], ['datetime', 'date', 'time', 'select'])) {
@@ -1360,6 +1360,7 @@ class FormHelper extends Helper {
  */
 	public function textarea($fieldName, array $options = array()) {
 		$options = $this->_initInputField($fieldName, $options);
+		unset($options['type']);
 		return $this->widget('textarea', $options);
 	}
 

@@ -23,7 +23,6 @@
 	<strong>File</strong>
 	<?= h($error->getFile()); ?>
 	<br>
-
 	<strong>Line: </strong>
 	<?= h($error->getLine()); ?>
 </p>
