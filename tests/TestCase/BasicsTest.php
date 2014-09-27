@@ -399,61 +399,11 @@ EXPECTED;
 	}
 
 /**
- * test pr()
- *
- * @return void
- */
-	public function testPrCli() {
-		$this->skipIf(php_sapi_name() != 'cli', 'Skipping cli test in web mode');
-
-		$result = pr(123);
-		$expected = "\n123\n\n";
-		$this->assertEquals($expected, $result);
-
-		$result = pr('123');
-		$expected = "\n123\n\n";
-		$this->assertEquals($expected, $result);
-
-		$result = pr('this is a test');
-		$expected = "\nthis is a test\n\n";
-		$this->assertEquals($expected, $result);
-
-		$result = pr(['this' => 'is', 'a' => 'test', 123 => 456]);
-		$expected = "\nArray\n(\n    [this] => is\n    [a] => test\n    [123] => 456\n)\n\n";
-		$this->assertEquals($expected, $result);
-	}
-	
-/**
  * test pj()
  *
  * @return void
  */
 	public function testPj() {
-		$result = pj(123);
-		$expected = "\n123\n\n";
-		$this->assertEquals($expected, $result);
-	
-		$result = pj('123');
-		$expected = "\n\"123\"\n\n";
-		$this->assertEquals($expected, $result);
-
-		$result = pj('this is a test');
-		$expected = "\n\"this is a test\"\n\n";
-		$this->assertEquals($expected, $result);
-
-		$result = pj(['this' => 'is', 'a' => 'test', 123 => 456]);
-		$expected = "\n{\n    \"this\" => \"is\",\n    \"a\" => \"test\",\n    \"123\" => 456\n}\n\n";
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test pj()
- *
- * @return void
- */
-	public function testPjCli() {
-		$this->skipIf(php_sapi_name() != 'cli', 'Skipping cli test in web mode');
-
 		$result = pj(123);
 		$expected = "\n123\n\n";
 		$this->assertEquals($expected, $result);
