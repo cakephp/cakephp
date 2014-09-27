@@ -303,3 +303,34 @@ if (!function_exists('__dx')) {
 	}
 
 }
+
+if (!function_exists('__dxn')) {
+
+/**
+ * Returns correct plural form of message identified by $singular and $plural for count $count.
+ * Allows you to override the current domain for a single message lookup.
+ * The context is a unique identifier for the translations string that makes it unique
+ * for in the same domain.
+ *
+ * @param string $domain Domain
+ * @param string $context Context of the text
+ * @param string $singular Singular text to translate
+ * @param string $plural Plural text
+ * @param int $count Count
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return mixed plural form of translated string
+ * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__dxn
+ */
+	function __dxn($domain, $context, $singular, $plural, $count, $args = null) {
+		if (!$singular) {
+			return;
+		}
+
+		$arguments = func_num_args() === 6 ? (array)$args : array_slice(func_get_args(), 2);
+		return I18n::translator($domain)->translate(
+			$singular,
+			['_count' => $count, '_singular' => $singular, '_context' => $context] + $arguments
+		);
+	}
+
+}
