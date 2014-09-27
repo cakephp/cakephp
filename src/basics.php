@@ -226,6 +226,8 @@ if (!function_exists('__x')) {
 
 /**
  * Returns a translated string if one is found; Otherwise, the submitted message.
+ * The context is a unique identifier for the translations string that makes it unique
+ * for in the same domain.
  *
  * @param string $context Context of the text
  * @param string $singular Text to translate
@@ -240,6 +242,36 @@ if (!function_exists('__x')) {
 
 		$arguments = func_num_args() === 3 ? (array)$args : array_slice(func_get_args(), 2);
 		return I18n::translator()->translate($singular, ['_context' => $context] + $arguments);
+	}
+
+}
+
+if (!function_exists('__xn')) {
+
+/**
+ * Returns correct plural form of message identified by $singular and $plural for count $count.
+ * Some languages have more than one form for plural messages dependent on the count.
+ * The context is a unique identifier for the translations string that makes it unique
+ * for in the same domain.
+ *
+ * @param string $context Context of the text
+ * @param string $singular Singular text to translate
+ * @param string $plural Plural text
+ * @param int $count Count
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return mixed plural form of translated string
+ * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__xn
+ */
+	function __xn($context, $singular, $plural, $count, $args = null) {
+		if (!$singular) {
+			return;
+		}
+
+		$arguments = func_num_args() === 5 ? (array)$args : array_slice(func_get_args(), 2);
+		return I18n::translator()->translate(
+			$singular,
+			['_count' => $count, '_singular' => $singular, '_context' => $context] + $arguments
+		);
 	}
 
 }
