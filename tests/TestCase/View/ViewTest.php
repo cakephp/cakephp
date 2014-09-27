@@ -921,6 +921,23 @@ class ViewTest extends TestCase {
 	}
 
 /**
+ * Test loading helper when duplicate.
+ *
+ * @return void
+ */
+	public function testLoadHelperDuplicate() {
+		$View = new View();
+
+		$this->assertNotEmpty($View->loadHelper('Html', ['foo' => 'bar']));
+		try {
+			$View->loadHelper('Html', ['test' => 'value']);
+			$this->fail('No exception');
+		} catch (\RuntimeException $e) {
+			$this->assertContains('The "Html" helper has already been loaded', $e->getMessage());
+		}
+	}
+
+/**
  * Test loadHelpers method
  *
  * @return void

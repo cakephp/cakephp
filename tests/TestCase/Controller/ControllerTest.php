@@ -812,7 +812,7 @@ class ControllerTest extends TestCase {
  *
  * @return void
  */
-	public function testAddComponent() {
+	public function testLoadComponent() {
 		$request = new Request('/');
 		$response = $this->getMock('Cake\Network\Response');
 
@@ -824,5 +824,26 @@ class ControllerTest extends TestCase {
 		$registry = $controller->components();
 		$this->assertTrue(isset($registry->Paginator));
 	}
+
+/**
+ * Test adding a component that is a duplicate.
+ *
+ * @return void
+ */
+	public function testLoadComponentDuplicate() {
+		$request = new Request('/');
+		$response = $this->getMock('Cake\Network\Response');
+
+		$controller = new TestController($request, $response);
+		$this->assertNotEmpty($controller->loadComponent('Paginator'));
+		$this->assertNotEmpty($controller->loadComponent('Paginator'));
+		try {
+			$controller->loadComponent('Paginator', ['bad' => 'settings']);
+			$this->fail('No exception');
+		} catch (\RuntimeException $e) {
+			$this->assertContains('The "Paginator" component has already been loaded', $e->getMessage());
+		}
+	}
+
 
 }

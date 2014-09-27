@@ -30,6 +30,7 @@ use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\View\ViewVarsTrait;
 use LogicException;
+use RuntimeException;
 
 /**
  * Application controller class for organization of business logic.
@@ -347,7 +348,17 @@ class Controller implements EventListener {
  */
 	public function loadComponent($name, array $config = []) {
 		list(, $prop) = pluginSplit($name);
-		$this->{$prop} = $this->components()->load($name, $config);
+		$components = $this->components();
+
+		if (isset($components->$name) && $config && $components->$name->config() !== $config) {
+			$msg = sprintf(
+				'The "%s" component has already been loaded with the following config: %s',
+				$name,
+				var_export($components->{$name}->config(), true)
+			);
+			throw new RuntimeException($msg);
+		}
+		$this->{$prop} = $components->load($name, $config);
 		return $this->{$prop};
 	}
 

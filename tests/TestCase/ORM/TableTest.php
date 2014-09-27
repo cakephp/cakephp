@@ -1070,6 +1070,23 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test adding a behavior that is a duplicate.
+ *
+ * @return void
+ */
+	public function testAddBehaviorDuplicate() {
+		$table = new Table(['table' => 'articles']);
+		$this->assertNull($table->addBehavior('Sluggable', ['test' => 'value']));
+		$this->assertNull($table->addBehavior('Sluggable', ['test' => 'value']));
+		try {
+			$table->addBehavior('Sluggable');
+			$this->fail('No exception raised');
+		} catch (\RuntimeException $e) {
+			$this->assertContains('The "Sluggable" behavior has already been loaded', $e->getMessage());
+		}
+	}
+
+/**
  * Test removing a behavior from a table.
  *
  * @return void
