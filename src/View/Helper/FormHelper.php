@@ -381,10 +381,9 @@ class FormHelper extends Helper {
 			$options['url']['action'] = $options['action'];
 		}
 
-		$plugin = $this->plugin ? Inflector::underscore($this->plugin) : null;
 		$actionDefaults = [
-			'plugin' => $plugin,
-			'controller' => Inflector::underscore($this->request->params['controller']),
+			'plugin' => $this->plugin,
+			'controller' => $this->request->params['controller'],
 			'action' => $this->request->params['action'],
 		];
 
