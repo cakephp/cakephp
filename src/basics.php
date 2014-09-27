@@ -275,3 +275,31 @@ if (!function_exists('__xn')) {
 	}
 
 }
+
+if (!function_exists('__dx')) {
+
+/**
+ * Allows you to override the current domain for a single message lookup.
+ * The context is a unique identifier for the translations string that makes it unique
+ * for in the same domain.
+ *
+ * @param string $domain Domain
+ * @param string $context Context of the text
+ * @param string $msg String to translate
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return string translated string
+ * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__dx
+ */
+	function __dx($domain, $context, $msg, $args = null) {
+		if (!$msg) {
+			return;
+		}
+
+		$arguments = func_num_args() === 4 ? (array)$args : array_slice(func_get_args(), 2);
+		return I18n::translator($domain)->translate(
+			$msg,
+			['_context' => $context] + $arguments
+		);
+	}
+
+}

@@ -329,6 +329,32 @@ class I18nTest extends TestCase {
 	}
 
 /**
+ * Tests the __dx() function
+ *
+ * @return void
+ */
+	public function testDomainContextFunction() {
+		I18n::translator('custom', 'en_US', function () {
+			$package = new Package('default');
+			$package->setMessages([
+				'letter' => [
+					'_context' => [
+						'character' => 'The letter {0}',
+						'communication' => 'She wrote a letter to {0}'
+					]
+				]
+			]);
+			return $package;
+		});
+
+		$this->assertEquals('The letter A', __dx('custom', 'character', 'letter', ['A']));
+		$this->assertEquals(
+			'She wrote a letter to Thomas',
+			__dx('custom', 'communication', 'letter', ['Thomas'])
+		);
+	}
+
+/**
  * Tests that translators are cached for performance
  *
  * @return void
