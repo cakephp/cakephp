@@ -845,5 +845,4 @@ class ControllerTest extends TestCase {
 		}
 	}
 
-
 }
