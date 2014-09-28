@@ -516,11 +516,11 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertHtml($expected, $result);
 
-		$this->Form->request['controller'] = 'pages';
+		$this->Form->request['controller'] = 'Pages';
 		$result = $this->Form->create($this->article, array('action' => 'signup'));
 		$expected = array(
 			'form' => array(
-				'method' => 'post', 'action' => '/pages/signup/1',
+				'method' => 'post', 'action' => '/Pages/signup/1',
 				'accept-charset' => $encoding
 			),
 			'div' => array('style' => 'display:none;'),
