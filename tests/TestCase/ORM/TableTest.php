@@ -1079,10 +1079,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($table->addBehavior('Sluggable', ['test' => 'value']));
 		$this->assertNull($table->addBehavior('Sluggable', ['test' => 'value']));
 		try {
-			$table->addBehavior('Sluggable');
+			$table->addBehavior('Sluggable', ['thing' => 'thing']);
 			$this->fail('No exception raised');
 		} catch (\RuntimeException $e) {
-			$this->assertContains('The "Sluggable" behavior has already been loaded', $e->getMessage());
+			$this->assertContains('The "Sluggable" alias has already been loaded', $e->getMessage());
 		}
 	}
 

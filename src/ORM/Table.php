@@ -503,16 +503,7 @@ class Table implements RepositoryInterface, EventListener {
  * @see \Cake\ORM\Behavior
  */
 	public function addBehavior($name, array $options = []) {
-		$behaviors = $this->_behaviors;
-		if (isset($behaviors->$name) && $behaviors->{$name}->config() !== $options) {
-			$msg = sprintf(
-				'The "%s" behavior has already been loaded with the following config: %s',
-				$name,
-				var_export($behaviors->{$name}->config(), true)
-			);
-			throw new RuntimeException($msg);
-		}
-		$behaviors->load($name, $options);
+		$this->_behaviors->load($name, $options);
 	}
 
 /**

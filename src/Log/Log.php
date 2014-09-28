@@ -180,7 +180,9 @@ class Log {
 			if (isset($properties['engine'])) {
 				$properties['className'] = $properties['engine'];
 			}
-			static::$_registry->load($name, $properties);
+			if (!static::$_registry->loaded($name)) {
+				static::$_registry->load($name, $properties);
+			}
 		}
 	}
 

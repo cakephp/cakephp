@@ -29,7 +29,6 @@ use Cake\View\CellTrait;
 use Cake\View\ViewVarsTrait;
 use InvalidArgumentException;
 use LogicException;
-use RuntimeException;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
@@ -780,14 +779,6 @@ class View {
 	public function loadHelper($name, array $config = []) {
 		list(, $class) = pluginSplit($name);
 		$helpers = $this->helpers();
-		if ($helpers->loaded($class) && $config && $helpers->$class->config() !== $config) {
-			$msg = sprintf(
-				'The "%s" helper has already been loaded with the following config: %s',
-				$name,
-				var_export($helpers->{$class}->config(), true)
-			);
-			throw new RuntimeException($msg);
-		}
 		return $this->{$class} = $helpers->load($name, $config);
 	}
 
