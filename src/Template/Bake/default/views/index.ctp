@@ -55,6 +55,8 @@ $displayFieldVar = "\${$singularVar}->{$displayField}";
 <?php	if ($isAssociation == false) : ?>
 <?php		if (!in_array($field, $schema->primaryKey()) && in_array($schema->columnType($field), ['integer', 'biginteger', 'decimal', 'float'])) : ?>
 				<td><?= "<?= \$this->Number->format(\${$singularVar}->{$field}) ?>" ?></td>
+<?php		elseif ($schema->columnType($field) == 'boolean') : ?>
+				<td><?= "<?= \${$singularVar}->{$field} ? __('True') : __('False') ?>" ?></td>
 <?php		else : ?>
 				<td><?= "<?= h(\${$singularVar}->{$field}) ?>" ?></td>
 <?php		endif ?>
