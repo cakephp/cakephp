@@ -37,28 +37,30 @@ if (empty($plugin)) {
 }
 
 ?>
+<section class="error">
 <h2>Missing Controller</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('<em>%sController</em> could not be found.', h($pluginDot . $class)); ?>
+	<?= sprintf('<em>%sController</em> could not be found.', h($pluginDot . $class)) ?>
 </p>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('Create the class <em>%sController</em> below in file: %s', h($class), $path); ?>
+	<?= sprintf('Create the class <em>%sController</em> below in file: %s', h($class), $path) ?>
 </p>
 <pre>
 &lt;?php
-namespace <?= h($namespace); ?>\Controller<?= h($prefixNs); ?>;
+namespace <?= h($namespace) ?>\Controller<?= h($prefixNs) ?>;
 
-use <?= h($namespace); ?>\Controller\AppController;
+use <?= h($namespace) ?>\Controller\AppController;
 
-class <?= h($class) . 'Controller extends'; ?> AppController {
+class <?= h($class) . 'Controller extends' ?> AppController {
 
 }
 </pre>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_controller.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)) ?>
 </p>
 
-<?= $this->element('exception_stack_trace'); ?>
+<?= $this->element('exception_stack_trace') ?>
+</section>

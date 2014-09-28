@@ -17,10 +17,11 @@ use Cake\Routing\Router;
 use Cake\Error\Debugger;
 
 ?>
+<section class="error">
 <h2>Missing Route</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= $error->getMessage(); ?>
+	<?= $error->getMessage() ?>
 </p>
 
 <p class="notice">None of the currently connected routes match the given URL or parameters.
@@ -45,6 +46,7 @@ endforeach;
 
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_route.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)) ?>
 </p>
-<?= $this->element('exception_stack_trace'); ?>
+<?= $this->element('exception_stack_trace') ?>
+</section>

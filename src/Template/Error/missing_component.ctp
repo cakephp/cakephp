@@ -28,10 +28,11 @@ if (!empty($plugin) && !Plugin::loaded($plugin)) {
 	$filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
 }
 ?>
+<section class="error">
 <h2>Missing Component</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('<em>%s</em> could not be found.', h($pluginDot . $class)); ?>
+	<?= sprintf('<em>%s</em> could not be found.', h($pluginDot . $class)) ?>
 	<?php
 		if (!empty($plugin) && !Plugin::loaded($plugin)):
 			echo sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded.', h($plugin), $pluginPath);
@@ -40,17 +41,18 @@ if (!empty($plugin) && !Plugin::loaded($plugin)) {
 </p>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'Controller' . DS . 'Component' . DS . h($class) . '.php'); ?>
+	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'Controller' . DS . 'Component' . DS . h($class) . '.php') ?>
 </p>
 <pre>
 &lt;?php
-class <?= h($class); ?> extends Component {
+class <?= h($class) ?> extends Component {
 
 }
 </pre>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_component.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)) ?>
 </p>
 
-<?= $this->element('exception_stack_trace'); ?>
+<?= $this->element('exception_stack_trace') ?>
+</section>

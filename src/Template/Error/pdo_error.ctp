@@ -14,10 +14,11 @@
  */
 use Cake\Error\Debugger;
 ?>
+<section class="error">
 <h2>Database Error</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= $message; ?>
+	<?= $message ?>
 </p>
 <p class="notice">
 	If you are using SQL keywords as table column names, you can enable identifier
@@ -26,16 +27,17 @@ use Cake\Error\Debugger;
 <?php if (!empty($error->queryString)) : ?>
 	<p class="notice">
 		<strong>SQL Query: </strong>
-		<?= h($error->queryString); ?>
+		<?= h($error->queryString) ?>
 	</p>
-<?php endif; ?>
+<?php endif ?>
 <?php if (!empty($error->params)) : ?>
 		<strong>SQL Query Params: </strong>
-		<?= Debugger::dump($error->params); ?>
-<?php endif; ?>
-<?= $this->element('auto_table_warning'); ?>
+		<?= Debugger::dump($error->params) ?>
+<?php endif ?>
+<?= $this->element('auto_table_warning') ?>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'pdo_error.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)) ?>
 </p>
-<?= $this->element('exception_stack_trace'); ?>
+<?= $this->element('exception_stack_trace') ?>
+</section>

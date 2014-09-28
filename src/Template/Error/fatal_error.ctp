@@ -14,19 +14,22 @@
  */
 
 ?>
+<section class="error">
 <h2>Fatal Error</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= h($error->getMessage()); ?>
+	<?= h($error->getMessage()) ?>
 	<br>
 
 	<strong>File</strong>
-	<?= h($error->getFile()); ?>
+	<?= h($error->getFile()) ?>
 	<br>
+
 	<strong>Line: </strong>
-	<?= h($error->getLine()); ?>
+	<?= h($error->getLine()) ?>
 </p>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'fatal_error.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'fatal_error.ctp') ?>
 </p>
+</section>

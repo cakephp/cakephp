@@ -14,14 +14,16 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
+<section class="error">
 <h2>Missing Datasource Configuration</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('The datasource configuration <em>%s</em> was not found in %s.', h($name), 'config' . DS . 'app.php'); ?>
+	<?= sprintf('The datasource configuration <em>%s</em> was not found in %s.', h($name), 'config' . DS . 'app.php') ?>
 </p>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_datasource_config.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)) ?>
 </p>
 
-<?= $this->element('exception_stack_trace'); ?>
+<?= $this->element('exception_stack_trace') ?>
+</section>
