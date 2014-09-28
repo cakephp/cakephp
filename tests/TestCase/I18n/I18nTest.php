@@ -283,10 +283,116 @@ class I18nTest extends TestCase {
 			]);
 			return $package;
 		});
+
 		$this->assertEquals('The letter A', __x('character', 'letter', ['A']));
 		$this->assertEquals(
 			'She wrote a letter to Thomas',
 			__x('communication', 'letter', ['Thomas'])
+		);
+	}
+
+/**
+ * Tests the __xn() function
+ *
+ * @return void
+ */
+	public function testPluralContextFunction() {
+		I18n::translator('default', 'en_US', function () {
+			$package = new Package('default');
+			$package->setMessages([
+				'letter' => [
+					'_context' => [
+						'character' => [
+							'The letter {0}',
+							'The letters {0} and {1}'
+						],
+						'communication' => [
+							'She wrote a letter to {0}',
+							'She wrote a letter to {0} and {1}'
+						]
+					]
+				]
+			]);
+			return $package;
+		});
+		$this->assertEquals('The letters A and B', __xn('character', 'letter', 'letters', 2, ['A', 'B']));
+		$this->assertEquals('The letter A', __xn('character', 'letter', 'letters', 1, ['A']));
+
+		$this->assertEquals(
+			'She wrote a letter to Thomas and Sara',
+			__xn('communication', 'letter', 'letters', 2, ['Thomas', 'Sara'])
+		);
+		$this->assertEquals(
+			'She wrote a letter to Thomas',
+			__xn('communication', 'letter', 'letters', 1, ['Thomas'])
+		);
+	}
+
+/**
+ * Tests the __dx() function
+ *
+ * @return void
+ */
+	public function testDomainContextFunction() {
+		I18n::translator('custom', 'en_US', function () {
+			$package = new Package('default');
+			$package->setMessages([
+				'letter' => [
+					'_context' => [
+						'character' => 'The letter {0}',
+						'communication' => 'She wrote a letter to {0}'
+					]
+				]
+			]);
+			return $package;
+		});
+
+		$this->assertEquals('The letter A', __dx('custom', 'character', 'letter', ['A']));
+		$this->assertEquals(
+			'She wrote a letter to Thomas',
+			__dx('custom', 'communication', 'letter', ['Thomas'])
+		);
+	}
+
+/**
+ * Tests the __dxn() function
+ *
+ * @return void
+ */
+	public function testDomainPluralContextFunction() {
+		I18n::translator('custom', 'en_US', function () {
+			$package = new Package('default');
+			$package->setMessages([
+				'letter' => [
+					'_context' => [
+						'character' => [
+							'The letter {0}',
+							'The letters {0} and {1}'
+						],
+						'communication' => [
+							'She wrote a letter to {0}',
+							'She wrote a letter to {0} and {1}'
+						]
+					]
+				]
+			]);
+			return $package;
+		});
+		$this->assertEquals(
+			'The letters A and B',
+			__dxn('custom', 'character', 'letter', 'letters', 2, ['A', 'B'])
+		);
+		$this->assertEquals(
+			'The letter A',
+			__dxn('custom', 'character', 'letter', 'letters', 1, ['A']));
+
+		$this->assertEquals(
+			'She wrote a letter to Thomas and Sara',
+			__dxn('custom', 'communication', 'letter', 'letters', 2, ['Thomas', 'Sara'])
+		);
+		$this->assertEquals(
+			'She wrote a letter to Thomas',
+			__dxn('custom', 'communication', 'letter', 'letters', 1, ['Thomas'])
 		);
 	}
 
