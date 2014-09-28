@@ -14,6 +14,8 @@
  */
 namespace Cake\Core;
 
+use RuntimeException;
+
 /**
  * Acts as a registry/factory for objects.
  *
@@ -65,9 +67,14 @@ abstract class ObjectRegistry {
  */
 	public function load($objectName, $config = []) {
 		list($plugin, $name) = pluginSplit($objectName);
-		if (isset($this->_loaded[$name])) {
+		$loaded = isset($this->_loaded[$name]);
+		if ($loaded && !empty($config)) {
+			$this->_checkDuplicate($name, $config);
+		}
+		if ($loaded) {
 			return $this->_loaded[$name];
 		}
+
 		if (is_array($config) && isset($config['className'])) {
 			$objectName = $config['className'];
 		}
@@ -79,6 +86,41 @@ abstract class ObjectRegistry {
 		$instance = $this->_create($className, $name, $config);
 		$this->_loaded[$name] = $instance;
 		return $instance;
+	}
+
+/**
+ * Check for duplicate object loading.
+ *
+ * If a duplicate is being loaded and has different configuration, that is
+ * bad and an exception will be raised.
+ *
+ * An exception is raised, as replacing the object will not update any
+ * references other objects may have. Additionally, simply updating the runtime
+ * configuration is not a good option as we may be missing important constructor
+ * logic dependent on the configuration.
+ *
+ * @param string $name The name of the alias in the registry.
+ * @param array $config The config data for the new instance.
+ * @return void
+ * @throws \RuntimeException When a duplicate is found.
+ */
+	protected function _checkDuplicate($name, $config) {
+		$existing = $this->_loaded[$name];
+		$msg = sprintf('The "%s" alias has already been loaded', $name);
+		$hasConfig = false;
+		if (method_exists($existing, 'config')) {
+			$hasConfig = true;
+		}
+		if (!$hasConfig) {
+			throw new RuntimeException($msg);
+		}
+		unset($config['enabled']);
+		if ($hasConfig && array_diff_assoc($config, $existing->config()) != []) {
+			$msg .= ' with the following config: ';
+			$msg .= var_export($this->{$name}->config(), true);
+			$msg .= ' which differs from ' . var_export($config, true);
+			throw new RuntimeException($msg);
+		}
 	}
 
 /**

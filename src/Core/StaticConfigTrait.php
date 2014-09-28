@@ -107,7 +107,7 @@ trait StaticConfigTrait {
 		if (!isset(static::$_config[$config])) {
 			return false;
 		}
-		if (isset(static::$_registry) && isset(static::$_registry->{$config})) {
+		if (isset(static::$_registry)) {
 			static::$_registry->unload($config);
 		}
 		unset(static::$_config[$config]);

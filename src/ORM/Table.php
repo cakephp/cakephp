@@ -34,6 +34,7 @@ use Cake\ORM\Exception\RecordNotFoundException;
 use Cake\ORM\Marshaller;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
+use RuntimeException;
 
 /**
  * Represents a single database table.
@@ -498,6 +499,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param string $name The name of the behavior. Can be a short class reference.
  * @param array $options The options for the behavior to use.
  * @return void
+ * @throws \RuntimeException If a behavior is being reloaded.
  * @see \Cake\ORM\Behavior
  */
 	public function addBehavior($name, array $options = []) {
