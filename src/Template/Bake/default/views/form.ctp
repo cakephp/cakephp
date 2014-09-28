@@ -20,7 +20,7 @@ $primaryKeyVar = "\${$singularVar}->{$primaryKey[0]}";
 <?php if ($action == 'edit') : ?>
 	<nav class="actions">
 		<ul>
-			<li><?= "<?= \$this->Html->link(__('View'), ['action' => 'view', {$primaryKeyVar}], ['title' => __('Edit {0}', h(\${$singularVar}->{$displayField}))]) ?>" ?></li>
+			<li><?= "<?= \$this->Html->link(__('View'), ['action' => 'view', {$primaryKeyVar}], ['title' => __('View {0}', h(\${$singularVar}->{$displayField}))]) ?>" ?></li>
 			<li><?= "<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', {$primaryKeyVar}], ['title' => __('Delete {0}', h(\${$singularVar}->{$displayField})), 'confirm' => __('Are you sure you want to delete # {0}?', {$primaryKeyVar})]) ?>" ?></li>
 		</ul>
 	</nav>
