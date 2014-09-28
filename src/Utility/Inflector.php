@@ -679,7 +679,7 @@ class Inflector {
 	}
 
 /**
- * Returns a string with all spaces converted to underscores (by default), accented
+ * Returns a string with all spaces converted to dashes (by default), accented
  * characters converted to non-accented characters, and non word characters removed.
  *
  * @param string $string the string you want to slug
@@ -687,7 +687,7 @@ class Inflector {
  * @return string
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::slug
  */
-	public static function slug($string, $replacement = '_') {
+	public static function slug($string, $replacement = '-') {
 		$quotedReplacement = preg_quote($replacement, '/');
 
 		$map = array(

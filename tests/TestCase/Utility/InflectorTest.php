@@ -249,18 +249,18 @@ class InflectorTest extends TestCase {
  */
 	public function testInflectorSlug() {
 		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more');
-		$expected = 'Foo_Bar_Not_just_for_breakfast_any_more';
-		$this->assertEquals($expected, $result);
-
-		$result = Inflector::slug('this/is/a/path');
-		$expected = 'this_is_a_path';
-		$this->assertEquals($expected, $result);
-
-		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more', "-");
 		$expected = 'Foo-Bar-Not-just-for-breakfast-any-more';
 		$this->assertEquals($expected, $result);
 
-		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more', "+");
+		$result = Inflector::slug('this/is/a/path');
+		$expected = 'this-is-a-path';
+		$this->assertEquals($expected, $result);
+
+		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more', '_');
+		$expected = 'Foo_Bar_Not_just_for_breakfast_any_more';
+		$this->assertEquals($expected, $result);
+
+		$result = Inflector::slug('Foo Bar: Not just for breakfast any-more', '+');
 		$expected = 'Foo+Bar+Not+just+for+breakfast+any+more';
 		$this->assertEquals($expected, $result);
 
@@ -293,7 +293,7 @@ class InflectorTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Inflector::slug('controller/action/りんご/1');
-		$expected = 'controller_action_りんご_1';
+		$expected = 'controller-action-りんご-1';
 		$this->assertEquals($expected, $result);
 
 		$result = Inflector::slug('の話が出たので大丈夫かなあと');
@@ -301,11 +301,11 @@ class InflectorTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Inflector::slug('posts/view/한국어/page:1/sort:asc');
-		$expected = 'posts_view_한국어_page_1_sort_asc';
+		$expected = 'posts-view-한국어-page-1-sort-asc';
 		$this->assertEquals($expected, $result);
 
 		$result = Inflector::slug("non\xc2\xa0breaking\xc2\xa0space");
-		$this->assertEquals('non_breaking_space', $result);
+		$this->assertEquals('non-breaking-space', $result);
 	}
 
 /**
@@ -330,7 +330,7 @@ class InflectorTest extends TestCase {
 	public function testInflectorSlugWithMap() {
 		Inflector::rules('transliteration', array('r' => '1'));
 		$result = Inflector::slug('replace every r');
-		$expected = '1eplace_eve1y_1';
+		$expected = '1eplace-eve1y-1';
 		$this->assertEquals($expected, $result);
 
 		$result = Inflector::slug('replace every r', '_');
@@ -490,13 +490,13 @@ class InflectorTest extends TestCase {
  * @return void
  */
 	public function testCustomTransliterationRule() {
-		$this->assertEquals(Inflector::slug('Testing æ ø å'), 'Testing_ae_o_a');
+		$this->assertEquals(Inflector::slug('Testing æ ø å'), 'Testing-ae-o-a');
 
 		Inflector::rules('transliteration', array('å' => 'aa', 'ø' => 'oe'));
-		$this->assertEquals(Inflector::slug('Testing æ ø å'), 'Testing_ae_oe_aa');
+		$this->assertEquals(Inflector::slug('Testing æ ø å'), 'Testing-ae-oe-aa');
 
 		Inflector::rules('transliteration', array('æ' => 'ae', 'å' => 'aa'), true);
-		$this->assertEquals(Inflector::slug('Testing æ ø å'), 'Testing_ae_ø_aa');
+		$this->assertEquals(Inflector::slug('Testing æ ø å'), 'Testing-ae-ø-aa');
 	}
 
 /**
