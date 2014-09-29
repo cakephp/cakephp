@@ -39,7 +39,6 @@ define('LOG_ERROR', LOG_ERR);
 // Point app constants to the test app.
 define('APP', TEST_APP . 'TestApp' . DS);
 define('WWW_ROOT', TEST_APP . 'webroot' . DS);
-define('TESTS', TEST_APP . 'tests' . DS);
 define('CONFIG', TEST_APP . 'config' . DS);
 
 //@codingStandardsIgnoreStart
