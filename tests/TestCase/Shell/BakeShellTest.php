@@ -104,7 +104,7 @@ class BakeShellTest extends TestCase {
 			->method('out')
 			->with($this->stringContains('The following commands'));
 
-		$this->Shell->expects($this->exactly(19))
+		$this->Shell->expects($this->exactly(18))
 			->method('out');
 
 		$this->Shell->loadTasks();
