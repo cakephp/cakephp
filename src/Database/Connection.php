@@ -21,6 +21,8 @@ use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
+use Cake\Database\Schema\CachedCollection;
+use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\ValueBinder;
 
 /**
@@ -80,6 +82,13 @@ class Connection {
  * @var QueryLogger
  */
 	protected $_logger = null;
+
+/**
+ * The schema collection object
+ *
+ * @var \Cake\Database\Schema\Collection
+ */
+	protected $_schemaCollection;
 
 /**
  * Constructor.
@@ -280,12 +289,25 @@ class Connection {
 	}
 
 /**
- * Get a Schema\Collection object for this connection.
+ * Gets or sets a Schema\Collection object for this connection.
  *
+ * @param \Cake\Database\Schema\Collection $collection The schema collection object
  * @return \Cake\Database\Schema\Collection
  */
-	public function schemaCollection() {
-		return new \Cake\Database\Schema\Collection($this);
+	public function schemaCollection(SchemaCollection $collection = null) {
+		if ($collection !== null) {
+			return $this->_schemaCollection = $collection;
+		}
+
+		if ($this->_schemaCollection !== null) {
+			return $this->_schemaCollection;
+		}
+
+		if (!empty($this->_config['cacheMetadata'])) {
+			return $this->_schemaCollection = new CachedCollection($this, $this->_config['cacheMetadata']);
+		}
+
+		return $this->_schemaCollection = new SchemaCollection($this);
 	}
 
 /**
@@ -584,6 +606,7 @@ class Connection {
  * @return void
  */
 	public function cacheMetadata($cache) {
+		$this->_schemaCollection = null;
 		$this->_config['cacheMetadata'] = $cache;
 	}
 
