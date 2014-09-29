@@ -14,7 +14,12 @@
  */
 use Cake\Utility\Inflector;
 
+if (!defined('NL')) {
+	define('NL', "\n");
+}
+
 $primaryKeyVar = "\${$singularVar}->{$primaryKey[0]}";
+
 ?>
 <div class="<?= $pluralVar ?> form">
 <?php if ($action == 'edit') : ?>
@@ -25,29 +30,31 @@ $primaryKeyVar = "\${$singularVar}->{$primaryKey[0]}";
 		</ul>
 	</nav>
 <?php endif ?>
-	<?= "<?= \$this->Form->create(\${$singularVar}) ?> " . PHP_EOL ?>
+	<?= "<?= \$this->Form->create(\${$singularVar}) ?> " . NL ?>
 		<fieldset>
 			<legend><?= ($action == 'add')
 				? "<?= __('Add {0}', __('" . $singularHumanName . "')) ?>"
 				: "<?= __('Edit {0}', h(\${$singularVar}->{$displayField})) ?>" ?></legend>
 <?php foreach ($fields as $field) :?>
-<?php 	if (in_array($field, $primaryKey)) : continue; endif ?>
+<?php 	if (in_array($field, $primaryKey)) : ?>
+<?php		continue ?>
+<?php	endif ?>
 <?php 	if (isset($keyFields[$field])) : ?>
-			<?= "<?= \$this->Form->input('{$field}', ['options' => \${$keyFields[$field]}]) ?> " . PHP_EOL ?>
+			<?= "<?= \$this->Form->input('{$field}', ['options' => \${$keyFields[$field]}]) ?> " . NL ?>
 <?php 		continue ?>
 <?php 	endif  ?>
 <?php 	if (!in_array($field, ['created', 'modified'])) : ?>
-			<?= "<?= \$this->Form->input('{$field}') ?> " . PHP_EOL ?>
+			<?= "<?= \$this->Form->input('{$field}') ?> " . NL ?>
 <?php 	endif  ?>
 <?php endforeach  ?>
 <?php if (!empty($associations['BelongsToMany'])) : ?>
 <?php 	foreach ($associations['BelongsToMany'] as $assocName => $assocData) : ?>
-	 	   <?= "<?= \$this->Form->input('{$assocData['property']}._ids', ['options' => \${$assocData['variable']}]) ?> " . PHP_EOL ?>
+	 	   <?= "<?= \$this->Form->input('{$assocData['property']}._ids', ['options' => \${$assocData['variable']}]) ?> " . NL ?>
 <?php 	endforeach ?>
 <?php endif ?>
 		</fieldset>
-		<?= "<?= \$this->Form->button(__('Save')) ?> " . PHP_EOL ?>
-	<?= "<?= \$this->Form->end() ?> " . PHP_EOL ?>
+		<?= "<?= \$this->Form->button(__('Save')) ?> " . NL ?>
+	<?= "<?= \$this->Form->end() ?> " . NL ?>
 </div>
 <nav class="actions" id="actions_opened">
 	<h3><a href="#actions_opened"><?= "<?= __('Actions') ?>" ?></a><a href="#actions_closed" id="actions_closed" title="<?= "<?=__('Close Actions Menu')?>" ?>">X</a></h3>

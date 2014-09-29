@@ -14,14 +14,18 @@
  */
 use Cake\Utility\Inflector;
 
+if (!defined('NL')) {
+	define('NL', "\n");
+}
+
 $fields = collection($fields)
 	->filter(function($field) use ($schema) {
 		return !in_array($schema->columnType($field), ['binary', 'text']);
 	});
-	// ->take(7);
 $fieldCount = 0;
 $primaryKeyVar = "\${$singularVar}->{$primaryKey[0]}";
 $displayFieldVar = "\${$singularVar}->{$displayField}";
+
 ?>
 <div class="<?= $pluralVar ?> index">
 	<style type="text/css">
@@ -39,7 +43,7 @@ $displayFieldVar = "\${$singularVar}->{$displayField}";
 			</tr>
 		</thead>
 		<tbody>
-<?= "<?php foreach (\${$pluralVar} as \${$singularVar}): ?>" . PHP_EOL ?>
+<?= "<?php foreach (\${$pluralVar} as \${$singularVar}): ?>" . NL ?>
 			<tr>
 <?php foreach ($fields as $field) : ?>
 <?php	$isAssociation = false ?>
@@ -63,12 +67,12 @@ $displayFieldVar = "\${$singularVar}->{$displayField}";
 <?php	endif ?>
 <?php endforeach ?>
 				<td class="actions">
-					<?= "<?= \$this->Html->link(__('View'), ['action' => 'view', {$primaryKeyVar}], ['title' => __('View {0}', {$displayFieldVar})]) ?> " . PHP_EOL ?>
-					<?= "<?= \$this->Html->link(__('Edit'), ['action' => 'edit', {$primaryKeyVar}], ['title' => __('Edit {0}', {$displayFieldVar})]) ?> " . PHP_EOL ?>
-					<?= "<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', {$primaryKeyVar}], ['title' => __('Delete {0}', {$displayFieldVar}), 'confirm' => __('Are you sure you want to delete # {0}?', {$primaryKeyVar})]) ?> " . PHP_EOL ?>
+					<?= "<?= \$this->Html->link(__('View'), ['action' => 'view', {$primaryKeyVar}], ['title' => __('View {0}', {$displayFieldVar})]) ?> " . NL ?>
+					<?= "<?= \$this->Html->link(__('Edit'), ['action' => 'edit', {$primaryKeyVar}], ['title' => __('Edit {0}', {$displayFieldVar})]) ?> " . NL ?>
+					<?= "<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', {$primaryKeyVar}], ['title' => __('Delete {0}', {$displayFieldVar}), 'confirm' => __('Are you sure you want to delete # {0}?', {$primaryKeyVar})]) ?> " . NL ?>
 				</td>
 			</tr>
-<?= "<?php endforeach ?>" . PHP_EOL ?>
+<?= "<?php endforeach ?>" . NL ?>
 		</tbody>
 		<tfoot>
 			<tr class="pagination">
@@ -76,9 +80,9 @@ $displayFieldVar = "\${$singularVar}->{$displayField}";
 					<nav>
 						<h3>Paginator</h3>
 						<ul>
-							<?= "<?= \$this->Paginator->prev('◄ ' . __('Prev')) ?> " . PHP_EOL ?>
-							<?= "<?= \$this->Paginator->numbers() ?> " . PHP_EOL ?>
-							<?= "<?= \$this->Paginator->next(__('Next') . ' ►') ?> " . PHP_EOL ?>
+							<?= "<?= \$this->Paginator->prev('◄ ' . __('Prev')) ?> " . NL ?>
+							<?= "<?= \$this->Paginator->numbers() ?> " . NL ?>
+							<?= "<?= \$this->Paginator->next(__('Next') . ' ►') ?> " . NL ?>
 						</ul>
 					</nav>
 					<p><?= "<?= \$this->Paginator->counter() ?>" ?></p>

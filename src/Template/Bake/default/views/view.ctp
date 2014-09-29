@@ -15,6 +15,10 @@
 use Cake\Utility\Inflector;
 use Cake\Utility\String;
 
+if (!defined('NL')) {
+	define('NL', "\n");
+}
+
 $associations += ['BelongsTo' => [], 'HasOne' => [], 'HasMany' => [], 'BelongsToMany' => []];
 $immediateAssociations = $associations['BelongsTo'] + $associations['HasOne'];
 $associationFields = collection($fields)
@@ -31,9 +35,6 @@ $associationFields = collection($fields)
 	}, []);
 
 $groupedFields = collection($fields)
-	//	->filter(function($field) use ($schema) {
-	//		return $schema->columnType($field) !== 'binary';
-	//	})
 	->groupBy(function($field) use ($schema, $associationFields) {
 		if (in_array($field, $schema->primaryKey())) { // Offer parent_id support for trees?
 			return 'meta';
@@ -61,12 +62,6 @@ $groupedFields += ['number' => [], 'string' => [], 'boolean' => [], 'date' => []
 
 $primaryKeyVar = "\${$singularVar}->{$primaryKey[0]}";
 
-$dateFormat = 'YYYY-MM-dd';
-$dateTimeFormat = 'YYYY-MM-dd HH:mm:ss';
-$timeFormat = 'HH:mm:ss';
-$g0 = 'dl'; $g1 = '<' . $g0 . '>'; $g2 = '</' . $g0 . '>'; // field group tag
-$l0 = 'dt'; $l1 = '<' . $l0 . '>'; $l2 = '</' . $l0 . '>'; // field label tag
-$d0 = 'dd'; $d1 = '<' . $d0 . '>'; $d2 = '</' . $d0 . '>'; // field data tag
 ?>
 <article class="<?= $pluralVar ?> view">
 	<h2><?= "<?= h(\${$singularVar}->{$displayField}) ?>" ?></h2>
@@ -79,83 +74,83 @@ $d0 = 'dd'; $d1 = '<' . $d0 . '>'; $d2 = '</' . $d0 . '>'; // field data tag
 <?php if ($groupedFields['meta']) : ?>
 	<section class="meta" title="<?= __('Meta') ?>">
 		<h3><?= __('Meta')?></h3>
-		<?= $g1 . PHP_EOL ?>
+		<dl>
 <?php 	foreach ($groupedFields['meta'] as $field) : ?>
-			<?= $l1 ?><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?><?= $l2 . PHP_EOL ?>
-				<?= $d1 ?><?= "<?= h(\${$singularVar}->{$field}) ?>" ?><?= $d2 . PHP_EOL ?>
+			<dt><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></dt>
+				<dd><?= "<?= h(\${$singularVar}->{$field}) ?>" ?></dd>
 <?php 	endforeach ?>
-		<?= $g2 . PHP_EOL ?>
+		</dl>
 	</section>
 <?php endif ?>
 	<section class="strings" title="<?= __('Strings') ?>">
 		<h3><?= __('Strings')?></h3>
 <?php if ($groupedFields['string']) : ?>
-		<?= $g1 . PHP_EOL ?>
+		<dl>
 <?php 	foreach ($groupedFields['string'] as $field) : ?>
 <?php 		if (isset($associationFields[$field])) : $details = $associationFields[$field] ?>
-			<?= $l1 ?><?= "<?= __('" . Inflector::humanize($details['property']) . "') ?>" ?><?= $l2 . PHP_EOL ?>
-				<?= $d1 ?><?= "<?= \${$singularVar}->has('{$details['property']}') ? \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['property']}->{$details['primaryKey'][0]}]) : '' ?>" ?><?= $d2 . PHP_EOL ?>
+			<dt><?= "<?= __('" . Inflector::humanize($details['property']) . "') ?>" ?></dt>
+				<dd><?= "<?= \${$singularVar}->has('{$details['property']}') ? \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['property']}->{$details['primaryKey'][0]}]) : '' ?>" ?></dd>
 <?php 		else : ?>
-			<?= $l1 ?><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?><?= $l2 . PHP_EOL ?>
-				<?= $d1 ?><?= "<?= h(\${$singularVar}->{$field}) ?>" ?><?= $d2 . PHP_EOL ?>
+			<dt><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></dt>
+				<dd><?= "<?= h(\${$singularVar}->{$field}) ?>" ?></dd>
 <?php 		endif ?>
 <?php 	endforeach ?>
-		<?= $g2 . PHP_EOL ?>
+		</dl>
 	</section>
 <?php endif ?>
 <?php if ($groupedFields['number']) : ?>
 	<section class="numbers" title="<?= __('Numbers') ?>">
 		<h3><?= __('Numbers')?></h3>
-		<?= $g1 . PHP_EOL ?>
+		<dl>
 <?php 	foreach ($groupedFields['number'] as $field) : ?>
-			<?= $l1 ?><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?><?= $l2 . PHP_EOL ?>
-				<?= $d1 ?><?= "<?= \$this->Number->format(\${$singularVar}->{$field}) ?>" ?><?= $d2 . PHP_EOL ?>
+			<dt><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></dt>
+				<dd><?= "<?= \$this->Number->format(\${$singularVar}->{$field}) ?>" ?></dd>
 <?php 	endforeach ?>
-		<?= $g2 . PHP_EOL ?>
+		</dl>
 	</section>
 <?php endif ?>
 <?php if ($groupedFields['date']) : ?>
 	<section class="dates" title="<?= __('Dates') ?>">
 		<h3><?= __('Dates')?></h3>
-		<?= $g1 . PHP_EOL ?>
+		<dl>
 <?php 	foreach ($groupedFields['date'] as $field) : ?>
-			<?= $l1 ?><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?><?= $l2 . PHP_EOL ?>
-				<?= $d1 ?><?= "<?= \${$singularVar}->{$field} ?>" ?><?= $d2 . PHP_EOL ?>
+			<dt><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></dt>
+				<dd><?= "<?= \${$singularVar}->{$field} ?>" ?></dd>
 <?php 	endforeach ?>
-		<?= $g2 . PHP_EOL ?>
+		</dl>
 	</section>
 <?php endif ?>
 <?php if ($groupedFields['boolean']) : ?>
 	<section class="booleans" title="<?= __('Flags') ?>">
 		<h3><?= __('Flags')?></h3>
-		<?= $g1 . PHP_EOL ?>
+		<dl>
 <?php 	foreach ($groupedFields['boolean'] as $field) : ?>
-			<?= $l1 ?><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?><?= $l2 . PHP_EOL ?>
-				<?= $d1 ?><?= "<?= \${$singularVar}->{$field} ? __('True') : __('False') ?>" ?><?= $d2 . PHP_EOL ?>
+			<dt><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></dt>
+				<dd><?= "<?= \${$singularVar}->{$field} ? __('True') : __('False') ?>" ?></dd>
 <?php 	endforeach ?>
-		<?= $g2 . PHP_EOL ?>
+		</dl>
 	</section>
 <?php endif ?>
 <?php if ($groupedFields['binary']) : ?>
 	<section class="binary" title="<?= __('Binary Data') ?>">
 		<h3><?= __('Binary Data')?></h3>
-		<?= $g1 . PHP_EOL ?>
+		<dl>
 <?php 	foreach ($groupedFields['binary'] as $field) : ?>
-			<?= $l1 ?><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?><?= $l2 . PHP_EOL ?>
-				<?= $d1 ?><em><?= __('Binary Data') ?></em><?= $d2 . PHP_EOL ?>
+			<dt><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></dt>
+				<dd><em><?= __('Binary Data') ?></em></dd>
 <?php 	endforeach ?>
-		<?= $g2 . PHP_EOL ?>
+		</dl>
 	</section>
 <?php endif ?>
 <?php if ($groupedFields['text']) : ?>
 	<section class="texts" title="<?= __('Texts') ?>">
 		<h3><?= __('Texts')?></h3>
-		<?= $g1 . PHP_EOL ?>
+		<dl>
 <?php 	foreach ($groupedFields['text'] as $field) : ?>
-			<?= $l1 ?><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?><?= $l2 . PHP_EOL ?>
-				<?= $d1 ?><pre><?= "<?= h(\${$singularVar}->{$field}) ?>" ?></pre><?= $d2 . PHP_EOL ?>
+			<dt><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></dt>
+				<dd><pre><?= "<?= h(\${$singularVar}->{$field}) ?>" ?></pre></dd>
 <?php 	endforeach ?>
-		<?= $g2 . PHP_EOL ?>
+		</dl>
 	</section>
 <?php endif ?>
 </article>
@@ -169,7 +164,7 @@ $d0 = 'dd'; $d1 = '<' . $d0 . '>'; $d2 = '</' . $d0 . '>'; // field data tag
 <?php 	$relatedSingularVar = Inflector::variable($alias) ?>
 <article class="related" id="related_<?= $relationsCounter ?>">
 	<h3><?= "<?= __('Associated " . Inflector::humanize($details['controller']) . "') ?>" ?></h3>
-<?= "<?php if (!empty(\${$singularVar}->{$details['property']})): ?>" . PHP_EOL ?>
+<?= "<?php if (!empty(\${$singularVar}->{$details['property']})): ?>" . NL ?>
 	<style type="text/css">
 <?php 	$relatedFieldCount = 0; foreach ($details['fields'] as $field) : $relatedFieldCount++ ?>
 		#related_<?= $relationsCounter ?>.related tbody td:nth-of-type(<?= $relatedFieldCount ?>):before { content: '<?= Inflector::humanize($field) ?>' }
@@ -185,7 +180,7 @@ $d0 = 'dd'; $d1 = '<' . $d0 . '>'; $d2 = '</' . $d0 . '>'; // field data tag
 			</tr>
 		</thead>
 		<tbody>
-<?= "<?php 	foreach (\${$singularVar}->{$details['property']} as \${$relatedSingularVar}): ?>" . PHP_EOL ?>
+<?= "<?php 	foreach (\${$singularVar}->{$details['property']} as \${$relatedSingularVar}): ?>" . NL ?>
 <?php /* TODO filter parent foreign key */ ?>
 			<tr>
 <?php	foreach ($details['fields'] as $index => $field) : ?>
@@ -195,12 +190,12 @@ $d0 = 'dd'; $d1 = '<' . $d0 . '>'; $d2 = '</' . $d0 . '>'; // field data tag
 <?php   $relatedDisplayField = $details['displayField'] ?>
 <?php 	$relatedDisplayFieldVar = "\${$relatedSingularVar}->{$relatedDisplayField}" ?>
 				<td class="actions">
-					<?= "<?= \$this->Html->link(__('View'), ['controller' => '{$details['controller']}', 'action' => 'view', {$relatedPrimaryKey}], ['title' => __('View {0}', {$relatedDisplayFieldVar})]) ?> " . PHP_EOL ?>
-					<?= "<?= \$this->Html->link(__('Edit'), ['controller' => '{$details['controller']}', 'action' => 'edit', {$relatedPrimaryKey}], ['title' => __('Edit {0}', {$relatedDisplayFieldVar})]) ?> " . PHP_EOL ?>
-					<?= "<?= \$this->Form->postLink(__('Delete'), ['controller' => '{$details['controller']}', 'action' => 'delete', {$relatedPrimaryKey}], ['title' => __('Delete {0}', {$relatedDisplayFieldVar}), 'confirm' => __('Are you sure you want to delete # {0}?', {$relatedPrimaryKey})]) ?> " . PHP_EOL ?>
+					<?= "<?= \$this->Html->link(__('View'), ['controller' => '{$details['controller']}', 'action' => 'view', {$relatedPrimaryKey}], ['title' => __('View {0}', {$relatedDisplayFieldVar})]) ?> " . NL ?>
+					<?= "<?= \$this->Html->link(__('Edit'), ['controller' => '{$details['controller']}', 'action' => 'edit', {$relatedPrimaryKey}], ['title' => __('Edit {0}', {$relatedDisplayFieldVar})]) ?> " . NL ?>
+					<?= "<?= \$this->Form->postLink(__('Delete'), ['controller' => '{$details['controller']}', 'action' => 'delete', {$relatedPrimaryKey}], ['title' => __('Delete {0}', {$relatedDisplayFieldVar}), 'confirm' => __('Are you sure you want to delete # {0}?', {$relatedPrimaryKey})]) ?> " . NL ?>
 				</td>
 			</tr>
-<?= "<?php 	endforeach ?>" . PHP_EOL ?>
+<?= "<?php 	endforeach ?>" . NL ?>
 		</tbody>
 		<tfoot>
 			<tr>
@@ -208,7 +203,7 @@ $d0 = 'dd'; $d1 = '<' . $d0 . '>'; $d2 = '</' . $d0 . '>'; // field data tag
 			</tr>
 		</tfoot>
 	</table>
-<?= "<?php endif ?>" . PHP_EOL ?>
+<?= "<?php endif ?>" . NL ?>
 </article>
 <?php endforeach ?>
 <nav class="actions" id="actions_opened">
