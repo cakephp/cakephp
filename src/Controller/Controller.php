@@ -355,15 +355,14 @@ class Controller implements EventListener {
  * Magic accessor for model autoloading.
  *
  * @param string $name Property name
- * @return bool
+ * @return bool|object The model instance or false
  */
 	public function __get($name) {
 		list($plugin, $class) = pluginSplit($this->modelClass, true);
-		if ($class === $name) {
-			$this->loadModel($plugin . $class);
-			return $this->{$class};
+		if ($class !== $name) {
+			return false;
 		}
-		return false;
+		return $this->loadModel($plugin . $class);
 	}
 
 /**
