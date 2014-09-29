@@ -116,6 +116,23 @@ class DashedRouteTest extends TestCase {
 		]);
 		$expected = '/admin/subscriptions/edit-admin-e/1';
 		$this->assertEquals($expected, $result);
+
+		$route = new DashedRoute('/:controller/:action-:id');
+		$result = $route->match([
+			'controller' => 'MyPosts',
+			'action' => 'myView',
+			'id' => 1
+		]);
+		$this->assertEquals('/my-posts/my-view-1', $result);
+
+		$route = new DashedRoute('/:controller/:action/:slug-:id', [], ['id' => Router::ID]);
+		$result = $route->match([
+			'controller' => 'MyPosts',
+			'action' => 'myView',
+			'id' => 1,
+			'slug' => 'the-slug'
+		]);
+		$this->assertEquals('/my-posts/my-view/the-slug-1', $result);
 	}
 
 /**
@@ -124,20 +141,31 @@ class DashedRouteTest extends TestCase {
  * @return void
  */
 	public function testParse() {
-		$route = new DashedRoute(
-			'/:controller/:action/:id',
-			['controller' => 'Testing4', 'id' => null],
-			['id' => Router::ID]
-		);
+		$route = new DashedRoute('/:controller/:action/:id', [], ['id' => Router::ID]);
 		$route->compile();
 		$result = $route->parse('/my-posts/my-view/1');
 		$this->assertEquals('MyPosts', $result['controller']);
 		$this->assertEquals('myView', $result['action']);
 		$this->assertEquals('1', $result['id']);
 
+		$route = new DashedRoute('/:controller/:action-:id');
+		$route->compile();
+		$result = $route->parse('/my-posts/my-view-1');
+		$this->assertEquals('MyPosts', $result['controller']);
+		$this->assertEquals('myView', $result['action']);
+		$this->assertEquals('1', $result['id']);
+
+		$route = new DashedRoute('/:controller/:action/:slug-:id', [], ['id' => Router::ID]);
+		$route->compile();
+		$result = $route->parse('/my-posts/my-view/the-slug-1');
+		$this->assertEquals('MyPosts', $result['controller']);
+		$this->assertEquals('myView', $result['action']);
+		$this->assertEquals('1', $result['id']);
+		$this->assertEquals('the-slug', $result['slug']);
+
 		$route = new DashedRoute(
 			'/admin/:controller',
-			['prefix' => 'admin', 'admin' => 1, 'action' => 'index']
+			['prefix' => 'admin', 'action' => 'index']
 		);
 		$route->compile();
 		$result = $route->parse('/admin/');
