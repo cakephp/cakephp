@@ -28,7 +28,8 @@
 		"psr/log": "1.0"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "*"
+		"phpunit/phpunit": "*",
+		"cakephp/cakephp-codesniffer": "*"
 	},
 	"autoload": {
 		"psr-4": {
