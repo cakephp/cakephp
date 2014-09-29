@@ -30,6 +30,6 @@
 </p>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'fatal_error.ctp') ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)) ?>
 </p>
 </section>
