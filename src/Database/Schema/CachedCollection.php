@@ -36,7 +36,7 @@ class CachedCollection extends Collection {
  * Constructor.
  *
  * @param \Cake\Database\Connection $connection The connection instance.
- * @param string|boolean The cache key or boolean false to disable caching.
+ * @param string|bool $cacheKey The cache key or boolean false to disable caching.
  */
 	public function __construct(Connection $connection, $cacheKey = true) {
 		parent::__construct($connection);
