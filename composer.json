@@ -51,6 +51,7 @@
 		"cakephp/validation": "self.version",
 		"cakephp/utility": "self.version",
 		"cakephp/core": "self.version",
-		"cakephp/datasource": "self.version"
+		"cakephp/datasource": "self.version",
+		"cakephp/cache": "self.version"
 	}
 }
