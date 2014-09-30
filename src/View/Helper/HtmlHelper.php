@@ -344,9 +344,10 @@ class HtmlHelper extends Helper {
 			$options['onclick'] = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
 		}
 
-		return $this->formatTemplate('link', [
+		$templater = $this->templater();
+		return $templater->format('link', [
 			'url' => $url,
-			'attrs' => $this->templater()->formatAttributes($options),
+			'attrs' => $templater->formatAttributes($options),
 			'content' => $title
 		]);
 	}
@@ -416,17 +417,18 @@ class HtmlHelper extends Helper {
 		}
 		unset($options['once']);
 		$this->_includedAssets[$url] = true;
+		$templater = $this->templater();
 
 		if ($options['rel'] === 'import') {
-			$out = $this->formatTemplate('style', [
-				'attrs' => $this->templater()->formatAttributes($options, ['rel', 'block']),
+			$out = $templater->format('style', [
+				'attrs' => $templater->formatAttributes($options, ['rel', 'block']),
 				'content' => '@import url(' . $url . ');',
 			]);
 		} else {
-			$out = $this->formatTemplate('css', [
+			$out = $templater->format('css', [
 				'rel' => $options['rel'],
 				'url' => $url,
-				'attrs' => $this->templater()->formatAttributes($options, ['rel', 'block']),
+				'attrs' => $templater->formatAttributes($options, ['rel', 'block']),
 			]);
 		}
 
@@ -773,13 +775,14 @@ class HtmlHelper extends Helper {
 			unset($options['url']);
 		}
 
-		$image = $this->formatTemplate('image', [
+		$templater = $this->templater();
+		$image = $templater->format('image', [
 			'url' => $path,
-			'attrs' => $this->templater()->formatAttributes($options),
+			'attrs' => $templater->formatAttributes($options),
 		]);
 
 		if ($url) {
-			return $this->formatTemplate('link', [
+			return $templater->format('link', [
 				'url' => $this->Url->build($url),
 				'attrs' => null,
 				'content' => $image
