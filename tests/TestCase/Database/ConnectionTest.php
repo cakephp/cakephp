@@ -812,4 +812,25 @@ class ConnectionTest extends TestCase {
 		});
 	}
 
+/**
+ * Tests it is possible to set a schema collection object
+ *
+ * @return void
+ */
+	public function testSchemaCollection() {
+		$driver = $this->getMockFormDriver();
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['connect'],
+			[['driver' => $driver]]
+		);
+
+		$schema = $connection->schemaCollection();
+		$this->assertInstanceOf('Cake\Database\Schema\Collection', $schema);
+
+		$schema = $this->getMock('Cake\Database\Schema\Collection', [], [$connection]);
+		$connection->schemaCollection($schema);
+		$this->assertSame($schema, $connection->schemaCollection());
+	}
+
 }
