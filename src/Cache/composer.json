@@ -1,0 +1,20 @@
+{
+	"name": "cakephp/cache",
+	"description": "Easy to use Caching library with support for multiple caching backends",
+	"license": "MIT",
+	"authors": [
+		{
+		"name": "CakePHP Community",
+		"homepage": "http://cakephp.org"
+	}
+	],
+	"autoload": {
+		"psr-4": {
+			"Cake\\Cache\\": "."
+		}
+	},
+	"require": {
+		"cakephp/core": "dev-master"
+	},
+	"minimum-stability": "beta"
+}
