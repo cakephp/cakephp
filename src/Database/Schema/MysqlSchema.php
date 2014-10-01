@@ -106,7 +106,7 @@ class MysqlSchema extends BaseSchema {
 		if ($col === 'char') {
 			return ['type' => 'string', 'fixed' => true, 'length' => $length];
 		}
-		if (strpos($col, 'char') !== false || $col === 'tinytext') {
+		if (strpos($col, 'char') !== false) {
 			return ['type' => 'string', 'length' => $length];
 		}
 		if (strpos($col, 'text') !== false) {
