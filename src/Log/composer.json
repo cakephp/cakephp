@@ -1,5 +1,5 @@
 {
-	"name": "cakephp/cache",
+	"name": "cakephp/log",
 	"description": "CakePHP logging library with support for multiple different streams",
 	"license": "MIT",
 	"authors": [
