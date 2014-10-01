@@ -622,21 +622,41 @@ class Hash {
  */
 	public static function expand($data, $separator = '.') {
 		$result = array();
-		foreach ($data as $flat => $value) {
-			$keys = explode($separator, $flat);
-			$keys = array_reverse($keys);
-			$child = array(
-				$keys[0] => $value
-			);
-			array_shift($keys);
-			foreach ($keys as $k) {
-				$child = array(
-					$k => $child
-				);
-			}
-			$result = self::merge($result, $child);
-		}
-		return $result;
+
+        $stack = array();
+
+        foreach ($data as $flat => $value) {
+            $keys = explode($separator, $flat);
+            $keys = array_reverse($keys);
+            $child = array(
+                $keys[0] => $value
+            );
+            array_shift($keys);
+            foreach ($keys as $k) {
+                $child = array(
+                    $k => $child
+                );
+            }
+
+            $stack[] = array($child, &$result);
+
+            while (!empty($stack)) {
+                foreach ($stack as $cur_key => &$cur_args) {
+                    foreach ($cur_args[0] as $key => &$val) {
+                        if (!empty($cur_args[1][$key]) && (array)$cur_args[1][$key]===$cur_args[1][$key] && (array)$val===$val) {
+                            $stack[] = array(&$val, &$cur_args[1][$key]);
+                        } elseif ((int)$key===$key && isset($cur_args[1][$key])) {
+                            $cur_args[1][] = $val;
+                        }  else {
+                            $cur_args[1][$key] = $val;
+                        }
+                    }
+                    unset($stack[$cur_key]);
+                }
+                unset($cur_args);
+            }
+        }
+        return $result;
 	}
 
 /**
@@ -654,21 +674,30 @@ class Hash {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::merge
  */
 	public static function merge(array $data, $merge) {
-		$args = func_get_args();
-		$return = current($args);
+		$args = array_slice(func_get_args(), 1);
+        $return = $data;
 
-		while (($arg = next($args)) !== false) {
-			foreach ((array)$arg as $key => $val) {
-				if (!empty($return[$key]) && is_array($return[$key]) && is_array($val)) {
-					$return[$key] = self::merge($return[$key], $val);
-				} elseif (is_int($key) && isset($return[$key])) {
-					$return[] = $val;
-				} else {
-					$return[$key] = $val;
-				}
-			}
-		}
-		return $return;
+        foreach ($args as &$cur_arr) {
+            $stack[] = array((array)$cur_arr, &$return);
+        }
+        unset($cur_arr);
+
+        while (!empty($stack)) {
+            foreach ($stack as $cur_key => &$cur_args) {
+                foreach ($cur_args[0] as $key => &$val) {
+                    if (!empty($cur_args[1][$key]) && (array)$cur_args[1][$key]===$cur_args[1][$key] && (array)$val===$val) {
+                        $stack[] = array(&$val, &$cur_args[1][$key]);
+                    } elseif ((int)$key===$key && isset($cur_args[1][$key])) {
+                        $cur_args[1][] = $val;
+                    }  else {
+                        $cur_args[1][$key] = $val;
+                    }
+                }
+                unset($stack[$cur_key]);
+            }
+            unset($cur_args);
+        }
+        return $return;
 	}
 
 /**
