@@ -1036,6 +1036,38 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * test url() when the current request has an extension.
+ *
+ * @return void
+ */
+	public function testUrlGenerationWithExtensionInCurrentRequest() {
+		Router::extensions('rss');
+		Router::scope('/', function ($r) {
+			$r->fallbacks();
+		});
+		$request = new Request();
+		$request->addParams(['controller' => 'Tasks', 'action' => 'index', '_ext' => 'rss']);
+		Router::pushRequest($request);
+
+		$result = Router::url(array(
+			'controller' => 'Tasks',
+			'action' => 'view',
+			1
+		));
+		$expected = '/tasks/view/1';
+		$this->assertEquals($expected, $result);
+
+		$result = Router::url(array(
+			'controller' => 'Tasks',
+			'action' => 'view',
+			1,
+			'_ext' => 'json'
+		));
+		$expected = '/tasks/view/1.json';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test url generation with named routes.
  */
 	public function testUrlGenerationNamedRoute() {
