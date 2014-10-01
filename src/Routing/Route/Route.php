@@ -530,28 +530,26 @@ class Route {
 		$pass = implode('/', array_map('rawurlencode', $pass));
 		$out = $this->template;
 
-		if (!empty($this->keys)) {
-			$search = $replace = [];
-
-			foreach ($this->keys as $key) {
-				$string = null;
-				if (isset($params[$key])) {
-					$string = $params[$key];
-				} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
-					$key .= '/';
-				}
-				$search[] = ':' . $key;
-				$replace[] = $string;
+		$search = $replace = [];
+		foreach ($this->keys as $key) {
+			$string = null;
+			if (isset($params[$key])) {
+				$string = $params[$key];
+			} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
+				$key .= '/';
 			}
-			$out = str_replace($search, $replace, $out);
+			$search[] = ':' . $key;
+			$replace[] = $string;
 		}
 
 		if (strpos($this->template, '**') !== false) {
-			$out = str_replace('**', $pass, $out);
-			$out = str_replace('%2F', '/', $out);
+			array_push($search, '**', '%2F');
+			array_push($replace, $pass, '/');
 		} elseif (strpos($this->template, '*') !== false) {
-			$out = str_replace('*', $pass, $out);
+			$search[] = '*';
+			$replace[] = $pass;
 		}
+		$out = str_replace($search, $replace, $out);
 
 		// add base url if applicable.
 		if (isset($params['_base'])) {
@@ -560,7 +558,6 @@ class Route {
 		}
 
 		$out = str_replace('//', '/', $out);
-
 		if (
 			isset($params['_scheme']) ||
 			isset($params['_host']) ||
@@ -572,12 +569,7 @@ class Route {
 			if (isset($params['_port'])) {
 				$host .= ':' . $params['_port'];
 			}
-			$out = sprintf(
-				'%s://%s%s',
-				$params['_scheme'],
-				$host,
-				$out
-			);
+			$out = "{$params['_scheme']}://{$host}{$out}";
 		}
 		if (!empty($params['_ext']) || !empty($query)) {
 			$out = rtrim($out, '/');
