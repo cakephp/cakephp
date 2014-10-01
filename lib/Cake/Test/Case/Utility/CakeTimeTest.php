@@ -279,7 +279,7 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertEquals('on 2007-09-25', $result);
 
 		$result = $this->Time->timeAgoInWords('2007-9-25', '%x');
-		$this->assertEquals('on '. strftime('%x', strtotime('2007-9-25')), $result);
+		$this->assertEquals('on ' . strftime('%x', strtotime('2007-9-25')), $result);
 
 		$result = $this->Time->timeAgoInWords(
 			strtotime('+2 weeks +2 days'),

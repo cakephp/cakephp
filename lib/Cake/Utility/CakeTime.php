@@ -896,22 +896,22 @@ class CakeTime {
 			$relativeDate[] = __dn('cake', '%d year', '%d years', $years, $years);
 		}
 		if ($accuracyNum >= 2 && $months > 0) {
-			$relativeDate[] =  __dn('cake', '%d month', '%d months', $months, $months);
+			$relativeDate[] = __dn('cake', '%d month', '%d months', $months, $months);
 		}
 		if ($accuracyNum >= 3 && $weeks > 0) {
-			$relativeDate[] =  __dn('cake', '%d week', '%d weeks', $weeks, $weeks);
+			$relativeDate[] = __dn('cake', '%d week', '%d weeks', $weeks, $weeks);
 		}
 		if ($accuracyNum >= 4 && $days > 0) {
-			$relativeDate[] =  __dn('cake', '%d day', '%d days', $days, $days);
+			$relativeDate[] = __dn('cake', '%d day', '%d days', $days, $days);
 		}
 		if ($accuracyNum >= 5 && $hours > 0) {
-			$relativeDate[] =  __dn('cake', '%d hour', '%d hours', $hours, $hours);
+			$relativeDate[] = __dn('cake', '%d hour', '%d hours', $hours, $hours);
 		}
 		if ($accuracyNum >= 6 && $minutes > 0) {
-			$relativeDate[] =  __dn('cake', '%d minute', '%d minutes', $minutes, $minutes);
+			$relativeDate[] = __dn('cake', '%d minute', '%d minutes', $minutes, $minutes);
 		}
 		if ($accuracyNum >= 7 && $seconds > 0) {
-			$relativeDate[] =  __dn('cake', '%d second', '%d seconds', $seconds, $seconds);
+			$relativeDate[] = __dn('cake', '%d second', '%d seconds', $seconds, $seconds);
 		}
 		$relativeDate = implode(', ', $relativeDate);
 
