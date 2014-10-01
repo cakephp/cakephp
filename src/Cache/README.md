@@ -43,7 +43,7 @@ You can now read a write from the cache:
 
 ```php
 $data = Cache::remember('my_cache_key', function () {
-	return Service::expesiveCall();
+	return Service::expensiveCall();
 });
 ```
 
