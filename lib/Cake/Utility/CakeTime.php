@@ -891,7 +891,7 @@ class CakeTime {
 
 		$accuracyNum = str_replace(array('year', 'month', 'week', 'day', 'hour', 'minute', 'second'), array(1, 2, 3, 4, 5, 6, 7), $accuracy);
 
-		$relativeDate = [];
+		$relativeDate = array();
 		if ($accuracyNum >= 1 && $years > 0) {
 			$relativeDate[] = __dn('cake', '%d year', '%d years', $years, $years);
 		}
