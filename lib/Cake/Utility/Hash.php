@@ -643,11 +643,11 @@ class Hash {
 			while (!empty($stack)) {
 				foreach ($stack as $curKey => &$curMerge) {
 					foreach ($curMerge[0] as $key => &$val) {
-						if (!empty($curMerge[1][$key]) && (array)$curMerge[1][$key]===$curMerge[1][$key] && (array)$val===$val) {
+						if (!empty($curMerge[1][$key]) && (array)$curMerge[1][$key] === $curMerge[1][$key] && (array)$val === $val) {
 							$stack[] = array(&$val, &$curMerge[1][$key]);
-						} elseif ((int)$key===$key && isset($curMerge[1][$key])) {
+						} elseif ((int)$key === $key && isset($curMerge[1][$key])) {
 							$curMerge[1][] = $val;
-						}  else {
+						} else {
 							$curMerge[1][$key] = $val;
 						}
 					}
@@ -685,11 +685,11 @@ class Hash {
 		while (!empty($stack)) {
 			foreach ($stack as $curKey => &$curMerge) {
 				foreach ($curMerge[0] as $key => &$val) {
-					if (!empty($curMerge[1][$key]) && (array)$curMerge[1][$key]===$curMerge[1][$key] && (array)$val===$val) {
+					if (!empty($curMerge[1][$key]) && (array)$curMerge[1][$key] === $curMerge[1][$key] && (array)$val === $val) {
 						$stack[] = array(&$val, &$curMerge[1][$key]);
-					} elseif ((int)$key===$key && isset($curMerge[1][$key])) {
+					} elseif ((int)$key === $key && isset($curMerge[1][$key])) {
 						$curMerge[1][] = $val;
-					}  else {
+					} else {
 						$curMerge[1][$key] = $val;
 					}
 				}
