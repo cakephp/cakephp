@@ -198,6 +198,20 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that RequestHandler sets $this->ext when Angular sends its wonky-ish headers.
+ *
+ * @return void
+ */
+	public function testInitializeContentTypeWithAngularAccept() {
+		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/plain, * / *';
+		$this->assertNull($this->RequestHandler->ext);
+		Router::parseExtensions('json');
+
+		$this->RequestHandler->initialize($this->Controller);
+		$this->assertEquals('json', $this->RequestHandler->ext);
+	}
+
+/**
  * Test that RequestHandler sets $this->ext when jQuery sends its wonky-ish headers
  * and the application is configured to handle multiple extensions
  *
