@@ -1084,7 +1084,7 @@ EXPECTED;
 		$expected = "\nArray\n(\n    [this] => is\n    [a] => test\n    [123] => 456\n)\n\n";
 		$this->assertEquals($expected, $result);
 	}
-	
+
 /**
  * test pj()
  *
