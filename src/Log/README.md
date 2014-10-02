@@ -1,16 +1,17 @@
 # CakePHP Logging Library
 
-The Cache library provides a `Log` service locator for interfacing with multiple logging backends using
-a simple interface. With the `Log` class it is possible to send a single message to multiple logging
-backends at the same time or just a subset of them based on the log level or context.
+The Cache library provides a `Log` service locator for interfacing with
+multiple logging backends using a simple interface. With the `Log` class it is
+possible to send a single message to multiple logging backends at the same time
+or just a subset of them based on the log level or context.
 
-By default you can use Files or Syslog as logging backends, but you can use any object implementing
-`Psr\Log\LogInterface` as an engine for the `Log` class.
+By default you can use Files or Syslog as logging backends, but you can use any
+object implementing `Psr\Log\LogInterface` as an engine for the `Log` class.
 
 ## Usage
 
-You can define as many or as few loggers as your application needs. Loggers should be configured using `Cake\Core\Log.`
-An example would be:
+You can define as many or as few loggers as your application needs. Loggers
+should be configured using `Cake\Core\Log.` An example would be:
 
 ```php
 use Cake\Cache\Cache;
@@ -33,27 +34,33 @@ Log::config('production', [
 
 It is also possible to create loggers by providing a closure.
 
-
 ```php
 Log::config('special', function() {
 	// Return any PSR-3 compatible logger
 	return new MyPSR3CompatibleLogger();
-};
+});
 ```
 
-You can no use the `Log` class to pass messages to the logging backends:
+Or by injecting an instance directly:
+
+```php
+Log::config('special', new MyPSR3CompatibleLogger());
+```
+
+You can then use the `Log` class to pass messages to the logging backends:
 
 ```php
 Log::write('debug', 'Something did not work');
 ```
 
-Only the logging engines subscribed to the log level your are writing to will get the
-message passed. In the example above, only the 'local' engine will get the log message.
+Only the logging engines subscribed to the log level you are writing to will
+get the message passed. In the example above, only the 'local' engine will get
+the log message.
 
 ### Filtering messages with scopes
 
-The Log library supports another level of message filtering. By using scopes, you can limit the
-logging engines that receive a particular message.
+The Log library supports another level of message filtering. By using scopes,
+you can limit the logging engines that receive a particular message.
 
 ```php
 // Configure /logs/payments.log to receive all levels, but only
