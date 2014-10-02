@@ -652,10 +652,7 @@ class Hash {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::expand
  */
 	public static function expand(array $data, $separator = '.') {
-		$result = array();
-
-		$stack = array();
-
+		$result = [];
 		foreach ($data as $flat => $value) {
 			$keys = explode($separator, $flat);
 			$keys = array_reverse($keys);
@@ -669,23 +666,8 @@ class Hash {
 				);
 			}
 
-			$stack[] = array($child, &$result);
-
-			while (!empty($stack)) {
-				foreach ($stack as $curKey => &$curMerge) {
-					foreach ($curMerge[0] as $key => &$val) {
-						if (!empty($curMerge[1][$key]) && (array)$curMerge[1][$key] === $curMerge[1][$key] && (array)$val === $val) {
-							$stack[] = array(&$val, &$curMerge[1][$key]);
-						} elseif ((int)$key === $key && isset($curMerge[1][$key])) {
-							$curMerge[1][] = $val;
-						} else {
-							$curMerge[1][$key] = $val;
-						}
-					}
-					unset($stack[$curKey]);
-				}
-				unset($curMerge);
-			}
+			$stack = [[$child, &$result]];
+			static::_merge($stack, $result);
 		}
 		return $result;
 	}
@@ -709,15 +691,26 @@ class Hash {
 		$return = $data;
 
 		foreach ($args as &$curArg) {
-			$stack[] = array((array)$curArg, &$return);
+			$stack[] = [(array)$curArg, &$return];
 		}
 		unset($curArg);
+		static::_merge($stack, $return);
+		return $return;
+	}
 
+/**
+ * Merge helper function to reduce duplicated code between merge() and expand().
+ *
+ * @param array $stack The stack of operations to work with.
+ * @param array &$return The return value to operate on.
+ * @return void
+ */
+	protected static function _merge($stack, &$return) {
 		while (!empty($stack)) {
 			foreach ($stack as $curKey => &$curMerge) {
 				foreach ($curMerge[0] as $key => &$val) {
 					if (!empty($curMerge[1][$key]) && (array)$curMerge[1][$key] === $curMerge[1][$key] && (array)$val === $val) {
-						$stack[] = array(&$val, &$curMerge[1][$key]);
+						$stack[] = [&$val, &$curMerge[1][$key]];
 					} elseif ((int)$key === $key && isset($curMerge[1][$key])) {
 						$curMerge[1][] = $val;
 					} else {
@@ -728,7 +721,6 @@ class Hash {
 			}
 			unset($curMerge);
 		}
-		return $return;
 	}
 
 /**
