@@ -41,12 +41,12 @@ class FixtureManagerTest extends TestCase {
  */
 	public function testFixturizeCore() {
 		$test = $this->getMock('Cake\TestSuite\TestCase');
-		$test->fixtures = ['core.article'];
+		$test->fixtures = ['core.articles'];
 		$this->manager->fixturize($test);
 		$fixtures = $this->manager->loaded();
 		$this->assertCount(1, $fixtures);
-		$this->assertArrayHasKey('core.article', $fixtures);
-		$this->assertInstanceOf('Cake\Test\Fixture\ArticleFixture', $fixtures['core.article']);
+		$this->assertArrayHasKey('core.articles', $fixtures);
+		$this->assertInstanceOf('Cake\Test\Fixture\ArticlesFixture', $fixtures['core.articles']);
 	}
 
 /**
@@ -58,14 +58,14 @@ class FixtureManagerTest extends TestCase {
 		Plugin::load('TestPlugin');
 
 		$test = $this->getMock('Cake\TestSuite\TestCase');
-		$test->fixtures = ['plugin.test_plugin.article'];
+		$test->fixtures = ['plugin.test_plugin.articles'];
 		$this->manager->fixturize($test);
 		$fixtures = $this->manager->loaded();
 		$this->assertCount(1, $fixtures);
-		$this->assertArrayHasKey('plugin.test_plugin.article', $fixtures);
+		$this->assertArrayHasKey('plugin.test_plugin.articles', $fixtures);
 		$this->assertInstanceOf(
-			'TestPlugin\Test\Fixture\ArticleFixture',
-			$fixtures['plugin.test_plugin.article']
+			'TestPlugin\Test\Fixture\ArticlesFixture',
+			$fixtures['plugin.test_plugin.articles']
 		);
 	}
 

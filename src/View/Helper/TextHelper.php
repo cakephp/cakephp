@@ -69,7 +69,7 @@ class TextHelper extends Helper {
  * - `engine` Class name to use to replace String functionality.
  *            The class needs to be placed in the `Utility` directory.
  *
- * @param View $View the view object the helper is attached to.
+ * @param \Cake\View\View $View the view object the helper is attached to.
  * @param array $config Settings array Settings array
  * @throws \Cake\Core\Exception\Exception when the engine class could not be found.
  */

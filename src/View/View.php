@@ -771,14 +771,15 @@ class View {
 /**
  * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
  *
- * @param string $helperName Name of the helper to load.
+ * @param string $name Name of the helper to load.
  * @param array $config Settings for the helper
  * @return Helper a constructed helper object.
  * @see HelperRegistry::load()
  */
-	public function loadHelper($helperName, array $config = []) {
-		list(, $class) = pluginSplit($helperName);
-		return $this->{$class} = $this->helpers()->load($helperName, $config);
+	public function loadHelper($name, array $config = []) {
+		list(, $class) = pluginSplit($name);
+		$helpers = $this->helpers();
+		return $this->{$class} = $helpers->load($name, $config);
 	}
 
 /**

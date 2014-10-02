@@ -66,7 +66,7 @@ use LogicException;
  *   applies to all actions.
  * - `beforeRender(Event $event)`
  *   Called before the view is rendered.
- * - `beforeRedirect(Cake\Event\Event $event $url, Cake\Network\Response $response)`
+ * - `beforeRedirect(Event $event, $url, Response $response)`
  *    Called before a redirect is done.
  * - `afterFilter(Event $event)`
  *   Called after each action is complete and after the view is rendered.
@@ -355,15 +355,14 @@ class Controller implements EventListener {
  * Magic accessor for model autoloading.
  *
  * @param string $name Property name
- * @return bool
+ * @return bool|object The model instance or false
  */
 	public function __get($name) {
 		list($plugin, $class) = pluginSplit($this->modelClass, true);
-		if ($class === $name) {
-			$this->loadModel($plugin . $class);
-			return $this->{$class};
+		if ($class !== $name) {
+			return false;
 		}
-		return false;
+		return $this->loadModel($plugin . $class);
 	}
 
 /**
@@ -676,12 +675,6 @@ class Controller implements EventListener {
 		}
 
 		$this->loadComponent('Paginator');
-		if (
-			!in_array('Paginator', $this->helpers) &&
-			!array_key_exists('Paginator', $this->helpers)
-		) {
-			$this->helpers[] = 'Paginator';
-		}
 		if (empty($table)) {
 			throw new \RuntimeException('Unable to locate an object compatible with paginate.');
 		}

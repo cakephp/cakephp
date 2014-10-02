@@ -198,7 +198,7 @@ class ShellDispatcher {
 		$io = new ConsoleIo();
 		$task = new CommandTask($io);
 		$io->setLoggers(false);
-		$list = $task->getShellList();
+		$list = $task->getShellList() + ['app' => []];
 		$fixed = array_flip($list['app']) + array_flip($list['CORE']);
 		$aliases = [];
 

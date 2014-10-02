@@ -15,13 +15,14 @@
 namespace Cake\Log\Engine;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Log\LogInterface;
+use JsonSerializable;
+use Psr\Log\AbstractLogger;
 
 /**
  * Base log engine class.
  *
  */
-abstract class BaseLog implements LogInterface {
+abstract class BaseLog extends AbstractLogger {
 
 	use InstanceConfigTrait;
 
@@ -72,6 +73,33 @@ abstract class BaseLog implements LogInterface {
  */
 	public function scopes() {
 		return $this->_config['scopes'];
+	}
+
+/**
+ * Converts to string the provided data so it can be logged. The context
+ * can optionally be used by log engines to interpolate variables
+ * or add additional info to the logged message.
+ *
+ * @param mixed $data The data to be converted to string and logged.
+ * @param array $context Additional logging information for the message.
+ * @return string
+ */
+	protected function _format($data, array $context = []) {
+		if (is_string($data)) {
+			return $data;
+		}
+
+		$object = is_object($data);
+
+		if ($object && method_exists($data, '__toString')) {
+			return (string)$data;
+		}
+
+		if ($object && $data instanceof JsonSerializable) {
+			return json_encode($data);
+		}
+
+		return print_r($data, true);
 	}
 
 }

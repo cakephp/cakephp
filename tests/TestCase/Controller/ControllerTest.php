@@ -206,8 +206,8 @@ class ControllerTest extends TestCase {
  * @var array
  */
 	public $fixtures = array(
-		'core.post',
-		'core.comment'
+		'core.posts',
+		'core.comments'
 	);
 
 /**
@@ -660,11 +660,10 @@ class ControllerTest extends TestCase {
 		$this->assertArrayNotHasKey('Paginator', $Controller->helpers);
 
 		$results = $Controller->paginate('Posts');
-		$this->assertInstanceOf('Cake\ORM\ResultSet', $results);
-		$this->assertContains('Paginator', $Controller->helpers, 'Paginator should be added.');
+		$this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
 
 		$results = $Controller->paginate(TableRegistry::get('Posts'));
-		$this->assertInstanceOf('Cake\ORM\ResultSet', $results);
+		$this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
 
 		$this->assertSame($Controller->request->params['paging']['Posts']['page'], 1);
 		$this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 1);
@@ -687,7 +686,7 @@ class ControllerTest extends TestCase {
 		$Controller->modelClass = 'Posts';
 		$results = $Controller->paginate();
 
-		$this->assertInstanceOf('Cake\ORM\ResultSet', $results);
+		$this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
 	}
 
 /**
@@ -813,7 +812,7 @@ class ControllerTest extends TestCase {
  *
  * @return void
  */
-	public function testAddComponent() {
+	public function testLoadComponent() {
 		$request = new Request('/');
 		$response = $this->getMock('Cake\Network\Response');
 
@@ -824,6 +823,26 @@ class ControllerTest extends TestCase {
 
 		$registry = $controller->components();
 		$this->assertTrue(isset($registry->Paginator));
+	}
+
+/**
+ * Test adding a component that is a duplicate.
+ *
+ * @return void
+ */
+	public function testLoadComponentDuplicate() {
+		$request = new Request('/');
+		$response = $this->getMock('Cake\Network\Response');
+
+		$controller = new TestController($request, $response);
+		$this->assertNotEmpty($controller->loadComponent('Paginator'));
+		$this->assertNotEmpty($controller->loadComponent('Paginator'));
+		try {
+			$controller->loadComponent('Paginator', ['bad' => 'settings']);
+			$this->fail('No exception');
+		} catch (\RuntimeException $e) {
+			$this->assertContains('The "Paginator" alias has already been loaded', $e->getMessage());
+		}
 	}
 
 }

@@ -28,35 +28,24 @@ use Cake\Log\LogTrait;
  * Components can provide several callbacks that are fired at various stages of the request
  * cycle. The available callbacks are:
  *
- * - `initialize()` - Called before the controller's beforeFilter method.
- * - `startup()` - Called after the controller's beforeFilter method,
- *   and before the controller action is called.
- * - `beforeRender()` - Called before the Controller beforeRender, and
- *   before the view class is loaded.
- * - `shutdown()` - Called after the action is complete and the view has been rendered.
- *    but before Controller::afterFilter().
- * - `beforeRedirect()` - Called before Controller::redirect(), and
- *   before a redirect() is done. Allows you to replace the URL that will
- *   be redirected to with a new URL. The return of this method can either be an
- *   array or a string. If the return is an array and contains a 'url' key.
- *   You may also supply the following:
- *
- *   - `status` The status code for the redirect
- *   - `exit` Whether or not the redirect should exit.
- *
- *   If your response is a string or an array that does not contain a 'url' key it will
- *   be used as the new URL to redirect to.
- *
- * Each callback has a slightly different signature:
- *
- * - `intitalize(Event $event)`
+ * - `initialize(Event $event)`
+ *   Called before the controller's beforeFilter method.
  * - `startup(Event $event)`
+ *   Called after the controller's beforeFilter method, and before the
+ *   controller action is called.
  * - `beforeRender(Event $event)`
- * - `beforeRedirect(Event $event $url, Response $response)`
+ *   Called before the Controller beforeRender, and before the view class is loaded.
  * - `shutdown(Event $event)`
+ *   Called after the action is complete and the view has been rendered but
+ *   before Controller::afterFilter().
+ * - `beforeRedirect(Event $event $url, Response $response)`
+ *   Called before a redirect is done. Allows you to change the URL that will
+ *   be redirected to by returning a Response instance with new URL set using
+ *   Response::location(). Redirection can be prevented by stopping the event
+ *   propagation.
  *
- * While the controller is not an explicit argument it is the subject of each event
- * and can be fetched using Event::subject().
+ * While the controller is not an explicit argument for the callback methods it
+ * is the subject of each event and can be fetched using Event::subject().
  *
  * @link http://book.cakephp.org/2.0/en/controllers/components.html
  * @see Controller::$components

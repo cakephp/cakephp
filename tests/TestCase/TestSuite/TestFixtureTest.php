@@ -16,16 +16,17 @@ namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Log\Log;
 use Cake\Model\Model;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 
 /**
- * ArticleFixture class
+ * ArticlesFixture class
  *
  */
-class ArticleFixture extends TestFixture {
+class ArticlesFixture extends TestFixture {
 
 /**
  * Table property
@@ -61,10 +62,10 @@ class ArticleFixture extends TestFixture {
 }
 
 /**
- * StringFieldsTestFixture class
+ * StringsTestsFixture class
  *
  */
-class StringsTestFixture extends TestFixture {
+class StringsTestsFixture extends TestFixture {
 
 /**
  * Table property
@@ -99,10 +100,10 @@ class StringsTestFixture extends TestFixture {
 
 
 /**
- * ImportFixture class
+ * ImportsFixture class
  *
  */
-class ImportFixture extends TestFixture {
+class ImportsFixture extends TestFixture {
 
 /**
  * Import property
@@ -132,7 +133,27 @@ class TestFixtureTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.post'];
+	public $fixtures = ['core.posts'];
+
+/**
+ * Set up
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		Log::reset();
+	}
+
+/**
+ * Tear down
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		Log::reset();
+	}
 
 /**
  * test initializing a static fixture
@@ -140,10 +161,10 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testInitStaticFixture() {
-		$Fixture = new ArticleFixture();
+		$Fixture = new ArticlesFixture();
 		$this->assertEquals('articles', $Fixture->table);
 
-		$Fixture = new ArticleFixture();
+		$Fixture = new ArticlesFixture();
 		$Fixture->table = null;
 		$Fixture->init();
 		$this->assertEquals('articles', $Fixture->table);
@@ -168,7 +189,7 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testInitImport() {
-		$fixture = new ImportFixture();
+		$fixture = new ImportsFixture();
 		$fixture->fields = $fixture->records = null;
 		$fixture->import = [
 			'table' => 'posts',
@@ -192,7 +213,7 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testCreate() {
-		$fixture = new ArticleFixture();
+		$fixture = new ArticlesFixture();
 		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
 		$table->expects($this->once())
@@ -215,7 +236,7 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testCreateError() {
-		$fixture = new ArticleFixture();
+		$fixture = new ArticlesFixture();
 		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$table = $this->getMock('Cake\Database\Schema\Table', [], ['articles']);
 		$table->expects($this->once())
@@ -233,7 +254,7 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testInsert() {
-		$fixture = new ArticleFixture();
+		$fixture = new ArticlesFixture();
 
 		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$query = $this->getMock('Cake\Database\Query', [], [$db]);
@@ -284,7 +305,7 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testInsertImport() {
-		$fixture = new ImportFixture();
+		$fixture = new ImportsFixture();
 
 		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$query = $this->getMock('Cake\Database\Query', [], [$db]);
@@ -325,7 +346,7 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testInsertStrings() {
-		$fixture = new StringsTestFixture();
+		$fixture = new StringsTestsFixture();
 
 		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$query = $this->getMock('Cake\Database\Query', [], [$db]);
@@ -376,7 +397,7 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testDrop() {
-		$fixture = new ArticleFixture();
+		$fixture = new ArticlesFixture();
 
 		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$statement = $this->getMock('\PDOStatement', ['closeCursor']);
@@ -401,7 +422,7 @@ class TestFixtureTest extends TestCase {
  * @return void
  */
 	public function testTruncate() {
-		$fixture = new ArticleFixture();
+		$fixture = new ArticlesFixture();
 
 		$db = $this->getMock('Cake\Database\Connection', [], [], '', false);
 		$statement = $this->getMock('\PDOStatement', ['closeCursor']);

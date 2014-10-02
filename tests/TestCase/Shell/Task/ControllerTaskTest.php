@@ -14,13 +14,13 @@
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
-use Cake\Shell\Task\ControllerTask;
-use Cake\Shell\Task\TemplateTask;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\Shell\Task\ControllerTask;
+use Cake\Shell\Task\TemplateTask;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
 
@@ -48,7 +48,7 @@ class ControllerTaskTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.bake_article', 'core.bake_articles_bake_tag', 'core.bake_comment', 'core.bake_tag'];
+	public $fixtures = ['core.bake_articles', 'core.bake_articles_bake_tags', 'core.bake_comments', 'core.bake_tags'];
 
 /**
  * setUp method
@@ -325,7 +325,7 @@ class ControllerTaskTest extends TestCase {
  */
 	public static function nameVariations() {
 		return array(
-			array('BakeArticles'), array('BakeArticle'), array('bake_article'), array('bake_articles')
+			array('BakeArticles'), array('bake_articles')
 		);
 	}
 

@@ -37,7 +37,7 @@ class FormAuthenticateTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.user', 'core.auth_user'];
+	public $fixtures = ['core.users', 'core.auth_users'];
 
 /**
  * setup

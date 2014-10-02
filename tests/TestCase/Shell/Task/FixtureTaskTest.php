@@ -14,11 +14,11 @@
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
-use Cake\Shell\Task\FixtureTask;
-use Cake\Shell\Task\TemplateTask;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
+use Cake\Shell\Task\FixtureTask;
+use Cake\Shell\Task\TemplateTask;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -32,7 +32,7 @@ class FixtureTaskTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.article', 'core.comment', 'core.datatype', 'core.binary_test', 'core.user');
+	public $fixtures = array('core.articles', 'core.comments', 'core.datatypes', 'core.binary_tests', 'core.users');
 
 /**
  * setUp method
@@ -101,7 +101,7 @@ class FixtureTaskTest extends TestCase {
 
 		$this->assertContains('namespace App\Test\Fixture;', $result);
 		$this->assertContains('use Cake\TestSuite\Fixture\TestFixture;', $result);
-		$this->assertContains('class ArticleFixture extends TestFixture', $result);
+		$this->assertContains('class ArticlesFixture extends TestFixture', $result);
 		$this->assertContains('public $records', $result);
 		$this->assertContains('public $import', $result);
 		$this->assertContains("'title' => 'First Article'", $result, 'Missing import data %s');
@@ -144,13 +144,13 @@ class FixtureTaskTest extends TestCase {
 	public function testMainWithTableOption() {
 		$this->Task->connection = 'test';
 		$this->Task->params = ['table' => 'comments'];
-		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/ArticleFixture.php');
+		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/ArticlesFixture.php');
 
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with($filename, $this->stringContains("public \$table = 'comments';"));
 
-		$this->Task->main('article');
+		$this->Task->main('articles');
 	}
 
 /**
@@ -160,15 +160,15 @@ class FixtureTaskTest extends TestCase {
  */
 	public function testMainWithPluginModel() {
 		$this->Task->connection = 'test';
-		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/tests/Fixture/ArticleFixture.php');
+		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/tests/Fixture/ArticlesFixture.php');
 
 		Plugin::load('TestPlugin');
 
 		$this->Task->expects($this->at(0))
 			->method('createFile')
-			->with($filename, $this->stringContains('class ArticleFixture'));
+			->with($filename, $this->stringContains('class ArticlesFixture'));
 
-		$this->Task->main('TestPlugin.Article');
+		$this->Task->main('TestPlugin.Articles');
 	}
 
 /**
@@ -182,15 +182,15 @@ class FixtureTaskTest extends TestCase {
 			->method('listAll')
 			->will($this->returnValue(array('articles', 'comments')));
 
-		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/ArticleFixture.php');
+		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/ArticlesFixture.php');
 		$this->Task->expects($this->at(0))
 			->method('createFile')
-			->with($filename, $this->stringContains('class ArticleFixture'));
+			->with($filename, $this->stringContains('class ArticlesFixture'));
 
-		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/CommentFixture.php');
+		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/CommentsFixture.php');
 		$this->Task->expects($this->at(1))
 			->method('createFile')
-			->with($filename, $this->stringContains('class CommentFixture'));
+			->with($filename, $this->stringContains('class CommentsFixture'));
 
 		$this->Task->all();
 	}
@@ -207,12 +207,12 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->Model->expects($this->any())->method('listAll')
 			->will($this->returnValue(array('Articles', 'comments')));
 
-		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/ArticleFixture.php');
+		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/ArticlesFixture.php');
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with($filename, $this->stringContains("'title' => 'Third Article'"));
 
-		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/CommentFixture.php');
+		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/CommentsFixture.php');
 		$this->Task->expects($this->at(1))
 			->method('createFile')
 			->with($filename, $this->stringContains("'comment' => 'First Comment for First Article'"));
@@ -233,11 +233,11 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->Model->expects($this->any())->method('listAll')
 			->will($this->returnValue(array('Articles', 'comments')));
 
-		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/ArticleFixture.php');
+		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/ArticlesFixture.php');
 		$this->Task->expects($this->at(0))->method('createFile')
 			->with($filename, $this->stringContains("public \$import = ['model' => 'Articles'"));
 
-		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/CommentFixture.php');
+		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/CommentsFixture.php');
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with($filename, $this->stringContains("public \$import = ['model' => 'Comments'"));
 		$this->Task->expects($this->exactly(2))->method('createFile');
@@ -257,7 +257,7 @@ class FixtureTaskTest extends TestCase {
 			->method('listAll')
 			->will($this->returnValue(['articles', 'comments']));
 
-		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/ArticleFixture.php');
+		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/ArticlesFixture.php');
 		$this->Task->expects($this->never())
 			->method('createFile');
 
@@ -275,12 +275,12 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->expects($this->at(0))
 			->method('createFile')
 			->with($this->anything(), $this->logicalAnd(
-				$this->stringContains('class ArticleFixture extends TestFixture'),
+				$this->stringContains('class ArticlesFixture extends TestFixture'),
 				$this->stringContains('public $fields'),
 				$this->stringContains('public $records'),
 				$this->logicalNot($this->stringContains('public $import'))
 			));
-		$result = $this->Task->main('Article');
+		$result = $this->Task->main('Articles');
 	}
 
 /**
@@ -347,13 +347,13 @@ class FixtureTaskTest extends TestCase {
  */
 	public function testGenerateFixtureFile() {
 		$this->Task->connection = 'test';
-		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/ArticleFixture.php');
+		$filename = $this->_normalizePath(ROOT . '/tests/Fixture/ArticlesFixture.php');
 
 		$this->Task->expects($this->at(0))
 			->method('createFile')
-			->with($filename, $this->stringContains('ArticleFixture'));
+			->with($filename, $this->stringContains('ArticlesFixture'));
 
-		$result = $this->Task->generateFixtureFile('Article', []);
+		$result = $this->Task->generateFixtureFile('Articles', []);
 		$this->assertContains('<?php', $result);
 		$this->assertContains('namespace App\Test\Fixture;', $result);
 	}
@@ -366,13 +366,13 @@ class FixtureTaskTest extends TestCase {
 	public function testGeneratePluginFixtureFile() {
 		$this->Task->connection = 'test';
 		$this->Task->plugin = 'TestPlugin';
-		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/tests/Fixture/ArticleFixture.php');
+		$filename = $this->_normalizePath(TEST_APP . 'Plugin/TestPlugin/tests/Fixture/ArticlesFixture.php');
 
 		Plugin::load('TestPlugin');
 		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, $this->stringContains('class Article'));
+			->with($filename, $this->stringContains('class Articles'));
 
-		$result = $this->Task->generateFixtureFile('Article', []);
+		$result = $this->Task->generateFixtureFile('Articles', []);
 		$this->assertContains('<?php', $result);
 		$this->assertContains('namespace TestPlugin\Test\Fixture;', $result);
 	}

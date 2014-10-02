@@ -15,8 +15,8 @@
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Cache\Cache;
-use Cake\Shell\OrmCacheShell;
 use Cake\Datasource\ConnectionManager;
+use Cake\Shell\OrmCacheShell;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -29,7 +29,7 @@ class OrmCacheShellTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.article', 'core.tag'];
+	public $fixtures = ['core.articles', 'core.tags'];
 
 /**
  * setup method

@@ -26,7 +26,7 @@ use Cake\TestSuite\TestCase;
  */
 class QueryTest extends TestCase {
 
-	public $fixtures = ['core.article', 'core.author', 'core.comment'];
+	public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
 
 	public $prefix = '';
 
@@ -1627,9 +1627,15 @@ class QueryTest extends TestCase {
 		$result = $query->select('id')->from('comments')
 			->limit(1)
 			->page(2)
+			->order(['id' => 'asc'])
 			->execute();
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$query->select('id')->from('comments')->page(3, 10);
+		$this->assertEquals(10, $query->clause('limit'));
+		$this->assertEquals(20, $query->clause('offset'));
 
 		$query = new Query($this->connection);
 		$query->select('id')->from('comments')->page(1);
@@ -2151,7 +2157,7 @@ class QueryTest extends TestCase {
 		$this->assertQuotedQuery(
 			$this->applyConnectionPrefix(
 				'INSERT INTO <~articles> \(<title>, <body>\) ' .
-				'VALUES \(\?, \?\)'
+				'VALUES \(:c0, :c1\)'
 			),
 			$result,
 			true
@@ -2189,7 +2195,7 @@ class QueryTest extends TestCase {
 		$this->assertQuotedQuery(
 			$this->applyConnectionPrefix(
 				'INSERT INTO <~articles> \(<title>, <body>\) ' .
-				'VALUES \(\?, \?\)'
+				'VALUES \(:c0, :c1\)'
 			),
 			$result,
 			true
@@ -2319,6 +2325,33 @@ class QueryTest extends TestCase {
 			->into('articles')
 			->values(new Query($this->connection))
 			->values(['name' => 'mark']);
+	}
+
+/**
+ * Test that insert can use expression objects as values.
+ *
+ * @return void
+ */
+	public function testInsertExpressionValues() {
+		$query = new Query($this->connection);
+		$query->insert(['title'])
+			->into('articles')
+			->values(['title' => $query->newExpr("SELECT 'jose'")]);
+
+		$result = $query->execute();
+		$this->assertCount(1, $result);
+
+		$subquery = new Query($this->connection);
+		$subquery->select(['name'])
+			->from('authors')
+			->where(['id' => 1]);
+
+		$query = new Query($this->connection);
+		$query->insert(['title'])
+			->into('articles')
+			->values(['title' => $subquery]);
+		$result = $query->execute();
+		$this->assertCount(1, $result);
 	}
 
 /**

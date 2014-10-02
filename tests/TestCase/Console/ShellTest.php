@@ -121,10 +121,15 @@ class ShellTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array(
-		'core.post', 'core.comment', 'core.article', 'core.user',
-		'core.tag', 'core.articles_tag', 'core.attachment'
-	);
+	public $fixtures = [
+		'core.posts',
+		'core.comments',
+		'core.articles',
+		'core.users',
+		'core.tags',
+		'core.articles_tags',
+		'core.attachments'
+	];
 
 /**
  * setUp method

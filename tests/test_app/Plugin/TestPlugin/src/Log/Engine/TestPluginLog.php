@@ -15,14 +15,15 @@
 namespace TestPlugin\Log\Engine;
 
 use Cake\Log\LogInterface;
+use Psr\Log\AbstractLogger;
 
 /**
  * Test Suite Test Plugin Logging stream class.
  *
  */
-class TestPluginLog implements LogInterface {
+class TestPluginLog extends AbstractLogger {
 
-	public function write($level, $message, $scope = []) {
+	public function log($level, $message, array $context = []) {
 	}
 
 }

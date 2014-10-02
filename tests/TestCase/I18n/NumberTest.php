@@ -34,7 +34,7 @@ class NumberTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->Number = new Number();
-		$this->locale = I18n::defaultLocale();
+		$this->locale = I18n::locale();
 	}
 
 /**
@@ -45,7 +45,7 @@ class NumberTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Number);
-		I18n::defaultLocale($this->locale);
+		I18n::locale($this->locale);
 		Number::defaultCurrency(false);
 	}
 
@@ -276,7 +276,7 @@ class NumberTest extends TestCase {
 		$this->assertEquals('USD', $result);
 
 		$this->Number->defaultCurrency(false);
-		I18n::defaultLocale('es_ES');
+		I18n::locale('es_ES');
 		$this->assertEquals('EUR', $this->Number->defaultCurrency());
 
 		$this->Number->defaultCurrency('JPY');
@@ -361,7 +361,7 @@ class NumberTest extends TestCase {
  * @return void
  */
 	public function testPrecisionLocalized() {
-		I18n::defaultLocale('fr_FR');
+		I18n::locale('fr_FR');
 		$result = $this->Number->precision(1.234);
 		$this->assertEquals('1,234', $result);
 	}
@@ -486,7 +486,7 @@ class NumberTest extends TestCase {
  * @return void
  */
 	public function testReadableSizeLocalized() {
-		I18n::defaultLocale('fr_FR');
+		I18n::locale('fr_FR');
 		$result = $this->Number->toReadableSize(1321205);
 		$this->assertEquals('1,26 MB', $result);
 

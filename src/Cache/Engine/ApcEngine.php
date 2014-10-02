@@ -16,7 +16,6 @@ namespace Cake\Cache\Engine;
 
 use APCIterator;
 use Cake\Cache\CacheEngine;
-use Cake\Utility\Inflector;
 
 /**
  * APC storage engine for cache
@@ -41,9 +40,6 @@ class ApcEngine extends CacheEngine {
  * @return bool True if the engine has been successfully initialized, false if not
  */
 	public function init(array $config = []) {
-		if (!isset($config['prefix'])) {
-			$config['prefix'] = Inflector::slug(APP_DIR) . '_';
-		}
 		parent::init($config);
 		return function_exists('apc_dec');
 	}

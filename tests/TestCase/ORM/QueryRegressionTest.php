@@ -33,14 +33,14 @@ class QueryRegressionTest extends TestCase {
  * @var array
  */
 	public $fixtures = [
-		'core.user',
-		'core.article',
-		'core.comment',
-		'core.tag',
-		'core.articles_tag',
-		'core.author',
-		'core.special_tag',
-		'core.translate',
+		'core.users',
+		'core.articles',
+		'core.comments',
+		'core.tags',
+		'core.articles_tags',
+		'core.authors',
+		'core.special_tags',
+		'core.translates',
 	];
 
 /**
@@ -289,6 +289,19 @@ class QueryRegressionTest extends TestCase {
 		$article = $articles->newEntity();
 		$article->title = 'Foo';
 		$article->body = 'Bar';
+		$this->assertSame($article, $articles->save($article));
+	}
+
+/**
+ * Test that save() works with entities containing expressions
+ * as properties.
+ *
+ * @return void
+ */
+	public function testSaveWithExpressionProperty() {
+		$articles = TableRegistry::get('Articles');
+		$article = $articles->newEntity();
+		$article->title = new \Cake\Database\Expression\QueryExpression("SELECT 'jose'");
 		$this->assertSame($article, $articles->save($article));
 	}
 

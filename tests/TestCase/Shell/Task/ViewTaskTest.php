@@ -14,13 +14,13 @@
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
-use Cake\Shell\Task\TemplateTask;
-use Cake\Shell\Task\ViewTask;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\Shell\Task\TemplateTask;
+use Cake\Shell\Task\ViewTask;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -84,11 +84,11 @@ class ViewTaskTest extends TestCase {
  * @var array
  */
 	public $fixtures = array(
-		'core.article', 'core.post', 'core.comment',
-		'core.articles_tag',
-		'core.tag',
-		'core.test_plugin_comment',
-		'core.category_thread',
+		'core.articles', 'core.posts', 'core.comments',
+		'core.articles_tags',
+		'core.tags',
+		'core.test_plugin_comments',
+		'core.category_threads',
 	);
 
 /**
@@ -226,7 +226,7 @@ class ViewTaskTest extends TestCase {
 		$this->assertEquals('Articles', $this->Task->modelName);
 
 		$this->Task->model('NotThere');
-		$this->assertEquals('NotTheres', $this->Task->modelName);
+		$this->assertEquals('NotThere', $this->Task->modelName);
 	}
 
 /**
@@ -629,7 +629,7 @@ class ViewTaskTest extends TestCase {
  * @return void
  */
 	public static function nameVariations() {
-		return [['ViewTaskComments'], ['ViewTaskComment'], ['view_task_comment']];
+		return [['ViewTaskComments'], ['view_task_comments']];
 	}
 
 /**

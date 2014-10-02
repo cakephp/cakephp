@@ -37,11 +37,9 @@ class SprintfFormatter implements FormatterInterface {
  * @return string The formatted message
  */
 	public function format($locale, $message, array $vars) {
-		$isString = is_string($message);
-		if ($isString && isset($vars['_singular'])) {
+		if (is_string($message) && isset($vars['_singular'])) {
 			$message = [$vars['_singular'], $message];
 			unset($vars['_singular']);
-			$isString = false;
 		}
 
 		if (is_string($message)) {

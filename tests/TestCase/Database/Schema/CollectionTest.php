@@ -28,7 +28,7 @@ use Cake\TestSuite\TestCase;
 class CollectionTest extends TestCase {
 
 	public $fixtures = [
-		'core.user'
+		'core.users'
 	];
 
 /**
@@ -77,7 +77,9 @@ class CollectionTest extends TestCase {
 		$table = $this->connection->schemaCollection()->describe('users');
 
 		Cache::delete('test_users', '_cake_model_');
-		$schema->cacheMetadata(true);
+		$this->connection->cacheMetadata(true);
+		$schema = $this->connection->schemaCollection();
+
 		$result = $schema->describe('users');
 		$this->assertEquals($table, $result);
 

@@ -14,8 +14,8 @@
  */
 namespace Cake\Network\Email;
 
-use Cake\Network\Socket;
 use Cake\Network\Exception\SocketException;
+use Cake\Network\Socket;
 
 /**
  * Send mail using SMTP protocol

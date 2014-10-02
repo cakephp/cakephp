@@ -12,7 +12,6 @@
  * @since         0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Cake\I18n\I18n;
@@ -227,6 +226,8 @@ if (!function_exists('__x')) {
 
 /**
  * Returns a translated string if one is found; Otherwise, the submitted message.
+ * The context is a unique identifier for the translations string that makes it unique
+ * for in the same domain.
  *
  * @param string $context Context of the text
  * @param string $singular Text to translate
@@ -245,16 +246,91 @@ if (!function_exists('__x')) {
 
 }
 
-if (!function_exists('collection')) {
+if (!function_exists('__xn')) {
 
 /**
- * Returns a new Cake\Collection\Collection object wrapping the passed argument
+ * Returns correct plural form of message identified by $singular and $plural for count $count.
+ * Some languages have more than one form for plural messages dependent on the count.
+ * The context is a unique identifier for the translations string that makes it unique
+ * for in the same domain.
  *
- * @param \Traversable|array $items The items from which the collection will be built
- * @return \Cake\Collection\Collection
+ * @param string $context Context of the text
+ * @param string $singular Singular text to translate
+ * @param string $plural Plural text
+ * @param int $count Count
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return mixed plural form of translated string
+ * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__xn
  */
-	function collection($items) {
-		return new Collection($items);
+	function __xn($context, $singular, $plural, $count, $args = null) {
+		if (!$singular) {
+			return;
+		}
+
+		$arguments = func_num_args() === 5 ? (array)$args : array_slice(func_get_args(), 2);
+		return I18n::translator()->translate(
+			$singular,
+			['_count' => $count, '_singular' => $singular, '_context' => $context] + $arguments
+		);
+	}
+
+}
+
+if (!function_exists('__dx')) {
+
+/**
+ * Allows you to override the current domain for a single message lookup.
+ * The context is a unique identifier for the translations string that makes it unique
+ * for in the same domain.
+ *
+ * @param string $domain Domain
+ * @param string $context Context of the text
+ * @param string $msg String to translate
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return string translated string
+ * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__dx
+ */
+	function __dx($domain, $context, $msg, $args = null) {
+		if (!$msg) {
+			return;
+		}
+
+		$arguments = func_num_args() === 4 ? (array)$args : array_slice(func_get_args(), 2);
+		return I18n::translator($domain)->translate(
+			$msg,
+			['_context' => $context] + $arguments
+		);
+	}
+
+}
+
+if (!function_exists('__dxn')) {
+
+/**
+ * Returns correct plural form of message identified by $singular and $plural for count $count.
+ * Allows you to override the current domain for a single message lookup.
+ * The context is a unique identifier for the translations string that makes it unique
+ * for in the same domain.
+ *
+ * @param string $domain Domain
+ * @param string $context Context of the text
+ * @param string $singular Singular text to translate
+ * @param string $plural Plural text
+ * @param int $count Count
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return mixed plural form of translated string
+ * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__dxn
+ */
+	function __dxn($domain, $context, $singular, $plural, $count, $args = null) {
+		if (!$singular) {
+			return;
+		}
+
+		$arguments = func_num_args() === 6 ? (array)$args : array_slice(func_get_args(), 2);
+		return I18n::translator($domain)->translate(
+			$singular,
+			['_count' => $count, '_singular' => $singular, '_context' => $context] + $arguments
+		);
 	}
 
 }

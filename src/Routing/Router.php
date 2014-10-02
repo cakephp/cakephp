@@ -517,7 +517,7 @@ class Router {
 			'plugin' => null,
 			'controller' => null,
 			'action' => 'index',
-			'_ext' => null
+			'_ext' => null,
 		);
 		$here = $base = $output = $frag = null;
 
@@ -575,7 +575,7 @@ class Router {
 					'plugin' => $params['plugin'],
 					'controller' => $params['controller'],
 					'action' => 'index',
-					'_ext' => $params['_ext']
+					'_ext' => null
 				);
 			}
 

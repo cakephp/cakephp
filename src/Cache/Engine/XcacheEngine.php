@@ -15,7 +15,6 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
-use Cake\Utility\Inflector;
 
 /**
  * Xcache storage engine for cache
@@ -58,9 +57,6 @@ class XcacheEngine extends CacheEngine {
  */
 	public function init(array $config = []) {
 		if (php_sapi_name() !== 'cli') {
-			if (!isset($config['prefix'])) {
-				$config['prefix'] = Inflector::slug(APP_DIR) . '_';
-			}
 			parent::init($config);
 			return function_exists('xcache_info');
 		}

@@ -34,7 +34,7 @@ class TableUuidTest extends TestCase {
  * @var array
  */
 	public $fixtures = [
-		'core.uuiditem', 'core.uuidportfolio'
+		'core.uuiditems', 'core.uuidportfolios'
 	];
 
 /**

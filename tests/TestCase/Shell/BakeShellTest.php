@@ -14,11 +14,11 @@
  */
 namespace Cake\Test\TestCase\Shell;
 
-use Cake\Shell\BakeShellShell;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Shell\BakeShellShell;
 use Cake\TestSuite\TestCase;
 
 class BakeShellTest extends TestCase {
@@ -28,7 +28,7 @@ class BakeShellTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.comment');
+	public $fixtures = array('core.comments');
 
 /**
  * setup test
@@ -91,7 +91,7 @@ class BakeShellTest extends TestCase {
 
 		$this->Shell->connection = '';
 		$this->Shell->params = [];
-		$this->Shell->all('Comment');
+		$this->Shell->all('Comments');
 	}
 
 /**
@@ -104,7 +104,7 @@ class BakeShellTest extends TestCase {
 			->method('out')
 			->with($this->stringContains('The following commands'));
 
-		$this->Shell->expects($this->exactly(19))
+		$this->Shell->expects($this->exactly(18))
 			->method('out');
 
 		$this->Shell->loadTasks();

@@ -19,8 +19,8 @@ use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
-use Cake\TestSuite\TestCase;
 use Cake\TestSuite\Stub\Response;
+use Cake\TestSuite\TestCase;
 
 /**
  * A test case class intended to make integration tests of
@@ -239,8 +239,9 @@ abstract class IntegrationTestCase extends TestCase {
  * @param string $method The HTTP method
  * @param array|null $data The request data.
  * @return void
+ * @throws \Exception
  */
-	protected function _sendRequest($url, $method, $data = null) {
+	protected function _sendRequest($url, $method, $data = []) {
 		$request = $this->_buildRequest($url, $method, $data);
 		$response = new Response();
 		$dispatcher = DispatcherFactory::create();

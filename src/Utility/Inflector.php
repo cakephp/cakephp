@@ -150,7 +150,7 @@ class Inflector {
  */
 	protected static $_uninflected = array(
 		'.*[nrlm]ese', '.*data', '.*deer', '.*fish', '.*measles', '.*ois',
-		'.*pox', '.*sheep', '.*ss', 'people', 'feedback', 'stadia', '.*?media',
+		'.*pox', '.*sheep', 'people', 'feedback', 'stadia', '.*?media',
 		'chassis', 'clippers', 'debris', 'diabetes', 'equipment', 'gallows',
 		'graffiti', 'headquarters', 'information', 'innings', 'news', 'nexus',
 		'proceedings', 'research', 'sea[- ]bass', 'series', 'species', 'weather'

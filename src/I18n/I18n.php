@@ -34,6 +34,13 @@ class I18n {
 	protected static $_collection;
 
 /**
+ * The environment default locale
+ *
+ * @var string
+ */
+	protected static $_defaultLocale;
+
+/**
  * Returns the translators collection instance. It can be used
  * for getting specific translators based of their name and locale
  * or to configure some aspect of future translations that are not yet constructed.
@@ -56,13 +63,13 @@ class I18n {
 				},
 			]),
 			new TranslatorFactory,
-			static::defaultLocale()
+			static::locale()
 		);
 	}
 
 /**
  * Returns an instance of a translator that was configured for the name and passed
- * locale. If no locale is passed then it takes the value returned by the `defaultLocale()` method.
+ * locale. If no locale is passed then it takes the value returned by the `locale()` method.
  *
  * This method can be used to configure future translators, this is achieved by passing a callable
  * as the last argument of this function.
@@ -103,7 +110,7 @@ class I18n {
 	public static function translator($name = 'default', $locale = null, callable $loader = null) {
 		if ($loader !== null) {
 			$packages = static::translators()->getPackages();
-			$locale = $locale ?: static::defaultLocale();
+			$locale = $locale ?: static::locale();
 
 			if ($name !== 'default') {
 				$loader = function () use ($loader) {
@@ -184,15 +191,17 @@ class I18n {
 
 /**
  * Sets the default locale to use for future translator instances.
- * This also affects the `intl.default_locale` php setting.
+ * This also affects the `intl.default_locale` PHP setting.
  *
  * When called with no arguments it will return the currently configure
- * defaultLocale as stored in the `intl.default_locale` php setting.
+ * locale as stored in the `intl.default_locale` PHP setting.
  *
  * @param string $locale The name of the locale to set as default.
  * @return string|null The name of the default locale.
  */
-	public static function defaultLocale($locale = null) {
+	public static function locale($locale = null) {
+		static::defaultLocale();
+
 		if (!empty($locale)) {
 			Locale::setDefault($locale);
 			static::translators()->setLocale($locale);
@@ -206,6 +215,20 @@ class I18n {
 		}
 
 		return $current;
+	}
+
+/**
+ * This returns the default locale before any modifications, i.e.
+ * the value as stored in the `intl.default_locale` PHP setting before
+ * any manipulation by this class.
+ *
+ * @return string
+ */
+	public static function defaultLocale() {
+		if (static::$_defaultLocale === null) {
+			static::$_defaultLocale = Locale::getDefault() ?: 'en_US';
+		}
+		return static::$_defaultLocale;
 	}
 
 /**

@@ -447,18 +447,18 @@ TEXT;
  * @return void
  */
 	public function testLog() {
-		$mock = $this->getMock('Cake\Log\Engine\BaseLog', ['write']);
+		$mock = $this->getMock('Cake\Log\Engine\BaseLog', ['log']);
 		Log::config('test', ['engine' => $mock]);
 
 		$mock->expects($this->at(0))
-			->method('write')
+			->method('log')
 			->with('debug', $this->logicalAnd(
 				$this->stringContains('DebuggerTest::testLog'),
 				$this->stringContains('cool')
 			));
 
 		$mock->expects($this->at(1))
-			->method('write')
+			->method('log')
 			->with('debug', $this->logicalAnd(
 				$this->stringContains('DebuggerTest::testLog'),
 				$this->stringContains('[main]'),
@@ -478,11 +478,11 @@ TEXT;
  * @return void
  */
 	public function testLogDepth() {
-		$mock = $this->getMock('Cake\Log\Engine\BaseLog', ['write']);
+		$mock = $this->getMock('Cake\Log\Engine\BaseLog', ['log']);
 		Log::config('test', ['engine' => $mock]);
 
 		$mock->expects($this->at(0))
-			->method('write')
+			->method('log')
 			->with('debug', $this->logicalAnd(
 				$this->stringContains('DebuggerTest::testLog'),
 				$this->stringContains('test'),

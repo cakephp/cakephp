@@ -51,7 +51,7 @@ class AuthComponentTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.user', 'core.auth_user'];
+	public $fixtures = ['core.users', 'core.auth_users'];
 
 /**
  * setUp method
@@ -598,7 +598,7 @@ class AuthComponentTest extends TestCase {
 
 		Configure::write('App', array(
 			'dir' => APP_DIR,
-			'webroot' => WEBROOT_DIR,
+			'webroot' => 'webroot',
 			'base' => false,
 			'baseUrl' => '/cake/index.php'
 		));
@@ -1198,7 +1198,7 @@ class AuthComponentTest extends TestCase {
 
 		Configure::write('App', array(
 			'dir' => APP_DIR,
-			'webroot' => WEBROOT_DIR,
+			'webroot' => 'webroot',
 			'base' => false,
 			'baseUrl' => '/cake/index.php'
 		));

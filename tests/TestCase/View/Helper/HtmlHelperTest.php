@@ -18,13 +18,13 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Filesystem\File;
+use Cake\Filesystem\Folder;
 use Cake\Model\Model;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
-use Cake\Filesystem\File;
-use Cake\Filesystem\Folder;
 use Cake\View\Helper\FormHelper;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
@@ -448,7 +448,7 @@ class HtmlHelperTest extends TestCase {
 		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
 
 		$testfile = WWW_ROOT . 'test_theme/img/__cake_test_image.gif';
-		new File($testfile, true);
+		$File = new File($testfile, true);
 
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', true);
@@ -471,6 +471,7 @@ class HtmlHelperTest extends TestCase {
 				'alt' => ''
 		));
 		$this->assertHtml($expected, $result);
+		$File->delete();
 	}
 
 /**
@@ -1020,7 +1021,7 @@ class HtmlHelperTest extends TestCase {
 		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
 
 		$testfile = WWW_ROOT . '/test_theme/js/__test_js.js';
-		new File($testfile, true);
+		$File = new File($testfile, true);
 
 		$this->Html->Url->request->webroot = '/';
 		$this->Html->Url->theme = 'TestTheme';
@@ -1029,6 +1030,7 @@ class HtmlHelperTest extends TestCase {
 			'script' => array('src' => '/test_theme/js/__test_js.js')
 		);
 		$this->assertHtml($expected, $result);
+		$File->delete();
 	}
 
 /**

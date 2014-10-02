@@ -38,8 +38,8 @@ class UsersTable extends Table {
 class TableTest extends \Cake\TestSuite\TestCase {
 
 	public $fixtures = [
-		'core.user', 'core.category', 'core.article', 'core.author',
-		'core.tag', 'core.articles_tag'
+		'core.users', 'core.categories', 'core.articles', 'core.authors',
+		'core.tags', 'core.articles_tags'
 	];
 
 /**
@@ -1067,6 +1067,23 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'behaviors' => $mock
 		]);
 		$table->addBehavior('Sluggable');
+	}
+
+/**
+ * Test adding a behavior that is a duplicate.
+ *
+ * @return void
+ */
+	public function testAddBehaviorDuplicate() {
+		$table = new Table(['table' => 'articles']);
+		$this->assertNull($table->addBehavior('Sluggable', ['test' => 'value']));
+		$this->assertNull($table->addBehavior('Sluggable', ['test' => 'value']));
+		try {
+			$table->addBehavior('Sluggable', ['thing' => 'thing']);
+			$this->fail('No exception raised');
+		} catch (\RuntimeException $e) {
+			$this->assertContains('The "Sluggable" alias has already been loaded', $e->getMessage());
+		}
 	}
 
 /**
@@ -3528,6 +3545,48 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'connectionName' => 'test'
 		];
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test the findOrCreate method.
+ *
+ * @return void
+ */
+	public function testFindOrCreate() {
+		$articles = TableRegistry::get('Articles');
+
+		$article = $articles->findOrCreate(['title' => 'Not there'], function ($article) {
+			$article->body = 'New body';
+		});
+		$this->assertFalse($article->isNew());
+		$this->assertNotNull($article->id);
+		$this->assertEquals('Not there', $article->title);
+		$this->assertEquals('New body', $article->body);
+
+		$article = $articles->findOrCreate(['title' => 'Not there']);
+		$this->assertFalse($article->isNew());
+		$this->assertNotNull($article->id);
+		$this->assertEquals('Not there', $article->title);
+
+		$article = $articles->findOrCreate(['title' => 'First Article'], function ($article) {
+			$this->fail('Should not be called for existing entities.');
+		});
+		$this->assertFalse($article->isNew());
+		$this->assertNotNull($article->id);
+		$this->assertEquals('First Article', $article->title);
+
+		$article = $articles->findOrCreate(
+			['author_id' => 2, 'title' => 'First Article'],
+			function ($article) {
+				$article->set(['published' => 'N', 'body' => 'New body']);
+			}
+		);
+		$this->assertFalse($article->isNew());
+		$this->assertNotNull($article->id);
+		$this->assertEquals('First Article', $article->title);
+		$this->assertEquals('New body', $article->body);
+		$this->assertEquals('N', $article->published);
+		$this->assertEquals(2, $article->author_id);
 	}
 
 }

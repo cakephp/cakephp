@@ -35,14 +35,14 @@ class LogTraitTest extends TestCase {
  * @return void
  */
 	public function testLog() {
-		$mock = $this->getMock('Cake\Log\LogInterface');
+		$mock = $this->getMock('Psr\Log\LoggerInterface');
 		$mock->expects($this->at(0))
-			->method('write')
+			->method('log')
 			->with('error', 'Testing');
 
 		$mock->expects($this->at(1))
-			->method('write')
-			->with('debug', print_r(array(1, 2), true));
+			->method('log')
+			->with('debug', array(1, 2));
 
 		Log::config('trait_test', ['engine' => $mock]);
 		$subject = $this->getObjectForTrait('Cake\Log\LogTrait');

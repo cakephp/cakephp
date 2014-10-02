@@ -29,7 +29,7 @@ class SyslogLogTest extends TestCase {
 	public function testOpenLog() {
 		$log = $this->getMock('Cake\Log\Engine\SyslogLog', array('_open', '_write'));
 		$log->expects($this->once())->method('_open')->with('', LOG_ODELAY, LOG_USER);
-		$log->write('debug', 'message');
+		$log->log('debug', 'message');
 
 		$log = $this->getMock('Cake\Log\Engine\SyslogLog', array('_open', '_write'));
 		$log->config(array(
@@ -40,7 +40,7 @@ class SyslogLogTest extends TestCase {
 		));
 		$log->expects($this->once())->method('_open')
 			->with('thing', LOG_NDELAY, LOG_MAIL);
-		$log->write('debug', 'message');
+		$log->log('debug', 'message');
 	}
 
 /**
@@ -52,7 +52,7 @@ class SyslogLogTest extends TestCase {
 	public function testWriteOneLine($type, $expected) {
 		$log = $this->getMock('Cake\Log\Engine\SyslogLog', array('_open', '_write'));
 		$log->expects($this->once())->method('_write')->with($expected, $type . ': Foo');
-		$log->write($type, 'Foo');
+		$log->log($type, 'Foo');
 	}
 
 /**
@@ -65,7 +65,7 @@ class SyslogLogTest extends TestCase {
 		$log->expects($this->at(1))->method('_write')->with(LOG_DEBUG, 'debug: Foo');
 		$log->expects($this->at(2))->method('_write')->with(LOG_DEBUG, 'debug: Bar');
 		$log->expects($this->exactly(2))->method('_write');
-		$log->write('debug', "Foo\nBar");
+		$log->log('debug', "Foo\nBar");
 	}
 
 /**

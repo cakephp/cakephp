@@ -27,7 +27,7 @@ class ConsoleLogTest extends TestCase {
 /**
  * Test writing to ConsoleOutput
  */
-	public function testConsoleOutputWrites() {
+	public function testConsoleOutputlogs() {
 		$output = $this->getMock('Cake\Console\ConsoleOutput');
 
 		$output->expects($this->at(0))
@@ -41,7 +41,7 @@ class ConsoleLogTest extends TestCase {
 		$log = new ConsoleLog([
 			'stream' => $output
 		]);
-		$log->write('error', 'oh noes');
+		$log->log('error', 'oh noes');
 	}
 
 /**
@@ -49,12 +49,12 @@ class ConsoleLogTest extends TestCase {
  *
  * @return void
  */
-	public function testWriteToFileStream() {
+	public function testlogToFileStream() {
 		$filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
 		$log = new ConsoleLog([
 			'stream' => $filename
 		]);
-		$log->write('error', 'oh noes');
+		$log->log('error', 'oh noes');
 		$fh = fopen($filename, 'r');
 		$line = fgets($fh);
 		$this->assertContains('Error: oh noes', $line);
@@ -64,7 +64,10 @@ class ConsoleLogTest extends TestCase {
  * test default value of stream 'outputAs'
  */
 	public function testDefaultOutputAs() {
-		if (DS === '\\' && !(bool)env('ANSICON')) {
+		if (
+			(DS === '\\' && !(bool)env('ANSICON')) ||
+			(function_exists('posix_isatty') && !posix_isatty(null))
+		) {
 			$expected = ConsoleOutput::PLAIN;
 		} else {
 			$expected = ConsoleOutput::COLOR;

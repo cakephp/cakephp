@@ -224,6 +224,7 @@ class AssetFilterTest extends TestCase {
 		$request = new Request($url);
 		$event = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
 
+		ob_start();
 		$filter->beforeDispatch($event);
 		$result = ob_get_contents();
 		ob_end_clean();

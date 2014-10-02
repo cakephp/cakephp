@@ -31,7 +31,7 @@ class RequestActionTraitTest extends TestCase {
  *
  * @var string
  */
-	public $fixtures = array('core.post', 'core.test_plugin_comment', 'core.comment');
+	public $fixtures = array('core.posts', 'core.test_plugin_comments', 'core.comments');
 
 /**
  * Setup

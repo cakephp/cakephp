@@ -81,12 +81,12 @@ class ModelTask extends BakeTask {
 		if (empty($name)) {
 			$this->out('Choose a model to bake from the following:');
 			foreach ($this->listAll() as $table) {
-				$this->out('- ' . $this->_modelName($table));
+				$this->out('- ' . $this->_camelize($table));
 			}
 			return true;
 		}
 
-		$this->bake($this->_modelName($name));
+		$this->bake($this->_camelize($name));
 	}
 
 /**
@@ -129,6 +129,7 @@ class ModelTask extends BakeTask {
 			if (in_array($table, $this->skipTables)) {
 				continue;
 			}
+			TableRegistry::clear();
 			$this->main($table);
 		}
 	}
@@ -263,7 +264,7 @@ class ModelTask extends BakeTask {
 		$foreignKey = $this->_modelKey($tableName);
 
 		foreach ($this->listAll() as $otherTable) {
-			$otherModel = $this->getTableObject($this->_modelName($otherTable), $otherTable);
+			$otherModel = $this->getTableObject($this->_camelize($otherTable), $otherTable);
 			$otherSchema = $otherModel->schema();
 
 			// Exclude habtm join tables.
@@ -323,7 +324,7 @@ class ModelTask extends BakeTask {
 				$assocTable = substr($otherTable, 0, $otherOffset);
 			}
 			if ($assocTable && in_array($assocTable, $tables)) {
-				$habtmName = $this->_modelName($assocTable);
+				$habtmName = $this->_camelize($assocTable);
 				$assoc = [
 					'alias' => $habtmName,
 					'foreignKey' => $foreignKey,
@@ -549,7 +550,7 @@ class ModelTask extends BakeTask {
 		$counterCache = [];
 		foreach ($belongsTo['belongsTo'] as $otherTable) {
 			$otherAlias = $otherTable['alias'];
-			$otherModel = $this->getTableObject($this->_modelName($otherAlias), Inflector::underscore($otherAlias));
+			$otherModel = $this->getTableObject($this->_camelize($otherAlias), Inflector::underscore($otherAlias));
 
 			try {
 				$otherSchema = $otherModel->schema();
@@ -602,6 +603,8 @@ class ModelTask extends BakeTask {
 		$filename = $path . 'Entity' . DS . $name . '.php';
 		$this->out("\n" . sprintf('Baking entity class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
+		$emptyFile = $path . 'Entity' . DS . 'empty';
+		$this->_deleteEmptyFile($emptyFile);
 		return $out;
 	}
 
@@ -645,6 +648,8 @@ class ModelTask extends BakeTask {
 		$filename = $path . 'Table' . DS . $name . 'Table.php';
 		$this->out("\n" . sprintf('Baking table class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
+		$emptyFile = $path . 'Table' . DS . 'empty';
+		$this->_deleteEmptyFile($emptyFile);
 		return $out;
 	}
 
@@ -661,7 +666,7 @@ class ModelTask extends BakeTask {
 		$this->_modelNames = [];
 		$this->_tables = $this->_getAllTables();
 		foreach ($this->_tables as $table) {
-			$this->_modelNames[] = $this->_modelName($table);
+			$this->_modelNames[] = $this->_camelize($table);
 		}
 		return $this->_tables;
 	}
@@ -705,7 +710,7 @@ class ModelTask extends BakeTask {
 		if (isset($this->params['table'])) {
 			return $this->params['table'];
 		}
-		return Inflector::tableize($name);
+		return Inflector::underscore($name);
 	}
 
 /**

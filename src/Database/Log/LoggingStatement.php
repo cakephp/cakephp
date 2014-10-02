@@ -52,6 +52,7 @@ class LoggingStatement extends StatementDecorator {
 		try {
 			$result = parent::execute($params);
 		} catch (\Exception $e) {
+			$e->queryString = $this->queryString;
 			$query->error = $e;
 			$this->_log($query, $params, $t);
 			throw $e;

@@ -387,7 +387,7 @@ class Hash {
 				if (empty($data[$k])) {
 					unset($data[$k]);
 				}
-			} elseif ($match) {
+			} elseif ($match && empty($nextPath)) {
 				unset($data[$k]);
 			}
 		}
@@ -652,7 +652,7 @@ class Hash {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::expand
  */
 	public static function expand(array $data, $separator = '.') {
-		$result = array();
+		$result = [];
 		foreach ($data as $flat => $value) {
 			$keys = explode($separator, $flat);
 			$keys = array_reverse($keys);
@@ -665,7 +665,9 @@ class Hash {
 					$k => $child
 				);
 			}
-			$result = static::merge($result, $child);
+
+			$stack = [[$child, &$result]];
+			static::_merge($stack, $result);
 		}
 		return $result;
 	}
@@ -685,21 +687,40 @@ class Hash {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::merge
  */
 	public static function merge(array $data, $merge) {
-		$args = func_get_args();
-		$return = current($args);
+		$args = array_slice(func_get_args(), 1);
+		$return = $data;
 
-		while (($arg = next($args)) !== false) {
-			foreach ((array)$arg as $key => $val) {
-				if (!empty($return[$key]) && is_array($return[$key]) && is_array($val)) {
-					$return[$key] = static::merge($return[$key], $val);
-				} elseif (is_int($key) && isset($return[$key])) {
-					$return[] = $val;
-				} else {
-					$return[$key] = $val;
-				}
-			}
+		foreach ($args as &$curArg) {
+			$stack[] = [(array)$curArg, &$return];
 		}
+		unset($curArg);
+		static::_merge($stack, $return);
 		return $return;
+	}
+
+/**
+ * Merge helper function to reduce duplicated code between merge() and expand().
+ *
+ * @param array $stack The stack of operations to work with.
+ * @param array &$return The return value to operate on.
+ * @return void
+ */
+	protected static function _merge($stack, &$return) {
+		while (!empty($stack)) {
+			foreach ($stack as $curKey => &$curMerge) {
+				foreach ($curMerge[0] as $key => &$val) {
+					if (!empty($curMerge[1][$key]) && (array)$curMerge[1][$key] === $curMerge[1][$key] && (array)$val === $val) {
+						$stack[] = [&$val, &$curMerge[1][$key]];
+					} elseif ((int)$key === $key && isset($curMerge[1][$key])) {
+						$curMerge[1][] = $val;
+					} else {
+						$curMerge[1][$key] = $val;
+					}
+				}
+				unset($stack[$curKey]);
+			}
+			unset($curMerge);
+		}
 	}
 
 /**

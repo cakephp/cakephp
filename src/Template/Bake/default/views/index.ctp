@@ -41,12 +41,12 @@ $fields = collection($fields)
 <div class="<?= $pluralVar ?> index large-10 medium-9 columns">
 	<table cellpadding="0" cellspacing="0">
 	<thead>
-	<tr>
+		<tr>
 	<?php foreach ($fields as $field): ?>
 		<th><?= "<?= \$this->Paginator->sort('{$field}') ?>"; ?></th>
 	<?php endforeach; ?>
 		<th class="actions"><?= "<?= __('Actions') ?>"; ?></th>
-	</tr>
+		</tr>
 	</thead>
 	<tbody>
 	<?php

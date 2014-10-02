@@ -80,6 +80,13 @@ class Email {
 	const MESSAGE_TEXT = 'text';
 
 /**
+ * Holds the regex pattern for email validation
+ *
+ * @var string
+ */
+	const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui';
+
+/**
  * Recipient of the email
  *
  * @var array
@@ -335,7 +342,7 @@ class Email {
  *
  * @var string
  */
-	protected $_emailPattern = '/^((?:[\p{L}0-9\.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui';
+	protected $_emailPattern = self::EMAIL_PATTERN;
 
 /**
  * The class name used for email configuration.
@@ -613,7 +620,8 @@ class Email {
 	protected function _validateEmail($email) {
 		if ($this->_emailPattern === null && filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			return;
-		} elseif (preg_match($this->_emailPattern, $email)) {
+		}
+		if (preg_match($this->_emailPattern, $email)) {
 			return;
 		}
 		throw new InvalidArgumentException(sprintf('Invalid email: "%s"', $email));
@@ -1370,7 +1378,7 @@ class Email {
 		$this->headerCharset = null;
 		$this->_attachments = array();
 		$this->_profile = array();
-		$this->_emailPattern = null;
+		$this->_emailPattern = self::EMAIL_PATTERN;
 		return $this;
 	}
 

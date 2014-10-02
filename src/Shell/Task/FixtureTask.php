@@ -101,7 +101,7 @@ class FixtureTask extends BakeTask {
 		if (empty($name)) {
 			$this->out('Choose a fixture to bake from the following:');
 			foreach ($this->Model->listAll() as $table) {
-				$this->out('- ' . $this->_modelName($table));
+				$this->out('- ' . $this->_camelize($table));
 			}
 			return true;
 		}
@@ -110,7 +110,7 @@ class FixtureTask extends BakeTask {
 		if (isset($this->params['table'])) {
 			$table = $this->params['table'];
 		}
-		$model = $this->_modelName($name);
+		$model = $this->_camelize($name);
 		$this->bake($model, $table);
 	}
 
@@ -194,7 +194,7 @@ class FixtureTask extends BakeTask {
  */
 	public function generateFixtureFile($model, array $otherVars) {
 		$defaults = [
-			'name' => Inflector::singularize($model),
+			'name' => $model,
 			'table' => null,
 			'schema' => null,
 			'records' => null,

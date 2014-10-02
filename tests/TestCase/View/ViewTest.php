@@ -270,7 +270,7 @@ class ViewTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.user', 'core.post');
+	public $fixtures = array('core.users', 'core.posts');
 
 /**
  * setUp method
@@ -921,6 +921,23 @@ class ViewTest extends TestCase {
 	}
 
 /**
+ * Test loading helper when duplicate.
+ *
+ * @return void
+ */
+	public function testLoadHelperDuplicate() {
+		$View = new View();
+
+		$this->assertNotEmpty($View->loadHelper('Html', ['foo' => 'bar']));
+		try {
+			$View->loadHelper('Html', ['test' => 'value']);
+			$this->fail('No exception');
+		} catch (\RuntimeException $e) {
+			$this->assertContains('The "Html" alias has already been loaded', $e->getMessage());
+		}
+	}
+
+/**
  * Test loadHelpers method
  *
  * @return void
@@ -1475,23 +1492,33 @@ class ViewTest extends TestCase {
 /**
  * Test that starting the same block twice throws an exception
  *
- * @expectedException \Cake\Core\Exception\Exception
  * @return void
  */
 	public function testStartBlocksTwice() {
-		$this->View->start('first');
-		$this->View->start('first');
+		try {
+			$this->View->start('first');
+			$this->View->start('first');
+			$this->fail('No exception');
+		} catch (\Cake\Core\Exception\Exception $e) {
+			ob_end_clean();
+			$this->assertTrue(true);
+		}
 	}
 
 /**
  * Test that an exception gets thrown when you leave a block open at the end
  * of a view.
  *
- * @expectedException \LogicException
  * @return void
  */
 	public function testExceptionOnOpenBlock() {
-		$this->View->render('open_block');
+		try {
+			$this->View->render('open_block');
+			$this->fail('No exception');
+		} catch (\LogicException $e) {
+			ob_end_clean();
+			$this->assertContains('The "no_close" block was left open', $e->getMessage());
+		}
 	}
 
 /**
@@ -1514,23 +1541,32 @@ TEXT;
 /**
  * Make sure that extending the current view with itself causes an exception
  *
- * @expectedException LogicException
  * @return void
  */
 	public function testExtendSelf() {
-		$this->View->layout = false;
-		$this->View->render('extend_self');
+		try {
+			$this->View->layout = false;
+			$this->View->render('extend_self');
+			$this->fail('No exception');
+		} catch (\LogicException $e) {
+			ob_end_clean();
+			$this->assertContains('cannot have views extend themselves', $e->getMessage());
+		}
 	}
 
 /**
  * Make sure that extending in a loop causes an exception
  *
- * @expectedException LogicException
  * @return void
  */
 	public function testExtendLoop() {
-		$this->View->layout = false;
-		$this->View->render('extend_loop');
+		try {
+			$this->View->layout = false;
+			$this->View->render('extend_loop');
+		} catch (\LogicException $e) {
+			ob_end_clean();
+			$this->assertContains('cannot have views extend in a loop', $e->getMessage());
+		}
 	}
 
 /**
@@ -1554,12 +1590,18 @@ TEXT;
 /**
  * Extending an element which doesn't exist should throw a missing view exception
  *
- * @expectedException LogicException
  * @return void
  */
 	public function testExtendMissingElement() {
-		$this->View->layout = false;
-		$this->View->render('extend_missing_element');
+		try {
+			$this->View->layout = false;
+			$this->View->render('extend_missing_element');
+			$this->fail('No exception');
+		} catch (\LogicException $e) {
+			ob_end_clean();
+			ob_end_clean();
+			$this->assertContains('element', $e->getMessage());
+		}
 	}
 
 /**

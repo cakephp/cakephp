@@ -432,6 +432,7 @@ abstract class Association {
  * - propertyPath: A dot separated string representing the path of association
  *   properties to be followed from the passed query main entity to this
  *   association
+ * - joinType: The SQL join type to use in the query.
  *
  * @param Query $query the query to be altered to include the target table data
  * @param array $options Any extra options or overrides to be taken in account
@@ -441,12 +442,13 @@ abstract class Association {
  */
 	public function attachTo(Query $query, array $options = []) {
 		$target = $this->target();
+		$joinType = empty($options['joinType']) ? $this->joinType() : $options['joinType'];
 		$options += [
 			'includeFields' => true,
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
 			'fields' => [],
-			'type' => empty($options['matching']) ? $this->joinType() : 'INNER',
+			'type' => empty($options['matching']) ? $joinType : 'INNER',
 			'table' => $target->table(),
 			'finder' => $this->finder()
 		];

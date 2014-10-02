@@ -120,7 +120,7 @@ class ExceptionRenderer {
 /**
  * Renders the response for the exception.
  *
- * @return Cake\Network\Response The response to be sent.
+ * @return \Cake\Network\Response The response to be sent.
  */
 	public function render() {
 		$exception = $this->error;
@@ -262,7 +262,7 @@ class ExceptionRenderer {
  * Generate the response using the controller object.
  *
  * @param string $template The template to render.
- * @return Cake\Network\Response A response object that can be sent.
+ * @return \Cake\Network\Response A response object that can be sent.
  */
 	protected function _outputMessage($template) {
 		try {
@@ -292,7 +292,7 @@ class ExceptionRenderer {
  * and doesn't call component methods.
  *
  * @param string $template The template to render
- * @return void
+ * @return \Cake\Network\Response A response object that can be sent.
  */
 	protected function _outputMessageSafe($template) {
 		$this->controller->layoutPath = null;

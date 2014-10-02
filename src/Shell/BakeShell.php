@@ -17,10 +17,10 @@ namespace Cake\Shell;
 use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use Cake\Core\ConventionsTrait;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Model\Model;
-use Cake\Core\ConventionsTrait;
 use Cake\Utility\Inflector;
 
 /**
@@ -76,10 +76,9 @@ class BakeShell extends Shell {
 			$this->out('Add your database connection information to config/app.php.');
 			return false;
 		}
-		$this->out('The following commands can be used to generate skeleton code for your application.');
-		$this->out('');
-		$this->out('<info>Available bake commands:</info>');
-		$this->out('');
+		$this->out('The following commands can be used to generate skeleton code for your application.', 2);
+		$this->out('<info>Available bake commands:</info>', 2);
+		$this->out('- all');
 		foreach ($this->tasks as $task) {
 			list($p, $name) = pluginSplit($task);
 			$this->out('- ' . Inflector::underscore($name));
@@ -213,7 +212,7 @@ class BakeShell extends Shell {
 			$this->{$task}->connection = $this->connection;
 		}
 
-		$name = $this->_modelName($name);
+		$name = $this->_camelize($name);
 
 		$this->Model->bake($name);
 		$this->Controller->bake($name);
@@ -237,7 +236,7 @@ class BakeShell extends Shell {
 			' If run with no command line arguments, Bake guides the user through the class creation process.' .
 			' You can customize the generation process by telling Bake where different parts of your application are using command line arguments.'
 		)->addSubcommand('all', [
-			'help' => 'Bake a complete MVC skeleton. Optional: <name> of a model.',
+			'help' => 'Bake a complete MVC skeleton.',
 		])->addOption('connection', [
 			'help' => 'Database connection to use in conjunction with `bake all`.',
 			'short' => 'c',

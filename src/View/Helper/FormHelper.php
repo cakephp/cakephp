@@ -14,6 +14,7 @@
  */
 namespace Cake\View\Helper;
 
+use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\ORM\Entity;
@@ -216,11 +217,16 @@ class FormHelper extends Helper {
 		});
 
 		$this->addContextProvider('orm', function ($request, $data) {
-			if (
-				$data['entity'] instanceof Entity ||
-				$data['entity'] instanceof Traversable ||
-				(is_array($data['entity']) && !isset($data['entity']['schema']))
-			) {
+			if (is_array($data['entity']) || $data['entity'] instanceof Traversable) {
+				$pass = (new Collection($data['entity']))->first() !== null;
+				if ($pass) {
+					return new EntityContext($request, $data);
+				}
+			}
+			if ($data['entity'] instanceof Entity) {
+				return new EntityContext($request, $data);
+			}
+			if (is_array($data['entity']) && empty($data['entity']['schema'])) {
 				return new EntityContext($request, $data);
 			}
 		});
@@ -375,10 +381,9 @@ class FormHelper extends Helper {
 			$options['url']['action'] = $options['action'];
 		}
 
-		$plugin = $this->plugin ? Inflector::underscore($this->plugin) : null;
 		$actionDefaults = [
-			'plugin' => $plugin,
-			'controller' => Inflector::underscore($this->request->params['controller']),
+			'plugin' => $this->plugin,
+			'controller' => $this->request->params['controller'],
 			'action' => $this->request->params['action'],
 		];
 
@@ -1135,9 +1140,9 @@ class FormHelper extends Helper {
 			&& !empty($fieldDef['length'])
 			&& $options['type'] !== 'select';
 
-		$allowedTypes = ['text', 'email', 'tel', 'url', 'search'];
+		$allowedTypes = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
 		if ($autoLength && in_array($options['type'], $allowedTypes)) {
-			$options['maxlength'] = $fieldDef['length'];
+			$options['maxlength'] = min($fieldDef['length'], 100000);
 		}
 
 		if (in_array($options['type'], ['datetime', 'date', 'time', 'select'])) {
@@ -1354,6 +1359,7 @@ class FormHelper extends Helper {
  */
 	public function textarea($fieldName, array $options = array()) {
 		$options = $this->_initInputField($fieldName, $options);
+		unset($options['type']);
 		return $this->widget('textarea', $options);
 	}
 

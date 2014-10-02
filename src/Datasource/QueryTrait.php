@@ -37,7 +37,7 @@ trait QueryTrait {
  *
  * When set, query execution will be bypassed.
  *
- * @var \Cake\Datasource\ResultSetDecorator
+ * @var \Cake\Datasource\ResultSetInterface
  * @see setResult()
  */
 	protected $_results;
@@ -107,7 +107,7 @@ trait QueryTrait {
  *
  * This method is most useful when combined with results stored in a persistent cache.
  *
- * @param \Cake\ORM\ResultSet $results The results this query should return.
+ * @param \Cake\Datasource\ResultSetInterface $results The results this query should return.
  * @return \Cake\ORM\Query The query instance.
  */
 	public function setResult($results) {
@@ -196,7 +196,7 @@ trait QueryTrait {
  * ResultSetDecorator is a travesable object that implements the methods found
  * on Cake\Collection\Collection.
  *
- * @return \Cake\DataSource\ResultSetDecorator
+ * @return \Cake\Datasource\ResultSetInterface
  */
 	public function all() {
 		if (isset($this->_results)) {
@@ -393,7 +393,7 @@ trait QueryTrait {
  * Decorates the results iterator with MapReduce routines and formatters
  *
  * @param \Traversable $result Original results
- * @return \Cake\Datasource\ResultSetDecorator
+ * @return \Cake\Datasource\ResultSetInterface
  */
 	protected function _decorateResults($result) {
 		$decorator = $this->_decoratorClass();

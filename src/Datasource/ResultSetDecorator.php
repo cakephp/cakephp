@@ -15,9 +15,7 @@
 namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
-use Countable;
-use JsonSerializable;
-use Serializable;
+use Cake\Datasource\ResultSetInterface;
 
 /**
  * Generic ResultSet decorator. This will make any traversable object appear to
@@ -25,7 +23,7 @@ use Serializable;
  *
  * @return void
  */
-class ResultSetDecorator extends Collection implements Countable, Serializable, JsonSerializable {
+class ResultSetDecorator extends Collection implements ResultSetInterface {
 
 /**
  * Make this object countable.
@@ -37,6 +35,10 @@ class ResultSetDecorator extends Collection implements Countable, Serializable, 
  * @return int
  */
 	public function count() {
+		if ($this->getInnerIterator() instanceof Countable) {
+			return $this->getInnerIterator()->count();
+		}
+
 		return count($this->toArray());
 	}
 

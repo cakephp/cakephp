@@ -37,7 +37,7 @@ class SessionComponentTest extends TestCase {
  *
  * @var string
  */
-	public $fixtures = array('core.session');
+	public $fixtures = array('core.sessions');
 
 /**
  * test case startup

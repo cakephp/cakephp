@@ -35,8 +35,8 @@ class QueryTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.article', 'core.author', 'core.tag',
-		'core.articles_tag', 'core.post'];
+	public $fixtures = ['core.articles', 'core.authors', 'core.tags',
+		'core.articles_tags', 'core.posts'];
 
 /**
  * setUp method
@@ -966,6 +966,10 @@ class QueryTest extends TestCase {
 			->method('fetch')
 			->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2], false));
 
+		$statement->expects($this->once())
+			->method('rowCount')
+			->will($this->returnValue(2));
+
 		$query->expects($this->once())
 			->method('execute')
 			->will($this->returnValue($statement));
@@ -1537,7 +1541,7 @@ class QueryTest extends TestCase {
 			->method('write')
 			->with(
 				'my_key',
-				$this->isInstanceOf('Cake\ORM\ResultSet')
+				$this->isInstanceOf('Cake\Datasource\ResultSetInterface')
 			);
 
 		$query->cache('my_key', $cacher)
@@ -2146,6 +2150,28 @@ class QueryTest extends TestCase {
 
 		$this->assertEmpty($resultWithoutAuthor->first()['author']);
 		$this->assertEquals($authorId, $resultWithAuthor->first()['author']['id']);
+	}
+
+/**
+ * Tests that it is possible to pass a custom join type for an association when
+ * using contain
+ *
+ * @return void
+ */
+	public function testContainWithCustomJoinType() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors');
+
+		$articles = $table->find()
+			->contain([
+				'Authors' => [
+					'joinType' => 'inner',
+					'conditions' => ['Authors.id' => 3]
+				]
+			])
+			->toArray();
+		$this->assertCount(1, $articles);
+		$this->assertEquals(3, $articles[0]->author->id);
 	}
 
 }

@@ -24,33 +24,13 @@ use Cake\Utility\Inflector;
 trait ConventionsTrait {
 
 /**
- * Creates the proper controller plural name for the specified controller class name
- *
- * @param string $name Controller class name
- * @return string Controller plural name
- */
-	protected function _controllerName($name) {
-		return Inflector::pluralize(Inflector::camelize($name));
-	}
-
-/**
  * Creates a fixture name
  *
  * @param string $name Model class name
  * @return string Singular model key
  */
 	protected function _fixtureName($name) {
-		return Inflector::underscore(Inflector::singularize($name));
-	}
-
-/**
- * Creates the proper model camelized name (plural) for the specified name
- *
- * @param string $name Name
- * @return string Camelized and plural model name
- */
-	protected function _modelName($name) {
-		return Inflector::pluralize(Inflector::camelize($name));
+		return Inflector::underscore($name);
 	}
 
 /**
@@ -81,7 +61,7 @@ trait ConventionsTrait {
  */
 	protected function _modelNameFromKey($key) {
 		$key = str_replace('_id', '', $key);
-		return $this->_modelName($key);
+		return Inflector::pluralize(Inflector::classify($key));
 	}
 
 /**
