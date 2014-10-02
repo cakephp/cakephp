@@ -265,7 +265,6 @@ if (!function_exists('pj')) {
  * @see pr()
  * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
  */
-	
 	function pj($var) {
 		if (php_sapi_name() == 'cli') {
 			echo "\n" , trim(json_encode($var, JSON_PRETTY_PRINT)) , "\n\n";

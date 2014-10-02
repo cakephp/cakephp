@@ -1047,7 +1047,7 @@ EXPECTED;
 		$result = ob_get_clean();
 		$expected = "\n1\n\n";
 		$this->assertEquals($expected, $result);
-		
+
 		ob_start();
 		pr(false);
 		$result = ob_get_clean();
@@ -1059,7 +1059,7 @@ EXPECTED;
 		$result = ob_get_clean();
 		$expected = "\n\n\n";
 		$this->assertEquals($expected, $result);
-		
+
 		ob_start();
 		pr(123);
 		$result = ob_get_clean();
@@ -1096,7 +1096,7 @@ EXPECTED;
 		$result = ob_get_clean();
 		$expected = "\ntrue\n\n";
 		$this->assertEquals($expected, $result);
-		
+
 		ob_start();
 		pj(false);
 		$result = ob_get_clean();
@@ -1108,13 +1108,13 @@ EXPECTED;
 		$result = ob_get_clean();
 		$expected = "\nnull\n\n";
 		$this->assertEquals($expected, $result);
-		
+
 		ob_start();
 		pj(123);
 		$result = ob_get_clean();
 		$expected = "\n123\n\n";
 		$this->assertEquals($expected, $result);
-	
+
 		ob_start();
 		pj('123');
 		$result = ob_get_clean();
