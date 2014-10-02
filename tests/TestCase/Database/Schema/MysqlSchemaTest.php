@@ -185,12 +185,15 @@ class MysqlSchemaTest extends TestCase {
  * @return void
  */
 	protected function _createTables($connection) {
+		$prefix = $this->getConnectionPrefix($connection);
+
 		$this->_needsConnection();
-		$connection->execute('DROP TABLE IF EXISTS schema_articles');
-		$connection->execute('DROP TABLE IF EXISTS schema_authors');
+
+		$connection->execute('DROP TABLE IF EXISTS ' . $prefix . 'schema_articles');
+		$connection->execute('DROP TABLE IF EXISTS ' . $prefix . 'schema_authors');
 
 		$table = <<<SQL
-CREATE TABLE schema_authors (
+CREATE TABLE {$prefix}schema_authors (
 id INT(11) PRIMARY KEY AUTO_INCREMENT,
 name VARCHAR(50),
 bio TEXT,
@@ -200,7 +203,7 @@ SQL;
 		$connection->execute($table);
 
 		$table = <<<SQL
-CREATE TABLE schema_articles (
+CREATE TABLE {$prefix}schema_articles (
 id BIGINT PRIMARY KEY AUTO_INCREMENT,
 title VARCHAR(20) COMMENT 'A title',
 body TEXT,
@@ -738,7 +741,7 @@ SQL;
 			]);
 
 		$expected = <<<SQL
-CREATE TABLE `posts` (
+CREATE TABLE `{$prefix}posts` (
 `id` INTEGER NOT NULL AUTO_INCREMENT,
 `title` VARCHAR(255) NOT NULL COMMENT "The title",
 `body` TEXT,
@@ -803,7 +806,7 @@ SQL;
 			]);
 
 		$expected = <<<SQL
-CREATE TABLE `articles_tags` (
+CREATE TABLE `{$prefix}articles_tags` (
 `article_id` INTEGER NOT NULL,
 `tag_id` INTEGER NOT NULL,
 PRIMARY KEY (`article_id`, `tag_id`)
@@ -829,7 +832,7 @@ SQL;
 			]);
 
 		$expected = <<<SQL
-CREATE TABLE `composite_key` (
+CREATE TABLE `{$prefix}composite_key` (
 `id` INTEGER NOT NULL AUTO_INCREMENT,
 `account_id` INTEGER NOT NULL,
 PRIMARY KEY (`id`, `account_id`)
@@ -860,7 +863,7 @@ SQL;
 		$table = new Table('articles');
 		$result = $table->dropSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('DROP TABLE `articles`', $result[0]);
+		$this->assertEquals('DROP TABLE `' . $prefix . 'articles`', $result[0]);
 	}
 
 /**
@@ -883,7 +886,7 @@ SQL;
 		$table = new Table('articles');
 		$result = $table->truncateSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('TRUNCATE TABLE `articles`', $result[0]);
+		$this->assertEquals('TRUNCATE TABLE `' . $prefix . 'articles`', $result[0]);
 	}
 
 /**

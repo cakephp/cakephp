@@ -39,6 +39,14 @@ class TableNameExpression implements ExpressionInterface {
 	protected $_prefix;
 
 /**
+ * Holds a possible field name to be associated with the table name
+ * For instance in SELECT or ORDER clause (table.field)
+ *
+ * @var string
+ */
+	protected $_field = null;
+
+/**
  * Tells whether the current $_name is quoted or not
  *
  * @var bool
@@ -75,6 +83,16 @@ class TableNameExpression implements ExpressionInterface {
 	}
 
 /**
+ * Sets the field name associated to the table name for this expression
+ *
+ * @param string $field Field name associated to the table name
+ * @return void
+ */
+	public function setField($field) {
+		$this->_field = $field;
+	}
+
+/**
  * Gets the table name prefix for this expression
  *
  * @return void
@@ -89,9 +107,13 @@ class TableNameExpression implements ExpressionInterface {
  * @param string $name Table name
  * @param string $prefix Prefix to prepend
  */
-	public function __construct($name, $prefix) {
+	public function __construct($name, $prefix, $field = null) {
 		$this->setName($name);
 		$this->setPrefix($prefix);
+
+		if ($field !== null) {
+			$this->setField($field);
+		}
 	}
 
 /**
@@ -123,6 +145,10 @@ class TableNameExpression implements ExpressionInterface {
 				$sql = $this->_name[0] . $this->_prefix . substr($this->_name, 1);
 			} else {
 				$sql = $this->_prefix . $this->_name;
+			}
+
+			if ($this->_field !== null) {
+				$sql .= '.' . $this->_field;
 			}
 		}
 

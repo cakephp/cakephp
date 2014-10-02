@@ -502,7 +502,22 @@ class Query implements ExpressionInterface, IteratorAggregate {
 				$t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
 			}
 			$alias = is_string($alias) ? $alias : null;
+
 			$joins[$alias ?: $i++] = $t + ['type' => 'INNER', 'alias' => $alias];
+
+			$exclude = [];
+			if (!empty($alias)) {
+				$exclude[] = $alias;
+			}
+			if (!empty($t['alias'])) {
+				$exclude[] = $t['alias'];
+			}
+			$t['conditions']->iterateParts(function($condition, $key) use ($exclude) {
+				if (is_string($condition)) {
+					$condition = $this->_connection->applyFullTableName($condition, $exclude);
+				}
+				return $condition;
+			});
 		}
 
 		if ($overwrite) {
@@ -620,6 +635,26 @@ class Query implements ExpressionInterface, IteratorAggregate {
 				'type' => $type
 			]
 		];
+	}
+
+/**
+ * Retrieves all the aliases made by joins clauses
+ *
+ * @return array
+ */
+	public function getJoinsAliases() {
+		$aliases = array();
+		$joins = $this->clause('join');
+
+		if (!empty($joins)) {
+			foreach ($joins as $join) {
+				if (isset($join['alias']) && $join['alias'] !== '') {
+					$aliases[$join['alias']] = $join['alias'];
+				}
+			}
+		}
+
+		return $aliases;
 	}
 
 /**

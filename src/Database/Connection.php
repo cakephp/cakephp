@@ -231,6 +231,52 @@ class Connection {
 	}
 
 /**
+ * Wrap the table name associated to the field in a TableNameExpression with the current config prefix
+ *
+ * @param string $field The field
+ * @return TableNameExpression Full field names
+ *
+ * @see \Cake\Database\Expression\TableNameExpression
+ */
+	public function fullFieldName($field) {
+		$prefix = '';
+
+		if (isset($this->_config['prefix']) && $this->_config['prefix'] !== '') {
+			$prefix = $this->_config['prefix'];
+		}
+
+		if (is_string($field) && strpos($field, '.') !== false) {
+			list($tableName, $fieldName) = explode('.', $field);
+			$field = new TableNameExpression($tableName, $prefix, $fieldName);
+		}
+
+		return $field;
+	}
+
+/**
+ * Apply the full table name on conditions string
+ * Will replace string such as `articles.id` to `prefix_articles.id`
+ *
+ * @param string $condition Condition extracted from a QueryExpression
+ * @param string $exclude String to be excluded as a table name
+ * @return string
+ */
+	public function applyFullTableName($condition, $exclude) {
+		if (isset($this->_config['prefix']) && $this->_config['prefix'] !== '') {
+			$prefix = $this->_config['prefix'];
+			if (is_string($condition)) {
+				if (!empty($exclude)) {
+					$condition = preg_replace('/(?!' . implode('|', $exclude) . ')([\w-]+)(\.[\w-])+/', $prefix . "$1$2", $condition);
+				} else {
+					$condition = preg_replace('/([\w-]+)(\.[\w-])+/', $prefix . "$1$2", $condition);
+				}
+			}
+		}
+
+		return $condition;
+	}
+
+/**
  * Prepares a SQL statement to be executed.
  *
  * @param string|\Cake\Database\Query $sql The SQL to convert into a prepared statement.

@@ -28,6 +28,8 @@ class QueryTest extends TestCase {
 
 	public $fixtures = ['core.article', 'core.author', 'core.comment'];
 
+	public $prefix = '';
+
 	const ARTICLE_COUNT = 3;
 	const AUTHOR_COUNT = 4;
 	const COMMENT_COUNT = 6;
@@ -35,6 +37,10 @@ class QueryTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
+		$config = $this->connection->config();
+		if (isset($config['prefix']) && $config['prefix'] !== '') {
+			$this->prefix = $config['prefix'];
+		}
 		$this->autoQuote = $this->connection->driver()->autoQuoting();
 	}
 
@@ -784,7 +790,7 @@ class QueryTest extends TestCase {
 
 		$result = $query->sql();
 		$this->assertQuotedQuery(
-			'SELECT <id> FROM <comments> WHERE \(<id> = :c0 OR <id> = :c1\)',
+			$this->applyConnectionPrefix('SELECT <id> FROM <~comments> WHERE \(<id> = :c0 OR <id> = :c1\)'),
 			$result,
 			true
 		);
@@ -869,7 +875,7 @@ class QueryTest extends TestCase {
 			->from('comments')
 			->where(function ($exp) {
 				$field = clone $exp;
-				$field->add('SELECT min(id) FROM comments');
+				$field->add($this->applyConnectionPrefix('SELECT min(id) FROM ~comments'));
 				return $exp
 					->eq($field, 100, 'integer');
 			})
@@ -1381,7 +1387,7 @@ class QueryTest extends TestCase {
 			->from(['addresses'])
 			->modifier('DISTINCTROW');
 		$this->assertQuotedQuery(
-			'SELECT DISTINCTROW <city>, <state>, <country> FROM <addresses>',
+			$this->applyConnectionPrefix('SELECT DISTINCTROW <city>, <state>, <country> FROM <~addresses>'),
 			$result->sql(),
 			true
 		);
@@ -1392,7 +1398,7 @@ class QueryTest extends TestCase {
 			->from(['addresses'])
 			->modifier(['DISTINCTROW', 'SQL_NO_CACHE']);
 		$this->assertQuotedQuery(
-			'SELECT DISTINCTROW SQL_NO_CACHE <city>, <state>, <country> FROM <addresses>',
+			$this->applyConnectionPrefix('SELECT DISTINCTROW SQL_NO_CACHE <city>, <state>, <country> FROM <~addresses>'),
 			$result->sql(),
 			true
 		);
@@ -1404,7 +1410,7 @@ class QueryTest extends TestCase {
 			->modifier('DISTINCTROW')
 			->modifier('SQL_NO_CACHE');
 		$this->assertQuotedQuery(
-			'SELECT DISTINCTROW SQL_NO_CACHE <city>, <state>, <country> FROM <addresses>',
+			$this->applyConnectionPrefix('SELECT DISTINCTROW SQL_NO_CACHE <city>, <state>, <country> FROM <~addresses>'),
 			$result->sql(),
 			true
 		);
@@ -1415,7 +1421,7 @@ class QueryTest extends TestCase {
 			->from(['addresses'])
 			->modifier(['TOP 10']);
 		$this->assertQuotedQuery(
-			'SELECT TOP 10 <city>, <state>, <country> FROM <addresses>',
+			$this->applyConnectionPrefix('SELECT TOP 10 <city>, <state>, <country> FROM <~addresses>'),
 			$result->sql(),
 			true
 		);
@@ -1898,7 +1904,11 @@ class QueryTest extends TestCase {
 			->where('1 = 1');
 
 		$result = $query->sql();
-		$this->assertQuotedQuery('DELETE FROM <authors>', $result, true);
+		$this->assertQuotedQuery(
+			$this->applyConnectionPrefix('DELETE FROM <~authors>'),
+			$result,
+			true
+		);
 
 		$result = $query->execute();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -1918,7 +1928,11 @@ class QueryTest extends TestCase {
 			->where(['a.id !=' => 99]);
 
 		$result = $query->sql();
-		$this->assertQuotedQuery('DELETE FROM <authors> WHERE <id> != :c0', $result, true);
+		$this->assertQuotedQuery(
+			$this->applyConnectionPrefix('DELETE FROM <~authors> WHERE <id> != :c0'),
+			$result,
+			true
+		);
 
 		$result = $query->execute();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -1937,7 +1951,11 @@ class QueryTest extends TestCase {
 			->where('1 = 1');
 
 		$result = $query->sql();
-		$this->assertQuotedQuery('DELETE FROM <authors>', $result, true);
+		$this->assertQuotedQuery(
+			$this->applyConnectionPrefix('DELETE FROM <~authors>'),
+			$result,
+			true
+		);
 
 		$result = $query->execute();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -1956,7 +1974,11 @@ class QueryTest extends TestCase {
 			->where('1 = 1');
 		$result = $query->sql();
 
-		$this->assertQuotedQuery('DELETE FROM <authors>', $result, true);
+		$this->assertQuotedQuery(
+			$this->applyConnectionPrefix('DELETE FROM <~authors>'),
+			$result,
+			true
+		);
 		$this->assertContains(' WHERE 1 = 1', $result);
 	}
 
@@ -1971,7 +1993,11 @@ class QueryTest extends TestCase {
 			->set('name', 'mark')
 			->where(['id' => 1]);
 		$result = $query->sql();
-		$this->assertQuotedQuery('UPDATE <authors> SET <name> = :', $result, true);
+		$this->assertQuotedQuery(
+			$this->applyConnectionPrefix('UPDATE <~authors> SET <name> = :'),
+			$result,
+			true
+		);
 
 		$result = $query->execute();
 		$this->assertCount(1, $result);
@@ -1991,7 +2017,7 @@ class QueryTest extends TestCase {
 		$result = $query->sql();
 
 		$this->assertQuotedQuery(
-			'UPDATE <articles> SET <title> = :c0 , <body> = :c1',
+			$this->applyConnectionPrefix('UPDATE <~articles> SET <title> = :c0 , <body> = :c1'),
 			$result,
 			true
 		);
@@ -2017,7 +2043,7 @@ class QueryTest extends TestCase {
 		$result = $query->sql();
 
 		$this->assertQuotedQuery(
-			'UPDATE <articles> SET <title> = :c0 , <body> = :c1',
+			$this->applyConnectionPrefix('UPDATE <~articles> SET <title> = :c0 , <body> = :c1'),
 			$result,
 			true
 		);
@@ -2043,7 +2069,7 @@ class QueryTest extends TestCase {
 		$result = $query->sql();
 
 		$this->assertQuotedQuery(
-			'UPDATE <articles> SET title = author_id WHERE <id> = :',
+			$this->applyConnectionPrefix('UPDATE <~articles> SET title = author_id WHERE <id> = :'),
 			$result,
 			true
 		);
@@ -2066,7 +2092,7 @@ class QueryTest extends TestCase {
 		$result = $query->sql();
 
 		$this->assertQuotedQuery(
-			'UPDATE <comments> SET <comment> = :c0 , <created> = :c1',
+			$this->applyConnectionPrefix('UPDATE <~comments> SET <comment> = :c0 , <created> = :c1'),
 			$result,
 			true
 		);
@@ -2123,8 +2149,10 @@ class QueryTest extends TestCase {
 			]);
 		$result = $query->sql();
 		$this->assertQuotedQuery(
-			'INSERT INTO <articles> \(<title>, <body>\) ' .
-			'VALUES \(\?, \?\)',
+			$this->applyConnectionPrefix(
+				'INSERT INTO <~articles> \(<title>, <body>\) ' .
+				'VALUES \(\?, \?\)'
+			),
 			$result,
 			true
 		);
@@ -2159,8 +2187,10 @@ class QueryTest extends TestCase {
 			]);
 		$result = $query->sql();
 		$this->assertQuotedQuery(
-			'INSERT INTO <articles> \(<title>, <body>\) ' .
-			'VALUES \(\?, \?\)',
+			$this->applyConnectionPrefix(
+				'INSERT INTO <~articles> \(<title>, <body>\) ' .
+				'VALUES \(\?, \?\)'
+			),
 			$result,
 			true
 		);
@@ -2238,12 +2268,15 @@ class QueryTest extends TestCase {
 
 		$result = $query->sql();
 		$this->assertQuotedQuery(
-			'INSERT INTO <articles> \(<title>, <body>, <author_id>\) SELECT',
+			$this->applyConnectionPrefix('INSERT INTO <~articles> \(<title>, <body>, <author_id>\) SELECT'),
 			$result,
 			true
 		);
 		$this->assertQuotedQuery(
-			'SELECT <name>, \'some text\', 99 FROM <authors>', $result, true);
+			$this->applyConnectionPrefix('SELECT <name>, \'some text\', 99 FROM <~authors>'),
+			$result,
+			true
+		);
 		$result = $query->execute();
 
 		$this->assertCount(1, $result);
@@ -2523,11 +2556,11 @@ class QueryTest extends TestCase {
 		$this->connection->driver()->autoQuoting(true);
 		$query = new Query($this->connection);
 		$sql = $query->select('*')->from(['something'])->sql();
-		$this->assertQuotedQuery('FROM <something>', $sql);
+		$this->assertQuotedQuery($this->applyConnectionPrefix('FROM <~something>'), $sql);
 
 		$query = new Query($this->connection);
 		$sql = $query->select('*')->from(['foo' => 'something'])->sql();
-		$this->assertQuotedQuery('FROM <something> AS <foo>$', $sql);
+		$this->assertQuotedQuery($this->applyConnectionPrefix('FROM <~something> AS <foo>$'), $sql);
 
 		$query = new Query($this->connection);
 		$sql = $query->select('*')->from(['foo' => $query->newExpr('bar')])->sql();
@@ -2555,11 +2588,11 @@ class QueryTest extends TestCase {
 		$this->connection->driver()->autoQuoting(true);
 		$query = new Query($this->connection);
 		$sql = $query->select('*')->join(['something'])->sql();
-		$this->assertQuotedQuery('JOIN <something>', $sql);
+		$this->assertQuotedQuery($this->applyConnectionPrefix('JOIN <~something>'), $sql);
 
 		$query = new Query($this->connection);
 		$sql = $query->select('*')->join(['foo' => 'something'])->sql();
-		$this->assertQuotedQuery('JOIN <something> <foo>', $sql);
+		$this->assertQuotedQuery($this->applyConnectionPrefix('JOIN <~something> <foo>'), $sql);
 
 		$query = new Query($this->connection);
 		$sql = $query->select('*')->join(['foo' => $query->newExpr('bar')])->sql();
@@ -2622,14 +2655,20 @@ class QueryTest extends TestCase {
 			->into('foo')
 			->where(['something' => 'value'])
 			->sql();
-		$this->assertQuotedQuery('INSERT INTO <foo> \(<bar>, <baz>\)', $sql);
+		$this->assertQuotedQuery(
+			$this->applyConnectionPrefix('INSERT INTO <~foo> \(<bar>, <baz>\)'),
+			$sql
+		);
 
 		$query = new Query($this->connection);
 		$sql = $query->insert([$query->newExpr('bar')])
 			->into('foo')
 			->where(['something' => 'value'])
 			->sql();
-		$this->assertQuotedQuery('INSERT INTO <foo> \(\(bar\)\)', $sql);
+		$this->assertQuotedQuery(
+			$this->applyConnectionPrefix('INSERT INTO <~foo> \(\(bar\)\)'),
+			$sql
+		);
 	}
 
 /**
@@ -2643,7 +2682,7 @@ class QueryTest extends TestCase {
 			->select(['title'])
 			->from('articles');
 		$result = (string)$query;
-		$this->assertQuotedQuery('SELECT <title> FROM <articles>', $result, true);
+		$this->assertQuotedQuery($this->applyConnectionPrefix('SELECT <title> FROM <~articles>'), $result, true);
 	}
 
 /**
@@ -2873,6 +2912,18 @@ class QueryTest extends TestCase {
 		$pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
 		$pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
 		$this->assertRegExp('#' . $pattern . '#', $query);
+	}
+
+/**
+ * Will apply connection prefix to a raw SQL query.
+ * Prefixes are to be represented by the character ~
+ *
+ * @param string $query Query as a string that should be prefixed
+ * @return string The given query with the connection prefix, if any
+ */
+	public function applyConnectionPrefix($query) {
+		$query = str_replace('~', $this->prefix, $query);
+		return $query;
 	}
 
 }

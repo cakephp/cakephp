@@ -45,6 +45,14 @@ class QueryCompiler {
 	];
 
 /**
+ * List of query clauses that need to have the connection prefix applied
+ * to their fields name
+ *
+ * @var array
+ */
+	protected $_fullFieldsParts = ['order', 'group'];
+
+/**
  * The list of query clauses to traverse for generating a SELECT statment
  *
  * @var array
@@ -107,6 +115,9 @@ class QueryCompiler {
 			if (!count($parts)) {
 				return;
 			}
+			if (in_array($name, $this->_fullFieldsParts)) {
+				$parts = $this->_fullFieldsName($name, $parts, $query, $generator);
+			}
 			if ($parts instanceof ExpressionInterface) {
 				$parts = [$parts->sql($generator)];
 			}
@@ -116,6 +127,64 @@ class QueryCompiler {
 			}
 			return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $query, $generator);
 		};
+	}
+
+/**
+ * Calls specific helper function on parts that needs to have their composed field name (e.g. tableName.fieldName)
+ *
+ * @param string $name Name of the query clause being processed
+ * @param array|ExpressionInterface $parts Parts of the query clause
+ * @param \Cake\Database\Query $query The query that is being compiled
+ * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
+ * @return array|ExpressionInterface The variable $parts modified
+ */
+	protected function _fullFieldsName($name, $parts, $query, $generator) {
+		return $this->{'_' . $name . 'FullFieldsName'}($parts, $query, $generator);
+	}
+
+/**
+ * Helper function used to apply full field name (meaning applying the connection prefix if the field names in
+ * the order clause contains the table name)
+ * This functions is only applied on ORDER clause
+ *
+ * @param ExpressionInterface $parts Parts of the query clause
+ * @param \Cake\Database\Query $query The query that is being compiled
+ * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
+ * @return array|ExpressionInterface The variable $parts modified
+ */
+	protected function _orderFullFieldsName($parts, $query, $generator) {
+		if ($parts instanceof ExpressionInterface) {
+			$parts->iterateParts(function($condition, &$key) use ($parts, $query, $generator) {
+				$key = $query->connection()->fullFieldName($key);
+
+				if ($key instanceof ExpressionInterface) {
+					$key = $key->sql($generator);
+				}
+				return $condition;
+			});
+		}
+
+		return $parts;
+	}
+
+/**
+ * Helper function used to apply full field name (meaning applying the connection prefix if the field names in
+ * the order clause contains the table name)
+ * This functions is only applied on GROUP clause
+ *
+ * @param array $parts Parts of the query clause
+ * @param \Cake\Database\Query $query The query that is being compiled
+ * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
+ * @return array|ExpressionInterface The variable $parts modified
+ */
+	protected function _groupFullFieldsName($parts, $query, $generator) {
+		if (!empty($parts)) {
+			foreach ($parts as $key => $part) {
+				$parts[$key] = $query->connection()->fullFieldName($part);
+			}
+		}
+
+		return $parts;
 	}
 
 /**
@@ -136,6 +205,20 @@ class QueryCompiler {
 		$modifiers = $query->clause('modifier') ?: null;
 
 		$normalized = [];
+
+		$froms = $query->clause('from');
+		$joinsAliases = $query->getJoinsAliases();
+
+		foreach ($parts as $alias => $part) {
+			if (is_string($part) && strpos($part, '.') !== false) {
+				list($tableName, $fieldName) = explode('.', $part);
+
+				if (!isset($froms[$tableName]) && !isset($joinsAliases[$tableName])) {
+					$parts[$alias] = $query->connection()->fullFieldName($part);
+				}
+			}
+		}
+
 		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
@@ -159,6 +242,7 @@ class QueryCompiler {
 
 		return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
 	}
+
 
 /**
  * Helper function used to build the string representation of a FROM clause,
