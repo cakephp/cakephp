@@ -245,7 +245,7 @@ if (!function_exists('pr')) {
 	function pr($var) {
 		if (php_sapi_name() == 'cli') {
 			echo "\n" , trim(print_r($var, true)) , "\n\n";
-		} else if (Configure::read('debug')) {
+		} elseif (Configure::read('debug')) {
 			echo '<pre class="pr">' , trim(print_r($var, true)) , '</pre>';
 		}
 	}
@@ -268,7 +268,7 @@ if (!function_exists('pj')) {
 	function pj($var) {
 		if (php_sapi_name() == 'cli') {
 			echo "\n" , trim(json_encode($var, JSON_PRETTY_PRINT)) , "\n\n";
-		} else if (Configure::read('debug')) {
+		} elseif (Configure::read('debug')) {
 			echo '<pre class="pj">' , trim(json_encode($var, JSON_PRETTY_PRINT)) , '</pre>';
 		}
 	}
