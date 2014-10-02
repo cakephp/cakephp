@@ -3005,9 +3005,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(4, $tags[2]->id);
 		$this->assertEquals(1, $tags[2]->_joinData->article_id);
 		$this->assertEquals(4, $tags[2]->_joinData->tag_id);
-
-		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
-		$this->assertEquals($tags, $article->tags);
 	}
 
 /**

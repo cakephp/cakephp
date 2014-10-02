@@ -46,7 +46,8 @@ class CounterCacheBehaviorTest extends TestCase {
  */
 	public $fixtures = [
 		'core.counter_cache_users',
-		'core.counter_cache_posts'
+		'core.counter_cache_posts',
+		'core.counter_cache_categories',
 	];
 
 /**
@@ -60,6 +61,11 @@ class CounterCacheBehaviorTest extends TestCase {
 
 		$this->user = TableRegistry::get('Users', [
 			'table' => 'counter_cache_users',
+			'connection' => $this->connection
+		]);
+
+		$this->category = TableRegistry::get('Categories', [
+			'table' => 'counter_cache_categories',
 			'connection' => $this->connection
 		]);
 
@@ -162,26 +168,38 @@ class CounterCacheBehaviorTest extends TestCase {
  */
 	public function testUpdate() {
 		$this->post->belongsTo('Users');
+		$this->post->belongsTo('Categories');
 
 		$this->post->addBehavior('CounterCache', [
 			'Users' => [
 				'post_count'
-			]
+			],
+			'Categories' => [
+				'post_count'
+			],
 		]);
 
 		$user1 = $this->_getUser(1);
 		$user2 = $this->_getUser(2);
+		$category1 = $this->_getCategory(1);
+		$category2 = $this->_getCategory(2);
 		$post = $this->post->find('all')->first();
 		$this->assertEquals(2, $user1->get('post_count'));
 		$this->assertEquals(1, $user2->get('post_count'));
+		$this->assertEquals(1, $category1->get('post_count'));
+		$this->assertEquals(2, $category2->get('post_count'));
 
-		$entity = $this->post->patchEntity($post, ['user_id' => 2]);
+		$entity = $this->post->patchEntity($post, ['user_id' => 2, 'category_id' => 2]);
 		$this->post->save($entity);
 
 		$user1 = $this->_getUser(1);
 		$user2 = $this->_getUser(2);
+		$category1 = $this->_getCategory(1);
+		$category2 = $this->_getCategory(2);
 		$this->assertEquals(1, $user1->get('post_count'));
 		$this->assertEquals(2, $user2->get('post_count'));
+		$this->assertEquals(0, $category1->get('post_count'));
+		$this->assertEquals(3, $category2->get('post_count'));
 	}
 
 /**
@@ -309,11 +327,21 @@ class CounterCacheBehaviorTest extends TestCase {
 	}
 
 /**
- * Returns entity for user 1
+ * Returns entity for user
  *
  * @return Entity
  */
 	protected function _getUser($id = 1) {
 		return $this->user->find('all')->where(['id' => $id])->first();
 	}
+
+/**
+ * Returns entity for category
+ *
+ * @return Entity
+ */
+	protected function _getCategory($id = 1) {
+		return $this->category->find('all')->where(['id' => $id])->first();
+	}
+
 }
