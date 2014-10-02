@@ -814,7 +814,7 @@ if (!function_exists('__xn')) {
  * @param string $context Context of the text
  * @param string $singular Singular text to translate
  * @param string $plural Plural text
- * @param integer $count Count
+ * @param int $count Count
  * @param mixed $args Array with arguments or multiple arguments in function
  * @return mixed plural form of translated string
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__n
@@ -867,7 +867,7 @@ if (!function_exists('__dxn')) {
  * @param string $context Context of the text
  * @param string $singular Singular string to translate
  * @param string $plural Plural
- * @param integer $count Count
+ * @param int $count Count
  * @param mixed $args Array with arguments or multiple arguments in function
  * @return plural form of translated string
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dn
@@ -906,7 +906,7 @@ if (!function_exists('__dxc')) {
  * @param string $domain Domain
  * @param string $context Context of the text
  * @param string $msg Message to translate
- * @param integer $category Category
+ * @param int $category Category
  * @param mixed $args Array with arguments or multiple arguments in function
  * @return translated string
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dc
@@ -948,8 +948,8 @@ if (!function_exists('__dxcn')) {
  * @param string $context Context of the text
  * @param string $singular Singular string to translate
  * @param string $plural Plural
- * @param integer $count Count
- * @param integer $category Category
+ * @param int $count Count
+ * @param int $category Category
  * @param mixed $args Array with arguments or multiple arguments in function
  * @return plural form of translated string
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dcn
@@ -984,7 +984,7 @@ if (!function_exists('__xc')) {
  *
  * @param string $context Context of the text
  * @param string $msg String to translate
- * @param integer $category Category
+ * @param int $category Category
  * @param mixed $args Array with arguments or multiple arguments in function
  * @return translated string
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__c
