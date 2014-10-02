@@ -118,15 +118,35 @@ if (!function_exists('pr')) {
  * print_r() will wrap <PRE> tags around the output of given array. Similar to debug().
  *
  * @param mixed $var Variable to print out
- * @return void
+ * @return string|void
  * @see debug()
  * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pr
- * @see debug()
  */
 	function pr($var) {
-		if (Configure::read('debug')) {
-			$template = php_sapi_name() !== 'cli' ? '<pre>%s</pre>' : "\n%s\n";
-			printf($template, print_r($var, true));
+		if (Configure::read('debug') || php_sapi_name() == 'cli') {
+			$template = php_sapi_name() == 'cli' ? "\n%s\n\n" : '<pre>%s</pre>';
+			return printf($template, trim(print_r($var, true)));
+		}
+	}
+
+}
+
+
+if (!function_exists('pj')) {
+
+/**
+ * json pretty print convenience function. Similar to pr().
+ *
+ * @param mixed $var Variable to print out
+ * @return string|void
+ * @see pr()
+ * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
+ */
+	
+	function pj($var) {
+		if (Configure::read('debug') || php_sapi_name() == 'cli') {
+			$template = php_sapi_name() == 'cli' ? "\n%s\n\n" : '%s';
+			return printf($template, trim(json_encode($var, JSON_PRETTY_PRINT)));
 		}
 	}
 
