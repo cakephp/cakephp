@@ -156,6 +156,35 @@ class CounterCacheBehaviorTest extends TestCase {
 	}
 
 /**
+ * Testing update simple counter caching when updating a record association
+ *
+ * @return void
+ */
+	public function testUpdate() {
+		$this->post->belongsTo('Users');
+
+		$this->post->addBehavior('CounterCache', [
+			'Users' => [
+				'post_count'
+			]
+		]);
+
+		$user1 = $this->_getUser(1);
+		$user2 = $this->_getUser(2);
+		$post = $this->post->find('all')->first();
+		$this->assertEquals(2, $user1->get('post_count'));
+		$this->assertEquals(1, $user2->get('post_count'));
+
+		$entity = $this->post->patchEntity($post, ['user_id' => 2]);
+		$this->post->save($entity);
+
+		$user1 = $this->_getUser(1);
+		$user2 = $this->_getUser(2);
+		$this->assertEquals(1, $user1->get('post_count'));
+		$this->assertEquals(2, $user2->get('post_count'));
+	}
+
+/**
  * Testing counter cache with custom find
  *
  * @return void
@@ -284,7 +313,7 @@ class CounterCacheBehaviorTest extends TestCase {
  *
  * @return Entity
  */
-	protected function _getUser() {
-		return $this->user->find('all')->where(['id' => 1])->first();
+	protected function _getUser($id = 1) {
+		return $this->user->find('all')->where(['id' => $id])->first();
 	}
 }
