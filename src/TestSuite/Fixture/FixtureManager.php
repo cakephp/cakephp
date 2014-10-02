@@ -192,6 +192,11 @@ class FixtureManager {
 		}
 
 		$table = $fixture->table;
+		$dbConfig = $db->config();
+		if (isset($dbConfig['prefix']) && is_string($dbConfig['prefix']) && $dbConfig['prefix'] !== '') {
+			$table = $dbConfig['prefix'] . $table;
+		}
+
 		$exists = in_array($table, $sources);
 
 		if ($drop && $exists) {
