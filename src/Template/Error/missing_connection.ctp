@@ -13,10 +13,11 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
+<section class="error">
 <h2>Missing Database Connection</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('A Database connection using "%s" was missing or unable to connect.', h($class)); ?>
+	<?= sprintf('A Database connection using "%s" was missing or unable to connect.', h($class)) ?>
 	<br />
 	<?php
 	if (isset($message)):
@@ -27,13 +28,13 @@
 <?php if (!$enabled) : ?>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('%s driver is NOT enabled', h($class)); ?>
+	<?= sprintf('%s driver is NOT enabled', h($class)) ?>
 </p>
-<?php endif; ?>
+<?php endif ?>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)) ?>
 </p>
-<?= $this->element('auto_table_warning'); ?>
-<?php
-echo $this->element('exception_stack_trace');
+<?= $this->element('auto_table_warning') ?>
+<?= $this->element('exception_stack_trace') ?>
+</section>

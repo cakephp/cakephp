@@ -14,14 +14,16 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
-<h2><?= sprintf('Private Method in %s', $controller); ?></h2>
+<section class="error">
+<h2><?= sprintf('Private Method in %s', $controller) ?></h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('<em>%s::%s()</em> cannot be accessed directly.', h($controller), h($action)); ?>
+	<?= sprintf('<em>%s::%s()</em> cannot be accessed directly.', h($controller), h($action)) ?>
 </p>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'private_action.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)) ?>
 </p>
 
-<?= $this->element('exception_stack_trace'); ?>
+<?= $this->element('exception_stack_trace') ?>
+</section>

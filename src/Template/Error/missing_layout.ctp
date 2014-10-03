@@ -13,14 +13,15 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
+<section class="error">
 <h2>Missing Layout</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('The layout file <em>%s</em> can not be found or does not exist.', h($file)); ?>
+	<?= sprintf('The layout file <em>%s</em> can not be found or does not exist.', h($file)) ?>
 </p>
 
 <p>
-	<?= sprintf('Confirm you have created the file: %s', h($file)); ?>
+	<?= sprintf('Confirm you have created the file: %s', h($file)) ?>
 	in one of the following paths:
 </p>
 <ul>
@@ -37,7 +38,8 @@
 
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_layout.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)) ?>
 </p>
 
-<?= $this->element('exception_stack_trace'); ?>
+<?= $this->element('exception_stack_trace') ?>
+</section>

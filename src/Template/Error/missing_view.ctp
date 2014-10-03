@@ -14,10 +14,11 @@
  */
 use Cake\Utility\Inflector;
 ?>
+<section class="error">
 <h2>Missing View</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)); ?>
+	<?= sprintf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)) ?>
 </p>
 
 <p>
@@ -38,7 +39,8 @@ use Cake\Utility\Inflector;
 
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_view.ctp') ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)) ?>
 </p>
 
-<?= $this->element('exception_stack_trace'); ?>
+<?= $this->element('exception_stack_trace') ?>
+</section>

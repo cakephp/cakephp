@@ -14,87 +14,96 @@
  */
 use Cake\Utility\Inflector;
 
+if (!defined('NL')) {
+	define('NL', "\n");
+}
+
 $fields = collection($fields)
 	->filter(function($field) use ($schema) {
 		return !in_array($schema->columnType($field), ['binary', 'text']);
-	})
-	->take(7);
+	});
+$fieldCount = 0;
+$primaryKeyVar = "\${$singularVar}->{$primaryKey[0]}";
+$displayFieldVar = "\${$singularVar}->{$displayField}";
+
 ?>
-<div class="actions columns large-2 medium-3">
-	<h3><?= "<?= __('Actions') ?>"; ?></h3>
-	<ul class="side-nav">
-		<li><?= "<?= \$this->Html->link(__('New " . $singularHumanName . "'), ['action' => 'add']) ?>"; ?></li>
-<?php
-	$done = [];
-	foreach ($associations as $type => $data) {
-		foreach ($data as $alias => $details) {
-			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-				echo "\t\t<li><?= \$this->Html->link(__('List " . Inflector::humanize($details['controller']) . "'), ['controller' => '{$details['controller']}', 'action' => 'index']) ?> </li>\n";
-				echo "\t\t<li><?= \$this->Html->link(__('New " . Inflector::humanize(Inflector::singularize(Inflector::underscore($alias))) . "'), ['controller' => '{$details['controller']}', 'action' => 'add']) ?> </li>\n";
-				$done[] = $details['controller'];
-			}
-		}
-	}
-?>
-	</ul>
-</div>
-<div class="<?= $pluralVar ?> index large-10 medium-9 columns">
-	<table cellpadding="0" cellspacing="0">
-	<thead>
-		<tr>
-	<?php foreach ($fields as $field): ?>
-		<th><?= "<?= \$this->Paginator->sort('{$field}') ?>"; ?></th>
-	<?php endforeach; ?>
-		<th class="actions"><?= "<?= __('Actions') ?>"; ?></th>
-		</tr>
-	</thead>
-	<tbody>
-	<?php
-	echo "<?php foreach (\${$pluralVar} as \${$singularVar}): ?>\n";
-	echo "\t\t<tr>\n";
-		foreach ($fields as $field) {
-			$isKey = false;
-			if (!empty($associations['BelongsTo'])) {
-				foreach ($associations['BelongsTo'] as $alias => $details) {
-					if ($field === $details['foreignKey']) {
-						$isKey = true;
-						echo "\t\t\t<td>\n\t\t\t\t<?= \${$singularVar}->has('{$details['property']}') ? \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['property']}->{$details['primaryKey'][0]}]) : '' ?>\n\t\t\t</td>\n";
-						break;
-					}
-				}
-			}
-			if ($isKey !== true) {
-				if (!in_array($schema->columnType($field), ['integer', 'biginteger', 'decimal', 'float'])) {
-					echo "\t\t\t<td><?= h(\${$singularVar}->{$field}) ?></td>\n";
-				} else {
-					echo "\t\t\t<td><?= \$this->Number->format(\${$singularVar}->{$field}) ?></td>\n";
-				}
-			}
-		}
-
-		$pk = "\${$singularVar}->{$primaryKey[0]}";
-
-		echo "\t\t\t<td class=\"actions\">\n";
-		echo "\t\t\t\t<?= \$this->Html->link(__('View'), ['action' => 'view', {$pk}]) ?>\n";
-		echo "\t\t\t\t<?= \$this->Html->link(__('Edit'), ['action' => 'edit', {$pk}]) ?>\n";
-		echo "\t\t\t\t<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', {$pk}], ['confirm' => __('Are you sure you want to delete # {0}?', {$pk})]) ?>\n";
-		echo "\t\t\t</td>\n";
-	echo "\t\t</tr>\n";
-
-	echo "\t<?php endforeach; ?>\n";
-	?>
-	</tbody>
+<div class="<?= $pluralVar ?> index">
+	<style type="text/css">
+<?php foreach ($fields as $field): $fieldCount++ ?>
+		.index tbody td:nth-of-type(<?= $fieldCount ?>):before { content: '<?= Inflector::humanize($field) ?>' }
+<?php endforeach ?>
+	</style>
+	<table>
+		<thead>
+			<tr>
+<?php foreach ($fields as $field): ?>
+				<th><?= "<?= \$this->Paginator->sort('{$field}') ?>" ?></th>
+<?php endforeach ?>
+				<th><?= "<?= __('Actions') ?>" ?></th>
+			</tr>
+		</thead>
+		<tbody>
+<?= "<?php foreach (\${$pluralVar} as \${$singularVar}): ?>" . NL ?>
+			<tr>
+<?php foreach ($fields as $field) : ?>
+<?php	$isAssociation = false ?>
+<?php 	if (!empty($associations['BelongsTo'])) : ?>
+<?php		foreach ($associations['BelongsTo'] as $alias => $details) : ?>
+<?php			if ($field === $details['foreignKey']) : ?>
+<?php 				$isAssociation = true ?>
+				<td><?= "<?= \${$singularVar}->has('{$details['property']}') ? \$this->Html->link(\${$singularVar}->{$details['property']}->{$details['displayField']}, ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}->{$details['property']}->{$details['primaryKey'][0]}]) : '' ?>" ?></td>
+<?php				break ?>
+<?php			endif ?>
+<?php		endforeach ?>
+<?php	endif ?>
+<?php	if ($isAssociation == false) : ?>
+<?php		if (!in_array($field, $schema->primaryKey()) && in_array($schema->columnType($field), ['integer', 'biginteger', 'decimal', 'float'])) : ?>
+				<td><?= "<?= \$this->Number->format(\${$singularVar}->{$field}) ?>" ?></td>
+<?php		elseif ($schema->columnType($field) == 'boolean') : ?>
+				<td><?= "<?= \${$singularVar}->{$field} ? __('True') : __('False') ?>" ?></td>
+<?php		else : ?>
+				<td><?= "<?= h(\${$singularVar}->{$field}) ?>" ?></td>
+<?php		endif ?>
+<?php	endif ?>
+<?php endforeach ?>
+				<td class="actions">
+					<?= "<?= \$this->Html->link(__('View'), ['action' => 'view', {$primaryKeyVar}], ['title' => __('View {0}', {$displayFieldVar})]) ?> " . NL ?>
+					<?= "<?= \$this->Html->link(__('Edit'), ['action' => 'edit', {$primaryKeyVar}], ['title' => __('Edit {0}', {$displayFieldVar})]) ?> " . NL ?>
+					<?= "<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', {$primaryKeyVar}], ['title' => __('Delete {0}', {$displayFieldVar}), 'confirm' => __('Are you sure you want to delete # {0}?', {$primaryKeyVar})]) ?> " . NL ?>
+				</td>
+			</tr>
+<?= "<?php endforeach ?>" . NL ?>
+		</tbody>
+		<tfoot>
+			<tr class="pagination">
+				<td colspan="100%">
+					<nav>
+						<h3>Paginator</h3>
+						<ul>
+							<?= "<?= \$this->Paginator->prev('◄ ' . __('Prev')) ?> " . NL ?>
+							<?= "<?= \$this->Paginator->numbers() ?> " . NL ?>
+							<?= "<?= \$this->Paginator->next(__('Next') . ' ►') ?> " . NL ?>
+						</ul>
+					</nav>
+					<p><?= "<?= \$this->Paginator->counter() ?>" ?></p>
+				</td>
+			</tr>
+		</tfoot>
 	</table>
-	<div class="paginator">
-		<ul class="pagination">
-		<?php
-			echo "<?php\n";
-			echo "\t\t\techo \$this->Paginator->prev('< ' . __('previous'));\n";
-			echo "\t\t\techo \$this->Paginator->numbers();\n";
-			echo "\t\t\techo \$this->Paginator->next(__('next') . ' >');\n";
-			echo "\t\t?>\n";
-		?>
-		</ul>
-		<p><?= "<?= \$this->Paginator->counter() ?>"; ?></p>
-	</div>
 </div>
+<nav class="actions" id="actions_opened">
+	<h3><a href="#actions_opened"><?= "<?= __('Actions') ?>" ?></a><a href="#actions_closed" id="actions_closed" title="<?=__('Close Actions Menu')?>">X</a></h3>
+	<ul>
+		<li class="separator"><?= "<?= \$this->Html->link(__('New {0}', __('" . $singularHumanName . "')), ['action' => 'add']) ?>" ?></li>
+<?php $processedAssociations = [] ?>
+<?php foreach ($associations as $type => $data) : ?>
+<?php 	foreach ($data as $alias => $details) : ?>
+<?php 		if ($details['controller'] != $this->name && !in_array($details['variable'], $processedAssociations)) : ?>
+		<li><?= "<?= \$this->Html->link(__('List {0}', __('" . Inflector::humanize(Inflector::pluralize($details['variable'])) . "')), ['controller' => '{$details['controller']}', 'action' => 'index']) ?>" ?></li>
+		<li class="separator"><?= "<?= \$this->Html->link(__('New {0}', __('" . Inflector::humanize(Inflector::singularize($details['variable'])) . "')), ['controller' => '{$details['controller']}', 'action' => 'add']) ?>" ?></li>
+<?php			$processedAssociations[] = $details['variable'] ?>
+<?php 		endif ?>
+<?php 	endforeach ?>
+<?php endforeach ?>
+	</ul>
+</nav>

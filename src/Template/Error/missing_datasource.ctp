@@ -15,17 +15,19 @@
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 ?>
+<section class="error">
 <h2>Missing Datasource</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('Datasource class <em>%s</em> could not be found.', h($pluginDot . $class)); ?>
+	<?= sprintf('Datasource class <em>%s</em> could not be found.', h($pluginDot . $class)) ?>
 	<?php if (isset($message)):  ?>
-		<?= h($message); ?>
-	<?php endif; ?>
+		<?= h($message) ?>
+	<?php endif ?>
 </p>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_datasource.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)) ?>
 </p>
 
-<?= $this->element('exception_stack_trace'); ?>
+<?= $this->element('exception_stack_trace') ?>
+</section>

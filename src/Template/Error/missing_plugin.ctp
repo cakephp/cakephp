@@ -17,10 +17,11 @@ use Cake\Core\Configure;
 
 $pluginPath = Configure::read('App.paths.plugins.0');
 ?>
+<section class="error">
 <h2>Missing Plugin</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('The application is trying to load a file from the <em>%s</em> plugin', h($plugin)); ?>
+	<?= sprintf('The application is trying to load a file from the <em>%s</em> plugin', h($plugin)) ?>
 </p>
 <p class="error">
 	<strong>Error: </strong>
@@ -33,14 +34,15 @@ Plugin::load('<?= h($plugin)?>');
 </pre>
 <p class="notice">
 	<strong>Loading all plugins: </strong>
-	<?= sprintf('If you wish to load all plugins at once, use the following line in your %s file', 'config' . DS . 'bootstrap.php'); ?>
+	<?= sprintf('If you wish to load all plugins at once, use the following line in your %s file', 'config' . DS . 'bootstrap.php') ?>
 </p>
 <pre>
 Plugin::loadAll();
 </pre>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_plugin.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)) ?>
 </p>
 
-<?= $this->element('exception_stack_trace'); ?>
+<?= $this->element('exception_stack_trace') ?>
+</section>
