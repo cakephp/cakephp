@@ -267,7 +267,7 @@ class EntityContext implements ContextInterface {
 			$next = $this->_getProp($entity, $prop);
 
 			if ($next === null && $prop !== '_ids') {
-				return false;
+				return new Entity();
 			}
 
 			$isLast = ($i === $last && isset($next));
