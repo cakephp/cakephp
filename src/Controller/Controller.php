@@ -30,6 +30,8 @@ use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\View\ViewVarsTrait;
 use LogicException;
+use ReflectionClass;
+use ReflectionException;
 
 /**
  * Application controller class for organization of business logic.
@@ -231,14 +233,6 @@ class Controller implements EventListener {
 	public $passedArgs = array();
 
 /**
- * Holds current methods of the controller. This is a list of all the methods reachable
- * via URL. Modifying this array, will allow you to change which methods can be reached.
- *
- * @var array
- */
-	public $methods = array();
-
-/**
  * Constructor.
  *
  * Sets a number of properties based on conventions if they are empty. To override the
@@ -266,10 +260,6 @@ class Controller implements EventListener {
 			}
 			$this->viewPath = $viewPath;
 		}
-
-		$childMethods = get_class_methods($this);
-		$baseMethods = get_class_methods('Cake\Controller\Controller');
-		$this->methods = array_diff($childMethods, $baseMethods);
 
 		if ($request instanceof Request) {
 			$this->setRequest($request);
@@ -442,8 +432,7 @@ class Controller implements EventListener {
  */
 	protected function _isPrivateAction(\ReflectionMethod $method) {
 		return (
-			!$method->isPublic() ||
-			!in_array($method->name, $this->methods)
+			!$method->isPublic() || !$this->isAction($method->name)
 		);
 	}
 
@@ -679,6 +668,29 @@ class Controller implements EventListener {
 			throw new \RuntimeException('Unable to locate an object compatible with paginate.');
 		}
 		return $this->Paginator->paginate($table, $this->paginate);
+	}
+
+/**
+ * Method to check that an action is accessible from a URL.
+ *
+ * Override this method to change which controller methods can be reached.
+ * The default implementation disallows access to all methods defined on Cake\Controller\Controller,
+ * and allows all public methods on all subclasses of this class.
+ *
+ * @param string $action The action to check.
+ * @return boolean Whether or not the method is accesible from a URL.
+ */
+	public function isAction($action) {
+		$reflection = new ReflectionClass($this);
+		try {
+			$method = $reflection->getMethod($action);
+		} catch (\ReflectionException $e) {
+			return false;
+		}
+		if ($method->getDeclaringClass()->name == 'Cake\Controller\Controller') {
+			return false;
+		}
+		return true;
 	}
 
 /**

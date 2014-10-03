@@ -845,4 +845,19 @@ class ControllerTest extends TestCase {
 		}
 	}
 
+/**
+ * Test the isAction method.
+ *
+ * @return void
+ */
+	public function testIsAction() {
+		$request = new Request('/');
+		$response = $this->getMock('Cake\Network\Response');
+		$controller = new TestController($request, $response);
+
+		$this->assertFalse($controller->isAction('redirect'));
+		$this->assertFalse($controller->isAction('beforeFilter'));
+		$this->assertTrue($controller->isAction('index'));
+	}
+
 }
