@@ -97,7 +97,7 @@ HTML;
 
 TEXT;
 			$template = $html;
-			if (php_sapi_name() == 'cli' || $showHtml === false) {
+			if (php_sapi_name() === 'cli' || $showHtml === false) {
 				$template = $text;
 				if ($showFrom) {
 					$lineInfo = sprintf('%s (line %s)', $file, $line);
@@ -243,10 +243,14 @@ if (!function_exists('pr')) {
  * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pr
  */
 	function pr($var) {
-		if (php_sapi_name() == 'cli') {
-			echo "\n" , trim(print_r($var, true)) , "\n\n";
+		if (php_sapi_name() === 'cli') {
+			echo "\n",
+				trim(print_r($var, true)),
+				"\n\n";
 		} elseif (Configure::read('debug')) {
-			echo '<pre class="pr">' , trim(print_r($var, true)) , '</pre>';
+			echo '<pre class="pr">',
+				trim(print_r($var, true)),
+				'</pre>';
 		}
 	}
 
@@ -266,10 +270,14 @@ if (!function_exists('pj')) {
  * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
  */
 	function pj($var) {
-		if (php_sapi_name() == 'cli') {
-			echo "\n" , trim(json_encode($var, JSON_PRETTY_PRINT)) , "\n\n";
+		if (php_sapi_name() === 'cli') {
+			echo "\n",
+				trim(json_encode($var, JSON_PRETTY_PRINT)),
+				"\n\n";
 		} elseif (Configure::read('debug')) {
-			echo '<pre class="pj">' , trim(json_encode($var, JSON_PRETTY_PRINT)) , '</pre>';
+			echo '<pre class="pj">',
+				trim(json_encode($var, JSON_PRETTY_PRINT)),
+				'</pre>';
 		}
 	}
 
