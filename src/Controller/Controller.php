@@ -31,6 +31,7 @@ use Cake\Utility\MergeVariablesTrait;
 use Cake\View\ViewVarsTrait;
 use LogicException;
 use ReflectionClass;
+use ReflectionMethod;
 use ReflectionException;
 
 /**
@@ -403,8 +404,7 @@ class Controller implements EventListener {
 			if (!isset($request)) {
 				throw new LogicException('No Request object configured. Cannot invoke action');
 			}
-			$method = new \ReflectionMethod($this, $request->params['action']);
-			if ($this->_isPrivateAction($method, $request)) {
+			if (!$this->isAction($request)) {
 				throw new PrivateActionException(array(
 					'controller' => $this->name . "Controller",
 					'action' => $request->params['action'],
@@ -412,9 +412,9 @@ class Controller implements EventListener {
 					'plugin' => $request->params['plugin'],
 				));
 			}
+			$method = new ReflectionMethod($this, $request->params['action']);
 			return $method->invokeArgs($this, $request->params['pass']);
-
-		} catch (\ReflectionException $e) {
+		} catch (ReflectionException $e) {
 			throw new MissingActionException(array(
 				'controller' => $this->name . "Controller",
 				'action' => $request->params['action'],
@@ -422,18 +422,6 @@ class Controller implements EventListener {
 				'plugin' => $request->params['plugin'],
 			));
 		}
-	}
-
-/**
- * Check if the request's action is a public method.
- *
- * @param \ReflectionMethod $method The method to be invoked.
- * @return bool
- */
-	protected function _isPrivateAction(\ReflectionMethod $method) {
-		return (
-			!$method->isPublic() || !$this->isAction($method->name)
-		);
 	}
 
 /**
@@ -685,6 +673,9 @@ class Controller implements EventListener {
 		try {
 			$method = $reflection->getMethod($action);
 		} catch (\ReflectionException $e) {
+			return false;
+		}
+		if (!$method->isPublic()) {
 			return false;
 		}
 		if ($method->getDeclaringClass()->name == 'Cake\Controller\Controller') {

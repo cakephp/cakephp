@@ -56,22 +56,6 @@ class AuthTestController extends Controller {
 	}
 
 /**
- * admin_login method
- *
- * @return void
- */
-	public function admin_login() {
-	}
-
-/**
- * admin_add method
- *
- * @return void
- */
-	public function admin_add() {
-	}
-
-/**
  * logout method
  *
  * @return void
@@ -86,6 +70,15 @@ class AuthTestController extends Controller {
  */
 	public function add() {
 		echo "add";
+	}
+
+/**
+ * view method
+ *
+ * @return void
+ */
+	public function view() {
+		echo "view";
 	}
 
 /**

@@ -162,14 +162,14 @@ class AuthComponentTest extends TestCase {
  */
 	public function testRedirectVarClearing() {
 		$this->Controller->request['controller'] = 'auth_test';
-		$this->Controller->request['action'] = 'admin_add';
-		$this->Controller->request->here = '/auth_test/admin_add';
+		$this->Controller->request['action'] = 'add';
+		$this->Controller->request->here = '/auth_test/add';
 		$this->assertNull($this->Auth->session->read('Auth.redirect'));
 
 		$this->Auth->config('authenticate', ['Form']);
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->startup($event);
-		$this->assertEquals('/auth_test/admin_add', $this->Auth->session->read('Auth.redirect'));
+		$this->assertEquals('/auth_test/add', $this->Auth->session->read('Auth.redirect'));
 
 		$this->Auth->session->write('Auth.User', array('username' => 'admad'));
 		$this->Auth->startup($event, $this->Controller);
@@ -377,7 +377,6 @@ class AuthComponentTest extends TestCase {
  */
 	public function testAllowDenyAll() {
 		$event = new Event('Controller.startup', $this->Controller);
-
 		$this->Controller->Auth->allow();
 		$this->Controller->Auth->deny(['add', 'camelCase']);
 
@@ -540,7 +539,6 @@ class AuthComponentTest extends TestCase {
 		$this->Controller->testUrl = null;
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->request->env('HTTP_REFERER', false);
-		array_push($this->Controller->methods, 'view', 'edit', 'index');
 
 		$this->Auth->config('authorize', 'controller');
 
@@ -579,7 +577,7 @@ class AuthComponentTest extends TestCase {
 
 		// QueryString parameters
 		$this->Auth->session->delete('Auth');
-		$url = '/posts/index/29';
+		$url = '/posts/view/29';
 		$this->Auth->request->addParams(Router::parse($url));
 		$this->Auth->request->url = $this->Auth->request->here = Router::normalize($url);
 		$this->Auth->request->query = array(
@@ -590,7 +588,7 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->startup($event);
-		$expected = Router::normalize('posts/index/29?print=true&refer=menu');
+		$expected = Router::normalize('posts/view/29?print=true&refer=menu');
 		$this->assertEquals($expected, $this->Auth->session->read('Auth.redirect'));
 
 		// Different base urls.
@@ -621,7 +619,7 @@ class AuthComponentTest extends TestCase {
 
 		// External Authed Action
 		$this->Auth->session->delete('Auth');
-		$url = '/posts/edit/1';
+		$url = '/posts/view/1';
 		$request = new Request($url);
 		$request->env('HTTP_REFERER', 'http://webmail.example.com/view/message');
 		$request->query = array();
@@ -631,7 +629,7 @@ class AuthComponentTest extends TestCase {
 		$this->Auth->config('loginAction', ['controller' => 'AuthTest', 'action' => 'login']);
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->startup($event);
-		$expected = Router::normalize('/posts/edit/1');
+		$expected = Router::normalize('/posts/view/1');
 		$this->assertEquals($expected, $this->Auth->session->read('Auth.redirect'));
 
 		// External Direct Login Link
@@ -1087,8 +1085,7 @@ class AuthComponentTest extends TestCase {
 			[],
 			[$this->Controller->components()]
 		);
-		$this->Controller->methods = ['foo'];
-		$this->Controller->request->params['action'] = 'foo';
+		$this->Controller->request->params['action'] = 'add';
 		$this->Auth->startup(new Event('Controller.startup', $this->Controller));
 
 		$this->Auth->Flash->expects($this->at(0))
@@ -1272,7 +1269,7 @@ class AuthComponentTest extends TestCase {
 
 		$this->sessionKey = false;
 		$this->Auth->config('authenticate', ['Basic']);
-		$this->Controller->request['action'] = 'admin_add';
+		$this->Controller->request['action'] = 'add';
 
 		$result = $this->Auth->startup($event);
 	}
@@ -1285,7 +1282,7 @@ class AuthComponentTest extends TestCase {
 	public function testStatelessFollowedByStatefulAuth() {
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Auth->authenticate = array('Basic', 'Form');
-		$this->Controller->request['action'] = 'admin_add';
+		$this->Controller->request['action'] = 'add';
 
 		$this->Auth->response->expects($this->never())->method('statusCode');
 		$this->Auth->response->expects($this->never())->method('send');

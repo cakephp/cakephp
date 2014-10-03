@@ -213,13 +213,6 @@ class AuthComponent extends Component {
 	public $session;
 
 /**
- * Method list for bound controller.
- *
- * @var array
- */
-	protected $_methods = array();
-
-/**
  * The instance of the Authenticate provider that was used for
  * successfully logging in the current user after calling `login()`
  * in the same request
@@ -248,7 +241,6 @@ class AuthComponent extends Component {
 		$controller = $registry->getController();
 		$this->request = $controller->request;
 		$this->response = $controller->response;
-		$this->_methods = $controller->methods;
 		$this->session = $controller->request->session();
 	}
 
@@ -261,10 +253,9 @@ class AuthComponent extends Component {
  */
 	public function startup(Event $event) {
 		$controller = $event->subject();
-		$methods = array_flip(array_map('strtolower', $controller->methods));
-		$action = strtolower($controller->request->params['action']);
 
-		if (!isset($methods[$action])) {
+		$action = strtolower($controller->request->params['action']);
+		if (!$controller->isAction($action)) {
 			return;
 		}
 
@@ -543,7 +534,8 @@ class AuthComponent extends Component {
  */
 	public function allow($actions = null) {
 		if ($actions === null) {
-			$this->allowedActions = $this->_methods;
+			$controller = $this->_registry->getController();
+			$this->allowedActions = get_class_methods($controller);
 			return;
 		}
 		$this->allowedActions = array_merge($this->allowedActions, (array)$actions);
@@ -565,7 +557,7 @@ class AuthComponent extends Component {
  */
 	public function deny($actions = null) {
 		if ($actions === null) {
-			$this->allowedActions = array();
+			$this->allowedActions = [];
 			return;
 		}
 		foreach ((array)$actions as $action) {
