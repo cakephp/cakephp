@@ -194,46 +194,46 @@ class TreeBehaviorTest extends TestCase {
 		];
 		$this->assertEquals($expected, $result);
 	}
-	
+
 /**
  * Tests the find('treeList') method after moveUp, moveDown 
  *
  * @return void
  */
-        public function testFindTreeListAfterMove() {
-                $table = TableRegistry::get('MenuLinkTrees');
-                $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+	public function testFindTreeListAfterMove() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
 
 		// moveUp
-                $table->moveUp($table->get(3), 1);
-                $result = $table->find('treeList')->toArray();
-                $expected = [
-                        1 => 'Link 1',
-                        3 => '_Link 3',
-                        4 => '__Link 4',
-                        5 => '___Link 5',
-                        2 => '_Link 2',
-                        6 => 'Link 6',
-                        7 => '_Link 7',
-                        8 => 'Link 8'
-                ];
-                $this->assertSame($expected, $result);
+		$table->moveUp($table->get(3), 1);
+		$result = $table->find('treeList')->toArray();
+		$expected = [
+			1 => 'Link 1',
+			3 => '_Link 3',
+			4 => '__Link 4',
+			5 => '___Link 5',
+			2 => '_Link 2',
+			6 => 'Link 6',
+			7 => '_Link 7',
+			8 => 'Link 8'
+		];
+		$this->assertSame($expected, $result);
 
 		// moveDown
-                $table->moveDown($table->get(6), 1);
-                $result2 = $table->find('treeList')->toArray();
-                $expected2 = [
-                        1 => 'Link 1',
-                        3 => '_Link 3',
-                        4 => '__Link 4',
-                        5 => '___Link 5',
-                        2 => '_Link 2',
-                        8 => 'Link 8',
-                        6 => 'Link 6',
-                        7 => '_Link 7',
-                ];
-                $this->assertSame($expected2, $result2);
-        }
+		$table->moveDown($table->get(6), 1);
+		$result2 = $table->find('treeList')->toArray();
+		$expected2 = [
+			1 => 'Link 1',
+			3 => '_Link 3',
+			4 => '__Link 4',
+			5 => '___Link 5',
+			2 => '_Link 2',
+			8 => 'Link 8',
+			6 => 'Link 6',
+			7 => '_Link 7',
+		];
+		$this->assertSame($expected2, $result2);
+	}
 
 /**
  * Tests the find('treeList') method with custom options
