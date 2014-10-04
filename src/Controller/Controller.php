@@ -395,23 +395,22 @@ class Controller implements EventListener {
  *
  * @return mixed The resulting response.
  * @throws \LogicException When request is not set.
- * @throws \Cake\Controller\Exception\PrivateActionException When actions are not public or prefixed by _
- * @throws \Cake\Controller\Exception\MissingActionException When actions are not defined.
+ * @throws \Cake\Controller\Exception\MissingActionException When actions are not defined or inaccessible.
  */
 	public function invokeAction() {
+		$request = $this->request;
+		if (!isset($request)) {
+			throw new LogicException('No Request object configured. Cannot invoke action');
+		}
+		if (!$this->isAction($request->params['action'])) {
+			throw new MissingActionException(array(
+				'controller' => $this->name . "Controller",
+				'action' => $request->params['action'],
+				'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
+				'plugin' => $request->params['plugin'],
+			));
+		}
 		try {
-			$request = $this->request;
-			if (!isset($request)) {
-				throw new LogicException('No Request object configured. Cannot invoke action');
-			}
-			if (!$this->isAction($request)) {
-				throw new PrivateActionException(array(
-					'controller' => $this->name . "Controller",
-					'action' => $request->params['action'],
-					'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
-					'plugin' => $request->params['plugin'],
-				));
-			}
 			$method = new ReflectionMethod($this, $request->params['action']);
 			return $method->invokeArgs($this, $request->params['pass']);
 		} catch (ReflectionException $e) {

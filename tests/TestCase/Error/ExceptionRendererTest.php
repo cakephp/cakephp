@@ -18,7 +18,6 @@ use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Controller\Exception\MissingComponentException;
-use Cake\Controller\Exception\PrivateActionException;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\MissingPluginException;
@@ -486,14 +485,6 @@ class ExceptionRendererTest extends TestCase {
 				array(
 					'/<h2>Missing Method in PostsController<\/h2>/',
 					'/<em>PostsController::index\(\)<\/em>/'
-				),
-				404
-			),
-			array(
-				new PrivateActionException(array('controller' => 'PostsController', 'action' => '_secretSauce')),
-				array(
-					'/<h2>Private Method in PostsController<\/h2>/',
-					'/<em>PostsController::_secretSauce\(\)<\/em>/'
 				),
 				404
 			),
