@@ -393,7 +393,7 @@ class TreeBehavior extends Behavior {
  */
 	public function findTreeList(Query $query, array $options) {
 		return $this->_scope($query)
-			->find('threaded', ['parentField' => $this->config()['parent']])
+			->find('threaded', ['parentField' => $this->config()['parent'], 'order' => [$this->config()['left'] => 'ASC']])
 			->formatResults(function ($results) use ($options) {
 				$options += [
 					'keyPath' => $this->_getPrimaryKey(),
