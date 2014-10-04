@@ -93,7 +93,7 @@ $groupedFields += ['number' => [], 'string' => [], 'boolean' => [], 'date' => []
 		</div>
 <?php endif; ?>
 <?php if ($groupedFields['number']) : ?>
-		<div class="large-2 larege-offset-1 columns numbers end">
+		<div class="large-2 large-offset-1 columns numbers end">
 <?php foreach ($groupedFields['number'] as $field) : ?>
 			<h6 class="subheader"><?= "<?= __('" . Inflector::humanize($field) . "') ?>" ?></h6>
 			<p><?= "<?= \$this->Number->format(\${$singularVar}->{$field}) ?>" ?></p>
