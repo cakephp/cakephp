@@ -31,7 +31,6 @@ use Cake\Utility\MergeVariablesTrait;
 use Cake\View\ViewVarsTrait;
 use LogicException;
 use ReflectionClass;
-use ReflectionMethod;
 use ReflectionException;
 
 /**
@@ -410,10 +409,8 @@ class Controller implements EventListener {
 				'plugin' => $request->params['plugin'],
 			));
 		}
-		try {
-			$method = new ReflectionMethod($this, $request->params['action']);
-			return $method->invokeArgs($this, $request->params['pass']);
-		} catch (ReflectionException $e) {
+		$callable = [$this, $request->params['action']];
+		if (!is_callable($callable)) {
 			throw new MissingActionException(array(
 				'controller' => $this->name . "Controller",
 				'action' => $request->params['action'],
@@ -421,6 +418,7 @@ class Controller implements EventListener {
 				'plugin' => $request->params['plugin'],
 			));
 		}
+		return call_user_func_array($callable, $request->params['pass']);
 	}
 
 /**
