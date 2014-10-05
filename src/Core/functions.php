@@ -114,8 +114,8 @@ if (!function_exists('pr')) {
 /**
  * print_r() convenience function
  *
- * In terminals this will act the same as using print_r() directly, when not run on cli
- * print_r() will wrap <PRE> tags around the output of given array. Similar to debug().
+ * In terminals this will act similar to using print_r() directly, when not run on cli
+ * print_r() will also wrap <pre> tags around the output of given variable. Similar to debug().
  *
  * @param mixed $var Variable to print out
  * @return void
@@ -125,8 +125,31 @@ if (!function_exists('pr')) {
  */
 	function pr($var) {
 		if (Configure::read('debug')) {
-			$template = php_sapi_name() !== 'cli' ? '<pre>%s</pre>' : "\n%s\n";
-			printf($template, print_r($var, true));
+			$template = php_sapi_name() !== 'cli' ? '<pre>%s</pre>' : "\n%s\n\n";
+			printf($template, trim(print_r($var, true)));
+		}
+	}
+
+}
+
+if (!function_exists('pj')) {
+
+/**
+ * json pretty print convenience function.
+ *
+ * In terminals this will act similar to using json_encode() with JSON_PRETTY_PRINT directly, when not run on cli
+ * will also wrap <pre> tags around the output of given variable. Similar to pr().
+ *
+ * @param mixed $var Variable to print out
+ * @return void
+ * @see pr()
+ * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
+ */
+	function pj($var) {
+		if (php_sapi_name() === 'cli') {
+			printf("\n%s\n\n", trim(json_encode($var, JSON_PRETTY_PRINT)));
+		} elseif (Configure::read('debug')) {
+			printf('<pre class="pj">%s</pre>', trim(json_encode($var, JSON_PRETTY_PRINT)));
 		}
 	}
 

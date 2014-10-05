@@ -382,35 +382,94 @@ EXPECTED;
  */
 	public function testPr() {
 		ob_start();
-		pr('this is a test');
+		pr(true);
 		$result = ob_get_clean();
-		$expected = "\nthis is a test\n";
+		$expected = "\n1\n\n";
 		$this->assertEquals($expected, $result);
 
 		ob_start();
-		pr(array('this' => 'is', 'a' => 'test'));
+		pr(false);
 		$result = ob_get_clean();
-		$expected = "\nArray\n(\n    [this] => is\n    [a] => test\n)\n\n";
+		$expected = "\n\n\n";
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		pr(null);
+		$result = ob_get_clean();
+		$expected = "\n\n\n";
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		pr(123);
+		$result = ob_get_clean();
+		$expected = "\n123\n\n";
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		pr('123');
+		$result = ob_get_clean();
+		$expected = "\n123\n\n";
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		pr('this is a test');
+		$result = ob_get_clean();
+		$expected = "\nthis is a test\n\n";
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		pr(['this' => 'is', 'a' => 'test', 123 => 456]);
+		$result = ob_get_clean();
+		$expected = "\nArray\n(\n    [this] => is\n    [a] => test\n    [123] => 456\n)\n\n";
 		$this->assertEquals($expected, $result);
 	}
 
 /**
- * test pr()
+ * test pj()
  *
  * @return void
  */
-	public function testPrCli() {
-		$this->skipIf(php_sapi_name() != 'cli', 'Skipping cli test in web mode');
+	public function testPj() {
 		ob_start();
-		pr('this is a test');
+		pj(true);
 		$result = ob_get_clean();
-		$expected = "\nthis is a test\n";
+		$expected = "\ntrue\n\n";
 		$this->assertEquals($expected, $result);
 
 		ob_start();
-		pr(array('this' => 'is', 'a' => 'test'));
+		pj(false);
 		$result = ob_get_clean();
-		$expected = "\nArray\n(\n    [this] => is\n    [a] => test\n)\n\n";
+		$expected = "\nfalse\n\n";
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		pj(null);
+		$result = ob_get_clean();
+		$expected = "\nnull\n\n";
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		pj(123);
+		$result = ob_get_clean();
+		$expected = "\n123\n\n";
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		pj('123');
+		$result = ob_get_clean();
+		$expected = "\n\"123\"\n\n";
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		pj('this is a test');
+		$result = ob_get_clean();
+		$expected = "\n\"this is a test\"\n\n";
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		pj(['this' => 'is', 'a' => 'test', 123 => 456]);
+		$result = ob_get_clean();
+		$expected = "\n{\n    \"this\" => \"is\",\n    \"a\" => \"test\",\n    \"123\" => 456\n}\n\n";
 		$this->assertEquals($expected, $result);
 	}
 
