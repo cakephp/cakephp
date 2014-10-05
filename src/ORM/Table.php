@@ -925,16 +925,16 @@ class Table implements RepositoryInterface, EventListener {
 		}
 		$conditions = array_combine($key, $primaryKey);
 
-        if (isset($options['cache'])) {
-            if (!is_array($options['cache'])) {
-                $options['cache'] = [
-                    'config' => $options['cache']
-                ];
-            }
-            if (!isset($options['cache']['key'])) {
-                $options['cache']['key'] = $this->table() . '_' . json_encode($primaryKey);
-            }
-        }
+		if (isset($options['cache'])) {
+			if (!is_array($options['cache'])) {
+				$options['cache'] = [
+					'config' => $options['cache']
+				];
+			}
+			if (!isset($options['cache']['key'])) {
+				$options['cache']['key'] = $this->table() . '_' . json_encode($primaryKey);
+			}
+		}
 
 		$entity = $this->find('all', $options)->where($conditions)->first();
 

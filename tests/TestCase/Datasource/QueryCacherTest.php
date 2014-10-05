@@ -129,13 +129,13 @@ class QueryCacherTest extends TestCase {
  *
  * @return void
  */
-    public function testFetchCacheHitConstructedWithArray() {
-        $this->_mockRead('my_key', 'A winner');
-        $cacher = new QueryCacher(['key' => 'my_key', 'config' => $this->engine]);
-        $query = $this->getMock('stdClass');
-        $result = $cacher->fetch($query);
-        $this->assertEquals('A winner', $result);
-    }
+	public function testFetchCacheHitConstructedWithArray() {
+		$this->_mockRead('my_key', 'A winner');
+		$cacher = new QueryCacher(['key' => 'my_key', 'config' => $this->engine]);
+		$query = $this->getMock('stdClass');
+		$result = $cacher->fetch($query);
+		$this->assertEquals('A winner', $result);
+	}
 
 /**
  * Helper for building mocks.

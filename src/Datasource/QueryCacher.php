@@ -36,10 +36,10 @@ class QueryCacher {
  * @throws RuntimeException
  */
 	public function __construct($key, $config = null) {
-        if (is_array($key)) {
-            $config = $key['config'];
-            $key = $key['key'];
-        }
+		if (is_array($key)) {
+			$config = $key['config'];
+			$key = $key['key'];
+		}
 
 		if (!is_string($key) && !is_callable($key)) {
 			throw new RuntimeException('Cache keys must be strings or callables.');

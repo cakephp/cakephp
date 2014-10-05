@@ -3304,27 +3304,27 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->find();
 	}
 
-    public function dataProviderGet()
-    {
-        return [
-            [
-                ['fields' => ['id']],
-                ['fields' => ['id']]
-            ],
-            [
-                ['fields' => ['id'], 'cache' => 'some_cache'],
-                ['fields' => ['id'], 'cache' => ['key' => 'name_[10]', 'config' => 'some_cache']]
-            ],
-            [
-                ['fields' => ['id'], 'cache' => ['config' => 'some_cache']],
-                ['fields' => ['id'], 'cache' => ['key' => 'name_[10]', 'config' => 'some_cache']]
-            ],
-            [
-                ['fields' => ['id'], 'cache' => ['key' => 'some_key', 'config' => 'some_cache']],
-                ['fields' => ['id'], 'cache' => ['key' => 'some_key', 'config' => 'some_cache']]
-            ]
-        ];
-    }
+	public function dataProviderGet()
+	{
+		return [
+			[
+				['fields' => ['id']],
+				['fields' => ['id']]
+			],
+			[
+				['fields' => ['id'], 'cache' => 'some_cache'],
+				['fields' => ['id'], 'cache' => ['key' => 'name_[10]', 'config' => 'some_cache']]
+			],
+			[
+				['fields' => ['id'], 'cache' => ['config' => 'some_cache']],
+				['fields' => ['id'], 'cache' => ['key' => 'name_[10]', 'config' => 'some_cache']]
+			],
+			[
+				['fields' => ['id'], 'cache' => ['key' => 'some_key', 'config' => 'some_cache']],
+				['fields' => ['id'], 'cache' => ['key' => 'some_key', 'config' => 'some_cache']]
+			]
+		];
+	}
 
 /**
  * Test that get() will use the primary key for searching and return the first
@@ -3346,7 +3346,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				]
 			]]
 		);
-        $table->table('name');
+		$table->table('name');
 
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
