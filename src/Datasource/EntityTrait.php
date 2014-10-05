@@ -230,7 +230,10 @@ trait EntityTrait {
 
 			$this->dirty($p, true);
 
-			if (!isset($this->_original[$p]) && isset($this->_properties[$p]) && $this->_properties[$p] !== $value) {
+			if (!isset($this->_original[$p]) &&
+				isset($this->_properties[$p]) &&
+			 	$this->_properties[$p] !== $value
+			 ) {
 				$this->_original[$p] = $this->_properties[$p];
 			}
 
@@ -509,7 +512,9 @@ trait EntityTrait {
 	public function extractOriginal(array $properties) {
 		$result = [];
 		foreach ($properties as $property) {
-			if (($this->getOriginal($property) !== null) && ($this->getOriginal($property) !== $this->get($property))) {
+			if ($this->getOriginal($property) !== null &&
+				$this->getOriginal($property) !== $this->get($property)
+			) {
 				$result[$property] = $this->getOriginal($property);
 			}
 		}
