@@ -30,7 +30,7 @@ use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\View\ViewVarsTrait;
 use LogicException;
-use ReflectionClass;
+use ReflectionMethod;
 use ReflectionException;
 
 /**
@@ -410,14 +410,6 @@ class Controller implements EventListener {
 			));
 		}
 		$callable = [$this, $request->params['action']];
-		if (!is_callable($callable)) {
-			throw new MissingActionException(array(
-				'controller' => $this->name . "Controller",
-				'action' => $request->params['action'],
-				'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
-				'plugin' => $request->params['plugin'],
-			));
-		}
 		return call_user_func_array($callable, $request->params['pass']);
 	}
 
@@ -663,12 +655,11 @@ class Controller implements EventListener {
  * and allows all public methods on all subclasses of this class.
  *
  * @param string $action The action to check.
- * @return boolean Whether or not the method is accesible from a URL.
+ * @return bool Whether or not the method is accesible from a URL.
  */
 	public function isAction($action) {
-		$reflection = new ReflectionClass($this);
 		try {
-			$method = $reflection->getMethod($action);
+			$method = new ReflectionMethod($this, $action);
 		} catch (\ReflectionException $e) {
 			return false;
 		}
