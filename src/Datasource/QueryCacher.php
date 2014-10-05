@@ -29,10 +29,24 @@ use Traversable;
 class QueryCacher {
 
 /**
- * Constructor.
+ * Constructor requires cache key and cache engine (config) to be used
+ * either as two separate arguments or in an array:
  *
- * @param string|\Closure $key The key or function to generate a key.
- * @param string|CacheEngine $config The cache config name or cache engine instance.
+ * {{{
+ * new QueryCacher('my_cached_query', 'cache_config_name');
+ * }}}
+ *
+ * or:
+ *
+ * {{{
+ * new QueryCacher([
+ *  'key' => 'my_cached_query',
+ *  'config' => 'cache_config_name'
+ * ]);
+ * }}}
+ *
+ * @param string|\Closure|array $key The key or function to generate a key.
+ * @param string|CacheEngine|null $config The cache config name or cache engine instance.
  * @throws RuntimeException
  */
 	public function __construct($key, $config = null) {
