@@ -19,6 +19,7 @@ use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\EventManager;
 use Cake\I18n\Time;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -81,6 +82,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		]);
 	}
 
+/**
+ * teardown method
+ *
+ * @return void
+ */
 	public function tearDown() {
 		parent::tearDown();
 		TableRegistry::clear();
@@ -1902,6 +1908,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->method('attach');
 
 		$mock->expects($this->at(1))
+			->method('dispatch');
+
+		$mock->expects($this->at(2))
 			->method('dispatch')
 			->with($this->logicalAnd(
 				$this->attributeEqualTo('_name', 'Model.beforeDelete'),
@@ -1911,7 +1920,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				)
 			));
 
-		$mock->expects($this->at(2))
+		$mock->expects($this->at(3))
 			->method('dispatch')
 			->with($this->logicalAnd(
 				$this->attributeEqualTo('_name', 'Model.afterDelete'),
@@ -1936,7 +1945,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
 
 		$mock = $this->getMock('Cake\Event\EventManager');
-		$mock->expects($this->once())
+		$mock->expects($this->at(2))
 			->method('dispatch')
 			->will($this->returnCallback(function ($event) {
 				$event->stopPropagation();
@@ -1958,7 +1967,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
 
 		$mock = $this->getMock('Cake\Event\EventManager');
-		$mock->expects($this->once())
+		$mock->expects($this->at(2))
 			->method('dispatch')
 			->will($this->returnCallback(function ($event) {
 				$event->stopPropagation();
@@ -3587,6 +3596,23 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('New body', $article->body);
 		$this->assertEquals('N', $article->published);
 		$this->assertEquals(2, $article->author_id);
+	}
+
+/**
+ * Test that creating a table fires the initialize event.
+ *
+ * @return void
+ */
+	public function testInitializeEvent() {
+		$count = 0;
+		$cb = function ($event) use (&$count){
+			$count++;
+		};
+		EventManager::instance()->attach($cb, 'Model.initialize');
+		$articles = TableRegistry::get('Articles');
+
+		$this->assertEquals(1, $count, 'Callback should be called');
+		EventManager::instance()->detach($cb, 'Model.initialize');
 	}
 
 }
