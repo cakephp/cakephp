@@ -505,7 +505,6 @@ class EntityContextTest extends TestCase {
 
 		$result = $context->val('id');
 		$this->assertEquals($row->id, $result);
-
 		$this->assertNull($context->val('profile.id'));
 	}
 
@@ -917,6 +916,8 @@ class EntityContextTest extends TestCase {
 			]
 		]);
 		$row->comments[0]->errors('comment', ['Is required']);
+		$row->comments[0]->errors('article_id', ['Is required']);
+
 		$context = new EntityContext($this->request, [
 			'entity' => $row,
 			'table' => 'Articles',
@@ -927,8 +928,10 @@ class EntityContextTest extends TestCase {
 		$this->assertEquals([], $context->error('comments.0.user_id'));
 		$this->assertEquals([], $context->error('comments.0'));
 		$this->assertEquals(['Is required'], $context->error('comments.0.comment'));
+		$this->assertEquals(['Is required'], $context->error('comments.0.article_id'));
 		$this->assertEquals([], $context->error('comments.1'));
 		$this->assertEquals([], $context->error('comments.1.comment'));
+		$this->assertEquals([], $context->error('comments.1.article_id'));
 	}
 
 /**
