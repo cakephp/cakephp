@@ -693,7 +693,7 @@ class ControllerTest extends TestCase {
  * testMissingAction method
  *
  * @expectedException \Cake\Controller\Exception\MissingActionException
- * @expectedExceptionMessage Action TestController::missing() could not be found.
+ * @expectedExceptionMessage Action TestController::missing() could not be found, or is not accessible.
  * @return void
  */
 	public function testInvokeActionMissingAction() {
@@ -708,8 +708,8 @@ class ControllerTest extends TestCase {
 /**
  * test invoking private methods.
  *
- * @expectedException \Cake\Controller\Exception\PrivateActionException
- * @expectedExceptionMessage Private Action TestController::private_m() is not directly accessible.
+ * @expectedException \Cake\Controller\Exception\MissingActionException
+ * @expectedExceptionMessage Action TestController::private_m() could not be found, or is not accessible.
  * @return void
  */
 	public function testInvokeActionPrivate() {
@@ -724,8 +724,8 @@ class ControllerTest extends TestCase {
 /**
  * test invoking protected methods.
  *
- * @expectedException \Cake\Controller\Exception\PrivateActionException
- * @expectedExceptionMessage Private Action TestController::protected_m() is not directly accessible.
+ * @expectedException \Cake\Controller\Exception\MissingActionException
+ * @expectedExceptionMessage Action TestController::protected_m() could not be found, or is not accessible.
  * @return void
  */
 	public function testInvokeActionProtected() {
@@ -740,8 +740,8 @@ class ControllerTest extends TestCase {
 /**
  * test invoking controller methods.
  *
- * @expectedException \Cake\Controller\Exception\PrivateActionException
- * @expectedExceptionMessage Private Action TestController::redirect() is not directly accessible.
+ * @expectedException \Cake\Controller\Exception\MissingActionException
+ * @expectedExceptionMessage Action TestController::redirect() could not be found, or is not accessible.
  * @return void
  */
 	public function testInvokeActionBaseMethods() {
@@ -843,6 +843,21 @@ class ControllerTest extends TestCase {
 		} catch (\RuntimeException $e) {
 			$this->assertContains('The "Paginator" alias has already been loaded', $e->getMessage());
 		}
+	}
+
+/**
+ * Test the isAction method.
+ *
+ * @return void
+ */
+	public function testIsAction() {
+		$request = new Request('/');
+		$response = $this->getMock('Cake\Network\Response');
+		$controller = new TestController($request, $response);
+
+		$this->assertFalse($controller->isAction('redirect'));
+		$this->assertFalse($controller->isAction('beforeFilter'));
+		$this->assertTrue($controller->isAction('index'));
 	}
 
 }
