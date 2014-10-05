@@ -30,8 +30,8 @@ use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\View\ViewVarsTrait;
 use LogicException;
-use ReflectionMethod;
 use ReflectionException;
+use ReflectionMethod;
 
 /**
  * Application controller class for organization of business logic.
