@@ -925,16 +925,16 @@ class Table implements RepositoryInterface, EventListener {
 		}
 		$conditions = array_combine($key, $primaryKey);
 
-        if (isset($options['cache'])) {
-            $cache = $options['cache'];
-            unset($options['cache']);
-        }
+		if (isset($options['cache'])) {
+			$cache = $options['cache'];
+			unset($options['cache']);
+		}
 
-        $query = $this->find('all', $options);
+		$query = $this->find('all', $options);
 
-        if (isset($cache)) {
-            $query->cache($this->table() . '_' . json_encode($primaryKey), $cache);
-        }
+		if (isset($cache)) {
+			$query->cache($this->table() . '_' . json_encode($primaryKey), $cache);
+		}
 
 		$entity = $query->where($conditions)->first();
 
