@@ -924,7 +924,19 @@ class Table implements RepositoryInterface, EventListener {
 			));
 		}
 		$conditions = array_combine($key, $primaryKey);
-		$entity = $this->find('all', $options)->where($conditions)->first();
+
+        if (isset($options['cache'])) {
+            $cache = $options['cache'];
+            unset($options['cache']);
+        }
+
+        $query = $this->find('all', $options);
+
+        if (isset($cache)) {
+            $query->cache($this->table() . '_' . json_encode($primaryKey), $cache);
+        }
+
+		$entity = $query->where($conditions)->first();
 
 		if ($entity) {
 			return $entity;

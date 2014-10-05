@@ -3347,6 +3347,50 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test that get() will use the cache.
+ *
+ * @return void
+ */
+    public function testGetWithCache() {
+        $table = $this->getMock(
+            '\Cake\ORM\Table',
+            ['callFinder', 'query'],
+            [[
+                'connection' => $this->connection,
+                'schema' => [
+                    'id' => ['type' => 'integer'],
+                    'bar' => ['type' => 'integer'],
+                    '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]]
+                ]
+            ]]
+        );
+
+        $query = $this->getMock(
+            '\Cake\ORM\Query',
+            ['addDefaultTypes', 'first', 'where', 'cache'],
+            [$this->connection, $table]
+        );
+
+        $entity = new \Cake\ORM\Entity;
+        $table->expects($this->once())->method('query')
+            ->will($this->returnValue($query));
+        $table->expects($this->once())->method('callFinder')
+            ->with('all', $query, ['fields' => ['id']])
+            ->will($this->returnValue($query));
+
+        $query->expects($this->once())->method('where')
+            ->with([$table->alias() . '.bar' => 10])
+            ->will($this->returnSelf());
+        $query->expects($this->once())->method('cache')
+            ->with($table->table() . '_[10]', 'any_cache')
+            ->will($this->returnSelf());
+        $query->expects($this->once())->method('first')
+            ->will($this->returnValue($entity));
+        $result = $table->get(10, ['fields' => ['id'], 'cache' => 'any_cache']);
+        $this->assertSame($entity, $result);
+    }
+
+/**
  * Tests that get() will throw an exception if the record was not found
  *
  * @expectedException \Cake\ORM\Exception\RecordNotFoundException
