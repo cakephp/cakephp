@@ -3326,7 +3326,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['addDefaultTypes', 'first', 'where'],
+			['addDefaultTypes', 'first', 'where', 'cache'],
 			[$this->connection, $table]
 		);
 
@@ -3340,6 +3340,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('where')
 			->with([$table->alias() . '.bar' => 10])
 			->will($this->returnSelf());
+		$query->expects($this->never())->method('cache');
 		$query->expects($this->once())->method('first')
 			->will($this->returnValue($entity));
 		$result = $table->get(10, ['fields' => ['id']]);
