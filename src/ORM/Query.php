@@ -454,6 +454,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 			'having' => 'having',
 			'contain' => 'contain',
 			'page' => 'page',
+			'cache' => 'cache'
 		];
 
 		ksort($options);

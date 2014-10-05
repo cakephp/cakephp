@@ -3304,13 +3304,36 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->find();
 	}
 
+	public function dataProviderGet()
+	{
+		return [
+			[
+				['fields' => ['id']],
+				['fields' => ['id']]
+			],
+			[
+				['fields' => ['id'], 'cache' => 'some_cache'],
+				['fields' => ['id'], 'cache' => ['key' => 'name_[10]', 'config' => 'some_cache']]
+			],
+			[
+				['fields' => ['id'], 'cache' => ['config' => 'some_cache']],
+				['fields' => ['id'], 'cache' => ['key' => 'name_[10]', 'config' => 'some_cache']]
+			],
+			[
+				['fields' => ['id'], 'cache' => ['key' => 'some_key', 'config' => 'some_cache']],
+				['fields' => ['id'], 'cache' => ['key' => 'some_key', 'config' => 'some_cache']]
+			]
+		];
+	}
+
 /**
  * Test that get() will use the primary key for searching and return the first
  * entity found
  *
+ * @dataProvider dataProviderGet
  * @return void
  */
-	public function testGet() {
+	public function testGet($options, $expectedFinderOptions) {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
 			['callFinder', 'query'],
@@ -3323,6 +3346,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				]
 			]]
 		);
+		$table->table('name');
 
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
@@ -3334,7 +3358,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->expects($this->once())->method('query')
 			->will($this->returnValue($query));
 		$table->expects($this->once())->method('callFinder')
-			->with('all', $query, ['fields' => ['id']])
+			->with('all', $query, $expectedFinderOptions)
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('where')
@@ -3342,7 +3366,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnSelf());
 		$query->expects($this->once())->method('first')
 			->will($this->returnValue($entity));
-		$result = $table->get(10, ['fields' => ['id']]);
+
+		$result = $table->get(10, $options);
 		$this->assertSame($entity, $result);
 	}
 
