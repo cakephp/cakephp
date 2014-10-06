@@ -28,8 +28,6 @@ use Cake\Log\LogTrait;
  * Components can provide several callbacks that are fired at various stages of the request
  * cycle. The available callbacks are:
  *
- * - `initialize(Event $event)`
- *   Called before the controller's beforeFilter method.
  * - `startup(Event $event)`
  *   Called after the controller's beforeFilter method, and before the
  *   controller action is called.
@@ -99,6 +97,18 @@ class Component implements EventListener {
 		if (!empty($this->components)) {
 			$this->_componentMap = $registry->normalizeArray($this->components);
 		}
+		$this->initialize($config);
+	}
+
+/**
+ * Constructor hook method.
+ *
+ * Implement this method to avoid having to overwrite
+ * the constructor and call parent.
+ *
+ * @return void
+ */
+	public function initialize(array $config) {
 	}
 
 /**
@@ -131,7 +141,7 @@ class Component implements EventListener {
  */
 	public function implementedEvents() {
 		$eventMap = [
-			'Controller.initialize' => 'initialize',
+			// 'Controller.initialize' => 'initialize',
 			'Controller.startup' => 'startup',
 			'Controller.beforeRender' => 'beforeRender',
 			'Controller.beforeRedirect' => 'beforeRedirect',

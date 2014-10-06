@@ -261,12 +261,16 @@ class Controller implements EventListener {
 			$this->viewPath = $viewPath;
 		}
 
-		if ($request instanceof Request) {
-			$this->setRequest($request);
+		if (!($request instanceof Request)) {
+			$request = new Request();
 		}
-		if ($response instanceof Response) {
-			$this->response = $response;
+		$this->setRequest($request);
+
+		if (!($response instanceof Response)) {
+			$response = new Response();
 		}
+		$this->response = $response;
+
 		if ($eventManager) {
 			$this->eventManager($eventManager);
 		}

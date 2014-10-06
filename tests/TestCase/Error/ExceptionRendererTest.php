@@ -56,10 +56,10 @@ class BlueberryComponent extends Component {
 /**
  * initialize method
  *
- * @param Event $event
+ * @param array $config
  * @return void
  */
-	public function initialize(Event $event) {
+	public function initialize(array $config) {
 		$this->testName = 'BlueberryComponent';
 	}
 
