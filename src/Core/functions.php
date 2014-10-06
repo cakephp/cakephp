@@ -125,7 +125,7 @@ if (!function_exists('pr')) {
  */
 	function pr($var) {
 		if (Configure::read('debug')) {
-			$template = php_sapi_name() !== 'cli' ? '<pre>%s</pre>' : "\n%s\n\n";
+			$template = php_sapi_name() !== 'cli' ? '<pre class="pr">%s</pre>' : "\n%s\n\n";
 			printf($template, trim(print_r($var, true)));
 		}
 	}
@@ -146,6 +146,9 @@ if (!function_exists('pj')) {
  * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
  */
 	function pj($var) {
+		if (!Configure::read('debug')) {
+			return;
+		}
 		if (php_sapi_name() === 'cli') {
 			printf("\n%s\n\n", trim(json_encode($var, JSON_PRETTY_PRINT)));
 		} elseif (Configure::read('debug')) {

@@ -517,8 +517,8 @@ TEXT;
 		Debugger::dump($var);
 		$result = ob_get_clean();
 
-		$open = php_sapi_name() === 'cli' ? "\n" : '<pre>';
-		$close = php_sapi_name() === 'cli' ? "\n" : '</pre>';
+		$open = "\n";
+		$close = "\n\n";
 		$expected = <<<TEXT
 {$open}[
 	'People' => [
@@ -541,8 +541,6 @@ TEXT;
 		Debugger::dump($var, 1);
 		$result = ob_get_clean();
 
-		$open = php_sapi_name() === 'cli' ? "\n" : '<pre>';
-		$close = php_sapi_name() === 'cli' ? "\n" : '</pre>';
 		$expected = <<<TEXT
 {$open}[
 	'People' => [

@@ -469,7 +469,7 @@ EXPECTED;
 		ob_start();
 		pj(['this' => 'is', 'a' => 'test', 123 => 456]);
 		$result = ob_get_clean();
-		$expected = "\n{\n    \"this\" => \"is\",\n    \"a\" => \"test\",\n    \"123\" => 456\n}\n\n";
+		$expected = "\n{\n    \"this\": \"is\",\n    \"a\": \"test\",\n    \"123\": 456\n}\n\n";
 		$this->assertEquals($expected, $result);
 	}
 
