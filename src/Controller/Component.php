@@ -141,7 +141,7 @@ class Component implements EventListener {
  */
 	public function implementedEvents() {
 		$eventMap = [
-			// 'Controller.initialize' => 'initialize',
+			'Controller.initialize' => 'beforeFilter',
 			'Controller.startup' => 'startup',
 			'Controller.beforeRender' => 'beforeRender',
 			'Controller.beforeRedirect' => 'beforeRedirect',
