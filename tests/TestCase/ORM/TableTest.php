@@ -3304,13 +3304,22 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->find();
 	}
 
+	public function providerForTestGet() {
+		return [
+			[ ['fields' => ['id']] ],
+			[ ['fields' => ['id'], 'cache' => false] ]
+		];
+	}
+
 /**
  * Test that get() will use the primary key for searching and return the first
  * entity found
  *
+ * @dataProvider providerForTestGet
+ * @param array $options
  * @return void
  */
-	public function testGet() {
+	public function testGet($options) {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
 			['callFinder', 'query'],
@@ -3343,16 +3352,33 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->never())->method('cache');
 		$query->expects($this->once())->method('first')
 			->will($this->returnValue($entity));
-		$result = $table->get(10, ['fields' => ['id']]);
+		$result = $table->get(10, $options);
 		$this->assertSame($entity, $result);
+	}
+
+	public function providerForTestGetWithCache() {
+		return [
+			[
+				['fields' => ['id'], 'cache' => 'default'],
+				'get:test.table_name[10]', 'default'
+			],
+			[
+				['fields' => ['id'], 'cache' => 'default', 'key' => 'custom_key'],
+				'custom_key', 'default'
+			]
+		];
 	}
 
 /**
  * Test that get() will use the cache.
  *
+ * @dataProvider providerForTestGetWithCache
+ * @param array $options
+ * @param string $cacheKey
+ * @param string $cacheConfig
  * @return void
  */
-	public function testGetWithCache() {
+	public function testGetWithCache($options, $cacheKey, $cacheConfig) {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
 			['callFinder', 'query'],
@@ -3365,6 +3391,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				]
 			]]
 		);
+		$table->table('table_name');
 
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
@@ -3383,11 +3410,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->with([$table->alias() . '.bar' => 10])
 			->will($this->returnSelf());
 		$query->expects($this->once())->method('cache')
-			->with($table->table() . '_[10]', 'any_cache')
+			->with($cacheKey, $cacheConfig)
 			->will($this->returnSelf());
 		$query->expects($this->once())->method('first')
 			->will($this->returnValue($entity));
-		$result = $table->get(10, ['fields' => ['id'], 'cache' => 'any_cache']);
+		$result = $table->get(10, $options);
 		$this->assertSame($entity, $result);
 	}
 

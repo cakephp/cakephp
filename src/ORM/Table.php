@@ -925,18 +925,23 @@ class Table implements RepositoryInterface, EventListener {
 		}
 		$conditions = array_combine($key, $primaryKey);
 
-		if (isset($options['cache'])) {
-			$cache = $options['cache'];
-			unset($options['cache']);
+		$cacheConfig = isset($options['cache']) ? $options['cache'] : false;
+		$cacheKey = isset($options['key']) ? $options['key'] : false;
+		unset($options['key'], $options['cache']);
+
+		$query = $this->find('all', $options)->where($conditions);
+
+		if ($cacheConfig) {
+			if (!$cacheKey) {
+				$cacheKey = sprintf(
+					"get:%s.%s%s",
+					$this->connection()->configName(), $this->table(), json_encode($primaryKey)
+				);
+			}
+			$query->cache($cacheKey, $cacheConfig);
 		}
 
-		$query = $this->find('all', $options);
-
-		if (isset($cache)) {
-			$query->cache($this->table() . '_' . json_encode($primaryKey), $cache);
-		}
-
-		$entity = $query->where($conditions)->first();
+		$entity = $query->first();
 
 		if ($entity) {
 			return $entity;
