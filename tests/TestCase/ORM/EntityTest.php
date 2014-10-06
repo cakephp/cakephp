@@ -30,14 +30,19 @@ class EntityTest extends TestCase {
  */
 	public function testSetOneParamNoSetters() {
 		$entity = new Entity;
+		$this->assertNull($entity->getOriginal('foo'));
 		$entity->set('foo', 'bar');
 		$this->assertEquals('bar', $entity->foo);
+		$this->assertEquals('bar', $entity->getOriginal('foo'));
 
 		$entity->set('foo', 'baz');
 		$this->assertEquals('baz', $entity->foo);
+		$this->assertEquals('bar', $entity->getOriginal('foo'));
 
 		$entity->set('id', 1);
 		$this->assertSame(1, $entity->id);
+		$this->assertEquals(1, $entity->getOriginal('id'));
+		$this->assertEquals('bar', $entity->getOriginal('foo'));
 	}
 
 /**
@@ -57,6 +62,8 @@ class EntityTest extends TestCase {
 		$this->assertEquals('baz', $entity->foo);
 		$this->assertSame(2, $entity->id);
 		$this->assertSame(3, $entity->thing);
+		$this->assertEquals('bar', $entity->getOriginal('foo'));
+		$this->assertEquals(1, $entity->getOriginal('id'));
 	}
 
 /**
@@ -570,11 +577,12 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testIsNew() {
-		$entity = new Entity([
+		$data = [
 			'id' => 1,
 			'title' => 'Foo',
 			'author_id' => 3
-		]);
+		];
+		$entity = new Entity($data);
 		$this->assertTrue($entity->isNew());
 
 		$entity->isNew(true);
@@ -1062,6 +1070,7 @@ class EntityTest extends TestCase {
 			'accessible' => ['*' => true, 'name' => true],
 			'properties' => ['foo' => 'bar'],
 			'dirty' => ['foo' => true],
+			'original' => [],
 			'virtual' => ['baz'],
 			'errors' => ['foo' => ['An error']],
 			'repository' => 'foos'

@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         1.2.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\Fixture;
@@ -17,23 +17,20 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Counter Cache Test Fixtures
+ * Short description for class.
  *
  */
-class CounterCachePostsFixture extends TestFixture {
+class CounterCacheCategoriesFixture extends TestFixture {
 
 	public $fields = array(
 		'id' => ['type' => 'integer'],
-		'title' => ['type' => 'string', 'length' => 255],
-		'user_id' => ['type' => 'integer', 'null' => true],
-		'category_id' => ['type' => 'integer', 'null' => true],
-		'published' => ['type' => 'boolean', 'null' => false, 'default' => false],
+		'name' => ['type' => 'string', 'length' => 255, 'null' => false],
+		'post_count' => ['type' => 'integer', 'null' => true],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 	public $records = array(
-		array('title' => 'Rock and Roll', 'user_id' => 1, 'category_id' => 1, 'published' => 0),
-		array('title' => 'Music', 'user_id' => 1, 'category_id' => 2, 'published' => 1),
-		array('title' => 'Food', 'user_id' => 2, 'category_id' => 2, 'published' => 1),
+		array('name' => 'Sport', 'post_count' => 1),
+		array('name' => 'Music', 'post_count' => 2),
 	);
 }
