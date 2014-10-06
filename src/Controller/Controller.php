@@ -666,7 +666,7 @@ class Controller implements EventListener {
 		if (!$method->isPublic()) {
 			return false;
 		}
-		if ($method->getDeclaringClass()->name == 'Cake\Controller\Controller') {
+		if ($method->getDeclaringClass()->name === 'Cake\Controller\Controller') {
 			return false;
 		}
 		return true;
