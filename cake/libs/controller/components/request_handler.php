@@ -25,7 +25,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
- * @link http://book.cakephp.org/view/1291/Request-Handling
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Core-Components/Request-Handling.html
  *
  */
 class RequestHandlerComponent extends Object {

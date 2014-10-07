@@ -22,7 +22,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller
- * @link          http://book.cakephp.org/view/993/Components
+ * @link          http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Components.html
  */
 class Component extends Object {
 
@@ -84,7 +84,7 @@ class Component extends Object {
  * @param object $controller Controller with components to initialize
  * @return void
  * @access public
- * @link http://book.cakephp.org/view/998/MVC-Class-Access-Within-Components
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Components.html#mvc-class-access-within-components
  */
 	function initialize(&$controller) {
 		foreach (array_keys($this->_loaded) as $name) {
@@ -106,7 +106,7 @@ class Component extends Object {
  * @param object $controller Controller with components to startup
  * @return void
  * @access public
- * @link http://book.cakephp.org/view/998/MVC-Class-Access-Within-Components
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Components.html#mvc-class-access-within-components
  * @deprecated See Component::triggerCallback()
  */
 	function startup(&$controller) {

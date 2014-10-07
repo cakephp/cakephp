@@ -41,7 +41,7 @@ if (!class_exists('Overloadable')) {
  *
  * @package       cake
  * @subpackage    cake.cake.libs.model
- * @link          http://book.cakephp.org/view/1000/Models
+ * @link          http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Models
  */
 class Model extends Overloadable {
 
@@ -50,7 +50,7 @@ class Model extends Overloadable {
  *
  * @var string
  * @access public
- * @link http://book.cakephp.org/view/1057/Model-Attributes#useDbConfig-1058
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Model-Attributes#useDbConfig-1058
  */
 	var $useDbConfig = 'default';
 
@@ -59,7 +59,7 @@ class Model extends Overloadable {
  *
  * @var string
  * @access public
- * @link http://book.cakephp.org/view/1057/Model-Attributes#useTable-1059
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Model-Attributes#useTable-1059
  */
 	var $useTable = null;
 
@@ -68,7 +68,7 @@ class Model extends Overloadable {
  *
  * @var string
  * @access public
- * @link http://book.cakephp.org/view/1057/Model-Attributes#displayField-1062
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Model-Attributes#displayField-1062
  */
 	var $displayField = null;
 
@@ -86,7 +86,7 @@ class Model extends Overloadable {
  *
  * @var array
  * @access public
- * @link http://book.cakephp.org/view/1057/Model-Attributes#data-1065
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Model-Attributes#data-1065
  */
 	var $data = array();
 
@@ -103,7 +103,7 @@ class Model extends Overloadable {
  *
  * @var string
  * @access public
- * @link http://book.cakephp.org/view/1057/Model-Attributes#primaryKey-1061
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Model-Attributes#primaryKey-1061
  */
 	var $primaryKey = null;
 
@@ -112,7 +112,7 @@ class Model extends Overloadable {
  *
  * @var array
  * @access protected
- * @link http://book.cakephp.org/view/1057/Model-Attributes#_schema-1066
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Model-Attributes#_schema-1066
  */
 	var $_schema = null;
 
@@ -122,8 +122,8 @@ class Model extends Overloadable {
  *
  * @var array
  * @access public
- * @link http://book.cakephp.org/view/1057/Model-Attributes#validate-1067
- * @link http://book.cakephp.org/view/1143/Data-Validation
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Model-Attributes#validate-1067
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Data-Validation
  */
 	var $validate = array();
 
@@ -132,7 +132,7 @@ class Model extends Overloadable {
  *
  * @var array
  * @access public
- * @link http://book.cakephp.org/view/1182/Validating-Data-from-the-Controller
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Validating-Data-from-the-Controller
  */
 	var $validationErrors = array();
 
@@ -141,7 +141,7 @@ class Model extends Overloadable {
  *
  * @var string
  * @access public
- * @link http://book.cakephp.org/view/1057/Model-Attributes#tablePrefix-1060
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Model-Attributes#tablePrefix-1060
  */
 	var $tablePrefix = null;
 
@@ -150,7 +150,7 @@ class Model extends Overloadable {
  *
  * @var string
  * @access public
- * @link http://book.cakephp.org/view/1057/Model-Attributes#name-1068
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Model-Attributes#name-1068
  */
 	var $name = null;
 
@@ -184,7 +184,7 @@ class Model extends Overloadable {
  *
  * @var boolean
  * @access public
- * @link http://book.cakephp.org/view/1057/Model-Attributes#cacheQueries-1069
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Model-Attributes#cacheQueries-1069
  */
 	var $cacheQueries = false;
 
@@ -193,7 +193,7 @@ class Model extends Overloadable {
  *
  * @var array
  * @access public
- * @link http://book.cakephp.org/view/1042/belongsTo
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#belongsTo
  */
 	var $belongsTo = array();
 
@@ -202,7 +202,7 @@ class Model extends Overloadable {
  *
  * @var array
  * @access public
- * @link http://book.cakephp.org/view/1041/hasOne
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#hasOne
  */
 	var $hasOne = array();
 
@@ -211,7 +211,7 @@ class Model extends Overloadable {
  *
  * @var array
  * @access public
- * @link http://book.cakephp.org/view/1043/hasMany
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#hasMany
  */
 	var $hasMany = array();
 
@@ -220,7 +220,7 @@ class Model extends Overloadable {
  *
  * @var array
  * @access public
- * @link http://book.cakephp.org/view/1044/hasAndBelongsToMany-HABTM
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#hasAndBelongsToMany-HABTM
  */
 	var $hasAndBelongsToMany = array();
 
@@ -232,7 +232,7 @@ class Model extends Overloadable {
  *
  * @var array
  * @access public
- * @link http://book.cakephp.org/view/1072/Using-Behaviors
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Using-Behaviors
  */
 	var $actsAs = null;
 
@@ -274,7 +274,7 @@ class Model extends Overloadable {
  *
  * @var integer
  * @access public
- * @link http://book.cakephp.org/view/1057/Model-Attributes#recursive-1063
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Model-Attributes#recursive-1063
  */
 	var $recursive = 1;
 
@@ -286,7 +286,7 @@ class Model extends Overloadable {
  *
  * @var string
  * @access public
- * @link http://book.cakephp.org/view/1057/Model-Attributes#order-1064
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Model-Attributes#order-1064
  */
 	var $order = null;
 
@@ -534,7 +534,7 @@ class Model extends Overloadable {
  * @param boolean $reset Set to false to make the binding permanent
  * @return boolean Success
  * @access public
- * @link http://book.cakephp.org/view/1045/Creating-and-Destroying-Associations-on-the-Fly
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Creating-and-Destroying-Associations-on-the-Fly
  */
 	function bindModel($params, $reset = true) {
 		foreach ($params as $assoc => $model) {
@@ -577,7 +577,7 @@ class Model extends Overloadable {
  * @param boolean $reset  Set to false to make the unbinding permanent
  * @return boolean Success
  * @access public
- * @link http://book.cakephp.org/view/1045/Creating-and-Destroying-Associations-on-the-Fly
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Creating-and-Destroying-Associations-on-the-Fly
  */
 	function unbindModel($params, $reset = true) {
 		foreach ($params as $assoc => $models) {
@@ -803,7 +803,7 @@ class Model extends Overloadable {
  * @param string $two Value string for the alternative indata method
  * @return array Data with all of $one's keys and values
  * @access public
- * @link http://book.cakephp.org/view/1031/Saving-Your-Data
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Saving-Your-Data
  */
 	function set($one, $two = null) {
 		if (!$one) {
@@ -1085,7 +1085,7 @@ class Model extends Overloadable {
  * @param boolean $filterKey If true, overwrites any primary key input with an empty value
  * @return array The current Model::data; after merging $data and/or defaults from database
  * @access public
- * @link http://book.cakephp.org/view/1031/Saving-Your-Data
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Saving-Your-Data
  */
 	function create($data = array(), $filterKey = false) {
 		$defaults = array();
@@ -1116,7 +1116,7 @@ class Model extends Overloadable {
  * @param mixed $id The ID of the record to read
  * @return array Array of database fields, or false if not found
  * @access public
- * @link http://book.cakephp.org/view/1017/Retrieving-Your-Data#read-1029
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Retrieving-Your-Data#read-1029
  */
 	function read($fields = null, $id = null) {
 		$this->validationErrors = array();
@@ -1151,7 +1151,7 @@ class Model extends Overloadable {
  * @param string $order SQL ORDER BY fragment
  * @return string field contents, or false if not found
  * @access public
- * @link http://book.cakephp.org/view/1017/Retrieving-Your-Data#field-1028
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Retrieving-Your-Data#field-1028
  */
 	function field($name, $conditions = null, $order = null) {
 		if ($conditions === null && $this->id !== false) {
@@ -1192,7 +1192,7 @@ class Model extends Overloadable {
  * @return boolean See Model::save()
  * @access public
  * @see Model::save()
- * @link http://book.cakephp.org/view/1031/Saving-Your-Data
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Saving-Your-Data
  */
 	function saveField($name, $value, $validate = false) {
 		$id = $this->id;
@@ -1217,7 +1217,7 @@ class Model extends Overloadable {
  * @param array $fieldList List of fields to allow to be written
  * @return mixed On success Model::$data if its not empty or true, false on failure
  * @access public
- * @link http://book.cakephp.org/view/1031/Saving-Your-Data
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Saving-Your-Data
  */
 	function save($data = null, $validate = true, $fieldList = array()) {
 		$defaults = array('validate' => true, 'fieldList' => array(), 'callbacks' => true);
@@ -1580,8 +1580,8 @@ class Model extends Overloadable {
  *    Otherwise: array similar to the $data array passed, but values are set to true/false
  *    depending on whether each record saved successfully.
  * @access public
- * @link http://book.cakephp.org/view/1032/Saving-Related-Model-Data-hasOne-hasMany-belongsTo
- * @link http://book.cakephp.org/view/1031/Saving-Your-Data
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Saving-Related-Model-Data-hasOne-hasMany-belongsTo
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Saving-Your-Data
  */
 	function saveAll($data = null, $options = array()) {
 		if (empty($data)) {
@@ -1806,7 +1806,7 @@ class Model extends Overloadable {
  * @param mixed $conditions Conditions to match, true for all records
  * @return boolean True on success, false on failure
  * @access public
- * @link http://book.cakephp.org/view/1031/Saving-Your-Data
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Saving-Your-Data
  */
 	function updateAll($fields, $conditions = true) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
@@ -1820,7 +1820,7 @@ class Model extends Overloadable {
  * @param boolean $cascade Set to true to delete records that depend on this record
  * @return boolean True on success
  * @access public
- * @link http://book.cakephp.org/view/1036/delete
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#delete
  */
 	function delete($id = null, $cascade = true) {
 		if (!empty($id)) {
@@ -1943,7 +1943,7 @@ class Model extends Overloadable {
  * @param boolean $callbacks Run callbacks
  * @return boolean True on success, false on failure
  * @access public
- * @link http://book.cakephp.org/view/1038/deleteAll
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#deleteAll
  */
 	function deleteAll($conditions, $cascade = true, $callbacks = false) {
 		if (empty($conditions)) {
@@ -2091,7 +2091,7 @@ class Model extends Overloadable {
  * @param integer $recursive The number of levels deep to fetch associated records
  * @return array Array of records
  * @access public
- * @link http://book.cakephp.org/view/1018/find
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#find
  */
 	function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
 		if (!is_string($conditions) || (is_string($conditions) && !array_key_exists($conditions, $this->_findMethods))) {
@@ -2481,7 +2481,7 @@ class Model extends Overloadable {
  * @param string $sql SQL statement
  * @return array Resultset
  * @access public
- * @link http://book.cakephp.org/view/1027/query
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#query
  */
 	function query() {
 		$params = func_get_args();
@@ -2498,7 +2498,7 @@ class Model extends Overloadable {
  * @param string $options An optional array of custom options to be made available in the beforeValidate callback
  * @return boolean True if there are no errors
  * @access public
- * @link http://book.cakephp.org/view/1182/Validating-Data-from-the-Controller
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Validating-Data-from-the-Controller
  */
 	function validates($options = array()) {
 		$errors = $this->invalidFields($options);
@@ -2518,7 +2518,7 @@ class Model extends Overloadable {
  * @return array Array of invalid fields
  * @see Model::validates()
  * @access public
- * @link http://book.cakephp.org/view/1182/Validating-Data-from-the-Controller
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Validating-Data-from-the-Controller
  */
 	function invalidFields($options = array()) {
 		if (
@@ -2963,7 +2963,7 @@ class Model extends Overloadable {
  * @return mixed true if the operation should continue, false if it should abort; or, modified
  *               $queryData to continue with new $queryData
  * @access public
- * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeFind-1049
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Callback-Methods#beforeFind-1049
  */
 	function beforeFind($queryData) {
 		return true;
@@ -2977,7 +2977,7 @@ class Model extends Overloadable {
  * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
  * @return mixed Result of the find operation
  * @access public
- * @link http://book.cakephp.org/view/1048/Callback-Methods#afterFind-1050
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Callback-Methods#afterFind-1050
  */
 	function afterFind($results, $primary = false) {
 		return $results;
@@ -2989,7 +2989,7 @@ class Model extends Overloadable {
  *
  * @return boolean True if the operation should continue, false if it should abort
  * @access public
- * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeSave-1052
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Callback-Methods#beforeSave-1052
  */
 	function beforeSave($options = array()) {
 		return true;
@@ -3000,7 +3000,7 @@ class Model extends Overloadable {
  *
  * @param boolean $created True if this save created a new record
  * @access public
- * @link http://book.cakephp.org/view/1048/Callback-Methods#afterSave-1053
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Callback-Methods#afterSave-1053
  */
 	function afterSave($created) {
 	}
@@ -3011,7 +3011,7 @@ class Model extends Overloadable {
  * @param boolean $cascade If true records that depend on this record will also be deleted
  * @return boolean True if the operation should continue, false if it should abort
  * @access public
- * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeDelete-1054
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Callback-Methods#beforeDelete-1054
  */
 	function beforeDelete($cascade = true) {
 		return true;
@@ -3021,7 +3021,7 @@ class Model extends Overloadable {
  * Called after every deletion operation.
  *
  * @access public
- * @link http://book.cakephp.org/view/1048/Callback-Methods#afterDelete-1055
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Callback-Methods#afterDelete-1055
  */
 	function afterDelete() {
 	}
@@ -3033,7 +3033,7 @@ class Model extends Overloadable {
  * @return boolean True if validate operation should continue, false to abort
  * @param $options array Options passed from model::save(), see $options of model::save().
  * @access public
- * @link http://book.cakephp.org/view/1048/Callback-Methods#beforeValidate-1051
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Callback-Methods#beforeValidate-1051
  */
 	function beforeValidate($options = array()) {
 		return true;
@@ -3043,7 +3043,7 @@ class Model extends Overloadable {
  * Called when a DataSource-level error occurs.
  *
  * @access public
- * @link http://book.cakephp.org/view/1048/Callback-Methods#onError-1056
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Models.html#Callback-Methods#onError-1056
  */
 	function onError() {
 	}

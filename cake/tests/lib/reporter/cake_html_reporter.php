@@ -4,7 +4,7 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) Tests <http://book.cakephp.org/1.3/en/The-Manual/Common-Tasks-With-CakePHP/Testing.html>
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License

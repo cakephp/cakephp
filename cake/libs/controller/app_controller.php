@@ -30,7 +30,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller
- * @link http://book.cakephp.org/view/957/The-App-Controller
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-with-CakePHP/Controllers.html#the-app-controller
  */
 class AppController extends Controller {
 }

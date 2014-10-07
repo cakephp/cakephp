@@ -26,7 +26,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.console.libs
- * @link http://book.cakephp.org/view/1323/Containable
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Core-Behaviors/Containable.html#Containable
  */
 class ContainableBehavior extends ModelBehavior {
 
@@ -234,7 +234,7 @@ class ContainableBehavior extends ModelBehavior {
  * @param object $Model Model on which binding restriction is being applied
  * @return void
  * @access public
- * @link http://book.cakephp.org/view/1323/Containable#Using-Containable-1324
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Core-Behaviors/Containable.html#Containable#Using-Containable-1324
  */
 	function contain(&$Model) {
 		$args = func_get_args();

@@ -29,7 +29,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
- * @link http://book.cakephp.org/view/1242/Access-Control-Lists
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Core-Components/Access-Control-Lists.html
  */
 class AclComponent extends Object {
 
@@ -258,7 +258,7 @@ class DbAcl extends AclBase {
  * @param string $action Action (defaults to *)
  * @return boolean Success (true if ARO has access to action in ACO, false otherwise)
  * @access public
- * @link http://book.cakephp.org/view/1249/Checking-Permissions-The-ACL-Component
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Core-Components/Access-Control-Lists.html#checking-permissions-the-acl-component
  */
 	function check($aro, $aco, $action = "*") {
 		if ($aro == null || $aco == null) {
@@ -350,7 +350,7 @@ class DbAcl extends AclBase {
  * @param integer $value Value to indicate access type (1 to give access, -1 to deny, 0 to inherit)
  * @return boolean Success
  * @access public
- * @link http://book.cakephp.org/view/1248/Assigning-Permissions
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Core-Components/Access-Control-Lists.html#assigning-permissions
  */
 	function allow($aro, $aco, $actions = "*", $value = 1) {
 		$perms = $this->getAclLink($aro, $aco);
@@ -402,7 +402,7 @@ class DbAcl extends AclBase {
  * @param string $actions Action (defaults to *)
  * @return boolean Success
  * @access public
- * @link http://book.cakephp.org/view/1248/Assigning-Permissions
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Core-Components/Access-Control-Lists.html#assigning-permissions
  */
 	function deny($aro, $aco, $action = "*") {
 		return $this->allow($aro, $aco, $action, -1);

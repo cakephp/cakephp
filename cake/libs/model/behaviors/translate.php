@@ -23,7 +23,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.model.behaviors
- * @link http://book.cakephp.org/view/1328/Translate
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Core-Behaviors/Translate.html#Translate
  */
 class TranslateBehavior extends ModelBehavior {
 

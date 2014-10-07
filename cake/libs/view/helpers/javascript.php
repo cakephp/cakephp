@@ -25,7 +25,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
- * @link http://book.cakephp.org/view/1450/Javascript
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Core-Helpers/Javascript.html#Javascript
  */
 class JavascriptHelper extends AppHelper {
 

@@ -26,7 +26,7 @@ App::import('Core', array('Xml', 'Set'));
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
- * @link http://book.cakephp.org/view/1473/XML
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Core-Helpers/XML.html#XML
  */
 class XmlHelper extends AppHelper {
 
@@ -57,7 +57,7 @@ class XmlHelper extends AppHelper {
  * @param array $attrib Header tag attributes
  * @return string XML header
  * @access public
- * @link http://book.cakephp.org/view/1476/header
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Core-Helpers/XML.html#header
  */
 	function header($attrib = array()) {
 		if (Configure::read('App.encoding') !== null) {
@@ -109,7 +109,7 @@ class XmlHelper extends AppHelper {
  * @param boolean $endTag Whether the end tag of the element should be printed
  * @return string XML
  * @access public
- * @link http://book.cakephp.org/view/1475/elem
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Core-Helpers/XML.html#elem
  */
 	function elem($name, $attrib = array(), $content = null, $endTag = true) {
 		$namespace = null;
@@ -167,7 +167,7 @@ class XmlHelper extends AppHelper {
  * @return string A copy of $data in XML format
  * @see Xml::__construct()
  * @access public
- * @link http://book.cakephp.org/view/1474/serialize
+ * @link http://book.cakephp.org/1.3/en/The-Manual/Core-Helpers/XML.html#serialize
  */
 	function serialize($data, $options = array()) {
 		$options += array('attributes' => false, 'format' => 'attributes');
