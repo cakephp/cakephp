@@ -83,7 +83,7 @@ class BakeShell extends Shell {
 			list($p, $name) = pluginSplit($task);
 			$this->out('- ' . Inflector::underscore($name));
 		}
-		$this->out('');
+		$this->nl(1);
 		$this->out('By using <info>`cake bake [name]`</info> you can invoke a specific bake task.');
 	}
 

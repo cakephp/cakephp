@@ -115,7 +115,7 @@ class TestTask extends BakeTask {
 		foreach ($this->classTypes as $option => $package) {
 			$this->out(++$i . '. ' . $option);
 		}
-		$this->out('');
+		$this->nl(1);
 		$this->out('Re-run your command as `cake bake <type> <classname>`');
 	}
 
@@ -141,7 +141,7 @@ class TestTask extends BakeTask {
 		foreach ($options as $option) {
 			$this->out(++$i . '. ' . $option);
 		}
-		$this->out('');
+		$this->nl(1);
 		$this->out('Re-run your command as `cake bake ' . $type . ' <classname>`');
 	}
 

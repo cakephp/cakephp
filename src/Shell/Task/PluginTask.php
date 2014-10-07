@@ -172,7 +172,7 @@ class PluginTask extends BakeTask {
 				$plugin,
 				$autoload
 			));
-			$this->out('');
+			$this->nl(1);
 			$this->out(sprintf('%s modified', $this->bootstrap));
 		}
 	}
