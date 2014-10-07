@@ -473,4 +473,33 @@ class QueryRegressionTest extends TestCase {
 		$this->assertEquals(2, $count);
 	}
 
+/**
+ * Test that deep containments don't generate empty entities for
+ * intermediary relations.
+ *
+ * @return void
+ */
+	public function testContainNoEmptyAssociatedObjects() {
+		$comments = TableRegistry::get('Comments');
+		$comments->belongsTo('Users');
+		$users = TableRegistry::get('Users');
+		$users->hasMany('Articles', [
+			'foreignKey' => 'author_id'
+		]);
+
+		$comments->updateAll(['user_id' => 99], ['id' => 1]);
+
+		$result = $comments->find()
+			->contain(['Users'])
+			->where(['Comments.id' => 1])
+			->first();
+		$this->assertNull($result->user, 'No record should be null.');
+
+		$result = $comments->find()
+			->contain(['Users', 'Users.Articles'])
+			->where(['Comments.id' => 1])
+			->first();
+		$this->assertNull($result->user, 'No record should be null.');
+	}
+
 }
