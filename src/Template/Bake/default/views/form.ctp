@@ -43,7 +43,7 @@ $fields = collection($fields)
 <div class="<?= $pluralVar ?> form large-10 medium-9 columns">
 <?= "<?= \$this->Form->create(\${$singularVar}) ?>\n" ?>
 	<fieldset>
-		<legend><?= sprintf("<?= __('%s %s'); ?>", Inflector::humanize($action), $singularHumanName) ?></legend>
+		<legend><?= sprintf("<?= __('%s %s') ?>", Inflector::humanize($action), $singularHumanName) ?></legend>
 <?php
 		echo "\t<?php\n";
 		foreach ($fields as $field) {
