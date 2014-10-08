@@ -757,7 +757,7 @@ class Model extends Object implements CakeEventListener {
 
 /**
  * Returns a list of all events that will fire in the model during it's lifecycle.
- * You can override this function to add you own listener callbacks
+ * You can override this function to add your own listener callbacks
  *
  * @return array
  */
