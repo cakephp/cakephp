@@ -1133,7 +1133,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testCallBehaviorMethod() {
 		$table = TableRegistry::get('article');
 		$table->addBehavior('Sluggable');
-		$this->assertEquals('some_value', $table->slugify('some value'));
+		$this->assertEquals('some-value', $table->slugify('some value'));
 	}
 
 /**
@@ -1144,7 +1144,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testCallBehaviorAliasedMethod() {
 		$table = TableRegistry::get('article');
 		$table->addBehavior('Sluggable', ['implementedMethods' => ['wednesday' => 'slugify']]);
-		$this->assertEquals('some_value', $table->wednesday('some value'));
+		$this->assertEquals('some-value', $table->wednesday('some value'));
 	}
 
 /**
