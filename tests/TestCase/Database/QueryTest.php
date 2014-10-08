@@ -2560,11 +2560,11 @@ class QueryTest extends TestCase {
 
 		$query = new Query($this->connection);
 		$sql = $query->select('*')->from(['foo' => 'something'])->sql();
-		$this->assertQuotedQuery('FROM <something> AS <foo>$', $sql);
+		$this->assertQuotedQuery('FROM <something> <foo>$', $sql);
 
 		$query = new Query($this->connection);
 		$sql = $query->select('*')->from(['foo' => $query->newExpr('bar')])->sql();
-		$this->assertQuotedQuery('FROM \(bar\) AS <foo>$', $sql);
+		$this->assertQuotedQuery('FROM \(bar\) <foo>$', $sql);
 	}
 
 /**

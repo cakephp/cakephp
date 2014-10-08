@@ -175,7 +175,7 @@ class QueryCompiler {
 		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
-				$p = $p . ' AS ' . $k;
+				$p = $p . ' ' . $k;
 			}
 			$normalized[] = $p;
 		}
