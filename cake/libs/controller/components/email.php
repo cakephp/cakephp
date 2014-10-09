@@ -617,7 +617,6 @@ class EmailComponent extends Object{
 		}
 
 		if (!empty($this->attachments)) {
-			$headers['MIME-Version'] = '1.0';
 			$headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->__boundary . '"';
 		} elseif ($this->sendAs === 'text') {
 			$headers['Content-Type'] = 'text/plain; charset=' . $this->charset;
@@ -626,7 +625,8 @@ class EmailComponent extends Object{
 		} elseif ($this->sendAs === 'both') {
 			$headers['Content-Type'] = 'multipart/alternative; boundary="alt-' . $this->__boundary . '"';
 		}
-
+		
+		$headers['MIME-Version'] = '1.0';
 		$headers['Content-Transfer-Encoding'] = '7bit';
 
         $this->header($headers);
