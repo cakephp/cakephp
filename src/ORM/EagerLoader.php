@@ -454,7 +454,6 @@ class EagerLoader {
 			);
 			$statement = new CallbackStatement($statement, $driver, $f);
 		}
-
 		return $statement;
 	}
 
@@ -510,6 +509,10 @@ class EagerLoader {
 		$keys = [];
 		while ($result = $statement->fetch('assoc')) {
 			foreach ($collectKeys as $parts) {
+				// Missed joins will have null in the results.
+				if ($parts[2] && !isset($result[$parts[1][0]])) {
+					continue;
+				}
 				if ($parts[2]) {
 					$keys[$parts[0]][] = $result[$parts[1][0]];
 					continue;
