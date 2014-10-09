@@ -270,11 +270,15 @@ class CounterCacheBehaviorTest extends TestCase {
 
 		$this->post->addBehavior('CounterCache', [
 			'Users' => [
-				'posts_published' => function (Event $orgEvent, Entity $orgEntity, Table $orgTable) use ($entity, $table) {
+				'posts_published' => function (Event $orgEvent, Entity $orgEntity, Table $orgTable, $original) use ($entity, $table) {
 					$this->assertSame($orgTable, $table);
 					$this->assertSame($orgEntity, $entity);
 
-					return 2;
+					if (!$original) {
+						return 2;
+					} else {
+						return 1;
+					}
 				}
 			]
 		]);
