@@ -811,7 +811,7 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * test callback used in testSaveTransaction method
  *
- * @return boolean false to stop event propagation
+ * @return bool false to stop event propagation
  */
 	public function callbackForTestSaveTransaction($event) {
 		$TestModel = new Article();
