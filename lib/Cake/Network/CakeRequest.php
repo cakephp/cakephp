@@ -418,22 +418,22 @@ class CakeRequest implements ArrayAccess {
  * @return string The referring address for this request.
  */
 	public function referer($local = false) {
-		$ref = env('HTTP_REFERER');
-
-		$base = Configure::read('App.fullBaseUrl') . $this->webroot;
-		if (!empty($ref) && !empty($base)) {
-			if ($local && strpos($ref, $base) === 0) {
-				$ref = substr($ref, strlen($base));
-				if ($ref[0] !== '/') {
-					$ref = '/' . $ref;
-				}
-				return $ref;
-			} elseif (!$local) {
-				return $ref;
-			}
-		}
-		return '/';
-	}
+	        $ref = env('HTTP_REFERER');
+	        $here = Configure::read('App.fullBaseUrl'). $this->here ;
+	        $base = Configure::read('App.fullBaseUrl') .$this->webroot;
+	
+	        if (!empty($ref) && !empty($base) && $here !== $ref) {
+	            if ($local && strpos($ref, $base) === 0) {
+	                if ($ref[0] !== '/') {
+	                    $ref = '/' . $ref;
+	                }
+	                return $ref;
+	            } elseif (!$local) {
+	                return $ref;
+	            }
+	        }
+	        return '/';
+    	}
 
 /**
  * Missing method handler, handles wrapping older style isAjax() type methods
