@@ -258,6 +258,44 @@ class CounterCacheBehaviorTest extends TestCase {
 	}
 
 /**
+ * Testing counter cache with lambda returning number and changing of related ID
+ *
+ * @return void
+ */
+	public function testLambdaNumberUpdate() {
+		$this->post->belongsTo('Users');
+
+		$table = $this->post;
+		$entity = $this->_getEntity();
+
+		$this->post->addBehavior('CounterCache', [
+			'Users' => [
+				'posts_published' => function (Event $orgEvent, Entity $orgEntity, Table $orgTable, $original) use ($entity, $table) {
+					$this->assertSame($orgTable, $table);
+					$this->assertSame($orgEntity, $entity);
+
+					if (!$original) {
+						return 2;
+					} else {
+						return 1;
+					}
+				}
+			]
+		]);
+
+		$this->post->save($entity);
+		$between = $this->_getUser();
+		$entity->user_id = 2;
+		$this->post->save($entity);
+		$afterUser1 = $this->_getUser(1);
+		$afterUser2 = $this->_getUser(2);
+
+		$this->assertEquals(2, $between->get('posts_published'));
+		$this->assertEquals(1, $afterUser1->get('posts_published'));
+		$this->assertEquals(2, $afterUser2->get('posts_published'));
+	}
+
+/**
  * Testing counter cache with lambda returning subqueryn
  *
  * @return void
