@@ -230,6 +230,7 @@ class Table implements RepositoryInterface, EventListener {
 
 		$this->initialize($config);
 		$this->_eventManager->attach($this);
+		$this->dispatchEvent('Model.initialize');
 	}
 
 /**

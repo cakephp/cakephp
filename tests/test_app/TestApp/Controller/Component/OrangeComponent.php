@@ -33,12 +33,11 @@ class OrangeComponent extends Component {
 /**
  * initialize method
  *
- * @param Event $event
- * @param Controller $controller
+ * @param array $config
  * @return void
  */
-	public function initialize(Event $event) {
-		$this->Controller = $event->subject();
+	public function initialize(array $config) {
+		$this->Controller = $this->_registry->getController();
 		$this->Banana->testField = 'OrangeField';
 	}
 

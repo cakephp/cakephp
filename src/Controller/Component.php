@@ -23,13 +23,19 @@ use Cake\Log\LogTrait;
  * controller logic that can be composed into a controller. Components also
  * provide request life-cycle callbacks for injecting logic at specific points.
  *
+ * ## Initialize hook
+ *
+ * Like Controller and Table, this class has an initialize() hook that you can use
+ * to add custom 'constructor' logic. It is important to remember that each request
+ * (and sub-request) will only make one instance of any given component.
+ *
  * ## Life cycle callbacks
  *
  * Components can provide several callbacks that are fired at various stages of the request
  * cycle. The available callbacks are:
  *
- * - `initialize(Event $event)`
- *   Called before the controller's beforeFilter method.
+ * - `beforeFilter(Event $event)`
+ *   Called before the controller's beforeFilter method by default.
  * - `startup(Event $event)`
  *   Called after the controller's beforeFilter method, and before the
  *   controller action is called.
@@ -99,6 +105,19 @@ class Component implements EventListener {
 		if (!empty($this->components)) {
 			$this->_componentMap = $registry->normalizeArray($this->components);
 		}
+		$this->initialize($config);
+	}
+
+/**
+ * Constructor hook method.
+ *
+ * Implement this method to avoid having to overwrite
+ * the constructor and call parent.
+ *
+ * @param array $config The configuration array this component is using.
+ * @return void
+ */
+	public function initialize(array $config) {
 	}
 
 /**
@@ -131,7 +150,7 @@ class Component implements EventListener {
  */
 	public function implementedEvents() {
 		$eventMap = [
-			'Controller.initialize' => 'initialize',
+			'Controller.initialize' => 'beforeFilter',
 			'Controller.startup' => 'startup',
 			'Controller.beforeRender' => 'beforeRender',
 			'Controller.beforeRedirect' => 'beforeRedirect',
