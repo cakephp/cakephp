@@ -419,8 +419,8 @@ class CakeRequest implements ArrayAccess {
  */
 	public function referer($local = false) {
 		$ref = env('HTTP_REFERER');
-		$here = Configure::read('App.fullBaseUrl').$this->here;
-		$base = Configure::read('App.fullBaseUrl').$this->webroot;
+		$here = Configure::read('App.fullBaseUrl') . $this->here;
+		$base = Configure::read('App.fullBaseUrl') . $this->webroot;
 
 		if (!empty($ref) && !empty($base) && $here !== $ref) {
 			if ($local && strpos($ref, $base) === 0) {
