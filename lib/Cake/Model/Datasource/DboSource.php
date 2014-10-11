@@ -396,7 +396,7 @@ class DboSource extends DataSource {
  *
  * @param string $sql SQL statement
  * @param array $params Additional options for the query.
- * @return bool
+ * @return mixed Resource or object representing the result set, or false on failure
  */
 	public function rawQuery($sql, $params = array()) {
 		$this->took = $this->numRows = false;
