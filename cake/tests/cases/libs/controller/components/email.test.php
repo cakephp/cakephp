@@ -551,6 +551,7 @@ Reply-To: noreply@example.com
 Date: $date
 X-Mailer: CakePHP Email Component
 Content-Type: {CONTENTTYPE}
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bitParameters:
 
 Message:
@@ -608,6 +609,7 @@ Reply-To: noreply@example.com
 Date: $date
 X-Mailer: CakePHP Email Component
 Content-Type: {CONTENTTYPE}
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bitParameters:
 
 Message:
@@ -655,8 +657,14 @@ HTMLBLOC;
 		$boundary = $this->Controller->EmailTest->getBoundary();
 
 		$expect = str_replace('{CONTENTTYPE}', 'multipart/alternative; boundary="alt-' . $boundary . '"', $header);
-		$expect .= '--alt-' . $boundary . "\n" . 'Content-Type: text/plain; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 7bit' . "\n\n" . $text . "\n\n";
-		$expect .= '--alt-' . $boundary . "\n" . 'Content-Type: text/html; charset=UTF-8' . "\n" . 'Content-Transfer-Encoding: 7bit' . "\n\n" . $html . "\n\n";
+		$expect .= '--alt-' . $boundary . "\n" .
+			'Content-Type: text/plain; charset=UTF-8' . "\n" .
+			'Content-Transfer-Encoding: 7bit' .
+			"\n\n" . $text . "\n\n";
+		$expect .= '--alt-' . $boundary . "\n" .
+			'Content-Type: text/html; charset=UTF-8' . "\n" .
+			'Content-Transfer-Encoding: 7bit' .
+			"\n\n" . $html . "\n\n";
 		$expect = '<pre>' . $expect . "--alt-$boundary--" . "\n\n" . '</pre>';
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 
@@ -692,7 +700,7 @@ HTMLBLOC;
 		$expect = str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $header) . $html;
 		$expect = '<pre>' . $expect . '</pre>';
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
-		
+
 		$result = ClassRegistry::getObject('view');
 		$this->assertFalse($result);
 	}
