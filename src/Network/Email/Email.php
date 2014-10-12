@@ -42,7 +42,9 @@ use LogicException;
  */
 class Email {
 
-	use StaticConfigTrait;
+	use StaticConfigTrait {
+		parseDsn as protected _parseDsn;
+	}
 
 /**
  * Default X-Mailer
@@ -1169,7 +1171,13 @@ class Email {
 		if (isset(static::$_transportConfig[$key])) {
 			throw new BadMethodCallException(sprintf('Cannot modify an existing config "%s"', $key));
 		}
-		if (is_object($config)) {
+		if (is_array($config)) {
+			$config = static::parseDsn($config);
+		} elseif ($config === null && is_array($key)) {
+			foreach ($key as $name => $settings) {
+				$key[$name] = static::parseDsn($settings);
+			}
+		} elseif (is_object($config)) {
 			$config = ['className' => $config];
 		}
 		static::$_transportConfig[$key] = $config;
@@ -1183,6 +1191,42 @@ class Email {
  */
 	public static function dropTransport($key) {
 		unset(static::$_transportConfig[$key]);
+	}
+
+/**
+ * Parses a dsn into a valid connection configuration
+ *
+ * This method allows setting a dsn using PEAR::DB formatting, with added support for drivers
+ * in the SQLAlchemy format. The following is an example of it's usage:
+ *
+ * {{{
+ * 	 $dsn = 'mail://user:secret@localhost:25?timeout=30&client=null&tls=null';
+ * 	 $config = Email::parseDsn($dsn);
+ * }}
+ *
+ * If an array is given, the parsed dsn will be merged into this array. Note that querystring
+ * arguments are also parsed and set as values in the returned configuration.
+ *
+ * @param array $config An array with a `url` key mapping to a string dsn
+ * @return mixed null when adding configuration and an array of configuration data when reading.
+ */
+	public static function parseDsn($config) {
+		$config = static::_parseDsn($config);
+
+		if (isset($config['scheme'])) {
+			$config['className'] = $config['scheme'];
+		}
+
+		if (isset($config['user'])) {
+			$config['username'] = $config['user'];
+		}
+
+		if (isset($config['pass'])) {
+			$config['password'] = $config['pass'];
+		}
+
+		unset($config['scheme'], $config['user'], $config['pass']);
+		return $config;
 	}
 
 /**
