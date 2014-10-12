@@ -147,13 +147,13 @@ trait StaticConfigTrait {
  * @return mixed null when adding configuration and an array of configuration data when reading.
  */
 	public static function parseDsn($config) {
-		if (!is_array($config) || !isset($config['dsn'])) {
+		if (!is_array($config) || !isset($config['url'])) {
 			return $config;
 		}
 
 		$driver = null;
-		$dsn = $config['dsn'];
-		unset($config['dsn']);
+		$dsn = $config['url'];
+		unset($config['url']);
 
 		if (preg_match("/^([\w]+)\+([\w\\\]+)/", $dsn, $matches)) {
 			$scheme = $matches[1];
