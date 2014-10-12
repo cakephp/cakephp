@@ -26,6 +26,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
 use Cake\View\View;
+use TestApp\View\AppView;
 
 /**
  * ViewPostsController class
@@ -98,7 +99,11 @@ class ThemePostsController extends Controller {
  * TestView class
  *
  */
-class TestView extends View {
+class TestView extends AppView {
+
+	public function initialize() {
+		$this->helpers['Html'] = ['mykey' => 'myval'];
+	}
 
 /**
  * getViewFileName method
@@ -969,6 +974,17 @@ class ViewTest extends TestCase {
 		$View->helpers = array();
 		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
 		$this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
+	}
+
+/**
+ * Test manipulating class properties in initialize()
+ *
+ * @return void
+ */
+	public function testInitialize() {
+		$View = new TestView();
+		$config = $View->Html->config();
+		$this->assertEquals('myval', $config['mykey']);
 	}
 
 /**
