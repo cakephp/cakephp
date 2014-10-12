@@ -31,6 +31,7 @@ class ConnectionManager {
 
 	use StaticConfigTrait {
 		config as protected _config;
+		parseDsn as protected _parseDsn;
 	}
 
 /**
@@ -61,22 +62,10 @@ class ConnectionManager {
 	public static function config($key, $config = null) {
 		if (is_array($config)) {
 			$config['name'] = $key;
-			$config = static::parseDsn($config);
 		}
-
-		if (is_string($config)) {
-			$config = static::parseDsn($config);
-		}
-
-		if ($config === null && is_array($key)) {
-			foreach ($key as $name => $settings) {
-				$key[$name] = static::parseDsn($settings);
-			}
-		}
-
 		return static::_config($key, $config);
 	}
-	
+
 /**
  * Parses a dsn into a valid connection configuration
  *
@@ -95,38 +84,7 @@ class ConnectionManager {
  * @return mixed null when adding configuration and an array of configuration data when reading.
  */
 	public static function parseDsn($config) {
-		if (is_string($config)) {
-			$config = ['dsn' => $config];
-		}
-
-		if (!is_array($config) || !isset($config['dsn'])) {
-			return $config;
-		}
-
-		$driver = null;
-		$dsn = $config['dsn'];
-
-		if (preg_match("/^([\w]+)\+([\w\\\]+)/", $dsn, $matches)) {
-			$scheme = $matches[1];
-			$driver = $matches[2];
-			$dsn = preg_replace("/^([\w]+)\+([\w\\\]+)/", $scheme, $dsn);
-		}
-
-		$parsed = parse_url($dsn);
-		$query = '';
-
-		if (isset($parsed['query'])) {
-			$query = $parsed['query'];
-		}
-
-		parse_str($query, $queryArgs);
-
-
-		if ($driver !== null) {
-			$queryArgs['driver'] = $driver;
-		}
-
-		$config = array_merge($queryArgs, $parsed, $config);
+		$config = static::_parseDsn($config);
 
 		if (isset($config['user'])) {
 			$config['login'] = $config['user'];
@@ -140,17 +98,7 @@ class ConnectionManager {
 			$config['database'] = substr($config['path'], 1);
 		}
 
-		foreach ($config as $key => $value) {
-			if ($value === 'true') {
-				$config[$key] = true;
-			} elseif ($value === 'false') {
-				$config[$key] = false;
-			}
-		}
-
-		unset($config['dsn'], $config['query'], $config['scheme']);
 		unset($config['path'], $config['user'], $config['pass']);
-
 		return $config;
 	}
 
