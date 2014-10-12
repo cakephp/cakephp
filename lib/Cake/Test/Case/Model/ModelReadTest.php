@@ -6551,11 +6551,42 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * Test that find() with array conditions works when there is only one element.
+ *
+ * @return void
+ */
+	public function testFindAllArrayConditions() {
+		$this->loadFixtures('User');
+		$TestModel = new User();
+		$TestModel->cacheQueries = false;
+
+		$result = $TestModel->find('all', array(
+			'conditions' => array('User.id' => array(3)),
+		));
+		$expected = array(
+			array(
+				'User' => array(
+					'id' => '3',
+					'user' => 'larry',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:20:23',
+					'updated' => '2007-03-17 01:22:31'
+			))
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $TestModel->find('all', array(
+			'conditions' => array('User.user' => array('larry')),
+		));
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test find('list') method
  *
  * @return void
  */
-	public function testGenerateFindList() {
+	public function testFindList() {
 		$this->loadFixtures('Article', 'Apple', 'Post', 'Author', 'User', 'Comment');
 
 		$TestModel = new Article();
@@ -6822,6 +6853,32 @@ class ModelReadTest extends BaseModelTest {
 			1 => 'First Article',
 			3 => 'Third Article'
 		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that find(list) works with array conditions that have only one element.
+ *
+ * @return void
+ */
+	public function testFindListArrayCondition() {
+		$this->loadFixtures('User');
+		$TestModel = new User();
+		$TestModel->cacheQueries = false;
+
+		$result = $TestModel->find('list', array(
+			'fields' => array('id', 'user'),
+			'conditions' => array('User.id' => array(3)),
+		));
+		$expected = array(
+			3 => 'larry'
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $TestModel->find('list', array(
+			'fields' => array('id', 'user'),
+			'conditions' => array('User.user' => array('larry')),
+		));
 		$this->assertEquals($expected, $result);
 	}
 

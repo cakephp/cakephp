@@ -776,7 +776,7 @@ class Model extends Object implements CakeEventListener {
 
 /**
  * Returns a list of all events that will fire in the model during it's lifecycle.
- * You can override this function to add you own listener callbacks
+ * You can override this function to add your own listener callbacks
  *
  * @return array
  */
@@ -3361,11 +3361,19 @@ class Model extends Object implements CakeEventListener {
 /**
  * Returns false if any fields passed match any (by default, all if $or = false) of their matching values.
  *
+ * Can be used as a validation method. When used as a validation method, the `$or` parameter
+ * contains an array of fields to be validated.
+ *
  * @param array $fields Field/value pairs to search (if no values specified, they are pulled from $this->data)
- * @param bool $or If false, all fields specified must match in order for a false return value
+ * @param bool|array $or If false, all fields specified must match in order for a false return value
  * @return bool False if any records matching any fields are found
  */
 	public function isUnique($fields, $or = true) {
+		if (is_array($or)) {
+			$args = func_get_args();
+			$fields = $args[1];
+			$or = isset($args[2]) ? $args[2] : true;
+		}
 		if (!is_array($fields)) {
 			$fields = func_get_args();
 			if (is_bool($fields[count($fields) - 1])) {
