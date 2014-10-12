@@ -182,6 +182,8 @@ trait StaticConfigTrait {
 				$config[$key] = true;
 			} elseif ($value === 'false') {
 				$config[$key] = false;
+			} elseif ($value === 'null') {
+				$config[$key] = null;
 			}
 		}
 
