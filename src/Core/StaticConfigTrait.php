@@ -146,7 +146,7 @@ trait StaticConfigTrait {
  * @param array $config An array with a `url` key mapping to a string dsn
  * @return mixed null when adding configuration and an array of configuration data when reading.
  */
-	public static function parseDsn($config) {
+	public static function parseDsn($config = null) {
 		if (!is_array($config) || !isset($config['url'])) {
 			return $config;
 		}
