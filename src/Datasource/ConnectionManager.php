@@ -61,16 +61,16 @@ class ConnectionManager {
 	public static function config($key, $config = null) {
 		if (is_array($config)) {
 			$config['name'] = $key;
-			$config = static::_parseDsn($config);
+			$config = static::parseDsn($config);
 		}
 
 		if (is_string($config)) {
-			$config = static::_parseDsn($config);
+			$config = static::parseDsn($config);
 		}
 
 		if ($config === null && is_array($key)) {
 			foreach ($key as $name => $settings) {
-				$key[$name] = static::_parseDsn($settings);
+				$key[$name] = static::parseDsn($settings);
 			}
 		}
 
