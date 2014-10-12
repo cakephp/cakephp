@@ -159,6 +159,11 @@ trait StaticConfigTrait {
 			$scheme = $matches[1];
 			$driver = $matches[2];
 			$dsn = preg_replace("/^([\w]+)\+([\w\\\]+)/", $scheme, $dsn);
+		} elseif (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
+			$scheme = explode('\\', $matches[1]);
+			$scheme = array_pop($scheme);
+			$driver = $matches[1];
+			$dsn = preg_replace("/^([\w\\\]+)/", $scheme, $dsn);
 		}
 
 		$parsed = parse_url($dsn);
