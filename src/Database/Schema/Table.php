@@ -419,8 +419,8 @@ class Table {
 /**
  * Get the column(s) used for the primary key.
  *
- * @return array|null Column name(s) for the primary key.
- *   Null will be returned if a table has no primary key.
+ * @return array Column name(s) for the primary key. An
+ *   empty list will be returned when the table has no primary key.
  */
 	public function primaryKey() {
 		foreach ($this->_constraints as $name => $data) {
@@ -428,7 +428,7 @@ class Table {
 				return $data['columns'];
 			}
 		}
-		return null;
+		return [];
 	}
 
 /**
