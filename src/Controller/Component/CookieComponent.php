@@ -120,19 +120,17 @@ class CookieComponent extends Component {
 	protected $_validCiphers = ['aes', 'rijndael'];
 
 /**
- * Constructor
+ * Initialize config data and properties.
  *
- * @param ComponentRegistry $registry A ComponentRegistry for this component
- * @param array $config Array of config.
+ * @param array $config The config data.
+ * @return void
  */
-	public function __construct(ComponentRegistry $registry, array $config = array()) {
-		parent::__construct($registry, $config);
-
+	public function initialize(array $config) {
 		if (!$this->_config['key']) {
 			$this->config('key', Security::salt());
 		}
 
-		$controller = $registry->getController();
+		$controller = $this->_registry->getController();
 		if ($controller && isset($controller->request)) {
 			$this->_request = $controller->request;
 		} else {

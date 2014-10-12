@@ -230,15 +230,13 @@ class AuthComponent extends Component {
 	protected $_authorizationProvider;
 
 /**
- * Constructor
+ * Initialize properties.
  *
- * @param ComponentRegistry $registry A ComponentRegistry object.
- * @param array $config Array of configuration settings.
+ * @param array $config The config data.
+ * @return void
  */
-	public function __construct(ComponentRegistry $registry, array $config = []) {
-		parent::__construct($registry, $config);
-
-		$controller = $registry->getController();
+	public function initialize(array $config) {
+		$controller = $this->_registry->getController();
 		$this->request = $controller->request;
 		$this->response = $controller->response;
 		$this->session = $controller->request->session();
