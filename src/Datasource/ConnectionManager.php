@@ -113,7 +113,14 @@ class ConnectionManager {
 		}
 
 		$parsed = parse_url($dsn);
-		parse_str(Hash::get($parsed, 'query', ''), $queryArgs);
+		$query = '';
+
+		if (isset($parsed['query'])) {
+			$query = $parsed['query'];
+		}
+
+		parse_str($query, $queryArgs);
+
 
 		if ($driver !== null) {
 			$queryArgs['driver'] = $driver;
