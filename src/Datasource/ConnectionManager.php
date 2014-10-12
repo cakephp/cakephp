@@ -61,8 +61,100 @@ class ConnectionManager {
 	public static function config($key, $config = null) {
 		if (is_array($config)) {
 			$config['name'] = $key;
+			$config = static::_parseDsn($config);
 		}
+
+		if (is_string($config)) {
+			$config = static::_parseDsn($config);
+		}
+
+		if ($config === null && is_array($key)) {
+			foreach ($key as $name => $settings) {
+				$key[$name] = static::_parseDsn($settings);
+			}
+		}
+
 		return static::_config($key, $config);
+	}
+	
+/**
+ * Parses a dsn into a valid connection configuration
+ *
+ * This method allows setting a dsn using PEAR::DB formatting, with added support for drivers
+ * in the SQLAlchemy format. The following is an example of it's usage:
+ *
+ * {{{
+ * 	 $dsn = 'mysql+Cake\Database\Driver\Mysql://user:password@localhost:3306/database_name';
+ * 	 $config = ConnectionManager::parseDsn($dsn);
+ * }}
+ *
+ * If an array is given, the parsed dsn will be merged into this array. Note that querystring
+ * arguments are also parsed and set as values in the returned configuration.
+ *
+ * @param string|array $key Either a DSN or an array with a `dsn` key mapping to a string dsn
+ * @return mixed null when adding configuration and an array of configuration data when reading.
+ */
+	public static function parseDsn($config) {
+		if (is_string($config)) {
+			$config = ['dsn' => $config];
+		}
+
+		if (!is_array($config) || !isset($config['dsn'])) {
+			return $config;
+		}
+
+		$driver = null;
+		$dsn = $config['dsn'];
+
+		if (preg_match("/^([\w]+)\+([\w\\\]+)/", $dsn, $matches)) {
+			$scheme = $matches[1];
+			$driver = $matches[2];
+			$dsn = preg_replace("/^([\w]+)\+([\w\\\]+)/", $scheme, $dsn);
+		}
+
+		$parsed = parse_url($dsn);
+		parse_str(Hash::get($parsed, 'query', ''), $queryArgs);
+
+		if ($driver !== null) {
+			$queryArgs['driver'] = $driver;
+		}
+
+		$config = array_merge($queryArgs, $parsed, $config);
+
+		if (isset($config['query'])) {
+			unset($config['query']);
+		}
+
+		if (isset($config['scheme'])) {
+			unset($config['scheme']);
+		}
+
+		unset($config['dsn']);
+
+		if (isset($config['user'])) {
+			$config['login'] = $config['user'];
+			unset($config['user']);
+		}
+
+		if (isset($config['pass'])) {
+			$config['password'] = $config['pass'];
+			unset($config['pass']);
+		}
+
+		if (isset($config['path'])) {
+			$config['database'] = substr($config['path'], 1);
+			unset($config['path']);
+		}
+
+		foreach ($config as $key => $value) {
+			if ($value === 'true') {
+				$config[$key] = true;
+			} elseif ($value === 'false') {
+				$config[$key] = false;
+			}
+		}
+
+		return $config;
 	}
 
 /**
