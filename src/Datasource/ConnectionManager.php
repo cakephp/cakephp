@@ -121,29 +121,16 @@ class ConnectionManager {
 
 		$config = array_merge($queryArgs, $parsed, $config);
 
-		if (isset($config['query'])) {
-			unset($config['query']);
-		}
-
-		if (isset($config['scheme'])) {
-			unset($config['scheme']);
-		}
-
-		unset($config['dsn']);
-
 		if (isset($config['user'])) {
 			$config['login'] = $config['user'];
-			unset($config['user']);
 		}
 
 		if (isset($config['pass'])) {
 			$config['password'] = $config['pass'];
-			unset($config['pass']);
 		}
 
 		if (isset($config['path'])) {
 			$config['database'] = substr($config['path'], 1);
-			unset($config['path']);
 		}
 
 		foreach ($config as $key => $value) {
@@ -153,6 +140,9 @@ class ConnectionManager {
 				$config[$key] = false;
 			}
 		}
+
+		unset($config['dsn'], $config['query'], $config['scheme']);
+		unset($config['path'], $config['user'], $config['pass']);
 
 		return $config;
 	}
