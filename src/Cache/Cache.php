@@ -65,7 +65,9 @@ use RuntimeException;
  */
 class Cache {
 
-	use StaticConfigTrait;
+	use StaticConfigTrait {
+		parseDsn as protected _parseDsn;
+	}
 
 /**
  * Flag for tracking whether or not caching is enabled.
@@ -477,5 +479,37 @@ class Cache {
 		self::write($key, $results, $config);
 		return $results;
 	}
+
+/**
+ * Parses a dsn into a valid connection configuration
+ *
+ * This method allows setting a dsn using PEAR::DB formatting, with added support for drivers
+ * in the SQLAlchemy format. The following is an example of it's usage:
+ *
+ * {{{
+ * 	 $dsn = 'File:///';
+ * 	 $config = Cache::parseDsn($dsn);
+ *
+ * 	 $dsn = 'File://?prefix=myapp_cake_core_&serialize=true&duration=+2 minutes&path=/tmp/persistent/';
+ * 	 $config = Cache::parseDsn($dsn);
+ * }}
+ *
+ * If an array is given, the parsed dsn will be merged into this array. Note that querystring
+ * arguments are also parsed and set as values in the returned configuration.
+ *
+ * @param array $config An array with a `url` key mapping to a string dsn
+ * @return mixed null when adding configuration and an array of configuration data when reading.
+ */
+	public static function parseDsn($config = null) {
+		$config = static::_parseDsn($config);
+
+		if (isset($config['scheme'])) {
+			$config['className'] = $config['scheme'];
+		}
+
+		unset($config['scheme']);
+		return $config;
+	}
+
 
 }
