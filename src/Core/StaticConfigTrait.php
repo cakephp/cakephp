@@ -143,7 +143,7 @@ trait StaticConfigTrait {
  * If an array is given, the parsed dsn will be merged into this array. Note that querystring
  * arguments are also parsed and set as values in the returned configuration.
  *
- * @param array $config An array with a `dsn` key mapping to a string dsn
+ * @param array $config An array with a `url` key mapping to a string dsn
  * @return mixed null when adding configuration and an array of configuration data when reading.
  */
 	public static function parseDsn($config) {
