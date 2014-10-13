@@ -34,7 +34,7 @@
 	<php>
 		<!-- SQLite
 		<env name="db_class" value="Cake\Database\Driver\Sqlite"/>
-		<env name="db_dsn" value="Cake\Database\Driver\Sqlite:///?database=memory:"/>
+		<env name="db_dsn" value="Cake\Database\Driver\Sqlite:///memory:"/>
 		-->
 		<!-- Postgres
 		<env name="db_class" value="Cake\Database\Driver\Postgres"/>

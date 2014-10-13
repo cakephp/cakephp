@@ -74,6 +74,23 @@ class StaticConfigTraitTest extends TestCase {
 			'username' => 'user',
 		];
 		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+
+		$dsn = 'Cake\Database\Driver\Sqlite:///memory:';
+		$expected = [
+			'className' => 'Cake\Database\Driver\Sqlite',
+			'driver' => 'Cake\Database\Driver\Sqlite',
+			'path' => '/memory:',
+		];
+		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+
+		$dsn = 'Cake\Database\Driver\Sqlite:///?database=memory:';
+		$expected = [
+			'className' => 'Cake\Database\Driver\Sqlite',
+			'driver' => 'Cake\Database\Driver\Sqlite',
+			'database' => 'memory:',
+			'path' => '/',
+		];
+		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
 	}
 
 /**
