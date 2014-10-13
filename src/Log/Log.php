@@ -273,16 +273,10 @@ class Log {
  * If an array is given, the parsed dsn will be merged into this array. Note that querystring
  * arguments are also parsed and set as values in the returned configuration.
  *
- * There is a special replacement value for the string `LOGS`, which is replaced by the LOGS constant.
- *
  * @param array $config An array with a `url` key mapping to a string dsn
  * @return mixed null when adding configuration and an array of configuration data when reading.
  */
 	public static function parseDsn($config = null) {
-		if (is_array($config) && isset($config['url'])) {
-			$config['url'] = str_replace('LOGS', LOGS, $config['url']);
-		}
-
 		$config = static::_parseDsn($config);
 
 		if (isset($config['driver'])) {
