@@ -193,7 +193,7 @@ trait QueryTrait {
  * Will return either the results set through setResult(), or execute this query
  * and return the ResultSetDecorator object ready for streaming of results.
  *
- * ResultSetDecorator is a travesable object that implements the methods found
+ * ResultSetDecorator is a traversable object that implements the methods found
  * on Cake\Collection\Collection.
  *
  * @return \Cake\Datasource\ResultSetInterface

@@ -100,7 +100,7 @@ class Number {
  *
  * Options:
  *
- * - `places` - Minimim number or decimals to use, e.g 0
+ * - `places` - Minimum number or decimals to use, e.g 0
  * - `precision` - Maximum Number of decimal places to use, e.g. 2
  * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,###.00
  * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
@@ -122,7 +122,7 @@ class Number {
  *
  * ### Options
  *
- * - `places` - Minimim number or decimals to use, e.g 0
+ * - `places` - Minimum number or decimals to use, e.g 0
  * - `precision` - Maximum Number of decimal places to use, e.g. 2
  * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
  * - `before` - The string to place before whole numbers, e.g. '['
@@ -219,7 +219,7 @@ class Number {
  * The options array accepts the following keys:
  *
  * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
- * - `type` - The formatter type to construct, set it to `curency` if you need to format
+ * - `type` - The formatter type to construct, set it to `currency` if you need to format
  *    numbers representing money.
  * - `places` - Number of decimal places to use. e.g. 2
  * - `precision` - Maximum Number of decimal places to use, e.g. 2

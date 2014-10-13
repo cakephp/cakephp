@@ -37,7 +37,7 @@ class PaginatorHelper extends Helper {
 	public $helpers = ['Url', 'Number'];
 
 /**
- * Defualt config for this class
+ * Default config for this class
  *
  * Options: Holds the default options for pagination links
  *

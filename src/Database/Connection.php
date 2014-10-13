@@ -249,7 +249,7 @@ class Connection {
 	}
 
 /**
- * Executes the provided query after compiling it for the specific dirver
+ * Executes the provided query after compiling it for the specific driver
  * dialect and returns the executed Statement object.
  *
  * @param \Cake\Database\Query $query The query to be executed
@@ -597,7 +597,7 @@ class Connection {
 	}
 
 /**
- * Enables or disables metadata caching for this connectino
+ * Enables or disables metadata caching for this connection
  *
  * Changing this setting will not modify existing schema collections objects.
  *

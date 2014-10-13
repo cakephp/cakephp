@@ -25,7 +25,7 @@ use Cake\Filesystem\Folder;
 class TestSuite extends \PHPUnit_Framework_TestSuite {
 
 /**
- * Adds all the files in a directory to the test suite. Does not recurse through directories.
+ * Adds all the files in a directory to the test suite. Does not recursive through directories.
  *
  * @param string $directory The directory to add tests from.
  * @return void

@@ -1046,7 +1046,7 @@ class Response {
  * makes it unique.
  *
  * Second parameter is used to instruct clients that the content has
- * changed, but sematicallly, it can be used as the same thing. Think
+ * changed, but semantically, it can be used as the same thing. Think
  * for instance of a page with a hit counter, two different page views
  * are equivalent, but they differ by a few bytes. This leaves off to
  * the Client the decision of using or not the cached page.

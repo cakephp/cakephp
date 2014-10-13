@@ -161,7 +161,7 @@ class Comparison extends QueryExpression {
 			$type = str_replace('[]', '', $this->_type);
 			$value = $this->_flattenValue($this->_value, $generator, $type);
 
-			// To avoid SQL erros when comparing a field to a list of empty values,
+			// To avoid SQL errors when comparing a field to a list of empty values,
 			// generate a condition that will always evaluate to false
 			if ($value === '') {
 				return ['1 != 1', ''];

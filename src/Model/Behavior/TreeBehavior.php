@@ -379,7 +379,7 @@ class TreeBehavior extends Behavior {
  * the primary key for the table and the values are the display field for the table.
  * Values are prefixed to visually indicate relative depth in the tree.
  *
- * Avaliable options are:
+ * Available options are:
  *
  * - keyPath: A dot separated path to fetch the field to use for the array key, or a closure to
  *  return the key out of the provided row.
@@ -642,7 +642,7 @@ class TreeBehavior extends Behavior {
 	}
 
 /**
- * Recovers the lft and right column values out of the hirearchy defined by the
+ * Recovers the lft and right column values out of the hierarchy defined by the
  * parent column.
  *
  * @return void
