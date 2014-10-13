@@ -205,19 +205,15 @@ trait StaticConfigTrait {
 			$parsed['password'] = $parsed['pass'];
 		}
 
+		$config = array_merge($queryArgs, $config, $parsed);
 		unset($config['user'], $config['pass']);
-		$config = array_filter($config, function ($value) {
-			return $value !== '';
-		});
-
-		$config = array_merge($queryArgs, $parsed, $config);
 
 		if ($driver !== null) {
-			if (!isset($config['driver'])) {
+			if (empty($config['driver'])) {
 				$config['driver'] = $driver;
 			}
 
-			if (!isset($config['className'])) {
+			if (empty($config['className'])) {
 				$config['className'] = $driver;
 			}
 		}
