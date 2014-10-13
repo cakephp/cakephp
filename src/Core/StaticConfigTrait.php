@@ -198,6 +198,16 @@ trait StaticConfigTrait {
 
 		parse_str($query, $queryArgs);
 
+		foreach ($queryArgs as $key => $value) {
+			if ($value === 'true') {
+				$queryArgs[$key] = true;
+			} elseif ($value === 'false') {
+				$queryArgs[$key] = false;
+			} elseif ($value === 'null') {
+				$queryArgs[$key] = null;
+			}
+		}
+
 		if (isset($parsed['user'])) {
 			$parsed['username'] = $parsed['user'];
 		}
@@ -215,16 +225,6 @@ trait StaticConfigTrait {
 
 			if (empty($config['className'])) {
 				$config['className'] = $driver;
-			}
-		}
-
-		foreach ($config as $key => $value) {
-			if ($value === 'true') {
-				$config[$key] = true;
-			} elseif ($value === 'false') {
-				$config[$key] = false;
-			} elseif ($value === 'null') {
-				$config[$key] = null;
 			}
 		}
 
