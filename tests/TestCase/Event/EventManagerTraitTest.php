@@ -47,7 +47,7 @@ class EventManagerTraitTest extends TestCase {
 /**
  * testSettingEventManager
  *
- * @covers EventManagerTrait::eventManager
+ * @covers \Cake\Event\EventManagerTrait::eventManager
  * @return void
  */
 	public function testSettingEventManager() {
