@@ -2450,7 +2450,7 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 /**
- * Test backward compatibility of the isUnique method when used as a validator for multiple fields.
+ * Test backward compatibility of the isUnique method when used as a validator for a single field.
  *
  * @return void
  */
