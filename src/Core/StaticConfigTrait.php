@@ -177,9 +177,9 @@ trait StaticConfigTrait {
 		unset($config['url']);
 
 		if (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
-			$scheme = explode('\\', $matches[2]);
+			$scheme = explode('\\', $matches[1]);
 			$scheme = array_pop($scheme);
-			$driver = $matches[2];
+			$driver = $matches[1];
 			$dsn = preg_replace("/^([\w\\\]+)/", $scheme, $dsn);
 		}
 
