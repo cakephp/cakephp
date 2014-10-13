@@ -6,9 +6,9 @@ php:
   - 5.6
 
 env:
-  - DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_login='travis' db_password=''
-  - DB=pgsql db_class='Cake\Database\Driver\Postgres' db_dsn='pgsql:host=127.0.0.1;dbname=cakephp_test' db_database="cakephp_test" db_login='postgres' db_password=''
-  - DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite::memory:'
+  - DB=mysql db_dsn='Cake\Database\Driver\Mysql://travis@0.0.0.0/cakephp_test'
+  - DB=pgsql db_dsn='Cake\Database\Driver\Postgres://postgres@127.0.0.1/cakephp_test'
+  - DB=sqlite db_dsn='Cake\Database\Driver\Sqlite:///?database=memory:'
 
 services:
   - memcached
@@ -21,9 +21,9 @@ matrix:
     - php: 5.4
       env: PHPCS=1
     - php: hhvm-nightly
-      env: HHVM=1 DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite::memory:'
+      env: HHVM=1 DB=sqlite db_dsn='Cake\Database\Driver\Sqlite:///?database=memory:'
     - php: hhvm-nightly
-      env: HHVM=1 DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_login='travis' db_password=''
+      env: HHVM=1 DB=mysql db_dsn='Cake\Database\Driver\Mysql://travis@0.0.0.0/cakephp_test'
 
 before_script:
   - composer self-update

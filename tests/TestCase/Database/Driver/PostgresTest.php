@@ -33,6 +33,7 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
  */
 	public function testConnectionConfigDefault() {
 		$driver = $this->getMock('Cake\Database\Driver\Postgres', ['_connect', 'connection']);
+		$dsn = 'pgsql:host=localhost;port=5432;dbname=cake';
 		$expected = [
 			'persistent' => true,
 			'host' => 'localhost',
@@ -45,7 +46,6 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 			'timezone' => null,
 			'flags' => [],
 			'init' => [],
-			'dsn' => 'pgsql:host=localhost;port=5432;dbname=cake'
 		];
 
 		$expected['flags'] += [
@@ -67,7 +67,7 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 		$connection->expects($this->exactly(2))->method('exec');
 
 		$driver->expects($this->once())->method('_connect')
-			->with($expected);
+			->with($dsn, $expected);
 		$driver->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
 
@@ -98,9 +98,9 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 			['_connect', 'connection'],
 			[$config]
 		);
+		$dsn = 'pgsql:host=foo;port=3440;dbname=bar';
 
 		$expected = $config;
-		$expected['dsn'] = 'pgsql:host=foo;port=3440;dbname=bar';
 		$expected['flags'] += [
 			PDO::ATTR_PERSISTENT => false,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
@@ -124,7 +124,7 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 
 		$driver->connection($connection);
 		$driver->expects($this->once())->method('_connect')
-			->with($expected);
+			->with($dsn, $expected);
 
 		$driver->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
@@ -141,7 +141,7 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 		$driver = $this->getMock(
 			'Cake\Database\Driver\Postgres',
 			['_connect', 'connection'],
-			[['dsn' => 'foo']]
+			[[]]
 		);
 		$connection = $this
 			->getMockBuilder('\Cake\Database\Connection')

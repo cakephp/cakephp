@@ -206,6 +206,11 @@ trait StaticConfigTrait {
 		}
 
 		unset($config['user'], $config['pass']);
+
+		$config = array_filter($config, function ($value) {
+			return $value !== '';
+		});
+
 		$config = array_merge($queryArgs, $parsed, $config);
 
 		if ($driver !== null) {

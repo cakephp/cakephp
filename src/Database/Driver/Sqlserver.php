@@ -41,7 +41,6 @@ class Sqlserver extends \Cake\Database\Driver {
 		'flags' => [],
 		'init' => [],
 		'settings' => [],
-		'dsn' => null
 	];
 
 /**
@@ -62,11 +61,9 @@ class Sqlserver extends \Cake\Database\Driver {
 		if (!empty($config['encoding'])) {
 			$config['flags'][PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
 		}
-		if (empty($config['dsn'])) {
-			$config['dsn'] = "sqlsrv:Server={$config['host']};Database={$config['database']};MultipleActiveResultSets=false";
-		}
 
-		$this->_connect($config);
+		$dsn = "sqlsrv:Server={$config['host']};Database={$config['database']};MultipleActiveResultSets=false";
+		$this->_connect($dsn, $config);
 
 		$connection = $this->connection();
 		if (!empty($config['init'])) {

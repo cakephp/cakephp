@@ -32,12 +32,13 @@ trait PDODriverTrait {
 /**
  * Establishes a connection to the databse server
  *
+ * @param string $dsn A Driver-specific PDO-DSN
  * @param array $config configuration to be used for creating connection
  * @return bool true on success
  */
-	protected function _connect(array $config) {
+	protected function _connect($dsn, array $config) {
 		$connection = new PDO(
-			$config['dsn'],
+			$dsn,
 			$config['username'],
 			$config['password'],
 			$config['flags']

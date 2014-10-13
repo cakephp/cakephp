@@ -38,7 +38,6 @@ class Mysql extends \Cake\Database\Driver {
 		'encoding' => 'utf8',
 		'timezone' => null,
 		'init' => [],
-		'dsn' => null
 	];
 
 /**
@@ -74,15 +73,13 @@ class Mysql extends \Cake\Database\Driver {
 			$config['flags'][PDO::MYSQL_ATTR_SSL_CA] = $config['ssl_ca'];
 		}
 
-		if (empty($config['dsn'])) {
-			if (empty($config['unix_socket'])) {
-				$config['dsn'] = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['encoding']}";
-			} else {
-				$config['dsn'] = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
-			}
+		if (empty($config['unix_socket'])) {
+			$dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['encoding']}";
+		} else {
+			$dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
 		}
 
-		$this->_connect($config);
+		$this->_connect($dsn, $config);
 
 		if (!empty($config['init'])) {
 			foreach ((array)$config['init'] as $command) {

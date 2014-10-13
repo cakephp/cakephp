@@ -39,7 +39,6 @@ class Postgres extends \Cake\Database\Driver {
 		'timezone' => null,
 		'flags' => [],
 		'init' => [],
-		'dsn' => null
 	];
 
 /**
@@ -57,11 +56,8 @@ class Postgres extends \Cake\Database\Driver {
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		];
 
-		if (empty($config['dsn'])) {
-			$config['dsn'] = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
-		}
-
-		$this->_connect($config);
+		$dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
+		$this->_connect($dsn, $config);
 		$this->_connection = $connection = $this->connection();
 		if (!empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);

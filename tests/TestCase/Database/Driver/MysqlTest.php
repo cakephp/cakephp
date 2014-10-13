@@ -45,6 +45,7 @@ class MysqlTest extends TestCase {
  */
 	public function testConnectionConfigDefault() {
 		$driver = $this->getMock('Cake\Database\Driver\Mysql', ['_connect']);
+		$dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8';
 		$expected = [
 			'persistent' => true,
 			'host' => 'localhost',
@@ -56,7 +57,6 @@ class MysqlTest extends TestCase {
 			'encoding' => 'utf8',
 			'timezone' => null,
 			'init' => [],
-			'dsn' => 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8'
 		];
 
 		$expected['flags'] += [
@@ -65,7 +65,7 @@ class MysqlTest extends TestCase {
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 		];
 		$driver->expects($this->once())->method('_connect')
-			->with($expected);
+			->with($dsn, $expected);
 		$driver->connect([]);
 	}
 
@@ -92,8 +92,8 @@ class MysqlTest extends TestCase {
 			['_connect', 'connection'],
 			[$config]
 		);
+		$dsn = 'mysql:host=foo;port=3440;dbname=bar;charset=a-language';
 		$expected = $config;
-		$expected['dsn'] = 'mysql:host=foo;port=3440;dbname=bar;charset=a-language';
 		$expected['init'][] = "SET time_zone = 'Antartica'";
 		$expected['flags'] += [
 			PDO::ATTR_PERSISTENT => false,
@@ -108,7 +108,7 @@ class MysqlTest extends TestCase {
 		$connection->expects($this->exactly(3))->method('exec');
 
 		$driver->expects($this->once())->method('_connect')
-			->with($expected);
+			->with($dsn, $expected);
 		$driver->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
 		$driver->connect($config);

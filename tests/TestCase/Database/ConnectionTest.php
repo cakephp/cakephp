@@ -114,7 +114,6 @@ class ConnectionTest extends TestCase {
  */
 	public function testWrongCredentials() {
 		$config = ConnectionManager::config('test');
-		$this->skipIf(isset($config['dsn']), 'Datasource has dsn, skipping.');
 		$connection = new Connection(['database' => '_probably_not_there_'] + ConnectionManager::config('test'));
 		$connection->connect();
 	}
