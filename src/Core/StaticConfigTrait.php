@@ -174,7 +174,6 @@ trait StaticConfigTrait {
 
 		$driver = null;
 		$dsn = $config['url'];
-		unset($config['url']);
 
 		if (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
 			$scheme = explode('\\', $matches[1]);
@@ -215,6 +214,7 @@ trait StaticConfigTrait {
 			$parsed['password'] = $parsed['pass'];
 		}
 
+		unset($config['url']);
 		$config = array_merge($config, $parsed, $queryArgs);
 		unset($config['user'], $config['pass'], $config['scheme']);
 
