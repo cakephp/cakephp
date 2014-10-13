@@ -180,7 +180,7 @@ trait StaticConfigTrait {
 			$scheme = explode('\\', $matches[1]);
 			$scheme = array_pop($scheme);
 			$driver = $matches[1];
-			$dsn = preg_replace("/^([\w\\\]+)/", $scheme, $dsn);
+			$dsn = preg_replace("/^([\w\\\]+)/", 'file', $dsn);
 		}
 
 		$parsed = parse_url($dsn);
