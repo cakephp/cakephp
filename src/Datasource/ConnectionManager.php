@@ -69,16 +69,24 @@ class ConnectionManager {
 /**
  * Parses a DSN into a valid connection configuration
  *
- * This method allows setting a DSN using PEAR::DB formatting, with added support for drivers
- * in the SQLAlchemy format. The following is an example of its usage:
+ * This method allows setting a DSN using formatting similar to that used by PEAR::DB.
+ * The following is an example of its usage:
  *
  * {{{
- * 	 $dsn = 'mysql+Cake\Database\Driver\Mysql://user:password@localhost:3306/database_name';
- * 	 $config = ConnectionManager::parseDsn($dsn);
+ *   $dsn = 'Cake\Database\Driver\Mysql://localhost/database?className=Cake\Database\Connection';
+ *   $config = ConnectionManager::parseDsn($dsn);
+ *
+ *   $dsn = 'Cake\Database\Driver\Mysql://localhost:3306/database?className=Cake\Database\Connection';
+ *   $config = ConnectionManager::parseDsn($dsn);
+ *
+ *   $dsn = 'Cake\Database\Connection://localhost:3306/database?driver=Cake\Database\Driver\Mysql';
+ *   $config = ConnectionManager::parseDsn($dsn);
  * }}
  *
- * If an array is given, the parsed DSN will be merged into this array. Note that querystring
- * arguments are also parsed and set as values in the returned configuration.
+ * For all classes, the value of `scheme` is set as the value of both the `className` and `driver`
+ * unless they have been otherwise specified.
+ *
+ * Note that querystring arguments are also parsed and set as values in the returned configuration.
  *
  * @param array $config An array with a `url` key mapping to a string DSN
  * @return mixed null when adding configuration and an array of configuration data when reading.

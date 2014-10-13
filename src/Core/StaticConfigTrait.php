@@ -132,16 +132,37 @@ trait StaticConfigTrait {
 /**
  * Parses a DSN into a valid connection configuration
  *
- * This method allows setting a DSN using PEAR::DB formatting, with added support for drivers
- * in the SQLAlchemy format. The following is an example of its usage:
+ * This method allows setting a DSN using formatting similar to that used by PEAR::DB.
+ * The following is an example of its usage:
  *
  * {{{
- * 	 $dsn = 'mysql+Cake\Database\Driver\Mysql://user:password@localhost:3306/database_name';
- * 	 $config = ConnectionManager::parseDsn($dsn);
+ *   $dsn = 'Cake\Database\Driver\Mysql://localhost/database?className=Cake\Database\Connection';
+ *   $config = ConnectionManager::parseDsn($dsn);
+ *
+ *   $dsn = 'Cake\Database\Driver\Mysql://localhost:3306/database?className=Cake\Database\Connection';
+ *   $config = ConnectionManager::parseDsn($dsn);
+ *
+ *   $dsn = 'Cake\Database\Connection://localhost:3306/database?driver=Cake\Database\Driver\Mysql';
+ *   $config = ConnectionManager::parseDsn($dsn);
+ *
+ *   $dsn = 'Cake\Log\Engine\FileLog://?types=notice,info,debug&file=debug&path=LOGS';
+ * 	 $config = Log::parseDsn($dsn);
+ *
+ *   $dsn = 'Mail://user:secret@localhost:25?timeout=30&client=null&tls=null';
+ * 	 $config = Email::parseDsn($dsn);
+ *
+ *   $dsn = 'File:///';
+ * 	 $config = Cache::parseDsn($dsn);
+ *
+ *   $dsn = 'File://?prefix=myapp_cake_core_&serialize=true&duration=+2 minutes&path=/tmp/persistent/';
+ * 	 $config = Cache::parseDsn($dsn);
+ *
  * }}
  *
- * If an array is given, the parsed DSN will be merged into this array. Note that querystring
- * arguments are also parsed and set as values in the returned configuration.
+ * For all classes, the value of `scheme` is set as the value of both the `className` and `driver`
+ * unless they have been otherwise specified.
+ *
+ * Note that querystring arguments are also parsed and set as values in the returned configuration.
  *
  * @param array $config An array with a `url` key mapping to a string DSN
  * @return mixed null when adding configuration and an array of configuration data when reading.
@@ -155,15 +176,11 @@ trait StaticConfigTrait {
 		$dsn = $config['url'];
 		unset($config['url']);
 
-		if (preg_match("/^([\w]+)\+([\w\\\]+)/", $dsn, $matches)) {
-			$scheme = $matches[1];
-			$driver = $matches[2];
-			$dsn = preg_replace("/^([\w]+)\+([\w\\\]+)/", $scheme, $dsn);
-		} elseif (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
-			$scheme = explode('\\', $matches[1]);
+		if (preg_match('/^([\w\\]+)/', $dsn, $matches)) {
+			$scheme = explode('\\', $matches[2]);
 			$scheme = array_pop($scheme);
-			$driver = $matches[1];
-			$dsn = preg_replace("/^([\w\\\]+)/", $scheme, $dsn);
+			$driver = $matches[2];
+			$dsn = preg_replace('/^([\w\\]+)/', $scheme, $dsn);
 		}
 
 		$parsed = parse_url($dsn);
@@ -176,20 +193,25 @@ trait StaticConfigTrait {
 
 		parse_str($query, $queryArgs);
 
-		if ($driver !== null) {
-			$queryArgs['driver'] = $driver;
-		}
-
 		if (isset($parsed['user'])) {
 			$parsed['username'] = $parsed['user'];
 		}
-
 		if (isset($parsed['pass'])) {
 			$parsed['password'] = $parsed['pass'];
 		}
 
 		unset($config['user'], $config['pass']);
 		$config = array_merge($queryArgs, $parsed, $config);
+
+		if ($driver !== null) {
+			if (!isset($config['driver'])) {
+				$config['driver'] = $driver;
+			}
+
+			if (!isset($config['className'])) {
+				$config['className'] = $driver;
+			}
+		}
 
 		foreach ($config as $key => $value) {
 			if ($value === 'true') {

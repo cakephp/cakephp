@@ -105,7 +105,6 @@ class Log {
 
 	use StaticConfigTrait {
 		config as protected _config;
-		parseDsn as protected _parseDsn;
 	}
 
 /**
@@ -257,34 +256,6 @@ class Log {
 			return $return;
 		}
 		static::$_dirtyConfig = true;
-	}
-
-/**
- * Parses a DSN into a valid connection configuration
- *
- * This method allows setting a DSN using PEAR::DB formatting, with added support for drivers
- * in the SQLAlchemy format. The following is an example of its usage:
- *
- * {{{
- * 	 $dsn = 'Cake\Log\Engine\FileLog://?types=notice,info,debug&file=debug&path=LOGS';
- * 	 $config = Log::parseDsn($dsn);
- * }}
- *
- * If an array is given, the parsed DSN will be merged into this array. Note that querystring
- * arguments are also parsed and set as values in the returned configuration.
- *
- * @param array $config An array with a `url` key mapping to a string DSN
- * @return mixed null when adding configuration and an array of configuration data when reading.
- */
-	public static function parseDsn($config = null) {
-		$config = static::_parseDsn($config);
-
-		if (isset($config['driver'])) {
-			$config['className'] = $config['driver'];
-		}
-
-		unset($config['driver']);
-		return $config;
 	}
 
 /**
