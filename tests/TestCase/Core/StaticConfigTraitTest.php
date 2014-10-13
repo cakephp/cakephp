@@ -91,6 +91,18 @@ class StaticConfigTraitTest extends TestCase {
 			'path' => '/',
 		];
 		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+
+		$dsn = 'Cake\Database\Driver\Sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false';
+		$expected = [
+			'className' => 'Cake\Database\Driver\Sqlserver',
+			'driver' => 'Cake\Database\Driver\Sqlserver',
+			'host' => '.\SQL2012SP1',
+			'MultipleActiveResultSets' => false,
+			'password' => 'Password12!',
+			'path' => '/cakephp',
+			'username' => 'sa',
+		];
+		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
 	}
 
 /**
