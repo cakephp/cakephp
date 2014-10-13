@@ -176,11 +176,11 @@ trait StaticConfigTrait {
 		$dsn = $config['url'];
 		unset($config['url']);
 
-		if (preg_match('/^([\w\\]+)/', $dsn, $matches)) {
+		if (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
 			$scheme = explode('\\', $matches[2]);
 			$scheme = array_pop($scheme);
 			$driver = $matches[2];
-			$dsn = preg_replace('/^([\w\\]+)/', $scheme, $dsn);
+			$dsn = preg_replace("/^([\w\\\]+)/", $scheme, $dsn);
 		}
 
 		$parsed = parse_url($dsn);
@@ -206,7 +206,6 @@ trait StaticConfigTrait {
 		}
 
 		unset($config['user'], $config['pass']);
-
 		$config = array_filter($config, function ($value) {
 			return $value !== '';
 		});
