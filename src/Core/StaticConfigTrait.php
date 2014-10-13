@@ -216,7 +216,7 @@ trait StaticConfigTrait {
 		}
 
 		$config = array_merge($queryArgs, $config, $parsed);
-		unset($config['user'], $config['pass']);
+		unset($config['user'], $config['pass'], $config['scheme']);
 
 		if ($driver !== null) {
 			if (empty($config['driver'])) {
