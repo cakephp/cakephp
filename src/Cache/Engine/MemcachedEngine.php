@@ -45,7 +45,7 @@ class MemcachedEngine extends CacheEngine {
  * - `duration` Specify how long items in this cache configuration last.
  * - `groups` List of groups or 'tags' associated to every key stored in this config.
  *    handy for deleting a complete group from cache.
- * - `login` Login to access the Memcache server
+ * - `username` Login to access the Memcache server
  * - `password` Password to access the Memcache server
  * - `persistent` The name of the persistent connection. All configurations using
  *    the same persistent value will share a single underlying connection.
@@ -67,7 +67,7 @@ class MemcachedEngine extends CacheEngine {
 		'compress' => false,
 		'duration' => 3600,
 		'groups' => [],
-		'login' => null,
+		'username' => null,
 		'password' => null,
 		'persistent' => false,
 		'prefix' => 'cake_',
@@ -147,14 +147,14 @@ class MemcachedEngine extends CacheEngine {
 			}
 		}
 
-		if ($this->_config['login'] !== null && $this->_config['password'] !== null) {
+		if ($this->_config['username'] !== null && $this->_config['password'] !== null) {
 			if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
 				throw new InvalidArgumentException(
 					'Memcached extension is not build with SASL support'
 				);
 			}
 			$this->_Memcached->setSaslAuthData(
-				$this->_config['login'],
+				$this->_config['username'],
 				$this->_config['password']
 			);
 		}

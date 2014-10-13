@@ -44,7 +44,7 @@ class SqlserverTest extends \Cake\TestSuite\TestCase {
 		$config = [
 			'persistent' => false,
 			'host' => 'foo',
-			'login' => 'Administrator',
+			'username' => 'Administrator',
 			'password' => 'blablabla',
 			'database' => 'bar',
 			'encoding' => 'a-language',

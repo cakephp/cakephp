@@ -661,7 +661,7 @@ class Connection {
 	public function __debugInfo() {
 		$secrets = [
 			'password' => '*****',
-			'login' => '*****',
+			'username' => '*****',
 			'host' => '*****',
 			'database' => '*****',
 			'port' => '*****',

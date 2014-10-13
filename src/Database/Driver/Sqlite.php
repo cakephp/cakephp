@@ -31,7 +31,7 @@ class Sqlite extends \Cake\Database\Driver {
  */
 	protected $_baseConfig = [
 		'persistent' => false,
-		'login' => null,
+		'username' => null,
 		'password' => null,
 		'database' => ':memory:',
 		'encoding' => 'utf8',

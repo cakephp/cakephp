@@ -36,7 +36,7 @@ class SqliteTest extends TestCase {
 			'persistent' => false,
 			'database' => ':memory:',
 			'encoding' => 'utf8',
-			'login' => null,
+			'username' => null,
 			'password' => null,
 			'flags' => [],
 			'init' => [],
@@ -73,7 +73,7 @@ class SqliteTest extends TestCase {
 		);
 
 		$expected = $config;
-		$expected += ['login' => null, 'password' => null];
+		$expected += ['username' => null, 'password' => null];
 		$expected['dsn'] = 'sqlite:bar.db';
 		$expected['flags'] += [
 			PDO::ATTR_PERSISTENT => true,

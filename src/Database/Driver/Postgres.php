@@ -30,7 +30,7 @@ class Postgres extends \Cake\Database\Driver {
 	protected $_baseConfig = [
 		'persistent' => true,
 		'host' => 'localhost',
-		'login' => 'root',
+		'username' => 'root',
 		'password' => '',
 		'database' => 'cake',
 		'schema' => 'public',

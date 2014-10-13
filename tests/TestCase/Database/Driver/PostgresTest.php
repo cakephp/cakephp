@@ -36,7 +36,7 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 		$expected = [
 			'persistent' => true,
 			'host' => 'localhost',
-			'login' => 'root',
+			'username' => 'root',
 			'password' => '',
 			'database' => 'cake',
 			'schema' => 'public',
@@ -84,7 +84,7 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 			'persistent' => false,
 			'host' => 'foo',
 			'database' => 'bar',
-			'login' => 'user',
+			'username' => 'user',
 			'password' => 'pass',
 			'port' => 3440,
 			'flags' => [1 => true, 2 => false],

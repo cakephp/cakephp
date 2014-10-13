@@ -48,7 +48,7 @@ class MysqlTest extends TestCase {
 		$expected = [
 			'persistent' => true,
 			'host' => 'localhost',
-			'login' => 'root',
+			'username' => 'root',
 			'password' => '',
 			'database' => 'cake',
 			'port' => '3306',
@@ -79,7 +79,7 @@ class MysqlTest extends TestCase {
 			'persistent' => false,
 			'host' => 'foo',
 			'database' => 'bar',
-			'login' => 'user',
+			'username' => 'user',
 			'password' => 'pass',
 			'port' => 3440,
 			'flags' => [1 => true, 2 => false],

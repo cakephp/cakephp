@@ -34,7 +34,7 @@ class Sqlserver extends \Cake\Database\Driver {
 	protected $_baseConfig = [
 		'persistent' => false,
 		'host' => 'localhost\SQLEXPRESS',
-		'login' => '',
+		'username' => '',
 		'password' => '',
 		'database' => 'cake',
 		'encoding' => PDO::SQLSRV_ENCODING_UTF8,

@@ -38,7 +38,7 @@ trait PDODriverTrait {
 	protected function _connect(array $config) {
 		$connection = new PDO(
 			$config['dsn'],
-			$config['login'],
+			$config['username'],
 			$config['password'],
 			$config['flags']
 		);
