@@ -215,7 +215,7 @@ trait StaticConfigTrait {
 			$parsed['password'] = $parsed['pass'];
 		}
 
-		$config = array_merge($queryArgs, $config, $parsed);
+		$config = array_merge($config, $parsed, $queryArgs);
 		unset($config['user'], $config['pass'], $config['scheme']);
 
 		if ($driver !== null) {
