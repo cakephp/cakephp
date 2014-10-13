@@ -180,6 +180,15 @@ trait StaticConfigTrait {
 			$queryArgs['driver'] = $driver;
 		}
 
+		if (isset($parsed['user'])) {
+			$parsed['username'] = $parsed['user'];
+		}
+
+		if (isset($parsed['pass'])) {
+			$parsed['password'] = $parsed['pass'];
+		}
+
+		unset($config['user'], $config['pass']);
 		$config = array_merge($queryArgs, $parsed, $config);
 
 		foreach ($config as $key => $value) {

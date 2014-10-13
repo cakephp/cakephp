@@ -1217,15 +1217,7 @@ class Email {
 			$config['className'] = $config['scheme'];
 		}
 
-		if (isset($config['user'])) {
-			$config['username'] = $config['user'];
-		}
-
-		if (isset($config['pass'])) {
-			$config['password'] = $config['pass'];
-		}
-
-		unset($config['scheme'], $config['user'], $config['pass']);
+		unset($config['scheme']);
 		return $config;
 	}
 

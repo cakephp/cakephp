@@ -86,19 +86,11 @@ class ConnectionManager {
 	public static function parseDsn($config = null) {
 		$config = static::_parseDsn($config);
 
-		if (isset($config['user'])) {
-			$config['login'] = $config['user'];
-		}
-
-		if (isset($config['pass'])) {
-			$config['password'] = $config['pass'];
-		}
-
 		if (isset($config['path'])) {
 			$config['database'] = substr($config['path'], 1);
 		}
 
-		unset($config['path'], $config['user'], $config['pass']);
+		unset($config['path']);
 		return $config;
 	}
 
