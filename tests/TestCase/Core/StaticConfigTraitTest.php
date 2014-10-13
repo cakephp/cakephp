@@ -113,7 +113,6 @@ class StaticConfigTraitTest extends TestCase {
 	public function testParseDsnClassnameDriver() {
 		$klassName = get_class($this->subject);
 
-
 		$dsn = 'Cake\Database\Driver\Mysql://localhost:3306/database';
 		$expected = [
 			'className' => 'Cake\Database\Driver\Mysql',
@@ -210,7 +209,7 @@ class StaticConfigTraitTest extends TestCase {
 			'key' => true,
 			'key2' => false,
 			'path' => '/',
-			'timeout' =>'30',
+			'timeout' => '30',
 			'tls' => null,
 		];
 		$dsn = 'Mail:///?timeout=30&key=true&key2=false&client=null&tls=null';
@@ -225,7 +224,7 @@ class StaticConfigTraitTest extends TestCase {
 			'key2' => false,
 			'password' => 'false',
 			'path' => '/1',
-			'timeout' =>'30',
+			'timeout' => '30',
 			'tls' => null,
 			'username' => 'true',
 		];
@@ -239,7 +238,7 @@ class StaticConfigTraitTest extends TestCase {
 			'host' => 'localhost',
 			'password' => 'secret',
 			'port' => 25,
-			'timeout' =>'30',
+			'timeout' => '30',
 			'tls' => null,
 			'username' => 'user',
 		];
