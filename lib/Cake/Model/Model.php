@@ -3302,9 +3302,12 @@ class Model extends Object implements CakeEventListener {
  */
 	public function isUnique($fields, $or = true) {
 		if (is_array($or)) {
-			$args = func_get_args();
-			$fields = $args[1];
-			$or = isset($args[2]) ? $args[2] : true;
+			$isAssociative = count(array_filter(array_keys($or), 'is_string'));
+			if (!$isAssociative) {
+				$args = func_get_args();
+				$fields = $args[1];
+				$or = isset($args[2]) ? $args[2] : true;
+			}
 		}
 		if (!is_array($fields)) {
 			$fields = func_get_args();
