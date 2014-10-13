@@ -44,7 +44,7 @@ class CallbackStatement extends StatementDecorator {
 /**
  * Fetch a row from the statement.
  *
- * The result will be processed by the callback when it is not `false.
+ * The result will be processed by the callback when it is not `false`.
  *
  * @param string $type Either 'num' or 'assoc' to indicate the result format you would like.
  * @return mixed
