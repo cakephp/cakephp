@@ -86,7 +86,7 @@ class SqliteTest extends TestCase {
 		$connection->expects($this->exactly(2))->method('exec');
 
 		$driver->expects($this->once())->method('_connect')
-			->with($dsn, expected);
+			->with($dsn, $expected);
 		$driver->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
 		$driver->connect($config);
