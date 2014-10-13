@@ -1033,6 +1033,8 @@ class MarshallerTest extends TestCase {
 		$this->assertNotSame($entities[0], $result[0]);
 		$this->assertSame($entities[1], $result[0]);
 		$this->assertEquals('Changed 2', $result[0]->comment);
+
+		$this->assertEquals('Comment 1', $result[1]->comment);
 	}
 
 /**
