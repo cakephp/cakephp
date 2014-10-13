@@ -2449,6 +2449,33 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertFalse($Article->validates(), 'Should fail, conditions are combined with or');
 	}
 
+/**
+ * Test backward compatibility of the isUnique method when used as a validator for multiple fields.
+ *
+ * @return void
+ */
+	public function testBackwardCompatIsUniqueValidator() {
+		$this->loadFixtures('Article');
+		$Article = ClassRegistry::init('Article');
+		$Article->validate = array(
+			'title' => array(
+				'duplicate' => array(
+					'rule' => 'isUnique',
+					'message' => 'Title must be unique',
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 1),
+					'message' => 'Title cannot be empty',
+				),
+			)
+		);
+		$data = array(
+			'title' => 'First Article',
+		);
+		$data = $Article->create($data);
+		$this->assertFalse($Article->validates(), 'Contains a dupe');
+	}
+
 }
 
 /**
