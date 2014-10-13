@@ -1197,7 +1197,7 @@ class Email {
  * Parses a DSN into a valid connection configuration
  *
  * This method allows setting a DSN using PEAR::DB formatting, with added support for drivers
- * in the SQLAlchemy format. The following is an example of it's usage:
+ * in the SQLAlchemy format. The following is an example of its usage:
  *
  * {{{
  * 	 $dsn = 'mail://user:secret@localhost:25?timeout=30&client=null&tls=null';
