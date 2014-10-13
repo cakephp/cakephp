@@ -41,7 +41,7 @@ class Sqlite extends \Cake\Database\Driver {
 	];
 
 /**
- * Establishes a connection to the databse server
+ * Establishes a connection to the database server
  *
  * @return bool true on success
  */

@@ -34,7 +34,7 @@ use SessionHandlerInterface;
 class Session {
 
 /**
- * The Session handler instace used as an engine for persisting the session data.
+ * The Session handler instance used as an engine for persisting the session data.
  *
  * @var SessionHandlerInterface
  */
@@ -55,7 +55,7 @@ class Session {
 	protected $_lifetime;
 
 /**
- * Whehter this session is running under a CLI environment
+ * Whether this session is running under a CLI environment
  *
  * @var bool
  */

@@ -272,7 +272,7 @@ class Cache {
  * @param array $keys an array of keys to fetch from the cache
  * @param string $config optional name of the configuration to use. Defaults to 'default'
  * @return array An array containing, for each of the given $keys, the cached data or false if cached data could not be
- * retreived
+ * retrieved.
  */
 	public static function readMany($keys, $config = 'default') {
 		$engine = static::engine($config);

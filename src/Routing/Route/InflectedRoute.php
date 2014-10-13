@@ -34,7 +34,7 @@ class InflectedRoute extends Route {
 	protected $_inflectedDefaults = false;
 
 /**
- * Parses a string URL into an array. If it mathes, it will convert the prefix, controller and
+ * Parses a string URL into an array. If it matches, it will convert the prefix, controller and
  * plugin keys to their camelized form
  *
  * @param string $url The URL to parse

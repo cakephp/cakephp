@@ -19,7 +19,7 @@ use Cake\Collection\Collection;
 /**
  * This iterator will insert values into a property of each of the records returned.
  * The values to be inserted come out of another traversal object. This is useful
- * when you have two separate collections and want to merge them toghether by placing
+ * when you have two separate collections and want to merge them together by placing
  * each of the values from one collection into a property inside the other collection.
  */
 class InsertIterator extends Collection {
@@ -32,7 +32,7 @@ class InsertIterator extends Collection {
 	protected $_values;
 
 /**
- * Holds whether the values colelction is still valid. (has more records)
+ * Holds whether the values collection is still valid. (has more records)
  *
  * @var bool
  */

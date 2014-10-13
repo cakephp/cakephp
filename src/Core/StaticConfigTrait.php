@@ -33,7 +33,7 @@ trait StaticConfigTrait {
 	protected static $_config = [];
 
 /**
- * This method can be used to define confguration adapters for an application
+ * This method can be used to define configuration adapters for an application
  * or read existing configuration.
  *
  * To change an adapter's configuration at runtime, first drop the adapter and then
@@ -100,7 +100,7 @@ trait StaticConfigTrait {
  * If the implementing objects supports a `$_registry` object the named configuration
  * will also be unloaded from the registry.
  *
- * @param string $config An existing configuation you wish to remove.
+ * @param string $config An existing configuration you wish to remove.
  * @return bool success of the removal, returns false when the config does not exist.
  */
 	public static function drop($config) {

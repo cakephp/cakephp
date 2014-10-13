@@ -46,7 +46,7 @@ class LocaleSelectorFilter extends DispatcherFilter {
 	}
 
 /**
- * Inspects the request for the Accept-Langauge header and sets the default
+ * Inspects the request for the Accept-Language header and sets the default
  * Locale for the current runtime if it matches the list of valid locales
  * as passed in the configuration.
  *

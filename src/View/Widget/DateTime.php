@@ -77,7 +77,7 @@ class DateTime implements WidgetInterface {
  *   option elements. Set to a string to define the display value of the
  *   empty option.
  *
- * In addtion to the above options, the following options allow you to control
+ * In addition to the above options, the following options allow you to control
  * which input elements are generated. By setting any option to false you can disable
  * that input picker. In addition each picker allows you to set additional options
  * that are set as HTML properties on the picker.

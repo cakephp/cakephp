@@ -56,7 +56,7 @@ trait RequestActionTrait {
  *
  * ### Passing other request data
  *
- * You can pass POST, GET, COOKIE and other data into the request using the apporpriate keys.
+ * You can pass POST, GET, COOKIE and other data into the request using the appropriate keys.
  * Cookies can be passed using the `cookies` key. Get parameters can be set with `query` and post
  * data can be sent using the `post` key.
  *

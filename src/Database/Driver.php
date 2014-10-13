@@ -289,8 +289,8 @@ abstract class Driver {
  *
  * @param \Cake\Database\Query $query The query to compile.
  * @param \Cake\Database\ValueBinder $generator The value binder to use.
- * @return array containing 2 entries. The first enty is the transformed query
- * and the secod one the compiled SQL
+ * @return array containing 2 entries. The first entity is the transformed query
+ * and the second one the compiled SQL
  */
 	public function compileQuery(Query $query, ValueBinder $generator) {
 		$processor = $this->newCompiler();

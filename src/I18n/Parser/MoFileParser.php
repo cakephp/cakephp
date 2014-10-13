@@ -51,7 +51,7 @@ class MoFileParser {
  *
  * @param resource $resource The file to be parsed.
  *
- * @return array List of messages extrated from the file
+ * @return array List of messages extracted from the file
  * @throws \RuntimeException If stream content has an invalid format.
  */
 	public function parse($resource) {
@@ -130,7 +130,7 @@ class MoFileParser {
  * Reads an unsigned long from stream respecting endianess.
  *
  * @param resource $stream The File being read.
- * @param bool $isBigEndian Whether or not the current platfomr is Big Endian
+ * @param bool $isBigEndian Whether or not the current platformer is Big Endian
  * @return int
  */
 	protected function _readLong($stream, $isBigEndian) {

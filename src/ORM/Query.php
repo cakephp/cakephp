@@ -107,7 +107,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	protected $_eagerLoader;
 
 /**
- * Constuctor
+ * Constructor
  *
  * @param \Cake\Database\Connection $connection The connection object
  * @param \Cake\ORM\Table $table The table this query is starting on
@@ -383,7 +383,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	}
 
 /**
- * Runs `aliasfield()` for each field in the provided list and returns
+ * Runs `aliasField()` for each field in the provided list and returns
  * the result under a single array.
  *
  * @param array $fields The fields to alias
@@ -550,7 +550,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	}
 
 /**
- * Toggle hydrating entites.
+ * Toggle hydrating entities.
  *
  * If set to false array results will be returned
  *
