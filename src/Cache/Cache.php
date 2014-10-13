@@ -511,5 +511,4 @@ class Cache {
 		return $config;
 	}
 
-
 }
