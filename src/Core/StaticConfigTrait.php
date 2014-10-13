@@ -184,6 +184,11 @@ trait StaticConfigTrait {
 		}
 
 		$parsed = parse_url($dsn);
+
+		if ($parsed === false) {
+			return $config;
+		}
+
 		$query = '';
 
 		if (isset($parsed['query'])) {
