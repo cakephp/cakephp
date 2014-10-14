@@ -26,6 +26,7 @@ App::uses('Model', 'Model');
  * Secondary Post stub class.
  */
 class SecondaryPost extends Model {
+
 /**
  * @var string
  */
@@ -35,6 +36,7 @@ class SecondaryPost extends Model {
  * @var string
  */
 	public $useDbConfig = 'secondary';
+
 }
 
 /**
@@ -437,9 +439,9 @@ class CakeTestCaseTest extends CakeTestCase {
 			)
 		), App::RESET);
 		CakePlugin::load('TestPlugin');
-		ConnectionManager::create('test_secondary', [
+		ConnectionManager::create('test_secondary', array(
 			'datasource' => 'Database/TestLocalDriver'
-		]);
+		));
 		$post = $this->getMockForModel('SecondaryPost', array('save'));
 		$this->assertEquals('test_secondary', $post->useDbConfig);
 		ConnectionManager::drop('test_secondary');
