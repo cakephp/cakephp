@@ -1038,6 +1038,36 @@ class MarshallerTest extends TestCase {
 	}
 
 /**
+ * Test that mergeMany() handles composite key associations properly.
+ *
+ * The articles_tags table has a composite primary key, and should be
+ * handled correctly.
+ *
+ * @return void
+ */
+	public function testMergeManyCompositeKey() {
+		$articlesTags = TableRegistry::get('ArticlesTags');
+
+		$entities = [
+			new OpenEntity(['article_id' => 1, 'tag_id' => 2]),
+			new OpenEntity(['article_id' => 1, 'tag_id' => 1]),
+		];
+		$entities[0]->clean();
+		$entities[1]->clean();
+
+		$data = [
+			['article_id' => 1, 'tag_id' => 1],
+			['article_id' => 1, 'tag_id' => 2]
+		];
+		$marshall = new Marshaller($articlesTags);
+		$result = $marshall->mergeMany($entities, $data);
+
+		$this->assertCount(2, $result, 'Should have two records');
+		$this->assertSame($entities[0], $result[0], 'Should retain object');
+		$this->assertSame($entities[1], $result[1], 'Should retain object');
+	}
+
+/**
  * Tests merge with data types that need to be marshalled
  *
  * @return void
