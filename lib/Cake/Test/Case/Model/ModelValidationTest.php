@@ -2405,6 +2405,77 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Test the isUnique method when used as a validator for multiple fields.
+ *
+ * @return void
+ */
+	public function testIsUniqueValidator() {
+		$this->loadFixtures('Article');
+		$Article = ClassRegistry::init('Article');
+		$Article->validate = array(
+			'user_id' => array(
+				'duplicate' => array(
+					'rule' => array('isUnique', array('user_id', 'title'), false)
+				)
+			)
+		);
+		$data = array(
+			'user_id' => 1,
+			'title' => 'First Article',
+		);
+		$Article->create($data);
+		$this->assertFalse($Article->validates(), 'Contains a dupe');
+
+		$data = array(
+			'user_id' => 1,
+			'title' => 'Unique Article',
+		);
+		$Article->create($data);
+		$this->assertTrue($Article->validates(), 'Should pass');
+
+		$Article->validate = array(
+			'user_id' => array(
+				'duplicate' => array(
+					'rule' => array('isUnique', array('user_id', 'title'))
+				)
+			)
+		);
+		$data = array(
+			'user_id' => 1,
+			'title' => 'Unique Article',
+		);
+		$Article->create($data);
+		$this->assertFalse($Article->validates(), 'Should fail, conditions are combined with or');
+	}
+
+/**
+ * Test backward compatibility of the isUnique method when used as a validator for a single field.
+ *
+ * @return void
+ */
+	public function testBackwardCompatIsUniqueValidator() {
+		$this->loadFixtures('Article');
+		$Article = ClassRegistry::init('Article');
+		$Article->validate = array(
+			'title' => array(
+				'duplicate' => array(
+					'rule' => 'isUnique',
+					'message' => 'Title must be unique',
+				),
+				'minLength' => array(
+					'rule' => array('minLength', 1),
+					'message' => 'Title cannot be empty',
+				),
+			)
+		);
+		$data = array(
+			'title' => 'First Article',
+		);
+		$data = $Article->create($data);
+		$this->assertFalse($Article->validates(), 'Contains a dupe');
+	}
+
 }
 
 /**
