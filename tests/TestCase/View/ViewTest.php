@@ -102,7 +102,7 @@ class ThemePostsController extends Controller {
 class TestView extends AppView {
 
 	public function initialize() {
-		$this->helpers['Html'] = ['mykey' => 'myval'];
+		$this->loadHelper('Html', ['mykey' => 'myval']);
 	}
 
 /**
@@ -1116,14 +1116,15 @@ class ViewTest extends TestCase {
  * @return void
  */
 	public function testRenderLoadHelper() {
-		$this->PostsController->helpers = array('Session', 'Html', 'Form', 'Number');
+		$this->PostsController->helpers = array('Session', 'Form', 'Number');
 		$View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
 
 		$result = $View->render('index', false);
 		$this->assertEquals('posts index', $result);
 
 		$attached = $View->helpers()->loaded();
-		$this->assertEquals(array('Session', 'Html', 'Form', 'Number'), $attached);
+		// HtmlHelper is loaded in TestView::initialize()
+		$this->assertEquals(array('Html', 'Session', 'Form', 'Number'), $attached);
 
 		$this->PostsController->helpers = array('Html', 'Form', 'Number', 'TestPlugin.PluggedHelper');
 		$View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
