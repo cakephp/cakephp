@@ -320,11 +320,11 @@ class Marshaller {
 
 /**
  * Merges each of the elements from `$data` into each of the entities in `$entities
- * and recursively does the same for each one of the association names passed in
+ * and recursively does the same for each of the association names passed in
  * `$options`. When merging associations, if an entity is not present in the parent
- * entity for such association, a new one will be created.
+ * entity for a given association, a new one will be created.
  *
- * Records in `$data` are matched against the entities by using the primary key
+ * Records in `$data` are matched against the entities using the primary key
  * column. Entries in `$entities` that cannot be matched to any record in
  * `$data` will be discarded. Records in `$data` that could not be matched will
  * be marshalled as a new entity.
@@ -335,19 +335,30 @@ class Marshaller {
  *
  * ### Options:
  *
- * * associated: Associations listed here will be marshalled as well.
- * * fieldList: A whitelist of fields to be assigned to the entity. If not present,
+ * - associated: Associations listed here will be marshalled as well.
+ * - fieldList: A whitelist of fields to be assigned to the entity. If not present,
  *   the accessible fields list in the entity will be used.
  *
  * @param array|\Traversable $entities the entities that will get the
- * data merged in
+ *   data merged in
  * @param array $data list of arrays to be merged into the entities
  * @param array $options List of options.
  * @return array
  */
 	public function mergeMany($entities, array $data, array $options = []) {
 		$primary = (array)$this->_table->primaryKey();
-		$indexed = (new Collection($data))->groupBy($primary[0])->toArray();
+		$isSimple = !is_array($primary);
+
+		$data = new Collection($data);
+		$data = $data->groupBy(function ($el) use ($primary) {
+			$keys = [];
+			foreach ($primary as $key) {
+				$keys[] = isset($el[$key]) ? $el[$key] : '';
+			}
+			return implode(';', $keys);
+		});
+		$indexed = $data->toArray();
+
 		$new = isset($indexed[null]) ? [$indexed[null]] : [];
 		unset($indexed[null]);
 		$output = [];
@@ -357,7 +368,7 @@ class Marshaller {
 				continue;
 			}
 
-			$key = $entity->get($primary[0]);
+			$key = implode(';', $entity->extract($primary));
 
 			if ($key === null || !isset($indexed[$key])) {
 				continue;
