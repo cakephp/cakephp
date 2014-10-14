@@ -58,7 +58,7 @@ trait ViewVarsTrait {
 		$this->viewClass = $viewClass;
 		$className = App::className($this->viewClass, 'View', 'View');
 
-		if ($this->View && is_a($this->View, $className)) {
+		if ($this->View && $this->View instanceof $className) {
 			return $this->View;
 		}
 
