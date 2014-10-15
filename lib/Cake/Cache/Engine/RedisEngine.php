@@ -59,7 +59,7 @@ class RedisEngine extends CacheEngine {
 		}
 		parent::init(array_merge(array(
 			'engine' => 'Redis',
-			'prefix' => null,
+			'prefix' => Inflector::slug(APP_DIR) . '_',
 			'server' => '127.0.0.1',
 			'database' => 0,
 			'port' => 6379,
