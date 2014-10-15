@@ -35,6 +35,15 @@ trait SqlDialectTrait {
 			return '*';
 		}
 
+		if ($identifier === '') {
+			return '';
+		}
+
+		// string
+		if (preg_match('/^[\w-]+$/', $identifier)) {
+			return $this->_startQuote . $identifier . $this->_endQuote;
+		}
+
 		if (preg_match('/^[\w-]+(?:\.[^ \*]*)*$/', $identifier)) { // string.string
 			$items = explode('.', $identifier);
 			return $this->_startQuote . implode($this->_endQuote . '.' . $this->_startQuote, $items) . $this->_endQuote;
