@@ -417,7 +417,7 @@ class PaginatorHelper extends Helper {
 		];
 
 		if (!empty($this->_config['options']['url'])) {
-			$url = array_merge($this->_config['options']['url'], $url);
+			$url = array_merge($url, $this->_config['options']['url']);
 		}
 		$url = array_merge(array_filter($url), $options);
 
