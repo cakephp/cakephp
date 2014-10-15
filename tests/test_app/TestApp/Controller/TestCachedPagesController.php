@@ -95,4 +95,3 @@ class TestCachedPagesController extends Controller {
 	}
 
 }
-
