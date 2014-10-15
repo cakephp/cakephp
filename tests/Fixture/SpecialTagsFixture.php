@@ -50,4 +50,3 @@ class SpecialTagsFixture extends TestFixture {
 		array('article_id' => 2, 'tag_id' => 1, 'highlighted' => true, 'highlighted_time' => '2014-06-01 10:10:00', 'author_id' => null)
 	);
 }
-

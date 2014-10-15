@@ -54,4 +54,3 @@ class SomePagesController extends Controller {
 	}
 
 }
-

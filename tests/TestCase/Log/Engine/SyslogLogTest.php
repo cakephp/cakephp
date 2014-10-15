@@ -87,4 +87,3 @@ class SyslogLogTest extends TestCase {
 	}
 
 }
-

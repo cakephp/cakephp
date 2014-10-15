@@ -32,4 +32,3 @@ class SampleShell extends Shell {
 		$this->out('This is the main method called from SampleShell');
 	}
 }
-
