@@ -261,7 +261,7 @@ class Email {
 /**
  * The transport instance to use for sending mail.
  *
- * @var string
+ * @var \Cake\Network\Email\AbstractTransport
  */
 	protected $_transport = null;
 
@@ -1373,7 +1373,7 @@ class Email {
 		$this->_htmlMessage = '';
 		$this->_message = '';
 		$this->_emailFormat = 'text';
-		$this->_transport = 'default';
+		$this->_transport = null;
 		$this->charset = 'utf-8';
 		$this->headerCharset = null;
 		$this->_attachments = array();
