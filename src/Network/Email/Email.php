@@ -937,6 +937,7 @@ class Email {
  *   transport, or a transport instance.
  * @return \Cake\Network\Email\AbstractTransport|$this
  * @throws \LogicException When the chosen transport lacks a send method.
+ * @throws \InvalidArgumentException When $name is neither a string nor an object.
  */
 	public function transport($name = null) {
 		if ($name === null) {
@@ -947,6 +948,10 @@ class Email {
 			$transport = $this->_constructTransport($name);
 		} elseif (is_object($name)) {
 			$transport = $name;
+		} else {
+			throw new InvalidArgumentException(
+				sprintf('The value passed for the "$name" argument must be either a string, or an object, %s given.', gettype($name))
+			);
 		}
 		if (!method_exists($transport, 'send')) {
 			throw new LogicException(sprintf('The "%s" do not have send method.', get_class($transport)));
