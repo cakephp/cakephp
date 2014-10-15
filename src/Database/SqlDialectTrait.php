@@ -35,10 +35,7 @@ trait SqlDialectTrait {
 			return '*';
 		}
 
-		if (preg_match('/^[\w-]+(?:\.[^ \*]*)*$/', $identifier)) { // string, string.string
-			if (strpos($identifier, '.') === false) { // string
-				return $this->_startQuote . $identifier . $this->_endQuote;
-			}
+		if (preg_match('/^[\w-]+(?:\.[^ \*]*)*$/', $identifier)) { // string.string
 			$items = explode('.', $identifier);
 			return $this->_startQuote . implode($this->_endQuote . '.' . $this->_startQuote, $items) . $this->_endQuote;
 		}
@@ -51,10 +48,9 @@ trait SqlDialectTrait {
 			return $matches[1] . '(' . $this->quoteIdentifier($matches[2]) . ')';
 		}
 
+		// Alias.field AS thing
 		if (preg_match('/^([\w-]+(\.[\w-]+|\(.*\))*)\s+AS\s*([\w-]+)$/i', $identifier, $matches)) {
-			return preg_replace(
-				'/\s{2,}/', ' ', $this->quoteIdentifier($matches[1]) . ' AS  ' . $this->quoteIdentifier($matches[3])
-			);
+			return $this->quoteIdentifier($matches[1]) . ' AS ' . $this->quoteIdentifier($matches[3]);
 		}
 
 		if (preg_match('/^[\w-_\s]*[\w-_]+/', $identifier)) {
