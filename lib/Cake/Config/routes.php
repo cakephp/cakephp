@@ -18,14 +18,15 @@
  * Connects the default, built-in routes, including prefix and plugin routes. The following routes are created
  * in the order below:
  *
- * For each of the Routing.prefixes the following routes are created. Routes containing `:plugin` are only
- * created when your application has one or more plugins.
+ * For each of the Routing.prefixes the following routes are created. If it has a non-numeric key,
+ * it (the key) will be used as an urlPrefix different from the action prefix in the controller.
+ * Routes containing `:plugin` are only created when your application has one or more plugins.
  *
- * - `/:prefix/:plugin` a plugin shortcut route.
- * - `/:prefix/:plugin/:controller`
- * - `/:prefix/:plugin/:controller/:action/*`
- * - `/:prefix/:controller`
- * - `/:prefix/:controller/:action/*`
+ * - `/:urlPrefix/:plugin` a plugin shortcut route.
+ * - `/:urlPrefix/:plugin/:controller`
+ * - `/:urlPrefix/:plugin/:controller/:action/*`
+ * - `/:urlPrefix/:controller`
+ * - `/:urlPrefix/:controller/:action/*`
  *
  * If plugins are found in your application the following routes are created:
  *
@@ -51,23 +52,29 @@ if ($plugins = CakePlugin::loaded()) {
 	$match = array('plugin' => $pluginPattern, 'defaultRoute' => true);
 	$shortParams = array('routeClass' => 'PluginShortRoute', 'plugin' => $pluginPattern, 'defaultRoute' => true);
 
-	foreach ($prefixes as $prefix) {
+	foreach ($prefixes as $urlPrefix => $prefix) {
+		if (is_int($urlPrefix)) {
+			$urlPrefix = $prefix;
+		}
 		$params = array('prefix' => $prefix, $prefix => true);
 		$indexParams = $params + array('action' => 'index');
-		Router::connect("/{$prefix}/:plugin", $indexParams, $shortParams);
-		Router::connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
-		Router::connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
+		Router::connect("/{$urlPrefix}/:plugin", $indexParams, $shortParams);
+		Router::connect("/{$urlPrefix}/:plugin/:controller", $indexParams, $match);
+		Router::connect("/{$urlPrefix}/:plugin/:controller/:action/*", $params, $match);
 	}
 	Router::connect('/:plugin', array('action' => 'index'), $shortParams);
 	Router::connect('/:plugin/:controller', array('action' => 'index'), $match);
 	Router::connect('/:plugin/:controller/:action/*', array(), $match);
 }
 
-foreach ($prefixes as $prefix) {
+foreach ($prefixes as $urlPrefix => $prefix) {
+	if (is_int($urlPrefix)) {
+		$urlPrefix = $prefix;
+	}
 	$params = array('prefix' => $prefix, $prefix => true);
 	$indexParams = $params + array('action' => 'index');
-	Router::connect("/{$prefix}/:controller", $indexParams, array('defaultRoute' => true));
-	Router::connect("/{$prefix}/:controller/:action/*", $params, array('defaultRoute' => true));
+	Router::connect("/{$urlPrefix}/:controller", $indexParams, array('defaultRoute' => true));
+	Router::connect("/{$urlPrefix}/:controller/:action/*", $params, array('defaultRoute' => true));
 }
 Router::connect('/:controller', array('action' => 'index'), array('defaultRoute' => true));
 Router::connect('/:controller/:action/*', array(), array('defaultRoute' => true));
