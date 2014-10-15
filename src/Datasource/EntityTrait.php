@@ -543,7 +543,7 @@ trait EntityTrait {
 			return isset($this->_dirty[$property]);
 		}
 
-		if (!$isDirty) {
+		if ($isDirty === false) {
 			unset($this->_dirty[$property]);
 			return false;
 		}
