@@ -132,7 +132,7 @@ $allAssociations = array_merge(
  */
 	public function delete($id = null) {
 		$<?= $singularName ?> = $this-><?= $currentModelName ?>->get($id);
-		$this->request->allowMethod('post', 'delete');
+		$this->request->allowMethod(['post', 'delete']);
 		if ($this-><?= $currentModelName; ?>->delete($<?= $singularName ?>)) {
 			$this->Flash->success('The <?= strtolower($singularHumanName) ?> has been deleted.');
 		} else {
