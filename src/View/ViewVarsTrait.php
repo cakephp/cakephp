@@ -120,7 +120,7 @@ trait ViewVarsTrait {
 			$this->_validViewOptions = [];
 		}
 
-		if ($options == null) {
+		if ($options === null) {
 			return $this->_validViewOptions;
 		}
 

@@ -16,7 +16,7 @@ namespace Cake\ORM;
 
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 
 /**
  * Base class for behaviors.
@@ -99,7 +99,7 @@ use Cake\Event\EventListener;
  * @see \Cake\ORM\Table::addBehavior()
  * @see \Cake\Event\EventManager
  */
-class Behavior implements EventListener {
+class Behavior implements EventListenerInterface {
 
 	use InstanceConfigTrait;
 

@@ -347,7 +347,6 @@ class Marshaller {
  */
 	public function mergeMany($entities, array $data, array $options = []) {
 		$primary = (array)$this->_table->primaryKey();
-		$isSimple = !is_array($primary);
 
 		$data = new Collection($data);
 		$data = $data->groupBy(function ($el) use ($primary) {

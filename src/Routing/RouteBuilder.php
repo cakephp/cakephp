@@ -120,7 +120,7 @@ class RouteBuilder {
  * @return string|void
  */
 	public function routeClass($routeClass = null) {
-		if ($routeClass == null) {
+		if ($routeClass === null) {
 			return $this->_routeClass;
 		}
 		$this->_routeClass = $routeClass;

@@ -15,7 +15,7 @@
 namespace Cake\Routing;
 
 use Cake\Controller\Controller;
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -133,11 +133,11 @@ class Dispatcher {
  * The added filter will be attached to the event manager used
  * by this dispatcher.
  *
- * @param \Cake\Event\EventListener $filter The filter to connect. Can be
- *   any EventListener. Typically an instance of \Cake\Routing\DispatcherFilter.
+ * @param \Cake\Event\EventListenerInterface $filter The filter to connect. Can be
+ *   any EventListenerInterface. Typically an instance of \Cake\Routing\DispatcherFilter.
  * @return void
  */
-	public function addFilter(EventListener $filter) {
+	public function addFilter(EventListenerInterface $filter) {
 		$this->_filters[] = $filter;
 		$this->eventManager()->attach($filter);
 	}

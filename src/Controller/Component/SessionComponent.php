@@ -15,7 +15,6 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentRegistry;
 
 /**
  * The CakePHP SessionComponent provides a way to persist client data between

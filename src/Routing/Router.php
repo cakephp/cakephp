@@ -154,7 +154,7 @@ class Router {
  * @return string|void
  */
 	public static function defaultRouteClass($routeClass = null) {
-		if ($routeClass == null) {
+		if ($routeClass === null) {
 			return static::$_defaultRouteClass;
 		}
 		static::$_defaultRouteClass = $routeClass;

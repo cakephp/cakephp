@@ -14,7 +14,6 @@
  */
 namespace Cake\Database\Schema;
 
-use Cake\Cache\Cache;
 use Cake\Database\Connection;
 use Cake\Database\Exception;
 use Cake\Database\Schema\Table;
