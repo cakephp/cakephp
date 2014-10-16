@@ -397,8 +397,10 @@ class CakeSchema extends Object {
 	}
 
 /**
- * Generate the code for a table. Takes a table name and $fields array
- * Returns a completed variable declaration to be used in schema classes.
+ * Generate the schema code for a table.
+ *
+ * Takes a table name and $fields array and returns a completed,
+ * escaped variable declaration to be used in schema classes.
  *
  * @param string $table Table name you want returned.
  * @param array $fields Array of field information to generate the table with.
@@ -426,10 +428,7 @@ class CakeSchema extends Object {
 					$col .= implode(",\n\t\t\t", $props) . "\n\t\t";
 				} elseif ($field === 'tableParameters') {
 					$col = "\t\t'tableParameters' => array(";
-					$props = array();
-					foreach ((array)$value as $key => $param) {
-						$props[] = "'{$key}' => '$param'";
-					}
+					$props = $this->_values($value);
 					$col .= implode(', ', $props);
 				}
 				$col .= ")";
