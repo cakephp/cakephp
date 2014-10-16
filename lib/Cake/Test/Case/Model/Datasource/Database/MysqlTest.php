@@ -704,7 +704,8 @@ class MysqlTest extends CakeTestCase {
 				'tableParameters' => array(
 					'charset' => 'utf8',
 					'collate' => 'utf8_general_ci',
-					'engine' => 'InnoDB'
+					'engine' => 'InnoDB',
+					'comment' => 'Newly table added comment.',
 				)
 			)
 		));
@@ -712,6 +713,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertContains('DEFAULT CHARSET=utf8', $result);
 		$this->assertContains('ENGINE=InnoDB', $result);
 		$this->assertContains('COLLATE=utf8_general_ci', $result);
+		$this->assertContains('COMMENT=\'Newly table added comment.\'', $result);
 
 		$this->Dbo->rawQuery($result);
 		$result = $this->Dbo->listDetailedSources($this->Dbo->fullTableName('altertest', false, false));
@@ -775,13 +777,15 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$table = $this->Dbo->fullTableName($tableName);
-		$this->Dbo->rawQuery('CREATE TABLE ' . $table . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci;');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $table . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci COMMENT=\'Table\'\'s comment\';');
 		$result = $this->Dbo->readTableParameters($this->Dbo->fullTableName($tableName, false, false));
 		$this->Dbo->rawQuery('DROP TABLE ' . $table);
 		$expected = array(
 			'charset' => 'cp1250',
 			'collate' => 'cp1250_general_ci',
-			'engine' => 'MyISAM');
+			'engine' => 'MyISAM',
+			'comment' => 'Table\'s comment',
+		);
 		$this->assertEquals($expected, $result);
 	}
 
