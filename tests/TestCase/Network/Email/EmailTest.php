@@ -732,6 +732,7 @@ class EmailTest extends TestCase {
  * Test that using unknown transports fails.
  *
  * @expectedException InvalidArgumentException
+ * @expectedExceptionMessage Transport config "Invalid" is missing.
  */
 	public function testTransportInvalid() {
 		$this->CakeEmail->transport('Invalid');
@@ -744,6 +745,16 @@ class EmailTest extends TestCase {
  */
 	public function testTransportInstanceInvalid() {
 		$this->CakeEmail->transport(new \StdClass());
+	}
+
+/**
+ * Test that using unknown transports fails.
+ *
+ * @expectedException InvalidArgumentException
+ * @expectedExceptionMessage The value passed for the "$name" argument must be either a string, or an object, integer given.
+ */
+	public function testTransportTypeInvalid() {
+		$this->CakeEmail->transport(123);
 	}
 
 /**
