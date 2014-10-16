@@ -27,6 +27,8 @@ use Cake\TestSuite\TestCase;
  */
 class SqlserverSchemaTest extends TestCase {
 
+	public $prefix = '';
+
 /**
  * Set up
  *
