@@ -79,7 +79,7 @@
  */
 	public function delete($id = null) {
 		$bakeArticle = $this->BakeArticles->get($id);
-		$this->request->allowMethod('post', 'delete');
+		$this->request->allowMethod(['post', 'delete']);
 		if ($this->BakeArticles->delete($bakeArticle)) {
 			$this->Flash->success('The bake article has been deleted.');
 		} else {
