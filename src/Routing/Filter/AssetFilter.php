@@ -14,7 +14,6 @@
  */
 namespace Cake\Routing\Filter;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Network\Request;
