@@ -17,9 +17,27 @@
  * @since         CakePHP v 1.2.0.4487
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
+App::uses('CakePlugin', 'Core');
 App::uses('Controller', 'Controller');
 App::uses('CakeHtmlReporter', 'TestSuite/Reporter');
+App::uses('Model', 'Model');
+
+/**
+ * Secondary Post stub class.
+ */
+class SecondaryPost extends Model {
+
+/**
+ * @var string
+ */
+	public $useTable = 'posts';
+
+/**
+ * @var string
+ */
+	public $useDbConfig = 'secondary';
+
+}
 
 /**
  * CakeTestCaseTest
@@ -391,9 +409,9 @@ class CakeTestCaseTest extends CakeTestCase {
  */
 	public function testGetMockForModel() {
 		App::build(array(
-				'Model' => array(
-					CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS
-				)
+			'Model' => array(
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS
+			)
 		), App::RESET);
 		$Post = $this->getMockForModel('Post');
 
@@ -409,15 +427,36 @@ class CakeTestCaseTest extends CakeTestCase {
 	}
 
 /**
+ * Test getMockForModel on secondary datasources.
+ *
+ * @return void
+ */
+	public function testGetMockForModelSecondaryDatasource() {
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Model/Datasource/Database' => array(
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS . 'Datasource' . DS . 'Database' . DS
+			)
+		), App::RESET);
+		CakePlugin::load('TestPlugin');
+		ConnectionManager::create('test_secondary', array(
+			'datasource' => 'Database/TestLocalDriver'
+		));
+		$post = $this->getMockForModel('SecondaryPost', array('save'));
+		$this->assertEquals('test_secondary', $post->useDbConfig);
+		ConnectionManager::drop('test_secondary');
+	}
+
+/**
  * test getMockForModel() with plugin models
  *
  * @return void
  */
 	public function testGetMockForModelWithPlugin() {
 		App::build(array(
-				'Plugin' => array(
-					CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
-				)
+			'Plugin' => array(
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
+			)
 		), App::RESET);
 		CakePlugin::load('TestPlugin');
 		$this->getMockForModel('TestPlugin.TestPluginAppModel');
@@ -425,6 +464,7 @@ class CakeTestCaseTest extends CakeTestCase {
 
 		$result = ClassRegistry::init('TestPlugin.TestPluginComment');
 		$this->assertInstanceOf('TestPluginComment', $result);
+		$this->assertEquals('test', $result->useDbConfig);
 
 		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComment', array('save'));
 
@@ -445,7 +485,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  */
 	public function testGetMockForModelModel() {
-		$Mock = $this->getMockForModel('Model', array('save'), array('name' => 'Comment'));
+		$Mock = $this->getMockForModel('Model', array('save', 'setDataSource'), array('name' => 'Comment'));
 
 		$result = ClassRegistry::init('Comment');
 		$this->assertInstanceOf('Model', $result);
