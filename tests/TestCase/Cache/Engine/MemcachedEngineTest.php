@@ -361,7 +361,7 @@ class MemcachedEngineTest extends TestCase {
 		);
 
 		$this->setExpectedException('PHPUnit_Framework_Error_Warning');
-		$MemcachedEngine->init($settings);
+		$MemcachedEngine->init($config);
 	}
 
 /**
