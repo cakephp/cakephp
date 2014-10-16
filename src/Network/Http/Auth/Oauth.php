@@ -201,7 +201,6 @@ class Oauth {
 
 		$post = [];
 		$body = $request->body();
-		$contentType = $request->header('content-type');
 
 		if (is_array($body)) {
 			$post = $body;

@@ -336,8 +336,6 @@ class Connection {
  * @return \Cake\Database\StatementInterface
  */
 	public function update($table, array $data, array $conditions = [], $types = []) {
-		$columns = array_keys($data);
-
 		return $this->newQuery()->update($table)
 			->set($data, $types)
 			->where($conditions, $types)

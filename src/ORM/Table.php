@@ -1242,7 +1242,6 @@ class Table implements RepositoryInterface, EventListener {
 		}
 
 		$data = $entity->extract($this->schema()->columns(), true);
-		$keys = array_keys($data);
 		$isNew = $entity->isNew();
 
 		if ($isNew) {

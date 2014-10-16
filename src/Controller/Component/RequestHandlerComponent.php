@@ -149,7 +149,6 @@ class RequestHandlerComponent extends Component {
 	public function initialize(array $config) {
 		$controller = $this->_registry->getController();
 		$request = $this->request = $controller->request;
-		$response = $this->response = $controller->response;
 
 		if (isset($request->params['_ext'])) {
 			$this->ext = $request->params['_ext'];

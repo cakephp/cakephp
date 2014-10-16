@@ -220,7 +220,6 @@ class ModelTask extends BakeTask {
  */
 	public function findBelongsTo($model, array $associations) {
 		$schema = $model->schema();
-		$primary = (array)$schema->primaryKey();
 		foreach ($schema->columns() as $fieldName) {
 			if (!preg_match('/^.*_id$/', $fieldName)) {
 				continue;
@@ -433,7 +432,6 @@ class ModelTask extends BakeTask {
 			return false;
 		}
 
-		$skipFields = false;
 		$validate = [];
 		$primaryKey = (array)$schema->primaryKey();
 

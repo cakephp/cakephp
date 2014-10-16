@@ -180,7 +180,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return string
  */
 	public function sql(ValueBinder $generator = null) {
-		$sql = '';
 		if (!$generator) {
 			$generator = $this->valueBinder();
 			$generator->resetCount();
