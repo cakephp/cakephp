@@ -120,4 +120,3 @@ class PluralRulesTest extends TestCase {
 	}
 
 }
-

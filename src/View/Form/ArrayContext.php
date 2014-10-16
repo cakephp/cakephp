@@ -35,7 +35,7 @@ use Cake\Utility\Hash;
  *   the inferred type for fields and allows auto generation of attributes
  *   like maxlength, step and other HTML attributes. If you want
  *   primary key/id detection to work. Make sure you have provided a `_constraints`
- *   array that contains `primary`. See below for an exmaple.
+ *   array that contains `primary`. See below for an example.
  * - `errors` An array of validation errors. Errors should be nested following
  *   the dot separated paths you access your fields with.
  *

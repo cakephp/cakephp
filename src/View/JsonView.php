@@ -50,7 +50,7 @@ use Cake\Network\Response;
  * views to provide layout-like functionality.
  *
  * You can also enable JSONP support by setting parameter `_jsonp` to true or a string to specify
- * custom query string paramater name which will contain the callback function name.
+ * custom query string parameter name which will contain the callback function name.
  */
 class JsonView extends View {
 

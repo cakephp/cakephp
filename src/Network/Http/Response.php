@@ -23,7 +23,7 @@ use Cake\Network\Http\Message;
  *
  * ### Get header values
  *
- * Header names are case-insensitve, but normalized to Title-Case
+ * Header names are case-insensitive, but normalized to Title-Case
  * when the response is parsed.
  *
  * `$val = $response->header('content-type');`

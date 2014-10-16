@@ -499,6 +499,7 @@ class BelongsToMany extends Association {
 			if (!$joint) {
 				$joint = new $entityClass;
 				$joint->isNew(true);
+				$joint->source($junctionAlias);
 			}
 
 			$joint->set(array_combine(
@@ -514,7 +515,6 @@ class BelongsToMany extends Association {
 
 			$e->set($jointProperty, $joint);
 			$e->dirty($jointProperty, false);
-			$joint->source($junctionAlias);
 		}
 
 		return true;

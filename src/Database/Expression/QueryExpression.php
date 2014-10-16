@@ -201,7 +201,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 /**
  * Adds a new condition to the expression object in the form "field IS NULL".
  *
- * @param string|\Cake\Database\ExpressionInteface $field database field to be
+ * @param string|\Cake\Database\ExpressionInterface $field database field to be
  * tested for null
  * @return QueryExpression
  */
@@ -215,7 +215,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 /**
  * Adds a new condition to the expression object in the form "field IS NOT NULL".
  *
- * @param string|\Cake\Database\ExpressionInteface $field database field to be
+ * @param string|\Cake\Database\ExpressionInterface $field database field to be
  * tested for not null
  * @return QueryExpression
  */
@@ -300,7 +300,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 
 // @codingStandardsIgnoreStart
 /**
- * Returns a new QueryExpresion object containing all the conditions passed
+ * Returns a new QueryExpression object containing all the conditions passed
  * and set up the conjunction to be "AND"
  *
  * @param string|array|QueryExpression $conditions to be joined with AND
@@ -316,7 +316,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 	}
 
 /**
- * Returns a new QueryExpresion object containing all the conditions passed
+ * Returns a new QueryExpression object containing all the conditions passed
  * and set up the conjunction to be "OR"
  *
  * @param string|array|QueryExpression $conditions to be joined with OR

@@ -390,6 +390,7 @@ class ResultSet implements ResultSetInterface {
 			$alias = $assoc['nestKey'];
 			$instance = $assoc['instance'];
 
+			// Doing this before we're sure the root assoc has data is the problem.
 			if (!isset($results[$alias])) {
 				$results = $instance->defaultRowValue($results, $assoc['canBeJoined']);
 				continue;
@@ -404,7 +405,7 @@ class ResultSet implements ResultSetInterface {
 
 				$hasData = false;
 				foreach ($results[$alias] as $v) {
-					if ($v !== null) {
+					if ($v !== null && $v !== []) {
 						$hasData = true;
 						break;
 					}

@@ -230,6 +230,7 @@ class Table implements RepositoryInterface, EventListener {
 
 		$this->initialize($config);
 		$this->_eventManager->attach($this);
+		$this->dispatchEvent('Model.initialize');
 	}
 
 /**
@@ -924,7 +925,24 @@ class Table implements RepositoryInterface, EventListener {
 			));
 		}
 		$conditions = array_combine($key, $primaryKey);
-		$entity = $this->find('all', $options)->where($conditions)->first();
+
+		$cacheConfig = isset($options['cache']) ? $options['cache'] : false;
+		$cacheKey = isset($options['key']) ? $options['key'] : false;
+		unset($options['key'], $options['cache']);
+
+		$query = $this->find('all', $options)->where($conditions);
+
+		if ($cacheConfig) {
+			if (!$cacheKey) {
+				$cacheKey = sprintf(
+					"get:%s.%s%s",
+					$this->connection()->configName(), $this->table(), json_encode($primaryKey)
+				);
+			}
+			$query->cache($cacheKey, $cacheConfig);
+		}
+
+		$entity = $query->first();
 
 		if ($entity) {
 			return $entity;

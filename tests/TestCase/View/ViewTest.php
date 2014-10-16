@@ -26,6 +26,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
 use Cake\View\View;
+use TestApp\View\AppView;
 
 /**
  * ViewPostsController class
@@ -98,7 +99,11 @@ class ThemePostsController extends Controller {
  * TestView class
  *
  */
-class TestView extends View {
+class TestView extends AppView {
+
+	public function initialize() {
+		$this->loadHelper('Html', ['mykey' => 'myval']);
+	}
 
 /**
  * getViewFileName method
@@ -972,6 +977,17 @@ class ViewTest extends TestCase {
 	}
 
 /**
+ * Test manipulating class properties in initialize()
+ *
+ * @return void
+ */
+	public function testInitialize() {
+		$View = new TestView();
+		$config = $View->Html->config();
+		$this->assertEquals('myval', $config['mykey']);
+	}
+
+/**
  * Test the correct triggering of helper callbacks
  *
  * @return void
@@ -1100,14 +1116,15 @@ class ViewTest extends TestCase {
  * @return void
  */
 	public function testRenderLoadHelper() {
-		$this->PostsController->helpers = array('Session', 'Html', 'Form', 'Number');
+		$this->PostsController->helpers = array('Session', 'Form', 'Number');
 		$View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
 
 		$result = $View->render('index', false);
 		$this->assertEquals('posts index', $result);
 
 		$attached = $View->helpers()->loaded();
-		$this->assertEquals(array('Session', 'Html', 'Form', 'Number'), $attached);
+		// HtmlHelper is loaded in TestView::initialize()
+		$this->assertEquals(array('Html', 'Session', 'Form', 'Number'), $attached);
 
 		$this->PostsController->helpers = array('Html', 'Form', 'Number', 'TestPlugin.PluggedHelper');
 		$View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');

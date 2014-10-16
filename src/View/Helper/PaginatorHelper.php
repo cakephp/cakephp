@@ -37,7 +37,7 @@ class PaginatorHelper extends Helper {
 	public $helpers = ['Url', 'Number'];
 
 /**
- * Defualt config for this class
+ * Default config for this class
  *
  * Options: Holds the default options for pagination links
  *
@@ -417,7 +417,7 @@ class PaginatorHelper extends Helper {
 		];
 
 		if (!empty($this->_config['options']['url'])) {
-			$url = array_merge($this->_config['options']['url'], $url);
+			$url = array_merge($url, $this->_config['options']['url']);
 		}
 		$url = array_merge(array_filter($url), $options);
 

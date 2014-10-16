@@ -4,7 +4,6 @@
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -12,15 +11,13 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database\Exception;
+namespace TestApp\View;
 
-use Cake\Core\Exception\Exception;
-
-class MissingExtensionException extends \Cake\Core\Exception\Exception {
+use Cake\View\View;
 
 /**
- * {@inheritDoc}
+ * App View class
+ *
  */
-	protected $_messageTemplate = 'Database driver %s cannot be used due to a missing PHP extension or unmet dependency';
-
+class AppView extends View {
 }

@@ -150,4 +150,3 @@ class BufferedStatement extends StatementDecorator {
 	}
 
 }
-

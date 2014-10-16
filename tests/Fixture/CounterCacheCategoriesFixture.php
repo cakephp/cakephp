@@ -1,7 +1,5 @@
 <?php
 /**
- * Testing task in a plugin
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -11,18 +9,28 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         2.0.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Class OtherTaskTask
+ * Short description for class.
  *
  */
-namespace TestPlugin\Shell\Task;
+class CounterCacheCategoriesFixture extends TestFixture {
 
-use Cake\Console\Shell;
+	public $fields = array(
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'length' => 255, 'null' => false],
+		'post_count' => ['type' => 'integer', 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+	);
 
-class OtherTaskTask extends Shell {
-
+	public $records = array(
+		array('name' => 'Sport', 'post_count' => 1),
+		array('name' => 'Music', 'post_count' => 2),
+	);
 }

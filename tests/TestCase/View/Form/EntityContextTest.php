@@ -505,7 +505,6 @@ class EntityContextTest extends TestCase {
 
 		$result = $context->val('id');
 		$this->assertEquals($row->id, $result);
-
 		$this->assertNull($context->val('profile.id'));
 	}
 
@@ -646,6 +645,42 @@ class EntityContextTest extends TestCase {
 		$this->assertFalse($context->isRequired('comments.0.other'));
 		$this->assertFalse($context->isRequired('user.0.other'));
 		$this->assertFalse($context->isRequired(''));
+	}
+
+/**
+ * Test isRequired on associated entities.
+ *
+ * @return void
+ */
+	public function testIsRequiredAssociatedHasManyMissingObject() {
+		$this->_setupTables();
+
+		$comments = TableRegistry::get('Comments');
+		$validator = $comments->validator();
+		$validator->allowEmpty('comment', function ($context) {
+			return $context['providers']['entity']->isNew();
+		});
+
+		$row = new Article([
+			'title' => 'My title',
+			'comments' => [
+				new Entity(['comment' => 'First comment'], ['markNew' => false]),
+			]
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+			'validator' => 'default',
+		]);
+
+		$this->assertTrue(
+			$context->isRequired('comments.0.comment'),
+			'comment is required as object is not new'
+		);
+		$this->assertFalse(
+			$context->isRequired('comments.1.comment'),
+			'comment is not required as missing object is "new"'
+		);
 	}
 
 /**
@@ -862,6 +897,41 @@ class EntityContextTest extends TestCase {
 
 		$expected = ['Required'];
 		$this->assertEquals($expected, $context->error('user.username'));
+	}
+
+/**
+ * Test error on associated entities.
+ *
+ * @return void
+ */
+	public function testErrorAssociatedHasMany() {
+		$this->_setupTables();
+
+		$comments = TableRegistry::get('Comments');
+		$row = new Article([
+			'title' => 'My title',
+			'comments' => [
+				new Entity(['comment' => '']),
+				new Entity(['comment' => 'Second comment']),
+			]
+		]);
+		$row->comments[0]->errors('comment', ['Is required']);
+		$row->comments[0]->errors('article_id', ['Is required']);
+
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+			'validator' => 'default',
+		]);
+
+		$this->assertEquals([], $context->error('title'));
+		$this->assertEquals([], $context->error('comments.0.user_id'));
+		$this->assertEquals([], $context->error('comments.0'));
+		$this->assertEquals(['Is required'], $context->error('comments.0.comment'));
+		$this->assertEquals(['Is required'], $context->error('comments.0.article_id'));
+		$this->assertEquals([], $context->error('comments.1'));
+		$this->assertEquals([], $context->error('comments.1.comment'));
+		$this->assertEquals([], $context->error('comments.1.article_id'));
 	}
 
 /**

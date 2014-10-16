@@ -31,7 +31,7 @@ trait TypeMapTrait {
  * or exchanges it for the given one.
  *
  * @param array|TypeMap $typeMap Creates a TypeMap if array, otherwise sets the given TypeMap
- * @return this|TypeMap
+ * @return $this|TypeMap
  */
 	public function typeMap($typeMap = null) {
 		if (!$this->_typeMap) {
@@ -48,7 +48,7 @@ trait TypeMapTrait {
  * Allows setting default types when chaining query
  *
  * @param array $types The array of types to set.
- * @return this|array
+ * @return $this|array
  */
 	public function defaultTypes(array $types = null) {
 		if ($types === null) {

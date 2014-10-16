@@ -57,7 +57,7 @@ class RedisEngine extends CacheEngine {
 		'password' => false,
 		'persistent' => true,
 		'port' => 6379,
-		'prefix' => null,
+		'prefix' => 'cake_',
 		'probability' => 100,
 		'server' => '127.0.0.1',
 		'timeout' => 0,

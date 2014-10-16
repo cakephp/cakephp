@@ -153,6 +153,11 @@ class CounterCacheBehavior extends Behavior {
 		$countConditions = $entity->extract($foreignKeys);
 		$updateConditions = array_combine($primaryKeys, $countConditions);
 
+		$countOriginalConditions = $entity->extractOriginal($foreignKeys);
+		if ($countOriginalConditions !== []) {
+			$updateOriginalConditions = array_combine($primaryKeys, $countOriginalConditions);
+		}
+
 		foreach ($settings as $field => $config) {
 			if (is_int($field)) {
 				$field = $config;
@@ -160,12 +165,21 @@ class CounterCacheBehavior extends Behavior {
 			}
 
 			if (!is_string($config) && is_callable($config)) {
-				$count = $config($event, $entity, $this->_table);
+				$count = $config($event, $entity, $this->_table, false);
 			} else {
 				$count = $this->_getCount($config, $countConditions);
 			}
 
 			$assoc->target()->updateAll([$field => $count], $updateConditions);
+
+			if (isset($updateOriginalConditions)) {
+				if (!is_string($config) && is_callable($config)) {
+					$count = $config($event, $entity, $this->_table, true);
+				} else {
+					$count = $this->_getCount($config, $countOriginalConditions);
+				}
+				$assoc->target()->updateAll([$field => $count], $updateOriginalConditions);
+			}
 		}
 	}
 

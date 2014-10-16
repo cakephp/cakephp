@@ -44,7 +44,7 @@ if (!empty($plugin) && !Plugin::loaded($plugin)) {
 </p>
 <pre>
 &lt;?php
-class <?= h($class); ?> extends AppHelper {
+class <?= h($class); ?> extends Helper {
 
 }
 </pre>

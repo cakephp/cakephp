@@ -26,13 +26,14 @@ class CounterCachePostsFixture extends TestFixture {
 		'id' => ['type' => 'integer'],
 		'title' => ['type' => 'string', 'length' => 255],
 		'user_id' => ['type' => 'integer', 'null' => true],
+		'category_id' => ['type' => 'integer', 'null' => true],
 		'published' => ['type' => 'boolean', 'null' => false, 'default' => false],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 	public $records = array(
-		array('title' => 'Rock and Roll', 'user_id' => 1, 'published' => 0),
-		array('title' => 'Music', 'user_id' => 1, 'published' => 1),
-		array('title' => 'Food', 'user_id' => 2, 'published' => 1),
+		array('title' => 'Rock and Roll', 'user_id' => 1, 'category_id' => 1, 'published' => 0),
+		array('title' => 'Music', 'user_id' => 1, 'category_id' => 2, 'published' => 1),
+		array('title' => 'Food', 'user_id' => 2, 'category_id' => 2, 'published' => 1),
 	);
 }

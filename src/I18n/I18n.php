@@ -29,7 +29,7 @@ class I18n {
 /**
  * The translators collection
  *
- * @var \Aura\Int\TranslatorLocator
+ * @var \Aura\Intl\TranslatorLocator
  */
 	protected static $_collection;
 

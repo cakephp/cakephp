@@ -53,7 +53,7 @@ class QueryCompiler {
 	protected $_fullFieldsParts = ['order', 'group'];
 
 /**
- * The list of query clauses to traverse for generating a SELECT statment
+ * The list of query clauses to traverse for generating a SELECT statement
  *
  * @var array
  */
@@ -63,21 +63,21 @@ class QueryCompiler {
 	];
 
 /**
- * The list of query clauses to traverse for generating an UPDATE statment
+ * The list of query clauses to traverse for generating an UPDATE statement
  *
  * @var array
  */
 	protected $_updateParts = ['update', 'set', 'where', 'epilog'];
 
 /**
- * The list of query clauses to traverse for generating a DELETE statment
+ * The list of query clauses to traverse for generating a DELETE statement
  *
  * @var array
  */
 	protected $_deleteParts = ['delete', 'from', 'where', 'epilog'];
 
 /**
- * The list of query clauses to traverse for generating an INSERT statment
+ * The list of query clauses to traverse for generating an INSERT statement
  *
  * @var array
  */
@@ -260,7 +260,7 @@ class QueryCompiler {
 		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
-				$p = $p . ' AS ' . $k;
+				$p = $p . ' ' . $k;
 			}
 			$normalized[] = $p;
 		}

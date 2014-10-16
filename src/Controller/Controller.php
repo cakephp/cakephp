@@ -30,6 +30,8 @@ use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\View\ViewVarsTrait;
 use LogicException;
+use ReflectionException;
+use ReflectionMethod;
 
 /**
  * Application controller class for organization of business logic.
@@ -177,7 +179,7 @@ class Controller implements EventListener {
  *
  * @var string
  */
-	public $viewClass = 'Cake\View\View';
+	public $viewClass = null;
 
 /**
  * The path to this controllers view templates.
@@ -231,14 +233,6 @@ class Controller implements EventListener {
 	public $passedArgs = array();
 
 /**
- * Holds current methods of the controller. This is a list of all the methods reachable
- * via URL. Modifying this array, will allow you to change which methods can be reached.
- *
- * @var array
- */
-	public $methods = array();
-
-/**
  * Constructor.
  *
  * Sets a number of properties based on conventions if they are empty. To override the
@@ -267,16 +261,16 @@ class Controller implements EventListener {
 			$this->viewPath = $viewPath;
 		}
 
-		$childMethods = get_class_methods($this);
-		$baseMethods = get_class_methods('Cake\Controller\Controller');
-		$this->methods = array_diff($childMethods, $baseMethods);
+		if (!($request instanceof Request)) {
+			$request = new Request();
+		}
+		$this->setRequest($request);
 
-		if ($request instanceof Request) {
-			$this->setRequest($request);
+		if (!($response instanceof Response)) {
+			$response = new Response();
 		}
-		if ($response instanceof Response) {
-			$this->response = $response;
-		}
+		$this->response = $response;
+
 		if ($eventManager) {
 			$this->eventManager($eventManager);
 		}
@@ -390,12 +384,6 @@ class Controller implements EventListener {
 		if (isset($request->params['pass'])) {
 			$this->passedArgs = $request->params['pass'];
 		}
-		if (!empty($request->params['return']) && $request->params['return'] == 1) {
-			$this->autoRender = false;
-		}
-		if (!empty($request->params['bare'])) {
-			$this->autoLayout = false;
-		}
 	}
 
 /**
@@ -404,27 +392,14 @@ class Controller implements EventListener {
  *
  * @return mixed The resulting response.
  * @throws \LogicException When request is not set.
- * @throws \Cake\Controller\Exception\PrivateActionException When actions are not public or prefixed by _
- * @throws \Cake\Controller\Exception\MissingActionException When actions are not defined.
+ * @throws \Cake\Controller\Exception\MissingActionException When actions are not defined or inaccessible.
  */
 	public function invokeAction() {
-		try {
-			$request = $this->request;
-			if (!isset($request)) {
-				throw new LogicException('No Request object configured. Cannot invoke action');
-			}
-			$method = new \ReflectionMethod($this, $request->params['action']);
-			if ($this->_isPrivateAction($method, $request)) {
-				throw new PrivateActionException(array(
-					'controller' => $this->name . "Controller",
-					'action' => $request->params['action'],
-					'prefix' => isset($request->params['prefix']) ? $request->params['prefix'] : '',
-					'plugin' => $request->params['plugin'],
-				));
-			}
-			return $method->invokeArgs($this, $request->params['pass']);
-
-		} catch (\ReflectionException $e) {
+		$request = $this->request;
+		if (!isset($request)) {
+			throw new LogicException('No Request object configured. Cannot invoke action');
+		}
+		if (!$this->isAction($request->params['action'])) {
 			throw new MissingActionException(array(
 				'controller' => $this->name . "Controller",
 				'action' => $request->params['action'],
@@ -432,19 +407,8 @@ class Controller implements EventListener {
 				'plugin' => $request->params['plugin'],
 			));
 		}
-	}
-
-/**
- * Check if the request's action is a public method.
- *
- * @param \ReflectionMethod $method The method to be invoked.
- * @return bool
- */
-	protected function _isPrivateAction(\ReflectionMethod $method) {
-		return (
-			!$method->isPublic() ||
-			!in_array($method->name, $this->methods)
-		);
+		$callable = [$this, $request->params['action']];
+		return call_user_func_array($callable, $request->params['pass']);
 	}
 
 /**
@@ -607,6 +571,10 @@ class Controller implements EventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::render
  */
 	public function render($view = null, $layout = null) {
+		if (!empty($this->request->params['bare'])) {
+			$this->getView()->autoLayout = false;
+		}
+
 		$event = $this->dispatchEvent('Controller.beforeRender');
 		if ($event->result instanceof Response) {
 			$this->autoRender = false;
@@ -617,10 +585,8 @@ class Controller implements EventListener {
 			return $this->response;
 		}
 
-		$this->View = $this->createView();
-
 		$this->autoRender = false;
-		$this->response->body($this->View->render($view, $layout));
+		$this->response->body($this->getView()->render($view, $layout));
 		return $this->response;
 	}
 
@@ -679,6 +645,31 @@ class Controller implements EventListener {
 			throw new \RuntimeException('Unable to locate an object compatible with paginate.');
 		}
 		return $this->Paginator->paginate($table, $this->paginate);
+	}
+
+/**
+ * Method to check that an action is accessible from a URL.
+ *
+ * Override this method to change which controller methods can be reached.
+ * The default implementation disallows access to all methods defined on Cake\Controller\Controller,
+ * and allows all public methods on all subclasses of this class.
+ *
+ * @param string $action The action to check.
+ * @return bool Whether or not the method is accessible from a URL.
+ */
+	public function isAction($action) {
+		try {
+			$method = new ReflectionMethod($this, $action);
+		} catch (\ReflectionException $e) {
+			return false;
+		}
+		if (!$method->isPublic()) {
+			return false;
+		}
+		if ($method->getDeclaringClass()->name === 'Cake\Controller\Controller') {
+			return false;
+		}
+		return true;
 	}
 
 /**

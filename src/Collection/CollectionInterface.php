@@ -269,7 +269,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
 	public function min($callback, $type = SORT_NUMERIC);
 
 /**
- * Returns a sorted iterator out of the elements in this colletion,
+ * Returns a sorted iterator out of the elements in this collection,
  * ranked in ascending order by the results of running each value through a
  * callback. $callback can also be a string representing the column or property
  * name.

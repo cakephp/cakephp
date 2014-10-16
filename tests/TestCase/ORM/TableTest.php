@@ -19,6 +19,7 @@ use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\EventManager;
 use Cake\I18n\Time;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -81,6 +82,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		]);
 	}
 
+/**
+ * teardown method
+ *
+ * @return void
+ */
 	public function tearDown() {
 		parent::tearDown();
 		TableRegistry::clear();
@@ -1133,7 +1139,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testCallBehaviorMethod() {
 		$table = TableRegistry::get('article');
 		$table->addBehavior('Sluggable');
-		$this->assertEquals('some_value', $table->slugify('some value'));
+		$this->assertEquals('some-value', $table->slugify('some value'));
 	}
 
 /**
@@ -1144,7 +1150,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testCallBehaviorAliasedMethod() {
 		$table = TableRegistry::get('article');
 		$table->addBehavior('Sluggable', ['implementedMethods' => ['wednesday' => 'slugify']]);
-		$this->assertEquals('some_value', $table->wednesday('some value'));
+		$this->assertEquals('some-value', $table->wednesday('some value'));
 	}
 
 /**
@@ -1902,6 +1908,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->method('attach');
 
 		$mock->expects($this->at(1))
+			->method('dispatch');
+
+		$mock->expects($this->at(2))
 			->method('dispatch')
 			->with($this->logicalAnd(
 				$this->attributeEqualTo('_name', 'Model.beforeDelete'),
@@ -1911,7 +1920,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				)
 			));
 
-		$mock->expects($this->at(2))
+		$mock->expects($this->at(3))
 			->method('dispatch')
 			->with($this->logicalAnd(
 				$this->attributeEqualTo('_name', 'Model.afterDelete'),
@@ -1936,7 +1945,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
 
 		$mock = $this->getMock('Cake\Event\EventManager');
-		$mock->expects($this->once())
+		$mock->expects($this->at(2))
 			->method('dispatch')
 			->will($this->returnCallback(function ($event) {
 				$event->stopPropagation();
@@ -1958,7 +1967,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
 
 		$mock = $this->getMock('Cake\Event\EventManager');
-		$mock->expects($this->once())
+		$mock->expects($this->at(2))
 			->method('dispatch')
 			->will($this->returnCallback(function ($event) {
 				$event->stopPropagation();
@@ -3005,9 +3014,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(4, $tags[2]->id);
 		$this->assertEquals(1, $tags[2]->_joinData->article_id);
 		$this->assertEquals(4, $tags[2]->_joinData->tag_id);
-
-		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
-		$this->assertEquals($tags, $article->tags);
 	}
 
 /**
@@ -3304,13 +3310,22 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->find();
 	}
 
+	public function providerForTestGet() {
+		return [
+			[ ['fields' => ['id']] ],
+			[ ['fields' => ['id'], 'cache' => false] ]
+		];
+	}
+
 /**
  * Test that get() will use the primary key for searching and return the first
  * entity found
  *
+ * @dataProvider providerForTestGet
+ * @param array $options
  * @return void
  */
-	public function testGet() {
+	public function testGet($options) {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
 			['callFinder', 'query'],
@@ -3326,7 +3341,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['addDefaultTypes', 'first', 'where'],
+			['addDefaultTypes', 'first', 'where', 'cache'],
 			[$this->connection, $table]
 		);
 
@@ -3340,9 +3355,72 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('where')
 			->with([$table->alias() . '.bar' => 10])
 			->will($this->returnSelf());
+		$query->expects($this->never())->method('cache');
 		$query->expects($this->once())->method('first')
 			->will($this->returnValue($entity));
-		$result = $table->get(10, ['fields' => ['id']]);
+		$result = $table->get(10, $options);
+		$this->assertSame($entity, $result);
+	}
+
+	public function providerForTestGetWithCache() {
+		return [
+			[
+				['fields' => ['id'], 'cache' => 'default'],
+				'get:test.table_name[10]', 'default'
+			],
+			[
+				['fields' => ['id'], 'cache' => 'default', 'key' => 'custom_key'],
+				'custom_key', 'default'
+			]
+		];
+	}
+
+/**
+ * Test that get() will use the cache.
+ *
+ * @dataProvider providerForTestGetWithCache
+ * @param array $options
+ * @param string $cacheKey
+ * @param string $cacheConfig
+ * @return void
+ */
+	public function testGetWithCache($options, $cacheKey, $cacheConfig) {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['callFinder', 'query'],
+			[[
+				'connection' => $this->connection,
+				'schema' => [
+					'id' => ['type' => 'integer'],
+					'bar' => ['type' => 'integer'],
+					'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]]
+				]
+			]]
+		);
+		$table->table('table_name');
+
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['addDefaultTypes', 'first', 'where', 'cache'],
+			[$this->connection, $table]
+		);
+
+		$entity = new \Cake\ORM\Entity;
+		$table->expects($this->once())->method('query')
+			->will($this->returnValue($query));
+		$table->expects($this->once())->method('callFinder')
+			->with('all', $query, ['fields' => ['id']])
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('where')
+			->with([$table->alias() . '.bar' => 10])
+			->will($this->returnSelf());
+		$query->expects($this->once())->method('cache')
+			->with($cacheKey, $cacheConfig)
+			->will($this->returnSelf());
+		$query->expects($this->once())->method('first')
+			->will($this->returnValue($entity));
+		$result = $table->get(10, $options);
 		$this->assertSame($entity, $result);
 	}
 
@@ -3587,6 +3665,23 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('New body', $article->body);
 		$this->assertEquals('N', $article->published);
 		$this->assertEquals(2, $article->author_id);
+	}
+
+/**
+ * Test that creating a table fires the initialize event.
+ *
+ * @return void
+ */
+	public function testInitializeEvent() {
+		$count = 0;
+		$cb = function ($event) use (&$count){
+			$count++;
+		};
+		EventManager::instance()->attach($cb, 'Model.initialize');
+		$articles = TableRegistry::get('Articles');
+
+		$this->assertEquals(1, $count, 'Callback should be called');
+		EventManager::instance()->detach($cb, 'Model.initialize');
 	}
 
 }

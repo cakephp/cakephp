@@ -321,7 +321,21 @@ class View {
 			$this->response = new Response();
 		}
 		$this->Blocks = new ViewBlock();
+		$this->initialize();
 		$this->loadHelpers();
+	}
+
+/**
+ * Initialization hook method.
+ *
+ * Properties like $helpers etc. cannot be initialized statically in your custom
+ * view class as they are overwritten by values from controller in constructor.
+ * So this method allows you to manipulate them as required after view instance
+ * is constructed.
+ *
+ * @return void
+ */
+	public function initialize() {
 	}
 
 /**

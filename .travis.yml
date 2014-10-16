@@ -36,15 +36,14 @@ before_script:
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi"
   - sh -c "if [ '$PHPCS' != '1' ]; then sudo apt-get install lighttpd; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then sudo vendor/bin/phpcs --config-set installed_paths vendor/cakephp/cakephp-codesniffer; fi"
   - sh -c "if [ '$HHVM' != '1' ]; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
   - phpenv rehash
   - set +H
 
 script:
   - sh -c "if [ '$PHPCS' != '1' ]; then phpunit; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then phpcs -p --extensions=php --standard=CakePHP ./src ./tests; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./src ./tests; fi"
 
 notifications:
   email: false

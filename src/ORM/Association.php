@@ -389,7 +389,7 @@ abstract class Association {
 
 /**
  * Sets the default finder to use for fetching rows from the target table.
- * If no parameters are passed, it will reeturn the currently configured
+ * If no parameters are passed, it will return the currently configured
  * finder name.
  *
  * @param string $finder the finder name to use

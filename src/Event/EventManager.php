@@ -110,7 +110,7 @@ class EventManager {
  * Auxiliary function to attach all implemented callbacks of a Cake\Event\EventListener class instance
  * as individual methods on this manager
  *
- * @param \Cake\Event\EventListener $subscriber Event listerner.
+ * @param \Cake\Event\EventListener $subscriber Event listener.
  * @return void
  */
 	protected function _attachSubscriber(EventListener $subscriber) {

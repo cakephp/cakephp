@@ -76,7 +76,7 @@ class FixtureManager {
 	}
 
 /**
- * Add aliaes for all non test prefixed connections.
+ * Add aliases for all non test prefixed connections.
  *
  * This allows models to use the test connections without
  * a pile of configuration work.

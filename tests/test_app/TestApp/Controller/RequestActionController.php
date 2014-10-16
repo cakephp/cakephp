@@ -77,30 +77,33 @@ class RequestActionController extends AppController {
  */
 	public function paginate_request_action() {
 		$data = $this->paginate();
+		$this->autoRender = false;
 	}
 
 /**
  * post pass, testing post passing
  *
- * @return array
+ * @return \Cake\Network\Reponse
  */
 	public function post_pass() {
 		$this->response->body(json_encode($this->request->data));
+		return $this->response;
 	}
 
 /**
  * query pass, testing query passing
  *
- * @return array
+ * @return \Cake\Network\Reponse
  */
 	public function query_pass() {
 		$this->response->body(json_encode($this->request->query));
+		return $this->response;
 	}
 
 /**
  * test param passing and parsing.
  *
- * @return void
+ * @return \Cake\Network\Reponse
  */
 	public function params_pass() {
 		$this->response->body(json_encode([
@@ -109,12 +112,13 @@ class RequestActionController extends AppController {
 			'url' => $this->request->url,
 			'contentType' => $this->request->env('CONTENT_TYPE'),
 		]));
+		return $this->response;
 	}
 
 /**
  * param check method.
  *
- * @return void
+ * @return \Cake\Network\Reponse
  */
 	public function param_check() {
 		$this->autoRender = false;
@@ -123,12 +127,13 @@ class RequestActionController extends AppController {
 			$content = 'return found';
 		}
 		$this->response->body($content);
+		return $this->response;
 	}
 
 /**
  * Tests session transmission
  *
- * @return void
+ * @return \Cake\Network\Reponse
  */
 	public function session_test() {
 		$this->response->body($this->request->session()->read('foo'));

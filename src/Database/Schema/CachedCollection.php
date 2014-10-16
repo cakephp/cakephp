@@ -80,7 +80,7 @@ class CachedCollection extends Collection {
 
 /**
  * Sets the cache config name to use for caching table metadata, or
- * disabels it if false is passed.
+ * disables it if false is passed.
  * If called with no arguments it returns the current configuration name.
  *
  * @param bool $enable whether or not to enable caching

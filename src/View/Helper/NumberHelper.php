@@ -129,7 +129,7 @@ class NumberHelper extends Helper {
  *
  * Options:
  *
- * - `places` - Minimim number or decimals to use, e.g 0
+ * - `places` - Minimum number or decimals to use, e.g 0
  * - `precision` - Maximum Number of decimal places to use, e.g. 2
  * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
  * - `before` - The string to place before whole numbers, e.g. '['
@@ -182,7 +182,7 @@ class NumberHelper extends Helper {
  *
  * ### Options
  *
- * - `places` - Minimim number or decimals to use, e.g 0
+ * - `places` - Minimum number or decimals to use, e.g 0
  * - `precision` - Maximum Number of decimal places to use, e.g. 2
  * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
  * - `before` - The string to place before whole numbers, e.g. '['

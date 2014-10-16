@@ -38,14 +38,13 @@ class SessionComponent extends Component {
 	protected $_session;
 
 /**
- * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
+ * Initialize properties.
  *
- * @param ComponentRegistry $registry ComponentRegistry object.
- * @param array $config Array of config.
+ * @param array $config The config data.
+ * @return void
  */
-	public function __construct(ComponentRegistry $registry, array $config = array()) {
-		parent::__construct($registry, $config);
-		$this->_session = $registry->getController()->request->session();
+	public function initialize(array $config) {
+		$this->_session = $this->_registry->getController()->request->session();
 	}
 
 /**

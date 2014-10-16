@@ -32,6 +32,13 @@ trait EntityTrait {
 	protected $_properties = [];
 
 /**
+ * Holds all properties that have been changed and their original values for this entity
+ *
+ * @var array
+ */
+	protected $_original = [];
+
+/**
  * List of property names that should **not** be included in JSON or Array
  * representations of this Entity.
  *
@@ -223,6 +230,13 @@ trait EntityTrait {
 
 			$this->dirty($p, true);
 
+			if (!isset($this->_original[$p]) &&
+				isset($this->_properties[$p]) &&
+				$this->_properties[$p] !== $value
+			) {
+				$this->_original[$p] = $this->_properties[$p];
+			}
+
 			if (!$options['setter']) {
 				$this->_properties[$p] = $value;
 				continue;
@@ -261,6 +275,23 @@ trait EntityTrait {
 			return $result;
 		}
 		return $value;
+	}
+
+/**
+ * Returns the value of an original property by name
+ *
+ * @param string $property the name of the property for which original value is retrieved.
+ * @return mixed
+ * @throws \InvalidArgumentException if an empty property name is passed.
+ */
+	public function getOriginal($property) {
+		if (!strlen((string)$property)) {
+			throw new \InvalidArgumentException('Cannot get an empty property');
+		}
+		if (isset($this->_original[$property])) {
+			return $this->_original[$property];
+		}
+		return $this->get($property);
 	}
 
 /**
@@ -472,6 +503,24 @@ trait EntityTrait {
 	}
 
 /**
+ * Returns an array with the requested original properties
+ * stored in this entity, indexed by property name
+ *
+ * @param array $properties List of properties to be returned
+ * @return array
+ */
+	public function extractOriginal(array $properties) {
+		$result = [];
+		foreach ($properties as $property) {
+			$original = $this->getOriginal($property);
+			if ($original !== null && $original !== $this->get($property)) {
+				$result[$property] = $original;
+			}
+		}
+		return $result;
+	}
+
+/**
  * Sets the dirty status of a single property. If called with no second
  * argument, it will return whether the property was modified or not
  * after the object creation.
@@ -494,7 +543,7 @@ trait EntityTrait {
 			return isset($this->_dirty[$property]);
 		}
 
-		if (!$isDirty) {
+		if ($isDirty === false) {
 			unset($this->_dirty[$property]);
 			return false;
 		}
@@ -764,6 +813,7 @@ trait EntityTrait {
 			'accessible' => array_filter($this->_accessible),
 			'properties' => $this->_properties,
 			'dirty' => $this->_dirty,
+			'original' => $this->_original,
 			'virtual' => $this->_virtual,
 			'errors' => $this->_errors,
 			'repository' => $this->_repositoryAlias

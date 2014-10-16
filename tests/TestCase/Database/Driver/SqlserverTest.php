@@ -182,7 +182,7 @@ class SqlserverTest extends \Cake\TestSuite\TestCase {
 			->from('articles')
 			->offset(10);
 		$expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY (SELECT NULL))) AS [_cake_page_rownum_] ' .
-			'FROM articles) AS _cake_paging_ ' .
+			'FROM articles) _cake_paging_ ' .
 			'WHERE _cake_paging_._cake_page_rownum_ > :c0';
 		$this->assertEquals($expected, $query->sql());
 
@@ -192,7 +192,7 @@ class SqlserverTest extends \Cake\TestSuite\TestCase {
 			->order(['id'])
 			->offset(10);
 		$expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS [_cake_page_rownum_] ' .
-			'FROM articles) AS _cake_paging_ ' .
+			'FROM articles) _cake_paging_ ' .
 			'WHERE _cake_paging_._cake_page_rownum_ > :c0';
 		$this->assertEquals($expected, $query->sql());
 
@@ -204,7 +204,7 @@ class SqlserverTest extends \Cake\TestSuite\TestCase {
 			->limit(10)
 			->offset(50);
 		$expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS [_cake_page_rownum_] ' .
-			'FROM articles WHERE title = :c0) AS _cake_paging_ ' .
+			'FROM articles WHERE title = :c0) _cake_paging_ ' .
 			'WHERE (_cake_paging_._cake_page_rownum_ > :c1 AND _cake_paging_._cake_page_rownum_ <= :c2)';
 		$this->assertEquals($expected, $query->sql());
 	}

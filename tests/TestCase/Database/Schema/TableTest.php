@@ -318,6 +318,12 @@ class TableTest extends TestCase {
 				'columns' => ['id']
 			]);
 		$this->assertEquals(['id'], $table->primaryKey());
+
+		$table = new Table('articles');
+		$table->addColumn('id', 'integer')
+			->addColumn('title', 'string')
+			->addColumn('author_id', 'integer');
+		$this->assertEquals([], $table->primaryKey());
 	}
 
 /**

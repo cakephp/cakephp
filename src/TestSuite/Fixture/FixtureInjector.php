@@ -36,7 +36,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 	protected $_fixtureManager;
 
 /**
- * Holds a reference to the conainer test suite
+ * Holds a reference to the container test suite
  *
  * @var \PHPUnit_Framework_TestSuite
  */

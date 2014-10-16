@@ -75,7 +75,7 @@ class CaseExpression implements ExpressionInterface {
  * The trueValues must be a similar structure, but may contain a string value.
  *
  * @param array|ExpressionInterface $conditions Must be a ExpressionInterface instance, or an array of ExpressionInterface instances.
- * @param array|ExpressionInterface $values associtative array of values of each condition
+ * @param array|ExpressionInterface $values associative array of values of each condition
  * @param array $types associative array of types to be associated with the values
  *
  * @return $this
@@ -101,7 +101,7 @@ class CaseExpression implements ExpressionInterface {
  * If no matching true value, then it is defaulted to '1'.
  *
  * @param array|ExpressionInterface $conditions Must be a ExpressionInterface instance, or an array of ExpressionInterface instances.
- * @param array|ExpressionInterface $values associtative array of values of each condition
+ * @param array|ExpressionInterface $values associative array of values of each condition
  * @param array $types associative array of types to be associated with the values
  *
  * @return void
