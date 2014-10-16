@@ -55,11 +55,13 @@ class SqlserverSchemaTest extends TestCase {
 	protected function _createTables($connection) {
 		$this->_needsConnection();
 
-		$connection->execute("IF OBJECT_ID('schema_articles', 'U') IS NOT NULL DROP TABLE schema_articles");
-		$connection->execute("IF OBJECT_ID('schema_authors', 'U') IS NOT NULL DROP TABLE schema_authors");
+		$prefix = $this->getConnectionPrefix($connection);
+
+		$connection->execute("IF OBJECT_ID('" . $prefix . "schema_articles', 'U') IS NOT NULL DROP TABLE schema_articles");
+		$connection->execute("IF OBJECT_ID('" . $prefix . "schema_authors', 'U') IS NOT NULL DROP TABLE schema_authors");
 
 		$table = <<<SQL
-CREATE TABLE schema_authors (
+CREATE TABLE {$prefix}schema_authors (
 id int IDENTITY(1,1) PRIMARY KEY,
 name VARCHAR(50),
 bio DATE,
@@ -69,7 +71,7 @@ SQL;
 		$connection->execute($table);
 
 		$table = <<<SQL
-CREATE TABLE schema_articles (
+CREATE TABLE {$prefix}schema_articles (
 id BIGINT PRIMARY KEY,
 title VARCHAR(20),
 body VARCHAR(1000),
@@ -82,7 +84,7 @@ CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([
 )
 SQL;
 		$connection->execute($table);
-		$connection->execute('CREATE INDEX [author_idx] ON [schema_articles] ([author_id])');
+		$connection->execute($this->applyConnectionPrefix('CREATE INDEX [author_idx] ON [~schema_articles] ([author_id])'));
 	}
 
 /**
@@ -267,11 +269,13 @@ SQL;
 		$connection = ConnectionManager::get('test');
 		$this->_createTables($connection);
 
+		$prefix = $this->getConnectionPrefix($connection);
+
 		$schema = new SchemaCollection($connection);
 		$result = $schema->listTables();
 		$this->assertInternalType('array', $result);
-		$this->assertContains('schema_articles', $result);
-		$this->assertContains('schema_authors', $result);
+		$this->assertContains($prefix . 'schema_articles', $result);
+		$this->assertContains($prefix . 'schema_authors', $result);
 	}
 
 /**
@@ -366,10 +370,12 @@ SQL;
 		$connection = ConnectionManager::get('test');
 		$this->_createTables($connection);
 
+		$prefix = $this->getConnectionPrefix($connection);
+
 		$schema = new SchemaCollection($connection);
 		$result = $schema->describe('dbo.schema_articles');
 		$this->assertEquals(['id'], $result->primaryKey());
-		$this->assertEquals('schema_articles', $result->name());
+		$this->assertEquals($prefix . 'schema_articles', $result->name());
 	}
 
 /**
@@ -643,6 +649,8 @@ SQL;
 		$connection->expects($this->any())->method('fullTableName')
 			->will($this->returnValue($expression));
 
+		$prefix = $this->getConnectionPrefix($connection);
+
 		$table = (new Table('schema_articles'))->addColumn('id', [
 				'type' => 'integer',
 				'null' => false
@@ -663,7 +671,7 @@ SQL;
 			]);
 
 		$expected = <<<SQL
-CREATE TABLE [schema_articles] (
+CREATE TABLE [{$prefix}schema_articles] (
 [id] INTEGER IDENTITY(1, 1),
 [title] NVARCHAR(255) NOT NULL,
 [body] NVARCHAR(MAX),
@@ -676,7 +684,7 @@ SQL;
 		$this->assertCount(2, $result);
 		$this->assertEquals(str_replace("\r\n", "\n", $expected), str_replace("\r\n", "\n", $result[0]));
 		$this->assertEquals(
-			'CREATE INDEX [title_idx] ON [schema_articles] ([title])',
+			$this->applyConnectionPrefix('CREATE INDEX [title_idx] ON [~schema_articles] ([title])'),
 			$result[1]
 		);
 	}
@@ -701,7 +709,7 @@ SQL;
 		$table = new Table('schema_articles');
 		$result = $table->dropSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('DROP TABLE [schema_articles]', $result[0]);
+		$this->assertEquals($this->applyConnectionPrefix('DROP TABLE [~schema_articles]'), $result[0]);
 	}
 
 /**
@@ -729,8 +737,8 @@ SQL;
 			]);
 		$result = $table->truncateSql($connection);
 		$this->assertCount(2, $result);
-		$this->assertEquals('DELETE FROM [schema_articles]', $result[0]);
-		$this->assertEquals('DBCC CHECKIDENT([schema_articles], RESEED, 0)', $result[1]);
+		$this->assertEquals($this->applyConnectionPrefix('DELETE FROM [~schema_articles]'), $result[0]);
+		$this->assertEquals($this->applyConnectionPrefix('DBCC CHECKIDENT([~schema_articles], RESEED, 0)'), $result[1]);
 	}
 
 /**
@@ -745,6 +753,18 @@ SQL;
 		$prefix = isset($config["prefix"]) && is_string($config["prefix"]) ? $config["prefix"] : "";
 
 		return $prefix;
+	}
+
+/**
+ * Will apply connection prefix to a raw SQL query.
+ * Prefixes are to be represented by the character ~
+ *
+ * @param string $query Query as a string that should be prefixed
+ * @return string The given query with the connection prefix, if any
+ */
+	public function applyConnectionPrefix($query) {
+		$query = str_replace('~', $this->prefix, $query);
+		return $query;
 	}
 
 /**

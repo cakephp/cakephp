@@ -330,6 +330,8 @@ SQL;
 		$connection = ConnectionManager::get('test');
 		$this->_createTables($connection);
 
+		$prefix = $this->getConnectionPrefix($connection);
+
 		$schema = new SchemaCollection($connection);
 		$result = $schema->describe('schema_articles');
 		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
@@ -348,7 +350,7 @@ SQL;
 					'title' => 4,
 				]
 			],
-			'schema_articles_ibfk_1' => [
+			$prefix . 'schema_articles_ibfk_1' => [
 				'type' => 'foreign',
 				'columns' => ['author_id'],
 				'references' => ['schema_authors', 'id'],
@@ -359,7 +361,7 @@ SQL;
 		];
 		$this->assertEquals($expected['primary'], $result->constraint('primary'));
 		$this->assertEquals($expected['length_idx'], $result->constraint('length_idx'));
-		$this->assertEquals($expected['schema_articles_ibfk_1'], $result->constraint('schema_articles_ibfk_1'));
+		$this->assertEquals($expected[$prefix . 'schema_articles_ibfk_1'], $result->constraint($prefix . 'schema_articles_ibfk_1'));
 
 		$this->assertCount(1, $result->indexes());
 		$expected = [
