@@ -16,7 +16,7 @@ namespace Cake\Routing;
 
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\Event;
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 use InvalidArgumentException;
 
 /**
@@ -64,7 +64,7 @@ use InvalidArgumentException;
  * callback as the conditions could change during the dispatch cycle.
  *
  */
-class DispatcherFilter implements EventListener {
+class DispatcherFilter implements EventListenerInterface {
 
 	use InstanceConfigTrait;
 

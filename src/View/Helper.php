@@ -15,7 +15,7 @@
 namespace Cake\View;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 
 /**
  * Abstract base class for all other Helpers in CakePHP.
@@ -39,7 +39,7 @@ use Cake\Event\EventListener;
  *   If a listener returns a non-null value, the output of the rendered file will be set to that.
  *
  */
-class Helper implements EventListener {
+class Helper implements EventListenerInterface {
 
 	use InstanceConfigTrait;
 

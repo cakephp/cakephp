@@ -19,7 +19,7 @@ namespace Cake\Event;
  * to notify the event manager what methods should be called when an event is triggered.
  *
  */
-interface EventListener {
+interface EventListenerInterface {
 
 /**
  * Returns a list of events this object is implementing. When the class is registered
