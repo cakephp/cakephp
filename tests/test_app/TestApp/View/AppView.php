@@ -11,37 +11,13 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace TestApp\Controller;
+namespace TestApp\View;
 
-use Cake\Controller\Controller;
-
-/**
- * SessionTestController class
- *
- */
-class SessionTestController extends Controller {
+use Cake\View\View;
 
 /**
- * uses property
+ * App View class
  *
- * @var array
  */
-	public $uses = array();
-
-/**
- * List of components
- *
- * @var array
- */
-	public $components = ['Session'];
-
-/**
- * session_id method
- *
- * @return \Cake\Network\Response
- */
-	public function session_id() {
-		$this->response->body($this->Session->id());
-		return $this->response;
-	}
+class AppView extends View {
 }

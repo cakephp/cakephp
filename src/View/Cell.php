@@ -78,7 +78,7 @@ abstract class Cell {
  *
  * @var string
  */
-	public $viewClass = 'Cake\View\View';
+	public $viewClass = null;
 
 /**
  * The theme name that will be used to render.
@@ -153,7 +153,8 @@ abstract class Cell {
 			$template = $this->template;
 		}
 
-		$this->View = $this->createView();
+		$this->View = null;
+		$this->getView();
 
 		$this->View->layout = false;
 		$className = explode('\\', get_class($this));
