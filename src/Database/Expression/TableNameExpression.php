@@ -106,6 +106,7 @@ class TableNameExpression implements ExpressionInterface {
  *
  * @param string $name Table name
  * @param string $prefix Prefix to prepend
+ * @param string $field Field name associated to the table name
  */
 	public function __construct($name, $prefix, $field = null) {
 		$this->setName($name);

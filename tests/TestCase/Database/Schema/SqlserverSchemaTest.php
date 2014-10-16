@@ -57,7 +57,7 @@ class SqlserverSchemaTest extends TestCase {
 	protected function _createTables($connection) {
 		$this->_needsConnection();
 
-		$prefix = $this->getConnectionPrefix($connection);
+		$prefix = $this->_getConnectionPrefix($connection);
 
 		$connection->execute("IF OBJECT_ID('" . $prefix . "schema_articles', 'U') IS NOT NULL DROP TABLE schema_articles");
 		$connection->execute("IF OBJECT_ID('" . $prefix . "schema_authors', 'U') IS NOT NULL DROP TABLE schema_authors");
@@ -271,7 +271,7 @@ SQL;
 		$connection = ConnectionManager::get('test');
 		$this->_createTables($connection);
 
-		$prefix = $this->getConnectionPrefix($connection);
+		$prefix = $this->_getConnectionPrefix($connection);
 
 		$schema = new SchemaCollection($connection);
 		$result = $schema->listTables();
@@ -372,7 +372,7 @@ SQL;
 		$connection = ConnectionManager::get('test');
 		$this->_createTables($connection);
 
-		$prefix = $this->getConnectionPrefix($connection);
+		$prefix = $this->_getConnectionPrefix($connection);
 
 		$schema = new SchemaCollection($connection);
 		$result = $schema->describe('dbo.schema_articles');
@@ -646,12 +646,12 @@ SQL;
 			->will($this->returnValue($driver));
 
 		$testConnection = ConnectionManager::get('test');
-		$prefix = $this->getConnectionPrefix($testConnection);
+		$prefix = $this->_getConnectionPrefix($testConnection);
 		$expression = new TableNameExpression('schema_articles', $prefix);
 		$connection->expects($this->any())->method('fullTableName')
 			->will($this->returnValue($expression));
 
-		$prefix = $this->getConnectionPrefix($connection);
+		$prefix = $this->_getConnectionPrefix($connection);
 
 		$table = (new Table('schema_articles'))->addColumn('id', [
 				'type' => 'integer',
@@ -703,7 +703,7 @@ SQL;
 			->will($this->returnValue($driver));
 
 		$testConnection = ConnectionManager::get('test');
-		$prefix = $this->getConnectionPrefix($testConnection);
+		$prefix = $this->_getConnectionPrefix($testConnection);
 		$expression = new TableNameExpression('schema_articles', $prefix);
 		$connection->expects($this->any())->method('fullTableName')
 			->will($this->returnValue($expression));
@@ -726,7 +726,7 @@ SQL;
 			->will($this->returnValue($driver));
 
 		$testConnection = ConnectionManager::get('test');
-		$prefix = $this->getConnectionPrefix($testConnection);
+		$prefix = $this->_getConnectionPrefix($testConnection);
 		$expression = new TableNameExpression('schema_articles', $prefix);
 		$connection->expects($this->any())->method('fullTableName')
 			->will($this->returnValue($expression));
@@ -750,7 +750,7 @@ SQL;
  *
  * @return string Connection prefix
  */
-	protected function getConnectionPrefix(\Cake\Database\Connection $connection) {
+	protected function _getConnectionPrefix(\Cake\Database\Connection $connection) {
 		$config = $connection->config();
 		$prefix = isset($config["prefix"]) && is_string($config["prefix"]) ? $config["prefix"] : "";
 

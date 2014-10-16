@@ -512,7 +512,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			if (!empty($t['alias'])) {
 				$exclude[] = $t['alias'];
 			}
-			$t['conditions']->iterateParts(function($condition, $key) use ($exclude) {
+			$t['conditions']->iterateParts(function ($condition, $key) use ($exclude) {
 				if (is_string($condition)) {
 					$condition = $this->_connection->applyFullTableName($condition, $exclude);
 				}

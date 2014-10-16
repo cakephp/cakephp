@@ -185,7 +185,7 @@ class MysqlSchemaTest extends TestCase {
  * @return void
  */
 	protected function _createTables($connection) {
-		$prefix = $this->getConnectionPrefix($connection);
+		$prefix = $this->_getConnectionPrefix($connection);
 
 		$this->_needsConnection();
 
@@ -330,7 +330,7 @@ SQL;
 		$connection = ConnectionManager::get('test');
 		$this->_createTables($connection);
 
-		$prefix = $this->getConnectionPrefix($connection);
+		$prefix = $this->_getConnectionPrefix($connection);
 
 		$schema = new SchemaCollection($connection);
 		$result = $schema->describe('schema_articles');
@@ -713,7 +713,7 @@ SQL;
 			->will($this->returnValue($driver));
 
 		$testConnection = ConnectionManager::get('test');
-		$prefix = $this->getConnectionPrefix($testConnection);
+		$prefix = $this->_getConnectionPrefix($testConnection);
 		$expression = new TableNameExpression('posts', $prefix);
 		$connection->expects($this->any())->method('fullTableName')
 			->will($this->returnValue($expression));
@@ -787,7 +787,7 @@ SQL;
 			->will($this->returnValue($driver));
 
 		$testConnection = ConnectionManager::get('test');
-		$prefix = $this->getConnectionPrefix($testConnection);
+		$prefix = $this->_getConnectionPrefix($testConnection);
 		$expression = new TableNameExpression('articles_tags', $prefix);
 		$expressionCompositeKey = new TableNameExpression('composite_key', $prefix);
 		$connection->method('fullTableName')
@@ -857,7 +857,7 @@ SQL;
 			->will($this->returnValue($driver));
 
 		$testConnection = ConnectionManager::get('test');
-		$prefix = $this->getConnectionPrefix($testConnection);
+		$prefix = $this->_getConnectionPrefix($testConnection);
 		$expression = new TableNameExpression('articles', $prefix);
 		$connection->expects($this->any())->method('fullTableName')
 			->will($this->returnValue($expression));
@@ -880,7 +880,7 @@ SQL;
 			->will($this->returnValue($driver));
 
 		$testConnection = ConnectionManager::get('test');
-		$prefix = $this->getConnectionPrefix($testConnection);
+		$prefix = $this->_getConnectionPrefix($testConnection);
 		$expression = new TableNameExpression('articles', $prefix);
 		$connection->expects($this->any())->method('fullTableName')
 			->will($this->returnValue($expression));
@@ -910,7 +910,7 @@ SQL;
  *
  * @return string Connection prefix
  */
-	protected function getConnectionPrefix(\Cake\Database\Connection $connection) {
+	protected function _getConnectionPrefix(\Cake\Database\Connection $connection) {
 		$config = $connection->config();
 		$prefix = isset($config["prefix"]) && is_string($config["prefix"]) ? $config["prefix"] : "";
 

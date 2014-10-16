@@ -154,7 +154,7 @@ class QueryCompiler {
  */
 	protected function _orderFullFieldsName($parts, $query, $generator) {
 		if ($parts instanceof ExpressionInterface) {
-			$parts->iterateParts(function($condition, &$key) use ($parts, $query, $generator) {
+			$parts->iterateParts(function ($condition, &$key) use ($parts, $query, $generator) {
 				$key = $query->connection()->fullFieldName($key);
 
 				if ($key instanceof ExpressionInterface) {
@@ -242,7 +242,6 @@ class QueryCompiler {
 
 		return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
 	}
-
 
 /**
  * Helper function used to build the string representation of a FROM clause,
