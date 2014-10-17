@@ -23,6 +23,7 @@ use Cake\Event\EventManager;
 use Cake\I18n\Time;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 
 /**
@@ -36,7 +37,7 @@ class UsersTable extends Table {
  * Tests Table class
  *
  */
-class TableTest extends \Cake\TestSuite\TestCase {
+class TableTest extends TestCase {
 
 	public $fixtures = [
 		'core.users', 'core.categories', 'core.articles', 'core.authors',

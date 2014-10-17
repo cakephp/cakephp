@@ -19,12 +19,13 @@ use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Query;
 use Cake\Datasource\ConnectionManager;
+use Cake\TestSuite\TestCase;
 use \PDO;
 
 /**
  * Tests Postgres driver
  */
-class PostgresTest extends \Cake\TestSuite\TestCase {
+class PostgresTest extends TestCase {
 
 /**
  * Test connecting to Postgres with default configuration

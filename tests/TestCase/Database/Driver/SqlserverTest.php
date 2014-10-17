@@ -18,12 +18,13 @@ use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Query;
+use Cake\TestSuite\TestCase;
 use \PDO;
 
 /**
  * Tests Sqlserver driver
  */
-class SqlserverTest extends \Cake\TestSuite\TestCase {
+class SqlserverTest extends TestCase {
 
 /**
  * Set up
