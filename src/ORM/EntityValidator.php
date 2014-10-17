@@ -14,6 +14,8 @@
  */
 namespace Cake\ORM;
 
+use ArrayObject;
+
 /**
  * Contains logic for validating entities and their associations
  *
@@ -82,6 +84,7 @@ class EntityValidator {
 		$valid = true;
 		$types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
 		$propertyMap = $this->_buildPropertyMap($options);
+		$options = new ArrayObject($options);
 
 		foreach ($propertyMap as $key => $assoc) {
 			$value = $entity->get($key);
@@ -133,7 +136,7 @@ class EntityValidator {
  * the name passed in the key
  *
  * @param \Cake\ORM\Entity $entity The entity to validate
- * @param \ArrayObject|array $options The option for processing validation
+ * @param \ArrayObject $options The option for processing validation
  * @return bool true if the entity is valid, false otherwise
  */
 	protected function _processValidation($entity, $options) {
