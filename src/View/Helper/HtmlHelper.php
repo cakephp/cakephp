@@ -228,16 +228,16 @@ class HtmlHelper extends Helper {
 		if (isset($types[$type])) {
 			$type = $types[$type];
 		} elseif (!isset($options['type']) && $content !== null) {
-			if (is_array($content) && isset($content['ext'])) {
-				$type = $types[$content['ext']];
+			if (is_array($content) && isset($content['_ext'])) {
+				$type = $types[$content['_ext']];
 			} else {
-				$type = $types['rss'];
+				$type = ['name' => $type, 'content' => $content];
 			}
 		} elseif (isset($options['type']) && isset($types[$options['type']])) {
 			$type = $types[$options['type']];
 			unset($options['type']);
 		} else {
-			$type = array();
+			$type = [];
 		}
 
 		$options += $type;

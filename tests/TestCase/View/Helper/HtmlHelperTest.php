@@ -1534,11 +1534,11 @@ class HtmlHelperTest extends TestCase {
 		$this->assertHtml($expected, $result);
 
 		$result = $this->Html->meta('non-existing');
-		$expected = array('<meta');
+		$expected = ['<meta'];
 		$this->assertHtml($expected, $result);
 
-		$result = $this->Html->meta('non-existing', '/posts.xpp');
-		$expected = array('link' => array('href' => 'preg:/.*\/posts\.xpp/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'non-existing'));
+		$result = $this->Html->meta('non-existing', 'some content');
+		$expected = ['meta' => ['name' => 'non-existing', 'content' => 'some content']];
 		$this->assertHtml($expected, $result);
 
 		$result = $this->Html->meta('non-existing', '/posts.xpp', array('type' => 'atom'));
