@@ -15,12 +15,13 @@ namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\ValueBinder;
+use Cake\TestSuite\TestCase;
 
 /**
  * Tests FunctionExpression class
  *
  */
-class FunctionExpressionTest extends \Cake\TestSuite\TestCase {
+class FunctionExpressionTest extends TestCase {
 
 /**
  * Tests generating a function with no arguments

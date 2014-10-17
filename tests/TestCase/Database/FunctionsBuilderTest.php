@@ -15,12 +15,13 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
+use Cake\TestSuite\TestCase;
 
 /**
  * Tests FunctionsBuilder class
  *
  */
-class FunctionsBuilderTest extends \Cake\TestSuite\TestCase {
+class FunctionsBuilderTest extends TestCase {
 
 /**
  * Setups a mock for FunctionsBuilder

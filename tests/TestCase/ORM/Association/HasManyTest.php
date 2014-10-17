@@ -23,12 +23,13 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
 
 /**
  * Tests HasMany class
  *
  */
-class HasManyTest extends \Cake\TestSuite\TestCase {
+class HasManyTest extends TestCase {
 
 /**
  * Set up
