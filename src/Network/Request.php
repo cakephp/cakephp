@@ -253,14 +253,16 @@ class Request implements \ArrayAccess {
 
 /**
  * Sets the REQUEST_METHOD environment variable based on the simulated _method
- * HTTP override value.
+ * HTTP override value. The 'ORIGINAL_REQUEST_METHOD' is also preserved, if you
+ * want the read the non-simulated HTTP method the client used.
  *
  * @param array $data Array of post data.
  * @return array
  */
 	protected function _processPost($data) {
+		$method = $this->env('REQUEST_METHOD');
 		if (
-			in_array($this->env('REQUEST_METHOD'), array('PUT', 'DELETE', 'PATCH')) &&
+			in_array($method, array('PUT', 'DELETE', 'PATCH')) &&
 			strpos($this->env('CONTENT_TYPE'), 'application/x-www-form-urlencoded') === 0
 		) {
 			$data = $this->input();
@@ -269,6 +271,7 @@ class Request implements \ArrayAccess {
 		if ($this->env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
 			$data['_method'] = $this->env('HTTP_X_HTTP_METHOD_OVERRIDE');
 		}
+		$this->_environment['ORIGINAL_REQUEST_METHOD'] = $method;
 		if (isset($data['_method'])) {
 			$this->_environment['REQUEST_METHOD'] = $data['_method'];
 			unset($data['_method']);
