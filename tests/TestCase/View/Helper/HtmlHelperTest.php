@@ -1566,6 +1566,12 @@ class HtmlHelperTest extends TestCase {
 			'meta' => ['name' => 'viewport', 'content' => 'width=device-width']
 		];
 		$this->assertHtml($expected, $result);
+
+		$result = $this->Html->meta(['property' => 'og:site_name', 'content' => 'CakePHP']);
+		$expected = [
+			'meta' => ['property' => 'og:site_name', 'content' => 'CakePHP']
+		];
+		$this->assertHtml($expected, $result);
 	}
 
 /**
