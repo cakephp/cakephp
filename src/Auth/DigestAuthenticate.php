@@ -112,7 +112,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 		$password = $user[$field];
 		unset($user[$field]);
 
-		$hash = $this->generateResponseHash($digest, $password, $request->env('REQUEST_METHOD'));
+		$hash = $this->generateResponseHash($digest, $password, $request->env('ORIGINAL_REQUEST_METHOD'));
 		if ($digest['response'] === $hash) {
 			return $user;
 		}

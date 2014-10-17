@@ -425,6 +425,13 @@ class RequestTest extends TestCase {
 
 		$request = new Request(['environment' => ['HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT']]);
 		$this->assertEquals('PUT', $request->env('REQUEST_METHOD'));
+
+		$request = new Request([
+			'environment' => ['REQUEST_METHOD' => 'POST'],
+			'post' => ['_method' => 'PUT']
+		]);
+		$this->assertEquals('PUT', $request->env('REQUEST_METHOD'));
+		$this->assertEquals('POST', $request->env('ORIGINAL_REQUEST_METHOD'));
 	}
 
 /**
