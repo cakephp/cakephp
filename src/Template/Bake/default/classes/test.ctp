@@ -77,13 +77,24 @@ class <?= $className ?>Test extends TestCase {
 <?php endif; ?>
 <?php foreach ($methods as $method): ?>
 /**
- * test<?= Inflector::camelize($method) ?> method
+ * Test <?= $method ?> method
  *
  * @return void
  */
 	public function test<?= Inflector::camelize($method) ?>() {
-		$this->markTestIncomplete('test<?= Inflector::camelize($method) ?> not implemented.');
+		$this->markTestIncomplete('Not implemented yet.');
 	}
 
 <?php endforeach; ?>
+<?php if (empty($methods)): ?>
+/**
+ * Test initial setup
+ *
+ * @return void
+ */
+	public function testInitialization() {
+		$this->markTestIncomplete('Not implemented yet.');
+	}
+
+<?php endif; ?>
 }
