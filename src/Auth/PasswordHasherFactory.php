@@ -25,11 +25,11 @@ class PasswordHasherFactory {
 /**
  * Returns password hasher object out of a hasher name or a configuration array
  *
- * @param string|array $passwordHasher name of the password hasher or an array with
+ * @param string|array $passwordHasher Name of the password hasher or an array with
  * at least the key `className` set to the name of the class to use
- * @return AbstractPasswordHasher Password hasher instance
+ * @return \Cake\Auth\AbstractPasswordHasher Password hasher instance
  * @throws \RuntimeException If password hasher class not found or
- *   it does not extend AbstractPasswordHasher
+ *   it does not extend Cake\Auth\AbstractPasswordHasher
  */
 	public static function build($passwordHasher) {
 		$config = [];
@@ -41,9 +41,8 @@ class PasswordHasherFactory {
 			unset($config['className']);
 		}
 
-		list($plugin, $class) = pluginSplit($class, true);
 		$className = App::className($class, 'Auth', 'PasswordHasher');
-		if (!class_exists($className)) {
+		if (!$className) {
 			throw new \RuntimeException(sprintf('Password hasher class "%s" was not found.', $class));
 		}
 
