@@ -158,7 +158,7 @@ abstract class ObjectRegistry {
  * Get the loaded object list, or get the object instance at a given name.
  *
  * @param null|string $name The object name to get or null.
- * @return array|Helper Either a list of object names, or a loaded object.
+ * @return array|\Cake\View\Helper Either a list of object names, or a loaded object.
  */
 	public function loaded($name = null) {
 		if (!empty($name)) {

@@ -44,7 +44,7 @@ class Digest {
 /**
  * Add Authorization header to the request.
  *
- * @param \Cake\Network\Request $request The request object.
+ * @param \Cake\Network\Http\Request $request The request object.
  * @param array $credentials Authentication credentials.
  * @return void
  * @see http://www.ietf.org/rfc/rfc2617.txt
@@ -70,7 +70,7 @@ class Digest {
  * another request without authentication to get authentication
  * challenge.
  *
- * @param \Cake\Network\Request $request The request object.
+ * @param \Cake\Network\Http\Request $request The request object.
  * @param array $credentials Authentication credentials.
  * @return Array modified credentials.
  */
@@ -102,7 +102,7 @@ class Digest {
 /**
  * Generate the header Authorization
  *
- * @param \Cake\Network\Request $request The request object.
+ * @param \Cake\Network\Http\Request $request The request object.
  * @param array $credentials Authentication credentials.
  * @return string
  */

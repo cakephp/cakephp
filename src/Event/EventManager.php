@@ -214,9 +214,7 @@ class EventManager {
  * Dispatches a new event to all configured listeners
  *
  * @param string|\Cake\Event\Event $event the event key name or instance of Event
- * @return CakeEvent
- * @param string|CakeEvent $event the event key name or instance of CakeEvent
- * @return CakeEvent
+ * @return \Cake\Event\Event
  */
 	public function dispatch($event) {
 		if (is_string($event)) {

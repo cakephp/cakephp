@@ -34,7 +34,7 @@ class MemcachedEngine extends CacheEngine {
 /**
  * memcached wrapper.
  *
- * @var Memcache
+ * @var Memcached
  */
 	protected $_Memcached = null;
 

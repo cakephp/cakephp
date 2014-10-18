@@ -31,7 +31,7 @@ class Oauth {
 /**
  * Add headers for Oauth authorization.
  *
- * @param \Cake\Network\Request $request The request object.
+ * @param \Cake\Network\Http\Request $request The request object.
  * @param array $credentials Authentication credentials.
  * @return void
  * @throws \Cake\Core\Exception\Exception On invalid signature types.
@@ -73,7 +73,7 @@ class Oauth {
  * You should only ever use PLAINTEXT when dealing with SSL
  * services.
  *
- * @param \Cake\Network\Request $request The request object.
+ * @param \Cake\Network\Http\Request $request The request object.
  * @param array $credentials Authentication credentials.
  * @return string Authorization header.
  */
@@ -101,7 +101,7 @@ class Oauth {
  *
  * This method is suitable for plain HTTP or HTTPS.
  *
- * @param \Cake\Network\Request $request The request object.
+ * @param \Cake\Network\Http\Request $request The request object.
  * @param array $credentials Authentication credentials.
  * @return string
  */
@@ -140,7 +140,7 @@ class Oauth {
  * - The request URL (without querystring) is normalized.
  * - The HTTP method, URL and request parameters are concatenated and returnned.
  *
- * @param \Cake\Network\Request $request The request object.
+ * @param \Cake\Network\Http\Request $request The request object.
  * @param array $oauthValues Oauth values.
  * @return string
  */
@@ -191,7 +191,7 @@ class Oauth {
  * - URL encode keys + values.
  * - Sort keys & values by byte value.
  *
- * @param \Cake\Network\Request $request The request object.
+ * @param \Cake\Network\Http\Request $request The request object.
  * @param array $oauthValues Oauth values.
  * @return string sorted and normalized values
  */

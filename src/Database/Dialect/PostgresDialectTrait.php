@@ -51,8 +51,8 @@ trait PostgresDialectTrait {
 /**
  * Distinct clause needs no transformation
  *
- * @param Query $query The query to be transformed
- * @return Query
+ * @param \Cake\Database\Query $query The query to be transformed
+ * @return \Cake\Database\Query
  */
 	protected function _transformDistinct($query) {
 		return $query;
