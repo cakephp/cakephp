@@ -444,7 +444,7 @@ class TestTaskTest extends TestCase {
 		$this->assertContains("\$this->Apple = new AppleComponent(\$registry)", $result);
 
 		$this->assertContains('function testStartup()', $result);
-		$this->assertContains('$this->markTestIncomplete(\'testStartup not implemented.\')', $result);
+		$this->assertContains('$this->markTestIncomplete(\'Not implemented yet.\')', $result);
 
 		$this->assertContains('function tearDown()', $result);
 		$this->assertContains('unset($this->Apple)', $result);
