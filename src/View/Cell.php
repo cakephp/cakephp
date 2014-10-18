@@ -191,7 +191,7 @@ abstract class Cell {
 /**
  * Debug info.
  *
- * @return void
+ * @return array
  */
 	public function __debugInfo() {
 		return [

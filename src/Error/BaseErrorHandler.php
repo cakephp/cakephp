@@ -144,7 +144,7 @@ abstract class BaseErrorHandler {
  *
  * @param \Exception $exception Exception instance.
  * @return void
- * @throws Exception When renderer class not found
+ * @throws \Exception When renderer class not found
  * @see http://php.net/manual/en/function.set-exception-handler.php
  */
 	public function handleException(\Exception $exception) {
@@ -217,7 +217,7 @@ abstract class BaseErrorHandler {
 /**
  * Handles exception logging
  *
- * @param Exception $exception Exception instance.
+ * @param \Exception $exception Exception instance.
  * @return bool
  */
 	protected function _logException(\Exception $exception) {
@@ -239,7 +239,7 @@ abstract class BaseErrorHandler {
 /**
  * Generates a formatted error message
  *
- * @param Exception $exception Exception instance
+ * @param \Exception $exception Exception instance
  * @return string Formatted message
  */
 	protected function _getMessage(\Exception $exception) {

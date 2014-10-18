@@ -229,7 +229,7 @@ class Stream {
 /**
  * Open the stream and send the request.
  *
- * @param \Cake\Network\Request $request The request object.
+ * @param \Cake\Network\Http\Request $request The request object.
  * @return array Array of populated Response objects
  * @throws \Cake\Core\Exception\Exception
  */

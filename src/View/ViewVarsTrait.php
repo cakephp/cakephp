@@ -69,7 +69,7 @@ trait ViewVarsTrait {
  * Constructs the view class instance based on object properties.
  *
  * @param string $viewClass Optional namespaced class name of the View class to instantiate.
- * @return Cake\View\View
+ * @return \Cake\View\View
  */
 	public function createView($viewClass = null) {
 		if ($viewClass === null) {

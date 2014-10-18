@@ -26,7 +26,7 @@ class RedisEngine extends CacheEngine {
 /**
  * Redis wrapper.
  *
- * @var Redis
+ * @var \Redis
  */
 	protected $_Redis = null;
 

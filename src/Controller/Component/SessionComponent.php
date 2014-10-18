@@ -32,7 +32,7 @@ class SessionComponent extends Component {
 /**
  * The Session object instance
  *
- * @var Cake\Network\Session
+ * @var \Cake\Network\Session
  */
 	protected $_session;
 

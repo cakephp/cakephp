@@ -23,7 +23,7 @@ use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use Cake\Network\Response;
 use Cake\Routing\Router;
-use Cake\Utility\Error\XmlException;
+use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Inflector;
 use Cake\Utility\Xml;
 
