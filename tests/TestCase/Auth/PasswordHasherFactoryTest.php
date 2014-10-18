@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Auth;
 
-use Cake\Core\Plugin;
 use Cake\Auth\PasswordHasherFactory;
+use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -35,10 +35,10 @@ class PasswordHasherFactoryTest extends TestCase {
 
 		$hasher = PasswordHasherFactory::build([
 			'className' => 'Default',
-			'hashOptions' => ['foo' =>' bar']
+			'hashOptions' => ['foo' => 'bar']
 		]);
 		$this->assertInstanceof('Cake\Auth\DefaultPasswordHasher', $hasher);
-		$this->assertEquals(['foo' =>' bar'], $hasher->config('hashOptions'));
+		$this->assertEquals(['foo' => 'bar'], $hasher->config('hashOptions'));
 
 		Plugin::load('TestPlugin');
 		$hasher = PasswordHasherFactory::build('TestPlugin.Legacy');

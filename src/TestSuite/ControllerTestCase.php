@@ -15,13 +15,13 @@
 namespace Cake\TestSuite;
 
 use Cake\Controller\Exception\MissingComponentException;
-use Cake\Routing\Exception\MissingControllerException;
 use Cake\Core\App;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\DispatcherFilter;
+use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
