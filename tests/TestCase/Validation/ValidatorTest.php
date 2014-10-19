@@ -373,6 +373,9 @@ class ValidatorTest extends TestCase {
 		$errors = $validator->errors(['title' => 0]);
 		$this->assertEmpty($errors);
 
+		$errors = $validator->errors(['title' => 0.0]);
+		$this->assertEmpty($errors);
+
 		$errors = $validator->errors(['title' => '0']);
 		$this->assertEmpty($errors);
 
