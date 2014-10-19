@@ -74,7 +74,18 @@ class FloatType extends \Cake\Database\Type {
 		if ($value === null || $value === '') {
 			return null;
 		}
-		return floatval($value);
+
+	        if (is_numeric($value)) {
+	            return $value;
+	        }
+	
+	        $numberFormatter = new \NumberFormatter(ini_get('intl.default_locale'), \NumberFormatter::DECIMAL);
+	        $parsedValue = $numberFormatter->parse($value);
+	
+	        if (!is_numeric($parsedValue)) {
+	            return $value;
+	        }
+	        return $parsedValue;
 	}
 
 }
