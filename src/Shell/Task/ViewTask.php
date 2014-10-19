@@ -357,6 +357,11 @@ class ViewTask extends BakeTask {
 			$vars = $this->_loadController();
 		}
 
+		if (empty($vars['primaryKey'])) {
+			$this->error('Cannot generate views for models with no primary key');
+			return false;
+		}
+
 		$this->Template->set('action', $action);
 		$this->Template->set('plugin', $this->plugin);
 		$this->Template->set($vars);

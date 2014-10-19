@@ -646,6 +646,14 @@ class ModelTask extends BakeTask {
 		$filename = $path . 'Table' . DS . $name . 'Table.php';
 		$this->out("\n" . sprintf('Baking table class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
+
+		// Work around composer caching that classes/files do not exist.
+		// Check for the file as it might not exist in tests.
+		if (file_exists($filename)) {
+			require_once($filename);
+		}
+		TableRegistry::clear();
+
 		$emptyFile = $path . 'Table' . DS . 'empty';
 		$this->_deleteEmptyFile($emptyFile);
 		return $out;
