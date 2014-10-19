@@ -481,7 +481,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @return bool
  */
 	protected function _fieldIsEmpty($data) {
-		if (empty($data) && $data !== '0' && $data !== false && $data !== 0) {
+		if (empty($data) && $data !== '0' && $data !== false && $data !== 0 && $data !== 0.0) {
 			return true;
 		}
 		return false;
