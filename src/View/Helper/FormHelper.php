@@ -999,6 +999,22 @@ class FormHelper extends Helper {
 			case 'url':
 				$options = $this->_initInputField($fieldName, $options);
 				return $this->widget($options['type'], $options);
+			case 'number':
+	                        if ($this->request->is('get') AND ! array_key_exists('value', $options)) {
+	                            $currentValue = $this->_getContext()->val($fieldName);
+	                            if ($currentValue !== NULL) {
+	                                $fieldType = $this->_getContext()->type($fieldName);
+	                                if ($fieldType === 'decimal') {
+	                                    $fieldDef = $this->_getContext()->attributes($fieldName);
+	                                    $numberFormatter = new \NumberFormatter(ini_get('intl.default_locale'), \NumberFormatter::DECIMAL);
+	                                    $numberFormatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, $fieldDef['precision']);
+	                                    $numberFormatter->setAttribute(\NumberFormatter::GROUPING_USED, false);
+	                                    $options['value'] = $numberFormatter->format($currentValue);
+	                                }
+	                            }
+	                        }
+                		$options['type'] = 'text';
+				// fall through
 			default:
 				return $this->{$options['type']}($fieldName, $options);
 		}
