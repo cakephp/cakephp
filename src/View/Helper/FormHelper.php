@@ -1002,7 +1002,7 @@ class FormHelper extends Helper {
 			case 'number':
 	                        if ($this->request->is('get') AND ! array_key_exists('value', $options)) {
 	                            $currentValue = $this->_getContext()->val($fieldName);
-	                            if ($currentValue !== NULL) {
+	                            if ($currentValue !== null) {
 	                                $fieldType = $this->_getContext()->type($fieldName);
 	                                if ($fieldType === 'decimal') {
 	                                    $fieldDef = $this->_getContext()->attributes($fieldName);
