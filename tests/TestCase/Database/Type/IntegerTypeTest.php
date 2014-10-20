@@ -76,7 +76,7 @@ class IntegerTypeTest extends TestCase {
  */
 	public function testMarshal() {
 		$result = $this->type->marshal('some data', $this->driver);
-		$this->assertSame(0, $result);
+		$this->assertSame('some data', $result);
 
 		$result = $this->type->marshal('', $this->driver);
 		$this->assertNull($result);
