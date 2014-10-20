@@ -96,7 +96,7 @@ class FormHelper extends Helper {
 			'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
 			'inputContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
 			'label' => '<label{{attrs}}>{{text}}</label>',
-			'nestedLabel' => '<label{{attrs}}>{{input}}{{text}}</label>',
+			'nestingLabel' => '<label{{attrs}}>{{input}}{{text}}</label>',
 			'legend' => '<legend>{{text}}</legend>',
 			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
@@ -744,7 +744,7 @@ class FormHelper extends Helper {
 			'text' => $text,
 		];
 		if (isset($options['input'])) {
-			return $this->widget('nestedLabel', $attrs);
+			return $this->widget('nestingLabel', $attrs);
 		}
 		return $this->widget('label', $attrs);
 	}
