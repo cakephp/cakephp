@@ -101,7 +101,7 @@ trait PostgresDialectTrait {
 				break;
 			case 'DATEDIFF':
 				$expression
-					->name('ABS')
+					->name('')
 					->type('-')
 					->iterateParts(function ($p) {
 						if( is_string($p) ) {
