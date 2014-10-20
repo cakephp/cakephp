@@ -104,7 +104,7 @@ trait PostgresDialectTrait {
 					->name('')
 					->type('-')
 					->iterateParts(function ($p) {
-						if( is_string($p) ) {
+						if ( is_string($p) ) {
 							$p = [ 'value' => [$p => 'literal'], 'type' => null ];
 						} else {
 							$p['value'] = [$p['value']];
