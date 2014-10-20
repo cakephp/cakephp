@@ -80,7 +80,7 @@ class FormHelper extends Helper {
 			'button' => '<button{{attrs}}>{{text}}</button>',
 			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
 			'checkboxFormGroup' => '{{label}}',
-			'checkboxWrapper' => '<div class="checkbox">{{input}}{{label}}</div>',
+			'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
 			'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}',
 			'error' => '<div class="error-message">{{content}}</div>',
 			'errorList' => '<ul>{{content}}</ul>',
@@ -923,10 +923,10 @@ class FormHelper extends Helper {
 		}
 
 		$label = $options['label'];
+		unset($options['label']);
 		$nestedInput = false;
 		if (in_array($options['type'], ['radio', 'checkbox'], true)) {
 			$nestedInput = true;
-			unset($options['label']);
 		}
 		$nestedInput = isset($options['nestedInput']) ? $options['nestedInput'] : $nestedInput;
 
@@ -1179,6 +1179,9 @@ class FormHelper extends Helper {
 			$label = $options['label'];
 		}
 
+		if ($label === false && isset($options['input'])) {
+			return $options['input'];
+		}
 		if ($label === false) {
 			return false;
 		}
