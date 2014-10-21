@@ -2773,6 +2773,34 @@ class TableTest extends TestCase {
 	}
 
 /**
+ * Tests saving belongsToMany records when record exists.
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToManyJoinDataOnExistingRecord() {
+		$tags = TableRegistry::get('Tags');
+		$table = TableRegistry::get('Articles');
+		$table->belongsToMany('Tags');
+
+		$entity = $table->find()->contain('Tags')->first();
+		// not associated to the article already.
+		$entity->tags[] = $tags->get(3);
+		$entity->dirty('tags', true);
+
+		$this->assertSame($entity, $table->save($entity));
+
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->tags[0]->isNew());
+		$this->assertFalse($entity->tags[1]->isNew());
+		$this->assertFalse($entity->tags[2]->isNew());
+
+		$this->assertNotEmpty($entity->tags[0]->_joinData);
+		$this->assertNotEmpty($entity->tags[1]->_joinData);
+		$this->assertNotEmpty($entity->tags[2]->_joinData);
+	}
+
+/**
  * Tests saving belongsToMany records can delete all links.
  *
  * @group save
