@@ -104,7 +104,13 @@ trait PostgresDialectTrait {
 					->name('')
 					->type('-')
 					->iterateParts(function ($p) {
-						return new FunctionExpression('DATE', [$p['value']], [$p['type']]);
+						if (is_string($p)) {
+							$p = ['value' => [$p => 'literal'], 'type' => null];
+						} else {
+							$p['value'] = [$p['value']];
+						}
+
+						return new FunctionExpression('DATE', $p['value'], [$p['type']]);
 					});
 				break;
 			case 'CURRENT_DATE':
