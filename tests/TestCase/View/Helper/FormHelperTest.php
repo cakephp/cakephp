@@ -6249,6 +6249,27 @@ class FormHelperTest extends TestCase {
 			'/div',
 		];
 		$this->assertHtml($expected, $result);
+
+		$result = $this->Form->select('category', ['1', '2'], [
+			'multiple' => 'checkbox',
+			'name' => 'fish',
+		]);
+		$expected = [
+			'input' => ['type' => 'hidden', 'name' => 'fish', 'value' => ''],
+			['div' => ['class' => 'checkbox']],
+				['input' => ['type' => 'checkbox', 'name' => 'fish[]', 'value' => '0', 'id' => 'fish-0']],
+				['label' => ['for' => 'fish-0']],
+					'1',
+				'/label',
+			'/div',
+			['div' => ['class' => 'checkbox']],
+				['input' => ['type' => 'checkbox', 'name' => 'fish[]', 'value' => '1', 'id' => 'fish-1']],
+				['label' => ['for' => 'fish-1']],
+					'2',
+				'/label',
+			'/div'
+		];
+		$this->assertHtml($expected, $result);
 	}
 
 /**
