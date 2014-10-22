@@ -977,4 +977,15 @@ class CakeRouteTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Test for var_export on CakeRoute
+ *
+ * @return void
+ */
+	public function testSetState() {
+		$route = new CakeRoute('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+		$retrievedRoute = eval('return ' . var_export($route, true) . ';');
+		$this->assertEquals($route, $retrievedRoute);
+	}
+
 }
