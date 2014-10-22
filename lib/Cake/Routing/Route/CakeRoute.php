@@ -546,15 +546,15 @@ class CakeRoute {
 		return $out;
 	}
 
-	/**
-	 * Set state magic method to support var_export
-	 *
-	 * This method helps for applications that want to implement
-	 * router caching.
-	 *
-	 * @param array $fields
-	 * @return CakeRoute
-	 */
+/**
+ * Set state magic method to support var_export
+ *
+ * This method helps for applications that want to implement
+ * router caching.
+ *
+ * @param array $fields Key/Value of object attributes
+ * @return CakeRoute A new instance of the route
+ */
 	public static function __set_state($fields) {
 		$class = function_exists('get_called_class') ? get_called_class() : __CLASS__;
 		$obj = new $class('');

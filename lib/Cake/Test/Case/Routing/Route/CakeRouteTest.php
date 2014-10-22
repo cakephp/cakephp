@@ -984,7 +984,9 @@ class CakeRouteTest extends CakeTestCase {
  */
 	public function testSetState() {
 		$route = new CakeRoute('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+		// @codingStandardsIgnoreStart
 		$retrievedRoute = eval('return ' . var_export($route, true) . ';');
+		// @codingStandardsIgnoreEnd
 		$this->assertEquals($route, $retrievedRoute);
 	}
 
