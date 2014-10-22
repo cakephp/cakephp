@@ -526,8 +526,8 @@ abstract class Association {
 	}
 
 /**
- * Proxies the finding operation to the target table's find method
- * and modifies the query accordingly based of this association
+ * Proxies the finding operation to the target tables find method
+ * and modifies the query accordingly based off this association
  * configuration
  *
  * @param string|array $type the type of query to perform, if an array is passed,
