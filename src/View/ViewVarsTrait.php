@@ -36,6 +36,7 @@ trait ViewVarsTrait {
  *
  * @param string $viewClass View class name or null to use $viewClass
  * @return \Cake\View\View
+ * @throws \RuntimeException If view class was not found.
  */
 	public function getView($viewClass = null) {
 		if ($viewClass === null && $this->View) {
@@ -57,6 +58,9 @@ trait ViewVarsTrait {
 
 		$this->viewClass = $viewClass;
 		$className = App::className($this->viewClass, 'View', 'View');
+		if (!$className) {
+			throw new \RuntimeException(sprintf('View class "%s" was not found.', $viewClass));
+		}
 
 		if ($this->View && $this->View instanceof $className) {
 			return $this->View;
@@ -70,18 +74,22 @@ trait ViewVarsTrait {
  *
  * @param string $viewClass Optional namespaced class name of the View class to instantiate.
  * @return \Cake\View\View
+ * @throws \RuntimeException If view class was not found.
  */
 	public function createView($viewClass = null) {
 		if ($viewClass === null) {
 			$viewClass = $this->viewClass;
 		}
 		if ($viewClass === 'View') {
-			$viewClass = App::className($viewClass, 'View');
+			$className = App::className($viewClass, 'View');
 		} else {
-			$viewClass = App::className($viewClass, 'View', 'View');
+			$className = App::className($viewClass, 'View', 'View');
+		}
+		if (!$className) {
+			throw new \RuntimeException(sprintf('View class "%s" was not found.', $viewClass));
 		}
 		$viewOptions = array_intersect_key(get_object_vars($this), array_flip($this->_validViewOptions));
-		return new $viewClass($this->request, $this->response, $this->eventManager(), $viewOptions);
+		return new $className($this->request, $this->response, $this->eventManager(), $viewOptions);
 	}
 
 /**
