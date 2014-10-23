@@ -139,8 +139,8 @@ class ViewVarsTraitTest extends TestCase {
 /**
  * test getView() throws exception if view class cannot be found
  *
- * @expectedException RuntimeException
- * @expectedExceptionMessage View class "Foo" was not found.
+ * @expectedException Cake\View\Exception\MissingViewException
+ * @expectedExceptionMessage View class "Foo" is missing.
  * @return void
  */
 	public function testGetViewException() {
@@ -150,8 +150,8 @@ class ViewVarsTraitTest extends TestCase {
 /**
  * test createView() throws exception if view class cannot be found
  *
- * @expectedException RuntimeException
- * @expectedExceptionMessage View class "Foo" was not found.
+ * @expectedException Cake\View\Exception\MissingViewException
+ * @expectedExceptionMessage View class "Foo" is missing.
  * @return void
  */
 	public function testCreateViewException() {
