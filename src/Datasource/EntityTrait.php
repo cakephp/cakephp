@@ -777,7 +777,7 @@ trait EntityTrait {
 	}
 
 /**
- * Returns the alias of the repository from wich this entity came from.
+ * Returns the alias of the repository from which this entity came from.
  *
  * If called with no arguments, it returns the alias of the repository
  * this entity came from if it is known.
