@@ -65,7 +65,7 @@ class IntegerType extends \Cake\Database\Type {
 	}
 
 /**
- * Marshalls request data into PHP floats.
+ * Marshalls request data into PHP integers.
  *
  * @param mixed $value The value to convert.
  * @return mixed Converted value.
@@ -73,6 +73,9 @@ class IntegerType extends \Cake\Database\Type {
 	public function marshal($value) {
 		if ($value === null || $value === '') {
 			return null;
+		}
+		if (!is_numeric($value) OR strstr($value, '.')) {
+			return $value;
 		}
 		return (int)$value;
 	}
