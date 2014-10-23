@@ -650,7 +650,7 @@ class ModelTask extends BakeTask {
 		// Work around composer caching that classes/files do not exist.
 		// Check for the file as it might not exist in tests.
 		if (file_exists($filename)) {
-			require_once($filename);
+			require_once ($filename);
 		}
 		TableRegistry::clear();
 
