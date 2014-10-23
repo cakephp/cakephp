@@ -25,7 +25,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
-use Cake\View\Exception\MissingViewException;
+use Cake\View\Exception\MissingTemplateException;
 use Exception;
 
 /**
@@ -270,7 +270,7 @@ class ExceptionRenderer {
 			$event = new Event('Controller.shutdown', $this->controller);
 			$this->controller->afterFilter($event);
 			return $this->controller->response;
-		} catch (MissingViewException $e) {
+		} catch (MissingTemplateException $e) {
 			$attributes = $e->getAttributes();
 			if (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false) {
 				return $this->_outputMessageSafe('error500');
