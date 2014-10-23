@@ -16,11 +16,11 @@ namespace Cake\View\Exception;
 use Cake\Core\Exception\Exception;
 
 /**
- * Used when a view file cannot be found.
+ * Used when a template file cannot be found.
  *
  */
-class MissingViewException extends Exception {
+class MissingTemplateException extends Exception {
 
-	protected $_messageTemplate = 'View file "%s" is missing.';
+	protected $_messageTemplate = 'Template file "%s" is missing.';
 
 }
