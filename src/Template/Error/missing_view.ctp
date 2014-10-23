@@ -9,36 +9,48 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         0.10.0
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Utility\Inflector;
+use Cake\Core\Plugin;
+use Cake\Core\Configure;
+
+$pluginPath = Configure::read('App.paths.plugins.0');
+
+$pluginDot = empty($plugin) ? null : $plugin . '.';
+if (empty($plugin)) {
+	$filePath = APP_DIR . DS;
+}
+if (!empty($plugin) && Plugin::loaded($plugin)) {
+	$filePath = Plugin::classPath($plugin);
+}
+if (!empty($plugin) && !Plugin::loaded($plugin)) {
+	$filePath = $pluginPath . h($plugin) . DS . 'src' . DS;
+}
 ?>
 <h2>Missing View</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)); ?>
+	<?= sprintf('<em>%s</em> could not be found.', h($pluginDot . $class)); ?>
+	<?php
+		if (!empty($plugin) && !Plugin::loaded($plugin)):
+			echo sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded.', h($plugin), $pluginPath);
+		endif;
+	?>
 </p>
-
-<p>
-	<?= sprintf('Confirm you have created the file: "%s"', h($file)) ?>
-	in one of the following paths:
+<p class="error">
+	<strong>Error: </strong>
+	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'View' . DS . h($class) . '.php'); ?>
 </p>
-<ul>
-<?php
-	$paths = $this->_paths($this->plugin);
-	foreach ($paths as $path):
-		if (strpos($path, CORE_PATH) !== false) {
-			continue;
-		}
-		echo sprintf('<li>%s%s</li>', h($path), h($file));
-	endforeach;
-?>
-</ul>
+<pre>
+&lt;?php
+class <?= h($class); ?> extends View {
 
+}
+</pre>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_view.ctp') ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_view.ctp'); ?>
 </p>
 
 <?= $this->element('exception_stack_trace'); ?>

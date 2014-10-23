@@ -803,7 +803,7 @@ class View {
  *
  * @param string $name Controller action to find template filename for
  * @return string Template filename
- * @throws \Cake\View\Exception\MissingViewException when a view file could not be found.
+ * @throws \Cake\View\Exception\MissingTemplateException when a view file could not be found.
  */
 	protected function _getViewFileName($name = null) {
 		$subDir = null;
@@ -838,7 +838,7 @@ class View {
 				return $this->_checkFilePath($path . $name . $this->_ext, $path);
 			}
 		}
-		throw new Exception\MissingViewException(array('file' => $name . $this->_ext));
+		throw new Exception\MissingTemplateException(array('file' => $name . $this->_ext));
 	}
 
 /**

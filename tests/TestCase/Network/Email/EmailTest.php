@@ -22,7 +22,7 @@ use Cake\Log\Log;
 use Cake\Network\Email\DebugTransport;
 use Cake\Network\Email\Email;
 use Cake\TestSuite\TestCase;
-use Cake\View\Exception\MissingViewException;
+use Cake\View\Exception\MissingTemplateException;
 
 /**
  * Help to test Email
@@ -1644,7 +1644,7 @@ class EmailTest extends TestCase {
 		$this->assertContains('Here is your value: 12345', $result['message']);
 		$this->assertContains('This email was sent using the TestPlugin.', $result['message']);
 
-		$this->setExpectedException('Cake\View\Exception\MissingViewException');
+		$this->setExpectedException('Cake\View\Exception\MissingTemplateException');
 		$this->CakeEmail->template('test_plugin_tpl', 'plug_default')->send();
 	}
 

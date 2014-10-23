@@ -136,4 +136,26 @@ class ViewVarsTraitTest extends TestCase {
 		$this->assertTrue(empty($result));
 	}
 
+/**
+ * test getView() throws exception if view class cannot be found
+ *
+ * @expectedException Cake\View\Exception\MissingViewException
+ * @expectedExceptionMessage View class "Foo" is missing.
+ * @return void
+ */
+	public function testGetViewException() {
+		$this->subject->getView('Foo');
+	}
+
+/**
+ * test createView() throws exception if view class cannot be found
+ *
+ * @expectedException Cake\View\Exception\MissingViewException
+ * @expectedExceptionMessage View class "Foo" is missing.
+ * @return void
+ */
+	public function testCreateViewException() {
+		$this->subject->getView('Foo');
+	}
+
 }

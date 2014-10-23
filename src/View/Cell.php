@@ -21,7 +21,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingCellViewException;
-use Cake\View\Exception\MissingViewException;
+use Cake\View\Exception\MissingTemplateException;
 use Cake\View\ViewVarsTrait;
 
 /**
@@ -143,7 +143,7 @@ abstract class Cell {
  * @param string $template Custom template name to render. If not provided (null), the last
  * value will be used. This value is automatically set by `CellTrait::cell()`.
  * @return void
- * @throws \Cake\View\Exception\MissingCellViewException When a MissingViewException is raised during rendering.
+ * @throws \Cake\View\Exception\MissingCellViewException When a MissingTemplateException is raised during rendering.
  */
 	public function render($template = null) {
 		if ($template !== null && strpos($template, '/') === false) {
@@ -164,7 +164,7 @@ abstract class Cell {
 
 		try {
 			return $this->View->render($template);
-		} catch (MissingViewException $e) {
+		} catch (MissingTemplateException $e) {
 			throw new MissingCellViewException(['file' => $template, 'name' => $name]);
 		}
 	}

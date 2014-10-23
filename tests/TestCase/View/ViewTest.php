@@ -667,10 +667,10 @@ class ViewTest extends TestCase {
 /**
  * Test for missing views
  *
- * @expectedException \Cake\View\Exception\MissingViewException
+ * @expectedException \Cake\View\Exception\MissingTemplateException
  * @return void
  */
-	public function testMissingView() {
+	public function testMissingTemplate() {
 		$viewOptions = ['plugin' => null,
 			'name' => 'Pages',
 			'viewPath' => 'Pages'
