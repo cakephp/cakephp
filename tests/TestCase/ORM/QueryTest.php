@@ -2174,4 +2174,29 @@ class QueryTest extends TestCase {
 		$this->assertEquals(3, $articles[0]->author->id);
 	}
 
+/**
+ * Tests that it is possible to override the contain strategy using the
+ * containments array. In this case, no inner join will be made and for that
+ * reason, the parent association will not be filtered as the strategy changed
+ * from join to select.
+ *
+ * @return void
+ */
+	public function testContainWithStrategyOverride() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors', [
+			'joinType' => 'INNER'
+		]);
+		$articles = $table->find()
+			->contain([
+				'Authors' => [
+					'strategy' => 'select',
+					'conditions' => ['Authors.id' => 3]
+				]
+			])
+			->toArray();
+		$this->assertCount(3, $articles);
+		$this->assertEquals(3, $articles[1]->author->id);
+	}
+
 }
