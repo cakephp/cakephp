@@ -230,14 +230,18 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * By default this function will append any passed argument to the list of fields
  * to be selected, unless the second argument is set to true.
  *
- * ##Examples:
+ * ## Examples:
  *
  * {{{
- *	$query->select(['id', 'title']); // Produces SELECT id, title
- *	$query->select(['author' => 'author_id']); // Appends author: SELECT id, title, author_id as author
- *	$query->select('id', true); // Resets the list: SELECT id
- *	$query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
+ * $query->select(['id', 'title']); // Produces SELECT id, title
+ * $query->select(['author' => 'author_id']); // Appends author: SELECT id, title, author_id as author
+ * $query->select('id', true); // Resets the list: SELECT id
+ * $query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
  * }}}
+ *
+ * By default no fields are selected, if you have an instance of `Cake\ORM\Query` and try to append
+ * fields you should also call `Cake\ORM\Query::autoFields()` to select the default fields
+ * from the table.
  *
  * @param array|ExpressionInterface|string $fields fields to be added to the list
  * @param bool $overwrite whether to reset fields with passed list or not
