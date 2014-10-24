@@ -268,6 +268,19 @@ class ConnectionTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to pass PDO constants to the underlying statement
+ * object for using alternate fetch types
+ *
+ * @return void
+ */
+	public function testStatementFetchObject() {
+		$result = $this->connection->execute('SELECT title, body  FROM things');
+		$row = $result->fetch(\PDO::FETCH_OBJ);
+		$this->assertEquals('a title', $row->title);
+		$this->assertEquals('a body', $row->body);
+	}
+
+/**
  * Tests rows can be updated without specifying any conditions nor types
  *
  * @return void
