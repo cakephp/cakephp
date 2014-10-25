@@ -20,7 +20,7 @@ use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerTrait;
 use Cake\ORM\AssociationCollection;
@@ -105,7 +105,7 @@ use RuntimeException;
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  */
-class Table implements RepositoryInterface, EventListener {
+class Table implements RepositoryInterface, EventListenerInterface {
 
 	use EventManagerTrait;
 
@@ -1242,7 +1242,6 @@ class Table implements RepositoryInterface, EventListener {
 		}
 
 		$data = $entity->extract($this->schema()->columns(), true);
-		$keys = array_keys($data);
 		$isNew = $entity->isNew();
 
 		if ($isNew) {

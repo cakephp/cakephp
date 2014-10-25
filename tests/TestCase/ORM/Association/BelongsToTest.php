@@ -22,12 +22,13 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
 
 /**
  * Tests BelongsTo class
  *
  */
-class BelongsToTest extends \Cake\TestSuite\TestCase {
+class BelongsToTest extends TestCase {
 
 /**
  * Fixtures to use.

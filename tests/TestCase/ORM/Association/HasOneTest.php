@@ -22,12 +22,13 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
 
 /**
  * Tests HasOne class
  *
  */
-class HasOneTest extends \Cake\TestSuite\TestCase {
+class HasOneTest extends TestCase {
 
 /**
  * Set up

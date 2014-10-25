@@ -76,9 +76,9 @@ class IcuFormatter implements FormatterInterface {
  * @param string|array $message The message to be translated
  * @param array $vars The list of values to interpolate in the message
  * @return string The formatted message
- * @throws Aura\Intl\Exception\CannotInstantiateFormatter if any error occurred
+ * @throws \Aura\Intl\Exception\CannotInstantiateFormatter if any error occurred
  * while parsing the message
- * @throws Aura\Intl\Exception\CannotFormat If any error related to the passed
+ * @throws \Aura\Intl\Exception\CannotFormat If any error related to the passed
  * variables is found
  */
 	protected function _formatMessage($locale, $message, $vars) {

@@ -88,7 +88,7 @@ class Comparison extends QueryExpression {
 /**
  * Returns the field name
  *
- * @return string|Cake\Database\ExpressionInterface
+ * @return string|\Cake\Database\ExpressionInterface
  */
 	public function getField() {
 		return $this->_field;

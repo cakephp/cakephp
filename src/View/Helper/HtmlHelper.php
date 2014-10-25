@@ -196,12 +196,16 @@ class HtmlHelper extends Helper {
  *
  * `$this->Html->meta('description', 'A great page', array('block' => 'metaTags'));`
  *
+ * Create a custom meta tag:
+ *
+ * `$this->Html->meta(['property' => 'og:site_name', 'content' => 'CakePHP']);`
+ *
  * ### Options
  *
  * - `block` - Set to true to append output to view block "meta" or provide
  *   custom block name.
  *
- * @param string $type The title of the external resource
+ * @param string|array $type The title of the external resource
  * @param string|array $content The address of the external resource or string for content attribute
  * @param array $options Other attributes for the generated tag. If the type attribute is html,
  *    rss, atom, or icon, the mime-type is returned.
@@ -211,33 +215,35 @@ class HtmlHelper extends Helper {
 	public function meta($type, $content = null, array $options = array()) {
 		$options += array('block' => null);
 
-		$types = array(
-			'rss' => array('type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $content),
-			'atom' => array('type' => 'application/atom+xml', 'title' => $type, 'link' => $content),
-			'icon' => array('type' => 'image/x-icon', 'rel' => 'icon', 'link' => $content),
-			'keywords' => array('name' => 'keywords', 'content' => $content),
-			'description' => array('name' => 'description', 'content' => $content),
-			'robots' => array('name' => 'robots', 'content' => $content),
-			'viewport' => array('name' => 'viewport', 'content' => $content),
-		);
+		if (!is_array($type)) {
+			$types = array(
+				'rss' => array('type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $content),
+				'atom' => array('type' => 'application/atom+xml', 'title' => $type, 'link' => $content),
+				'icon' => array('type' => 'image/x-icon', 'rel' => 'icon', 'link' => $content),
+				'keywords' => array('name' => 'keywords', 'content' => $content),
+				'description' => array('name' => 'description', 'content' => $content),
+				'robots' => array('name' => 'robots', 'content' => $content),
+				'viewport' => array('name' => 'viewport', 'content' => $content),
+			);
 
-		if ($type === 'icon' && $content === null) {
-			$types['icon']['link'] = 'favicon.ico';
-		}
-
-		if (isset($types[$type])) {
-			$type = $types[$type];
-		} elseif (!isset($options['type']) && $content !== null) {
-			if (is_array($content) && isset($content['ext'])) {
-				$type = $types[$content['ext']];
-			} else {
-				$type = $types['rss'];
+			if ($type === 'icon' && $content === null) {
+				$types['icon']['link'] = 'favicon.ico';
 			}
-		} elseif (isset($options['type']) && isset($types[$options['type']])) {
-			$type = $types[$options['type']];
-			unset($options['type']);
-		} else {
-			$type = array();
+
+			if (isset($types[$type])) {
+				$type = $types[$type];
+			} elseif (!isset($options['type']) && $content !== null) {
+				if (is_array($content) && isset($content['_ext'])) {
+					$type = $types[$content['_ext']];
+				} else {
+					$type = ['name' => $type, 'content' => $content];
+				}
+			} elseif (isset($options['type']) && isset($types[$options['type']])) {
+				$type = $types[$options['type']];
+				unset($options['type']);
+			} else {
+				$type = [];
+			}
 		}
 
 		$options += $type;

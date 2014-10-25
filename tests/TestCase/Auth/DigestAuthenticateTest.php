@@ -176,6 +176,42 @@ DIGEST;
 	}
 
 /**
+ * test authenticate success
+ *
+ * @return void
+ */
+	public function testAuthenticateSuccessSimulatedRequestMethod() {
+		$request = new Request([
+			'url' => 'posts/index',
+			'post' => ['_method' => 'PUT'],
+			'environment' => ['REQUEST_METHOD' => 'GET']
+		]);
+		$request->addParams(array('pass' => array()));
+
+		$digest = <<<DIGEST
+Digest username="mariano",
+realm="localhost",
+nonce="123",
+uri="/dir/index.html",
+qop=auth,
+nc=1,
+cnonce="123",
+response="06b257a54befa2ddfb9bfa134224aa29",
+opaque="123abc"
+DIGEST;
+		$request->env('PHP_AUTH_DIGEST', $digest);
+
+		$result = $this->auth->authenticate($request, $this->response);
+		$expected = array(
+			'id' => 1,
+			'username' => 'mariano',
+			'created' => new Time('2007-03-17 01:16:23'),
+			'updated' => new Time('2007-03-17 01:18:31')
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test scope failure.
  *
  * @expectedException \Cake\Network\Exception\UnauthorizedException

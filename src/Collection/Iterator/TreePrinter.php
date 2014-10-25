@@ -50,7 +50,7 @@ class TreePrinter extends RecursiveIteratorIterator {
 /**
  * Constructor
  *
- * @param RecursiveIterator $items The iterator to flatten.
+ * @param \RecursiveIterator $items The iterator to flatten.
  * @param string|callable $valuePath The property to extract or a callable to return
  * the display value.
  * @param string|callable $keyPath The property to use as iteration key or a

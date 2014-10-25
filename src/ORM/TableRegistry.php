@@ -211,7 +211,7 @@ class TableRegistry {
  *
  * @param string $alias The alias to set.
  * @param \Cake\ORM\Table $object The table to set.
- * @return void
+ * @return \Cake\ORM\Table
  */
 	public static function set($alias, Table $object) {
 		return static::$_instances[$alias] = $object;

@@ -79,8 +79,8 @@ class FormHelper extends Helper {
 		'templates' => [
 			'button' => '<button{{attrs}}>{{text}}</button>',
 			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
-			'checkboxFormGroup' => '{{input}}{{label}}',
-			'checkboxWrapper' => '<div class="checkbox">{{input}}{{label}}</div>',
+			'checkboxFormGroup' => '{{label}}',
+			'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
 			'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}',
 			'error' => '<div class="error-message">{{content}}</div>',
 			'errorList' => '<ul>{{content}}</ul>',
@@ -96,13 +96,14 @@ class FormHelper extends Helper {
 			'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
 			'inputContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
 			'label' => '<label{{attrs}}>{{text}}</label>',
+			'nestingLabel' => '<label{{attrs}}>{{input}}{{text}}</label>',
 			'legend' => '<legend>{{text}}</legend>',
 			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
 			'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
 			'selectMultiple' => '<select name="{{name}}[]" multiple="multiple"{{attrs}}>{{content}}</select>',
 			'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
-			'radioWrapper' => '{{input}}{{label}}',
+			'radioWrapper' => '{{label}}',
 			'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
 			'submitContainer' => '<div class="submit">{{content}}</div>',
 		]
@@ -701,7 +702,7 @@ class FormHelper extends Helper {
  * {{{
  * echo $this->Form->label('published', 'Publish', array(
  *   'for' => 'published',
- *   'input' => $this->text('published')
+ *   'input' => $this->text('published'),
  * ));
  * <label for="post-publish">Publish <input type="text" name="published"></label>
  * }}}
@@ -742,6 +743,9 @@ class FormHelper extends Helper {
 			'for' => $labelFor,
 			'text' => $text,
 		];
+		if (isset($options['input'])) {
+			return $this->widget('nestingLabel', $attrs);
+		}
 		return $this->widget('label', $attrs);
 	}
 
@@ -879,6 +883,9 @@ class FormHelper extends Helper {
  * - `error` - Control the error message that is produced. Set to `false` to disable any kind of error reporting (field
  *    error and error messages).
  * - `empty` - String or boolean to enable empty select box options.
+ * - `nestedInput` - Used with checkbox and radio inputs. Set to false to render inputs outside of label
+ *   elements. Can be set to true on any input to force the input inside the label. If you
+ *   enable this option for radio buttons you will also need to modify the default `radioWrapper` template.
  *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param array $options Each type of input takes different options.
@@ -892,7 +899,7 @@ class FormHelper extends Helper {
 			'error' => null,
 			'required' => null,
 			'options' => null,
-			'templates' => []
+			'templates' => [],
 		];
 		$options = $this->_parseOptions($fieldName, $options);
 		$options += ['id' => $this->_domId($fieldName)];
@@ -916,9 +923,12 @@ class FormHelper extends Helper {
 		}
 
 		$label = $options['label'];
-		if ($options['type'] !== 'radio') {
-			unset($options['label']);
+		unset($options['label']);
+		$nestedInput = false;
+		if (in_array($options['type'], ['radio', 'checkbox'], true)) {
+			$nestedInput = true;
 		}
+		$nestedInput = isset($options['nestedInput']) ? $options['nestedInput'] : $nestedInput;
 
 		$input = $this->_getInput($fieldName, $options);
 		if ($options['type'] === 'hidden') {
@@ -928,7 +938,7 @@ class FormHelper extends Helper {
 			return $input;
 		}
 
-		$label = $this->_getLabel($fieldName, compact('input', 'label', 'error') + $options);
+		$label = $this->_getLabel($fieldName, compact('input', 'label', 'error', 'nestedInput') + $options);
 		$result = $this->_groupTemplate(compact('input', 'label', 'error', 'options'));
 		$result = $this->_inputContainerTemplate([
 			'content' => $result,
@@ -1169,6 +1179,9 @@ class FormHelper extends Helper {
 			$label = $options['label'];
 		}
 
+		if ($label === false && isset($options['input'])) {
+			return $options['input'];
+		}
 		if ($label === false) {
 			return false;
 		}
@@ -1213,11 +1226,12 @@ class FormHelper extends Helper {
 		} else {
 			$labelText = $label;
 		}
+		$options += ['id' => null, 'input' => null, 'nestedInput' => false];
 
-		$labelAttributes = [
-			'for' => isset($options['id']) ? $options['id'] : null,
-			'input' => isset($options['input']) ? $options['input'] : null
-		] + $labelAttributes;
+		$labelAttributes['for'] = $options['id'];
+		if ($options['nestedInput']) {
+			$labelAttributes['input'] = $options['input'];
+		}
 		return $this->label($fieldName, $labelText, $labelAttributes);
 	}
 

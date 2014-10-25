@@ -8,17 +8,13 @@
 *.php text
 *.default text
 *.ctp text
-*.sql text
 *.md text
 *.po text
 *.js text
 *.css text
 *.ini text
-*.properties text
 *.txt text
 *.xml text
-*.yml text
-.htaccess text
 
 # Declare files that will always have CRLF line endings on checkout.
 *.bat eol=crlf

@@ -15,7 +15,6 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentRegistry;
 
 /**
  * The CakePHP SessionComponent provides a way to persist client data between
@@ -33,7 +32,7 @@ class SessionComponent extends Component {
 /**
  * The Session object instance
  *
- * @var Cake\Network\Session
+ * @var \Cake\Network\Session
  */
 	protected $_session;
 

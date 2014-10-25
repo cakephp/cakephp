@@ -1534,11 +1534,11 @@ class HtmlHelperTest extends TestCase {
 		$this->assertHtml($expected, $result);
 
 		$result = $this->Html->meta('non-existing');
-		$expected = array('<meta');
+		$expected = ['<meta'];
 		$this->assertHtml($expected, $result);
 
-		$result = $this->Html->meta('non-existing', '/posts.xpp');
-		$expected = array('link' => array('href' => 'preg:/.*\/posts\.xpp/', 'type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => 'non-existing'));
+		$result = $this->Html->meta('non-existing', 'some content');
+		$expected = ['meta' => ['name' => 'non-existing', 'content' => 'some content']];
 		$this->assertHtml($expected, $result);
 
 		$result = $this->Html->meta('non-existing', '/posts.xpp', array('type' => 'atom'));
@@ -1564,6 +1564,12 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->meta('viewport', 'width=device-width');
 		$expected = [
 			'meta' => ['name' => 'viewport', 'content' => 'width=device-width']
+		];
+		$this->assertHtml($expected, $result);
+
+		$result = $this->Html->meta(['property' => 'og:site_name', 'content' => 'CakePHP']);
+		$expected = [
+			'meta' => ['property' => 'og:site_name', 'content' => 'CakePHP']
 		];
 		$this->assertHtml($expected, $result);
 	}

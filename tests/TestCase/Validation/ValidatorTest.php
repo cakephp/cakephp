@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Validation;
 
+use Cake\TestSuite\TestCase;
 use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator;
 
@@ -21,7 +22,7 @@ use Cake\Validation\Validator;
  * Tests Validator class
  *
  */
-class ValidatorTest extends \Cake\TestSuite\TestCase {
+class ValidatorTest extends TestCase {
 
 /**
  * Testing you can dynamically add rules to a field
@@ -370,6 +371,9 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertEmpty($errors);
 
 		$errors = $validator->errors(['title' => 0]);
+		$this->assertEmpty($errors);
+
+		$errors = $validator->errors(['title' => 0.0]);
 		$this->assertEmpty($errors);
 
 		$errors = $validator->errors(['title' => '0']);

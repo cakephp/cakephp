@@ -375,7 +375,7 @@ class Response extends Message {
 		if (!empty($this->_xml)) {
 			return $this->_xml;
 		}
-		$restore = libxml_use_internal_errors();
+		libxml_use_internal_errors();
 		$data = simplexml_load_string($this->_body);
 		if ($data) {
 			$this->_xml = $data;

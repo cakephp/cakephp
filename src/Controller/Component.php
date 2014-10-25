@@ -15,7 +15,7 @@
 namespace Cake\Controller;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 use Cake\Log\LogTrait;
 
 /**
@@ -56,7 +56,7 @@ use Cake\Log\LogTrait;
  * @link http://book.cakephp.org/3.0/en/controllers/components.html
  * @see Controller::$components
  */
-class Component implements EventListener {
+class Component implements EventListenerInterface {
 
 	use InstanceConfigTrait;
 	use LogTrait;

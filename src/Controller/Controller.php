@@ -17,7 +17,7 @@ namespace Cake\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Controller\Exception\PrivateActionException;
 use Cake\Event\Event;
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerTrait;
 use Cake\Log\LogTrait;
 use Cake\Model\ModelAwareTrait;
@@ -82,7 +82,7 @@ use ReflectionMethod;
  * @property      \Cake\Controller\Component\SessionComponent $Session
  * @link          http://book.cakephp.org/3.0/en/controllers.html
  */
-class Controller implements EventListener {
+class Controller implements EventListenerInterface {
 
 	use EventManagerTrait;
 	use LogTrait;

@@ -23,7 +23,7 @@ $fields = collection($fields)
 	<h3><?= "<?= __('Actions') ?>" ?></h3>
 	<ul class="side-nav">
 <?php if (strpos($action, 'add') === false): ?>
-		<li><?= "<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', \${$singularVar}->{$primaryKey[0]}], ['confirm' => __('Are you sure you want to delete # %s?', \${$singularVar}->{$primaryKey[0]})]) ?>" ?></li>
+		<li><?= "<?= \$this->Form->postLink(__('Delete'), ['action' => 'delete', \${$singularVar}->{$primaryKey[0]}], ['confirm' => __('Are you sure you want to delete # {0}?', \${$singularVar}->{$primaryKey[0]})]) ?>" ?></li>
 <?php endif; ?>
 		<li><?= "<?= \$this->Html->link(__('List " . $pluralHumanName . "'), ['action' => 'index']) ?>" ?></li>
 <?php

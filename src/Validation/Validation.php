@@ -964,11 +964,11 @@ class Validation {
  *
  * ### Options
  *
- * - `types` - A list of valid mime types. If empty all types
+ * - `types` - An array of valid mime types. If empty all types
  *   will be accepted. The `type` will not be looked at, instead
  *   the file type will be checked with ext/finfo.
- * - `minSize` - The minimum file size. Defaults to not checking.
- * - `maxSize` - The maximum file size. Defaults to not checking.
+ * - `minSize` - The minimum file size in bytes. Defaults to not checking.
+ * - `maxSize` - The maximum file size in bytes. Defaults to not checking.
  * - `optional` - Whether or not this file is optional. Defaults to false.
  *   If true a missing file will pass the validator regardless of other constraints.
  *

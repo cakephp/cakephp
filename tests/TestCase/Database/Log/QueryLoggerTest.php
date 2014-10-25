@@ -17,12 +17,13 @@ namespace Cake\Test\TestCase\Database\Log;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\QueryLogger;
 use Cake\Log\Log;
+use Cake\TestSuite\TestCase;
 
 /**
  * Tests QueryLogger class
  *
  */
-class QueryLoggerTest extends \Cake\TestSuite\TestCase {
+class QueryLoggerTest extends TestCase {
 
 /**
  * Set up

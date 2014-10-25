@@ -15,7 +15,7 @@
 namespace Cake\Test\TestCase\Event;
 
 use Cake\Event\Event;
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
 
@@ -59,7 +59,7 @@ class EventTestListener {
 /**
  * Mock used for testing the subscriber objects
  */
-class CustomTestEventListener extends EventTestListener implements EventListener {
+class CustomTestEventListenerInterface extends EventTestListener implements EventListenerInterface {
 
 	public function implementedEvents() {
 		return array(
@@ -298,7 +298,7 @@ class EventManagerTest extends TestCase {
  */
 	public function testAttachSubscriber() {
 		$manager = new EventManager();
-		$listener = $this->getMock(__NAMESPACE__ . '\CustomTestEventListener', array('secondListenerFunction'));
+		$listener = $this->getMock(__NAMESPACE__ . '\CustomTestEventListenerInterface', array('secondListenerFunction'));
 		$manager->attach($listener);
 
 		$event = new Event('fake.event');
@@ -321,7 +321,7 @@ class EventManagerTest extends TestCase {
  */
 	public function testAttachSubscriberMultiple() {
 		$manager = new EventManager();
-		$listener = $this->getMock(__NAMESPACE__ . '\CustomTestEventListener', array('listenerFunction', 'thirdListenerFunction'));
+		$listener = $this->getMock(__NAMESPACE__ . '\CustomTestEventListenerInterface', array('listenerFunction', 'thirdListenerFunction'));
 		$manager->attach($listener);
 		$event = new Event('multiple.handlers');
 		$listener->expects($this->once())
@@ -340,7 +340,7 @@ class EventManagerTest extends TestCase {
  */
 	public function testDetachSubscriber() {
 		$manager = new EventManager();
-		$listener = $this->getMock(__NAMESPACE__ . '\CustomTestEventListener', array('secondListenerFunction'));
+		$listener = $this->getMock(__NAMESPACE__ . '\CustomTestEventListenerInterface', array('secondListenerFunction'));
 		$manager->attach($listener);
 		$expected = array(
 			array('callable' => array($listener, 'secondListenerFunction'))
@@ -419,7 +419,7 @@ class EventManagerTest extends TestCase {
 	public function testDispatchPrioritizedWithGlobal() {
 		$generalManager = $this->getMock('Cake\Event\EventManager');
 		$manager = new EventManager();
-		$listener = new CustomTestEventListener();
+		$listener = new CustomTestEventListenerInterface();
 		$event = new Event('fake.event');
 
 		EventManager::instance($generalManager);
@@ -450,7 +450,7 @@ class EventManagerTest extends TestCase {
 	public function testDispatchGlobalBeforeLocal() {
 		$generalManager = $this->getMock('Cake\Event\EventManager');
 		$manager = new EventManager();
-		$listener = new CustomTestEventListener();
+		$listener = new CustomTestEventListenerInterface();
 		$event = new Event('fake.event');
 
 		EventManager::instance($generalManager);
@@ -499,7 +499,7 @@ class EventManagerTest extends TestCase {
  * @return void
  */
 	public function testDispatchWithGlobalAndLocalEvents() {
-		$listener = new CustomTestEventListener();
+		$listener = new CustomTestEventListenerInterface();
 		EventManager::instance()->attach($listener);
 		$listener2 = new EventTestListener();
 		$manager = new EventManager();

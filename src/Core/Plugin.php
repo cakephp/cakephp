@@ -268,7 +268,6 @@ class Plugin {
 		if ($config['bootstrap'] === false) {
 			return false;
 		}
-		$path = static::path($plugin);
 		if ($config['bootstrap'] === true) {
 			return static::_includeFile(
 				$config['configPath'] . 'bootstrap.php',

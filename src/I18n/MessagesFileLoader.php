@@ -98,7 +98,7 @@ class MessagesFileLoader {
  * Loads the translation file and parses it. Returns an instance of a translations
  * package containing the messages loaded from the file.
  *
- * @return Aura\Intl\Package
+ * @return \Aura\Intl\Package
  * @throws \RuntimeException if no file parser class could be found for the specified
  * file extension.
  */

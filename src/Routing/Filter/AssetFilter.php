@@ -14,7 +14,6 @@
  */
 namespace Cake\Routing\Filter;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Network\Request;
@@ -42,7 +41,7 @@ class AssetFilter extends DispatcherFilter {
  *
  * @param \Cake\Event\Event $event containing the request and response object
  * @return \Cake\Network\Response if the client is requesting a recognized asset, null otherwise
- * @throws NotFoundException When asset not found
+ * @throws \Cake\Network\Exception\NotFoundException When asset not found
  */
 	public function beforeDispatch(Event $event) {
 		$request = $event->data['request'];

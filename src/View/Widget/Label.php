@@ -33,6 +33,13 @@ class Label implements WidgetInterface {
 	protected $_templates;
 
 /**
+ * The template to use.
+ *
+ * @var string
+ */
+	protected $_labelTemplate = 'label';
+
+/**
  * Constructor.
  *
  * This class uses the following template:
@@ -68,7 +75,7 @@ class Label implements WidgetInterface {
 			'escape' => true,
 		];
 
-		return $this->_templates->format('label', [
+		return $this->_templates->format($this->_labelTemplate, [
 			'text' => $data['escape'] ? h($data['text']) : $data['text'],
 			'input' => $data['input'],
 			'attrs' => $this->_templates->formatAttributes($data, ['text', 'input']),

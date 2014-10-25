@@ -15,12 +15,13 @@
 namespace Cake\Test\TestCase\Database\Log;
 
 use Cake\Database\Log\LoggedQuery;
+use Cake\TestSuite\TestCase;
 
 /**
  * Tests LoggedQuery class
  *
  */
-class LoggedQueryTest extends \Cake\TestSuite\TestCase {
+class LoggedQueryTest extends TestCase {
 
 /**
  * Tests that LoggedQuery can be converted to string

@@ -106,7 +106,7 @@ trait SqliteDialectTrait {
  * joined with UNION.
  *
  * @param \Cake\Database\Query $query The query to translate
- * @return Query
+ * @return \Cake\Database\Query
  */
 	protected function _insertQueryTranslator($query) {
 		$v = $query->clause('values');

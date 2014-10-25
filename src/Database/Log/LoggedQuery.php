@@ -60,7 +60,7 @@ class LoggedQuery {
 /**
  * Returns the string representation of this logged query
  *
- * @return void
+ * @return string
  */
 	public function __toString() {
 		return $this->query;
