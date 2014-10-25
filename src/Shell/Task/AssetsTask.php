@@ -60,42 +60,51 @@ class AssetsTask extends Shell {
 
 			$link = Inflector::underscore($plugin);
 			$dir = WWW_ROOT;
-			if (file_exists($dir . $link)) {
-				$this->out($link . ' already exists');
-				$this->out();
-				continue;
-			}
 
 			if (strpos('/', $link) !== false) {
 				$parts = explode('/', $link);
 				$link = array_pop($parts);
 				$dir = WWW_ROOT . implode(DS, $parts) . DS;
 				if (!is_dir($dir)) {
-					$this->out('Creating directory: ' . $dir);
-					$this->out();
 					$old = umask(0);
-					mkdir($dir, 0755, true);
+					// @codingStandardsIgnoreStart
+					$result = @mkdir($dir, 0755, true);
+					// @codingStandardsIgnoreEnd
 					umask($old);
+
+					if ($result) {
+						$this->out('Created directory ' . $dir);
+					} else {
+						$this->err('Failed creating directory ' . $dir);
+						continue;
+					}
 				}
 			}
 
-			$this->out('Creating symlink: ' . $dir);
-			$this->out();
+			if (file_exists($dir . $link)) {
+				$this->out($link . ' already exists', 1, Shell::VERBOSE);
+				continue;
+			}
+
 			// @codingStandardsIgnoreStart
 			$result = @symlink($path, $dir . $link);
 			// @codingStandardsIgnoreEnd
 
-			if (!$result) {
-				$this->err('Symlink creation failed');
-				$this->out('Copying to directory:' . $dir);
-				$this->out();
-				$folder = new Folder($path);
-				$folder->copy(['to' => $dir . $link]);
+			if ($result) {
+				$this->out('Created symlink ' . $dir . $link);
+				continue;
+			}
+
+			$folder = new Folder($path);
+			if ($folder->copy(['to' => $dir . $link])) {
+				$this->out('Copied assets to directory ' . $dir);
+			} else {
+				$this->err('Error copying assets to directory ' . $dir);
 			}
 		}
 
 		$this->out();
-		$this->out('Done.');
+		$this->out('Done');
 	}
 
 }
