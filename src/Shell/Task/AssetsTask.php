@@ -65,19 +65,8 @@ class AssetsTask extends Shell {
 				$parts = explode('/', $link);
 				$link = array_pop($parts);
 				$dir = WWW_ROOT . implode(DS, $parts) . DS;
-				if (!is_dir($dir)) {
-					$old = umask(0);
-					// @codingStandardsIgnoreStart
-					$result = @mkdir($dir, 0755, true);
-					// @codingStandardsIgnoreEnd
-					umask($old);
-
-					if ($result) {
-						$this->out('Created directory ' . $dir);
-					} else {
-						$this->err('Failed creating directory ' . $dir);
-						continue;
-					}
+				if (!is_dir($dir) && !$this->_createDirectory($dir)) {
+					continue;
 				}
 			}
 
@@ -86,25 +75,75 @@ class AssetsTask extends Shell {
 				continue;
 			}
 
-			// @codingStandardsIgnoreStart
-			$result = @symlink($path, $dir . $link);
-			// @codingStandardsIgnoreEnd
-
-			if ($result) {
-				$this->out('Created symlink ' . $dir . $link);
+			if ($this->_createSymlink($path, $dir . $link)) {
 				continue;
 			}
 
-			$folder = new Folder($path);
-			if ($folder->copy(['to' => $dir . $link])) {
-				$this->out('Copied assets to directory ' . $dir);
-			} else {
-				$this->err('Error copying assets to directory ' . $dir);
-			}
+			$this->_copyDirectory($path, $dir . $link);
 		}
 
 		$this->out();
 		$this->out('Done');
+	}
+
+/**
+ * Create direcotry
+ *
+ * @param string $dir Directory name
+ * @return boolean
+ */
+	protected function _createDirectory($dir) {
+		$old = umask(0);
+		// @codingStandardsIgnoreStart
+		$result = @mkdir($dir, 0755, true);
+		// @codingStandardsIgnoreEnd
+		umask($old);
+
+		if ($result) {
+			$this->out('Created directory ' . $dir);
+			return true;
+		}
+
+		$this->err('Failed creating directory ' . $dir);
+		return false;
+	}
+
+/**
+ * Create symmlink
+ *
+ * @param string $target Target directory
+ * @param string $link Link name
+ * @return boolean
+ */
+	protected function _createSymlink($target, $link) {
+		// @codingStandardsIgnoreStart
+		$result = @symlink($target, $link);
+		// @codingStandardsIgnoreEnd
+
+		if ($result) {
+			$this->out('Created symlink ' . $link);
+			return true;
+		}
+
+		return false;
+	}
+
+/**
+ * Copy directory
+ *
+ * @param string $source Source directory
+ * @param string $destination Destination directory
+ * @return boolean
+ */
+	protected function _copyDirectory($source, $destination) {
+		$folder = new Folder($source);
+		if ($folder->copy(['to' => $destination])) {
+			$this->out('Copied assets to directory ' . $destination);
+			return true;
+		}
+
+		$this->err('Error copying assets to directory ' . $destination);
+		return false;
 	}
 
 }
