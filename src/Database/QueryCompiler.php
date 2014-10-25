@@ -34,7 +34,6 @@ class QueryCompiler {
  */
 	protected $_templates = [
 		'delete' => 'DELETE',
-		'update' => 'UPDATE %s',
 		'where' => ' WHERE %s',
 		'group' => ' GROUP BY %s ',
 		'having' => ' HAVING %s ',
@@ -256,6 +255,9 @@ class QueryCompiler {
 	protected function _buildFromPart($parts, $query, $generator) {
 		$select = ' FROM %s';
 		$normalized = [];
+
+		$parts = $query->connection()->fullTableName($parts);
+
 		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
@@ -280,6 +282,7 @@ class QueryCompiler {
 	protected function _buildJoinPart($parts, $query, $generator) {
 		$joins = '';
 		foreach ($parts as $join) {
+			$join['table'] = $query->connection()->fullTableName($join['table']);
 			$join['table'] = $this->_stringifyExpression($join['table'], $generator);
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
 			if (isset($join['conditions']) && count($join['conditions'])) {
@@ -289,6 +292,20 @@ class QueryCompiler {
 			}
 		}
 		return $joins;
+	}
+
+/**
+ * Helper function to generate SQL for UPDATE expressions.
+ *
+ * @param array $parts List of tables to update.
+ * @param \Cake\Database\Query $query The query that is being compiled
+ * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+ * @return string
+ */
+	protected function _buildUpdatePart($parts, $query, $generator) {
+		$parts = $query->connection()->fullTableName($parts);
+		$parts = $this->_stringifyExpressions($parts, $generator);
+		return sprintf('UPDATE %s', implode(', ', $parts));
 	}
 
 /**
@@ -341,6 +358,7 @@ class QueryCompiler {
  * @return string SQL fragment.
  */
 	protected function _buildInsertPart($parts, $query, $generator) {
+		$parts[0] = $query->connection()->fullTableName($parts[0]);
 		$table = $this->_stringifyExpression($parts[0], $generator);
 		$columns = $this->_stringifyExpressions($parts[1], $generator);
 		return sprintf('INSERT INTO %s (%s)', $table, implode(', ', $columns));

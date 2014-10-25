@@ -202,7 +202,22 @@ class Connection {
 	}
 
 /**
- * Wrap the table name in a TableNameExpression with the current config prefix
+ * Retrieves the connection prefix from the connection config
+ *
+ * @return string Connection prefix if any
+ */
+	protected function _getPrefix() {
+		$prefix = '';
+
+		if (isset($this->_config['prefix']) && $this->_config['prefix'] !== '') {
+			$prefix = $this->_config['prefix'];
+		}
+
+		return $prefix;
+	}
+
+/**
+ * Public method that will resolve the full table name of a table
  *
  * @param string|array|TableNameExpression $names The names of the tables
  * @return array|TableNameExpression Full tables names
@@ -210,26 +225,20 @@ class Connection {
  * @see \Cake\Database\Expression\TableNameExpression
  */
 	public function fullTableName($names) {
-		$prefix = '';
+		$prefix = $this->_getPrefix();
 
-		if (isset($this->_config['prefix']) && $this->_config['prefix'] !== '') {
-			$prefix = $this->_config['prefix'];
-		}
-
-		if (is_string($names)) {
-			$names = new TableNameExpression($names, $prefix);
-		} elseif ($names instanceof TableNameExpression) {
-			$names->setPrefix($prefix);
+		if (is_string($names) || $names instanceof TableNameExpression) {
+			$names = $this->_fullTableName($names);
 		} elseif (is_array($names) && !empty($names)) {
 			foreach ($names as $alias => $tableName) {
 				if (is_string($tableName)) {
-					$tableName = new TableNameExpression($tableName, $prefix);
+					$tableName = $this->_fullTableName($tableName);
 				} elseif (
 					is_array($tableName) &&
 					isset($tableName['table']) &&
 					is_string($tableName['table'])
 				) {
-					$tableName['table'] = new TableNameExpression($tableName['table'], $prefix);
+					$tableName['table'] = $this->_fullTableName($tableName['table']);
 				}
 
 				$names[$alias] = $tableName;
@@ -237,6 +246,29 @@ class Connection {
 		}
 
 		return $names;
+	}
+
+/**
+ * Wrap the table name in a TableNameExpression with the current config prefix
+ *
+ * @param string|TableNameExpression $names The names of the tables
+ *
+ * @return TableNameExpression
+ */
+	protected function _fullTableName($table) {
+		$prefix = $this->_getPrefix();
+		if ($table instanceof TableNameExpression) {
+			$expression = $table;
+			$expression->setPrefix($prefix);
+		} else {
+			$expression = new TableNameExpression($table, $prefix);
+		}
+
+		if ($this->_driver->autoQuoting()) {
+			$expression->setQuoted();
+		}
+
+		return $expression;
 	}
 
 /**
