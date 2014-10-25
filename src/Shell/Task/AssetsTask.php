@@ -32,23 +32,31 @@ class AssetsTask extends Shell {
  * @return void
  */
 	public function main() {
-		$this->_symlink();
+		$this->_process();
 	}
 
 /**
- * Symlink folder
+ * Process plugins
  *
  * @return void
  */
-	protected function _symlink() {
-		$this->out();
-		$this->out();
-		$this->out('Symlinking...');
-		$this->hr();
+	protected function _process() {
 		$plugins = Plugin::loaded();
 		foreach ($plugins as $plugin) {
-			$this->out('For plugin: ' . $plugin);
+			$path = Plugin::path($plugin) . 'webroot';
+			if (!is_dir($path)) {
+				$this->out();
+				$this->out(
+					sprintf('Skipping plugin %s. It does not have webroot folder.', $plugin),
+					2,
+					Shell::VERBOSE
+				);
+				continue;
+			}
+
 			$this->out();
+			$this->out('For plugin: ' . $plugin);
+			$this->hr();
 
 			$link = Inflector::underscore($plugin);
 			$dir = WWW_ROOT;
@@ -71,7 +79,6 @@ class AssetsTask extends Shell {
 				}
 			}
 
-			$path = Plugin::path($plugin) . 'webroot';
 			$this->out('Creating symlink: ' . $dir);
 			$this->out();
 			// @codingStandardsIgnoreStart

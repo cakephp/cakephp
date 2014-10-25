@@ -79,4 +79,16 @@ class SymlinkAssetsTaskTest extends TestCase {
 		$folder->delete();
 	}
 
+/**
+ * testExecute method
+ *
+ * @return void
+ */
+	public function testForPluginWithoutWebroot() {
+		Plugin::load('TestPluginTwo');
+
+		$this->Task->main();
+		$this->assertFalse(file_exists(WWW_ROOT . 'test_plugin_two'));
+	}
+
 }
