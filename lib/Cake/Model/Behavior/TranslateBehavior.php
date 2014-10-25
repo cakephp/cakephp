@@ -590,7 +590,8 @@ class TranslateBehavior extends ModelBehavior {
 		$RuntimeModel = $this->translateModel($Model);
 		$default = array(
 			'className' => $RuntimeModel->alias,
-			'foreignKey' => 'foreign_key'
+			'foreignKey' => 'foreign_key',
+			'order' => 'id'
 		);
 
 		foreach ($fields as $key => $value) {
