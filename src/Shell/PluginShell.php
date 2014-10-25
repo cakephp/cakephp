@@ -30,32 +30,12 @@ class PluginShell extends Shell {
 	public $tasks = ['Assets'];
 
 /**
- * Override main() for help message hook
+ * Symlink / copy plugin assets to app's webroot
  *
  * @return void
  */
-	public function main() {
-		$this->out('<info>Plugin Shell</info>');
-		$this->hr();
-		$this->out('[A]ssets symlink / copy to app\'s webroot');
-		$this->out('[H]elp');
-		$this->out('[Q]uit');
-
-		$choice = strtolower($this->in('What would you like to do?', ['A', 'H', 'Q']));
-		switch ($choice) {
-			case 'a':
-				$this->Assets->main();
-				break;
-			case 'h':
-				$this->out($this->OptionParser->help());
-				break;
-			case 'q':
-				return $this->_stop();
-			default:
-				$this->out('You have made an invalid selection. Please choose a command to execute by entering A, H, or Q.');
-		}
-		$this->hr();
-		$this->main();
+	public function assets() {
+		$this->Assets->main();
 	}
 
 /**
@@ -66,11 +46,8 @@ class PluginShell extends Shell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 
-		$parser->description(
-			'Plugin Shell symlinks your plugin assets to app\'s webroot.'
-		)->addSubcommand('assets', [
-			'help' => 'Symlink / copy assets to app\'s webroot',
-			'parser' => $this->Assets->getOptionParser()
+		$parser->addSubcommand('assets', [
+			'help' => 'Symlink / copy assets to app\'s webroot'
 		]);
 
 		return $parser;
