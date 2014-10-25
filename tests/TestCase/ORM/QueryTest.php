@@ -2153,6 +2153,23 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to bind arguments to a query and it will return the right
+ * results
+ *
+ * @return void
+ */
+	public function testCustomBindings() {
+		$table = TableRegistry::get('Articles');
+		$query = $table->find()->where(['id >' => 1]);
+		$query->where(function ($exp) {
+			return $exp->add('author_id = :author');
+		});
+		$query->bind(':author', 1, 'integer');
+		$this->assertEquals(1, $query->count());
+		$this->assertEquals(3, $query->first()->id);
+	}
+
+/**
  * Tests that it is possible to pass a custom join type for an association when
  * using contain
  *
