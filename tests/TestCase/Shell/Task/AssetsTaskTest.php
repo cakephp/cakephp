@@ -18,7 +18,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
-use Cake\Shell\Task\SymlinkAssetsTask;
+use Cake\Shell\Task\AssetsTask;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -37,7 +37,7 @@ class SymlinkAssetsTaskTest extends TestCase {
 		$this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
 		$this->Task = $this->getMock(
-			'Cake\Shell\Task\SymlinkAssetsTask',
+			'Cake\Shell\Task\AssetsTask',
 			array('in', 'out', 'err', '_stop'),
 			array($this->io)
 		);

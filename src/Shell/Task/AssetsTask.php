@@ -21,10 +21,10 @@ use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
 
 /**
- * Language string extractor
+ * Task for symlinking / copying plugin assets to app's webroot.
  *
  */
-class SymlinkAssetsTask extends Shell {
+class AssetsTask extends Shell {
 
 /**
  * Execution method always used for tasks
