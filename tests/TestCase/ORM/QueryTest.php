@@ -2197,6 +2197,9 @@ class QueryTest extends TestCase {
 			->toArray();
 		$this->assertCount(3, $articles);
 		$this->assertEquals(3, $articles[1]->author->id);
+
+		$this->assertNull($articles[0]->author);
+		$this->assertNull($articles[2]->author);
 	}
 
 }
