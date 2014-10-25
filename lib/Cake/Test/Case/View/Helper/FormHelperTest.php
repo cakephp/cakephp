@@ -2695,7 +2695,7 @@ class FormHelperTest extends CakeTestCase {
 			array('label' => array('for' => "ContactMultiple")),
 			'Multiple',
 			'/label',
-			array('input' => array('type' => 'hidden', 'name' => "data[Contact][multiple]", 'value' => '', 'id' => "ContactMultiple")),
+			array('input' => array('type' => 'hidden', 'name' => "data[Contact][multiple]", 'value' => '', 'id' => "ContactMultiple", 'disabled' => 'disabled')),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array('type' => 'checkbox', 'name' => "data[Contact][multiple][]", 'value' => 1, 'disabled' => 'disabled', 'id' => "ContactMultiple1")),
 			array('label' => array('for' => "ContactMultiple1")),
@@ -5004,7 +5004,7 @@ class FormHelperTest extends CakeTestCase {
 			'Multiple',
 			'/label',
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Contact][multiple]', 'value' => '', 'id' => 'ContactMultiple_'
+				'type' => 'hidden', 'name' => 'data[Contact][multiple]', 'value' => '', 'id' => 'ContactMultiple_', 'disabled' => 'disabled'
 			),
 			'select' => array(
 				'name' => 'data[Contact][multiple][]', 'disabled' => 'disabled', 'multiple' => 'multiple', 'id' => 'ContactMultiple'

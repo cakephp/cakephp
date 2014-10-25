@@ -2070,7 +2070,7 @@ class FormHelper extends AppHelper {
 					'secure' => false,
 					'form' => isset($attributes['form']) ? $attributes['form'] : null,
 					'name' => $attributes['name'],
-					'disabled' => $attributes['disabled']
+					'disabled' => $attributes['disabled'] === true || $attributes['disabled'] === 'disabled'
 				);
 				$select[] = $this->hidden(null, $hiddenAttributes);
 			}
