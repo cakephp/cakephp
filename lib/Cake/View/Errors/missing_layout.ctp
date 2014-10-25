@@ -19,10 +19,23 @@
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
 	<?php echo __d('cake_dev', 'The layout file %s can not be found or does not exist.', '<em>' . h($file) . '</em>'); ?>
 </p>
-<p class="error">
-	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', '<em>' . h($file) . '</em>'); ?>
+
+<p>
+	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', h($file)); ?>
+	in one of the following paths:
 </p>
+<ul>
+<?php
+	$paths = $this->_paths($this->plugin);
+	foreach ($paths as $path):
+		if (strpos($path, CORE_PATH) !== false) {
+			continue;
+		}
+		echo sprintf('<li>%s%s</li>', h($path), h($file));
+	endforeach;
+?>
+</ul>
+
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
 	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Errors' . DS . 'missing_layout.ctp'); ?>

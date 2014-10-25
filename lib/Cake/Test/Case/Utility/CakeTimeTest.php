@@ -108,9 +108,9 @@ class CakeTimeTest extends CakeTestCase {
 			array('-2 days -3 hours', '2 days, 3 hours ago'),
 			array('-1 week', '1 week ago'),
 			array('-2 weeks -2 days', '2 weeks, 2 days ago'),
-			array('+1 week', '1 week'),
-			array('+1 week 1 day', '1 week, 1 day'),
-			array('+2 weeks 2 day', '2 weeks, 2 days'),
+			array('+1 week', 'in 1 week'),
+			array('+1 week 1 day', 'in 1 week, 1 day'),
+			array('+2 weeks 2 day', 'in 2 weeks, 2 days'),
 			array('2007-9-24', 'on 24/9/07'),
 			array('now', 'just now'),
 		);
@@ -136,37 +136,37 @@ class CakeTimeTest extends CakeTestCase {
 		return array(
 			array(
 				'+4 months +2 weeks +3 days',
-				'4 months, 2 weeks, 3 days',
+				'in 4 months, 2 weeks, 3 days',
 				'8 years'
 			),
 			array(
 				'+4 months +2 weeks +1 day',
-				'4 months, 2 weeks, 1 day',
+				'in 4 months, 2 weeks, 1 day',
 				'8 years'
 			),
 			array(
 				'+3 months +2 weeks',
-				'3 months, 2 weeks',
+				'in 3 months, 2 weeks',
 				'8 years'
 			),
 			array(
 				'+3 months +2 weeks +1 day',
-				'3 months, 2 weeks, 1 day',
+				'in 3 months, 2 weeks, 1 day',
 				'8 years'
 			),
 			array(
 				'+1 months +1 week +1 day',
-				'1 month, 1 week, 1 day',
+				'in 1 month, 1 week, 1 day',
 				'8 years'
 			),
 			array(
 				'+2 months +2 days',
-				'2 months, 2 days',
+				'in 2 months, 2 days',
 				'on ' . date('j/n/y', strtotime('+2 months +2 days'))
 			),
 			array(
 				'+2 months +12 days',
-				'2 months, 1 week, 5 days',
+				'in 2 months, 1 week, 5 days',
 				'3 months'
 			),
 		);
@@ -199,6 +199,13 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->timeAgoInWords(
+			strtotime('+8 years +4 months +2 weeks +3 days'),
+			array('relativeStringFuture' => 'not in the next %s', 'accuracy' => array('year' => 'year'), 'end' => '+10 years')
+		);
+		$expected = 'not in the next 8 years';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Time->timeAgoInWords(
 			strtotime('+4 months +2 weeks +3 days'),
 			array('absoluteString' => 'exactly on %s', 'accuracy' => array('year' => 'year'), 'end' => '+2 months')
 		);
@@ -216,35 +223,35 @@ class CakeTimeTest extends CakeTestCase {
 			strtotime('+8 years +4 months +2 weeks +3 days'),
 			array('accuracy' => array('year' => 'year'), 'end' => '+10 years')
 		);
-		$expected = '8 years';
+		$expected = 'in 8 years';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->timeAgoInWords(
 			strtotime('+8 years +4 months +2 weeks +3 days'),
 			array('accuracy' => array('year' => 'month'), 'end' => '+10 years')
 		);
-		$expected = '8 years, 4 months';
+		$expected = 'in 8 years, 4 months';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->timeAgoInWords(
 			strtotime('+8 years +4 months +2 weeks +3 days'),
 			array('accuracy' => array('year' => 'week'), 'end' => '+10 years')
 		);
-		$expected = '8 years, 4 months, 2 weeks';
+		$expected = 'in 8 years, 4 months, 2 weeks';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->timeAgoInWords(
 			strtotime('+8 years +4 months +2 weeks +3 days'),
 			array('accuracy' => array('year' => 'day'), 'end' => '+10 years')
 		);
-		$expected = '8 years, 4 months, 2 weeks, 3 days';
+		$expected = 'in 8 years, 4 months, 2 weeks, 3 days';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->timeAgoInWords(
 			strtotime('+1 years +5 weeks'),
 			array('accuracy' => array('year' => 'year'), 'end' => '+10 years')
 		);
-		$expected = '1 year';
+		$expected = 'in 1 year';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Time->timeAgoInWords(
@@ -263,7 +270,7 @@ class CakeTimeTest extends CakeTestCase {
 	}
 
 /**
- * Test the format option of timeAgoInWords()
+ * Test the format option of timeAgoInWords() with date() and strftime compatible strings
  *
  * @return void
  */
@@ -271,20 +278,32 @@ class CakeTimeTest extends CakeTestCase {
 		$result = $this->Time->timeAgoInWords('2007-9-25', 'Y-m-d');
 		$this->assertEquals('on 2007-09-25', $result);
 
-		$result = $this->Time->timeAgoInWords('2007-9-25', 'Y-m-d');
-		$this->assertEquals('on 2007-09-25', $result);
+		$result = $this->Time->timeAgoInWords('2007-9-25', '%x');
+		$this->assertEquals('on ' . strftime('%x', strtotime('2007-9-25')), $result);
 
 		$result = $this->Time->timeAgoInWords(
 			strtotime('+2 weeks +2 days'),
 			'Y-m-d'
 		);
-		$this->assertRegExp('/^2 weeks, [1|2] day(s)?$/', $result);
+		$this->assertRegExp('/^in 2 weeks, [1|2] day(s)?$/', $result);
+
+		$result = $this->Time->timeAgoInWords(
+			strtotime('+2 weeks +2 days'),
+			'%x'
+		);
+		$this->assertRegExp('/^in 2 weeks, [1|2] day(s)?$/', $result);
 
 		$result = $this->Time->timeAgoInWords(
 			strtotime('+2 months +2 days'),
 			array('end' => '1 month', 'format' => 'Y-m-d')
 		);
 		$this->assertEquals('on ' . date('Y-m-d', strtotime('+2 months +2 days')), $result);
+
+		$result = $this->Time->timeAgoInWords(
+			strtotime('+2 months +2 days'),
+			array('end' => '1 month', 'format' => '%x')
+		);
+		$this->assertEquals('on ' . strftime('%x', strtotime('+2 months +2 days')), $result);
 	}
 
 /**

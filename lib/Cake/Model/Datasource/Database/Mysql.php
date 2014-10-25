@@ -102,7 +102,8 @@ class Mysql extends DboSource {
 	public $tableParameters = array(
 		'charset' => array('value' => 'DEFAULT CHARSET', 'quote' => false, 'join' => '=', 'column' => 'charset'),
 		'collate' => array('value' => 'COLLATE', 'quote' => false, 'join' => '=', 'column' => 'Collation'),
-		'engine' => array('value' => 'ENGINE', 'quote' => false, 'join' => '=', 'column' => 'Engine')
+		'engine' => array('value' => 'ENGINE', 'quote' => false, 'join' => '=', 'column' => 'Engine'),
+		'comment' => array('value' => 'COMMENT', 'quote' => true, 'join' => '=', 'column' => 'Comment'),
 	);
 
 /**
@@ -563,7 +564,11 @@ class Mysql extends DboSource {
 								if (!isset($col['name'])) {
 									$col['name'] = $field;
 								}
-								$colList[] = 'CHANGE ' . $this->name($field) . ' ' . $this->buildColumn($col);
+								$alter = 'CHANGE ' . $this->name($field) . ' ' . $this->buildColumn($col);
+								if (isset($col['after'])) {
+									$alter .= ' AFTER ' . $this->name($col['after']);
+								}
+								$colList[] = $alter;
 							}
 							break;
 					}

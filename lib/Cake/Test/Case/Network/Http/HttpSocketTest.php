@@ -217,7 +217,6 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->expects($this->never())->method('connect');
 		$this->Socket->__construct(array('host' => 'foo-bar'));
 		$baseConfig['host'] = 'foo-bar';
-		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
 		$this->assertEquals($this->Socket->config, $baseConfig);
 
 		$this->Socket->reset();
@@ -226,7 +225,6 @@ class HttpSocketTest extends CakeTestCase {
 		$baseConfig['host'] = $baseConfig['request']['uri']['host'] = 'www.cakephp.org';
 		$baseConfig['port'] = $baseConfig['request']['uri']['port'] = 23;
 		$baseConfig['request']['uri']['scheme'] = 'http';
-		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
 		$this->assertEquals($this->Socket->config, $baseConfig);
 
 		$this->Socket->reset();
@@ -495,6 +493,9 @@ class HttpSocketTest extends CakeTestCase {
 					)
 				)
 			),
+			'reset10' => array(
+				'config.protocol' => 'ssl'
+			),
 			array(
 				'request' => array(
 					'method' => 'POST',
@@ -522,6 +523,9 @@ class HttpSocketTest extends CakeTestCase {
 						'header' => "Host: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 38\r\n"
 					)
 				)
+			),
+			'reset11' => array(
+				'config.protocol' => 'ssl'
 			),
 			array(
 				'request' => array(
@@ -1039,6 +1043,54 @@ class HttpSocketTest extends CakeTestCase {
 		$this->RequestSocket->get('http://www.google.com/', null, array('version' => '1.0'));
 		$this->RequestSocket->get('https://secure.example.com/test.php', array('one' => 'two'));
 		$this->RequestSocket->get('https://example.com/oauth/access', array(
+			'clientid' => '123',
+			'redirect_uri' => 'http://example.com',
+			'code' => 456
+		));
+	}
+
+/**
+ * Test the head method
+ *
+ * @return void
+ */
+	public function testHead() {
+		$this->RequestSocket->reset();
+		$this->RequestSocket->expects($this->at(0))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'http://www.google.com/'));
+
+		$this->RequestSocket->expects($this->at(1))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'http://www.google.com/?foo=bar'));
+
+		$this->RequestSocket->expects($this->at(2))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'http://www.google.com/?foo=bar'));
+
+		$this->RequestSocket->expects($this->at(3))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'http://www.google.com/?foo=23&foobar=42'));
+
+		$this->RequestSocket->expects($this->at(4))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'http://www.google.com/', 'version' => '1.0'));
+
+		$this->RequestSocket->expects($this->at(5))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'https://secure.example.com/test.php?one=two'));
+
+		$this->RequestSocket->expects($this->at(6))
+			->method('request')
+			->with(array('method' => 'HEAD', 'uri' => 'https://example.com/oauth/access?clientid=123&redirect_uri=http%3A%2F%2Fexample.com&code=456'));
+
+		$this->RequestSocket->head('http://www.google.com/');
+		$this->RequestSocket->head('http://www.google.com/', array('foo' => 'bar'));
+		$this->RequestSocket->head('http://www.google.com/', 'foo=bar');
+		$this->RequestSocket->head('http://www.google.com/?foo=bar', array('foobar' => '42', 'foo' => '23'));
+		$this->RequestSocket->head('http://www.google.com/', null, array('version' => '1.0'));
+		$this->RequestSocket->head('https://secure.example.com/test.php', array('one' => 'two'));
+		$this->RequestSocket->head('https://example.com/oauth/access', array(
 			'clientid' => '123',
 			'redirect_uri' => 'http://example.com',
 			'code' => 456

@@ -59,7 +59,7 @@ class RedisEngine extends CacheEngine {
 		}
 		parent::init(array_merge(array(
 			'engine' => 'Redis',
-			'prefix' => null,
+			'prefix' => Inflector::slug(APP_DIR) . '_',
 			'server' => '127.0.0.1',
 			'database' => 0,
 			'port' => 6379,
@@ -79,7 +79,6 @@ class RedisEngine extends CacheEngine {
  * @return bool True if Redis server was connected
  */
 	protected function _connect() {
-		$return = false;
 		try {
 			$this->_Redis = new Redis();
 			if (!empty($this->settings['unix_socket'])) {
@@ -91,15 +90,15 @@ class RedisEngine extends CacheEngine {
 				$return = $this->_Redis->pconnect($this->settings['server'], $this->settings['port'], $this->settings['timeout'], $persistentId);
 			}
 		} catch (RedisException $e) {
+			$return = false;
+		}
+		if (!$return) {
 			return false;
 		}
-		if ($return && $this->settings['password']) {
-			$return = $this->_Redis->auth($this->settings['password']);
+		if ($this->settings['password'] && !$this->_Redis->auth($this->settings['password'])) {
+			return false;
 		}
-		if ($return) {
-			$return = $this->_Redis->select($this->settings['database']);
-		}
-		return $return;
+		return $this->_Redis->select($this->settings['database']);
 	}
 
 /**

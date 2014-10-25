@@ -104,7 +104,7 @@ class AclBehavior extends ModelBehavior {
 			$types = array($types);
 		}
 		foreach ($types as $type) {
-			$parent = $model->parentNode();
+			$parent = $model->parentNode($type);
 			if (!empty($parent)) {
 				$parent = $this->node($model, $parent, $type);
 			}

@@ -65,13 +65,13 @@ class CakeTime {
  * @see CakeTime::timeAgoInWords()
  */
 	public static $wordAccuracy = array(
-		'year' => "day",
-		'month' => "day",
-		'week' => "day",
-		'day' => "hour",
-		'hour' => "minute",
-		'minute' => "minute",
-		'second' => "second",
+		'year' => 'day',
+		'month' => 'day',
+		'week' => 'day',
+		'day' => 'hour',
+		'hour' => 'minute',
+		'minute' => 'minute',
+		'second' => 'second',
 	);
 
 /**
@@ -713,9 +713,10 @@ class CakeTime {
  *    - minute => The format if minutes > 0 (default "minute")
  *    - second => The format if seconds > 0 (default "second")
  * - `end` => The end of relative time telling
- * - `relativeString` => The printf compatible string when outputting relative time
+ * - `relativeString` => The printf compatible string when outputting past relative time
+ * - `relativeStringFuture` => The printf compatible string when outputting future relative time
  * - `absoluteString` => The printf compatible string when outputting absolute time
- * - `userOffset` => Users offset from GMT (in hours) *Deprecated* use timezone intead.
+ * - `userOffset` => Users offset from GMT (in hours) *Deprecated* use timezone instead.
  * - `timezone` => The user timezone the timestamp should be formatted in.
  *
  * Relative dates look something like this:
@@ -737,13 +738,16 @@ class CakeTime {
  */
 	public static function timeAgoInWords($dateTime, $options = array()) {
 		$timezone = null;
+		$accuracies = self::$wordAccuracy;
 		$format = self::$wordFormat;
-		$end = self::$wordEnd;
-		$relativeString = __d('cake', '%s ago');
+		$relativeEnd = self::$wordEnd;
+		$relativeStringPast = __d('cake', '%s ago');
+		$relativeStringFuture = __d('cake', 'in %s');
 		$absoluteString = __d('cake', 'on %s');
-		$accuracy = self::$wordAccuracy;
 
-		if (is_array($options)) {
+		if (is_string($options)) {
+			$format = $options;
+		} elseif (!empty($options)) {
 			if (isset($options['timezone'])) {
 				$timezone = $options['timezone'];
 			} elseif (isset($options['userOffset'])) {
@@ -752,10 +756,10 @@ class CakeTime {
 
 			if (isset($options['accuracy'])) {
 				if (is_array($options['accuracy'])) {
-					$accuracy = array_merge($accuracy, $options['accuracy']);
+					$accuracies = array_merge($accuracies, $options['accuracy']);
 				} else {
-					foreach ($accuracy as $key => $level) {
-						$accuracy[$key] = $options['accuracy'];
+					foreach ($accuracies as $key => $level) {
+						$accuracies[$key] = $options['accuracy'];
 					}
 				}
 			}
@@ -764,47 +768,56 @@ class CakeTime {
 				$format = $options['format'];
 			}
 			if (isset($options['end'])) {
-				$end = $options['end'];
+				$relativeEnd = $options['end'];
 			}
 			if (isset($options['relativeString'])) {
-				$relativeString = $options['relativeString'];
+				$relativeStringPast = $options['relativeString'];
 				unset($options['relativeString']);
+			}
+			if (isset($options['relativeStringFuture'])) {
+				$relativeStringFuture = $options['relativeStringFuture'];
+				unset($options['relativeStringFuture']);
 			}
 			if (isset($options['absoluteString'])) {
 				$absoluteString = $options['absoluteString'];
 				unset($options['absoluteString']);
 			}
 			unset($options['end'], $options['format']);
-		} else {
-			$format = $options;
 		}
 
 		$now = self::fromString(time(), $timezone);
 		$inSeconds = self::fromString($dateTime, $timezone);
-		$backwards = ($inSeconds > $now);
+		$isFuture = ($inSeconds > $now);
 
-		$futureTime = $now;
-		$pastTime = $inSeconds;
-		if ($backwards) {
-			$futureTime = $inSeconds;
-			$pastTime = $now;
+		if ($isFuture) {
+			$startTime = $now;
+			$endTime = $inSeconds;
+		} else {
+			$startTime = $inSeconds;
+			$endTime = $now;
 		}
-		$diff = $futureTime - $pastTime;
+		$diff = $endTime - $startTime;
 
-		if (!$diff) {
+		if ($diff === 0) {
 			return __d('cake', 'just now', 'just now');
 		}
 
-		if ($diff > abs($now - self::fromString($end))) {
-			return sprintf($absoluteString, date($format, $inSeconds));
+		$isAbsoluteDate = $diff > abs($now - self::fromString($relativeEnd));
+		if ($isAbsoluteDate) {
+			if (strpos($format, '%') === false) {
+				$date = date($format, $inSeconds);
+			} else {
+				$date = self::_strftime($format, $inSeconds);
+			}
+			return sprintf($absoluteString, $date);
 		}
+
+		$years = $months = $weeks = $days = $hours = $minutes = $seconds = 0;
 
 		// If more than a week, then take into account the length of months
 		if ($diff >= 604800) {
-			list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $futureTime));
-
-			list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $pastTime));
-			$years = $months = $weeks = $days = $hours = $minutes = $seconds = 0;
+			list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $endTime));
+			list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $startTime));
 
 			$years = $future['Y'] - $past['Y'];
 			$months = $future['m'] + ((12 * $years) - $past['m']);
@@ -820,13 +833,13 @@ class CakeTime {
 			if ($future['d'] >= $past['d']) {
 				$days = $future['d'] - $past['d'];
 			} else {
-				$daysInPastMonth = date('t', $pastTime);
+				$daysInPastMonth = date('t', $startTime);
 				$daysInFutureMonth = date('t', mktime(0, 0, 0, $future['m'] - 1, 1, $future['Y']));
 
-				if (!$backwards) {
-					$days = ($daysInPastMonth - $past['d']) + $future['d'];
-				} else {
+				if ($isFuture) {
 					$days = ($daysInFutureMonth - $past['d']) + $future['d'];
+				} else {
+					$days = ($daysInPastMonth - $past['d']) + $future['d'];
 				}
 
 				if ($future['m'] != $past['m']) {
@@ -849,9 +862,7 @@ class CakeTime {
 				$days = $days - ($weeks * 7);
 			}
 		} else {
-			$years = $months = $weeks = 0;
 			$days = floor($diff / 86400);
-
 			$diff = $diff - ($days * 86400);
 
 			$hours = floor($diff / 3600);
@@ -859,69 +870,58 @@ class CakeTime {
 
 			$minutes = floor($diff / 60);
 			$diff = $diff - ($minutes * 60);
+
 			$seconds = $diff;
 		}
 
-		$fWord = $accuracy['second'];
+		$accuracy = $accuracies['second'];
 		if ($years > 0) {
-			$fWord = $accuracy['year'];
+			$accuracy = $accuracies['year'];
 		} elseif (abs($months) > 0) {
-			$fWord = $accuracy['month'];
+			$accuracy = $accuracies['month'];
 		} elseif (abs($weeks) > 0) {
-			$fWord = $accuracy['week'];
+			$accuracy = $accuracies['week'];
 		} elseif (abs($days) > 0) {
-			$fWord = $accuracy['day'];
+			$accuracy = $accuracies['day'];
 		} elseif (abs($hours) > 0) {
-			$fWord = $accuracy['hour'];
+			$accuracy = $accuracies['hour'];
 		} elseif (abs($minutes) > 0) {
-			$fWord = $accuracy['minute'];
+			$accuracy = $accuracies['minute'];
 		}
 
-		$fNum = str_replace(array('year', 'month', 'week', 'day', 'hour', 'minute', 'second'), array(1, 2, 3, 4, 5, 6, 7), $fWord);
+		$accuracyNum = str_replace(array('year', 'month', 'week', 'day', 'hour', 'minute', 'second'), array(1, 2, 3, 4, 5, 6, 7), $accuracy);
 
-		$relativeDate = '';
-		if ($fNum >= 1 && $years > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d year', '%d years', $years, $years);
+		$relativeDate = array();
+		if ($accuracyNum >= 1 && $years > 0) {
+			$relativeDate[] = __dn('cake', '%d year', '%d years', $years, $years);
 		}
-		if ($fNum >= 2 && $months > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d month', '%d months', $months, $months);
+		if ($accuracyNum >= 2 && $months > 0) {
+			$relativeDate[] = __dn('cake', '%d month', '%d months', $months, $months);
 		}
-		if ($fNum >= 3 && $weeks > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d week', '%d weeks', $weeks, $weeks);
+		if ($accuracyNum >= 3 && $weeks > 0) {
+			$relativeDate[] = __dn('cake', '%d week', '%d weeks', $weeks, $weeks);
 		}
-		if ($fNum >= 4 && $days > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d day', '%d days', $days, $days);
+		if ($accuracyNum >= 4 && $days > 0) {
+			$relativeDate[] = __dn('cake', '%d day', '%d days', $days, $days);
 		}
-		if ($fNum >= 5 && $hours > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d hour', '%d hours', $hours, $hours);
+		if ($accuracyNum >= 5 && $hours > 0) {
+			$relativeDate[] = __dn('cake', '%d hour', '%d hours', $hours, $hours);
 		}
-		if ($fNum >= 6 && $minutes > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d minute', '%d minutes', $minutes, $minutes);
+		if ($accuracyNum >= 6 && $minutes > 0) {
+			$relativeDate[] = __dn('cake', '%d minute', '%d minutes', $minutes, $minutes);
 		}
-		if ($fNum >= 7 && $seconds > 0) {
-			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d second', '%d seconds', $seconds, $seconds);
+		if ($accuracyNum >= 7 && $seconds > 0) {
+			$relativeDate[] = __dn('cake', '%d second', '%d seconds', $seconds, $seconds);
 		}
+		$relativeDate = implode(', ', $relativeDate);
 
-		// When time has passed
-		if (!$backwards && $relativeDate) {
+		if ($relativeDate) {
+			$relativeString = ($isFuture) ? $relativeStringFuture : $relativeStringPast;
 			return sprintf($relativeString, $relativeDate);
 		}
-		if (!$backwards) {
-			$aboutAgo = array(
-				'second' => __d('cake', 'about a second ago'),
-				'minute' => __d('cake', 'about a minute ago'),
-				'hour' => __d('cake', 'about an hour ago'),
-				'day' => __d('cake', 'about a day ago'),
-				'week' => __d('cake', 'about a week ago'),
-				'year' => __d('cake', 'about a year ago')
-			);
 
-			return $aboutAgo[$fWord];
-		}
-
-		// When time is to come
-		if (!$relativeDate) {
-			$aboutIn = array(
+		if ($isFuture) {
+			$strings = array(
 				'second' => __d('cake', 'in about a second'),
 				'minute' => __d('cake', 'in about a minute'),
 				'hour' => __d('cake', 'in about an hour'),
@@ -929,11 +929,18 @@ class CakeTime {
 				'week' => __d('cake', 'in about a week'),
 				'year' => __d('cake', 'in about a year')
 			);
-
-			return $aboutIn[$fWord];
+		} else {
+			$strings = array(
+				'second' => __d('cake', 'about a second ago'),
+				'minute' => __d('cake', 'about a minute ago'),
+				'hour' => __d('cake', 'about an hour ago'),
+				'day' => __d('cake', 'about a day ago'),
+				'week' => __d('cake', 'about a week ago'),
+				'year' => __d('cake', 'about a year ago')
+			);
 		}
 
-		return $relativeDate;
+		return $strings[$accuracy];
 	}
 
 /**

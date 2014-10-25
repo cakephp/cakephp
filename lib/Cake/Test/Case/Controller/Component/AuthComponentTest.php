@@ -1306,6 +1306,45 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test mapActions as a getter
+ *
+ * @return void
+ */
+	public function testMapActions() {
+		$MapActionMockAuthorize = $this->getMock(
+			'BaseAuthorize',
+			array('authorize'),
+			array(),
+			'',
+			false
+		);
+		$this->Auth->authorize = array('MapActionAuthorize');
+		$this->Auth->setAuthorizeObject(0, $MapActionMockAuthorize);
+
+		$actions = array('my_action' => 'create');
+		$this->Auth->mapActions($actions);
+		$actions = array(
+			'create' => array('my_other_action'),
+			'update' => array('updater')
+		);
+		$this->Auth->mapActions($actions);
+
+		$actions = $this->Auth->mapActions();
+
+		$result = $actions['my_action'];
+		$expected = 'create';
+		$this->assertEquals($expected, $result);
+
+		$result = $actions['my_other_action'];
+		$expected = 'create';
+		$this->assertEquals($expected, $result);
+
+		$result = $actions['updater'];
+		$expected = 'update';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test mapActions loading and delegating to authorize objects.
  *
  * @return void

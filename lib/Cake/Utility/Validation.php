@@ -102,9 +102,23 @@ class Validation {
  * @param int $max Maximum value in range (inclusive)
  * @return bool Success
  */
-	public static function between($check, $min, $max) {
+	public static function lengthBetween($check, $min, $max) {
 		$length = mb_strlen($check);
 		return ($length >= $min && $length <= $max);
+	}
+
+/**
+ * Alias of Validator::lengthBetween() for backwards compatibility.
+ *
+ * @param string $check Value to check for length
+ * @param int $min Minimum value in range (inclusive)
+ * @param int $max Maximum value in range (inclusive)
+ * @return bool Success
+ * @see Validator::lengthBetween()
+ * @deprecated Deprecated 2.6. Use Validator::lengthBetween() instead.
+ */
+	public static function between($check, $min, $max) {
+		return self::lengthBetween($check, $min, $max);
 	}
 
 /**
@@ -129,7 +143,8 @@ class Validation {
  * Returns true if $check is in the proper credit card format.
  *
  * @param string|array $check credit card number to validate
- * @param string|array $type 'all' may be passed as a sting, defaults to fast which checks format of most major credit cards
+ * @param string|array $type 'all' may be passed as a sting, defaults to fast which checks format of most major credit 
+ * cards
  *    if an array is used only the values of the array are checked.
  *    Example: array('amex', 'bankcard', 'maestro')
  * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
@@ -164,11 +179,13 @@ class Validation {
 				'maestro'	=> '/^(?:5020|6\\d{3})\\d{12}$/',
 				'mc'		=> '/^5[1-5]\\d{14}$/',
 				'solo'		=> '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
-				'switch'	=> '/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
+				'switch'	=>
+				'/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
 				'visa'		=> '/^4\\d{12}(\\d{3})?$/',
 				'voyager'	=> '/^8699[0-9]{11}$/'
 			),
-			'fast' => '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/'
+			'fast' =>
+			'/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/'
 		);
 
 		if (is_array($type)) {
@@ -740,6 +757,7 @@ class Validation {
  * @param string $regex Regular expression to use
  * @param string $country Country
  * @return bool Success
+ * @deprecated Deprecated 2.6. Will be removed in 3.0.
  */
 	public static function ssn($check, $regex = null, $country = null) {
 		if (is_array($check)) {

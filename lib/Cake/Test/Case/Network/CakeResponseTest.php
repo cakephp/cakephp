@@ -1200,6 +1200,10 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response->expects($this->at(1))
 			->method('header')
+			->with('Accept-Ranges', 'bytes');
+
+		$response->expects($this->at(2))
+			->method('header')
 			->with('Content-Length', 38);
 
 		$response->expects($this->once())->method('_clearBuffer');
@@ -1249,11 +1253,11 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response->expects($this->at(2))
 			->method('header')
-			->with('Accept-Ranges', 'bytes');
+			->with('Content-Transfer-Encoding', 'binary');
 
 		$response->expects($this->at(3))
 			->method('header')
-			->with('Content-Transfer-Encoding', 'binary');
+			->with('Accept-Ranges', 'bytes');
 
 		$response->expects($this->at(4))
 			->method('header')
@@ -1314,11 +1318,11 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response->expects($this->at(3))
 			->method('header')
-			->with('Accept-Ranges', 'bytes');
+			->with('Content-Transfer-Encoding', 'binary');
 
 		$response->expects($this->at(4))
 			->method('header')
-			->with('Content-Transfer-Encoding', 'binary');
+			->with('Accept-Ranges', 'bytes');
 
 		$response->expects($this->at(5))
 			->method('header')
@@ -1378,11 +1382,11 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response->expects($this->at(3))
 			->method('header')
-			->with('Accept-Ranges', 'bytes');
+			->with('Content-Transfer-Encoding', 'binary');
 
 		$response->expects($this->at(4))
 			->method('header')
-			->with('Content-Transfer-Encoding', 'binary');
+			->with('Accept-Ranges', 'bytes');
 
 		$response->expects($this->at(5))
 			->method('header')
@@ -1431,6 +1435,10 @@ class CakeResponseTest extends CakeTestCase {
 			->method('type')
 			->with('ini')
 			->will($this->returnValue(false));
+
+		$response->expects($this->at(1))
+			->method('header')
+			->with('Accept-Ranges', 'bytes');
 
 		$response->expects($this->never())
 			->method('download');
@@ -1584,11 +1592,11 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response->expects($this->at(2))
 			->method('header')
-			->with('Accept-Ranges', 'bytes');
+			->with('Content-Transfer-Encoding', 'binary');
 
 		$response->expects($this->at(3))
 			->method('header')
-			->with('Content-Transfer-Encoding', 'binary');
+			->with('Accept-Ranges', 'bytes');
 
 		$response->expects($this->at(4))
 			->method('header')
@@ -1639,11 +1647,11 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response->expects($this->at(2))
 			->method('header')
-			->with('Accept-Ranges', 'bytes');
+			->with('Content-Transfer-Encoding', 'binary');
 
 		$response->expects($this->at(3))
 			->method('header')
-			->with('Content-Transfer-Encoding', 'binary');
+			->with('Accept-Ranges', 'bytes');
 
 		$response->expects($this->at(4))
 			->method('header')
@@ -1694,11 +1702,11 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response->expects($this->at(2))
 			->method('header')
-			->with('Accept-Ranges', 'bytes');
+			->with('Content-Transfer-Encoding', 'binary');
 
 		$response->expects($this->at(3))
 			->method('header')
-			->with('Content-Transfer-Encoding', 'binary');
+			->with('Accept-Ranges', 'bytes');
 
 		$response->expects($this->at(4))
 			->method('header')
@@ -1709,6 +1717,136 @@ class CakeResponseTest extends CakeTestCase {
 		$response->file(
 			CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS . 'test_asset.css',
 			array('download' => true)
+		);
+
+		$this->assertEquals(416, $response->statusCode());
+		$result = $response->send();
+	}
+
+/**
+ * testFileRangeOffsetsNoDownload method
+ *
+ * @dataProvider rangeProvider
+ * @return void
+ */
+	public function testFileRangeOffsetsNoDownload($range, $length, $offsetResponse) {
+		$_SERVER['HTTP_RANGE'] = $range;
+		$response = $this->getMock('CakeResponse', array(
+			'header',
+			'type',
+			'_sendHeader',
+			'_isActive',
+			'_clearBuffer',
+			'_flushBuffer'
+		));
+
+		$response->expects($this->at(1))
+			->method('header')
+			->with('Accept-Ranges', 'bytes');
+
+		$response->expects($this->at(2))
+			->method('header')
+			->with(array(
+				'Content-Length' => $length,
+				'Content-Range' => $offsetResponse,
+			));
+
+		$response->expects($this->any())
+			->method('_isActive')
+			->will($this->returnValue(true));
+
+		$response->file(
+			CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS . 'test_asset.css',
+			array('download' => false)
+		);
+
+		ob_start();
+		$result = $response->send();
+		ob_get_clean();
+	}
+
+/**
+ * testFileRangeNoDownload method
+ *
+ * @return void
+ */
+	public function testFileRangeNoDownload() {
+		$_SERVER['HTTP_RANGE'] = 'bytes=8-25';
+		$response = $this->getMock('CakeResponse', array(
+			'header',
+			'type',
+			'_sendHeader',
+			'_setContentType',
+			'_isActive',
+			'_clearBuffer',
+			'_flushBuffer'
+		));
+
+		$response->expects($this->exactly(1))
+			->method('type')
+			->with('css')
+			->will($this->returnArgument(0));
+
+		$response->expects($this->at(1))
+			->method('header')
+			->with('Accept-Ranges', 'bytes');
+
+		$response->expects($this->at(2))
+			->method('header')
+			->with(array(
+				'Content-Length' => 18,
+				'Content-Range' => 'bytes 8-25/38',
+			));
+
+		$response->expects($this->once())->method('_clearBuffer');
+
+		$response->expects($this->any())
+			->method('_isActive')
+			->will($this->returnValue(true));
+
+		$response->file(
+			CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS . 'test_asset.css',
+			array('download' => false)
+		);
+
+		ob_start();
+		$result = $response->send();
+		$output = ob_get_clean();
+		$this->assertEquals(206, $response->statusCode());
+		$this->assertEquals("is the test asset ", $output);
+		$this->assertTrue($result !== false);
+	}
+
+/**
+ * testFileRangeInvalidNoDownload method
+ *
+ * @return void
+ */
+	public function testFileRangeInvalidNoDownload() {
+		$_SERVER['HTTP_RANGE'] = 'bytes=30-2';
+		$response = $this->getMock('CakeResponse', array(
+			'header',
+			'type',
+			'_sendHeader',
+			'_setContentType',
+			'_isActive',
+			'_clearBuffer',
+			'_flushBuffer'
+		));
+
+		$response->expects($this->at(1))
+			->method('header')
+			->with('Accept-Ranges', 'bytes');
+
+		$response->expects($this->at(2))
+			->method('header')
+			->with(array(
+				'Content-Range' => 'bytes 0-37/38',
+			));
+
+		$response->file(
+			CAKE . 'Test' . DS . 'test_app' . DS . 'Vendor' . DS . 'css' . DS . 'test_asset.css',
+			array('download' => false)
 		);
 
 		$this->assertEquals(416, $response->statusCode());

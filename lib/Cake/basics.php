@@ -71,17 +71,20 @@ if (!function_exists('debug')) {
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#debug
  */
 	function debug($var, $showHtml = null, $showFrom = true) {
-		if (Configure::read('debug') > 0) {
-			App::uses('Debugger', 'Utility');
-			$file = '';
-			$line = '';
-			$lineInfo = '';
-			if ($showFrom) {
-				$trace = Debugger::trace(array('start' => 1, 'depth' => 2, 'format' => 'array'));
-				$file = str_replace(array(CAKE_CORE_INCLUDE_PATH, ROOT), '', $trace[0]['file']);
-				$line = $trace[0]['line'];
-			}
-			$html = <<<HTML
+		if (!Configure::read('debug')) {
+			return;
+		}
+		App::uses('Debugger', 'Utility');
+
+		$file = '';
+		$line = '';
+		$lineInfo = '';
+		if ($showFrom) {
+			$trace = Debugger::trace(array('start' => 1, 'depth' => 2, 'format' => 'array'));
+			$file = str_replace(array(CAKE_CORE_INCLUDE_PATH, ROOT), '', $trace[0]['file']);
+			$line = $trace[0]['line'];
+		}
+		$html = <<<HTML
 <div class="cake-debug-output">
 %s
 <pre class="cake-debug">
@@ -89,33 +92,61 @@ if (!function_exists('debug')) {
 </pre>
 </div>
 HTML;
-			$text = <<<TEXT
+		$text = <<<TEXT
 %s
 ########## DEBUG ##########
 %s
 ###########################
 
 TEXT;
-			$template = $html;
-			if (php_sapi_name() === 'cli' || $showHtml === false) {
-				$template = $text;
-				if ($showFrom) {
-					$lineInfo = sprintf('%s (line %s)', $file, $line);
-				}
+		$template = $html;
+		if (php_sapi_name() === 'cli' || $showHtml === false) {
+			$template = $text;
+			if ($showFrom) {
+				$lineInfo = sprintf('%s (line %s)', $file, $line);
 			}
-			if ($showHtml === null && $template !== $text) {
-				$showHtml = true;
-			}
-			$var = Debugger::exportVar($var, 25);
-			if ($showHtml) {
-				$template = $html;
-				$var = h($var);
-				if ($showFrom) {
-					$lineInfo = sprintf('<span><strong>%s</strong> (line <strong>%s</strong>)</span>', $file, $line);
-				}
-			}
-			printf($template, $lineInfo, $var);
 		}
+		if ($showHtml === null && $template !== $text) {
+			$showHtml = true;
+		}
+		$var = Debugger::exportVar($var, 25);
+		if ($showHtml) {
+			$template = $html;
+			$var = h($var);
+			if ($showFrom) {
+				$lineInfo = sprintf('<span><strong>%s</strong> (line <strong>%s</strong>)</span>', $file, $line);
+			}
+		}
+		printf($template, $lineInfo, $var);
+	}
+
+}
+
+if (!function_exists('stackTrace')) {
+
+/**
+ * Outputs a stack trace based on the supplied options.
+ *
+ * ### Options
+ *
+ * - `depth` - The number of stack frames to return. Defaults to 999
+ * - `args` - Should arguments for functions be shown? If true, the arguments for each method call
+ *   will be displayed.
+ * - `start` - The stack frame to start generating a trace from. Defaults to 1
+ *
+ * @param array $options Format for outputting stack trace
+ * @return mixed Formatted stack trace
+ * @see Debugger::trace()
+ */
+	function stackTrace(array $options = array()) {
+		if (!Configure::read('debug')) {
+			return;
+		}
+		App::uses('Debugger', 'Utility');
+
+		$options += array('start' => 0);
+		$options['start']++;
+		echo Debugger::trace($options);
 	}
 
 }
@@ -554,14 +585,8 @@ if (!function_exists('__')) {
 
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($singular);
-		if ($args === null && func_num_args() < 3) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 1);
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 1));
 	}
 
 }
@@ -586,14 +611,8 @@ if (!function_exists('__n')) {
 
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($singular, $plural, null, I18n::LC_MESSAGES, $count);
-		if ($args === null && func_num_args() < 5) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 3);
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 3));
 	}
 
 }
@@ -615,14 +634,8 @@ if (!function_exists('__d')) {
 		}
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($msg, null, $domain);
-		if ($args === null && func_num_args() < 4) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 2);
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 2));
 	}
 
 }
@@ -648,14 +661,8 @@ if (!function_exists('__dn')) {
 		}
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($singular, $plural, $domain, I18n::LC_MESSAGES, $count);
-		if ($args === null && func_num_args() < 6) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 4);
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 4));
 	}
 
 }
@@ -692,14 +699,8 @@ if (!function_exists('__dc')) {
 		}
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($msg, null, $domain, $category);
-		if ($args === null && func_num_args() < 5) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 3);
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 3));
 	}
 
 }
@@ -740,14 +741,8 @@ if (!function_exists('__dcn')) {
 		}
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($singular, $plural, $domain, $category, $count);
-		if ($args === null && func_num_args() < 7) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 5);
-		}
-
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 5));
 	}
 
 }
@@ -780,14 +775,228 @@ if (!function_exists('__c')) {
 		}
 		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($msg, null, null, $category);
-		if ($args === null && func_num_args() < 4) {
-			return $translated;
-		} elseif (!is_array($args)) {
-			$args = array_slice(func_get_args(), 2);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 2));
+	}
+
+}
+
+if (!function_exists('__x')) {
+
+/**
+ * Returns a translated string if one is found; Otherwise, the submitted message.
+ *
+ * @param string $context Context of the text
+ * @param string $singular Text to translate
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return mixed translated string
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__
+ */
+	function __x($context, $singular, $args = null) {
+		if (!$singular) {
+			return;
 		}
 
-		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
-		return vsprintf($translated, $args);
+		App::uses('I18n', 'I18n');
+		$translated = I18n::translate($singular, null, null, null, null, null, $context);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 2));
+	}
+
+}
+
+if (!function_exists('__xn')) {
+
+/**
+ * Returns correct plural form of message identified by $singular and $plural for count $count.
+ * Some languages have more than one form for plural messages dependent on the count.
+ *
+ * @param string $context Context of the text
+ * @param string $singular Singular text to translate
+ * @param string $plural Plural text
+ * @param int $count Count
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return mixed plural form of translated string
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__n
+ */
+	function __xn($context, $singular, $plural, $count, $args = null) {
+		if (!$singular) {
+			return;
+		}
+
+		App::uses('I18n', 'I18n');
+		$translated = I18n::translate($singular, $plural, null, I18n::LC_MESSAGES, $count, null, $context);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 4));
+	}
+
+}
+
+if (!function_exists('__dx')) {
+
+/**
+ * Allows you to override the current domain for a single message lookup.
+ *
+ * @param string $domain Domain
+ * @param string $context Context of the text
+ * @param string $msg String to translate
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return translated string
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__d
+ */
+	function __dx($domain, $context, $msg, $args = null) {
+		if (!$msg) {
+			return;
+		}
+		App::uses('I18n', 'I18n');
+		$translated = I18n::translate($msg, null, $domain, null, null, null, $context);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 3));
+	}
+
+}
+
+if (!function_exists('__dxn')) {
+
+/**
+ * Allows you to override the current domain for a single plural message lookup.
+ * Returns correct plural form of message identified by $singular and $plural for count $count
+ * from domain $domain.
+ *
+ * @param string $domain Domain
+ * @param string $context Context of the text
+ * @param string $singular Singular string to translate
+ * @param string $plural Plural
+ * @param int $count Count
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return plural form of translated string
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dn
+ */
+	function __dxn($domain, $context, $singular, $plural, $count, $args = null) {
+		if (!$singular) {
+			return;
+		}
+		App::uses('I18n', 'I18n');
+		$translated = I18n::translate($singular, $plural, $domain, I18n::LC_MESSAGES, $count, null, $context);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 5));
+	}
+
+}
+
+if (!function_exists('__dxc')) {
+
+/**
+ * Allows you to override the current domain for a single message lookup.
+ * It also allows you to specify a category.
+ *
+ * The category argument allows a specific category of the locale settings to be used for fetching a message.
+ * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
+ *
+ * Note that the category must be specified with a class constant of I18n, instead of the constant name. The values are:
+ *
+ * - LC_ALL       I18n::LC_ALL
+ * - LC_COLLATE   I18n::LC_COLLATE
+ * - LC_CTYPE     I18n::LC_CTYPE
+ * - LC_MONETARY  I18n::LC_MONETARY
+ * - LC_NUMERIC   I18n::LC_NUMERIC
+ * - LC_TIME      I18n::LC_TIME
+ * - LC_MESSAGES  I18n::LC_MESSAGES
+ *
+ * @param string $domain Domain
+ * @param string $context Context of the text
+ * @param string $msg Message to translate
+ * @param int $category Category
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return translated string
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dc
+ */
+	function __dxc($domain, $context, $msg, $category, $args = null) {
+		if (!$msg) {
+			return;
+		}
+		App::uses('I18n', 'I18n');
+		$translated = I18n::translate($msg, null, $domain, $category, null, null, $context);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 4));
+	}
+
+}
+
+if (!function_exists('__dxcn')) {
+
+/**
+ * Allows you to override the current domain for a single plural message lookup.
+ * It also allows you to specify a category.
+ * Returns correct plural form of message identified by $singular and $plural for count $count
+ * from domain $domain.
+ *
+ * The category argument allows a specific category of the locale settings to be used for fetching a message.
+ * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
+ *
+ * Note that the category must be specified with a class constant of I18n, instead of the constant name. The values are:
+ *
+ * - LC_ALL       I18n::LC_ALL
+ * - LC_COLLATE   I18n::LC_COLLATE
+ * - LC_CTYPE     I18n::LC_CTYPE
+ * - LC_MONETARY  I18n::LC_MONETARY
+ * - LC_NUMERIC   I18n::LC_NUMERIC
+ * - LC_TIME      I18n::LC_TIME
+ * - LC_MESSAGES  I18n::LC_MESSAGES
+ *
+ * @param string $domain Domain
+ * @param string $context Context of the text
+ * @param string $singular Singular string to translate
+ * @param string $plural Plural
+ * @param int $count Count
+ * @param int $category Category
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return plural form of translated string
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dcn
+ */
+	function __dxcn($domain, $context, $singular, $plural, $count, $category, $args = null) {
+		if (!$singular) {
+			return;
+		}
+		App::uses('I18n', 'I18n');
+		$translated = I18n::translate($singular, $plural, $domain, $category, $count, null, $context);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 6));
+	}
+
+}
+
+if (!function_exists('__xc')) {
+
+/**
+ * The category argument allows a specific category of the locale settings to be used for fetching a message.
+ * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
+ *
+ * Note that the category must be specified with a class constant of I18n, instead of the constant name. The values are:
+ *
+ * - LC_ALL       I18n::LC_ALL
+ * - LC_COLLATE   I18n::LC_COLLATE
+ * - LC_CTYPE     I18n::LC_CTYPE
+ * - LC_MONETARY  I18n::LC_MONETARY
+ * - LC_NUMERIC   I18n::LC_NUMERIC
+ * - LC_TIME      I18n::LC_TIME
+ * - LC_MESSAGES  I18n::LC_MESSAGES
+ *
+ * @param string $context Context of the text
+ * @param string $msg String to translate
+ * @param int $category Category
+ * @param mixed $args Array with arguments or multiple arguments in function
+ * @return translated string
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__c
+ */
+	function __xc($context, $msg, $category, $args = null) {
+		if (!$msg) {
+			return;
+		}
+		App::uses('I18n', 'I18n');
+		$translated = I18n::translate($msg, null, null, $category, null, null, $context);
+		$arguments = func_get_args();
+		return I18n::insertArgs($translated, array_slice($arguments, 3));
 	}
 
 }

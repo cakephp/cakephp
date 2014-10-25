@@ -697,6 +697,31 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test css() with once option.
+ *
+ * @return void
+ */
+	public function testCssLinkOnce() {
+		Configure::write('Asset.filter.css', false);
+
+		$result = $this->Html->css('screen', array('once' => true));
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*css\/screen\.css/')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->css('screen', array('once' => true));
+		$this->assertEquals('', $result);
+
+		// Default is once=false
+		$result = $this->Html->css('screen');
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*css\/screen\.css/')
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test css link BC usage
  *
  * @return void

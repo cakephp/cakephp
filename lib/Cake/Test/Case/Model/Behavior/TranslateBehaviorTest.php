@@ -720,6 +720,54 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * testSaveAssociatedAtomic method
+ *
+ * @return void
+ */
+	public function testSaveAssociatedAtomic() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$TestModel = new TranslatedItem();
+		$data = array(
+			'slug' => 'fourth_translated',
+			'title' => array(
+				'eng' => 'Title #4'
+			),
+			'content' => array(
+				'eng' => 'Content #4'
+			),
+			'translated_article_id' => 1,
+		);
+		$Mock = $this->getMockForModel('TranslateTestModel', array('save'));
+		$TestModel->Behaviors->Translate->runtime[$TestModel->alias]['model'] = $Mock;
+
+		$with = array(
+			'TranslateTestModel' => array (
+				'model' => 'TranslatedItem',
+				'foreign_key' => '4',
+				'field' => 'content',
+				'locale' => 'eng',
+				'content' => 'Content #4',
+			)
+		);
+		$Mock->expects($this->at(0))->method('save')->with($with, array('atomic' => false));
+
+		$with = array(
+			'TranslateTestModel' => array (
+				'model' => 'TranslatedItem',
+				'foreign_key' => '4',
+				'field' => 'title',
+				'locale' => 'eng',
+				'content' => 'Title #4',
+			)
+		);
+		$Mock->expects($this->at(1))->method('save')->with($with, array('atomic' => false));
+
+		$TestModel->create();
+		$TestModel->saveAssociated($data, array('atomic' => false));
+	}
+
+/**
  * Test that saving only some of the translated fields allows the record to be found again.
  *
  * @return void

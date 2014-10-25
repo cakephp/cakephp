@@ -1125,6 +1125,8 @@ class FormHelper extends AppHelper {
 			$options = $this->_optionsOptions($options);
 		}
 
+		$options = $this->_maxLength($options);
+
 		if (isset($options['rows']) || isset($options['cols'])) {
 			$options['type'] = 'textarea';
 		}
@@ -1228,7 +1230,7 @@ class FormHelper extends AppHelper {
 		if ($options['type'] === 'select' && array_key_exists('step', $options)) {
 			unset($options['step']);
 		}
-		$options = $this->_maxLength($options);
+
 		return $options;
 	}
 
@@ -1286,10 +1288,11 @@ class FormHelper extends AppHelper {
 			!array_key_exists('maxlength', $options) &&
 			isset($fieldDef['length']) &&
 			is_scalar($fieldDef['length']) &&
+			$fieldDef['length'] < 1000000 &&
 			$options['type'] !== 'select'
 		);
 		if ($autoLength &&
-			in_array($options['type'], array('text', 'email', 'tel', 'url', 'search'))
+			in_array($options['type'], array('text', 'textarea', 'email', 'tel', 'url', 'search'))
 		) {
 			$options['maxlength'] = $fieldDef['length'];
 		}
@@ -1789,7 +1792,8 @@ class FormHelper extends AppHelper {
  * @param string $title The content to be wrapped by <a> tags.
  * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
  * @param array $options Array of HTML attributes.
- * @param bool|string $confirmMessage JavaScript confirmation message.
+ * @param bool|string $confirmMessage JavaScript confirmation message. This
+ *   argument is deprecated as of 2.6. Use `confirm` key in $options instead.
  * @return string An `<a />` element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */

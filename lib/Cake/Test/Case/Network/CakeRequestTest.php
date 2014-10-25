@@ -1996,26 +1996,6 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
- * Test using param()
- *
- * @return void
- */
-	public function testReadingParams() {
-		$request = new CakeRequest();
-		$request->addParams(array(
-			'controller' => 'posts',
-			'admin' => true,
-			'truthy' => 1,
-			'zero' => '0',
-		));
-		$this->assertFalse($request->param('not_set'));
-		$this->assertTrue($request->param('admin'));
-		$this->assertEquals(1, $request->param('truthy'));
-		$this->assertEquals('posts', $request->param('controller'));
-		$this->assertEquals('0', $request->param('zero'));
-	}
-
-/**
  * Test the data() method reading
  *
  * @return void
@@ -2075,6 +2055,100 @@ class CakeRequestTest extends CakeTestCase {
 
 		$request->data('Post.empty', '');
 		$this->assertSame('', $request->data['Post']['empty']);
+	}
+
+/**
+ * Test reading params
+ *
+ * @dataProvider paramReadingDataProvider
+ */
+	public function testParamReading($toRead, $expected) {
+		$request = new CakeRequest('/');
+		$request->addParams(array(
+			'action' => 'index',
+			'foo' => 'bar',
+			'baz' => array(
+				'a' => array(
+					'b' => 'c',
+				),
+			),
+			'admin' => true,
+			'truthy' => 1,
+			'zero' => '0',
+		));
+		$this->assertEquals($expected, $request->param($toRead));
+	}
+
+/**
+ * Data provider for testing reading values with CakeRequest::param()
+ *
+ * @return array
+ */
+	public function paramReadingDataProvider() {
+		return array(
+			array(
+				'action',
+				'index',
+			),
+			array(
+				'baz',
+				array(
+					'a' => array(
+						'b' => 'c',
+					),
+				),
+			),
+			array(
+				'baz.a.b',
+				'c',
+			),
+			array(
+				'does_not_exist',
+				false,
+			),
+			array(
+				'admin',
+				true,
+			),
+			array(
+				'truthy',
+				1,
+			),
+			array(
+				'zero',
+				'0',
+			),
+		);
+	}
+
+/**
+ * test writing request params with param()
+ *
+ * @return void
+ */
+	public function testParamWriting() {
+		$request = new CakeRequest('/');
+		$request->addParams(array(
+			'action' => 'index',
+		));
+
+		$this->assertInstanceOf('CakeRequest', $request->param('some', 'thing'), 'Method has not returned $this');
+
+		$request->param('Post.null', null);
+		$this->assertNull($request->params['Post']['null']);
+
+		$request->param('Post.false', false);
+		$this->assertFalse($request->params['Post']['false']);
+
+		$request->param('Post.zero', 0);
+		$this->assertSame(0, $request->params['Post']['zero']);
+
+		$request->param('Post.empty', '');
+		$this->assertSame('', $request->params['Post']['empty']);
+
+		$this->assertSame('index', $request->action);
+		$request->param('action', 'edit');
+		$this->assertSame('edit', $request->action);
 	}
 
 /**
@@ -2156,6 +2230,22 @@ class CakeRequestTest extends CakeTestCase {
 
 		$result = $request->here();
 		$this->assertEquals('/admin/settings/settings/prefix/Access%20Control', $result);
+	}
+
+/**
+ * Test the input() method.
+ *
+ * @return void
+ */
+	public function testSetInput() {
+		$request = new CakeRequest('/');
+
+		$request->setInput('I came from setInput');
+		$result = $request->input();
+		$this->assertEquals('I came from setInput', $result);
+
+		$result = $request->input();
+		$this->assertEquals('I came from setInput', $result);
 	}
 
 /**

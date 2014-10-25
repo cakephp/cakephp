@@ -813,7 +813,14 @@ class View extends Object {
 		}
 		$this->viewVars = $data + $this->viewVars;
 	}
-
+/**
+ * Retrieve the current view type
+ *
+ * @return string
+ */
+	public function getCurrentType() {
+		return $this->_currentType;
+	}
 /**
  * Magic accessor for helpers. Provides access to attributes that were deprecated.
  *
@@ -1008,18 +1015,7 @@ class View extends Object {
 				}
 			}
 		}
-		$defaultPath = $paths[0];
-
-		if ($this->plugin) {
-			$pluginPaths = App::path('plugins');
-			foreach ($paths as $path) {
-				if (strpos($path, $pluginPaths[0]) === 0) {
-					$defaultPath = $path;
-					break;
-				}
-			}
-		}
-		throw new MissingViewException(array('file' => $defaultPath . $name . $this->ext));
+		throw new MissingViewException(array('file' => $name . $this->ext));
 	}
 
 /**
@@ -1072,7 +1068,7 @@ class View extends Object {
 				}
 			}
 		}
-		throw new MissingLayoutException(array('file' => $paths[0] . $file . $this->ext));
+		throw new MissingLayoutException(array('file' => $file . $this->ext));
 	}
 
 /**
@@ -1202,22 +1198,23 @@ class View extends Object {
  * @return string
  */
 	protected function _renderElement($file, $data, $options) {
+		$current = $this->_current;
+		$restore = $this->_currentType;
+		$this->_currentType = self::TYPE_ELEMENT;
+
 		if ($options['callbacks']) {
 			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
 		}
 
-		$current = $this->_current;
-		$restore = $this->_currentType;
-
-		$this->_currentType = self::TYPE_ELEMENT;
 		$element = $this->_render($file, array_merge($this->viewVars, $data));
-
-		$this->_currentType = $restore;
-		$this->_current = $current;
 
 		if ($options['callbacks']) {
 			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));
 		}
+
+		$this->_currentType = $restore;
+		$this->_current = $current;
+
 		if (isset($options['cache'])) {
 			Cache::write($this->elementCacheSettings['key'], $element, $this->elementCacheSettings['config']);
 		}

@@ -142,8 +142,8 @@ class Model extends Object implements CakeEventListener {
  *
  * {{{
  * public $validate = array(
- *     'age' => array(
- *         'rule' => array('between', 5, 25)
+ *     'length' => array(
+ *         'rule' => array('lengthBetween', 5, 25)
  *     )
  * );
  * }}}
@@ -171,9 +171,9 @@ class Model extends Object implements CakeEventListener {
  *
  * {{{
  * public $validate = array(
- *     'age' => array(
- *         'rule' => array('between', 5, 25),
- *         'message' => array('The age must be between %d and %d.')
+ *     'length' => array(
+ *         'rule' => array('lengthBetween', 5, 15),
+ *         'message' => array('Between %d to %d characters')
  *     )
  * );
  * }}}
@@ -602,6 +602,25 @@ class Model extends Object implements CakeEventListener {
 	public $__safeUpdateMode = false;
 
 // @codingStandardsIgnoreEnd
+
+/**
+ * If true, afterFind will be passed consistent formatted $results in case of $primary is false.
+ * The format will be such as the following.
+ *
+ * {{{
+ * $results = array(
+ * 	0 => array(
+ * 		'ModelName' => array(
+ * 			'field1' => 'value1',
+ * 			'field2' => 'value2'
+ * 		)
+ * 	)
+ * );
+ * }}}
+ *
+ * @var bool
+ */
+	public $useConsistentAfterFind = true;
 
 /**
  * The ID of the model record that was last inserted.
@@ -1683,13 +1702,15 @@ class Model extends Object implements CakeEventListener {
 
 /**
  * Saves model data (based on white-list, if supplied) to the database. By
- * default, validation occurs before save.
+ * default, validation occurs before save. Passthrough method to _doSave() with
+ * transaction handling.
  *
  * @param array $data Data to save.
  * @param bool|array $validate Either a boolean, or an array.
  *   If a boolean, indicates whether or not to validate before saving.
  *   If an array, can have following keys:
  *
+ *   - atomic: If true (default), will attempt to save the record in a single transaction.
  *   - validate: Set to true/false to enable or disable validation.
  *   - fieldList: An array of fields you want to allow for saving.
  *   - callbacks: Set to false to disable callbacks. Using 'before' or 'after'
@@ -1698,22 +1719,67 @@ class Model extends Object implements CakeEventListener {
  *
  * @param array $fieldList List of fields to allow to be saved
  * @return mixed On success Model::$data if its not empty or true, false on failure
+ * @throws Exception
  * @throws PDOException
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html
  */
 	public function save($data = null, $validate = true, $fieldList = array()) {
 		$defaults = array(
 			'validate' => true, 'fieldList' => array(),
-			'callbacks' => true, 'counterCache' => true
+			'callbacks' => true, 'counterCache' => true,
+			'atomic' => true
 		);
-		$_whitelist = $this->whitelist;
-		$fields = array();
 
 		if (!is_array($validate)) {
 			$options = compact('validate', 'fieldList') + $defaults;
 		} else {
 			$options = $validate + $defaults;
 		}
+
+		if (!$options['atomic']) {
+			return $this->_doSave($data, $options);
+		}
+
+		$db = $this->getDataSource();
+		$transactionBegun = $db->begin();
+		try {
+			$success = $this->_doSave($data, $options);
+			if ($transactionBegun) {
+				if ($success) {
+					$db->commit();
+				} else {
+					$db->rollback();
+				}
+			}
+			return $success;
+		} catch (Exception $e) {
+			if ($transactionBegun) {
+				$db->rollback();
+			}
+			throw $e;
+		}
+	}
+
+/**
+ * Saves model data (based on white-list, if supplied) to the database. By
+ * default, validation occurs before save.
+ *
+ * @param array $data Data to save.
+ * @param array $options can have following keys:
+ *
+ *   - validate: Set to true/false to enable or disable validation.
+ *   - fieldList: An array of fields you want to allow for saving.
+ *   - callbacks: Set to false to disable callbacks. Using 'before' or 'after'
+ *      will enable only those callbacks.
+ *   - `counterCache`: Boolean to control updating of counter caches (if any)
+ *
+ * @return mixed On success Model::$data if its not empty or true, false on failure
+ * @throws PDOException
+ * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html
+ */
+	protected function _doSave($data = null, $options = array()) {
+		$_whitelist = $this->whitelist;
+		$fields = array();
 
 		if (!empty($options['fieldList'])) {
 			if (!empty($options['fieldList'][$this->alias]) && is_array($options['fieldList'][$this->alias])) {
@@ -1792,12 +1858,10 @@ class Model extends Object implements CakeEventListener {
 			}
 		}
 
-		$db = $this->getDataSource();
-
 		if (empty($this->data[$this->alias][$this->primaryKey])) {
 			unset($this->data[$this->alias][$this->primaryKey]);
 		}
-		$fields = $values = array();
+		$joined = $fields = $values = array();
 
 		foreach ($this->data as $n => $v) {
 			if (isset($this->hasAndBelongsToMany[$n])) {
@@ -1818,6 +1882,11 @@ class Model extends Object implements CakeEventListener {
 					}
 				}
 			}
+		}
+
+		if (empty($fields) && empty($joined)) {
+			$this->whitelist = $_whitelist;
+			return false;
 		}
 
 		$count = count($fields);
@@ -1863,36 +1932,35 @@ class Model extends Object implements CakeEventListener {
 			}
 		}
 
-		if (!empty($joined) && $success === true) {
+		if ($success && !empty($joined)) {
 			$this->_saveMulti($joined, $this->id, $db);
 		}
 
-		if ($success && $count === 0) {
-			$success = false;
+		$this->whitelist = $_whitelist;
+
+		if (!$success) {
+			return $success;
 		}
 
-		if ($success && $count > 0) {
-			if (!empty($this->data)) {
-				if ($created) {
-					$this->data[$this->alias][$this->primaryKey] = $this->id;
-				}
+		if ($count > 0) {
+			if ($created) {
+				$this->data[$this->alias][$this->primaryKey] = $this->id;
 			}
 
 			if ($options['callbacks'] === true || $options['callbacks'] === 'after') {
 				$event = new CakeEvent('Model.afterSave', $this, array($created, $options));
 				$this->getEventManager()->dispatch($event);
 			}
-
-			if (!empty($this->data)) {
-				$success = $this->data;
-			}
-
-			$this->_clearCache();
-			$this->validationErrors = array();
-			$this->data = false;
 		}
 
-		$this->whitelist = $_whitelist;
+		if (!empty($this->data)) {
+			$success = $this->data;
+		}
+
+		$this->_clearCache();
+		$this->validationErrors = array();
+		$this->data = false;
+
 		return $success;
 	}
 
@@ -2013,7 +2081,7 @@ class Model extends Object implements CakeEventListener {
 						$Model->create();
 					}
 
-					$Model->save($data);
+					$Model->save($data, array('atomic' => false));
 				}
 			}
 
@@ -2260,9 +2328,9 @@ class Model extends Object implements CakeEventListener {
 				$saved = false;
 				if ($validates) {
 					if ($options['deep']) {
-						$saved = $this->saveAssociated($record, array_merge($options, array('atomic' => false)));
+						$saved = $this->saveAssociated($record, array('atomic' => false) + $options);
 					} else {
-						$saved = $this->save($record, $options);
+						$saved = $this->save($record, array('atomic' => false) + $options);
 					}
 				}
 
@@ -2425,7 +2493,7 @@ class Model extends Object implements CakeEventListener {
 				$return[$association] = $validates;
 			}
 
-			if ($validates && !($this->create(null) !== null && $this->save($data, $options))) {
+			if ($validates && !($this->create(null) !== null && $this->save($data, array('atomic' => false) + $options))) {
 				$validationErrors[$this->alias] = $this->validationErrors;
 				$validates = false;
 			}
