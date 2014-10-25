@@ -87,7 +87,7 @@ class AssetsTask extends Shell {
 	}
 
 /**
- * Create direcotry
+ * Create directory
  *
  * @param string $dir Directory name
  * @return boolean
@@ -109,7 +109,7 @@ class AssetsTask extends Shell {
 	}
 
 /**
- * Create symmlink
+ * Create symlink
  *
  * @param string $target Target directory
  * @param string $link Link name
