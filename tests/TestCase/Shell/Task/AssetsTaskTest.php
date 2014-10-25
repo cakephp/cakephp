@@ -80,7 +80,7 @@ class SymlinkAssetsTaskTest extends TestCase {
 	}
 
 /**
- * testExecute method
+ * test that plugins without webroot are not processed
  *
  * @return void
  */
