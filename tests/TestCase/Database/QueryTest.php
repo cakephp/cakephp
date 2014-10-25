@@ -2889,7 +2889,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Assertion for comparing a regex pattern against a query having its indentifiers
+ * Assertion for comparing a regex pattern against a query having its identifiers
  * quoted. It accepts queries quoted with the characters `<` and `>`. If the third
  * parameter is set to true, it will alter the pattern to both accept quoted and
  * unquoted queries

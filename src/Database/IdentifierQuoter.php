@@ -82,7 +82,7 @@ class IdentifierQuoter {
 		}
 
 		if ($expression instanceof IdentifierExpression) {
-			$this->_quoteIndetifierExpression($expression);
+			$this->_quoteIdentifierExpression($expression);
 			return;
 		}
 	}
@@ -220,7 +220,7 @@ class IdentifierQuoter {
  * @param \Cake\Database\Expression\IdentifierExpression $expression The identifiers to quote.
  * @return void
  */
-	protected function _quoteIndetifierExpression(IdentifierExpression $expression) {
+	protected function _quoteIdentifierExpression(IdentifierExpression $expression) {
 		$expression->setIdentifier(
 			$this->_driver->quoteIdentifier($expression->getIdentifier())
 		);
