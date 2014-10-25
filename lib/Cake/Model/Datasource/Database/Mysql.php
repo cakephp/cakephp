@@ -102,7 +102,8 @@ class Mysql extends DboSource {
 	public $tableParameters = array(
 		'charset' => array('value' => 'DEFAULT CHARSET', 'quote' => false, 'join' => '=', 'column' => 'charset'),
 		'collate' => array('value' => 'COLLATE', 'quote' => false, 'join' => '=', 'column' => 'Collation'),
-		'engine' => array('value' => 'ENGINE', 'quote' => false, 'join' => '=', 'column' => 'Engine')
+		'engine' => array('value' => 'ENGINE', 'quote' => false, 'join' => '=', 'column' => 'Engine'),
+		'comment' => array('value' => 'COMMENT', 'quote' => true, 'join' => '=', 'column' => 'Comment'),
 	);
 
 /**
