@@ -46,6 +46,13 @@ class BetweenExpression implements ExpressionInterface {
 	protected $_to;
 
 /**
+ * The data type for the from and to arguments
+ *
+ * @var mixed
+ */
+	protected $_type;
+
+/**
  * Constructor
  *
  * @param mixed $value the value to use as the operand for the expression
@@ -55,7 +62,7 @@ class BetweenExpression implements ExpressionInterface {
 		$this->_field = $field;
 		$this->_from = $from;
 		$this->_to = $to;
-		$this->$type = $type;
+		$this->_type = $type;
 	}
 
 /**

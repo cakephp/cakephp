@@ -298,6 +298,10 @@ class QueryExpression implements ExpressionInterface, Countable {
 		return $this->add(new Comparison($field, $values, $type, 'NOT IN'));
 	}
 
+	public function between($field, $from, $to, $type = null) {
+		return $this->add(new BetweenExpression($field, $from, $to, $type));
+	}
+
 // @codingStandardsIgnoreStart
 /**
  * Returns a new QueryExpression object containing all the conditions passed
