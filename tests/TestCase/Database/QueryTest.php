@@ -1133,7 +1133,7 @@ class QueryTest extends TestCase {
 		$result = $query
 			->select(['id'])
 			->from('comments')
-			->where(function($exp) {
+			->where(function ($exp) {
 				return $exp->between('id', 5, 6, 'integer');
 			})
 			->execute();
@@ -1157,7 +1157,7 @@ class QueryTest extends TestCase {
 		$result = $query
 			->select(['id'])
 			->from('comments')
-			->where(function($exp) {
+			->where(function ($exp) {
 				$from = new \DateTime('2007-03-18 10:51:00');
 				$to = new \DateTime('2007-03-18 10:54:00');
 				return $exp->between('created', $from, $to, 'datetime');

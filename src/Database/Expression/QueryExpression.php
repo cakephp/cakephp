@@ -305,7 +305,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @param mixed $field The field name to compare for values in between the range.
  * @param mixed $from The initial value of the range.
  * @param mixed $to The ending value in the comparison range.
- *@param string $type the type name for $value as configured using the Type map.
+ * @param string $type the type name for $value as configured using the Type map.
  * @return QueryExpression
  */
 	public function between($field, $from, $to, $type = null) {
