@@ -15,7 +15,7 @@
 namespace Cake\Database;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 
@@ -71,7 +71,7 @@ class IdentifierQuoter {
  * @return void
  */
 	public function quoteExpression($expression) {
-		if ($expression instanceof Comparison) {
+		if ($expression instanceof FieldInterface) {
 			$this->_quoteComparison($expression);
 			return;
 		}
@@ -174,12 +174,12 @@ class IdentifierQuoter {
 	}
 
 /**
- * Quotes identifiers in comparison expression objects
+ * Quotes identifiers in expression objects implementing the field interface
  *
- * @param \Cake\Database\Expression\Comparison $expression The comparison expression to quote.
+ * @param \Cake\Database\Expression\FieldInterface $expression The expression to quote.
  * @return void
  */
-	protected function _quoteComparison(Comparison $expression) {
+	protected function _quoteComparison(FieldInterface $expression) {
 		$field = $expression->getField();
 		if (is_string($field)) {
 			$expression->field($this->_driver->quoteIdentifier($field));
@@ -191,11 +191,6 @@ class IdentifierQuoter {
 			$expression->field($quoted);
 		} elseif ($field instanceof ExpressionInterface) {
 			$this->quoteExpression($field);
-		}
-
-		$value = $expression->getValue();
-		if ($value instanceof ExpressionInterface) {
-			$this->quoteExpression($value);
 		}
 	}
 

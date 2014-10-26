@@ -15,6 +15,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\FieldTrait;
 use Cake\Database\ValueBinder;
 
@@ -23,7 +24,7 @@ use Cake\Database\ValueBinder;
  *
  * @internal
  */
-class BetweenExpression implements ExpressionInterface {
+class BetweenExpression implements ExpressionInterface, FieldInterface {
 
 	use FieldTrait;
 
