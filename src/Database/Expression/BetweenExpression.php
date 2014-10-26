@@ -15,6 +15,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Expression\FieldTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -24,12 +25,7 @@ use Cake\Database\ValueBinder;
  */
 class BetweenExpression implements ExpressionInterface {
 
-/**
- * The first value in the expression
- *
- * @var mixed
- */
-	protected $_field;
+	use FieldTrait;
 
 /**
  * The first value in the expression

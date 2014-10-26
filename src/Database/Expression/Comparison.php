@@ -15,6 +15,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Expression\FieldTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -26,12 +27,7 @@ use Cake\Database\ValueBinder;
  */
 class Comparison implements ExpressionInterface {
 
-/**
- * The field name or expression to be used in the left hand side of the operator
- *
- * @var string
- */
-	protected $_field;
+	use FieldTrait;
 
 /**
  * The value to be used in the right hand side of the operation
@@ -73,16 +69,6 @@ class Comparison implements ExpressionInterface {
 	}
 
 /**
- * Sets the field name
- *
- * @param string $field The field to compare with.
- * @return void
- */
-	public function field($field) {
-		$this->_field = $field;
-	}
-
-/**
  * Sets the value
  *
  * @param mixed $value The value to compare
@@ -90,15 +76,6 @@ class Comparison implements ExpressionInterface {
  */
 	public function value($value) {
 		$this->_value = $value;
-	}
-
-/**
- * Returns the field name
- *
- * @return string|\Cake\Database\ExpressionInterface
- */
-	public function getField() {
-		return $this->_field;
 	}
 
 /**
