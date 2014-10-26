@@ -24,7 +24,7 @@ use Cake\Database\ValueBinder;
  *
  * @internal
  */
-class Comparison extends QueryExpression {
+class Comparison implements ExpressionInterface {
 
 /**
  * The field name or expression to be used in the left hand side of the operator
@@ -48,17 +48,24 @@ class Comparison extends QueryExpression {
 	protected $_type;
 
 /**
+ * The operator used for comparing field and value
+ *
+ * @var string
+ */
+	protected $_operator;
+
+/**
  * Constructor
  *
  * @param string $field the field name to compare to a value
  * @param mixed $value The value to be used in comparison
  * @param string $type the type name used to cast the value
- * @param string $conjunction the operator used for comparing field and value
+ * @param string $operator the operator used for comparing field and value
  */
-	public function __construct($field, $value, $type, $conjunction) {
+	public function __construct($field, $value, $type, $operator) {
 		$this->field($field);
 		$this->value($value);
-		$this->type($conjunction);
+		$this->_operator = $operator;
 
 		if (is_string($type)) {
 			$this->_type = $type;
@@ -104,6 +111,25 @@ class Comparison extends QueryExpression {
 	}
 
 /**
+ * Returns the operator used for comparison
+ *
+ * @return string
+ */
+	public function getOperator() {
+		return $this->_operator;
+	}
+
+/**
+ * Sets the operator to use for the comparison
+ *
+ * @param string $operator The operator to be used for the comparison.
+ * @return void
+ */
+	public function setOperator($operator) {
+		$this->_operator = $operator;
+	}
+
+/**
  * Convert the expression into a SQL fragment.
  *
  * @param \Cake\Database\ValueBinder $generator Placeholder generator object
@@ -123,7 +149,7 @@ class Comparison extends QueryExpression {
 			list($template, $value) = $this->_stringExpression($generator);
 		}
 
-		return sprintf($template, $field, $this->_conjunction, $value);
+		return sprintf($template, $field, $this->_operator, $value);
 	}
 
 /**
@@ -204,15 +230,6 @@ class Comparison extends QueryExpression {
 		}
 
 		return implode(',', $parts);
-	}
-
-/**
- * Returns the number of expression this class represents
- *
- * @return int
- */
-	public function count() {
-		return 1;
 	}
 
 }

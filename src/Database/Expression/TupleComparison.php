@@ -62,7 +62,7 @@ class TupleComparison extends Comparison {
 		$values = $this->_stringifyValues($generator);
 
 		$field = implode(', ', $fields);
-		return sprintf($template, $field, $this->_conjunction, $values);
+		return sprintf($template, $field, $this->_operator, $values);
 	}
 
 /**
@@ -179,7 +179,7 @@ class TupleComparison extends Comparison {
  * @return bool
  */
 	public function isMulti() {
-		return in_array(strtolower($this->_conjunction), ['in', 'not in']);
+		return in_array(strtolower($this->_operator), ['in', 'not in']);
 	}
 
 }
