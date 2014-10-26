@@ -40,13 +40,6 @@ class PagesController extends AppController {
 	public $helpers = array('Html', 'Session');
 
 /**
- * This controller does not use a model
- *
- * @var array
- */
-	public $uses = array();
-
-/**
  * Displays a view
  *
  * @param mixed What page to display
