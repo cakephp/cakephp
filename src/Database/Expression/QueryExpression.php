@@ -298,6 +298,16 @@ class QueryExpression implements ExpressionInterface, Countable {
 		return $this->add(new Comparison($field, $values, $type, 'NOT IN'));
 	}
 
+/**
+ * Adds a new condition to the expression object in the form
+ * "field BETWEEN from AND to".
+ *
+ * @param mixed $field The field name to compare for values in between the range.
+ * @param mixed $from The initial value of the range.
+ * @param mixed $to The ending value in the comparison range.
+ *@param string $type the type name for $value as configured using the Type map.
+ * @return QueryExpression
+ */
 	public function between($field, $from, $to, $type = null) {
 		return $this->add(new BetweenExpression($field, $from, $to, $type));
 	}

@@ -55,10 +55,10 @@ class BetweenExpression implements ExpressionInterface {
 /**
  * Constructor
  *
- * @param mixed $field The field name to compare for values in between the rage
- * @param mixed $from The initial value of the range
- * @param mixed $to The ending value in the comparison range
- * @param string $type The data type name to bind the values with
+ * @param mixed $field The field name to compare for values in between the range.
+ * @param mixed $from The initial value of the range.
+ * @param mixed $to The ending value in the comparison range.
+ * @param string $type The data type name to bind the values with.
  */
 	public function __construct($field, $from, $to, $type = null) {
 		$this->_field = $field;
