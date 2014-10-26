@@ -185,6 +185,27 @@ class MarshallerTest extends TestCase {
 	}
 
 /**
+ * Ensure that marshalling casts reasonably.
+ *
+ * @return void
+ */
+	public function testOneOnlyCastMatchingData() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 'derp',
+			'created' => 'fale'
+		];
+		$this->articles->entityClass(__NAMESPACE__ . '\OpenEntity');
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, []);
+
+		$this->assertSame($data['title'], $result->title);
+		$this->assertSame($data['author_id'], $result->author_id, 'No cast on bad data.');
+		$this->assertSame($data['created'], $result->created, 'No cast on bad data.');
+	}
+
+/**
  * Test one() follows mass-assignment rules.
  *
  * @return void
