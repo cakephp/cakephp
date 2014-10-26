@@ -18,6 +18,93 @@ use Cake\TestSuite\TestCase;
 use PHPUnit_Framework_Test;
 
 /**
+ * TestConnectionManagerStaticConfig
+ */
+class TestConnectionManagerStaticConfig {
+
+	use StaticConfigTrait {
+		parseDsn as protected _parseDsn;
+	}
+
+	public static function parseDsn($config = null) {
+		$config = static::_parseDsn($config);
+
+		if (isset($config['path']) && empty($config['database'])) {
+			$config['database'] = substr($config['path'], 1);
+		}
+
+		if (empty($config['driver'])) {
+			$config['driver'] = $config['className'];
+			$config['className'] = 'Cake\Database\Connection';
+		}
+
+		unset($config['path']);
+		return $config;
+	}
+
+	public static function getClassMap() {
+		return [
+			'mysql' => 'Cake\Database\Driver\Mysql',
+			'postgres' => 'Cake\Database\Driver\Postgres',
+			'sqlite' => 'Cake\Database\Driver\Sqlite',
+			'sqlserver' => 'Cake\Database\Driver\Sqlserver',
+		];
+	}
+}
+
+/**
+ * TestCacheStaticConfig
+ */
+class TestCacheStaticConfig {
+
+	use StaticConfigTrait;
+
+	public static function getClassMap() {
+		return [
+			'apc' => 'Cake\Cache\Engine\ApcEngine',
+			'file' => 'Cake\Cache\Engine\FileEngine',
+			'memcached' => 'Cake\Cache\Engine\MemcachedEngine',
+			'null' => 'Cake\Cache\Engine\NullEngine',
+			'redis' => 'Cake\Cache\Engine\RedisEngine',
+			'wincache' => 'Cake\Cache\Engine\WincacheEngine',
+			'xcache' => 'Cake\Cache\Engine\XcacheEngine',
+		];
+	}
+}
+
+/**
+ * TestEmailStaticConfig
+ */
+class TestEmailStaticConfig {
+
+	use StaticConfigTrait;
+
+	public static function getClassMap() {
+		return [
+			'debug' => 'Cake\Network\Email\DebugTransport',
+			'mail' => 'Cake\Network\Email\MailTransport',
+			'smtp' => 'Cake\Network\Email\SmtpTransport',
+		];
+	}
+}
+
+/**
+ * TestLogStaticConfig
+ */
+class TestLogStaticConfig {
+
+	use StaticConfigTrait;
+
+	public static function getClassMap() {
+		return [
+			'console' => 'Cake\Log\Engine\ConsoleLog',
+			'file' => 'Cake\Log\Engine\FileLog',
+			'syslog' => 'Cake\Log\Engine\SyslogLog',
+		];
+	}
+}
+
+/**
  * StaticConfigTraitTest class
  *
  */
@@ -52,57 +139,63 @@ class StaticConfigTraitTest extends TestCase {
 
 		$this->assertInternalType('array', $klassName::parseDsn(['url' => 'http://user@:80']));
 		$this->assertEquals(['url' => 'http://user@:80'], $klassName::parseDsn(['url' => 'http://user@:80']));
+	}
 
+	public function testCustomParseDsn() {
 		$dsn = 'mysql://localhost:3306/database';
 		$expected = [
-			'className' => 'mysql',
-			'driver' => 'mysql',
+			'className' => 'Cake\Database\Connection',
+			'driver' => 'Cake\Database\Driver\Mysql',
 			'host' => 'localhost',
-			'path' => '/database',
+			'database' => 'database',
 			'port' => 3306,
+			'scheme' => 'mysql',
 		];
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestConnectionManagerStaticConfig::parseDsn(['url' => $dsn]));
 
 		$dsn = 'mysql://user:password@localhost:3306/database';
 		$expected = [
-			'className' => 'mysql',
-			'driver' => 'mysql',
+			'className' => 'Cake\Database\Connection',
+			'driver' => 'Cake\Database\Driver\Mysql',
 			'host' => 'localhost',
 			'password' => 'password',
-			'path' => '/database',
+			'database' => 'database',
 			'port' => 3306,
+			'scheme' => 'mysql',
 			'username' => 'user',
 		];
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestConnectionManagerStaticConfig::parseDsn(['url' => $dsn]));
 
-		$dsn = 'Cake\Database\Driver\Sqlite:///memory:';
+		$dsn = 'sqlite:///memory:';
 		$expected = [
-			'className' => 'Cake\Database\Driver\Sqlite',
-			'driver' => 'Cake\Database\Driver\Sqlite',
-			'path' => '/memory:',
-		];
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
-
-		$dsn = 'Cake\Database\Driver\Sqlite:///?database=memory:';
-		$expected = [
-			'className' => 'Cake\Database\Driver\Sqlite',
+			'className' => 'Cake\Database\Connection',
 			'driver' => 'Cake\Database\Driver\Sqlite',
 			'database' => 'memory:',
-			'path' => '/',
+			'scheme' => 'sqlite',
 		];
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestConnectionManagerStaticConfig::parseDsn(['url' => $dsn]));
 
-		$dsn = 'Cake\Database\Driver\Sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false';
+		$dsn = 'sqlite:///?database=memory:';
 		$expected = [
-			'className' => 'Cake\Database\Driver\Sqlserver',
+			'className' => 'Cake\Database\Connection',
+			'driver' => 'Cake\Database\Driver\Sqlite',
+			'database' => 'memory:',
+			'scheme' => 'sqlite',
+		];
+		$this->assertEquals($expected, TestConnectionManagerStaticConfig::parseDsn(['url' => $dsn]));
+
+		$dsn = 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false';
+		$expected = [
+			'className' => 'Cake\Database\Connection',
 			'driver' => 'Cake\Database\Driver\Sqlserver',
 			'host' => '.\SQL2012SP1',
 			'MultipleActiveResultSets' => false,
 			'password' => 'Password12!',
-			'path' => '/cakephp',
+			'database' => 'cakephp',
+			'scheme' => 'sqlserver',
 			'username' => 'sa',
 		];
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestConnectionManagerStaticConfig::parseDsn(['url' => $dsn]));
 	}
 
 /**
@@ -111,58 +204,61 @@ class StaticConfigTraitTest extends TestCase {
  * @return void
  */
 	public function testParseDsnClassnameDriver() {
-		$klassName = get_class($this->subject);
-
-		$dsn = 'Cake\Database\Driver\Mysql://localhost:3306/database';
+		$dsn = 'mysql://localhost:3306/database';
 		$expected = [
-			'className' => 'Cake\Database\Driver\Mysql',
+			'className' => 'Cake\Database\Connection',
+			'database' => 'database',
 			'driver' => 'Cake\Database\Driver\Mysql',
 			'host' => 'localhost',
-			'path' => '/database',
 			'port' => 3306,
+			'scheme' => 'mysql',
 		];
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestConnectionManagerStaticConfig::parseDsn(['url' => $dsn]));
 
-		$dsn = 'Cake\Database\Driver\Mysql://user:password@localhost:3306/database';
+		$dsn = 'mysql://user:password@localhost:3306/database';
 		$expected = [
-			'className' => 'Cake\Database\Driver\Mysql',
+			'className' => 'Cake\Database\Connection',
+			'database' => 'database',
 			'driver' => 'Cake\Database\Driver\Mysql',
 			'host' => 'localhost',
 			'password' => 'password',
-			'path' => '/database',
 			'port' => 3306,
+			'scheme' => 'mysql',
 			'username' => 'user',
 		];
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestConnectionManagerStaticConfig::parseDsn(['url' => $dsn]));
 
-		$dsn = 'Cake\Database\Driver\Mysql://localhost/database?className=Cake\Database\Connection';
+		$dsn = 'mysql://localhost/database?className=Custom\Driver';
 		$expected = [
 			'className' => 'Cake\Database\Connection',
-			'driver' => 'Cake\Database\Driver\Mysql',
+			'database' => 'database',
+			'driver' => 'Custom\Driver',
 			'host' => 'localhost',
-			'path' => '/database',
+			'scheme' => 'mysql',
 		];
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestConnectionManagerStaticConfig::parseDsn(['url' => $dsn]));
 
-		$dsn = 'Cake\Database\Driver\Mysql://localhost:3306/database?className=Cake\Database\Connection';
+		$dsn = 'mysql://localhost:3306/database?className=Custom\Driver';
 		$expected = [
 			'className' => 'Cake\Database\Connection',
-			'driver' => 'Cake\Database\Driver\Mysql',
+			'database' => 'database',
+			'driver' => 'Custom\Driver',
 			'host' => 'localhost',
-			'path' => '/database',
+			'scheme' => 'mysql',
 			'port' => 3306,
 		];
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestConnectionManagerStaticConfig::parseDsn(['url' => $dsn]));
 
 		$dsn = 'Cake\Database\Connection://localhost:3306/database?driver=Cake\Database\Driver\Mysql';
 		$expected = [
 			'className' => 'Cake\Database\Connection',
+			'database' => 'database',
 			'driver' => 'Cake\Database\Driver\Mysql',
 			'host' => 'localhost',
-			'path' => '/database',
+			'scheme' => 'Cake\Database\Connection',
 			'port' => 3306,
 		];
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestConnectionManagerStaticConfig::parseDsn(['url' => $dsn]));
 	}
 
 /**
@@ -171,90 +267,88 @@ class StaticConfigTraitTest extends TestCase {
  * @return void
  */
 	public function testParseDsnQuerystring() {
-		$klassName = get_class($this->subject);
-
+		$dsn = 'file:///?url=test';
 		$expected = [
 			'className' => 'Cake\Log\Engine\FileLog',
-			'driver' => 'Cake\Log\Engine\FileLog',
+			'path' => '/',
+			'scheme' => 'file',
 			'url' => 'test',
-			'path' => '/',
 		];
-		$dsn = 'Cake\Log\Engine\FileLog:///?url=test';
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestLogStaticConfig::parseDsn(['url' => $dsn]));
 
+		$dsn = 'file:///?file=debug&key=value';
 		$expected = [
 			'className' => 'Cake\Log\Engine\FileLog',
-			'driver' => 'Cake\Log\Engine\FileLog',
 			'file' => 'debug',
-			'path' => '/',
 			'key' => 'value',
+			'path' => '/',
+			'scheme' => 'file',
 		];
-		$dsn = 'Cake\Log\Engine\FileLog:///?file=debug&key=value';
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestLogStaticConfig::parseDsn(['url' => $dsn]));
 
+		$dsn = 'file:///tmp?file=debug&types[]=notice&types[]=info&types[]=debug';
 		$expected = [
 			'className' => 'Cake\Log\Engine\FileLog',
-			'driver' => 'Cake\Log\Engine\FileLog',
 			'file' => 'debug',
 			'path' => '/tmp',
+			'scheme' => 'file',
 			'types' => ['notice', 'info', 'debug'],
 		];
-		$dsn = 'Cake\Log\Engine\FileLog:///tmp?file=debug&types[]=notice&types[]=info&types[]=debug';
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestLogStaticConfig::parseDsn(['url' => $dsn]));
 
+		$dsn = 'mail:///?timeout=30&key=true&key2=false&client=null&tls=null';
 		$expected = [
-			'className' => 'Mail',
+			'className' => 'Cake\Network\Email\MailTransport',
 			'client' => null,
-			'driver' => 'Mail',
 			'key' => true,
 			'key2' => false,
 			'path' => '/',
+			'scheme' => 'mail',
 			'timeout' => '30',
 			'tls' => null,
 		];
-		$dsn = 'Mail:///?timeout=30&key=true&key2=false&client=null&tls=null';
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestEmailStaticConfig::parseDsn(['url' => $dsn]));
 
+		$dsn = 'mail://true:false@null/1?timeout=30&key=true&key2=false&client=null&tls=null';
 		$expected = [
-			'className' => 'Mail',
+			'className' => 'Cake\Network\Email\MailTransport',
 			'client' => null,
-			'driver' => 'Mail',
 			'host' => 'null',
 			'key' => true,
 			'key2' => false,
 			'password' => 'false',
 			'path' => '/1',
+			'scheme' => 'mail',
 			'timeout' => '30',
 			'tls' => null,
 			'username' => 'true',
 		];
-		$dsn = 'Mail://true:false@null/1?timeout=30&key=true&key2=false&client=null&tls=null';
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestEmailStaticConfig::parseDsn(['url' => $dsn]));
 
+		$dsn = 'mail://user:secret@localhost:25?timeout=30&client=null&tls=null';
 		$expected = [
-			'className' => 'Mail',
+			'className' => 'Cake\Network\Email\MailTransport',
 			'client' => null,
-			'driver' => 'Mail',
 			'host' => 'localhost',
 			'password' => 'secret',
 			'port' => 25,
+			'scheme' => 'mail',
 			'timeout' => '30',
 			'tls' => null,
 			'username' => 'user',
 		];
-		$dsn = 'Mail://user:secret@localhost:25?timeout=30&client=null&tls=null';
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestEmailStaticConfig::parseDsn(['url' => $dsn]));
 
-		$dsn = 'File:///?prefix=myapp_cake_core_&serialize=true&duration=%2B2 minutes';
+		$dsn = 'file:///?prefix=myapp_cake_core_&serialize=true&duration=%2B2 minutes';
 		$expected = [
-			'className' => 'File',
-			'driver' => 'File',
+			'className' => 'Cake\Log\Engine\FileLog',
 			'duration' => '+2 minutes',
 			'path' => '/',
 			'prefix' => 'myapp_cake_core_',
+			'scheme' => 'file',
 			'serialize' => true,
 		];
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestLogStaticConfig::parseDsn(['url' => $dsn]));
 	}
 
 /**
@@ -263,23 +357,21 @@ class StaticConfigTraitTest extends TestCase {
  * @return void
  */
 	public function testParseDsnPathSetting() {
-		$klassName = get_class($this->subject);
-
-		$dsn = 'File:///';
+		$dsn = 'file:///';
 		$expected = [
-			'className' => 'File',
-			'driver' => 'File',
+			'className' => 'Cake\Log\Engine\FileLog',
 			'path' => '/',
+			'scheme' => 'file',
 		];
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestLogStaticConfig::parseDsn(['url' => $dsn]));
 
-		$dsn = 'File:///?path=/tmp/persistent/';
+		$dsn = 'file:///?path=/tmp/persistent/';
 		$expected = [
-			'className' => 'File',
-			'driver' => 'File',
+			'className' => 'Cake\Log\Engine\FileLog',
 			'path' => '/tmp/persistent/',
+			'scheme' => 'file',
 		];
-		$this->assertEquals($expected, $klassName::parseDsn(['url' => $dsn]));
+		$this->assertEquals($expected, TestLogStaticConfig::parseDsn(['url' => $dsn]));
 	}
 
 }

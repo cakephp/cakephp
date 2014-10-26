@@ -1815,4 +1815,13 @@ class Email {
 		return strtoupper($this->charset);
 	}
 
+
+	public static function getClassMap() {
+		return [
+			'debug' => 'Cake\Network\Email\DebugTransport',
+			'mail' => 'Cake\Network\Email\MailTransport',
+			'smtp' => 'Cake\Network\Email\SmtpTransport',
+		];
+	}
+
 }

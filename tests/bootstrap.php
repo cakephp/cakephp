@@ -98,11 +98,10 @@ Cache::config([
 
 // Ensure default test connection is defined
 if (!getenv('db_dsn')) {
-	putenv('db_dsn=Cake\Database\Driver\Sqlite:///memory:');
+	putenv('db_dsn=sqlite:///memory:');
 }
 
 ConnectionManager::config('test', [
-	'className' => 'Cake\Database\Connection',
 	'driver' => getenv('db_class'),
 	'url' => getenv('db_dsn'),
 	'database' => getenv('db_database'),

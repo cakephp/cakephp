@@ -15,6 +15,7 @@
 namespace Cake\Core;
 
 use BadMethodCallException;
+use UnexpectedValueException;
 
 /**
  * A trait that provides a set of static methods to manage configuration
@@ -176,9 +177,7 @@ trait StaticConfigTrait {
 		$dsn = $config['url'];
 
 		if (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
-			$scheme = explode('\\', $matches[1]);
-			$scheme = array_pop($scheme);
-			$driver = $matches[1];
+			$scheme = $matches[1];
 			$dsn = preg_replace("/^([\w\\\]+)/", 'file', $dsn);
 		}
 
@@ -188,6 +187,7 @@ trait StaticConfigTrait {
 			return $config;
 		}
 
+		$parsed['scheme'] = $scheme;
 		$query = '';
 
 		if (isset($parsed['query'])) {
@@ -216,15 +216,14 @@ trait StaticConfigTrait {
 
 		unset($config['url']);
 		$config = array_merge($config, $parsed, $queryArgs);
-		unset($config['user'], $config['pass'], $config['scheme']);
+		unset($config['user'], $config['pass']);
 
-		if ($driver !== null) {
-			if (empty($config['driver'])) {
-				$config['driver'] = $driver;
-			}
+		if (empty($config['className']) && method_exists(get_called_class(), 'getClassMap')) {
+			$classMap = static::getClassMap();
 
-			if (empty($config['className'])) {
-				$config['className'] = $driver;
+			$config['className'] = $config['scheme'];
+			if (isset($classMap[$config['scheme']])) {
+				$config['className'] = $classMap[$config['scheme']];
 			}
 		}
 

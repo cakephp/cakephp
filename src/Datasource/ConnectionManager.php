@@ -94,12 +94,26 @@ class ConnectionManager {
 	public static function parseDsn($config = null) {
 		$config = static::_parseDsn($config);
 
-		if (isset($config['path'])) {
+		if (isset($config['path']) && empty($config['database'])) {
 			$config['database'] = substr($config['path'], 1);
+		}
+
+		if (empty($config['driver'])) {
+			$config['driver'] = $config['className'];
+			$config['className'] = 'Cake\Database\Connection';
 		}
 
 		unset($config['path']);
 		return $config;
+	}
+
+	public static function getClassMap() {
+		return [
+			'mysql' => 'Cake\Database\Driver\Mysql',
+			'postgres' => 'Cake\Database\Driver\Postgres',
+			'sqlite' => 'Cake\Database\Driver\Sqlite',
+			'sqlserver' => 'Cake\Database\Driver\Sqlserver',
+		];
 	}
 
 /**

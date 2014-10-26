@@ -481,4 +481,11 @@ class Log {
 		return static::write(static::$_levelMap['info'], $message, $context);
 	}
 
+	public static function getClassMap() {
+		return [
+			'console' => 'Cake\Log\Engine\ConsoleLog',
+			'file' => 'Cake\Log\Engine\FileLog',
+			'syslog' => 'Cake\Log\Engine\SyslogLog',
+		];
+	}
 }
