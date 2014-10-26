@@ -355,9 +355,8 @@ class Router {
 				break;
 			}
 		}
-		if (isset($defaults['prefix'])) {
+		if (isset($defaults['prefix']) && !in_array($defaults['prefix'], self::$_prefixes)) {
 			self::$_prefixes[] = $defaults['prefix'];
-			self::$_prefixes = array_keys(array_flip(self::$_prefixes));
 		}
 		$defaults += array('plugin' => null);
 		if (empty($options['action'])) {
