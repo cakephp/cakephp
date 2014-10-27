@@ -53,7 +53,7 @@ trait TupleComparisonTranslatorTrait {
 		}
 
 		$value = $expression->getValue();
-		$op = $expression->type();
+		$op = $expression->getOperator();
 		$true = new QueryExpression('1');
 
 		if ($value instanceof Query) {
@@ -63,7 +63,7 @@ trait TupleComparisonTranslatorTrait {
 			}
 			$value->select($true, true);
 			$expression->field($true);
-			$expression->type('=');
+			$expression->setOperator('=');
 			return;
 		}
 
@@ -86,7 +86,7 @@ trait TupleComparisonTranslatorTrait {
 
 		$expression->field($true);
 		$expression->value($surrogate);
-		$expression->type('=');
+		$expression->setOperator('=');
 	}
 
 }
