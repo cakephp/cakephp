@@ -526,19 +526,15 @@ class SecurityComponent extends Component {
 		);
 		$check = Security::hash(implode('', $hashParts), 'sha1');
 
-		if (Configure::read('debug') > 0) {
-			$blackholeFile = TMP . 'blackhole';
-			if (file_exists($blackholeFile)) {
-				$formData = file_get_contents($blackholeFile);
-				$formData = json_decode($formData, true);
-				$this->_blackHoleData['beforeSubmit'] = $formData;
-				$this->_blackHoleData['afterSubmit'] = array(
-					'fields' => $fieldList,
-					'unlocked' => $unlocked,
-					'hash' => $check
-				);
-				$this->_blackHoleData['dirtyFields'] = array_diff($formData['fields'], $fieldList);
-			}
+		if (Configure::read('debug') > 0 && $this->Session->check('_Blackhole')) {
+			$formData = $this->Session->read('_Blackhole');
+			$this->_blackHoleData['beforeSubmit'] = $formData;
+			$this->_blackHoleData['afterSubmit'] = array(
+				'fields' => $fieldList,
+				'unlocked' => $unlocked,
+				'hash' => $check
+			);
+			$this->_blackHoleData['dirtyFields'] = array_diff($formData['fields'], $fieldList);
 		}
 
 		return ($token === $check);
