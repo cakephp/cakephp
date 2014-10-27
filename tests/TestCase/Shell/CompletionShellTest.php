@@ -113,7 +113,7 @@ class CompletionShellTest extends TestCase {
 		$output = $this->out->output;
 
 		$expected = "TestPlugin.example TestPlugin.sample " .
-			"TestPluginTwo.example TestPluginTwo.welcome i18n orm_cache plugin server test sample\n";
+			"TestPluginTwo.example TestPluginTwo.welcome i18n orm_cache plugin_assets server test sample\n";
 		$this->assertTextEquals($expected, $output);
 	}
 
