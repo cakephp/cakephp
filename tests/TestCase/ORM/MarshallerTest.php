@@ -774,6 +774,7 @@ class MarshallerTest extends TestCase {
 				['id' => 2, 'comment' => 'Altered comment 2'],
 				['id' => 1, 'comment' => 'Altered comment 1'],
 				['id' => 3, 'comment' => 'Extra comment 3'],
+				['id' => 4, 'comment' => 'Extra comment 4'],
 				['comment' => 'Extra comment 2']
 			]
 		];
@@ -797,13 +798,25 @@ class MarshallerTest extends TestCase {
 			['comment' => 'Extra comment 3'] + $thirdComment,
 			$entity->comments[2]->toArray()
 		);
+
+		$forthComment = $this->articles->Comments
+			->find()
+			->where(['id' => 4])
+			->hydrate(false)
+			->first();
+
+		$this->assertEquals(
+			['comment' => 'Extra comment 4'] + $forthComment,
+			$entity->comments[3]->toArray()
+		);
+
 		$this->assertEquals(
 			['comment' => 'Extra comment 1'],
-			$entity->comments[3]->toArray()
+			$entity->comments[4]->toArray()
 		);
 		$this->assertEquals(
 			['comment' => 'Extra comment 2'],
-			$entity->comments[4]->toArray()
+			$entity->comments[5]->toArray()
 		);
 	}
 
