@@ -74,7 +74,13 @@ class IntegerType extends \Cake\Database\Type {
 		if ($value === null || $value === '') {
 			return null;
 		}
-		return (int)$value;
+		if (is_int($value)) {
+			return $value;
+		}
+		if (ctype_digit($value)) {
+			return (int)$value;
+		}
+		return $value;
 	}
 
 }

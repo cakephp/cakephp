@@ -74,7 +74,10 @@ class FloatType extends \Cake\Database\Type {
 		if ($value === null || $value === '') {
 			return null;
 		}
-		return floatval($value);
+		if (is_numeric($value)) {
+			return (float)$value;
+		}
+		return $value;
 	}
 
 }

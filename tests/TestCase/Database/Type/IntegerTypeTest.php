@@ -76,13 +76,25 @@ class IntegerTypeTest extends TestCase {
  */
 	public function testMarshal() {
 		$result = $this->type->marshal('some data', $this->driver);
-		$this->assertSame(0, $result);
+		$this->assertSame('some data', $result);
 
 		$result = $this->type->marshal('', $this->driver);
 		$this->assertNull($result);
 
 		$result = $this->type->marshal('0', $this->driver);
 		$this->assertSame(0, $result);
+
+		$result = $this->type->marshal('105', $this->driver);
+		$this->assertSame(105, $result);
+
+		$result = $this->type->marshal(105, $this->driver);
+		$this->assertSame(105, $result);
+
+		$result = $this->type->marshal('1.25', $this->driver);
+		$this->assertSame('1.25', $result);
+
+		$result = $this->type->marshal('2 monkeys', $this->driver);
+		$this->assertSame('2 monkeys', $result);
 	}
 
 /**
