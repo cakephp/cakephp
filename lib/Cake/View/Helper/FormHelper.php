@@ -600,7 +600,7 @@ class FormHelper extends AppHelper {
 		$debugData['hash'] = $fields;
 
 		if (Configure::read('debug') > 0) {
-			file_put_contents(TMP . 'blackhole', json_encode($debugData, true));
+			file_put_contents(TMP . 'blackhole', json_encode($debugData));
 		}
 
 		$tokenFields = array_merge($secureAttributes, array(
