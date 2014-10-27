@@ -377,16 +377,32 @@ class Marshaller {
 			unset($indexed[$key]);
 		}
 
-	        foreach(array_merge($indexed, $new) as $record) {
-			foreach($record as $value) {
-				if (isset($value[$primary[0]]) && $this->_table->exists([$primary[0] => $value[$primary[0]]])) {
-					$entity = $this->_table->get($value[$primary[0]]);
-					$output[] = $this->merge($entity, $value, $options);
-				} else {
-					$output[] = $this->one($value, $options);
-				}
+		$maybeExistentQuery = (new Collection($indexed))
+			->map(function ($data, $key) {
+				return explode(';', $key);
+			})
+			->filter(function ($data) use ($primary) {
+				return count(array_filter($data, 'strlen')) === count($primary);
+			})
+			->map(function ($keys) use ($primary) {
+				return $this->_table->find()->where(array_combine($primary, $keys));
+			})
+			->reduce(function ($result, $query) {
+				return $result === null ? $query : $result->union($query);
+			}, null);
+
+		if ($maybeExistentQuery) {
+			foreach ($maybeExistentQuery as $entity) {
+				$key = implode(';', $entity->extract($primary));
+				$output[] = $this->merge($entity, $indexed[$key][0], $options);
+				unset($indexed[$key]);
 			}
-	        }
+		}
+
+		foreach ((new Collection($indexed))->append($new) as $value) {
+			$output[] = $this->one($value[0], $options);
+		}
+
 		return $output;
 	}
 
