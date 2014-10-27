@@ -16,7 +16,7 @@ namespace Cake\Database\Expression;
 
 /**
  * Describes a getter and a setter for the a field property. Useful for expressions
- * that contain the an identifier to compare against.
+ * that contain an identifier to compare against.
  *
  * @internal
  */
