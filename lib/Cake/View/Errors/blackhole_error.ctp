@@ -12,7 +12,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Errors
- * @since         CakePHP(tm) v 2.2.0
+ * @since         CakePHP(tm) v 2.6.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
@@ -39,5 +39,5 @@
 <?php endif; ?>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
-	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Errors' . DS . 'fatal_error.ctp'); ?>
+	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Errors' . DS . 'blackhole_error.ctp'); ?>
 </p>
