@@ -3060,8 +3060,8 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		$query['order'] = array($query['order']);
-
-		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
+//if ($type === 'search') { debug($query['fields']); }
+		if ($query['callbacks'] === true || $query['callbacks'] === 'before' && $type !== 'search') {
 			$event = new CakeEvent('Model.beforeFind', $this, array($query));
 			list($event->break, $event->breakOn, $event->modParams) = array(true, array(false, null), 0);
 			$this->getEventManager()->dispatch($event);
@@ -3069,10 +3069,9 @@ class Model extends Object implements CakeEventListener {
 			if ($event->isStopped()) {
 				return null;
 			}
-
 			$query = $event->result === true ? $event->data[0] : $event->result;
 		}
-
+//if ($type === 'search') { debug($query['fields']); }
 		return $query;
 	}
 

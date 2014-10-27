@@ -592,7 +592,16 @@ class FormHelper extends AppHelper {
 			$unlocked,
 			Configure::read('Security.salt')
 		);
+
+		$debugData = array();
+		$debugData['fields'] = $fields;
 		$fields = Security::hash(implode('', $hashParts), 'sha1');
+		$debugData['unlocked'] = $unlocked;
+		$debugData['hash'] = $fields;
+
+		if (Configure::read('debug') > 0) {
+			file_put_contents(TMP . 'blackhole', json_encode($debugData, true));
+		}
 
 		$tokenFields = array_merge($secureAttributes, array(
 			'value' => urlencode($fields . ':' . $locked),

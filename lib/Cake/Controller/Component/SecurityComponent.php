@@ -205,6 +205,13 @@ class SecurityComponent extends Component {
 	protected $_action = null;
 
 /**
+ * Collection of blackhole information
+ *
+ * @var array
+ */
+	protected $_blackHoleData = array();
+
+/**
  * Request object
  *
  * @var CakeRequest
@@ -328,11 +335,12 @@ class SecurityComponent extends Component {
  * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
  * @see SecurityComponent::$blackHoleCallback
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#handling-blackhole-callbacks
- * @throws BadRequestException
+ * @throws BlackHoleException
  */
 	public function blackHole(Controller $controller, $error = '') {
 		if (!$this->blackHoleCallback) {
-			throw new BadRequestException(__d('cake_dev', 'The request has been black-holed'));
+			$this->_blackHoleData['error'] = $error;
+			throw new BlackHoleException(__d('cake_dev', 'The request has been black-holed'), 400, $this->_blackHoleData);
 		}
 		return $this->_callback($controller, $this->blackHoleCallback, array($error));
 	}
@@ -517,6 +525,22 @@ class SecurityComponent extends Component {
 			Configure::read('Security.salt')
 		);
 		$check = Security::hash(implode('', $hashParts), 'sha1');
+
+		if (Configure::read('debug') > 0) {
+			$blackholeFile = TMP . 'blackhole';
+			if (file_exists($blackholeFile)) {
+				$formData = file_get_contents($blackholeFile);
+				$formData = json_decode($formData, true);
+				$this->_blackHoleData['beforeSubmit'] = $formData;
+				$this->_blackHoleData['afterSubmit'] = array(
+					'fields' => $fieldList,
+					'unlocked' => $unlocked,
+					'hash' => $check
+				);
+				$this->_blackHoleData['dirtyFields'] = array_diff($formData['fields'], $fieldList);
+			}
+		}
+
 		return ($token === $check);
 	}
 

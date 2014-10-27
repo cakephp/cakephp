@@ -109,6 +109,9 @@ class ExceptionRenderer {
 			$method = 'pdoError';
 			$template = 'pdo_error';
 			$code = 500;
+		} elseif ($exception instanceof BlackHoleException) {
+			$method = 'blackholeError';
+			$template = 'blackhole_error';
 		} elseif (!$methodExists) {
 			$method = 'error500';
 			if ($code >= 400 && $code < 500) {
@@ -196,6 +199,27 @@ class ExceptionRenderer {
 			'_serialize' => array('code', 'name', 'message', 'url')
 		));
 		$this->controller->set($error->getAttributes());
+		$this->_outputMessage($this->template);
+	}
+
+/**
+ * Generic handler for the internal framework errors CakePHP can generate.
+ *
+ * @param BlackHoleException $error
+ * @return void
+ */
+	protected function blackholeError(BlackHoleException $error) {
+		$url = $this->controller->request->here();
+		$code = $error->getCode();
+		$this->controller->response->statusCode($code);
+		$this->controller->set(array(
+			'code' => $code,
+			'url' => h($url),
+			'name' => h($error->getMessage()),
+			'error' => $error,
+			'blackHoleData' => $error->getAttributes(),
+			'_serialize' => array('code', 'url', 'name', 'blackHoleData')
+		));
 		$this->_outputMessage($this->template);
 	}
 
