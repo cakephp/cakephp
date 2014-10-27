@@ -98,7 +98,8 @@ class BlackHoleException extends BadRequestException {
  * Constructor
  *
  * @param string $message If no message is given 'Bad Request' will be the message
- * @param integer $code Status code, defaults to 400
+ * @param int $code Status code, defaults to 400
+ * @param array $blackHoleData Array of data that
  */
 	public function __construct($message = null, $code = 400, $blackHoleData = array()) {
 		if (empty($message)) {
@@ -116,6 +117,7 @@ class BlackHoleException extends BadRequestException {
 	public function getAttributes() {
 		return $this->_attributes;
 	}
+
 }
 
 /**

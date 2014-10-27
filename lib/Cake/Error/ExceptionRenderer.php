@@ -120,7 +120,7 @@ class ExceptionRenderer {
 		}
 
 		$isNotDebug = !Configure::read('debug');
-		if ($isNotDebug && $method === '_cakeError') {
+		if ($isNotDebug && in_array($method, array('_cakeError', 'blackholeError'))) {
 			$method = 'error400';
 		}
 		if ($isNotDebug && $code == 500) {
@@ -205,10 +205,10 @@ class ExceptionRenderer {
 /**
  * Generic handler for the internal framework errors CakePHP can generate.
  *
- * @param BlackHoleException $error
+ * @param BlackHoleException $error The BlackHoleException object
  * @return void
  */
-	protected function blackholeError(BlackHoleException $error) {
+	public function blackholeError(BlackHoleException $error) {
 		$url = $this->controller->request->here();
 		$code = $error->getCode();
 		$this->controller->response->statusCode($code);
