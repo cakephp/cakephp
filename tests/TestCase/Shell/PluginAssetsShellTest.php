@@ -12,20 +12,20 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell\Task;
+namespace Cake\Test\TestCase\Shell;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
-use Cake\Shell\Task\AssetsTask;
+use Cake\Shell\PluginAssetsTask;
 use Cake\TestSuite\TestCase;
 
 /**
- * SymlinkAssetsTask class
+ * PluginAssetsShellTest class
  *
  */
-class SymlinkAssetsTaskTest extends TestCase {
+class PluginAssetsShellTest extends TestCase {
 
 /**
  * setUp method
@@ -36,8 +36,8 @@ class SymlinkAssetsTaskTest extends TestCase {
 		parent::setUp();
 		$this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
-		$this->Task = $this->getMock(
-			'Cake\Shell\Task\AssetsTask',
+		$this->shell = $this->getMock(
+			'Cake\Shell\PluginAssetsShell',
 			array('in', 'out', 'err', '_stop'),
 			array($this->io)
 		);
@@ -50,20 +50,20 @@ class SymlinkAssetsTaskTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->Task);
+		unset($this->shell);
 		Plugin::unload();
 	}
 
 /**
- * testExecute method
+ * testSymlink method
  *
  * @return void
  */
-	public function testExecute() {
+	public function testSymlink() {
 		Plugin::load('TestPlugin');
 		Plugin::load('Company/TestPluginThree');
 
-		$this->Task->main();
+		$this->shell->symlink();
 
 		$path = WWW_ROOT . 'test_plugin';
 		$link = new \SplFileInfo($path);
@@ -71,6 +71,27 @@ class SymlinkAssetsTaskTest extends TestCase {
 		$this->assertTrue(file_exists($path . DS . 'root.js'));
 		unlink($path);
 
+		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+		$link = new \SplFileInfo($path);
+		// If "company" directory exists beforehand "test_plugin_three" would
+		// be a link. But if the directory is created by the shell itself
+		// symlinking fails and the assets folder is copied as fallback.
+		$this->assertTrue($link->isDir());
+		$this->assertTrue(file_exists($path . DS . 'css' . DS . 'company.css'));
+		$folder = new Folder(WWW_ROOT . 'company');
+		$folder->delete();
+	}
+
+/**
+ * testSymlinkWhenVendorDirectoryExits
+ *
+ * @return void
+ */
+	public function testSymlinkWhenVendorDirectoryExits() {
+		Plugin::load('Company/TestPluginThree');
+		mkdir(WWW_ROOT . 'company');
+
+		$this->shell->symlink();
 		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
 		$link = new \SplFileInfo($path);
 		$this->assertTrue($link->isLink());
@@ -87,7 +108,7 @@ class SymlinkAssetsTaskTest extends TestCase {
 	public function testForPluginWithoutWebroot() {
 		Plugin::load('TestPluginTwo');
 
-		$this->Task->main();
+		$this->shell->symlink();
 		$this->assertFalse(file_exists(WWW_ROOT . 'test_plugin_two'));
 	}
 

@@ -12,40 +12,41 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Shell\Task;
+namespace Cake\Shell;
 
 use Cake\Console\Shell;
-use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
 
 /**
- * Task for symlinking / copying plugin assets to app's webroot.
+ * Shell for symlinking / copying plugin assets to app's webroot.
  *
  */
-class AssetsTask extends Shell {
+class PluginAssetsShell extends Shell {
 
 /**
- * Execution method always used for tasks
+ * Attempt to symlink plugin assets to app's webroot. If symlinking fails it
+ * fallback to copying the assets. For vendor namespaced plugin, parent folder
+ * for vendor name are created if required.
  *
  * @return void
  */
-	public function main() {
-		$this->_process();
+	public function symlink() {
+		$this->_process($this->_list());
 	}
 
 /**
- * Process plugins
+ * Get list of plugins to process. Plugins without a webroot directory are skipped.
  *
- * @return void
+ * @return array
  */
-	protected function _process() {
-		$plugins = Plugin::loaded();
-		foreach ($plugins as $plugin) {
+	protected function _list() {
+		$plugins = [];
+		foreach (Plugin::loaded() as $plugin) {
 			$path = Plugin::path($plugin) . 'webroot';
 			if (!is_dir($path)) {
-				$this->out();
+				$this->out('', 1, Shell::VERBOSE);
 				$this->out(
 					sprintf('Skipping plugin %s. It does not have webroot folder.', $plugin),
 					2,
@@ -54,32 +55,67 @@ class AssetsTask extends Shell {
 				continue;
 			}
 
+			$link = Inflector::underscore($plugin);
+			$dir = WWW_ROOT;
+			$namespaced = false;
+			if (strpos('/', $link) !== false) {
+				$namespaced = true;
+				$parts = explode('/', $link);
+				$link = array_pop($parts);
+				$dir = WWW_ROOT . implode(DS, $parts) . DS;
+			}
+
+			$plugins[$plugin] = [
+				'srcPath' => Plugin::path($plugin) . 'webroot',
+				'destDir' => $dir,
+				'link' => $link,
+				'namespaced' => $namespaced
+			];
+		}
+		return $plugins;
+	}
+
+/**
+ * Process plugins
+ *
+ * @return void
+ */
+	protected function _process($plugins) {
+		foreach ($plugins as $plugin => $config) {
+			$path = Plugin::path($plugin) . 'webroot';
+
 			$this->out();
 			$this->out('For plugin: ' . $plugin);
 			$this->hr();
 
-			$link = Inflector::underscore($plugin);
-			$dir = WWW_ROOT;
-
-			if (strpos('/', $link) !== false) {
-				$parts = explode('/', $link);
-				$link = array_pop($parts);
-				$dir = WWW_ROOT . implode(DS, $parts) . DS;
-				if (!is_dir($dir) && !$this->_createDirectory($dir)) {
-					continue;
-				}
-			}
-
-			if (file_exists($dir . $link)) {
-				$this->out($link . ' already exists', 1, Shell::VERBOSE);
+			if ($config['namespaced'] &&
+				!is_dir($config['destDir']) &&
+				!$this->_createDirectory($config['destDir'])
+			) {
 				continue;
 			}
 
-			if ($this->_createSymlink($path, $dir . $link)) {
+			if (file_exists($config['destDir'] . $config['link'])) {
+				$this->out(
+					$config['destDir'] . $config['link'] . ' already exists',
+					1,
+					Shell::VERBOSE
+				);
 				continue;
 			}
 
-			$this->_copyDirectory($path, $dir . $link);
+			$result = $this->_createSymlink(
+				$config['srcPath'],
+				$config['destDir'] . $config['link']
+			);
+			if ($result) {
+				continue;
+			}
+
+			$this->_copyDirectory(
+				$config['srcPath'],
+				$config['destDir'] . $config['link']
+			);
 		}
 
 		$this->out();
@@ -144,6 +180,21 @@ class AssetsTask extends Shell {
 
 		$this->err('Error copying assets to directory ' . $destination);
 		return false;
+	}
+
+/**
+ * Gets the option parser instance and configures it.
+ *
+ * @return \Cake\Console\ConsoleOptionParser
+ */
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+
+		$parser->addSubcommand('symlink', [
+			'help' => 'Symlink / copy assets to app\'s webroot'
+		]);
+
+		return $parser;
 	}
 
 }
