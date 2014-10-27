@@ -270,19 +270,19 @@ class TimeTest extends TestCase {
  */
 	public function testTimeAgoInWordsWithFormat() {
 		$time = new Time('2007-9-25');
-		$result = $time->timeAgoInWords(array('format' => 'YYYY-MM-dd'));
+		$result = $time->timeAgoInWords(array('format' => 'yyyy-MM-dd'));
 		$this->assertEquals('on 2007-09-25', $result);
 
 		$time = new Time('2007-9-25');
-		$result = $time->timeAgoInWords(array('format' => 'YYYY-MM-dd'));
+		$result = $time->timeAgoInWords(array('format' => 'yyyy-MM-dd'));
 		$this->assertEquals('on 2007-09-25', $result);
 
 		$time = new Time('+2 weeks +2 days');
-		$result = $time->timeAgoInWords(array('format' => 'YYYY-MM-dd'));
+		$result = $time->timeAgoInWords(array('format' => 'yyyy-MM-dd'));
 		$this->assertRegExp('/^2 weeks, [1|2] day(s)?$/', $result);
 
 		$time = new Time('+2 months +2 days');
-		$result = $time->timeAgoInWords(array('end' => '1 month', 'format' => 'YYYY-MM-dd'));
+		$result = $time->timeAgoInWords(array('end' => '1 month', 'format' => 'yyyy-MM-dd'));
 		$this->assertEquals('on ' . date('Y-m-d', strtotime('+2 months +2 days')), $result);
 	}
 
