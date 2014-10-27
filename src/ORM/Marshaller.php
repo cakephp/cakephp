@@ -377,11 +377,16 @@ class Marshaller {
 			unset($indexed[$key]);
 		}
 
-		foreach (array_merge($indexed, $new) as $record) {
-			foreach ($record as $value) {
-				$output[] = $this->one($value, $options);
+	        foreach(array_merge($indexed, $new) as $record) {
+			foreach($record as $value) {
+				if (isset($value[$primary[0]]) && $this->_table->exists([$primary[0] => $value[$primary[0]]])) {
+					$entity = $this->_table->get($value[$primary[0]]);
+					$output[] = $this->merge($entity, $value, $options);
+				} else {
+					$output[] = $this->one($value, $options);
+				}
 			}
-		}
+	        }
 		return $output;
 	}
 
