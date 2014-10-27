@@ -1768,6 +1768,7 @@ class FormHelper extends Helper {
 				'name' => $attributes['name'],
 				'value' => '',
 				'secure' => false,
+				'disabled' => ($attributes['disabled'] === true || $attributes['disabled'] === 'disabled'),
 			);
 			$hidden = $this->hidden($fieldName, $hiddenAttributes);
 		}

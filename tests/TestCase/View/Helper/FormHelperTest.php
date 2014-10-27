@@ -2448,7 +2448,7 @@ class FormHelperTest extends TestCase {
 			array('label' => array('for' => "contact-multiple")),
 			'Multiple',
 			'/label',
-			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'value' => '')),
+			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'disabled' => 'disabled', 'value' => '')),
 			array('div' => array('class' => 'checkbox')),
 			array('label' => array('for' => "contact-multiple-1")),
 			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 1, 'disabled' => 'disabled', 'id' => "contact-multiple-1")),
