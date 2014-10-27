@@ -88,6 +88,38 @@ class BadRequestException extends HttpException {
 }
 
 /**
+ * Represents an HTTP 400 error.
+ *
+ * @package       Cake.Error
+ */
+class BlackHoleException extends BadRequestException {
+
+/**
+ * Constructor
+ *
+ * @param string $message If no message is given 'Bad Request' will be the message
+ * @param integer $code Status code, defaults to 400
+ */
+	public function __construct($message = null, $code = 400, $blackHoleData = array()) {
+		debug($blackHoleData);
+		if (empty($message)) {
+			$message = 'Bad Request';
+		}
+		$this->_attributes = $blackHoleData;
+		parent::__construct($message, $code);
+	}
+
+/**
+ * Get the passed in attributes
+ *
+ * @return array
+ */
+	public function getAttributes() {
+		return $this->_attributes;
+	}
+}
+
+/**
  * Represents an HTTP 401 error.
  *
  * @package       Cake.Error
