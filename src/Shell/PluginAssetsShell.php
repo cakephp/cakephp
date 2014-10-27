@@ -58,7 +58,7 @@ class PluginAssetsShell extends Shell {
 			$link = Inflector::underscore($plugin);
 			$dir = WWW_ROOT;
 			$namespaced = false;
-			if (strpos('/', $link) !== false) {
+			if (strpos($link, '/') !== false) {
 				$namespaced = true;
 				$parts = explode('/', $link);
 				$link = array_pop($parts);
