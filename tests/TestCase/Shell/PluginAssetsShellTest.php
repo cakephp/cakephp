@@ -101,6 +101,27 @@ class PluginAssetsShellTest extends TestCase {
 	}
 
 /**
+ * testSymlinkWhenTargetAlreadyExits
+ *
+ * @return void
+ */
+	public function testSymlinkWhenTargetAlreadyExits() {
+		Plugin::load('TestTheme');
+
+		$shell = $this->getMock(
+			'Cake\Shell\PluginAssetsShell',
+			array('in', 'out', 'err', '_stop', '_createSymlink', '_copyDirectory'),
+			array($this->io)
+		);
+
+		$this->assertTrue(is_dir(WWW_ROOT . 'test_theme'));
+
+		$shell->expects($this->never())->method('_createSymlink');
+		$shell->expects($this->never())->method('_copyDirectory');
+		$shell->symlink();
+	}
+
+/**
  * test that plugins without webroot are not processed
  *
  * @return void
