@@ -786,8 +786,15 @@ class MarshallerTest extends TestCase {
 		$this->assertSame($comment2, $entity->comments[1]);
 		$this->assertEquals('Altered comment 1', $entity->comments[0]->comment);
 		$this->assertEquals('Altered comment 2', $entity->comments[1]->comment);
+
+		$thirdComment = $this->articles->Comments
+			->find()
+			->where(['id' => 3])
+			->hydrate(false)
+			->first();
+
 		$this->assertEquals(
-			['comment' => 'Extra comment 3', 'id' => 3],
+			['comment' => 'Extra comment 3'] + $thirdComment,
 			$entity->comments[2]->toArray()
 		);
 		$this->assertEquals(
