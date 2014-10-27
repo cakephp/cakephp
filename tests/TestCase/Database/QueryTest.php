@@ -1173,6 +1173,31 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to use an expresison object
+ * as the field for a between expression
+ *
+ * @return void
+ */
+	public function testWhereWithBetweenWithExpressionField() {
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function ($exp, $q) {
+				$field = $q->newExpr('COALESCE(id, 1)');
+				return $exp->between($field, 5, 6, 'integer');
+			})
+			->execute();
+
+		$this->assertCount(2, $result);
+		$first = $result->fetch('assoc');
+		$this->assertEquals(5, $first['id']);
+
+		$second = $result->fetch('assoc');
+		$this->assertEquals(6, $second['id']);
+	}
+
+/**
  * Tests nesting query expressions both using arrays and closures
  *
  * @return void

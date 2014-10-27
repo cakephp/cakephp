@@ -99,7 +99,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface {
 	public function traverse(callable $callable) {
 		foreach ([$this->_field, $this->_from, $this->_to] as $part) {
 			if ($part instanceof ExpressionInterface) {
-				$callable($this->_value);
+				$callable($part);
 			}
 		}
 	}
