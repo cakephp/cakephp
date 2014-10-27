@@ -101,7 +101,6 @@ class BlackHoleException extends BadRequestException {
  * @param integer $code Status code, defaults to 400
  */
 	public function __construct($message = null, $code = 400, $blackHoleData = array()) {
-		debug($blackHoleData);
 		if (empty($message)) {
 			$message = 'Bad Request';
 		}
