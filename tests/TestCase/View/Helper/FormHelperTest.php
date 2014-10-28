@@ -5170,6 +5170,22 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test the label option being set to false.
+ *
+ * @return void
+ */
+	public function testInputLabelFalse() {
+		$this->Form->create($this->article);
+		$result = $this->Form->input('title', ['label' => false]);
+		$expected = [
+			'div' => ['class' => 'input text required'],
+			'input' => ['type' => 'text', 'required' => 'required', 'id' => 'title', 'name' => 'title'],
+			'/div'
+		];
+		$this->assertHtml($expected, $result);
+	}
+
+/**
  * testInputDateMaxYear method
  *
  * Let's say we want to only allow users born from 2006 to 2008 to register
@@ -6227,6 +6243,15 @@ class FormHelperTest extends TestCase {
 			'label' => ['for' => 'foo'],
 				'Foo',
 			'/label',
+			'/div'
+		];
+		$this->assertHtml($expected, $result);
+
+		$result = $this->Form->input('foo', ['type' => 'checkbox', 'label' => false]);
+		$expected = [
+			'div' => ['class' => 'input checkbox'],
+			['input' => ['type' => 'hidden', 'name' => 'foo', 'value' => '0']],
+			['input' => ['type' => 'checkbox', 'name' => 'foo', 'id' => 'foo', 'value' => '1']],
 			'/div'
 		];
 		$this->assertHtml($expected, $result);

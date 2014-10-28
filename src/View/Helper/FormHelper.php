@@ -1179,7 +1179,7 @@ class FormHelper extends Helper {
 			$label = $options['label'];
 		}
 
-		if ($label === false && isset($options['input'])) {
+		if ($label === false && $options['type'] === 'checkbox') {
 			return $options['input'];
 		}
 		if ($label === false) {
