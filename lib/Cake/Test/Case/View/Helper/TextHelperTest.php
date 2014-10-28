@@ -314,6 +314,16 @@ class TextHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testAutoLinkUrlsEscape() {
+		$text = 'Text with a partial <a href="http://www.example.com">http://www.example.com</a> link';
+		$expected = 'Text with a partial <a href="http://www.example.com">http://www.example.com</a> link';
+		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
+		$this->assertEquals($expected, $result);
+
+		$text = 'Text with a partial <a href="http://www.example.com">www.example.com</a> link';
+		$expected = 'Text with a partial <a href="http://www.example.com">www.example.com</a> link';
+		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
+		$this->assertEquals($expected, $result);
+
 		$text = 'Text with a partial <a href="http://www.cakephp.org">link</a> link';
 		$expected = 'Text with a partial <a href="http://www.cakephp.org">link</a> link';
 		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
@@ -331,22 +341,22 @@ class TextHelperTest extends CakeTestCase {
 
 		$text = 'Text with a url <a href="http://www.not-working-www.com">www.not-working-www.com</a> and more';
 		$expected = 'Text with a url &lt;a href=&quot;http://www.not-working-www.com&quot;&gt;www.not-working-www.com&lt;/a&gt; and more';
-		$result = $this->Text->autoLinkUrls($text);
+		$result = $this->Text->autoLinkUrls($text, array('escape' => true));
 		$this->assertEquals($expected, $result);
 
 		$text = 'Text with a url www.not-working-www.com and more';
 		$expected = 'Text with a url <a href="http://www.not-working-www.com">www.not-working-www.com</a> and more';
-		$result = $this->Text->autoLinkUrls($text);
+		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
 		$this->assertEquals($expected, $result);
 
 		$text = 'Text with a url http://www.not-working-www.com and more';
 		$expected = 'Text with a url <a href="http://www.not-working-www.com">http://www.not-working-www.com</a> and more';
-		$result = $this->Text->autoLinkUrls($text);
+		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
 		$this->assertEquals($expected, $result);
 
 		$text = 'Text with a url http://www.www.not-working-www.com and more';
 		$expected = 'Text with a url <a href="http://www.www.not-working-www.com">http://www.www.not-working-www.com</a> and more';
-		$result = $this->Text->autoLinkUrls($text);
+		$result = $this->Text->autoLinkUrls($text, array('escape' => false));
 		$this->assertEquals($expected, $result);
 	}
 
