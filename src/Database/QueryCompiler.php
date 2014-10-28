@@ -14,6 +14,8 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TableNameExpression;
 use Cake\Database\Query;
 use Cake\Database\ValueBinder;
@@ -49,7 +51,7 @@ class QueryCompiler {
  *
  * @var array
  */
-	protected $_fullFieldsParts = ['order', 'group'];
+	protected $_fullFieldsParts = ['order', 'group', 'having'];
 
 /**
  * The list of query clauses to traverse for generating a SELECT statement
@@ -168,7 +170,7 @@ class QueryCompiler {
 
 /**
  * Helper function used to apply full field name (meaning applying the connection prefix if the field names in
- * the order clause contains the table name)
+ * the group clause contains the table name)
  * This functions is only applied on GROUP clause
  *
  * @param array $parts Parts of the query clause
@@ -181,6 +183,35 @@ class QueryCompiler {
 			foreach ($parts as $key => $part) {
 				$parts[$key] = $query->connection()->fullFieldName($part);
 			}
+		}
+
+		return $parts;
+	}
+
+/**
+ * Helper function used to apply full field name (meaning applying the connection prefix if the field names in
+ * the order clause contains the table name)
+ * This functions is only applied on HAVING clause
+ *
+ * @param ExpressionInterface $parts Parts of the query clause
+ * @param \Cake\Database\Query $query The query that is being compiled
+ * @param \Cake\Database\ValueBinder $generator The placeholder and value binder object
+ * @return array|ExpressionInterface The variable $parts modified
+ */
+	protected function _havingFullFieldsName($parts, $query, $generator) {
+		if ($parts instanceof ExpressionInterface) {
+			$parts->traverse(function ($condition) use ($query) {
+				if ($condition instanceof Comparison) {
+					$field = $query->connection()->applyFullTableName($condition->getField());
+					$condition->field($field);
+				} elseif ($condition instanceof QueryExpression) {
+					$condition->iterateParts(function ($condition) use ($query) {
+						return $query->connection()->applyFullTableName($condition);
+					});
+				}
+
+				return $condition;
+			});
 		}
 
 		return $parts;

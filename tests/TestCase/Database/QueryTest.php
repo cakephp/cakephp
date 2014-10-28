@@ -19,6 +19,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Traits\ConnectionPrefixTestTrait;
 
 /**
  * Tests Query class
@@ -26,9 +27,9 @@ use Cake\TestSuite\TestCase;
  */
 class QueryTest extends TestCase {
 
-	public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
+	use ConnectionPrefixTestTrait;
 
-	public $prefix = '';
+	public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
 
 	const ARTICLE_COUNT = 3;
 	const AUTHOR_COUNT = 4;
@@ -37,10 +38,7 @@ class QueryTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
-		$config = $this->connection->config();
-		if (isset($config['prefix']) && $config['prefix'] !== '') {
-			$this->prefix = $config['prefix'];
-		}
+		$this->setPrefix();
 		$this->autoQuote = $this->connection->driver()->autoQuoting();
 	}
 
@@ -2928,7 +2926,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Assertion for comparing a regex pattern against a query having its indentifiers
+ * Assertion for comparing a regex pattern against a query having its identifiers
  * quoted. It accepts queries quoted with the characters `<` and `>`. If the third
  * parameter is set to true, it will alter the pattern to both accept quoted and
  * unquoted queries
@@ -2945,18 +2943,6 @@ class QueryTest extends TestCase {
 		$pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
 		$pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
 		$this->assertRegExp('#' . $pattern . '#', $query);
-	}
-
-/**
- * Will apply connection prefix to a raw SQL query.
- * Prefixes are to be represented by the character ~
- *
- * @param string $query Query as a string that should be prefixed
- * @return string The given query with the connection prefix, if any
- */
-	public function applyConnectionPrefix($query) {
-		$query = str_replace('~', $this->prefix, $query);
-		return $query;
 	}
 
 }

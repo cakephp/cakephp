@@ -21,13 +21,14 @@ use Cake\Database\Schema\SqlserverSchema;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Traits\ConnectionPrefixTestTrait;
 
 /**
  * SQL Server schema test case.
  */
 class SqlserverSchemaTest extends TestCase {
 
-	public $prefix = '';
+	use ConnectionPrefixTestTrait;
 
 /**
  * Set up
@@ -36,6 +37,7 @@ class SqlserverSchemaTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$this->setPrefix();
 		$this->skipUnless(defined('PDO::SQLSRV_ENCODING_UTF8'), 'SQL Server extension not present');
 	}
 
@@ -59,8 +61,8 @@ class SqlserverSchemaTest extends TestCase {
 
 		$prefix = $this->_getConnectionPrefix($connection);
 
-		$connection->execute("IF OBJECT_ID('" . $prefix . "schema_articles', 'U') IS NOT NULL DROP TABLE schema_articles");
-		$connection->execute("IF OBJECT_ID('" . $prefix . "schema_authors', 'U') IS NOT NULL DROP TABLE schema_authors");
+		$connection->execute($this->applyConnectionPrefix("IF OBJECT_ID('~schema_articles', 'U') IS NOT NULL DROP TABLE ~schema_articles"));
+		$connection->execute($this->applyConnectionPrefix("IF OBJECT_ID('~schema_authors', 'U') IS NOT NULL DROP TABLE ~schema_authors"));
 
 		$table = <<<SQL
 CREATE TABLE {$prefix}schema_authors (
@@ -276,8 +278,8 @@ SQL;
 		$schema = new SchemaCollection($connection);
 		$result = $schema->listTables();
 		$this->assertInternalType('array', $result);
-		$this->assertContains($prefix . 'schema_articles', $result);
-		$this->assertContains($prefix . 'schema_authors', $result);
+		$this->assertContains($this->applyConnectionPrefix('~schema_articles'), $result);
+		$this->assertContains($this->applyConnectionPrefix('~schema_authors'), $result);
 	}
 
 /**
@@ -377,7 +379,7 @@ SQL;
 		$schema = new SchemaCollection($connection);
 		$result = $schema->describe('dbo.schema_articles');
 		$this->assertEquals(['id'], $result->primaryKey());
-		$this->assertEquals($prefix . 'schema_articles', $result->name());
+		$this->assertEquals($this->applyConnectionPrefix('~schema_articles'), $result->name());
 	}
 
 /**
@@ -741,32 +743,6 @@ SQL;
 		$this->assertCount(2, $result);
 		$this->assertEquals($this->applyConnectionPrefix('DELETE FROM [~schema_articles]'), $result[0]);
 		$this->assertEquals($this->applyConnectionPrefix('DBCC CHECKIDENT([~schema_articles], RESEED, 0)'), $result[1]);
-	}
-
-/**
- * Gets the connection prefix of an instance of \Cake\Database\Connection
- *
- * @param \Cake\Database\Connection $connection Instance of Connection
- *
- * @return string Connection prefix
- */
-	protected function _getConnectionPrefix(\Cake\Database\Connection $connection) {
-		$config = $connection->config();
-		$prefix = isset($config["prefix"]) && is_string($config["prefix"]) ? $config["prefix"] : "";
-
-		return $prefix;
-	}
-
-/**
- * Will apply connection prefix to a raw SQL query.
- * Prefixes are to be represented by the character ~
- *
- * @param string $query Query as a string that should be prefixed
- * @return string The given query with the connection prefix, if any
- */
-	public function applyConnectionPrefix($query) {
-		$query = str_replace('~', $this->prefix, $query);
-		return $query;
 	}
 
 /**

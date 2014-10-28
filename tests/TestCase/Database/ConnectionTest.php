@@ -19,22 +19,20 @@ use Cake\Database\Connection;
 use Cake\Database\Expression\TableNameExpression;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Traits\ConnectionPrefixTestTrait;
 
 /**
  * Tests Connection class
  */
 class ConnectionTest extends TestCase {
 
-	public $fixtures = ['core.things'];
+	use ConnectionPrefixTestTrait;
 
-	public $prefix = '';
+	public $fixtures = ['core.things'];
 
 	public function setUp() {
 		$this->connection = ConnectionManager::get('test');
-		$config = $this->connection->config();
-		if (isset($config['prefix']) && $config['prefix'] !== '') {
-			$this->prefix = $config['prefix'];
-		}
+		$this->setPrefix();
 		parent::setUp();
 	}
 
@@ -334,6 +332,19 @@ class ConnectionTest extends TestCase {
 		$result->closeCursor();
 		$this->assertEquals('another title', $row['title']);
 		$this->assertEquals('another body', $row['body']);
+	}
+
+/**
+ * Tests that it is possible to pass PDO constants to the underlying statement
+ * object for using alternate fetch types
+ *
+ * @return void
+ */
+	public function testStatementFetchObject() {
+		$result = $this->connection->execute('SELECT title, body  FROM things');
+		$row = $result->fetch(\PDO::FETCH_OBJ);
+		$this->assertEquals('a title', $row->title);
+		$this->assertEquals('a body', $row->body);
 	}
 
 /**
@@ -917,18 +928,6 @@ class ConnectionTest extends TestCase {
 		$schema = $this->getMock('Cake\Database\Schema\Collection', [], [$connection]);
 		$connection->schemaCollection($schema);
 		$this->assertSame($schema, $connection->schemaCollection());
-	}
-
-/**
- * Will apply connection prefix to a raw SQL query.
- * Prefixes are to be represented by the character ~
- *
- * @param string $query Query as a string that should be prefixed
- * @return string The given query with the connection prefix, if any
- */
-	public function applyConnectionPrefix($query) {
-		$query = str_replace('~', $this->prefix, $query);
-		return $query;
 	}
 
 }

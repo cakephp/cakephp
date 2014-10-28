@@ -21,19 +21,18 @@ use Cake\Database\Schema\SqliteSchema;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Traits\ConnectionPrefixTestTrait;
 
 /**
  * Test case for Sqlite Schema Dialect.
  */
 class SqliteSchemaTest extends TestCase {
 
-	public $prefix = '';
+	use ConnectionPrefixTestTrait;
 
 	public function setUp() {
-		$config = ConnectionManager::config('test');
-		if (isset($config['prefix']) && $config['prefix'] !== '') {
-			$this->prefix = $config['prefix'];
-		}
+		parent::setUp();
+		$this->setPrefix();
 	}
 
 /**
@@ -925,20 +924,6 @@ SQL;
 	}
 
 /**
- * Gets the connection prefix of an instance of \Cake\Database\Connection
- *
- * @param \Cake\Database\Connection $connection Instance of Connection
- *
- * @return string Connection prefix
- */
-	protected function _getConnectionPrefix(\Cake\Database\Connection $connection) {
-		$config = $connection->config();
-		$prefix = isset($config["prefix"]) && is_string($config["prefix"]) ? $config["prefix"] : "";
-
-		return $prefix;
-	}
-
-/**
  * Get a schema instance with a mocked driver/pdo instances
  *
  * @return Driver
@@ -958,18 +943,6 @@ SQL;
 			}));
 		$driver->connection($mock);
 		return $driver;
-	}
-
-/**
- * Will apply connection prefix to a raw SQL query.
- * Prefixes are to be represented by the character ~
- *
- * @param string $query Query as a string that should be prefixed
- * @return string The given query with the connection prefix, if any
- */
-	public function applyConnectionPrefix($query) {
-		$query = str_replace('~', $this->prefix, $query);
-		return $query;
 	}
 
 }

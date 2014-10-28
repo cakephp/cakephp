@@ -21,11 +21,19 @@ use Cake\Database\Schema\MysqlSchema;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Traits\ConnectionPrefixTestTrait;
 
 /**
  * Test case for Mysql Schema Dialect.
  */
 class MysqlSchemaTest extends TestCase {
+
+	use ConnectionPrefixTestTrait;
+
+	public function setUp() {
+		parent::setUp();
+		$this->setPrefix();
+	}
 
 /**
  * Helper method for skipping tests that need a real connection.
@@ -189,8 +197,8 @@ class MysqlSchemaTest extends TestCase {
 
 		$this->_needsConnection();
 
-		$connection->execute('DROP TABLE IF EXISTS ' . $prefix . 'schema_articles');
-		$connection->execute('DROP TABLE IF EXISTS ' . $prefix . 'schema_authors');
+		$connection->execute($this->applyConnectionPrefix('DROP TABLE IF EXISTS ~schema_articles'));
+		$connection->execute($this->applyConnectionPrefix('DROP TABLE IF EXISTS ~schema_authors'));
 
 		$table = <<<SQL
 CREATE TABLE {$prefix}schema_authors (
@@ -213,7 +221,7 @@ allow_comments TINYINT(1) DEFAULT 0,
 created DATETIME,
 KEY `author_idx` (`author_id`),
 UNIQUE KEY `length_idx` (`title`(4)),
-FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
+FOREIGN KEY `author_idx` (`author_id`) REFERENCES `{$prefix}schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB COLLATE=utf8_general_ci
 SQL;
 		$connection->execute($table);
@@ -865,7 +873,7 @@ SQL;
 		$table = new Table('articles');
 		$result = $table->dropSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('DROP TABLE `' . $prefix . 'articles`', $result[0]);
+		$this->assertEquals($this->applyConnectionPrefix('DROP TABLE `~articles`'), $result[0]);
 	}
 
 /**
@@ -888,7 +896,7 @@ SQL;
 		$table = new Table('articles');
 		$result = $table->truncateSql($connection);
 		$this->assertCount(1, $result);
-		$this->assertEquals('TRUNCATE TABLE `' . $prefix . 'articles`', $result[0]);
+		$this->assertEquals($this->applyConnectionPrefix('TRUNCATE TABLE `~articles`'), $result[0]);
 	}
 
 /**
@@ -901,20 +909,6 @@ SQL;
 		$driver->expects($this->once())
 			->method('connect');
 		$schema = new MysqlSchema($driver);
-	}
-
-/**
- * Gets the connection prefix of an instance of \Cake\Database\Connection
- *
- * @param \Cake\Database\Connection $connection Instance of Connection
- *
- * @return string Connection prefix
- */
-	protected function _getConnectionPrefix(\Cake\Database\Connection $connection) {
-		$config = $connection->config();
-		$prefix = isset($config["prefix"]) && is_string($config["prefix"]) ? $config["prefix"] : "";
-
-		return $prefix;
 	}
 
 /**

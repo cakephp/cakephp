@@ -302,7 +302,7 @@ class Connection {
  * @param string $exclude String to be excluded as a table name
  * @return string
  */
-	public function applyFullTableName($condition, $exclude) {
+	public function applyFullTableName($condition, $exclude = false) {
 		if (isset($this->_config['prefix']) && $this->_config['prefix'] !== '') {
 			$prefix = $this->_config['prefix'];
 			if (is_string($condition)) {

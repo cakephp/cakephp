@@ -18,7 +18,6 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
-use Cake\Database\Expression\TableNameExpression;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object
@@ -83,7 +82,7 @@ class IdentifierQuoter {
 		}
 
 		if ($expression instanceof IdentifierExpression) {
-			$this->_quoteIndetifierExpression($expression);
+			$this->_quoteIdentifierExpression($expression);
 			return;
 		}
 	}
@@ -95,7 +94,7 @@ class IdentifierQuoter {
  * @return void
  */
 	protected function _quoteParts($query) {
-		foreach (['distinct', 'select', 'group'] as $part) {
+		foreach (['distinct', 'select', 'from', 'group'] as $part) {
 			$contents = $query->clause($part);
 
 			if (!is_array($contents)) {
@@ -106,12 +105,6 @@ class IdentifierQuoter {
 			if ($result) {
 				$query->{$part}($result, true);
 			}
-		}
-
-		$froms = $query->clause('from');
-		if ($froms) {
-			$froms = $this->_quoteFroms($froms);
-			$query->from($froms, true);
 		}
 
 		$joins = $query->clause('join');
@@ -138,28 +131,6 @@ class IdentifierQuoter {
 	}
 
 /**
- * Quotes both the table and alias for an array of froms as stored in a Query
- * object
- *
- * @param array $froms The froms to quote.
- * @return array
- */
-	protected function _quoteFroms($froms) {
-		$result = [];
-
-		if (!empty($froms)) {
-			foreach ($froms as $alias => $value) {
-				$value = $this->_quoteTableName($value);
-				$alias = is_numeric($alias) ? $alias : $this->_driver->quoteIdentifier($alias);
-
-				$result[$alias] = $value;
-			}
-		}
-
-		return $result;
-	}
-
-/**
  * Quotes both the table and alias for an array of joins as stored in a Query
  * object
  *
@@ -175,34 +146,14 @@ class IdentifierQuoter {
 				$value['alias'] = $alias;
 			}
 
-			$value['table'] = $this->_quoteTableName($value['table']);
+			if (is_string($value['table'])) {
+				$value['table'] = $this->_driver->quoteIdentifier($value['table']);
+			}
 
 			$result[$alias] = $value;
 		}
 
 		return $result;
-	}
-
-/**
- * Quotes the table name
- *
- * @param string|TableNameExpression|QueryExpression|\Cake\Database\Query $name Table name to quote
- *
- * @return string|TableNameExpression|QueryExpression|\Cake\Database\Query
- */
-	protected function _quoteTableName($name) {
-		if ($name instanceof TableNameExpression) {
-			$tableName = $name->getName();
-			if (is_string($tableName)) {
-				$quoted = $this->_driver->quoteIdentifier($tableName);
-				$name->setName($quoted);
-				$name->setQuoted();
-			}
-		} else {
-			$name = !is_string($name) ? $name : $this->_driver->quoteIdentifier($name);
-		}
-
-		return $name;
 	}
 
 /**
@@ -213,9 +164,7 @@ class IdentifierQuoter {
  */
 	protected function _quoteInsert($query) {
 		list($table, $columns) = $query->clause('insert');
-
-		$table = $this->_quoteTableName($table);
-
+		$table = $this->_driver->quoteIdentifier($table);
 		foreach ($columns as &$column) {
 			if (is_string($column)) {
 				$column = $this->_driver->quoteIdentifier($column);
@@ -271,7 +220,7 @@ class IdentifierQuoter {
  * @param \Cake\Database\Expression\IdentifierExpression $expression The identifiers to quote.
  * @return void
  */
-	protected function _quoteIndetifierExpression(IdentifierExpression $expression) {
+	protected function _quoteIdentifierExpression(IdentifierExpression $expression) {
 		$expression->setIdentifier(
 			$this->_driver->quoteIdentifier($expression->getIdentifier())
 		);
