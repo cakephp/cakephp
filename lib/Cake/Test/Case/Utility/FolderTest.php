@@ -171,6 +171,22 @@ class FolderTest extends CakeTestCase {
 	}
 
 /**
+ * Test that relative paths to create() are added to cwd.
+ *
+ * @return void
+ */
+	public function testCreateRelative() {
+		$folder = new Folder(TMP);
+		$path = TMP . 'tests' . DS . 'relative-test';
+		$result = $folder->create('tests' . DS . 'relative-test');
+		$this->assertTrue($result, 'should create');
+
+		$this->assertTrue(is_dir($path), 'Folder was not made');
+		$folder = new Folder($path);
+		$folder->delete();
+	}
+
+/**
  * test recursive directory create failure.
  *
  * @return void
