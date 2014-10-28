@@ -978,16 +978,33 @@ class CakeRouteTest extends CakeTestCase {
 	}
 
 /**
- * Test for var_export on CakeRoute
+ * Test for __set_state magic method on CakeRoute
  *
  * @return void
  */
 	public function testSetState() {
-		$route = new CakeRoute('/', array('controller' => 'pages', 'action' => 'display', 'home'));
-		// @codingStandardsIgnoreStart
-		$retrievedRoute = eval('return ' . var_export($route, true) . ';');
-		// @codingStandardsIgnoreEnd
-		$this->assertEquals($route, $retrievedRoute);
+		$route = CakeRoute::__set_state(array(
+			'keys' => array(),
+			'options' => array(),
+			'defaults' => array(
+				'controller' => 'pages',
+				'action' => 'display',
+				'home',
+			),
+			'template' => '/',
+			'_greedy' => false,
+			'_compiledRoute' => null,
+			'_headerMap' => array (
+				'type' => 'content_type',
+				'method' => 'request_method',
+				'server' => 'server_name',
+			),
+		));
+		$this->assertInstanceOf('CakeRoute', $route);
+		$this->assertSame('/', $route->match(array('controller' => 'pages', 'action' => 'display', 'home')));
+		$this->assertFalse($route->match(array('controller' => 'pages', 'action' => 'display', 'about')));
+		$expected = array('controller' => 'pages', 'action' => 'display', 'pass' => array('home'), 'named' => array());
+		$this->assertEquals($expected, $route->parse('/'));
 	}
 
 }
