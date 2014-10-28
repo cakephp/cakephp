@@ -67,9 +67,15 @@ class PluginAssetsShellTest extends TestCase {
 
 		$path = WWW_ROOT . 'test_plugin';
 		$link = new \SplFileInfo($path);
-		$this->assertTrue($link->isLink());
 		$this->assertTrue(file_exists($path . DS . 'root.js'));
-		unlink($path);
+		if (DIRECTORY_SEPARATOR === '\\') {
+			$this->assertTrue($link->isDir());
+			$folder = new Folder($path);
+			$folder->delete();
+		} else {
+			$this->assertTrue($link->isLink());
+			unlink($path);
+		}
 
 		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
 		$link = new \SplFileInfo($path);
