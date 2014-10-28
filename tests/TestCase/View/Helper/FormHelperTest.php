@@ -241,12 +241,49 @@ class FormHelperTest extends TestCase {
  */
 	public function testAddContextProvider() {
 		$context = 'My data';
-		$this->Form->addContextProvider('test', function ($request, $data) use ($context) {
+		$stub = $this->getMock('Cake\View\Form\ContextInterface');
+		$this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
 			$this->assertInstanceOf('Cake\Network\Request', $request);
 			$this->assertEquals($context, $data['entity']);
-			return $this->getMock('Cake\View\Form\ContextInterface');
+			return $stub;
 		});
 		$this->Form->create($context);
+		$result = $this->Form->context();
+		$this->assertSame($stub, $result);
+	}
+
+/**
+ * Test replacing a context class.
+ *
+ * @return void
+ */
+	public function testAddContextProviderReplace() {
+		$entity = new Article();
+		$stub = $this->getMock('Cake\View\Form\ContextInterface');
+		$this->Form->addContextProvider('orm', function ($request, $data) use ($stub) {
+			return $stub;
+		});
+		$this->Form->create($entity);
+		$result = $this->Form->context();
+		$this->assertSame($stub, $result);
+	}
+
+/**
+ * Test overriding a context class.
+ *
+ * @return void
+ */
+	public function testAddContextProviderAdd() {
+		$entity = new Article();
+		$stub = $this->getMock('Cake\View\Form\ContextInterface');
+		$this->Form->addContextProvider('newshiny', function ($request, $data) use ($stub) {
+			if ($data['entity'] instanceof Entity) {
+				return $stub;
+			}
+		});
+		$this->Form->create($entity);
+		$result = $this->Form->context();
+		$this->assertSame($stub, $result);
 	}
 
 /**
@@ -2448,7 +2485,7 @@ class FormHelperTest extends TestCase {
 			array('label' => array('for' => "contact-multiple")),
 			'Multiple',
 			'/label',
-			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'value' => '')),
+			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'disabled' => 'disabled', 'value' => '')),
 			array('div' => array('class' => 'checkbox')),
 			array('label' => array('for' => "contact-multiple-1")),
 			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 1, 'disabled' => 'disabled', 'id' => "contact-multiple-1")),
@@ -5170,6 +5207,22 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test the label option being set to false.
+ *
+ * @return void
+ */
+	public function testInputLabelFalse() {
+		$this->Form->create($this->article);
+		$result = $this->Form->input('title', ['label' => false]);
+		$expected = [
+			'div' => ['class' => 'input text required'],
+			'input' => ['type' => 'text', 'required' => 'required', 'id' => 'title', 'name' => 'title'],
+			'/div'
+		];
+		$this->assertHtml($expected, $result);
+	}
+
+/**
  * testInputDateMaxYear method
  *
  * Let's say we want to only allow users born from 2006 to 2008 to register
@@ -6227,6 +6280,15 @@ class FormHelperTest extends TestCase {
 			'label' => ['for' => 'foo'],
 				'Foo',
 			'/label',
+			'/div'
+		];
+		$this->assertHtml($expected, $result);
+
+		$result = $this->Form->input('foo', ['type' => 'checkbox', 'label' => false]);
+		$expected = [
+			'div' => ['class' => 'input checkbox'],
+			['input' => ['type' => 'hidden', 'name' => 'foo', 'value' => '0']],
+			['input' => ['type' => 'checkbox', 'name' => 'foo', 'id' => 'foo', 'value' => '1']],
 			'/div'
 		];
 		$this->assertHtml($expected, $result);

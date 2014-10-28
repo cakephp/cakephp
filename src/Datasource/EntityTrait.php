@@ -733,7 +733,7 @@ trait EntityTrait {
  *
  * {{{
  * $entity->accessible('id', true); // Mark id as not protected
- * $entity->accessible('author_id', true); // Mark author_id as protected
+ * $entity->accessible('author_id', false); // Mark author_id as protected
  * $entity->accessible(['id', 'user_id'], true); // Mark both properties as accessible
  * $entity->accessible('*', false); // Mark all properties as protected
  * }}}

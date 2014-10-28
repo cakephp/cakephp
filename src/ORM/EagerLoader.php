@@ -59,7 +59,8 @@ class EagerLoader {
 		'matching' => 1,
 		'queryBuilder' => 1,
 		'finder' => 1,
-		'joinType' => 1
+		'joinType' => 1,
+		'strategy' => 1
 	];
 
 /**
@@ -382,7 +383,11 @@ class EagerLoader {
  * but is not possible to change the strategy due to conflicting settings
  */
 	protected function _correctStrategy(&$config, $alias) {
-		if (!$config['canBeJoined']) {
+		$currentStrategy = isset($config['config']['strategy']) ?
+			$config['config']['strategy'] :
+			'join';
+
+		if (!$config['canBeJoined'] || $currentStrategy !== 'join') {
 			return $config;
 		}
 

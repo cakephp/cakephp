@@ -348,17 +348,20 @@ class Marshaller {
 	public function mergeMany($entities, array $data, array $options = []) {
 		$primary = (array)$this->_table->primaryKey();
 
-		$data = new Collection($data);
-		$data = $data->groupBy(function ($el) use ($primary) {
-			$keys = [];
-			foreach ($primary as $key) {
-				$keys[] = isset($el[$key]) ? $el[$key] : '';
-			}
-			return implode(';', $keys);
-		});
-		$indexed = $data->toArray();
+		$indexed = (new Collection($data))
+			->groupBy(function ($el) use ($primary) {
+				$keys = [];
+				foreach ($primary as $key) {
+					$keys[] = isset($el[$key]) ? $el[$key] : '';
+				}
+				return implode(';', $keys);
+			})
+			->map(function ($element, $key) {
+				return $key === '' ? $element : $element[0];
+			})
+			->toArray();
 
-		$new = isset($indexed[null]) ? [$indexed[null]] : [];
+		$new = isset($indexed[null]) ? $indexed[null] : [];
 		unset($indexed[null]);
 		$output = [];
 
@@ -373,15 +376,33 @@ class Marshaller {
 				continue;
 			}
 
-			$output[] = $this->merge($entity, $indexed[$key][0], $options);
+			$output[] = $this->merge($entity, $indexed[$key], $options);
 			unset($indexed[$key]);
 		}
 
-		foreach (array_merge($indexed, $new) as $record) {
-			foreach ($record as $value) {
-				$output[] = $this->one($value, $options);
+		$maybeExistentQuery = (new Collection($indexed))
+			->map(function ($data, $key) {
+				return explode(';', $key);
+			})
+			->filter(function ($keys) use ($primary) {
+				return count(array_filter($keys, 'strlen')) === count($primary);
+			})
+			->reduce(function ($query, $keys) use ($primary) {
+				return $query->orWhere($query->newExpr()->and_(array_combine($primary, $keys)));
+			}, $this->_table->find());
+
+		if (count($maybeExistentQuery->clause('where'))) {
+			foreach ($maybeExistentQuery as $entity) {
+				$key = implode(';', $entity->extract($primary));
+				$output[] = $this->merge($entity, $indexed[$key], $options);
+				unset($indexed[$key]);
 			}
 		}
+
+		foreach ((new Collection($indexed))->append($new) as $value) {
+			$output[] = $this->one($value, $options);
+		}
+
 		return $output;
 	}
 

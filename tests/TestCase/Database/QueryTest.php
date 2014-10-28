@@ -1127,6 +1127,81 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to use a between expression
+ * in a where condition
+ *
+ * @return void
+ */
+	public function testWhereWithBetween() {
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function ($exp) {
+				return $exp->between('id', 5, 6, 'integer');
+			})
+			->execute();
+
+		$this->assertCount(2, $result);
+		$first = $result->fetch('assoc');
+		$this->assertEquals(5, $first['id']);
+
+		$second = $result->fetch('assoc');
+		$this->assertEquals(6, $second['id']);
+	}
+
+/**
+ * Tests that it is possible to use a between expression
+ * in a where condition with a complex data type
+ *
+ * @return void
+ */
+	public function testWhereWithBetweenComplex() {
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function ($exp) {
+				$from = new \DateTime('2007-03-18 10:51:00');
+				$to = new \DateTime('2007-03-18 10:54:00');
+				return $exp->between('created', $from, $to, 'datetime');
+			})
+			->execute();
+
+		$this->assertCount(2, $result);
+		$first = $result->fetch('assoc');
+		$this->assertEquals(4, $first['id']);
+
+		$second = $result->fetch('assoc');
+		$this->assertEquals(5, $second['id']);
+	}
+
+/**
+ * Tests that it is possible to use an expresison object
+ * as the field for a between expression
+ *
+ * @return void
+ */
+	public function testWhereWithBetweenWithExpressionField() {
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function ($exp, $q) {
+				$field = $q->newExpr('COALESCE(id, 1)');
+				return $exp->between($field, 5, 6, 'integer');
+			})
+			->execute();
+
+		$this->assertCount(2, $result);
+		$first = $result->fetch('assoc');
+		$this->assertEquals(5, $first['id']);
+
+		$second = $result->fetch('assoc');
+		$this->assertEquals(6, $second['id']);
+	}
+
+/**
  * Tests nesting query expressions both using arrays and closures
  *
  * @return void

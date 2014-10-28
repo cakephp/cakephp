@@ -76,13 +76,16 @@ class FloatTypeTest extends TestCase {
  */
 	public function testMarshal() {
 		$result = $this->type->marshal('some data', $this->driver);
-		$this->assertSame(0.0, $result);
+		$this->assertSame('some data', $result);
 
 		$result = $this->type->marshal('', $this->driver);
 		$this->assertNull($result);
 
 		$result = $this->type->marshal('2.51', $this->driver);
 		$this->assertSame(2.51, $result);
+
+		$result = $this->type->marshal('3.5 bears', $this->driver);
+		$this->assertSame('3.5 bears', $result);
 	}
 
 /**
