@@ -384,17 +384,14 @@ class Marshaller {
 			->map(function ($data, $key) {
 				return explode(';', $key);
 			})
-			->filter(function ($data) use ($primary) {
-				return count(array_filter($data, 'strlen')) === count($primary);
+			->filter(function ($keys) use ($primary) {
+				return count(array_filter($keys, 'strlen')) === count($primary);
 			})
-			->map(function ($keys) use ($primary) {
-				return $this->_table->find()->where(array_combine($primary, $keys));
-			})
-			->reduce(function ($result, $query) {
-				return $result === null ? $query : $result->union($query);
-			}, null);
+			->reduce(function ($query, $keys) use ($primary) {
+				return $query->orWhere($query->newExpr()->and_(array_combine($primary, $keys)));
+			}, $this->_table->find());
 
-		if ($maybeExistentQuery) {
+		if (count($maybeExistentQuery->clause('where'))) {
 			foreach ($maybeExistentQuery as $entity) {
 				$key = implode(';', $entity->extract($primary));
 				$output[] = $this->merge($entity, $indexed[$key], $options);
