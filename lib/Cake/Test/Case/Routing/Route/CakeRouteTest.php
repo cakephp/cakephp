@@ -977,4 +977,34 @@ class CakeRouteTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Test for __set_state magic method on CakeRoute
+ *
+ * @return void
+ */
+	public function testSetState() {
+		$route = CakeRoute::__set_state(array(
+			'keys' => array(),
+			'options' => array(),
+			'defaults' => array(
+				'controller' => 'pages',
+				'action' => 'display',
+				'home',
+			),
+			'template' => '/',
+			'_greedy' => false,
+			'_compiledRoute' => null,
+			'_headerMap' => array (
+				'type' => 'content_type',
+				'method' => 'request_method',
+				'server' => 'server_name',
+			),
+		));
+		$this->assertInstanceOf('CakeRoute', $route);
+		$this->assertSame('/', $route->match(array('controller' => 'pages', 'action' => 'display', 'home')));
+		$this->assertFalse($route->match(array('controller' => 'pages', 'action' => 'display', 'about')));
+		$expected = array('controller' => 'pages', 'action' => 'display', 'pass' => array('home'), 'named' => array());
+		$this->assertEquals($expected, $route->parse('/'));
+	}
+
 }
