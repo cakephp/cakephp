@@ -161,7 +161,7 @@ class FormHelper extends Helper {
  * @var array
  * @see addContextProvider
  */
-	protected $_contextProviders;
+	protected $_contextProviders = [];
 
 /**
  * The action attribute value of the last created form.
@@ -211,12 +211,6 @@ class FormHelper extends Helper {
  * @return void
  */
 	protected function _addDefaultContextProviders() {
-		$this->addContextProvider('array', function ($request, $data) {
-			if (is_array($data['entity']) && isset($data['entity']['schema'])) {
-				return new ArrayContext($request, $data['entity']);
-			}
-		});
-
 		$this->addContextProvider('orm', function ($request, $data) {
 			if (is_array($data['entity']) || $data['entity'] instanceof Traversable) {
 				$pass = (new Collection($data['entity']))->first() !== null;
@@ -229,6 +223,12 @@ class FormHelper extends Helper {
 			}
 			if (is_array($data['entity']) && empty($data['entity']['schema'])) {
 				return new EntityContext($request, $data);
+			}
+		});
+
+		$this->addContextProvider('array', function ($request, $data) {
+			if (is_array($data['entity']) && isset($data['entity']['schema'])) {
+				return new ArrayContext($request, $data['entity']);
 			}
 		});
 	}
@@ -2256,7 +2256,12 @@ class FormHelper extends Helper {
  * @return void
  */
 	public function addContextProvider($type, callable $check) {
-		$this->_contextProviders[$type] = $check;
+		foreach ($this->_contextProviders as $i => $provider) {
+			if ($provider['type'] === $type) {
+				unset($this->_contextProviders[$i]);
+			}
+		}
+		array_unshift($this->_contextProviders, ['type' => $type, 'callable' => $check]);
 	}
 
 /**
@@ -2290,7 +2295,8 @@ class FormHelper extends Helper {
 		}
 		$data += ['entity' => null];
 
-		foreach ($this->_contextProviders as $key => $check) {
+		foreach ($this->_contextProviders as $provider) {
+			$check = $provider['callable'];
 			$context = $check($this->request, $data);
 			if ($context) {
 				break;

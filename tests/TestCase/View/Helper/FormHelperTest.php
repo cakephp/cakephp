@@ -241,12 +241,49 @@ class FormHelperTest extends TestCase {
  */
 	public function testAddContextProvider() {
 		$context = 'My data';
-		$this->Form->addContextProvider('test', function ($request, $data) use ($context) {
+		$stub = $this->getMock('Cake\View\Form\ContextInterface');
+		$this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
 			$this->assertInstanceOf('Cake\Network\Request', $request);
 			$this->assertEquals($context, $data['entity']);
-			return $this->getMock('Cake\View\Form\ContextInterface');
+			return $stub;
 		});
 		$this->Form->create($context);
+		$result = $this->Form->context();
+		$this->assertSame($stub, $result);
+	}
+
+/**
+ * Test replacing a context class.
+ *
+ * @return void
+ */
+	public function testAddContextProviderReplace() {
+		$entity = new Article();
+		$stub = $this->getMock('Cake\View\Form\ContextInterface');
+		$this->Form->addContextProvider('orm', function ($request, $data) use ($stub) {
+			return $stub;
+		});
+		$this->Form->create($entity);
+		$result = $this->Form->context();
+		$this->assertSame($stub, $result);
+	}
+
+/**
+ * Test overriding a context class.
+ *
+ * @return void
+ */
+	public function testAddContextProviderAdd() {
+		$entity = new Article();
+		$stub = $this->getMock('Cake\View\Form\ContextInterface');
+		$this->Form->addContextProvider('newshiny', function ($request, $data) use ($stub) {
+			if ($data['entity'] instanceof Entity) {
+				return $stub;
+			}
+		});
+		$this->Form->create($entity);
+		$result = $this->Form->context();
+		$this->assertSame($stub, $result);
 	}
 
 /**
