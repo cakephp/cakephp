@@ -79,18 +79,19 @@ trait StaticConfigTrait {
 			}
 			return;
 		}
+
 		if (isset(static::$_config[$key])) {
 			throw new BadMethodCallException(sprintf('Cannot reconfigure existing key "%s"', $key));
 		}
-		if (is_array($config)) {
-			$config = static::parseDsn($config);
-		} elseif ($config === null && is_array($key)) {
-			foreach ($key as $name => $settings) {
-				$key[$name] = static::parseDsn($settings);
-			}
-		} elseif (is_object($config)) {
+
+		if (is_array($config) && isset($config['url'])) {
+			$config = static::parseDsn($config['url']);
+		}
+
+		if (is_object($config)) {
 			$config = ['className' => $config];
 		}
+
 		if (isset($config['engine']) && empty($config['className'])) {
 			$config['className'] = $config['engine'];
 			unset($config['engine']);
@@ -165,17 +166,10 @@ trait StaticConfigTrait {
  *
  * Note that querystring arguments are also parsed and set as values in the returned configuration.
  *
- * @param array $config An array with a `url` key mapping to a string DSN
+ * @param string $dsn The DSN string to convert to a configuration array
  * @return mixed null when adding configuration and an array of configuration data when reading.
  */
-	public static function parseDsn($config = null) {
-		if (!is_array($config) || !isset($config['url'])) {
-			return $config;
-		}
-
-		$driver = null;
-		$dsn = $config['url'];
-
+	public static function parseDsn($dsn) {
 		if (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
 			$scheme = $matches[1];
 			$dsn = preg_replace("/^([\w\\\]+)/", 'file', $dsn);
