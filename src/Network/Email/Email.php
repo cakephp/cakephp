@@ -1169,15 +1169,17 @@ class Email {
 		if (isset(static::$_transportConfig[$key])) {
 			throw new BadMethodCallException(sprintf('Cannot modify an existing config "%s"', $key));
 		}
-		if (is_array($config)) {
-			$config = static::parseDsn($config);
-		} elseif ($config === null && is_array($key)) {
-			foreach ($key as $name => $settings) {
-				$key[$name] = static::parseDsn($settings);
-			}
-		} elseif (is_object($config)) {
+
+		if (is_object($config)) {
 			$config = ['className' => $config];
 		}
+
+		if (isset($config['url'])) {
+			$parsed = static::parseDsn($config['url']);
+			unset($config['url']);
+			$config = $parsed + $config;
+		}
+
 		static::$_transportConfig[$key] = $config;
 	}
 

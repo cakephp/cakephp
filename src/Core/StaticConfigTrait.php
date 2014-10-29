@@ -84,14 +84,14 @@ trait StaticConfigTrait {
 			throw new BadMethodCallException(sprintf('Cannot reconfigure existing key "%s"', $key));
 		}
 
-		if (is_array($config) && isset($config['url'])) {
+		if (is_object($config)) {
+			$config = ['className' => $config];
+		}
+
+		if (isset($config['url'])) {
 			$parsed = static::parseDsn($config['url']);
 			unset($config['url']);
 			$config = $parsed + $config;
-		}
-
-		if (is_object($config)) {
-			$config = ['className' => $config];
 		}
 
 		if (isset($config['engine']) && empty($config['className'])) {
