@@ -109,9 +109,6 @@ class ExceptionRenderer {
 			$method = 'pdoError';
 			$template = 'pdo_error';
 			$code = 500;
-		} elseif ($exception instanceof BlackHoleException) {
-			$method = 'blackholeError';
-			$template = 'blackhole_error';
 		} elseif (!$methodExists) {
 			$method = 'error500';
 			if ($code >= 400 && $code < 500) {
@@ -208,7 +205,7 @@ class ExceptionRenderer {
  * @param BlackHoleException $error The BlackHoleException object
  * @return void
  */
-	public function blackholeError(BlackHoleException $error) {
+	public function blackHole(BlackHoleException $error) {
 		$url = $this->controller->request->here();
 		$code = $error->getCode();
 		$this->controller->response->statusCode($code);

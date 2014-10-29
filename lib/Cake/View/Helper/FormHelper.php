@@ -593,18 +593,14 @@ class FormHelper extends AppHelper {
 			Configure::read('Security.salt')
 		);
 
-		$debugData = array();
-		$debugData['fields'] = $fields;
-		$fields = Security::hash(implode('', $hashParts), 'sha1');
-		$debugData['unlocked'] = $unlocked;
-		$debugData['hash'] = $fields;
+		$hash = Security::hash(implode('', $hashParts), 'sha1');
 
 		if (Configure::read('debug') > 0) {
-			CakeSession::write('_Blackhole', $debugData);
+			CakeSession::write('_Blackhole', compact('fields', 'unlocked', 'hash'));
 		}
 
 		$tokenFields = array_merge($secureAttributes, array(
-			'value' => urlencode($fields . ':' . $locked),
+			'value' => urlencode($hash . ':' . $locked),
 			'id' => 'TokenFields' . mt_rand(),
 		));
 		$out = $this->hidden('_Token.fields', $tokenFields);
