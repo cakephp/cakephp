@@ -3395,7 +3395,7 @@ class FormHelperTest extends TestCase {
 		]);
 		$expected = [
 			['div' => ['class' => 'input radio']],
-				['label' => ['for' => 'test']],
+				'<label',
 				'Test',
 				'/label',
 				['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
@@ -4227,7 +4227,7 @@ class FormHelperTest extends TestCase {
 		]);
 		$expected = [
 			['div' => ['class' => 'input multicheckbox']],
-			['label' => ['for' => 'category']],
+			'<label',
 			'Category',
 			'/label',
 			'input' => ['type' => 'hidden', 'name' => 'category', 'value' => ''],
@@ -6405,7 +6405,7 @@ class FormHelperTest extends TestCase {
 			['label' => ['for' => 'confirm-n']],
 			'No',
 			'/label',
-			['label' => ['for' => 'confirm']],
+			'<label',
 			'Confirm',
 			'/label',
 			'/div',

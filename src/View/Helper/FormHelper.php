@@ -1174,7 +1174,7 @@ class FormHelper extends Helper {
  * @return bool|string false or Generated label element
  */
 	protected function _getLabel($fieldName, $options) {
-		if (in_array($options['type'], ['hidden'])) {
+		if ($options['type'] === 'hidden') {
 			return false;
 		}
 
@@ -1233,6 +1233,9 @@ class FormHelper extends Helper {
 		$options += ['id' => null, 'input' => null, 'nestedInput' => false];
 
 		$labelAttributes['for'] = $options['id'];
+		if (in_array($options['type'], ['radio', 'multicheckbox'], true)) {
+			$labelAttributes['for'] = false;
+		}
 		if ($options['nestedInput']) {
 			$labelAttributes['input'] = $options['input'];
 		}
