@@ -4152,6 +4152,39 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test that input() works with multicheckbox.
+ *
+ * @return void
+ */
+	public function testInputMultiCheckbox() {
+		$result = $this->Form->input('category', [
+			'type' => 'multicheckbox',
+			'options' => ['1', '2'],
+		]);
+		$expected = [
+			['div' => ['class' => 'input multicheckbox']],
+			['label' => ['for' => 'category']],
+			'Category',
+			'/label',
+			'input' => ['type' => 'hidden', 'name' => 'category', 'value' => ''],
+			['div' => ['class' => 'checkbox']],
+				['label' => ['for' => 'category-0']],
+					['input' => ['type' => 'checkbox', 'name' => 'category[]', 'value' => '0', 'id' => 'category-0']],
+					'1',
+				'/label',
+			'/div',
+			['div' => ['class' => 'checkbox']],
+				['label' => ['for' => 'category-1']],
+					['input' => ['type' => 'checkbox', 'name' => 'category[]', 'value' => '1', 'id' => 'category-1']],
+					'2',
+				'/label',
+			'/div',
+			'/div',
+		];
+		$this->assertHtml($expected, $result);
+	}
+
+/**
  * testCheckbox method
  *
  * Test generation of checkboxes

@@ -1006,6 +1006,10 @@ class FormHelper extends Helper {
 				$opts = $options['options'];
 				unset($options['options']);
 				return $this->radio($fieldName, $opts, $options);
+			case 'multicheckbox':
+				$opts = $options['options'];
+				unset($options['options']);
+				return $this->multicheckbox($fieldName, $opts, $options);
 			case 'url':
 				$options = $this->_initInputField($fieldName, $options);
 				return $this->widget($options['type'], $options);
