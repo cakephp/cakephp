@@ -134,8 +134,10 @@ class PoFileParser {
 		$translation = $item['translated'];
 
 		if (is_array($translation)) {
-			$translation = stripcslashes($translation[0]);
+			$translation = $translation[0];
 		}
+
+		$translation = stripcslashes($translation);
 
 		if ($context) {
 			$messages[$singular]['_context'][$context] = $translation;
