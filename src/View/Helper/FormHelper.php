@@ -925,7 +925,7 @@ class FormHelper extends Helper {
 		$label = $options['label'];
 		unset($options['label']);
 		$nestedInput = false;
-		if (in_array($options['type'], ['radio', 'checkbox'], true)) {
+		if ($options['type'] === 'checkbox') {
 			$nestedInput = true;
 		}
 		$nestedInput = isset($options['nestedInput']) ? $options['nestedInput'] : $nestedInput;
@@ -1174,7 +1174,7 @@ class FormHelper extends Helper {
  * @return bool|string false or Generated label element
  */
 	protected function _getLabel($fieldName, $options) {
-		if (in_array($options['type'], ['radio', 'hidden'])) {
+		if (in_array($options['type'], ['hidden'])) {
 			return false;
 		}
 

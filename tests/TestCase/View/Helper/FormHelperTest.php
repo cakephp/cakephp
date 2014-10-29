@@ -3384,6 +3384,70 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test that input works with radio types
+ *
+ * @return void
+ */
+	public function testInputRadio() {
+		$result = $this->Form->input('test', [
+			'type' => 'radio',
+			'options' => ['A', 'B'],
+		]);
+		$expected = [
+			['div' => ['class' => 'input radio']],
+				['label' => ['for' => 'test']],
+				'Test',
+				'/label',
+				['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+				['label' => ['for' => 'test-0']],
+					['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
+					'A',
+				'/label',
+				['label' => ['for' => 'test-1']],
+					['input' => ['type' => 'radio', 'name' => 'test', 'value' => '1', 'id' => 'test-1']],
+					'B',
+				'/label',
+			'/div',
+		];
+		$this->assertHtml($expected, $result);
+
+		$result = $this->Form->input('test', [
+			'type' => 'radio',
+			'options' => ['A', 'B'],
+			'label' => false
+		]);
+		$expected = [
+			['div' => ['class' => 'input radio']],
+				['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+				['label' => ['for' => 'test-0']],
+					['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
+					'A',
+				'/label',
+				['label' => ['for' => 'test-1']],
+					['input' => ['type' => 'radio', 'name' => 'test', 'value' => '1', 'id' => 'test-1']],
+					'B',
+				'/label',
+			'/div',
+		];
+		$this->assertHtml($expected, $result);
+	}
+
+/**
+ * Test that radio() works with label = false
+ *
+ * @return void
+ */
+	public function testRadioNoLabel() {
+		$result = $this->Form->radio('Model.field', ['A', 'B'], ['label' => false]);
+		$expected = [
+			'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
+			['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0']],
+			['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1']],
+		];
+		$this->assertHtml($expected, $result);
+	}
+
+/**
  * test generating radio input inside label ala twitter bootstrap
  *
  * @return void
@@ -6340,6 +6404,9 @@ class FormHelperTest extends TestCase {
 			['input' => ['type' => 'radio', 'name' => 'confirm', 'id' => 'confirm-n', 'value' => 'N']],
 			['label' => ['for' => 'confirm-n']],
 			'No',
+			'/label',
+			['label' => ['for' => 'confirm']],
+			'Confirm',
 			'/label',
 			'/div',
 		];
