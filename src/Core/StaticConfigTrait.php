@@ -172,6 +172,14 @@ trait StaticConfigTrait {
  * @return mixed null when adding configuration and an array of configuration data when reading.
  */
 	public static function parseDsn($dsn) {
+		if (empty($dsn)) {
+			return [];
+		}
+
+		if (!is_string($dsn)) {
+			return $dsn;
+		}
+
 		if (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
 			$scheme = $matches[1];
 			$dsn = preg_replace("/^([\w\\\]+)/", 'file', $dsn);
@@ -180,7 +188,7 @@ trait StaticConfigTrait {
 		$parsed = parse_url($dsn);
 
 		if ($parsed === false) {
-			return $config;
+			return $dsn;
 		}
 
 		$parsed['scheme'] = $scheme;
@@ -211,7 +219,7 @@ trait StaticConfigTrait {
 			$parsed['password'] = $parsed['pass'];
 		}
 
-		unset($parsed['pass'], $parsed['used']);
+		unset($parsed['pass'], $parsed['user']);
 		$parsed = $queryArgs + $parsed;
 
 		if (empty($parsed['className']) && method_exists(get_called_class(), 'getClassMap')) {
