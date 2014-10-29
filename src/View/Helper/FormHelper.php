@@ -1233,7 +1233,8 @@ class FormHelper extends Helper {
 		$options += ['id' => null, 'input' => null, 'nestedInput' => false];
 
 		$labelAttributes['for'] = $options['id'];
-		if (in_array($options['type'], ['radio', 'multicheckbox'], true)) {
+		$groupTypes = ['radio', 'multicheckbox', 'date', 'time', 'datetime'];
+		if (in_array($options['type'], $groupTypes, true)) {
 			$labelAttributes['for'] = false;
 		}
 		if ($options['nestedInput']) {

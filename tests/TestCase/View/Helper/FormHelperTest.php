@@ -2416,7 +2416,7 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'div' => array('class' => 'input datetime'),
-			'label' => array('for' => 'prueba'),
+			'<label',
 			'Prueba',
 			'/label',
 			'This is it!',
@@ -2458,7 +2458,7 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'div' => array('class' => 'input datetime'),
-			'label' => array('for' => 'prefix-prueba'),
+			'<label',
 			'Prueba',
 			'/label',
 			'This is it!',
@@ -4788,15 +4788,14 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDateTimeLabelIdMatchesFirstInput() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('Model.date', array('type' => 'date'));
-		$this->assertContains('label for="ModelDateMonth"', $result);
+		$this->assertContains('<label>Date</label>', $result);
 
 		$result = $this->Form->input('Model.date', array('type' => 'date', 'dateFormat' => 'DMY'));
-		$this->assertContains('label for="ModelDateDay"', $result);
+		$this->assertContains('<label>Date</label>', $result);
 
 		$result = $this->Form->input('Model.date', array('type' => 'date', 'dateFormat' => 'YMD'));
-		$this->assertContains('label for="ModelDateYear"', $result);
+		$this->assertContains('<label>Date</label>', $result);
 	}
 
 /**
