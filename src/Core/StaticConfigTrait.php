@@ -85,7 +85,9 @@ trait StaticConfigTrait {
 		}
 
 		if (is_array($config) && isset($config['url'])) {
-			$config = static::parseDsn($config['url']);
+			$parsed = static::parseDsn($config['url']);
+			unset($config['url']);
+			$config = $parsed + $config;
 		}
 
 		if (is_object($config)) {
@@ -204,24 +206,24 @@ trait StaticConfigTrait {
 		if (isset($parsed['user'])) {
 			$parsed['username'] = $parsed['user'];
 		}
+
 		if (isset($parsed['pass'])) {
 			$parsed['password'] = $parsed['pass'];
 		}
 
-		unset($config['url']);
-		$config = array_merge($config, $parsed, $queryArgs);
-		unset($config['user'], $config['pass']);
+		unset($parsed['pass'], $parsed['used']);
+		$parsed = $queryArgs + $parsed;
 
-		if (empty($config['className']) && method_exists(get_called_class(), 'getClassMap')) {
+		if (empty($parsed['className']) && method_exists(get_called_class(), 'getClassMap')) {
 			$classMap = static::getClassMap();
 
-			$config['className'] = $config['scheme'];
-			if (isset($classMap[$config['scheme']])) {
-				$config['className'] = $classMap[$config['scheme']];
+			$parsed['className'] = $parsed['scheme'];
+			if (isset($classMap[$parsed['scheme']])) {
+				$parsed['className'] = $classMap[$parsed['scheme']];
 			}
 		}
 
-		return $config;
+		return $parsed;
 	}
 
 }
