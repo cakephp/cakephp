@@ -41,7 +41,7 @@ interface RepositoryInterface {
  * Returns a single record after finding it by its primary key, if no record is
  * found this method throws an exception.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $id = 10;
