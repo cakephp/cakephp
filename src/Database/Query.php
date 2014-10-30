@@ -275,7 +275,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * or set of fields, you may pass an array of fields to filter on. Beware that
  * this option might not be fully supported in all database systems.
  *
- * ##Examples:
+ * ## Examples:
  *
  * {{{
  * // Filters products with the same name and city
@@ -355,7 +355,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * This method can be used for select, update and delete statements.
  *
- * ##Examples:
+ * ## Examples:
  *
  * {{{
  *	$query->from(['p' => 'posts']); // Produces FROM posts p
@@ -755,7 +755,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * that each array entry will be joined to the other using the AND operator, unless
  * you nest the conditions in the array using other operator.
  *
- * ##Examples:
+ * ## Examples:
  *
  * {{{
  * $query->where(['title' => 'Hello World')->andWhere(['author_id' => 1]);
@@ -816,7 +816,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * that each array entry will be joined to the other using the OR operator, unless
  * you nest the conditions in the array using other operator.
  *
- * ##Examples:
+ * ## Examples:
  *
  * {{{
  * $query->where(['title' => 'Hello World')->orWhere(['title' => 'Foo']);
@@ -874,7 +874,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * By default this function will append any passed argument to the list of fields
  * to be selected, unless the second argument is set to true.
  *
- * ##Examples:
+ * ## Examples:
  *
  * {{{
  * $query->order(['title' => 'DESC', 'author_id' => 'ASC']);
@@ -929,7 +929,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * By default this function will append any passed argument to the list of fields
  * to be grouped, unless the second argument is set to true.
  *
- * ##Examples:
+ * ## Examples:
  *
  * {{{
  * // Produces GROUP BY id, title
