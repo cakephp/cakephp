@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -15,7 +13,6 @@
  * @since         CakePHP(tm) v 2.6.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 ?>
 <h2><?php echo __d('cake_dev', 'Blackhole Error'); ?></h2>
 <p class="error">
@@ -31,7 +28,7 @@
 <ul>
 	<?php foreach ($blackHoleData['dirtyFields'] as $key => $value) : ?>
 		<li>
-			<?php echo $key . ' => ' . $value; ?>
+			<?php echo h($key) . ' => ' . h($value); ?>
 		</li>
 	<?php endforeach; ?>
 </ul>
