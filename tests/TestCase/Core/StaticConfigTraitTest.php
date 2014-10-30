@@ -146,6 +146,11 @@ class StaticConfigTraitTest extends TestCase {
 		$klassName::parseDsn(['url' => 'http://:80']);
 	}
 
+/**
+ * Tests parsing different DSNs
+ *
+ * @return void
+ */
 	public function testCustomParseDsn() {
 		$dsn = 'mysql://localhost:3306/database';
 		$expected = [

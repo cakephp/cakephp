@@ -73,7 +73,7 @@ class ConnectionManager {
  * The following is an example of its usage:
  *
  * {{{
- *   $dsn = 'Cake\Database\Driver\Mysql://localhost/database?className=Cake\Database\Connection';
+ *   $dsn = 'mysql://user:pass@localhost/database';
  *   $config = ConnectionManager::parseDsn($dsn);
  *
  *   $dsn = 'Cake\Database\Driver\Mysql://localhost:3306/database?className=Cake\Database\Connection';
@@ -89,7 +89,7 @@ class ConnectionManager {
  * Note that querystring arguments are also parsed and set as values in the returned configuration.
  *
  * @param array $config An array with a `url` key mapping to a string DSN
- * @return mixed null when adding configuration and an array of configuration data when reading.
+ * @return array The configuration array to be stored after parsing the DSN
  */
 	public static function parseDsn($config = null) {
 		$config = static::_parseDsn($config);
@@ -108,7 +108,7 @@ class ConnectionManager {
 	}
 
 /**
- * Returns an array mapping url schemes to fully qualified class names
+ * Returns an array mapping url schemes to fully qualified driver class names
  *
  * @return array
  */
