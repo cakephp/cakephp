@@ -337,6 +337,11 @@ class ViewTest extends TestCase {
 		$request->params['pass'] = array('home');
 
 		$ThemeView = new TestView(null, null, null, $viewOptions);
+		$expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Template' . DS . 'Pages' . DS . 'index.ctp';
+		$result = $ThemeView->getViewFileName('Company/TestPluginThree./Pages/index');
+		$this->assertPathEquals($expected, $result);
+
+		$ThemeView = new TestView(null, null, null, $viewOptions);
 		$ThemeView->theme = 'TestTheme';
 		$expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages' . DS . 'home.ctp';
 		$result = $ThemeView->getViewFileName('home');
