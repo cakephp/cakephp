@@ -15,6 +15,7 @@
 namespace Cake\Core;
 
 use BadMethodCallException;
+use InvalidArgumentException;
 use UnexpectedValueException;
 
 /**
@@ -140,22 +141,16 @@ trait StaticConfigTrait {
  * The following is an example of its usage:
  *
  * {{{
- *   $dsn = 'Cake\Database\Driver\Mysql://localhost/database?className=Cake\Database\Connection';
- *   $config = ConnectionManager::parseDsn($dsn);
- *
- *   $dsn = 'Cake\Database\Driver\Mysql://localhost:3306/database?className=Cake\Database\Connection';
- *   $config = ConnectionManager::parseDsn($dsn);
- *
- *   $dsn = 'Cake\Database\Connection://localhost:3306/database?driver=Cake\Database\Driver\Mysql';
+ *   $dsn = 'mysql://user:pass@localhost/database?';
  *   $config = ConnectionManager::parseDsn($dsn);
  *
  *   $dsn = 'Cake\Log\Engine\FileLog://?types=notice,info,debug&file=debug&path=LOGS';
  * 	 $config = Log::parseDsn($dsn);
  *
- *   $dsn = 'Mail://user:secret@localhost:25?timeout=30&client=null&tls=null';
+ *   $dsn = 'smtp://user:secret@localhost:25?timeout=30&client=null&tls=null';
  * 	 $config = Email::parseDsn($dsn);
  *
- *   $dsn = 'File:///';
+ *   $dsn = 'file:///?className=\My\Cache\Engine\FileEngine';
  * 	 $config = Cache::parseDsn($dsn);
  *
  *   $dsn = 'File://?prefix=myapp_cake_core_&serialize=true&duration=+2 minutes&path=/tmp/persistent/';
@@ -163,13 +158,13 @@ trait StaticConfigTrait {
  *
  * }}
  *
- * For all classes, the value of `scheme` is set as the value of both the `className` and `driver`
+ * For all classes, the value of `scheme` is set as the value of both the `className`
  * unless they have been otherwise specified.
  *
  * Note that querystring arguments are also parsed and set as values in the returned configuration.
  *
  * @param string $dsn The DSN string to convert to a configuration array
- * @return mixed null when adding configuration and an array of configuration data when reading.
+ * @return array The configuration array to be stored after parsing the DSN
  */
 	public static function parseDsn($dsn) {
 		if (empty($dsn)) {
@@ -177,7 +172,7 @@ trait StaticConfigTrait {
 		}
 
 		if (!is_string($dsn)) {
-			return $dsn;
+			throw new InvalidArgumentException('Only strings can be passed to parseDsn');
 		}
 
 		if (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {

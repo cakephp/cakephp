@@ -479,7 +479,8 @@ class Cache {
 	}
 
 /**
- * Returns an array mapping url schemes to fully qualified class names
+ * Returns an array mapping url schemes to fully qualified caching engine
+ * class names.
  *
  * @return array
  */

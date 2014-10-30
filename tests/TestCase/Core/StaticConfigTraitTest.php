@@ -133,11 +133,17 @@ class StaticConfigTraitTest extends TestCase {
 		$klassName = get_class($this->subject);
 
 		$this->assertSame([], $klassName::parseDsn(''));
-		$this->assertInternalType('array', $klassName::parseDsn(['url' => 'http://:80']));
-		$this->assertEquals(['url' => 'http://:80'], $klassName::parseDsn(['url' => 'http://:80']));
+	}
 
-		$this->assertInternalType('array', $klassName::parseDsn(['url' => 'http://user@:80']));
-		$this->assertEquals(['url' => 'http://user@:80'], $klassName::parseDsn(['url' => 'http://user@:80']));
+/**
+ * Tests that failing to pass a string to parseDsn will throw an exception
+ *
+ * @expectedException InvalidArgumentException
+ * @return void
+ */
+	public function testParseBadType() {
+		$klassName = get_class($this->subject);
+		$klassName::parseDsn(['url' => 'http://:80']);
 	}
 
 	public function testCustomParseDsn() {
