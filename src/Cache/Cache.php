@@ -478,6 +478,11 @@ class Cache {
 		return $results;
 	}
 
+/**
+ * Returns an array mapping url schemes to fully qualified class names
+ *
+ * @return array
+ */
 	public static function getClassMap() {
 		return [
 			'apc' => 'Cake\Cache\Engine\ApcEngine',

@@ -50,6 +50,7 @@ class TestConnectionManagerStaticConfig {
 			'sqlserver' => 'Cake\Database\Driver\Sqlserver',
 		];
 	}
+
 }
 
 /**
@@ -70,6 +71,7 @@ class TestCacheStaticConfig {
 			'xcache' => 'Cake\Cache\Engine\XcacheEngine',
 		];
 	}
+
 }
 
 /**
@@ -86,6 +88,7 @@ class TestEmailStaticConfig {
 			'smtp' => 'Cake\Network\Email\SmtpTransport',
 		];
 	}
+
 }
 
 /**
@@ -102,6 +105,7 @@ class TestLogStaticConfig {
 			'syslog' => 'Cake\Log\Engine\SyslogLog',
 		];
 	}
+
 }
 
 /**

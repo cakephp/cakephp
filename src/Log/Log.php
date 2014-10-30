@@ -481,6 +481,11 @@ class Log {
 		return static::write(static::$_levelMap['info'], $message, $context);
 	}
 
+/**
+ * Returns an array mapping url schemes to fully qualified class names
+ *
+ * @return array
+ */
 	public static function getClassMap() {
 		return [
 			'console' => 'Cake\Log\Engine\ConsoleLog',

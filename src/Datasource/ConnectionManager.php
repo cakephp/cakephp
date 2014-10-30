@@ -107,6 +107,11 @@ class ConnectionManager {
 		return $config;
 	}
 
+/**
+ * Returns an array mapping url schemes to fully qualified class names
+ *
+ * @return array
+ */
 	public static function getClassMap() {
 		return [
 			'mysql' => 'Cake\Database\Driver\Mysql',
