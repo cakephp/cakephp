@@ -88,6 +88,12 @@ class NumberTest extends TestCase {
 		$result = $this->Number->format($value, $options);
 		$expected = '1,23 €';
 		$this->assertEquals($expected, $result);
+
+		$value = 10000;
+		$options = array('locale' => 'fr_FR');
+		$result = $this->Number->format($value, $options);
+		$expected = '10 000';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
