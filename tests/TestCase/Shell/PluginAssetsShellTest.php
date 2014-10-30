@@ -100,7 +100,11 @@ class PluginAssetsShellTest extends TestCase {
 		$this->shell->symlink();
 		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
 		$link = new \SplFileInfo($path);
-		$this->assertTrue($link->isLink());
+		if (DIRECTORY_SEPARATOR === '\\') {
+			$this->assertTrue($link->isDir());
+		} else {
+			$this->assertTrue($link->isLink());
+		}
 		$this->assertTrue(file_exists($path . DS . 'css' . DS . 'company.css'));
 		$folder = new Folder(WWW_ROOT . 'company');
 		$folder->delete();
