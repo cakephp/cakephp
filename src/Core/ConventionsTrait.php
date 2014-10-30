@@ -75,13 +75,13 @@ trait ConventionsTrait {
 	}
 
 /**
- * Creates the plural name for views
+ * Creates the plural variable name for views
  *
  * @param string $name Name to use
  * @return string Plural name for views
  */
-	protected function _pluralName($name) {
-		return Inflector::variable(Inflector::pluralize($name));
+	protected function _variableName($name) {
+		return Inflector::variable($name);
 	}
 
 /**
