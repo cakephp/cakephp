@@ -3428,7 +3428,7 @@ SQL;
 	}
 
 /**
- * test find() generating usable virtual fields to use in query
+ * test find() generating usable virtual fields to use in query without modifying custom subqueries.
  *
  * @return void
  */
