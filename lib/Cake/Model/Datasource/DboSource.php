@@ -1410,11 +1410,10 @@ class DboSource extends DataSource {
 	protected function _fetchHasMany(Model $Model, $query, $ids) {
 		$ids = array_unique($ids);
 
-		$query = str_replace('{$__cakeID__$}', implode(', ', $ids), $query);
 		if (count($ids) > 1) {
-			$query = str_replace('= (', 'IN (', $query);
+			$query = str_replace('= ({$__cakeID__$}', 'IN ({$__cakeID__$}', $query);
 		}
-
+		$query = str_replace('{$__cakeID__$}', implode(', ', $ids), $query);
 		return $this->fetchAll($query, $Model->cacheQueries);
 	}
 
