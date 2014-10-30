@@ -264,8 +264,8 @@ class PluginTask extends BakeTask {
 		}
 
 		try {
-			$command = 'cd ' . escapeshellarg($path) . '; ';
-			$command .= 'php ' . escapeshellarg($composer) . ' dump-autoload';
+			chdir($path);
+			$command = 'php ' . escapeshellarg($composer) . ' dump-autoload';
 			$this->callProcess($command);
 		} catch (\RuntimeException $e) {
 			$error = $e->getMessage();

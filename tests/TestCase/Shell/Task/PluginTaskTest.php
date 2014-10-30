@@ -200,7 +200,7 @@ class PluginTaskTest extends TestCase {
 
 		$this->Task->expects($this->at(3))
 			->method('callProcess')
-			->with('cd ' . escapeshellarg($path) . '; php ' . escapeshellarg('composer.phar') . ' dump-autoload');
+			->with('php ' . escapeshellarg('composer.phar') . ' dump-autoload');
 
 		$this->Task->main('BakeTestPlugin');
 
