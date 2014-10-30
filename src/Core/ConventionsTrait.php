@@ -80,7 +80,7 @@ trait ConventionsTrait {
  * @param string $name Name to use
  * @return string Plural name for views
  */
-	protected function _pluralName($name) {
+	protected function _variableName($name) {
 		return Inflector::variable($name);
 	}
 

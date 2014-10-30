@@ -82,7 +82,7 @@ $allAssociations = array_merge(
 		foreach ($editAssociations as $assoc):
 			$association = $modelObj->association($assoc);
 			$otherName = $association->target()->alias();
-			$otherPlural = $this->_pluralName($otherName);
+			$otherPlural = $this->_variableName($otherName);
 			echo "\t\t\${$otherPlural} = \$this->{$currentModelName}->{$otherName}->find('list');\n";
 			$compact[] = "'{$otherPlural}'";
 		endforeach;
@@ -115,7 +115,7 @@ $allAssociations = array_merge(
 		foreach ($editAssociations as $assoc):
 			$association = $modelObj->association($assoc);
 			$otherName = $association->target()->alias();
-			$otherPlural = $this->_pluralName($otherName);
+			$otherPlural = $this->_variableName($otherName);
 			echo "\t\t\${$otherPlural} = \$this->{$currentModelName}->{$otherName}->find('list');\n";
 			$compact[] = "'{$otherPlural}'";
 		endforeach;
