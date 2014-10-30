@@ -78,6 +78,7 @@ class PluginAssetsShell extends Shell {
 /**
  * Process plugins
  *
+ * @param array $plugins List of plugins to process
  * @return void
  */
 	protected function _process($plugins) {
@@ -126,7 +127,7 @@ class PluginAssetsShell extends Shell {
  * Create directory
  *
  * @param string $dir Directory name
- * @return boolean
+ * @return bool
  */
 	protected function _createDirectory($dir) {
 		$old = umask(0);
@@ -149,7 +150,7 @@ class PluginAssetsShell extends Shell {
  *
  * @param string $target Target directory
  * @param string $link Link name
- * @return boolean
+ * @return bool
  */
 	protected function _createSymlink($target, $link) {
 		// @codingStandardsIgnoreStart
@@ -169,7 +170,7 @@ class PluginAssetsShell extends Shell {
  *
  * @param string $source Source directory
  * @param string $destination Destination directory
- * @return boolean
+ * @return bool
  */
 	protected function _copyDirectory($source, $destination) {
 		$folder = new Folder($source);
