@@ -206,7 +206,7 @@ class Connection {
  *
  * @return string Connection prefix if any
  */
-	protected function _getPrefix() {
+	public function getPrefix() {
 		$prefix = '';
 
 		if (isset($this->_config['prefix']) && $this->_config['prefix'] !== '') {
@@ -225,7 +225,7 @@ class Connection {
  * @see \Cake\Database\Expression\TableNameExpression
  */
 	public function fullTableName($names) {
-		$prefix = $this->_getPrefix();
+		$prefix = $this->getPrefix();
 
 		if (is_string($names) || $names instanceof TableNameExpression) {
 			$names = $this->_fullTableName($names);
@@ -256,7 +256,7 @@ class Connection {
  * @return TableNameExpression
  */
 	protected function _fullTableName($table) {
-		$prefix = $this->_getPrefix();
+		$prefix = $this->getPrefix();
 		if ($table instanceof TableNameExpression) {
 			$expression = $table;
 			$expression->setPrefix($prefix);
@@ -280,11 +280,7 @@ class Connection {
  * @see \Cake\Database\Expression\TableNameExpression
  */
 	public function fullFieldName($field) {
-		$prefix = '';
-
-		if (isset($this->_config['prefix']) && $this->_config['prefix'] !== '') {
-			$prefix = $this->_config['prefix'];
-		}
+		$prefix = $this->getPrefix();
 
 		if (is_string($field) && strpos($field, '.') !== false) {
 			list($tableName, $fieldName) = explode('.', $field);
@@ -303,8 +299,9 @@ class Connection {
  * @return string
  */
 	public function applyFullTableName($condition, $exclude = false) {
-		if (isset($this->_config['prefix']) && $this->_config['prefix'] !== '') {
-			$prefix = $this->_config['prefix'];
+		$prefix = $this->getPrefix();
+
+		if ($prefix !== '') {
 			if (is_string($condition)) {
 				if (!empty($exclude)) {
 					$condition = preg_replace('/(?!' . implode('|', $exclude) . ')([\w-]+)(\.[\w-])+/', $prefix . "$1$2", $condition);

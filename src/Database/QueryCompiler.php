@@ -156,10 +156,12 @@ class QueryCompiler {
 	protected function _orderFullFieldsName($parts, $query, $generator) {
 		if ($parts instanceof ExpressionInterface) {
 			$parts->iterateParts(function ($condition, &$key) use ($parts, $query, $generator) {
-				$key = $query->connection()->fullFieldName($key);
+				if (!$query->hasTableAlias($key)) {
+					$key = $query->connection()->fullFieldName($key);
 
-				if ($key instanceof ExpressionInterface) {
-					$key = $key->sql($generator);
+					if ($key instanceof ExpressionInterface) {
+						$key = $key->sql($generator);
+					}
 				}
 				return $condition;
 			});
@@ -181,7 +183,9 @@ class QueryCompiler {
 	protected function _groupFullFieldsName($parts, $query, $generator) {
 		if (!empty($parts)) {
 			foreach ($parts as $key => $part) {
-				$parts[$key] = $query->connection()->fullFieldName($part);
+				if (!$query->hasTableAlias($part)) {
+					$parts[$key] = $query->connection()->fullFieldName($part);
+				}
 			}
 		}
 
@@ -202,11 +206,16 @@ class QueryCompiler {
 		if ($parts instanceof ExpressionInterface) {
 			$parts->traverse(function ($condition) use ($query) {
 				if ($condition instanceof Comparison) {
-					$field = $query->connection()->applyFullTableName($condition->getField());
-					$condition->field($field);
+					$field = $condition->getField();
+					if (!$query->hasTableAlias($field)) {
+						$field = $query->connection()->applyFullTableName($condition->getField());
+						$condition->field($field);
+					}
 				} elseif ($condition instanceof QueryExpression) {
 					$condition->iterateParts(function ($condition) use ($query) {
-						return $query->connection()->applyFullTableName($condition);
+						if (!$query->hasTableAlias($condition)) {
+							return $query->connection()->applyFullTableName($condition);
+						}
 					});
 				}
 
@@ -236,16 +245,9 @@ class QueryCompiler {
 
 		$normalized = [];
 
-		$froms = $query->clause('from');
-		$joinsAliases = $query->getJoinsAliases();
-
 		foreach ($parts as $alias => $part) {
-			if (is_string($part) && strpos($part, '.') !== false) {
-				list($tableName, $fieldName) = explode('.', $part);
-
-				if (!isset($froms[$tableName]) && !isset($joinsAliases[$tableName])) {
-					$parts[$alias] = $query->connection()->fullFieldName($part);
-				}
+			if (!$query->hasTableAlias($part)) {
+				$parts[$alias] = $query->connection()->fullFieldName($part);
 			}
 		}
 

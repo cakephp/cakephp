@@ -47,6 +47,13 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected $_type = 'select';
 
 /**
+ * Stores the tables aliases used in this query
+ *
+ * @var array
+ */
+	public $tablesAliases = array();
+
+/**
  * List of SQL parts that will be used to build this query.
  *
  * @var array
@@ -377,6 +384,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$tables = [$tables];
 		}
 
+		$this->_extractTableAliases($tables);
+
 		if ($overwrite) {
 			$this->_parts['from'] = $tables;
 		} else {
@@ -503,16 +512,21 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$exclude = [];
 			if (!empty($alias)) {
 				$exclude[] = $alias;
+				$this->tablesAliases[$alias] = $alias;
 			}
 			if (!empty($t['alias'])) {
 				$exclude[] = $t['alias'];
+				$this->tablesAliases[$t['alias']] = $t['alias'];
 			}
-			$t['conditions']->iterateParts(function ($condition, $key) use ($exclude) {
-				if (is_string($condition)) {
-					$condition = $this->_connection->applyFullTableName($condition, $exclude);
-				}
-				return $condition;
-			});
+
+			if ($t['conditions'] instanceof QueryExpression) {
+				$t['conditions']->iterateParts(function ($condition, $key) use ($exclude) {
+					if (is_string($condition)) {
+						$condition = $this->_connection->applyFullTableName($condition, $exclude);
+					}
+					return $condition;
+				});
+			}
 		}
 
 		if ($overwrite) {
@@ -1572,6 +1586,45 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		}
 		$this->_valueBinder = $binder;
 		return $this;
+	}
+
+/**
+ * Extract table aliases from $tables and stores them in Query::_tableAliases
+ *
+ * @param string|array $tables Table name or array of table name
+ *
+ * @return $this
+ */
+	public function _extractTableAliases($tables) {
+		if (!empty($tables)) {
+			if (!is_array($tables)) {
+				$tables = array($tables);
+			}
+
+			foreach ($tables as $alias => $table) {
+				if (!is_numeric($alias)) {
+					$this->tablesAliases[$alias] = $alias;
+				}
+			}
+		}
+
+		return $this;
+	}
+
+/**
+ * Checks wheter $name is or contain (e.g. 'table.field') a aliased table name.
+ *
+ * @param string $name Table or field name
+ *
+ * @return bool
+ */
+	public function hasTableAlias($name) {
+		if (is_string($name) && strpos($name, '.') !== false) {
+			list($tableName, $fieldName) = explode('.', $name);
+			return isset($this->tablesAliases[$tableName]);
+		}
+
+		return false;
 	}
 
 /**
