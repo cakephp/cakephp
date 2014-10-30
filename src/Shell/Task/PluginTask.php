@@ -264,9 +264,14 @@ class PluginTask extends BakeTask {
 		}
 
 		try {
+			$cwd = getcwd();
+
+			// Windows makes running multiple commands at once hard.
 			chdir($path);
 			$command = 'php ' . escapeshellarg($composer) . ' dump-autoload';
 			$this->callProcess($command);
+
+			chdir($cwd);
 		} catch (\RuntimeException $e) {
 			$error = $e->getMessage();
 			$this->error(sprintf('Could not run `composer dump-autoload`: %s', $error));
