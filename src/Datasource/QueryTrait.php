@@ -339,7 +339,7 @@ trait QueryTrait {
  * Returns an array with the custom options that were applied to this query
  * and that were not already processed by another method in this class.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  *	$query->applyOptions(['doABarrelRoll' => true, 'fields' => ['id', 'name']);

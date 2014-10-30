@@ -61,7 +61,7 @@ class TreeIterator extends RecursiveIteratorIterator {
  * the current element as first parameter, the current iteration key as second
  * parameter, and the iterator instance as third argument.
  *
- * ##Example
+ * ## Example
  *
  * {{{
  *	$printer = (new Collection($treeStructure))->listNested()->printer('name');
