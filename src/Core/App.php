@@ -118,6 +118,9 @@ class App {
 			return (array)Configure::read('App.paths.templates');
 		}
 		if (!empty($plugin)) {
+			if (DS === '\\') {
+				$plugin = str_replace('/', '\\', $plugin);
+			}
 			return [Plugin::classPath($plugin) . $type . DS];
 		}
 		return [APP . $type . DS];
