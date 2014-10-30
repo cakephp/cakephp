@@ -33,27 +33,16 @@
 	</listeners>
 	<php>
 		<!-- SQLite
-		<env name="db_class" value="Cake\Database\Driver\Sqlite"/>
-		<env name="db_dsn" value="Cake\Database\Driver\Sqlite:///memory:"/>
+		<env name="db_dsn" value="sqlite:///memory:"/>
 		-->
 		<!-- Postgres
-		<env name="db_class" value="Cake\Database\Driver\Postgres"/>
-		<env name="db_database" value="cake_test"/>
-		<env name="db_login" value=""/>
-		<env name="db_password" value=""/>
+		<env name="db_dsn" value="postgres://localhost/cake_test"/>
 		-->
 		<!-- Mysql
-		<env name="db_class" value="Cake\Database\Driver\Mysql"/>
-		<env name="db_dsn" value="Cake\Database\Driver\Mysql://localhost/cake_test"/>
-		<env name="db_database" value=""/>
-		<env name="db_login" value=""/>
-		<env name="db_password" value=""/>
+		<env name="db_dsn" value="mysql://localhost/cake_test"/>
 		-->
 		<!-- SQL Server
-		<env name="db_class" value="Cake\Database\Driver\Sqlserver"/>
-		<env name="db_dsn" value="Cake\Database\Driver\Sqlserver://localhost/cake_test"/>
-		<env name="db_login" value=""/>
-		<env name="db_password" value=""/>
+		<env name="db_dsn" value="sqlsrv://localhost/cake_test"/>
 		-->
 	</php>
 </phpunit>
