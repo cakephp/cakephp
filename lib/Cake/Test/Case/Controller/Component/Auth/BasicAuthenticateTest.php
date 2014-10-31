@@ -198,6 +198,27 @@ class BasicAuthenticateTest extends CakeTestCase {
 	}
 
 /**
+ * test userFields success
+ *
+ * @return void
+ */
+	public function testAuthenticateUserFieldsSuccess() {
+		$this->auth->settings['userFields'] = array('id', 'user');
+		$request = new CakeRequest('posts/index', false);
+		$request->addParams(array('pass' => array(), 'named' => array()));
+
+		$_SERVER['PHP_AUTH_USER'] = 'mariano';
+		$_SERVER['PHP_AUTH_PW'] = 'password';
+
+		$result = $this->auth->authenticate($request, $this->response);
+		$expected = array(
+			'id' => 1,
+			'user' => 'mariano',
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test scope failure.
  *
  * @expectedException UnauthorizedException
