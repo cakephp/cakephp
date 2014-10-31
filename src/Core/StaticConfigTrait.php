@@ -216,8 +216,8 @@ trait StaticConfigTrait {
 		unset($parsed['pass'], $parsed['user']);
 		$parsed = $queryArgs + $parsed;
 
-		if (empty($parsed['className']) && method_exists(get_called_class(), 'getClassMap')) {
-			$classMap = static::getClassMap();
+		if (empty($parsed['className'])) {
+			$classMap = static::dsnClassMap();
 
 			$parsed['className'] = $parsed['scheme'];
 			if (isset($classMap[$parsed['scheme']])) {
@@ -228,4 +228,16 @@ trait StaticConfigTrait {
 		return $parsed;
 	}
 
+/**
+ * return or update the dsn class map for this class
+ *
+ * @param mixed $map
+ * @return array
+ */
+	public static function dsnClassMap($map = null) {
+		if ($map) {
+			static::$_dsnClassMap = $map + $_dsnClassMap;
+		}
+		return static::$_dsnClassMap;
+	}
 }

@@ -68,6 +68,22 @@ class Cache {
 	use StaticConfigTrait;
 
 /**
+ * An array mapping url schemes to fully qualified caching engine
+ * class names.
+ *
+ * @var array
+ */
+	protected static $_dsnClassMap = [
+		'apc' => 'Cake\Cache\Engine\ApcEngine',
+		'file' => 'Cake\Cache\Engine\FileEngine',
+		'memcached' => 'Cake\Cache\Engine\MemcachedEngine',
+		'null' => 'Cake\Cache\Engine\NullEngine',
+		'redis' => 'Cake\Cache\Engine\RedisEngine',
+		'wincache' => 'Cake\Cache\Engine\WincacheEngine',
+		'xcache' => 'Cake\Cache\Engine\XcacheEngine',
+	];
+
+/**
  * Flag for tracking whether or not caching is enabled.
  *
  * @var bool
@@ -476,24 +492,6 @@ class Cache {
 		$results = call_user_func($callable);
 		self::write($key, $results, $config);
 		return $results;
-	}
-
-/**
- * Returns an array mapping url schemes to fully qualified caching engine
- * class names.
- *
- * @return array
- */
-	public static function getClassMap() {
-		return [
-			'apc' => 'Cake\Cache\Engine\ApcEngine',
-			'file' => 'Cake\Cache\Engine\FileEngine',
-			'memcached' => 'Cake\Cache\Engine\MemcachedEngine',
-			'null' => 'Cake\Cache\Engine\NullEngine',
-			'redis' => 'Cake\Cache\Engine\RedisEngine',
-			'wincache' => 'Cake\Cache\Engine\WincacheEngine',
-			'xcache' => 'Cake\Cache\Engine\XcacheEngine',
-		];
 	}
 
 }

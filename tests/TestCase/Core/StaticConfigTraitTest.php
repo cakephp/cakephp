@@ -51,16 +51,14 @@ class TestConnectionManagerStaticConfig {
 /**
  * Database driver class map.
  *
- * @return array
+ * @var array
  */
-	public static function getClassMap() {
-		return [
-			'mysql' => 'Cake\Database\Driver\Mysql',
-			'postgres' => 'Cake\Database\Driver\Postgres',
-			'sqlite' => 'Cake\Database\Driver\Sqlite',
-			'sqlserver' => 'Cake\Database\Driver\Sqlserver',
-		];
-	}
+	protected static $_dsnClassMap = [
+		'mysql' => 'Cake\Database\Driver\Mysql',
+		'postgres' => 'Cake\Database\Driver\Postgres',
+		'sqlite' => 'Cake\Database\Driver\Sqlite',
+		'sqlserver' => 'Cake\Database\Driver\Sqlserver',
+	];
 
 }
 
@@ -74,19 +72,17 @@ class TestCacheStaticConfig {
 /**
  * Cache driver class map.
  *
- * @return array
+ * @var array
  */
-	public static function getClassMap() {
-		return [
-			'apc' => 'Cake\Cache\Engine\ApcEngine',
-			'file' => 'Cake\Cache\Engine\FileEngine',
-			'memcached' => 'Cake\Cache\Engine\MemcachedEngine',
-			'null' => 'Cake\Cache\Engine\NullEngine',
-			'redis' => 'Cake\Cache\Engine\RedisEngine',
-			'wincache' => 'Cake\Cache\Engine\WincacheEngine',
-			'xcache' => 'Cake\Cache\Engine\XcacheEngine',
-		];
-	}
+	protected static $_dsnClassMap = [
+		'apc' => 'Cake\Cache\Engine\ApcEngine',
+		'file' => 'Cake\Cache\Engine\FileEngine',
+		'memcached' => 'Cake\Cache\Engine\MemcachedEngine',
+		'null' => 'Cake\Cache\Engine\NullEngine',
+		'redis' => 'Cake\Cache\Engine\RedisEngine',
+		'wincache' => 'Cake\Cache\Engine\WincacheEngine',
+		'xcache' => 'Cake\Cache\Engine\XcacheEngine',
+	];
 
 }
 
@@ -100,15 +96,13 @@ class TestEmailStaticConfig {
 /**
  * Email driver class map.
  *
- * @return array
+ * @var array
  */
-	public static function getClassMap() {
-		return [
-			'debug' => 'Cake\Network\Email\DebugTransport',
-			'mail' => 'Cake\Network\Email\MailTransport',
-			'smtp' => 'Cake\Network\Email\SmtpTransport',
-		];
-	}
+	protected static $_dsnClassMap = [
+		'debug' => 'Cake\Network\Email\DebugTransport',
+		'mail' => 'Cake\Network\Email\MailTransport',
+		'smtp' => 'Cake\Network\Email\SmtpTransport',
+	];
 
 }
 
@@ -122,15 +116,13 @@ class TestLogStaticConfig {
 /**
  * Log engine class map.
  *
- * @return array
+ * @var array
  */
-	public static function getClassMap() {
-		return [
-			'console' => 'Cake\Log\Engine\ConsoleLog',
-			'file' => 'Cake\Log\Engine\FileLog',
-			'syslog' => 'Cake\Log\Engine\SyslogLog',
-		];
-	}
+	protected static $_dsnClassMap = [
+		'console' => 'Cake\Log\Engine\ConsoleLog',
+		'file' => 'Cake\Log\Engine\FileLog',
+		'syslog' => 'Cake\Log\Engine\SyslogLog',
+	];
 
 }
 

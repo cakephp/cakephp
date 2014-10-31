@@ -304,6 +304,17 @@ class Email {
 	protected $_boundary = null;
 
 /**
+ * An array mapping url schemes to fully qualified Transport class names
+ *
+ * @var array
+ */
+	protected static $_dsnClassMap = [
+		'debug' => 'Cake\Network\Email\DebugTransport',
+		'mail' => 'Cake\Network\Email\MailTransport',
+		'smtp' => 'Cake\Network\Email\SmtpTransport',
+	];
+
+/**
  * Configuration profiles for transports.
  *
  * @var array
@@ -1815,19 +1826,6 @@ class Email {
 			return strtoupper($this->_contentTypeCharset[$charset]);
 		}
 		return strtoupper($this->charset);
-	}
-
-/**
- * Returns an array mapping url schemes to fully qualified Transport class names
- *
- * @return array
- */
-	public static function getClassMap() {
-		return [
-			'debug' => 'Cake\Network\Email\DebugTransport',
-			'mail' => 'Cake\Network\Email\MailTransport',
-			'smtp' => 'Cake\Network\Email\SmtpTransport',
-		];
 	}
 
 }

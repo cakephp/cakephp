@@ -42,6 +42,18 @@ class ConnectionManager {
 	protected static $_aliasMap = [];
 
 /**
+ * An array mapping url schemes to fully qualified driver class names
+ *
+ * @return array
+ */
+	protected static $_dsnClassMap = [
+		'mysql' => 'Cake\Database\Driver\Mysql',
+		'postgres' => 'Cake\Database\Driver\Postgres',
+		'sqlite' => 'Cake\Database\Driver\Sqlite',
+		'sqlserver' => 'Cake\Database\Driver\Sqlserver',
+	];
+
+/**
  * The ConnectionRegistry used by the manager.
  *
  * @var \Cake\Datasource\ConnectionRegistry
@@ -105,20 +117,6 @@ class ConnectionManager {
 
 		unset($config['path']);
 		return $config;
-	}
-
-/**
- * Returns an array mapping url schemes to fully qualified driver class names
- *
- * @return array
- */
-	public static function getClassMap() {
-		return [
-			'mysql' => 'Cake\Database\Driver\Mysql',
-			'postgres' => 'Cake\Database\Driver\Postgres',
-			'sqlite' => 'Cake\Database\Driver\Sqlite',
-			'sqlserver' => 'Cake\Database\Driver\Sqlserver',
-		];
 	}
 
 /**
