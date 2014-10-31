@@ -3449,7 +3449,7 @@ SQL;
 
 		$expected = 'SELECT `Comment`.`id`, `Comment`.`article_id`, `Comment`.`user_id`, `Comment`.`comment`, `Comment`.`published`, `Comment`.`created`,' .
 			' `Comment`.`updated`, (SELECT id FROM comments WHERE id = (SELECT 1)) AS  `Comment__extra`' .
-			' FROM `cake_test`.`comments` AS `Comment`   WHERE `Comment`.`article_id` IN (1, 2)';
+			' FROM `cakephp_test`.`comments` AS `Comment`   WHERE `Comment`.`article_id` IN (1, 2)';
 
 		$log = $test->getLog();
 		$this->assertTextEquals($expected, $log['log'][count($log['log']) - 2]['query']);
