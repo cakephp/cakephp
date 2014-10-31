@@ -53,7 +53,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * in the current iteration, the key of the element and this collection as
  * arguments, in that order.
  *
- * ## Example:
+ * ### Example:
  *
  * Filtering odd numbers in an array, at the end only the value 2 will
  * be present in the resulting collection:
@@ -79,7 +79,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * in the current iteration, the key of the element and this collection as
  * arguments, in that order.
  *
- * ## Example:
+ * ### Example:
  *
  * Filtering even numbers in an array, at the end only values 1 and 3 will
  * be present in the resulting collection:
@@ -157,7 +157,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * in the current iteration, the key of the element and this collection as
  * arguments, in that order.
  *
- * ## Example:
+ * ### Example:
  *
  * Getting a collection of booleans where true indicates if a person is female:
  *

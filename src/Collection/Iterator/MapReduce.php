@@ -78,7 +78,7 @@ class MapReduce implements IteratorAggregate {
 /**
  * Constructor
  *
- * ## Example:
+ * ### Example:
  *
  * Separate all unique odd and even numbers in an array
  *

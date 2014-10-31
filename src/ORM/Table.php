@@ -1401,11 +1401,11 @@ class Table implements RepositoryInterface, EventListenerInterface {
  * will always be removed. You can use the `cascadeCallbacks` option
  * when defining associations to change how associated data is deleted.
  *
- * ## Options
+ * ### Options
  *
  * - `atomic` Defaults to true. When true the deletion happens within a transaction.
  *
- * ## Events
+ * ### Events
  *
  * - `beforeDelete` Fired before the delete occurs. If stopped the delete
  *   will be aborted. Receives the event, entity, and options.

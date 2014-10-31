@@ -36,7 +36,7 @@ class SyslogLog extends BaseLog {
  * the running process. For a local prefix, to be used only by one stream, you
  * can use the format key.
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  *	Log::config('error', ]
