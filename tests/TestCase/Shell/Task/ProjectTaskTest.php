@@ -21,6 +21,15 @@ use Cake\Shell\Task\ProjectTask;
 use Cake\TestSuite\TestCase;
 
 /**
+ * ProjectTask class enabling access to protected methods.
+ */
+class TestProjectTask extends ProjectTask {
+	public function isOpenBasedirProtected($path) {
+		return $this->_isOpenBasedirProtected($path);
+	}
+}
+
+/**
  * ProjectTask Test class
  *
  */
@@ -35,8 +44,8 @@ class ProjectTaskTest extends TestCase {
 		parent::setUp();
 		$io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
 
-		$this->Task = $this->getMock('Cake\Shell\Task\ProjectTask',
-			array('in', 'err', 'createFile', '_stop'),
+		$this->Task = $this->getMock('Cake\Test\TestCase\Shell\Task\TestProjectTask',
+			array('in', 'err', 'createFile', '_stop', '_getOpenBasedirConfig'),
 			array($io)
 		);
 		$this->Task->path = TMP;
@@ -80,6 +89,37 @@ class ProjectTaskTest extends TestCase {
 		$File = new File($path . DS . 'Config/paths.php');
 		$contents = $File->read();
 		$this->assertRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', .*?DS/', $contents);
+	}
+
+/**
+ * Test _isOpenBasedirProtected()
+ *
+ * @return void
+ */
+	public function testIsOpenBasedirProtected() {
+		$path = DS . 'foo' . PATH_SEPARATOR . DS . 'bar' . PATH_SEPARATOR . DS . 'baz' . DS . PATH_SEPARATOR . '.';
+		$this->Task->expects($this->at(0))->method('_getOpenBasedirConfig')->will($this->returnValue($path));
+
+		$this->assertTrue($this->Task->isOpenBasedirProtected(DS));
+		$this->assertTrue($this->Task->isOpenBasedirProtected(DS . 'some' . DS . 'path'));
+		$this->assertfalse($this->Task->isOpenBasedirProtected(DS . 'foo'));
+		$this->assertfalse($this->Task->isOpenBasedirProtected(DS . 'foo' . DS . 'bar'));
+		$this->assertfalse($this->Task->isOpenBasedirProtected(DS . 'baz' . DS));
+		$this->assertfalse($this->Task->isOpenBasedirProtected(DS . 'baz'));
+		$this->assertfalse($this->Task->isOpenBasedirProtected(getcwd()));
+	}
+
+/**
+ * Test _isOpenBasedirProtected() with no basedirs configured.
+ *
+ * @return void
+ */
+	public function testIsOpenBasedirProtectedWithEmptyConfig() {
+		$this->Task->expects($this->at(0))->method('_getOpenBasedirConfig')->will($this->returnValue(null));
+
+		$this->assertfalse($this->Task->isOpenBasedirProtected(DS));
+		$this->assertfalse($this->Task->isOpenBasedirProtected(DS . 'some' . DS . 'path'));
+		$this->assertfalse($this->Task->isOpenBasedirProtected(getcwd()));
 	}
 
 /**

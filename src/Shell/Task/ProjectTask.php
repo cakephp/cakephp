@@ -15,7 +15,6 @@
 namespace Cake\Shell\Task;
 
 use Cake\Filesystem\Folder;
-use Cake\Shell\Task\BakeTask;
 
 /**
  * Task class for creating new project apps and plugins
@@ -29,6 +28,13 @@ class ProjectTask extends BakeTask {
  * @var string
  */
 	public $appPath = null;
+
+/**
+ * Paths defined in the php.ini `open_basedir` directive.
+ *
+ * @var array
+ */
+	protected $_openBasedirPaths = null;
 
 /**
  * Checks that given project path does not already exist, and
@@ -107,6 +113,49 @@ class ProjectTask extends BakeTask {
 	}
 
 /**
+ * Returns the value of the php.ini `open_basedir` declaration.
+ *
+ * @return string
+ */
+	protected function _getOpenBasedirConfig() {
+		return ini_get('open_basedir');
+	}
+
+/**
+ * Tests whether the given path is inaccessible because it's not inside of
+ * a path defined in the php.ini `open_basedir` directive.
+ *
+ * @param string $path The path to test.
+ * @return bool
+ */
+	protected function _isOpenBasedirProtected($path) {
+		if ($this->_openBasedirPaths === null) {
+			$openBasedir = $this->_getOpenBasedirConfig();
+
+			$openBasedirPaths = [];
+			if (!empty($openBasedir)) {
+				$openBasedirPaths = explode(PATH_SEPARATOR, $openBasedir);
+				if (($index = array_search('.', $openBasedirPaths)) !== false) {
+					$openBasedirPaths[$index] = getcwd();
+				}
+			}
+			$this->_openBasedirPaths = $openBasedirPaths;
+		}
+
+		if (empty($this->_openBasedirPaths)) {
+			return false;
+		}
+
+		foreach ($this->_openBasedirPaths as $basePath) {
+			if (preg_match('/^' . preg_quote($basePath, '/') . '/', $path . DS)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+/**
  * Search the $PATH for composer.
  *
  * @param array $path The paths to search.
@@ -116,9 +165,10 @@ class ProjectTask extends BakeTask {
 		$composer = ['composer.phar', 'composer'];
 		foreach ($path as $dir) {
 			foreach ($composer as $cmd) {
-				if (is_file($dir . DS . $cmd)) {
+				$path = $dir . DS . $cmd;
+				if (!$this->_isOpenBasedirProtected($path) && is_file($path)) {
 					$this->_io->verbose('Found composer executable in ' . $dir);
-					return $dir . DS . $cmd;
+					return $path;
 				}
 			}
 		}
