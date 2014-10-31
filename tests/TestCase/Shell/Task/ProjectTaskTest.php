@@ -24,9 +24,17 @@ use Cake\TestSuite\TestCase;
  * ProjectTask class enabling access to protected methods.
  */
 class TestProjectTask extends ProjectTask {
+
+/**
+ * Wrapper for `_isOpenBasedirProtected()`
+ *
+ * @param string $path The path to test.
+ * @return bool
+ */
 	public function isOpenBasedirProtected($path) {
 		return $this->_isOpenBasedirProtected($path);
 	}
+
 }
 
 /**
