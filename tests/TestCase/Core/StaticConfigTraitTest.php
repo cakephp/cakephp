@@ -411,4 +411,36 @@ class StaticConfigTraitTest extends TestCase {
 		$this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
 	}
 
+/**
+ * Test that the dsn map can be updated/append to
+ *
+ * @return void
+ */
+	public function testCanUpdateClassMap() {
+		$expected = [
+			'console' => 'Cake\Log\Engine\ConsoleLog',
+			'file' => 'Cake\Log\Engine\FileLog',
+			'syslog' => 'Cake\Log\Engine\SyslogLog',
+		];
+		$result = TestLogStaticConfig::dsnClassMap();
+		$this->assertEquals($expected, $result, "The class map should match the class property");
+
+		$expected = [
+			'console' => 'Special\EngineLog',
+			'file' => 'Cake\Log\Engine\FileLog',
+			'syslog' => 'Cake\Log\Engine\SyslogLog',
+		];
+		$result = TestLogStaticConfig::dsnClassMap(['console' => 'Special\EngineLog']);
+		$this->assertEquals($expected, $result, "Should be possible to change the map");
+
+		$expected = [
+			'console' => 'Special\EngineLog',
+			'file' => 'Cake\Log\Engine\FileLog',
+			'syslog' => 'Cake\Log\Engine\SyslogLog',
+			'my' => 'Special\OtherLog'
+		];
+		$result = TestLogStaticConfig::dsnClassMap(['my' => 'Special\OtherLog']);
+		$this->assertEquals($expected, $result, "Should be possible to add to the map");
+	}
+
 }

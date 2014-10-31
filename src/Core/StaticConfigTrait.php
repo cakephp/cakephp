@@ -236,7 +236,7 @@ trait StaticConfigTrait {
  */
 	public static function dsnClassMap($map = null) {
 		if ($map) {
-			static::$_dsnClassMap = $map + $_dsnClassMap;
+			static::$_dsnClassMap = $map + static::$_dsnClassMap;
 		}
 		return static::$_dsnClassMap;
 	}
