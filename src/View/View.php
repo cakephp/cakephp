@@ -815,8 +815,9 @@ class View {
 		if ($name === null) {
 			$name = $this->view;
 		}
-		$name = str_replace('/', DS, $name);
+
 		list($plugin, $name) = $this->pluginSplit($name);
+		$name = str_replace('/', DS, $name);
 
 		if (strpos($name, DS) === false && $name[0] !== '.') {
 			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
