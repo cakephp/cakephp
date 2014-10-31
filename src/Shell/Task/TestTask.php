@@ -525,6 +525,7 @@ class TestTask extends BakeTask {
 				'Helper', 'helper',
 				'Component', 'component',
 				'Behavior', 'behavior',
+				'Shell', 'shell',
 				'Cell', 'cell',
 			]
 		])->addArgument('name', [
