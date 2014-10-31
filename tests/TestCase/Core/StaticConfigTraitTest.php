@@ -26,6 +26,12 @@ class TestConnectionManagerStaticConfig {
 		parseDsn as protected _parseDsn;
 	}
 
+/**
+ * Parse a DSN
+ *
+ * @param string $config The config to parse.
+ * @return array
+ */
 	public static function parseDsn($config = null) {
 		$config = static::_parseDsn($config);
 
@@ -42,6 +48,11 @@ class TestConnectionManagerStaticConfig {
 		return $config;
 	}
 
+/**
+ * Database driver class map.
+ *
+ * @return array
+ */
 	public static function getClassMap() {
 		return [
 			'mysql' => 'Cake\Database\Driver\Mysql',
@@ -60,6 +71,11 @@ class TestCacheStaticConfig {
 
 	use StaticConfigTrait;
 
+/**
+ * Cache driver class map.
+ *
+ * @return array
+ */
 	public static function getClassMap() {
 		return [
 			'apc' => 'Cake\Cache\Engine\ApcEngine',
@@ -81,6 +97,11 @@ class TestEmailStaticConfig {
 
 	use StaticConfigTrait;
 
+/**
+ * Email driver class map.
+ *
+ * @return array
+ */
 	public static function getClassMap() {
 		return [
 			'debug' => 'Cake\Network\Email\DebugTransport',
@@ -98,6 +119,11 @@ class TestLogStaticConfig {
 
 	use StaticConfigTrait;
 
+/**
+ * Log engine class map.
+ *
+ * @return array
+ */
 	public static function getClassMap() {
 		return [
 			'console' => 'Cake\Log\Engine\ConsoleLog',
@@ -114,11 +140,21 @@ class TestLogStaticConfig {
  */
 class StaticConfigTraitTest extends TestCase {
 
+/**
+ * setup method
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
 		$this->subject = $this->getObjectForTrait('Cake\Core\StaticConfigTrait');
 	}
 
+/**
+ * teardown method
+ *
+ * @return void
+ */
 	public function tearDown() {
 		unset($this->subject);
 		parent::tearDown();
@@ -130,9 +166,8 @@ class StaticConfigTraitTest extends TestCase {
  * @return void
  */
 	public function testSimpleParseDsn() {
-		$klassName = get_class($this->subject);
-
-		$this->assertSame([], $klassName::parseDsn(''));
+		$className = get_class($this->subject);
+		$this->assertSame([], $className::parseDsn(''));
 	}
 
 /**
@@ -142,8 +177,8 @@ class StaticConfigTraitTest extends TestCase {
  * @return void
  */
 	public function testParseBadType() {
-		$klassName = get_class($this->subject);
-		$klassName::parseDsn(['url' => 'http://:80']);
+		$className = get_class($this->subject);
+		$className::parseDsn(['url' => 'http://:80']);
 	}
 
 /**
@@ -385,4 +420,3 @@ class StaticConfigTraitTest extends TestCase {
 	}
 
 }
-

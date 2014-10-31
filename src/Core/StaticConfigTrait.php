@@ -141,22 +141,21 @@ trait StaticConfigTrait {
  * The following is an example of its usage:
  *
  * {{{
- *   $dsn = 'mysql://user:pass@localhost/database?';
- *   $config = ConnectionManager::parseDsn($dsn);
+ * $dsn = 'mysql://user:pass@localhost/database?';
+ * $config = ConnectionManager::parseDsn($dsn);
  *
- *   $dsn = 'Cake\Log\Engine\FileLog://?types=notice,info,debug&file=debug&path=LOGS';
- * 	 $config = Log::parseDsn($dsn);
+ * $dsn = 'Cake\Log\Engine\FileLog://?types=notice,info,debug&file=debug&path=LOGS';
+ * $config = Log::parseDsn($dsn);
  *
- *   $dsn = 'smtp://user:secret@localhost:25?timeout=30&client=null&tls=null';
- * 	 $config = Email::parseDsn($dsn);
+ * $dsn = 'smtp://user:secret@localhost:25?timeout=30&client=null&tls=null';
+ * $config = Email::parseDsn($dsn);
  *
- *   $dsn = 'file:///?className=\My\Cache\Engine\FileEngine';
- * 	 $config = Cache::parseDsn($dsn);
+ * $dsn = 'file:///?className=\My\Cache\Engine\FileEngine';
+ * $config = Cache::parseDsn($dsn);
  *
- *   $dsn = 'File://?prefix=myapp_cake_core_&serialize=true&duration=+2 minutes&path=/tmp/persistent/';
- * 	 $config = Cache::parseDsn($dsn);
- *
- * }}
+ * $dsn = 'File://?prefix=myapp_cake_core_&serialize=true&duration=+2 minutes&path=/tmp/persistent/';
+ * $config = Cache::parseDsn($dsn);
+ * }}}
  *
  * For all classes, the value of `scheme` is set as the value of both the `className`
  * unless they have been otherwise specified.

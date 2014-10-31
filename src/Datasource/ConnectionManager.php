@@ -73,15 +73,15 @@ class ConnectionManager {
  * The following is an example of its usage:
  *
  * {{{
- *   $dsn = 'mysql://user:pass@localhost/database';
- *   $config = ConnectionManager::parseDsn($dsn);
+ * $dsn = 'mysql://user:pass@localhost/database';
+ * $config = ConnectionManager::parseDsn($dsn);
  *
- *   $dsn = 'Cake\Database\Driver\Mysql://localhost:3306/database?className=Cake\Database\Connection';
- *   $config = ConnectionManager::parseDsn($dsn);
+ * $dsn = 'Cake\Database\Driver\Mysql://localhost:3306/database?className=Cake\Database\Connection';
+ * $config = ConnectionManager::parseDsn($dsn);
  *
- *   $dsn = 'Cake\Database\Connection://localhost:3306/database?driver=Cake\Database\Driver\Mysql';
- *   $config = ConnectionManager::parseDsn($dsn);
- * }}
+ * $dsn = 'Cake\Database\Connection://localhost:3306/database?driver=Cake\Database\Driver\Mysql';
+ * $config = ConnectionManager::parseDsn($dsn);
+ * }}}
  *
  * For all classes, the value of `scheme` is set as the value of both the `className` and `driver`
  * unless they have been otherwise specified.
