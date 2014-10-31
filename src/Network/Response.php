@@ -948,7 +948,7 @@ class Response {
  * Sets the Expires header for the response by taking an expiration time
  * If called with no parameters it will return the current Expires value
  *
- * ## Examples:
+ * ### Examples:
  *
  * `$response->expires('now')` Will Expire the response cache now
  * `$response->expires(new DateTime('+1 day'))` Will set the expiration in next 24 hours
@@ -972,7 +972,7 @@ class Response {
  * Sets the Last-Modified header for the response by taking a modification time
  * If called with no parameters it will return the current Last-Modified value
  *
- * ## Examples:
+ * ### Examples:
  *
  * `$response->modified('now')` Will set the Last-Modified to the current time
  * `$response->modified(new DateTime('+1 day'))` Will set the modification date in the past 24 hours
@@ -1218,7 +1218,7 @@ class Response {
  *  - secure: Is the cookie https?
  *  - httpOnly: Is the cookie available in the client?
  *
- * ## Examples
+ * ### Examples
  *
  * ### Getting all cookies
  *

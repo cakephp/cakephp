@@ -137,7 +137,7 @@ trait QueryTrait {
  * - When the cached data is stale/missing the result set will be cached as the query
  *   is executed.
  *
- * ## Usage
+ * ### Usage
  *
  * {{{
  * // Simple string key + config

@@ -23,13 +23,13 @@ use Cake\Log\LogTrait;
  * controller logic that can be composed into a controller. Components also
  * provide request life-cycle callbacks for injecting logic at specific points.
  *
- * ## Initialize hook
+ * ### Initialize hook
  *
  * Like Controller and Table, this class has an initialize() hook that you can use
  * to add custom 'constructor' logic. It is important to remember that each request
  * (and sub-request) will only make one instance of any given component.
  *
- * ## Life cycle callbacks
+ * ### Life cycle callbacks
  *
  * Components can provide several callbacks that are fired at various stages of the request
  * cycle. The available callbacks are:

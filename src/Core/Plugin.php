@@ -51,7 +51,7 @@ class Plugin {
  * This method does not configure any autoloaders. That must be done separately either
  * through composer, or your own code during config/bootstrap.php.
  *
- * ## Examples:
+ * ### Examples:
  *
  * `Plugin::load('DebugKit')`
  *
@@ -91,7 +91,7 @@ class Plugin {
  *
  * Will only load the bootstrap for ApiGenerator and only the routes for DebugKit
  *
- * ## Configuration options
+ * ### Configuration options
  *
  * - `bootstrap` - array - Whether or not you want the $plugin/config/bootstrap.php file loaded.
  * - `routes` - boolean - Whether or not you want to load the $plugin/config/routes.php file.

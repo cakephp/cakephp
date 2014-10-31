@@ -42,7 +42,7 @@ class FunctionExpression extends QueryExpression {
  * By default, all params that are passed will be quoted. If you wish to use
  * literal arguments, you need to explicitly hint this function.
  *
- * ## Examples:
+ * ### Examples:
  *
  *	``$f = new FunctionExpression('CONCAT', ['CakePHP', ' rules']);``
  *

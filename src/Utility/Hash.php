@@ -845,7 +845,7 @@ class Hash {
  * - `asc` Sort ascending.
  * - `desc` Sort descending.
  *
- * ## Sort types
+ * ### Sort types
  *
  * - `regular` For regular sorting (don't change types)
  * - `numeric` Compare values numerically

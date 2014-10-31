@@ -438,7 +438,7 @@ class Connection {
  * If you are trying to enable this feature, make sure you check the return value of this
  * function to verify it was enabled successfully.
  *
- * ## Example:
+ * ### Example:
  *
  * `$connection->useSavePoints(true)` Returns true if drivers supports save points, false otherwise
  * `$connection->useSavePoints(false)` Disables usage of savepoints and returns false

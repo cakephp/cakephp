@@ -235,7 +235,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * then rules list for the field will be replaced with second argument and
  * third argument will be ignored.
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  *		$validator
@@ -272,7 +272,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Removes a rule from the set by its name
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  *		$validator
