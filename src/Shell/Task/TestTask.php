@@ -524,7 +524,8 @@ class TestTask extends BakeTask {
 				'Entity', 'entity',
 				'Helper', 'helper',
 				'Component', 'component',
-				'Behavior', 'behavior'
+				'Behavior', 'behavior',
+				'Cell', 'cell',
 			]
 		])->addArgument('name', [
 			'help' => 'An existing class to bake tests for.'
