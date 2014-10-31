@@ -266,7 +266,7 @@ class BasicAuthenticateTest extends CakeTestCase {
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(
 			'id' => 1,
-      'title' => 'First Article',
+			'title' => 'First Article',
 		);
 		$this->assertEquals($expected, $result['Article']);
 	}
