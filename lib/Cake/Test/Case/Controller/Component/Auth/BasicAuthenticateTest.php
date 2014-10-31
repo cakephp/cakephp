@@ -248,6 +248,30 @@ class BasicAuthenticateTest extends CakeTestCase {
 	}
 
 /**
+ * test userFields and related models success
+ *
+ * @return void
+ */
+	public function testAuthenticateUserFieldsRelatedModelsSuccess() {
+		$User = ClassRegistry::init('User');
+		$User->bindModel(array('hasOne' => array('Article')));
+		$this->auth->settings['recursive'] = 0;
+		$this->auth->settings['userFields'] = array('Article.id', 'Article.title');
+		$request = new CakeRequest('posts/index', false);
+		$request->addParams(array('pass' => array(), 'named' => array()));
+
+		$_SERVER['PHP_AUTH_USER'] = 'mariano';
+		$_SERVER['PHP_AUTH_PW'] = 'password';
+
+		$result = $this->auth->authenticate($request, $this->response);
+		$expected = array(
+			'id' => 1,
+      'title' => 'First Article',
+		);
+		$this->assertEquals($expected, $result['Article']);
+	}
+
+/**
  * test scope failure.
  *
  * @expectedException UnauthorizedException
