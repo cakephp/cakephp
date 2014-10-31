@@ -167,7 +167,7 @@ trait EntityTrait {
  * with one call by passing a hashed array as properties in the form of
  * property => value pairs
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  * $entity->set(['name' => 'andrew', 'id' => 1]);
@@ -543,7 +543,7 @@ trait EntityTrait {
 			return isset($this->_dirty[$property]);
 		}
 
-		if (!$isDirty) {
+		if ($isDirty === false) {
 			unset($this->_dirty[$property]);
 			return false;
 		}
@@ -733,7 +733,7 @@ trait EntityTrait {
  *
  * {{{
  * $entity->accessible('id', true); // Mark id as not protected
- * $entity->accessible('author_id', true); // Mark author_id as protected
+ * $entity->accessible('author_id', false); // Mark author_id as protected
  * $entity->accessible(['id', 'user_id'], true); // Mark both properties as accessible
  * $entity->accessible('*', false); // Mark all properties as protected
  * }}}
@@ -777,7 +777,7 @@ trait EntityTrait {
 	}
 
 /**
- * Returns the alias of the repository from wich this entity came from.
+ * Returns the alias of the repository from which this entity came from.
  *
  * If called with no arguments, it returns the alias of the repository
  * this entity came from if it is known.

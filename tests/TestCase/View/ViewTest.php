@@ -20,12 +20,13 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
 use Cake\View\View;
+use TestApp\View\AppView;
 
 /**
  * ViewPostsController class
@@ -98,7 +99,11 @@ class ThemePostsController extends Controller {
  * TestView class
  *
  */
-class TestView extends View {
+class TestView extends AppView {
+
+	public function initialize() {
+		$this->loadHelper('Html', ['mykey' => 'myval']);
+	}
 
 /**
  * getViewFileName method
@@ -205,11 +210,11 @@ class TestObjectWithoutToString {
 }
 
 /**
- * Class TestViewEventListener
+ * Class TestViewEventListenerInterface
  *
  * An event listener to test cakePHP events
  */
-class TestViewEventListener implements EventListener {
+class TestViewEventListenerInterface implements EventListenerInterface {
 
 /**
  * type of view before rendering has occurred
@@ -330,6 +335,11 @@ class ViewTest extends TestCase {
 		];
 		$request->action = 'display';
 		$request->params['pass'] = array('home');
+
+		$ThemeView = new TestView(null, null, null, $viewOptions);
+		$expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Template' . DS . 'Pages' . DS . 'index.ctp';
+		$result = $ThemeView->getViewFileName('Company/TestPluginThree./Pages/index');
+		$this->assertPathEquals($expected, $result);
 
 		$ThemeView = new TestView(null, null, null, $viewOptions);
 		$ThemeView->theme = 'TestTheme';
@@ -662,10 +672,10 @@ class ViewTest extends TestCase {
 /**
  * Test for missing views
  *
- * @expectedException \Cake\View\Exception\MissingViewException
+ * @expectedException \Cake\View\Exception\MissingTemplateException
  * @return void
  */
-	public function testMissingView() {
+	public function testMissingTemplate() {
 		$viewOptions = ['plugin' => null,
 			'name' => 'Pages',
 			'viewPath' => 'Pages'
@@ -889,7 +899,7 @@ class ViewTest extends TestCase {
 	public function testViewEvent() {
 		$View = $this->PostsController->createView();
 		$View->autoLayout = false;
-		$listener = new TestViewEventListener();
+		$listener = new TestViewEventListenerInterface();
 
 		$View->eventManager()->attach($listener);
 
@@ -969,6 +979,17 @@ class ViewTest extends TestCase {
 		$View->helpers = array();
 		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
 		$this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
+	}
+
+/**
+ * Test manipulating class properties in initialize()
+ *
+ * @return void
+ */
+	public function testInitialize() {
+		$View = new TestView();
+		$config = $View->Html->config();
+		$this->assertEquals('myval', $config['mykey']);
 	}
 
 /**
@@ -1100,14 +1121,15 @@ class ViewTest extends TestCase {
  * @return void
  */
 	public function testRenderLoadHelper() {
-		$this->PostsController->helpers = array('Session', 'Html', 'Form', 'Number');
+		$this->PostsController->helpers = array('Session', 'Form', 'Number');
 		$View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
 
 		$result = $View->render('index', false);
 		$this->assertEquals('posts index', $result);
 
 		$attached = $View->helpers()->loaded();
-		$this->assertEquals(array('Session', 'Html', 'Form', 'Number'), $attached);
+		// HtmlHelper is loaded in TestView::initialize()
+		$this->assertEquals(array('Html', 'Session', 'Form', 'Number'), $attached);
 
 		$this->PostsController->helpers = array('Html', 'Form', 'Number', 'TestPlugin.PluggedHelper');
 		$View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');

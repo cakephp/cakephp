@@ -102,7 +102,7 @@ class ViewTaskTest extends TestCase {
 		parent::setUp();
 
 		Configure::write('App.namespace', 'TestApp');
-		$this->_setupTask(['in', 'err', 'createFile', '_stop']);
+		$this->_setupTask(['in', 'err', 'error', 'createFile', '_stop']);
 
 		TableRegistry::get('ViewTaskComments', [
 			'className' => __NAMESPACE__ . '\ViewTaskCommentsTable',
@@ -310,6 +310,33 @@ class ViewTaskTest extends TestCase {
 		$this->assertContains('$testViewModel->id', $result);
 		$this->assertContains('$testViewModel->name', $result);
 		$this->assertContains('$testViewModel->body', $result);
+	}
+
+/**
+ * Test getContent with no pk
+ *
+ * @return void
+ */
+	public function testGetContentWithNoPrimaryKey() {
+		$vars = array(
+			'modelClass' => 'TestViewModel',
+			'schema' => TableRegistry::get('ViewTaskComments')->schema(),
+			'primaryKey' => [],
+			'displayField' => 'name',
+			'singularVar' => 'testViewModel',
+			'pluralVar' => 'testViewModels',
+			'singularHumanName' => 'Test View Model',
+			'pluralHumanName' => 'Test View Models',
+			'fields' => ['id', 'name', 'body'],
+			'associations' => [],
+			'keyFields' => [],
+		);
+		$this->Task->expects($this->once())
+			->method('error')
+			->with($this->stringContains('Cannot generate views for models'));
+
+		$result = $this->Task->getContent('view', $vars);
+		$this->assertFalse($result);
 	}
 
 /**

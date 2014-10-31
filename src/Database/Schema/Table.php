@@ -419,8 +419,8 @@ class Table {
 /**
  * Get the column(s) used for the primary key.
  *
- * @return array|null Column name(s) for the primary key.
- *   Null will be returned if a table has no primary key.
+ * @return array Column name(s) for the primary key. An
+ *   empty list will be returned when the table has no primary key.
  */
 	public function primaryKey() {
 		foreach ($this->_constraints as $name => $data) {
@@ -428,14 +428,14 @@ class Table {
 				return $data['columns'];
 			}
 		}
-		return null;
+		return [];
 	}
 
 /**
  * Add a constraint.
  *
  * Used to add constraints to a table. For example primary keys, unique
- * keys and foriegn keys.
+ * keys and foreign keys.
  *
  * ### Attributes
  *
@@ -533,7 +533,7 @@ class Table {
  * For example the engine type in MySQL.
  *
  * @param array|null $options The options to set, or null to read options.
- * @return this|array Either the table instance, or an array of options when reading.
+ * @return $this|array Either the table instance, or an array of options when reading.
  */
 	public function options($options = null) {
 		if ($options === null) {
@@ -547,7 +547,7 @@ class Table {
  * Get/Set whether the table is temporary in the database
  *
  * @param bool|null $set whether or not the table is to be temporary
- * @return this|bool Either the table instance, the current temporary setting
+ * @return $this|bool Either the table instance, the current temporary setting
  */
 	public function temporary($set = null) {
 		if ($set === null) {

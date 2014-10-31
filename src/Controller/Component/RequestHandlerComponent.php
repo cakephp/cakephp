@@ -23,7 +23,7 @@ use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use Cake\Network\Response;
 use Cake\Routing\Router;
-use Cake\Utility\Error\XmlException;
+use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Inflector;
 use Cake\Utility\Xml;
 
@@ -149,7 +149,7 @@ class RequestHandlerComponent extends Component {
 	public function initialize(array $config) {
 		$controller = $this->_registry->getController();
 		$request = $this->request = $controller->request;
-		$response = $this->response = $controller->response;
+		$this->response = $controller->response;
 
 		if (isset($request->params['_ext'])) {
 			$this->ext = $request->params['_ext'];

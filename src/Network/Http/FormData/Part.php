@@ -116,7 +116,7 @@ class Part {
 /**
  * Get/set the filename.
  *
- * Setting the filname to `false` will exclude it from the
+ * Setting the filename to `false` will exclude it from the
  * generated output.
  *
  * @param null|string $filename Use null to get/string to set.

@@ -90,10 +90,10 @@ class ControllerTask extends BakeTask {
 
 		$modelObj = TableRegistry::get($currentModelName);
 
-		$pluralName = $this->_pluralName($currentModelName);
+		$pluralName = $this->_variableName($currentModelName);
 		$singularName = $this->_singularName($currentModelName);
 		$singularHumanName = $this->_singularHumanName($controllerName);
-		$pluralHumanName = $this->_pluralName($controllerName);
+		$pluralHumanName = $this->_variableName($controllerName);
 
 		$this->Template->set(compact(
 			'plugin', 'admin', 'pluralName', 'singularName',

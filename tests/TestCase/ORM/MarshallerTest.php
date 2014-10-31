@@ -185,6 +185,27 @@ class MarshallerTest extends TestCase {
 	}
 
 /**
+ * Ensure that marshalling casts reasonably.
+ *
+ * @return void
+ */
+	public function testOneOnlyCastMatchingData() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 'derp',
+			'created' => 'fale'
+		];
+		$this->articles->entityClass(__NAMESPACE__ . '\OpenEntity');
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, []);
+
+		$this->assertSame($data['title'], $result->title);
+		$this->assertSame($data['author_id'], $result->author_id, 'No cast on bad data.');
+		$this->assertSame($data['created'], $result->created, 'No cast on bad data.');
+	}
+
+/**
  * Test one() follows mass-assignment rules.
  *
  * @return void
@@ -753,6 +774,7 @@ class MarshallerTest extends TestCase {
 				['id' => 2, 'comment' => 'Altered comment 2'],
 				['id' => 1, 'comment' => 'Altered comment 1'],
 				['id' => 3, 'comment' => 'Extra comment 3'],
+				['id' => 4, 'comment' => 'Extra comment 4'],
 				['comment' => 'Extra comment 2']
 			]
 		];
@@ -765,17 +787,36 @@ class MarshallerTest extends TestCase {
 		$this->assertSame($comment2, $entity->comments[1]);
 		$this->assertEquals('Altered comment 1', $entity->comments[0]->comment);
 		$this->assertEquals('Altered comment 2', $entity->comments[1]->comment);
+
+		$thirdComment = $this->articles->Comments
+			->find()
+			->where(['id' => 3])
+			->hydrate(false)
+			->first();
+
 		$this->assertEquals(
-			['comment' => 'Extra comment 3', 'id' => 3],
+			['comment' => 'Extra comment 3'] + $thirdComment,
 			$entity->comments[2]->toArray()
 		);
+
+		$forthComment = $this->articles->Comments
+			->find()
+			->where(['id' => 4])
+			->hydrate(false)
+			->first();
+
+		$this->assertEquals(
+			['comment' => 'Extra comment 4'] + $forthComment,
+			$entity->comments[3]->toArray()
+		);
+
 		$this->assertEquals(
 			['comment' => 'Extra comment 1'],
-			$entity->comments[3]->toArray()
+			$entity->comments[4]->toArray()
 		);
 		$this->assertEquals(
 			['comment' => 'Extra comment 2'],
-			$entity->comments[4]->toArray()
+			$entity->comments[5]->toArray()
 		);
 	}
 
@@ -1033,6 +1074,38 @@ class MarshallerTest extends TestCase {
 		$this->assertNotSame($entities[0], $result[0]);
 		$this->assertSame($entities[1], $result[0]);
 		$this->assertEquals('Changed 2', $result[0]->comment);
+
+		$this->assertEquals('Comment 1', $result[1]->comment);
+	}
+
+/**
+ * Test that mergeMany() handles composite key associations properly.
+ *
+ * The articles_tags table has a composite primary key, and should be
+ * handled correctly.
+ *
+ * @return void
+ */
+	public function testMergeManyCompositeKey() {
+		$articlesTags = TableRegistry::get('ArticlesTags');
+
+		$entities = [
+			new OpenEntity(['article_id' => 1, 'tag_id' => 2]),
+			new OpenEntity(['article_id' => 1, 'tag_id' => 1]),
+		];
+		$entities[0]->clean();
+		$entities[1]->clean();
+
+		$data = [
+			['article_id' => 1, 'tag_id' => 1],
+			['article_id' => 1, 'tag_id' => 2]
+		];
+		$marshall = new Marshaller($articlesTags);
+		$result = $marshall->mergeMany($entities, $data);
+
+		$this->assertCount(2, $result, 'Should have two records');
+		$this->assertSame($entities[0], $result[0], 'Should retain object');
+		$this->assertSame($entities[1], $result[1], 'Should retain object');
 	}
 
 /**

@@ -321,7 +321,21 @@ class View {
 			$this->response = new Response();
 		}
 		$this->Blocks = new ViewBlock();
+		$this->initialize();
 		$this->loadHelpers();
+	}
+
+/**
+ * Initialization hook method.
+ *
+ * Properties like $helpers etc. cannot be initialized statically in your custom
+ * view class as they are overwritten by values from controller in constructor.
+ * So this method allows you to manipulate them as required after view instance
+ * is constructed.
+ *
+ * @return void
+ */
+	public function initialize() {
 	}
 
 /**
@@ -789,7 +803,7 @@ class View {
  *
  * @param string $name Controller action to find template filename for
  * @return string Template filename
- * @throws \Cake\View\Exception\MissingViewException when a view file could not be found.
+ * @throws \Cake\View\Exception\MissingTemplateException when a view file could not be found.
  */
 	protected function _getViewFileName($name = null) {
 		$subDir = null;
@@ -801,8 +815,9 @@ class View {
 		if ($name === null) {
 			$name = $this->view;
 		}
-		$name = str_replace('/', DS, $name);
+
 		list($plugin, $name) = $this->pluginSplit($name);
+		$name = str_replace('/', DS, $name);
 
 		if (strpos($name, DS) === false && $name[0] !== '.') {
 			$name = $this->viewPath . DS . $subDir . Inflector::underscore($name);
@@ -824,7 +839,7 @@ class View {
 				return $this->_checkFilePath($path . $name . $this->_ext, $path);
 			}
 		}
-		throw new Exception\MissingViewException(array('file' => $name . $this->_ext));
+		throw new Exception\MissingTemplateException(array('file' => $name . $this->_ext));
 	}
 
 /**

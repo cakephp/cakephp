@@ -34,7 +34,7 @@ class MemcachedEngine extends CacheEngine {
 /**
  * memcached wrapper.
  *
- * @var Memcache
+ * @var \Memcached
  */
 	protected $_Memcached = null;
 
@@ -298,7 +298,7 @@ class MemcachedEngine extends CacheEngine {
  *
  * @param array $keys An array of identifiers for the data
  * @return An array containing, for each of the given $keys, the cached data or
- *   false if cached data could not be retreived.
+ *   false if cached data could not be retrieved.
  */
 	public function readMany($keys) {
 		$cacheKeys = array();

@@ -174,7 +174,7 @@ trait SelectableAssociationTrait {
 	}
 
 /**
- * Returns a TupleComparison object that can be used for mathching all the fields
+ * Returns a TupleComparison object that can be used for matching all the fields
  * from $keys with the tuple values in $filter using the provided operator.
  *
  * @param \Cake\ORM\Query $query Target table's query

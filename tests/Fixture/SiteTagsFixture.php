@@ -42,4 +42,3 @@ class SiteTagsFixture extends TestFixture {
 		['id' => 4, 'site_id' => 2, 'name' => 'tag4']
 	];
 }
-

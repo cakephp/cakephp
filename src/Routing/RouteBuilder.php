@@ -86,7 +86,7 @@ class RouteBuilder {
 /**
  * The route collection routes should be added to.
  *
- * @var Cake\Routing\RouteCollection
+ * @var \Cake\Routing\RouteCollection
  */
 	protected $_collection;
 
@@ -120,7 +120,7 @@ class RouteBuilder {
  * @return string|void
  */
 	public function routeClass($routeClass = null) {
-		if ($routeClass == null) {
+		if ($routeClass === null) {
 			return $this->_routeClass;
 		}
 		$this->_routeClass = $routeClass;

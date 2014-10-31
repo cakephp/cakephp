@@ -14,9 +14,7 @@
  */
 namespace Cake\Shell\Task;
 
-use Cake\Console\Shell;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Shell\Task\BakeTask;
 use Cake\Utility\Inflector;
 

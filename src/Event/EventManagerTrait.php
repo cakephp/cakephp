@@ -45,7 +45,7 @@ trait EventManagerTrait {
  * @return \Cake\Event\EventManager
  */
 	public function eventManager(EventManager $eventManager = null) {
-		if ($eventManager != null) {
+		if ($eventManager !== null) {
 			$this->_eventManager = $eventManager;
 		} elseif (empty($this->_eventManager)) {
 			$this->_eventManager = new EventManager();
@@ -54,7 +54,7 @@ trait EventManagerTrait {
 	}
 
 /**
- * Wrapper for creating and dispatching events. 
+ * Wrapper for creating and dispatching events.
  *
  * Returns a dispatched event.
  *
@@ -62,7 +62,7 @@ trait EventManagerTrait {
  * @param array $data Any value you wish to be transported with this event to
  * it can be read by listeners.
  *
- * @param object $subject The object that this event applies to 
+ * @param object $subject The object that this event applies to
  * ($this by default).
  *
  * @return \Cake\Event\Event

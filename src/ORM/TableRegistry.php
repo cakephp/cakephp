@@ -25,7 +25,7 @@ use RuntimeException;
  * This registry allows you to centralize the configuration for tables
  * their connections and other meta-data.
  *
- * ## Configuring instances
+ * ### Configuring instances
  *
  * You may need to configure your table objects, using TableRegistry you can
  * centralize configuration. Any configuration set before instances are created
@@ -39,7 +39,7 @@ use RuntimeException;
  * Configuration data is stored *per alias* if you use the same table with
  * multiple aliases you will need to set configuration multiple times.
  *
- * ## Getting instances
+ * ### Getting instances
  *
  * You can fetch instances out of the registry using get(). One instance is stored
  * per alias. Once an alias is populated the same instance will always be returned.
@@ -211,7 +211,7 @@ class TableRegistry {
  *
  * @param string $alias The alias to set.
  * @param \Cake\ORM\Table $object The table to set.
- * @return void
+ * @return \Cake\ORM\Table
  */
 	public static function set($alias, Table $object) {
 		return static::$_instances[$alias] = $object;

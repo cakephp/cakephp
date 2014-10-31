@@ -62,7 +62,7 @@ class TupleComparison extends Comparison {
 		$values = $this->_stringifyValues($generator);
 
 		$field = implode(', ', $fields);
-		return sprintf($template, $field, $this->_conjunction, $values);
+		return sprintf($template, $field, $this->_operator, $values);
 	}
 
 /**
@@ -129,7 +129,7 @@ class TupleComparison extends Comparison {
  * Traverses the tree of expressions stored in this object, visiting first
  * expressions in the left hand side and then the rest.
  *
- * Callback function receives as its only argument an instance of an ExpressoinInterface
+ * Callback function receives as its only argument an instance of an ExpressionInterface
  *
  * @param callable $callable The callable to apply to sub-expressions
  * @return void
@@ -179,7 +179,7 @@ class TupleComparison extends Comparison {
  * @return bool
  */
 	public function isMulti() {
-		return in_array(strtolower($this->_conjunction), ['in', 'not in']);
+		return in_array(strtolower($this->_operator), ['in', 'not in']);
 	}
 
 }

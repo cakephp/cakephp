@@ -249,7 +249,7 @@ class Connection {
 	}
 
 /**
- * Executes the provided query after compiling it for the specific dirver
+ * Executes the provided query after compiling it for the specific driver
  * dialect and returns the executed Statement object.
  *
  * @param \Cake\Database\Query $query The query to be executed
@@ -336,8 +336,6 @@ class Connection {
  * @return \Cake\Database\StatementInterface
  */
 	public function update($table, array $data, array $conditions = [], $types = []) {
-		$columns = array_keys($data);
-
 		return $this->newQuery()->update($table)
 			->set($data, $types)
 			->where($conditions, $types)
@@ -440,7 +438,7 @@ class Connection {
  * If you are trying to enable this feature, make sure you check the return value of this
  * function to verify it was enabled successfully.
  *
- * ## Example:
+ * ### Example:
  *
  * `$connection->useSavePoints(true)` Returns true if drivers supports save points, false otherwise
  * `$connection->useSavePoints(false)` Disables usage of savepoints and returns false
@@ -597,7 +595,7 @@ class Connection {
 	}
 
 /**
- * Enables or disables metadata caching for this connectino
+ * Enables or disables metadata caching for this connection
  *
  * Changing this setting will not modify existing schema collections objects.
  *

@@ -362,9 +362,11 @@ class ControllerTest extends TestCase {
 		$this->assertRegExp('/posts index/', (string)$result);
 
 		$Controller->view = 'index';
+		$Controller->getView()->hasRendered = false;
 		$result = $Controller->render();
 		$this->assertRegExp('/posts index/', (string)$result);
 
+		$Controller->getView()->hasRendered = false;
 		$result = $Controller->render('/Element/test_element');
 		$this->assertRegExp('/this is the test element/', (string)$result);
 		$Controller->view = null;
@@ -570,6 +572,30 @@ class ControllerTest extends TestCase {
 		$Controller = new Controller(null);
 		$result = $Controller->referer();
 		$this->assertEquals('/', $result);
+	}
+
+/**
+ * Test that the referer is not absolute if it is '/'.
+ *
+ * This avoids the base path being applied twice on string urls.
+ *
+ * @return void
+ */
+	public function testRefererSlash() {
+		$request = $this->getMock('Cake\Network\Request', ['referer']);
+		$request->base = '/base';
+		Router::pushRequest($request);
+
+		$request->expects($this->any())->method('referer')
+			->will($this->returnValue('/'));
+
+		$controller = new Controller($request);
+		$result = $controller->referer('/', true);
+		$this->assertEquals('/', $result);
+
+		$controller = new Controller($request);
+		$result = $controller->referer('/some/path', true);
+		$this->assertEquals('/base/some/path', $result);
 	}
 
 /**

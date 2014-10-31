@@ -96,12 +96,13 @@ class DateTypeTest extends TestCase {
 			['', null],
 			['derpy', 'derpy'],
 			['2013-nope!', '2013-nope!'],
+			['14-02-14', '14-02-14'],
+			['2014-02-14 13:14:15', '2014-02-14 13:14:15'],
 
 			// valid string types
 			['1392387900', $date],
 			[1392387900, $date],
 			['2014-02-14', new Time('2014-02-14')],
-			['2014-02-14 13:14:15', new Time('2014-02-14 00:00:00')],
 
 			// valid array types
 			[

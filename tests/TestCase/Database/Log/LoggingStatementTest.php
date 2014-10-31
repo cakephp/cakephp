@@ -15,13 +15,14 @@
 namespace Cake\Test\TestCase\Database\Log;
 
 use Cake\Database\Log\LoggingStatement;
+use Cake\TestSuite\TestCase;
 use PDOStatement;
 
 /**
  * Tests LoggingStatement class
  *
  */
-class LoggingStatementTest extends \Cake\TestSuite\TestCase {
+class LoggingStatementTest extends TestCase {
 
 /**
  * Tests that queries are logged when executed without params

@@ -15,7 +15,7 @@
 namespace Cake\Controller;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 use Cake\Log\LogTrait;
 
 /**
@@ -23,13 +23,13 @@ use Cake\Log\LogTrait;
  * controller logic that can be composed into a controller. Components also
  * provide request life-cycle callbacks for injecting logic at specific points.
  *
- * ## Initialize hook
+ * ### Initialize hook
  *
  * Like Controller and Table, this class has an initialize() hook that you can use
  * to add custom 'constructor' logic. It is important to remember that each request
  * (and sub-request) will only make one instance of any given component.
  *
- * ## Life cycle callbacks
+ * ### Life cycle callbacks
  *
  * Components can provide several callbacks that are fired at various stages of the request
  * cycle. The available callbacks are:
@@ -53,10 +53,10 @@ use Cake\Log\LogTrait;
  * While the controller is not an explicit argument for the callback methods it
  * is the subject of each event and can be fetched using Event::subject().
  *
- * @link http://book.cakephp.org/2.0/en/controllers/components.html
+ * @link http://book.cakephp.org/3.0/en/controllers/components.html
  * @see Controller::$components
  */
-class Component implements EventListener {
+class Component implements EventListenerInterface {
 
 	use InstanceConfigTrait;
 	use LogTrait;

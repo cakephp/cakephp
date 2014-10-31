@@ -38,5 +38,3 @@ class SqliteStatement extends BufferedStatement {
 	}
 
 }
-
-

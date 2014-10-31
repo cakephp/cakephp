@@ -401,12 +401,11 @@ class FileEngine extends CacheEngine {
  */
 	protected function _active() {
 		$dir = new \SplFileInfo($this->_config['path']);
-		if (Configure::read('debug')) {
-			$path = $dir->getPathname();
-			if (!is_dir($path)) {
-				mkdir($path, 0775, true);
-			}
+		$path = $dir->getPathname();
+		if (!is_dir($path)) {
+			mkdir($path, 0775, true);
 		}
+
 		if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
 			$this->_init = false;
 			trigger_error(sprintf(

@@ -26,6 +26,7 @@ use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use ReflectionClass;
 
 /**
  * Task class for creating and updating test files.
@@ -127,11 +128,6 @@ class TestTask extends BakeTask {
  */
 	public function outputClassChoices($type) {
 		$type = $this->mapType($type);
-		$plugin = null;
-		if (!empty($this->plugin)) {
-			$plugin = $this->plugin;
-		}
-
 		$this->out(
 			'You must provide a class to bake a test for. Some possible options are:',
 			2
@@ -281,10 +277,6 @@ class TestTask extends BakeTask {
  * @return string Path of the subspace.
  */
 	public function getSubspacePath($type) {
-		$namespace = Configure::read('App.namespace');
-		if ($this->plugin) {
-			$namespace = $this->plugin;
-		}
 		$suffix = $this->classSuffixes[strtolower($type)];
 		$subspace = $this->mapType($type);
 		return str_replace('\\', DS, $subspace);
@@ -313,14 +305,16 @@ class TestTask extends BakeTask {
  * @return array Array of method names.
  */
 	public function getTestableMethods($className) {
-		$classMethods = get_class_methods($className);
-		$parentMethods = get_class_methods(get_parent_class($className));
-		$thisMethods = array_diff($classMethods, $parentMethods);
+		$class = new ReflectionClass($className);
 		$out = [];
-		foreach ($thisMethods as $method) {
-			if (substr($method, 0, 1) !== '_' && $method != strtolower($className)) {
-				$out[] = $method;
+		foreach ($class->getMethods() as $method) {
+			if ($method->getDeclaringClass()->getName() != $className) {
+				continue;
 			}
+			if (!$method->isPublic()) {
+				continue;
+			}
+			$out[] = $method->getName();
 		}
 		return $out;
 	}

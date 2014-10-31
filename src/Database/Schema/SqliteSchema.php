@@ -117,12 +117,12 @@ class SqliteSchema extends BaseSchema {
 			'null' => !$row['notnull'],
 			'default' => $row['dflt_value'] === null ? null : trim($row['dflt_value'], "'"),
 		];
-		if ($row['pk'] == true) {
+		if ($row['pk']) {
 			$field['null'] = false;
 			$field['autoIncrement'] = true;
 		}
 		$table->addColumn($row['name'], $field);
-		if ($row['pk'] == true) {
+		if ($row['pk']) {
 			$constraint = (array)$table->constraint('primary') + [
 				'type' => Table::CONSTRAINT_PRIMARY,
 				'columns' => []

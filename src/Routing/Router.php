@@ -154,7 +154,7 @@ class Router {
  * @return string|void
  */
 	public static function defaultRouteClass($routeClass = null) {
-		if ($routeClass == null) {
+		if ($routeClass === null) {
 			return static::$_defaultRouteClass;
 		}
 		static::$_defaultRouteClass = $routeClass;
@@ -613,7 +613,7 @@ class Router {
  * fully qualified URLs for this application. If not parameters are passed,
  * the currently configured value is returned.
  *
- * ## Note:
+ * ### Note:
  *
  * If you change the configuration value ``App.fullBaseUrl`` during runtime
  * and expect the router to produce links using the new setting, you are

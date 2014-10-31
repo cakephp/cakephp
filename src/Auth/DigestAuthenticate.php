@@ -112,7 +112,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 		$password = $user[$field];
 		unset($user[$field]);
 
-		$hash = $this->generateResponseHash($digest, $password, $request->env('REQUEST_METHOD'));
+		$hash = $this->generateResponseHash($digest, $password, $request->env('ORIGINAL_REQUEST_METHOD'));
 		if ($digest['response'] === $hash) {
 			return $user;
 		}
@@ -151,7 +151,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 		}
 		$keys = $match = array();
 		$req = array('nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1);
-		preg_match_all('/(\w+)=([\'"]?)([a-zA-Z0-9\:\#\%@=.\/_-]+)\2/', $digest, $match, PREG_SET_ORDER);
+		preg_match_all('/(\w+)=([\'"]?)([a-zA-Z0-9\:\#\%\?\&@=\.\/_-]+)\2/', $digest, $match, PREG_SET_ORDER);
 
 		foreach ($match as $i) {
 			$keys[$i[1]] = $i[3];

@@ -15,6 +15,8 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Expression\FieldInterface;
+use Cake\Database\Expression\FieldTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -24,14 +26,9 @@ use Cake\Database\ValueBinder;
  *
  * @internal
  */
-class Comparison extends QueryExpression {
+class Comparison implements ExpressionInterface, FieldInterface {
 
-/**
- * The field name or expression to be used in the left hand side of the operator
- *
- * @var string
- */
-	protected $_field;
+	use FieldTrait;
 
 /**
  * The value to be used in the right hand side of the operation
@@ -48,31 +45,28 @@ class Comparison extends QueryExpression {
 	protected $_type;
 
 /**
+ * The operator used for comparing field and value
+ *
+ * @var string
+ */
+	protected $_operator;
+
+/**
  * Constructor
  *
  * @param string $field the field name to compare to a value
  * @param mixed $value The value to be used in comparison
  * @param string $type the type name used to cast the value
- * @param string $conjunction the operator used for comparing field and value
+ * @param string $operator the operator used for comparing field and value
  */
-	public function __construct($field, $value, $type, $conjunction) {
+	public function __construct($field, $value, $type, $operator) {
 		$this->field($field);
 		$this->value($value);
-		$this->type($conjunction);
+		$this->_operator = $operator;
 
 		if (is_string($type)) {
 			$this->_type = $type;
 		}
-	}
-
-/**
- * Sets the field name
- *
- * @param string $field The field to compare with.
- * @return void
- */
-	public function field($field) {
-		$this->_field = $field;
 	}
 
 /**
@@ -86,21 +80,31 @@ class Comparison extends QueryExpression {
 	}
 
 /**
- * Returns the field name
- *
- * @return string|Cake\Database\ExpressionInterface
- */
-	public function getField() {
-		return $this->_field;
-	}
-
-/**
  * Returns the value used for comparison
  *
  * @return mixed
  */
 	public function getValue() {
 		return $this->_value;
+	}
+
+/**
+ * Returns the operator used for comparison
+ *
+ * @return string
+ */
+	public function getOperator() {
+		return $this->_operator;
+	}
+
+/**
+ * Sets the operator to use for the comparison
+ *
+ * @param string $operator The operator to be used for the comparison.
+ * @return void
+ */
+	public function setOperator($operator) {
+		$this->_operator = $operator;
 	}
 
 /**
@@ -123,7 +127,7 @@ class Comparison extends QueryExpression {
 			list($template, $value) = $this->_stringExpression($generator);
 		}
 
-		return sprintf($template, $field, $this->_conjunction, $value);
+		return sprintf($template, $field, $this->_operator, $value);
 	}
 
 /**
@@ -161,7 +165,7 @@ class Comparison extends QueryExpression {
 			$type = str_replace('[]', '', $this->_type);
 			$value = $this->_flattenValue($this->_value, $generator, $type);
 
-			// To avoid SQL erros when comparing a field to a list of empty values,
+			// To avoid SQL errors when comparing a field to a list of empty values,
 			// generate a condition that will always evaluate to false
 			if ($value === '') {
 				return ['1 != 1', ''];
@@ -204,15 +208,6 @@ class Comparison extends QueryExpression {
 		}
 
 		return implode(',', $parts);
-	}
-
-/**
- * Returns the number of expression this class represents
- *
- * @return int
- */
-	public function count() {
-		return 1;
 	}
 
 }

@@ -32,22 +32,64 @@ trait ViewVarsTrait {
 	public $viewVars = [];
 
 /**
+ * Get view instance
+ *
+ * @param string $viewClass View class name or null to use $viewClass
+ * @return \Cake\View\View
+ * @throws \Cake\View\Exception\MissingViewException If view class was not found.
+ */
+	public function getView($viewClass = null) {
+		if ($viewClass === null && $this->View) {
+			return $this->View;
+		}
+
+		if ($viewClass === null) {
+			$viewClass = $this->viewClass;
+		}
+		if ($viewClass === null) {
+			$viewClass = App::className('App', 'View', 'View');
+			if ($viewClass === false) {
+				$viewClass = 'Cake\View\View';
+			}
+		}
+		if ($viewClass === 'View') {
+			$viewClass = 'Cake\View\View';
+		}
+
+		$this->viewClass = $viewClass;
+		$className = App::className($this->viewClass, 'View', 'View');
+		if (!$className) {
+			throw new Exception\MissingViewException([$viewClass]);
+		}
+
+		if ($this->View && $this->View instanceof $className) {
+			return $this->View;
+		}
+
+		return $this->View = $this->createView();
+	}
+
+/**
  * Constructs the view class instance based on object properties.
  *
  * @param string $viewClass Optional namespaced class name of the View class to instantiate.
- * @return View
+ * @return \Cake\View\View
+ * @throws \Cake\View\Exception\MissingViewException If view class was not found.
  */
 	public function createView($viewClass = null) {
 		if ($viewClass === null) {
 			$viewClass = $this->viewClass;
 		}
 		if ($viewClass === 'View') {
-			$viewClass = App::className($viewClass, 'View');
+			$className = App::className($viewClass, 'View');
 		} else {
-			$viewClass = App::className($viewClass, 'View', 'View');
+			$className = App::className($viewClass, 'View', 'View');
+		}
+		if (!$className) {
+			throw new Exception\MissingViewException([$viewClass]);
 		}
 		$viewOptions = array_intersect_key(get_object_vars($this), array_flip($this->_validViewOptions));
-		return new $viewClass($this->request, $this->response, $this->eventManager(), $viewOptions);
+		return new $className($this->request, $this->response, $this->eventManager(), $viewOptions);
 	}
 
 /**
@@ -86,7 +128,7 @@ trait ViewVarsTrait {
 			$this->_validViewOptions = [];
 		}
 
-		if ($options == null) {
+		if ($options === null) {
 			return $this->_validViewOptions;
 		}
 

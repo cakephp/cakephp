@@ -30,7 +30,7 @@ trait PDODriverTrait {
 	protected $_connection;
 
 /**
- * Establishes a connection to the databse server
+ * Establishes a connection to the database server
  *
  * @param string $dsn A Driver-specific PDO-DSN
  * @param array $config configuration to be used for creating connection
@@ -49,7 +49,7 @@ trait PDODriverTrait {
 
 /**
  * Returns correct connection resource or object that is internally used
- * If first argument is passed, it will set internal conenction object or
+ * If first argument is passed, it will set internal connection object or
  * result to the value passed
  *
  * @param null|\PDO $connection The PDO connection instance.

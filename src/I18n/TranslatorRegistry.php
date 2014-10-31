@@ -48,7 +48,7 @@ class TranslatorRegistry extends TranslatorLocator {
  * @param string $locale The locale to use; if empty, uses the default
  * locale.
  * @return \Aura\Intl\TranslatorInterface A translator object.
- * @throws \Aura\Intl\Exception If no translattor with that name could be found
+ * @throws \Aura\Intl\Exception If no translator with that name could be found
  * for the given locale.
  */
 	public function get($name, $locale = null) {

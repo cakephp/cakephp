@@ -73,4 +73,17 @@ class PoFileParserTest extends TestCase {
 		$this->assertCount(12, $messages);
 		$this->assertTextEquals("v\nsecond line", $messages["valid\nsecond line"]);
 	}
+
+/**
+ * Test parsing a file with quoted strings
+ *
+ * @return void
+ */
+	public function testQuotedString() {
+		$parser = new PoFileParser;
+		$file = APP . 'Locale' . DS . 'en' . DS . 'default.po';
+		$messages = $parser->parse($file);
+
+		$this->assertTextEquals('this is a "quoted string" (translated)', $messages['this is a "quoted string"']);
+	}
 }

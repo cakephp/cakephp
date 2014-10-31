@@ -17,7 +17,7 @@ namespace Cake\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Controller\Exception\PrivateActionException;
 use Cake\Event\Event;
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerTrait;
 use Cake\Log\LogTrait;
 use Cake\Model\ModelAwareTrait;
@@ -76,13 +76,14 @@ use ReflectionMethod;
  * @property      \Cake\Controller\Component\AuthComponent $Auth
  * @property      \Cake\Controller\Component\CookieComponent $Cookie
  * @property      \Cake\Controller\Component\CsrfComponent $Csrf
+ * @property      \Cake\Controller\Component\FlashComponent $Flash
  * @property      \Cake\Controller\Component\PaginatorComponent $Paginator
  * @property      \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property      \Cake\Controller\Component\SecurityComponent $Security
  * @property      \Cake\Controller\Component\SessionComponent $Session
  * @link          http://book.cakephp.org/3.0/en/controllers.html
  */
-class Controller implements EventListener {
+class Controller implements EventListenerInterface {
 
 	use EventManagerTrait;
 	use LogTrait;
@@ -179,7 +180,7 @@ class Controller implements EventListener {
  *
  * @var string
  */
-	public $viewClass = 'Cake\View\View';
+	public $viewClass = null;
 
 /**
  * The path to this controllers view templates.
@@ -384,12 +385,6 @@ class Controller implements EventListener {
 		if (isset($request->params['pass'])) {
 			$this->passedArgs = $request->params['pass'];
 		}
-		if (!empty($request->params['return']) && $request->params['return'] == 1) {
-			$this->autoRender = false;
-		}
-		if (!empty($request->params['bare'])) {
-			$this->autoLayout = false;
-		}
 	}
 
 /**
@@ -577,6 +572,10 @@ class Controller implements EventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::render
  */
 	public function render($view = null, $layout = null) {
+		if (!empty($this->request->params['bare'])) {
+			$this->getView()->autoLayout = false;
+		}
+
 		$event = $this->dispatchEvent('Controller.beforeRender');
 		if ($event->result instanceof Response) {
 			$this->autoRender = false;
@@ -587,10 +586,8 @@ class Controller implements EventListener {
 			return $this->response;
 		}
 
-		$this->View = $this->createView();
-
 		$this->autoRender = false;
-		$this->response->body($this->View->render($view, $layout));
+		$this->response->body($this->getView()->render($view, $layout));
 		return $this->response;
 	}
 
@@ -608,7 +605,7 @@ class Controller implements EventListener {
 		}
 
 		$referer = $this->request->referer($local);
-		if ($referer === '/' && $default) {
+		if ($referer === '/' && $default && $default !== $referer) {
 			return Router::url($default, !$local);
 		}
 		return $referer;
@@ -659,7 +656,7 @@ class Controller implements EventListener {
  * and allows all public methods on all subclasses of this class.
  *
  * @param string $action The action to check.
- * @return bool Whether or not the method is accesible from a URL.
+ * @return bool Whether or not the method is accessible from a URL.
  */
 	public function isAction($action) {
 		try {

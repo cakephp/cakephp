@@ -18,10 +18,26 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Test\Fixture\AssertHtmlTestCase;
 use Cake\Test\Fixture\FixturizedTestCase;
+
+/**
+ * Testing stub.
+ */
+class SecondaryPostsTable extends Table {
+
+/**
+ * @return string
+ */
+	public static function defaultConnectionName() {
+		return 'secondary';
+	}
+
+}
 
 /**
  * TestCaseTest
@@ -327,6 +343,18 @@ class TestCaseTest extends TestCase {
 		$Posts = $this->getMockForModel('Posts', ['doSomething']);
 		$this->assertInstanceOf('Cake\Database\Connection', $Posts->connection());
 		$this->assertEquals('test', $Posts->connection()->configName());
+	}
+
+/**
+ * Test getMockForModel on secondary datasources.
+ *
+ * @return void
+ */
+	public function testGetMockForModelSecondaryDatasource() {
+		ConnectionManager::alias('test', 'secondary');
+
+		$post = $this->getMockForModel(__NAMESPACE__ . '\SecondaryPostsTable', array('save'));
+		$this->assertEquals('test', $post->connection()->configName());
 	}
 
 /**

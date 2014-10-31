@@ -360,15 +360,7 @@ class MemcachedEngineTest extends TestCase {
 			'password' => 'password'
 		);
 
-		$Memcached = new Memcached();
-		$this->skipIf(
-			method_exists($Memcached, 'setSaslAuthData'),
-			'Memcached extension is installed with SASL support'
-		);
-
-		$this->setExpectedException(
-			'InvalidArgumentException', 'Memcached extension is not build with SASL support'
-		);
+		$this->setExpectedException('PHPUnit_Framework_Error_Warning');
 		$MemcachedEngine->init($config);
 	}
 
@@ -796,6 +788,8 @@ class MemcachedEngineTest extends TestCase {
  * @return void
  */
 	public function testLongDurationEqualToZero() {
+		$this->markTestSkipped('Cannot run as Memcached cannot be reflected');
+
 		$memcached = new TestMemcachedEngine();
 		$memcached->init(['prefix' => 'Foo_', 'compress' => false, 'duration' => 50 * DAY]);
 

@@ -21,7 +21,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingCellViewException;
-use Cake\View\Exception\MissingViewException;
+use Cake\View\Exception\MissingTemplateException;
 use Cake\View\ViewVarsTrait;
 
 /**
@@ -78,7 +78,7 @@ abstract class Cell {
  *
  * @var string
  */
-	public $viewClass = 'Cake\View\View';
+	public $viewClass = null;
 
 /**
  * The theme name that will be used to render.
@@ -143,7 +143,7 @@ abstract class Cell {
  * @param string $template Custom template name to render. If not provided (null), the last
  * value will be used. This value is automatically set by `CellTrait::cell()`.
  * @return void
- * @throws \Cake\View\Exception\MissingCellViewException When a MissingViewException is raised during rendering.
+ * @throws \Cake\View\Exception\MissingCellViewException When a MissingTemplateException is raised during rendering.
  */
 	public function render($template = null) {
 		if ($template !== null && strpos($template, '/') === false) {
@@ -153,7 +153,8 @@ abstract class Cell {
 			$template = $this->template;
 		}
 
-		$this->View = $this->createView();
+		$this->View = null;
+		$this->getView();
 
 		$this->View->layout = false;
 		$className = explode('\\', get_class($this));
@@ -163,7 +164,7 @@ abstract class Cell {
 
 		try {
 			return $this->View->render($template);
-		} catch (MissingViewException $e) {
+		} catch (MissingTemplateException $e) {
 			throw new MissingCellViewException(['file' => $template, 'name' => $name]);
 		}
 	}
@@ -190,7 +191,7 @@ abstract class Cell {
 /**
  * Debug info.
  *
- * @return void
+ * @return array
  */
 	public function __debugInfo() {
 		return [

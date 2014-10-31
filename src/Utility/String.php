@@ -643,7 +643,7 @@ class String {
 	public static function isMultibyte($string) {
 		$length = strlen($string);
 
-		for ($i = 0; $i < $length; $i++ ) {
+		for ($i = 0; $i < $length; $i++) {
 			$value = ord(($string[$i]));
 			if ($value > 128) {
 				return true;

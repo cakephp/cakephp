@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
 
 /**
  * A Test double used to assert that default tables are created
@@ -38,7 +39,7 @@ class TestTable extends Table {
  * Tests Association class
  *
  */
-class AssociationTest extends \Cake\TestSuite\TestCase {
+class AssociationTest extends TestCase {
 
 /**
  * Set up

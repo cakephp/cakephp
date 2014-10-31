@@ -15,13 +15,13 @@
 namespace Cake\View;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 
 /**
  * Abstract base class for all other Helpers in CakePHP.
  * Provides common methods and features.
  *
- * ## Callback methods
+ * ### Callback methods
  *
  * Helpers support a number of callback methods. These callbacks allow you to hook into
  * the various view lifecycle events and either modify existing view content or perform
@@ -39,7 +39,7 @@ use Cake\Event\EventListener;
  *   If a listener returns a non-null value, the output of the rendered file will be set to that.
  *
  */
-class Helper implements EventListener {
+class Helper implements EventListenerInterface {
 
 	use InstanceConfigTrait;
 

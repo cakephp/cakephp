@@ -65,7 +65,7 @@ class PaginatorComponent extends Component {
 /**
  * Handles automatic pagination of model records.
  *
- * ## Configuring pagination
+ * ### Configuring pagination
  *
  * When calling `paginate()` you can use the $settings parameter to pass in pagination settings.
  * These settings are used to build the queries made and control other pagination settings.

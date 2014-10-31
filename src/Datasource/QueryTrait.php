@@ -137,7 +137,7 @@ trait QueryTrait {
  * - When the cached data is stale/missing the result set will be cached as the query
  *   is executed.
  *
- * ## Usage
+ * ### Usage
  *
  * {{{
  * // Simple string key + config
@@ -193,7 +193,7 @@ trait QueryTrait {
  * Will return either the results set through setResult(), or execute this query
  * and return the ResultSetDecorator object ready for streaming of results.
  *
- * ResultSetDecorator is a travesable object that implements the methods found
+ * ResultSetDecorator is a traversable object that implements the methods found
  * on Cake\Collection\Collection.
  *
  * @return \Cake\Datasource\ResultSetInterface
@@ -339,7 +339,7 @@ trait QueryTrait {
  * Returns an array with the custom options that were applied to this query
  * and that were not already processed by another method in this class.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  *	$query->applyOptions(['doABarrelRoll' => true, 'fields' => ['id', 'name']);

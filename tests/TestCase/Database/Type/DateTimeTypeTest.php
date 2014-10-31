@@ -100,11 +100,12 @@ class DateTimeTypeTest extends TestCase {
 			['', null],
 			['derpy', 'derpy'],
 			['2013-nope!', '2013-nope!'],
+			['13-06-26', '13-06-26'],
 
 			// valid string types
 			['1392387900', new Time('@1392387900')],
 			[1392387900, new Time('@1392387900')],
-			['2014-02-14', new Time('2014-02-14')],
+			['2014-02-14 00:00:00', new Time('2014-02-14 00:00:00')],
 			['2014-02-14 13:14:15', new Time('2014-02-14 13:14:15')],
 
 			// valid array types

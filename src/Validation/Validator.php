@@ -235,7 +235,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * then rules list for the field will be replaced with second argument and
  * third argument will be ignored.
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  *		$validator
@@ -272,7 +272,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Removes a rule from the set by its name
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  *		$validator
@@ -362,7 +362,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * $message = 'This field cannot be empty';
  * $validator->notEmpty('email'); // Email cannot be empty
  * $validator->notEmpty('email', $message, 'create'); // Email can be empty on update
- * $validator->notEmpty('email', $message, update); // Email can be empty on create
+ * $validator->notEmpty('email', $message, 'update'); // Email can be empty on create
  * }}}
  *
  * It is possible to conditionally disallow emptiness on a field by passing a callback
@@ -481,7 +481,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @return bool
  */
 	protected function _fieldIsEmpty($data) {
-		if (empty($data) && $data !== '0' && $data !== false && $data !== 0) {
+		if (empty($data) && $data !== '0' && $data !== false && $data !== 0 && $data !== 0.0) {
 			return true;
 		}
 		return false;

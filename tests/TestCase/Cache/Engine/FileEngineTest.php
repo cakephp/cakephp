@@ -1,7 +1,5 @@
 <?php
 /**
- * FileEngineTest file
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -23,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * FileEngineTest class
- *
  */
 class FileEngineTest extends TestCase {
 
@@ -393,41 +390,42 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testPathDoesNotExist() {
-		$this->skipIf(is_dir(TMP . 'tests' . DS . 'autocreate'), 'Cannot run if test directory exists.');
 		Configure::write('debug', true);
+		$dir = TMP . 'tests/autocreate-' . microtime(true);
 
 		Cache::drop('file_test');
 		Cache::config('file_test', array(
 			'engine' => 'File',
-			'path' => TMP . 'tests/autocreate'
+			'path' => $dir
 		));
-		Cache::read('Test', 'file_test');
 
-		$this->assertTrue(file_exists(TMP . 'tests/autocreate'), 'Dir should exist.');
+		Cache::read('Test', 'file_test');
+		$this->assertTrue(file_exists($dir), 'Dir should exist.');
 
 		// Cleanup
-		rmdir(TMP . 'tests/autocreate');
+		rmdir($dir);
 	}
 
 /**
- * Test that under debug 0 directories do not get made.
+ * Test that under debug 0 directories do get made.
  *
- * @expectedException PHPUnit_Framework_Error_Warning
  * @return void
  */
 	public function testPathDoesNotExistDebugOff() {
-		$this->skipIf(is_dir(TMP . 'tests/autocreate'), 'Cannot run if test directory exists.');
 		Configure::write('debug', false);
+		$dir = TMP . 'tests/autocreate-' . microtime(true);
 
-		Cache::drop('file_groups');
-		Cache::config('file_groups', array(
+		Cache::drop('file_test');
+		Cache::config('file_test', array(
 			'engine' => 'File',
-			'duration' => '+1 year',
-			'prefix' => 'testing_invalid_',
-			'path' => TMP . 'tests/autocreate',
+			'path' => $dir
 		));
-		Cache::read('Test', 'file_groups');
-		Cache::drop('file_groups');
+
+		Cache::read('Test', 'file_test');
+		$this->assertTrue(file_exists($dir), 'Dir should exist.');
+
+		// Cleanup
+		rmdir($dir);
 	}
 
 /**

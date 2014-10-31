@@ -23,6 +23,7 @@ use Cake\Event\EventManager;
 use Cake\I18n\Time;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 
 /**
@@ -36,7 +37,7 @@ class UsersTable extends Table {
  * Tests Table class
  *
  */
-class TableTest extends \Cake\TestSuite\TestCase {
+class TableTest extends TestCase {
 
 	public $fixtures = [
 		'core.users', 'core.categories', 'core.articles', 'core.authors',
@@ -2769,6 +2770,34 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(4, $entity->tags[1]->_joinData->article_id);
 		$this->assertEquals(4, $entity->tags[0]->_joinData->tag_id);
 		$this->assertEquals(5, $entity->tags[1]->_joinData->tag_id);
+	}
+
+/**
+ * Tests saving belongsToMany records when record exists.
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToManyJoinDataOnExistingRecord() {
+		$tags = TableRegistry::get('Tags');
+		$table = TableRegistry::get('Articles');
+		$table->belongsToMany('Tags');
+
+		$entity = $table->find()->contain('Tags')->first();
+		// not associated to the article already.
+		$entity->tags[] = $tags->get(3);
+		$entity->dirty('tags', true);
+
+		$this->assertSame($entity, $table->save($entity));
+
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->tags[0]->isNew());
+		$this->assertFalse($entity->tags[1]->isNew());
+		$this->assertFalse($entity->tags[2]->isNew());
+
+		$this->assertNotEmpty($entity->tags[0]->_joinData);
+		$this->assertNotEmpty($entity->tags[1]->_joinData);
+		$this->assertNotEmpty($entity->tags[2]->_joinData);
 	}
 
 /**

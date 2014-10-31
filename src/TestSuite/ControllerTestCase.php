@@ -14,14 +14,14 @@
  */
 namespace Cake\TestSuite;
 
-use Cake\Controller\Error\MissingComponentException;
-use Cake\Controller\Error\MissingControllerException;
+use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\DispatcherFilter;
+use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
@@ -349,8 +349,8 @@ abstract class ControllerTestCase extends TestCase {
  * @param \Cake\Network\Request $request A request object to build the controller with.
  *   This parameter is required when mocking prefixed controllers.
  * @return \Cake\Controller\Controller Mocked controller
- * @throws \Cake\Controller\Error\MissingControllerException When controllers could not be created.
- * @throws \Cake\Controller\Error\MissingComponentException When components could not be created.
+ * @throws \Cake\Routing\Exception\MissingControllerException When controllers could not be created.
+ * @throws \Cake\Controller\Exception\MissingComponentException When components could not be created.
  */
 	public function generate($controller, array $mocks = array(), Request $request = null) {
 		$className = App::className($controller, 'Controller', 'Controller');

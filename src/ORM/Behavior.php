@@ -16,7 +16,7 @@ namespace Cake\ORM;
 
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 
 /**
  * Base class for behaviors.
@@ -40,7 +40,7 @@ use Cake\Event\EventListener;
  *
  * Would be called like `$table->doSomething($arg1, $arg2);`.
  *
- * ## Callback methods
+ * ### Callback methods
  *
  * Behaviors can listen to any events fired on a Table. By default
  * CakePHP provides a number of lifecycle events your behaviors can
@@ -82,7 +82,7 @@ use Cake\Event\EventListener;
  * `priority` setting when attaching a behavior. This will set the
  * priority for all the callbacks a behavior provides.
  *
- * ## Finder methods
+ * ### Finder methods
  *
  * Behaviors can provide finder methods that hook into a Table's
  * find() method. Custom finders are a great way to provide preset
@@ -99,7 +99,7 @@ use Cake\Event\EventListener;
  * @see \Cake\ORM\Table::addBehavior()
  * @see \Cake\Event\EventManager
  */
-class Behavior implements EventListener {
+class Behavior implements EventListenerInterface {
 
 	use InstanceConfigTrait;
 

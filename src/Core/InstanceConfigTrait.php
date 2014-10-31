@@ -122,7 +122,7 @@ trait InstanceConfigTrait {
  * @param mixed $value Value to write.
  * @param bool $merge Whether to merge or overwrite value.
  * @return void
- * @throws Cake\Core\Exception\Exception if attempting to clobber existing config
+ * @throws \Cake\Core\Exception\Exception if attempting to clobber existing config
  */
 	protected function _configWrite($key, $value, $merge = false) {
 		if (is_string($key) && $value === null) {
@@ -174,7 +174,7 @@ trait InstanceConfigTrait {
  *
  * @param string $key Key to delete.
  * @return void
- * @throws Cake\Core\Exception\Exception if attempting to clobber existing config
+ * @throws \Cake\Core\Exception\Exception if attempting to clobber existing config
  */
 	protected function _configDelete($key) {
 		if (strpos($key, '.') === false) {

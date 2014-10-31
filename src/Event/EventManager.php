@@ -76,13 +76,13 @@ class EventManager {
 /**
  * Adds a new listener to an event.
  *
- * @param callback|\Cake\Event\EventListener $callable PHP valid callback type or instance of Cake\Event\EventListener to be called
- * when the event named with $eventKey is triggered. If a Cake\Event\EventListener instance is passed, then the `implementedEvents`
+ * @param callback|\Cake\Event\EventListenerInterface $callable PHP valid callback type or instance of Cake\Event\EventListenerInterface to be called
+ * when the event named with $eventKey is triggered. If a Cake\Event\EventListenerInterface instance is passed, then the `implementedEvents`
  * method will be called on the object to register the declared events individually as methods to be managed by this class.
  * It is possible to define multiple event handlers per event name.
  *
  * @param string $eventKey The event unique identifier name with which the callback will be associated. If $callable
- * is an instance of Cake\Event\EventListener this argument will be ignored
+ * is an instance of Cake\Event\EventListenerInterface this argument will be ignored
  *
  * @param array $options used to set the `priority` flag to the listener. In the future more options may be added.
  * Priorities are treated as queues. Lower values are called before higher ones, and multiple attachments
@@ -90,13 +90,13 @@ class EventManager {
  *
  * @return void
  * @throws \InvalidArgumentException When event key is missing or callable is not an
- *   instance of Cake\Event\EventListener.
+ *   instance of Cake\Event\EventListenerInterface.
  */
 	public function attach($callable, $eventKey = null, array $options = array()) {
-		if (!$eventKey && !($callable instanceof EventListener)) {
+		if (!$eventKey && !($callable instanceof EventListenerInterface)) {
 			throw new \InvalidArgumentException('The eventKey variable is required');
 		}
-		if ($callable instanceof EventListener) {
+		if ($callable instanceof EventListenerInterface) {
 			$this->_attachSubscriber($callable);
 			return;
 		}
@@ -107,13 +107,13 @@ class EventManager {
 	}
 
 /**
- * Auxiliary function to attach all implemented callbacks of a Cake\Event\EventListener class instance
+ * Auxiliary function to attach all implemented callbacks of a Cake\Event\EventListenerInterface class instance
  * as individual methods on this manager
  *
- * @param \Cake\Event\EventListener $subscriber Event listerner.
+ * @param \Cake\Event\EventListenerInterface $subscriber Event listener.
  * @return void
  */
-	protected function _attachSubscriber(EventListener $subscriber) {
+	protected function _attachSubscriber(EventListenerInterface $subscriber) {
 		foreach ((array)$subscriber->implementedEvents() as $eventKey => $function) {
 			$options = array();
 			$method = $function;
@@ -135,10 +135,10 @@ class EventManager {
 
 /**
  * Auxiliary function to extract and return a PHP callback type out of the callable definition
- * from the return value of the `implementedEvents` method on a Cake\Event\EventListener
+ * from the return value of the `implementedEvents` method on a Cake\Event\EventListenerInterface
  *
  * @param array $function the array taken from a handler definition for an event
- * @param \Cake\Event\EventListener $object The handler object
+ * @param \Cake\Event\EventListenerInterface $object The handler object
  * @return callback
  */
 	protected function _extractCallable($function, $object) {
@@ -154,12 +154,12 @@ class EventManager {
 /**
  * Removes a listener from the active listeners.
  *
- * @param callback|\Cake\Event\EventListener $callable any valid PHP callback type or an instance of EventListener
+ * @param callback|\Cake\Event\EventListenerInterface $callable any valid PHP callback type or an instance of EventListenerInterface
  * @param string $eventKey The event unique identifier name with which the callback has been associated
  * @return void
  */
 	public function detach($callable, $eventKey = null) {
-		if ($callable instanceof EventListener) {
+		if ($callable instanceof EventListenerInterface) {
 			return $this->_detachSubscriber($callable, $eventKey);
 		}
 		if (empty($eventKey)) {
@@ -182,13 +182,13 @@ class EventManager {
 	}
 
 /**
- * Auxiliary function to help detach all listeners provided by an object implementing EventListener
+ * Auxiliary function to help detach all listeners provided by an object implementing EventListenerInterface
  *
- * @param \Cake\Event\EventListener $subscriber the subscriber to be detached
+ * @param \Cake\Event\EventListenerInterface $subscriber the subscriber to be detached
  * @param string $eventKey optional event key name to unsubscribe the listener from
  * @return void
  */
-	protected function _detachSubscriber(EventListener $subscriber, $eventKey = null) {
+	protected function _detachSubscriber(EventListenerInterface $subscriber, $eventKey = null) {
 		$events = (array)$subscriber->implementedEvents();
 		if (!empty($eventKey) && empty($events[$eventKey])) {
 			return;
@@ -214,9 +214,7 @@ class EventManager {
  * Dispatches a new event to all configured listeners
  *
  * @param string|\Cake\Event\Event $event the event key name or instance of Event
- * @return CakeEvent
- * @param string|CakeEvent $event the event key name or instance of CakeEvent
- * @return CakeEvent
+ * @return \Cake\Event\Event
  */
 	public function dispatch($event) {
 		if (is_string($event)) {

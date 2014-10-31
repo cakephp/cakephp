@@ -23,7 +23,7 @@ use Cake\Network\Http\Message;
  *
  * ### Get header values
  *
- * Header names are case-insensitve, but normalized to Title-Case
+ * Header names are case-insensitive, but normalized to Title-Case
  * when the response is parsed.
  *
  * `$val = $response->header('content-type');`
@@ -375,7 +375,7 @@ class Response extends Message {
 		if (!empty($this->_xml)) {
 			return $this->_xml;
 		}
-		$restore = libxml_use_internal_errors();
+		libxml_use_internal_errors();
 		$data = simplexml_load_string($this->_body);
 		if ($data) {
 			$this->_xml = $data;

@@ -38,7 +38,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingHelperException;
 use Cake\View\Exception\MissingLayoutException;
-use Cake\View\Exception\MissingViewException;
+use Cake\View\Exception\MissingTemplateException;
 
 /**
  * BlueberryComponent class
@@ -489,7 +489,7 @@ class ExceptionRendererTest extends TestCase {
 				404
 			),
 			array(
-				new MissingViewException(array('file' => '/posts/about.ctp')),
+				new MissingTemplateException(array('file' => '/posts/about.ctp')),
 				array(
 					"/posts\/about.ctp/"
 				),

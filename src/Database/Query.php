@@ -180,7 +180,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return string
  */
 	public function sql(ValueBinder $generator = null) {
-		$sql = '';
 		if (!$generator) {
 			$generator = $this->valueBinder();
 			$generator->resetCount();
@@ -198,7 +197,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * The callback will receive 2 parameters, the first one is the value of the query
  * part that is being iterated and the second the name of such part.
  *
- * ## Example:
+ * ### Example:
  * {{{
  *	$query->select(['title'])->from('articles')->traverse(function ($value, $clause) {
  *		if ($clause === 'select') {
@@ -231,14 +230,18 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * By default this function will append any passed argument to the list of fields
  * to be selected, unless the second argument is set to true.
  *
- * ##Examples:
+ * ### Examples:
  *
  * {{{
- *	$query->select(['id', 'title']); // Produces SELECT id, title
- *	$query->select(['author' => 'author_id']); // Appends author: SELECT id, title, author_id as author
- *	$query->select('id', true); // Resets the list: SELECT id
- *	$query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
+ * $query->select(['id', 'title']); // Produces SELECT id, title
+ * $query->select(['author' => 'author_id']); // Appends author: SELECT id, title, author_id as author
+ * $query->select('id', true); // Resets the list: SELECT id
+ * $query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
  * }}}
+ *
+ * By default no fields are selected, if you have an instance of `Cake\ORM\Query` and try to append
+ * fields you should also call `Cake\ORM\Query::autoFields()` to select the default fields
+ * from the table.
  *
  * @param array|ExpressionInterface|string $fields fields to be added to the list
  * @param bool $overwrite whether to reset fields with passed list or not
@@ -272,7 +275,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * or set of fields, you may pass an array of fields to filter on. Beware that
  * this option might not be fully supported in all database systems.
  *
- * ##Examples:
+ * ### Examples:
  *
  * {{{
  * // Filters products with the same name and city
@@ -352,7 +355,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * This method can be used for select, update and delete statements.
  *
- * ##Examples:
+ * ### Examples:
  *
  * {{{
  *	$query->from(['p' => 'posts']); // Produces FROM posts p
@@ -430,7 +433,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *	// INNER JOIN products p (a.owner_id = p.id)
  * }}}
  *
- * ## Using conditions and types
+ * ### Using conditions and types
  *
  * Conditions can be expressed, as in the examples above, using a string for comparing
  * columns, or string with already quoted literal values. Additionally it is
@@ -451,7 +454,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *	]], ['a.posted' => 'datetime', 'a.published' => 'boolean'])
  * }}}
  *
- * ## Overwriting joins
+ * ### Overwriting joins
  *
  * When creating aliased joins using the array notation, you can override
  * previous join definitions by using the same alias in consequent
@@ -629,7 +632,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Any conditions created with this methods can be used with any SELECT, UPDATE
  * and DELETE type of queries.
  *
- * ## Conditions using operators:
+ * ### Conditions using operators:
  *
  * {{{
  *	$query->where([
@@ -646,7 +649,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Second parameter is used to specify what type is expected for each passed
  * key. Valid types can be used from the mapped with Database\Type class.
  *
- * ## Nesting conditions with conjunctions:
+ * ### Nesting conditions with conjunctions:
  *
  * {{{
  *	$query->where([
@@ -671,7 +674,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * the AND operator. Also, using the same array key twice in consecutive calls to
  * this method will not override the previous value.
  *
- * ## Using expressions objects:
+ * ### Using expressions objects:
  *
  * {{{
  *	$exp = $query->newExpr()->add(['id !=' => 100, 'author_id' != 1])->type('OR');
@@ -684,7 +687,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * Other Query objects that be used as conditions for any field.
  *
- * ## Adding conditions in multiple steps:
+ * ### Adding conditions in multiple steps:
  *
  * You can use callable functions to construct complex expressions, functions
  * receive as first argument a new QueryExpression object and this query instance
@@ -705,7 +708,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * ``WHERE title != 'Hello World' AND (id = 1 OR (id > 2 AND id < 10))``
  *
- * ## Conditions as strings:
+ * ### Conditions as strings:
  *
  * {{{
  *	$query->where(['articles.author_id = authors.id', 'modified IS NULL']);
@@ -752,7 +755,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * that each array entry will be joined to the other using the AND operator, unless
  * you nest the conditions in the array using other operator.
  *
- * ##Examples:
+ * ### Examples:
  *
  * {{{
  * $query->where(['title' => 'Hello World')->andWhere(['author_id' => 1]);
@@ -813,7 +816,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * that each array entry will be joined to the other using the OR operator, unless
  * you nest the conditions in the array using other operator.
  *
- * ##Examples:
+ * ### Examples:
  *
  * {{{
  * $query->where(['title' => 'Hello World')->orWhere(['title' => 'Foo']);
@@ -871,7 +874,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * By default this function will append any passed argument to the list of fields
  * to be selected, unless the second argument is set to true.
  *
- * ##Examples:
+ * ### Examples:
  *
  * {{{
  * $query->order(['title' => 'DESC', 'author_id' => 'ASC']);
@@ -926,7 +929,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * By default this function will append any passed argument to the list of fields
  * to be grouped, unless the second argument is set to true.
  *
- * ##Examples:
+ * ### Examples:
  *
  * {{{
  * // Produces GROUP BY id, title
@@ -1043,7 +1046,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * In some databases, this operation might not be supported or will require
  * the query to be transformed in order to limit the result set size.
  *
- * ## Examples
+ * ### Examples
  *
  * {{{
  * $query->limit(10) // generates LIMIT 10
@@ -1070,7 +1073,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * In some databases, this operation might not be supported or will require
  * the query to be transformed in order to limit the result set size.
  *
- * ## Examples
+ * ### Examples
  *
  * {{{
  *	$query->offset(10) // generates OFFSET 10
@@ -1097,7 +1100,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * By default, the UNION operator will remove duplicate rows, if you wish to include
  * every row for all queries, use unionAll().
  *
- * ## Examples
+ * ### Examples
  *
  * {{{
  *	$union = (new Query($conn))->select(['id', 'title'])->from(['a' => 'articles']);
@@ -1436,7 +1439,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * If you wish to remove all decorators from the stack, set the first parameter
  * to null and the second to true.
  *
- * ## Example
+ * ### Example
  *
  * {{{
  * $query->decorateResults(function ($row) {
@@ -1588,7 +1591,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		$this->_dirty = true;
 		$this->_transformedQuery = null;
 
-		if ($this->_valueBinder) {
+		if ($this->_iterator && $this->_valueBinder) {
 			$this->valueBinder()->reset();
 		}
 	}

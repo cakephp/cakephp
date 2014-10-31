@@ -94,14 +94,19 @@ class DateTimeType extends \Cake\Database\Type {
 
 		$class = static::$dateTimeClass;
 		try {
+			$compare = $date = false;
 			if ($value === '' || $value === null || $value === false || $value === true) {
 				return null;
 			} elseif (is_numeric($value)) {
 				$date = new $class('@' . $value);
 			} elseif (is_string($value)) {
 				$date = new $class($value);
+				$compare = true;
 			}
-			if (isset($date)) {
+			if ($compare && $date && $date->format($this->_format) !== $value) {
+				return $value;
+			}
+			if ($date) {
 				return $date;
 			}
 		} catch (\Exception $e) {

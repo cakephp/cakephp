@@ -27,7 +27,7 @@ interface StatementInterface {
  *
  * It is not allowed to combine positional and named variables in the same statement
  *
- * ## Examples:
+ * ### Examples:
  *
  *	`$statement->bindValue(1, 'a title');`
  *	`$statement->bindValue('active', true, 'boolean');`
@@ -52,7 +52,7 @@ interface StatementInterface {
 /**
  * Returns the number of columns this statement's results will contain
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  *	$statement = $connection->prepare('SELECT id, title from articles');
@@ -95,7 +95,7 @@ interface StatementInterface {
  * Rows can be fetched to contain columns as names or positions. If no
  * rows are left in result set, this method will return false
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  *	$statement = $connection->prepare('SELECT id, title from articles');
@@ -112,7 +112,7 @@ interface StatementInterface {
 /**
  * Returns an array with all rows resulting from executing this statement
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  *	$statement = $connection->prepare('SELECT id, title from articles');
@@ -128,7 +128,7 @@ interface StatementInterface {
 /**
  * Returns the number of rows affected by this SQL statement
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  *	$statement = $connection->prepare('SELECT id, title from articles');

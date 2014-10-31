@@ -292,7 +292,7 @@ class ShellDispatcher {
 /**
  * Create the given shell name, and set the plugin property
  *
- * @param string $className The class name to instanciate
+ * @param string $className The class name to instantiate
  * @param string $shortName The plugin-prefixed shell name
  * @return \Cake\Console\Shell A shell instance.
  */

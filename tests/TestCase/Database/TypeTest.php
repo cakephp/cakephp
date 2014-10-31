@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Type;
+use Cake\TestSuite\TestCase;
 use PDO;
 
 /**
@@ -28,7 +29,7 @@ class FooType extends \Cake\Database\Type {
 /**
  * Tests Type class
  */
-class TypeTest extends \Cake\TestSuite\TestCase {
+class TypeTest extends TestCase {
 
 /**
  * Original type map

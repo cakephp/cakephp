@@ -74,7 +74,7 @@ class Stream {
  * Create the response list based on the headers & content
  *
  * Creates one or many response objects based on the number
- * of redirects that occured.
+ * of redirects that occurred.
  *
  * @param array $headers The list of headers from the request(s)
  * @param string $content The response content.
@@ -229,7 +229,7 @@ class Stream {
 /**
  * Open the stream and send the request.
  *
- * @param \Cake\Network\Request $request The request object.
+ * @param \Cake\Network\Http\Request $request The request object.
  * @return array Array of populated Response objects
  * @throws \Cake\Core\Exception\Exception
  */

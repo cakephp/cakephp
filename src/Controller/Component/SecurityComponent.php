@@ -369,10 +369,6 @@ class SecurityComponent extends Component {
 			'unlockedFields' => $this->_config['unlockedFields'],
 		);
 
-		$tokenData = array();
-		if ($this->session->check('_Token')) {
-			$tokenData = $this->session->read('_Token');
-		}
 		$this->session->write('_Token', $token);
 		$request->params['_Token'] = array(
 			'unlockedFields' => $token['unlockedFields']

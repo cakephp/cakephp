@@ -2153,6 +2153,23 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to bind arguments to a query and it will return the right
+ * results
+ *
+ * @return void
+ */
+	public function testCustomBindings() {
+		$table = TableRegistry::get('Articles');
+		$query = $table->find()->where(['id >' => 1]);
+		$query->where(function ($exp) {
+			return $exp->add('author_id = :author');
+		});
+		$query->bind(':author', 1, 'integer');
+		$this->assertEquals(1, $query->count());
+		$this->assertEquals(3, $query->first()->id);
+	}
+
+/**
  * Tests that it is possible to pass a custom join type for an association when
  * using contain
  *
@@ -2172,6 +2189,34 @@ class QueryTest extends TestCase {
 			->toArray();
 		$this->assertCount(1, $articles);
 		$this->assertEquals(3, $articles[0]->author->id);
+	}
+
+/**
+ * Tests that it is possible to override the contain strategy using the
+ * containments array. In this case, no inner join will be made and for that
+ * reason, the parent association will not be filtered as the strategy changed
+ * from join to select.
+ *
+ * @return void
+ */
+	public function testContainWithStrategyOverride() {
+		$table = TableRegistry::get('Articles');
+		$table->belongsTo('Authors', [
+			'joinType' => 'INNER'
+		]);
+		$articles = $table->find()
+			->contain([
+				'Authors' => [
+					'strategy' => 'select',
+					'conditions' => ['Authors.id' => 3]
+				]
+			])
+			->toArray();
+		$this->assertCount(3, $articles);
+		$this->assertEquals(3, $articles[1]->author->id);
+
+		$this->assertNull($articles[0]->author);
+		$this->assertNull($articles[2]->author);
 	}
 
 }

@@ -45,7 +45,7 @@ class PDOStatement extends StatementDecorator {
  *
  * It is not allowed to combine positional and named variables in the same statement
  *
- * ## Examples:
+ * ### Examples:
  *
  * {{{
  * $statement->bindValue(1, 'a title');
@@ -74,7 +74,7 @@ class PDOStatement extends StatementDecorator {
  * Rows can be fetched to contain columns as names or positions. If no
  * rows are left in result set, this method will return false
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  *	$statement = $connection->prepare('SELECT id, title from articles');
@@ -99,7 +99,7 @@ class PDOStatement extends StatementDecorator {
 /**
  * Returns an array with all rows resulting from executing this statement
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  *	$statement = $connection->prepare('SELECT id, title from articles');

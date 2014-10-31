@@ -25,7 +25,7 @@ use Cake\Utility\Hash;
  *
  * ### Scoped clients
  *
- * If you're doing multiple requests to the same hostname its often convienent
+ * If you're doing multiple requests to the same hostname its often convenient
  * to use the constructor arguments to create a scoped client. This allows you
  * to keep your code DRY and not repeat hostnames, authentication, and other options.
  *
@@ -460,7 +460,7 @@ class Client {
  * @param array $auth The authentication options to use.
  * @param array $options The overall request options to use.
  * @return mixed Authentication strategy instance.
- * @throws \Cake\Core\Exception\Exception when an invalid stratgey is chosen.
+ * @throws \Cake\Core\Exception\Exception when an invalid strategy is chosen.
  */
 	protected function _createAuth($auth, $options) {
 		if (empty($auth['type'])) {

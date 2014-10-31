@@ -278,8 +278,7 @@ class Time extends Carbon implements JsonSerializable {
 		}
 
 		if ($diff > abs($now - (new static($end))->format('U'))) {
-			$absoluteTime = new static($inSeconds);
-			return sprintf($absoluteString, $absoluteTime->i18nFormat($format));
+			return sprintf($absoluteString, $this->i18nFormat($format));
 		}
 
 		// If more than a week, then take into account the length of months
@@ -483,7 +482,7 @@ class Time extends Carbon implements JsonSerializable {
  * function, or pass a full ICU date formatting string as specified in the following
  * resource: http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details.
  *
- * ## Examples
+ * ### Examples
  *
  * {{{
  * $time = new Time('2014-04-20 22:10');
@@ -507,7 +506,7 @@ class Time extends Carbon implements JsonSerializable {
  * Finally, should you need to use a different locale for displaying this time object,
  * pass a locale string as the third parameter to this function.
  *
- * ## Examples
+ * ### Examples
  *
  * {{{
  * $time = new Time('2014-04-20 22:10');
@@ -587,7 +586,7 @@ class Time extends Carbon implements JsonSerializable {
 /**
  * Get list of timezone identifiers
  *
- * @param int|string $filter A regex to filter identifer
+ * @param int|string $filter A regex to filter identifier
  *   Or one of DateTimeZone class constants
  * @param string $country A two-letter ISO 3166-1 compatible country code.
  *   This option is only used when $filter is set to DateTimeZone::PER_COUNTRY

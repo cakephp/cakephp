@@ -398,8 +398,6 @@ class FixtureTask extends BakeTask {
 			'limit' => $recordCount
 		]);
 
-		$schema = $model->schema();
-		$alias = $model->alias();
 		$out = [];
 		foreach ($records as $record) {
 			$out[] = $record->toArray();
