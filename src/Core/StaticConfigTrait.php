@@ -164,6 +164,7 @@ trait StaticConfigTrait {
  *
  * @param string $dsn The DSN string to convert to a configuration array
  * @return array The configuration array to be stored after parsing the DSN
+ * @throws \InvalidArgumentException If not passed a string
  */
 	public static function parseDsn($dsn) {
 		if (empty($dsn)) {
@@ -231,7 +232,7 @@ trait StaticConfigTrait {
 /**
  * return or update the dsn class map for this class
  *
- * @param mixed $map
+ * @param array|null $map additions/edits to the class map to apply
  * @return array
  */
 	public static function dsnClassMap($map = null) {
