@@ -195,6 +195,7 @@ class TestTask extends BakeTask {
 
 		$this->out("\n" . sprintf('Baking test case for %s ...', $fullClassName), 1, Shell::QUIET);
 
+		$namespace = str_replace('/', '\\', $namespace);
 		$this->Template->set('fixtures', $this->_fixtures);
 		$this->Template->set('plugin', $this->plugin);
 		$this->Template->set(compact(

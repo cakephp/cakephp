@@ -158,6 +158,7 @@ class ControllerTask extends BakeTask {
 			'plugin' => null,
 			'pluginPath' => null,
 		];
+		$data['namespace'] = str_replace('/', '\\', $data['namespace']);
 		$this->Template->set($data);
 
 		$contents = $this->Template->generate('classes', 'controller');
