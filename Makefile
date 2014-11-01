@@ -158,12 +158,12 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
 components: $(foreach component, $(COMPONENTS), component-$(component))
 
 component-%:
-	git checkout 3.0
+	git checkout 3.0 > /dev/null
 	- (git remote add $* git@github.com:cakephp/$*.git -f 2> /dev/null)
 	- (git branch -D $* 2> /dev/null)
 	git checkout -b $*
-	git filter-branch --prune-empty --subdirectory-filter src/$* -f $*
-
+	git filter-branch --prune-empty --subdirectory-filter src/$(shell php -r "echo ucfirst('$*');") -f $*
+	git push $* $*:master
 
 # Top level alias for doing a release.
 release: guard-VERSION guard-GITHUB_USER tag-release package publish
