@@ -313,6 +313,49 @@ class ViewTaskTest extends TestCase {
 	}
 
 /**
+ * Test getContent with associations
+ *
+ * @return void
+ */
+	public function testGetContentAssociations() {
+		$vars = array(
+			'modelClass' => 'ViewTaskComments',
+			'schema' => TableRegistry::get('ViewTaskComments')->schema(),
+			'primaryKey' => ['id'],
+			'displayField' => 'name',
+			'singularVar' => 'viewTaskComment',
+			'pluralVar' => 'viewTaskComments',
+			'singularHumanName' => 'View Task Comment',
+			'pluralHumanName' => 'View Task Comments',
+			'fields' => ['id', 'name', 'body'],
+			'associations' => [
+				'belongsTo' => [
+					'Authors' => [
+						'property' => 'author',
+						'variable' => 'author',
+						'primaryKey' => ['id'],
+						'displayField' => 'name',
+						'foreignKey' => 'author_id',
+						'alias' => 'Authors',
+						'controller' => 'ViewTaskAuthors',
+						'fields' => ['name'],
+					]
+				]
+			],
+			'keyFields' => [],
+		);
+		$result = $this->Task->getContent('view', $vars);
+
+		$this->assertContains('Delete View Task Comment', $result);
+		$this->assertContains('Edit View Task Comment', $result);
+		$this->assertContains('List Authors', $result);
+		$this->assertContains('New Author', $result);
+
+		$this->assertContains("'controller' => 'ViewTaskAuthors'", $result);
+	}
+
+
+/**
  * Test getContent with no pk
  *
  * @return void
