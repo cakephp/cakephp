@@ -156,6 +156,8 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
 	rm release.json
 	rm id.txt
 
+# Tasks for publishing separate reporsitories out of each cake namespace
+
 components: $(foreach component, $(COMPONENTS), component-$(component))
 
 component-%:
@@ -168,4 +170,4 @@ component-%:
 	git checkout $(CURRENT_BRANCH) > /dev/null
 
 # Top level alias for doing a release.
-release: guard-VERSION guard-GITHUB_USER tag-release package publish
+release: guard-VERSION guard-GITHUB_USER tag-release package publish components
