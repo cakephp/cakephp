@@ -147,7 +147,7 @@ class MemcachedEngine extends CacheEngine {
 			}
 		}
 
-		if (empty($this->_config['username']) && !empty($config['login'])) {
+		if (empty($this->_config['username']) && !empty($this->_config['login'])) {
 			throw new InvalidArgumentException(
 				'Please pass "username" instead of "login" for connecting to Memcached'
 			);
