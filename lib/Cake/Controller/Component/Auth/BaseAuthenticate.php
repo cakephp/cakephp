@@ -109,7 +109,7 @@ abstract class BaseAuthenticate {
 
 		$userFields = $this->settings['userFields'];
 		if ($password !== null && $userFields !== null) {
-			$userFields[] = $fields['password'];
+			$userFields[] = $model . '.' . $fields['password'];
 		}
 
 		$result = ClassRegistry::init($userModel)->find('first', array(
