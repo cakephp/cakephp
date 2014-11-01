@@ -55,6 +55,18 @@ class WidgetRegistryTestCase extends TestCase {
 	}
 
 /**
+ * Test getting view instance from registry.
+ *
+ * @return void
+ */
+	public function testGetViewInstance() {
+		$inputs = new WidgetRegistry($this->templates, $this->view, []);
+
+		$result = $inputs->get('_view');
+		$this->assertInstanceOf('Cake\View\View', $result);
+	}
+
+/**
  * Test loading widgets files in the app.
  *
  * @return void

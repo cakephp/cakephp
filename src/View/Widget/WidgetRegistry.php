@@ -160,16 +160,18 @@ class WidgetRegistry {
  * @param mixed $widget The widget to get
  * @return WidgetInterface
  * @throws \RuntimeException when class cannot be loaded or does not
- *   implement WidgetInterface.
+ *   implement WidgetInterface or not a View instance.
  */
 	protected function _resolveWidget($widget) {
 		$type = gettype($widget);
-		if ($type === 'object' && $widget instanceof WidgetInterface) {
+		if ($type === 'object' &&
+			($widget instanceof WidgetInterface || $widget instanceof View)
+		) {
 			return $widget;
 		}
 		if ($type === 'object') {
 			throw new \RuntimeException(
-				'Input objects must implement Cake\View\Widget\WidgetInterface.'
+				'Widget objects must implement Cake\View\Widget\WidgetInterface.'
 			);
 		}
 		if ($type === 'string') {
