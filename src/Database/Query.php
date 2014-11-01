@@ -509,23 +509,11 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 			$joins[$alias ?: $i++] = $t + ['type' => 'INNER', 'alias' => $alias];
 
-			$exclude = [];
 			if (!empty($alias)) {
-				$exclude[] = $alias;
 				$this->tablesAliases[$alias] = $alias;
 			}
 			if (!empty($t['alias'])) {
-				$exclude[] = $t['alias'];
 				$this->tablesAliases[$t['alias']] = $t['alias'];
-			}
-
-			if ($t['conditions'] instanceof QueryExpression) {
-				$t['conditions']->iterateParts(function ($condition, $key) use ($exclude) {
-					if (is_string($condition)) {
-						$condition = $this->_connection->applyFullTableName($condition, $exclude);
-					}
-					return $condition;
-				});
 			}
 		}
 

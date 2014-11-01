@@ -315,6 +315,15 @@ class QueryCompiler {
 	protected function _buildJoinPart($parts, $query, $generator) {
 		$joins = '';
 		foreach ($parts as $join) {
+			if ($join['conditions'] instanceof QueryExpression) {
+				$join['conditions']->iterateParts(function ($condition, $key) use ($query) {
+					if (is_string($condition)) {
+						$condition = $query->connection()->applyFullTableName($condition, $query->tablesAliases);
+					}
+					return $condition;
+				});
+			}
+
 			$join['table'] = $query->connection()->fullTableName($join['table']);
 			$join['table'] = $this->_stringifyExpression($join['table'], $generator);
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
