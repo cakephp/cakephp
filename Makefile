@@ -166,7 +166,7 @@ components-tag: $(foreach component, $(COMPONENTS), tag-component-$(component))
 
 component-%:
 	git checkout $(CURRENT_BRANCH) > /dev/null
-	- (git remote add $* git@github.com:cakephp/$*.git -f 2> /dev/null)
+	- (git remote add $* git@github.com:$(OWNER)/$*.git -f 2> /dev/null)
 	- (git branch -D $* 2> /dev/null)
 	git checkout -b $*
 	git filter-branch --prune-empty --subdirectory-filter src/$(shell php -r "echo ucfirst('$*');") -f $*
