@@ -187,6 +187,39 @@ class ConnectionTest extends TestCase {
 	}
 
 /**
+ * Test full table name resolution in strings such as join condition
+ *
+ * @return void
+ */
+	public function testApplyFullTableName() {
+		$config = ConnectionManager::config('test');
+		if (!isset($config['prefix']) || $config['prefix'] === '') {
+			$config['prefix'] = 'prefix_';
+		}
+		$connectionWithPrefix = new Connection($config);
+
+		$condition = 'user.id';
+		$expected = 'prefix_user.id';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName('user.id'), $expected);
+
+		$expected = 'user.id';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName('user.id', ['user']), $expected);
+
+		$condition = 'user.id = articles.user_id';
+		$expected = 'prefix_user.id = prefix_articles.user_id';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName('user.id = articles.user_id'), $expected);
+
+		$expected = 'user.id = prefix_articles.user_id';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName('user.id = articles.user_id', ['user']), $expected);
+
+		$expected = 'prefix_user.id = articles.user_id';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName('user.id = articles.user_id', ['articles']), $expected);
+
+		$expected = 'user.id = articles.user_id';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName('user.id = articles.user_id', ['articles', 'user']), $expected);
+	}
+
+/**
  * Tests creation of prepared statements
  *
  * @return void
@@ -341,7 +374,7 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testStatementFetchObject() {
-		$result = $this->connection->execute('SELECT title, body  FROM things');
+		$result = $this->connection->execute($this->applyConnectionPrefix('SELECT title, body  FROM ~things'));
 		$row = $result->fetch(\PDO::FETCH_OBJ);
 		$this->assertEquals('a title', $row->title);
 		$this->assertEquals('a body', $row->body);

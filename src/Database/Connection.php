@@ -304,7 +304,8 @@ class Connection {
 		if ($prefix !== '') {
 			if (is_string($condition)) {
 				if (!empty($exclude)) {
-					$condition = preg_replace('/(?!' . implode('|', $exclude) . ')([\w-]+)(\.[\w-])+/', $prefix . "$1$2", $condition);
+					$pattern = '/\b(?!(?:' . implode('|', $exclude) . ')\b)([\w-]+)(\.[\w-]+)/';
+					$condition = preg_replace($pattern, $prefix . "$1$2", $condition);
 				} else {
 					$condition = preg_replace('/([\w-]+)(\.[\w-])+/', $prefix . "$1$2", $condition);
 				}
