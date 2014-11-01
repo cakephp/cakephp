@@ -635,26 +635,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
- * Retrieves all the aliases made by joins clauses
- *
- * @return array
- */
-	public function getJoinsAliases() {
-		$aliases = array();
-		$joins = $this->clause('join');
-
-		if (!empty($joins)) {
-			foreach ($joins as $join) {
-				if (isset($join['alias']) && $join['alias'] !== '') {
-					$aliases[$join['alias']] = $join['alias'];
-				}
-			}
-		}
-
-		return $aliases;
-	}
-
-/**
  * Adds a condition or set of conditions to be used in the WHERE clause for this
  * query. Conditions can be expressed as an array of fields as keys with
  * comparison operators in it, the values for the array will be used for comparing
