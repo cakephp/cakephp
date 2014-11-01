@@ -98,7 +98,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Sets a ValidationRule $rule with a $name
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  *		$set
@@ -121,7 +121,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Removes a validation rule from the set
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  *		$set

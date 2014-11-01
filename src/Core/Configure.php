@@ -264,7 +264,7 @@ class Configure {
  * 'default' adapter is a PhpConfig, the generated file will be a PHP
  * configuration file loadable by the PhpConfig.
  *
- * ## Usage
+ * ### Usage
  *
  * Given that the 'default' engine is an instance of PhpConfig.
  * Save all data in Configure to the file `my_config.php`:

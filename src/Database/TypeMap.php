@@ -54,7 +54,7 @@ class TypeMap {
  *
  * If called with no arguments it will return the currently configured types.
  *
- * ## Example
+ * ### Example
  *
  * {{{
  * $query->defaults(['created' => 'datetime', 'is_visible' => 'boolean']);
@@ -77,7 +77,7 @@ class TypeMap {
  *
  * If called with no arguments it will return the currently configured types.
  *
- * ## Example
+ * ### Example
  *
  * {{{
  * $query->types(['created' => 'time']);

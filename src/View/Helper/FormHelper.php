@@ -925,7 +925,7 @@ class FormHelper extends Helper {
 		$label = $options['label'];
 		unset($options['label']);
 		$nestedInput = false;
-		if (in_array($options['type'], ['radio', 'checkbox'], true)) {
+		if ($options['type'] === 'checkbox') {
 			$nestedInput = true;
 		}
 		$nestedInput = isset($options['nestedInput']) ? $options['nestedInput'] : $nestedInput;
@@ -1006,6 +1006,10 @@ class FormHelper extends Helper {
 				$opts = $options['options'];
 				unset($options['options']);
 				return $this->radio($fieldName, $opts, $options);
+			case 'multicheckbox':
+				$opts = $options['options'];
+				unset($options['options']);
+				return $this->multicheckbox($fieldName, $opts, $options);
 			case 'url':
 				$options = $this->_initInputField($fieldName, $options);
 				return $this->widget($options['type'], $options);
@@ -1170,7 +1174,7 @@ class FormHelper extends Helper {
  * @return bool|string false or Generated label element
  */
 	protected function _getLabel($fieldName, $options) {
-		if (in_array($options['type'], ['radio', 'hidden'])) {
+		if ($options['type'] === 'hidden') {
 			return false;
 		}
 
@@ -1229,6 +1233,10 @@ class FormHelper extends Helper {
 		$options += ['id' => null, 'input' => null, 'nestedInput' => false];
 
 		$labelAttributes['for'] = $options['id'];
+		$groupTypes = ['radio', 'multicheckbox', 'date', 'time', 'datetime'];
+		if (in_array($options['type'], $groupTypes, true)) {
+			$labelAttributes['for'] = false;
+		}
 		if ($options['nestedInput']) {
 			$labelAttributes['input'] = $options['input'];
 		}
@@ -1285,10 +1293,10 @@ class FormHelper extends Helper {
  *
  * ### Attributes:
  *
- * - `value` - Indicate a value that is should be checked
- * - `label` - boolean to indicate whether or not labels for widgets show be displayed
+ * - `value` - Indicates the value when this radio button is checked.
+ * - `label` - boolean to indicate whether or not labels for widgets should be displayed.
  * - `hiddenField` - boolean to indicate if you want the results of radio() to include
- *    a hidden input with a value of ''. This is useful for creating radio sets that non-continuous
+ *    a hidden input with a value of ''. This is useful for creating radio sets that are non-continuous.
  * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons.
  * - `empty` - Set to `true` to create an input with the value '' as the first option. When `true`
  *   the radio label will be 'empty'. Set this option to a string to control the label value.

@@ -187,6 +187,13 @@ class Radio implements WidgetInterface {
 			$escape
 		);
 
+		if (
+			$label === false &&
+			strpos($this->_templates->get('radioWrapper'), '{{input}}') === false
+		) {
+			$label = $input;
+		}
+
 		return $this->_templates->format('radioWrapper', [
 			'input' => $input,
 			'label' => $label,

@@ -448,10 +448,17 @@ class ViewTask extends BakeTask {
 				$target = $assoc->target();
 				$assocName = $assoc->name();
 				$alias = $target->alias();
+				$targetClass = get_class($target);
+				list($_, $className) = namespaceSplit($targetClass);
 
 				$modelClass = get_class($model);
-				if ($modelClass !== 'Cake\ORM\Table' && get_class($target) === $modelClass) {
+				if ($modelClass !== 'Cake\ORM\Table' && $targetClass === $modelClass) {
 					continue;
+				}
+
+				$className = preg_replace('/(.*)Table$/', '\1', $className);
+				if ($className === '') {
+					$className = $alias;
 				}
 
 				$associations[$type][$assocName] = [
@@ -460,7 +467,8 @@ class ViewTask extends BakeTask {
 					'primaryKey' => (array)$target->primaryKey(),
 					'displayField' => $target->displayField(),
 					'foreignKey' => $assoc->foreignKey(),
-					'controller' => $alias,
+					'alias' => $alias,
+					'controller' => $className,
 					'fields' => $target->schema()->columns(),
 				];
 			}

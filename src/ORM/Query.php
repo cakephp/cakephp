@@ -418,7 +418,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * - join: Maps to the join method
  * - page: Maps to the page method
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  * $query->applyOptions([

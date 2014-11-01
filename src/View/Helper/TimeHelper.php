@@ -208,7 +208,7 @@ class TimeHelper extends Helper {
 /**
  * Formats a date into a phrase expressing the relative time.
  *
- * ## Additional options
+ * ### Additional options
  *
  * - `element` - The element to wrap the formatted time in.
  *   Has a few additional options:

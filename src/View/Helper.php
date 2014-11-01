@@ -21,7 +21,7 @@ use Cake\Event\EventListenerInterface;
  * Abstract base class for all other Helpers in CakePHP.
  * Provides common methods and features.
  *
- * ## Callback methods
+ * ### Callback methods
  *
  * Helpers support a number of callback methods. These callbacks allow you to hook into
  * the various view lifecycle events and either modify existing view content or perform

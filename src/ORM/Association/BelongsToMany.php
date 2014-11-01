@@ -571,7 +571,7 @@ class BelongsToMany extends Association {
  * By default this method will also unset each of the entity objects stored inside
  * the source entity.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $article->tags = [$tag1, $tag2, $tag3, $tag4];
@@ -653,7 +653,7 @@ class BelongsToMany extends Association {
  * Additional options for new links to be saved can be passed in the third argument,
  * check `Table::save()` for information on the accepted options.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $article->tags = [$tag1, $tag2, $tag3, $tag4];

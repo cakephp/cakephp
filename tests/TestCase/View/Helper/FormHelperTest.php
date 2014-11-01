@@ -2416,7 +2416,7 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'div' => array('class' => 'input datetime'),
-			'label' => array('for' => 'prueba'),
+			'<label',
 			'Prueba',
 			'/label',
 			'This is it!',
@@ -2458,7 +2458,7 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'div' => array('class' => 'input datetime'),
-			'label' => array('for' => 'prefix-prueba'),
+			'<label',
 			'Prueba',
 			'/label',
 			'This is it!',
@@ -3384,6 +3384,70 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test that input works with radio types
+ *
+ * @return void
+ */
+	public function testInputRadio() {
+		$result = $this->Form->input('test', [
+			'type' => 'radio',
+			'options' => ['A', 'B'],
+		]);
+		$expected = [
+			['div' => ['class' => 'input radio']],
+				'<label',
+				'Test',
+				'/label',
+				['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+				['label' => ['for' => 'test-0']],
+					['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
+					'A',
+				'/label',
+				['label' => ['for' => 'test-1']],
+					['input' => ['type' => 'radio', 'name' => 'test', 'value' => '1', 'id' => 'test-1']],
+					'B',
+				'/label',
+			'/div',
+		];
+		$this->assertHtml($expected, $result);
+
+		$result = $this->Form->input('test', [
+			'type' => 'radio',
+			'options' => ['A', 'B'],
+			'label' => false
+		]);
+		$expected = [
+			['div' => ['class' => 'input radio']],
+				['input' => ['type' => 'hidden', 'name' => 'test', 'value' => '']],
+				['label' => ['for' => 'test-0']],
+					['input' => ['type' => 'radio', 'name' => 'test', 'value' => '0', 'id' => 'test-0']],
+					'A',
+				'/label',
+				['label' => ['for' => 'test-1']],
+					['input' => ['type' => 'radio', 'name' => 'test', 'value' => '1', 'id' => 'test-1']],
+					'B',
+				'/label',
+			'/div',
+		];
+		$this->assertHtml($expected, $result);
+	}
+
+/**
+ * Test that radio() works with label = false
+ *
+ * @return void
+ */
+	public function testRadioNoLabel() {
+		$result = $this->Form->radio('Model.field', ['A', 'B'], ['label' => false]);
+		$expected = [
+			'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
+			['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0']],
+			['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1']],
+		];
+		$this->assertHtml($expected, $result);
+	}
+
+/**
  * test generating radio input inside label ala twitter bootstrap
  *
  * @return void
@@ -4152,6 +4216,39 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test that input() works with multicheckbox.
+ *
+ * @return void
+ */
+	public function testInputMultiCheckbox() {
+		$result = $this->Form->input('category', [
+			'type' => 'multicheckbox',
+			'options' => ['1', '2'],
+		]);
+		$expected = [
+			['div' => ['class' => 'input multicheckbox']],
+			'<label',
+			'Category',
+			'/label',
+			'input' => ['type' => 'hidden', 'name' => 'category', 'value' => ''],
+			['div' => ['class' => 'checkbox']],
+				['label' => ['for' => 'category-0']],
+					['input' => ['type' => 'checkbox', 'name' => 'category[]', 'value' => '0', 'id' => 'category-0']],
+					'1',
+				'/label',
+			'/div',
+			['div' => ['class' => 'checkbox']],
+				['label' => ['for' => 'category-1']],
+					['input' => ['type' => 'checkbox', 'name' => 'category[]', 'value' => '1', 'id' => 'category-1']],
+					'2',
+				'/label',
+			'/div',
+			'/div',
+		];
+		$this->assertHtml($expected, $result);
+	}
+
+/**
  * testCheckbox method
  *
  * Test generation of checkboxes
@@ -4691,15 +4788,14 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDateTimeLabelIdMatchesFirstInput() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('Model.date', array('type' => 'date'));
-		$this->assertContains('label for="ModelDateMonth"', $result);
+		$this->assertContains('<label>Date</label>', $result);
 
 		$result = $this->Form->input('Model.date', array('type' => 'date', 'dateFormat' => 'DMY'));
-		$this->assertContains('label for="ModelDateDay"', $result);
+		$this->assertContains('<label>Date</label>', $result);
 
 		$result = $this->Form->input('Model.date', array('type' => 'date', 'dateFormat' => 'YMD'));
-		$this->assertContains('label for="ModelDateYear"', $result);
+		$this->assertContains('<label>Date</label>', $result);
 	}
 
 /**
@@ -6307,6 +6403,9 @@ class FormHelperTest extends TestCase {
 			['input' => ['type' => 'radio', 'name' => 'confirm', 'id' => 'confirm-n', 'value' => 'N']],
 			['label' => ['for' => 'confirm-n']],
 			'No',
+			'/label',
+			'<label',
+			'Confirm',
 			'/label',
 			'/div',
 		];

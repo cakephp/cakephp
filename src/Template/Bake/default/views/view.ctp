@@ -65,7 +65,7 @@ $groupedFields += ['number' => [], 'string' => [], 'boolean' => [], 'date' => []
 	foreach ($associations as $type => $data) {
 		foreach ($data as $alias => $details) {
 			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-				echo "\t\t<li><?= \$this->Html->link(__('List " . Inflector::humanize($details['controller']) . "'), ['controller' => '{$details['controller']}', 'action' => 'index']) ?> </li>\n";
+				echo "\t\t<li><?= \$this->Html->link(__('List " . $this->_pluralHumanName($alias) . "'), ['controller' => '{$details['controller']}', 'action' => 'index']) ?> </li>\n";
 				echo "\t\t<li><?= \$this->Html->link(__('New " . Inflector::humanize(Inflector::singularize(Inflector::underscore($alias))) . "'), ['controller' => '{$details['controller']}', 'action' => 'add']) ?> </li>\n";
 				$done[] = $details['controller'];
 			}

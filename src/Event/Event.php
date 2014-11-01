@@ -60,7 +60,7 @@ class Event {
 /**
  * Constructor
  *
- * ## Examples of usage:
+ * ### Examples of usage:
  *
  * {{{
  *	$event = new Event('Order.afterBuy', $this, array('buyer' => $userData));
