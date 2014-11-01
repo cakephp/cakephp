@@ -7,6 +7,7 @@
 # is a pre-release
 PRERELEASE=$(shell echo $(VERSION) | grep -E 'dev|rc|alpha|beta' --quiet && echo 'true' || echo 'false')
 COMPONENTS= log utility cache datasource core collection event validation
+CURRENT_BRANCH=$(shell git branch | grep '*' | tr -d '* ')
 
 # Github settings
 UPLOAD_HOST=https://uploads.github.com
@@ -158,12 +159,13 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
 components: $(foreach component, $(COMPONENTS), component-$(component))
 
 component-%:
-	git checkout 3.0 > /dev/null
+	git checkout $(CURRENT_BRANCH) > /dev/null
 	- (git remote add $* git@github.com:cakephp/$*.git -f 2> /dev/null)
 	- (git branch -D $* 2> /dev/null)
 	git checkout -b $*
 	git filter-branch --prune-empty --subdirectory-filter src/$(shell php -r "echo ucfirst('$*');") -f $*
 	git push $* $*:master
+	git checkout $(CURRENT_BRANCH) > /dev/null
 
 # Top level alias for doing a release.
 release: guard-VERSION guard-GITHUB_USER tag-release package publish
