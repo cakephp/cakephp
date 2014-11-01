@@ -114,7 +114,7 @@ class WidgetRegistryTestCase extends TestCase {
  * Test adding an instance of an invalid type.
  *
  * @expectedException \RuntimeException
- * @expectedExceptionMessage Input objects must implement Cake\View\Widget\WidgetInterface
+ * @expectedExceptionMessage Widget objects must implement Cake\View\Widget\WidgetInterface
  * @return void
  */
 	public function testAddInvalidType() {
