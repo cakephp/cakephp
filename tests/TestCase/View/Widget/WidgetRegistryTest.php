@@ -44,10 +44,14 @@ class WidgetRegistryTestCase extends TestCase {
 	public function testAddInConstructor() {
 		$widgets = [
 			'text' => ['Cake\View\Widget\Basic'],
+			'label' => ['Label'],
 		];
 		$inputs = new WidgetRegistry($this->templates, $this->view, $widgets);
 		$result = $inputs->get('text');
 		$this->assertInstanceOf('Cake\View\Widget\Basic', $result);
+
+		$result = $inputs->get('label');
+		$this->assertInstanceOf('Cake\View\Widget\Label', $result);
 	}
 
 /**
