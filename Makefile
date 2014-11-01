@@ -12,7 +12,7 @@ CURRENT_BRANCH=$(shell git branch | grep '*' | tr -d '* ')
 # Github settings
 UPLOAD_HOST=https://uploads.github.com
 API_HOST=https://api.github.com
-OWNER='cakephp'
+OWNER="cakephp"
 REMOTE="origin"
 
 ifdef GITHUB_TOKEN
@@ -159,6 +159,7 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
 # Tasks for publishing separate reporsitories out of each cake namespace
 
 components: $(foreach component, $(COMPONENTS), component-$(component))
+components-tag: $(foreach component, $(COMPONENTS), tag-component-$(component))
 
 component-%:
 	git checkout $(CURRENT_BRANCH) > /dev/null
@@ -167,6 +168,15 @@ component-%:
 	git checkout -b $*
 	git filter-branch --prune-empty --subdirectory-filter src/$(shell php -r "echo ucfirst('$*');") -f $*
 	git push $* $*:master
+	git checkout $(CURRENT_BRANCH) > /dev/null
+
+tag-component-%: component-% guard-VERSION guard-GITHUB_USER
+	@echo "Creating tag for the $* component"
+	git checkout $*
+	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/$*/git/refs -d '{ \
+		"refs": "refs\/tags\/$(VERSION)", \
+		"sha": "$(shell git rev-parse $*)" \
+	}'
 	git checkout $(CURRENT_BRANCH) > /dev/null
 
 # Top level alias for doing a release.
