@@ -123,7 +123,7 @@ class ControllerTask extends BakeTask {
 
 		$namespace = Configure::read('App.namespace');
 		if ($this->plugin) {
-			$namespace = $this->plugin;
+			$namespace = str_replace('/', '\\', $this->plugin);
 		}
 
 		$data = compact(
@@ -158,7 +158,7 @@ class ControllerTask extends BakeTask {
 			'plugin' => null,
 			'pluginPath' => null,
 		];
-		$data['namespace'] = str_replace('/', '\\', $data['namespace']);
+
 		$this->Template->set($data);
 
 		$contents = $this->Template->generate('classes', 'controller');
