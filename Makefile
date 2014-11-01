@@ -180,4 +180,4 @@ tag-component-%: component-% guard-VERSION guard-GITHUB_USER
 	git checkout $(CURRENT_BRANCH) > /dev/null
 
 # Top level alias for doing a release.
-release: guard-VERSION guard-GITHUB_USER tag-release package publish components
+release: guard-VERSION guard-GITHUB_USER tag-release package publish components-tag
