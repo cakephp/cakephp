@@ -958,13 +958,13 @@ class Request implements \ArrayAccess {
  * Provides a read/write accessor for `$this->data`. Allows you
  * to use a syntax similar to `Cake\Model\Datasource\Session` for reading post data.
  *
- * ## Reading values.
+ * ### Reading values.
  *
  * `$request->data('Post.title');`
  *
  * When reading values you will get `null` for keys/values that do not exist.
  *
- * ## Writing values
+ * ### Writing values
  *
  * `$request->data('Post.title', 'New post!');`
  *

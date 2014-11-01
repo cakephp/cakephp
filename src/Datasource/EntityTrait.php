@@ -167,7 +167,7 @@ trait EntityTrait {
  * with one call by passing a hashed array as properties in the form of
  * property => value pairs
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  * $entity->set(['name' => 'andrew', 'id' => 1]);

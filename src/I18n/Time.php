@@ -482,7 +482,7 @@ class Time extends Carbon implements JsonSerializable {
  * function, or pass a full ICU date formatting string as specified in the following
  * resource: http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details.
  *
- * ## Examples
+ * ### Examples
  *
  * {{{
  * $time = new Time('2014-04-20 22:10');
@@ -506,7 +506,7 @@ class Time extends Carbon implements JsonSerializable {
  * Finally, should you need to use a different locale for displaying this time object,
  * pass a locale string as the third parameter to this function.
  *
- * ## Examples
+ * ### Examples
  *
  * {{{
  * $time = new Time('2014-04-20 22:10');

@@ -75,7 +75,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
  *
  * It is not allowed to combine positional and named variables in the same statement.
  *
- * ## Examples:
+ * ### Examples:
  *
  * {{{
  * $statement->bindValue(1, 'a title');
@@ -106,7 +106,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 /**
  * Returns the number of columns this statement's results will contain.
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  * $statement = $connection->prepare('SELECT id, title from articles');
@@ -157,7 +157,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
  * Rows can be fetched to contain columns as names or positions. If no
  * rows are left in result set, this method will return false.
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  * $statement = $connection->prepare('SELECT id, title from articles');
@@ -176,7 +176,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 /**
  * Returns an array with all rows resulting from executing this statement.
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  * $statement = $connection->prepare('SELECT id, title from articles');
@@ -194,7 +194,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 /**
  * Returns the number of rows affected by this SQL statement.
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  * $statement = $connection->prepare('SELECT id, title from articles');
@@ -212,7 +212,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
  * Statements are iterable as arrays, this method will return
  * the iterator object for traversing all items in the result.
  *
- * ## Example:
+ * ### Example:
  *
  * {{{
  * $statement = $connection->prepare('SELECT id, title from articles');

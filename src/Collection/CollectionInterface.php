@@ -30,7 +30,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * and passes both the value and key for them on each step.
  * Returns the same collection for chaining.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $collection = (new Collection($items))->each(function ($value, $key) {
@@ -53,7 +53,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * in the current iteration, the key of the element and this collection as
  * arguments, in that order.
  *
- * ##Example:
+ * ### Example:
  *
  * Filtering odd numbers in an array, at the end only the value 2 will
  * be present in the resulting collection:
@@ -79,7 +79,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * in the current iteration, the key of the element and this collection as
  * arguments, in that order.
  *
- * ##Example:
+ * ### Example:
  *
  * Filtering even numbers in an array, at the end only values 1 and 3 will
  * be present in the resulting collection:
@@ -104,7 +104,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * in the current iteration and  the key of the element as arguments, in that
  * order.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $overTwentyOne = (new Collection([24, 45, 60, 15]))->every(function ($value, $key) {
@@ -126,7 +126,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * in the current iteration and the key of the element as arguments, in that
  * order.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $hasYoungPeople = (new Collection([24, 45, 15]))->every(function ($value, $key) {
@@ -157,7 +157,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * in the current iteration, the key of the element and this collection as
  * arguments, in that order.
  *
- * ##Example:
+ * ### Example:
  *
  * Getting a collection of booleans where true indicates if a person is female:
  *
@@ -220,7 +220,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * Returns the top element in this collection after being sorted by a property.
  * Check the sortBy method for information on the callback and $type parameters
  *
- * ###Examples:
+ * ### Examples:
  *
  * {{{
  * // For a collection of employees
@@ -246,7 +246,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * Returns the bottom element in this collection after being sorted by a property.
  * Check the sortBy method for information on the callback and $type parameters
  *
- * ###Examples:
+ * ### Examples:
  *
  * {{{
  * // For a collection of employees
@@ -279,7 +279,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * element. Please note that the callback function could be called more than once
  * per element.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $items = $collection->sortBy(function ($user) {
@@ -315,7 +315,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * a dot separated path of properties that should be followed to get the last
  * one in the path.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $items = [
@@ -358,7 +358,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * a dot separated path of properties that should be followed to get the last
  * one in the path.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $items = [
@@ -397,7 +397,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * a dot separated path of properties that should be followed to get the last
  * one in the path.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $items = [
@@ -430,7 +430,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * Returns the total sum of all the values extracted with $matcher
  * or of this collection.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $items = [
@@ -483,7 +483,7 @@ interface CollectionInterface extends Iterator, JsonSerializable {
  * Looks through each value in the list, returning a Collection of all the
  * values that contain all of the key-value pairs listed in $conditions.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $items = [

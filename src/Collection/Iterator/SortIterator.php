@@ -21,7 +21,7 @@ use SplHeap;
  * An iterator that will return the passed items in order. The order is given by
  * the value returned in a callback function that maps each of the elements.
  *
- * ###Example:
+ * ### Example:
  *
  * {{{
  * $items = [$user1, $user2, $user3];
