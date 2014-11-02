@@ -237,6 +237,9 @@ class Marshaller {
 		$target = $assoc->target();
 		$primaryKey = (array)$target->primaryKey();
 		$multi = count($primaryKey) > 1;
+		$primaryKey = array_map(function($key) use ($target) {
+			return $target->alias() . '.' . $key;
+		}, $primaryKey);
 
 		if ($multi) {
 			if (count(current($ids)) !== count($primaryKey)) {

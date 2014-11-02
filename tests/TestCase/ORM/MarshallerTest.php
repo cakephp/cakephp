@@ -852,6 +852,39 @@ class MarshallerTest extends TestCase {
 
 /**
  * Tests that merging data to an entity containing belongsToMany and _ids
+ * will not generate conflicting queries when associations are automatically selected
+ *
+ * @return void
+ */
+	public function testMergeFromIdsWithAutoAssociation() {
+		$entity = new Entity([
+			'title' => 'Haz tags',
+			'body' => 'Some content here',
+			'tags' => [
+				new Entity(['id' => 1, 'name' => 'Cake']),
+				new Entity(['id' => 2, 'name' => 'PHP'])
+			]
+		]);
+
+		$data = [
+			'title' => 'Haz moar tags',
+			'tags' => ['_ids' => [1, 2, 3]]
+		];
+		$entity->accessible('*', true);
+
+		// Adding a forced join to have another table with the same column names
+		$this->articles->Tags->eventManager()->attach(function($e, $query) {
+			$query->leftJoin(['a' => 'tags'], ['Tags.id = a.id']);
+		}, 'Model.beforeFind');
+
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
+
+		$this->assertCount(3, $result->tags);
+	}
+
+/**
+ * Tests that merging data to an entity containing belongsToMany and _ids
  * will ignore empty values.
  *
  * @return void
