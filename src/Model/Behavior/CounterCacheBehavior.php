@@ -80,25 +80,6 @@ use Cake\ORM\Table;
 class CounterCacheBehavior extends Behavior {
 
 /**
- * Keeping a reference to the table in order to,
- * be able to retrieve associations and fetch records for counting.
- *
- * @var \Cake\ORM\Table
- */
-	protected $_table;
-
-/**
- * Constructor
- *
- * @param \Cake\ORM\Table $table The table this behavior is attached to.
- * @param array $config The config for this behavior.
- */
-	public function __construct(Table $table, array $config = []) {
-		parent::__construct($table, $config);
-		$this->_table = $table;
-	}
-
-/**
  * afterSave callback.
  *
  * Makes sure to update counter cache when a new record is created or updated.

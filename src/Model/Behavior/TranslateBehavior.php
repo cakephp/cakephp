@@ -77,10 +77,19 @@ class TranslateBehavior extends Behavior {
 	public function __construct(Table $table, array $config = []) {
 		$config += ['defaultLocale' => I18n::defaultLocale()];
 		parent::__construct($table, $config);
+	}
 
-		$this->_table = $table;
-		$config = $this->_config;
-		$this->setupFieldAssociations($config['fields'], $config['translationTable']);
+/**
+ * Initialize hook
+ *
+ * @param array $config The config for this behavior.
+ * @return void
+ */
+	public function initialize(array $config) {
+		$this->setupFieldAssociations(
+			$this->_config['fields'],
+			$this->_config['translationTable']
+		);
 	}
 
 /**
