@@ -151,8 +151,21 @@ class Behavior implements EventListenerInterface {
 			$this->_defaultConfig,
 			$config
 		);
-		$this->config($config);
 		$this->_table = $table;
+		$this->config($config);
+		$this->initialize($config);
+	}
+
+/**
+ * Constructor hook method.
+ *
+ * Implement this method to avoid having to overwrite
+ * the constructor and call parent.
+ *
+ * @param array $config The configuration array this behavior is using.
+ * @return void
+ */
+	public function initialize(array $config) {
 	}
 
 /**

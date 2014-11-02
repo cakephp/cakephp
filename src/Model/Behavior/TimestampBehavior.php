@@ -60,17 +60,14 @@ class TimestampBehavior extends Behavior {
 	protected $_ts;
 
 /**
- * Constructor
+ * Initialize hook
  *
  * If events are specified - do *not* merge them with existing events,
  * overwrite the events to listen on
  *
- * @param \Cake\ORM\Table $table The table this behavior is attached to.
  * @param array $config The config for this behavior.
  */
-	public function __construct(Table $table, array $config = []) {
-		parent::__construct($table, $config);
-
+	public function initialize(array $config) {
 		if (isset($config['events'])) {
 			$this->config('events', $config['events'], false);
 		}
