@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
@@ -848,6 +849,41 @@ class MarshallerTest extends TestCase {
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[2]);
+	}
+
+/**
+ * Tests that merging data to an entity containing belongsToMany and _ids
+ * will not generate conflicting queries when associations are automatically selected
+ *
+ * @return void
+ */
+	public function testMergeFromIdsWithAutoAssociation() {
+		$entity = new Entity([
+			'title' => 'Haz tags',
+			'body' => 'Some content here',
+			'tags' => [
+				new Entity(['id' => 1, 'name' => 'Cake']),
+				new Entity(['id' => 2, 'name' => 'PHP'])
+			]
+		]);
+
+		$data = [
+			'title' => 'Haz moar tags',
+			'tags' => ['_ids' => [1, 2, 3]]
+		];
+		$entity->accessible('*', true);
+
+		// Adding a forced join to have another table with the same column names
+		$this->articles->Tags->eventManager()->attach(function ($e, $query) {
+			$left = new IdentifierExpression('Tags.id');
+			$right = new IdentifierExpression('a.id');
+			$query->leftJoin(['a' => 'tags'], $query->newExpr()->eq($left, $right));
+		}, 'Model.beforeFind');
+
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
+
+		$this->assertCount(3, $result->tags);
 	}
 
 /**
