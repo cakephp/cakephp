@@ -133,6 +133,13 @@ class Request implements \ArrayAccess {
 	);
 
 /**
+ * Instance cache for results of is(something) calls
+ *
+ * @var array
+ */
+	protected $_isResults = [];
+
+/**
  * Copy of php://input. Since this stream can only be read once in most SAPI's
  * keep a copy of it so users don't need to know about that detail.
  *
@@ -576,6 +583,35 @@ class Request implements \ArrayAccess {
  * @return bool Whether or not the request is the type you are checking.
  */
 	public function is($type) {
+		if (!isset($this->_isResults[$type])) {
+			$this->_isResults[$type] = $this->_is($type);
+		}
+
+		return $this->_isResults[$type];
+	}
+
+/**
+ * Read or set the instance is-cache results
+ *
+ * @param array|null $results
+ * @return array|void
+ */
+	public function isCache($results = null) {
+		if ($results === null) {
+			return $this->_isResults;
+		}
+
+		$this->_isResults = (array)$results;
+	}
+
+/**
+ * Worker for the public is function
+ *
+ * @param string|array $type The type of request you want to check. If an array
+ *   this method will return true if the request matches any type.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _is($type) {
 		if (is_array($type)) {
 			$result = array_map(array($this, 'is'), $type);
 			return count(array_filter($result)) > 0;
