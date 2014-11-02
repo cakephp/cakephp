@@ -814,7 +814,7 @@ class PaginatorHelper extends Helper {
  *
  * `echo $this->Paginator->meta();`
  *
- * Echos the links directly, will output nothing of there is neither a previous nor next page.
+ * Echos the links directly, will output nothing if there is neither a previous nor next page.
  *
  * `$this->Paginator->meta(['block' => true]);`
  *
