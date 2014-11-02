@@ -108,6 +108,17 @@ class Log {
 	}
 
 /**
+ * An array mapping url schemes to fully qualified Log engine class names
+ *
+ * @var array
+ */
+	protected static $_dsnClassMap = [
+		'console' => 'Cake\Log\Engine\ConsoleLog',
+		'file' => 'Cake\Log\Engine\FileLog',
+		'syslog' => 'Cake\Log\Engine\SyslogLog',
+	];
+
+/**
  * Internal flag for tracking whether or not configuration has been changed.
  *
  * @var bool

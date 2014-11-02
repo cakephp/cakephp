@@ -304,6 +304,17 @@ class Email {
 	protected $_boundary = null;
 
 /**
+ * An array mapping url schemes to fully qualified Transport class names
+ *
+ * @var array
+ */
+	protected static $_dsnClassMap = [
+		'debug' => 'Cake\Network\Email\DebugTransport',
+		'mail' => 'Cake\Network\Email\MailTransport',
+		'smtp' => 'Cake\Network\Email\SmtpTransport',
+	];
+
+/**
  * Configuration profiles for transports.
  *
  * @var array
@@ -1174,9 +1185,17 @@ class Email {
 		if (isset(static::$_transportConfig[$key])) {
 			throw new BadMethodCallException(sprintf('Cannot modify an existing config "%s"', $key));
 		}
+
 		if (is_object($config)) {
 			$config = ['className' => $config];
 		}
+
+		if (isset($config['url'])) {
+			$parsed = static::parseDsn($config['url']);
+			unset($config['url']);
+			$config = $parsed + $config;
+		}
+
 		static::$_transportConfig[$key] = $config;
 	}
 

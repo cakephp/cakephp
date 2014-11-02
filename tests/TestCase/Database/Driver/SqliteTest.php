@@ -32,15 +32,15 @@ class SqliteTest extends TestCase {
  */
 	public function testConnectionConfigDefault() {
 		$driver = $this->getMock('Cake\Database\Driver\Sqlite', ['_connect']);
+		$dsn = 'sqlite::memory:';
 		$expected = [
 			'persistent' => false,
 			'database' => ':memory:',
 			'encoding' => 'utf8',
-			'login' => null,
+			'username' => null,
 			'password' => null,
 			'flags' => [],
 			'init' => [],
-			'dsn' => 'sqlite::memory:'
 		];
 
 		$expected['flags'] += [
@@ -48,7 +48,7 @@ class SqliteTest extends TestCase {
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		];
 		$driver->expects($this->once())->method('_connect')
-			->with($expected);
+			->with($dsn, $expected);
 		$driver->connect([]);
 	}
 
@@ -71,10 +71,10 @@ class SqliteTest extends TestCase {
 			['_connect', 'connection'],
 			[$config]
 		);
+		$dsn = 'sqlite:bar.db';
 
 		$expected = $config;
-		$expected += ['login' => null, 'password' => null];
-		$expected['dsn'] = 'sqlite:bar.db';
+		$expected += ['username' => null, 'password' => null];
 		$expected['flags'] += [
 			PDO::ATTR_PERSISTENT => true,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
@@ -86,7 +86,7 @@ class SqliteTest extends TestCase {
 		$connection->expects($this->exactly(2))->method('exec');
 
 		$driver->expects($this->once())->method('_connect')
-			->with($expected);
+			->with($dsn, $expected);
 		$driver->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
 		$driver->connect($config);

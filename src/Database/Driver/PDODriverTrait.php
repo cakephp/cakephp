@@ -15,6 +15,7 @@
 namespace Cake\Database\Driver;
 
 use Cake\Database\Statement\PDOStatement;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -32,13 +33,20 @@ trait PDODriverTrait {
 /**
  * Establishes a connection to the database server
  *
+ * @param string $dsn A Driver-specific PDO-DSN
  * @param array $config configuration to be used for creating connection
  * @return bool true on success
+ * @throws InvalidArgumentException
  */
-	protected function _connect(array $config) {
+	protected function _connect($dsn, array $config) {
+		if (empty($config['username']) && !empty($config['login'])) {
+			throw new InvalidArgumentException(
+				'Please pass "username" instead of "login" for connecting to the database'
+			);
+		}
 		$connection = new PDO(
-			$config['dsn'],
-			$config['login'],
+			$dsn,
+			$config['username'],
 			$config['password'],
 			$config['flags']
 		);

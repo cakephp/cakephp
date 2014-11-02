@@ -31,13 +31,12 @@ class Sqlite extends \Cake\Database\Driver {
  */
 	protected $_baseConfig = [
 		'persistent' => false,
-		'login' => null,
+		'username' => null,
 		'password' => null,
 		'database' => ':memory:',
 		'encoding' => 'utf8',
 		'flags' => [],
 		'init' => [],
-		'dsn' => null
 	];
 
 /**
@@ -55,11 +54,8 @@ class Sqlite extends \Cake\Database\Driver {
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		];
 
-		if (empty($config['dsn'])) {
-			$config['dsn'] = "sqlite:{$config['database']}";
-		}
-
-		$this->_connect($config);
+		$dsn = "sqlite:{$config['database']}";
+		$this->_connect($dsn, $config);
 
 		if (!empty($config['init'])) {
 			foreach ((array)$config['init'] as $command) {

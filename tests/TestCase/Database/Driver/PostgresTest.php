@@ -34,10 +34,11 @@ class PostgresTest extends TestCase {
  */
 	public function testConnectionConfigDefault() {
 		$driver = $this->getMock('Cake\Database\Driver\Postgres', ['_connect', 'connection']);
+		$dsn = 'pgsql:host=localhost;port=5432;dbname=cake';
 		$expected = [
 			'persistent' => true,
 			'host' => 'localhost',
-			'login' => 'root',
+			'username' => 'root',
 			'password' => '',
 			'database' => 'cake',
 			'schema' => 'public',
@@ -46,7 +47,6 @@ class PostgresTest extends TestCase {
 			'timezone' => null,
 			'flags' => [],
 			'init' => [],
-			'dsn' => 'pgsql:host=localhost;port=5432;dbname=cake'
 		];
 
 		$expected['flags'] += [
@@ -68,7 +68,7 @@ class PostgresTest extends TestCase {
 		$connection->expects($this->exactly(2))->method('exec');
 
 		$driver->expects($this->once())->method('_connect')
-			->with($expected);
+			->with($dsn, $expected);
 		$driver->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
 
@@ -85,7 +85,7 @@ class PostgresTest extends TestCase {
 			'persistent' => false,
 			'host' => 'foo',
 			'database' => 'bar',
-			'login' => 'user',
+			'username' => 'user',
 			'password' => 'pass',
 			'port' => 3440,
 			'flags' => [1 => true, 2 => false],
@@ -99,9 +99,9 @@ class PostgresTest extends TestCase {
 			['_connect', 'connection'],
 			[$config]
 		);
+		$dsn = 'pgsql:host=foo;port=3440;dbname=bar';
 
 		$expected = $config;
-		$expected['dsn'] = 'pgsql:host=foo;port=3440;dbname=bar';
 		$expected['flags'] += [
 			PDO::ATTR_PERSISTENT => false,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
@@ -125,7 +125,7 @@ class PostgresTest extends TestCase {
 
 		$driver->connection($connection);
 		$driver->expects($this->once())->method('_connect')
-			->with($expected);
+			->with($dsn, $expected);
 
 		$driver->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
@@ -142,7 +142,7 @@ class PostgresTest extends TestCase {
 		$driver = $this->getMock(
 			'Cake\Database\Driver\Postgres',
 			['_connect', 'connection'],
-			[['dsn' => 'foo']]
+			[[]]
 		);
 		$connection = $this
 			->getMockBuilder('\Cake\Database\Connection')

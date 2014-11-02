@@ -45,7 +45,7 @@ class SqlserverTest extends TestCase {
 		$config = [
 			'persistent' => false,
 			'host' => 'foo',
-			'login' => 'Administrator',
+			'username' => 'Administrator',
 			'password' => 'blablabla',
 			'database' => 'bar',
 			'encoding' => 'a-language',
@@ -58,9 +58,9 @@ class SqlserverTest extends TestCase {
 			['_connect', 'connection'],
 			[$config]
 		);
+		$dsn = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
 
 		$expected = $config;
-		$expected['dsn'] = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
 		$expected['flags'] += [
 			PDO::ATTR_PERSISTENT => false,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -83,7 +83,7 @@ class SqlserverTest extends TestCase {
 
 		$driver->connection($connection);
 		$driver->expects($this->once())->method('_connect')
-			->with($expected);
+			->with($dsn, $expected);
 
 		$driver->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
@@ -100,7 +100,7 @@ class SqlserverTest extends TestCase {
 		$driver = $this->getMock(
 			'Cake\Database\Driver\Sqlserver',
 			['_connect', 'connection', '_version'],
-			[['dsn' => 'foo']]
+			[[]]
 		);
 		$driver
 			->expects($this->any())
@@ -154,7 +154,7 @@ class SqlserverTest extends TestCase {
 		$driver = $this->getMock(
 			'Cake\Database\Driver\Sqlserver',
 			['_connect', 'connection', '_version'],
-			[['dsn' => 'foo']]
+			[[]]
 		);
 		$driver
 			->expects($this->any())

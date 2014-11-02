@@ -31,6 +31,7 @@ class ConnectionManager {
 
 	use StaticConfigTrait {
 		config as protected _config;
+		parseDsn as protected _parseDsn;
 	}
 
 /**
@@ -39,6 +40,18 @@ class ConnectionManager {
  * @var array
  */
 	protected static $_aliasMap = [];
+
+/**
+ * An array mapping url schemes to fully qualified driver class names
+ *
+ * @return array
+ */
+	protected static $_dsnClassMap = [
+		'mysql' => 'Cake\Database\Driver\Mysql',
+		'postgres' => 'Cake\Database\Driver\Postgres',
+		'sqlite' => 'Cake\Database\Driver\Sqlite',
+		'sqlserver' => 'Cake\Database\Driver\Sqlserver',
+	];
 
 /**
  * The ConnectionRegistry used by the manager.
@@ -63,6 +76,47 @@ class ConnectionManager {
 			$config['name'] = $key;
 		}
 		return static::_config($key, $config);
+	}
+
+/**
+ * Parses a DSN into a valid connection configuration
+ *
+ * This method allows setting a DSN using formatting similar to that used by PEAR::DB.
+ * The following is an example of its usage:
+ *
+ * {{{
+ * $dsn = 'mysql://user:pass@localhost/database';
+ * $config = ConnectionManager::parseDsn($dsn);
+ *
+ * $dsn = 'Cake\Database\Driver\Mysql://localhost:3306/database?className=Cake\Database\Connection';
+ * $config = ConnectionManager::parseDsn($dsn);
+ *
+ * $dsn = 'Cake\Database\Connection://localhost:3306/database?driver=Cake\Database\Driver\Mysql';
+ * $config = ConnectionManager::parseDsn($dsn);
+ * }}}
+ *
+ * For all classes, the value of `scheme` is set as the value of both the `className` and `driver`
+ * unless they have been otherwise specified.
+ *
+ * Note that querystring arguments are also parsed and set as values in the returned configuration.
+ *
+ * @param array $config An array with a `url` key mapping to a string DSN
+ * @return array The configuration array to be stored after parsing the DSN
+ */
+	public static function parseDsn($config = null) {
+		$config = static::_parseDsn($config);
+
+		if (isset($config['path']) && empty($config['database'])) {
+			$config['database'] = substr($config['path'], 1);
+		}
+
+		if (empty($config['driver'])) {
+			$config['driver'] = $config['className'];
+			$config['className'] = 'Cake\Database\Connection';
+		}
+
+		unset($config['path']);
+		return $config;
 	}
 
 /**
