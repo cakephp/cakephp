@@ -183,10 +183,11 @@ class TranslateBehavior extends Behavior {
 		$fields = array_keys($values);
 		$primaryKey = (array)$this->_table->primaryKey();
 		$key = $entity->get(current($primaryKey));
+		$model = $this->_table->alias();
 
 		$preexistent = TableRegistry::get($table)->find()
 			->select(['id', 'field'])
-			->where(['field IN' => $fields, 'locale' => $locale, 'foreign_key' => $key])
+			->where(['field IN' => $fields, 'locale' => $locale, 'foreign_key' => $key, 'model' => $model])
 			->bufferResults(false)
 			->indexBy('field');
 
@@ -197,7 +198,6 @@ class TranslateBehavior extends Behavior {
 		}
 
 		$new = array_diff_key($values, $modified);
-		$model = $this->_table->alias();
 		foreach ($new as $field => $content) {
 			$new[$field] = new Entity(compact('locale', 'field', 'content', 'model'), [
 				'useSetters' => false,
