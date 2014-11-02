@@ -251,7 +251,7 @@ class Connection {
 /**
  * Wrap the table name in a TableNameExpression with the current config prefix
  *
- * @param string|TableNameExpression $names The names of the tables
+ * @param string|TableNameExpression $table The names of the tables
  *
  * @return TableNameExpression
  */

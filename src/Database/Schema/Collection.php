@@ -84,7 +84,6 @@ class Collection {
  */
 	public function describe($name, array $options = []) {
 		$config = $this->_connection->config();
-
 		if (strpos($name, '.')) {
 			list($config['schema'], $name) = explode('.', $name);
 		}

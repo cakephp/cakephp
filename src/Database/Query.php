@@ -1563,7 +1563,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @return $this
  */
-	public function _extractTableAliases($tables) {
+	protected function _extractTableAliases($tables) {
 		if (!empty($tables)) {
 			if (!is_array($tables)) {
 				$tables = array($tables);
