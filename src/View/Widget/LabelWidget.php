@@ -23,7 +23,7 @@ use Cake\View\Widget\WidgetInterface;
  * Generally this element is used by other widgets,
  * and FormHelper itself.
  */
-class Label implements WidgetInterface {
+class LabelWidget implements WidgetInterface {
 
 /**
  * Templates

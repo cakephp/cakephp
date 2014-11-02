@@ -18,23 +18,15 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\Widget\WidgetInterface;
 
 /**
- * Basic input class.
+ * Input widget class for generating a file upload control.
  *
- * This input class can be used to render basic simple
- * input elements like hidden, text, email, tel and other
- * types.
+ * This class is intended as an internal implementation detail
+ * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class Basic implements WidgetInterface {
+class FileWidget implements WidgetInterface {
 
 /**
- * StringTemplate instance.
- *
- * @var \Cake\View\StringTemplate
- */
-	protected $_templates;
-
-/**
- * Constructor.
+ * Constructor
  *
  * @param \Cake\View\StringTemplate $templates Templates list.
  */
@@ -43,37 +35,33 @@ class Basic implements WidgetInterface {
 	}
 
 /**
- * Render a text widget or other simple widget like email/tel/number.
+ * Render a file upload form widget.
  *
- * This method accepts a number of keys:
+ * Data supports the following keys:
  *
- * - `name` The name attribute.
- * - `val` The value attribute.
- * - `escape` Set to false to disable escaping on all attributes.
+ * - `name` - Set the input name.
+ * - `escape` - Set to false to disable HTML escaping.
  *
- * Any other keys provided in $data will be converted into HTML attributes.
+ * All other keys will be converted into HTML attributes.
+ * Unlike other input objects the `val` property will be specifically
+ * ignored.
  *
- * @param array $data The data to build an input with.
+ * @param array $data The data to build a file input with.
  * @param \Cake\View\Form\ContextInterface $context The current form context.
- * @return string
+ * @return string HTML elements.
  */
 	public function render(array $data, ContextInterface $context) {
 		$data += [
 			'name' => '',
-			'val' => null,
-			'type' => 'text',
 			'escape' => true,
 		];
-		$data['value'] = $data['val'];
 		unset($data['val']);
 
-		return $this->_templates->format('input', [
+		return $this->_templates->format('file', [
 			'name' => $data['name'],
-			'type' => $data['type'],
 			'attrs' => $this->_templates->formatAttributes(
-				$data,
-				['name', 'type']
-			),
+				$data, ['name', 'val']
+			)
 		]);
 	}
 
@@ -81,7 +69,11 @@ class Basic implements WidgetInterface {
  * {@inheritDoc}
  */
 	public function secureFields(array $data) {
-		return [$data['name']];
+		$fields = [];
+		foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $suffix) {
+			$fields[] = $data['name'] . '[' . $suffix . ']';
+		}
+		return $fields;
 	}
 
 }

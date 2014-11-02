@@ -16,7 +16,7 @@ namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\SelectBox;
+use Cake\View\Widget\SelectBoxWidget;
 use Cake\View\Widget\WidgetInterface;
 
 /**
@@ -25,7 +25,7 @@ use Cake\View\Widget\WidgetInterface;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class DateTime implements WidgetInterface {
+class DateTimeWidget implements WidgetInterface {
 
 /**
  * Select box widget.
@@ -60,9 +60,9 @@ class DateTime implements WidgetInterface {
  * Constructor
  *
  * @param \Cake\View\StringTemplate $templates Templates list.
- * @param \Cake\View\Widget\SelectBox $selectBox Selectbox widget instance.
+ * @param \Cake\View\Widget\SelectBoxWidget $selectBox Selectbox widget instance.
  */
-	public function __construct(StringTemplate $templates, SelectBox $selectBox) {
+	public function __construct(StringTemplate $templates, SelectBoxWidget $selectBox) {
 		$this->_select = $selectBox;
 		$this->_templates = $templates;
 	}

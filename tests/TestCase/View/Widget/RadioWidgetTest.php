@@ -17,13 +17,13 @@ namespace Cake\Test\TestCase\View\Widget;
 use Cake\Collection\Collection;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\NestingLabel;
-use Cake\View\Widget\Radio;
+use Cake\View\Widget\NestingLabelWidget;
+use Cake\View\Widget\RadioWidget;
 
 /**
  * Radio test case
  */
-class RadioTest extends TestCase {
+class RadioWidgetTest extends TestCase {
 
 /**
  * setup method.
@@ -51,8 +51,8 @@ class RadioTest extends TestCase {
 			'nestingLabel' => '<label{{attrs}}>{{text}}</label>',
 			'radioWrapper' => '{{input}}{{label}}'
 		]);
-		$label = new NestingLabel($this->templates);
-		$radio = new Radio($this->templates, $label);
+		$label = new NestingLabelWidget($this->templates);
+		$radio = new RadioWidget($this->templates, $label);
 		$data = [
 			'name' => 'Crayons[color]',
 			'label' => null,
@@ -110,8 +110,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$label = new NestingLabel($this->templates);
-		$radio = new Radio($this->templates, $label);
+		$label = new NestingLabelWidget($this->templates);
+		$radio = new RadioWidget($this->templates, $label);
 		$data = [
 			'name' => 'Crayons[color]',
 			'label' => null,
@@ -154,8 +154,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderComplex() {
-		$label = new NestingLabel($this->templates);
-		$radio = new Radio($this->templates, $label);
+		$label = new NestingLabelWidget($this->templates);
+		$radio = new RadioWidget($this->templates, $label);
 		$data = [
 			'name' => 'Crayons[color]',
 			'options' => [
@@ -194,8 +194,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderIdSuffixGeneration() {
-		$label = new NestingLabel($this->templates);
-		$radio = new Radio($this->templates, $label);
+		$label = new NestingLabelWidget($this->templates);
+		$radio = new RadioWidget($this->templates, $label);
 		$data = [
 			'name' => 'Thing[value]',
 			'options' => ['a>b' => 'First', 'a<b' => 'Second']
@@ -230,8 +230,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderBooleanishValues() {
-		$label = new NestingLabel($this->templates);
-		$radio = new Radio($this->templates, $label);
+		$label = new NestingLabelWidget($this->templates);
+		$radio = new RadioWidget($this->templates, $label);
 		$data = [
 			'name' => 'Model[field]',
 			'options' => ['1' => 'Yes', '0' => 'No'],
@@ -305,8 +305,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderRequiredAndFormAttribute() {
-		$label = new NestingLabel($this->templates);
-		$radio = new Radio($this->templates, $label);
+		$label = new NestingLabelWidget($this->templates);
+		$radio = new RadioWidget($this->templates, $label);
 		$data = [
 			'name' => 'published',
 			'options' => ['option A', 'option B'],
@@ -335,8 +335,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderEmptyOption() {
-		$label = new NestingLabel($this->templates);
-		$radio = new Radio($this->templates, $label);
+		$label = new NestingLabelWidget($this->templates);
+		$radio = new RadioWidget($this->templates, $label);
 		$data = [
 			'name' => 'Crayons[color]',
 			'options' => ['r' => 'Red'],
@@ -400,8 +400,8 @@ class RadioTest extends TestCase {
 			'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
 			'radioWrapper' => '{{label}}',
 		]);
-		$label = new NestingLabel($this->templates);
-		$radio = new Radio($this->templates, $label);
+		$label = new NestingLabelWidget($this->templates);
+		$radio = new RadioWidget($this->templates, $label);
 		$data = [
 			'name' => 'Crayons[color]',
 			'options' => ['r' => 'Red'],
@@ -427,8 +427,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderSelected() {
-		$label = new NestingLabel($this->templates);
-		$radio = new Radio($this->templates, $label);
+		$label = new NestingLabelWidget($this->templates);
+		$radio = new RadioWidget($this->templates, $label);
 		$data = [
 			'name' => 'Versions[ver]',
 			'val' => '1',
@@ -478,8 +478,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderDisabled() {
-		$label = new NestingLabel($this->templates);
-		$radio = new Radio($this->templates, $label);
+		$label = new NestingLabelWidget($this->templates);
+		$radio = new RadioWidget($this->templates, $label);
 		$data = [
 			'name' => 'Versions[ver]',
 			'options' => [
@@ -550,8 +550,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderLabelOptions() {
-		$label = new NestingLabel($this->templates);
-		$radio = new Radio($this->templates, $label);
+		$label = new NestingLabelWidget($this->templates);
+		$radio = new RadioWidget($this->templates, $label);
 		$data = [
 			'name' => 'Versions[ver]',
 			'options' => [
@@ -623,8 +623,8 @@ class RadioTest extends TestCase {
 		$this->templates->add([
 			'radioWrapper' => '<div class="radio">{{input}}{{label}}</div>'
 		]);
-		$label = new NestingLabel($this->templates);
-		$radio = new Radio($this->templates, $label);
+		$label = new NestingLabelWidget($this->templates);
+		$radio = new RadioWidget($this->templates, $label);
 		$data = [
 			'name' => 'Versions[ver]',
 			'options' => [

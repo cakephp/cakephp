@@ -44,17 +44,17 @@ class WidgetRegistry {
  * @var array
  */
 	protected $_widgets = [
-		'button' => ['Cake\View\Widget\Button'],
-		'checkbox' => ['Cake\View\Widget\Checkbox'],
-		'file' => ['Cake\View\Widget\File'],
-		'label' => ['Cake\View\Widget\Label'],
-		'nestingLabel' => ['Cake\View\Widget\NestingLabel'],
-		'multicheckbox' => ['Cake\View\Widget\MultiCheckbox', 'nestingLabel'],
-		'radio' => ['Cake\View\Widget\Radio', 'nestingLabel'],
-		'select' => ['Cake\View\Widget\SelectBox'],
-		'textarea' => ['Cake\View\Widget\Textarea'],
-		'datetime' => ['Cake\View\Widget\DateTime', 'select'],
-		'_default' => ['Cake\View\Widget\Basic'],
+		'button' => ['Cake\View\Widget\ButtonWidget'],
+		'checkbox' => ['Cake\View\Widget\CheckboxWidget'],
+		'file' => ['Cake\View\Widget\FileWidget'],
+		'label' => ['Cake\View\Widget\LabelWidget'],
+		'nestingLabel' => ['Cake\View\Widget\NestingLabelWidget'],
+		'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'nestingLabel'],
+		'radio' => ['Cake\View\Widget\RadioWidget', 'nestingLabel'],
+		'select' => ['Cake\View\Widget\SelectBoxWidget'],
+		'textarea' => ['Cake\View\Widget\TextareaWidget'],
+		'datetime' => ['Cake\View\Widget\DateTimeWidget', 'select'],
+		'_default' => ['Cake\View\Widget\BasicWidget'],
 	];
 
 /**
@@ -179,7 +179,7 @@ class WidgetRegistry {
 		}
 
 		$class = array_shift($widget);
-		$className = App::className($class, 'View/Widget');
+		$className = App::className($class, 'View/Widget', 'Widget');
 		if ($className === false || !class_exists($className)) {
 			throw new \RuntimeException(sprintf('Unable to locate widget class "%s"', $class));
 		}

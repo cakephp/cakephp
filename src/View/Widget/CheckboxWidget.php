@@ -20,7 +20,7 @@ use Cake\View\Widget\WidgetInterface;
 /**
  * Input widget for creating checkbox widgets.
  */
-class Checkbox implements WidgetInterface {
+class CheckboxWidget implements WidgetInterface {
 
 /**
  * Template instance.

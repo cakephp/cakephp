@@ -43,15 +43,15 @@ class WidgetRegistryTestCase extends TestCase {
  */
 	public function testAddInConstructor() {
 		$widgets = [
-			'text' => ['Cake\View\Widget\Basic'],
+			'text' => ['Cake\View\Widget\BasicWidget'],
 			'label' => ['Label'],
 		];
 		$inputs = new WidgetRegistry($this->templates, $this->view, $widgets);
 		$result = $inputs->get('text');
-		$this->assertInstanceOf('Cake\View\Widget\Basic', $result);
+		$this->assertInstanceOf('Cake\View\Widget\BasicWidget', $result);
 
 		$result = $inputs->get('label');
-		$this->assertInstanceOf('Cake\View\Widget\Label', $result);
+		$this->assertInstanceOf('Cake\View\Widget\LabelWidget', $result);
 	}
 
 /**
@@ -73,7 +73,7 @@ class WidgetRegistryTestCase extends TestCase {
  */
 	public function testLoadInConstructor() {
 		$inputs = new WidgetRegistry($this->templates, $this->view, 'test_widgets');
-		$this->assertInstanceOf('Cake\View\Widget\Label', $inputs->get('text'));
+		$this->assertInstanceOf('Cake\View\Widget\LabelWidget', $inputs->get('text'));
 	}
 
 /**
@@ -84,7 +84,7 @@ class WidgetRegistryTestCase extends TestCase {
 	public function testLoadPluginInConstuctor() {
 		Plugin::load('TestPlugin');
 		$inputs = new WidgetRegistry($this->templates, $this->view, 'TestPlugin.test_widgets');
-		$this->assertInstanceOf('Cake\View\Widget\Label', $inputs->get('text'));
+		$this->assertInstanceOf('Cake\View\Widget\LabelWidget', $inputs->get('text'));
 	}
 
 /**
@@ -95,7 +95,7 @@ class WidgetRegistryTestCase extends TestCase {
 	public function testAdd() {
 		$inputs = new WidgetRegistry($this->templates, $this->view);
 		$result = $inputs->add([
-			'text' => ['Cake\View\Widget\Basic'],
+			'text' => ['Cake\View\Widget\BasicWidget'],
 		]);
 		$this->assertNull($result);
 		$result = $inputs->get('text');
@@ -103,7 +103,7 @@ class WidgetRegistryTestCase extends TestCase {
 
 		$inputs = new WidgetRegistry($this->templates, $this->view);
 		$result = $inputs->add([
-			'hidden' => 'Cake\View\Widget\Basic',
+			'hidden' => 'Cake\View\Widget\BasicWidget',
 		]);
 		$this->assertNull($result);
 		$result = $inputs->get('hidden');
@@ -133,10 +133,10 @@ class WidgetRegistryTestCase extends TestCase {
 	public function testGet() {
 		$inputs = new WidgetRegistry($this->templates, $this->view);
 		$inputs->add([
-			'text' => ['Cake\View\Widget\Basic'],
+			'text' => ['Cake\View\Widget\BasicWidget'],
 		]);
 		$result = $inputs->get('text');
-		$this->assertInstanceOf('Cake\View\Widget\Basic', $result);
+		$this->assertInstanceOf('Cake\View\Widget\BasicWidget', $result);
 		$this->assertSame($result, $inputs->get('text'));
 	}
 
@@ -148,10 +148,10 @@ class WidgetRegistryTestCase extends TestCase {
 	public function testGetFallback() {
 		$inputs = new WidgetRegistry($this->templates, $this->view);
 		$inputs->add([
-			'_default' => ['Cake\View\Widget\Basic'],
+			'_default' => ['Cake\View\Widget\BasicWidget'],
 		]);
 		$result = $inputs->get('text');
-		$this->assertInstanceOf('Cake\View\Widget\Basic', $result);
+		$this->assertInstanceOf('Cake\View\Widget\BasicWidget', $result);
 
 		$result2 = $inputs->get('hidden');
 		$this->assertSame($result, $result2);
@@ -179,23 +179,23 @@ class WidgetRegistryTestCase extends TestCase {
 		$inputs = new WidgetRegistry($this->templates, $this->view);
 		$inputs->clear();
 		$inputs->add([
-			'label' => ['Cake\View\Widget\Label'],
-			'multicheckbox' => ['Cake\View\Widget\MultiCheckbox', 'label']
+			'label' => ['Cake\View\Widget\LabelWidget'],
+			'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'label']
 		]);
 		$result = $inputs->get('multicheckbox');
-		$this->assertInstanceOf('Cake\View\Widget\MultiCheckbox', $result);
+		$this->assertInstanceOf('Cake\View\Widget\MultiCheckboxWidget', $result);
 	}
 
 /**
  * Test getting resolve dependency missing class
  *
  * @expectedException RuntimeException
- * @expectedExceptionMessage Unable to locate widget class "TestApp\View\Derp"
+ * @expectedExceptionMessage Unable to locate widget class "TestApp\View\DerpWidget"
  * @return void
  */
 	public function testGetResolveDependencyMissingClass() {
 		$inputs = new WidgetRegistry($this->templates, $this->view);
-		$inputs->add(['test' => ['TestApp\View\Derp']]);
+		$inputs->add(['test' => ['TestApp\View\DerpWidget']]);
 		$inputs->get('test');
 	}
 
@@ -209,7 +209,7 @@ class WidgetRegistryTestCase extends TestCase {
 	public function testGetResolveDependencyMissingDependency() {
 		$inputs = new WidgetRegistry($this->templates, $this->view);
 		$inputs->clear();
-		$inputs->add(['multicheckbox' => ['Cake\View\Widget\MultiCheckbox', 'label']]);
+		$inputs->add(['multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'label']]);
 		$inputs->get('multicheckbox');
 	}
 

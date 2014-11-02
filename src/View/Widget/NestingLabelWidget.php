@@ -14,7 +14,7 @@
  */
 namespace Cake\View\Widget;
 
-use Cake\View\Widget\Label;
+use Cake\View\Widget\LabelWidget;
 
 /**
  * Form 'widget' for creating labels that contain their input.
@@ -22,7 +22,7 @@ use Cake\View\Widget\Label;
  * Generally this element is used by other widgets,
  * and FormHelper itself.
  */
-class NestingLabel extends Label {
+class NestingLabelWidget extends LabelWidget {
 
 /**
  * The template to use.

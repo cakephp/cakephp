@@ -17,12 +17,12 @@ namespace Cake\Test\TestCase\View\Widget;
 use Cake\Collection\Collection;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\SelectBox;
+use Cake\View\Widget\SelectBoxWidget;
 
 /**
  * SelectBox test case
  */
-class SelectBoxTest extends TestCase {
+class SelectBoxWidgetTest extends TestCase {
 
 /**
  * setup method.
@@ -47,7 +47,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderNoOptions() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',
@@ -67,7 +67,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',
@@ -89,7 +89,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderSimpleIterator() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$options = new \ArrayObject(['a' => 'Albatross', 'b' => 'Budgie']);
 		$data = [
 			'name' => 'Birds[name]',
@@ -113,7 +113,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderSimpleIteratorWithEmpty() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$options = new Collection(['a' => 'Albatross', 'b' => 'Budgie']);
 		$data = [
 			'name' => 'Birds[name]',
@@ -137,7 +137,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderComplex() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',
@@ -166,7 +166,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderSelected() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',
@@ -208,7 +208,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderMultipleSelect() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',
@@ -235,7 +235,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderMultipleSelected() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'multiple' => true,
 			'id' => 'BirdName',
@@ -270,7 +270,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderOptionGroups() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'name' => 'Birds[name]',
 			'options' => [
@@ -316,7 +316,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderOptionGroupsEscape() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'name' => 'Birds[name]',
 			'options' => [
@@ -361,7 +361,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderOptionGroupsWithAttributes() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'name' => 'Birds[name]',
 			'options' => [
@@ -399,7 +399,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderOptionGroupsTraversable() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$mammals = new \ArrayObject(['beaver' => 'Beaver', 'elk' => 'Elk']);
 		$data = [
 			'name' => 'Birds[name]',
@@ -443,7 +443,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderOptionGroupsSelectedAndDisabled() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'name' => 'Birds[name]',
 			'val' => ['1', '2', 'burp'],
@@ -484,7 +484,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderDisabled() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'disabled' => true,
 			'name' => 'Birds[name]',
@@ -503,7 +503,7 @@ class SelectBoxTest extends TestCase {
 		];
 		$this->assertHtml($expected, $result);
 
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'disabled' => [1],
 			'name' => 'numbers',
@@ -527,7 +527,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderDisabledMultiple() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'disabled' => ['a', 'c'],
 			'val' => 'a',
@@ -563,7 +563,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderEmptyOption() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',
@@ -614,7 +614,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderEscapingOption() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'name' => 'Birds[name]',
 			'options' => [
@@ -667,7 +667,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderNullOptions() {
-		$select = new SelectBox($this->templates);
+		$select = new SelectBoxWidget($this->templates);
 		$data = [
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',
