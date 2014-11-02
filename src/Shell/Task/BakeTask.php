@@ -96,6 +96,9 @@ class BakeTask extends Shell {
 	public function main() {
 		if (isset($this->params['plugin'])) {
 			$this->plugin = $this->params['plugin'];
+			if (strpos($this->plugin, '\\')) {
+				return $this->error('Invalid plugin namespace separator, please use / instead of \ for plugins.');
+			}
 		}
 		if (isset($this->params['connection'])) {
 			$this->connection = $this->params['connection'];
