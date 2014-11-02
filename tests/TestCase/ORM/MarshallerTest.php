@@ -874,7 +874,7 @@ class MarshallerTest extends TestCase {
 		$entity->accessible('*', true);
 
 		// Adding a forced join to have another table with the same column names
-		$this->articles->Tags->eventManager()->attach(function($e, $query) {
+		$this->articles->Tags->eventManager()->attach(function ($e, $query) {
 			$left = new IdentifierExpression('Tags.id');
 			$right = new IdentifierExpression('a.id');
 			$query->leftJoin(['a' => 'tags'], $query->newExpr()->eq($left, $right));
