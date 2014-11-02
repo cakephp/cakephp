@@ -34,7 +34,7 @@ class PaginatorHelper extends Helper {
  *
  * @var array
  */
-	public $helpers = ['Url', 'Number'];
+	public $helpers = ['Url', 'Number', 'Html'];
 
 /**
  * Default config for this class
@@ -73,7 +73,6 @@ class PaginatorHelper extends Helper {
 			'sortDesc' => '<a class="desc" href="{{url}}">{{text}}</a>',
 			'sortAscLocked' => '<a class="asc locked" href="{{url}}">{{text}}</a>',
 			'sortDescLocked' => '<a class="desc locked" href="{{url}}">{{text}}</a>',
-			'metaLink' => '<link rel="{{type}}" href="{{url}}">',
 		]
 	];
 
@@ -836,15 +835,15 @@ class PaginatorHelper extends Helper {
 		$links = [];
 
 		if ($this->hasPrev()) {
-			$links[] = $this->templater()->format('metaLink', [
-				'type' => 'prev',
+			$links[] = $this->Html->templater()->format('css', [
+				'rel' => 'prev',
 				'url' => $this->generateUrl(['page' => $params['page'] - 1], null, true)
 			]);
 		}
 
 		if ($this->hasNext()) {
-			$links[] = $this->templater()->format('metaLink', [
-				'type' => 'next',
+			$links[] = $this->Html->templater()->format('css', [
+				'rel' => 'next',
 				'url' => $this->generateUrl(['page' => $params['page'] + 1], null, true)
 			]);
 		}

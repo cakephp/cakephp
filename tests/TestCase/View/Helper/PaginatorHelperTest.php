@@ -2057,7 +2057,7 @@ class PaginatorHelperTest extends TestCase {
 			)
 		);
 
-		$expected = '<link rel="next" href="http://localhost/index?page=2">';
+		$expected = '<link rel="next" href="http://localhost/index?page=2"/>';
 		$result = $this->Paginator->meta();
 		$this->assertSame($expected, $result);
 	}
@@ -2077,7 +2077,7 @@ class PaginatorHelperTest extends TestCase {
 			)
 		);
 
-		$expected = '<link rel="next" href="http://localhost/index?page=2">';
+		$expected = '<link rel="next" href="http://localhost/index?page=2"/>';
 		$this->Paginator->meta(['block' => true]);
 		$result = $this->View->fetch('meta');
 		$this->assertSame($expected, $result);
@@ -2098,8 +2098,9 @@ class PaginatorHelperTest extends TestCase {
 			)
 		);
 
-		$expected = '<link rel="prev" href="http://localhost/index">';
+		$expected = '<link rel="prev" href="http://localhost/index"/>';
 		$result = $this->Paginator->meta();
+
 		$this->assertSame($expected, $result);
 	}
 
@@ -2118,8 +2119,8 @@ class PaginatorHelperTest extends TestCase {
 			)
 		);
 
-		$expected = '<link rel="prev" href="http://localhost/index?page=4">';
-		$expected .= '<link rel="next" href="http://localhost/index?page=6">';
+		$expected = '<link rel="prev" href="http://localhost/index?page=4"/>';
+		$expected .= '<link rel="next" href="http://localhost/index?page=6"/>';
 		$result = $this->Paginator->meta();
 		$this->assertSame($expected, $result);
 	}
