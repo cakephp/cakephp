@@ -66,6 +66,7 @@ class TimestampBehavior extends Behavior {
  * overwrite the events to listen on
  *
  * @param array $config The config for this behavior.
+ * @return void
  */
 	public function initialize(array $config) {
 		if (isset($config['events'])) {

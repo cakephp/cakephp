@@ -83,6 +83,7 @@ class TranslateBehavior extends Behavior {
  * Initialize hook
  *
  * @param array $config The config for this behavior.
+ * @return void
  */
 	public function initialize(array $config) {
 		$this->setupFieldAssociations(
