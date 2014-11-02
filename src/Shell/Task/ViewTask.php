@@ -449,7 +449,7 @@ class ViewTask extends BakeTask {
 				$assocName = $assoc->name();
 				$alias = $target->alias();
 				$targetClass = get_class($target);
-				list($_, $className) = namespaceSplit($targetClass);
+				list(, $className) = namespaceSplit($targetClass);
 
 				$modelClass = get_class($model);
 				if ($modelClass !== 'Cake\ORM\Table' && $targetClass === $modelClass) {
