@@ -73,6 +73,7 @@ class PaginatorHelper extends Helper {
 			'sortDesc' => '<a class="desc" href="{{url}}">{{text}}</a>',
 			'sortAscLocked' => '<a class="asc locked" href="{{url}}">{{text}}</a>',
 			'sortDescLocked' => '<a class="desc locked" href="{{url}}">{{text}}</a>',
+			'metaLink' => '<link rel="{{type}}" href="{{url}}">',
 		]
 	];
 
@@ -808,6 +809,56 @@ class PaginatorHelper extends Helper {
 			]);
 		}
 		return $out;
+	}
+/**
+ * Returns the meta-links for a paginated result set
+ *
+ * `echo $this->Paginator->meta();`
+ *
+ * Echos the links directly, will output nothing of there is neither a previous nor next page.
+ *
+ * `$this->Paginator->meta(['block' => true]);`
+ *
+ * Will append the output of the meta function to the named block - if true is passed the "meta"
+ * block is used
+ *
+ * ### Options:
+ *
+ * - `model` The model to use defaults to PaginatorHelper::defaultModel()
+ * - `block` The block name to append the output to, or false/absenst to return as a string
+ *
+ * @param array $options Array of options
+ * @return string|null meta links
+ */
+	public function meta($options = []) {
+		$model = isset($options['model']) ? $options['model'] : null;
+		$params = $this->params($model);
+		$links = [];
+
+		if ($this->hasPrev()) {
+			$links[] = $this->templater()->format('metaLink', [
+				'type' => 'prev',
+				'url' => $this->generateUrl(['page' => $params['page'] - 1], null, true)
+			]);
+		}
+
+		if ($this->hasNext()) {
+			$links[] = $this->templater()->format('metaLink', [
+				'type' => 'next',
+				'url' => $this->generateUrl(['page' => $params['page'] + 1], null, true)
+			]);
+		}
+
+		$out = implode($links);
+
+		if (empty($options['block'])) {
+			return $out;
+		}
+
+		if ($options['block'] === true) {
+			$options['block'] = __FUNCTION__;
+		}
+		$this->_View->append($options['block'], $out);
 	}
 
 /**
