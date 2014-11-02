@@ -591,20 +591,6 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Read or set the instance is-cache results
- *
- * @param array|null $results
- * @return array|void
- */
-	public function isCache($results = null) {
-		if ($results === null) {
-			return $this->_isResults;
-		}
-
-		$this->_isResults = (array)$results;
-	}
-
-/**
  * Worker for the public is function
  *
  * @param string|array $type The type of request you want to check. If an array
