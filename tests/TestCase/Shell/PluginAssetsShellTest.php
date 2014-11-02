@@ -96,9 +96,9 @@ class PluginAssetsShellTest extends TestCase {
 	public function testSymlinkWhenVendorDirectoryExits() {
 		Plugin::load('Company/TestPluginThree');
 
-		// codingStandardsIgnoreStart
+		// @codingStandardsIgnoreStart
 		@mkdir(WWW_ROOT . 'company'); // Appveyor is unable to delete the folder in testSymlink() method
-		// codingStandardsIgnoreEnd
+		// @codingStandardsIgnoreEnd
 
 		$this->shell->symlink();
 		$path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
