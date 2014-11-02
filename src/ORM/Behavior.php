@@ -104,6 +104,13 @@ class Behavior implements EventListenerInterface {
 	use InstanceConfigTrait;
 
 /**
+ * Table instance.
+ *
+ * @var \Cake\ORM\Table
+ */
+	protected $_table;
+
+/**
  * Reflection method cache for behaviors.
  *
  * Stores the reflected method + finder methods per class.
@@ -145,6 +152,7 @@ class Behavior implements EventListenerInterface {
 			$config
 		);
 		$this->config($config);
+		$this->_table = $table;
 	}
 
 /**

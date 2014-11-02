@@ -39,13 +39,6 @@ use Cake\ORM\TableRegistry;
 class TranslateBehavior extends Behavior {
 
 /**
- * Table instance
- *
- * @var \Cake\ORM\Table
- */
-	protected $_table;
-
-/**
  * The locale name that will be used to override fields in the bound table
  * from the translations table
  *
@@ -78,7 +71,6 @@ class TranslateBehavior extends Behavior {
 		$config += ['defaultLocale' => I18n::defaultLocale()];
 		parent::__construct($table, $config);
 
-		$this->_table = $table;
 		$config = $this->_config;
 		$this->setupFieldAssociations($config['fields'], $config['translationTable']);
 	}
