@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
@@ -874,7 +875,9 @@ class MarshallerTest extends TestCase {
 
 		// Adding a forced join to have another table with the same column names
 		$this->articles->Tags->eventManager()->attach(function($e, $query) {
-			$query->leftJoin(['a' => 'tags'], ['Tags.id = a.id']);
+			$left = new IdentifierExpression('Tags.id');
+			$right = new IdentifierExpression('a.id');
+			$query->leftJoin(['a' => 'tags'], $query->newExpr()->eq($left, $right));
 		}, 'Model.beforeFind');
 
 		$marshall = new Marshaller($this->articles);
