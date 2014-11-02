@@ -18,12 +18,12 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\Widget\WidgetInterface;
 
 /**
- * Input widget class for generating a file upload control.
+ * Input widget class for generating a textarea control.
  *
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class File implements WidgetInterface {
+class TextareaWidget implements WidgetInterface {
 
 /**
  * Constructor
@@ -35,30 +35,29 @@ class File implements WidgetInterface {
 	}
 
 /**
- * Render a file upload form widget.
+ * Render a text area form widget.
  *
  * Data supports the following keys:
  *
  * - `name` - Set the input name.
+ * - `val` - A string of the option to mark as selected.
  * - `escape` - Set to false to disable HTML escaping.
  *
  * All other keys will be converted into HTML attributes.
- * Unlike other input objects the `val` property will be specifically
- * ignored.
  *
- * @param array $data The data to build a file input with.
+ * @param array $data The data to build a textarea with.
  * @param \Cake\View\Form\ContextInterface $context The current form context.
  * @return string HTML elements.
  */
 	public function render(array $data, ContextInterface $context) {
 		$data += [
+			'val' => '',
 			'name' => '',
 			'escape' => true,
 		];
-		unset($data['val']);
-
-		return $this->_templates->format('file', [
+		return $this->_templates->format('textarea', [
 			'name' => $data['name'],
+			'value' => $data['escape'] ? h($data['val']) : $data['val'],
 			'attrs' => $this->_templates->formatAttributes(
 				$data, ['name', 'val']
 			)
@@ -69,11 +68,7 @@ class File implements WidgetInterface {
  * {@inheritDoc}
  */
 	public function secureFields(array $data) {
-		$fields = [];
-		foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $suffix) {
-			$fields[] = $data['name'] . '[' . $suffix . ']';
-		}
-		return $fields;
+		return [$data['name']];
 	}
 
 }

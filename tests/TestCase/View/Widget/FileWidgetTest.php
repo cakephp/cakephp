@@ -16,12 +16,12 @@ namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\File;
+use Cake\View\Widget\FileWidget;
 
 /**
  * File input test.
  */
-class FileTest extends TestCase {
+class FileWidgetTest extends TestCase {
 
 /**
  * setup
@@ -43,7 +43,7 @@ class FileTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$input = new File($this->templates);
+		$input = new FileWidget($this->templates);
 		$result = $input->render(['name' => 'image'], $this->context);
 		$expected = [
 			'input' => ['type' => 'file', 'name' => 'image'],
@@ -57,7 +57,7 @@ class FileTest extends TestCase {
  * @return void
  */
 	public function testRenderAttributes() {
-		$input = new File($this->templates);
+		$input = new FileWidget($this->templates);
 		$data = ['name' => 'image', 'required' => true, 'val' => 'nope'];
 		$result = $input->render($data, $this->context);
 		$expected = [

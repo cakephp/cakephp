@@ -16,13 +16,13 @@ namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\Label;
-use Cake\View\Widget\MultiCheckbox;
+use Cake\View\Widget\LabelWidget;
+use Cake\View\Widget\MultiCheckboxWidget;
 
 /**
  * MultiCheckbox test case.
  */
-class MultiCheckboxTest extends TestCase {
+class MultiCheckboxWidgetTest extends TestCase {
 
 /**
  * setup method.
@@ -46,8 +46,8 @@ class MultiCheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$label = new Label($this->templates);
-		$input = new MultiCheckbox($this->templates, $label);
+		$label = new LabelWidget($this->templates);
+		$input = new MultiCheckboxWidget($this->templates, $label);
 		$data = [
 			'name' => 'Tags[id]',
 			'options' => [
@@ -89,8 +89,8 @@ class MultiCheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderComplex() {
-		$label = new Label($this->templates);
-		$input = new MultiCheckbox($this->templates, $label);
+		$label = new LabelWidget($this->templates);
+		$input = new MultiCheckboxWidget($this->templates, $label);
 		$data = [
 			'name' => 'Tags[id]',
 			'options' => [
@@ -134,8 +134,8 @@ class MultiCheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderEscaping() {
-		$label = new Label($this->templates);
-		$input = new MultiCheckbox($this->templates, $label);
+		$label = new LabelWidget($this->templates);
+		$input = new MultiCheckboxWidget($this->templates, $label);
 		$data = [
 			'name' => 'Tags[id]',
 			'options' => [
@@ -165,8 +165,8 @@ class MultiCheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderSelected() {
-		$label = new Label($this->templates);
-		$input = new MultiCheckbox($this->templates, $label);
+		$label = new LabelWidget($this->templates);
+		$input = new MultiCheckboxWidget($this->templates, $label);
 		$data = [
 			'name' => 'Tags[id]',
 			'options' => [
@@ -219,8 +219,8 @@ class MultiCheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderDisabled() {
-		$label = new Label($this->templates);
-		$input = new MultiCheckbox($this->templates, $label);
+		$label = new LabelWidget($this->templates);
+		$input = new MultiCheckboxWidget($this->templates, $label);
 		$data = [
 			'name' => 'Tags[id]',
 			'options' => [

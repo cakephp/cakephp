@@ -24,7 +24,7 @@ use Cake\View\Widget\WidgetInterface;
  * If you need to make basic submit inputs with type=submit,
  * use the Basic input widget.
  */
-class Button implements WidgetInterface {
+class ButtonWidget implements WidgetInterface {
 
 /**
  * StringTemplate instance.

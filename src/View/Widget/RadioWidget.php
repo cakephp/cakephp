@@ -25,7 +25,7 @@ use Traversable;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class Radio implements WidgetInterface {
+class RadioWidget implements WidgetInterface {
 
 	use IdGeneratorTrait;
 

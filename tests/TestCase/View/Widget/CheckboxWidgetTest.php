@@ -16,12 +16,12 @@ namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\Checkbox;
+use Cake\View\Widget\CheckboxWidget;
 
 /**
  * Checkbox test case
  */
-class CheckboxTest extends TestCase {
+class CheckboxWidgetTest extends TestCase {
 
 /**
  * setup method.
@@ -43,7 +43,7 @@ class CheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$checkbox = new Checkbox($this->templates);
+		$checkbox = new CheckboxWidget($this->templates);
 		$data = [
 			'name' => 'Comment[spam]',
 		];
@@ -78,7 +78,7 @@ class CheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderDisabled() {
-		$checkbox = new Checkbox($this->templates);
+		$checkbox = new CheckboxWidget($this->templates);
 		$data = [
 			'name' => 'Comment[spam]',
 			'disabled' => true,
@@ -101,7 +101,7 @@ class CheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderChecked() {
-		$checkbox = new Checkbox($this->templates);
+		$checkbox = new CheckboxWidget($this->templates);
 		$data = [
 			'name' => 'Comment[spam]',
 			'value' => 1,
@@ -167,7 +167,7 @@ class CheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderCheckedValue($checked) {
-		$checkbox = new Checkbox($this->templates);
+		$checkbox = new CheckboxWidget($this->templates);
 		$data = [
 			'name' => 'Comment[spam]',
 			'value' => 1,
@@ -207,7 +207,7 @@ class CheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderUnCheckedValue($checked) {
-		$checkbox = new Checkbox($this->templates);
+		$checkbox = new CheckboxWidget($this->templates);
 		$data = [
 			'name' => 'Comment[spam]',
 			'value' => 1,

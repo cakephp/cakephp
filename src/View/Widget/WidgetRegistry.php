@@ -43,19 +43,7 @@ class WidgetRegistry {
  *
  * @var array
  */
-	protected $_widgets = [
-		'button' => ['Cake\View\Widget\Button'],
-		'checkbox' => ['Cake\View\Widget\Checkbox'],
-		'file' => ['Cake\View\Widget\File'],
-		'label' => ['Cake\View\Widget\Label'],
-		'nestingLabel' => ['Cake\View\Widget\NestingLabel'],
-		'multicheckbox' => ['Cake\View\Widget\MultiCheckbox', 'nestingLabel'],
-		'radio' => ['Cake\View\Widget\Radio', 'nestingLabel'],
-		'select' => ['Cake\View\Widget\SelectBox'],
-		'textarea' => ['Cake\View\Widget\Textarea'],
-		'datetime' => ['Cake\View\Widget\DateTime', 'select'],
-		'_default' => ['Cake\View\Widget\Basic'],
-	];
+	protected $_widgets = [];
 
 /**
  * Templates to use.
@@ -80,7 +68,7 @@ class WidgetRegistry {
 				$this->add($widgets);
 			}
 		}
-		$this->add(['_view' => $view]);
+		$this->_widgets['_view'] = $view;
 	}
 
 /**
@@ -106,7 +94,7 @@ class WidgetRegistry {
  *
  * {{{
  * $registry->add([
- *   'label' => new MyLabel($templates),
+ *   'label' => new MyLabelWidget($templates),
  *   'checkbox' => ['Fancy.MyCheckbox', 'label']
  * ]);
  * }}}
@@ -117,8 +105,18 @@ class WidgetRegistry {
  *
  * @param array $widgets Array of widgets to use.
  * @return void
+ * @throws \RuntimeException When class does not implement WidgetInterface.
  */
 	public function add(array $widgets) {
+		foreach ($widgets as $object) {
+			if (gettype($object) === 'object' &&
+				!($object instanceof WidgetInterface)
+			) {
+				throw new \RuntimeException(
+					'Widget objects must implement Cake\View\Widget\WidgetInterface.'
+				);
+			}
+		}
 		$this->_widgets = $widgets + $this->_widgets;
 	}
 
@@ -164,20 +162,16 @@ class WidgetRegistry {
  */
 	protected function _resolveWidget($widget) {
 		$type = gettype($widget);
-		if ($type === 'object' && $widget instanceof WidgetInterface) {
+		if ($type === 'object') {
 			return $widget;
 		}
-		if ($type === 'object') {
-			throw new \RuntimeException(
-				'Input objects must implement Cake\View\Widget\WidgetInterface.'
-			);
-		}
+
 		if ($type === 'string') {
 			$widget = [$widget];
 		}
 
 		$class = array_shift($widget);
-		$className = App::className($class, 'View/Input');
+		$className = App::className($class, 'View/Widget', 'Widget');
 		if ($className === false || !class_exists($className)) {
 			throw new \RuntimeException(sprintf('Unable to locate widget class "%s"', $class));
 		}

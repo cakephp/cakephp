@@ -18,15 +18,23 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\Widget\WidgetInterface;
 
 /**
- * Input widget class for generating a textarea control.
+ * Basic input class.
  *
- * This class is intended as an internal implementation detail
- * of Cake\View\Helper\FormHelper and is not intended for direct use.
+ * This input class can be used to render basic simple
+ * input elements like hidden, text, email, tel and other
+ * types.
  */
-class Textarea implements WidgetInterface {
+class BasicWidget implements WidgetInterface {
 
 /**
- * Constructor
+ * StringTemplate instance.
+ *
+ * @var \Cake\View\StringTemplate
+ */
+	protected $_templates;
+
+/**
+ * Constructor.
  *
  * @param \Cake\View\StringTemplate $templates Templates list.
  */
@@ -35,32 +43,37 @@ class Textarea implements WidgetInterface {
 	}
 
 /**
- * Render a text area form widget.
+ * Render a text widget or other simple widget like email/tel/number.
  *
- * Data supports the following keys:
+ * This method accepts a number of keys:
  *
- * - `name` - Set the input name.
- * - `val` - A string of the option to mark as selected.
- * - `escape` - Set to false to disable HTML escaping.
+ * - `name` The name attribute.
+ * - `val` The value attribute.
+ * - `escape` Set to false to disable escaping on all attributes.
  *
- * All other keys will be converted into HTML attributes.
+ * Any other keys provided in $data will be converted into HTML attributes.
  *
- * @param array $data The data to build a textarea with.
+ * @param array $data The data to build an input with.
  * @param \Cake\View\Form\ContextInterface $context The current form context.
- * @return string HTML elements.
+ * @return string
  */
 	public function render(array $data, ContextInterface $context) {
 		$data += [
-			'val' => '',
 			'name' => '',
+			'val' => null,
+			'type' => 'text',
 			'escape' => true,
 		];
-		return $this->_templates->format('textarea', [
+		$data['value'] = $data['val'];
+		unset($data['val']);
+
+		return $this->_templates->format('input', [
 			'name' => $data['name'],
-			'value' => $data['escape'] ? h($data['val']) : $data['val'],
+			'type' => $data['type'],
 			'attrs' => $this->_templates->formatAttributes(
-				$data, ['name', 'val']
-			)
+				$data,
+				['name', 'type']
+			),
 		]);
 	}
 
