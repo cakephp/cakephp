@@ -43,19 +43,7 @@ class WidgetRegistry {
  *
  * @var array
  */
-	protected $_widgets = [
-		'button' => ['Cake\View\Widget\ButtonWidget'],
-		'checkbox' => ['Cake\View\Widget\CheckboxWidget'],
-		'file' => ['Cake\View\Widget\FileWidget'],
-		'label' => ['Cake\View\Widget\LabelWidget'],
-		'nestingLabel' => ['Cake\View\Widget\NestingLabelWidget'],
-		'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'nestingLabel'],
-		'radio' => ['Cake\View\Widget\RadioWidget', 'nestingLabel'],
-		'select' => ['Cake\View\Widget\SelectBoxWidget'],
-		'textarea' => ['Cake\View\Widget\TextareaWidget'],
-		'datetime' => ['Cake\View\Widget\DateTimeWidget', 'select'],
-		'_default' => ['Cake\View\Widget\BasicWidget'],
-	];
+	protected $_widgets = [];
 
 /**
  * Templates to use.
