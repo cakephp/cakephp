@@ -2023,7 +2023,7 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
- * Verify that no next and prev links are created for single page results
+ * Verifies that no next and prev links are created for single page results.
  *
  * @return void
  */
@@ -2043,7 +2043,7 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
- * Verify that page 1 only has a next link
+ * Verifies that page 1 only has a next link.
  *
  * @return void
  */
@@ -2063,7 +2063,7 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
- * Verify that the method will append to a block
+ * Verifies that the method will append to a block.
  *
  * @return void
  */
@@ -2084,7 +2084,7 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
- * Verify that the last page only has a prev link
+ * Verifies that the last page only has a prev link.
  *
  * @return void
  */
@@ -2105,7 +2105,7 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
- * Verify that a page in the middle has both links
+ * Verifies that a page in the middle has both links.
  *
  * @return void
  */
@@ -2124,4 +2124,5 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->meta();
 		$this->assertSame($expected, $result);
 	}
+
 }

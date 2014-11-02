@@ -810,7 +810,7 @@ class PaginatorHelper extends Helper {
 		return $out;
 	}
 /**
- * Returns the meta-links for a paginated result set
+ * Returns the meta-links for a paginated result set.
  *
  * `echo $this->Paginator->meta();`
  *
@@ -819,7 +819,7 @@ class PaginatorHelper extends Helper {
  * `$this->Paginator->meta(['block' => true]);`
  *
  * Will append the output of the meta function to the named block - if true is passed the "meta"
- * block is used
+ * block is used.
  *
  * ### Options:
  *
@@ -827,9 +827,9 @@ class PaginatorHelper extends Helper {
  * - `block` The block name to append the output to, or false/absenst to return as a string
  *
  * @param array $options Array of options
- * @return string|null meta links
+ * @return string|null Meta links
  */
-	public function meta($options = []) {
+	public function meta(array $options = []) {
 		$model = isset($options['model']) ? $options['model'] : null;
 		$params = $this->params($model);
 		$links = [];
