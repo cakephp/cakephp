@@ -122,7 +122,6 @@ class WidgetRegistryTestCase extends TestCase {
 		$inputs->add([
 			'text' => new \StdClass()
 		]);
-		$inputs->get('text');
 	}
 
 /**

@@ -80,7 +80,7 @@ class WidgetRegistry {
 				$this->add($widgets);
 			}
 		}
-		$this->add(['_view' => $view]);
+		$this->_widgets['_view'] = $view;
 	}
 
 /**
@@ -106,7 +106,7 @@ class WidgetRegistry {
  *
  * {{{
  * $registry->add([
- *   'label' => new MyLabel($templates),
+ *   'label' => new MyLabelWidget($templates),
  *   'checkbox' => ['Fancy.MyCheckbox', 'label']
  * ]);
  * }}}
@@ -117,8 +117,18 @@ class WidgetRegistry {
  *
  * @param array $widgets Array of widgets to use.
  * @return void
+ * @throws \RuntimeException When class does not implement WidgetInterface.
  */
 	public function add(array $widgets) {
+		foreach ($widgets as $object) {
+			if (gettype($object) === 'object' &&
+				!($object instanceof WidgetInterface)
+			) {
+				throw new \RuntimeException(
+					'Widget objects must implement Cake\View\Widget\WidgetInterface.'
+				);
+			}
+		}
 		$this->_widgets = $widgets + $this->_widgets;
 	}
 
@@ -160,20 +170,14 @@ class WidgetRegistry {
  * @param mixed $widget The widget to get
  * @return WidgetInterface
  * @throws \RuntimeException when class cannot be loaded or does not
- *   implement WidgetInterface or not a View instance.
+ *   implement WidgetInterface.
  */
 	protected function _resolveWidget($widget) {
 		$type = gettype($widget);
-		if ($type === 'object' &&
-			($widget instanceof WidgetInterface || $widget instanceof View)
-		) {
+		if ($type === 'object') {
 			return $widget;
 		}
-		if ($type === 'object') {
-			throw new \RuntimeException(
-				'Widget objects must implement Cake\View\Widget\WidgetInterface.'
-			);
-		}
+
 		if ($type === 'string') {
 			$widget = [$widget];
 		}
