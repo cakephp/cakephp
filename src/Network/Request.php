@@ -137,7 +137,7 @@ class Request implements \ArrayAccess {
  *
  * @var array
  */
-	protected $_isResults = [];
+	protected $_detectorCache = [];
 
 /**
  * Copy of php://input. Since this stream can only be read once in most SAPI's
@@ -593,11 +593,20 @@ class Request implements \ArrayAccess {
 			return false;
 		}
 
-		if (!isset($this->_isResults[$type])) {
-			$this->_isResults[$type] = $this->_is($type);
+		if (!isset($this->_detectorCache[$type])) {
+			$this->_detectorCache[$type] = $this->_is($type);
 		}
 
-		return $this->_isResults[$type];
+		return $this->_detectorCache[$type];
+	}
+
+/**
+ * Clears the instance detector cache, used by the is() function
+ *
+ * @return void
+ */
+	public function clearDetectorCache() {
+		$this->_detectorCache = [];
 	}
 
 /**
@@ -1084,7 +1093,7 @@ class Request implements \ArrayAccess {
 	public function env($key, $value = null) {
 		if ($value !== null) {
 			$this->_environment[$key] = $value;
-			$this->_isResults = [];
+			$this->clearDetectorCache();
 			return $this;
 		}
 
