@@ -1084,6 +1084,7 @@ class Request implements \ArrayAccess {
 	public function env($key, $value = null) {
 		if ($value !== null) {
 			$this->_environment[$key] = $value;
+			$this->_isResults = [];
 			return $this;
 		}
 
