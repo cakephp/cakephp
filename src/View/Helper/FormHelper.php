@@ -74,20 +74,6 @@ class FormHelper extends Helper {
 			'date' => 'date', 'float' => 'number', 'integer' => 'number',
 			'decimal' => 'number', 'binary' => 'file', 'uuid' => 'string'
 		],
-		'widgets' => [
-			'button' => ['Cake\View\Widget\ButtonWidget'],
-			'checkbox' => ['Cake\View\Widget\CheckboxWidget'],
-			'file' => ['Cake\View\Widget\FileWidget'],
-			'label' => ['Cake\View\Widget\LabelWidget'],
-			'nestingLabel' => ['Cake\View\Widget\NestingLabelWidget'],
-			'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'nestingLabel'],
-			'radio' => ['Cake\View\Widget\RadioWidget', 'nestingLabel'],
-			'select' => ['Cake\View\Widget\SelectBoxWidget'],
-			'textarea' => ['Cake\View\Widget\TextareaWidget'],
-			'datetime' => ['Cake\View\Widget\DateTimeWidget', 'select'],
-			'_default' => ['Cake\View\Widget\BasicWidget'],
-		],
-		'registry' => null,
 		'templates' => [
 			'button' => '<button{{attrs}}>{{text}}</button>',
 			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
@@ -119,6 +105,25 @@ class FormHelper extends Helper {
 			'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
 			'submitContainer' => '<div class="submit">{{content}}</div>',
 		]
+	];
+
+/**
+ * Default widgets
+ *
+ * @var array
+ */
+	protected $_defaultWigets = [
+		'button' => ['Cake\View\Widget\ButtonWidget'],
+		'checkbox' => ['Cake\View\Widget\CheckboxWidget'],
+		'file' => ['Cake\View\Widget\FileWidget'],
+		'label' => ['Cake\View\Widget\LabelWidget'],
+		'nestingLabel' => ['Cake\View\Widget\NestingLabelWidget'],
+		'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'nestingLabel'],
+		'radio' => ['Cake\View\Widget\RadioWidget', 'nestingLabel'],
+		'select' => ['Cake\View\Widget\SelectBoxWidget'],
+		'textarea' => ['Cake\View\Widget\TextareaWidget'],
+		'datetime' => ['Cake\View\Widget\DateTimeWidget', 'select'],
+		'_default' => ['Cake\View\Widget\BasicWidget'],
 	];
 
 /**
@@ -190,17 +195,25 @@ class FormHelper extends Helper {
  * @param array $config Configuration settings for the helper.
  */
 	public function __construct(View $View, array $config = []) {
+		$registry = null;
+		$widgets = $this->_defaultWigets;
+		if (isset($config['registry'])) {
+			$registry = $config['registry'];
+			unset($config['registry']);
+		}
+		if (isset($config['widgets'])) {
+			$widgets = $config['widgets'] + $widgets;
+			unset($config['widgets']);
+		}
+
 		parent::__construct($View, $config);
-		$config = $this->_config;
 
-		$this->widgetRegistry($config['registry'], $config['widgets']);
-		$this->config(['widgets' => null, 'registry' => null]);
-
+		$this->widgetRegistry($registry, $widgets);
 		$this->_addDefaultContextProviders();
 	}
 
 /**
- * Set the input registry the helper will use.
+ * Set the wiget registry the helper will use.
  *
  * @param \Cake\View\Widget\WidgetRegistry $instance The registry instance to set.
  * @param array $widgets An array of widgets
