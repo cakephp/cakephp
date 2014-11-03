@@ -610,7 +610,7 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Worker for the public is function
+ * Worker for the public is() function
  *
  * @param string|array $type The type of request you want to check. If an array
  *   this method will return true if the request matches any type.
