@@ -112,7 +112,7 @@ class FormHelper extends Helper {
  *
  * @var array
  */
-	protected $_defaultWigets = [
+	protected $_defaultWidgets = [
 		'button' => ['Cake\View\Widget\ButtonWidget'],
 		'checkbox' => ['Cake\View\Widget\CheckboxWidget'],
 		'file' => ['Cake\View\Widget\FileWidget'],
@@ -196,7 +196,7 @@ class FormHelper extends Helper {
  */
 	public function __construct(View $View, array $config = []) {
 		$registry = null;
-		$widgets = $this->_defaultWigets;
+		$widgets = $this->_defaultWidgets;
 		if (isset($config['registry'])) {
 			$registry = $config['registry'];
 			unset($config['registry']);
