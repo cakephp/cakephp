@@ -73,7 +73,7 @@ class PluginTest extends TestCase {
  * @return void
  */
 	public function testLoadSingleWithAutoload() {
-		$this->assertFalse(class_exists('Company/TestPluginThree\Utility\Hello'));
+		$this->assertFalse(class_exists('Company\TestPluginThree\Utility\Hello'));
 		Plugin::load('Company/TestPluginThree', [
 			'autoload' => true,
 		]);
