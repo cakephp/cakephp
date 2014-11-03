@@ -209,7 +209,7 @@ class FormHelperTest extends TestCase {
  *
  * @return void
  */
-	public function testConstructWithWigets() {
+	public function testConstructWithWidgets() {
 		$expected = [
 			'button' => ['Cake\View\Widget\ButtonWidget'],
 			'checkbox' => ['Cake\View\Widget\CheckboxWidget'],

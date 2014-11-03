@@ -213,7 +213,7 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Set the wiget registry the helper will use.
+ * Set the widget registry the helper will use.
  *
  * @param \Cake\View\Widget\WidgetRegistry $instance The registry instance to set.
  * @param array $widgets An array of widgets
