@@ -90,6 +90,26 @@ class ShellDispatcherTest extends TestCase {
 	}
 
 /**
+ * testAddShortPluginAlias
+ *
+ * @return void
+ */
+	public function testAddShortPluginAlias() {
+		$expected = [
+			'Example' => 'TestPlugin.example'
+		];
+		$result = $this->dispatcher->addShortPluginAliases();
+		$this->assertSame($expected, $result, 'Should return the list of aliased plugin shells');
+
+		ShellDispatcher::alias('Example', 'SomeOther.PluginsShell');
+		$expected = [
+			'Example' => 'SomeOther.PluginsShell'
+		];
+		$result = $this->dispatcher->addShortPluginAliases();
+		$this->assertSame($expected, $result, 'Should not overwrite existing aliases');
+	}
+
+/**
  * Test getting shells with aliases.
  *
  * @return void
