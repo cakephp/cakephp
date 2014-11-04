@@ -40,10 +40,6 @@ class OrmCacheShell extends Shell {
 		if (!$schema) {
 			return false;
 		}
-		if (!$schema->cacheMetadata()) {
-			$this->_io->verbose('Metadata cache was disabled in config. Enabling to write cache.');
-			$schema->cacheMetadata(true);
-		}
 		$tables = [$name];
 		if (empty($name)) {
 			$tables = $schema->listTables();
@@ -70,10 +66,6 @@ class OrmCacheShell extends Shell {
 		$tables = [$name];
 		if (empty($name)) {
 			$tables = $schema->listTables();
-		}
-		if (!$schema->cacheMetadata()) {
-			$this->_io->verbose('Metadata cache was disabled in config. Enabling to clear cache.');
-			$schema->cacheMetadata(true);
 		}
 		$configName = $schema->cacheMetadata();
 
@@ -103,6 +95,11 @@ class OrmCacheShell extends Shell {
 				$this->params['connection']);
 			$this->error($msg);
 			return false;
+		}
+		$config = $source->config();
+		if (empty($config['cacheMetadata'])) {
+			$this->_io->verbose('Metadata cache was disabled in config. Enabling to clear cache.');
+			$source->cacheMetadata(true);
 		}
 		return $source->schemaCollection();
 	}
