@@ -21,7 +21,7 @@ matrix:
     - php: 5.4
       env: PHPCS=1
     - php: hhvm-nightly
-      env: HHVM=1 DB=sqlite db_dsn='sqlite:///memory:'
+      env: HHVM=1 DB=sqlite db_dsn='sqlite://:memory:'
     - php: hhvm-nightly
       env: HHVM=1 DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
 
