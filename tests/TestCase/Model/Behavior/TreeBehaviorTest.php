@@ -196,7 +196,7 @@ class TreeBehaviorTest extends TestCase {
 	}
 
 /**
- * Tests the find('treeList') method after moveUp, moveDown 
+ * Tests the find('treeList') method after moveUp, moveDown
  *
  * @return void
  */
