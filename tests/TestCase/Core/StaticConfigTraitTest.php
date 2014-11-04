@@ -203,11 +203,11 @@ class StaticConfigTraitTest extends TestCase {
 		];
 		$this->assertEquals($expected, TestConnectionManagerStaticConfig::parseDsn($dsn));
 
-		$dsn = 'sqlite://:memory:';
+		$dsn = 'sqlite:///:memory:';
 		$expected = [
 			'className' => 'Cake\Database\Connection',
 			'driver' => 'Cake\Database\Driver\Sqlite',
-			'host' => ':memory:',
+			'database' => ':memory:',
 			'scheme' => 'sqlite',
 		];
 		$this->assertEquals($expected, TestConnectionManagerStaticConfig::parseDsn($dsn));
