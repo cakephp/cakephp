@@ -670,7 +670,18 @@ class ModelTask extends BakeTask {
 		}
 
 		$this->_modelNames = [];
-		$this->_tables = $this->_getAllTables();
+		$tables = $this->_getAllTables();
+
+		$db = ConnectionManager::get($this->connection);
+		$prefix = $db->getPrefix();
+
+		foreach ($tables as $key => $table) {
+			if ($prefix !== '' && strpos($table, $prefix) === 0 && $table !== $prefix) {
+				$tables[$key] = preg_replace('/^(' . $prefix . ')/', '', $table);
+			}
+		}
+		$this->_tables = $tables;
+
 		foreach ($this->_tables as $table) {
 			$this->_modelNames[] = $this->_camelize($table);
 		}
@@ -696,6 +707,7 @@ class ModelTask extends BakeTask {
 		}
 		$schema = $db->schemaCollection();
 		$tables = $schema->listTables();
+
 		if (empty($tables)) {
 			$this->err('Your database does not have any tables.');
 			return $this->_stop();
