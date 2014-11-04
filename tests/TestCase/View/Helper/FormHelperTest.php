@@ -204,6 +204,46 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test that when specifying custom widgets the config array for that widget
+ * is overwritten instead of merged.
+ *
+ * @return void
+ */
+	public function testConstructWithWidgets() {
+		$expected = [
+			'button' => ['Cake\View\Widget\ButtonWidget'],
+			'checkbox' => ['Cake\View\Widget\CheckboxWidget'],
+			'file' => ['Cake\View\Widget\FileWidget'],
+			'label' => ['Cake\View\Widget\LabelWidget'],
+			'nestingLabel' => ['Cake\View\Widget\NestingLabelWidget'],
+			'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'nestingLabel'],
+			'radio' => ['Cake\View\Widget\RadioWidget', 'nestingLabel'],
+			'select' => ['Cake\View\Widget\SelectBoxWidget'],
+			'textarea' => ['Cake\View\Widget\TextareaWidget'],
+			'datetime' => ['MyPlugin\View\Widget\DateTimeWidget', 'select'],
+			'_default' => ['Cake\View\Widget\BasicWidget']
+		];
+
+		$helper = $this->getMock(
+			'Cake\View\Helper\FormHelper',
+			['widgetRegistry'],
+			[],
+			'',
+			false
+		);
+		$helper->expects($this->once())
+			->method('widgetRegistry')
+			->with(null, $expected);
+
+		$config = [
+			'widgets' => [
+				'datetime' => ['MyPlugin\View\Widget\DateTimeWidget', 'select']
+			]
+		];
+		$helper->__construct($this->View, $config);
+	}
+
+/**
  * Test registering a new widget class and rendering it.
  *
  * @return void
