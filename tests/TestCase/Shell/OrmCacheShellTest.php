@@ -65,6 +65,34 @@ class OrmCacheShellTest extends TestCase {
 	}
 
 /**
+ * Test that clear enables the cache if it was disabled.
+ *
+ * @return void
+ */
+	public function testClearEnablesMetadataCache() {
+		$ds = ConnectionManager::get('test');
+		$ds->cacheMetadata(false);
+
+		$this->shell->params['connection'] = 'test';
+		$this->shell->clear();
+		$this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
+	}
+
+/**
+ * Test that build enables the cache if it was disabled.
+ *
+ * @return void
+ */
+	public function testBuildEnablesMetadataCache() {
+		$ds = ConnectionManager::get('test');
+		$ds->cacheMetadata(false);
+
+		$this->shell->params['connection'] = 'test';
+		$this->shell->build();
+		$this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
+	}
+
+/**
  * Test build() with no args.
  *
  * @return void
