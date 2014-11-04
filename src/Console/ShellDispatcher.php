@@ -190,7 +190,7 @@ class ShellDispatcher {
  * This permits a plugin which implements a shell of the same name to be accessed
  * Using the shell name alone
  *
- * @return void
+ * @return array the resultant list of aliases
  */
 	public function addShortPluginAliases() {
 		$plugins = Plugin::loaded();
@@ -208,14 +208,6 @@ class ShellDispatcher {
 			}
 
 			foreach ($list[$plugin] as $shell) {
-				if (isset($aliases[$shell])) {
-					$other = $aliased[$shell];
-					Log::write(
-						'debug',
-						"command '$shell' in plugin '$plugin' was not aliased, conflicts with '$other'",
-						['shell-dispatcher']
-					);
-				}
 				$aliases += [$shell => $plugin];
 			}
 		}
@@ -229,8 +221,22 @@ class ShellDispatcher {
 				);
 				continue;
 			}
+
+			$other = static::alias($shell);
+			if ($other) {
+				$other = $aliases[$shell];
+				Log::write(
+					'debug',
+					"command '$shell' in plugin '$plugin' was not aliased, conflicts with '$other'",
+					['shell-dispatcher']
+				);
+				continue;
+			}
+
 			static::alias($shell, "$plugin.$shell");
 		}
+
+		return static::$_aliases;
 	}
 
 /**

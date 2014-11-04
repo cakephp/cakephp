@@ -16,12 +16,12 @@ namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\Label;
+use Cake\View\Widget\LabelWidget;
 
 /**
  * Label test case.
  */
-class LabelTest extends TestCase {
+class LabelWidgetTest extends TestCase {
 
 /**
  * setup method.
@@ -43,7 +43,7 @@ class LabelTest extends TestCase {
  * @return void
  */
 	public function testRender() {
-		$label = new Label($this->templates);
+		$label = new LabelWidget($this->templates);
 		$data = [
 			'text' => 'My text',
 		];
@@ -62,7 +62,7 @@ class LabelTest extends TestCase {
  * @return void
  */
 	public function testRenderEscape() {
-		$label = new Label($this->templates);
+		$label = new LabelWidget($this->templates);
 		$data = [
 			'text' => 'My > text',
 			'for' => 'Some > value',
@@ -83,7 +83,7 @@ class LabelTest extends TestCase {
  * @return void
  */
 	public function testRenderAttributes() {
-		$label = new Label($this->templates);
+		$label = new LabelWidget($this->templates);
 		$data = [
 			'text' => 'My > text',
 			'for' => 'some-id',

@@ -621,7 +621,7 @@ class ModelTask extends BakeTask {
 		$ns = Configure::read('App.namespace');
 		$pluginPath = '';
 		if ($this->plugin) {
-			$ns = $this->plugin;
+			$ns = str_replace('/', '\\', $this->plugin);
 			$pluginPath = $this->plugin . '.';
 		}
 

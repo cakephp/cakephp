@@ -30,3 +30,8 @@
 	<strong>Notice: </strong>
 	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'fatal_error.ctp'); ?>
 </p>
+<?php
+if (extension_loaded('xdebug')) {
+	xdebug_print_function_stack();
+}
+?>

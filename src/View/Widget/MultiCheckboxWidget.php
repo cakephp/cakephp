@@ -22,7 +22,7 @@ use Cake\View\Widget\WidgetInterface;
  * Input widget class for generating multiple checkboxes.
  *
  */
-class MultiCheckbox implements WidgetInterface {
+class MultiCheckboxWidget implements WidgetInterface {
 
 	use IdGeneratorTrait;
 

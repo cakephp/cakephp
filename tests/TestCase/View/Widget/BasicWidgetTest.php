@@ -16,12 +16,12 @@ namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\Basic;
+use Cake\View\Widget\BasicWidget;
 
 /**
  * Basic input test.
  */
-class BasicTest extends TestCase {
+class BasicWidgetTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
@@ -38,7 +38,7 @@ class BasicTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$text = new Basic($this->templates);
+		$text = new BasicWidget($this->templates);
 		$result = $text->render(['name' => 'my_input'], $this->context);
 		$expected = [
 			'input' => ['type' => 'text', 'name' => 'my_input']
@@ -52,7 +52,7 @@ class BasicTest extends TestCase {
  * @return void
  */
 	public function testRenderType() {
-		$text = new Basic($this->templates);
+		$text = new BasicWidget($this->templates);
 		$data = [
 			'name' => 'my_input',
 			'type' => 'email',
@@ -70,7 +70,7 @@ class BasicTest extends TestCase {
  * @return void
  */
 	public function testRenderWithValue() {
-		$text = new Basic($this->templates);
+		$text = new BasicWidget($this->templates);
 		$data = [
 			'name' => 'my_input',
 			'type' => 'email',
@@ -93,7 +93,7 @@ class BasicTest extends TestCase {
  * @return void
  */
 	public function testRenderAttributes() {
-		$text = new Basic($this->templates);
+		$text = new BasicWidget($this->templates);
 		$data = [
 			'name' => 'my_input',
 			'type' => 'email',

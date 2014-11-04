@@ -16,13 +16,13 @@ namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\DateTime;
-use Cake\View\Widget\SelectBox;
+use Cake\View\Widget\DateTimeWidget;
+use Cake\View\Widget\SelectBoxWidget;
 
 /**
  * DateTime input test case
  */
-class DateTimeTest extends TestCase {
+class DateTimeWidgetTest extends TestCase {
 
 /**
  * @setUp
@@ -39,8 +39,8 @@ class DateTimeTest extends TestCase {
 		];
 		$this->templates = new StringTemplate($templates);
 		$this->context = $this->getMock('Cake\View\Form\ContextInterface');
-		$this->selectBox = new SelectBox($this->templates);
-		$this->DateTime = new DateTime($this->templates, $this->selectBox);
+		$this->selectBox = new SelectBoxWidget($this->templates);
+		$this->DateTime = new DateTimeWidget($this->templates, $this->selectBox);
 	}
 
 /**

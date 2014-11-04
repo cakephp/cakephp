@@ -7,14 +7,10 @@ branches:
     - 3.0
 environment:
   global:
-    db_class: 'Cake\Database\Driver\SqlServer'
-    db_database: 'cakephp'
-    db_login: 'sa'
-    db_password: 'Password12!'
     PHP: "C:/PHP"
   matrix:
       - db: 2012
-        db_dsn: 'sqlsrv:Server=.\SQL2012SP1;Database=cakephp;MultipleActiveResultSets=false'
+        db_dsn: 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false'
 services:
   - mssql2012sp1
 init:

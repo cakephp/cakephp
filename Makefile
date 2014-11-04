@@ -6,11 +6,13 @@
 # Use the version number to figure out if the release
 # is a pre-release
 PRERELEASE=$(shell echo $(VERSION) | grep -E 'dev|rc|alpha|beta' --quiet && echo 'true' || echo 'false')
+COMPONENTS= log utility cache datasource core collection event validation
+CURRENT_BRANCH=$(shell git branch | grep '*' | tr -d '* ')
 
 # Github settings
 UPLOAD_HOST=https://uploads.github.com
 API_HOST=https://api.github.com
-OWNER='cakephp'
+OWNER="cakephp"
 REMOTE="origin"
 
 ifdef GITHUB_TOKEN
@@ -37,6 +39,9 @@ help:
 	@echo ""
 	@echo "publish"
 	@echo "  Publish the dist/cakephp-VERSION.zip to github."
+	@echo ""
+	@echo "components"
+	@echo "  Split each of the public namespaces into separate repos and push the to github."
 	@echo ""
 	@echo "test"
 	@echo "  Run the tests for CakePHP."
@@ -154,5 +159,28 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
 	rm release.json
 	rm id.txt
 
+# Tasks for publishing separate reporsitories out of each cake namespace
+
+components: $(foreach component, $(COMPONENTS), component-$(component))
+components-tag: $(foreach component, $(COMPONENTS), tag-component-$(component))
+
+component-%:
+	git checkout $(CURRENT_BRANCH) > /dev/null
+	- (git remote add $* git@github.com:$(OWNER)/$*.git -f 2> /dev/null)
+	- (git branch -D $* 2> /dev/null)
+	git checkout -b $*
+	git filter-branch --prune-empty --subdirectory-filter src/$(shell php -r "echo ucfirst('$*');") -f $*
+	git push $* $*:master
+	git checkout $(CURRENT_BRANCH) > /dev/null
+
+tag-component-%: component-% guard-VERSION guard-GITHUB_USER
+	@echo "Creating tag for the $* component"
+	git checkout $*
+	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/$*/git/refs -d '{ \
+		"refs": "refs\/tags\/$(VERSION)", \
+		"sha": "$(shell git rev-parse $*)" \
+	}'
+	git checkout $(CURRENT_BRANCH) > /dev/null
+
 # Top level alias for doing a release.
-release: guard-VERSION guard-GITHUB_USER tag-release package publish
+release: guard-VERSION guard-GITHUB_USER tag-release package publish components-tag

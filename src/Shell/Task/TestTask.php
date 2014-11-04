@@ -260,7 +260,7 @@ class TestTask extends BakeTask {
 	public function getRealClassName($type, $class) {
 		$namespace = Configure::read('App.namespace');
 		if ($this->plugin) {
-			$namespace = $this->plugin;
+			$namespace = str_replace('/', '\\', $this->plugin);
 		}
 		$suffix = $this->classSuffixes[strtolower($type)];
 		$subSpace = $this->mapType($type);

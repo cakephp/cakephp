@@ -16,12 +16,12 @@ namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\Textarea;
+use Cake\View\Widget\TextareaWidget;
 
 /**
  * Textarea input test.
  */
-class TextareaTest extends TestCase {
+class TextareaWidgetTest extends TestCase {
 
 /**
  * setup
@@ -43,7 +43,7 @@ class TextareaTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$input = new Textarea($this->templates);
+		$input = new TextareaWidget($this->templates);
 		$result = $input->render(['name' => 'comment'], $this->context);
 		$expected = [
 			'textarea' => ['name' => 'comment'],
@@ -58,7 +58,7 @@ class TextareaTest extends TestCase {
  * @return void
  */
 	public function testRenderWithValue() {
-		$input = new Textarea($this->templates);
+		$input = new TextareaWidget($this->templates);
 		$data = ['name' => 'comment', 'data-foo' => '<val>', 'val' => 'some <html>'];
 		$result = $input->render($data, $this->context);
 		$expected = [

@@ -354,7 +354,6 @@ class ViewTaskTest extends TestCase {
 		$this->assertContains("'controller' => 'ViewTaskAuthors'", $result);
 	}
 
-
 /**
  * Test getContent with no pk
  *

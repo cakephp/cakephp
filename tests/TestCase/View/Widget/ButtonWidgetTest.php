@@ -16,12 +16,12 @@ namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\Button;
+use Cake\View\Widget\ButtonWidget;
 
 /**
  * Basic input test.
  */
-class ButtonTest extends TestCase {
+class ButtonWidgetTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
@@ -38,7 +38,7 @@ class ButtonTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$button = new Button($this->templates);
+		$button = new ButtonWidget($this->templates);
 		$result = $button->render(['name' => 'my_input'], $this->context);
 		$expected = [
 			'button' => ['type' => 'submit', 'name' => 'my_input'],
@@ -53,7 +53,7 @@ class ButtonTest extends TestCase {
  * @return void
  */
 	public function testRenderType() {
-		$button = new Button($this->templates);
+		$button = new ButtonWidget($this->templates);
 		$data = [
 			'name' => 'my_input',
 			'type' => 'button',
@@ -74,7 +74,7 @@ class ButtonTest extends TestCase {
  * @return void
  */
 	public function testRenderWithText() {
-		$button = new Button($this->templates);
+		$button = new ButtonWidget($this->templates);
 		$data = [
 			'text' => 'Some <value>'
 		];
@@ -102,7 +102,7 @@ class ButtonTest extends TestCase {
  * @return void
  */
 	public function testRenderAttributes() {
-		$button = new Button($this->templates);
+		$button = new ButtonWidget($this->templates);
 		$data = [
 			'name' => 'my_input',
 			'text' => 'Go',

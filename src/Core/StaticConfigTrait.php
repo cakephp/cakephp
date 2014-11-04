@@ -15,6 +15,8 @@
 namespace Cake\Core;
 
 use BadMethodCallException;
+use InvalidArgumentException;
+use UnexpectedValueException;
 
 /**
  * A trait that provides a set of static methods to manage configuration
@@ -78,12 +80,21 @@ trait StaticConfigTrait {
 			}
 			return;
 		}
+
 		if (isset(static::$_config[$key])) {
 			throw new BadMethodCallException(sprintf('Cannot reconfigure existing key "%s"', $key));
 		}
+
 		if (is_object($config)) {
 			$config = ['className' => $config];
 		}
+
+		if (isset($config['url'])) {
+			$parsed = static::parseDsn($config['url']);
+			unset($config['url']);
+			$config = $parsed + $config;
+		}
+
 		if (isset($config['engine']) && empty($config['className'])) {
 			$config['className'] = $config['engine'];
 			unset($config['engine']);
@@ -123,4 +134,111 @@ trait StaticConfigTrait {
 		return array_keys(static::$_config);
 	}
 
+/**
+ * Parses a DSN into a valid connection configuration
+ *
+ * This method allows setting a DSN using formatting similar to that used by PEAR::DB.
+ * The following is an example of its usage:
+ *
+ * {{{
+ * $dsn = 'mysql://user:pass@localhost/database?';
+ * $config = ConnectionManager::parseDsn($dsn);
+ *
+ * $dsn = 'Cake\Log\Engine\FileLog://?types=notice,info,debug&file=debug&path=LOGS';
+ * $config = Log::parseDsn($dsn);
+ *
+ * $dsn = 'smtp://user:secret@localhost:25?timeout=30&client=null&tls=null';
+ * $config = Email::parseDsn($dsn);
+ *
+ * $dsn = 'file:///?className=\My\Cache\Engine\FileEngine';
+ * $config = Cache::parseDsn($dsn);
+ *
+ * $dsn = 'File://?prefix=myapp_cake_core_&serialize=true&duration=+2 minutes&path=/tmp/persistent/';
+ * $config = Cache::parseDsn($dsn);
+ * }}}
+ *
+ * For all classes, the value of `scheme` is set as the value of both the `className`
+ * unless they have been otherwise specified.
+ *
+ * Note that querystring arguments are also parsed and set as values in the returned configuration.
+ *
+ * @param string $dsn The DSN string to convert to a configuration array
+ * @return array The configuration array to be stored after parsing the DSN
+ * @throws \InvalidArgumentException If not passed a string
+ */
+	public static function parseDsn($dsn) {
+		if (empty($dsn)) {
+			return [];
+		}
+
+		if (!is_string($dsn)) {
+			throw new InvalidArgumentException('Only strings can be passed to parseDsn');
+		}
+
+		if (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
+			$scheme = $matches[1];
+			$dsn = preg_replace("/^([\w\\\]+)/", 'file', $dsn);
+		}
+
+		$parsed = parse_url($dsn);
+
+		if ($parsed === false) {
+			return $dsn;
+		}
+
+		$parsed['scheme'] = $scheme;
+		$query = '';
+
+		if (isset($parsed['query'])) {
+			$query = $parsed['query'];
+			unset($parsed['query']);
+		}
+
+		parse_str($query, $queryArgs);
+
+		foreach ($queryArgs as $key => $value) {
+			if ($value === 'true') {
+				$queryArgs[$key] = true;
+			} elseif ($value === 'false') {
+				$queryArgs[$key] = false;
+			} elseif ($value === 'null') {
+				$queryArgs[$key] = null;
+			}
+		}
+
+		if (isset($parsed['user'])) {
+			$parsed['username'] = $parsed['user'];
+		}
+
+		if (isset($parsed['pass'])) {
+			$parsed['password'] = $parsed['pass'];
+		}
+
+		unset($parsed['pass'], $parsed['user']);
+		$parsed = $queryArgs + $parsed;
+
+		if (empty($parsed['className'])) {
+			$classMap = static::dsnClassMap();
+
+			$parsed['className'] = $parsed['scheme'];
+			if (isset($classMap[$parsed['scheme']])) {
+				$parsed['className'] = $classMap[$parsed['scheme']];
+			}
+		}
+
+		return $parsed;
+	}
+
+/**
+ * return or update the dsn class map for this class
+ *
+ * @param array|null $map additions/edits to the class map to apply
+ * @return array
+ */
+	public static function dsnClassMap($map = null) {
+		if ($map) {
+			static::$_dsnClassMap = $map + static::$_dsnClassMap;
+		}
+		return static::$_dsnClassMap;
+	}
 }

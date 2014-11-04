@@ -36,13 +36,6 @@ use Cake\ORM\Table;
 class TreeBehavior extends Behavior {
 
 /**
- * Table instance
- *
- * @var \Cake\ORM\Table
- */
-	protected $_table;
-
-/**
  * Cached copy of the first column in a table's primary key.
  *
  * @var string
@@ -74,17 +67,6 @@ class TreeBehavior extends Behavior {
 		'right' => 'rght',
 		'scope' => null
 	];
-
-/**
- * Constructor
- *
- * @param \Cake\ORM\Table $table The table this behavior is attached to.
- * @param array $config The config for this behavior.
- */
-	public function __construct(Table $table, array $config = []) {
-		parent::__construct($table, $config);
-		$this->_table = $table;
-	}
 
 /**
  * Before save listener.

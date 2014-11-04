@@ -111,7 +111,7 @@ class MemcachedEngineTest extends TestCase {
 			'servers' => array('127.0.0.1'),
 			'persistent' => false,
 			'compress' => false,
-			'login' => null,
+			'username' => null,
 			'password' => null,
 			'groups' => array(),
 			'serialize' => 'php',
@@ -356,7 +356,7 @@ class MemcachedEngineTest extends TestCase {
 			'engine' => 'Memcached',
 			'servers' => array('127.0.0.1:11211'),
 			'persistent' => false,
-			'login' => 'test',
+			'username' => 'test',
 			'password' => 'password'
 		);
 

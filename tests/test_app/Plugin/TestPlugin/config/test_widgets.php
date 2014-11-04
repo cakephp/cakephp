@@ -3,5 +3,5 @@
  * Widgets list for testing.
  */
 $config = [
-	'text' => ['Cake\View\Widget\Label'],
+	'text' => ['Cake\View\Widget\LabelWidget'],
 ];
