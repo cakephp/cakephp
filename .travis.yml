@@ -8,7 +8,7 @@ php:
 env:
   - DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
   - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
-  - DB=sqlite db_dsn='sqlite:///memory:'
+  - DB=sqlite db_dsn='sqlite://:memory:'
 
 services:
   - memcached
