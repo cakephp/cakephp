@@ -33,7 +33,7 @@
 	</listeners>
 	<php>
 		<!-- SQLite
-		<env name="db_dsn" value="sqlite://:memory:"/>
+		<env name="db_dsn" value="sqlite:///:memory:"/>
 		-->
 		<!-- Postgres
 		<env name="db_dsn" value="postgres://localhost/cake_test"/>
