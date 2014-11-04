@@ -1077,7 +1077,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * {{{
  *	$query->offset(10) // generates OFFSET 10
- *	$query->limit($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
+ *	$query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
  * }}}
  *
  * @param int|ExpressionInterface $num number of records to be skipped
