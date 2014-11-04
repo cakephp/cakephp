@@ -157,7 +157,11 @@ class ShellDispatcher {
  * @return int The cli command exit code. 0 is success.
  */
 	public function dispatch() {
-		return $this->_dispatch() === true ? 0 : 1;
+		$r = $this->_dispatch();
+		if ($r === null || $r === true) {
+			return 0;
+		}
+		return 1;
 	}
 
 /**
@@ -320,16 +324,6 @@ class ShellDispatcher {
 	public function help() {
 		$this->args = array_merge(['command_list'], $this->args);
 		$this->dispatch();
-	}
-
-/**
- * Stop execution of the current script
- *
- * @param int|string $status see http://php.net/exit for values
- * @return void
- */
-	protected function _stop($status = 0) {
-		exit($status);
 	}
 
 }

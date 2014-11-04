@@ -129,9 +129,10 @@ class ShellDispatcherTest extends TestCase {
 		$Shell = $this->getMock('Cake\Console\Shell');
 
 		$Shell->expects($this->once())->method('initialize');
-		$Shell->expects($this->once())->method('runCommand')
-			->with([])
+		$Shell->expects($this->at(0))->method('runCommand')
 			->will($this->returnValue(true));
+		$Shell->expects($this->at(1))->method('runCommand')
+			->will($this->returnValue(null));
 
 		$dispatcher->expects($this->any())
 			->method('findShell')
@@ -140,7 +141,12 @@ class ShellDispatcherTest extends TestCase {
 
 		$dispatcher->args = array('mock_with_main');
 		$result = $dispatcher->dispatch();
-		$this->assertEquals(0, $result);
+		$this->assertSame(0, $result);
+		$this->assertEquals(array(), $dispatcher->args);
+
+		$dispatcher->args = array('mock_with_main');
+		$result = $dispatcher->dispatch();
+		$this->assertSame(0, $result);
 		$this->assertEquals(array(), $dispatcher->args);
 	}
 
