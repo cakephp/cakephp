@@ -26,6 +26,7 @@ App::uses('Hash', 'Utility');
 App::uses('CakeSession', 'Model/Datasource');
 App::uses('BaseAuthorize', 'Controller/Component/Auth');
 App::uses('BaseAuthenticate', 'Controller/Component/Auth');
+App::uses('CakeEvent', 'Event');
 
 /**
  * Authentication control component class
@@ -608,7 +609,6 @@ class AuthComponent extends Component {
 		if ($user) {
 			$this->Session->renew();
 			$this->Session->write(self::$sessionKey, $user);
-			App::uses('CakeEvent', 'Event');
 			$event = new CakeEvent('Auth.afterIdentify', $this, array('user' => $user));
 			$this->_Collection->getController()->getEventManager()->dispatch($event);
 		}
