@@ -63,7 +63,7 @@ abstract class BaseSchema {
 	}
 
 /**
- * Resolves the full table name for the table $name
+ * Resolves the full table name for the table name $tableName
  *
  * @param string|TableNameExpression $tableName Table name
  * @param array $config Configuration array for the current Connection
@@ -73,27 +73,27 @@ abstract class BaseSchema {
 	public function getFullTableName($tableName, $config, $quoted = true) {
 		$prefix = $this->getConnectionPrefix($config);
 
-		if (strpos($tableName, $prefix) !== 0 || $tableName === $prefix) {
-			if ($tableName instanceof TableNameExpression) {
-				$tableName->setPrefix($prefix);
-				$_tableName = $tableName;
-				$name = $tableName->getName();
-				if (is_string($name) && $quoted === true) {
-					$quoted = $this->_driver->quoteIdentifier($name);
-					$_tableName->setName($quoted);
-					$_tableName->setQuoted();
-				}
-
-				$tableName = $_tableName->sql(new ValueBinder);
-
-				$_tableName->setName($name);
-				$_tableName->setQuoted(false);
-			} elseif (is_string($tableName)) {
+		if (is_string($tableName)) {
+			if ($prefix !== '' && (strpos($tableName, $prefix) !== 0 || $tableName === $prefix)) {
 				$tableName = $prefix . $tableName;
-				if ($quoted === true) {
-					$tableName = $this->_driver->quoteIdentifier($tableName);
-				}
 			}
+
+			if ($quoted === true) {
+				$tableName = $this->_driver->quoteIdentifier($tableName);
+			}
+		} elseif ($tableName instanceof TableNameExpression) {
+			$_tableName = $tableName;
+			$name = $tableName->getName();
+			if (is_string($name) && $quoted === true) {
+				$quoted = $this->_driver->quoteIdentifier($name);
+				$_tableName->setName($quoted);
+				$_tableName->setQuoted();
+			}
+
+			$tableName = $_tableName->sql(new ValueBinder);
+
+			$_tableName->setName($name);
+			$_tableName->setQuoted(false);
 		}
 
 		return $tableName;
