@@ -20,6 +20,7 @@ App::uses('Controller', 'Controller');
 App::uses('AuthComponent', 'Controller/Component');
 App::uses('AclComponent', 'Controller/Component');
 App::uses('FormAuthenticate', 'Controller/Component/Auth');
+App::uses('CakeEvent', 'Event');
 
 /**
  * TestAuthComponent class
@@ -271,7 +272,7 @@ class AjaxAuthController extends Controller {
  *
  * @package Cake.Test.Case.Event
  */
-class CakeEventTestListener {
+class AuthEventTestListener {
 
 	public $callStack = array();
 
@@ -426,9 +427,8 @@ class AuthComponentTest extends CakeTestCase {
 			->method('renew');
 
 		$manager = $this->Controller->getEventManager();
-		$listener = $this->getMock('CakeEventTestListener');
+		$listener = $this->getMock('AuthEventTestListener');
 		$manager->attach(array($listener, 'listenerFunction'), 'Auth.afterIdentify');
-		App::uses('CakeEvent', 'Event');
 		$event = new CakeEvent('Auth.afterIdentify', $this->Auth, array('user' => $user));
 		$listener->expects($this->once())->method('listenerFunction')->with($event);
 
