@@ -289,7 +289,7 @@ class SecurityComponent extends Component {
 		if (strpos($token, ':')) {
 			list($token, $locked) = explode(':', $token, 2);
 		}
-		unset($check['_Token'], $check['_csrfToken']);
+		unset($check['_Token']);
 
 		$locked = explode('|', $locked);
 		$unlocked = explode('|', $unlocked);
