@@ -351,7 +351,8 @@ class SecurityComponent extends Component {
 	}
 
 /**
- * Manually add CSRF token information into the provided request object.
+ * Manually add form tampering prevention token information into the provided
+ * request object.
  *
  * @param \Cake\Network\Request $request The request object to add into.
  * @return bool
