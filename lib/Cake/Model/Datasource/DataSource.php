@@ -407,14 +407,14 @@ class DataSource extends Object {
 /**
  * Returns the schema name. Override this in subclasses.
  *
- * @return string|null schema name
+ * @return string|null The schema name
  */
 	public function getSchemaName() {
 		return null;
 	}
 
 /**
- * Closes a connection. Override in subclasses
+ * Closes a connection. Override in subclasses.
  *
  * @return bool
  */
