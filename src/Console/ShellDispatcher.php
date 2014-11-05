@@ -154,11 +154,14 @@ class ShellDispatcher {
 /**
  * Dispatches a CLI request
  *
+ * Converts a shell command result into an exit code. Null/True
+ * are treated as success. All other return values are an error.
+ *
  * @return int The cli command exit code. 0 is success.
  */
 	public function dispatch() {
-		$r = $this->_dispatch();
-		if ($r === null || $r === true) {
+		$result = $this->_dispatch();
+		if ($result === null || $result === true) {
 			return 0;
 		}
 		return 1;
