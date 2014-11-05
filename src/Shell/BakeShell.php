@@ -85,6 +85,7 @@ class BakeShell extends Shell {
 		}
 		$this->out('');
 		$this->out('By using <info>`cake bake [name]`</info> you can invoke a specific bake task.');
+		return false;
 	}
 
 /**

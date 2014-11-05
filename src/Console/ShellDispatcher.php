@@ -154,10 +154,17 @@ class ShellDispatcher {
 /**
  * Dispatches a CLI request
  *
+ * Converts a shell command result into an exit code. Null/True
+ * are treated as success. All other return values are an error.
+ *
  * @return int The cli command exit code. 0 is success.
  */
 	public function dispatch() {
-		return $this->_dispatch() === true ? 0 : 1;
+		$result = $this->_dispatch();
+		if ($result === null || $result === true) {
+			return 0;
+		}
+		return 1;
 	}
 
 /**
@@ -326,16 +333,6 @@ class ShellDispatcher {
 	public function help() {
 		$this->args = array_merge(['command_list'], $this->args);
 		$this->dispatch();
-	}
-
-/**
- * Stop execution of the current script
- *
- * @param int|string $status see http://php.net/exit for values
- * @return void
- */
-	protected function _stop($status = 0) {
-		exit($status);
 	}
 
 }
