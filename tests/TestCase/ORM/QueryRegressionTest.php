@@ -513,7 +513,8 @@ class QueryRegressionTest extends TestCase {
 		$query = $table->find();
 		$query->where([
 			'OR' => [
-				new \Cake\Database\Expression\Comparison('id', 1, 'integer', '>')
+				new \Cake\Database\Expression\Comparison('id', 1, 'integer', '>'),
+				new \Cake\Database\Expression\Comparison('id', 3, 'integer', '<')
 			]
 		]);
 

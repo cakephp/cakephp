@@ -483,7 +483,11 @@ class QueryExpression implements ExpressionInterface, Countable {
 				continue;
 			}
 
-			if ($c instanceof self && count($c) > 0) {
+			if ($c instanceof self && count($c) === 0) {
+				continue;
+			}
+
+			if ($numericKey && $c instanceof ExpressionInterface) {
 				$this->_conditions[] = $c;
 				continue;
 			}
