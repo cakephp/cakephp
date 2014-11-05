@@ -502,4 +502,23 @@ class QueryRegressionTest extends TestCase {
 		$this->assertNull($result->user, 'No record should be null.');
 	}
 
+/**
+ * Tests that using a comparison expression inside an OR condition works
+ *
+ * @see https://github.com/cakephp/cakephp/issues/5081
+ * @return void
+ */
+	public function testOrConditionsWithExpression() {
+		$table = TableRegistry::get('Articles');
+		$query = $table->find();
+		$query->where([
+			'OR' => [
+				new \Cake\Database\Expression\Comparison('id', 1, 'integer', '>')
+			]
+		]);
+
+		$results = $query->toArray();
+		$this->assertCount(3, $results);
+	}
+
 }
