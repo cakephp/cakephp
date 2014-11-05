@@ -608,6 +608,9 @@ class AuthComponent extends Component {
 		if ($user) {
 			$this->Session->renew();
 			$this->Session->write(self::$sessionKey, $user);
+			App::uses('CakeEvent', 'Event');
+			$event = new CakeEvent('Auth.afterIdentify', $this, array('user' => $user));
+			$this->_Collection->getController()->getEventManager()->dispatch($event);
 		}
 		return (bool)$this->user();
 	}

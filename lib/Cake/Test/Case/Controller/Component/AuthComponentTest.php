@@ -267,6 +267,27 @@ class AjaxAuthController extends Controller {
 }
 
 /**
+ * Mock class used to test event dispatching
+ *
+ * @package Cake.Test.Case.Event
+ */
+class CakeEventTestListener {
+
+	public $callStack = array();
+
+/**
+ * Test function to be used in event dispatching
+ *
+ * @return void
+ */
+	public function listenerFunction() {
+		$this->callStack[] = __FUNCTION__;
+	}
+
+}
+
+
+/**
  * AuthComponentTest class
  *
  * @package       Cake.Test.Case.Controller.Component
@@ -403,6 +424,13 @@ class AuthComponentTest extends CakeTestCase {
 
 		$this->Auth->Session->expects($this->once())
 			->method('renew');
+
+		$manager = $this->Controller->getEventManager();
+		$listener = $this->getMock('CakeEventTestListener');
+		$manager->attach(array($listener, 'listenerFunction'), 'Auth.afterIdentify');
+		App::uses('CakeEvent', 'Event');
+		$event = new CakeEvent('Auth.afterIdentify', $this->Auth, array('user' => $user));
+		$listener->expects($this->once())->method('listenerFunction')->with($event);
 
 		$result = $this->Auth->login();
 		$this->assertTrue($result);
