@@ -799,7 +799,9 @@ class AuthComponent extends Component {
 				throw new CakeException(__d('cake_dev', 'Authentication objects must implement an %s method.', 'authenticate()'));
 			}
 			$settings = array_merge($global, (array)$settings);
-			$this->_authenticateObjects[] = new $className($this->_Collection, $settings);
+			$auth = new $className($this->_Collection, $settings);
+			$this->_Collection->getController()->getEventManager()->attach($auth);
+			$this->_authenticateObjects[] = $auth;
 		}
 		return $this->_authenticateObjects;
 	}
