@@ -51,12 +51,27 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	protected $_presenceMessages = [];
 
 /**
+ * Whether or not to use I18n functions for translating default error messages
+ *
+ * @var boolean
+ */
+	protected $_useI18n = false;
+
+/**
  * Contains the validation messages associated with checking the emptiness
  * for each corresponding field.
  *
  * @var array
  */
 	protected $_allowEmptyMessages = [];
+
+/**
+ * Constructor
+ *
+ */
+	public function __construct() {
+		$this->_useI18n = function_exists('__d');
+	}
 
 /**
  * Returns an array of fields that have failed validation. On the current model. This method will
@@ -69,8 +84,14 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  */
 	public function errors(array $data, $newRecord = true) {
 		$errors = [];
-		$requiredMessage = __d('cake', 'This field is required');
-		$emptyMessage = __d('cake', 'This field cannot be left empty');
+
+		$requiredMessage = 'This field is required';
+		$emptyMessage = 'This field cannot be left empty';
+
+		if ($this->_useI18n) {
+			$requiredMessage = __d('cake', 'This field is required');
+			$emptyMessage = __d('cake', 'This field cannot be left empty');
+		}
 
 		foreach ($this->_fields as $name => $field) {
 			$keyPresent = array_key_exists($name, $data);
@@ -502,13 +523,19 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 		$errors = [];
 		// Loading default provider in case there is none
 		$this->provider('default');
+		$message = 'The provided value is invalid';
+
+		if ($this->_useI18n) {
+			$message = __d('cake', 'The provided value is invalid');
+		}
+
 		foreach ($rules as $name => $rule) {
 			$result = $rule->process($value, $this->_providers, compact('newRecord', 'data', 'field'));
 			if ($result === true) {
 				continue;
 			}
 
-			$errors[$name] = __d('cake', 'The provided value is invalid');
+			$errors[$name] = $message;
 			if (is_string($result)) {
 				$errors[$name] = $result;
 			}
