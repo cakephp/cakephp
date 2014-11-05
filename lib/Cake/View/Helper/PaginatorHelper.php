@@ -499,9 +499,9 @@ class PaginatorHelper extends AppHelper {
 			if (!empty($disabledTitle) && $disabledTitle !== true) {
 				$title = $disabledTitle;
 			}
-			$options = (array)$disabledOptions + $_defaults;
+			$options = (array)$disabledOptions + $options + $_defaults;
 		} elseif (!$this->{$check}($options['model'])) {
-			return null;
+			return '';
 		}
 
 		foreach (array_keys($_defaults) as $key) {
