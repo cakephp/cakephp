@@ -443,7 +443,7 @@ class TreeBehavior extends ModelBehavior {
  * @param int|string $id The ID of the record to read
  * @param string|array $fields Either a single string of a field name, or an array of field names
  * @param int $recursive The number of levels deep to fetch associated records
- * @return array Array of nodes from top most parent to current node
+ * @return array|null Array of nodes from top most parent to current node
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::getPath
  */
 	public function getPath(Model $Model, $id = null, $fields = null, $recursive = null) {

@@ -120,7 +120,7 @@ class PaginatorHelper extends AppHelper {
  * Gets the current paging parameters from the resultset for the given model
  *
  * @param string $model Optional model name. Uses the default if none is specified.
- * @return array The array of paging parameters for the paginated resultset.
+ * @return array|null The array of paging parameters for the paginated resultset.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::params
  */
 	public function params($model = null) {
@@ -207,7 +207,7 @@ class PaginatorHelper extends AppHelper {
  *
  * @param string $model Optional model name. Uses the default if none is specified.
  * @param array $options Options for pagination links. See #options for list of keys.
- * @return string The name of the key by which the recordset is being sorted, or
+ * @return string|null The name of the key by which the recordset is being sorted, or
  *  null if the results are not currently sorted.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortKey
  */
@@ -481,7 +481,7 @@ class PaginatorHelper extends AppHelper {
  * @param array $options Options list.
  * @param string $disabledTitle Disabled link title.
  * @param array $disabledOptions Disabled link options.
- * @return string
+ * @return string|null
  */
 	protected function _pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		$check = 'has' . $which;
@@ -594,7 +594,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Gets the default model of the paged sets
  *
- * @return string Model name or null if the pagination isn't initialized.
+ * @return string|null Model name or null if the pagination isn't initialized.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::defaultModel
  */
 	public function defaultModel() {
@@ -707,7 +707,7 @@ class PaginatorHelper extends AppHelper {
  * - `currentTag` Tag to use for current page number, defaults to null
  *
  * @param array $options Options for the numbers, (before, after, model, modulus, separator)
- * @return string numbers string.
+ * @return string|bool numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::numbers
  */
 	public function numbers($options = array()) {
@@ -849,7 +849,7 @@ class PaginatorHelper extends AppHelper {
  * @param string|int $first if string use as label for the link. If numeric, the number of page links
  *   you want at the beginning of the range.
  * @param array $options An array of options.
- * @return string numbers string.
+ * @return string|bool numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::first
  */
 	public function first($first = '<< first', $options = array()) {
@@ -912,7 +912,7 @@ class PaginatorHelper extends AppHelper {
  *
  * @param string|int $last if string use as label for the link, if numeric print page numbers
  * @param array $options Array of options
- * @return string numbers string.
+ * @return string|bool numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::last
  */
 	public function last($last = 'last >>', $options = array()) {

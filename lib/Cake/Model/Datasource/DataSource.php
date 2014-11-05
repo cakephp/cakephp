@@ -90,7 +90,7 @@ class DataSource extends Object {
  * Caches/returns cached results for child instances
  *
  * @param mixed $data Unused in this class.
- * @return array Array of sources available in this datasource.
+ * @return array|null Array of sources available in this datasource.
  */
 	public function listSources($data = null) {
 		if ($this->cacheSources === false) {
@@ -117,7 +117,7 @@ class DataSource extends Object {
  * Returns a Model description (metadata) or null if none found.
  *
  * @param Model|string $model The model to describe.
- * @return array Array of Metadata for the $model
+ * @return array|null Array of Metadata for the $model
  */
 	public function describe($model) {
 		if ($this->cacheSources === false) {
@@ -407,14 +407,14 @@ class DataSource extends Object {
 /**
  * Returns the schema name. Override this in subclasses.
  *
- * @return string schema name
+ * @return string|null The schema name
  */
 	public function getSchemaName() {
 		return null;
 	}
 
 /**
- * Closes a connection. Override in subclasses
+ * Closes a connection. Override in subclasses.
  *
  * @return bool
  */

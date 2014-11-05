@@ -318,7 +318,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * params are passed then it returns an array with all CakeValidationSet objects for each field
  *
  * @param string $name [optional] The fieldname to fetch. Defaults to null.
- * @return CakeValidationSet|array
+ * @return CakeValidationSet|array|null
  */
 	public function getField($name = null) {
 		$this->_parseRules();
