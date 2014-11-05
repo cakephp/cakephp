@@ -69,8 +69,8 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  */
 	public function errors(array $data, $newRecord = true) {
 		$errors = [];
-		$requiredMessage = __d('cake', 'This field is required');
-		$emptyMessage = __d('cake', 'This field cannot be left empty');
+		$requiredMessage = 'This field is required';
+		$emptyMessage = 'This field cannot be left empty';
 
 		foreach ($this->_fields as $name => $field) {
 			$keyPresent = array_key_exists($name, $data);
@@ -508,7 +508,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 				continue;
 			}
 
-			$errors[$name] = __d('cake', 'The provided value is invalid');
+			$errors[$name] = 'The provided value is invalid';
 			if (is_string($result)) {
 				$errors[$name] = $result;
 			}
