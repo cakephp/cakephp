@@ -1009,10 +1009,8 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->prev('<i class="fa fa-angle-left"></i>', array('escape' => false), null, array('class' => 'prev disabled'));
 		$expected = array(
 			'span' => array('class' => 'prev disabled'),
-			'a' => array('href' => '/', 'rel' => 'prev'),
 			'i' => array('class' => 'fa fa-angle-left'),
 			'/i',
-			'/a',
 			'/span'
 		);
 		$this->assertTags($result, $expected);
@@ -1020,9 +1018,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->prev('<i class="fa fa-angle-left"></i>', array('escape' => false), null, array('escape' => true));
 		$expected = array(
 			'span' => array('class' => 'prev'),
-			'a' => array('href' => '/', 'rel' => 'prev'),
 			'&lt;i class=&quot;fa fa-angle-left&quot;&gt;&lt;/i&gt;',
-			'/a',
 			'/span'
 		);
 		$this->assertTags($result, $expected);
