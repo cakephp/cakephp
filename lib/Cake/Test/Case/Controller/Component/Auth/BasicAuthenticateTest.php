@@ -36,7 +36,7 @@ class BasicAuthenticateTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.user', 'core.auth_user');
+	public $fixtures = array('core.user', 'core.auth_user', 'core.article');
 
 /**
  * setup
@@ -195,6 +195,80 @@ class BasicAuthenticateTest extends CakeTestCase {
 			'updated' => '2007-03-17 01:18:31'
 		);
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test contain success
+ *
+ * @return void
+ */
+	public function testAuthenticateContainSuccess() {
+		$User = ClassRegistry::init('User');
+		$User->bindModel(array('hasMany' => array('Article')));
+		$User->Behaviors->load('Containable');
+		$this->auth->settings['contain'] = 'Article';
+		$request = new CakeRequest('posts/index', false);
+		$request->addParams(array('pass' => array(), 'named' => array()));
+
+		$_SERVER['PHP_AUTH_USER'] = 'mariano';
+		$_SERVER['PHP_AUTH_PW'] = 'password';
+
+		$result = $this->auth->authenticate($request, $this->response);
+		$expected = array(
+			'id' => 1,
+			'user_id' => 1,
+			'title' => 'First Article',
+			'body' => 'First Article Body',
+			'published' => 'Y',
+			'created' => '2007-03-18 10:39:23',
+			'updated' => '2007-03-18 10:41:31'
+		);
+		$this->assertEquals($expected, $result['Article'][0]);
+	}
+
+/**
+ * test userFields success
+ *
+ * @return void
+ */
+	public function testAuthenticateUserFieldsSuccess() {
+		$this->auth->settings['userFields'] = array('id', 'user');
+		$request = new CakeRequest('posts/index', false);
+		$request->addParams(array('pass' => array(), 'named' => array()));
+
+		$_SERVER['PHP_AUTH_USER'] = 'mariano';
+		$_SERVER['PHP_AUTH_PW'] = 'password';
+
+		$result = $this->auth->authenticate($request, $this->response);
+		$expected = array(
+			'id' => 1,
+			'user' => 'mariano',
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test userFields and related models success
+ *
+ * @return void
+ */
+	public function testAuthenticateUserFieldsRelatedModelsSuccess() {
+		$User = ClassRegistry::init('User');
+		$User->bindModel(array('hasOne' => array('Article')));
+		$this->auth->settings['recursive'] = 0;
+		$this->auth->settings['userFields'] = array('Article.id', 'Article.title');
+		$request = new CakeRequest('posts/index', false);
+		$request->addParams(array('pass' => array(), 'named' => array()));
+
+		$_SERVER['PHP_AUTH_USER'] = 'mariano';
+		$_SERVER['PHP_AUTH_PW'] = 'password';
+
+		$result = $this->auth->authenticate($request, $this->response);
+		$expected = array(
+			'id' => 1,
+			'title' => 'First Article',
+		);
+		$this->assertEquals($expected, $result['Article']);
 	}
 
 /**
