@@ -20,7 +20,6 @@ App::uses('Controller', 'Controller');
 App::uses('AuthComponent', 'Controller/Component');
 App::uses('AclComponent', 'Controller/Component');
 App::uses('FormAuthenticate', 'Controller/Component/Auth');
-App::uses('CakeEvent', 'Event');
 
 /**
  * TestAuthComponent class
@@ -429,6 +428,7 @@ class AuthComponentTest extends CakeTestCase {
 		$manager = $this->Controller->getEventManager();
 		$listener = $this->getMock('AuthEventTestListener');
 		$manager->attach(array($listener, 'listenerFunction'), 'Auth.afterIdentify');
+		App::uses('CakeEvent', 'Event');
 		$event = new CakeEvent('Auth.afterIdentify', $this->Auth, array('user' => $user));
 		$listener->expects($this->once())->method('listenerFunction')->with($event);
 
