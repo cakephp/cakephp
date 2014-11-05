@@ -575,7 +575,7 @@ class App {
  * Returns the package name where a class was defined to be located at
  *
  * @param string $className name of the class to obtain the package name from
- * @return string package name or null if not declared
+ * @return string|null Package name, or null if not declared
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::location
  */
 	public static function location($className) {

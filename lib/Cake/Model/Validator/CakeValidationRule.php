@@ -300,7 +300,7 @@ class CakeValidationRule {
  * Returns passed options for this rule
  *
  * @param string|int $key Array index
- * @return array
+ * @return array|null
  */
 	public function getOptions($key) {
 		if (!isset($this->_passedOptions[$key])) {

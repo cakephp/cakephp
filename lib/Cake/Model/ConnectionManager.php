@@ -126,7 +126,7 @@ class ConnectionManager {
  * Gets a DataSource name from an object reference.
  *
  * @param DataSource $source DataSource object
- * @return string Datasource name, or null if source is not present
+ * @return string|null Datasource name, or null if source is not present
  *    in the ConnectionManager.
  */
 	public static function getSourceName($source) {
@@ -145,8 +145,8 @@ class ConnectionManager {
  * Loads the DataSource class for the given connection name
  *
  * @param string|array $connName A string name of the connection, as defined in app/Config/database.php,
- *                        or an array containing the filename (without extension) and class name of the object,
- *                        to be found in app/Model/Datasource/ or lib/Cake/Model/Datasource/.
+ *    or an array containing the filename (without extension) and class name of the object,
+ *    to be found in app/Model/Datasource/ or lib/Cake/Model/Datasource/.
  * @return bool True on success, null on failure or false if the class is already loaded
  * @throws MissingDatasourceException
  */
@@ -184,10 +184,10 @@ class ConnectionManager {
 	}
 
 /**
- * Return a list of connections
+ * Returns a list of connections
  *
  * @return array An associative array of elements where the key is the connection name
- *               (as defined in Connections), and the value is an array with keys 'filename' and 'classname'.
+ *    (as defined in Connections), and the value is an array with keys 'filename' and 'classname'.
  */
 	public static function enumConnectionObjects() {
 		if (empty(self::$_init)) {
@@ -201,7 +201,7 @@ class ConnectionManager {
  *
  * @param string $name The DataSource name
  * @param array $config The DataSource configuration settings
- * @return DataSource A reference to the DataSource object, or null if creation failed
+ * @return DataSource|null A reference to the DataSource object, or null if creation failed
  */
 	public static function create($name = '', $config = array()) {
 		if (empty(self::$_init)) {
