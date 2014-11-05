@@ -19,7 +19,52 @@
 App::uses('Controller', 'Controller');
 App::uses('AuthComponent', 'Controller/Component');
 App::uses('AclComponent', 'Controller/Component');
+App::uses('BaseAuthenticate', 'Controller/Component/Auth');
 App::uses('FormAuthenticate', 'Controller/Component/Auth');
+
+/**
+ * TestFormAuthenticate class
+ *
+ * @package       Cake.Test.Case.Controller.Component
+ */
+class TestBaseAuthenticate extends BaseAuthenticate {
+
+/**
+ * Implemented events
+ *
+ * @return array of events => callbacks.
+ */
+	public function implementedEvents() {
+		return array(
+			'Auth.afterIdentify' => 'afterIdentify'
+		);
+	}
+
+	public $afterIdentifyCallable = null;
+
+/**
+ * Test function to be used in event dispatching
+ *
+ * @return void
+ */
+	public function afterIdentify($event) {
+		call_user_func($this->afterIdentifyCallable, $event);
+	}
+
+/**
+ * Authenticate a user based on the request information.
+ *
+ * @param CakeRequest $request Request to get authentication information from.
+ * @param CakeResponse $response A response object that can have headers added.
+ * @return mixed Either false on failure, or an array of user data on success.
+ */
+	public function authenticate(CakeRequest $request, CakeResponse $response) {
+		return array(
+			'id' => 1,
+			'username' => 'mark'
+		);
+	}
+}
 
 /**
  * TestAuthComponent class
@@ -44,6 +89,17 @@ class TestAuthComponent extends AuthComponent {
  */
 	public function setAuthenticateObject($index, $object) {
 		$this->_authenticateObjects[$index] = $object;
+	}
+
+/**
+ * Helper method to get an authenticate object instance
+ *
+ * @param int $index The index at which to get the object
+ * @return Object $object
+ */
+	public function getAuthenticateObject($index) {
+    $this->constructAuthenticate();
+		return isset($this->_authenticateObjects[$index]) ? $this->_authenticateObjects[$index] : null;
 	}
 
 /**
@@ -425,16 +481,37 @@ class AuthComponentTest extends CakeTestCase {
 		$this->Auth->Session->expects($this->once())
 			->method('renew');
 
-		$manager = $this->Controller->getEventManager();
+		$result = $this->Auth->login();
+		$this->assertTrue($result);
+
+		$this->assertTrue($this->Auth->loggedIn());
+		$this->assertEquals($user, $this->Auth->user());
+	}
+
+/**
+ * testLogin afterIdentify event method
+ *
+ * @return void
+ */
+	public function testLoginAfterIdentify() {
+		$this->Auth->authenticate = array(
+			'TestBase',
+		);
+
+		$user = array(
+			'id' => 1,
+			'username' => 'mark'
+		);
+
+		$auth = $this->Auth->getAuthenticateObject(0);
 		$listener = $this->getMock('AuthEventTestListener');
-		$manager->attach(array($listener, 'listenerFunction'), 'Auth.afterIdentify');
+		$auth->afterIdentifyCallable = array($listener, 'listenerFunction');
 		App::uses('CakeEvent', 'Event');
 		$event = new CakeEvent('Auth.afterIdentify', $this->Auth, array('user' => $user));
 		$listener->expects($this->once())->method('listenerFunction')->with($event);
 
 		$result = $this->Auth->login();
 		$this->assertTrue($result);
-
 		$this->assertTrue($this->Auth->loggedIn());
 		$this->assertEquals($user, $this->Auth->user());
 	}
