@@ -56,7 +56,7 @@ class TestBaseAuthenticate extends BaseAuthenticate {
  *
  * @param CakeRequest $request Request to get authentication information from.
  * @param CakeResponse $response A response object that can have headers added.
- * @return mixed Either false on failure, or an array of user data on success.
+ * @return array|bool Either false on failure, or an array of user data on success.
  */
 	public function authenticate(CakeRequest $request, CakeResponse $response) {
 		return array(
@@ -84,7 +84,7 @@ class TestAuthComponent extends AuthComponent {
  * Helper method to add/set an authenticate object instance
  *
  * @param int $index The index at which to add/set the object
- * @param Object $object The object to add/set
+ * @param object $object The object to add/set
  * @return void
  */
 	public function setAuthenticateObject($index, $object) {
@@ -95,10 +95,10 @@ class TestAuthComponent extends AuthComponent {
  * Helper method to get an authenticate object instance
  *
  * @param int $index The index at which to get the object
- * @return Object $object
+ * @return object $object
  */
 	public function getAuthenticateObject($index) {
-    $this->constructAuthenticate();
+		$this->constructAuthenticate();
 		return isset($this->_authenticateObjects[$index]) ? $this->_authenticateObjects[$index] : null;
 	}
 
