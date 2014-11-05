@@ -129,7 +129,7 @@ if (!function_exists('sortByKey')) {
  * @param string $sortBy Sort by this key
  * @param string $order Sort order asc/desc (ascending or descending).
  * @param int $type Type of sorting to perform
- * @return mixed Sorted array
+ * @return array|null Sorted array, or null if not an array.
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#sortByKey
  */
 	function sortByKey(&$array, $sortBy, $order = 'asc', $type = SORT_NUMERIC) {
@@ -284,7 +284,7 @@ if (!function_exists('env')) {
  * environment information.
  *
  * @param string $key Environment variable name.
- * @return string Environment variable setting.
+ * @return string|bool|null Environment variable setting.
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#env
  */
 	function env($key) {

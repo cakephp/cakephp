@@ -141,7 +141,7 @@ class FormHelper extends AppHelper {
  * or get an already created instance of the model
  *
  * @param string $model Model name.
- * @return Model model instance
+ * @return Model|null Model instance
  */
 	protected function _getModel($model) {
 		$object = null;

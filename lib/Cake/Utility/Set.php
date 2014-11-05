@@ -97,7 +97,7 @@ class Set {
  *
  * @param string $class A class name of the type of object to map to
  * @param string $tmp A temporary class name used as $class if $class is an array
- * @return object Hierarchical object
+ * @return object|null Hierarchical object
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::map
  */
 	public static function map($class = 'stdClass', $tmp = 'stdClass') {

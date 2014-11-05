@@ -406,7 +406,7 @@ class Helper extends Object {
  * content is the best way to prevent all possible attacks.
  *
  * @param string|array $output Either an array of strings to clean or a single string to clean.
- * @return string|array cleaned content for output
+ * @return string|array|null Cleaned content for output
  * @deprecated 3.0.0 This method will be removed in 3.0
  */
 	public function clean($output) {

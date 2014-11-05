@@ -241,7 +241,7 @@ class CakeSocket {
 /**
  * Get the last error as a string.
  *
- * @return string Last error
+ * @return string|null Last error
  */
 	public function lastError() {
 		if (!empty($this->lastError)) {

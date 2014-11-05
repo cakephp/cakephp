@@ -1362,7 +1362,7 @@ class Model extends Object implements CakeEventListener {
  * $field => keys(type, null, default, key, length, extra)
  *
  * @param bool|string $field Set to true to reload schema, or a string to return a specific field
- * @return array Array of table metadata
+ * @return array|null Array of table metadata
  */
 	public function schema($field = false) {
 		if ($this->useTable !== false && (!is_array($this->_schema) || $field === true)) {
@@ -2904,7 +2904,7 @@ class Model extends Object implements CakeEventListener {
  *
  * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
  * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
- * @return array Array of records, or Null on failure.
+ * @return array|null Array of records, or Null on failure.
  * @link http://book.cakephp.org/2.0/en/models/retrieving-your-data.html
  */
 	public function find($type = 'first', $query = array()) {
@@ -2963,7 +2963,7 @@ class Model extends Object implements CakeEventListener {
  *
  * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
  * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
- * @return array Query array or null if it could not be build for some reasons
+ * @return array|null Query array or null if it could not be build for some reasons
  * @see Model::find()
  */
 	public function buildQuery($type = 'first', $query = array()) {
@@ -3582,7 +3582,7 @@ class Model extends Object implements CakeEventListener {
  * Gets all the models with which this model is associated.
  *
  * @param string $type Only result associations of this type
- * @return array Associations
+ * @return array|null Associations
  */
 	public function getAssociated($type = null) {
 		if (!$type) {

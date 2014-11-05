@@ -824,7 +824,7 @@ class Multibyte {
  *
  * @param int $char decimal value of character
  * @param string $type Type 'lower' or 'upper'. Defaults to 'lower'.
- * @return array
+ * @return array|null
  */
 	protected static function _find($char, $type = 'lower') {
 		$found = array();
