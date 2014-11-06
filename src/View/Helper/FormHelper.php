@@ -94,7 +94,7 @@ class FormHelper extends Helper {
 			'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
 			'inputContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
 			'label' => '<label{{attrs}}>{{text}}</label>',
-			'nestingLabel' => '<label{{attrs}}>{{input}}{{text}}</label>',
+			'nestingLabel' => '{{hidden}}<label{{attrs}}>{{input}}{{text}}</label>',
 			'legend' => '<legend>{{text}}</legend>',
 			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
@@ -769,6 +769,9 @@ class FormHelper extends Helper {
 			'text' => $text,
 		];
 		if (isset($options['input'])) {
+			if (is_array($options['input'])) {
+				$attrs = $options['input'] + $attrs;
+			}
 			return $this->widget('nestingLabel', $attrs);
 		}
 		return $this->widget('label', $attrs);
@@ -1298,16 +1301,21 @@ class FormHelper extends Helper {
 
 		$output = '';
 		if ($options['hiddenField']) {
-			$hiddenOptions = array(
+			$hiddenOptions = [
 				'name' => $options['name'],
-				'value' => ($options['hiddenField'] !== true ? $options['hiddenField'] : '0'),
+				'value' => ($options['hiddenField'] !== true && $options['hiddenField'] !== '_split' ? $options['hiddenField'] : '0'),
 				'form' => isset($options['form']) ? $options['form'] : null,
 				'secure' => false
-			);
+			];
 			if (isset($options['disabled']) && $options['disabled']) {
 				$hiddenOptions['disabled'] = 'disabled';
 			}
 			$output = $this->hidden($fieldName, $hiddenOptions);
+		}
+
+		if ($options['hiddenField'] == '_split') {
+			unset($options['hiddenField'], $options['type']);
+			return ['hidden' => $output, 'input' => $this->widget('checkbox', $options)];
 		}
 		unset($options['hiddenField'], $options['type']);
 		return $output . $this->widget('checkbox', $options);
