@@ -259,7 +259,7 @@ class ModelTask extends BakeTask {
 	public function findHasMany($model, array $associations) {
 		$schema = $model->schema();
 		$primaryKey = (array)$schema->primaryKey();
-		$tableName = $schema->name();
+		$tableName = $model->connection()->rawTableName($schema->name());
 		$foreignKey = $this->_modelKey($tableName);
 
 		foreach ($this->listAll() as $otherTable) {
@@ -308,7 +308,7 @@ class ModelTask extends BakeTask {
  */
 	public function findBelongsToMany($model, array $associations) {
 		$schema = $model->schema();
-		$tableName = $schema->name();
+		$tableName = $model->connection()->rawTableName($schema->name());
 		$foreignKey = $this->_modelKey($tableName);
 
 		$tables = $this->listAll();
@@ -676,9 +676,7 @@ class ModelTask extends BakeTask {
 		$prefix = $db->getPrefix();
 
 		foreach ($tables as $key => $table) {
-			if ($prefix !== '' && strpos($table, $prefix) === 0 && $table !== $prefix) {
-				$tables[$key] = preg_replace('/^(' . $prefix . ')/', '', $table);
-			}
+			$tables[$key] = $db->rawTableName($table);
 		}
 		$this->_tables = $tables;
 

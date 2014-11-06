@@ -217,6 +217,24 @@ class Connection {
 	}
 
 /**
+ * Checks if $tableName is prefixed
+ * If no prefix is configured, the method will return false
+ *
+ * @param string $tableName Table name to check
+ *
+ * @return bool
+ */
+	public function isTableNamePrefixed($tableName) {
+		$prefix = $this->getPrefix();
+
+		if ($prefix !== '' && strpos($tableName, $prefix) === 0 && $tableName !== $prefix) {
+			return true;
+		}
+
+		return false;
+	}
+
+/**
  * Public method that will resolve the full table name of a table
  *
  * @param string|array|TableNameExpression $names The names of the tables
@@ -313,6 +331,22 @@ class Connection {
 		}
 
 		return $condition;
+	}
+
+/**
+ * Return the table name without its prefix
+ *
+ * @param string $tableName The table name
+ *
+ * @return string
+ */
+	public function rawTableName($tableName) {
+		$prefix = $this->getPrefix();
+		if ($this->isTableNamePrefixed($tableName)) {
+			$tableName = preg_replace('/^(' . $prefix . ')/', '', $tableName);
+		}
+
+		return $tableName;
 	}
 
 /**
