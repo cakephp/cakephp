@@ -958,6 +958,10 @@ class FormHelper extends Helper {
 		}
 		$nestedInput = isset($options['nestedInput']) ? $options['nestedInput'] : $nestedInput;
 
+		if ($nestedInput == true && $options['type'] === 'checkbox' && !array_key_exists('hiddenField', $options) && $label !== false) {
+			$options['hiddenField'] = '_split';
+		}
+
 		$input = $this->_getInput($fieldName, $options);
 		if ($options['type'] === 'hidden') {
 			if ($newTemplates) {
@@ -1287,11 +1291,11 @@ class FormHelper extends Helper {
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
- * @return string An HTML text input element.
+ * @return string|array An HTML text input element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
  */
 	public function checkbox($fieldName, array $options = []) {
-		$options += array('hiddenField' => true, 'value' => 1);
+		$options += ['hiddenField' => true, 'value' => 1];
 
 		// Work around value=>val translations.
 		$value = $options['value'];
@@ -1313,7 +1317,7 @@ class FormHelper extends Helper {
 			$output = $this->hidden($fieldName, $hiddenOptions);
 		}
 
-		if ($options['hiddenField'] == '_split') {
+		if ($options['hiddenField'] === '_split') {
 			unset($options['hiddenField'], $options['type']);
 			return ['hidden' => $output, 'input' => $this->widget('checkbox', $options)];
 		}
