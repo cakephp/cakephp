@@ -1014,22 +1014,21 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
- * Logout should trigger a logout method on authentication objects.
+ * Test that Auth.afterIdentify and Auth.logout events are triggered
  *
  * @return void
  */
-	public function testLogoutTrigger() {
-		$LogoutTriggerMockAuthenticate = $this->getMock(
-			'Cake\Controller\Component\Auth\BaseAuthenticate',
-			array('authenticate', 'logout'), array(), '', false
-		);
+	public function testEventTriggering() {
+		$this->Auth->config('authenticate', [
+			'Test' => ['className' => 'TestApp\Auth\TestAuthenticate']
+		]);
 
-		$this->Auth->config('authenticate', ['LogoutTriggerMock']);
-		$this->Auth->setAuthenticateObject(0, $LogoutTriggerMockAuthenticate);
-		$LogoutTriggerMockAuthenticate->expects($this->once())
-			->method('logout');
-
+		$this->Auth->identify();
 		$this->Auth->logout();
+		$authObject = $this->Auth->authenticationProvider();
+
+		$expected = ['afterIdentify', 'logout'];
+		$this->assertEquals($expected, $authObject->callStack);
 	}
 
 /**
