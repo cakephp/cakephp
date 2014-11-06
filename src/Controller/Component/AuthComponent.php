@@ -588,8 +588,8 @@ class AuthComponent extends Component {
 /**
  * Log a user out.
  *
- * Returns the logout action to redirect to. Triggers the logout() method of
- * all the authenticate objects, so they can perform custom logout logic.
+ * Returns the logout action to redirect to. Triggers the `Auth.logout` event
+ * which the authenticate classes can listen for and perform custom logout logic.
  * AuthComponent will remove the session data, so there is no need to do that
  * in an authentication object. Logging out will also renew the session id.
  * This helps mitigate issues with session replays.
@@ -705,6 +705,9 @@ class AuthComponent extends Component {
 /**
  * Use the configured authentication adapters, and attempt to identify the user
  * by credentials contained in $request.
+ *
+ * Triggers `Auth.afterIdentify` event which the authenticate classes can listen
+ * to.
  *
  * @return array User record data, or false, if the user could not be identified.
  */
