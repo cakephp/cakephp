@@ -416,7 +416,8 @@ class HttpSocket extends CakeSocket {
 		}
 
 		if ($this->request['redirect'] && $this->response->isRedirect()) {
-			$request['uri'] = trim(urldecode($this->response->getHeader('Location')), '=');
+			$location = trim($this->response->getHeader('Location'), '=');
+			$request['uri'] = str_replace('%2F', '/', $location);
 			$request['redirect'] = is_int($this->request['redirect']) ? $this->request['redirect'] - 1 : $this->request['redirect'];
 			$this->response = $this->request($request);
 		}
