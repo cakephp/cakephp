@@ -888,6 +888,37 @@ class MarshallerTest extends TestCase {
 
 /**
  * Tests that merging data to an entity containing belongsToMany and _ids
+ * with additional association conditions works.
+ *
+ * @return void
+ */
+	public function testMergeBelongsToManyFromIdsWithConditions() {
+		$this->articles->belongsToMany('Tags', [
+			'conditions' => ['ArticleTags.article_id' => 1]
+		]);
+
+		$entity = new Entity([
+			'title' => 'No tags',
+			'body' => 'Some content here',
+			'tags' => []
+		]);
+
+		$data = [
+			'title' => 'Haz moar tags',
+			'tags' => ['_ids' => [1, 2, 3]]
+		];
+		$entity->accessible('*', true);
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
+
+		$this->assertCount(3, $result->tags);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[2]);
+	}
+
+/**
+ * Tests that merging data to an entity containing belongsToMany and _ids
  * will ignore empty values.
  *
  * @return void
