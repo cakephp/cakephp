@@ -19,6 +19,7 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
+use Cake\Event\EventManagerTrait;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -33,6 +34,8 @@ use Cake\Utility\Hash;
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html
  */
 class AuthComponent extends Component {
+
+	use EventManagerTrait;
 
 /**
  * Constant for 'all'
@@ -236,6 +239,7 @@ class AuthComponent extends Component {
  */
 	public function initialize(array $config) {
 		$controller = $this->_registry->getController();
+		$this->eventManager($controller->eventManager());
 		$this->request = $controller->request;
 		$this->response = $controller->response;
 		$this->session = $controller->request->session();
@@ -584,8 +588,8 @@ class AuthComponent extends Component {
 /**
  * Log a user out.
  *
- * Returns the logout action to redirect to. Triggers the logout() method of
- * all the authenticate objects, so they can perform custom logout logic.
+ * Returns the logout action to redirect to. Triggers the `Auth.logout` event
+ * which the authenticate classes can listen for and perform custom logout logic.
  * AuthComponent will remove the session data, so there is no need to do that
  * in an authentication object. Logging out will also renew the session id.
  * This helps mitigate issues with session replays.
@@ -599,9 +603,7 @@ class AuthComponent extends Component {
 			$this->constructAuthenticate();
 		}
 		$user = (array)$this->user();
-		foreach ($this->_authenticateObjects as $auth) {
-			$auth->logout($user);
-		}
+		$this->dispatchEvent('Auth.logout', [$user]);
 		$this->session->delete($this->sessionKey);
 		$this->session->delete('Auth.redirect');
 		$this->session->renew();
@@ -704,6 +706,9 @@ class AuthComponent extends Component {
  * Use the configured authentication adapters, and attempt to identify the user
  * by credentials contained in $request.
  *
+ * Triggers `Auth.afterIdentify` event which the authenticate classes can listen
+ * to.
+ *
  * @return array User record data, or false, if the user could not be identified.
  */
 	public function identify() {
@@ -716,6 +721,7 @@ class AuthComponent extends Component {
 			$result = $auth->authenticate($this->request, $this->response);
 			if (!empty($result) && is_array($result)) {
 				$this->_authenticationProvider = $auth;
+				$event = $this->dispatchEvent('Auth.afterIdentify', [$result]);
 				return $result;
 			}
 		}
@@ -755,6 +761,7 @@ class AuthComponent extends Component {
 			}
 			$config = array_merge($global, (array)$config);
 			$this->_authenticateObjects[$alias] = new $className($this->_registry, $config);
+			$this->eventManager()->attach($this->_authenticateObjects[$alias]);
 		}
 		return $this->_authenticateObjects;
 	}

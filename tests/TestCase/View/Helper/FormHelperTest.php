@@ -1476,12 +1476,12 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('something', array('type' => 'checkbox'));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'label' => array('for' => 'something'),
 			array('input' => array(
 				'type' => 'hidden',
 				'name' => 'something',
 				'value' => '0'
 			)),
+			'label' => array('for' => 'something'),
 			array('input' => array(
 				'type' => 'checkbox',
 				'name' => 'something',
@@ -2386,8 +2386,8 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'label' => array('for' => 'user-disabled'),
 			'input' => array('type' => 'hidden', 'name' => 'User[disabled]', 'value' => '0'),
+			'label' => array('for' => 'user-disabled'),
 			array('input' => array(
 				'type' => 'checkbox',
 				'name' => 'User[disabled]',
@@ -2815,12 +2815,12 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Model.user', array('type' => 'checkbox'));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'label' => array('for' => 'model-user'),
 			array('input' => array(
 				'type' => 'hidden',
 				'name' => 'Model[user]',
 				'value' => 0,
 			)),
+			'label' => array('for' => 'model-user'),
 			array('input' => array(
 				'name' => 'Model[user]',
 				'type' => 'checkbox',
@@ -6405,7 +6405,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testInputsNotNested() {
 		$this->Form->templates([
-			'nestingLabel' => '{{input}}<label{{attrs}}>{{text}}</label>',
+			'nestingLabel' => '{{hidden}}{{input}}<label{{attrs}}>{{text}}</label>',
 			'formGroup' => '{{input}}{{label}}',
 		]);
 		$result = $this->Form->input('foo', ['type' => 'checkbox']);
@@ -6496,8 +6496,8 @@ class FormHelperTest extends TestCase {
 		]);
 		$expected = [
 			'div' => ['class' => 'check'],
-			'label' => ['for' => 'accept'],
 			['input' => ['type' => 'hidden', 'name' => 'accept', 'value' => 0]],
+			'label' => ['for' => 'accept'],
 			['input' => ['id' => 'accept', 'type' => 'checkbox', 'name' => 'accept', 'value' => 1]],
 			'Accept',
 			'/label',

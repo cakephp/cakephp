@@ -847,26 +847,33 @@ class RequestTest extends TestCase {
 
 		Request::addDetector('index', array('param' => 'action', 'value' => 'index'));
 		$request->params['action'] = 'index';
+		$request->clearDetectorCache();
 		$this->assertTrue($request->isIndex());
 
 		$request->params['action'] = 'add';
+		$request->clearDetectorCache();
 		$this->assertFalse($request->isIndex());
 
 		$request->return = true;
+		$request->clearDetectorCache();
 		$this->assertTrue($request->isCallMe());
 
 		$request->return = false;
+		$request->clearDetectorCache();
 		$this->assertFalse($request->isCallMe());
 
 		Request::addDetector('callme', array($this, 'detectCallback'));
 		$request->return = true;
+		$request->clearDetectorCache();
 		$this->assertTrue($request->isCallMe());
 
 		Request::addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'png', 'txt')));
 		$request->params['ext'] = 'pdf';
+		$request->clearDetectorCache();
 		$this->assertTrue($request->is('extension'));
 
 		$request->params['ext'] = 'exe';
+		$request->clearDetectorCache();
 		$this->assertFalse($request->isExtension());
 	}
 

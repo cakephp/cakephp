@@ -133,6 +133,13 @@ class Request implements \ArrayAccess {
 	);
 
 /**
+ * Instance cache for results of is(something) calls
+ *
+ * @var array
+ */
+	protected $_detectorCache = [];
+
+/**
  * Copy of php://input. Since this stream can only be read once in most SAPI's
  * keep a copy of it so users don't need to know about that detail.
  *
@@ -580,10 +587,36 @@ class Request implements \ArrayAccess {
 			$result = array_map(array($this, 'is'), $type);
 			return count(array_filter($result)) > 0;
 		}
+
 		$type = strtolower($type);
 		if (!isset(static::$_detectors[$type])) {
 			return false;
 		}
+
+		if (!isset($this->_detectorCache[$type])) {
+			$this->_detectorCache[$type] = $this->_is($type);
+		}
+
+		return $this->_detectorCache[$type];
+	}
+
+/**
+ * Clears the instance detector cache, used by the is() function
+ *
+ * @return void
+ */
+	public function clearDetectorCache() {
+		$this->_detectorCache = [];
+	}
+
+/**
+ * Worker for the public is() function
+ *
+ * @param string|array $type The type of request you want to check. If an array
+ *   this method will return true if the request matches any type.
+ * @return bool Whether or not the request is the type you are checking.
+ */
+	protected function _is($type) {
 		$detect = static::$_detectors[$type];
 		if (is_callable($detect)) {
 			return call_user_func($detect, $this);
@@ -1060,6 +1093,7 @@ class Request implements \ArrayAccess {
 	public function env($key, $value = null) {
 		if ($value !== null) {
 			$this->_environment[$key] = $value;
+			$this->clearDetectorCache();
 			return $this;
 		}
 

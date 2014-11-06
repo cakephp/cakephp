@@ -311,11 +311,11 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
- * testDisabling method
+ * Verify that isAjax is set on the request params for ajax requests
  *
  * @return void
  */
-	public function testDisabling() {
+	public function testIsAjaxParams() {
 		$this->request->env('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->RequestHandler->initialize([]);
