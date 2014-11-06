@@ -958,7 +958,7 @@ class FormHelper extends Helper {
 		}
 		$nestedInput = isset($options['nestedInput']) ? $options['nestedInput'] : $nestedInput;
 
-		if ($nestedInput == true && $options['type'] === 'checkbox' && !array_key_exists('hiddenField', $options) && $label !== false) {
+		if ($nestedInput === true && $options['type'] === 'checkbox' && !array_key_exists('hiddenField', $options) && $label !== false) {
 			$options['hiddenField'] = '_split';
 		}
 
