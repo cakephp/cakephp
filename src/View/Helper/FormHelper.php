@@ -94,7 +94,7 @@ class FormHelper extends Helper {
 			'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
 			'inputContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
 			'label' => '<label{{attrs}}>{{text}}</label>',
-			'nestingLabel' => '<label{{attrs}}>{{input}}{{text}}</label>',
+			'nestingLabel' => '{{hidden}}<label{{attrs}}>{{input}}{{text}}</label>',
 			'legend' => '<legend>{{text}}</legend>',
 			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
@@ -769,6 +769,9 @@ class FormHelper extends Helper {
 			'text' => $text,
 		];
 		if (isset($options['input'])) {
+			if (is_array($options['input'])) {
+				$attrs = $options['input'] + $attrs;
+			}
 			return $this->widget('nestingLabel', $attrs);
 		}
 		return $this->widget('label', $attrs);
@@ -954,6 +957,10 @@ class FormHelper extends Helper {
 			$nestedInput = true;
 		}
 		$nestedInput = isset($options['nestedInput']) ? $options['nestedInput'] : $nestedInput;
+
+		if ($nestedInput === true && $options['type'] === 'checkbox' && !array_key_exists('hiddenField', $options) && $label !== false) {
+			$options['hiddenField'] = '_split';
+		}
 
 		$input = $this->_getInput($fieldName, $options);
 		if ($options['type'] === 'hidden') {
@@ -1284,11 +1291,11 @@ class FormHelper extends Helper {
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
- * @return string An HTML text input element.
+ * @return string|array An HTML text input element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
  */
 	public function checkbox($fieldName, array $options = []) {
-		$options += array('hiddenField' => true, 'value' => 1);
+		$options += ['hiddenField' => true, 'value' => 1];
 
 		// Work around value=>val translations.
 		$value = $options['value'];
@@ -1298,16 +1305,21 @@ class FormHelper extends Helper {
 
 		$output = '';
 		if ($options['hiddenField']) {
-			$hiddenOptions = array(
+			$hiddenOptions = [
 				'name' => $options['name'],
-				'value' => ($options['hiddenField'] !== true ? $options['hiddenField'] : '0'),
+				'value' => ($options['hiddenField'] !== true && $options['hiddenField'] !== '_split' ? $options['hiddenField'] : '0'),
 				'form' => isset($options['form']) ? $options['form'] : null,
 				'secure' => false
-			);
+			];
 			if (isset($options['disabled']) && $options['disabled']) {
 				$hiddenOptions['disabled'] = 'disabled';
 			}
 			$output = $this->hidden($fieldName, $hiddenOptions);
+		}
+
+		if ($options['hiddenField'] === '_split') {
+			unset($options['hiddenField'], $options['type']);
+			return ['hidden' => $output, 'input' => $this->widget('checkbox', $options)];
 		}
 		unset($options['hiddenField'], $options['type']);
 		return $output . $this->widget('checkbox', $options);
