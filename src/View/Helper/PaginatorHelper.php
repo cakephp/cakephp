@@ -175,7 +175,7 @@ class PaginatorHelper extends Helper {
  *
  * @param string $model Optional model name. Uses the default if none is specified.
  * @param array $options Options for pagination links. See #options for list of keys.
- * @return string The name of the key by which the recordset is being sorted, or
+ * @return string|null The name of the key by which the recordset is being sorted, or
  *  null if the results are not currently sorted.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortKey
  */
@@ -491,7 +491,7 @@ class PaginatorHelper extends Helper {
 /**
  * Gets the default model of the paged sets
  *
- * @return string Model name or null if the pagination isn't initialized.
+ * @return string|null Model name or null if the pagination isn't initialized.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::defaultModel
  */
 	public function defaultModel() {

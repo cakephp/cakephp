@@ -352,7 +352,7 @@ class Session {
 		}
 
 		if (!isset($_SESSION)) {
-			return null;
+			return false;
 		}
 
 		return Hash::get($_SESSION, $name) !== null;
