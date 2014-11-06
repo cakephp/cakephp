@@ -260,6 +260,17 @@ class Table {
 	}
 
 /**
+ * Set the table name prefix to the $_table property
+ *
+ * @param string $prefix Prefix for the table name
+ *
+ * @return void
+ */
+	public function setTableNamePrefix($prefix = '') {
+		$this->_table->setPrefix($prefix);
+	}
+
+/**
  * Add a column to the table.
  *
  * ### Attributes
