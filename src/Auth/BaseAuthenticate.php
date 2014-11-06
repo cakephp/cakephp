@@ -16,6 +16,7 @@ namespace Cake\Auth;
 use Cake\Auth\PasswordHasherFactory;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
@@ -24,7 +25,7 @@ use Cake\ORM\TableRegistry;
  * Base Authentication class with common methods and properties.
  *
  */
-abstract class BaseAuthenticate {
+abstract class BaseAuthenticate implements EventListenerInterface {
 
 	use InstanceConfigTrait;
 
@@ -175,19 +176,6 @@ abstract class BaseAuthenticate {
 	abstract public function authenticate(Request $request, Response $response);
 
 /**
- * Allows you to hook into AuthComponent::logout(),
- * and implement specialized logout behavior.
- *
- * All attached authentication objects will have this method
- * called when a user logs out.
- *
- * @param array $user The user about to be logged out.
- * @return void
- */
-	public function logout(array $user) {
-	}
-
-/**
  * Get a user based on information in the request. Primarily used by stateless authentication
  * systems like basic and digest auth.
  *
@@ -211,6 +199,26 @@ abstract class BaseAuthenticate {
  * @return void
  */
 	public function unauthenticated(Request $request, Response $response) {
+	}
+
+/**
+ * Returns a list of all events that this authenticate class will listen to.
+ *
+ * An autheticate class can listen to following events fired by AuthComponent:
+ *
+ * - `Auth.afterIdentify` - Fired after a user has been identified using one of
+ *   configured authenticate class. The callback function should have signature
+ *   like `afteIndentify(Event $event, array $user)` when `$user` is the
+ *   identified user record.
+ *
+ * - `Auth.logout` - Fired when AuthComponent::logout() is called. The callback
+ *   function should have signature like `logout(Event $event, array $user)`
+ *   where `$user` is the user about to be logged out.
+ *
+ * @return array List of events this class listens to. Defaults to `[]`.
+ */
+	public function implementedEvents() {
+		return [];
 	}
 
 }

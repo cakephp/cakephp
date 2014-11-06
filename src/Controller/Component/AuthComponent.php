@@ -19,6 +19,7 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
+use Cake\Event\EventManagerTrait;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -33,6 +34,8 @@ use Cake\Utility\Hash;
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html
  */
 class AuthComponent extends Component {
+
+	use EventManagerTrait;
 
 /**
  * Constant for 'all'
@@ -236,6 +239,7 @@ class AuthComponent extends Component {
  */
 	public function initialize(array $config) {
 		$controller = $this->_registry->getController();
+		$this->eventManager($controller->eventManager());
 		$this->request = $controller->request;
 		$this->response = $controller->response;
 		$this->session = $controller->request->session();
@@ -599,9 +603,7 @@ class AuthComponent extends Component {
 			$this->constructAuthenticate();
 		}
 		$user = (array)$this->user();
-		foreach ($this->_authenticateObjects as $auth) {
-			$auth->logout($user);
-		}
+		$this->dispatchEvent('Auth.logout', [$user]);
 		$this->session->delete($this->sessionKey);
 		$this->session->delete('Auth.redirect');
 		$this->session->renew();
@@ -716,6 +718,7 @@ class AuthComponent extends Component {
 			$result = $auth->authenticate($this->request, $this->response);
 			if (!empty($result) && is_array($result)) {
 				$this->_authenticationProvider = $auth;
+				$event = $this->dispatchEvent('Auth.afterIdentify', [$result]);
 				return $result;
 			}
 		}
@@ -755,6 +758,7 @@ class AuthComponent extends Component {
 			}
 			$config = array_merge($global, (array)$config);
 			$this->_authenticateObjects[$alias] = new $className($this->_registry, $config);
+			$this->eventManager()->attach($this->_authenticateObjects[$alias]);
 		}
 		return $this->_authenticateObjects;
 	}
