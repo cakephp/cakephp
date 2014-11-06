@@ -204,7 +204,7 @@ abstract class BaseAuthenticate implements EventListenerInterface {
 /**
  * Returns a list of all events that this authenticate class will listen to.
  *
- * An autheticate class can listen to following events fired by AuthComponent:
+ * An authenticate class can listen to following events fired by AuthComponent:
  *
  * - `Auth.afterIdentify` - Fired after a user has been identified using one of
  *   configured authenticate class. The callback function should have signature
