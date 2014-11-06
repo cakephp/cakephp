@@ -250,7 +250,7 @@ class Marshaller {
 			$filter = [$primaryKey[0] . ' IN' => $ids];
 		}
 
-		return $assoc->find()->where($filter)->toArray();
+		return $target->find()->where($filter)->toArray();
 	}
 
 /**
