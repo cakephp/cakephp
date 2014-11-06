@@ -1665,7 +1665,7 @@ class Model extends Object implements CakeEventListener {
  *   If a boolean, indicates whether or not to validate before saving.
  *   If an array, allows control of 'validate', 'callbacks' and 'counterCache' options.
  *   See Model::save() for details of each options.
- * @return bool See Model::save()
+ * @return bool|array See Model::save() False on failure or an array of model data on success.
  * @see Model::save()
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-savefield-string-fieldname-string-fieldvalue-validate-false
  */
