@@ -1930,10 +1930,13 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$tables = [
 			'a' => 'articles',
-			'Comment' => 'comments',
 			'users'
 		];
-		$query = $query->from($tables);
+		$query = $query
+					->from($tables)
+					->join(
+						['table' => 'comments', 'alias' => 'Comment', 'conditions' => 'a.id = Comment.article_id']
+					);
 
 		$expected = ['a' => 'a', 'Comment' => 'Comment'];
 		$this->assertEquals($query->tablesAliases, $expected);
