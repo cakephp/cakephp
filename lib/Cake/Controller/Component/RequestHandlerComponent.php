@@ -162,7 +162,7 @@ class RequestHandlerComponent extends Component {
 		$accepts = $this->response->mapType($accept);
 		$preferedTypes = current($accepts);
 		if (array_intersect($preferedTypes, array('html', 'xhtml'))) {
-			return null;
+			return;
 		}
 
 		$extensions = Router::extensions();
@@ -724,7 +724,7 @@ class RequestHandlerComponent extends Component {
  * Maps a content type alias back to its mime-type(s)
  *
  * @param string|array $alias String alias to convert back into a content type. Or an array of aliases to map.
- * @return string Null on an undefined alias. String value of the mapped alias type. If an
+ * @return string|null Null on an undefined alias. String value of the mapped alias type. If an
  *   alias maps to more than one content type, the first one will be returned.
  */
 	public function mapAlias($alias) {
