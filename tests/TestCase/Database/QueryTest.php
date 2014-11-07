@@ -1922,6 +1922,32 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests table alias detection in a string
+ *
+ * @return void
+ */
+	public function testsHasTableAlias() {
+		$query = new Query($this->connection);
+		$tables = [
+			'a' => 'articles',
+			'Comment' => 'comments',
+			'users'
+		];
+		$query = $query->from($tables);
+
+		$expected = ['a' => 'a', 'Comment' => 'Comment'];
+		$this->assertEquals($query->tablesAliases, $expected);
+
+		$this->assertTrue($query->hasTableAlias('a'));
+		$this->assertTrue($query->hasTableAlias('Comment'));
+		$this->assertFalse($query->hasTableAlias('users'));
+
+		$this->assertTrue($query->hasTableAlias('a.id'));
+		$this->assertTrue($query->hasTableAlias('Comment.content'));
+		$this->assertFalse($query->hasTableAlias('users.active'));
+	}
+
+/**
  * Tests stacking decorators for results and resetting the list of decorators
  *
  * @return void

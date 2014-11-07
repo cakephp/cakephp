@@ -1587,9 +1587,12 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return bool
  */
 	public function hasTableAlias($name) {
-		if (is_string($name) && strpos($name, '.') !== false) {
-			list($tableName, $fieldName) = explode('.', $name);
-			return isset($this->tablesAliases[$tableName]);
+		if (is_string($name)) {
+			if (strpos($name, '.') !== false) {
+				list($name, $fieldName) = explode('.', $name);
+			}
+
+			return isset($this->tablesAliases[$name]);
 		}
 
 		return false;
