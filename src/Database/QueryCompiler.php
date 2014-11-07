@@ -156,7 +156,7 @@ class QueryCompiler {
 	protected function _orderFullFieldsName($parts, $query, $generator) {
 		if ($parts instanceof ExpressionInterface) {
 			$parts->iterateParts(function ($condition, &$key) use ($parts, $query, $generator) {
-				if (!$query->hasTableAlias($key)) {
+				if ($query->hasTableAlias($key) === false) {
 					$key = $query->connection()->fullFieldName($key);
 
 					if ($key instanceof ExpressionInterface) {
@@ -183,7 +183,7 @@ class QueryCompiler {
 	protected function _groupFullFieldsName($parts, $query, $generator) {
 		if (!empty($parts)) {
 			foreach ($parts as $key => $part) {
-				if (!$query->hasTableAlias($part)) {
+				if ($query->hasTableAlias($part) === false) {
 					$parts[$key] = $query->connection()->fullFieldName($part);
 				}
 			}
@@ -207,13 +207,13 @@ class QueryCompiler {
 			$parts->traverse(function ($condition) use ($query) {
 				if ($condition instanceof Comparison) {
 					$field = $condition->getField();
-					if (!$query->hasTableAlias($field)) {
+					if ($query->hasTableAlias($field) === false) {
 						$field = $query->connection()->applyFullTableName($condition->getField());
 						$condition->field($field);
 					}
 				} elseif ($condition instanceof QueryExpression) {
 					$condition->iterateParts(function ($condition) use ($query) {
-						if (!$query->hasTableAlias($condition)) {
+						if ($query->hasTableAlias($condition) === false) {
 							return $query->connection()->applyFullTableName($condition);
 						}
 					});
@@ -246,7 +246,7 @@ class QueryCompiler {
 		$normalized = [];
 
 		foreach ($parts as $alias => $part) {
-			if (!$query->hasTableAlias($part)) {
+			if ($query->hasTableAlias($part) === false) {
 				$parts[$alias] = $query->connection()->fullFieldName($part);
 			}
 		}
