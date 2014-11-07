@@ -673,8 +673,6 @@ class ModelTask extends BakeTask {
 		$tables = $this->_getAllTables();
 
 		$db = ConnectionManager::get($this->connection);
-		$prefix = $db->getPrefix();
-
 		foreach ($tables as $key => $table) {
 			$tables[$key] = $db->rawTableName($table);
 		}
