@@ -189,7 +189,7 @@ class PluginTask extends BakeTask {
 			'plugin' => $plugin,
 		]);
 		$this->out('Generating routes.php file...');
-		$out = $this->Template->generate('config', 'routes');
+		$out = $this->Template->generate('config/routes');
 		$file = $path . $plugin . DS . 'config' . DS . 'routes.php';
 		$this->createFile($file, $out);
 	}
@@ -207,7 +207,7 @@ class PluginTask extends BakeTask {
 			'path' => $path
 		]);
 		$this->out('Generating phpunit.xml file...');
-		$out = $this->Template->generate('test', 'phpunit.xml');
+		$out = $this->Template->generate('tests/phpunit.xml');
 		$file = $path . $plugin . DS . 'phpunit.xml';
 		$this->createFile($file, $out);
 	}
@@ -226,7 +226,7 @@ class PluginTask extends BakeTask {
 			'root' => ROOT
 		]);
 		$this->out('Generating tests/bootstrap.php file...');
-		$out = $this->Template->generate('test', 'bootstrap');
+		$out = $this->Template->generate('tests/bootstrap');
 		$file = $path . $plugin . DS . 'tests' . DS . 'bootstrap.php';
 		$this->createFile($file, $out);
 	}

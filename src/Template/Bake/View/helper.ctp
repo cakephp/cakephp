@@ -1,4 +1,4 @@
-<?php
+<%
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -12,41 +12,23 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Shell\Task;
+%>
+<?php
+namespace <%= $namespace %>\View\Helper;
 
-use Cake\Shell\Task\SimpleBakeTask;
+use Cake\View\Helper;
+use Cake\View\View;
 
 /**
- * Helper code generator.
+ * <%= $name %> helper
  */
-class HelperTask extends SimpleBakeTask {
+class <%= $name %>Helper extends Helper {
 
 /**
- * Task name used in path generation.
+ * Default configuration.
  *
- * @var string
+ * @var array
  */
-	public $pathFragment = 'View/Helper/';
-
-/**
- * {@inheritDoc}
- */
-	public function name() {
-		return 'helper';
-	}
-
-/**
- * {@inheritDoc}
- */
-	public function fileName($name) {
-		return $name . 'Helper.php';
-	}
-
-/**
- * {@inheritDoc}
- */
-	public function template() {
-		return 'View/helper';
-	}
+	protected $_defaultConfig = [];
 
 }

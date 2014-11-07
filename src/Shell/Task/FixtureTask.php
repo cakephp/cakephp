@@ -212,7 +212,7 @@ class FixtureTask extends BakeTask {
 
 		$this->Template->set('model', $model);
 		$this->Template->set($vars);
-		$content = $this->Template->generate('classes', 'fixture');
+		$content = $this->Template->generate('tests/fixture');
 
 		$this->out("\n" . sprintf('Baking test fixture for %s...', $model), 1, Shell::QUIET);
 		$this->createFile($path . $filename, $content);

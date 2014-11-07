@@ -365,45 +365,7 @@ class ViewTask extends BakeTask {
 		$this->Template->set('action', $action);
 		$this->Template->set('plugin', $this->plugin);
 		$this->Template->set($vars);
-		$template = $this->getTemplate($action);
-		if ($template) {
-			return $this->Template->generate('views', $template);
-		}
-		return false;
-	}
-
-/**
- * Gets the template name based on the action name
- *
- * @param string $action name
- * @return string template name
- */
-	public function getTemplate($action) {
-		if ($action != $this->template && in_array($action, $this->noTemplateActions)) {
-			return false;
-		}
-		if (!empty($this->template) && $action != $this->template) {
-			return $this->template;
-		}
-		$templatePath = $this->Template->getTemplatePath();
-
-		if (!empty($this->params['prefix'])) {
-			$prefixed = Inflector::underscore($this->params['prefix']) . '_' . $action;
-			if (file_exists($templatePath . 'views/' . $prefixed . '.ctp')) {
-				return $prefixed;
-			}
-			$generic = preg_replace('/(.*)(_add|_edit)$/', '\1_form', $prefixed);
-			if (file_exists($templatePath . 'views/' . $generic . '.ctp')) {
-				return $generic;
-			}
-		}
-		if (file_exists($templatePath . 'views/' . $action . '.ctp')) {
-			return $action;
-		}
-		if (in_array($action, ['add', 'edit'])) {
-			return 'form';
-		}
-		return $action;
+		return $this->Template->generate("Template/$action");
 	}
 
 /**

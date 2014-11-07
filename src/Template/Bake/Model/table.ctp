@@ -1,4 +1,4 @@
-<?php
+<%
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -13,19 +13,18 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Utility\Inflector;
-
-echo "<?php\n";
-?>
-namespace <?= $namespace ?>\Model\Table;
+%>
+<?php
+namespace <%= $namespace %>\Model\Table;
 
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * <?= $name ?> Model
+ * <%= $name %> Model
  */
-class <?= $name ?>Table extends Table {
+class <%= $name %>Table extends Table {
 
 /**
  * Initialize method
@@ -34,44 +33,44 @@ class <?= $name ?>Table extends Table {
  * @return void
  */
 	public function initialize(array $config) {
-<?php if (!empty($table)): ?>
-		$this->table('<?= $table ?>');
-<?php endif ?>
-<?php if (!empty($displayField)): ?>
-		$this->displayField('<?= $displayField ?>');
-<?php endif ?>
-<?php if (!empty($primaryKey)): ?>
-<?php
+<% if (!empty($table)): %>
+		$this->table('<%= $table %>');
+<% endif %>
+<% if (!empty($displayField)): %>
+		$this->displayField('<%= $displayField %>');
+<% endif %>
+<% if (!empty($primaryKey)): %>
+<%
 $key = array_map(function($el) { return "'$el'"; }, (array)$primaryKey);
-?>
-<?php if (count($primaryKey) > 1): ?>
-		$this->primaryKey([<?= implode(', ', $key) ?>]);
-<?php else: ?>
-		$this->primaryKey(<?= current($key) ?>);
-<?php endif ?>
-<?php endif ?>
-<?php foreach ($behaviors as $behavior => $behaviorData): ?>
-		$this->addBehavior('<?= $behavior ?>'<?= $behaviorData ? ", [" . implode(', ', $behaviorData) . ']' : '' ?>);
-<?php endforeach ?>
-<?php $firstAssoc = true; ?>
-<?php foreach ($associations as $type => $assocs): ?>
-<?php foreach ($assocs as $assoc): ?>
-<?php if ($firstAssoc): ?>
-<?= "\n" ?>
-<?php $firstAssoc = false; ?>
-<?php endif ?>
-		$this-><?= $type ?>('<?= $assoc['alias'] ?>', [
-<?php foreach ($assoc as $key => $val): ?>
-<?php if ($key !== 'alias'): ?>
-			<?= "'$key' => '$val',\n" ?>
-<?php endif ?>
-<?php endforeach ?>
+%>
+<% if (count($primaryKey) > 1): %>
+		$this->primaryKey([<%= implode(', ', $key) %>]);
+<% else: %>
+		$this->primaryKey(<%= current($key) %>);
+<% endif %>
+<% endif %>
+<% foreach ($behaviors as $behavior => $behaviorData): %>
+		$this->addBehavior('<%= $behavior %>'<%= $behaviorData ? ", [" . implode(', ', $behaviorData) . ']' : '' %>);
+<% endforeach %>
+<% $firstAssoc = true; %>
+<% foreach ($associations as $type => $assocs): %>
+<% foreach ($assocs as $assoc): %>
+<% if ($firstAssoc): %>
+<%= "\n" %>
+<% $firstAssoc = false; %>
+<% endif %>
+		$this-><%= $type %>('<%= $assoc['alias'] %>', [
+<% foreach ($assoc as $key => $val): %>
+<% if ($key !== 'alias'): %>
+			<%= "'$key' => '$val',\n" %>
+<% endif %>
+<% endforeach %>
 		]);
-<?php endforeach ?>
-<?php endforeach ?>
+<% endforeach %>
+<% endforeach %>
 	}
 
-<?php if (!empty($validation)): ?>
+<% if (!empty($validation)): %>
 /**
  * Default validation rules.
  *
@@ -80,8 +79,8 @@ $key = array_map(function($el) { return "'$el'"; }, (array)$primaryKey);
  */
 	public function validationDefault(Validator $validator) {
 		$validator
-<?php $validationMethods = []; ?>
-<?php
+<% $validationMethods = []; %>
+<%
 foreach ($validation as $field => $rules):
 	foreach ($rules as $ruleName => $rule):
 		if ($rule['rule'] && !isset($rule['provider'])):
@@ -126,12 +125,12 @@ foreach ($validation as $field => $rules):
 		endif;
 	endforeach;
 endforeach;
-?>
-<?= "\t\t\t" . implode("\n\t\t\t", $validationMethods) . ";" ?>
+%>
+<%= "\t\t\t" . implode("\n\t\t\t", $validationMethods) . ";" %>
 
 
 		return $validator;
 	}
-<?php endif ?>
+<% endif %>
 
 }

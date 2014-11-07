@@ -1,4 +1,4 @@
-<?php
+<%
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -12,41 +12,10 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Shell\Task;
+%>
+<?php
+use Cake\Routing\Router;
 
-use Cake\Shell\Task\SimpleBakeTask;
-
-/**
- * Helper code generator.
- */
-class HelperTask extends SimpleBakeTask {
-
-/**
- * Task name used in path generation.
- *
- * @var string
- */
-	public $pathFragment = 'View/Helper/';
-
-/**
- * {@inheritDoc}
- */
-	public function name() {
-		return 'helper';
-	}
-
-/**
- * {@inheritDoc}
- */
-	public function fileName($name) {
-		return $name . 'Helper.php';
-	}
-
-/**
- * {@inheritDoc}
- */
-	public function template() {
-		return 'View/helper';
-	}
-
-}
+Router::plugin('<%= $plugin %>', function($routes) {
+	$routes->fallbacks();
+});

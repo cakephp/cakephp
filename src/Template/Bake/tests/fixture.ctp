@@ -1,4 +1,4 @@
-<?php
+<%
 /**
  * Fixture Template file
  *
@@ -16,52 +16,52 @@
  * @since         1.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-?>
-<?= '<?php' . "\n"; ?>
-namespace <?= $namespace ?>\Test\Fixture;
+%>
+<?php
+namespace <%= $namespace %>\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * <?= $name ?>Fixture
+ * <%= $name %>Fixture
  *
  */
-class <?= $name ?>Fixture extends TestFixture {
+class <%= $name %>Fixture extends TestFixture {
 
-<?php if ($table): ?>
+<% if ($table): %>
 /**
  * Table name
  *
  * @var string
  */
-	public $table = '<?= $table ?>';
+	public $table = '<%= $table %>';
 
-<?php endif; ?>
-<?php if ($import): ?>
+<% endif; %>
+<% if ($import): %>
 /**
  * Import
  *
  * @var array
  */
-	public $import = <?= $import ?>;
+	public $import = <%= $import %>;
 
-<?php endif; ?>
-<?php if ($schema): ?>
+<% endif; %>
+<% if ($schema): %>
 /**
  * Fields
  *
  * @var array
  */
-	public $fields = <?= $schema ?>;
+	public $fields = <%= $schema %>;
 
-<?php endif; ?>
-<?php if ($records): ?>
+<% endif; %>
+<% if ($records): %>
 /**
  * Records
  *
  * @var array
  */
-	public $records = <?= $records ?>;
+	public $records = <%= $records %>;
 
-<?php endif; ?>
+<% endif; %>
 }

@@ -594,7 +594,7 @@ class ModelTask extends BakeTask {
 		];
 
 		$this->Template->set($data);
-		$out = $this->Template->generate('classes', 'entity');
+		$out = $this->Template->generate('Model/entity');
 
 		$path = $this->getPath();
 		$filename = $path . 'Entity' . DS . $name . '.php';
@@ -639,7 +639,7 @@ class ModelTask extends BakeTask {
 		];
 
 		$this->Template->set($data);
-		$out = $this->Template->generate('classes', 'table');
+		$out = $this->Template->generate('Model/table');
 
 		$path = $this->getPath();
 		$filename = $path . 'Table' . DS . $name . 'Table.php';

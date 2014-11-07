@@ -46,7 +46,7 @@ class ComponentTask extends SimpleBakeTask {
  * {@inheritDoc}
  */
 	public function template() {
-		return 'component';
+		return 'Controller/component';
 	}
 
 }

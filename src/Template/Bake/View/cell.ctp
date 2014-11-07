@@ -1,4 +1,4 @@
-<?php
+<%
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -12,22 +12,31 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-echo "<?php\n"; ?>
-namespace <?= $namespace ?>\View\Helper;
+%>
+<?php
+namespace <%= $namespace %>\View\Cell;
 
-use Cake\View\Helper;
-use Cake\View\View;
+use Cake\View\Cell;
 
 /**
- * <?= $name ?> helper
+ * <%= $name %> cell
  */
-class <?= $name ?>Helper extends Helper {
+class <%= $name %>Cell extends Cell {
 
 /**
- * Default configuration.
+ * List of valid options that can be passed into this
+ * cell's constructor.
  *
  * @var array
  */
-	protected $_defaultConfig = [];
+	protected $_validCellOptions = [];
+
+/**
+ * Default display method.
+ *
+ * @return void
+ */
+	public function display() {
+	}
 
 }

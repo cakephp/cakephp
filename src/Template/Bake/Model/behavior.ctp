@@ -1,4 +1,4 @@
-<?php
+<%
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -12,30 +12,23 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-echo "<?php\n"; ?>
-namespace <?= $namespace ?>\View\Cell;
+%>
+<?php
+namespace <%= $namespace %>\Model\Behavior;
 
-use Cake\View\Cell;
+use Cake\ORM\Behavior;
+use Cake\ORM\Table;
 
 /**
- * <?= $name ?> cell
+ * <%= $name %> behavior
  */
-class <?= $name ?>Cell extends Cell {
+class <%= $name %>Behavior extends Behavior {
 
 /**
- * List of valid options that can be passed into this
- * cell's constructor.
+ * Default configuration.
  *
  * @var array
  */
-	protected $_validCellOptions = [];
-
-/**
- * Default display method.
- *
- * @return void
- */
-	public function display() {
-	}
+	protected $_defaultConfig = [];
 
 }

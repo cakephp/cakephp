@@ -1,4 +1,4 @@
-<?php
+<%
 /**
  * Test Case bake template
  *
@@ -17,40 +17,40 @@
 use Cake\Utility\Inflector;
 
 $isController = strtolower($type) === 'controller';
-echo "<?php\n";
-?>
-namespace <?= $baseNamespace; ?>\Test\TestCase\<?= $subNamespace ?>;
+%>
+<?php
+namespace <%= $baseNamespace; %>\Test\TestCase\<%= $subNamespace %>;
 
-<?php foreach ($uses as $dependency): ?>
-use <?= $dependency; ?>;
-<?php endforeach; ?>
-<?php if ($isController): ?>
+<% foreach ($uses as $dependency): %>
+use <%= $dependency; %>;
+<% endforeach; %>
+<% if ($isController): %>
 use Cake\TestSuite\IntegrationTestCase;
-<?php else: ?>
+<% else: %>
 use Cake\TestSuite\TestCase;
-<?php endif; ?>
+<% endif; %>
 
 /**
- * <?= $fullClassName ?> Test Case
+ * <%= $fullClassName %> Test Case
  */
-<?php if ($isController): ?>
-class <?= $className ?>Test extends IntegrationTestCase {
-<?php else: ?>
-class <?= $className ?>Test extends TestCase {
-<?php endif; ?>
+<% if ($isController): %>
+class <%= $className %>Test extends IntegrationTestCase {
+<% else: %>
+class <%= $className %>Test extends TestCase {
+<% endif; %>
 
-<?php if (!empty($fixtures)): ?>
+<% if (!empty($fixtures)): %>
 /**
  * Fixtures
  *
  * @var array
  */
 	public $fixtures = [
-		'<?= join("',\n\t\t'", $fixtures); ?>'
+		'<%= join("',\n\t\t'", $fixtures); %>'
 	];
 
-<?php endif; ?>
-<?php if (!empty($construction)): ?>
+<% endif; %>
+<% if (!empty($construction)): %>
 /**
  * setUp method
  *
@@ -58,9 +58,9 @@ class <?= $className ?>Test extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-<?= $preConstruct ? "\t\t" . $preConstruct : '' ?>
-		$this-><?= $subject . ' = ' . $construction ?>
-<?= $postConstruct ? "\t\t" . $postConstruct : '' ?>
+<%= $preConstruct ? "\t\t" . $preConstruct : '' %>
+		$this-><%= $subject . ' = ' . $construction %>
+<%= $postConstruct ? "\t\t" . $postConstruct : '' %>
 	}
 
 /**
@@ -69,24 +69,24 @@ class <?= $className ?>Test extends TestCase {
  * @return void
  */
 	public function tearDown() {
-		unset($this-><?= $subject ?>);
+		unset($this-><%= $subject %>);
 
 		parent::tearDown();
 	}
 
-<?php endif; ?>
-<?php foreach ($methods as $method): ?>
+<% endif; %>
+<% foreach ($methods as $method): %>
 /**
- * Test <?= $method ?> method
+ * Test <%= $method %> method
  *
  * @return void
  */
-	public function test<?= Inflector::camelize($method) ?>() {
+	public function test<%= Inflector::camelize($method) %>() {
 		$this->markTestIncomplete('Not implemented yet.');
 	}
 
-<?php endforeach; ?>
-<?php if (empty($methods)): ?>
+<% endforeach; %>
+<% if (empty($methods)): %>
 /**
  * Test initial setup
  *
@@ -96,5 +96,5 @@ class <?= $className ?>Test extends TestCase {
 		$this->markTestIncomplete('Not implemented yet.');
 	}
 
-<?php endif; ?>
+<% endif; %>
 }

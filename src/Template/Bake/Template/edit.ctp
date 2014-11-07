@@ -1,4 +1,4 @@
-<?php
+<%
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -13,23 +13,4 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-echo "<?php\n";
-?>
-namespace <?= $namespace ?>\Shell;
-
-use Cake\Console\Shell;
-
-/**
- * <?= $name ?> shell command.
- */
-class <?= $name ?>Shell extends Shell {
-
-/**
- * main() method.
- *
- * @return bool|int Success or error code.
- */
-	public function main() {
-	}
-
-}
+echo $this->element('form');

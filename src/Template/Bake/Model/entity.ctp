@@ -1,4 +1,4 @@
-<?php
+<%
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -12,43 +12,43 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-echo "<?php\n";
-?>
-namespace <?= $namespace ?>\Model\Entity;
+%>
+<?php
+namespace <%= $namespace %>\Model\Entity;
 
 use Cake\ORM\Entity;
 
 /**
- * <?= $name ?> Entity.
+ * <%= $name %> Entity.
  */
-class <?= $name ?> extends Entity {
+class <%= $name %> extends Entity {
 
-<?php if (!empty($fields)): ?>
+<% if (!empty($fields)): %>
 /**
  * Fields that can be mass assigned using newEntity() or patchEntity().
  *
  * @var array
  */
 	protected $_accessible = [
-<?php foreach ($fields as $field): ?>
-		'<?= $field ?>' => true,
-<?php endforeach; ?>
+<% foreach ($fields as $field): %>
+		'<%= $field %>' => true,
+<% endforeach; %>
 	];
 
-<?php endif ?>
-<?php if (!empty($hidden)): ?>
-<?php
+<% endif %>
+<% if (!empty($hidden)): %>
+<%
 $hidden = array_map(function($el) { return "'$el'"; }, $hidden);
-?>
+%>
 /**
  * Fields that are excluded from JSON an array versions of the entity.
  *
  * @var array
  */
 	protected $_hidden = [
-		<?= implode(",\n\t\t", $hidden) ?>
+		<%= implode(",\n\t\t", $hidden) %>
 
 	];
 
-<?php endif ?>
+<% endif %>
 }

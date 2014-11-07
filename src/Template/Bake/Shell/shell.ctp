@@ -1,4 +1,4 @@
-<?php
+<%
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -12,22 +12,23 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-echo "<?php\n"; ?>
-namespace <?= $namespace ?>\Model\Behavior;
+%>
+<?php
+namespace <%= $namespace %>\Shell;
 
-use Cake\ORM\Behavior;
-use Cake\ORM\Table;
+use Cake\Console\Shell;
 
 /**
- * <?= $name ?> behavior
+ * <%= $name %> shell command.
  */
-class <?= $name ?>Behavior extends Behavior {
+class <%= $name %>Shell extends Shell {
 
 /**
- * Default configuration.
+ * main() method.
  *
- * @var array
+ * @return bool|int Success or error code.
  */
-	protected $_defaultConfig = [];
+	public function main() {
+	}
 
 }
