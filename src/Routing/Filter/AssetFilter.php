@@ -48,7 +48,7 @@ class AssetFilter extends DispatcherFilter {
 
 		$url = urldecode($request->url);
 		if (strpos($url, '..') !== false || strpos($url, '.') === false) {
-			return;
+			return null;
 		}
 
 		$assetFile = $this->_getAssetFile($url);

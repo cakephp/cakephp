@@ -167,7 +167,7 @@ if (!function_exists('env')) {
  * environment information.
  *
  * @param string $key Environment variable name.
- * @return string Environment variable setting.
+ * @return string|null Environment variable setting.
  * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#env
  */
 	function env($key) {

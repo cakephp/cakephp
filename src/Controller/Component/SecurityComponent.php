@@ -236,7 +236,7 @@ class SecurityComponent extends Component {
 			if (in_array($this->request->params['action'], $requireAuth) || $requireAuth == array('*')) {
 				if (!isset($controller->request->data['_Token'])) {
 					if (!$this->blackHole($controller, 'auth')) {
-						return null;
+						return false;
 					}
 				}
 
@@ -250,12 +250,12 @@ class SecurityComponent extends Component {
 						!in_array($this->request->params['action'], $tData['allowedActions'])
 					) {
 						if (!$this->blackHole($controller, 'auth')) {
-							return null;
+							return false;
 						}
 					}
 				} else {
 					if (!$this->blackHole($controller, 'auth')) {
-						return null;
+						return false;
 					}
 				}
 			}

@@ -170,7 +170,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $name  The name under which the provider should be set.
  * @param null|object|string $object Provider object or class name.
- * @return Validator|object|string
+ * @return Validator|object|string|null
  */
 	public function provider($name, $object = null) {
 		if ($object === null) {

@@ -596,7 +596,7 @@ class Folder {
 			$path = $this->pwd();
 		}
 		if (!$path) {
-			return null;
+			return false;
 		}
 		$path = Folder::slashTerm($path);
 		if (is_dir($path)) {

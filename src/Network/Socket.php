@@ -188,7 +188,7 @@ class Socket {
  */
 	public function context() {
 		if (!$this->connection) {
-			return;
+			return null;
 		}
 		return stream_context_get_options($this->connection);
 	}
@@ -232,7 +232,7 @@ class Socket {
 /**
  * Get the last error as a string.
  *
- * @return string Last error
+ * @return string|null Last error
  */
 	public function lastError() {
 		if (!empty($this->lastError)) {

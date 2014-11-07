@@ -151,7 +151,7 @@ class PostgresSchema extends BaseSchema {
  * We need to remove those.
  *
  * @param string $default The default value.
- * @return string
+ * @return string|null
  */
 	protected function _defaultValue($default) {
 		if (is_numeric($default) || $default === null) {

@@ -255,7 +255,7 @@ class ResultSet implements ResultSetInterface {
  * end of the results simulating the behavior when the result set is backed
  * by a statement.
  *
- * @return array|object
+ * @return array|object|null
  */
 	public function first() {
 		if (isset($this->_results[0])) {
