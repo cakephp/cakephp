@@ -53,7 +53,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Whether or not to use I18n functions for translating default error messages
  *
- * @var boolean
+ * @var bool
  */
 	protected $_useI18n = false;
 
