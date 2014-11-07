@@ -187,7 +187,28 @@ class ConnectionTest extends TestCase {
 	}
 
 /**
- * Test full table name resolution in strings such as join condition
+ * Tests full field name resolution in strings such as table.field
+ *
+ * @return void
+ */
+	public function testFullFieldName() {
+		$config = ConnectionManager::config('test');
+		if (!isset($config['prefix']) || $config['prefix'] === '') {
+			$config['prefix'] = 'prefix_';
+		}
+		$connectionWithPrefix = new Connection($config);
+
+		$this->assertEquals($connectionWithPrefix->fullFieldName('id'), 'id');
+
+		$expected = new TableNameExpression('users', 'prefix_', 'id');
+		$this->assertEquals($connectionWithPrefix->fullFieldName('users.id'), $expected);
+
+		$expected = new TableNameExpression('prefix_', 'prefix_', 'id');
+		$this->assertEquals($connectionWithPrefix->fullFieldName('prefix_.id'), $expected);
+	}
+
+/**
+ * Tests full table name resolution in strings such as join condition
  *
  * @return void
  */
@@ -198,25 +219,73 @@ class ConnectionTest extends TestCase {
 		}
 		$connectionWithPrefix = new Connection($config);
 
-		$condition = 'user.id';
-		$expected = 'prefix_user.id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName('user.id'), $expected);
+		$condition = 'users.id';
+		$expected = 'prefix_users.id';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition), $expected);
 
-		$expected = 'user.id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName('user.id', ['user']), $expected);
+		$expected = 'users.id';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users']), $expected);
 
-		$condition = 'user.id = articles.user_id';
-		$expected = 'prefix_user.id = prefix_articles.user_id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName('user.id = articles.user_id'), $expected);
+		$condition = 'users.id = articles.user_id';
+		$expected = 'prefix_users.id = prefix_articles.user_id';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition), $expected);
 
-		$expected = 'user.id = prefix_articles.user_id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName('user.id = articles.user_id', ['user']), $expected);
+		$expected = 'users.id = prefix_articles.user_id';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users']), $expected);
 
-		$expected = 'prefix_user.id = articles.user_id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName('user.id = articles.user_id', ['articles']), $expected);
+		$expected = 'prefix_users.id = articles.user_id';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['articles']), $expected);
 
-		$expected = 'user.id = articles.user_id';
-		$this->assertEquals($connectionWithPrefix->applyFullTableName('user.id = articles.user_id', ['articles', 'user']), $expected);
+		$expected = 'users.id = articles.user_id';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['articles', 'users']), $expected);
+
+		$condition = 'users.id = articles.user_id AND (articles.published = 1 OR users.status = 2)';
+		$expected = 'prefix_users.id = prefix_articles.user_id AND (prefix_articles.published = 1 OR prefix_users.status = 2)';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition), $expected);
+
+		$expected = 'users.id = prefix_articles.user_id AND (prefix_articles.published = 1 OR users.status = 2)';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users']), $expected);
+
+		$expected = 'users.id = articles.user_id AND (articles.published = 1 OR users.status = 2)';
+		$this->assertEquals($connectionWithPrefix->applyFullTableName($condition, ['users', 'articles']), $expected);
+	}
+
+/**
+ * Tests the Connection::isTableNamePrefixed() method
+ *
+ * @return void
+ */
+	public function testIsPrefixedTableName() {
+		$config = ConnectionManager::config('test');
+		if (!isset($config['prefix']) || $config['prefix'] === '') {
+			$config['prefix'] = 'prefix_';
+		}
+		$connectionWithPrefix = new Connection($config);
+
+		$this->assertTrue($connectionWithPrefix->isTableNamePrefixed('prefix_users'));
+		$this->assertTrue($connectionWithPrefix->isTableNamePrefixed('prefix_articles'));
+		$this->assertTrue($connectionWithPrefix->isTableNamePrefixed('prefix_prefix_'));
+		$this->assertFalse($connectionWithPrefix->isTableNamePrefixed('prefix_'));
+		$this->assertFalse($connectionWithPrefix->isTableNamePrefixed('users_prefix_'));
+	}
+
+/**
+ * Tests the trimming of the prefix on a table name
+ *
+ * @return void
+ */
+	public function testRawTableName() {
+		$config = ConnectionManager::config('test');
+		if (!isset($config['prefix']) || $config['prefix'] === '') {
+			$config['prefix'] = 'prefix_';
+		}
+		$connectionWithPrefix = new Connection($config);
+
+		$this->assertEquals($connectionWithPrefix->rawTableName('prefix_users'), 'users');
+		$this->assertEquals($connectionWithPrefix->rawTableName('prefix_articles'), 'articles');
+		$this->assertEquals($connectionWithPrefix->rawTableName('prefix_prefix_'), 'prefix_');
+		$this->assertEquals($connectionWithPrefix->rawTableName('prefix_'), 'prefix_');
+		$this->assertEquals($connectionWithPrefix->rawTableName('users_prefix_'), 'users_prefix_');
 	}
 
 /**
