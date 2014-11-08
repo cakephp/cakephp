@@ -20,7 +20,6 @@ use Cake\Core\Configure;
 use Cake\Core\ConventionsTrait;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
-use Cake\Model\Model;
 use Cake\Utility\Inflector;
 
 /**

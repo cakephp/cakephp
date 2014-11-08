@@ -62,7 +62,7 @@ class TypeMap {
  *
  * @param array $defaults associative array where keys are field names and values
  * are the correspondent type.
- * @return this|array
+ * @return $this|array
  */
 	public function defaults(array $defaults = null) {
 		if ($defaults === null) {
@@ -85,7 +85,7 @@ class TypeMap {
  *
  * @param array $types associative array where keys are field names and values
  * are the correspondent type.
- * @return this|array
+ * @return $this|array
  */
 	public function types(array $types = null) {
 		if ($types === null) {

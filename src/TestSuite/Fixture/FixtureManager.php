@@ -309,7 +309,7 @@ class FixtureManager {
  * Creates a single fixture table and loads data into it.
  *
  * @param string $name of the fixture
- * @param DataSource $db DataSource instance or leave null to get DataSource from the fixture
+ * @param \Cake\Database\Connection $db Connection instance or leave null to get a Connection from the fixture
  * @param bool $dropTables Whether or not tables should be dropped and re-created.
  * @return void
  * @throws \UnexpectedValueException if $name is not a previously loaded class
