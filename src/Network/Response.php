@@ -364,7 +364,7 @@ class Response {
  * Holds all the cache directives that will be converted
  * into headers when sending the request
  *
- * @var string
+ * @var array
  */
 	protected $_cacheDirectives = array();
 
