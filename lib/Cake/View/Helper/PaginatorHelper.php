@@ -481,7 +481,7 @@ class PaginatorHelper extends AppHelper {
  * @param array $options Options list.
  * @param string $disabledTitle Disabled link title.
  * @param array $disabledOptions Disabled link options.
- * @return string|null
+ * @return string
  */
 	protected function _pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		$check = 'has' . $which;
@@ -501,7 +501,7 @@ class PaginatorHelper extends AppHelper {
 			}
 			$options = (array)$disabledOptions + $_defaults;
 		} elseif (!$this->{$check}($options['model'])) {
-			return null;
+			return '';
 		}
 
 		foreach (array_keys($_defaults) as $key) {
@@ -707,7 +707,7 @@ class PaginatorHelper extends AppHelper {
  * - `currentTag` Tag to use for current page number, defaults to null
  *
  * @param array $options Options for the numbers, (before, after, model, modulus, separator)
- * @return string|bool numbers string.
+ * @return string Numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::numbers
  */
 	public function numbers($options = array()) {
@@ -728,7 +728,7 @@ class PaginatorHelper extends AppHelper {
 		unset($options['model']);
 
 		if ($params['pageCount'] <= 1) {
-			return false;
+			return '';
 		}
 
 		extract($options);
@@ -849,7 +849,7 @@ class PaginatorHelper extends AppHelper {
  * @param string|int $first if string use as label for the link. If numeric, the number of page links
  *   you want at the beginning of the range.
  * @param array $options An array of options.
- * @return string|bool numbers string.
+ * @return string Numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::first
  */
 	public function first($first = '<< first', $options = array()) {
@@ -866,7 +866,7 @@ class PaginatorHelper extends AppHelper {
 		unset($options['model']);
 
 		if ($params['pageCount'] <= 1) {
-			return false;
+			return '';
 		}
 		extract($options);
 		unset($options['tag'], $options['after'], $options['model'], $options['separator'], $options['ellipsis'], $options['class']);
@@ -912,7 +912,7 @@ class PaginatorHelper extends AppHelper {
  *
  * @param string|int $last if string use as label for the link, if numeric print page numbers
  * @param array $options Array of options
- * @return string|bool numbers string.
+ * @return string Numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::last
  */
 	public function last($last = 'last >>', $options = array()) {
@@ -929,7 +929,7 @@ class PaginatorHelper extends AppHelper {
 		unset($options['model']);
 
 		if ($params['pageCount'] <= 1) {
-			return false;
+			return '';
 		}
 
 		extract($options);
@@ -976,7 +976,7 @@ class PaginatorHelper extends AppHelper {
  * - `block` The block name to append the output to, or false/absenst to return as a string
  *
  * @param array $options Array of options
- * @return string|null Meta links
+ * @return string|void Meta links
  */
 	public function meta($options = array()) {
 		$model = isset($options['model']) ? $options['model'] : null;

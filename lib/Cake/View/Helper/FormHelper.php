@@ -696,7 +696,7 @@ class FormHelper extends AppHelper {
  * @param string|array $text Error message as string or array of messages.
  *   If array contains `attributes` key it will be used as options for error container
  * @param array $options Rendering options for <div /> wrapper tag
- * @return string If there are errors this method returns an error message, otherwise null.
+ * @return string|null If there are errors this method returns an error message, otherwise null.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::error
  */
 	public function error($field, $text = null, $options = array()) {

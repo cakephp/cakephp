@@ -2731,9 +2731,9 @@ class PaginatorHelperTest extends CakeTestCase {
 				'paramType' => 'named',
 			)
 		);
-		$this->assertFalse($this->Paginator->numbers());
-		$this->assertFalse($this->Paginator->first());
-		$this->assertFalse($this->Paginator->last());
+		$this->assertSame('', $this->Paginator->numbers());
+		$this->assertSame('', $this->Paginator->first());
+		$this->assertSame('', $this->Paginator->last());
 	}
 
 /**
