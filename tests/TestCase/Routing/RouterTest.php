@@ -1582,6 +1582,8 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testExtensionsWithScopedRoutes() {
+		Router::extensions(['json']);
+
 		Router::scope('/', function ($routes) {
 			$routes->extensions('rss');
 			$routes->connect('/', ['controller' => 'Pages', 'action' => 'index']);
@@ -1592,7 +1594,7 @@ class RouterTest extends TestCase {
 			});
 		});
 
-		$this->assertEquals(['rss', 'xml', 'json'], Router::extensions());
+		$this->assertEquals(['json', 'rss', 'xml'], array_values(Router::extensions()));
 	}
 
 /**
@@ -2642,6 +2644,42 @@ class RouterTest extends TestCase {
  */
 	public function testScopeError() {
 		Router::scope('/path', 'derpy');
+	}
+
+/**
+ * Test to ensure that extensions defined in scopes don't leak.
+ * And that global extensions are propagated.
+ *
+ * @return void
+ */
+	public function testScopeExtensionsContained() {
+		Router::extensions(['json']);
+		Router::scope('/', function ($routes) {
+			$this->assertEquals(['json'], $routes->extensions(), 'Should default to global extensions.');
+			$routes->extensions(['rss']);
+
+			$this->assertEquals(
+				['rss'],
+				$routes->extensions(),
+				'Should include new extensions.'
+			);
+			$routes->connect('/home', []);
+		});
+
+		$this->assertEquals(['json', 'rss'], array_values(Router::extensions()));
+
+		Router::scope('/api', function ($routes) {
+			$this->assertEquals(['json'], $routes->extensions(), 'Should default to global extensions.');
+
+			$routes->extensions(['json', 'csv']);
+			$routes->connect('/export', []);
+
+			$routes->scope('/v1', function ($routes) {
+				$this->assertEquals(['json', 'csv'], $routes->extensions());
+			});
+		});
+
+		$this->assertEquals(['json', 'rss', 'csv'], array_values(Router::extensions()));
 	}
 
 /**

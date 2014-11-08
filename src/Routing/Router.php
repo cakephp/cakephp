@@ -148,6 +148,13 @@ class Router {
 	protected static $_urlFilters = [];
 
 /**
+ * Default extensions defined with Router::extensions()
+ *
+ * @var array
+ */
+	protected static $_defaultExtensions = [];
+
+/**
  * Get or set default route class.
  *
  * @param string|null $routeClass Class name.
@@ -724,7 +731,9 @@ class Router {
 	}
 
 /**
- * Get/Set valid extensions. Instructs the router to parse out file extensions
+ * Get or set valid extensions for all routes connected later.
+ *
+ * Instructs the router to parse out file extensions
  * from the URL. For example, http://example.com/posts.rss would yield a file
  * extension of "rss". The file extension itself is made available in the
  * controller as `$this->request->params['_ext']`, and is used by the RequestHandler
@@ -747,10 +756,13 @@ class Router {
 			if (!static::$initialized) {
 				static::_loadRoutes();
 			}
-			return $collection->extensions();
+			return array_unique(array_merge(static::$_defaultExtensions, $collection->extensions()));
 		}
-
-		return $collection->extensions($extensions, $merge);
+		$extensions = (array)$extensions;
+		if ($merge) {
+			$extensions = array_unique(array_merge(static::$_defaultExtensions, $extensions));
+		}
+		return static::$_defaultExtensions = $extensions;
 	}
 
 /**
@@ -845,7 +857,7 @@ class Router {
 	public static function scope($path, $params = [], $callback = null) {
 		$builder = new RouteBuilder(static::$_collection, '/', [], [
 			'routeClass' => static::defaultRouteClass(),
-			'extensions' => static::$_collection->extensions()
+			'extensions' => static::$_defaultExtensions
 		]);
 		$builder->scope($path, $params, $callback);
 	}
