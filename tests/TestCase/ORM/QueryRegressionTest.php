@@ -522,4 +522,18 @@ class QueryRegressionTest extends TestCase {
 		$this->assertCount(3, $results);
 	}
 
+/**
+ * Tests that calling count on a query having a union works correctly
+ *
+ * @see https://github.com/cakephp/cakephp/issues/5107
+ * @return void
+ */
+	public function testCountWithUnionQuery() {
+		$table = TableRegistry::get('Articles');
+		$query = $table->find()->where(['id' => 1]);
+		$query2 = $table->find()->where(['id' => 2]);
+		$query->union($query2);
+		$this->assertEquals(2, $query->count());
+	}
+
 }
