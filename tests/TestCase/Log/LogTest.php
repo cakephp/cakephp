@@ -69,7 +69,7 @@ class LogTest extends TestCase {
 /**
  * test all the errors from failed logger imports
  *
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @return void
  */
 	public function testImportingLoggerFailure() {

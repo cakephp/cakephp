@@ -232,7 +232,7 @@ class TestFixtureTest extends TestCase {
 /**
  * test create method, trigger error
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException \PHPUnit_Framework_Error
  * @return void
  */
 	public function testCreateError() {

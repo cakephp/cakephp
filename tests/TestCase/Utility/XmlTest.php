@@ -168,7 +168,7 @@ class XmlTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidDataProvider
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @return void
  */
 	public function testBuildInvalidData($value) {
@@ -536,7 +536,7 @@ XML;
  * testFromArrayFail method
  *
  * @dataProvider invalidArrayDataProvider
- * @expectedException Exception
+ * @expectedException \Exception
  * @return void
  */
 	public function testFromArrayFail($value) {

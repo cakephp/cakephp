@@ -2277,7 +2277,7 @@ class TableTest extends TestCase {
 /**
  * Test magic findByXX errors on missing arguments.
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 0 required 1
  * @return void
  */
@@ -2290,7 +2290,7 @@ class TableTest extends TestCase {
 /**
  * Test magic findByXX errors on missing arguments.
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 1 required 2
  * @return void
  */
@@ -2303,7 +2303,7 @@ class TableTest extends TestCase {
 /**
  * Test magic findByXX errors when there is a mix of or & and.
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @expectedExceptionMessage Cannot mix "and" & "or" in a magic finder. Use find() instead.
  * @return void
  */

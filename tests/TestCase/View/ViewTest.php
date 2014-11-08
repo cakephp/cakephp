@@ -772,7 +772,7 @@ class ViewTest extends TestCase {
 /**
  * Test elementInexistent method
  *
- * @expectedException Cake\View\Exception\MissingElementException
+ * @expectedException \Cake\View\Exception\MissingElementException
  * @return void
  */
 	public function testElementInexistent() {
@@ -782,7 +782,7 @@ class ViewTest extends TestCase {
 /**
  * Test elementInexistent3 method
  *
- * @expectedException Cake\View\Exception\MissingElementException
+ * @expectedException \Cake\View\Exception\MissingElementException
  * @return void
  */
 	public function testElementInexistent3() {
@@ -1367,7 +1367,7 @@ class ViewTest extends TestCase {
  * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
  * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException \PHPUnit_Framework_Error
  * @return void
  */
 	public function testBlockSetObjectWithoutToString() {
@@ -1420,7 +1420,7 @@ class ViewTest extends TestCase {
  * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
  * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException \PHPUnit_Framework_Error
  * @return void
  */
 	public function testBlockAppendObjectWithoutToString() {
@@ -1450,7 +1450,7 @@ class ViewTest extends TestCase {
  * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
  * which gets thrown as a PHPUnit_Framework_Error Exception by PHPUnit.
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException \PHPUnit_Framework_Error
  * @return void
  */
 	public function testBlockPrependObjectWithoutToString() {

@@ -184,7 +184,7 @@ class TimestampBehaviorTest extends TestCase {
 /**
  * testInvalidEventConfig
  *
- * @expectedException UnexpectedValueException
+ * @expectedException \UnexpectedValueException
  * @expectedExceptionMessage When should be one of "always", "new" or "existing". The passed value "fat fingers" is invalid
  * @return void
  */
