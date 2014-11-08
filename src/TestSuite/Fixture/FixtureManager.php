@@ -222,7 +222,6 @@ class FixtureManager {
 			return;
 		}
 
-		$dbs = $this->_fixtureConnections($fixtures);
 		try {
 			$createTables = function ($db, $fixtures) use ($test) {
 				$tables = $db->schemaCollection()->listTables();

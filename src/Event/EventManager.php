@@ -280,7 +280,6 @@ class EventManager {
  */
 	public function listeners($eventKey) {
 		$localListeners = array();
-		$priorities = array();
 		if (!$this->_isGlobal) {
 			$localListeners = $this->prioritisedListeners($eventKey);
 			$localListeners = empty($localListeners) ? array() : $localListeners;

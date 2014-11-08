@@ -563,7 +563,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 		$connectionName = $options['className']::defaultConnectionName();
 		$connection = ConnectionManager::get($connectionName);
 
-		list($plugin, $baseClass) = pluginSplit($alias);
+		list(, $baseClass) = pluginSplit($alias);
 		$options += ['alias' => $baseClass, 'connection' => $connection];
 		$options += TableRegistry::config($alias);
 

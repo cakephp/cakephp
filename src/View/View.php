@@ -361,8 +361,6 @@ class View {
  *   is false.
  */
 	public function element($name, array $data = array(), array $options = array()) {
-		$file = $plugin = null;
-
 		if (!isset($options['callbacks'])) {
 			$options['callbacks'] = false;
 		}

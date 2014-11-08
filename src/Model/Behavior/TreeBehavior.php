@@ -290,12 +290,7 @@ class TreeBehavior extends Behavior {
 	public function childCount(Entity $node, $direct = false) {
 		$config = $this->config();
 		$alias = $this->_table->alias();
-		list($parent, $left, $right) = array_map(
-			function ($field) use ($alias) {
-				return "$alias.$field";
-			},
-			[$config['parent'], $config['left'], $config['right']]
-		);
+		$parent = $alias . '.' . $config['parent'];
 
 		if ($direct) {
 			return $this->_scope($this->_table->find())

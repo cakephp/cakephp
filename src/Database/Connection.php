@@ -258,7 +258,7 @@ class Connection {
 	public function run(Query $query) {
 		$binder = $query->valueBinder();
 		$binder->resetCount();
-		list($query, $sql) = $this->driver()->compileQuery($query, $binder);
+		list(, $sql) = $this->driver()->compileQuery($query, $binder);
 
 		$statement = $this->prepare($sql);
 		$binder->attachTo($statement);

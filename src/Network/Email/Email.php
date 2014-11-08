@@ -1769,8 +1769,8 @@ class Email {
 
 		$View->loadHelpers();
 
-		list($templatePlugin, $template) = pluginSplit($this->_template);
-		list($layoutPlugin, $layout) = pluginSplit($this->_layout);
+		list($templatePlugin) = pluginSplit($this->_template);
+		list($layoutPlugin) = pluginSplit($this->_layout);
 		if ($templatePlugin) {
 			$View->plugin = $templatePlugin;
 		} elseif ($layoutPlugin) {

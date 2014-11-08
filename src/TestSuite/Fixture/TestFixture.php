@@ -90,7 +90,6 @@ class TestFixture {
  * @throws \Cake\Core\Exception\Exception on invalid datasource usage.
  */
 	public function __construct() {
-		$connection = 'test';
 		if (!empty($this->connection)) {
 			$connection = $this->connection;
 			if (strpos($connection, 'test') !== 0) {
@@ -113,7 +112,7 @@ class TestFixture {
  */
 	public function init() {
 		if ($this->table === null) {
-			list($namespace, $class) = namespaceSplit(get_class($this));
+			list(, $class) = namespaceSplit(get_class($this));
 			preg_match('/^(.*)Fixture$/', $class, $matches);
 			$table = $class;
 			if (isset($matches[1])) {

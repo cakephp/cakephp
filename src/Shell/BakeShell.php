@@ -80,7 +80,7 @@ class BakeShell extends Shell {
 		$this->out('<info>Available bake commands:</info>', 2);
 		$this->out('- all');
 		foreach ($this->tasks as $task) {
-			list($p, $name) = pluginSplit($task);
+			list(, $name) = pluginSplit($task);
 			$this->out('- ' . Inflector::underscore($name));
 		}
 		$this->out('');
@@ -133,7 +133,7 @@ class BakeShell extends Shell {
 		$candidates = $this->_findClassFiles($path, $namespace);
 		$classes = $this->_findTaskClasses($candidates);
 		foreach ($classes as $class) {
-			list($ns, $name) = namespaceSplit($class);
+			list(, $name) = namespaceSplit($class);
 			$name = substr($name, 0, -4);
 			$fullName = ($prefix ? $prefix . '.' : '') . $name;
 			$tasks[$name] = $fullName;
