@@ -125,7 +125,7 @@ class BakeShell extends Shell {
  * @param string $prefix The prefix to append.
  * @return array Updated tasks.
  */
-	protected function _findTasks($tasks, $path, $namespace, $prefix = false) {
+	protected function _findTasks($tasks, $path, $namespace, $prefix = null) {
 		$path .= 'Shell/Task';
 		if (!is_dir($path)) {
 			return $tasks;

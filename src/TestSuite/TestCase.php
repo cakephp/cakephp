@@ -257,7 +257,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param string $string An HTML/XHTML/XML string
  * @param array $expected An array, see above
- * @param string $fullDebug Whether or not more verbose output should be used.
+ * @param bool $fullDebug Whether or not more verbose output should be used.
  * @return void
  * @deprecated 3.0. Use assertHtml() instead.
  */
@@ -306,7 +306,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param array $expected An array, see above
  * @param string $string An HTML/XHTML/XML string
- * @param string $fullDebug Whether or not more verbose output should be used.
+ * @param bool $fullDebug Whether or not more verbose output should be used.
  * @return void
  */
 	public function assertHtml($expected, $string, $fullDebug = false) {

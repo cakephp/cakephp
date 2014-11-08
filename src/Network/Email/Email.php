@@ -582,8 +582,8 @@ class Email {
  * @param string $regex for email address validation
  * @return string|$this
  */
-	public function emailPattern($regex = false) {
-		if ($regex === false) {
+	public function emailPattern($regex = null) {
+		if ($regex === null) {
 			return $this->_emailPattern;
 		}
 		$this->_emailPattern = $regex;
