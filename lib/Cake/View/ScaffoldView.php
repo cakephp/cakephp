@@ -51,10 +51,6 @@ class ScaffoldView extends View {
 			}
 		}
 
-		if ($name === 'add' || $name === 'edit') {
-			$name = 'form';
-		}
-
 		$scaffoldAction = 'scaffold.' . $name;
 
 		if ($this->subDir !== null) {
