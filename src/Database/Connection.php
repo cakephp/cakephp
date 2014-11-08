@@ -135,7 +135,7 @@ class Connection {
  */
 	public function configName() {
 		if (empty($this->_config['name'])) {
-			return null;
+			return '';
 		}
 		return $this->_config['name'];
 	}

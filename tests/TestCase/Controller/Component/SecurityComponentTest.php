@@ -427,6 +427,26 @@ class SecurityComponentTest extends TestCase {
 	}
 
 /**
+ * Tests validation post data ignores `_csrfToken`.
+ *
+ * @return void
+ */
+	public function testValidatePostIgnoresCsrfToken() {
+		$event = new Event('Controller.startup', $this->Controller);
+		$this->Controller->Security->startup($event);
+
+		$fields = '8e26ef05379e5402c2c619f37ee91152333a0264%3A';
+		$unlocked = '';
+
+		$this->Controller->request->data = array(
+			'_csrfToken' => 'abc123',
+			'Model' => array('multi_field' => array('1', '3')),
+			'_Token' => compact('fields', 'unlocked')
+		);
+		$this->assertTrue($this->Controller->Security->validatePost($this->Controller));
+	}
+
+/**
  * Tests validation of checkbox arrays
  *
  * @return void

@@ -723,7 +723,7 @@ class Response {
  * e.g `type(array('jpg' => 'text/plain'));`
  *
  * @param string $contentType Content type key.
- * @return mixed current content type or false if supplied an invalid content type
+ * @return mixed Current content type or false if supplied an invalid content type
  */
 	public function type($contentType = null) {
 		if ($contentType === null) {
@@ -751,7 +751,7 @@ class Response {
  * e.g `getMimeType('pdf'); // returns 'application/pdf'`
  *
  * @param string $alias the content type alias to map
- * @return mixed string mapped mime type or false if $alias is not mapped
+ * @return mixed String mapped mime type or false if $alias is not mapped
  */
 	public function getMimeType($alias) {
 		if (isset($this->_mimeTypes[$alias])) {
@@ -837,7 +837,7 @@ class Response {
  *   if set to false, the response will be set to private
  *   if no value is provided, it will return whether the response is sharable or not
  * @param int $time time in seconds after which the response should no longer be considered fresh
- * @return bool
+ * @return bool|null
  */
 	public function sharable($public = null, $time = null) {
 		if ($public === null) {
@@ -872,7 +872,7 @@ class Response {
  * If called with no parameters, this function will return the current max-age value if any
  *
  * @param int $seconds if null, the method will return the current s-maxage value
- * @return int
+ * @return int|null
  */
 	public function sharedMaxAge($seconds = null) {
 		if ($seconds !== null) {
@@ -892,7 +892,7 @@ class Response {
  * If called with no parameters, this function will return the current max-age value if any
  *
  * @param int $seconds if null, the method will return the current max-age value
- * @return int
+ * @return int|null
  */
 	public function maxAge($seconds = null) {
 		if ($seconds !== null) {
@@ -955,7 +955,7 @@ class Response {
  * `$response->expires()` Will return the current expiration header value
  *
  * @param string|\DateTime $time Valid time string or \DateTime instance.
- * @return string
+ * @return string|null
  */
 	public function expires($time = null) {
 		if ($time !== null) {
@@ -979,7 +979,7 @@ class Response {
  * `$response->modified()` Will return the current Last-Modified header value
  *
  * @param string|\DateTime $time Valid time string or \DateTime instance.
- * @return string
+ * @return string|null
  */
 	public function modified($time = null) {
 		if ($time !== null) {
@@ -1024,7 +1024,7 @@ class Response {
  *
  * @param string|array $cacheVariances a single Vary string or an array
  *   containing the list for variances.
- * @return array
+ * @return array|null
  */
 	public function vary($cacheVariances = null) {
 		if ($cacheVariances !== null) {
@@ -1056,7 +1056,7 @@ class Response {
  * @param string $hash the unique hash that identifies this response
  * @param bool $weak whether the response is semantically the same as
  *   other with the same hash or not
- * @return string
+ * @return string|null
  */
 	public function etag($hash = null, $weak = false) {
 		if ($hash !== null) {

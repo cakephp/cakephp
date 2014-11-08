@@ -17,6 +17,7 @@ namespace Cake\Database;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\ValueBinder;
+use InvalidArgumentException;
 
 /**
  * Represents a database diver containing all specificities for
@@ -52,8 +53,14 @@ abstract class Driver {
  * Constructor
  *
  * @param array $config The configuration for the driver.
+ * @throws InvalidArgumentException
  */
 	public function __construct($config = []) {
+		if (empty($config['username']) && !empty($config['login'])) {
+			throw new InvalidArgumentException(
+				'Please pass "username" instead of "login" for connecting to the database'
+			);
+		}
 		$config += $this->_baseConfig;
 		$this->_config = $config;
 		if (!empty($config['quoteIdentifiers'])) {

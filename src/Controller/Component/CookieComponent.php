@@ -171,7 +171,7 @@ class CookieComponent extends Component {
  * @param null|string|array $option Either the option name to set, or an array of options to set,
  *   or null to read config options for a given key.
  * @param string|null $value Either the value to set, or empty when $option is an array.
- * @return void
+ * @return array|null
  */
 	public function configKey($keyname, $option = null, $value = null) {
 		if ($option === null) {
@@ -183,6 +183,7 @@ class CookieComponent extends Component {
 			$option = [$option => $value];
 		}
 		$this->_keyConfig[$keyname] = $option;
+		return null;
 	}
 
 /**
