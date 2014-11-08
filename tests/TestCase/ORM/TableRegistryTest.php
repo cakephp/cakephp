@@ -84,7 +84,7 @@ class TableRegistryTest extends TestCase {
 /**
  * Test calling config() on existing instances throws an error.
  *
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @expectedExceptionMessage You cannot configure "Users", it has already been constructed.
  * @return void
  */
@@ -141,7 +141,7 @@ class TableRegistryTest extends TestCase {
 /**
  * Test get with config throws an exception if the alias exists already.
  *
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @expectedExceptionMessage You cannot configure "Users", it already exists in the registry.
  * @return void
  */

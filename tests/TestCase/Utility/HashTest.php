@@ -1606,7 +1606,7 @@ class HashTest extends TestCase {
 /**
  * test combine() giving errors on key/value length mismatches.
  *
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @return void
  */
 	public function testCombineErrorMissingValue() {
@@ -1620,7 +1620,7 @@ class HashTest extends TestCase {
 /**
  * test combine() giving errors on key/value length mismatches.
  *
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @return void
  */
 	public function testCombineErrorMissingKey() {

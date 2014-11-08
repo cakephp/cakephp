@@ -119,7 +119,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test load() duplicate method error
  *
- * @expectedException LogicException
+ * @expectedException \LogicException
  * @expectedExceptionMessage TestApp\Model\Behavior\DuplicateBehavior contains duplicate method "slugify"
  * @return void
  */
@@ -149,7 +149,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test load() duplicate finder error
  *
- * @expectedException LogicException
+ * @expectedException \LogicException
  * @expectedExceptionMessage TestApp\Model\Behavior\DuplicateBehavior contains duplicate finder "children"
  * @return void
  */
@@ -243,7 +243,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test errors on unknown methods.
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @expectedExceptionMessage Cannot call "nope"
  */
 	public function testCallError() {
@@ -280,7 +280,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test errors on unknown methods.
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @expectedExceptionMessage Cannot call finder "nope"
  */
 	public function testCallFinderError() {
@@ -291,7 +291,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test errors on unloaded behavior methods.
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @expectedExceptionMessage Cannot call "slugify" it does not belong to any attached behavior.
  */
 	public function testUnloadBehaviorThenCall() {
@@ -304,7 +304,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test errors on unloaded behavior finders.
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @expectedExceptionMessage Cannot call finder "noslug" it does not belong to any attached behavior.
  */
 	public function testUnloadBehaviorThenCallFinder() {

@@ -116,7 +116,7 @@ class SocketTest extends TestCase {
  * testInvalidConnection method
  *
  * @dataProvider invalidConnections
- * @expectedException Cake\Network\Exception\SocketException
+ * @expectedException \Cake\Network\Exception\SocketException
  * @return void
  */
 	public function testInvalidConnection($data) {
@@ -248,7 +248,7 @@ class SocketTest extends TestCase {
 /**
  * testEncrypt
  *
- * @expectedException Cake\Network\Exception\SocketException
+ * @expectedException \Cake\Network\Exception\SocketException
  * @return void
  */
 	public function testEnableCryptoSocketExceptionNoSsl() {
@@ -264,7 +264,7 @@ class SocketTest extends TestCase {
 /**
  * testEnableCryptoSocketExceptionNoTls
  *
- * @expectedException Cake\Network\Exception\SocketException
+ * @expectedException \Cake\Network\Exception\SocketException
  * @return void
  */
 	public function testEnableCryptoSocketExceptionNoTls() {
@@ -326,7 +326,7 @@ class SocketTest extends TestCase {
 /**
  * testEnableCryptoExceptionEnableTwice
  *
- * @expectedException Cake\Network\Exception\SocketException
+ * @expectedException \Cake\Network\Exception\SocketException
  * @return void
  */
 	public function testEnableCryptoExceptionEnableTwice() {
@@ -340,7 +340,7 @@ class SocketTest extends TestCase {
 /**
  * testEnableCryptoExceptionDisableTwice
  *
- * @expectedException Cake\Network\Exception\SocketException
+ * @expectedException \Cake\Network\Exception\SocketException
  * @return void
  */
 	public function testEnableCryptoExceptionDisableTwice() {

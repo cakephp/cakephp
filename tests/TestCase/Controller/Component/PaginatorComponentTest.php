@@ -736,7 +736,7 @@ class PaginatorComponentTest extends TestCase {
 /**
  * test paginate() and custom find with deprecated option.
  *
- * @expectedException PHPUnit_Framework_Error_Deprecated
+ * @expectedException \PHPUnit_Framework_Error_Deprecated
  * @return void
  */
 	public function testPaginateCustomFindOldOption() {

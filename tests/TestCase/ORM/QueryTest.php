@@ -1487,7 +1487,7 @@ class QueryTest extends TestCase {
 /**
  * cache() should fail on non select queries.
  *
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @return void
  */
 	public function testCacheErrorOnNonSelect() {
@@ -1968,7 +1968,7 @@ class QueryTest extends TestCase {
  * Tests that it is not allowed to use matching on an association
  * that is already added to containments.
  *
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @expectedExceptionMessage Cannot use "matching" on "Authors" as there is another association with the same alias
  * @return void
  */

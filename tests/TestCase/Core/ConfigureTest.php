@@ -232,7 +232,7 @@ class ConfigureTest extends TestCase {
 /**
  * testLoad method
  *
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @return void
  */
 	public function testLoadExceptionOnNonExistantFile() {
@@ -436,7 +436,7 @@ class ConfigureTest extends TestCase {
 /**
  * test engine() throwing exceptions on missing interface.
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException \PHPUnit_Framework_Error
  * @return void
  */
 	public function testEngineExceptionOnIncorrectClass() {

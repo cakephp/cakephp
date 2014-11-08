@@ -90,8 +90,8 @@ class IcuFormatterTest extends TestCase {
 
 /**
  * Tests that passing a message in the wrong format will throw an exception
- * 
- * @expectedException Aura\Intl\Exception\CannotInstantiateFormatter
+ *
+ * @expectedException \Aura\Intl\Exception\CannotInstantiateFormatter
  * @return void
  */
 	public function testBadMessageFormat() {

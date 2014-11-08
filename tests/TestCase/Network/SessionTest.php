@@ -431,7 +431,7 @@ class SessionTest extends TestCase {
 /**
  * Tests instantiating a missing engine
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @expectedExceptionMessage The class "Derp" does not exist and cannot be used as a session engine
  * @return void
  */
