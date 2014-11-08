@@ -2064,7 +2064,7 @@ class FormHelper extends Helper {
 			'orderYear' => 'desc',
 			'timeFormat' => 24,
 			'second' => false,
-			'meridian' => false,
+			'meridian' => null,
 		];
 		$options = $this->_initInputField($fieldName, $options);
 		$options = $this->_datetimeOptions($options);
