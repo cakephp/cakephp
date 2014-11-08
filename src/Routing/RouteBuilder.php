@@ -127,9 +127,10 @@ class RouteBuilder {
 	}
 
 /**
- * Get or set the extensions in this route collection.
+ * Get or set the extensions in this route builder's scope.
  *
- * Setting extensions does not modify existing routes.
+ * Future routes connected in through this builder will have the connected
+ * extensions applied. However, setting extensions does not modify existing routes.
  *
  * @param null|string|array $extensions Either the extensions to use or null.
  * @return array|void
