@@ -355,7 +355,7 @@ class SecurityComponent extends Component {
  * Check if HTTP methods are required
  *
  * @param Controller $controller Instantiating controller
- * @return bool|null True if $method is required
+ * @return bool True if $method is required
  */
 	protected function _methodsRequired(Controller $controller) {
 		foreach (array('Post', 'Get', 'Put', 'Delete') as $method) {
@@ -365,7 +365,7 @@ class SecurityComponent extends Component {
 				if (in_array($this->_action, $require) || $this->$property === array('*')) {
 					if (!$this->request->is($method)) {
 						if (!$this->blackHole($controller, $method)) {
-							return null;
+							return false;
 						}
 					}
 				}
@@ -378,7 +378,7 @@ class SecurityComponent extends Component {
  * Check if access requires secure connection
  *
  * @param Controller $controller Instantiating controller
- * @return bool|null True if secure connection required
+ * @return bool True if secure connection required
  */
 	protected function _secureRequired(Controller $controller) {
 		if (is_array($this->requireSecure) && !empty($this->requireSecure)) {
@@ -387,7 +387,7 @@ class SecurityComponent extends Component {
 			if (in_array($this->_action, $requireSecure) || $this->requireSecure === array('*')) {
 				if (!$this->request->is('ssl')) {
 					if (!$this->blackHole($controller, 'secure')) {
-						return null;
+						return false;
 					}
 				}
 			}

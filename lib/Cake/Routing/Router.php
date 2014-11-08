@@ -731,7 +731,7 @@ class Router {
  *
  * @param string $name Parameter name
  * @param bool $current Current parameter, useful when using requestAction
- * @return string Parameter value
+ * @return string|null Parameter value
  */
 	public static function getParam($name = 'controller', $current = false) {
 		$params = Router::getParams($current);
