@@ -511,13 +511,14 @@ class Query extends DatabaseQuery implements JsonSerializable {
 		}
 
 		$count = ['count' => $query->func()->count('*')];
-		if (!count($query->clause('group')) && !$query->clause('distinct')) {
+		$complex = count($query->clause('group')) || $query->clause('distinct');
+		$complex = $complex || count($query->clause('union'));
+
+		if (!$complex) {
 			$statement = $query
 				->select($count, true)
 				->execute();
 		} else {
-			// Forcing at least one field to be selected
-			$query->select(['_one_' => $query->newExpr()->add('1')]);
 			$statement = $this->connection()->newQuery()
 				->select($count)
 				->from(['count_source' => $query])

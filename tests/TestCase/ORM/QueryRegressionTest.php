@@ -194,8 +194,7 @@ class QueryRegressionTest extends TestCase {
 		$articles->belongsToMany('Tags');
 		$tags->belongsToMany('Articles');
 
-		$result = $articles->find()->contain(['Tags'])->first();
-		$sub = $articles->Tags->find()->select(['id'])->matching('Articles', function ($q) use ($result) {
+		$sub = $articles->Tags->find()->select(['id'])->matching('Articles', function ($q) {
 			return $q->where(['Articles.id' => 1]);
 		});
 
