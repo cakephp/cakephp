@@ -55,21 +55,16 @@ class BakeHelper extends Helper {
  */
 	public function stringifyList($list, $options = []) {
 		$options += [
-			'keys' => false,
-			'indent' => 2,
-			'callback' => function ($v) {
-				return "'$v'";
-			},
+			'indent' => 2
 		];
 
 		if (!$list) {
 			return '';
 		}
 
-		$wrapped = array_map($options['callback'], $list);
-
-		if (!empty($option['keys'])) {
-			foreach($wrapped as $k => &$v) {
+		foreach($list as $k => &$v) {
+			$v = "'$v'";
+			if (!is_numeric($k)) {
 				$v = "'$k' => $v";
 			}
 		}
@@ -82,7 +77,7 @@ class BakeHelper extends Helper {
 			$end = "\n" . str_repeat("\t", $options['indent'] - 1);
 		}
 
-		return $start . implode($join, $wrapped) . $end;
+		return $start . implode($join, $list) . $end;
 	}
 
 	public function aliasExtractor($modelObj, $assoc) {
