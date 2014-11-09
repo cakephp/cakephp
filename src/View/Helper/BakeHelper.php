@@ -74,14 +74,15 @@ class BakeHelper extends Helper {
 			}
 		}
 
-		$end = '';
+		$start = $end = '';
 		$join = ', ';
 		if ($options['indent']) {
-			$join .= "\n" . str_repeat("\t", $options['indent']);
+			$start = "\n" . str_repeat("\t", $options['indent']);
+			$join .= $start;
 			$end = "\n" . str_repeat("\t", $options['indent'] - 1);
 		}
 
-		return implode($join, $wrapped) . $end;
+		return $start . implode($join, $wrapped) . $end;
 	}
 
 }
