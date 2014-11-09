@@ -34,10 +34,10 @@ use <%= $namespace %>\Controller\AppController;
 <% endforeach; %>
  */
 class <%= $name %>Controller extends AppController {
-<%= $this->Bake->arrayProperty('helpers', $helpers); %>
-<%= $this->Bake->arrayProperty('components', $components); %>
-<% if (!empty($actions)): %>
-<%= trim($actions); %>
-<% endif; %>
+<%
+echo $this->Bake->arrayProperty('helpers', $helpers);
+echo $this->Bake->arrayProperty('components', $components);
+echo $actions;
+%>
 
 }

@@ -12,6 +12,12 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+$allAssociations = array_merge(
+	$this->Bake->aliasExtractor($modelObj, 'belongsTo'),
+	$this->Bake->aliasExtractor($modelObj, 'belongsToMany'),
+	$this->Bake->aliasExtractor($modelObj, 'HasOne'),
+	$this->Bake->aliasExtractor($modelObj, 'HasMany')
+);
 %>
 
 /**

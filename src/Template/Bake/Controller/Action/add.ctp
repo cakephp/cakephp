@@ -31,14 +31,18 @@
 			}
 		}
 <%
-		foreach ($editAssociations as $assoc):
+		$associations = array_merge(
+			$this->Bake->aliasExtractor($modelObj, 'belongsTo'),
+			$this->Bake->aliasExtractor($modelObj, 'belongsToMany')
+		);
+		foreach ($associations as $assoc):
 			$association = $modelObj->association($assoc);
 			$otherName = $association->target()->alias();
 			$otherPlural = $this->_variableName($otherName);
 %>
 		$<%= $otherPlural %> = $this-><%= $currentModelName %>-><%= $otherName %>->find('list');
 <%
-			$compact[] = "'<%= $otherPlural %>'";
+			$compact[] = "'$otherPlural'";
 		endforeach;
 %>
 		$this->set(compact(" <%= join(', ', $compact) %> "));

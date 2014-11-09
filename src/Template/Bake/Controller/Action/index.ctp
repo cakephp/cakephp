@@ -20,6 +20,7 @@
  * @return void
  */
 	public function index() {
+<% $belongsTo = $this->Bake->aliasExtractor($modelObj, 'belongsTo'); %>
 <% if ($belongsTo): %>
 		$this->paginate = [
 			'contain' => [<%= $this->Bake->stringifyList($belongsTo, ['indent' => 4]) %>]

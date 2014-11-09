@@ -12,6 +12,9 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
+$belongsTo = $this->Bake->aliasExtractor($modelObj, 'belongsTo');
+$belongsToMany = $this->Bake->aliasExtractor($modelObj, 'belongsToMany');
 %>
 
 <% $compact = ["'" . $singularName . "'"]; %>
@@ -36,7 +39,11 @@
 			}
 		}
 <%
-		foreach ($editAssociations as $assoc):
+		$associations = array_merge(
+			$this->Bake->aliasExtractor($modelObj, 'belongsTo'),
+			$this->Bake->aliasExtractor($modelObj, 'belongsToMany')
+		);
+		foreach ($associations as $assoc):
 			$association = $modelObj->association($assoc);
 			$otherName = $association->target()->alias();
 			$otherPlural = $this->_variableName($otherName);
