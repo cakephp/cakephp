@@ -1,7 +1,5 @@
 <%
 use Cake\Utility\Inflector;
-
-$last = count($value) - 1;
 %>
 
 /**
@@ -9,8 +7,4 @@ $last = count($value) - 1;
  *
  * @var array
  */
-	public $<%= $name %> = [
-<% foreach($value as $i => $val): %>
-		'<%= $val %>'<%= $i < $last ? ',' : ''; %>
-<% endforeach; %>
-	];
+	public $<%= $name %> = [<%= $this->Bake->stringifyList($value, ['keys' => true]) %>];

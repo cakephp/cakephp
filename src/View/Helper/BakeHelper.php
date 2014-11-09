@@ -47,12 +47,15 @@ class BakeHelper extends Helper {
 /**
  * stringifyList
  *
+ * Returns an array converted into a formatted multiline string
+ *
  * @param array $list
  * @param array $options
  * @return string
  */
 	public function stringifyList($list, $options = []) {
 		$options += [
+			'keys' => false,
 			'indent' => 2,
 			'callback' => function ($v) {
 				return "'$v'";
@@ -64,7 +67,21 @@ class BakeHelper extends Helper {
 		}
 
 		$wrapped = array_map($options['callback'], $list);
-		$return = implode("\n" . str_repeat("\t", $indent) . ', ', $wrapped) . "\n";
+
+		if (!empty($option['keys'])) {
+			foreach($wrapped as $k => &$v) {
+				$v = "'$k' => $v";
+			}
+		}
+
+		$end = '';
+		$join = ', ';
+		if ($options['indent']) {
+			$join = "\n" . str_repeat("\t", $options['indent']) . $join;
+			$end = "\n" . str_repeat("\t", $options['indent'] - 1);
+		}
+
+		return implode($join, $wrapped) . $end;
 	}
 
 }
