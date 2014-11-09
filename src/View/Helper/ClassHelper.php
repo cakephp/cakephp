@@ -17,7 +17,7 @@ class ClassHelper extends Helper {
 	protected $_defaultConfig = [];
 
 /**
- * property
+ * arrayProperty
  *
  * Used for generating formatted properties such as component and helper arrays
  *
@@ -26,7 +26,7 @@ class ClassHelper extends Helper {
  * @param array $params
  * @return string
  */
-	public function property($name, $value, $params = []) {
+	public function arrayProperty($name, $value, $params = []) {
 		if (!$value) {
 			return '';
 		}
@@ -38,7 +38,7 @@ class ClassHelper extends Helper {
 			'name' => $name,
 			'value' => $value
 		];
-		return $this->_View->element('property', $params);
+		return $this->_View->element('arrayProperty', $params);
 	}
 
 }

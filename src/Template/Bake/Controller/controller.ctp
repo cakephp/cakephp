@@ -37,8 +37,8 @@ use <%= $namespace %>\Controller\AppController;
 <% endforeach; %>
  */
 class <%= $name %>Controller extends AppController {
-<%= $this->Class->property('helpers', $helpers); %>
-<%= $this->Class->property('components', $components); %>
+<%= $this->Class->arrayProperty('helpers', $helpers); %>
+<%= $this->Class->arrayProperty('components', $components); %>
 <% if (!empty($actions)): %>
 
 <% echo trim($actions); %>
