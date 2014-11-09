@@ -22,7 +22,7 @@
 	public function index() {
 <% if ($belongsTo): %>
 		$this->paginate = [
-			'contain' => [<%= $this->Class->stringifyList($belongsTo, ['indent' => 4]) %>]
+			'contain' => [<%= $this->Bake->stringifyList($belongsTo, ['indent' => 4]) %>]
 		];
 <% endif; %>
 		$this->set('<%= $pluralName %>', $this->paginate($this-><%= $currentModelName %>));

@@ -6,9 +6,9 @@ use Cake\View\Helper;
 use Cake\Utility\Inflector;
 
 /**
- * Class helper
+ * Bake helper
  */
-class ClassHelper extends Helper {
+class BakeHelper extends Helper {
 
 	use ConventionsTrait;
 
@@ -26,10 +26,10 @@ class ClassHelper extends Helper {
  *
  * @param string $name
  * @param array $value
- * @param array $params
+ * @param array $options
  * @return string
  */
-	public function arrayProperty($name, $value, $params = []) {
+	public function arrayProperty($name, $value, $options = []) {
 		if (!$value) {
 			return '';
 		}
@@ -37,13 +37,20 @@ class ClassHelper extends Helper {
 		foreach($value as &$val) {
 			$val = Inflector::camelize($val);
 		}
-		$params += [
+		$options += [
 			'name' => $name,
 			'value' => $value
 		];
-		return $this->_View->element('array_property', $params);
+		return $this->_View->element('array_property', $options);
 	}
 
+/**
+ * stringifyList
+ *
+ * @param array $list
+ * @param array $options
+ * @return string
+ */
 	public function stringifyList($list, $options = []) {
 		$options += [
 			'indent' => 2,

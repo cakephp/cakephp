@@ -23,7 +23,7 @@
  */
 	public function view($id = null) {
 		$<%= $singularName%> = $this-><%= $currentModelName %>->get($id, [
-			'contain' => [<%= $this->Class->stringifyList($allAssociations, ['indent' => 4]) %>]
+			'contain' => [<%= $this->Bake->stringifyList($allAssociations, ['indent' => 4]) %>]
 		]);
 		$this->set('<%= $singularName %>', $<%= $singularName %>);
 	}

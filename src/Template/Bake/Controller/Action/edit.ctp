@@ -24,7 +24,7 @@
  */
 	public function edit($id = null) {
 		$<%= $singularName %> = $this-><%= $currentModelName %>->get($id, [
-			'contain' => [<%= $this->Class->stringifyList($belongsToMany, ['indent' => 4]) %>]
+			'contain' => [<%= $this->Bake->stringifyList($belongsToMany, ['indent' => 4]) %>]
 		]);
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$<%= $singularName %> = $this-><%= $currentModelName %>->patchEntity($<%= $singularName %>, $this->request->data);

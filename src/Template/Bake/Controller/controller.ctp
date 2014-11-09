@@ -34,8 +34,8 @@ use <%= $namespace %>\Controller\AppController;
 <% endforeach; %>
  */
 class <%= $name %>Controller extends AppController {
-<%= $this->Class->arrayProperty('helpers', $helpers); %>
-<%= $this->Class->arrayProperty('components', $components); %>
+<%= $this->Bake->arrayProperty('helpers', $helpers); %>
+<%= $this->Bake->arrayProperty('components', $components); %>
 <% if (!empty($actions)): %>
 <%= trim($actions); %>
 <% endif; %>
