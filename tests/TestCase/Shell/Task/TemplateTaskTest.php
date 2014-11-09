@@ -49,55 +49,6 @@ class TemplateTaskTest extends TestCase {
 	}
 
 /**
- * test finding templates installed in
- *
- * @return void
- */
-	public function testFindingInstalledTemplatesForBake() {
-		$consoleLibs = CAKE . 'Template' . DS;
-		$this->Task->initialize();
-		$this->assertPathEquals($this->Task->templatePaths['default'], $consoleLibs . 'Bake/default/');
-	}
-
-/**
- * test using an invalid template name.
- *
- * @expectedException \RuntimeException
- * @expectedExceptionMessage Unable to locate "nope" bake template
- * @return void
- */
-	public function testGetTemplatePathInvalid() {
-		$defaultTemplate = CAKE . 'Template/Bake/default/';
-		$this->Task->templatePaths = ['default' => $defaultTemplate];
-		$this->Task->params['template'] = 'nope';
-		$this->Task->getTemplatePath();
-	}
-
-/**
- * test getting the correct template name. Ensure that with only one template, or a template param
- * that the user is not bugged. If there are more, find and return the correct template name
- *
- * @return void
- */
-	public function testGetTemplatePath() {
-		$defaultTemplate = CAKE . 'Template/Bake/default/';
-		$this->Task->templatePaths = ['default' => $defaultTemplate];
-
-		$result = $this->Task->getTemplatePath();
-		$this->assertEquals($defaultTemplate, $result);
-
-		$this->Task->templatePaths = ['other' => '/some/path', 'default' => $defaultTemplate];
-		$this->Task->params['template'] = 'other';
-		$result = $this->Task->getTemplatePath();
-		$this->assertEquals('/some/path', $result);
-
-		$this->Task->params = array();
-		$result = $this->Task->getTemplatePath();
-		$this->assertEquals($defaultTemplate, $result);
-		$this->assertEquals('default', $this->Task->params['template']);
-	}
-
-/**
  * test generate
  *
  * @return void

@@ -35,14 +35,6 @@ class TemplateTask extends Shell {
 	use ViewVarsTrait;
 
 /**
- * Paths to look for templates on.
- * Contains a list of $template => $path
- *
- * @var array
- */
-	public $templatePaths = [];
-
-/**
  * BakeView instance
  *
  * @var Cake\View\BakeView
