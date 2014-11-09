@@ -22,6 +22,7 @@ use Cake\Filesystem\Folder;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\View\BakeView;
+use Cake\View\Exception\MissingTemplateException;
 use Cake\View\ViewVarsTrait;
 
 /**
@@ -73,7 +74,12 @@ class TemplateTask extends Shell {
 		}
 
 		$this->View->set($this->viewVars);
-		return $this->View->render($template);
+
+		try {
+			return $this->View->render($template);
+		} catch (MissingTemplateException $e) {
+			return '';
+		}
 	}
 
 }
