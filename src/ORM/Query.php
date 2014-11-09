@@ -609,7 +609,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	public function sql(ValueBinder $binder = null) {
 		$this->_transformQuery();
 
-		if (!$this->_beforeFindFired) {
+		if (!$this->_beforeFindFired && $this->_type === 'select') {
 			$table = $this->repository();
 			$table->dispatchEvent('Model.beforeFind', [$this, $this->_options, !$this->eagerLoaded()]);
 			$this->_beforeFindFired = true;
