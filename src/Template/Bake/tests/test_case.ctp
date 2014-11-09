@@ -45,9 +45,7 @@ class <%= $className %>Test extends TestCase {
  *
  * @var array
  */
-	public $fixtures = [
-		'<%= join("',\n\t\t'", $fixtures); %>'
-	];
+	public $fixtures = [<%= $this->Bake->stringifyList($fixtures) %>];
 
 <% endif; %>
 <% if (!empty($construction)): %>
