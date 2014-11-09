@@ -22,7 +22,7 @@ class BakeView extends View {
  * @var mixed
  */
 	public $helpers = [
-		'Class'
+		'Bake'
 	];
 
 /**

@@ -13,8 +13,8 @@ $allAssociations = array_merge(
 	array_map($extractor, $modelObj->associations()->type('HasMany'))
 );
 %>
-<%= $this->element('/Controller/Action/index') %>
-<%= $this->element('/Controller/Action/view') %>
-<%= $this->element('/Controller/Action/add') %>
-<%= $this->element('/Controller/Action/edit') %>
-<%= $this->element('/Controller/Action/delete') %>
+<%= $this->render('/Controller/Action/index') %>
+<%= $this->render('/Controller/Action/view') %>
+<%= $this->render('/Controller/Action/add') %>
+<%= $this->render('/Controller/Action/edit') %>
+<%= $this->render('/Controller/Action/delete') %>
