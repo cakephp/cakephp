@@ -88,6 +88,7 @@ class BakeView extends View {
 
 		$viewString = str_replace(array_keys($unPhp), array_values($unPhp), $viewString);
 		$viewString = str_replace(array_keys($templatify), array_values($templatify), $viewString);
+		$viewString = preg_replace('/<\?=(.*)\?>\n(.)/', "<?=$1?>\n\n$2", $viewString);
 
 		$this->__viewFile = TMP . $randomString . '.php';
 		file_put_contents($this->__viewFile, $viewString);
@@ -100,7 +101,9 @@ class BakeView extends View {
 
 		unset($this->__viewFile);
 
-		return str_replace(array_values($unPhp), array_keys($unPhp), ob_get_clean());
+		$content = ob_get_clean();
+
+		return str_replace(array_values($unPhp), array_keys($unPhp), $content);
 	}
 
 /**

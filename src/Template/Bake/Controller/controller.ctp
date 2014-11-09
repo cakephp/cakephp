@@ -29,20 +29,15 @@ use <%= $namespace %>\Controller\AppController;
  * <%= $name %> Controller
  *
  * @property <%= $namespace %>\Model\Table\<%= $defaultModel %>Table $<%= $defaultModel %>
-
 <% foreach ($components as $component): %>
-
  * @property <%= $component %>Component $<%= $component %>
-
 <% endforeach; %>
  */
 class <%= $name %>Controller extends AppController {
 <%= $this->Class->arrayProperty('helpers', $helpers); %>
 <%= $this->Class->arrayProperty('components', $components); %>
 <% if (!empty($actions)): %>
-
-<% echo trim($actions); %>
-
+<%= trim($actions); %>
 <% endif; %>
 
 }
