@@ -1,5 +1,6 @@
-<%= $this->render('/Controller/Action/index') %>
-<%= $this->render('/Controller/Action/view') %>
-<%= $this->render('/Controller/Action/add') %>
-<%= $this->render('/Controller/Action/edit') %>
-<%= $this->render('/Controller/Action/delete') %>
+<%
+$actions = ['index', 'view', 'add', 'edit', 'delete'];
+foreach($actions as $action) {
+	$out[] = trim($this->render('/Controller/Action/' . $action, false));
+}
+echo implode("\n\n", $out);

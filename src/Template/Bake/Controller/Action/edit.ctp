@@ -16,7 +16,6 @@
 $belongsTo = $this->Bake->aliasExtractor($modelObj, 'belongsTo');
 $belongsToMany = $this->Bake->aliasExtractor($modelObj, 'belongsToMany');
 %>
-
 <% $compact = ["'" . $singularName . "'"]; %>
 /**
  * Edit method
