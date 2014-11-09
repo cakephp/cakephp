@@ -480,8 +480,8 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testThemeAssetsInMainWebrootPath() {
-		$webRoot = Configure::read('App.www_root');
-		Configure::write('App.www_root', TEST_APP . 'webroot/');
+		$webRoot = Configure::read('App.wwwRoot');
+		Configure::write('App.wwwRoot', TEST_APP . 'webroot/');
 
 		$this->Html->Url->theme = 'TestTheme';
 		$result = $this->Html->css('webroot_test');

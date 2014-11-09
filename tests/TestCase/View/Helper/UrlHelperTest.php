@@ -261,8 +261,8 @@ class UrlHelperTest extends TestCase {
 		$expected = '/test_theme/img/test.jpg';
 		$this->assertEquals($expected, $result);
 
-		$webRoot = Configure::read('App.www_root');
-		Configure::write('App.www_root', TEST_APP . 'TestApp/webroot/');
+		$webRoot = Configure::read('App.wwwRoot');
+		Configure::write('App.wwwRoot', TEST_APP . 'TestApp/webroot/');
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
 		$expected = '/test_theme/img/cake.power.gif';
@@ -280,7 +280,7 @@ class UrlHelperTest extends TestCase {
 		$expected = '/img/cake.icon.gif?some=param';
 		$this->assertEquals($expected, $result);
 
-		Configure::write('App.www_root', $webRoot);
+		Configure::write('App.wwwRoot', $webRoot);
 	}
 
 }
