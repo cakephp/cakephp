@@ -794,4 +794,23 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals('Un artículo', $article->translation('spa')->title);
 	}
 
+/**
+ * Tests that translation queries are added to union queries as well.
+ *
+ * @return void
+ */
+	public function testTranslationWithUnionQuery() {
+		$table = TableRegistry::get('Comments');
+		$table->addBehavior('Translate', ['fields' => ['comment']]);
+		$table->locale('spa');
+		$query = $table->find()->where(['Comments.id' => 6]);
+		$query2 = $table->find()->where(['Comments.id' => 5]);
+		$query->union($query2);
+		$results = $query->toArray();
+		$this->assertCount(2, $results);
+
+		$this->assertEquals('First Comment for Second Article', $results[0]->comment);
+		$this->assertEquals('Second Comment for Second Article', $results[1]->comment);
+	}
+
 }
