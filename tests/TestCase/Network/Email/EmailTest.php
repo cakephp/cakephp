@@ -334,6 +334,25 @@ class EmailTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to unset the email pattern and make use of filter_var() instead.
+ *
+ * @return void
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Invalid email: "fail.@example.com"
+ */
+	public function testUnsetEmailPattern() {
+		$email = new Email();
+		$this->assertSame(Email::EMAIL_PATTERN, $email->emailPattern());
+
+		$email->emailPattern(null);
+		$this->assertNull($email->emailPattern());
+
+		$email->to('pass@example.com');
+		$email->to('fail.@example.com');
+	}
+
+/**
  * testFormatAddress method
  *
  * @return void

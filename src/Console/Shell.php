@@ -132,7 +132,7 @@ class Shell {
 /**
  * Normalized map of tasks.
  *
- * @var string
+ * @var array
  */
 	protected $_taskMap = [];
 
@@ -511,7 +511,7 @@ class Shell {
  * @return void
  */
 	public function err($message = null, $newlines = 1) {
-		return $this->_io->err($message, $newlines);
+		$this->_io->err($message, $newlines);
 	}
 
 /**
@@ -534,7 +534,7 @@ class Shell {
  * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::hr
  */
 	public function hr($newlines = 0, $width = 63) {
-		return $this->_io->hr($newlines, $width);
+		$this->_io->hr($newlines, $width);
 	}
 
 /**
@@ -552,7 +552,7 @@ class Shell {
 		if (!empty($message)) {
 			$this->_io->err($message);
 		}
-		return $this->_stop(1);
+		$this->_stop(1);
 	}
 
 /**

@@ -47,7 +47,7 @@ class AssociationCollection {
  * @return Association The association object being added.
  */
 	public function add($alias, Association $association) {
-		list($plugin, $alias) = pluginSplit($alias);
+		list(, $alias) = pluginSplit($alias);
 		return $this->_items[strtolower($alias)] = $association;
 	}
 
@@ -107,7 +107,7 @@ class AssociationCollection {
  */
 	public function type($class) {
 		$out = array_filter($this->_items, function ($assoc) use ($class) {
-			list($ns, $name) = namespaceSplit(get_class($assoc));
+			list(, $name) = namespaceSplit(get_class($assoc));
 			return $class === $name;
 		});
 		return array_values($out);

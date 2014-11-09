@@ -225,7 +225,6 @@ class ModelTask extends BakeTask {
 				continue;
 			}
 
-			$assoc = false;
 			if ($fieldName === 'parent_id') {
 				$className = ($this->plugin) ? $this->plugin . '.' . $model->alias() : $model->alias();
 				$assoc = [
@@ -686,7 +685,6 @@ class ModelTask extends BakeTask {
  *   does not have a schemaCollection method.
  */
 	protected function _getAllTables() {
-		$tables = [];
 		$db = ConnectionManager::get($this->connection);
 		if (!method_exists($db, 'schemaCollection')) {
 			$this->err(

@@ -30,7 +30,7 @@ class ExtractTask extends Shell {
 /**
  * Paths to use when looking for strings
  *
- * @var string
+ * @var array
  */
 	protected $_paths = [];
 
@@ -58,7 +58,7 @@ class ExtractTask extends Shell {
 /**
  * Contains all content waiting to be write
  *
- * @var string
+ * @var array
  */
 	protected $_storage = [];
 

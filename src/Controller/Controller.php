@@ -15,7 +15,6 @@
 namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
-use Cake\Controller\Exception\PrivateActionException;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerTrait;

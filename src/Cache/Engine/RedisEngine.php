@@ -87,7 +87,6 @@ class RedisEngine extends CacheEngine {
  * @return bool True if Redis server was connected
  */
 	protected function _connect() {
-		$return = false;
 		try {
 			$this->_Redis = new \Redis();
 			if (!empty($this->settings['unix_socket'])) {

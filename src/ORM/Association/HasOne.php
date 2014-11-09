@@ -62,7 +62,7 @@ class HasOne extends Association {
 			return parent::property($name);
 		}
 		if ($name === null && !$this->_propertyName) {
-			list($plugin, $name) = pluginSplit($this->_name);
+			list(, $name) = pluginSplit($this->_name);
 			$this->_propertyName = Inflector::underscore(Inflector::singularize($name));
 		}
 		return $this->_propertyName;

@@ -1308,7 +1308,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *  ->epilog('RETURNING id');
  * }}}
  *
- * @param string|\Cake\Database\QueryExpression $expression The expression to be appended
+ * @param string|\Cake\Database\Expression\QueryExpression $expression The expression to be appended
  * @return $this
  */
 	public function epilog($expression = null) {
@@ -1342,7 +1342,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * }}}
  *
  * @param mixed $rawExpression A string, array or anything you want wrapped in an expression object
- * @return \Cake\Database\QueryExpression
+ * @return \Cake\Database\Expression\QueryExpression
  */
 	public function newExpr($rawExpression = null) {
 		$expression = new QueryExpression([], $this->typeMap());

@@ -136,7 +136,7 @@ class RouteCollection {
  * and newer style urls containing '_name'
  *
  * @param array $url The url to match.
- * @return string The name of the url
+ * @return array The set of names of the url
  */
 	protected function _getNames($url) {
 		$plugin = false;

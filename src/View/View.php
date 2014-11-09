@@ -45,7 +45,6 @@ use LogicException;
  * template file `plugins/SuperHot/Template/Posts/index.ctp`. If a theme template
  * is not found for the current action the default app template file is used.
  *
- * @property      \Cake\View\Helper\CacheHelper $Cache
  * @property      \Cake\View\Helper\FormHelper $Form
  * @property      \Cake\View\Helper\HtmlHelper $Html
  * @property      \Cake\View\Helper\NumberHelper $Number
@@ -361,8 +360,6 @@ class View {
  *   is false.
  */
 	public function element($name, array $data = array(), array $options = array()) {
-		$file = $plugin = null;
-
 		if (!isset($options['callbacks'])) {
 			$options['callbacks'] = false;
 		}

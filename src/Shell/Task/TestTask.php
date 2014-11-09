@@ -155,7 +155,7 @@ class TestTask extends BakeTask {
 		}
 		$path = $base . str_replace('\\', DS, $namespace);
 		$folder = new Folder($path);
-		list($dirs, $files) = $folder->read();
+		list(, $files) = $folder->read();
 		foreach ($files as $file) {
 			$classes[] = str_replace('.php', '', $file);
 		}
@@ -235,7 +235,7 @@ class TestTask extends BakeTask {
  */
 	public function buildTestSubject($type, $class) {
 		if (strtolower($type) === 'table') {
-			list($namespace, $name) = namespaceSplit($class);
+			list(, $name) = namespaceSplit($class);
 			$name = str_replace('Table', '', $name);
 			if ($this->plugin) {
 				$name = $this->plugin . '.' . $name;
@@ -419,7 +419,7 @@ class TestTask extends BakeTask {
  * @return array Constructor snippets for the thing you are building.
  */
 	public function generateConstructor($type, $fullClassName) {
-		list($namespace, $className) = namespaceSplit($fullClassName);
+		list(, $className) = namespaceSplit($fullClassName);
 		$type = strtolower($type);
 		$pre = $construct = $post = '';
 		if ($type === 'table') {

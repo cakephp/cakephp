@@ -125,7 +125,7 @@ class EntityContext implements ContextInterface {
 				$table = $entity->source();
 			}
 			if (!$table && $isEntity && get_class($entity) !== 'Cake\ORM\Entity') {
-				list($ns, $entityClass) = namespaceSplit(get_class($entity));
+				list(, $entityClass) = namespaceSplit(get_class($entity));
 				$table = Inflector::pluralize($entityClass);
 			}
 		}

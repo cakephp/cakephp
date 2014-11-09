@@ -64,7 +64,7 @@ trait CellTrait {
 			list($pluginAndCell, $action) = [$parts[0], 'display'];
 		}
 
-		list($plugin, $cellName) = pluginSplit($pluginAndCell);
+		list($plugin) = pluginSplit($pluginAndCell);
 		$className = App::className($pluginAndCell, 'View/Cell', 'Cell');
 
 		if (!$className) {

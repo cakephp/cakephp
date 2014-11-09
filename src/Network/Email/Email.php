@@ -579,7 +579,9 @@ class Email {
 /**
  * EmailPattern setter/getter
  *
- * @param string $regex for email address validation
+ * @param string|bool|null $regex The pattern to use for email address validation,
+ *   null to unset the pattern and make use of filter_var() instead, false or
+ *   nothing to return the current value
  * @return string|$this
  */
 	public function emailPattern($regex = false) {
@@ -629,10 +631,11 @@ class Email {
  * @throws \InvalidArgumentException If email address does not validate
  */
 	protected function _validateEmail($email) {
-		if ($this->_emailPattern === null && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			return;
-		}
-		if (preg_match($this->_emailPattern, $email)) {
+		if ($this->_emailPattern === null) {
+			if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+				return;
+			}
+		} elseif (preg_match($this->_emailPattern, $email)) {
 			return;
 		}
 		throw new InvalidArgumentException(sprintf('Invalid email: "%s"', $email));
@@ -1769,8 +1772,8 @@ class Email {
 
 		$View->loadHelpers();
 
-		list($templatePlugin, $template) = pluginSplit($this->_template);
-		list($layoutPlugin, $layout) = pluginSplit($this->_layout);
+		list($templatePlugin) = pluginSplit($this->_template);
+		list($layoutPlugin) = pluginSplit($this->_layout);
 		if ($templatePlugin) {
 			$View->plugin = $templatePlugin;
 		} elseif ($layoutPlugin) {

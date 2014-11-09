@@ -211,7 +211,7 @@ class Router {
  * @param array $options An array matching the named elements in the route to regular expressions which that
  *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
- * @return array Array of routes
+ * @return void
  * @see \Cake\Routing\RouteBuilder::redirect()
  */
 	public static function redirect($route, $url, $options = []) {
@@ -219,7 +219,7 @@ class Router {
 		if (is_string($url)) {
 			$url = ['redirect' => $url];
 		}
-		return static::connect($route, $url, $options);
+		static::connect($route, $url, $options);
 	}
 
 /**

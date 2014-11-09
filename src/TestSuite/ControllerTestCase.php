@@ -199,7 +199,7 @@ abstract class ControllerTestCase extends TestCase {
  *
  * @param string $name The name of the function
  * @param array $arguments Array of arguments
- * @return the return of _testAction
+ * @return mixed the return of _testAction
  * @throws \BadMethodCallException when you call methods that don't exist.
  */
 	public function __call($name, $arguments) {

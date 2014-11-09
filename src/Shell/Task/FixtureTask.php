@@ -135,7 +135,7 @@ class FixtureTask extends BakeTask {
  * @return string Baked fixture content
  * @throws \RuntimeException
  */
-	public function bake($model, $useTable = false) {
+	public function bake($model, $useTable = null) {
 		$table = $schema = $records = $import = $modelImport = null;
 
 		if (!$useTable) {
