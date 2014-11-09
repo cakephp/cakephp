@@ -38,7 +38,7 @@ class ClassHelper extends Helper {
 			'name' => $name,
 			'value' => $value
 		];
-		return $this->_View->element('arrayProperty', $params);
+		return $this->_View->element('array_property', $params);
 	}
 
 }
