@@ -14,6 +14,8 @@
  */
 namespace Cake\View;
 
+use Cake\Utility\Inflector;
+
 class BakeView extends View {
 
 /**
@@ -90,7 +92,7 @@ class BakeView extends View {
 		$viewString = str_replace(array_keys($templatify), array_values($templatify), $viewString);
 		$viewString = preg_replace('/<\?=(.*)\?>\n(.)/', "<?=$1?>\n\n$2", $viewString);
 
-		$this->__viewFile = TMP . $randomString . '.php';
+		$this->__viewFile = TMP . Inflector::slug(str_replace(ROOT, '', $viewFile)) . '.php';
 		file_put_contents($this->__viewFile, $viewString);
 
 		unset($randomString, $templatify, $viewFile, $viewString);

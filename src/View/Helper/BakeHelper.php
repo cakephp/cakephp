@@ -85,4 +85,11 @@ class BakeHelper extends Helper {
 		return $start . implode($join, $wrapped) . $end;
 	}
 
+	public function aliasExtractor($modelObj, $assoc) {
+		$extractor = function ($val) {
+			return $val->target()->alias();
+		};
+
+		return array_map($extractor, $modelObj->associations()->type($assoc));
+	}
 }
