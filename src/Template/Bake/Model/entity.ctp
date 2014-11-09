@@ -43,6 +43,6 @@ class <%= $name %> extends Entity {
  *
  * @var array
  */
-	protected $_hidden = [<%= $this->Bake->stringifyList($hidden)];
+	protected $_hidden = [<%= $this->Bake->stringifyList($hidden) %>];
 <% endif %>
 }

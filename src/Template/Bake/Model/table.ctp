@@ -41,7 +41,7 @@ class <%= $name %>Table extends Table {
 <% endif %>
 <% if (!empty($primaryKey)): %>
 <% if (count($primaryKey) > 1): %>
-		$this->primaryKey([<%= $this->Bake->stringifyList($(array)$primaryKey, ['indent' => false]) %>]);
+		$this->primaryKey([<%= $this->Bake->stringifyList((array)$primaryKey, ['indent' => false]) %>]);
 <% else: %>
 		$this->primaryKey('<%= current((array)$primaryKey) %>');
 <% endif %>
@@ -51,7 +51,7 @@ class <%= $name %>Table extends Table {
 <% endforeach %>
 <% foreach ($associations as $type => $assocs): %>
 <% foreach ($assocs as $assoc): %>
-		$this-><%= $type %>('<%= $assoc['alias'] %>', [<?% $this->Bake->stringifyList($assoc, ['indent' => 3]) %>]);
+		$this-><%= $type %>('<%= $assoc['alias'] %>', [<%= $this->Bake->stringifyList($assoc, ['indent' => 3]) %>]);
 <% endforeach %>
 <% endforeach %>
 	}

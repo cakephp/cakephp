@@ -19,10 +19,10 @@
  * @return void
  */
 	public function index() {
-<% $belongsTo = $this->Bake->aliasExtractor($modelObj, 'belongsTo'); %>
+<% $belongsTo = $this->Bake->aliasExtractor($modelObj, 'BelongsTo'); %>
 <% if ($belongsTo): %>
 		$this->paginate = [
-			'contain' => [<%= $this->Bake->stringifyList($belongsTo, ['indent' => 4]) %>]
+			'contain' => [<%= $this->Bake->stringifyList($belongsTo, ['indent' => false]) %>]
 		];
 <% endif; %>
 		$this->set('<%= $pluralName %>', $this->paginate($this-><%= $currentModelName %>));

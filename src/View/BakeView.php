@@ -14,10 +14,12 @@
  */
 namespace Cake\View;
 
+use Cake\Core\ConventionsTrait;
 use Cake\Utility\Inflector;
 
 class BakeView extends View {
 
+	use ConventionsTrait;
 /**
  * An array of names of built-in helpers to include.
  *

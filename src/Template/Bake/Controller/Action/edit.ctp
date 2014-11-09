@@ -13,8 +13,8 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-$belongsTo = $this->Bake->aliasExtractor($modelObj, 'belongsTo');
-$belongsToMany = $this->Bake->aliasExtractor($modelObj, 'belongsToMany');
+$belongsTo = $this->Bake->aliasExtractor($modelObj, 'BelongsTo');
+$belongsToMany = $this->Bake->aliasExtractor($modelObj, 'BelongsToMany');
 %>
 <% $compact = ["'" . $singularName . "'"]; %>
 /**
@@ -26,7 +26,7 @@ $belongsToMany = $this->Bake->aliasExtractor($modelObj, 'belongsToMany');
  */
 	public function edit($id = null) {
 		$<%= $singularName %> = $this-><%= $currentModelName %>->get($id, [
-			'contain' => [<%= $this->Bake->stringifyList($belongsToMany, ['indent' => 4]) %>]
+			'contain' => [<%= $this->Bake->stringifyList($belongsToMany, ['indent' => false]) %>]
 		]);
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$<%= $singularName %> = $this-><%= $currentModelName %>->patchEntity($<%= $singularName %>, $this->request->data);
@@ -38,19 +38,15 @@ $belongsToMany = $this->Bake->aliasExtractor($modelObj, 'belongsToMany');
 			}
 		}
 <%
-		$associations = array_merge(
-			$this->Bake->aliasExtractor($modelObj, 'belongsTo'),
-			$this->Bake->aliasExtractor($modelObj, 'belongsToMany')
-		);
-		foreach ($associations as $assoc):
+		foreach (array_merge($belongsTo, $belongsToMany) as $assoc):
 			$association = $modelObj->association($assoc);
 			$otherName = $association->target()->alias();
 			$otherPlural = $this->_variableName($otherName);
 %>
 		$<%= $otherPlural %> = $this-><%= $currentModelName %>-><%= $otherName %>->find('list');
 <%
-			$compact[] = "'<%= $otherPlural %>'";
+			$compact[] = "'$otherPlural'";
 		endforeach;
 %>
-		$this->set(compact(" <%= join(', ', $compact) %> "));
+		$this->set(compact(<%= join(', ', $compact) %>));
 	}

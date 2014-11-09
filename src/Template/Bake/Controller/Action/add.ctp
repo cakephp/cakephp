@@ -31,8 +31,8 @@
 		}
 <%
 		$associations = array_merge(
-			$this->Bake->aliasExtractor($modelObj, 'belongsTo'),
-			$this->Bake->aliasExtractor($modelObj, 'belongsToMany')
+			$this->Bake->aliasExtractor($modelObj, 'BelongsTo'),
+			$this->Bake->aliasExtractor($modelObj, 'BelongsToMany')
 		);
 		foreach ($associations as $assoc):
 			$association = $modelObj->association($assoc);
@@ -44,5 +44,5 @@
 			$compact[] = "'$otherPlural'";
 		endforeach;
 %>
-		$this->set(compact(" <%= join(', ', $compact) %> "));
+		$this->set(compact(<%= join(', ', $compact) %>));
 	}

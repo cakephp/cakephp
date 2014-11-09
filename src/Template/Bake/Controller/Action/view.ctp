@@ -13,8 +13,8 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 $allAssociations = array_merge(
-	$this->Bake->aliasExtractor($modelObj, 'belongsTo'),
-	$this->Bake->aliasExtractor($modelObj, 'belongsToMany'),
+	$this->Bake->aliasExtractor($modelObj, 'BelongsTo'),
+	$this->Bake->aliasExtractor($modelObj, 'BelongsToMany'),
 	$this->Bake->aliasExtractor($modelObj, 'HasOne'),
 	$this->Bake->aliasExtractor($modelObj, 'HasMany')
 );
@@ -28,7 +28,7 @@ $allAssociations = array_merge(
  */
 	public function view($id = null) {
 		$<%= $singularName%> = $this-><%= $currentModelName %>->get($id, [
-			'contain' => [<%= $this->Bake->stringifyList($allAssociations, ['indent' => 4]) %>]
+			'contain' => [<%= $this->Bake->stringifyList($allAssociations, ['indent' => false]) %>]
 		]);
 		$this->set('<%= $singularName %>', $<%= $singularName %>);
 	}
