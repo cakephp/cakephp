@@ -1,6 +1,7 @@
 <?php
 namespace Cake\View\Helper;
 
+use Cake\Core\ConventionsTrait;
 use Cake\View\Helper;
 use Cake\Utility\Inflector;
 
@@ -8,6 +9,8 @@ use Cake\Utility\Inflector;
  * Class helper
  */
 class ClassHelper extends Helper {
+
+	use ConventionsTrait;
 
 /**
  * Default configuration.
@@ -39,6 +42,22 @@ class ClassHelper extends Helper {
 			'value' => $value
 		];
 		return $this->_View->element('array_property', $params);
+	}
+
+	public function stringifyList($list, $options = []) {
+		$options += [
+			'indent' => 2,
+			'callback' => function ($v) {
+				return "'$v'";
+			},
+		];
+
+		if (!$list) {
+			return '';
+		}
+
+		$wrapped = array_map($options['callback'], $list);
+		$return = implode("\n" . str_repeat("\t", $indent) . ', ', $wrapped) . "\n";
 	}
 
 }
