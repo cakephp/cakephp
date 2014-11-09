@@ -148,7 +148,12 @@ class TranslateBehaviorTest extends TestCase {
 
 		$results = $table->find()
 			->select(['id', 'title', 'body'])
-			->contain(['Comments' => ['fields' => ['article_id', 'comment']]])
+			->contain([
+				'Comments' => [
+					'fields' => ['article_id', 'comment'],
+					'sort' => ['Comments.id' => 'ASC']
+				]
+			])
 			->hydrate(false)
 			->toArray();
 
@@ -806,7 +811,7 @@ class TranslateBehaviorTest extends TestCase {
 		$query = $table->find()->where(['Comments.id' => 6]);
 		$query2 = $table->find()->where(['Comments.id' => 5]);
 		$query->union($query2);
-		$results = $query->toArray();
+		$results = $query->sortBy('id')->toArray();
 		$this->assertCount(2, $results);
 
 		$this->assertEquals('First Comment for Second Article', $results[0]->comment);
