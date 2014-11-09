@@ -256,12 +256,9 @@ class Connection {
  * @return \Cake\Database\StatementInterface executed statement
  */
 	public function run(Query $query) {
-		$binder = $query->valueBinder();
-		$binder->resetCount();
-		list($query, $sql) = $this->driver()->compileQuery($query, $binder);
-
+		$sql = $query->sql();
 		$statement = $this->prepare($sql);
-		$binder->attachTo($statement);
+		$query->valueBinder()->attachTo($statement);
 		$statement->execute();
 
 		return $statement;
