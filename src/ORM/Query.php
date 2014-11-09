@@ -607,15 +607,15 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * {@inheritDoc}
  */
 	public function sql(ValueBinder $binder = null) {
-		$this->_transformQuery();
-
 		if (!$this->_beforeFindFired && $this->_type === 'select') {
 			$table = $this->repository();
 			$table->dispatchEvent('Model.beforeFind', [$this, $this->_options, !$this->eagerLoaded()]);
 			$this->_beforeFindFired = true;
 		}
 
-		return parent::sql($binder);
+		$this->_transformQuery();
+		$sql = parent::sql($binder);
+		return $sql;
 	}
 
 /**
