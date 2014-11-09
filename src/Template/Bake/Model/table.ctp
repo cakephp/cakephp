@@ -40,32 +40,18 @@ class <%= $name %>Table extends Table {
 		$this->displayField('<%= $displayField %>');
 <% endif %>
 <% if (!empty($primaryKey)): %>
-<%
-$key = array_map(function($el) { return "'$el'"; }, (array)$primaryKey);
-%>
 <% if (count($primaryKey) > 1): %>
-		$this->primaryKey([<%= implode(', ', $key) %>]);
+		$this->primaryKey([<%= $this->Bake->stringifyList($(array)$primaryKey, ['indent' => false]) %>]);
 <% else: %>
-		$this->primaryKey(<%= current($key) %>);
+		$this->primaryKey('<%= current((array)$primaryKey) %>');
 <% endif %>
 <% endif %>
 <% foreach ($behaviors as $behavior => $behaviorData): %>
 		$this->addBehavior('<%= $behavior %>'<%= $behaviorData ? ", [" . implode(', ', $behaviorData) . ']' : '' %>);
 <% endforeach %>
-<% $firstAssoc = true; %>
 <% foreach ($associations as $type => $assocs): %>
 <% foreach ($assocs as $assoc): %>
-<% if ($firstAssoc): %>
-<%= "\n" %>
-<% $firstAssoc = false; %>
-<% endif %>
-		$this-><%= $type %>('<%= $assoc['alias'] %>', [
-<% foreach ($assoc as $key => $val): %>
-<% if ($key !== 'alias'): %>
-			<%= "'$key' => '$val',\n" %>
-<% endif %>
-<% endforeach %>
-		]);
+		$this-><%= $type %>('<%= $assoc['alias'] %>', [<?% $this->Bake->stringifyList($assoc, ['indent' => 3]) %>]);
 <% endforeach %>
 <% endforeach %>
 	}

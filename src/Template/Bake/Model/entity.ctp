@@ -37,18 +37,12 @@ class <%= $name %> extends Entity {
 
 <% endif %>
 <% if (!empty($hidden)): %>
-<%
-$hidden = array_map(function($el) { return "'$el'"; }, $hidden);
-%>
+
 /**
  * Fields that are excluded from JSON an array versions of the entity.
  *
  * @var array
  */
-	protected $_hidden = [
-		<%= implode(",\n\t\t", $hidden) %>
-
-	];
-
+	protected $_hidden = [<%= $this->Bake->stringifyList($hidden)];
 <% endif %>
 }
