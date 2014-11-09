@@ -30,7 +30,7 @@ class DateTimeWidget implements WidgetInterface {
 /**
  * Select box widget.
  *
- * @var \Cake\View\Widget\SelectBox
+ * @var \Cake\View\Widget\SelectBoxWidget
  */
 	protected $_select;
 
@@ -177,7 +177,7 @@ class DateTimeWidget implements WidgetInterface {
 /**
  * Deconstructs the passed date value into all time units
  *
- * @param string|int|array|DateTime $value Value to deconstruct.
+ * @param string|int|array|\DateTime $value Value to deconstruct.
  * @param array $options Options for conversion.
  * @return array
  */

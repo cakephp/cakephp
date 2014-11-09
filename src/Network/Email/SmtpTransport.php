@@ -392,7 +392,7 @@ class SmtpTransport extends AbstractTransport {
  *
  * @param string $data data to be sent to SMTP server
  * @param string|bool $checkCode code to check for in server response, false to skip
- * @return void
+ * @return string|null The matched code, or null if nothing matched
  * @throws \Cake\Network\Exception\SocketException
  */
 	protected function _smtpSend($data, $checkCode = '250') {

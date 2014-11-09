@@ -696,7 +696,6 @@ class BelongsToMany extends Association {
 					return false;
 				}
 
-				$inserted = [];
 				$property = $this->property();
 
 				if (count($inserts)) {

@@ -329,7 +329,7 @@ class FormHelperTest extends TestCase {
 /**
  * Test adding an invalid context class.
  *
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @expectedExceptionMessage Context objects must implement Cake\View\Form\ContextInterface
  * @return void
  */

@@ -127,9 +127,10 @@ class RouteBuilder {
 	}
 
 /**
- * Get or set the extensions in this route collection.
+ * Get or set the extensions in this route builder's scope.
  *
- * Setting extensions does not modify existing routes.
+ * Future routes connected in through this builder will have the connected
+ * extensions applied. However, setting extensions does not modify existing routes.
  *
  * @param null|string|array $extensions Either the extensions to use or null.
  * @return array|void
@@ -437,14 +438,14 @@ class RouteBuilder {
  * @param array $options An array matching the named elements in the route to regular expressions which that
  *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
- * @return array Array of routes
+ * @return void
  */
 	public function redirect($route, $url, array $options = []) {
 		$options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
 		if (is_string($url)) {
 			$url = array('redirect' => $url);
 		}
-		return $this->connect($route, $url, $options);
+		$this->connect($route, $url, $options);
 	}
 
 /**

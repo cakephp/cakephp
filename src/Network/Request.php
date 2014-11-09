@@ -289,8 +289,8 @@ class Request implements \ArrayAccess {
 /**
  * Process the GET parameters and move things into the object.
  *
- * @param array $query Contains querystring data such as `pag`
- * @return void
+ * @param array $query The array to which the parsed keys/values are being added.
+ * @return array An array containing the parsed querystring keys/values.
  */
 	protected function _processGet($query) {
 		$unsetUrl = '/' . str_replace(array('.', ' '), '_', urldecode($this->url));
@@ -440,7 +440,7 @@ class Request implements \ArrayAccess {
  * @param string $path The dot separated path to insert $data into.
  * @param string $field The terminal field in the path. This is one of the
  *   $_FILES properties e.g. name, tmp_name, size, error
- * @return void
+ * @return array The restructured FILES data
  */
 	protected function _processFileData($data, $post, $path = '', $field = '') {
 		foreach ($post as $key => $fields) {

@@ -97,7 +97,7 @@ class CacheSessionTest extends TestCase {
 /**
  * Tests that a cache config is required
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @expectedExceptionMessage The cache configuration name to use is required
  * @return void
  */

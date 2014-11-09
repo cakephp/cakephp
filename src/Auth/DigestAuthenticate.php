@@ -102,7 +102,6 @@ class DigestAuthenticate extends BasicAuthenticate {
 			return false;
 		}
 
-		list(, $model) = pluginSplit($this->_config['userModel']);
 		$user = $this->_findUser($digest['username']);
 		if (empty($user)) {
 			return false;

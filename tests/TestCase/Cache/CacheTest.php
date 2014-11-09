@@ -116,7 +116,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testWriteNonExistingConfig() {
@@ -126,7 +126,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testIncrementNonExistingConfig() {
@@ -136,7 +136,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testDecrementNonExistingConfig() {
@@ -182,7 +182,7 @@ class CacheTest extends TestCase {
 /**
  * testConfigInvalidEngine method
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @return void
  */
 	public function testConfigInvalidEngine() {
@@ -194,7 +194,7 @@ class CacheTest extends TestCase {
 /**
  * test that trying to configure classes that don't extend CacheEngine fail.
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @return void
  */
 	public function testConfigInvalidObject() {
@@ -208,7 +208,7 @@ class CacheTest extends TestCase {
 /**
  * Ensure you cannot reconfigure a cache adapter.
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @return void
  */
 	public function testConfigErrorOnReconfigure() {
@@ -286,7 +286,7 @@ class CacheTest extends TestCase {
 
 /**
  * testGroupConfigsThrowsException method
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  */
 	public function testGroupConfigsThrowsException() {
 		Cache::groupConfigs('bogus');
@@ -353,7 +353,7 @@ class CacheTest extends TestCase {
 /**
  * testWriteEmptyValues method
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @expectedExceptionMessage An empty value is not valid as a cache key
  * @return void
  */
@@ -417,7 +417,7 @@ class CacheTest extends TestCase {
 /**
  * Test that failed writes cause errors to be triggered.
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException \PHPUnit_Framework_Error
  * @return void
  */
 	public function testWriteTriggerError() {

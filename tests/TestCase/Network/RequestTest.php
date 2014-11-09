@@ -691,7 +691,7 @@ class RequestTest extends TestCase {
 /**
  * Test __call exceptions
  *
- * @expectedException BadMethodCallException
+ * @expectedException \BadMethodCallException
  * @return void
  */
 	public function testMagicCallExceptionOnUnknownMethod() {

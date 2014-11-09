@@ -126,7 +126,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @param \Cake\ORM\Behavior $instance The behavior to get methods from.
  * @param string $class The classname that is missing.
  * @param string $alias The alias of the object.
- * @return void
+ * @return array A list of implemented finders and methods.
  * @throws \LogicException when duplicate methods are connected.
  */
 	protected function _getMethods(Behavior $instance, $class, $alias) {

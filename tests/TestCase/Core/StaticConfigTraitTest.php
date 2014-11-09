@@ -165,7 +165,7 @@ class StaticConfigTraitTest extends TestCase {
 /**
  * Tests that failing to pass a string to parseDsn will throw an exception
  *
- * @expectedException InvalidArgumentException
+ * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testParseBadType() {

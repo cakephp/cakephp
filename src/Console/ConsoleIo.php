@@ -269,8 +269,6 @@ class ConsoleIo {
  * @return mixed Either the default value, or the user-provided input.
  */
 	public function askChoice($prompt, $options, $default = null) {
-		$originalOptions = $options;
-
 		if ($options && is_string($options)) {
 			if (strpos($options, ',')) {
 				$options = explode(',', $options);

@@ -159,7 +159,7 @@ class WidgetRegistryTestCase extends TestCase {
 /**
  * Test getting errors
  *
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @expectedExceptionMessage Unknown widget "foo"
  * @return void
  */
@@ -188,7 +188,7 @@ class WidgetRegistryTestCase extends TestCase {
 /**
  * Test getting resolve dependency missing class
  *
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @expectedExceptionMessage Unable to locate widget class "TestApp\View\DerpWidget"
  * @return void
  */
@@ -201,7 +201,7 @@ class WidgetRegistryTestCase extends TestCase {
 /**
  * Test getting resolve dependency missing dependency
  *
- * @expectedException RuntimeException
+ * @expectedException \RuntimeException
  * @expectedExceptionMessage Unknown widget "label"
  * @return void
  */

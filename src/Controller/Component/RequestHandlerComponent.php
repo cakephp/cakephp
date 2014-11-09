@@ -578,7 +578,6 @@ class RequestHandlerComponent extends Component {
 		$options += $defaults;
 
 		$cType = $type;
-		$request = $this->request;
 		$response = $this->response;
 		if (strpos($type, '/') === false) {
 			$cType = $response->getMimeType($type);

@@ -128,7 +128,6 @@ class BakeTask extends Shell {
 			$this->error('Could not start subprocess.');
 			return false;
 		}
-		$output = $error = '';
 		fclose($pipes[0]);
 
 		$output = stream_get_contents($pipes[1]);

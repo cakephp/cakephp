@@ -36,7 +36,7 @@ class MultiCheckboxWidget implements WidgetInterface {
 /**
  * Label widget instance.
  *
- * @var \Cake\View\Widget\Label
+ * @var \Cake\View\Widget\LabelWidget
  */
 	protected $_label;
 
@@ -52,7 +52,7 @@ class MultiCheckboxWidget implements WidgetInterface {
  *   variables.
  *
  * @param \Cake\View\StringTemplate $templates Templates list.
- * @param \Cake\View\Widget\Label $label Label widget instance.
+ * @param \Cake\View\Widget\LabelWidget $label Label widget instance.
  */
 	public function __construct($templates, $label) {
 		$this->_templates = $templates;

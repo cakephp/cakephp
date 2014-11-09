@@ -294,7 +294,6 @@ class TranslateBehavior extends Behavior {
  */
 	protected function _rowMapper($results, $locale) {
 		return $results->map(function ($row) use ($locale) {
-			$options = ['setter' => false, 'guard' => false];
 			$hydrated = !is_array($row);
 
 			foreach ($this->_config['fields'] as $field) {

@@ -81,7 +81,7 @@ class FormData implements \Countable {
 			$this->addRecursive($name, $value);
 		} elseif (is_resource($value)) {
 			$this->_parts[] = $this->addFile($name, $value);
-		} elseif (is_string($value) && $value[0] === '@') {
+		} elseif (is_string($value) && strlen($value) && $value[0] === '@') {
 			$this->_parts[] = $this->addFile($name, $value);
 		} else {
 			$this->_parts[] = $this->newPart($name, $value);

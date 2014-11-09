@@ -361,7 +361,6 @@ class Socket {
 		if (!array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
 			throw new \InvalidArgumentException('Invalid encryption scheme chosen');
 		}
-		$enableCryptoResult = false;
 		try {
 			$enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $this->_encryptMethods[$type . '_' . $clientOrServer]);
 		} catch (\Exception $e) {
