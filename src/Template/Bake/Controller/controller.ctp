@@ -35,8 +35,8 @@ use <%= $namespace %>\Controller\AppController;
  */
 class <%= $name %>Controller extends AppController {
 <%
-echo $this->Bake->arrayProperty('helpers', $helpers);
-echo $this->Bake->arrayProperty('components', $components);
+echo $this->Bake->arrayProperty('helpers', $helpers, ['indent' => false]);
+echo $this->Bake->arrayProperty('components', $components, ['indent' => false]);
 echo $actions;
 %>
 

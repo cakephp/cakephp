@@ -7,4 +7,4 @@ use Cake\Utility\Inflector;
  *
  * @var array
  */
-	public $<%= $name %> = [<%= $this->Bake->stringifyList($value) %>];
+	public $<%= $name %> = [<%= $this->Bake->stringifyList($value, ['indent' => false]) %>];
