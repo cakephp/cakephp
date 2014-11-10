@@ -95,14 +95,10 @@ $fields = collection($fields)
 	</table>
 	<div class="paginator">
 		<ul class="pagination">
-		<%
-			echo "<%\n";
-			echo "\t\t\techo \$this->Paginator->prev('< ' . __('previous'));\n";
-			echo "\t\t\techo \$this->Paginator->numbers();\n";
-			echo "\t\t\techo \$this->Paginator->next(__('next') . ' >');\n";
-			echo "\t\t%>\n";
-		%>
+			<?= $this->Paginator->prev('< ' . __('previous')); ?>
+			<?= this->Paginator->numbers(); ?>
+			<?=	$this->Paginator->next(__('next') . ' >'); ?>
 		</ul>
-		<p><%= "<%= \$this->Paginator->counter() %>"; %></p>
+		<p><?= $this->Paginator->counter(); ?></p>
 	</div>
 </div>
