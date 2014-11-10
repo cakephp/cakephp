@@ -146,7 +146,7 @@ class TranslateBehavior extends Behavior {
 		if ($locale === $this->config('defaultLocale')) {
 			return;
 		}
-	
+
 		$conditions = function ($field, $locale, $query, $select) {
 			return function ($q) use ($field, $locale, $query, $select) {
 				$q->where([$q->repository()->alias() . '.locale' => $locale]);
