@@ -2,8 +2,8 @@
 namespace Cake\View\Helper;
 
 use Cake\Core\ConventionsTrait;
-use Cake\View\Helper;
 use Cake\Utility\Inflector;
+use Cake\View\Helper;
 
 /**
  * Bake helper
@@ -24,17 +24,17 @@ class BakeHelper extends Helper {
  *
  * Used for generating formatted properties such as component and helper arrays
  *
- * @param string $name
- * @param array $value
- * @param array $options
+ * @param string $name the name of the property
+ * @param array $value the array of values
+ * @param array $options extra options to be passed ot the element
  * @return string
  */
-	public function arrayProperty($name, $value, $options = []) {
+	public function arrayProperty($name, $value = [], $options = []) {
 		if (!$value) {
 			return '';
 		}
 
-		foreach($value as &$val) {
+		foreach ($value as &$val) {
 			$val = Inflector::camelize($val);
 		}
 		$options += [
@@ -49,8 +49,8 @@ class BakeHelper extends Helper {
  *
  * Returns an array converted into a formatted multiline string
  *
- * @param array $list
- * @param array $options
+ * @param array $list array of items to be stringified
+ * @param array $options options to use
  * @return string
  */
 	public function stringifyList($list, $options = []) {
@@ -62,7 +62,7 @@ class BakeHelper extends Helper {
 			return '';
 		}
 
-		foreach($list as $k => &$v) {
+		foreach ($list as $k => &$v) {
 			$v = "'$v'";
 			if (!is_numeric($k)) {
 				$v = "'$k' => $v";
@@ -80,6 +80,13 @@ class BakeHelper extends Helper {
 		return $start . implode($join, $list) . $end;
 	}
 
+/**
+ * aliasExtractor
+ *
+ * @param \Cake\Datasource\EntityInterface $modelObj object to find associations on
+ * @param string $assoc association to extract
+ * @return array
+ */
 	public function aliasExtractor($modelObj, $assoc) {
 		$extractor = function ($val) {
 			return $val->target()->alias();
@@ -87,4 +94,5 @@ class BakeHelper extends Helper {
 
 		return array_map($extractor, $modelObj->associations()->type($assoc));
 	}
+
 }

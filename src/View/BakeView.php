@@ -20,10 +20,11 @@ use Cake\Utility\Inflector;
 class BakeView extends View {
 
 	use ConventionsTrait;
+
 /**
  * An array of names of built-in helpers to include.
  *
- * @var mixed
+ * @var array
  */
 	public $helpers = [
 		'Bake'
@@ -152,7 +153,7 @@ class BakeView extends View {
  */
 	protected function _paths($plugin = null, $cached = true) {
 		$paths = parent::_paths($plugin, false);
-		foreach($paths as &$path) {
+		foreach ($paths as &$path) {
 			$path .= 'Bake' . DS;
 		}
 		return $paths;

@@ -50,16 +50,16 @@ class TemplateTaskTest extends TestCase {
 
 /**
  * test generate
-	*
-	* @return void
-	*/
-		public function testGenerate() {
-			$this->Task->initialize();
-			$this->Task->expects($this->any())->method('in')->will($this->returnValue(1));
+ *
+ * @return void
+ */
+	public function testGenerate() {
+		$this->Task->initialize();
+		$this->Task->expects($this->any())->method('in')->will($this->returnValue(1));
 
-			$result = $this->Task->generate('classes/test_object', array('test' => 'foo'));
-			$expected = "I got rendered\nfoo";
-			$this->assertTextEquals($expected, $result);
+		$result = $this->Task->generate('classes/test_object', array('test' => 'foo'));
+		$expected = "I got rendered\nfoo";
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
