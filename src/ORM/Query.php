@@ -107,6 +107,13 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	protected $_eagerLoader;
 
 /**
+ * True if the beforeFind event has already been triggered for this query
+ *
+ * @var bool
+ */
+	protected $_beforeFindFired = false;
+
+/**
  * Constructor
  *
  * @param \Cake\Database\Connection $connection The connection object
@@ -517,6 +524,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 		if (!$complex) {
 			$statement = $query
 				->select($count, true)
+				->autoFields(false)
 				->execute();
 		} else {
 			$statement = $this->connection()->newQuery()
@@ -600,16 +608,15 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * {@inheritDoc}
  */
 	public function sql(ValueBinder $binder = null) {
-		$this->_transformQuery();
-		return parent::sql($binder);
-	}
+		if (!$this->_beforeFindFired && $this->_type === 'select') {
+			$table = $this->repository();
+			$table->dispatchEvent('Model.beforeFind', [$this, $this->_options, !$this->eagerLoaded()]);
+			$this->_beforeFindFired = true;
+		}
 
-/**
- * {@inheritDoc}
- */
-	public function execute() {
 		$this->_transformQuery();
-		return parent::execute();
+		$sql = parent::sql($binder);
+		return $sql;
 	}
 
 /**
