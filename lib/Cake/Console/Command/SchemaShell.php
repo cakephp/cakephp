@@ -89,7 +89,7 @@ class SchemaShell extends AppShell {
 				$name = $plugin;
 			}
 		}
-		$name = Inflector::classify($name);
+		$name = Inflector::camelize($name);
 		$this->Schema = new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
 	}
 
@@ -292,10 +292,10 @@ class SchemaShell extends AppShell {
 		$Schema = $this->Schema->load($options);
 
 		if (!$Schema) {
-			$this->err(__d('cake_console', 'The chosen schema could not be loaded. Attempted to load:'));
-			$this->err(__d('cake_console', 'File: %s', $this->Schema->path . DS . $this->Schema->file));
-			$this->err(__d('cake_console', 'Name: %s', $this->Schema->name));
-			return $this->_stop();
+			$this->err(__d('cake_console', '<error>Error</error>: The chosen schema could not be loaded. Attempted to load:'));
+			$this->err(__d('cake_console', '- file: %s', $this->Schema->path . DS . $this->Schema->file));
+			$this->err(__d('cake_console', '- name: %s', $this->Schema->name));
+			return $this->_stop(2);
 		}
 		$table = null;
 		if (isset($this->args[1])) {
