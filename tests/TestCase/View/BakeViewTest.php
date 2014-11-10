@@ -58,6 +58,14 @@ class BakeViewTest extends TestCase {
 		$this->assertSame($expected, $result, 'variables in erb-style tags should be evaluated');
 	}
 
+	public function testRenderTemplate() {
+		$this->View->set(['aVariable' => 123]);
+		$result = $this->View->render('view_tests/simple');
+		$expected = "The value of aVariable is: 123.\n";
+
+		$this->assertSame($expected, $result, 'variables in erb-style tags should be evaluated');
+	}
+
 	public function testRenderIgnorePhpTags() {
 		$template = 'The value of aVariable is: <%= $aVariable %>. Not <?php echo $aVariable ?>.';
 
@@ -78,4 +86,17 @@ class BakeViewTest extends TestCase {
 		$this->assertSame($expected, $result, 'variables in php tags should be treated as strings');
 	}
 
+	public function testRenderNewlines() {
+		$result = $this->View->render('view_tests/newlines');
+		$expected = "There should be a newline about here: \n";
+		$expected .= "And this should be on the next line.\n";
+		$expected .= "\n";
+		$expected .= "There should be no new line after this";
+
+		$this->assertSame(
+			$expected,
+			$result,
+			'Tags at the end of a line should not swallow new lines when rendered'
+		);
+	}
 }
