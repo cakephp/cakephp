@@ -74,7 +74,6 @@ class TemplateTask extends Shell {
 		try {
 			return $this->View->render($template);
 		} catch (MissingTemplateException $e) {
-			$this->log($e->getMessage());
 			return '';
 		}
 	}
