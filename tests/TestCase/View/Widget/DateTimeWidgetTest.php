@@ -966,4 +966,46 @@ class DateTimeWidgetTest extends TestCase {
 		$this->assertHtml($expected, $result);
 	}
 
+/**
+ * Test that secureFields omits removed selects
+ *
+ * @return void
+ */
+	public function testSecureFields() {
+		$data = [
+			'name' => 'date',
+		];
+		$result = $this->DateTime->secureFields($data);
+		$expected = [
+			'date[year]', 'date[month]', 'date[day]',
+			'date[hour]', 'date[minute]', 'date[second]',
+		];
+		$this->assertEquals($expected, $result, 'No meridian on 24hr input');
+
+		$data = [
+			'name' => 'date',
+			'hour' => ['format' => 24]
+		];
+		$result = $this->DateTime->secureFields($data);
+		$this->assertEquals($expected, $result, 'No meridian on 24hr input');
+
+		$data = [
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => [
+				'format' => 12,
+				'data-foo' => 'test'
+			],
+			'minute' => false,
+			'second' => false,
+		];
+		$result = $this->DateTime->secureFields($data);
+		$expected = [
+			'date[hour]', 'date[meridian]'
+		];
+		$this->assertEquals($expected, $result);
+	}
+
 }
