@@ -92,10 +92,11 @@ class BakeView extends View {
 		];
 
 		$viewString = str_replace(array_keys($unPhp), array_values($unPhp), $viewString);
+		$viewString = preg_replace('/\n[ \t]+<% /', "\n<% ", $viewString);
 		$viewString = str_replace(array_keys($templatify), array_values($templatify), $viewString);
 		$viewString = preg_replace('/<\?=(.*)\?>\n(.)/', "<?=$1?>\n\n$2", $viewString);
 
-		$this->__viewFile = TMP . Inflector::slug(str_replace(ROOT, '', $viewFile)) . '.php';
+		$this->__viewFile = TMP . Inflector::slug(preg_replace('@.*Template[/\\\\]@', '', $viewFile)) . '.php';
 		file_put_contents($this->__viewFile, $viewString);
 
 		unset($randomString, $templatify, $viewFile, $viewString);

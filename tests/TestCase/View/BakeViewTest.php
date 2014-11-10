@@ -99,4 +99,25 @@ class BakeViewTest extends TestCase {
 			'Tags at the end of a line should not swallow new lines when rendered'
 		);
 	}
+
+	public function testSwallowLeadingWhitespace() {
+		$result = $this->View->render('view_tests/leading-whitespace');
+		$expected = $this->_getCompareTemplate('leading-whitespace');
+
+		$this->assertSame(
+			$expected,
+			$result,
+			'Leading whitespace in bake templates should not result in leading/loose whitespace in rendered results'
+		);
+	}
+
+/**
+ * _getCompareTemplate
+ *
+ * @param string $template
+ * @return string
+ */
+	protected function _getCompareTemplate($template) {
+		return file_get_contents(dirname(dirname(__DIR__)) . "/test_app/TestApp/Template/Bake/view_tests_compare/$template.ctp");
+	}
 }
