@@ -89,7 +89,7 @@ class SchemaShell extends AppShell {
 				$name = $plugin;
 			}
 		}
-		$name = Inflector::classify($name);
+		$name = Inflector::camelize($name);
 		$this->Schema = new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
 	}
 
