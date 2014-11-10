@@ -524,6 +524,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 		if (!$complex) {
 			$statement = $query
 				->select($count, true)
+				->autoFields(false)
 				->execute();
 		} else {
 			$statement = $this->connection()->newQuery()
