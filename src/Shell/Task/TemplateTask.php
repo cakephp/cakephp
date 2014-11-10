@@ -48,6 +48,10 @@ class TemplateTask extends Shell {
  */
 	public function initialize() {
 		$this->View = new BakeView(new Request(), new Response());
+		$this->View->theme = isset($this->params['template']) ? $this->params['template'] : '';
+		if ($this->View->theme === 'default') {
+			$this->View->theme = '';
+		}
 	}
 
 /**
@@ -70,6 +74,7 @@ class TemplateTask extends Shell {
 		try {
 			return $this->View->render($template);
 		} catch (MissingTemplateException $e) {
+			$this->log($e->getMessage());
 			return '';
 		}
 	}

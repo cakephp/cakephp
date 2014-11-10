@@ -1,2 +1,2 @@
 I got rendered
-<?= $test; ?>
+<%= $test; %>
