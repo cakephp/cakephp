@@ -107,7 +107,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	protected $_eagerLoader;
 
 /**
- * True if the beforeFind even has already been triggered for this query
+ * True if the beforeFind event has already been triggered for this query
  *
  * @var bool
  */
