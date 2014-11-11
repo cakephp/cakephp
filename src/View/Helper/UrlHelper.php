@@ -155,7 +155,7 @@ class UrlHelper extends Helper {
 				$file = str_replace('/', '\\', $file);
 			}
 
-			if (file_exists(Configure::read('App.www_root') . $theme . $file)) {
+			if (file_exists(Configure::read('App.wwwRoot') . $theme . $file)) {
 				$webPath = $this->request->webroot . $theme . $asset[0];
 			} else {
 				$themePath = Plugin::path($this->theme);
