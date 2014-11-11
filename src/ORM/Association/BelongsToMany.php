@@ -304,7 +304,7 @@ class BelongsToMany extends Association {
 /**
  * Clear out the data in the junction table for a given entity.
  *
- * @param \Cake\ORM\EntityInterface $entity The entity that started the cascading delete.
+ * @param \Cake\Datasource\EntityInterface $entity The entity that started the cascading delete.
  * @param array $options The options for the original delete.
  * @return bool Success.
  */
@@ -375,12 +375,12 @@ class BelongsToMany extends Association {
  * of the entities intended to be saved by this method, they will be updated,
  * not deleted.
  *
- * @param \Cake\ORM\EntityInterface $entity an entity from the source table
+ * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
  * @param array|\ArrayObject $options options to be passed to the save method in
  * the target table
  * @throws \InvalidArgumentException if the property representing the association
  * in the parent entity cannot be traversed
- * @return bool|EntityInterface false if $entity could not be saved, otherwise it returns
+ * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()
  * @see BelongsToMany::replaceLinks()
@@ -412,14 +412,14 @@ class BelongsToMany extends Association {
  * Persists each of the entities into the target table and creates links between
  * the parent entity and each one of the saved target entities.
  *
- * @param \Cake\ORM\EntityInterface $parentEntity the source entity containing the target
+ * @param \Cake\Datasource\EntityInterface $parentEntity the source entity containing the target
  * entities to be saved.
  * @param array|\Traversable $entities list of entities to persist in target table and to
  * link to the parent entity
  * @param array $options list of options accepted by Table::save()
  * @throws \InvalidArgumentException if the property representing the association
  * in the parent entity cannot be traversed
- * @return \Cake\ORM\EntityInterface|bool The parent entity after all links have been
+ * @return \Cake\Datasource\EntityInterface|bool The parent entity after all links have been
  * created if no errors happened, false otherwise
  */
 	protected function _saveTarget(EntityInterface $parentEntity, $entities, $options) {
@@ -474,7 +474,7 @@ class BelongsToMany extends Association {
 /**
  * Creates links between the source entity and each of the passed target entities
  *
- * @param \Cake\ORM\EntityInterface $sourceEntity the entity from source table in this
+ * @param \Cake\Datasource\EntityInterface $sourceEntity the entity from source table in this
  * association
  * @param array $targetEntities list of entities to link to link to the source entity using the
  * junction table
@@ -538,7 +538,7 @@ class BelongsToMany extends Association {
  *
  * `$article->get('tags')` will contain all tags in `$newTags` after liking
  *
- * @param \Cake\ORM\EntityInterface $sourceEntity the row belonging to the `source` side
+ * @param \Cake\Datasource\EntityInterface $sourceEntity the row belonging to the `source` side
  * of this association
  * @param array $targetEntities list of entities belonging to the `target` side
  * of this association
@@ -579,7 +579,7 @@ class BelongsToMany extends Association {
  *
  * `$article->get('tags')` will contain only `[$tag4]` after deleting in the database
  *
- * @param \Cake\ORM\EntityInterface $sourceEntity an entity persisted in the source table for
+ * @param \Cake\Datasource\EntityInterface $sourceEntity an entity persisted in the source table for
  * this association
  * @param array $targetEntities list of entities persisted in the target table for
  * this association
@@ -662,7 +662,7 @@ class BelongsToMany extends Association {
  *
  * `$article->get('tags')` will contain only `[$tag1, $tag3]` at the end
  *
- * @param \Cake\ORM\EntityInterface $sourceEntity an entity persisted in the source table for
+ * @param \Cake\Datasource\EntityInterface $sourceEntity an entity persisted in the source table for
  * this association
  * @param array $targetEntities list of entities from the target table to be linked
  * @param array $options list of options to be passed to `save` persisting or
@@ -805,7 +805,7 @@ class BelongsToMany extends Association {
  * Returns the list of joint entities that exist between the source entity
  * and each of the passed target entities
  *
- * @param \Cake\ORM\EntityInterface $sourceEntity The row belonging to the source side
+ * @param \Cake\Datasource\EntityInterface $sourceEntity The row belonging to the source side
  *   of this association.
  * @param array $targetEntities The rows belonging to the target side of this
  *   association.

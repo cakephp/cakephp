@@ -53,7 +53,7 @@ class BelongsTo extends Association {
  *
  * BelongsTo associations are never cleared in a cascading delete scenario.
  *
- * @param \Cake\ORM\EntityInterface $entity The entity that started the cascaded delete.
+ * @param \Cake\Datasource\EntityInterface $entity The entity that started the cascaded delete.
  * @param array $options The options for the original delete.
  * @return bool Success.
  */
@@ -107,10 +107,10 @@ class BelongsTo extends Association {
  * saved on the target table for this association by passing supplied
  * `$options`
  *
- * @param \Cake\ORM\EntityInterface $entity an entity from the source table
+ * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
  * @param array|\ArrayObject $options options to be passed to the save method in
  * the target table
- * @return bool|EntityInterface false if $entity could not be saved, otherwise it returns
+ * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()
  */

@@ -821,7 +821,7 @@ abstract class Association {
  * Each implementing class should handle the cascaded delete as
  * required.
  *
- * @param \Cake\ORM\EntityInterface $entity The entity that started the cascaded delete.
+ * @param \Cake\Datasource\EntityInterface $entity The entity that started the cascaded delete.
  * @param array $options The options for the original delete.
  * @return bool Success
  */
@@ -841,9 +841,9 @@ abstract class Association {
  * Extract the target's association data our from the passed entity and proxies
  * the saving operation to the target table.
  *
- * @param \Cake\ORM\EntityInterface $entity the data to be saved
+ * @param \Cake\Datasource\EntityInterface $entity the data to be saved
  * @param array|\ArrayObject $options The options for saving associated data.
- * @return bool|EntityInterface false if $entity could not be saved, otherwise it returns
+ * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()
  */
