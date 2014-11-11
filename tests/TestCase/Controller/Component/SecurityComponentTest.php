@@ -53,7 +53,6 @@ class SecurityTestController extends Controller {
  * @var array
  */
 	public $components = array(
-		'Session',
 		'TestSecurity' => array('className' => 'Cake\Test\TestCase\Controller\Component\TestSecurityComponent')
 	);
 
