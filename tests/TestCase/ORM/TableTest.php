@@ -2801,6 +2801,25 @@ class TableTest extends TestCase {
 	}
 
 /**
+ * Test that belongsToMany can be saved with _joinData data.
+ *
+ * @return void
+ */
+	public function testSaveBelongsToManyJoinData() {
+		$articles = TableRegistry::get('Articles');
+		$article = $articles->get(1, ['contain' => ['Tags']]);
+		$data = [
+			'tags' => [
+				['id' => 1, '_joinData' => ['highlighted' => 1]],
+				['id' => 3]
+			]
+		];
+		$article = $articles->patchEntity($article, $data);
+		$result = $articles->save($article);
+		$this->assertSame($result, $article);
+	}
+
+/**
  * Tests saving belongsToMany records can delete all links.
  *
  * @group save

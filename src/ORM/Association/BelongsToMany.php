@@ -496,10 +496,8 @@ class BelongsToMany extends Association {
 
 		foreach ($targetEntities as $e) {
 			$joint = $e->get($jointProperty);
-			if (!$joint) {
-				$joint = new $entityClass;
-				$joint->isNew(true);
-				$joint->source($junctionAlias);
+			if (!$joint || !($joint instanceof Entity)) {
+				$joint = new $entityClass([], ['markNew' => true, 'source' => $junctionAlias]);
 			}
 
 			$joint->set(array_combine(
@@ -828,7 +826,7 @@ class BelongsToMany extends Association {
 		foreach ($targetEntities as $entity) {
 			$joint = $entity->get($jointProperty);
 
-			if (!$joint) {
+			if (!$joint || !($joint instanceof Entity)) {
 				$missing[] = $entity->extract($primary);
 				continue;
 			}
