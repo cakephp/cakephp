@@ -104,8 +104,9 @@ class BakeView extends View {
 		ob_start();
 
 		include $this->__viewFile;
-
-		unset($this->__viewFile);
+		if (file_exists($this->__viewFile)) {
+			unlink($this->__viewFile);
+		}
 
 		$content = ob_get_clean();
 
