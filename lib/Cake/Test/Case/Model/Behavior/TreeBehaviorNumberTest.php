@@ -93,7 +93,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->create();
 		$this->Tree->save($save);
 		$result = $this->Tree->verify();
-		$this->assertNotSame($result, true);
+		$this->assertNotSame(true, $result);
 
 		$result = $this->Tree->recover();
 		$this->assertTrue($result);
@@ -121,7 +121,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->create();
 		$this->Tree->save($save);
 		$result = $this->Tree->verify();
-		$this->assertNotSame($result, true);
+		$this->assertNotSame(true, $result);
 
 		$result = $this->Tree->recover();
 		$this->assertTrue($result);
@@ -147,7 +147,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->updateAll(array($parentField => null), array('id' => $result[$modelClass]['id']));
 
 		$result = $this->Tree->verify();
-		$this->assertNotSame($result, true);
+		$this->assertNotSame(true, $result);
 
 		$result = $this->Tree->recover();
 		$this->assertTrue($result);
@@ -171,7 +171,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->updateAll(array($parentField => 999999), array('id' => $result[$modelClass]['id']));
 
 		$result = $this->Tree->verify();
-		$this->assertNotSame($result, true);
+		$this->assertNotSame(true, $result);
 
 		$result = $this->Tree->recover('MPTT');
 		$this->assertTrue($result);
@@ -212,7 +212,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->Behaviors->enable('Tree');
 
 		$result = $this->Tree->verify();
-		$this->assertNotSame($result, true);
+		$this->assertNotSame(true, $result);
 
 		$result = $this->Tree->recover();
 		$this->assertTrue($result);
@@ -280,7 +280,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		))));
 
 		$result = $this->Tree->verify();
-		$this->assertNotSame($result, true);
+		$this->assertNotSame(true, $result);
 
 		$count = $this->Tree->find('count');
 		$this->assertEquals(6, $count);
@@ -325,7 +325,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->updateAll(array($parentField => 999999), array('id' => $result[$modelClass]['id']));
 
 		$result = $this->Tree->verify();
-		$this->assertNotSame($result, true);
+		$this->assertNotSame(true, $result);
 
 		$result = $this->Tree->recover();
 		$this->assertTrue($result);
@@ -348,7 +348,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->updateAll(array($parentField => null));
 
 		$result = $this->Tree->verify();
-		$this->assertNotSame($result, true);
+		$this->assertNotSame(true, $result);
 
 		$result = $this->Tree->recover();
 		$this->assertTrue($result);
@@ -371,7 +371,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->updateAll(array($leftField => 0, $rightField => 0));
 
 		$result = $this->Tree->verify();
-		$this->assertNotSame($result, true);
+		$this->assertNotSame(true, $result);
 
 		$this->Tree->recover();
 
@@ -398,7 +398,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 			array($rightField . ' >' => $result[$modelClass][$leftField]));
 
 		$result = $this->Tree->verify();
-		$this->assertNotSame($result, true);
+		$this->assertNotSame(true, $result);
 
 		$result = $this->Tree->recover();
 		$this->assertTrue($result);
