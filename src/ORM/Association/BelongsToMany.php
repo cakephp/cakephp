@@ -14,8 +14,8 @@
  */
 namespace Cake\ORM\Association;
 
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
-use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -304,11 +304,11 @@ class BelongsToMany extends Association {
 /**
  * Clear out the data in the junction table for a given entity.
  *
- * @param \Cake\ORM\Entity $entity The entity that started the cascading delete.
+ * @param \Cake\ORM\EntityInterface $entity The entity that started the cascading delete.
  * @param array $options The options for the original delete.
  * @return bool Success.
  */
-	public function cascadeDelete(Entity $entity, array $options = []) {
+	public function cascadeDelete(EntityInterface $entity, array $options = []) {
 		$foreignKey = (array)$this->foreignKey();
 		$primaryKey = (array)$this->source()->primaryKey();
 		$conditions = [];
@@ -375,17 +375,17 @@ class BelongsToMany extends Association {
  * of the entities intended to be saved by this method, they will be updated,
  * not deleted.
  *
- * @param \Cake\ORM\Entity $entity an entity from the source table
+ * @param \Cake\ORM\EntityInterface $entity an entity from the source table
  * @param array|\ArrayObject $options options to be passed to the save method in
  * the target table
  * @throws \InvalidArgumentException if the property representing the association
  * in the parent entity cannot be traversed
- * @return bool|Entity false if $entity could not be saved, otherwise it returns
+ * @return bool|EntityInterface false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()
  * @see BelongsToMany::replaceLinks()
  */
-	public function saveAssociated(Entity $entity, array $options = []) {
+	public function saveAssociated(EntityInterface $entity, array $options = []) {
 		$targetEntity = $entity->get($this->property());
 		$strategy = $this->saveStrategy();
 
@@ -412,17 +412,17 @@ class BelongsToMany extends Association {
  * Persists each of the entities into the target table and creates links between
  * the parent entity and each one of the saved target entities.
  *
- * @param \Cake\ORM\Entity $parentEntity the source entity containing the target
+ * @param \Cake\ORM\EntityInterface $parentEntity the source entity containing the target
  * entities to be saved.
  * @param array|\Traversable $entities list of entities to persist in target table and to
  * link to the parent entity
  * @param array $options list of options accepted by Table::save()
  * @throws \InvalidArgumentException if the property representing the association
  * in the parent entity cannot be traversed
- * @return \Cake\ORM\Entity|bool The parent entity after all links have been
+ * @return \Cake\ORM\EntityInterface|bool The parent entity after all links have been
  * created if no errors happened, false otherwise
  */
-	protected function _saveTarget(Entity $parentEntity, $entities, $options) {
+	protected function _saveTarget(EntityInterface $parentEntity, $entities, $options) {
 		$joinAssociations = false;
 		if (!empty($options['associated'][$this->_junctionProperty]['associated'])) {
 			$joinAssociations = $options['associated'][$this->_junctionProperty]['associated'];
@@ -440,7 +440,7 @@ class BelongsToMany extends Association {
 		$persisted = [];
 
 		foreach ($entities as $k => $entity) {
-			if (!($entity instanceof Entity)) {
+			if (!($entity instanceof EntityInterface)) {
 				break;
 			}
 
@@ -474,14 +474,14 @@ class BelongsToMany extends Association {
 /**
  * Creates links between the source entity and each of the passed target entities
  *
- * @param \Cake\ORM\Entity $sourceEntity the entity from source table in this
+ * @param \Cake\ORM\EntityInterface $sourceEntity the entity from source table in this
  * association
  * @param array $targetEntities list of entities to link to link to the source entity using the
  * junction table
  * @param array $options list of options accepted by Table::save()
  * @return bool success
  */
-	protected function _saveLinks(Entity $sourceEntity, $targetEntities, $options) {
+	protected function _saveLinks(EntityInterface $sourceEntity, $targetEntities, $options) {
 		$target = $this->target();
 		$junction = $this->junction();
 		$source = $this->source();
@@ -496,7 +496,7 @@ class BelongsToMany extends Association {
 
 		foreach ($targetEntities as $e) {
 			$joint = $e->get($jointProperty);
-			if (!$joint || !($joint instanceof Entity)) {
+			if (!$joint || !($joint instanceof EntityInterface)) {
 				$joint = new $entityClass([], ['markNew' => true, 'source' => $junctionAlias]);
 			}
 
@@ -538,7 +538,7 @@ class BelongsToMany extends Association {
  *
  * `$article->get('tags')` will contain all tags in `$newTags` after liking
  *
- * @param \Cake\ORM\Entity $sourceEntity the row belonging to the `source` side
+ * @param \Cake\ORM\EntityInterface $sourceEntity the row belonging to the `source` side
  * of this association
  * @param array $targetEntities list of entities belonging to the `target` side
  * of this association
@@ -547,7 +547,7 @@ class BelongsToMany extends Association {
  * detected to not be already persisted
  * @return bool true on success, false otherwise
  */
-	public function link(Entity $sourceEntity, array $targetEntities, array $options = []) {
+	public function link(EntityInterface $sourceEntity, array $targetEntities, array $options = []) {
 		$this->_checkPersistenceStatus($sourceEntity, $targetEntities);
 		$property = $this->property();
 		$links = $sourceEntity->get($property) ?: [];
@@ -579,7 +579,7 @@ class BelongsToMany extends Association {
  *
  * `$article->get('tags')` will contain only `[$tag4]` after deleting in the database
  *
- * @param \Cake\ORM\Entity $sourceEntity an entity persisted in the source table for
+ * @param \Cake\ORM\EntityInterface $sourceEntity an entity persisted in the source table for
  * this association
  * @param array $targetEntities list of entities persisted in the target table for
  * this association
@@ -589,7 +589,7 @@ class BelongsToMany extends Association {
  * any of them is lacking a primary key value
  * @return void
  */
-	public function unlink(Entity $sourceEntity, array $targetEntities, $cleanProperty = true) {
+	public function unlink(EntityInterface $sourceEntity, array $targetEntities, $cleanProperty = true) {
 		$this->_checkPersistenceStatus($sourceEntity, $targetEntities);
 		$property = $this->property();
 
@@ -662,7 +662,7 @@ class BelongsToMany extends Association {
  *
  * `$article->get('tags')` will contain only `[$tag1, $tag3]` at the end
  *
- * @param \Cake\ORM\Entity $sourceEntity an entity persisted in the source table for
+ * @param \Cake\ORM\EntityInterface $sourceEntity an entity persisted in the source table for
  * this association
  * @param array $targetEntities list of entities from the target table to be linked
  * @param array $options list of options to be passed to `save` persisting or
@@ -671,7 +671,7 @@ class BelongsToMany extends Association {
  * any of them is lacking a primary key value
  * @return bool success
  */
-	public function replaceLinks(Entity $sourceEntity, array $targetEntities, array $options = []) {
+	public function replaceLinks(EntityInterface $sourceEntity, array $targetEntities, array $options = []) {
 		$primaryKey = (array)$this->source()->primaryKey();
 		$primaryValue = $sourceEntity->extract($primaryKey);
 
@@ -805,7 +805,7 @@ class BelongsToMany extends Association {
  * Returns the list of joint entities that exist between the source entity
  * and each of the passed target entities
  *
- * @param \Cake\ORM\Entity $sourceEntity The row belonging to the source side
+ * @param \Cake\ORM\EntityInterface $sourceEntity The row belonging to the source side
  *   of this association.
  * @param array $targetEntities The rows belonging to the target side of this
  *   association.
@@ -826,7 +826,7 @@ class BelongsToMany extends Association {
 		foreach ($targetEntities as $entity) {
 			$joint = $entity->get($jointProperty);
 
-			if (!$joint || !($joint instanceof Entity)) {
+			if (!$joint || !($joint instanceof EntityInterface)) {
 				$missing[] = $entity->extract($primary);
 				continue;
 			}

@@ -15,9 +15,9 @@
 namespace Cake\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\SelectableAssociationTrait;
-use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -53,11 +53,11 @@ class BelongsTo extends Association {
  *
  * BelongsTo associations are never cleared in a cascading delete scenario.
  *
- * @param \Cake\ORM\Entity $entity The entity that started the cascaded delete.
+ * @param \Cake\ORM\EntityInterface $entity The entity that started the cascaded delete.
  * @param array $options The options for the original delete.
  * @return bool Success.
  */
-	public function cascadeDelete(Entity $entity, array $options = []) {
+	public function cascadeDelete(EntityInterface $entity, array $options = []) {
 		return true;
 	}
 
@@ -107,16 +107,16 @@ class BelongsTo extends Association {
  * saved on the target table for this association by passing supplied
  * `$options`
  *
- * @param \Cake\ORM\Entity $entity an entity from the source table
+ * @param \Cake\ORM\EntityInterface $entity an entity from the source table
  * @param array|\ArrayObject $options options to be passed to the save method in
  * the target table
- * @return bool|Entity false if $entity could not be saved, otherwise it returns
+ * @return bool|EntityInterface false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()
  */
-	public function saveAssociated(Entity $entity, array $options = []) {
+	public function saveAssociated(EntityInterface $entity, array $options = []) {
 		$targetEntity = $entity->get($this->property());
-		if (empty($targetEntity) || !($targetEntity instanceof Entity)) {
+		if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
 			return $entity;
 		}
 

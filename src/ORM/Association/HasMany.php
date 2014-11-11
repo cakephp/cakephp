@@ -18,7 +18,7 @@ namespace Cake\ORM\Association;
 use Cake\ORM\Association;
 use Cake\ORM\Association\DependentDeleteTrait;
 use Cake\ORM\Association\ExternalAssociationTrait;
-use Cake\ORM\Entity;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Table;
 
 /**
@@ -64,15 +64,15 @@ class HasMany extends Association {
  * saved on the target table for this association by passing supplied
  * `$options`
  *
- * @param \Cake\ORM\Entity $entity an entity from the source table
+ * @param \Cake\ORM\EntityInterface $entity an entity from the source table
  * @param array|\ArrayObject $options options to be passed to the save method in
  * the target table
- * @return bool|Entity false if $entity could not be saved, otherwise it returns
+ * @return bool|EntityInterface false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()
  * @throws \InvalidArgumentException when the association data cannot be traversed.
  */
-	public function saveAssociated(Entity $entity, array $options = []) {
+	public function saveAssociated(EntityInterface $entity, array $options = []) {
 		$targetEntities = $entity->get($this->property());
 		if (empty($targetEntities)) {
 			return $entity;
@@ -92,7 +92,7 @@ class HasMany extends Association {
 		$original = $targetEntities;
 
 		foreach ($targetEntities as $k => $targetEntity) {
-			if (!($targetEntity instanceof Entity)) {
+			if (!($targetEntity instanceof EntityInterface)) {
 				break;
 			}
 
