@@ -314,9 +314,8 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
- *
- * This method takes into account the default date format for the current language if an LC_TIME file is used.
+ * Returns a formatted date string, given either a Datetime instance,
+ * UNIX timestamp or a valid strtotime() date string.
  *
  * @param int|string|\DateTime $date UNIX timestamp, strtotime() valid string or DateTime object
  * @param string $format Intl compatible format string.
