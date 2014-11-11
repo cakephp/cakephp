@@ -4567,7 +4567,6 @@ class FormHelperTest extends TestCase {
 			'Contact.date.day',
 			'Contact.date.hour',
 			'Contact.date.minute',
-			'Contact.date.meridian',
 		];
 		$this->assertEquals($expected, $this->Form->fields);
 
