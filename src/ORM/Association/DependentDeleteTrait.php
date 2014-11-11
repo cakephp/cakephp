@@ -14,7 +14,7 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\ORM\Entity;
+use Cake\Datasource\EntityInterface;
 
 /**
  * Implements cascading deletes for dependent associations.
@@ -28,11 +28,11 @@ trait DependentDeleteTrait {
  *
  * This method does nothing if the association is not dependent.
  *
- * @param \Cake\ORM\Entity $entity The entity that started the cascaded delete.
+ * @param \Cake\Datasource\EntityInterface $entity The entity that started the cascaded delete.
  * @param array $options The options for the original delete.
  * @return bool Success.
  */
-	public function cascadeDelete(Entity $entity, array $options = []) {
+	public function cascadeDelete(EntityInterface $entity, array $options = []) {
 		if (!$this->dependent()) {
 			return true;
 		}

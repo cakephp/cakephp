@@ -14,10 +14,10 @@
  */
 namespace Cake\ORM\Association;
 
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\DependentDeleteTrait;
 use Cake\ORM\Association\SelectableAssociationTrait;
-use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -95,16 +95,16 @@ class HasOne extends Association {
  * saved on the target table for this association by passing supplied
  * `$options`
  *
- * @param \Cake\ORM\Entity $entity an entity from the source table
+ * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
  * @param array|\ArrayObject $options options to be passed to the save method in
  * the target table
- * @return bool|Entity false if $entity could not be saved, otherwise it returns
+ * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()
  */
-	public function saveAssociated(Entity $entity, array $options = []) {
+	public function saveAssociated(EntityInterface $entity, array $options = []) {
 		$targetEntity = $entity->get($this->property());
-		if (empty($targetEntity) || !($targetEntity instanceof Entity)) {
+		if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
 			return $entity;
 		}
 
