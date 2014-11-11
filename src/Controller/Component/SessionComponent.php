@@ -25,7 +25,7 @@ use Cake\Controller\Component;
  *
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html
  * @link http://book.cakephp.org/2.0/en/development/sessions.html
- * @deprecated
+ * @deprecated 3.0.0
  */
 class SessionComponent extends Component {
 
@@ -43,6 +43,7 @@ class SessionComponent extends Component {
  * @return void
  */
 	public function initialize(array $config) {
+		trigger_error('SessionComponent has been deprecated. Use request->session() instead.', E_USER_WARNING);
 		$this->_session = $this->_registry->getController()->request->session();
 	}
 
