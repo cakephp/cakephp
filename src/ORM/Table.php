@@ -1535,7 +1535,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			$conditions = [];
 			if (count($args) < count($fields)) {
 				throw new BadMethodCallException(sprintf(
-					'Not enough arguments to magic finder. Got %s required %s',
+					'Not enough arguments for magic finder. Got %s required %s',
 					count($args),
 					count($fields)
 				));
