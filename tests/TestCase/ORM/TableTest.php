@@ -2278,7 +2278,7 @@ class TableTest extends TestCase {
  * Test magic findByXX errors on missing arguments.
  *
  * @expectedException \BadMethodCallException
- * @expectedExceptionMessage Not enough arguments to magic finder. Got 0 required 1
+ * @expectedExceptionMessage Not enough arguments for magic finder. Got 0 required 1
  * @return void
  */
 	public function testMagicFindError() {
@@ -2291,7 +2291,7 @@ class TableTest extends TestCase {
  * Test magic findByXX errors on missing arguments.
  *
  * @expectedException \BadMethodCallException
- * @expectedExceptionMessage Not enough arguments to magic finder. Got 1 required 2
+ * @expectedExceptionMessage Not enough arguments for magic finder. Got 1 required 2
  * @return void
  */
 	public function testMagicFindErrorMissingField() {
