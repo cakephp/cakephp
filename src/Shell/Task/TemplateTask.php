@@ -52,6 +52,32 @@ class TemplateTask extends Shell {
 	public $viewClass = 'Cake\View\BakeView';
 
 /**
+ * An array containing the names of helpers to use when baking
+ *
+ * Example: `public $helpers = ['Bake', 'BakePlusPlus'];`
+ *
+ * @var array
+ */
+	public $helpers = [
+		'Bake',
+	];
+
+/**
+ * The bake theme to use
+ *
+ * @var string
+ */
+	public $theme = '';
+
+/**
+ * These properties will be passed from the template task to the View as options.
+ *
+ * @var array
+ * @see \Cake\View\View
+ */
+	protected $_validViewOptions = ['helpers', 'theme'];
+
+/**
  * Get view instance
  *
  * @param string $viewClass View class name or null to use $viewClass
@@ -63,13 +89,9 @@ class TemplateTask extends Shell {
 			return $this->View;
 		}
 
-		$this->View = $this->_getView();
-		$this->View->theme = isset($this->params['template']) ? $this->params['template'] : '';
-		if ($this->View->theme === 'default') {
-			$this->View->theme = '';
-		}
+		$this->theme = isset($this->params['template']) ? $this->params['template'] : '';
 
-		return $this->View;
+		return $this->_getView();
 	}
 
 /**
