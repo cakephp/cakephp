@@ -71,16 +71,6 @@ class TemplateTask extends Shell {
 	}
 
 /**
- * Constructs the view class instance based on object properties.
- *
- * @param string $viewClass Optional namespaced class name of the View class to instantiate.
- * @return \Cake\View\View
- * @throws \Cake\View\Exception\MissingViewException If view class was not found.
- */
-	public function createView($viewClass = null) {
-	}
-
-/**
  * Runs the template
  *
  * @param string $template bake template to render

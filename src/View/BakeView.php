@@ -22,15 +22,6 @@ class BakeView extends View {
 	use ConventionsTrait;
 
 /**
- * An array of names of built-in helpers to include.
- *
- * @var array
- */
-	public $helpers = [
-		'Bake'
-	];
-
-/**
  * Renders view for given view file and layout.
  *
  * Render triggers helper callbacks, which are fired before and after the view are rendered,
@@ -139,7 +130,7 @@ class BakeView extends View {
  *
  * Also allows rendering a template string directly
  *
- * @param string $name Controller action to find template filename for
+ * @param string $name Bake template name
  * @return string Template filename or a Bake template string
  * @throws \Cake\View\Exception\MissingTemplateException when a view file could not be found.
  */
