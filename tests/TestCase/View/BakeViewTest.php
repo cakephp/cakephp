@@ -49,21 +49,6 @@ class BakeViewTest extends TestCase {
 	}
 
 /**
- * test rendering a string
- *
- * @return void
- */
-	public function testRenderString() {
-		$template = 'The value of aVariable is: <%= $aVariable %>.';
-
-		$this->View->set(['aVariable' => 123]);
-		$result = $this->View->render($template);
-		$expected = 'The value of aVariable is: 123.';
-
-		$this->assertSame($expected, $result, 'variables in erb-style tags should be evaluated');
-	}
-
-/**
  * test rendering a template file
  *
  * @return void
@@ -82,11 +67,9 @@ class BakeViewTest extends TestCase {
  * @return void
  */
 	public function testRenderIgnorePhpTags() {
-		$template = 'The value of aVariable is: <%= $aVariable %>. Not <?php echo $aVariable ?>.';
-
 		$this->View->set(['aVariable' => 123]);
-		$result = $this->View->render($template);
-		$expected = 'The value of aVariable is: 123. Not <?php echo $aVariable ?>.';
+		$result = $this->View->render('view_tests/simple_php');
+		$expected = "The value of aVariable is: 123. Not <?php echo \$aVariable ?>.\n";
 
 		$this->assertSame($expected, $result, 'variables in php tags should be treated as strings');
 	}
@@ -97,11 +80,9 @@ class BakeViewTest extends TestCase {
  * @return void
  */
 	public function testRenderIgnorePhpShortTags() {
-		$template = 'The value of aVariable is: <%= $aVariable %>. Not <?= $aVariable ?>.';
-
 		$this->View->set(['aVariable' => 123]);
-		$result = $this->View->render($template);
-		$expected = 'The value of aVariable is: 123. Not <?= $aVariable ?>.';
+		$result = $this->View->render('view_tests/simple_php_short_tags');
+		$expected = "The value of aVariable is: 123. Not <?= \$aVariable ?>.\n";
 
 		$this->assertSame($expected, $result, 'variables in php tags should be treated as strings');
 	}
@@ -131,7 +112,7 @@ class BakeViewTest extends TestCase {
  * @return void
  */
 	public function testSwallowLeadingWhitespace() {
-		$result = $this->View->render('view_tests/leading-whitespace');
+		$result = $this->View->render('view_tests/leading_whitespace');
 		$expected = $this->_getCompareTemplate('leading-whitespace');
 
 		$this->assertSame(

@@ -148,10 +148,6 @@ class BakeView extends View {
  * @return string Bake template to evaluate
  */
 	protected function _getViewFileContents($name) {
-		if (strpos($name, '<') !== false) {
-			return $name;
-		}
-
 		$filename = $this->_getViewFileName($name);
 		return file_get_contents($filename);
 	}
