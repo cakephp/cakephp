@@ -1528,7 +1528,6 @@ class Table implements RepositoryInterface, EventListenerInterface {
 			$fields = substr($method, strlen($matches[0]));
 			$findType = Inflector::variable($matches[1]);
 		}
-		$conditions = [];
 		$hasOr = strpos($fields, '_or_');
 		$hasAnd = strpos($fields, '_and_');
 
