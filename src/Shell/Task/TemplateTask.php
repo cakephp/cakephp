@@ -32,7 +32,10 @@ use Cake\View\ViewVarsTrait;
 class TemplateTask extends Shell {
 
 	use ConventionsTrait;
-	use ViewVarsTrait;
+
+	use ViewVarsTrait {
+		getView as _getView;
+	}
 
 /**
  * BakeView instance
@@ -42,16 +45,49 @@ class TemplateTask extends Shell {
 	public $View;
 
 /**
- * Initialize callback. Setup paths for the template task.
+ * Which view class to use for baking
  *
- * @return void
+ * @var string
  */
-	public function initialize() {
-		$this->View = new BakeView(new Request(), new Response());
+	public $viewClass = 'Cake\View\BakeView';
+
+/**
+ * Get view instance
+ *
+ * @param string $viewClass View class name or null to use $viewClass
+ * @return \Cake\View\View
+ * @throws \Cake\View\Exception\MissingViewException If view class was not found.
+ */
+	public function getView() {
+		if ($this->View) {
+			return $this->View;
+		}
+
+		$this->View = $this->_getView();
 		$this->View->theme = isset($this->params['template']) ? $this->params['template'] : '';
 		if ($this->View->theme === 'default') {
 			$this->View->theme = '';
 		}
+
+		return $this->View;
+	}
+
+/**
+ * Constructs the view class instance based on object properties.
+ *
+ * @param string $viewClass Optional namespaced class name of the View class to instantiate.
+ * @return \Cake\View\View
+ * @throws \Cake\View\Exception\MissingViewException If view class was not found.
+ */
+	public function createView($viewClass = null) {
+		if ($viewClass === null) {
+			$viewClass = $this->viewClass;
+		}
+		$className = App::className($viewClass, 'View');
+		if (!$className) {
+			throw new Exception\MissingViewException([$viewClass]);
+		}
+		return new $className(new Request(), new Response());
 	}
 
 /**
@@ -65,11 +101,8 @@ class TemplateTask extends Shell {
 		if ($vars !== null) {
 			$this->set($vars);
 		}
-		if (empty($this->View)) {
-			$this->initialize();
-		}
 
-		$this->View->set($this->viewVars);
+		$this->getView()->set($this->viewVars);
 
 		try {
 			return $this->View->render($template);

@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Shell\Task;
 
 use Cake\Core\App;
+use Cake\Core\Plugin;
 use Cake\Shell\Task\TemplateTask;
 use Cake\TestSuite\TestCase;
 
@@ -46,6 +47,7 @@ class TemplateTaskTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Task);
+		Plugin::unload();
 	}
 
 /**
@@ -54,7 +56,6 @@ class TemplateTaskTest extends TestCase {
  * @return void
  */
 	public function testGenerate() {
-		$this->Task->initialize();
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue(1));
 
 		$result = $this->Task->generate('classes/test_object', array('test' => 'foo'));
@@ -63,14 +64,28 @@ class TemplateTaskTest extends TestCase {
 	}
 
 /**
+ * test generate with an overriden template it gets used
+ *
+ * @return void
+ */
+	public function testGenerateWithTemplateOverride() {
+		Plugin::load('TestBakeTheme');
+		$this->Task->params['template'] = 'TestBakeTheme';
+		$this->Task->set(array(
+			'plugin' => 'Special'
+		));
+		$result = $this->Task->generate('config/routes');
+		$this->assertContains('These are my routes. There are many like them but these are my own.', $result);
+	}
+/**
  * test generate with a missing template in the chosen template.
  * ensure fallback to default works.
  *
  * @return void
  */
 	public function testGenerateWithTemplateFallbacks() {
-		$this->Task->initialize();
-		$this->Task->params['template'] = 'test';
+		Plugin::load('TestBakeTheme');
+		$this->Task->params['template'] = 'TestBakeTheme';
 		$this->Task->set(array(
 			'name' => 'Articles',
 			'table' => 'articles',
