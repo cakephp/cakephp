@@ -113,7 +113,7 @@ class BakeViewTest extends TestCase {
  */
 	public function testSwallowLeadingWhitespace() {
 		$result = $this->View->render('view_tests/leading_whitespace');
-		$expected = $this->_getCompareTemplate('leading-whitespace');
+		$expected = $this->_getCompareTemplate('leading_whitespace');
 
 		$this->assertSame(
 			$expected,
