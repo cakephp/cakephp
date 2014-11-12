@@ -69,6 +69,25 @@ class BakeView extends View {
 	}
 
 /**
+ * Wrapper for creating and dispatching events.
+ *
+ * Use the Bake prefix for bake related view events
+ *
+ * @param string $name Name of the event.
+ * @param array $data Any value you wish to be transported with this event to
+ * it can be read by listeners.
+ *
+ * @param object $subject The object that this event applies to
+ * ($this by default).
+ *
+ * @return \Cake\Event\Event
+ */
+	public function dispatchEvent($name, $data = null, $subject = null) {
+		$name = str_replace('View.', 'Bake.', $name);
+		return parent::dispatchEvent($name, $data, $subject);
+	}
+
+/**
  * Sandbox method to evaluate a template / view script in.
  *
  * @param string $viewFile Filename of the view
