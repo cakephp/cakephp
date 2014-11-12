@@ -18,6 +18,8 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
 use Cake\Core\Plugin;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\Filesystem\Folder;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -33,9 +35,7 @@ class TemplateTask extends Shell {
 
 	use ConventionsTrait;
 
-	use ViewVarsTrait {
-		getView as _getView;
-	}
+	use ViewVarsTrait;
 
 /**
  * BakeView instance
@@ -43,39 +43,6 @@ class TemplateTask extends Shell {
  * @var Cake\View\BakeView
  */
 	public $View;
-
-/**
- * Which view class to use for baking
- *
- * @var string
- */
-	public $viewClass = 'Cake\View\BakeView';
-
-/**
- * An array containing the names of helpers to use when baking
- *
- * Example: `public $helpers = ['Bake', 'BakePlusPlus'];`
- *
- * @var array
- */
-	public $helpers = [
-		'Bake',
-	];
-
-/**
- * The bake theme to use
- *
- * @var string
- */
-	public $theme = '';
-
-/**
- * These properties will be passed from the template task to the View as options.
- *
- * @var array
- * @see \Cake\View\View
- */
-	protected $_validViewOptions = ['helpers', 'theme'];
 
 /**
  * Get view instance
@@ -89,9 +56,18 @@ class TemplateTask extends Shell {
 			return $this->View;
 		}
 
-		$this->theme = isset($this->params['template']) ? $this->params['template'] : '';
+		$theme = isset($this->params['template']) ? $this->params['template'] : '';
 
-		return $this->_getView();
+		$viewOptions = [
+			'helpers' => ['Bake'],
+			'theme' => $theme
+		];
+		$view = new BakeView(new Request(), new Response(), null, $viewOptions);
+		$event = new Event('Bake.initialize', $view);
+		EventManager::instance()->dispatch($event);
+		$this->View = $event->subject;
+
+		return $this->View;
 	}
 
 /**
@@ -102,14 +78,6 @@ class TemplateTask extends Shell {
  * @throws \Cake\View\Exception\MissingViewException If view class was not found.
  */
 	public function createView($viewClass = null) {
-		if ($viewClass === null) {
-			$viewClass = $this->viewClass;
-		}
-		$className = App::className($viewClass, 'View');
-		if (!$className) {
-			throw new Exception\MissingViewException([$viewClass]);
-		}
-		return new $className(new Request(), new Response());
 	}
 
 /**

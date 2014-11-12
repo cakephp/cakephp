@@ -123,9 +123,6 @@ class ViewTaskTest extends TestCase {
 		);
 		$this->Task->Template = new TemplateTask($io);
 		$this->Task->Model = $this->getMock('Cake\Shell\Task\ModelTask', [], [$io]);
-
-		$this->Task->Template->params['template'] = 'default';
-		$this->Task->Template->templatePaths = ['default' => CAKE . 'Template/Bake/default/'];
 	}
 
 /**
