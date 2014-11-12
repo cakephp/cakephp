@@ -70,7 +70,7 @@ class TemplateTaskTest extends TestCase {
  */
 	public function testGenerateWithTemplateOverride() {
 		Plugin::load('TestBakeTheme');
-		$this->Task->params['template'] = 'TestBakeTheme';
+		$this->Task->params['theme'] = 'TestBakeTheme';
 		$this->Task->set(array(
 			'plugin' => 'Special'
 		));
@@ -85,7 +85,7 @@ class TemplateTaskTest extends TestCase {
  */
 	public function testGenerateWithTemplateFallbacks() {
 		Plugin::load('TestBakeTheme');
-		$this->Task->params['template'] = 'TestBakeTheme';
+		$this->Task->params['theme'] = 'TestBakeTheme';
 		$this->Task->set(array(
 			'name' => 'Articles',
 			'table' => 'articles',

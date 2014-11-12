@@ -241,7 +241,7 @@ class BakeShell extends Shell {
 			'help' => 'Database connection to use in conjunction with `bake all`.',
 			'short' => 'c',
 			'default' => 'default'
-		])->addOption('template', [
+		])->addOption('theme', [
 			'short' => 't',
 			'help' => 'Theme to use when baking code.'
 		]);
