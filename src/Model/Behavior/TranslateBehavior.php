@@ -331,7 +331,7 @@ class TranslateBehavior extends Behavior {
 				unset($row[$name]);
 			}
 
-			if (!is_null($row)) {
+			if ($row !== null) {
 				$row['_locale'] = $locale;
 				if ($hydrated) {
 					$row->clean();
