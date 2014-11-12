@@ -231,6 +231,14 @@ class BakeShell extends Shell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 
+		$bakeThemes = [];
+		foreach (Plugin::loaded() as $plugin) {
+			$path = Plugin::classPath($plugin);
+			if (is_dir($path . 'Template' . DS . 'Bake')) {
+				$bakeThemes[] = $plugin;
+			}
+		}
+
 		$parser->description(
 			'The Bake script generates controllers, views and models for your application.' .
 			' If run with no command line arguments, Bake guides the user through the class creation process.' .
@@ -243,7 +251,8 @@ class BakeShell extends Shell {
 			'default' => 'default'
 		])->addOption('theme', [
 			'short' => 't',
-			'help' => 'Theme to use when baking code.'
+			'help' => 'The theme to use when baking code.',
+			'choices' => $bakeThemes
 		]);
 
 		foreach ($this->_taskMap as $task => $config) {
