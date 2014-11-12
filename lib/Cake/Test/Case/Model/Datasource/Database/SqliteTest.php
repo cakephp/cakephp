@@ -518,4 +518,28 @@ class SqliteTest extends CakeTestCase {
 		$this->assertNotContains($scientificNotation, $result);
 	}
 
+/**
+ * Test that fields are parsed out in a reasonable fashion.
+ *
+ * @return void
+ */
+	public function testFetchRowColumnParsing() {
+		$this->loadFixtures('User');
+		$sql = 'SELECT "User"."id", "User"."user", "User"."password", "User"."created", (1 + 1) AS "two" ' .
+			'FROM "users" AS "User" WHERE ' .
+			'"User"."id" IN (SELECT MAX("id") FROM "users")';
+		$result = $this->Dbo->fetchRow($sql);
+
+		$this->assertArrayHasKey('User', $result);
+		$this->assertArrayHasKey('0', $result);
+		$this->assertCount(2, $result, 'Too many top level keys');
+		$this->assertCount(4, $result['User'], 'Too many keys');
+		$this->assertCount(1, $result['0'], 'Too many keys');
+		$this->assertArrayHasKey('id', $result['User']);
+		$this->assertArrayHasKey('user', $result['User']);
+		$this->assertArrayHasKey('password', $result['User']);
+		$this->assertArrayHasKey('created', $result['User']);
+		$this->assertArrayHasKey('two', $result['0']);
+	}
+
 }

@@ -300,12 +300,11 @@ class Sqlite extends DboSource {
 		// PDO::getColumnMeta is experimental and does not work with sqlite3,
 		// so try to figure it out based on the querystring
 		$querystring = $results->queryString;
-		if (stripos($querystring, 'SELECT') === 0) {
-			$last = strripos($querystring, 'FROM');
-			if ($last !== false) {
-				$selectpart = substr($querystring, 7, $last - 8);
-				$selects = String::tokenize($selectpart, ',', '(', ')');
-			}
+		if (stripos($querystring, 'SELECT') === 0 && stripos($querystring, 'FROM') > 0) {
+			$selectpart = substr($querystring, 7);
+			$selects = String::tokenize($selectpart, ',', '(', ')');
+			$last = count($selects) - 1;
+			$selects[$last] = trim(substr($selects[$last], 0, stripos($selects[$last], 'FROM')));
 		} elseif (strpos($querystring, 'PRAGMA table_info') === 0) {
 			$selects = array('cid', 'name', 'type', 'notnull', 'dflt_value', 'pk');
 		} elseif (strpos($querystring, 'PRAGMA index_list') === 0) {
