@@ -56,7 +56,7 @@ class TemplateTask extends Shell {
 			return $this->View;
 		}
 
-		$theme = isset($this->params['template']) ? $this->params['template'] : '';
+		$theme = isset($this->params['theme']) ? $this->params['theme'] : '';
 
 		$viewOptions = [
 			'helpers' => ['Bake'],
