@@ -1327,6 +1327,26 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * test count with a beforeFind.
+ *
+ * @return void
+ */
+	public function testCountBeforeFind() {
+		$table = TableRegistry::get('Articles');
+		$table->hasMany('Comments');
+		$table->eventManager()
+			->attach(function ($event, $query) {
+				$query
+					->limit(1)
+					->order(['Articles.title' => 'DESC']);
+			}, 'Model.beforeFind');
+
+		$query = $table->find();
+		$result = $query->count();
+		$this->assertSame(3, $result);
+	}
+
+/**
  * Test that count() returns correct results with group by.
  *
  * @return void
@@ -2105,6 +2125,34 @@ class QueryTest extends TestCase {
 	public function testCleanCopy() {
 		$table = TableRegistry::get('Articles');
 		$table->hasMany('Comments');
+
+		$query = $table->find();
+		$query->offset(10)
+			->limit(1)
+			->order(['Articles.id' => 'DESC'])
+			->contain(['Comments']);
+		$copy = $query->cleanCopy();
+
+		$this->assertNotSame($copy, $query);
+		$this->assertNull($copy->clause('offset'));
+		$this->assertNull($copy->clause('limit'));
+		$this->assertNull($copy->clause('order'));
+	}
+
+/**
+ * test that cleanCopy makes a cleaned up clone with a beforeFind.
+ *
+ * @return void
+ */
+	public function testCleanCopyBeforeFind() {
+		$table = TableRegistry::get('Articles');
+		$table->hasMany('Comments');
+		$table->eventManager()
+			->attach(function($event, $query) {
+				$query
+					->limit(5)
+					->order(['Articles.title' => 'DESC']);
+			}, 'Model.beforeFind');
 
 		$query = $table->find();
 		$query->offset(10)
