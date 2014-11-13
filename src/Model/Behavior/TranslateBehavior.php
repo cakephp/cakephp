@@ -311,6 +311,9 @@ class TranslateBehavior extends Behavior {
  */
 	protected function _rowMapper($results, $locale) {
 		return $results->map(function ($row) use ($locale) {
+			if ($row === null) {
+				return $row;	
+			}
 			$hydrated = !is_array($row);
 
 			foreach ($this->_config['fields'] as $field) {
@@ -331,11 +334,9 @@ class TranslateBehavior extends Behavior {
 				unset($row[$name]);
 			}
 
-			if ($row !== null) {
-				$row['_locale'] = $locale;
-				if ($hydrated) {
-					$row->clean();
-				}
+			$row['_locale'] = $locale;
+			if ($hydrated) {
+				$row->clean();
 			}
 
 			return $row;
