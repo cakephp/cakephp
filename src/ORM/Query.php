@@ -481,7 +481,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	}
 
 /**
- * Creates a copy of this current query and resets some state.
+ * Creates a copy of this current query, triggers beforeFind and resets some state.
  *
  * The following state will be cleared:
  *
@@ -499,6 +499,7 @@ class Query extends DatabaseQuery implements JsonSerializable {
  */
 	public function cleanCopy() {
 		$query = clone $this;
+		$query->triggerBeforeFind();
 		$query->autoFields(false);
 		$query->limit(null);
 		$query->order([], true);
@@ -610,14 +611,25 @@ class Query extends DatabaseQuery implements JsonSerializable {
 	}
 
 /**
- * {@inheritDoc}
+ * Trigger the beforeFind event on the query's repository object.
+ *
+ * Will not trigger more than once, and only for select queries.
+ *
+ * @return void
  */
-	public function sql(ValueBinder $binder = null) {
+	public function triggerBeforeFind() {
 		if (!$this->_beforeFindFired && $this->_type === 'select') {
 			$table = $this->repository();
 			$table->dispatchEvent('Model.beforeFind', [$this, $this->_options, !$this->eagerLoaded()]);
 			$this->_beforeFindFired = true;
 		}
+	}
+
+/**
+ * {@inheritDoc}
+ */
+	public function sql(ValueBinder $binder = null) {
+		$this->triggerBeforeFind();
 
 		$this->_transformQuery();
 		$sql = parent::sql($binder);
