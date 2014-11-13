@@ -1273,7 +1273,7 @@ class Email {
 			return;
 		}
 		$config = [
-			'level' => LOG_DEBUG,
+			'level' => 'debug',
 			'scope' => 'email'
 		];
 		if ($this->_profile['log'] !== true) {

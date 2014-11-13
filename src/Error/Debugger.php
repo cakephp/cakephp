@@ -181,12 +181,12 @@ class Debugger {
  * as well as export the variable using exportVar. By default the log is written to the debug log.
  *
  * @param mixed $var Variable or content to log
- * @param int $level type of log to use. Defaults to LOG_DEBUG
+ * @param int|string $level type of log to use. Defaults to 'debug'
  * @param int $depth The depth to output to. Defaults to 3.
  * @return void
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::log
  */
-	public static function log($var, $level = LOG_DEBUG, $depth = 3) {
+	public static function log($var, $level = 'debug', $depth = 3) {
 		$source = static::trace(array('start' => 1)) . "\n";
 		Log::write($level, "\n" . $source . static::exportVar($var, $depth));
 	}
