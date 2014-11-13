@@ -306,7 +306,7 @@ class Sqlite extends DboSource {
 			foreach (String::tokenize($selectpart, ',', '(', ')') as $part) {
 				$fromPos = stripos($part, ' FROM ');
 				if ($fromPos !== false) {
-					$selects[] = trim(substr($part, 0, $fromPos)); 
+					$selects[] = trim(substr($part, 0, $fromPos));
 					break;
 				}
 				$selects[] = $part;
