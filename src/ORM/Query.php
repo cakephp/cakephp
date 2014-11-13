@@ -229,22 +229,27 @@ class Query extends DatabaseQuery implements JsonSerializable {
  * ### Example:
  *
  * {{{
- *  // Set options for the articles that will be eagerly loaded for an author
- *	$query->contain([
- *		'Articles' => [
- *			'fields' => ['title']
- *		]
- *	]);
+ * // Set options for the hasMany articles that will be eagerly loaded for an author
+ * $query->contain([
+ *   'Articles' => [
+ *     'fields' => ['title', 'author_id']
+ *   ]
+ * ]);
+ * }}}
  *
- *	// Use special join conditions for getting an article author's 'likes'
- *	$query->contain([
- *		'Likes' => [
- *			'foreignKey' => false,
- *			'queryBuilder' => function ($q) {
- *				return $q->where(...); // Add full filtering conditions
- *			}
- *		]
- *	]);
+ * When containing associations, it is important to include foreign key columns.
+ * Failing to do so will trigger exceptions.
+ *
+ * {{{
+ * // Use special join conditions for getting an author's hasMany 'likes'
+ * $query->contain([
+ *   'Likes' => [
+ *     'foreignKey' => false,
+ *     'queryBuilder' => function ($q) {
+ *       return $q->where(...); // Add full filtering conditions
+ *     }
+ *   ]
+ * ]);
  * }}}
  *
  * If called with no arguments, this function will return an array with
