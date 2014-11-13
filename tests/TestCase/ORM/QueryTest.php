@@ -2148,7 +2148,7 @@ class QueryTest extends TestCase {
 		$table = TableRegistry::get('Articles');
 		$table->hasMany('Comments');
 		$table->eventManager()
-			->attach(function($event, $query) {
+			->attach(function ($event, $query) {
 				$query
 					->limit(5)
 					->order(['Articles.title' => 'DESC']);
