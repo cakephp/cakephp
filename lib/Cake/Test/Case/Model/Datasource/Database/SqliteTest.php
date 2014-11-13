@@ -527,19 +527,37 @@ class SqliteTest extends CakeTestCase {
 		$this->loadFixtures('User');
 		$sql = 'SELECT "User"."id", "User"."user", "User"."password", "User"."created", (1 + 1) AS "two" ' .
 			'FROM "users" AS "User" WHERE ' .
-			'"User"."id" IN (SELECT MAX("id") FROM "users")';
+			'"User"."id" IN (SELECT MAX("id") FROM "users") ' .
+			'OR "User.id" IN (5, 6, 7, 8)';
 		$result = $this->Dbo->fetchRow($sql);
 
-		$this->assertArrayHasKey('User', $result);
-		$this->assertArrayHasKey('0', $result);
-		$this->assertCount(2, $result, 'Too many top level keys');
-		$this->assertCount(4, $result['User'], 'Too many keys');
-		$this->assertCount(1, $result['0'], 'Too many keys');
-		$this->assertArrayHasKey('id', $result['User']);
-		$this->assertArrayHasKey('user', $result['User']);
-		$this->assertArrayHasKey('password', $result['User']);
-		$this->assertArrayHasKey('created', $result['User']);
-		$this->assertArrayHasKey('two', $result['0']);
+		$expected = array(
+			'User' => array(
+				'id' => 4,
+				'user' => 'garrett',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'created' => '2007-03-17 01:22:23'
+			),
+			0 => array(
+				'two' => 2
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+		$sql = 'SELECT "User"."id", "User"."user" ' .
+			'FROM "users" AS "User" WHERE "User"."id" = 4 ' .
+			'UNION ' .
+			'SELECT "User"."id", "User"."user" ' .
+			'FROM "users" AS "User" WHERE "User"."id" = 3';
+		$result = $this->Dbo->fetchRow($sql);
+
+		$expected = array(
+			'User' => array(
+				'id' => 3,
+				'user' => 'larry',
+			),
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 }

@@ -302,9 +302,15 @@ class Sqlite extends DboSource {
 		$querystring = $results->queryString;
 		if (stripos($querystring, 'SELECT') === 0 && stripos($querystring, 'FROM') > 0) {
 			$selectpart = substr($querystring, 7);
-			$selects = String::tokenize($selectpart, ',', '(', ')');
-			$last = count($selects) - 1;
-			$selects[$last] = trim(substr($selects[$last], 0, stripos($selects[$last], 'FROM')));
+			$selects = array();
+			foreach (String::tokenize($selectpart, ',', '(', ')') as $part) {
+				$fromPos = stripos($part, ' FROM ');
+				if ($fromPos !== false) {
+					$selects[] = trim(substr($part, 0, $fromPos)); 
+					break;
+				}
+				$selects[] = $part;
+			}
 		} elseif (strpos($querystring, 'PRAGMA table_info') === 0) {
 			$selects = array('cid', 'name', 'type', 'notnull', 'dflt_value', 'pk');
 		} elseif (strpos($querystring, 'PRAGMA index_list') === 0) {
