@@ -47,9 +47,7 @@ class TemplateTask extends Shell {
 /**
  * Get view instance
  *
- * @param string $viewClass View class name or null to use $viewClass
  * @return \Cake\View\View
- * @throws \Cake\View\Exception\MissingViewException If view class was not found.
  */
 	public function getView() {
 		if ($this->View) {
