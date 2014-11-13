@@ -1020,7 +1020,7 @@ class Table implements RepositoryInterface, EventListenerInterface {
  *	return $validator
  *	->add('email', 'valid-email', ['rule' => 'email'])
  *	->add('password', 'valid', ['rule' => 'notEmpty'])
- *	->validatePresence('username');
+ *	->requirePresence('username');
  * }
  * }}}
  *
