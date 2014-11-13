@@ -2066,7 +2066,7 @@ class TableTest extends TestCase {
 			'username' => 'superuser'
 		]);
 		$table = TableRegistry::get('users');
-		$table->validator()->validatePresence('password');
+		$table->validator()->requirePresence('password');
 		$this->assertFalse($table->save($entity));
 		$this->assertNotEmpty($entity->errors('password'));
 		$this->assertSame($entity, $table->validator()->provider('entity'));
@@ -2083,7 +2083,7 @@ class TableTest extends TestCase {
 			'username' => 'superuser'
 		]);
 		$table = TableRegistry::get('users');
-		$table->validator()->validatePresence('password');
+		$table->validator()->requirePresence('password');
 		$this->assertFalse($table->save($entity));
 		$this->assertNotEmpty($entity->errors('password'));
 	}
@@ -2098,7 +2098,7 @@ class TableTest extends TestCase {
 			'username' => 'superuser'
 		]);
 		$table = TableRegistry::get('users');
-		$validator = (new Validator)->validatePresence('password');
+		$validator = (new Validator)->requirePresence('password');
 		$table->validator('custom', $validator);
 		$this->assertFalse($table->save($entity, ['validate' => 'custom']));
 		$this->assertNotEmpty($entity->errors('password'));
@@ -2117,7 +2117,7 @@ class TableTest extends TestCase {
 			'password' => 'hey'
 		]);
 		$table = TableRegistry::get('users');
-		$table->validator()->validatePresence('password');
+		$table->validator()->requirePresence('password');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertEmpty($entity->errors('password'));
 	}
@@ -2136,7 +2136,7 @@ class TableTest extends TestCase {
 			$this->assertSame($entity, $en);
 			$this->assertTrue($opt['crazy']);
 			$this->assertSame($ev->subject()->validator('default'), $val);
-			$val->validatePresence('password');
+			$val->requirePresence('password');
 		}, 'Model.beforeValidate');
 		$this->assertFalse($table->save($entity, ['crazy' => true]));
 		$this->assertNotEmpty($entity->errors('password'));
@@ -2171,7 +2171,7 @@ class TableTest extends TestCase {
 			'password' => 'hey'
 		]);
 		$table = TableRegistry::get('users');
-		$table->validator()->validatePresence('password');
+		$table->validator()->requirePresence('password');
 		$table->eventManager()->attach(function ($ev, $en, $opt, $val) use ($entity) {
 			$this->assertSame($entity, $en);
 			$this->assertTrue($opt['crazy']);
@@ -2207,10 +2207,10 @@ class TableTest extends TestCase {
 		$table = TableRegistry::get('articles');
 		$table->belongsTo('authors');
 		$table->hasMany('ArticlesTags');
-		$validator = (new Validator)->validatePresence('body');
+		$validator = (new Validator)->requirePresence('body');
 		$table->validator('custom', $validator);
 
-		$validator2 = (new Validator)->validatePresence('thing');
+		$validator2 = (new Validator)->requirePresence('thing');
 		$table->authors->validator('default', $validator2);
 		$this->assertFalse($table->save($entity, ['validate' => 'custom']), 'default was not used');
 		$this->assertNotEmpty($entity->author->errors('thing'));
@@ -2242,13 +2242,13 @@ class TableTest extends TestCase {
 		$table->belongsTo('Authors');
 		$table->hasMany('Comments');
 
-		$validator = (new Validator)->validatePresence('body');
+		$validator = (new Validator)->requirePresence('body');
 		$table->validator('default', $validator);
 
-		$authorValidate = (new Validator)->validatePresence('bio');
+		$authorValidate = (new Validator)->requirePresence('bio');
 		$table->Authors->validator('default', $authorValidate);
 
-		$commentValidate = (new Validator)->validatePresence('author');
+		$commentValidate = (new Validator)->requirePresence('author');
 		$table->Comments->validator('default', $commentValidate);
 
 		$result = $table->save($entity);
