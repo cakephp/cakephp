@@ -250,12 +250,12 @@ class LogTest extends TestCase {
 		));
 
 		$testMessage = 'selective logging';
-		Log::write(LOG_WARNING, $testMessage);
+		Log::write('warning', $testMessage);
 
 		$this->assertFileExists(LOGS . 'eggs.log');
 		$this->assertFileNotExists(LOGS . 'spam.log');
 
-		Log::write(LOG_DEBUG, $testMessage);
+		Log::write('debug', $testMessage);
 		$this->assertFileExists(LOGS . 'spam.log');
 
 		$contents = file_get_contents(LOGS . 'spam.log');

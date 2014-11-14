@@ -492,7 +492,7 @@ TEXT;
 		$val = array(
 			'test' => array('key' => 'val')
 		);
-		Debugger::log($val, LOG_DEBUG, 0);
+		Debugger::log($val, 'debug', 0);
 	}
 
 /**
