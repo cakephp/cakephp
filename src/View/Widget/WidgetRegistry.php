@@ -65,8 +65,6 @@ class WidgetRegistry {
 			$this->add($widgets);
 		}
 		$this->_widgets['_view'] = $view;
-		debug($this->_widgets);
-		exit();
 
 	}
 
