@@ -851,8 +851,7 @@ class Router {
  *   If you have no parameters, this argument can be a callable.
  * @param callable $callback The callback to invoke with the scoped collection.
  * @throws \InvalidArgumentException When an invalid callable is provided.
- * @return null|\Cake\Routing\RouteBuilder The route builder
- *   was created/used.
+ * @return void
  */
 	public static function scope($path, $params = [], $callback = null) {
 		$builder = new RouteBuilder(static::$_collection, '/', [], [

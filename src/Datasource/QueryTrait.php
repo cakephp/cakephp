@@ -378,7 +378,7 @@ trait QueryTrait {
  * This is handy for passing all query clauses at once.
  *
  * @param array $options the options to be applied
- * @return \Cake\Datasource\QueryTrait this object
+ * @return $this This object
  */
 	abstract public function applyOptions(array $options);
 
